@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define>__heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_IRAM2$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\os\kernel\include;..\..\..\os\ports\RVCT\ARMCMx;..\..\..\os\ports\RVCT\ARMCMx\STM32L1xx;..\..\..\os\hal\include;..\..\..\os\hal\platforms\STM32;..\..\..\os\hal\platforms\STM32\GPIOv2;..\..\..\os\hal\platforms\STM32L1xx;..\..\..\boards\ST_STM32L_DISCOVERY;..\..\..\test</IncludePath>
+              <IncludePath>..\;..\..\..\os\kernel\include;..\..\..\os\ports\common\ARMCMx;..\..\..\os\ports\common\ARMCMx\CMSIS\include;..\..\..\os\ports\RVCT\ARMCMx;..\..\..\os\ports\RVCT\ARMCMx\STM32L1xx;..\..\..\os\hal\include;..\..\..\os\hal\platforms\STM32;..\..\..\os\hal\platforms\STM32\GPIOv2;..\..\..\os\hal\platforms\STM32L1xx;..\..\..\boards\ST_STM32L_DISCOVERY;..\..\..\test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -422,11 +422,6 @@
               <FilePath>..\..\..\os\ports\RVCT\ARMCMx\chcore_v7m.c</FilePath>
             </File>
             <File>
-              <FileName>nvic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\ports\RVCT\ARMCMx\nvic.c</FilePath>
-            </File>
-            <File>
               <FileName>chcore.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\os\ports\RVCT\ARMCMx\chcore.h</FilePath>
@@ -442,11 +437,6 @@
               <FilePath>..\..\..\os\ports\RVCT\ARMCMx\chtypes.h</FilePath>
             </File>
             <File>
-              <FileName>nvic.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\ports\RVCT\ARMCMx\nvic.h</FilePath>
-            </File>
-            <File>
               <FileName>cmparams.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\os\ports\RVCT\ARMCMx\STM32L1xx\cmparams.h</FilePath>
@@ -455,6 +445,16 @@
               <FileName>vectors.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\..\os\ports\RVCT\ARMCMx\STM32L1xx\vectors.s</FilePath>
+            </File>
+            <File>
+              <FileName>nvic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\ports\common\ARMCMx\nvic.c</FilePath>
+            </File>
+            <File>
+              <FileName>nvic.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\ports\common\ARMCMx\nvic.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -677,14 +677,54 @@
           <GroupName>hal</GroupName>
           <Files>
             <File>
+              <FileName>usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\usb.c</FilePath>
+            </File>
+            <File>
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\os\hal\src\adc.c</FilePath>
             </File>
             <File>
+              <FileName>can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\can.c</FilePath>
+            </File>
+            <File>
+              <FileName>ext.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\ext.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\gpt.c</FilePath>
+            </File>
+            <File>
               <FileName>hal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\os\hal\src\hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>icu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\icu.c</FilePath>
+            </File>
+            <File>
+              <FileName>mac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\mac.c</FilePath>
+            </File>
+            <File>
+              <FileName>mmc_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\mmc_spi.c</FilePath>
             </File>
             <File>
               <FileName>pal.c</FileName>
@@ -697,9 +737,24 @@
               <FilePath>..\..\..\os\hal\src\pwm.c</FilePath>
             </File>
             <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\sdc.c</FilePath>
+            </File>
+            <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\os\hal\src\serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>serial_usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\serial_usb.c</FilePath>
             </File>
             <File>
               <FileName>spi.c</FileName>
@@ -707,34 +762,14 @@
               <FilePath>..\..\..\os\hal\src\spi.c</FilePath>
             </File>
             <File>
-              <FileName>adc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\include\adc.h</FilePath>
+              <FileName>tm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\tm.c</FilePath>
             </File>
             <File>
-              <FileName>hal.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\include\hal.h</FilePath>
-            </File>
-            <File>
-              <FileName>pal.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\include\pal.h</FilePath>
-            </File>
-            <File>
-              <FileName>pwm.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\include\pwm.h</FilePath>
-            </File>
-            <File>
-              <FileName>serial.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\include\serial.h</FilePath>
-            </File>
-            <File>
-              <FileName>spi.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\include\spi.h</FilePath>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -742,34 +777,44 @@
           <GroupName>platform</GroupName>
           <Files>
             <File>
-              <FileName>adc_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32L1xx\adc_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>adc_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32L1xx\adc_lld.h</FilePath>
-            </File>
-            <File>
-              <FileName>hal_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32L1xx\hal_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32L1xx\hal_lld.h</FilePath>
-            </File>
-            <File>
               <FileName>pal_lld.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\os\hal\platforms\STM32\GPIOv2\pal_lld.c</FilePath>
             </File>
             <File>
-              <FileName>pal_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\GPIOv2\pal_lld.h</FilePath>
+              <FileName>uart_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\uart_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>can_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\can_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>ext_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\ext_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpt_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\gpt_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\i2c_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>icu_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\icu_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>mac_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\mac_lld.c</FilePath>
             </File>
             <File>
               <FileName>pwm_lld.c</FileName>
@@ -777,9 +822,9 @@
               <FilePath>..\..\..\os\hal\platforms\STM32\pwm_lld.c</FilePath>
             </File>
             <File>
-              <FileName>pwm_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\pwm_lld.h</FilePath>
+              <FileName>sdc_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32\sdc_lld.c</FilePath>
             </File>
             <File>
               <FileName>serial_lld.c</FileName>
@@ -787,19 +832,9 @@
               <FilePath>..\..\..\os\hal\platforms\STM32\serial_lld.c</FilePath>
             </File>
             <File>
-              <FileName>spi_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\spi_lld.h</FilePath>
-            </File>
-            <File>
               <FileName>spi_lld.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\os\hal\platforms\STM32\spi_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>serial_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\serial_lld.h</FilePath>
             </File>
             <File>
               <FileName>stm32_dma.c</FileName>
@@ -807,19 +842,14 @@
               <FilePath>..\..\..\os\hal\platforms\STM32L1xx\stm32_dma.c</FilePath>
             </File>
             <File>
-              <FileName>stm32_dma.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32L1xx\stm32_dma.h</FilePath>
+              <FileName>adc_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32L1xx\adc_lld.c</FilePath>
             </File>
             <File>
-              <FileName>stm32_rcc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32L1xx\stm32_rcc.h</FilePath>
-            </File>
-            <File>
-              <FileName>stm32l1xx.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32L1xx\stm32l1xx.h</FilePath>
+              <FileName>hal_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\platforms\STM32L1xx\hal_lld.c</FilePath>
             </File>
           </Files>
         </Group>
