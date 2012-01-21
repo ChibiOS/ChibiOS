@@ -148,7 +148,7 @@
 /** @} */
 
 /**
- * @name    CR register constants only found in STM32F2xx/STM32F2xx
+ * @name    CR register constants only found in STM32F2xx/STM32F4xx
  * @{
  */
 #define STM32_DMA_CR_DMEIE          DMA_SxCR_DMEIE
@@ -171,7 +171,7 @@
 /** @} */
 
 /**
- * @name    FCR register constants only found in STM32F2xx/STM32F2xx
+ * @name    FCR register constants only found in STM32F2xx/STM32F4xx
  * @{
  */
 #define STM32_DMA_FCR_FEIE          DMA_SxFCR_FEIE
@@ -418,9 +418,11 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  */
-#define dmaWaitCompletion(dmastp)                                           \
-  while (((dmastp)->stream->CNDTR > 0) &&                                   \
-         ((dmastp)->stream->CCR & STM32_DMA_CR_EN))
+#define dmaWaitCompletion(dmastp) {                                         \
+  while ((dmastp)->stream->NDTR > 0)                                        \
+    ;                                                                       \
+  dmaStreamDisable(dmastp);                                                 \
+}
 /** @} */
 
 /*===========================================================================*/
