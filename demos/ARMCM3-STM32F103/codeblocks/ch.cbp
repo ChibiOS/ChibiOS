@@ -41,16 +41,22 @@
 			<Add option="-fdata-sections" />
 			<Add directory="..\..\ARMCM3-STM32F103" />
 			<Add directory="..\..\..\os\kernel\include" />
+			<Add directory="..\..\..\os\ports\common\ARMCMx" />
+			<Add directory="..\..\..\os\ports\common\ARMCMx\CMSIS\include" />
 			<Add directory="..\..\..\os\ports\GCC\ARMCMx" />
-			<Add directory="..\..\..\os\ports\GCC\ARMCMx\STM32" />
+			<Add directory="..\..\..\os\ports\GCC\ARMCMx\STM32F1xx" />
 			<Add directory="..\..\..\os\hal\include" />
 			<Add directory="..\..\..\os\hal\platforms\STM32" />
+			<Add directory="..\..\..\os\hal\platforms\STM32\GPIOv1" />
+			<Add directory="..\..\..\os\hal\platforms\STM32\RTCv1" />
+			<Add directory="..\..\..\os\hal\platforms\STM32\USBv1" />
+			<Add directory="..\..\..\os\hal\platforms\STM32F1xx" />
 			<Add directory="..\..\..\boards\OLIMEX_STM32_P103" />
 			<Add directory="..\..\..\test" />
 		</Compiler>
 		<Linker>
 			<Add option="-nostartfiles" />
-			<Add option="-T../ch.ld" />
+			<Add option="-T../../../os/ports/GCC/ARMCMx/STM32F1xx/ld/STM32F103xB.ld" />
 			<Add option="-Wl,-Map=$exe_dir/ch.map,--cref,--no-warn-mismatch,--gc-sections" />
 		</Linker>
 		<ExtraCommands>
@@ -67,38 +73,87 @@
 		</Unit>
 		<Unit filename="..\..\..\os\hal\include\adc.h" />
 		<Unit filename="..\..\..\os\hal\include\can.h" />
+		<Unit filename="..\..\..\os\hal\include\ext.h" />
+		<Unit filename="..\..\..\os\hal\include\gpt.h" />
 		<Unit filename="..\..\..\os\hal\include\hal.h" />
 		<Unit filename="..\..\..\os\hal\include\i2c.h" />
+		<Unit filename="..\..\..\os\hal\include\icu.h" />
 		<Unit filename="..\..\..\os\hal\include\mac.h" />
 		<Unit filename="..\..\..\os\hal\include\mii.h" />
 		<Unit filename="..\..\..\os\hal\include\mmc_spi.h" />
 		<Unit filename="..\..\..\os\hal\include\pal.h" />
 		<Unit filename="..\..\..\os\hal\include\pwm.h" />
+		<Unit filename="..\..\..\os\hal\include\rtc.h" />
+		<Unit filename="..\..\..\os\hal\include\sdc.h" />
 		<Unit filename="..\..\..\os\hal\include\serial.h" />
+		<Unit filename="..\..\..\os\hal\include\serial_usb.h" />
 		<Unit filename="..\..\..\os\hal\include\spi.h" />
+		<Unit filename="..\..\..\os\hal\include\tm.h" />
 		<Unit filename="..\..\..\os\hal\include\uart.h" />
-		<Unit filename="..\..\..\os\hal\platforms\STM32\adc_lld.c">
+		<Unit filename="..\..\..\os\hal\include\usb.h" />
+		<Unit filename="..\..\..\os\hal\include\usb_cdc.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\adc_lld.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\os\hal\platforms\STM32\adc_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\adc_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\hal_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\hal_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f100.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f103.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f105_f107.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\stm32_dma.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\stm32_dma.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\stm32_rcc.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32F1xx\stm32f10x.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\RTCv1\rtc_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\RTCv1\rtc_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\USBv1\stm32_usb.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\USBv1\usb_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\USBv1\usb_lld.h" />
 		<Unit filename="..\..\..\os\hal\platforms\STM32\can_lld.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\hal\platforms\STM32\can_lld.h" />
-		<Unit filename="..\..\..\os\hal\platforms\STM32\hal_lld.c">
+		<Unit filename="..\..\..\os\hal\platforms\STM32\ext_lld.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\os\hal\platforms\STM32\hal_lld.h" />
-		<Unit filename="..\..\..\os\hal\platforms\STM32\hal_lld_f103.h" />
-		<Unit filename="..\..\..\os\hal\platforms\STM32\hal_lld_f105_f107.h" />
-		<Unit filename="..\..\..\os\hal\platforms\STM32\pal_lld.c">
+		<Unit filename="..\..\..\os\hal\platforms\STM32\ext_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\gpt_lld.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\os\hal\platforms\STM32\pal_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\gpt_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\i2c_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\i2c_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\icu_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\icu_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\mac_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\mac_lld.h" />
 		<Unit filename="..\..\..\os\hal\platforms\STM32\pwm_lld.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\hal\platforms\STM32\pwm_lld.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\sdc_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\platforms\STM32\sdc_lld.h" />
 		<Unit filename="..\..\..\os\hal\platforms\STM32\serial_lld.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -107,11 +162,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\hal\platforms\STM32\spi_lld.h" />
-		<Unit filename="..\..\..\os\hal\platforms\STM32\stm32_dma.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\os\hal\platforms\STM32\stm32_dma.h" />
-		<Unit filename="..\..\..\os\hal\platforms\STM32\stm32f10x.h" />
+		<Unit filename="..\..\..\os\hal\platforms\STM32\stm32.h" />
 		<Unit filename="..\..\..\os\hal\platforms\STM32\uart_lld.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -122,10 +173,19 @@
 		<Unit filename="..\..\..\os\hal\src\can.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\os\hal\src\ext.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\gpt.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\os\hal\src\hal.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\hal\src\i2c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\icu.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\hal\src\mac.c">
@@ -140,13 +200,28 @@
 		<Unit filename="..\..\..\os\hal\src\pwm.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\os\hal\src\rtc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\sdc.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\os\hal\src\serial.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\serial_usb.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\hal\src\spi.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\os\hal\src\tm.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\os\hal\src\uart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\hal\src\usb.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\kernel\include\ch.h" />
@@ -226,8 +301,8 @@
 		<Unit filename="..\..\..\os\kernel\src\chvt.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\STM32\cmparams.h" />
-		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\STM32\vectors.c">
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\STM32F1xx\cmparams.h" />
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\STM32F1xx\vectors.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\chcore.c">
@@ -239,12 +314,14 @@
 		</Unit>
 		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\chcore_v7m.h" />
 		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\chtypes.h" />
-		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\cmsis\core_cm0.h" />
-		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\crt0_v7m.s" />
-		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\nvic.c">
+		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\crt0.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\os\ports\GCC\ARMCMx\nvic.h" />
+		<Unit filename="..\..\..\os\ports\common\ARMCMx\nvic.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\ports\common\ARMCMx\nvic.h" />
 		<Unit filename="..\..\..\test\test.c">
 			<Option compilerVar="CC" />
 		</Unit>
