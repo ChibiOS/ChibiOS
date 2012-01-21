@@ -5,8 +5,8 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.3.5unstable
-*** Compiled:     Dec 28 2011 - 09:52:16
+*** Kernel:       2.4.0
+*** Compiled:     Jan 15 2012 - 20:12:59
 *** Compiler:     GCC 4.6.2
 *** Architecture: ARMv7-ME
 *** Core Variant: Cortex-M4F

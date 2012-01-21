@@ -1,13 +1,13 @@
 ***************************************************************************
 Options:  -Ohs
 Settings: SYSCLK=168, ACR=0x705 (5 wait states)
-Compiler: IAR C/C++ Compiler for ARM 6.30.3.33228
+Compiler: IAR C/C++ Compiler for ARM 6.30.3.3241
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.3.5unstable
-*** Compiled:     Dec 28 2011 - 10:01:37
+*** Kernel:       2.4.0
+*** Compiled:     Jan 15 2012 - 20:30:59
 *** Compiler:     IAR
 *** Architecture: ARMv7-ME
 *** Core Variant: Cortex-M4
@@ -101,15 +101,15 @@ Compiler: IAR C/C++ Compiler for ARM 6.30.3.33228
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 682344 msgs/S, 1364688 ctxswc/S
+--- Score : 682340 msgs/S, 1364680 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 593136 msgs/S, 1186272 ctxswc/S
+--- Score : 593133 msgs/S, 1186266 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 593135 msgs/S, 1186270 ctxswc/S
+--- Score : 593132 msgs/S, 1186264 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
@@ -117,7 +117,7 @@ Compiler: IAR C/C++ Compiler for ARM 6.30.3.33228
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 424956 threads/S
+--- Score : 424953 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
@@ -125,7 +125,7 @@ Compiler: IAR C/C++ Compiler for ARM 6.30.3.33228
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 203219 reschedules/S, 1219314 ctxswc/S
+--- Score : 203217 reschedules/S, 1219302 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)

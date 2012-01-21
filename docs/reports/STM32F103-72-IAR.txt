@@ -1,17 +1,18 @@
 ***************************************************************************
 Options:  -Ohs
 Settings: SYSCLK=72, ACR=0x12 (2 wait states)
-Compiler: IAR C/C++ Compiler for ARM 6.10.1.32143
+Compiler: IAR C/C++ Compiler for ARM 6.30.3.3241
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.3.3unstable
+*** Kernel:       2.4.0
+*** Compiled:     Jan 21 2012 - 12:19:46
 *** Compiler:     IAR
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
 *** Port Info:    Advanced kernel mode
-*** Platform:     STM32 Performance Line Medium Density
+*** Platform:     STM32F1 Performance Line Medium Density
 *** Test Board:   Olimex STM32-P103
 
 ----------------------------------------------------------------------------
@@ -100,56 +101,56 @@ Compiler: IAR C/C++ Compiler for ARM 6.10.1.32143
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 243426 msgs/S, 486852 ctxswc/S
+--- Score : 241831 msgs/S, 483662 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 208147 msgs/S, 416294 ctxswc/S
+--- Score : 211248 msgs/S, 422496 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 211209 msgs/S, 422418 ctxswc/S
+--- Score : 210000 msgs/S, 420000 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 838672 ctxswc/S
+--- Score : 841272 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 145079 threads/S
+--- Score : 149324 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 220971 threads/S
+--- Score : 217650 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 66615 reschedules/S, 399690 ctxswc/S
+--- Score : 69192 reschedules/S, 415152 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 458860 ctxswc/S
+--- Score : 467900 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 667992 bytes/S
+--- Score : 661520 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 704032 timers/S
+--- Score : 690526 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 1052200 wait+signal/S
+--- Score : 1071880 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 623104 lock+unlock/S
+--- Score : 632748 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 368 bytes
---- Thread: 68 bytes
+--- System: 376 bytes
+--- Thread: 72 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes
 --- EventS: 4 bytes

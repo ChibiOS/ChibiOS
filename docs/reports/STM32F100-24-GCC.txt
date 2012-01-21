@@ -1,12 +1,12 @@
 ***************************************************************************
-Options:  -O3 -fomit-frame-pointer -mabi=apcs-gnu
+Options:  -O2 -fomit-frame-pointer -falign-functions=16
 Settings: SYSCLK=24, ACR=0x10 (no wait states)
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.3.5unstable
-*** Compiled:     Jan  8 2012 - 14:14:07
+*** Kernel:       2.4.0
+*** Compiled:     Jan 21 2012 - 14:51:29
 *** Compiler:     GCC 4.6.2
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3

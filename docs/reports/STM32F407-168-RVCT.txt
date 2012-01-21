@@ -6,8 +6,8 @@ Compiler: RealView C/C++ Compiler V4.1.0.791 [Evaluation].
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.3.5unstable
-*** Compiled:     Dec 28 2011 - 17:21:35
+*** Kernel:       2.4.0
+*** Compiled:     Jan 15 2012 - 20:25:03
 *** Compiler:     RVCT
 *** Architecture: ARMv7-ME
 *** Core Variant: Cortex-M4
@@ -121,7 +121,7 @@ Compiler: RealView C/C++ Compiler V4.1.0.791 [Evaluation].
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 640692 threads/S
+--- Score : 640691 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)

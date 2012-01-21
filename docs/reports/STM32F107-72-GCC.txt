@@ -5,8 +5,8 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.3.5unstable
-*** Compiled:     Jan  8 2012 - 18:40:04
+*** Kernel:       2.4.0
+*** Compiled:     Jan 21 2012 - 11:49:01
 *** Compiler:     GCC 4.6.2
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
@@ -136,7 +136,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 644190 timers/S
+--- Score : 644192 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
