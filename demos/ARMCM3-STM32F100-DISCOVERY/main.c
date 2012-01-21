@@ -47,6 +47,7 @@ static const ADCConversionGroup adcgrpcfg = {
   FALSE,
   ADC_GRP1_NUM_CHANNELS,
   adccb,
+  NULL,
   /* HW dependent part.*/
   0,
   ADC_CR2_TSVREFE,
