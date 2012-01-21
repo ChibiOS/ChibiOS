@@ -1911,6 +1911,9 @@
           <name>$PROJ_DIR$\..\..\..\os\hal\include\spi.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\tm.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\uart.h</name>
         </file>
         <file>
@@ -1969,6 +1972,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\spi.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\tm.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\uart.c</name>
