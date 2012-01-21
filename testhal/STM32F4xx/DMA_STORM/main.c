@@ -18,9 +18,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+
 #include "ch.h"
 #include "hal.h"
-
 
 #define ADC_GRP2_NUM_CHANNELS   8
 #define ADC_GRP2_BUF_DEPTH      16
@@ -82,9 +83,9 @@ static void tmo(void *p) {
 /*
  * SPI thread.
  */
-static WORKING_AREA(waSPI1, 512);
-static WORKING_AREA(waSPI2, 512);
-static WORKING_AREA(waSPI3, 512);
+static WORKING_AREA(waSPI1, 1024);
+static WORKING_AREA(waSPI2, 1024);
+static WORKING_AREA(waSPI3, 1024);
 static msg_t spi_thread(void *p) {
   unsigned i;
   SPIDriver *spip = (SPIDriver *)p;
@@ -101,7 +102,7 @@ static msg_t spi_thread(void *p) {
     /* Starts a VT working as watchdog to catch a malfunction in the SPI
        driver.*/
     chSysLock();
-    chVTSetI(&vt, MS2ST(500), tmo, NULL);
+    chVTSetI(&vt, MS2ST(10), tmo, NULL);
     chSysUnlock();
 
     spiExchange(spip, sizeof(txbuf), txbuf, rxbuf);
@@ -111,9 +112,6 @@ static msg_t spi_thread(void *p) {
     if (chVTIsArmedI(&vt))
       chVTResetI(&vt);
     chSysUnlock();
-
-    /* Releases a bit of CPU time.*/
-    chThdSleep(1);
   }
 }
 
@@ -138,6 +136,8 @@ static msg_t Thread1(void *arg) {
  * Application entry point.
  */
 int main(void) {
+  unsigned i;
+  static uint8_t patterns1[4096], patterns2[4096], buf1[4096], buf2[4096];
 
   /* System initializations.
      - HAL initialization, this also initializes the configured device drivers
@@ -148,7 +148,8 @@ int main(void) {
   chSysInit();
 
   /* Creates the blinker thread.*/
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 10,
+                    Thread1, NULL);
 
   /* Activates the ADC1 driver and the thermal sensor.*/
   adcStart(&ADCD1, NULL);
@@ -167,9 +168,66 @@ int main(void) {
   chThdCreateStatic(waSPI2, sizeof(waSPI2), NORMALPRIO + 1, spi_thread, &SPID2);
   chThdCreateStatic(waSPI3, sizeof(waSPI3), NORMALPRIO + 1, spi_thread, &SPID3);
 
-  /* Normal main() thread activity, in this demo it does nothing.*/
+  /* Allocating two DMA2 streams for memory copy operations.*/
+  if (dmaStreamAllocate(STM32_DMA2_STREAM6, 0, NULL, NULL))
+    chSysHalt();
+  if (dmaStreamAllocate(STM32_DMA2_STREAM7, 0, NULL, NULL))
+    chSysHalt();
+  for (i = 0; i < sizeof (patterns1); i++)
+    patterns1[i] = (uint8_t)i;
+  for (i = 0; i < sizeof (patterns2); i++)
+    patterns2[i] = (uint8_t)(i ^ 0xAA);
+
+  /* Normal main() thread activity, it does continues memory copy operations
+     using 2 DMA streams at the lowest priority.*/
   while (TRUE) {
-    chThdSleepMilliseconds(500);
+    VirtualTimer vt;
+
+    /* Starts a VT working as watchdog to catch a malfunction in the DMA
+       driver.*/
+    chSysLock();
+    chVTSetI(&vt, MS2ST(10), tmo, NULL);
+    chSysUnlock();
+
+    /* Copy pattern 1.*/
+    dmaStartMemCopy(STM32_DMA2_STREAM6,
+                    STM32_DMA_CR_PL(0) | STM32_DMA_CR_PSIZE_BYTE |
+                                         STM32_DMA_CR_MSIZE_BYTE,
+                    patterns1, buf1, sizeof (patterns1));
+    dmaStartMemCopy(STM32_DMA2_STREAM7,
+                    STM32_DMA_CR_PL(0) | STM32_DMA_CR_PSIZE_BYTE |
+                                         STM32_DMA_CR_MSIZE_BYTE,
+                    patterns1, buf2, sizeof (patterns1));
+    dmaWaitCompletion(STM32_DMA2_STREAM6);
+    dmaWaitCompletion(STM32_DMA2_STREAM7);
+    if (memcmp(patterns1, buf1, sizeof (patterns1)))
+      chSysHalt();
+    if (memcmp(patterns1, buf2, sizeof (patterns1)))
+      chSysHalt();
+
+    /* Copy pattern 2.*/
+    dmaStartMemCopy(STM32_DMA2_STREAM6,
+                    STM32_DMA_CR_PL(0) | STM32_DMA_CR_PSIZE_BYTE |
+                                         STM32_DMA_CR_MSIZE_BYTE,
+                    patterns2, buf1, sizeof (patterns2));
+    dmaStartMemCopy(STM32_DMA2_STREAM7,
+                    STM32_DMA_CR_PL(0) | STM32_DMA_CR_PSIZE_BYTE |
+                                         STM32_DMA_CR_MSIZE_BYTE,
+                    patterns2, buf2, sizeof (patterns2));
+    dmaWaitCompletion(STM32_DMA2_STREAM6);
+    dmaWaitCompletion(STM32_DMA2_STREAM7);
+    if (memcmp(patterns2, buf1, sizeof (patterns1)))
+      chSysHalt();
+    if (memcmp(patterns2, buf2, sizeof (patterns1)))
+      chSysHalt();
+
+    /* Stops the watchdog.*/
+    chSysLock();
+    if (chVTIsArmedI(&vt))
+      chVTResetI(&vt);
+    chSysUnlock();
+
+    chThdSleepMilliseconds(2);
   }
   return 0;
 }
