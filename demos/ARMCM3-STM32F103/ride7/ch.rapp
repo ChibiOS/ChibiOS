@@ -1,12 +1,14 @@
 
 <ApplicationBuild Header="ch" Extern=".\ch.rapp" Path=".\ch.rapp" OutputFile=".\ch.elf" sate="98" AsyncBuild="" >
-	<Group Header="port" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
-		<NodeASM Path="..\..\..\os\ports\GCC\ARMCMx\crt0_v7m.s" Header="crt0_v7m.s" Marker="-1" AsyncBuild="" OutputFile=".\bin\crt0_v7m.o" sate="0" />
-		<NodeC Path="..\..\..\os\ports\GCC\ARMCMx\nvic.c" Header="nvic.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\nvic.o" sate="0" />
+	<Group Header="port" Marker="-1" OutputFile="" sate="96" AsyncBuild="" >
+		<Group Header="common" Marker="-1" AsyncBuild="" OutputFile="" sate="96" >
+			<NodeC Path="..\..\..\os\ports\common\ARMCMx\nvic.c" Header="nvic.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\nvic.o" sate="0" />
+		</Group>
 		<NodeC Path="..\..\..\os\ports\GCC\ARMCMx\chcore.c" Header="chcore.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\chcore.o" sate="0" />
 		<NodeC Path="..\..\..\os\ports\GCC\ARMCMx\chcore_v7m.c" Header="chcore_v7m.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\chcore_v7m.o" sate="0" />
-		<NodeC Path="..\..\..\os\ports\GCC\ARMCMx\STM32\vectors.c" Header="vectors.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\vectors.o" sate="0" />
-												
+		<NodeC Path="..\..\..\os\ports\GCC\ARMCMx\crt0.c" Header="crt0.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\crt0.o" sate="0" />
+		<NodeC Path="..\..\..\os\ports\GCC\ARMCMx\STM32F1xx\vectors.c" Header="vectors.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\vectors.o" sate="0" />
+															
 	</Group>
 	<Group Header="kernel" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
 		<NodeC Path="..\..\..\os\kernel\src\chcond.c" Header="chcond.c" Marker="-1" OutputFile=".\bin\chcond.o" sate="0" AsyncBuild="" />
@@ -27,34 +29,63 @@
 		<NodeC Path="..\..\..\os\kernel\src\chthreads.c" Header="chthreads.c" Marker="-1" OutputFile=".\bin\chthreads.o" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\..\os\kernel\src\chvt.c" Header="chvt.c" Marker="-1" OutputFile=".\bin\chvt.o" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\..\os\kernel\src\chdynamic.c" Header="chdynamic.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\chdynamic.o" sate="0" />
-												
+															
 	</Group>
 	<Group Header="hal" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
+		<Group Header="platform" Marker="-1" OutputFile="" sate="96" AsyncBuild="" >
+			<Group Header="STM32" Marker="-1" AsyncBuild="" OutputFile="" sate="96" >
+				<Group Header="GPIOv1" Marker="-1" AsyncBuild="" OutputFile="" sate="96" >
+					<NodeC Path="..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.c" Header="pal_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\pal_lld.o" sate="0" />
+				</Group>
+				<Group Header="RTCv1" Marker="-1" AsyncBuild="" OutputFile="" sate="0" >
+					<NodeC Path="..\..\..\os\hal\platforms\STM32\RTCv1\rtc_lld.c" Header="rtc_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\rtc_lld.o" sate="0" />
+				</Group>
+				<Group Header="USBv1" Marker="-1" AsyncBuild="" OutputFile="" sate="0" >
+					<NodeC Path="..\..\..\os\hal\platforms\STM32\USBv1\usb_lld.c" Header="usb_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\usb_lld.o" sate="0" />
+				</Group>
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\uart_lld.c" Header="uart_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\uart_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\can_lld.c" Header="can_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\can_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\ext_lld.c" Header="ext_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\ext_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\gpt_lld.c" Header="gpt_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\gpt_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\i2c_lld.c" Header="i2c_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\i2c_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\icu_lld.c" Header="icu_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\icu_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\mac_lld.c" Header="mac_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\mac_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\pwm_lld.c" Header="pwm_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\pwm_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\sdc_lld.c" Header="sdc_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\sdc_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\serial_lld.c" Header="serial_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\serial_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32\spi_lld.c" Header="spi_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\spi_lld.o" sate="0" />
+			</Group>
+			<Group Header="STM32F1xx" Marker="-1" AsyncBuild="" OutputFile="" sate="0" >
+				<NodeC Path="..\..\..\os\hal\platforms\STM32F1xx\stm32_dma.c" Header="stm32_dma.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\stm32_dma.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32F1xx\adc_lld.c" Header="adc_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\adc_lld.o" sate="0" />
+				<NodeC Path="..\..\..\os\hal\platforms\STM32F1xx\hal_lld.c" Header="hal_lld.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\hal_lld.o" sate="0" />
+			</Group>
+																									
+		</Group>
 		<NodeC Path="..\..\..\os\hal\src\adc.c" Header="adc.c" Marker="-1" OutputFile=".\bin\adc.o" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\..\os\hal\src\can.c" Header="can.c" Marker="-1" OutputFile=".\bin\can.o" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\..\os\hal\src\ext.c" Header="ext.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\ext.o" sate="0" />
+		<NodeC Path="..\..\..\os\hal\src\gpt.c" Header="gpt.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\gpt.o" sate="0" />
 		<NodeC Path="..\..\..\os\hal\src\hal.c" Header="hal.c" Marker="-1" OutputFile=".\bin\hal.o" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\..\os\hal\src\i2c.c" Header="i2c.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\i2c.o" sate="0" />
+		<NodeC Path="..\..\..\os\hal\src\icu.c" Header="icu.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\icu.o" sate="0" />
 		<NodeC Path="..\..\..\os\hal\src\mac.c" Header="mac.c" Marker="-1" OutputFile=".\bin\mac.o" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\..\os\hal\src\mmc_spi.c" Header="mmc_spi.c" Marker="-1" OutputFile=".\bin\mmc_spi.o" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\..\os\hal\src\pal.c" Header="pal.c" Marker="-1" OutputFile=".\bin\pal.o" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\..\os\hal\src\pwm.c" Header="pwm.c" Marker="-1" OutputFile=".\bin\pwm.o" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\..\os\hal\src\rtc.c" Header="rtc.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\rtc.o" sate="0" />
+		<NodeC Path="..\..\..\os\hal\src\sdc.c" Header="sdc.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\sdc.o" sate="0" />
 		<NodeC Path="..\..\..\os\hal\src\serial.c" Header="serial.c" Marker="-1" OutputFile=".\bin\serial.o" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\..\os\hal\src\serial_usb.c" Header="serial_usb.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\serial_usb.o" sate="0" />
 		<NodeC Path="..\..\..\os\hal\src\spi.c" Header="spi.c" Marker="-1" OutputFile=".\bin\spi.o" sate="0" AsyncBuild="" />
-		<Group Header="platform" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
-			<NodeC Path="..\..\..\os\hal\platforms\STM32\adc_lld.c" Header="adc_lld.c" Marker="-1" OutputFile=".\bin\adc_lld.o" sate="0" AsyncBuild="" />
-			<NodeC Path="..\..\..\os\hal\platforms\STM32\can_lld.c" Header="can_lld.c" Marker="-1" OutputFile=".\bin\can_lld.o" sate="0" AsyncBuild="" />
-			<NodeC Path="..\..\..\os\hal\platforms\STM32\hal_lld.c" Header="hal_lld.c" Marker="-1" OutputFile=".\bin\hal_lld.o" sate="0" AsyncBuild="" />
-			<NodeC Path="..\..\..\os\hal\platforms\STM32\pal_lld.c" Header="pal_lld.c" Marker="-1" OutputFile=".\bin\pal_lld.o" sate="0" AsyncBuild="" />
-			<NodeC Path="..\..\..\os\hal\platforms\STM32\pwm_lld.c" Header="pwm_lld.c" Marker="-1" OutputFile=".\bin\pwm_lld.o" sate="0" AsyncBuild="" />
-			<NodeC Path="..\..\..\os\hal\platforms\STM32\serial_lld.c" Header="serial_lld.c" Marker="-1" OutputFile=".\bin\serial_lld.o" sate="0" AsyncBuild="" />
-			<NodeC Path="..\..\..\os\hal\platforms\STM32\spi_lld.c" Header="spi_lld.c" Marker="-1" OutputFile=".\bin\spi_lld.o" sate="0" AsyncBuild="" />
-			<NodeC Path="..\..\..\os\hal\platforms\STM32\stm32_dma.c" Header="stm32_dma.c" Marker="-1" OutputFile=".\bin\stm32_dma.o" sate="0" AsyncBuild="" />
-																				
-		</Group>
-												
+		<NodeC Path="..\..\..\os\hal\src\tm.c" Header="tm.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\tm.o" sate="0" />
+		<NodeC Path="..\..\..\os\hal\src\uart.c" Header="uart.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\uart.o" sate="0" />
+		<NodeC Path="..\..\..\os\hal\src\usb.c" Header="usb.c" Marker="-1" AsyncBuild="" OutputFile=".\bin\usb.o" sate="0" />
+															
 	</Group>
 	<Group Header="board" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
 		<NodeC Path="..\..\..\boards\OLIMEX_STM32_P103\board.c" Header="board.c" Marker="-1" OutputFile=".\bin\board.o" sate="0" AsyncBuild="" />
-												
+															
 	</Group>
 	<Group Header="test" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
 		<NodeC Path="..\..\..\test\test.c" Header="test.c" Marker="-1" OutputFile=".\bin\test.o" sate="0" AsyncBuild="" />
@@ -69,7 +100,7 @@
 		<NodeC Path="..\..\..\test\testqueues.c" Header="testqueues.c" Marker="-1" OutputFile=".\bin\testqueues.o" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\..\test\testsem.c" Header="testsem.c" Marker="-1" OutputFile=".\bin\testsem.o" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\..\test\testthd.c" Header="testthd.c" Marker="-1" OutputFile=".\bin\testthd.o" sate="0" AsyncBuild="" />
-												
+															
 	</Group>
 	<NodeC Path="..\main.c" Header="main.c" Marker="-1" OutputFile=".\bin\main.o" sate="0" AsyncBuild="" />
 	<Options>
@@ -77,10 +108,10 @@
 			<Set Header="ApplicationBuild" >
 				<Section Header="General" >
 					<Property Header="TargetFamily" Value="ARM" />
-																																																				
+																																																													
 				</Section>
 				<Section Header="Directories" >
-					<Property Header="IncDir" Value="..;$(RkitLib)\ARM\include;..\..\..\os\kernel\include;..\..\..\os\ports\GCC\ARMCMx;..\..\..\os\ports\GCC\ARMCMx\STM32;..\..\..\os\hal\include;..\..\..\os\hal\platforms\STM32;..\..\..\os\hal\platforms\STM32;..\..\..\boards\OLIMEX_STM32_P103;..\..\..\test" Removable="1" />
+					<Property Header="IncDir" Value="..;..\..\..\os\kernel\include;..\..\..\os\ports\common\ARMCMx;..\..\..\os\ports\common\ARMCMx\CMSIS\include;..\..\..\os\ports\GCC\ARMCMx;..\..\..\os\ports\GCC\ARMCMx\STM32F1xx;..\..\..\os\hal\include;..\..\..\os\hal\platforms\STM32;..\..\..\os\hal\platforms\STM32\GPIOv1;..\..\..\os\hal\platforms\STM32\RTCv1;..\..\..\os\hal\platforms\STM32\USBv1;..\..\..\os\hal\platforms\STM32F1xx;..\..\..\boards\OLIMEX_STM32_P103;..\..\..\test;$(RkitLib)\ARM\include" Removable="1" />
 					<Property Header="ListDir" Value="$(ApplicationDir)\lst" Removable="1" />
 					<Property Header="OutDir" Value="$(ApplicationDir)\bin" Removable="1" />
 					<Property Header="LinkerOutputDir" Value="Application Directory" Removable="1" />
@@ -91,50 +122,50 @@
 			<Set Header="Target" >
 				<Section Header="ProcessorARM" >
 					<Property Header="Processor" Value="STM32F103RBT6" />
-																
+																									
 				</Section>
 				<Section Header="ToolSetARM" >
 					<Property Header="BuildToolSetARM" Value="ARM\GNU.config" Removable="1" />
-																																																				
+																																																													
 				</Section>
 				<Section Header="DebugARM" >
 					<Property Header="DebugTool_CORTEX" Value="RLINK_CORTEX" Removable="1" />
-																																		
+																																											
 				</Section>
-												
+																			
 			</Set>
 			<Set Header="LD" >
 				<Section Header="Startup" >
 					<Property Header="DEFAULTSTARTUP" Value="No" Removable="1" />
 					<Property Header="File" Value="" Removable="1" />
-																																											
+																																																				
 				</Section>
 				<Section Header="Scripts" >
 					<Property Header="SCRIPTFILES" Value="No" Removable="1" />
-					<Property Header="File" Value="..\ch.ld" Removable="1" />
-																																		
+					<Property Header="File" Value="..\..\..\os\ports\GCC\ARMCMx\STM32F1xx\ld\STM32F103xB.ld" Removable="1" />
+							
 				</Section>
 				<Section Header="LIB" >
 					<Property Header="UART0PUTC" Value="0" Removable="1" />
 					<Property Header="STM32LIB" Value="0" Removable="1" />
-																																											
+																																																				
 				</Section>
 				<Section Header="More" >
 					<Property Header="More" Value="-Wl,--no-warn-mismatch" />
-																																											
+																																																				
 				</Section>
-																										
+					
 			</Set>
 			<Set Header="GCC" >
 				<Section Header="OPTIMIZE" >
 					<Property Header="Optimize" Value="-O2" Removable="1" />
-																																											
+																																																				
 				</Section>
 				<Section Header="More" >
 					<Property Header="More" Value="-Wall; -Wextra; -Wstrict-prototypes; -fomit-frame-pointer; -falign-functions=16; -mabi=apcs-gnu" />
-																																											
+																																																				
 				</Section>
-																																	
+																																								
 			</Set>
 		</Config>
 	</Options>
