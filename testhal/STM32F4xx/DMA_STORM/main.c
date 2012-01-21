@@ -216,9 +216,9 @@ int main(void) {
                     patterns2, buf2, sizeof (patterns2));
     dmaWaitCompletion(STM32_DMA2_STREAM6);
     dmaWaitCompletion(STM32_DMA2_STREAM7);
-    if (memcmp(patterns2, buf1, sizeof (patterns1)))
+    if (memcmp(patterns2, buf1, sizeof (patterns2)))
       chSysHalt();
-    if (memcmp(patterns2, buf2, sizeof (patterns1)))
+    if (memcmp(patterns2, buf2, sizeof (patterns2)))
       chSysHalt();
 
     /* Stops the watchdog.*/
