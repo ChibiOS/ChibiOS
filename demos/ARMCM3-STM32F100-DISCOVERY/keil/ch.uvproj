@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define>__heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_IRAM2$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\os\kernel\include;..\..\..\os\ports\RVCT\ARMCMx;..\..\..\os\ports\RVCT\ARMCMx\STM32F1xx;..\..\..\os\hal\include;..\..\..\os\hal\platforms\STM32;..\..\..\os\hal\platforms\STM32\GPIOv1;..\..\..\os\hal\platforms\STM32\DMAv1;..\..\..\os\hal\platforms\STM32\USBv1;..\..\..\os\hal\platforms\STM32F1xx;..\..\..\boards\ST_STM32VL_DISCOVERY;..\..\..\test</IncludePath>
+              <IncludePath>..\;..\..\..\os\kernel\include;..\..\..\os\ports\common\ARMCMx;..\..\..\os\ports\common\ARMCMx\CMSIS\include;..\..\..\os\ports\RVCT\ARMCMx;..\..\..\os\ports\RVCT\ARMCMx\STM32F1xx;..\..\..\os\hal\include;..\..\..\os\hal\platforms\STM32;..\..\..\os\hal\platforms\STM32\GPIOv1;..\..\..\os\hal\platforms\STM32\DMAv1;..\..\..\os\hal\platforms\STM32\USBv1;..\..\..\os\hal\platforms\STM32F1xx;..\..\..\boards\ST_STM32VL_DISCOVERY;..\..\..\test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -427,11 +427,6 @@
               <FilePath>..\..\..\os\ports\RVCT\ARMCMx\chcore_v7m.c</FilePath>
             </File>
             <File>
-              <FileName>nvic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\ports\RVCT\ARMCMx\nvic.c</FilePath>
-            </File>
-            <File>
               <FileName>chcore.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\os\ports\RVCT\ARMCMx\chcore.h</FilePath>
@@ -449,7 +444,12 @@
             <File>
               <FileName>nvic.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\os\ports\RVCT\ARMCMx\nvic.h</FilePath>
+              <FilePath>..\..\..\os\ports\common\ARMCMx\nvic.h</FilePath>
+            </File>
+            <File>
+              <FileName>nvic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\ports\common\ARMCMx\nvic.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -785,6 +785,91 @@
               <FileName>uart.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\os\hal\include\uart.h</FilePath>
+            </File>
+            <File>
+              <FileName>usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\usb.c</FilePath>
+            </File>
+            <File>
+              <FileName>ext.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\ext.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\gpt.c</FilePath>
+            </File>
+            <File>
+              <FileName>icu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\icu.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\sdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>serial_usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\serial_usb.c</FilePath>
+            </File>
+            <File>
+              <FileName>tm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\os\hal\src\tm.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_cdc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\usb_cdc.h</FilePath>
+            </File>
+            <File>
+              <FileName>ext.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\ext.h</FilePath>
+            </File>
+            <File>
+              <FileName>gpt.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\gpt.h</FilePath>
+            </File>
+            <File>
+              <FileName>icu.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\icu.h</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\rtc.h</FilePath>
+            </File>
+            <File>
+              <FileName>sdc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\sdc.h</FilePath>
+            </File>
+            <File>
+              <FileName>serial_usb.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\serial_usb.h</FilePath>
+            </File>
+            <File>
+              <FileName>tm.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\tm.h</FilePath>
+            </File>
+            <File>
+              <FileName>usb.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\os\hal\include\usb.h</FilePath>
             </File>
           </Files>
         </Group>
