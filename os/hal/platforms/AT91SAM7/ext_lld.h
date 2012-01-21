@@ -1,8 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011 Giovanni Di Sirio,
-                 2011 Florian Goebe, Chair for Computer Science 11,
-                      RWTH Aachen University
+                 2011,2012 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
