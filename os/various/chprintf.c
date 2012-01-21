@@ -49,7 +49,7 @@ static char *ltoa(char *p, long num, unsigned radix) {
  * @brief   System formatted output function.
  * @details This function implements a minimal @p printf() like functionality
  *          with output on a @p BaseChannel.
- *          The general parameters format is: %[.][width|*][l|L]p.
+ *          The general parameters format is: %[-][width|*][.precision|*][l|L]p.
  *          The following parameter types (p) are supported:
  *          - <b>x</b> hexadecimal integer.
  *          - <b>X</b> hexadecimal long.
@@ -72,8 +72,8 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
   va_list ap;
   char tmpbuf[MAX_FILLER + 1];
   char *p, *s, c, filler;
-  int i, n, width;
-  bool_t is_long, left_just;
+  int i, precision, width;
+  bool_t is_long, left_align;
   long l;
 
   va_start(ap, fmt);
@@ -89,10 +89,10 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
     }
     p = tmpbuf;
     s = tmpbuf;
-    left_just = FALSE;
+    left_align = FALSE;
     if (*fmt == '-') {
       fmt++;
-      left_just = TRUE;
+      left_align = TRUE;
     }
     filler = ' ';
     if (*fmt == '.') {
@@ -110,7 +110,7 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
         break;
       width = width * 10 + c;
     }
-    n = 0;
+    precision = 0;
     if (c == '.') {
       while (TRUE) {
         c = *fmt++;
@@ -120,40 +120,35 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
           c = va_arg(ap, int);
         else
           break;
-        n *= 10;
-        n += c;
+        precision *= 10;
+        precision += c;
       }
     }
-    is_long = FALSE;
+    /* Long modifier.*/
     if (c == 'l' || c == 'L') {
-      is_long++;
+      is_long = TRUE;
       if (*fmt)
         c = *fmt++;
     }
+    else
+      is_long = (c >= 'A') && (c <= 'Z');
+
+    /* Command decoding.*/
     switch (c) {
-    case 'X':
-      is_long = TRUE;
-    case 'x':
-      c = 16;
-      goto skip;
-    case 'U':
-      is_long = TRUE;
-    case 'u':
-      c = 10;
-      goto skip;
-    case 'O':
-      is_long = TRUE;
-    case 'o':
-      c = 8;
-skip:
-      if (is_long)
-        l = va_arg(ap, long);
-      else
-        l = va_arg(ap, int);
-      p = ltoa(p, l, c);
+    case 'c':
+      filler = ' ';
+      *p++ = va_arg(ap, int);
+      break;
+    case 's':
+      filler = ' ';
+      if ((s = va_arg(ap, char *)) == 0)
+        s = "(null)";
+      if (precision == 0)
+        precision = 32767;
+      for (p = s; *p && (--precision >= 0); p++)
+        ;
       break;
     case 'D':
-      is_long = TRUE;
     case 'd':
       if (is_long)
         l = va_arg(ap, long);
@@ -165,18 +160,23 @@ skip:
       }
       p = ltoa(p, l, 10);
       break;
-    case 'c':
-      filler = ' ';
-      *p++ = va_arg(ap, int);
-      break;
-    case 's':
-      filler = ' ';
-      if ((s = va_arg(ap, char *)) == 0)
-        s = "(null)";
-      if (n == 0)
-        n = 32767;
-      for (p = s; *p && --n >= 0; p++)
-        ;
+    case 'X':
+    case 'x':
+      c = 16;
+      goto unsigned_common;
+    case 'U':
+    case 'u':
+      c = 10;
+      goto unsigned_common;
+    case 'O':
+    case 'o':
+      c = 8;
+unsigned_common:
+      if (is_long)
+        l = va_arg(ap, long);
+      else
+        l = va_arg(ap, int);
+      p = ltoa(p, l, c);
       break;
     default:
       *p++ = c;
@@ -185,7 +185,7 @@ skip:
     i = (int)(p - s);
     if ((width -= i) < 0)
       width = 0;
-    if (left_just == FALSE)
+    if (left_align == FALSE)
       width = -width;
     if (width < 0) {
       if (*s == '-' && filler == '0') {
