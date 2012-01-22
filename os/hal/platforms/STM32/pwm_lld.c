@@ -251,7 +251,7 @@ CH_IRQ_HANDLER(TIM8_UP_IRQHandler) {
   CH_IRQ_PROLOGUE();
 
   STM32_TIM8->SR = ~TIM_SR_UIF;
-  PWMD1.config->callback(&PWMD8);
+  PWMD8.config->callback(&PWMD8);
 
   CH_IRQ_EPILOGUE();
 }
