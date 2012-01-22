@@ -257,7 +257,7 @@ CH_IRQ_HANDLER(TIM8_UP_IRQHandler) {
 }
 
 /**
- * @brief   TIM1 compare interrupt handler.
+ * @brief   TIM8 compare interrupt handler.
  * @note    It is assumed that the various sources are only activated if the
  *          associated callback pointer is not equal to @p NULL in order to not
  *          perform an extra check in a potentially critical interrupt handler.
