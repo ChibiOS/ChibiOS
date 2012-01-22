@@ -708,7 +708,7 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
 bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
                      const uint8_t *buf, uint32_t n) {
 
-  #if STM32_SDC_UNALIGNED_SUPPORT
+#if STM32_SDC_UNALIGNED_SUPPORT
   if (((unsigned)buf & 3) != 0) {
     uint32_t i;
     for (i = 0; i < n; i++) {
