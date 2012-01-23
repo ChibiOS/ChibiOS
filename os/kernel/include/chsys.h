@@ -195,7 +195,7 @@
  */
 #define CH_IRQ_PROLOGUE()                                                   \
   PORT_IRQ_PROLOGUE();                                                      \
-  dbg_check_enter_isr()
+  dbg_check_enter_isr();
 
 /**
  * @brief   IRQ handler exit code.
@@ -207,7 +207,7 @@
  */
 #define CH_IRQ_EPILOGUE()                                                   \
   dbg_check_leave_isr();                                                    \
-  PORT_IRQ_EPILOGUE()
+  PORT_IRQ_EPILOGUE();
 
 /**
  * @brief   Standard normal IRQ handler declaration.
