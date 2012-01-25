@@ -5,8 +5,8 @@ Settings: CLK=72, (3 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.3.5unstable
-*** Compiled:     Dec 28 2011 - 11:20:11
+*** Kernel:       2.4.0
+*** Compiled:     Jan 25 2012 - 19:42:36
 *** Compiler:     GCC 4.6.2
 *** Architecture: ARMv7-M
 *** Core Variant: Cortex-M3
