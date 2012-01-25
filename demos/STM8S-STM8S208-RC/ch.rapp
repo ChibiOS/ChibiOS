@@ -1,5 +1,5 @@
 
-<ApplicationBuild Header="ch" Extern=".\ch.rapp" Path=".\ch.rapp" OutputFile="..\STM8S-STM8S208-RC/bin\ch.aof" sate="98" AsyncBuild="" >
+<ApplicationBuild Header="ch" Extern=".\ch.rapp" Path=".\ch.rapp" OutputFile="..\STM8S-STM8S208-RC/bin\ch.aof" sate="96" AsyncBuild="" >
 	<Group Header="kernel" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
 		<NodeC Path="..\..\os\kernel\src\chcond.c" Header="chcond.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chcond.obj" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\os\kernel\src\chdebug.c" Header="chdebug.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chdebug.obj" sate="0" AsyncBuild="" />
@@ -11,15 +11,15 @@
 					<Set Header="RCST7" >
 						<Section Header="Model" >
 							<Property Header="GlobalMemory" Value="" Removable="1" />
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																					
 						</Section>
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																											
 					</Set>
-																																																																																																																																																																																																																																																																																																																																																																																																			
+																																																																																																																																																																																																																																																																																																																																																																																																												
 				</Config>
-																																																																																																																																																																																																																																																																																																													
+																																																																																																																																																																																																																																																																																																																				
 			</Options>
-																																																																																																																																																																																																																							
+																																																																																																																																																																																																																												
 		</NodeC>
 		<NodeC Path="..\..\os\kernel\src\chlists.c" Header="chlists.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chlists.obj" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\os\kernel\src\chmboxes.c" Header="chmboxes.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chmboxes.obj" sate="0" AsyncBuild="" />
@@ -31,7 +31,7 @@
 		<NodeC Path="..\..\os\kernel\src\chregistry.c" Header="chregistry.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chregistry.obj" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\os\kernel\src\chschd.c" Header="chschd.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chschd.obj" sate="0" AsyncBuild="" >
 			<Options/>
-																																																																																																																																																																																																																							
+																																																																																																																																																																																																																												
 		</NodeC>
 		<NodeC Path="..\..\os\kernel\src\chsem.c" Header="chsem.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chsem.obj" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\os\kernel\src\chsys.c" Header="chsys.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chsys.obj" sate="0" AsyncBuild="" />
@@ -42,17 +42,17 @@
 					<Set Header="RCST7" >
 						<Section Header="Model" >
 							<Property Header="GlobalMemory" Value="" Removable="1" />
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																								
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																					
 						</Section>
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																											
 					</Set>
-																																																																																																																																																																																																																																																																																																																																																																																																			
+																																																																																																																																																																																																																																																																																																																																																																																																												
 				</Config>
-																																																																																																																																																																																																																																																																																																													
+																																																																																																																																																																																																																																																																																																																				
 			</Options>
-																																																																																																																																																																																																																							
+																																																																																																																																																																																																																												
 		</NodeC>
-																																																																																																																																				
+																																																																																																																																							
 	</Group>
 	<Group Header="test" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
 		<NodeC Path="..\..\test\test.c" Header="test.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\test.obj" sate="0" AsyncBuild="" />
@@ -67,11 +67,11 @@
 		<NodeC Path="..\..\test\testqueues.c" Header="testqueues.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testqueues.obj" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\test\testsem.c" Header="testsem.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testsem.obj" sate="0" AsyncBuild="" />
 		<NodeC Path="..\..\test\testthd.c" Header="testthd.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testthd.obj" sate="0" AsyncBuild="" />
-																																																																																										
+																																																																																													
 	</Group>
 	<Group Header="port" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
 		<NodeC Path="..\..\os\ports\RC\STM8\chcore.c" Header="chcore.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chcore.obj" sate="0" AsyncBuild="" />
-																																																																																																																																				
+																																																																																																																																							
 	</Group>
 	<Group Header="hal" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
 		<NodeC Path="..\..\os\hal\src\adc.c" Header="adc.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\adc.obj" sate="0" AsyncBuild="" />
@@ -88,13 +88,13 @@
 			<NodeC Path="..\..\os\hal\platforms\STM8S\pal_lld.c" Header="pal_lld.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\pal_lld.obj" sate="0" />
 			<NodeC Path="..\..\os\hal\platforms\STM8S\serial_lld.c" Header="serial_lld.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\serial_lld.obj" sate="0" />
 			<NodeC Path="..\..\os\hal\platforms\STM8S\spi_lld.c" Header="spi_lld.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\spi_lld.obj" sate="0" />
-					
+										
 		</Group>
-																																																																																																																		
+																																																																																																																					
 	</Group>
 	<Group Header="board" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
 		<NodeC Path="..\..\boards\RAISONANCE_REVA_STM8S\board.c" Header="board.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\board.obj" sate="0" AsyncBuild="" />
-																																																																																																																					
+																																																																																																																								
 	</Group>
 	<NodeC Path=".\main.c" Header="main.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\main.obj" sate="0" AsyncBuild="" />
 	<Options>
@@ -102,21 +102,21 @@
 			<Set Header="ApplicationBuild" >
 				<Section Header="General" >
 					<Property Header="TargetFamily" Value="ST7" />
-																																																																																																																																																																																																																																																																																																																																																																																																																												
+																																																																																																																																																																																																																																																																																																																																																																																																																																					
 				</Section>
 				<Section Header="Directories" >
 					<Property Header="IncDir" Value="$(RkitInc);$(RkitInc)\ST7;..\..\os\kernel\include;..\..\os\ports\RC\STM8;..\..\os\hal\include;..\..\os\hal\platforms\STM8S;..\..\boards\RAISONANCE_REVA_STM8S;..\..\test" Removable="1" />
 					<Property Header="OutDir" Value="$(ApplicationDir)/bin" Removable="1" />
 					<Property Header="ListDir" Value="$(ApplicationDir)/lst" Removable="1" />
 					<Property Header="LinkerOutputDir" Value="Output Directory" Removable="1" />
-																																																																																																																																																																																																																																																																			
+																																																																																																																																																																																																																																																																												
 				</Section>
-																																																																																																																																																																																																									
+																																																																																																																																																																																																																
 			</Set>
 			<Set Header="Target" >
 				<Section Header="ProcessorST7" >
 					<Property Header="Processor" Value="STM8S208MB" Removable="1" />
-																																																																																																																																																																																																																																																																																																																																																																																																																												
+																																																																																																																																																																																																																																																																																																																																																																																																																																					
 				</Section>
 				<Section Header="ToolSetST7" >
 					<Property Header="BuildToolSetST7" Value="ST7\RaisonanceTools.config" Removable="1" />
@@ -127,33 +127,33 @@
 				<Section Header="DebugST7" >
 					<Property Header="Startup" Value="1" Removable="1" />
 					<Property Header="DebugTool_STM8" Value="RLINK_STM8" Removable="1" />
-																																																																																																																																																							
+																																																																																																																																																																
 				</Section>
 					
 			</Set>
 			<Set Header="RCST7" >
 				<Section Header="CodeGen" >
 					<Property Header="ENUMTYPE" Value="ET(CHAR)" Removable="1" />
-																																																																																																																																																																																																																																																																																																																																																																																																																			
+																																																																																																																																																																																																																																																																																																																																																																																																																												
 				</Section>
 				<Section Header="Model" >
 					<Property Header="GlobalMemory" Value="DGC(DATA)" Removable="1" />
 					<Property Header="ModelP" Value="STM8(SMALL)" Removable="1" />
-																																																																																																																																																																
+																																																																																																																																																																									
 				</Section>
 				<Section Header="OPTIM" >
 					<Property Header="OTLEVEL" Value="3" Removable="1" />
 					<Property Header="SPEEDSIZE" Value="SPEED" Removable="1" />
-																																																																																																																																																																																																				
+																																																																																																																																																																																																													
 				</Section>
-																																																																																																																												
+																																																																																																																																			
 			</Set>
 			<Set Header="MAST7" >
 				<Section Header="Set" >
 					<Property Header="Defines" Value="STM8S208RB" Removable="1" />
-																																																																																																																																																																																																																																																																																																																																																													
+																																																																																																																																																																																																																																																																																																																																																																						
 				</Section>
-																																																																																																																																																																																																																																																																															
+																																																																																																																																																																																																																																																																																						
 			</Set>
 		</Config>
 	</Options>

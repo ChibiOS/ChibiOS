@@ -1,4 +1,4 @@
 
-<Project Header="Project 'ch'" Path=".\ch.rprj" Project="Yes" OutputFile="" sate="96" ActiveApp="ch" AsyncBuild="" >
-	<ApplicationBuild Header="ch" Extern=".\ch.rapp" Path=".\ch.rapp" OutputFile="..\STM8S-STM8S208-RC/bin\ch.aof" sate="98" AsyncBuild="" />
+<Project Header="Project 'ch'" Path=".\ch.rprj" Project="Yes" OutputFile="" sate="98" ActiveApp="ch" AsyncBuild="" >
+	<ApplicationBuild Header="ch" Extern=".\ch.rapp" Path=".\ch.rapp" OutputFile="..\STM8S-STM8S208-RC/bin\ch.aof" sate="96" AsyncBuild="" />
 </Project>
