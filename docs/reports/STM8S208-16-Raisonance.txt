@@ -1,13 +1,16 @@
 ***************************************************************************
 Options:  Optimized for speed (3)
 Settings: CPUCLK=16MHz (HSI)
-Compiler: Raisonance RKit-STM8_2.30.10.0175
+Compiler: Raisonance RKit-STM8_2.32.10.0307
 ***************************************************************************
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.1.6unstable
+*** Kernel:       2.4.0
+*** Compiled:     Jan 25 2012 - 19:04:12
+*** Compiler:     Raisonance
 *** Architecture: STM8
+*** Port Info:    None
 *** Platform:     STM8S
 *** Test Board:   Raisonance REva V3 + STM8S208RB
 
@@ -97,15 +100,15 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 31278 msgs/S, 62556 ctxswc/S
+--- Score : 30272 msgs/S, 60544 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 23785 msgs/S, 47570 ctxswc/S
+--- Score : 23199 msgs/S, 46398 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 23785 msgs/S, 47570 ctxswc/S
+--- Score : 23199 msgs/S, 46398 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
@@ -113,15 +116,15 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 17603 threads/S
+--- Score : 17469 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 27510 threads/S
+--- Score : 27276 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 6268 reschedules/S, 37608 ctxswc/S
+--- Score : 6269 reschedules/S, 37614 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
@@ -129,11 +132,11 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 53004 bytes/S
+--- Score : 76456 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 57830 timers/S
+--- Score : 57702 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
@@ -145,15 +148,15 @@ Compiler: Raisonance RKit-STM8_2.30.10.0175
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 214 bytes
---- Thread: 32 bytes
+--- System: 218 bytes
+--- Thread: 34 bytes
 --- Timer : 10 bytes
 --- Semaph: 5 bytes
 --- EventS: 2 bytes
 --- EventL: 5 bytes
 --- Mutex : 8 bytes
 --- CondV.: 4 bytes
---- Queue : 15 bytes
+--- Queue : 16 bytes
 --- MailB.: 18 bytes
 --- Result: SUCCESS
 ----------------------------------------------------------------------------

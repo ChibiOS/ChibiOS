@@ -1,7 +1,7 @@
 ***************************************************************************
 Options:  Optimized for speed
 Settings: CPUCLK=16MHz (HSE)
-Compiler: Raisonance RKit-STM8_2.30.10.0175
+Compiler: Raisonance RKit-STM8_2.32.10.0307
 ***************************************************************************
 
 *** ChibiOS/RT test suite
