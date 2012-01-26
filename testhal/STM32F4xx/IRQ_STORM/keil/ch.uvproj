@@ -716,6 +716,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\src\gpt.c</FilePath>
             </File>
+            <File>
+              <FileName>tm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\src\tm.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -295,6 +295,7 @@
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\..\os\kernel\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\ports\common\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ports\common\ARMCMx\CMSIS\include</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ports\IAR\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ports\IAR\ARMCMx\STM32f4xx</state>
@@ -1908,6 +1909,9 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\spi.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\tm.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\uart.h</name>
         </file>
         <file>
@@ -1966,6 +1970,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\spi.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\src\tm.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\uart.c</name>
