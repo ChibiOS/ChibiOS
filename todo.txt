@@ -5,11 +5,6 @@ X = In progress, some work done.
 ? = Not sure if worth the effort or useful at all.
 N = Decided against.
 
-Current Pipeline (2.4.0):
-* Complete test cycle.
-* Complete documentation cycle.
-X Release.
-
 Version 2.4.1
 X STM32F2 validation (so far testing done on STM32F4 only).
 X Revision of the RTCv2 driver implementation.

@@ -77,6 +77,8 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.5.0 ***
+
 *** 2.3.5 ***
 - FIX: Fixed RTC compile problem on STM32F103 (bug 3468445).
 - FIX: Fixed PWM with TIM1 and TIM8 broken in STM32 HAL (bug 3458947).
