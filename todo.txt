@@ -7,8 +7,8 @@ N = Decided against.
 
 Current Pipeline (2.4.0):
 * Complete test cycle.
-X Complete documentation cycle.
-- Release.
+* Complete documentation cycle.
+X Release.
 
 Version 2.4.1
 X STM32F2 validation (so far testing done on STM32F4 only).

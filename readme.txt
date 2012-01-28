@@ -30,7 +30,11 @@
   |  |  |  +--LPC214x/  - Drivers for LPC214x platform.
   |  |  |  +--MSP430/   - Drivers for MSP430 platform.
   |  |  |  +--SPC56x/   - Drivers for SPC56x/MPC563xx platforms.
-  |  |  |  +--STM32/    - Drivers for STM32 platform.
+  |  |  |  +--STM32/    - Drivers for STM32 platform (common).
+  |  |  |  +--STM32F1xx/- Drivers for STM32F1xx platform.
+  |  |  |  +--STM32F2xx/- Drivers for STM32F2xx platform.
+  |  |  |  +--STM32F4xx/- Drivers for STM32F4xx platform.
+  |  |  |  +--STM32L1xx/- Drivers for STM32L1xx platform.
   |  |  |  +--STM8L/    - Drivers for STM8L platform.
   |  |  |  +--STM8S/    - Drivers for STM8S platform.
   |  |  |  +--Posix/    - Drivers for x86 Linux/OSX simulator platform.
