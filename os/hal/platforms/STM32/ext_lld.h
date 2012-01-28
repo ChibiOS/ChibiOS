@@ -43,7 +43,7 @@
 /**
  * @brief   Mask of the available channels.
  */
-#define EXT_CHANNELS_MASK   (EXT_MAX_CHANNELS - 1)
+#define EXT_CHANNELS_MASK   ((1 << EXT_MAX_CHANNELS) - 1)
 
 /**
  * @name    EXTI configuration helpers
