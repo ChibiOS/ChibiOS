@@ -213,7 +213,6 @@
   (API and functionality review)
 - NEW: Improved MAC driver model, it now follows the same template of other
   drivers.
-  TODO: uIP demo to be adapted.
   TODO: implement macStop() in AT91SAM7X implementation.
 - NEW: New RCC helper driver for STM32F1xx and STM32L1xx, it simplifies
   the use of the RCC resources and hides most differences found among the
@@ -235,7 +234,6 @@
 - NEW: Added a new debug option CH_DBG_SYSTEM_STATE_CHECK that ensures the
   correct API call protocol. If an API is invoked out of the correct context
   then the kernel panics with a debug message.
-- NEW: Added Eclipse ChibiOS/RT debugger plugin 1.0.5 under ./tools/eclipse.
 - NEW: The ARMCMx startup file (crt0.c) now is able to fill the stack areas
   with a filler (default behavior). This is required in order to easily assess
   the stack usage at runtime.
@@ -347,7 +345,6 @@
   started and released when it is stopped.
 - NEW: Added an STM32 C++ demo for the GNU compiler.
 - NEW: Added an STM32F103ZG demo for the STM3210E-EVAL evaluation board.
-
 - OPT: STM32 PWM driver implementation simplified.
 - CHANGE: Now pwmChangePeriod() does not implicitly disable the active
   PWM channels.
