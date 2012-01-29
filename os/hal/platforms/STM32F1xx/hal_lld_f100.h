@@ -214,7 +214,7 @@
 #define STM32_HAS_ETH           FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS 19
+#define STM32_EXTI_NUM_CHANNELS 18
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA         TRUE

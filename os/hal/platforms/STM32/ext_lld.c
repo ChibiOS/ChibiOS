@@ -487,6 +487,9 @@ void ext_lld_start(EXTDriver *extp) {
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
     nvicEnableVector(ETH_WKUP_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
+#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
+      defined(STM32F10X_HD_VL)
+    /* EXTI vectors specific to STM32F1xx Value Line.*/
 #else
     /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
     nvicEnableVector(USB_FS_WKUP_IRQn,
@@ -562,6 +565,9 @@ void ext_lld_stop(EXTDriver *extp) {
     /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
     nvicDisableVector(OTG_FS_WKUP_IRQn);
     nvicDisableVector(ETH_WKUP_IRQn);
+#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
+      defined(STM32F10X_HD_VL)
+    /* EXTI vectors specific to STM32F1xx Value Line.*/
 #else
     /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
     nvicDisableVector(USB_FS_WKUP_IRQn);
