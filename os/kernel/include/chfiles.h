@@ -78,7 +78,7 @@ typedef uint32_t fileoffset_t;
  *
  * @brief   @p BaseFileStream virtual methods table.
  */
-struct BaseFilelStreamVMT {
+struct BaseFileStreamVMT {
   _base_file_stream_methods
 };
 
@@ -90,7 +90,7 @@ struct BaseFilelStreamVMT {
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct FileStreamVMT *vmt;
+  const struct BaseFileStreamVMT *vmt;
   _base_file_stream_data
 } BaseFileStream;
 
