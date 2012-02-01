@@ -164,7 +164,7 @@ typedef struct {
  *
  * @api
  */
-#define chFileStreamSeek(ip) ((ip)->vmt->lseek(ip, offset))
+#define chFileStreamSeek(ip, offset) ((ip)->vmt->lseek(ip, offset))
 /** @} */
 
 #endif /* _CHFILES_H_ */
