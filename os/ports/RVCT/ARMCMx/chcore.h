@@ -103,53 +103,6 @@
 /* Port configurable parameters (common).                                    */
 /*===========================================================================*/
 
-/**
- * @brief   Stack size for the system idle thread.
- * @details This size depends on the idle thread implementation, usually
- *          the idle thread should take no more space than those reserved
- *          by @p PORT_INT_REQUIRED_STACK.
- * @note    In this port it is set to 16 because the idle thread does have
- *          a stack frame when compiling without optimizations. You may
- *          reduce this value to zero when compiling with optimizations.
- */
-#if !defined(PORT_IDLE_THREAD_STACK_SIZE)
-#define PORT_IDLE_THREAD_STACK_SIZE     16
-#endif
-
-/**
- * @brief   Per-thread stack overhead for interrupts servicing.
- * @details This constant is used in the calculation of the correct working
- *          area size.
- *          This value can be zero on those architecture where there is a
- *          separate interrupt stack and the stack space between @p intctx and
- *          @p extctx is known to be zero.
- * @note    In this port it is conservatively set to 16 because the function
- *          @p chSchDoReschedule() can have a stack frame, expecially with
- *          compiler optimizations disabled.
- */
-#if !defined(PORT_INT_REQUIRED_STACK)
-#define PORT_INT_REQUIRED_STACK         16
-#endif
-
-/**
- * @brief   Enables the use of the WFI instruction in the idle thread loop.
- */
-#if !defined(CORTEX_ENABLE_WFI_IDLE)
-#define CORTEX_ENABLE_WFI_IDLE          FALSE
-#endif
-
-/**
- * @brief   SYSTICK handler priority.
- * @note    The default SYSTICK handler priority is calculated as the priority
- *          level in the middle of the numeric priorities range.
- */
-#if !defined(CORTEX_PRIORITY_SYSTICK)
-#define CORTEX_PRIORITY_SYSTICK         (CORTEX_PRIORITY_LEVELS >> 1)
-#elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
-/* If it is externally redefined then better perform a validity check on it.*/
-#error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
-#endif
-
 /*===========================================================================*/
 /* Port derived parameters (common).                                         */
 /*===========================================================================*/
