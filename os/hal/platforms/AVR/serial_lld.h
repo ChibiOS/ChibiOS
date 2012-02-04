@@ -113,7 +113,27 @@ typedef struct {
  * @brief   Macro for baud rate computation.
  * @note    Make sure the final baud rate is within tolerance.
  */
-#define UBRR(b) (((F_CPU / b) >> 4) - 1)
+#define UBRR(b)     (((F_CPU / b) >> 4) - 1)
+
+/**
+ * @brief   Macro for baud rate computationwhen U2Xn == 1.
+ * @note    Make sure the final baud rate is within tolerance.
+ */
+#define UBRR2(b)    (((F_CPU / b) >> 3) - 1)
+
+/**
+* @brief   Macro for baud rate computation.
+* @note    Make sure the final baud rate is within tolerance.
+* @note    This version uses floating point math for greater accuracy.
+*/
+#define UBRR_F(b)   ((((double) F_CPU / (double) b) / 16.0) - 0.5)
+
+/**
+* @brief   Macro for baud rate computation when U2Xn == 1.
+* @note    Make sure the final baud rate is within tolerance.
+* @note    This version uses floating point math for greater accuracy.
+*/
+#define UBRR2_F(b)  ((((double) F_CPU / (double) b) / 8.0) - 0.5)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
