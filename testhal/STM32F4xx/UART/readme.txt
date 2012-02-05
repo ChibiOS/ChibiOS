@@ -12,7 +12,7 @@ The application demonstrates the use of the STM32F4xx UART driver.
 
 ** Board Setup **
 
-- Connect an RS232 transceiver to pins PA2(TX) and PA10(9).
+- Connect an RS232 transceiver to pins PA2(TX) and PA3(RX).
 - Connect a terminal emulator to the transceiver (38400-N-8-1).
 
 ** Build Procedure **
