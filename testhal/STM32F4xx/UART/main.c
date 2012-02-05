@@ -132,7 +132,7 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the UART driver 2, PA2 and PA3 are routed to USART2.
+   * Activates the UART driver 2, PA2(TX) and PA3(RX) are routed to USART2.
    */
   uartStart(&UARTD2, &uart_cfg_1);
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
