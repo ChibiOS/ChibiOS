@@ -107,10 +107,8 @@ int main(void) {
    * button EXT channel using 5 seconds intervals.
    */
   while (TRUE) {
-    EXTI->SWIER = 64;
     chThdSleepMilliseconds(5000);
     extChannelDisable(&EXTD1, 0);
-    EXTI->SWIER = 64;
     chThdSleepMilliseconds(5000);
     extChannelEnable(&EXTD1, 0);
   }
