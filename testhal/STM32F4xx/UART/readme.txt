@@ -12,7 +12,7 @@ The application demonstrates the use of the STM32F4xx UART driver.
 
 ** Board Setup **
 
-- Connect an RS232 transceiver to pins PA2(TX) and PA10(9).
+- Connect an RS232 transceiver to pins PA2(TX) and PA3(RX).
 - Connect a terminal emulator to the transceiver (38400-N-8-1).
 
 ** Build Procedure **
@@ -25,7 +25,7 @@ Just modify the TRGT line in the makefile in order to use different GCC ports.
 
 Some files used by the demo are not part of ChibiOS/RT but are copyright of
 ST Microelectronics and are licensed under a different license.
-Also note that not all the files present in the ST library are distribited
+Also note that not all the files present in the ST library are distributed
 with ChibiOS/RT, you can find the whole library on the ST web site:
 
                              http://www.st.com
