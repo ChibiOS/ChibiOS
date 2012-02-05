@@ -65,11 +65,12 @@
   +--test/              - Kernel test suite source code.
   |  +--coverage/       - Code coverage project.
   +--testhal/           - HAL integration test demos.
-  |  +--LPC11xx/        - LPC11xx HAL test demos.
-  |  +--LPC13xx/        - LPC13xx HAL test demos.
-  |  +--STM32F1xx/      - STM32F1xx HAL test demos.
-  |  +--STM32L1xx/      - STM32L1xx HAL test demos.
-  |  +--STM8S/          - STM8S HAL test demos.
+  |  +--LPC11xx/        - LPC11xx HAL demos.
+  |  +--LPC13xx/        - LPC11xx HAL demos.
+  |  +--STM32F1xx/      - STM32F1xx HAL demos.
+  |  +--STM32F4xx/      - STM32F4xx HAL demos (valid for STM32F2xx too).
+  |  +--STM32L1xx/      - STM32L!xx HAL demos.
+  |  +--STM8S/          - STM8S HAL demos.
   +--tools              - Various tools.
      +--eclipse         - Eclipse enhancements.
 
