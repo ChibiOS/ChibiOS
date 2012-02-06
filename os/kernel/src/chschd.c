@@ -244,7 +244,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
  * @details If a thread with a higher priority than the current thread is in
  *          the ready list then make the higher priority thread running.
  *
- * @iclass
+ * @sclass
  */
 #if !defined(PORT_OPTIMIZED_RESCHEDULES) || defined(__DOXYGEN__)
 void chSchRescheduleS(void) {
