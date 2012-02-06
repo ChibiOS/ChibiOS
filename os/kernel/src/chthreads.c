@@ -71,6 +71,9 @@ Thread *_thread_init(Thread *tp, tprio_t prio) {
   tp->p_prio = prio;
   tp->p_state = THD_STATE_SUSPENDED;
   tp->p_flags = THD_MEM_MODE_STATIC;
+#if CH_TIME_QUANTUM > 0
+  tp->p_preempt = CH_TIME_QUANTUM;
+#endif
 #if CH_USE_MUTEXES
   tp->p_realprio = prio;
   tp->p_mtxlist = NULL;

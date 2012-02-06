@@ -82,6 +82,10 @@
 - NEW: Updated debug plugin 1.0.8 (backported to 2.4.0).
 - NEW: Added more accurate UBRR calculation in AVR serial driver (backported
   to 2.4.0).
+- NEW: Revision of the round-robin scheduling, now threads do not lose their
+  time slice when preempted. Each thread has its own time slices counter.
+  TODO: Half done, extend it to all ports.
+  TODO: Seek optimizations.
 
 *** 2.3.5 ***
 - FIX: Fixed RTC compile problem on STM32F103 (bug 3468445).

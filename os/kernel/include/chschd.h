@@ -95,9 +95,6 @@ typedef struct {
   Thread                *r_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the Thread structure.*/
-#if (CH_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
-  cnt_t                 r_preempt;  /**< @brief Round robin counter.        */
-#endif
   Thread                *r_current; /**< @brief The currently running
                                                 thread.                     */
 } ReadyList;
@@ -154,6 +151,12 @@ extern "C" {
 #if !defined(PORT_OPTIMIZED_ISPREEMPTIONREQUIRED)
   bool_t chSchIsPreemptionRequired(void);
 #endif
+#if !defined(PORT_OPTIMIZED_DORESCHEDULEBEHIND) || defined(__DOXYGEN__)
+  void chSchDoRescheduleBehind(void);
+#endif
+#if !defined(PORT_OPTIMIZED_DORESCHEDULEAHEAD) || defined(__DOXYGEN__)
+  void chSchDoRescheduleAhead(void);
+#endif
 #if !defined(PORT_OPTIMIZED_DORESCHEDULE)
   void chSchDoReschedule(void);
 #endif
@@ -197,7 +200,7 @@ extern "C" {
 #if !defined(PORT_OPTIMIZED_DOYIELDS) || defined(__DOXYGEN__)
 #define chSchDoYieldS() {                                                   \
   if (chSchCanYieldS())                                                     \
-    chSchDoReschedule();                                                    \
+    chSchDoRescheduleBehind();                                              \
 }
 #endif /* !defined(PORT_OPTIMIZED_DOYIELDS) */
 
@@ -212,19 +215,19 @@ extern "C" {
 #define chSchPreemption() {                                                 \
   tprio_t p1 = firstprio(&rlist.r_queue);                                   \
   tprio_t p2 = currp->p_prio;                                               \
-  if (rlist.r_preempt) {                                                    \
+  if (currp->p_preempt) {                                                   \
     if (p1 > p2)                                                            \
-      chSchDoReschedule();                                                  \
+      chSchDoRescheduleAhead();                                             \
   }                                                                         \
   else {                                                                    \
     if (p1 >= p2)                                                           \
-      chSchDoReschedule();                                                  \
+      chSchDoRescheduleBehind();                                            \
   }                                                                         \
 }
 #else /* CH_TIME_QUANTUM == 0 */
 #define chSchPreemption() {                                                 \
   if (p1 >= p2)                                                             \
-    chSchDoReschedule();                                                    \
+    chSchDoRescheduleAhead();                                               \
 }
 #endif /* CH_TIME_QUANTUM == 0 */
 /** @} */

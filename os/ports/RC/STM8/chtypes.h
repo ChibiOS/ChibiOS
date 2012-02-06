@@ -47,55 +47,17 @@ typedef uint8_t         uint_fast8_t;   /**< C99-style 8 bits unsigned.     */
 typedef uint16_t        uint_fast16_t;  /**< C99-style 16 bits unsigned.    */
 typedef uint32_t        uint_fast32_t;  /**< C99-style 32 bits unsigned.    */
 
-/**
- * @brief   Boolean, recommended the fastest signed.
- */
-typedef int8_t          bool_t;
-
-/**
- * @brief   Thread mode flags, uint8_t is ok.
- */
-typedef uint8_t         tmode_t;
-
-/**
- * @brief   Thread state, uint8_t is ok.
- */
-typedef uint8_t         tstate_t;
-
-/**
- * @brief   Thread references counter, uint8_t is ok.
- */
-typedef uint8_t         trefs_t;
-
-/**
- * @brief   Priority, use the fastest unsigned type.
- */
-typedef uint8_t         tprio_t;
-
-/**
- * @brief   Message, use signed pointer equivalent.
- */
-typedef int16_t         msg_t;
-
-/**
- * @brief   Event Id, use fastest signed.
- */
-typedef int8_t          eventid_t;
-
-/**
- * @brief   Event Mask, recommended fastest unsigned.
- */
-typedef uint8_t         eventmask_t;
-
-/**
- * @brief   System Time, recommended fastest unsigned.
- */
-typedef uint16_t        systime_t;
-
-/**
- * @brief   Counter, recommended fastest signed.
- */
-typedef int8_t          cnt_t;
+typedef int8_t          bool_t;         /**< Fast boolean type.             */
+typedef uint8_t         tmode_t;        /**< Thread flags.                  */
+typedef uint8_t         tstate_t;       /**< Thread state.                  */
+typedef uint8_t         trefs_t;        /**< Thread references counter.     */
+typedef uint8_t         tslices_t;      /**< Thread time slices counter.    */
+typedef uint8_t         tprio_t;        /**< Thread priority.               */
+typedef int16_t         msg_t;          /**< Inter-thread message.          */
+typedef int8_t          eventid_t;      /**< Event Id.                      */
+typedef uint8_t         eventmask_t;    /**< Events mask.                   */
+typedef uint16_t        systime_t;      /**< System time.                   */
+typedef int8_t          cnt_t;          /**< Resources counter.             */
 
 /**
  * @brief   Inline function modifier.

@@ -49,9 +49,6 @@ void _scheduler_init(void) {
 
   queue_init(&rlist.r_queue);
   rlist.r_prio = NOPRIO;
-#if CH_TIME_QUANTUM > 0
-  rlist.r_preempt = CH_TIME_QUANTUM;
-#endif
 #if CH_USE_REGISTRY
   rlist.r_newer = rlist.r_older = (Thread *)&rlist;
 #endif
@@ -59,6 +56,8 @@ void _scheduler_init(void) {
 
 /**
  * @brief   Inserts a thread in the Ready List.
+ * @details The thread is positioned behind all threads with higher or equal
+ *          priority.
  * @pre     The thread must not be already inserted in any list through its
  *          @p p_next and @p p_prev or list corruption would occur.
  * @post    This function does not reschedule so a call to a rescheduling
@@ -111,7 +110,9 @@ void chSchGoSleepS(tstate_t newstate) {
 
   (otp = currp)->p_state = newstate;
 #if CH_TIME_QUANTUM > 0
-  rlist.r_preempt = CH_TIME_QUANTUM;
+  /* The thread is renouncing its remaining time slices so it will have a new
+     time quantum when it will wakeup.*/
+  otp->p_preempt = CH_TIME_QUANTUM;
 #endif
   setcurrp(fifo_remove(&rlist.r_queue));
   currp->p_state = THD_STATE_CURRENT;
@@ -222,9 +223,6 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
     chSchReadyI(ntp);
   else {
     Thread *otp = chSchReadyI(currp);
-#if CH_TIME_QUANTUM > 0
-    rlist.r_preempt = CH_TIME_QUANTUM;
-#endif
     setcurrp(ntp);
     ntp->p_state = THD_STATE_CURRENT;
     chSysSwitch(ntp, otp);
@@ -237,7 +235,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
  * @details If a thread with a higher priority than the current thread is in
  *          the ready list then make the higher priority thread running.
  *
- * @iclass
+ * @sclass
  */
 #if !defined(PORT_OPTIMIZED_RESCHEDULES) || defined(__DOXYGEN__)
 void chSchRescheduleS(void) {
@@ -245,7 +243,7 @@ void chSchRescheduleS(void) {
   chDbgCheckClassS();
 
   if (chSchIsRescRequiredI())
-    chSchDoReschedule();
+    chSchDoRescheduleAhead();
 }
 #endif /* !defined(PORT_OPTIMIZED_RESCHEDULES) */
 
@@ -271,7 +269,7 @@ bool_t chSchIsPreemptionRequired(void) {
      if the first thread on the ready queue has a higher priority.
      Otherwise, if the running thread has used up its time quantum, reschedule
      if the first thread on the ready queue has equal or higher priority.*/
-  return rlist.r_preempt ? p1 > p2 : p1 >= p2;
+  return currp->r_preempt ? p1 > p2 : p1 >= p2;
 #else
   /* If the round robin preemption feature is not enabled then performs a
      simpler comparison.*/
@@ -282,6 +280,65 @@ bool_t chSchIsPreemptionRequired(void) {
 
 /**
  * @brief   Switches to the first thread on the runnable queue.
+ * @details The current thread is positioned in the ready list behind all
+ *          threads having the same priority. The thread regains its time
+ *          quantum.
+ * @note    Not a user function, it is meant to be invoked by the scheduler
+ *          itself or from within the port layer.
+ *
+ * @special
+ */
+#if !defined(PORT_OPTIMIZED_DORESCHEDULEBEHIND) || defined(__DOXYGEN__)
+void chSchDoRescheduleBehind(void) {
+  Thread *otp;
+
+  otp = currp;
+  /* Picks the first thread from the ready queue and makes it current.*/
+  setcurrp(fifo_remove(&rlist.r_queue));
+  currp->p_state = THD_STATE_CURRENT;
+  otp->p_preempt = CH_TIME_QUANTUM;
+  chSchReadyI(otp);
+  chSysSwitch(currp, otp);
+}
+#endif /* !defined(PORT_OPTIMIZED_DORESCHEDULEBEHIND) */
+
+/**
+ * @brief   Switches to the first thread on the runnable queue.
+ * @details The current thread is positioned in the ready list ahead of all
+ *          threads having the same priority.
+ * @note    Not a user function, it is meant to be invoked by the scheduler
+ *          itself or from within the port layer.
+ *
+ * @special
+ */
+#if !defined(PORT_OPTIMIZED_DORESCHEDULEAHEAD) || defined(__DOXYGEN__)
+void chSchDoRescheduleAhead(void) {
+  Thread *otp, *cp;
+
+  otp = currp;
+  /* Picks the first thread from the ready queue and makes it current.*/
+  setcurrp(fifo_remove(&rlist.r_queue));
+  currp->p_state = THD_STATE_CURRENT;
+
+  otp->p_state = THD_STATE_READY;
+  cp = (Thread *)&rlist.r_queue;
+  do {
+    cp = cp->p_next;
+  } while (cp->p_prio > otp->p_prio);
+  /* Insertion on p_prev.*/
+  otp->p_next = cp;
+  otp->p_prev = cp->p_prev;
+  otp->p_prev->p_next = cp->p_prev = otp;
+
+  chSysSwitch(currp, otp);
+}
+#endif /* !defined(PORT_OPTIMIZED_DORESCHEDULEAHEAD) */
+
+/**
+ * @brief   Switches to the first thread on the runnable queue.
+ * @details The current thread is positioned in the ready list behind or
+ *          ahead of all threads having the same priority depending on
+ *          if it used its whole time slice.
  * @note    Not a user function, it is meant to be invoked by the scheduler
  *          itself or from within the port layer.
  *
@@ -289,17 +346,25 @@ bool_t chSchIsPreemptionRequired(void) {
  */
 #if !defined(PORT_OPTIMIZED_DORESCHEDULE) || defined(__DOXYGEN__)
 void chSchDoReschedule(void) {
-  Thread *otp;
 
 #if CH_TIME_QUANTUM > 0
-  rlist.r_preempt = CH_TIME_QUANTUM;
-#endif
-  otp = currp;
-  /* Picks the first thread from the ready queue and makes it current.*/
-  setcurrp(fifo_remove(&rlist.r_queue));
-  currp->p_state = THD_STATE_CURRENT;
-  chSchReadyI(otp);
-  chSysSwitch(currp, otp);
+  /* If CH_TIME_QUANTUM is enabled then there are two different scenarios to
+     handle on preemption: time quantum elapsed or not.*/
+  if (currp->p_preempt == 0) {
+    /* The thread consumed its time quantum so it is enqueued behind threads
+       with same priority level, however, it acquires a new time quantum.*/
+    chSchDoRescheduleBehind();
+  }
+  else {
+    /* The thread didn't consume all its time quantum so it is put ahead of
+       threads with equal priority and does not acquire a new time quantum.*/
+    chSchDoRescheduleAhead();
+  }
+#else /* !(CH_TIME_QUANTUM > 0) */
+  /* If the round-robin mechanism is disabled then the thread goes always
+     ahead of its peers.*/
+  chSchDoRescheduleAhead();
+#endif /* !(CH_TIME_QUANTUM > 0) */
 }
 #endif /* !defined(PORT_OPTIMIZED_DORESCHEDULE) */
 
