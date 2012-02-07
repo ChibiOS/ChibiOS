@@ -90,7 +90,6 @@
   to 2.4.0).
 - NEW: Revision of the round-robin scheduling, now threads do not lose their
   time slice when preempted. Each thread has its own time slices counter.
-  TODO: Half done, extend it to all ports.
   TODO: Seek optimizations.
 
 *** 2.3.5 ***

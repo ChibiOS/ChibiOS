@@ -168,7 +168,7 @@ struct intctx {};
  * @brief   Inlineable version of this kernel function.
  */
 #define chSchIsPreemptionRequired()                                         \
-  (rlist.r_preempt ? firstprio(&rlist.r_queue) > currp->p_prio :            \
+  (currp->p_preempt ? firstprio(&rlist.r_queue) > currp->p_prio :           \
                      firstprio(&rlist.r_queue) >= currp->p_prio)
 #else /* CH_TIME_QUANTUM == 0 */
 #define chSchIsPreemptionRequired()                                         \
