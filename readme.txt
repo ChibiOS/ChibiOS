@@ -79,6 +79,9 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed various minor documentation errors and fixed ADC maximum
+  frequency limit in STM32F2/F4 ADC drivers (bug 3484942)(backported
+  to 2.4.1).
 - NEW: Updated debug plugin 1.0.8 (backported to 2.4.0).
 - NEW: Added more accurate UBRR calculation in AVR serial driver (backported
   to 2.4.0).
