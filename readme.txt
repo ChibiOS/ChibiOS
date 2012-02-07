@@ -63,10 +63,15 @@
   +--testhal/           - HAL integration test demos.
      +--STM32/          - STM32 HAL demos.
      +--STM8S/          - STM8S HAL demos.
+  +--tools              - Various tools.
+     +--eclipse         - Eclipse enhancements.
 
 *****************************************************************************
 *** Releases                                                              ***
 *****************************************************************************
+
+*** 2.2.9 ***
+- FIX: Fixed Error in the BaseFileStream interface (bug 3482776).
 
 *** 2.2.8 ***
 - NEW: Added new API chThdExitS() in order to allow atomic operations on
