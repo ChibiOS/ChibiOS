@@ -710,6 +710,7 @@
 /* PLL3 activation conditions.*/
 #if STM32_I2S_CLOCK_REQUIRED ||                                             \
     (STM32_MCOSEL == STM32_MCOSEL_PLL3DIV2) ||                              \
+    (STM32_MCOSEL == STM32_MCOSEL_PLL3) ||                                  \
     defined(__DOXYGEN__)
 /**
  * @brief   PLL3 activation flag.
