@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed missing PLL3 check in STM32F107 HAL (bug 3485278)(backported to
+  2.2.8 and 2.4.1).
 - FIX: Fixed ADC maximum frequency limit in STM32F2/F4 ADC drivers (bug
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
