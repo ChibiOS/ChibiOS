@@ -79,8 +79,9 @@
 *****************************************************************************
 
 *** 2.4.1 ***
-- FIX: Fixed various minor documentation errors and fixed ADC maximum
-  frequency limit in STM32F2/F4 ADC drivers (bug 3484942).
+- FIX: Fixed ADC maximum frequency limit in STM32F2/F4 ADC drivers (bug
+  3484947).
+- FIX: Fixed various minor documentation errors (bug 3484942).
 
 *** 2.4.0 ***
 - NEW: Implemented new makefile system for ARM GCC ports, now objects,
