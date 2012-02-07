@@ -53,11 +53,8 @@
 
 /**
  * @brief   Maximum HSE  clock frequency.
- * @note    This value is arbitrary defined, the current datasheet does not
- *          define a maximum value (it is TBD). A value of 36MHz is mentioned
- *          but without relationship to VDD ranges.
  */
-#define STM32_ADCCLK_MAX        42000000
+#define STM32_ADCCLK_MAX        36000000
 /** @} */
 
 /**
@@ -130,9 +127,9 @@
 /**
  * @brief   ADC common clock divider.
  * @note    This setting is influenced by the VDDA voltage and other
- *          external conditions, please refer to the STM32L15x datasheet
+ *          external conditions, please refer to the STM32F4xx datasheet
  *          for more info.<br>
- *          See section 6.3.15 "12-bit ADC characteristics".
+ *          See section 5.3.20 "12-bit ADC characteristics".
  */
 #if !defined(STM32_ADC_ADCPRE) || defined(__DOXYGEN__)
 #define STM32_ADC_ADCPRE                    ADC_CCR_ADCPRE_DIV2
