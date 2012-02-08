@@ -269,7 +269,7 @@ bool_t chSchIsPreemptionRequired(void) {
      if the first thread on the ready queue has a higher priority.
      Otherwise, if the running thread has used up its time quantum, reschedule
      if the first thread on the ready queue has equal or higher priority.*/
-  return currp->r_preempt ? p1 > p2 : p1 >= p2;
+  return currp->p_preempt ? p1 > p2 : p1 >= p2;
 #else
   /* If the round robin preemption feature is not enabled then performs a
      simpler comparison.*/
