@@ -83,11 +83,20 @@ IVOR10:
         lis         %r3, 0x0800             /* DIS bit mask.                */
         mtspr       336, %r3                /* TSR register.                */
 
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl          dbg_check_enter_isr
+        bl          dbg_check_lock_from_isr
+#endif
+        bl          chSysTimerHandlerI
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl          dbg_check_unlock_from_isr
+        bl          dbg_check_leave_isr
+#endif
+
         /* System tick handler invocation.*/
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_lock
 #endif
-        bl          chSysTimerHandlerI
         bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
         beq         cr0, .ctxrestore
@@ -131,7 +140,7 @@ IVOR4:
         ori         %r3, %r3, INTC_IACKR@l  /* IACKR register address.      */
         lwz         %r3, 0(%r3)             /* IACKR register value.        */
         lwz         %r3, 0(%r3)
-        mtCTR        %r3                    /* Software handler address.    */
+        mtCTR       %r3                     /* Software handler address.    */
 
 #if PPC_USE_IRQ_PREEMPTION
         /* Allows preemption while executing the software handler.*/
