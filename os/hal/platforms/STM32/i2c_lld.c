@@ -167,8 +167,10 @@ static void i2c_lld_safety_timeout(void *p) {
 
   if (i2cp->thread) {
     i2c_lld_abort_operation(i2cp);
+    chSysLockFromIsr();
     i2cp->thread->p_u.rdymsg = RDY_TIMEOUT;
     chSchReadyI(i2cp->thread);
+    chSysUnlockFromIsr();
   }
 }
 

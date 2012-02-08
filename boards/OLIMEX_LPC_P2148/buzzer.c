@@ -69,7 +69,9 @@ void buzzInit(void) {
 static void stop(void *p) {
 
   StopCounter((TC *)p);
+  chSysLockFromIsr();
   chEvtBroadcastI(&BuzzerSilentEventSource);
+  chSysUnlockFromIsr();
 }
 
 /**

@@ -49,8 +49,7 @@ void _vt_init(void) {
 
 /**
  * @brief   Enables a virtual timer.
- * @note    The associated function is invoked by an interrupt handler within
- *          the I-Locked state, see @ref system_states.
+ * @note    The associated function is invoked from interrupt context.
  *
  * @param[out] vtp      the @p VirtualTimer structure pointer
  * @param[in] time      the number of ticks before the operation timeouts, the

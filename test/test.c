@@ -278,9 +278,7 @@ void test_start_timer(unsigned ms) {
 
   systime_t duration = MS2ST(ms);
   test_timer_done = FALSE;
-  chSysLock();
-  chVTSetI(&vt, duration, tmr, NULL);
-  chSysUnlock();
+  chVTSet(&vt, duration, tmr, NULL);
 }
 
 /*

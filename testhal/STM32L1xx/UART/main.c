@@ -26,7 +26,10 @@ static VirtualTimer vt1, vt2;
 static void restart(void *p) {
 
   (void)p;
+
+  chSysLockFromIsr();
   uartStartSendI(&UARTD1, 14, "Hello World!\r\n");
+  chSysUnlockFromIsr();
 }
 
 static void ledoff(void *p) {

@@ -93,6 +93,9 @@
 - NEW: Revision of the round-robin scheduling, now threads do not lose their
   time slice when preempted. Each thread has its own time slices counter.
   TODO: Seek optimizations.
+- NEW: Modified the Virtual Timers management, now the callback is invoked
+  not in lock mode. This change reduces the interrupt jitter caused by
+  multiple timers used at same time.
 
 *** 2.3.5 ***
 - FIX: Fixed RTC compile problem on STM32F103 (bug 3468445).

@@ -89,6 +89,7 @@ bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
 static void tmrfunc(void *p) {
   SDCDriver *sdcp = p;
 
+  chSysLockFromIsr();
   if (cnt > 0) {
     if (sdcIsCardInserted(sdcp)) {
       if (--cnt == 0) {
@@ -105,6 +106,7 @@ static void tmrfunc(void *p) {
     }
   }
   chVTSetI(&tmr, MS2ST(SDC_POLLING_DELAY), tmrfunc, sdcp);
+  chSysUnlockFromIsr();
 }
 
 /**

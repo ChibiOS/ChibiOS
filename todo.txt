@@ -13,8 +13,8 @@ X SDC driver port to STM32F2 and STM32F4.
 
 Within 2.5.x:
 * Revision of scheduling strategy for threads at equal priority.
-- Handling of Virtual Timer callbacks out of critical zone.
-- Add normal API (not iclass) variants of the VT functions.
+* Handling of Virtual Timer callbacks out of critical zone.
+* Add normal API (not iclass) variants of the VT functions.
 - Add the RTC service inside the kernel and port, remove from HAL.
 - Add option to use the RTC counter instead of the systick counter into the
   trace buffer.

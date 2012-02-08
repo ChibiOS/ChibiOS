@@ -5,8 +5,8 @@ Settings: SYSCLK=80
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.4.0
-*** Compiled:     Jan 17 2012 - 14:35:40
+*** Kernel:       2.5.0
+*** Compiled:     Feb  8 2012 - 10:21:46
 *** Compiler:     GCC 4.4.1
 *** Architecture: Power Architecture
 *** Core Variant: e200z3
@@ -100,35 +100,35 @@ Settings: SYSCLK=80
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 283160 msgs/S, 566320 ctxswc/S
+--- Score : 278226 msgs/S, 556452 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 226208 msgs/S, 452416 ctxswc/S
+--- Score : 224935 msgs/S, 449870 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 226208 msgs/S, 452416 ctxswc/S
+--- Score : 224935 msgs/S, 449870 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 897232 ctxswc/S
+--- Score : 890960 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 180251 threads/S
+--- Score : 178638 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 261812 threads/S
+--- Score : 255935 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 73862 reschedules/S, 443172 ctxswc/S
+--- Score : 73319 reschedules/S, 439914 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 614140 ctxswc/S
+--- Score : 609448 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
@@ -136,7 +136,7 @@ Settings: SYSCLK=80
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 1093664 timers/S
+--- Score : 1094200 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
@@ -144,11 +144,11 @@ Settings: SYSCLK=80
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 841236 lock+unlock/S
+--- Score : 841232 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 768 bytes
+--- System: 764 bytes
 --- Thread: 72 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes

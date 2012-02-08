@@ -105,6 +105,7 @@ static uint8_t crc7(uint8_t crc, const uint8_t *buffer, size_t len) {
 static void tmrfunc(void *p) {
   MMCDriver *mmcp = p;
 
+  chSysLockFromIsr();
   if (mmcp->cnt > 0) {
     if (mmcp->is_inserted()) {
       if (--mmcp->cnt == 0) {
@@ -123,6 +124,7 @@ static void tmrfunc(void *p) {
     }
   }
   chVTSetI(&mmcp->vt, MS2ST(MMC_POLLING_DELAY), tmrfunc, mmcp);
+  chSysUnlockFromIsr();
 }
 
 /**
