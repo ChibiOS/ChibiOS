@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed PPC port broken when CH_DBG_SYSTEM_STATE_CHECK is activated
+  (bug 3485667)(backported to 2.4.1).
 - FIX: Fixed missing PLL3 check in STM32F107 HAL (bug 3485278)(backported
   to 2.4.1).
 - FIX: Fixed ADC maximum frequency limit in STM32F2/F4 ADC drivers (bug
