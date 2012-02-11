@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed Realtime counter initialization in STM32 HALs (bug 3485500)
+  (backported to 2.4.1).
 - FIX: Fixed PPC port broken when CH_DBG_SYSTEM_STATE_CHECK is activated
   (bug 3485667)(backported to 2.4.1).
 - FIX: Fixed missing PLL3 check in STM32F107 HAL (bug 3485278)(backported
