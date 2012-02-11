@@ -114,7 +114,8 @@ void hal_lld_init(void) {
                   SysTick_CTRL_TICKINT_Msk;
 
   /* DWT cycle counter enable.*/
-  DWT_CTRL |= DWT_CTRL_CYCCNTENA;
+  SCS_DEMCR |= SCS_DEMCR_TRCENA;
+  DWT_CTRL  |= DWT_CTRL_CYCCNTENA;
 
   /* PWR clock enabled.*/
   rccEnablePWRInterface(FALSE);

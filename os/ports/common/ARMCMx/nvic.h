@@ -236,6 +236,27 @@ typedef struct {
 #define FPDSCR_RMODE(n)         ((n##U) << 22)
 
 /**
+ * @brief Structure representing the SCS I/O space.
+ */
+typedef struct {
+  IOREG32       DHCSR;
+  IOREG32       DCRSR;
+  IOREG32       DCRDR;
+  IOREG32       DEMCR;
+} CMx_SCS;
+
+/**
+ * @brief SCS peripheral base address.
+ */
+#define SCSBase                 ((CMx_SCS *)0xE000EDF0U)
+#define SCS_DHCSR               (SCSBase->DHCSR)
+#define SCS_DCRSR               (SCSBase->DCRSR)
+#define SCS_DCRDR               (SCSBase->DCRDR)
+#define SCS_DEMCR               (SCSBase->DEMCR)
+
+#define SCS_DEMCR_TRCENA        (0x1U << 24)
+
+/**
  * @brief Structure representing the DWT I/O space.
  */
 typedef struct {

@@ -80,6 +80,7 @@
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+#if HAL_IMPLEMENTS_COUNTERS || defined(__DOXYGEN__)
 /**
  * @name    Time conversion utilities for the realtime counter
  * @{
@@ -130,11 +131,12 @@
  * @brief   Returns the current value of the system free running counter.
  * @note    This is an optional service that could not be implemented in
  *          all HAL implementations.
+ * @note    This function can be called from any context.
  *
  * @return              The value of the system free running counter of
  *                      type halrtcnt_t.
  *
- * @api
+ * @special
  */
 #define halGetCounterValue() hal_lld_get_counter_value()
 
@@ -142,75 +144,15 @@
  * @brief   Realtime counter frequency.
  * @note    This is an optional service that could not be implemented in
  *          all HAL implementations.
+ * @note    This function can be called from any context.
  *
  * @return              The realtime counter frequency of type halclock_t.
  *
- * @api
+ * @special
  */
 #define halGetCounterFrequency() hal_lld_get_counter_frequency()
-
-/**
- * @brief   Realtime window test.
- * @details This function verifies if the current realtime counter value
- *          lies within the specified range or not. The test takes care
- *          of the realtime counter wrapping to zero on overflow.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
- *
- * @par Example 1
- * Example of a guarded loop using the realtime counter. The loop implements
- * a timeout after one second.
- * @code
- *   halrtcnt_t start = halGetCounterValue();
- *   halrtcnt_t timeout  = start + S2RTT(1);
- *   while (my_condition) {
- *     if (!halIsCounterWithin(start, timeout)
- *       return TIMEOUT;
- *     // Do something.
- *   }
- *   // Continue.
- * @endcode
- *
- * @par Example 2
- * Example of a loop that lasts exactly 50 microseconds.
- * @code
- *   halrtcnt_t start = halGetCounterValue();
- *   halrtcnt_t timeout  = start + US2RTT(50);
- *   while (halIsCounterWithin(start, timeout)) {
- *     // Do something.
- *   }
- *   // Continue.
- * @endcode
- *
- * @param[in] start     the start of the time window (inclusive)
- * @param[in] end       the end of the time window (non inclusive)
- * @retval TRUE         current time within the specified time window.
- * @retval FALSE        current time not within the specified time window.
- *
- * @api
- */
-#define halIsCounterWithin(start, end)                                      \
-  (end > start ? (halGetCounterValue() >= start) &&                         \
-                 (halGetCounterValue() < end) :                             \
-                 (halGetCounterValue() >= start) ||                         \
-                 (halGetCounterValue() < end))
 /** @} */
-
-/**
- * @brief   Polled delay.
- * @note    The real delays is always few cycles in excess of the specified
- *          value.
- *
- * @param[in] ticks     number of ticks
- *
- * @api
- */
-#define halPolledDelay(ticks) {                                             \
-  halrtcnt_t start = halGetCounterValue();                                  \
-  halrtcnt_t timeout  = start + (ticks);                                    \
-  while (halIsCounterWithin(start, timeout))                                \
-    ;                                                                       \
-}
+#endif /* HAL_IMPLEMENTS_COUNTERS */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -220,6 +162,10 @@
 extern "C" {
 #endif
   void halInit(void);
+#if HAL_IMPLEMENTS_COUNTERS
+  bool_t halIsCounterWithin(halrtcnt_t start, halrtcnt_t end);
+  void halPolledDelay(halrtcnt_t ticks);
+#endif /* HAL_IMPLEMENTS_COUNTERS */
 #ifdef __cplusplus
 }
 #endif
