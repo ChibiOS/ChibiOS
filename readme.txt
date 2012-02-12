@@ -79,6 +79,9 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed MMC over SPI driver performs an unnecessary SPI read (bug
+  3486930)(backported to 2.2.9 and 2.4.1). Also removed unnecessary CRC7
+  calculation.
 - FIX: Fixed Realtime counter initialization in STM32 HALs (bug 3485500)
   (backported to 2.4.1).
 - FIX: Fixed PPC port broken when CH_DBG_SYSTEM_STATE_CHECK is activated
