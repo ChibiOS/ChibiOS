@@ -15,6 +15,7 @@ Within 2.5.x:
 * Revision of scheduling strategy for threads at equal priority.
 * Handling of Virtual Timer callbacks out of critical zone.
 * Add normal API (not iclass) variants of the VT functions.
+* MMC_SPI driver speedup.
 - Add the RTC service inside the kernel and port, remove from HAL.
 - Add option to use the RTC counter instead of the systick counter into the
   trace buffer.
@@ -27,7 +28,6 @@ Within 2.5.x:
 - Runtime errors manager in HAL.
 - Critical errors manager in HAL (to replace or complement assertions).
 - Streaming DAC/I2S driver model and STM32 implementation.
-- MMC_SPI driver speedup.
 - USB driver model revision.
 - MAC driver for STM32F107, STM32F2xx, STM32F4xx.
 - STM32 OTG USB cell support for CL, F2, F4 devices.
