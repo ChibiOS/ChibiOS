@@ -370,9 +370,6 @@ void icu_lld_start(ICUDriver *icup) {
   icup->tim->PSC  = (uint16_t)psc;
   icup->tim->ARR   = 0xFFFF;
 
-  chDbgAssert((icup->config->channel != ICU_CHANNEL_1) &&
-              (icup->config->channel != ICU_CHANNEL_2),
-              "icu_lld_start(), #2", "invalid channel");
   if (icup->config->channel == ICU_CHANNEL_1) {
     /* Selected input 1.
        CCMR1_CC1S = 01 = CH1 Input on TI1.
