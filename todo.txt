@@ -16,8 +16,10 @@ Within 2.5.x:
 * Handling of Virtual Timer callbacks out of critical zone.
 * Add normal API (not iclass) variants of the VT functions.
 * MMC_SPI driver speedup.
-- Add the RTC service inside the kernel and port, remove from HAL.
-- Add option to use the RTC counter instead of the systick counter into the
+- MAC driver for STM32F107, STM32F2xx, STM32F4xx.
+- USB driver model revision.
+- STM32 OTG USB cell support for CL, F2, F4 devices.
+- Add option to use another counter instead of the systick counter into the
   trace buffer.
 - Add a chSysIntegrityCheck() API to the kernel.
 - Add guard pages as extra stack checking mechanism. Guard pages should be
@@ -28,15 +30,13 @@ Within 2.5.x:
 - Runtime errors manager in HAL.
 - Critical errors manager in HAL (to replace or complement assertions).
 - Streaming DAC/I2S driver model and STM32 implementation.
-- USB driver model revision.
-- MAC driver for STM32F107, STM32F2xx, STM32F4xx.
-- STM32 OTG USB cell support for CL, F2, F4 devices.
 - Add ADC3 support to the STM32 ADC driver.
 - Update C++ wrapper.
 - FatFs 0.9x integration.
 - Nios II support.
 - LPC17xx support.
 - NUC120 support.
+? Add the RTC service inside the kernel and port, remove from HAL.
 
 Within 2.x.x
 - Software I2C implementation using a GPT instance for timings.

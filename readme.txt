@@ -103,6 +103,8 @@
   multiple timers used at same time.
 - NEW: Added board files and demo for Olimex LPC-P1343 (contributed by
   Johnny Halfmoon).
+- NEW: Added handling of input 2 to the STM32 ICU driver (contributed by
+  Fabio).
 
 *** 2.3.5 ***
 - FIX: Fixed RTC compile problem on STM32F103 (bug 3468445).

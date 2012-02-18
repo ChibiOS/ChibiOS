@@ -103,25 +103,29 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  * @brief   Returns the width of the latest pulse.
  * @details The pulse width is defined as number of ticks between the start
  *          edge and the stop edge.
+ * @note    This function is meant to be invoked from the width capture
+ *          callback only.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  * @return              The number of ticks.
  *
- * @iclass
+ * @special
  */
-#define icuGetWidthI(icup) icu_lld_get_width(icup)
+#define icuGetWidth(icup) icu_lld_get_width(icup)
 
 /**
  * @brief   Returns the width of the latest cycle.
  * @details The cycle width is defined as number of ticks between a start
  *          edge and the next start edge.
+ * @note    This function is meant to be invoked from the width capture
+ *          callback only.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  * @return              The number of ticks.
  *
- * @iclass
+ * @special
  */
-#define icuGetPeriodI(icup) icu_lld_get_period(icup)
+#define icuGetPeriod(icup) icu_lld_get_period(icup)
 /** @} */
 
 /**
