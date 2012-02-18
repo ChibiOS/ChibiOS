@@ -105,6 +105,8 @@
   Johnny Halfmoon).
 - NEW: Added handling of input 2 to the STM32 ICU driver (contributed by
   Fabio).
+- CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renemed to  icuGetWidth()
+  and icuGetPeriod().
 
 *** 2.3.5 ***
 - FIX: Fixed RTC compile problem on STM32F103 (bug 3468445).
