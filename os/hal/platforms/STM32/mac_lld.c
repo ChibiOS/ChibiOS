@@ -142,6 +142,7 @@ void mac_lld_init(void) {
   unsigned i;
 
   macObjectInit(&ETHD1);
+  ETHD1.link_up = FALSE;
 
   /* Descriptor tables are initialized in linked mode, note that the first
      word is not initialized here but in mac_lld_start().*/
@@ -205,23 +206,56 @@ void mac_lld_start(MACDriver *macp) {
   /* MAC clocks activation.*/
   rccEnableETH(FALSE);
 
-  /* Descriptor chains pointers.*/
-  ETH->DMARDLAR = (uint32_t)rd;
-  ETH->DMATDLAR = (uint32_t)rd;
-
   /* MAC configuration:
-       ETH_MACCR_TE     - Transmitter enable.
-       ETH_MACCR_RE     - Receiver enable.
+     ETH_MACFFR_SAF     - Source address filter. Broadcast frames are not
+                          filtered.*/
+  ETH->MACFFR    = ETH_MACFFR_SAF;
+
+  /* MAC address configuration, only a single address comparator is used,
+     hash table not used.*/
+  ETH->MACA0HR   = ((uint32_t)macp->config->mac_address[0] << 8) |
+                   ((uint32_t)macp->config->mac_address[1] << 0);
+  ETH->MACA0LR   = ((uint32_t)macp->config->mac_address[2] << 24) |
+                   ((uint32_t)macp->config->mac_address[3] << 16) |
+                   ((uint32_t)macp->config->mac_address[4] << 8) |
+                   ((uint32_t)macp->config->mac_address[5] << 0);
+  ETH->MACA1HR   = 0x0000FFFF;
+  ETH->MACA1LR   = 0xFFFFFFFF;
+  ETH->MACA2HR   = 0x0000FFFF;
+  ETH->MACA2LR   = 0xFFFFFFFF;
+  ETH->MACA3HR   = 0x0000FFFF;
+  ETH->MACA3LR   = 0xFFFFFFFF;
+  ETH->MACHTHR   = 0;
+  ETH->MACHTLR   = 0;
+
+  /* MAC flow control not used, VLAN not used.*/
+  ETH->MACFCR    = 0;
+  ETH->MACVLANTR = 0;
+
+  /* Transmitter and receiver enabled.
      Note that the complete setup of the MAC is performed when the link
      status is detected.*/
   ETH->MACCR = ETH_MACCR_TE | ETH_MACCR_TE;
 
-  ETH->MACFFR    = 0;
-  ETH->MACHTHR   = 0;
-  ETH->MACHTLR   = 0;
-  ETH->MACHTLR   = 0;
-  ETH->MACFCR    = 0;
-  ETH->MACVLANTR = 0;
+  /* DMA configuration:
+     Descriptor chains pointers.*/
+  ETH->DMARDLAR = (uint32_t)rd;
+  ETH->DMATDLAR = (uint32_t)td;
+
+  /* Enabling required interrupt sources.*/
+  ETH->DMASR    = 0xFFFFFFFF;                   /* Resetting pending flags. */
+
+  /* DMA general settings.*/
+  ETH->DMABMR   = ETH_DMABMR_AAB | ETH_DMABMR_RDP_1Beat | ETH_DMABMR_PBL_1Beat;
+
+  /* Transmit FIFO flush.*/
+  ETH->DMAOMR   = ETH_DMAOMR_FTF;
+  while (ETH->DMAOMR & ETH_DMAOMR_FTF)
+    ;
+
+  /* DMA final configuration and start.*/
+  ETH->DMAOMR   = ETH_DMAOMR_DTCEFD | ETH_DMAOMR_RSF | ETH_DMAOMR_TSF |
+                  ETH_DMAOMR_ST | ETH_DMAOMR_SR;
 }
 
 /**
@@ -350,7 +384,56 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
  * @notapi
  */
 bool_t mac_lld_poll_link_status(MACDriver *macp) {
+  uint32_t maccr, bmsr, bmcr;
 
+  /* Checks if the link is up, updates the status accordingly and returns.*/
+  bmsr = mii_read_phy(MII_BMSR);
+  if (!(bmsr & BMSR_LSTATUS))
+    return macp->link_up = FALSE;
+
+  maccr = ETH->MACCR;
+  bmcr = mii_read_phy(MII_BMCR);
+
+  /* Check on auto-negotiation mode.*/
+  if (bmcr & BMCR_ANENABLE) {
+    uint32_t lpa;
+
+    /* Auto-nogotiation enabled, checks the LPA register.*/
+    lpa = mii_read_phy(MII_LPA);
+
+    /* Check on link speed.*/
+    if (lpa & (LPA_100HALF | LPA_100FULL | LPA_100BASE4))
+      maccr |= ETH_MACCR_FES;
+    else
+      maccr &= ~ETH_MACCR_FES;
+
+    /* Check on link mode.*/
+    if (lpa & (LPA_10FULL | LPA_100FULL))
+      maccr |= ETH_MACCR_DM;
+    else
+      maccr &= ~ETH_MACCR_DM;
+  }
+  else {
+    /* Auto-negotiation disabled, checks the current settings.*/
+
+    /* Check on link speed.*/
+    if (bmcr & BMCR_SPEED100)
+      maccr |= ETH_MACCR_FES;
+    else
+      maccr &= ~ETH_MACCR_FES;
+
+    /* Check on link mode.*/
+    if (bmcr & BMCR_FULLDPLX)
+      maccr |= ETH_MACCR_DM;
+    else
+      maccr &= ~ETH_MACCR_DM;
+  }
+
+  /* Changes the mode in the MAC.*/
+  ETH->MACCR = maccr;
+
+  /* Returns the link status.*/
+  return macp->link_up = TRUE;
 }
 
 #endif /* HAL_USE_MAC */

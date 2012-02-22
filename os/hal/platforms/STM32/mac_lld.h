@@ -206,6 +206,10 @@ struct MACDriver {
   EventSource           rdevent;
 #endif
   /* End of the mandatory fields.*/
+  /**
+   * @brief Link status flag.
+   */
+  bool_t                link_up;
 };
 
 /**
