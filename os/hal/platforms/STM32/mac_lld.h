@@ -129,14 +129,21 @@
  * @brief   Number of available receive buffers.
  */
 #if !defined(MAC_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
-#define MAC_RECEIVE_BUFFERS         2
+#define MAC_RECEIVE_BUFFERS         4
 #endif
 
 /**
  * @brief   Maximum supported frame size.
  */
 #if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define MAC_BUFFERS_SIZE            1518
+#define MAC_BUFFERS_SIZE            1520
+#endif
+
+/**
+ * @brief   ETHD1 interrupt priority level setting.
+ */
+#if !defined(STM32_ETH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ETH1_IRQ_PRIORITY     13
 #endif
 /** @} */
 
@@ -210,6 +217,18 @@ struct MACDriver {
    * @brief Link status flag.
    */
   bool_t                link_up;
+  /**
+   * @brief PHY address (pre shifted).
+   */
+  uint32_t phyaddr;
+  /**
+   * @brief Receive next frame pointer.
+   */
+  stm32_eth_rx_descriptor_t *rxptr;
+  /**
+   * @brief Transmit next frame pointer.
+   */
+  stm32_eth_tx_descriptor_t *txptr;
 };
 
 /**

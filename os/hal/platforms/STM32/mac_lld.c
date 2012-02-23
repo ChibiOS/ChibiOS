@@ -62,10 +62,8 @@ MACDriver ETHD1;
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-static uint32_t phyaddr;
-
-static stm32_eth_rx_descriptor_t *rxptr;
-static stm32_eth_tx_descriptor_t *txptr;
+static const uint8_t default_mac_address[] = {0xAA, 0x55, 0x13,
+                                              0x37, 0x01, 0x10};
 
 static stm32_eth_rx_descriptor_t rd[MAC_RECEIVE_BUFFERS];
 static stm32_eth_tx_descriptor_t td[MAC_TRANSMIT_BUFFERS];
@@ -80,13 +78,14 @@ static uint32_t tb[MAC_TRANSMIT_BUFFERS * BUFFER_SLICE];
 /**
  * @brief   Writes a PHY register.
  *
+ * @param[in] macp      pointer to the @p MACDriver object
  * @param[in] reg       register number
  * @param[in] value     new register value
  */
-static void mii_write_phy(uint32_t reg, uint32_t value) {
+static void mii_write_phy(MACDriver *macp, uint32_t reg, uint32_t value) {
 
   ETH->MACMIIDR = value;
-  ETH->MACMIIAR = phyaddr | (reg << 6) | MACMIIDR_CR |
+  ETH->MACMIIAR = macp->phyaddr | (reg << 6) | MACMIIDR_CR |
                   ETH_MACMIIAR_MW | ETH_MACMIIAR_MB;
   while ((ETH->MACMIIAR & ETH_MACMIIAR_MB) != 0)
     ;
@@ -95,39 +94,98 @@ static void mii_write_phy(uint32_t reg, uint32_t value) {
 /**
  * @brief   Reads a PHY register.
  *
+ * @param[in] macp      pointer to the @p MACDriver object
  * @param[in] reg       register number
+ *
+ * @return              The PHY register content.
  */
-static uint32_t mii_read_phy(uint32_t reg) {
+static uint32_t mii_read_phy(MACDriver *macp, uint32_t reg) {
 
-  ETH->MACMIIAR = phyaddr | (reg << 6) | MACMIIDR_CR |
-                  ETH_MACMIIAR_MB;
+  ETH->MACMIIAR = macp->phyaddr | (reg << 6) | MACMIIDR_CR | ETH_MACMIIAR_MB;
   while ((ETH->MACMIIAR & ETH_MACMIIAR_MB) != 0)
     ;
   return ETH->MACMIIDR;
 }
 
-
+#if !defined(BOARD_PHY_ADDRESS)
 /**
  * @brief   PHY address detection.
+ *
+ * @param[in] macp      pointer to the @p MACDriver object
  */
-static void mii_find_phy(void) {
+static void mii_find_phy(MACDriver *macp) {
   uint32_t i;
 
   for (i = 0; i < 31; i++) {
     ETH->MACMIIDR = (i << 6) | MACMIIDR_CR;
-    if ((mii_read_phy(MII_PHYSID1) == (BOARD_PHY_ID >> 16)) &&
-        (mii_read_phy(MII_PHYSID2) == (BOARD_PHY_ID & 0xFFF0))) {
-      phyaddr = i << 11;
+    if ((mii_read_phy(macp, MII_PHYSID1) == (BOARD_PHY_ID >> 16)) &&
+        (mii_read_phy(macp, MII_PHYSID2) == (BOARD_PHY_ID & 0xFFF0))) {
+      macp->phyaddr = i << 11;
       return;
     }
   }
   /* Wrong or defective board.*/
   chSysHalt();
 }
+#endif
+
+/**
+ * @brief   MAC address setup.
+ *
+ * @param[in] p         pointer to a six bytes buffer containing the MAC
+ *                      address
+ */
+static void mac_lld_set_address(const uint8_t *p) {
+
+  /* MAC address configuration, only a single address comparator is used,
+     hash table not used.*/
+  ETH->MACA0HR   = ((uint32_t)p[5] << 8) |
+                   ((uint32_t)p[4] << 0);
+  ETH->MACA0LR   = ((uint32_t)p[3] << 24) |
+                   ((uint32_t)p[2] << 16) |
+                   ((uint32_t)p[1] << 8) |
+                   ((uint32_t)p[0] << 0);
+  ETH->MACA1HR   = 0x0000FFFF;
+  ETH->MACA1LR   = 0xFFFFFFFF;
+  ETH->MACA2HR   = 0x0000FFFF;
+  ETH->MACA2LR   = 0xFFFFFFFF;
+  ETH->MACA3HR   = 0x0000FFFF;
+  ETH->MACA3LR   = 0xFFFFFFFF;
+  ETH->MACHTHR   = 0;
+  ETH->MACHTLR   = 0;
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+CH_IRQ_HANDLER(ETH_IRQHandler) {
+  uint32_t dmasr;
+
+  CH_IRQ_PROLOGUE();
+
+  dmasr = ETH->DMASR;
+  ETH->DMASR = dmasr; /* Clear status bits.*/
+
+  if (dmasr & ETH_DMASR_RS) {
+    /* Data Received.*/
+    chSysLockFromIsr();
+    chSemResetI(&ETHD1.rdsem, 0);
+#if MAC_USE_EVENTS
+    chEvtBroadcastI(&ETHD1.rdevent);
+#endif
+    chSysUnlockFromIsr();
+  }
+
+  if (dmasr & ETH_DMASR_TS) {
+    /* Data Transmitted.*/
+    chSysLockFromIsr();
+    chSemResetI(&ETHD1.tdsem, 0);
+    chSysUnlockFromIsr();
+  }
+
+  CH_IRQ_EPILOGUE();
+}
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -144,7 +202,7 @@ void mac_lld_init(void) {
   macObjectInit(&ETHD1);
   ETHD1.link_up = FALSE;
 
-  /* Descriptor tables are initialized in linked mode, note that the first
+  /* Descriptor tables are initialized in chained mode, note that the first
      word is not initialized here but in mac_lld_start().*/
   for (i = 0; i < MAC_RECEIVE_BUFFERS; i++) {
     rd[i].rdes1 = STM32_RDES1_RCH | MAC_BUFFERS_SIZE;
@@ -159,27 +217,48 @@ void mac_lld_init(void) {
                                 BUFFER_SLICE];
   }
 
-  /* MAC clocks activation.*/
-  rccEnableETH(FALSE);
+  /* Selection of the RMII or MII mode based on info exported by board.h.*/
+#if defined(STM32F10X_CL)
+#if defined(BOARD_PHY_RMII)
+  AFIO->MAPR |= AFIO_MAPR_MII_RMII_SEL;
+#else
+  AFIO->MAPR &= ~AFIO_MAPR_MII_RMII_SEL;
+#endif
+#elif defined(STM32F2XX) || defined(STM32F4XX)
+#if defined(BOARD_PHY_RMII)
+  SYSCFG->PMC |= SYSCFG_PMC_MII_RMII;
+#else
+  SYSCFG->PMC &= ~SYSCFG_PMC_MII_RMII;
+#endif
+#else
+#error "unsupported STM32 platform for MAC driver"
+#endif
 
   /* Reset of the MAC core.*/
   rccResetETH();
 
-  /* Find PHY address.*/
-  mii_find_phy();
+  /* MAC clocks temporary activation.*/
+  rccEnableETH(FALSE);
+
+  /* PHY address setup.*/
+#if defined(BOARD_PHY_ADDRESS)
+  phyaddr = BOARD_PHY_ADDRESS << 11;
+#else
+  mii_find_phy(&ETHD1);
+#endif
 
 #if defined(BOARD_PHY_RESET)
   /* PHY board-specific reset procedure.*/
   BOARD_PHY_RESET();
 #else
   /* PHY soft reset procedure.*/
-  mii_write_phy(MII_BMCR, BMCR_RESET);
-  while (mii_read_phy(MII_BMCR) & BMCR_RESET)
+  mii_write_phy(&ETHD1, MII_BMCR, BMCR_RESET);
+  while (mii_read_phy(&ETHD1, MII_BMCR) & BMCR_RESET)
     ;
 #endif
 
   /* PHY in power down mode until the driver will be started.*/
-  mii_write_phy(MII_BMCR, BMCR_PDOWN);
+  mii_write_phy(&ETHD1, MII_BMCR, BMCR_PDOWN);
 
   /* MAC clocks stopped again.*/
   rccDisableETH(FALSE);
@@ -195,38 +274,34 @@ void mac_lld_init(void) {
 void mac_lld_start(MACDriver *macp) {
   unsigned i;
 
+
   /* Resets the state of all descriptors.*/
   for (i = 0; i < MAC_RECEIVE_BUFFERS; i++)
     rd[i].rdes0 = STM32_RDES0_OWN;
-  rxptr = (stm32_eth_rx_descriptor_t *)rd;
+  macp->rxptr = (stm32_eth_rx_descriptor_t *)rd;
   for (i = 0; i < MAC_TRANSMIT_BUFFERS; i++)
     td[i].tdes0 = STM32_TDES0_TCH;
-  txptr = (stm32_eth_tx_descriptor_t *)td;
+  macp->txptr = (stm32_eth_tx_descriptor_t *)td;
 
-  /* MAC clocks activation.*/
+  /* MAC clocks activation and commanded reset procedure.*/
   rccEnableETH(FALSE);
+  ETH->DMABMR |= ETH_DMABMR_SR;
+  while(ETH->DMABMR & ETH_DMABMR_SR)
+    ;
+
+  /* ISR vector enabled.*/
+  nvicEnableVector(ETH_IRQn, CORTEX_PRIORITY_MASK(STM32_ETH1_IRQ_PRIORITY));
 
   /* MAC configuration:
      ETH_MACFFR_SAF     - Source address filter. Broadcast frames are not
                           filtered.*/
   ETH->MACFFR    = ETH_MACFFR_SAF;
 
-  /* MAC address configuration, only a single address comparator is used,
-     hash table not used.*/
-  ETH->MACA0HR   = ((uint32_t)macp->config->mac_address[0] << 8) |
-                   ((uint32_t)macp->config->mac_address[1] << 0);
-  ETH->MACA0LR   = ((uint32_t)macp->config->mac_address[2] << 24) |
-                   ((uint32_t)macp->config->mac_address[3] << 16) |
-                   ((uint32_t)macp->config->mac_address[4] << 8) |
-                   ((uint32_t)macp->config->mac_address[5] << 0);
-  ETH->MACA1HR   = 0x0000FFFF;
-  ETH->MACA1LR   = 0xFFFFFFFF;
-  ETH->MACA2HR   = 0x0000FFFF;
-  ETH->MACA2LR   = 0xFFFFFFFF;
-  ETH->MACA3HR   = 0x0000FFFF;
-  ETH->MACA3LR   = 0xFFFFFFFF;
-  ETH->MACHTHR   = 0;
-  ETH->MACHTLR   = 0;
+  /* MAC address setup.*/
+  if (macp->config->mac_address == NULL)
+    mac_lld_set_address(default_mac_address);
+  else
+    mac_lld_set_address(macp->config->mac_address);
 
   /* MAC flow control not used, VLAN not used.*/
   ETH->MACFCR    = 0;
@@ -243,7 +318,8 @@ void mac_lld_start(MACDriver *macp) {
   ETH->DMATDLAR = (uint32_t)td;
 
   /* Enabling required interrupt sources.*/
-  ETH->DMASR    = 0xFFFFFFFF;                   /* Resetting pending flags. */
+  ETH->DMASR    = ETH->DMASR;
+  ETH->DMAIER   = ETH_DMAIER_RIE | ETH_DMAIER_TIE;
 
   /* DMA general settings.*/
   ETH->DMABMR   = ETH_DMABMR_AAB | ETH_DMABMR_RDP_1Beat | ETH_DMABMR_PBL_1Beat;
@@ -267,8 +343,19 @@ void mac_lld_start(MACDriver *macp) {
  */
 void mac_lld_stop(MACDriver *macp) {
 
+  (void)macp;
+
+  /* MAC and DMA stopped.*/
+  ETH->MACCR    = 0;
+  ETH->DMAOMR   = 0;
+  ETH->DMAIER   = 0;
+  ETH->DMASR    = ETH->DMASR;
+
   /* MAC clocks stopped.*/
   rccDisableETH(FALSE);
+
+  /* ISR vector disabled.*/
+  nvicDisableVector(ETH_IRQn);
 }
 
 /**
@@ -286,6 +373,9 @@ void mac_lld_stop(MACDriver *macp) {
  */
 msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
                                       MACTransmitDescriptor *tdp) {
+
+  (void)macp;
+  (void)tdp;
 
   return RDY_OK;
 }
@@ -308,6 +398,10 @@ size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
                                          uint8_t *buf,
                                          size_t size) {
 
+  (void)tdp;
+  (void)buf;
+  (void)size;
+
   return 0;
 }
 
@@ -321,6 +415,7 @@ size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
  */
 void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 
+  (void)tdp;
 }
 
 /**
@@ -336,6 +431,9 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
  */
 msg_t max_lld_get_receive_descriptor(MACDriver *macp,
                                      MACReceiveDescriptor *rdp) {
+
+  (void)macp;
+  (void)rdp;
 
   return RDY_TIMEOUT;
 }
@@ -354,8 +452,12 @@ msg_t max_lld_get_receive_descriptor(MACDriver *macp,
  * @notapi
  */
 size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
-                                         uint8_t *buf,
-                                         size_t size) {
+                                       uint8_t *buf,
+                                       size_t size) {
+
+  (void)rdp;
+  (void)buf;
+  (void)size;
 
   return 0;
 }
@@ -371,6 +473,7 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
  */
 void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 
+  (void)rdp;
 }
 
 /**
@@ -387,19 +490,19 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   uint32_t maccr, bmsr, bmcr;
 
   /* Checks if the link is up, updates the status accordingly and returns.*/
-  bmsr = mii_read_phy(MII_BMSR);
+  bmsr = mii_read_phy(macp, MII_BMSR);
   if (!(bmsr & BMSR_LSTATUS))
     return macp->link_up = FALSE;
 
   maccr = ETH->MACCR;
-  bmcr = mii_read_phy(MII_BMCR);
+  bmcr = mii_read_phy(macp, MII_BMCR);
 
   /* Check on auto-negotiation mode.*/
   if (bmcr & BMCR_ANENABLE) {
     uint32_t lpa;
 
     /* Auto-nogotiation enabled, checks the LPA register.*/
-    lpa = mii_read_phy(MII_LPA);
+    lpa = mii_read_phy(macp, MII_LPA);
 
     /* Check on link speed.*/
     if (lpa & (LPA_100HALF | LPA_100FULL | LPA_100BASE4))
