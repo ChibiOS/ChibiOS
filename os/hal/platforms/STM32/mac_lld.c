@@ -36,7 +36,7 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define BUFFER_SLICE ((((MAC_BUFFERS_SIZE - 1) | 3) + 1) / 4)
+#define BUFFER_SLICE ((((STM32_MAC_BUFFERS_SIZE - 1) | 3) + 1) / 4)
 
 /* MII divider optimal value.*/
 #if (STM32_HCLK >= 60000000)
@@ -65,11 +65,11 @@ MACDriver ETHD1;
 static const uint8_t default_mac_address[] = {0xAA, 0x55, 0x13,
                                               0x37, 0x01, 0x10};
 
-static stm32_eth_rx_descriptor_t rd[MAC_RECEIVE_BUFFERS];
-static stm32_eth_tx_descriptor_t td[MAC_TRANSMIT_BUFFERS];
+static stm32_eth_rx_descriptor_t rd[STM32_MAC_RECEIVE_BUFFERS];
+static stm32_eth_tx_descriptor_t td[STM32_MAC_TRANSMIT_BUFFERS];
 
-static uint32_t rb[MAC_RECEIVE_BUFFERS * BUFFER_SLICE];
-static uint32_t tb[MAC_TRANSMIT_BUFFERS * BUFFER_SLICE];
+static uint32_t rb[STM32_MAC_RECEIVE_BUFFERS * BUFFER_SLICE];
+static uint32_t tb[STM32_MAC_TRANSMIT_BUFFERS * BUFFER_SLICE];
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -82,7 +82,7 @@ static uint32_t tb[MAC_TRANSMIT_BUFFERS * BUFFER_SLICE];
  * @param[in] reg       register number
  * @param[in] value     new register value
  */
-static void mii_write_phy(MACDriver *macp, uint32_t reg, uint32_t value) {
+static void mii_write(MACDriver *macp, uint32_t reg, uint32_t value) {
 
   ETH->MACMIIDR = value;
   ETH->MACMIIAR = macp->phyaddr | (reg << 6) | MACMIIDR_CR |
@@ -99,7 +99,7 @@ static void mii_write_phy(MACDriver *macp, uint32_t reg, uint32_t value) {
  *
  * @return              The PHY register content.
  */
-static uint32_t mii_read_phy(MACDriver *macp, uint32_t reg) {
+static uint32_t mii_read(MACDriver *macp, uint32_t reg) {
 
   ETH->MACMIIAR = macp->phyaddr | (reg << 6) | MACMIIDR_CR | ETH_MACMIIAR_MB;
   while ((ETH->MACMIIAR & ETH_MACMIIAR_MB) != 0)
@@ -117,10 +117,10 @@ static void mii_find_phy(MACDriver *macp) {
   uint32_t i;
 
   for (i = 0; i < 31; i++) {
+    macp->phyaddr = i << 11;
     ETH->MACMIIDR = (i << 6) | MACMIIDR_CR;
-    if ((mii_read_phy(macp, MII_PHYSID1) == (BOARD_PHY_ID >> 16)) &&
-        (mii_read_phy(macp, MII_PHYSID2) == (BOARD_PHY_ID & 0xFFF0))) {
-      macp->phyaddr = i << 11;
+    if ((mii_read(macp, MII_PHYSID1) == (BOARD_PHY_ID >> 16)) &&
+        ((mii_read(macp, MII_PHYSID2) & 0xFFF0) == (BOARD_PHY_ID & 0xFFF0))) {
       return;
     }
   }
@@ -204,16 +204,16 @@ void mac_lld_init(void) {
 
   /* Descriptor tables are initialized in chained mode, note that the first
      word is not initialized here but in mac_lld_start().*/
-  for (i = 0; i < MAC_RECEIVE_BUFFERS; i++) {
-    rd[i].rdes1 = STM32_RDES1_RCH | MAC_BUFFERS_SIZE;
+  for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++) {
+    rd[i].rdes1 = STM32_RDES1_RCH | STM32_MAC_BUFFERS_SIZE;
     rd[i].rdes2 = (uint32_t)&rb[i * BUFFER_SLICE];
-    rd[i].rdes3 = (uint32_t)&rb[((i + 1) % MAC_RECEIVE_BUFFERS) *
+    rd[i].rdes3 = (uint32_t)&rd[((i + 1) % STM32_MAC_RECEIVE_BUFFERS) *
                                 BUFFER_SLICE];
   }
-  for (i = 0; i < MAC_TRANSMIT_BUFFERS; i++) {
+  for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++) {
     td[i].tdes1 = 0;
     td[i].tdes2 = (uint32_t)&tb[i * BUFFER_SLICE];
-    td[i].tdes3 = (uint32_t)&tb[((i + 1) % MAC_TRANSMIT_BUFFERS) *
+    td[i].tdes3 = (uint32_t)&td[((i + 1) % STM32_MAC_TRANSMIT_BUFFERS) *
                                 BUFFER_SLICE];
   }
 
@@ -252,13 +252,13 @@ void mac_lld_init(void) {
   BOARD_PHY_RESET();
 #else
   /* PHY soft reset procedure.*/
-  mii_write_phy(&ETHD1, MII_BMCR, BMCR_RESET);
-  while (mii_read_phy(&ETHD1, MII_BMCR) & BMCR_RESET)
+  mii_write(&ETHD1, MII_BMCR, BMCR_RESET);
+  while (mii_read(&ETHD1, MII_BMCR) & BMCR_RESET)
     ;
 #endif
 
   /* PHY in power down mode until the driver will be started.*/
-  mii_write_phy(&ETHD1, MII_BMCR, BMCR_PDOWN);
+/*  mii_write(&ETHD1, MII_BMCR, BMCR_PDOWN);*/
 
   /* MAC clocks stopped again.*/
   rccDisableETH(FALSE);
@@ -276,10 +276,10 @@ void mac_lld_start(MACDriver *macp) {
 
 
   /* Resets the state of all descriptors.*/
-  for (i = 0; i < MAC_RECEIVE_BUFFERS; i++)
+  for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++)
     rd[i].rdes0 = STM32_RDES0_OWN;
   macp->rxptr = (stm32_eth_rx_descriptor_t *)rd;
-  for (i = 0; i < MAC_TRANSMIT_BUFFERS; i++)
+  for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++)
     td[i].tdes0 = STM32_TDES0_TCH;
   macp->txptr = (stm32_eth_tx_descriptor_t *)td;
 
@@ -490,19 +490,19 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   uint32_t maccr, bmsr, bmcr;
 
   /* Checks if the link is up, updates the status accordingly and returns.*/
-  bmsr = mii_read_phy(macp, MII_BMSR);
+  bmsr = mii_read(macp, MII_BMSR);
   if (!(bmsr & BMSR_LSTATUS))
     return macp->link_up = FALSE;
 
   maccr = ETH->MACCR;
-  bmcr = mii_read_phy(macp, MII_BMCR);
+  bmcr = mii_read(macp, MII_BMCR);
 
   /* Check on auto-negotiation mode.*/
   if (bmcr & BMCR_ANENABLE) {
     uint32_t lpa;
 
     /* Auto-nogotiation enabled, checks the LPA register.*/
-    lpa = mii_read_phy(macp, MII_LPA);
+    lpa = mii_read(macp, MII_LPA);
 
     /* Check on link speed.*/
     if (lpa & (LPA_100HALF | LPA_100FULL | LPA_100BASE4))

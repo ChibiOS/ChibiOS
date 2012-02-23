@@ -122,21 +122,21 @@
  * @brief   Number of available transmit buffers.
  */
 #if !defined(MAC_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
-#define MAC_TRANSMIT_BUFFERS        2
+#define STM32_MAC_TRANSMIT_BUFFERS  2
 #endif
 
 /**
  * @brief   Number of available receive buffers.
  */
 #if !defined(MAC_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
-#define MAC_RECEIVE_BUFFERS         4
+#define STM32_MAC_RECEIVE_BUFFERS   4
 #endif
 
 /**
  * @brief   Maximum supported frame size.
  */
 #if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define MAC_BUFFERS_SIZE            1520
+#define STM32_MAC_BUFFERS_SIZE      1520
 #endif
 
 /**

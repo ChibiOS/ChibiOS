@@ -21,6 +21,8 @@
 #include "ch.h"
 #include "hal.h"
 
+static const MACConfig mac_config = {NULL};
+
 /*
  * Application entry point.
  */
@@ -39,7 +41,7 @@ int main(void) {
   /*
    * Activates the MAC driver 1.
    */
-/*  macStart(&ETHD1, NULL);*/
+  macStart(&ETHD1, &mac_config);
 
   /*
    * Normal main() thread activity, in this demo it enables and disables the
