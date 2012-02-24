@@ -26,6 +26,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 #include "hal.h"
 #include "mii.h"
@@ -258,7 +260,7 @@ void mac_lld_init(void) {
 #endif
 
   /* PHY in power down mode until the driver will be started.*/
-/*  mii_write(&ETHD1, MII_BMCR, BMCR_PDOWN);*/
+  mii_write(&ETHD1, MII_BMCR, mii_read(&ETHD1, MII_BMCR) | BMCR_PDOWN);
 
   /* MAC clocks stopped again.*/
   rccDisableETH(FALSE);
@@ -273,7 +275,6 @@ void mac_lld_init(void) {
  */
 void mac_lld_start(MACDriver *macp) {
   unsigned i;
-
 
   /* Resets the state of all descriptors.*/
   for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++)
@@ -291,6 +292,9 @@ void mac_lld_start(MACDriver *macp) {
 
   /* ISR vector enabled.*/
   nvicEnableVector(ETH_IRQn, CORTEX_PRIORITY_MASK(STM32_ETH1_IRQ_PRIORITY));
+
+  /* PHY in power up mode.*/
+  mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) & ~BMCR_PDOWN);
 
   /* MAC configuration:
      ETH_MACFFR_SAF     - Source address filter. Broadcast frames are not
@@ -343,19 +347,22 @@ void mac_lld_start(MACDriver *macp) {
  */
 void mac_lld_stop(MACDriver *macp) {
 
-  (void)macp;
+  if (macp->state != MAC_STOP) {
+    /* PHY in power down mode until the driver will be restarted.*/
+    mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) | BMCR_PDOWN);
 
-  /* MAC and DMA stopped.*/
-  ETH->MACCR    = 0;
-  ETH->DMAOMR   = 0;
-  ETH->DMAIER   = 0;
-  ETH->DMASR    = ETH->DMASR;
+    /* MAC and DMA stopped.*/
+    ETH->MACCR    = 0;
+    ETH->DMAOMR   = 0;
+    ETH->DMAIER   = 0;
+    ETH->DMASR    = ETH->DMASR;
 
-  /* MAC clocks stopped.*/
-  rccDisableETH(FALSE);
+    /* MAC clocks stopped.*/
+    rccDisableETH(FALSE);
 
-  /* ISR vector disabled.*/
-  nvicDisableVector(ETH_IRQn);
+    /* ISR vector disabled.*/
+    nvicDisableVector(ETH_IRQn);
+  }
 }
 
 /**
@@ -373,9 +380,35 @@ void mac_lld_stop(MACDriver *macp) {
  */
 msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
                                       MACTransmitDescriptor *tdp) {
+  stm32_eth_tx_descriptor_t *tdes;
 
-  (void)macp;
-  (void)tdp;
+  if (!macp->link_up)
+    return RDY_TIMEOUT;
+
+  chSysLock();
+
+  /* Get Current TX descriptor.*/
+  tdes = macp->txptr;
+
+  /* Ensure that descriptor isn't owned by the Ethernet DMA or locked by
+     another thread.*/
+  if (tdes->tdes0 & (STM32_TDES0_OWN | STM32_TDES0_LOCKED)) {
+    chSysUnlock();
+    return RDY_TIMEOUT;
+  }
+
+  /* Marks the current descriptor as locked using a reserved bit.*/
+  tdes->tdes0 |= STM32_TDES0_LOCKED;
+
+  /* Next TX descriptor to use.*/
+  macp->txptr = (stm32_eth_tx_descriptor_t *)tdes->tdes3;
+
+  chSysUnlock();
+
+  /* Set the buffer size and configuration.*/
+  tdp->offset   = 0;
+  tdp->size     = STM32_MAC_BUFFERS_SIZE;
+  tdp->physdesc = tdes;
 
   return RDY_OK;
 }
@@ -398,11 +431,18 @@ size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
                                          uint8_t *buf,
                                          size_t size) {
 
-  (void)tdp;
-  (void)buf;
-  (void)size;
+  chDbgAssert(!(tdp->physdesc->tdes0 & STM32_TDES0_OWN),
+              "mac_lld_release_receive_descriptor(), #1",
+              "attempt to write descriptor already owned by DMA");
 
-  return 0;
+  if (size > tdp->size - tdp->offset)
+    size = tdp->size - tdp->offset;
+
+  if (size > 0) {
+    memcpy((uint8_t *)(tdp->physdesc->tdes2) + tdp->offset, buf, size);
+    tdp->offset += size;
+  }
+  return size;
 }
 
 /**
@@ -415,7 +455,24 @@ size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
  */
 void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 
-  (void)tdp;
+  chDbgAssert(!(tdp->physdesc->tdes0 & STM32_TDES0_OWN),
+              "mac_lld_release_transmit_descriptor(), #1",
+              "attempt to release descriptor already owned by DMA");
+
+  chSysLock();
+
+  /* Unlocks the descriptor and returns it to the DMA engine.*/
+  tdp->physdesc->tdes1 = tdp->offset;
+  tdp->physdesc->tdes0 = STM32_TDES0_IC | STM32_TDES0_LS | STM32_TDES0_FS |
+                         STM32_TDES0_OWN;
+
+  /* If the DMA engine is stalled then a restart request is issued.*/
+  if ((ETH->DMASR & 0x700000) == 0x600000) {
+    ETH->DMASR   = ETH_DMASR_TBUS;
+    ETH->DMATPDR = ETH_DMASR_TBUS; /* Any value is OK.*/
+  }
+
+  chSysUnlock();
 }
 
 /**

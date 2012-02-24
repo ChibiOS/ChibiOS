@@ -82,6 +82,7 @@
 #define STM32_TDES0_DC              0x08000000
 #define STM32_TDES0_DP              0x04000000
 #define STM32_TDES0_TTSE            0x02000000
+#define STM32_TDES0_LOCKED          0x01000000 /* NOTE: Pseudo flag.        */
 #define STM32_TDES0_CIC_MASK        0x00C00000
 #define STM32_TDES0_TER             0x00200000
 #define STM32_TDES0_TCH             0x00100000
@@ -136,7 +137,7 @@
  * @brief   Maximum supported frame size.
  */
 #if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define STM32_MAC_BUFFERS_SIZE      1520
+#define STM32_MAC_BUFFERS_SIZE      1518
 #endif
 
 /**
@@ -238,12 +239,16 @@ typedef struct {
   /**
    * @brief Current write offset.
    */
-  size_t                offset;
+  size_t                    offset;
   /**
    * @brief Available space size.
    */
-  size_t                size;
+  size_t                    size;
   /* End of the mandatory fields.*/
+  /**
+   * @brief Pointer to the physical descriptor.
+   */
+  stm32_eth_tx_descriptor_t *physdesc;
 } MACTransmitDescriptor;
 
 /**
@@ -259,6 +264,10 @@ typedef struct {
    */
   size_t                size;
   /* End of the mandatory fields.*/
+  /**
+   * @brief Pointer to the physical descriptor.
+   */
+  stm32_eth_rx_descriptor_t *physdesc;
 } MACReceiveDescriptor;
 
 /*===========================================================================*/
