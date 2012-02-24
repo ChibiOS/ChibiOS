@@ -464,7 +464,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
   /* Unlocks the descriptor and returns it to the DMA engine.*/
   tdp->physdesc->tdes1 = tdp->offset;
   tdp->physdesc->tdes0 = STM32_TDES0_IC | STM32_TDES0_LS | STM32_TDES0_FS |
-                         STM32_TDES0_OWN;
+                         STM32_TDES0_TCH | STM32_TDES0_OWN;
 
   /* If the DMA engine is stalled then a restart request is issued.*/
   if ((ETH->DMASR & 0x700000) == 0x600000) {
