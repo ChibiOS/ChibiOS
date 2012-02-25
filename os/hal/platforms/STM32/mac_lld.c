@@ -592,6 +592,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   uint32_t maccr, bmsr, bmcr;
 
   /* Checks if the link is up, updates the status accordingly and returns.*/
+  (void)mii_read(macp, MII_BMSR);
   bmsr = mii_read(macp, MII_BMSR);
   if (!(bmsr & BMSR_LSTATUS))
     return macp->link_up = FALSE;
