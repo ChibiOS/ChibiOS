@@ -432,7 +432,7 @@ size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
                                          size_t size) {
 
   chDbgAssert(!(tdp->physdesc->tdes0 & STM32_TDES0_OWN),
-              "mac_lld_release_receive_descriptor(), #1",
+              "mac_lld_write_transmit_descriptor(), #1",
               "attempt to write descriptor already owned by DMA");
 
   if (size > tdp->size - tdp->offset)
@@ -467,7 +467,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
                          STM32_TDES0_TCH | STM32_TDES0_OWN;
 
   /* If the DMA engine is stalled then a restart request is issued.*/
-  if ((ETH->DMASR & 0x700000) == 0x600000) {
+  if ((ETH->DMASR & ETH_DMASR_TPS) == ETH_DMASR_TPS_Suspended) {
     ETH->DMASR   = ETH_DMASR_TBUS;
     ETH->DMATPDR = ETH_DMASR_TBUS; /* Any value is OK.*/
   }
@@ -488,10 +488,33 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
  */
 msg_t max_lld_get_receive_descriptor(MACDriver *macp,
                                      MACReceiveDescriptor *rdp) {
+  stm32_eth_rx_descriptor_t *rdes;
 
-  (void)macp;
-  (void)rdp;
+  chSysLock();
 
+  /* Get Current RX descriptor.*/
+  rdes = macp->rxptr;
+
+  /* Iterates through received frames until a valid one is found, invalid
+     frames are discarded.*/
+  while (!(rdes->rdes0 & STM32_RDES0_OWN)) {
+    if (!(rdes->rdes0 & (STM32_RDES0_AFM | STM32_RDES0_ES)) &&
+        (rdes->rdes0 & STM32_RDES0_FS) && (rdes->rdes0 & STM32_RDES0_LS)) {
+      /* Found a valid one.*/
+      rdp->offset   = 0;
+      rdp->size     = ((rdes->rdes0 & STM32_RDES0_FL_MASK) >> 16) - 4;
+      rdp->physdesc = rdes;
+      macp->rxptr   = (stm32_eth_rx_descriptor_t *)rdes->rdes3;
+
+      chSysUnlock();
+      return RDY_OK;
+    }
+    /* Invalid frame found, purging.*/
+    rdes->rdes0 = STM32_RDES0_OWN;
+    macp->rxptr = (stm32_eth_rx_descriptor_t *)rdes->rdes3;
+  }
+
+  chSysUnlock();
   return RDY_TIMEOUT;
 }
 
@@ -512,11 +535,18 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
                                        uint8_t *buf,
                                        size_t size) {
 
-  (void)rdp;
-  (void)buf;
-  (void)size;
+  chDbgAssert(!(tdp->physdesc->rdes0 & STM32_RDES0_OWN),
+              "mac_lld_read_receive_descriptor(), #1",
+              "attempt to read descriptor already owned by DMA");
 
-  return 0;
+  if (size > rdp->size - rdp->offset)
+    size = rdp->size - rdp->offset;
+
+  if (size > 0) {
+    memcpy(buf, (uint8_t *)(rdp->physdesc->rdes2) + rdp->offset, size);
+    rdp->offset += size;
+  }
+  return size;
 }
 
 /**
@@ -530,7 +560,22 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
  */
 void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 
-  (void)rdp;
+  chDbgAssert(!(rdp->physdesc->rdes0 & STM32_RDES0_OWN),
+              "mac_lld_release_receive_descriptor(), #1",
+              "attempt to release descriptor already owned by DMA");
+
+  chSysLock();
+
+  /* Give buffer back to the Ethernet DMA.*/
+  rdp->physdesc->rdes0 = STM32_RDES0_OWN;
+
+  /* If the DMA engine is stalled then a restart request is issued.*/
+  if ((ETH->DMASR & ETH_DMASR_RPS) == ETH_DMASR_RPS_Suspended) {
+    ETH->DMASR   = ETH_DMASR_RBUS;
+    ETH->DMARPDR = ETH_DMASR_RBUS; /* Any value is OK.*/
+  }
+
+  chSysUnlock();
 }
 
 /**
