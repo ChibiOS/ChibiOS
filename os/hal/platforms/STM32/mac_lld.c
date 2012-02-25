@@ -535,7 +535,7 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
                                        uint8_t *buf,
                                        size_t size) {
 
-  chDbgAssert(!(tdp->physdesc->rdes0 & STM32_RDES0_OWN),
+  chDbgAssert(!(rdp->physdesc->rdes0 & STM32_RDES0_OWN),
               "mac_lld_read_receive_descriptor(), #1",
               "attempt to read descriptor already owned by DMA");
 
