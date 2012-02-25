@@ -60,8 +60,8 @@ int main(void) {
   chEvtAddFlags(PERIODIC_TIMER_ID | FRAME_RECEIVED_ID);
 
   /*
-   * Normal main() thread activity, in this demo it enables and disables the
-   * button EXT channel using 5 seconds intervals.
+   * Normal main() thread activity, the Ethernet status is polled every
+   * 5 seconds, incoming frames are read.
    */
   while (TRUE) {
     eventmask_t mask = chEvtWaitAny(ALL_EVENTS);
