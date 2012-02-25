@@ -314,7 +314,7 @@ void mac_lld_start(MACDriver *macp) {
   /* Transmitter and receiver enabled.
      Note that the complete setup of the MAC is performed when the link
      status is detected.*/
-  ETH->MACCR = ETH_MACCR_TE | ETH_MACCR_TE;
+  ETH->MACCR = ETH_MACCR_RE | ETH_MACCR_TE;
 
   /* DMA configuration:
      Descriptor chains pointers.*/
