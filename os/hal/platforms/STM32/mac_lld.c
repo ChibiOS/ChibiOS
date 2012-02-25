@@ -296,10 +296,10 @@ void mac_lld_start(MACDriver *macp) {
   /* PHY in power up mode.*/
   mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) & ~BMCR_PDOWN);
 
-  /* MAC configuration:
-     ETH_MACFFR_SAF     - Source address filter. Broadcast frames are not
-                          filtered.*/
-  ETH->MACFFR    = ETH_MACFFR_SAF;
+  /* MAC configuration.*/
+  ETH->MACFFR    = 0;
+  ETH->MACFCR    = 0;
+  ETH->MACVLANTR = 0;
 
   /* MAC address setup.*/
   if (macp->config->mac_address == NULL)
@@ -307,14 +307,10 @@ void mac_lld_start(MACDriver *macp) {
   else
     mac_lld_set_address(macp->config->mac_address);
 
-  /* MAC flow control not used, VLAN not used.*/
-  ETH->MACFCR    = 0;
-  ETH->MACVLANTR = 0;
-
   /* Transmitter and receiver enabled.
      Note that the complete setup of the MAC is performed when the link
      status is detected.*/
-  ETH->MACCR = ETH_MACCR_RE | ETH_MACCR_TE;
+  ETH->MACCR = ETH_MACCR_IPCO | ETH_MACCR_RE | ETH_MACCR_TE;
 
   /* DMA configuration:
      Descriptor chains pointers.*/
@@ -604,7 +600,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   if (bmcr & BMCR_ANENABLE) {
     uint32_t lpa;
 
-    /* Auto-nogotiation enabled, checks the LPA register.*/
+    /* Auto-negotiation enabled, checks the LPA register.*/
     lpa = mii_read(macp, MII_LPA);
 
     /* Check on link speed.*/
