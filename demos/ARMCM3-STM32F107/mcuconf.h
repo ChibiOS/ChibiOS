@@ -55,7 +55,7 @@
 #define STM32_OTG_CLOCK_REQUIRED            TRUE
 #define STM32_OTGFSPRE                      STM32_OTGFSPRE_DIV3
 #define STM32_I2S_CLOCK_REQUIRED            FALSE
-#define STM32_MCOSEL                        STM32_MCOSEL_PLL2
+#define STM32_MCOSEL                        STM32_MCOSEL_PLL3
 #define STM32_RTCSEL                        STM32_RTCSEL_HSEDIV
 #define STM32_PVD_ENABLE                    FALSE
 #define STM32_PLS                           STM32_PLS_LEV0
