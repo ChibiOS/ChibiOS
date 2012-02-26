@@ -38,7 +38,7 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define BUFFER_SLICE ((((STM32_MAC_BUFFERS_SIZE - 1) | 3) + 1) / 4)
+#define BUFFER_SIZE ((((STM32_MAC_BUFFERS_SIZE - 1) | 3) + 1) / 4)
 
 /* MII divider optimal value.*/
 #if (STM32_HCLK >= 60000000)
@@ -70,8 +70,8 @@ static const uint8_t default_mac_address[] = {0xAA, 0x55, 0x13,
 static stm32_eth_rx_descriptor_t rd[STM32_MAC_RECEIVE_BUFFERS];
 static stm32_eth_tx_descriptor_t td[STM32_MAC_TRANSMIT_BUFFERS];
 
-static uint32_t rb[STM32_MAC_RECEIVE_BUFFERS * BUFFER_SLICE];
-static uint32_t tb[STM32_MAC_TRANSMIT_BUFFERS * BUFFER_SLICE];
+static uint32_t rb[STM32_MAC_RECEIVE_BUFFERS][BUFFER_SIZE];
+static uint32_t tb[STM32_MAC_TRANSMIT_BUFFERS][BUFFER_SIZE];
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -208,15 +208,13 @@ void mac_lld_init(void) {
      word is not initialized here but in mac_lld_start().*/
   for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++) {
     rd[i].rdes1 = STM32_RDES1_RCH | STM32_MAC_BUFFERS_SIZE;
-    rd[i].rdes2 = (uint32_t)&rb[i * BUFFER_SLICE];
-    rd[i].rdes3 = (uint32_t)&rd[((i + 1) % STM32_MAC_RECEIVE_BUFFERS) *
-                                BUFFER_SLICE];
+    rd[i].rdes2 = (uint32_t)rb[i];
+    rd[i].rdes3 = (uint32_t)&rd[((i + 1) % STM32_MAC_RECEIVE_BUFFERS)];
   }
   for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++) {
     td[i].tdes1 = 0;
-    td[i].tdes2 = (uint32_t)&tb[i * BUFFER_SLICE];
-    td[i].tdes3 = (uint32_t)&td[((i + 1) % STM32_MAC_TRANSMIT_BUFFERS) *
-                                BUFFER_SLICE];
+    td[i].tdes2 = (uint32_t)tb[i];
+    td[i].tdes3 = (uint32_t)&td[((i + 1) % STM32_MAC_TRANSMIT_BUFFERS)];
   }
 
   /* Selection of the RMII or MII mode based on info exported by board.h.*/
@@ -260,7 +258,7 @@ void mac_lld_init(void) {
 #endif
 
   /* PHY in power down mode until the driver will be started.*/
-  mii_write(&ETHD1, MII_BMCR, mii_read(&ETHD1, MII_BMCR) | BMCR_PDOWN);
+//  mii_write(&ETHD1, MII_BMCR, mii_read(&ETHD1, MII_BMCR) | BMCR_PDOWN);
 
   /* MAC clocks stopped again.*/
   rccDisableETH(FALSE);
@@ -294,7 +292,7 @@ void mac_lld_start(MACDriver *macp) {
   nvicEnableVector(ETH_IRQn, CORTEX_PRIORITY_MASK(STM32_ETH1_IRQ_PRIORITY));
 
   /* PHY in power up mode.*/
-  mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) & ~BMCR_PDOWN);
+//  mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) & ~BMCR_PDOWN);
 
   /* MAC configuration.*/
   ETH->MACFFR    = 0;
@@ -345,7 +343,7 @@ void mac_lld_stop(MACDriver *macp) {
 
   if (macp->state != MAC_STOP) {
     /* PHY in power down mode until the driver will be restarted.*/
-    mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) | BMCR_PDOWN);
+//    mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) | BMCR_PDOWN);
 
     /* MAC and DMA stopped.*/
     ETH->MACCR    = 0;
