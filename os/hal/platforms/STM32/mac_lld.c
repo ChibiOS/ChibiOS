@@ -209,12 +209,12 @@ void mac_lld_init(void) {
   for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++) {
     rd[i].rdes1 = STM32_RDES1_RCH | STM32_MAC_BUFFERS_SIZE;
     rd[i].rdes2 = (uint32_t)rb[i];
-    rd[i].rdes3 = (uint32_t)&rd[((i + 1) % STM32_MAC_RECEIVE_BUFFERS)];
+    rd[i].rdes3 = (uint32_t)&rd[(i + 1) % STM32_MAC_RECEIVE_BUFFERS];
   }
   for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++) {
     td[i].tdes1 = 0;
     td[i].tdes2 = (uint32_t)tb[i];
-    td[i].tdes3 = (uint32_t)&td[((i + 1) % STM32_MAC_TRANSMIT_BUFFERS)];
+    td[i].tdes3 = (uint32_t)&td[(i + 1) % STM32_MAC_TRANSMIT_BUFFERS];
   }
 
   /* Selection of the RMII or MII mode based on info exported by board.h.*/
