@@ -258,7 +258,7 @@ void mac_lld_init(void) {
 #endif
 
   /* PHY in power down mode until the driver will be started.*/
-//  mii_write(&ETHD1, MII_BMCR, mii_read(&ETHD1, MII_BMCR) | BMCR_PDOWN);
+  mii_write(&ETHD1, MII_BMCR, mii_read(&ETHD1, MII_BMCR) | BMCR_PDOWN);
 
   /* MAC clocks stopped again.*/
   rccDisableETH(FALSE);
@@ -292,7 +292,7 @@ void mac_lld_start(MACDriver *macp) {
   nvicEnableVector(ETH_IRQn, CORTEX_PRIORITY_MASK(STM32_ETH1_IRQ_PRIORITY));
 
   /* PHY in power up mode.*/
-//  mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) & ~BMCR_PDOWN);
+  mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) & ~BMCR_PDOWN);
 
   /* MAC configuration.*/
   ETH->MACFFR    = 0;
@@ -317,7 +317,7 @@ void mac_lld_start(MACDriver *macp) {
 
   /* Enabling required interrupt sources.*/
   ETH->DMASR    = ETH->DMASR;
-  ETH->DMAIER   = ETH_DMAIER_RIE | ETH_DMAIER_TIE;
+  ETH->DMAIER   = ETH_DMAIER_NISE | ETH_DMAIER_RIE | ETH_DMAIER_TIE;
 
   /* DMA general settings.*/
   ETH->DMABMR   = ETH_DMABMR_AAB | ETH_DMABMR_RDP_1Beat | ETH_DMABMR_PBL_1Beat;
@@ -343,7 +343,7 @@ void mac_lld_stop(MACDriver *macp) {
 
   if (macp->state != MAC_STOP) {
     /* PHY in power down mode until the driver will be restarted.*/
-//    mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) | BMCR_PDOWN);
+    mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) | BMCR_PDOWN);
 
     /* MAC and DMA stopped.*/
     ETH->MACCR    = 0;
