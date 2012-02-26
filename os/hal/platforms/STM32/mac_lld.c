@@ -585,18 +585,21 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 bool_t mac_lld_poll_link_status(MACDriver *macp) {
   uint32_t maccr, bmsr, bmcr;
 
-  /* Checks if the link is up, updates the status accordingly and returns.*/
+  maccr = ETH->MACCR;
+
+  /* PHY CR and SR registers read.*/
   (void)mii_read(macp, MII_BMSR);
   bmsr = mii_read(macp, MII_BMSR);
-  if (!(bmsr & BMSR_LSTATUS))
-    return macp->link_up = FALSE;
-
-  maccr = ETH->MACCR;
   bmcr = mii_read(macp, MII_BMCR);
 
   /* Check on auto-negotiation mode.*/
   if (bmcr & BMCR_ANENABLE) {
     uint32_t lpa;
+
+    /* Auto-negotiation must be finished without faults and link established.*/
+    if ((bmsr & (BMSR_LSTATUS | BMSR_RFAULT | BMSR_ANEGCOMPLETE)) !=
+        (BMSR_LSTATUS | BMSR_ANEGCOMPLETE))
+      return macp->link_up = FALSE;
 
     /* Auto-negotiation enabled, checks the LPA register.*/
     lpa = mii_read(macp, MII_LPA);
@@ -614,7 +617,9 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
       maccr &= ~ETH_MACCR_DM;
   }
   else {
-    /* Auto-negotiation disabled, checks the current settings.*/
+    /* Link must be established.*/
+    if (!(bmsr & BMSR_LSTATUS))
+      return macp->link_up = FALSE;
 
     /* Check on link speed.*/
     if (bmcr & BMCR_SPEED100)
