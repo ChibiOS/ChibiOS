@@ -107,6 +107,7 @@
 - NEW: Added handling of input 2 to the STM32 ICU driver (contributed by
   Fabio).
 - NEW: STM32 Ethernet driver completed, only partially tested on STM32F107.
+  Added an STM32 lwIP demo.
   TODO: Extensive testing.
 - CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renemed to  icuGetWidth()
   and icuGetPeriod().
