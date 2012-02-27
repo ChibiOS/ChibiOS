@@ -70,8 +70,8 @@ CSRC = $(PORTSRC) \
        $(LWIPV4SRC) \
        $(LWAPISRC) \
        $(CHIBIOS)/os/various/evtimer.c \
+       $(CHIBIOS)/os/various/lwipthread.c \
        ./lwip/arch/sys_arch.c \
-       ./lwip/lwipthread.c \
        ./web/web.c \
        main.c
 
