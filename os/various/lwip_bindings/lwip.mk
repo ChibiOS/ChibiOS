@@ -1,6 +1,10 @@
 # List of the required lwIP files.
 LWIP = 	${CHIBIOS}/ext/lwip-1.4.0
 
+LWBINDSRC = \
+        $(CHIBIOS)/os/various/lwip_bindings/lwipthread.c \
+        $(CHIBIOS)/os/various/lwip_bindings/arch/sys_arch.c
+
 LWNETIFSRC = \
         ${LWIP}/src/netif/etharp.c
 
@@ -42,6 +46,9 @@ LWAPISRC = \
         ${LWIP}/src/api/sockets.c \
         ${LWIP}/src/api/tcpip.c
 
+LWSRC = $(LWBINDSRC) $(LWNETIFSRC) $(LWCORESRC) $(LWIPV4SRC) $(LWAPISRC)
+
 LWINC = \
+        $(CHIBIOS)/os/various/lwip_bindings \
         ${LWIP}/src/include \
         ${LWIP}/src/include/ipv4

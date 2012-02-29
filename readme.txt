@@ -108,7 +108,8 @@
   Fabio).
 - NEW: STM32 Ethernet driver completed, only partially tested on STM32F107.
   Added an STM32 lwIP demo.
-  TODO: Extensive testing.
+- NEW: lwIP related code is not centralized into a single place, no need to
+  duplicate the code in each application or demo.
 - CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renemed to  icuGetWidth()
   and icuGetPeriod().
 - CHANGE: Renamed Ethernet driver in AT91 HAL ETHD1.

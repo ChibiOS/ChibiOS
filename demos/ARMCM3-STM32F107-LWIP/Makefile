@@ -64,8 +64,8 @@ include $(CHIBIOS)/os/hal/platforms/STM32F1xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F1xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
 include $(CHIBIOS)/test/test.mk
-include ./lwip/lwip.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/STM32F107xC.ld
@@ -78,13 +78,8 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(LWNETIFSRC) \
-       $(LWCORESRC) \
-       $(LWIPV4SRC) \
-       $(LWAPISRC) \
+       $(LWSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
-       $(CHIBIOS)/os/various/lwipthread.c \
-       ./lwip/arch/sys_arch.c \
        web/web.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -116,8 +111,7 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(LWINC) \
-         $(CHIBIOS)/os/various \
-         ./lwip
+         $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths
