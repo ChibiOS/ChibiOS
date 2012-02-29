@@ -118,9 +118,8 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p) {
 #endif
 
   /* Iterates through the pbuf chain. */
-  for(q = p; q != NULL; q = q->next) {
+  for(q = p; q != NULL; q = q->next)
     macWriteTransmitDescriptor(&td, (uint8_t *)q->payload, (size_t)q->len);
-  }
   macReleaseTransmitDescriptor(&td);
 
 #if ETH_PAD_SIZE
@@ -158,9 +157,8 @@ static struct pbuf *low_level_input(struct netif *netif) {
 #endif
 
       /* Iterates through the pbuf chain. */
-      for(q = p; q != NULL; q = q->next) {
+      for(q = p; q != NULL; q = q->next)
         macReadReceiveDescriptor(&rd, (uint8_t *)q->payload, (size_t)q->len);
-      }
       macReleaseReceiveDescriptor(&rd);
 
 #if ETH_PAD_SIZE
