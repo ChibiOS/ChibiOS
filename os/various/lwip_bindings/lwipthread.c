@@ -224,6 +224,8 @@ msg_t lwip_thread(void *p) {
   static struct netif thisif;
   static const MACConfig mac_config = {thisif.hwaddr};
 
+  chRegSetThreadName("lwipthread");
+
   /* Initializes the thing.*/
   sys_init();
   mem_init();
