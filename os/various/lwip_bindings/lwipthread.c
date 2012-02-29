@@ -275,8 +275,17 @@ msg_t lwip_thread(void *p) {
 
   while (TRUE) {
     eventmask_t mask = chEvtWaitAny(ALL_EVENTS);
-    if (mask & PERIODIC_TIMER_ID)
-      (void)macPollLinkStatus(&ETHD1);
+    if (mask & PERIODIC_TIMER_ID) {
+      bool_t current_link_status = macPollLinkStatus(&ETHD1);
+      if (current_link_status != netif_is_link_up(&thisif)) {
+        if (current_link_status)
+          tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_up,
+                                     &thisif, 0);
+        else
+          tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_down,
+                                     &thisif, 0);
+      }
+    }
     if (mask & FRAME_RECEIVED_ID) {
       struct pbuf *p;
       while ((p = low_level_input(&thisif)) != NULL) {
