@@ -1,8 +1,14 @@
+/**
+ * @file
+ *
+ * lwIP Options Configuration
+ */
+
 /*
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
+ * All rights reserved. 
+ * 
+ * Redistribution and use in source and binary forms, with or without modification, 
  * are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
@@ -11,21 +17,21 @@
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
+ *    derived from this software without specific prior written permission. 
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
+ * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
  * OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
- *
+ * 
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
@@ -48,12 +54,20 @@
 #define SYS_LIGHTWEIGHT_PROT            0
 #endif
 
-/**
+/** 
  * NO_SYS==1: Provides VERY minimal functionality. Otherwise,
  * use lwIP facilities.
  */
 #ifndef NO_SYS
 #define NO_SYS                          0
+#endif
+
+/**
+ * NO_SYS_NO_TIMERS==1: Drop support for sys_timeout when NO_SYS==1
+ * Mainly for compatibility to old versions.
+ */
+#ifndef NO_SYS_NO_TIMERS
+#define NO_SYS_NO_TIMERS                0
 #endif
 
 /**
@@ -110,6 +124,15 @@
  */
 #ifndef MEM_SIZE
 #define MEM_SIZE                        1600
+#endif
+
+/**
+ * MEMP_SEPARATE_POOLS: if defined to 1, each pool is placed in its own array.
+ * This can be used to individually change the location of each pool.
+ * Default is one big array for all pools
+ */
+#ifndef MEMP_SEPARATE_POOLS
+#define MEMP_SEPARATE_POOLS             0
 #endif
 
 /**
@@ -239,11 +262,22 @@
 #endif
 
 /**
- * MEMP_NUM_REASSDATA: the number of simultaneously IP packets queued for
+ * MEMP_NUM_REASSDATA: the number of IP packets simultaneously queued for
  * reassembly (whole packets, not fragments!)
  */
 #ifndef MEMP_NUM_REASSDATA
 #define MEMP_NUM_REASSDATA              5
+#endif
+
+/**
+ * MEMP_NUM_FRAG_PBUF: the number of IP fragments simultaneously sent
+ * (fragments, not whole packets!).
+ * This is only used with IP_FRAG_USES_STATIC_BUF==0 and
+ * LWIP_NETIF_TX_SINGLE_PBUF==0 and only has to be > 1 with DMA-enabled MACs
+ * where the packet is not yet sent when netif->output returns.
+ */
+#ifndef MEMP_NUM_FRAG_PBUF
+#define MEMP_NUM_FRAG_PBUF              15
 #endif
 
 /**
@@ -271,7 +305,7 @@
  * (requires NO_SYS==0)
  */
 #ifndef MEMP_NUM_SYS_TIMEOUT
-#define MEMP_NUM_SYS_TIMEOUT            (4 + LWIP_DHCP + LWIP_DNS)
+#define MEMP_NUM_SYS_TIMEOUT            3
 #endif
 
 /**
@@ -292,7 +326,7 @@
 
 /**
  * MEMP_NUM_TCPIP_MSG_API: the number of struct tcpip_msg, which are used
- * for callback/timeout API communication.
+ * for callback/timeout API communication. 
  * (only needed if you use tcpip.c)
  */
 #ifndef MEMP_NUM_TCPIP_MSG_API
@@ -301,7 +335,7 @@
 
 /**
  * MEMP_NUM_TCPIP_MSG_INPKT: the number of struct tcpip_msg, which are used
- * for incoming packets.
+ * for incoming packets. 
  * (only needed if you use tcpip.c)
  */
 #ifndef MEMP_NUM_TCPIP_MSG_INPKT
@@ -309,7 +343,64 @@
 #endif
 
 /**
- * PBUF_POOL_SIZE: the number of buffers in the pbuf pool.
+ * MEMP_NUM_SNMP_NODE: the number of leafs in the SNMP tree.
+ */
+#ifndef MEMP_NUM_SNMP_NODE
+#define MEMP_NUM_SNMP_NODE              50
+#endif
+
+/**
+ * MEMP_NUM_SNMP_ROOTNODE: the number of branches in the SNMP tree.
+ * Every branch has one leaf (MEMP_NUM_SNMP_NODE) at least!
+ */
+#ifndef MEMP_NUM_SNMP_ROOTNODE
+#define MEMP_NUM_SNMP_ROOTNODE          30
+#endif
+
+/**
+ * MEMP_NUM_SNMP_VARBIND: the number of concurrent requests (does not have to
+ * be changed normally) - 2 of these are used per request (1 for input,
+ * 1 for output)
+ */
+#ifndef MEMP_NUM_SNMP_VARBIND
+#define MEMP_NUM_SNMP_VARBIND           2
+#endif
+
+/**
+ * MEMP_NUM_SNMP_VALUE: the number of OID or values concurrently used
+ * (does not have to be changed normally) - 3 of these are used per request
+ * (1 for the value read and 2 for OIDs - input and output)
+ */
+#ifndef MEMP_NUM_SNMP_VALUE
+#define MEMP_NUM_SNMP_VALUE             3
+#endif
+
+/**
+ * MEMP_NUM_NETDB: the number of concurrently running lwip_addrinfo() calls
+ * (before freeing the corresponding memory using lwip_freeaddrinfo()).
+ */
+#ifndef MEMP_NUM_NETDB
+#define MEMP_NUM_NETDB                  1
+#endif
+
+/**
+ * MEMP_NUM_LOCALHOSTLIST: the number of host entries in the local host list
+ * if DNS_LOCAL_HOSTLIST_IS_DYNAMIC==1.
+ */
+#ifndef MEMP_NUM_LOCALHOSTLIST
+#define MEMP_NUM_LOCALHOSTLIST          1
+#endif
+
+/**
+ * MEMP_NUM_PPPOE_INTERFACES: the number of concurrently active PPPoE
+ * interfaces (only used with PPPOE_SUPPORT==1)
+ */
+#ifndef MEMP_NUM_PPPOE_INTERFACES
+#define MEMP_NUM_PPPOE_INTERFACES       1
+#endif
+
+/**
+ * PBUF_POOL_SIZE: the number of buffers in the pbuf pool. 
  */
 #ifndef PBUF_POOL_SIZE
 #define PBUF_POOL_SIZE                  16
@@ -335,11 +426,14 @@
 #endif
 
 /**
- * ARP_QUEUEING==1: Outgoing packets are queued during hardware address
- * resolution.
+ * ARP_QUEUEING==1: Multiple outgoing packets are queued during hardware address
+ * resolution. By default, only the most recent packet is queued per IP address.
+ * This is sufficient for most protocols and mainly reduces TCP connection
+ * startup time. Set this to 1 if you know your application sends more than one
+ * packet in a row to an IP address that is not in the ARP cache.
  */
 #ifndef ARP_QUEUEING
-#define ARP_QUEUEING                    1
+#define ARP_QUEUEING                    0
 #endif
 
 /**
@@ -349,10 +443,46 @@
  * correct addresses, or as a limited approach to attempt to handle
  * spoofing. If disabled, lwIP will need to make a new ARP request if
  * the peer is not already in the ARP table, adding a little latency.
+ * The peer *is* in the ARP table if it requested our address before.
+ * Also notice that this slows down input processing of every IP packet!
  */
 #ifndef ETHARP_TRUST_IP_MAC
-#define ETHARP_TRUST_IP_MAC             1
+#define ETHARP_TRUST_IP_MAC             0
 #endif
+
+/**
+ * ETHARP_SUPPORT_VLAN==1: support receiving ethernet packets with VLAN header.
+ * Additionally, you can define ETHARP_VLAN_CHECK to an u16_t VLAN ID to check.
+ * If ETHARP_VLAN_CHECK is defined, only VLAN-traffic for this VLAN is accepted.
+ * If ETHARP_VLAN_CHECK is not defined, all traffic is accepted.
+ */
+#ifndef ETHARP_SUPPORT_VLAN
+#define ETHARP_SUPPORT_VLAN             0
+#endif
+
+/** LWIP_ETHERNET==1: enable ethernet support for PPPoE even though ARP
+ * might be disabled
+ */
+#ifndef LWIP_ETHERNET
+#define LWIP_ETHERNET                   (LWIP_ARP || PPPOE_SUPPORT)
+#endif
+
+/** ETH_PAD_SIZE: number of bytes added before the ethernet header to ensure
+ * alignment of payload after that header. Since the header is 14 bytes long,
+ * without this padding e.g. addresses in the IP header will not be aligned
+ * on a 32-bit boundary, so setting this to 2 can speed up 32-bit-platforms.
+ */
+#ifndef ETH_PAD_SIZE
+#define ETH_PAD_SIZE                    0
+#endif
+
+/** ETHARP_SUPPORT_STATIC_ENTRIES==1: enable code to support static ARP table
+ * entries (using etharp_add_static_entry/etharp_remove_static_entry).
+ */
+#ifndef ETHARP_SUPPORT_STATIC_ENTRIES
+#define ETHARP_SUPPORT_STATIC_ENTRIES   0
+#endif
+
 
 /*
    --------------------------------
@@ -417,10 +547,12 @@
 /**
  * IP_FRAG_USES_STATIC_BUF==1: Use a static MTU-sized buffer for IP
  * fragmentation. Otherwise pbufs are allocated and reference the original
- * packet data to be fragmented.
+ * packet data to be fragmented (or with LWIP_NETIF_TX_SINGLE_PBUF==1,
+ * new PBUF_RAM pbufs are used for fragments).
+ * ATTENTION: IP_FRAG_USES_STATIC_BUF==1 may not be used for DMA-enabled MACs!
  */
 #ifndef IP_FRAG_USES_STATIC_BUF
-#define IP_FRAG_USES_STATIC_BUF         1
+#define IP_FRAG_USES_STATIC_BUF         0
 #endif
 
 /**
@@ -574,6 +706,7 @@
 /**
  * SNMP_CONCURRENT_REQUESTS: Number of concurrent requests the module will
  * allow. At least one request buffer is required.
+ * Does not have to be changed unless external MIBs answer request asynchronously
  */
 #ifndef SNMP_CONCURRENT_REQUESTS
 #define SNMP_CONCURRENT_REQUESTS        1
@@ -588,7 +721,9 @@
 #endif
 
 /**
- * SNMP_PRIVATE_MIB:
+ * SNMP_PRIVATE_MIB: 
+ * When using a private MIB, you have to create a file 'private_mib.h' that contains
+ * a 'struct mib_array_node mib_private' which contains your MIB.
  */
 #ifndef SNMP_PRIVATE_MIB
 #define SNMP_PRIVATE_MIB                0
@@ -603,13 +738,38 @@
 #define SNMP_SAFE_REQUESTS              1
 #endif
 
+/**
+ * The maximum length of strings used. This affects the size of
+ * MEMP_SNMP_VALUE elements.
+ */
+#ifndef SNMP_MAX_OCTET_STRING_LEN
+#define SNMP_MAX_OCTET_STRING_LEN       127
+#endif
+
+/**
+ * The maximum depth of the SNMP tree.
+ * With private MIBs enabled, this depends on your MIB!
+ * This affects the size of MEMP_SNMP_VALUE elements.
+ */
+#ifndef SNMP_MAX_TREE_DEPTH
+#define SNMP_MAX_TREE_DEPTH             15
+#endif
+
+/**
+ * The size of the MEMP_SNMP_VALUE elements, normally calculated from
+ * SNMP_MAX_OCTET_STRING_LEN and SNMP_MAX_TREE_DEPTH.
+ */
+#ifndef SNMP_MAX_VALUE_SIZE
+#define SNMP_MAX_VALUE_SIZE             LWIP_MAX((SNMP_MAX_OCTET_STRING_LEN)+1, sizeof(s32_t)*(SNMP_MAX_TREE_DEPTH))
+#endif
+
 /*
    ----------------------------------
    ---------- IGMP options ----------
    ----------------------------------
 */
 /**
- * LWIP_IGMP==1: Turn on IGMP module.
+ * LWIP_IGMP==1: Turn on IGMP module. 
  */
 #ifndef LWIP_IGMP
 #define LWIP_IGMP                       0
@@ -646,13 +806,6 @@
 /** DNS do a name checking between the query and the response. */
 #ifndef DNS_DOES_NAME_CHECK
 #define DNS_DOES_NAME_CHECK             1
-#endif
-
-/** DNS use a local buffer if DNS_USES_STATIC_BUF=0, a static one if
-    DNS_USES_STATIC_BUF=1, or a dynamic one if DNS_USES_STATIC_BUF=2.
-    The buffer will be of size DNS_MSG_SIZE */
-#ifndef DNS_USES_STATIC_BUF
-#define DNS_USES_STATIC_BUF             1
 #endif
 
 /** DNS message max. size. Default value is RFC compliant. */
@@ -706,6 +859,13 @@
 #define UDP_TTL                         (IP_DEFAULT_TTL)
 #endif
 
+/**
+ * LWIP_NETBUF_RECVINFO==1: append destination addr and port to every netbuf.
+ */
+#ifndef LWIP_NETBUF_RECVINFO
+#define LWIP_NETBUF_RECVINFO            0
+#endif
+
 /*
    ---------------------------------
    ---------- TCP options ----------
@@ -726,12 +886,12 @@
 #endif
 
 /**
- * TCP_WND: The size of a TCP window.  This must be at least
+ * TCP_WND: The size of a TCP window.  This must be at least 
  * (2 * TCP_MSS) for things to work well
  */
 #ifndef TCP_WND
-#define TCP_WND                         2048
-#endif
+#define TCP_WND                         (4 * TCP_MSS)
+#endif 
 
 /**
  * TCP_MAXRTX: Maximum number of retransmissions of data segments.
@@ -756,14 +916,14 @@
 #endif
 
 /**
- * TCP_MSS: TCP Maximum segment size. (default is 128, a *very*
- * conservative default.)
+ * TCP_MSS: TCP Maximum segment size. (default is 536, a conservative default,
+ * you might want to increase this.)
  * For the receive side, this MSS is advertised to the remote side
  * when opening a connection. For the transmit size, this MSS sets
  * an upper limit on the MSS advertised by the remote host.
  */
 #ifndef TCP_MSS
-#define TCP_MSS                         128
+#define TCP_MSS                         536
 #endif
 
 /**
@@ -780,7 +940,7 @@
 
 
 /**
- * TCP_SND_BUF: TCP sender buffer space (bytes).
+ * TCP_SND_BUF: TCP sender buffer space (bytes). 
  */
 #ifndef TCP_SND_BUF
 #define TCP_SND_BUF                     256
@@ -791,16 +951,25 @@
  * as much as (2 * TCP_SND_BUF/TCP_MSS) for things to work.
  */
 #ifndef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                (4 * (TCP_SND_BUF/TCP_MSS))
+#define TCP_SND_QUEUELEN                ((4 * (TCP_SND_BUF) + (TCP_MSS - 1))/(TCP_MSS))
 #endif
 
 /**
- * TCP_SNDLOWAT: TCP writable space (bytes). This must be less than or equal
- * to TCP_SND_BUF. It is the amount of space which must be available in the
- * TCP snd_buf for select to return writable.
+ * TCP_SNDLOWAT: TCP writable space (bytes). This must be less than
+ * TCP_SND_BUF. It is the amount of space which must be available in the
+ * TCP snd_buf for select to return writable (combined with TCP_SNDQUEUELOWAT).
  */
 #ifndef TCP_SNDLOWAT
-#define TCP_SNDLOWAT                    (TCP_SND_BUF/2)
+#define TCP_SNDLOWAT                    ((TCP_SND_BUF)/2)
+#endif
+
+/**
+ * TCP_SNDQUEUELOWAT: TCP writable bufs (pbuf count). This must be grater
+ * than TCP_SND_QUEUELEN. If the number of pbufs queued on a pcb drops below
+ * this number, select returns writable (combined with TCP_SNDLOWAT).
+ */
+#ifndef TCP_SNDQUEUELOWAT
+#define TCP_SNDQUEUELOWAT               ((TCP_SND_QUEUELEN)/2)
 #endif
 
 /**
@@ -817,6 +986,24 @@
  */
 #ifndef TCP_DEFAULT_LISTEN_BACKLOG
 #define TCP_DEFAULT_LISTEN_BACKLOG      0xff
+#endif
+
+/**
+ * TCP_OVERSIZE: The maximum number of bytes that tcp_write may
+ * allocate ahead of time in an attempt to create shorter pbuf chains
+ * for transmission. The meaningful range is 0 to TCP_MSS. Some
+ * suggested values are:
+ *
+ * 0:         Disable oversized allocation. Each tcp_write() allocates a new
+              pbuf (old behaviour).
+ * 1:         Allocate size-aligned pbufs with minimal excess. Use this if your
+ *            scatter-gather DMA requires aligned fragments.
+ * 128:       Limit the pbuf/memory overhead to 20%.
+ * TCP_MSS:   Try to create unfragmented TCP packets.
+ * TCP_MSS/4: Try to create 4 fragments or less per TCP packet.
+ */
+#ifndef TCP_OVERSIZE
+#define TCP_OVERSIZE                    TCP_MSS
 #endif
 
 /**
@@ -854,7 +1041,7 @@
  * Ethernet.
  */
 #ifndef PBUF_LINK_HLEN
-#define PBUF_LINK_HLEN                  14
+#define PBUF_LINK_HLEN                  (14 + ETH_PAD_SIZE)
 #endif
 
 /**
@@ -1048,14 +1235,14 @@
 #endif
 
 /**
- * PPP_THREAD_NAME: The name assigned to the pppMain thread.
+ * PPP_THREAD_NAME: The name assigned to the pppInputThread.
  */
 #ifndef PPP_THREAD_NAME
-#define PPP_THREAD_NAME                "pppMain"
+#define PPP_THREAD_NAME                "pppInputThread"
 #endif
 
 /**
- * PPP_THREAD_STACKSIZE: The stack size used by the pppMain thread.
+ * PPP_THREAD_STACKSIZE: The stack size used by the pppInputThread.
  * The stack size value itself is platform-dependent, but is passed to
  * sys_thread_new() when the thread is created.
  */
@@ -1064,7 +1251,7 @@
 #endif
 
 /**
- * PPP_THREAD_PRIO: The priority assigned to the pppMain thread.
+ * PPP_THREAD_PRIO: The priority assigned to the pppInputThread.
  * The priority value itself is platform-dependent, but is passed to
  * sys_thread_new() when the thread is created.
  */
@@ -1147,10 +1334,25 @@
 #endif
 
 /**
+ * LWIP_TCPIP_CORE_LOCKING_INPUT: (EXPERIMENTAL!)
+ * Don't use it if you're not an active lwIP project member
+ */
+#ifndef LWIP_TCPIP_CORE_LOCKING_INPUT
+#define LWIP_TCPIP_CORE_LOCKING_INPUT   0
+#endif
+
+/**
  * LWIP_NETCONN==1: Enable Netconn API (require to use api_lib.c)
  */
 #ifndef LWIP_NETCONN
 #define LWIP_NETCONN                    1
+#endif
+
+/** LWIP_TCPIP_TIMEOUT==1: Enable tcpip_timeout/tcpip_untimeout tod create
+ * timers running in tcpip_thread from another thread.
+ */
+#ifndef LWIP_TCPIP_TIMEOUT
+#define LWIP_TCPIP_TIMEOUT              1
 #endif
 
 /*
@@ -1213,10 +1415,19 @@
 #endif
 
 /**
- * SO_REUSE==1: Enable SO_REUSEADDR and SO_REUSEPORT options. DO NOT USE!
+ * SO_REUSE==1: Enable SO_REUSEADDR option.
  */
 #ifndef SO_REUSE
 #define SO_REUSE                        0
+#endif
+
+/**
+ * SO_REUSE_RXTOALL==1: Pass a copy of incoming broadcast/multicast packets
+ * to all local matches if SO_REUSEADDR is turned on.
+ * WARNING: Adds a memcpy for every packet if passing to more than one pcb!
+ */
+#ifndef SO_REUSE_RXTOALL
+#define SO_REUSE_RXTOALL                0
 #endif
 
 /*
@@ -1303,21 +1514,21 @@
  * MEM_STATS==1: Enable mem.c stats.
  */
 #ifndef MEM_STATS
-#define MEM_STATS                       1
+#define MEM_STATS                       ((MEM_LIBC_MALLOC == 0) && (MEM_USE_POOLS == 0))
 #endif
 
 /**
  * MEMP_STATS==1: Enable memp.c pool stats.
  */
 #ifndef MEMP_STATS
-#define MEMP_STATS                      1
+#define MEMP_STATS                      (MEMP_MEM_MALLOC == 0)
 #endif
 
 /**
  * SYS_STATS==1: Enable system stats (sem and mbox counts, etc).
  */
 #ifndef SYS_STATS
-#define SYS_STATS                       1
+#define SYS_STATS                       (NO_SYS == 0)
 #endif
 
 #else
@@ -1491,9 +1702,12 @@
 #endif
 #define PPP_MINMRU                      128             /* No MRUs below this */
 
-
+#ifndef MAXNAMELEN
 #define MAXNAMELEN                      256     /* max length of hostname or name for auth */
+#endif
+#ifndef MAXSECRETLEN
 #define MAXSECRETLEN                    256     /* max length of password or secret */
+#endif
 
 #endif /* PPP_SUPPORT */
 
@@ -1508,28 +1722,28 @@
 #ifndef CHECKSUM_GEN_IP
 #define CHECKSUM_GEN_IP                 1
 #endif
-
+ 
 /**
  * CHECKSUM_GEN_UDP==1: Generate checksums in software for outgoing UDP packets.
  */
 #ifndef CHECKSUM_GEN_UDP
 #define CHECKSUM_GEN_UDP                1
 #endif
-
+ 
 /**
  * CHECKSUM_GEN_TCP==1: Generate checksums in software for outgoing TCP packets.
  */
 #ifndef CHECKSUM_GEN_TCP
 #define CHECKSUM_GEN_TCP                1
 #endif
-
+ 
 /**
  * CHECKSUM_CHECK_IP==1: Check checksums in software for incoming IP packets.
  */
 #ifndef CHECKSUM_CHECK_IP
 #define CHECKSUM_CHECK_IP               1
 #endif
-
+ 
 /**
  * CHECKSUM_CHECK_UDP==1: Check checksums in software for incoming UDP packets.
  */
@@ -1542,6 +1756,14 @@
  */
 #ifndef CHECKSUM_CHECK_TCP
 #define CHECKSUM_CHECK_TCP              1
+#endif
+
+/**
+ * LWIP_CHECKSUM_ON_COPY==1: Calculate checksum when copying data from
+ * application buffers to pbufs.
+ */
+#ifndef LWIP_CHECKSUM_ON_COPY
+#define LWIP_CHECKSUM_ON_COPY           0
 #endif
 
 /*
@@ -1669,6 +1891,13 @@
  */
 #ifndef SYS_DEBUG
 #define SYS_DEBUG                       LWIP_DBG_OFF
+#endif
+
+/**
+ * TIMERS_DEBUG: Enable debugging in timers.c.
+ */
+#ifndef TIMERS_DEBUG
+#define TIMERS_DEBUG                    LWIP_DBG_OFF
 #endif
 
 /**
