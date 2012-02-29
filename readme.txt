@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed stack misalignment on Posix-MacOSX (bug 3495487)(backported
+  in 2.2.9 and 2.4.1).
 - FIX: Fixed STM8S HSI clock initialization error (bug 3489727)(backported to
   2.2.9 and 2.4.1).
 - FIX: Fixed MMC over SPI driver performs an unnecessary SPI read (bug
