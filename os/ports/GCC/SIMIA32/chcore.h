@@ -105,6 +105,12 @@ struct context {
 
 #define APUSH(p, a) (p) -= sizeof(void *), *(void **)(p) = (void*)(a)
 
+/* Darwin requires the stack to be aligned to a 16-byte boundary at
+ * the time of a call instruction (in case the called function needs
+ * to save MMX registers). This aligns to 'mod' module 16, so that we'll end
+ * up with the right alignment after pushing the args. */
+#define AALIGN(p, mask, mod) p = (void *)((((uintptr_t)(p) - mod) & ~mask) + mod)
+
 /**
  * Platform dependent part of the @p chThdCreateI() API.
  * This code usually setup the context switching frame represented by a
@@ -112,6 +118,9 @@ struct context {
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
   uint8_t *esp = (uint8_t *)workspace + wsize;                          \
+  APUSH(esp, 0);                                                        \
+  uint8_t *savebp = esp;                                                \
+  AALIGN(esp, 15, 8);                                                   \
   APUSH(esp, arg);                                                      \
   APUSH(esp, pf);                                                       \
   APUSH(esp, 0);                                                        \
@@ -120,7 +129,7 @@ struct context {
   ((struct intctx *)esp)->ebx = 0;                                      \
   ((struct intctx *)esp)->edi = 0;                                      \
   ((struct intctx *)esp)->esi = 0;                                      \
-  ((struct intctx *)esp)->ebp = 0;                                      \
+  ((struct intctx *)esp)->ebp = savebp;                                 \
   tp->p_ctx.esp = (struct intctx *)esp;                                 \
 }
 
