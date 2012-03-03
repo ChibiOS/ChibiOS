@@ -226,9 +226,9 @@ void mac_lld_init(void) {
 #endif
 #elif defined(STM32F2XX) || defined(STM32F4XX)
 #if defined(BOARD_PHY_RMII)
-  SYSCFG->PMC |= SYSCFG_PMC_MII_RMII;
+  SYSCFG->PMC |= SYSCFG_PMC_MII_RMII_SEL;
 #else
-  SYSCFG->PMC &= ~SYSCFG_PMC_MII_RMII;
+  SYSCFG->PMC &= ~SYSCFG_PMC_MII_RMII_SEL;
 #endif
 #else
 #error "unsupported STM32 platform for MAC driver"
