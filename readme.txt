@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.1 ***
+- FIX: Fixed STM8S HSI clock initialization error (bug 3489727).
 - FIX: Fixed MMC over SPI driver performs an unnecessary SPI read (bug
   3486930).
 - FIX: Fixed Realtime counter initialization in STM32 HALs (bug 3485500).

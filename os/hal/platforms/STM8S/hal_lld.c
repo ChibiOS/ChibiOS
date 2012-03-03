@@ -69,7 +69,7 @@ void hal_lld_init(void) {
 
 #if !STM8S_NO_CLOCK_INIT
   /* Makes sure that HSI is stable before proceeding.*/
-  CLK->ICKR |= CLK_ICKR_HSIRDY;
+  CLK->ICKR |= CLK_ICKR_HSIEN;
   while ((CLK->ICKR & CLK_ICKR_HSIRDY) == 0)
     ;
 
