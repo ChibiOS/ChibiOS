@@ -5707,7 +5707,11 @@ typedef struct
 #define SYSCFG_MEMRMP_MEM_MODE_1        ((uint32_t)0x00000002)
 
 /******************  Bit definition for SYSCFG_PMC register  ******************/
-#define SYSCFG_PMC_MII_RMII            ((uint16_t)0x0080) /*!<Ethernet PHY interface selection */
+/* CHIBIOS FIX */
+#define SYSCFG_PMC_MII_RMII_SEL         ((uint32_t)0x00800000) /*!<Ethernet PHY interface selection */
+/* Old MII_RMII_SEL bit definition, maintained for legacy purpose */
+#define SYSCFG_PMC_MII_RMII             SYSCFG_PMC_MII_RMII_SEL
+/*#define SYSCFG_PMC_MII_RMII            ((uint16_t)0x0080)*/ /*!<Ethernet PHY interface selection */
 
 /*****************  Bit definition for SYSCFG_EXTICR1 register  ***************/
 #define SYSCFG_EXTICR1_EXTI0            ((uint16_t)0x000F) /*!<EXTI 0 configuration */
