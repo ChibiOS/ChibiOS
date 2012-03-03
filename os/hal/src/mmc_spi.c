@@ -146,7 +146,7 @@ static void wait(MMCDriver *mmcp) {
   for (i = 0; i < 16; i++) {
     spiReceive(mmcp->spip, 1, buf);
     if (buf[0] == 0xFF)
-      break;
+      return;
   }
   /* Looks like it is a long wait.*/
   while (TRUE) {
