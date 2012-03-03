@@ -71,6 +71,7 @@
 *****************************************************************************
 
 *** 2.2.9 ***
+- FIX: Fixed STM8S HSI clock initialization error (bug 3489727).
 - FIX: Fixed MMC over SPI driver performs an unnecessary SPI read (bug
   3486930).
 - FIX: Fixed Error in the BaseFileStream interface (bug 3482776).
