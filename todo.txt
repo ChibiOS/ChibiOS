@@ -9,6 +9,7 @@ Version 2.4.1
 X STM32F2 validation (so far testing done on STM32F4 only).
 X Revision of the RTCv2 driver implementation.
 X SDC driver port to STM32F2 and STM32F4.
+X MAC driver for STM32F107, STM32F2xx, STM32F4xx.
 - CAN2 support and CAN driver test on STM32F2/F4.
 
 Within 2.5.x:
@@ -16,7 +17,6 @@ Within 2.5.x:
 * Handling of Virtual Timer callbacks out of critical zone.
 * Add normal API (not iclass) variants of the VT functions.
 * MMC_SPI driver speedup.
-- MAC driver for STM32F107, STM32F2xx, STM32F4xx.
 - USB driver model revision.
 - STM32 OTG USB cell support for CL, F2, F4 devices.
 - Add option to use another counter instead of the systick counter into the
