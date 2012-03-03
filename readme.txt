@@ -71,8 +71,6 @@
 *****************************************************************************
 
 *** 2.2.9 ***
-- NEW: MMC over SPI driver improved to handle high capacity cards, by
-  Matthias Blaicher.
 - FIX: Fixed MMC over SPI driver performs an unnecessary SPI read (bug
   3486930).
 - FIX: Fixed Error in the BaseFileStream interface (bug 3482776).
