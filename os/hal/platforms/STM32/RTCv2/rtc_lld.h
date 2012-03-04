@@ -87,6 +87,10 @@
 #define RTC_USE_INTERRUPTS                FALSE
 #endif
 
+#if STM32_PCLK1 < (STM32_RTCCLK * 7)
+#error "STM32_PCLK1 frequency is too low to handle RTC without ugly workaround"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
