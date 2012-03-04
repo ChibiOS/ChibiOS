@@ -35,14 +35,7 @@
 
 #if HAL_USE_RTC || defined(__DOXYGEN__)
 
-/*===========================================================================*/
-/* Driver constants.                                                         */
-/*===========================================================================*/
-
-/**
- * @brief   This RTC implementation doesn't support callbacks.
- */
-#define RTC_SUPPORTS_CALLBACKS      FALSE
+#include <time.h>
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -54,12 +47,23 @@
 #define RTC_ALARMS                  2
 
 /**
- * @brief   Callback enable masks.
+ * @brief   Data offsets in RTC date and time registers.
  */
-#define ALARMA_CB_FLAG    0x1
-#define ALARMB_CB_FLAG    0x2
-#define WAKEUP_CB_FLAG    0x4
-#define TIMESTAMP_CB_FLAG 0x8
+#define RTC_TR_PM_OFFSET    22
+#define RTC_TR_HT_OFFSET    20
+#define RTC_TR_HU_OFFSET    16
+#define RTC_TR_MNT_OFFSET   12
+#define RTC_TR_MNU_OFFSET   8
+#define RTC_TR_ST_OFFSET    4
+#define RTC_TR_SU_OFFSET    0
+
+#define RTC_DR_YT_OFFSET    20
+#define RTC_DR_YU_OFFSET    16
+#define RTC_DR_WDU_OFFSET   13
+#define RTC_DR_MT_OFFSET    12
+#define RTC_DR_MU_OFFSET    8
+#define RTC_DR_DT_OFFSET    4
+#define RTC_DR_DU_OFFSET    0
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -79,8 +83,8 @@
 #error "invalid source selected for RTC clock"
 #endif
 
-#if RTC_SUPPORTS_CALLBACKS && !(HAL_USE_EXT)
-#error "interrupts from RTC works only through EXTI on this platform"
+#if !defined(RTC_USE_INTERRUPTS) || defined(__DOXYGEN__)
+#define RTC_USE_INTERRUPTS                FALSE
 #endif
 
 /*===========================================================================*/
@@ -109,17 +113,6 @@ typedef struct RTCCallbackConfig RTCCallbackConfig;
 typedef uint32_t rtcalarm_t;
 
 /**
- * @brief   Type of an RTC event.
- */
-typedef enum {
-  RTC_EVENT_WAKEUP = 0,           /** Triggered every wakeup event.          */
-  RTC_EVENT_ALARM_A = 1,          /** Triggered on alarm A.                  */
-  RTC_EVENT_ALARM_B = 2,          /** Triggered on alarm B.                  */
-  RTC_EVENT_TAMPER = 3,           /** Triggered on Tamper event.             */
-  RTC_EVENT_TIMESTAMP = 4,        /** Triggered on TimeStamp event.          */
-} rtcevent_t;
-
-/**
  * @brief   Structure representing an RTC time stamp.
  */
 struct RTCTime {
@@ -131,6 +124,10 @@ struct RTCTime {
    * @brief RTC time register in STM32 BCD format.
    */
   uint32_t tv_time;
+  /**
+   * @brief Set this to TRUE to use 12 hour notation.
+   */
+  bool_t h12;
   /**
    * @brief Fractional part of time.
    */
@@ -164,18 +161,6 @@ struct RTCWakeup {
 };
 
 /**
- * @brief   Structure representing an RTC callbacks config.
- * @details It is bitmask. Set bit to enable callback, clear bit to disable.
- *          bit0 - alarmA
- *          bit1 - alarmB
- *          bit2 - wakeup
- *          bit3 - timestamp
- */
-struct RTCCallbackConfig{
-  uint32_t cb_cfg;
-};
-
-/**
  * @brief   Structure representing an RTC driver.
  */
 struct RTCDriver{
@@ -183,10 +168,6 @@ struct RTCDriver{
    * @brief Pointer to the RTC registers block.
    */
   RTC_TypeDef               *id_rtc;
-  /**
-   * @brief Current callback confuguration.
-   */
-  const RTCCallbackConfig   *cb_cfg;
 };
 
 /*===========================================================================*/
@@ -213,9 +194,10 @@ extern "C" {
   void rtc_lld_get_alarm(RTCDriver *rtcp,
                          rtcalarm_t alarm,
                          RTCAlarm *alarmspec);
-  void rtc_lld_set_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec);
-  void rtc_lld_get_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec);
-  void rtc_lld_set_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg);
+  void rtcSetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec);
+  void rtcGetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec);
+  void stm32_rtc_bcd2tm(struct tm *timp, RTCTime *timespec);
+  void stm32_rtc_tm2bcd(struct tm *timp, RTCTime *timespec);
 #ifdef __cplusplus
 }
 #endif

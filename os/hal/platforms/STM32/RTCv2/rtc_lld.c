@@ -24,7 +24,7 @@
 
 /**
  * @file    STM32/RTCv2/rtc_lld.c
- * @brief   STM32L1xx/STM32F2xx/STM32F4xx RTC low level driver header.
+ * @brief   STM32L1xx/STM32F2xx/STM32F4xx RTC low level driver.
  *
  * @addtogroup RTC
  * @{
@@ -51,6 +51,31 @@ RTCDriver RTCD1;
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+/**
+ * @brief   Wait for synchronization of RTC registers with APB1 bus.
+ * @details This function must be invoked before trying to read RTC registers.
+ *
+ * @notapi
+ */
+#define rtc_lld_apb1_sync() {while ((RTCD1.id_rtc->ISR & RTC_ISR_RSF) == 0);}
+
+/**
+ * @brief   Beginning of configuration procedure.
+ *
+ * @notapi
+ */
+#define rtc_lld_enter_init() {                                                \
+  RTCD1.id_rtc->ISR |= RTC_ISR_INIT;                                          \
+  while ((RTCD1.id_rtc->ISR & RTC_ISR_INITF) == 0)                            \
+    ;                                                                         \
+}
+
+/**
+ * @brief   Finalizing of configuration procedure.
+ *
+ * @notapi
+ */
+#define rtc_lld_exit_init() {RTCD1.id_rtc->ISR &= ~RTC_ISR_INIT;}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -61,96 +86,52 @@ RTCDriver RTCD1;
 /*===========================================================================*/
 
 /**
- * @brief   Enable access to registers and initialize RTC if BKP domain
- *          was previously reseted.
- * @note:   Cold start time of LSE oscillator on STM32 platform 
- *          takes about 3 seconds.
+ * @brief   Enable access to registers.
  *
- * @notapi
+ * @api
  */
 void rtc_lld_init(void){
   RTCD1.id_rtc = RTC;
 
   /* Asynchronous part of preloader. Set it to maximum value. */
-  #define PREDIV_A ((uint32_t)0x7F)
+  uint32_t prediv_a = 0x7F;
 
-  /* Add async part to preload value. */
-  volatile uint32_t preload = PREDIV_A << 16;
-
-  /* Enables access to BKP registers.*/
-  PWR->CR |= PWR_CR_DBP;
-
-  /* If the RTC is not enabled then performs a reset of the backup domain.*/
-  if (!(RCC->BDCR & RCC_BDCR_RTCEN)) {
-    RCC->BDCR = RCC_BDCR_BDRST;
-    RCC->BDCR = 0;
-  }
-
-#if STM32_RTC == STM32_RTC_LSE
-  #define RTC_CLK   STM32_LSECLK
-  if (!(RCC->BDCR & RCC_BDCR_LSEON)) {
-    RCC->BDCR |= RCC_BDCR_LSEON;
-    while (!(RCC->BDCR & RCC_BDCR_LSERDY))
-      ;
-  }
-
-#elif STM32_RTC == STM32_RTC_LSI
-  #define RTC_CLK   STM32_LSICLK
-  /* TODO: Move the LSI clock initialization in the HAL low level driver.*/
-  RCC->CSR |= RCC_CSR_LSION;
-  while (!(RCC->CSR & RCC_CSR_LSIRDY))
-    ;
-
-#elif STM32_RTC == STM32_RTC_HSE
-  #define RTC_CLK   (STM32_HSICLK / 31)
-#endif
-
-  /* Add sync part to preload value. */
-  preload |= ((RTC_CLK / (PREDIV_A + 1)) - 1) & 0x7FFF;
-
-  /* Selects clock source (previously enabled and stabilized).*/
-  RCC->BDCR = (RCC->BDCR & ~RCC_BDCR_RTCSEL) | STM32_RTCSEL;
-
-  /* RTC enabled regardless its previous status.*/
-  RCC->BDCR |= RCC_BDCR_RTCEN;
-
-  /* Disable write protection on RTC registers. */
+  /* Disable write protection. */
   RTCD1.id_rtc->WPR = 0xCA;
   RTCD1.id_rtc->WPR = 0x53;
 
   /* If calendar not init yet. */
   if (!(RTC->ISR & RTC_ISR_INITS)){
-    /* Enter in init mode. */
-    RTCD1.id_rtc->ISR |= RTC_ISR_INIT;
-    while(!(RTC->ISR & RTC_ISR_INITF))
-      ;
-    /* Prescaler registers must be written in by two separate writes. */
-    RTCD1.id_rtc->PRER = preload;
-    RTCD1.id_rtc->PRER = preload;
-    RTCD1.id_rtc->ISR &= ~RTC_ISR_INIT;
+    rtc_lld_enter_init();
+
+    /* Prescaler register must be written in two SEPARATE writes. */
+    RTCD1.id_rtc->PRER = prediv_a << 16;
+    RTCD1.id_rtc->PRER = ((STM32_RTCCLK / (prediv_a + 1)) - 1) & 0x7FFF;
+    rtc_lld_exit_init();
   }
 }
-
 
 /**
  * @brief   Set current time.
  * @note    Fractional part will be silently ignored. There is no possibility
- *          to change it on STM32F1xx platform.
+ *          to set it on STM32 platform.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] timespec  pointer to a @p RTCTime structure
  *
- * @notapi
+ * @api
  */
 void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
   (void)rtcp;
 
-  RTCD1.id_rtc->ISR |= RTC_ISR_INIT;
-  while(!(RTC->ISR & RTC_ISR_INITF))
-    ;
+  rtc_lld_enter_init();
+  if (timespec->h12)
+    RTCD1.id_rtc->CR |= RTC_CR_FMT;
+  else
+    RTCD1.id_rtc->CR &= ~RTC_CR_FMT;
   RTCD1.id_rtc->TR = timespec->tv_time;
   RTCD1.id_rtc->DR = timespec->tv_date;
-  RTCD1.id_rtc->ISR &= ~RTC_ISR_INIT;
+  rtc_lld_exit_init();
 }
 
 /**
@@ -159,21 +140,17 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec) {
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[out] timespec pointer to a @p RTCTime structure
  *
- * @notapi
+ * @api
  */
 void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
   (void)rtcp;
 
-  /*  TODO: If the frequency of the APB1 clock is less than seven times
-   * the frequency of RTCCLK, BYPSHAD must be set to ‘1’ .*/
-
-  /* Wait until calendar data will updated. */
-  while(!(RTC->ISR & RTC_ISR_RSF))
-    ;
+  rtc_lld_apb1_sync();
 
 #if STM32_RTC_HAS_SUBSECONDS
-  timespec->tv_msec = (1000 * ((RTCD1.id_rtc->PRER & 0x7FFF) - RTCD1.id_rtc->SSR)) /
-                      ((RTCD1.id_rtc->PRER & 0x7FFF) + 1);
+  timespec->tv_msec =
+      (1000 * ((RTCD1.id_rtc->PRER & 0x7FFF) - RTCD1.id_rtc->SSR)) /
+      ((RTCD1.id_rtc->PRER & 0x7FFF) + 1);
 #endif /* STM32_RTC_HAS_SUBSECONDS */
   timespec->tv_time = RTCD1.id_rtc->TR;
   timespec->tv_date = RTCD1.id_rtc->DR;
@@ -189,24 +166,38 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
  * @param[in] alarm     Alarm identifier. Can be 1 or 2.
  * @param[in] alarmspec Pointer to a @p RTCAlarm structure.
  *
- * @notapi
+ * @api
  */
 void rtc_lld_set_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        const RTCAlarm *alarmspec) {
   if (alarm == 1){
-    rtcp->id_rtc->CR &= ~RTC_CR_ALRAE;
-    while(!(rtcp->id_rtc->ISR & RTC_ISR_ALRAWF))
-      ;
-    rtcp->id_rtc->ALRMAR = alarmspec->tv_datetime;
-    rtcp->id_rtc->CR |= RTC_CR_ALRAE;
+    if (alarmspec != NULL){
+      rtcp->id_rtc->CR &= ~RTC_CR_ALRAE;
+      while(!(rtcp->id_rtc->ISR & RTC_ISR_ALRAWF))
+        ;
+      rtcp->id_rtc->ALRMAR = alarmspec->tv_datetime;
+      rtcp->id_rtc->CR |= RTC_CR_ALRAE;
+      rtcp->id_rtc->CR |= RTC_CR_ALRAIE;
+    }
+    else {
+      rtcp->id_rtc->CR &= ~RTC_CR_ALRAIE;
+      rtcp->id_rtc->CR &= ~RTC_CR_ALRAE;
+    }
   }
   else{
-    rtcp->id_rtc->CR &= ~RTC_CR_ALRBE;
-    while(!(rtcp->id_rtc->ISR & RTC_ISR_ALRBWF))
-      ;
-    rtcp->id_rtc->ALRMAR = alarmspec->tv_datetime;
-    rtcp->id_rtc->CR |= RTC_CR_ALRBE;
+    if (alarmspec != NULL){
+      rtcp->id_rtc->CR &= ~RTC_CR_ALRBE;
+      while(!(rtcp->id_rtc->ISR & RTC_ISR_ALRBWF))
+        ;
+      rtcp->id_rtc->ALRMBR = alarmspec->tv_datetime;
+      rtcp->id_rtc->CR |= RTC_CR_ALRBE;
+      rtcp->id_rtc->CR |= RTC_CR_ALRBIE;
+    }
+    else {
+      rtcp->id_rtc->CR &= ~RTC_CR_ALRBIE;
+      rtcp->id_rtc->CR &= ~RTC_CR_ALRBE;
+    }
   }
 }
 
@@ -217,7 +208,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
  * @param[in] alarm      alarm identifier
  * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
- * @notapi
+ * @api
  */
 void rtc_lld_get_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
@@ -236,18 +227,25 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  * @param[in] rtcp       pointer to RTC driver structure
  * @param[in] wakeupspec pointer to a @p RTCWakeup structure
  *
- * @notapi
+ * @api
  */
-void rtc_lld_set_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
+void rtcSetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec){
   chDbgCheck((wakeupspec->wakeup != 0x30000),
               "rtc_lld_set_periodic_wakeup, forbidden combination");
 
-  rtcp->id_rtc->CR &= ~RTC_CR_WUTE;
-  while(!(rtcp->id_rtc->ISR & RTC_ISR_WUTWF))
-    ;
-  rtcp->id_rtc->WUTR = wakeupspec->wakeup & 0xFFFF;
-  rtcp->id_rtc->CR   = (wakeupspec->wakeup >> 16) & 0x7;
-  rtcp->id_rtc->CR |= RTC_CR_WUTE;
+  if (wakeupspec != NULL){
+    rtcp->id_rtc->CR &= ~RTC_CR_WUTE;
+    while(!(rtcp->id_rtc->ISR & RTC_ISR_WUTWF))
+      ;
+    rtcp->id_rtc->WUTR = wakeupspec->wakeup & 0xFFFF;
+    rtcp->id_rtc->CR   = (wakeupspec->wakeup >> 16) & 0x7;
+    rtcp->id_rtc->CR |= RTC_CR_WUTIE;
+    rtcp->id_rtc->CR |= RTC_CR_WUTE;
+  }
+  else {
+    rtcp->id_rtc->CR &= ~RTC_CR_WUTIE;
+    rtcp->id_rtc->CR &= ~RTC_CR_WUTE;
+  }
 }
 
 /**
@@ -258,65 +256,110 @@ void rtc_lld_set_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
  * @param[in] rtcp        pointer to RTC driver structure
  * @param[out] wakeupspec pointer to a @p RTCWakeup structure
  *
- * @notapi
+ * @api
  */
-void rtc_lld_get_periodic_wakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec){
+void rtcGetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec){
   wakeupspec->wakeup  = 0;
   wakeupspec->wakeup |= rtcp->id_rtc->WUTR;
   wakeupspec->wakeup |= (((uint32_t)rtcp->id_rtc->CR) & 0x7) << 16;
 }
 
-#if RTC_SUPPORTS_CALLBACKS
-
 /**
- * @brief   Enables or disables RTC callbacks.
- * @details To enable interrupt set corresponding bit in @p RTCCallbackConfig
- *          structure. To disable interrupt clear that bit.
- * @note    This function just enable/disable interrupts in RTC CR register.
- *          You must configure callbacks in EXTI driver for corresponding
- *          interrupts. See documentation for you MCU.
+ * @brief     Converts from STM32 BCD to canonicalized time format.
  *
- * @param[in] rtcp      pointer to RTC driver structure
- * @param[in] cb_cfg    pointer to configuration structure with callbacks
+ * @param[out] timp     pointer to a @p tm structure defined in time.h
+ * @param[in]  timespec pointer to a @p RTCTime structure
  *
- * @notapi
+ * @api
  */
-void rtc_lld_set_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg) {
+void stm32_rtc_bcd2tm(struct tm *timp, RTCTime *timespec){
+  uint32_t tv_time = timespec->tv_time;
+  uint32_t tv_date = timespec->tv_date;
 
-  if (cb_cfg->cb_cfg & ALARMA_CB_FLAG)
-    rtcp->id_rtc->CR |= RTC_CR_ALRAIE;
-  else
-    rtcp->id_rtc->CR &= ~RTC_CR_ALRAIE;
+#if CH_DBG_ENABLE_CHECKS
+  timp->tm_isdst = 0;
+  timp->tm_wday  = 0;
+  timp->tm_mday  = 0;
+  timp->tm_yday  = 0;
+  timp->tm_mon   = 0;
+  timp->tm_year  = 0;
+  timp->tm_sec   = 0;
+  timp->tm_min   = 0;
+  timp->tm_hour  = 0;
+#endif
 
-  if (cb_cfg->cb_cfg & ALARMB_CB_FLAG)
-    rtcp->id_rtc->CR |= RTC_CR_ALRBIE;
-  else
-    rtcp->id_rtc->CR &= ~RTC_CR_ALRBIE;
+  timp->tm_isdst = -1;
 
-  if (cb_cfg->cb_cfg & WAKEUP_CB_FLAG)
-    rtcp->id_rtc->CR |= RTC_CR_WUTIE;
-  else
-    rtcp->id_rtc->CR &= ~RTC_CR_WUTIE;
+  timp->tm_wday = (tv_date & RTC_DR_WDU) >> RTC_DR_WDU_OFFSET;
+  if(timp->tm_wday == 7)
+    timp->tm_wday = 0;
 
-  if (cb_cfg->cb_cfg & TIMESTAMP_CB_FLAG)
-    rtcp->id_rtc->CR |= RTC_CR_TSIE;
-  else
-    rtcp->id_rtc->CR &= ~RTC_CR_TSIE;
+  timp->tm_mday =  (tv_date & RTC_DR_DU) >> RTC_DR_DU_OFFSET;
+  timp->tm_mday += ((tv_date & RTC_DR_DT) >> RTC_DR_DT_OFFSET) * 10;
+
+  timp->tm_mon  =  (tv_date & RTC_DR_MU) >> RTC_DR_MU_OFFSET;
+  timp->tm_mon  += ((tv_date & RTC_DR_MT) >> RTC_DR_MT_OFFSET) * 10;
+  timp->tm_mon  -= 1;
+
+  timp->tm_year =  (tv_date & RTC_DR_YU) >> RTC_DR_YU_OFFSET;
+  timp->tm_year += ((tv_date & RTC_DR_YT) >> RTC_DR_YT_OFFSET) * 10;
+  timp->tm_year += 2000 - 1900;
+
+  timp->tm_sec  =  (tv_time & RTC_TR_SU) >> RTC_TR_SU_OFFSET;
+  timp->tm_sec  += ((tv_time & RTC_TR_ST) >> RTC_TR_ST_OFFSET) * 10;
+
+  timp->tm_min  =  (tv_time & RTC_TR_MNU) >> RTC_TR_MNU_OFFSET;
+  timp->tm_min  += ((tv_time & RTC_TR_MNT) >> RTC_TR_MNT_OFFSET) * 10;
+
+  timp->tm_hour =  (tv_time & RTC_TR_HU) >> RTC_TR_HU_OFFSET;
+  timp->tm_hour += ((tv_time & RTC_TR_HT) >> RTC_TR_HT_OFFSET) * 10;
+  timp->tm_hour += 12 * ((tv_time & RTC_TR_PM) >> RTC_TR_PM_OFFSET);
 }
 
 /**
- * @brief               Gets current RTC callbacks.
+ * @brief     Converts from canonicalized to STM32 BCD time format.
  *
- * @param[in] rtcp      pointer to RTC driver structure
- * @param[out] cb_cfg   callback bitmask
+ * @param[in]  timp     pointer to a @p tm structure defined in time.h
+ * @param[out] timespec pointer to a @p RTCTime structure
  *
- * @notapi
+ * @api
  */
-void rtc_lld_get_callback(RTCDriver *rtcp, RTCCallbackConfig *cb_cfg) {
-  cb_cfg->cb_cfg = rtcp->cb_cfg->cb_cfg;
-}
+void stm32_rtc_tm2bcd(struct tm *timp, RTCTime *timespec){
+  uint32_t v = 0;
 
-#endif /* RTC_SUPPORTS_CALLBACKS */
+  timespec->tv_date = 0;
+  timespec->tv_time = 0;
+
+  v = timp->tm_year - 100;
+  timespec->tv_date |= ((v / 10) << RTC_DR_YT_OFFSET) & RTC_DR_YT;
+  timespec->tv_date |= (v % 10) << RTC_DR_YU_OFFSET;
+
+  if (timp->tm_wday == 0)
+    v = 7;
+  else
+    v = timp->tm_wday;
+  timespec->tv_date |= (v << RTC_DR_WDU_OFFSET) & RTC_DR_WDU;
+
+  v = timp->tm_mon + 1;
+  timespec->tv_date |= ((v / 10) << RTC_DR_MT_OFFSET) & RTC_DR_MT;
+  timespec->tv_date |= (v % 10) << RTC_DR_MU_OFFSET;
+
+  v = timp->tm_mday;
+  timespec->tv_date |= ((v / 10) << RTC_DR_DT_OFFSET) & RTC_DR_DT;
+  timespec->tv_date |= (v % 10) << RTC_DR_DU_OFFSET;
+
+  v = timp->tm_hour;
+  timespec->tv_time |= ((v / 10) << RTC_TR_HT_OFFSET) & RTC_TR_HT;
+  timespec->tv_time |= (v % 10) << RTC_TR_HU_OFFSET;
+
+  v = timp->tm_min;
+  timespec->tv_time |= ((v / 10) << RTC_TR_MNT_OFFSET) & RTC_TR_MNT;
+  timespec->tv_time |= (v % 10) << RTC_TR_MNU_OFFSET;
+
+  v = timp->tm_sec;
+  timespec->tv_time |= ((v / 10) << RTC_TR_ST_OFFSET) & RTC_TR_ST;
+  timespec->tv_time |= (v % 10) << RTC_TR_SU_OFFSET;
+}
 
 #endif /* HAL_USE_RTC */
 

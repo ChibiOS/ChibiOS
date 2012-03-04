@@ -1103,6 +1103,9 @@
 #if STM32_PCLK1 > STM32_PCLK1_MAX
 #error "STM32_PCLK1 exceeding maximum frequency (STM32_PCLK1_MAX)"
 #endif
+#if STM32_PCLK1 < (STM32_RTCCLK * 7)
+#error "STM32_PCLK1 frequency is too low to handle RTC without ugly workaround"
+#endif
 
 /**
  * @brief   APB2 frequency.

@@ -17,201 +17,229 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <time.h>
-#include <stdlib.h>
 
-#include "ch.h"
-#include "hal.h"
-
-/*===========================================================================*/
-/* Notes.                                                                    */
-/*===========================================================================*/
 /*
 This structure is used to hold the values representing a calendar time.
 It contains the following members, with the meanings as shown.
 
 int tm_sec       seconds after minute [0-61] (61 allows for 2 leap-seconds)
-int tm_min       minutes after hour [0-59] 
-int tm_hour      hours after midnight [0-23] 
-int tm_mday      day of the month [1-31] 
-int tm_mon       month of year [0-11] 
-int tm_year      current year-1900 
-int tm_wday      days since Sunday [0-6] 
-int tm_yday      days since January 1st [0-365] 
+int tm_min       minutes after hour [0-59]
+int tm_hour      hours after midnight [0-23]
+int tm_mday      day of the month [1-31]
+int tm_mon       month of year [0-11]
+int tm_year      current year-1900
+int tm_wday      days since Sunday [0-6]
+int tm_yday      days since January 1st [0-365]
 int tm_isdst     daylight savings indicator (1 = yes, 0 = no, -1 = unknown)
 */
+#define WAKEUP_TEST FALSE
 
-RTCTime  timespec;
-RTCAlarm alarmspec;
-RTCWakeup wakeupspec;
-RTCCallbackConfig cb_cfg;
-time_t unix_time;
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
-/**
- * Alarms callback
- */
-static inline void exti_rtcalarm_cb(EXTDriver *extp, expchannel_t channel){
-  (void)extp;
-  (void)channel;
-  if (RTCD1.id_rtc->ISR | RTC_ISR_ALRBF){
-    RTCD1.id_rtc->ISR &= ~RTC_ISR_ALRBF;
-  }
-  if (RTCD1.id_rtc->ISR | RTC_ISR_ALRAF){
-    RTCD1.id_rtc->ISR &= ~RTC_ISR_ALRAF;
-  }
-  palTogglePad(GPIOB, GPIOB_LED_R);
+#include "ch.h"
+#include "hal.h"
+
+#include "shell.h"
+#include "chprintf.h"
+
+#if WAKEUP_TEST
+static RTCWakeup wakeupspec;
+#endif
+static RTCTime timespec = {0,0,FALSE,0};
+static RTCAlarm alarmspec;
+static time_t unix_time;
+
+/* libc stub */
+int _getpid(void) {return 1;}
+/* libc stub */
+void _exit(int i) {(void)i;}
+/* libc stub */
+#include <errno.h>
+#undef errno
+extern int errno;
+int _kill(int pid, int sig) {
+  (void)pid;
+  (void)sig;
+  errno = EINVAL;
+  return -1;
 }
 
-/**
- * Periodic wakeup callback
- */
-static inline void exti_rtcwakeup_cb(EXTDriver *extp, expchannel_t channel){
-  (void)extp;
-  (void)channel;
-  /* manually clear flags because exti driver does not do that */
-  if (RTCD1.id_rtc->ISR | RTC_ISR_WUTF){
-    RTCD1.id_rtc->ISR &= ~RTC_ISR_WUTF;
+
+/* sleep indicator thread */
+static WORKING_AREA(blinkWA, 128);
+static msg_t blink_thd(void *arg){
+  (void)arg;
+  while (TRUE) {
+    chThdSleepMilliseconds(100);
+    palTogglePad(GPIOB, GPIOB_LED_R);
   }
-  palTogglePad(GPIOB, GPIOB_LED_B);
-  palTogglePad(GPIOB, GPIOB_LED_R);
+  return 0;
 }
 
+static void func_sleep(void){
+  chSysLock();
+  SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+  PWR->CR |= (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
+  RTC->ISR &= ~(RTC_ISR_ALRBF | RTC_ISR_ALRAF | RTC_ISR_WUTF | RTC_ISR_TAMP1F |
+                RTC_ISR_TSOVF | RTC_ISR_TSF);
+  __WFI();
+}
 
-static const EXTConfig extcfg = {
-  {
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART, exti_rtcalarm_cb},/* RTC alarms */
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},/* timestamp */
-    {EXT_CH_MODE_RISING_EDGE| EXT_CH_MODE_AUTOSTART, exti_rtcwakeup_cb},/* wakeup */
-  },
-  EXT_MODE_EXTI(
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0)/* 15 */
+static void cmd_sleep(BaseChannel *chp, int argc, char *argv[]){
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: sleep\r\n");
+    return;
+  }
+  chprintf(chp, "Going to sleep.\r\n");
+
+  chThdSleepMilliseconds(200);
+
+  /* going to anabiosis */
+  func_sleep();
+}
+
+/*
+ *
+ */
+static void cmd_alarm(BaseChannel *chp, int argc, char *argv[]){
+  int i = 0;
+
+  (void)argv;
+  if (argc < 1) {
+    goto ERROR;
+  }
+
+  if ((argc == 1) && (strcmp(argv[0], "get") == 0)){
+    rtcGetAlarm(&RTCD1, 0, &alarmspec);
+    chprintf(chp, "%D%s",alarmspec," - alarm in STM internal format\r\n");
+    return;
+  }
+
+  if ((argc == 2) && (strcmp(argv[0], "set") == 0)){
+    i = atol(argv[1]);
+    alarmspec.tv_datetime = ((i / 10) & 7 << 4) | (i % 10) | RTC_ALRMAR_MSK4 |
+                            RTC_ALRMAR_MSK3 | RTC_ALRMAR_MSK2;
+    rtcSetAlarm(&RTCD1, 0, &alarmspec);
+    return;
+  }
+  else{
+    goto ERROR;
+  }
+
+ERROR:
+  chprintf(chp, "Usage: alarm get\r\n");
+  chprintf(chp, "       alarm set N\r\n");
+  chprintf(chp, "where N is alarm time in seconds\r\n");
+}
+
+/*
+ *
+ */
+static void cmd_date(BaseChannel *chp, int argc, char *argv[]){
+  (void)argv;
+  struct tm timp;
+
+  if (argc == 0) {
+    goto ERROR;
+  }
+
+  if ((argc == 1) && (strcmp(argv[0], "get") == 0)){
+    rtcGetTime(&RTCD1, &timespec);
+    stm32_rtc_bcd2tm(&timp, &timespec);
+    unix_time = mktime(&timp);
+
+    if (unix_time == -1){
+      chprintf(chp, "incorrect time in RTC cell\r\n");
+    }
+    else{
+      chprintf(chp, "%D%s",unix_time," - unix time\r\n");
+      chprintf(chp, "%s%s",asctime(&timp)," - formatted time string\r\n");
+    }
+    return;
+  }
+
+  if ((argc == 2) && (strcmp(argv[0], "set") == 0)){
+    unix_time = atol(argv[1]);
+    if (unix_time > 0){
+      stm32_rtc_tm2bcd((localtime(&unix_time)), &timespec);
+      rtcSetTime(&RTCD1, &timespec);
+      return;
+    }
+    else{
+      goto ERROR;
+    }
+  }
+  else{
+    goto ERROR;
+  }
+
+ERROR:
+  chprintf(chp, "Usage: date get\r\n");
+  chprintf(chp, "       date set N\r\n");
+  chprintf(chp, "where N is time in seconds sins Unix epoch\r\n");
+  chprintf(chp, "you can get current N value from unix console by the command\r\n");
+  chprintf(chp, "%s", "date +\%s\r\n");
+  return;
+}
+
+static SerialConfig ser_cfg = {
+    115200,
+    0,
+    0,
+    0,
 };
 
-/**
- * Convert from STM32 BCD to classical format.
- */
-void bcd2tm(struct tm *timp, uint32_t tv_time, uint32_t tv_date){
-  timp->tm_isdst = -1;
+static const ShellCommand commands[] = {
+  {"alarm", cmd_alarm},
+  {"date",  cmd_date},
+  {"sleep", cmd_sleep},
+  {NULL, NULL}
+};
 
-  timp->tm_wday = ((tv_date >> 13) & 0x7);
-  if(timp->tm_wday == 7)
-    timp->tm_wday = 0;
-  timp->tm_mday = (tv_date & 0xF) + ((tv_date >> 4) & 0x3) * 10;
-  timp->tm_mon  = (((tv_date >> 8) & 0xF) + ((tv_date >> 12) & 0x1) * 10) - 1;
-  timp->tm_year = (((tv_date >> 16)& 0xF) + ((tv_date >> 20) & 0xF) * 10) + 2000 - 1900;
-
-  timp->tm_sec  = (tv_time & 0xF) + ((tv_time >> 4) & 0x7) * 10;
-  timp->tm_min  = ((tv_time >> 8)& 0xF) + ((tv_time >> 12) & 0x7) * 10;
-  timp->tm_hour = ((tv_time >> 16)& 0xF) + ((tv_time >> 20) & 0x3) * 10;
-}
-
-/**
- * Convert from classical format to STM32 BCD
- */
-void tm2bcd(struct tm *timp, RTCTime *timespec){
-  uint32_t v = 0;
-
-  timespec->tv_date = 0;
-  timespec->tv_time = 0;
-
-  v = timp->tm_year - 100;
-  timespec->tv_date |= (((v / 10) & 0xF) << 20) | ((v % 10) << 16);
-  if (timp->tm_wday == 0)
-    v = 7;
-  else
-    v = timp->tm_wday;
-  timespec->tv_date |= (v & 7) << 13;
-  v = timp->tm_mon + 1;
-  timespec->tv_date |= (((v / 10) & 1) << 12) | ((v % 10) << 8);
-  v = timp->tm_mday;
-  timespec->tv_date |= (((v / 10) & 3) << 4) | (v % 10);
-  v = timp->tm_hour;
-  timespec->tv_time |= (((v / 10) & 3) << 20) | ((v % 10) << 16);
-  v = timp->tm_min;
-  timespec->tv_time |= (((v / 10) & 7) << 12) | ((v % 10) << 8);
-  v = timp->tm_sec;
-  timespec->tv_time |= (((v / 10) & 7) << 4) | (v % 10);
-}
-
+static const ShellConfig shell_cfg1 = {
+  (BaseChannel *)&SD2,
+  commands
+};
 
 
 /**
  * Main function.
  */
 int main(void){
-  struct tm timp;
 
   halInit();
   chSysInit();
+  chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
 
-  extStart(&EXTD1, &extcfg);
+#if !WAKEUP_TEST
+  /* switch off wakeup */
+  rtcSetPeriodicWakeup_v2(&RTCD1, NULL);
 
-  /* tune wakeup callback */
-  wakeupspec.wakeup = ((uint32_t)4) << 16; /* select 1 Hz clock source */
-  wakeupspec.wakeup |= 3; /* set counter value to 3. Period will be 3+1 seconds. */
-  rtcSetWakeup(&RTCD1, &wakeupspec);
+  /* Shell initialization.*/
+  sdStart(&SD2, &ser_cfg);
+  shellInit();
+  static WORKING_AREA(waShell, 1024);
+  shellCreateStatic(&shell_cfg1, waShell, sizeof(waShell), NORMALPRIO);
 
-  /* enable wakeup callback */
-  cb_cfg.cb_cfg = WAKEUP_CB_FLAG;
-  rtcSetCallback(&RTCD1, &cb_cfg);
-
-  /* get current time in unix format */
-  rtcGetTime(&RTCD1, &timespec);
-  bcd2tm(&timp, timespec.tv_time, timespec.tv_date);
-  unix_time = mktime(&timp);
-
-  if (unix_time == -1){/* incorrect time in RTC cell */
-    unix_time = 1000000000;
-  }
-  /* set correct time */
-  tm2bcd((localtime(&unix_time)), &timespec);
-  rtcSetTime(&RTCD1, &timespec);
-
+  /* wait until user do not want to test wakeup */
   while (TRUE){
-    rtcGetTime(&RTCD1, &timespec);
-    bcd2tm(&timp, timespec.tv_time, timespec.tv_date);
-    unix_time = mktime(&timp);
-    chThdSleepMilliseconds(1500);
+    chThdSleepMilliseconds(200);
   }
+
+#else
+  /* set wakeup */
+  wakeupspec.wakeup = ((uint32_t)4) << 16; /* select 1 Hz clock source */
+  wakeupspec.wakeup |= 9; /* set counter value to 9. Period will be 9+1 seconds. */
+  rtcSetPeriodicWakeup_v2(&RTCD1, &wakeupspec);
+
+  chThdSleepSeconds(3);
+  func_sleep();
+#endif /* !WAKEUP_TEST */
+
   return 0;
 }
-
-
-
 
 
