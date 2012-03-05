@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed USART3 not working on STM32F2/F4 UART driver (bug 3496981)
+  (backported to 2.4.1).
 - FIX: Fixed stack misalignment on Posix-MacOSX (bug 3495487)(backported
   to 2.4.1).
 - FIX: Fixed STM8S HSI clock initialization error (bug 3489727)(backported to
