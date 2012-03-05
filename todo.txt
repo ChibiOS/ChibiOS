@@ -18,7 +18,7 @@ Within 2.5.x:
 * Add normal API (not iclass) variants of the VT functions.
 * MMC_SPI driver speedup.
 - USB driver model revision.
-- STM32 OTG USB cell support for CL, F2, F4 devices.
+X STM32 OTG USB cell support for CL, F2, F4 devices.
 - Add option to use another counter instead of the systick counter into the
   trace buffer.
 - Add a chSysIntegrityCheck() API to the kernel.
