@@ -503,6 +503,39 @@
 /** @} */
 
 /**
+ * @name    SDIO peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the SDIO peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDIO(lp) rccEnableAPB2(RCC_APB2ENR_SDIOEN, lp)
+
+/**
+ * @brief   Disables the SDIO peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableSDIO(lp) rccDisableAPB2(RCC_APB2ENR_SDIOEN, lp)
+
+/**
+ * @brief   Resets the SDIO peripheral.
+ * @note    Not supported in this family, does nothing.
+ *
+ * @api
+ */
+#define rccResetSDIO() rccResetAPB2(RCC_APB2RSTR_SDIORST)
+/** @} */
+
+/**
  * @name    SPI peripherals specific RCC operations
  * @{
  */

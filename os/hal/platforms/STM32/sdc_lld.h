@@ -1,6 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012 Giovanni Di Sirio.
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -35,6 +35,23 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief Value to clear all interrupts flag at once.
+ */
+#define STM32_SDIO_ICR_ALL_FLAGS (SDIO_ICR_CCRCFAILC | SDIO_ICR_DCRCFAILC |   \
+                                  SDIO_ICR_CTIMEOUTC | SDIO_ICR_DTIMEOUTC |   \
+                                  SDIO_ICR_TXUNDERRC | SDIO_ICR_RXOVERRC |    \
+                                  SDIO_ICR_CMDRENDC  | SDIO_ICR_CMDSENTC |    \
+                                  SDIO_ICR_DATAENDC  | SDIO_ICR_STBITERRC |   \
+                                  SDIO_ICR_DBCKENDC  | SDIO_ICR_SDIOITC |     \
+                                  SDIO_ICR_CEATAENDC)
+
+/**
+ * @brief Mask of error flags in STA register.
+ */
+#define STM32_SDIO_STA_ERROR_MASK (SDIO_STA_CCRCFAIL | SDIO_STA_DCRCFAIL |    \
+                                   SDIO_STA_CTIMEOUT | SDIO_STA_DTIMEOUT |    \
+                                   SDIO_STA_TXUNDERR | SDIO_STA_RXOVERR)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -44,13 +61,6 @@
  * @name    Configuration options
  * @{
  */
-/**
- * @brief   SDIO data timeout in SDIO clock cycles.
- */
-#if !defined(STM32_SDC_DATATIMEOUT) || defined(__DOXYGEN__)
-#define STM32_SDC_DATATIMEOUT               0x000FFFFF
-#endif
-
 /**
  * @brief   SDIO DMA priority (0..3|lowest..highest).
  */
@@ -65,12 +75,6 @@
 #define STM32_SDC_SDIO_IRQ_PRIORITY         9
 #endif
 
-/**
- * @brief   SDIO support for unaligned transfers.
- */
-#if !defined(STM32_SDC_UNALIGNED_SUPPORT) || defined(__DOXYGEN__)
-#define STM32_SDC_UNALIGNED_SUPPORT         TRUE
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -88,13 +92,33 @@
 /*
  * SDIO clock divider.
  */
-#if STM32_HCLK > 48000000
-#define STM32_SDIO_DIV_HS                   0x01
-#define STM32_SDIO_DIV_LS                   0xB2
+#if (defined(STM32F4XX) || defined(STM32F2XX))
+  #define STM32_SDIO_DIV_HS                   0
+  #define STM32_SDIO_DIV_LS                   120
+#elif STM32_HCLK > 48000000
+  #define STM32_SDIO_DIV_HS                   1
+  #define STM32_SDIO_DIV_LS                   178
 #else
-#define STM32_SDIO_DIV_HS                   0x00
-#define STM32_SDIO_DIV_LS                   0x76
+  #define STM32_SDIO_DIV_HS                   0
+  #define STM32_SDIO_DIV_LS                   118
 #endif
+
+/**
+ * @brief   SDIO data timeouts in SDIO clock cycles.
+ */
+#if (defined(STM32F4XX) || defined(STM32F2XX))
+  #define STM32_SDC_WRITE_TIMEOUT \
+    (((48000000 / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
+  #define STM32_SDC_READ_TIMEOUT \
+    (((48000000 / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
+#else
+  #define STM32_SDC_WRITE_TIMEOUT  \
+    (((STM32_HCLK /((STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
+  #define STM32_SDC_READ_TIMEOUT  \
+    (((STM32_HCLK /((STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
+#endif
+
+
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -144,6 +168,10 @@ struct SDCDriver {
    */
   sdcmode_t                 cardmode;
   /**
+   * @brief Errors flags.
+   */
+  uint32_t                  errors;
+  /**
    * @brief Card CID.
    */
   uint32_t                  cid[4];
@@ -155,11 +183,30 @@ struct SDCDriver {
    * @brief Card RCA.
    */
   uint32_t                  rca;
+  /**
+   * @brief Total number of blocks in card.
+   */
+  uint32_t                  capacity;
   /* End of the mandatory fields.*/
   /**
    * @brief Thread waiting for I/O completion IRQ.
    */
   Thread                    *thread;
+  /**
+   * @brief     DMA mode bit mask.
+   */
+  uint32_t                  dmamode;
+  /**
+   * @brief     Transmit DMA channel.
+   */
+  const stm32_dma_stream_t  *dma;
+  /**
+   * @brief     Pointer to the SDIO registers block.
+   * @note      Used only for dubugging purpose.
+   */
+#if CH_DBG_ENABLE_ASSERTS
+  SDIO_TypeDef              *sdio;
+#endif
 };
 
 /*===========================================================================*/

@@ -1,6 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012 Giovanni Di Sirio.
+                 2011 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -48,13 +48,49 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Get slice with data from uint32_t[4] array.
+ *
+ * @notapi
+ */
+static uint32_t _sdc_get_slice(uint32_t *data, int8_t end, int8_t start) {
+  uint32_t word = 0;
+  uint32_t mask = 0;
+
+  chDbgCheck(((start >=0) && (end >=0) && (end >= start)), "sdc_get_slice");
+
+  while ((start - 32 * word) > 31){
+    word++;
+    data++;
+  }
+
+  end   -= 32 * word;
+  start -= 32 * word;
+
+  if (end < 31){
+    /* Value lays in one word.*/
+    mask = (1 << (end - start + 1)) - 1;
+    return (*data >> start) & mask;
+  }
+  else{
+    /* Value spread on separate words.*/
+    uint32_t lsb, msb;
+    lsb = *data >> start;
+    data++;
+    mask = (1 << (end - 32 + 1)) - 1;
+    msb = *data & mask;
+    msb = msb << (32 - start);
+    return (msb | lsb);
+  }
+}
+
+/**
  * @brief   Wait for the card to complete pending operations.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
  * @return              The operation status.
- * @retval FALSE        the card is now in transfer state.
- * @retval TRUE         an error occurred while waiting or the card is in an
- *                      unexpected state.
+ * @retval SDC_SUCCESS  operation succeeded.
+ * @retval SDC_FAILED   operation failed.
  *
  * @notapi
  */
@@ -65,10 +101,10 @@ bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_STATUS,
                                    sdcp->rca, resp) ||
         SDC_R1_ERROR(resp[0]))
-      return TRUE;
+      return SDC_FAILED;
     switch (SDC_R1_STS(resp[0])) {
     case SDC_STS_TRAN:
-      return FALSE;
+      return SDC_SUCCESS;
     case SDC_STS_DATA:
     case SDC_STS_RCV:
     case SDC_STS_PRG:
@@ -79,9 +115,11 @@ bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
     default:
       /* The card should have been initialized so any other state is not
          valid and is reported as an error.*/
-      return TRUE;
+      return SDC_FAILED;
     }
   }
+  /* If something going too wrong.*/
+  return SDC_FAILED;
 }
 
 /*===========================================================================*/
@@ -110,7 +148,9 @@ void sdcInit(void) {
 void sdcObjectInit(SDCDriver *sdcp) {
 
   sdcp->state  = SDC_STOP;
+  sdcp->errors = SDC_NO_ERROR;
   sdcp->config = NULL;
+  sdcp->capacity = 0;
 }
 
 /**
@@ -162,10 +202,10 @@ void sdcStop(SDCDriver *sdcp) {
  *          to perform read and write operations.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
  * @return              The operation status.
- * @retval FALSE        operation succeeded, the driver is now
- *                      in the @p SDC_ACTIVE state.
- * @retval TRUE         operation failed.
+ * @retval SDC_SUCCESS  operation succeeded.
+ * @retval SDC_FAILED   operation failed.
  *
  * @api
  */
@@ -282,24 +322,48 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BUS_WIDTH, 2, resp) ||
         SDC_R1_ERROR(resp[0]))
       goto failed;
+    break;
   }
 
+  /* Determine capacity.*/
+  switch (sdcp->csd[3] >> 30) {
+  uint32_t a;
+  uint8_t  b, c;
+  case 0:
+    /* CSD version 1.0 */
+    a = _sdc_get_slice(sdcp->csd, SDC_CSD_10_C_SIZE_SLICE);
+    b = _sdc_get_slice(sdcp->csd, SDC_CSD_10_C_SIZE_MULT_SLICE);
+    c = _sdc_get_slice(sdcp->csd, SDC_CSD_10_READ_BL_LEN_SLICE);
+    sdcp->capacity = ((a + 1) << (b + 2) << c) / 512;
+    break;
+  case 1:
+    /* CSD version 2.0 */
+    a = _sdc_get_slice(sdcp->csd, SDC_CSD_20_C_SIZE_SLICE);
+    sdcp->capacity = 1024 * (a + 1);
+    break;
+  }
+  if (sdcp->capacity == 0)
+    goto failed;
+
+  /* Initialization complete.*/
   sdcp->state = SDC_ACTIVE;
-  return FALSE;
+  return SDC_SUCCESS;
+
+  /* Initialization failed.*/
 failed:
   sdc_lld_stop_clk(sdcp);
   sdcp->state = SDC_READY;
-  return TRUE;
+  return SDC_FAILED;
 }
 
 /**
  * @brief   Brings the driver in a state safe for card removal.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
  * @return              The operation status.
- * @retval FALSE        the operation succeeded and the driver is now
- *                      in the @p SDC_READY state.
- * @retval TRUE         the operation failed.
+ * @retval SDC_SUCCESS  operation succeeded.
+ * @retval SDC_FAILED   operation failed.
  *
  * @api
  */
@@ -312,20 +376,20 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
               "sdcDisconnect(), #1", "invalid state");
   if (sdcp->state == SDC_READY) {
     chSysUnlock();
-    return FALSE;
+    return SDC_SUCCESS;
   }
   sdcp->state = SDC_DISCONNECTING;
   chSysUnlock();
 
   /* Waits for eventual pending operations completion.*/
   if (_sdc_wait_for_transfer_state(sdcp))
-    return TRUE;
+    return SDC_FAILED;
 
   /* Card clock stopped.*/
   sdc_lld_stop_clk(sdcp);
 
   sdcp->state = SDC_READY;
-  return FALSE;
+  return SDC_SUCCESS;
 }
 
 /**
@@ -337,27 +401,32 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
  * @param[in] startblk  first block to read
  * @param[out] buf      pointer to the read buffer
  * @param[in] n         number of blocks to read
+ *
  * @return              The operation status.
- * @retval FALSE        operation succeeded, the requested blocks have been
- *                      read.
- * @retval TRUE         operation failed, the state of the buffer is uncertain.
+ * @retval SDC_SUCCESS  operation succeeded.
+ * @retval SDC_FAILED   operation failed.
  *
  * @api
  */
 bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
                uint8_t *buf, uint32_t n) {
-  bool_t err;
+  bool_t status;
 
   chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcRead");
+
+  if ((startblk + n - 1) > sdcp->capacity){
+    sdcp->errors |= SDC_OVERFLOW_ERROR;
+    return SDC_FAILED;
+  }
 
   chSysLock();
   chDbgAssert(sdcp->state == SDC_ACTIVE, "sdcRead(), #1", "invalid state");
   sdcp->state = SDC_READING;
   chSysUnlock();
 
-  err = sdc_lld_read(sdcp, startblk, buf, n);
+  status = sdc_lld_read(sdcp, startblk, buf, n);
   sdcp->state = SDC_ACTIVE;
-  return err;
+  return status;
 }
 
 /**
@@ -369,27 +438,32 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] startblk  first block to write
  * @param[out] buf      pointer to the write buffer
  * @param[in] n         number of blocks to write
+ *
  * @return              The operation status.
- * @retval FALSE        operation succeeded, the requested blocks have been
- *                      written.
- * @retval TRUE         operation failed.
+ * @retval SDC_SUCCESS  operation succeeded.
+ * @retval SDC_FAILED   operation failed.
  *
  * @api
  */
 bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
                 const uint8_t *buf, uint32_t n) {
-  bool_t err;
+  bool_t status;
 
   chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcWrite");
+
+  if ((startblk + n - 1) > sdcp->capacity){
+    sdcp->errors |= SDC_OVERFLOW_ERROR;
+    return SDC_FAILED;
+  }
 
   chSysLock();
   chDbgAssert(sdcp->state == SDC_ACTIVE, "sdcWrite(), #1", "invalid state");
   sdcp->state = SDC_WRITING;
   chSysUnlock();
 
-  err = sdc_lld_write(sdcp, startblk, buf, n);
+  status = sdc_lld_write(sdcp, startblk, buf, n);
   sdcp->state = SDC_ACTIVE;
-  return err;
+  return status;
 }
 
 #endif /* HAL_USE_SDC */
