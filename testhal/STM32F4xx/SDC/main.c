@@ -23,15 +23,15 @@
 #include "hal.h"
 
 
-#define SDC_DATA_DESTRUCTIVE_TEST   FALSE
+#define SDC_DATA_DESTRUCTIVE_TEST   TRUE
 
-#define SDC_BURST_SIZE      8
+#define SDC_BURST_SIZE      8 /* how many sectors reads at once */
 static uint8_t outbuf[SDC_BLOCK_SIZE * SDC_BURST_SIZE + 1];
 static uint8_t  inbuf[SDC_BLOCK_SIZE * SDC_BURST_SIZE + 1];
 
 
 /**
- * @brief   Clone of UNIX badblocks program.
+ * @brief   Parody of UNIX badblocks program.
  *
  * @param[in] start       first block to check
  * @param[in] end         last block to check
@@ -39,9 +39,9 @@ static uint8_t  inbuf[SDC_BLOCK_SIZE * SDC_BURST_SIZE + 1];
  * @param[in] pattern     check pattern
  *
  * @return              The operation status.
- * @retval FALSE        operation succeeded, the requested blocks have been
+ * @retval SDC_SUCCESS  operation succeeded, the requested blocks have been
  *                      read.
- * @retval TRUE         operation failed, the state of the buffer is uncertain.
+ * @retval SDC_FAILED   operation failed, the state of the buffer is uncertain.
  */
 bool_t badblocks(uint32_t start, uint32_t end, uint32_t blockatonce, uint8_t pattern){
   uint32_t position = 0;
@@ -76,12 +76,21 @@ ERROR:
   return SDC_FAILED;
 }
 
-void clearbuffers(void){
+/**
+ *
+ */
+void fillbuffer(uint8_t pattern, uint8_t *b){
   uint32_t i = 0;
   for (i=0; i < SDC_BLOCK_SIZE * SDC_BURST_SIZE; i++)
-    outbuf[i] = 0x55;
-  for (i=0; i < SDC_BLOCK_SIZE * SDC_BURST_SIZE; i++)
-    inbuf[i] = 0x55;
+    b[i] = pattern;
+}
+
+/**
+ *
+ */
+void fillbuffers(uint8_t pattern){
+  fillbuffer(pattern, inbuf);
+  fillbuffer(pattern, outbuf);
 }
 
 /*
@@ -97,13 +106,6 @@ static const SDCConfig sdccfg = {
 int main(void) {
   uint32_t i = 0;
 
-  /*
-   * System initializations.
-   * - HAL initialization, this also initializes the configured device drivers
-   *   and performs the board-specific initializations.
-   * - Kernel initialization, the main() function becomes a thread and the
-   *   RTOS is active.
-   */
   halInit();
   chSysInit();
 
@@ -111,14 +113,24 @@ int main(void) {
    * Initializes the SDIO drivers.
    */
   sdcStart(&SDCD1, &sdccfg);
-  /*http://en.wikipedia.org/wiki/Secure_Digital#Storage_capacity_calculations*/
 
   if (!sdcConnect(&SDCD1)) {
 
     /* Single aligned read.*/
+    if (sdcRead(&SDCD1, 0, inbuf, 1))
+      chSysHalt();
 
-    /* Multiple aligned read from one place.*/
-    clearbuffers();
+    /* Single unaligned read.*/
+    if (sdcRead(&SDCD1, 0, inbuf + 1, 1))
+      chSysHalt();
+    if (sdcRead(&SDCD1, 0, inbuf + 2, 1))
+      chSysHalt();
+    if (sdcRead(&SDCD1, 0, inbuf + 3, 1))
+      chSysHalt();
+
+    /* Multiple aligned reads from one place to ensure in bus stability */
+    fillbuffers(0x55);
+    /* fill reference buffer from SD card */
     if (sdcRead(&SDCD1, 0, inbuf, SDC_BURST_SIZE))
       chSysHalt();
     for (i=0; i<1000; i++){
@@ -128,19 +140,56 @@ int main(void) {
         chSysHalt();
     }
 
-    /* Repeated multiple aligned reads.*/
-
     /* Repeated multiple unaligned reads.*/
+    fillbuffers(0x55);
+    /* fill reference buffer from SD card */
+    if (sdcRead(&SDCD1, 0, inbuf + 1, SDC_BURST_SIZE))
+      chSysHalt();
+    for (i=0; i<1000; i++){
+      if (sdcRead(&SDCD1, 0, outbuf + 1, SDC_BURST_SIZE))
+        chSysHalt();
+      if (memcmp(inbuf, outbuf, SDC_BURST_SIZE * SDC_BLOCK_SIZE) != 0)
+        chSysHalt();
+    }
+
+
+
+
+
 
 
 #if SDC_DATA_DESTRUCTIVE_TEST
-    clearbuffers();
-    if (sdcWrite(&SDCD1, 0x10000, outbuf, SDC_BURST_SIZE))
+
+    /* Single aligned write.*/
+    fillbuffer(0xAA, inbuf);
+    if (sdcWrite(&SDCD1, 0, inbuf, 1))
+      chSysHalt();
+    fillbuffer(0, outbuf);
+    if (sdcRead(&SDCD1, 0, outbuf, 1))
+      chSysHalt();
+    if (memcmp(inbuf, outbuf, SDC_BLOCK_SIZE) != 0)
       chSysHalt();
 
-//      if(badblocks(0x10000, 0x11000, SDC_BURST_SIZE, 0xAA))
-//        chSysHalt();
+    /* Single unaligned write.*/
+    fillbuffer(0xFF, inbuf);
+    if (sdcWrite(&SDCD1, 0, inbuf+1, 1))
+      chSysHalt();
+    fillbuffer(0, outbuf);
+    if (sdcRead(&SDCD1, 0, outbuf+1, 1))
+      chSysHalt();
+    if (memcmp(inbuf+1, outbuf+1, SDC_BLOCK_SIZE) != 0)
+      chSysHalt();
+
+
+    if(badblocks(0x10000, 0x11000, SDC_BURST_SIZE, 0xAA))
+      chSysHalt();
 #endif /* !SDC_DATA_DESTRUCTIVE_TEST */
+
+
+
+
+
+
 
     if (sdcDisconnect(&SDCD1))
       chSysHalt();
@@ -148,8 +197,10 @@ int main(void) {
   else{
     chSysHalt();
   }
+
   /*
    * Normal main() thread activity.
+   * Blinking signaling about successful passing.
    */
   while (TRUE) {
     palTogglePad(GPIOB, GPIOB_LED_R);
