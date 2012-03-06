@@ -56,8 +56,8 @@ typedef struct {
  * @brief   Device input endpoint registers group.
  */
 typedef struct {
-  volatile uint32_t DIEPCTL;    /**< @brief Device control IN endpoint control
-                                            register.                       */
+  volatile uint32_t DIEPCTL;    /**< @brief Device control IN endpoint
+                                            control register.               */
   volatile uint32_t resvd4;
   volatile uint32_t DIEPINT;    /**< @brief Device IN endpoint interrupt
                                             register.                       */
@@ -74,14 +74,14 @@ typedef struct {
  * @brief   Device output endpoint registers group.
  */
 typedef struct {
-  volatile uint32_t DOEPCTL;    /**< @brief Device control OUT endpoint control
-                                            register.                       */
+  volatile uint32_t DOEPCTL;    /**< @brief Device control OUT endpoint
+                                            control register.               */
   volatile uint32_t resvd4;
   volatile uint32_t DOEPINT;    /**< @brief Device OUT endpoint interrupt
                                             register.                       */
   volatile uint32_t resvdC;
-  volatile uint32_t DOEPTSIZ;   /**< @brief Device OUT endpoint transfer size
-                                            register.                       */
+  volatile uint32_t DOEPTSIZ;   /**< @brief Device OUT endpoint transfer
+                                            size register.                  */
   volatile uint32_t resvd14;
   volatile uint32_t resvd18;
   volatile uint32_t resvd1C;
@@ -103,9 +103,9 @@ typedef struct {
   volatile uint32_t GRXSTSP;    /**< @brief Receive status read/pop
                                             register.                       */
   volatile uint32_t GRXFSIZ;    /**< @brief Receive FIFO size register.     */
-  volatile uint32_t DIEPTXF0;   /**< @brief endpoint 0 transmit FIFO size
+  volatile uint32_t DIEPTXF0;   /**< @brief Endpoint 0 transmit FIFO size
                                             register.                       */
-  volatile uint32_t HNPTXSTS;   /**< @brief non-periodic transmit FIFO/queue
+  volatile uint32_t HNPTXSTS;   /**< @brief Non-periodic transmit FIFO/queue
                                             status register.                */
   volatile uint32_t resvd30;
   volatile uint32_t resvd34;
@@ -114,7 +114,7 @@ typedef struct {
   volatile uint32_t resvd58[48];
   volatile uint32_t HPTXFSIZ;   /**< @brief Host periodic transmit FIFO size
                                             register.                       */
-  volatile uint32_t DIEPTXF[15];/**< @brief Ddevice IN endpoint transmit FIFO
+  volatile uint32_t DIEPTXF[15];/**< @brief Device IN endpoint transmit FIFO
                                             size registers.                 */
   volatile uint32_t resvd140[176];
   volatile uint32_t HCFG;       /**< @brief Host configuration register.    */
@@ -148,9 +148,9 @@ typedef struct {
                                             mask register.                  */
   volatile uint32_t resvd820;
   volatile uint32_t resvd824;
-  volatile uint32_t DVBUSDIS;   /**< @brief Device VBUS Discharge time
+  volatile uint32_t DVBUSDIS;   /**< @brief Device VBUS discharge time
                                             register.                       */
-  volatile uint32_t DVBUSPULSE; /**< @brief Device VBUS Pulsing time
+  volatile uint32_t DVBUSPULSE; /**< @brief Device VBUS pulsing time
                                             register.                       */
   volatile uint32_t resvd830;
   volatile uint32_t DIEPEMPMSK; /**< @brief Device IN endpoint FIFO empty
@@ -387,286 +387,206 @@ typedef struct {
 /** @} */
 
 /**
- * @name GNPTXFSIZ register bit definitions
+ * @name GCCFG register bit definitions
  * @{
  */
-#define GNPTXFSIZ_NPTXFD_MASK   (0xFFFFU<<16)/**< Non-periodic TxFIFO depth
-                                                 mask.                      */
-#define GNPTXFSIZ_NPTXFD(n)     ((n##U)<<16)/**< Non-periodic TxFIFO depth
-                                                 value.                     */
-#define GNPTXFSIZ_NPTXFSA_MASK  (0xFFFFU<<0)/**< Non-periodic transmit RAM
-                                                 start address mask.        */
-#define GNPTXFSIZ_NPTXFSA(n)    ((n##U)<<0) /**< Non-periodic transmit RAM
-                                                 start address value.       */
-/** @} */
-
-/**
- * @name GNPTXSTS register bit definitions
- * @{
- */
-#define GNPTXSTS_NPTxQTop_MASK      (0x7F<<24)  /**< Top of the non-periodic
-                                                     transmit request queue
-                                                     mask.                  */
-#define GNPTXSTS_NPTxQTop(n)        ((n)<<24)   /**< Top of the non-periodic
-                                                     transmit request queue
-                                                     value.                 */
-#define GNPTXSTS_NPTxQSpcAvail_MASK (0xFF<<16)  /**< non-periodic transmit
-                                                     request queue Space
-                                                     Available mask.        */
-#define GNPTXSTS_NPTxQSpcAvail(n)   ((n)<<16)   /**< non-periodic transmit
-                                                     request queue Space
-                                                     Available value.       */
-#define GNPTXSTS_NPTxFSpcAvail_MASK (0xFFFF<<0) /**< non-periodic TxFIFO
-                                                     Space Available mask.  */
-#define GNPTXSTS_NPTxFSpcAvail(n)   ((n)<<0)    /**< non-periodic TxFIFO
-                                                     Space Available value. */
+#define GCCFG_SOFOUTEN          (1U<<20)    /**< SOF output enable.         */
+#define GCCFG_VBUSBSEN          (1U<<19)    /**< Enable the VBUS sensing "B"
+                                                 device.                    */
+#define GCCFG_VBUSASEN          (1U<<18)    /**< Enable the VBUS sensing "A"
+                                                 device.                    */
+#define GCCFG_PWRDWN            (1U<<16)    /**< Power down.                */
 /** @} */
 
 /**
  * @name HPTXFSIZ register bit definitions
  * @{
  */
-#define HPTXFSIZ_PTxFsize_MASK      (0xFFFF<<16)/**< Host periodic TxFIFO
-                                                     Depth mask.            */
-#define HPTXFSIZ_PTxFsize(n)        ((n)<<16)   /**< Host periodic TxFIFO
-                                                     Depth value.           */
-#define HPTXFSIZ_PTxFStAddr_MASK    (0xFFFF<<0) /**< Host periodic TxFIFO
-                                                     Start Address mask.    */
-#define HPTXFSIZ_PTxFStAddr(n)      ((n)<<0)    /**< Host periodic TxFIFO
-                                                     Start Address value.   */
-/** @} */
-
-/**
- * @name DPTXFSIZ register bit definitions
- * @{
- */
-#define DPTXFSIZ_DPTxFsize_MASK     (0xFFFF<<16 /**< Device periodic TxFIFO
-                                                     size mask.             */
-#define DPTXFSIZ_DPTxFsize(n)       ((n)<<16)   /**< Device periodic TxFIFO
-                                                     size value.            */
-#define DPTXFSIZ_DPTxFStAddr_MASK   (0xFFFF<<0) /**< Device periodic TxFIFO
-                                                     RAM Start Address mask.*/
-#define DPTXFSIZ_DPTxFStAddr(n)     ((n)<<0)    /**< Device periodic TxFIFO
-                                                     RAM Start Address
-                                                     value.                 */
+#define HPTXFSIZ_PTXFD_MASK     (0xFFFFU<<16)/**< Host periodic TxFIFO
+                                                 depth mask.               */
+#define HPTXFSIZ_PTXFD(n)       ((n##U)<<16)/**< Host periodic TxFIFO
+                                                 depth value.               */
+#define HPTXFSIZ_PTXSA_MASK     (0xFFFFU<<0)/**< Host periodic TxFIFO
+                                                 Start address mask.        */
+#define HPTXFSIZ_PTXSA(n)       ((n##U)<<0) /**< Host periodic TxFIFO
+                                                 start address value.       */
 /** @} */
 
 /**
  * @name HCFG register bit definitions
  * @{
  */
-#define HCFG_ResValid_MASK          (0xFF<<8)   /**< Resume Validation
-                                                     Period mask.           */
-#define HCFG_ResValid(n)            ((n)<<8)    /**< Resume Validation
-                                                     Period value.          */
-#define HCFG_Ena32KHzS              (1U<<7)      /**< enable 32-KHz suspend
-                                                     Mode.                  */
-#define HCFG_FSLSSupp               (1U<<2)      /**< FS- and LS-Only
-                                                     Support.               */
-#define HCFG_FSLSPclkSel_MASK       (3<<0)      /**< FS/LS PHY clock Select
-                                                     mask.                  */
-#define HCFG_FSLSPclkSel_30_60      (0<<0)      /**< PHY clock is running at
-                                                     30/60 MHz.             */
-#define HCFG_FSLSPclkSel_48         (1U<<0)      /**< PHY clock is running at
-                                                     48 MHz.                */
+#define HCFG_FSLSS              (1U<<2)     /**< FS- and LS-only support.   */
+#define HCFG_FSLSPCS_MASK       (3U<<0)     /**< FS/LS PHY clock select
+                                                 mask.                      */
+#define HCFG_FSLSPCS_48         (1U<<0)     /**< PHY clock is running at
+                                                 48 MHz.                    */
+#define HCFG_FSLSPCS_6          (2U<<0)     /**< PHY clock is running at
+                                                 6 MHz.                     */
 /** @} */
 
 /**
  * @name HFIR register bit definitions
  * @{
  */
-#define HFIR_FrInt_MASK             (0xFFFF<<0) /**< frame interval mask.   */
-#define HFIR_FrInt(n)               ((n)<<0)    /**< frame interval value.  */
+#define HFIR_FRIVL_MASK         (0xFFFFU<<0)/**< Frame interval mask.       */
+#define HFIR_FRIVL(n)           ((n##U)<<0) /**< Frame interval value.      */
 /** @} */
 
 /**
  * @name HFNUM register bit definitions
  * @{
  */
-#define HFNUM_FrRem_MASK            (0xFFFF<<16)/**< frame time Remaining
-                                                     mask.                  */
-#define HFNUM_FrRem(n)              ((n)<<16)   /**< frame time Remaining
-                                                     value.                 */
-#define HFNUM_FrNum_MASK            (0xFFFF<<0) /**< frame number mask.     */
-#define HFNUM_FrNum(n)              ((n)<<0)    /**< frame number value.    */
+#define HFNUM_FTREM_MASK        (0xFFFFU<<16)/**< Frame time Remaining mask.*/
+#define HFNUM_FTREM(n)          ((n##U)<<16)/**< Frame time Remaining value.*/
+#define HFNUM_FRNUM_MASK        (0xFFFFU<<0)/**< Frame number mask.         */
+#define HFNUM_FRNUM(n)          ((n##U)<<0) /**< Frame number value.        */
 /** @} */
 
 /**
  * @name HPTXSTS register bit definitions
  * @{
  */
-#define HPTXSTS_PTxQTop_MASK        (0xFF<<24)  /**< Top of the periodic
-                                                     transmit request queue
-                                                     mask.                  */
-#define HPTXSTS_PTxQTop(n)          ((n)<<24)   /**< Top of the periodic
-                                                     transmit request queue
-                                                     value.                 */
-#define HPTXSTS_PTxQSpcAvail_MASK   (0xFF<<16)  /**< periodic transmit request
-                                                     queue Space Available
-                                                     mask.                  */
-#define HPTXSTS_PTxQSpcAvail(n)     ((n)<<16)   /**< periodic transmit request
-                                                     queue Space Available
-                                                     value.                 */
-#define HPTXSTS_PTxFSpcAvail_MASK   (0xFFFF<<0) /**< periodic transmit Data
-                                                     FIFO Space Available
-                                                     mask.                  */
-#define HPTXSTS_PTxFSpcAvail(n)     ((n)<<0)    /**< periodic transmit Data
-                                                     FIFO Space Available
-                                                     value.                 */
+#define HPTXSTS_PTXQTOP_MASK    (0xFFU<<24) /**< Top of the periodic
+                                                 transmit request queue
+                                                 mask.                      */
+#define HPTXSTS_PTXQTOP(n)      ((n##U)<<24)/**< Top of the periodic
+                                                 transmit request queue
+                                                 value.                     */
+#define HPTXSTS_PTXQSAV_MASK    (0xFF<<16)  /**< Periodic transmit request
+                                                 queue Space Available
+                                                 mask.                      */
+#define HPTXSTS_PTXQSAV(n)      ((n##U)<<16)/**< Periodic transmit request
+                                                 queue Space Available
+                                                 value.                     */
+#define HPTXSTS_PTXFSAVL_MASK   (0xFFFF<<0) /**< Periodic transmit Data
+                                                 FIFO Space Available
+                                                 mask.                      */
+#define HPTXSTS_PTXFSAVL(n)     ((n##U)<<0) /**< Periodic transmit Data
+                                                 FIFO Space Available
+                                                 value.                     */
 /** @} */
 
 /**
  * @name HAINT register bit definitions
  * @{
  */
-#define HAINT_HAINT_MASK            (0xFFFF<<0) /**< channel interrupts
-                                                     mask.                  */
-#define HAINT_HAINT(n)              ((n)<<0)    /**< channel interrupts
-                                                     value.                 */
+#define HAINT_HAINT_MASK        (0xFFFFU<<0)/**< Channel interrupts mask.   */
+#define HAINT_HAINT(n)          ((n##U)<<0) /**< Channel interrupts value.  */
 /** @} */
 
 /**
  * @name HAINTMSK register bit definitions
  * @{
  */
-#define HAINTMSK_HAINTMsk_MASK      (0xFFFF<<0) /**< channel interrupt mask
-                                                     mask.                  */
-#define HAINTMSK_HAINTMsk(n)        ((n)<<0)    /**< channel interrupt mask
-                                                     value.                 */
+#define HAINTMSK_HAINTM_MASK    (0xFFFFU<<0)/**< Channel interrupt mask
+                                                 mask.                      */
+#define HAINTMSK_HAINTM(n)      ((n##U)<<0) /**< Channel interrupt mask
+                                                value.                      */
 /** @} */
 
 /**
  * @name HPRT register bit definitions
  * @{
  */
-#define HPRT_PrtSpd_MASK            (3<<17)     /**< port Speed mask.       */
-#define HPRT_PrtSpd_HS              (0<<17)     /**< High Speed value.      */
-#define HPRT_PrtSpd_FS              (1U<<17)     /**< Full Speed value.      */
-#define HPRT_PrtSpd_LS              (2<<17)     /**< Low Speed value.       */
-#define HPRT_PrtTstCtl_MASK         (15<<13)    /**< port Test control mask.*/
-#define HPRT_PrtTstCtl(n)           ((n)<<13)   /**< port Test control
-                                                     value.                 */
-#define HPRT_PrtPwr                 (1U<<12)     /**< port power.            */
-#define HPRT_PrtLnSts_MASK          (3<<11)     /**< port Line status mask. */
-#define HPRT_PrtLnSts_DM            (1U<<11)     /**< Logic level of D-.     */
-#define HPRT_PrtLnSts_DP            (1U<<10)     /**< Logic level of D+.     */
-#define HPRT_PrtRst                 (1U<<8)      /**< port reset.            */
-#define HPRT_PrtSusp                (1U<<7)      /**< port suspend.          */
-#define HPRT_PrtRes                 (1U<<6)      /**< port Resume.           */
-#define HPRT_PrtOvrCurrChng         (1U<<5)      /**< port Overcurrent
-                                                     change.                */
-#define HPRT_PrtOvrCurrAct          (1U<<4)      /**< port Overcurrent
-                                                     Active.                */
-#define HPRT_PrtEnChng              (1U<<3)      /**< port enable/Disable
-                                                     change.                */
-#define HPRT_PrtEna                 (1U<<2)      /**< port enable.           */
-#define HPRT_PrtConnDet             (1U<<1)      /**< port Connect detected. */
-#define HPRT_PrtConnSts             (1U<<0)      /**< .*/
+#define HPRT_PSPD_MASK          (3U<<17)    /**< Port speed mask.           */
+#define HPRT_PSPD_FS            (1U<<17)    /**< Full speed value.          */
+#define HPRT_PSPD_LS            (2U<<17)    /**< Low speed value.           */
+#define HPRT_PTCTL_MASK         (15<<13)    /**< Port Test control mask.    */
+#define HPRT_PTCTL(n)           ((n##U)<<13)/**< Port Test control value.   */
+#define HPRT_PPWR               (1U<<12)    /**< Port power.                */
+#define HPRT_PLSTS_MASK         (3U<<11)    /**< Port Line status mask.     */
+#define HPRT_PLSTS_DM           (1U<<11)    /**< Logic level of D-.         */
+#define HPRT_PLSTS_DP           (1U<<10)    /**< Logic level of D+.         */
+#define HPRT_PRST               (1U<<8)     /**< Port reset.                */
+#define HPRT_PSUSP              (1U<<7)     /**< Port suspend.              */
+#define HPRT_PRES               (1U<<6)     /**< Port Resume.               */
+#define HPRT_POCCHNG            (1U<<5)     /**< Port overcurrent change.   */
+#define HPRT_POCA               (1U<<4)     /**< Port overcurrent active.   */
+#define HPRT_PENCHNG            (1U<<3)     /**< Port enable/disable change.*/
+#define HPRT_PENA               (1U<<2)     /**< Port enable.               */
+#define HPRT_PCDET              (1U<<1)     /**< Port Connect detected.     */
+#define HPRT_PCSTS              (1U<<0)     /**< Port connect status.       */
 /** @} */
 
 /**
  * @name HCCHAR register bit definitions
  * @{
  */
-#define HCCHAR_ChEna                (1u<<31)    /**< channel enable.        */
-#define HCCHAR_ChDis                (1U<<30)     /**< channel Disable.       */
-#define HCCHAR_OddFrm               (1U<<29)     /**< Odd frame.             */
-#define HCCHAR_DevAddr_MASK         (0x7F<<22)  /**< Device Address mask.   */
-#define HCCHAR_DevAddr(n)           ((n)<<22)   /**< Device Address value.  */
-#define HCCHAR_MC_EC_MASK           (3<<20)     /**< Multi count (MC) / Error
-                                                     count mask.            */
-#define HCCHAR_MC_EC(n)             ((n)<<20)   /**< Multi count (MC) / Error
-                                                     count value.           */
-#define HCCHAR_EPType_MASK          (3<<18)         /**< .*/
-#define HCCHAR_EPType(n)            ((n)<<18)   /**< endpoint Type mask.    */
-#define HCCHAR_EPType_control       (0<<18)     /**< control endpoint value.*/
-#define HCCHAR_EPType_isochronous   (1U<<18)     /**< isochronous endpoint
-                                                     value.                 */
-#define HCCHAR_EPType_Bulk          (2<<18)     /**< Bulk endpoint value.   */
-#define HCCHAR_EPType_interrupt     (3<<18)     /**< interrupt endpoint
-                                                     value.                 */
-#define HCCHAR_LSpdDev              (1U<<17)     /**< Low-Speed Device.      */
-#define HCCHAR_EPDir                (1U<<15)     /**< endpoint Direction.    */
-#define HCCHAR_EPNum_MASK           (15<<11)    /**< endpoint number mask.  */
-#define HCCHAR_EPNum(n)             ((n)<<11)   /**< endpoint number value. */
-#define HCCHAR_MPS_MASK             (11<<0)     /**< Maximum Packet size
-                                                     mask.                  */
-#define HCCHAR_MPS(n)               (11<<0)     /**< Maximum Packet size
-                                                     value.                 */
-/** @} */
-
-/**
- * @name HCSPLT register bit definitions
- * @{
- */
-#define HCSPLT_SpltEna              (1u<<31)    /**< Split enable.          */
-#define HCSPLT_CompSplt             (1U<<16)     /**< Do Complete Split.     */
-#define HCSPLT_XactPos_MASK         (3<<14)     /**< Transaction Position.  */
-#define HCSPLT_XactPos_Mid          (0<<14)     /**< Middle.                */
-#define HCSPLT_XactPos_end          (1U<<14)     /**< End.                   */
-#define HCSPLT_XactPos_Begin        (2<<14)     /**< Begin.                 */
-#define HCSPLT_XactPos_all          (3<<14)     /**< All.                   */
-#define HCSPLT_HubAddr_MASK         (0x7F<<6)   /**< Hub Address mask.      */
-#define HCSPLT_HubAddr(n)           ((n)<<n)    /**< Hub Address value.     */
-#define HCSPLT_PrtAddr_MASK         (0x7F<<0)   /**< port Address mask.     */
-#define HCSPLT_PrtAddr(n)           ((n)<<0)    /**< port Address value.    */
+#define HCCHAR_CHENA            (1U<<31)    /**< Channel enable.            */
+#define HCCHAR_CHDIS            (1U<<30)    /**< Channel Disable.           */
+#define HCCHAR_ODDFRM           (1U<<29)    /**< Odd frame.                 */
+#define HCCHAR_DAD_MASK         (0x7FU<<22) /**< Device Address mask.       */
+#define HCCHAR_DAD(n)           ((n##U)<<22)/**< Device Address value.      */
+#define HCCHAR_MCNT_MASK        (3U<<20)    /**< Multicount mask.           */
+#define HCCHAR_MCNT(n)          ((n##U)<<20)/**< Multicount value.          */
+#define HCCHAR_EPTYP_MASK       (3U<<18)    /**< Endpoint type mask.        */
+#define HCCHAR_EPTYP(n)         ((n##U)<<18)/**< Endpoint type value.       */
+#define HCCHAR_EPTYP_CTL        (0U<<18)    /**< Control endpoint value.    */
+#define HCCHAR_EPTYP_ISO        (1U<<18)    /**< Isochronous endpoint value.*/
+#define HCCHAR_EPTYP_BULK       (2U<<18)    /**< Bulk endpoint value.       */
+#define HCCHAR_EPTYP_INTR       (3U<<18)    /**< Interrupt endpoint value.  */
+#define HCCHAR_LSDEV            (1U<<17)    /**< Low-Speed device.          */
+#define HCCHAR_EPDIR            (1U<<15)    /**< Endpoint direction.        */
+#define HCCHAR_EPNUM_MASK       (15U<<11)   /**< Endpoint number mask.      */
+#define HCCHAR_EPNUM(n)         ((n##U)<<11)/**< Endpoint number value.     */
+#define HCCHAR_MPS_MASK         (11U<<0)    /**< Maximum packet size mask.  */
+#define HCCHAR_MPS(n)           (11U<<0)    /**< Maximum packet size value. */
 /** @} */
 
 /**
  * @name HCINT register bit definitions
  * @{
  */
-#define HCINT_DataTglErr            (1U<<10)     /**< Data Toggle Error.     */
-#define HCINT_FrmOvrun              (1U<<9)      /**< frame Overrun.         */
-#define HCINT_BblErr                (1U<<8)      /**< Babble Error.          */
-#define HCINT_XactErr               (1U<<7)      /**< Transaction Error.     */
-#define HCINT_NYET                  (1U<<6)      /**< NYET Response Received
-                                                     interrupt.             */
-#define HCINT_ACK                   (1U<<5)      /**< ACK Response
-                                                     Received/transmitted
-                                                     interrupt.             */
-#define HCINT_NAK                   (1U<<4)      /**< NAK Response Received
-                                                     interrupt.             */
-#define HCINT_STALL                 (1U<<3)      /**< STALL Response Received
-                                                     interrupt.             */
-#define HCINT_ChHltd                (1U<<1)      /**< channel Halted.        */
-#define HCINT_XferCompl             (1U<<0)      /**< transfer completed.    */
+#define HCINT_DTERR             (1U<<10)    /**< Data toggle error.         */
+#define HCINT_FRMOR             (1U<<9)     /**< Frame overrun.             */
+#define HCINT_BBERR             (1U<<8)     /**< Babble error.              */
+#define HCINT_TRERR             (1U<<7)     /**< Transaction Error.         */
+#define HCINT_ACK               (1U<<5)     /**< ACK response
+                                                 received/transmitted
+                                                 interrupt.                 */
+#define HCINT_NAK               (1U<<4)     /**< NAK response received
+                                                 interrupt.                 */
+#define HCINT_STALL             (1U<<3)     /**< STALL response received
+                                                 interrupt.                 */
+#define HCINT_CHH               (1U<<1)     /**< Channel halted.            */
+#define HCINT_XFRC              (1U<<0)     /**< Transfer completed.        */
 /** @} */
 
 /**
  * @name HCINTMSK register bit definitions
  * @{
  */
-#define HCINTMSK_DataTglErrMsk      (1U<<10)     /**< Data Toggle Error mask.*/
-#define HCINTMSK_FrmOvrunMsk        (1U<<9)      /**< frame Overrun mask.    */
-#define HCINTMSK_BblErrMsk          (1U<<8)      /**< Babble Error mask.     */
-#define HCINTMSK_XactErrMsk         (1U<<7)      /**< Transaction Error mask.*/
-#define HCINTMSK_NyetMsk            (1U<<6)      /**< NYET Response Received
-                                                     interrupt mask.        */
-#define HCINTMSK_AckMsk             (1U<<5)      /**< ACK Response
-                                                     Received/transmitted
-                                                     interrupt mask.        */
-#define HCINTMSK_NakMsk             (1U<<4)      /**< NAK Response Received
-                                                     interrupt mask.        */
-#define HCINTMSK_StallMsk           (1U<<3)      /**< STALL Response Received
-                                                     interrupt mask.        */
-#define HCINTMSK_ChHltdMsk          (1U<<1)      /**< channel Halted mask.   */
-#define HCINTMSK_XferComplMsk       (1U<<0)      /**< transfer completed
-                                                     mask.*/
+#define HCINTMSK_DTERRM         (1U<<10)    /**< Data toggle error mask.    */
+#define HCINTMSK_FRMORM         (1U<<9)     /**< Frame overrun mask.        */
+#define HCINTMSK_BBERRM         (1U<<8)     /**< Babble error mask.         */
+#define HCINTMSK_TRERRM         (1U<<7)     /**< Transaction error mask.    */
+#define HCINTMSK_NYET           (1U<<6)     /**< NYET response received
+                                                 interrupt mask.            */
+#define HCINTMSK_ACKM           (1U<<5)     /**< ACK Response
+                                                 received/transmitted
+                                                 interrupt mask.            */
+#define HCINTMSK_NAKM           (1U<<4)     /**< NAK response received
+                                                 interrupt mask.            */
+#define HCINTMSK_STALLM         (1U<<3)     /**< STALL response received
+                                                 interrupt mask.            */
+#define HCINTMSK_CHHM           (1U<<1)     /**< Channel halted mask.       */
+#define HCINTMSK_XFRCM          (1U<<0)     /**< Transfer completed mask.   */
 /** @} */
 
 /**
  * @name HCTSIZ register bit definitions
  * @{
  */
-#define HCTSIZ_DoPng                (1U<<31)     /**< Do Ping.               */
-#define HCTSIZ_Pid_MASK             (3<<29)     /**< PID mask.              */
-#define HCTSIZ_Pid_DATA0            (0<<29)     /**< DATA0.                 */
-#define HCTSIZ_Pid_DATA2            (1U<<29)     /**< DATA2.                 */
-#define HCTSIZ_Pid_DATA1            (2<<29)     /**< DATA1.                 */
-#define HCTSIZ_Pid_MDATA            (3<<29)     /**< MDATA.                 */
-#define HCTSIZ_Xfersize_MASK        (0x7FFFF<<0)/**< transfer size mask.    */
-#define HCTSIZ_Xfersize(n)          ((n)<<0)    /**< transfer size value.   */
+#define HCTSIZ_DPID_MASK        (3U<<29)    /**< PID mask.                  */
+#define HCTSIZ_DPID_DATA0       (0U<<29)    /**< DATA0.                     */
+#define HCTSIZ_DPID_DATA2       (1U<<29)    /**< DATA2.                     */
+#define HCTSIZ_DPID_DATA1       (2U<<29)    /**< DATA1.                     */
+#define HCTSIZ_DPID_MDATA       (3U<<29)    /**< MDATA.                     */
+#define HCTSIZ_PKTCNT_MASK      (0x3FFU<<19)/**< Packet count mask.         */
+#define HCTSIZ_PKTCNT(n)        ((n##U)<<19)/**< Packet count value.        */
+#define HCTSIZ_XFRSIZ_MASK      (0x7FFFF<<0)/**< Transfer size mask.        */
+#define HCTSIZ_XFRSIZ(n)        ((n##U)<<0) /**< Transfer size value.       */
 /** @} */
 
 /**
@@ -675,18 +595,18 @@ typedef struct {
  */
 #define DCFG_ResValid_MASK          (0x3F<<26)  /**< Resume Validation Period
                                                      mask.                  */
-#define DCFG_ResValid(n)            ((n)<<26)   /**< Resume Validation Period
+#define DCFG_ResValid(n)            ((n##U)<<26)   /**< Resume Validation Period
                                                      value.                 */
 #define DCFG_EPMiscnt_MASK          (0x1F<<18)  /**< IN endpoint Mismatch
                                                      count mask.            */
-#define DCFG_EPMiscnt(n)            ((n)<<18)   /**< IN endpoint Mismatch
+#define DCFG_EPMiscnt(n)            ((n##U)<<18)   /**< IN endpoint Mismatch
                                                      count value.           */
 #define DCFG_PerFrInt_MASK          (3<<11)     /**< periodic frame interval
                                                      mask.                  */
-#define DCFG_PerFrInt(n)            ((n)<<11)   /**< periodic frame interval
+#define DCFG_PerFrInt(n)            ((n##U)<<11)   /**< periodic frame interval
                                                      value.                 */
 #define DCFG_DevAddr_MASK           (0x7F<<4)   /**< Device Address mask.   */
-#define DCFG_DevAddr(n)             ((n)<<4)    /**< Device Address value.  */
+#define DCFG_DevAddr(n)             ((n##U)<<4)    /**< Device Address value.  */
 #define DCFG_Ena32KHzS              (1U<<3)      /**< enable 32-KHz suspend
                                                      Mode.                  */
 #define DCFG_NZStsOUTHShk           (1U<<2)      /**< non-Zero-Length status
@@ -719,7 +639,7 @@ typedef struct {
 #define DCTL_SGNPInNak              (1U<<7)      /**< Set Global non-periodic
                                                      IN NAK.                */
 #define DCTL_TstCtl_MASK            (7<<4)      /**< Test control mask.     */
-#define DCTL_TstCtl(n)              ((n)<<4)    /**< Test control value.    */
+#define DCTL_TstCtl(n)              ((n##U)<<4)    /**< Test control value.    */
 #define DCTL_GOUTNakSts             (1U<<3)      /**< Global OUT NAK status. */
 #define DCTL_GNPINNakSts            (1U<<2)      /**< Global non-periodic IN
                                                      NAK status.            */
@@ -735,7 +655,7 @@ typedef struct {
 #define DSTS_SOFFN_MASK             (0x3FFF<<8) /**< frame or Microframe
                                                      number of the Received
                                                      SOF mask.              */
-#define DSTS_SOFFN(n)               ((n)<<8)    /**< frame or Microframe
+#define DSTS_SOFFN(n)               ((n##U)<<8)    /**< frame or Microframe
                                                      number of the Received
                                                      SOF value.             */
 #define DSTS_ErrticErr              (1U<<3)      /**< Erratic Error.         */
@@ -803,11 +723,11 @@ typedef struct {
  */
 #define DAINT_OutEPInt_MASK         (0xFFFF<<16)/**< OUT endpoint interrupt
                                                      Bits mask.             */
-#define DAINT_OutEPInt(n)           ((n)<<16)   /**< OUT endpoint interrupt
+#define DAINT_OutEPInt(n)           ((n##U)<<16)   /**< OUT endpoint interrupt
                                                      Bits value.            */
 #define DAINT_InEpInt_MASK          (0xFFFF<<0) /**< IN endpoint interrupt
                                                      Bits mask.             */
-#define DAINT_InEpInt(n)            ((n)<<0)    /**< IN endpoint interrupt
+#define DAINT_InEpInt(n)            ((n##U)<<0)    /**< IN endpoint interrupt
                                                      Bits value.            */
 /** @} */
 
@@ -831,7 +751,7 @@ typedef struct {
  */
 #define DVBUSDIS_DVBUSDis_MASK      (0xFFFF<<0) /**< Device VBUS Discharge
                                                      time mask.             */
-#define DVBUSDIS_DVBUSDis(n)        ((n)<<0)    /**< Device VBUS Discharge
+#define DVBUSDIS_DVBUSDis(n)        ((n##U)<<0)    /**< Device VBUS Discharge
                                                      time value.            */
 /** @} */
 
@@ -841,7 +761,7 @@ typedef struct {
  */
 #define DVBUSPULSE_DVBUSPulse_MASK  (0xFFF<<0)  /**< Device VBUS Pulsing time
                                                      mask.                  */
-#define DVBUSPULSE_DVBUSPulse(n)    ((n)<<0)    /**< Device VBUS Pulsing time
+#define DVBUSPULSE_DVBUSPulse(n)    ((n##U)<<0)    /**< Device VBUS Pulsing time
                                                      value.                 */
 /** @} */
 
@@ -856,7 +776,7 @@ typedef struct {
 #define DIEPCTL_SNAK                (1U<<27)     /**< Set NAK.               */
 #define DIEPCTL_CNAK                (1U<<26)     /**< Clear NAK.             */
 #define DIEPCTL_TxFNum_MASK         (15<<22)    /**< TxFIFO number mask.    */
-#define DIEPCTL_TxFNum(n)           ((n)<<22)   /**< TxFIFO number value.   */
+#define DIEPCTL_TxFNum(n)           ((n##U)<<22)   /**< TxFIFO number value.   */
 #define DIEPCTL_Stall               (1U<<21)     /**< STALL Handshake.       */
 #define DIEPCTL_Snp                 (1U<<20)     /**< Snoop Mode.            */
 #define DIEPCTL_EPType_MASK         (3<<18)     /**< endpoint Type mask.    */
@@ -868,10 +788,10 @@ typedef struct {
 #define DIEPCTL_DPID                (1U<<16)     /**< endpoint Data PID.     */
 #define DIEPCTL_USBActEP            (1U<<15)     /**< USB Active endpoint.   */
 #define DIEPCTL_NextEp_MASK         (15<<11)    /**< Next endpoint mask.    */
-#define DIEPCTL_NextEp(n)           ((n)<<11)   /**< Next endpoint value.   */
+#define DIEPCTL_NextEp(n)           ((n##U)<<11)   /**< Next endpoint value.   */
 #define DIEPCTL_MPS_MASK            (0x3FF<<0)  /**< Maximum Packet size
                                                      mask.                  */
-#define DIEPCTL_MPS(n)              ((n)<<0)    /**< Maximum Packet size
+#define DIEPCTL_MPS(n)              ((n##U)<<0)    /**< Maximum Packet size
                                                      value.                 */
 /** @} */
 
@@ -902,11 +822,11 @@ typedef struct {
  * @{
  */
 #define DIEPTSIZ_MC_MASK            (3<<29)     /**< Multi count mask.      */
-#define DIEPTSIZ_MC(n)              ((n)<<29)   /**< Multi count value.     */
+#define DIEPTSIZ_MC(n)              ((n##U)<<29)   /**< Multi count value.     */
 #define DIEPTSIZ_Pktcnt_MASK        (0x3FF<<19) /**< Packet count mask.     */
-#define DIEPTSIZ_Pktcnt(n)          ((n)<<19)   /**< Packet count value.    */
+#define DIEPTSIZ_Pktcnt(n)          ((n##U)<<19)   /**< Packet count value.    */
 #define DIEPTSIZ_Xfersize_MASK      (0x7FFFF<<0)/**< transfer size mask.    */
-#define DIEPTSIZ_Xfersize(n)        ((n)<<0)    /**< transfer size value.   */
+#define DIEPTSIZ_Xfersize(n)        ((n##U)<<0)    /**< transfer size value.   */
 /** @} */
 
 /**
@@ -930,10 +850,10 @@ typedef struct {
 #define DOEPCTL_EO_FrNum            (1U<<16)     /**< Even/Odd (Micro)frame. */
 #define DOEPCTL_USBActEP            (1U<<15)     /**< USB Active endpoint.   */
 #define DOEPCTL_NextEp_MASK         (15<<11)    /**< Next endpoint mask.    */
-#define DOEPCTL_NextEp(n)           ((n)<<11)   /**< Next endpoint value.   */
+#define DOEPCTL_NextEp(n)           ((n##U)<<11)   /**< Next endpoint value.   */
 #define DOEPCTL_MPS_MASK            (0x3FF<<0)  /**< Maximum Packet size
                                                      mask.                  */
-#define DOEPCTL_MPS(n)              ((n)<<0)    /**< Maximum Packet size
+#define DOEPCTL_MPS(n)              ((n##U)<<0)    /**< Maximum Packet size
                                                      value.                 */
 /** @} */
 
@@ -962,11 +882,11 @@ typedef struct {
  * @{
  */
 #define DOEPTSIZ_SUPcnt_MASK        (3<<29)     /**< SETUP Packet cnt mask. */
-#define DOEPTSIZ_SUPcnt(n)          ((n)<<29)   /**< SETUP Packet cnt value.*/
+#define DOEPTSIZ_SUPcnt(n)          ((n##U)<<29)   /**< SETUP Packet cnt value.*/
 #define DOEPTSIZ_Pktcnt_MASK        (0x3FF<<19) /**< Packet count mask.     */
-#define DOEPTSIZ_Pktcnt(n)          ((n)<<19)   /**< Packet count value.    */
+#define DOEPTSIZ_Pktcnt(n)          ((n##U)<<19)   /**< Packet count value.    */
 #define DOEPTSIZ_Xfersize_MASK      (0x7FFFF<<0)/**< transfer size mask.    */
-#define DOEPTSIZ_Xfersize(n)        ((n)<<0)    /**< transfer size value.   */
+#define DOEPTSIZ_Xfersize(n)        ((n##U)<<0)    /**< transfer size value.   */
 /** @} */
 
 /**
