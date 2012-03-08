@@ -265,6 +265,29 @@ void rtcGetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec){
 }
 
 /**
+ * @brief   Get current time in format suitable for usage in FatFS.
+ *
+ * @param[in] timespec  pointer to RTCTime structure
+ * @return              FAT time value.
+ *
+ * @api
+ */
+uint32_t rtc_lld_calc_fat_time(RTCTime *timespec){
+  uint32_t fattime = 0;
+  struct tm timp;
+
+  stm32_rtc_bcd2tm(&timp, timespec);
+
+  fattime |= (timp.tm_sec / 2);
+  fattime |= (timp.tm_min) << 5;
+  fattime |= (timp.tm_hour) << 11;
+  fattime |= (timp.tm_mday) << 16;
+  fattime |= (timp.tm_mon + 1) << 21;
+  fattime |= (timp.tm_year - 80) << 25;
+  return fattime;
+}
+
+/**
  * @brief     Converts from STM32 BCD to canonicalized time format.
  *
  * @param[out] timp     pointer to a @p tm structure defined in time.h

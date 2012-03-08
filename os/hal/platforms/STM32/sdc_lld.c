@@ -56,7 +56,7 @@ SDCDriver SDCD1;
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-#if STM32_SDC_UNALIGNED_SUPPORT
+#if STM32_SDC_SDIO_UNALIGNED_SUPPORT
 /**
  * @brief   Buffer for temporary storage during unaligned transfers.
  */
@@ -64,7 +64,7 @@ static union {
   uint32_t  alignment;
   uint8_t   buf[SDC_BLOCK_SIZE];
 } u;
-#endif
+#endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -706,7 +706,7 @@ error:
 bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
                     uint8_t *buf, uint32_t n) {
 
-#if STM32_SDC_UNALIGNED_SUPPORT
+#if STM32_SDC_SDIO_UNALIGNED_SUPPORT
   if (((unsigned)buf & 3) != 0) {
     uint32_t i;
     for (i = 0; i < n; i++) {
@@ -718,7 +718,7 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
     }
     return SDC_SUCCESS;
   }
-#endif
+#endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
   return sdc_lld_read_aligned(sdcp, startblk, buf, n);
 }
 
@@ -739,7 +739,7 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
 bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
                      const uint8_t *buf, uint32_t n) {
 
-  #if STM32_SDC_UNALIGNED_SUPPORT
+#if STM32_SDC_SDIO_UNALIGNED_SUPPORT
   if (((unsigned)buf & 3) != 0) {
     uint32_t i;
     for (i = 0; i < n; i++) {
@@ -751,7 +751,7 @@ bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
     }
     return SDC_SUCCESS;
   }
-#endif
+#endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
   return sdc_lld_write_aligned(sdcp, startblk, buf, n);
 }
 

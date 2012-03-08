@@ -30,6 +30,8 @@
  * @{
  */
 
+#include <time.h>
+
 #include "ch.h"
 #include "hal.h"
 
@@ -290,6 +292,28 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
   }
 }
 
+/**
+ * @brief   Get current time in format suitable for usage in FatFS.
+ *
+ * @param[in] timespec  pointer to RTCTime structure
+ * @return              FAT time value.
+ *
+ * @api
+ */
+uint32_t rtc_lld_calc_fat_time(RTCTime *timespec){
+  uint32_t fattime = 0;
+  struct tm *timp;
+
+  timp = localtime((time_t *)(timespec->tv_sec));
+
+  fattime |= (timp->tm_sec / 2);
+  fattime |= (timp->tm_min) << 5;
+  fattime |= (timp->tm_hour) << 11;
+  fattime |= (timp->tm_mday) << 16;
+  fattime |= (timp->tm_mon + 1) << 21;
+  fattime |= (timp->tm_year - 80) << 25;
+  return fattime;
+}
 #endif /* HAL_USE_RTC */
 
 /** @} */

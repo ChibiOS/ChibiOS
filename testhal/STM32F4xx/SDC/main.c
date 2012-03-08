@@ -22,13 +22,22 @@
 #include "ch.h"
 #include "hal.h"
 
+#include "shell.h"
+#include "chprintf.h"
 
-#define SDC_DATA_DESTRUCTIVE_TEST   TRUE
+#include "ff.h"
+
+#define SDC_DATA_DESTRUCTIVE_TEST   FALSE
 
 #define SDC_BURST_SIZE      8 /* how many sectors reads at once */
 static uint8_t outbuf[SDC_BLOCK_SIZE * SDC_BURST_SIZE + 1];
 static uint8_t  inbuf[SDC_BLOCK_SIZE * SDC_BURST_SIZE + 1];
 
+/* FS object.*/
+static FATFS SDC_FS;
+
+/* FS mounted and ready.*/
+static bool_t fs_ready = FALSE;
 
 /**
  * @brief   Parody of UNIX badblocks program.
@@ -93,42 +102,49 @@ void fillbuffers(uint8_t pattern){
   fillbuffer(pattern, outbuf);
 }
 
-/*
- * SDIO configuration.
+/**
+ *
  */
-static const SDCConfig sdccfg = {
-  0
-};
+bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
+  (void)sdcp;
+  return FALSE;
+}
 
-/*
- * Application entry point.
+/**
+ *
  */
-int main(void) {
+void cmd_sdiotest(BaseChannel *chp, int argc, char *argv[]){
+  (void)argc;
+  (void)argv;
   uint32_t i = 0;
 
-  halInit();
-  chSysInit();
-
-  /*
-   * Initializes the SDIO drivers.
-   */
-  sdcStart(&SDCD1, &sdccfg);
+  chprintf(chp, "Trying to connect SDIO... ");
+  chThdSleepMilliseconds(100);
 
   if (!sdcConnect(&SDCD1)) {
 
-    /* Single aligned read.*/
+    chprintf(chp, "OK\r\nSingle aligned read...");
+    chThdSleepMilliseconds(100);
     if (sdcRead(&SDCD1, 0, inbuf, 1))
       chSysHalt();
+    chprintf(chp, " OK\r\n");
+    chThdSleepMilliseconds(100);
 
-    /* Single unaligned read.*/
+
+    chprintf(chp, "Single unaligned read...");
+    chThdSleepMilliseconds(100);
     if (sdcRead(&SDCD1, 0, inbuf + 1, 1))
       chSysHalt();
     if (sdcRead(&SDCD1, 0, inbuf + 2, 1))
       chSysHalt();
     if (sdcRead(&SDCD1, 0, inbuf + 3, 1))
       chSysHalt();
+    chprintf(chp, " OK\r\n");
+    chThdSleepMilliseconds(100);
 
-    /* Multiple aligned reads from one place to ensure in bus stability */
+
+    chprintf(chp, "Multiple aligned reads...");
+    chThdSleepMilliseconds(100);
     fillbuffers(0x55);
     /* fill reference buffer from SD card */
     if (sdcRead(&SDCD1, 0, inbuf, SDC_BURST_SIZE))
@@ -139,8 +155,12 @@ int main(void) {
       if (memcmp(inbuf, outbuf, SDC_BURST_SIZE * SDC_BLOCK_SIZE) != 0)
         chSysHalt();
     }
+    chprintf(chp, " OK\r\n");
+    chThdSleepMilliseconds(100);
 
-    /* Repeated multiple unaligned reads.*/
+
+    chprintf(chp, "Multiple unaligned reads...");
+    chThdSleepMilliseconds(100);
     fillbuffers(0x55);
     /* fill reference buffer from SD card */
     if (sdcRead(&SDCD1, 0, inbuf + 1, SDC_BURST_SIZE))
@@ -151,16 +171,13 @@ int main(void) {
       if (memcmp(inbuf, outbuf, SDC_BURST_SIZE * SDC_BLOCK_SIZE) != 0)
         chSysHalt();
     }
-
-
-
-
-
-
+    chprintf(chp, " OK\r\n");
+    chThdSleepMilliseconds(100);
 
 #if SDC_DATA_DESTRUCTIVE_TEST
 
-    /* Single aligned write.*/
+    chprintf(chp, "Single aligned write...");
+    chThdSleepMilliseconds(100);
     fillbuffer(0xAA, inbuf);
     if (sdcWrite(&SDCD1, 0, inbuf, 1))
       chSysHalt();
@@ -169,8 +186,10 @@ int main(void) {
       chSysHalt();
     if (memcmp(inbuf, outbuf, SDC_BLOCK_SIZE) != 0)
       chSysHalt();
+    chprintf(chp, " OK\r\n");
 
-    /* Single unaligned write.*/
+    chprintf(chp, "Single unaligned write...");
+    chThdSleepMilliseconds(100);
     fillbuffer(0xFF, inbuf);
     if (sdcWrite(&SDCD1, 0, inbuf+1, 1))
       chSysHalt();
@@ -179,24 +198,152 @@ int main(void) {
       chSysHalt();
     if (memcmp(inbuf+1, outbuf+1, SDC_BLOCK_SIZE) != 0)
       chSysHalt();
+    chprintf(chp, " OK\r\n");
 
-
+    chprintf(chp, "Running badblocks at 0x10000 offset...");
+    chThdSleepMilliseconds(100);
     if(badblocks(0x10000, 0x11000, SDC_BURST_SIZE, 0xAA))
       chSysHalt();
+    chprintf(chp, " OK\r\n");
 #endif /* !SDC_DATA_DESTRUCTIVE_TEST */
 
 
+    /**
+     * Now some perform FS tests.
+     */
+
+    FRESULT err;
+    uint32_t clusters;
+    FATFS *fsp;
+    FIL FileObject;
+    uint32_t bytes_written;
 
 
+    chprintf(chp, "Register working area for filesystem... ");
+    chThdSleepMilliseconds(100);
+    err = f_mount(0, &SDC_FS);
+    if (err != FR_OK){
+      chSysHalt();
+    }
+    else{
+      fs_ready = TRUE;
+      chprintf(chp, "OK\r\n");
+    }
 
 
+#if SDC_DATA_DESTRUCTIVE_TEST
+    chprintf(chp, "Formatting... ");
+    chThdSleepMilliseconds(100);
+    err = f_mkfs (0,0,0);
+    if (err != FR_OK){
+      chSysHalt();
+    }
+    else{
+      chprintf(chp, "OK\r\n");
+    }
+#endif /* SDC_DATA_DESTRUCTIVE_TEST */
 
+
+    chprintf(chp, "Mount filesystem... ");
+    chThdSleepMilliseconds(100);
+    err = f_getfree("/", &clusters, &fsp);
+    if (err != FR_OK) {
+      chSysHalt();
+    }
+    chprintf(chp, "OK\r\n");
+    chprintf(chp,
+             "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free\r\n",
+             clusters, (uint32_t)SDC_FS.csize,
+             clusters * (uint32_t)SDC_FS.csize * (uint32_t)SDC_BLOCK_SIZE);
+
+
+    chprintf(chp, "Create file \"chtest.txt\"... ");
+    chThdSleepMilliseconds(100);
+    err = f_open(&FileObject, "0:chtest.txt", FA_WRITE | FA_OPEN_ALWAYS);
+    if (err != FR_OK) {
+      chSysHalt();
+    }
+    chprintf(chp, "OK\r\n");
+    chprintf(chp, "Write some data in it... ");
+    chThdSleepMilliseconds(100);
+    err = f_write(&FileObject, "This is test file", 17, (void *)&bytes_written);
+    if (err != FR_OK) {
+      chSysHalt();
+    }
+    else
+      chprintf(chp, "OK\r\n");
+
+
+    chprintf(chp, "Close file \"chtest.txt\"... ");
+    err = f_close(&FileObject);
+    if (err != FR_OK) {
+      chSysHalt();
+    }
+    else
+      chprintf(chp, "OK\r\n");
+
+    chprintf(chp, "Umount filesystem... ");
+    f_mount(0, NULL);
+    chprintf(chp, "OK\r\n");
+
+
+    chprintf(chp, "Disconnecting from SDIO...");
+    chThdSleepMilliseconds(100);
     if (sdcDisconnect(&SDCD1))
       chSysHalt();
+    chprintf(chp, " OK\r\n");
+    chprintf(chp, "------------------------------------------------------\r\n");
+    chprintf(chp, "All tests passed successfully.\r\n");
+    chThdSleepMilliseconds(100);
   }
   else{
     chSysHalt();
   }
+}
+
+
+/*
+ * SDIO configuration.
+ */
+static const SDCConfig sdccfg = {
+  0
+};
+
+/**
+ *
+ */
+static SerialConfig ser_cfg = {
+    115200,
+    0,
+    0,
+    0,
+};
+static const ShellCommand commands[] = {
+  {"sdiotest", cmd_sdiotest},
+  {NULL, NULL}
+};
+static const ShellConfig shell_cfg1 = {
+  (BaseChannel *)&SD2,
+  commands
+};
+
+/*
+ * Application entry point.
+ */
+int main(void) {
+  halInit();
+  chSysInit();
+
+  /* start debugging serial link */
+  sdStart(&SD2, &ser_cfg);
+  shellInit();
+  static WORKING_AREA(waShell, 2048);
+  shellCreateStatic(&shell_cfg1, waShell, sizeof(waShell), NORMALPRIO);
+
+  /*
+   * Initializes the SDIO drivers.
+   */
+  sdcStart(&SDCD1, &sdccfg);
 
   /*
    * Normal main() thread activity.
@@ -204,6 +351,6 @@ int main(void) {
    */
   while (TRUE) {
     palTogglePad(GPIOB, GPIOB_LED_R);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(100);
   }
 }

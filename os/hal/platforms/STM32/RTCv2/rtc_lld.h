@@ -200,6 +200,7 @@ extern "C" {
                          RTCAlarm *alarmspec);
   void rtcSetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec);
   void rtcGetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec);
+  uint32_t rtc_lld_calc_fat_time(RTCTime *timespec);
   void stm32_rtc_bcd2tm(struct tm *timp, RTCTime *timespec);
   void stm32_rtc_tm2bcd(struct tm *timp, RTCTime *timespec);
 #ifdef __cplusplus
