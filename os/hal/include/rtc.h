@@ -151,7 +151,6 @@ extern "C" {
   void rtcInit(void);
   void rtcSetTime(RTCDriver *rtcp, const RTCTime *timespec);
   void rtcGetTime(RTCDriver *rtcp, RTCTime *timespec);
-  uint32_t rtcGetFatTime(RTCDriver *rtcp);
 #if RTC_ALARMS > 0
   void rtcSetAlarm(RTCDriver *rtcp,
                    rtcalarm_t alarm,

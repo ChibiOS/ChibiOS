@@ -101,26 +101,6 @@ void rtcGetTime(RTCDriver *rtcp, RTCTime *timespec) {
   chSysUnlock();
 }
 
-/**
- * @brief   Get current time in format suitable for usage in FatFS.
- *
- * @param[in] rtcp      pointer to RTC driver structure
- * @return              FAT time value.
- *
- * @api
- */
-uint32_t rtcGetFatTime(RTCDriver *rtcp) {
-  RTCTime timespec;
-
-  chDbgCheck((rtcp != NULL), "rtcGetTime");
-
-  chSysLock();
-  rtcGetTimeI(rtcp, &timespec);
-  chSysUnlock();
-
-  return rtc_lld_calc_fat_time(&timespec);
-}
-
 #if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
 /**
  * @brief   Set alarm time.

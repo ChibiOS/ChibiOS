@@ -21,6 +21,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#include "chrtclib.h"
+
 RTCTime timespec;
 RTCAlarm alarmspec;
 
