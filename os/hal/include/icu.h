@@ -157,6 +157,17 @@ typedef void (*icucallback_t)(ICUDriver *icup);
   if (previous_state != ICU_WAITING)                                        \
     (icup)->config->period_cb(icup);                                        \
 }
+
+/**
+ * @brief   Common ISR code, ICU timer overflow event.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @notapi
+ */
+#define _icu_isr_invoke_overflow_cb(icup) {                                 \
+  (icup)->config->overflow_cb(icup);                                        \
+}
 /** @} */
 
 /*===========================================================================*/

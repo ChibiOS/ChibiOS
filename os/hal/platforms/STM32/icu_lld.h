@@ -227,6 +227,10 @@ typedef struct {
    * @brief   Callback for cycle period measurement.
    */
   icucallback_t             period_cb;
+  /**
+   * @brief   Callback for timer overflow.
+   */
+  icucallback_t             overflow_cb;
   /* End of the mandatory fields.*/
   /**
    * @brief   Timer input channel to be used.

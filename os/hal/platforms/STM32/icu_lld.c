@@ -17,6 +17,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   Concepts and parts of this file have been contributed by Fabio Utzig and
+   Xo Wang.
+ */
 
 /**
  * @file    STM32/icu_lld.c
@@ -112,6 +116,8 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
     if ((sr & TIM_SR_CC2IF) != 0)
       _icu_isr_invoke_period_cb(icup);
   }
+  if ((sr & TIM_SR_UIF) != 0)
+    _icu_isr_invoke_overflow_cb(icup);
 }
 
 /*===========================================================================*/
@@ -482,7 +488,7 @@ void icu_lld_stop(ICUDriver *icup) {
  */
 void icu_lld_enable(ICUDriver *icup) {
 
-  icup->tim->SR   = 0;                      /* Clear pending IRQs (if any). */
+  icup->tim->SR = 0;                        /* Clear pending IRQs (if any). */
   if (icup->config->channel == ICU_CHANNEL_1) {
     if (icup->config->period_cb != NULL)
       icup->tim->DIER |= TIM_DIER_CC1IE;
@@ -494,6 +500,8 @@ void icu_lld_enable(ICUDriver *icup) {
     if (icup->config->period_cb != NULL)
       icup->tim->DIER |= TIM_DIER_CC2IE;
   }
+  if (icup->config->overflow_cb != NULL)
+    icup->tim->DIER |= TIM_DIER_UIE;
   icup->tim->CR1  = TIM_CR1_URS | TIM_CR1_CEN;
 }
 

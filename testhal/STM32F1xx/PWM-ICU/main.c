@@ -66,6 +66,7 @@ static ICUConfig icucfg = {
   10000,                                    /* 10KHz ICU clock frequency.   */
   icuwidthcb,
   icuperiodcb,
+  NULL,
   ICU_CHANNEL_1
 };
 

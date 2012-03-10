@@ -17,6 +17,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   Concepts and parts of this file have been contributed by Fabio Utzig and
+   Xo Wang.
+ */
 
 /**
  * @file    templates/icu_lld.h
@@ -88,6 +92,10 @@ typedef struct {
    * @brief   Callback for cycle period measurement.
    */
   icucallback_t             period_cb;
+  /**
+   * @brief   Callback for timer overflow.
+   */
+  icucallback_t             overflow_cb;
   /* End of the mandatory fields.*/
 } ICUConfig;
 
