@@ -47,12 +47,12 @@
  * @{
  */
 /**
- * @brief   Maximum HSE  clock frequency.
+ * @brief   Minimum ADC clock frequency.
  */
 #define STM32_ADCCLK_MIN        600000
 
 /**
- * @brief   Maximum HSE  clock frequency.
+ * @brief   Maximum ADC clock frequency.
  */
 #define STM32_ADCCLK_MAX        36000000
 /** @} */
