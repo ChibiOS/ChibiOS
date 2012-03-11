@@ -97,8 +97,6 @@ static char *ftoa(char *p, double num) {
  *          - <b>c</b> character.
  *          - <b>s</b> string.
  *          .
- * @note    Floating point types are not implemented, this function is meant
- *          as a system utility and not a full implementation.
  *
  * @param[in] chp       pointer to a @p BaseChannel implementing object
  * @param[in] fmt       formatting string
