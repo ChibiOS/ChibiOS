@@ -29,6 +29,13 @@
 #ifndef _CHPRINTF_H_
 #define _CHPRINTF_H_
 
+/**
+ * @brief   Float type support.
+ */
+#if !defined(CHPRINTF_USE_FLOAT) || defined(__DOXYGEN__)
+#define CHPRINTF_USE_FLOAT          FALSE
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

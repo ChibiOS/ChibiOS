@@ -17,25 +17,42 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   Concepts and parts of this file have been contributed by Fabio Utzig.
+ */
 
 #include <stdarg.h>
 
 #include "ch.h"
+#include "chprintf.h"
 
 #define MAX_FILLER 11
+#define FLOAT_PRECISION 100000
 
-static char *ltoa(char *p, long num, unsigned radix) {
+static char *long_to_string_with_divisor(char *p,
+                                         long num,
+                                         unsigned radix,
+                                         long divisor) {
   int i;
   char *q;
+  long l, ll;
+
+  l = num;
+  if (divisor == 0) {
+    ll = num;
+  } else {
+    ll = divisor;
+  }
 
   q = p + MAX_FILLER;
   do {
-    i = (int)(num % radix);
+    i = (int)(l % radix);
     i += '0';
     if (i > '9')
       i += 'A' - '0' - 10;
     *--q = i;
-  } while ((num /= radix) != 0);
+    l /= radix;
+  } while ((ll /= radix) != 0);
 
   i = (int)(p + MAX_FILLER - q);
   do
@@ -44,6 +61,24 @@ static char *ltoa(char *p, long num, unsigned radix) {
 
   return p;
 }
+
+static char *ltoa(char *p, long num, unsigned radix) {
+
+  return long_to_string_with_divisor(p, num, radix, 0);
+}
+
+#if CHPRINTF_USE_FLOAT
+static char *ftoa(char *p, double num) {
+  long l;
+  unsigned long precision = FLOAT_PRECISION;
+
+  l = num;
+  p = long_to_string_with_divisor(p, l, 10, 0);
+  *p++ = '.';
+  l = (num - l) * precision;
+  return long_to_string_with_divisor(p, l, 10, precision / 10);
+}
+#endif
 
 /**
  * @brief   System formatted output function.
@@ -75,6 +110,9 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
   int i, precision, width;
   bool_t is_long, left_align;
   long l;
+#if CHPRINTF_USE_FLOAT
+  float f;
+#endif
 
   va_start(ap, fmt);
   while (TRUE) {
@@ -160,6 +198,16 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
       }
       p = ltoa(p, l, 10);
       break;
+#if CHPRINTF_USE_FLOAT
+    case 'f':
+      f = (float) va_arg(ap, double);
+      if (f < 0) {
+        *p++ = '-';
+        f = -f;
+      }
+      p = ftoa(p, f);
+      break;
+#endif
     case 'X':
     case 'x':
       c = 16;

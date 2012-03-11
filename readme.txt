@@ -97,6 +97,7 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added float support (optional) to chprintf(), by Fabio Utzig.
 - NEW: Added overflow handling in the ICU driver (contributed by Xo).
 - NEW: Updated debug plugin 1.0.8 (backported to 2.4.0).
 - NEW: Added more accurate UBRR calculation in AVR serial driver (backported
