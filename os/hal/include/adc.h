@@ -282,13 +282,13 @@ extern "C" {
   void adcStart(ADCDriver *adcp, const ADCConfig *config);
   void adcStop(ADCDriver *adcp);
   void adcStartConversion(ADCDriver *adcp,
+                          const ADCConversionGroup *grpp,
+                          adcsample_t *samples,
+                          size_t depth);
+  void adcStartConversionI(ADCDriver *adcp,
                            const ADCConversionGroup *grpp,
                            adcsample_t *samples,
                            size_t depth);
-  void adcStartConversionI(ADCDriver *adcp,
-                            const ADCConversionGroup *grpp,
-                            adcsample_t *samples,
-                            size_t depth);
   void adcStopConversion(ADCDriver *adcp);
   void adcStopConversionI(ADCDriver *adcp);
 #if ADC_USE_WAIT
