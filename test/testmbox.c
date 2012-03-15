@@ -204,10 +204,10 @@ static void mbox1_execute(void) {
     test_assert(39, msg1 == RDY_OK, "wrong wake-up message");
     test_emit_token(msg2);
   }
-  test_assert_sequence(38, "ABCDE");
-  test_assert_lock(39, chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-  test_assert_lock(40, chMBGetUsedCountI(&mb1) == 0, "still full");
-  test_assert(41, mb1.mb_rdptr == mb1.mb_wrptr, "pointers not aligned");
+  test_assert_sequence(40, "ABCDE");
+  test_assert_lock(41, chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+  test_assert_lock(42, chMBGetUsedCountI(&mb1) == 0, "still full");
+  test_assert(43, mb1.mb_rdptr == mb1.mb_wrptr, "pointers not aligned");
 
   /*
    * Testing reset.
@@ -217,10 +217,10 @@ static void mbox1_execute(void) {
   /*
    * Re-testing final conditions.
    */
-  test_assert_lock(42, chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
-  test_assert_lock(43, chMBGetUsedCountI(&mb1) == 0, "still full");
-  test_assert_lock(44, mb1.mb_buffer == mb1.mb_wrptr, "write pointer not aligned to base");
-  test_assert_lock(45, mb1.mb_buffer == mb1.mb_rdptr, "read pointer not aligned to base");
+  test_assert_lock(44, chMBGetFreeCountI(&mb1) == MB_SIZE, "not empty");
+  test_assert_lock(45, chMBGetUsedCountI(&mb1) == 0, "still full");
+  test_assert_lock(46, mb1.mb_buffer == mb1.mb_wrptr, "write pointer not aligned to base");
+  test_assert_lock(47, mb1.mb_buffer == mb1.mb_rdptr, "read pointer not aligned to base");
 }
 
 ROMCONST struct testcase testmbox1 = {
