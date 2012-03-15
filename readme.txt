@@ -80,6 +80,7 @@
 
 *** 2.4.1 ***
 - FIX: Fixed chMBFetchI does not decrement mb_fullsem (bug 3504450).
+- FIX: Fixed USART3 not working on STM32F2/F4 UART driver (bug 3496981).
 - FIX: Fixed stack misalignment on Posix-MacOSX (bug 3495487).
 - FIX: Fixed STM8S HSI clock initialization error (bug 3489727).
 - FIX: Fixed MMC over SPI driver performs an unnecessary SPI read (bug
