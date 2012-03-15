@@ -71,6 +71,7 @@
 *****************************************************************************
 
 *** 2.2.9 ***
+- FIX: Fixed chMBFetchI does not decrement mb_fullsem (bug 3504450).
 - FIX: Fixed STM8S HSI clock initialization error (bug 3489727).
 - FIX: Fixed MMC over SPI driver performs an unnecessary SPI read (bug
   3486930).

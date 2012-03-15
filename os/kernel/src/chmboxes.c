@@ -364,6 +364,7 @@ msg_t chMBFetchI(Mailbox *mbp, msg_t *msgp) {
 
   if (chSemGetCounterI(&mbp->mb_fullsem) <= 0)
     return RDY_TIMEOUT;
+  chSemFastWaitI(&mbp->mb_fullsem);
   *msgp = *mbp->mb_rdptr++;
   if (mbp->mb_rdptr >= mbp->mb_top)
     mbp->mb_rdptr = mbp->mb_buffer;
