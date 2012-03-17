@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    i2s.c
- * @brief   I2S Driver code.
+ * @file    templates/i2s_lld.c
+ * @brief   I2S Driver subsystem low level driver source template.
  *
  * @addtogroup I2S
  * @{
@@ -48,53 +48,35 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
+/* Driver interrupt handlers.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**
- * @brief   I2S Driver initialization.
- * @note    This function is implicitly invoked by @p halInit(), there is
- *          no need to explicitly initialize the driver.
+ * @brief   Low level I2S driver initialization.
  *
- * @init
+ * @notapi
  */
-void i2sInit(void) {
+void i2s_lld_init(void) {
 
-  i2s_lld_init();
-}
-
-/**
- * @brief   Initializes the standard part of a @p I2SDriver structure.
- *
- * @param[out] i2sp     pointer to the @p I2SDriver object
- *
- * @init
- */
-void i2sObjectInit(I2SDriver *i2sp) {
-
-  i2sp->state  = I2S_STOP;
-  i2sp->config = NULL;
 }
 
 /**
  * @brief   Configures and activates the I2S peripheral.
  *
  * @param[in] i2sp      pointer to the @p I2SDriver object
- * @param[in] config    pointer to the @p I2SConfig object
  *
- * @api
+ * @notapi
  */
-void i2sStart(I2SDriver *i2sp, const I2SConfig *config) {
+void i2s_lld_start(I2SDriver *i2sp) {
 
-  chDbgCheck((i2sp != NULL) && (config != NULL), "i2sStart");
-
-  chSysLock();
-  chDbgAssert((i2sp->state == I2S_STOP) || (i2sp->state == I2S_READY),
-              "i2sStart(), #1", "invalid state");
-  i2sp->config = config;
-  i2s_lld_start(i2sp);
-  i2sp->state = I2S_READY;
-  chSysUnlock();
+  if (i2sp->state == I2S_STOP) {
+    /* Clock activation.*/
+  }
+  /* Configuration.*/
 }
 
 /**
@@ -102,35 +84,26 @@ void i2sStart(I2SDriver *i2sp, const I2SConfig *config) {
  *
  * @param[in] i2sp      pointer to the @p I2SDriver object
  *
- * @api
+ * @notapi
  */
-void i2sStop(I2SDriver *i2sp) {
+void i2s_lld_stop(I2SDriver *i2sp) {
 
-  chDbgCheck(i2sp != NULL, "i2sStop");
+  if (i2sp->state == I2S_READY) {
+    /* Clock deactivation.*/
 
-  chSysLock();
-  chDbgAssert((i2sp->state == I2S_STOP) || (i2sp->state == I2S_READY),
-              "i2sStop(), #1", "invalid state");
-  i2s_lld_stop(i2sp);
-  i2sp->state = I2S_STOP;
-  chSysUnlock();
+  }
 }
+
 
 /**
  * @brief   Starts a I2S data exchange.
  *
  * @param[in] i2sp      pointer to the @p I2SDriver object
  *
- * @api
+ * @notapi
  */
-void i2sStartExchange(I2SDriver *i2sp) {
+void i2s_lld_start_exchange(I2SDriver *i2sp) {
 
-  chDbgCheck(i2sp != NULL "i2sStartExchange");
-
-  chSysLock();
-  chDbgAssert(i2sp->state == I2S_READY, "i2sStartExchange(), #1", "not ready");
-  i2sStartExchangeI(i2sp);
-  chSysUnlock();
 }
 
 /**
@@ -140,19 +113,10 @@ void i2sStartExchange(I2SDriver *i2sp) {
  *
  * @param[in] i2sp      pointer to the @p I2SDriver object
  *
- * @api
+ * @notapi
  */
-void i2sStopExchange(I2SDriver *i2sp) {
+void i2s_lld_stop_exchange(I2SDriver *i2sp) {
 
-  chDbgCheck((i2sp != NULL), "i2sStopExchange");
-
-  chSysLock();
-  chDbgAssert((i2sp->state == I2S_READY) ||
-              (i2sp->state == I2S_ACTIVE) ||
-              (i2sp->state == I2S_COMPLETE),
-              "i2sStopExchange(), #1", "not ready");
-  i2sStopExchangeI(i2sp);
-  chSysUnlock();
 }
 
 #endif /* HAL_USE_I2S */

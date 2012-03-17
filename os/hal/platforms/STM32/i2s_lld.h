@@ -19,15 +19,15 @@
 */
 
 /**
- * @file    i2s.h
- * @brief   I2S Driver macros and structures.
+ * @file    templates/i2s_lld.h
+ * @brief   I2S Driver subsystem low level driver header template.
  *
  * @addtogroup I2S
  * @{
  */
 
-#ifndef _I2S_H_
-#define _I2S_H_
+#ifndef _I2S_LLD_H_
+#define _I2S_LLD_H_
 
 #if HAL_USE_I2S || defined(__DOXYGEN__)
 
@@ -48,58 +48,53 @@
 /*===========================================================================*/
 
 /**
- * @brief   Driver state machine possible states.
- */
-typedef enum {
-  I2S_UNINIT = 0,                   /**< Not initialized.                   */
-  I2S_STOP = 1,                     /**< Stopped.                           */
-  I2S_READY = 2,                    /**< Ready.                             */
-  I2S_ACTIVE = 3,                   /**< Active.                            */
-  I2S_COMPLETE = 4                  /**< Transmission complete.             */
-} i2sstate_t;
-
-/**
- * @brief   Type of a structure representing a I2S driver.
+ * @brief   Type of a structure representing an I2S driver.
  */
 typedef struct I2SDriver I2SDriver;
 
-#include "i2s_lld.h"
+/**
+ * @brief   I2S notification callback type.
+ *
+ * @param[in] i2sp      pointer to the @p I2SDriver object
+ * @param[in] buffer    pointer to the buffer
+ * @param[in] n         number of sample positions starting from @p buffer
+ */
+typedef void (*i2scallback_t)(I2SDriver *i2sp, void *buffer, size_t n);
+
+/**
+ * @brief   Driver configuration structure.
+ * @note    It could be empty on some architectures.
+ */
+typedef struct {
+  /**
+   * @brief   Callback function associated to the reception or @p NULL.
+   */
+  i2scallback_t             rx_cb;;
+  /**
+   * @brief   Callback function associated to the transmission or @p NULL.
+   */
+  i2scallback_t             tx_cb;
+  /* End of the mandatory fields.*/
+} I2SConfig;
+
+/**
+ * @brief   Structure representing an I2S driver.
+ */
+struct I2SDriver {
+  /**
+   * @brief Driver state.
+   */
+  i2sstate_t                state;
+  /**
+   * @brief Current configuration data.
+   */
+  const I2SConfig           *config;
+  /* End of the mandatory fields.*/
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Starts a I2S data exchange.
- *
- * @param[in] i2sp      pointer to the @p I2SDriver object
- *
- * @iclass
- */
-#define i2sStartExchangeI(i2sp) {                                           \
-  i2s_lld_start_exchange(i2sp);                                             \
-  (i2sp)->state = I2S_ACTIVE;                                               \
-}
-
-/**
- * @brief   Stops the ongoing data exchange.
- * @details The ongoing data exchange, if any, is stopped, if the driver
- *          was not active the function does nothing.
- *
- * @param[in] i2sp      pointer to the @p I2SDriver object
- *
- * @iclass
- */
-#define i2sStopExchangeI(i2sp) {                                            \
-  i2s_lld_stop_exchange(i2sp);                                              \
-  (i2sp)->state = I2S_READY;                                                \
-}
-
-/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -108,18 +103,17 @@ typedef struct I2SDriver I2SDriver;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void i2sInit(void);
-  void i2sObjectInit(I2SDriver *i2sp);
-  void i2sStart(I2SDriver *i2sp, const I2SConfig *config);
-  void i2sStop(I2SDriver *i2sp);
-  void i2sStartExchange(I2SDriver *i2sp);
-  void i2sStopExchange(I2SDriver *i2sp);
+  void i2s_lld_init(void);
+  void i2s_lld_start(I2SDriver *i2sp);
+  void i2s_lld_stop(I2SDriver *i2sp);
+  void i2s_lld_start_exchange(I2SDriver *i2sp);
+  void i2s_lld_stop_exchange(I2SDriver *i2sp);
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* HAL_USE_I2S */
 
-#endif /* _I2S_H_ */
+#endif /* _I2S_LLD_H_ */
 
 /** @} */
