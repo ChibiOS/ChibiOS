@@ -21,7 +21,7 @@ Lines executed:100.00% of 68
 ../../os/kernel/src/chschd.c:creating `chschd.c.gcov'
 
 File `../../os/kernel/src/chthreads.c'
-Lines executed:100.00% of 88
+Lines executed:100.00% of 90
 ../../os/kernel/src/chthreads.c:creating `chthreads.c.gcov'
 
 File `../../os/kernel/src/chdynamic.c'
@@ -53,7 +53,7 @@ Lines executed:100.00% of 32
 ../../os/kernel/src/chmsg.c:creating `chmsg.c.gcov'
 
 File `../../os/kernel/src/chmboxes.c'
-Lines executed:100.00% of 94
+Lines executed:100.00% of 95
 ../../os/kernel/src/chmboxes.c:creating `chmboxes.c.gcov'
 
 File `../../os/kernel/src/chqueues.c'
