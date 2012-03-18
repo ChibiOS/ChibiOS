@@ -146,12 +146,12 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if STM32_I2S_USE_I2S2 && !STM32_HAS_I2S2
-#error "I2S2 not present in the selected device"
+#if STM32_I2S_USE_I2S2 && !STM32_HAS_SPI2
+#error "SPI2 not present in the selected device"
 #endif
 
-#if STM32_I2S_USE_I2S3 && !STM32_HAS_I2S3
-#error "I2S3 not present in the selected device"
+#if STM32_I2S_USE_I2S3 && !STM32_HAS_SPI3
+#error "SPI3 not present in the selected device"
 #endif
 
 #if !STM32_I2S_USE_I2S2 && !STM32_I2S_USE_I2S3
@@ -159,22 +159,22 @@
 #endif
 
 #if STM32_I2S_USE_I2S2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S2_RX_DMA_STREAM, STM32_I2S2_RX_DMA_MSK)
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S2_RX_DMA_STREAM, STM32_SPI2_RX_DMA_MSK)
 #error "invalid DMA stream associated to I2S2 RX"
 #endif
 
 #if STM32_I2S_USE_I2S2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S2_TX_DMA_STREAM, STM32_I2S2_TX_DMA_MSK)
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S2_TX_DMA_STREAM, STM32_SPI2_TX_DMA_MSK)
 #error "invalid DMA stream associated to I2S2 TX"
 #endif
 
 #if STM32_I2S_USE_I2S3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S3_RX_DMA_STREAM, STM32_I2S3_RX_DMA_MSK)
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S3_RX_DMA_STREAM, STM32_SPI3_RX_DMA_MSK)
 #error "invalid DMA stream associated to I2S3 RX"
 #endif
 
 #if STM32_I2S_USE_I2S3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S3_TX_DMA_STREAM, STM32_I2S3_TX_DMA_MSK)
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S3_TX_DMA_STREAM, STM32_SPI3_TX_DMA_MSK)
 #error "invalid DMA stream associated to I2S3 TX"
 #endif
 
