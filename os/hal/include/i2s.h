@@ -86,6 +86,18 @@ typedef struct I2SDriver I2SDriver;
 }
 
 /**
+ * @brief   Starts a I2S data exchange in continuous mode.
+ *
+ * @param[in] i2sp      pointer to the @p I2SDriver object
+ *
+ * @iclass
+ */
+#define i2sStartExchangeContinuousI(i2sp) {                                 \
+  i2s_lld_start_exchange_continuous(i2sp);                                  \
+  (i2sp)->state = I2S_ACTIVE;                                               \
+}
+
+/**
  * @brief   Stops the ongoing data exchange.
  * @details The ongoing data exchange, if any, is stopped, if the driver
  *          was not active the function does nothing.

@@ -311,6 +311,7 @@ extern "C" {
   void i2s_lld_start(I2SDriver *i2sp);
   void i2s_lld_stop(I2SDriver *i2sp);
   void i2s_lld_start_exchange(I2SDriver *i2sp);
+  void i2s_lld_start_exchange_continuous(I2SDriver *i2sp);
   void i2s_lld_stop_exchange(I2SDriver *i2sp);
 #ifdef __cplusplus
 }

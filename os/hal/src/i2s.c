@@ -128,8 +128,27 @@ void i2sStartExchange(I2SDriver *i2sp) {
   chDbgCheck(i2sp != NULL "i2sStartExchange");
 
   chSysLock();
-  chDbgAssert(i2sp->state == I2S_READY, "i2sStartExchange(), #1", "not ready");
+  chDbgAssert(i2sp->state == I2S_READY,
+              "i2sStartExchange(), #1", "not ready");
   i2sStartExchangeI(i2sp);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Starts a I2S data exchange in continuous mode.
+ *
+ * @param[in] i2sp      pointer to the @p I2SDriver object
+ *
+ * @api
+ */
+void i2sStartExchangeContinuous(I2SDriver *i2sp) {
+
+  chDbgCheck(i2sp != NULL "i2sStartExchangeContinuous");
+
+  chSysLock();
+  chDbgAssert(i2sp->state == I2S_READY,
+              "i2sStartExchangeContinuous(), #1", "not ready");
+  i2sStartExchangeContinuousI(i2sp);
   chSysUnlock();
 }
 

@@ -62,6 +62,15 @@
  */
 void i2s_lld_init(void) {
 
+#if STM32_I2S_USE_I2S2
+  spiObjectInit(&I2SD2);
+  I2SD2.spi = SPI2;
+#endif
+
+#if STM32_I2S_USE_I2S3
+  spiObjectInit(&I2SD3);
+  I2SD3.spi = SPI3;
+#endif
 }
 
 /**
@@ -73,8 +82,30 @@ void i2s_lld_init(void) {
  */
 void i2s_lld_start(I2SDriver *i2sp) {
 
+  /* If in stopped state then enables the SPI and DMA clocks.*/
   if (i2sp->state == I2S_STOP) {
-    /* Clock activation.*/
+#if STM32_SPI_USE_SPI2
+    if (&SPID2 == spip) {
+      bool_t b;
+      b = dmaStreamAllocate(spip->dma,
+                            STM32_I2S_I2S2_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
+                            (void *)spip);
+      chDbgAssert(!b, "spi_lld_start(), #1", "stream already allocated");
+      rccEnableSPI2(FALSE);
+    }
+#endif
+#if STM32_SPI_USE_SPI3
+    if (&SPID3 == spip) {
+      bool_t b;
+      b = dmaStreamAllocate(spip->dma,
+                            STM32_I2S_I2S3_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
+                            (void *)spip);
+      chDbgAssert(!b, "spi_lld_start(), #2", "stream already allocated");
+      rccEnableSPI3(FALSE);
+    }
+#endif
   }
   /* Configuration.*/
 }
@@ -94,7 +125,6 @@ void i2s_lld_stop(I2SDriver *i2sp) {
   }
 }
 
-
 /**
  * @brief   Starts a I2S data exchange.
  *
@@ -103,6 +133,17 @@ void i2s_lld_stop(I2SDriver *i2sp) {
  * @notapi
  */
 void i2s_lld_start_exchange(I2SDriver *i2sp) {
+
+}
+
+/**
+ * @brief   Starts a I2S data exchange in continuous mode.
+ *
+ * @param[in] i2sp      pointer to the @p I2SDriver object
+ *
+ * @notapi
+ */
+void i2s_lld_start_exchange_continuous(I2SDriver *i2sp) {
 
 }
 
