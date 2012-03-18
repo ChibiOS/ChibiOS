@@ -39,13 +39,160 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   I2S2 driver enable switch.
+ * @details If set to @p TRUE the support for I2S2 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_I2S_USE_I2S2) || defined(__DOXYGEN__)
+#define STM32_I2S_USE_I2S2                  TRUE
+#endif
+
+/**
+ * @brief   I2S3 driver enable switch.
+ * @details If set to @p TRUE the support for I2S3 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_I2S_USE_I2S3) || defined(__DOXYGEN__)
+#define STM32_I2S_USE_I2S3                  TRUE
+#endif
+
+/**
+ * @brief   I2S2 interrupt priority level setting.
+ */
+#if !defined(STM32_I2S_I2S2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2S_I2S2_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   I2S3 interrupt priority level setting.
+ */
+#if !defined(STM32_I2S_I2S3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2S_I2S3_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   I2S2 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_I2S_I2S2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2S_I2S2_DMA_PRIORITY         1
+#endif
+
+/**
+ * @brief   I2S3 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_I2S_I2S2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2S_I2S2_DMA_PRIORITY         1
+#endif
+
+/**
+ * @brief   I2S DMA error hook.
+ */
+#if !defined(STM32_I2S_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_I2S_DMA_ERROR_HOOK(i2sp)      chSysHalt()
+#endif
+
+#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
+
+/**
+ * @brief   DMA stream used for I2S2 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2S_I2S2_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2S_I2S2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 0)
+#endif
+
+/**
+ * @brief   DMA stream used for I2S2 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2S_I2S2_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2S_I2S2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#endif
+
+/**
+ * @brief   DMA stream used for I2S3 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2S_I2S3_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2S_I2S3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 0)
+#endif
+
+/**
+ * @brief   DMA stream used for I2S3 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_I2S_I2S3_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_I2S_I2S3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 7)
+#endif
+
+#else /* !STM32_ADVANCED_DMA */
+
+/* Fixed streams for platforms using the old DMA peripheral, the values are
+   valid for both STM32F1xx and STM32L1xx.*/
+#define STM32_I2S_I2S2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#define STM32_I2S_I2S2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#define STM32_I2S_I2S3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 1)
+#define STM32_I2S_I2S3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 2)
+
+#endif /* !STM32_ADVANCED_DMA */
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if STM32_I2S_USE_I2S2 && !STM32_HAS_I2S2
+#error "I2S2 not present in the selected device"
+#endif
+
+#if STM32_I2S_USE_I2S3 && !STM32_HAS_I2S3
+#error "I2S3 not present in the selected device"
+#endif
+
+#if !STM32_I2S_USE_I2S2 && !STM32_I2S_USE_I2S3
+#error "I2S driver activated but no I2S peripheral assigned"
+#endif
+
+#if STM32_I2S_USE_I2S2 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S2_RX_DMA_STREAM, STM32_I2S2_RX_DMA_MSK)
+#error "invalid DMA stream associated to I2S2 RX"
+#endif
+
+#if STM32_I2S_USE_I2S2 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S2_TX_DMA_STREAM, STM32_I2S2_TX_DMA_MSK)
+#error "invalid DMA stream associated to I2S2 TX"
+#endif
+
+#if STM32_I2S_USE_I2S3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S3_RX_DMA_STREAM, STM32_I2S3_RX_DMA_MSK)
+#error "invalid DMA stream associated to I2S3 RX"
+#endif
+
+#if STM32_I2S_USE_I2S3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_I2S3_TX_DMA_STREAM, STM32_I2S3_TX_DMA_MSK)
+#error "invalid DMA stream associated to I2S3 TX"
+#endif
+
+#if !defined(STM32_DMA_REQUIRED)
+#define STM32_DMA_REQUIRED
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   I2S mode type.
+ */
+typedef enum {
+  i2s_mode_master = 0,                          /**< Master mode.           */
+  i2s_mode_slave = 1                            /**< Slave mode.            */
+} i2smode_t;
 
 /**
  * @brief   Type of a structure representing an I2S driver.
@@ -67,14 +214,51 @@ typedef void (*i2scallback_t)(I2SDriver *i2sp, void *buffer, size_t n);
  */
 typedef struct {
   /**
-   * @brief   Callback function associated to the reception or @p NULL.
+   * @brief   Slave mode selec
    */
-  i2scallback_t             rx_cb;;
+  i2smode_t                 mode;
+  /**
+   * @brief   Transmission buffer pointer.
+   */
+  const void                *tx_buffer;
+  /**
+   * @brief   Transmission buffer size in number of samples.
+   */
+  size_t                    tx_size;
   /**
    * @brief   Callback function associated to the transmission or @p NULL.
    */
   i2scallback_t             tx_cb;
+  /**
+   * @brief   Receive buffer pointer.
+   */
+  void                      *rx_buffer;
+  /**
+   * @brief   Receive buffer size in number of samples.
+   */
+  size_t                    rx_size;
+  /**
+   * @brief   Callback function associated to the reception or @p NULL.
+   */
+  i2scallback_t             rx_cb;;
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Configuration of the I2SCFGR register.
+   * @details See the STM32 reference manual, this register is used for
+   *          the I2S configuration, the following bits must not be
+   *          specified because handled directly by the driver:
+   *          - I2SMOD
+   *          - I2SE
+   *          - I2SCFG
+   *          .
+   */
+  int16_t                   i2scfgr;
+  /**
+   * @brief   Configuration of the I2SPR register.
+   * @details See the STM32 reference manual, this register is used for
+   *          the I2S clock setup.
+   */
+  int16_t                   i2spr;
 } I2SConfig;
 
 /**
@@ -82,14 +266,26 @@ typedef struct {
  */
 struct I2SDriver {
   /**
-   * @brief Driver state.
+   * @brief   Driver state.
    */
   i2sstate_t                state;
   /**
-   * @brief Current configuration data.
+   * @brief   Current configuration data.
    */
   const I2SConfig           *config;
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Pointer to the SPIx registers block.
+   */
+  SPI_TypeDef               *spi;
+  /**
+   * @brief   DMA stream.
+   */
+  const stm32_dma_stream_t  *dma;
+  /**
+   * @brief   DMA mode bit mask.
+   */
+  uint32_t                  dmamode;
 };
 
 /*===========================================================================*/
@@ -99,6 +295,14 @@ struct I2SDriver {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if STM32_I2S_USE_I2S2 && !defined(__DOXYGEN__)
+extern I2SDriver I2SD2;
+#endif
+
+#if STM32_I2S_USE_I2S3 && !defined(__DOXYGEN__)
+extern I2SDriver I2SD3;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
