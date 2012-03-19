@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.1 ***
+- FIX: Fixed STM32 ICUD8 not functional because wrong initialization (bug
+  3508758).
 - FIX: Fixed chMBFetchI does not decrement mb_fullsem (bug 3504450).
 - FIX: Fixed USART3 not working on STM32F2/F4 UART driver (bug 3496981).
 - FIX: Fixed stack misalignment on Posix-MacOSX (bug 3495487).

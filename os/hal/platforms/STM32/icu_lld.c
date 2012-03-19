@@ -276,7 +276,7 @@ void icu_lld_init(void) {
 #if STM32_ICU_USE_TIM8
   /* Driver initialization.*/
   icuObjectInit(&ICUD8);
-  ICUD5.tim = STM32_TIM8;
+  ICUD8.tim = STM32_TIM8;
 #endif
 }
 
@@ -340,8 +340,8 @@ void icu_lld_start(ICUDriver *icup) {
 #endif
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
-      rccEnableTIM5(FALSE);
-      rccResetTIM5();
+      rccEnableTIM8(FALSE);
+      rccResetTIM8();
       nvicEnableVector(TIM8_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK2;
