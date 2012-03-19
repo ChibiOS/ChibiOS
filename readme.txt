@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed STM32 ICUD8 not functional because wrong initialization (bug
+  3508758)(backported to 2.4.1).
 - FIX: Fixed chMBFetchI does not decrement mb_fullsem (bug 3504450)(backported
   to 2.2.9 and 2.4.1).
 - FIX: Fixed USART3 not working on STM32F2/F4 UART driver (bug 3496981)
