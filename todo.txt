@@ -6,10 +6,10 @@ X = In progress, some work done.
 N = Decided against.
 
 Version 2.4.1
+* MAC driver for STM32F107, STM32F2xx, STM32F4xx.
 X STM32F2 validation (so far testing done on STM32F4 only).
 X Revision of the RTCv2 driver implementation.
 X SDC driver port to STM32F2 and STM32F4.
-X MAC driver for STM32F107, STM32F2xx, STM32F4xx.
 - CAN2 support and CAN driver test on STM32F2/F4.
 
 Within 2.5.x:

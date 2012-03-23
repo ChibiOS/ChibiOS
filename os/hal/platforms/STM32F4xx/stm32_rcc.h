@@ -423,6 +423,42 @@
 /** @} */
 
 /**
+ * @name    ETH peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the ETH peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableETH(lp) rccEnableAHB1(RCC_AHB1ENR_ETHMACEN |               \
+                                       RCC_AHB1ENR_ETHMACTXEN |             \
+                                       RCC_AHB1ENR_ETHMACRXEN, lp)
+
+/**
+ * @brief   Disables the ETH peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableETH(lp) rccDisableAHB1(RCC_AHB1ENR_ETHMACEN |             \
+                                         RCC_AHB1ENR_ETHMACTXEN |           \
+                                         RCC_AHB1ENR_ETHMACRXEN, lp)
+
+/**
+ * @brief   Resets the ETH peripheral.
+ *
+ * @api
+ */
+#define rccResetETH() rccResetAHB1(RCC_AHB1RSTR_ETHMACRST)
+/** @} */
+
+/**
  * @name    I2C peripherals specific RCC operations
  * @{
  */

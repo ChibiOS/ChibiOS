@@ -146,6 +146,23 @@
 #if !defined(STM32_ETH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ETH1_IRQ_PRIORITY     13
 #endif
+
+/**
+ * @brief   IP checksum offload.
+ * @details The following modes are available:
+ *          - 0 Function disabled.
+ *          - 1 Only IP header checksum calculation and insertion are enabled.
+ *          - 2 IP header checksum and payload checksum calculation and
+ *              insertion are enabled, but pseudo-header checksum is not
+ *              calculated in hardware.
+ *          - 3 IP Header checksum and payload checksum calculation and
+ *              insertion are enabled, and pseudo-header checksum is
+ *              calculated in hardware.
+ *          .
+ */
+#if !defined(STM32_IP_CHECKSUM_OFFLOAD) || defined(__DOXYGEN__)
+#define STM32_IP_CHECKSUM_OFFLOAD   0
+#endif
 /** @} */
 
 /*===========================================================================*/

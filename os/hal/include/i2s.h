@@ -35,6 +35,17 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    I2S modes
+ * @{
+ */
+#define I2S_MODE_SLAVE          0
+#define I2S_MODE_MASTER         1
+#define I2S_MODE_TX             2
+#define I2S_MODE_RX             4
+#define I2S_MODE_TXRX           (I2S_MODE_TX | I2S_MODE_RX)
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/

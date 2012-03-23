@@ -189,10 +189,7 @@
 /**
  * @brief   I2S mode type.
  */
-typedef enum {
-  i2s_mode_master = 0,                          /**< Master mode.           */
-  i2s_mode_slave = 1                            /**< Slave mode.            */
-} i2smode_t;
+typedef uint32_t i2smode_t;
 
 /**
  * @brief   Type of a structure representing an I2S driver.
@@ -214,7 +211,7 @@ typedef void (*i2scallback_t)(I2SDriver *i2sp, void *buffer, size_t n);
  */
 typedef struct {
   /**
-   * @brief   Slave mode selec
+   * @brief   I2S mode selection.
    */
   i2smode_t                 mode;
   /**
