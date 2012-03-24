@@ -84,6 +84,7 @@
 #define STM32_TDES0_TTSE            0x02000000
 #define STM32_TDES0_LOCKED          0x01000000 /* NOTE: Pseudo flag.        */
 #define STM32_TDES0_CIC_MASK        0x00C00000
+#define STM32_TDES0_CIC(n)          ((n) << 22)
 #define STM32_TDES0_TER             0x00200000
 #define STM32_TDES0_TCH             0x00100000
 #define STM32_TDES0_TTSS            0x00020000

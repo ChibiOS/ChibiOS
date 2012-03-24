@@ -461,7 +461,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 
   /* Unlocks the descriptor and returns it to the DMA engine.*/
   tdp->physdesc->tdes1 = tdp->offset;
-  tdp->physdesc->tdes0 = (STM32_IP_CHECKSUM_OFFLOAD << 22) |
+  tdp->physdesc->tdes0 = STM32_TDES0_CIC(STM32_IP_CHECKSUM_OFFLOAD) |
                          STM32_TDES0_IC | STM32_TDES0_LS | STM32_TDES0_FS |
                          STM32_TDES0_TCH | STM32_TDES0_OWN;
 
