@@ -29,7 +29,7 @@
  *          drivers to coordinate the access to the resource.
  * @note    The DMA ISR handlers are all declared into this module because
  *          sharing, the various device drivers can associate a callback to
- *          IRSs when allocating streams.
+ *          ISRs when allocating streams.
  * @{
  */
 
