@@ -204,7 +204,7 @@ typedef struct {
  */
 #define GAHBCFG_PTXFELVL        (1U<<8)     /**< Periodic TxFIFO empty
                                                  level.                     */
-#define GAHBCFG_TXFELVL         (1U<<7)     /**< non-periodic TxFIFO empty
+#define GAHBCFG_TXFELVL         (1U<<7)     /**< Non-periodic TxFIFO empty
                                                  level.                     */
 #define GAHBCFG_GINTMSK         (1U<<0)     /**< Global interrupt mask.     */
 /** @} */
@@ -218,7 +218,7 @@ typedef struct {
 #define GUSBCFG_FHMOD           (1U<<29)    /**< Force Host Mode.           */
 #define GUSBCFG_TRDT_MASK       (15U<<10)   /**< USB Turnaround time field
                                                  mask.                      */
-#define GUSBCFG_TRDT(n)         ((n##U)<<10)/**< USB Turnaround time field
+#define GUSBCFG_TRDT(n)         ((n)<<10)   /**< USB Turnaround time field
                                                  value.                     */
 #define GUSBCFG_HNPCAP          (1U<<9)     /**< HNP-Capable.               */
 #define GUSBCFG_SRPCAP          (1U<<8)     /**< SRP-Capable.               */
@@ -227,7 +227,7 @@ typedef struct {
                                                  transceiver Select.        */
 #define GUSBCFG_TOCAL_MASK      (7U<<0)     /**< HS/FS timeout calibration
                                                  field mask.                */
-#define GUSBCFG_TOCAL(n)        ((n##U)<<0) /**< HS/FS timeout calibration
+#define GUSBCFG_TOCAL(n)        ((n)<<0)    /**< HS/FS timeout calibration
                                                  field value.               */
 /** @} */
 
@@ -237,7 +237,7 @@ typedef struct {
  */
 #define GRSTCTL_AHBIDL          (1U<<31)    /**< AHB Master Idle.           */
 #define GRSTCTL_TXFNUM_MASK     (31U<<6)    /**< TxFIFO number field mask.  */
-#define GRSTCTL_TXFNUM(n)       ((n##U)<<6) /**< TxFIFO number field value. */
+#define GRSTCTL_TXFNUM(n)       ((n)<<6)    /**< TxFIFO number field value. */
 #define GRSTCTL_TXFFLSH         (1U<<5)     /**< TxFIFO flush.              */
 #define GRSTCTL_RXFFLSH         (1U<<4)     /**< RxFIFO flush.              */
 #define GRSTCTL_FCRST           (1U<<2)     /**< Host frame counter reset.  */
@@ -341,20 +341,20 @@ typedef struct {
  * @{
  */
 #define GRXSTSR_PKTSTS_MASK     (15U<<17)   /**< Packet status mask.        */
-#define GRXSTSR_PKTSTS(n)       ((n##U)<<17)/**< Packet status value.       */
+#define GRXSTSR_PKTSTS(n)       ((n)<<17)   /**< Packet status value.       */
 #define GRXSTSR_OUT_GLOBAL_NAK  GRXSTSR_PKTSTS(1)
 #define GRXSTSR_OUT_DATA        GRXSTSR_PKTSTS(2)
 #define GRXSTSR_OUT_COMP        GRXSTSR_PKTSTS(3)
 #define GRXSTSR_SETUP_COMP      GRXSTSR_PKTSTS(4)
 #define GRXSTSR_SETUP_DATA      GRXSTSR_PKTSTS(6)
 #define GRXSTSR_DPID_MASK       (3U<<15)    /**< Data PID mask.             */
-#define GRXSTSR_DPID(n)         ((n##U)<<15)/**< Data PID value.            */
+#define GRXSTSR_DPID(n)         ((n)<<15)   /**< Data PID value.            */
 #define GRXSTSR_BCNT_MASK       (0x7FF<<4)  /**< Byte count mask.           */
-#define GRXSTSR_BCNT(n)         ((n##U)<<4) /**< Byte count value.          */
+#define GRXSTSR_BCNT(n)         ((n)<<4)    /**< Byte count value.          */
 #define GRXSTSR_CHNUM_MASK      (15U<<0)    /**< Channel number mask.       */
-#define GRXSTSR_CHNUM(n)        ((n##U)<<0) /**< Channel number value.      */
+#define GRXSTSR_CHNUM(n)        ((n)<<0)    /**< Channel number value.      */
 #define GRXSTSR_EPNUM_MASK      (15U<<0)    /**< Endpoint number mask.      */
-#define GRXSTSR_EPNUM(n)        ((n##U)<<0) /**< Endpoint number value.     */
+#define GRXSTSR_EPNUM(n)        ((n)<<0)    /**< Endpoint number value.     */
 /** @} */
 
 /**
@@ -362,20 +362,20 @@ typedef struct {
  * @{
  */
 #define GRXSTSP_PKTSTS_MASK     (15<<17)    /**< Packet status mask.        */
-#define GRXSTSP_PKTSTS(n)       ((n##U)<<17)/**< Packet status value.       */
+#define GRXSTSP_PKTSTS(n)       ((n)<<17)   /**< Packet status value.       */
 #define GRXSTSP_OUT_GLOBAL_NAK  GRXSTSP_PKTSTS(1)
 #define GRXSTSP_OUT_DATA        GRXSTSP_PKTSTS(2)
 #define GRXSTSP_OUT_COMP        GRXSTSP_PKTSTS(3)
 #define GRXSTSP_SETUP_COMP      GRXSTSP_PKTSTS(4)
 #define GRXSTSP_SETUP_DATA      GRXSTSP_PKTSTS(6)
 #define GRXSTSP_DPID_MASK       (3U<<15)    /**< Data PID mask.             */
-#define GRXSTSP_DPID(n)         ((n##U)<<15)/**< Data PID value.            */
+#define GRXSTSP_DPID(n)         ((n)<<15)   /**< Data PID value.            */
 #define GRXSTSP_BCNT_MASK       (0x7FF<<4)  /**< Byte count mask.           */
-#define GRXSTSP_BCNT(n)         ((n##U)<<4) /**< Byte count value.          */
+#define GRXSTSP_BCNT(n)         ((n)<<4)    /**< Byte count value.          */
 #define GRXSTSP_CHNUM_MASK      (15U<<0)    /**< Channel number mask.       */
-#define GRXSTSP_CHNUM(n)        ((n##U)<<0) /**< Channel number value.      */
+#define GRXSTSP_CHNUM(n)        ((n)<<0)    /**< Channel number value.      */
 #define GRXSTSP_EPNUM_MASK      (15U<<0)    /**< Endpoint number mask.      */
-#define GRXSTSP_EPNUM(n)        ((n##U)<<0) /**< Endpoint number value.     */
+#define GRXSTSP_EPNUM(n)        ((n)<<0)    /**< Endpoint number value.     */
 /** @} */
 
 /**
@@ -383,7 +383,7 @@ typedef struct {
  * @{
  */
 #define GRXFSIZ_RXFD_MASK       (0xFFFF<<0) /**< RxFIFO depth mask.         */
-#define GRXFSIZ_RXFD(n)         ((n##U)<<0) /**< RxFIFO depth value.        */
+#define GRXFSIZ_RXFD(n)         ((n)<<0)    /**< RxFIFO depth value.        */
 /** @} */
 
 /**
@@ -404,11 +404,11 @@ typedef struct {
  */
 #define HPTXFSIZ_PTXFD_MASK     (0xFFFFU<<16)/**< Host periodic TxFIFO
                                                  depth mask.                */
-#define HPTXFSIZ_PTXFD(n)       ((n##U)<<16)/**< Host periodic TxFIFO
+#define HPTXFSIZ_PTXFD(n)       ((n)<<16)   /**< Host periodic TxFIFO
                                                  depth value.               */
 #define HPTXFSIZ_PTXSA_MASK     (0xFFFFU<<0)/**< Host periodic TxFIFO
                                                  Start address mask.        */
-#define HPTXFSIZ_PTXSA(n)       ((n##U)<<0) /**< Host periodic TxFIFO
+#define HPTXFSIZ_PTXSA(n)       ((n)<<0)    /**< Host periodic TxFIFO
                                                  start address value.       */
 /** @} */
 
@@ -430,7 +430,7 @@ typedef struct {
  * @{
  */
 #define HFIR_FRIVL_MASK         (0xFFFFU<<0)/**< Frame interval mask.       */
-#define HFIR_FRIVL(n)           ((n##U)<<0) /**< Frame interval value.      */
+#define HFIR_FRIVL(n)           ((n)<<0)    /**< Frame interval value.      */
 /** @} */
 
 /**
@@ -438,9 +438,9 @@ typedef struct {
  * @{
  */
 #define HFNUM_FTREM_MASK        (0xFFFFU<<16)/**< Frame time Remaining mask.*/
-#define HFNUM_FTREM(n)          ((n##U)<<16)/**< Frame time Remaining value.*/
+#define HFNUM_FTREM(n)          ((n)<<16)   /**< Frame time Remaining value.*/
 #define HFNUM_FRNUM_MASK        (0xFFFFU<<0)/**< Frame number mask.         */
-#define HFNUM_FRNUM(n)          ((n##U)<<0) /**< Frame number value.        */
+#define HFNUM_FRNUM(n)          ((n)<<0)    /**< Frame number value.        */
 /** @} */
 
 /**
@@ -450,19 +450,19 @@ typedef struct {
 #define HPTXSTS_PTXQTOP_MASK    (0xFFU<<24) /**< Top of the periodic
                                                  transmit request queue
                                                  mask.                      */
-#define HPTXSTS_PTXQTOP(n)      ((n##U)<<24)/**< Top of the periodic
+#define HPTXSTS_PTXQTOP(n)      ((n)<<24)   /**< Top of the periodic
                                                  transmit request queue
                                                  value.                     */
 #define HPTXSTS_PTXQSAV_MASK    (0xFF<<16)  /**< Periodic transmit request
                                                  queue Space Available
                                                  mask.                      */
-#define HPTXSTS_PTXQSAV(n)      ((n##U)<<16)/**< Periodic transmit request
+#define HPTXSTS_PTXQSAV(n)      ((n)<<16)   /**< Periodic transmit request
                                                  queue Space Available
                                                  value.                     */
 #define HPTXSTS_PTXFSAVL_MASK   (0xFFFF<<0) /**< Periodic transmit Data
                                                  FIFO Space Available
                                                  mask.                      */
-#define HPTXSTS_PTXFSAVL(n)     ((n##U)<<0) /**< Periodic transmit Data
+#define HPTXSTS_PTXFSAVL(n)     ((n)<<0)    /**< Periodic transmit Data
                                                  FIFO Space Available
                                                  value.                     */
 /** @} */
@@ -472,7 +472,7 @@ typedef struct {
  * @{
  */
 #define HAINT_HAINT_MASK        (0xFFFFU<<0)/**< Channel interrupts mask.   */
-#define HAINT_HAINT(n)          ((n##U)<<0) /**< Channel interrupts value.  */
+#define HAINT_HAINT(n)          ((n)<<0)    /**< Channel interrupts value.  */
 /** @} */
 
 /**
@@ -481,7 +481,7 @@ typedef struct {
  */
 #define HAINTMSK_HAINTM_MASK    (0xFFFFU<<0)/**< Channel interrupt mask
                                                  mask.                      */
-#define HAINTMSK_HAINTM(n)      ((n##U)<<0) /**< Channel interrupt mask
+#define HAINTMSK_HAINTM(n)      ((n)<<0)    /**< Channel interrupt mask
                                                 value.                      */
 /** @} */
 
@@ -493,7 +493,7 @@ typedef struct {
 #define HPRT_PSPD_FS            (1U<<17)    /**< Full speed value.          */
 #define HPRT_PSPD_LS            (2U<<17)    /**< Low speed value.           */
 #define HPRT_PTCTL_MASK         (15<<13)    /**< Port Test control mask.    */
-#define HPRT_PTCTL(n)           ((n##U)<<13)/**< Port Test control value.   */
+#define HPRT_PTCTL(n)           ((n)<<13)   /**< Port Test control value.   */
 #define HPRT_PPWR               (1U<<12)    /**< Port power.                */
 #define HPRT_PLSTS_MASK         (3U<<11)    /**< Port Line status mask.     */
 #define HPRT_PLSTS_DM           (1U<<11)    /**< Logic level of D-.         */
@@ -517,11 +517,11 @@ typedef struct {
 #define HCCHAR_CHDIS            (1U<<30)    /**< Channel Disable.           */
 #define HCCHAR_ODDFRM           (1U<<29)    /**< Odd frame.                 */
 #define HCCHAR_DAD_MASK         (0x7FU<<22) /**< Device Address mask.       */
-#define HCCHAR_DAD(n)           ((n##U)<<22)/**< Device Address value.      */
+#define HCCHAR_DAD(n)           ((n)<<22)   /**< Device Address value.      */
 #define HCCHAR_MCNT_MASK        (3U<<20)    /**< Multicount mask.           */
-#define HCCHAR_MCNT(n)          ((n##U)<<20)/**< Multicount value.          */
+#define HCCHAR_MCNT(n)          ((n)<<20)   /**< Multicount value.          */
 #define HCCHAR_EPTYP_MASK       (3U<<18)    /**< Endpoint type mask.        */
-#define HCCHAR_EPTYP(n)         ((n##U)<<18)/**< Endpoint type value.       */
+#define HCCHAR_EPTYP(n)         ((n)<<18)   /**< Endpoint type value.       */
 #define HCCHAR_EPTYP_CTL        (0U<<18)    /**< Control endpoint value.    */
 #define HCCHAR_EPTYP_ISO        (1U<<18)    /**< Isochronous endpoint value.*/
 #define HCCHAR_EPTYP_BULK       (2U<<18)    /**< Bulk endpoint value.       */
@@ -529,7 +529,7 @@ typedef struct {
 #define HCCHAR_LSDEV            (1U<<17)    /**< Low-Speed device.          */
 #define HCCHAR_EPDIR            (1U<<15)    /**< Endpoint direction.        */
 #define HCCHAR_EPNUM_MASK       (15U<<11)   /**< Endpoint number mask.      */
-#define HCCHAR_EPNUM(n)         ((n##U)<<11)/**< Endpoint number value.     */
+#define HCCHAR_EPNUM(n)         ((n)<<11)   /**< Endpoint number value.     */
 #define HCCHAR_MPS_MASK         (11U<<0)    /**< Maximum packet size mask.  */
 #define HCCHAR_MPS(n)           (11U<<0)    /**< Maximum packet size value. */
 /** @} */
@@ -584,9 +584,9 @@ typedef struct {
 #define HCTSIZ_DPID_DATA1       (2U<<29)    /**< DATA1.                     */
 #define HCTSIZ_DPID_MDATA       (3U<<29)    /**< MDATA.                     */
 #define HCTSIZ_PKTCNT_MASK      (0x3FFU<<19)/**< Packet count mask.         */
-#define HCTSIZ_PKTCNT(n)        ((n##U)<<19)/**< Packet count value.        */
+#define HCTSIZ_PKTCNT(n)        ((n)<<19)   /**< Packet count value.        */
 #define HCTSIZ_XFRSIZ_MASK      (0x7FFFF<<0)/**< Transfer size mask.        */
-#define HCTSIZ_XFRSIZ(n)        ((n##U)<<0) /**< Transfer size value.       */
+#define HCTSIZ_XFRSIZ(n)        ((n)<<0)    /**< Transfer size value.       */
 /** @} */
 
 /**
@@ -595,10 +595,10 @@ typedef struct {
  */
 #define DCFG_PFIVL_MASK         (3U<<11)    /**< Periodic frame interval
                                                  mask.                      */
-#define DCFG_PFIVL(n)           ((n##U)<<11)/**< Periodic frame interval
-                                                value.                      */
+#define DCFG_PFIVL(n)           ((n)<<11)   /**< Periodic frame interval
+                                                 value.                     */
 #define DCFG_DAD_MASK           (0x7FU<<4)  /**< Device address mask.       */
-#define DCFG_DAD(n)             ((n##U)<<4) /**< Device address value.      */
+#define DCFG_DAD(n)             ((n)<<4)    /**< Device address value.      */
 #define DCFG_NZLSOHSK           (1U<<2)     /**< Non-Zero-Length status
                                                  OUT handshake.             */
 #define DCFG_DSPD_MASK          (3U<<0)     /**< Device speed mask.         */
@@ -619,7 +619,7 @@ typedef struct {
 #define DCTL_SGINAK             (1U<<7)     /**< Set global non-periodic
                                                  IN NAK.                    */
 #define DCTL_TCTL_MASK          (7U<<4)     /**< Test control mask.         */
-#define DCTL_TCTL(n)            ((n##U)<<4  /**< Test control value.        */
+#define DCTL_TCTL(n)            ((n)<<4     /**< Test control value.        */
 #define DCTL_GONSTS             (1U<<3)     /**< Global OUT NAK status.     */
 #define DCTL_GINSTS             (1U<<2)     /**< Global non-periodic IN
                                                  NAK status.                */
@@ -633,7 +633,7 @@ typedef struct {
  */
 #define DSTS_FNSOF_MASK         (0x3FFU<<8) /**< Frame number of the received
                                                  SOF mask.                  */
-#define DSTS_FNSOF(n)           ((n##U)<<8) /**< Frame number of the received
+#define DSTS_FNSOF(n)           ((n)<<8)    /**< Frame number of the received
                                                  SOF value.                 */
 #define DSTS_EERR               (1U<<3)     /**< Erratic error.             */
 #define DSTS_ENUMSPD_MASK       (3U<<1)     /**< Enumerated speed mask.     */
@@ -678,11 +678,11 @@ typedef struct {
  */
 #define DAINT_OEPINT_MASK       (0xFFFFU<<16)/**< OUT endpoint interrupt
                                                  bits mask.                 */
-#define DAINT_OEPINT(n)         ((n##U)<<16)/**< OUT endpoint interrupt
+#define DAINT_OEPINT(n)         ((n)<<16)   /**< OUT endpoint interrupt
                                                  bits value.                */
 #define DAINT_IEPINT_MASK       (0xFFFFU<<0)/**< IN endpoint interrupt
                                                  bits mask.                 */
-#define DAINT_IEPINT(n)         ((n##U)<<0) /**< IN endpoint interrupt
+#define DAINT_IEPINT(n)         ((n)<<0)    /**< IN endpoint interrupt
                                                  bits value.                */
 /** @} */
 
@@ -706,7 +706,7 @@ typedef struct {
  */
 #define DVBUSDIS_VBUSDT_MASK    (0xFFFFU<<0)/**< Device VBUS discharge
                                                  time mask.                 */
-#define DVBUSDIS_VBUSDT(n)      ((n##U)<<0) /**< Device VBUS discharge
+#define DVBUSDIS_VBUSDT(n)      ((n)<<0)    /**< Device VBUS discharge
                                                  time value.                */
 /** @} */
 
@@ -716,7 +716,7 @@ typedef struct {
  */
 #define DVBUSPULSE_DVBUSP_MASK  (0xFFFU<<0) /**< Device VBUSpulsing time
                                                  mask.                      */
-#define DVBUSPULSE_DVBUSP(n)    ((n##U)<<0) /**< Device VBUS pulsing time
+#define DVBUSPULSE_DVBUSP(n)    ((n)<<0)    /**< Device VBUS pulsing time
                                                  value.                     */
 /** @} */
 
@@ -741,7 +741,7 @@ typedef struct {
 #define DIEPCTL_SNAK            (1U<<27)    /**< Set NAK.                   */
 #define DIEPCTL_CNAK            (1U<<26)    /**< Clear NAK.                 */
 #define DIEPCTL_TXFNUM_MASK     (15U<<22)   /**< TxFIFO number mask.        */
-#define DIEPCTL_TXFNUM(n)       ((n##U)<<22)/**< TxFIFO number value.       */
+#define DIEPCTL_TXFNUM(n)       ((n)<<22)   /**< TxFIFO number value.       */
 #define DIEPCTL_STALL           (1U<<21)    /**< STALL handshake.           */
 #define DIEPCTL_SNPM            (1U<<20)    /**< Snoop mode.                */
 #define DIEPCTL_EPTYP_MASK      (3<<18)     /**< Endpoint type mask.        */
@@ -754,7 +754,7 @@ typedef struct {
 #define DIEPCTL_DPID            (1U<<16)    /**< Endpoint data PID.         */
 #define DIEPCTL_USBAEP          (1U<<15)    /**< USB active endpoint.       */
 #define DIEPCTL_MPSIZ_MASK      (0x3FFU<<0) /**< Maximum Packet size mask.  */
-#define DIEPCTL_MPSIZ(n)        ((n##U)<<0) /**< Maximum Packet size value. */
+#define DIEPCTL_MPSIZ(n)        ((n)<<0)    /**< Maximum Packet size value. */
 /** @} */
 
 /**
@@ -776,11 +776,11 @@ typedef struct {
  * @{
  */
 #define DIEPTSIZ_MCNT_MASK      (3U<<29)    /**< Multi count mask.          */
-#define DIEPTSIZ_MCNT(n)        ((n##U)<<29)/**< Multi count value.         */
+#define DIEPTSIZ_MCNT(n)        ((n)<<29)   /**< Multi count value.         */
 #define DIEPTSIZ_PKTCNT_MASK    (0x3FF<<19) /**< Packet count mask.         */
-#define DIEPTSIZ_PKTCNT(n)      ((n##U)<<19)/**< Packet count value.        */
+#define DIEPTSIZ_PKTCNT(n)      ((n)<<19)   /**< Packet count value.        */
 #define DIEPTSIZ_XFRSIZ_MASK    (0x7FFFFU<<0)/**< Transfer size mask.       */
-#define DIEPTSIZ_XFRSIZ(n)      ((n##U)<<0) /**< Transfer size value.       */
+#define DIEPTSIZ_XFRSIZ(n)      ((n)<<0)    /**< Transfer size value.       */
 /** @} */
 
 /**
@@ -807,7 +807,7 @@ typedef struct {
 #define DOEPCTL_DPID            (1U<<16)    /**< Endpoint data PID.         */
 #define DOEPCTL_USBAEP          (1U<<15)    /**< USB active endpoint.       */
 #define DOEPCTL_MPSIZ_MASK      (0x3FFU<<0) /**< Maximum Packet size mask.  */
-#define DOEPCTL_MPSIZ(n)        ((n##U)<<0) /**< Maximum Packet size value. */
+#define DOEPCTL_MPSIZ(n)        ((n)<<0)    /**< Maximum Packet size value. */
 /** @} */
 
 /**
@@ -830,11 +830,11 @@ typedef struct {
  * @{
  */
 #define DOEPTSIZ_RXDPID_MASK    (3U<<29)    /**< Received data PID mask.    */
-#define DOEPTSIZ_RXDPID(n)      ((n##U)<<29)/**< Received data PID value.   */
+#define DOEPTSIZ_RXDPID(n)      ((n)<<29)   /**< Received data PID value.   */
 #define DOEPTSIZ_PKTCNT_MASK    (0x3FFU<<19)/**< Packet count mask.         */
-#define DOEPTSIZ_PKTCNT(n)      ((n##U)<<19)/**< Packet count value.        */
+#define DOEPTSIZ_PKTCNT(n)      ((n)<<19)   /**< Packet count value.        */
 #define DOEPTSIZ_XFRSIZ_MASK    (0x7FFFFU<<0)/**< Transfer size mask.       */
-#define DOEPTSIZ_XFRSIZ(n)      ((n##U)<<0) /**< Transfer size value.       */
+#define DOEPTSIZ_XFRSIZ(n)      ((n)<<0)    /**< Transfer size value.       */
 /** @} */
 
 /**

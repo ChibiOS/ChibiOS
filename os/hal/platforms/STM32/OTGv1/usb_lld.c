@@ -34,6 +34,12 @@
 #if HAL_USE_USB || defined(__DOXYGEN__)
 
 /*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
+#define TRDT_VALUE      5
+
+/*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
@@ -146,15 +152,57 @@ void usb_lld_start(USBDriver *usbp) {
     /* Clock activation.*/
 #if STM32_USB_USE_OTG1
     if (&USBD1 == usbp) {
-      /* USB clock enabled.*/
+      /* OTG FS clock enable and reset.*/
       rccEnableOTG1(FALSE);
+      rccResetOTG1();
+
       /* Enables IRQ vector.*/
       nvicEnableVector(OTG_FS_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_USB_OTG1_IRQ_PRIORITY));
     }
 #endif
-    /* Reset procedure enforced on driver start.*/
-    _usb_reset(usbp);
+
+    /* Wait AHB idle condition.*/
+    while ((OTG->GRSTCTL & GRSTCTL_AHBIDL) == 0)
+      ;
+
+    /* Core reset and delay of at least 3 PHY cycles.*/
+    OTG->GRSTCTL = GRSTCTL_CSRST;
+    while ((OTG->GRSTCTL & GRSTCTL_CSRST) != 0)
+      ;
+    halPolledDelay(12);
+
+    /* - Forced device mode.
+       - USB turnaroudn time = TRDT_VALUE.
+       - Full Speed 1.1 PHY.*/
+    OTG->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_PHYSEL;
+
+    /* Interrupt on TXFIFOs empty.*/
+    OTG->GAHBCFG = GAHBCFG_PTXFELVL | GAHBCFG_TXFELVL;
+
+    /* 48MHz 1.1 PHY.*/
+    OTG->DCFG = 0x02200000 |  DCFG_PFIVL(0) | DCFG_DSPD_FS11;
+
+    /* PHY enabled.*/
+    OTG->PCGCCTL = 0;
+
+    /* Receive FIFO size initialization, the address is always zero.*/
+    OTG->GRXFSIZ = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
+
+    /* EP0 TX FIFO initialization.*/
+
+    /* Endpoints reinitialization.*/
+
+    /* Clear all pending Device Interrupts, only the USB Reset interrupt
+       is required initially.*/
+    OTG->DIEPMSK  = 0;
+    OTG->DOEPMSK  = 0;
+    OTG->DAINTMSK = 0;
+    OTG->GINTMSK  = GINTMSK_USBRSTM;
+    OTG->GINTSTS  = 0xFFFFFFFF;
+
+    /* Global interrupts enable.*/
+    OTG->GAHBCFG |= GAHBCFG_GINTMSK;
   }
   /* Configuration.*/
 }

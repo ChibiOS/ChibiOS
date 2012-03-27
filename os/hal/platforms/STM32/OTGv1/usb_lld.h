@@ -67,6 +67,14 @@
 #define STM32_USB_OTG1_IRQ_PRIORITY         6
 #endif
 
+/**
+ * @brief   OTG1 RX shared FIFO size.
+ * @note    Must be a multiple of 4.
+ */
+#if !defined(STM32_USB_OTG1_RX_FIFO_SIZE) || defined(__DOXYGEN__)
+#define STM32_USB_OTG1_RX_FIFO_SIZE         512
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -79,9 +87,21 @@
 #error "USB driver activated but no USB peripheral assigned"
 #endif
 
-//#if STM32_USBCLK != 48000000
-//#error "the USB driver requires a 48MHz clock"
-//#endif
+#if (STM32_USB_OTG1_RX_FIFO_SIZE & 3) != 0
+#error "RX FIFO size must be a multiple of 4"
+#endif
+
+#if defined(STM32F4XX) || defined(STM32F2XX)
+#define STM32_USBCLK                        STM32_PLL48CLK
+#elif defined(STM32F10X_CL)
+#define STM32_USBCLK                        STM32_OTGFSCLK
+#else
+#error "unsupported STM32 platform for OTG functionality"
+#endif
+
+#if STM32_USBCLK != 48000000
+#error "the USB OTG driver requires a 48MHz clock"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
