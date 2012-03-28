@@ -31,7 +31,7 @@
 
 #if HAL_USE_USB || defined(__DOXYGEN__)
 
-#include "stm32_usb.h"
+#include "stm32_otg.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -331,6 +331,20 @@ struct USBDriver {
  */
 #define usb_lld_get_transaction_size(usbp, ep)                              \
   ((usbp)->epc[ep]->out_state->rxcnt)
+
+/**
+ * @brief   Connects the USB device.
+ *
+ * @api
+ */
+#define usb_lld_connect_bus(usbp) (OTG->GCCFG |= GCCFG_VBUSBSEN)
+
+/**
+ * @brief   Disconnect the USB device.
+ *
+ * @api
+ */
+#define usb_lld_disconnect_bus(usbp) (OTG->GCCFG &= ~GCCFG_VBUSBSEN)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

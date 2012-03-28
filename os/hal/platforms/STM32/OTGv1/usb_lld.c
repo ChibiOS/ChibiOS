@@ -86,6 +86,45 @@ static const USBEndpointConfig ep0config = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void otg_reset_ep(void) {
+  unsigned i;
+
+  for (i = 0; i <= USB_MAX_ENDPOINTS; i++) {
+    /* Disable only if enabled because this sentence in the manual:
+       "The application must set this bit only if Endpoint Enable is
+        already set for this endpoint".*/
+    if ((OTG->ie[i].DIEPCTL & DIEPCTL_EPENA) != 0) {
+      OTG->ie[i].DIEPCTL = DIEPCTL_EPDIS;
+      /* Wait for endpoint disable.*/
+      while (!(OTG->ie[i].DIEPINT & DIEPINT_EPDISD))
+        ;
+    }
+    else
+      OTG->ie[i].DIEPCTL = 0;
+    OTG->ie[i].DIEPTSIZ = 0;
+    OTG->ie[i].DIEPINT = DIEPINT_INEPNE | DIEPINT_ITTXFE |
+                         DIEPINT_TOC    | DIEPINT_EPDISD |
+                         DIEPINT_XFRC;
+    /* Disable only if enabled because this sentence in the manual:
+       "The application must set this bit only if Endpoint Enable is
+        already set for this endpoint".
+       Note that the attempt to disable the OUT EP0 is ignored by the
+       hardware but the code is simpler this way.*/
+    if ((OTG->oe[i].DOEPCTL & DOEPCTL_EPENA) != 0) {
+      OTG->oe[i].DOEPCTL = DOEPCTL_EPDIS;
+      /* Wait for endpoint disable.*/
+      while (!(OTG->oe[i].DOEPINT & DOEPINT_OTEPDIS))
+        ;
+    }
+    else
+      OTG->oe[i].DOEPCTL = 0;
+    OTG->oe[i].DOEPTSIZ = 0;
+    OTG->oe[i].DOEPINT = DOEPINT_B2BSTUP | DOEPINT_OTEPDIS |
+                         DOEPINT_STUP    | DOEPINT_EPDISD  |
+                         DOEPINT_XFRC;
+  }
+}
+
 /**
  * @brief   Resets the RX FIFO memory allocator.
  *
@@ -141,6 +180,9 @@ void usb_lld_init(void) {
 
 /**
  * @brief   Configures and activates the USB peripheral.
+ * @note    Starting the ORG cell can be a slow operation carried out with
+ *          interrupts disabled, perform it before starting time-critical
+ *          operations.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  *
@@ -153,8 +195,8 @@ void usb_lld_start(USBDriver *usbp) {
 #if STM32_USB_USE_OTG1
     if (&USBD1 == usbp) {
       /* OTG FS clock enable and reset.*/
-      rccEnableOTG1(FALSE);
-      rccResetOTG1();
+      rccEnableOTG_FS(FALSE);
+      rccResetOTG_FS();
 
       /* Enables IRQ vector.*/
       nvicEnableVector(OTG_FS_IRQn,
@@ -173,7 +215,7 @@ void usb_lld_start(USBDriver *usbp) {
     halPolledDelay(12);
 
     /* - Forced device mode.
-       - USB turnaroudn time = TRDT_VALUE.
+       - USB turn-around time = TRDT_VALUE.
        - Full Speed 1.1 PHY.*/
     OTG->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_PHYSEL;
 
@@ -189,22 +231,21 @@ void usb_lld_start(USBDriver *usbp) {
     /* Receive FIFO size initialization, the address is always zero.*/
     OTG->GRXFSIZ = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
 
-    /* EP0 TX FIFO initialization.*/
-
-    /* Endpoints reinitialization.*/
+    /* Endpoints re-initialization.*/
+    otg_reset_ep();
 
     /* Clear all pending Device Interrupts, only the USB Reset interrupt
        is required initially.*/
     OTG->DIEPMSK  = 0;
     OTG->DOEPMSK  = 0;
     OTG->DAINTMSK = 0;
-    OTG->GINTMSK  = GINTMSK_USBRSTM;
-    OTG->GINTSTS  = 0xFFFFFFFF;
+    OTG->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM | GINTMSK_USBSUSPM |
+                    GINTMSK_ESUSPM   | GINTMSK_SOFM;
+    OTG->GINTSTS  = 0xFFFFFFFF;         /* Clears all pending IRQs, if any. */
 
     /* Global interrupts enable.*/
     OTG->GAHBCFG |= GAHBCFG_GINTMSK;
   }
-  /* Configuration.*/
 }
 
 /**

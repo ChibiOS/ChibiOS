@@ -85,7 +85,7 @@ typedef struct {
   volatile uint32_t resvd14;
   volatile uint32_t resvd18;
   volatile uint32_t resvd1C;
-} stm32_t_out_ep_t;
+} stm32_otg_out_ep_t;
 
 /**
  * @brief   USB registers memory map.
@@ -161,7 +161,7 @@ typedef struct {
   volatile uint32_t resvd880[16];
   volatile uint32_t resvd8C0[16];
   stm32_otg_in_ep_t ie[16];     /**< @brief Input endpoints.                */
-  stm32_t_out_ep_t oe[16];      /**< @brief Output endpoints.               */
+  stm32_otg_out_ep_t oe[16];    /**< @brief Output endpoints.               */
   volatile uint32_t resvdD00[64];
   volatile uint32_t PCGCCTL;    /**< @brief Power and clock gating control
                                             register.                       */
@@ -860,7 +860,7 @@ typedef struct {
  * @brief   Returns a FIFO address.
  */
 #define OTG_FIFO(n)                 ((volatile uint32_t *)(OTG_ADDR +       \
-                                                           0x1000 +
+                                                           0x1000 +         \
                                                            (0x1000 * (n))))
 
 #endif /* _STM32_OTG_H_ */

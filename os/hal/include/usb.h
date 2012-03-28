@@ -323,11 +323,15 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  */
 /**
  * @brief   Connects the USB device.
+ *
+ * @api
  */
 #define usbConnectBus(usbp) usb_lld_connect_bus(usbp)
 
 /**
  * @brief   Disconnect the USB device.
+ *
+ * @api
  */
 #define usbDisconnectBus(usbp) usb_lld_disconnect_bus(usbp)
 
