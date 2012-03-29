@@ -312,8 +312,6 @@ typedef struct {
                                                  mask.                      */
 #define GINTMSK_IEPM            (1U<<18)    /**< IN endpoints interrupt
                                                  mask.                      */
-#define GINTMSK_EPMISM          (1U<<17)    /**< Endpoint Mismatch interrupt
-                                                 mask.                      */
 #define GINTMSK_EOPFM           (1U<<15)    /**< End of periodic frame
                                                  interrupt mask.            */
 #define GINTMSK_ISOODRPM        (1U<<14)    /**< Isochronous OUT packet

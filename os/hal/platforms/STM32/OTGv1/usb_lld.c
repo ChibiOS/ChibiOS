@@ -86,7 +86,19 @@ static const USBEndpointConfig ep0config = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static void otg_reset_ep(void) {
+static void otg_core_reset(void) {
+
+  /* Wait AHB idle condition.*/
+  while ((OTG->GRSTCTL & GRSTCTL_AHBIDL) == 0)
+    ;
+  /* Core reset and delay of at least 3 PHY cycles.*/
+  OTG->GRSTCTL = GRSTCTL_CSRST;
+  while ((OTG->GRSTCTL & GRSTCTL_CSRST) != 0)
+    ;
+  halPolledDelay(12);
+}
+
+static void otg_disable_ep(void) {
   unsigned i;
 
   for (i = 0; i <= USB_MAX_ENDPOINTS; i++) {
@@ -126,22 +138,22 @@ static void otg_reset_ep(void) {
 }
 
 /**
- * @brief   Resets the RX FIFO memory allocator.
+ * @brief   Resets the packet memory allocator.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  */
-static void rxfifo_reset(USBDriver *usbp) {
+static void otg_pm_reset(USBDriver *usbp) {
 
   (void)usbp;
 }
 
 /**
- * @brief   Resets the RX FIFO memory allocator.
+ * @brief   Allocates a block from the packet memory allocator.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] size      size of the packet buffer to allocate
  */
-static uint32_t rxfifo_alloc(USBDriver *usbp, size_t size) {
+static uint32_t otg_pm_alloc(USBDriver *usbp, size_t size) {
 
   (void)usbp;
   (void)size;
@@ -160,8 +172,64 @@ static uint32_t rxfifo_alloc(USBDriver *usbp, size_t size) {
  * @isr
  */
 CH_IRQ_HANDLER(OTG_FS_IRQHandler) {
+  USBDriver *usbp = &USBD1;
+  uint32_t sts;
 
   CH_IRQ_PROLOGUE();
+
+  sts = OTG->GINTSTS & OTG->GINTMSK;
+
+  /* Reset interrupt handling.*/
+  if (sts & GINTSTS_USBRST) {
+    _usb_reset(usbp);
+    _usb_isr_invoke_event_cb(usbp, USB_EVENT_RESET);
+    OTG->GINTSTS = GINTSTS_USBRST;
+  }
+
+  /* Enumeration done.*/
+  if (sts & GINTSTS_ENUMDNE) {
+    (void)OTG->DSTS;
+    OTG->GINTSTS = GINTSTS_ENUMDNE;
+  }
+
+  /* SOF interrupt handling.*/
+  if (sts & GINTSTS_SOF) {
+    _usb_isr_invoke_sof_cb(usbp);
+    OTG->GINTSTS = GINTSTS_SOF;
+  }
+
+  /* RX FIFO not empty handling.*/
+  if (sts & GINTMSK_RXFLVLM) {
+
+  }
+
+  /* Non periodic TX FIFO empty handling.*/
+  if (sts & GINTSTS_NPTXFE) {
+
+    OTG->GINTSTS = GINTSTS_NPTXFE;
+  }
+
+  /* IN/OUT endpoints event handling, timeout and transfer complete events
+     are handled.*/
+  if (sts & (GINTSTS_IEPINT | GINTSTS_OEPINT)) {
+    uint32_t src = OTG->DAINT;
+    if (src & (1 << 0))
+      otg_epin_handler(usbp, 0);
+    if (src & (1 << 1))
+      otg_epin_handler(usbp, 1);
+    if (src & (1 << 2))
+      otg_epin_handler(usbp, 2);
+    if (src & (1 << 3))
+      otg_epin_handler(usbp, 3);
+    if (src & (1 << 16))
+      otg_epout_handler(usbp, 0);
+    if (src & (1 << 17))
+      otg_epout_handler(usbp, 1);
+    if (src & (1 << 18))
+      otg_epout_handler(usbp, 2);
+    if (src & (1 << 19))
+      otg_epout_handler(usbp, 3);
+  }
 
   CH_IRQ_EPILOGUE();
 }
@@ -208,15 +276,8 @@ void usb_lld_start(USBDriver *usbp) {
     }
 #endif
 
-    /* Wait AHB idle condition.*/
-    while ((OTG->GRSTCTL & GRSTCTL_AHBIDL) == 0)
-      ;
-
-    /* Core reset and delay of at least 3 PHY cycles.*/
-    OTG->GRSTCTL = GRSTCTL_CSRST;
-    while ((OTG->GRSTCTL & GRSTCTL_CSRST) != 0)
-      ;
-    halPolledDelay(12);
+    /* Soft core reset.*/
+    otg_core_reset();
 
     /* - Forced device mode.
        - USB turn-around time = TRDT_VALUE.
@@ -236,7 +297,7 @@ void usb_lld_start(USBDriver *usbp) {
     OTG->GRXFSIZ = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
 
     /* Endpoints re-initialization.*/
-    otg_reset_ep();
+    otg_disable_ep();
 
     /* Clear all pending Device Interrupts, only the USB Reset interrupt
        is required initially.*/
@@ -280,11 +341,28 @@ void usb_lld_stop(USBDriver *usbp) {
  * @notapi
  */
 void usb_lld_reset(USBDriver *usbp) {
+  unsigned i;
 
-  /* Post reset initialization.*/
+  /* Endpoint interrupts all disabled and cleared.*/
+  OTG->DAINTMSK = 0;
+  OTG->DAINT    = 0xFFFFFFFF;
+
+  /* All endpoints in NAK mode, interrupts cleared.*/
+  for (i = 0; i <= USB_MAX_ENDPOINTS; i++) {
+    OTG->ie[i].DIEPCTL = DIEPCTL_SNAK;
+    OTG->oe[i].DOEPCTL = DOEPCTL_SNAK;
+    OTG->ie[i].DIEPINT = 0xFFFFFFFF;
+    OTG->oe[i].DOEPINT = 0xFFFFFFFF;
+  }
 
   /* Resets the packet memory allocator.*/
-  rxfifo_reset(usbp);
+  otg_pm_reset(usbp);
+
+  /* Enables also EP-related interrupt sources.*/
+  OTG->GINTMSK  |= GINTMSK_RXFLVLM | GINTMSK_OEPM  | GINTMSK_IEPM;
+  OTG->DIEPMSK   = DIEPMSK_TOM     | DIEPMSK_XFRCM;
+  OTG->DOEPMSK   = DOEPMSK_STUPM   | DOEPMSK_XFRCM;
+//  OTG->DAINTMSK = DAINTMSK_OutEpMsk(0) | DAINTMSK_InEpMsk(0);
 
   /* EP0 initialization.*/
   usbp->epc[0] = &ep0config;
@@ -300,7 +378,7 @@ void usb_lld_reset(USBDriver *usbp) {
  */
 void usb_lld_set_address(USBDriver *usbp) {
 
-  (void)usbp;
+  OTG->DCFG = (OTG->DCFG & ~DCFG_DAD_MASK) | DCFG_DAD(usbp->address);
 }
 
 /**
