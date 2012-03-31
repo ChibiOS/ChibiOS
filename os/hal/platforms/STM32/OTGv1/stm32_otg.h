@@ -369,10 +369,12 @@ typedef struct {
 #define GRXSTSP_DPID_MASK       (3U<<15)    /**< Data PID mask.             */
 #define GRXSTSP_DPID(n)         ((n)<<15)   /**< Data PID value.            */
 #define GRXSTSP_BCNT_MASK       (0x7FF<<4)  /**< Byte count mask.           */
+#define GRXSTSP_BCNT_OFF        4           /**< Byte count offset.         */
 #define GRXSTSP_BCNT(n)         ((n)<<4)    /**< Byte count value.          */
 #define GRXSTSP_CHNUM_MASK      (15U<<0)    /**< Channel number mask.       */
 #define GRXSTSP_CHNUM(n)        ((n)<<0)    /**< Channel number value.      */
 #define GRXSTSP_EPNUM_MASK      (15U<<0)    /**< Endpoint number mask.      */
+#define GRXSTSP_EPNUM_OFF       0           /**< Endpoint number offset.    */
 #define GRXSTSP_EPNUM(n)        ((n)<<0)    /**< Endpoint number value.     */
 /** @} */
 
@@ -480,7 +482,7 @@ typedef struct {
 #define HAINTMSK_HAINTM_MASK    (0xFFFFU<<0)/**< Channel interrupt mask
                                                  mask.                      */
 #define HAINTMSK_HAINTM(n)      ((n)<<0)    /**< Channel interrupt mask
-                                                value.                      */
+                                                 value.                     */
 /** @} */
 
 /**
@@ -644,13 +646,12 @@ typedef struct {
  * @name DIEPMSK register bit definitions
  * @{
  */
+#define DIEPMSK_TXFEM           (1U<<6)     /**< Transmit FIFO empty mask.  */
 #define DIEPMSK_INEPNEM         (1U<<6)     /**< IN endpoint NAK effective
                                                  mask.                      */
-#define DIEPMSK_INEPNMM         (1U<<5)     /**< IN Token received with
-                                                 EP mismatch mask.          */
 #define DIEPMSK_ITTXFEMSK       (1U<<4)     /**< IN token received when
                                                  TxFIFO empty mask.         */
-#define DIEPMSK_TOM             (1U<<3)     /**< Timeout condition mask.    */
+#define DIEPMSK_TOCM            (1U<<3)     /**< Timeout condition mask.    */
 #define DIEPMSK_EPDM            (1U<<1)     /**< Endpoint disabled
                                                  interrupt mask.            */
 #define DIEPMSK_XFRCM           (1U<<0)     /**< Transfer completed
@@ -662,7 +663,7 @@ typedef struct {
  * @{
  */
 #define DOEPMSK_OTEPDM          (1U<<4)     /**< OUT token received when
-                                                endpoint disabled mask.     */
+                                                 endpoint disabled mask.    */
 #define DOEPMSK_STUPM           (1U<<3)     /**< SETUP phase done mask.     */
 #define DOEPMSK_EPDM            (1U<<1)     /**< Endpoint disabled
                                                  interrupt mask.            */
@@ -759,7 +760,7 @@ typedef struct {
  * @name DIEPINT register bit definitions
  * @{
  */
-#define DIEPINT_TXFE            (1U<<7)     /**< transmit FIFO empty.       */
+#define DIEPINT_TXFE            (1U<<7)     /**< Transmit FIFO empty.       */
 #define DIEPINT_INEPNE          (1U<<6)     /**< IN endpoint NAK effective. */
 #define DIEPINT_ITTXFE          (1U<<4)     /**< IN Token received when
                                                  TxFIFO is empty.           */
