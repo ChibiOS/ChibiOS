@@ -242,7 +242,7 @@ void mac_lld_init(void) {
 
   /* PHY address setup.*/
 #if defined(BOARD_PHY_ADDRESS)
-  phyaddr = BOARD_PHY_ADDRESS << 11;
+  ETHD1.phyaddr = BOARD_PHY_ADDRESS << 11;
 #else
   mii_find_phy(&ETHD1);
 #endif
