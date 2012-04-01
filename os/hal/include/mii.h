@@ -40,9 +40,12 @@
 #define MII_ADVERTISE           0x04    /**< Advertisement control reg.     */
 #define MII_LPA                 0x05    /**< Link partner ability reg.      */
 #define MII_EXPANSION           0x06    /**< Expansion register.            */
+#define MII_ANNPTR              0x07    /**< 1000BASE-T control.            */
 #define MII_CTRL1000            0x09    /**< 1000BASE-T control.            */
 #define MII_STAT1000            0x0a    /**< 1000BASE-T status.             */
 #define MII_ESTATUS             0x0f    /**< Extended Status.               */
+#define MII_PHYSTS              0x10    /**< PHY Status register.           */
+#define MII_MICR                0x11    /**< MII Interrupt ctrl register.   */
 #define MII_DCOUNTER            0x12    /**< Disconnect counter.            */
 #define MII_FCSCOUNTER          0x13    /**< False carrier counter.         */
 #define MII_NWAYTEST            0x14    /**< N-way auto-neg test reg.       */
@@ -52,14 +55,13 @@
 #define MII_LBRERROR            0x18    /**< Lpback, rx, bypass error.      */
 #define MII_PHYADDR             0x19    /**< PHY address.                   */
 #define MII_RESV2               0x1a    /**< Reserved.                      */
-#define MII_TPISTATUS           0x1b    /**< TPI status for 10mbps.         */
+#define MII_TPISTATUS           0x1b    /**< TPI status for 10Mbps.         */
 #define MII_NCONFIG             0x1c    /**< Network interface config.      */
 
 /*
  * Basic mode control register.
  */
-#define BMCR_RESV               0x003f  /**< Unused.                        */
-#define BMCR_SPEED1000          0x0040  /**< MSB of Speed (1000).           */
+#define BMCR_RESV               0x007f  /**< Unused.                        */
 #define BMCR_CTST               0x0080  /**< Collision test.                */
 #define BMCR_FULLDPLX           0x0100  /**< Full duplex.                   */
 #define BMCR_ANRESTART          0x0200  /**< Auto negotiation restart.      */
@@ -67,7 +69,7 @@
 #define BMCR_PDOWN              0x0800  /**< Powerdown.                     */
 #define BMCR_ANENABLE           0x1000  /**< Enable auto negotiation.       */
 #define BMCR_SPEED100           0x2000  /**< Select 100Mbps.                */
-#define BMCR_LOOPBACK           0x4000  /**< TXD loopback bits.             */
+#define BMCR_LOOPBACK           0x4000  /**< TXD loopback bit.              */
 #define BMCR_RESET              0x8000  /**< Reset.                         */
 
 /*
@@ -79,10 +81,8 @@
 #define BMSR_ANEGCAPABLE        0x0008  /**< Able to do auto-negotiation.   */
 #define BMSR_RFAULT             0x0010  /**< Remote fault detected.         */
 #define BMSR_ANEGCOMPLETE       0x0020  /**< Auto-negotiation complete.     */
-#define BMSR_RESV               0x00c0  /**< Unused.                        */
-#define BMSR_ESTATEN            0x0100  /**< Extended Status in R15.        */
-#define BMSR_100HALF2           0x0200  /**< Can do 100BASE-T2 HDX.         */
-#define BMSR_100FULL2           0x0400  /**< Can do 100BASE-T2 FDX.         */
+#define BMSR_MFPRESUPPCAP       0x0040  /**< Able to suppress preamble.     */
+#define BMSR_RESV               0x0780  /**< Unused.                        */
 #define BMSR_10HALF             0x0800  /**< Can do 10mbps, half-duplex.    */
 #define BMSR_10FULL             0x1000  /**< Can do 10mbps, full-duplex.    */
 #define BMSR_100HALF            0x2000  /**< Can do 100mbps, half-duplex.   */
@@ -95,13 +95,9 @@
 #define ADVERTISE_SLCT          0x001f  /**< Selector bits.                 */
 #define ADVERTISE_CSMA          0x0001  /**< Only selector supported.       */
 #define ADVERTISE_10HALF        0x0020  /**< Try for 10mbps half-duplex.    */
-#define ADVERTISE_1000XFULL     0x0020  /**< Try for 1000BASE-X full-duplex.*/
 #define ADVERTISE_10FULL        0x0040  /**< Try for 10mbps full-duplex.    */
-#define ADVERTISE_1000XHALF     0x0040  /**< Try for 1000BASE-X half-duplex.*/
 #define ADVERTISE_100HALF       0x0080  /**< Try for 100mbps half-duplex.   */
-#define ADVERTISE_1000XPAUSE    0x0080  /**< Try for 1000BASE-X pause.      */
 #define ADVERTISE_100FULL       0x0100  /**< Try for 100mbps full-duplex.   */
-#define ADVERTISE_1000XPSE_ASYM 0x0100  /**< Try for 1000BASE-X asym pause. */
 #define ADVERTISE_100BASE4      0x0200  /**< Try for 100mbps 4k packets.    */
 #define ADVERTISE_PAUSE_CAP     0x0400  /**< Try for pause.                 */
 #define ADVERTISE_PAUSE_ASYM    0x0800  /**< Try for asymetric pause.       */
@@ -120,13 +116,9 @@
  */
 #define LPA_SLCT                0x001f  /**< Same as advertise selector.    */
 #define LPA_10HALF              0x0020  /**< Can do 10mbps half-duplex.     */
-#define LPA_1000XFULL           0x0020  /**< Can do 1000BASE-X full-duplex. */
 #define LPA_10FULL              0x0040  /**< Can do 10mbps full-duplex.     */
-#define LPA_1000XHALF           0x0040  /**< Can do 1000BASE-X half-duplex. */
 #define LPA_100HALF             0x0080  /**< Can do 100mbps half-duplex.    */
-#define LPA_1000XPAUSE          0x0080  /**< Can do 1000BASE-X pause.       */
 #define LPA_100FULL             0x0100  /**< Can do 100mbps full-duplex.    */
-#define LPA_1000XPAUSE_ASYM     0x0100  /**< Can do 1000BASE-X pause asym.  */
 #define LPA_100BASE4            0x0200  /**< Can do 100mbps 4k packets.     */
 #define LPA_PAUSE_CAP           0x0400  /**< Can pause.                     */
 #define LPA_PAUSE_ASYM          0x0800  /**< Can pause asymetrically.       */
@@ -148,9 +140,6 @@
 #define EXPANSION_MFAULTS       0x0010  /**< Multiple faults detected.      */
 #define EXPANSION_RESV          0xffe0  /**< Unused.                        */
 
-#define ESTATUS_1000_TFULL      0x2000  /**< Can do 1000BT Full.            */
-#define ESTATUS_1000_THALF      0x1000  /**< Can do 1000BT Half.            */
-
 /*
  * N-way test register.
  */
@@ -159,26 +148,13 @@
 #define NWAYTEST_RESV2          0xfe00  /**< Unused.                        */
 
 /*
- * 1000BASE-T Control register.
- */
-#define ADVERTISE_1000FULL      0x0200  /**< Advertise 1000BASE-T full duplex.*/
-#define ADVERTISE_1000HALF      0x0100  /**< Advertise 1000BASE-T half duplex.*/
-
-/*
- * 1000BASE-T Status register.
- */
-#define LPA_1000LOCALRXOK       0x2000  /**< Link partner local receiver status.*/
-#define LPA_1000REMRXOK         0x1000  /**< Link partner remote receiver status.*/
-#define LPA_1000FULL            0x0800  /**< Link partner 1000BASE-T full duplex.*/
-#define LPA_1000HALF            0x0400  /**< Link partner 1000BASE-T half duplex.*/
-
-/*
  * PHY identifiers.
  */
 #define MII_DM9161_ID     0x0181b8a0
 #define MII_AM79C875_ID   0x00225540
 #define MII_KS8721_ID     0x00221610
 #define MII_STE101P_ID    0x00061C50
+#define MII_DP84848I_ID   0x20005C90
 
 #endif /* _MII_H_ */
 
