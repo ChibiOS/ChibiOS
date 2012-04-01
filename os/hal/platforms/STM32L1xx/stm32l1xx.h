@@ -2602,10 +2602,10 @@ typedef struct
 #define  RCC_ICSCR_HSITRIM                   ((uint32_t)0x00001F00)        /*!< Internal High Speed clock trimming */
 
 #define  RCC_ICSCR_MSIRANGE                  ((uint32_t)0x0000E000)        /*!< Internal Multi Speed clock Range */
-#define  RCC_ICSCR_MSIRANGE_0                ((uint32_t)0x00000000)        /*!< Internal Multi Speed clock Range 65.536 KHz */
-#define  RCC_ICSCR_MSIRANGE_1                ((uint32_t)0x00002000)        /*!< Internal Multi Speed clock Range 131.072 KHz */
-#define  RCC_ICSCR_MSIRANGE_2                ((uint32_t)0x00004000)        /*!< Internal Multi Speed clock Range 262.144 KHz */
-#define  RCC_ICSCR_MSIRANGE_3                ((uint32_t)0x00006000)        /*!< Internal Multi Speed clock Range 524.288 KHz */
+#define  RCC_ICSCR_MSIRANGE_0                ((uint32_t)0x00000000)        /*!< Internal Multi Speed clock Range 65.536 kHz */
+#define  RCC_ICSCR_MSIRANGE_1                ((uint32_t)0x00002000)        /*!< Internal Multi Speed clock Range 131.072 kHz */
+#define  RCC_ICSCR_MSIRANGE_2                ((uint32_t)0x00004000)        /*!< Internal Multi Speed clock Range 262.144 kHz */
+#define  RCC_ICSCR_MSIRANGE_3                ((uint32_t)0x00006000)        /*!< Internal Multi Speed clock Range 524.288 kHz */
 #define  RCC_ICSCR_MSIRANGE_4                ((uint32_t)0x00008000)        /*!< Internal Multi Speed clock Range 1.048 MHz */
 #define  RCC_ICSCR_MSIRANGE_5                ((uint32_t)0x0000A000)        /*!< Internal Multi Speed clock Range 2.097 MHz */
 #define  RCC_ICSCR_MSIRANGE_6                ((uint32_t)0x0000C000)        /*!< Internal Multi Speed clock Range 4.194 MHz */

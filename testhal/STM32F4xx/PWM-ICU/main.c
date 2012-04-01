@@ -34,7 +34,7 @@ static void pwmc1cb(PWMDriver *pwmp) {
 }
 
 static PWMConfig pwmcfg = {
-  10000,                                    /* 10KHz PWM clock frequency.   */
+  10000,                                    /* 10kHz PWM clock frequency.   */
   10000,                                    /* Initial PWM period 1S.       */
   pwmpcb,
   {
@@ -62,7 +62,7 @@ static void icuperiodcb(ICUDriver *icup) {
 
 static ICUConfig icucfg = {
   ICU_INPUT_ACTIVE_HIGH,
-  10000,                                    /* 10KHz ICU clock frequency.   */
+  10000,                                    /* 10kHz ICU clock frequency.   */
   icuwidthcb,
   icuperiodcb,
   NULL,
