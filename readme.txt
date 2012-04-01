@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed problem with FPU initialization in GCC Cortex-M4 port (bug
+  3513897)(backported to 2.4.1).
 - FIX: Spelling fixes (bug 3510812)(backported to 2.4.1).
 - FIX: Fixed STM32 ICUD8 not functional because wrong initialization (bug
   3508758)(backported to 2.4.1).
@@ -102,6 +104,8 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added a switch to the STM32F4 Makefile files in order to enable or
+  disable the FPU support in a single place.
 - NEW: Added float support (optional) to chprintf(), by Fabio Utzig.
 - NEW: Added overflow handling in the ICU driver (contributed by Xo).
 - NEW: Updated debug plugin 1.0.8 (backported to 2.4.0).

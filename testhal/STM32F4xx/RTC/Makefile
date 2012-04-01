@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -41,6 +41,12 @@ endif
 # Architecture or project specific options
 #
 
+# Enables the use of FPU on Cortex-M4.
+# Enable this if you really want to use the STM FWLib.
+ifeq ($(USE_FPU),)
+  USE_FPU = no
+endif
+
 # Enable this if you really want to use the STM FWLib.
 ifeq ($(USE_FWLIB),)
   USE_FWLIB = no
@@ -57,17 +63,18 @@ endif
 # Define project name here
 PROJECT = ch
 
-# Imported source files
-CHIBIOS = ../../..
-include $(CHIBIOS)/boards/NONSTANDARD_STM32F4_BARTHESS1/board.mk
+# Imported source files and paths
+CHIBIOS = ../..
+include $(CHIBIOS)/boards/ST_STM32F4_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F4xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F4xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
-#include $(CHIBIOS)/test/test.mk
+include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/STM32F407xG.ld
+#LDSCRIPT= $(PORTLD)/STM32F407xG_CCM.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -77,11 +84,9 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(CHIBIOS)/os/various/evtimer.c \
-       $(CHIBIOS)/os/various/syscalls.c \
-       $(CHIBIOS)/os/various/shell.c \
+       $(CHIBIOS)/os/various/lis302dl.c \
        $(CHIBIOS)/os/various/chprintf.c \
-       main.c \
+       main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -131,8 +136,7 @@ CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.
 # NOTE: You can use C++ even without C++ support if you are careful. C++
 #       runtime support makes code size explode.
-
-LD   = $(TRGT)gcc 
+LD   = $(TRGT)gcc
 #LD   = $(TRGT)g++
 CP   = $(TRGT)objcopy
 AS   = $(TRGT)gcc -x assembler-with-cpp
@@ -141,13 +145,13 @@ HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
 # ARM-specific options here
-AOPT = 
+AOPT =
 
 # THUMB-specific options here
 TOPT = -mthumb -DTHUMB
 
 # Define C warning options here
-CWARN = -Wall -Wextra -Wstrict-prototypes 
+CWARN = -Wall -Wextra -Wstrict-prototypes
 
 # Define C++ warning options here
 CPPWARN = -Wall -Wextra
@@ -193,7 +197,7 @@ UADEFS =
 UINCDIR =
 
 # List the user directory to look for the libraries here
-ULIBDIR = 
+ULIBDIR =
 
 # List all user libraries here
 ULIBS =
@@ -201,6 +205,13 @@ ULIBS =
 #
 # End of user defines
 ##############################################################################
+
+ifeq ($(USE_FPU),yes)
+  USE_OPT += -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+  DDEFS += -DCORTEX_USE_FPU=TRUE
+else
+  DDEFS += -DCORTEX_USE_FPU=FALSE
+endif
 
 ifeq ($(USE_FWLIB),yes)
   include $(CHIBIOS)/ext/stm32lib/stm32lib.mk
