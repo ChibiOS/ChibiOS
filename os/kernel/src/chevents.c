@@ -383,7 +383,7 @@ eventmask_t chEvtWaitAll(eventmask_t mask) {
  *          This means that Event Listeners with a lower event identifier have
  *          an higher priority.
  *
- * @param[in] mask      mask of the event flagss that the function should wait
+ * @param[in] mask      mask of the event flags that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:

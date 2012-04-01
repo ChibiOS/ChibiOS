@@ -57,7 +57,7 @@
                          RCC_AHB1ENR_GPIOIEN)
 #define AHB1_LPEN_MASK  AHB1_EN_MASK
 #else
-#error "missing or usupported platform for GPIOv2 PAL driver"
+#error "missing or unsupported platform for GPIOv2 PAL driver"
 #endif
 
 /*===========================================================================*/

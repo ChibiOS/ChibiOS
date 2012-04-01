@@ -83,7 +83,7 @@ void port_unlock_from_isr(void) {
 
 /**
  * @brief   Disables all the interrupt sources.
- * @note    Of course non maskable interrupt sources are not included.
+ * @note    Of course non-maskable interrupt sources are not included.
  */
 void port_disable(void) {
 }

@@ -58,7 +58,7 @@ static SPIConfig hs_spicfg = {
   2
 };
 
-/* Low speed SPI configuration (281.250KHz, CPHA=0, CPOL=0).*/
+/* Low speed SPI configuration (281.250kHz, CPHA=0, CPOL=0).*/
 static SPIConfig ls_spicfg = {
   NULL,
   IOPORT1,

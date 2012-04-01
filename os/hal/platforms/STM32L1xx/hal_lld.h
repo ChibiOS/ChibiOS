@@ -156,10 +156,10 @@
  * @{
  */
 #define STM32_MSIRANGE_MASK     (7 << 13)   /**< MSIRANGE field mask.       */
-#define STM32_MSIRANGE_64K      (0 << 13)   /**< 64KHz nominal.             */
-#define STM32_MSIRANGE_128K     (1 << 13)   /**< 128KHz nominal.            */
-#define STM32_MSIRANGE_256K     (2 << 13)   /**< 256KHz nominal.            */
-#define STM32_MSIRANGE_512K     (3 << 13)   /**< 512KHz nominal.            */
+#define STM32_MSIRANGE_64K      (0 << 13)   /**< 64kHz nominal.             */
+#define STM32_MSIRANGE_128K     (1 << 13)   /**< 128kHz nominal.            */
+#define STM32_MSIRANGE_256K     (2 << 13)   /**< 256kHz nominal.            */
+#define STM32_MSIRANGE_512K     (3 << 13)   /**< 512kHz nominal.            */
 #define STM32_MSIRANGE_1M       (4 << 13)   /**< 1MHz nominal.              */
 #define STM32_MSIRANGE_2M       (5 << 13)   /**< 2MHz nominal.              */
 #define STM32_MSIRANGE_4M       (6 << 13)   /**< 4MHz nominal               */
@@ -684,7 +684,7 @@
 #error "impossible to activate LSE"
 #endif
 #if (STM32_LSECLK < 1000) || (STM32_LSECLK > 1000000)
-#error "STM32_LSECLK outside acceptable range (1...1000KHz)"
+#error "STM32_LSECLK outside acceptable range (1...1000kHz)"
 #endif
 #else /* !STM32_LSE_ENABLED */
 #if STM_RTCCLK == STM32_LSECLK

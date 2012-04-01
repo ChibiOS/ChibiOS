@@ -209,7 +209,7 @@ extern "C" {
 #endif /* !defined(PORT_OPTIMIZED_DOYIELDS) */
 
 /**
- * @brief   Inlineable preemption code.
+ * @brief   Inline-able preemption code.
  * @details This is the common preemption code, this function must be invoked
  *          exclusively from the port layer.
  *

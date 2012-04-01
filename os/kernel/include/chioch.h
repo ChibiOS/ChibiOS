@@ -324,7 +324,7 @@ typedef struct {
 
 /**
  * @brief   Adds status flags to the channel's mask.
- * @details This function is usually called from the I/O ISTs in order to
+ * @details This function is usually called from the I/O ISRs in order to
  *          notify I/O conditions such as data events, errors, signal
  *          changes etc.
  *

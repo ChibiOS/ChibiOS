@@ -116,7 +116,7 @@ typedef struct {
 #define UBRR(b)     (((F_CPU / b) >> 4) - 1)
 
 /**
- * @brief   Macro for baud rate computationwhen U2Xn == 1.
+ * @brief   Macro for baud rate computation when U2Xn == 1.
  * @note    Make sure the final baud rate is within tolerance.
  */
 #define UBRR2(b)    (((F_CPU / b) >> 3) - 1)

@@ -260,7 +260,7 @@ struct stm8_startctx {
 /**
  * @brief   Disables all the interrupt sources.
  * @note    Implemented as global interrupts disable.
- * @note    Of course non maskable interrupt sources are not included.
+ * @note    Of course non-maskable interrupt sources are not included.
  */
 #define port_disable() _asm("sim")
 

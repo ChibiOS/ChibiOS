@@ -153,7 +153,7 @@ void ext_lld_init(void) {
 
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
     (SAM7_PLATFORM == SAM7X512)
-  /* Aame for PIOB.*/
+  /* Same for PIOB.*/
   extObjectInit(&EXTDB);
   EXTDB.pio = AT91C_BASE_PIOB;
   EXTDB.pid = AT91C_ID_PIOB;

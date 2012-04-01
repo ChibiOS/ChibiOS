@@ -124,14 +124,14 @@ void chMtxLockS(Mutex *mp) {
   chDbgCheckClassS();
   chDbgCheck(mp != NULL, "chMtxLockS");
 
-  /* Ia the mutex already locked? */
+  /* Is the mutex already locked? */
   if (mp->m_owner != NULL) {
     /* Priority inheritance protocol; explores the thread-mutex dependencies
        boosting the priority of all the affected threads to equal the priority
        of the running thread requesting the mutex.*/
     Thread *tp = mp->m_owner;
     /* Does the running thread have higher priority than the mutex
-       ownning thread? */
+       owning thread? */
     while (tp->p_prio < ctp->p_prio) {
       /* Make priority of thread tp match the running thread's priority.*/
       tp->p_prio = ctp->p_prio;
@@ -265,7 +265,7 @@ Mutex *chMtxUnlock(void) {
   chDbgAssert(ctp->p_mtxlist->m_owner == ctp,
               "chMtxUnlock(), #2",
               "ownership failure");
-  /* Removes the top Mutex from the Threads's owned mutexes list and matk it
+  /* Removes the top Mutex from the Thread's owned mutexes list and matk it
      as not owned.*/
   ump = ctp->p_mtxlist;
   ctp->p_mtxlist = ump->m_next;

@@ -77,7 +77,7 @@ void hal_lld_init(void) {
 
   /* Optimal crossbar settings. The DMA priority is placed above the CPU
      priority in order to not starve I/O activities while the CPU is
-     excuting tight loops (FLASH and SRAM slave ports only).
+     executing tight loops (FLASH and SRAM slave ports only).
      The SRAM is parked on the load/store port, for some unknown reason it
      is defaulted on the instructions port and this kills performance.*/
   XBAR.SGPCR3.B.PARK = 4;               /* RAM slave on load/store port.*/

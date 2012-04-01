@@ -446,7 +446,7 @@
  * @brief   Threads initialization hook.
  * @details User initialization code added to the @p chThdInit() API.
  *
- * @note    It is invoked from within @p chThdInit() and implicitily from all
+ * @note    It is invoked from within @p chThdInit() and implicitly from all
  *          the threads creation APIs.
  */
 #if !defined(THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)

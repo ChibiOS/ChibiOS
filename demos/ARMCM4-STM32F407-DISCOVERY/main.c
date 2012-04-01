@@ -73,7 +73,7 @@ static const ADCConversionGroup adcgrpcfg = {
  * the active state is a logic one.
  */
 static PWMConfig pwmcfg = {
-  10000,                                    /* 10KHz PWM clock frequency.   */
+  10000,                                    /* 10kHz PWM clock frequency.   */
   10000,                                    /* PWM period 1S (in ticks).    */
   pwmpcb,
   {

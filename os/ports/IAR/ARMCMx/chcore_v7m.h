@@ -409,7 +409,7 @@ struct context {
 
 /**
  * @brief   Disables all the interrupt sources.
- * @note    Of course non maskable interrupt sources are not included.
+ * @note    Of course non-maskable interrupt sources are not included.
  * @note    In this port it disables all the interrupt sources by raising
  *          the priority mask to level 0.
  */

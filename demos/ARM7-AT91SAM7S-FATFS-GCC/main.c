@@ -60,7 +60,7 @@ static SPIConfig hs_spicfg = {
   (MAX_SPI_BITRATE << 8) | AT91C_SPI_NCPHA | AT91C_SPI_BITS_8
 };
 
-/* Low speed SPI configuration (192KHz, NCPHA=1, CPOL=0).*/
+/* Low speed SPI configuration (192kHz, NCPHA=1, CPOL=0).*/
 static SPIConfig ls_spicfg = {
   NULL,
   IOPORT1,

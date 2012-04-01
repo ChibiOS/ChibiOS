@@ -46,7 +46,7 @@
  *          - Multipoint network drivers.
  *          - Serial protocol decoders.
  *          .
- *          If your application requires a synchronoyus buffered driver then
+ *          If your application requires a synchronous buffered driver then
  *          the @ref SERIAL should be used instead.
  * @pre     In order to use the UART driver the @p HAL_USE_UART option
  *          must be enabled in @p halconf.h.

@@ -153,7 +153,7 @@ void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  */
 Thread *chThdCreateI(void *wsp, size_t size,
                      tprio_t prio, tfunc_t pf, void *arg) {
-  /* Thread structure is layed out in the lower part of the thread workspace */
+  /* Thread structure is laid out in the lower part of the thread workspace.*/
   Thread *tp = wsp;
 
   chDbgCheckClassI();

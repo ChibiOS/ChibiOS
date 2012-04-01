@@ -53,7 +53,7 @@
 #define S2ST(sec)   ((systime_t)((sec) * CH_FREQUENCY))
 
 /**
- * @brief   Milliseconds t0 system ticks.
+ * @brief   Milliseconds to system ticks.
  * @details Converts from milliseconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.
  *
@@ -147,7 +147,7 @@ extern VTList vtlist;
 }
 
 /**
- * @brief   Returns TRUE if the speciified timer is armed.
+ * @brief   Returns TRUE if the specified timer is armed.
  *
  * @iclass
  */

@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.1 ***
+- FIX: Spelling fixes (bug 3510812).
 - FIX: Fixed STM32 ICUD8 not functional because wrong initialization (bug
   3508758).
 - FIX: Fixed chMBFetchI does not decrement mb_fullsem (bug 3504450).

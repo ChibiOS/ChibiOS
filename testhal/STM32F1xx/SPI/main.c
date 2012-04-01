@@ -39,7 +39,7 @@ static const SPIConfig hs_spicfg = {
 };
 
 /*
- * Low speed SPI configuration (281.250KHz, CPHA=0, CPOL=0, MSb first).
+ * Low speed SPI configuration (281.250kHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig ls_spicfg = {
   NULL,

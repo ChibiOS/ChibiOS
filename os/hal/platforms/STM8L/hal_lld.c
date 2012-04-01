@@ -115,7 +115,7 @@ void hal_lld_init(void) {
 #endif
 
   /* Clocks initially all disabled, note the boot ROM clock is disabled
-     because the boot loader is no more required and it draws pretious uAs.*/
+     because the boot loader is no more required and it draws precious uAs.*/
   CLK->PCKENR1 = 0;
   CLK->PCKENR2 = 0;
   CLK->PCKENR3 = 0;

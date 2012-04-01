@@ -121,7 +121,7 @@ msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
  * @brief   Writes to a transmit descriptor's stream.
  *
  * @param[in] tdp       pointer to a @p MACTransmitDescriptor structure
- * @param[in] buf       pointer to the buffer cointaining the data to be
+ * @param[in] buf       pointer to the buffer containing the data to be
  *                      written
  * @param[in] size      number of bytes to be written
  * @return              The number of bytes written into the descriptor's

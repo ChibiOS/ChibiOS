@@ -482,7 +482,7 @@ void sdc_lld_stop(SDCDriver *sdcp) {
 }
 
 /**
- * @brief   Starts the SDIO clock and sets it to init mode (400KHz or less).
+ * @brief   Starts the SDIO clock and sets it to init mode (400kHz or less).
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
@@ -491,7 +491,7 @@ void sdc_lld_stop(SDCDriver *sdcp) {
 void sdc_lld_start_clk(SDCDriver *sdcp) {
 
   (void)sdcp;
-  /* Initial clock setting: 400KHz, 1bit mode.*/
+  /* Initial clock setting: 400kHz, 1bit mode.*/
   SDIO->CLKCR  = STM32_SDIO_DIV_LS;
   SDIO->POWER |= SDIO_POWER_PWRCTRL_0 | SDIO_POWER_PWRCTRL_1;
   SDIO->CLKCR |= SDIO_CLKCR_CLKEN;

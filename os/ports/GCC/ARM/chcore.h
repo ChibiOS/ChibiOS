@@ -386,7 +386,7 @@ struct context {
 
 /**
  * @brief   Disables all the interrupt sources.
- * @note    Of course non maskable interrupt sources are not included.
+ * @note    Of course non-maskable interrupt sources are not included.
  * @note    In this port it disables both the IRQ and FIQ sources.
  * @note    Implements a workaround for spurious interrupts taken from the NXP
  *          LPC214x datasheet.

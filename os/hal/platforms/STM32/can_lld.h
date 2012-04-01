@@ -195,7 +195,7 @@ typedef struct {
    */
   uint32_t                  mode:1;
   /**
-   * @brief Filter sclae.
+   * @brief Filter scale.
    * @note  This bit represent the CAN_FS1R register bit associated to this
    *        filter (0=16 bits mode, 1=32 bits mode).
    */

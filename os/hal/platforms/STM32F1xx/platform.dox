@@ -395,7 +395,7 @@
  * @section stm32f1xx_rcc_2 STM32F1xx RCC driver implementation features
  * - Peripherals reset.
  * - Peripherals clock enable.
- * - Periplerals clock disable.
+ * - Peripherals clock disable.
  * .
  * @ingroup STM32F1xx_PLATFORM_DRIVERS
  */

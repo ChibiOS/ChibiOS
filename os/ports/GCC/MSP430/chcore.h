@@ -254,7 +254,7 @@ struct context {
 
 /**
  * @brief   Disables all the interrupt sources.
- * @note    Of course non maskable interrupt sources are not included.
+ * @note    Of course non-maskable interrupt sources are not included.
  * @note    Implemented as global interrupt disable.
  */
 #define port_disable() asm volatile ("dint" : : : "memory")

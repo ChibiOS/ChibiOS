@@ -103,7 +103,7 @@ static uint8_t crc7(uint8_t crc, const uint8_t *buffer, size_t len) {
 }
 
 /**
- * @brief   Inserion monitor timer callback function.
+ * @brief   Insertion monitor timer callback function.
  *
  * @param[in] p         pointer to the @p MMCDriver object
  *
