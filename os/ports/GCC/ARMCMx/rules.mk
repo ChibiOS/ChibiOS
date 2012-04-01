@@ -28,7 +28,7 @@ else
 endif
 ASRC	  = $(ACSRC)$(ACPPSRC)
 TSRC	  = $(TCSRC)$(TCPPSRC)
-SRCPATHS  = $(sort $(dir $(ASMSRC)) $(dir $(ASRC)) $(dir $(TSRC)))
+SRCPATHS  = $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(ASRC)) $(dir $(TSRC)))
 
 # Various directories
 OBJDIR    = $(BUILDDIR)/obj
@@ -40,7 +40,8 @@ ACPPOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ACPPSRC:.cpp=.o)))
 TCOBJS    = $(addprefix $(OBJDIR)/, $(notdir $(TCSRC:.c=.o)))
 TCPPOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
 ASMOBJS   = $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
-OBJS	  = $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
+ASMXOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
+OBJS	  = $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
 
 # Paths
 IINCDIR   = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
@@ -57,6 +58,7 @@ LIBS      = $(DLIBS) $(ULIBS)
 MCFLAGS   = -mcpu=$(MCU)
 ODFLAGS	  = -x --syms
 ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
+ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
 CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
 ifeq ($(USE_LINK_GC),yes)
@@ -160,6 +162,15 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 else
 	@echo Compiling $<
 	@$(AS) -c $(ASFLAGS) -I. $(IINCDIR) $< -o $@
+endif
+
+$(ASMXOBJS) : $(OBJDIR)/%.o : %.S Makefile
+ifeq ($(USE_VERBOSE_COMPILE),yes)
+	@echo 
+	$(CC) -c $(ASXFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
+else
+	@echo Compiling $<
+	@$(CC) -c $(ASXFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 endif
 
 %.elf: $(OBJS) $(LDSCRIPT)
