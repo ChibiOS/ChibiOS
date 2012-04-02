@@ -64,8 +64,8 @@ endif
 PROJECT = ch
 
 # Imported source files and paths
-CHIBIOS = ../..
-include $(CHIBIOS)/boards/ST_STM32F4_DISCOVERY/board.mk
+CHIBIOS = ../../..
+include $(CHIBIOS)/boards/NONSTANDARD_STM32F4_BARTHESS1/board.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F4xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F4xx/port.mk
@@ -84,7 +84,6 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(CHIBIOS)/os/various/lis302dl.c \
        $(CHIBIOS)/os/various/chprintf.c \
        main.c
 
