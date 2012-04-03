@@ -497,8 +497,12 @@ msg_t max_lld_get_receive_descriptor(MACDriver *macp,
   /* Iterates through received frames until a valid one is found, invalid
      frames are discarded.*/
   while (!(rdes->rdes0 & STM32_RDES0_OWN)) {
-    if (!(rdes->rdes0 & (STM32_RDES0_AFM | STM32_RDES0_ES)) &&
-        (rdes->rdes0 & STM32_RDES0_FS) && (rdes->rdes0 & STM32_RDES0_LS)) {
+    if (!(rdes->rdes0 & (STM32_RDES0_AFM | STM32_RDES0_ES
+#if STM32_IP_CHECKSUM_OFFLOAD
+                       | STM32_RDES0_IPHCE | STM32_RDES0_PCE
+#endif
+        )) && (rdes->rdes0 & STM32_RDES0_FS) &&
+              (rdes->rdes0 & STM32_RDES0_LS)) {
       /* Found a valid one.*/
       rdp->offset   = 0;
       rdp->size     = ((rdes->rdes0 & STM32_RDES0_FL_MASK) >> 16) - 4;
