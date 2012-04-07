@@ -373,7 +373,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 
 /**
  * @brief   Reads from a dedicated packet buffer.
- * @pre     In order to use this function he endpoint must have been
+ * @pre     In order to use this function the endpoint must have been
  *          initialized in packet mode.
  * @note    This function can be invoked both in thread and IRQ context.
  *
@@ -393,7 +393,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 
 /**
  * @brief   Writes to a dedicated packet buffer.
- * @pre     In order to use this function he endpoint must have been
+ * @pre     In order to use this function the endpoint must have been
  *          initialized in packet mode.
  * @note    This function can be invoked both in thread and IRQ context.
  *
@@ -410,7 +410,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 
 /**
  * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @pre     In order to use this function he endpoint must have been
+ * @pre     In order to use this function the endpoint must have been
  *          initialized in transaction mode.
  * @post    The endpoint is ready for @p usbStartReceiveI().
  *
@@ -426,7 +426,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 
 /**
  * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @pre     In order to use this function he endpoint must have been
+ * @pre     In order to use this function the endpoint must have been
  *          initialized in transaction mode.
  * @post    The endpoint is ready for @p usbStartTransmitI().
  *

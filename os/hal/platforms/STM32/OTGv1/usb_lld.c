@@ -236,12 +236,7 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
   case GRXSTSP_SETUP_DATA:
     cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
     ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
-    if (ep == 0)
-      otg_fifo_read(usbp->setup, cnt, 8);
-    else
-      otg_fifo_read(usbp->epc[ep]->out_state->rxbuf, cnt,
-                    usbp->epc[ep]->out_state->rxsize);
-    usbp->epc[ep]->out_state->rxcnt = cnt;
+    otg_fifo_read(usbp->epc[ep]->setup_buf, cnt, 8);
     break;
   case GRXSTSP_OUT_DATA:
     cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
@@ -270,6 +265,7 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
 static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
   uint32_t n;
 
+#if 0
   if ((usbp->transmitting & (1 << ep))== 0) {
     /* Nothing to transmit.*/
     /* ????????????????????? */
@@ -289,6 +285,8 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
                            DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
   }
+#endif
+
   n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
   if (n > usbp->epc[ep]->in_maxsize)
     n = usbp->epc[ep]->in_maxsize;
@@ -298,7 +296,6 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
   usbp->epc[ep]->in_state->txcnt += n;
   if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize) {
     /* Transfer finished.*/
-    /* ????????????????????? */
     OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
   }
 }

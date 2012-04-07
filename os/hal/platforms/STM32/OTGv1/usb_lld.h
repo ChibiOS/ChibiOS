@@ -206,6 +206,12 @@ typedef struct {
    */
   USBOutEndpointState           *out_state;
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Pointer to a buffer for setup packets.
+   * @details Setup packets require a dedicated 8-bytes buffer, set this
+   *          field to @p NULL for non-control endpoints.
+   */
+  uint8_t                       *setup_buf;
 } USBEndpointConfig;
 
 /**
