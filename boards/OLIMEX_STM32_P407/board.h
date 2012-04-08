@@ -245,7 +245,7 @@
                              PIN_PUDR_PULLUP(GPIOA_OTG_FS_VBUS) |           \
                              PIN_PUDR_PULLUP(GPIOA_DCMI_D1) |               \
                              PIN_PUDR_PULLDOWN(GPIOA_SWCLK))
-#define VAL_GPIOA_ODR       0xFFFFFFFF
+#define VAL_GPIOA_ODR       0xFFFFFFDF
 #define VAL_GPIOA_AFRL      (PIN_AFIO_AF(GPIOA_ETH_RMII_REF_CLK, 11) |      \
                              PIN_AFIO_AF(GPIOA_ETH_RMII_MDIO, 11) |         \
                              PIN_AFIO_AF(GPIOA_ETH_RMII_CRS_DV, 11))
@@ -297,7 +297,7 @@
 #define VAL_GPIOB_PUPDR     (PIN_PUDR_PULLUP(GPIOB_DCMI_D5) |               \
                              PIN_PUDR_PULLUP(GPIOB_DCMI_VSYNC) |            \
                              PIN_PUDR_PULLUP(GPIOB_OTG_HS_VBUS))
-#define VAL_GPIOB_ODR       0xFFFFFFFF
+#define VAL_GPIOB_ODR       0xFFFFFFFC
 #define VAL_GPIOB_AFRL      (PIN_AFIO_AF(GPIOB_I2S3_CK, 6) |                \
                              PIN_AFIO_AF(GPIOB_I2S3_SD, 6))
 #define VAL_GPIOB_AFRH      (PIN_AFIO_AF(GPIOB_CAN1_RX, 9) |                \
@@ -348,7 +348,7 @@
 #define VAL_GPIOC_PUPDR     (PIN_PUDR_PULLUP(GPIOC_DCMI_D0) |               \
                              PIN_PUDR_PULLUP(GPIOC_DCMI_D2) |               \
                              PIN_PUDR_PULLUP(GPIOC_DCMI_D3))
-#define VAL_GPIOC_ODR       0xFFFFFFFF
+#define VAL_GPIOC_ODR       0xFFFFFFF3
 #define VAL_GPIOC_AFRL      (PIN_AFIO_AF(GPIOC_ETH_RMII_MDC, 11) |          \
                              PIN_AFIO_AF(GPIOC_ETH_RMII_RXD0, 11) |         \
                              PIN_AFIO_AF(GPIOC_ETH_RMII_RXD1, 11) |         \
@@ -463,7 +463,7 @@
                              PIN_PUDR_PULLUP(GPIOE_13) |                    \
                              PIN_PUDR_PULLUP(GPIOE_14) |                    \
                              PIN_PUDR_PULLUP(GPIOE_15))
-#define VAL_GPIOE_ODR       0xFFFFFFFF
+#define VAL_GPIOE_ODR       0xFFFFFFF7
 #define VAL_GPIOE_AFRL      0x00000000
 #define VAL_GPIOE_AFRH      0x00000000
 
@@ -516,7 +516,7 @@
                              PIN_PUDR_PULLUP(GPIOF_13) |                    \
                              PIN_PUDR_PULLUP(GPIOF_14) |                    \
                              PIN_PUDR_PULLUP(GPIOF_15))
-#define VAL_GPIOF_ODR       0xFFFFFFFF
+#define VAL_GPIOF_ODR       0xFFFFFC3F
 #define VAL_GPIOF_AFRL      0x00000000
 #define VAL_GPIOF_AFRH      0x00000000
 
