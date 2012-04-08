@@ -34,6 +34,12 @@
 #define BOARD_NAME              "Olimex STM32-P407"
 
 /*
+ * Ethernet PHY type.
+ */
+#define BOARD_PHY_ID            MII_KS8721_ID
+#define BOARD_PHY_RMII
+
+/*
  * Board frequencies.
  * NOTE: The LSE crystal is not fitted by default on the board.
  */
@@ -94,14 +100,14 @@
 #define GPIOC_LCD_MOSI          3
 #define GPIOC_ETH_RMII_RXD0     4
 #define GPIOC_ETH_RMII_RXD1     5
-#define GPIOC_USELESS6          6
+#define GPIOC_DCMI_D0           6
 #define GPIOC_I2S3_MCK          7
 #define GPIOC_DCMI_D2           8
 #define GPIOC_DCMI_D3           9
 #define GPIOC_SPI3_SCK          10
 #define GPIOC_SPI3_MISO         11
 #define GPIOC_SPI3_MOSI         12
-#define GPIOC_BUTTON_TAMPER     13
+#define GPIOC_SWITCH_TAMPER     13
 #define GPIOC_OSC32_IN          14
 #define GPIOC_OSC32_OUT         15
 
@@ -130,8 +136,8 @@
 #define GPIOE_5                 5
 #define GPIOE_6                 6
 #define GPIOE_7                 7
-#define GPIOE_7                 8
-#define GPIOE_8                 9
+#define GPIOE_8                 8
+#define GPIOE_9                 9
 #define GPIOE_10                10
 #define GPIOE_11                11
 #define GPIOE_12                12
@@ -149,7 +155,7 @@
 #define GPIOF_STAT2             7
 #define GPIOF_STAT3             8
 #define GPIOF_CAM_PWR           9
-#define GPIOF_ETH_RXER          10
+#define GPIOF_10                10
 #define GPIOF_CAM_RS            11
 #define GPIOF_12                12
 #define GPIOF_13                13
@@ -235,7 +241,6 @@
 #define VAL_GPIOA_OTYPER    0x00000000
 #define VAL_GPIOA_OSPEEDR   0xFFFFFFFF
 #define VAL_GPIOA_PUPDR     (PIN_PUDR_PULLUP(GPIOA_DCMI_HSYNC) |            \
-                             PIN_PUDR_PULLUP(GPIOA_USELESS5) |              \
                              PIN_PUDR_PULLUP(GPIOA_DCMI_PIXCLK) |           \
                              PIN_PUDR_PULLUP(GPIOA_OTG_FS_VBUS) |           \
                              PIN_PUDR_PULLUP(GPIOA_DCMI_D1) |               \
@@ -318,7 +323,7 @@
  * PC10 - GPIOC_SPI3_SCK        (alternate 6).
  * PC11 - GPIOC_SPI3_MISO       (alternate 6).
  * PC12 - GPIOC_SPI3_MOSI       (alternate 6).
- * PC13 - GPIOC_BUTTON_TAMPER   (input floating).
+ * PC13 - GPIOC_SWITCH_TAMPER   (input floating).
  * PC14 - GPIOC_OSC32_IN        (input floating).
  * PC15 - GPIOC_OSC32_OUT       (input floating).
  */
@@ -335,7 +340,7 @@
                              PIN_MODE_ALTERNATE(GPIOC_SPI3_SCK) |           \
                              PIN_MODE_ALTERNATE(GPIOC_SPI3_MISO) |          \
                              PIN_MODE_ALTERNATE(GPIOC_SPI3_MOSI) |          \
-                             PIN_MODE_INPUT(GPIOC_BUTTON_TAMPER) |          \
+                             PIN_MODE_INPUT(GPIOC_SWITCH_TAMPER) |          \
                              PIN_MODE_INPUT(GPIOC_OSC32_IN) |               \
                              PIN_MODE_INPUT(GPIOC_OSC32_OUT))
 #define VAL_GPIOC_OTYPER    0x00000000
@@ -550,7 +555,7 @@
                              PIN_MODE_INPUT(GPIOG_12) |                     \
                              PIN_MODE_ALTERNATE(GPIOG_ETH_RMII_TXD0) |      \
                              PIN_MODE_ALTERNATE(GPIOG_ETH_RMII_TXD1) |      \
-                             PIN_MODE_INPUT(GPIOG_15))
+                             PIN_MODE_INPUT(GPIOG_CENT))
 #define VAL_GPIOG_OTYPER    0x00000000
 #define VAL_GPIOG_OSPEEDR   0xFFFFFFFF
 #define VAL_GPIOG_PUPDR     (PIN_PUDR_PULLUP(GPIOG_0) |                     \
@@ -560,8 +565,7 @@
                              PIN_PUDR_PULLUP(GPIOG_4) |                     \
                              PIN_PUDR_PULLUP(GPIOG_5) |                     \
                              PIN_PUDR_PULLUP(GPIOG_10) |                    \
-                             PIN_PUDR_PULLUP(GPIOG_12) |                    \
-                             PIN_PUDR_PULLUP(GPIOG_15))
+                             PIN_PUDR_PULLUP(GPIOG_12))
 #define VAL_GPIOG_ODR       0xFFFFFFFF
 #define VAL_GPIOG_AFRL      0x00000000
 #define VAL_GPIOG_AFRH      (PIN_AFIO_AF(GPIOG_ETH_RMII_TXD0, 11) |         \
