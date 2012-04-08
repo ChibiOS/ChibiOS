@@ -100,7 +100,7 @@
 #define GPIOC_LCD_MOSI          3
 #define GPIOC_ETH_RMII_RXD0     4
 #define GPIOC_ETH_RMII_RXD1     5
-#define GPIOC_DCMI_D0           6
+#define GPIOC_DCMI_D0_US6_TX    6
 #define GPIOC_I2S3_MCK          7
 #define GPIOC_DCMI_D2           8
 #define GPIOC_DCMI_D3           9
@@ -119,11 +119,11 @@
 #define GPIOD_USELESS5          5
 #define GPIOD_LCD_CS            6
 #define GPIOD_USELESS7          7
-#define GPIOD_USELESS8          8
-#define GPIOD_USELESS9          9
+#define GPIOD_USART3_TX         8
+#define GPIOD_USART3_RX         9
 #define GPIOD_USELESS10         10
-#define GPIOD_USELESS11         11
-#define GPIOD_USELESS12         12
+#define GPIOD_USART3_CTS        11
+#define GPIOD_USART3_RTS        12
 #define GPIOD_USB_HS_FAULT      13
 #define GPIOD_USELESS14         14
 #define GPIOD_USELESS15         15
@@ -316,7 +316,7 @@
  * PC3  - GPIOC_LCD_MOSI        (output push-pull).
  * PC4  - GPIOC_ETH_RMII_RXD0   (alternate 11).
  * PC5  - GPIOC_ETH_RMII_RXD1   (alternate 11).
- * PC6  - GPIOC_DCMI_D0         (input pull-up).
+ * PC6  - GPIOC_DCMI_D0_US6_TX  (alternate 8).
  * PC7  - GPIOC_I2S3_MCK        (alternate 6).
  * PC8  - GPIOC_DCMI_D2         (input pull-up).
  * PC9  - GPIOC_DCMI_D3         (input pull-up).
@@ -333,7 +333,7 @@
                              PIN_MODE_OUTPUT(GPIOC_LCD_MOSI) |              \
                              PIN_MODE_ALTERNATE(GPIOC_ETH_RMII_RXD0) |      \
                              PIN_MODE_ALTERNATE(GPIOC_ETH_RMII_RXD1) |      \
-                             PIN_MODE_INPUT(GPIOC_DCMI_D0) |                \
+                             PIN_MODE_ALTERNATE(GPIOC_DCMI_D0_US6_TX) |     \
                              PIN_MODE_ALTERNATE(GPIOC_I2S3_MCK) |           \
                              PIN_MODE_INPUT(GPIOC_DCMI_D2) |                \
                              PIN_MODE_INPUT(GPIOC_DCMI_D3) |                \
@@ -345,14 +345,14 @@
                              PIN_MODE_INPUT(GPIOC_OSC32_OUT))
 #define VAL_GPIOC_OTYPER    0x00000000
 #define VAL_GPIOC_OSPEEDR   0xFFFFFFFF
-#define VAL_GPIOC_PUPDR     (PIN_PUDR_PULLUP(GPIOC_DCMI_D0) |               \
-                             PIN_PUDR_PULLUP(GPIOC_DCMI_D2) |               \
+#define VAL_GPIOC_PUPDR     (PIN_PUDR_PULLUP(GPIOC_DCMI_D2) |               \
                              PIN_PUDR_PULLUP(GPIOC_DCMI_D3))
 #define VAL_GPIOC_ODR       0xFFFFFFF3
 #define VAL_GPIOC_AFRL      (PIN_AFIO_AF(GPIOC_ETH_RMII_MDC, 11) |          \
                              PIN_AFIO_AF(GPIOC_ETH_RMII_RXD0, 11) |         \
                              PIN_AFIO_AF(GPIOC_ETH_RMII_RXD1, 11) |         \
-                             PIN_AFIO_AF(GPIOC_ETH_RMII_MDC, 6))
+                             PIN_AFIO_AF(GPIOC_DCMI_D0_US6_TX, 8) |         \
+                             PIN_AFIO_AF(GPIOC_I2S3_MCK, 6))
 #define VAL_GPIOC_AFRH      (PIN_AFIO_AF(GPIOC_SPI3_SCK, 6) |               \
                              PIN_AFIO_AF(GPIOC_SPI3_MISO, 6) |              \
                              PIN_AFIO_AF(GPIOC_SPI3_MOSI, 6))
@@ -368,11 +368,11 @@
  * PD5  - GPIOD_USELESS5        (input pull-up).
  * PD6  - GPIOD_LCD_CS          (output push-pull).
  * PD7  - GPIOD_USELESS7        (input pull-up).
- * PD8  - GPIOD_USELESS8        (input pull-up).
- * PD9  - GPIOD_USELESS9        (input pull-up).
+ * PD8  - GPIOD_USART3_TX       (alternate 8).
+ * PD9  - GPIOD_USART3_RX       (alternate 8).
  * PD10 - GPIOD_USELESS10       (input pull-up).
- * PD11 - GPIOD_USELESS11       (input pull-up).
- * PD12 - GPIOD_USELESS12       (input pull-up).
+ * PD11 - GPIOD_USART3_CTS      (alternate 8).
+ * PD12 - GPIOD_USART3_RTS      (alternate 8).
  * PD13 - GPIOD_USB_HS_FAULT    (input floating).
  * PD14 - GPIOD_USELESS14       (input pull-up).
  * PD15 - GPIOD_USELESS15       (input pull-up).
@@ -385,11 +385,11 @@
                              PIN_MODE_INPUT(GPIOD_USELESS5) |               \
                              PIN_MODE_OUTPUT(GPIOD_LCD_CS) |                \
                              PIN_MODE_INPUT(GPIOD_USELESS7) |               \
-                             PIN_MODE_INPUT(GPIOD_USELESS8) |               \
-                             PIN_MODE_INPUT(GPIOD_USELESS9) |               \
+                             PIN_MODE_ALTERNATE(GPIOD_USART3_TX) |          \
+                             PIN_MODE_ALTERNATE(GPIOD_USART3_RX) |          \
                              PIN_MODE_INPUT(GPIOD_USELESS10) |              \
-                             PIN_MODE_INPUT(GPIOD_USELESS11) |              \
-                             PIN_MODE_INPUT(GPIOD_USELESS12) |              \
+                             PIN_MODE_ALTERNATE(GPIOD_USART3_CTS) |         \
+                             PIN_MODE_ALTERNATE(GPIOD_USART3_RTS) |         \
                              PIN_MODE_INPUT(GPIOD_USB_HS_FAULT) |           \
                              PIN_MODE_INPUT(GPIOD_USELESS14) |              \
                              PIN_MODE_INPUT(GPIOD_USELESS15))
@@ -400,16 +400,15 @@
                              PIN_PUDR_PULLUP(GPIOD_USELESS4) |              \
                              PIN_PUDR_PULLUP(GPIOD_USELESS5) |              \
                              PIN_PUDR_PULLUP(GPIOD_USELESS7) |              \
-                             PIN_PUDR_PULLUP(GPIOD_USELESS8) |              \
-                             PIN_PUDR_PULLUP(GPIOD_USELESS9) |              \
                              PIN_PUDR_PULLUP(GPIOD_USELESS10) |             \
-                             PIN_PUDR_PULLUP(GPIOD_USELESS11) |             \
-                             PIN_PUDR_PULLUP(GPIOD_USELESS12) |             \
                              PIN_PUDR_PULLUP(GPIOD_USELESS14) |             \
                              PIN_PUDR_PULLUP(GPIOD_USELESS15))
 #define VAL_GPIOD_ODR       0xFFFFFFFF
 #define VAL_GPIOD_AFRL      0x00000000
-#define VAL_GPIOD_AFRH      0x00000000
+#define VAL_GPIOD_AFRH      (PIN_AFIO_AF(GPIOD_USART3_TX, 8) |              \
+                             PIN_AFIO_AF(GPIOD_USART3_RX, 8) |              \
+                             PIN_AFIO_AF(GPIOD_USART3_CTS, 8) |             \
+                             PIN_AFIO_AF(GPIOD_USART3_RTS, 8))
 
 /*
  * Port E setup.
@@ -532,7 +531,7 @@
  * PG6  - GPIOG_RIGHT           (input floating).
  * PG7  - GPIOG_UP              (input floating).
  * PG8  - GPIOG_DOWN            (input floating).
- * PG9  - GPIOG_USART6_RX       (input floating).
+ * PG9  - GPIOG_USART6_RX       (alternate 8).
  * PG10 - GPIOG_10              (input pull-up).
  * PG11 - GPIOG_LEFT            (input floating).
  * PG12 - GPIOG_12              (input pull-up).
@@ -549,7 +548,7 @@
                              PIN_MODE_INPUT(GPIOG_RIGHT) |                  \
                              PIN_MODE_INPUT(GPIOG_UP) |                     \
                              PIN_MODE_INPUT(GPIOG_DOWN) |                   \
-                             PIN_MODE_INPUT(GPIOG_USART6_RX) |              \
+                             PIN_MODE_ALTERNATE(GPIOG_USART6_RX) |          \
                              PIN_MODE_INPUT(GPIOG_10) |                     \
                              PIN_MODE_INPUT(GPIOG_LEFT) |                   \
                              PIN_MODE_INPUT(GPIOG_12) |                     \
@@ -568,7 +567,8 @@
                              PIN_PUDR_PULLUP(GPIOG_12))
 #define VAL_GPIOG_ODR       0xFFFFFFFF
 #define VAL_GPIOG_AFRL      0x00000000
-#define VAL_GPIOG_AFRH      (PIN_AFIO_AF(GPIOG_ETH_RMII_TXD0, 11) |         \
+#define VAL_GPIOG_AFRH      (PIN_AFIO_AF(GPIOG_USART6_RX, 8) |              \
+                             PIN_AFIO_AF(GPIOG_ETH_RMII_TXD0, 11) |         \
                              PIN_AFIO_AF(GPIOG_ETH_RMII_TXD1, 11))
 
 /*
