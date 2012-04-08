@@ -124,7 +124,8 @@
   Johnny Halfmoon).
 - NEW: Added handling of input 2 to the STM32 ICU driver (contributed by
   Fabio).
-- NEW: STM32 Ethernet driver completed. Added an STM32 lwIP demo.
+- NEW: STM32 Ethernet driver completed. Added STM32F107 and STM32F407
+  lwIP demos.
 - NEW: lwIP related code is not centralized into a single place, no need to
   duplicate the code in each application or demo.
 - CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renamed to  icuGetWidth()
