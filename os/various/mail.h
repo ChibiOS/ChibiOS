@@ -19,54 +19,41 @@
 */
 
 /**
- * @file    evtimer.h
- * @brief   Events Generator Timer structures and macros.
+ * @file    mail.h
+ * @brief   Threads mail macros and structures.
  *
- * @addtogroup event_timer
+ * @addtogroup mail
  * @{
  */
 
-#ifndef _EVTIMER_H_
-#define _EVTIMER_H_
-
+#ifndef _MAIL_H_
+#define _MAIL_H_
 
 /*
  * Module dependencies check.
  */
-#if !CH_USE_EVENTS
-#error "Event Timers require CH_USE_EVENTS"
+#if !CH_USE_SEMAPHORES || !CH_USE_MEMPOOLS
+#error "Mail Pools require CH_USE_SEMAPHORES and CH_USE_MEMPOOLS"
 #endif
 
 /**
- * @brief Event timer structure.
+ * @brief   Mail Pool descriptor.
  */
 typedef struct {
-  VirtualTimer  et_vt;
-  EventSource   et_es;
-  systime_t     et_interval;
-} EvTimer;
+  MemoryPool            pool;           /**< @brief Available mail objects. */
+  Semaphore             sem;            /**< @brief Semaphore guard.        */
+} MailPool;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void evtStart(EvTimer *etp);
-  void evtStop(EvTimer *etp);
+  void mailInit(MailPool *mlp, size_t size, void *p, size_t n);
+  void *mailCreate(MailPool *mlp, systime_t time);
+  void mailDelete(MailPool *mlp, void *mailp);
 #ifdef __cplusplus
 }
 #endif
 
-/**
- * @brief Initializes an @p EvTimer structure.
- *
- * @param etp the EvTimer structure to be initialized
- * @param time the interval in system ticks
- */
-#define evtInit(etp, time) {                                            \
-  chEvtInit(&(etp)->et_es);                                             \
-  (etp)->et_vt.vt_func = NULL;                                          \
-  (etp)->et_interval = (time);                                          \
-}
-
-#endif /* _EVTIMER_H_ */
+#endif /* _MAIL_H_ */
 
 /** @} */

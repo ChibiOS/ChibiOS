@@ -106,6 +106,8 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added support for pools of generic "mail" objects under ./os/various,
+  mail objects are meant to be used together with mailboxes.
 - NEW: Added a new function chPoolLoadArray() to the Memory Pools subsystem,
   it allows to load an entire array element's into a pool with a single
   operation.
