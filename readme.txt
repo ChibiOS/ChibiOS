@@ -106,6 +106,9 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added a new function chPoolLoadArray() to the Memory Pools subsystem,
+  it allows to load an entire array element's into a pool with a single
+  operation.
 - NEW: Addes support for .S patch in the GCC ARM ports, by Ayman El-Khashab.
 - NEW: Added a switch to the STM32F4 Makefile files in order to enable or
   disable the FPU support in a single place.

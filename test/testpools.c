@@ -75,20 +75,30 @@ static void pools1_setup(void) {
 static void pools1_execute(void) {
   int i;
 
-  /* Adding the WAs to the pool. */
-  for (i = 0; i < MAX_THREADS; i++)
-    chPoolFree(&mp1, wa[i]);
+  /* Adding the WAs to the pool.*/
+  chPoolLoadArray(&mp1, wa[0], MAX_THREADS);
 
-  /* Empting the pool again. */
+  /* Emptying the pool.*/
   for (i = 0; i < MAX_THREADS; i++)
     test_assert(1, chPoolAlloc(&mp1) != NULL, "list empty");
 
-  /* Now must be empty. */
+  /* Now must be empty.*/
   test_assert(2, chPoolAlloc(&mp1) == NULL, "list not empty");
+
+  /* Adding the WAs to the pool, one by one this time.*/
+  for (i = 0; i < MAX_THREADS; i++)
+    chPoolFree(&mp1, wa[i]);
+
+  /* Emptying the pool again.*/
+  for (i = 0; i < MAX_THREADS; i++)
+    test_assert(3, chPoolAlloc(&mp1) != NULL, "list empty");
+
+  /* Now must be empty again.*/
+  test_assert(4, chPoolAlloc(&mp1) == NULL, "list not empty");
 
   /* Covering the case where a provider is unable to return more memory.*/
   chPoolInit(&mp1, 16, null_provider);
-  test_assert(3, chPoolAlloc(&mp1) == NULL, "provider returned memory");
+  test_assert(5, chPoolAlloc(&mp1) == NULL, "provider returned memory");
 }
 
 ROMCONST struct testcase testpools1 = {
