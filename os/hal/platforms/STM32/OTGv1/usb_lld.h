@@ -306,6 +306,10 @@ struct USBDriver {
   USB_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Pointer to the next address in the packet memory.
+   */
+  uint32_t                      pmnext;
 };
 
 /*===========================================================================*/

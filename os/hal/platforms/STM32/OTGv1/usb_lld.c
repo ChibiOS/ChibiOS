@@ -69,6 +69,11 @@ static union {
 } ep0_state;
 
 /**
+ * @brief   Buffer for the EP0 setup packets.
+ */
+static uint8_t ep8setup_buffer[8];
+
+/**
  * @brief   EP0 initialization structure.
  */
 static const USBEndpointConfig ep0config = {
@@ -79,7 +84,8 @@ static const USBEndpointConfig ep0config = {
   0x40,
   0x40,
   &ep0_state.in,
-  &ep0_state.out
+  &ep0_state.out,
+  ep8setup_buffer
 };
 
 /*===========================================================================*/
@@ -114,9 +120,7 @@ static void otg_disable_ep(void) {
     else
       OTG->ie[i].DIEPCTL = 0;
     OTG->ie[i].DIEPTSIZ = 0;
-    OTG->ie[i].DIEPINT = DIEPINT_INEPNE | DIEPINT_ITTXFE |
-                         DIEPINT_TOC    | DIEPINT_EPDISD |
-                         DIEPINT_XFRC;
+    OTG->ie[i].DIEPINT = 0xFFFFFFFF;
     /* Disable only if enabled because this sentence in the manual:
        "The application must set this bit only if Endpoint Enable is
         already set for this endpoint".
@@ -131,38 +135,52 @@ static void otg_disable_ep(void) {
     else
       OTG->oe[i].DOEPCTL = 0;
     OTG->oe[i].DOEPTSIZ = 0;
-    OTG->oe[i].DOEPINT = DOEPINT_B2BSTUP | DOEPINT_OTEPDIS |
-                         DOEPINT_STUP    | DOEPINT_EPDISD  |
-                         DOEPINT_XFRC;
+    OTG->oe[i].DOEPINT = 0xFFFFFFFF;
   }
 }
 
-/**
- * @brief   Resets the packet memory allocator.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- *
- * @notapi
- */
-static void otg_pm_reset(USBDriver *usbp) {
+static void otg_rxfifo_flush(void) {
 
-  (void)usbp;
+  OTG->GRSTCTL = GRSTCTL_RXFFLSH;
+  while ((OTG->GRSTCTL & GRSTCTL_RXFFLSH) != 0)
+    ;
+}
+
+static void otg_txfifo_flush(uint32_t fifo) {
+
+  OTG->GRSTCTL = GRSTCTL_TXFNUM(fifo) | GRSTCTL_TXFFLSH;
+  while ((OTG->GRSTCTL & GRSTCTL_TXFFLSH) != 0)
+    ;
 }
 
 /**
- * @brief   Allocates a block from the packet memory allocator.
+ * @brief   Resets the FIFO RAM memory allocator.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] size      size of the packet buffer to allocate
  *
  * @notapi
  */
-static uint32_t otg_pm_alloc(USBDriver *usbp, size_t size) {
+static void otg_ram_reset(USBDriver *usbp) {
 
-  (void)usbp;
-  (void)size;
+  usbp->pmnext = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
+}
 
-  return 0;
+/**
+ * @brief   Allocates a block from the FIFO RAM memory.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] size      size of the packet buffer to allocate in words
+ *
+ * @notapi
+ */
+static uint32_t otg_ram_alloc(USBDriver *usbp, size_t size) {
+  uint32_t next;
+
+  next = usbp->pmnext;
+  usbp->pmnext += size;
+  chDbgAssert(usbp->pmnext <= STM32_OTG_FIFO_MEM_SIZE,
+              "otg_fifo_alloc(), #1", "FIFO memory overflow");
+  return next;
 }
 
 /**
@@ -475,9 +493,6 @@ void usb_lld_start(USBDriver *usbp) {
     /* PHY enabled.*/
     OTG->PCGCCTL = 0;
 
-    /* Receive FIFO size initialization, the address is always zero.*/
-    OTG->GRXFSIZ = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
-
     /* Endpoints re-initialization.*/
     otg_disable_ep();
 
@@ -537,8 +552,13 @@ void usb_lld_reset(USBDriver *usbp) {
     OTG->oe[i].DOEPINT = 0xFFFFFFFF;
   }
 
-  /* Resets the packet memory allocator.*/
-  otg_pm_reset(usbp);
+  /* Resets the FIFO memory allocator.*/
+  otg_ram_reset(usbp);
+
+
+  /* Receive FIFO size initialization, the address is always zero.*/
+  OTG->GRXFSIZ = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
+  otg_rxfifo_flush();
 
   /* Enables also EP-related interrupt sources.*/
   OTG->GINTMSK  |= GINTMSK_RXFLVLM | GINTMSK_OEPM  | GINTMSK_IEPM;
@@ -546,9 +566,18 @@ void usb_lld_reset(USBDriver *usbp) {
   OTG->DOEPMSK   = DOEPMSK_STUPM   | DOEPMSK_XFRCM;
 //  OTG->DAINTMSK = DAINTMSK_OutEpMsk(0) | DAINTMSK_InEpMsk(0);
 
-  /* EP0 initialization.*/
+  /* EP0 initialization, it is a special case.*/
   usbp->epc[0] = &ep0config;
-  usb_lld_init_endpoint(usbp, 0);
+  OTG->oe[0].DOEPTSIZ = 0;
+  OTG->oe[0].DOEPCTL = DIEPCTL_SD0PID | DIEPCTL_USBAEP | DIEPCTL_EPTYP_CTRL |
+                       DOEPCTL_MPSIZ(ep0config.out_maxsize);
+  OTG->ie[0].DIEPTSIZ = 0;
+  OTG->ie[0].DIEPCTL = DIEPCTL_SD0PID | DIEPCTL_USBAEP | DIEPCTL_EPTYP_CTRL |
+                       DIEPCTL_TXFNUM(0) | DIEPCTL_MPSIZ(ep0config.in_maxsize);
+  OTG->DIEPTXF0 = DIEPTXF_INEPTXFD(ep0config.in_maxsize / 4) |
+                  DIEPTXF_INEPTXSA(otg_ram_alloc(usbp,
+                                                 ep0config.in_maxsize / 4));
+  otg_txfifo_flush(0);
 }
 
 /**
@@ -572,9 +601,51 @@ void usb_lld_set_address(USBDriver *usbp) {
  * @notapi
  */
 void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
+  uint32_t ctl, fsize;
 
-  (void)usbp;
-  (void)ep;
+  /* IN and OUT common parameters.*/
+  switch (usbp->epc[ep]->ep_mode & USB_EP_MODE_TYPE) {
+  case USB_EP_MODE_TYPE_CTRL:
+    ctl = DIEPCTL_SD0PID | DIEPCTL_USBAEP | DIEPCTL_EPTYP_CTRL;
+    break;
+  case USB_EP_MODE_TYPE_ISOC:
+    ctl = DIEPCTL_SD0PID | DIEPCTL_USBAEP | DIEPCTL_EPTYP_ISO;
+    break;
+  case USB_EP_MODE_TYPE_BULK:
+    ctl = DIEPCTL_SD0PID | DIEPCTL_USBAEP | DIEPCTL_EPTYP_BULK;
+    break;
+  case USB_EP_MODE_TYPE_INTR:
+    ctl = DIEPCTL_SD0PID | DIEPCTL_USBAEP | DIEPCTL_EPTYP_INTR;
+    break;
+  default:
+    return;
+  }
+
+  /* OUT endpoint activation or deactivation.*/
+  OTG->oe[ep].DOEPTSIZ = 0;
+  if (usbp->epc[ep]->out_cb != NULL)
+    OTG->oe[ep].DOEPCTL = ctl | DOEPCTL_MPSIZ(usbp->epc[ep]->out_maxsize);
+  else
+    OTG->oe[ep].DOEPCTL &= ~DOEPCTL_USBAEP;
+
+  /* IN endpoint activation or deactivation.*/
+  OTG->ie[ep].DIEPTSIZ = 0;
+  if (usbp->epc[ep]->in_cb != NULL) {
+    /* FIFO allocation for the IN endpoint.*/
+    fsize = usbp->epc[ep]->in_maxsize / 4;
+    OTG->DIEPTXF[ep - 1] = DIEPTXF_INEPTXFD(fsize) |
+                           DIEPTXF_INEPTXSA(otg_ram_alloc(usbp, fsize));
+    otg_txfifo_flush(ep);
+
+    OTG->ie[ep].DIEPCTL = ctl |
+                          DIEPCTL_TXFNUM(ep) |
+                          DIEPCTL_MPSIZ(usbp->epc[ep]->in_maxsize);
+  }
+  else {
+    OTG->DIEPTXF[ep - 1] = 0x02000400; /* Reset value.*/
+    otg_txfifo_flush(ep);
+    OTG->ie[ep].DIEPCTL &= ~DIEPCTL_USBAEP;
+  }
 }
 
 /**
@@ -586,7 +657,11 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_disable_endpoints(USBDriver *usbp) {
 
-  (void)usbp;
+  /* Resets the FIFO memory allocator.*/
+  otg_ram_reset(usbp);
+
+  /* Disabling all endpoints.*/
+  otg_disable_ep();
 }
 
 /**

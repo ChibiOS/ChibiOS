@@ -36,6 +36,11 @@
 #define STM32_OTG_ENDOPOINTS_NUMBER     3
 
 /**
+ * @brief   FIFO memory size in words.
+ */
+#define STM32_OTG_FIFO_MEM_SIZE         384
+
+/**
  * @brief   Host channel registers group.
  */
 typedef struct {
@@ -384,6 +389,20 @@ typedef struct {
  */
 #define GRXFSIZ_RXFD_MASK       (0xFFFF<<0) /**< RxFIFO depth mask.         */
 #define GRXFSIZ_RXFD(n)         ((n)<<0)    /**< RxFIFO depth value.        */
+/** @} */
+
+/**
+ * @name DIEPTXFx register bit definitions
+ * @{
+ */
+#define DIEPTXF_INEPTXFD_MASK   (0xFFFFU<<16)/**< IN endpoint TxFIFO depth
+                                                 mask.                      */
+#define DIEPTXF_INEPTXFD(n)     ((n)<<16)   /**< IN endpoint TxFIFO depth
+                                                 value.                     */
+#define DIEPTXF_INEPTXSA_MASK   (0xFFFF<<0) /**< IN endpoint FIFOx transmit
+                                                 RAM start address mask.    */
+#define DIEPTXF_INEPTXSA(n)     ((n)<<0)    /**< IN endpoint FIFOx transmit
+                                                 RAM start address value.   */
 /** @} */
 
 /**
@@ -746,7 +765,7 @@ typedef struct {
 #define DIEPCTL_EPTYP_MASK      (3<<18)     /**< Endpoint type mask.        */
 #define DIEPCTL_EPTYP_CTRL      (0U<<18)    /**< Control.                   */
 #define DIEPCTL_EPTYP_ISO       (1U<<18)    /**< Isochronous.               */
-#define DIEPCTL_EPType_BULK     (2U<<18)    /**< Bulk.                      */
+#define DIEPCTL_EPTYP_BULK      (2U<<18)    /**< Bulk.                      */
 #define DIEPCTL_EPTYP_INTR      (3U<<18)    /**< Interrupt.                 */
 #define DIEPCTL_NAKSTS          (1U<<17)    /**< NAK status.                */
 #define DIEPCTL_EONUM           (1U<<16)    /**< Even/odd frame.            */
