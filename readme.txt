@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed missing serial driver functionality for SAM7S64, SAM7S128 and
+  SAM7S512 (bug 3517648)(backported to 2.2.10 and 2.4.1).
 - FIX: Fixed spurious ) char in STM32 serial_lld.h (bug 3514138)(backported
   to 2.2.10 and 2.4.1).
 - FIX: Fixed problem with FPU initialization in GCC Cortex-M4 port (bug
