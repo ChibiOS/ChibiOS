@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.1 ***
+- FIX: Fixed missing serial driver functionality for SAM7S64, SAM7S128 and
+  SAM7S512 (bug 3517648).
 - FIX: Spelling fixes (bug 3510812).
 - FIX: Fixed STM32 ICUD8 not functional because wrong initialization (bug
   3508758).
