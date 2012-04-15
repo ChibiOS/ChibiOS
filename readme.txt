@@ -135,6 +135,11 @@
   lwIP demos.
 - NEW: lwIP related code is not centralized into a single place, no need to
   duplicate the code in each application or demo.
+- CHANGE: The PORT_INT_REQUIRED_STACK parameter for the Cortex-Mx ports has
+  been increased to 32 from 16 because the stack frame sizes are increased
+  when compiling with optimizations disabled, which is common during
+  debugging. In order to save RAM trim back this value when compilung with
+  optimizations enabled.
 - CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renamed to  icuGetWidth()
   and icuGetPeriod().
 - CHANGE: Renamed Ethernet driver in AT91 HAL ETHD1.
