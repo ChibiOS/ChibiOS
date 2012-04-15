@@ -482,8 +482,8 @@ void usb_lld_start(USBDriver *usbp) {
     OTG->DIEPMSK  = 0;
     OTG->DOEPMSK  = 0;
     OTG->DAINTMSK = 0;
-    OTG->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM | GINTMSK_USBSUSPM |
-                    GINTMSK_ESUSPM   | GINTMSK_SOFM;
+    OTG->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM | /*GINTMSK_USBSUSPM |
+                    GINTMSK_ESUSPM   |*/ GINTMSK_SOFM;
     OTG->GINTSTS  = 0xFFFFFFFF;         /* Clears all pending IRQs, if any. */
 
     /* Global interrupts enable.*/
