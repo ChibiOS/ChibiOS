@@ -283,28 +283,6 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
 static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
   uint32_t n;
 
-#if 0
-  if ((usbp->transmitting & (1 << ep))== 0) {
-    /* Nothing to transmit.*/
-    /* ????????????????????? */
-    OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
-    return;
-  }
-
-  if (usbp->epc[ep]->in_state->txsize == 0) {
-    /* Special case, sending zero size packet.*/
-    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(1) | DIEPTSIZ_XFRSIZ(0);
-  }
-  else if (usbp->epc[ep]->in_state->txcnt == 0) {
-    /* Transfer initialization.*/
-    uint32_t pcnt = (usbp->epc[ep]->in_state->txsize +
-                     (usbp->epc[ep]->in_maxsize - 1) /
-                      usbp->epc[ep]->in_maxsize);
-    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
-                           DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
-  }
-#endif
-
   n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
   if (n > usbp->epc[ep]->in_maxsize)
     n = usbp->epc[ep]->in_maxsize;
@@ -559,16 +537,14 @@ void usb_lld_reset(USBDriver *usbp) {
   /* Resets the FIFO memory allocator.*/
   otg_ram_reset(usbp);
 
-
   /* Receive FIFO size initialization, the address is always zero.*/
   OTG->GRXFSIZ = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
   otg_rxfifo_flush();
 
   /* Enables also EP-related interrupt sources.*/
-  OTG->GINTMSK  |= GINTMSK_RXFLVLM | GINTMSK_OEPM  | GINTMSK_IEPM;
+  OTG->GINTMSK  |= GINTMSK_RXFLVLM | GINTMSK_OEPM | GINTMSK_IEPM;
   OTG->DIEPMSK   = DIEPMSK_TOCM    | DIEPMSK_XFRCM;
   OTG->DOEPMSK   = DOEPMSK_STUPM   | DOEPMSK_XFRCM;
-//  OTG->DAINTMSK = DAINTMSK_OutEpMsk(0) | DAINTMSK_InEpMsk(0);
 
   /* EP0 initialization, it is a special case.*/
   usbp->epc[0] = &ep0config;
@@ -582,6 +558,7 @@ void usb_lld_reset(USBDriver *usbp) {
                   DIEPTXF_INEPTXSA(otg_ram_alloc(usbp,
                                                  ep0config.in_maxsize / 4));
   otg_txfifo_flush(0);
+  OTG->DAINTMSK = DAINTMSK_IEPM(0) | DAINTMSK_IEPM(0);
 }
 
 /**
@@ -809,11 +786,24 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
  */
 void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
                               const uint8_t *buf, size_t n) {
+  USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  (void)usbp;
-  (void)ep;
-  (void)buf;
-  (void)n;
+  isp->txbuf  = buf;
+  isp->txsize = n;
+  isp->txcnt  = 0;
+
+  if (n == 0) {
+    /* Special case, sending zero size packet.*/
+    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(1) | DIEPTSIZ_XFRSIZ(0);
+  }
+  else {
+    /* Transfer initialization.*/
+    uint32_t pcnt = (n + (usbp->epc[ep]->in_maxsize - 1) /
+                          usbp->epc[ep]->in_maxsize);
+    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
+                           DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
+  }
+  OTG->DIEPEMPMSK |= DIEPEMPMSK_INEPTXFEM(ep);
 }
 
 /**
