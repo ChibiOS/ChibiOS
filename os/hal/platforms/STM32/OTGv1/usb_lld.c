@@ -479,6 +479,9 @@ void usb_lld_start(USBDriver *usbp) {
     /* Soft core reset.*/
     otg_core_reset();
 
+    /* Internal FS PHY activation.*/
+    OTG->GCCFG = GCCFG_PWRDWN;
+
     /* - Forced device mode.
        - USB turn-around time = TRDT_VALUE.
        - Full Speed 1.1 PHY.*/
@@ -528,6 +531,7 @@ void usb_lld_stop(USBDriver *usbp) {
     }
 #endif
   }
+  OTG->GCCFG = 0;
 }
 
 /**
@@ -720,9 +724,7 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
 
-  (void)usbp;
-  (void)ep;
-  (void)buf;
+  memcpy(buf, usbp->epc[ep]->setup_buf, 8);
 }
 
 /**

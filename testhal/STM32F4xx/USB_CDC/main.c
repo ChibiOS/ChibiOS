@@ -421,6 +421,8 @@ int main(void) {
    */
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
+  usbDisconnectBus(serusbcfg.usbp);
+  chThdSleepMilliseconds(100);
   usbConnectBus(serusbcfg.usbp);
 
   /*
