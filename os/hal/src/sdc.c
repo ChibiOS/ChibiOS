@@ -477,7 +477,9 @@ sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp) {
 
   chDbgCheck(sdcp != NULL, "sdcGetAndClearErrors");
 
-  return sdc_lld_get_and_clear_errors(sdcp);
+  sdcflags_t flags = sdcp->errors;
+  sdcp->errors = SDC_NO_ERROR;
+  return flags;
 }
 
 #endif /* HAL_USE_SDC */
