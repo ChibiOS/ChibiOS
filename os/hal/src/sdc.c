@@ -327,8 +327,7 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 
   /* Determine capacity.*/
   switch (sdcp->csd[3] >> 30) {
-  uint32_t a;
-  uint8_t  b, c;
+  uint32_t a, b, c;
   case 0:
     /* CSD version 1.0 */
     a = _sdc_get_slice(sdcp->csd, SDC_CSD_10_C_SIZE_SLICE);
