@@ -52,7 +52,7 @@
  *
  * @notapi
  */
-static uint32_t _sdc_get_slice(uint32_t *data, int8_t end, int8_t start) {
+static uint32_t _sdc_get_slice(uint32_t *data, int32_t end, int32_t start) {
   uint32_t word = 0;
   uint32_t mask = 0;
 
