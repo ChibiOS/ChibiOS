@@ -340,6 +340,10 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     a = _sdc_get_slice(sdcp->csd, SDC_CSD_20_C_SIZE_SLICE);
     sdcp->capacity = 1024 * (a + 1);
     break;
+  default:
+    /* Reserved value detected. */
+    sdcp->capacity = 0;
+    break;
   }
   if (sdcp->capacity == 0)
     goto failed;
