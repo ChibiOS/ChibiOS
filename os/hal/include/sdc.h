@@ -262,7 +262,7 @@ typedef enum {
 /**
  * @brief  Slice position of values in CSD register.
  */
-/* CSD version 1.0 */
+/* CSD version 2.0 */
 #define SDC_CSD_20_CRC_SLICE                7,1
 #define SDC_CSD_20_FILE_FORMAT_SLICE        11,10
 #define SDC_CSD_20_TMP_WRITE_PROTECT_SLICE  12,12
@@ -288,7 +288,7 @@ typedef enum {
 #define SDC_CSD_20_TAAC_SLICE               119,112
 #define SDC_CSD_20_STRUCTURE_SLICE          127,126
 
-/* CSD version 2.0 */
+/* CSD version 1.0 */
 #define SDC_CSD_10_CRC_SLICE                SDC_CSD_20_CRC_SLICE
 #define SDC_CSD_10_FILE_FORMAT_SLICE        SDC_CSD_20_FILE_FORMAT_SLICE
 #define SDC_CSD_10_TMP_WRITE_PROTECT_SLICE  SDC_CSD_20_TMP_WRITE_PROTECT_SLICE
