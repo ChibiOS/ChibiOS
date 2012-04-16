@@ -119,7 +119,6 @@
 #endif
 
 
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -137,6 +136,11 @@ typedef enum {
  * @brief   Type of card flags.
  */
 typedef uint32_t sdcmode_t;
+
+/**
+ * @brief   SDC Driver condition flags type.
+ */
+typedef uint32_t sdcflags_t;
 
 /**
  * @brief   Type of a structure representing an SDC driver.
@@ -170,7 +174,7 @@ struct SDCDriver {
   /**
    * @brief Errors flags.
    */
-  uint32_t                  errors;
+  sdcflags_t                errors;
   /**
    * @brief Card CID.
    */
@@ -242,6 +246,7 @@ extern "C" {
                       uint8_t *buf, uint32_t n);
   bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
                        const uint8_t *buf, uint32_t n);
+  sdcflags_t sdc_lld_get_and_clear_errors(SDCDriver *sdcp);
   bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp);
   bool_t sdc_lld_is_write_protected(SDCDriver *sdcp);
 #ifdef __cplusplus

@@ -465,6 +465,21 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
   return status;
 }
 
+/**
+ * @brief   Returns the errors mask associated to the previous operation.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @return              The errors mask.
+ *
+ * @api
+ */
+sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp) {
+
+  chDbgCheck(sdcp != NULL, "sdcGetAndClearErrors");
+
+  return sdc_lld_get_and_clear_errors(sdcp);
+}
+
 #endif /* HAL_USE_SDC */
 
 /** @} */

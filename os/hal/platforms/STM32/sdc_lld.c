@@ -755,6 +755,19 @@ bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
   return sdc_lld_write_aligned(sdcp, startblk, buf, n);
 }
 
+/**
+ * @brief   Get errors from SDC driver and clear error field.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+sdcflags_t sdc_lld_get_and_clear_errors(SDCDriver *sdcp) {
+  sdcflags_t flags = sdcp->errors;
+  sdcp->errors = SDC_NO_ERROR;
+  return flags;
+}
+
 #endif /* HAL_USE_SDC */
 
 /** @} */
