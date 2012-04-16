@@ -89,8 +89,8 @@ static uint32_t _sdc_get_slice(uint32_t *data, int32_t end, int32_t start) {
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -101,10 +101,10 @@ bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_STATUS,
                                    sdcp->rca, resp) ||
         SDC_R1_ERROR(resp[0]))
-      return SDC_FAILED;
+      return TRUE;
     switch (SDC_R1_STS(resp[0])) {
     case SDC_STS_TRAN:
-      return SDC_SUCCESS;
+      return FALSE;
     case SDC_STS_DATA:
     case SDC_STS_RCV:
     case SDC_STS_PRG:
@@ -115,11 +115,11 @@ bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
     default:
       /* The card should have been initialized so any other state is not
          valid and is reported as an error.*/
-      return SDC_FAILED;
+      return TRUE;
     }
   }
   /* If something going too wrong.*/
-  return SDC_FAILED;
+  return TRUE;
 }
 
 /*===========================================================================*/
@@ -204,8 +204,8 @@ void sdcStop(SDCDriver *sdcp) {
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @api
  */
@@ -346,13 +346,13 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 
   /* Initialization complete.*/
   sdcp->state = SDC_ACTIVE;
-  return SDC_SUCCESS;
+  return FALSE;
 
   /* Initialization failed.*/
 failed:
   sdc_lld_stop_clk(sdcp);
   sdcp->state = SDC_READY;
-  return SDC_FAILED;
+  return TRUE;
 }
 
 /**
@@ -361,8 +361,8 @@ failed:
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @api
  */
@@ -375,20 +375,20 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
               "sdcDisconnect(), #1", "invalid state");
   if (sdcp->state == SDC_READY) {
     chSysUnlock();
-    return SDC_SUCCESS;
+    return FALSE;
   }
   sdcp->state = SDC_DISCONNECTING;
   chSysUnlock();
 
   /* Waits for eventual pending operations completion.*/
   if (_sdc_wait_for_transfer_state(sdcp))
-    return SDC_FAILED;
+    return TRUE;
 
   /* Card clock stopped.*/
   sdc_lld_stop_clk(sdcp);
 
   sdcp->state = SDC_READY;
-  return SDC_SUCCESS;
+  return FALSE;
 }
 
 /**
@@ -402,8 +402,8 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
  * @param[in] n         number of blocks to read
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @api
  */
@@ -415,7 +415,7 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
 
   if ((startblk + n - 1) > sdcp->capacity){
     sdcp->errors |= SDC_OVERFLOW_ERROR;
-    return SDC_FAILED;
+    return TRUE;
   }
 
   chSysLock();
@@ -439,8 +439,8 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @api
  */
@@ -452,7 +452,7 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
 
   if ((startblk + n - 1) > sdcp->capacity){
     sdcp->errors |= SDC_OVERFLOW_ERROR;
-    return SDC_FAILED;
+    return TRUE;
   }
 
   chSysLock();

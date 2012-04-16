@@ -79,8 +79,8 @@ static union {
  * @param[in] resp      pointer to the response buffer
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -96,16 +96,16 @@ static bool_t sdc_lld_prepare_read(SDCDriver *sdcp, uint32_t startblk,
     /* Send read multiple blocks command to card.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK,
                                    startblk, resp) || SDC_R1_ERROR(resp[0]))
-      return SDC_FAILED;
+      return TRUE;
   }
   else{
     /* Send read single block command.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_SINGLE_BLOCK,
                                    startblk, resp) || SDC_R1_ERROR(resp[0]))
-      return SDC_FAILED;
+      return TRUE;
   }
 
-  return SDC_SUCCESS;
+  return FALSE;
 }
 
 /**
@@ -117,8 +117,8 @@ static bool_t sdc_lld_prepare_read(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] resp      pointer to the response buffer
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -134,16 +134,16 @@ static bool_t sdc_lld_prepare_write(SDCDriver *sdcp, uint32_t startblk,
     /* Write multiple blocks command.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_WRITE_MULTIPLE_BLOCK,
                                    startblk, resp) || SDC_R1_ERROR(resp[0]))
-      return SDC_FAILED;
+      return TRUE;
   }
   else{
     /* Write single block command.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_WRITE_BLOCK,
                                    startblk, resp) || SDC_R1_ERROR(resp[0]))
-      return SDC_FAILED;
+      return TRUE;
   }
 
-  return SDC_SUCCESS;
+  return FALSE;
 }
 
 /**
@@ -154,8 +154,8 @@ static bool_t sdc_lld_prepare_write(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] resp      pointer to the response buffer
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  */
 static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
                                            uint32_t *resp){
@@ -173,7 +173,7 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
   }
   if ((SDIO->STA & SDIO_STA_DATAEND) == 0) {
     chSysUnlock();
-    return SDC_FAILED;
+    return TRUE;
   }
 
   /* Wait until DMA channel enabled to be sure that all data transferred.*/
@@ -195,7 +195,7 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
   if (n > 1)
     return sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
   else
-    return SDC_SUCCESS;
+    return FALSE;
 }
 
 /**
@@ -470,8 +470,8 @@ void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
  * @param[out] resp     pointer to the response buffer (one word)
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -488,10 +488,10 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
   if ((sta & (SDIO_STA_CTIMEOUT)) != 0){
     sdc_lld_collect_errors(sdcp);
-    return SDC_FAILED;
+    return TRUE;
   }
   *resp = SDIO->RESP1;
-  return SDC_SUCCESS;
+  return FALSE;
 }
 
 /**
@@ -503,8 +503,8 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @param[out] resp     pointer to the response buffer (one word)
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -521,10 +521,10 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
   if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0){
     sdc_lld_collect_errors(sdcp);
-    return SDC_FAILED;
+    return TRUE;
   }
   *resp = SDIO->RESP1;
-  return SDC_SUCCESS;
+  return FALSE;
 }
 
 /**
@@ -536,8 +536,8 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @param[out] resp     pointer to the response buffer (four words)
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -556,14 +556,14 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
   if ((sta & (STM32_SDIO_STA_ERROR_MASK)) != 0){
     sdc_lld_collect_errors(sdcp);
-    return SDC_FAILED;
+    return TRUE;
   }
   /* save bytes in reverse order because MSB in response comes first */
   *resp++ = SDIO->RESP4;
   *resp++ = SDIO->RESP3;
   *resp++ = SDIO->RESP2;
   *resp   = SDIO->RESP1;
-  return SDC_SUCCESS;
+  return FALSE;
 }
 
 /**
@@ -575,8 +575,8 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @param[in] n         number of blocks to read
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -590,7 +590,7 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   /* Checks for errors and waits for the card to be ready for reading.*/
   if (_sdc_wait_for_transfer_state(sdcp))
-    return SDC_FAILED;
+    return TRUE;
 
   /* Prepares the DMA channel for writing.*/
   dmaStreamSetMemory0(sdcp->dma, buf);
@@ -609,7 +609,7 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   SDIO->DLEN  = n * SDC_BLOCK_SIZE;
 
   /* Talk to card what we want from it.*/
-  if (sdc_lld_prepare_read(sdcp, startblk, n, resp) == SDC_FAILED)
+  if (sdc_lld_prepare_read(sdcp, startblk, n, resp) == TRUE)
     goto error;
 
   /* Transaction starts just after DTEN bit setting.*/
@@ -618,14 +618,14 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_DCTRL_DBLOCKSIZE_0 |
                 SDIO_DCTRL_DMAEN |
                 SDIO_DCTRL_DTEN;
-  if (sdc_lld_wait_transaction_end(sdcp, n, resp) == SDC_FAILED)
+  if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
     goto error;
   else
-    return SDC_SUCCESS;
+    return FALSE;
 
 error:
   sdc_lld_error_cleanup(sdcp, n, resp);
-  return SDC_FAILED;
+  return TRUE;
 }
 
 /**
@@ -637,8 +637,8 @@ error:
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -652,7 +652,7 @@ bool_t sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   /* Checks for errors and waits for the card to be ready for writing.*/
   if (_sdc_wait_for_transfer_state(sdcp))
-    return SDC_FAILED;
+    return TRUE;
 
   /* Prepares the DMA channel for writing.*/
   dmaStreamSetMemory0(sdcp->dma, buf);
@@ -671,7 +671,7 @@ bool_t sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   SDIO->DLEN  = n * SDC_BLOCK_SIZE;
 
   /* Talk to card what we want from it.*/
-  if (sdc_lld_prepare_write(sdcp, startblk, n, resp) == SDC_FAILED)
+  if (sdc_lld_prepare_write(sdcp, startblk, n, resp) == TRUE)
     goto error;
 
   /* Transaction starts just after DTEN bit setting.*/
@@ -679,14 +679,14 @@ bool_t sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_DCTRL_DBLOCKSIZE_0 |
                 SDIO_DCTRL_DMAEN |
                 SDIO_DCTRL_DTEN;
-  if (sdc_lld_wait_transaction_end(sdcp, n, resp) == SDC_FAILED)
+  if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
     goto error;
   else
-    return SDC_SUCCESS;
+    return FALSE;
 
 error:
   sdc_lld_error_cleanup(sdcp, n, resp);
-  return SDC_FAILED;
+  return TRUE;
 }
 
 /**
@@ -698,8 +698,8 @@ error:
  * @param[in] n         number of blocks to read
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -711,12 +711,12 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
     uint32_t i;
     for (i = 0; i < n; i++) {
       if (sdc_lld_read_aligned(sdcp, startblk, u.buf, 1))
-        return SDC_FAILED;
+        return TRUE;
       memcpy(buf, u.buf, SDC_BLOCK_SIZE);
       buf += SDC_BLOCK_SIZE;
       startblk++;
     }
-    return SDC_SUCCESS;
+    return FALSE;
   }
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
   return sdc_lld_read_aligned(sdcp, startblk, buf, n);
@@ -731,8 +731,8 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
- * @retval SDC_SUCCESS  operation succeeded.
- * @retval SDC_FAILED   operation failed.
+ * @retval FALSE  operation succeeded.
+ * @retval TRUE   operation failed.
  *
  * @notapi
  */
@@ -746,10 +746,10 @@ bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
       memcpy(u.buf, buf, SDC_BLOCK_SIZE);
       buf += SDC_BLOCK_SIZE;
       if (sdc_lld_write_aligned(sdcp, startblk, u.buf, 1))
-        return SDC_FAILED;
+        return TRUE;
       startblk++;
     }
-    return SDC_SUCCESS;
+    return FALSE;
   }
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
   return sdc_lld_write_aligned(sdcp, startblk, buf, n);

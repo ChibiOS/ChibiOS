@@ -79,10 +79,10 @@ bool_t badblocks(uint32_t start, uint32_t end, uint32_t blockatonce, uint8_t pat
       goto ERROR;
     position += blockatonce;
   }
-  return SDC_SUCCESS;
+  return FALSE;
 
 ERROR:
-  return SDC_FAILED;
+  return TRUE;
 }
 
 /**

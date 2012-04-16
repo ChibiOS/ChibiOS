@@ -89,12 +89,6 @@
 #define SDC_CMD_APP_CMD                 55
 
 /**
- * @brief   Returning status.
- */
-#define SDC_SUCCESS                     FALSE
-#define SDC_FAILED                      TRUE
-
-/**
  * @name    SDC bus error conditions
  * @{
  */
