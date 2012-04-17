@@ -142,6 +142,19 @@
 #endif
 
 /**
+ * @brief   PHY detection timeout.
+ * @details Timeout, in milliseconds, for PHY address detection, if a PHY
+ *          is not detected within the timeout then the driver halts during
+ *          initialization. This setting applies only if the PHY address is
+ *          not explicitly set in the board header file using
+ *          @p BOARD_PHY_ADDRESS. A zero value disables the timeout and a
+ *          single search path is performed.
+ */
+#if !defined(STM32_MAC_PHY_TIMEOUT) || defined(__DOXYGEN__)
+#define STM32_MAC_PHY_TIMEOUT       100
+#endif
+
+/**
  * @brief   ETHD1 interrupt priority level setting.
  */
 #if !defined(STM32_ETH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -169,6 +182,10 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (STM32_MAC_PHY_TIMEOUT > 0) && !HAL_IMPLEMENTS_COUNTERS
+#error "STM32_MAC_PHY_TIMEOUT requires the realtime counter service"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

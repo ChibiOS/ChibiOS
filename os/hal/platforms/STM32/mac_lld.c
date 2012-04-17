@@ -118,14 +118,22 @@ static uint32_t mii_read(MACDriver *macp, uint32_t reg) {
 static void mii_find_phy(MACDriver *macp) {
   uint32_t i;
 
-  for (i = 0; i < 31; i++) {
-    macp->phyaddr = i << 11;
-    ETH->MACMIIDR = (i << 6) | MACMIIDR_CR;
-    if ((mii_read(macp, MII_PHYSID1) == (BOARD_PHY_ID >> 16)) &&
-        ((mii_read(macp, MII_PHYSID2) & 0xFFF0) == (BOARD_PHY_ID & 0xFFF0))) {
-      return;
+#if STM32_MAC_PHY_TIMEOUT > 0
+  halrtcnt_t start = halGetCounterValue();
+  halrtcnt_t timeout  = start + MS2RTT(STM32_MAC_PHY_TIMEOUT);
+  while (halIsCounterWithin(start, timeout)) {
+#endif
+    for (i = 0; i < 31; i++) {
+      macp->phyaddr = i << 11;
+      ETH->MACMIIDR = (i << 6) | MACMIIDR_CR;
+      if ((mii_read(macp, MII_PHYSID1) == (BOARD_PHY_ID >> 16)) &&
+          ((mii_read(macp, MII_PHYSID2) & 0xFFF0) == (BOARD_PHY_ID & 0xFFF0))) {
+        return;
+      }
     }
+#if STM32_MAC_PHY_TIMEOUT > 0
   }
+#endif
   /* Wrong or defective board.*/
   chSysHalt();
 }
