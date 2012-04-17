@@ -266,10 +266,6 @@
 #define STM32_I2C3_TX_DMA_MSK   0
 #define STM32_I2C3_TX_DMA_CHN   0x00000000
 
-/* RTC attributes.*/
-#define STM32_HAS_RTC           TRUE
-#define STM32_RTCSEL_HAS_SUBSECONDS TRUE
-
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO          FALSE
 

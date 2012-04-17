@@ -30,6 +30,8 @@
  * @{
  */
 
+#include <time.h>
+
 #include "ch.h"
 #include "hal.h"
 
@@ -289,7 +291,6 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
     rtcp->callback = NULL;
   }
 }
-
 #endif /* HAL_USE_RTC */
 
 /** @} */

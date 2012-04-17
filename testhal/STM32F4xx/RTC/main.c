@@ -43,11 +43,11 @@ int tm_isdst     daylight savings indicator (1 = yes, 0 = no, -1 = unknown)
 
 #include "shell.h"
 #include "chprintf.h"
+#include "chrtclib.h"
 
 #if WAKEUP_TEST
 static RTCWakeup wakeupspec;
 #endif
-static RTCTime timespec = {0,0,FALSE,0};
 static RTCAlarm alarmspec;
 static time_t unix_time;
 
@@ -147,15 +147,14 @@ static void cmd_date(BaseChannel *chp, int argc, char *argv[]){
   }
 
   if ((argc == 1) && (strcmp(argv[0], "get") == 0)){
-    rtcGetTime(&RTCD1, &timespec);
-    stm32_rtc_bcd2tm(&timp, &timespec);
-    unix_time = mktime(&timp);
+    unix_time = rtcGetTimeUnixSec(&RTCD1);
 
     if (unix_time == -1){
       chprintf(chp, "incorrect time in RTC cell\r\n");
     }
     else{
       chprintf(chp, "%D%s",unix_time," - unix time\r\n");
+      rtcGetTimeTm(&RTCD1, &timp);
       chprintf(chp, "%s%s",asctime(&timp)," - formatted time string\r\n");
     }
     return;
@@ -164,8 +163,7 @@ static void cmd_date(BaseChannel *chp, int argc, char *argv[]){
   if ((argc == 2) && (strcmp(argv[0], "set") == 0)){
     unix_time = atol(argv[1]);
     if (unix_time > 0){
-      stm32_rtc_tm2bcd((localtime(&unix_time)), &timespec);
-      rtcSetTime(&RTCD1, &timespec);
+      rtcSetTimeUnixSec(&RTCD1, unix_time);
       return;
     }
     else{

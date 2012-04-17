@@ -538,7 +538,6 @@
 #define rccResetI2C3() rccResetAPB1(RCC_APB1RSTR_I2C3RST)
 /** @} */
 
-
 /**
  * @name    OTG peripherals specific RCC operations
  * @{
@@ -567,6 +566,39 @@
  * @api
  */
 #define rccResetOTG_FS() rccResetAHB2(RCC_AHB2RSTR_OTGFSRST)
+/** @} */
+
+/**
+ * @name    SDIO peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the SDIO peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDIO(lp) rccEnableAPB2(RCC_APB2ENR_SDIOEN, lp)
+
+/**
+ * @brief   Disables the SDIO peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableSDIO(lp) rccDisableAPB2(RCC_APB2ENR_SDIOEN, lp)
+
+/**
+ * @brief   Resets the SDIO peripheral.
+ * @note    Not supported in this family, does nothing.
+ *
+ * @api
+ */
+#define rccResetSDIO() rccResetAPB2(RCC_APB2RSTR_SDIORST)
 /** @} */
 
 /**
