@@ -72,6 +72,16 @@
 #define TRUE        (!FALSE)
 #endif
 
+/*
+ * Human readable boolean error conditions.
+ */
+#ifndef CH_SUCCESS
+#define CH_SUCCESS  FALSE
+#endif
+#ifndef CH_FAILED
+#define CH_FAILED   TRUE
+#endif
+
 #include "chconf.h"
 #include "chtypes.h"
 #include "chlists.h"

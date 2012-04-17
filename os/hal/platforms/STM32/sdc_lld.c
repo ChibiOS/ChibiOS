@@ -96,16 +96,16 @@ static bool_t sdc_lld_prepare_read(SDCDriver *sdcp, uint32_t startblk,
     /* Send read multiple blocks command to card.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK,
                                    startblk, resp) || SDC_R1_ERROR(resp[0]))
-      return TRUE;
+      return CH_FAILED;
   }
   else{
     /* Send read single block command.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_SINGLE_BLOCK,
                                    startblk, resp) || SDC_R1_ERROR(resp[0]))
-      return TRUE;
+      return CH_FAILED;
   }
 
-  return FALSE;
+  return CH_SUCCESS;
 }
 
 /**
@@ -134,16 +134,16 @@ static bool_t sdc_lld_prepare_write(SDCDriver *sdcp, uint32_t startblk,
     /* Write multiple blocks command.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_WRITE_MULTIPLE_BLOCK,
                                    startblk, resp) || SDC_R1_ERROR(resp[0]))
-      return TRUE;
+      return CH_FAILED;
   }
   else{
     /* Write single block command.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_WRITE_BLOCK,
                                    startblk, resp) || SDC_R1_ERROR(resp[0]))
-      return TRUE;
+      return CH_FAILED;
   }
 
-  return FALSE;
+  return CH_SUCCESS;
 }
 
 /**
@@ -173,7 +173,7 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
   }
   if ((SDIO->STA & SDIO_STA_DATAEND) == 0) {
     chSysUnlock();
-    return TRUE;
+    return CH_FAILED;
   }
 
   /* Wait until DMA channel enabled to be sure that all data transferred.*/
@@ -195,7 +195,7 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
   if (n > 1)
     return sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
   else
-    return FALSE;
+    return CH_SUCCESS;
 }
 
 /**
@@ -488,10 +488,10 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
   if ((sta & (SDIO_STA_CTIMEOUT)) != 0){
     sdc_lld_collect_errors(sdcp);
-    return TRUE;
+    return CH_FAILED;
   }
   *resp = SDIO->RESP1;
-  return FALSE;
+  return CH_SUCCESS;
 }
 
 /**
@@ -521,10 +521,10 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
   if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0){
     sdc_lld_collect_errors(sdcp);
-    return TRUE;
+    return CH_FAILED;
   }
   *resp = SDIO->RESP1;
-  return FALSE;
+  return CH_SUCCESS;
 }
 
 /**
@@ -556,14 +556,14 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
   if ((sta & (STM32_SDIO_STA_ERROR_MASK)) != 0){
     sdc_lld_collect_errors(sdcp);
-    return TRUE;
+    return CH_FAILED;
   }
   /* save bytes in reverse order because MSB in response comes first */
   *resp++ = SDIO->RESP4;
   *resp++ = SDIO->RESP3;
   *resp++ = SDIO->RESP2;
   *resp   = SDIO->RESP1;
-  return FALSE;
+  return CH_SUCCESS;
 }
 
 /**
@@ -590,7 +590,7 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   /* Checks for errors and waits for the card to be ready for reading.*/
   if (_sdc_wait_for_transfer_state(sdcp))
-    return TRUE;
+    return CH_FAILED;
 
   /* Prepares the DMA channel for writing.*/
   dmaStreamSetMemory0(sdcp->dma, buf);
@@ -621,11 +621,11 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
     goto error;
   else
-    return FALSE;
+    return CH_SUCCESS;
 
 error:
   sdc_lld_error_cleanup(sdcp, n, resp);
-  return TRUE;
+  return CH_FAILED;
 }
 
 /**
@@ -652,7 +652,7 @@ bool_t sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   /* Checks for errors and waits for the card to be ready for writing.*/
   if (_sdc_wait_for_transfer_state(sdcp))
-    return TRUE;
+    return CH_FAILED;
 
   /* Prepares the DMA channel for writing.*/
   dmaStreamSetMemory0(sdcp->dma, buf);
@@ -682,11 +682,11 @@ bool_t sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
     goto error;
   else
-    return FALSE;
+    return CH_SUCCESS;
 
 error:
   sdc_lld_error_cleanup(sdcp, n, resp);
-  return TRUE;
+  return CH_FAILED;
 }
 
 /**
@@ -711,12 +711,12 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
     uint32_t i;
     for (i = 0; i < n; i++) {
       if (sdc_lld_read_aligned(sdcp, startblk, u.buf, 1))
-        return TRUE;
+        return CH_FAILED;
       memcpy(buf, u.buf, SDC_BLOCK_SIZE);
       buf += SDC_BLOCK_SIZE;
       startblk++;
     }
-    return FALSE;
+    return CH_SUCCESS;
   }
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
   return sdc_lld_read_aligned(sdcp, startblk, buf, n);
@@ -746,10 +746,10 @@ bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
       memcpy(u.buf, buf, SDC_BLOCK_SIZE);
       buf += SDC_BLOCK_SIZE;
       if (sdc_lld_write_aligned(sdcp, startblk, u.buf, 1))
-        return TRUE;
+        return CH_FAILED;
       startblk++;
     }
-    return FALSE;
+    return CH_SUCCESS;
   }
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
   return sdc_lld_write_aligned(sdcp, startblk, buf, n);

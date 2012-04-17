@@ -101,10 +101,10 @@ bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
     if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_STATUS,
                                    sdcp->rca, resp) ||
         SDC_R1_ERROR(resp[0]))
-      return TRUE;
+      return CH_FAILED;
     switch (SDC_R1_STS(resp[0])) {
     case SDC_STS_TRAN:
-      return FALSE;
+      return CH_SUCCESS;
     case SDC_STS_DATA:
     case SDC_STS_RCV:
     case SDC_STS_PRG:
@@ -115,11 +115,11 @@ bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
     default:
       /* The card should have been initialized so any other state is not
          valid and is reported as an error.*/
-      return TRUE;
+      return CH_FAILED;
     }
   }
   /* If something going too wrong.*/
-  return TRUE;
+  return CH_FAILED;
 }
 
 /*===========================================================================*/
@@ -251,7 +251,7 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 #if SDC_MMC_SUPPORT
     if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
     /* TODO: MMC initialization.*/
-    return TRUE;
+    return CH_FAILED;
   }
   else
 #endif /* SDC_MMC_SUPPORT */
@@ -350,13 +350,13 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 
   /* Initialization complete.*/
   sdcp->state = SDC_ACTIVE;
-  return FALSE;
+  return CH_SUCCESS;
 
   /* Initialization failed.*/
 failed:
   sdc_lld_stop_clk(sdcp);
   sdcp->state = SDC_READY;
-  return TRUE;
+  return CH_FAILED;
 }
 
 /**
@@ -379,20 +379,20 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
               "sdcDisconnect(), #1", "invalid state");
   if (sdcp->state == SDC_READY) {
     chSysUnlock();
-    return FALSE;
+    return CH_SUCCESS;
   }
   sdcp->state = SDC_DISCONNECTING;
   chSysUnlock();
 
   /* Waits for eventual pending operations completion.*/
   if (_sdc_wait_for_transfer_state(sdcp))
-    return TRUE;
+    return CH_FAILED;
 
   /* Card clock stopped.*/
   sdc_lld_stop_clk(sdcp);
 
   sdcp->state = SDC_READY;
-  return FALSE;
+  return CH_SUCCESS;
 }
 
 /**
@@ -419,7 +419,7 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
 
   if ((startblk + n - 1) > sdcp->capacity){
     sdcp->errors |= SDC_OVERFLOW_ERROR;
-    return TRUE;
+    return CH_FAILED;
   }
 
   chSysLock();
@@ -456,7 +456,7 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
 
   if ((startblk + n - 1) > sdcp->capacity){
     sdcp->errors |= SDC_OVERFLOW_ERROR;
-    return TRUE;
+    return CH_FAILED;
   }
 
   chSysLock();
