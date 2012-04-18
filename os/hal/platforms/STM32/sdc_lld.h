@@ -88,6 +88,29 @@
 #if !defined(SDC_READ_TIMEOUT_MS) || defined(__DOXYGEN__)
 #define SDC_READ_TIMEOUT_MS                 5
 #endif
+
+/**
+ * @brief   Support for unaligned transfers.
+ * @note    Unaligned transfers are much slower.
+ */
+#if !defined(STM32_SDC_SDIO_UNALIGNED_SUPPORT) || defined(__DOXYGEN__)
+#define STM32_SDC_SDIO_UNALIGNED_SUPPORT    TRUE
+#endif
+
+#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
+
+/**
+ * @brief   DMA stream used for SDC operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_SDC_SDIO_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_SDC_SDIO_DMA_STREAM           STM32_DMA_STREAM_ID(2, 3)
+#endif
+
+#else /* !STM32_ADVANCED_DMA*/
+#define STM32_SDC_SDIO_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
+
+#endif /* !STM32_ADVANCED_DMA*/
 /** @} */
 
 /*===========================================================================*/
