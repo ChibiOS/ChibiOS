@@ -53,7 +53,7 @@ static unsigned cnt;
 static EventSource inserted_event, removed_event;
 
 /**
- * @brief   Inserion monitor function.
+ * @brief   Insertion monitor function.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
@@ -80,7 +80,7 @@ bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
 }
 
 /**
- * @brief   Inserion monitor timer callback function.
+ * @brief   Insertion monitor timer callback function.
  *
  * @param[in] p         pointer to the @p SDCDriver object
  *

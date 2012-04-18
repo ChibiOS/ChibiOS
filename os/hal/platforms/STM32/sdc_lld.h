@@ -75,6 +75,19 @@
 #define STM32_SDC_SDIO_IRQ_PRIORITY         9
 #endif
 
+/**
+ * @brief   Write timeout in milliseconds.
+ */
+#if !defined(SDC_WRITE_TIMEOUT_MS) || defined(__DOXYGEN__)
+#define SDC_WRITE_TIMEOUT_MS                250
+#endif
+
+/**
+ * @brief   Read timeout in milliseconds.
+ */
+#if !defined(SDC_READ_TIMEOUT_MS) || defined(__DOXYGEN__)
+#define SDC_READ_TIMEOUT_MS                 5
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -93,31 +106,33 @@
  * SDIO clock divider.
  */
 #if (defined(STM32F4XX) || defined(STM32F2XX))
-  #define STM32_SDIO_DIV_HS                   0
-  #define STM32_SDIO_DIV_LS                   120
+#define STM32_SDIO_DIV_HS                   0
+#define STM32_SDIO_DIV_LS                   120
+
 #elif STM32_HCLK > 48000000
-  #define STM32_SDIO_DIV_HS                   1
-  #define STM32_SDIO_DIV_LS                   178
+#define STM32_SDIO_DIV_HS                   1
+#define STM32_SDIO_DIV_LS                   178
 #else
-  #define STM32_SDIO_DIV_HS                   0
-  #define STM32_SDIO_DIV_LS                   118
+
+#define STM32_SDIO_DIV_HS                   0
+#define STM32_SDIO_DIV_LS                   118
 #endif
 
 /**
  * @brief   SDIO data timeouts in SDIO clock cycles.
  */
 #if (defined(STM32F4XX) || defined(STM32F2XX))
-  #define STM32_SDC_WRITE_TIMEOUT \
-    (((48000000 / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
-  #define STM32_SDC_READ_TIMEOUT \
-    (((48000000 / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
-#else
-  #define STM32_SDC_WRITE_TIMEOUT  \
-    (((STM32_HCLK /((STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
-  #define STM32_SDC_READ_TIMEOUT  \
-    (((STM32_HCLK /((STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
-#endif
+#define STM32_SDC_WRITE_TIMEOUT                                             \
+  (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
+#define STM32_SDC_READ_TIMEOUT                                              \
+  (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
 
+#else
+#define STM32_SDC_WRITE_TIMEOUT                                             \
+  (((STM32_HCLK /((STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
+#define STM32_SDC_READ_TIMEOUT                                              \
+  (((STM32_HCLK /((STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

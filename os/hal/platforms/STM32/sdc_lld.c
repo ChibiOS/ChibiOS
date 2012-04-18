@@ -249,7 +249,10 @@ static void sdc_lld_collect_errors(SDCDriver *sdcp) {
  *
  * @notapi
  */
-static void sdc_lld_error_cleanup(SDCDriver *sdcp, uint32_t n, uint32_t *resp){
+static void sdc_lld_error_cleanup(SDCDriver *sdcp,
+                                  uint32_t n,
+                                  uint32_t *resp) {
+
   dmaStreamClearInterrupt(sdcp->dma);
   dmaStreamDisable(sdcp->dma);
   SDIO->ICR   = STM32_SDIO_ICR_ALL_FLAGS;
@@ -324,11 +327,11 @@ void sdc_lld_start(SDCDriver *sdcp) {
                   STM32_DMA_CR_MSIZE_WORD |
                   STM32_DMA_CR_MINC;
 
-  #if (defined(STM32F4XX) || defined(STM32F2XX))
-    sdcp->dmamode |= STM32_DMA_CR_PFCTRL |
-                     STM32_DMA_CR_PBURST_INCR4 |
-                     STM32_DMA_CR_MBURST_INCR4;
-  #endif
+#if (defined(STM32F4XX) || defined(STM32F2XX))
+  sdcp->dmamode |= STM32_DMA_CR_PFCTRL |
+                   STM32_DMA_CR_PBURST_INCR4 |
+                   STM32_DMA_CR_MBURST_INCR4;
+#endif
 
   if (sdcp->state == SDC_STOP) {
     /* Note, the DMA must be enabled before the IRQs.*/
@@ -336,9 +339,9 @@ void sdc_lld_start(SDCDriver *sdcp) {
     b = dmaStreamAllocate(sdcp->dma, STM32_SDC_SDIO_IRQ_PRIORITY, NULL, NULL);
     chDbgAssert(!b, "i2c_lld_start(), #3", "stream already allocated");
     dmaStreamSetPeripheral(sdcp->dma, &SDIO->FIFO);
-    #if (defined(STM32F4XX) || defined(STM32F2XX))
-      dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS | STM32_DMA_FCR_FTH_FULL);
-    #endif
+#if (defined(STM32F4XX) || defined(STM32F2XX))
+    dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS | STM32_DMA_FCR_FTH_FULL);
+#endif
     nvicEnableVector(SDIO_IRQn,
                      CORTEX_PRIORITY_MASK(STM32_SDC_SDIO_IRQ_PRIORITY));
     rccEnableSDIO(FALSE);
@@ -383,6 +386,7 @@ void sdc_lld_stop(SDCDriver *sdcp) {
 void sdc_lld_start_clk(SDCDriver *sdcp) {
 
   (void)sdcp;
+
   /* Initial clock setting: 400kHz, 1bit mode.*/
   SDIO->CLKCR  = STM32_SDIO_DIV_LS;
   SDIO->POWER |= SDIO_POWER_PWRCTRL_0 | SDIO_POWER_PWRCTRL_1;
@@ -399,6 +403,7 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
 void sdc_lld_set_data_clk(SDCDriver *sdcp) {
 
   (void)sdcp;
+
   SDIO->CLKCR = (SDIO->CLKCR & 0xFFFFFF00) | STM32_SDIO_DIV_HS;
 }
 
@@ -412,6 +417,7 @@ void sdc_lld_set_data_clk(SDCDriver *sdcp) {
 void sdc_lld_stop_clk(SDCDriver *sdcp) {
 
   (void)sdcp;
+
   SDIO->CLKCR = 0;
   SDIO->POWER = 0;
 }
@@ -428,6 +434,7 @@ void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
   uint32_t clk = SDIO->CLKCR & ~SDIO_CLKCR_WIDBUS;
 
   (void)sdcp;
+
   switch (mode) {
   case SDC_MODE_1BIT:
     SDIO->CLKCR = clk;
@@ -453,6 +460,7 @@ void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
 void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
 
   (void)sdcp;
+
   SDIO->ARG = arg;
   SDIO->CMD = (uint32_t)cmd | SDIO_CMD_CPSMEN;
   while ((SDIO->STA & SDIO_STA_CMDSENT) == 0)
@@ -480,6 +488,7 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   uint32_t sta;
 
   (void)sdcp;
+
   SDIO->ARG = arg;
   SDIO->CMD = (uint32_t)cmd | SDIO_CMD_WAITRESP_0 | SDIO_CMD_CPSMEN;
   while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
@@ -513,6 +522,7 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   uint32_t sta;
 
   (void)sdcp;
+
   SDIO->ARG = arg;
   SDIO->CMD = (uint32_t)cmd | SDIO_CMD_WAITRESP_0 | SDIO_CMD_CPSMEN;
   while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
@@ -543,10 +553,10 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  */
 bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                  uint32_t *resp) {
-
   uint32_t sta;
 
   (void)sdcp;
+
   SDIO->ARG = arg;
   SDIO->CMD = (uint32_t)cmd | SDIO_CMD_WAITRESP_0 | SDIO_CMD_WAITRESP_1 |
                               SDIO_CMD_CPSMEN;
@@ -620,8 +630,8 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_DCTRL_DTEN;
   if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
     goto error;
-  else
-    return CH_SUCCESS;
+
+  return CH_SUCCESS;
 
 error:
   sdc_lld_error_cleanup(sdcp, n, resp);
@@ -681,8 +691,8 @@ bool_t sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_DCTRL_DTEN;
   if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
     goto error;
-  else
-    return CH_SUCCESS;
+
+  return CH_SUCCESS;
 
 error:
   sdc_lld_error_cleanup(sdcp, n, resp);

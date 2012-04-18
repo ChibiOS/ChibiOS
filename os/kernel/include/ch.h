@@ -62,25 +62,43 @@
 #define CH_KERNEL_PATCH         0
 /** @} */
 
-/*
- * Common values.
+/**
+ * @name    Common constants
  */
-#ifndef FALSE
+/**
+ * @brief   Generic 'false' boolean constant.
+ */
+#if !defined(FALSE) || defined(__DOXYGEN__)
 #define FALSE       0
 #endif
-#ifndef TRUE
+
+/**
+ * @brief   Generic 'true' boolean constant.
+ */
+#if !defined(TRUE) || defined(__DOXYGEN__)
 #define TRUE        (!FALSE)
 #endif
 
-/*
- * Human readable boolean error conditions.
+/**
+ * @brief   Generic success constant.
+ * @details This constant is functionally equivalent to @p FALSE but more
+ *          readable, it can be used as return value of all those functions
+ *          returning a @p bool_t as a status indicator.
  */
-#ifndef CH_SUCCESS
+#if !defined(CH_SUCCESS) || defined(__DOXYGEN__)
 #define CH_SUCCESS  FALSE
 #endif
-#ifndef CH_FAILED
+
+/**
+ * @brief   Generic failure constant.
+ * @details This constant is functionally equivalent to @p TRUE but more
+ *          readable, it can be used as return value of all those functions
+ *          returning a @p bool_t as a status indicator.
+ */
+#if !defined(CH_FAILED) || defined(__DOXYGEN__)
 #define CH_FAILED   TRUE
 #endif
+/** @} */
 
 #include "chconf.h"
 #include "chtypes.h"
