@@ -152,9 +152,9 @@
 
 #else
 #define STM32_SDC_WRITE_TIMEOUT                                             \
-  (((STM32_HCLK /((STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
+  (((STM32_HCLK / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
 #define STM32_SDC_READ_TIMEOUT                                              \
-  (((STM32_HCLK /((STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
+  (((STM32_HCLK / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
 #endif
 
 /*===========================================================================*/
