@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed macro dmaWaitCompletion() fails to compile in STM32 HAL (bug
+  3519202)(backported to 2.4.1).
 - FIX: Fixed ARM addresses generated in vectors table (bug 3519037)(backported
   to 2.2.10 and 2.4.1).
 - FIX: Fixed missing serial driver functionality for SAM7S64, SAM7S128 and
