@@ -176,26 +176,23 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
     return CH_FAILED;
   }
 
-  /* Wait until DMA channel enabled to be sure that all data transferred.*/
-  while (sdcp->dma->stream->CR & STM32_DMA_CR_EN)
-    ;
-
-  /* DMA event flags must be manually cleared.*/
-  dmaStreamClearInterrupt(sdcp->dma);
+  /* Waits for transfer completion at DMA level, the the stream is
+     disabled and cleared.*/
+  dmaWaitCompletion(sdcp->dma);
 
   SDIO->ICR = STM32_SDIO_ICR_ALL_FLAGS;
   SDIO->DCTRL = 0;
   chSysUnlock();
 
   /* Wait until interrupt flags to be cleared.*/
-  while (((DMA2->LISR) >> (sdcp->dma->ishift)) & STM32_DMA_ISR_TCIF)
-    dmaStreamClearInterrupt(sdcp->dma);
+/*  while (((DMA2->LISR) >> (sdcp->dma->ishift)) & STM32_DMA_ISR_TCIF)
+    dmaStreamClearInterrupt(sdcp->dma);*/
 
   /* Finalize transaction.*/
   if (n > 1)
     return sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
-  else
-    return CH_SUCCESS;
+
+  return CH_SUCCESS;
 }
 
 /**
