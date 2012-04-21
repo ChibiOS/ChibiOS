@@ -11,7 +11,7 @@ The currently included items are:
 
 1. uip-1.0, a minimal TCP/IP implementation: http://www.sics.se/~adam/uip/
 2. lwip-1.4.0, lightweight TCP/IP stack: http://savannah.nongnu.org/projects/lwip/
-3. FatFS 0.8b (patched), the original version is available from
+3. FatFS 0.9 (patched), the original version is available from
    http://elm-chan.org/fsw/ff/00index_e.html
 
 The above files are included packed as downloaded from the original repository
