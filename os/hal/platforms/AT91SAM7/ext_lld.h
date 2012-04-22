@@ -178,7 +178,7 @@ typedef struct {
   /**
    * @brief interrupt priority.
    */
-  uint32_t                priority;
+  uint32_t              priority;
 } EXTConfig;
 
 /**
