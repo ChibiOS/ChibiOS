@@ -181,7 +181,7 @@
 /* default 0x00000000 */
 #define VAL_GPIOA_OTYPER        0x00000000
 /* default 0x00000000 */
-#define VAL_GPIOA_OSPEEDR       0xAAAAAAAA
+#define VAL_GPIOA_OSPEEDR       0x00000000
 /* 0x64000000 */
 #define VAL_GPIOA_PUPDR        (PIN_PUDR_FLOATING(GPIOA_USART2_CTS) |         \
                                 PIN_PUDR_FLOATING(GPIOA_USART2_RTS) |         \
