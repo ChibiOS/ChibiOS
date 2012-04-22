@@ -32,7 +32,9 @@ MEMORYPOOL_DECL(fs_sem_pool, sizeof(Semaphore), chCoreAlloc);
 /*------------------------------------------------------------------------*/
 /* Create a Synchronization Object                                        */
 /*------------------------------------------------------------------------*/
-int ff_cre_syncobj(_SYNC_t *sobj) {
+int ff_cre_syncobj(BYTE vol, _SYNC_t *sobj) {
+
+  (void)vol;
 
   *sobj = chPoolAlloc(&fs_sem_pool);
   if (*sobj == NULL)
@@ -56,14 +58,14 @@ int ff_del_syncobj(_SYNC_t sobj) {
 /*------------------------------------------------------------------------*/
 int ff_req_grant(_SYNC_t sobj) {
 
-  msg_t msg = chSemWaitTimeout(sobj, (systick_t)_FS_TIMEOUT);
+  msg_t msg = chSemWaitTimeout(sobj, (systime_t)_FS_TIMEOUT);
   return msg == RDY_OK;
 }
 
 /*------------------------------------------------------------------------*/
 /* Release Grant to Access the Volume                                     */
 /*------------------------------------------------------------------------*/
-void ff_rel_grant(_SYNC_t sob) {
+void ff_rel_grant(_SYNC_t sobj) {
 
   chSemSignal(sobj);
 }

@@ -113,6 +113,10 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Integrated FatFS 0.9, now the FatFS integration files are centralized
+  under ./os/various/fatfs_bindings and shared among all demos. The FatFS
+  file ffconf.h is now application-specific like all the other configuration
+  files.
 - NEW: Added support for pools of generic "mail" objects under ./os/various,
   mail objects are meant to be used together with mailboxes.
 - NEW: Added a new function chPoolLoadArray() to the Memory Pools subsystem,

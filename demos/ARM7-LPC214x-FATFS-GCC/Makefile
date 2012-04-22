@@ -51,8 +51,8 @@ include $(CHIBIOS)/os/hal/platforms/LPC214x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARM/LPC214x/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 include $(CHIBIOS)/test/test.mk
-include $(CHIBIOS)/ext/fatfs/fatfs.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/LPC2148.ld
@@ -61,11 +61,11 @@ LDSCRIPT= $(PORTLD)/LPC2148.ld
 # setting.
 CSRC = $(PORTSRC) \
        $(KERNSRC) \
-       $(TESTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
-       $(FATFSSRC) \
        $(BOARDSRC) \
+       $(FATFSSRC) \
+       $(TESTSRC) \
        ${BOARDPATH}/buzzer.c \
        $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/various/syscalls.c \
