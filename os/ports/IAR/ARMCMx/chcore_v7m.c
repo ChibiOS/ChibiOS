@@ -112,7 +112,7 @@ void _port_init(void) {
 
   /* Initialization of the vector table and priority related settings.*/
   SCB_VTOR = CORTEX_VTOR_INIT;
-  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);
+  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(CORTEX_PRIGROUP_INIT);
 
 #if CORTEX_USE_FPU
   {

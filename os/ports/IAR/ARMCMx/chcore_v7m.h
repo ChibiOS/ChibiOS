@@ -132,6 +132,15 @@
 #define CORTEX_VTOR_INIT              0x00000000
 #endif
 
+/**
+ * @brief   NVIC PRIGROUP initialization expression.
+ * @details The default assigns all available priority bits as preemption
+ *          priority with no sub-priority.
+ */
+#if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
+#define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
+#endif
+
 /*===========================================================================*/
 /* Port derived parameters.                                                  */
 /*===========================================================================*/

@@ -117,6 +117,10 @@
   under ./os/various/fatfs_bindings and shared among all demos. The FatFS
   file ffconf.h is now application-specific like all the other configuration
   files.
+- NEW: Added an new option CORTEX_PRIGROUP_INIT to the Cortex-Mx ports in
+  order to make priority organization configurable, the default is to
+  assign all the available priority bits to preemption priority with no
+  sub-priorities.
 - NEW: Added support for pools of generic "mail" objects under ./os/various,
   mail objects are meant to be used together with mailboxes.
 - NEW: Added a new function chPoolLoadArray() to the Memory Pools subsystem,
