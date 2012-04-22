@@ -217,7 +217,9 @@ void cmd_sdiotest(BaseChannel *chp, int argc, char *argv[]){
     FATFS *fsp;
     FIL FileObject;
     uint32_t bytes_written;
-
+    uint32_t bytes_read;
+    FILINFO filinfo;
+    uint8_t teststring[] = {"This is test file\r\n"};
 
     chprintf(chp, "Register working area for filesystem... ");
     chThdSleepMilliseconds(100);
@@ -266,13 +268,12 @@ void cmd_sdiotest(BaseChannel *chp, int argc, char *argv[]){
     chprintf(chp, "OK\r\n");
     chprintf(chp, "Write some data in it... ");
     chThdSleepMilliseconds(100);
-    err = f_write(&FileObject, "This is test file", 17, (void *)&bytes_written);
+    err = f_write(&FileObject, teststring, sizeof(teststring), (void *)&bytes_written);
     if (err != FR_OK) {
       chSysHalt();
     }
     else
       chprintf(chp, "OK\r\n");
-
 
     chprintf(chp, "Close file \"chtest.txt\"... ");
     err = f_close(&FileObject);
@@ -282,10 +283,42 @@ void cmd_sdiotest(BaseChannel *chp, int argc, char *argv[]){
     else
       chprintf(chp, "OK\r\n");
 
+    chprintf(chp, "Check file size \"chtest.txt\"... ");
+    err = f_stat("0:chtest.txt", &filinfo);
+    chThdSleepMilliseconds(100);
+    if (err != FR_OK) {
+      chSysHalt();
+    }
+    else{
+      if (filinfo.fsize == sizeof(teststring))
+        chprintf(chp, "OK\r\n");
+      else
+        chSysHalt();
+    }
+
+    chprintf(chp, "Check file content \"chtest.txt\"... ");
+    err = f_open(&FileObject, "0:chtest.txt", FA_READ | FA_OPEN_EXISTING);
+    chThdSleepMilliseconds(100);
+    if (err != FR_OK) {
+      chSysHalt();
+    }
+    uint8_t buf[sizeof(teststring)];
+    err = f_read(&FileObject, buf, sizeof(teststring), (void *)&bytes_read);
+    if (err != FR_OK) {
+      chSysHalt();
+    }
+    else{
+      if (memcmp(teststring, buf, sizeof(teststring)) != 0){
+        chSysHalt();
+      }
+      else{
+        chprintf(chp, "OK\r\n");
+      }
+    }
+
     chprintf(chp, "Umount filesystem... ");
     f_mount(0, NULL);
     chprintf(chp, "OK\r\n");
-
 
     chprintf(chp, "Disconnecting from SDIO...");
     chThdSleepMilliseconds(100);
