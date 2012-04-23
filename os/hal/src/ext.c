@@ -189,20 +189,17 @@ void extSetChannelModeI(EXTDriver *extp,
   chDbgCheck((extp != NULL) && (channel < EXT_MAX_CHANNELS) &&
              (extcp != NULL), "extSetChannelModeI");
 
+  chDbgAssert(extp->state == EXT_ACTIVE,
+              "extSetChannelModeI(), #1", "invalid state");
+
   /* Note that here the access is enforced as non-const, known access
      violation.*/
   oldcp = (EXTChannelConfig *)&extp->config->channels[channel];
-
-  chSysLock();
-
-  chDbgAssert(extp->state == EXT_ACTIVE,
-              "extSetChannelModeI(), #1", "invalid state");
 
   /* Overwiting the old channels configuration then the channel is reconfigured
      by the low level driver.*/
   *oldcp = *extcp;
   ext_lld_channel_enable(extp, channel);
-  chSysUnlock();
 }
 
 #endif /* HAL_USE_EXT */
