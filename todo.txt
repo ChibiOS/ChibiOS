@@ -7,9 +7,10 @@ N = Decided against.
 
 Version 2.4.1
 * MAC driver for STM32F107, STM32F2xx, STM32F4xx.
+* SDC driver port to STM32F2 and STM32F4.
+* FatFs 0.9x integration.
 X STM32F2 validation (so far testing done on STM32F4 only).
 X Revision of the RTCv2 driver implementation.
-X SDC driver port to STM32F2 and STM32F4.
 - CAN2 support and CAN driver test on STM32F2/F4.
 
 Within 2.5.x:
@@ -19,6 +20,7 @@ Within 2.5.x:
 * MMC_SPI driver speedup.
 - USB driver model revision.
 X STM32 OTG USB cell support for CL, F2, F4 devices.
+- Add USARTs support to the STM32 SPI driver.
 - Add option to use another counter instead of the systick counter into the
   trace buffer.
 - Add a chSysIntegrityCheck() API to the kernel.
@@ -32,8 +34,7 @@ X STM32 OTG USB cell support for CL, F2, F4 devices.
 - Streaming DAC/I2S driver model and STM32 implementation.
 - Add ADC3 support to the STM32 ADC driver.
 - Update C++ wrapper.
-- FatFs 0.9x integration.
-- Nios II support.
+- STM32F0 support.
 - LPC17xx support.
 - NUC120 support.
 ? Add the RTC service inside the kernel and port, remove from HAL.
