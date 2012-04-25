@@ -45,14 +45,40 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Simple MSP430 I/O port.
+ */
+struct msp430_port_simple_t {
+  volatile uint8_t              in;
+  volatile uint8_t              out;
+  volatile uint8_t              dir;
+  volatile uint8_t              sel;
+};
+
+/**
+ * @brief   Full MSP430 I/O port.
+ */
+struct msp430_port_full_t {
+  volatile uint8_t              in;
+  volatile uint8_t              out;
+  volatile uint8_t              dir;
+  volatile uint8_t              ifg;
+  volatile uint8_t              ies;
+  volatile uint8_t              ie;
+  volatile uint8_t              sel;
+#if defined(__MSP430_HAS_PORT1_R__) || defined(__MSP430_HAS_PORT2_R__)
+  volatile uint8_t             ren;
+#endif
+};
+
+/**
  * @brief   Simplified MSP430 I/O port representation.
  * @details This structure represents the common part of all the MSP430 I/O
  *          ports.
  */
 struct msp430_port_common {
-  ioregister_t  in;
-  ioregister_t  out;
-  ioregister_t  dir;
+  volatile uint8_t              in;
+  volatile uint8_t              out;
+  volatile uint8_t              dir;
 };
 
 /**
@@ -60,16 +86,16 @@ struct msp430_port_common {
  */
 typedef union {
   struct msp430_port_common     iop_common;
-  struct port_simple_t          iop_simple;
-  struct port_full_t            iop_full;
+  struct msp430_port_simple_t   iop_simple;
+  struct msp430_port_full_t     iop_full;
 } msp430_ioport_t;
 
 /**
  * @brief   Setup registers common to all the MSP430 ports.
  */
 typedef struct  {
-  ioregister_t  out;
-  ioregister_t  dir;
+  volatile uint8_t              out;
+  volatile uint8_t              dir;
 } msp430_dio_setup_t;
 
 /**
@@ -158,7 +184,7 @@ typedef msp430_ioport_t *ioportid_t;
 #if defined(__MSP430_HAS_PORT1__) ||                                    \
     defined(__MSP430_HAS_PORT1_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT1         ((ioportid_t)0x0020)
+#define IOPORT1         ((ioportid_t)P1IN_)
 #endif
 
 /**
@@ -168,7 +194,7 @@ typedef msp430_ioport_t *ioportid_t;
 #if defined(__MSP430_HAS_PORT2__) ||                                    \
     defined(__MSP430_HAS_PORT2_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT2         ((ioportid_t)0x0028)
+#define IOPORT2         ((ioportid_t)P2IN_)
 #endif
 
 /**
@@ -178,7 +204,7 @@ typedef msp430_ioport_t *ioportid_t;
 #if defined(__MSP430_HAS_PORT3__) ||                                    \
     defined(__MSP430_HAS_PORT3_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT3         ((ioportid_t)0x0018)
+#define IOPORT3         ((ioportid_t)P3IN_)
 #endif
 
 /**
@@ -188,7 +214,7 @@ typedef msp430_ioport_t *ioportid_t;
 #if defined(__MSP430_HAS_PORT4__) ||                                    \
     defined(__MSP430_HAS_PORT4_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT4         ((ioportid_t)0x001c)
+#define IOPORT4         ((ioportid_t)P4IN_)
 #endif
 
 /**
@@ -198,7 +224,7 @@ typedef msp430_ioport_t *ioportid_t;
 #if defined(__MSP430_HAS_PORT5__) ||                                    \
     defined(__MSP430_HAS_PORT5_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT5         ((ioportid_t)0x0030)
+#define IOPORT5         ((ioportid_t)P5IN_)
 #endif
 
 /**
@@ -208,7 +234,7 @@ typedef msp430_ioport_t *ioportid_t;
 #if defined(__MSP430_HAS_PORT6__) ||                                    \
     defined(__MSP430_HAS_PORT6_R__) ||                                  \
     defined(__DOXYGEN__)
-#define IOPORT6         ((ioportid_t)0x0034)
+#define IOPORT6         ((ioportid_t)P6IN_)
 #endif
 
 /*===========================================================================*/
@@ -236,7 +262,7 @@ typedef msp430_ioport_t *ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readport(port) ((port)->iop_common.in.reg_p)
+#define pal_lld_readport(port) ((port)->iop_common.in)
 
 /**
  * @brief   Reads the output latch.
@@ -248,7 +274,7 @@ typedef msp430_ioport_t *ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readlatch(port) ((port)->iop_common.out.reg_p)
+#define pal_lld_readlatch(port) ((port)->iop_common.out)
 
 /**
  * @brief   Writes a bits mask on a I/O port.
@@ -260,7 +286,7 @@ typedef msp430_ioport_t *ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writeport(port, bits) ((port)->iop_common.out.reg_p = (bits))
+#define pal_lld_writeport(port, bits) ((port)->iop_common.out = (bits))
 
 /**
  * @brief   Pads group mode setup.

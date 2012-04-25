@@ -113,6 +113,9 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Updated the MSP port to work with the latest MSPGCC compiler (4.6.3
+  LTS 20120406 unpatched), now the old MSPGCC 3.2.3 is no more supported
+  (backported to 2.4.1).
 - NEW: EXT driver improved, now it is possible to reprogram channels at
   runtime without necessarily specifying a new configuration.
   TODO: Update AT91SAM7 EXT driver.
