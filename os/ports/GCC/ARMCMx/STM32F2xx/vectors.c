@@ -183,106 +183,104 @@ __attribute__ ((naked))
 #endif
 void _unhandled_exception(void) {
 
-  asm volatile (
-    ".weak NMIVector            \nNMIVector:                \n\t"
-    ".weak HardFaultVector      \nHardFaultVector:          \n\t"
-    ".weak MemManageVector      \nMemManageVector:          \n\t"
-    ".weak BusFaultVector       \nBusFaultVector:           \n\t"
-    ".weak UsageFaultVector     \nUsageFaultVector:         \n\t"
-    ".weak Vector1C             \nVector1C:                 \n\t"
-    ".weak Vector20             \nVector20:                 \n\t"
-    ".weak Vector24             \nVector24:                 \n\t"
-    ".weak Vector28             \nVector28:                 \n\t"
-    ".weak SVCallVector         \nSVCallVector:             \n\t"
-    ".weak DebugMonitorVector   \nDebugMonitorVector:       \n\t"
-    ".weak Vector34             \nVector34:                 \n\t"
-    ".weak PendSVVector         \nPendSVVector:             \n\t"
-    ".weak SysTickVector        \nSysTickVector:            \n\t"
-    ".weak Vector40             \nVector40:                 \n\t"
-    ".weak Vector44             \nVector44:                 \n\t"
-    ".weak Vector48             \nVector48:                 \n\t"
-    ".weak Vector4C             \nVector4C:                 \n\t"
-    ".weak Vector50             \nVector50:                 \n\t"
-    ".weak Vector54             \nVector54:                 \n\t"
-    ".weak Vector58             \nVector58:                 \n\t"
-    ".weak Vector5C             \nVector5C:                 \n\t"
-    ".weak Vector60             \nVector60:                 \n\t"
-    ".weak Vector64             \nVector64:                 \n\t"
-    ".weak Vector68             \nVector68:                 \n\t"
-    ".weak Vector6C             \nVector6C:                 \n\t"
-    ".weak Vector70             \nVector70:                 \n\t"
-    ".weak Vector74             \nVector74:                 \n\t"
-    ".weak Vector78             \nVector78:                 \n\t"
-    ".weak Vector7C             \nVector7C:                 \n\t"
-    ".weak Vector80             \nVector80:                 \n\t"
-    ".weak Vector84             \nVector84:                 \n\t"
-    ".weak Vector88             \nVector88:                 \n\t"
-    ".weak Vector8C             \nVector8C:                 \n\t"
-    ".weak Vector90             \nVector90:                 \n\t"
-    ".weak Vector94             \nVector94:                 \n\t"
-    ".weak Vector98             \nVector98:                 \n\t"
-    ".weak Vector9C             \nVector9C:                 \n\t"
-    ".weak VectorA0             \nVectorA0:                 \n\t"
-    ".weak VectorA4             \nVectorA4:                 \n\t"
-    ".weak VectorA8             \nVectorA8:                 \n\t"
-    ".weak VectorAC             \nVectorAC:                 \n\t"
-    ".weak VectorB0             \nVectorB0:                 \n\t"
-    ".weak VectorB4             \nVectorB4:                 \n\t"
-    ".weak VectorB8             \nVectorB8:                 \n\t"
-    ".weak VectorBC             \nVectorBC:                 \n\t"
-    ".weak VectorC0             \nVectorC0:                 \n\t"
-    ".weak VectorC4             \nVectorC4:                 \n\t"
-    ".weak VectorC8             \nVectorC8:                 \n\t"
-    ".weak VectorCC             \nVectorCC:                 \n\t"
-    ".weak VectorD0             \nVectorD0:                 \n\t"
-    ".weak VectorD4             \nVectorD4:                 \n\t"
-    ".weak VectorD8             \nVectorD8:                 \n\t"
-    ".weak VectorDC             \nVectorDC:                 \n\t"
-    ".weak VectorE0             \nVectorE0:                 \n\t"
-    ".weak VectorE4             \nVectorE4:                 \n\t"
-    ".weak VectorE8             \nVectorE8:                 \n\t"
-    ".weak VectorEC             \nVectorEC:                 \n\t"
-    ".weak VectorF0             \nVectorF0:                 \n\t"
-    ".weak VectorF4             \nVectorF4:                 \n\t"
-    ".weak VectorF8             \nVectorF8:                 \n\t"
-    ".weak VectorFC             \nVectorFC:                 \n\t"
-    ".weak Vector100            \nVector100:                \n\t"
-    ".weak Vector104            \nVector104:                \n\t"
-    ".weak Vector108            \nVector108:                \n\t"
-    ".weak Vector10C            \nVector10C:                \n\t"
-    ".weak Vector110            \nVector110:                \n\t"
-    ".weak Vector114            \nVector114:                \n\t"
-    ".weak Vector118            \nVector118:                \n\t"
-    ".weak Vector11C            \nVector11C:                \n\t"
-    ".weak Vector120            \nVector120:                \n\t"
-    ".weak Vector124            \nVector124:                \n\t"
-    ".weak Vector128            \nVector128:                \n\t"
-    ".weak Vector12C            \nVector12C:                \n\t"
-    ".weak Vector130            \nVector130:                \n\t"
-    ".weak Vector134            \nVector134:                \n\t"
-    ".weak Vector138            \nVector138:                \n\t"
-    ".weak Vector13C            \nVector13C:                \n\t"
-    ".weak Vector140            \nVector140:                \n\t"
-    ".weak Vector144            \nVector144:                \n\t"
-    ".weak Vector148            \nVector148:                \n\t"
-    ".weak Vector14C            \nVector14C:                \n\t"
-    ".weak Vector150            \nVector150:                \n\t"
-    ".weak Vector154            \nVector154:                \n\t"
-    ".weak Vector158            \nVector158:                \n\t"
-    ".weak Vector15C            \nVector15C:                \n\t"
-    ".weak Vector160            \nVector160:                \n\t"
-    ".weak Vector164            \nVector164:                \n\t"
-    ".weak Vector168            \nVector168:                \n\t"
-    ".weak Vector16C            \nVector16C:                \n\t"
-    ".weak Vector170            \nVector170:                \n\t"
-    ".weak Vector174            \nVector174:                \n\t"
-    ".weak Vector178            \nVector178:                \n\t"
-    ".weak Vector17C            \nVector17C:                \n\t"
-    ".weak Vector180            \nVector180:                \n\t"
-  );
-
   while (TRUE)
     ;
 }
+
+void NMIVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void HardFaultVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void MemManageVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void BusFaultVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void UsageFaultVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector1C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector20(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector24(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector28(void) __attribute__((weak, alias("_unhandled_exception")));
+void SVCallVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void DebugMonitorVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector34(void) __attribute__((weak, alias("_unhandled_exception")));
+void PendSVVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void SysTickVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector40(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector44(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector48(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector4C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector50(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector54(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector58(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector5C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector60(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector64(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector68(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector6C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector70(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector74(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector78(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector7C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector80(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector84(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector88(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector8C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector90(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector94(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector98(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector9C(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorA0(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorA4(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorA8(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorAC(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorB0(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorB4(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorB8(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorBC(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorC0(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorC4(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorC8(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorCC(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorD0(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorD4(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorD8(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorDC(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorE0(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorE4(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorE8(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorEC(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorF0(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorF4(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorF8(void) __attribute__((weak, alias("_unhandled_exception")));
+void VectorFC(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector100(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector104(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector108(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector10C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector110(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector114(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector118(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector11C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector120(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector124(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector128(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector12C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector130(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector134(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector138(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector13C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector140(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector144(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector148(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector14C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector150(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector154(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector158(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector15C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector160(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector164(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector168(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector16C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector170(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector174(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector178(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector17C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector180(void) __attribute__((weak, alias("_unhandled_exception")));
 
 /** @} */
