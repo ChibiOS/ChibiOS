@@ -361,7 +361,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  */
-#define dmaWaitCompletion(dmastp)                                           \
+#define dmaWaitCompletion(dmastp) {                                         \
   while ((dmastp)->channel->CNDTR > 0)                                      \
     ;                                                                       \
   dmaStreamDisable(dmastp);                                                 \
