@@ -100,6 +100,8 @@
 - FIX: Fixed ADC maximum frequency limit in STM32F2/F4 ADC drivers (bug
   3484947).
 - FIX: Fixed various minor documentation errors (bug 3484942).
+- NEW: Updated the MSP port to work with the latest MSPGCC compiler (4.6.3
+  LTS 20120406 unpatched), now the old MSPGCC 3.2.3 is no more supported.
 
 *** 2.4.0 ***
 - NEW: Implemented new makefile system for ARM GCC ports, now objects,

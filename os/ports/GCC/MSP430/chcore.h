@@ -37,7 +37,7 @@
 #define _CHCORE_H_
 
 #include <iomacros.h>
-#include <msp430/common.h>
+#include <isr_compat.h>
 
 #if CH_DBG_ENABLE_STACK_CHECK
 #error "option CH_DBG_ENABLE_STACK_CHECK not supported by this port"
@@ -201,12 +201,14 @@ struct context {
   dbg_check_unlock();                                                       \
 }
 
+#define ISRNAME(pre, id) pre##id
+
 /**
  * @brief   IRQ handler function declaration.
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_IRQ_HANDLER(id) interrupt(id) _vect_##id(void)
+#define PORT_IRQ_HANDLER(id) ISR(id, ISRNAME(vect, id))
 
 /**
  * @brief   Port-related initialization code.

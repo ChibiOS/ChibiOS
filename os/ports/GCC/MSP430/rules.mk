@@ -4,9 +4,6 @@
 OPT = $(USE_OPT)
 COPT = $(USE_COPT)
 CPPOPT = $(USE_CPPOPT)
-ifeq ($(USE_CURRP_CACHING),yes)
-  OPT += -ffixed-r7 -DCH_CURRP_REGISTER_CACHE='"r7"'
-endif
 ifeq ($(USE_LINK_GC),yes)
   OPT += -ffunction-sections -fdata-sections
 endif

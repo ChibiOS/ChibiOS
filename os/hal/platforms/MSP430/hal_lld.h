@@ -36,7 +36,7 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "msp430x16x.h"
+#include "msp430.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -50,7 +50,7 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME   "MSP430x16x"
+#define PLATFORM_NAME   "MSP430"
 
 #define MSP430_CLOCK_SOURCE_XT2CLK  0   /**< @brief XT2CLK clock selector.  */
 #define MSP430_CLOCK_SOURCE_DCOCLK  1   /**< @brief DCOCLK clock selector.  */

@@ -41,7 +41,7 @@ endif
 PROJECT = ch
 
 # Define linker script file here
-LDSCRIPT = mspgcc/msp430x1611.x
+LDSCRIPT = msp430.x
 
 # Imported source files
 CHIBIOS = ../..
@@ -111,7 +111,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS =
+DDEFS = -D__MSP430F1611__
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =

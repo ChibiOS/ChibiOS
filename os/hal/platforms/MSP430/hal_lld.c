@@ -63,9 +63,10 @@
  */
 void hal_lld_init(void) {
 
-  /*
-   * Clock sources setup.
-   */
+  /* RTC initially stopped.*/
+  WDTCTL = 0x5A80;
+
+  /* Clock sources setup.*/
   DCOCTL  = VAL_DCOCTL;
   BCSCTL1 = VAL_BCSCTL1;
 #if MSP430_USE_CLOCK == MSP430_CLOCK_SOURCE_XT2CLK

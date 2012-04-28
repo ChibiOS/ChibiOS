@@ -33,8 +33,6 @@
  * @{
  */
 
-#include <signal.h>
-
 #include "ch.h"
 #include "hal.h"
 
@@ -184,7 +182,7 @@ static void usart1_deinit(void) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(USART0TX_VECTOR) {
+CH_IRQ_HANDLER(USART0TX) {
   msg_t b;
 
   CH_IRQ_PROLOGUE();
@@ -205,7 +203,7 @@ CH_IRQ_HANDLER(USART0TX_VECTOR) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(USART0RX_VECTOR) {
+CH_IRQ_HANDLER(USART0RX) {
   uint8_t urctl;
 
   CH_IRQ_PROLOGUE();
@@ -275,14 +273,10 @@ void sd_lld_init(void) {
 
 #if USE_MSP430_USART0
   sdObjectInit(&SD1, NULL, notify1);
-  /* I/O pins for USART0.*/
-  P3SEL |= BV(4) + BV(5);
 #endif
 
 #if USE_MSP430_USART1
   sdObjectInit(&SD2, NULL, notify2);
-  /* I/O pins for USART1.*/
-  P3SEL |= BV(6) + BV(7);
 #endif
 }
 

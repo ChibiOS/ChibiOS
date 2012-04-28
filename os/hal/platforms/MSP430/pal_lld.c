@@ -70,41 +70,41 @@
 void _pal_lld_init(const PALConfig *config) {
 
 #if defined(__MSP430_HAS_PORT1__) || defined(__MSP430_HAS_PORT1_R__)
-  IOPORT1->iop_full.ie.reg_p = 0;
-  IOPORT1->iop_full.ifg.reg_p = 0;
-  IOPORT1->iop_full.sel.reg_p = 0;
+  IOPORT1->iop_full.ie = 0;
+  IOPORT1->iop_full.ifg = 0;
+  IOPORT1->iop_full.sel = 0;
   IOPORT1->iop_common.out = config->P1Data.out;
   IOPORT1->iop_common.dir = config->P1Data.dir;
 #endif
 
 #if defined(__MSP430_HAS_PORT2__) || defined(__MSP430_HAS_PORT2_R__)
-  IOPORT2->iop_full.ie.reg_p = 0;
-  IOPORT2->iop_full.ifg.reg_p = 0;
-  IOPORT2->iop_full.sel.reg_p = 0;
+  IOPORT2->iop_full.ie = 0;
+  IOPORT2->iop_full.ifg = 0;
+  IOPORT2->iop_full.sel = 0;
   IOPORT2->iop_common.out = config->P2Data.out;
   IOPORT2->iop_common.dir = config->P2Data.dir;
 #endif
 
 #if defined(__MSP430_HAS_PORT3__) || defined(__MSP430_HAS_PORT3_R__)
-  IOPORT3->iop_simple.sel.reg_p = 0;
+  IOPORT3->iop_simple.sel = 0;
   IOPORT3->iop_common.out = config->P3Data.out;
   IOPORT3->iop_common.dir = config->P3Data.dir;
 #endif
 
 #if defined(__MSP430_HAS_PORT4__) || defined(__MSP430_HAS_PORT4_R__)
-  IOPORT4->iop_simple.sel.reg_p = 0;
+  IOPORT4->iop_simple.sel = 0;
   IOPORT4->iop_common.out = config->P4Data.out;
   IOPORT4->iop_common.dir = config->P4Data.dir;
 #endif
 
 #if defined(__MSP430_HAS_PORT5__) || defined(__MSP430_HAS_PORT5_R__)
-  IOPORT5->iop_simple.sel.reg_p = 0;
+  IOPORT5->iop_simple.sel = 0;
   IOPORT5->iop_common.out = config->P5Data.out;
   IOPORT5->iop_common.dir = config->P5Data.dir;
 #endif
 
 #if defined(__MSP430_HAS_PORT6__) || defined(__MSP430_HAS_PORT6_R__)
-  IOPORT6->iop_simple.sel.reg_p = 0;
+  IOPORT6->iop_simple.sel = 0;
   IOPORT6->iop_common.out = config->P6Data.out;
   IOPORT6->iop_common.dir = config->P6Data.dir;
 #endif
@@ -133,12 +133,12 @@ void _pal_lld_setgroupmode(ioportid_t port,
   switch (mode) {
   case PAL_MODE_RESET:
   case PAL_MODE_INPUT:
-    port->iop_common.dir.reg_p &= ~mask;
+    port->iop_common.dir &= ~mask;
     break;
   case PAL_MODE_UNCONNECTED:
-    port->iop_common.out.reg_p |= mask;
+    port->iop_common.out |= mask;
   case PAL_MODE_OUTPUT_PUSHPULL:
-    port->iop_common.dir.reg_p |= mask;
+    port->iop_common.dir |= mask;
     break;
   }
 }
