@@ -25,8 +25,6 @@
     for full details of how and when the exception can be applied.
 */
 
-#include <signal.h>
-
 #include "ch.h"
 #include "hal.h"
 
@@ -59,7 +57,7 @@ const PALConfig pal_default_config =
 };
 #endif
 
-CH_IRQ_HANDLER(TIMERA0_VECTOR) {
+CH_IRQ_HANDLER(TIMERA0) {
 
   CH_IRQ_PROLOGUE();
 
@@ -74,6 +72,14 @@ CH_IRQ_HANDLER(TIMERA0_VECTOR) {
  * Board-specific initialization code.
  */
 void boardInit(void) {
+
+#if USE_MSP430_USART0
+  P3SEL |= (1 << 4) | (1 << 5);
+#endif
+
+#if USE_MSP430_USART1
+  P3SEL |= (1 << 6) | (1 << 7);
+#endif
 
   /*
    * Timer 0 setup, uses SMCLK as source.
