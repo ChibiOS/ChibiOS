@@ -581,7 +581,7 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
     uint32_t mask = ~(0xF << (channel & 3));
     uint32_t port = ((extp->config->channels[channel].mode &
                       EXT_MODE_GPIO_MASK) >>
-                     EXT_MODE_GPIO_OFF) << (channel & 3);
+                     EXT_MODE_GPIO_OFF) << ((channel & 3) * 4);
 
 #if defined(STM32L1XX_MD) || defined(STM32F2XX) || defined(STM32F4XX)
   SYSCFG->EXTICR[n] = (SYSCFG->EXTICR[n] & mask) | port;
