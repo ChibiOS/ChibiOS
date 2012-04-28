@@ -405,10 +405,10 @@
                              PIN_PUDR_PULLUP(GPIOD_USELESS15))
 #define VAL_GPIOD_ODR       0xFFFFFFFF
 #define VAL_GPIOD_AFRL      0x00000000
-#define VAL_GPIOD_AFRH      (PIN_AFIO_AF(GPIOD_USART3_TX, 8) |              \
-                             PIN_AFIO_AF(GPIOD_USART3_RX, 8) |              \
-                             PIN_AFIO_AF(GPIOD_USART3_CTS, 8) |             \
-                             PIN_AFIO_AF(GPIOD_USART3_RTS, 8))
+#define VAL_GPIOD_AFRH      (PIN_AFIO_AF(GPIOD_USART3_TX, 7) |              \
+                             PIN_AFIO_AF(GPIOD_USART3_RX, 7) |              \
+                             PIN_AFIO_AF(GPIOD_USART3_CTS, 7) |             \
+                             PIN_AFIO_AF(GPIOD_USART3_RTS, 7))
 
 /*
  * Port E setup.
