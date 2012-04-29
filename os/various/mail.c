@@ -32,7 +32,7 @@
 /**
  * @brief   Initializes a Mail Pool.
  * @note    The number of the mail objects in the mail pool should be at
- *          least <b>2+size(mailbox)<b>, this considering one writer and
+ *          least <b>2+size(mailbox)</b>, this considering one writer and
  *          one reader, add one element for each extra reader or writer in
  *          order to avoid waiting on the mail pool. A smaller number of
  *          elements can be specified if waiting on the pool is acceptable.

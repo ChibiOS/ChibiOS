@@ -34,14 +34,14 @@
      defined(STM32F10X_HD))
 #if STM32_RTC_IS_CALENDAR
 /**
- * @brief     Converts from STM32 BCD to canonicalized time format.
+ * @brief   Converts from STM32 BCD to canonicalized time format.
  *
- * @param[out] timp     pointer to a @p tm structure defined in time.h
- * @param[in]  timespec pointer to a @p RTCTime structure
+ * @param[out] timp     pointer to a @p tm structure as defined in time.h
+ * @param[in] timespec  pointer to a @p RTCTime structure
  *
  * @notapi
  */
-void stm32_rtc_bcd2tm(struct tm *timp, RTCTime *timespec){
+static void stm32_rtc_bcd2tm(struct tm *timp, RTCTime *timespec) {
   uint32_t tv_time = timespec->tv_time;
   uint32_t tv_date = timespec->tv_date;
 
@@ -60,7 +60,7 @@ void stm32_rtc_bcd2tm(struct tm *timp, RTCTime *timespec){
   timp->tm_isdst = -1;
 
   timp->tm_wday = (tv_date & RTC_DR_WDU) >> RTC_DR_WDU_OFFSET;
-  if(timp->tm_wday == 7)
+  if (timp->tm_wday == 7)
     timp->tm_wday = 0;
 
   timp->tm_mday =  (tv_date & RTC_DR_DU) >> RTC_DR_DU_OFFSET;
@@ -86,14 +86,14 @@ void stm32_rtc_bcd2tm(struct tm *timp, RTCTime *timespec){
 }
 
 /**
- * @brief     Converts from canonicalized to STM32 BCD time format.
+ * @brief   Converts from canonicalized to STM32 BCD time format.
  *
- * @param[in]  timp     pointer to a @p tm structure defined in time.h
+ * @param[in] timp      pointer to a @p tm structure as defined in time.h
  * @param[out] timespec pointer to a @p RTCTime structure
  *
  * @notapi
  */
-void stm32_rtc_tm2bcd(struct tm *timp, RTCTime *timespec){
+static void stm32_rtc_tm2bcd(struct tm *timp, RTCTime *timespec) {
   uint32_t v = 0;
 
   timespec->tv_date = 0;
@@ -131,28 +131,29 @@ void stm32_rtc_tm2bcd(struct tm *timp, RTCTime *timespec){
 }
 
 /**
- * @brief     Gets raw time from RTC and converts it to canonicalized format.
+ * @brief   Gets raw time from RTC and converts it to canonicalized format.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[out] timp     pointer to a @p tm structure defined in time.h
+ * @param[out] timp     pointer to a @p tm structure as defined in time.h
  *
  * @api
  */
-void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp){
+void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
   RTCTime timespec = {0,0,FALSE,0};
+
   rtcGetTime(rtcp, &timespec);
   stm32_rtc_bcd2tm(timp, &timespec);
 }
 
 /**
- * @brief     Sets RTC time.
+ * @brief   Sets RTC time.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[out] timp     pointer to a @p tm structure defined in time.h
+ * @param[out] timp     pointer to a @p tm structure as defined in time.h
  *
  * @api
  */
-void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp){
+void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp) {
   RTCTime timespec = {0,0,FALSE,0};
 
   stm32_rtc_tm2bcd(timp, &timespec);
@@ -160,15 +161,14 @@ void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp){
 }
 
 /**
- * @brief     Gets raw time from RTC and converts it to unix format.
+ * @brief   Gets raw time from RTC and converts it to unix format.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- *
  * @return              Unix time value in seconds.
  *
  * @api
  */
-time_t rtcGetTimeUnixSec(RTCDriver *rtcp){
+time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
   RTCTime timespec = {0,0,FALSE,0};
   struct tm timp;
 
@@ -179,15 +179,14 @@ time_t rtcGetTimeUnixSec(RTCDriver *rtcp){
 }
 
 /**
- * @brief     Sets RTC time.
+ * @brief   Sets RTC time.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- *
  * @return              Unix time value in seconds.
  *
  * @api
  */
-void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec){
+void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec) {
   RTCTime timespec = {0,0,FALSE,0};
   struct tm *timp;
 
@@ -197,15 +196,14 @@ void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec){
 }
 
 /**
- * @brief     Gets raw time from RTC and converts it to unix format.
+ * @brief   Gets raw time from RTC and converts it to unix format.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- *
  * @return              Unix time value in microseconds.
  *
  * @api
  */
-uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp){
+uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp) {
   uint64_t result = 0;
 
   RTCTime timespec = {0,0,FALSE,0};
@@ -225,14 +223,14 @@ uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp){
 
 #else /* STM32_RTC_IS_CALENDAR */
 /**
- * @brief     Gets raw time from RTC and converts it to canonicalized format.
+ * @brief   Gets raw time from RTC and converts it to canonicalized format.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[out] timp     pointer to a @p tm structure defined in time.h
+ * @param[out] timp     pointer to a @p tm structure as defined in time.h
  *
  * @api
  */
-void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp){
+void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
   RTCTime timespec = {0,0,FALSE,0};
 
   rtcGetTime(rtcp, &timespec);
@@ -241,14 +239,14 @@ void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp){
 }
 
 /**
- * @brief     Sets RTC time.
+ * @brief   Sets RTC time.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- * @param[out] timp     pointer to a @p tm structure defined in time.h
+ * @param[out] timp     pointer to a @p tm structure as defined in time.h
  *
  * @api
  */
-void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp){
+void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp) {
   RTCTime timespec = {0,0,FALSE,0};
 
   timespec.tv_sec = mktime(timp);
@@ -257,15 +255,14 @@ void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp){
 }
 
 /**
- * @brief     Gets raw time from RTC and converts it to unix format.
+ * @brief   Gets raw time from RTC and converts it to unix format.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- *
  * @return              Unix time value in seconds.
  *
  * @api
  */
-time_t rtcGetTimeUnixSec(RTCDriver *rtcp){
+time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
   RTCTime timespec = {0,0,FALSE,0};
 
   rtcGetTime(rtcp, &timespec);
@@ -273,15 +270,14 @@ time_t rtcGetTimeUnixSec(RTCDriver *rtcp){
 }
 
 /**
- * @brief     Sets RTC time.
+ * @brief   Sets RTC time.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- *
  * @return              Unix time value in seconds.
  *
  * @api
  */
-void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec){
+void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec) {
   RTCTime timespec = {0,0,FALSE,0};
 
   timespec.tv_sec = tv_sec;
@@ -290,15 +286,14 @@ void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec){
 }
 
 /**
- * @brief     Gets raw time from RTC and converts it to unix format.
+ * @brief   Gets raw time from RTC and converts it to unix format.
  *
  * @param[in] rtcp      pointer to RTC driver structure
- *
  * @return              Unix time value in microseconds.
  *
  * @api
  */
-uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp){
+uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp) {
   uint64_t result = 0;
   RTCTime timespec = {0,0,FALSE,0};
 
@@ -317,12 +312,12 @@ uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp){
 /**
  * @brief   Get current time in format suitable for usage in FatFS.
  *
- * @param[in] timespec  pointer to time value structure
+ * @param[in] rtcp      pointer to RTC driver structure
  * @return              FAT time value.
  *
  * @api
  */
-uint32_t rtcGetTimeFat(RTCDriver *rtcp){
+uint32_t rtcGetTimeFat(RTCDriver *rtcp) {
   uint32_t fattime = 0;
   struct tm *timp = NULL;
 
