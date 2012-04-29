@@ -27,7 +27,10 @@
  *          <h2>Operation mode</h2>
  *          The Memory Pools APIs allow to allocate/free fixed size objects in
  *          <b>constant time</b> and reliably without memory fragmentation
- *          problems.
+ *          problems.<br>
+ *          Memory Pools do not enforce any alignment constraint on the
+ *          contained object however the objects must be properly aligned
+ *          to contain a pointer to void.
  * @pre     In order to use the memory pools APIs the @p CH_USE_MEMPOOLS option
  *          must be enabled in @p chconf.h.
  * @{
@@ -56,7 +59,7 @@ void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
   chDbgCheck((mp != NULL) && (size >= sizeof(void *)), "chPoolInit");
 
   mp->mp_next = NULL;
-  mp->mp_object_size = MEM_ALIGN_NEXT(size);
+  mp->mp_object_size = size;
   mp->mp_provider = provider;
 }
 
@@ -75,8 +78,7 @@ void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
  */
 void chPoolLoadArray(MemoryPool *mp, void *p, size_t n) {
 
-  chDbgCheck((mp != NULL) && MEM_IS_ALIGNED(p) && (n != 0),
-             "chPoolLoadArray");
+  chDbgCheck((mp != NULL) && (n != 0), "chPoolLoadArray");
 
   while (n) {
     chPoolAdd(mp, p);
@@ -132,8 +134,7 @@ void *chPoolAlloc(MemoryPool *mp) {
  * @pre     The memory pool must be already been initialized.
  * @pre     The freed object must be of the right size for the specified
  *          memory pool.
- * @pre     The freed object must be memory aligned to the size of
- *          @p stkalign_t type.
+ * @pre     The object must be properly aligned to contain a pointer to void.
  *
  * @param[in] mp        pointer to a @p MemoryPool structure
  * @param[in] objp      the pointer to the object to be released
@@ -144,8 +145,7 @@ void chPoolFreeI(MemoryPool *mp, void *objp) {
   struct pool_header *php = objp;
 
   chDbgCheckClassI();
-  chDbgCheck((mp != NULL) && (objp != NULL) && MEM_IS_ALIGNED(objp),
-             "chPoolFreeI");
+  chDbgCheck((mp != NULL) && (objp != NULL), "chPoolFreeI");
 
   php->ph_next = mp->mp_next;
   mp->mp_next = php;
@@ -156,8 +156,7 @@ void chPoolFreeI(MemoryPool *mp, void *objp) {
  * @pre     The memory pool must be already been initialized.
  * @pre     The freed object must be of the right size for the specified
  *          memory pool.
- * @pre     The freed object must be memory aligned to the size of
- *          @p stkalign_t type.
+ * @pre     The object must be properly aligned to contain a pointer to void.
  *
  * @param[in] mp        pointer to a @p MemoryPool structure
  * @param[in] objp      the pointer to the object to be released
