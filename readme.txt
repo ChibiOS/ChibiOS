@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed code coverage crashes with Linux/gcc-4.4.5 (bug 3522301)
+  (backported to 2.4.1).
 - FIX: Fixed macro dmaWaitCompletion() fails to compile in STM32 HAL (bug
   3519202)(backported to 2.4.1).
 - FIX: Fixed ARM addresses generated in vectors table (bug 3519037)(backported
