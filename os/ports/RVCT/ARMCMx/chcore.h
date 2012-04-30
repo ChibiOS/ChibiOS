@@ -172,7 +172,7 @@ struct intctx {};
 
 #if (CH_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
 /**
- * @brief   Inlineable version of this kernel function.
+ * @brief   Inline-able version of this kernel function.
  */
 #define chSchIsPreemptionRequired()                                         \
   (rlist.r_preempt ? firstprio(&rlist.r_queue) > currp->p_prio :            \

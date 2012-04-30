@@ -265,7 +265,7 @@ Mutex *chMtxUnlock(void) {
   chDbgAssert(ctp->p_mtxlist->m_owner == ctp,
               "chMtxUnlock(), #2",
               "ownership failure");
-  /* Removes the top Mutex from the Thread's owned mutexes list and matk it
+  /* Removes the top Mutex from the Thread's owned mutexes list and mark it
      as not owned.*/
   ump = ctp->p_mtxlist;
   ctp->p_mtxlist = ump->m_next;
