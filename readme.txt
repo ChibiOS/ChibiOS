@@ -87,6 +87,8 @@
   SAM7S512 (bug 3517648).
 - FIX: Fixed a few more spelling fixes (bug 3515531).
 - FIX: Fixed spurious ) char in STM32 serial_lld.h (bug 3514138).
+- FIX: Fixed problem with FPU initialization in GCC Cortex-M4 port (bug
+  3513897).
 - FIX: Spelling fixes (bug 3510812).
 - FIX: Fixed STM32 ICUD8 not functional because wrong initialization (bug
   3508758).

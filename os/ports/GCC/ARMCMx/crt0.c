@@ -33,10 +33,7 @@
  * @{
  */
 
-#include <stdint.h>
-
-#define FALSE   0
-#define TRUE    (!FALSE)
+#include "ch.h"
 
 typedef void (*funcp_t)(void);
 typedef funcp_t * funcpp_t;
@@ -257,7 +254,7 @@ static void fill32(uint32_t *start, uint32_t *end, uint32_t filler) {
 __attribute__((naked))
 #endif
 void ResetHandler(void) {
-  uint32_t psp, ctl;
+  uint32_t psp, reg;
 
   /* Process Stack initialization, it is allocated starting from the
      symbol __process_stack_end__ and its lower limit is the symbol
@@ -266,9 +263,25 @@ void ResetHandler(void) {
   psp = SYMVAL(__process_stack_end__);
   asm volatile ("msr     PSP, %0" : : "r" (psp));
 
+#if CORTEX_USE_FPU
+  /* Initializing the FPU context save in lazy mode.*/
+  SCB_FPCCR = FPCCR_ASPEN | FPCCR_LSPEN;
+
+  /* CP10 and CP11 set to full access.*/
+  SCB_CPACR |= 0x00F00000;
+
+  /* FPSCR and FPDSCR initially zero.*/
+  reg = 0;
+  asm volatile ("vmsr    FPSCR, %0" : : "r" (reg) : "memory");
+  SCB_FPDSCR = reg;
+
+  /* CPU mode initialization, enforced FPCA bit.*/
+  reg = CRT0_CONTROL_INIT | 4;
+#else
   /* CPU mode initialization.*/
-  ctl = CRT0_CONTROL_INIT;
-  asm volatile ("msr     CONTROL, %0" : : "r" (ctl));
+  reg = CRT0_CONTROL_INIT;
+#endif
+  asm volatile ("msr     CONTROL, %0" : : "r" (reg));
   asm volatile ("isb");
 
   /* Early initialization hook invocation.*/

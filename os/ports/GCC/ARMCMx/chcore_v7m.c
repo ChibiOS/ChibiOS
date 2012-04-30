@@ -121,28 +121,6 @@ void _port_init(void) {
   SCB_VTOR = CORTEX_VTOR_INIT;
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);
 
-#if CORTEX_USE_FPU
-  {
-    uint32_t reg;
-
-    /* Initializing the FPU context save in lazy mode.*/
-    SCB_FPCCR = FPCCR_ASPEN | FPCCR_LSPEN;
-
-    /* CP10 and CP11 set to full access.*/
-    SCB_CPACR |= 0x00F00000;
-
-    /* Enables FPU context save/restore on exception entry/exit (FPCA bit).*/
-    asm volatile ("mrs     %0, CONTROL" : "=r" (reg) : : "memory");
-    reg |= 4;
-    asm volatile ("msr     CONTROL, %0" : : "r" (reg) : "memory");
-
-    /* FPSCR and FPDSCR initially zero.*/
-    reg = 0;
-    asm volatile ("vmsr    FPSCR, %0" : : "r" (reg) : "memory");
-    SCB_FPDSCR = reg;
-  }
-#endif
-
   /* Initialization of the system vectors used by the port.*/
   nvicSetSystemHandlerPriority(HANDLER_SVCALL,
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));
