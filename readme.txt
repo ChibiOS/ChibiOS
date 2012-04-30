@@ -164,7 +164,7 @@
   when compiling with optimizations disabled, which is common during
   debugging. In order to save RAM trim back this value when compilung with
   optimizations enabled.
-- CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renamed to  icuGetWidth()
+- CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renamed to icuGetWidth()
   and icuGetPeriod().
 - CHANGE: Renamed Ethernet driver in AT91 HAL ETHD1.
 
