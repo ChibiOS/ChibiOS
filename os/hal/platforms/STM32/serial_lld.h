@@ -115,7 +115,7 @@
  * @brief   USART2 interrupt priority level setting.
  */
 #if !defined(STM32_SERIAL_USART2_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SERIAL_USART2_PRIORITY        12)
+#define STM32_SERIAL_USART2_PRIORITY        12
 #endif
 
 /**

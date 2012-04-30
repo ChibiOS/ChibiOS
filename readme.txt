@@ -85,6 +85,8 @@
 - FIX: Fixed ARM addresses generated in vectors table (bug 3519037).
 - FIX: Fixed missing serial driver functionality for SAM7S64, SAM7S128 and
   SAM7S512 (bug 3517648).
+- FIX: Fixed a few more spelling fixes (bug 3515531).
+- FIX: Fixed spurious ) char in STM32 serial_lld.h (bug 3514138).
 - FIX: Spelling fixes (bug 3510812).
 - FIX: Fixed STM32 ICUD8 not functional because wrong initialization (bug
   3508758).
