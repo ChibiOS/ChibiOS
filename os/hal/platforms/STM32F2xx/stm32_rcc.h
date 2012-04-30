@@ -430,6 +430,42 @@
 /** @} */
 
 /**
+ * @name    ETH peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the ETH peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableETH(lp) rccEnableAHB1(RCC_AHB1ENR_ETHMACEN |               \
+                                       RCC_AHB1ENR_ETHMACTXEN |             \
+                                       RCC_AHB1ENR_ETHMACRXEN, lp)
+
+/**
+ * @brief   Disables the ETH peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableETH(lp) rccDisableAHB1(RCC_AHB1ENR_ETHMACEN |             \
+                                         RCC_AHB1ENR_ETHMACTXEN |           \
+                                         RCC_AHB1ENR_ETHMACRXEN, lp)
+
+/**
+ * @brief   Resets the ETH peripheral.
+ *
+ * @api
+ */
+#define rccResetETH() rccResetAHB1(RCC_AHB1RSTR_ETHMACRST)
+/** @} */
+
+/**
  * @name    I2C peripherals specific RCC operations
  * @{
  */
@@ -507,6 +543,36 @@
  * @api
  */
 #define rccResetI2C3() rccResetAPB1(RCC_APB1RSTR_I2C3RST)
+/** @} */
+
+/**
+ * @name    OTG peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the OTG_FS peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableOTG_FS(lp) rccEnableAHB2(RCC_AHB2LPENR_OTGFSLPEN, lp)
+
+/**
+ * @brief   Disables the OTG_FS peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableOTG_FS(lp) rccEnableAHB2(RCC_AHB2LPENR_OTGFSLPEN, lp)
+
+/**
+ * @brief   Resets the OTG_FS peripheral.
+ *
+ * @api
+ */
+#define rccResetOTG_FS() rccResetAHB2(RCC_AHB2RSTR_OTGFSRST)
 /** @} */
 
 /**

@@ -132,6 +132,21 @@
  */
 
 /**
+ * @defgroup STM32F4xx_MAC STM32F4xx MAC Support
+ * @details The STM32F4xx MAC driver supports the ETH peripheral.
+ *
+ * @section stm32f4xx_mac_1 Supported HW resources
+ * - ETH.
+ * - PHY (external).
+ * .
+ * @section stm32f4xx_mac_2 STM32F4xx MAC driver implementation features
+ * - Dedicated DMA operations.
+ * - Support for checksum off-loading.
+ * .
+ * @ingroup STM32F4xx_DRIVERS
+ */
+
+/**
  * @defgroup STM32F4xx_PAL STM32F4xx PAL Support
  * @details The STM32F4xx PAL driver uses the GPIO peripherals.
  *
