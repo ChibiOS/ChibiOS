@@ -43,26 +43,28 @@
 __attribute__((used))
 static void __dummy(Thread *ntp, Thread *otp) {
   (void)ntp; (void)otp;
+
+  asm volatile (
 #if defined(WIN32)
-  asm volatile (".globl @port_switch@8                          \n\t" \
-                "@port_switch@8:");
+                ".globl @port_switch@8                          \n\t"
+                "@port_switch@8:"
 #elif defined(__APPLE__)
-  asm volatile (".globl _port_switch                            \n\t" \
-                "_port_switch:");
+                ".globl _port_switch                            \n\t"
+                "_port_switch:"
 #else
-  asm volatile (".globl port_switch                             \n\t" \
-                "port_switch:");
+                ".globl port_switch                             \n\t"
+                "port_switch:"
 #endif
-  asm volatile ("push    %ebp                                   \n\t" \
-                "push    %esi                                   \n\t" \
-                "push    %edi                                   \n\t" \
-                "push    %ebx                                   \n\t" \
-                "movl    %esp, 12(%edx)                         \n\t" \
-                "movl    12(%ecx), %esp                         \n\t" \
-                "pop     %ebx                                   \n\t" \
-                "pop     %edi                                   \n\t" \
-                "pop     %esi                                   \n\t" \
-                "pop     %ebp                                   \n\t" \
+                "push    %ebp                                   \n\t"
+                "push    %esi                                   \n\t"
+                "push    %edi                                   \n\t"
+                "push    %ebx                                   \n\t"
+                "movl    %esp, 12(%edx)                         \n\t"
+                "movl    12(%ecx), %esp                         \n\t"
+                "pop     %ebx                                   \n\t"
+                "pop     %edi                                   \n\t"
+                "pop     %esi                                   \n\t"
+                "pop     %ebp                                   \n\t"
                 "ret");
 }
 
