@@ -236,6 +236,7 @@ static const USBEndpointConfig ep1config = {
   0x0040,
   0x0000,
   NULL,
+  NULL,
   NULL
 };
 
@@ -250,6 +251,7 @@ static const USBEndpointConfig ep2config = {
   0x0010,
   0x0000,
   NULL,
+  NULL,
   NULL
 };
 
@@ -263,6 +265,7 @@ static const USBEndpointConfig ep3config = {
   sduDataReceived,
   0x0000,
   0x0040,
+  NULL,
   NULL,
   NULL
 };
