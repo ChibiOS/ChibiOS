@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.1 ***
+- FIX: Fixed three testhal builds fail (bug 3523322).
+- FIX: Fixed MAC driver functions with invalid name (bug 3522808).
 - FIX: Fixed code coverage crashes with Linux/gcc-4.4.5 (bug 3522301).
 - FIX: Fixed macro dmaWaitCompletion() fails to compile in STM32 HAL (bug
   3519202).

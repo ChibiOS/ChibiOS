@@ -48,16 +48,21 @@
 #define STM32_HSE_ENABLED                   TRUE
 #define STM32_LSE_ENABLED                   FALSE
 #define STM32_SW                            STM32_SW_PLL
-#define STM32_PLLSRC                        STM32_PLLSRC_HSE
-#define STM32_PLLXTPRE                      STM32_PLLXTPRE_DIV1
+#define STM32_PLLSRC                        STM32_PLLSRC_PREDIV1
+#define STM32_PREDIV1SRC                    STM32_PREDIV1SRC_PLL2
+#define STM32_PREDIV1_VALUE                 5
 #define STM32_PLLMUL_VALUE                  9
+#define STM32_PREDIV2_VALUE                 5
+#define STM32_PLL2MUL_VALUE                 8
+#define STM32_PLL3MUL_VALUE                 10
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE1                         STM32_PPRE1_DIV2
 #define STM32_PPRE2                         STM32_PPRE2_DIV2
 #define STM32_ADCPRE                        STM32_ADCPRE_DIV4
-#define STM32_USB_CLOCK_REQUIRED            TRUE
-#define STM32_USBPRE                        STM32_USBPRE_DIV1P5
-#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
+#define STM32_OTG_CLOCK_REQUIRED            TRUE
+#define STM32_OTGFSPRE                      STM32_OTGFSPRE_DIV3
+#define STM32_I2S_CLOCK_REQUIRED            FALSE
+#define STM32_MCOSEL                        STM32_MCOSEL_PLL3
 #define STM32_RTCSEL                        STM32_RTCSEL_HSEDIV
 #define STM32_PVD_ENABLE                    FALSE
 #define STM32_PLS                           STM32_PLS_LEV0
@@ -164,8 +169,8 @@
  * SERIAL driver system settings.
  */
 #define STM32_SERIAL_USE_USART1             FALSE
-#define STM32_SERIAL_USE_USART2             TRUE
-#define STM32_SERIAL_USE_USART3             FALSE
+#define STM32_SERIAL_USE_USART2             FALSE
+#define STM32_SERIAL_USE_USART3             TRUE
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
 #define STM32_SERIAL_USE_USART6             FALSE
