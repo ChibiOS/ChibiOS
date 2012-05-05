@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed three testhal builds fail (bug 3523322)(backported to 2.4.1).
 - FIX: Fixed MAC driver functions with invalid name (bug 3522808)(backported
   to 2.2.10 and 2.4.1).
 - FIX: Fixed code coverage crashes with Linux/gcc-4.4.5 (bug 3522301)
