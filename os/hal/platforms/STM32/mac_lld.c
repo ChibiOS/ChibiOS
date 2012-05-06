@@ -391,7 +391,7 @@ void mac_lld_stop(MACDriver *macp) {
  *
  * @notapi
  */
-msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
+msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
                                       MACTransmitDescriptor *tdp) {
   stm32_eth_tx_descriptor_t *tdes;
 
@@ -500,7 +500,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
  *
  * @notapi
  */
-msg_t max_lld_get_receive_descriptor(MACDriver *macp,
+msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
                                      MACReceiveDescriptor *rdp) {
   stm32_eth_rx_descriptor_t *rdes;
 
@@ -512,12 +512,12 @@ msg_t max_lld_get_receive_descriptor(MACDriver *macp,
   /* Iterates through received frames until a valid one is found, invalid
      frames are discarded.*/
   while (!(rdes->rdes0 & STM32_RDES0_OWN)) {
-    if (!(rdes->rdes0 & (STM32_RDES0_AFM | STM32_RDES0_ES
+    if (!(rdes->rdes0 & (STM32_RDES0_AFM | STM32_RDES0_ES))
 #if STM32_IP_CHECKSUM_OFFLOAD
-                       | STM32_RDES0_IPHCE | STM32_RDES0_PCE
+        && !(rdes->rdes0 & STM32_RDES0_FT & (STM32_RDES0_IPHCE |
+                                             STM32_RDES0_PCE))
 #endif
-        )) && (rdes->rdes0 & STM32_RDES0_FS) &&
-              (rdes->rdes0 & STM32_RDES0_LS)) {
+        && (rdes->rdes0 & STM32_RDES0_FS) && (rdes->rdes0 & STM32_RDES0_LS)) {
       /* Found a valid one.*/
       rdp->offset   = 0;
       rdp->size     = ((rdes->rdes0 & STM32_RDES0_FL_MASK) >> 16) - 4;

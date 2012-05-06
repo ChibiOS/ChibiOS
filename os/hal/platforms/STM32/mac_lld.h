@@ -145,7 +145,7 @@
  * @brief   Maximum supported frame size.
  */
 #if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define STM32_MAC_BUFFERS_SIZE      1518
+#define STM32_MAC_BUFFERS_SIZE      1522
 #endif
 
 /**
@@ -330,13 +330,13 @@ extern "C" {
   void mac_lld_init(void);
   void mac_lld_start(MACDriver *macp);
   void mac_lld_stop(MACDriver *macp);
-  msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
+  msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
                                         MACTransmitDescriptor *tdp);
   size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
                                            uint8_t *buf,
                                            size_t size);
   void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp);
-  msg_t max_lld_get_receive_descriptor(MACDriver *macp,
+  msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
                                        MACReceiveDescriptor *rdp);
   size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
                                          uint8_t *buf,

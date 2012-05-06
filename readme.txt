@@ -107,7 +107,10 @@
 - FIX: Fixed ADC maximum frequency limit in STM32F2/F4 ADC drivers (bug
   3484947).
 - FIX: Fixed various minor documentation errors (bug 3484942).
-- NEW: STM32 Ethernet driver added.
+- NEW: STM32 Ethernet driver completed. Added STM32F107 and STM32F407
+  lwIP demos.
+- NEW: lwIP related code is not centralized into a single place, no need to
+  duplicate the code in each application or demo.
 - NEW: Updated the MSP port to work with the latest MSPGCC compiler (4.6.3
   LTS 20120406 unpatched), now the old MSPGCC 3.2.3 is no more supported.
 

@@ -160,7 +160,7 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
   chDbgAssert(macp->state == MAC_ACTIVE, "macWaitTransmitDescriptor(), #1",
               "not active");
 
-  while (((msg = max_lld_get_transmit_descriptor(macp, tdp)) != RDY_OK) &&
+  while (((msg = mac_lld_get_transmit_descriptor(macp, tdp)) != RDY_OK) &&
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();
@@ -218,7 +218,7 @@ msg_t macWaitReceiveDescriptor(MACDriver *macp,
   chDbgAssert(macp->state == MAC_ACTIVE, "macWaitReceiveDescriptor(), #1",
               "not active");
 
-  while (((msg = max_lld_get_receive_descriptor(macp, rdp)) != RDY_OK) &&
+  while (((msg = mac_lld_get_receive_descriptor(macp, rdp)) != RDY_OK) &&
          (time > 0)) {
     chSysLock();
     systime_t now = chTimeNow();

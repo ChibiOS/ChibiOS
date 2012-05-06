@@ -64,7 +64,7 @@
 /**
  * @brief   Ethernet driver 1.
  */
-MACDriver ETH1;
+MACDriver ETHD1;
 
 /*===========================================================================*/
 /* Driver local variables.                                                   */
@@ -107,9 +107,9 @@ static void serve_interrupt(void) {
   if ((isr & AT91C_EMAC_RCOMP) || (rsr & RSR_BITS)) {
     if (rsr & AT91C_EMAC_REC) {
       chSysLockFromIsr();
-      chSemResetI(&ETH1.rdsem, 0);
+      chSemResetI(&ETHD1.rdsem, 0);
 #if MAC_USE_EVENTS
-      chEvtBroadcastI(&ETH1.rdevent);
+      chEvtBroadcastI(&ETHD1.rdevent);
 #endif
       chSysUnlockFromIsr();
     }
@@ -119,7 +119,7 @@ static void serve_interrupt(void) {
   if ((isr & AT91C_EMAC_TCOMP) || (tsr & TSR_BITS)) {
     if (tsr & AT91C_EMAC_COMP) {
       chSysLockFromIsr();
-      chSemResetI(&ETH1.tdsem, 0);
+      chSemResetI(&ETHD1.tdsem, 0);
       chSysUnlockFromIsr();
     }
     AT91C_BASE_EMAC->EMAC_TSR = TSR_BITS;
@@ -184,12 +184,12 @@ CH_IRQ_HANDLER(irq_handler) {
 void mac_lld_init(void) {
 
   miiInit();
-  macObjectInit(&ETH1);
+  macObjectInit(&ETHD1);
 
   /*
    * Associated PHY initialization.
    */
-  miiReset(&ETH1);
+  miiReset(&ETHD1);
 
   /*
    * EMAC pins setup. Note, PB18 is not included because it is
@@ -255,8 +255,8 @@ void mac_lld_start(MACDriver *macp) {
    * PHY device identification.
    */
   AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_MPE;
-  if ((miiGet(&ETH1, MII_PHYSID1) != (PHY_ID >> 16)) ||
-      ((miiGet(&ETH1, MII_PHYSID2) & 0xFFF0) != (PHY_ID & 0xFFF0)))
+  if ((miiGet(&ETHD1, MII_PHYSID1) != (PHY_ID >> 16)) ||
+      ((miiGet(&ETHD1, MII_PHYSID2) & 0xFFF0) != (PHY_ID & 0xFFF0)))
     chSysHalt();
   AT91C_BASE_EMAC->EMAC_NCR &= ~AT91C_EMAC_MPE;
 
@@ -295,7 +295,7 @@ void mac_lld_stop(MACDriver *macp) {
  *
  * @notapi
  */
-msg_t max_lld_get_transmit_descriptor(MACDriver *macp,
+msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
                                       MACTransmitDescriptor *tdp) {
   EMACDescriptor *edp;
 
@@ -385,7 +385,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
  *
  * @notapi
  */
-msg_t max_lld_get_receive_descriptor(MACDriver *macp,
+msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
                                      MACReceiveDescriptor *rdp) {
   unsigned n;
   EMACDescriptor *edp;

@@ -53,6 +53,7 @@
  * Ethernet PHY type.
  */
 #define BOARD_PHY_ID            MII_STE101P_ID
+#define BOARD_PHY_RMII
 
 /*
  * IO pins assignments.
