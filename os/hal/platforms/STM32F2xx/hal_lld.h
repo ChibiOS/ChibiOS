@@ -319,7 +319,7 @@
 #define STM32_I2C1_RX_DMA_CHN   0x00100001
 #define STM32_I2C1_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 7)) |           \
                                  (STM32_DMA_STREAM_ID_MSK(1, 6))
-#define STM32_I2C1_TX_DMA_CHN   0x10000000
+#define STM32_I2C1_TX_DMA_CHN   0x11000000
 
 #define STM32_HAS_I2C2          TRUE
 #define STM32_I2C2_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 2) |            \

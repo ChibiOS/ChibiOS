@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed STM32 I2C1 wrong alternate TX DMA setting (bug 3524088)
+  (backported to 2.4.1).
 - FIX: Fixed system state check problem related to FatFS (bug 3523769).
 - FIX: Fixed three testhal builds fail (bug 3523322)(backported to 2.4.1).
 - FIX: Fixed MAC driver functions with invalid name (bug 3522808)(backported
