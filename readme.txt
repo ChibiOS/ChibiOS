@@ -159,20 +159,20 @@
 - NEW: Added handling of input 2 to the STM32 ICU driver (contributed by
   Fabio).
 - NEW: STM32 Ethernet driver completed. Added STM32F107 and STM32F407
-  lwIP demos.
+  lwIP demos (backported to 2.4.1).
 - NEW: lwIP related code is not centralized into a single place, no need to
-  duplicate the code in each application or demo.
+  duplicate the code in each application or demo (backported to 2.4.1).
 - CHANGE: Kernel memory pools now do not check the alignment of the inserted
   objects, it is responsibility of the application to insert properly
   aligned objects.
 - CHANGE: The PORT_INT_REQUIRED_STACK parameter for the Cortex-Mx ports has
   been increased to 32 from 16 because the stack frame sizes are increased
   when compiling with optimizations disabled, which is common during
-  debugging. In order to save RAM trim back this value when compilung with
-  optimizations enabled.
+  debugging. In order to save RAM trim back this value when compiling with
+  optimizations enabled (backported to 2.4.1).
 - CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renamed to icuGetWidth()
   and icuGetPeriod().
-- CHANGE: Renamed Ethernet driver in AT91 HAL ETHD1.
+- CHANGE: Renamed Ethernet driver in AT91 HAL ETHD1 (backported to 2.4.1).
 
 *** 2.3.5 ***
 - FIX: Fixed RTC compile problem on STM32F103 (bug 3468445).
