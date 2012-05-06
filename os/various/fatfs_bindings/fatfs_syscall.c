@@ -26,7 +26,7 @@
 #include "ch.h"
 #include "ff.h"
 
-MEMORYPOOL_DECL(fs_sem_pool, sizeof(Semaphore), chCoreAlloc);
+MEMORYPOOL_DECL(fs_sem_pool, sizeof(Semaphore), chCoreAllocI);
 
 #if _FS_REENTRANT
 /*------------------------------------------------------------------------*/

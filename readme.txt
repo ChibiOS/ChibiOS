@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed system state check problem related to FatFS (bug 3523769).
 - FIX: Fixed three testhal builds fail (bug 3523322)(backported to 2.4.1).
 - FIX: Fixed MAC driver functions with invalid name (bug 3522808)(backported
   to 2.2.10 and 2.4.1).
@@ -170,9 +171,9 @@
   when compiling with optimizations disabled, which is common during
   debugging. In order to save RAM trim back this value when compiling with
   optimizations enabled (backported to 2.4.1).
+- CHANGE: Renamed Ethernet driver in AT91 HAL ETHD1 (backported to 2.4.1).
 - CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renamed to icuGetWidth()
   and icuGetPeriod().
-- CHANGE: Renamed Ethernet driver in AT91 HAL ETHD1 (backported to 2.4.1).
 
 *** 2.3.5 ***
 - FIX: Fixed RTC compile problem on STM32F103 (bug 3468445).
