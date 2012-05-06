@@ -113,6 +113,12 @@
   duplicate the code in each application or demo.
 - NEW: Updated the MSP port to work with the latest MSPGCC compiler (4.6.3
   LTS 20120406 unpatched), now the old MSPGCC 3.2.3 is no more supported.
+- CHANGE: The PORT_INT_REQUIRED_STACK parameter for the Cortex-Mx ports has
+  been increased to 32 from 16 because the stack frame sizes are increased
+  when compiling with optimizations disabled, which is common during
+  debugging. In order to save RAM trim back this value when compiling with
+  optimizations enabled.
+- CHANGE: Renamed Ethernet driver in AT91 HAL ETHD1.
 
 *** 2.4.0 ***
 - NEW: Implemented new makefile system for ARM GCC ports, now objects,

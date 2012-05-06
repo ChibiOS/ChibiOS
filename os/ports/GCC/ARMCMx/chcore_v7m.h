@@ -73,12 +73,12 @@
  *          This value can be zero on those architecture where there is a
  *          separate interrupt stack and the stack space between @p intctx and
  *          @p extctx is known to be zero.
- * @note    In this port it is conservatively set to 16 because the function
+ * @note    In this port it is conservatively set to 32 because the function
  *          @p chSchDoReschedule() can have a stack frame, especially with
  *          compiler optimizations disabled.
  */
 #if !defined(PORT_INT_REQUIRED_STACK)
-#define PORT_INT_REQUIRED_STACK         16
+#define PORT_INT_REQUIRED_STACK         32
 #endif
 
 /**
