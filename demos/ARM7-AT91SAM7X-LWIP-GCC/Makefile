@@ -51,8 +51,8 @@ include $(CHIBIOS)/os/hal/platforms/AT91SAM7/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARM/AT91SAM7/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
 include $(CHIBIOS)/test/test.mk
-include ./lwip/lwip.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/AT91SAM7X256.ld
@@ -65,15 +65,9 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(LWNETIFSRC) \
-       $(LWCORESRC) \
-       $(LWIPV4SRC) \
-       $(LWAPISRC) \
+       $(LWSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
-       ./lwip/arch/sys_arch.c \
-       ./lwip/lwipthread.c \
-       ./web/web.c \
-       main.c
+       ./web/web.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -104,8 +98,7 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(LWINC) \
-         $(CHIBIOS)/os/various \
-         ./lwip
+         $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths

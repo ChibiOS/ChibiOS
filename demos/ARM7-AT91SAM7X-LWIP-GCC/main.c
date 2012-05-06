@@ -29,7 +29,7 @@
 #include "hal.h"
 #include "test.h"
 
-#include "lwip/lwipthread.h"
+#include "lwipthread.h"
 #include "web/web.h"
 
 static WORKING_AREA(waThread1, 128);
