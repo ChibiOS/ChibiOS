@@ -138,7 +138,7 @@
  * @brief   Maximum supported frame size.
  */
 #if !defined(MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define STM32_MAC_BUFFERS_SIZE      1518
+#define STM32_MAC_BUFFERS_SIZE      1522
 #endif
 
 /**
