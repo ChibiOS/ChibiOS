@@ -325,7 +325,7 @@
 #define STM32_I2C1_RX_DMA_CHN   0x00100001
 #define STM32_I2C1_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 7)) |           \
                                  (STM32_DMA_STREAM_ID_MSK(1, 6))
-#define STM32_I2C1_TX_DMA_CHN   0x10000000
+#define STM32_I2C1_TX_DMA_CHN   0x11000000
 
 #define STM32_HAS_I2C2          TRUE
 #define STM32_I2C2_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(1, 2) |            \
@@ -343,9 +343,13 @@
 /* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
 #define STM32_RTC_HAS_SUBSECONDS TRUE
+#define STM32_RTC_IS_CALENDAR   TRUE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO          TRUE
+#define STM32_SDC_SDIO_DMA_MSK  (STM32_DMA_STREAM_ID_MSK(2, 3) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 6))
+#define STM32_SDC_SDIO_DMA_CHN  0x04004000
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1          TRUE
@@ -499,6 +503,7 @@
 #define TIM8_CC_IRQHandler      VectorF8    /**< TIM8 Capture Compare.      */
 #define DMA1_Stream7_IRQHandler VectorFC    /**< DMA1 Stream 7.             */
 #define FSMC_IRQHandler         Vector100   /**< FSMC.                      */
+#define SDIO_IRQHandler         Vector104   /**< SDIO.                      */
 #define TIM5_IRQHandler         Vector108   /**< TIM5.                      */
 #define SPI3_IRQHandler         Vector10C   /**< SPI3.                      */
 #define UART4_IRQHandler        Vector110   /**< UART4.                     */

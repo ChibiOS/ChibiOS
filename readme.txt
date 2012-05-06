@@ -79,6 +79,9 @@
 *****************************************************************************
 
 *** 2.4.1 ***
+- FIX: Fixed wrong frequency limit checks vs VDD in STM32F2xx HAL (bug
+  3524094).
+- FIX: Fixed STM32 I2C1 wrong alternate TX DMA setting (bug 3524088).
 - FIX: Fixed three testhal builds fail (bug 3523322).
 - FIX: Fixed MAC driver functions with invalid name (bug 3522808).
 - FIX: Fixed code coverage crashes with Linux/gcc-4.4.5 (bug 3522301).
