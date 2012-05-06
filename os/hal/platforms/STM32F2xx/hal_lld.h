@@ -143,6 +143,10 @@
  * @name    PWR_CR register bits definitions
  * @{
  */
+#define STM32_VOS_MASK          (1 << 14)   /**< Core voltage mask.         */
+#define STM32_VOS_LOW           (0 << 14)   /**< Core voltage set to low.   */
+#define STM32_VOS_HIGH          (1 << 14)   /**< Core voltage set to high.  */
+
 #define STM32_PLS_MASK          (7 << 5)    /**< PLS bits mask.             */
 #define STM32_PLS_LEV0          (0 << 5)    /**< PVD level 0.               */
 #define STM32_PLS_LEV1          (1 << 5)    /**< PVD level 1.               */
@@ -341,6 +345,9 @@
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO          TRUE
+#define STM32_SDC_SDIO_DMA_MSK  (STM32_DMA_STREAM_ID_MSK(2, 3) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 6))
+#define STM32_SDC_SDIO_DMA_CHN  0x04004000
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1          TRUE
@@ -494,6 +501,7 @@
 #define TIM8_CC_IRQHandler      VectorF8    /**< TIM8 Capture Compare.      */
 #define DMA1_Stream7_IRQHandler VectorFC    /**< DMA1 Stream 7.             */
 #define FSMC_IRQHandler         Vector100   /**< FSMC.                      */
+#define SDIO_IRQHandler         Vector104   /**< SDIO.                      */
 #define TIM5_IRQHandler         Vector108   /**< TIM5.                      */
 #define SPI3_IRQHandler         Vector10C   /**< SPI3.                      */
 #define UART4_IRQHandler        Vector110   /**< UART4.                     */
@@ -761,8 +769,8 @@
 #define STM32_1WS_THRESHOLD         60000000
 #define STM32_2WS_THRESHOLD         90000000
 #define STM32_3WS_THRESHOLD         120000000
-#define STM32_4WS_THRESHOLD         150000000
-#define STM32_5WS_THRESHOLD         168000000
+#define STM32_4WS_THRESHOLD         0
+#define STM32_5WS_THRESHOLD         0
 #define STM32_6WS_THRESHOLD         0
 #define STM32_7WS_THRESHOLD         0
 #elif (STM32_VDD >= 240) && (STM32_VDD < 270)
@@ -771,8 +779,8 @@
 #define STM32_2WS_THRESHOLD         72000000
 #define STM32_3WS_THRESHOLD         96000000
 #define STM32_4WS_THRESHOLD         120000000
-#define STM32_5WS_THRESHOLD         144000000
-#define STM32_6WS_THRESHOLD         168000000
+#define STM32_5WS_THRESHOLD         0
+#define STM32_6WS_THRESHOLD         0
 #define STM32_7WS_THRESHOLD         0
 #elif (STM32_VDD >= 210) && (STM32_VDD < 240)
 #define STM32_0WS_THRESHOLD         18000000
@@ -782,7 +790,7 @@
 #define STM32_4WS_THRESHOLD         90000000
 #define STM32_5WS_THRESHOLD         108000000
 #define STM32_6WS_THRESHOLD         120000000
-#define STM32_7WS_THRESHOLD         138000000
+#define STM32_7WS_THRESHOLD         0
 #elif (STM32_VDD >= 180) && (STM32_VDD < 210)
 #define STM32_0WS_THRESHOLD         16000000
 #define STM32_1WS_THRESHOLD         32000000
@@ -791,7 +799,7 @@
 #define STM32_4WS_THRESHOLD         80000000
 #define STM32_5WS_THRESHOLD         96000000
 #define STM32_6WS_THRESHOLD         112000000
-#define STM32_7WS_THRESHOLD         128000000
+#define STM32_7WS_THRESHOLD         120000000
 #else
 #error "invalid VDD voltage specified"
 #endif
@@ -1263,6 +1271,16 @@
 #define STM32_RTCCLK                STM32_HSEDIVCLK
 #else
 #error "invalid STM32_RTCSEL value specified"
+#endif
+
+/**
+ * @brief   RTC HSE divider setting.
+ */
+#if ((STM32_RTCPRE_VALUE >= 2) && (STM32_RTCPRE_VALUE <= 31)) ||            \
+    defined(__DOXYGEN__)
+#define STM32_RTCPRE                (STM32_RTCPRE_VALUE << 16)
+#else
+#error "invalid STM32_RTCPRE value specified"
 #endif
 
 /**
