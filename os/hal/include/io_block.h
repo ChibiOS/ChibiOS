@@ -51,9 +51,9 @@ typedef struct {
  */
 #define _base_block_device_methods                                          \
   /* Removable media detection.*/                                           \
-  bool_t is_inserted(void *instance);                                       \
+  bool_t (*is_inserted)(void *instance);                                    \
   /* Removable write protection detection.*/                                \
-  bool_t is_protected(void *instance);                                      \
+  bool_t (*is_protected)(void *instance);                                   \
   /* Connection to the block device.*/                                      \
   bool_t (*connect)(void *instance);                                        \
   /* Disconnection from the block device.*/                                 \

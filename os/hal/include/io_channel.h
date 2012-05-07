@@ -19,12 +19,12 @@
 */
 
 /**
- * @file    io_serial.h
- * @brief   I/O serial devices access.
+ * @file    io_channel.h
+ * @brief   I/O channels access.
  * @details This header defines abstract interfaces useful to access generic
  *          I/O serial devices in a standardized way.
  *
- * @addtogroup IO_SERIAL
+ * @addtogroup IO_CHANNEL
  * @details This module defines an abstract interface for I/O channels by
  *          extending the @p BaseSequentialStream interface. Note that no code
  *          is present, I/O channels are just abstract interface like
@@ -36,8 +36,8 @@
  * @{
  */
 
-#ifndef _IO_SERIAL_H_
-#define _IO_SERIAL_H_
+#ifndef _IO_CHANNEL_H_
+#define _IO_CHANNEL_H_
 
 /**
  * @brief   @p BaseChannel specific methods.
@@ -71,7 +71,7 @@
  *
  * @brief   @p BaseChannel virtual methods table.
  */
-struct BaseChannelVMT {
+struct tmp_BaseChannelVMT {
   _base_channel_methods
 };
 
@@ -86,7 +86,7 @@ typedef struct {
   /** @brief Virtual Methods Table.*/
   const struct BaseChannelVMT *vmt;
   _base_channel_data
-} BaseChannel;
+} tmp_BaseChannel;
 
 /**
  * @name    Macro Functions (BaseChannel)
@@ -106,7 +106,7 @@ typedef struct {
  *
  * @api
  */
-#define srlPutWouldBlock(ip) ((ip)->vmt->putwouldblock(ip))
+#define chnPutWouldBlock(ip) ((ip)->vmt->putwouldblock(ip))
 
 /**
  * @brief   Channel input check.
@@ -122,7 +122,7 @@ typedef struct {
  *
  * @api
  */
-#define srlGetWouldBlock(ip) ((ip)->vmt->getwouldblock(ip))
+#define chnGetWouldBlock(ip) ((ip)->vmt->getwouldblock(ip))
 
 /**
  * @brief   Channel blocking byte write.
@@ -137,7 +137,7 @@ typedef struct {
  *
  * @api
  */
-#define srlPut(ip, b) ((ip)->vmt->put(ip, b, TIME_INFINITE))
+#define chnPut(ip, b) ((ip)->vmt->put(ip, b, TIME_INFINITE))
 
 /**
  * @brief   Channel blocking byte write with timeout.
@@ -158,7 +158,7 @@ typedef struct {
  *
  * @api
  */
-#define srlPutTimeout(ip, b, time) ((ip)->vmt->put(ip, b, time))
+#define chnPutTimeout(ip, b, time) ((ip)->vmt->put(ip, b, time))
 
 /**
  * @brief   Channel blocking byte read.
@@ -172,7 +172,7 @@ typedef struct {
  *
  * @api
  */
-#define srlGet(ip) ((ip)->vmt->get(ip, TIME_INFINITE))
+#define chnGet(ip) ((ip)->vmt->get(ip, TIME_INFINITE))
 
 /**
  * @brief   Channel blocking byte read with timeout.
@@ -192,7 +192,7 @@ typedef struct {
  *
  * @api
  */
-#define srlGetTimeout(ip, time) ((ip)->vmt->get(ip, time))
+#define chnGetTimeout(ip, time) ((ip)->vmt->get(ip, time))
 
 /**
  * @brief   Channel blocking write with timeout.
@@ -211,7 +211,7 @@ typedef struct {
  *
  * @api
  */
-#define srlWriteTimeout(ip, bp, n, time) ((ip)->vmt->writet(ip, bp, n, time))
+#define chnWriteTimeout(ip, bp, n, time) ((ip)->vmt->writet(ip, bp, n, time))
 
 /**
  * @brief   Channel blocking read with timeout.
@@ -230,7 +230,7 @@ typedef struct {
  *
  * @api
  */
-#define srlReadTimeout(ip, bp, n, time) ((ip)->vmt->readt(ip, bp, n, time))
+#define chnReadTimeout(ip, bp, n, time) ((ip)->vmt->readt(ip, bp, n, time))
 /** @} */
 
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
@@ -239,48 +239,48 @@ typedef struct {
  * @{
  */
 /** @brief No pending conditions.*/
-#define IO_NO_ERROR             0
+#define CHN_NO_ERROR            0
 /** @brief Connection happened.*/
-#define IO_CONNECTED            1
+#define ICHN_CONNECTED          1
 /** @brief Disconnection happened.*/
-#define IO_DISCONNECTED         2
+#define CHN_DISCONNECTED        2
 /** @brief Data available in the input queue.*/
-#define IO_INPUT_AVAILABLE      4
+#define CHN_INPUT_AVAILABLE     4
 /** @brief Output queue empty.*/
-#define IO_OUTPUT_EMPTY         8
+#define CHN_OUTPUT_EMPTY        8
 /** @brief Transmission end.*/
-#define IO_TRANSMISSION_END     16
+#define CHN_TRANSMISSION_END    16
 /** @} */
 
 /**
  * @brief   Type of an I/O condition flags mask.
  */
-typedef uint_fast16_t ioflags_t;
+typedef uint_fast16_t chnflags_t;
 
 /**
  * @brief   @p BaseAsynchronousChannel specific methods.
  */
-#define _base_asynchronous_channel_methods                                  \
+#define tmp__base_asynchronous_channel_methods                                  \
   _base_channel_methods                                                     \
   /* Channel read method with timeout specification.*/                      \
-  ioflags_t (*getflags)(void *instance);
+  chnflags_t (*getflags)(void *instance);
 
 /**
  * @brief   @p BaseAsynchronousChannel specific data.
  */
-#define _base_asynchronous_channel_data                                     \
+#define tmp__base_asynchronous_channel_data                                     \
   _base_channel_data                                                        \
   /* I/O condition event source.*/                                          \
   EventSource           event;                                              \
   /* I/O condition flags.*/                                                 \
-  ioflags_t             flags;
+  chnflags_t             flags;
 
 /**
  * @extends BaseChannelVMT
  *
  * @brief   @p BaseAsynchronousChannel virtual methods table.
  */
-struct BaseAsynchronousChannelVMT {
+struct tmp_BaseAsynchronousChannelVMT {
   _base_asynchronous_channel_methods
 };
 
@@ -295,7 +295,7 @@ typedef struct {
   /** @brief Virtual Methods Table.*/
   const struct BaseAsynchronousChannelVMT *vmt;
   _base_asynchronous_channel_data
-} BaseAsynchronousChannel;
+} tmp_BaseAsynchronousChannel;
 
 /**
  * @name    Macro Functions (BaseAsynchronousChannel)
@@ -311,7 +311,7 @@ typedef struct {
  *
  * @api
  */
-#define srlGetEventSource(ip) (&((ip)->event))
+#define chnGetEventSource(ip) (&((ip)->event))
 
 /**
  * @brief   Adds status flags to the channel's mask.
@@ -325,7 +325,7 @@ typedef struct {
  *
  * @iclass
  */
-#define srlAddFlagsI(ip, mask) {                                            \
+#define chnAddFlagsI(ip, mask) {                                            \
   (ip)->flags |= (mask);                                                    \
   chEvtBroadcastI(&(ip)->event);                                            \
 }
@@ -340,7 +340,7 @@ typedef struct {
  *
  * @api
  */
-#define srlGetAndClearFlags(ip) ((ip)->vmt->getflags(ip))
+#define chnGetAndClearFlags(ip) ((ip)->vmt->getflags(ip))
 /** @} */
 
 /**
@@ -353,16 +353,16 @@ typedef struct {
  *
  * @notapi
  */
-#define _ser_get_and_clear_flags_impl(ip)                                    \
-  ioflags_t mask;                                                           \
+#define _chn_get_and_clear_flags_impl(ip)                                   \
+  chnflags_t mask;                                                          \
   chSysLock();                                                              \
   mask = ((BaseAsynchronousChannel *)(ip))->flags;                          \
-  ((BaseAsynchronousChannel *)(ip))->flags = IO_NO_ERROR;                   \
+  ((BaseAsynchronousChannel *)(ip))->flags = CHN_NO_ERROR;                  \
   chSysUnlock();                                                            \
   return mask
 
 #endif /* CH_USE_EVENTS */
 
-#endif /* _IO_SERIAL_H_ */
+#endif /* _IO_CHANNEL_H_ */
 
 /** @} */

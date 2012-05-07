@@ -34,6 +34,9 @@
 
 #include "hal_lld.h"
 
+#include "io_channel.h"
+#include "io_block.h"
+
 #include "tm.h"
 #include "pal.h"
 #include "adc.h"

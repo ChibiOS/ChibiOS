@@ -124,8 +124,8 @@
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
 - NEW: Added an abstract interface for serial devices in the HAL. This
-  interface is meant to replace the equivalent class present in the
-  kernel. access macros are similar except for the prefix, "ser" instead
+  interface is meant to replace the equivalent class already present in the
+  kernel. access macros are similar except for the prefix, "chn" instead
   of "chIO".
 - NEW: Added an abstract interface for block devices in the HAL. This
   abstraction layer is meant to unify the access protocol to the SDC and
