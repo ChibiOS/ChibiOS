@@ -19,12 +19,12 @@
 */
 
 /**
- * @file    chioch.h
- * @brief   I/O channels.
+ * @file    io_serial.h
+ * @brief   I/O serial devices access.
  * @details This header defines abstract interfaces useful to access generic
- *          I/O resources in a standardized way.
+ *          I/O serial devices in a standardized way.
  *
- * @addtogroup io_channels
+ * @addtogroup IO_SERIAL
  * @details This module defines an abstract interface for I/O channels by
  *          extending the @p BaseSequentialStream interface. Note that no code
  *          is present, I/O channels are just abstract interface like
@@ -36,8 +36,8 @@
  * @{
  */
 
-#ifndef _CHIOCH_H_
-#define _CHIOCH_H_
+#ifndef _IO_SERIAL_H_
+#define _IO_SERIAL_H_
 
 /**
  * @brief   @p BaseChannel specific methods.
@@ -106,7 +106,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOPutWouldBlock(ip) ((ip)->vmt->putwouldblock(ip))
+#define srlPutWouldBlock(ip) ((ip)->vmt->putwouldblock(ip))
 
 /**
  * @brief   Channel input check.
@@ -122,7 +122,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOGetWouldBlock(ip) ((ip)->vmt->getwouldblock(ip))
+#define srlGetWouldBlock(ip) ((ip)->vmt->getwouldblock(ip))
 
 /**
  * @brief   Channel blocking byte write.
@@ -137,7 +137,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOPut(ip, b) ((ip)->vmt->put(ip, b, TIME_INFINITE))
+#define srlPut(ip, b) ((ip)->vmt->put(ip, b, TIME_INFINITE))
 
 /**
  * @brief   Channel blocking byte write with timeout.
@@ -158,7 +158,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOPutTimeout(ip, b, time) ((ip)->vmt->put(ip, b, time))
+#define srlPutTimeout(ip, b, time) ((ip)->vmt->put(ip, b, time))
 
 /**
  * @brief   Channel blocking byte read.
@@ -172,7 +172,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOGet(ip) ((ip)->vmt->get(ip, TIME_INFINITE))
+#define srlGet(ip) ((ip)->vmt->get(ip, TIME_INFINITE))
 
 /**
  * @brief   Channel blocking byte read with timeout.
@@ -192,7 +192,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOGetTimeout(ip, time) ((ip)->vmt->get(ip, time))
+#define srlGetTimeout(ip, time) ((ip)->vmt->get(ip, time))
 
 /**
  * @brief   Channel blocking write with timeout.
@@ -211,8 +211,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOWriteTimeout(ip, bp, n, time)                                   \
-  ((ip)->vmt->writet(ip, bp, n, time))
+#define srlWriteTimeout(ip, bp, n, time) ((ip)->vmt->writet(ip, bp, n, time))
 
 /**
  * @brief   Channel blocking read with timeout.
@@ -231,8 +230,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOReadTimeout(ip, bp, n, time)                                    \
-  ((ip)->vmt->readt(ip, bp, n, time))
+#define srlReadTimeout(ip, bp, n, time) ((ip)->vmt->readt(ip, bp, n, time))
 /** @} */
 
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
@@ -313,7 +311,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOGetEventSource(ip) (&((ip)->event))
+#define srlGetEventSource(ip) (&((ip)->event))
 
 /**
  * @brief   Adds status flags to the channel's mask.
@@ -327,7 +325,7 @@ typedef struct {
  *
  * @iclass
  */
-#define chIOAddFlagsI(ip, mask) {                                           \
+#define srlAddFlagsI(ip, mask) {                                            \
   (ip)->flags |= (mask);                                                    \
   chEvtBroadcastI(&(ip)->event);                                            \
 }
@@ -342,7 +340,7 @@ typedef struct {
  *
  * @api
  */
-#define chIOGetAndClearFlags(ip) ((ip)->vmt->getflags(ip))
+#define srlGetAndClearFlags(ip) ((ip)->vmt->getflags(ip))
 /** @} */
 
 /**
@@ -355,7 +353,7 @@ typedef struct {
  *
  * @notapi
  */
-#define _ch_get_and_clear_flags_impl(ip)                                    \
+#define _ser_get_and_clear_flags_impl(ip)                                    \
   ioflags_t mask;                                                           \
   chSysLock();                                                              \
   mask = ((BaseAsynchronousChannel *)(ip))->flags;                          \
@@ -365,6 +363,6 @@ typedef struct {
 
 #endif /* CH_USE_EVENTS */
 
-#endif /* _CHIOCH_H_ */
+#endif /* _IO_SERIAL_H_ */
 
 /** @} */

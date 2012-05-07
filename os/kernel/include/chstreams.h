@@ -26,11 +26,11 @@
  *
  * @addtogroup data_streams
  * @details This module define an abstract interface for generic data streams.
- *          Note that no code is present, streams are just abstract interfaces
- *          like structures, you should look at the systems as to a set of
- *          abstract C++ classes (even if written in C). This system has the
- *          advantage to make the access to streams independent from the
- *          implementation logic.<br>
+ *          Note that no code is present, just abstract interfaces-like
+ *          structures, you should look at the system as to a set of
+ *          abstract C++ classes (even if written in C). This system
+ *          has then advantage to make the access to data streams
+ *          independent from the implementation logic.<br>
  *          The stream interface can be used as base class for high level
  *          object types such as files, sockets, serial ports, pipes etc.
  * @{
