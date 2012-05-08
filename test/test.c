@@ -130,7 +130,7 @@ void test_print(const char *msgp) {
 void test_println(const char *msgp) {
 
   test_print(msgp);
-  chSequentialStreamWrite(chp, (const uint8_t *)"\r\n", 1);
+  chSequentialStreamWrite(chp, (const uint8_t *)"\r\n", 2);
 }
 
 /*
@@ -311,7 +311,7 @@ static void print_line(void) {
 
   for (i = 0; i < 76; i++)
     _putc(chp, '-');
-  chSequentialStreamWrite(chp, (const uint8_t *)"\r\n", 1);
+  chSequentialStreamWrite(chp, (const uint8_t *)"\r\n", 2);
 }
 
 /**
