@@ -29,6 +29,11 @@
 #define MAX_FILLER 11
 #define FLOAT_PRECISION 100000
 
+static void _putc(BaseSequentialStream *chp, char c) {
+
+  chSequentialStreamWrite(chp, (const uint8_t *)&c, 1);
+}
+
 static char *long_to_string_with_divisor(char *p,
                                          long num,
                                          unsigned radix,
@@ -83,7 +88,7 @@ static char *ftoa(char *p, double num) {
 /**
  * @brief   System formatted output function.
  * @details This function implements a minimal @p printf() like functionality
- *          with output on a @p BaseChannel.
+ *          with output on a @p BaseSequentialStream.
  *          The general parameters format is: %[-][width|*][.precision|*][l|L]p.
  *          The following parameter types (p) are supported:
  *          - <b>x</b> hexadecimal integer.
@@ -98,10 +103,10 @@ static char *ftoa(char *p, double num) {
  *          - <b>s</b> string.
  *          .
  *
- * @param[in] chp       pointer to a @p BaseChannel implementing object
+ * @param[in] chp       pointer to a @p BaseSequentialStream implementing object
  * @param[in] fmt       formatting string
  */
-void chprintf(BaseChannel *chp, const char *fmt, ...) {
+void chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
   va_list ap;
   char tmpbuf[MAX_FILLER + 1];
   char *p, *s, c, filler;
@@ -120,7 +125,7 @@ void chprintf(BaseChannel *chp, const char *fmt, ...) {
       return;
     }
     if (c != '%') {
-      chIOPut(chp, (uint8_t)c);
+      _putc(chp, (uint8_t)c);
       continue;
     }
     p = tmpbuf;
@@ -235,18 +240,18 @@ unsigned_common:
       width = -width;
     if (width < 0) {
       if (*s == '-' && filler == '0') {
-        chIOPut(chp, (uint8_t)*s++);
+        _putc(chp, (uint8_t)*s++);
         i--;
       }
       do
-        chIOPut(chp, (uint8_t)filler);
+        _putc(chp, (uint8_t)filler);
       while (++width != 0);
     }
     while (--i >= 0)
-      chIOPut(chp, (uint8_t)*s++);
+      _putc(chp, (uint8_t)*s++);
 
     while (width) {
-      chIOPut(chp, (uint8_t)filler);
+      _putc(chp, (uint8_t)filler);
       width--;
     }
   }

@@ -70,7 +70,7 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 static void set_error(uint8_t sra, SerialDriver *sdp) {
-  ioflags_t sts = 0;
+  chnflags_t sts = 0;
 
   if (sra & (1 << DOR))
     sts |= SD_OVERRUN_ERROR;
@@ -79,7 +79,7 @@ static void set_error(uint8_t sra, SerialDriver *sdp) {
   if (sra & (1 << FE))
     sts |= SD_FRAMING_ERROR;
   chSysLockFromIsr();
-  chIOAddFlagsI(sdp, sts);
+  chnAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 

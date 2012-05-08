@@ -20,6 +20,12 @@ Within 2.5.x:
 * FatFs 0.9x integration.
 - USB driver model revision.
 X STM32 OTG USB cell support for CL, F2, F4 devices.
+X Streaming DAC/I2S driver model and STM32 implementation.
+- Unified LPC1xxx HAL.
+  - LPC11xx and LPC13xx HALs merged in the unified one.
+  - LPC17xx support.
+- NUC120 support.
+- STM32F0 support.
 - Add USARTs support to the STM32 SPI driver.
 - Add option to use another counter instead of the systick counter into the
   trace buffer.
@@ -31,12 +37,8 @@ X STM32 OTG USB cell support for CL, F2, F4 devices.
   to be updated.
 - Runtime errors manager in HAL.
 - Critical errors manager in HAL (to replace or complement assertions).
-- Streaming DAC/I2S driver model and STM32 implementation.
-- Add ADC3 support to the STM32 ADC driver.
+- Add ADC3 support to the STM32F1xx ADC driver.
 - Update C++ wrapper.
-- STM32F0 support.
-- LPC17xx support.
-- NUC120 support.
 ? Add the RTC service inside the kernel and port, remove from HAL.
 
 Within 2.x.x

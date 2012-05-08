@@ -73,7 +73,7 @@ static ROMCONST SerialConfig default_config = {
 /*===========================================================================*/
 
 static void set_error(SerialDriver *sdp, uint8_t sr) {
-  ioflags_t sts = 0;
+  chnflags_t sts = 0;
 
   /* Note, SR register bit definitions are equal for all UARTs so using
      the UART1 definitions is fine.*/
@@ -86,7 +86,7 @@ static void set_error(SerialDriver *sdp, uint8_t sr) {
   if (sr & UART1_SR_PE)
     sts |= SD_PARITY_ERROR;
   chSysLockFromIsr();
-  chIOAddFlagsI(sdp, sts);
+  chnAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 

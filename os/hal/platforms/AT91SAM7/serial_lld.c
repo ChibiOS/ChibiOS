@@ -139,7 +139,7 @@ static void usart_deinit(AT91PS_USART u) {
  * @param[in] sdp       communication channel associated to the USART
  */
 static void set_error(SerialDriver *sdp, AT91_REG csr) {
-  ioflags_t sts = 0;
+  chnflags_t sts = 0;
 
   if (csr & AT91C_US_OVRE)
     sts |= SD_OVERRUN_ERROR;
@@ -150,7 +150,7 @@ static void set_error(SerialDriver *sdp, AT91_REG csr) {
   if (csr & AT91C_US_RXBRK)
     sts |= SD_BREAK_DETECTED;
   chSysLockFromIsr();
-  chIOAddFlagsI(sdp, sts);
+  chnAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 
@@ -181,7 +181,7 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
     chSysLockFromIsr();
     b = chOQGetI(&sdp->oqueue);
     if (b < Q_OK) {
-      chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
+      chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
       u->US_IDR = AT91C_US_TXRDY;
     }
     else

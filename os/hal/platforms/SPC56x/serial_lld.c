@@ -117,7 +117,7 @@ static void esci_deinit(volatile struct ESCI_tag *escip) {
  * @param[in] sr        eSCI SR register value
  */
 static void set_error(SerialDriver *sdp, uint32_t sr) {
-  ioflags_t sts = 0;
+  chnflags_t sts = 0;
 
   if (sr & 0x08000000)
     sts |= SD_OVERRUN_ERROR;
@@ -130,7 +130,7 @@ static void set_error(SerialDriver *sdp, uint32_t sr) {
 /*  if (sr & 0x00000000)
     sts |= SD_BREAK_DETECTED;*/
   chSysLockFromIsr();
-  chIOAddFlagsI(sdp, sts);
+  chnAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();
 }
 
@@ -156,7 +156,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     chSysLockFromIsr();
     b = chOQGetI(&sdp->oqueue);
     if (b < Q_OK) {
-      chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
+      chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
       escip->CR1.B.TIE = 0;
     }
     else {

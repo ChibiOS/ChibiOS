@@ -74,7 +74,7 @@ static bool_t mmc_is_protected(void) {
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
 
-static FRESULT scan_files(BaseChannel *chp, char *path) {
+static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
   FRESULT res;
   FILINFO fno;
   DIR dir;
@@ -114,7 +114,7 @@ static FRESULT scan_files(BaseChannel *chp, char *path) {
 #define SHELL_WA_SIZE   THD_WA_SIZE(1024)
 #define TEST_WA_SIZE    THD_WA_SIZE(256)
 
-static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
+static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
   size_t n, size;
 
   (void)argv;
@@ -128,7 +128,7 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
   chprintf(chp, "heap free total  : %u bytes\r\n", size);
 }
 
-static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
+static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   static const char *states[] = {THD_STATE_NAMES};
   Thread *tp;
 
@@ -148,7 +148,7 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
   } while (tp != NULL);
 }
 
-static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
+static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
   Thread *tp;
 
   (void)argv;
@@ -165,7 +165,7 @@ static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
   chThdWait(tp);
 }
 
-static void cmd_tree(BaseChannel *chp, int argc, char *argv[]) {
+static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   FRESULT err;
   uint32_t clusters;
   FATFS *fsp;
@@ -201,7 +201,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseChannel *)&SD1,
+  (BaseSequentialStream *)&SD1,
   commands
 };
 

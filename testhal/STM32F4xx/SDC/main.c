@@ -113,7 +113,7 @@ bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
 /**
  *
  */
-void cmd_sdiotest(BaseChannel *chp, int argc, char *argv[]){
+void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]){
   (void)argc;
   (void)argv;
   uint32_t i = 0;
@@ -356,7 +356,7 @@ static const ShellCommand commands[] = {
   {NULL, NULL}
 };
 static const ShellConfig shell_cfg1 = {
-  (BaseChannel *)&SD2,
+  (BaseSequentialStream *)&SD2,
   commands
 };
 

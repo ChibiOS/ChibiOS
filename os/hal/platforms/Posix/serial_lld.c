@@ -121,7 +121,7 @@ static bool_t connint(SerialDriver *sdp) {
       goto abort;
     }
     chSysLockFromIsr();
-    chIOAddFlagsI(sdp, IO_CONNECTED);
+    chnAddFlagsI(sdp, CHN_CONNECTED);
     chSysUnlockFromIsr();
     return TRUE;
   }
@@ -149,7 +149,7 @@ static bool_t inint(SerialDriver *sdp) {
       close(sdp->com_data);
       sdp->com_data = INVALID_SOCKET;
       chSysLockFromIsr();
-      chIOAddFlagsI(sdp, IO_DISCONNECTED);
+      chnAddFlagsI(sdp, CHN_DISCONNECTED);
       chSysUnlockFromIsr();
       return FALSE;
     case INVALID_SOCKET:
@@ -190,7 +190,7 @@ static bool_t outint(SerialDriver *sdp) {
       close(sdp->com_data);
       sdp->com_data = INVALID_SOCKET;
       chSysLockFromIsr();
-      chIOAddFlagsI(sdp, IO_DISCONNECTED);
+      chnAddFlagsI(sdp, CHN_DISCONNECTED);
       chSysUnlockFromIsr();
       return FALSE;
     case INVALID_SOCKET:

@@ -94,8 +94,8 @@ static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
   return chIQReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, time);
 }
 
-static ioflags_t getflags(void *ip) {
-  _ch_get_and_clear_flags_impl(ip);
+static chnflags_t getflags(void *ip) {
+  _chn_get_and_clear_flags_impl(ip);
 }
 
 static const struct SerialDriverVMT vmt = {
@@ -139,7 +139,7 @@ void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
   sdp->vmt = &vmt;
   chEvtInit(&sdp->event);
-  sdp->flags = IO_NO_ERROR;
+  sdp->flags = CHN_NO_ERROR;
   sdp->state = SD_STOP;
   chIQInit(&sdp->iqueue, sdp->ib, SERIAL_BUFFERS_SIZE, inotify);
   chOQInit(&sdp->oqueue, sdp->ob, SERIAL_BUFFERS_SIZE, onotify);
@@ -215,9 +215,9 @@ void sdIncomingDataI(SerialDriver *sdp, uint8_t b) {
   chDbgCheck(sdp != NULL, "sdIncomingDataI");
 
   if (chIQIsEmptyI(&sdp->iqueue))
-    chIOAddFlagsI(sdp, IO_INPUT_AVAILABLE);
+    chnAddFlagsI(sdp, CHN_INPUT_AVAILABLE);
   if (chIQPutI(&sdp->iqueue, b) < Q_OK)
-    chIOAddFlagsI(sdp, SD_OVERRUN_ERROR);
+    chnAddFlagsI(sdp, SD_OVERRUN_ERROR);
 }
 
 /**
@@ -243,7 +243,7 @@ msg_t sdRequestDataI(SerialDriver *sdp) {
 
   b = chOQGetI(&sdp->oqueue);
   if (b < Q_OK)
-    chIOAddFlagsI(sdp, IO_OUTPUT_EMPTY);
+    chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
   return b;
 }
 

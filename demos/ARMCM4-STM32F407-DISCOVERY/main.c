@@ -274,7 +274,7 @@ int main(void) {
     x = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTX);
     y = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTY);
     z = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTZ);
-    chprintf((BaseChannel *)&SD2, "%d, %d, %d\r\n", x, y, z);
+    chprintf((BaseSequentialStream *)&SD2, "%d, %d, %d\r\n", x, y, z);
     chThdSleepMilliseconds(500);
   }
 }

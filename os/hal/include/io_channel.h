@@ -71,7 +71,7 @@
  *
  * @brief   @p BaseChannel virtual methods table.
  */
-struct tmp_BaseChannelVMT {
+struct BaseChannelVMT {
   _base_channel_methods
 };
 
@@ -86,7 +86,7 @@ typedef struct {
   /** @brief Virtual Methods Table.*/
   const struct BaseChannelVMT *vmt;
   _base_channel_data
-} tmp_BaseChannel;
+} BaseChannel;
 
 /**
  * @name    Macro Functions (BaseChannel)
@@ -98,6 +98,7 @@ typedef struct {
  *          block.
  *
  * @param[in] ip        pointer to a @p BaseChannel or derived class
+ *
  * @return              The output queue status.
  * @retval FALSE        if the output queue has space and would not block a
  *                      write operation.
@@ -114,6 +115,7 @@ typedef struct {
  *          block.
  *
  * @param[in] ip        pointer to a @p BaseChannel or derived class
+ *
  * @return              The input queue status.
  * @retval FALSE        if the input queue contains data and would not block a
  *                      read operation.
@@ -131,6 +133,7 @@ typedef struct {
  *
  * @param[in] ip        pointer to a @p BaseChannel or derived class
  * @param[in] b         the byte value to be written to the channel
+ *
  * @return              The operation status.
  * @retval Q_OK         if the operation succeeded.
  * @retval Q_RESET      if the channel associated queue (if any) was reset.
@@ -166,6 +169,7 @@ typedef struct {
  *          is not available then the calling thread is suspended.
  *
  * @param[in] ip        pointer to a @p BaseChannel or derived class
+ *
  * @return              A byte value from the queue.
  * @retval Q_RESET      if the channel associated queue (if any) has been
  *                      reset.
@@ -195,6 +199,21 @@ typedef struct {
 #define chnGetTimeout(ip, time) ((ip)->vmt->get(ip, time))
 
 /**
+ * @brief   Channel blocking write.
+ * @details The function writes data from a buffer to a channel. If the channel
+ *          is not ready to accept data then the calling thread is suspended.
+ *
+ * @param[in] ip        pointer to a @p BaseChannel or derived class
+ * @param[out] bp       pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred
+ *
+ * @return              The number of bytes transferred.
+ *
+ * @api
+ */
+#define chnWrite(ip, bp, n) chSequentialStreamWrite(ip, bp, n)
+
+/**
  * @brief   Channel blocking write with timeout.
  * @details The function writes data from a buffer to a channel. If the channel
  *          is not ready to accept data then the calling thread is suspended.
@@ -212,6 +231,21 @@ typedef struct {
  * @api
  */
 #define chnWriteTimeout(ip, bp, n, time) ((ip)->vmt->writet(ip, bp, n, time))
+
+/**
+ * @brief   Channel blocking read.
+ * @details The function reads data from a channel into a buffer. If the data
+ *          is not available then the calling thread is suspended.
+ *
+ * @param[in] ip        pointer to a @p BaseChannel or derived class
+ * @param[in] bp        pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred
+ *
+ * @return              The number of bytes transferred.
+ *
+ * @api
+ */
+#define chnRead(ip, bp, n) chSequentialStreamRead(ip, bp, n)
 
 /**
  * @brief   Channel blocking read with timeout.
@@ -260,7 +294,7 @@ typedef uint_fast16_t chnflags_t;
 /**
  * @brief   @p BaseAsynchronousChannel specific methods.
  */
-#define tmp__base_asynchronous_channel_methods                                  \
+#define _base_asynchronous_channel_methods                                  \
   _base_channel_methods                                                     \
   /* Channel read method with timeout specification.*/                      \
   chnflags_t (*getflags)(void *instance);
@@ -268,7 +302,7 @@ typedef uint_fast16_t chnflags_t;
 /**
  * @brief   @p BaseAsynchronousChannel specific data.
  */
-#define tmp__base_asynchronous_channel_data                                     \
+#define _base_asynchronous_channel_data                                     \
   _base_channel_data                                                        \
   /* I/O condition event source.*/                                          \
   EventSource           event;                                              \
@@ -280,7 +314,7 @@ typedef uint_fast16_t chnflags_t;
  *
  * @brief   @p BaseAsynchronousChannel virtual methods table.
  */
-struct tmp_BaseAsynchronousChannelVMT {
+struct BaseAsynchronousChannelVMT {
   _base_asynchronous_channel_methods
 };
 
@@ -295,7 +329,7 @@ typedef struct {
   /** @brief Virtual Methods Table.*/
   const struct BaseAsynchronousChannelVMT *vmt;
   _base_asynchronous_channel_data
-} tmp_BaseAsynchronousChannel;
+} BaseAsynchronousChannel;
 
 /**
  * @name    Macro Functions (BaseAsynchronousChannel)

@@ -171,6 +171,12 @@
   lwIP demos (backported to 2.4.1).
 - NEW: lwIP related code is not centralized into a single place, no need to
   duplicate the code in each application or demo (backported to 2.4.1).
+- CHANGE: Removed the chioch.h header from the kernel, now channels interface
+  is exported by the HAL.
+- CHANGE: chprintf() now takes a BaseSequentialStream as parameter instead
+  of a BaseChannel making it more generic.
+- CHANGE: Now the shell requires a BaseSequentialStream instead of a
+  BaseChannel for communications making it more generic.
 - CHANGE: Kernel memory pools now do not check the alignment of the inserted
   objects, it is responsibility of the application to insert properly
   aligned objects.
