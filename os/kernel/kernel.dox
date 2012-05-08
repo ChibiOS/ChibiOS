@@ -110,6 +110,11 @@
  */
 
 /**
+ * @defgroup io_queues I/O Queues
+ * @ingroup synchronization
+ */
+
+/**
  * @defgroup memory Memory Management
  * @details Memory Management services.
  * @ingroup kernel
@@ -136,29 +141,19 @@
  */
 
  /**
- * @defgroup io_support I/O Support
- * @details I/O related services.
+ * @defgroup streams Streams and Files
+ * @details Stream and Files interfaces.
  * @ingroup kernel
  */
 
 /**
  * @defgroup data_streams Abstract Sequential Streams
- * @ingroup io_support
+ * @ingroup streams
  */
 
 /**
  * @defgroup data_files Abstract File Streams
- * @ingroup io_support
- */
-
-/**
- * @defgroup io_channels Abstract I/O Channels
- * @ingroup io_support
- */
- 
-/**
- * @defgroup io_queues I/O Queues
- * @ingroup io_support
+ * @ingroup streams
  */
 
 /**

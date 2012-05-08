@@ -167,8 +167,8 @@ typedef struct {
  *
  * @api
  */
-#define blkRead(ip, startblk, buffer, n)                                    \
-  ((ip)->vmt->read(ip, startblk, buffer, n))
+#define blkRead(ip, startblk, buf, n)                                       \
+  ((ip)->vmt->read(ip, startblk, buf, n))
 
 /**
  * @brief   Writes one or more blocks.
@@ -184,8 +184,8 @@ typedef struct {
  *
  * @api
  */
-#define blkWrite(ip, startblk, buffer, n)                                   \
-  ((ip)->vmt->write(ip, startblk, buffer, n))
+#define blkWrite(ip, startblk, buf, n)                                      \
+  ((ip)->vmt->write(ip, startblk, buf, n))
 
 /**
  * @brief   Ensures write synchronization.
@@ -200,7 +200,7 @@ typedef struct {
  * @brief   Returns a media information structure.
  *
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
- * @param[out] bdpi     pointer to a @p BlockDeviceInfo structure
+ * @param[out] bdip     pointer to a @p BlockDeviceInfo structure
  *
  * @api
  */

@@ -81,3 +81,13 @@
  *
  * @ingroup IO
  */
+
+/**
+ * @defgroup IO_CHANNEL Abstract I/O Channels
+ * @ingroup IO
+ */
+
+/**
+ * @defgroup IO_BLOCK Abstract I/O Block Device
+ * @ingroup IO
+ */
