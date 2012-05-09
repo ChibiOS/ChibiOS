@@ -53,12 +53,6 @@ static SPIConfig hs_spicfg = {NULL, IOPORT2, GPIOB_SPI2NSS, 0};
 static SPIConfig ls_spicfg = {NULL, IOPORT2, GPIOB_SPI2NSS,
                               SPI_CR1_BR_2 | SPI_CR1_BR_1};
 
-/* Card insertion verification.*/
-static bool_t mmc_is_inserted(void) {return palReadPad(IOPORT3, GPIOC_MMCCP);}
-
-/* Card protection verification.*/
-static bool_t mmc_is_protected(void) {return !palReadPad(IOPORT3, GPIOC_MMCWP);}
-
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
 
@@ -277,9 +271,7 @@ int main(void) {
    */
   palSetPadMode(IOPORT2, GPIOB_SPI2NSS, PAL_MODE_OUTPUT_PUSHPULL);
   palSetPad(IOPORT2, GPIOB_SPI2NSS);
-  mmcObjectInit(&MMCD1, &SPID2,
-                &ls_spicfg, &hs_spicfg,
-                mmc_is_protected, mmc_is_inserted);
+  mmcObjectInit(&MMCD1, &SPID2, &ls_spicfg, &hs_spicfg);
   mmcStart(&MMCD1, NULL);
 
   /*

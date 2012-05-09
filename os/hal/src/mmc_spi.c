@@ -49,8 +49,6 @@
 /*===========================================================================*/
 
 /* Forward declarations required by mmc_vmt.*/
-bool_t mmc_is_inserted(void *instance);
-bool_t mmc_is_protected(void *instance);
 bool_t mmc_read(void *instance, uint32_t startblk,
                 uint8_t *buffer, uint32_t n);
 bool_t mmc_write(void *instance, uint32_t startblk,
@@ -60,8 +58,8 @@ bool_t mmc_write(void *instance, uint32_t startblk,
  * @brief   Virtual methods table.
  */
 static const struct MMCSDBlockDeviceVMT mmc_vmt = {
-  mmc_is_inserted,
-  mmc_is_protected,
+  (bool_t (*)(void *))mmc_lld_is_card_inserted,
+  (bool_t (*)(void *))mmc_lld_is_write_protected,
   (bool_t (*)(void *))mmcConnect,
   (bool_t (*)(void *))mmcDisconnect,
   mmc_read,
@@ -101,16 +99,6 @@ static const uint8_t crc7_lookup_table[256] = {
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
-
-bool_t mmc_is_inserted(void *instance) {
-
-  return ((MMCDriver *)instance)->is_inserted();
-}
-
-bool_t mmc_is_protected(void *instance) {
-
-  return ((MMCDriver *)instance)->is_protected();
-}
 
 bool_t mmc_read(void *instance, uint32_t startblk,
                 uint8_t *buffer, uint32_t n) {
@@ -171,7 +159,7 @@ static void tmrfunc(void *p) {
 
   chSysLockFromIsr();
   if (mmcp->cnt > 0) {
-    if (mmcp->is_inserted()) {
+    if (mmc_lld_is_card_inserted(mmcp)) {
       if (--mmcp->cnt == 0) {
         mmcp->state = MMC_INSERTED;
         chEvtBroadcastI(&mmcp->inserted_event);
@@ -181,7 +169,7 @@ static void tmrfunc(void *p) {
       mmcp->cnt = MMC_POLLING_INTERVAL;
   }
   else {
-    if (!mmcp->is_inserted()) {
+    if (!mmc_lld_is_card_inserted(mmcp)) {
       mmcp->state = MMC_WAIT;
       mmcp->cnt = MMC_POLLING_INTERVAL;
       chEvtBroadcastI(&mmcp->removed_event);
@@ -382,8 +370,7 @@ void mmcInit(void) {
  * @init
  */
 void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
-                   const SPIConfig *lscfg, const SPIConfig *hscfg,
-                   mmcquery_t is_protected, mmcquery_t is_inserted) {
+                   const SPIConfig *lscfg, const SPIConfig *hscfg) {
 
   mmcp->vmt = &mmc_vmt;
   mmcp->state = MMC_STOP;
@@ -391,8 +378,6 @@ void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
   mmcp->spip = spip;
   mmcp->lscfg = lscfg;
   mmcp->hscfg = hscfg;
-  mmcp->is_protected = is_protected;
-  mmcp->is_inserted = is_inserted;
   mmcp->block_addresses = FALSE;
   chEvtInit(&mmcp->inserted_event);
   chEvtInit(&mmcp->removed_event);

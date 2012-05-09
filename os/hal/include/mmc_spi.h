@@ -102,13 +102,6 @@ typedef enum {
 } mmcstate_t;
 
 /**
- * @brief   Function used to query some hardware status bits.
- *
- * @return              The status.
- */
-typedef bool_t (*mmcquery_t)(void);
-
-/**
  * @brief   Driver configuration structure.
  * @note    Not required in the current implementation.
  */
@@ -146,14 +139,6 @@ typedef struct {
    * @brief SPI high speed configuration used during transfers.
    */
   const SPIConfig       *hscfg;
-  /**
-   * @brief Write protect status query function.
-   */
-  mmcquery_t            is_protected;
-  /**
-   * @brief Insertion status query function.
-   */
-  mmcquery_t            is_inserted;
   /**
    * @brief Card insertion event source.
    */
@@ -204,7 +189,7 @@ typedef struct {
  *
  * @api
  */
-#define mmcIsWriteProtected(mmcp) ((mmcp)->is_protected())
+#define mmcIsWriteProtected(mmcp) mmc_lld_is_write_protected(mmcp)
 /** @} */
 
 /*===========================================================================*/
@@ -216,8 +201,7 @@ extern "C" {
 #endif
   void mmcInit(void);
   void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
-                     const SPIConfig *lscfg, const SPIConfig *hscfg,
-                     mmcquery_t is_protected, mmcquery_t is_inserted);
+                     const SPIConfig *lscfg, const SPIConfig *hscfg);
   void mmcStart(MMCDriver *mmcp, const MMCConfig *config);
   void mmcStop(MMCDriver *mmcp);
   bool_t mmcConnect(MMCDriver *mmcp);
@@ -230,6 +214,8 @@ extern "C" {
   bool_t mmcStopSequentialWrite(MMCDriver *mmcp);
   bool_t mmcSync(MMCDriver *mmcp);
   bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip);
+  bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp);
+  bool_t mmc_lld_is_write_protected(MMCDriver *mmcp);
 #ifdef __cplusplus
 }
 #endif
