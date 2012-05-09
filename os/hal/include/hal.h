@@ -34,9 +34,14 @@
 
 #include "hal_lld.h"
 
+/* Abstract interfaces.*/
 #include "io_channel.h"
 #include "io_block.h"
 
+/* Shared headers.*/
+#include "mmcsd.h"
+
+/* Layered drivers.*/
 #include "tm.h"
 #include "pal.h"
 #include "adc.h"
@@ -53,6 +58,8 @@
 #include "spi.h"
 #include "uart.h"
 #include "usb.h"
+
+/* Complex drivers.*/
 #include "mmc_spi.h"
 #include "serial_usb.h"
 

@@ -53,33 +53,6 @@ static unsigned cnt;
 static EventSource inserted_event, removed_event;
 
 /**
- * @brief   Insertion monitor function.
- *
- * @param[in] sdcp      pointer to the @p SDCDriver object
- *
- * @notapi
- */
-bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
-
-  (void)sdcp;
-  return !palReadPad(GPIOF, GPIOF_SD_DETECT);
-}
-
-/**
- * @brief   Protection detection.
- * @note    Not supported.
- *
- * @param[in] sdcp      pointer to the @p SDCDriver object
- *
- * @notapi
- */
-bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
-
-  (void)sdcp;
-  return FALSE;
-}
-
-/**
  * @brief   Insertion monitor timer callback function.
  *
  * @param[in] p         pointer to the @p SDCDriver object

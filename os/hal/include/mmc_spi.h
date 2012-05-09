@@ -40,20 +40,6 @@
 #define MMC_ACMD41_RETRY            100
 #define MMC_WAIT_DATA               10000
 
-#define MMC_CMDGOIDLE               0
-#define MMC_CMDINIT                 1
-#define MMC_CMDINTERFACE_CONDITION  8
-#define MMC_CMDREADCSD              9
-#define MMC_CMDSTOP                 12
-#define MMC_CMDSETBLOCKLEN          16
-#define MMC_CMDREAD                 17
-#define MMC_CMDREADMULTIPLE         18
-#define MMC_CMDWRITE                24
-#define MMC_CMDWRITEMULTIPLE        25
-#define MMC_CMDAPP                  55
-#define MMC_CMDREADOCR              58
-#define MMC_ACMDOPCONDITION         41
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -62,13 +48,6 @@
  * @name    MMC_SPI configuration options
  * @{
  */
-/**
- * @brief   Block size for MMC transfers.
- */
-#if !defined(MMC_SECTOR_SIZE) || defined(__DOXYGEN__)
-#define MMC_SECTOR_SIZE             512
-#endif
-
 /**
  * @brief   Delays insertions.
  * @details If enabled this options inserts delays into the MMC waiting
@@ -138,9 +117,15 @@ typedef struct {
 } MMCConfig;
 
 /**
- * @brief   Structure representing a MMC driver.
+ * @extends MMCSDBlockDevice
+ *
+ * @brief   Structure representing a MMC/SD over SPI driver.
  */
 typedef struct {
+  /**
+   * @brief Virtual Methods Table.
+   */
+  const struct MMCSDBlockDeviceVMT *vmt;
   /**
    * @brief Driver state.
    */
@@ -243,6 +228,8 @@ extern "C" {
   bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk);
   bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer);
   bool_t mmcStopSequentialWrite(MMCDriver *mmcp);
+  bool_t mmcSync(MMCDriver *mmcp);
+  bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip);
 #ifdef __cplusplus
 }
 #endif

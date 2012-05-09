@@ -123,13 +123,16 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added two new functions to the MMC_SPI driver: mmcSync() and
+  mmc_Get_Info(). Also added the capability to operate through the new
+  block devices abstract interface.
+- NEW: Added an abstract interface for block devices in the HAL. This
+  abstraction layer is meant to unify the access protocol to the SDC and
+  MMC_SPI (and potentially others) device drivers.
 - NEW: Added an abstract interface for serial devices in the HAL. This
   interface is meant to replace the equivalent class already present in the
   kernel. access macros are similar except for the prefix, "chn" instead
   of "chIO".
-- NEW: Added an abstract interface for block devices in the HAL. This
-  abstraction layer is meant to unify the access protocol to the SDC and
-  MMC_SPI (and potentially others) device drivers.
 - NEW: Updated the MSP port to work with the latest MSPGCC compiler (4.6.3
   LTS 20120406 unpatched), now the old MSPGCC 3.2.3 is no more supported
   (backported to 2.4.1).

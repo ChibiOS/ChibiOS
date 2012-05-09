@@ -48,6 +48,28 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
+/* Forward declarations required by mmc_vmt.*/
+bool_t mmc_is_inserted(void *instance);
+bool_t mmc_is_protected(void *instance);
+bool_t mmc_read(void *instance, uint32_t startblk,
+                uint8_t *buffer, uint32_t n);
+bool_t mmc_write(void *instance, uint32_t startblk,
+                 const uint8_t *buffer, uint32_t n);
+
+/**
+ * @brief   Virtual methods table.
+ */
+static const struct MMCSDBlockDeviceVMT mmc_vmt = {
+  mmc_is_inserted,
+  mmc_is_protected,
+  (bool_t (*)(void *))mmcConnect,
+  (bool_t (*)(void *))mmcDisconnect,
+  mmc_read,
+  mmc_write,
+  (bool_t (*)(void *))mmcSync,
+  (bool_t (*)(void *, BlockDeviceInfo *))mmcGetInfo
+};
+
 /**
  * @brief   Lookup table for CRC-7 ( based on polynomial x^7 + x^3 + 1).
  */
@@ -79,6 +101,48 @@ static const uint8_t crc7_lookup_table[256] = {
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+bool_t mmc_is_inserted(void *instance) {
+
+  return ((MMCDriver *)instance)->is_inserted();
+}
+
+bool_t mmc_is_protected(void *instance) {
+
+  return ((MMCDriver *)instance)->is_protected();
+}
+
+bool_t mmc_read(void *instance, uint32_t startblk,
+                uint8_t *buffer, uint32_t n) {
+
+  if (mmcStartSequentialRead((MMCDriver *)instance, startblk))
+    return TRUE;
+  while (n > 0) {
+    if (mmcSequentialRead((MMCDriver *)instance, buffer))
+      return TRUE;
+    buffer += SDMMC_BLOCK_SIZE;
+    n--;
+  }
+  if (mmcStopSequentialRead((MMCDriver *)instance))
+      return TRUE;
+  return FALSE;
+}
+
+bool_t mmc_write(void *instance, uint32_t startblk,
+                 const uint8_t *buffer, uint32_t n) {
+
+  if (mmcStartSequentialWrite((MMCDriver *)instance, startblk))
+      return TRUE;
+  while (n > 0) {
+      if (mmcSequentialWrite((MMCDriver *)instance, buffer))
+          return TRUE;
+      buffer += SDMMC_BLOCK_SIZE;
+      n--;
+  }
+  if (mmcStopSequentialWrite((MMCDriver *)instance))
+      return TRUE;
+  return FALSE;
+}
 
 /**
  * @brief Calculate the MMC standard CRC-7 based on a lookup table.
@@ -321,6 +385,7 @@ void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
                    const SPIConfig *lscfg, const SPIConfig *hscfg,
                    mmcquery_t is_protected, mmcquery_t is_inserted) {
 
+  mmcp->vmt = &mmc_vmt;
   mmcp->state = MMC_STOP;
   mmcp->config = NULL;
   mmcp->spip = spip;
@@ -387,6 +452,7 @@ void mmcStop(MMCDriver *mmcp) {
  *          handler.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
+ *
  * @return              The operation status.
  * @retval FALSE        the operation succeeded and the driver is now
  *                      in the @p MMC_READY state.
@@ -411,7 +477,7 @@ bool_t mmcConnect(MMCDriver *mmcp) {
     /* SPI mode selection.*/
     i = 0;
     while (TRUE) {
-      if (send_command_R1(mmcp, MMC_CMDGOIDLE, 0) == 0x01)
+      if (send_command_R1(mmcp, SDMMC_CMD_GO_IDLE_STATE, 0) == 0x01)
         break;
       if (++i >= MMC_CMD0_RETRY)
         return TRUE;
@@ -419,20 +485,19 @@ bool_t mmcConnect(MMCDriver *mmcp) {
     }
 
     /* Try to detect if this is a high capacity card and switch to block
-     * addresses if possible.
-     *
-     * This method is based on "How to support SDC Ver2 and high capacity cards"
-     * by ElmChan.
-     *
-     * */
+       addresses if possible.
+       This method is based on "How to support SDC Ver2 and high capacity cards"
+       by ElmChan.*/
     uint8_t r3[4];
-    if(send_command_R3(mmcp, MMC_CMDINTERFACE_CONDITION, 0x01AA, r3) != 0x05){
+    if (send_command_R3(mmcp, SDMMC_CMD_SEND_IF_COND,
+                        SDMMC_CMD8_PATTERN, r3) != 0x05) {
 
-      /* Switch to SDHC mode */
+      /* Switch to SDHC mode.*/
       i = 0;
       while (TRUE) {
-        if ((send_command_R1(mmcp, MMC_CMDAPP, 0) == 0x01) &&
-            (send_command_R3(mmcp, MMC_ACMDOPCONDITION, 0x400001aa, r3) == 0x00))
+        if ((send_command_R1(mmcp, SDMMC_CMD_APP_CMD, 0) == 0x01) &&
+            (send_command_R3(mmcp, SDMMC_CMD_APP_OP_COND,
+                             0x400001aa, r3) == 0x00))
           break;
 
         if (++i >= MMC_ACMD41_RETRY)
@@ -441,17 +506,17 @@ bool_t mmcConnect(MMCDriver *mmcp) {
       }
 
       /* Execute dedicated read on OCR register */
-      send_command_R3(mmcp, MMC_CMDREADOCR, 0, r3);
+      send_command_R3(mmcp, SDMMC_CMD_READ_OCR, 0, r3);
 
-      /* Check if CCS is set in response. Card operates in block mode if set */
+      /* Check if CCS is set in response. Card operates in block mode if set.*/
       if(r3[0] & 0x40)
         mmcp->block_addresses = TRUE;
     }
 
-    /* Initialization. */
+    /* Initialization.*/
     i = 0;
     while (TRUE) {
-      uint8_t b = send_command_R1(mmcp, MMC_CMDINIT, 0);
+      uint8_t b = send_command_R1(mmcp, SDMMC_CMD_INIT, 0);
       if (b == 0x00)
         break;
       if (b != 0x01)
@@ -461,11 +526,12 @@ bool_t mmcConnect(MMCDriver *mmcp) {
       chThdSleepMilliseconds(10);
     }
 
-    /* Initialization complete, full speed. */
+    /* Initialization complete, full speed.*/
     spiStart(mmcp->spip, mmcp->hscfg);
 
     /* Setting block size.*/
-    if (send_command_R1(mmcp, MMC_CMDSETBLOCKLEN, MMC_SECTOR_SIZE) != 0x00)
+    if (send_command_R1(mmcp, SDMMC_CMD_SET_BLOCKLEN,
+                        SDMMC_BLOCK_SIZE) != 0x00)
       return TRUE;
 
     /* Transition to MMC_READY state (if not extracted).*/
@@ -490,6 +556,7 @@ bool_t mmcConnect(MMCDriver *mmcp) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @return              The operation status.
+ *
  * @retval FALSE        the operation succeeded and the driver is now
  *                      in the @p MMC_INSERTED state.
  * @retval TRUE         the operation failed.
@@ -525,6 +592,7 @@ bool_t mmcDisconnect(MMCDriver *mmcp) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[in] startblk  first block to read
+ *
  * @return              The operation status.
  * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
@@ -547,9 +615,9 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
   spiSelect(mmcp->spip);
 
   if(mmcp->block_addresses)
-    send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk);
+    send_hdr(mmcp, SDMMC_CMD_READ_MULTIPLE_BLOCK, startblk);
   else
-    send_hdr(mmcp, MMC_CMDREADMULTIPLE, startblk * MMC_SECTOR_SIZE);
+    send_hdr(mmcp, SDMMC_CMD_READ_MULTIPLE_BLOCK, startblk * SDMMC_BLOCK_SIZE);
 
   if (recvr1(mmcp) != 0x00) {
     spiUnselect(mmcp->spip);
@@ -567,6 +635,7 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[out] buffer   pointer to the read buffer
+ *
  * @return              The operation status.
  * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
@@ -588,7 +657,7 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
   for (i = 0; i < MMC_WAIT_DATA; i++) {
     spiReceive(mmcp->spip, 1, buffer);
     if (buffer[0] == 0xFE) {
-      spiReceive(mmcp->spip, MMC_SECTOR_SIZE, buffer);
+      spiReceive(mmcp->spip, SDMMC_BLOCK_SIZE, buffer);
       /* CRC ignored. */
       spiIgnore(mmcp->spip, 2);
       return FALSE;
@@ -607,6 +676,7 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
  * @brief   Stops a sequential read gracefully.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
+ *
  * @return              The operation status.
  * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
@@ -614,7 +684,8 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
  * @api
  */
 bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
-  static const uint8_t stopcmd[] = {0x40 | MMC_CMDSTOP, 0, 0, 0, 0, 1, 0xFF};
+  static const uint8_t stopcmd[] = {0x40 | SDMMC_CMD_STOP_TRANSMISSION,
+                                    0, 0, 0, 0, 1, 0xFF};
   bool_t result;
 
   chDbgCheck(mmcp != NULL, "mmcStopSequentialRead");
@@ -645,6 +716,7 @@ bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[in] startblk  first block to write
+ *
  * @return              The operation status.
  * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
@@ -666,9 +738,10 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
   spiStart(mmcp->spip, mmcp->hscfg);
   spiSelect(mmcp->spip);
   if(mmcp->block_addresses)
-    send_hdr(mmcp, MMC_CMDWRITEMULTIPLE, startblk);
+    send_hdr(mmcp, SDMMC_CMD_WRITE_MULTIPLE_BLOCK, startblk);
   else
-    send_hdr(mmcp, MMC_CMDWRITEMULTIPLE, startblk * MMC_SECTOR_SIZE);
+    send_hdr(mmcp, SDMMC_CMD_WRITE_MULTIPLE_BLOCK,
+             startblk * SDMMC_BLOCK_SIZE);
 
 
   if (recvr1(mmcp) != 0x00) {
@@ -687,6 +760,7 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[out] buffer   pointer to the write buffer
+ *
  * @return              The operation status.
  * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
@@ -707,7 +781,7 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
   chSysUnlock();
 
   spiSend(mmcp->spip, sizeof(start), start);        /* Data prologue.       */
-  spiSend(mmcp->spip, MMC_SECTOR_SIZE, buffer);     /* Data.                */
+  spiSend(mmcp->spip, SDMMC_BLOCK_SIZE, buffer);    /* Data.                */
   spiIgnore(mmcp->spip, 2);                         /* CRC ignored.         */
   spiReceive(mmcp->spip, 1, b);
   if ((b[0] & 0x1F) == 0x05) {
@@ -728,6 +802,7 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
  * @brief   Stops a sequential write gracefully.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
+ *
  * @return              The operation status.
  * @retval FALSE        the operation succeeded.
  * @retval TRUE         the operation failed.
@@ -757,6 +832,63 @@ bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
   }
   chSysUnlock();
   return TRUE;
+}
+
+/**
+ * @brief   Waits for card idle condition.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ *
+ * @return              The operation status.
+ * @retval FALSE        the operation succeeded.
+ * @retval TRUE         the operation failed.
+ *
+ * @api
+ */
+bool_t mmcSync(MMCDriver *mmcp) {
+
+  chDbgCheck(mmcp != NULL, "mmcSync");
+
+  chSysLock();
+  if (mmcp->state != MMC_READY) {
+    chSysUnlock();
+    return TRUE;
+  }
+  chSysUnlock();
+
+  sync(mmcp);
+
+  return FALSE;
+}
+
+/**
+ * @brief   Returns the media info.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[out] bdip     pointer to a @p BlockDeviceInfo structure
+ *
+ * @return              The operation status.
+ * @retval FALSE        the operation succeeded.
+ * @retval TRUE         the operation failed.
+ *
+ * @api
+ */
+bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip) {
+
+
+  chDbgCheck((mmcp != NULL) && (bdip != NULL), "mmcGetInfo");
+
+  chSysLock();
+  if (mmcp->state != MMC_READY) {
+    chSysUnlock();
+    return TRUE;
+  }
+  chSysUnlock();
+
+  bdip->blk_num = 0; /* NOTE: To be implemented.*/
+  bdip->blk_size = SDMMC_BLOCK_SIZE;
+
+  return FALSE;
 }
 
 #endif /* HAL_USE_MMC_SPI */

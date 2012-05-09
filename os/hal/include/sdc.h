@@ -102,6 +102,7 @@
 #define SDC_STARTBIT_ERROR    64          /**< @brief Start bit not detected.*/
 #define SDC_OVERFLOW_ERROR    128         /**< @brief Card overflow error.   */
 #define SDC_UNHANDLED_ERROR   0xFFFFFFFF
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -332,6 +333,8 @@ extern "C" {
   bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
                   const uint8_t *buffer, uint32_t n);
   sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp);
+  bool_t sdcSync(SDCDriver *sdcp);
+  bool_t sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip);
   bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp);
 #ifdef __cplusplus
 }

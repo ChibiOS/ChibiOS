@@ -43,6 +43,20 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Virtual methods table.
+ */
+static const struct MMCSDBlockDeviceVMT sdc_vmt = {
+  (bool_t (*)(void *))sdc_lld_is_card_inserted,
+  (bool_t (*)(void *))sdc_lld_is_write_protected,
+  (bool_t (*)(void *))sdcConnect,
+  (bool_t (*)(void *))sdcDisconnect,
+  (bool_t (*)(void *, uint32_t, uint8_t *, uint32_t))sdcRead,
+  (bool_t (*)(void *, uint32_t, const uint8_t *, uint32_t))sdcWrite,
+  (bool_t (*)(void *))sdcSync,
+  (bool_t (*)(void *, BlockDeviceInfo *))sdcGetInfo
+};
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -147,6 +161,7 @@ void sdcInit(void) {
  */
 void sdcObjectInit(SDCDriver *sdcp) {
 
+  sdcp->vmt    = &sdc_vmt;
   sdcp->state  = SDC_STOP;
   sdcp->errors = SDC_NO_ERROR;
   sdcp->config = NULL;
@@ -484,6 +499,63 @@ sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp) {
   sdcflags_t flags = sdcp->errors;
   sdcp->errors = SDC_NO_ERROR;
   return flags;
+}
+
+/**
+ * @brief   Waits for card idle condition.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @return              The operation status.
+ * @retval FALSE        the operation succeeded.
+ * @retval TRUE         the operation failed.
+ *
+ * @api
+ */
+bool_t sdcSync(SDCDriver *sdcp) {
+
+  chDbgCheck(sdcp != NULL, "sdcSync");
+
+  chSysLock();
+  if (sdcp->state != SDC_READY) {
+    chSysUnlock();
+    return TRUE;
+  }
+  chSysUnlock();
+
+  /* TODO: implement.*/
+
+  return FALSE;
+}
+
+/**
+ * @brief   Returns the media info.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[out] bdip     pointer to a @p BlockDeviceInfo structure
+ *
+ * @return              The operation status.
+ * @retval FALSE        the operation succeeded.
+ * @retval TRUE         the operation failed.
+ *
+ * @api
+ */
+bool_t sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
+
+
+  chDbgCheck((sdcp != NULL) && (bdip != NULL), "sdcGetInfo");
+
+  chSysLock();
+  if (sdcp->state != SDC_READY) {
+    chSysUnlock();
+    return TRUE;
+  }
+  chSysUnlock();
+
+  bdip->blk_num = 0; /* NOTE: To be implemented.*/
+  bdip->blk_size = SDMMC_BLOCK_SIZE;
+
+  return FALSE;
 }
 
 #endif /* HAL_USE_SDC */

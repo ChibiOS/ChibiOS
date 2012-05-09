@@ -192,6 +192,10 @@ typedef struct {
  *
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  *
+ * @return              The operation status.
+ * @retval FALSE        operation succeeded.
+ * @retval TRUE         operation failed.
+ *
  * @api
  */
 #define blkSync(ip) ((ip)->vmt->sync(ip))
@@ -201,6 +205,10 @@ typedef struct {
  *
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  * @param[out] bdip     pointer to a @p BlockDeviceInfo structure
+ *
+ * @return              The operation status.
+ * @retval FALSE        operation succeeded.
+ * @retval TRUE         operation failed.
  *
  * @api
  */

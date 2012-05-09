@@ -198,6 +198,10 @@ typedef struct {
  */
 struct SDCDriver {
   /**
+   * @brief Virtual Methods Table.
+   */
+  const struct MMCSDBlockDeviceVMT *vmt;
+  /**
    * @brief Driver state.
    */
   sdcstate_t                state;
