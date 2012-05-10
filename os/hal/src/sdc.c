@@ -499,7 +499,7 @@ bool_t sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
   }
   chSysUnlock();
 
-  bdip->blk_num = 0; /* NOTE: To be implemented.*/
+  bdip->blk_num = sdcp->capacity;
   bdip->blk_size = MMCSD_BLOCK_SIZE;
 
   return FALSE;
