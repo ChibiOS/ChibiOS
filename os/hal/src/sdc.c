@@ -443,8 +443,10 @@ sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp) {
 
   chDbgCheck(sdcp != NULL, "sdcGetAndClearErrors");
 
+  chSysLock();
   sdcflags_t flags = sdcp->errors;
   sdcp->errors = SDC_NO_ERROR;
+  chSysUnlock();
   return flags;
 }
 
@@ -470,9 +472,7 @@ bool_t sdcSync(SDCDriver *sdcp) {
   }
   chSysUnlock();
 
-  /* TODO: implement.*/
-
-  return CH_SUCCESS;
+  return sdc_lld_sync(sdcp);
 }
 
 /**

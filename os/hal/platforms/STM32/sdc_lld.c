@@ -775,6 +775,24 @@ bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
   return sdc_lld_write_aligned(sdcp, startblk, buf, n);
 }
 
+/**
+ * @brief   Waits for card idle condition.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @return              The operation status.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
+ *
+ * @api
+ */
+bool_t sdc_lld_sync(SDCDriver *sdcp) {
+
+  /* TODO: Implement.*/
+  (void)sdcp;
+  return CH_SUCCESS;
+}
+
 #endif /* HAL_USE_SDC */
 
 /** @} */
