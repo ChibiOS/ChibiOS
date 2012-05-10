@@ -79,8 +79,8 @@ static union {
  * @param[in] resp      pointer to the response buffer
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */
@@ -117,8 +117,8 @@ static bool_t sdc_lld_prepare_read(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] resp      pointer to the response buffer
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */
@@ -154,8 +154,8 @@ static bool_t sdc_lld_prepare_write(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] resp      pointer to the response buffer
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  */
 static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
                                            uint32_t *resp){
@@ -488,8 +488,8 @@ void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
  * @param[out] resp     pointer to the response buffer (one word)
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */
@@ -522,8 +522,8 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @param[out] resp     pointer to the response buffer (one word)
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */
@@ -556,8 +556,8 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @param[out] resp     pointer to the response buffer (four words)
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */
@@ -595,8 +595,8 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @param[in] n         number of blocks to read
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */
@@ -657,8 +657,8 @@ error:
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */
@@ -718,8 +718,8 @@ error:
  * @param[in] n         number of blocks to read
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */
@@ -751,8 +751,8 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS  operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */

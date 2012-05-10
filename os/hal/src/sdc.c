@@ -454,8 +454,8 @@ sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp) {
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
  * @return              The operation status.
- * @retval FALSE        the operation succeeded.
- * @retval TRUE         the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -466,13 +466,13 @@ bool_t sdcSync(SDCDriver *sdcp) {
   chSysLock();
   if (sdcp->state != SDC_READY) {
     chSysUnlock();
-    return TRUE;
+    return CH_FAILED;
   }
   chSysUnlock();
 
   /* TODO: implement.*/
 
-  return FALSE;
+  return CH_SUCCESS;
 }
 
 /**
@@ -482,8 +482,8 @@ bool_t sdcSync(SDCDriver *sdcp) {
  * @param[out] bdip     pointer to a @p BlockDeviceInfo structure
  *
  * @return              The operation status.
- * @retval FALSE        the operation succeeded.
- * @retval TRUE         the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -495,14 +495,14 @@ bool_t sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
   chSysLock();
   if (sdcp->state != SDC_READY) {
     chSysUnlock();
-    return TRUE;
+    return CH_FAILED;
   }
   chSysUnlock();
 
   bdip->blk_num = sdcp->capacity;
   bdip->blk_size = MMCSD_BLOCK_SIZE;
 
-  return FALSE;
+  return CH_SUCCESS;
 }
 
 #endif /* HAL_USE_SDC */
