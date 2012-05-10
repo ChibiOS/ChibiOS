@@ -58,7 +58,7 @@ static uint32_t mmcsd_get_slice(uint32_t *data, uint32_t end, uint32_t start) {
 
   chDbgCheck(end >= start, "sdc_get_slice");
 
-  while ((start - 32 * word) > 31){
+  while ((start - 32 * word) > 31) {
     word++;
     data++;
   }
@@ -66,12 +66,12 @@ static uint32_t mmcsd_get_slice(uint32_t *data, uint32_t end, uint32_t start) {
   end   -= 32 * word;
   start -= 32 * word;
 
-  if (end < 31){
+  if (end < 31) {
     /* Value lays in one word.*/
     mask = (1 << (end - start + 1)) - 1;
     return (*data >> start) & mask;
   }
-  else{
+  else {
     /* Value spread on separate words.*/
     uint32_t lsb, msb;
     lsb = *data >> start;

@@ -310,12 +310,59 @@ static uint8_t send_command_R1(MMCDriver *mmcp, uint8_t cmd, uint32_t arg) {
 static uint8_t send_command_R3(MMCDriver *mmcp, uint8_t cmd, uint32_t arg,
                                uint8_t *response) {
   uint8_t r1;
-  
+
   spiSelect(mmcp->config->spip);
   send_hdr(mmcp, cmd, arg);
   r1 = recvr3(mmcp, response);
   spiUnselect(mmcp->config->spip);
   return r1;
+}
+
+/**
+ * @brief   Reads the CSD.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[out] csd       pointer to the CSD buffer
+ *
+ * @return              The operation status.
+ * @retval FALSE        the operation succeeded.
+ * @retval TRUE         the operation failed.
+ *
+ * @notapi
+ */
+static bool_t read_CSD(MMCDriver *mmcp, uint32_t csd[4]) {
+  unsigned i;
+  uint8_t *bp, buf[16];
+
+  spiSelect(mmcp->config->spip);
+  send_hdr(mmcp, MMCSD_CMD_SEND_CSD, 0);
+  if (recvr1(mmcp) != 0x00) {
+    spiUnselect(mmcp->config->spip);
+    return TRUE;
+  }
+
+  /* Wait for data availability.*/
+  for (i = 0; i < MMC_WAIT_DATA; i++) {
+    spiReceive(mmcp->config->spip, 1, buf);
+    if (buf[0] == 0xFE) {
+      uint32_t *wp;
+
+      spiReceive(mmcp->config->spip, 16, buf);
+      bp = buf;
+      for (wp = &csd[3]; wp >= csd; wp--) {
+        *wp = ((uint32_t)bp[0] << 24) | ((uint32_t)bp[1] << 16) |
+              ((uint32_t)bp[2] << 8)  | (uint32_t)bp[3];
+        bp += 4;
+      }
+
+      /* CRC ignored then end of transaction. */
+      spiIgnore(mmcp->config->spip, 2);
+      spiUnselect(mmcp->config->spip);
+
+      return FALSE;
+    }
+  }
+  return TRUE;
 }
 
 /**
@@ -444,6 +491,7 @@ void mmcStop(MMCDriver *mmcp) {
 bool_t mmcConnect(MMCDriver *mmcp) {
   unsigned i;
   bool_t result;
+  uint32_t csd[4];
 
   chDbgCheck(mmcp != NULL, "mmcConnect");
 
@@ -513,6 +561,13 @@ bool_t mmcConnect(MMCDriver *mmcp) {
     /* Setting block size.*/
     if (send_command_R1(mmcp, MMCSD_CMD_SET_BLOCKLEN,
                         MMCSD_BLOCK_SIZE) != 0x00)
+      return TRUE;
+
+    /* Determine capacity.*/
+    if (read_CSD(mmcp, csd))
+      return TRUE;
+    mmcp->capacity = mmcsdGetCapacity(csd);
+    if (mmcp->capacity == 0)
       return TRUE;
 
     /* Transition to MMC_READY state (if not extracted).*/
@@ -866,7 +921,7 @@ bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip) {
   }
   chSysUnlock();
 
-  bdip->blk_num = 0; /* NOTE: To be implemented.*/
+  bdip->blk_num  = mmcp->capacity;
   bdip->blk_size = MMCSD_BLOCK_SIZE;
 
   return FALSE;

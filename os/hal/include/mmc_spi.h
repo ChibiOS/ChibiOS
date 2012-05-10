@@ -157,6 +157,10 @@ typedef struct {
    * @brief Addresses use blocks instead of bytes.
    */
   bool_t                block_addresses;
+  /**
+   * @brief Total number of blocks in card.
+   */
+  uint32_t              capacity;
 } MMCDriver;
 
 /*===========================================================================*/

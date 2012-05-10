@@ -578,7 +578,7 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
     sdc_lld_collect_errors(sdcp);
     return CH_FAILED;
   }
-  /* save bytes in reverse order because MSB in response comes first */
+  /* Save bytes in reverse order because MSB in response comes first.*/
   *resp++ = SDIO->RESP4;
   *resp++ = SDIO->RESP3;
   *resp++ = SDIO->RESP2;
