@@ -60,15 +60,8 @@ static SPIConfig ls_spicfg = {
   254
 };
 
-/* Card insertion verification.*/
-static bool_t mmc_is_inserted(void) {
-  return !palReadPad(IOPORT2, PB_CP1);
-}
-
-/* Card protection verification.*/
-static bool_t mmc_is_protected(void) {
-  return palReadPad(IOPORT2, PB_WP1);
-}
+/* MMC/SD over SPI driver configuration.*/
+static MMCConfig mmccfg = {&SPID1, &ls_spicfg, &hs_spicfg};
 
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
@@ -255,10 +248,8 @@ int main(void) {
   /*
    * Initializes the MMC driver to work with SPI2.
    */
-  mmcObjectInit(&MMCD1, &SPID1,
-                &ls_spicfg, &hs_spicfg,
-                mmc_is_protected, mmc_is_inserted);
-  mmcStart(&MMCD1, NULL);
+  mmcObjectInit(&MMCD1);
+  mmcStart(&MMCD1, &mmccfg);
 
   /*
    * Creates the blinker threads.

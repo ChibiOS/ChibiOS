@@ -227,7 +227,7 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp,
            "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free\r\n",
            clusters, (uint32_t)SDC_FS.csize,
-           clusters * (uint32_t)SDC_FS.csize * (uint32_t)SDC_BLOCK_SIZE);
+           clusters * (uint32_t)SDC_FS.csize * (uint32_t)MMCSD_BLOCK_SIZE);
   fbuff[0] = 0;
   scan_files(chp, (char *)fbuff);
 }

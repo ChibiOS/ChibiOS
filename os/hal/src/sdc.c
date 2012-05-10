@@ -62,42 +62,6 @@ static const struct MMCSDBlockDeviceVMT sdc_vmt = {
 /*===========================================================================*/
 
 /**
- * @brief   Get slice with data from uint32_t[4] array.
- *
- * @notapi
- */
-static uint32_t _sdc_get_slice(uint32_t *data, int32_t end, int32_t start) {
-  uint32_t word = 0;
-  uint32_t mask = 0;
-
-  chDbgCheck(((start >=0) && (end >=0) && (end >= start)), "sdc_get_slice");
-
-  while ((start - 32 * word) > 31){
-    word++;
-    data++;
-  }
-
-  end   -= 32 * word;
-  start -= 32 * word;
-
-  if (end < 31){
-    /* Value lays in one word.*/
-    mask = (1 << (end - start + 1)) - 1;
-    return (*data >> start) & mask;
-  }
-  else{
-    /* Value spread on separate words.*/
-    uint32_t lsb, msb;
-    lsb = *data >> start;
-    data++;
-    mask = (1 << (end - 32 + 1)) - 1;
-    msb = *data & mask;
-    msb = msb << (32 - start);
-    return (msb | lsb);
-  }
-}
-
-/**
  * @brief   Wait for the card to complete pending operations.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
@@ -112,16 +76,16 @@ bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
   uint32_t resp[1];
 
   while (TRUE) {
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_STATUS,
+    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_STATUS,
                                    sdcp->rca, resp) ||
-        SDC_R1_ERROR(resp[0]))
+        MMCSD_R1_ERROR(resp[0]))
       return CH_FAILED;
-    switch (SDC_R1_STS(resp[0])) {
-    case SDC_STS_TRAN:
+    switch (MMCSD_R1_STS(resp[0])) {
+    case MMCSD_STS_TRAN:
       return CH_SUCCESS;
-    case SDC_STS_DATA:
-    case SDC_STS_RCV:
-    case SDC_STS_PRG:
+    case MMCSD_STS_DATA:
+    case MMCSD_STS_RCV:
+    case MMCSD_STS_PRG:
 #if SDC_NICE_WAITING
       chThdSleepMilliseconds(1);
 #endif
@@ -239,23 +203,23 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   sdc_lld_start_clk(sdcp);
 
   /* Enforces the initial card state.*/
-  sdc_lld_send_cmd_none(sdcp, SDC_CMD_GO_IDLE_STATE, 0);
+  sdc_lld_send_cmd_none(sdcp, MMCSD_CMD_GO_IDLE_STATE, 0);
 
   /* V2.0 cards detection.*/
-  if (!sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_IF_COND,
-                                  SDC_CMD8_PATTERN, resp)) {
+  if (!sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_IF_COND,
+                                  MMCSD_CMD8_PATTERN, resp)) {
     sdcp->cardmode = SDC_MODE_CARDTYPE_SDV20;
     /* Voltage verification.*/
     if (((resp[0] >> 8) & 0xF) != 1)
       goto failed;
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
-        SDC_R1_ERROR(resp[0]))
+    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, 0, resp) ||
+        MMCSD_R1_ERROR(resp[0]))
       goto failed;
   }
   else {
 #if SDC_MMC_SUPPORT
     /* MMC or SD V1.1 detection.*/
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
+    if (sdc_lld_send_cmd_short_crc(sdcp, SDMMC_CMD_APP_CMD, 0, resp) ||
         SDC_R1_ERROR(resp[0]))
       sdcp->cardmode = SDC_MODE_CARDTYPE_MMC;
     else
@@ -283,10 +247,10 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     /* SD-type initialization. */
     i = 0;
     while (TRUE) {
-      if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, 0, resp) ||
-        SDC_R1_ERROR(resp[0]))
+      if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, 0, resp) ||
+        MMCSD_R1_ERROR(resp[0]))
         goto failed;
-      if (sdc_lld_send_cmd_short(sdcp, SDC_CMD_APP_OP_COND, ocr, resp))
+      if (sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_APP_OP_COND, ocr, resp))
         goto failed;
       if ((resp[0] & 0x80000000) != 0) {
         if (resp[0] & 0x40000000)
@@ -300,30 +264,31 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   }
 
   /* Reads CID.*/
-  if (sdc_lld_send_cmd_long_crc(sdcp, SDC_CMD_ALL_SEND_CID, 0, sdcp->cid))
+  if (sdc_lld_send_cmd_long_crc(sdcp, MMCSD_CMD_ALL_SEND_CID, 0, sdcp->cid))
     goto failed;
 
   /* Asks for the RCA.*/
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEND_RELATIVE_ADDR,
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_RELATIVE_ADDR,
                                  0, &sdcp->rca))
     goto failed;
 
   /* Reads CSD.*/
-  if (sdc_lld_send_cmd_long_crc(sdcp, SDC_CMD_SEND_CSD, sdcp->rca, sdcp->csd))
+  if (sdc_lld_send_cmd_long_crc(sdcp, MMCSD_CMD_SEND_CSD,
+                                sdcp->rca, sdcp->csd))
     goto failed;
 
   /* Switches to high speed.*/
   sdc_lld_set_data_clk(sdcp);
 
   /* Selects the card for operations.*/
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SEL_DESEL_CARD,
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEL_DESEL_CARD,
                                  sdcp->rca, resp))
     goto failed;
 
   /* Block length fixed at 512 bytes.*/
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BLOCKLEN,
-                                 SDC_BLOCK_SIZE, resp) ||
-      SDC_R1_ERROR(resp[0]))
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SET_BLOCKLEN,
+                                 MMCSD_BLOCK_SIZE, resp) ||
+      MMCSD_R1_ERROR(resp[0]))
     goto failed;
 
   /* Switches to wide bus mode.*/
@@ -331,35 +296,17 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   case SDC_MODE_CARDTYPE_SDV11:
   case SDC_MODE_CARDTYPE_SDV20:
     sdc_lld_set_bus_mode(sdcp, SDC_MODE_4BIT);
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_APP_CMD, sdcp->rca, resp) ||
-        SDC_R1_ERROR(resp[0]))
+    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, sdcp->rca, resp) ||
+        MMCSD_R1_ERROR(resp[0]))
       goto failed;
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_SET_BUS_WIDTH, 2, resp) ||
-        SDC_R1_ERROR(resp[0]))
+    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SET_BUS_WIDTH, 2, resp) ||
+        MMCSD_R1_ERROR(resp[0]))
       goto failed;
     break;
   }
 
   /* Determine capacity.*/
-  switch (sdcp->csd[3] >> 30) {
-  uint32_t a, b, c;
-  case 0:
-    /* CSD version 1.0 */
-    a = _sdc_get_slice(sdcp->csd, SDC_CSD_10_C_SIZE_SLICE);
-    b = _sdc_get_slice(sdcp->csd, SDC_CSD_10_C_SIZE_MULT_SLICE);
-    c = _sdc_get_slice(sdcp->csd, SDC_CSD_10_READ_BL_LEN_SLICE);
-    sdcp->capacity = ((a + 1) << (b + 2) << c) / 512;
-    break;
-  case 1:
-    /* CSD version 2.0 */
-    a = _sdc_get_slice(sdcp->csd, SDC_CSD_20_C_SIZE_SLICE);
-    sdcp->capacity = 1024 * (a + 1);
-    break;
-  default:
-    /* Reserved value detected. */
-    sdcp->capacity = 0;
-    break;
-  }
+  sdcp->capacity = mmcsdGetCapacity(sdcp->csd);
   if (sdcp->capacity == 0)
     goto failed;
 
@@ -553,7 +500,7 @@ bool_t sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
   chSysUnlock();
 
   bdip->blk_num = 0; /* NOTE: To be implemented.*/
-  bdip->blk_size = SDMMC_BLOCK_SIZE;
+  bdip->blk_size = MMCSD_BLOCK_SIZE;
 
   return FALSE;
 }

@@ -219,7 +219,7 @@ DRESULT disk_ioctl (
         *((DWORD *)buff) = sdcGetCardCapacity(&SDCD1);
         return RES_OK;
     case GET_SECTOR_SIZE:
-        *((WORD *)buff) = SDC_BLOCK_SIZE;
+        *((WORD *)buff) = MMCSD_BLOCK_SIZE;
         return RES_OK;
     case GET_BLOCK_SIZE:
         *((DWORD *)buff) = 256; /* 512b blocks in one erase block */

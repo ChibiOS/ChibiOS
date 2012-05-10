@@ -61,15 +61,8 @@ static SPIConfig ls_spicfg = {
   (MIN_SPI_BITRATE << 8) | AT91C_SPI_NCPHA | AT91C_SPI_BITS_8
 };
 
-/* Card insertion verification.*/
-static bool_t mmc_is_inserted(void) {
-  return !palReadPad(IOPORT2, PIOB_MMC_CP);
-}
-
-/* Card protection verification.*/
-static bool_t mmc_is_protected(void) {
-  return palReadPad(IOPORT2, PIOB_MMC_WP);
-}
+/* MMC/SD over SPI driver configuration.*/
+static MMCConfig mmccfg = {&SPID1, &ls_spicfg, &hs_spicfg};
 
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
@@ -288,10 +281,8 @@ int main(void) {
    */
   palSetPadMode(IOPORT1, PIOA_CS_MMC, PAL_MODE_OUTPUT_PUSHPULL);
   palSetPad(IOPORT1, PIOA_CS_MMC);
-  mmcObjectInit(&MMCD1, &SPID1,
-                &ls_spicfg, &hs_spicfg,
-                mmc_is_protected, mmc_is_inserted);
-  mmcStart(&MMCD1, NULL);
+  mmcObjectInit(&MMCD1);
+  mmcStart(&MMCD1, &mmccfg);
 
   /*
    * Creates the blinker threads.

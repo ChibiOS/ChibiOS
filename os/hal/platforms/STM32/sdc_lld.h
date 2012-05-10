@@ -38,19 +38,19 @@
 /**
  * @brief Value to clear all interrupts flag at once.
  */
-#define STM32_SDIO_ICR_ALL_FLAGS (SDIO_ICR_CCRCFAILC | SDIO_ICR_DCRCFAILC |   \
-                                  SDIO_ICR_CTIMEOUTC | SDIO_ICR_DTIMEOUTC |   \
-                                  SDIO_ICR_TXUNDERRC | SDIO_ICR_RXOVERRC |    \
-                                  SDIO_ICR_CMDRENDC  | SDIO_ICR_CMDSENTC |    \
-                                  SDIO_ICR_DATAENDC  | SDIO_ICR_STBITERRC |   \
-                                  SDIO_ICR_DBCKENDC  | SDIO_ICR_SDIOITC |     \
+#define STM32_SDIO_ICR_ALL_FLAGS (SDIO_ICR_CCRCFAILC | SDIO_ICR_DCRCFAILC | \
+                                  SDIO_ICR_CTIMEOUTC | SDIO_ICR_DTIMEOUTC | \
+                                  SDIO_ICR_TXUNDERRC | SDIO_ICR_RXOVERRC |  \
+                                  SDIO_ICR_CMDRENDC  | SDIO_ICR_CMDSENTC |  \
+                                  SDIO_ICR_DATAENDC  | SDIO_ICR_STBITERRC | \
+                                  SDIO_ICR_DBCKENDC  | SDIO_ICR_SDIOITC |   \
                                   SDIO_ICR_CEATAENDC)
 
 /**
  * @brief Mask of error flags in STA register.
  */
-#define STM32_SDIO_STA_ERROR_MASK (SDIO_STA_CCRCFAIL | SDIO_STA_DCRCFAIL |    \
-                                   SDIO_STA_CTIMEOUT | SDIO_STA_DTIMEOUT |    \
+#define STM32_SDIO_STA_ERROR_MASK (SDIO_STA_CCRCFAIL | SDIO_STA_DCRCFAIL |  \
+                                   SDIO_STA_CTIMEOUT | SDIO_STA_DTIMEOUT |  \
                                    SDIO_STA_TXUNDERR | SDIO_STA_RXOVERR)
 
 /*===========================================================================*/
@@ -258,6 +258,32 @@ struct SDCDriver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @name    R1 response utilities
+ * @{
+ */
+/**
+ * @brief   Evaluates to @p TRUE if the R1 response contains error flags.
+ *
+ * @param[in] r1        the r1 response
+ */
+#define MMCSD_R1_ERROR(r1)              (((r1) & MMCSD_R1_ERROR_MASK) != 0)
+
+/**
+ * @brief   Returns the status field of an R1 response.
+ *
+ * @param[in] r1        the r1 response
+ */
+#define MMCSD_R1_STS(r1)                (((r1) >> 9) & 15)
+
+/**
+ * @brief   Evaluates to @p TRUE if the R1 response indicates a locked card.
+ *
+ * @param[in] r1        the r1 response
+ */
+#define MMCSD_R1_IS_CARD_LOCKED(r1)     (((r1) >> 21) & 1)
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

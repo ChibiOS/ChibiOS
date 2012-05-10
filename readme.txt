@@ -123,11 +123,14 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added a common ancestor class to the SDC and MMC_SPI drivers. This
+  allows to share code and definitions.
 - NEW: Modified the SDC driver to implement the new block devices abstract
   interface.
 - NEW: Added two new functions to the MMC_SPI driver: mmcSync() and
   mmc_Get_Info(). Also implemented the new block devices abstract
-  interface.
+  interface. Moved the configuration parameters from mmcObjectInit() to
+  the configuration structure saving some RAM space. Updated demos.
 - NEW: Added an abstract interface for block devices in the HAL. This
   abstraction layer is meant to unify the access protocol to the SDC and
   MMC_SPI (and potentially others) device drivers.

@@ -35,13 +35,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define SDC_BLOCK_SIZE                  512     /**< Fixed block size.      */
-
-/**
- * @brief   Fixed pattern for CMD8.
- */
-#define SDC_CMD8_PATTERN                0x000001AA
-
 /**
  * @name    SD cart types
  * @{
@@ -54,53 +47,18 @@
 /** @} */
 
 /**
- * @brief   Mask of error bits in R1 responses.
- */
-#define SDC_R1_ERROR_MASK               0xFDFFE008
-
-#define SDC_STS_IDLE                    0
-#define SDC_STS_READY                   1
-#define SDC_STS_IDENT                   2
-#define SDC_STS_STBY                    3
-#define SDC_STS_TRAN                    4
-#define SDC_STS_DATA                    5
-#define SDC_STS_RCV                     6
-#define SDC_STS_PRG                     7
-#define SDC_STS_DIS                     8
-
-#define SDC_CMD_GO_IDLE_STATE           0
-#define SDC_CMD_INIT                    1
-#define SDC_CMD_ALL_SEND_CID            2
-#define SDC_CMD_SEND_RELATIVE_ADDR      3
-#define SDC_CMD_SET_BUS_WIDTH           6
-#define SDC_CMD_SEL_DESEL_CARD          7
-#define SDC_CMD_SEND_IF_COND            8
-#define SDC_CMD_SEND_CSD                9
-#define SDC_CMD_STOP_TRANSMISSION       12
-#define SDC_CMD_SEND_STATUS             13
-#define SDC_CMD_SET_BLOCKLEN            16
-#define SDC_CMD_READ_SINGLE_BLOCK       17
-#define SDC_CMD_READ_MULTIPLE_BLOCK     18
-#define SDC_CMD_SET_BLOCK_COUNT         23
-#define SDC_CMD_WRITE_BLOCK             24
-#define SDC_CMD_WRITE_MULTIPLE_BLOCK    25
-#define SDC_CMD_APP_OP_COND             41
-#define SDC_CMD_LOCK_UNLOCK             42
-#define SDC_CMD_APP_CMD                 55
-
-/**
  * @name    SDC bus error conditions
  * @{
  */
-#define SDC_NO_ERROR          0           /**< @brief No error.              */
-#define SDC_CMD_CRC_ERROR     1           /**< @brief Command CRC error.     */
-#define SDC_DATA_CRC_ERROR    2           /**< @brief Data CRC error.        */
-#define SDC_DATA_TIMEOUT      4           /**< @brief Hardware write timeout.*/
-#define SDC_COMMAND_TIMEOUT   8           /**< @brief Hardware read timeout. */
-#define SDC_TX_UNDERRUN       16          /**< @brief TX buffer underrun.    */
-#define SDC_RX_OVERRUN        32          /**< @brief RX buffer overrun.     */
-#define SDC_STARTBIT_ERROR    64          /**< @brief Start bit not detected.*/
-#define SDC_OVERFLOW_ERROR    128         /**< @brief Card overflow error.   */
+#define SDC_NO_ERROR          0           /**< @brief No error.             */
+#define SDC_CMD_CRC_ERROR     1           /**< @brief Command CRC error.    */
+#define SDC_DATA_CRC_ERROR    2           /**< @brief Data CRC error.       */
+#define SDC_DATA_TIMEOUT      4           /**< @brief HW write timeout.     */
+#define SDC_COMMAND_TIMEOUT   8           /**< @brief HW read timeout.      */
+#define SDC_TX_UNDERRUN       16          /**< @brief TX buffer underrun.   */
+#define SDC_RX_OVERRUN        32          /**< @brief RX buffer overrun.    */
+#define SDC_STARTBIT_ERROR    64          /**< @brief Start bit missing.    */
+#define SDC_OVERFLOW_ERROR    128         /**< @brief Card overflow error.  */
 #define SDC_UNHANDLED_ERROR   0xFFFFFFFF
 /** @} */
 
@@ -169,32 +127,6 @@ typedef enum {
 /*===========================================================================*/
 
 /**
- * @name    R1 response utilities
- * @{
- */
-/**
- * @brief   Evaluates to @p TRUE if the R1 response contains error flags.
- *
- * @param[in] r1        the r1 response
- */
-#define SDC_R1_ERROR(r1)                (((r1) & SDC_R1_ERROR_MASK) != 0)
-
-/**
- * @brief   Returns the status field of an R1 response.
- *
- * @param[in] r1        the r1 response
- */
-#define SDC_R1_STS(r1)                  (((r1) >> 9) & 15)
-
-/**
- * @brief   Evaluates to @p TRUE if the R1 response indicates a locked card.
- *
- * @param[in] r1        the r1 response
- */
-#define SDC_R1_IS_CARD_LOCKED(r1)       (((r1) >> 21) & 1)
-/** @} */
-
-/**
  * @name    Macro Functions
  * @{
  */
@@ -249,70 +181,6 @@ typedef enum {
  * @api
  */
 #define sdcGetCardCapacity(sdcp)  ((sdcp)->capacity)
-/** @} */
-
-/**
- * @name   CSD record offsets
- */
-/**
- * @brief  Slice position of values in CSD register.
- */
-/* CSD version 2.0 */
-#define SDC_CSD_20_CRC_SLICE                7,1
-#define SDC_CSD_20_FILE_FORMAT_SLICE        11,10
-#define SDC_CSD_20_TMP_WRITE_PROTECT_SLICE  12,12
-#define SDC_CSD_20_PERM_WRITE_PROTECT_SLICE 13,13
-#define SDC_CSD_20_COPY_SLICE               14,14
-#define SDC_CSD_20_FILE_FORMAT_GRP_SLICE    15,15
-#define SDC_CSD_20_WRITE_BL_PARTIAL_SLICE   21,21
-#define SDC_CSD_20_WRITE_BL_LEN_SLICE       25,12
-#define SDC_CSD_20_R2W_FACTOR_SLICE         28,26
-#define SDC_CSD_20_WP_GRP_ENABLE_SLICE      31,31
-#define SDC_CSD_20_WP_GRP_SIZE_SLICE        38,32
-#define SDC_CSD_20_ERASE_SECTOR_SIZE_SLICE  45,39
-#define SDC_CSD_20_ERASE_BLK_EN_SLICE       46,46
-#define SDC_CSD_20_C_SIZE_SLICE             69,48
-#define SDC_CSD_20_DSR_IMP_SLICE            76,76
-#define SDC_CSD_20_READ_BLK_MISALIGN_SLICE  77,77
-#define SDC_CSD_20_WRITE_BLK_MISALIGN_SLICE 78,78
-#define SDC_CSD_20_READ_BL_PARTIAL_SLICE    79,79
-#define SDC_CSD_20_READ_BL_LEN_SLICE        83,80
-#define SDC_CSD_20_CCC_SLICE                95,84
-#define SDC_CSD_20_TRANS_SPEED_SLICE        103,96
-#define SDC_CSD_20_NSAC_SLICE               111,104
-#define SDC_CSD_20_TAAC_SLICE               119,112
-#define SDC_CSD_20_STRUCTURE_SLICE          127,126
-
-/* CSD version 1.0 */
-#define SDC_CSD_10_CRC_SLICE                SDC_CSD_20_CRC_SLICE
-#define SDC_CSD_10_FILE_FORMAT_SLICE        SDC_CSD_20_FILE_FORMAT_SLICE
-#define SDC_CSD_10_TMP_WRITE_PROTECT_SLICE  SDC_CSD_20_TMP_WRITE_PROTECT_SLICE
-#define SDC_CSD_10_PERM_WRITE_PROTECT_SLICE SDC_CSD_20_PERM_WRITE_PROTECT_SLICE
-#define SDC_CSD_10_COPY_SLICE               SDC_CSD_20_COPY_SLICE
-#define SDC_CSD_10_FILE_FORMAT_GRP_SLICE    SDC_CSD_20_FILE_FORMAT_GRP_SLICE
-#define SDC_CSD_10_WRITE_BL_PARTIAL_SLICE   SDC_CSD_20_WRITE_BL_PARTIAL_SLICE
-#define SDC_CSD_10_WRITE_BL_LEN_SLICE       SDC_CSD_20_WRITE_BL_LEN_SLICE
-#define SDC_CSD_10_R2W_FACTOR_SLICE         SDC_CSD_20_R2W_FACTOR_SLICE
-#define SDC_CSD_10_WP_GRP_ENABLE_SLICE      SDC_CSD_20_WP_GRP_ENABLE_SLICE
-#define SDC_CSD_10_WP_GRP_SIZE_SLICE        SDC_CSD_20_WP_GRP_SIZE_SLICE
-#define SDC_CSD_10_ERASE_SECTOR_SIZE_SLICE  SDC_CSD_20_ERASE_SECTOR_SIZE_SLICE
-#define SDC_CSD_10_ERASE_BLK_EN_SLICE       SDC_CSD_20_ERASE_BLK_EN_SLICE
-#define SDC_CSD_10_C_SIZE_MULT_SLICE        49,47
-#define SDC_CSD_10_VDD_W_CURR_MAX_SLICE     52,50
-#define SDC_CSD_10_VDD_W_CURR_MIN_SLICE     55,53
-#define SDC_CSD_10_VDD_R_CURR_MAX_SLICE     58,56
-#define SDC_CSD_10_VDD_R_CURR_MIX_SLICE     61,59
-#define SDC_CSD_10_C_SIZE_SLICE             73,62
-#define SDC_CSD_10_DSR_IMP_SLICE            SDC_CSD_20_DSR_IMP_SLICE
-#define SDC_CSD_10_READ_BLK_MISALIGN_SLICE  SDC_CSD_20_READ_BLK_MISALIGN_SLICE
-#define SDC_CSD_10_WRITE_BLK_MISALIGN_SLICE SDC_CSD_20_WRITE_BLK_MISALIGN_SLICE
-#define SDC_CSD_10_READ_BL_PARTIAL_SLICE    SDC_CSD_20_READ_BL_PARTIAL_SLICE
-#define SDC_CSD_10_READ_BL_LEN_SLICE        83, 80
-#define SDC_CSD_10_CCC_SLICE                SDC_CSD_20_CCC_SLICE
-#define SDC_CSD_10_TRANS_SPEED_SLICE        SDC_CSD_20_TRANS_SPEED_SLICE
-#define SDC_CSD_10_NSAC_SLICE               SDC_CSD_20_NSAC_SLICE
-#define SDC_CSD_10_TAAC_SLICE               SDC_CSD_20_TAAC_SLICE
-#define SDC_CSD_10_STRUCTURE_SLICE          SDC_CSD_20_STRUCTURE_SLICE
 /** @} */
 
 /*===========================================================================*/

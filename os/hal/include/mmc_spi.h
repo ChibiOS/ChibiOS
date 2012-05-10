@@ -102,11 +102,21 @@ typedef enum {
 } mmcstate_t;
 
 /**
- * @brief   Driver configuration structure.
- * @note    Not required in the current implementation.
+ * @brief   MMC/SD over SPI driver configuration structure.
  */
 typedef struct {
-  uint8_t               dummy;
+  /**
+   * @brief SPI driver associated to this MMC driver.
+   */
+  SPIDriver             *spip;
+  /**
+   * @brief SPI low speed configuration used during initialization.
+   */
+  const SPIConfig       *lscfg;
+  /**
+   * @brief SPI high speed configuration used during transfers.
+   */
+  const SPIConfig       *hscfg;
 } MMCConfig;
 
 /**
@@ -127,18 +137,6 @@ typedef struct {
    * @brief Current configuration data.
    */
   const MMCConfig       *config;
-  /**
-   * @brief SPI driver associated to this MMC driver.
-   */
-  SPIDriver             *spip;
-  /**
-   * @brief SPI low speed configuration used during initialization.
-   */
-  const SPIConfig       *lscfg;
-  /**
-   * @brief SPI high speed configuration used during transfers.
-   */
-  const SPIConfig       *hscfg;
   /**
    * @brief Card insertion event source.
    */
@@ -200,8 +198,7 @@ typedef struct {
 extern "C" {
 #endif
   void mmcInit(void);
-  void mmcObjectInit(MMCDriver *mmcp, SPIDriver *spip,
-                     const SPIConfig *lscfg, const SPIConfig *hscfg);
+  void mmcObjectInit(MMCDriver *mmcp);
   void mmcStart(MMCDriver *mmcp, const MMCConfig *config);
   void mmcStop(MMCDriver *mmcp);
   bool_t mmcConnect(MMCDriver *mmcp);

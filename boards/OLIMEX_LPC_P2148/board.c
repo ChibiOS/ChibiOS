@@ -65,6 +65,21 @@ void __early_init(void) {
   lpc214x_clock_init();
 }
 
+#if HAL_USE_MMC_SPI
+/* Board-related functions related to the MMC_SPI driver.*/
+bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+
+  (void)mmcp;
+  return !palReadPad(IOPORT2, PB_CP1);
+}
+
+bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
+
+  (void)mmcp;
+  return palReadPad(IOPORT2, PB_WP1);
+}
+#endif
+
 /*
  * Board-specific initialization code.
  */

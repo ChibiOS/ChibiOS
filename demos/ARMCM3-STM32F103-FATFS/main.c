@@ -53,6 +53,9 @@ static SPIConfig hs_spicfg = {NULL, IOPORT2, GPIOB_SPI2NSS, 0};
 static SPIConfig ls_spicfg = {NULL, IOPORT2, GPIOB_SPI2NSS,
                               SPI_CR1_BR_2 | SPI_CR1_BR_1};
 
+/* MMC/SD over SPI driver configuration.*/
+static MMCConfig mmccfg = {&SPID2, &ls_spicfg, &hs_spicfg};
+
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
 
@@ -271,8 +274,8 @@ int main(void) {
    */
   palSetPadMode(IOPORT2, GPIOB_SPI2NSS, PAL_MODE_OUTPUT_PUSHPULL);
   palSetPad(IOPORT2, GPIOB_SPI2NSS);
-  mmcObjectInit(&MMCD1, &SPID2, &ls_spicfg, &hs_spicfg);
-  mmcStart(&MMCD1, NULL);
+  mmcObjectInit(&MMCD1);
+  mmcStart(&MMCD1, &mmccfg);
 
   /*
    * Creates the blinker thread.

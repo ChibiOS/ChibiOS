@@ -62,7 +62,7 @@ SDCDriver SDCD1;
  */
 static union {
   uint32_t  alignment;
-  uint8_t   buf[SDC_BLOCK_SIZE];
+  uint8_t   buf[MMCSD_BLOCK_SIZE];
 } u;
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
 
@@ -90,18 +90,18 @@ static bool_t sdc_lld_prepare_read(SDCDriver *sdcp, uint32_t startblk,
   /* Driver handles data in 512 bytes blocks (just like HC cards). But if we
      have not HC card than we must convert address from blocks to bytes.*/
   if (!(sdcp->cardmode & SDC_MODE_HIGH_CAPACITY))
-    startblk *= SDC_BLOCK_SIZE;
+    startblk *= MMCSD_BLOCK_SIZE;
 
   if (n > 1){
     /* Send read multiple blocks command to card.*/
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_MULTIPLE_BLOCK,
-                                   startblk, resp) || SDC_R1_ERROR(resp[0]))
+    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_READ_MULTIPLE_BLOCK,
+                                   startblk, resp) || MMCSD_R1_ERROR(resp[0]))
       return CH_FAILED;
   }
   else{
     /* Send read single block command.*/
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_READ_SINGLE_BLOCK,
-                                   startblk, resp) || SDC_R1_ERROR(resp[0]))
+    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_READ_SINGLE_BLOCK,
+                                   startblk, resp) || MMCSD_R1_ERROR(resp[0]))
       return CH_FAILED;
   }
 
@@ -128,18 +128,18 @@ static bool_t sdc_lld_prepare_write(SDCDriver *sdcp, uint32_t startblk,
   /* Driver handles data in 512 bytes blocks (just like HC cards). But if we
      have not HC card than we must convert address from blocks to bytes.*/
   if (!(sdcp->cardmode & SDC_MODE_HIGH_CAPACITY))
-    startblk *= SDC_BLOCK_SIZE;
+    startblk *= MMCSD_BLOCK_SIZE;
 
   if (n > 1){
     /* Write multiple blocks command.*/
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_WRITE_MULTIPLE_BLOCK,
-                                   startblk, resp) || SDC_R1_ERROR(resp[0]))
+    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_WRITE_MULTIPLE_BLOCK,
+                                   startblk, resp) || MMCSD_R1_ERROR(resp[0]))
       return CH_FAILED;
   }
   else{
     /* Write single block command.*/
-    if (sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_WRITE_BLOCK,
-                                   startblk, resp) || SDC_R1_ERROR(resp[0]))
+    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_WRITE_BLOCK,
+                                   startblk, resp) || MMCSD_R1_ERROR(resp[0]))
       return CH_FAILED;
   }
 
@@ -203,7 +203,7 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
 
   /* Finalize transaction.*/
   if (n > 1)
-    return sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
+    return sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_STOP_TRANSMISSION, 0, resp);
 
   return CH_SUCCESS;
 }
@@ -270,7 +270,7 @@ static void sdc_lld_error_cleanup(SDCDriver *sdcp,
   SDIO->DCTRL = 0;
   sdc_lld_collect_errors(sdcp);
   if (n > 1)
-    sdc_lld_send_cmd_short_crc(sdcp, SDC_CMD_STOP_TRANSMISSION, 0, resp);
+    sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_STOP_TRANSMISSION, 0, resp);
 }
 
 /*===========================================================================*/
@@ -604,7 +604,7 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                             uint8_t *buf, uint32_t n) {
   uint32_t resp[1];
 
-  chDbgCheck((n < (0x1000000 / SDC_BLOCK_SIZE)), "max transaction size");
+  chDbgCheck((n < (0x1000000 / MMCSD_BLOCK_SIZE)), "max transaction size");
 
   SDIO->DTIMER = STM32_SDC_READ_TIMEOUT;
 
@@ -615,7 +615,7 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   /* Prepares the DMA channel for writing.*/
   dmaStreamSetMemory0(sdcp->dma, buf);
   dmaStreamSetTransactionSize(sdcp->dma,
-                              (n * SDC_BLOCK_SIZE) / sizeof (uint32_t));
+                              (n * MMCSD_BLOCK_SIZE) / sizeof (uint32_t));
   dmaStreamSetMode(sdcp->dma, sdcp->dmamode | STM32_DMA_CR_DIR_P2M);
   dmaStreamEnable(sdcp->dma);
 
@@ -626,7 +626,7 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_MASK_STBITERRIE |
                 SDIO_MASK_RXOVERRIE |
                 SDIO_MASK_DATAENDIE;
-  SDIO->DLEN  = n * SDC_BLOCK_SIZE;
+  SDIO->DLEN  = n * MMCSD_BLOCK_SIZE;
 
   /* Talk to card what we want from it.*/
   if (sdc_lld_prepare_read(sdcp, startblk, n, resp) == TRUE)
@@ -666,7 +666,7 @@ bool_t sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                              const uint8_t *buf, uint32_t n) {
   uint32_t resp[1];
 
-  chDbgCheck((n < (0x1000000 / SDC_BLOCK_SIZE)), "max transaction size");
+  chDbgCheck((n < (0x1000000 / MMCSD_BLOCK_SIZE)), "max transaction size");
 
   SDIO->DTIMER = STM32_SDC_WRITE_TIMEOUT;
 
@@ -677,7 +677,7 @@ bool_t sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   /* Prepares the DMA channel for writing.*/
   dmaStreamSetMemory0(sdcp->dma, buf);
   dmaStreamSetTransactionSize(sdcp->dma,
-                              (n * SDC_BLOCK_SIZE) / sizeof (uint32_t));
+                              (n * MMCSD_BLOCK_SIZE) / sizeof (uint32_t));
   dmaStreamSetMode(sdcp->dma, sdcp->dmamode | STM32_DMA_CR_DIR_M2P);
   dmaStreamEnable(sdcp->dma);
 
@@ -688,7 +688,7 @@ bool_t sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_MASK_STBITERRIE |
                 SDIO_MASK_TXUNDERRIE |
                 SDIO_MASK_DATAENDIE;
-  SDIO->DLEN  = n * SDC_BLOCK_SIZE;
+  SDIO->DLEN  = n * MMCSD_BLOCK_SIZE;
 
   /* Talk to card what we want from it.*/
   if (sdc_lld_prepare_write(sdcp, startblk, n, resp) == TRUE)
@@ -732,8 +732,8 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
     for (i = 0; i < n; i++) {
       if (sdc_lld_read_aligned(sdcp, startblk, u.buf, 1))
         return CH_FAILED;
-      memcpy(buf, u.buf, SDC_BLOCK_SIZE);
-      buf += SDC_BLOCK_SIZE;
+      memcpy(buf, u.buf, MMCSD_BLOCK_SIZE);
+      buf += MMCSD_BLOCK_SIZE;
       startblk++;
     }
     return CH_SUCCESS;
@@ -763,8 +763,8 @@ bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
   if (((unsigned)buf & 3) != 0) {
     uint32_t i;
     for (i = 0; i < n; i++) {
-      memcpy(u.buf, buf, SDC_BLOCK_SIZE);
-      buf += SDC_BLOCK_SIZE;
+      memcpy(u.buf, buf, MMCSD_BLOCK_SIZE);
+      buf += MMCSD_BLOCK_SIZE;
       if (sdc_lld_write_aligned(sdcp, startblk, u.buf, 1))
         return CH_FAILED;
       startblk++;
