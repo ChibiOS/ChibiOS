@@ -48,39 +48,33 @@
 /*===========================================================================*/
 
 /**
- * @brief   Get slice with data from uint32_t[4] array.
+ * @brief   Gets a bit field from a words array.
+ * @note    The bit zero is the LSb of the first word.
+ *
+ * @param[in] data      pointer to the words array
+ * @param[in] end       bit offset of the last bit of the field, inclusive
+ * @param[in] start     bit offset of the first bit of the field, inclusive
+ *
+ * @return              The bits field value, left aligned.
  *
  * @notapi
  */
 static uint32_t mmcsd_get_slice(uint32_t *data, uint32_t end, uint32_t start) {
-  uint32_t word = 0;
-  uint32_t mask = 0;
+  unsigned startidx, endidx, startoff;
+  uint32_t endmask;
 
-  chDbgCheck(end >= start, "sdc_get_slice");
+  chDbgCheck((end >= start) && ((end - start) < 32), "mmcsd_get_slice");
 
-  while ((start - 32 * word) > 31) {
-    word++;
-    data++;
-  }
+  startidx = start / 32;
+  startoff = start % 32;
+  endidx   = end / 32;
+  endmask  = (1 << ((end % 32) + 1)) - 1;
 
-  end   -= 32 * word;
-  start -= 32 * word;
-
-  if (end < 31) {
-    /* Value lays in one word.*/
-    mask = (1 << (end - start + 1)) - 1;
-    return (*data >> start) & mask;
-  }
-  else {
-    /* Value spread on separate words.*/
-    uint32_t lsb, msb;
-    lsb = *data >> start;
-    data++;
-    mask = (1 << (end - 32 + 1)) - 1;
-    msb = *data & mask;
-    msb = msb << (32 - start);
-    return msb | lsb;
-  }
+  /* One or two pieces?*/
+  if (startidx < endidx)
+    return (data[startidx] >> startoff) |               /* Two pieces case. */
+           ((data[endidx] & endmask) << (32 - startoff));
+  return (data[startidx] & endmask) >> startoff;        /* One piece case.  */
 }
 
 /*===========================================================================*/
@@ -105,7 +99,7 @@ uint32_t mmcsdGetCapacity(uint32_t csd[4]) {
     a = mmcsd_get_slice(csd, MMCSD_CSD_10_C_SIZE_SLICE);
     b = mmcsd_get_slice(csd, MMCSD_CSD_10_C_SIZE_MULT_SLICE);
     c = mmcsd_get_slice(csd, MMCSD_CSD_10_READ_BL_LEN_SLICE);
-    return (a + 1) << (b + 2) << (c - 9);   /* 2^9 == MMCSD_BLOCK_SIZE.     */
+    return (a + 1) << (b + 2) << (c - 9);       /* 2^9 == MMCSD_BLOCK_SIZE. */
   case 1:
     /* CSD version 2.0.*/
     return 1024 * (mmcsd_get_slice(csd, MMCSD_CSD_20_C_SIZE_SLICE) + 1);
