@@ -65,13 +65,21 @@ static size_t reads(void *ip, uint8_t *bp, size_t n) {
 }
 
 static bool_t putwouldblock(void *ip) {
+  bool_t b;
 
-  return chOQIsFullI(&((SerialDriver *)ip)->oqueue);
+  chSysLock();
+  b = chOQIsFullI(&((SerialDriver *)ip)->oqueue);
+  chSysUnlock();
+  return b;
 }
 
 static bool_t getwouldblock(void *ip) {
+  bool_t b;
 
-  return chIQIsEmptyI(&((SerialDriver *)ip)->iqueue);
+  chSysLock();
+  b = chIQIsEmptyI(&((SerialDriver *)ip)->iqueue);
+  chSysUnlock();
+  return b;
 }
 
 static msg_t putt(void *ip, uint8_t b, systime_t timeout) {

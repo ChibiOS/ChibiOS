@@ -85,14 +85,14 @@ static union {
  * @notapi
  */
 static bool_t sdc_lld_prepare_read(SDCDriver *sdcp, uint32_t startblk,
-                                   uint32_t n, uint32_t *resp){
+                                   uint32_t n, uint32_t *resp) {
 
   /* Driver handles data in 512 bytes blocks (just like HC cards). But if we
      have not HC card than we must convert address from blocks to bytes.*/
   if (!(sdcp->cardmode & SDC_MODE_HIGH_CAPACITY))
     startblk *= MMCSD_BLOCK_SIZE;
 
-  if (n > 1){
+  if (n > 1) {
     /* Send read multiple blocks command to card.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_READ_MULTIPLE_BLOCK,
                                    startblk, resp) || MMCSD_R1_ERROR(resp[0]))
@@ -123,14 +123,14 @@ static bool_t sdc_lld_prepare_read(SDCDriver *sdcp, uint32_t startblk,
  * @notapi
  */
 static bool_t sdc_lld_prepare_write(SDCDriver *sdcp, uint32_t startblk,
-                                    uint32_t n, uint32_t *resp){
+                                    uint32_t n, uint32_t *resp) {
 
   /* Driver handles data in 512 bytes blocks (just like HC cards). But if we
      have not HC card than we must convert address from blocks to bytes.*/
   if (!(sdcp->cardmode & SDC_MODE_HIGH_CAPACITY))
     startblk *= MMCSD_BLOCK_SIZE;
 
-  if (n > 1){
+  if (n > 1) {
     /* Write multiple blocks command.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_WRITE_MULTIPLE_BLOCK,
                                    startblk, resp) || MMCSD_R1_ERROR(resp[0]))
@@ -158,7 +158,7 @@ static bool_t sdc_lld_prepare_write(SDCDriver *sdcp, uint32_t startblk,
  * @retval CH_FAILED    operation failed.
  */
 static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
-                                           uint32_t *resp){
+                                           uint32_t *resp) {
 
   /* Note the mask is checked before going to sleep because the interrupt
      may have occurred before reaching the critical zone.*/
@@ -218,31 +218,31 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
 static void sdc_lld_collect_errors(SDCDriver *sdcp) {
   uint32_t errors = SDC_NO_ERROR;
 
-  if (SDIO->STA & SDIO_STA_CCRCFAIL){
+  if (SDIO->STA & SDIO_STA_CCRCFAIL) {
     SDIO->ICR |= SDIO_ICR_CCRCFAILC;
     errors |= SDC_CMD_CRC_ERROR;
   }
-  if (SDIO->STA & SDIO_STA_DCRCFAIL){
+  if (SDIO->STA & SDIO_STA_DCRCFAIL) {
     SDIO->ICR |= SDIO_ICR_DCRCFAILC;
     errors |= SDC_DATA_CRC_ERROR;
   }
-  if (SDIO->STA & SDIO_STA_CTIMEOUT){
+  if (SDIO->STA & SDIO_STA_CTIMEOUT) {
     SDIO->ICR |= SDIO_ICR_CTIMEOUTC;
     errors |= SDC_COMMAND_TIMEOUT;
   }
-  if (SDIO->STA & SDIO_STA_DTIMEOUT){
+  if (SDIO->STA & SDIO_STA_DTIMEOUT) {
     SDIO->ICR |= SDIO_ICR_CTIMEOUTC;
     errors |= SDC_DATA_TIMEOUT;
   }
-  if (SDIO->STA & SDIO_STA_TXUNDERR){
+  if (SDIO->STA & SDIO_STA_TXUNDERR) {
     SDIO->ICR |= SDIO_ICR_TXUNDERRC;
     errors |= SDC_TX_UNDERRUN;
   }
-  if (SDIO->STA & SDIO_STA_RXOVERR){
+  if (SDIO->STA & SDIO_STA_RXOVERR) {
     SDIO->ICR |= SDIO_ICR_RXOVERRC;
     errors |= SDC_RX_OVERRUN;
   }
-  if (SDIO->STA & SDIO_STA_STBITERR){
+  if (SDIO->STA & SDIO_STA_STBITERR) {
     SDIO->ICR |= SDIO_ICR_STBITERRC;
     errors |= SDC_STARTBIT_ERROR;
   }
@@ -505,7 +505,7 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                SDIO_STA_CCRCFAIL)) == 0)
     ;
   SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
-  if ((sta & (SDIO_STA_CTIMEOUT)) != 0){
+  if ((sta & (SDIO_STA_CTIMEOUT)) != 0) {
     sdc_lld_collect_errors(sdcp);
     return CH_FAILED;
   }
@@ -539,7 +539,7 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                SDIO_STA_CCRCFAIL)) == 0)
     ;
   SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
-  if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0){
+  if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0) {
     sdc_lld_collect_errors(sdcp);
     return CH_FAILED;
   }
@@ -574,7 +574,7 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                SDIO_STA_CCRCFAIL)) == 0)
     ;
   SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
-  if ((sta & (STM32_SDIO_STA_ERROR_MASK)) != 0){
+  if ((sta & (STM32_SDIO_STA_ERROR_MASK)) != 0) {
     sdc_lld_collect_errors(sdcp);
     return CH_FAILED;
   }

@@ -46,7 +46,7 @@
  *
  * @api
  */
-#define chSysGetIdleThread() ((Thread *)_idle_thread_wa)
+#define chSysGetIdleThread() (rlist.r_queue.r_prev)
 #endif
 
 /**
