@@ -190,7 +190,7 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_PLLI2S
   /* PLLI2S activation.*/
-  RCC->PLLI2SCFGR = STM32_PLLI2SR_VALUE | STM32_PLLI2SN_VALUE;
+  RCC->PLLI2SCFGR = STM32_PLLI2SR | STM32_PLLI2SN;
   RCC->CR |= RCC_CR_PLLI2SON;
   while (!(RCC->CR & RCC_CR_PLLI2SRDY))
     ;                           /* Waits until PLLI2S is stable.            */

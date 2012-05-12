@@ -99,6 +99,7 @@
 - FIX: Fixed STM32 ICUD8 not functional because wrong initialization (bug
   3508758).
 - FIX: Fixed chMBFetchI does not decrement mb_fullsem (bug 3504450).
+- FIX: Fixed STM32 PLLI2S initialization error (bug 3503490).
 - FIX: Fixed USART3 not working on STM32F2/F4 UART driver (bug 3496981).
 - FIX: Fixed stack misalignment on Posix-MacOSX (bug 3495487).
 - FIX: Fixed STM8S HSI clock initialization error (bug 3489727).
