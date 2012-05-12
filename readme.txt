@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.1 ***
+- FIX: Fixed inconsistent LPCxxx Internal RC oscillator names (bug 3524138).
 - FIX: Fixed wrong frequency limit checks vs VDD in STM32F2xx HAL (bug
   3524094).
 - FIX: Fixed STM32 I2C1 wrong alternate TX DMA setting (bug 3524088).
