@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16 -mhard-float -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -41,6 +41,12 @@ endif
 # Architecture or project specific options
 #
 
+# Enables the use of FPU on Cortex-M4.
+# Enable this if you really want to use the STM FWLib.
+ifeq ($(USE_FPU),)
+  USE_FPU = no
+endif
+
 # Enable this if you really want to use the STM FWLib.
 ifeq ($(USE_FWLIB),)
   USE_FWLIB = no
@@ -64,10 +70,11 @@ include $(CHIBIOS)/os/hal/platforms/STM32F4xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F4xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
-#include $(CHIBIOS)/test/test.mk
+include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/STM32F407xG.ld
+#LDSCRIPT= $(PORTLD)/STM32F407xG_CCM.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -77,6 +84,7 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       $(CHIBIOS)/os/various/chprintf.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -196,6 +204,13 @@ ULIBS =
 #
 # End of user defines
 ##############################################################################
+
+ifeq ($(USE_FPU),yes)
+  USE_OPT += -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+  DDEFS += -DCORTEX_USE_FPU=TRUE
+else
+  DDEFS += -DCORTEX_USE_FPU=FALSE
+endif
 
 ifeq ($(USE_FWLIB),yes)
   include $(CHIBIOS)/ext/stm32lib/stm32lib.mk

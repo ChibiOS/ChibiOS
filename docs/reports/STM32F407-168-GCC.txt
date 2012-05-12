@@ -5,8 +5,8 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.4.0
-*** Compiled:     Jan 15 2012 - 20:10:20
+*** Kernel:       2.4.1
+*** Compiled:     May 12 2012 - 09:28:13
 *** Compiler:     GCC 4.6.2
 *** Architecture: ARMv7-ME
 *** Core Variant: Cortex-M4
@@ -148,7 +148,7 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 376 bytes
+--- System: 408 bytes
 --- Thread: 72 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes
