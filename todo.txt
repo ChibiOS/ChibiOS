@@ -5,21 +5,19 @@ X = In progress, some work done.
 ? = Not sure if worth the effort or useful at all.
 N = Decided against.
 
-Version 2.4.1
-* MAC driver for STM32F107, STM32F2xx, STM32F4xx.
-* SDC driver port to STM32F2 and STM32F4.
-X STM32F2 validation (so far testing done on STM32F4 only).
+Version 2.5.0
 X Revision of the RTCv2 driver implementation.
-- CAN2 support and CAN driver test on STM32F2/F4.
+- USB driver model revision.
+  X STM32 OTG USB cell support for CL, F2, F4 devices.
 
 Within 2.5.x:
+* SDC driver port to STM32F2 and STM32F4.
 * Revision of scheduling strategy for threads at equal priority.
 * Handling of Virtual Timer callbacks out of critical zone.
 * Add normal API (not iclass) variants of the VT functions.
 * MMC_SPI driver speedup.
 * FatFs 0.9x integration.
-- USB driver model revision.
-X STM32 OTG USB cell support for CL, F2, F4 devices.
+- CAN2 support and CAN driver test on STM32F2/F4.
 X Streaming DAC/I2S driver model and STM32 implementation.
 - Unified LPC1xxx HAL.
   - LPC11xx and LPC13xx HALs merged in the unified one.
