@@ -87,7 +87,7 @@ static void func_sleep(void){
   __WFI();
 }
 
-static void cmd_sleep(BaseChannel *chp, int argc, char *argv[]){
+static void cmd_sleep(BaseSequentialStream *chp, int argc, char *argv[]){
   (void)argv;
   if (argc > 0) {
     chprintf(chp, "Usage: sleep\r\n");
@@ -104,7 +104,7 @@ static void cmd_sleep(BaseChannel *chp, int argc, char *argv[]){
 /*
  *
  */
-static void cmd_alarm(BaseChannel *chp, int argc, char *argv[]){
+static void cmd_alarm(BaseSequentialStream *chp, int argc, char *argv[]){
   int i = 0;
 
   (void)argv;
@@ -138,7 +138,7 @@ ERROR:
 /*
  *
  */
-static void cmd_date(BaseChannel *chp, int argc, char *argv[]){
+static void cmd_date(BaseSequentialStream *chp, int argc, char *argv[]){
   (void)argv;
   struct tm timp;
 
@@ -198,7 +198,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseChannel *)&SD2,
+  (BaseSequentialStream  *)&SD2,
   commands
 };
 
