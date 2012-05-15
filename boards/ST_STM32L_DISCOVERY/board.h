@@ -104,7 +104,7 @@
                                      PIN_MODE_ALTERNATE(15))
 #define VAL_GPIOA_OTYPER            0x00000000
 #define VAL_GPIOA_OSPEEDR           0xFFFFFFFF
-#define VAL_GPIOA_PUPDR             (PIN_PUDR_PULLUP(GPIOA_BUTTON) |        \
+#define VAL_GPIOA_PUPDR             (PIN_PUDR_FLOATING(GPIOA_BUTTON) |      \
                                      PIN_PUDR_PULLUP(1) |                   \
                                      PIN_PUDR_PULLUP(2) |                   \
                                      PIN_PUDR_PULLUP(3) |                   \
@@ -176,11 +176,40 @@
  * PC13 - OSC32_OUT     (input floating).
  * PC14 - OSC32_IN      (input floating).
  */
-#define VAL_GPIOC_MODER             0x00000000
+#define VAL_GPIOC_MODER             (PIN_MODE_INPUT(0) |                    \
+                                     PIN_MODE_INPUT(1) |                    \
+                                     PIN_MODE_INPUT(2) |                    \
+                                     PIN_MODE_INPUT(3) |                    \
+                                     PIN_MODE_INPUT(4) |                    \
+                                     PIN_MODE_INPUT(5) |                    \
+                                     PIN_MODE_INPUT(6) |                    \
+                                     PIN_MODE_INPUT(7) |                    \
+                                     PIN_MODE_INPUT(8) |                    \
+                                     PIN_MODE_INPUT(9) |                    \
+                                     PIN_MODE_INPUT(10) |                   \
+                                     PIN_MODE_INPUT(11) |                   \
+                                     PIN_MODE_INPUT(12) |                   \
+                                     PIN_MODE_INPUT(13) |                   \
+                                     PIN_MODE_INPUT(14) |                   \
+                                     PIN_MODE_INPUT(15))
 #define VAL_GPIOC_OTYPER            0x00000000
 #define VAL_GPIOC_OSPEEDR           0xFFFFFFFF
-#define VAL_GPIOC_PUPDR             (~(PIN_PUDR_FLOATING(15) |              \
-                                       PIN_PUDR_FLOATING(14)))
+#define VAL_GPIOC_PUPDR             (PIN_PUDR_PULLUP(0) |                   \
+                                     PIN_PUDR_PULLUP(1) |                   \
+                                     PIN_PUDR_PULLUP(2) |                   \
+                                     PIN_PUDR_PULLUP(3) |                   \
+                                     PIN_PUDR_PULLUP(4) |                   \
+                                     PIN_PUDR_PULLUP(5) |                   \
+                                     PIN_PUDR_PULLUP(6) |                   \
+                                     PIN_PUDR_PULLUP(7) |                   \
+                                     PIN_PUDR_PULLUP(8) |                   \
+                                     PIN_PUDR_PULLUP(9) |                   \
+                                     PIN_PUDR_PULLUP(10) |                  \
+                                     PIN_PUDR_PULLUP(11) |                  \
+                                     PIN_PUDR_PULLUP(12) |                  \
+                                     PIN_PUDR_PULLUP(13) |                  \
+                                     PIN_PUDR_FLOATING(14) |                \
+                                     PIN_PUDR_FLOATING(15)))
 #define VAL_GPIOC_ODR               0xFFFFFFFF
 #define VAL_GPIOC_AFRL              0x00000000
 #define VAL_GPIOC_AFRH              0x00000000
@@ -189,10 +218,40 @@
  * Port D setup.
  * All input with pull-up.
  */
-#define VAL_GPIOD_MODER             0x00000000
+#define VAL_GPIOD_MODER             (PIN_MODE_INPUT(0) |                    \
+                                     PIN_MODE_INPUT(1) |                    \
+                                     PIN_MODE_INPUT(2) |                    \
+                                     PIN_MODE_INPUT(3) |                    \
+                                     PIN_MODE_INPUT(4) |                    \
+                                     PIN_MODE_INPUT(5) |                    \
+                                     PIN_MODE_INPUT(6) |                    \
+                                     PIN_MODE_INPUT(7) |                    \
+                                     PIN_MODE_INPUT(8) |                    \
+                                     PIN_MODE_INPUT(9) |                    \
+                                     PIN_MODE_INPUT(10) |                   \
+                                     PIN_MODE_INPUT(11) |                   \
+                                     PIN_MODE_INPUT(12) |                   \
+                                     PIN_MODE_INPUT(13) |                   \
+                                     PIN_MODE_INPUT(14) |                   \
+                                     PIN_MODE_INPUT(15))
 #define VAL_GPIOD_OTYPER            0x00000000
 #define VAL_GPIOD_OSPEEDR           0xFFFFFFFF
-#define VAL_GPIOD_PUPDR             0xFFFFFFFF
+#define VAL_GPIOD_PUPDR             (PIN_PUDR_PULLUP(0) |                   \
+                                     PIN_PUDR_PULLUP(1) |                   \
+                                     PIN_PUDR_PULLUP(2) |                   \
+                                     PIN_PUDR_PULLUP(3) |                   \
+                                     PIN_PUDR_PULLUP(4) |                   \
+                                     PIN_PUDR_PULLUP(5) |                   \
+                                     PIN_PUDR_PULLUP(6) |                   \
+                                     PIN_PUDR_PULLUP(7) |                   \
+                                     PIN_PUDR_PULLUP(8) |                   \
+                                     PIN_PUDR_PULLUP(9) |                   \
+                                     PIN_PUDR_PULLUP(10) |                  \
+                                     PIN_PUDR_PULLUP(11) |                  \
+                                     PIN_PUDR_PULLUP(12) |                  \
+                                     PIN_PUDR_PULLUP(13) |                  \
+                                     PIN_PUDR_PULLUP(14) |                  \
+                                     PIN_PUDR_PULLUP(15))
 #define VAL_GPIOD_ODR               0xFFFFFFFF
 #define VAL_GPIOD_AFRL              0x00000000
 #define VAL_GPIOD_AFRH              0x00000000
@@ -201,10 +260,40 @@
  * Port E setup.
  * All input with pull-up.
  */
-#define VAL_GPIOE_MODER             0x00000000
+#define VAL_GPIOE_MODER             (PIN_MODE_INPUT(0) |                    \
+                                     PIN_MODE_INPUT(1) |                    \
+                                     PIN_MODE_INPUT(2) |                    \
+                                     PIN_MODE_INPUT(3) |                    \
+                                     PIN_MODE_INPUT(4) |                    \
+                                     PIN_MODE_INPUT(5) |                    \
+                                     PIN_MODE_INPUT(6) |                    \
+                                     PIN_MODE_INPUT(7) |                    \
+                                     PIN_MODE_INPUT(8) |                    \
+                                     PIN_MODE_INPUT(9) |                    \
+                                     PIN_MODE_INPUT(10) |                   \
+                                     PIN_MODE_INPUT(11) |                   \
+                                     PIN_MODE_INPUT(12) |                   \
+                                     PIN_MODE_INPUT(13) |                   \
+                                     PIN_MODE_INPUT(14) |                   \
+                                     PIN_MODE_INPUT(15))
 #define VAL_GPIOE_OTYPER            0x00000000
 #define VAL_GPIOE_OSPEEDR           0xFFFFFFFF
-#define VAL_GPIOE_PUPDR             0xFFFFFFFF
+#define VAL_GPIOE_PUPDR             (PIN_PUDR_PULLUP(0) |                   \
+                                     PIN_PUDR_PULLUP(1) |                   \
+                                     PIN_PUDR_PULLUP(2) |                   \
+                                     PIN_PUDR_PULLUP(3) |                   \
+                                     PIN_PUDR_PULLUP(4) |                   \
+                                     PIN_PUDR_PULLUP(5) |                   \
+                                     PIN_PUDR_PULLUP(6) |                   \
+                                     PIN_PUDR_PULLUP(7) |                   \
+                                     PIN_PUDR_PULLUP(8) |                   \
+                                     PIN_PUDR_PULLUP(9) |                   \
+                                     PIN_PUDR_PULLUP(10) |                  \
+                                     PIN_PUDR_PULLUP(11) |                  \
+                                     PIN_PUDR_PULLUP(12) |                  \
+                                     PIN_PUDR_PULLUP(13) |                  \
+                                     PIN_PUDR_PULLUP(14) |                  \
+                                     PIN_PUDR_PULLUP(15))
 #define VAL_GPIOE_ODR               0xFFFFFFFF
 #define VAL_GPIOE_AFRL              0x00000000
 #define VAL_GPIOE_AFRH              0x00000000
@@ -213,10 +302,40 @@
  * Port H setup.
  * All input with pull-up.
  */
-#define VAL_GPIOH_MODER             0x00000000
+#define VAL_GPIOH_MODER             (PIN_MODE_INPUT(0) |                    \
+                                     PIN_MODE_INPUT(1) |                    \
+                                     PIN_MODE_INPUT(2) |                    \
+                                     PIN_MODE_INPUT(3) |                    \
+                                     PIN_MODE_INPUT(4) |                    \
+                                     PIN_MODE_INPUT(5) |                    \
+                                     PIN_MODE_INPUT(6) |                    \
+                                     PIN_MODE_INPUT(7) |                    \
+                                     PIN_MODE_INPUT(8) |                    \
+                                     PIN_MODE_INPUT(9) |                    \
+                                     PIN_MODE_INPUT(10) |                   \
+                                     PIN_MODE_INPUT(11) |                   \
+                                     PIN_MODE_INPUT(12) |                   \
+                                     PIN_MODE_INPUT(13) |                   \
+                                     PIN_MODE_INPUT(14) |                   \
+                                     PIN_MODE_INPUT(15))
 #define VAL_GPIOH_OTYPER            0x00000000
 #define VAL_GPIOH_OSPEEDR           0xFFFFFFFF
-#define VAL_GPIOH_PUPDR             0xFFFFFFFF
+#define VAL_GPIOH_PUPDR             (PIN_PUDR_PULLUP(0) |                   \
+                                     PIN_PUDR_PULLUP(1) |                   \
+                                     PIN_PUDR_PULLUP(2) |                   \
+                                     PIN_PUDR_PULLUP(3) |                   \
+                                     PIN_PUDR_PULLUP(4) |                   \
+                                     PIN_PUDR_PULLUP(5) |                   \
+                                     PIN_PUDR_PULLUP(6) |                   \
+                                     PIN_PUDR_PULLUP(7) |                   \
+                                     PIN_PUDR_PULLUP(8) |                   \
+                                     PIN_PUDR_PULLUP(9) |                   \
+                                     PIN_PUDR_PULLUP(10) |                  \
+                                     PIN_PUDR_PULLUP(11) |                  \
+                                     PIN_PUDR_PULLUP(12) |                  \
+                                     PIN_PUDR_PULLUP(13) |                  \
+                                     PIN_PUDR_PULLUP(14) |                  \
+                                     PIN_PUDR_PULLUP(15))
 #define VAL_GPIOH_ODR               0xFFFFFFFF
 #define VAL_GPIOH_AFRL              0x00000000
 #define VAL_GPIOH_AFRH              0x00000000
