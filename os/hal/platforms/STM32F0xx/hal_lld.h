@@ -354,7 +354,8 @@
 #define WWDG_IRQHandler         Vector40    /**< Window Watchdog.           */
 #define PVD_IRQHandler          Vector44    /**< PVD through EXTI Line
                                                  detect.                    */
-#define RTC_IRQHandler          Vector48    /**< RTC.                       */
+#define RTC_IRQHandler          Vector48    /**< RTC through EXTI Line
+                                                 Interrupt.                 */
 #define FLASH_IRQHandler        Vector4C    /**< Flash.                     */
 #define RCC_IRQHandler          Vector50    /**< RCC.                       */
 #define EXTI0_1_IRQHandler      Vector54    /**< EXTI Line 0..1.            */
