@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.2 ***
+- FIX: Fixed wrong macro check in STM32 MAC driver (bug 3527179).
 - FIX: Fixed error in STM32L-Discovery board.h file (bug 3526918).
 
 *** 2.4.1 ***
