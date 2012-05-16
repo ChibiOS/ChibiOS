@@ -167,10 +167,10 @@
 #define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
 #define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
 
-#define STM32_ADCPRE_DIV2       (0 << 14)   /**< HCLK divided by 2.         */
-#define STM32_ADCPRE_DIV4       (1 << 14)   /**< HCLK divided by 4.         */
-#define STM32_ADCPRE_DIV6       (2 << 14)   /**< HCLK divided by 6.         */
-#define STM32_ADCPRE_DIV8       (3 << 14)   /**< HCLK divided by 8.         */
+#define STM32_ADCPRE_DIV2       (0 << 14)   /**< PPRE2 divided by 2.        */
+#define STM32_ADCPRE_DIV4       (1 << 14)   /**< PPRE2 divided by 4.        */
+#define STM32_ADCPRE_DIV6       (2 << 14)   /**< PPRE2 divided by 6.        */
+#define STM32_ADCPRE_DIV8       (3 << 14)   /**< PPRE2 divided by 8.        */
 
 #define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI.   */
 #define STM32_PLLSRC_PREDIV1    (1 << 16)   /**< PLL clock source is
@@ -188,7 +188,12 @@
 #define STM32_MCOSEL_PLL3DIV2   (9 << 24)   /**< PLL3/2 clock on MCO pin.   */
 #define STM32_MCOSEL_XT1        (10 << 24)  /**< XT1 clock on MCO pin.      */
 #define STM32_MCOSEL_PLL3       (11 << 24)  /**< PLL3 clock on MCO pin.     */
+/** @} */
 
+/**
+ * @name    RCC_BDCR register bits definitions
+ * @{
+ */
 #define STM32_RTCSEL_MASK       (3 << 8)    /**< RTC clock source mask.     */
 #define STM32_RTCSEL_NOCLOCK    (0 << 8)    /**< No clock.                  */
 #define STM32_RTCSEL_LSE        (1 << 8)    /**< LSE used as RTC clock.     */

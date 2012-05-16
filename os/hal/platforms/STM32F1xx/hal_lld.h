@@ -25,6 +25,7 @@
  *          @p board.h file:
  *          - STM32_LSECLK.
  *          - STM32_HSECLK.
+ *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
  *          - STM32F10X_LD_VL for Value Line Low Density devices.

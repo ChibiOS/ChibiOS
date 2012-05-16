@@ -159,10 +159,10 @@
 #define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
 #define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
 
-#define STM32_ADCPRE_DIV2       (0 << 14)   /**< HCLK divided by 2.         */
-#define STM32_ADCPRE_DIV4       (1 << 14)   /**< HCLK divided by 4.         */
-#define STM32_ADCPRE_DIV6       (2 << 14)   /**< HCLK divided by 6.         */
-#define STM32_ADCPRE_DIV8       (3 << 14)   /**< HCLK divided by 8.         */
+#define STM32_ADCPRE_DIV2       (0 << 14)   /**< PPRE2 divided by 2.        */
+#define STM32_ADCPRE_DIV4       (1 << 14)   /**< PPRE2 divided by 4.        */
+#define STM32_ADCPRE_DIV6       (2 << 14)   /**< PPRE2 divided by 6.        */
+#define STM32_ADCPRE_DIV8       (3 << 14)   /**< PPRE2 divided by 8.        */
 
 #define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI.   */
 #define STM32_PLLSRC_HSE        (1 << 16)   /**< PLL clock source is HSE.   */

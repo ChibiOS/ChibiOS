@@ -25,6 +25,7 @@
  *          @p board.h file:
  *          - STM32_LSECLK.
  *          - STM32_HSECLK.
+ *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
  *          - STM32L1XX_MD for Ultra Low Power Medium-density devices.

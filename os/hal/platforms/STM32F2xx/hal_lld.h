@@ -25,6 +25,7 @@
  *          @p board.h file:
  *          - STM32_LSECLK.
  *          - STM32_HSECLK.
+ *          - STM32_HSE_BYPASS (optionally).
  *          - STM32_VDD (as hundredths of Volt).
  *          .
  *          One of the following macros must also be defined:
