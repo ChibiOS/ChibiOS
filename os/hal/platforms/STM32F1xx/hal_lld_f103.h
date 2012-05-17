@@ -178,7 +178,12 @@
 #define STM32_MCOSEL_HSI        (5 << 24)   /**< HSI clock on MCO pin.      */
 #define STM32_MCOSEL_HSE        (6 << 24)   /**< HSE clock on MCO pin.      */
 #define STM32_MCOSEL_PLLDIV2    (7 << 24)   /**< PLL/2 clock on MCO pin.    */
+/** @} */
 
+/**
+ * @name    RCC_BDCR register bits definitions
+ * @{
+ */
 #define STM32_RTCSEL_MASK       (3 << 8)    /**< RTC clock source mask.     */
 #define STM32_RTCSEL_NOCLOCK    (0 << 8)    /**< No clock.                  */
 #define STM32_RTCSEL_LSE        (1 << 8)    /**< LSE used as RTC clock.     */
@@ -953,7 +958,7 @@
 #endif
 
 /**
- * @brief   Clock source selecting. LSI by default.
+ * @brief   RTC clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
 #define STM32_RTCSEL                STM32_RTCSEL_LSI
@@ -1008,7 +1013,8 @@
 #endif
 
 #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                   \
-    ((STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) && (STM32_PLLSRC == STM32_PLLSRC_HSE))
+    ((STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) &&                              \
+     (STM32_PLLSRC == STM32_PLLSRC_HSE))
 #error "HSE not enabled, required by STM32_MCOSEL"
 #endif
 

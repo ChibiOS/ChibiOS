@@ -573,7 +573,7 @@
 #endif
 
 /**
- * @brief   Clock source selecting. LSI by default.
+ * @brief   RTC clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
 #define STM32_RTCSEL                   STM32_RTCSEL_HSEDIV

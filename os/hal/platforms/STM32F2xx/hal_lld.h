@@ -688,7 +688,7 @@
 #endif
 
 /**
- * @brief   RTC source clock.
+ * @brief   RTC clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
 #define STM32_RTCSEL                STM32_RTCSEL_LSE
