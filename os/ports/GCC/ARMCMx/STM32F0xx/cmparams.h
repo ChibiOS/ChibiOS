@@ -35,7 +35,7 @@
 /**
  * @brief   Cortex core model.
  */
-#define CORTEX_MODEL            CORTEX_M3
+#define CORTEX_MODEL            CORTEX_M0
 
 /**
  * @brief   Systick unit presence.

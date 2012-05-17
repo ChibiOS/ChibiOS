@@ -38,7 +38,7 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "stm32.h"
+#include "stm32f0xx.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -471,7 +471,7 @@
  * @brief   Main clock source selection.
  * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
- * @note    The default value is calculated for a 72MHz system clock from
+ * @note    The default value is calculated for a 48MHz system clock from
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
@@ -482,7 +482,7 @@
  * @brief   Clock source for the PLL.
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
- * @note    The default value is calculated for a 72MHz system clock from
+ * @note    The default value is calculated for a 48MHz system clock from
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
@@ -493,7 +493,7 @@
  * @brief   Crystal PLL pre-divider.
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
- * @note    The default value is calculated for a 72MHz system clock from
+ * @note    The default value is calculated for a 48MHz system clock from
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLXTPRE) || defined(__DOXYGEN__)
@@ -503,16 +503,16 @@
 /**
  * @brief   PLL multiplier value.
  * @note    The allowed range is 2...16.
- * @note    The default value is calculated for a 72MHz system clock from
+ * @note    The default value is calculated for a 48MHz system clock from
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLMUL_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLMUL_VALUE          9
+#define STM32_PLLMUL_VALUE          6
 #endif
 
 /**
  * @brief   AHB prescaler value.
- * @note    The default value is calculated for a 72MHz system clock from
+ * @note    The default value is calculated for a 48MHz system clock from
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
@@ -523,7 +523,7 @@
  * @brief   APB1 prescaler value.
  */
 #if !defined(STM32_PPRE) || defined(__DOXYGEN__)
-#define STM32_PPRE                  STM32_PPRE_DIV2
+#define STM32_PPRE                  STM32_PPRE_DIV1
 #endif
 
 /**
@@ -531,6 +531,7 @@
  */
 #if !defined(STM32_ADCSW) || defined(__DOXYGEN__)
 #define STM32_ADCSW                 STM32_ADCSW_HSI14
+#endif
 
 /**
  * @brief   ADC prescaler value.
@@ -860,8 +861,8 @@
 /*===========================================================================*/
 
 /* STM32 DMA and RCC helpers.*/
-#include "stm32_dma.h"
-#include "stm32_rcc.h"
+/*#include "stm32_dma.h"
+#include "stm32_rcc.h"*/
 
 #ifdef __cplusplus
 extern "C" {
