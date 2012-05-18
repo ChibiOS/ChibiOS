@@ -419,14 +419,14 @@
  *
  * @api
  */
-#define rccDisablePWRInterface(lp) rccDisableAPB1(RCC_APB1ENR_BKPEN, lp)
+#define rccDisablePWRInterface(lp) rccDisableAPB1(RCC_APB1ENR_PWREN, lp)
 
 /**
  * @brief   Resets the PWR interface.
  *
  * @api
  */
-#define rccResetPWRInterface() rccResetAPB1(RCC_APB1ENR_BKPRST)
+#define rccResetPWRInterface() rccResetAPB1(RCC_APB1RSTR_PWRRST)
 /** @} */
 
 /**

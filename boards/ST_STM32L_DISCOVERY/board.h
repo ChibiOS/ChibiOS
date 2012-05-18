@@ -209,7 +209,7 @@
                                      PIN_PUDR_PULLUP(12) |                  \
                                      PIN_PUDR_PULLUP(13) |                  \
                                      PIN_PUDR_FLOATING(14) |                \
-                                     PIN_PUDR_FLOATING(15)))
+                                     PIN_PUDR_FLOATING(15))
 #define VAL_GPIOC_ODR               0xFFFFFFFF
 #define VAL_GPIOC_AFRL              0x00000000
 #define VAL_GPIOC_AFRH              0x00000000

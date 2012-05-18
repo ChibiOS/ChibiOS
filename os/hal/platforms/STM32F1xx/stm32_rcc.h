@@ -221,8 +221,7 @@
  *
  * @api
  */
-#define rccEnableBKPInterface(lp)                                           \
-  rccEnableAPB1((RCC_APB1ENR_BKPEN | RCC_APB1ENR_PWREN), lp)
+#define rccEnableBKPInterface(lp) rccEnableAPB1((RCC_APB1ENR_BKPEN), lp)
 
 /**
  * @brief   Disables BKP interface clock.
@@ -232,8 +231,7 @@
  *
  * @api
  */
-#define rccDisableBKPInterface(lp)                                          \
-  rccDisableAPB1((RCC_APB1ENR_BKPEN | RCC_APB1ENR_PWREN), lp)
+#define rccDisableBKPInterface(lp) rccDisableAPB1((RCC_APB1ENR_BKPEN), lp)
 
 /**
  * @brief   Resets the Backup Domain interface.
@@ -272,14 +270,14 @@
  *
  * @api
  */
-#define rccDisablePWRInterface(lp) rccDisableAPB1(RCC_APB1ENR_BKPEN, lp)
+#define rccDisablePWRInterface(lp) rccDisableAPB1(RCC_APB1ENR_PWREN, lp)
 
 /**
  * @brief   Resets the PWR interface.
  *
  * @api
  */
-#define rccResetPWRInterface() rccResetAPB1(RCC_APB1ENR_BKPRST)
+#define rccResetPWRInterface() rccResetAPB1(RCC_APB1RSTR_PWRRST)
 /** @} */
 
 /**
