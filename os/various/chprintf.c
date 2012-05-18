@@ -25,6 +25,14 @@
     for full details of how and when the exception can be applied.
 */
 
+/**
+ * @file    chprintf.c
+ * @brief   Mini printf-like functionality.
+ *
+ * @addtogroup chprintf
+ * @{
+ */
+
 #include <stdarg.h>
 
 #include "ch.h"
