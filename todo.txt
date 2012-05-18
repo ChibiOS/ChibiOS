@@ -19,11 +19,12 @@ Within 2.5.x:
 * FatFs 0.9x integration.
 - CAN2 support and CAN driver test on STM32F2/F4.
 X Streaming DAC/I2S driver model and STM32 implementation.
+X STM32F0 support.
 - Unified LPC1xxx HAL.
   - LPC11xx and LPC13xx HALs merged in the unified one.
   - LPC17xx support.
 - NUC120 support.
-- STM32F0 support.
+- Create a null device driver implementing a stream interface.
 - Add USARTs support to the STM32 SPI driver.
 - Add option to use another counter instead of the systick counter into the
   trace buffer.

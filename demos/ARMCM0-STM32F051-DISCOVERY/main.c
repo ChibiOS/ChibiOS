@@ -23,18 +23,34 @@
 #include "test.h"
 
 /*
- * This is a periodic thread that does absolutely nothing except increasing
- * a seconds counter.
+ * Blue LED blinker thread, times are in milliseconds.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
-  static uint32_t seconds_counter;
 
   (void)arg;
-  chRegSetThreadName("counter");
+  chRegSetThreadName("blinker1");
   while (TRUE) {
-    chThdSleepMilliseconds(1000);
-    seconds_counter++;
+    palClearPad(GPIOC, GPIOC_LED4);
+    chThdSleepMilliseconds(500);
+    palSetPad(GPIOC, GPIOC_LED4);
+    chThdSleepMilliseconds(500);
+  }
+}
+
+/*
+ * Green LED blinker thread, times are in milliseconds.
+ */
+static WORKING_AREA(waThread2, 128);
+static msg_t Thread2(void *arg) {
+
+  (void)arg;
+  chRegSetThreadName("blinker2");
+  while (TRUE) {
+    palClearPad(GPIOC, GPIOC_LED3);
+    chThdSleepMilliseconds(250);
+    palSetPad(GPIOC, GPIOC_LED3);
+    chThdSleepMilliseconds(250);
   }
 }
 
@@ -54,9 +70,10 @@ int main(void) {
   chSysInit();
 
   /*
-   * Creates the example thread.
+   * Creates the blinker threads.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
@@ -65,7 +82,7 @@ int main(void) {
    * driver 1.
    */
   while (TRUE) {
-/*    if (palReadPad(GPIOA, GPIOA_BUTTON))
+    /*if (palReadPad(GPIOA, GPIOA_BUTTON))
       TestThread(&SD1);*/
     chThdSleepMilliseconds(500);
   }

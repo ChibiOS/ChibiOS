@@ -94,7 +94,8 @@ static void hal_lld_backup_domain_init(void) {
 void hal_lld_init(void) {
 
   /* Reset of all peripherals.*/
-  rccResetAPB(0xFFFFFFFF);
+  rccResetAPB1(0xFFFFFFFF);
+  rccResetAPB2(0xFFFFFFFF);
 
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;

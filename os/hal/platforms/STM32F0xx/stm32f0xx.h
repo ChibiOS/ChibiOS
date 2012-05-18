@@ -393,7 +393,8 @@ typedef struct
 /** 
   * @brief General Purpose IO
   */
-
+/* CHIBIOS FIX */
+#if 0
 typedef struct
 {
   __IO uint32_t MODER;        /*!< GPIO port mode register,                                  Address offset: 0x00 */
@@ -411,6 +412,7 @@ typedef struct
   __IO uint16_t BRR;          /*!< GPIO bit reset register,                                  Address offset: 0x28 */
   uint16_t RESERVED3;         /*!< Reserved,                                                                 0x2A */
 }GPIO_TypeDef;
+#endif
 
 /** 
   * @brief SysTem Configuration

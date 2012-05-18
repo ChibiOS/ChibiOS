@@ -95,7 +95,7 @@ void hal_lld_init(void) {
 
   /* Reset of all peripherals.*/
   rccResetAPB1(0xFFFFFFFF);
-  rccResetAPB2(0xFFFFFFFF);
+  rccResetAPB2(!RCC_APB2RSTR_DBGMCURST);
 
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
@@ -104,13 +104,8 @@ void hal_lld_init(void) {
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
-  /* DWT cycle counter enable.*/
-  SCS_DEMCR |= SCS_DEMCR_TRCENA;
-  DWT_CTRL  |= DWT_CTRL_CYCCNTENA;
-
   /* PWR and BD clocks enabled.*/
   rccEnablePWRInterface(FALSE);
-  rccEnableBKPInterface(FALSE);
 
   /* Initializes the backup domain.*/
   hal_lld_backup_domain_init();
@@ -152,6 +147,13 @@ void stm32_clock_init(void) {
     ;                                       /* Waits until HSE is stable.   */
 #endif
 
+#if STM32_HSE14_ENABLED
+  /* HSI14 activation.*/
+  RCC->CR2 |= RCC_CR2_HSI14ON;
+  while (!(RCC->CR2 & RCC_CR2_HSI14RDY))
+    ;                                       /* Waits until HSI14 is stable. */
+#endif
+
 #if STM32_LSI_ENABLED
   /* LSI activation.*/
   RCC->CSR |= RCC_CSR_LSION;
@@ -168,15 +170,9 @@ void stm32_clock_init(void) {
 #endif
 
   /* Clock settings.*/
-#if STM32_HAS_USB
-  RCC->CFGR = STM32_MCOSEL | STM32_USBPRE | STM32_PLLMUL | STM32_PLLXTPRE |
-              STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE2  | STM32_PPRE1    |
-              STM32_HPRE;
-#else
-  RCC->CFGR = STM32_MCOSEL |                STM32_PLLMUL | STM32_PLLXTPRE |
-              STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE2  | STM32_PPRE1    |
-              STM32_HPRE;
-#endif
+  RCC->CFGR  = STM32_MCOSEL |                STM32_PLLMUL | STM32_PLLXTPRE |
+               STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE   | STM32_HPRE;
+  RCC->CFGR3 = STM32_ADCSW  | STM32_CECSW  | STM32_I2C1SW | STM32_USART1SW;
 
   /* Flash setup and final clock selection.   */
   FLASH->ACR = STM32_FLASHBITS;
@@ -188,6 +184,10 @@ void stm32_clock_init(void) {
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;                                       /* Waits selection complete.    */
 #endif
+
+  /* SYSCFG clock enabled here because it is a multi-functional unit shared
+     among multiple drivers.*/
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE);
 #endif /* !STM32_NO_INIT */
 }
 

@@ -527,10 +527,10 @@
 #endif
 
 /**
- * @brief   ADC clock source.
+ * @brief   MCO pin setting.
  */
-#if !defined(STM32_ADCSW) || defined(__DOXYGEN__)
-#define STM32_ADCSW                 STM32_ADCSW_HSI14
+#if !defined(STM32_MCOSEL) || defined(__DOXYGEN__)
+#define STM32_MCOSEL                STM32_MCOSEL_NOCLOCK
 #endif
 
 /**
@@ -541,10 +541,31 @@
 #endif
 
 /**
- * @brief   MCO pin setting.
+ * @brief   ADC clock source.
  */
-#if !defined(STM32_MCOSEL) || defined(__DOXYGEN__)
-#define STM32_MCOSEL                STM32_MCOSEL_NOCLOCK
+#if !defined(STM32_ADCSW) || defined(__DOXYGEN__)
+#define STM32_ADCSW                 STM32_ADCSW_HSI14
+#endif
+
+/**
+ * @brief   CEC clock source.
+ */
+#if !defined(STM32_CECSW) || defined(__DOXYGEN__)
+#define STM32_CECSW                 STM32_CECSW_HSI
+#endif
+
+/**
+ * @brief   I2C1 clock source.
+ */
+#if !defined(STM32_I2C1SW) || defined(__DOXYGEN__)
+#define STM32_I2C1SW                STM32_I2C1SW_HSI
+#endif
+
+/**
+ * @brief   USART1 clock source.
+ */
+#if !defined(STM32_USART1SW) || defined(__DOXYGEN__)
+#define STM32_USART1SW              STM32_USART1SW_PCLK
 #endif
 
 /**
@@ -567,6 +588,18 @@
 
 #if STM32_SW == STM32_SW_HSI
 #error "HSI not enabled, required by STM32_SW"
+#endif
+
+#if STM32_CECSW == STM32_CECSW_HSI
+#error "HSI not enabled, required by STM32_CECSW"
+#endif
+
+#if STM32_I2C1SW == STM32_I2C1SW_HSI
+#error "HSI not enabled, required by STM32_I2C1SW"
+#endif
+
+#if STM32_USART1SW == STM32_USART1SW_HSI
+#error "HSI not enabled, required by STM32_USART1SW"
 #endif
 
 #if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSI)
@@ -649,6 +682,14 @@
 
 #if (STM32_LSECLK == 0)
 #error "LSE frequency not defined"
+#endif
+
+#if STM32_CECSW == STM32_CECSW_LSE
+#error "LSE not enabled, required by STM32_CECSW"
+#endif
+
+#if STM32_USART1SW == STM32_USART1SW_LSE
+#error "LSE not enabled, required by STM32_USART1SW"
 #endif
 
 #if (STM32_LSECLK < STM32_LSECLK_MIN) || (STM32_LSECLK > STM32_LSECLK_MAX)
@@ -829,6 +870,43 @@
 #endif
 
 /**
+ * @brief   CEC frequency.
+ */
+#if STM32_CECSW == STM32_CECSW_HSI
+#define STM32_CECCLK                STM32_HSICLK
+#elif STM32_CECSW == STM32_CECSW_LSE
+#define STM32_CECCLK                STM32_LSECLK
+#else
+#error "invalid source selected for CEC clock"
+#endif
+
+/**
+ * @brief   I2C1 frequency.
+ */
+#if STM32_I2CSW == STM32_I2C1SW_HSI
+#define STM32_I2C1CLK               STM32_HSICLK
+#elif STM32_I2CSW == STM32_I2C1SW_SYSCLK
+#define STM32_I2C1CLK               STM32_SYSCLK
+#else
+#error "invalid source selected for I2C1 clock"
+#endif
+
+/**
+ * @brief   USART1 frequency.
+ */
+#if STM32_USART1SW == STM32_USART1SW_PCLK
+#define STM32_USART1CLK             STM32_PCLK
+#elif STM32_USART1SW == STM32_USART1SW_SYSCLK
+#define STM32_USART1CLK             STM32_SYSCLK
+#elif STM32_USART1SW == STM32_USART1SW_LSECLK
+#define STM32_USART1CLK             STM32_LSECLK
+#elif STM32_USART1SW == STM32_USART1SW_HSICLK
+#define STM32_USART1CLK             STM32_HSICLK
+#else
+#error "invalid source selected for USART1 clock"
+#endif
+
+/**
  * @brief   Timers clock.
  */
 #if (STM32_PPRE == STM32_PPRE_DIV1) || defined(__DOXYGEN__)
@@ -861,8 +939,8 @@
 /*===========================================================================*/
 
 /* STM32 DMA and RCC helpers.*/
-/*#include "stm32_dma.h"
-#include "stm32_rcc.h"*/
+/*#include "stm32_dma.h"*/
+#include "stm32_rcc.h"
 
 #ifdef __cplusplus
 extern "C" {
