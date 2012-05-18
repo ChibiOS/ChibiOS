@@ -21,6 +21,14 @@
    Concepts and parts of this file have been contributed by Fabio Utzig.
  */
 
+/**
+ * @file    chprintf.c
+ * @brief   Mini printf-like functionality.
+ *
+ * @addtogroup chprintf
+ * @{
+ */
+
 #include <stdarg.h>
 
 #include "ch.h"

@@ -22,7 +22,7 @@
  * @file    chprintf.h
  * @brief   Mini printf-like functionality.
  *
- * @addtogroup event_timer
+ * @addtogroup chprintf
  * @{
  */
 
