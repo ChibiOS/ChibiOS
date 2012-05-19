@@ -70,6 +70,14 @@ int main(void) {
   chSysInit();
 
   /*
+   * Activates the serial driver 1 using the driver default configuration.
+   * PA9 and PA10 are routed to USART1.
+   */
+  sdStart(&SD1, NULL);
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(1));       /* USART1 TX.       */
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(1));      /* USART1 RX.       */
+
+  /*
    * Creates the blinker threads.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
@@ -82,8 +90,8 @@ int main(void) {
    * driver 1.
    */
   while (TRUE) {
-    /*if (palReadPad(GPIOA, GPIOA_BUTTON))
-      TestThread(&SD1);*/
+    if (palReadPad(GPIOA, GPIOA_BUTTON))
+      TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
 }
