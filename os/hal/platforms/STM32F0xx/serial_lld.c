@@ -166,7 +166,7 @@ static void serve_interrupt(SerialDriver *sdp) {
       u->CR1 = (cr1 & ~USART_CR1_TXEIE) | USART_CR1_TCIE;
     }
     else
-      u->RDR = b;
+      u->TDR = b;
     chSysUnlockFromIsr();
   }
   /* Physical transmission end.*/
