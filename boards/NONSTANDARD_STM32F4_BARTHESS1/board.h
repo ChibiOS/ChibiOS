@@ -430,7 +430,7 @@
                                 PIN_MODE_INPUT(GPIOE_MMA8451_INT2))
 /* 0x00000000 */
 #define VAL_GPIOE_OTYPER       (PIN_OTYPE_PUSHPULL(GPIOE_XBEE_SLEEP) |        \
-                                PIN_OTYPE_OPENDRAIN(GPIOE_XBEE_RESET) |       \
+                                PIN_OTYPE_PUSHPULL(GPIOE_XBEE_RESET) |        \
                                 PIN_OTYPE_PUSHPULL(GPIOE_USB_DISCOVERY) |     \
                                 PIN_OTYPE_OPENDRAIN(GPIOE_GPS_PWR_EN) |       \
                                 PIN_OTYPE_PUSHPULL(GPIOE_PWM5) |              \
@@ -442,8 +442,8 @@
 /* 0x00000000 */
 #define VAL_GPIOE_PUPDR        (PIN_PUDR_PULLDOWN(GPIOE_GPS_PPS) |            \
                                 PIN_PUDR_PULLUP(GPIOE_XBEE_SLEEP) |           \
-                                PIN_PUDR_PULLUP(GPIOE_XBEE_RESET) |           \
-                                PIN_PUDR_PULLUP(GPIOE_SDIO_DETECT) |        \
+                                PIN_PUDR_FLOATING(GPIOE_XBEE_RESET) |         \
+                                PIN_PUDR_PULLUP(GPIOE_SDIO_DETECT) |          \
                                 PIN_PUDR_FLOATING(GPIOE_USB_DISCOVERY) |      \
                                 PIN_PUDR_FLOATING(GPIOE_GPS_PWR_EN) |         \
                                 PIN_PUDR_PULLDOWN(GPIOE_BMP085_EOC) |         \
