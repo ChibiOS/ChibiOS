@@ -43,7 +43,7 @@
 /**
  * @brief   PendSV priority level.
  * @note    This priority is enforced to be equal to @p 0,
- *          this handler always have the highest priority that cannot preempt
+ *          this handler always has the highest priority that cannot preempt
  *          the kernel.
  */
 #define CORTEX_PRIORITY_PENDSV          0
