@@ -46,6 +46,7 @@ extern "C" {
   void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp);
   void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp);
   time_t rtcGetTimeUnixSec(RTCDriver *rtcp);
+  uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp);
   void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec);
 #ifdef __cplusplus
 }
