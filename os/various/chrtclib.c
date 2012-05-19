@@ -139,7 +139,11 @@ static void stm32_rtc_tm2bcd(struct tm *timp, RTCTime *timespec) {
  * @api
  */
 void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
+#if STM32_RTC_HAS_SUBSECONDS
   RTCTime timespec = {0,0,FALSE,0};
+#else
+  RTCTime timespec = {0,0,FALSE};
+#endif
 
   rtcGetTime(rtcp, &timespec);
   stm32_rtc_bcd2tm(timp, &timespec);
@@ -154,7 +158,11 @@ void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
  * @api
  */
 void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp) {
+#if STM32_RTC_HAS_SUBSECONDS
   RTCTime timespec = {0,0,FALSE,0};
+#else
+  RTCTime timespec = {0,0,FALSE};
+#endif
 
   stm32_rtc_tm2bcd(timp, &timespec);
   rtcSetTime(rtcp, &timespec);
@@ -169,7 +177,11 @@ void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp) {
  * @api
  */
 time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
+#if STM32_RTC_HAS_SUBSECONDS
   RTCTime timespec = {0,0,FALSE,0};
+#else
+  RTCTime timespec = {0,0,FALSE};
+#endif
   struct tm timp;
 
   rtcGetTime(rtcp, &timespec);
@@ -187,11 +199,13 @@ time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
  * @api
  */
 void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec) {
+#if STM32_RTC_HAS_SUBSECONDS
   RTCTime timespec = {0,0,FALSE,0};
-  struct tm *timp;
+#else
+  RTCTime timespec = {0,0,FALSE};
+#endif
 
-  timp = localtime(&tv_sec);
-  stm32_rtc_tm2bcd(timp, &timespec);
+  stm32_rtc_tm2bcd(localtime(&tv_sec), &timespec);
   rtcSetTime(rtcp, &timespec);
 }
 
@@ -204,20 +218,18 @@ void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec) {
  * @api
  */
 uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp) {
+#if STM32_RTC_HAS_SUBSECONDS
   uint64_t result = 0;
-
   RTCTime timespec = {0,0,FALSE,0};
   struct tm timp;
 
   rtcGetTime(rtcp, &timespec);
   stm32_rtc_bcd2tm(&timp, &timespec);
 
-  result = mktime(&timp) * 1000000;
-
-#if STM32_RTC_HAS_SUBSECONDS
+  result = (uint64_t)mktime(&timp) * 1000000;
   return result + timespec.tv_msec * 1000;
 #else
-  return result;
+  return (uint64_t)rtcGetTimeUnixSec(rtcp) * 1000000;
 #endif
 }
 
@@ -231,7 +243,7 @@ uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp) {
  * @api
  */
 void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
-  RTCTime timespec = {0,0,FALSE,0};
+  RTCTime timespec = {0,0};
 
   rtcGetTime(rtcp, &timespec);
   if (timp != NULL) /* this comparison needed to avoid compiler warning */
@@ -247,7 +259,7 @@ void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
  * @api
  */
 void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp) {
-  RTCTime timespec = {0,0,FALSE,0};
+  RTCTime timespec = {0,0};
 
   timespec.tv_sec = mktime(timp);
   timespec.tv_msec = 0;
@@ -263,7 +275,7 @@ void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp) {
  * @api
  */
 time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
-  RTCTime timespec = {0,0,FALSE,0};
+  RTCTime timespec = {0,0};
 
   rtcGetTime(rtcp, &timespec);
   return timespec.tv_sec;
@@ -278,7 +290,7 @@ time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
  * @api
  */
 void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec) {
-  RTCTime timespec = {0,0,FALSE,0};
+  RTCTime timespec = {0,0};
 
   timespec.tv_sec = tv_sec;
   timespec.tv_msec = 0;
@@ -294,16 +306,15 @@ void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec) {
  * @api
  */
 uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp) {
+#if STM32_RTC_HAS_SUBSECONDS
   uint64_t result = 0;
-  RTCTime timespec = {0,0,FALSE,0};
+  RTCTime timespec = {0,0};
 
   rtcGetTime(rtcp, &timespec);
-  result = timespec.tv_sec * 1000000;
-
-#if STM32_RTC_HAS_SUBSECONDS
+  result = (uint64_t)timespec.tv_sec * 1000000;
   return result + timespec.tv_msec * 1000;
 #else
-  return result;
+  return (uint64_t)rtcGetTimeUnixSec(rtcp) * 1000000;
 #endif
 }
 #endif /* STM32_RTC_IS_CALENDAR */
