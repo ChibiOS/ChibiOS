@@ -195,14 +195,14 @@
 /**
  * @brief   SSP0 clock.
  */
-#define LPC11xx_SERIAL_SSP0_PCLK                                            \
-  (LPC11xx_MAINCLK / LPC11xx_SERIAL_SSP0CLKDIV)
+#define LPC11xx_SPI_SSP0_PCLK                                               \
+  (LPC11xx_MAINCLK / LPC11xx_SPI_SSP0CLKDIV)
 
 /**
  * @brief   SSP1 clock.
  */
-#define LPC11xx_SERIAL_SSP1_PCLK                                            \
-  (LPC11xx_MAINCLK / LPC11xx_SERIAL_SSP1CLKDIV)
+#define LPC11xx_SPI_SSP1_PCLK                                               \
+  (LPC11xx_MAINCLK / LPC11xx_SPI_SSP1CLKDIV)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

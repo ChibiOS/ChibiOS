@@ -99,6 +99,8 @@ __Vectors
                 DCD     Vector114
                 DCD     Vector118
                 DCD     Vector11C
+                DCD     Vector120
+                DCD     Vector124
 
                 AREA    |.text|, CODE, READONLY
                 THUMB
@@ -178,6 +180,8 @@ _unhandled_exception PROC
                 EXPORT  Vector114               [WEAK]
                 EXPORT  Vector118               [WEAK]
                 EXPORT  Vector11C               [WEAK]
+                EXPORT  Vector120               [WEAK]
+                EXPORT  Vector124               [WEAK]
 
 NMIVector
 HardFaultVector
@@ -249,6 +253,8 @@ Vector110
 Vector114
 Vector118
 Vector11C
+Vector120
+Vector124
                 b       _unhandled_exception
                 ENDP
 

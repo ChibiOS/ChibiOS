@@ -103,6 +103,8 @@ extern void Vector110(void);
 extern void Vector114(void);
 extern void Vector118(void);
 extern void Vector11C(void);
+extern void Vector120(void);
+extern void Vector124(void);
 #endif
 
 /**
@@ -129,7 +131,8 @@ void  (*_vectors[])(void) = {
   VectorE0,           VectorE4,           VectorE8,           VectorEC,
   VectorF0,           VectorF4,           VectorF8,           VectorFC,
   Vector100,          Vector104,          Vector108,          Vector10C,
-  Vector110,          Vector114,          Vector118,          Vector11C
+  Vector110,          Vector114,          Vector118,          Vector11C,
+  Vector120,          Vector124
 };
 
 /**
@@ -218,5 +221,7 @@ void Vector110(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector114(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector118(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector11C(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector120(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector124(void) __attribute__((weak, alias("_unhandled_exception")));
 
 /** @} */
