@@ -152,7 +152,7 @@
  * @brief   SPI1 interrupt priority level setting.
  */
 #if !defined(LPC13xx_SPI_SSP1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define LPC13xx_SPI_SSP1_IRQ_PRIORITY       1
+#define LPC13xx_SPI_SSP1_IRQ_PRIORITY       5
 #endif
 
 /**

@@ -74,7 +74,10 @@
  * SPI driver system settings.
  */
 #define LPC13xx_SPI_USE_SSP0                TRUE
+#define LPC13xx_SPI_USE_SSP1                FALSE
 #define LPC13xx_SPI_SSP0CLKDIV              1
+#define LPC13xx_SPI_SSP1CLKDIV              1
 #define LPC13xx_SPI_SSP0_IRQ_PRIORITY       5
+#define LPC13xx_SPI_SSP1_IRQ_PRIORITY       5
 #define LPC13xx_SPI_SSP_ERROR_HOOK(spip)    chSysHalt()
 #define LPC13xx_SPI_SCK0_SELECTOR           SCK0_IS_PIO2_11
