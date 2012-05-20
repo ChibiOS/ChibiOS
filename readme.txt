@@ -131,6 +131,8 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Updated vendor headers for LPC11xx and LPC13xx, the new headers
+  support several new devices.
 - NEW: Demo for STM32F0-Discovery board.
 - NEW: Initial support for STM32F0xx devices.
 - NEW: Added a common ancestor class to the SDC and MMC_SPI drivers. This

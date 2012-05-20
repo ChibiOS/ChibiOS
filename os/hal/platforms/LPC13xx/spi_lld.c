@@ -156,10 +156,10 @@ void spi_lld_init(void) {
 
 #if LPC13xx_SPI_USE_SSP0
   spiObjectInit(&SPID1);
-  SPID1.ssp = LPC_SSP;
-  LPC_IOCON->SCKLOC = LPC13xx_SPI_SCK0_SELECTOR;
+  SPID1.ssp = LPC_SSP0;
+  LPC_IOCON->SCK_LOC = LPC13xx_SPI_SCK0_SELECTOR;
 #if LPC13xx_SPI_SCK0_SELECTOR == SCK0_IS_PIO0_10
-  LPC_IOCON->JTAG_TCK_PIO0_10 = 0xC2;       /* SCK0 without resistors.      */
+  LPC_IOCON->SWCLK_PIO0_10 = 0xC2;          /* SCK0 without resistors.      */
 #elif LPC13xx_SPI_SCK0_SELECTOR == SCK0_IS_PIO2_11
   LPC_IOCON->PIO2_11 = 0xC1;                /* SCK0 without resistors.      */
 #else /* LPC13xx_SPI_SCK0_SELECTOR == SCK0_IS_PIO0_6 */
@@ -183,10 +183,10 @@ void spi_lld_start(SPIDriver *spip) {
     /* Clock activation.*/
 #if LPC13xx_SPI_USE_SSP0
     if (&SPID1 == spip) {
-      LPC_SYSCON->SSPCLKDIV = LPC13xx_SPI_SSP0CLKDIV;
+      LPC_SYSCON->SSP0CLKDIV = LPC13xx_SPI_SSP0CLKDIV;
       LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 11);
       LPC_SYSCON->PRESETCTRL |= 1;
-      nvicEnableVector(SSP_IRQn,
+      nvicEnableVector(SSP0_IRQn,
                        CORTEX_PRIORITY_MASK(LPC13xx_SPI_SSP0_IRQ_PRIORITY));
     }
 #endif
@@ -216,8 +216,8 @@ void spi_lld_stop(SPIDriver *spip) {
     if (&SPID1 == spip) {
       LPC_SYSCON->PRESETCTRL &= ~1;
       LPC_SYSCON->SYSAHBCLKCTRL &= ~(1 << 11);
-      LPC_SYSCON->SSPCLKDIV = 0;
-      nvicDisableVector(SSP_IRQn);
+      LPC_SYSCON->SSP0CLKDIV = 0;
+      nvicDisableVector(SSP0_IRQn);
     }
 #endif
   }

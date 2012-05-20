@@ -180,7 +180,7 @@ void spi_lld_init(void) {
   SPID1.ssp = LPC_SSP0;
   LPC_IOCON->SCK_LOC = LPC11xx_SPI_SCK0_SELECTOR;
 #if LPC11xx_SPI_SCK0_SELECTOR == SCK0_IS_PIO0_10
-  LPC_IOCON->JTAG_TCK_PIO0_10 = 0xC2;       /* SCK0 without resistors.      */
+  LPC_IOCON->SWCLK_PIO0_10 = 0xC2;          /* SCK0 without resistors.      */
 #elif LPC11xx_SPI_SCK0_SELECTOR == SCK0_IS_PIO2_11
   LPC_IOCON->PIO2_11 = 0xC1;                /* SCK0 without resistors.      */
 #else /* LPC11xx_SPI_SCK0_SELECTOR == SCK0_IS_PIO0_6 */

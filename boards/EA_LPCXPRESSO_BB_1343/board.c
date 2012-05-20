@@ -56,7 +56,7 @@ void boardInit(void) {
    *       you must comment that line first.
    */
   LPC_IOCON->PIO0_7 = 0xC0;             /* Disables pull-up on LED2 output. */
-  LPC_IOCON->JTAG_nTRST_PIO1_2 = 0xC1;  /* Disables pull-up on LED3B output
+  LPC_IOCON->R_PIO1_2 = 0xC1;           /* Disables pull-up on LED3B output
                                            and makes it GPIO1_2.            */
   LPC_IOCON->PIO1_9 = 0xC0;             /* Disables pull-up on LED3R output.*/
   LPC_IOCON->PIO1_10 = 0xC0;            /* Disables pull-up on LED3G output.*/
