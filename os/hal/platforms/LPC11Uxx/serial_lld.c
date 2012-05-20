@@ -240,8 +240,8 @@ void sd_lld_init(void) {
 #if LPC_SERIAL_USE_UART0
   sdObjectInit(&SD1, NULL, notify1);
   SD1.uart = LPC_UART;
-  LPC_IOCON->PIO1_6 = 0xC1;                 /* RDX without resistors.       */
-  LPC_IOCON->PIO1_7 = 0xC1;                 /* TDX without resistors.       */
+  LPC_IOCON->PIO0_18 = 0x81;                /* RDX without resistors.       */
+  LPC_IOCON->PIO0_19 = 0x81;                /* TDX without resistors.       */
 #endif
 }
 
