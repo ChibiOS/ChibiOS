@@ -28,8 +28,8 @@
  */
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 const PALConfig pal_default_config = {
- {VAL_GPIO0DATA, VAL_GPIO0DIR},
- {VAL_GPIO1DATA, VAL_GPIO1DIR}
+  {VAL_GPIO0DATA, VAL_GPIO0DIR},
+  {VAL_GPIO1DATA, VAL_GPIO1DIR}
 };
 #endif
 
@@ -58,4 +58,13 @@ void boardInit(void) {
                                            and makes it GPIO1_2.            */
   LPC_IOCON->PIO0_21 = 0x80;            /* Disables pull-up on LED3R output.*/
   LPC_IOCON->PIO0_22 = 0x80;            /* Disables pull-up on LED3G output.*/
+
+  /* SSP0 mapping.*/
+  LPC_IOCON->PIO1_29 = 0x81;            /* SCK0 without resistors.          */
+  LPC_IOCON->PIO0_8  = 0x81;            /* MISO0 without resistors.         */
+  LPC_IOCON->PIO0_9  = 0x81;            /* MOSI0 without resistors.         */
+
+  /* USART mapping.*/
+  LPC_IOCON->PIO0_18 = 0x81;            /* RDX without resistors.           */
+  LPC_IOCON->PIO0_19 = 0x81;            /* TDX without resistors.           */
 }

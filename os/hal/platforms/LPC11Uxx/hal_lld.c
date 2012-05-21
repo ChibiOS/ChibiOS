@@ -29,11 +29,6 @@
 #include "ch.h"
 #include "hal.h"
 
-/**
- * @brief   Register missing in NXP header file.
- */
-#define FLASHCFG (*((volatile uint32_t *)0x4003C010))
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -81,7 +76,8 @@ void lpc_clock_init(void) {
   unsigned i;
 
   /* Flash wait states setting, the code takes care to not touch TBD bits.*/
-  FLASHCFG = (FLASHCFG & ~3) | LPC_FLASHCFG_FLASHTIM;
+  LPC_FLASHCTRL->FLASHCFG = (LPC_FLASHCTRL->FLASHCFG & ~3) |
+                            LPC_FLASHCFG_FLASHTIM;
 
   /* System oscillator initialization if required.*/
 #if LPC_MAINCLK_SOURCE == SYSMAINCLKSEL_PLLOUT

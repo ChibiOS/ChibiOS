@@ -48,16 +48,16 @@
 #define VAL_GPIO0DIR            PAL_PORT_BIT(GPIO0_OLEDSEL)   |             \
                                 PAL_PORT_BIT(GPIO0_USB_DPCTL) |             \
                                 PAL_PORT_BIT(GPIO0_LED2)      |             \
-                                PAL_PORT_BIT(GPIO1_LED3B)     |             \
-                                PAL_PORT_BIT(GPIO1_LED3R)     |             \
-                                PAL_PORT_BIT(GPIO1_LED3G)     |             \
-                                PAL_PORT_BIT(GPIO1_SPI0SEL)
+                                PAL_PORT_BIT(GPIO0_LED3B)     |             \
+                                PAL_PORT_BIT(GPIO0_LED3R)     |             \
+                                PAL_PORT_BIT(GPIO0_LED3G)     |             \
+                                PAL_PORT_BIT(GPIO0_SPI0SEL)
 #define VAL_GPIO0DATA           PAL_PORT_BIT(GPIO0_OLEDSEL)   |             \
                                 PAL_PORT_BIT(GPIO0_LED2)      |             \
-                                PAL_PORT_BIT(GPIO1_LED3B)     |             \
-                                PAL_PORT_BIT(GPIO1_LED3R)     |             \
-                                PAL_PORT_BIT(GPIO1_LED3G)     |             \
-                                PAL_PORT_BIT(GPIO1_SPI0SEL)
+                                PAL_PORT_BIT(GPIO0_LED3B)     |             \
+                                PAL_PORT_BIT(GPIO0_LED3R)     |             \
+                                PAL_PORT_BIT(GPIO0_LED3G)     |             \
+                                PAL_PORT_BIT(GPIO0_SPI0SEL)
 
 /*
  * GPIO 1 initial setup.

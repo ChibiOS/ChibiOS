@@ -109,7 +109,7 @@
 /**
  * @brief   Calculated SYSOSCCTRL setting.
  */
-#if (SYSOSCCLK < 18000000) || defined(__DOXYGEN__)
+#if (SYSOSCCLK < 20000000) || defined(__DOXYGEN__)
 #define LPC_SYSOSCCTRL              0
 #else
 #define LPC_SYSOSCCTRL              1
@@ -212,7 +212,7 @@
 extern "C" {
 #endif
   void hal_lld_init(void);
-  void lpc111x_clock_init(void);
+  void lpc_clock_init(void);
 #ifdef __cplusplus
 }
 #endif

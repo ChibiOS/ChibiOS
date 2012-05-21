@@ -19,7 +19,7 @@
 */
 
 /*
- * LPC1114 memory setup.
+ * LPC11U14 memory setup.
  */
 __main_stack_size__     = 0x0100;
 __process_stack_size__  = 0x0100;
@@ -27,7 +27,8 @@ __process_stack_size__  = 0x0100;
 MEMORY
 {
     flash : org = 0x00000000, len = 32k
-    ram : org = 0x10000000, len = 8k
+    ram : org = 0x10000000, len = 4k
+    usbram : org = 0x20004000, len = 2k
 }
 
 __ram_start__           = ORIGIN(ram);

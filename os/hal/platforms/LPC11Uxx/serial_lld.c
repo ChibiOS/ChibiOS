@@ -56,13 +56,13 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 /**
- * @brief   UART initialization.
+ * @brief   USART initialization.
  *
- * @param[in] sdp       communication channel associated to the UART
+ * @param[in] sdp       communication channel associated to the USART
  * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
-  LPC_UART_TypeDef *u = sdp->uart;
+  LPC_USART_Type *u = sdp->uart;
 
   uint32_t div = LPC_SERIAL_UART0_PCLK / (config->sc_speed << 4);
   u->LCR = config->sc_lcr | LCR_DLAB;
@@ -77,11 +77,11 @@ static void uart_init(SerialDriver *sdp, const SerialConfig *config) {
 }
 
 /**
- * @brief   UART de-initialization.
+ * @brief   USART de-initialization.
  *
- * @param[in] u         pointer to an UART I/O block
+ * @param[in] u         pointer to an USART I/O block
  */
-static void uart_deinit(LPC_UART_TypeDef *u) {
+static void uart_deinit(LPC_USART_Type *u) {
 
   u->LCR = LCR_DLAB;
   u->DLL = 1;
@@ -126,7 +126,7 @@ static void set_error(SerialDriver *sdp, IOREG32 err) {
  * @param[in] sdp       communication channel associated to the UART
  */
 static void serve_interrupt(SerialDriver *sdp) {
-  LPC_UART_TypeDef *u = sdp->uart;
+  LPC_USART_Type *u = sdp->uart;
 
   while (TRUE) {
     switch (u->IIR & IIR_SRC_MASK) {
@@ -179,7 +179,7 @@ static void serve_interrupt(SerialDriver *sdp) {
  * @brief   Attempts a TX FIFO preload.
  */
 static void preload(SerialDriver *sdp) {
-  LPC_UART_TypeDef *u = sdp->uart;
+  LPC_USART_Type *u = sdp->uart;
 
   if (u->LSR & LSR_THRE) {
     int i = LPC_SERIAL_FIFO_PRELOAD;
@@ -239,9 +239,7 @@ void sd_lld_init(void) {
 
 #if LPC_SERIAL_USE_UART0
   sdObjectInit(&SD1, NULL, notify1);
-  SD1.uart = LPC_UART;
-  LPC_IOCON->PIO0_18 = 0x81;                /* RDX without resistors.       */
-  LPC_IOCON->PIO0_19 = 0x81;                /* TDX without resistors.       */
+  SD1.uart = LPC_USART;
 #endif
 }
 
