@@ -22,7 +22,6 @@
 #include "hal.h"
 #include "test.h"
 
-#if 0
 /*
  * Conversion table from hex digit to 7 segments encoding, bit 5 controls the
  * dot.
@@ -40,12 +39,11 @@ static uint8_t digits[32] = {
  */
 static SPIConfig spicfg = {
   NULL,
-  GPIO1,
-  GPIO1_SPI0SEL,
+  GPIO0,
+  GPIO0_SPI0SEL,
   CR0_DSS8BIT | CR0_FRFSPI | CR0_CLOCKRATE(0),
   48
 };
-#endif
 
 /*
  * Red LED blinker thread, times are in milliseconds.
@@ -114,7 +112,7 @@ int main(void) {
    * Activates the SD1 and SPI1 drivers.
    */
   sdStart(&SD1, NULL);                  /* Default: 38400,8,N,1.            */
-//  spiStart(&SPID1, &spicfg);
+  spiStart(&SPID1, &spicfg);
 
   /*
    * Creates the blinker threads.
@@ -130,7 +128,6 @@ int main(void) {
   while (TRUE) {
     if (!palReadPad(GPIO0, GPIO0_SW3))
       TestThread(&SD1);
-#if 0
     spiSelect(&SPID1);
     spiSend(&SPID1, 1, &digits[i]);                 /* Non polled method.   */
     spiUnselect(&SPID1);
@@ -139,7 +136,6 @@ int main(void) {
     spiPolledExchange(&SPID1, digits[i | 0x10]);    /* Polled method.       */
     spiUnselect(&SPID1);
     chThdSleepMilliseconds(500);
-#endif
     i = (i + 1) & 15;
   }
 }
