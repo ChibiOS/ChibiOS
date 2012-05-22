@@ -158,6 +158,14 @@ typedef struct {
    */
   bool_t                block_addresses;
   /**
+   * @brief Card CID.
+   */
+  uint32_t                  cid[4];
+  /**
+   * @brief Card CSD.
+   */
+  uint32_t                  csd[4];
+  /**
    * @brief Total number of blocks in card.
    */
   uint32_t              capacity;
@@ -215,6 +223,7 @@ extern "C" {
   bool_t mmcStopSequentialWrite(MMCDriver *mmcp);
   bool_t mmcSync(MMCDriver *mmcp);
   bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip);
+  bool_t mmcErase(MMCDriver *mmcp, uint32_t startblk, uint32_t endblk);
   bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp);
   bool_t mmc_lld_is_write_protected(MMCDriver *mmcp);
 #ifdef __cplusplus

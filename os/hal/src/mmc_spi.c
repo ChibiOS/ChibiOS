@@ -330,12 +330,12 @@ static uint8_t send_command_R3(MMCDriver *mmcp, uint8_t cmd, uint32_t arg,
  *
  * @notapi
  */
-static bool_t read_CSD(MMCDriver *mmcp, uint32_t csd[4]) {
+static bool_t read_CxD(MMCDriver *mmcp, uint8_t cmd, uint32_t cxd[4]) {
   unsigned i;
   uint8_t *bp, buf[16];
 
   spiSelect(mmcp->config->spip);
-  send_hdr(mmcp, MMCSD_CMD_SEND_CSD, 0);
+  send_hdr(mmcp, cmd, 0);
   if (recvr1(mmcp) != 0x00) {
     spiUnselect(mmcp->config->spip);
     return TRUE;
@@ -349,7 +349,7 @@ static bool_t read_CSD(MMCDriver *mmcp, uint32_t csd[4]) {
 
       spiReceive(mmcp->config->spip, 16, buf);
       bp = buf;
-      for (wp = &csd[3]; wp >= csd; wp--) {
+      for (wp = &cxd[3]; wp >= cxd; wp--) {
         *wp = ((uint32_t)bp[0] << 24) | ((uint32_t)bp[1] << 16) |
               ((uint32_t)bp[2] << 8)  | (uint32_t)bp[3];
         bp += 4;
@@ -491,7 +491,6 @@ void mmcStop(MMCDriver *mmcp) {
 bool_t mmcConnect(MMCDriver *mmcp) {
   unsigned i;
   bool_t result;
-  uint32_t csd[4];
 
   chDbgCheck(mmcp != NULL, "mmcConnect");
 
@@ -564,10 +563,13 @@ bool_t mmcConnect(MMCDriver *mmcp) {
       return TRUE;
 
     /* Determine capacity.*/
-    if (read_CSD(mmcp, csd))
+    if (read_CxD(mmcp, MMCSD_CMD_SEND_CSD, mmcp->csd))
       return TRUE;
-    mmcp->capacity = mmcsdGetCapacity(csd);
+    mmcp->capacity = mmcsdGetCapacity(mmcp->csd);
     if (mmcp->capacity == 0)
+      return TRUE;
+
+    if (read_CxD(mmcp, MMCSD_CMD_SEND_CID, mmcp->cid))
       return TRUE;
 
     /* Transition to MMC_READY state (if not extracted).*/
@@ -926,6 +928,36 @@ bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip) {
 
   return FALSE;
 }
+
+/**
+ * @brief   Erases blocks.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @param[in] startblk  starting block number
+ * @param[in] endblk    ending block number
+ *
+ * @return              The operation status.
+ * @retval FALSE        the operation succeeded.
+ * @retval TRUE         the operation failed.
+ *
+ * @api
+ */
+bool_t mmcErase(MMCDriver *mmcp, uint32_t startblk, uint32_t endblk) {
+
+  chDbgCheck((mmcp != NULL), "mmcErase");
+
+  if (send_command_R1(mmcp, MMCSD_CMD_ERASE_RW_BLK_START, startblk))
+    return TRUE;
+
+  if (send_command_R1(mmcp, MMCSD_CMD_ERASE_RW_BLK_END, endblk))
+    return TRUE;
+
+  if (send_command_R1(mmcp, MMCSD_CMD_ERASE, 0))
+    return TRUE;
+
+  return FALSE;
+}
+
 
 #endif /* HAL_USE_MMC_SPI */
 

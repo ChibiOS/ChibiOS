@@ -505,6 +505,52 @@ bool_t sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
   return CH_SUCCESS;
 }
 
+
+/**
+ * @brief   Erases the supplied blocks.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] startblk  starting block number
+ * @param[in] endblk    ending block number
+ *
+ * @return              The operation status.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
+ *
+ * @api
+ */
+bool_t sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk) {
+  uint32_t resp[1];
+
+  chDbgCheck((sdcp != NULL), "sdcErase");
+
+  /* Driver handles data in 512 bytes blocks (just like HC cards). But if we
+     have not HC card than we must convert address from blocks to bytes.*/
+  if (!(sdcp->cardmode & SDC_MODE_HIGH_CAPACITY)) {
+    startblk *= MMCSD_BLOCK_SIZE;
+    endblk *= MMCSD_BLOCK_SIZE;
+  }
+
+  _sdc_wait_for_transfer_state( sdcp );
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_START, startblk, resp) != CH_SUCCESS || MMCSD_R1_ERROR(resp[0]))
+    return CH_FAILED;
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_END, endblk, resp) != CH_SUCCESS || MMCSD_R1_ERROR(resp[0]))
+    return CH_FAILED;
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE, 0, resp) != CH_SUCCESS || MMCSD_R1_ERROR(resp[0]))
+    return CH_FAILED;
+
+  /* Quick sleep to allow it to transition to programming or receiving state */
+  chThdSleepMilliseconds(2);
+
+  /* Wait for it to return to transfer state to indicate it has finished erasing */
+  _sdc_wait_for_transfer_state( sdcp );
+
+  return CH_SUCCESS;
+}
+
 #endif /* HAL_USE_SDC */
 
 /** @} */

@@ -7,7 +7,7 @@
 
 #include "ch.h"
 #include "hal.h"
-
+#include "ffconf.h"
 #include "diskio.h"
 
 #if HAL_USE_MMC_SPI && HAL_USE_SDC
@@ -207,6 +207,11 @@ DRESULT disk_ioctl (
     case GET_SECTOR_SIZE:
         *((WORD *)buff) = MMC_SECTOR_SIZE;
         return RES_OK;
+#if _USE_ERASE
+    case CTRL_ERASE_SECTOR:
+        mmcErase(&MMCD1, *((DWORD *)buff), *((DWORD *)buff + 1));
+        return RES_OK;
+#endif
     default:
         return RES_PARERR;
     }
@@ -224,6 +229,11 @@ DRESULT disk_ioctl (
     case GET_BLOCK_SIZE:
         *((DWORD *)buff) = 256; /* 512b blocks in one erase block */
         return RES_OK;
+#if _USE_ERASE
+    case CTRL_ERASE_SECTOR:
+        sdcErase(&SDCD1, *((DWORD *)buff), *((DWORD *)buff + 1));
+        return RES_OK;
+#endif
     default:
         return RES_PARERR;
     }

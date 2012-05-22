@@ -77,6 +77,7 @@
 #define MMCSD_CMD_SEL_DESEL_CARD        7
 #define MMCSD_CMD_SEND_IF_COND          8
 #define MMCSD_CMD_SEND_CSD              9
+#define MMCSD_CMD_SEND_CID              10
 #define MMCSD_CMD_STOP_TRANSMISSION     12
 #define MMCSD_CMD_SEND_STATUS           13
 #define MMCSD_CMD_SET_BLOCKLEN          16
@@ -85,6 +86,9 @@
 #define MMCSD_CMD_SET_BLOCK_COUNT       23
 #define MMCSD_CMD_WRITE_BLOCK           24
 #define MMCSD_CMD_WRITE_MULTIPLE_BLOCK  25
+#define MMCSD_CMD_ERASE_RW_BLK_START    32
+#define MMCSD_CMD_ERASE_RW_BLK_END      33
+#define MMCSD_CMD_ERASE                 38
 #define MMCSD_CMD_APP_OP_COND           41
 #define MMCSD_CMD_LOCK_UNLOCK           42
 #define MMCSD_CMD_APP_CMD               55
