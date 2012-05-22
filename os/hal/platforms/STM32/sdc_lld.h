@@ -145,6 +145,10 @@
  * @brief   SDIO data timeouts in SDIO clock cycles.
  */
 #if (defined(STM32F4XX) || defined(STM32F2XX))
+#if !STM32_CLOCK48_REQUIRED
+#error "SDIO requires STM32_CLOCK48_REQUIRED to be enabled"
+#endif
+
 #define STM32_SDC_WRITE_TIMEOUT                                             \
   (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
 #define STM32_SDC_READ_TIMEOUT                                              \
