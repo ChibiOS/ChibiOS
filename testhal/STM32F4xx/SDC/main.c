@@ -30,8 +30,8 @@
 #define SDC_DATA_DESTRUCTIVE_TEST   TRUE
 
 #define SDC_BURST_SIZE      8 /* how many sectors reads at once */
-static uint8_t outbuf[SDC_BLOCK_SIZE * SDC_BURST_SIZE + 1];
-static uint8_t  inbuf[SDC_BLOCK_SIZE * SDC_BURST_SIZE + 1];
+static uint8_t outbuf[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE + 1];
+static uint8_t  inbuf[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE + 1];
 
 /* FS object.*/
 static FATFS SDC_FS;
@@ -59,7 +59,7 @@ bool_t badblocks(uint32_t start, uint32_t end, uint32_t blockatonce, uint8_t pat
   chDbgCheck(blockatonce <= SDC_BURST_SIZE, "badblocks");
 
   /* fill control buffer */
-  for (i=0; i < SDC_BLOCK_SIZE * blockatonce; i++)
+  for (i=0; i < MMCSD_BLOCK_SIZE * blockatonce; i++)
     outbuf[i] = pattern;
 
   /* fill SD card with pattern. */
@@ -75,7 +75,7 @@ bool_t badblocks(uint32_t start, uint32_t end, uint32_t blockatonce, uint8_t pat
   while (position < end){
     if (sdcRead(&SDCD1, position, inbuf, blockatonce))
       goto ERROR;
-    if (memcmp(inbuf, outbuf, blockatonce * SDC_BLOCK_SIZE) != 0)
+    if (memcmp(inbuf, outbuf, blockatonce * MMCSD_BLOCK_SIZE) != 0)
       goto ERROR;
     position += blockatonce;
   }
@@ -90,7 +90,7 @@ ERROR:
  */
 void fillbuffer(uint8_t pattern, uint8_t *b){
   uint32_t i = 0;
-  for (i=0; i < SDC_BLOCK_SIZE * SDC_BURST_SIZE; i++)
+  for (i=0; i < MMCSD_BLOCK_SIZE * SDC_BURST_SIZE; i++)
     b[i] = pattern;
 }
 
@@ -108,6 +108,14 @@ void fillbuffers(uint8_t pattern){
 bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
   (void)sdcp;
   return FALSE;
+}
+
+/**
+ *
+ */
+bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+  (void)sdcp;
+  return !palReadPad(GPIOE, GPIOE_SDIO_DETECT);
 }
 
 /**
@@ -152,7 +160,7 @@ void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]){
     for (i=0; i<1000; i++){
       if (sdcRead(&SDCD1, 0, outbuf, SDC_BURST_SIZE))
         chSysHalt();
-      if (memcmp(inbuf, outbuf, SDC_BURST_SIZE * SDC_BLOCK_SIZE) != 0)
+      if (memcmp(inbuf, outbuf, SDC_BURST_SIZE * MMCSD_BLOCK_SIZE) != 0)
         chSysHalt();
     }
     chprintf(chp, " OK\r\n");
@@ -168,7 +176,7 @@ void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]){
     for (i=0; i<1000; i++){
       if (sdcRead(&SDCD1, 0, outbuf + 1, SDC_BURST_SIZE))
         chSysHalt();
-      if (memcmp(inbuf, outbuf, SDC_BURST_SIZE * SDC_BLOCK_SIZE) != 0)
+      if (memcmp(inbuf, outbuf, SDC_BURST_SIZE * MMCSD_BLOCK_SIZE) != 0)
         chSysHalt();
     }
     chprintf(chp, " OK\r\n");
@@ -184,7 +192,7 @@ void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]){
     fillbuffer(0, outbuf);
     if (sdcRead(&SDCD1, 0, outbuf, 1))
       chSysHalt();
-    if (memcmp(inbuf, outbuf, SDC_BLOCK_SIZE) != 0)
+    if (memcmp(inbuf, outbuf, MMCSD_BLOCK_SIZE) != 0)
       chSysHalt();
     chprintf(chp, " OK\r\n");
 
@@ -196,7 +204,7 @@ void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]){
     fillbuffer(0, outbuf);
     if (sdcRead(&SDCD1, 0, outbuf+1, 1))
       chSysHalt();
-    if (memcmp(inbuf+1, outbuf+1, SDC_BLOCK_SIZE) != 0)
+    if (memcmp(inbuf+1, outbuf+1, MMCSD_BLOCK_SIZE) != 0)
       chSysHalt();
     chprintf(chp, " OK\r\n");
 
@@ -256,7 +264,7 @@ void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]){
     chprintf(chp,
              "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free\r\n",
              clusters, (uint32_t)SDC_FS.csize,
-             clusters * (uint32_t)SDC_FS.csize * (uint32_t)SDC_BLOCK_SIZE);
+             clusters * (uint32_t)SDC_FS.csize * (uint32_t)MMCSD_BLOCK_SIZE);
 
 
     chprintf(chp, "Create file \"chtest.txt\"... ");
