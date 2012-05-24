@@ -107,6 +107,15 @@
 /* Port derived parameters.                                                  */
 /*===========================================================================*/
 
+/**
+ * @brief   Maximum usable priority for normal ISRs.
+ */
+#if CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+#define CORTEX_MAX_KERNEL_PRIORITY      1
+#else
+#define CORTEX_MAX_KERNEL_PRIORITY      0
+#endif
+
 /*===========================================================================*/
 /* Port exported info.                                                       */
 /*===========================================================================*/

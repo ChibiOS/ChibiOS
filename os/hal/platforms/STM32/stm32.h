@@ -24,6 +24,7 @@
  * @pre     One of the following macros must be defined before including
  *          this header, the macro selects the inclusion of the appropriate
  *          vendor header:
+ *          - STM32F0XX for Entry Level devices.
  *          - STM32F10X_LD_VL for Value Line Low Density devices.
  *          - STM32F10X_MD_VL for Value Line Medium Density devices.
  *          - STM32F10X_LD for Performance Low Density devices.
@@ -43,24 +44,27 @@
 #ifndef _STM32_H_
 #define _STM32_H_
 
-#if defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||                 \
-    defined(STM32F10X_HD_VL) || defined(STM32F10X_LD)    ||                 \
-    defined(STM32F10X_MD)    || defined(STM32F10X_HD)    ||                 \
-    defined(STM32F10X_XL)    || defined(STM32F10X_CL)    ||                 \
-    defined(__DOXYGEN__)
+#if defined(STM32F0XX)
+#include "stm32f0xx.h"
+
+#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
+      defined(STM32F10X_HD_VL) || defined(STM32F10X_LD)    ||               \
+      defined(STM32F10X_MD)    || defined(STM32F10X_HD)    ||               \
+      defined(STM32F10X_XL)    || defined(STM32F10X_CL)    ||               \
+      defined(__DOXYGEN__)
 #include "stm32f10x.h"
-#endif
 
-#if defined(STM32F2XX) || defined(__DOXYGEN__)
+#elif defined(STM32F2XX) || defined(__DOXYGEN__)
 #include "stm32f2xx.h"
-#endif
 
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
+#elif defined(STM32F4XX) || defined(__DOXYGEN__)
 #include "stm32f4xx.h"
-#endif
 
-#if defined(STM32L1XX_MD) || defined(__DOXYGEN__)
+#elif defined(STM32L1XX_MD) || defined(__DOXYGEN__)
 #include "stm32l1xx.h"
+
+#else
+#error "STM32 device not specified"
 #endif
 
 /*===========================================================================*/

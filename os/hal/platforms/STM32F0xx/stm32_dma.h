@@ -19,13 +19,13 @@
 */
 
 /**
- * @file    STM32L1xx/stm32_dma.h
+ * @file    STM32F0xx/stm32_dma.h
  * @brief   DMA helper driver header.
  * @note    This file requires definitions from the ST header file stm32l1xx.h.
  * @note    This driver uses the new naming convention used for the STM32F2xx
  *          so the "DMA channels" are referred as "DMA streams".
  *
- * @addtogroup STM32L1xx_DMA
+ * @addtogroup STM32F0xx_DMA
  * @{
  */
 
@@ -40,7 +40,7 @@
  * @brief   Total number of DMA streams.
  * @note    This is the total number of streams among all the DMA units.
  */
-#define STM32_DMA_STREAMS           7
+#define STM32_DMA_STREAMS           5
 
 /**
  * @brief   Mask of the ISR bits passed to the DMA callback functions.
@@ -117,36 +117,34 @@
 #define STM32_DMA1_STREAM3          STM32_DMA_STREAM(2)
 #define STM32_DMA1_STREAM4          STM32_DMA_STREAM(3)
 #define STM32_DMA1_STREAM5          STM32_DMA_STREAM(4)
-#define STM32_DMA1_STREAM6          STM32_DMA_STREAM(5)
-#define STM32_DMA1_STREAM7          STM32_DMA_STREAM(6)
 /** @} */
 
 /**
  * @name    CR register constants common to all DMA types
  * @{
  */
-#define STM32_DMA_CR_EN             DMA_CCR1_EN
-#define STM32_DMA_CR_TEIE           DMA_CCR1_TEIE
-#define STM32_DMA_CR_HTIE           DMA_CCR1_HTIE
-#define STM32_DMA_CR_TCIE           DMA_CCR1_TCIE
-#define STM32_DMA_CR_DIR_MASK       (DMA_CCR1_DIR | DMA_CCR1_MEM2MEM)
+#define STM32_DMA_CR_EN             DMA_CCR_EN
+#define STM32_DMA_CR_TEIE           DMA_CCR_TEIE
+#define STM32_DMA_CR_HTIE           DMA_CCR_HTIE
+#define STM32_DMA_CR_TCIE           DMA_CCR_TCIE
+#define STM32_DMA_CR_DIR_MASK       (DMA_CCR_DIR | DMA_CCR_MEM2MEM)
 #define STM32_DMA_CR_DIR_P2M        0
-#define STM32_DMA_CR_DIR_M2P        DMA_CCR1_DIR
-#define STM32_DMA_CR_DIR_M2M        DMA_CCR1_MEM2MEM
-#define STM32_DMA_CR_CIRC           DMA_CCR1_CIRC
-#define STM32_DMA_CR_PINC           DMA_CCR1_PINC
-#define STM32_DMA_CR_MINC           DMA_CCR1_MINC
-#define STM32_DMA_CR_PSIZE_MASK     DMA_CCR1_PSIZE
+#define STM32_DMA_CR_DIR_M2P        DMA_CCR_DIR
+#define STM32_DMA_CR_DIR_M2M        DMA_CCR_MEM2MEM
+#define STM32_DMA_CR_CIRC           DMA_CCR_CIRC
+#define STM32_DMA_CR_PINC           DMA_CCR_PINC
+#define STM32_DMA_CR_MINC           DMA_CCR_MINC
+#define STM32_DMA_CR_PSIZE_MASK     DMA_CCR_PSIZE
 #define STM32_DMA_CR_PSIZE_BYTE     0
-#define STM32_DMA_CR_PSIZE_HWORD    DMA_CCR1_PSIZE_0
-#define STM32_DMA_CR_PSIZE_WORD     DMA_CCR1_PSIZE_1
-#define STM32_DMA_CR_MSIZE_MASK     DMA_CCR1_MSIZE
+#define STM32_DMA_CR_PSIZE_HWORD    DMA_CCR_PSIZE_0
+#define STM32_DMA_CR_PSIZE_WORD     DMA_CCR_PSIZE_1
+#define STM32_DMA_CR_MSIZE_MASK     DMA_CCR_MSIZE
 #define STM32_DMA_CR_MSIZE_BYTE     0
-#define STM32_DMA_CR_MSIZE_HWORD    DMA_CCR1_MSIZE_0
-#define STM32_DMA_CR_MSIZE_WORD     DMA_CCR1_MSIZE_1
+#define STM32_DMA_CR_MSIZE_HWORD    DMA_CCR_MSIZE_0
+#define STM32_DMA_CR_MSIZE_WORD     DMA_CCR_MSIZE_1
 #define STM32_DMA_CR_SIZE_MASK      (STM32_DMA_CR_MSIZE_MASK |              \
                                      STM32_DMA_CR_MSIZE_MASK)
-#define STM32_DMA_CR_PL_MASK        DMA_CCR1_PL
+#define STM32_DMA_CR_PL_MASK        DMA_CCR_PL
 #define STM32_DMA_CR_PL(n)          ((n) << 12)
 /** @} */
 

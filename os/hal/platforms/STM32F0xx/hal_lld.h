@@ -38,7 +38,7 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "stm32f0xx.h"
+#include "stm32.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -223,8 +223,20 @@
  */
 /* ADC attributes.*/
 #define STM32_HAS_ADC1          TRUE
+#define STM32_ADC1_DMA_DEFAULT  STM32_DMA_STREAM_ID(1, 0)
+#define STM32_ADC1_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(1, 0) |            \
+                                 STM32_DMA_STREAM_ID_MSK(1, 1))
+#define STM32_ADC1_DMA_CHN      0x00000000
+
 #define STM32_HAS_ADC2          FALSE
+#define STM32_ADC2_DMA_DEFAULT  0
+#define STM32_ADC2_DMA_MSK      0x00000000
+#define STM32_ADC2_DMA_CHN      0x00000000
+
 #define STM32_HAS_ADC3          FALSE
+#define STM32_ADC3_DMA_DEFAULT  0
+#define STM32_ADC3_DMA_MSK      0x00000000
+#define STM32_ADC3_DMA_CHN      0x00000000
 
 /* CAN attributes.*/
 #define STM32_HAS_CAN1          FALSE
@@ -322,9 +334,11 @@
 
 /* USART attributes.*/
 #define STM32_HAS_USART1        TRUE
-#define STM32_USART1_RX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 3))
+#define STM32_USART1_RX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 3) |            \
+                                 STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_USART1_RX_DMA_CHN 0x00000000
-#define STM32_USART1_TX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_USART1_TX_DMA_MSK (STM32_DMA_STREAM_ID_MSK(1, 2) |            \
+                                 STM32_DMA_STREAM_ID_MSK(1, 4))
 #define STM32_USART1_TX_DMA_CHN 0x00000000
 
 #define STM32_HAS_USART2        TRUE
@@ -939,7 +953,7 @@
 /*===========================================================================*/
 
 /* STM32 DMA and RCC helpers.*/
-/*#include "stm32_dma.h"*/
+#include "stm32_dma.h"
 #include "stm32_rcc.h"
 
 #ifdef __cplusplus

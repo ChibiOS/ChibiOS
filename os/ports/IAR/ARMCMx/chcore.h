@@ -87,6 +87,12 @@
   (((n) >= 0) && ((n) < CORTEX_PRIORITY_LEVELS))
 
 /**
+ * @brief   Priority level verification macro.
+ */
+#define CORTEX_IS_VALID_KERNEL_PRIORITY(n)                                  \
+  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
+
+/**
  * @brief   Priority level to priority mask conversion macro.
  */
 #define CORTEX_PRIORITY_MASK(n)                                             \
@@ -170,7 +176,7 @@ struct intctx {};
  */
 #define chSchIsPreemptionRequired()                                         \
   (currp->p_preempt ? firstprio(&rlist.r_queue) > currp->p_prio :           \
-                     firstprio(&rlist.r_queue) >= currp->p_prio)
+                      firstprio(&rlist.r_queue) >= currp->p_prio)
 #else /* CH_TIME_QUANTUM == 0 */
 #define chSchIsPreemptionRequired()                                         \
   (firstprio(&rlist.r_queue) > currp->p_prio)

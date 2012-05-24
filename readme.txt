@@ -25,12 +25,14 @@
   |  |  +--platforms/   - HAL low level drivers implementations.
   |  |  |  +--AT91SAM7/ - Drivers for AT91SAM7 platform.
   |  |  |  +--AVR/      - Drivers for AVR platform.
+  |  |  |  +--LPC11Uxx/ - Drivers for LPC11Uxx platform.
   |  |  |  +--LPC11xx/  - Drivers for LPC11xx platform.
   |  |  |  +--LPC13xx/  - Drivers for LPC13xx platform.
   |  |  |  +--LPC214x/  - Drivers for LPC214x platform.
   |  |  |  +--MSP430/   - Drivers for MSP430 platform.
   |  |  |  +--SPC56x/   - Drivers for SPC56x/MPC563xx platforms.
   |  |  |  +--STM32/    - Drivers for STM32 platform (common).
+  |  |  |  +--STM32F0xx/- Drivers for STM32F0xx platform.
   |  |  |  +--STM32F1xx/- Drivers for STM32F1xx platform.
   |  |  |  +--STM32F2xx/- Drivers for STM32F2xx platform.
   |  |  |  +--STM32F4xx/- Drivers for STM32F4xx platform.

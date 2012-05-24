@@ -145,14 +145,21 @@
 /* Port derived parameters.                                                  */
 /*===========================================================================*/
 
+#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
+/**
+ * @brief   Maximum usable priority for normal ISRs.
+ */
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
+
 /**
  * @brief   BASEPRI level within kernel lock.
  * @note    In compact kernel mode this constant value is enforced to zero.
  */
-#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
 #define CORTEX_BASEPRI_KERNEL                                               \
-  CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL+1)
+  CORTEX_PRIORITY_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 #else
+
+#define CORTEX_MAX_KERNEL_PRIORITY      1
 #define CORTEX_BASEPRI_KERNEL           0
 #endif
 
