@@ -223,18 +223,15 @@
  */
 /* ADC attributes.*/
 #define STM32_HAS_ADC1          TRUE
-#define STM32_ADC1_DMA_DEFAULT  STM32_DMA_STREAM_ID(1, 0)
 #define STM32_ADC1_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(1, 0) |            \
                                  STM32_DMA_STREAM_ID_MSK(1, 1))
 #define STM32_ADC1_DMA_CHN      0x00000000
 
 #define STM32_HAS_ADC2          FALSE
-#define STM32_ADC2_DMA_DEFAULT  0
 #define STM32_ADC2_DMA_MSK      0x00000000
 #define STM32_ADC2_DMA_CHN      0x00000000
 
 #define STM32_HAS_ADC3          FALSE
-#define STM32_ADC3_DMA_DEFAULT  0
 #define STM32_ADC3_DMA_MSK      0x00000000
 #define STM32_ADC3_DMA_CHN      0x00000000
 

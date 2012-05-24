@@ -98,17 +98,13 @@ static const SerialConfig default_config =
 static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   USART_TypeDef *u = sdp->usart;
 
-  /*
-   * Baud rate setting.
-   */
+  /* Baud rate setting.*/
   if (sdp->usart == USART1)
     u->BRR = STM32_USART1CLK / config->sc_speed;
   else
     u->BRR = STM32_PCLK / config->sc_speed;
 
-  /*
-   * Note that some bits are enforced.
-   */
+  /* Note that some bits are enforced.*/
   u->CR1 = config->sc_cr1 | USART_CR1_UE | USART_CR1_PEIE |
                             USART_CR1_RXNEIE | USART_CR1_TE |
                             USART_CR1_RE;
@@ -215,9 +211,7 @@ static void serve_interrupt(SerialDriver *sdp) {
 static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   USART_TypeDef *u = sdp->usart;
 
-  /*
-   * Baud rate setting.
-   */
+  /* Baud rate setting.*/
 #if STM32_HAS_USART6
   if ((sdp->usart == USART1) || (sdp->usart == USART6))
 #else
@@ -227,9 +221,7 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   else
     u->BRR = STM32_PCLK1 / config->sc_speed;
 
-  /*
-   * Note that some bits are enforced.
-   */
+  /* Note that some bits are enforced.*/
   u->CR1 = config->sc_cr1 | USART_CR1_UE | USART_CR1_PEIE |
                             USART_CR1_RXNEIE | USART_CR1_TE |
                             USART_CR1_RE;
