@@ -21,7 +21,7 @@
 /**
  * @file    STM32F0xx/stm32_dma.h
  * @brief   DMA helper driver header.
- * @note    This file requires definitions from the ST header file stm32l1xx.h.
+ * @note    This file requires definitions from the ST header file stm32f0xx.h.
  * @note    This driver uses the new naming convention used for the STM32F2xx
  *          so the "DMA channels" are referred as "DMA streams".
  *

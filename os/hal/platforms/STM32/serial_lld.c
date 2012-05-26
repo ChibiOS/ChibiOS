@@ -83,7 +83,7 @@ static const SerialConfig default_config =
 /*===========================================================================*/
 
 /* Local functions have different implementations depending on the USART type,
-   STM32F0xx devices and newer have and enhanced peripheral with slightly
+   STM32F0xx devices and newer have an enhanced peripheral with slightly
    different register interface.*/
 
 #if defined(STM32F0XX)
