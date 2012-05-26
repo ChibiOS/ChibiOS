@@ -578,7 +578,7 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
   /* Setting the associated GPIO for external channels.*/
   if (channel < 16) {
     uint32_t n = channel >> 2;
-    uint32_t mask = ~(0xF << (channel & 3));
+    uint32_t mask = ~(0xF << ((channel & 3) * 4));
     uint32_t port = ((extp->config->channels[channel].mode &
                       EXT_MODE_GPIO_MASK) >>
                      EXT_MODE_GPIO_OFF) << ((channel & 3) * 4);
