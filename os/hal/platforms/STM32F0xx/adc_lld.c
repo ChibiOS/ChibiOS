@@ -151,6 +151,14 @@ void adc_lld_init(void) {
      disabled.*/
   nvicEnableVector(ADC1_COMP_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
+
+  /* Calibration procedure.*/
+  rccEnableADC1(FALSE);
+  chDbgAssert(ADC1->CR == 0, "adc_lld_init(), #1", "invalid register state");
+  ADC1->CR |= ADC_CR_ADCAL;
+  while (ADC1->CR & ADC_CR_ADCAL)
+    ;
+  rccDisableADC1(FALSE);
 }
 
 /**
