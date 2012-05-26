@@ -264,6 +264,14 @@ struct ADCDriver {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Changes the value of the ADC CCR register.
+ * @details Use this function in order to enable or disable the internal
+ *          analog sources. See the documentation in the STM32F0xx Reference
+ *          Manual.
+ */
+#define adcSTM32SetCCR(ccr) (ADC->CCR = (ccr))
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -280,8 +288,6 @@ extern "C" {
   void adc_lld_stop(ADCDriver *adcp);
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
-  void adcSTM32EnableTSVREFE(void);
-  void adcSTM32DisableTSVREFE(void);
 #ifdef __cplusplus
 }
 #endif

@@ -174,6 +174,16 @@ void adc_lld_start(ADCDriver *adcp) {
       chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(FALSE);
+#if STM32_ADCSW == STM32_ADCSW_HSI14
+      /* Clock from HSI14, no need for jitter removal.*/
+      ADC1->CFGR2 = 0x00001000;
+#else
+#if STM32_ADCPRE == STM32_ADCPRE_DIV2
+      ADC1->CFGR2 = 0x00001000 | ADC_CFGR2_JITOFFDIV2;
+#else
+      ADC1->CFGR2 = 0x00001000 | ADC_CFGR2_JITOFFDIV4;
+#endif
+#endif
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -263,28 +273,6 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
 
   dmaStreamDisable(adcp->dmastp);
   adc_lld_stop_adc(adcp->adc);
-}
-
-/**
- * @brief   Enables the TSVREFE bit.
- * @details The TSVREFE bit is required in order to sample the internal
- *          temperature sensor and internal reference voltage.
- * @note    This is an STM32-only functionality.
- */
-void adcSTM32EnableTSVREFE(void) {
-
-  ADC->CCR |= ADC_CCR_VREFEN;
-}
-
-/**
- * @brief   Disables the TSVREFE bit.
- * @details The TSVREFE bit is required in order to sample the internal
- *          temperature sensor and internal reference voltage.
- * @note    This is an STM32-only functionality.
- */
-void adcSTM32DisableTSVREFE(void) {
-
-  ADC->CCR &= ~ADC_CCR_VREFEN;
 }
 
 #endif /* HAL_USE_ADC */
