@@ -137,7 +137,7 @@
 - NEW: Updated vendor headers for LPC11xx and LPC13xx, the new headers
   support several new devices.
 - NEW: Demo for STM32F0-Discovery board.
-- NEW: Initial support for STM32F0xx devices.
+- NEW: Initial support for STM32F0xx devices, added a specific ADC driver.
 - NEW: Added a common ancestor class to the SDC and MMC_SPI drivers. This
   allows to share code and definitions.
 - NEW: Modified the SDC driver to implement the new block devices abstract

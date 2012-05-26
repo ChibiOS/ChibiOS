@@ -101,6 +101,21 @@
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
+#if STM32_ADC_USE_ADC1 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC1"
+#endif
+
+#if STM32_ADC_USE_ADC1 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC1 DMA"
+#endif
+
+#if STM32_ADC_USE_ADC1 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC1"
+#endif
+
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
 #endif
