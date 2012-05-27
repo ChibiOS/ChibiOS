@@ -109,7 +109,7 @@ typedef enum {
  */
 #define i2cMasterTransmit(i2cp, addr, txbuf, txbytes, rxbuf, rxbytes)       \
   (i2cMasterTransmitTimeout(i2cp, addr, txbuf, txbytes, rxbuf, rxbytes,     \
-                           TIME_INFINITE))
+                            TIME_INFINITE))
 
 /**
  * @brief   Wrap i2cMasterReceiveTimeout function with TIME_INFINITE timeout.

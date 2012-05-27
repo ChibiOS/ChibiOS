@@ -173,9 +173,11 @@ static void i2c_lld_safety_timeout(void *p) {
   I2CDriver *i2cp = (I2CDriver *)p;
 
   if (i2cp->thread) {
+    Thread *tp = i2cp->thread;
     i2c_lld_abort_operation(i2cp);
-    i2cp->thread->p_u.rdymsg = RDY_TIMEOUT;
-    chSchReadyI(i2cp->thread);
+    i2cp->thread = NULL;
+    tp->p_u.rdymsg = RDY_TIMEOUT;
+    chSchReadyI(tp);
   }
 }
 
@@ -773,12 +775,12 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      systime_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
   VirtualTimer vt;
-  msg_t rdymsg;
 
   chDbgCheck((rxbytes > 1), "i2c_lld_master_receive_timeout");
 
   /* Global timeout for the whole operation.*/
-  chVTSetI(&vt, timeout, i2c_lld_safety_timeout, (void *)i2cp);
+  if (timeout != TIME_INFINITE)
+    chVTSetI(&vt, timeout, i2c_lld_safety_timeout, (void *)i2cp);
 
   /* Releases the lock from high level driver.*/
   chSysUnlock();
@@ -794,10 +796,10 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Waits until BUSY flag is reset and the STOP from the previous operation
      is completed, alternatively for a timeout condition.*/
   while ((dp->SR2 & I2C_SR2_BUSY) || (dp->CR1 & I2C_CR1_STOP)) {
-    if (!chVTIsArmedI(&vt)) {
-      chSysLock();
+    chSysLock();
+    if (!chVTIsArmedI(&vt))
       return RDY_TIMEOUT;
-    }
+    chSysUnlock();
   }
 
   /* This lock will be released in high level driver.*/
@@ -815,11 +817,10 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Waits for the operation completion or a timeout.*/
   i2cp->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
-  rdymsg = chThdSelf()->p_u.rdymsg;
-  if (rdymsg != RDY_TIMEOUT)
+  if (chVTIsArmedI(&vt))
     chVTResetI(&vt);
 
-  return rdymsg;
+  return chThdSelf()->p_u.rdymsg;
 }
 
 /**
@@ -853,13 +854,13 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       systime_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
   VirtualTimer vt;
-  msg_t rdymsg;
 
   chDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
              "i2c_lld_master_transmit_timeout");
 
   /* Global timeout for the whole operation.*/
-  chVTSetI(&vt, timeout, i2c_lld_safety_timeout, (void *)i2cp);
+  if (timeout != TIME_INFINITE)
+    chVTSetI(&vt, timeout, i2c_lld_safety_timeout, (void *)i2cp);
 
   /* Releases the lock from high level driver.*/
   chSysUnlock();
@@ -879,10 +880,10 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Waits until BUSY flag is reset and the STOP from the previous operation
      is completed, alternatively for a timeout condition.*/
   while ((dp->SR2 & I2C_SR2_BUSY) || (dp->CR1 & I2C_CR1_STOP)) {
-    if (!chVTIsArmedI(&vt)) {
-      chSysLock();
+    chSysLock();
+    if (!chVTIsArmedI(&vt))
       return RDY_TIMEOUT;
-    }
+    chSysUnlock();
   }
 
   /* This lock will be released in high level driver.*/
@@ -900,11 +901,10 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Waits for the operation completion or a timeout.*/
   i2cp->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
-  rdymsg = chThdSelf()->p_u.rdymsg;
-  if (rdymsg != RDY_TIMEOUT)
+  if (chVTIsArmedI(&vt))
     chVTResetI(&vt);
 
-  return rdymsg;
+  return chThdSelf()->p_u.rdymsg;
 }
 
 #endif /* HAL_USE_I2C */
