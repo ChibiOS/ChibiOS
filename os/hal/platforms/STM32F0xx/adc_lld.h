@@ -39,14 +39,24 @@
  * @name    Sampling rates
  * @{
  */
-#define ADC_SAMPLE_1P5          0   /**< @brief 14 cycles conversion time   */
-#define ADC_SAMPLE_7P5          1   /**< @brief 21 cycles conversion time.  */
-#define ADC_SAMPLE_13P5         2   /**< @brief 28 cycles conversion time.  */
-#define ADC_SAMPLE_28P5         3   /**< @brief 41 cycles conversion time.  */
-#define ADC_SAMPLE_41P5         4   /**< @brief 54 cycles conversion time.  */
-#define ADC_SAMPLE_55P5         5   /**< @brief 68 cycles conversion time.  */
-#define ADC_SAMPLE_71P5         6   /**< @brief 84 cycles conversion time.  */
-#define ADC_SAMPLE_239P5        7   /**< @brief 252 cycles conversion time. */
+#define ADC_SMPR_SMP_1P5        0   /**< @brief 14 cycles conversion time   */
+#define ADC_SMPR_SMP_7P5        1   /**< @brief 21 cycles conversion time.  */
+#define ADC_SMPR_SMP_13P5       2   /**< @brief 28 cycles conversion time.  */
+#define ADC_SMPR_SMP_28P5       3   /**< @brief 41 cycles conversion time.  */
+#define ADC_SMPR_SMP_41P5       4   /**< @brief 54 cycles conversion time.  */
+#define ADC_SMPR_SMP_55P5       5   /**< @brief 68 cycles conversion time.  */
+#define ADC_SMPR_SMP_71P5       6   /**< @brief 84 cycles conversion time.  */
+#define ADC_SMPR_SMP_239P5      7   /**< @brief 252 cycles conversion time. */
+/** @} */
+
+/**
+ * @name    Resolution
+ * @{
+ */
+#define ADC_CFGR1_RES_12BIT     (0 << 3)
+#define ADC_CFGR1_RES_10BIT     (1 << 3)
+#define ADC_CFGR1_RES_8BIT      (2 << 3)
+#define ADC_CFGR1_RES_6BIT      (3 << 3)
 /** @} */
 
 /*===========================================================================*/

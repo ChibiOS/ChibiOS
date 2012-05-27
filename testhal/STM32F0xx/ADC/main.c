@@ -24,7 +24,7 @@
 #define ADC_GRP1_NUM_CHANNELS   1
 #define ADC_GRP1_BUF_DEPTH      8
 
-#define ADC_GRP2_NUM_CHANNELS   8
+#define ADC_GRP2_NUM_CHANNELS   4
 #define ADC_GRP2_BUF_DEPTH      16
 
 static adcsample_t samples1[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
@@ -61,24 +61,25 @@ static const ADCConversionGroup adcgrpcfg1 = {
   ADC_GRP1_NUM_CHANNELS,
   NULL,
   adcerrorcallback,
-  0,                        /* CFGRR1 */
-  0,                        /* SMPR */
-  0                         /* CHSELR */
+  ADC_CFGR1_RES_12BIT,      /* CFGRR1 */
+  ADC_SMPR_SMP_1P5,         /* SMPR */
+  ADC_CHSELR_CHSEL10        /* CHSELR */
 };
 
 /*
  * ADC conversion group.
  * Mode:        Continuous, 16 samples of 8 channels, SW triggered.
- * Channels:    IN10, IN11, IN10, IN11, IN10, IN11, Sensor, VRef.
+ * Channels:    IN10, IN11, Sensor, VRef.
  */
 static const ADCConversionGroup adcgrpcfg2 = {
   TRUE,
   ADC_GRP2_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
-  0,                        /* CFGRR1 */
-  0,                        /* SMPR */
-  0                         /* CHSELR */
+  ADC_CFGR1_RES_12BIT,                              /* CFGRR1 */
+  ADC_SMPR_SMP_28P5,                                /* SMPR */
+  ADC_CHSELR_CHSEL10 | ADC_CHSELR_CHSEL11 |
+  ADC_CHSELR_CHSEL16 | ADC_CHSELR_CHSEL17           /* CHSELR */
 };
 
 /*

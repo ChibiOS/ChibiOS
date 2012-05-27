@@ -102,7 +102,7 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(ADC1_IRQHandler) {
+CH_IRQ_HANDLER(ADC1_COMP_IRQHandler) {
   uint32_t isr;
 
   CH_IRQ_PROLOGUE();
