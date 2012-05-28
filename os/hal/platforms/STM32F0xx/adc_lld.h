@@ -59,6 +59,13 @@
 #define ADC_CFGR1_RES_6BIT      (3 << 3)
 /** @} */
 
+/**
+ * @name    Threashold register initializer
+ * @{
+ */
+#define ADC_TR(low, high)       (((uint32_t)(high) << 16) | (uint32_t)(low))
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -151,7 +158,8 @@ typedef uint16_t adc_channels_num_t;
  */
 typedef enum {
   ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
-  ADC_ERR_OVERFLOW = 1                      /**< ADC overflow condition.    */
+  ADC_ERR_OVERFLOW = 1,                     /**< ADC overflow condition.    */
+  ADC_ERR_AWD = 2                           /**< Analog watchdog triggered. */
 } adcerror_t;
 
 /**
@@ -174,6 +182,7 @@ typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
  *
  * @param[in] adcp      pointer to the @p ADCDriver object triggering the
  *                      callback
+ * @param[in] err       ADC error code
  */
 typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);
 
@@ -207,6 +216,10 @@ typedef struct {
    * @brief   ADC CFGR1 register initialization data.
    */
   uint32_t                  cfgr1;
+  /**
+   * @brief   ADC TR register initialization data.
+   */
+  uint32_t                  tr;
   /**
    * @brief   ADC SMPR register initialization data.
    */

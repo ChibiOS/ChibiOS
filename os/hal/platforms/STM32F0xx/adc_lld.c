@@ -109,15 +109,23 @@ CH_IRQ_HANDLER(ADC1_COMP_IRQHandler) {
 
   isr = ADC1->ISR;
   ADC1->ISR = isr;
-  /* Note, an overflow may occur after the conversion ended before the driver
-     is able to stop the ADC, this is why the DMA channel is checked too.*/
-  if ((isr & ADC_ISR_OVR) && (dmaStreamGetTransactionSize(ADCD1.dmastp) > 0)) {
-    /* ADC overflow condition, this could happen only if the DMA is unable
-       to read data fast enough.*/
-    if (ADCD1.grpp != NULL)
+
+  /* It could be a spurious interrupt caused by overflows after DMA disabling,
+     just ignore it in this case.*/
+  if (ADCD1.grpp != NULL) {
+    /* Note, an overflow may occur after the conversion ended before the driver
+       is able to stop the ADC, this is why the DMA channel is checked too.*/
+    if ((isr & ADC_ISR_OVR) &&
+        (dmaStreamGetTransactionSize(ADCD1.dmastp) > 0)) {
+      /* ADC overflow condition, this could happen only if the DMA is unable
+         to read data fast enough.*/
       _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
+    }
+    if (isr & ADC_ISR_AWD) {
+      /* Analog watchdog error.*/
+      _adc_isr_error_code(&ADCD1, ADC_ERR_AWD);
+    }
   }
-  /* TODO: Add here analog watchdog handling.*/
 
   CH_IRQ_EPILOGUE();
 }
@@ -258,9 +266,11 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
                                             (uint32_t)adcp->depth);
   dmaStreamSetMode(adcp->dmastp, mode);
 
-  /* ADC setup.*/
+  /* ADC setup, if it is defined a callback for the analog watch dog then it
+     is enabled.*/
   adcp->adc->ISR    = adcp->adc->ISR;
-  adcp->adc->IER    = ADC_IER_OVRIE;
+  adcp->adc->IER    = ADC_IER_OVRIE | ADC_IER_AWDIE;
+  adcp->adc->TR     = grpp->tr;
   adcp->adc->SMPR   = grpp->smpr;
   adcp->adc->CHSELR = grpp->chselr;
 
