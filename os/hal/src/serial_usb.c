@@ -104,7 +104,7 @@ static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
 }
 
 static chnflags_t getflags(void *ip) {
-  _ch_get_and_clear_flags_impl(ip);
+  _chn_get_and_clear_flags_impl(ip);
 }
 
 static const struct SerialUSBDriverVMT vmt = {
