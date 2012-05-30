@@ -81,6 +81,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed missing "break" in AVR PAL driver (bug 3530924)(backported
+  to 2.4.2).
 - FIX: Fixed timeout related race condition in STM32 I2C driver (bug 3530043)
   (backported to 2.4.2).
 - FIX: Fixed wrong macro check in STM32 MAC driver (bug 3527179)(backported
