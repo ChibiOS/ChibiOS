@@ -27,7 +27,7 @@
 
 #include "ff.h"
 
-#define SDC_DATA_DESTRUCTIVE_TEST   TRUE
+#define SDC_DATA_DESTRUCTIVE_TEST   FALSE
 
 #define SDC_BURST_SIZE      8 /* how many sectors reads at once */
 static uint8_t outbuf[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE + 1];
@@ -131,7 +131,12 @@ void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]){
 
   if (!sdcConnect(&SDCD1)) {
 
-    chprintf(chp, "OK\r\nSingle aligned read...");
+    chprintf(chp, "OK\r\n");
+    chprintf(chp, "*** Card CSD content is: ");
+    chprintf(chp, "%X %X %X %X \r\n", (&SDCD1)->csd[3], (&SDCD1)->csd[2],
+                                      (&SDCD1)->csd[1], (&SDCD1)->csd[0]);
+
+    chprintf(chp, "Single aligned read...");
     chThdSleepMilliseconds(100);
     if (sdcRead(&SDCD1, 0, inbuf, 1))
       chSysHalt();
