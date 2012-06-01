@@ -256,6 +256,18 @@
 #ifndef _ARM_MATH_H
 #define _ARM_MATH_H
 
+/* CHIBIOS FIX BEGIN */
+#include "board.h"
+#if defined(STM32F4XX)
+#define ARM_MATH_CM4
+#define __FPU_PRESENT 1
+#elif (defined(STM32F2XX) || defined(STM32F1XX) || defined(STM32L1XX))
+#define ARM_MATH_CM3
+#elif defined(STM32F0XX)
+#define ARM_MATH_CM0
+#endif
+/* CHIBIOS FIX END */
+
 #define __CMSIS_GENERIC         /* disable NVIC and Systick functions */
 
 #if defined (ARM_MATH_CM4)
