@@ -5898,7 +5898,9 @@ extern "C"
       /* Iniatilize output for below specified range as least output value of table */
       y = pYData[0];
     }
-    else if(i >= S->nValues)
+    /* CHIBIOS FIX BEGIN */
+    else if(i >= (int32_t)S->nValues)
+    /* CHIBIOS FIX END */
     {
       /* Iniatilize output for above specified range as last output value of table */
       y = pYData[S->nValues - 1];
@@ -5951,8 +5953,9 @@ extern "C"
     /* 12 bits for the table index */
     /* Index value calculation */
     index = ((x & 0xFFF00000) >> 20);
-
-    if(index >= (nValues - 1))
+    /* CHIBIOS FIX BEGIN */
+    if(index >= ((int32_t)nValues - 1))
+    /* CHIBIOS FIX END */
     {
       return (pYData[nValues - 1]);
     }
@@ -6014,7 +6017,9 @@ extern "C"
     /* Index value calculation */
     index = ((x & 0xFFF00000) >> 20u);
 
-    if(index >= (nValues - 1))
+    /* CHIBIOS FIX BEGIN */
+    if(index >= ((int32_t)nValues - 1))
+    /* CHIBIOS FIX END */
     {
       return (pYData[nValues - 1]);
     }
@@ -6074,8 +6079,9 @@ extern "C"
     /* Index value calculation */
     index = ((x & 0xFFF00000) >> 20u);
 
-
-    if(index >= (nValues - 1))
+    /* CHIBIOS FIX BEGIN */
+    if(index >= ((int32_t)nValues - 1))
+    /* CHIBIOS FIX END */
     {
       return (pYData[nValues - 1]);
     }
