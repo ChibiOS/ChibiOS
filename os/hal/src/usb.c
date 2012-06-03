@@ -571,20 +571,20 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
   switch (usbp->ep0state) {
   case USB_EP0_TX:
     max = usb_lld_fetch_word(&usbp->setup[6]);
-     /* If the transmitted size is less than the requested size and it is a
-        multiple of the maximum packet size then a zero size packet must be
-        transmitted.*/
-     if ((usbp->ep0n < max) &&
-         ((usbp->ep0n % usbp->epc[0]->in_maxsize) == 0)) {
-       usb_lld_prepare_transmit(usbp, 0, NULL, 0);
-       usb_lld_start_in(usbp, 0);
-       return;
-     }
+    /* If the transmitted size is less than the requested size and it is a
+       multiple of the maximum packet size then a zero size packet must be
+       transmitted.*/
+    if ((usbp->ep0n < max) &&
+        ((usbp->ep0n % usbp->epc[0]->in_maxsize) == 0)) {
+      usb_lld_prepare_transmit(usbp, 0, NULL, 0);
+      usb_lld_start_in(usbp, 0);
+      return;
+    }
 
-     /* Transmit phase over, receiving the zero sized status packet.*/
-     usbp->ep0state = USB_EP0_WAITING_STS;
-     usb_lld_prepare_receive(usbp, 0, NULL, 0);
-     usb_lld_start_out(usbp, 0);
+    /* Transmit phase over, receiving the zero sized status packet.*/
+    usbp->ep0state = USB_EP0_WAITING_STS;
+    usb_lld_prepare_receive(usbp, 0, NULL, 0);
+    usb_lld_start_out(usbp, 0);
     return;
   case USB_EP0_SENDING_STS:
     /* Status packet sent, invoking the callback if defined.*/

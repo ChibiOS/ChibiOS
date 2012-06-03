@@ -71,7 +71,7 @@ static union {
 /**
  * @brief   Buffer for the EP0 setup packets.
  */
-static uint8_t ep8setup_buffer[8];
+static uint8_t ep0setup_buffer[8];
 
 /**
  * @brief   EP0 initialization structure.
@@ -85,7 +85,7 @@ static const USBEndpointConfig ep0config = {
   0x40,
   &ep0_state.in,
   &ep0_state.out,
-  ep8setup_buffer
+  ep0setup_buffer
 };
 
 /*===========================================================================*/
