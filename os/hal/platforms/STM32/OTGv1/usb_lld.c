@@ -798,12 +798,11 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
   }
   else {
     /* Transfer initialization.*/
-    uint32_t pcnt = (n + (usbp->epc[ep]->in_maxsize - 1) /
-                          usbp->epc[ep]->in_maxsize);
+    uint32_t pcnt = (n + usbp->epc[ep]->in_maxsize - 1) /
+                    usbp->epc[ep]->in_maxsize;
     OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
                            DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
   }
-  OTG->DIEPEMPMSK |= DIEPEMPMSK_INEPTXFEM(ep);
 }
 
 /**
@@ -831,7 +830,8 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
 void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
-  (void)ep;
+
+  OTG->DIEPEMPMSK |= DIEPEMPMSK_INEPTXFEM(ep);
 }
 
 /**
