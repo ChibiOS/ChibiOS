@@ -767,11 +767,15 @@ void usb_lld_write_packet_buffer(USBDriver *usbp, usbep_t ep,
  */
 void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
                              uint8_t *buf, size_t n) {
+  uint32_t pcnt;
+  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  (void)usbp;
-  (void)ep;
-  (void)buf;
-  (void)n;
+  osp->rxbuf  = buf;
+  osp->rxsize = n;
+  osp->rxcnt  = 0;
+  pcnt = (n + usbp->epc[ep]->out_maxsize - 1) / usbp->epc[ep]->out_maxsize;
+  OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
+                         DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
 }
 
 /**
@@ -786,6 +790,7 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
  */
 void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
                               const uint8_t *buf, size_t n) {
+  uint32_t pcnt;
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
   isp->txbuf  = buf;
@@ -798,8 +803,7 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
   }
   else {
     /* Transfer initialization.*/
-    uint32_t pcnt = (n + usbp->epc[ep]->in_maxsize - 1) /
-                    usbp->epc[ep]->in_maxsize;
+    pcnt = (n + usbp->epc[ep]->in_maxsize - 1) / usbp->epc[ep]->in_maxsize;
     OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
                            DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
   }
@@ -816,7 +820,8 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
 void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
-  (void)ep;
+
+  OTG->oe[ep].DOEPCTL |= DOEPCTL_CNAK;
 }
 
 /**

@@ -849,6 +849,8 @@ typedef struct {
  */
 #define DOEPTSIZ_RXDPID_MASK    (3U<<29)    /**< Received data PID mask.    */
 #define DOEPTSIZ_RXDPID(n)      ((n)<<29)   /**< Received data PID value.   */
+#define DOEPTSIZ_STUPCNT_MASK   (3U<<29)    /**< SETUP packet count mask.   */
+#define DOEPTSIZ_STUPCNT(n)     ((n)<<29)   /**< SETUP packet count value.  */
 #define DOEPTSIZ_PKTCNT_MASK    (0x3FFU<<19)/**< Packet count mask.         */
 #define DOEPTSIZ_PKTCNT(n)      ((n)<<19)   /**< Packet count value.        */
 #define DOEPTSIZ_XFRSIZ_MASK    (0x7FFFFU<<0)/**< Transfer size mask.       */
