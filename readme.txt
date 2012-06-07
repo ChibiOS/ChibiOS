@@ -81,6 +81,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed problem with arm-v6m and state checker (bug 3532591)(backported
+  to 2.4.2).
 - FIX: Fixed wrong MAC divider setting in STM32 MAC driver (bug 3531290)
   (backported to 2.4.2).
 - FIX: Fixed wrong MCO1 divider in STM32F2/F4 HAL (bug 3531289)(backported
