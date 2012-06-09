@@ -81,7 +81,7 @@
 *****************************************************************************
 
 *** 2.5.0 ***
-- FIX: Fixed STM32F2 RTC subseconds (bug 3533414)(backported to 2.4.2).
+- FIX: Fixed STM32F2 RTC subseconds (bug 3533414)(trunk only).
 - FIX: Fixed problem with arm-v6m and state checker (bug 3532591)(backported
   to 2.4.2).
 - FIX: Fixed wrong MAC divider setting in STM32 MAC driver (bug 3531290)
