@@ -341,7 +341,7 @@
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
-#define STM32_RTC_HAS_SUBSECONDS TRUE
+#define STM32_RTC_HAS_SUBSECONDS FALSE
 #define STM32_RTC_IS_CALENDAR   TRUE
 
 /* SDIO attributes.*/
