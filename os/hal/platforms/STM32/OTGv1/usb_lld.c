@@ -144,6 +144,8 @@ static void otg_rxfifo_flush(void) {
   OTG->GRSTCTL = GRSTCTL_RXFFLSH;
   while ((OTG->GRSTCTL & GRSTCTL_RXFFLSH) != 0)
     ;
+  /* Wait for 3 PHY Clocks*/
+  halPolledDelay(12);
 }
 
 static void otg_txfifo_flush(uint32_t fifo) {
@@ -151,6 +153,8 @@ static void otg_txfifo_flush(uint32_t fifo) {
   OTG->GRSTCTL = GRSTCTL_TXFNUM(fifo) | GRSTCTL_TXFFLSH;
   while ((OTG->GRSTCTL & GRSTCTL_TXFFLSH) != 0)
     ;
+  /* Wait for 3 PHY Clocks*/
+  halPolledDelay(12);
 }
 
 /**
@@ -286,7 +290,6 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
   n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
   if (n > usbp->epc[ep]->in_maxsize)
     n = usbp->epc[ep]->in_maxsize;
-  OTG->ie[ep].DIEPCTL |= DIEPCTL_EPENA | DIEPCTL_CNAK;
   otg_fifo_write(ep, usbp->epc[ep]->in_state->txbuf, n);
   usbp->epc[ep]->in_state->txbuf += n;
   usbp->epc[ep]->in_state->txcnt += n;
@@ -307,6 +310,9 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
 static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   uint32_t epint = OTG->ie[ep].DIEPINT;
 
+  /* Resets all EP IRQ sources.*/
+  OTG->ie[ep].DIEPINT = 0xFFFFFFFF;
+
   if (epint & DIEPINT_TXFE) {
     /* TX FIFO empty or emptying.*/
     otg_txfifo_handler(usbp, ep);
@@ -318,7 +324,6 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   if (epint & DIEPINT_TOC) {
     /* Timeouts not handled yet, not sure how to handle.*/
   }
-  OTG->ie[ep].DIEPINT = 0xFFFFFFFF;
 }
 
 /**
@@ -332,17 +337,19 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
 static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
   uint32_t epint = OTG->oe[ep].DOEPINT;
 
-  /* Is it a setup packet?*/
+  /* Resets all EP IRQ sources.*/
+  OTG->oe[ep].DOEPINT = 0xFFFFFFFF;
+
   if (epint & DOEPINT_STUP) {
     /* Setup packets handling, setup packets are handled using a
        specific callback.*/
     _usb_isr_invoke_setup_cb(usbp, ep);
+
   }
   if (epint & DOEPINT_XFRC) {
     /* Receive transfer complete.*/
     _usb_isr_invoke_out_cb(usbp, ep);
   }
-  OTG->oe[ep].DOEPINT = 0xFFFFFFFF;
 }
 
 /*===========================================================================*/
@@ -522,17 +529,23 @@ void usb_lld_stop(USBDriver *usbp) {
 void usb_lld_reset(USBDriver *usbp) {
   unsigned i;
 
-  /* Endpoint interrupts all disabled and cleared.*/
-  OTG->DAINTMSK = 0;
-  OTG->DAINT    = 0xFFFFFFFF;
+  /* Clear the Remote Wake-up Signaling */
+  OTG->DCTL &= ~DCTL_RWUSIG;
+
+  /* Flush the Tx FIFO */
+  otg_txfifo_flush(0);
 
   /* All endpoints in NAK mode, interrupts cleared.*/
   for (i = 0; i <= USB_MAX_ENDPOINTS; i++) {
     OTG->ie[i].DIEPCTL = DIEPCTL_SNAK;
     OTG->oe[i].DOEPCTL = DOEPCTL_SNAK;
-    OTG->ie[i].DIEPINT = 0xFFFFFFFF;
-    OTG->oe[i].DOEPINT = 0xFFFFFFFF;
+    OTG->ie[i].DIEPINT = 0xFF;
+    OTG->oe[i].DOEPINT = 0xFF;
   }
+
+  /* Endpoint interrupts all disabled and cleared.*/
+  OTG->DAINT = 0xFFFFFFFF;
+  OTG->DAINTMSK = DAINTMSK_OEPM(0) | DAINTMSK_IEPM(0);
 
   /* Resets the FIFO memory allocator.*/
   otg_ram_reset(usbp);
@@ -542,7 +555,7 @@ void usb_lld_reset(USBDriver *usbp) {
   otg_rxfifo_flush();
 
   /* Enables also EP-related interrupt sources.*/
-  OTG->GINTMSK  |= GINTMSK_RXFLVLM | GINTMSK_OEPM | GINTMSK_IEPM;
+  OTG->GINTMSK  |= GINTMSK_RXFLVLM | GINTMSK_OEPM  | GINTMSK_IEPM;
   OTG->DIEPMSK   = DIEPMSK_TOCM    | DIEPMSK_XFRCM;
   OTG->DOEPMSK   = DOEPMSK_STUPM   | DOEPMSK_XFRCM;
 
@@ -557,8 +570,6 @@ void usb_lld_reset(USBDriver *usbp) {
   OTG->DIEPTXF0 = DIEPTXF_INEPTXFD(ep0config.in_maxsize / 4) |
                   DIEPTXF_INEPTXSA(otg_ram_alloc(usbp,
                                                  ep0config.in_maxsize / 4));
-  otg_txfifo_flush(0);
-  OTG->DAINTMSK = DAINTMSK_IEPM(0) | DAINTMSK_IEPM(0);
 }
 
 /**
@@ -836,6 +847,7 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
 
+  OTG->ie[ep].DIEPCTL |= DIEPCTL_EPENA | DIEPCTL_CNAK;
   OTG->DIEPEMPMSK |= DIEPEMPMSK_INEPTXFEM(ep);
 }
 
