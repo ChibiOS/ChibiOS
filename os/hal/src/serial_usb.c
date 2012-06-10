@@ -119,6 +119,7 @@ static const struct SerialUSBDriverVMT vmt = {
 static void inotify(GenericQueue *qp) {
   SerialUSBDriver *sdup = (SerialUSBDriver *)qp->q_wrptr;
 
+#if 0
   /* Writes to the input queue can only happen when the queue has been
      emptied, then a whole packet is loaded in the queue.*/
   if (!usbGetReceiveStatusI(sdup->config->usbp, USB_CDC_DATA_AVAILABLE_EP) &&
@@ -139,6 +140,7 @@ static void inotify(GenericQueue *qp) {
     while (notempty(&sdup->iqueue.q_waiting))
       chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
   }
+#endif
 }
 
 /**
@@ -148,6 +150,7 @@ static void onotify(GenericQueue *qp) {
   SerialUSBDriver *sdup = (SerialUSBDriver *)qp->q_rdptr;
   size_t n;
 
+#if 0
   /* If there is any data in the output queue then it is sent within a
      single packet and the queue is emptied.*/
   n = chOQGetFullI(&sdup->oqueue);
@@ -166,6 +169,7 @@ static void onotify(GenericQueue *qp) {
     while (notempty(&sdup->oqueue.q_waiting))
       chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
   }
+#endif
 }
 
 /*===========================================================================*/
@@ -298,6 +302,7 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   SerialUSBDriver *sdup = usbp->param;
   size_t n;
 
+#if 0
   chSysLockFromIsr();
   /* If there is any data in the output queue then it is sent within a
      single packet and the queue is emptied.*/
@@ -319,6 +324,7 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
       chSchReadyI(fifo_remove(&sdup->oqueue.q_waiting))->p_u.rdymsg = Q_OK;
   }
   chSysUnlockFromIsr();
+#endif
 }
 
 /**
@@ -332,6 +338,7 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
 void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   SerialUSBDriver *sdup = usbp->param;
 
+#if 0
   chSysLockFromIsr();
   /* Writes to the input queue can only happen when the queue has been
      emptied, then a whole packet is loaded in the queue.*/
@@ -355,6 +362,7 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
       chSchReadyI(fifo_remove(&sdup->iqueue.q_waiting))->p_u.rdymsg = Q_OK;
   }
   chSysUnlockFromIsr();
+#endif
 }
 
 /**

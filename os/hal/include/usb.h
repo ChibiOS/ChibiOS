@@ -181,8 +181,8 @@
 #define USB_EP_MODE_TYPE_ISOC           0x0001  /**< Isochronous endpoint.  */
 #define USB_EP_MODE_TYPE_BULK           0x0002  /**< Bulk endpoint.         */
 #define USB_EP_MODE_TYPE_INTR           0x0003  /**< Interrupt endpoint.    */
-#define USB_EP_MODE_TRANSACTION         0x0000  /**< Transaction mode.      */
-#define USB_EP_MODE_PACKET              0x0010  /**< Packet mode enabled.   */
+#define USB_EP_MODE_LINEAR_BUFFER       0x0000  /**< Linear buffer mode.    */
+#define USB_EP_MODE_QUEUE_BUFFER        0x0010  /**< Queue buffer mode.     */
 /** @} */
 
 /*===========================================================================*/
@@ -372,43 +372,6 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 #define usbGetReceiveStatusI(usbp, ep) ((usbp)->receiving & (1 << (ep)))
 
 /**
- * @brief   Reads from a dedicated packet buffer.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in packet mode.
- * @note    This function can be invoked both in thread and IRQ context.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the packet data
- * @param[in] n         maximum number of bytes to copy. This value must
- *                      not exceed the maximum packet size for this endpoint.
- * @return              The received packet size regardless the specified
- *                      @p n parameter.
- * @retval 0            Zero size packet received.
- *
- * @special
- */
-#define usbReadPacketBuffer(usbp, ep, buf, n)                               \
-  usb_lld_read_packet_buffer(usbp, ep, buf, n)
-
-/**
- * @brief   Writes to a dedicated packet buffer.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in packet mode.
- * @note    This function can be invoked both in thread and IRQ context.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to fetch the packet data
- * @param[in] n         maximum number of bytes to copy. This value must
- *                      not exceed the maximum packet size for this endpoint.
- *
- * @special
- */
-#define usbWritePacketBuffer(usbp, ep, buf, n)                              \
-  usb_lld_write_packet_buffer(usbp, ep, buf, n)
-
-/**
  * @brief   Prepares for a receive transaction on an OUT endpoint.
  * @pre     In order to use this function the endpoint must have been
  *          initialized in transaction mode.
@@ -439,6 +402,42 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  */
 #define usbPrepareTransmit(usbp, ep, buf, n)                                \
   usb_lld_prepare_transmit(usbp, ep, buf, n)
+
+/**
+ * @brief   Prepares for a receive transaction on an OUT endpoint.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized in transaction mode.
+ * @post    The endpoint is ready for @p usbStartReceiveI().
+ * @note    The receive transaction size is equal to the space in the queue
+ *          rounded to the lower multiple of a packet size. So make sure there
+ *          is room for at least one packet in the queue before starting
+ *          the receive operation.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] iq        input queue to be filled with incoming data
+ *
+ * @special
+ */
+#define usbPrepareQueuedReceive(usbp, ep, iq)                               \
+  usb_lld_prepare_queued_receive(usbp, ep, iq)
+
+/**
+ * @brief   Prepares for a transmit transaction on an IN endpoint.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized in transaction mode.
+ * @post    The endpoint is ready for @p usbStartTransmitI().
+ * @note    The transmit transaction size is equal to the data contained
+ *          in the queue.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] oq        output queue to be fetched for outgoing data
+ *
+ * @special
+ */
+#define usbPrepareQueuedTransmit(usbp, ep, oq)                              \
+  usb_lld_prepare_queued_transmit(usbp, ep, oq)
 
 /**
  * @brief   Returns the exact size of a receive transaction.

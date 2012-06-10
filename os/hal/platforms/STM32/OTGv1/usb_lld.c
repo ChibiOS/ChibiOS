@@ -77,7 +77,7 @@ static uint8_t ep0setup_buffer[8];
  * @brief   EP0 initialization structure.
  */
 static const USBEndpointConfig ep0config = {
-  USB_EP_MODE_TYPE_CTRL | USB_EP_MODE_TRANSACTION,
+  USB_EP_MODE_TYPE_CTRL,
   _usb_ep0setup,
   _usb_ep0in,
   _usb_ep0out,
@@ -716,57 +716,6 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
 }
 
 /**
- * @brief   Reads from a dedicated packet buffer.
- * @pre     In order to use this function he endpoint must have been
- *          initialized in packet mode.
- * @note    This function can be invoked both in thread and IRQ context.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the packet data
- * @param[in] n         maximum number of bytes to copy. This value must
- *                      not exceed the maximum packet size for this endpoint.
- * @return              The received packet size regardless the specified
- *                      @p n parameter.
- * @retval 0            Zero size packet received.
- *
- * @notapi
- */
-size_t usb_lld_read_packet_buffer(USBDriver *usbp, usbep_t ep,
-                                  uint8_t *buf, size_t n) {
-
-  (void)usbp;
-  (void)ep;
-  (void)buf;
-  (void)n;
-
-  return 0;
-}
-
-/**
- * @brief   Writes to a dedicated packet buffer.
- * @pre     In order to use this function he endpoint must have been
- *          initialized in packet mode.
- * @note    This function can be invoked both in thread and IRQ context.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to fetch the packet data
- * @param[in] n         maximum number of bytes to copy. This value must
- *                      not exceed the maximum packet size for this endpoint.
- *
- * @notapi
- */
-void usb_lld_write_packet_buffer(USBDriver *usbp, usbep_t ep,
-                                 const uint8_t *buf, size_t n) {
-
-  (void)usbp;
-  (void)ep;
-  (void)buf;
-  (void)n;
-}
-
-/**
  * @brief   Prepares for a receive operation.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
@@ -818,6 +767,46 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
     OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
                            DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
   }
+}
+
+/**
+ * @brief   Prepares for a receive transaction on an OUT endpoint.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized in transaction mode.
+ * @post    The endpoint is ready for @p usbStartReceiveI().
+ * @note    The receive transaction size is equal to the space in the queue
+ *          rounded to the lower multiple of a packet size. So make sure there
+ *          is room for at least one packet in the queue before starting
+ *          the receive operation.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] iq        input queue to be filled with incoming data
+ *
+ * @special
+ */
+void usb_lld_prepare_queued_receive(USBDriver *usbp, usbep_t ep,
+                                      InputQueue *iq) {
+
+}
+
+/**
+ * @brief   Prepares for a transmit transaction on an IN endpoint.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized in transaction mode.
+ * @post    The endpoint is ready for @p usbStartTransmitI().
+ * @note    The transmit transaction size is equal to the data contained
+ *          in the queue.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] oq        output queue to be fetched for outgoing data
+ *
+ * @special
+ */
+void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
+                                       OutputQueue *oq) {
+
 }
 
 /**
