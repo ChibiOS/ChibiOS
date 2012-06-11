@@ -315,18 +315,21 @@ static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
       *iqp->q_wrptr++ = (uint8_t)(dw >> 8);
       if (iqp->q_wrptr >= iqp->q_top)
         iqp->q_wrptr = iqp->q_buffer;
+
+      if (--nb > 0) {
+        *iqp->q_wrptr++ = (uint8_t)(dw >> 16);
+        if (iqp->q_wrptr >= iqp->q_top)
+          iqp->q_wrptr = iqp->q_buffer;
+
+        if (--nb > 0) {
+          *iqp->q_wrptr++ = (uint8_t)(dw >> 24);
+          if (iqp->q_wrptr >= iqp->q_top)
+            iqp->q_wrptr = iqp->q_buffer;
+
+          --nb;
+        }
+      }
     }
-    else if (--nb > 0) {
-      *iqp->q_wrptr++ = (uint8_t)(dw >> 16);
-      if (iqp->q_wrptr >= iqp->q_top)
-        iqp->q_wrptr = iqp->q_buffer;
-    }
-    else if (--nb > 0) {
-      *iqp->q_wrptr++ = (uint8_t)(dw >> 24);
-      if (iqp->q_wrptr >= iqp->q_top)
-        iqp->q_wrptr = iqp->q_buffer;
-    }
-    --nb;
   } while (--nw > 0);
 
   /* Updating queue.*/
