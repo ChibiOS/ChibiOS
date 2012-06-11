@@ -288,8 +288,8 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
 
   (void)ep;
 
-  chnAddFlagsI(sdup, CHN_OUTPUT_EMPTY);
   chSysLockFromIsr();
+  chnAddFlagsI(sdup, CHN_OUTPUT_EMPTY);
 
   if ((n = chOQGetFullI(&sdup->oqueue)) > 0) {
     /* The endpoint cannot be busy, we are in the context of the callback,
@@ -321,8 +321,8 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
 
   (void)ep;
 
-  chnAddFlagsI(sdup, CHN_INPUT_AVAILABLE);
   chSysLockFromIsr();
+  chnAddFlagsI(sdup, CHN_INPUT_AVAILABLE);
 
   /* Writes to the input queue can only happen when there is enough space
      to hold at least one packet.*/
