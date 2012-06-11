@@ -300,14 +300,44 @@ static void otg_fifo_read_to_buffer(uint8_t *buf, size_t n, size_t max) {
  * @notapi
  */
 static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
-  size_t nw;
+  size_t nw, nb;
   volatile uint32_t *fifop;
 
   fifop = OTG_FIFO(0);
+  nb = n;
   nw = (n + 3) / 4;
   do {
     uint32_t dw = *fifop;
-  } while (--n > 0);
+    *iqp->q_wrptr++ = (uint8_t)dw;
+    if (iqp->q_wrptr >= iqp->q_top)
+      iqp->q_wrptr = iqp->q_buffer;
+    if (--nb > 0) {
+      *iqp->q_wrptr++ = (uint8_t)(dw >> 8);
+      if (iqp->q_wrptr >= iqp->q_top)
+        iqp->q_wrptr = iqp->q_buffer;
+    }
+    else if (--nb > 0) {
+      *iqp->q_wrptr++ = (uint8_t)(dw >> 16);
+      if (iqp->q_wrptr >= iqp->q_top)
+        iqp->q_wrptr = iqp->q_buffer;
+    }
+    else if (--nb > 0) {
+      *iqp->q_wrptr++ = (uint8_t)(dw >> 24);
+      if (iqp->q_wrptr >= iqp->q_top)
+        iqp->q_wrptr = iqp->q_buffer;
+    }
+    --nb;
+  } while (--nw > 0);
+
+  /* Updating queue.*/
+  chSysLockFromIsr();
+  iqp->q_wrptr += n;
+  if (iqp->q_wrptr >= iqp->q_top)
+    iqp->q_wrptr = iqp->q_buffer;
+  iqp->q_counter += n;
+  while (notempty(&iqp->q_waiting))
+    chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
+  chSysUnlockFromIsr();
 }
 
 /**
@@ -334,6 +364,8 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
     ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
     if (usbp->epc[ep]->out_state->rxqueued) {
       /* Queue associated.*/
+      otg_fifo_read_to_queue(usbp->epc[ep]->out_state->mode.queue.rxqueue,
+                             cnt);
     }
     else {
       otg_fifo_read_to_buffer(usbp->epc[ep]->out_state->mode.linear.rxbuf,
