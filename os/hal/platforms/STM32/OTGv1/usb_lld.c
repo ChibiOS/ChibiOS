@@ -381,13 +381,6 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     usbp->epc[ep]->in_state->mode.linear.txbuf += n;
   }
   usbp->epc[ep]->in_state->txcnt += n;
-  /* TODO: Potential issue, txcnt can be less than txsize after the planned
-           number of packets have been received, better disable the interrupt
-           at the end of the transaction in otg_epin_handler().*/
-  if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize) {
-    /* Transfer finished.*/
-    OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
-  }
 }
 
 /**
@@ -401,19 +394,20 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
 static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   uint32_t epint = OTG->ie[ep].DIEPINT;
 
-  /* Resets all EP IRQ sources.*/
-  OTG->ie[ep].DIEPINT = 0xFFFFFFFF;
-
-  if (epint & DIEPINT_XFRC) {
-    /* Transmit transfer complete.*/
-    _usb_isr_invoke_in_cb(usbp, ep);
-  }
-  if (epint & DIEPINT_TXFE) {
-    /* TX FIFO empty or emptying.*/
-    otg_txfifo_handler(usbp, ep);
-  }
   if (epint & DIEPINT_TOC) {
     /* Timeouts not handled yet, not sure how to handle.*/
+    OTG->ie[ep].DIEPINT = DIEPINT_TOC;
+  }
+  if (epint & DIEPINT_XFRC) {
+    /* Transmit transfer complete.*/
+    OTG->ie[ep].DIEPINT = DIEPINT_XFRC;
+    _usb_isr_invoke_in_cb(usbp, ep);
+    OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
+  }
+  else if (epint & DIEPINT_TXFE) {
+    /* TX FIFO empty or emptying.*/
+    OTG->ie[ep].DIEPINT = DIEPINT_TXFE;
+    otg_txfifo_handler(usbp, ep);
   }
 }
 

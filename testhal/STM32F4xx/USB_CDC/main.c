@@ -443,12 +443,14 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
+#if 0
     if (!shelltp && (SDU1.config->usbp->state == USB_ACTIVE))
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     else if (chThdTerminated(shelltp)) {
       chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
       shelltp = NULL;           /* Triggers spawning of a new shell.        */
     }
+#endif
     chThdSleepMilliseconds(1000);
   }
 }
