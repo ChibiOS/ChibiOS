@@ -416,11 +416,12 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  * @param[in] iq        input queue to be filled with incoming data
+ * @param[in] n         maximum number of bytes to copy
  *
  * @special
  */
-#define usbPrepareQueuedReceive(usbp, ep, iq)                               \
-  usb_lld_prepare_queued_receive(usbp, ep, iq)
+#define usbPrepareQueuedReceive(usbp, ep, iq, n)                            \
+  usb_lld_prepare_queued_receive(usbp, ep, iq, n)
 
 /**
  * @brief   Prepares for a transmit transaction on an IN endpoint.
@@ -433,11 +434,12 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  * @param[in] oq        output queue to be fetched for outgoing data
+ * @param[in] n         maximum number of bytes to copy
  *
  * @special
  */
-#define usbPrepareQueuedTransmit(usbp, ep, oq)                              \
-  usb_lld_prepare_queued_transmit(usbp, ep, oq)
+#define usbPrepareQueuedTransmit(usbp, ep, oq, n)                           \
+  usb_lld_prepare_queued_transmit(usbp, ep, oq, n)
 
 /**
  * @brief   Returns the exact size of a receive transaction.

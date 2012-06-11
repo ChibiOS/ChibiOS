@@ -193,11 +193,12 @@ static uint32_t otg_ram_alloc(USBDriver *usbp, size_t size) {
  * @param[in] ep        endpoint number
  * @param[in] buf       buffer where to copy the endpoint data
  * @param[in] n         maximum number of bytes to copy
- * @return              the number of bytes that were effectively written
  *
  * @notapi
  */
-static void otg_fifo_write(usbep_t ep, const uint8_t *buf, size_t n) {
+static void otg_fifo_write_from_buffer(usbep_t ep,
+                                       const uint8_t *buf,
+                                       size_t n) {
   volatile uint32_t *fifop;
 
   fifop = OTG_FIFO(ep);
@@ -214,6 +215,55 @@ static void otg_fifo_write(usbep_t ep, const uint8_t *buf, size_t n) {
 }
 
 /**
+ * @brief   Writes to a TX FIFO fetching data from a queue.
+ *
+ * @param[in] ep        endpoint number
+ * @param[in] oqp       pointer to an @p OutputQueue object
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @notapi
+ */
+static void otg_fifo_write_from_queue(usbep_t ep,
+                                      OutputQueue *oqp,
+                                      size_t n) {
+  size_t nw;
+  uint8_t *bp;
+  volatile uint32_t *fifop;
+
+  fifop = OTG_FIFO(ep);
+
+  /* Fetching data from the queue buffer directly.*/
+  bp = oqp->q_rdptr;
+  nw = (n + 3) / 4;
+  do {
+    uint32_t dw;
+    dw  = (uint32_t)*bp++;
+    if (bp >= oqp->q_top)
+      bp = oqp->q_buffer;
+    dw |= (uint32_t)*bp++ << 8;
+    if (bp >= oqp->q_top)
+      bp = oqp->q_buffer;
+    dw |= (uint32_t)*bp++ << 16;
+    if (bp >= oqp->q_top)
+      bp = oqp->q_buffer;
+    dw |= (uint32_t)*bp++ << 24;
+    if (bp >= oqp->q_top)
+      bp = oqp->q_buffer;
+    *fifop = dw;
+  } while (--nw > 0);
+
+  /* Updating queue.*/
+  chSysLockFromIsr();
+  oqp->q_rdptr += n;
+  if (oqp->q_rdptr >= oqp->q_top)
+    oqp->q_rdptr = oqp->q_buffer;
+  oqp->q_counter += n;
+  while (notempty(&oqp->q_waiting))
+    chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
+  chSysUnlockFromIsr();
+}
+
+/**
  * @brief   Reads a packet from the RXFIFO.
  *
  * @param[out] buf      buffer where to copy the endpoint data
@@ -222,7 +272,7 @@ static void otg_fifo_write(usbep_t ep, const uint8_t *buf, size_t n) {
  *
  * @notapi
  */
-static void otg_fifo_read(uint8_t *buf, size_t n, size_t max) {
+static void otg_fifo_read_to_buffer(uint8_t *buf, size_t n, size_t max) {
   volatile uint32_t *fifop;
 
   fifop = OTG_FIFO(0);
@@ -242,6 +292,25 @@ static void otg_fifo_read(uint8_t *buf, size_t n, size_t max) {
 }
 
 /**
+ * @brief   Reads a packet from the RXFIFO.
+ *
+ * @param[in] oqp       pointer to an @p InputQueue object
+ * @param[in] n         number of bytes to pull from the FIFO
+ *
+ * @notapi
+ */
+static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
+  size_t nw;
+  volatile uint32_t *fifop;
+
+  fifop = OTG_FIFO(0);
+  nw = (n + 3) / 4;
+  do {
+    uint32_t dw = *fifop;
+  } while (--n > 0);
+}
+
+/**
  * @brief   Incoming packets handler.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
@@ -258,15 +327,21 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
   case GRXSTSP_SETUP_DATA:
     cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
     ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
-    otg_fifo_read(usbp->epc[ep]->setup_buf, cnt, 8);
+    otg_fifo_read_to_buffer(usbp->epc[ep]->setup_buf, cnt, 8);
     break;
   case GRXSTSP_OUT_DATA:
     cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
     ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
-    otg_fifo_read(usbp->epc[ep]->out_state->rxbuf, cnt,
-                  usbp->epc[ep]->out_state->rxsize -
-                  usbp->epc[ep]->out_state->rxcnt);
-    usbp->epc[ep]->out_state->rxbuf += cnt;
+    if (usbp->epc[ep]->out_state->rxqueued) {
+      /* Queue associated.*/
+    }
+    else {
+      otg_fifo_read_to_buffer(usbp->epc[ep]->out_state->mode.linear.rxbuf,
+                              cnt,
+                              usbp->epc[ep]->out_state->rxsize -
+                              usbp->epc[ep]->out_state->rxcnt);
+      usbp->epc[ep]->out_state->mode.linear.rxbuf += cnt;
+    }
     usbp->epc[ep]->out_state->rxcnt += cnt;
     break;
   case GRXSTSP_OUT_GLOBAL_NAK:
@@ -287,12 +362,28 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
 static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
   uint32_t n;
 
+  /* Number of bytes remaining in current transaction.*/
   n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
   if (n > usbp->epc[ep]->in_maxsize)
     n = usbp->epc[ep]->in_maxsize;
-  otg_fifo_write(ep, usbp->epc[ep]->in_state->txbuf, n);
-  usbp->epc[ep]->in_state->txbuf += n;
+
+  if (usbp->epc[ep]->in_state->txqueued) {
+    /* Queue associated.*/
+    otg_fifo_write_from_queue(ep,
+                              usbp->epc[ep]->in_state->mode.queue.txqueue,
+                              n);
+  }
+  else {
+    /* Linear buffer associated.*/
+    otg_fifo_write_from_buffer(ep,
+                               usbp->epc[ep]->in_state->mode.linear.txbuf,
+                               n);
+    usbp->epc[ep]->in_state->mode.linear.txbuf += n;
+  }
   usbp->epc[ep]->in_state->txcnt += n;
+  /* TODO: Potential issue, txcnt can be less than txsize after the planned
+           number of packets have been received, better disable the interrupt
+           at the end of the transaction in otg_epin_handler().*/
   if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize) {
     /* Transfer finished.*/
     OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
@@ -313,13 +404,13 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   /* Resets all EP IRQ sources.*/
   OTG->ie[ep].DIEPINT = 0xFFFFFFFF;
 
-  if (epint & DIEPINT_TXFE) {
-    /* TX FIFO empty or emptying.*/
-    otg_txfifo_handler(usbp, ep);
-  }
   if (epint & DIEPINT_XFRC) {
     /* Transmit transfer complete.*/
     _usb_isr_invoke_in_cb(usbp, ep);
+  }
+  if (epint & DIEPINT_TXFE) {
+    /* TX FIFO empty or emptying.*/
+    otg_txfifo_handler(usbp, ep);
   }
   if (epint & DIEPINT_TOC) {
     /* Timeouts not handled yet, not sure how to handle.*/
@@ -730,9 +821,12 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
   uint32_t pcnt;
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  osp->rxbuf  = buf;
-  osp->rxsize = n;
-  osp->rxcnt  = 0;
+  osp->rxqueued           = FALSE;
+  osp->rxsize             = n;
+  osp->rxcnt              = 0;
+  osp->mode.linear.rxbuf  = buf;
+
+  /* Transfer initialization.*/
   pcnt = (n + usbp->epc[ep]->out_maxsize - 1) / usbp->epc[ep]->out_maxsize;
   OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
                          DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
@@ -753,9 +847,10 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
   uint32_t pcnt;
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  isp->txbuf  = buf;
-  isp->txsize = n;
-  isp->txcnt  = 0;
+  isp->txqueued           = FALSE;
+  isp->txsize             = n;
+  isp->txcnt              = 0;
+  isp->mode.linear.txbuf  = buf;
 
   if (n == 0) {
     /* Special case, sending zero size packet.*/
@@ -782,12 +877,24 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  * @param[in] iq        input queue to be filled with incoming data
+ * @param[in] n         maximum number of bytes to copy
  *
  * @special
  */
 void usb_lld_prepare_queued_receive(USBDriver *usbp, usbep_t ep,
-                                      InputQueue *iq) {
+                                    InputQueue *iq, size_t n) {
+  uint32_t pcnt;
+  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
+  osp->rxqueued           = TRUE;
+  osp->rxsize             = n;
+  osp->rxcnt              = 0;
+  osp->mode.queue.rxqueue = iq;
+
+  /* Transfer initialization.*/
+  pcnt = (n + usbp->epc[ep]->out_maxsize - 1) / usbp->epc[ep]->out_maxsize;
+  OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
+                         DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
 }
 
 /**
@@ -801,12 +908,24 @@ void usb_lld_prepare_queued_receive(USBDriver *usbp, usbep_t ep,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  * @param[in] oq        output queue to be fetched for outgoing data
+ * @param[in] n         maximum number of bytes to copy
  *
  * @special
  */
 void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
-                                       OutputQueue *oq) {
+                                     OutputQueue *oq, size_t n) {
+  uint32_t pcnt;
+  USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
+  isp->txqueued           = TRUE;
+  isp->txsize             = n;
+  isp->txcnt              = 0;
+  isp->mode.queue.txqueue = oq;
+
+  /* Transfer initialization.*/
+  pcnt = (n + usbp->epc[ep]->in_maxsize - 1) / usbp->epc[ep]->in_maxsize;
+  OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
+                         DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
 }
 
 /**

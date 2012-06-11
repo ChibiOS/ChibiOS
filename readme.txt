@@ -144,6 +144,7 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added an application-defined field to I/O queues (a void pointer).
 - NEW: Added board files for Maple Mini STM32F103, contributed by Wagner
   Sartori Junior.
 - NEW: Added SSP1 capability to the LPC13xx SPI driver.

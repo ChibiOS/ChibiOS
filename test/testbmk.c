@@ -460,7 +460,7 @@ static void bmk9_execute(void) {
   static uint8_t ib[16];
   static InputQueue iq;
 
-  chIQInit(&iq, ib, sizeof(ib), NULL);
+  chIQInit(&iq, ib, sizeof(ib), NULL, NULL);
   n = 0;
   test_wait_tick();
   test_start_timer(1000);

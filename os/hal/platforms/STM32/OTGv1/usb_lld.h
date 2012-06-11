@@ -108,13 +108,13 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of an endpoint state structure.
+ * @brief   Type of an IN endpoint state structure.
  */
 typedef struct {
   /**
-   * @brief   Pointer to the transmission buffer.
+   * @brief   Buffer mode, queue or linear.
    */
-  const uint8_t                 *txbuf;
+  bool_t                        txqueued;
   /**
    * @brief   Requested transmit transfer size.
    */
@@ -123,16 +123,30 @@ typedef struct {
    * @brief   Transmitted bytes so far.
    */
   size_t                        txcnt;
+  union {
+    struct {
+      /**
+       * @brief   Pointer to the transmission buffer.
+       */
+      const uint8_t             *txbuf;
+    } linear;
+    struct {
+      /**
+       * @brief   Pointer to the output queue.
+       */
+      OutputQueue               *txqueue;
+    } queue;
+  } mode;
 } USBInEndpointState;
 
 /**
- * @brief   Type of an endpoint state structure.
+ * @brief   Type of an OUT endpoint state structure.
  */
 typedef struct {
   /**
-   * @brief   Pointer to the receive buffer.
+   * @brief   Buffer mode, queue or linear.
    */
-  uint8_t                       *rxbuf;
+  bool_t                        rxqueued;
   /**
    * @brief   Requested receive transfer size.
    */
@@ -141,6 +155,20 @@ typedef struct {
    * @brief   Received bytes so far.
    */
   size_t                        rxcnt;
+  union {
+    struct {
+      /**
+       * @brief   Pointer to the receive buffer.
+       */
+      uint8_t                   *rxbuf;
+    } linear;
+    struct {
+      /**
+       * @brief   Pointer to the input queue.
+       */
+      InputQueue               *rxqueue;
+    } queue;
+  } mode;
 } USBOutEndpointState;
 
 /**
@@ -378,9 +406,9 @@ extern "C" {
   void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
                                 const uint8_t *buf, size_t n);
   void usb_lld_prepare_queued_receive(USBDriver *usbp, usbep_t ep,
-                                      InputQueue *iq);
+                                      InputQueue *iq, size_t n);
   void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
-                                       OutputQueue *oq);
+                                       OutputQueue *oq, size_t n);
   void usb_lld_start_out(USBDriver *usbp, usbep_t ep);
   void usb_lld_start_in(USBDriver *usbp, usbep_t ep);
   void usb_lld_stall_out(USBDriver *usbp, usbep_t ep);
