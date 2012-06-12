@@ -256,7 +256,7 @@ static void otg_fifo_write_from_queue(usbep_t ep,
   chSysLockFromIsr();
   oqp->q_rdptr += n;
   if (oqp->q_rdptr >= oqp->q_top)
-    oqp->q_rdptr = oqp->q_buffer;
+    oqp->q_rdptr -= chQSizeI(oqp);
   oqp->q_counter += n;
   while (notempty(&oqp->q_waiting))
     chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
@@ -334,9 +334,6 @@ static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
 
   /* Updating queue.*/
   chSysLockFromIsr();
-  iqp->q_wrptr += n;
-  if (iqp->q_wrptr >= iqp->q_top)
-    iqp->q_wrptr = iqp->q_buffer;
   iqp->q_counter += n;
   while (notempty(&iqp->q_waiting))
     chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
@@ -416,6 +413,10 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     usbp->epc[ep]->in_state->mode.linear.txbuf += n;
   }
   usbp->epc[ep]->in_state->txcnt += n;
+
+  /* Interrupt disabled on transaction end.*/
+  if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize)
+    OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
 }
 
 /**
@@ -429,19 +430,17 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
 static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   uint32_t epint = OTG->ie[ep].DIEPINT;
 
+  OTG->ie[ep].DIEPINT = 0xFFFFFFFF;
+
   if (epint & DIEPINT_TOC) {
     /* Timeouts not handled yet, not sure how to handle.*/
-    OTG->ie[ep].DIEPINT = DIEPINT_TOC;
   }
   if (epint & DIEPINT_XFRC) {
     /* Transmit transfer complete.*/
-    OTG->ie[ep].DIEPINT = DIEPINT_XFRC;
     _usb_isr_invoke_in_cb(usbp, ep);
-    OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
   }
-  else if (epint & DIEPINT_TXFE) {
+  if ((epint & DIEPINT_TXFE) && (OTG->DIEPEMPMSK & DIEPEMPMSK_INEPTXFEM(ep))) {
     /* TX FIFO empty or emptying.*/
-    OTG->ie[ep].DIEPINT = DIEPINT_TXFE;
     otg_txfifo_handler(usbp, ep);
   }
 }

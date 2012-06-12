@@ -144,6 +144,12 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: USB implementation for STM32F105/F107/2xx/F4xx devices.
+  TODO: Modify the F103 USB driver for the new model.
+- NEW: Improved SerialUSB driver using the new queued mode, much smaller
+  than the previous driver.
+- NEW: Improved USB driver model supporting also queues for endpoint I/O,
+  packet mode removed.
 - NEW: Added an application-defined field to I/O queues (a void pointer).
 - NEW: Added board files for Maple Mini STM32F103, contributed by Wagner
   Sartori Junior.
