@@ -126,7 +126,7 @@ typedef struct {
   union {
     struct {
       /**
-       * @brief   Pointer to the transmission buffer.
+       * @brief   Pointer to the transmission linear buffer.
        */
       const uint8_t             *txbuf;
     } linear;
@@ -158,7 +158,7 @@ typedef struct {
   union {
     struct {
       /**
-       * @brief   Pointer to the receive buffer.
+       * @brief   Pointer to the receive linear buffer.
        */
       uint8_t                   *rxbuf;
     } linear;
@@ -217,16 +217,12 @@ typedef struct {
   uint16_t                      out_maxsize;
   /**
    * @brief   @p USBEndpointState associated to the IN endpoint.
-   * @details This structure maintains the state of the IN endpoint when
-   *          the endpoint is not in packet mode. Endpoints configured in
-   *          packet mode must set this field to @p NULL.
+   * @details This structure maintains the state of the IN endpoint.
    */
   USBInEndpointState            *in_state;
   /**
    * @brief   @p USBEndpointState associated to the OUT endpoint.
-   * @details This structure maintains the state of the OUT endpoint when
-   *          the endpoint is not in packet mode. Endpoints configured in
-   *          packet mode must set this field to @p NULL.
+   * @details This structure maintains the state of the OUT endpoint.
    */
   USBOutEndpointState           *out_state;
   /* End of the mandatory fields.*/

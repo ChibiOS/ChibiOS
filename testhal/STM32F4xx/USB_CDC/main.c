@@ -296,13 +296,18 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
   case USB_EVENT_ADDRESS:
     return;
   case USB_EVENT_CONFIGURED:
+    chSysLockFromIsr();
+
     /* Enables the endpoints specified into the configuration.
        Note, this callback is invoked from an ISR so I-Class functions
        must be used.*/
-    chSysLockFromIsr();
     usbInitEndpointI(usbp, USB_CDC_DATA_REQUEST_EP, &ep1config);
     usbInitEndpointI(usbp, USB_CDC_INTERRUPT_REQUEST_EP, &ep2config);
     usbInitEndpointI(usbp, USB_CDC_DATA_AVAILABLE_EP, &ep3config);
+
+    /* Resetting the state of the CDC subsystem.*/
+    sduConfigureHookI(usbp);
+
     chSysUnlockFromIsr();
     return;
   case USB_EVENT_SUSPEND:
@@ -437,10 +442,10 @@ int main(void) {
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
    */
+  usbDisconnectBus(serusbcfg.usbp);
+  chThdSleepMilliseconds(1000);
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
-  usbDisconnectBus(serusbcfg.usbp);
-  chThdSleepMilliseconds(100);
   usbConnectBus(serusbcfg.usbp);
 
   /*

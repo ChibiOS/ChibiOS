@@ -144,7 +144,7 @@ static void otg_rxfifo_flush(void) {
   OTG->GRSTCTL = GRSTCTL_RXFFLSH;
   while ((OTG->GRSTCTL & GRSTCTL_RXFFLSH) != 0)
     ;
-  /* Wait for 3 PHY Clocks*/
+  /* Wait for 3 PHY Clocks.*/
   halPolledDelay(12);
 }
 
@@ -153,7 +153,7 @@ static void otg_txfifo_flush(uint32_t fifo) {
   OTG->GRSTCTL = GRSTCTL_TXFNUM(fifo) | GRSTCTL_TXFFLSH;
   while ((OTG->GRSTCTL & GRSTCTL_TXFFLSH) != 0)
     ;
-  /* Wait for 3 PHY Clocks*/
+  /* Wait for 3 PHY Clocks.*/
   halPolledDelay(12);
 }
 
@@ -186,6 +186,84 @@ static uint32_t otg_ram_alloc(USBDriver *usbp, size_t size) {
               "otg_fifo_alloc(), #1", "FIFO memory overflow");
   return next;
 }
+/**
+ * @brief   Prepares for a transmit transaction on an IN endpoint.
+ * @post    The endpoint is ready for @p usbStartTransmitI().
+ * @note    The transmit transaction size is equal to the data contained
+ *          in the queue.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @special
+ */
+static void otg_prepare_transmit(USBDriver *usbp, usbep_t ep, size_t n) {
+  uint32_t pcnt;
+  USBInEndpointState *isp = usbp->epc[ep]->in_state;
+
+  isp->txsize = n;
+  isp->txcnt  = 0;
+
+  /* Transfer initialization.*/
+  if (n == 0) {
+    /* Special case, sending zero size packet.*/
+    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(1) | DIEPTSIZ_XFRSIZ(0);
+  }
+  else {
+    /* Normal case.*/
+    pcnt = (n + usbp->epc[ep]->in_maxsize - 1) / usbp->epc[ep]->in_maxsize;
+    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
+                           DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
+  }
+}
+
+/**
+ * @brief   Prepares for a receive transaction on an OUT endpoint.
+ * @post    The endpoint is ready for @p usbStartReceiveI().
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @special
+ */
+static void otg_prepare_receive(USBDriver *usbp, usbep_t ep, size_t n) {
+  uint32_t pcnt;
+  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
+
+  osp->rxsize = n;
+  osp->rxcnt  = 0;
+
+  /* Transfer initialization.*/
+  pcnt = (n + usbp->epc[ep]->out_maxsize - 1) / usbp->epc[ep]->out_maxsize;
+  OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
+                         DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
+}
+
+/**
+ * @brief   Pushes a series of words into a FIFO.
+ *
+ * @param[in] fifop     pointer to the FIFO register
+ * @param[in] buf       pointer to the words buffer, not necessarily word
+ *                      aligned
+ * @param[in] n         number of words to push
+ *
+ * @return              A pointer after the last word pushed.
+ *
+ * @notapi
+ */
+static uint8_t *otg_do_push(volatile uint32_t *fifop, uint8_t *buf, size_t n) {
+
+  while (n > 0) {
+    /* Note, this line relies on the Cortex-M3/M4 ability to perform
+       unaligned word accesses and on the LSB-first memory organization.*/
+    *fifop = *((uint32_t *)buf);
+    buf += 4;
+    n--;
+  }
+  return buf;
+}
 
 /**
  * @brief   Writes to a TX FIFO.
@@ -199,19 +277,8 @@ static uint32_t otg_ram_alloc(USBDriver *usbp, size_t size) {
 static void otg_fifo_write_from_buffer(usbep_t ep,
                                        const uint8_t *buf,
                                        size_t n) {
-  volatile uint32_t *fifop;
 
-  fifop = OTG_FIFO(ep);
-  n = (n + 3) / 4;
-  while (n) {
-    uint32_t dw = (uint32_t)buf[0]          |
-                  ((uint32_t)buf[1] << 8)   |
-                  ((uint32_t)buf[2] << 16)  |
-                  ((uint32_t)buf[3] << 24);
-    *fifop = dw;
-    n--;
-    buf += 4;
-  }
+  otg_do_push(OTG_FIFO(ep), (uint8_t *)buf, (n + 3) / 4);
 }
 
 /**
@@ -226,41 +293,73 @@ static void otg_fifo_write_from_buffer(usbep_t ep,
 static void otg_fifo_write_from_queue(usbep_t ep,
                                       OutputQueue *oqp,
                                       size_t n) {
-  size_t nw;
-  uint8_t *bp;
+  size_t ntogo;
   volatile uint32_t *fifop;
 
   fifop = OTG_FIFO(ep);
 
-  /* Fetching data from the queue buffer directly.*/
-  bp = oqp->q_rdptr;
-  nw = (n + 3) / 4;
-  do {
-    uint32_t dw;
-    dw  = (uint32_t)*bp++;
-    if (bp >= oqp->q_top)
-      bp = oqp->q_buffer;
-    dw |= (uint32_t)*bp++ << 8;
-    if (bp >= oqp->q_top)
-      bp = oqp->q_buffer;
-    dw |= (uint32_t)*bp++ << 16;
-    if (bp >= oqp->q_top)
-      bp = oqp->q_buffer;
-    dw |= (uint32_t)*bp++ << 24;
-    if (bp >= oqp->q_top)
-      bp = oqp->q_buffer;
+  ntogo = n;
+  while (ntogo > 0) {
+    uint32_t dw, i;
+    size_t streak, nw = ntogo / 4;
+    uint32_t nw2end = (oqp->q_top - oqp->q_rdptr) / 4;
+
+    ntogo -= (streak = nw <= nw2end ? nw : nw2end) * 4;
+    oqp->q_rdptr = otg_do_push(fifop, oqp->q_rdptr, streak);
+    if (oqp->q_rdptr >= oqp->q_top) {
+      oqp->q_rdptr = oqp->q_buffer;
+      continue;
+    }
+
+    /* If this condition is not satisfied then there is a word lying across
+       queue circular buffer boundary.*/
+    if (ntogo <= 0)
+      break;
+
+    /* One byte at time.*/
+    dw = 0;
+    i = 0;
+    while ((ntogo > 0) && (i < 4)) {
+      dw |= (uint32_t)*oqp->q_rdptr++ << (i * 8);
+      if (oqp->q_rdptr >= oqp->q_top)
+        oqp->q_rdptr = oqp->q_buffer;
+      ntogo--;
+      i++;
+    }
     *fifop = dw;
-  } while (--nw > 0);
+  }
 
   /* Updating queue.*/
   chSysLockFromIsr();
-  oqp->q_rdptr += n;
-  if (oqp->q_rdptr >= oqp->q_top)
-    oqp->q_rdptr -= chQSizeI(oqp);
   oqp->q_counter += n;
   while (notempty(&oqp->q_waiting))
     chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
   chSysUnlockFromIsr();
+}
+
+/**
+ * @brief   Pops a series of words from a FIFO.
+ *
+ * @param[in] fifop     pointer to the FIFO register
+ * @param[in] buf       pointer to the words buffer, not necessarily word
+ *                      aligned
+ * @param[in] n         number of words to push
+ *
+ * @return              A pointer after the last word pushed.
+ *
+ * @notapi
+ */
+static uint8_t *otg_do_pop(volatile uint32_t *fifop, uint8_t *buf, size_t n) {
+
+  while (n > 0) {
+    uint32_t dw = *fifop;
+    /* Note, this line relies on the Cortex-M3/M4 ability to perform
+       unaligned word accesses and on the LSB-first memory organization.*/
+    *((uint32_t *)buf) = dw;
+    buf += 4;
+    n--;
+  }
+  return buf;
 }
 
 /**
@@ -281,10 +380,10 @@ static void otg_fifo_read_to_buffer(uint8_t *buf, size_t n, size_t max) {
   while (n) {
     uint32_t dw = *fifop;
     if (max) {
-      *buf++ = (uint8_t)dw;
-      *buf++ = (uint8_t)(dw >> 8);
-      *buf++ = (uint8_t)(dw >> 16);
-      *buf++ = (uint8_t)(dw >> 24);
+      /* Note, this line relies on the Cortex-M3/M4 ability to perform
+         unaligned word accesses and on the LSB-first memory organization.*/
+      *((uint32_t *)buf) = dw;
+      buf += 4;
       max--;
     }
     n--;
@@ -300,37 +399,40 @@ static void otg_fifo_read_to_buffer(uint8_t *buf, size_t n, size_t max) {
  * @notapi
  */
 static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
-  size_t nw, nb;
+  size_t ntogo;
   volatile uint32_t *fifop;
 
   fifop = OTG_FIFO(0);
-  nb = n;
-  nw = (n + 3) / 4;
-  do {
-    uint32_t dw = *fifop;
-    *iqp->q_wrptr++ = (uint8_t)dw;
-    if (iqp->q_wrptr >= iqp->q_top)
+
+  ntogo = n;
+  while (ntogo > 0) {
+    uint32_t dw, i;
+    size_t streak, nw = ntogo / 4;
+    uint32_t nw2end = (iqp->q_wrptr - iqp->q_wrptr) / 4;
+
+    ntogo -= (streak = nw <= nw2end ? nw : nw2end) * 4;
+    iqp->q_wrptr = otg_do_pop(fifop, iqp->q_wrptr, streak);
+    if (iqp->q_wrptr >= iqp->q_top) {
       iqp->q_wrptr = iqp->q_buffer;
-    if (--nb > 0) {
-      *iqp->q_wrptr++ = (uint8_t)(dw >> 8);
+      continue;
+    }
+
+    /* If this condition is not satisfied then there is a word lying across
+       queue circular buffer boundary.*/
+    if (ntogo <= 0)
+      break;
+
+    /* One byte at time.*/
+    dw = *fifop;
+    i = 0;
+    while ((ntogo > 0) && (i < 4)) {
+      *iqp->q_wrptr++ = (uint8_t)dw >> (i * 8);
       if (iqp->q_wrptr >= iqp->q_top)
         iqp->q_wrptr = iqp->q_buffer;
-
-      if (--nb > 0) {
-        *iqp->q_wrptr++ = (uint8_t)(dw >> 16);
-        if (iqp->q_wrptr >= iqp->q_top)
-          iqp->q_wrptr = iqp->q_buffer;
-
-        if (--nb > 0) {
-          *iqp->q_wrptr++ = (uint8_t)(dw >> 24);
-          if (iqp->q_wrptr >= iqp->q_top)
-            iqp->q_wrptr = iqp->q_buffer;
-
-          --nb;
-        }
-      }
+      ntogo--;
+      i++;
     }
-  } while (--nw > 0);
+  }
 
   /* Updating queue.*/
   chSysLockFromIsr();
@@ -846,18 +948,11 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
  */
 void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
                              uint8_t *buf, size_t n) {
-  uint32_t pcnt;
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
   osp->rxqueued           = FALSE;
-  osp->rxsize             = n;
-  osp->rxcnt              = 0;
   osp->mode.linear.rxbuf  = buf;
-
-  /* Transfer initialization.*/
-  pcnt = (n + usbp->epc[ep]->out_maxsize - 1) / usbp->epc[ep]->out_maxsize;
-  OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
-                         DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
+  otg_prepare_receive(usbp, ep, n);
 }
 
 /**
@@ -872,30 +967,15 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
  */
 void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
                               const uint8_t *buf, size_t n) {
-  uint32_t pcnt;
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
   isp->txqueued           = FALSE;
-  isp->txsize             = n;
-  isp->txcnt              = 0;
   isp->mode.linear.txbuf  = buf;
-
-  if (n == 0) {
-    /* Special case, sending zero size packet.*/
-    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(1) | DIEPTSIZ_XFRSIZ(0);
-  }
-  else {
-    /* Transfer initialization.*/
-    pcnt = (n + usbp->epc[ep]->in_maxsize - 1) / usbp->epc[ep]->in_maxsize;
-    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
-                           DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
-  }
+  otg_prepare_transmit(usbp, ep, n);
 }
 
 /**
  * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
  * @post    The endpoint is ready for @p usbStartReceiveI().
  * @note    The receive transaction size is equal to the space in the queue
  *          rounded to the lower multiple of a packet size. So make sure there
@@ -911,24 +991,15 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
  */
 void usb_lld_prepare_queued_receive(USBDriver *usbp, usbep_t ep,
                                     InputQueue *iq, size_t n) {
-  uint32_t pcnt;
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
   osp->rxqueued           = TRUE;
-  osp->rxsize             = n;
-  osp->rxcnt              = 0;
   osp->mode.queue.rxqueue = iq;
-
-  /* Transfer initialization.*/
-  pcnt = (n + usbp->epc[ep]->out_maxsize - 1) / usbp->epc[ep]->out_maxsize;
-  OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
-                         DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
+  otg_prepare_receive(usbp, ep, n);
 }
 
 /**
  * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
  * @post    The endpoint is ready for @p usbStartTransmitI().
  * @note    The transmit transaction size is equal to the data contained
  *          in the queue.
@@ -942,18 +1013,11 @@ void usb_lld_prepare_queued_receive(USBDriver *usbp, usbep_t ep,
  */
 void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
                                      OutputQueue *oq, size_t n) {
-  uint32_t pcnt;
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
   isp->txqueued           = TRUE;
-  isp->txsize             = n;
-  isp->txcnt              = 0;
   isp->mode.queue.txqueue = oq;
-
-  /* Transfer initialization.*/
-  pcnt = (n + usbp->epc[ep]->in_maxsize - 1) / usbp->epc[ep]->in_maxsize;
-  OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
-                         DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
+  otg_prepare_transmit(usbp, ep, n);
 }
 
 /**

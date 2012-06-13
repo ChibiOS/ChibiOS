@@ -275,7 +275,7 @@ typedef struct {
 /** @brief No pending conditions.*/
 #define CHN_NO_ERROR            0
 /** @brief Connection happened.*/
-#define ICHN_CONNECTED          1
+#define CHN_CONNECTED           1
 /** @brief Disconnection happened.*/
 #define CHN_DISCONNECTED        2
 /** @brief Data available in the input queue.*/

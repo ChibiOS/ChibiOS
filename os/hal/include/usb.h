@@ -322,7 +322,19 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @{
  */
 /**
+ * @brief   Returns the sriver state.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @return              The driver state.
+ *
+ * @iclass
+ */
+#define usbGetDriverStateI(usbp) ((usbp)->state)
+
+/**
  * @brief   Connects the USB device.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
  *
  * @api
  */
@@ -330,6 +342,8 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 
 /**
  * @brief   Disconnect the USB device.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
  *
  * @api
  */

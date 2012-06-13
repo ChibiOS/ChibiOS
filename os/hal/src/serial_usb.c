@@ -120,6 +120,11 @@ static void inotify(GenericQueue *qp) {
   size_t n, maxsize;
   SerialUSBDriver *sdup = chQGetLink(qp);
 
+  /* If the USB driver is not in the appropriate state then transactions
+     must not be started.*/
+  if (usbGetDriverStateI(sdup->config->usbp) != USB_ACTIVE)
+    return;
+
   /* If there is in the queue enough space to hold at least one packet and
      a transaction is not yet started then a new transaction is started for
      the available space.*/
@@ -144,6 +149,11 @@ static void inotify(GenericQueue *qp) {
 static void onotify(GenericQueue *qp) {
   size_t n;
   SerialUSBDriver *sdup = chQGetLink(qp);
+
+  /* If the USB driver is not in the appropriate state then transactions
+     must not be started.*/
+  if (usbGetDriverStateI(sdup->config->usbp) != USB_ACTIVE)
+    return;
 
   /* If there is not an ongoing transaction and the output queue contains
      data then a new transaction is started.*/
@@ -236,6 +246,22 @@ void sduStop(SerialUSBDriver *sdup) {
   sdup->state = SDU_STOP;
   chSysUnlock();
   usbStop(sdup->config->usbp);
+}
+
+/**
+ * @brief   USB device configured handler.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @iclass
+ */
+void sduConfigureHookI(USBDriver *usbp) {
+  SerialUSBDriver *sdup = usbp->param;
+
+  sdup->flags = CHN_NO_ERROR;
+  chIQResetI(&sdup->iqueue);
+  chOQResetI(&sdup->oqueue);
+  chnAddFlagsI(sdup, CHN_CONNECTED);
 }
 
 /**
