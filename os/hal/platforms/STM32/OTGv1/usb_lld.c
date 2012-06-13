@@ -775,6 +775,9 @@ void usb_lld_reset(USBDriver *usbp) {
   OTG->GRXFSIZ = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
   otg_rxfifo_flush();
 
+  /* Resets the device address to zero.*/
+  OTG->DCFG = (OTG->DCFG & ~DCFG_DAD_MASK) | DCFG_DAD(0);
+
   /* Enables also EP-related interrupt sources.*/
   OTG->GINTMSK  |= GINTMSK_RXFLVLM | GINTMSK_OEPM  | GINTMSK_IEPM;
   OTG->DIEPMSK   = DIEPMSK_TOCM    | DIEPMSK_XFRCM;
