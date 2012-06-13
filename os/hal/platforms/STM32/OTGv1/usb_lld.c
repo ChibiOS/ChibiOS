@@ -301,18 +301,22 @@ static void otg_fifo_write_from_queue(usbep_t ep,
   ntogo = n;
   while (ntogo > 0) {
     uint32_t dw, i;
-    size_t streak, nw = ntogo / 4;
-    uint32_t nw2end = (oqp->q_top - oqp->q_rdptr) / 4;
+    size_t nw = ntogo / 4;
 
-    ntogo -= (streak = nw <= nw2end ? nw : nw2end) * 4;
-    oqp->q_rdptr = otg_do_push(fifop, oqp->q_rdptr, streak);
-    if (oqp->q_rdptr >= oqp->q_top) {
-      oqp->q_rdptr = oqp->q_buffer;
-      continue;
+    if (nw > 0) {
+      size_t streak;
+      uint32_t nw2end = (oqp->q_top - oqp->q_rdptr) / 4;
+
+      ntogo -= (streak = nw <= nw2end ? nw : nw2end) * 4;
+      oqp->q_rdptr = otg_do_push(fifop, oqp->q_rdptr, streak);
+      if (oqp->q_rdptr >= oqp->q_top) {
+        oqp->q_rdptr = oqp->q_buffer;
+        continue;
+      }
     }
 
     /* If this condition is not satisfied then there is a word lying across
-       queue circular buffer boundary.*/
+       queue circular buffer boundary or there is a residual of data.*/
     if (ntogo <= 0)
       break;
 
@@ -407,18 +411,22 @@ static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
   ntogo = n;
   while (ntogo > 0) {
     uint32_t dw, i;
-    size_t streak, nw = ntogo / 4;
-    uint32_t nw2end = (iqp->q_wrptr - iqp->q_wrptr) / 4;
+    size_t nw = ntogo / 4;
 
-    ntogo -= (streak = nw <= nw2end ? nw : nw2end) * 4;
-    iqp->q_wrptr = otg_do_pop(fifop, iqp->q_wrptr, streak);
-    if (iqp->q_wrptr >= iqp->q_top) {
-      iqp->q_wrptr = iqp->q_buffer;
-      continue;
+    if (nw > 0) {
+      size_t streak;
+      uint32_t nw2end = (iqp->q_wrptr - iqp->q_wrptr) / 4;
+
+      ntogo -= (streak = nw <= nw2end ? nw : nw2end) * 4;
+      iqp->q_wrptr = otg_do_pop(fifop, iqp->q_wrptr, streak);
+      if (iqp->q_wrptr >= iqp->q_top) {
+        iqp->q_wrptr = iqp->q_buffer;
+        continue;
+      }
     }
 
     /* If this condition is not satisfied then there is a word lying across
-       queue circular buffer boundary.*/
+       queue circular buffer boundary or there is a residual of data.*/
     if (ntogo <= 0)
       break;
 
@@ -426,7 +434,7 @@ static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
     dw = *fifop;
     i = 0;
     while ((ntogo > 0) && (i < 4)) {
-      *iqp->q_wrptr++ = (uint8_t)dw >> (i * 8);
+      *iqp->q_wrptr++ = (uint8_t)(dw >> (i * 8));
       if (iqp->q_wrptr >= iqp->q_top)
         iqp->q_wrptr = iqp->q_buffer;
       ntogo--;
