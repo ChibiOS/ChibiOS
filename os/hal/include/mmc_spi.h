@@ -120,6 +120,21 @@ typedef struct {
 } MMCConfig;
 
 /**
+ * @brief   @p MMCDriver specific methods.
+ */
+#define _mmc_driver_methods                                                 \
+  _mmcsd_block_device_methods
+
+/**
+ * @extends MMCSDBlockDeviceVMT
+ *
+ * @brief   @p MMCDriver virtual methods table.
+ */
+struct MMCDriverVMT {
+  _mmc_driver_methods
+};
+
+/**
  * @extends MMCSDBlockDevice
  *
  * @brief   Structure representing a MMC/SD over SPI driver.
@@ -128,7 +143,8 @@ typedef struct {
   /**
    * @brief Virtual Methods Table.
    */
-  const struct MMCSDBlockDeviceVMT *vmt;
+  const struct MMCDriverVMT *vmt;
+  _mmcsd_block_device_data
   /**
    * @brief Driver state.
    */
@@ -157,18 +173,6 @@ typedef struct {
    * @brief Addresses use blocks instead of bytes.
    */
   bool_t                block_addresses;
-  /**
-   * @brief Card CID.
-   */
-  uint32_t                  cid[4];
-  /**
-   * @brief Card CSD.
-   */
-  uint32_t                  csd[4];
-  /**
-   * @brief Total number of blocks in card.
-   */
-  uint32_t              capacity;
 } MMCDriver;
 
 /*===========================================================================*/

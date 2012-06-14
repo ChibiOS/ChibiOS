@@ -198,13 +198,29 @@ typedef struct {
 } SDCConfig;
 
 /**
+ * @brief   @p SDCDriver specific methods.
+ */
+#define _sdc_driver_methods                                                 \
+  _mmcsd_block_device_methods
+
+/**
+ * @extends MMCSDBlockDeviceVMT
+ *
+ * @brief   @p SDCDriver virtual methods table.
+ */
+struct SDCDriverVMT {
+  _sdc_driver_methods
+};
+
+/**
  * @brief   Structure representing an SDC driver.
  */
 struct SDCDriver {
   /**
    * @brief Virtual Methods Table.
    */
-  const struct MMCSDBlockDeviceVMT *vmt;
+  const struct SDCDriverVMT *vmt;
+  _mmcsd_block_device_data
   /**
    * @brief Driver state.
    */
@@ -222,21 +238,9 @@ struct SDCDriver {
    */
   sdcflags_t                errors;
   /**
-   * @brief Card CID.
-   */
-  uint32_t                  cid[4];
-  /**
-   * @brief Card CSD.
-   */
-  uint32_t                  csd[4];
-  /**
    * @brief Card RCA.
    */
   uint32_t                  rca;
-  /**
-   * @brief Total number of blocks in card.
-   */
-  uint32_t                  capacity;
   /* End of the mandatory fields.*/
   /**
    * @brief Thread waiting for I/O completion IRQ.

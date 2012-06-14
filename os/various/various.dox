@@ -75,7 +75,25 @@
  */
 
 /**
- * @defgroup lis302dl Interface module for LIS302DL MEMS.
+ * @defgroup chrtclib RTC time conversion utilities
+ *
+ * @brief   RTC time conversion utilities.
+ *
+ * @ingroup various
+ */
+
+/**
+ * @defgroup chprintf System formatted print
+ *
+ * @brief   System formatted print service.
+ * @details This module implements printf()-like function able to send data
+ *          to any module implementing a @p BaseSequentialStream interface.
+ *
+ * @ingroup various
+ */
+
+/**
+ * @defgroup lis302dl Interface module for LIS302DL MEMS
  *
  * @brief   Interface module for LIS302DL MEMS.
  * @details This module implements a generic interface for the LIS302DL

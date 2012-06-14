@@ -989,7 +989,7 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
  * @brief   Prepares for a receive transaction on an OUT endpoint.
  * @post    The endpoint is ready for @p usbStartReceiveI().
  * @note    The receive transaction size is equal to the space in the queue
- *          rounded to the lower multiple of a packet size. So make sure there
+ *          rounded to the lower multiple of a packet size. Make sure there
  *          is room for at least one packet in the queue before starting
  *          the receive operation.
  *

@@ -183,7 +183,13 @@
  *          without implementation.
  */
 #define _mmcsd_block_device_data                                            \
-  _base_block_device_data
+  _base_block_device_data                                                   \
+  /* Card CID.*/                                                            \
+  uint32_t              cid[4];                                             \
+  /* Card CSD.*/                                                            \
+  uint32_t              csd[4];                                             \
+  /* Total number of blocks in card.*/                                      \
+  uint32_t              capacity;
 
 /**
  * @extends BaseBlockDeviceVMT

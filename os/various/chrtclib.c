@@ -22,6 +22,14 @@
    aka barthess.
  */
 
+/**
+ * @file    chrtclib.c
+ * @brief   RTC time conversion utilities code.
+ *
+ * @addtogroup chrtclib
+ * @{
+ */
+
 #include <time.h>
 
 #include "ch.h"
@@ -31,7 +39,7 @@
 
 #if (defined(STM32F4XX) || defined(STM32F2XX) || defined(STM32L1XX) || \
      defined(STM32F1XX) || defined(STM32F10X_MD) || defined(STM32F10X_LD) || \
-     defined(STM32F10X_HD))
+     defined(STM32F10X_HD) || defined(__DOXYGEN__))
 #if STM32_RTC_IS_CALENDAR
 /**
  * @brief   Converts from STM32 BCD to canonicalized time format.
@@ -194,6 +202,7 @@ time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
  * @brief   Sets RTC time.
  *
  * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] tv_sec    time specification
  * @return              Unix time value in seconds.
  *
  * @api
@@ -285,6 +294,7 @@ time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
  * @brief   Sets RTC time.
  *
  * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] tv_sec    time specification
  * @return              Unix time value in seconds.
  *
  * @api
@@ -342,3 +352,5 @@ uint32_t rtcGetTimeFat(RTCDriver *rtcp) {
   fattime |= (timp->tm_year - 80) << 25;
   return fattime;
 }
+
+/** @} */

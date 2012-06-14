@@ -423,7 +423,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *          initialized in transaction mode.
  * @post    The endpoint is ready for @p usbStartReceiveI().
  * @note    The receive transaction size is equal to the space in the queue
- *          rounded to the lower multiple of a packet size. So make sure there
+ *          rounded to the lower multiple of a packet size. Make sure there
  *          is room for at least one packet in the queue before starting
  *          the receive operation.
  *

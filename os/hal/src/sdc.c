@@ -46,7 +46,7 @@
 /**
  * @brief   Virtual methods table.
  */
-static const struct MMCSDBlockDeviceVMT sdc_vmt = {
+static const struct SDCDriverVMT sdc_vmt = {
   (bool_t (*)(void *))sdc_lld_is_card_inserted,
   (bool_t (*)(void *))sdc_lld_is_write_protected,
   (bool_t (*)(void *))sdcConnect,

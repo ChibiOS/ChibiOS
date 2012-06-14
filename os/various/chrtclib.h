@@ -22,18 +22,18 @@
    aka barthess.
  */
 
-#ifndef CHRTCLIB_H_
-#define CHRTCLIB_H_
-
-#include <time.h>
-
 /**
  * @file    chrtclib.h
- * @brief   Various time conversion functionality.
+ * @brief   RTC time conversion utilities header.
  *
  * @addtogroup chrtclib
  * @{
  */
+
+#ifndef CHRTCLIB_H_
+#define CHRTCLIB_H_
+
+#include <time.h>
 
 /*===========================================================================*/
 /* External declarations.                                                    */
