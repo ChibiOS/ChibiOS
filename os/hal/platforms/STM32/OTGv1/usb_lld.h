@@ -64,7 +64,7 @@
  * @brief   OTG1 interrupt priority level setting.
  */
 #if !defined(STM32_USB_OTG1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USB_OTG1_IRQ_PRIORITY         6
+#define STM32_USB_OTG1_IRQ_PRIORITY         14
 #endif
 
 /**

@@ -65,17 +65,23 @@ static union {
 } ep0_state;
 
 /**
+ * @brief   Buffer for the EP0 setup packets.
+ */
+static uint8_t ep0setup_buffer[8];
+
+/**
  * @brief   EP0 initialization structure.
  */
 static const USBEndpointConfig ep0config = {
-  USB_EP_MODE_TYPE_CTRL | USB_EP_MODE_TRANSACTION,
+  USB_EP_MODE_TYPE_CTRL,
   _usb_ep0setup,
   _usb_ep0in,
   _usb_ep0out,
   0x40,
   0x40,
   &ep0_state.in,
-  &ep0_state.out
+  &ep0_state.out,
+  ep0setup_buffer
 };
 
 /*===========================================================================*/
@@ -107,6 +113,117 @@ static uint32_t pm_alloc(USBDriver *usbp, size_t size) {
   usbp->pmnext += size;
   chDbgAssert(usbp->pmnext <= USB_PMA_SIZE, "pm_alloc(), #1", "PMA overflow");
   return next;
+}
+
+/**
+ * @brief   Reads from a dedicated packet buffer.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the packet data
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
+ * @return              The received packet size regardless the specified
+ *                      @p n parameter.
+ * @retval 0            Zero size packet received.
+ *
+ * @notapi
+ */
+static size_t usb_read_packet_buffer(USBDriver *usbp, usbep_t ep,
+                                     uint8_t *buf, size_t n) {
+  uint32_t *pmap;
+  stm32_usb_descriptor_t *udp;
+  size_t count;
+
+  (void)usbp;
+  udp = USB_GET_DESCRIPTOR(ep);
+  pmap = USB_ADDR2PTR(udp->RXADDR0);
+  count = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
+  if (n > count)
+    n = count;
+  n = (n + 1) / 2;
+  while (n > 0) {
+    *(uint16_t *)buf = (uint16_t)*pmap++;
+    buf += 2;
+    n--;
+  }
+  return count;
+}
+
+/**
+ * @brief   Writes to a dedicated packet buffer.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] buf       buffer where to fetch the packet data
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
+ *
+ * @notapi
+ */
+static void usb_write_packet_buffer(USBDriver *usbp, usbep_t ep,
+                                    const uint8_t *buf, size_t n) {
+  uint32_t *pmap;
+  stm32_usb_descriptor_t *udp;
+
+  (void)usbp;
+  udp = USB_GET_DESCRIPTOR(ep);
+  pmap = USB_ADDR2PTR(udp->TXADDR0);
+  udp->TXCOUNT0 = (uint16_t)n;
+  n = (n + 1) / 2;
+  while (n > 0) {
+    *pmap++ = *(uint16_t *)buf;
+    buf += 2;
+    n--;
+  }
+}
+
+/**
+ * @brief   Prepares for a receive transaction on an OUT endpoint.
+ * @post    The endpoint is ready for @p usbStartReceiveI().
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @special
+ */
+static void usb_prepare_receive(USBDriver *usbp, usbep_t ep, size_t n) {
+  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
+
+  osp->rxsize = n;
+  osp->rxcnt  = 0;
+
+  /* Transfer initialization.*/
+  if (osp->rxsize == 0)         /* Special case for zero sized packets.*/
+    osp->rxpkts = 1;
+  else
+    osp->rxpkts = (uint16_t)((n + usbp->epc[ep]->out_maxsize - 1) /
+                             usbp->epc[ep]->out_maxsize);
+}
+
+/**
+ * @brief   Prepares for a transmit transaction on an IN endpoint.
+ * @post    The endpoint is ready for @p usbStartTransmitI().
+ * @note    The transmit transaction size is equal to the data contained
+ *          in the queue.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @special
+ */
+static void usb_prepare_transmit(USBDriver *usbp, usbep_t ep, size_t n) {
+  USBInEndpointState *isp = usbp->epc[ep]->in_state;
+
+  isp->txsize = n;
+  isp->txcnt  = 0;
+
+  /* Transfer initialization.*/
+  if (n > (size_t)usbp->epc[ep]->in_maxsize)
+    n = (size_t)usbp->epc[ep]->in_maxsize;
+  usb_write_packet_buffer(usbp, ep, isp->mode.linear.txbuf, n);
 }
 
 /*===========================================================================*/
@@ -189,29 +306,24 @@ CH_IRQ_HANDLER(Vector90) {
     if (epr & EPR_CTR_TX) {
       /* IN endpoint, transmission.*/
       EPR_CLEAR_CTR_TX(ep);
-      if (epcp->ep_mode & USB_EP_MODE_PACKET) {
-        /* Packet mode, just invokes the callback.*/
-        _usb_isr_invoke_in_cb(usbp, ep);
+
+      n = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
+      epcp->in_state->mode.linear.txbuf  += n;
+      epcp->in_state->txcnt              += n;
+      epcp->in_state->txsize             -= n;
+      if (epcp->in_state->txsize > 0) {
+        /* Transfer not completed, there are more packets to send.*/
+        if (epcp->in_state->txsize > epcp->in_maxsize)
+          n = epcp->in_maxsize;
+        else
+          n = epcp->in_state->txsize;
+        usb_write_packet_buffer(usbp, ep,
+                                epcp->in_state->mode.linear.txbuf, n);
+        usb_lld_start_in(usbp, ep);
       }
       else {
-        /* Transaction mode.*/
-        n = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
-        epcp->in_state->txbuf  += n;
-        epcp->in_state->txcnt  += n;
-        epcp->in_state->txsize -= n;
-        if (epcp->in_state->txsize > 0) {
-          /* Transfer not completed, there are more packets to send.*/
-          if (epcp->in_state->txsize > epcp->in_maxsize)
-            n = epcp->in_maxsize;
-          else
-            n = epcp->in_state->txsize;
-          usb_lld_write_packet_buffer(usbp, ep, epcp->in_state->txbuf, n);
-          usb_lld_start_in(usbp, ep);
-        }
-        else {
-          /* Transfer completed, invokes the callback.*/
-          _usb_isr_invoke_in_cb(usbp, ep);
-        }
+        /* Transfer completed, invokes the callback.*/
+        _usb_isr_invoke_in_cb(usbp, ep);
       }
     }
     if (epr & EPR_CTR_RX) {
@@ -222,20 +334,15 @@ CH_IRQ_HANDLER(Vector90) {
            specific callback.*/
         _usb_isr_invoke_setup_cb(usbp, ep);
       }
-      else if (epcp->ep_mode & USB_EP_MODE_PACKET) {
-        /* Packet mode, just invokes the callback.*/
-        _usb_isr_invoke_out_cb(usbp, ep);
-      }
       else {
-        /* Transaction mode.*/
-        n = usb_lld_read_packet_buffer(usbp, ep,
-                                       epcp->out_state->rxbuf,
+        n = usb_read_packet_buffer(usbp, ep,
+                                       epcp->out_state->mode.linear.rxbuf,
                                        epcp->out_state->rxsize);
         usb_lld_start_out(usbp, ep);
-        epcp->out_state->rxbuf  += n;
-        epcp->out_state->rxcnt  += n;
-        epcp->out_state->rxsize -= n;
-        epcp->out_state->rxpkts -= 1;
+        epcp->out_state->mode.linear.rxbuf  += n;
+        epcp->out_state->rxcnt              += n;
+        epcp->out_state->rxsize             -= n;
+        epcp->out_state->rxpkts             -= 1;
         if (epcp->out_state->rxpkts > 0) {
           /* Transfer not completed, there are more packets to receive.*/
           EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
@@ -393,20 +500,13 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
     epr = EPR_EP_TYPE_CONTROL;
   }
 
-  /* IN endpoint settings, always in NAK mode initially.*/
+  /* IN endpoint initially in NAK mode.*/
   if (epcp->in_cb != NULL)
     epr |= EPR_STAT_TX_NAK;
 
-  /* OUT endpoint settings. If the endpoint is in packet mode then it must
-     start ready to accept data else it must start in NAK mode.*/
-  if (epcp->out_cb != NULL) {
-    if (epcp->ep_mode & USB_EP_MODE_PACKET) {
-      usbp->receiving |= (1 << ep);
-      epr |= EPR_STAT_RX_VALID;
-    }
-    else
-      epr |= EPR_STAT_RX_NAK;
-  }
+  /* OUT endpoint initially in NAK mode.*/
+  if (epcp->out_cb != NULL)
+    epr |= EPR_STAT_RX_NAK;
 
   /* EPxR register setup.*/
   EPR_SET(ep, epr | ep);
@@ -524,75 +624,6 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
 }
 
 /**
- * @brief   Reads from a dedicated packet buffer.
- * @pre     In order to use this function he endpoint must have been
- *          initialized in packet mode.
- * @note    This function can be invoked both in thread and IRQ context.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the packet data
- * @param[in] n         maximum number of bytes to copy. This value must
- *                      not exceed the maximum packet size for this endpoint.
- * @return              The received packet size regardless the specified
- *                      @p n parameter.
- * @retval 0            Zero size packet received.
- *
- * @notapi
- */
-size_t usb_lld_read_packet_buffer(USBDriver *usbp, usbep_t ep,
-                                  uint8_t *buf, size_t n) {
-  uint32_t *pmap;
-  stm32_usb_descriptor_t *udp;
-  size_t count;
-
-  (void)usbp;
-  udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->RXADDR0);
-  count = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
-  if (n > count)
-    n = count;
-  n = (n + 1) / 2;
-  while (n > 0) {
-    *(uint16_t *)buf = (uint16_t)*pmap++;
-    buf += 2;
-    n--;
-  }
-  return count;
-}
-
-/**
- * @brief   Writes to a dedicated packet buffer.
- * @pre     In order to use this function he endpoint must have been
- *          initialized in packet mode.
- * @note    This function can be invoked both in thread and IRQ context.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to fetch the packet data
- * @param[in] n         maximum number of bytes to copy. This value must
- *                      not exceed the maximum packet size for this endpoint.
- *
- * @notapi
- */
-void usb_lld_write_packet_buffer(USBDriver *usbp, usbep_t ep,
-                                 const uint8_t *buf, size_t n) {
-  uint32_t *pmap;
-  stm32_usb_descriptor_t *udp;
-
-  (void)usbp;
-  udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->TXADDR0);
-  udp->TXCOUNT0 = (uint16_t)n;
-  n = (n + 1) / 2;
-  while (n > 0) {
-    *pmap++ = *(uint16_t *)buf;
-    buf += 2;
-    n--;
-  }
-}
-
-/**
  * @brief   Prepares for a receive operation.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
@@ -606,14 +637,9 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
                              uint8_t *buf, size_t n) {
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  osp->rxbuf  = buf;
-  osp->rxsize = n;
-  osp->rxcnt  = 0;
-  if (osp->rxsize == 0)    /* Special case for zero sized packets.*/
-    osp->rxpkts = 1;
-  else
-    osp->rxpkts = (uint16_t)((n + usbp->epc[ep]->out_maxsize - 1) /
-                             usbp->epc[ep]->out_maxsize);
+  osp->rxqueued           = FALSE;
+  osp->mode.linear.rxbuf  = buf;
+  usb_prepare_receive(usbp, ep, n);
 }
 
 /**
@@ -630,12 +656,55 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
                               const uint8_t *buf, size_t n) {
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  isp->txbuf  = buf;
-  isp->txsize = n;
-  isp->txcnt  = 0;
-  if (n > (size_t)usbp->epc[ep]->in_maxsize)
-    n = (size_t)usbp->epc[ep]->in_maxsize;
-  usb_lld_write_packet_buffer(usbp, ep, buf, n);
+  isp->txqueued           = FALSE;
+  isp->mode.linear.txbuf  = buf;
+  usb_prepare_transmit(usbp, ep, n);
+}
+
+/**
+ * @brief   Prepares for a receive transaction on an OUT endpoint.
+ * @post    The endpoint is ready for @p usbStartReceiveI().
+ * @note    The receive transaction size is equal to the space in the queue
+ *          rounded to the lower multiple of a packet size. Make sure there
+ *          is room for at least one packet in the queue before starting
+ *          the receive operation.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] iq        input queue to be filled with incoming data
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @special
+ */
+void usb_lld_prepare_queued_receive(USBDriver *usbp, usbep_t ep,
+                                    InputQueue *iq, size_t n) {
+  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
+
+  osp->rxqueued           = TRUE;
+  osp->mode.queue.rxqueue = iq;
+  usb_prepare_receive(usbp, ep, n);
+}
+
+/**
+ * @brief   Prepares for a transmit transaction on an IN endpoint.
+ * @post    The endpoint is ready for @p usbStartTransmitI().
+ * @note    The transmit transaction size is equal to the data contained
+ *          in the queue.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] oq        output queue to be fetched for outgoing data
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @special
+ */
+void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
+                                     OutputQueue *oq, size_t n) {
+  USBInEndpointState *isp = usbp->epc[ep]->in_state;
+
+  isp->txqueued           = TRUE;
+  isp->mode.queue.txqueue = oq;
+  usb_prepare_transmit(usbp, ep, n);
 }
 
 /**

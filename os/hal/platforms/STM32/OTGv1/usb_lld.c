@@ -186,6 +186,30 @@ static uint32_t otg_ram_alloc(USBDriver *usbp, size_t size) {
               "otg_fifo_alloc(), #1", "FIFO memory overflow");
   return next;
 }
+
+/**
+ * @brief   Prepares for a receive transaction on an OUT endpoint.
+ * @post    The endpoint is ready for @p usbStartReceiveI().
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] n         maximum number of bytes to copy
+ *
+ * @special
+ */
+static void otg_prepare_receive(USBDriver *usbp, usbep_t ep, size_t n) {
+  uint32_t pcnt;
+  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
+
+  osp->rxsize = n;
+  osp->rxcnt  = 0;
+
+  /* Transfer initialization.*/
+  pcnt = (n + usbp->epc[ep]->out_maxsize - 1) / usbp->epc[ep]->out_maxsize;
+  OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
+                         DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
+}
+
 /**
  * @brief   Prepares for a transmit transaction on an IN endpoint.
  * @post    The endpoint is ready for @p usbStartTransmitI().
@@ -216,29 +240,6 @@ static void otg_prepare_transmit(USBDriver *usbp, usbep_t ep, size_t n) {
     OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
                            DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
   }
-}
-
-/**
- * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @post    The endpoint is ready for @p usbStartReceiveI().
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-static void otg_prepare_receive(USBDriver *usbp, usbep_t ep, size_t n) {
-  uint32_t pcnt;
-  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
-
-  osp->rxsize = n;
-  osp->rxcnt  = 0;
-
-  /* Transfer initialization.*/
-  pcnt = (n + usbp->epc[ep]->out_maxsize - 1) / usbp->epc[ep]->out_maxsize;
-  OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
-                         DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
 }
 
 /**
@@ -666,7 +667,7 @@ void usb_lld_init(void) {
 
 /**
  * @brief   Configures and activates the USB peripheral.
- * @note    Starting the ORG cell can be a slow operation carried out with
+ * @note    Starting the OTG cell can be a slow operation carried out with
  *          interrupts disabled, perform it before starting time-critical
  *          operations.
  *
@@ -901,11 +902,16 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
  * @notapi
  */
 usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
+  uint32_t ctl;
 
   (void)usbp;
-  (void)ep;
 
-  return 0;
+  ctl = OTG->oe[ep].DOEPCTL;
+  if (!(ctl & DOEPCTL_USBAEP))
+    return EP_STATUS_DISABLED;
+  if (ctl & DOEPCTL_STALL)
+    return EP_STATUS_STALLED;
+  return EP_STATUS_ACTIVE;
 }
 
 /**
@@ -921,11 +927,16 @@ usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
+  uint32_t ctl;
 
   (void)usbp;
-  (void)ep;
 
-  return 0;
+  ctl = OTG->ie[ep].DIEPCTL;
+  if (!(ctl & DIEPCTL_USBAEP))
+    return EP_STATUS_DISABLED;
+  if (ctl & DIEPCTL_STALL)
+    return EP_STATUS_STALLED;
+  return EP_STATUS_ACTIVE;
 }
 
 /**
