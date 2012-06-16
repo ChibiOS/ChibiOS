@@ -151,6 +151,35 @@ static void usb_packet_read_to_buffer(stm32_usb_descriptor_t *udp,
  */
 static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
                                      InputQueue *iqp, size_t n) {
+  uint32_t w;
+  size_t nhw;
+  uint32_t *pmap= USB_ADDR2PTR(udp->RXADDR0);
+
+  nhw = n / 2;
+  while (nhw > 0) {
+    w = *pmap++;
+    *iqp->q_wrptr++ = (uint8_t)w;
+    if (iqp->q_wrptr >= iqp->q_top)
+      iqp->q_wrptr = iqp->q_buffer;
+    *iqp->q_wrptr++ = (uint8_t)(w >> 8);
+    if (iqp->q_wrptr >= iqp->q_top)
+      iqp->q_wrptr = iqp->q_buffer;
+    nhw--;
+  }
+  /* Last byte for odd numbers.*/
+  if ((n & 1) != 0) {
+    w = *pmap++;
+    *iqp->q_wrptr++ = (uint8_t)w;
+    if (iqp->q_wrptr >= iqp->q_top)
+      iqp->q_wrptr = iqp->q_buffer;
+  }
+
+  /* Updating queue.*/
+  chSysLockFromIsr();
+  iqp->q_counter += n;
+  while (notempty(&iqp->q_waiting))
+    chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
+  chSysUnlockFromIsr();
 }
 
 /**

@@ -301,7 +301,7 @@ static void otg_fifo_write_from_queue(usbep_t ep,
 
   ntogo = n;
   while (ntogo > 0) {
-    uint32_t dw, i;
+    uint32_t w, i;
     size_t nw = ntogo / 4;
 
     if (nw > 0) {
@@ -322,10 +322,10 @@ static void otg_fifo_write_from_queue(usbep_t ep,
       break;
 
     /* One byte at time.*/
-    dw = 0;
+    w = 0;
     i = 0;
     while ((ntogo > 0) && (i < 4)) {
-      dw |= (uint32_t)*oqp->q_rdptr++ << (i * 8);
+      w |= (uint32_t)*oqp->q_rdptr++ << (i * 8);
       if (oqp->q_rdptr >= oqp->q_top)
         oqp->q_rdptr = oqp->q_buffer;
       ntogo--;
@@ -357,10 +357,10 @@ static void otg_fifo_write_from_queue(usbep_t ep,
 static uint8_t *otg_do_pop(volatile uint32_t *fifop, uint8_t *buf, size_t n) {
 
   while (n > 0) {
-    uint32_t dw = *fifop;
+    uint32_t w = *fifop;
     /* Note, this line relies on the Cortex-M3/M4 ability to perform
        unaligned word accesses and on the LSB-first memory organization.*/
-    *((uint32_t *)buf) = dw;
+    *((uint32_t *)buf) = w;
     buf += 4;
     n--;
   }
@@ -383,11 +383,11 @@ static void otg_fifo_read_to_buffer(uint8_t *buf, size_t n, size_t max) {
   n = (n + 3) / 4;
   max = (max + 3) / 4;
   while (n) {
-    uint32_t dw = *fifop;
+    uint32_t w = *fifop;
     if (max) {
       /* Note, this line relies on the Cortex-M3/M4 ability to perform
          unaligned word accesses and on the LSB-first memory organization.*/
-      *((uint32_t *)buf) = dw;
+      *((uint32_t *)buf) = w;
       buf += 4;
       max--;
     }
@@ -411,7 +411,7 @@ static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
 
   ntogo = n;
   while (ntogo > 0) {
-    uint32_t dw, i;
+    uint32_t w, i;
     size_t nw = ntogo / 4;
 
     if (nw > 0) {
@@ -432,10 +432,10 @@ static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
       break;
 
     /* One byte at time.*/
-    dw = *fifop;
+    w = *fifop;
     i = 0;
     while ((ntogo > 0) && (i < 4)) {
-      *iqp->q_wrptr++ = (uint8_t)(dw >> (i * 8));
+      *iqp->q_wrptr++ = (uint8_t)(w >> (i * 8));
       if (iqp->q_wrptr >= iqp->q_top)
         iqp->q_wrptr = iqp->q_buffer;
       ntogo--;
