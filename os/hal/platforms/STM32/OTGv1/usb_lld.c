@@ -398,7 +398,7 @@ static void otg_fifo_read_to_buffer(uint8_t *buf, size_t n, size_t max) {
 /**
  * @brief   Reads a packet from the RXFIFO.
  *
- * @param[in] oqp       pointer to an @p InputQueue object
+ * @param[in] iqp       pointer to an @p InputQueue object
  * @param[in] n         number of bytes to pull from the FIFO
  *
  * @notapi

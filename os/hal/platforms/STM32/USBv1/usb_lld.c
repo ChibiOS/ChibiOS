@@ -93,7 +93,7 @@ static const USBEndpointConfig ep0config = {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  */
-static void pm_reset(USBDriver *usbp) {
+static void usb_pm_reset(USBDriver *usbp) {
 
   /* The first 64 bytes are reserved for the descriptors table. The effective
      available RAM for endpoint buffers is just 448 bytes.*/
@@ -106,72 +106,73 @@ static void pm_reset(USBDriver *usbp) {
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] size      size of the packet buffer to allocate
  */
-static uint32_t pm_alloc(USBDriver *usbp, size_t size) {
+static uint32_t usb_pm_alloc(USBDriver *usbp, size_t size) {
   uint32_t next;
 
   next = usbp->pmnext;
   usbp->pmnext += size;
-  chDbgAssert(usbp->pmnext <= USB_PMA_SIZE, "pm_alloc(), #1", "PMA overflow");
+  chDbgAssert(usbp->pmnext <= USB_PMA_SIZE, "usb_pm_alloc(), #1", "PMA overflow");
   return next;
 }
 
 /**
  * @brief   Reads from a dedicated packet buffer.
  *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
+ * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
  * @param[out] buf      buffer where to copy the packet data
  * @param[in] n         maximum number of bytes to copy. This value must
  *                      not exceed the maximum packet size for this endpoint.
- * @return              The received packet size regardless the specified
- *                      @p n parameter.
- * @retval 0            Zero size packet received.
  *
  * @notapi
  */
-static size_t usb_read_packet_buffer(USBDriver *usbp, usbep_t ep,
-                                     uint8_t *buf, size_t n) {
-  uint32_t *pmap;
-  stm32_usb_descriptor_t *udp;
-  size_t count;
+static void usb_packet_read_to_buffer(stm32_usb_descriptor_t *udp,
+                                      uint8_t *buf, size_t n) {
+  uint32_t *pmap= USB_ADDR2PTR(udp->RXADDR0);
 
-  (void)usbp;
-  udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->RXADDR0);
-  count = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
-  if (n > count)
-    n = count;
   n = (n + 1) / 2;
   while (n > 0) {
+    /* Note, this line relies on the Cortex-M3/M4 ability to perform
+       unaligned word accesses.*/
     *(uint16_t *)buf = (uint16_t)*pmap++;
     buf += 2;
     n--;
   }
-  return count;
+}
+
+/**
+ * @brief   Reads from a dedicated packet buffer.
+ *
+ * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
+ * @param[in] iqp       pointer to an @p InputQueue object
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
+ *
+ * @notapi
+ */
+static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
+                                     InputQueue *iqp, size_t n) {
 }
 
 /**
  * @brief   Writes to a dedicated packet buffer.
  *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
+ * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
  * @param[in] buf       buffer where to fetch the packet data
  * @param[in] n         maximum number of bytes to copy. This value must
  *                      not exceed the maximum packet size for this endpoint.
  *
  * @notapi
  */
-static void usb_write_packet_buffer(USBDriver *usbp, usbep_t ep,
-                                    const uint8_t *buf, size_t n) {
-  uint32_t *pmap;
-  stm32_usb_descriptor_t *udp;
+static void usb_packet_write_from_buffer(stm32_usb_descriptor_t *udp,
+                                         const uint8_t *buf,
+                                         size_t n) {
+  uint32_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
 
-  (void)usbp;
-  udp = USB_GET_DESCRIPTOR(ep);
-  pmap = USB_ADDR2PTR(udp->TXADDR0);
   udp->TXCOUNT0 = (uint16_t)n;
   n = (n + 1) / 2;
   while (n > 0) {
+    /* Note, this line relies on the Cortex-M3/M4 ability to perform
+       unaligned word accesses.*/
     *pmap++ = *(uint16_t *)buf;
     buf += 2;
     n--;
@@ -223,7 +224,8 @@ static void usb_prepare_transmit(USBDriver *usbp, usbep_t ep, size_t n) {
   /* Transfer initialization.*/
   if (n > (size_t)usbp->epc[ep]->in_maxsize)
     n = (size_t)usbp->epc[ep]->in_maxsize;
-  usb_write_packet_buffer(usbp, ep, isp->mode.linear.txbuf, n);
+  usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
+                               isp->mode.linear.txbuf, n);
 }
 
 /*===========================================================================*/
@@ -317,8 +319,9 @@ CH_IRQ_HANDLER(Vector90) {
           n = epcp->in_maxsize;
         else
           n = epcp->in_state->txsize;
-        usb_write_packet_buffer(usbp, ep,
-                                epcp->in_state->mode.linear.txbuf, n);
+        usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
+                                     epcp->in_state->mode.linear.txbuf,
+                                     n);
         usb_lld_start_in(usbp, ep);
       }
       else {
@@ -335,10 +338,13 @@ CH_IRQ_HANDLER(Vector90) {
         _usb_isr_invoke_setup_cb(usbp, ep);
       }
       else {
-        n = usb_read_packet_buffer(usbp, ep,
-                                       epcp->out_state->mode.linear.rxbuf,
-                                       epcp->out_state->rxsize);
-        usb_lld_start_out(usbp, ep);
+        stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
+        n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
+
+        /* Reads the packet into the linear buffer.*/
+        usb_packet_read_to_buffer(udp, epcp->out_state->mode.linear.rxbuf, n);
+
+        /* Transaction data updated.*/
         epcp->out_state->mode.linear.rxbuf  += n;
         epcp->out_state->rxcnt              += n;
         epcp->out_state->rxsize             -= n;
@@ -453,7 +459,7 @@ void usb_lld_reset(USBDriver *usbp) {
   STM32_USB->CNTR = cntr;
 
   /* Resets the packet memory allocator.*/
-  pm_reset(usbp);
+  usb_pm_reset(usbp);
 
   /* EP0 initialization.*/
   usbp->epc[0] = &ep0config;
@@ -521,8 +527,8 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   dp = USB_GET_DESCRIPTOR(ep);
   dp->TXCOUNT0 = 0;
   dp->RXCOUNT0 = nblocks;
-  dp->TXADDR0  = pm_alloc(usbp, epcp->in_maxsize);
-  dp->RXADDR0  = pm_alloc(usbp, epcp->out_maxsize);
+  dp->TXADDR0  = usb_pm_alloc(usbp, epcp->in_maxsize);
+  dp->RXADDR0  = usb_pm_alloc(usbp, epcp->out_maxsize);
 }
 
 /**
@@ -536,7 +542,7 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
   unsigned i;
 
   /* Resets the packet memory allocator.*/
-  pm_reset(usbp);
+  usb_pm_reset(usbp);
 
   /* Disabling all endpoints.*/
   for (i = 1; i <= USB_ENDOPOINTS_NUMBER; i++) {
