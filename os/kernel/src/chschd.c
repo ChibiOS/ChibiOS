@@ -74,6 +74,8 @@ void _scheduler_init(void) {
 Thread *chSchReadyI(Thread *tp) {
   Thread *cp;
 
+  chDbgCheckClassI();
+
   /* Integrity checks.*/
   chDbgAssert((tp->p_state != THD_STATE_READY) &&
               (tp->p_state != THD_STATE_FINAL),
