@@ -629,7 +629,22 @@
 #define VAL_GPIOI_MODER     0x00000000
 #define VAL_GPIOI_OTYPER    0x00000000
 #define VAL_GPIOI_OSPEEDR   0xFFFFFFFF
-#define VAL_GPIOI_PUPDR     0xFFFFFFFF
+#define VAL_GPIOI_PUPDR     (PIN_PUDR_PULLUP(0) |                           \
+                             PIN_PUDR_PULLUP(1) |                           \
+                             PIN_PUDR_PULLUP(2) |                           \
+                             PIN_PUDR_PULLUP(3) |                           \
+                             PIN_PUDR_PULLUP(4) |                           \
+                             PIN_PUDR_PULLUP(5) |                           \
+                             PIN_PUDR_PULLUP(6) |                           \
+                             PIN_PUDR_PULLUP(7) |                           \
+                             PIN_PUDR_PULLUP(8) |                           \
+                             PIN_PUDR_PULLUP(9) |                           \
+                             PIN_PUDR_PULLUP(10) |                          \
+                             PIN_PUDR_PULLUP(11) |                          \
+                             PIN_PUDR_PULLUP(12) |                          \
+                             PIN_PUDR_PULLUP(13) |                          \
+                             PIN_PUDR_PULLUP(14) |                          \
+                             PIN_PUDR_PULLUP(15))
 #define VAL_GPIOI_ODR       0xFFFFFFFF
 #define VAL_GPIOI_AFRL      0x00000000
 #define VAL_GPIOI_AFRH      0x00000000

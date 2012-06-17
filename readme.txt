@@ -84,6 +84,7 @@
 - FIX: Fixed timeout related race condition in STM32 I2C driver (bug 3530043).
 - FIX: Fixed wrong macro check in STM32 MAC driver (bug 3527179).
 - FIX: Fixed error in STM32L-Discovery board.h file (bug 3526918).
+- Small fixes to the STM32F4 board files.
 
 *** 2.4.1 ***
 - FIX: Fixed inconsistent LPCxxx Internal RC oscillator names (bug 3524138).
