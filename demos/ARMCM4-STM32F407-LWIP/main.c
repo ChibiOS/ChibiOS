@@ -58,7 +58,7 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 3 using the driver default configuration.
+   * Activates the serial driver 6 using the driver default configuration.
    */
   sdStart(&SD6, NULL);
 
