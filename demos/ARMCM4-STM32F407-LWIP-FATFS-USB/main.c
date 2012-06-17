@@ -24,6 +24,7 @@
 
 #include "lwipthread.h"
 
+#include "usbshell.h"
 #include "web/web.h"
 
 /*
@@ -58,7 +59,12 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 3 using the driver default configuration.
+   * Activates the shell on the USB-CDC.
+   */
+  usInit();
+
+  /*
+   * Activates the serial driver 6 using the driver default configuration.
    */
   sdStart(&SD6, NULL);
 
@@ -84,8 +90,9 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (palReadPad(GPIOA, GPIOA_BUTTON_WKUP) == 0)
-      TestThread(&SD6);
+    usStateCheck();
+    if (palReadPad(GPIOA, GPIOA_BUTTON_WKUP) != 0) {
+    }
     chThdSleepMilliseconds(500);
   }
 }
