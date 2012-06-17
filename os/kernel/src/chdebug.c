@@ -108,7 +108,7 @@ void dbg_check_lock(void) {
 
   if ((dbg_isr_cnt != 0) || (dbg_lock_cnt != 0))
     chDbgPanic("SV#4");
-  dbg_lock_cnt = 1;
+  dbg_enter_lock();
 }
 
 /**
@@ -120,7 +120,7 @@ void dbg_check_unlock(void) {
 
   if ((dbg_isr_cnt != 0) || (dbg_lock_cnt <= 0))
     chDbgPanic("SV#5");
-  dbg_lock_cnt = 0;
+  dbg_leave_lock();
 }
 
 /**
@@ -132,7 +132,7 @@ void dbg_check_lock_from_isr(void) {
 
   if ((dbg_isr_cnt <= 0) || (dbg_lock_cnt != 0))
     chDbgPanic("SV#6");
-  dbg_lock_cnt = 1;
+  dbg_enter_lock();
 }
 
 /**
@@ -144,7 +144,7 @@ void dbg_check_unlock_from_isr(void) {
 
   if ((dbg_isr_cnt <= 0) || (dbg_lock_cnt <= 0))
     chDbgPanic("SV#7");
-  dbg_lock_cnt = 0;
+  dbg_leave_lock();
 }
 
 /**

@@ -437,6 +437,8 @@ int main(void) {
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
    */
+  usbDisconnectBus(serusbcfg.usbp);
+  chThdSleepMilliseconds(1000);
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
   usbConnectBus(serusbcfg.usbp);

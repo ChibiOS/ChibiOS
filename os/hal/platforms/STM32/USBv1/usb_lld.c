@@ -174,8 +174,12 @@ static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
       iqp->q_wrptr = iqp->q_buffer;
   }
 
-  /* Updating queue counter.*/
+  /* Updating queue.*/
+  chSysLockFromIsr();
   iqp->q_counter += n;
+  while (notempty(&iqp->q_waiting))
+    chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
+  chSysUnlockFromIsr();
 }
 
 /**
@@ -240,6 +244,19 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
     if (oqp->q_rdptr >= oqp->q_top)
       oqp->q_rdptr = oqp->q_buffer;
   }
+
+  /* Updating queue. Note, the lock is done in this unusual way because this
+     function can be called from both ISR and thread context so the kind
+     of lock function to be invoked cannot be decided beforehand.*/
+  port_lock();
+  dbg_enter_lock();
+
+  oqp->q_counter += n;
+  while (notempty(&oqp->q_waiting))
+    chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
+
+  dbg_leave_lock();
+  port_unlock();
 }
 
 /**
@@ -264,31 +281,6 @@ static void usb_prepare_receive(USBDriver *usbp, usbep_t ep, size_t n) {
   else
     osp->rxpkts = (uint16_t)((n + usbp->epc[ep]->out_maxsize - 1) /
                              usbp->epc[ep]->out_maxsize);
-}
-
-/**
- * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @post    The endpoint is ready for @p usbStartTransmitI().
- * @note    The transmit transaction size is equal to the data contained
- *          in the queue.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-static void usb_prepare_transmit(USBDriver *usbp, usbep_t ep, size_t n) {
-  USBInEndpointState *isp = usbp->epc[ep]->in_state;
-
-  isp->txsize = n;
-  isp->txcnt  = 0;
-
-  /* Transfer initialization.*/
-  if (n > (size_t)usbp->epc[ep]->in_maxsize)
-    n = (size_t)usbp->epc[ep]->in_maxsize;
-  usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
-                               isp->mode.linear.txbuf, n);
 }
 
 /*===========================================================================*/
@@ -382,9 +374,15 @@ CH_IRQ_HANDLER(Vector90) {
           n = epcp->in_maxsize;
         else
           n = epcp->in_state->txsize;
-        usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
-                                     epcp->in_state->mode.linear.txbuf,
-                                     n);
+
+        if (epcp->in_state->txqueued)
+          usb_packet_write_from_queue(USB_GET_DESCRIPTOR(ep),
+                                      epcp->in_state->mode.queue.txqueue,
+                                      n);
+        else
+          usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
+                                       epcp->in_state->mode.linear.txbuf,
+                                       n);
         chSysLockFromIsr();
         usb_lld_start_in(usbp, ep);
         chSysUnlockFromIsr();
@@ -406,8 +404,15 @@ CH_IRQ_HANDLER(Vector90) {
         stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
         n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
 
-        /* Reads the packet into the linear buffer.*/
-        usb_packet_read_to_buffer(udp, epcp->out_state->mode.linear.rxbuf, n);
+        /* Reads the packet into the defined buffer.*/
+        if (epcp->out_state->rxqueued)
+          usb_packet_read_to_queue(udp,
+                                   epcp->out_state->mode.queue.rxqueue,
+                                   n);
+        else
+          usb_packet_read_to_buffer(udp,
+                                    epcp->out_state->mode.linear.rxbuf,
+                                    n);
 
         /* Transaction data updated.*/
         epcp->out_state->mode.linear.rxbuf  += n;
@@ -735,6 +740,7 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
   /* Transfer initialization.*/
   if (n > (size_t)usbp->epc[ep]->in_maxsize)
     n = (size_t)usbp->epc[ep]->in_maxsize;
+
   usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
                                isp->mode.linear.txbuf, n);
 }
@@ -788,8 +794,9 @@ void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
   /* Transfer initialization.*/
   if (n > (size_t)usbp->epc[ep]->in_maxsize)
     n = (size_t)usbp->epc[ep]->in_maxsize;
-  usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
-                               isp->mode.linear.txbuf, n);
+
+  usb_packet_write_from_queue(USB_GET_DESCRIPTOR(ep),
+                              isp->mode.queue.txqueue, n);
 }
 
 /**
@@ -801,13 +808,8 @@ void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
  * @notapi
  */
 void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
-  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  if (osp->rxqueued) {
-    InputQueue *iqp = osp->mode.queue.rxqueue;
-    while (notempty(&iqp->q_waiting))
-      chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
-  }
+  (void)usbp;
 
   EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
 }
@@ -821,13 +823,8 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
-  USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  if (isp->txqueued) {
-    OutputQueue *oqp = isp->mode.queue.txqueue;
-    while (notempty(&oqp->q_waiting))
-      chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
-  }
+  (void)usbp;
 
   EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
 }

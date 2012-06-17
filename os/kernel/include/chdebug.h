@@ -77,6 +77,8 @@
 /*===========================================================================*/
 
 #if !CH_DBG_SYSTEM_STATE_CHECK
+#define dbg_enter_lock()
+#define dbg_leave_lock()
 #define dbg_check_disable()
 #define dbg_check_suspend()
 #define dbg_check_enable()
@@ -88,6 +90,9 @@
 #define dbg_check_leave_isr()
 #define chDbgCheckClassI();
 #define chDbgCheckClassS();
+#else
+#define dbg_enter_lock() (dbg_lock_cnt = 1)
+#define dbg_leave_lock() (dbg_lock_cnt = 0)
 #endif
 
 /*===========================================================================*/
@@ -213,6 +218,8 @@ extern char *dbg_panic_msg;
 extern "C" {
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
+  extern cnt_t dbg_isr_cnt;
+  extern cnt_t dbg_lock_cnt;
   void dbg_check_disable(void);
   void dbg_check_suspend(void);
   void dbg_check_enable(void);

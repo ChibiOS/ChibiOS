@@ -313,10 +313,11 @@ void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
               "usbEnableEndpointI(), #2", "already initialized");
 
   /* Logically enabling the endpoint in the USBDriver structure.*/
-//  if (!(epcp->ep_mode & USB_EP_MODE_PACKET)) {
+  if (epcp->in_state != NULL)
     memset(epcp->in_state, 0, sizeof(USBInEndpointState));
+  if (epcp->out_state != NULL)
     memset(epcp->out_state, 0, sizeof(USBOutEndpointState));
-//  }
+
   usbp->epc[ep] = epcp;
 
   /* Low level endpoint activation.*/
