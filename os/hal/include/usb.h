@@ -386,76 +386,6 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 #define usbGetReceiveStatusI(usbp, ep) ((usbp)->receiving & (1 << (ep)))
 
 /**
- * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
- * @post    The endpoint is ready for @p usbStartReceiveI().
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the received data
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-#define usbPrepareReceive(usbp, ep, buf, n)                                 \
-  usb_lld_prepare_receive(usbp, ep, buf, n)
-
-/**
- * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
- * @post    The endpoint is ready for @p usbStartTransmitI().
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to fetch the data to be transmitted
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-#define usbPrepareTransmit(usbp, ep, buf, n)                                \
-  usb_lld_prepare_transmit(usbp, ep, buf, n)
-
-/**
- * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
- * @post    The endpoint is ready for @p usbStartReceiveI().
- * @note    The receive transaction size is equal to the space in the queue
- *          rounded to the lower multiple of a packet size. Make sure there
- *          is room for at least one packet in the queue before starting
- *          the receive operation.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] iq        input queue to be filled with incoming data
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-#define usbPrepareQueuedReceive(usbp, ep, iq, n)                            \
-  usb_lld_prepare_queued_receive(usbp, ep, iq, n)
-
-/**
- * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
- * @post    The endpoint is ready for @p usbStartTransmitI().
- * @note    The transmit transaction size is equal to the data contained
- *          in the queue.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] oq        output queue to be fetched for outgoing data
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-#define usbPrepareQueuedTransmit(usbp, ep, oq, n)                           \
-  usb_lld_prepare_queued_transmit(usbp, ep, oq, n)
-
-/**
  * @brief   Returns the exact size of a receive transaction.
  * @details The received size can be different from the size specified in
  *          @p usbStartReceiveI() because the last packet could have a size
@@ -604,6 +534,14 @@ extern "C" {
                         const USBEndpointConfig *epcp);
   void usbDisableEndpointsI(USBDriver *usbp);
   void usbReadSetupI(USBDriver *usbp, usbep_t ep, uint8_t *buf);
+  void usbPrepareReceive(USBDriver *usbp, usbep_t ep,
+                         uint8_t *buf, size_t n);
+  void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
+                          const uint8_t *buf, size_t n);
+  void usbPrepareQueuedReceive(USBDriver *usbp, usbep_t ep,
+                               InputQueue *iqp, size_t n);
+  void usbPrepareQueuedTransmit(USBDriver *usbp, usbep_t ep,
+                                OutputQueue *oqp, size_t n);
   bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep);
   bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep);
   bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep);

@@ -188,61 +188,6 @@ static uint32_t otg_ram_alloc(USBDriver *usbp, size_t size) {
 }
 
 /**
- * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @post    The endpoint is ready for @p usbStartReceiveI().
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-static void otg_prepare_receive(USBDriver *usbp, usbep_t ep, size_t n) {
-  uint32_t pcnt;
-  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
-
-  osp->rxsize = n;
-  osp->rxcnt  = 0;
-
-  /* Transfer initialization.*/
-  pcnt = (n + usbp->epc[ep]->out_maxsize - 1) / usbp->epc[ep]->out_maxsize;
-  OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
-                         DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
-}
-
-/**
- * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @post    The endpoint is ready for @p usbStartTransmitI().
- * @note    The transmit transaction size is equal to the data contained
- *          in the queue.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-static void otg_prepare_transmit(USBDriver *usbp, usbep_t ep, size_t n) {
-  uint32_t pcnt;
-  USBInEndpointState *isp = usbp->epc[ep]->in_state;
-
-  isp->txsize = n;
-  isp->txcnt  = 0;
-
-  /* Transfer initialization.*/
-  if (n == 0) {
-    /* Special case, sending zero size packet.*/
-    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(1) | DIEPTSIZ_XFRSIZ(0);
-  }
-  else {
-    /* Normal case.*/
-    pcnt = (n + usbp->epc[ep]->in_maxsize - 1) / usbp->epc[ep]->in_maxsize;
-    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
-                           DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
-  }
-}
-
-/**
  * @brief   Pushes a series of words into a FIFO.
  *
  * @param[in] fifop     pointer to the FIFO register
@@ -963,18 +908,19 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[out] buf      buffer where to copy the received data
- * @param[in] n         maximum number of bytes to copy
  *
  * @notapi
  */
-void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
-                             uint8_t *buf, size_t n) {
+void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep) {
+  uint32_t pcnt;
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  osp->rxqueued           = FALSE;
-  osp->mode.linear.rxbuf  = buf;
-  otg_prepare_receive(usbp, ep, n);
+  /* Transfer initialization.*/
+  pcnt = (osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
+         usbp->epc[ep]->out_maxsize;
+  OTG->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
+                         DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
+
 }
 
 /**
@@ -982,64 +928,25 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep,
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
- * @param[in] buf       buffer where to fetch the data to be transmitted
- * @param[in] n         maximum number of bytes to copy
  *
  * @notapi
  */
-void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
-                              const uint8_t *buf, size_t n) {
+void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  isp->txqueued           = FALSE;
-  isp->mode.linear.txbuf  = buf;
-  otg_prepare_transmit(usbp, ep, n);
-}
+  /* Transfer initialization.*/
+  if (isp->txsize == 0) {
+    /* Special case, sending zero size packet.*/
+    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(1) | DIEPTSIZ_XFRSIZ(0);
+  }
+  else {
+    /* Normal case.*/
+    uint32_t pcnt = (isp->txsize + usbp->epc[ep]->in_maxsize - 1) /
+                    usbp->epc[ep]->in_maxsize;
+    OTG->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
+                           DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
+  }
 
-/**
- * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @post    The endpoint is ready for @p usbStartReceiveI().
- * @note    The receive transaction size is equal to the space in the queue
- *          rounded to the lower multiple of a packet size. Make sure there
- *          is room for at least one packet in the queue before starting
- *          the receive operation.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] iq        input queue to be filled with incoming data
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-void usb_lld_prepare_queued_receive(USBDriver *usbp, usbep_t ep,
-                                    InputQueue *iq, size_t n) {
-  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
-
-  osp->rxqueued           = TRUE;
-  osp->mode.queue.rxqueue = iq;
-  otg_prepare_receive(usbp, ep, n);
-}
-
-/**
- * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @post    The endpoint is ready for @p usbStartTransmitI().
- * @note    The transmit transaction size is equal to the data contained
- *          in the queue.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] oq        output queue to be fetched for outgoing data
- * @param[in] n         maximum number of bytes to copy
- *
- * @special
- */
-void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
-                                     OutputQueue *oq, size_t n) {
-  USBInEndpointState *isp = usbp->epc[ep]->in_state;
-
-  isp->txqueued           = TRUE;
-  isp->mode.queue.txqueue = oq;
-  otg_prepare_transmit(usbp, ep, n);
 }
 
 /**
