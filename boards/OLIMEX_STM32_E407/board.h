@@ -174,13 +174,12 @@
                              PIN_PUDR_PULLUP(5) |                           \
                              PIN_PUDR_PULLUP(6) |                           \
                              PIN_PUDR_PULLDOWN(GPIOA_OTG_FS_VBUS) |         \
-                             PIN_PUDR_PULLDOWN(GPIOA_SWCLK))
+                             PIN_PUDR_PULLDOWN(GPIOA_JTAG_TCK))
 #define VAL_GPIOA_ODR       0xFFFFFFFF
 #define VAL_GPIOA_AFRL      (PIN_AFIO_AF(GPIOA_ETH_RMII_REF_CLK, 11) |      \
                              PIN_AFIO_AF(GPIOA_ETH_RMII_MDIO, 11) |         \
                              PIN_AFIO_AF(GPIOA_ETH_RMII_CRS_DV, 11))
-#define VAL_GPIOA_AFRH      (PIN_AFIO_AF(GPIOA_MCO1, 0) |                   \
-                             PIN_AFIO_AF(GPIOA_OTG_FS_ID, 10) |             \
+#define VAL_GPIOA_AFRH      (PIN_AFIO_AF(GPIOA_OTG_FS_ID, 10) |             \
                              PIN_AFIO_AF(GPIOA_OTG_FS_DM, 10) |             \
                              PIN_AFIO_AF(GPIOA_OTG_FS_DP, 10) |             \
                              PIN_AFIO_AF(GPIOA_JTAG_TMS, 0) |               \
@@ -240,7 +239,6 @@
 /*
  * Port C setup.
  * All input with pull-up except:
- * PC0  - GPIOC_P0              (input pull-up).
  * PC1  - GPIOC_ETH_RMII_MDC    (alternate 11).
  * PC2  - GPIOC_SPI2_MISO       (alternate 5).
  * PC3  - GPIOC_SPI2_MOSI       (alternate 5).
@@ -257,7 +255,7 @@
  * PC14 - GPIOC_OSC32_IN        (input floating).
  * PC15 - GPIOC_OSC32_OUT       (input floating).
  */
-#define VAL_GPIOC_MODER     (PIN_MODE_INPUT(GPIOC_P0) |                     \
+#define VAL_GPIOC_MODER     (PIN_MODE_INPUT(0) |                            \
                              PIN_MODE_ALTERNATE(GPIOC_ETH_RMII_MDC) |       \
                              PIN_MODE_ALTERNATE(GPIOC_SPI2_MISO) |          \
                              PIN_MODE_ALTERNATE(GPIOC_SPI2_MOSI) |          \
@@ -275,7 +273,7 @@
                              PIN_MODE_INPUT(GPIOC_OSC32_OUT))
 #define VAL_GPIOC_OTYPER    0x00000000
 #define VAL_GPIOC_OSPEEDR   0xFFFFFFFF
-#define VAL_GPIOC_PUPDR     (PIN_PUDR_PULLUP(GPIOC_P0))
+#define VAL_GPIOC_PUPDR     (PIN_PUDR_PULLUP(0))
 #define VAL_GPIOC_ODR       0xFFFFFFFF
 #define VAL_GPIOC_AFRL      (PIN_AFIO_AF(GPIOC_ETH_RMII_MDC, 11) |          \
                              PIN_AFIO_AF(GPIOC_SPI2_MISO, 5) |              \
