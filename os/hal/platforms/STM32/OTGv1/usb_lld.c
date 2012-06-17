@@ -317,7 +317,7 @@ static void otg_fifo_write_from_queue(usbep_t ep,
     }
 
     /* If this condition is not satisfied then there is a word lying across
-       queue circular buffer boundary or there is a residual of data.*/
+       queue circular buffer boundary or there are some remaining bytes.*/
     if (ntogo <= 0)
       break;
 
@@ -331,7 +331,7 @@ static void otg_fifo_write_from_queue(usbep_t ep,
       ntogo--;
       i++;
     }
-    *fifop = dw;
+    *fifop = w;
   }
 
   /* Updating queue.*/
@@ -427,7 +427,7 @@ static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
     }
 
     /* If this condition is not satisfied then there is a word lying across
-       queue circular buffer boundary or there is a residual of data.*/
+       queue circular buffer boundary or there are some remaining bytes.*/
     if (ntogo <= 0)
       break;
 
