@@ -373,9 +373,20 @@
 
 /*
  * Port G setup.
- * All input with pull-up.
+ * All input with pull-up except:
+ * PG10 - GPIOG_SPI2_CS         (output push-pull).
+ * PG11 - GPIOG_ETH_RMII_TXEN   (alternate 11).
+ * PG12 - GPIOG_ETH_RMII_TXD0   (alternate 11).
+ * PG13 - GPIOG_ETH_RMII_TXD1   (alternate 11).
  */
-#define VAL_GPIOG_MODER     0x00000000
+#define GPIOG_SPI2_CS           10
+#define GPIOG_ETH_RMII_TXEN     11
+#define GPIOG_ETH_RMII_TXD0     13
+#define GPIOG_ETH_RMII_TXD1     14
+#define VAL_GPIOG_MODER     (PIN_MODE_OUTPUT(GPIOD_SD_CMD) |                \
+                             PIN_MODE_ALTERNATE(GPIOG_ETH_RMII_TXEN) |      \
+                             PIN_MODE_ALTERNATE(GPIOG_ETH_RMII_TXD0) |      \
+                             PIN_MODE_ALTERNATE(GPIOG_ETH_RMII_TXD1))
 #define VAL_GPIOG_OTYPER    0x00000000
 #define VAL_GPIOG_OSPEEDR   0xFFFFFFFF
 #define VAL_GPIOG_PUPDR     (PIN_PUDR_PULLUP(0) |                           \
@@ -388,15 +399,17 @@
                              PIN_PUDR_PULLUP(7) |                           \
                              PIN_PUDR_PULLUP(8) |                           \
                              PIN_PUDR_PULLUP(9) |                           \
-                             PIN_PUDR_PULLUP(10) |                          \
-                             PIN_PUDR_PULLUP(11) |                          \
+                             PIN_PUDR_FLOATING(GPIOD_SD_CMD) |              \
+                             PIN_PUDR_FLOATING(GPIOG_ETH_RMII_TXEN) |       \
                              PIN_PUDR_PULLUP(12) |                          \
-                             PIN_PUDR_PULLUP(13) |                          \
-                             PIN_PUDR_PULLUP(14) |                          \
+                             PIN_PUDR_FLOATING(GPIOG_ETH_RMII_TXD0) |       \
+                             PIN_PUDR_FLOATING(GPIOG_ETH_RMII_TXD1) |       \
                              PIN_PUDR_PULLUP(15))
 #define VAL_GPIOG_ODR       0xFFFFFFFF
 #define VAL_GPIOG_AFRL      0x00000000
-#define VAL_GPIOG_AFRH      0x00000000
+#define VAL_GPIOG_AFRH      (PIN_AFIO_AF(GPIOG_ETH_RMII_TXEN, 11) |         \
+                             PIN_AFIO_AF(GPIOG_ETH_RMII_TXD0, 11) |         \
+                             PIN_AFIO_AF(GPIOG_ETH_RMII_TXD1, 11))
 
 /*
  * Port H setup.
