@@ -151,12 +151,13 @@ static void usb_packet_read_to_buffer(stm32_usb_descriptor_t *udp,
  */
 static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
                                      InputQueue *iqp, size_t n) {
-  uint32_t w;
   size_t nhw;
   uint32_t *pmap= USB_ADDR2PTR(udp->RXADDR0);
 
   nhw = n / 2;
   while (nhw > 0) {
+    uint32_t w;
+
     w = *pmap++;
     *iqp->q_wrptr++ = (uint8_t)w;
     if (iqp->q_wrptr >= iqp->q_top)
@@ -168,18 +169,13 @@ static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
   }
   /* Last byte for odd numbers.*/
   if ((n & 1) != 0) {
-    w = *pmap++;
-    *iqp->q_wrptr++ = (uint8_t)w;
+    *iqp->q_wrptr++ = (uint8_t)*pmap;
     if (iqp->q_wrptr >= iqp->q_top)
       iqp->q_wrptr = iqp->q_buffer;
   }
 
-  /* Updating queue.*/
-  chSysLockFromIsr();
+  /* Updating queue counter.*/
   iqp->q_counter += n;
-  while (notempty(&iqp->q_waiting))
-    chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
-  chSysUnlockFromIsr();
 }
 
 /**
@@ -205,6 +201,44 @@ static void usb_packet_write_from_buffer(stm32_usb_descriptor_t *udp,
     *pmap++ = *(uint16_t *)buf;
     buf += 2;
     n--;
+  }
+}
+
+/**
+ * @brief   Writes to a dedicated packet buffer.
+ *
+ * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
+ * @param[in] buf       buffer where to fetch the packet data
+ * @param[in] n         maximum number of bytes to copy. This value must
+ *                      not exceed the maximum packet size for this endpoint.
+ *
+ * @notapi
+ */
+static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
+                                        OutputQueue *oqp, size_t n) {
+  size_t nhw;
+  uint32_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
+
+  udp->TXCOUNT0 = (uint16_t)n;
+  nhw = n / 2;
+  while (nhw > 0) {
+    uint32_t w;
+
+    w  = (uint32_t)*oqp->q_rdptr++;
+    if (oqp->q_rdptr >= oqp->q_top)
+      oqp->q_rdptr = oqp->q_buffer;
+    w |= (uint32_t)*oqp->q_rdptr++ << 8;
+    if (oqp->q_rdptr >= oqp->q_top)
+      oqp->q_rdptr = oqp->q_buffer;
+    *pmap++ = w;
+    nhw--;
+  }
+
+  /* Last byte for odd numbers.*/
+  if ((n & 1) != 0) {
+    *pmap = (uint32_t)*oqp->q_rdptr++;
+    if (oqp->q_rdptr >= oqp->q_top)
+      oqp->q_rdptr = oqp->q_buffer;
   }
 }
 
@@ -351,7 +385,9 @@ CH_IRQ_HANDLER(Vector90) {
         usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
                                      epcp->in_state->mode.linear.txbuf,
                                      n);
+        chSysLockFromIsr();
         usb_lld_start_in(usbp, ep);
+        chSysUnlockFromIsr();
       }
       else {
         /* Transfer completed, invokes the callback.*/
@@ -693,7 +729,14 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep,
 
   isp->txqueued           = FALSE;
   isp->mode.linear.txbuf  = buf;
-  usb_prepare_transmit(usbp, ep, n);
+  isp->txsize = n;
+  isp->txcnt  = 0;
+
+  /* Transfer initialization.*/
+  if (n > (size_t)usbp->epc[ep]->in_maxsize)
+    n = (size_t)usbp->epc[ep]->in_maxsize;
+  usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
+                               isp->mode.linear.txbuf, n);
 }
 
 /**
@@ -739,7 +782,14 @@ void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
 
   isp->txqueued           = TRUE;
   isp->mode.queue.txqueue = oq;
-  usb_prepare_transmit(usbp, ep, n);
+  isp->txsize = n;
+  isp->txcnt  = 0;
+
+  /* Transfer initialization.*/
+  if (n > (size_t)usbp->epc[ep]->in_maxsize)
+    n = (size_t)usbp->epc[ep]->in_maxsize;
+  usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
+                               isp->mode.linear.txbuf, n);
 }
 
 /**
@@ -751,8 +801,13 @@ void usb_lld_prepare_queued_transmit(USBDriver *usbp, usbep_t ep,
  * @notapi
  */
 void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
+  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  (void)usbp;
+  if (osp->rxqueued) {
+    InputQueue *iqp = osp->mode.queue.rxqueue;
+    while (notempty(&iqp->q_waiting))
+      chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
+  }
 
   EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
 }
@@ -766,8 +821,13 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
+  USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  (void)usbp;
+  if (isp->txqueued) {
+    OutputQueue *oqp = isp->mode.queue.txqueue;
+    while (notempty(&oqp->q_waiting))
+      chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
+  }
 
   EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
 }
