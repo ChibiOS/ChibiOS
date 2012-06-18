@@ -217,7 +217,8 @@ typedef enum {
       if ((adcp)->depth > 1) {                                              \
         /* Invokes the callback passing the 2nd half of the buffer.*/       \
         size_t half = (adcp)->depth / 2;                                    \
-        (adcp)->grpp->end_cb(adcp, (adcp)->samples + half, half);           \
+        size_t half_index = half * (adcp)->grpp->num_channels;              \
+        (adcp)->grpp->end_cb(adcp, (adcp)->samples + half_index, half);     \
       }                                                                     \
       else {                                                                \
         /* Invokes the callback passing the whole buffer.*/                 \
@@ -233,7 +234,8 @@ typedef enum {
       if ((adcp)->depth > 1) {                                              \
         /* Invokes the callback passing the 2nd half of the buffer.*/       \
         size_t half = (adcp)->depth / 2;                                    \
-        (adcp)->grpp->end_cb(adcp, (adcp)->samples + half, half);           \
+        size_t half_index = half * (adcp)->grpp->num_channels;              \
+        (adcp)->grpp->end_cb(adcp, (adcp)->samples + half_index, half);     \
       }                                                                     \
       else {                                                                \
         /* Invokes the callback passing the whole buffer.*/                 \
@@ -289,13 +291,13 @@ extern "C" {
   void adcStart(ADCDriver *adcp, const ADCConfig *config);
   void adcStop(ADCDriver *adcp);
   void adcStartConversion(ADCDriver *adcp,
+                          const ADCConversionGroup *grpp,
+                          adcsample_t *samples,
+                          size_t depth);
+  void adcStartConversionI(ADCDriver *adcp,
                            const ADCConversionGroup *grpp,
                            adcsample_t *samples,
                            size_t depth);
-  void adcStartConversionI(ADCDriver *adcp,
-                            const ADCConversionGroup *grpp,
-                            adcsample_t *samples,
-                            size_t depth);
   void adcStopConversion(ADCDriver *adcp);
   void adcStopConversionI(ADCDriver *adcp);
 #if ADC_USE_WAIT
