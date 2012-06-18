@@ -79,8 +79,12 @@
 *****************************************************************************
 
 *** 2.4.2 ***
+- FIX: Fixed wrong DMA channels on USART2 in STM32F10X_MD_VL devices (bug
+  3536070).
 - FIX: Fixed lwIP-related files missing from version 2.4.1 (bug 3533887).
 
+- FIX: Fixed wrong MCO1 divider in STM32F2/F4 HAL (bug 3531289).
+  
 - FIX: Fixed timeout related race condition in STM32 I2C driver (bug 3530043).
 - FIX: Fixed wrong macro check in STM32 MAC driver (bug 3527179).
 - FIX: Fixed error in STM32L-Discovery board.h file (bug 3526918).

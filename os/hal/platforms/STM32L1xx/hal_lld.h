@@ -240,6 +240,7 @@
 /* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
 #define STM32_RTC_HAS_SUBSECONDS FALSE
+#define STM32_RTC_IS_CALENDAR   TRUE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO          FALSE
@@ -551,7 +552,7 @@
 #endif
 
 /**
- * @brief   Clock source for the RTC/LCD.
+ * @brief   RTC/LCD clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
 #define STM32_RTCSEL                STM32_RTCSEL_LSE

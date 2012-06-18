@@ -223,10 +223,10 @@
 
 #define STM32_MCO1PRE_MASK      (7 << 24)   /**< MCO1PRE mask.              */
 #define STM32_MCO1PRE_DIV1      (0 << 24)   /**< MCO1 divided by 1.         */
-#define STM32_MCO1PRE_DIV2      (1 << 24)   /**< MCO1 divided by 2.         */
-#define STM32_MCO1PRE_DIV3      (2 << 24)   /**< MCO1 divided by 3.         */
-#define STM32_MCO1PRE_DIV4      (3 << 24)   /**< MCO1 divided by 4.         */
-#define STM32_MCO1PRE_DIV5      (4 << 24)   /**< MCO1 divided by 5.         */
+#define STM32_MCO1PRE_DIV2      (4 << 24)   /**< MCO1 divided by 2.         */
+#define STM32_MCO1PRE_DIV3      (5 << 24)   /**< MCO1 divided by 3.         */
+#define STM32_MCO1PRE_DIV4      (6 << 24)   /**< MCO1 divided by 4.         */
+#define STM32_MCO1PRE_DIV5      (7 << 24)   /**< MCO1 divided by 5.         */
 
 #define STM32_MCO2PRE_MASK      (7 << 27)   /**< MCO2PRE mask.              */
 #define STM32_MCO2PRE_DIV1      (0 << 27)   /**< MCO2 divided by 1.         */
@@ -343,7 +343,7 @@
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
-#define STM32_RTC_HAS_SUBSECONDS TRUE
+#define STM32_RTC_HAS_SUBSECONDS FALSE
 #define STM32_RTC_IS_CALENDAR   TRUE
 
 /* SDIO attributes.*/
@@ -690,7 +690,7 @@
 #endif
 
 /**
- * @brief   RTC source clock.
+ * @brief   RTC clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
 #define STM32_RTCSEL                STM32_RTCSEL_LSE
