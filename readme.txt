@@ -81,8 +81,12 @@
 *** 2.4.2 ***
 - FIX: Fixed wrong DMA channels on USART2 in STM32F10X_MD_VL devices (bug
   3536070).
+  
+- FIX: Fixed unreliable PHY initialization (bug 3534819)(backported to 2.4.2).
+
 - FIX: Fixed lwIP-related files missing from version 2.4.1 (bug 3533887).
 
+- FIX: Fixed wrong MAC divider setting in STM32 MAC driver (bug 3531290).
 - FIX: Fixed wrong MCO1 divider in STM32F2/F4 HAL (bug 3531289).
 - FIX: Fixed missing "break" in AVR PAL driver (bug 3530924).
 - FIX: Fixed timeout related race condition in STM32 I2C driver (bug 3530043).

@@ -48,7 +48,11 @@
 #define BUFFER_SIZE ((((STM32_MAC_BUFFERS_SIZE - 1) | 3) + 1) / 4)
 
 /* MII divider optimal value.*/
-#if (STM32_HCLK >= 60000000)
+#if (STM32_HCLK >= 150000000)
+#define MACMIIDR_CR ETH_MACMIIAR_CR_Div102
+#elif (STM32_HCLK >= 100000000)
+#define MACMIIDR_CR ETH_MACMIIAR_CR_Div62
+#elif (STM32_HCLK >= 60000000)
 #define MACMIIDR_CR     ETH_MACMIIAR_CR_Div42
 #elif (STM32_HCLK >= 35000000)
 #define MACMIIDR_CR     ETH_MACMIIAR_CR_Div26
@@ -268,6 +272,9 @@ void mac_lld_init(void) {
 #else
   /* PHY soft reset procedure.*/
   mii_write(&ETHD1, MII_BMCR, BMCR_RESET);
+#if defined(BOARD_PHY_RESET_DELAY)
+  halPolledDelay(BOARD_PHY_RESET_DELAY);
+#endif
   while (mii_read(&ETHD1, MII_BMCR) & BMCR_RESET)
     ;
 #endif
