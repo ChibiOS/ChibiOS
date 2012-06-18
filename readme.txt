@@ -86,6 +86,7 @@
 
 - FIX: Fixed lwIP-related files missing from version 2.4.1 (bug 3533887).
 
+- FIX: Fixed problem with arm-v6m and state checker (bug 3532591).
 - FIX: Fixed wrong MAC divider setting in STM32 MAC driver (bug 3531290).
 - FIX: Fixed wrong MCO1 divider in STM32F2/F4 HAL (bug 3531289).
 - FIX: Fixed missing "break" in AVR PAL driver (bug 3530924).

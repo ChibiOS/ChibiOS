@@ -95,10 +95,10 @@ _port_switch_from_isr PROC
                 bl      dbg_check_lock
 #endif
                 bl      chSchDoReschedule
-_port_exit_from_isr
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      dbg_check_unlock
 #endif
+_port_exit_from_isr
                 ldr     r2, =SCB_ICSR
                 movs    r3, #128
 #if CORTEX_ALTERNATE_SWITCH
