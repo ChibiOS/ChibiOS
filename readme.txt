@@ -81,6 +81,8 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed wrong DMA channels on USART2 in STM32F10X_MD_VL devices (bug
+  3536070)(backported to 2.4.2).
 - FIX: Fixed issue with DMA channel init in STM32 ADC and SPI drivers (bug
   3535938)(backported to 2.2.10 and 2.4.2).
 - FIX: Fixed issue debugging mmc_spi (bug 3535887)(trunk only).
