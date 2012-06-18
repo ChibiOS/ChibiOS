@@ -104,7 +104,7 @@ void adc_lld_init(void) {
   ADCD1.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
-                  STM32_DMA_CR_TEIE        | STM32_DMA_CR_EN;
+                  STM32_DMA_CR_TEIE;
 
   /* Temporary activation.*/
   rccEnableADC1(FALSE);
@@ -206,6 +206,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmaStreamSetMemory0(adcp->dmastp, adcp->samples);
   dmaStreamSetTransactionSize(adcp->dmastp, n);
   dmaStreamSetMode(adcp->dmastp, mode);
+  dmaStreamEnable(adcp->dmastp);
 
   /* ADC setup.*/
   adcp->adc->CR1   = grpp->cr1 | ADC_CR1_SCAN;

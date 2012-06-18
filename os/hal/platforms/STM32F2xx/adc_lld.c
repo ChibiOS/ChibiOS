@@ -193,8 +193,7 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
-                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE        |
-                  STM32_DMA_CR_EN;
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
 #endif
 
 #if STM32_ADC_USE_ADC2
@@ -207,8 +206,7 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
-                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE        |
-                  STM32_DMA_CR_EN;
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
 #endif
 
 #if STM32_ADC_USE_ADC3
@@ -221,8 +219,7 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
-                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE        |
-                  STM32_DMA_CR_EN;
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
 #endif
 
   /* The shared vector is initialized on driver initialization and never
@@ -345,6 +342,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
                                             (uint32_t)adcp->depth);
   dmaStreamSetMode(adcp->dmastp, mode);
+  dmaStreamEnable(adcp->dmastp);
 
   /* ADC setup.*/
   adcp->adc->SR    = 0;

@@ -336,6 +336,7 @@ typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
  *
  * @param[in] adcp      pointer to the @p ADCDriver object triggering the
  *                      callback
+ * @param[in] err       ADC error code
  */
 typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);
 
