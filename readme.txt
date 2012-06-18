@@ -81,6 +81,12 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed issue with DMA channel init in STM32 ADC and SPI drivers (bug
+  3535938)(backported to 2.2.10 and 2.4.2).
+- FIX: Fixed issue debugging mmc_spi (bug 3535887)(trunk only).
+- FIX: Fixed unreliable PHY initialization (bug 3534819)(backported to 2.4.2).
+- FIX: Fixed wrong ADC callback buffer pointer in ADC driver (bug 3534767)
+  (backported to 2.2.10 and 2.4.2).
 - FIX: Fixed STM32F2 RTC subseconds (bug 3533414)(trunk only).
 - FIX: Fixed problem with arm-v6m and state checker (bug 3532591)(backported
   to 2.4.2).

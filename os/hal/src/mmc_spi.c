@@ -423,13 +423,13 @@ void mmcObjectInit(MMCDriver *mmcp) {
  * @brief   Configures and activates the MMC peripheral.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
- * @param[in] config    pointer to the @p MMCConfig object. Must be @p NULL.
+ * @param[in] config    pointer to the @p MMCConfig object.
  *
  * @api
  */
 void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
 
-  chDbgCheck((mmcp != NULL) && (config == NULL), "mmcStart");
+  chDbgCheck((mmcp != NULL) && (config != NULL), "mmcStart");
 
   chSysLock();
   chDbgAssert(mmcp->state == MMC_STOP, "mmcStart(), #1", "invalid state");

@@ -372,11 +372,14 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   dmaStreamSetMemory0(spip->dmarx, &dummyrx);
   dmaStreamSetTransactionSize(spip->dmarx, n);
-  dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmarx, spip->rxdmamode);
 
   dmaStreamSetMemory0(spip->dmatx, &dummytx);
   dmaStreamSetTransactionSize(spip->dmatx, n);
-  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmatx, spip->txdmamode);
+
+  dmaStreamEnable(spip->dmarx);
+  dmaStreamEnable(spip->dmatx);
 }
 
 /**
@@ -399,12 +402,14 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
 
   dmaStreamSetMemory0(spip->dmarx, rxbuf);
   dmaStreamSetTransactionSize(spip->dmarx, n);
-  dmaStreamSetMode(spip->dmarx, spip->rxdmamode| STM32_DMA_CR_MINC |
-                                                 STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmarx, spip->rxdmamode| STM32_DMA_CR_MINC);
+
   dmaStreamSetMemory0(spip->dmatx, txbuf);
   dmaStreamSetTransactionSize(spip->dmatx, n);
-  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_MINC |
-                                                  STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_MINC);
+
+  dmaStreamEnable(spip->dmarx);
+  dmaStreamEnable(spip->dmatx);
 }
 
 /**
@@ -424,12 +429,14 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   dmaStreamSetMemory0(spip->dmarx, &dummyrx);
   dmaStreamSetTransactionSize(spip->dmarx, n);
-  dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmarx, spip->rxdmamode);
 
   dmaStreamSetMemory0(spip->dmatx, txbuf);
   dmaStreamSetTransactionSize(spip->dmatx, n);
-  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_MINC |
-                                                  STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_MINC);
+
+  dmaStreamEnable(spip->dmarx);
+  dmaStreamEnable(spip->dmatx);
 }
 
 /**
@@ -449,11 +456,14 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   dmaStreamSetMemory0(spip->dmarx, rxbuf);
   dmaStreamSetTransactionSize(spip->dmarx, n);
-  dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_MINC |
-                                                  STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_MINC);
+
   dmaStreamSetMemory0(spip->dmatx, &dummytx);
   dmaStreamSetTransactionSize(spip->dmatx, n);
-  dmaStreamSetMode(spip->dmatx, spip->txdmamode | STM32_DMA_CR_EN);
+  dmaStreamSetMode(spip->dmatx, spip->txdmamode);
+
+  dmaStreamEnable(spip->dmarx);
+  dmaStreamEnable(spip->dmatx);
 }
 
 /**

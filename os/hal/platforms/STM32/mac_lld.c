@@ -265,6 +265,9 @@ void mac_lld_init(void) {
 #else
   /* PHY soft reset procedure.*/
   mii_write(&ETHD1, MII_BMCR, BMCR_RESET);
+#if defined(BOARD_PHY_RESET_DELAY)
+  halPolledDelay(BOARD_PHY_RESET_DELAY);
+#endif
   while (mii_read(&ETHD1, MII_BMCR) & BMCR_RESET)
     ;
 #endif

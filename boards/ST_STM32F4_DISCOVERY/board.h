@@ -259,7 +259,7 @@
                              PIN_PUDR_PULLUP(14) |                          \
                              PIN_PUDR_PULLUP(15))
 #define VAL_GPIOC_ODR       0xFFFFFFFF
-#define VAL_GPIOC_AFRL      PIN_AFIO_AF(GPIOC_MCLK, 6))
+#define VAL_GPIOC_AFRL      (PIN_AFIO_AF(GPIOC_MCLK, 6))
 #define VAL_GPIOC_AFRH      (PIN_AFIO_AF(GPIOC_SCLK, 6) |                   \
                              PIN_AFIO_AF(GPIOC_SDIN, 6))
 
