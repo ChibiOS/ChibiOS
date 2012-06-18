@@ -46,7 +46,11 @@
   /* Stream write buffer method.*/                                          \
   size_t (*write)(void *instance, const uint8_t *bp, size_t n);             \
   /* Stream read buffer method.*/                                           \
-  size_t (*read)(void *instance, uint8_t *bp, size_t n);
+  size_t (*read)(void *instance, uint8_t *bp, size_t n);                    \
+  /* Channel put method, blocking.*/                                        \
+  msg_t (*put)(void *instance, uint8_t b);                                  \
+  /* Channel get method, blocking.*/                                        \
+  msg_t (*get)(void *instance);                                             \
 
 /**
  * @brief   @p BaseSequentialStream specific data.
@@ -85,9 +89,8 @@ typedef struct {
  * @param[in] bp        pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred
  * @return              The number of bytes transferred. The return value can
- *                      be less than the specified number of bytes if the
- *                      stream reaches a physical end of file and cannot be
- *                      extended.
+ *                      be less than the specified number of bytes if an
+ *                      end-of-file condition has been met.
  *
  * @api
  */
@@ -101,12 +104,42 @@ typedef struct {
  * @param[out] bp       pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred
  * @return              The number of bytes transferred. The return value can
- *                      be less than the specified number of bytes if the
- *                      stream reaches the end of the available data.
+ *                      be less than the specified number of bytes if an
+ *                      end-of-file condition has been met.
  *
  * @api
  */
 #define chSequentialStreamRead(ip, bp, n) ((ip)->vmt->read(ip, bp, n))
+
+/**
+ * @brief   Sequential Stream blocking byte write.
+ * @details This function writes a byte value to a channel. If the channel
+ *          is not ready to accept data then the calling thread is suspended.
+ *
+ * @param[in] ip        pointer to a @p BaseChannel or derived class
+ * @param[in] b         the byte value to be written to the channel
+ *
+ * @return              The operation status.
+ * @retval Q_OK         if the operation succeeded.
+ * @retval Q_RESET      if an end-of-file condition has been met.
+ *
+ * @api
+ */
+#define chSequentialStreamPut(ip, b) ((ip)->vmt->put(ip, b))
+
+/**
+ * @brief   Sequential Stream blocking byte read.
+ * @details This function reads a byte value from a channel. If the data
+ *          is not available then the calling thread is suspended.
+ *
+ * @param[in] ip        pointer to a @p BaseChannel or derived class
+ *
+ * @return              A byte value from the queue.
+ * @retval Q_RESET      if an end-of-file condition has been met.
+ *
+ * @api
+ */
+#define chSequentialStreamGet(ip) ((ip)->vmt->get(ip))
 /** @} */
 
 #endif /* _CHSTREAMS_H_ */

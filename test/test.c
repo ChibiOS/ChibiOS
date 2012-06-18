@@ -87,11 +87,6 @@ void * ROMCONST wa[5] = {test.wa.T0, test.wa.T1, test.wa.T2,
  */
 static BaseSequentialStream *chp;
 
-static void _putc(BaseSequentialStream *chp, char c) {
-
-  chSequentialStreamWrite(chp, (const uint8_t *)&c, 1);
-}
-
 /**
  * @brief   Prints a decimal unsigned number.
  *
@@ -101,13 +96,13 @@ void test_printn(uint32_t n) {
   char buf[16], *p;
 
   if (!n)
-    _putc(chp, '0');
+    chSequentialStreamPut(chp, '0');
   else {
     p = buf;
     while (n)
       *p++ = (n % 10) + '0', n /= 10;
     while (p > buf)
-      _putc(chp, *--p);
+      chSequentialStreamPut(chp, *--p);
   }
 }
 
@@ -119,7 +114,7 @@ void test_printn(uint32_t n) {
 void test_print(const char *msgp) {
 
   while (*msgp)
-    _putc(chp, *msgp++);
+    chSequentialStreamPut(chp, *msgp++);
 }
 
 /**
@@ -145,7 +140,7 @@ static void print_tokens(void) {
   char *cp = tokens_buffer;
 
   while (cp < tokp)
-    _putc(chp, *cp++);
+    chSequentialStreamPut(chp, *cp++);
 }
 
 /**
@@ -310,7 +305,7 @@ static void print_line(void) {
   unsigned i;
 
   for (i = 0; i < 76; i++)
-    _putc(chp, '-');
+    chSequentialStreamPut(chp, '-');
   chSequentialStreamWrite(chp, (const uint8_t *)"\r\n", 2);
 }
 

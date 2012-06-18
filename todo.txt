@@ -7,7 +7,7 @@ N = Decided against.
 
 Version 2.5.0
 X Revision of the RTCv2 driver implementation.
-- USB driver model revision.
+X USB driver model revision.
   X STM32 OTG USB cell support for CL, F2, F4 devices.
 
 Within 2.5.x:

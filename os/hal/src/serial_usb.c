@@ -73,14 +73,14 @@ static size_t reads(void *ip, uint8_t *bp, size_t n) {
                          n, TIME_INFINITE);
 }
 
-static bool_t putwouldblock(void *ip) {
+static msg_t put(void *ip, uint8_t b) {
 
-  return chOQIsFullI(&((SerialUSBDriver *)ip)->oqueue);
+  return chOQPutTimeout(&((SerialUSBDriver *)ip)->oqueue, b, TIME_INFINITE);
 }
 
-static bool_t getwouldblock(void *ip) {
+static msg_t get(void *ip) {
 
-  return chIQIsEmptyI(&((SerialUSBDriver *)ip)->iqueue);
+  return chIQGetTimeout(&((SerialUSBDriver *)ip)->iqueue, TIME_INFINITE);
 }
 
 static msg_t putt(void *ip, uint8_t b, systime_t timeout) {
@@ -108,7 +108,7 @@ static chnflags_t getflags(void *ip) {
 }
 
 static const struct SerialUSBDriverVMT vmt = {
-  writes, reads, putwouldblock, getwouldblock,
+  writes, reads, put, get,
   putt, gett, writet, readt,
   getflags
 };

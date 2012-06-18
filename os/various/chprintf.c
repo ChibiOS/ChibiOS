@@ -37,11 +37,6 @@
 #define MAX_FILLER 11
 #define FLOAT_PRECISION 100000
 
-static void _putc(BaseSequentialStream *chp, char c) {
-
-  chSequentialStreamWrite(chp, (const uint8_t *)&c, 1);
-}
-
 static char *long_to_string_with_divisor(char *p,
                                          long num,
                                          unsigned radix,
@@ -133,7 +128,7 @@ void chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
       return;
     }
     if (c != '%') {
-      _putc(chp, (uint8_t)c);
+      chSequentialStreamPut(chp, (uint8_t)c);
       continue;
     }
     p = tmpbuf;
@@ -248,18 +243,18 @@ unsigned_common:
       width = -width;
     if (width < 0) {
       if (*s == '-' && filler == '0') {
-        _putc(chp, (uint8_t)*s++);
+        chSequentialStreamPut(chp, (uint8_t)*s++);
         i--;
       }
       do
-        _putc(chp, (uint8_t)filler);
+        chSequentialStreamPut(chp, (uint8_t)filler);
       while (++width != 0);
     }
     while (--i >= 0)
-      _putc(chp, (uint8_t)*s++);
+      chSequentialStreamPut(chp, (uint8_t)*s++);
 
     while (width) {
-      _putc(chp, (uint8_t)filler);
+      chSequentialStreamPut(chp, (uint8_t)filler);
       width--;
     }
   }

@@ -38,11 +38,6 @@
  */
 EventSource shell_terminated;
 
-static void _putc(BaseSequentialStream *chp, char c) {
-
-  chSequentialStreamWrite(chp, (const uint8_t *)&c, 1);
-}
-
 static char *_strtok(char *str, const char *delim, char **saveptr) {
   char *token;
   if (str)
@@ -271,9 +266,9 @@ bool_t shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
     }
     if (c == 8) {
       if (p != line) {
-        _putc(chp, c);
-        _putc(chp, 0x20);
-        _putc(chp, c);
+        chSequentialStreamPut(chp, c);
+        chSequentialStreamPut(chp, 0x20);
+        chSequentialStreamPut(chp, c);
         p--;
       }
       continue;
@@ -286,7 +281,7 @@ bool_t shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
     if (c < 0x20)
       continue;
     if (p < line + size - 1) {
-      _putc(chp, c);
+      chSequentialStreamPut(chp, c);
       *p++ = (char)c;
     }
   }

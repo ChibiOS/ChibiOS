@@ -168,7 +168,7 @@
 - NEW: Modified the SDC driver to implement the new block devices abstract
   interface.
 - NEW: Added two new functions to the MMC_SPI driver: mmcSync() and
-  mmc_Get_Info(). Also implemented the new block devices abstract
+  mmcGetInfo(). Also implemented the new block devices abstract
   interface. Moved the configuration parameters from mmcObjectInit() to
   the configuration structure saving some RAM space. Updated demos.
 - NEW: Added an abstract interface for block devices in the HAL. This
@@ -219,8 +219,11 @@
   lwIP demos (backported to 2.4.1).
 - NEW: lwIP related code is not centralized into a single place, no need to
   duplicate the code in each application or demo (backported to 2.4.1).
+- CHANGE: Added two new methods to the BaseSequentialStream interface:
+  chSequentialStreamPut() and chSequentialStreamGet().
 - CHANGE: Removed the chioch.h header from the kernel, now channels interface
-  is exported by the HAL.
+  is exported by the HAL. Removed functions chPutWouldBlock() and
+  chGetWouldBlock().
 - CHANGE: chprintf() now takes a BaseSequentialStream as parameter instead
   of a BaseChannel making it more generic.
 - CHANGE: Now the shell requires a BaseSequentialStream instead of a

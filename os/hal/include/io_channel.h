@@ -44,14 +44,10 @@
  */
 #define _base_channel_methods                                               \
   _base_sequential_stream_methods                                           \
-  /* Channel output check.*/                                                \
-  bool_t (*putwouldblock)(void *instance);                                  \
-  /* Channel input check.*/                                                 \
-  bool_t (*getwouldblock)(void *instance);                                  \
   /* Channel put method with timeout specification.*/                       \
-  msg_t (*put)(void *instance, uint8_t b, systime_t time);                  \
+  msg_t (*putt)(void *instance, uint8_t b, systime_t time);                 \
   /* Channel get method with timeout specification.*/                       \
-  msg_t (*get)(void *instance, systime_t time);                             \
+  msg_t (*gett)(void *instance, systime_t time);                            \
   /* Channel write method with timeout specification.*/                     \
   size_t (*writet)(void *instance, const uint8_t *bp,                       \
                   size_t n, systime_t time);                                \
@@ -93,56 +89,6 @@ typedef struct {
  * @{
  */
 /**
- * @brief   Channel output check.
- * @details This function verifies if a subsequent put/write operation would
- *          block.
- *
- * @param[in] ip        pointer to a @p BaseChannel or derived class
- *
- * @return              The output queue status.
- * @retval FALSE        if the output queue has space and would not block a
- *                      write operation.
- * @retval TRUE         if the output queue is full and would block a write
- *                      operation.
- *
- * @api
- */
-#define chnPutWouldBlock(ip) ((ip)->vmt->putwouldblock(ip))
-
-/**
- * @brief   Channel input check.
- * @details This function verifies if a subsequent get/read operation would
- *          block.
- *
- * @param[in] ip        pointer to a @p BaseChannel or derived class
- *
- * @return              The input queue status.
- * @retval FALSE        if the input queue contains data and would not block a
- *                      read operation.
- * @retval TRUE         if the input queue is empty and would block a read
- *                      operation.
- *
- * @api
- */
-#define chnGetWouldBlock(ip) ((ip)->vmt->getwouldblock(ip))
-
-/**
- * @brief   Channel blocking byte write.
- * @details This function writes a byte value to a channel. If the channel
- *          is not ready to accept data then the calling thread is suspended.
- *
- * @param[in] ip        pointer to a @p BaseChannel or derived class
- * @param[in] b         the byte value to be written to the channel
- *
- * @return              The operation status.
- * @retval Q_OK         if the operation succeeded.
- * @retval Q_RESET      if the channel associated queue (if any) was reset.
- *
- * @api
- */
-#define chnPut(ip, b) ((ip)->vmt->put(ip, b, TIME_INFINITE))
-
-/**
  * @brief   Channel blocking byte write with timeout.
  * @details This function writes a byte value to a channel. If the channel
  *          is not ready to accept data then the calling thread is suspended.
@@ -162,21 +108,6 @@ typedef struct {
  * @api
  */
 #define chnPutTimeout(ip, b, time) ((ip)->vmt->put(ip, b, time))
-
-/**
- * @brief   Channel blocking byte read.
- * @details This function reads a byte value from a channel. If the data
- *          is not available then the calling thread is suspended.
- *
- * @param[in] ip        pointer to a @p BaseChannel or derived class
- *
- * @return              A byte value from the queue.
- * @retval Q_RESET      if the channel associated queue (if any) has been
- *                      reset.
- *
- * @api
- */
-#define chnGet(ip) ((ip)->vmt->get(ip, TIME_INFINITE))
 
 /**
  * @brief   Channel blocking byte read with timeout.
