@@ -107,7 +107,7 @@ typedef struct {
  *
  * @api
  */
-#define chnPutTimeout(ip, b, time) ((ip)->vmt->put(ip, b, time))
+#define chnPutTimeout(ip, b, time) ((ip)->vmt->putt(ip, b, time))
 
 /**
  * @brief   Channel blocking byte read with timeout.
@@ -127,7 +127,7 @@ typedef struct {
  *
  * @api
  */
-#define chnGetTimeout(ip, time) ((ip)->vmt->get(ip, time))
+#define chnGetTimeout(ip, time) ((ip)->vmt->gett(ip, time))
 
 /**
  * @brief   Channel blocking write.
