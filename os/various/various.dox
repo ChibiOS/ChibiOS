@@ -91,14 +91,3 @@
  *
  * @ingroup various
  */
-
-/**
- * @defgroup lis302dl Interface module for LIS302DL MEMS
- *
- * @brief   Interface module for LIS302DL MEMS.
- * @details This module implements a generic interface for the LIS302DL
- *          STMicroelectronics MEMS device. The communication is performed
- *          through a standard SPI driver.
- *
- * @ingroup various
- */
