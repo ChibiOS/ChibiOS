@@ -156,7 +156,7 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
-- NEW: Validated CAN driver on STM32F2/F4.
+- NEW: Validated CAN driver on STM32F2/F4 (backported to 2.4.2).
 - NEW: USB implementation for STM32F105/F107/2xx/F4xx devices.
 - NEW: Improved SerialUSB driver using the new queued mode, much smaller
   than the previous driver.
