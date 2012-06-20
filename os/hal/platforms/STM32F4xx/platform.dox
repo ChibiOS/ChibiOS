@@ -77,6 +77,21 @@
  */
 
 /**
+ * @defgroup STM32F2xx_CAN STM32F2xx CAN Support
+ * @details The STM32F2xx CAN driver uses the CAN peripherals.
+ *
+ * @section stm32f2xx_can_1 Supported HW resources
+ * - bxCAN1.
+ * .
+ * @section stm32f2xx_can_2 STM32F2xx CAN driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Support for bxCAN sleep mode.
+ * - Programmable bxCAN interrupts priority level.
+ * .
+ * @ingroup STM32F2xx_DRIVERS
+ */
+
+/**
  * @defgroup STM32F4xx_EXT STM32F4xx EXT Support
  * @details The STM32F4xx EXT driver uses the EXTI peripheral.
  *
@@ -322,7 +337,7 @@
  * @details This RCC helper driver is used by the other drivers in order to
  *          access the shared RCC resources in a consistent way.
  *
- * @section stm32f1xx_rcc_1 Supported HW resources
+ * @section stm32f4xx_rcc_1 Supported HW resources
  * - RCC.
  * .
  * @section stm32f4xx_rcc_2 STM32F4xx RCC driver implementation features

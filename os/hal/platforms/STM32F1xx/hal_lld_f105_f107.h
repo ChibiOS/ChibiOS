@@ -233,6 +233,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          TRUE
+#define STM32_CAN_MAX_FILTERS   28
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC           TRUE
