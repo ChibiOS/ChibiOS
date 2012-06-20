@@ -81,6 +81,10 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed TIM8 not working in STM32 GPT driver (bug 3536523)(backported
+  to 2.4.2).
+- FIX: Fixed timer overflow not working in STM32 ICU driver for TIM1/TIM8 (bug
+  3536522)(backported to 2.4.2).
 - FIX: Fixed wrong DMA channels on USART2 in STM32F10X_MD_VL devices (bug
   3536070)(backported to 2.4.2).
 - FIX: Fixed issue with DMA channel init in STM32 ADC and SPI drivers (bug

@@ -61,13 +61,13 @@ static cdc_linecoding_t linecoding = {
  * Interface implementation.
  */
 
-static size_t writes(void *ip, const uint8_t *bp, size_t n) {
+static size_t write(void *ip, const uint8_t *bp, size_t n) {
 
   return chOQWriteTimeout(&((SerialUSBDriver *)ip)->oqueue, bp,
                           n, TIME_INFINITE);
 }
 
-static size_t reads(void *ip, uint8_t *bp, size_t n) {
+static size_t read(void *ip, uint8_t *bp, size_t n) {
 
   return chIQReadTimeout(&((SerialUSBDriver *)ip)->iqueue, bp,
                          n, TIME_INFINITE);
@@ -108,7 +108,7 @@ static chnflags_t getflags(void *ip) {
 }
 
 static const struct SerialUSBDriverVMT vmt = {
-  writes, reads, put, get,
+  write, read, put, get,
   putt, gett, writet, readt,
   getflags
 };
