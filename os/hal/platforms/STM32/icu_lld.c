@@ -135,11 +135,28 @@ CH_IRQ_HANDLER(TIM1_CC_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
+
+/**
+ * @brief   TIM1 compare interrupt handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(TIM1_UP_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  icu_lld_serve_interrupt(&ICUD1);
+
+  CH_IRQ_EPILOGUE();
+}
 #endif /* STM32_ICU_USE_TIM1 */
 
 #if STM32_ICU_USE_TIM2
 /**
- * @brief   TIM2 compare interrupt handler.
+ * @brief   TIM2 interrupt handler.
  * @note    It is assumed that the various sources are only activated if the
  *          associated callback pointer is not equal to @p NULL in order to not
  *          perform an extra check in a potentially critical interrupt handler.
@@ -158,7 +175,7 @@ CH_IRQ_HANDLER(TIM2_IRQHandler) {
 
 #if STM32_ICU_USE_TIM3
 /**
- * @brief   TIM3 compare interrupt handler.
+ * @brief   TIM3 interrupt handler.
  * @note    It is assumed that the various sources are only activated if the
  *          associated callback pointer is not equal to @p NULL in order to not
  *          perform an extra check in a potentially critical interrupt handler.
@@ -177,7 +194,7 @@ CH_IRQ_HANDLER(TIM3_IRQHandler) {
 
 #if STM32_ICU_USE_TIM4
 /**
- * @brief   TIM4 compare interrupt handler.
+ * @brief   TIM4 interrupt handler.
  * @note    It is assumed that the various sources are only activated if the
  *          associated callback pointer is not equal to @p NULL in order to not
  *          perform an extra check in a potentially critical interrupt handler.
@@ -196,7 +213,7 @@ CH_IRQ_HANDLER(TIM4_IRQHandler) {
 
 #if STM32_ICU_USE_TIM5
 /**
- * @brief   TIM5 compare interrupt handler.
+ * @brief   TIM5 interrupt handler.
  * @note    It is assumed that the various sources are only activated if the
  *          associated callback pointer is not equal to @p NULL in order to not
  *          perform an extra check in a potentially critical interrupt handler.
@@ -223,6 +240,23 @@ CH_IRQ_HANDLER(TIM5_IRQHandler) {
  * @isr
  */
 CH_IRQ_HANDLER(TIM8_CC_IRQHandler) {
+
+  CH_IRQ_PROLOGUE();
+
+  icu_lld_serve_interrupt(&ICUD8);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   TIM8 compare interrupt handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(TIM8_UP_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
@@ -298,6 +332,8 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM1();
       nvicEnableVector(TIM1_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
+      nvicEnableVector(TIM1_UP_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK2;
     }
 #endif
@@ -344,6 +380,8 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM8();
       nvicEnableVector(TIM8_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
+      nvicEnableVector(TIM8_UP_IRQn,
+                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK2;
     }
 #endif
@@ -403,6 +441,7 @@ void icu_lld_stop(ICUDriver *icup) {
 #if STM32_ICU_USE_TIM1
     if (&ICUD1 == icup) {
       nvicDisableVector(TIM1_CC_IRQn);
+      nvicDisableVector(TIM1_UP_IRQn);
       rccDisableTIM1(FALSE);
     }
 #endif
@@ -434,6 +473,7 @@ void icu_lld_stop(ICUDriver *icup) {
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
       nvicDisableVector(TIM8_CC_IRQn);
+      nvicDisableVector(TIM8_UP_IRQn);
       rccDisableTIM8(FALSE);
     }
 #endif

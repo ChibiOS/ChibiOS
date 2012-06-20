@@ -203,7 +203,7 @@ CH_IRQ_HANDLER(TIM5_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(TIM8_IRQHandler) {
+CH_IRQ_HANDLER(TIM8_UP_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
