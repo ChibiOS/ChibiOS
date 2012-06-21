@@ -53,8 +53,8 @@
 #define LPC11xx_GPT_USE_CT16B1              TRUE
 #define LPC11xx_GPT_USE_CT32B0              TRUE
 #define LPC11xx_GPT_USE_CT32B1              TRUE
-#define LPC11xx_GPT_CT16B0_IRQ_PRIORITY     0
-#define LPC11xx_GPT_CT16B1_IRQ_PRIORITY     1
+#define LPC11xx_GPT_CT16B0_IRQ_PRIORITY     1
+#define LPC11xx_GPT_CT16B1_IRQ_PRIORITY     3
 #define LPC11xx_GPT_CT32B0_IRQ_PRIORITY     2
 #define LPC11xx_GPT_CT32B1_IRQ_PRIORITY     2
 

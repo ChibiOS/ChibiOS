@@ -60,6 +60,23 @@
 #define STM32_RTCSEL                        STM32_RTCSEL_LSI
 
 /*
+ * ADC driver system settings.
+ */
+#define STM32_ADC_USE_ADC1                  TRUE
+#define STM32_ADC_ADC1_DMA_PRIORITY         2
+#define STM32_ADC_IRQ_PRIORITY              2
+#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     2
+
+/*
+ * EXT driver system settings.
+ */
+#define STM32_EXT_EXTI0_1_IRQ_PRIORITY      3
+#define STM32_EXT_EXTI2_3_IRQ_PRIORITY      3
+#define STM32_EXT_EXTI4_15_IRQ_PRIORITY     3
+#define STM32_EXT_EXTI16_IRQ_PRIORITY       3
+#define STM32_EXT_EXTI17_IRQ_PRIORITY       3
+
+/*
  * SERIAL driver system settings.
  */
 #define STM32_SERIAL_USE_USART1             TRUE

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    23-March-2012
+  * @version V1.0.1
+  * @date    20-April-2012
   * @brief   CMSIS Cortex-M0 Device Peripheral Access Layer Header File. 
   *          This file contains all the peripheral register's definitions, bits 
   *          definitions and memory mapping for STM32F0xx devices.  
@@ -61,7 +61,7 @@
   * @{
   */
   
-/* Uncomment the line below according to the target STM32F-0 device used in your 
+/* Uncomment the line below according to the target STM32F0 device used in your 
    application 
   */
 
@@ -71,8 +71,9 @@
 /*  Tip: To avoid modifying this file each time you need to switch between these
         devices, you can define the device in your toolchain compiler preprocessor.
 
- - STM32F0xx devices are STM32F050xx microcontrollers where the Flash memory 
-   density ranges between 32 and 64 Kbytes.
+ STM32F0xx devices are:
+    - STM32F050xx microcontrollers where the Flash memory density can go up to 32 Kbytes.
+    - STM32F051xx microcontrollers where the Flash memory density can go up to 64 Kbytes.
   */
 
 #if !defined (STM32F0XX)
@@ -138,11 +139,11 @@
 #endif /* LSE_VALUE */
 
 /**
- * @brief STM32F0xx Standard Peripheral Library version number V1.0.0
+ * @brief STM32F0xx Standard Peripheral Library version number V1.0.1
    */
 #define __STM32F0XX_STDPERIPH_VERSION_MAIN   (0x01) /*!< [31:24] main version */
 #define __STM32F0XX_STDPERIPH_VERSION_SUB1   (0x00) /*!< [23:16] sub1 version */
-#define __STM32F0XX_STDPERIPH_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
+#define __STM32F0XX_STDPERIPH_VERSION_SUB2   (0x01) /*!< [15:8]  sub2 version */
 #define __STM32F0XX_STDPERIPH_VERSION_RC     (0x00) /*!< [7:0]  release candidate */ 
 #define __STM32F0XX_STDPERIPH_VERSION        ((__STM32F0XX_STDPERIPH_VERSION_MAIN << 24)\
                                              |(__STM32F0XX_STDPERIPH_VERSION_SUB1 << 16)\
@@ -2179,266 +2180,263 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 /********************  Bits definition for RTC_TR register  *******************/
-#define RTC_TR_PM                            ((uint32_t)0x00400000)        /*!<  */
-#define RTC_TR_HT                            ((uint32_t)0x00300000)        /*!<  */
-#define RTC_TR_HT_0                          ((uint32_t)0x00100000)        /*!<  */
-#define RTC_TR_HT_1                          ((uint32_t)0x00200000)        /*!<  */
-#define RTC_TR_HU                            ((uint32_t)0x000F0000)        /*!<  */
-#define RTC_TR_HU_0                          ((uint32_t)0x00010000)        /*!<  */
-#define RTC_TR_HU_1                          ((uint32_t)0x00020000)        /*!<  */
-#define RTC_TR_HU_2                          ((uint32_t)0x00040000)        /*!<  */
-#define RTC_TR_HU_3                          ((uint32_t)0x00080000)        /*!<  */
-#define RTC_TR_MNT                           ((uint32_t)0x00007000)        /*!<  */
-#define RTC_TR_MNT_0                         ((uint32_t)0x00001000)        /*!<  */
-#define RTC_TR_MNT_1                         ((uint32_t)0x00002000)        /*!<  */
-#define RTC_TR_MNT_2                         ((uint32_t)0x00004000)        /*!<  */
-#define RTC_TR_MNU                           ((uint32_t)0x00000F00)        /*!<  */
-#define RTC_TR_MNU_0                         ((uint32_t)0x00000100)        /*!<  */
-#define RTC_TR_MNU_1                         ((uint32_t)0x00000200)        /*!<  */
-#define RTC_TR_MNU_2                         ((uint32_t)0x00000400)        /*!<  */
-#define RTC_TR_MNU_3                         ((uint32_t)0x00000800)        /*!<  */
-#define RTC_TR_ST                            ((uint32_t)0x00000070)        /*!<  */
-#define RTC_TR_ST_0                          ((uint32_t)0x00000010)        /*!<  */
-#define RTC_TR_ST_1                          ((uint32_t)0x00000020)        /*!<  */
-#define RTC_TR_ST_2                          ((uint32_t)0x00000040)        /*!<  */
-#define RTC_TR_SU                            ((uint32_t)0x0000000F)        /*!<  */
-#define RTC_TR_SU_0                          ((uint32_t)0x00000001)        /*!<  */
-#define RTC_TR_SU_1                          ((uint32_t)0x00000002)        /*!<  */
-#define RTC_TR_SU_2                          ((uint32_t)0x00000004)        /*!<  */
-#define RTC_TR_SU_3                          ((uint32_t)0x00000008)        /*!<  */
+#define RTC_TR_PM                            ((uint32_t)0x00400000)
+#define RTC_TR_HT                            ((uint32_t)0x00300000)
+#define RTC_TR_HT_0                          ((uint32_t)0x00100000)
+#define RTC_TR_HT_1                          ((uint32_t)0x00200000)
+#define RTC_TR_HU                            ((uint32_t)0x000F0000)
+#define RTC_TR_HU_0                          ((uint32_t)0x00010000)
+#define RTC_TR_HU_1                          ((uint32_t)0x00020000)
+#define RTC_TR_HU_2                          ((uint32_t)0x00040000)
+#define RTC_TR_HU_3                          ((uint32_t)0x00080000)
+#define RTC_TR_MNT                           ((uint32_t)0x00007000)
+#define RTC_TR_MNT_0                         ((uint32_t)0x00001000)
+#define RTC_TR_MNT_1                         ((uint32_t)0x00002000)
+#define RTC_TR_MNT_2                         ((uint32_t)0x00004000)
+#define RTC_TR_MNU                           ((uint32_t)0x00000F00)
+#define RTC_TR_MNU_0                         ((uint32_t)0x00000100)
+#define RTC_TR_MNU_1                         ((uint32_t)0x00000200)
+#define RTC_TR_MNU_2                         ((uint32_t)0x00000400)
+#define RTC_TR_MNU_3                         ((uint32_t)0x00000800)
+#define RTC_TR_ST                            ((uint32_t)0x00000070)
+#define RTC_TR_ST_0                          ((uint32_t)0x00000010)
+#define RTC_TR_ST_1                          ((uint32_t)0x00000020)
+#define RTC_TR_ST_2                          ((uint32_t)0x00000040)
+#define RTC_TR_SU                            ((uint32_t)0x0000000F)
+#define RTC_TR_SU_0                          ((uint32_t)0x00000001)
+#define RTC_TR_SU_1                          ((uint32_t)0x00000002)
+#define RTC_TR_SU_2                          ((uint32_t)0x00000004)
+#define RTC_TR_SU_3                          ((uint32_t)0x00000008)
 
 /********************  Bits definition for RTC_DR register  *******************/
-#define RTC_DR_YT                            ((uint32_t)0x00F00000)        /*!<  */
-#define RTC_DR_YT_0                          ((uint32_t)0x00100000)        /*!<  */
-#define RTC_DR_YT_1                          ((uint32_t)0x00200000)        /*!<  */
-#define RTC_DR_YT_2                          ((uint32_t)0x00400000)        /*!<  */
-#define RTC_DR_YT_3                          ((uint32_t)0x00800000)        /*!<  */
-#define RTC_DR_YU                            ((uint32_t)0x000F0000)        /*!<  */
-#define RTC_DR_YU_0                          ((uint32_t)0x00010000)        /*!<  */
-#define RTC_DR_YU_1                          ((uint32_t)0x00020000)        /*!<  */
-#define RTC_DR_YU_2                          ((uint32_t)0x00040000)        /*!<  */
-#define RTC_DR_YU_3                          ((uint32_t)0x00080000)        /*!<  */
-#define RTC_DR_WDU                           ((uint32_t)0x0000E000)        /*!<  */
-#define RTC_DR_WDU_0                         ((uint32_t)0x00002000)        /*!<  */
-#define RTC_DR_WDU_1                         ((uint32_t)0x00004000)        /*!<  */
-#define RTC_DR_WDU_2                         ((uint32_t)0x00008000)        /*!<  */
-#define RTC_DR_MT                            ((uint32_t)0x00001000)        /*!<  */
-#define RTC_DR_MU                            ((uint32_t)0x00000F00)        /*!<  */
-#define RTC_DR_MU_0                          ((uint32_t)0x00000100)        /*!<  */
-#define RTC_DR_MU_1                          ((uint32_t)0x00000200)        /*!<  */
-#define RTC_DR_MU_2                          ((uint32_t)0x00000400)        /*!<  */
-#define RTC_DR_MU_3                          ((uint32_t)0x00000800)        /*!<  */
-#define RTC_DR_DT                            ((uint32_t)0x00000030)        /*!<  */
-#define RTC_DR_DT_0                          ((uint32_t)0x00000010)        /*!<  */
-#define RTC_DR_DT_1                          ((uint32_t)0x00000020)        /*!<  */
-#define RTC_DR_DU                            ((uint32_t)0x0000000F)        /*!<  */
-#define RTC_DR_DU_0                          ((uint32_t)0x00000001)        /*!<  */
-#define RTC_DR_DU_1                          ((uint32_t)0x00000002)        /*!<  */
-#define RTC_DR_DU_2                          ((uint32_t)0x00000004)        /*!<  */
-#define RTC_DR_DU_3                          ((uint32_t)0x00000008)        /*!<  */
+#define RTC_DR_YT                            ((uint32_t)0x00F00000)
+#define RTC_DR_YT_0                          ((uint32_t)0x00100000)
+#define RTC_DR_YT_1                          ((uint32_t)0x00200000)
+#define RTC_DR_YT_2                          ((uint32_t)0x00400000)
+#define RTC_DR_YT_3                          ((uint32_t)0x00800000)
+#define RTC_DR_YU                            ((uint32_t)0x000F0000)
+#define RTC_DR_YU_0                          ((uint32_t)0x00010000)
+#define RTC_DR_YU_1                          ((uint32_t)0x00020000)
+#define RTC_DR_YU_2                          ((uint32_t)0x00040000)
+#define RTC_DR_YU_3                          ((uint32_t)0x00080000)
+#define RTC_DR_WDU                           ((uint32_t)0x0000E000)
+#define RTC_DR_WDU_0                         ((uint32_t)0x00002000)
+#define RTC_DR_WDU_1                         ((uint32_t)0x00004000)
+#define RTC_DR_WDU_2                         ((uint32_t)0x00008000)
+#define RTC_DR_MT                            ((uint32_t)0x00001000)
+#define RTC_DR_MU                            ((uint32_t)0x00000F00)
+#define RTC_DR_MU_0                          ((uint32_t)0x00000100)
+#define RTC_DR_MU_1                          ((uint32_t)0x00000200)
+#define RTC_DR_MU_2                          ((uint32_t)0x00000400)
+#define RTC_DR_MU_3                          ((uint32_t)0x00000800)
+#define RTC_DR_DT                            ((uint32_t)0x00000030)
+#define RTC_DR_DT_0                          ((uint32_t)0x00000010)
+#define RTC_DR_DT_1                          ((uint32_t)0x00000020)
+#define RTC_DR_DU                            ((uint32_t)0x0000000F)
+#define RTC_DR_DU_0                          ((uint32_t)0x00000001)
+#define RTC_DR_DU_1                          ((uint32_t)0x00000002)
+#define RTC_DR_DU_2                          ((uint32_t)0x00000004)
+#define RTC_DR_DU_3                          ((uint32_t)0x00000008)
 
 /********************  Bits definition for RTC_CR register  *******************/
-#define RTC_CR_COE                           ((uint32_t)0x00800000)        /*!<  */
-#define RTC_CR_OSEL                          ((uint32_t)0x00600000)        /*!<  */
-#define RTC_CR_OSEL_0                        ((uint32_t)0x00200000)        /*!<  */
-#define RTC_CR_OSEL_1                        ((uint32_t)0x00400000)        /*!<  */
-#define RTC_CR_POL                           ((uint32_t)0x00100000)        /*!<  */
-#define RTC_CR_CALSEL                        ((uint32_t)0x00080000)        /*!<  */
-#define RTC_CR_BCK                           ((uint32_t)0x00040000)        /*!<  */
-#define RTC_CR_SUB1H                         ((uint32_t)0x00020000)        /*!<  */
-#define RTC_CR_ADD1H                         ((uint32_t)0x00010000)        /*!<  */
-#define RTC_CR_TSIE                          ((uint32_t)0x00008000)        /*!<  */
-#define RTC_CR_ALRAIE                        ((uint32_t)0x00001000)        /*!<  */
-#define RTC_CR_TSE                           ((uint32_t)0x00000800)        /*!<  */
-#define RTC_CR_ALRAE                         ((uint32_t)0x00000100)        /*!<  */
-#define RTC_CR_DCE                           ((uint32_t)0x00000080)        /*!<  */
-#define RTC_CR_FMT                           ((uint32_t)0x00000040)        /*!<  */
-#define RTC_CR_BYPSHAD                       ((uint32_t)0x00000020)        /*!<  */
-#define RTC_CR_REFCKON                       ((uint32_t)0x00000010)        /*!<  */
-#define RTC_CR_TSEDGE                        ((uint32_t)0x00000008)        /*!<  */
+#define RTC_CR_COE                           ((uint32_t)0x00800000)
+#define RTC_CR_OSEL                          ((uint32_t)0x00600000)
+#define RTC_CR_OSEL_0                        ((uint32_t)0x00200000)
+#define RTC_CR_OSEL_1                        ((uint32_t)0x00400000)
+#define RTC_CR_POL                           ((uint32_t)0x00100000)
+#define RTC_CR_CALSEL                        ((uint32_t)0x00080000)
+#define RTC_CR_BCK                           ((uint32_t)0x00040000)
+#define RTC_CR_SUB1H                         ((uint32_t)0x00020000)
+#define RTC_CR_ADD1H                         ((uint32_t)0x00010000)
+#define RTC_CR_TSIE                          ((uint32_t)0x00008000)
+#define RTC_CR_ALRAIE                        ((uint32_t)0x00001000)
+#define RTC_CR_TSE                           ((uint32_t)0x00000800)
+#define RTC_CR_ALRAE                         ((uint32_t)0x00000100)
+#define RTC_CR_DCE                           ((uint32_t)0x00000080)
+#define RTC_CR_FMT                           ((uint32_t)0x00000040)
+#define RTC_CR_BYPSHAD                       ((uint32_t)0x00000020)
+#define RTC_CR_REFCKON                       ((uint32_t)0x00000010)
+#define RTC_CR_TSEDGE                        ((uint32_t)0x00000008)
 
 /********************  Bits definition for RTC_ISR register  ******************/
-#define RTC_ISR_RECALPF                      ((uint32_t)0x00010000)        /*!<  */
-#define RTC_ISR_TAMP3F                       ((uint32_t)0x00008000)        /*!<  */
-#define RTC_ISR_TAMP2F                       ((uint32_t)0x00004000)        /*!<  */
-#define RTC_ISR_TAMP1F                       ((uint32_t)0x00002000)        /*!<  */
-#define RTC_ISR_TSOVF                        ((uint32_t)0x00001000)        /*!<  */
-#define RTC_ISR_TSF                          ((uint32_t)0x00000800)        /*!<  */
-#define RTC_ISR_ALRAF                        ((uint32_t)0x00000100)        /*!<  */
-#define RTC_ISR_INIT                         ((uint32_t)0x00000080)        /*!<  */
-#define RTC_ISR_INITF                        ((uint32_t)0x00000040)        /*!<  */
-#define RTC_ISR_RSF                          ((uint32_t)0x00000020)        /*!<  */
-#define RTC_ISR_INITS                        ((uint32_t)0x00000010)        /*!<  */
-#define RTC_ISR_SHPF                         ((uint32_t)0x00000008)        /*!<  */
-#define RTC_ISR_ALRAWF                       ((uint32_t)0x00000001)        /*!<  */
+#define RTC_ISR_RECALPF                      ((uint32_t)0x00010000)
+#define RTC_ISR_TAMP2F                       ((uint32_t)0x00004000)
+#define RTC_ISR_TAMP1F                       ((uint32_t)0x00002000)
+#define RTC_ISR_TSOVF                        ((uint32_t)0x00001000)
+#define RTC_ISR_TSF                          ((uint32_t)0x00000800)
+#define RTC_ISR_ALRAF                        ((uint32_t)0x00000100)
+#define RTC_ISR_INIT                         ((uint32_t)0x00000080)
+#define RTC_ISR_INITF                        ((uint32_t)0x00000040)
+#define RTC_ISR_RSF                          ((uint32_t)0x00000020)
+#define RTC_ISR_INITS                        ((uint32_t)0x00000010)
+#define RTC_ISR_SHPF                         ((uint32_t)0x00000008)
+#define RTC_ISR_ALRAWF                       ((uint32_t)0x00000001)
 
 /********************  Bits definition for RTC_PRER register  *****************/
-#define RTC_PRER_PREDIV_A                    ((uint32_t)0x007F0000)        /*!<  */
-#define RTC_PRER_PREDIV_S                    ((uint32_t)0x00007FFF)        /*!<  */
+#define RTC_PRER_PREDIV_A                    ((uint32_t)0x007F0000)
+#define RTC_PRER_PREDIV_S                    ((uint32_t)0x00007FFF)
 
 /********************  Bits definition for RTC_ALRMAR register  ***************/
-#define RTC_ALRMAR_MSK4                      ((uint32_t)0x80000000)        /*!<  */
-#define RTC_ALRMAR_WDSEL                     ((uint32_t)0x40000000)        /*!<  */
-#define RTC_ALRMAR_DT                        ((uint32_t)0x30000000)        /*!<  */
-#define RTC_ALRMAR_DT_0                      ((uint32_t)0x10000000)        /*!<  */
-#define RTC_ALRMAR_DT_1                      ((uint32_t)0x20000000)        /*!<  */
-#define RTC_ALRMAR_DU                        ((uint32_t)0x0F000000)        /*!<  */
-#define RTC_ALRMAR_DU_0                      ((uint32_t)0x01000000)        /*!<  */
-#define RTC_ALRMAR_DU_1                      ((uint32_t)0x02000000)        /*!<  */
-#define RTC_ALRMAR_DU_2                      ((uint32_t)0x04000000)        /*!<  */
-#define RTC_ALRMAR_DU_3                      ((uint32_t)0x08000000)        /*!<  */
-#define RTC_ALRMAR_MSK3                      ((uint32_t)0x00800000)        /*!<  */
-#define RTC_ALRMAR_PM                        ((uint32_t)0x00400000)        /*!<  */
-#define RTC_ALRMAR_HT                        ((uint32_t)0x00300000)        /*!<  */
-#define RTC_ALRMAR_HT_0                      ((uint32_t)0x00100000)        /*!<  */
-#define RTC_ALRMAR_HT_1                      ((uint32_t)0x00200000)        /*!<  */
-#define RTC_ALRMAR_HU                        ((uint32_t)0x000F0000)        /*!<  */
-#define RTC_ALRMAR_HU_0                      ((uint32_t)0x00010000)        /*!<  */
-#define RTC_ALRMAR_HU_1                      ((uint32_t)0x00020000)        /*!<  */
-#define RTC_ALRMAR_HU_2                      ((uint32_t)0x00040000)        /*!<  */
-#define RTC_ALRMAR_HU_3                      ((uint32_t)0x00080000)        /*!<  */
-#define RTC_ALRMAR_MSK2                      ((uint32_t)0x00008000)        /*!<  */
-#define RTC_ALRMAR_MNT                       ((uint32_t)0x00007000)        /*!<  */
-#define RTC_ALRMAR_MNT_0                     ((uint32_t)0x00001000)        /*!<  */
-#define RTC_ALRMAR_MNT_1                     ((uint32_t)0x00002000)        /*!<  */
-#define RTC_ALRMAR_MNT_2                     ((uint32_t)0x00004000)        /*!<  */
-#define RTC_ALRMAR_MNU                       ((uint32_t)0x00000F00)        /*!<  */
-#define RTC_ALRMAR_MNU_0                     ((uint32_t)0x00000100)        /*!<  */
-#define RTC_ALRMAR_MNU_1                     ((uint32_t)0x00000200)        /*!<  */
-#define RTC_ALRMAR_MNU_2                     ((uint32_t)0x00000400)        /*!<  */
-#define RTC_ALRMAR_MNU_3                     ((uint32_t)0x00000800)        /*!<  */
-#define RTC_ALRMAR_MSK1                      ((uint32_t)0x00000080)        /*!<  */
-#define RTC_ALRMAR_ST                        ((uint32_t)0x00000070)        /*!<  */
-#define RTC_ALRMAR_ST_0                      ((uint32_t)0x00000010)        /*!<  */
-#define RTC_ALRMAR_ST_1                      ((uint32_t)0x00000020)        /*!<  */
-#define RTC_ALRMAR_ST_2                      ((uint32_t)0x00000040)        /*!<  */
-#define RTC_ALRMAR_SU                        ((uint32_t)0x0000000F)        /*!<  */
-#define RTC_ALRMAR_SU_0                      ((uint32_t)0x00000001)        /*!<  */
-#define RTC_ALRMAR_SU_1                      ((uint32_t)0x00000002)        /*!<  */
-#define RTC_ALRMAR_SU_2                      ((uint32_t)0x00000004)        /*!<  */
-#define RTC_ALRMAR_SU_3                      ((uint32_t)0x00000008)        /*!<  */
+#define RTC_ALRMAR_MSK4                      ((uint32_t)0x80000000)
+#define RTC_ALRMAR_WDSEL                     ((uint32_t)0x40000000)
+#define RTC_ALRMAR_DT                        ((uint32_t)0x30000000)
+#define RTC_ALRMAR_DT_0                      ((uint32_t)0x10000000)
+#define RTC_ALRMAR_DT_1                      ((uint32_t)0x20000000)
+#define RTC_ALRMAR_DU                        ((uint32_t)0x0F000000)
+#define RTC_ALRMAR_DU_0                      ((uint32_t)0x01000000)
+#define RTC_ALRMAR_DU_1                      ((uint32_t)0x02000000)
+#define RTC_ALRMAR_DU_2                      ((uint32_t)0x04000000)
+#define RTC_ALRMAR_DU_3                      ((uint32_t)0x08000000)
+#define RTC_ALRMAR_MSK3                      ((uint32_t)0x00800000)
+#define RTC_ALRMAR_PM                        ((uint32_t)0x00400000)
+#define RTC_ALRMAR_HT                        ((uint32_t)0x00300000)
+#define RTC_ALRMAR_HT_0                      ((uint32_t)0x00100000)
+#define RTC_ALRMAR_HT_1                      ((uint32_t)0x00200000)
+#define RTC_ALRMAR_HU                        ((uint32_t)0x000F0000)
+#define RTC_ALRMAR_HU_0                      ((uint32_t)0x00010000)
+#define RTC_ALRMAR_HU_1                      ((uint32_t)0x00020000)
+#define RTC_ALRMAR_HU_2                      ((uint32_t)0x00040000)
+#define RTC_ALRMAR_HU_3                      ((uint32_t)0x00080000)
+#define RTC_ALRMAR_MSK2                      ((uint32_t)0x00008000)
+#define RTC_ALRMAR_MNT                       ((uint32_t)0x00007000)
+#define RTC_ALRMAR_MNT_0                     ((uint32_t)0x00001000)
+#define RTC_ALRMAR_MNT_1                     ((uint32_t)0x00002000)
+#define RTC_ALRMAR_MNT_2                     ((uint32_t)0x00004000)
+#define RTC_ALRMAR_MNU                       ((uint32_t)0x00000F00)
+#define RTC_ALRMAR_MNU_0                     ((uint32_t)0x00000100)
+#define RTC_ALRMAR_MNU_1                     ((uint32_t)0x00000200)
+#define RTC_ALRMAR_MNU_2                     ((uint32_t)0x00000400)
+#define RTC_ALRMAR_MNU_3                     ((uint32_t)0x00000800)
+#define RTC_ALRMAR_MSK1                      ((uint32_t)0x00000080)
+#define RTC_ALRMAR_ST                        ((uint32_t)0x00000070)
+#define RTC_ALRMAR_ST_0                      ((uint32_t)0x00000010)
+#define RTC_ALRMAR_ST_1                      ((uint32_t)0x00000020)
+#define RTC_ALRMAR_ST_2                      ((uint32_t)0x00000040)
+#define RTC_ALRMAR_SU                        ((uint32_t)0x0000000F)
+#define RTC_ALRMAR_SU_0                      ((uint32_t)0x00000001)
+#define RTC_ALRMAR_SU_1                      ((uint32_t)0x00000002)
+#define RTC_ALRMAR_SU_2                      ((uint32_t)0x00000004)
+#define RTC_ALRMAR_SU_3                      ((uint32_t)0x00000008)
 
 /********************  Bits definition for RTC_WPR register  ******************/
-#define RTC_WPR_KEY                          ((uint32_t)0x000000FF)        /*!<  */
+#define RTC_WPR_KEY                          ((uint32_t)0x000000FF)
 
 /********************  Bits definition for RTC_SSR register  ******************/
-#define RTC_SSR_SS                           ((uint32_t)0x0003FFFF)        /*!<  */
+#define RTC_SSR_SS                           ((uint32_t)0x0003FFFF)
 
 /********************  Bits definition for RTC_SHIFTR register  ***************/
-#define RTC_SHIFTR_SUBFS                     ((uint32_t)0x00007FFF)        /*!<  */
-#define RTC_SHIFTR_ADD1S                     ((uint32_t)0x80000000)        /*!<  */
+#define RTC_SHIFTR_SUBFS                     ((uint32_t)0x00007FFF)
+#define RTC_SHIFTR_ADD1S                     ((uint32_t)0x80000000)
 
 /********************  Bits definition for RTC_TSTR register  *****************/
-#define RTC_TSTR_PM                          ((uint32_t)0x00400000)        /*!<  */
-#define RTC_TSTR_HT                          ((uint32_t)0x00300000)        /*!<  */
-#define RTC_TSTR_HT_0                        ((uint32_t)0x00100000)        /*!<  */
-#define RTC_TSTR_HT_1                        ((uint32_t)0x00200000)        /*!<  */
-#define RTC_TSTR_HU                          ((uint32_t)0x000F0000)        /*!<  */
-#define RTC_TSTR_HU_0                        ((uint32_t)0x00010000)        /*!<  */
-#define RTC_TSTR_HU_1                        ((uint32_t)0x00020000)        /*!<  */
-#define RTC_TSTR_HU_2                        ((uint32_t)0x00040000)        /*!<  */
-#define RTC_TSTR_HU_3                        ((uint32_t)0x00080000)        /*!<  */
-#define RTC_TSTR_MNT                         ((uint32_t)0x00007000)        /*!<  */
-#define RTC_TSTR_MNT_0                       ((uint32_t)0x00001000)        /*!<  */
-#define RTC_TSTR_MNT_1                       ((uint32_t)0x00002000)        /*!<  */
-#define RTC_TSTR_MNT_2                       ((uint32_t)0x00004000)        /*!<  */
-#define RTC_TSTR_MNU                         ((uint32_t)0x00000F00)        /*!<  */
-#define RTC_TSTR_MNU_0                       ((uint32_t)0x00000100)        /*!<  */
-#define RTC_TSTR_MNU_1                       ((uint32_t)0x00000200)        /*!<  */
-#define RTC_TSTR_MNU_2                       ((uint32_t)0x00000400)        /*!<  */
-#define RTC_TSTR_MNU_3                       ((uint32_t)0x00000800)        /*!<  */
-#define RTC_TSTR_ST                          ((uint32_t)0x00000070)        /*!<  */
-#define RTC_TSTR_ST_0                        ((uint32_t)0x00000010)        /*!<  */
-#define RTC_TSTR_ST_1                        ((uint32_t)0x00000020)        /*!<  */
-#define RTC_TSTR_ST_2                        ((uint32_t)0x00000040)        /*!<  */
-#define RTC_TSTR_SU                          ((uint32_t)0x0000000F)        /*!<  */
-#define RTC_TSTR_SU_0                        ((uint32_t)0x00000001)        /*!<  */
-#define RTC_TSTR_SU_1                        ((uint32_t)0x00000002)        /*!<  */
-#define RTC_TSTR_SU_2                        ((uint32_t)0x00000004)        /*!<  */
-#define RTC_TSTR_SU_3                        ((uint32_t)0x00000008)        /*!<  */
+#define RTC_TSTR_PM                          ((uint32_t)0x00400000)
+#define RTC_TSTR_HT                          ((uint32_t)0x00300000)
+#define RTC_TSTR_HT_0                        ((uint32_t)0x00100000)
+#define RTC_TSTR_HT_1                        ((uint32_t)0x00200000)
+#define RTC_TSTR_HU                          ((uint32_t)0x000F0000)
+#define RTC_TSTR_HU_0                        ((uint32_t)0x00010000)
+#define RTC_TSTR_HU_1                        ((uint32_t)0x00020000)
+#define RTC_TSTR_HU_2                        ((uint32_t)0x00040000)
+#define RTC_TSTR_HU_3                        ((uint32_t)0x00080000)
+#define RTC_TSTR_MNT                         ((uint32_t)0x00007000)
+#define RTC_TSTR_MNT_0                       ((uint32_t)0x00001000)
+#define RTC_TSTR_MNT_1                       ((uint32_t)0x00002000)
+#define RTC_TSTR_MNT_2                       ((uint32_t)0x00004000)
+#define RTC_TSTR_MNU                         ((uint32_t)0x00000F00)
+#define RTC_TSTR_MNU_0                       ((uint32_t)0x00000100)
+#define RTC_TSTR_MNU_1                       ((uint32_t)0x00000200)
+#define RTC_TSTR_MNU_2                       ((uint32_t)0x00000400)
+#define RTC_TSTR_MNU_3                       ((uint32_t)0x00000800)
+#define RTC_TSTR_ST                          ((uint32_t)0x00000070)
+#define RTC_TSTR_ST_0                        ((uint32_t)0x00000010)
+#define RTC_TSTR_ST_1                        ((uint32_t)0x00000020)
+#define RTC_TSTR_ST_2                        ((uint32_t)0x00000040)
+#define RTC_TSTR_SU                          ((uint32_t)0x0000000F)
+#define RTC_TSTR_SU_0                        ((uint32_t)0x00000001)
+#define RTC_TSTR_SU_1                        ((uint32_t)0x00000002)
+#define RTC_TSTR_SU_2                        ((uint32_t)0x00000004)
+#define RTC_TSTR_SU_3                        ((uint32_t)0x00000008)
 
 /********************  Bits definition for RTC_TSDR register  *****************/
-#define RTC_TSDR_WDU                         ((uint32_t)0x0000E000)        /*!<  */
-#define RTC_TSDR_WDU_0                       ((uint32_t)0x00002000)        /*!<  */
-#define RTC_TSDR_WDU_1                       ((uint32_t)0x00004000)        /*!<  */
-#define RTC_TSDR_WDU_2                       ((uint32_t)0x00008000)        /*!<  */
-#define RTC_TSDR_MT                          ((uint32_t)0x00001000)        /*!<  */
-#define RTC_TSDR_MU                          ((uint32_t)0x00000F00)        /*!<  */
-#define RTC_TSDR_MU_0                        ((uint32_t)0x00000100)        /*!<  */
-#define RTC_TSDR_MU_1                        ((uint32_t)0x00000200)        /*!<  */
-#define RTC_TSDR_MU_2                        ((uint32_t)0x00000400)        /*!<  */
-#define RTC_TSDR_MU_3                        ((uint32_t)0x00000800)        /*!<  */
-#define RTC_TSDR_DT                          ((uint32_t)0x00000030)        /*!<  */
-#define RTC_TSDR_DT_0                        ((uint32_t)0x00000010)        /*!<  */
-#define RTC_TSDR_DT_1                        ((uint32_t)0x00000020)        /*!<  */
-#define RTC_TSDR_DU                          ((uint32_t)0x0000000F)        /*!<  */
-#define RTC_TSDR_DU_0                        ((uint32_t)0x00000001)        /*!<  */
-#define RTC_TSDR_DU_1                        ((uint32_t)0x00000002)        /*!<  */
-#define RTC_TSDR_DU_2                        ((uint32_t)0x00000004)        /*!<  */
-#define RTC_TSDR_DU_3                        ((uint32_t)0x00000008)        /*!<  */
+#define RTC_TSDR_WDU                         ((uint32_t)0x0000E000)
+#define RTC_TSDR_WDU_0                       ((uint32_t)0x00002000)
+#define RTC_TSDR_WDU_1                       ((uint32_t)0x00004000)
+#define RTC_TSDR_WDU_2                       ((uint32_t)0x00008000)
+#define RTC_TSDR_MT                          ((uint32_t)0x00001000)
+#define RTC_TSDR_MU                          ((uint32_t)0x00000F00)
+#define RTC_TSDR_MU_0                        ((uint32_t)0x00000100)
+#define RTC_TSDR_MU_1                        ((uint32_t)0x00000200)
+#define RTC_TSDR_MU_2                        ((uint32_t)0x00000400)
+#define RTC_TSDR_MU_3                        ((uint32_t)0x00000800)
+#define RTC_TSDR_DT                          ((uint32_t)0x00000030)
+#define RTC_TSDR_DT_0                        ((uint32_t)0x00000010)
+#define RTC_TSDR_DT_1                        ((uint32_t)0x00000020)
+#define RTC_TSDR_DU                          ((uint32_t)0x0000000F)
+#define RTC_TSDR_DU_0                        ((uint32_t)0x00000001)
+#define RTC_TSDR_DU_1                        ((uint32_t)0x00000002)
+#define RTC_TSDR_DU_2                        ((uint32_t)0x00000004)
+#define RTC_TSDR_DU_3                        ((uint32_t)0x00000008)
 
 /********************  Bits definition for RTC_TSSSR register  ****************/
 #define RTC_TSSSR_SS                         ((uint32_t)0x0003FFFF)
 
 /********************  Bits definition for RTC_CAL register  *****************/
-#define RTC_CAL_CALP                         ((uint32_t)0x00008000)        /*!<  */
-#define RTC_CAL_CALW8                        ((uint32_t)0x00004000)        /*!<  */
-#define RTC_CAL_CALW16                       ((uint32_t)0x00002000)        /*!<  */
-#define RTC_CAL_CALM                         ((uint32_t)0x000001FF)        /*!<  */
-#define RTC_CAL_CALM_0                       ((uint32_t)0x00000001)        /*!<  */
-#define RTC_CAL_CALM_1                       ((uint32_t)0x00000002)        /*!<  */
-#define RTC_CAL_CALM_2                       ((uint32_t)0x00000004)        /*!<  */
-#define RTC_CAL_CALM_3                       ((uint32_t)0x00000008)        /*!<  */
-#define RTC_CAL_CALM_4                       ((uint32_t)0x00000010)        /*!<  */
-#define RTC_CAL_CALM_5                       ((uint32_t)0x00000020)        /*!<  */
-#define RTC_CAL_CALM_6                       ((uint32_t)0x00000040)        /*!<  */
-#define RTC_CAL_CALM_7                       ((uint32_t)0x00000080)        /*!<  */
-#define RTC_CAL_CALM_8                       ((uint32_t)0x00000100)        /*!<  */
+#define RTC_CAL_CALP                         ((uint32_t)0x00008000)
+#define RTC_CAL_CALW8                        ((uint32_t)0x00004000)
+#define RTC_CAL_CALW16                       ((uint32_t)0x00002000)
+#define RTC_CAL_CALM                         ((uint32_t)0x000001FF)
+#define RTC_CAL_CALM_0                       ((uint32_t)0x00000001)
+#define RTC_CAL_CALM_1                       ((uint32_t)0x00000002)
+#define RTC_CAL_CALM_2                       ((uint32_t)0x00000004)
+#define RTC_CAL_CALM_3                       ((uint32_t)0x00000008)
+#define RTC_CAL_CALM_4                       ((uint32_t)0x00000010)
+#define RTC_CAL_CALM_5                       ((uint32_t)0x00000020)
+#define RTC_CAL_CALM_6                       ((uint32_t)0x00000040)
+#define RTC_CAL_CALM_7                       ((uint32_t)0x00000080)
+#define RTC_CAL_CALM_8                       ((uint32_t)0x00000100)
 
 /********************  Bits definition for RTC_TAFCR register  ****************/
-#define RTC_TAFCR_ALARMOUTTYPE               ((uint32_t)0x00040000)        /*!<  */
-#define RTC_TAFCR_TAMPPUDIS                  ((uint32_t)0x00008000)        /*!<  */
-#define RTC_TAFCR_TAMPPRCH                   ((uint32_t)0x00006000)        /*!<  */
-#define RTC_TAFCR_TAMPPRCH_0                 ((uint32_t)0x00002000)        /*!<  */
-#define RTC_TAFCR_TAMPPRCH_1                 ((uint32_t)0x00004000)        /*!<  */
-#define RTC_TAFCR_TAMPFLT                    ((uint32_t)0x00001800)        /*!<  */
-#define RTC_TAFCR_TAMPFLT_0                  ((uint32_t)0x00000800)        /*!<  */
-#define RTC_TAFCR_TAMPFLT_1                  ((uint32_t)0x00001000)        /*!<  */
-#define RTC_TAFCR_TAMPFREQ                   ((uint32_t)0x00000700)        /*!<  */
-#define RTC_TAFCR_TAMPFREQ_0                 ((uint32_t)0x00000100)        /*!<  */
-#define RTC_TAFCR_TAMPFREQ_1                 ((uint32_t)0x00000200)        /*!<  */
-#define RTC_TAFCR_TAMPFREQ_2                 ((uint32_t)0x00000400)        /*!<  */
-#define RTC_TAFCR_TAMPTS                     ((uint32_t)0x00000080)        /*!<  */
-#define RTC_TAFCR_TAMP3EDGE                  ((uint32_t)0x00000040)        /*!<  */
-#define RTC_TAFCR_TAMP3E                     ((uint32_t)0x00000020)        /*!<  */
-#define RTC_TAFCR_TAMP2EDGE                  ((uint32_t)0x00000010)        /*!<  */
-#define RTC_TAFCR_TAMP2E                     ((uint32_t)0x00000008)        /*!<  */
-#define RTC_TAFCR_TAMPIE                     ((uint32_t)0x00000004)        /*!<  */
-#define RTC_TAFCR_TAMP1TRG                   ((uint32_t)0x00000002)        /*!<  */
-#define RTC_TAFCR_TAMP1E                     ((uint32_t)0x00000001)        /*!<  */
+#define RTC_TAFCR_ALARMOUTTYPE               ((uint32_t)0x00040000)
+#define RTC_TAFCR_TAMPPUDIS                  ((uint32_t)0x00008000)
+#define RTC_TAFCR_TAMPPRCH                   ((uint32_t)0x00006000)
+#define RTC_TAFCR_TAMPPRCH_0                 ((uint32_t)0x00002000)
+#define RTC_TAFCR_TAMPPRCH_1                 ((uint32_t)0x00004000)
+#define RTC_TAFCR_TAMPFLT                    ((uint32_t)0x00001800)
+#define RTC_TAFCR_TAMPFLT_0                  ((uint32_t)0x00000800)
+#define RTC_TAFCR_TAMPFLT_1                  ((uint32_t)0x00001000)
+#define RTC_TAFCR_TAMPFREQ                   ((uint32_t)0x00000700)
+#define RTC_TAFCR_TAMPFREQ_0                 ((uint32_t)0x00000100)
+#define RTC_TAFCR_TAMPFREQ_1                 ((uint32_t)0x00000200)
+#define RTC_TAFCR_TAMPFREQ_2                 ((uint32_t)0x00000400)
+#define RTC_TAFCR_TAMPTS                     ((uint32_t)0x00000080)
+#define RTC_TAFCR_TAMP2EDGE                  ((uint32_t)0x00000010)
+#define RTC_TAFCR_TAMP2E                     ((uint32_t)0x00000008)
+#define RTC_TAFCR_TAMPIE                     ((uint32_t)0x00000004)
+#define RTC_TAFCR_TAMP1TRG                   ((uint32_t)0x00000002)
+#define RTC_TAFCR_TAMP1E                     ((uint32_t)0x00000001)
 
 /********************  Bits definition for RTC_ALRMASSR register  *************/
-#define RTC_ALRMASSR_MASKSS                  ((uint32_t)0x0F000000)        /*!<  */
-#define RTC_ALRMASSR_MASKSS_0                ((uint32_t)0x01000000)        /*!<  */
-#define RTC_ALRMASSR_MASKSS_1                ((uint32_t)0x02000000)        /*!<  */
-#define RTC_ALRMASSR_MASKSS_2                ((uint32_t)0x04000000)        /*!<  */
-#define RTC_ALRMASSR_MASKSS_3                ((uint32_t)0x08000000)        /*!<  */
-#define RTC_ALRMASSR_SS                      ((uint32_t)0x00007FFF)        /*!<  */
+#define RTC_ALRMASSR_MASKSS                  ((uint32_t)0x0F000000)
+#define RTC_ALRMASSR_MASKSS_0                ((uint32_t)0x01000000)
+#define RTC_ALRMASSR_MASKSS_1                ((uint32_t)0x02000000)
+#define RTC_ALRMASSR_MASKSS_2                ((uint32_t)0x04000000)
+#define RTC_ALRMASSR_MASKSS_3                ((uint32_t)0x08000000)
+#define RTC_ALRMASSR_SS                      ((uint32_t)0x00007FFF)
 
 /********************  Bits definition for RTC_BKP0R register  ****************/
-#define RTC_BKP0R                            ((uint32_t)0xFFFFFFFF)        /*!<  */
+#define RTC_BKP0R                            ((uint32_t)0xFFFFFFFF)
 
 /********************  Bits definition for RTC_BKP1R register  ****************/
-#define RTC_BKP1R                            ((uint32_t)0xFFFFFFFF)        /*!<  */
+#define RTC_BKP1R                            ((uint32_t)0xFFFFFFFF)
 
 /********************  Bits definition for RTC_BKP2R register  ****************/
-#define RTC_BKP2R                            ((uint32_t)0xFFFFFFFF)        /*!<  */
+#define RTC_BKP2R                            ((uint32_t)0xFFFFFFFF)
 
 /********************  Bits definition for RTC_BKP3R register  ****************/
-#define RTC_BKP3R                            ((uint32_t)0xFFFFFFFF)        /*!<  */
+#define RTC_BKP3R                            ((uint32_t)0xFFFFFFFF)
 
 /********************  Bits definition for RTC_BKP4R register  ****************/
-#define RTC_BKP4R                            ((uint32_t)0xFFFFFFFF)        /*!<  */
+#define RTC_BKP4R                            ((uint32_t)0xFFFFFFFF)
 
 /******************************************************************************/
 /*                                                                            */

@@ -112,16 +112,16 @@ static msg_t WorkerThread(void *arg) {
       /* Provides a visual feedback about the system.*/
       if (++cnt >= 500) {
         cnt = 0;
-        palTogglePad(GPIO0, GPIO0_LED2);
+        palTogglePad(GPIOC, GPIOC_LED4);
       }
     }
   }
 }
 
 /*
- * GPT1 callback.
+ * GPT2 callback.
  */
-static void gpt1cb(GPTDriver *gptp) {
+static void gpt2cb(GPTDriver *gptp) {
   msg_t msg;
 
   (void)gptp;
@@ -133,9 +133,9 @@ static void gpt1cb(GPTDriver *gptp) {
 }
 
 /*
- * GPT2 callback.
+ * GPT3 callback.
  */
-static void gpt2cb(GPTDriver *gptp) {
+static void gpt3cb(GPTDriver *gptp) {
   msg_t msg;
 
   (void)gptp;
@@ -147,19 +147,19 @@ static void gpt2cb(GPTDriver *gptp) {
 }
 
 /*
- * GPT1 configuration.
- */
-static const GPTConfig gpt1cfg = {
-  1000000,  /* 1MHz timer clock.*/
-  gpt1cb    /* Timer callback.*/
-};
-
-/*
  * GPT2 configuration.
  */
 static const GPTConfig gpt2cfg = {
   1000000,  /* 1MHz timer clock.*/
   gpt2cb    /* Timer callback.*/
+};
+
+/*
+ * GPT3 configuration.
+ */
+static const GPTConfig gpt3cfg = {
+  1000000,  /* 1MHz timer clock.*/
+  gpt3cb    /* Timer callback.*/
 };
 
 
@@ -214,11 +214,13 @@ int main(void) {
   chSysInit();
 
   /*
-   * Prepares the Serial driver 2 and GPT drivers 1 and 2.
+   * Prepares the Serial driver 1 and GPT drivers 2 and 3.
    */
-  sdStart(&SD1, NULL);          /* Default is 38400-8-N-1.*/
-  gptStart(&GPTD1, &gpt1cfg);
+  sdStart(&SD1, NULL);
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(1));       /* USART1 TX.       */
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(1));      /* USART1 RX.       */
   gptStart(&GPTD2, &gpt2cfg);
+  gptStart(&GPTD3, &gpt3cfg);
 
   /*
    * Initializes the mailboxes and creates the worker threads.
@@ -237,6 +239,8 @@ int main(void) {
   println("***");
   print("*** Kernel:       ");
   println(CH_KERNEL_VERSION);
+  print("*** Compiled:     ");
+  println(__DATE__ " - " __TIME__);
 #ifdef CH_COMPILER_NAME
   print("*** Compiler:     ");
   println(CH_COMPILER_NAME);
@@ -261,7 +265,7 @@ int main(void) {
 #endif
   println("***");
   print("*** System Clock: ");
-  printn(LPC13xx_SYSCLK);
+  printn(STM32_SYSCLK);
   println("");
   print("*** Iterations:   ");
   printn(ITERATIONS);
@@ -285,11 +289,11 @@ int main(void) {
     saturated = FALSE;
     threshold = 0;
     for (interval = 2000; interval >= 20; interval -= interval / 10) {
-      gptStartContinuous(&GPTD1, interval - 1); /* Slightly out of phase.*/
-      gptStartContinuous(&GPTD2, interval + 1); /* Slightly out of phase.*/
+      gptStartContinuous(&GPTD2, interval - 1); /* Slightly out of phase.*/
+      gptStartContinuous(&GPTD3, interval + 1); /* Slightly out of phase.*/
       chThdSleepMilliseconds(1000);
-      gptStopTimer(&GPTD1);
       gptStopTimer(&GPTD2);
+      gptStopTimer(&GPTD3);
       if (!saturated)
         print(".");
       else {
@@ -309,8 +313,8 @@ int main(void) {
     if (threshold > worst)
       worst = threshold;
   }
-  gptStopTimer(&GPTD1);
   gptStopTimer(&GPTD2);
+  gptStopTimer(&GPTD3);
 
   print("Worst case at ");
   printn(worst);

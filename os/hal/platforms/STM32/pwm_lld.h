@@ -94,7 +94,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM1) || defined(__DOXYGEN__)
-#define STM32_PWM_USE_TIM1                  TRUE
+#define STM32_PWM_USE_TIM1                  FALSE
 #endif
 
 /**
@@ -103,7 +103,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM2) || defined(__DOXYGEN__)
-#define STM32_PWM_USE_TIM2                  TRUE
+#define STM32_PWM_USE_TIM2                  FALSE
 #endif
 
 /**
@@ -112,7 +112,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM3) || defined(__DOXYGEN__)
-#define STM32_PWM_USE_TIM3                  TRUE
+#define STM32_PWM_USE_TIM3                  FALSE
 #endif
 
 /**
@@ -121,7 +121,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM4) || defined(__DOXYGEN__)
-#define STM32_PWM_USE_TIM4                  TRUE
+#define STM32_PWM_USE_TIM4                  FALSE
 #endif
 
 /**
@@ -130,7 +130,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM5) || defined(__DOXYGEN__)
-#define STM32_PWM_USE_TIM5                  TRUE
+#define STM32_PWM_USE_TIM5                  FALSE
 #endif
 
 /**
@@ -139,7 +139,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_TIM8) || defined(__DOXYGEN__)
-#define STM32_PWM_USE_TIM8                  TRUE
+#define STM32_PWM_USE_TIM8                  FALSE
 #endif
 
 /**

@@ -240,7 +240,8 @@ typedef uint32_t halrtcnt_t;
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* STM32 DMA and RCC helpers.*/
+/* STM32 ISR, DMA and RCC helpers.*/
+#include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"
 

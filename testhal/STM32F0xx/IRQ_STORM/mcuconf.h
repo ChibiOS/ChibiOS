@@ -77,6 +77,16 @@
 #define STM32_EXT_EXTI17_IRQ_PRIORITY       3
 
 /*
+ * GPT driver system settings.
+ */
+#define STM32_GPT_USE_TIM1                  FALSE
+#define STM32_GPT_USE_TIM2                  TRUE
+#define STM32_GPT_USE_TIM3                  TRUE
+#define STM32_GPT_TIM1_IRQ_PRIORITY         2
+#define STM32_GPT_TIM2_IRQ_PRIORITY         1
+#define STM32_GPT_TIM3_IRQ_PRIORITY         3
+
+/*
  * SERIAL driver system settings.
  */
 #define STM32_SERIAL_USE_USART1             TRUE

@@ -156,6 +156,9 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Reorganized the STM32 EXT driver to have a sub-platform specific
+  part containing all the ISR related code, this has been necessary because
+  the significant differences among the various sub-families.
 - NEW: Validated CAN driver on STM32F2/F4 (backported to 2.4.2).
 - NEW: USB implementation for STM32F105/F107/2xx/F4xx devices.
 - NEW: Improved SerialUSB driver using the new queued mode, much smaller
@@ -170,6 +173,7 @@
   support several new devices.
 - NEW: Demo for STM32F0-Discovery board.
 - NEW: Initial support for STM32F0xx devices, added a specific ADC driver.
+  Validated EXT, PAL, Serial, SPI drivers.
 - NEW: Added a common ancestor class to the SDC and MMC_SPI drivers. This
   allows to share code and definitions.
 - NEW: Modified the SDC driver to implement the new block devices abstract
