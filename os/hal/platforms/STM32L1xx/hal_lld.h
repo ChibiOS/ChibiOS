@@ -238,7 +238,7 @@
 #define STM32_RTC_IS_CALENDAR   TRUE
 
 /* SDIO attributes.*/
-#define STM32_HAS_SDIO          FALSE
+#define STM32_HAS_SDIO          TRUE
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1          TRUE
