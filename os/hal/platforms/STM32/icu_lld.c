@@ -381,7 +381,7 @@ void icu_lld_start(ICUDriver *icup) {
       nvicEnableVector(TIM8_CC_IRQn,
                        CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
       nvicEnableVector(TIM8_UP_IRQn,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
+                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
       icup->clock = STM32_TIMCLK2;
     }
 #endif
