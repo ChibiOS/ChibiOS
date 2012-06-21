@@ -480,40 +480,40 @@ void icu_lld_stop(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM1
     if (&ICUD1 == icup) {
-      nvicDisableVector(TIM1_CC_IRQn);
-      nvicDisableVector(TIM1_UP_IRQn);
+      nvicDisableVector(STM32_TIM1_UP_NUMBER);
+      nvicDisableVector(STM32_TIM1_CC_NUMBER);
       rccDisableTIM1(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM2
     if (&ICUD2 == icup) {
-      nvicDisableVector(TIM2_IRQn);
+      nvicDisableVector(STM32_TIM2_NUMBER);
       rccDisableTIM2(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM3
     if (&ICUD3 == icup) {
-      nvicDisableVector(TIM3_IRQn);
+      nvicDisableVector(STM32_TIM3_NUMBER);
       rccDisableTIM3(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM4
     if (&ICUD4 == icup) {
-      nvicDisableVector(TIM4_IRQn);
+      nvicDisableVector(STM32_TIM4_NUMBER);
       rccDisableTIM4(FALSE);
     }
 #endif
 #if STM32_ICU_USE_TIM5
     if (&ICUD5 == icup) {
-      nvicDisableVector(TIM5_IRQn);
+      nvicDisableVector(STM32_TIM5_NUMBER);
       rccDisableTIM5(FALSE);
     }
 #endif
   }
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
-      nvicDisableVector(TIM8_CC_IRQn);
-      nvicDisableVector(TIM8_UP_IRQn);
+      nvicDisableVector(STM32_TIM8_UP_NUMBER);
+      nvicDisableVector(STM32_TIM8_CC_NUMBER);
       rccDisableTIM8(FALSE);
     }
 #endif

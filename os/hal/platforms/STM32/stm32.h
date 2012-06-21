@@ -57,27 +57,12 @@
 /* Resolving naming anomalies related to the STM32F1xx sub-family.*/
 #define CAN1_TX_IRQn        USB_HP_CAN1_TX_IRQn
 #define CAN1_RX0_IRQn       USB_LP_CAN1_RX0_IRQn
-#if defined(STM32F10X_XL)
-#define TIM1_UP_IRQn        TIM1_UP_TIM16_IRQn
-#define TIM8_UP_IRQn        TIM8_UP_TIM13_IRQn
-#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
-      defined(STM32F10X_HD_VL)
-#define TIM1_UP_IRQn        TIM1_UP_TIM16_IRQn
-#endif
 
 #elif defined(STM32F2XX)
 #include "stm32f2xx.h"
 
-/* Resolving naming anomalies related to the STM32F2xx sub-family.*/
-#define TIM1_UP_IRQn        TIM1_UP_TIM10_IRQn
-#define TIM8_UP_IRQn        TIM8_UP_TIM13_IRQn
-
 #elif defined(STM32F4XX)
 #include "stm32f4xx.h"
-
-/* Resolving naming anomalies related to the STM32F4xx sub-family.*/
-#define TIM1_UP_IRQn        TIM1_UP_TIM10_IRQn
-#define TIM8_UP_IRQn        TIM8_UP_TIM13_IRQn
 
 #elif defined(STM32L1XX_MD)
 #include "stm32l1xx.h"
