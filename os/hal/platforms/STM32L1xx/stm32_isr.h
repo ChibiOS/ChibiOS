@@ -37,6 +37,9 @@
  * @name    ISR names and numbers remapping
  * @{
  */
+/*
+ * TIM units.
+ */
 #define STM32_TIM2_HANDLER          TIM2_IRQHandler
 #define STM32_TIM3_HANDLER          TIM3_IRQHandler
 #define STM32_TIM4_HANDLER          TIM4_IRQHandler

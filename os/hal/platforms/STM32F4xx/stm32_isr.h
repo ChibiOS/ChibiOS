@@ -37,6 +37,30 @@
  * @name    ISR names and numbers remapping
  * @{
  */
+/*
+ * CAN units.
+ */
+#define STM32_CAN1_TX_HANDLER       CAN1_TX_IRQHandler
+#define STM32_CAN1_RX0_HANDLER      CAN1_RX0_IRQHandler
+#define STM32_CAN1_RX1_HANDLER      CAN1_RX1_IRQHandler
+#define STM32_CAN1_SCE_HANDLER      CAN1_SCE_IRQHandler
+#define STM32_CAN2_TX_HANDLER       CAN2_TX_IRQHandler
+#define STM32_CAN2_RX0_HANDLER      CAN2_RX0_IRQHandler
+#define STM32_CAN2_RX1_HANDLER      CAN2_RX1_IRQHandler
+#define STM32_CAN2_SCE_HANDLER      CAN2_SCE_IRQHandler
+
+#define STM32_CAN1_TX_NUMBER        USB_HP_CAN1_TX_IRQn
+#define STM32_CAN1_RX0_NUMBER       USB_LP_CAN1_RX0_IRQn
+#define STM32_CAN1_RX1_NUMBER       CAN1_RX1_IRQn
+#define STM32_CAN1_SCE_NUMBER       CAN2_SCE_IRQn
+#define STM32_CAN2_TX_NUMBER        CAN2_TX_IRQn
+#define STM32_CAN2_RX0_NUMBER       CAN2_RX0_IRQn
+#define STM32_CAN2_RX1_NUMBER       CAN2_RX1_IRQn
+#define STM32_CAN2_SCE_NUMBER       CAN2_SCE_IRQn
+
+/*
+ * TIM units.
+ */
 #define STM32_TIM1_UP_HANDLER       TIM1_UP_IRQHandler
 #define STM32_TIM1_CC_HANDLER       TIM1_CC_IRQHandler
 #define STM32_TIM2_HANDLER          TIM2_IRQHandler

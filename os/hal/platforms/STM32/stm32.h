@@ -54,10 +54,6 @@
       defined(__DOXYGEN__)
 #include "stm32f10x.h"
 
-/* Resolving naming anomalies related to the STM32F1xx sub-family.*/
-#define CAN1_TX_IRQn        USB_HP_CAN1_TX_IRQn
-#define CAN1_RX0_IRQn       USB_LP_CAN1_RX0_IRQn
-
 #elif defined(STM32F2XX)
 #include "stm32f2xx.h"
 

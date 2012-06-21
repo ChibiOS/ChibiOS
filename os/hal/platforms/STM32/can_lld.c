@@ -57,7 +57,7 @@ CANDriver CAND1;
  *
  * @isr
  */
-CH_IRQ_HANDLER(CAN1_TX_IRQHandler) {
+CH_IRQ_HANDLER(STM32_CAN1_TX_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -77,7 +77,7 @@ CH_IRQ_HANDLER(CAN1_TX_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(CAN1_RX0_IRQHandler) {
+CH_IRQ_HANDLER(STM32_CAN1_RX0_HANDLER) {
   uint32_t rf0r;
 
   CH_IRQ_PROLOGUE();
@@ -109,7 +109,7 @@ CH_IRQ_HANDLER(CAN1_RX0_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(CAN1_RX1_IRQHandler) {
+CH_IRQ_HANDLER(STM32_CAN1_RX1_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -123,7 +123,7 @@ CH_IRQ_HANDLER(CAN1_RX1_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(CAN1_SCE_IRQHandler) {
+CH_IRQ_HANDLER(STM32_CAN1_SCE_HANDLER) {
   uint32_t msr;
 
   CH_IRQ_PROLOGUE();
@@ -184,13 +184,13 @@ void can_lld_start(CANDriver *canp) {
   /* Clock activation.*/
 #if STM32_CAN_USE_CAN1
   if (&CAND1 == canp) {
-    nvicEnableVector(CAN1_TX_IRQn,
+    nvicEnableVector(STM32_CAN1_TX_NUMBER,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    nvicEnableVector(CAN1_RX0_IRQn,
+    nvicEnableVector(STM32_CAN1_RX0_NUMBER,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    nvicEnableVector(CAN1_RX1_IRQn,
+    nvicEnableVector(STM32_CAN1_RX1_NUMBER,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    nvicEnableVector(CAN1_SCE_IRQn,
+    nvicEnableVector(STM32_CAN1_SCE_NUMBER,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
     rccEnableCAN1(FALSE);
   }
@@ -272,10 +272,10 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND1 == canp) {
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */
-      nvicDisableVector(CAN1_TX_IRQn);
-      nvicDisableVector(CAN1_RX0_IRQn);
-      nvicDisableVector(CAN1_RX1_IRQn);
-      nvicDisableVector(CAN1_SCE_IRQn);
+      nvicDisableVector(STM32_CAN1_TX_NUMBER);
+      nvicDisableVector(STM32_CAN1_RX0_NUMBER);
+      nvicDisableVector(STM32_CAN1_RX1_NUMBER);
+      nvicDisableVector(STM32_CAN1_SCE_NUMBER);
       rccDisableCAN1(FALSE);
     }
 #endif
