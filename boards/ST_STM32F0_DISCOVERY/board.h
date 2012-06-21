@@ -28,8 +28,8 @@
 /*
  * Board identifier.
  */
-#define BOARD_ST_STM32L_DISCOVERY
-#define BOARD_NAME              "ST STM32L-Discovery"
+#define BOARD_ST_STM32F0_DISCOVERY
+#define BOARD_NAME              "ST STM32F0-Discovery"
 
 /*
  * Board frequencies.
