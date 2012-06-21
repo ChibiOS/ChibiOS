@@ -47,9 +47,6 @@
 #if defined(STM32F0XX)
 #include "stm32f0xx.h"
 
-/* Resolving naming anomalies related to the STM32F0xx sub-family.*/
-#define TIM1_UP_IRQn        TIM1_BRK_UP_TRG_COM_IRQn
-
 #elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
       defined(STM32F10X_HD_VL) || defined(STM32F10X_LD)    ||               \
       defined(STM32F10X_MD)    || defined(STM32F10X_HD)    ||               \
