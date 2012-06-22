@@ -792,7 +792,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
      is completed, alternatively for a timeout condition.*/
   while ((dp->SR2 & I2C_SR2_BUSY) || (dp->CR1 & I2C_CR1_STOP)) {
     chSysLock();
-    if (!chVTIsArmedI(&vt))
+    if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
       return RDY_TIMEOUT;
     chSysUnlock();
   }
@@ -802,7 +802,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Atomic check on the timer in order to make sure that a timeout didn't
      happen outside the critical zone.*/
-  if (!chVTIsArmedI(&vt))
+  if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
     return RDY_TIMEOUT;
 
   /* Starts the operation.*/
@@ -812,7 +812,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Waits for the operation completion or a timeout.*/
   i2cp->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
-  if (chVTIsArmedI(&vt))
+  if ((timeout != TIME_INFINITE) && chVTIsArmedI(&vt))
     chVTResetI(&vt);
 
   return chThdSelf()->p_u.rdymsg;
@@ -876,7 +876,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
      is completed, alternatively for a timeout condition.*/
   while ((dp->SR2 & I2C_SR2_BUSY) || (dp->CR1 & I2C_CR1_STOP)) {
     chSysLock();
-    if (!chVTIsArmedI(&vt))
+    if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
       return RDY_TIMEOUT;
     chSysUnlock();
   }
@@ -886,7 +886,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Atomic check on the timer in order to make sure that a timeout didn't
      happen outside the critical zone.*/
-  if (!chVTIsArmedI(&vt))
+  if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
     return RDY_TIMEOUT;
 
   /* Starts the operation.*/
@@ -896,7 +896,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Waits for the operation completion or a timeout.*/
   i2cp->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
-  if (chVTIsArmedI(&vt))
+  if ((timeout != TIME_INFINITE) && chVTIsArmedI(&vt))
     chVTResetI(&vt);
 
   return chThdSelf()->p_u.rdymsg;
