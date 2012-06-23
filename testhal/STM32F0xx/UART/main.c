@@ -35,7 +35,7 @@ static void restart(void *p) {
 static void ledoff(void *p) {
 
   (void)p;
-  palClearPad(GPIOB, GPIOB_LED4);
+  palClearPad(GPIOC, GPIOC_LED4);
 }
 
 /*
@@ -45,7 +45,7 @@ static void ledoff(void *p) {
 static void txend1(UARTDriver *uartp) {
 
   (void)uartp;
-  palSetPad(GPIOB, GPIOB_LED4);
+  palSetPad(GPIOC, GPIOC_LED4);
 }
 
 /*
@@ -54,7 +54,7 @@ static void txend1(UARTDriver *uartp) {
 static void txend2(UARTDriver *uartp) {
 
   (void)uartp;
-  palClearPad(GPIOB, GPIOB_LED4);
+  palClearPad(GPIOC, GPIOC_LED4);
   chSysLockFromIsr();
   if (chVTIsArmedI(&vt1))
     chVTResetI(&vt1);
@@ -81,7 +81,7 @@ static void rxchar(UARTDriver *uartp, uint16_t c) {
   (void)uartp;
   (void)c;
   /* Flashing the LED each time a character is received.*/
-  palSetPad(GPIOB, GPIOB_LED4);
+  palSetPad(GPIOC, GPIOC_LED4);
   chSysLockFromIsr();
   if (chVTIsArmedI(&vt2))
     chVTResetI(&vt2);
@@ -131,8 +131,8 @@ int main(void) {
    * Activates the serial driver 1, PA9 and PA10 are routed to USART1.
    */
   uartStart(&UARTD1, &uart_cfg_1);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOC, 9, PAL_MODE_ALTERNATE(1));       /* USART1 TX.       */
+  palSetPadMode(GPIOC, 10, PAL_MODE_ALTERNATE(1));      /* USART1 RX.       */
 
   /*
    * Starts the transmission, it will be handled entirely in background.
