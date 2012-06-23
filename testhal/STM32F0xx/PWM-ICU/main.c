@@ -60,12 +60,17 @@ static void icuperiodcb(ICUDriver *icup) {
   last_period = icuGetPeriod(icup);
 }
 
+static void icuoverflowcb(ICUDriver *icup) {
+
+  (void)icup;
+}
+
 static ICUConfig icucfg = {
   ICU_INPUT_ACTIVE_HIGH,
   10000,                                    /* 10kHz ICU clock frequency.   */
   icuwidthcb,
   icuperiodcb,
-  NULL,
+  icuoverflowcb,
   ICU_CHANNEL_1
 };
 
@@ -86,14 +91,14 @@ int main(void) {
 
   /*
    * Initializes the PWM driver 2 and ICU driver 3.
-   * GPIOA15 is the PWM output.
-   * GPIOC6 is the ICU input.
+   * GPIOA6 is the ICU input (CH1).
+   * GPIOA15 is the PWM output (CH1).
    * The two pins have to be externally connected together.
    */
   pwmStart(&PWMD2, &pwmcfg);
-  palSetPadMode(GPIOA, 15, PAL_MODE_ALTERNATE(1));
+  palSetPadMode(GPIOA, 15, PAL_MODE_ALTERNATE(2));
   icuStart(&ICUD3, &icucfg);
-  palSetPadMode(GPIOC, 6, PAL_MODE_ALTERNATE(2));
+  palSetPadMode(GPIOA, 6, PAL_MODE_ALTERNATE(1));
   icuEnable(&ICUD3);
   chThdSleepMilliseconds(2000);
 

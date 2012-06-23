@@ -175,7 +175,7 @@
   support several new devices.
 - NEW: Demo for STM32F0-Discovery board.
 - NEW: Initial support for STM32F0xx devices, added a specific ADC driver.
-  Validated EXT, PAL, Serial, SPI drivers.
+  Validated EXT, GPT, ICU, PAL, PWM, Serial, SPI drivers.
 - NEW: Added a common ancestor class to the SDC and MMC_SPI drivers. This
   allows to share code and definitions.
 - NEW: Modified the SDC driver to implement the new block devices abstract
