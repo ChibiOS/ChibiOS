@@ -131,8 +131,8 @@ int main(void) {
    * Activates the serial driver 1, PA9 and PA10 are routed to USART1.
    */
   uartStart(&UARTD1, &uart_cfg_1);
-  palSetPadMode(GPIOC, 9, PAL_MODE_ALTERNATE(1));       /* USART1 TX.       */
-  palSetPadMode(GPIOC, 10, PAL_MODE_ALTERNATE(1));      /* USART1 RX.       */
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(1));       /* USART1 TX.       */
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(1));      /* USART1 RX.       */
 
   /*
    * Starts the transmission, it will be handled entirely in background.
