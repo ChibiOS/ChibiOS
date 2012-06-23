@@ -202,8 +202,6 @@ extern ch_trace_buffer_t dbg_trace_buffer;
 #define chDbgAssert(c, m, r) {(void)(c);}
 #endif /* !CH_DBG_ENABLE_ASSERTS */
 
-extern char *dbg_panic_msg;
-
 /*===========================================================================*/
 /* Panic related macros.                                                     */
 /*===========================================================================*/
@@ -237,7 +235,8 @@ extern "C" {
   void dbg_trace(Thread *otp);
 #endif
 #if CH_DBG_ENABLED
-  void chDbgPanic(char *msg);
+  extern const char *dbg_panic_msg;
+  void chDbgPanic(const char *msg);
 #endif
 #ifdef __cplusplus
 }

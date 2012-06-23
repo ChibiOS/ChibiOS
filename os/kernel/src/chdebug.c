@@ -254,14 +254,14 @@ void dbg_trace(Thread *otp) {
  * @details This pointer is meant to be accessed through the debugger, it is
  *          written once and then the system is halted.
  */
-char *dbg_panic_msg;
+const char *dbg_panic_msg;
 
 /**
  * @brief   Prints a panic message on the console and then halts the system.
  *
  * @param[in] msg       the pointer to the panic message string
  */
-void chDbgPanic(char *msg) {
+void chDbgPanic(const char *msg) {
 
   dbg_panic_msg = msg;
   chSysHalt();

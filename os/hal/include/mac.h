@@ -72,7 +72,7 @@
 typedef enum {
   MAC_UNINIT = 0,                   /**< Not initialized.                   */
   MAC_STOP = 1,                     /**< Stopped.                           */
-  MAC_ACTIVE = 2,                   /**< Active.                            */
+  MAC_ACTIVE = 2                    /**< Active.                            */
 } macstate_t;
 
 /**
