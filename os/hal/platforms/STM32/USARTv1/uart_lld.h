@@ -216,6 +216,36 @@
 #endif
 
 #if STM32_UART_USE_USART1 &&                                                \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to USART1"
+#endif
+
+#if STM32_UART_USE_USART2 &&                                                \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART2_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to USART2"
+#endif
+
+#if STM32_UART_USE_USART3 &&                                                \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART3_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to USART3"
+#endif
+
+#if STM32_UART_USE_USART1 &&                                                \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_UART_USART1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to USART1"
+#endif
+
+#if STM32_UART_USE_USART2 &&                                                \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_UART_USART2_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to USART2"
+#endif
+
+#if STM32_UART_USE_USART3 &&                                                \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_UART_USART3_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to USART3"
+#endif
+
+#if STM32_UART_USE_USART1 &&                                                \
     !STM32_DMA_IS_VALID_ID(STM32_UART_USART1_RX_DMA_STREAM,                 \
                            STM32_USART1_RX_DMA_MSK)
 #error "invalid DMA stream associated to USART1 RX"
