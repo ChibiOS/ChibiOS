@@ -126,6 +126,9 @@ static void serve_interrupt(PWMDriver *pwmp) {
 /*===========================================================================*/
 
 #if STM32_PWM_USE_TIM1
+#if !defined(STM32_TIM1_UP_HANDLER)
+#error "STM32_TIM1_UP_HANDLER not defined"
+#endif
 /**
  * @brief   TIM1 update interrupt handler.
  * @note    It is assumed that this interrupt is only activated if the callback
@@ -144,6 +147,9 @@ CH_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
   CH_IRQ_EPILOGUE();
 }
 
+#if !defined(STM32_TIM1_CC_HANDLER)
+#error "STM32_TIM1_CC_HANDLER not defined"
+#endif
 /**
  * @brief   TIM1 compare interrupt handler.
  * @note    It is assumed that the various sources are only activated if the
@@ -174,6 +180,9 @@ CH_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
 #endif /* STM32_PWM_USE_TIM1 */
 
 #if STM32_PWM_USE_TIM2
+#if !defined(STM32_TIM2_HANDLER)
+#error "STM32_TIM2_HANDLER not defined"
+#endif
 /**
  * @brief   TIM2 interrupt handler.
  *
@@ -190,6 +199,9 @@ CH_IRQ_HANDLER(STM32_TIM2_HANDLER) {
 #endif /* STM32_PWM_USE_TIM2 */
 
 #if STM32_PWM_USE_TIM3
+#if !defined(STM32_TIM3_HANDLER)
+#error "STM32_TIM3_HANDLER not defined"
+#endif
 /**
  * @brief   TIM3 interrupt handler.
  *
@@ -206,6 +218,9 @@ CH_IRQ_HANDLER(STM32_TIM3_HANDLER) {
 #endif /* STM32_PWM_USE_TIM3 */
 
 #if STM32_PWM_USE_TIM4
+#if !defined(STM32_TIM4_HANDLER)
+#error "STM32_TIM4_HANDLER not defined"
+#endif
 /**
  * @brief   TIM4 interrupt handler.
  *
@@ -222,6 +237,9 @@ CH_IRQ_HANDLER(STM32_TIM4_HANDLER) {
 #endif /* STM32_PWM_USE_TIM4 */
 
 #if STM32_PWM_USE_TIM5
+#if !defined(STM32_TIM5_HANDLER)
+#error "STM32_TIM5_HANDLER not defined"
+#endif
 /**
  * @brief   TIM5 interrupt handler.
  *
@@ -238,6 +256,9 @@ CH_IRQ_HANDLER(STM32_TIM5_HANDLER) {
 #endif /* STM32_PWM_USE_TIM5 */
 
 #if STM32_PWM_USE_TIM8
+#if !defined(STM32_TIM8_UP_HANDLER)
+#error "STM32_TIM8_UP_HANDLER not defined"
+#endif
 /**
  * @brief   TIM8 update interrupt handler.
  * @note    It is assumed that this interrupt is only activated if the callback
@@ -256,6 +277,9 @@ CH_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
   CH_IRQ_EPILOGUE();
 }
 
+#if !defined(STM32_TIM8_CC_HANDLER)
+#error "STM32_TIM8_CC_HANDLER not defined"
+#endif
 /**
  * @brief   TIM8 compare interrupt handler.
  * @note    It is assumed that the various sources are only activated if the
