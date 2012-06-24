@@ -264,24 +264,30 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
 /*===========================================================================*/
 
 #if STM32_USB_USE_USB1 || defined(__DOXYGEN__)
+#if !defined(STM32_USB1_HP_HANDLER)
+#error "STM32_USB1_HP_HANDLER not defined"
+#endif
 /**
  * @brief   USB high priority interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector8C) {
+CH_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
   CH_IRQ_EPILOGUE();
 }
 
+#if !defined(STM32_USB1_LP_HANDLER)
+#error "STM32_USB1_LP_HANDLER not defined"
+#endif
 /**
  * @brief   USB low priority interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector90) {
+CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
   uint32_t istr;
   size_t n;
   USBDriver *usbp = &USBD1;
@@ -446,9 +452,9 @@ void usb_lld_start(USBDriver *usbp) {
       STM32_USB->CNTR = CNTR_FRES;
       /* Enabling the USB IRQ vectors, this also gives enough time to allow
          the transceiver power up (1uS).*/
-      nvicEnableVector(19,
+      nvicEnableVector(STM32_USB1_HP_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_USB_USB1_HP_IRQ_PRIORITY));
-      nvicEnableVector(20,
+      nvicEnableVector(STM32_USB1_LP_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_USB_USB1_LP_IRQ_PRIORITY));
       /* Releases the USB reset.*/
       STM32_USB->CNTR = 0;
@@ -473,8 +479,8 @@ void usb_lld_stop(USBDriver *usbp) {
   if (usbp->state == USB_STOP) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
-      nvicDisableVector(19);
-      nvicDisableVector(20);
+      nvicDisableVector(STM32_USB1_HP_NUMBER);
+      nvicDisableVector(STM32_USB1_LP_NUMBER);
       STM32_USB->CNTR = CNTR_PDWN | CNTR_FRES;
       rccDisableUSB(FALSE);
     }

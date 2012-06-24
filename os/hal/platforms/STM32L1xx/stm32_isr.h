@@ -58,6 +58,15 @@
 #define STM32_USART1_NUMBER         USART1_IRQn
 #define STM32_USART2_NUMBER         USART2_IRQn
 #define STM32_USART3_NUMBER         USART3_IRQn
+
+/*
+ * USB units.
+ */
+#define STM32_USB1_HP_HANDLER       Vector8C
+#define STM32_USB1_LP_HANDLER       Vector90
+
+#define STM32_USB1_HP_NUMBER        USB_HP_IRQn
+#define STM32_USB1_LP_NUMBER        USB_LP_IRQn
 /** @} */
 
 /*===========================================================================*/
