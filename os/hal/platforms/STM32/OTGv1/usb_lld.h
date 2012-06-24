@@ -87,6 +87,11 @@
 #error "USB driver activated but no USB peripheral assigned"
 #endif
 
+#if STM32_USB_USE_OTG1 &&                                                \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_USB_OTG1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to OTG1"
+#endif
+
 #if (STM32_USB_OTG1_RX_FIFO_SIZE & 3) != 0
 #error "RX FIFO size must be a multiple of 4"
 #endif

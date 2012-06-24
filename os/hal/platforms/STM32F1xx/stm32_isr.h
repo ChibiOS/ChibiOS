@@ -59,9 +59,17 @@
 #define STM32_CAN2_SCE_NUMBER       CAN2_SCE_IRQn
 
 /*
+ * OTG units.
+ */
+#define STM32_OTG1_HANDLER          OTG_FS_IRQHandler
+
+#define STM32_OTG1_NUMBER           OTG_FS_IRQn
+
+/*
  * SDIO unit.
  */
 #define STM32_SDIO_HANDLER          SDIO_IRQHandler
+
 #define STM32_SDIO_NUMBER           SDIO_IRQn
 
 /*

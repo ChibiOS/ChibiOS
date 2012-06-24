@@ -532,12 +532,15 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
 /*===========================================================================*/
 
 #if STM32_USB_USE_OTG1 || defined(__DOXYGEN__)
+#if !defined(STM32_OTG1_HANDLER)
+#error "STM32_OTG1_HANDLER not defined"
+#endif
 /**
  * @brief   OTG1 interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(OTG_FS_IRQHandler) {
+CH_IRQ_HANDLER(STM32_OTG1_HANDLER) {
   USBDriver *usbp = &USBD1;
   uint32_t sts;
 
@@ -631,7 +634,7 @@ void usb_lld_start(USBDriver *usbp) {
       rccResetOTG_FS();
 
       /* Enables IRQ vector.*/
-      nvicEnableVector(OTG_FS_IRQn,
+      nvicEnableVector(STM32_OTG1_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_USB_OTG1_IRQ_PRIORITY));
     }
 #endif
@@ -686,7 +689,7 @@ void usb_lld_stop(USBDriver *usbp) {
   if (usbp->state == USB_STOP) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
-      nvicDisableVector(OTG_FS_IRQn);
+      nvicDisableVector(STM32_OTG1_NUMBER);
       rccDisableOTG1(FALSE);
     }
 #endif
