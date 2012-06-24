@@ -15,13 +15,15 @@ Version 2.5.0
 * USB driver model revision.
   * STM32 OTG USB cell support for CL, F2, F4 devices.
 * CAN driver test on STM32F2/F4.
+* STM32F0 support.
+  * Specific ADC driver for STM32F0.
 
 Within 2.5.x:
 X Revision of the RTCv2 driver implementation.
 X File System infrastructure.
   - FatFs wrapper.
 X Streaming DAC/I2S driver model and STM32 implementation.
-X STM32F0 support.
+- Specific I2C driver for STM32F0 and newer devices.
 - STM32 CAN2 support.
 - Unified LPC1xxx HAL.
   - LPC11xx and LPC13xx HALs merged in the unified one.
