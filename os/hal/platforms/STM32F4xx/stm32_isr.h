@@ -59,6 +59,12 @@
 #define STM32_CAN2_SCE_NUMBER       CAN2_SCE_IRQn
 
 /*
+ * SDIO unit.
+ */
+#define STM32_SDIO_HANDLER          SDIO_IRQHandler
+#define STM32_SDIO_NUMBER           SDIO_IRQn
+
+/*
  * TIM units.
  */
 #define STM32_TIM1_UP_HANDLER       TIM1_UP_IRQHandler

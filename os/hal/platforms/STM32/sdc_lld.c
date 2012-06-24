@@ -277,6 +277,9 @@ static void sdc_lld_error_cleanup(SDCDriver *sdcp,
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if !defined(STM32_SDIO_HANDLER)
+#error "STM32_SDIO_HANDLER not defined"
+#endif
 /**
  * @brief   SDIO IRQ handler.
  * @details It just wakes transaction thread. All error  handling performs in
@@ -284,7 +287,7 @@ static void sdc_lld_error_cleanup(SDCDriver *sdcp,
  *
  * @isr
  */
-CH_IRQ_HANDLER(SDIO_IRQHandler) {
+CH_IRQ_HANDLER(STM32_SDIO_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -352,7 +355,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
 #if (defined(STM32F4XX) || defined(STM32F2XX))
     dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS | STM32_DMA_FCR_FTH_FULL);
 #endif
-    nvicEnableVector(SDIO_IRQn,
+    nvicEnableVector(STM32_SDIO_NUMBER,
                      CORTEX_PRIORITY_MASK(STM32_SDC_SDIO_IRQ_PRIORITY));
     rccEnableSDIO(FALSE);
   }
@@ -380,7 +383,7 @@ void sdc_lld_stop(SDCDriver *sdcp) {
     SDIO->DTIMER = 0;
 
     /* Clock deactivation.*/
-    nvicDisableVector(SDIO_IRQn);
+    nvicDisableVector(STM32_SDIO_NUMBER);
     dmaStreamRelease(sdcp->dma);
     rccDisableSDIO(FALSE);
   }
