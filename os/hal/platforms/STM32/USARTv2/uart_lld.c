@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    STM32/uart_lld.c
+ * @file    STM32/USARTv2/uart_lld.c
  * @brief   STM32 low level UART driver code.
  *
  * @addtogroup UART
@@ -292,12 +292,15 @@ static void serve_usart_irq(UARTDriver *uartp) {
 /*===========================================================================*/
 
 #if STM32_UART_USE_USART1 || defined(__DOXYGEN__)
+#if !defined(STM32_USART1_HANDLER)
+#error "STM32_USART1_HANDLER not defined"
+#endif
 /**
  * @brief   USART1 IRQ handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(USART1_IRQHandler) {
+CH_IRQ_HANDLER(STM32_USART1_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -308,12 +311,15 @@ CH_IRQ_HANDLER(USART1_IRQHandler) {
 #endif /* STM32_UART_USE_USART1 */
 
 #if STM32_UART_USE_USART2 || defined(__DOXYGEN__)
+#if !defined(STM32_USART2_HANDLER)
+#error "STM32_USART2_HANDLER not defined"
+#endif
 /**
  * @brief   USART2 IRQ handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(USART2_IRQHandler) {
+CH_IRQ_HANDLER(STM32_USART2_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -324,12 +330,15 @@ CH_IRQ_HANDLER(USART2_IRQHandler) {
 #endif /* STM32_UART_USE_USART2 */
 
 #if STM32_UART_USE_USART3 || defined(__DOXYGEN__)
+#if !defined(STM32_USART3_HANDLER)
+#error "STM32_USART3_HANDLER not defined"
+#endif
 /**
  * @brief   USART3 IRQ handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(USART3_IRQHandler) {
+CH_IRQ_HANDLER(STM32_USART3_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -398,7 +407,7 @@ void uart_lld_start(UARTDriver *uartp) {
                             (void *)uartp);
       chDbgAssert(!b, "uart_lld_start(), #2", "stream already allocated");
       rccEnableUSART1(FALSE);
-      nvicEnableVector(USART1_IRQn,
+      nvicEnableVector(STM32_USART1_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART1_IRQ_PRIORITY));
       uartp->dmamode |= STM32_DMA_CR_CHSEL(USART1_RX_DMA_CHANNEL) |
                         STM32_DMA_CR_PL(STM32_UART_USART1_DMA_PRIORITY);
@@ -419,7 +428,7 @@ void uart_lld_start(UARTDriver *uartp) {
                             (void *)uartp);
       chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
       rccEnableUSART2(FALSE);
-      nvicEnableVector(USART2_IRQn,
+      nvicEnableVector(STM32_USART2_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART2_IRQ_PRIORITY));
       uartp->dmamode |= STM32_DMA_CR_CHSEL(USART2_RX_DMA_CHANNEL) |
                         STM32_DMA_CR_PL(STM32_UART_USART2_DMA_PRIORITY);
@@ -440,7 +449,7 @@ void uart_lld_start(UARTDriver *uartp) {
                             (void *)uartp);
       chDbgAssert(!b, "uart_lld_start(), #6", "stream already allocated");
       rccEnableUSART3(FALSE);
-      nvicEnableVector(USART3_IRQn,
+      nvicEnableVector(STM32_USART3_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART3_IRQ_PRIORITY));
       uartp->dmamode |= STM32_DMA_CR_CHSEL(USART3_RX_DMA_CHANNEL) |
                         STM32_DMA_CR_PL(STM32_UART_USART3_DMA_PRIORITY);
@@ -477,7 +486,7 @@ void uart_lld_stop(UARTDriver *uartp) {
 
 #if STM32_UART_USE_USART1
     if (&UARTD1 == uartp) {
-      nvicDisableVector(USART1_IRQn);
+      nvicDisableVector(STM32_USART1_NUMBER);
       rccDisableUSART1(FALSE);
       return;
     }
@@ -485,7 +494,7 @@ void uart_lld_stop(UARTDriver *uartp) {
 
 #if STM32_UART_USE_USART2
     if (&UARTD2 == uartp) {
-      nvicDisableVector(USART2_IRQn);
+      nvicDisableVector(STM32_USART2_NUMBER);
       rccDisableUSART2(FALSE);
       return;
     }
@@ -493,7 +502,7 @@ void uart_lld_stop(UARTDriver *uartp) {
 
 #if STM32_UART_USE_USART3
     if (&UARTD3 == uartp) {
-      nvicDisableVector(USART3_IRQn);
+      nvicDisableVector(STM32_USART3_NUMBER);
       rccDisableUSART3(FALSE);
       return;
     }

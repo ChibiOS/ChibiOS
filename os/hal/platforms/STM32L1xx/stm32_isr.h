@@ -47,6 +47,17 @@
 #define STM32_TIM2_NUMBER           TIM2_IRQn
 #define STM32_TIM3_NUMBER           TIM3_IRQn
 #define STM32_TIM4_NUMBER           TIM4_IRQn
+
+/*
+ * USART units.
+ */
+#define STM32_USART1_HANDLER        USART1_IRQHandler
+#define STM32_USART2_HANDLER        USART2_IRQHandler
+#define STM32_USART3_HANDLER        USART3_IRQHandler
+
+#define STM32_USART1_NUMBER         USART1_IRQn
+#define STM32_USART2_NUMBER         USART2_IRQn
+#define STM32_USART3_NUMBER         USART3_IRQn
 /** @} */
 
 /*===========================================================================*/

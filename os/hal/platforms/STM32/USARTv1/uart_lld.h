@@ -49,7 +49,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_UART_USE_USART1) || defined(__DOXYGEN__)
-#define STM32_UART_USE_USART1               TRUE
+#define STM32_UART_USE_USART1               FALSE
 #endif
 
 /**
@@ -58,7 +58,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_UART_USE_USART2) || defined(__DOXYGEN__)
-#define STM32_UART_USE_USART2               TRUE
+#define STM32_UART_USE_USART2               FALSE
 #endif
 
 /**
@@ -67,7 +67,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_UART_USE_USART3) || defined(__DOXYGEN__)
-#define STM32_UART_USE_USART3               TRUE
+#define STM32_UART_USE_USART3               FALSE
 #endif
 
 /**
