@@ -372,12 +372,15 @@ static void notify6(GenericQueue *qp) {
 /*===========================================================================*/
 
 #if STM32_SERIAL_USE_USART1 || defined(__DOXYGEN__)
+#if !defined(STM32_USART1_HANDLER)
+#error "STM32_USART1_HANDLER not defined"
+#endif
 /**
  * @brief   USART1 interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(USART1_IRQHandler) {
+CH_IRQ_HANDLER(STM32_USART1_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -388,12 +391,15 @@ CH_IRQ_HANDLER(USART1_IRQHandler) {
 #endif
 
 #if STM32_SERIAL_USE_USART2 || defined(__DOXYGEN__)
+#if !defined(STM32_USART2_HANDLER)
+#error "STM32_USART2_HANDLER not defined"
+#endif
 /**
  * @brief   USART2 interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(USART2_IRQHandler) {
+CH_IRQ_HANDLER(STM32_USART2_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -404,12 +410,15 @@ CH_IRQ_HANDLER(USART2_IRQHandler) {
 #endif
 
 #if STM32_SERIAL_USE_USART3 || defined(__DOXYGEN__)
+#if !defined(STM32_USART3_HANDLER)
+#error "STM32_USART3_HANDLER not defined"
+#endif
 /**
  * @brief   USART3 interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(USART3_IRQHandler) {
+CH_IRQ_HANDLER(STM32_USART3_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -420,12 +429,15 @@ CH_IRQ_HANDLER(USART3_IRQHandler) {
 #endif
 
 #if STM32_SERIAL_USE_UART4 || defined(__DOXYGEN__)
+#if !defined(STM32_UART4_HANDLER)
+#error "STM32_UART4_HANDLER not defined"
+#endif
 /**
  * @brief   UART4 interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(UART4_IRQHandler) {
+CH_IRQ_HANDLER(STM32_UART4_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -436,12 +448,15 @@ CH_IRQ_HANDLER(UART4_IRQHandler) {
 #endif
 
 #if STM32_SERIAL_USE_UART5 || defined(__DOXYGEN__)
+#if !defined(STM32_UART5_HANDLER)
+#error "STM32_UART5_HANDLER not defined"
+#endif
 /**
  * @brief   UART5 interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(UART5_IRQHandler) {
+CH_IRQ_HANDLER(STM32_UART5_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -452,12 +467,15 @@ CH_IRQ_HANDLER(UART5_IRQHandler) {
 #endif
 
 #if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+#if !defined(STM32_USART6_HANDLER)
+#error "STM32_USART6_HANDLER not defined"
+#endif
 /**
  * @brief   USART1 interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(USART6_IRQHandler) {
+CH_IRQ_HANDLER(STM32_USART6_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -528,42 +546,42 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
       rccEnableUSART1(FALSE);
-      nvicEnableVector(USART1_IRQn,
+      nvicEnableVector(STM32_USART1_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART1_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
       rccEnableUSART2(FALSE);
-      nvicEnableVector(USART2_IRQn,
+      nvicEnableVector(STM32_USART2_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART2_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
       rccEnableUSART3(FALSE);
-      nvicEnableVector(USART3_IRQn,
+      nvicEnableVector(STM32_USART3_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART3_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
       rccEnableUART4(FALSE);
-      nvicEnableVector(UART4_IRQn,
+      nvicEnableVector(STM32_UART4_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_UART4_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
       rccEnableUART5(FALSE);
-      nvicEnableVector(UART5_IRQn,
+      nvicEnableVector(STM32_UART5_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_UART5_PRIORITY));
     }
 #endif
 #if STM32_SERIAL_USE_USART6
     if (&SD6 == sdp) {
       rccEnableUSART6(FALSE);
-      nvicEnableVector(USART6_IRQn,
+      nvicEnableVector(STM32_USART6_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART6_PRIORITY));
     }
 #endif
@@ -587,42 +605,42 @@ void sd_lld_stop(SerialDriver *sdp) {
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
       rccDisableUSART1(FALSE);
-      nvicDisableVector(USART1_IRQn);
+      nvicDisableVector(STM32_USART1_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
       rccDisableUSART2(FALSE);
-      nvicDisableVector(USART2_IRQn);
+      nvicDisableVector(STM32_USART2_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
       rccDisableUSART3(FALSE);
-      nvicDisableVector(USART3_IRQn);
+      nvicDisableVector(STM32_USART3_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
       rccDisableUART4(FALSE);
-      nvicDisableVector(UART4_IRQn);
+      nvicDisableVector(STM32_UART4_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
       rccDisableUART5(FALSE);
-      nvicDisableVector(UART5_IRQn);
+      nvicDisableVector(STM32_UART5_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART6
     if (&SD6 == sdp) {
       rccDisableUSART6(FALSE);
-      nvicDisableVector(USART6_IRQn);
+      nvicDisableVector(STM32_USART6_NUMBER);
       return;
     }
 #endif
