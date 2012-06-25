@@ -59,21 +59,6 @@
 #if !defined(MMC_NICE_WAITING) || defined(__DOXYGEN__)
 #define MMC_NICE_WAITING            TRUE
 #endif
-
-/**
- * @brief   Number of positive insertion queries before generating the
- *          insertion event.
- */
-#if !defined(MMC_POLLING_INTERVAL) || defined(__DOXYGEN__)
-#define MMC_POLLING_INTERVAL        10
-#endif
-
-/**
- * @brief   Interval, in milliseconds, between insertion queries.
- */
-#if !defined(MMC_POLLING_DELAY) || defined(__DOXYGEN__)
-#define MMC_POLLING_DELAY           10
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -92,13 +77,14 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  MMC_UNINIT = 0,                           /**< Not initialized.           */
-  MMC_STOP = 1,                             /**< Stopped.                   */
-  MMC_WAIT = 2,                             /**< Waiting card.              */
-  MMC_INSERTED = 3,                         /**< Card inserted.             */
-  MMC_READY = 4,                            /**< Card ready.                */
-  MMC_READING = 5,                          /**< Reading.                   */
-  MMC_WRITING = 6                           /**< Writing.                   */
+  MMC_UNINIT = 0,                   /**< Not initialized.                   */
+  MMC_STOP = 1,                     /**< Stopped.                           */
+  MMC_READY = 2,                    /**< Ready.                             */
+  MMC_CONNECTING = 3,               /**< Card connection in progress.       */
+  MMC_DISCONNECTING = 4,            /**< Card disconnection in progress.    */
+  MMC_ACTIVE = 5,                   /**< Cart initialized.                  */
+  MMC_READING = 6,                  /**< Read operation in progress.        */
+  MMC_WRITING = 7,                  /**< Write operation in progress.       */
 } mmcstate_t;
 
 /**
@@ -153,22 +139,6 @@ typedef struct {
    * @brief Current configuration data.
    */
   const MMCConfig       *config;
-  /**
-   * @brief Card insertion event source.
-   */
-  EventSource           inserted_event;
-  /**
-   * @brief Card removal event source.
-   */
-  EventSource           removed_event;
-  /**
-   * @brief MMC insertion polling timer.
-   */
-  VirtualTimer          vt;
-  /**
-   * @brief Insertion counter.
-   */
-  uint_fast8_t          cnt;
   /***
    * @brief Addresses use blocks instead of bytes.
    */
@@ -192,6 +162,22 @@ typedef struct {
  * @api
  */
 #define mmcGetDriverState(mmcp) ((mmcp)->state)
+
+/**
+ * @brief   Returns the card insertion status.
+ * @note    This macro wraps a low level function named
+ *          @p sdc_lld_is_card_inserted(), this function must be
+ *          provided by the application because it is not part of the
+ *          SDC driver.
+ *
+ * @param[in] mmcp      pointer to the @p MMCDriver object
+ * @return              The card state.
+ * @retval FALSE        card not inserted.
+ * @retval TRUE         card inserted.
+ *
+ * @api
+ */
+#define mmcIsCardInserted(mmcp) mmc_lld_is_card_inserted(mmcp)
 
 /**
  * @brief   Returns the write protect status.

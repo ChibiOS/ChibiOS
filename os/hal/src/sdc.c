@@ -230,7 +230,7 @@ bool_t sdcConnect(SDCDriver *sdcp) {
 #if SDC_MMC_SUPPORT
     if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
     /* TODO: MMC initialization.*/
-    return CH_FAILED;
+    goto failed;
   }
   else
 #endif /* SDC_MMC_SUPPORT */
@@ -337,7 +337,7 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
   chDbgCheck(sdcp != NULL, "sdcDisconnect");
 
   chSysLock();
-  chDbgAssert(sdcp->state == SDC_ACTIVE,
+  chDbgAssert((sdcp->state == SDC_READY) || (sdcp->state == SDC_ACTIVE),
               "sdcDisconnect(), #1", "invalid state");
   if (sdcp->state == SDC_READY) {
     chSysUnlock();
