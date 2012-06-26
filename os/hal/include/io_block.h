@@ -39,6 +39,20 @@
 #define _IO_BLOCK_H_
 
 /**
+ * @brief   Driver state machine possible states.
+ */
+typedef enum {
+  BLK_UNINIT = 0,                   /**< Not initialized.                   */
+  BLK_STOP = 1,                     /**< Stopped.                           */
+  BLK_ACTIVE = 2,                   /**< Interface active.                  */
+  BLK_CONNECTING = 3,               /**< Connection in progress.            */
+  BLK_DISCONNECTING = 4,            /**< Disconnection in progress.         */
+  BLK_READY = 5,                    /**< Device ready.                      */
+  BLK_READING = 6,                  /**< Read operation in progress.        */
+  BLK_WRITING = 7,                  /**< Write operation in progress.       */
+} blkstate_t;
+
+/**
  * @brief   Block device info.
  */
 typedef struct {
@@ -71,10 +85,10 @@ typedef struct {
 
 /**
  * @brief   @p BaseBlockDevice specific data.
- * @note    It is empty because @p BaseBlockDevice is only an interface
- *          without implementation.
  */
-#define _base_block_device_data
+#define _base_block_device_data                                             \
+  /* Driver state.*/                                                        \
+  blkstate_t            state;
 
 /**
  * @brief   @p BaseBlockDevice virtual methods table.
@@ -97,6 +111,17 @@ typedef struct {
  * @name    Macro Functions (BaseBlockDevice)
  * @{
  */
+/**
+ * @brief   Returns the driver state.
+ *
+ * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
+ *
+ * @return              The driver state.
+ *
+ * @api
+ */
+#define blkGetDriverState(ip) ((ip)->state)
+
 /**
  * @brief   Returns the media insertion status.
  *

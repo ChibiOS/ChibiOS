@@ -216,6 +216,22 @@ typedef struct {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
+/**
+ * @brief   Returns the card capacity in blocks.
+ *
+ * @param[in] ip        pointer to a @p MMCSDBlockDevice or derived class
+ *
+ * @return              The card capacity.
+ *
+ * @api
+ */
+#define mmcsdGetCardCapacity(ip)  ((ip)->capacity)
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

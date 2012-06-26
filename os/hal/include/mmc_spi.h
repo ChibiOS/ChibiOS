@@ -74,20 +74,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Driver state machine possible states.
- */
-typedef enum {
-  MMC_UNINIT = 0,                   /**< Not initialized.                   */
-  MMC_STOP = 1,                     /**< Stopped.                           */
-  MMC_READY = 2,                    /**< Ready.                             */
-  MMC_CONNECTING = 3,               /**< Card connection in progress.       */
-  MMC_DISCONNECTING = 4,            /**< Card disconnection in progress.    */
-  MMC_ACTIVE = 5,                   /**< Cart initialized.                  */
-  MMC_READING = 6,                  /**< Read operation in progress.        */
-  MMC_WRITING = 7,                  /**< Write operation in progress.       */
-} mmcstate_t;
-
-/**
  * @brief   MMC/SD over SPI driver configuration structure.
  */
 typedef struct {
@@ -132,10 +118,6 @@ typedef struct {
   const struct MMCDriverVMT *vmt;
   _mmcsd_block_device_data
   /**
-   * @brief Driver state.
-   */
-  mmcstate_t            state;
-  /**
    * @brief Current configuration data.
    */
   const MMCConfig       *config;
@@ -153,16 +135,6 @@ typedef struct {
  * @name    Macro Functions
  * @{
  */
-/**
- * @brief   Returns the driver state.
- *
- * @param[in] mmcp      pointer to the @p MMCDriver object
- * @return              The driver state.
- *
- * @api
- */
-#define mmcGetDriverState(mmcp) ((mmcp)->state)
-
 /**
  * @brief   Returns the card insertion status.
  * @note    This macro wraps a low level function named

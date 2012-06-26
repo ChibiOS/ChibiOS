@@ -49,7 +49,7 @@ DSTATUS disk_initialize (
   case MMC:
     stat = 0;
     /* It is initialized externally, just reads the status.*/
-    if (mmcGetDriverState(&MMCD1) != MMC_READY)
+    if (blkGetDriverState(&MMCD1) != BLK_READY)
       stat |= STA_NOINIT;
     if (mmcIsWriteProtected(&MMCD1))
       stat |=  STA_PROTECT;
@@ -58,7 +58,7 @@ DSTATUS disk_initialize (
   case SDC:
     stat = 0;
     /* It is initialized externally, just reads the status.*/
-    if (sdcGetDriverState(&SDCD1) != SDC_ACTIVE)
+    if (blkGetDriverState(&SDCD1) != BLK_READY)
       stat |= STA_NOINIT;
     if (sdcIsWriteProtected(&SDCD1))
       stat |=  STA_PROTECT;
@@ -84,7 +84,7 @@ DSTATUS disk_status (
   case MMC:
     stat = 0;
     /* It is initialized externally, just reads the status.*/
-    if (mmcGetDriverState(&MMCD1) != MMC_READY)
+    if (blkGetDriverState(&MMCD1) != BLK_READY)
       stat |= STA_NOINIT;
     if (mmcIsWriteProtected(&MMCD1))
       stat |= STA_PROTECT;
@@ -93,7 +93,7 @@ DSTATUS disk_status (
   case SDC:
     stat = 0;
     /* It is initialized externally, just reads the status.*/
-    if (sdcGetDriverState(&SDCD1) != SDC_ACTIVE)
+    if (blkGetDriverState(&SDCD1) != BLK_READY)
       stat |= STA_NOINIT;
     if (sdcIsWriteProtected(&SDCD1))
       stat |= STA_PROTECT;
@@ -118,7 +118,7 @@ DRESULT disk_read (
   switch (drv) {
 #if HAL_USE_MMC_SPI
   case MMC:
-    if (mmcGetDriverState(&MMCD1) != MMC_READY)
+    if (blkGetDriverState(&MMCD1) != BLK_READY)
       return RES_NOTRDY;
     if (mmcStartSequentialRead(&MMCD1, sector))
       return RES_ERROR;
@@ -133,7 +133,7 @@ DRESULT disk_read (
     return RES_OK;
 #else
   case SDC:
-    if (sdcGetDriverState(&SDCD1) != SDC_ACTIVE)
+    if (blkGetDriverState(&SDCD1) != BLK_READY)
       return RES_NOTRDY;
     if (sdcRead(&SDCD1, sector, buff, count))
       return RES_ERROR;
@@ -159,7 +159,7 @@ DRESULT disk_write (
   switch (drv) {
 #if HAL_USE_MMC_SPI
   case MMC:
-    if (mmcGetDriverState(&MMCD1) != MMC_READY)
+    if (blkGetDriverState(&MMCD1) != BLK_READY)
         return RES_NOTRDY;
     if (mmcIsWriteProtected(&MMCD1))
         return RES_WRPRT;
@@ -176,7 +176,7 @@ DRESULT disk_write (
     return RES_OK;
 #else
   case SDC:
-    if (sdcGetDriverState(&SDCD1) != SDC_ACTIVE)
+    if (blkGetDriverState(&SDCD1) != BLK_READY)
       return RES_NOTRDY;
     if (sdcWrite(&SDCD1, sector, buff, count))
       return RES_ERROR;
