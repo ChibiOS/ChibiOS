@@ -106,20 +106,6 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Driver state machine possible states.
- */
-typedef enum {
-  SDC_UNINIT = 0,                   /**< Not initialized.                   */
-  SDC_STOP = 1,                     /**< Stopped.                           */
-  SDC_READY = 2,                    /**< Ready.                             */
-  SDC_CONNECTING = 3,               /**< Card connection in progress.       */
-  SDC_DISCONNECTING = 4,            /**< Card disconnection in progress.    */
-  SDC_ACTIVE = 5,                   /**< Cart initialized.                  */
-  SDC_READING = 6,                  /**< Read operation in progress.        */
-  SDC_WRITING = 7,                  /**< Write operation in progress.       */
-} sdcstate_t;
-
 #include "sdc_lld.h"
 
 /*===========================================================================*/
@@ -130,16 +116,6 @@ typedef enum {
  * @name    Macro Functions
  * @{
  */
-/**
- * @brief   Returns the driver state.
- *
- * @param[in] sdcp      pointer to the @p SDCDriver object
- * @return              The driver state.
- *
- * @api
- */
-#define sdcGetDriverState(sdcp)         ((sdcp)->state)
-
 /**
  * @brief   Returns the card insertion status.
  * @note    This macro wraps a low level function named
@@ -171,16 +147,6 @@ typedef enum {
  * @api
  */
 #define sdcIsWriteProtected(sdcp) (sdc_lld_is_write_protected(sdcp))
-
-/**
- * @brief   Returns the card capacity in blocks.
- *
- * @param[in] sdcp      pointer to the @p SDCDriver object
- * @return              The card capacity.
- *
- * @api
- */
-#define sdcGetCardCapacity(sdcp)  ((sdcp)->capacity)
 /** @} */
 
 /*===========================================================================*/

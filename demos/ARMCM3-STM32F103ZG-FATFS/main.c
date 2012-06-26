@@ -34,8 +34,8 @@
 /* Card insertion monitor.                                                   */
 /*===========================================================================*/
 
-#define SDC_POLLING_INTERVAL            10
-#define SDC_POLLING_DELAY               10
+#define POLLING_INTERVAL                10
+#define POLLING_DELAY                   10
 
 /**
  * @brief   Card monitor timer.
@@ -55,47 +55,55 @@ static EventSource inserted_event, removed_event;
 /**
  * @brief   Insertion monitor timer callback function.
  *
- * @param[in] p         pointer to the @p SDCDriver object
+ * @param[in] p         pointer to the @p BaseBlockDevice object
  *
  * @notapi
  */
 static void tmrfunc(void *p) {
-  SDCDriver *sdcp = p;
+  BaseBlockDevice *bbdp = p;
 
+  /* The presence check is performed only while the driver is not in a
+     transfer state because it is often performed by changing the mode of
+     the pin connected to the CS/D3 contact of the card, this could disturb
+     the transfer.*/
+  blkstate_t state = blkGetDriverState(bbdp);
   chSysLockFromIsr();
-  if (cnt > 0) {
-    if (sdcIsCardInserted(sdcp)) {
-      if (--cnt == 0) {
-        chEvtBroadcastI(&inserted_event);
+  if ((state != BLK_READING) && (state != BLK_WRITING)) {
+    /* Safe to perform the check.*/
+    if (cnt > 0) {
+      if (blkIsInserted(bbdp)) {
+        if (--cnt == 0) {
+          chEvtBroadcastI(&inserted_event);
+        }
+      }
+      else
+        cnt = POLLING_INTERVAL;
+    }
+    else {
+      if (!blkIsInserted(bbdp)) {
+        cnt = POLLING_INTERVAL;
+        chEvtBroadcastI(&removed_event);
       }
     }
-    else
-      cnt = SDC_POLLING_INTERVAL;
   }
-  else {
-    if (!sdcIsCardInserted(sdcp)) {
-      cnt = SDC_POLLING_INTERVAL;
-      chEvtBroadcastI(&removed_event);
-    }
-  }
-  chVTSetI(&tmr, MS2ST(SDC_POLLING_DELAY), tmrfunc, sdcp);
+  chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, bbdp);
   chSysUnlockFromIsr();
 }
 
 /**
  * @brief   Polling monitor start.
  *
- * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] p         pointer to an object implementing @p BaseBlockDevice
  *
  * @notapi
  */
-static void tmr_init(SDCDriver *sdcp) {
+static void tmr_init(void *p) {
 
   chEvtInit(&inserted_event);
   chEvtInit(&removed_event);
   chSysLock();
-  cnt = SDC_POLLING_INTERVAL;
-  chVTSetI(&tmr, MS2ST(SDC_POLLING_DELAY), tmrfunc, sdcp);
+  cnt = POLLING_INTERVAL;
+  chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, p);
   chSysUnlock();
 }
 
@@ -276,8 +284,6 @@ static void InsertHandler(eventid_t id) {
 static void RemoveHandler(eventid_t id) {
 
   (void)id;
-  if (sdcGetDriverState(&SDCD1) == SDC_ACTIVE)
-    sdcDisconnect(&SDCD1);
   fs_ready = FALSE;
 }
 

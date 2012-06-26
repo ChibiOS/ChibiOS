@@ -125,10 +125,10 @@ void sdcInit(void) {
  */
 void sdcObjectInit(SDCDriver *sdcp) {
 
-  sdcp->vmt    = &sdc_vmt;
-  sdcp->state  = SDC_STOP;
-  sdcp->errors = SDC_NO_ERROR;
-  sdcp->config = NULL;
+  sdcp->vmt      = &sdc_vmt;
+  sdcp->state    = BLK_STOP;
+  sdcp->errors   = SDC_NO_ERROR;
+  sdcp->config   = NULL;
   sdcp->capacity = 0;
 }
 
@@ -147,11 +147,11 @@ void sdcStart(SDCDriver *sdcp, const SDCConfig *config) {
   chDbgCheck(sdcp != NULL, "sdcStart");
 
   chSysLock();
-  chDbgAssert((sdcp->state == SDC_STOP) || (sdcp->state == SDC_READY),
+  chDbgAssert((sdcp->state == BLK_STOP) || (sdcp->state == BLK_ACTIVE),
               "sdcStart(), #1", "invalid state");
   sdcp->config = config;
   sdc_lld_start(sdcp);
-  sdcp->state = SDC_READY;
+  sdcp->state = BLK_ACTIVE;
   chSysUnlock();
 }
 
@@ -167,17 +167,17 @@ void sdcStop(SDCDriver *sdcp) {
   chDbgCheck(sdcp != NULL, "sdcStop");
 
   chSysLock();
-  chDbgAssert((sdcp->state == SDC_STOP) || (sdcp->state == SDC_READY),
+  chDbgAssert((sdcp->state == BLK_STOP) || (sdcp->state == BLK_ACTIVE),
               "sdcStop(), #1", "invalid state");
   sdc_lld_stop(sdcp);
-  sdcp->state = SDC_STOP;
+  sdcp->state = BLK_STOP;
   chSysUnlock();
 }
 
 /**
  * @brief   Performs the initialization procedure on the inserted card.
  * @details This function should be invoked when a card is inserted and
- *          brings the driver in the @p SDC_ACTIVE state where it is possible
+ *          brings the driver in the @p BLK_READY state where it is possible
  *          to perform read and write operations.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
@@ -192,12 +192,11 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   uint32_t resp[1];
 
   chDbgCheck(sdcp != NULL, "sdcConnect");
-
-  chSysLock();
-  chDbgAssert((sdcp->state == SDC_READY) || (sdcp->state == SDC_ACTIVE),
+  chDbgAssert((sdcp->state == BLK_ACTIVE) || (sdcp->state == BLK_READY),
               "mmcConnect(), #1", "invalid state");
-  sdcp->state = SDC_CONNECTING;
-  chSysUnlock();
+
+  /* Connection procedure in progress.*/
+  sdcp->state = BLK_CONNECTING;
 
   /* Card clock initialization.*/
   sdc_lld_start_clk(sdcp);
@@ -228,7 +227,7 @@ bool_t sdcConnect(SDCDriver *sdcp) {
   }
 
 #if SDC_MMC_SUPPORT
-    if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
+  if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
     /* TODO: MMC initialization.*/
     goto failed;
   }
@@ -311,13 +310,13 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     goto failed;
 
   /* Initialization complete.*/
-  sdcp->state = SDC_ACTIVE;
+  sdcp->state = BLK_READY;
   return CH_SUCCESS;
 
-  /* Initialization failed.*/
+  /* Connection failed, state reset to BLK_ACTIVE.*/
 failed:
   sdc_lld_stop_clk(sdcp);
-  sdcp->state = SDC_READY;
+  sdcp->state = BLK_ACTIVE;
   return CH_FAILED;
 }
 
@@ -337,29 +336,31 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
   chDbgCheck(sdcp != NULL, "sdcDisconnect");
 
   chSysLock();
-  chDbgAssert((sdcp->state == SDC_READY) || (sdcp->state == SDC_ACTIVE),
+  chDbgAssert((sdcp->state == BLK_ACTIVE) || (sdcp->state == BLK_READY),
               "sdcDisconnect(), #1", "invalid state");
-  if (sdcp->state == SDC_READY) {
+  if (sdcp->state == BLK_ACTIVE) {
     chSysUnlock();
     return CH_SUCCESS;
   }
-  sdcp->state = SDC_DISCONNECTING;
+  sdcp->state = BLK_DISCONNECTING;
   chSysUnlock();
 
   /* Waits for eventual pending operations completion.*/
-  if (_sdc_wait_for_transfer_state(sdcp))
+  if (_sdc_wait_for_transfer_state(sdcp)) {
+    sdc_lld_stop_clk(sdcp);
+    sdcp->state = BLK_ACTIVE;
     return CH_FAILED;
+  }
 
   /* Card clock stopped.*/
   sdc_lld_stop_clk(sdcp);
-
-  sdcp->state = SDC_READY;
+  sdcp->state = BLK_ACTIVE;
   return CH_SUCCESS;
 }
 
 /**
  * @brief   Reads one or more blocks.
- * @pre     The driver must be in the @p SDC_ACTIVE state after a successful
+ * @pre     The driver must be in the @p BLK_READY state after a successful
  *          sdcConnect() invocation.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
@@ -378,25 +379,26 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
   bool_t status;
 
   chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcRead");
+  chDbgAssert(sdcp->state == BLK_READY, "sdcRead(), #1", "invalid state");
 
   if ((startblk + n - 1) > sdcp->capacity){
     sdcp->errors |= SDC_OVERFLOW_ERROR;
     return CH_FAILED;
   }
 
-  chSysLock();
-  chDbgAssert(sdcp->state == SDC_ACTIVE, "sdcRead(), #1", "invalid state");
-  sdcp->state = SDC_READING;
-  chSysUnlock();
+  /* Read operation in progress.*/
+  sdcp->state = BLK_READING;
 
   status = sdc_lld_read(sdcp, startblk, buf, n);
-  sdcp->state = SDC_ACTIVE;
+
+  /* Read operation finished.*/
+  sdcp->state = BLK_READY;
   return status;
 }
 
 /**
  * @brief   Writes one or more blocks.
- * @pre     The driver must be in the @p SDC_ACTIVE state after a successful
+ * @pre     The driver must be in the @p BLK_READY state after a successful
  *          sdcConnect() invocation.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
@@ -415,19 +417,20 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
   bool_t status;
 
   chDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0), "sdcWrite");
+  chDbgAssert(sdcp->state == BLK_READY, "sdcWrite(), #1", "invalid state");
 
   if ((startblk + n - 1) > sdcp->capacity){
     sdcp->errors |= SDC_OVERFLOW_ERROR;
     return CH_FAILED;
   }
 
-  chSysLock();
-  chDbgAssert(sdcp->state == SDC_ACTIVE, "sdcWrite(), #1", "invalid state");
-  sdcp->state = SDC_WRITING;
-  chSysUnlock();
+  /* Write operation in progress.*/
+  sdcp->state = BLK_WRITING;
 
   status = sdc_lld_write(sdcp, startblk, buf, n);
-  sdcp->state = SDC_ACTIVE;
+
+  /* Write operation finished.*/
+  sdcp->state = BLK_READY;
   return status;
 }
 
@@ -442,6 +445,8 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
 sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp) {
 
   chDbgCheck(sdcp != NULL, "sdcGetAndClearErrors");
+  chDbgAssert(sdcp->state == BLK_READY,
+              "sdcGetAndClearErrors(), #1", "invalid state");
 
   chSysLock();
   sdcflags_t flags = sdcp->errors;
@@ -465,12 +470,8 @@ bool_t sdcSync(SDCDriver *sdcp) {
 
   chDbgCheck(sdcp != NULL, "sdcSync");
 
-  chSysLock();
-  if (sdcp->state != SDC_READY) {
-    chSysUnlock();
+  if (sdcp->state != BLK_READY)
     return CH_FAILED;
-  }
-  chSysUnlock();
 
   return sdc_lld_sync(sdcp);
 }
@@ -489,15 +490,10 @@ bool_t sdcSync(SDCDriver *sdcp) {
  */
 bool_t sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
 
-
   chDbgCheck((sdcp != NULL) && (bdip != NULL), "sdcGetInfo");
 
-  chSysLock();
-  if (sdcp->state != SDC_READY) {
-    chSysUnlock();
+  if (sdcp->state != BLK_READY)
     return CH_FAILED;
-  }
-  chSysUnlock();
 
   bdip->blk_num = sdcp->capacity;
   bdip->blk_size = MMCSD_BLOCK_SIZE;
@@ -523,29 +519,36 @@ bool_t sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk) {
   uint32_t resp[1];
 
   chDbgCheck((sdcp != NULL), "sdcErase");
+  chDbgAssert(sdcp->state == BLK_READY, "sdcErase(), #1", "invalid state");
 
-  /* Driver handles data in 512 bytes blocks (just like HC cards). But if we
-     have not HC card than we must convert address from blocks to bytes.*/
+  /* Handling command differences between HC and normal cards.*/
   if (!(sdcp->cardmode & SDC_MODE_HIGH_CAPACITY)) {
     startblk *= MMCSD_BLOCK_SIZE;
     endblk *= MMCSD_BLOCK_SIZE;
   }
 
-  _sdc_wait_for_transfer_state( sdcp );
+  _sdc_wait_for_transfer_state(sdcp);
 
-  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_START, startblk, resp) != CH_SUCCESS || MMCSD_R1_ERROR(resp[0]))
+  if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_START,
+                                  startblk, resp) != CH_SUCCESS) ||
+      MMCSD_R1_ERROR(resp[0]))
     return CH_FAILED;
 
-  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_END, endblk, resp) != CH_SUCCESS || MMCSD_R1_ERROR(resp[0]))
+  if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_END,
+                                  endblk, resp) != CH_SUCCESS) ||
+      MMCSD_R1_ERROR(resp[0]))
     return CH_FAILED;
 
-  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE, 0, resp) != CH_SUCCESS || MMCSD_R1_ERROR(resp[0]))
+  if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE,
+                                  0, resp) != CH_SUCCESS) ||
+      MMCSD_R1_ERROR(resp[0]))
     return CH_FAILED;
 
   /* Quick sleep to allow it to transition to programming or receiving state */
+  /* TODO: ??????????????????????????? */
 
   /* Wait for it to return to transfer state to indicate it has finished erasing */
-  _sdc_wait_for_transfer_state( sdcp );
+  _sdc_wait_for_transfer_state(sdcp);
 
   return CH_SUCCESS;
 }

@@ -41,8 +41,8 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define DMA_CHANNEL                                                           \
-  STM32_DMA_GETCHANNEL(STM32_SDC_SDIO_DMA_STREAM,                             \
+#define DMA_CHANNEL                                                         \
+  STM32_DMA_GETCHANNEL(STM32_SDC_SDIO_DMA_STREAM,                           \
                        STM32_SDC_SDIO_DMA_CHN)
 
 /*===========================================================================*/
@@ -346,7 +346,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
                    STM32_DMA_CR_MBURST_INCR4;
 #endif
 
-  if (sdcp->state == SDC_STOP) {
+  if (sdcp->state == BLK_STOP) {
     /* Note, the DMA must be enabled before the IRQs.*/
     bool_t b;
     b = dmaStreamAllocate(sdcp->dma, STM32_SDC_SDIO_IRQ_PRIORITY, NULL, NULL);
@@ -376,7 +376,9 @@ void sdc_lld_start(SDCDriver *sdcp) {
  */
 void sdc_lld_stop(SDCDriver *sdcp) {
 
-  if ((sdcp->state == SDC_READY) || (sdcp->state == SDC_ACTIVE)) {
+  if (sdcp->state != BLK_STOP) {
+
+    /* SDIO deactivation.*/
     SDIO->POWER  = 0;
     SDIO->CLKCR  = 0;
     SDIO->DCTRL  = 0;

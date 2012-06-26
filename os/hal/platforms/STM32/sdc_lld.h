@@ -230,10 +230,6 @@ struct SDCDriver {
   const struct SDCDriverVMT *vmt;
   _mmcsd_block_device_data
   /**
-   * @brief Driver state.
-   */
-  sdcstate_t                state;
-  /**
    * @brief Current configuration data.
    */
   const SDCConfig           *config;
