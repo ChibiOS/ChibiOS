@@ -81,6 +81,9 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed problem in STM32 DMA1 stream1 IRQ handler (bug 3538468)
+  (backported to 2.4.2).
+- FIX: Fixed TIM8 not working in STM32 GPT driver (bug 3536523)(
 - FIX: Fixed wrong priority assigned to TIM8 in STM32 ICU driver (bug 3536950)
   (backported to 2.4.2).
 - FIX: Fixed TIM8 not working in STM32 GPT driver (bug 3536523)(backported
