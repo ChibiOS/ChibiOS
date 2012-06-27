@@ -49,7 +49,7 @@ typedef enum {
   BLK_DISCONNECTING = 4,            /**< Disconnection in progress.         */
   BLK_READY = 5,                    /**< Device ready.                      */
   BLK_READING = 6,                  /**< Read operation in progress.        */
-  BLK_WRITING = 7,                  /**< Write operation in progress.       */
+  BLK_WRITING = 7                   /**< Write operation in progress.       */
 } blkstate_t;
 
 /**

@@ -342,15 +342,6 @@ struct USBDriver {
 /*===========================================================================*/
 
 /**
- * @brief   Fetches a 16 bits word value from an USB message.
- *
- * @param[in] p         pointer to the 16 bits word
- *
- * @notapi
- */
-#define usb_lld_fetch_word(p) (*(uint16_t *)(p))
-
-/**
  * @brief   Returns the exact size of a receive transaction.
  * @details The received size can be different from the size specified in
  *          @p usbStartReceiveI() because the last packet could have a size

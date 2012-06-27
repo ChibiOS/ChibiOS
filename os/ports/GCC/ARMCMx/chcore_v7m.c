@@ -157,7 +157,7 @@ void _port_irq_epilogue(void) {
        required or not.*/
     if (chSchIsPreemptionRequired()) {
       /* Preemption is required we need to enforce a context switch.*/
-      ctxp->pc = _port_switch_from_isr;
+      ctxp->pc = (void *)_port_switch_from_isr;
 #if CORTEX_USE_FPU
       /* Triggering a lazy FPU state save.*/
       asm volatile ("vmrs    APSR_nzcv, FPSCR" : : : "memory");
@@ -166,7 +166,7 @@ void _port_irq_epilogue(void) {
     else {
       /* Preemption not required, we just need to exit the exception
          atomically.*/
-      ctxp->pc = _port_exit_from_isr;
+      ctxp->pc = (void *)_port_exit_from_isr;
     }
 
 #if CORTEX_USE_FPU

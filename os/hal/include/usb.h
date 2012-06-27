@@ -215,7 +215,7 @@ typedef enum {
   USB_STOP     = 1,                     /**< Stopped.                       */
   USB_READY    = 2,                     /**< Ready, after bus reset.        */
   USB_SELECTED = 3,                     /**< Address assigned.              */
-  USB_ACTIVE   = 4,                     /**< Active, configuration selected.*/
+  USB_ACTIVE   = 4                      /**< Active, configuration selected.*/
 } usbstate_t;
 
 /**
@@ -248,7 +248,7 @@ typedef enum {
   USB_EVENT_CONFIGURED = 2,             /**< Configuration selected.        */
   USB_EVENT_SUSPEND = 3,                /**< Entering suspend mode.         */
   USB_EVENT_WAKEUP = 4,                 /**< Leaving suspend mode.          */
-  USB_EVENT_STALLED = 5,                /**< Endpoint 0 error, stalled.     */
+  USB_EVENT_STALLED = 5                 /**< Endpoint 0 error, stalled.     */
 } usbevent_t;
 
 /**
@@ -322,7 +322,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @{
  */
 /**
- * @brief   Returns the sriver state.
+ * @brief   Returns the driver state.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @return              The driver state.
@@ -330,6 +330,15 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @iclass
  */
 #define usbGetDriverStateI(usbp) ((usbp)->state)
+
+/**
+ * @brief   Fetches a 16 bits word value from an USB message.
+ *
+ * @param[in] p         pointer to the 16 bits word
+ *
+ * @notapi
+ */
+#define usbFetchWord(p) ((uint16_t)*(p) | ((uint16_t)*((p) + 1) << 8))
 
 /**
  * @brief   Connects the USB device.
