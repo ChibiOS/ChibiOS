@@ -347,15 +347,6 @@ struct USBDriver {
 /*===========================================================================*/
 
 /**
- * @brief   Fetches a 16 bits word value from an USB message.
- *
- * @param[in] p         pointer to the 16 bits word
- *
- * @notapi
- */
-#define usb_lld_fetch_word(p) (*(uint16_t *)(p))
-
-/**
  * @brief   Returns the current frame number.
  *
  * @param[in] usbp      pointer to the @p USBDriver object

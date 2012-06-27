@@ -125,7 +125,7 @@ static bool_t default_handler(USBDriver *usbp) {
     /* Handling descriptor requests from the host.*/
     dp = usbp->config->get_descriptor_cb(
            usbp, usbp->setup[3], usbp->setup[2],
-           usb_lld_fetch_word(&usbp->setup[4]));
+           usbFetchWord(&usbp->setup[4]));
     if (dp == NULL)
       return FALSE;
     usbSetupTransfer(usbp, (uint8_t *)dp->ud_string, dp->ud_size, NULL);
@@ -633,7 +633,7 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
   /* Transfer preparation. The request handler must have populated
      correctly the fields ep0next, ep0n and ep0endcb using the macro
      usbSetupTransfer().*/
-  max = usb_lld_fetch_word(&usbp->setup[6]);
+  max = usbFetchWord(&usbp->setup[6]);
   /* The transfer size cannot exceed the specified amount.*/
   if (usbp->ep0n > max)
     usbp->ep0n = max;
@@ -695,7 +695,7 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
   (void)ep;
   switch (usbp->ep0state) {
   case USB_EP0_TX:
-    max = usb_lld_fetch_word(&usbp->setup[6]);
+    max = usbFetchWord(&usbp->setup[6]);
     /* If the transmitted size is less than the requested size and it is a
        multiple of the maximum packet size then a zero size packet must be
        transmitted.*/
