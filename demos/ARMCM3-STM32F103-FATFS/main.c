@@ -66,24 +66,23 @@ static void tmrfunc(void *p) {
      the pin connected to the CS/D3 contact of the card, this could disturb
      the transfer.*/
   blkstate_t state = blkGetDriverState(bbdp);
-  if ((state == BLK_READING) || (state == BLK_WRITING))
-    return;
-
-  /* Safe to perform the check.*/
   chSysLockFromIsr();
-  if (cnt > 0) {
-    if (blkIsInserted(bbdp)) {
-      if (--cnt == 0) {
-        chEvtBroadcastI(&inserted_event);
+  if ((state != BLK_READING) && (state != BLK_WRITING)) {
+    /* Safe to perform the check.*/
+    if (cnt > 0) {
+      if (blkIsInserted(bbdp)) {
+        if (--cnt == 0) {
+          chEvtBroadcastI(&inserted_event);
+        }
       }
+      else
+        cnt = POLLING_INTERVAL;
     }
-    else
-      cnt = POLLING_INTERVAL;
-  }
-  else {
-    if (!blkIsInserted(bbdp)) {
-      cnt = POLLING_INTERVAL;
-      chEvtBroadcastI(&removed_event);
+    else {
+      if (!blkIsInserted(bbdp)) {
+        cnt = POLLING_INTERVAL;
+        chEvtBroadcastI(&removed_event);
+      }
     }
   }
   chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, bbdp);
