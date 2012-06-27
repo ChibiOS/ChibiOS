@@ -162,7 +162,7 @@ CH_IRQ_HANDLER(DMA1_Stream1_IRQHandler) {
   flags = (DMA1->LISR >> 6) & STM32_DMA_ISR_MASK;
   DMA1->LIFCR = STM32_DMA_ISR_MASK << 6;
   if (dma_isr_redir[1].dma_func)
-    dma_isr_redir[1].dma_func(dma_isr_redir[0].dma_param, flags);
+    dma_isr_redir[1].dma_func(dma_isr_redir[1].dma_param, flags);
 
   CH_IRQ_EPILOGUE();
 }

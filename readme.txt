@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.2 ***
+- FIX: Fixed problem in STM32 DMA1 stream1 IRQ handler (bug 3538468).
 - FIX: Fixed wrong priority assigned to TIM8 in STM32 ICU driver (bug 3536950).
 - FIX: Fixed TIM8 not working in STM32 GPT driver (bug 3536523).
 - FIX: Fixed timer overflow not working in STM32 ICU driver for TIM1/TIM8 (bug
