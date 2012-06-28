@@ -58,15 +58,7 @@ void __early_init(void) {
 bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
-  palSetPadMode(GPIOC, GPIOC_SD_D3, PAL_MODE_INPUT);
-  if (palReadPad(GPIOC, GPIOC_SD_D3) != PAL_LOW) {
-    /* Switching the pin to SDIO mode because after detecting the card the
-       SDC driver will start accessing it.*/
-    palSetPadMode(GPIOC, GPIOC_SD_D3, PAL_MODE_ALTERNATE(12));
-    return TRUE;
-  }
-  /* Leaving the pin in input mode, it will be polled again.*/
-  return FALSE;
+  return (bool_t)palReadPad(GPIOC, GPIOC_SD_D3);
 }
 
 /*
