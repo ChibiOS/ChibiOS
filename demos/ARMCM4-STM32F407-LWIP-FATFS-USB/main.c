@@ -133,10 +133,8 @@ static msg_t Thread1(void *arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (TRUE) {
-    palClearPad(GPIOC, GPIOC_LED);
-    chThdSleepMilliseconds(500);
-    palSetPad(GPIOC, GPIOC_LED);
-    chThdSleepMilliseconds(500);
+    palTogglePad(GPIOC, GPIOC_LED);
+    chThdSleepMilliseconds(cnt ? 500 : 125);
   }
 }
 
