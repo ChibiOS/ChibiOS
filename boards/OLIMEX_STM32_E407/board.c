@@ -51,6 +51,35 @@ void __early_init(void) {
   stm32_clock_init();
 }
 
+#if HAL_USE_SDC
+/*
+ * Card detection through the card internal pull-up on D3.
+ */
+bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  palSetPadMode(GPIOC, GPIOC_SD_D3, PAL_MODE_INPUT);
+  if (palReadPad(GPIOC, GPIOC_SD_D3) != PAL_LOW) {
+    /* Switching the pin to SDIO mode because after detecting the card the
+       SDC driver will start accessing it.*/
+    palSetPadMode(GPIOC, GPIOC_SD_D3, PAL_MODE_ALTERNATE(12));
+    return TRUE;
+  }
+  /* Leaving the pin in input mode, it will be polled again.*/
+  return FALSE;
+}
+
+/*
+ * Card write protection detection is not possible, the card is always
+ * reported as not protected.
+ */
+bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  return FALSE;
+}
+#endif /* HAL_USE_SDC */
+
 /*
  * Board-specific initialization code.
  */

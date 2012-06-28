@@ -27,6 +27,103 @@
 #include "usbshell.h"
 #include "web/web.h"
 
+/*===========================================================================*/
+/* Card insertion monitor.                                                   */
+/*===========================================================================*/
+
+#define POLLING_INTERVAL                10
+#define POLLING_DELAY                   10
+
+/**
+ * @brief   Card monitor timer.
+ */
+static VirtualTimer tmr;
+
+/**
+ * @brief   Debounce counter.
+ */
+static unsigned cnt;
+
+/**
+ * @brief   Card event sources.
+ */
+static EventSource inserted_event, removed_event;
+
+/**
+ * @brief   Insertion monitor timer callback function.
+ *
+ * @param[in] p         pointer to the @p BaseBlockDevice object
+ *
+ * @notapi
+ */
+static void tmrfunc(void *p) {
+  BaseBlockDevice *bbdp = p;
+
+  /* The presence check is performed only while the driver is not in a
+     transfer state because it is often performed by changing the mode of
+     the pin connected to the CS/D3 contact of the card, this could disturb
+     the transfer.*/
+  blkstate_t state = blkGetDriverState(bbdp);
+  chSysLockFromIsr();
+  if ((state != BLK_READING) && (state != BLK_WRITING)) {
+    /* Safe to perform the check.*/
+    if (cnt > 0) {
+      if (blkIsInserted(bbdp)) {
+        if (--cnt == 0) {
+          chEvtBroadcastI(&inserted_event);
+        }
+      }
+      else
+        cnt = POLLING_INTERVAL;
+    }
+    else {
+      if (!blkIsInserted(bbdp)) {
+        cnt = POLLING_INTERVAL;
+        chEvtBroadcastI(&removed_event);
+      }
+    }
+  }
+  chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, bbdp);
+  chSysUnlockFromIsr();
+}
+
+/**
+ * @brief   Polling monitor start.
+ *
+ * @param[in] p         pointer to an object implementing @p BaseBlockDevice
+ *
+ * @notapi
+ */
+static void tmr_init(void *p) {
+
+  chEvtInit(&inserted_event);
+  chEvtInit(&removed_event);
+  chSysLock();
+  cnt = POLLING_INTERVAL;
+  chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, p);
+  chSysUnlock();
+}
+
+/*===========================================================================*/
+/* Main and generic code.                                                    */
+/*===========================================================================*/
+
+/*
+ * Card insertion event.
+ */
+static void InsertHandler(eventid_t id) {
+
+  (void)id;
+}
+
+/*
+ * Card removal event.
+ */
+static void RemoveHandler(eventid_t id) {
+
+  (void)id;
+}
+
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
@@ -47,6 +144,11 @@ static msg_t Thread1(void *arg) {
  * Application entry point.
  */
 int main(void) {
+  static const evhandler_t evhndl[] = {
+    InsertHandler,
+    RemoveHandler
+  };
+  struct EventListener el0, el1;
 
   /*
    * System initializations.
@@ -69,6 +171,11 @@ int main(void) {
   sdStart(&SD6, NULL);
 
   /*
+   * Activates the card insertion monitor.
+   */
+  tmr_init(&SDCD1);
+
+  /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
@@ -87,12 +194,14 @@ int main(void) {
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * sleeping in a loop and listen for events.
    */
+  chEvtRegister(&inserted_event, &el0, 0);
+  chEvtRegister(&removed_event, &el1, 1);
   while (TRUE) {
     usStateCheck();
     if (palReadPad(GPIOA, GPIOA_BUTTON_WKUP) != 0) {
     }
-    chThdSleepMilliseconds(500);
+    chEvtDispatch(evhndl, chEvtWaitOne(ALL_EVENTS));
   }
 }
