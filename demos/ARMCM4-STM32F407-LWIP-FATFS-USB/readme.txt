@@ -4,13 +4,15 @@
 
 ** TARGET **
 
-The demo runs on an Olimex STM32-P407 board.
+The demo runs on an Olimex STM32-E407 board.
 
 ** The Demo **
 
 The demo currently just flashes a LED using a thread and serves HTTP requests
 at address 192.168.1.20 on port 80.
-The button activates che ChibiOS/RT test suite, output on SD6.
+FatFs integrated using SDIO.
+The USB-FS port is used as USB-CDC and a command shell is ready to accepts
+commands there.
 
 ** Build Procedure **
 
