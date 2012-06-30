@@ -303,7 +303,7 @@ void chSemSignalI(Semaphore *sp) {
               "inconsistent semaphore");
 
   if (++sp->s_cnt <= 0) {
-    /* note, it is done this way in order to allow a tail call on
+    /* Note, it is done this way in order to allow a tail call on
              chSchReadyI().*/
     Thread *tp = fifo_remove(&sp->s_queue);
     tp->p_u.rdymsg = RDY_OK;
