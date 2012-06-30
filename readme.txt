@@ -161,6 +161,9 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added support for the Olimex STM32-E407 board. Added an integrated
+  demo including USB-CDC, lwIP with web server, FatFs and shell, all running
+  together.
 - NEW: Added an experimental and unsupported STM8 port for the IAR compiler,
   contributed by "king2".
 - NEW: Updated STM8 header files to latest versions from ST.

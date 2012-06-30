@@ -110,13 +110,13 @@ static void tmr_init(void *p) {
 /**
  * @brief FS object.
  */
-FATFS SDC_FS;
+static FATFS SDC_FS;
 
 /* FS mounted and ready.*/
 static bool_t fs_ready = FALSE;
 
 /* Generic large buffer.*/
-uint8_t fbuff[1024];
+static uint8_t fbuff[1024];
 
 static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
   FRESULT res;
@@ -597,7 +597,7 @@ static msg_t Thread1(void *arg) {
   chRegSetThreadName("blinker");
   while (TRUE) {
     palTogglePad(GPIOC, GPIOC_LED);
-    chThdSleepMilliseconds(cnt ? 500 : 125);
+    chThdSleepMilliseconds(fs_ready ? 125 : 500);
   }
 }
 
@@ -630,6 +630,11 @@ int main(void) {
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg);
   usbConnectBus(serusbcfg.usbp);
+
+  /*
+   * Shell manager initialization.
+   */
+  shellInit();
 
   /*
    * Activates the serial driver 6 and SDC driver 1 using default
