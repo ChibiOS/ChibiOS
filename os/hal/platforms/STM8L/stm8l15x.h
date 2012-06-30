@@ -2,12 +2,12 @@
   ******************************************************************************
   * @file    stm8l15x.h
   * @author  MCD Application Team
-  * @version V1.4.0
-  * @date    09/24/2010
+  * @version V1.5.0
+  * @date    13-May-2011
   * @brief   This file contains all the peripheral register's definitions, bits
   *          definitions and memory mapping for STM8L15x devices.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -16,7 +16,8 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************  
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -26,16 +27,20 @@
 /** @addtogroup STM8L15x_StdPeriph_Driver
   * @{
   */
-/* Uncomment the line below according to the target STM8L device used in your
+/* Uncomment the line below according to the target STM8L15x device used in your
    application
   */
+/* #define STM8L15X_LD */     /*!< STM8L15X_LD: STM8L15x Low density devices */
 /* #define STM8L15X_MD */     /*!< STM8L15X_MD: STM8L15x Medium density devices */
-/* #define STM8L15X_MDP */     /*!< STM8L15X_MDP: STM8L15x Medium density plus devices */
+/* #define STM8L15X_MDP */    /*!< STM8L15X_MDP: STM8L15x Medium density plus devices */
 /* #define STM8L15X_HD */    /*!< STM8L15X_HD: STM8L15x/16x High density devices */
 
 /*  Tip: To avoid modifying this file each time you need to switch between these
         devices, you can define the device in your toolchain compiler preprocessor.
 
+ - Low density STM8L15x devices are STM8L151C3, STM8L151K3, STM8L151G3, STM8L151F3,
+   STM8L151C2, STM8L151K2, STM8L151G2 and STM8L151F2 microcontrollers where the 
+   Flash memory density ranges between 4 and 8 Kbytes.
  - Medium density STM8L15x devices are STM8L151C4, STM8L151C6, STM8L152C4,
    STM8L152C6, STM8L151K4, STM8L151K6, STM8L152K4, STM8L152K6, STM8L151G4,
    STM8L151G6, STM8L152G4 and STM8L152G6 microcontrollers where the Flash memory
@@ -49,7 +54,7 @@
 
  */
 
-#if !defined (STM8L15X_MD) && !defined (STM8L15X_MDP) && !defined (STM8L15X_HD)
+#if !defined (STM8L15X_MD) && !defined (STM8L15X_MDP) && !defined (STM8L15X_HD) && !defined (STM8L15X_LD)
  #error "Please select first the target STM8L device used in your application (in stm8l15x.h file)"
 #endif
 
@@ -71,6 +76,7 @@
 /* Comment the line below if you will not use the peripherals drivers.
    In this case, these drivers will not be included and the application code will be
    based on direct access to peripherals registers */
+/* CHIBIOS FIX */
 /* #define USE_STDPERIPH_DRIVER*/
 #endif
 
@@ -101,15 +107,13 @@
  #define NEAR @near
  #define TINY @tiny
  #define EEPROM @eeprom
- #define __CONST  const
- #define IN_RAM
+ #define CONST  const
 #elif defined (_RAISONANCE_) /* __RCST7__ */
  #define FAR  far
  #define NEAR data
  #define TINY page0
  #define EEPROM eeprom
- #define __CONST  code
- #define IN_RAM inram
+ #define CONST  code
  #if defined (STM8L15X_MD) || defined (STM8L15X_MDP)
   /*!< Used with memory Models for code less than 64K */
   #define MEMCPY memcpy
@@ -122,52 +126,54 @@
  #define NEAR __near
  #define TINY __tiny
  #define EEPROM __eeprom
- #define __CONST  const
- #define IN_RAM  
+ #define CONST  const
 #endif /* __CSMC__ */
 
-#if defined (STM8L15X_MD) || defined (STM8L15X_MDP)
+/**
+  * @brief Legacy definition
+  */
+#define __CONST  CONST
+
+#if defined (STM8L15X_MD) || defined (STM8L15X_MDP) || defined (STM8L15X_LD) 
 /*!< Used with memory Models for code smaller than 64K */
  #define PointerAttr NEAR
 #else /* STM8L15X_HD */
 /*!< Used with memory Models for code higher than 64K */
  #define PointerAttr FAR
-#endif /* STM8L15X_MD or STM8L15X_MDP */
+#endif /* STM8L15X_MD or STM8L15X_MDP or STM8L15X_LD*/
 
 /* Uncomment the line below to enable the FLASH functions execution from RAM */
-#if defined(_COSMIC_)
- #if !defined (COSMIC_RAM_EXECUTION)
-   /* #define COSMIC_RAM_EXECUTION  (1) */
- #endif 
+#if !defined (RAM_EXECUTION)
+/* #define RAM_EXECUTION  (1) */
+#endif /* RAM_EXECUTION */
 
-/* Uncomment the line below to enable the FLASH functions execution from RAM */
-#elif defined (_RAISONANCE_) /* __RCST7__ */
- #if !defined (RAISONANCE_RAM_EXECUTION)
-   /* #define RAISONANCE_RAM_EXECUTION  (1) */
- #endif
-/* Uncomment the line below to enable the FLASH functions execution from RAM */
-#elif defined (_IAR_) /* __RCST7__ */
- #if !defined (IAR_RAM_EXECUTION)
-   /* #define IAR_RAM_EXECUTION  (1) */
- #endif 
-#endif /* __CSMC__ */
+#ifdef RAM_EXECUTION
+ #ifdef _COSMIC_
+   #define IN_RAM(a) a
+ #elif defined (_RAISONANCE_) /* __RCST7__ */
+   #define IN_RAM(a) a inram
+ #else /*_IAR_*/
+  #define IN_RAM(a) __ramfunc a
+ #endif /* _COSMIC_ */
+#else 
+  #define IN_RAM(a) a
+#endif /* RAM_EXECUTION */
 
-/*!< [31:16] STM8L15x Standard Peripheral Library main version */
-#define __STM8L15X_STDPERIPH_VERSION_MAIN   ((uint8_t)0x01)
-/*!< [15:8]  STM8L15x Standard Peripheral Library sub1 version */
-#define __STM8L15X_STDPERIPH_VERSION_SUB1   ((uint8_t)0x04)
-/*!< [7:0]  STM8L15x Standard Peripheral Library sub2 version */
-#define __STM8L15X_STDPERIPH_VERSION_SUB2   ((uint8_t)0x00)
-/*!< STM8L15x Standard Peripheral Library version number */
-#define __STM8L15X_STDPERIPH_VERSION       ((uint32_t)(__STM8L15X_STDPERIPH_VERSION_MAIN <<(uint32_t)16)\
-    | (__STM8L15X_STDPERIPH_VERSION_SUB1 <<(uint32_t) 8)\
-    | __STM8L15X_STDPERIPH_VERSION_SUB2)
+/*!< [31:16] STM8L15X Standard Peripheral Library main version */
+#define __STM8L15X_STDPERIPH_VERSION_MAIN   ((uint8_t)0x01) /*!< [31:24] main version */                                  
+#define __STM8L15X_STDPERIPH_VERSION_SUB1   ((uint8_t)0x05) /*!< [23:16] sub1 version */
+#define __STM8L15X_STDPERIPH_VERSION_SUB2   ((uint8_t)0x00) /*!< [15:8]  sub2 version */
+#define __STM8L15X_STDPERIPH_VERSION_RC     ((uint8_t)0x00) /*!< [7:0]  release candidate */ 
+#define __STM8L15X_STDPERIPH_VERSION       ( (__STM8L15X_STDPERIPH_VERSION_MAIN << 24)\
+                                          |(__STM8L15X_STDPERIPH_VERSION_SUB1 << 16)\
+                                          |(__STM8L15X_STDPERIPH_VERSION_SUB2 << 8)\
+                                          |(__STM8L15X_STDPERIPH_VERSION_RC))
 
 /******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
 
-/* Exported types and constants-----------------------------------------------*/
+/* Exported types and constants ----------------------------------------------*/
 
 /** @addtogroup Exported_types
   * @{
@@ -182,7 +188,7 @@
 #define     __O     volatile         /*!< defines 'write only' permissions    */
 #define     __IO    volatile         /*!< defines 'read / write' permissions  */
 
-/* Stupid thing to do...*/
+/* CHIBIOS FIX */
 #if 0
 /*!< Signed integer types  */
 typedef   signed char     int8_t;
@@ -272,36 +278,36 @@ typedef struct RTC_struct
   __IO uint8_t TR2; /*!<  Time  Register  2*/
   __IO uint8_t TR3; /*!<  Time  Register  3*/
 
-  __IO uint8_t RESERVED0;
+  uint8_t RESERVED0;
 
   __IO uint8_t DR1; /*!<  Date  Register  1*/
   __IO uint8_t DR2; /*!<  Date  Register  2*/
   __IO uint8_t DR3; /*!<  Date  Register  3*/
 
-  __IO uint8_t RESERVED1;
+  uint8_t RESERVED1;
 
   __IO uint8_t CR1; /*!<  Control  Register  1*/
   __IO uint8_t CR2; /*!<  Control  Register  2*/
   __IO uint8_t CR3; /*!<  Control  Register  3*/
 
-  __IO uint8_t RESERVED2;
+  uint8_t RESERVED2;
 
   __IO uint8_t ISR1; /*!<  Initialisation and Status  Register 1 */
   __IO uint8_t ISR2; /*!<  Initialisation and Status  Register 2 */
 
-  __IO uint8_t RESERVED3;
-  __IO uint8_t RESERVED4;
+  uint8_t RESERVED3;
+  uint8_t RESERVED4;
 
   __IO uint8_t SPRERH; /*!<  Synchronous Prediv high  Register  */
   __IO uint8_t SPRERL; /*!<  Synchronous Prediv Low Register  */
   __IO uint8_t APRER;  /*!<  Asynchronous Prediv  Register  */
 
-  __IO uint8_t RESERVED5;
+  uint8_t RESERVED5;
 
   __IO uint8_t WUTRH; /*!<  Wake-Up Timer High Register  */
   __IO uint8_t WUTRL; /*!<  Wake-Up Timer  Low Register  */
 
-  __IO uint8_t RESERVED6;
+  uint8_t RESERVED6;
 
   __IO uint8_t SSRH; /*!< Sub Second High Register  */
   __IO uint8_t SSRL; /*!< Sub Second Low Register  */
@@ -316,13 +322,13 @@ typedef struct RTC_struct
   __IO uint8_t ALRMAR3; /*!<  ALARM A  Register 3 */
   __IO uint8_t ALRMAR4; /*!<  ALARM A  Register 4 */
 
-  __IO uint8_t RESERVED7[4];
+  uint8_t RESERVED7[4];
 
   __IO uint8_t ALRMASSRH; /*!<  ALARM A Subsecond Register High */
   __IO uint8_t ALRMASSRL; /*!<  ALARM A Subsecond Register Low  */
   __IO uint8_t ALRMASSMSKR; /*!<  ALARM A Subsecond Mask Register  */
 
-  __IO uint8_t RESERVED8[3];
+  uint8_t RESERVED8[3];
 
   __IO uint8_t CALRH; /*!<  Calibration register high  */
   __IO uint8_t CALRL; /*!<  Calibration register low  */
@@ -909,7 +915,7 @@ typedef struct EXTI_struct
   __IO uint8_t SR1;           /*!<  Pins Status flag register 1 */
   __IO uint8_t SR2;           /*!<  Ports Status flage register 2 */
   __IO uint8_t CONF1;         /*!<  Port interrupt selector */
-  __IO uint8_t RESERVED[4];  /*!<  reserved area */
+  uint8_t RESERVED[4];  /*!<  reserved area */
   __IO uint8_t CR4;           /*!<  EXTI port G & port H sensitivity */
   __IO uint8_t CONF2;         /*!<  Port interrupt selector */
 }
@@ -1429,7 +1435,7 @@ PWR_TypeDef;
   */
 typedef struct RI_struct
 {
-  __IO uint8_t RESERVED;
+  uint8_t RESERVED;
   __IO uint8_t ICR1;   /*!< Timer input capture routing register 1 */
   __IO uint8_t ICR2;   /*!< Timer input capture routing register 2 */
   __IO uint8_t IOIR1;  /*!< I/O input register 1 */
@@ -1442,11 +1448,19 @@ typedef struct RI_struct
   __IO uint8_t IOSR2;  /*!< I/O switch register 2*/
   __IO uint8_t IOSR3;  /*!< I/O switch register 3*/
   __IO uint8_t IOGCR;  /*!< I/O group control register */
-  __IO uint8_t ASCR1;  /*!< Analog switch register 1 */
-  __IO uint8_t ASCR2;  /*!< Analog switch register 2 */
+  __IO uint8_t ASCR1;  /*!< Analog Switch Control register 1 */
+  __IO uint8_t ASCR2;  /*!< Analog Switch Control register 2 */
   __IO uint8_t RCR;    /*!< Resistor control register  */
-}
-RI_TypeDef;
+  uint8_t RESERVED1[16];
+  __IO uint8_t CR;     /*!< Control Register  */
+  __IO uint8_t IOMR1;   /*!< IO Mask Register 1 */
+  __IO uint8_t IOMR2;   /*!< IO Mask Register 2 */
+  __IO uint8_t IOMR3;   /*!< IO Mask Register 3 */
+  __IO uint8_t IOMR4;   /*!< IO Mask Register 4*/
+  __IO uint8_t IOIR4;  /*!< I/O input register 4 */
+  __IO uint8_t IOCMR4; /*!< I/O control mode register 4 */
+  __IO uint8_t IOSR4;  /*!< I/O switch register 4 */
+}RI_TypeDef;
 /**
   * @}
   */
@@ -1455,14 +1469,26 @@ RI_TypeDef;
   * @{
   */
 
-#define RI_ICR1_RESET_VALUE    ((uint8_t)0x00) /*!< Timer input capture routing register 1 reset value */
-#define RI_ICR2_RESET_VALUE    ((uint8_t)0x00) /*!< Timer input capture routing register 2 reset value */
-#define RI_IOSR1_RESET_VALUE   ((uint8_t)0x00) /*!< I/O switch register 1 reset value */
-#define RI_IOSR2_RESET_VALUE   ((uint8_t)0x00) /*!< I/O switch register 2 reset value */
-#define RI_IOSR3_RESET_VALUE   ((uint8_t)0x00) /*!< I/O switch register 3 reset value */
-#define RI_ASCR1_RESET_VALUE   ((uint8_t)0x00) /*!< Analog switch register 1 reset value */
-#define RI_ASCR2_RESET_VALUE   ((uint8_t)0x00) /*!< Analog switch register 2 reset value */
-#define RI_RCR_RESET_VALUE     ((uint8_t)0x00) /*!< Resistor control register reset value */
+#define RI_ICR1_RESET_VALUE     ((uint8_t)0x00) /*!< Timer input capture routing register 1 reset value */
+#define RI_ICR2_RESET_VALUE     ((uint8_t)0x00) /*!< Timer input capture routing register 2 reset value */
+
+#define RI_IOCMR1_RESET_VALUE   ((uint8_t)0x00) /*!< I/O control mode register 1 reset value */
+#define RI_IOCMR2_RESET_VALUE   ((uint8_t)0x00) /*!< I/O control mode register 2 reset value */
+#define RI_IOCMR3_RESET_VALUE   ((uint8_t)0x00) /*!< I/O control mode register 3 reset value */
+
+#define RI_IOSR1_RESET_VALUE    ((uint8_t)0x00) /*!< I/O switch register 1 reset value */
+#define RI_IOSR2_RESET_VALUE    ((uint8_t)0x00) /*!< I/O switch register 2 reset value */
+#define RI_IOSR3_RESET_VALUE    ((uint8_t)0x00) /*!< I/O switch register 3 reset value */
+
+#define RI_IOGCR_RESET_VALUE    ((uint8_t)0xFF) /*!< IO group control register reset value */
+
+#define RI_ASCR1_RESET_VALUE    ((uint8_t)0x00) /*!< Analog switch register 1 reset value */
+#define RI_ASCR2_RESET_VALUE    ((uint8_t)0x00) /*!< Analog switch register 2 reset value */
+#define RI_RCR_RESET_VALUE      ((uint8_t)0x00) /*!< Resistor control register reset value */
+
+#define RI_IOCMR4_RESET_VALUE   ((uint8_t)0x00) /*!< I/O control mode register 4 reset value */
+#define RI_IOSR4_RESET_VALUE    ((uint8_t)0x00) /*!< I/O switch register 4 reset value */
+
 /**
   * @}
   */
@@ -1471,12 +1497,120 @@ RI_TypeDef;
   * @{
   */
 #define RI_ICR1_IC2CS          ((uint8_t)0x1F) /*!< TIM1 Input Capture 2 I/O selection mask */
+
 #define RI_ICR2_IC3CS          ((uint8_t)0x1F) /*!< TIM1 Input Capture 3 I/O selection mask */
-/* RCR*/
-#define RI_RCR_400KPD          ((uint8_t)0x08) /*!< 400K pull-down resistor  Mask. */
-#define RI_RCR_10KPD           ((uint8_t)0x04) /*!< 10K pull-down resistor  Mask. */
-#define RI_RCR_400KPU          ((uint8_t)0x02) /*!< 400K pull-up resistor  Mask. */
-#define RI_RCR_10KPU           ((uint8_t)0x01) /*!< 10K pull-up resistor  Mask. */
+
+#define RI_IOIR1_CH1I          ((uint8_t)0x01) /*!< Channel 1 I/O pin input value */
+#define RI_IOIR1_CH4I          ((uint8_t)0x02) /*!< Channel 4 I/O pin input value */
+#define RI_IOIR1_CH7I          ((uint8_t)0x04) /*!< Channel 7 I/O pin input value */
+#define RI_IOIR1_CH10I         ((uint8_t)0x08) /*!< Channel 10 I/O pin input value */
+#define RI_IOIR1_CH13I         ((uint8_t)0x10) /*!< Channel 13 I/O pin input value */
+#define RI_IOIR1_CH16I         ((uint8_t)0x20) /*!< Channel 16 I/O pin input value */
+#define RI_IOIR1_CH19I         ((uint8_t)0x40) /*!< Channel 19 I/O pin input value */
+#define RI_IOIR1_CH22I         ((uint8_t)0x80) /*!< Channel 22 I/O pin input value */
+
+#define RI_IOIR2_CH2I          ((uint8_t)0x01) /*!< Channel 2 I/O pin input value */
+#define RI_IOIR2_CH5I          ((uint8_t)0x02) /*!< Channel 5 I/O pin input value */
+#define RI_IOIR2_CH8I          ((uint8_t)0x04) /*!< Channel 8 I/O pin input value */
+#define RI_IOIR2_CH11I         ((uint8_t)0x08) /*!< Channel 11 I/O pin input value */
+#define RI_IOIR2_CH14I         ((uint8_t)0x10) /*!< Channel 14 I/O pin input value */
+#define RI_IOIR2_CH17I         ((uint8_t)0x20) /*!< Channel 17 I/O pin input value */
+#define RI_IOIR2_CH20I         ((uint8_t)0x40) /*!< Channel 20 I/O pin input value */
+#define RI_IOIR2_CH23I         ((uint8_t)0x80) /*!< Channel 23 I/O pin input value */
+
+#define RI_IOIR3_CH3I          ((uint8_t)0x01) /*!< Channel 3 I/O pin input value */
+#define RI_IOIR3_CH6I          ((uint8_t)0x02) /*!< Channel 6 I/O pin input value */
+#define RI_IOIR3_CH9I          ((uint8_t)0x04) /*!< Channel 9 I/O pin input value */
+#define RI_IOIR3_CH12I         ((uint8_t)0x08) /*!< Channel 12 I/O pin input value */
+#define RI_IOIR3_CH15I         ((uint8_t)0x10) /*!< Channel 15 I/O pin input value */
+#define RI_IOIR3_CH18I         ((uint8_t)0x20) /*!< Channel 18 I/O pin input value */
+#define RI_IOIR3_CH21I         ((uint8_t)0x40) /*!< Channel 21 I/O pin input value */
+#define RI_IOIR3_CH24I         ((uint8_t)0x80) /*!< Channel 24 I/O pin input value */
+
+#define RI_IOCMR1_CH1M          ((uint8_t)0x01) /*!< Channel 1 I/O control mode */
+#define RI_IOCMR1_CH4M          ((uint8_t)0x02) /*!< Channel 4 I/O control mode */
+#define RI_IOCMR1_CH7M          ((uint8_t)0x04) /*!< Channel 7 I/O control mode */
+#define RI_IOCMR1_CH10M         ((uint8_t)0x08) /*!< Channel 10 I/O control mode */
+#define RI_IOCMR1_CH13M         ((uint8_t)0x10) /*!< Channel 13 I/O control mode */
+#define RI_IOCMR1_CH16M         ((uint8_t)0x20) /*!< Channel 16 I/O control mode */
+#define RI_IOCMR1_CH19M         ((uint8_t)0x40) /*!< Channel 19 I/O control mode */
+#define RI_IOCMR1_CH22M         ((uint8_t)0x80) /*!< Channel 22 I/O control mode */
+
+#define RI_IOCMR2_CH2M          ((uint8_t)0x01) /*!< Channel 2 I/O control mode */
+#define RI_IOCMR2_CH5M          ((uint8_t)0x02) /*!< Channel 5 I/O control mode */
+#define RI_IOCMR2_CH8M          ((uint8_t)0x04) /*!< Channel 8 I/O control mode */
+#define RI_IOCMR2_CH11M         ((uint8_t)0x08) /*!< Channel 11 I/O control mode */
+#define RI_IOCMR2_CH14M         ((uint8_t)0x10) /*!< Channel 14 I/O control mode */
+#define RI_IOCMR2_CH17M         ((uint8_t)0x20) /*!< Channel 17 I/O control mode */
+#define RI_IOCMR2_CH20M         ((uint8_t)0x40) /*!< Channel 20 I/O control mode */
+#define RI_IOCMR2_CH23M         ((uint8_t)0x80) /*!< Channel 23 I/O control mode */
+
+#define RI_IOCMR3_CH3M          ((uint8_t)0x01) /*!< Channel 3 I/O control mode */
+#define RI_IOCMR3_CH6M          ((uint8_t)0x02) /*!< Channel 6 I/O control mode */
+#define RI_IOCMR3_CH9M          ((uint8_t)0x04) /*!< Channel 9 I/O control mode */
+#define RI_IOCMR3_CH12M         ((uint8_t)0x08) /*!< Channel 12 I/O control mode */
+#define RI_IOCMR3_CH15M         ((uint8_t)0x10) /*!< Channel 15 I/O control mode */
+#define RI_IOCMR3_CH18M         ((uint8_t)0x20) /*!< Channel 18 I/O control mode */
+#define RI_IOCMR3_CH21M         ((uint8_t)0x40) /*!< Channel 21 I/O control mode */
+#define RI_IOCMR3_CH24M         ((uint8_t)0x80) /*!< Channel 24 I/O control mode */
+
+#define RI_IOSR1_CH1E          ((uint8_t)0x01) /*!< Channel 1 I/O switch control */
+#define RI_IOSR1_CH4E          ((uint8_t)0x02) /*!< Channel 4 I/O switch control */
+#define RI_IOSR1_CH7E          ((uint8_t)0x04) /*!< Channel 7 I/O switch control */
+#define RI_IOSR1_CH10E         ((uint8_t)0x08) /*!< Channel 10 I/O switch control */
+#define RI_IOSR1_CH13E         ((uint8_t)0x10) /*!< Channel 13 I/O switch control */
+#define RI_IOSR1_CH16E         ((uint8_t)0x20) /*!< Channel 16 I/O switch control */
+#define RI_IOSR1_CH19E         ((uint8_t)0x40) /*!< Channel 19 I/O switch control */
+#define RI_IOSR1_CH22E         ((uint8_t)0x80) /*!< Channel 22 I/O switch control */
+
+#define RI_IOSR2_CH2E          ((uint8_t)0x01) /*!< Channel 2 I/O switch control */
+#define RI_IOSR2_CH5E          ((uint8_t)0x02) /*!< Channel 5 I/O switch control */
+#define RI_IOSR2_CH8E          ((uint8_t)0x04) /*!< Channel 8 I/O switch control */
+#define RI_IOSR2_CH11E         ((uint8_t)0x08) /*!< Channel 11 I/O switch control */
+#define RI_IOSR2_CH14E         ((uint8_t)0x10) /*!< Channel 14 I/O switch control */
+#define RI_IOSR2_CH17E         ((uint8_t)0x20) /*!< Channel 17 I/O switch control */
+#define RI_IOSR2_CH20E         ((uint8_t)0x40) /*!< Channel 20 I/O switch control */
+#define RI_IOSR2_CH23E         ((uint8_t)0x80) /*!< Channel 23 I/O switch control */
+
+#define RI_IOSR3_CH3E          ((uint8_t)0x01) /*!< Channel 3 I/O switch control */
+#define RI_IOSR3_CH6E          ((uint8_t)0x02) /*!< Channel 6 I/O switch control */
+#define RI_IOSR3_CH9E          ((uint8_t)0x04) /*!< Channel 9 I/O switch control */
+#define RI_IOSR3_CH12E         ((uint8_t)0x08) /*!< Channel 12 I/O switch control */
+#define RI_IOSR3_CH15E         ((uint8_t)0x10) /*!< Channel 15 I/O switch control */
+#define RI_IOSR3_CH18E         ((uint8_t)0x20) /*!< Channel 18 I/O switch control */
+#define RI_IOSR3_CH21E         ((uint8_t)0x40) /*!< Channel 21 I/O switch control */
+#define RI_IOSR3_CH24E         ((uint8_t)0x80) /*!< Channel 24 I/O switch control */
+
+#define RI_IOGCR_IOM1          ((uint8_t)0x03) /*!< I/O mode 1 */
+#define RI_IOGCR_IOM2          ((uint8_t)0x0C) /*!< I/O mode 2 */
+#define RI_IOGCR_IOM3          ((uint8_t)0x30) /*!< I/O mode 3 */
+#define RI_IOGCR_IOM4          ((uint8_t)0xC0) /*!< I/O mode 4 */
+
+#define RI_ASCR1_AS0           ((uint8_t)0x01) /*!< Analog switch AS0 control */
+#define RI_ASCR1_AS1           ((uint8_t)0x02) /*!< Analog switch AS1 control */
+#define RI_ASCR1_AS2           ((uint8_t)0x04) /*!< Analog switch AS2 control */
+#define RI_ASCR1_AS3           ((uint8_t)0x08) /*!< Analog switch AS3 control */
+#define RI_ASCR1_AS4           ((uint8_t)0x10) /*!< Analog switch AS4 control */
+#define RI_ASCR1_AS5           ((uint8_t)0x20) /*!< Analog switch AS5 control */
+#define RI_ASCR1_AS6           ((uint8_t)0x40) /*!< Analog switch AS6 control */
+#define RI_ASCR1_AS7           ((uint8_t)0x80) /*!< Analog switch AS7 control */
+
+#define RI_ASCR2_AS8           ((uint8_t)0x01) /*!< Analog switch AS8 control */
+#define RI_ASCR2_AS9           ((uint8_t)0x02) /*!< Analog switch AS9 control */
+#define RI_ASCR2_AS10          ((uint8_t)0x04) /*!< Analog switch AS10 control */
+#define RI_ASCR2_AS11          ((uint8_t)0x08) /*!< Analog switch AS11 control */
+#define RI_ASCR2_AS14          ((uint8_t)0x40) /*!< Analog switch AS14 control */
+
+#define RI_RCR_400KPD          ((uint8_t)0x08) /*!< 400K pull-down resistor Mask. */
+#define RI_RCR_10KPD           ((uint8_t)0x04) /*!< 10K pull-down resistor Mask. */
+#define RI_RCR_400KPU          ((uint8_t)0x02) /*!< 400K pull-up resistor Mask. */
+#define RI_RCR_10KPU           ((uint8_t)0x01) /*!< 10K pull-up resistor Mask. */
+
+#define RI_IOSR4_CH29E         ((uint8_t)0x01) /*!< Channel 29 I/O switch control */
+#define RI_IOSR4_CH26E         ((uint8_t)0x02) /*!< Channel 26 I/O switch control */
+#define RI_IOSR4_CH27E         ((uint8_t)0x40) /*!< Channel 27 I/O switch control */
+#define RI_IOSR4_CH28E         ((uint8_t)0x80) /*!< Channel 28 I/O switch control */
+
 /**
   * @}
   */
@@ -2761,16 +2895,16 @@ AES_TypeDef;
  #define halt() {_asm("halt\n");} /*!<Halt */
 #else /*_IAR*/
  #include <intrinsics.h>
- #define enableInterrupts() {asm("rim\n");} /* enable interrupts */
- #define disableInterrupts() {asm("sim\n");} /* disable interrupts */
- #define rim() {asm("rim\n");} /* enable interrupts */
- #define sim() {asm("sim\n");} /* disable interrupts */
- #define nop() {asm("nop\n");} /* No Operation */
- #define trap() {asm("trap\n");} /* Trap (soft IT) */
- #define wfi() {asm("wfi\n");} /* Wait For Interrupt */
- #define wfe() {asm("wfe\n");} /* Wait for event */
- #define halt() {asm("halt\n");} /* Halt */
-#endif
+ #define enableInterrupts()    __enable_interrupt()   /* enable interrupts */
+ #define disableInterrupts()   __disable_interrupt()  /* disable interrupts */
+ #define rim()                 __enable_interrupt()   /* enable interrupts */
+ #define sim()                 __disable_interrupt()  /* disable interrupts */
+ #define nop()                 __no_operation()       /* No Operation */
+ #define trap()                __trap()               /* Trap (soft IT) */
+ #define wfi()                 __wait_for_interrupt() /* Wait For Interrupt */
+ #define wfe()                 __wait_for_event();    /* Wait for event */
+ #define halt()                __halt()               /* Halt */
+#endif /* _RAISONANCE_ */
 
 /*============================== Interrupt vector Handling ========================*/
 
@@ -2863,4 +2997,4 @@ Comments :    The idea is to handle directly with the bit name. For that, it is
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

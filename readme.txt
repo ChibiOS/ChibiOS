@@ -161,6 +161,7 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Updated STM8 header files to latest versions from ST.
 - NEW: Reorganized the STM32 EXT driver to have a sub-platform specific
   part containing all the ISR related code, this has been necessary because
   the significant differences among the various sub-families.
