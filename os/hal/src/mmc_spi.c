@@ -293,8 +293,8 @@ static uint8_t send_command_R3(MMCDriver *mmcp, uint8_t cmd, uint32_t arg,
  * @param[out] csd       pointer to the CSD buffer
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @notapi
  */
@@ -431,9 +431,9 @@ void mmcStop(MMCDriver *mmcp) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded and the driver is now
+ * @retval CH_SUCCESS   the operation succeeded and the driver is now
  *                      in the @p MMC_READY state.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -538,9 +538,9 @@ failed:
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @return              The operation status.
  *
- * @retval CH_FAILED    the operation succeeded and the driver is now
+ * @retval CH_SUCCESS   the operation succeeded and the driver is now
  *                      in the @p MMC_INSERTED state.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -573,8 +573,8 @@ bool_t mmcDisconnect(MMCDriver *mmcp) {
  * @param[in] startblk  first block to read
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -611,8 +611,8 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
  * @param[out] buffer   pointer to the read buffer
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -645,8 +645,8 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -677,8 +677,8 @@ bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
  * @param[in] startblk  first block to write
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -713,8 +713,8 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
  * @param[out] buffer   pointer to the write buffer
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -748,8 +748,8 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -775,8 +775,8 @@ bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
  * @param[in] mmcp      pointer to the @p MMCDriver object
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -798,8 +798,8 @@ bool_t mmcSync(MMCDriver *mmcp) {
  * @param[out] bdip     pointer to a @p BlockDeviceInfo structure
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */
@@ -824,8 +824,8 @@ bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip) {
  * @param[in] endblk    ending block number
  *
  * @return              The operation status.
- * @retval CH_FAILED    the operation succeeded.
- * @retval CH_SUCCESS   the operation failed.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
  *
  * @api
  */

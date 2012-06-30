@@ -113,17 +113,39 @@ typedef struct {
  */
 /**
  * @brief   Returns the driver state.
+ * @note    Can be called in ISR context.
  *
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  *
  * @return              The driver state.
  *
- * @api
+ * @special
  */
 #define blkGetDriverState(ip) ((ip)->state)
 
 /**
+ * @brief   Determines if the device is transferring data.
+ * @note    Can be called in ISR context.
+ *
+ * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
+ *
+ * @return              The driver state.
+ * @retval FALSE        the device is not transferring data.
+ * @retval TRUE         the device not transferring data.
+ *
+ * @special
+ */
+#define blkIsTransferring(ip) ((((ip)->state) == BLK_CONNECTING) ||         \
+                               (((ip)->state) == BLK_DISCONNECTING) ||      \
+                               (((ip)->state) == BLK_READING) ||            \
+                               (((ip)->state) == BLK_WRITING))
+
+/**
  * @brief   Returns the media insertion status.
+ * @note    On some implementations this function can only be called if the
+ *          device is not transferring data.
+ *          The function @p blkIsTransferring() should be used before calling
+ *          this function.
  *
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  *
@@ -157,8 +179,8 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  *
  * @return              The operation status.
- * @retval FALSE        operation succeeded.
- * @retval TRUE         operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */
@@ -171,8 +193,8 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  *
  * @return              The operation status.
- * @retval FALSE        operation succeeded.
- * @retval TRUE         operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */
@@ -187,8 +209,8 @@ typedef struct {
  * @param[in] n         number of blocks to read
  *
  * @return              The operation status.
- * @retval FALSE        operation succeeded.
- * @retval TRUE         operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */
@@ -204,8 +226,8 @@ typedef struct {
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
- * @retval FALSE        operation succeeded.
- * @retval TRUE         operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */
@@ -218,8 +240,8 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  *
  * @return              The operation status.
- * @retval FALSE        operation succeeded.
- * @retval TRUE         operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */
@@ -232,8 +254,8 @@ typedef struct {
  * @param[out] bdip     pointer to a @p BlockDeviceInfo structure
  *
  * @return              The operation status.
- * @retval FALSE        operation succeeded.
- * @retval TRUE         operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */

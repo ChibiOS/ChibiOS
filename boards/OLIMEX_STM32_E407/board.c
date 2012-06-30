@@ -56,9 +56,11 @@ void __early_init(void) {
  * Card detection through the card internal pull-up on D3.
  */
 bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+  static bool_t last_status = FALSE;
 
-  (void)sdcp;
-  return (bool_t)palReadPad(GPIOC, GPIOC_SD_D3);
+  if (blkIsTransferring(sdcp))
+    return last_status;
+  return last_status = (bool_t)palReadPad(GPIOC, GPIOC_SD_D3);
 }
 
 /*
