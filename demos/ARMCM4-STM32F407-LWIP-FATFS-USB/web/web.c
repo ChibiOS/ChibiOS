@@ -96,6 +96,7 @@ msg_t http_server(void *p) {
   err_t err;
 
   (void)p;
+  chRegSetThreadName("http");
 
   /* Create a new TCP connection handle */
   conn = netconn_new(NETCONN_TCP);
