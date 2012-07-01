@@ -54,6 +54,30 @@ void __early_init(void) {
   stm32_clock_init();
 }
 
+#if HAL_USE_MMC_SPI
+/*
+ * Card detection through the card internal pull-up on D3.
+ */
+bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+  static bool_t last_status = FALSE;
+
+  (void)mmcp;
+  if ((palReadLatch(GPIOA) & PAL_PORT_BIT(GPIOA_SPI3_CS_MMC)) == 0)
+    return last_status;
+  return last_status = (bool_t)palReadPad(GPIOA, GPIOA_SPI3_CS_MMC);
+}
+
+/*
+ * Card write protection detection is not possible, the card is always
+ * reported as not protected.
+ */
+bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
+
+  (void)mmcp;
+  return FALSE;
+}
+#endif
+
 /*
  * Board-specific initialization code.
  */

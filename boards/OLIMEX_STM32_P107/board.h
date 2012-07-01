@@ -29,14 +29,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for the Olimex STM32-P107 evaluation board.
+ * Setup for the Olimex STM32-P107 Rev.A evaluation board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_OLIMEX_STM32_P107
-#define BOARD_NAME              "Olimex STM32-P107"
+#define BOARD_OLIMEX_STM32_P107_REV_A
+#define BOARD_NAME              "Olimex STM32-P107 Rev.A"
 
 /*
  * Board frequencies.
@@ -59,7 +59,7 @@
  * IO pins assignments.
  */
 #define GPIOA_SWITCH_WKUP       0
-
+#define GPIOA_SPI3_CS_MMC       4
 #define GPIOC_LED_STATUS1       6
 #define GPIOC_LED_STATUS2       7
 #define GPIOC_SWITCH_TAMPER     13
@@ -95,7 +95,7 @@
  * PA1  - Normal input      (ETH_RMII_REF_CLK).
  * PA2  - Alternate output  (ETH_RMII_MDIO).
  * PA3  - Input with PU     (unconnected).
- * PA4  - Push Pull output  (CS_MMC).
+ * PA4  - Open Drain output (CS_MMC).
  * PA5  - Input with PU     (unconnected).
  * PA6  - Input with PU     (unconnected).
  * PA7  - Normal input      (ETH_RMII_CRS_DV).
@@ -108,7 +108,7 @@
  * PA14 - Normal input      (TCK).
  * PA15 - Normal input      (TDI).
  */
-#define VAL_GPIOACRL            0x48838B44      /*  PA7...PA0 */
+#define VAL_GPIOACRL            0x48878B44      /*  PA7...PA0 */
 #define VAL_GPIOACRH            0x4444444B      /* PA15...PA8 */
 #define VAL_GPIOAODR            0xFFFFFFFF
 
