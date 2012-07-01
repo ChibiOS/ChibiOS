@@ -161,6 +161,8 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added demo for Arduino Mega, contributed by Fabio Utzig.
+- NEW: Added support for ATmega1280, contributed by Fabio Utzig.
 - NEW: Added FatFs demo for the Olimex STM32-P107 board.
 - NEW: Added support for the Olimex STM32-E407 board. Added an integrated
   demo including USB-CDC, lwIP with web server, FatFs and shell, all running
