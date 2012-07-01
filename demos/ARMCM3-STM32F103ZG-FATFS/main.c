@@ -62,28 +62,20 @@ static EventSource inserted_event, removed_event;
 static void tmrfunc(void *p) {
   BaseBlockDevice *bbdp = p;
 
-  /* The presence check is performed only while the driver is not in a
-     transfer state because it is often performed by changing the mode of
-     the pin connected to the CS/D3 contact of the card, this could disturb
-     the transfer.*/
-  blkstate_t state = blkGetDriverState(bbdp);
   chSysLockFromIsr();
-  if ((state != BLK_READING) && (state != BLK_WRITING)) {
-    /* Safe to perform the check.*/
-    if (cnt > 0) {
-      if (blkIsInserted(bbdp)) {
-        if (--cnt == 0) {
-          chEvtBroadcastI(&inserted_event);
-        }
+  if (cnt > 0) {
+    if (blkIsInserted(bbdp)) {
+      if (--cnt == 0) {
+        chEvtBroadcastI(&inserted_event);
       }
-      else
-        cnt = POLLING_INTERVAL;
     }
-    else {
-      if (!blkIsInserted(bbdp)) {
-        cnt = POLLING_INTERVAL;
-        chEvtBroadcastI(&removed_event);
-      }
+    else
+      cnt = POLLING_INTERVAL;
+  }
+  else {
+    if (!blkIsInserted(bbdp)) {
+      cnt = POLLING_INTERVAL;
+      chEvtBroadcastI(&removed_event);
     }
   }
   chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, bbdp);
@@ -284,11 +276,12 @@ static void InsertHandler(eventid_t id) {
 static void RemoveHandler(eventid_t id) {
 
   (void)id;
+  sdcDisconnect(&SDCD1);
   fs_ready = FALSE;
 }
 
 /*
- * Red LED blinker thread, times are in milliseconds.
+ * LEDs blinker thread, times are in milliseconds.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
