@@ -36,7 +36,6 @@
 #define STM8S_SYSCLK_SOURCE             CLK_SYSSEL_HSE
 #define STM8S_HSI_DIVIDER               CLK_HSI_DIV1
 #define STM8S_CPU_DIVIDER               CLK_CPU_DIV1
-#define STM8S_CAN_DIVIDER_VALUE         1
 
 /*
  * SERIAL driver system settings.

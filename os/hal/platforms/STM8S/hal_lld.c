@@ -99,9 +99,6 @@ void hal_lld_init(void) {
   /* Other clock related initializations.*/
   CLK->CSSR    = 0;
   CLK->CCOR    = 0;
-#if defined(STM8S208)
-  CLK->CANCCR  = STM8S_CAN_DIVIDER_VALUE;
-#endif
 
   /* HSI disabled if it is no more required.*/
 #if !STM8S_HSI_ENABLED
