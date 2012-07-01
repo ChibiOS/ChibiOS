@@ -67,8 +67,8 @@ static const struct SDCDriverVMT sdc_vmt = {
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
  * @return              The operation status.
- * @retval FALSE  operation succeeded.
- * @retval TRUE   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @notapi
  */
@@ -183,8 +183,8 @@ void sdcStop(SDCDriver *sdcp) {
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
  * @return              The operation status.
- * @retval CH_FAILED    operation succeeded.
- * @retval CH_SUCCESS   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */
@@ -326,8 +326,8 @@ failed:
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
  * @return              The operation status.
- * @retval CH_FAILED    operation succeeded.
- * @retval CH_SUCCESS   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */
@@ -369,8 +369,8 @@ bool_t sdcDisconnect(SDCDriver *sdcp) {
  * @param[in] n         number of blocks to read
  *
  * @return              The operation status.
- * @retval CH_FAILED    operation succeeded.
- * @retval CH_SUCCESS   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */
@@ -407,8 +407,8 @@ bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
- * @retval CH_FAILED    operation succeeded.
- * @retval CH_SUCCESS   operation failed.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
  *
  * @api
  */
