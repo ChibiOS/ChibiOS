@@ -305,6 +305,7 @@ static void InsertHandler(eventid_t id) {
 static void RemoveHandler(eventid_t id) {
 
   (void)id;
+  mmcDisconnect(&MMCD1);
   fs_ready = FALSE;
 }
 
