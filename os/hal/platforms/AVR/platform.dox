@@ -100,3 +100,15 @@
  * .
  * @ingroup AVR_DRIVERS
  */
+
+/**
+ * @defgroup AVR_I2C AVR I2C Support
+ * @details The AVR I2C driver uses the TWI peripheral in an interrupt
+ *          driven, implementation.
+ *
+ * @section avr_i2c Supported HW resources
+ * The i2c driver can support the following hardware resource:
+ * - I2C.
+ * .
+ * @ingroup AVR_DRIVERS
+ */
