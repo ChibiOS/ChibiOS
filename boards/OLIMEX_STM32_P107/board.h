@@ -29,7 +29,7 @@
 #define _BOARD_H_
 
 /*
- * Setup for the STMicroelectronics STM3210C-EVAL evaluation board.
+ * Setup for the Olimex STM32-P107 evaluation board.
  */
 
 /*
