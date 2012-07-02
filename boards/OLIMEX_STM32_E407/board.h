@@ -22,14 +22,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for STMicroelectronics STM32F4-Discovery board.
+ * Setup for Olimex STM32-E407 board.
  */
 
 /*
  * Board identifier.
  */
 #define BOARD_OLIMEX_STM32_E407
-#define BOARD_NAME              "Olimex STM32-P407"
+#define BOARD_NAME              "Olimex STM32-E407"
 
 /*
  * Ethernet PHY type.
