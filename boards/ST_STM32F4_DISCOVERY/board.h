@@ -266,7 +266,7 @@
                              PIN_PUDR_PULLUP(14) |                          \
                              PIN_PUDR_PULLUP(15))
 #define VAL_GPIOC_ODR       0xFFFFFFFF
-#define VAL_GPIOC_AFRL      PIN_AFIO_AF(GPIOC_MCLK, 6))
+#define VAL_GPIOC_AFRL      (PIN_AFIO_AF(GPIOC_MCLK, 6))
 #define VAL_GPIOC_AFRH      (PIN_AFIO_AF(GPIOC_SCLK, 6) |                   \
                              PIN_AFIO_AF(GPIOC_SDIN, 6))
 
@@ -374,7 +374,22 @@
                              PIN_PUDR_PULLUP(1) |                           \
                              PIN_PUDR_PULLUP(2) |                           \
                              PIN_PUDR_PULLUP(3) |                           \
-                             PIN_PUDR_PULLUP(4) |                           \                             PIN_PUDR_PULLUP(5) |                           \                             PIN_PUDR_PULLUP(6) |                           \                             PIN_PUDR_PULLUP(7) |                           \                             PIN_PUDR_PULLUP(8) |                           \                             PIN_PUDR_PULLUP(9) |                           \                             PIN_PUDR_PULLUP(10) |                          \                             PIN_PUDR_PULLUP(11) |                          \                             PIN_PUDR_PULLUP(12) |                          \                             PIN_PUDR_PULLUP(13) |                          \                             PIN_PUDR_PULLUP(14) |                          \                             PIN_PUDR_PULLUP(15))#define VAL_GPIOF_ODR       0xFFFFFFFF#define VAL_GPIOF_AFRL      0x00000000#define VAL_GPIOF_AFRH      0x00000000
+                             PIN_PUDR_PULLUP(4) |                           \
+                             PIN_PUDR_PULLUP(5) |                           \
+                             PIN_PUDR_PULLUP(6) |                           \
+                             PIN_PUDR_PULLUP(7) |                           \
+                             PIN_PUDR_PULLUP(8) |                           \
+                             PIN_PUDR_PULLUP(9) |                           \
+                             PIN_PUDR_PULLUP(10) |                          \
+                             PIN_PUDR_PULLUP(11) |                          \
+                             PIN_PUDR_PULLUP(12) |                          \
+                             PIN_PUDR_PULLUP(13) |                          \
+                             PIN_PUDR_PULLUP(14) |                          \
+                             PIN_PUDR_PULLUP(15))
+#define VAL_GPIOF_ODR       0xFFFFFFFF
+#define VAL_GPIOF_AFRL      0x00000000
+#define VAL_GPIOF_AFRH      0x00000000
+
 /*
  * Port G setup.
  * All input with pull-up.
@@ -386,7 +401,22 @@
                              PIN_PUDR_PULLUP(1) |                           \
                              PIN_PUDR_PULLUP(2) |                           \
                              PIN_PUDR_PULLUP(3) |                           \
-                             PIN_PUDR_PULLUP(4) |                           \                             PIN_PUDR_PULLUP(5) |                           \                             PIN_PUDR_PULLUP(6) |                           \                             PIN_PUDR_PULLUP(7) |                           \                             PIN_PUDR_PULLUP(8) |                           \                             PIN_PUDR_PULLUP(9) |                           \                             PIN_PUDR_PULLUP(10) |                          \                             PIN_PUDR_PULLUP(11) |                          \                             PIN_PUDR_PULLUP(12) |                          \                             PIN_PUDR_PULLUP(13) |                          \                             PIN_PUDR_PULLUP(14) |                          \                             PIN_PUDR_PULLUP(15))#define VAL_GPIOG_ODR       0xFFFFFFFF#define VAL_GPIOG_AFRL      0x00000000#define VAL_GPIOG_AFRH      0x00000000
+                             PIN_PUDR_PULLUP(4) |                           \
+                             PIN_PUDR_PULLUP(5) |                           \
+                             PIN_PUDR_PULLUP(6) |                           \
+                             PIN_PUDR_PULLUP(7) |                           \
+                             PIN_PUDR_PULLUP(8) |                           \
+                             PIN_PUDR_PULLUP(9) |                           \
+                             PIN_PUDR_PULLUP(10) |                          \
+                             PIN_PUDR_PULLUP(11) |                          \
+                             PIN_PUDR_PULLUP(12) |                          \
+                             PIN_PUDR_PULLUP(13) |                          \
+                             PIN_PUDR_PULLUP(14) |                          \
+                             PIN_PUDR_PULLUP(15))
+#define VAL_GPIOG_ODR       0xFFFFFFFF
+#define VAL_GPIOG_AFRL      0x00000000
+#define VAL_GPIOG_AFRH      0x00000000
+
 /*
  * Port H setup.
  * All input with pull-up except:
@@ -442,7 +472,22 @@
                              PIN_PUDR_PULLUP(1) |                           \
                              PIN_PUDR_PULLUP(2) |                           \
                              PIN_PUDR_PULLUP(3) |                           \
-                             PIN_PUDR_PULLUP(4) |                           \                             PIN_PUDR_PULLUP(5) |                           \                             PIN_PUDR_PULLUP(6) |                           \                             PIN_PUDR_PULLUP(7) |                           \                             PIN_PUDR_PULLUP(8) |                           \                             PIN_PUDR_PULLUP(9) |                           \                             PIN_PUDR_PULLUP(10) |                          \                             PIN_PUDR_PULLUP(11) |                          \                             PIN_PUDR_PULLUP(12) |                          \                             PIN_PUDR_PULLUP(13) |                          \                             PIN_PUDR_PULLUP(14) |                          \                             PIN_PUDR_PULLUP(15))#define VAL_GPIOI_ODR       0xFFFFFFFF#define VAL_GPIOI_AFRL      0x00000000#define VAL_GPIOI_AFRH      0x00000000
+                             PIN_PUDR_PULLUP(4) |                           \
+                             PIN_PUDR_PULLUP(5) |                           \
+                             PIN_PUDR_PULLUP(6) |                           \
+                             PIN_PUDR_PULLUP(7) |                           \
+                             PIN_PUDR_PULLUP(8) |                           \
+                             PIN_PUDR_PULLUP(9) |                           \
+                             PIN_PUDR_PULLUP(10) |                          \
+                             PIN_PUDR_PULLUP(11) |                          \
+                             PIN_PUDR_PULLUP(12) |                          \
+                             PIN_PUDR_PULLUP(13) |                          \
+                             PIN_PUDR_PULLUP(14) |                          \
+                             PIN_PUDR_PULLUP(15))
+#define VAL_GPIOI_ODR       0xFFFFFFFF
+#define VAL_GPIOI_AFRL      0x00000000
+#define VAL_GPIOI_AFRH      0x00000000
+
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {
