@@ -322,12 +322,12 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
        so it is safe to transmit without a check.*/
     chSysUnlockFromIsr();
 
-    usbPrepareQueuedTransmit(sdup->config->usbp,
+    usbPrepareQueuedTransmit(usbp,
                              USB_CDC_DATA_REQUEST_EP,
                              &sdup->oqueue, n);
 
     chSysLockFromIsr();
-    usbStartTransmitI(sdup->config->usbp, USB_CDC_DATA_REQUEST_EP);
+    usbStartTransmitI(usbp, USB_CDC_DATA_REQUEST_EP);
   }
 
   chSysUnlockFromIsr();
@@ -352,19 +352,19 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
 
   /* Writes to the input queue can only happen when there is enough space
      to hold at least one packet.*/
-  maxsize = sdup->config->usbp->epc[USB_CDC_DATA_AVAILABLE_EP]->out_maxsize;
+  maxsize = usbp->epc[USB_CDC_DATA_AVAILABLE_EP]->out_maxsize;
   if ((n = chIQGetEmptyI(&sdup->iqueue)) >= maxsize) {
     /* The endpoint cannot be busy, we are in the context of the callback,
        so a packet is in the buffer for sure.*/
     chSysUnlockFromIsr();
 
     n = (n / maxsize) * maxsize;
-    usbPrepareQueuedReceive(sdup->config->usbp,
+    usbPrepareQueuedReceive(usbp,
                             USB_CDC_DATA_AVAILABLE_EP,
                             &sdup->iqueue, n);
 
     chSysLockFromIsr();
-    usbStartReceiveI(sdup->config->usbp, USB_CDC_DATA_AVAILABLE_EP);
+    usbStartReceiveI(usbp, USB_CDC_DATA_AVAILABLE_EP);
   }
 
   chSysUnlockFromIsr();
