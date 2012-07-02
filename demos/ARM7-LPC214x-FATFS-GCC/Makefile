@@ -68,7 +68,7 @@ CSRC = $(PORTSRC) \
        $(TESTSRC) \
        ${BOARDPATH}/buzzer.c \
        $(CHIBIOS)/os/various/evtimer.c \
-       $(CHIBIOS)/os/various/syscalls.c \
+       $(CHIBIOS)/os/various/chprintf.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -149,7 +149,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS = -DSTDOUT_SD=SD1 -DSTDIN_SD=SD1
+DDEFS =
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =

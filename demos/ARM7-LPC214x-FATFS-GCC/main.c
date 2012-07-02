@@ -18,16 +18,97 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
 #include <string.h>
 
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
+#include "chprintf.h"
 #include "evtimer.h"
 #include "buzzer.h"
 
 #include "ff.h"
+
+/*===========================================================================*/
+/* Card insertion monitor.                                                   */
+/*===========================================================================*/
+
+#define POLLING_INTERVAL                10
+#define POLLING_DELAY                   10
+
+/**
+ * @brief   Card monitor timer.
+ */
+static VirtualTimer tmr;
+
+/**
+ * @brief   Debounce counter.
+ */
+static unsigned cnt;
+
+/**
+ * @brief   Card event sources.
+ */
+static EventSource inserted_event, removed_event;
+
+/**
+ * @brief   Insertion monitor timer callback function.
+ *
+ * @param[in] p         pointer to the @p BaseBlockDevice object
+ *
+ * @notapi
+ */
+static void tmrfunc(void *p) {
+  BaseBlockDevice *bbdp = p;
+
+  /* The presence check is performed only while the driver is not in a
+     transfer state because it is often performed by changing the mode of
+     the pin connected to the CS/D3 contact of the card, this could disturb
+     the transfer.*/
+  blkstate_t state = blkGetDriverState(bbdp);
+  chSysLockFromIsr();
+  if ((state != BLK_READING) && (state != BLK_WRITING)) {
+    /* Safe to perform the check.*/
+    if (cnt > 0) {
+      if (blkIsInserted(bbdp)) {
+        if (--cnt == 0) {
+          chEvtBroadcastI(&inserted_event);
+        }
+      }
+      else
+        cnt = POLLING_INTERVAL;
+    }
+    else {
+      if (!blkIsInserted(bbdp)) {
+        cnt = POLLING_INTERVAL;
+        chEvtBroadcastI(&removed_event);
+      }
+    }
+  }
+  chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, bbdp);
+  chSysUnlockFromIsr();
+}
+
+/**
+ * @brief   Polling monitor start.
+ *
+ * @param[in] p         pointer to an object implementing @p BaseBlockDevice
+ *
+ * @notapi
+ */
+static void tmr_init(void *p) {
+
+  chEvtInit(&inserted_event);
+  chEvtInit(&removed_event);
+  chSysLock();
+  cnt = POLLING_INTERVAL;
+  chVTSetI(&tmr, MS2ST(POLLING_DELAY), tmrfunc, p);
+  chSysUnlock();
+}
+
+/*===========================================================================*/
+/* FatFs related.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief FS object.
@@ -65,6 +146,43 @@ static MMCConfig mmccfg = {&SPID1, &ls_spicfg, &hs_spicfg};
 
 /* Generic large buffer.*/
 uint8_t fbuff[1024];
+
+static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
+  FRESULT res;
+  FILINFO fno;
+  DIR dir;
+  int i;
+  char *fn;
+
+  res = f_opendir(&dir, path);
+  if (res == FR_OK) {
+    i = strlen(path);
+    for (;;) {
+      res = f_readdir(&dir, &fno);
+      if (res != FR_OK || fno.fname[0] == 0)
+        break;
+      if (fno.fname[0] == '.')
+        continue;
+      fn = fno.fname;
+      if (fno.fattrib & AM_DIR) {
+        path[i++] = '/';
+        strcpy(&path[i], fn);
+        res = scan_files(chp, path);
+        if (res != FR_OK)
+          break;
+        path[i] = 0;
+      }
+      else {
+        chprintf(chp, "%s/%s\r\n", path, fn);
+      }
+    }
+  }
+  return res;
+}
+
+/*===========================================================================*/
+/* Main and generic code.                                                    */
+/*===========================================================================*/
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
@@ -104,39 +222,6 @@ static msg_t Thread2(void *arg) {
   return 0;
 }
 
-static FRESULT scan_files(char *path)
-{
-  FRESULT res;
-  FILINFO fno;
-  DIR dir;
-  int i;
-  char *fn;
-
-  res = f_opendir(&dir, path);
-  if (res == FR_OK) {
-    i = strlen(path);
-    for (;;) {
-      res = f_readdir(&dir, &fno);
-      if (res != FR_OK || fno.fname[0] == 0)
-        break;
-      if (fno.fname[0] == '.')
-        continue;
-      fn = fno.fname;
-      if (fno.fattrib & AM_DIR) {
-        siprintf(&path[i], "/%s", fn);
-        res = scan_files(path);
-        if (res != FR_OK)
-          break;
-        path[i] = 0;
-      }
-      else {
-        iprintf("%s/%s\r\n", path, fn);
-      }
-    }
-  }
-  return res;
-}
-
 /*
  * Executed as event handler at 500mS intervals.
  */
@@ -151,14 +236,15 @@ static void TimerHandler(eventid_t id) {
 
       err = f_getfree("/", &clusters, &fsp);
       if (err != FR_OK) {
-        iprintf("FS: f_getfree() failed\r\n");
+        chprintf((BaseSequentialStream *)&SD1, "FS: f_getfree() failed\r\n");
         return;
       }
-      iprintf("FS: %lu free clusters, %u sectors per cluster, %lu bytes free\r\n",
-              clusters, MMC_FS.csize,
-              clusters * (uint32_t)MMC_FS.csize * (uint32_t)MMC_SECTOR_SIZE);
+      chprintf((BaseSequentialStream *)&SD1,
+               "FS: %lu free clusters, %lu sectors per cluster, %lu bytes free\r\n",
+               clusters, (uint32_t)MMC_FS.csize,
+               clusters * (uint32_t)MMC_FS.csize * (uint32_t)MMC_SECTOR_SIZE);
       fbuff[0] = 0;
-      scan_files((char *)fbuff);
+      scan_files((BaseSequentialStream *)&SD1, (char *)fbuff);
     }
   }
   else if (!palReadPad(IOPORT1, PA_BUTTON2)) {
@@ -179,25 +265,25 @@ static void InsertHandler(eventid_t id) {
   (void)id;
   buzzPlayWait(1000, MS2ST(100));
   buzzPlayWait(2000, MS2ST(100));
-  iprintf("MMC: inserted\r\n");
+  chprintf((BaseSequentialStream *)&SD1, "MMC: inserted\r\n");
   /*
    * On insertion MMC initialization and FS mount.
    */
-  iprintf("MMC: initialization ");
+  chprintf((BaseSequentialStream *)&SD1, "MMC: initialization ");
   if (mmcConnect(&MMCD1)) {
-    iprintf("failed\r\n");
+    chprintf((BaseSequentialStream *)&SD1, "failed\r\n");
     return;
   }
-  iprintf("ok\r\n");
-  iprintf("FS: mount ");
+  chprintf((BaseSequentialStream *)&SD1, "ok\r\n");
+  chprintf((BaseSequentialStream *)&SD1, "FS: mount ");
   err = f_mount(0, &MMC_FS);
   if (err != FR_OK) {
-    iprintf("failed\r\n");
+    chprintf((BaseSequentialStream *)&SD1, "failed\r\n");
     mmcDisconnect(&MMCD1);
     return;
   }
   fs_ready = TRUE;
-  iprintf("ok\r\n");
+  chprintf((BaseSequentialStream *)&SD1, "ok\r\n");
   buzzPlay(440, MS2ST(200));
 }
 
@@ -207,7 +293,8 @@ static void InsertHandler(eventid_t id) {
 static void RemoveHandler(eventid_t id) {
 
   (void)id;
-  iprintf("MMC: removed\r\n");
+  chprintf((BaseSequentialStream *)&SD1, "MMC: removed\r\n");
+  mmcDisconnect(&MMCD1);
   fs_ready = FALSE;
   buzzPlayWait(2000, MS2ST(100));
   buzzPlayWait(1000, MS2ST(100));
@@ -252,6 +339,11 @@ int main(void) {
   mmcStart(&MMCD1, &mmccfg);
 
   /*
+   * Activates the card insertion monitor.
+   */
+  tmr_init(&MMCD1);
+
+  /*
    * Creates the blinker threads.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
@@ -264,8 +356,8 @@ int main(void) {
   evtInit(&evt, MS2ST(500));            /* Initializes an event timer object.   */
   evtStart(&evt);                       /* Starts the event timer.              */
   chEvtRegister(&evt.et_es, &el0, 0);   /* Registers on the timer event source. */
-  chEvtRegister(&MMCD1.inserted_event, &el1, 1);
-  chEvtRegister(&MMCD1.removed_event, &el2, 2);
+  chEvtRegister(&inserted_event, &el1, 1);
+  chEvtRegister(&removed_event, &el2, 2);
   while (TRUE)
     chEvtDispatch(evhndl, chEvtWaitOne(ALL_EVENTS));
   return 0;
