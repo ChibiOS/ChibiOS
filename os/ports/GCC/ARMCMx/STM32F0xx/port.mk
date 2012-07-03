@@ -1,4 +1,4 @@
-# List of the ChibiOS/RT Cortex-M3 STM32 port files.
+# List of the ChibiOS/RT Cortex-M0 STM32 port files.
 PORTSRC = $(CHIBIOS)/os/ports/GCC/ARMCMx/crt0.c \
           $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F0xx/vectors.c \
           ${CHIBIOS}/os/ports/GCC/ARMCMx/chcore.c \
