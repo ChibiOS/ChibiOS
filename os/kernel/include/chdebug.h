@@ -153,15 +153,15 @@ extern ch_trace_buffer_t dbg_trace_buffer;
  * @api
  */
 #if !defined(chDbgCheck)
-#define chDbgCheck(c, func) {                                           \
-  if (!(c))                                                             \
-    chDbgPanic(__QUOTE_THIS(func)"()");                                 \
+#define chDbgCheck(c, func) {                                               \
+  if (!(c))                                                                 \
+    chDbgPanic(__QUOTE_THIS(func)"()");                                     \
 }
 #endif /* !defined(chDbgCheck) */
 /** @} */
 #else /* !CH_DBG_ENABLE_CHECKS */
-#define chDbgCheck(c, func) {                                           \
-  (void)(c), (void)__QUOTE_THIS(func)"()";                              \
+#define chDbgCheck(c, func) {                                               \
+  (void)(c), (void)__QUOTE_THIS(func)"()";                                  \
 }
 #endif /* !CH_DBG_ENABLE_CHECKS */
 
@@ -192,9 +192,9 @@ extern ch_trace_buffer_t dbg_trace_buffer;
  * @api
  */
 #if !defined(chDbgAssert)
-#define chDbgAssert(c, m, r) {                                          \
-  if (!(c))                                                             \
-    chDbgPanic(m);                                                      \
+#define chDbgAssert(c, m, r) {                                              \
+  if (!(c))                                                                 \
+    chDbgPanic(m);                                                          \
 }
 #endif /* !defined(chDbgAssert) */
 /** @} */
