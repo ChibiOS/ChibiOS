@@ -34,7 +34,6 @@
 
 //#define CORTEX_VTOR_INIT       0x000E0000
 #define CORTEX_VTOR_INIT  0x00000000
-#define CORTEX_USE_FPU    TRUE
 
 /*===========================================================================*/
 /* Kernel parameters.                                                        */

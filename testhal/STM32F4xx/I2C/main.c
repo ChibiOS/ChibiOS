@@ -51,7 +51,7 @@ static int16_t acceleration_x, acceleration_y, acceleration_z;
 static void print(char *p) {
 
   while (*p) {
-    chIOPut(&SD2, *p++);
+    sdPut(&SD2, *p++);
   }
 }
 
@@ -61,9 +61,9 @@ static void print(char *p) {
 static void println(char *p) {
 
   while (*p) {
-    chIOPut(&SD2, *p++);
+    sdPut(&SD2, *p++);
   }
-  chIOWriteTimeout(&SD2, (uint8_t *)"\r\n", 2, TIME_INFINITE);
+  sdWriteTimeout(&SD2, (uint8_t *)"\r\n", 2, TIME_INFINITE);
 }
 
 /**
@@ -73,20 +73,20 @@ static void printn(int16_t n) {
   char buf[16], *p;
 
   if (n > 0)
-    chIOPut(&SD2, '+');
+    sdPut(&SD2, '+');
   else{
-    chIOPut(&SD2, '-');
+    sdPut(&SD2, '-');
     n = abs(n);
   }
 
   if (!n)
-    chIOPut(&SD2, '0');
+    sdPut(&SD2, '0');
   else {
     p = buf;
     while (n)
       *p++ = (n % 10) + '0', n /= 10;
     while (p > buf)
-      chIOPut(&SD2, *--p);
+      sdPut(&SD2, *--p);
   }
 }
 
@@ -101,6 +101,13 @@ int16_t complement2signed(uint8_t msb, uint8_t lsb){
   }
   return (int16_t)word;
 }
+
+/* I2C interface #2 */
+static const I2CConfig i2cfg2 = {
+    OPMODE_I2C,
+    400000,
+    FAST_DUTY_CYCLE_2,
+};
 
 /*
  * Application entry point.
@@ -120,19 +127,16 @@ int main(void) {
   chSysInit();
 
   /*
+   * Starts I2C
+   */
+  i2cStart(&I2CD2, &i2cfg2);
+
+  /*
    * Prepares the Serial driver 2
    */
   sdStart(&SD2, NULL);          /* Default is 38400-8-N-1.*/
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
   palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
-
-  /* I2C interface #2 */
-  static const I2CConfig i2cfg2 = {
-      OPMODE_I2C,
-      400000,
-      FAST_DUTY_CYCLE_16_9,
-  };
-  i2cStart(&I2CD2, &i2cfg2);
 
   /**
    * Prepares the accelerometer
