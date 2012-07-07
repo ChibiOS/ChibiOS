@@ -493,7 +493,6 @@ typedef struct {
 #define palTogglePad(port, pad) pal_lld_togglepad(port, pad)
 #endif
 
-
 /**
  * @brief   Pad mode setup.
  * @details This function programs a pad with the specified mode.
