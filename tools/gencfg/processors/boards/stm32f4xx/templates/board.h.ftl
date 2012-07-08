@@ -115,9 +115,9 @@
 #define PIN_OSPEED_25M(n)           (1U << ((n) * 2))
 #define PIN_OSPEED_50M(n)           (2U << ((n) * 2))
 #define PIN_OSPEED_100M(n)          (3U << ((n) * 2))
-#define PIN_PUDR_FLOATING(n)        (0U << ((n) * 2))
-#define PIN_PUDR_PULLUP(n)          (1U << ((n) * 2))
-#define PIN_PUDR_PULLDOWN(n)        (2U << ((n) * 2))
+#define PIN_PUPDR_FLOATING(n)       (0U << ((n) * 2))
+#define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2))
+#define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2))
 #define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
 
 [#list doc1.board.ports.* as port]
@@ -244,7 +244,7 @@ ${line + ")"}
     [#assign pinidx = pinidx + 1 /]
   [/#list]
   [#--
-    -- Generating PUDR register value.
+    -- Generating PUPDR register value.
     --]
   [#assign pinidx = 0 /]
   [#list port.* as pin]
@@ -255,14 +255,14 @@ ${line + ")"}
     [/#if]
     [#assign resistor = pin.@Resistor[0] /]
     [#if resistor == "Floating"]
-      [#assign out = "PIN_PUDR_FLOATING(" + port_name + "_" + name + ")" /]
+      [#assign out = "PIN_PUPDR_FLOATING(" + port_name + "_" + name + ")" /]
     [#elseif resistor == "PullUp"]
-      [#assign out = "PIN_PUDR_PULLUP(" + port_name + "_" + name + ")" /]
+      [#assign out = "PIN_PUPDR_PULLUP(" + port_name + "_" + name + ")" /]
     [#else]
-      [#assign out = "PIN_PUDR_PULLDOWN(" + port_name + "_" + name + ")" /]
+      [#assign out = "PIN_PUPDR_PULLDOWN(" + port_name + "_" + name + ")" /]
     [/#if]
     [#if pinidx == 0]
-      [#assign line = "#define VAL_" + port_name + "_PUDR              (" + out /]
+      [#assign line = "#define VAL_" + port_name + "_PUPDR             (" + out /]
     [#else]
       [#assign line = "                                     " + out /]
     [/#if]
