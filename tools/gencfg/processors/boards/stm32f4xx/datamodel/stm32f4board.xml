@@ -3,12 +3,11 @@
 <board
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f4xx_board.xsd"
-  name="ST STM32F4-Discovery"
+  name="STMicroelectronics STM32F4-Discovery"
   BoardID="ST_STM32F4_DISCOVERY"
   HSEBypass="true"
   HSEFrequency="0"
   LSEFrequency="0">
-  <details>Board definition for STM32F4-Discovery.</details>
   <ports>
     <GPIOA>
       <pin0

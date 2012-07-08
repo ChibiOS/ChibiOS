@@ -75,6 +75,7 @@
   |  +--STM8S/          - STM8S HAL demos.
   +--tools              - Various tools.
      +--eclipse         - Eclipse enhancements.
+     +--gencfg          - Configurations generator tool.
 
 *****************************************************************************
 *** Releases                                                              ***

@@ -20,9 +20,27 @@
   --]
 [@pp.dropOutputFile /]
 [#import "/@lib/libutils.ftl" as utils /]
-[@pp.changeOutputFile name="board.mk" /]
-# List of all the board related files.
-BOARDSRC = ${'$'}{CHIBIOS}/boards/${doc1.board.@BoardID[0]}/board.c
+[#import "/@lib/liblicense.ftl" as license /]
+[@pp.changeOutputFile name="board.h" /]
+/*
+[@license.EmitLicenseAsText /]
+*/
 
-# Required include directories
-BOARDINC = ${'$'}{CHIBIOS}/boards/${doc1.board.@BoardID[0]}
+#ifndef _BOARD_H_
+#define _BOARD_H_
+
+/*
+ * Setup for ${doc1.board.@name[0]} board.
+ */
+
+#if !defined(_FROM_ASM_)
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void boardInit(void);
+#ifdef __cplusplus
+}
+#endif
+#endif /* _FROM_ASM_ */
+
+#endif /* _BOARD_H_ */
