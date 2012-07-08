@@ -150,29 +150,29 @@ static const GPTConfig gpt3cfg = {
 static void print(char *p) {
 
   while (*p) {
-    chIOPut(&SD2, *p++);
+    chSequentialStreamPut(&SD2, *p++);
   }
 }
 
 static void println(char *p) {
 
   while (*p) {
-    chIOPut(&SD2, *p++);
+    chSequentialStreamPut(&SD2, *p++);
   }
-  chIOWriteTimeout(&SD2, (uint8_t *)"\r\n", 2, TIME_INFINITE);
+  chSequentialStreamWrite(&SD2, (uint8_t *)"\r\n", 2);
 }
 
 static void printn(uint32_t n) {
   char buf[16], *p;
 
   if (!n)
-    chIOPut(&SD2, '0');
+    chSequentialStreamPut(&SD2, '0');
   else {
     p = buf;
     while (n)
       *p++ = (n % 10) + '0', n /= 10;
     while (p > buf)
-      chIOPut(&SD2, *--p);
+      chSequentialStreamPut(&SD2, *--p);
   }
 }
 

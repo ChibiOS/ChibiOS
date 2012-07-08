@@ -1878,7 +1878,16 @@
           <name>$PROJ_DIR$\..\..\..\os\hal\include\i2c.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\i2s.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\icu.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\io_block.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\io_channel.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\mac.h</name>
@@ -1888,6 +1897,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\mmc_spi.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\mmcsd.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\pal.h</name>
@@ -1909,6 +1921,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\spi.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\include\tm.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\include\uart.h</name>
@@ -1941,6 +1956,9 @@
           <name>$PROJ_DIR$\..\..\..\os\hal\src\i2c.c</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\i2s.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\icu.c</name>
         </file>
         <file>
@@ -1948,6 +1966,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\mmc_spi.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\mmcsd.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\pal.c</name>
@@ -1969,6 +1990,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\spi.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\os\hal\src\tm.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\os\hal\src\uart.c</name>

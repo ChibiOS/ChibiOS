@@ -23,12 +23,13 @@ X Revision of the RTCv2 driver implementation.
 X File System infrastructure.
   - FatFs wrapper.
 X Streaming DAC/I2S driver model and STM32 implementation.
+- Support for STM32F3xx devices.
 - Specific I2C driver for STM32F0 and newer devices.
 - STM32 CAN2 support.
 - Unified LPC1xxx HAL.
   - LPC11xx and LPC13xx HALs merged in the unified one.
   - LPC17xx support.
-- NUC120 support.
+- NUC140 support.
 - Create a null device driver implementing a stream interface.
 - Add USARTs support to the STM32 SPI driver.
 - Add option to use another counter instead of the systick counter into the
