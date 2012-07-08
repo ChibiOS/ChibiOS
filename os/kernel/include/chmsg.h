@@ -56,18 +56,6 @@
 #define chMsgGet(tp) ((tp)->p_msg)
 
 /**
- * @brief   Returns the message carried by the specified thread.
- * @pre     This function must be invoked immediately after exiting a call
- *          to @p chMsgWait().
- *
- * @param[in] tp        pointer to the thread
- * @return              The message carried by the sender.
- *
- * @sclass
- */
-#define chMsgGetS(tp) ((tp)->p_msg)
-
-/**
  * @brief   Releases the thread waiting on top of the messages queue.
  * @pre     Invoke this function only after a message has been received
  *          using @p chMsgWait().

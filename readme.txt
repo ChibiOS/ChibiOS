@@ -251,6 +251,7 @@
 - CHANGE: Removed the chioch.h header from the kernel, now channels interface
   is exported by the HAL. Removed functions chPutWouldBlock() and
   chGetWouldBlock().
+- CHANGE: Removed macro chMsgGetS(), chMsgGet() is still available.
 - CHANGE: chprintf() now takes a BaseSequentialStream as parameter instead
   of a BaseChannel making it more generic.
 - CHANGE: Now the shell requires a BaseSequentialStream instead of a
