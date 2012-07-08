@@ -5,19 +5,17 @@
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f4xx_board.xsd"
   name="STMicroelectronics STM32F4-Discovery"
   BoardID="ST_STM32F4_DISCOVERY"
-  HSEBypass="true"
-  HSEFrequency="0"
+  HSEBypass="false"
+  HSEFrequency="8000000"
   LSEFrequency="0"
-  BoardPHYID="MII_KS8721_ID"
-  BoardPHYType="RMII"
-  VDD="330">
+  VDD="300">
   <ports>
     <GPIOA>
       <pin0
-        ID=""
+        ID="BUTTON"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -25,120 +23,120 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin4
-        ID=""
+        ID="LRCK"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="6" />
       <pin5
-        ID=""
+        ID="SPC"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="High"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="5" />
       <pin6
-        ID=""
+        ID="SDO"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="High"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="5" />
       <pin7
-        ID=""
+        ID="SDI"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="High"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="5" />
       <pin8
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
-        Alternate="0" />
+        Alternate="0" ></pin8>
       <pin9
-        ID=""
+        ID="VBUS_FS"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
-        ID=""
+        ID="OTG_FS_ID"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="10" />
       <pin11
-        ID=""
+        ID="OTG_FS_DM"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="10" />
       <pin12
-        ID=""
+        ID="OTG_FS_DP"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="10" />
       <pin13
-        ID=""
+        ID="SWDIO"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
+        Mode="Alternate"
         Alternate="0" />
       <pin14
-        ID=""
+        ID="SWCLK"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
+        Mode="Alternate"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
     </GPIOA>
@@ -147,258 +145,258 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID=""
+        ID="SWO"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="0" ></pin3>
       <pin4
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin6
-        ID=""
-        Type="PushPull"
+        ID="SCL"
+        Type="OpenDrain"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="4" />
       <pin7
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin9
-        ID=""
-        Type="PushPull"
+        ID="SDA"
+        Type="OpenDrain"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="4" ></pin9>
       <pin10
-        ID=""
+        ID="CLK_IN"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
     </GPIOB>
     <GPIOC>
       <pin0
-        ID=""
+        ID="OTG_FS_POWER_ON"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
+        Mode="Output"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID=""
+        ID="PDM_OUT"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
-        Alternate="0" />
+        Alternate="0" ></pin3>
       <pin4
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID=""
+        ID="MCLK"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="6" />
       <pin8
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin10
-        ID=""
+        ID="SCLK"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="6" />
       <pin11
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin12
-        ID=""
+        ID="SDIN"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="6" />
       <pin13
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
     </GPIOC>
@@ -407,145 +405,145 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin4
-        ID=""
+        ID="RESET"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
+        Mode="Output"
         Alternate="0" />
       <pin5
-        ID=""
+        ID="OVER_CURRENT"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
-        Alternate="0" />
+        Alternate="0" ></pin5>
       <pin6
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="Floating"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
-        ID=""
+        ID="LED4"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
+        Mode="Output"
         Alternate="0" />
       <pin13
-        ID=""
+        ID="LED3"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
+        Mode="Output"
         Alternate="0" />
       <pin14
-        ID=""
+        ID="LED5"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Output"
+        Alternate="0" ></pin14>
       <pin15
-        ID=""
+        ID="LED6"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
+        Mode="Output"
         Alternate="0" />
     </GPIOD>
     <GPIOE>
       <pin0
-        ID=""
+        ID="INT1"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID=""
+        ID="INT2"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -553,23 +551,23 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID=""
+        ID="CS_SPI"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
+        Mode="Output"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -577,7 +575,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -585,7 +583,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -593,7 +591,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -601,7 +599,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -609,7 +607,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -617,7 +615,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -625,7 +623,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -633,7 +631,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -641,7 +639,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -649,7 +647,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -657,7 +655,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -667,7 +665,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -675,7 +673,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -683,7 +681,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -691,7 +689,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -699,7 +697,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -707,7 +705,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -715,7 +713,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -723,7 +721,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -731,7 +729,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -739,7 +737,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -747,7 +745,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -755,7 +753,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -763,7 +761,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -771,7 +769,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -779,7 +777,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -787,7 +785,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -797,7 +795,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -805,7 +803,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -813,7 +811,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -821,7 +819,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -829,7 +827,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -837,7 +835,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -845,7 +843,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -853,7 +851,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -861,7 +859,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -869,7 +867,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -877,7 +875,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -885,7 +883,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -893,7 +891,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -901,7 +899,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -909,7 +907,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -917,25 +915,25 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOG>
     <GPIOH>
       <pin0
-        ID=""
+        ID="OSC_IN"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID=""
+        ID="OSC_OUT"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -943,15 +941,15 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
-        Alternate="0" />
+        Alternate="0" ></pin2>
       <pin3
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -959,7 +957,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -967,7 +965,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -975,7 +973,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -983,7 +981,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -991,7 +989,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -999,7 +997,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1007,7 +1005,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1015,7 +1013,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1023,7 +1021,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1031,7 +1029,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1039,7 +1037,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1047,7 +1045,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1057,7 +1055,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1065,7 +1063,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1073,7 +1071,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1081,7 +1079,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1089,7 +1087,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1097,7 +1095,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1105,7 +1103,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1113,7 +1111,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1121,7 +1119,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1129,7 +1127,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1137,7 +1135,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1145,7 +1143,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1153,7 +1151,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1161,7 +1159,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1169,7 +1167,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
@@ -1177,7 +1175,7 @@
         ID=""
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
         Alternate="0" />
