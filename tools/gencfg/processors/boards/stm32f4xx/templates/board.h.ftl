@@ -85,13 +85,15 @@
  * IO pins assignments.
  */
 [#list doc1.board.ports.* as port]
+  [#assign port_name = port?node_name?upper_case /]
   [#assign pinidx = 0 /]
   [#list port.* as pin]
+    [#assign pin_name = pin?node_name?upper_case /]
     [#assign name = pin.@ID[0]?string?trim /]
     [#if name?length == 0]
-      [#assign name = pin?node_name?upper_case /]
+      [#assign name = pin_name /]
     [/#if]
-#define ${(port?node_name + "_" + name)?right_pad(27, " ")} ${pinidx?string}
+#define ${(port_name + "_" + name)?right_pad(27, " ")} ${pinidx?string}
     [#assign pinidx = pinidx + 1 /]
   [/#list]
 
@@ -117,14 +119,17 @@
 #define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
 
 [#list doc1.board.ports.* as port]
+  [#assign port_name = port?node_name?upper_case /]
 /*
- * ${port?node_name} setup:
+ * ${port_name} setup:
  *
+  [#-- Generating pin descriptions inside the comment.--]
   [#assign pinidx = 0 /]
   [#list port.* as pin]
+    [#assign pin_name = pin?node_name?upper_case /]
     [#assign name = pin.@ID[0]?string?trim /]
     [#if name?length == 0]
-      [#assign name = pin?node_name?upper_case /]
+      [#assign name = pin_name /]
     [/#if]
     [#assign mode = pin.@Mode[0] /]
     [#assign type = pin.@Type[0] /]
@@ -144,6 +149,38 @@
     [#assign pinidx = pinidx + 1 /]
   [/#list]
  */
+  [#-- Generating MODER register value.--]
+  [#assign pinidx = 0 /]
+  [#list port.* as pin]
+    [#assign pin_name = pin?node_name?upper_case /]
+    [#assign name = pin.@ID[0]?string?trim /]
+    [#if name?length == 0]
+      [#assign name = pin_name /]
+    [/#if]
+    [#assign mode = pin.@Mode[0] /]
+    [#if mode == "Input"]
+      [#assign out = "PIN_MODE_INPUT(" + port_name + "_" + pin_name + ")" /]
+    [#elseif mode == "Output"]
+      [#assign out = "PIN_MODE_OUTPUT(" + port_name + "_" + pin_name + ")" /]
+    [#elseif mode == "Alternate"]
+      [#assign out = "PIN_MODE_ALTERNATE(" + port_name + "_" + pin_name + ")" /]
+    [#else]
+      [#assign out = "PIN_MODE_ANALOG(" + port_name + "_" + pin_name + ")" /]
+    [/#if]
+    [#if pinidx == 0]
+      [#assign line = "#define VAL_" + port_name + "_MODER             (" + out /]
+[#--#define VAL_${port_name}_MODER             (${out?right_pad(30, " ")}[#rt]--]
+    [#else]
+      [#assign line = "                                     " + out /]
+[#--                                     ${out?right_pad(30, " ")}[#rt]--]
+    [/#if]
+    [#if pinidx < 15]
+${(line + " |")?right_pad(76, " ") + "\\"}
+    [#else]
+${line + ")"}
+    [/#if]
+    [#assign pinidx = pinidx + 1 /]
+  [/#list]
 
 [/#list]
 
