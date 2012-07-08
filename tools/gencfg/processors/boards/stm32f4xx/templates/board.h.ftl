@@ -85,6 +85,19 @@
  * IO pins assignments.
  */
 
+[#list doc1.board.ports.* as port]
+  [#assign pinidx = 0 /]
+  [#list port.* as pin]
+    [#assign name = pin.@ID[0]?string?trim /]
+    [#if name?length == 0]
+      [#assign name = pin?node_name?upper_case /]
+    [/#if]
+#define ${(port?node_name + "_" + name)?right_pad(23, " ")} ${pinidx?string}
+    [#assign pinidx = pinidx + 1 /]
+  [/#list]
+
+[/#list]
+
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {
