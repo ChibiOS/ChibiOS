@@ -82,7 +82,7 @@
             </xs:annotation>
             <xs:simpleType>
         <xs:restriction base="xs:string">
-          <xs:enumeration value="None"></xs:enumeration>
+          <xs:enumeration value="Floating"></xs:enumeration>
           <xs:enumeration value="PullUp"></xs:enumeration>
           <xs:enumeration value="PullDown"></xs:enumeration>
         </xs:restriction>

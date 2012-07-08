@@ -14,115 +14,115 @@
   <ports>
     <GPIOA>
       <pin0
-        ID=""
+        ID="PIPPO"
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
-        ID=""
+        ID="PIPPO"
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOA>
@@ -131,112 +131,112 @@
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOB>
@@ -245,112 +245,112 @@
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOC>
@@ -359,112 +359,112 @@
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOD>
@@ -473,112 +473,112 @@
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOE>
@@ -587,112 +587,112 @@
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOF>
@@ -701,112 +701,112 @@
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOG>
@@ -815,112 +815,112 @@
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOH>
@@ -929,112 +929,112 @@
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin5
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin7
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin9
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin11
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin12
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin13
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin15
         ID=""
         Type="PushPull"
         Speed="Minimum"
-        Resistor="None"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
     </GPIOI>
