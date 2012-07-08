@@ -17,7 +17,7 @@
             minOccurs="1">
           </xs:element>
         </xs:sequence>
-                <xs:attribute
+        <xs:attribute
           name="HSEBypass"
           type="xs:boolean"
           use="required">
@@ -32,7 +32,6 @@
           </xs:annotation>
           <xs:simpleType>
             <xs:restriction base="xs:int">
-
               <xs:minInclusive value="0"></xs:minInclusive>
             </xs:restriction>
           </xs:simpleType>
@@ -50,11 +49,25 @@
               <xs:minInclusive value="0"></xs:minInclusive>
             </xs:restriction>
           </xs:simpleType>
-        </xs:attribute>
+        </xs:attribute>
+
+        <xs:attribute
+          name="VDD"
+          use="required">
+                    <xs:annotation>
+                      <xs:documentation>STM32F4xx VDD.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+            <xs:restriction base="xs:int">
+              <xs:minInclusive value="180"></xs:minInclusive>
+              <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              <xs:maxInclusive value="360"></xs:maxInclusive>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
 
   <xs:complexType name="portsType">
     <xs:sequence>
@@ -78,7 +91,6 @@
         maxOccurs="1" minOccurs="1"></xs:element>
     </xs:sequence>
   </xs:complexType>
-
 
   <xs:element name="board" type="STM32F4xxBoardType"></xs:element>
 </xs:schema>

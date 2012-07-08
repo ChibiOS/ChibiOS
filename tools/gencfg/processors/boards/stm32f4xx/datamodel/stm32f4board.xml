@@ -9,7 +9,8 @@
   HSEFrequency="0"
   LSEFrequency="0"
   BoardPHYID="MII_KS8721_ID"
-  BoardPHYType="RMII">
+  BoardPHYType="RMII"
+  VDD="330">
   <ports>
     <GPIOA>
       <pin0

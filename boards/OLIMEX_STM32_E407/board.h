@@ -39,7 +39,6 @@
 
 /*
  * Board frequencies.
- * NOTE: The LSE crystal is not fitted by default on the board.
  */
 #define STM32_LSECLK            32768
 #define STM32_HSECLK            12000000

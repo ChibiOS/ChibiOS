@@ -49,6 +49,42 @@
 [/#if]
 [/#if]
 
+/*
+ * Board oscillators-related settings.
+[#if doc1.board.@LSEFrequency[0]?number == 0]
+ * NOTE: LSE not fitted.
+[/#if]
+[#if doc1.board.@HSEFrequency[0]?number == 0]
+ * NOTE: HSE not fitted.
+[/#if]
+ */
+#if !defined(STM32_LSECLK)
+#define STM32_LSECLK            ${doc1.board.@LSEFrequency[0]}
+#endif
+
+#if !defined(STM32_HSECLK)
+#define STM32_HSECLK            ${doc1.board.@HSEFrequency[0]}
+#endif
+
+[#if doc1.board.@HSEBypass[0]?string == "true"]
+#define STM32_HSE_BYPASS
+[/#if]
+
+/*
+ * Board voltages.
+ * Required for performance limits calculation.
+ */
+#define STM32_VDD               ${doc1.board.@VDD[0]}
+
+/*
+ * MCU type as defined in the ST header file stm32f4xx.h.
+ */
+#define STM32F4XX
+
+/*
+ * IO pins assignments.
+ */
+
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {
