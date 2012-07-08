@@ -107,6 +107,8 @@
 #define PIN_MODE_OUTPUT(n)          (1U << ((n) * 2))
 #define PIN_MODE_ALTERNATE(n)       (2U << ((n) * 2))
 #define PIN_MODE_ANALOG(n)          (3U << ((n) * 2))
+#define PIN_ODR_LOW(n)              (0U << (n))
+#define PIN_ODR_HIGH(n)             (1U << (n))
 #define PIN_OTYPE_PUSHPULL(n)       (0U << (n))
 #define PIN_OTYPE_OPENDRAIN(n)      (1U << (n))
 #define PIN_OSPEED_2M(n)            (0U << ((n) * 2))
@@ -149,7 +151,9 @@
     [#assign pinidx = pinidx + 1 /]
   [/#list]
  */
-  [#-- Generating MODER register value.--]
+  [#--
+    -- Generating MODER register value.
+    --]
   [#assign pinidx = 0 /]
   [#list port.* as pin]
     [#assign pin_name = pin?node_name?upper_case /]
@@ -169,15 +173,157 @@
     [/#if]
     [#if pinidx == 0]
       [#assign line = "#define VAL_" + port_name + "_MODER             (" + out /]
-[#--#define VAL_${port_name}_MODER             (${out?right_pad(30, " ")}[#rt]--]
     [#else]
       [#assign line = "                                     " + out /]
-[#--                                     ${out?right_pad(30, " ")}[#rt]--]
     [/#if]
     [#if pinidx < 15]
 ${(line + " |")?right_pad(76, " ") + "\\"}
     [#else]
 ${line + ")"}
+    [/#if]
+    [#assign pinidx = pinidx + 1 /]
+  [/#list]
+  [#--
+    -- Generating OTYPER register value.
+    --]
+  [#assign pinidx = 0 /]
+  [#list port.* as pin]
+    [#assign pin_name = pin?node_name?upper_case /]
+    [#assign name = pin.@ID[0]?string?trim /]
+    [#if name?length == 0]
+      [#assign name = pin_name /]
+    [/#if]
+    [#assign type = pin.@Type[0] /]
+    [#if type == "PushPull"]
+      [#assign out = "PIN_OTYPE_PUSHPULL(" + port_name + "_" + pin_name + ")" /]
+    [#else]
+      [#assign out = "PIN_OTYPE_OPENDRAIN(" + port_name + "_" + pin_name + ")" /]
+    [/#if]
+    [#if pinidx == 0]
+      [#assign line = "#define VAL_" + port_name + "_OTYPER            (" + out /]
+    [#else]
+      [#assign line = "                                     " + out /]
+    [/#if]
+    [#if pinidx < 15]
+${(line + " |")?right_pad(76, " ") + "\\"}
+    [#else]
+${line + ")"}
+    [/#if]
+    [#assign pinidx = pinidx + 1 /]
+  [/#list]
+  [#--
+    -- Generating SPEEDR register value.
+    --]
+  [#assign pinidx = 0 /]
+  [#list port.* as pin]
+    [#assign pin_name = pin?node_name?upper_case /]
+    [#assign name = pin.@ID[0]?string?trim /]
+    [#if name?length == 0]
+      [#assign name = pin_name /]
+    [/#if]
+    [#assign speed = pin.@Speed[0] /]
+    [#if speed == "Minimum"]
+      [#assign out = "PIN_OSPEED_2M(" + port_name + "_" + pin_name + ")" /]
+    [#elseif speed == "Low"]
+      [#assign out = "PIN_OSPEED_25M(" + port_name + "_" + pin_name + ")" /]
+    [#elseif speed == "High"]
+      [#assign out = "PIN_OSPEED_50M(" + port_name + "_" + pin_name + ")" /]
+    [#else]
+      [#assign out = "PIN_OSPEED_100M(" + port_name + "_" + pin_name + ")" /]
+    [/#if]
+    [#if pinidx == 0]
+      [#assign line = "#define VAL_" + port_name + "_OSPEEDR           (" + out /]
+    [#else]
+      [#assign line = "                                     " + out /]
+    [/#if]
+    [#if pinidx < 15]
+${(line + " |")?right_pad(76, " ") + "\\"}
+    [#else]
+${line + ")"}
+    [/#if]
+    [#assign pinidx = pinidx + 1 /]
+  [/#list]
+  [#--
+    -- Generating PUDR register value.
+    --]
+  [#assign pinidx = 0 /]
+  [#list port.* as pin]
+    [#assign pin_name = pin?node_name?upper_case /]
+    [#assign name = pin.@ID[0]?string?trim /]
+    [#if name?length == 0]
+      [#assign name = pin_name /]
+    [/#if]
+    [#assign resistor = pin.@Resistor[0] /]
+    [#if resistor == "Floating"]
+      [#assign out = "PIN_PUDR_FLOATING(" + port_name + "_" + pin_name + ")" /]
+    [#elseif resistor == "PullUp"]
+      [#assign out = "PIN_PUDR_PULLUP(" + port_name + "_" + pin_name + ")" /]
+    [#else]
+      [#assign out = "PIN_PUDR_PULLDOWN(" + port_name + "_" + pin_name + ")" /]
+    [/#if]
+    [#if pinidx == 0]
+      [#assign line = "#define VAL_" + port_name + "_PUDR              (" + out /]
+    [#else]
+      [#assign line = "                                     " + out /]
+    [/#if]
+    [#if pinidx < 15]
+${(line + " |")?right_pad(76, " ") + "\\"}
+    [#else]
+${line + ")"}
+    [/#if]
+    [#assign pinidx = pinidx + 1 /]
+  [/#list]
+  [#--
+    -- Generating ODR register value.
+    --]
+  [#assign pinidx = 0 /]
+  [#list port.* as pin]
+    [#assign pin_name = pin?node_name?upper_case /]
+    [#assign name = pin.@ID[0]?string?trim /]
+    [#if name?length == 0]
+      [#assign name = pin_name /]
+    [/#if]
+    [#assign level = pin.@Level[0] /]
+    [#if level == "Low"]
+      [#assign out = "PIN_ODR_LOW(" + port_name + "_" + pin_name + ")" /]
+    [#else]
+      [#assign out = "PIN_ODR_HIGH(" + port_name + "_" + pin_name + ")" /]
+    [/#if]
+    [#if pinidx == 0]
+      [#assign line = "#define VAL_" + port_name + "_ODR               (" + out /]
+    [#else]
+      [#assign line = "                                     " + out /]
+    [/#if]
+    [#if pinidx < 15]
+${(line + " |")?right_pad(76, " ") + "\\"}
+    [#else]
+${line + ")"}
+    [/#if]
+    [#assign pinidx = pinidx + 1 /]
+  [/#list]
+  [#--
+    -- Generating AFRx registers values.
+    --]
+  [#assign pinidx = 0 /]
+  [#list port.* as pin]
+    [#assign pin_name = pin?node_name?upper_case /]
+    [#assign name = pin.@ID[0]?string?trim /]
+    [#if name?length == 0]
+      [#assign name = pin_name /]
+    [/#if]
+    [#assign alternate = pin.@Alternate[0]?trim /]
+    [#assign out = "PIN_AFIO_AF(" + port_name + "_" + pin_name + ", " + alternate + ")" /]
+    [#if pinidx == 0]
+      [#assign line = "#define VAL_" + port_name + "_AFRL              (" + out /]
+    [#elseif pinidx == 8]
+      [#assign line = "#define VAL_" + port_name + "_AFRH              (" + out /]
+    [#else]
+      [#assign line = "                                     " + out /]
+    [/#if]
+    [#if (pinidx == 7) || (pinidx == 15)]
+${line + ")"}
+    [#else]
+${(line + " |")?right_pad(76, " ") + "\\"}
     [/#if]
     [#assign pinidx = pinidx + 1 /]
   [/#list]
