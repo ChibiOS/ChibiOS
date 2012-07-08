@@ -33,6 +33,22 @@
  * Setup for ${doc1.board.@name[0]} board.
  */
 
+/*
+ * Board identifier.
+ */
+#define BOARD_${doc1.board.@BoardID[0]}
+#define BOARD_NAME              "${doc1.board.@name[0]}"
+
+[#if doc1.board.@BoardPHYID[0]??]
+/*
+ * Ethernet PHY type.
+ */
+#define BOARD_PHY_ID            ${doc1.board.@BoardPHYID[0]}
+[#if doc1.board.@BoardPHYType[0]?string == "RMII"]
+#define BOARD_PHY_RMII
+[/#if]
+[/#if]
+
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {

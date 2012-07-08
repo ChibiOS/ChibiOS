@@ -27,11 +27,11 @@
           <xs:simpleType>
             <xs:restriction base="xs:string">
               <xs:whiteSpace value="collapse"></xs:whiteSpace>
-              <xs:pattern value="MII_[\w_+]"></xs:pattern>
+              <xs:pattern value="MII_[\w\d_]+"></xs:pattern>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="BoardPHY" use="optional">
+        <xs:attribute name="BoardPHYType" use="optional">
           <xs:annotation>
             <xs:documentation>Type of the PHY device: RMII or MII, this attribute is defaulted to MII if not present.</xs:documentation>
           </xs:annotation>

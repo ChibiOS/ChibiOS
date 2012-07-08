@@ -7,7 +7,9 @@
   BoardID="ST_STM32F4_DISCOVERY"
   HSEBypass="true"
   HSEFrequency="0"
-  LSEFrequency="0">
+  LSEFrequency="0"
+  BoardPHYID="MII_KS8721_ID"
+  BoardPHYType="RMII">
   <ports>
     <GPIOA>
       <pin0

@@ -79,7 +79,7 @@ bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
   return TRUE;
 }
 
-/*
+/**
  * @brief   SDC card write protection detection.
  * @todo    Fill the implementation.
  */
@@ -101,7 +101,7 @@ bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
   return TRUE;
 }
 
-/*
+/**
  * @brief   MMC_SPI card write protection detection.
  * @todo    Fill the implementation.
  */
