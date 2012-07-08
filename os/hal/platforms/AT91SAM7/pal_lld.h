@@ -125,7 +125,7 @@ typedef AT91PS_PIO ioportid_t;
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
-/* functions, if so please put them in a file named pal_lld.c.               */
+/* functions, if so please put them in pal_lld.c.                            */
 /*===========================================================================*/
 
 /**

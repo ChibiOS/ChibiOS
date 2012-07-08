@@ -322,7 +322,7 @@ typedef GPIO_TypeDef * ioportid_t;
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
-/* functions, please put them in a file named ioports_lld.c if so.           */
+/* functions, if so please put them in pal_lld.c.                            */
 /*===========================================================================*/
 
 /**
@@ -364,9 +364,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Writes on a I/O port.
  * @details This function is implemented by writing the GPIO ODR register, the
  *          implementation has no side effects.
- * @note    Writing on pads programmed as pull-up or pull-down has the side
- *          effect to modify the resistor setting because the output latched
- *          data is used for the resistor selection.
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be written on the specified port
@@ -379,9 +376,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Sets a bits mask on a I/O port.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
- * @note    Writing on pads programmed as pull-up or pull-down has the side
- *          effect to modify the resistor setting because the output latched
- *          data is used for the resistor selection.
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be ORed on the specified port
@@ -394,9 +388,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Clears a bits mask on a I/O port.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
- * @note    Writing on pads programmed as pull-up or pull-down has the side
- *          effect to modify the resistor setting because the output latched
- *          data is used for the resistor selection.
  *
  * @param[in] port      port identifier
  * @param[in] bits      bits to be cleared on the specified port
@@ -409,9 +400,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Writes a group of bits.
  * @details This function is implemented by writing the GPIO BSRR register, the
  *          implementation has no side effects.
- * @note    Writing on pads programmed as pull-up or pull-down has the side
- *          effect to modify the resistor setting because the output latched
- *          data is used for the resistor selection.
  *
  * @param[in] port      port identifier
  * @param[in] mask      group mask
@@ -429,9 +417,6 @@ typedef GPIO_TypeDef * ioportid_t;
  * @brief   Pads group mode setup.
  * @details This function programs a pads group belonging to the same port
  *          with the specified mode.
- * @note    Writing on pads programmed as pull-up or pull-down has the side
- *          effect to modify the resistor setting because the output latched
- *          data is used for the resistor selection.
  *
  * @param[in] port      port identifier
  * @param[in] mask      group mask
@@ -445,9 +430,6 @@ typedef GPIO_TypeDef * ioportid_t;
 
 /**
  * @brief   Writes a logical state on an output pad.
- * @note    Writing on pads programmed as pull-up or pull-down has the side
- *          effect to modify the resistor setting because the output latched
- *          data is used for the resistor selection.
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port

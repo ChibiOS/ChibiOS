@@ -189,7 +189,7 @@ typedef GPIO_TypeDef * ioportid_t;
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
-/* functions, please put them in a file named ioports_lld.c if so.           */
+/* functions, if so please put them in pal_lld.c.                            */
 /*===========================================================================*/
 
 /**
