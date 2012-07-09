@@ -59,6 +59,14 @@
   STM32_DMA_GETCHANNEL(STM32_UART_USART3_TX_DMA_STREAM,                     \
                        STM32_USART3_TX_DMA_CHN)
 
+#define USART6_RX_DMA_CHANNEL                                               \
+  STM32_DMA_GETCHANNEL(STM32_UART_USART6_RX_DMA_STREAM,                     \
+                       STM32_USART6_RX_DMA_CHN)
+
+#define USART6_TX_DMA_CHANNEL                                               \
+  STM32_DMA_GETCHANNEL(STM32_UART_USART6_TX_DMA_STREAM,                     \
+                       STM32_USART6_TX_DMA_CHN)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -76,6 +84,12 @@ UARTDriver UARTD2;
 /** @brief USART3 UART driver identifier.*/
 #if STM32_UART_USE_USART3 || defined(__DOXYGEN__)
 UARTDriver UARTD3;
+#endif
+
+
+/** @brief USART6 UART driver identifier.*/
+#if STM32_UART_USE_USART6 || defined(__DOXYGEN__)
+UARTDriver UARTD6;
 #endif
 
 /*===========================================================================*/
@@ -344,6 +358,25 @@ CH_IRQ_HANDLER(STM32_USART3_HANDLER) {
 }
 #endif /* STM32_UART_USE_USART3 */
 
+#if STM32_UART_USE_USART6 || defined(__DOXYGEN__)
+#if !defined(STM32_USART6_HANDLER)
+#error "STM32_USART6_HANDLER not defined"
+#endif
+/**
+ * @brief   USART6 IRQ handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(STM32_USART6_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  serve_usart_irq(&UARTD6);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* STM32_UART_USE_USART6 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -374,6 +407,13 @@ void uart_lld_init(void) {
   UARTD3.usart   = USART3;
   UARTD3.dmarx   = STM32_DMA_STREAM(STM32_UART_USART3_RX_DMA_STREAM);
   UARTD3.dmatx   = STM32_DMA_STREAM(STM32_UART_USART3_TX_DMA_STREAM);
+#endif
+
+#if STM32_UART_USE_USART6
+  uartObjectInit(&UARTD6);
+  UARTD6.usart   = USART6;
+  UARTD6.dmarx   = STM32_DMA_STREAM(STM32_UART_USART6_RX_DMA_STREAM);
+  UARTD6.dmatx   = STM32_DMA_STREAM(STM32_UART_USART6_TX_DMA_STREAM);
 #endif
 }
 
@@ -452,6 +492,27 @@ void uart_lld_start(UARTDriver *uartp) {
     }
 #endif
 
+#if STM32_UART_USE_USART6
+    if (&UARTD6 == uartp) {
+      bool_t b;
+      b = dmaStreamAllocate(uartp->dmarx,
+                            STM32_UART_USART6_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
+                            (void *)uartp);
+      chDbgAssert(!b, "uart_lld_start(), #5", "stream already allocated");
+      b = dmaStreamAllocate(uartp->dmatx,
+                            STM32_UART_USART6_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
+                            (void *)uartp);
+      chDbgAssert(!b, "uart_lld_start(), #6", "stream already allocated");
+      rccEnableUSART6(FALSE);
+      nvicEnableVector(STM32_USART6_NUMBER,
+                       CORTEX_PRIORITY_MASK(STM32_UART_USART6_IRQ_PRIORITY));
+      uartp->dmamode |= STM32_DMA_CR_CHSEL(USART6_RX_DMA_CHANNEL) |
+                        STM32_DMA_CR_PL(STM32_UART_USART6_DMA_PRIORITY);
+    }
+#endif
+
     /* Static DMA setup, the transfer size depends on the USART settings,
        it is 16 bits if M=1 and PCE=0 else it is 8 bits.*/
     if ((uartp->config->cr1 & (USART_CR1_M | USART_CR1_PCE)) == USART_CR1_M)
@@ -500,6 +561,14 @@ void uart_lld_stop(UARTDriver *uartp) {
     if (&UARTD3 == uartp) {
       nvicDisableVector(STM32_USART3_NUMBER);
       rccDisableUSART3(FALSE);
+      return;
+    }
+#endif
+
+#if STM32_UART_USE_USART6
+    if (&UARTD6 == uartp) {
+      nvicDisableVector(STM32_USART6_NUMBER);
+      rccDisableUSART6(FALSE);
       return;
     }
 #endif

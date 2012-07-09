@@ -71,6 +71,15 @@
 #endif
 
 /**
+ * @brief   UART driver on USART6 enable switch.
+ * @details If set to @p TRUE the support for USART6 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_UART_USE_USART6) || defined(__DOXYGEN__)
+#define STM32_UART_USE_USART6               FALSE
+#endif
+
+/**
  * @brief   USART1 interrupt priority level setting.
  */
 #if !defined(STM32_UART_USART1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -89,6 +98,13 @@
  */
 #if !defined(STM32_UART_USART3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART3_IRQ_PRIORITY      12
+#endif
+
+/**
+ * @brief   USART6 interrupt priority level setting.
+ */
+#if !defined(STM32_UART_USART6_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_UART_USART6_IRQ_PRIORITY      12
 #endif
 
 /**
@@ -119,6 +135,16 @@
  */
 #if !defined(STM32_UART_USART3_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_UART_USART3_DMA_PRIORITY      0
+#endif
+
+/**
+ * @brief   USART6 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA channels but
+ *          because of the channels ordering the RX channel has always priority
+ *          over the TX channel.
+ */
+#if !defined(STM32_UART_USART6_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_UART_USART6_DMA_PRIORITY      0
 #endif
 
 /**
@@ -180,6 +206,22 @@
 #define STM32_UART_USART3_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
 #endif
 
+/**
+ * @brief   DMA stream used for USART6 RX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_UART_USART6_RX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_UART_USART6_RX_DMA_STREAM     STM32_DMA_STREAM_ID(2, 2)
+#endif
+
+/**
+ * @brief   DMA stream used for USART6 TX operations.
+ * @note    This option is only available on platforms with enhanced DMA.
+ */
+#if !defined(STM32_UART_USART6_TX_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_UART_USART6_TX_DMA_STREAM     STM32_DMA_STREAM_ID(2, 7)
+#endif
+
 #else /* !STM32_ADVANCED_DMA */
 
 /* Fixed streams for platforms using the old DMA peripheral, the values are
@@ -210,8 +252,12 @@
 #error "USART3 not present in the selected device"
 #endif
 
+#if STM32_UART_USE_USART6 && !STM32_HAS_USART6
+#error "USART6 not present in the selected device"
+#endif
+
 #if !STM32_UART_USE_USART1 && !STM32_UART_USE_USART2 &&                     \
-    !STM32_UART_USE_USART3
+    !STM32_UART_USE_USART3 && !STM32_UART_USE_USART6
 #error "UART driver activated but no USART/UART peripheral assigned"
 #endif
 
@@ -230,6 +276,11 @@
 #error "Invalid IRQ priority assigned to USART3"
 #endif
 
+#if STM32_UART_USE_USART6 &&                                                \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART6_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to USART6"
+#endif
+
 #if STM32_UART_USE_USART1 &&                                                \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_UART_USART1_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to USART1"
@@ -243,6 +294,11 @@
 #if STM32_UART_USE_USART3 &&                                                \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_UART_USART3_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to USART3"
+#endif
+
+#if STM32_UART_USE_USART6 &&                                                \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_UART_USART6_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to USART6"
 #endif
 
 #if STM32_UART_USE_USART1 &&                                                \
@@ -279,6 +335,18 @@
     !STM32_DMA_IS_VALID_ID(STM32_UART_USART3_TX_DMA_STREAM,                 \
                            STM32_USART3_TX_DMA_MSK)
 #error "invalid DMA stream associated to USART3 TX"
+#endif
+
+#if STM32_UART_USE_USART6 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_USART6_RX_DMA_STREAM,                 \
+                           STM32_USART6_RX_DMA_MSK)
+#error "invalid DMA stream associated to USART6 RX"
+#endif
+
+#if STM32_UART_USE_USART6 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_USART6_TX_DMA_STREAM,                 \
+                           STM32_USART6_TX_DMA_MSK)
+#error "invalid DMA stream associated to USART6 TX"
 #endif
 
 #if !defined(STM32_DMA_REQUIRED)
@@ -430,6 +498,10 @@ extern UARTDriver UARTD2;
 
 #if STM32_UART_USE_USART3 && !defined(__DOXYGEN__)
 extern UARTDriver UARTD3;
+#endif
+
+#if STM32_UART_USE_USART6 && !defined(__DOXYGEN__)
+extern UARTDriver UARTD6;
 #endif
 
 #ifdef __cplusplus
