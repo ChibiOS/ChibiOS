@@ -21,20 +21,21 @@
 [@pp.dropOutputFile /]
 [#import "/@lib/libutils.ftl" as utils /]
 [#import "/@lib/liblicense.ftl" as license /]
-[@pp.changeOutputFile name=doc1.configuration.@name[0] + ".h" /]
+[#assign fname = doc1.configuration.@name[0] /]
+[@pp.changeOutputFile name = fname + ".h" /]
 /*
 [@license.EmitLicenseAsText /]
 */
 
-#ifndef _x_H_
-#define _x_H_
+#ifndef _${fname?upper_case}_H_
+#define _${fname?upper_case}_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void boardInit(void);
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _x_H_ */
+#endif /* _${fname?upper_case}_H_ */

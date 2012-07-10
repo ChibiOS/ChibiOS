@@ -21,7 +21,8 @@
 [@pp.dropOutputFile /]
 [#import "/@lib/libutils.ftl" as utils /]
 [#import "/@lib/liblicense.ftl" as license /]
-[@pp.changeOutputFile name=doc1.configuration.@name[0] + ".c" /]
+[#assign fname = doc1.configuration.@name[0] /]
+[@pp.changeOutputFile name = fname + ".c" /]
 /*
 [@license.EmitLicenseAsText /]
 */
