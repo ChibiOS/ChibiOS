@@ -25,7 +25,6 @@
   --]
 [#macro EmitADCConfig config]
   [#local cfg_name = config.@name[0]?string /]
-/* ADC Config.*/
 /**
 [@code.EmitDoxygenBrief config.@brief /]
 [@code.EmitDoxygenDetails config.details /]

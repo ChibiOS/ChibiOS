@@ -4,5 +4,9 @@
 
   <xs:include schemaLocation="../common/doc.xsd" />
 
-  <xs:complexType name="AbstractDriverCfgType"></xs:complexType>
+  <xs:complexType name="AbstractDriverCfgType">
+    <xs:complexContent>
+      <xs:extension base="DocumentedItem"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 </xs:schema>
