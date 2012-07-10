@@ -212,7 +212,7 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
                 "PCLK1 must be divided without remainder");
     clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));
 
-    chDbgAssert(clock_div < 0x04,
+    chDbgAssert(clock_div >= 0x04,
                 "i2c_lld_set_clock(), #3",
                 "Clock divider less then 0x04 not allowed");
     regCCR |= (clock_div & I2C_CCR_CCR);
@@ -242,7 +242,7 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
       regCCR |= I2C_CCR_DUTY;
     }
 
-    chDbgAssert(clock_div < 0x01,
+    chDbgAssert(clock_div >= 0x01,
                     "i2c_lld_set_clock(), #7",
                     "Clock divider less then 0x04 not allowed");
     regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));
