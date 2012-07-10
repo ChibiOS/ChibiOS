@@ -261,7 +261,10 @@
 #if defined(STM32F4XX)
 #define ARM_MATH_CM4
 #define __FPU_PRESENT 1
-#elif (defined(STM32F2XX) || defined(STM32F1XX) || defined(STM32L1XX))
+#elif (defined(STM32F10X_LD) || defined(STM32F10X_LD_VL) ||                    \
+       defined(STM32F10X_MD) || defined(STM32F10X_MD_VL) ||                    \
+       defined(STM32F10X_HD) || defined(STM32F10X_XL) ||                       \
+       defined(STM32F10X_CL))
 #define ARM_MATH_CM3
 #elif defined(STM32F0XX)
 #define ARM_MATH_CM0
