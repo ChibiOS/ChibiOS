@@ -338,7 +338,7 @@
             minOccurs="1">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="channel" maxOccurs="unbounded"
+                <xs:element name="channel" maxOccurs="16"
                   minOccurs="1">
                   <xs:simpleType>
                     <xs:restriction base="xs:string">

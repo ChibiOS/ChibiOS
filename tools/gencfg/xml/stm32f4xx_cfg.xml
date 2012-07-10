@@ -5,9 +5,9 @@
   name="hal_configs">
   <details>Application HAL configurations.</details>
   <configs>
-    <adc_config name="ADCConfig1">
+    <adc_config name="adccfg1">
       <groups>
-        <group discontinuous_number="1" name="ADCGroupConfig1"
+        <group discontinuous_number="1" name="adcgrpcfg1"
           trigger_mode="0 Software" error_callback=""
           resolution="0 12 bits" trigger_source="0 Timer 1 CC1 event"
           discontinuous_mode="true"
