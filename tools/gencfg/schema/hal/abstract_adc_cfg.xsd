@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="abstract_driver_cfg.xsd" />
+
+  <xs:complexType name="AbstractAdcGroupCfgType">
+    <xs:complexContent>
+      <xs:extension base="DocumentedItem">
+        <xs:attribute name="circular" type="xs:boolean"
+          use="required">
+        </xs:attribute>
+        <xs:attribute name="conversion_callback" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:pattern value="\w?[\w\d_]*"></xs:pattern>
+              <xs:minLength value="0"></xs:minLength>
+              <xs:maxLength value="24"></xs:maxLength>
+              <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="error_callback" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:pattern value="\w?[\w\d_]*"></xs:pattern>
+              <xs:minLength value="0"></xs:minLength>
+              <xs:maxLength value="24"></xs:maxLength>
+              <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:complexType name="AbstractAdcCfgType">
+    <xs:complexContent>
+      <xs:extension base="DocumentedItem"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

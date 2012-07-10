@@ -1,42 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema
-  elementFormDefault="qualified"
+<xs:schema elementFormDefault="qualified"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:complexType name="NamedItem">
     <xs:annotation>
-      <xs:documentation>>Generic item with optional name and brief description
+      <xs:documentation>>Generic item with optional name and brief
+        description
       </xs:documentation>
     </xs:annotation>
-    <xs:attribute
-      name="name"
-      type="xs:string"
-      use="required"></xs:attribute>
-    <xs:attribute
-      name="brief"
-      type="xs:string"
-      use="optional"></xs:attribute>
+    <xs:attribute name="name" use="required">
+      <xs:annotation>
+        <xs:documentation>Object name.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="\w[\w\d_]*"></xs:pattern>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="brief" use="optional">
+      <xs:annotation>
+        <xs:documentation>Object brief description, 72 chars max in a
+          single line.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+
+          <xs:maxLength value="72"></xs:maxLength>
+          <xs:minLength value="0"></xs:minLength>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="DocumentedItem">
     <xs:annotation>
-      <xs:documentation>>Something that can have a detailed description attached
+      <xs:documentation>>Something that can have a detailed description
+        attached
       </xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="NamedItem">
-        <xs:sequence
-          maxOccurs="unbounded"
-          minOccurs="0">
-          <xs:element
-            name="details"
-            type="xs:string"
-            maxOccurs="1"
-            minOccurs="0">
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+          <xs:element name="details" type="xs:string"
+            maxOccurs="1" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>Object documentation as text, does not
+                preserve formatting.</xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
+  </xs:complexType>
 
 </xs:schema>

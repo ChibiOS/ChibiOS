@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="../common/doc.xsd" />
+
+  <xs:complexType name="AbstractDriverCfgType"></xs:complexType>
+</xs:schema>

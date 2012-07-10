@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- STM32F4xx board Template -->
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/hal/stm32f4xx/stm32f4xx_cfg.xsd"
+  name="hal_configs">
+  <details>Application HAL configurations.</details>
+  <configs>
+    <adc_config name="ADCConfig1">
+      <groups>
+        <group discontinuous_number="1" name="ADCGroupConfig1"
+          trigger_mode="0 Software" error_callback=""
+          resolution="0 12 bits" trigger_source="0 Timer 1 CC1 event"
+          discontinuous_mode="true"
+          alignment="0 Samples are Right Aligned" conversion_callback=""
+          circular="true" brief="Example conversion group.">
+          <sample_time>
+            <IN0>ADC_SAMPLE_3</IN0>
+            <IN1>ADC_SAMPLE_3</IN1>
+            <IN2>ADC_SAMPLE_3</IN2>
+            <IN3>ADC_SAMPLE_3</IN3>
+            <IN4>ADC_SAMPLE_3</IN4>
+            <IN5>ADC_SAMPLE_3</IN5>
+            <IN6>ADC_SAMPLE_3</IN6>
+            <IN7>ADC_SAMPLE_3</IN7>
+            <IN8>ADC_SAMPLE_3</IN8>
+            <IN9>ADC_SAMPLE_3</IN9>
+            <IN10>ADC_SAMPLE_3</IN10>
+            <IN11>ADC_SAMPLE_3</IN11>
+            <IN12>ADC_SAMPLE_3</IN12>
+            <IN13>ADC_SAMPLE_3</IN13>
+            <IN14>ADC_SAMPLE_3</IN14>
+            <IN15>ADC_SAMPLE_3</IN15>
+            <SENSOR>ADC_SAMPLE_3</SENSOR>
+            <VREFINT>ADC_SAMPLE_3</VREFINT>
+            <VBAT>ADC_SAMPLE_3</VBAT>
+          </sample_time>
+          <channels_sequence>
+            <channel>ADC_CHANNEL_IN0</channel>
+          </channels_sequence>
+        </group>
+      </groups>
+    </adc_config></configs>
+</configuration>
