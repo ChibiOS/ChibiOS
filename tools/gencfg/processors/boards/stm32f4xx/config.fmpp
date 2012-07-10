@@ -1,5 +1,5 @@
 sourceRoot: templates
 outputRoot: output
 data: {
-    doc1: xml(../datamodel/stm32f4board.xml)
+    doc1: xml(../input/stm32f4board.xml)
 }
