@@ -20,14 +20,61 @@
   --]
 
 [#--
-  -- Emits the ChibiOS/RT standard license exception text.
-  -- The license exception text is indented by 4 spaces.
+  -- Emits the STM32F4xx ADC driver constant configuration structures.
   --]
 [#macro EmitADCConfig config]
   [#local cfg_name = config.@name[0]?string /]
 /**
-[@code.EmitDoxygenBrief config.@brief /]
-[@code.EmitDoxygenDetails config.details /]
+  [@code.EmitDoxygenBrief config.@brief /]
+  [@code.EmitDoxygenDetails config.details /]
  */
 const ADCConfig ${cfg_name} = {0};
+
+  [#list config.groups.group as group]
+    [#local grpcfg_name = group.@name[0]?string /]
+/**
+    [@code.EmitDoxygenBrief group.@brief /]
+    [@code.EmitDoxygenDetails group.details /]
+ */
+const ADCGroupConfig ${grpcfg_name} = {
+  /* Circular conversion flag.*/
+  ${group.@circular[0]?string?upper_case},
+  /* Number of channels sampled in the conversion group.*/
+  ${group.channels_sequence.channel?size},
+  /* End of conversion callback or NULL.*/
+    [#if group.@conversion_callback[0]?string?trim == ""]
+  NULL,
+    [#else]
+  ${group.@conversion_callback[0]?string?trim},
+    [/#if]
+  /* Error callback or NULL.*/
+    [#if group.@error_callback[0]?string?trim == ""]
+  NULL,
+    [#else]
+  ${group.@error_callback[0]?string?trim},
+    [/#if]
+};
+  [/#list]
+[/#macro]
+
+[#--
+  -- Emits the STM32F4xx ADC driver configuration external declarations.
+  --]
+[#macro EmitADCConfigExtern config]
+  [#local cfg_name = config.@name[0]?string /]
+  [#list config.groups.group as group]
+    [#local grpcfg_name = group.@name[0]?string /]
+    [#-- Only emits the comment if there is at least a callback defined.--]
+  /* ADC configuration "${cfg_name}".*/
+  extern const ADCConfig ${cfg_name};
+  /* ADC conversion group "${grpcfg_name}".*/
+  extern const ADCGroupConfig ${grpcfg_name};
+    [#if group.@conversion_callback[0]?string?trim != ""]
+  void ${group.@conversion_callback[0]?string?trim}(ADCDriver *, adcsample_t *, size_t);
+    [/#if]
+    [#if group.@error_callback[0]?string?trim != ""]
+  void ${group.@error_callback[0]?string?trim}(ADCDriver *, adcerror_t);
+    [/#if]
+
+  [/#list]
 [/#macro]

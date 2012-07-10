@@ -21,6 +21,8 @@
 [@pp.dropOutputFile /]
 [#import "/@lib/libutils.ftl" as utils /]
 [#import "/@lib/liblicense.ftl" as license /]
+[#import "/@lib/libcode.ftl" as code /]
+[#import "/@lib/libstm32f4xx.ftl" as stm32f4xx /]
 [#assign fname = doc1.configuration.@name[0] /]
 [@pp.changeOutputFile name = fname + ".h" /]
 /*
@@ -57,7 +59,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+[#list doc1.configuration.configs.* as config]
+  [#assign config_type = config?node_name /]
+    [#if config_type == "adc_config"]
+      [@stm32f4xx.EmitADCConfigExtern config /]
+    [/#if]
+[/#list]
 #ifdef __cplusplus
 }
 #endif
