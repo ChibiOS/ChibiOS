@@ -269,6 +269,7 @@
 - CHANGE: Renamed Ethernet driver in AT91 HAL ETHD1 (backported to 2.4.1).
 - CHANGE: Macros icuGetWidthI() and icuGetPeriodI() renamed to icuGetWidth()
   and icuGetPeriod().
+- Various documentation fixes and improvements.
 
 *** 2.3.5 ***
 - FIX: Fixed RTC compile problem on STM32F103 (bug 3468445).
