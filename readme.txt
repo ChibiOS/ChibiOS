@@ -100,6 +100,7 @@
 - FIX: Fixed error in STM32L-Discovery board.h file (bug 3526918).
 - NEW: Validated CAN driver on STM32F2/F4.
 - Small fixes to the STM32F4 board files.
+- Various documentation fixes and improvements.
 
 *** 2.4.1 ***
 - FIX: Fixed inconsistent LPCxxx Internal RC oscillator names (bug 3524138).

@@ -140,6 +140,11 @@
  *   easily added by adding a subdirectory under <tt>./os/ports/RVCT/ARMCMx</tt>
  *   and giving it the name of the new device, then copy the files from another
  *   device into the new directory and customize them for the new device.
+ * - The free uVision is not able to handle scatter files, the following
+ *   options are required in the project options under "Preprocesso symbols"
+ *   in order to use the unused RAM as heap automatically:
+ *   <tt>__heap_base__=Image$$RW_IRAM1$$ZI$$Limit
+ *   __heap_end__=Image$$RW_IRAM2$$Base</tt>
  * .
  * @ingroup rvct
  */
@@ -208,13 +213,13 @@
  * @section RVCT_ARMCMx_STARTUP_1 Startup Process
  * The startup process, as implemented, is the following:
  * -# Interrupts are masked globally.
- * -# The two stacks are initialized by assigning them the sizes defined in the
- *    linker script (usually named @p ch.icf).
+ * -# The two stacks are initialized by assigning them the sizes defined in
+ *    <tt>cstartup.s</tt> file and accessible through the configuration wizard.
  * -# The CPU state is switched to Privileged and the PSP stack is used.
  * -# An early initialization routine @p __early_init() is invoked, if the
  *    symbol is not defined then an empty default routine is executed
  *    (weak symbol).
- * -# Control is passed to the C runtime entry point @p __cmain that performs
+ * -# Control is passed to the C runtime entry point @p __main that performs
  *    the required initializations before invoking the @p main() function.
  * .
  * @ingroup RVCT_ARMCMx
