@@ -53,6 +53,76 @@ const ADCGroupConfig ${grpcfg_name} = {
     [#else]
   ${group.@error_callback[0]?string?trim},
     [/#if]
+  /* CR1 register initialization value.*/
+    [#local resolution = group.@resolution[0]?word_list[0]?number /]
+    [#local cr1 = "ADC_CR1_RESOLUTION_N(" + resolution?string + ")" /]
+    [#local discnum = group.@discontinuous_number[0]?word_list[0]?number /]
+    [#local cr1 = cr1 + " | ADC_CR1_DISCNUM_N(" + (discnum - 1)?string + ")" /]
+    [#if group.@discontinuous_mode[0]?string == "true"]
+      [#local cr1 = cr1 + " | ADC_CR1_DISCEN" /]
+    [/#if]
+  ${cr1},
+  /* CR2 register initialization value.*/
+    [#local exten = group.@trigger_mode[0]?word_list[0]?number /]
+    [#local cr2 = "ADC_CR1_EXTEN_N(" + exten?string + ")" /]
+    [#local extsel = group.@trigger_source[0]?word_list[0]?number /]
+    [#local cr2 = cr2 + " | ADC_CR1_EXSEL_N(" + extsel?string + ")" /]
+    [#if group.@alignment[0]?word_list[0]?number != 0]
+      [#local cr2 = cr2 + " | ADC_CR2_ALIGN" /]
+    [/#if]
+  ${cr2},
+  /* Channels sample time settings.*/
+    [#local smpr1 = "" /]
+    [#local smpr2 = "" /]
+    [#list group.sample_time.* as input]
+      [#local sinput = input?node_name]
+      [#if input_index < 9]
+        [#local smpr2 = smpr2 + "ADC_SMPR2_SMP_" + input?node_name +
+                                "(" + input?string + ") | " /]
+      [#elseif input_index == 9]
+        [#local smpr2 = smpr2 + "ADC_SMPR2_SMP_" + input?node_name +
+                                "(" + input?string + ")," /]
+      [#elseif input_index < 18]
+        [#local smpr1 = smpr1 + "ADC_SMPR1_SMP_" + input?node_name +
+                                "(" + input?string + ") | " /]
+      [#else]
+        [#local smpr1 = smpr1 + "ADC_SMPR1_SMP_" + input?node_name +
+                                "(" + input?string + ")," /]
+      [/#if]
+    [/#list]
+    [@utils.FormatStringAsText "  " "  " smpr1 80 /]
+    [@utils.FormatStringAsText "  " "  " smpr2 80 /]
+  /* Channels sequence.*/
+    [#local sqr1 = "ADC_SQR1_NUM_CH(" + group.channels_sequence?size + ")" /]
+    [#local sqr2 = "" /]
+    [#local sqr3 = "" /]
+    [#list group.channels_sequence.channel as channel]
+      [#if channel_index <= 5]
+        [#local sqr3 = sqr3 + "ADC_SQR3_SQ" + (channel_index + 1) +
+                              "_N(" + channel + ")" /]
+        [#if channel_has_next && channel_index < 5]
+          [#local sqr3 = sqr3 + " | " /]
+        [/#if]
+      [#elseif channel_index <= 11]
+        [#local sqr2 = sqr2 + "ADC_SQR2_SQ" + (channel_index + 1) +
+                              "_N(" + channel + ")" /]
+        [#if channel_has_next && channel_index < 11]
+          [#local sqr2 = sqr2 + " | " /]
+        [/#if]
+      [#else]
+        [#local sqr1 = sqr1 + " | ADC_SQR2_SQ" + (channel_index + 1) +
+                              "_N(" + channel + ")" /]
+      [/#if]
+    [/#list]
+    [#-- SQR2 could be empty.--]
+    [#if sqr2 == ""]
+       [#local sqr2 = "0" /]
+    [/#if]      
+    [#local sqr1 = sqr1 + "," /]
+    [#local sqr2 = sqr2 + "," /]
+    [@utils.FormatStringAsText "  " "  " sqr1 80 /]
+    [@utils.FormatStringAsText "  " "  " sqr2 80 /]
+    [@utils.FormatStringAsText "  " "  " sqr3 80 /]
 };
   [/#list]
 [/#macro]
