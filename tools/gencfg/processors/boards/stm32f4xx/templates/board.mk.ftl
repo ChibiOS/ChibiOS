@@ -22,7 +22,7 @@
 [#import "/@lib/libutils.ftl" as utils /]
 [@pp.changeOutputFile name="board.mk" /]
 # List of all the board related files.
-BOARDSRC = ${'$'}{CHIBIOS}/boards/${doc1.board.@BoardID[0]}/board.c
+BOARDSRC = ${'$'}{CHIBIOS}/boards/${doc1.board.board_id[0]}/board.c
 
 # Required include directories
-BOARDINC = ${'$'}{CHIBIOS}/boards/${doc1.board.@BoardID[0]}
+BOARDINC = ${'$'}{CHIBIOS}/boards/${doc1.board.board_id[0]}

@@ -23,7 +23,7 @@
 [#import "/@lib/liblicense.ftl" as license /]
 [#import "/@lib/libcode.ftl" as code /]
 [#import "/@lib/libstm32f4xx.ftl" as stm32f4xx /]
-[#assign fname = doc1.configuration.@name[0] /]
+[#assign fname = doc1.configuration.name[0] /]
 [@pp.changeOutputFile name = fname + ".c" /]
 /*
 [@license.EmitLicenseAsText /]

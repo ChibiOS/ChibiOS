@@ -4,33 +4,26 @@
 
   <xs:complexType name="NamedItem">
     <xs:annotation>
-      <xs:documentation>>Generic item with optional name and brief
+      <xs:documentation>
+        >Generic item with optional name and brief
         description
       </xs:documentation>
     </xs:annotation>
-    <xs:attribute name="name" use="required">
-      <xs:annotation>
-        <xs:documentation>Object name.</xs:documentation>
-      </xs:annotation>
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:pattern value="\w[\w\d_]*"></xs:pattern>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="brief" use="optional">
-      <xs:annotation>
-        <xs:documentation>Object brief description, 72 chars max in a
-          single line.</xs:documentation>
-      </xs:annotation>
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-
-          <xs:maxLength value="72"></xs:maxLength>
-          <xs:minLength value="0"></xs:minLength>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
+    <xs:sequence>
+      <xs:element name="name" maxOccurs="1" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Name of the object.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="\w[\w\d_]*"></xs:pattern>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:maxLength value="24"></xs:maxLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="DocumentedItem">
@@ -41,15 +34,73 @@
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="NamedItem">
-        <xs:sequence maxOccurs="unbounded" minOccurs="0">
-          <xs:element name="details" type="xs:string"
-            maxOccurs="1" minOccurs="0">
+        <xs:sequence>
+          <xs:element name="brief" maxOccurs="1" minOccurs="1">
             <xs:annotation>
-              <xs:documentation>Object documentation as text, does not
-                preserve formatting.</xs:documentation>
+              <xs:documentation>
+                Brief description of the object.
+              </xs:documentation>
             </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:minLength value="0"></xs:minLength>
+                <xs:maxLength value="72"></xs:maxLength>
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
           </xs:element>
-        </xs:sequence>
+          <xs:element name="details" maxOccurs="1" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                Object documentation as text, does not preserve
+                formatting.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="pre" maxOccurs="unbounded" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                Object pre-requisites as text, does not preserve
+                formatting.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="post" maxOccurs="unbounded" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                Object post-requisites as text, does not preserve
+                formatting.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="note" maxOccurs="unbounded" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                Object note as text, does not preserve formatting.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+                </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

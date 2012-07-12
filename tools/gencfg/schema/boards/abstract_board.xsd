@@ -5,45 +5,48 @@
   <xs:include schemaLocation="../common/doc.xsd" />
 
   <xs:complexType name="AbstractBoardType" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="DocumentedItem">
-        <xs:attribute name="BoardID" use="required">
-          <xs:annotation>
-            <xs:documentation>Board identifier string, it is used to
-              create the board files folder name and the board
-              identifier macro in board.h.</xs:documentation>
-          </xs:annotation>
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <xs:whiteSpace value="collapse"></xs:whiteSpace>
-              <xs:pattern value="\w[\w\d_]*"></xs:pattern>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="BoardPHYID" use="optional">
-          <xs:annotation>
-            <xs:documentation>PHY identifier as defined in mii.h or empty if a PHY is not present.</xs:documentation>
-          </xs:annotation>
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <xs:whiteSpace value="collapse"></xs:whiteSpace>
-              <xs:pattern value="MII_[\w\d_]+"></xs:pattern>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="BoardPHYType" use="optional">
-          <xs:annotation>
-            <xs:documentation>Type of the PHY device: RMII or MII, this attribute is defaulted to MII if not present.</xs:documentation>
-          </xs:annotation>
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <xs:enumeration value="RMII"></xs:enumeration>
-              <xs:enumeration value="MII"></xs:enumeration>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
+    <xs:sequence>
+      <xs:element name="board_name" maxOccurs="1" minOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="board_id" maxOccurs="1" minOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="\w[\w\d_]*"></xs:pattern>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="ethernet_phy" type="EthernetPHYType"
+        maxOccurs="1" minOccurs="0">
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EthernetPHYType">
+    <xs:sequence>
+      <xs:element name="identifier" maxOccurs="1" minOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="MII_[\w\d_]+"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="bus_type" maxOccurs="1" minOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:enumeration value="RMII"></xs:enumeration>
+            <xs:enumeration value="MII"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 
 </xs:schema>

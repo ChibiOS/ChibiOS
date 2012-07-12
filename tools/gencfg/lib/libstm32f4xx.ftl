@@ -23,51 +23,45 @@
   -- Emits the STM32F4xx ADC driver constant configuration structures.
   --]
 [#macro EmitADCConfig config]
-  [#local cfg_name = config.@name[0]?string /]
-/**
-  [@code.EmitDoxygenBrief config.@brief /]
-  [@code.EmitDoxygenDetails config.details /]
- */
+  [#local cfg_name = config.name[0]?string /]
+  [@code.EmitDoxygenDocumentationComment config /]
 const ADCConfig ${cfg_name} = {0};
 
   [#list config.groups.group as group]
-    [#local grpcfg_name = group.@name[0]?string /]
-/**
-    [@code.EmitDoxygenBrief group.@brief /]
-    [@code.EmitDoxygenDetails group.details /]
- */
+    [#local grpcfg_name = group.name[0]?string /]
+    [@code.EmitDoxygenDocumentationComment group /]
 const ADCGroupConfig ${grpcfg_name} = {
   /* Circular conversion flag.*/
-  ${group.@circular[0]?string?upper_case},
+  ${group.circular[0]?string?upper_case},
   /* Number of channels sampled in the conversion group.*/
   ${group.channels_sequence.channel?size},
   /* End of conversion callback or NULL.*/
-    [#if group.@conversion_callback[0]?string?trim == ""]
+    [#if group.conv_callback[0]?string?trim == ""]
   NULL,
     [#else]
-  ${group.@conversion_callback[0]?string?trim},
+  ${group.conv_callback[0]?string?trim},
     [/#if]
   /* Error callback or NULL.*/
-    [#if group.@error_callback[0]?string?trim == ""]
+    [#if group.error_callback[0]?string?trim == ""]
   NULL,
     [#else]
-  ${group.@error_callback[0]?string?trim},
+  ${group.error_callback[0]?string?trim},
     [/#if]
   /* CR1 register initialization value.*/
-    [#local resolution = group.@resolution[0]?word_list[0]?number /]
+    [#local resolution = group.resolution[0]?word_list[0]?number /]
     [#local cr1 = "ADC_CR1_RESOLUTION_N(" + resolution?string + ")" /]
-    [#local discnum = group.@discontinuous_number[0]?word_list[0]?number /]
-    [#local cr1 = cr1 + " | ADC_CR1_DISCNUM_N(" + (discnum - 1)?string + ")" /]
-    [#if group.@discontinuous_mode[0]?string == "true"]
+    [#local disc = group.discontinuous[0]?word_list[0]?number /]
+    [#if disc > 0]
       [#local cr1 = cr1 + " | ADC_CR1_DISCEN" /]
+      [#local cr1 = cr1 + " | ADC_CR1_DISCNUM_N(" + (disc - 1)?string + ")" /]
     [/#if]
   ${cr1},
   /* CR2 register initialization value.*/
-    [#local exten = group.@trigger_mode[0]?word_list[0]?number /]
+    [#local exten = group.trigger_mode[0]?word_list[0]?number /]
     [#local cr2 = "ADC_CR1_EXTEN_N(" + exten?string + ")" /]
-    [#local extsel = group.@trigger_source[0]?word_list[0]?number /]
+    [#local extsel = group.trigger_source[0]?word_list[0]?number /]
     [#local cr2 = cr2 + " | ADC_CR1_EXSEL_N(" + extsel?string + ")" /]
-    [#if group.@alignment[0]?word_list[0]?number != 0]
+    [#if group.alignment[0]?word_list[0]?number != 0]
       [#local cr2 = cr2 + " | ADC_CR2_ALIGN" /]
     [/#if]
   ${cr2},
@@ -131,19 +125,19 @@ const ADCGroupConfig ${grpcfg_name} = {
   -- Emits the STM32F4xx ADC driver configuration external declarations.
   --]
 [#macro EmitADCConfigExtern config]
-  [#local cfg_name = config.@name[0]?string /]
+  [#local cfg_name = config.name[0]?string /]
   [#list config.groups.group as group]
-    [#local grpcfg_name = group.@name[0]?string /]
+    [#local grpcfg_name = group.name[0]?string /]
     [#-- Only emits the comment if there is at least a callback defined.--]
   /* ADC configuration "${cfg_name}".*/
   extern const ADCConfig ${cfg_name};
   /* ADC conversion group "${grpcfg_name}".*/
   extern const ADCGroupConfig ${grpcfg_name};
-    [#if group.@conversion_callback[0]?string?trim != ""]
-  void ${group.@conversion_callback[0]?string?trim}(ADCDriver *, adcsample_t *, size_t);
+    [#if group.conv_callback[0]?string?trim != ""]
+  void ${group.conv_callback[0]?string?trim}(ADCDriver *, adcsample_t *, size_t);
     [/#if]
-    [#if group.@error_callback[0]?string?trim != ""]
-  void ${group.@error_callback[0]?string?trim}(ADCDriver *, adcerror_t);
+    [#if group.error_callback[0]?string?trim != ""]
+  void ${group.error_callback[0]?string?trim}(ADCDriver *, adcerror_t);
     [/#if]
 
   [/#list]

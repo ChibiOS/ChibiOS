@@ -30,43 +30,43 @@
 #define _BOARD_H_
 
 /*
- * Setup for ${doc1.board.@name[0]} board.
+ * Setup for ${doc1.board.board_name[0]} board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_${doc1.board.@BoardID[0]}
-#define BOARD_NAME                  "${doc1.board.@name[0]}"
+#define BOARD_${doc1.board.board_id[0]}
+#define BOARD_NAME                  "${doc1.board.board_name[0]}"
 
-[#if doc1.board.@BoardPHYID[0]??]
+[#if doc1.board.ethernet_phy[0]??]
 /*
  * Ethernet PHY type.
  */
-#define BOARD_PHY_ID                ${doc1.board.@BoardPHYID[0]}
-[#if doc1.board.@BoardPHYType[0]?string == "RMII"]
+#define BOARD_PHY_ID                ${doc1.board.ethernet_phy.identifier[0]}
+[#if doc1.board.ethernet_phy.type[0]?string == "RMII"]
 #define BOARD_PHY_RMII
 [/#if]
 [/#if]
 
 /*
  * Board oscillators-related settings.
-[#if doc1.board.@LSEFrequency[0]?number == 0]
+[#if doc1.board.clocks.@LSEFrequency[0]?number == 0]
  * NOTE: LSE not fitted.
 [/#if]
-[#if doc1.board.@HSEFrequency[0]?number == 0]
+[#if doc1.board.clocks.@HSEFrequency[0]?number == 0]
  * NOTE: HSE not fitted.
 [/#if]
  */
 #if !defined(STM32_LSECLK)
-#define STM32_LSECLK                ${doc1.board.@LSEFrequency[0]}
+#define STM32_LSECLK                ${doc1.board.clocks.@LSEFrequency[0]}
 #endif
 
 #if !defined(STM32_HSECLK)
-#define STM32_HSECLK                ${doc1.board.@HSEFrequency[0]}
+#define STM32_HSECLK                ${doc1.board.clocks.@HSEFrequency[0]}
 #endif
 
-[#if doc1.board.@HSEBypass[0]?string == "true"]
+[#if doc1.board.clocks.@HSEBypass[0]?string == "true"]
 #define STM32_HSE_BYPASS
 [/#if]
 
@@ -74,7 +74,7 @@
  * Board voltages.
  * Required for performance limits calculation.
  */
-#define STM32_VDD                   ${doc1.board.@VDD[0]}
+#define STM32_VDD                   ${doc1.board.clocks.@VDD[0]}
 
 /*
  * MCU type as defined in the ST header file stm32f4xx.h.

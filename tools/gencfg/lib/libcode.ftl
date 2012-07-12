@@ -31,11 +31,11 @@
 [#--
   -- This macro generates a brief description in DoxyGen format.
   --]
-[#macro EmitDoxygenBrief brief=[]]
-  [#if brief[0]??]
+[#macro EmitDoxygenBrief object=[]]
+  [#if object.brief[0]??]
 [@utils.FormatStringAsText " * @brief   "
                            " *          "
-                           utils.WithDot(brief[0]?cap_first)
+                           utils.WithDot(object.brief[0]?cap_first)
                            boundary /]
   [/#if]
 [/#macro]
@@ -43,13 +43,68 @@
 [#--
   -- This macro generates a detailed description in DoxyGen format.
   --]
-[#macro EmitDoxygenDetails details=[]]
-  [#if details[0]??]
+[#macro EmitDoxygenDetails object=[]]
+  [#if object.details[0]??]
 [@utils.FormatStringAsText " * @details "
                            " *          "
-                           utils.WithDot(details[0]?cap_first)
+                           utils.WithDot(object.details[0]?cap_first)
                            boundary /]
   [/#if]
+[/#macro]
+
+[#--
+  -- This macro generates a notes list in DoxyGen format.
+  --]
+[#macro EmitDoxygenNotes object=[]]
+  [#list object.* as note]
+    [#if note?node_name == "note"]
+      [@utils.FormatStringAsText " * @note    "
+                                 " *          "
+                                 utils.WithDot(note[0]?cap_first)
+                                 boundary /]
+    [/#if]
+  [/#list]
+[/#macro]
+
+[#--
+  -- This macro generates a pre-requisites list in DoxyGen format.
+  --]
+[#macro EmitDoxygenPrerequisites object=[]]
+  [#list object.* as pre]
+    [#if pre?node_name == "pre"]
+      [@utils.FormatStringAsText " * @pre     "
+                                 " *          "
+                                 utils.WithDot(pre[0]?cap_first)
+                                 boundary /]
+    [/#if]
+  [/#list]
+[/#macro]
+
+[#--
+  -- This macro generates a post-requisites list in DoxyGen format.
+  --]
+[#macro EmitDoxygenPostrequisites object=[]]
+  [#list object.* as post]
+    [#if post?node_name == "post"]
+      [@utils.FormatStringAsText " * @post    "
+                                 " *          "
+                                 utils.WithDot(post[0]?cap_first)
+                                 boundary /]
+    [/#if]
+  [/#list]
+[/#macro]
+
+[#--
+  -- This macro generates a complete Doxygen documentation comment.
+  --]
+[#macro EmitDoxygenDocumentationComment object=[]]
+/**
+  [@code.EmitDoxygenBrief object /]
+  [@code.EmitDoxygenDetails object /]
+  [@code.EmitDoxygenPrerequisites object /]
+  [@code.EmitDoxygenPostrequisites object /]
+  [@code.EmitDoxygenNotes object /]
+ */
 [/#macro]
 
 [#--

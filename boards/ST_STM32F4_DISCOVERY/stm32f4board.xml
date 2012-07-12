@@ -2,13 +2,10 @@
 <!-- STM32F4xx board Template -->
 <board
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f4xx_board.xsd"
-  name="STMicroelectronics STM32F4-Discovery"
-  BoardID="ST_STM32F4_DISCOVERY"
-  HSEBypass="false"
-  HSEFrequency="8000000"
-  LSEFrequency="0"
-  VDD="300">
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f4xx_board.xsd">
+  <board_name>STMicroelectronics STM32F4-Discovery</board_name>
+  <board_id>ST_STM32F4_DISCOVERY</board_id>
+  <clocks HSEFrequency="8000000" HSEBypass="false" LSEFrequency="0" VDD="300" />
   <ports>
     <GPIOA>
       <pin0
