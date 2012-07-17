@@ -6,24 +6,40 @@
 
   <xs:complexType name="AbstractBoardType" abstract="true">
     <xs:sequence>
-      <xs:element name="board_name" maxOccurs="1" minOccurs="1">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:whiteSpace value="collapse"></xs:whiteSpace>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
-      <xs:element name="board_id" maxOccurs="1" minOccurs="1">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:pattern value="\w[\w\d_]*"></xs:pattern>
-            <xs:whiteSpace value="collapse"></xs:whiteSpace>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
-      <xs:element name="ethernet_phy" type="EthernetPHYType"
-        maxOccurs="1" minOccurs="0">
-      </xs:element>
+    	<xs:element name="board_name" maxOccurs="1" minOccurs="1">
+    		<xs:simpleType>
+    			<xs:restriction base="xs:string">
+    				<xs:whiteSpace value="collapse"></xs:whiteSpace>
+    			</xs:restriction>
+    		</xs:simpleType>
+    	</xs:element>
+    	<xs:element name="board_id" maxOccurs="1" minOccurs="1">
+    		<xs:simpleType>
+    			<xs:restriction base="xs:string">
+    				<xs:pattern value="\w[\w\d_]*"></xs:pattern>
+    				<xs:whiteSpace value="collapse"></xs:whiteSpace>
+    			</xs:restriction>
+    		</xs:simpleType>
+    	</xs:element>
+            <xs:element name="board_functions" maxOccurs="1" minOccurs="1">
+    		<xs:complexType>
+    			<xs:sequence>
+                        <xs:element name="__early_init" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
+                        <xs:element name="boardInit" type="xs:string" maxOccurs="1" minOccurs="0">
+    				</xs:element>
+    				<xs:element name="sdc_lld_is_card_inserted" type="xs:string" maxOccurs="1" minOccurs="0">
+    				</xs:element>
+    				<xs:element name="sdc_lld_is_write_protected" type="xs:string" maxOccurs="1" minOccurs="0">
+    				</xs:element>
+    				<xs:element name="mmc_lld_is_card_inserted" type="xs:string" maxOccurs="1" minOccurs="0">
+    				</xs:element>
+    				<xs:element name="mmc_lld_is_write_protected" type="xs:string" maxOccurs="1" minOccurs="0">
+    				</xs:element>
+    			</xs:sequence>
+    		</xs:complexType></xs:element>
+            <xs:element name="ethernet_phy" type="EthernetPHYType"
+    		maxOccurs="1" minOccurs="0">
+    	</xs:element>
     </xs:sequence>
   </xs:complexType>
 

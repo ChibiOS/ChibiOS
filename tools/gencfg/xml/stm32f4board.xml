@@ -5,6 +5,7 @@
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f4xx_board.xsd">
   <board_name>-----human readable blard name-----</board_name>
   <board_id>BOARD_IDENTIFIER</board_id>
+  <board_functions></board_functions>
   <ethernet_phy>
     <identifier>MII_KS8721_ID</identifier>
     <bus_type>RMII</bus_type>
