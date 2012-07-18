@@ -44,7 +44,7 @@
  * Ethernet PHY type.
  */
 #define BOARD_PHY_ID                ${doc1.board.ethernet_phy.identifier[0]}
-[#if doc1.board.ethernet_phy.type[0]?string == "RMII"]
+[#if doc1.board.ethernet_phy.bus_type[0]?string == "RMII"]
 #define BOARD_PHY_RMII
 [/#if]
 [/#if]

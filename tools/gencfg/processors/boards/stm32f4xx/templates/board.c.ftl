@@ -66,49 +66,68 @@ const PALConfig pal_default_config =
 void __early_init(void) {
 
   stm32_clock_init();
+[#if doc1.board.board_functions.__early_init[0]??]
+  ${doc1.board.board_functions.__early_init[0]}
+[/#if]
 }
 
 #if HAL_USE_SDC || defined(__DOXYGEN__)
 /**
  * @brief   SDC card detection.
- * @todo    Fill the implementation.
  */
 bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+[#if doc1.board.board_functions.sdc_lld_is_card_inserted[0]??]
+${doc1.board.board_functions.sdc_lld_is_card_inserted[0]}
+[#else]
 
   (void)sdcp;
+  /* TODO: Fill the implementation.*/
   return TRUE;
+[/#if]
 }
 
 /**
  * @brief   SDC card write protection detection.
- * @todo    Fill the implementation.
  */
 bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
+[#if doc1.board.board_functions.sdc_lld_is_write_protected[0]??]
+${doc1.board.board_functions.sdc_lld_is_write_protected[0]}
+[#else]
 
   (void)sdcp;
+  /* TODO: Fill the implementation.*/
   return FALSE;
+[/#if]
 }
 #endif /* HAL_USE_SDC */
 
 #if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 /**
  * @brief   MMC_SPI card detection.
- * @todo    Fill the implementation.
  */
 bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+[#if doc1.board.board_functions.mmc_lld_is_card_inserted[0]??]
+${doc1.board.board_functions.mmc_lld_is_card_inserted[0]}
+[#else]
 
   (void)mmcp;
+  /* TODO: Fill the implementation.*/
   return TRUE;
+[/#if]
 }
 
 /**
  * @brief   MMC_SPI card write protection detection.
- * @todo    Fill the implementation.
  */
 bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
+[#if doc1.board.board_functions.mmc_lld_is_write_protected[0]??]
+${doc1.board.board_functions.mmc_lld_is_write_protected[0]}
+[#else]
 
   (void)mmcp;
+  /* TODO: Fill the implementation.*/
   return FALSE;
+[/#if]
 }
 #endif
 
