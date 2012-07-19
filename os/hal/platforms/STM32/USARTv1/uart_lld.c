@@ -175,7 +175,7 @@ static void usart_start(UARTDriver *uartp) {
   usart_stop(uartp);
 
   /* Baud rate setting.*/
-  if (uartp->usart == USART1)
+  if ((uartp->usart == USART1) || (uartp->usart == USART6))
     u->BRR = STM32_PCLK2 / uartp->config->speed;
   else
     u->BRR = STM32_PCLK1 / uartp->config->speed;
