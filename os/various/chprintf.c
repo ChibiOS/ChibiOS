@@ -111,13 +111,15 @@ static char *ftoa(char *p, double num) {
  */
 void chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
   va_list ap;
-  char tmpbuf[MAX_FILLER + 1];
   char *p, *s, c, filler;
   int i, precision, width;
   bool_t is_long, left_align;
   long l;
 #if CHPRINTF_USE_FLOAT
   float f;
+  char tmpbuf[2*MAX_FILLER + 1];
+#else
+  char tmpbuf[MAX_FILLER + 1];
 #endif
 
   va_start(ap, fmt);
