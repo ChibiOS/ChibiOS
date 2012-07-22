@@ -34,7 +34,7 @@ static Thread *cdtp;
 static Thread *shelltp1;
 static Thread *shelltp2;
 
-static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
+static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
   size_t n, size;
 
   (void)argv;
@@ -48,7 +48,7 @@ static void cmd_mem(BaseChannel *chp, int argc, char *argv[]) {
   chprintf(chp, "heap free total  : %u bytes\r\n", size);
 }
 
-static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
+static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   static const char *states[] = {THD_STATE_NAMES};
   Thread *tp;
 
@@ -68,7 +68,7 @@ static void cmd_threads(BaseChannel *chp, int argc, char *argv[]) {
   } while (tp != NULL);
 }
 
-static void cmd_test(BaseChannel *chp, int argc, char *argv[]) {
+static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
   Thread *tp;
 
   (void)argv;
@@ -93,12 +93,12 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseChannel *)&SD1,
+  (BaseSequentialStream *)&SD1,
   commands
 };
 
 static const ShellConfig shell_cfg2 = {
-  (BaseChannel *)&SD2,
+  (BaseSequentialStream *)&SD2,
   commands
 };
 
@@ -153,15 +153,15 @@ static void termination_handler(eventid_t id) {
  * @param[in] id event id.
  */
 static void sd1_handler(eventid_t id) {
-  ioflags_t flags;
+  chnflags_t flags;
 
   (void)id;
-  flags = chIOGetAndClearFlags(&SD1);
-  if ((flags & IO_CONNECTED) && (shelltp1 == NULL)) {
+  flags = chnGetAndClearFlags(&SD1);
+  if ((flags & CHN_CONNECTED) && (shelltp1 == NULL)) {
     cputs("Init: connection on SD1");
     shelltp1 = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO + 1);
   }
-  if (flags & IO_DISCONNECTED) {
+  if (flags & CHN_DISCONNECTED) {
     cputs("Init: disconnection on SD1");
     chSysLock();
     chIQResetI(&SD1.iqueue);
@@ -175,15 +175,15 @@ static void sd1_handler(eventid_t id) {
  * @param[in] id event id.
  */
 static void sd2_handler(eventid_t id) {
-  ioflags_t flags;
+  chnflags_t flags;
 
   (void)id;
-  flags = chIOGetAndClearFlags(&SD2);
-  if ((flags & IO_CONNECTED) && (shelltp2 == NULL)) {
+  flags = chnGetAndClearFlags(&SD2);
+  if ((flags & CHN_CONNECTED) && (shelltp2 == NULL)) {
     cputs("Init: connection on SD2");
     shelltp2 = shellCreate(&shell_cfg2, SHELL_WA_SIZE, NORMALPRIO + 10);
   }
-  if (flags & IO_DISCONNECTED) {
+  if (flags & CHN_DISCONNECTED) {
     cputs("Init: disconnection on SD2");
     chSysLock();
     chIQResetI(&SD2.iqueue);
@@ -236,11 +236,11 @@ int main(void) {
    */
   cputs("Shell service started on SD1, SD2");
   cputs("  - Listening for connections on SD1");
-  (void) chIOGetAndClearFlags(&SD1);
-  chEvtRegister(chIOGetEventSource(&SD1), &sd1fel, 1);
+  (void) chnGetAndClearFlags(&SD1);
+  chEvtRegister(chnGetEventSource(&SD1), &sd1fel, 1);
   cputs("  - Listening for connections on SD2");
-  (void) chIOGetAndClearFlags(&SD2);
-  chEvtRegister(chIOGetEventSource(&SD2), &sd2fel, 2);
+  (void) chnGetAndClearFlags(&SD2);
+  chEvtRegister(chnGetEventSource(&SD2), &sd2fel, 2);
 
   /*
    * Events servicing loop.
@@ -251,7 +251,7 @@ int main(void) {
   /*
    * Clean simulator exit.
    */
-  chEvtUnregister(chIOGetEventSource(&SD1), &sd1fel);
-  chEvtUnregister(chIOGetEventSource(&SD2), &sd2fel);
+  chEvtUnregister(chnGetEventSource(&SD1), &sd1fel);
+  chEvtUnregister(chnGetEventSource(&SD2), &sd2fel);
   return 0;
 }
