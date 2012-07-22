@@ -498,7 +498,7 @@
       <pin12
         ID="LED4"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
         Resistor="Floating"
         Mode="Output"
@@ -506,7 +506,7 @@
       <pin13
         ID="LED3"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
         Resistor="Floating"
         Mode="Output"
@@ -514,7 +514,7 @@
       <pin14
         ID="LED5"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
         Resistor="Floating"
         Mode="Output"
@@ -522,7 +522,7 @@
       <pin15
         ID="LED6"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
         Resistor="Floating"
         Mode="Output"

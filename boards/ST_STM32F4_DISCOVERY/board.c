@@ -63,21 +63,21 @@ void __early_init(void) {
 #if HAL_USE_SDC || defined(__DOXYGEN__)
 /**
  * @brief   SDC card detection.
- * @todo    Fill the implementation.
  */
 bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
+  /* TODO: Fill the implementation.*/
   return TRUE;
 }
 
 /**
  * @brief   SDC card write protection detection.
- * @todo    Fill the implementation.
  */
 bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
   (void)sdcp;
+  /* TODO: Fill the implementation.*/
   return FALSE;
 }
 #endif /* HAL_USE_SDC */
@@ -85,21 +85,21 @@ bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
 #if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 /**
  * @brief   MMC_SPI card detection.
- * @todo    Fill the implementation.
  */
 bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 
   (void)mmcp;
+  /* TODO: Fill the implementation.*/
   return TRUE;
 }
 
 /**
  * @brief   MMC_SPI card write protection detection.
- * @todo    Fill the implementation.
  */
 bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
   (void)mmcp;
+  /* TODO: Fill the implementation.*/
   return FALSE;
 }
 #endif

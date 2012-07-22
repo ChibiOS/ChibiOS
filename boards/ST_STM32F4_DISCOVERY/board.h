@@ -681,10 +681,10 @@
                                      PIN_ODR_HIGH(GPIOD_PIN9) |             \
                                      PIN_ODR_HIGH(GPIOD_PIN10) |            \
                                      PIN_ODR_HIGH(GPIOD_PIN11) |            \
-                                     PIN_ODR_HIGH(GPIOD_LED4) |             \
-                                     PIN_ODR_HIGH(GPIOD_LED3) |             \
-                                     PIN_ODR_HIGH(GPIOD_LED5) |             \
-                                     PIN_ODR_HIGH(GPIOD_LED6))
+                                     PIN_ODR_LOW(GPIOD_LED4) |              \
+                                     PIN_ODR_LOW(GPIOD_LED3) |              \
+                                     PIN_ODR_LOW(GPIOD_LED5) |              \
+                                     PIN_ODR_LOW(GPIOD_LED6))
 #define VAL_GPIOD_AFRL              (PIN_AFIO_AF(GPIOD_PIN0, 0) |           \
                                      PIN_AFIO_AF(GPIOD_PIN1, 0) |           \
                                      PIN_AFIO_AF(GPIOD_PIN2, 0) |           \
