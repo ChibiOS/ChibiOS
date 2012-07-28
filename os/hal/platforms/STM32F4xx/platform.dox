@@ -77,18 +77,18 @@
  */
 
 /**
- * @defgroup STM32F2xx_CAN STM32F2xx CAN Support
- * @details The STM32F2xx CAN driver uses the CAN peripherals.
+ * @defgroup STM32F4xx_CAN STM32F4xx CAN Support
+ * @details The STM32F4xx CAN driver uses the CAN peripherals.
  *
- * @section stm32f2xx_can_1 Supported HW resources
+ * @section stm32f4xx_can_1 Supported HW resources
  * - bxCAN1.
  * .
- * @section stm32f2xx_can_2 STM32F2xx CAN driver implementation features
+ * @section stm32f4xx_can_2 STM32F4xx CAN driver implementation features
  * - Clock stop for reduced power usage when the driver is in stop state.
  * - Support for bxCAN sleep mode.
  * - Programmable bxCAN interrupts priority level.
  * .
- * @ingroup STM32F2xx_DRIVERS
+ * @ingroup STM32F4xx_DRIVERS
  */
 
 /**
@@ -225,6 +225,23 @@
  *   peripherals are left in low power mode.
  * - Four independent PWM channels per timer.
  * - Programmable TIMx interrupts priority level.
+ * .
+ * @ingroup STM32F4xx_DRIVERS
+ */
+
+/**
+ * @defgroup STM32F4xx_SDC STM32F4xx SDC Support
+ * @details The STM32F4xx SDC driver uses the SDIO peripheral.
+ *
+ * @section stm32f4xx_sdc_1 Supported HW resources
+ * - SDIO.
+ * - DMA2.
+ * .
+ * @section stm32f4xx_sdc_2 STM32F4xx SDC driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Programmable interrupt priority.
+ * - DMA is used for receiving and transmitting.
+ * - Programmable DMA bus priority for each DMA channel.
  * .
  * @ingroup STM32F4xx_DRIVERS
  */

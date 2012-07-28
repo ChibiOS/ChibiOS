@@ -88,7 +88,7 @@
   3536070).
 - FIX: Fixed issue with DMA channel init in STM32 ADC and SPI drivers (bug
   3535938).
-- FIX: Fixed unreliable PHY initialization (bug 3534819)(backported to 2.4.2).
+- FIX: Fixed unreliable PHY initialization (bug 3534819).
 - FIX: Fixed wrong ADC callback buffer pointer in ADC driver (bug 3534767).
 - FIX: Fixed lwIP-related files missing from version 2.4.1 (bug 3533887).
 - FIX: Fixed problem with arm-v6m and state checker (bug 3532591).

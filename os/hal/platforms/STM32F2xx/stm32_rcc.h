@@ -398,12 +398,11 @@
 /** @} */
 
 /**
- * @name   PWR interface specific RCC operations
+ * @name    PWR interface specific RCC operations
  * @{
  */
 /**
  * @brief   Enables the PWR interface clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -413,7 +412,6 @@
 
 /**
  * @brief   Disables PWR interface clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -427,6 +425,62 @@
  * @api
  */
 #define rccResetPWRInterface() rccResetAPB1(RCC_APB1RSTR_PWRRST)
+/** @} */
+
+
+/**
+ * @name    CAN peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the CAN1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCAN1(lp) rccEnableAPB1(RCC_APB1ENR_CAN1EN, lp)
+
+/**
+ * @brief   Disables the CAN1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableCAN1(lp) rccDisableAPB1(RCC_APB1ENR_CAN1EN, lp)
+
+/**
+ * @brief   Resets the CAN1 peripheral.
+ *
+ * @api
+ */
+#define rccResetCAN1() rccResetAPB1(RCC_APB1RSTR_CAN1RST)
+
+/**
+ * @brief   Enables the CAN2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCAN2(lp) rccEnableAPB1(RCC_APB1ENR_CAN2EN, lp)
+
+/**
+ * @brief   Disables the CAN2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableCAN2(lp) rccDisableAPB1(RCC_APB1ENR_CAN2EN, lp)
+
+/**
+ * @brief   Resets the CAN2 peripheral.
+ *
+ * @api
+ */
+#define rccResetCAN2() rccResetAPB1(RCC_APB1RSTR_CAN2RST)
 /** @} */
 
 /**
@@ -573,6 +627,39 @@
  * @api
  */
 #define rccResetOTG_FS() rccResetAHB2(RCC_AHB2RSTR_OTGFSRST)
+/** @} */
+
+/**
+ * @name    SDIO peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the SDIO peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDIO(lp) rccEnableAPB2(RCC_APB2ENR_SDIOEN, lp)
+
+/**
+ * @brief   Disables the SDIO peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableSDIO(lp) rccDisableAPB2(RCC_APB2ENR_SDIOEN, lp)
+
+/**
+ * @brief   Resets the SDIO peripheral.
+ * @note    Not supported in this family, does nothing.
+ *
+ * @api
+ */
+#define rccResetSDIO() rccResetAPB2(RCC_APB2RSTR_SDIORST)
 /** @} */
 
 /**
