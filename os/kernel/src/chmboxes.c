@@ -57,8 +57,8 @@
  * @brief   Initializes a Mailbox object.
  *
  * @param[out] mbp      the pointer to the Mailbox structure to be initialized
- * @param[in] buf       the circular messages buffer
- * @param[in] n         the buffer size as number of @p msg_t
+ * @param[in] buf       pointer to the messages buffer as an array of @p msg_t
+ * @param[in] n         size of the buffer as number of @p msg_t
  *
  * @init
  */
