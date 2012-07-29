@@ -41,7 +41,7 @@
  *          If larger messages need to be exchanged then a pointer to a
  *          structure can be posted in the mailbox but the posting side has
  *          no predefined way to know when the message has been processed. A
- *          possible approach is to allocate memory (from a memory pool as
+ *          possible approach is to allocate memory (from a memory pool for
  *          example) from the posting side and free it on the fetching side.
  *          Another approach is to set a "done" flag into the structure pointed
  *          by the message.
@@ -346,7 +346,7 @@ msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
 /**
  * @brief   Retrieves a message from a mailbox.
  * @details This variant is non-blocking, the function returns a timeout
- *          condition if the queue is full.
+ *          condition if the queue is empty.
  *
  * @param[in] mbp       the pointer to an initialized Mailbox object
  * @param[out] msgp     pointer to a message variable for the received message
