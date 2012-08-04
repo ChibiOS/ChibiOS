@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <!-- Configuration Wizard. -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.chibios.tools.eclipse.config"
+            name="ChibiOS/RT">
+      </category>
+      <wizard
+            category="org.chibios.tools.eclipse.config"
+            class="org.chibios.tools.eclipse.config.wizards.ConfigurationNewWizard"
+            icon="icons/chibios.gif"
+            id="org.chibios.tools.eclipse.config.wizards.ConfigurationNewWizard"
+            name="ChibiOS/RT Configuration Wizard">
+      </wizard>
+   </extension>
+
+   <!-- Registers the file extension .chxml as an XML type. -->
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
+            content-type="org.eclipse.core.runtime.xml"
+            file-extensions="chxml">
+      </file-association>
+   </extension>
+
+   <!-- Commands. -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.chibios.tools.eclipse.config.commands.category"
+            name="ChibiOS/RT Configuration Category">
+      </category>
+      <!-- Generate Files command. -->
+      <command
+            categoryId="org.chibios.tools.eclipse.config.commands.category"
+            id="org.chibios.tools.eclipse.config.commands.generateFiles"
+            name="Generate Files from Configuration Data">
+      </command>
+      <!-- Check Configuration Data command. -->
+      <command
+            categoryId="org.chibios.tools.eclipse.config.commands.category"
+            id="org.chibios.tools.eclipse.config.commands.checkDescription"
+            name="Check Configuration Data">
+      </command>
+   </extension>
+
+   <!-- Handlers. -->
+   <extension
+         point="org.eclipse.ui.handlers">
+      <!-- Generate Files handler. -->
+      <handler
+            class="org.chibios.tools.eclipse.config.handlers.GenerateFiles"
+            commandId="org.chibios.tools.eclipse.config.commands.generateFiles">
+      </handler>
+      <!-- Check Configuration Data handler. -->
+      <handler
+            class="org.chibios.tools.eclipse.config.handlers.CheckDescription"
+            commandId="org.chibios.tools.eclipse.config.commands.checkDescription">
+      </handler>
+   </extension>
+
+   <!-- Configuration menu and toolbar. -->
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="org.chibios.tools.eclipse.config.menus.configurationMenu"
+               label="Configuration"
+               mnemonic="M">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <test
+                              property="org.eclipse.core.resources.extension"
+                              value="chcfg">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+            <command
+                  commandId="org.chibios.tools.eclipse.config.commands.generateFiles"
+                  id="org.chibios.tools.eclipse.config.menus.generateFiles"
+                  mnemonic="S">
+            </command>
+            <command
+                  commandId="org.chibios.tools.eclipse.config.commands.checkDescription"
+                  id="org.chibios.tools.eclipse.config.menus.checkDescription"
+                  mnemonic="S">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.chibios.tools.eclipse.config.toolbars.sampleToolbar">
+            <command
+                  commandId="org.chibios.tools.eclipse.config.commands.generateFiles"
+                  icon="icons/generate.gif"
+                  id="org.chibios.tools.eclipse.config.toolbars.generateFiles"
+                  tooltip="Generate Files from Configuration Data">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <count
+                           value="1">
+                     </count>
+                     <iterate
+                           ifEmpty="false"
+                           operator="and">
+                        <adapt
+                              type="org.eclipse.core.resources.IResource">
+                           <test
+                                 property="org.eclipse.core.resources.extension"
+                                 value="chcfg">
+                           </test>
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.chibios.tools.eclipse.config.commands.checkDescription"
+                  icon="icons/check.gif"
+                  id="org.chibios.tools.eclipse.config.toolbars.checkDescription"
+                  tooltip="Check Configuration Data without generating Files">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <count
+                           value="1">
+                     </count>
+                     <iterate
+                           ifEmpty="false"
+                           operator="and">
+                        <adapt
+                              type="org.eclipse.core.resources.IResource">
+                           <test
+                                 property="org.eclipse.core.resources.extension"
+                                 value="chcfg">
+                           </test>
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+
+</plugin>
