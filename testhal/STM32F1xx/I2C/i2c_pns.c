@@ -35,7 +35,7 @@
 /* I2C1 */
 static const I2CConfig i2cfg1 = {
     OPMODE_I2C,
-    400000,
+    360000,
     FAST_DUTY_CYCLE_16_9,
 };
 
