@@ -133,7 +133,7 @@ public class ConfigurationNewWizard extends Wizard implements INewWizard {
       throwCoreException("Container \"" + containerName + "\" does not exist.");
     }
     IContainer container = (IContainer)resource;
-    monitor.beginTask("Creating " + projectFileName, 3);
+    monitor.beginTask("Creating " + projectFileName, 4);
 
     /* Step #1, creates the project file.*/
     final IFile projectFile = container.getFile(new Path(projectFileName));
@@ -181,6 +181,10 @@ public class ConfigurationNewWizard extends Wizard implements INewWizard {
         }
       }
     });
+    monitor.worked(1);
+
+    /* Step #4, refreshing local resources.*/
+    container.refreshLocal(IResource.DEPTH_INFINITE, monitor);
     monitor.worked(1);
   }
 
