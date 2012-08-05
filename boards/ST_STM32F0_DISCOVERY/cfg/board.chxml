@@ -3,20 +3,20 @@
 <board
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f0xx_board.xsd">
-  <board_name>-----human readable board name-----</board_name>
-  <board_id>BOARD_IDENTIFIER</board_id>
+  <board_name>ST STM32F0-Discovery</board_name>
+  <board_id>BOARD_ST_STM32F0_DISCOVERY</board_id>
   <board_functions></board_functions>
   <clocks
-    HSEFrequency="8000000"
-    HSEBypass="false"
-    LSEFrequency="32768" />
+    HSEFrequency="0"
+    HSEBypass="true"
+    LSEFrequency="0" />
   <ports>
     <GPIOA>
       <pin0
-        ID=""
+        ID="BUTTON"
         Type="PushPull"
         Speed="Minimum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Level="High"
         Mode="Input"
         Alternate="0" />
@@ -337,20 +337,20 @@
         Mode="Input"
         Alternate="0" />
       <pin8
-        ID=""
+        ID="LED4"
         Type="PushPull"
-        Speed="Minimum"
-        Resistor="PullUp"
-        Level="High"
-        Mode="Input"
+        Speed="Maximum"
+        Resistor="Floating"
+        Level="Low"
+        Mode="Output"
         Alternate="0" />
       <pin9
-        ID=""
+        ID="LED3"
         Type="PushPull"
-        Speed="Minimum"
-        Resistor="PullUp"
-        Level="High"
-        Mode="Input"
+        Speed="Maximum"
+        Resistor="Floating"
+        Level="Low"
+        Mode="Output"
         Alternate="0" />
       <pin10
         ID=""

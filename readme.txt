@@ -162,6 +162,8 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added configuration wizard plugin under ./tools/eclipse/plugins. This
+  first version is able to configure the board files for STM32F0 and STM32F4.
 - NEW: Added USART6 support to the STM32 UARTv1 driver, contributed by Erik
   van der Zalm.
 - NEW: Added demo for Arduino Mega, contributed by Fabio Utzig.
