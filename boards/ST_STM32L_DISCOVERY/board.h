@@ -34,16 +34,17 @@
 
 /*
  * Board oscillators-related settings.
- * NOTE: LSE not fitted.
+ * NOTE: HSE not fitted.
  */
 #if !defined(STM32_LSECLK)
-#define STM32_LSECLK                0
+#define STM32_LSECLK                32768
 #endif
 
 #if !defined(STM32_HSECLK)
-#define STM32_HSECLK                8000000
+#define STM32_HSECLK                0
 #endif
 
+#define STM32_HSE_BYPASS
 
 /*
  * MCU type as defined in the ST header file stm32l1xx.h.
