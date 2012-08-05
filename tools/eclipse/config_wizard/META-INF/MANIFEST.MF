@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ChibiOS-RT_Configuration_Support
 Bundle-SymbolicName: org.chibios.tools.eclipse.config;singleton:=true
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2
 Bundle-Activator: config_wizard.Activator
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,
@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.ui.ide
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-Vendor: CHIBIOS
+Bundle-Vendor: chibios-org
 Bundle-ClassPath: .,
  lib/jdom-2.0.2.jar,
  lib/freemarker.jar,
