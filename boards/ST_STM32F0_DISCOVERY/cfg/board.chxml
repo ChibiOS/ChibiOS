@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f0xx_board.xsd">
   <board_name>ST STM32F0-Discovery</board_name>
-  <board_id>BOARD_ST_STM32F0_DISCOVERY</board_id>
+  <board_id>ST_STM32F0_DISCOVERY</board_id>
   <board_functions></board_functions>
   <clocks
     HSEFrequency="0"

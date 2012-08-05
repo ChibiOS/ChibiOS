@@ -28,7 +28,7 @@
 /*
  * Board identifier.
  */
-#define BOARD_BOARD_ST_STM32F0_DISCOVERY
+#define BOARD_ST_STM32F0_DISCOVERY
 #define BOARD_NAME                  "ST STM32F0-Discovery"
 
 
