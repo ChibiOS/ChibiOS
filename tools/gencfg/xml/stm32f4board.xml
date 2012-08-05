@@ -3,7 +3,7 @@
 <board
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f4xx_board.xsd">
-  <board_name>-----human readable blard name-----</board_name>
+  <board_name>-----human readable board name-----</board_name>
   <board_id>BOARD_IDENTIFIER</board_id>
   <board_functions></board_functions>
   <ethernet_phy>
