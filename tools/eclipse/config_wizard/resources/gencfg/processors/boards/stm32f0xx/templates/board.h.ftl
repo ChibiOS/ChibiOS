@@ -103,10 +103,10 @@
 #define PIN_ODR_HIGH(n)             (1U << (n))
 #define PIN_OTYPE_PUSHPULL(n)       (0U << (n))
 #define PIN_OTYPE_OPENDRAIN(n)      (1U << (n))
-#define PIN_OSPEED_2M(n)            (0U << ((n) * 2))
-#define PIN_OSPEED_25M(n)           (1U << ((n) * 2))
-#define PIN_OSPEED_50M(n)           (2U << ((n) * 2))
-#define PIN_OSPEED_100M(n)          (3U << ((n) * 2))
+#define PIN_OSPEED_400K(n)          (0U << ((n) * 2))
+#define PIN_OSPEED_2M(n)            (1U << ((n) * 2))
+#define PIN_OSPEED_10M(n)           (2U << ((n) * 2))
+#define PIN_OSPEED_40M(n)           (3U << ((n) * 2))
 #define PIN_PUPDR_FLOATING(n)       (0U << ((n) * 2))
 #define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2))
 #define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2))
@@ -208,13 +208,13 @@ ${line + ")"}
     [/#if]
     [#assign speed = pin.@Speed[0] /]
     [#if speed == "Minimum"]
-      [#assign out = "PIN_OSPEED_2M(" + port_name + "_" + name + ")" /]
+      [#assign out = "PIN_OSPEED_400K(" + port_name + "_" + name + ")" /]
     [#elseif speed == "Low"]
-      [#assign out = "PIN_OSPEED_25M(" + port_name + "_" + name + ")" /]
+      [#assign out = "PIN_OSPEED_2M(" + port_name + "_" + name + ")" /]
     [#elseif speed == "High"]
-      [#assign out = "PIN_OSPEED_50M(" + port_name + "_" + name + ")" /]
+      [#assign out = "PIN_OSPEED_10M(" + port_name + "_" + name + ")" /]
     [#else]
-      [#assign out = "PIN_OSPEED_100M(" + port_name + "_" + name + ")" /]
+      [#assign out = "PIN_OSPEED_40M(" + port_name + "_" + name + ")" /]
     [/#if]
     [#if pin_index == 0]
       [#assign line = "#define VAL_" + port_name + "_OSPEEDR           (" + out /]
