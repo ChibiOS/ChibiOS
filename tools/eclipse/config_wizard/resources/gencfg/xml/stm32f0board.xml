@@ -533,18 +533,18 @@
     </GPIOD>
     <GPIOF>
       <pin0
-        ID=""
+        ID="OSC_IN"
         Type="PushPull"
         Speed="Minimum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Level="High"
         Mode="Input"
-        Alternate="0" />
+        Alternate="0" >OOSOSCOSC_OSC_IOSC_INOSC_IOSC_OSCOSO</pin0>
       <pin1
-        ID=""
+        ID="OSC_OUT"
         Type="PushPull"
         Speed="Minimum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Level="High"
         Mode="Input"
         Alternate="0" />
