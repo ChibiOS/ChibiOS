@@ -102,15 +102,6 @@ I2CDriver I2CD3;
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-/* The following variables have debugging purpose only and are included when
-   the option CH_DBG_ENABLE_ASSERTS is enabled.*/
-#if CH_DBG_ENABLE_ASSERTS
-static volatile uint16_t dbgSR1;
-static volatile uint16_t dbgSR2;
-static volatile uint16_t dbgCR1;
-static volatile uint16_t dbgCR2;
-#endif /* CH_DBG_ENABLE_ASSERTS */
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -286,34 +277,6 @@ static void i2c_lld_set_opmode(I2CDriver *i2cp) {
 }
 
 /**
- * @brief   Return the last event value from I2C status registers.
- * @details Important but implicit destination of this function is
- *          clearing interrupts flags.
- * @note    Internal use only.
- * @note    Function reads SR2 <b>before</b> SR1. This is workaround, not a bug.
- *          ADDR was not cleared and it was possible to clear ADDR after
- *          transfer is properly setup (enabled DMA stream).
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- *
- * @notapi
- */
-static uint32_t i2c_get_event(I2CDriver *i2cp) {
-  I2C_TypeDef *dp = i2cp->i2c;
-  uint16_t regSR2 = dp->SR2;
-  uint16_t regSR1 = dp->SR1;
-
-#if CH_DBG_ENABLE_ASSERTS
-  dbgSR1 = regSR1;
-  dbgSR2 = regSR2;
-  dbgCR1 = dp->CR1;
-  dbgCR2 = dp->CR2;
-#endif /* CH_DBG_ENABLE_ASSERTS */
-
-  return (I2C_EV_MASK & (regSR1 | (regSR2 << 16)));
-}
-
-/**
  * @brief   I2C shared ISR code.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
@@ -322,21 +285,16 @@ static uint32_t i2c_get_event(I2CDriver *i2cp) {
  */
 static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   I2C_TypeDef *dp = i2cp->i2c;
-  uint32_t event = i2c_get_event(i2cp);
-  uint32_t rxlen = dmaStreamGetTransactionSize(i2cp->dmarx);
+  uint32_t event = dp->SR1;
 
   /* Interrupts are disabled just before dmaStreamEnable() because there
      is no need of interrupts until next transaction begin. All the work is
      done by the DMA.*/
-  switch (event) {
+  switch (I2C_EV_MASK & (event | (dp->SR2 << 16))) {
   case I2C_EV5_MASTER_MODE_SELECT:
     dp->DR = i2cp->addr;
     break;
   case I2C_EV6_MASTER_REC_MODE_SELECTED:
-    if (rxlen <= 2)
-      dp->CR1 &= ~I2C_CR1_ACK;
-    if (rxlen == 2)
-      dp->CR1 |= I2C_CR1_POS;
     dp->CR2 &= ~I2C_CR2_ITEVTEN;
     dmaStreamEnable(i2cp->dmarx);
     dp->CR2 |= I2C_CR2_LAST;                 /* Needed in receiver mode. */
@@ -347,7 +305,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
     break;
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
     /* Catches BTF event after the end of transmission.*/
-    if (rxlen > 0) {
+    if (dmaStreamGetTransactionSize(i2cp->dmarx) > 0) {
       /* Starts "read after write" operation, LSB = 1 -> receive.*/
       i2cp->addr |= 0x01;
       dp->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
@@ -360,10 +318,6 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   default:
     break;
   }
-  /* Clear ADDR flag. Last part of workaround
-   (see comments to i2c_get_event() function). */
-  if (event & (I2C_SR1_ADDR | I2C_SR1_ADD10))
-    if (dp->SR2){;}
 }
 
 /**
