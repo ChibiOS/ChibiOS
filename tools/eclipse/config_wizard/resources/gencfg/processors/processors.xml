@@ -11,4 +11,10 @@
     <default>resources/gencfg/xml/stm32f4board.xml</default>
     <basefilename>board</basefilename>
   </processor>
+  <processor>
+    <name>STM32L1xx Board Configuration</name>
+    <path>resources/gencfg/processors/boards/stm32l1xx/templates</path>
+    <default>resources/gencfg/xml/stm32l1board.xml</default>
+    <basefilename>board</basefilename>
+  </processor>
 </processors>
