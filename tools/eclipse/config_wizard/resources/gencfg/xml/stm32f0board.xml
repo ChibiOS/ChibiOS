@@ -539,7 +539,7 @@
         Resistor="Floating"
         Level="High"
         Mode="Input"
-        Alternate="0" >OOSOSCOSC_OSC_IOSC_INOSC_IOSC_OSCOSO</pin0>
+        Alternate="0" />
       <pin1
         ID="OSC_OUT"
         Type="PushPull"
