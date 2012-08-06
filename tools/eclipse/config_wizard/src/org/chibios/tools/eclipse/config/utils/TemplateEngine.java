@@ -27,6 +27,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -55,10 +58,18 @@ import freemarker.template.TemplateNodeModel;
  */
 public class TemplateEngine {
 
-  private static final String CONSOLE_NAME = "ChibiOS/RT Configuration Tool";
+  private final static String CONSOLE_NAME = "ChibiOS/RT Configuration Tool";
+
+  private final static Color DEFAULT_MESSAGE = new Color(Display.getDefault(), new RGB(0, 0, 255));
+  private final static Color DEFAULT_OUTPUT = new Color(Display.getDefault(), new RGB(0, 0, 0));
+  private final static Color DEFAULT_WARNING = new Color(Display.getDefault(), new RGB(255, 255, 0));
+  private final static Color DEFAULT_ERROR = new Color(Display.getDefault(), new RGB(255, 0, 0));
 
   private static Settings settings;
+  private static MessageConsoleStream msg;
   private static MessageConsoleStream out;
+  private static MessageConsoleStream err;
+  private static MessageConsoleStream warn;
 
   /**
    * Runs the templates engine.
@@ -85,7 +96,14 @@ public class TemplateEngine {
     MessageConsole console = findConsole(CONSOLE_NAME);
     activateConsole(console);
     console.clearConsole();
+    msg = console.newMessageStream();
+    msg.setColor(DEFAULT_MESSAGE);
     out = console.newMessageStream();
+    out.setColor(DEFAULT_OUTPUT);
+    err = console.newMessageStream();
+    err.setColor(DEFAULT_ERROR);
+    warn = console.newMessageStream();
+    warn.setColor(DEFAULT_WARNING);
 
     /*
      * Instantiates the FMPP Settings engine and associates a listener for
@@ -103,29 +121,36 @@ public class TemplateEngine {
                                       java.lang.Throwable error,
                                       java.lang.Object param) {
 
+        if (error != null) {
+          err.println(": " + error.getMessage());
+          return;
+        }
+
         if (pMode == Engine.PMODE_IGNORE)
           return;
 
         switch (event) {
         case EVENT_BEGIN_PROCESSING_SESSION:
-          out.println("Starting session");
+          msg.println("Starting session");
+          msg.println();
           break;
         case EVENT_END_PROCESSING_SESSION:
-          out.println("Finished");
+          msg.println();
+          msg.println("Finished");
           break;
         case EVENT_BEGIN_FILE_PROCESSING:
-          out.println("Processing " + src.getName());
+          out.println("> Processing " + src.getName());
           break;
         case EVENT_END_FILE_PROCESSING:
           break;
         case EVENT_IGNORING_DIR:
-          out.println("Ignoring directory " + src.getName());
+          out.println("> Ignoring directory " + src.getName());
           break;
         case EVENT_SOURCE_NOT_MODIFIED:
-          out.println("Skipping " + src.getName());
+          out.println("> Skipping " + src.getName());
           break;
         case EVENT_WARNING:
-          out.println("Warning:" + (String) param);
+          warn.println(": " + (String)param);
           break;
         }
       }
