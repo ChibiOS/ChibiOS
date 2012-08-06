@@ -21,9 +21,7 @@
 package org.chibios.tools.eclipse.config.handlers;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Properties;
 
 import org.chibios.tools.eclipse.config.utils.TemplateEngine;
 import org.chibios.tools.eclipse.config.utils.TemplateException;
@@ -40,6 +38,10 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 import org.osgi.framework.Bundle;
 
 import config_wizard.Activator;
@@ -70,53 +72,32 @@ public class GenerateFiles extends AbstractHandler {
     if (selection instanceof IStructuredSelection) {
 
       /* Retrieves the full path of the configuration file. */
-      IPath cfgfilepath = ((IFile) ((IStructuredSelection) selection)
+      IPath cfgfilepath = ((IFile)((IStructuredSelection)selection)
           .getFirstElement()).getLocation();
-      
-      /* Determines the base path as the parent of the configuration file.*/
-      IPath basepath = cfgfilepath.removeLastSegments(1);
 
-      /* Reads the configuration file into a Properties object. */
-      Properties cfgfile = new Properties();
+      /* DOM tree creation. */
+      SAXBuilder builder = new SAXBuilder();
+      Document document;
       try {
-        cfgfile.load(new FileReader(cfgfilepath.toFile()));
+        document = builder.build(cfgfilepath.toFile());
+      } catch (JDOMException e) {
+        return null;
       } catch (IOException e) {
-        MessageDialog.openInformation(window.getShell(), "I/O Error",
-            e.getMessage());
         return null;
       }
 
-      /* Retrieves source property. */
-      String source = cfgfile.getProperty("source");
-      if (source == null) {
-        MessageDialog.openInformation(window.getShell(), "Properties Error",
-            "Property \"source\" not found in configuration file.");
-        return null;
-      }
-
-      /* Retrieves xmlfile property. */
-      String xmlfile = cfgfile.getProperty("xmlfile");
-      if (xmlfile == null) {
-        MessageDialog.openInformation(window.getShell(), "Properties Error",
-            "Property \"xmlfile\" not found in configuration file.");
-        return null;
-      }
-
-      /* Retrieves output property. */
-      String output = cfgfile.getProperty("output");
-      if (output == null) {
-        MessageDialog.openInformation(window.getShell(), "Properties Error",
-            "Property \"output\" not found in configuration file.");
-        return null;
-      }
+      /* Retrieving configuration settings info.*/
+      Element settings = document.getRootElement().getChild("configuration_settings");
+      String templates_path = settings.getChildText("templates_path");
+      String output_path = settings.getChildText("output_path");
 
       /* Calculating derived paths. */
-      IPath sourcepath = new Path(source);
+      IPath tpath = new Path(templates_path);
       IPath libpath = new Path("resources/gencfg/lib");
       try {
         Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
-        sourcepath = new Path(FileLocator.toFileURL(
-            FileLocator.find(bundle, sourcepath, null)).getFile());
+        tpath = new Path(FileLocator.toFileURL(
+            FileLocator.find(bundle, tpath, null)).getFile());
         libpath = new Path(FileLocator.toFileURL(
             FileLocator.find(bundle, libpath, null)).getFile());
       } catch (IOException e) {
@@ -127,9 +108,10 @@ public class GenerateFiles extends AbstractHandler {
 
       /* Templates execution. */
       try {
-        TemplateEngine.process(basepath.addTrailingSeparator().append(xmlfile)
-            .toFile(), libpath.toFile(), sourcepath.toFile(),
-            basepath.toFile(), new File(output));
+        TemplateEngine.process(cfgfilepath.toFile(),
+                               libpath.toFile(),
+                               tpath.toFile(),
+                               new File(output_path));
       } catch (TemplateException e) {
         MessageDialog.openInformation(window.getShell(), "Processing Error",
             e.getMessage());

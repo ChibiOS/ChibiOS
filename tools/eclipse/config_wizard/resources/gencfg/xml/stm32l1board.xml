@@ -3,6 +3,10 @@
 <board
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32l1xx_board.xsd">
+  <configuration_settings>
+    <templates_path>resources/gencfg/processors/boards/stm32l1xx/templates</templates_path>
+    <output_path>.</output_path>
+  </configuration_settings>
   <board_name>-----human readable board name-----</board_name>
   <board_id>BOARD_IDENTIFIER</board_id>
   <board_functions></board_functions>

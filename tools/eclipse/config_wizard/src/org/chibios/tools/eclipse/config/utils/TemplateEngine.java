@@ -80,16 +80,15 @@ public class TemplateEngine {
    *          absolute path to libraries directory
    * @param sourcedir
    *          absolute path to templates directory
-   * @param basedir
-   *          absolute path to project directory
    * @param outputdir
-   *          output directory relative to basedir
+   *          output directory relative to xmldata
    * 
    * @throws SettingException
    * @throws ProcessingException
    */
-  public static void process(java.io.File xmldata, java.io.File libdir,
-                             java.io.File sourcedir, java.io.File basedir,
+  public static void process(java.io.File xmldata,
+                             java.io.File libdir,
+                             java.io.File sourcedir,
                              java.io.File outputdir) throws TemplateException {
 
     /* Finds or creates a named console. */
@@ -110,7 +109,7 @@ public class TemplateEngine {
      * events to be logged.
      */
     try {
-      settings = new Settings(basedir);
+      settings = new Settings(xmldata.getParentFile());
     } catch (SettingException e) {
       e.printStackTrace();
       return;

@@ -17,12 +17,27 @@
       </wizard>
    </extension>
 
-   <!-- Registers the file extension .chxml as an XML type. -->
+   <!-- Registers the file extension .chcfg as an XML type. -->
    <extension point="org.eclipse.core.contenttype.contentTypes">
       <file-association
             content-type="org.eclipse.core.runtime.xml"
-            file-extensions="chxml">
+            file-extensions="chcfg">
       </file-association>
+   </extension>
+
+   <!-- XML catalog extensions. -->
+   <extension point="org.eclipse.wst.xml.core.catalogContributions">
+      <catalogContribution id="default">
+         <uri
+            name="http://www.chibios.org/xml/schema/boards/stm32f0xx_board.xsd"
+            uri="resources/gencfg/schema/boards/stm32f0xx_board.xsd" />
+         <uri
+            name="http://www.chibios.org/xml/schema/boards/stm32f4xx_board.xsd"
+            uri="resources/gencfg/schema/boards/stm32f4xx_board.xsd" />
+         <uri
+            name="http://www.chibios.org/xml/schema/boards/stm32l1xx_board.xsd"
+            uri="resources/gencfg/schema/boards/stm32l1xx_board.xsd" />
+      </catalogContribution>
    </extension>
 
    <!-- Commands. -->

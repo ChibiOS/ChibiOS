@@ -24,8 +24,6 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -65,14 +63,11 @@ public class ConfigurationNewWizardPage extends WizardPage {
   private IContainer resourceContainer;
 
   private Document processorsDocument;
-  private String currentTemplatesPath;
   private String currentDefaultDataFile;
 
   private Composite container;
   private Combo configurationTemplatesCombo;
   private Text confProjectFilenameText;
-  private Text confDataFilenameText;
-  private Text confOutputDirectoryText;
 
   /**
    * Constructor for SampleNewWizardPage.
@@ -118,41 +113,13 @@ public class ConfigurationNewWizardPage extends WizardPage {
       }
     });
 
-    Label lbl3 = new Label(container, SWT.NONE);
-    lbl3.setText("Configuration data filename:");
-
-    confDataFilenameText = new Text(container, SWT.BORDER);
-    confDataFilenameText.setText("config.chxml");
-    confDataFilenameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-                                                    false, 1, 1));
-    confDataFilenameText.addModifyListener(new ModifyListener() {
-      public void modifyText(ModifyEvent e) {
-        confDataFilenameUpdated();
-      }
-    });
-
-    Label lbl4 = new Label(container, SWT.NONE);
-    lbl4.setText("Configuration output directory:");
-
-    confOutputDirectoryText = new Text(container, SWT.BORDER);
-    confOutputDirectoryText.setText(".");
-    confOutputDirectoryText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-                                                       true, false, 1, 1));
-
     /* Note, it must stay after the creation of the text fields. */
     configurationTemplatesCombo.addModifyListener(new ModifyListener() {
       public void modifyText(ModifyEvent e) {
         Element processor = getSelectedTemplate();
         String basefilename = processor.getChildText("basefilename");
         confProjectFilenameText.setText(basefilename.concat(".chcfg"));
-        confDataFilenameText.setText(basefilename.concat(".chxml"));
-        currentTemplatesPath = processor.getChildText("path");
         currentDefaultDataFile = processor.getChildText("default");
-      }
-    });
-    confOutputDirectoryText.addModifyListener(new ModifyListener() {
-      public void modifyText(ModifyEvent e) {
-        confOutputDirectoryUpdated();
       }
     });
 
@@ -169,21 +136,6 @@ public class ConfigurationNewWizardPage extends WizardPage {
   public String getProjectFileName() {
 
     return confProjectFilenameText.getText();
-  }
-
-  public String getDataFileName() {
-
-    return confDataFilenameText.getText();
-  }
-
-  public String getOutputDirName() {
-
-    return confOutputDirectoryText.getText();
-  }
-
-  public String getTemplatesPath() {
-
-    return currentTemplatesPath;
   }
 
   public String getDefaultDataFile() {
@@ -287,52 +239,6 @@ public class ConfigurationNewWizardPage extends WizardPage {
         updateStatus("Configuration project filename extension must be \"chcfg\"");
         return;
       }
-    }
-    updateStatus(null);
-  }
-
-  /**
-   * Checks the content of the confProjectFilenameText field.
-   */
-  private void confDataFilenameUpdated() {
-    String fileName = getDataFileName();
-
-    if (fileName.length() == 0) {
-      updateStatus("File name must be specified");
-      return;
-    }
-    if (fileName.replace('\\', '/').indexOf('/', 1) > 0) {
-      updateStatus("File name must be valid");
-      return;
-    }
-    int dotLoc = fileName.lastIndexOf('.');
-    if (dotLoc != -1) {
-      String ext = fileName.substring(dotLoc + 1);
-      if (ext.equalsIgnoreCase("chxml") == false) {
-        updateStatus("Configuration project filename extension must be \"chxml\"");
-        return;
-      }
-    }
-    updateStatus(null);
-  }
-
-  /**
-   * Checks the content of the confOutputDirectoryText field.
-   */
-  private void confOutputDirectoryUpdated() {
-
-    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-    IPath outputPath = resourceContainer.getFullPath().addTrailingSeparator()
-        .append(getOutputDirName());
-    IResource outputContainer = root.findMember(outputPath);
-
-    if (outputContainer == null) {
-      updateStatus("The directory must exists");
-      return;
-    }
-    if (!(outputContainer instanceof IContainer)) {
-      updateStatus("A directory must be specified");
-      return;
     }
     updateStatus(null);
   }

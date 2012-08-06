@@ -54,9 +54,6 @@ public class ConfigurationNewWizard extends Wizard implements INewWizard {
 
   private String containerName;
   private String projectFileName;
-  private String dataFileName;
-  private String templatesPath;
-  private String outputDirName;
   private String defaultDataFile;
 
   /**
@@ -91,9 +88,6 @@ public class ConfigurationNewWizard extends Wizard implements INewWizard {
 
     containerName = page.getContainerName();
     projectFileName = page.getProjectFileName();
-    dataFileName = page.getDataFileName();
-    templatesPath = page.getTemplatesPath();
-    outputDirName = page.getOutputDirName();
     defaultDataFile = page.getDefaultDataFile();
 
     IRunnableWithProgress op = new IRunnableWithProgress() {
@@ -133,36 +127,20 @@ public class ConfigurationNewWizard extends Wizard implements INewWizard {
       throwCoreException("Container \"" + containerName + "\" does not exist.");
     }
     IContainer container = (IContainer)resource;
-    monitor.beginTask("Creating " + projectFileName, 4);
+    monitor.beginTask("Creating " + projectFileName, 3);
 
     /* Step #1, creates the project file.*/
     final IFile projectFile = container.getFile(new Path(projectFileName));
-    try {
-      InputStream stream = openProjectContentStream(templatesPath,
-                                                    dataFileName,
-                                                    outputDirName);
-      if (projectFile.exists()) {
-        projectFile.setContents(stream, true, true, monitor);
-      } else {
-        projectFile.create(stream, true, monitor);
-      }
-      stream.close();
-    } catch (IOException e) {
-    }
-    monitor.worked(1);
-    
-    /* Step #2, creates the XML data file.*/
-    final IFile dataFile = container.getFile(new Path(dataFileName));
     Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
     IPath path = new Path(defaultDataFile);
     String s;
     try {
       s = FileLocator.toFileURL(FileLocator.find(bundle, path, null)).getFile();
       InputStream stream = new FileInputStream(s);
-      if (dataFile.exists()) {
-        dataFile.setContents(stream, true, true, monitor);
+      if (projectFile.exists()) {
+        projectFile.setContents(stream, true, true, monitor);
       } else {
-        dataFile.create(stream, true, monitor);
+        projectFile.create(stream, true, monitor);
       }
       stream.close();
     } catch (IOException e) {
@@ -183,27 +161,9 @@ public class ConfigurationNewWizard extends Wizard implements INewWizard {
     });
     monitor.worked(1);
 
-    /* Step #4, refreshing local resources.*/
+    /* Step #3, refreshing local resources.*/
     container.refreshLocal(IResource.DEPTH_INFINITE, monitor);
     monitor.worked(1);
-  }
-
-  /**
-   * We will initialize file contents with a sample text.
-   */
-  private InputStream openProjectContentStream(String templatesPath,
-                                               String dataFileName,
-                                               String outputDirName) {
-
-    String contents = "# Automatically generated configuration project file.\n\n" +
-                      "# Templates path in the configuration plugin resources, do not modify.\n" +
-                      "source=" + templatesPath + "\n\n" +
-                      "# XML configuration data file path relative to this configuration file.\n" +
-                      "xmlfile=" + dataFileName + "\n\n" +
-                      "# Output directory path relative to directory containing this configuration\n" +
-                      "# file.\n" +
-                      "output=" + outputDirName + "\n";
-    return new ByteArrayInputStream(contents.getBytes());
   }
 
   private void throwCoreException(String message) throws CoreException {
