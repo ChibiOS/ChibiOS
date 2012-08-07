@@ -71,8 +71,6 @@ public class ConfigurationNewWizardPage extends WizardPage {
 
   /**
    * Constructor for SampleNewWizardPage.
-   * 
-   * @param pageName
    */
   public ConfigurationNewWizardPage(ISelection selection) {
 
@@ -85,6 +83,7 @@ public class ConfigurationNewWizardPage extends WizardPage {
   /**
    * @see IDialogPage#createControl(Composite)
    */
+  @Override
   public void createControl(Composite parent) {
     container = new Composite(parent, SWT.NULL);
     GridLayout layout = new GridLayout();

@@ -15,6 +15,13 @@
             id="org.chibios.tools.eclipse.config.wizards.ConfigurationNewWizard"
             name="ChibiOS/RT Configuration Wizard">
       </wizard>
+      <wizard
+            category="org.chibios.tools.eclipse.config"
+            class="org.chibios.tools.eclipse.config.wizards.NewApplicationProjectWizard"
+            icon="icons/chibios.gif"
+            id="org.chibios.tools.eclipse.config.wizards.NewApplicationProjectWizard"
+            name="ChibiOS/RT New Application Project Wizard">
+      </wizard>
    </extension>
 
    <!-- Registers the file extension .chcfg as an XML type. -->
