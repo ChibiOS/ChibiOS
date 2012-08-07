@@ -162,6 +162,9 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added another STM32F4-Discovery demo using the on-board MEMS, SPI
+  and PWM. Removed MEMS handling from the old demo because code size limits
+  on non-free compilers.
 - NEW: Added configuration wizard plugin under ./tools/eclipse/plugins. This
   first version is able to configure the board files for STM32F0xx, STM32F4xx
   and STM32L1xx.

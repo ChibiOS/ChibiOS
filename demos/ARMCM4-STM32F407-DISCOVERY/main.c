@@ -21,8 +21,6 @@
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
-#include "lis302dl.h"
-#include "chprintf.h"
 
 static void pwmpcb(PWMDriver *pwmp);
 static void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n);
@@ -250,31 +248,14 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Initializes the SPI driver 1 in order to access the MEMS. The signals
-   * are initialized in the board file.
-   * Several LIS302DL registers are then initialized.
-   */
-  spiStart(&SPID1, &spi1cfg);
-  lis302dlWriteRegister(&SPID1, LIS302DL_CTRL_REG1, 0x43);
-  lis302dlWriteRegister(&SPID1, LIS302DL_CTRL_REG2, 0x00);
-  lis302dlWriteRegister(&SPID1, LIS302DL_CTRL_REG3, 0x00);
-
-  /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state, when the button is
    * pressed the test procedure is launched with output on the serial
    * driver 2.
    */
   while (TRUE) {
-    int8_t x, y, z;
-
     if (palReadPad(GPIOA, GPIOA_BUTTON))
       TestThread(&SD2);
-
-    x = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTX);
-    y = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTY);
-    z = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTZ);
-    chprintf((BaseSequentialStream *)&SD2, "%d, %d, %d\r\n", x, y, z);
     chThdSleepMilliseconds(500);
   }
 }
