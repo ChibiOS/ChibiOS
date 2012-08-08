@@ -28,7 +28,12 @@ import org.chibios.tools.eclipse.config.utils.TemplateException;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -117,8 +122,15 @@ public class GenerateFiles extends AbstractHandler {
             e.getMessage());
         return null;
       }
+
+      /* Destination directory refresh.*/
+      IContainer container = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(cfgfilepath).getParent();
+      try {
+    	  container.refreshLocal(IResource.DEPTH_INFINITE, null);
+      } catch (CoreException e) {
+        e.printStackTrace();
+      }
     }
-    /* TODO: refresh output path.*/
     return null;
   }
 }
