@@ -281,11 +281,9 @@ static void i2c_lld_set_opmode(I2CDriver *i2cp) {
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  *
- * @return              Useless value to protect last instruction from
- *                      optimization out.
  * @notapi
  */
-static uint32_t i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
+static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   I2C_TypeDef *dp = i2cp->i2c;
   uint32_t regSR2 = dp->SR2;
   uint32_t event = dp->SR1;
@@ -314,7 +312,7 @@ static uint32_t i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
       /* Starts "read after write" operation, LSB = 1 -> receive.*/
       i2cp->addr |= 0x01;
       dp->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
-      return regSR2;
+      return;
     }
     dp->CR2 &= ~I2C_CR2_ITEVTEN;
     dp->CR1 |= I2C_CR1_STOP;
@@ -325,8 +323,7 @@ static uint32_t i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   }
   /* Clear ADDR flag. */
   if (event & (I2C_SR1_ADDR | I2C_SR1_ADD10))
-    regSR2 = dp->SR2;
-  return regSR2;
+    (void)dp->SR2;
 }
 
 /**
