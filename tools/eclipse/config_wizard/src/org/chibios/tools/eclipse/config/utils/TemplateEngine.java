@@ -20,6 +20,7 @@
 
 package org.chibios.tools.eclipse.config.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -165,9 +166,12 @@ public class TemplateEngine {
     } catch (ParserConfigurationException e) {
       throw new TemplateException(e.getMessage());
     }
-    Document dom1;
+    Document dom1, dom_snippets;
     try {
       dom1 = db.parse(xmldata);
+      java.io.File xmlsnippets = new File(libdir.toString() +
+                                          "/code_snippets.xml");
+      dom_snippets = db.parse(xmlsnippets);
     } catch (SAXException e) {
       throw new TemplateException(e.getMessage());
     } catch (IOException e) {
@@ -176,10 +180,14 @@ public class TemplateEngine {
 
     NodeModel.removeComments(dom1);
     NodeModel.mergeAdjacentText(dom1);
+    NodeModel.removeComments(dom_snippets);
     TemplateNodeModel doc1 = NodeModel.wrap(dom1);
+    NodeModel.mergeAdjacentText(dom_snippets);
+    TemplateNodeModel doc_snippets = NodeModel.wrap(dom_snippets);
 
     HashMap<String, TemplateNodeModel> xmls = new HashMap<String, TemplateNodeModel>();
     xmls.put("doc1", doc1);
+    xmls.put("doc_snippets", doc_snippets);
 
     /* Setting libraries path. */
     HashMap<String, String> libs = new HashMap<String, String>();

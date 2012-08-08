@@ -118,6 +118,7 @@ public class GenerateFiles extends AbstractHandler {
         return null;
       }
     }
+    /* TODO: refresh output path.*/
     return null;
   }
 }

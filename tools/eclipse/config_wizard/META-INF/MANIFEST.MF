@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ChibiOS-RT_Configuration_Support
 Bundle-SymbolicName: org.chibios.tools.eclipse.config;singleton:=true
-Bundle-Version: 1.1.0
+Bundle-Version: 1.2.0
 Bundle-Activator: config_wizard.Activator
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,

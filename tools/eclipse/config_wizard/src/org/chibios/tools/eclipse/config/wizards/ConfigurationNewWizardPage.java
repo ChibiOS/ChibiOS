@@ -122,7 +122,6 @@ public class ConfigurationNewWizardPage extends WizardPage {
       }
     });
 
-    populateWizardPanel();
     initialize();
     setControl(container);
   }
@@ -171,18 +170,9 @@ public class ConfigurationNewWizardPage extends WizardPage {
       container.setEnabled(false);
       updateStatus("Container for the resource not selected.");
     }
-  }
-
-  /**
-   * Fills the wizard configuration panel from XML data.
-   * 
-   * @param configurationTemplateCombo
-   *          the combo box to be populated
-   */
-  private void populateWizardPanel() {
-    String fpath;
 
     /* Retrieving the resource path of the processors.xml file. */
+    String fpath;
     try {
       Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
       IPath path = new Path("resources/gencfg/processors/processors.xml");
@@ -205,10 +195,8 @@ public class ConfigurationNewWizardPage extends WizardPage {
       return;
     }
 
-    /*
-     * Parsing the content of the processors.xml file in order to populate the
-     * panel objects.
-     */
+    /* Parsing the content of the processors.xml file in order to populate the
+       panel objects.*/
     Element root = processorsDocument.getRootElement();
     for (Element processor : root.getChildren("processor")) {
       String name = processor.getChildText("name");
