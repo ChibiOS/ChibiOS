@@ -281,16 +281,19 @@ static void i2c_lld_set_opmode(I2CDriver *i2cp) {
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  *
+ * @return              Useless value to protect last instruction from
+ *                      optimization out.
  * @notapi
  */
-static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
+static uint32_t i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   I2C_TypeDef *dp = i2cp->i2c;
+  uint32_t regSR2 = dp->SR2;
   uint32_t event = dp->SR1;
 
   /* Interrupts are disabled just before dmaStreamEnable() because there
      is no need of interrupts until next transaction begin. All the work is
      done by the DMA.*/
-  switch (I2C_EV_MASK & (event | (dp->SR2 << 16))) {
+  switch (I2C_EV_MASK & (event | (regSR2 << 16))) {
   case I2C_EV5_MASTER_MODE_SELECT:
     dp->DR = i2cp->addr;
     break;
@@ -298,6 +301,8 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
     dp->CR2 &= ~I2C_CR2_ITEVTEN;
     dmaStreamEnable(i2cp->dmarx);
     dp->CR2 |= I2C_CR2_LAST;                 /* Needed in receiver mode. */
+    if (dmaStreamGetTransactionSize(i2cp->dmarx) < 2)
+      dp->CR1 &= ~I2C_CR1_ACK;
     break;
   case I2C_EV6_MASTER_TRA_MODE_SELECTED:
     dp->CR2 &= ~I2C_CR2_ITEVTEN;
@@ -309,7 +314,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
       /* Starts "read after write" operation, LSB = 1 -> receive.*/
       i2cp->addr |= 0x01;
       dp->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
-      return;
+      return regSR2;
     }
     dp->CR2 &= ~I2C_CR2_ITEVTEN;
     dp->CR1 |= I2C_CR1_STOP;
@@ -318,6 +323,10 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   default:
     break;
   }
+  /* Clear ADDR flag. */
+  if (event & (I2C_SR1_ADDR | I2C_SR1_ADD10))
+    regSR2 = dp->SR2;
+  return regSR2;
 }
 
 /**
@@ -721,8 +730,8 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 
 /**
  * @brief   Receives data via the I2C bus as master.
- * @details Number of receiving bytes must be more than 1 because of stm32
- *          hardware restrictions.
+ * @details Number of receiving bytes must be more than 1 on STM32F1x. This is
+ *          hardware restriction.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] addr      slave device address
@@ -748,7 +757,9 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   I2C_TypeDef *dp = i2cp->i2c;
   VirtualTimer vt;
 
+#if defined(STM32F1XX)
   chDbgCheck((rxbytes > 1), "i2c_lld_master_receive_timeout");
+#endif
 
   /* Global timeout for the whole operation.*/
   if (timeout != TIME_INFINITE)
@@ -797,8 +808,8 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
 /**
  * @brief   Transmits data via the I2C bus as master.
- * @details Number of receiving bytes must be 0 or more than 1 because of stm32
- *          hardware restrictions.
+ * @details Number of receiving bytes must be 0 or more than 1 on STM32F1x.
+ *          This is hardware restriction.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] addr      slave device address
@@ -827,8 +838,10 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   I2C_TypeDef *dp = i2cp->i2c;
   VirtualTimer vt;
 
+#if defined(STM32F1XX)
   chDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
              "i2c_lld_master_transmit_timeout");
+#endif
 
   /* Global timeout for the whole operation.*/
   if (timeout != TIME_INFINITE)
