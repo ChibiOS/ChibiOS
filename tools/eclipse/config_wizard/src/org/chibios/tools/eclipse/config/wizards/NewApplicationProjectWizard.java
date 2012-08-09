@@ -2,20 +2,23 @@ package org.chibios.tools.eclipse.config.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.IManagedProject;
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -25,6 +28,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
+@SuppressWarnings("restriction")
 public class NewApplicationProjectWizard extends Wizard implements INewWizard {
 
   private NewApplicationProjectWizardPage page;
@@ -97,67 +101,39 @@ public class NewApplicationProjectWizard extends Wizard implements INewWizard {
    */
   private void doFinish(IProgressMonitor monitor) throws CoreException {
 
+    IWorkspace workspace = ResourcesPlugin.getWorkspace();
+    IWorkspaceRoot root = workspace.getRoot();
+
     monitor.beginTask("Creating " + projectName, 3);
 
     /* Step #1, creates the project file.*/
-    IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-    if (newProject.exists()) {
+    IProject project = root.getProject(projectName);
+    if (project.exists()) {
       monitor.done();
       MessageDialog.openError(getShell(), "Error", "Project " + projectName +
                                                    " already exists in workspace");
       return;
     }
-    
-    IProjectDescription desc = newProject.getWorkspace().newProjectDescription(newProject.getName());
+
+    IProjectDescription desc = project.getWorkspace().newProjectDescription(projectName);
     if (finalProjectPath != null)
       desc.setLocation(new Path(finalProjectPath));
-    CCorePlugin corePlugin = CCorePlugin.getDefault();
-    newProject = corePlugin.createCProject(desc, newProject, null,
-                                           ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
-    IManagedBuildInfo managedBuildInfo = ManagedBuildManager.createBuildInfo(newProject);
-    ManagedCProjectNature.addManagedNature(newProject, null);
-    ManagedCProjectNature.addManagedBuilder(newProject, null);
+    project.create(desc, null);
 
-    IProjectType parentProjectType;
-    try {
-      IManagedProject newManagedProject = ManagedBuildManager
-          .createManagedProject(newProject, ManagedBuildManager.getProjectType(""));
-    }
-    catch (BuildException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    /* Step #2, makes it a CDT project.*/
+    desc = workspace.newProjectDescription(projectName);
+    project = CCorePlugin.getDefault().createCDTProject(desc, project, new NullProgressMonitor());
 
-    return;
-    
-    
-/*    
-    IProjectDescription desc = newProject.getWorkspace().newProjectDescription(newProject.getName());
-    if (finalProjectPath != null)
-      desc.setLocation(new Path(finalProjectPath));
-    try {
-      newProject.create(desc, null);
-      if (!newProject.isOpen()) {
-          newProject.open(null);
-      }
-    } catch (CoreException e) {
-      monitor.done();
-      MessageDialog.openError(getShell(), "Error", "Project " + projectName +
-          " creation failed: " + e.getMessage());
-      return;
-    }
-    monitor.worked(1);*/
-    
-    /* Step #2, adding builders.*/
-/*    desc = newProject.getDescription();
-    String[] build_configs = new String[] {ManagedCProjectNature.BUILDER_ID,
-                                           "org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder"};
-    desc.setBuildConfigs(build_configs);
-    newProject.setDescription(desc, null);*/
-//    CProjectNature.addCNature(newProject, null);
-//    ManagedCProjectNature.addNature(newProject, ManagedCProjectNature.MNG_NATURE_ID, null);
-//    ManagedCProjectNature.addNature(newProject, "org.eclipse.cdt.managedbuilder.core.ScannerConfigNature", null);
-//    ManagedCProjectNature.addManagedBuilder(newProject, null);
-//    monitor.worked(1);
+    ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+    ICProjectDescription cdesc = mngr.createProjectDescription(project, false);
+    ManagedProject mproject = new ManagedProject(cdesc);
+    Configuration cfg = new Configuration(mproject, null, "Default", "Default");
+    IBuilder bld = cfg.getEditableBuilder();
+    bld.setManagedBuildOn(false);
+    CConfigurationData data = cfg.getConfigurationData();
+    cdesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+
+    mngr.setProjectDescription(project, cdesc);
+    monitor.worked(1);
   }
 }
