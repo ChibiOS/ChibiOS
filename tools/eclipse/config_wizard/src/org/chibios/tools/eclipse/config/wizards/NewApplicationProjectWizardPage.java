@@ -203,6 +203,28 @@ public class NewApplicationProjectWizardPage extends WizardPage {
     projectPageUpdated();
   }
 
+  public String getProjectName() {
+
+    return projectNameText.getText();
+  }
+
+  public String getProjectParentPath() {
+
+    return projectParentPathText.getText();
+  }
+
+  public String getFinalProjectPath() {
+
+    if (useCustomPathButton.getSelection())
+      return null;
+    return projectFinalPathText.getText();
+  }
+
+  public String getPlatform() {
+
+    return platformCombo.getText();
+  }
+
   private void projectPageUpdated() {
 
     updateFinalProjectPathText();
