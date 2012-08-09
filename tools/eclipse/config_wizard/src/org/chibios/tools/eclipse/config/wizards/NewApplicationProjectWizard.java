@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -122,7 +121,7 @@ public class NewApplicationProjectWizard extends Wizard implements INewWizard {
 
     /* Step #2, makes it a CDT project.*/
     desc = workspace.newProjectDescription(projectName);
-    project = CCorePlugin.getDefault().createCDTProject(desc, project, new NullProgressMonitor());
+    project = CCorePlugin.getDefault().createCDTProject(desc, project, null);
 
     ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
     ICProjectDescription cdesc = mngr.createProjectDescription(project, false);

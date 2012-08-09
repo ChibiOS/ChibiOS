@@ -162,7 +162,6 @@ public class NewApplicationProjectWizardPage extends WizardPage {
     projectParentPathText.setEnabled(false);
     btnBrowse.setEnabled(false);
 
-
     /* Retrieving the resource path of the processors.xml file. */
     String fpath;
     try {
@@ -201,6 +200,9 @@ public class NewApplicationProjectWizardPage extends WizardPage {
 
     /* Update checks on the fields.*/
     projectPageUpdated();
+    
+    /* Focus on the first editable field.*/
+    projectNameText.setFocus();
   }
 
   public String getProjectName() {
