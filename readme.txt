@@ -101,6 +101,8 @@
 - NEW: Validated CAN driver on STM32F2/F4.
 - Small fixes to the STM32F4 board files.
 - Various documentation fixes and improvements.
+- NEW: I2C workaround allowing to read single byte on STM32 platforms 
+  except F1x.
 
 *** 2.4.1 ***
 - FIX: Fixed inconsistent LPCxxx Internal RC oscillator names (bug 3524138).
