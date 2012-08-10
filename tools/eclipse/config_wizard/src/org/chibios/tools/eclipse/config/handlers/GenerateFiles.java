@@ -31,7 +31,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -98,13 +97,10 @@ public class GenerateFiles extends AbstractHandler {
 
       /* Calculating derived paths. */
       IPath tpath = new Path(templates_path);
-      IPath libpath = new Path("resources/gencfg/lib");
       try {
         Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
         tpath = new Path(FileLocator.toFileURL(
             FileLocator.find(bundle, tpath, null)).getFile());
-        libpath = new Path(FileLocator.toFileURL(
-            FileLocator.find(bundle, libpath, null)).getFile());
       } catch (IOException e) {
         MessageDialog.openInformation(window.getShell(), "Path Error",
             e.getMessage());
@@ -114,7 +110,6 @@ public class GenerateFiles extends AbstractHandler {
       /* Templates execution. */
       try {
         TemplateEngine.process(cfgfilepath.toFile(),
-                               libpath.toFile(),
                                tpath.toFile(),
                                new File(output_path));
       } catch (TemplateException e) {

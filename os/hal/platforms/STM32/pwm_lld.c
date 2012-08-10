@@ -101,13 +101,11 @@ PWMDriver PWMD8;
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  */
-static void serve_interrupt(PWMDriver *pwmp) {
+static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
   uint16_t sr;
 
-  sr  = pwmp->tim->SR;
-  sr &= pwmp->tim->DIER;
-  pwmp->tim->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF |
-                    TIM_SR_CC4IF | TIM_SR_UIF);
+  sr = pwmp->tim->SR & pwmp->tim->DIER;
+  pwmp->tim->SR = ~sr;
   if ((sr & TIM_SR_CC1IF) != 0)
     pwmp->config->channels[0].callback(pwmp);
   if ((sr & TIM_SR_CC2IF) != 0)
@@ -192,7 +190,7 @@ CH_IRQ_HANDLER(STM32_TIM2_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(&PWMD2);
+  pwm_lld_serve_interrupt(&PWMD2);
 
   CH_IRQ_EPILOGUE();
 }
@@ -211,7 +209,7 @@ CH_IRQ_HANDLER(STM32_TIM3_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(&PWMD3);
+  pwm_lld_serve_interrupt(&PWMD3);
 
   CH_IRQ_EPILOGUE();
 }
@@ -230,7 +228,7 @@ CH_IRQ_HANDLER(STM32_TIM4_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(&PWMD4);
+  pwm_lld_serve_interrupt(&PWMD4);
 
   CH_IRQ_EPILOGUE();
 }
@@ -249,7 +247,7 @@ CH_IRQ_HANDLER(STM32_TIM5_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
-  serve_interrupt(&PWMD5);
+  pwm_lld_serve_interrupt(&PWMD5);
 
   CH_IRQ_EPILOGUE();
 }

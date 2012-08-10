@@ -93,15 +93,15 @@ static msg_t Thread1(void *arg) {
     int32_t x, y;
     unsigned i;
 
-    /* Reading MEMS accelerometer X and Y registers.*/
-    xbuf[0] = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTX);
-    ybuf[0] = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTY);
-
     /* Keeping an history of the latest four accelerometer readings.*/
     for (i = 3; i > 0; i--) {
       xbuf[i] = xbuf[i - 1];
       ybuf[i] = ybuf[i - 1];
     }
+
+    /* Reading MEMS accelerometer X and Y registers.*/
+    xbuf[0] = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTX);
+    ybuf[0] = (int8_t)lis302dlReadRegister(&SPID1, LIS302DL_OUTY);
 
     /* Transmitting accelerometer the data over SPI2.*/
     spiSelect(&SPID2);

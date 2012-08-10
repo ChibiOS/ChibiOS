@@ -20,7 +20,6 @@
 
 package org.chibios.tools.eclipse.config.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -28,6 +27,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -43,8 +46,11 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import config_wizard.Activator;
 
 import fmpp.Engine;
 import fmpp.ProcessingException;
@@ -77,8 +83,6 @@ public class TemplateEngine {
    * 
    * @param xmldata
    *          absolute path to XML data file
-   * @param libdir
-   *          absolute path to libraries directory
    * @param sourcedir
    *          absolute path to templates directory
    * @param outputdir
@@ -88,7 +92,6 @@ public class TemplateEngine {
    * @throws ProcessingException
    */
   public static void process(java.io.File xmldata,
-                             java.io.File libdir,
                              java.io.File sourcedir,
                              java.io.File outputdir) throws TemplateException {
 
@@ -104,6 +107,19 @@ public class TemplateEngine {
     err.setColor(DEFAULT_ERROR);
     warn = console.newMessageStream();
     warn.setColor(DEFAULT_WARNING);
+
+    /*
+     * Calculates the path for FTL libraries.
+     */
+    IPath libpath = new Path("resources/gencfg/lib");
+    Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
+    try {
+      libpath = new Path(FileLocator.toFileURL(FileLocator.find(bundle, libpath, null)).getFile());
+    }
+    catch (IOException e1) {
+      err.println(": FTL libraries path not found.");
+      return;
+    }
 
     /*
      * Instantiates the FMPP Settings engine and associates a listener for
@@ -169,8 +185,7 @@ public class TemplateEngine {
     Document dom1, dom_snippets;
     try {
       dom1 = db.parse(xmldata);
-      java.io.File xmlsnippets = new File(libdir.toString() +
-                                          "/code_snippets.xml");
+      java.io.File xmlsnippets = libpath.addTrailingSeparator().append("code_snippets.xml").toFile();
       dom_snippets = db.parse(xmlsnippets);
     } catch (SAXException e) {
       throw new TemplateException(e.getMessage());
@@ -191,7 +206,7 @@ public class TemplateEngine {
 
     /* Setting libraries path. */
     HashMap<String, String> libs = new HashMap<String, String>();
-    libs.put("lib", libdir.toString());
+    libs.put("lib", libpath.toString());
 
     /* Other settings. */
     try {

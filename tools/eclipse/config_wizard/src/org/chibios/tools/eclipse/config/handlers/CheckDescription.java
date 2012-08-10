@@ -33,6 +33,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class CheckDescription extends AbstractHandler {
+
 	/**
 	 * The constructor.
 	 */

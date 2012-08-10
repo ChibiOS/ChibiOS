@@ -25,7 +25,8 @@
    </extension>
 
    <!-- Registers the file extension .chcfg as an XML type. -->
-   <extension point="org.eclipse.core.contenttype.contentTypes">
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
       <file-association
             content-type="org.eclipse.core.runtime.xml"
             file-extensions="chcfg">
@@ -33,7 +34,8 @@
    </extension>
 
    <!-- XML catalog extensions. -->
-   <extension point="org.eclipse.wst.xml.core.catalogContributions">
+   <extension
+         point="org.eclipse.wst.xml.core.catalogContributions">
       <catalogContribution id="default">
          <uri
             name="http://www.chibios.org/xml/schema/boards/stm32f0xx_board.xsd"
@@ -182,6 +184,33 @@
             </command>
          </toolbar>
       </menuContribution>
+   </extension>
+
+   <!-- ChibiOS/RT application generator process type. -->
+   <extension
+         point="org.eclipse.cdt.core.templateProcessTypes">
+      <processType
+            name="ApplicationGeneratorProcessRunner"
+            processRunner="org.chibios.tools.eclipse.config.process.ApplicationGeneratorProcessRunner">
+         <simple
+               name="name"/>
+         <simple
+               name="chibiosLocation"/>
+         <simple
+               name="platform"/>
+      </processType>
+   </extension>
+
+   <!-- Application templates. -->
+   <extension
+         point="org.eclipse.cdt.core.templates">
+      <template
+            filterPattern=".*gcc"
+            id="config_wizard.resources.app_templates.c"
+            isCategory="false"
+            location="resources/app_templates/c/template.xml"
+            projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+      </template>
    </extension>
 
 </plugin>
