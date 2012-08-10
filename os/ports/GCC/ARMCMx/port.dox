@@ -21,7 +21,7 @@
 /**
  * @defgroup ARMCMx ARM Cortex-Mx
  * @details ARM Cortex-Mx port for the GCC compiler.
- 
+ *
  * @section ARMCMx_INTRO Introduction
  * This port supports all the cores implementing the ARMv6-M and ARMv7-M
  * architectures.
