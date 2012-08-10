@@ -78,6 +78,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.4.3 ***
+- NEW: I2C workaround allowing to read single byte on all STM32 platforms 
+  except STM32F1xx.
+
 *** 2.4.2 ***
 - FIX: Fixed problem in STM32 DMA1 stream1 IRQ handler (bug 3538468).
 - FIX: Fixed wrong priority assigned to TIM8 in STM32 ICU driver (bug 3536950).
@@ -101,8 +105,6 @@
 - NEW: Validated CAN driver on STM32F2/F4.
 - Small fixes to the STM32F4 board files.
 - Various documentation fixes and improvements.
-- NEW: I2C workaround allowing to read single byte on STM32 platforms 
-  except F1x.
 
 *** 2.4.1 ***
 - FIX: Fixed inconsistent LPCxxx Internal RC oscillator names (bug 3524138).
