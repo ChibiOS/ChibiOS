@@ -137,7 +137,7 @@ int main(void) {
   static const I2CConfig i2cfg2 = {
       OPMODE_I2C,
       400000,
-      FAST_DUTY_CYCLE_16_9,
+      FAST_DUTY_CYCLE_2,
   };
   i2cStart(&I2CD2, &i2cfg2);
 
