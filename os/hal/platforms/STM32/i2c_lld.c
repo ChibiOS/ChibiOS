@@ -768,7 +768,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   I2C_TypeDef *dp = i2cp->i2c;
   VirtualTimer vt;
 
-#if defined(STM32F1XX)
+#if defined(STM32F1XX_I2C)
   chDbgCheck((rxbytes > 1), "i2c_lld_master_receive_timeout");
 #endif
 
@@ -849,7 +849,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   I2C_TypeDef *dp = i2cp->i2c;
   VirtualTimer vt;
 
-#if defined(STM32F1XX)
+#if defined(STM32F1XX_I2C)
   chDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
              "i2c_lld_master_transmit_timeout");
 #endif
