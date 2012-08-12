@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<location>C:/ChibiStudio/chibios/boards/OLIMEX_STM32_P103</location>
+			<locationURI>CHIBIOS/boards/OLIMEX_STM32_P103</locationURI>
 		</link>
 		<link>
 			<name>os</name>
