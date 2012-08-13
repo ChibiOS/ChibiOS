@@ -47,11 +47,11 @@
  * @brief   Serial over USB buffers size.
  * @details Configuration parameter, the buffer size must be a multiple of
  *          the USB data endpoint maximum packet size.
- * @note    The default is 64 bytes for both the transmission and receive
+ * @note    The default is 256 bytes for both the transmission and receive
  *          buffers.
  */
 #if !defined(SERIAL_USB_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_USB_BUFFERS_SIZE     64
+#define SERIAL_USB_BUFFERS_SIZE     256
 #endif
 /** @} */
 

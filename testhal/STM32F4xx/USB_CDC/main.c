@@ -242,13 +242,14 @@ static const USBEndpointConfig ep1config = {
   0x0000,
   &ep1instate,
   NULL,
+  2,
   NULL
 };
 
 /**
- * @brief   OUT EP2 state.
+ * @brief   IN EP2 state.
  */
-USBOutEndpointState ep2outstate;
+USBInEndpointState ep2instate;
 
 /**
  * @brief   EP2 initialization structure (IN only).
@@ -260,8 +261,9 @@ static const USBEndpointConfig ep2config = {
   NULL,
   0x0010,
   0x0000,
+  &ep2instate,
   NULL,
-  &ep2outstate,
+  1,
   NULL
 };
 
@@ -282,6 +284,7 @@ static const USBEndpointConfig ep3config = {
   0x0040,
   NULL,
   &ep3outstate,
+  0,
   NULL
 };
 

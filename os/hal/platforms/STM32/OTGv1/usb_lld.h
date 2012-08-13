@@ -232,6 +232,12 @@ typedef struct {
   USBOutEndpointState           *out_state;
   /* End of the mandatory fields.*/
   /**
+   * @brief   Determines the space allocated for the TXFIFO as multiples of
+   *          the packet size (@p in_maxsize). Note that zero is interpreted
+   *          as one for simplicity and robustness.
+   */
+  uint16_t                      in_multiplier;
+  /**
    * @brief   Pointer to a buffer for setup packets.
    * @details Setup packets require a dedicated 8-bytes buffer, set this
    *          field to @p NULL for non-control endpoints.

@@ -85,6 +85,7 @@ static const USBEndpointConfig ep0config = {
   0x40,
   &ep0_state.in,
   &ep0_state.out,
+  1,
   ep0setup_buffer
 };
 
@@ -448,31 +449,43 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
  * @notapi
  */
 static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
-  uint32_t n;
 
-  /* Number of bytes remaining in current transaction.*/
-  n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
-  if (n > usbp->epc[ep]->in_maxsize)
-    n = usbp->epc[ep]->in_maxsize;
+  /* The TXFIFO is filled until there is space and data to be transmitted.*/
+  while (TRUE) {
+    uint32_t n;
 
-  if (usbp->epc[ep]->in_state->txqueued) {
-    /* Queue associated.*/
-    otg_fifo_write_from_queue(ep,
-                              usbp->epc[ep]->in_state->mode.queue.txqueue,
-                              n);
+    /* Number of bytes remaining in current transaction.*/
+    n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
+    if (n > usbp->epc[ep]->in_maxsize)
+      n = usbp->epc[ep]->in_maxsize;
+
+    /* Checks if in the TXFIFO there is enough space to accommodate the
+       next packet.*/
+    if (((OTG->ie[ep].DTXFSTS & DTXFSTS_INEPTFSAV_MASK) * 4) < n)
+      return;
+
+    /* Handles the two cases: linear buffer or queue.*/
+    if (usbp->epc[ep]->in_state->txqueued) {
+      /* Queue associated.*/
+      otg_fifo_write_from_queue(ep,
+                                usbp->epc[ep]->in_state->mode.queue.txqueue,
+                                n);
+    }
+    else {
+      /* Linear buffer associated.*/
+      otg_fifo_write_from_buffer(ep,
+                                 usbp->epc[ep]->in_state->mode.linear.txbuf,
+                                 n);
+      usbp->epc[ep]->in_state->mode.linear.txbuf += n;
+    }
+    usbp->epc[ep]->in_state->txcnt += n;
+
+    /* Interrupt disabled on transaction end.*/
+    if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize) {
+      OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
+      return;
+    }
   }
-  else {
-    /* Linear buffer associated.*/
-    otg_fifo_write_from_buffer(ep,
-                               usbp->epc[ep]->in_state->mode.linear.txbuf,
-                               n);
-    usbp->epc[ep]->in_state->mode.linear.txbuf += n;
-  }
-  usbp->epc[ep]->in_state->txcnt += n;
-
-  /* Interrupt disabled on transaction end.*/
-  if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize)
-    OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
 }
 
 /**
@@ -650,8 +663,8 @@ void usb_lld_start(USBDriver *usbp) {
        - Full Speed 1.1 PHY.*/
     OTG->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_PHYSEL;
 
-    /* Interrupt on TXFIFOs empty.*/
-    OTG->GAHBCFG = GAHBCFG_PTXFELVL | GAHBCFG_TXFELVL;
+    /* Interrupts on TXFIFOs half empty.*/
+    OTG->GAHBCFG = 0;
 
     /* 48MHz 1.1 PHY.*/
     OTG->DCFG = 0x02200000 |  DCFG_PFIVL(0) | DCFG_DSPD_FS11;
@@ -806,6 +819,8 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   if (usbp->epc[ep]->in_cb != NULL) {
     /* FIFO allocation for the IN endpoint.*/
     fsize = usbp->epc[ep]->in_maxsize / 4;
+    if (usbp->epc[ep]->in_multiplier > 1)
+      fsize *= usbp->epc[ep]->in_multiplier;
     OTG->DIEPTXF[ep - 1] = DIEPTXF_INEPTXFD(fsize) |
                            DIEPTXF_INEPTXSA(otg_ram_alloc(usbp, fsize));
     otg_txfifo_flush(ep);
