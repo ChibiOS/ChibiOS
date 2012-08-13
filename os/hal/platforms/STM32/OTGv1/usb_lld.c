@@ -454,6 +454,12 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
   while (TRUE) {
     uint32_t n;
 
+    /* Interrupt disabled on transaction end.*/
+    if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize) {
+      OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
+      return;
+    }
+
     /* Number of bytes remaining in current transaction.*/
     n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
     if (n > usbp->epc[ep]->in_maxsize)
@@ -479,12 +485,6 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
       usbp->epc[ep]->in_state->mode.linear.txbuf += n;
     }
     usbp->epc[ep]->in_state->txcnt += n;
-
-    /* Interrupt disabled on transaction end.*/
-    if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize) {
-      OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
-      return;
-    }
   }
 }
 
