@@ -354,8 +354,6 @@ void usbDisableEndpointsI(USBDriver *usbp) {
 
 /**
  * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
  * @post    The endpoint is ready for @p usbStartReceiveI().
  * @note    This function can be called both in ISR and thread context.
  *
@@ -379,8 +377,6 @@ void usbPrepareReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
 
 /**
  * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
  * @post    The endpoint is ready for @p usbStartTransmitI().
  * @note    This function can be called both in ISR and thread context.
  * @note    The queue must contain at least the amount of data specified
@@ -407,8 +403,6 @@ void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
 
 /**
  * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
  * @post    The endpoint is ready for @p usbStartReceiveI().
  * @note    This function can be called both in ISR and thread context.
  * @note    The queue must have enough free space to accommodate the
@@ -438,8 +432,6 @@ void usbPrepareQueuedReceive(USBDriver *usbp, usbep_t ep,
 
 /**
  * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @pre     In order to use this function the endpoint must have been
- *          initialized in transaction mode.
  * @post    The endpoint is ready for @p usbStartTransmitI().
  * @note    This function can be called both in ISR and thread context.
  * @note    The transmit transaction size is equal to the data contained

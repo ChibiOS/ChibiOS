@@ -802,6 +802,14 @@ typedef struct {
 /** @} */
 
 /**
+ * @name DTXFSTS register bit definitions.
+ * @{
+ */
+#define DTXFSTS_INEPTFSAV_MASK  (0xFFFF<<0) /**< IN endpoint TxFIFO space
+                                                 available.                 */
+/** @} */
+
+/**
  * @name DOEPCTL register bit definitions.
  * @{
  */
