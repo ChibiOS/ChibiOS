@@ -542,7 +542,7 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
 }
 
 /*===========================================================================*/
-/* Driver interrupt handlers.                                                */
+/* Driver interrupt handlers and threads.                                    */
 /*===========================================================================*/
 
 #if STM32_USB_USE_OTG1 || defined(__DOXYGEN__)
@@ -561,28 +561,26 @@ CH_IRQ_HANDLER(STM32_OTG1_HANDLER) {
   CH_IRQ_PROLOGUE();
 
   sts = OTG->GINTSTS & OTG->GINTMSK;
+  OTG->GINTSTS = sts;
 
   /* Reset interrupt handling.*/
   if (sts & GINTSTS_USBRST) {
     _usb_reset(usbp);
     _usb_isr_invoke_event_cb(usbp, USB_EVENT_RESET);
-    OTG->GINTSTS = GINTSTS_USBRST;
   }
 
   /* Enumeration done.*/
   if (sts & GINTSTS_ENUMDNE) {
     (void)OTG->DSTS;
-    OTG->GINTSTS = GINTSTS_ENUMDNE;
   }
 
   /* SOF interrupt handling.*/
   if (sts & GINTSTS_SOF) {
     _usb_isr_invoke_sof_cb(usbp);
-    OTG->GINTSTS = GINTSTS_SOF;
   }
 
   /* RX FIFO not empty handling.*/
-  if (sts & GINTMSK_RXFLVLM) {
+  if (sts & GINTSTS_RXFLVL) {
     otg_rxfifo_handler(usbp);
   }
 
