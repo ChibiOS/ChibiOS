@@ -58,7 +58,7 @@
  */
 #define STM32_ADC_USE_ADC1                  TRUE
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
-#define STM32_ADC_ADC1_IRQ_PRIORITY         5
+#define STM32_ADC_ADC1_IRQ_PRIORITY         6
 
 /*
  * CAN driver system settings.
@@ -103,12 +103,12 @@
 #define STM32_I2C_USE_I2C1                  FALSE
 #define STM32_I2C_USE_I2C2                  FALSE
 #define STM32_I2C_USE_I2C3                  FALSE
-#define STM32_I2C_I2C1_IRQ_PRIORITY         10
-#define STM32_I2C_I2C2_IRQ_PRIORITY         10
-#define STM32_I2C_I2C3_IRQ_PRIORITY         10
-#define STM32_I2C_I2C1_DMA_PRIORITY         1
-#define STM32_I2C_I2C2_DMA_PRIORITY         1
-#define STM32_I2C_I2C3_DMA_PRIORITY         1
+#define STM32_I2C_I2C1_IRQ_PRIORITY         5
+#define STM32_I2C_I2C2_IRQ_PRIORITY         5
+#define STM32_I2C_I2C3_IRQ_PRIORITY         5
+#define STM32_I2C_I2C1_DMA_PRIORITY         3
+#define STM32_I2C_I2C2_DMA_PRIORITY         3
+#define STM32_I2C_I2C3_DMA_PRIORITY         3
 #define STM32_I2C_I2C1_DMA_ERROR_HOOK()     chSysHalt()
 #define STM32_I2C_I2C2_DMA_ERROR_HOOK()     chSysHalt()
 #define STM32_I2C_I2C3_DMA_ERROR_HOOK()     chSysHalt()
