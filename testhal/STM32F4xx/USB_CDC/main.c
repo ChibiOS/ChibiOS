@@ -411,22 +411,6 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
   (void)argv;
@@ -436,7 +420,7 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chSequentialStreamWrite(&SDU1, buf, sizeof buf);
+    chSequentialStreamWrite(&SDU1, buf, sizeof buf - 1);
   }
   chprintf(chp, "\r\n\nstopped\r\n");
 }
