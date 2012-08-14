@@ -394,7 +394,7 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
   chThdWait(tp);
 }
 
-static void cmd_usbblast(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   static uint8_t buf[] =
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -431,7 +431,7 @@ static void cmd_usbblast(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;
   if (argc > 0) {
-    chprintf(chp, "Usage: usbblast\r\n");
+    chprintf(chp, "Usage: write\r\n");
     return;
   }
 
@@ -445,7 +445,7 @@ static const ShellCommand commands[] = {
   {"mem", cmd_mem},
   {"threads", cmd_threads},
   {"test", cmd_test},
-  {"usbblast", cmd_usbblast},
+  {"write", cmd_write},
   {NULL, NULL}
 };
 

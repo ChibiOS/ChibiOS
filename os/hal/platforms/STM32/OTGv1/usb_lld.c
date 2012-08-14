@@ -138,6 +138,7 @@ static void otg_disable_ep(void) {
     OTG->oe[i].DOEPTSIZ = 0;
     OTG->oe[i].DOEPINT = 0xFFFFFFFF;
   }
+  OTG->DAINTMSK = DAINTMSK_OEPM(0) | DAINTMSK_IEPM(0);
 }
 
 static void otg_rxfifo_flush(void) {
@@ -699,7 +700,10 @@ void usb_lld_start(USBDriver *usbp) {
 void usb_lld_stop(USBDriver *usbp) {
 
   /* If in ready state then disables the USB clock.*/
-  if (usbp->state == USB_STOP) {
+  if (usbp->state != USB_STOP) {
+    OTG->DAINTMSK = 0;
+    OTG->GCCFG    = 0;
+
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
       nvicDisableVector(STM32_OTG1_NUMBER);
@@ -707,7 +711,6 @@ void usb_lld_stop(USBDriver *usbp) {
     }
 #endif
   }
-  OTG->GCCFG = 0;
 }
 
 /**
@@ -809,10 +812,14 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 
   /* OUT endpoint activation or deactivation.*/
   OTG->oe[ep].DOEPTSIZ = 0;
-  if (usbp->epc[ep]->out_cb != NULL)
+  if (usbp->epc[ep]->out_cb != NULL) {
     OTG->oe[ep].DOEPCTL = ctl | DOEPCTL_MPSIZ(usbp->epc[ep]->out_maxsize);
-  else
+    OTG->DAINTMSK |= DAINTMSK_OEPM(ep);
+  }
+  else {
     OTG->oe[ep].DOEPCTL &= ~DOEPCTL_USBAEP;
+    OTG->DAINTMSK &= ~DAINTMSK_OEPM(ep);
+  }
 
   /* IN endpoint activation or deactivation.*/
   OTG->ie[ep].DIEPTSIZ = 0;
@@ -828,11 +835,13 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
     OTG->ie[ep].DIEPCTL = ctl |
                           DIEPCTL_TXFNUM(ep) |
                           DIEPCTL_MPSIZ(usbp->epc[ep]->in_maxsize);
+    OTG->DAINTMSK |= DAINTMSK_IEPM(ep);
   }
   else {
     OTG->DIEPTXF[ep - 1] = 0x02000400; /* Reset value.*/
     otg_txfifo_flush(ep);
     OTG->ie[ep].DIEPCTL &= ~DIEPCTL_USBAEP;
+    OTG->DAINTMSK &= ~DAINTMSK_IEPM(ep);
   }
 }
 
