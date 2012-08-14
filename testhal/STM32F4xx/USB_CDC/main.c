@@ -421,7 +421,9 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
     chSequentialStreamWrite(&SDU1, buf, sizeof buf - 1);
+    palTogglePad(GPIOD, GPIOD_LED4);
   }
+  palClearPad(GPIOD, GPIOD_LED4);
   chprintf(chp, "\r\n\nstopped\r\n");
 }
 
@@ -451,10 +453,13 @@ static msg_t Thread1(void *arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (TRUE) {
+    systime_t time;
+
+    time = USBD1.state == USB_ACTIVE ? 250 : 500;
     palClearPad(GPIOD, GPIOD_LED6);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(time);
     palSetPad(GPIOD, GPIOD_LED6);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(time);
   }
 }
 
