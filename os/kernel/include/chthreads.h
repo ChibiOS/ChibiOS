@@ -270,11 +270,12 @@ typedef msg_t (*tfunc_t)(void *);
 
 /**
  * @brief   Verifies if the current thread has a termination request pending.
+ * @note    This function can be called in any context.
  *
- * @retval TRUE         termination request pended.
- * @retval FALSE        termination request not pended.
+ * @retval TRUE         termination request pending.
+ * @retval FALSE        termination request not pending.
  *
- * @api
+ * @special
  */
 #define chThdShouldTerminate() (currp->p_flags & THD_TERMINATE)
 
