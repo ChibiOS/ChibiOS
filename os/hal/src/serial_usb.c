@@ -368,12 +368,10 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
     chSysUnlockFromIsr();
 
     n = (n / maxsize) * maxsize;
-    usbPrepareQueuedReceive(usbp,
-                            USB_CDC_DATA_AVAILABLE_EP,
-                            &sdup->iqueue, n);
+    usbPrepareQueuedReceive(usbp, ep, &sdup->iqueue, n);
 
     chSysLockFromIsr();
-    usbStartReceiveI(usbp, USB_CDC_DATA_AVAILABLE_EP);
+    usbStartReceiveI(usbp, ep);
   }
 
   chSysUnlockFromIsr();
