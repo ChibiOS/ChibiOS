@@ -324,16 +324,20 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
 }
 
 /*
+ * USB driver configuration.
+ */
+static const USBConfig usbcfg = {
+  usb_event,
+  get_descriptor,
+  sduRequestsHook,
+  NULL
+};
+
+/*
  * Serial over USB driver configuration.
  */
 static const SerialUSBConfig serusbcfg = {
-  &USBD1,
-  {
-    usb_event,
-    get_descriptor,
-    sduRequestsHook,
-    NULL
-  }
+  &USBD1
 };
 
 /*===========================================================================*/
@@ -480,12 +484,19 @@ int main(void) {
   chSysInit();
 
   /*
+   * Initializes a serial-over-USB CDC driver.
+   */
+  sduObjectInit(&SDU1);
+  sduStart(&SDU1, &serusbcfg);
+
+  /*
    * Activates the USB driver and then the USB bus pull-up on D+.
+   * Note, a delay is inserted in order to not have to disconnect the cable
+   * after a reset.
    */
   usbDisconnectBus(serusbcfg.usbp);
   chThdSleepMilliseconds(1000);
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+  usbStart(&USBD1, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
 
   /*

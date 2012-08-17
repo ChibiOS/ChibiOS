@@ -92,10 +92,6 @@ typedef struct {
    * @brief   USB driver to use.
    */
   USBDriver                 *usbp;
-  /**
-   * @brief   USB driver configuration structure.
-   */
-  USBConfig                 usb_config;
 } SerialUSBConfig;
 
 /**

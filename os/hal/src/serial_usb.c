@@ -223,7 +223,6 @@ void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
   config->usbp->param = sdup;
   sdup->state = SDU_READY;
   chSysUnlock();
-  usbStart(config->usbp, &config->usb_config);
 }
 
 /**
@@ -245,7 +244,6 @@ void sduStop(SerialUSBDriver *sdup) {
               "invalid state");
   sdup->state = SDU_STOP;
   chSysUnlock();
-  usbStop(sdup->config->usbp);
 }
 
 /**
@@ -322,12 +320,23 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
        so it is safe to transmit without a check.*/
     chSysUnlockFromIsr();
 
-    usbPrepareQueuedTransmit(usbp,
-                             USB_CDC_DATA_REQUEST_EP,
-                             &sdup->oqueue, n);
+    usbPrepareQueuedTransmit(usbp, ep, &sdup->oqueue, n);
 
     chSysLockFromIsr();
-    usbStartTransmitI(usbp, USB_CDC_DATA_REQUEST_EP);
+    usbStartTransmitI(usbp, ep);
+  }
+  else if (!(usbp->epc[ep]->in_state->txsize &
+            (usbp->epc[ep]->in_maxsize - 1))) {
+    /* Transmit zero sized packet in case the last one has maximum allowed
+       size. Otherwise the recipient may expect more data coming soon and
+       not return buffered data to app. See section 5.8.3 Bulk Transfer
+       Packet Size Constraints of the USB Specification document.*/
+    chSysUnlockFromIsr();
+
+    usbPrepareQueuedTransmit(usbp, ep, &sdup->oqueue, 0);
+
+    chSysLockFromIsr();
+    usbStartTransmitI(usbp, ep);
   }
 
   chSysUnlockFromIsr();
