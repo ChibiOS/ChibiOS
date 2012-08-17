@@ -75,6 +75,39 @@
 #define STM32_USB_OTG1_RX_FIFO_SIZE         512
 #endif
 
+/**
+ * @brief   Dedicated data pump thread priority.
+ */
+#if !defined(STM32_USB_THREAD_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_USB_THREAD_PRIORITY           LOWPRIO
+#endif
+
+/**
+ * @brief   Dedicated data pump thread stack size.
+ */
+#if !defined(STM32_USB_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
+#define STM32_USB_THREAD_STACK_SIZE         128
+#endif
+
+/**
+ * @brief   Exception priority level during TXFIFOs operations.
+ * @note    Because an undocumented silicon behavior the operation of
+ *          copying a packet into a TXFIFO must not be interrupted by
+ *          any other operation on the OTG peripheral.
+ *          This parameter represents the priority mask during copy
+ *          operations. The default value only allows to call USB
+ *          functions from callbacks invoked from USB ISR handlers.
+ *          If you need to invoke USB functions from other handlers
+ *          then raise this priority mast to the same level of the
+ *          handler you need to use.
+ * @note    The value zero means disabled, when disabled calling USB
+ *          functions is only safe from thread level or from USB
+ *          callbacks.
+ */
+#if !defined(STM32_USB_FIFO_FILL_PRIORITY_MASK) || defined(__DOXYGEN__)
+#define STM32_USB_FIFO_FILL_PRIORITY_MASK   0
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -341,6 +374,22 @@ struct USBDriver {
    * @brief   Pointer to the next address in the packet memory.
    */
   uint32_t                      pmnext;
+  /**
+   * @brief   Mask of TXFIFOs to be filled by the pump thread.
+   */
+  uint32_t                      txpending;
+  /**
+   * @brief   Pointer to the thread.
+   */
+  Thread                        *thd_ptr;
+  /**
+   * @brief   Pointer to the thread when it is sleeping or @p NULL.
+   */
+  Thread                        *thd_wait;
+  /**
+   * @brief   Working area for the dedicated data pump thread;
+   */
+  WORKING_AREA(wa_pump, STM32_USB_THREAD_STACK_SIZE);
 };
 
 /*===========================================================================*/

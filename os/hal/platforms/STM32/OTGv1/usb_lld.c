@@ -282,11 +282,12 @@ static void otg_fifo_write_from_queue(usbep_t ep,
   }
 
   /* Updating queue.*/
-  chSysLockFromIsr();
+  chSysLock();
   oqp->q_counter += n;
   while (notempty(&oqp->q_waiting))
     chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
-  chSysUnlockFromIsr();
+  chSchRescheduleS();
+  chSysUnlock();
 }
 
 /**
@@ -391,11 +392,12 @@ static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
   }
 
   /* Updating queue.*/
-  chSysLockFromIsr();
+  chSysLock();
   iqp->q_counter += n;
   while (notempty(&iqp->q_waiting))
     chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
-  chSysUnlockFromIsr();
+  chSchRescheduleS();
+  chSysUnlock();
 }
 
 /**
@@ -449,17 +451,15 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
  *
  * @notapi
  */
-static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
+static bool_t otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
 
   /* The TXFIFO is filled until there is space and data to be transmitted.*/
   while (TRUE) {
     uint32_t n;
 
-    /* Interrupt disabled on transaction end.*/
-    if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize) {
-      OTG->DIEPEMPMSK &= ~DIEPEMPMSK_INEPTXFEM(ep);
-      return;
-    }
+    /* Transaction end condition.*/
+    if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize)
+      return TRUE;
 
     /* Number of bytes remaining in current transaction.*/
     n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
@@ -469,8 +469,11 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     /* Checks if in the TXFIFO there is enough space to accommodate the
        next packet.*/
     if (((OTG->ie[ep].DTXFSTS & DTXFSTS_INEPTFSAV_MASK) * 4) < n)
-      return;
+      return FALSE;
 
+#if STM32_USB_FIFO_FILL_PRIORITY_MASK
+    __set_BASEPRI(CORTEX_PRIORITY_MASK(STM32_USB_FIFO_FILL_PRIORITY_MASK));
+#endif
     /* Handles the two cases: linear buffer or queue.*/
     if (usbp->epc[ep]->in_state->txqueued) {
       /* Queue associated.*/
@@ -487,6 +490,9 @@ static void otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     }
     usbp->epc[ep]->in_state->txcnt += n;
   }
+#if STM32_USB_FIFO_FILL_PRIORITY_MASK
+  __set_BASEPRI(0);
+#endif
 }
 
 /**
@@ -505,13 +511,20 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   if (epint & DIEPINT_TOC) {
     /* Timeouts not handled yet, not sure how to handle.*/
   }
-  if (epint & DIEPINT_XFRC) {
+  if ((epint & DIEPINT_XFRC) && (OTG->DIEPMSK & DIEPMSK_XFRCM)) {
     /* Transmit transfer complete.*/
     _usb_isr_invoke_in_cb(usbp, ep);
   }
   if ((epint & DIEPINT_TXFE) && (OTG->DIEPEMPMSK & DIEPEMPMSK_INEPTXFEM(ep))) {
-    /* TX FIFO empty or emptying.*/
-    otg_txfifo_handler(usbp, ep);
+    /* The thread is made ready, it will be scheduled on ISR exit.*/
+    chSysLockFromIsr();
+    usbp->txpending |= (1 << ep);
+    OTG->DIEPEMPMSK &= ~(1 << ep);
+    if (usbp->thd_wait != NULL) {
+      chThdResumeI(usbp->thd_wait);
+      usbp->thd_wait = NULL;
+    }
+    chSysUnlockFromIsr();
   }
 }
 
@@ -529,13 +542,13 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
   /* Resets all EP IRQ sources.*/
   OTG->oe[ep].DOEPINT = 0xFFFFFFFF;
 
-  if (epint & DOEPINT_STUP) {
+  if ((epint & DOEPINT_STUP) && (OTG->DOEPMSK & DOEPMSK_STUPM)) {
     /* Setup packets handling, setup packets are handled using a
        specific callback.*/
     _usb_isr_invoke_setup_cb(usbp, ep);
 
   }
-  if (epint & DOEPINT_XFRC) {
+  if ((epint & DOEPINT_XFRC) && (OTG->DOEPMSK & DOEPMSK_XFRCM)) {
     /* Receive transfer complete.*/
     _usb_isr_invoke_out_cb(usbp, ep);
   }
@@ -544,6 +557,61 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
 /*===========================================================================*/
 /* Driver interrupt handlers and threads.                                    */
 /*===========================================================================*/
+
+static msg_t usb_lld_pump(void *p) {
+  USBDriver *usbp = (USBDriver *)p;
+
+  chRegSetThreadName("usb_lld_pump");
+  chSysLock();
+  while (TRUE) {
+    usbep_t ep;
+    uint32_t epmask;
+
+    /* Nothing to do, going to sleep.*/
+    if ((usbp->state == USB_STOP) ||
+        ((usbp->txpending == 0) && !(OTG->GINTSTS & GINTSTS_RXFLVL))) {
+      OTG->GINTMSK |= GINTMSK_RXFLVLM;
+      usbp->thd_wait = chThdSelf();
+      chSchGoSleepS(THD_STATE_SUSPENDED);
+    }
+    chSysUnlock();
+
+    /* Checks if there are TXFIFOs to be filled.*/
+    for (ep = 0; ep <= USB_MAX_ENDPOINTS; ep++) {
+
+      /* Empties the RX FIFO.*/
+      while (OTG->GINTSTS & GINTSTS_RXFLVL) {
+        otg_rxfifo_handler(usbp);
+      }
+
+      epmask = (1 << ep);
+      if (usbp->txpending & epmask) {
+        chSysLock();
+        /* USB interrupts are globally *suspended* because the peripheral
+           does not allow any interference during the TX FIFO filling
+           operation.
+           Synopsys document: DesignWare Cores USB 2.0 Hi-Speed On-The-Go (OTG)
+             "The application has to finish writing one complete packet before
+              switching to a different channel/endpoint FIFO. Violating this
+              rule results in an error.".*/
+        OTG->GAHBCFG &= ~GAHBCFG_GINTMSK;
+        usbp->txpending &= ~epmask;
+        chSysUnlock();
+
+        bool_t done = otg_txfifo_handler(usbp, ep);
+
+        chSysLock();
+        OTG->GAHBCFG |= GAHBCFG_GINTMSK;
+        if (!done)
+          OTG->DIEPEMPMSK |= epmask;
+        chSysUnlock();
+      }
+    }
+    chSysLock();
+  }
+  chSysUnlock();
+  return 0;
+}
 
 #if STM32_USB_USE_OTG1 || defined(__DOXYGEN__)
 #if !defined(STM32_OTG1_HANDLER)
@@ -581,7 +649,17 @@ CH_IRQ_HANDLER(STM32_OTG1_HANDLER) {
 
   /* RX FIFO not empty handling.*/
   if (sts & GINTSTS_RXFLVL) {
-    otg_rxfifo_handler(usbp);
+    /* The interrupt is masked while the thread has control or it would
+       be triggered again.*/
+    OTG->GINTMSK &= ~GINTMSK_RXFLVLM;
+    /* Checks if the thread is waiting for an event.*/
+    if (usbp->thd_wait != NULL) {
+      /* The thread is made ready, it will be scheduled on ISR exit.*/
+      chSysLockFromIsr();
+      chThdResumeI(usbp->thd_wait);
+      usbp->thd_wait = NULL;
+      chSysUnlockFromIsr();
+    }
   }
 
   /* IN/OUT endpoints event handling, timeout and transfer complete events
@@ -623,6 +701,23 @@ void usb_lld_init(void) {
 
   /* Driver initialization.*/
   usbObjectInit(&USBD1);
+
+  USBD1.thd_ptr  = NULL;
+  USBD1.thd_wait = NULL;
+
+  /* Filling the thread working area here because the function
+     @p chThdCreateI() does not do it.*/
+#if CH_DBG_FILL_THREADS
+  {
+    void *wsp = USBD1.wa_pump;
+    _thread_memfill((uint8_t *)wsp,
+                    (uint8_t *)wsp + sizeof(Thread),
+                    CH_THREAD_FILL_VALUE);
+    _thread_memfill((uint8_t *)wsp + sizeof(Thread),
+                    (uint8_t *)wsp + sizeof(USBD1.wa_pump) - sizeof(Thread),
+                    CH_STACK_FILL_VALUE);
+  }
+#endif
 }
 
 /**
@@ -648,6 +743,16 @@ void usb_lld_start(USBDriver *usbp) {
       /* Enables IRQ vector.*/
       nvicEnableVector(STM32_OTG1_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_USB_OTG1_IRQ_PRIORITY));
+
+      /* Creates the hauler threads in a suspended state. Note, it is
+         created only once, the first time @p usbStart() is invoked.*/
+      usbp->txpending = 0;
+      if (usbp->thd_ptr == NULL)
+        usbp->thd_ptr = usbp->thd_wait = chThdCreateI(usbp->wa_pump,
+                                                      sizeof usbp->wa_pump,
+                                                      STM32_USB_THREAD_PRIORITY,
+                                                      usb_lld_pump,
+                                                      usbp);
     }
 #endif
 
@@ -703,8 +808,12 @@ void usb_lld_stop(USBDriver *usbp) {
 
   /* If in ready state then disables the USB clock.*/
   if (usbp->state != USB_STOP) {
-    OTG->DAINTMSK = 0;
-    OTG->GCCFG    = 0;
+
+    usbp->txpending = 0;
+
+    OTG->DAINTMSK   = 0;
+    OTG->GAHBCFG    = 0;
+    OTG->GCCFG      = 0;
 
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
