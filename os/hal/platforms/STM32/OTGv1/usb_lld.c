@@ -761,9 +761,8 @@ CH_IRQ_HANDLER(STM32_OTG2_HANDLER) {
 void usb_lld_init(void) {
 
   /* Driver initialization.*/
-  usbObjectInit(&USBD1);
-
 #if STM32_USB_USE_OTG1
+  usbObjectInit(&USBD1);
   USBD1.thd_ptr  = NULL;
   USBD1.thd_wait = NULL;
   USBD1.otg      = OTG_FS;
@@ -784,6 +783,7 @@ void usb_lld_init(void) {
 #endif
 
 #if STM32_USB_USE_OTG2
+  usbObjectInit(&USBD2);
   USBD2.thd_ptr  = NULL;
   USBD2.thd_wait = NULL;
   USBD2.otg      = OTG_HS;
