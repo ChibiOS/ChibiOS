@@ -612,7 +612,7 @@
  *
  * @api
  */
-#define rccDisableOTG_FS(lp) rccEnableAHB2(RCC_AHB2ENR_OTGFSEN, lp)
+#define rccDisableOTG_FS(lp) rccDisableAHB2(RCC_AHB2ENR_OTGFSEN, lp)
 
 /**
  * @brief   Resets the OTG_FS peripheral.
@@ -637,7 +637,7 @@
  *
  * @api
  */
-#define rccDisableOTG_HS(lp) rccEnableAHB1(RCC_AHB1ENR_OTGHSEN, lp)
+#define rccDisableOTG_HS(lp) rccDisableAHB1(RCC_AHB1ENR_OTGHSEN, lp)
 
 /**
  * @brief   Resets the OTG_HS peripheral.
