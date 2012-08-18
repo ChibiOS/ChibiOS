@@ -830,15 +830,6 @@ void usb_lld_start(USBDriver *usbp) {
       /* Enables IRQ vector.*/
       nvicEnableVector(STM32_OTG1_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_USB_OTG1_IRQ_PRIORITY));
-
-      /* Creates the hauler threads in a suspended state. Note, it is
-         created only once, the first time @p usbStart() is invoked.*/
-      if (usbp->thd_ptr == NULL)
-        usbp->thd_ptr = usbp->thd_wait = chThdCreateI(usbp->wa_pump,
-                                                      sizeof usbp->wa_pump,
-                                                      STM32_USB_THREAD_PRIORITY,
-                                                      usb_lld_pump,
-                                                      usbp);
     }
 #endif
 #if STM32_USB_USE_OTG2
@@ -850,17 +841,17 @@ void usb_lld_start(USBDriver *usbp) {
       /* Enables IRQ vector.*/
       nvicEnableVector(STM32_OTG2_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_USB_OTG2_IRQ_PRIORITY));
-
-      /* Creates the hauler threads in a suspended state. Note, it is
-         created only once, the first time @p usbStart() is invoked.*/
-      if (usbp->thd_ptr == NULL)
-        usbp->thd_ptr = usbp->thd_wait = chThdCreateI(usbp->wa_pump,
-                                                      sizeof usbp->wa_pump,
-                                                      STM32_USB_THREAD_PRIORITY,
-                                                      usb_lld_pump,
-                                                      usbp);
     }
 #endif
+
+    /* Creates the hauler threads in a suspended state. Note, it is
+       created only once, the first time @p usbStart() is invoked.*/
+    if (usbp->thd_ptr == NULL)
+      usbp->thd_ptr = usbp->thd_wait = chThdCreateI(usbp->wa_pump,
+                                                    sizeof usbp->wa_pump,
+                                                    STM32_USB_THREAD_PRIORITY,
+                                                    usb_lld_pump,
+                                                    usbp);
 
     /* - Forced device mode.
        - USB turn-around time = TRDT_VALUE.
@@ -873,11 +864,11 @@ void usb_lld_start(USBDriver *usbp) {
     /* PHY enabled.*/
     otgp->PCGCCTL = 0;
 
-    /* Soft core reset.*/
-    otg_core_reset(otgp);
-
     /* Internal FS PHY activation.*/
     otgp->GCCFG = GCCFG_PWRDWN;
+
+    /* Soft core reset.*/
+    otg_core_reset(otgp);
 
     /* Interrupts on TXFIFOs half empty.*/
     otgp->GAHBCFG = 0;
