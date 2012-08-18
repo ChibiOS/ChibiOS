@@ -603,7 +603,7 @@
  *
  * @api
  */
-#define rccEnableOTG_FS(lp) rccEnableAHB2(RCC_AHB2LPENR_OTGFSLPEN, lp)
+#define rccEnableOTG_FS(lp) rccEnableAHB2(RCC_AHB2ENR_OTGFSEN, lp)
 
 /**
  * @brief   Disables the OTG_FS peripheral clock.
@@ -612,7 +612,7 @@
  *
  * @api
  */
-#define rccDisableOTG_FS(lp) rccEnableAHB2(RCC_AHB2LPENR_OTGFSLPEN, lp)
+#define rccDisableOTG_FS(lp) rccEnableAHB2(RCC_AHB2ENR_OTGFSEN, lp)
 
 /**
  * @brief   Resets the OTG_FS peripheral.
@@ -620,6 +620,31 @@
  * @api
  */
 #define rccResetOTG_FS() rccResetAHB2(RCC_AHB2RSTR_OTGFSRST)
+
+/**
+ * @brief   Enables the OTG_HS peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableOTG_HS(lp) rccEnableAHB1(RCC_AHB1ENR_OTGHSEN, lp)
+
+/**
+ * @brief   Disables the OTG_HS peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableOTG_HS(lp) rccEnableAHB1(RCC_AHB1ENR_OTGHSEN, lp)
+
+/**
+ * @brief   Resets the OTG_HS peripheral.
+ *
+ * @api
+ */
+#define rccResetOTG_HS() rccResetAHB1(RCC_AHB1RSTR_OTGHSRST)
 /** @} */
 
 /**

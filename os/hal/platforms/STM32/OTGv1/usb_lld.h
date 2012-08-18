@@ -40,7 +40,11 @@
 /**
  * @brief   Maximum endpoint address.
  */
+#if !STM32_USB_USE_OTG2 || defined(__DOXYGEN__)
 #define USB_MAX_ENDPOINTS                   3
+#else
+#define USB_MAX_ENDPOINTS                   5
+#endif
 
 /**
  * @brief   The address can be changed immediately upon packet reception.
@@ -53,7 +57,7 @@
 
 /**
  * @brief   OTG1 driver enable switch.
- * @details If set to @p TRUE the support for USB1 is included.
+ * @details If set to @p TRUE the support for OTG_FS is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_USB_USE_OTG1) || defined(__DOXYGEN__)
@@ -61,10 +65,26 @@
 #endif
 
 /**
+ * @brief   OTG2 driver enable switch.
+ * @details If set to @p TRUE the support for OTG_HS is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_USB_USE_OTG2) || defined(__DOXYGEN__)
+#define STM32_USB_USE_OTG2                  TRUE
+#endif
+
+/**
  * @brief   OTG1 interrupt priority level setting.
  */
 #if !defined(STM32_USB_OTG1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_USB_OTG1_IRQ_PRIORITY         14
+#endif
+
+/**
+ * @brief   OTG2 interrupt priority level setting.
+ */
+#if !defined(STM32_USB_OTG2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_USB_OTG2_IRQ_PRIORITY         14
 #endif
 
 /**
@@ -76,14 +96,22 @@
 #endif
 
 /**
- * @brief   Dedicated data pump thread priority.
+ * @brief   OTG2 RX shared FIFO size.
+ * @note    Must be a multiple of 4.
+ */
+#if !defined(STM32_USB_OTG2_RX_FIFO_SIZE) || defined(__DOXYGEN__)
+#define STM32_USB_OTG2_RX_FIFO_SIZE         512
+#endif
+
+/**
+ * @brief   Dedicated data pump threads priority.
  */
 #if !defined(STM32_USB_THREAD_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_USB_THREAD_PRIORITY           LOWPRIO
 #endif
 
 /**
- * @brief   Dedicated data pump thread stack size.
+ * @brief   Dedicated data pump threads stack size.
  */
 #if !defined(STM32_USB_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
 #define STM32_USB_THREAD_STACK_SIZE         128
@@ -116,7 +144,11 @@
 #error "OTG1 not present in the selected device"
 #endif
 
-#if !STM32_USB_USE_OTG1
+#if STM32_USB_USE_OTG2 && !STM32_HAS_OTG2
+#error "OTG2 not present in the selected device"
+#endif
+
+#if !STM32_USB_USE_OTG1 && !STM32_USB_USE_OTG2
 #error "USB driver activated but no USB peripheral assigned"
 #endif
 
@@ -125,8 +157,17 @@
 #error "Invalid IRQ priority assigned to OTG1"
 #endif
 
+#if STM32_USB_USE_OTG2 &&                                                \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_USB_OTG2_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to OTG2"
+#endif
+
 #if (STM32_USB_OTG1_RX_FIFO_SIZE & 3) != 0
-#error "RX FIFO size must be a multiple of 4"
+#error "OTG1 RX FIFO size must be a multiple of 4"
+#endif
+
+#if (STM32_USB_OTG2_RX_FIFO_SIZE & 3) != 0
+#error "OTG2 RX FIFO size must be a multiple of 4"
 #endif
 
 #if defined(STM32F4XX) || defined(STM32F2XX)
@@ -371,6 +412,10 @@ struct USBDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
+   * @brief   Pointer to the OTG peripheral associated to this driver.
+   */
+  stm32_otg_t                   *otg;
+  /**
    * @brief   Pointer to the next address in the packet memory.
    */
   uint32_t                      pmnext;
@@ -418,14 +463,14 @@ struct USBDriver {
  *
  * @api
  */
-#define usb_lld_connect_bus(usbp) (OTG->GCCFG |= GCCFG_VBUSBSEN)
+#define usb_lld_connect_bus(usbp) (usbp->otg->GCCFG |= GCCFG_VBUSBSEN)
 
 /**
  * @brief   Disconnect the USB device.
  *
  * @api
  */
-#define usb_lld_disconnect_bus(usbp) (OTG->GCCFG &= ~GCCFG_VBUSBSEN)
+#define usb_lld_disconnect_bus(usbp) (usbp->otg->GCCFG &= ~GCCFG_VBUSBSEN)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -433,6 +478,10 @@ struct USBDriver {
 
 #if STM32_USB_USE_OTG1 && !defined(__DOXYGEN__)
 extern USBDriver USBD1;
+#endif
+
+#if STM32_USB_USE_OTG2 && !defined(__DOXYGEN__)
+extern USBDriver USBD2;
 #endif
 
 #ifdef __cplusplus

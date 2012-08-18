@@ -30,15 +30,26 @@
 #define _STM32_OTG_H_
 
 /**
- * @brief   Number of the implemented endpoints.
+ * @brief   Number of the implemented endpoints in OTG_FS.
  * @details This value does not include the endpoint 0 that is always present.
  */
-#define STM32_OTG_ENDOPOINTS_NUMBER     3
+#define STM32_OTG1_ENDOPOINTS_NUMBER    3
 
 /**
- * @brief   FIFO memory size in words.
+ * @brief   Number of the implemented endpoints in OTG_HS.
+ * @details This value does not include the endpoint 0 that is always present.
  */
-#define STM32_OTG_FIFO_MEM_SIZE         384
+#define STM32_OTG2_ENDOPOINTS_NUMBER    5
+
+/**
+ * @brief   OTG_FS FIFO memory size in words.
+ */
+#define STM32_OTG1_FIFO_MEM_SIZE        384
+
+/**
+ * @brief   OTG_HS FIFO memory size in words.
+ */
+#define STM32_OTG2_FIFO_MEM_SIZE        1024
 
 /**
  * @brief   Host channel registers group.
@@ -881,24 +892,24 @@ typedef struct {
 /** @} */
 
 /**
- * @brief   OTG registers block memory address.
+ * @brief   OTG_FS registers block memory address.
  */
 #define OTG_FS_ADDR                 0x50000000
+
+/**
+ * @brief   OTG_HS registers block memory address.
+ */
 #define OTG_HS_ADDR                 0x40040000
 
 /**
- * @brief   Accesses to the OTG registers block.
+ * @brief   Accesses to the OTG_FS registers block.
  */
 #define OTG_FS                      ((stm32_otg_t *)OTG_FS_ADDR)
-#define OTG                         OTG_FS
-#define OTG_HS                      ((stm32_otg_t *)OTG_HS_ADDR)
 
 /**
- * @brief   Returns a FIFO address.
+ * @brief   Accesses to the OTG_HS registers block.
  */
-/*#define OTG1_FIFO(addr, n)          ((volatile uint32_t *)((addr) +         \
-                                                           0x1000 +         \
-                                                           (0x1000 * (n))))*/
+#define OTG_HS                      ((stm32_otg_t *)OTG_HS_ADDR)
 
 #endif /* _STM32_OTG_H_ */
 
