@@ -817,8 +817,6 @@ void usb_lld_init(void) {
 void usb_lld_start(USBDriver *usbp) {
   stm32_otg_t *otgp = usbp->otg;
 
-  usbp->txpending = 0;
-
   if (usbp->state == USB_STOP) {
     /* Clock activation.*/
 #if STM32_USB_USE_OTG1
@@ -844,8 +842,9 @@ void usb_lld_start(USBDriver *usbp) {
     }
 #endif
 
-    /* Creates the hauler threads in a suspended state. Note, it is
+    /* Creates the data pump threads in a suspended state. Note, it is
        created only once, the first time @p usbStart() is invoked.*/
+    usbp->txpending = 0;
     if (usbp->thd_ptr == NULL)
       usbp->thd_ptr = usbp->thd_wait = chThdCreateI(usbp->wa_pump,
                                                     sizeof usbp->wa_pump,
