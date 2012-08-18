@@ -862,25 +862,25 @@ void usb_lld_start(USBDriver *usbp) {
     }
 #endif
 
+    /* - Forced device mode.
+       - USB turn-around time = TRDT_VALUE.
+       - Full Speed 1.1 PHY.*/
+    otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_PHYSEL;
+
+    /* 48MHz 1.1 PHY.*/
+    otgp->DCFG = 0x02200000 | DCFG_DSPD_FS11;
+
+    /* PHY enabled.*/
+    otgp->PCGCCTL = 0;
+
     /* Soft core reset.*/
     otg_core_reset(otgp);
 
     /* Internal FS PHY activation.*/
     otgp->GCCFG = GCCFG_PWRDWN;
 
-    /* - Forced device mode.
-       - USB turn-around time = TRDT_VALUE.
-       - Full Speed 1.1 PHY.*/
-    otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_PHYSEL;
-
     /* Interrupts on TXFIFOs half empty.*/
     otgp->GAHBCFG = 0;
-
-    /* 48MHz 1.1 PHY.*/
-    otgp->DCFG = 0x02200000 |  DCFG_PFIVL(0) | DCFG_DSPD_FS11;
-
-    /* PHY enabled.*/
-    otgp->PCGCCTL = 0;
 
     /* Endpoints re-initialization.*/
     otg_disable_ep(otgp);
