@@ -226,7 +226,7 @@ static void otg_fifo_write_from_buffer(usbep_t ep,
                                        const uint8_t *buf,
                                        size_t n) {
 
-  otg_do_push(OTG_FIFO(ep), (uint8_t *)buf, (n + 3) / 4);
+  otg_do_push(OTG->FIFO[ep], (uint8_t *)buf, (n + 3) / 4);
 }
 
 /**
@@ -244,7 +244,7 @@ static void otg_fifo_write_from_queue(usbep_t ep,
   size_t ntogo;
   volatile uint32_t *fifop;
 
-  fifop = OTG_FIFO(ep);
+  fifop = OTG->FIFO[ep];
 
   ntogo = n;
   while (ntogo > 0) {
@@ -327,7 +327,7 @@ static uint8_t *otg_do_pop(volatile uint32_t *fifop, uint8_t *buf, size_t n) {
 static void otg_fifo_read_to_buffer(uint8_t *buf, size_t n, size_t max) {
   volatile uint32_t *fifop;
 
-  fifop = OTG_FIFO(0);
+  fifop = OTG->FIFO[0];
   n = (n + 3) / 4;
   max = (max + 3) / 4;
   while (n) {
@@ -355,7 +355,7 @@ static void otg_fifo_read_to_queue(InputQueue *iqp, size_t n) {
   size_t ntogo;
   volatile uint32_t *fifop;
 
-  fifop = OTG_FIFO(0);
+  fifop = OTG->FIFO[0];
 
   ntogo = n;
   while (ntogo > 0) {

@@ -171,6 +171,7 @@ typedef struct {
   volatile uint32_t PCGCCTL;    /**< @brief Power and clock gating control
                                             register.                       */
   volatile uint32_t resvdE04[127];
+  volatile uint32_t FIFO[16][1024];
 } stm32_otg_t;
 
 /**
@@ -211,6 +212,11 @@ typedef struct {
                                                  level.                     */
 #define GAHBCFG_TXFELVL         (1U<<7)     /**< Non-periodic TxFIFO empty
                                                  level.                     */
+#define GAHBCFG_DMAEN           (1U<<5)     /**< DMA enable (HS only).      */
+#define GAHBCFG_HBSTLEN_MASK    (15U<<1)    /**< Burst length/type mask (HS
+                                                 only).                     */
+#define GAHBCFG_HBSTLEN(n)      ((n)<<1)    /**< Burst length/type (HS
+                                                 only).                     */
 #define GAHBCFG_GINTMSK         (1U<<0)     /**< Global interrupt mask.     */
 /** @} */
 
@@ -877,19 +883,22 @@ typedef struct {
 /**
  * @brief   OTG registers block memory address.
  */
-#define OTG_ADDR                    0x50000000
+#define OTG_FS_ADDR                 0x50000000
+#define OTG_HS_ADDR                 0x40040000
 
 /**
  * @brief   Accesses to the OTG registers block.
  */
-#define OTG                         ((stm32_otg_t *)OTG_ADDR)
+#define OTG_FS                      ((stm32_otg_t *)OTG_FS_ADDR)
+#define OTG                         OTG_FS
+#define OTG_HS                      ((stm32_otg_t *)OTG_HS_ADDR)
 
 /**
  * @brief   Returns a FIFO address.
  */
-#define OTG_FIFO(n)                 ((volatile uint32_t *)(OTG_ADDR +       \
+/*#define OTG1_FIFO(addr, n)          ((volatile uint32_t *)((addr) +         \
                                                            0x1000 +         \
-                                                           (0x1000 * (n))))
+                                                           (0x1000 * (n))))*/
 
 #endif /* _STM32_OTG_H_ */
 
