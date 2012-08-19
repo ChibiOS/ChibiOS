@@ -61,11 +61,15 @@
 /*
  * OTG units.
  */
-#define STM32_OTG1_HANDLER          OTG_FS_IRQHandler
-#define STM32_OTG2_HANDLER          OTG_HS_IRQHandler
+#define STM32_OTG1_HANDLER          Vector14C
+#define STM32_OTG2_HANDLER          Vector174
+#define STM32_OTG2_EP1OUT_HANDLER   Vector168
+#define STM32_OTG2_EP1IN_HANDLER    Vector16C
 
 #define STM32_OTG1_NUMBER           OTG_FS_IRQn
 #define STM32_OTG2_NUMBER           OTG_HS_IRQn
+#define STM32_OTG2_EP1OUT_NUMBER    OTG_HS_EP1_OUT_IRQn
+#define STM32_OTG2_EP1IN_NUMBER     OTG_HS_EP1_IN_IRQn
 
 /*
  * SDIO unit.

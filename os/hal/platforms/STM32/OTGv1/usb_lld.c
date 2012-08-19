@@ -939,10 +939,7 @@ void usb_lld_reset(USBDriver *usbp) {
   unsigned i;
   stm32_otg_t *otgp = usbp->otg;
 
-  /* Clear the Remote Wake-up Signaling */
-  otgp->DCTL &= ~DCTL_RWUSIG;
-
-  /* Flush the Tx FIFO */
+  /* Flush the Tx FIFO.*/
   otg_txfifo_flush(otgp, 0);
 
   /* All endpoints in NAK mode, interrupts cleared.*/
