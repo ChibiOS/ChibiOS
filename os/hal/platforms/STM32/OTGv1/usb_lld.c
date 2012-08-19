@@ -94,6 +94,22 @@ static const USBEndpointConfig ep0config = {
   ep0setup_buffer
 };
 
+#if STM32_USB_USE_OTG1
+static const stm32_otg_params_t fsparams = {
+  STM32_USB_OTG1_RX_FIFO_SIZE / 4,
+  STM32_OTG1_FIFO_MEM_SIZE,
+  STM32_OTG1_ENDOPOINTS_NUMBER
+};
+#endif
+
+#if STM32_USB_USE_OTG2
+static const stm32_otg_params_t hsparams = {
+  STM32_USB_OTG2_RX_FIFO_SIZE / 4,
+  STM32_OTG2_FIFO_MEM_SIZE,
+  STM32_OTG2_ENDOPOINTS_NUMBER
+};
+#endif
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -110,10 +126,11 @@ static void otg_core_reset(stm32_otg_t *otgp) {
     ;
 }
 
-static void otg_disable_ep(stm32_otg_t *otgp) {
+static void otg_disable_ep(USBDriver *usbp) {
+  stm32_otg_t *otgp = usbp->otg;
   unsigned i;
 
-  for (i = 0; i <= USB_MAX_ENDPOINTS; i++) {
+  for (i = 0; i <= usbp->otgparams->num_endpoints; i++) {
     /* Disable only if enabled because this sentence in the manual:
        "The application must set this bit only if Endpoint Enable is
         already set for this endpoint".*/
@@ -173,7 +190,7 @@ static void otg_txfifo_flush(stm32_otg_t *otgp, uint32_t fifo) {
  */
 static void otg_ram_reset(USBDriver *usbp) {
 
-  usbp->pmnext = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
+  usbp->pmnext = usbp->otgparams->rx_fifo_size;
 }
 
 /**
@@ -189,14 +206,8 @@ static uint32_t otg_ram_alloc(USBDriver *usbp, size_t size) {
 
   next = usbp->pmnext;
   usbp->pmnext += size;
-#if STM32_USB_USE_OTG1
-  chDbgAssert((usbp != &USBD1) || (usbp->pmnext <= STM32_OTG1_FIFO_MEM_SIZE),
-              "otg_fifo_alloc(), #1", "OTG1 FIFO memory overflow");
-#endif
-#if STM32_USB_USE_OTG2
-  chDbgAssert((usbp != &USBD2) || (usbp->pmnext <= STM32_OTG2_FIFO_MEM_SIZE),
-              "otg_fifo_alloc(), #2", "OTG2 FIFO memory overflow");
-#endif
+  chDbgAssert(usbp->pmnext <= usbp->otgparams->otg_ram_size,
+              "otg_fifo_alloc(), #1", "OTG FIFO memory overflow");
   return next;
 }
 
@@ -675,7 +686,7 @@ static msg_t usb_lld_pump(void *p) {
     chSysUnlock();
 
     /* Checks if there are TXFIFOs to be filled.*/
-    for (ep = 0; ep <= USB_MAX_ENDPOINTS; ep++) {
+    for (ep = 0; ep <= usbp->otgparams->num_endpoints; ep++) {
 
       /* Empties the RX FIFO.*/
       while (otgp->GINTSTS & GINTSTS_RXFLVL) {
@@ -763,9 +774,10 @@ void usb_lld_init(void) {
   /* Driver initialization.*/
 #if STM32_USB_USE_OTG1
   usbObjectInit(&USBD1);
-  USBD1.thd_ptr  = NULL;
-  USBD1.thd_wait = NULL;
-  USBD1.otg      = OTG_FS;
+  USBD1.thd_ptr   = NULL;
+  USBD1.thd_wait  = NULL;
+  USBD1.otg       = OTG_FS;
+  USBD1.otgparams = &fsparams;
 
   /* Filling the thread working area here because the function
      @p chThdCreateI() does not do it.*/
@@ -784,9 +796,10 @@ void usb_lld_init(void) {
 
 #if STM32_USB_USE_OTG2
   usbObjectInit(&USBD2);
-  USBD2.thd_ptr  = NULL;
-  USBD2.thd_wait = NULL;
-  USBD2.otg      = OTG_HS;
+  USBD2.thd_ptr   = NULL;
+  USBD2.thd_wait  = NULL;
+  USBD2.otg       = OTG_HS;
+  USBD2.otgparams = &hsparams;
 
   /* Filling the thread working area here because the function
      @p chThdCreateI() does not do it.*/
@@ -873,7 +886,7 @@ void usb_lld_start(USBDriver *usbp) {
     otgp->GAHBCFG = 0;
 
     /* Endpoints re-initialization.*/
-    otg_disable_ep(otgp);
+    otg_disable_ep(usbp);
 
     /* Clear all pending Device Interrupts, only the USB Reset interrupt
        is required initially.*/
@@ -943,7 +956,7 @@ void usb_lld_reset(USBDriver *usbp) {
   otg_txfifo_flush(otgp, 0);
 
   /* All endpoints in NAK mode, interrupts cleared.*/
-  for (i = 0; i <= USB_MAX_ENDPOINTS; i++) {
+  for (i = 0; i <= usbp->otgparams->num_endpoints; i++) {
     otgp->ie[i].DIEPCTL = DIEPCTL_SNAK;
     otgp->oe[i].DOEPCTL = DOEPCTL_SNAK;
     otgp->ie[i].DIEPINT = 0xFF;
@@ -958,7 +971,7 @@ void usb_lld_reset(USBDriver *usbp) {
   otg_ram_reset(usbp);
 
   /* Receive FIFO size initialization, the address is always zero.*/
-  otgp->GRXFSIZ = STM32_USB_OTG1_RX_FIFO_SIZE / 4;
+  otgp->GRXFSIZ = usbp->otgparams->rx_fifo_size;
   otg_rxfifo_flush(otgp);
 
   /* Resets the device address to zero.*/
@@ -1073,7 +1086,7 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
   otg_ram_reset(usbp);
 
   /* Disabling all endpoints.*/
-  otg_disable_ep(usbp->otg);
+  otg_disable_ep(usbp);
 }
 
 /**
