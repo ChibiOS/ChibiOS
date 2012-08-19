@@ -103,6 +103,7 @@ static void otg_core_reset(stm32_otg_t *otgp) {
   /* Wait AHB idle condition.*/
   while ((otgp->GRSTCTL & GRSTCTL_AHBIDL) == 0)
     ;
+  halPolledDelay(12);
   /* Core reset and delay of at least 3 PHY cycles.*/
   otgp->GRSTCTL = GRSTCTL_CSRST;
   while ((otgp->GRSTCTL & GRSTCTL_CSRST) != 0)
@@ -864,7 +865,7 @@ void usb_lld_start(USBDriver *usbp) {
     otgp->PCGCCTL = 0;
 
     /* Internal FS PHY activation.*/
-    otgp->GCCFG = GCCFG_PWRDWN;
+    otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
 
     /* Soft core reset.*/
     otg_core_reset(otgp);
