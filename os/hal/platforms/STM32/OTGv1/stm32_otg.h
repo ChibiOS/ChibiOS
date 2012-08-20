@@ -638,6 +638,9 @@ typedef struct {
 #define DCFG_NZLSOHSK           (1U<<2)     /**< Non-Zero-Length status
                                                  OUT handshake.             */
 #define DCFG_DSPD_MASK          (3U<<0)     /**< Device speed mask.         */
+#define DCFG_DSPD_HS            (0U<<0)     /**< High speed (USB 2.0).      */
+#define DCFG_DSPD_HS_FS         (1U<<0)     /**< High speed (USB 2.0) in FS
+                                                 mode.                      */
 #define DCFG_DSPD_FS11          (3U<<0)     /**< Full speed (USB 1.1
                                                  transceiver clock is 48
                                                  MHz).                      */
