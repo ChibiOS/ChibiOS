@@ -231,17 +231,22 @@ static const USBDescriptor *get_descriptor(USBDriver *usbp,
 static USBInEndpointState ep1instate;
 
 /**
- * @brief   EP1 initialization structure (IN only).
+ * @brief   OUT EP1 state.
+ */
+static USBOutEndpointState ep1outstate;
+
+/**
+ * @brief   EP1 initialization structure (both IN and OUT).
  */
 static const USBEndpointConfig ep1config = {
   USB_EP_MODE_TYPE_BULK,
   NULL,
   sduDataTransmitted,
-  NULL,
+  sduDataReceived,
   0x0040,
-  0x0000,
+  0x0040,
   &ep1instate,
-  NULL,
+  &ep1outstate,
   2,
   NULL
 };
@@ -249,7 +254,7 @@ static const USBEndpointConfig ep1config = {
 /**
  * @brief   IN EP2 state.
  */
-USBInEndpointState ep2instate;
+static USBInEndpointState ep2instate;
 
 /**
  * @brief   EP2 initialization structure (IN only).
@@ -264,27 +269,6 @@ static const USBEndpointConfig ep2config = {
   &ep2instate,
   NULL,
   1,
-  NULL
-};
-
-/**
- * @brief   OUT EP2 state.
- */
-USBOutEndpointState ep3outstate;
-
-/**
- * @brief   EP3 initialization structure (OUT only).
- */
-static const USBEndpointConfig ep3config = {
-  USB_EP_MODE_TYPE_BULK,
-  NULL,
-  NULL,
-  sduDataReceived,
-  0x0000,
-  0x0040,
-  NULL,
-  &ep3outstate,
-  0,
   NULL
 };
 
@@ -306,7 +290,6 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
        must be used.*/
     usbInitEndpointI(usbp, USB_CDC_DATA_REQUEST_EP, &ep1config);
     usbInitEndpointI(usbp, USB_CDC_INTERRUPT_REQUEST_EP, &ep2config);
-    usbInitEndpointI(usbp, USB_CDC_DATA_AVAILABLE_EP, &ep3config);
 
     /* Resetting the state of the CDC subsystem.*/
     sduConfigureHookI(usbp);
@@ -337,7 +320,7 @@ static const USBConfig usbcfg = {
  * Serial over USB driver configuration.
  */
 static const SerialUSBConfig serusbcfg = {
-  &USBD1
+  &USBD2
 };
 
 /*===========================================================================*/
@@ -425,9 +408,9 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
     chSequentialStreamWrite(&SDU1, buf, sizeof buf - 1);
-    palTogglePad(GPIOD, GPIOD_LED4);
+//    palTogglePad(GPIOD, GPIOD_LED4);
   }
-  palClearPad(GPIOD, GPIOD_LED4);
+//  palClearPad(GPIOD, GPIOD_LED4);
   chprintf(chp, "\r\n\nstopped\r\n");
 }
 
@@ -459,10 +442,10 @@ static msg_t Thread1(void *arg) {
   while (TRUE) {
     systime_t time;
 
-    time = USBD1.state == USB_ACTIVE ? 250 : 500;
-    palClearPad(GPIOD, GPIOD_LED6);
+    time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
+    palClearPad(GPIOC, GPIOC_LED);
     chThdSleepMilliseconds(time);
-    palSetPad(GPIOD, GPIOD_LED6);
+    palSetPad(GPIOC, GPIOC_LED);
     chThdSleepMilliseconds(time);
   }
 }
@@ -496,7 +479,7 @@ int main(void) {
    */
   usbDisconnectBus(serusbcfg.usbp);
   chThdSleepMilliseconds(1000);
-  usbStart(&USBD1, &usbcfg);
+  usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
 
   /*

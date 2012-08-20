@@ -89,19 +89,19 @@
 #endif
 
 /**
+ * @brief   Endpoint number for bulk OUT.
+ */
+#if !defined(USB_CDC_DATA_AVAILABLE_EP) || defined(__DOXYGEN__)
+#define USB_CDC_DATA_AVAILABLE_EP       1
+#endif
+/** @} */
+
+/**
  * @brief   Endpoint number for interrupt IN.
  */
 #if !defined(USB_CDC_INTERRUPT_REQUEST_EP) || defined(__DOXYGEN__)
 #define USB_CDC_INTERRUPT_REQUEST_EP    2
 #endif
-
-/**
- * @brief   Endpoint number for bulk OUT.
- */
-#if !defined(USB_CDC_DATA_AVAILABLE_EP) || defined(__DOXYGEN__)
-#define USB_CDC_DATA_AVAILABLE_EP       3
-#endif
-/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
