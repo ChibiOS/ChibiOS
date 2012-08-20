@@ -617,13 +617,13 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
        be triggered again.*/
     otgp->GINTMSK &= ~GINTMSK_RXFLVLM;
     /* Checks if the thread is waiting for an event.*/
+    chSysLockFromIsr();
     if (usbp->thd_wait != NULL) {
       /* The thread is made ready, it will be scheduled on ISR exit.*/
-      chSysLockFromIsr();
       chThdResumeI(usbp->thd_wait);
       usbp->thd_wait = NULL;
-      chSysUnlockFromIsr();
     }
+    chSysUnlockFromIsr();
   }
 
   /* IN/OUT endpoints event handling.*/
