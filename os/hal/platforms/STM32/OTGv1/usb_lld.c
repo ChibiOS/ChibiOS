@@ -114,6 +114,14 @@ static const stm32_otg_params_t hsparams = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void usb_lld_wakeup_pump(USBDriver *usbp) {
+
+  if (usbp->thd_wait != NULL) {
+    chThdResumeI(usbp->thd_wait);
+    usbp->thd_wait = NULL;
+  }
+}
+
 static void otg_core_reset(stm32_otg_t *otgp) {
 
   /* Core reset and delay of at least 3 PHY cycles.*/
@@ -546,10 +554,7 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
     chSysLockFromIsr();
     usbp->txpending |= (1 << ep);
     otgp->DIEPEMPMSK &= ~(1 << ep);
-    if (usbp->thd_wait != NULL) {
-      chThdResumeI(usbp->thd_wait);
-      usbp->thd_wait = NULL;
-    }
+    usb_lld_wakeup_pump(usbp);
     chSysUnlockFromIsr();
   }
 }
@@ -615,14 +620,9 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
   if (sts & GINTSTS_RXFLVL) {
     /* The interrupt is masked while the thread has control or it would
        be triggered again.*/
-    otgp->GINTMSK &= ~GINTMSK_RXFLVLM;
-    /* Checks if the thread is waiting for an event.*/
     chSysLockFromIsr();
-    if (usbp->thd_wait != NULL) {
-      /* The thread is made ready, it will be scheduled on ISR exit.*/
-      chThdResumeI(usbp->thd_wait);
-      usbp->thd_wait = NULL;
-    }
+    otgp->GINTMSK &= ~GINTMSK_RXFLVLM;
+    usb_lld_wakeup_pump(usbp);
     chSysUnlockFromIsr();
   }
 
