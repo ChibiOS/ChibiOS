@@ -114,6 +114,13 @@ static const stm32_otg_params_t hsparams = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Wakes up the pump thread.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @notapi
+ */
 static void usb_lld_wakeup_pump(USBDriver *usbp) {
 
   if (usbp->thd_wait != NULL) {
@@ -122,7 +129,8 @@ static void usb_lld_wakeup_pump(USBDriver *usbp) {
   }
 }
 
-static void otg_core_reset(stm32_otg_t *otgp) {
+static void otg_core_reset(USBDriver *usbp) {
+  stm32_otg_t *otgp = usbp->otg;
 
   /* Core reset and delay of at least 3 PHY cycles.*/
   otgp->GRSTCTL = GRSTCTL_CSRST;
@@ -171,7 +179,8 @@ static void otg_disable_ep(USBDriver *usbp) {
   otgp->DAINTMSK = DAINTMSK_OEPM(0) | DAINTMSK_IEPM(0);
 }
 
-static void otg_rxfifo_flush(stm32_otg_t *otgp) {
+static void otg_rxfifo_flush(USBDriver *usbp) {
+  stm32_otg_t *otgp = usbp->otg;
 
   otgp->GRSTCTL = GRSTCTL_RXFFLSH;
   while ((otgp->GRSTCTL & GRSTCTL_RXFFLSH) != 0)
@@ -180,7 +189,8 @@ static void otg_rxfifo_flush(stm32_otg_t *otgp) {
   halPolledDelay(12);
 }
 
-static void otg_txfifo_flush(stm32_otg_t *otgp, uint32_t fifo) {
+static void otg_txfifo_flush(USBDriver *usbp, uint32_t fifo) {
+  stm32_otg_t *otgp = usbp->otg;
 
   otgp->GRSTCTL = GRSTCTL_TXFNUM(fifo) | GRSTCTL_TXFFLSH;
   while ((otgp->GRSTCTL & GRSTCTL_TXFFLSH) != 0)
@@ -880,7 +890,7 @@ void usb_lld_start(USBDriver *usbp) {
     otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
 
     /* Soft core reset.*/
-    otg_core_reset(otgp);
+    otg_core_reset(usbp);
 
     /* Interrupts on TXFIFOs half empty.*/
     otgp->GAHBCFG = 0;
@@ -953,7 +963,7 @@ void usb_lld_reset(USBDriver *usbp) {
   stm32_otg_t *otgp = usbp->otg;
 
   /* Flush the Tx FIFO.*/
-  otg_txfifo_flush(otgp, 0);
+  otg_txfifo_flush(usbp, 0);
 
   /* All endpoints in NAK mode, interrupts cleared.*/
   for (i = 0; i <= usbp->otgparams->num_endpoints; i++) {
@@ -972,7 +982,7 @@ void usb_lld_reset(USBDriver *usbp) {
 
   /* Receive FIFO size initialization, the address is always zero.*/
   otgp->GRXFSIZ = usbp->otgparams->rx_fifo_size;
-  otg_rxfifo_flush(otgp);
+  otg_rxfifo_flush(usbp);
 
   /* Resets the device address to zero.*/
   otgp->DCFG = (otgp->DCFG & ~DCFG_DAD_MASK) | DCFG_DAD(0);
@@ -1058,7 +1068,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
       fsize *= usbp->epc[ep]->in_multiplier;
     otgp->DIEPTXF[ep - 1] = DIEPTXF_INEPTXFD(fsize) |
                             DIEPTXF_INEPTXSA(otg_ram_alloc(usbp, fsize));
-    otg_txfifo_flush(otgp, ep);
+    otg_txfifo_flush(usbp, ep);
 
     otgp->ie[ep].DIEPCTL = ctl |
                            DIEPCTL_TXFNUM(ep) |
@@ -1067,7 +1077,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   }
   else {
     otgp->DIEPTXF[ep - 1] = 0x02000400; /* Reset value.*/
-    otg_txfifo_flush(otgp, ep);
+    otg_txfifo_flush(usbp, ep);
     otgp->ie[ep].DIEPCTL &= ~DIEPCTL_USBAEP;
     otgp->DAINTMSK &= ~DAINTMSK_IEPM(ep);
   }
