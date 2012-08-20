@@ -93,7 +93,7 @@
 #define GPIOB_SPI2_SCK              10
 #define GPIOB_PIN11                 11
 #define GPIOB_OTG_HS_ID             12
-#define GPIOB_OTG_FS_VBUS           13
+#define GPIOB_OTG_HS_VBUS           13
 #define GPIOB_OTG_HS_DM             14
 #define GPIOB_OTG_HS_DP             15
 
@@ -370,10 +370,10 @@
  * PB9  - I2C1_SDA                  (alternate 0).
  * PB10 - SPI2_SCK                  (alternate 5).
  * PB11 - PIN11                     (input pullup).
- * PB12 - OTG_HS_ID                 (alternate 10).
- * PB13 - OTG_FS_VBUS               (input pulldown).
- * PB14 - OTG_HS_DM                 (alternate 10).
- * PB15 - OTG_HS_DP                 (alternate 10).
+ * PB12 - OTG_HS_ID                 (alternate 12).
+ * PB13 - OTG_HS_VBUS               (input pulldown).
+ * PB14 - OTG_HS_DM                 (alternate 12).
+ * PB15 - OTG_HS_DP                 (alternate 12).
  */
 #define VAL_GPIOB_MODER             (PIN_MODE_OUTPUT(GPIOB_USB_FS_BUSON) |  \
                                      PIN_MODE_INPUT(GPIOB_USB_HS_FAULT) |   \
@@ -388,7 +388,7 @@
                                      PIN_MODE_ALTERNATE(GPIOB_SPI2_SCK) |   \
                                      PIN_MODE_INPUT(GPIOB_PIN11) |          \
                                      PIN_MODE_ALTERNATE(GPIOB_OTG_HS_ID) |  \
-                                     PIN_MODE_INPUT(GPIOB_OTG_FS_VBUS) |    \
+                                     PIN_MODE_INPUT(GPIOB_OTG_HS_VBUS) |    \
                                      PIN_MODE_ALTERNATE(GPIOB_OTG_HS_DM) |  \
                                      PIN_MODE_ALTERNATE(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOB_USB_FS_BUSON) |\
@@ -404,7 +404,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOB_SPI2_SCK) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN11) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOB_OTG_HS_ID) |  \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_OTG_FS_VBUS) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOB_OTG_HS_VBUS) |\
                                      PIN_OTYPE_PUSHPULL(GPIOB_OTG_HS_DM) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_OSPEEDR           (PIN_OSPEED_100M(GPIOB_USB_FS_BUSON) |  \
@@ -420,7 +420,7 @@
                                      PIN_OSPEED_100M(GPIOB_SPI2_SCK) |      \
                                      PIN_OSPEED_100M(GPIOB_PIN11) |         \
                                      PIN_OSPEED_100M(GPIOB_OTG_HS_ID) |     \
-                                     PIN_OSPEED_100M(GPIOB_OTG_FS_VBUS) |   \
+                                     PIN_OSPEED_100M(GPIOB_OTG_HS_VBUS) |   \
                                      PIN_OSPEED_100M(GPIOB_OTG_HS_DM) |     \
                                      PIN_OSPEED_100M(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_PUPDR             (PIN_PUPDR_FLOATING(GPIOB_USB_FS_BUSON) |\
@@ -436,7 +436,7 @@
                                      PIN_PUPDR_FLOATING(GPIOB_SPI2_SCK) |   \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN11) |        \
                                      PIN_PUPDR_FLOATING(GPIOB_OTG_HS_ID) |  \
-                                     PIN_PUPDR_PULLDOWN(GPIOB_OTG_FS_VBUS) |\
+                                     PIN_PUPDR_PULLDOWN(GPIOB_OTG_HS_VBUS) |\
                                      PIN_PUPDR_FLOATING(GPIOB_OTG_HS_DM) |  \
                                      PIN_PUPDR_FLOATING(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_USB_FS_BUSON) |     \
@@ -452,7 +452,7 @@
                                      PIN_ODR_HIGH(GPIOB_SPI2_SCK) |         \
                                      PIN_ODR_HIGH(GPIOB_PIN11) |            \
                                      PIN_ODR_HIGH(GPIOB_OTG_HS_ID) |        \
-                                     PIN_ODR_HIGH(GPIOB_OTG_FS_VBUS) |      \
+                                     PIN_ODR_HIGH(GPIOB_OTG_HS_VBUS) |      \
                                      PIN_ODR_HIGH(GPIOB_OTG_HS_DM) |        \
                                      PIN_ODR_HIGH(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_USB_FS_BUSON, 0) |   \
@@ -467,10 +467,10 @@
                                      PIN_AFIO_AF(GPIOB_I2C1_SDA, 0) |       \
                                      PIN_AFIO_AF(GPIOB_SPI2_SCK, 5) |       \
                                      PIN_AFIO_AF(GPIOB_PIN11, 0) |          \
-                                     PIN_AFIO_AF(GPIOB_OTG_HS_ID, 10) |     \
-                                     PIN_AFIO_AF(GPIOB_OTG_FS_VBUS, 0) |    \
-                                     PIN_AFIO_AF(GPIOB_OTG_HS_DM, 10) |     \
-                                     PIN_AFIO_AF(GPIOB_OTG_HS_DP, 10))
+                                     PIN_AFIO_AF(GPIOB_OTG_HS_ID, 12) |     \
+                                     PIN_AFIO_AF(GPIOB_OTG_HS_VBUS, 0) |    \
+                                     PIN_AFIO_AF(GPIOB_OTG_HS_DM, 12) |     \
+                                     PIN_AFIO_AF(GPIOB_OTG_HS_DP, 12))
 
 /*
  * GPIOC setup:
