@@ -985,7 +985,7 @@ void usb_lld_reset(USBDriver *usbp) {
   /* EP0 initialization, it is a special case.*/
   usbp->epc[0] = &ep0config;
   otgp->oe[0].DOEPTSIZ = 0;
-  otgp->oe[0].DOEPCTL = DIEPCTL_SD0PID | DIEPCTL_USBAEP | DIEPCTL_EPTYP_CTRL |
+  otgp->oe[0].DOEPCTL = DOEPCTL_SD0PID | DOEPCTL_USBAEP | DOEPCTL_EPTYP_CTRL |
                         DOEPCTL_MPSIZ(ep0config.out_maxsize);
   otgp->ie[0].DIEPTSIZ = 0;
   otgp->ie[0].DIEPCTL = DIEPCTL_SD0PID | DIEPCTL_USBAEP | DIEPCTL_EPTYP_CTRL |
