@@ -55,7 +55,7 @@
 /**
  * @brief   Name of the compiler supported by this port.
  */
-#define CH_COMPILER_NAME                "GCC "__VERSION__
+#define CH_COMPILER_NAME                "GCC " __VERSION__
 
 /**
  * @brief   Port-specific information string.

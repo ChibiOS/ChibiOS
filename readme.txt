@@ -81,6 +81,8 @@
 *** 2.4.3 ***
 - NEW: I2C workaround allowing to read single byte on all STM32 platforms 
   except STM32F1xx.
+- NEW: Small andjustment in chcore.h files under ./os/ports/GCC required by a
+  difference in GCC 4.7.x.
 
 *** 2.4.2 ***
 - FIX: Fixed problem in STM32 DMA1 stream1 IRQ handler (bug 3538468).
