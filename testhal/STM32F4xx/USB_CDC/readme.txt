@@ -8,7 +8,7 @@ The demo runs on an Olimex STM32-E407 board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32 USB driver.
+The application demonstrates the use of the STM32 USB (OTG) driver.
 
 ** Build Procedure **
 

@@ -513,8 +513,8 @@ static bool_t otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     if (((usbp->otg->ie[ep].DTXFSTS & DTXFSTS_INEPTFSAV_MASK) * 4) < n)
       return FALSE;
 
-#if STM32_USB_FIFO_FILL_PRIORITY_MASK
-    __set_BASEPRI(CORTEX_PRIORITY_MASK(STM32_USB_FIFO_FILL_PRIORITY_MASK));
+#if STM32_USB_OTGFIFO_FILL_BASEPRI
+    __set_BASEPRI(CORTEX_PRIORITY_MASK(STM32_USB_OTGFIFO_FILL_BASEPRI));
 #endif
     /* Handles the two cases: linear buffer or queue.*/
     if (usbp->epc[ep]->in_state->txqueued) {
@@ -532,7 +532,7 @@ static bool_t otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     }
     usbp->epc[ep]->in_state->txcnt += n;
   }
-#if STM32_USB_FIFO_FILL_PRIORITY_MASK
+#if STM32_USB_OTGFIFO_FILL_BASEPRI
   __set_BASEPRI(0);
 #endif
 }
@@ -871,7 +871,7 @@ void usb_lld_start(USBDriver *usbp) {
     if (usbp->thd_ptr == NULL)
       usbp->thd_ptr = usbp->thd_wait = chThdCreateI(usbp->wa_pump,
                                                     sizeof usbp->wa_pump,
-                                                    STM32_USB_THREAD_PRIORITY,
+                                                    STM32_USB_OTG_THREAD_PRIO,
                                                     usb_lld_pump,
                                                     usbp);
 

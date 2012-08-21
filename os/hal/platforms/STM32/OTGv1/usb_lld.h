@@ -61,7 +61,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_USB_USE_OTG1) || defined(__DOXYGEN__)
-#define STM32_USB_USE_OTG1                  TRUE
+#define STM32_USB_USE_OTG1                  FALSE
 #endif
 
 /**
@@ -70,7 +70,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_USB_USE_OTG2) || defined(__DOXYGEN__)
-#define STM32_USB_USE_OTG2                  TRUE
+#define STM32_USB_USE_OTG2                  FALSE
 #endif
 
 /**
@@ -100,21 +100,21 @@
  * @note    Must be a multiple of 4.
  */
 #if !defined(STM32_USB_OTG2_RX_FIFO_SIZE) || defined(__DOXYGEN__)
-#define STM32_USB_OTG2_RX_FIFO_SIZE         512
+#define STM32_USB_OTG2_RX_FIFO_SIZE         1024
 #endif
 
 /**
  * @brief   Dedicated data pump threads priority.
  */
-#if !defined(STM32_USB_THREAD_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USB_THREAD_PRIORITY           LOWPRIO
+#if !defined(STM32_USB_OTG_THREAD_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_USB_OTG_THREAD_PRIO           LOWPRIO
 #endif
 
 /**
  * @brief   Dedicated data pump threads stack size.
  */
-#if !defined(STM32_USB_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define STM32_USB_THREAD_STACK_SIZE         128
+#if !defined(STM32_USB_OTG_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
+#define STM32_USB_OTG_THREAD_STACK_SIZE     128
 #endif
 
 /**
@@ -132,8 +132,8 @@
  *          functions is only safe from thread level or from USB
  *          callbacks.
  */
-#if !defined(STM32_USB_FIFO_FILL_PRIORITY_MASK) || defined(__DOXYGEN__)
-#define STM32_USB_FIFO_FILL_PRIORITY_MASK   0
+#if !defined(STM32_USB_OTGFIFO_FILL_BASEPRI) || defined(__DOXYGEN__)
+#define STM32_USB_OTGFIFO_FILL_BASEPRI      0
 #endif
 
 /*===========================================================================*/
@@ -447,7 +447,7 @@ struct USBDriver {
   /**
    * @brief   Working area for the dedicated data pump thread;
    */
-  WORKING_AREA(wa_pump, STM32_USB_THREAD_STACK_SIZE);
+  WORKING_AREA(wa_pump, STM32_USB_OTG_THREAD_STACK_SIZE);
 };
 
 /*===========================================================================*/

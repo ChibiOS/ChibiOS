@@ -462,6 +462,36 @@
 /** @} */
 
 /**
+ * @name    OTG peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the OTG_FS peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableOTG_FS(lp) rccEnableAHB(RCC_AHBENR_OTGFSEN, lp)
+
+/**
+ * @brief   Disables the OTG_FS peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableOTG_FS(lp) rccDisableAHB(RCC_AHBENR_OTGFSEN, lp)
+
+/**
+ * @brief   Resets the OTG_FS peripheral.
+ *
+ * @api
+ */
+#define rccResetOTG_FS() rccResetAHB(RCC_AHBRSTR_OTGFSRST)
+/** @} */
+
+/**
  * @name    SDIO peripheral specific RCC operations
  * @{
  */
