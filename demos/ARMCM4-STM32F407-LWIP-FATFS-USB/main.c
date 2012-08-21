@@ -156,7 +156,7 @@ static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
 /*===========================================================================*/
 
 /*
- * USB Driver structure.
+ * Serial over USB Driver structure.
  */
 static SerialUSBDriver SDU1;
 

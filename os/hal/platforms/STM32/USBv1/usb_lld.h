@@ -237,6 +237,11 @@ typedef struct {
   USBOutEndpointState           *out_state;
   /* End of the mandatory fields.*/
   /**
+   * @brief   Reserved field, not currently used.
+   * @note    Initialize this field to 1 in order to be forward compatible.
+   */
+  uint16_t                      ep_buffers;
+  /**
    * @brief   Pointer to a buffer for setup packets.
    * @details Setup packets require a dedicated 8-bytes buffer, set this
    *          field to @p NULL for non-control endpoints.

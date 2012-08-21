@@ -34,7 +34,7 @@
 /*===========================================================================*/
 
 /*
- * USB Driver structure.
+ * Serial over USB Driver structure.
  */
 static SerialUSBDriver SDU1;
 

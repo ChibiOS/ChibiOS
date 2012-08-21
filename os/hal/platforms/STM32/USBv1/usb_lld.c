@@ -81,6 +81,7 @@ static const USBEndpointConfig ep0config = {
   0x40,
   &ep0_state.in,
   &ep0_state.out,
+  1,
   ep0setup_buffer
 };
 
@@ -347,7 +348,6 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
       EPR_CLEAR_CTR_TX(ep);
 
       n = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
-      epcp->in_state->mode.linear.txbuf  += n;
       epcp->in_state->txcnt              += n;
       epcp->in_state->txsize             -= n;
       if (epcp->in_state->txsize > 0) {
@@ -361,10 +361,12 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
           usb_packet_write_from_queue(USB_GET_DESCRIPTOR(ep),
                                       epcp->in_state->mode.queue.txqueue,
                                       n);
-        else
+        else {
+          epcp->in_state->mode.linear.txbuf  += n;
           usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
                                        epcp->in_state->mode.linear.txbuf,
                                        n);
+        }
         chSysLockFromIsr();
         usb_lld_start_in(usbp, ep);
         chSysUnlockFromIsr();
@@ -391,13 +393,13 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
           usb_packet_read_to_queue(udp,
                                    epcp->out_state->mode.queue.rxqueue,
                                    n);
-        else
+        else {
           usb_packet_read_to_buffer(udp,
                                     epcp->out_state->mode.linear.rxbuf,
                                     n);
-
+          epcp->out_state->mode.linear.rxbuf  += n;
+        }
         /* Transaction data updated.*/
-        epcp->out_state->mode.linear.rxbuf  += n;
         epcp->out_state->rxcnt              += n;
         epcp->out_state->rxsize             -= n;
         epcp->out_state->rxpkts             -= 1;
