@@ -768,6 +768,13 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/*
+ * Configuration-related checks.
+ */
+#if !defined(STM32F4xx_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F4xx_MCUCONF not defined"
+#endif
+
 /**
  * @brief   Maximum SYSCLK.
  * @note    It is a function of the core voltage setting.

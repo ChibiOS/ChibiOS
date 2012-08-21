@@ -89,7 +89,7 @@
 #if !defined(STM32_CAN_CAN1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 #endif
-/** @} */TRUE
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

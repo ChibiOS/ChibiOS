@@ -134,7 +134,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_ADC_USE_ADC1) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC1                  TRUE
+#define STM32_ADC_USE_ADC1                  FALSE
 #endif
 
 /**
@@ -143,7 +143,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_ADC_USE_ADC2) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC2                  TRUE
+#define STM32_ADC_USE_ADC2                  FALSE
 #endif
 
 /**
@@ -152,7 +152,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_ADC_USE_ADC3) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC3                  TRUE
+#define STM32_ADC_USE_ADC3                  FALSE
 #endif
 
 /**

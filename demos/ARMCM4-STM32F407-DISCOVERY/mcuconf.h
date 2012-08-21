@@ -32,6 +32,8 @@
  * 0...3        Lowest...Highest.
  */
 
+#define STM32F4xx_MCUCONF
+
 /*
  * HAL driver system settings.
  */
@@ -68,8 +70,8 @@
  */
 #define STM32_ADC_ADCPRE                    ADC_CCR_ADCPRE_DIV4
 #define STM32_ADC_USE_ADC1                  TRUE
-#define STM32_ADC_USE_ADC2                  TRUE
-#define STM32_ADC_USE_ADC3                  TRUE
+#define STM32_ADC_USE_ADC2                  FALSE
+#define STM32_ADC_USE_ADC3                  FALSE
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
 #define STM32_ADC_ADC2_DMA_STREAM           STM32_DMA_STREAM_ID(2, 2)
 #define STM32_ADC_ADC3_DMA_STREAM           STM32_DMA_STREAM_ID(2, 1)
@@ -84,8 +86,10 @@
 /*
  * CAN driver system settings.
  */
-#define STM32_CAN_USE_CAN1                  TRUE
+#define STM32_CAN_USE_CAN1                  FALSE
+#define STM32_CAN_USE_CAN2                  FALSE
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
+#define STM32_CAN_CAN2_IRQ_PRIORITY         11
 
 /*
  * EXT driver system settings.
@@ -122,12 +126,34 @@
 #define STM32_GPT_TIM8_IRQ_PRIORITY         7
 
 /*
+ * I2C driver system settings.
+ */
+#define STM32_I2C_USE_I2C1                  FALSE
+#define STM32_I2C_USE_I2C2                  FALSE
+#define STM32_I2C_USE_I2C3                  FALSE
+#define STM32_I2C_I2C1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 0)
+#define STM32_I2C_I2C1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 6)
+#define STM32_I2C_I2C2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
+#define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 7)
+#define STM32_I2C_I2C3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
+#define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#define STM32_I2C_I2C1_IRQ_PRIORITY         5
+#define STM32_I2C_I2C2_IRQ_PRIORITY         5
+#define STM32_I2C_I2C3_IRQ_PRIORITY         5
+#define STM32_I2C_I2C1_DMA_PRIORITY         3
+#define STM32_I2C_I2C2_DMA_PRIORITY         3
+#define STM32_I2C_I2C3_DMA_PRIORITY         3
+#define STM32_I2C_I2C1_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_I2C_I2C2_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_I2C_I2C3_DMA_ERROR_HOOK()     chSysHalt()
+
+/*
  * ICU driver system settings.
  */
 #define STM32_ICU_USE_TIM1                  FALSE
 #define STM32_ICU_USE_TIM2                  FALSE
 #define STM32_ICU_USE_TIM3                  FALSE
-#define STM32_ICU_USE_TIM4                  TRUE
+#define STM32_ICU_USE_TIM4                  FALSE
 #define STM32_ICU_USE_TIM5                  FALSE
 #define STM32_ICU_USE_TIM8                  FALSE
 #define STM32_ICU_TIM1_IRQ_PRIORITY         7
@@ -194,7 +220,7 @@
  * UART driver system settings.
  */
 #define STM32_UART_USE_USART1               FALSE
-#define STM32_UART_USE_USART2               TRUE
+#define STM32_UART_USE_USART2               FALSE
 #define STM32_UART_USE_USART3               FALSE
 #define STM32_UART_USE_USART6               FALSE
 #define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(2, 5)
@@ -216,24 +242,16 @@
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
 
 /*
- * I2C driver system settings.
+ * USB driver system settings.
  */
-#define STM32_I2C_USE_I2C1                  TRUE
-#define STM32_I2C_USE_I2C2                  FALSE
-#define STM32_I2C_USE_I2C3                  FALSE
-#define STM32_I2C_I2C1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 0)
-#define STM32_I2C_I2C1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 6)
-#define STM32_I2C_I2C2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
-#define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 7)
-#define STM32_I2C_I2C3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
-#define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
-#define STM32_I2C_I2C1_IRQ_PRIORITY         5
-#define STM32_I2C_I2C2_IRQ_PRIORITY         5
-#define STM32_I2C_I2C3_IRQ_PRIORITY         5
-#define STM32_I2C_I2C1_DMA_PRIORITY         3
-#define STM32_I2C_I2C2_DMA_PRIORITY         3
-#define STM32_I2C_I2C3_DMA_PRIORITY         3
-#define STM32_I2C_I2C1_DMA_ERROR_HOOK()     chSysHalt()
-#define STM32_I2C_I2C2_DMA_ERROR_HOOK()     chSysHalt()
-#define STM32_I2C_I2C3_DMA_ERROR_HOOK()     chSysHalt()
+#define STM32_USB_USE_OTG1                  FALSE
+#define STM32_USB_USE_OTG2                  FALSE
+#define STM32_USB_OTG1_IRQ_PRIORITY         14
+#define STM32_USB_OTG2_IRQ_PRIORITY         14
+#define STM32_USB_OTG1_RX_FIFO_SIZE         512
+#define STM32_USB_OTG2_RX_FIFO_SIZE         1024
+#define STM32_USB_OTG_THREAD_PRIO           LOWPRIO
+#define STM32_USB_OTG_THREAD_STACK_SIZE     128
+#define STM32_USB_OTGFIFO_FILL_BASEPRI      0
+
 

@@ -95,7 +95,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_ADC_USE_ADC1) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC1                  TRUE
+#define STM32_ADC_USE_ADC1                  FALSE
 #endif
 
 /**
