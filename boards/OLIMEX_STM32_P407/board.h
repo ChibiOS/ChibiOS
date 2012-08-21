@@ -242,7 +242,7 @@
 #define VAL_GPIOA_OSPEEDR   0xFFFFFFFF
 #define VAL_GPIOA_PUPDR     (PIN_PUDR_PULLUP(GPIOA_DCMI_HSYNC) |            \
                              PIN_PUDR_PULLUP(GPIOA_DCMI_PIXCLK) |           \
-                             PIN_PUDR_PULLDOWN(GPIOA_OTG_FS_VBUS) |           \
+                             PIN_PUDR_PULLDOWN(GPIOA_OTG_FS_VBUS) |         \
                              PIN_PUDR_PULLUP(GPIOA_DCMI_D1) |               \
                              PIN_PUDR_PULLDOWN(GPIOA_SWCLK))
 #define VAL_GPIOA_ODR       0xFFFFFFDF
