@@ -49,7 +49,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_SPI_USE_SPI1) || defined(__DOXYGEN__)
-#define STM32_SPI_USE_SPI1                  TRUE
+#define STM32_SPI_USE_SPI1                  FALSE
 #endif
 
 /**
@@ -58,7 +58,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_SPI_USE_SPI2) || defined(__DOXYGEN__)
-#define STM32_SPI_USE_SPI2                  TRUE
+#define STM32_SPI_USE_SPI2                  FALSE
 #endif
 
 /**

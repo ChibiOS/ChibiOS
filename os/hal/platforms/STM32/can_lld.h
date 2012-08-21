@@ -80,7 +80,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_CAN_USE_CAN1) || defined(__DOXYGEN__)
-#define STM32_CAN_USE_CAN1                  TRUE
+#define STM32_CAN_USE_CAN1                  FALSE
 #endif
 
 /**
@@ -89,7 +89,7 @@
 #if !defined(STM32_CAN_CAN1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 #endif
-/** @} */
+/** @} */TRUE
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

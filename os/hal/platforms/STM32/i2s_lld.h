@@ -49,7 +49,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_I2S_USE_I2S2) || defined(__DOXYGEN__)
-#define STM32_I2S_USE_I2S2                  TRUE
+#define STM32_I2S_USE_I2S2                  FALSE
 #endif
 
 /**
@@ -58,7 +58,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_I2S_USE_I2S3) || defined(__DOXYGEN__)
-#define STM32_I2S_USE_I2S3                  TRUE
+#define STM32_I2S_USE_I2S3                  FALSE
 #endif
 
 /**

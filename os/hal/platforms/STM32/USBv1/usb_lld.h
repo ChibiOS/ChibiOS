@@ -57,7 +57,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_USB_USE_USB1) || defined(__DOXYGEN__)
-#define STM32_USB_USE_USB1                  TRUE
+#define STM32_USB_USE_USB1                  FALSE
 #endif
 
 /**
