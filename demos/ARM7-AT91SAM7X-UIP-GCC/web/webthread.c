@@ -50,7 +50,7 @@ static const MACConfig mac_config = {macaddr.addr};
 static void network_device_send(void) {
   MACTransmitDescriptor td;
 
-  if (macWaitTransmitDescriptor(&ETH1, &td, MS2ST(SEND_TIMEOUT)) == RDY_OK) {
+  if (macWaitTransmitDescriptor(&ETHD1, &td, MS2ST(SEND_TIMEOUT)) == RDY_OK) {
     if(uip_len <= UIP_LLH_LEN + UIP_TCPIP_HLEN)
       macWriteTransmitDescriptor(&td, uip_buf, uip_len);
     else {
@@ -70,7 +70,7 @@ static size_t network_device_read(void) {
   MACReceiveDescriptor rd;
   size_t size;
 
-  if (macWaitReceiveDescriptor(&ETH1, &rd, TIME_IMMEDIATE) != RDY_OK)
+  if (macWaitReceiveDescriptor(&ETHD1, &rd, TIME_IMMEDIATE) != RDY_OK)
     return 0;
   size = rd.size;
   macReadReceiveDescriptor(&rd, uip_buf, size);
@@ -107,7 +107,7 @@ static void PeriodicTimerHandler(eventid_t id) {
 static void ARPTimerHandler(eventid_t id) {
 
   (void)id;
-  (void)macPollLinkStatus(&ETH1);
+  (void)macPollLinkStatus(&ETHD1);
   uip_arp_timer();
 }
 
@@ -154,7 +154,7 @@ msg_t WebThread(void *p) {
   /*
    * Event sources setup.
    */
-  chEvtRegister(macGetReceiveEventSource(&ETH1), &el0, FRAME_RECEIVED_ID);
+  chEvtRegister(macGetReceiveEventSource(&ETHD1), &el0, FRAME_RECEIVED_ID);
   chEvtAddFlags(EVENT_MASK(FRAME_RECEIVED_ID)); /* In case some frames are already buffered */
 
   evtInit(&evt1, MS2ST(500));
@@ -168,8 +168,8 @@ msg_t WebThread(void *p) {
   /*
    * EMAC driver start.
    */
-  macStart(&ETH1, &mac_config);
-  (void)macPollLinkStatus(&ETH1);
+  macStart(&ETHD1, &mac_config);
+  (void)macPollLinkStatus(&ETHD1);
 
   /*
    * uIP initialization.

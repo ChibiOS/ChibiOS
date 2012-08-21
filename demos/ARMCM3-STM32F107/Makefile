@@ -60,7 +60,7 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../..
 include $(CHIBIOS)/boards/OLIMEX_STM32_P107/board.mk
-include $(CHIBIOS)/os/hal/platforms/STM32F1xx/platform.mk
+include $(CHIBIOS)/os/hal/platforms/STM32F1xx/platform_f105_f107.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F1xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
