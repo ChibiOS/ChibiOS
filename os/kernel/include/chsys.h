@@ -233,10 +233,6 @@
 #define CH_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
 /** @} */
 
-#if !defined(__DOXYGEN__)
-extern Thread _mainthread;
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif

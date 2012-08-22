@@ -40,7 +40,8 @@ typedef struct {
   uint8_t   ch_reserved5;           /**< @brief Reserved field.             */
   uint16_t  ch_version;             /**< @brief Encoded ChibiOS/RT version. */
   uint8_t   ch_ptrsize;             /**< @brief Size of a pointer.          */
-  uint8_t   ch_timesize;            /**< @brief Size of a systime_t.         */
+  uint8_t   ch_timesize;            /**< @brief Size of a @p systime_t.     */
+  uint8_t   ch_threadsize;          /**< @brief Size of a @p Thread struct. */
   uint8_t   cf_off_prio;            /**< @brief Offset of @p p_prio field.  */
   uint8_t   cf_off_ctx;             /**< @brief Offset of @p p_ctx field.   */
   uint8_t   cf_off_newer;           /**< @brief Offset of @p p_newer field. */
