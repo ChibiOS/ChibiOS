@@ -28,7 +28,7 @@ static const SDCConfig sdccfg = {
   0
 };
 
-static uint8_t blkbuf[SDC_BLOCK_SIZE * 4 + 1];
+static uint8_t blkbuf[MMCSD_BLOCK_SIZE * 4 + 1];
 
 /*
  * Application entry point.

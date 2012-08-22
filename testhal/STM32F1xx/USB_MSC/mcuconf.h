@@ -18,8 +18,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define STM32F103_MCUCONF
+
 /*
- * STM32F1xx drivers configuration.
+ * STM32F103 drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -58,14 +60,14 @@
 /*
  * ADC driver system settings.
  */
-#define STM32_ADC_USE_ADC1                  TRUE
+#define STM32_ADC_USE_ADC1                  FALSE
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
 #define STM32_ADC_ADC1_IRQ_PRIORITY         6
 
 /*
  * CAN driver system settings.
  */
-#define STM32_CAN_USE_CAN1                  TRUE
+#define STM32_CAN_USE_CAN1                  FALSE
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 
 /*
@@ -104,16 +106,12 @@
  */
 #define STM32_I2C_USE_I2C1                  FALSE
 #define STM32_I2C_USE_I2C2                  FALSE
-#define STM32_I2C_USE_I2C3                  FALSE
 #define STM32_I2C_I2C1_IRQ_PRIORITY         5
 #define STM32_I2C_I2C2_IRQ_PRIORITY         5
-#define STM32_I2C_I2C3_IRQ_PRIORITY         5
 #define STM32_I2C_I2C1_DMA_PRIORITY         3
 #define STM32_I2C_I2C2_DMA_PRIORITY         3
-#define STM32_I2C_I2C3_DMA_PRIORITY         3
 #define STM32_I2C_I2C1_DMA_ERROR_HOOK()     chSysHalt()
 #define STM32_I2C_I2C2_DMA_ERROR_HOOK()     chSysHalt()
-#define STM32_I2C_I2C3_DMA_ERROR_HOOK()     chSysHalt()
 
 /*
  * ICU driver system settings.
@@ -161,18 +159,16 @@
 #define STM32_SERIAL_USE_USART3             FALSE
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
-#define STM32_SERIAL_USE_USART6             FALSE
 #define STM32_SERIAL_USART1_PRIORITY        12
 #define STM32_SERIAL_USART2_PRIORITY        12
 #define STM32_SERIAL_USART3_PRIORITY        12
 #define STM32_SERIAL_UART4_PRIORITY         12
 #define STM32_SERIAL_UART5_PRIORITY         12
-#define STM32_SERIAL_USART6_PRIORITY        12
 
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  FALSE
+#define STM32_SPI_USE_SPI1                  TRUE
 #define STM32_SPI_USE_SPI2                  FALSE
 #define STM32_SPI_USE_SPI3                  FALSE
 #define STM32_SPI_SPI1_DMA_PRIORITY         1
@@ -204,3 +200,4 @@
 #define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
 #define STM32_USB_USB1_HP_IRQ_PRIORITY      13
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      14
+
