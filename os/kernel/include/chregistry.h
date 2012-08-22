@@ -40,11 +40,20 @@ typedef struct {
   uint8_t   ch_reserved5;           /**< @brief Reserved field.             */
   uint16_t  ch_version;             /**< @brief Encoded ChibiOS/RT version. */
   uint8_t   ch_ptrsize;             /**< @brief Size of a pointer.          */
-  uint8_t   ch_options;             /**< @brief Enable options bits mask.   */
-  uint8_t   ch_reserved10;          /**< @brief Reserved field.             */
-  uint8_t   ch_reserved11;          /**< @brief Reserved field.             */
-  ReadyList *ch_rlist;              /**< @brief Pointer to the ready list.  */
-  VTList    *ch_vtlist;             /**< @brief Pointer to the timers list. */
+  uint8_t   ch_timesize;            /**< @brief Size of a systime_t.         */
+  uint8_t   cf_off_prio;            /**< @brief Offset of @p p_prio field.  */
+  uint8_t   cf_off_ctx;             /**< @brief Offset of @p p_ctx field.   */
+  uint8_t   cf_off_newer;           /**< @brief Offset of @p p_newer field. */
+  uint8_t   cf_off_older;           /**< @brief Offset of @p p_older field. */
+  uint8_t   cf_off_name;            /**< @brief Offset of @p p_name field.  */
+  uint8_t   cf_off_stklimit;        /**< @brief Offset of @p p_stklimit
+                                                field.                      */
+  uint8_t   cf_off_state;           /**< @brief Offset of @p p_state field. */
+  uint8_t   cf_off_flags;           /**< @brief Offset of @p p_flags field. */
+  uint8_t   cf_off_refs;            /**< @brief Offset of @p p_refs field.  */
+  uint8_t   cf_off_preempt;         /**< @brief Offset of @p p_preempt
+                                                field.                      */
+  uint8_t   cf_off_time;            /**< @brief Offset of @p p_time field.  */
 } chroot_t;
 
 /**

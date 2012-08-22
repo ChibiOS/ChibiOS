@@ -50,34 +50,11 @@
 
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
 
-/* Converting configuration options in bit masks in order to be encoded in
-   the global variable ch_root.*/
-#if CH_DBG_ENABLE_STACK_CHECK
-#define MSK_DBG_ENABLE_STACK_CHECK      1
-#else
-#define MSK_DBG_ENABLE_STACK_CHECK      0
-#endif
+#define THD_OFFSET(field) (uint8_t)((size_t)&_mainthread.field -            \
+                                    (size_t)&_mainthread)
 
-#if CH_USE_DYNAMIC
-#define MSK_USE_DYNAMIC                 2
-#else
-#define MSK_USE_DYNAMIC                 0
-#endif
-
-#if CH_TIME_QUANTUM > 0
-#define MSK_TIME_QUANTUM                4
-#else
-#define MSK_TIME_QUANTUM                0
-#endif
-
-#if CH_DBG_THREADS_PROFILING
-#define MSK_DBG_THREADS_PROFILING       8
-#else
-#define MSK_DBG_THREADS_PROFILING       0
-#endif
-
-/**
- * @brief   OS signature in ROM plus debug-related information.
+/*
+ * OS signature in ROM plus debug-related information.
  */
 ROMCONST chroot_t ch_root = {
   "CHRT",
@@ -87,12 +64,30 @@ ROMCONST chroot_t ch_root = {
              (CH_KERNEL_MINOR << 6) |
              (CH_KERNEL_PATCH) << 0),
   (uint8_t)sizeof (void *),
-  (uint8_t)(MSK_DBG_THREADS_PROFILING | MSK_TIME_QUANTUM |
-            MSK_USE_DYNAMIC | MSK_DBG_ENABLE_STACK_CHECK),
+  (uint8_t)sizeof (systime_t),
+  THD_OFFSET(p_prio),
+  THD_OFFSET(p_ctx),
+  THD_OFFSET(p_newer),
+  THD_OFFSET(p_older),
+  THD_OFFSET(p_name),
+#if CH_DBG_ENABLE_STACK_CHECK
+  THD_OFFSET(p_stklimit),
+#else
   (uint8_t)0,
+#endif
+  THD_OFFSET(p_state),
+  THD_OFFSET(p_flags),
+#if CH_USE_DYNAMIC
+  THD_OFFSET(p_refs),
+#else
   (uint8_t)0,
-  &rlist,
-  &vtlist
+#endif
+#if CH_TIME_QUANTUM > 0
+  THD_OFFSET(p_preempt),
+#else
+  (uint8_t)0,
+#endif
+  THD_OFFSET(p_time)
 };
 
 /**

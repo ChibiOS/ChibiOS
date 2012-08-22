@@ -36,8 +36,15 @@
 #include "ch.h"
 
 #if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
-/* Idle thread working area.*/
+/**
+ * @brief   Idle thread working area.
+ */
 WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+
+/**
+ * @brief   Main thread structure.
+ */
+Thread _mainthread;
 
 /**
  * @brief   This function implements the idle thread infinite loop.
@@ -73,7 +80,6 @@ void _idle_thread(void *p) {
  * @special
  */
 void chSysInit(void) {
-  static Thread mainthread;
 #if CH_DBG_ENABLE_STACK_CHECK
   extern stkalign_t __main_thread_stack_base__;
 #endif
@@ -92,7 +98,7 @@ void chSysInit(void) {
 #endif
 
   /* Now this instructions flow becomes the main thread.*/
-  setcurrp(_thread_init(&mainthread, NORMALPRIO));
+  setcurrp(_thread_init(&_mainthread, NORMALPRIO));
   currp->p_state = THD_STATE_CURRENT;
 #if CH_DBG_ENABLE_STACK_CHECK
   /* This is a special case because the main thread Thread structure is not
