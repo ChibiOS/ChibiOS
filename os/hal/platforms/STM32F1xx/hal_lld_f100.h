@@ -640,6 +640,13 @@
 /*===========================================================================*/
 
 /*
+ * Configuration-related checks.
+ */
+#if !defined(STM32F100_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F100_MCUCONF not defined"
+#endif
+
+/*
  * HSI related checks.
  */
 #if STM32_HSI_ENABLED
