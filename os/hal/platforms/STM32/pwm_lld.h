@@ -85,7 +85,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_PWM_USE_ADVANCED) || defined(__DOXYGEN__)
-#define STM32_PWM_USE_ADVANCED              TRUE
+#define STM32_PWM_USE_ADVANCED              FALSE
 #endif
 
 /**
