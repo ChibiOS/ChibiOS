@@ -162,6 +162,8 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added memory signature record to the registry in order to simplify
+  the implementation of ad-hoc debuggers.
 - NEW: Small andjustment in chcore.h files under ./os/ports/GCC required by a
   difference in GCC 4.7.x.
 - NEW: Added another STM32F4-Discovery demo using the on-board MEMS, SPI

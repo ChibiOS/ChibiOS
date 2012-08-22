@@ -50,6 +50,51 @@
 
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
 
+/* Converting configuration options in bit masks in order to be encoded in
+   the global variable ch_root.*/
+#if CH_DBG_ENABLE_STACK_CHECK
+#define MSK_DBG_ENABLE_STACK_CHECK      1
+#else
+#define MSK_DBG_ENABLE_STACK_CHECK      0
+#endif
+
+#if CH_USE_DYNAMIC
+#define MSK_USE_DYNAMIC                 2
+#else
+#define MSK_USE_DYNAMIC                 0
+#endif
+
+#if CH_TIME_QUANTUM > 0
+#define MSK_TIME_QUANTUM                4
+#else
+#define MSK_TIME_QUANTUM                0
+#endif
+
+#if CH_DBG_THREADS_PROFILING
+#define MSK_DBG_THREADS_PROFILING       8
+#else
+#define MSK_DBG_THREADS_PROFILING       0
+#endif
+
+/**
+ * @brief   OS signature in ROM plus debug-related information.
+ */
+ROMCONST chroot_t ch_root = {
+  "CHRT",
+  (uint8_t)sizeof (chroot_t),
+  (uint8_t)0,
+  (uint16_t)((CH_KERNEL_MAJOR << 11) |
+             (CH_KERNEL_MINOR << 6) |
+             (CH_KERNEL_PATCH) << 0),
+  (uint8_t)sizeof (void *),
+  (uint8_t)(MSK_DBG_THREADS_PROFILING | MSK_TIME_QUANTUM |
+            MSK_USE_DYNAMIC | MSK_DBG_ENABLE_STACK_CHECK),
+  (uint8_t)0,
+  (uint8_t)0,
+  &rlist,
+  &vtlist
+};
+
 /**
  * @brief   Returns the first thread in the system.
  * @details Returns the most ancient thread in the system, usually this is

@@ -30,6 +30,23 @@
 #define _CHREGISTRY_H_
 
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
+
+/**
+ * @brief   ChibiOS/RT memory signature record.
+ */
+typedef struct {
+  char      ch_identifier[4];       /**< @brief Always set to "CHRT".       */
+  uint8_t   ch_size;                /**< @brief Size of this structure.     */
+  uint8_t   ch_reserved5;           /**< @brief Reserved field.             */
+  uint16_t  ch_version;             /**< @brief Encoded ChibiOS/RT version. */
+  uint8_t   ch_ptrsize;             /**< @brief Size of a pointer.          */
+  uint8_t   ch_options;             /**< @brief Enable options bits mask.   */
+  uint8_t   ch_reserved10;          /**< @brief Reserved field.             */
+  uint8_t   ch_reserved11;          /**< @brief Reserved field.             */
+  ReadyList *ch_rlist;              /**< @brief Pointer to the ready list.  */
+  VTList    *ch_vtlist;             /**< @brief Pointer to the timers list. */
+} chroot_t;
+
 /**
  * @name    Macro Functions
  * @{
