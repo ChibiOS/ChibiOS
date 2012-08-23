@@ -88,6 +88,10 @@ static FRESULT scan_files(BaseChannel *chp, char *path) {
   int i;
   char *fn;
 
+#if _USE_LFN
+  fno.lfname = 0;
+  fno.lfsize = 0;
+#endif
   res = f_opendir(&dir, path);
   if (res == FR_OK) {
     i = strlen(path);
@@ -104,7 +108,7 @@ static FRESULT scan_files(BaseChannel *chp, char *path) {
         res = scan_files(chp, path);
         if (res != FR_OK)
           break;
-        path[i] = 0;
+        path[--i] = 0;
       }
       else {
         chprintf(chp, "%s/%s\r\n", path, fn);

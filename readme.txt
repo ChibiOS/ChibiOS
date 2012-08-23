@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed Problem in FatFs demos related to LFN (bug 3560980).
 - NEW: I2C workaround allowing to read single byte on all STM32 platforms 
   except STM32F1xx.
 - NEW: Small andjustment in chcore.h files under ./os/ports/GCC required by a

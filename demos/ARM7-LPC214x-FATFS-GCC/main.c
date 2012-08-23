@@ -126,6 +126,10 @@ static FRESULT scan_files(char *path)
   int i;
   char *fn;
 
+#if _USE_LFN
+  fno.lfname = 0;
+  fno.lfsize = 0;
+#endif
   res = f_opendir(&dir, path);
   if (res == FR_OK) {
     i = strlen(path);
@@ -141,7 +145,7 @@ static FRESULT scan_files(char *path)
         res = scan_files(path);
         if (res != FR_OK)
           break;
-        path[i] = 0;
+        path[--i] = 0;
       }
       else {
         iprintf("%s/%s\r\n", path, fn);
