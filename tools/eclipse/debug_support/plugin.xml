@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="ChibiOS/RT"
+            id="org.chibios.tools.eclipse.debug">
+      </category>
+      <view
+            category="org.chibios.tools.eclipse.debug"
+            class="org.chibios.tools.eclipse.debug.views.ChibiView"
+            icon="icons/sample.gif"
+            id="org.chibios.tools.eclipse.debug.views.ChibiView"
+            name="ChibiOS/RT">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="org.chibios.tools.eclipse.debug.views.ChibiView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>
