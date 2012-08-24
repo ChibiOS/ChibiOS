@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed packed structures macros not functional in IAR and RVCT port
+  (bug 3561279).
 - FIX: Fixed Problem in FatFs demos related to LFN (bug 3560980).
 - NEW: I2C workaround allowing to read single byte on all STM32 platforms 
   except STM32F1xx.
@@ -448,6 +450,7 @@
 - FIX: Fixed misspelled word in some chioch.h and chstreams.h macros (bug
   3031534).
 - FIX: Fixed wrong macro check in the STM32 SPI driver (bug 3028562).
+
 
 *** 2.0.2 ***
 - FIX: Fixed invalid context restore in MSP430 port (bug 3027975).

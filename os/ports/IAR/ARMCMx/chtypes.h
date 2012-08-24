@@ -67,15 +67,14 @@ typedef int32_t         cnt_t;          /**< Resources counter.             */
 
 /**
  * @brief   Packed structure modifier (within).
- * @note    It uses the "packed" GCC attribute.
+ * @note    Empty in this port.
  */
-#define PACK_STRUCT_STRUCT __attribute__((packed))
+#define PACK_STRUCT_STRUCT
 
 /**
  * @brief   Packed structure modifier (before).
- * @note    Empty in this port.
  */
-#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_BEGIN __packed
 
 /**
  * @brief   Packed structure modifier (after).
