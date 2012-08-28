@@ -166,6 +166,11 @@
   3484947)(backported to 2.4.1).
 - FIX: Fixed various minor documentation errors (bug 3484942)(backported
   to 2.4.1).
+- NEW: Added Eclipse project files to most demos. The project are setup to
+  have paths relative to a variable named CHIBIOS that must point to the
+  ChibiOS/RT installation path. The variable must be defined under
+  Window->Preferences->General->Workspace->Linked_Resources and must contain
+  a path without the trailing slash character.
 - NEW: Added memory signature record to the registry in order to simplify
   the implementation of ad-hoc debuggers.
 - NEW: Small andjustment in chcore.h files under ./os/ports/GCC required by a
