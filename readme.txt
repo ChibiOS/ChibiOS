@@ -82,6 +82,7 @@
 *****************************************************************************
 
 *** 2.5.0 ***
+- FIX: Fixed problem with lwIP statistics (bug 3564134)(backported to 2.4.3).
 - FIX: Fixed packed structures macros not functional in IAR and RVCT port
   (bug 3561279)(backported to 2.4.3 and 2.2.10).
 - FIX: Fixed Problem in FatFs demos related to LFN (bug 3560980)(backported
