@@ -172,6 +172,8 @@ void ext_lld_channel_disable(EXTDriver *extp, expchannel_t channel) {
 
   EXTI->IMR  &= ~(1 << channel);
   EXTI->EMR  &= ~(1 << channel);
+  EXTI->RTSR &= ~(1 << channel);
+  EXTI->FTSR &= ~(1 << channel);
   EXTI->PR    =  (1 << channel);
 }
 
