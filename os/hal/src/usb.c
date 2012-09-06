@@ -517,6 +517,7 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
       usb_lld_stall_out(usbp, 0);
       _usb_isr_invoke_event_cb(usbp, USB_EVENT_STALLED);
       usbp->ep0state = USB_EP0_ERROR;
+      return;
     }
   }
 
