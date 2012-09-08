@@ -239,6 +239,11 @@ int main(void) {
   chSysInit();
 
   /*
+   * Shell manager initialization.
+   */
+  shellInit();
+
+  /*
    * Initializes a serial-over-USB CDC driver.
    */
   sduObjectInit(&SDU1);
