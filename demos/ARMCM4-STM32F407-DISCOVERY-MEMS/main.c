@@ -313,8 +313,8 @@ int main(void) {
         shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
       }
     }
-    else{
-      /* If the previous shell has been exited.*/
+    else {
+      /* If the previous shell exited.*/
       if (chThdTerminated(shelltp)) {
         /* Recovers memory of the previous shell.*/
         chThdRelease(shelltp);
