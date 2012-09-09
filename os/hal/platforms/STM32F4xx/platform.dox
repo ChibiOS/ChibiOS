@@ -343,7 +343,7 @@
  */
 
 /**
- * @defgroup STM32F1xx_ISR STM32F4xx ISR Support
+ * @defgroup STM32F4xx_ISR STM32F4xx ISR Support
  * @details This ISR helper driver is used by the other drivers in order to
  *          map ISR names to physical vector names.
  *
