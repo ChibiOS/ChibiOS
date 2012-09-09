@@ -646,6 +646,7 @@ INPUT                  = ../docs/src \
                          ../os/kernel/src \
                          ../os/kernel/templates \
                          ../os/ports \
+                         ../os/ports/common/ARMCMx \
                          ../os/ports/GCC/ARM \
                          ../os/ports/GCC/ARM/LPC214x \
                          ../os/ports/GCC/ARM/AT91SAM7 \
