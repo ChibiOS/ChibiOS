@@ -36,8 +36,6 @@
  *            are implemented by pairing an input queue and an output queue
  *            together.
  *          .
- *          I/O queues are usually used as an implementation layer for the I/O
- *          channels interface, also see @ref IO_CHANNEL.
  * @pre     In order to use the I/O queues the @p CH_USE_QUEUES option must
  *          be enabled in @p chconf.h.
  * @{
