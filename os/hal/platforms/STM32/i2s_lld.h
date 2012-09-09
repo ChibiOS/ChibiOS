@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    templates/i2s_lld.h
+ * @file    STM32/i2s_lld.h
  * @brief   I2S Driver subsystem low level driver header template.
  *
  * @addtogroup I2S

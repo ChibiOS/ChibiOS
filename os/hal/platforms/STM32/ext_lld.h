@@ -49,8 +49,8 @@
  * @name    STM32-specific EXT channel modes
  * @{
  */
-#define EXT_MODE_GPIO_MASK  0xF0        /**< @bried Port field mask.        */
-#define EXT_MODE_GPIO_OFF   4           /**< @bried Port field offset.        */
+#define EXT_MODE_GPIO_MASK  0xF0        /**< @brief Port field mask.        */
+#define EXT_MODE_GPIO_OFF   4           /**< @brief Port field offset.      */
 #define EXT_MODE_GPIOA      0x00        /**< @brief GPIOA identifier.       */
 #define EXT_MODE_GPIOB      0x10        /**< @brief GPIOB identifier.       */
 #define EXT_MODE_GPIOC      0x20        /**< @brief GPIOC identifier.       */

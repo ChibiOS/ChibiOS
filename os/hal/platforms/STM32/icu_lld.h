@@ -294,11 +294,11 @@ struct ICUDriver {
    */
   stm32_tim_t               *tim;
   /**
-   * @bried CCR register used for width capture.
+   * @brief CCR register used for width capture.
    */
   volatile uint32_t         *wccrp;
   /**
-   * @bried CCR register used for period capture.
+   * @brief CCR register used for period capture.
    */
   volatile uint32_t         *pccrp;
 };
