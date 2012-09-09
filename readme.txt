@@ -242,8 +242,6 @@
   order to make priority organization configurable, the default is to
   assign all the available priority bits to preemption priority with no
   sub-priorities.
-- NEW: Added support for pools of generic "mail" objects under ./os/various,
-  mail objects are meant to be used together with mailboxes.
 - NEW: Added a new function chPoolLoadArray() to the Memory Pools subsystem,
   it allows to load an entire array element's into a pool with a single
   operation.
