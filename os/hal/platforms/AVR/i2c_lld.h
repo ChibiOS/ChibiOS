@@ -35,31 +35,31 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/** START transmitted */
+/** @brief   START transmitted.*/
 #define TWI_START                  0x08
-/** Repeated START transmitted */
+/** @brief   Repeated START transmitted.*/
 #define TWI_REPEAT_START           0x10
-/** Arbitration Lost */
+/** @brief   Arbitration Lost.*/
 #define TWI_ARBITRATION_LOST       0x38
-/** Bus errors */
+/** @brief   Bus errors.*/
 #define TWI_BUS_ERROR              0x00
 
-/** SLA+W transmitted with ACK response */
+/** @brief   SLA+W transmitted with ACK response.*/
 #define TWI_MASTER_TX_ADDR_ACK     0x18
-/** SLA+W transmitted with NACK response */
+/** @brief   SLA+W transmitted with NACK response.*/
 #define TWI_MASTER_TX_ADDR_NACK    0x20
-/** DATA transmitted with ACK response */
+/** @brief   DATA transmitted with ACK response.*/
 #define TWI_MASTER_TX_DATA_ACK     0x28
-/** DATA transmitted with NACK response */
+/** @brief   DATA transmitted with NACK response.*/
 #define TWI_MASTER_TX_DATA_NACK    0x30
 
-/** SLA+R transmitted with ACK response */
+/** @brief   SLA+R transmitted with ACK response.*/
 #define TWI_MASTER_RX_ADDR_ACK     0x40
-/** SLA+R transmitted with NACK response */
+/** @brief   SLA+R transmitted with NACK response.*/
 #define TWI_MASTER_RX_ADDR_NACK    0x48
-/** DATA received with ACK response */
+/** @brief   DATA received with ACK response.*/
 #define TWI_MASTER_RX_DATA_ACK     0x50
-/** DATA received with NACK response */
+/** @brief   DATA received with NACK response.*/
 #define TWI_MASTER_RX_DATA_NACK    0x58
 
 /*===========================================================================*/
@@ -78,6 +78,7 @@
 #if !defined(USE_AVR_I2C) || defined(__DOXYGEN__)
 #define USE_AVR_I2C              FALSE
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -146,7 +147,7 @@ struct I2CDriver {
    */
   Thread                    *thread;
   /**
-   * @brief   Address of slave device
+   * @brief   Address of slave device.
    */
   i2caddr_t                 addr;
   /**
