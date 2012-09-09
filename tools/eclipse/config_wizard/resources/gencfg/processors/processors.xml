@@ -1,0 +1,38 @@
+<processors>
+  <processor class="board" target="STM32F0xx">
+    <name>STM32F0xx Board Configuration</name>
+    <path>resources/gencfg/processors/boards/stm32f0xx/templates</path>
+    <default>resources/gencfg/xml/stm32f0board.xml</default>
+    <basefilename>board</basefilename>
+  </processor>
+  <processor class="board" target="STM32F4xx">
+    <name>STM32F4xx Board Configuration</name>
+    <path>resources/gencfg/processors/boards/stm32f4xx/templates</path>
+    <default>resources/gencfg/xml/stm32f4board.xml</default>
+    <basefilename>board</basefilename>
+  </processor>
+  <processor class="board" target="STM32L1xx">
+    <name>STM32L1xx Board Configuration</name>
+    <path>resources/gencfg/processors/boards/stm32l1xx/templates</path>
+    <default>resources/gencfg/xml/stm32l1board.xml</default>
+    <basefilename>board</basefilename>
+  </processor>
+  <processor class="build" target="STM32F0xx">
+    <name>STM32F0xx Build Environment Configuration</name>
+    <path>resources/gencfg/processors/builds/stm32f0xx/templates</path>
+    <default>resources/gencfg/xml/stm32f0build.xml</default>
+    <basefilename>build</basefilename>
+  </processor>
+  <processor class="build" target="STM32F4xx">
+    <name>STM32F4xx Build Environment Configuration</name>
+    <path>resources/gencfg/processors/builds/stm32f4xx/templates</path>
+    <default>resources/gencfg/xml/stm32f4build.xml</default>
+    <basefilename>build</basefilename>
+  </processor>
+  <processor class="build" target="STM32L1xx">
+    <name>STM32L1xx Build Environment Configuration</name>
+    <path>resources/gencfg/processors/builds/stm32l1xx/templates</path>
+    <default>resources/gencfg/xml/stm32l1build.xml</default>
+    <basefilename>build</basefilename>
+  </processor>
+</processors>

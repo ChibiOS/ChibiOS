@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+  elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="../common/doc.xsd" />
+
+  <xs:complexType name="AbstractCfgType">
+    <xs:complexContent>
+      <xs:extension base="DocumentedItem">
+        <xs:sequence>
+          <xs:element
+            name="hal"
+            maxOccurs="1"
+            minOccurs="1" type="HALSettingsType">
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ADCSettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="ADC_USE_WAIT">
+        <xs:simpleType>
+          <xs:restriction base="xs:boolean">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="ADC_USE_MUTUAL_EXCLUSION">
+        <xs:simpleType>
+          <xs:restriction base="xs:boolean">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="CANSettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="CAN_USE_SLEEP_MODE">
+        <xs:simpleType>
+          <xs:restriction base="xs:boolean">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EXTSettingsType"></xs:complexType>
+
+  <xs:complexType name="GPTSettingsType"></xs:complexType>
+
+  <xs:complexType name="I2CSettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="I2C_USE_MUTUAL_EXCLUSION">
+        <xs:simpleType>
+          <xs:restriction base="xs:boolean">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ICUSettingsType"></xs:complexType>
+
+  <xs:complexType name="MACSettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="MAC_USE_EVENTS">
+        <xs:simpleType>
+          <xs:restriction base="xs:boolean">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MMC_SPISettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="MMC_NICE_WAITING">
+        <xs:simpleType>
+          <xs:restriction base="xs:boolean">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PALSettingsType"></xs:complexType>
+
+  <xs:complexType name="PWMSettingsType"></xs:complexType>
+
+  <xs:complexType name="RTCSettingsType"></xs:complexType>
+
+  <xs:complexType name="SDCSettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="SDC_INIT_RETRY">
+        <xs:simpleType>
+          <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"></xs:minInclusive>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="SDC_MMC_SUPPORT">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="false"></xs:enumeration>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="SDC_NICE_WAITING">
+        <xs:simpleType>
+          <xs:restriction base="xs:boolean">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SERIALSettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="SERIAL_DEFAULT_BITRATE">
+        <xs:simpleType>
+          <xs:restriction base="xs:int">
+            <xs:minExclusive value="300"></xs:minExclusive>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="SERIAL_BUFFERS_SIZE">
+        <xs:simpleType>
+          <xs:restriction base="xs:int">
+            <xs:minInclusive value="4"></xs:minInclusive>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SERIAL_USBSettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="SERIAL_USB_BUFFERS_SIZE">
+        <xs:simpleType>
+          <xs:restriction base="xs:int">
+            <xs:minInclusive value="64"></xs:minInclusive>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SPISettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="SPI_USE_WAIT">
+        <xs:simpleType>
+          <xs:restriction base="xs:boolean">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element
+        minOccurs="1"
+        maxOccurs="1"
+        name="SPI_USE_MUTUAL_EXCLUSION">
+        <xs:simpleType>
+          <xs:restriction base="xs:boolean">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TMSettingsType"></xs:complexType>
+
+  <xs:complexType name="UARTSettingsType"></xs:complexType>
+
+  <xs:complexType name="USBSettingsType"></xs:complexType>
+
+  <xs:complexType name="HALSettingsType">
+    <xs:sequence>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="ADC"
+        type="ADCSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="CAN"
+        type="CANSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="EXT"
+        type="EXTSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="GPT"
+        type="GPTSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="I2C"
+        type="I2CSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="ICU"
+        type="ICUSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="MAC"
+        type="MACSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="MMC_SPI"
+        type="MMC_SPISettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="PAL"
+        type="PALSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="PWM"
+        type="PWMSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="RTC"
+        type="RTCSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="SDC"
+        type="SDCSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="SERIAL"
+        type="SERIALSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="SERIAL_USB"
+        type="SERIAL_USBSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="SPI"
+        type="SPISettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="TM"
+        type="TMSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="UART"
+        type="UARTSettingsType">
+      </xs:element>
+      <xs:element
+        minOccurs="0"
+        maxOccurs="1"
+        name="USB"
+        type="USBSettingsType">
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

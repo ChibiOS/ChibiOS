@@ -1,0 +1,2161 @@
+;	STMicroelectronics Project file
+
+[Version]
+Keyword=ST7Project
+Number=1.3
+
+[Project]
+Name=raisonance
+Toolset=Raisonance
+
+[Config]
+0=Config.0
+1=Config.1
+
+[Config.0]
+ConfigName=Debug
+Target=$(ProjectSFile).elf
+OutputFolder=Debug
+Debug=$(TargetFName)
+
+[Config.1]
+ConfigName=Release
+Target=$(ProjectSFile).elf
+OutputFolder=Release
+Debug=$(TargetFName)
+
+[Root]
+ElemType=Project
+PathName=raisonance
+Child=Root.Source Files
+Config.0=Root.Config.0
+Config.1=Root.Config.1
+
+[Root.Config.0]
+Settings.0.0=Root.Config.0.Settings.0
+Settings.0.1=Root.Config.0.Settings.1
+Settings.0.2=Root.Config.0.Settings.2
+Settings.0.3=Root.Config.0.Settings.3
+Settings.0.4=Root.Config.0.Settings.4
+Settings.0.5=Root.Config.0.Settings.5
+Settings.0.6=Root.Config.0.Settings.6
+Settings.0.7=Root.Config.0.Settings.7
+Settings.0.8=Root.Config.0.Settings.8
+
+[Root.Config.1]
+Settings.1.0=Root.Config.1.Settings.0
+Settings.1.1=Root.Config.1.Settings.1
+Settings.1.2=Root.Config.1.Settings.2
+Settings.1.3=Root.Config.1.Settings.3
+Settings.1.4=Root.Config.1.Settings.4
+Settings.1.5=Root.Config.1.Settings.5
+Settings.1.6=Root.Config.1.Settings.6
+Settings.1.7=Root.Config.1.Settings.7
+Settings.1.8=Root.Config.1.Settings.8
+
+[Root.Config.0.Settings.0]
+String.6.0=2010,6,4,10,30,46
+String.100.0=ST Assembler Linker
+String.100.1=ST7 Cosmic
+String.100.2=STM8 Cosmic
+String.100.3=ST7 Metrowerks V1.1
+String.100.4=Raisonance
+String.101.0=Raisonance
+String.102.0=C:\Programmi\Raisonance\Ride
+String.103.0=bin
+String.104.0=INC\STM8;INC\ST7;INC
+String.105.0=LIB\ST7
+String.106.0=Debug
+String.107.0=$(ProjectSFile).elf
+Int.108=0
+
+[Root.Config.0.Settings.1]
+String.6.0=2010,6,4,10,10,40
+String.100.0=$(TargetFName)
+String.101.0=
+String.102.0=
+String.103.0=.\;..\demo;..\..\..\boards\st_stm8s_discovery;..\..\..\os\kernel\src;..\..\..\os\kernel\include;..\..\..\os\hal\include;..\..\..\os\hal\platforms\stm8s;..\..\..\os\hal\src;..\..\..\test;..\..\..\os\ports\rc\stm8;
+
+[Root.Config.0.Settings.2]
+String.2.0=
+String.6.0=2010,6,4,10,10,40
+String.100.0=STM8S105C6
+
+[Root.Config.0.Settings.3]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+
+[Root.Config.0.Settings.4]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,46,5
+
+[Root.Config.0.Settings.5]
+String.2.0=Running Pre-Link step
+String.6.0=2010,6,4,10,10,40
+String.8.0=
+
+[Root.Config.0.Settings.6]
+String.2.0=Running Linker
+String.3.0=rlstm8 -P $(ObjectFiles) TO($(OutputPath)$(TargetSName).aof) $(ToolsetLibOpts) -CustomOutFile[$(ProjectSFile).elf] DEBUGLINES DEBUGPUBLICS DEBUGSYMBOLS -CustomRunHexConv -customMapFile -customMapFilePR($(OutputPath)$(TargetSName).map) 
+String.3.1=omf2elf $(OutputPath)$(TargetSName).aof
+String.4.0=$(OutputPath)$(TargetFName)
+String.5.0=$(OutputPath)$(ProjectSFile).elf $(OutputPath)$(TargetSName).map
+String.6.0=2010,6,4,12,15,0
+String.100.0= DATASTART(0x0) RAMSIZE(0x800) CODESTART(0x8000) CODESIZE(0x8000) STACKTOP(0x800) STACKSIZE(0x100) EEPROMSTART(0x4000) EEPROMSIZE(0x400)
+String.101.0=
+String.102.0=
+Int.0=0
+Int.1=0
+
+[Root.Config.0.Settings.7]
+String.2.0=Running Post-Build step
+String.3.0=omf2hex $(OutputPath)$(TargetSName).aof HEX
+String.6.0=2010,6,4,10,10,40
+
+[Root.Config.0.Settings.8]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,6,4,10,10,40
+
+[Root.Config.1.Settings.0]
+String.6.0=2010,6,4,11,25,50
+String.100.0=ST Assembler Linker
+String.100.1=ST7 Cosmic
+String.100.2=STM8 Cosmic
+String.100.3=ST7 Metrowerks V1.1
+String.100.4=Raisonance
+String.101.0=Raisonance
+String.102.0=C:\Programmi\Raisonance\Ride
+String.103.0=bin
+String.104.0=INC\STM8;INC\ST7;INC
+String.105.0=LIB\ST7
+String.106.0=Release
+String.107.0=$(ProjectSFile).elf
+Int.108=0
+
+[Root.Config.1.Settings.1]
+String.6.0=2010,6,4,10,10,40
+String.100.0=$(TargetFName)
+String.101.0=
+String.102.0=
+String.103.0=.\;..\demo;..\..\..\boards\st_stm8s_discovery;..\..\..\os\kernel\src;..\..\..\os\kernel\include;..\..\..\os\hal\include;..\..\..\os\hal\platforms\stm8s;..\..\..\os\hal\src;..\..\..\test;..\..\..\os\ports\rc\stm8;
+
+[Root.Config.1.Settings.2]
+String.2.0=
+String.6.0=2010,6,4,10,10,40
+String.100.0=STM8S105C6
+
+[Root.Config.1.Settings.3]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Config.1.Settings.4]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Config.1.Settings.5]
+String.2.0=Running Pre-Link step
+String.6.0=2010,6,4,10,10,40
+String.8.0=
+
+[Root.Config.1.Settings.6]
+String.2.0=Running Linker
+String.3.0=rlstm8 -P $(ObjectFiles) TO($(OutputPath)$(TargetSName).aof) $(ToolsetLibOpts) -CustomOutFile[$(ProjectSFile).elf] NODEBUGLINES NODEBUGPUBLICS NODEBUGSYMBOLS -CustomRunHexConv -customMapFile -customMapFilePR($(OutputPath)$(TargetSName).map) 
+String.3.1=omf2elf $(OutputPath)$(TargetSName).aof
+String.4.0=$(OutputPath)$(TargetFName)
+String.5.0=$(OutputPath)$(ProjectSFile).elf $(OutputPath)$(TargetSName).map
+String.6.0=2010,6,4,12,15,0
+String.100.0= DATASTART(0x0) RAMSIZE(0x800) CODESTART(0x8000) CODESIZE(0x8000) STACKTOP(0x800) STACKSIZE(0x100) EEPROMSTART(0x4000) EEPROMSIZE(0x400)
+String.101.0=
+String.102.0=
+Int.0=0
+Int.1=0
+
+[Root.Config.1.Settings.7]
+String.2.0=Running Post-Build step
+String.3.0=omf2hex $(OutputPath)$(TargetSName).aof HEX
+String.6.0=2010,6,4,10,10,40
+
+[Root.Config.1.Settings.8]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files]
+ElemType=Folder
+PathName=Source Files
+Child=Root.Source Files...\demo\main.c
+Next=Root.Include Files
+Config.0=Root.Source Files.Config.0
+Config.1=Root.Source Files.Config.1
+
+[Root.Source Files.Config.0]
+Settings.0.0=Root.Source Files.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Config.0.Settings.2
+Settings.0.3=Root.Source Files.Config.0.Settings.3
+
+[Root.Source Files.Config.1]
+Settings.1.0=Root.Source Files.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Config.1.Settings.2
+Settings.1.3=Root.Source Files.Config.1.Settings.3
+
+[Root.Source Files.Config.0.Settings.0]
+String.6.0=2010,6,4,10,10,40
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Config.0.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+
+[Root.Source Files.Config.0.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,46,5
+
+[Root.Source Files.Config.0.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Config.1.Settings.0]
+String.6.0=2010,6,4,10,10,40
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Config.1.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Config.1.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Config.1.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files...\demo\main.c]
+ElemType=File
+PathName=..\demo\main.c
+Next=Root.Source Files.Source Files\board
+Config.0=Root.Source Files...\demo\main.c.Config.0
+Config.1=Root.Source Files...\demo\main.c.Config.1
+
+[Root.Source Files...\demo\main.c.Config.0]
+Settings.0.0=Root.Source Files...\demo\main.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files...\demo\main.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files...\demo\main.c.Config.0.Settings.2
+
+[Root.Source Files...\demo\main.c.Config.1]
+Settings.1.0=Root.Source Files...\demo\main.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files...\demo\main.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files...\demo\main.c.Config.1.Settings.2
+
+[Root.Source Files...\demo\main.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,12,31
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files...\demo\main.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files...\demo\main.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files...\demo\main.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,12,31
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files...\demo\main.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files...\demo\main.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\board]
+ElemType=Folder
+PathName=Source Files\board
+Child=Root.Source Files.Source Files\board...\..\..\boards\st_stm8s_discovery\board.c
+Next=Root.Source Files.Source Files\os
+Config.0=Root.Source Files.Source Files\board.Config.0
+Config.1=Root.Source Files.Source Files\board.Config.1
+
+[Root.Source Files.Source Files\board.Config.0]
+Settings.0.0=Root.Source Files.Source Files\board.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\board.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\board.Config.0.Settings.2
+Settings.0.3=Root.Source Files.Source Files\board.Config.0.Settings.3
+
+[Root.Source Files.Source Files\board.Config.1]
+Settings.1.0=Root.Source Files.Source Files\board.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\board.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\board.Config.1.Settings.2
+Settings.1.3=Root.Source Files.Source Files\board.Config.1.Settings.3
+
+[Root.Source Files.Source Files\board.Config.0.Settings.0]
+String.6.0=2010,6,4,10,11,42
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\board.Config.0.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+
+[Root.Source Files.Source Files\board.Config.0.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,46,5
+
+[Root.Source Files.Source Files\board.Config.0.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\board.Config.1.Settings.0]
+String.6.0=2010,6,4,10,11,42
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\board.Config.1.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Source Files\board.Config.1.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Source Files\board.Config.1.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\board...\..\..\boards\st_stm8s_discovery\board.c]
+ElemType=File
+PathName=..\..\..\boards\st_stm8s_discovery\board.c
+
+[Root.Source Files.Source Files\os]
+ElemType=Folder
+PathName=Source Files\os
+Child=Root.Source Files.Source Files\os.Source Files\os\hal
+Next=Root.Source Files.Source Files\test
+
+[Root.Source Files.Source Files\os.Source Files\os\hal]
+ElemType=Folder
+PathName=Source Files\os\hal
+Child=Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\spi.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel
+Config.0=Root.Source Files.Source Files\os.Source Files\os\hal.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\hal.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.2
+Settings.0.3=Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.3
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.2
+Settings.1.3=Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.3
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.0]
+String.6.0=2010,6,4,10,13,32
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,46,5
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.0.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.0]
+String.6.0=2010,6,4,10,13,32
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Config.1.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\spi.c]
+ElemType=File
+PathName=..\..\..\os\hal\src\spi.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\serial.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\serial.c]
+ElemType=File
+PathName=..\..\..\os\hal\src\serial.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\pwm.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\pwm.c]
+ElemType=File
+PathName=..\..\..\os\hal\src\pwm.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\pal.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\pal.c]
+ElemType=File
+PathName=..\..\..\os\hal\src\pal.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\mmc_spi.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\mmc_spi.c]
+ElemType=File
+PathName=..\..\..\os\hal\src\mmc_spi.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\mac.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\mac.c]
+ElemType=File
+PathName=..\..\..\os\hal\src\mac.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\hal.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\hal.c]
+ElemType=File
+PathName=..\..\..\os\hal\src\hal.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\can.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\can.c]
+ElemType=File
+PathName=..\..\..\os\hal\src\can.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\adc.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal...\..\..\os\hal\src\adc.c]
+ElemType=File
+PathName=..\..\..\os\hal\src\adc.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s]
+ElemType=Folder
+PathName=Source Files\os\hal\stm8s
+Child=Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\spi_lld.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\spi_lld.c]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\spi_lld.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\pal_lld.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\pal_lld.c]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\pal_lld.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\hal_lld.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\hal_lld.c]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\hal_lld.c
+Next=Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\serial_lld.c
+
+[Root.Source Files.Source Files\os.Source Files\os\hal.Source Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\serial_lld.c]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\serial_lld.c
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel]
+ElemType=Folder
+PathName=Source Files\os\kernel
+Child=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c
+Next=Root.Source Files.Source Files\os.Source Files\os\port
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chvt.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,31
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,31
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chvt.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(page0) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chthreads.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,31
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,31
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chthreads.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chsys.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,30
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,30
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsys.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chsem.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,30
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,30
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chsem.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chschd.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,30
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,30
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chschd.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chregistry.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,29
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,29
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chregistry.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chqueues.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,29
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,29
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chqueues.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chmtx.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,28
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,28
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmtx.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chmsg.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,28
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,28
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmsg.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chmempools.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,28
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,28
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmempools.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chmemcore.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,28
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,28
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmemcore.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chmboxes.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chmboxes.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chlists.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chlists.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chheap.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chheap.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(page0) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chevents.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chevents.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdynamic.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chdynamic.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chdebug.c
+Next=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chdebug.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c]
+ElemType=File
+PathName=..\..\..\os\kernel\src\chcond.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.0.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1.Settings.2
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.0.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.0.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.0.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+String.8.0=Debug
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1.Settings.0]
+String.6.0=2010,6,4,10,14,27
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1.Settings.1]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\kernel...\..\..\os\kernel\src\chcond.c.Config.1.Settings.2]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+String.8.0=Release
+
+[Root.Source Files.Source Files\os.Source Files\os\port]
+ElemType=Folder
+PathName=Source Files\os\port
+Child=Root.Source Files.Source Files\os.Source Files\os\port...\..\..\os\ports\rc\stm8\chcore.c
+Config.0=Root.Source Files.Source Files\os.Source Files\os\port.Config.0
+Config.1=Root.Source Files.Source Files\os.Source Files\os\port.Config.1
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.0]
+Settings.0.0=Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.2
+Settings.0.3=Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.3
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.1]
+Settings.1.0=Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.2
+Settings.1.3=Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.3
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.0]
+String.6.0=2010,6,4,10,13,43
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,46,5
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.0.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.0]
+String.6.0=2010,6,4,10,13,43
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Source Files\os.Source Files\os\port.Config.1.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\os.Source Files\os\port...\..\..\os\ports\rc\stm8\chcore.c]
+ElemType=File
+PathName=..\..\..\os\ports\rc\stm8\chcore.c
+
+[Root.Source Files.Source Files\test]
+ElemType=Folder
+PathName=Source Files\test
+Child=Root.Source Files.Source Files\test...\..\..\test\testthd.c
+Config.0=Root.Source Files.Source Files\test.Config.0
+Config.1=Root.Source Files.Source Files\test.Config.1
+
+[Root.Source Files.Source Files\test.Config.0]
+Settings.0.0=Root.Source Files.Source Files\test.Config.0.Settings.0
+Settings.0.1=Root.Source Files.Source Files\test.Config.0.Settings.1
+Settings.0.2=Root.Source Files.Source Files\test.Config.0.Settings.2
+Settings.0.3=Root.Source Files.Source Files\test.Config.0.Settings.3
+
+[Root.Source Files.Source Files\test.Config.1]
+Settings.1.0=Root.Source Files.Source Files\test.Config.1.Settings.0
+Settings.1.1=Root.Source Files.Source Files\test.Config.1.Settings.1
+Settings.1.2=Root.Source Files.Source Files\test.Config.1.Settings.2
+Settings.1.3=Root.Source Files.Source Files\test.Config.1.Settings.3
+
+[Root.Source Files.Source Files\test.Config.0.Settings.0]
+String.6.0=2010,6,4,10,11,52
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\test.Config.0.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+
+[Root.Source Files.Source Files\test.Config.0.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,46,5
+
+[Root.Source Files.Source Files\test.Config.0.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\test.Config.1.Settings.0]
+String.6.0=2010,6,4,10,11,52
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Source Files.Source Files\test.Config.1.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Source Files\test.Config.1.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Source Files.Source Files\test.Config.1.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Source Files.Source Files\test...\..\..\test\testthd.c]
+ElemType=File
+PathName=..\..\..\test\testthd.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testsem.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testsem.c]
+ElemType=File
+PathName=..\..\..\test\testsem.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testqueues.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testqueues.c]
+ElemType=File
+PathName=..\..\..\test\testqueues.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testpools.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testpools.c]
+ElemType=File
+PathName=..\..\..\test\testpools.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testmtx.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testmtx.c]
+ElemType=File
+PathName=..\..\..\test\testmtx.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testmsg.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testmsg.c]
+ElemType=File
+PathName=..\..\..\test\testmsg.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testmbox.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testmbox.c]
+ElemType=File
+PathName=..\..\..\test\testmbox.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testheap.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testheap.c]
+ElemType=File
+PathName=..\..\..\test\testheap.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testevt.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testevt.c]
+ElemType=File
+PathName=..\..\..\test\testevt.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testdyn.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testdyn.c]
+ElemType=File
+PathName=..\..\..\test\testdyn.c
+Next=Root.Source Files.Source Files\test...\..\..\test\testbmk.c
+
+[Root.Source Files.Source Files\test...\..\..\test\testbmk.c]
+ElemType=File
+PathName=..\..\..\test\testbmk.c
+Next=Root.Source Files.Source Files\test...\..\..\test\test.c
+
+[Root.Source Files.Source Files\test...\..\..\test\test.c]
+ElemType=File
+PathName=..\..\..\test\test.c
+
+[Root.Include Files]
+ElemType=Folder
+PathName=Include Files
+Child=Root.Include Files...\demo\halconf.h
+Config.0=Root.Include Files.Config.0
+Config.1=Root.Include Files.Config.1
+
+[Root.Include Files.Config.0]
+Settings.0.0=Root.Include Files.Config.0.Settings.0
+Settings.0.1=Root.Include Files.Config.0.Settings.1
+Settings.0.2=Root.Include Files.Config.0.Settings.2
+Settings.0.3=Root.Include Files.Config.0.Settings.3
+
+[Root.Include Files.Config.1]
+Settings.1.0=Root.Include Files.Config.1.Settings.0
+Settings.1.1=Root.Include Files.Config.1.Settings.1
+Settings.1.2=Root.Include Files.Config.1.Settings.2
+Settings.1.3=Root.Include Files.Config.1.Settings.3
+
+[Root.Include Files.Config.0.Settings.0]
+String.6.0=2010,6,4,10,10,40
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Include Files.Config.0.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\..\test) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\..\..\os\ports\RC\stm8) PIN(..\..\..\os\kernel\include) PIN(..\demo)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,42,15
+
+[Root.Include Files.Config.0.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,46,5
+
+[Root.Include Files.Config.0.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Include Files.Config.1.Settings.0]
+String.6.0=2010,6,4,10,10,40
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Include Files.Config.1.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSpeedOpt -CustomOptimOT(7,SPEED) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB NOIS CD CO SB LAOB PIN(..\..\..\boards\st_stm8s_discovery) PIN(..\demo) PIN(..\..\..\os\kernel\include) PIN(..\..\..\os\hal\include) PIN(..\..\..\os\hal\platforms\stm8s) PIN(..\..\..\test) PIN(..\..\..\os\ports\rc\stm8)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Include Files.Config.1.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT NOCOND NOLIST NOLISTINCLUDE NOGEN NOSB NOXREF MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,26,17,22,23
+
+[Root.Include Files.Config.1.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.3.0=
+String.4.0=
+String.5.0=
+String.6.0=2010,6,4,10,10,40
+
+[Root.Include Files...\demo\halconf.h]
+ElemType=File
+PathName=..\demo\halconf.h
+Next=Root.Include Files...\demo\chconf.h
+
+[Root.Include Files...\demo\chconf.h]
+ElemType=File
+PathName=..\demo\chconf.h
+Next=Root.Include Files...\demo\mcuconf.h
+
+[Root.Include Files...\demo\mcuconf.h]
+ElemType=File
+PathName=..\demo\mcuconf.h
+Next=Root.Include Files.Include Files\board
+
+[Root.Include Files.Include Files\board]
+ElemType=Folder
+PathName=Include Files\board
+Child=Root.Include Files.Include Files\board...\..\..\boards\st_stm8s_discovery\board.h
+Next=Root.Include Files.Include Files\os
+
+[Root.Include Files.Include Files\board...\..\..\boards\st_stm8s_discovery\board.h]
+ElemType=File
+PathName=..\..\..\boards\st_stm8s_discovery\board.h
+
+[Root.Include Files.Include Files\os]
+ElemType=Folder
+PathName=Include Files\os
+Child=Root.Include Files.Include Files\os.Include Files\os\hal
+Next=Root.Include Files.Include Files\test
+
+[Root.Include Files.Include Files\os.Include Files\os\hal]
+ElemType=Folder
+PathName=Include Files\os\hal
+Child=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\spi.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\spi.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\spi.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\serial.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\serial.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\serial.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\pwm.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\pwm.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\pwm.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\pal.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\pal.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\pal.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\mmc_spi.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\mmc_spi.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\mmc_spi.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\mii.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\mii.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\mii.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\mac.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\mac.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\mac.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\hal.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\hal.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\hal.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\can.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\can.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\can.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\adc.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal...\..\..\os\hal\include\adc.h]
+ElemType=File
+PathName=..\..\..\os\hal\include\adc.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s
+
+[Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s]
+ElemType=Folder
+PathName=Include Files\os\hal\stm8s
+Child=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\spi_lld.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\spi_lld.h]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\spi_lld.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\stm8s_type.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\stm8s_type.h]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\stm8s_type.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\stm8s.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\stm8s.h]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\stm8s.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\serial_lld.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\serial_lld.h]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\serial_lld.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\pal_lld.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\pal_lld.h]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\pal_lld.h
+Next=Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\hal_lld.h
+
+[Root.Include Files.Include Files\os.Include Files\os\hal.Include Files\os\hal\stm8s...\..\..\os\hal\platforms\stm8s\hal_lld.h]
+ElemType=File
+PathName=..\..\..\os\hal\platforms\stm8s\hal_lld.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel]
+ElemType=Folder
+PathName=Include Files\os\kernel
+Child=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chvt.h
+Next=Root.Include Files.Include Files\os.Include Files\os\port
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chvt.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chvt.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chthreads.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chthreads.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chthreads.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chsys.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chsys.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chsys.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chstreams.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chstreams.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chstreams.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chsem.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chsem.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chsem.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chschd.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chschd.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chschd.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chregistry.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chregistry.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chregistry.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chqueues.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chqueues.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chqueues.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmtx.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmtx.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chmtx.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmsg.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmsg.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chmsg.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmempools.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmempools.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chmempools.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmemcore.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmemcore.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chmemcore.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmboxes.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chmboxes.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chmboxes.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chlists.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chlists.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chlists.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chioch.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chioch.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chioch.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chinline.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chinline.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chinline.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chheap.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chheap.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chheap.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chevents.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chevents.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chevents.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdynamic.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chdynamic.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdebug.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chdebug.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chdebug.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chcond.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chcond.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\chcond.h
+Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\ch.h
+
+[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\ch.h]
+ElemType=File
+PathName=..\..\..\os\kernel\include\ch.h
+
+[Root.Include Files.Include Files\os.Include Files\os\port]
+ElemType=Folder
+PathName=Include Files\os\port
+Child=Root.Include Files.Include Files\os.Include Files\os\port...\..\..\os\ports\rc\stm8\chtypes.h
+
+[Root.Include Files.Include Files\os.Include Files\os\port...\..\..\os\ports\rc\stm8\chtypes.h]
+ElemType=File
+PathName=..\..\..\os\ports\rc\stm8\chtypes.h
+Next=Root.Include Files.Include Files\os.Include Files\os\port...\..\..\os\ports\rc\stm8\chcore.h
+
+[Root.Include Files.Include Files\os.Include Files\os\port...\..\..\os\ports\rc\stm8\chcore.h]
+ElemType=File
+PathName=..\..\..\os\ports\rc\stm8\chcore.h
+
+[Root.Include Files.Include Files\test]
+ElemType=Folder
+PathName=Include Files\test
+Child=Root.Include Files.Include Files\test...\..\..\test\testsem.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testsem.h]
+ElemType=File
+PathName=..\..\..\test\testsem.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testqueues.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testqueues.h]
+ElemType=File
+PathName=..\..\..\test\testqueues.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testpools.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testpools.h]
+ElemType=File
+PathName=..\..\..\test\testpools.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testmtx.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testmtx.h]
+ElemType=File
+PathName=..\..\..\test\testmtx.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testmsg.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testmsg.h]
+ElemType=File
+PathName=..\..\..\test\testmsg.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testmbox.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testmbox.h]
+ElemType=File
+PathName=..\..\..\test\testmbox.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testheap.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testheap.h]
+ElemType=File
+PathName=..\..\..\test\testheap.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testevt.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testevt.h]
+ElemType=File
+PathName=..\..\..\test\testevt.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testdyn.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testdyn.h]
+ElemType=File
+PathName=..\..\..\test\testdyn.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testbmk.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testbmk.h]
+ElemType=File
+PathName=..\..\..\test\testbmk.h
+Next=Root.Include Files.Include Files\test...\..\..\test\test.h
+
+[Root.Include Files.Include Files\test...\..\..\test\test.h]
+ElemType=File
+PathName=..\..\..\test\test.h
+Next=Root.Include Files.Include Files\test...\..\..\test\testthd.h
+
+[Root.Include Files.Include Files\test...\..\..\test\testthd.h]
+ElemType=File
+PathName=..\..\..\test\testthd.h

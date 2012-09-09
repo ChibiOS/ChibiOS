@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="abstract_driver_cfg.xsd" />
+
+  <xs:complexType name="AbstractAdcGroupCfgType">
+    <xs:complexContent>
+      <xs:extension base="DocumentedItem">
+        <xs:sequence>
+          <xs:element name="circular" maxOccurs="1" minOccurs="1">
+
+            <xs:simpleType>
+              <xs:restriction base="xs:boolean">
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="conv_callback" maxOccurs="1" minOccurs="1">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:minLength value="0"></xs:minLength>
+                <xs:maxLength value="24"></xs:maxLength>
+                <xs:pattern value="\w[\w\d_]*"></xs:pattern>
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="error_callback" maxOccurs="1" minOccurs="1">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:minLength value="0"></xs:minLength>
+                <xs:maxLength value="24"></xs:maxLength>
+
+                <xs:pattern value="\w[\w\d_]*"></xs:pattern>
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:complexType name="AbstractAdcCfgType">
+    <xs:complexContent>
+      <xs:extension base="AbstractDriverCfgType"></xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,103 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011,2012 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup STM8L_DRIVERS STM8L Drivers
+ * @details This section describes all the supported drivers on the STM8L
+ * and the implementation details of the single drivers.
+ *
+ * @ingroup platforms
+ */
+
+/**
+ * @defgroup STM8L_HAL STM8L Initialization Support
+ * @details The STM8L HAL support is responsible for system initialization.
+ *
+ * @section stm8l_hal_1 Supported HW resources
+ * - CLK.
+ * .
+ * @section stm8l_hal_2 STM8L HAL driver implementation features
+ * - Board related initializations.
+ * - Clock tree initialization.
+ * - Clock source selection.
+ * .
+ * @ingroup STM8L_DRIVERS
+ */
+
+/**
+ * @defgroup STM8L_PAL STM8L PAL Support
+ * @details The STM8L PAL driver uses the GPIO peripherals.
+ *
+ * @section stm8l_pal_1 Supported HW resources
+ * - GPIOA.
+ * - GPIOB.
+ * - GPIOC.
+ * - GPIOD.
+ * - GPIOE.
+ * - GPIOF.
+ * - GPIOG.
+ * - GPIOH (where present).
+ * - GPIOI (where present).
+ * .
+ * @section stm8l_pal_2 STM8L PAL driver implementation features
+ * The PAL driver implementation fully supports the following hardware
+ * capabilities:
+ * - 8 bits wide ports.
+ * - Atomic set/reset/toggle functions because special STM8L instruction set.
+ * - Output latched regardless of the pad setting.
+ * - Direct read of input pads regardless of the pad setting.
+ * .
+ * @section stm8l_pal_3 Supported PAL setup modes
+ * The STM8L PAL driver supports the following I/O modes:
+ * - @p PAL_MODE_RESET.
+ * - @p PAL_MODE_UNCONNECTED.
+ * - @p PAL_MODE_INPUT.
+ * - @p PAL_MODE_INPUT_PULLUP.
+ * - @p PAL_MODE_OUTPUT_PUSHPULL.
+ * - @p PAL_MODE_OUTPUT_OPENDRAIN.
+ * .
+ * Any attempt to setup an invalid mode is ignored.
+ *
+ * @section stm8l_pal_4 Suboptimal behavior
+ * The STM8L GPIO is less than optimal in several areas, the limitations
+ * should be taken in account while using the PAL driver:
+ * - Bus/group writing is not atomic.
+ * - Pad/group mode setup is not atomic.
+ * .
+ * @ingroup STM8L_DRIVERS
+ */
+
+/**
+ * @defgroup STM8L_SERIAL STM8L Serial Support
+ * @details The STM8L Serial driver uses the USART1 peripheral in a
+ *          buffered, interrupt driven, implementation.
+ *
+ * @section stm8l_serial_1 Supported HW resources
+ * The serial driver can support any of the following hardware resources:
+ * - USART1.
+ * - USART2 (where present).
+ * - USART3 (where present).
+ * .
+ * @section stm8l_serial_2 STM8L Serial driver implementation features
+ * - Clock stop for reduced power usage when the driver is in stop state.
+ * - Fully interrupt driven.
+ * .
+ * @ingroup STM8L_DRIVERS
+ */
