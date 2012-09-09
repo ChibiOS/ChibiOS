@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    STM3F0xx/stm32_isr.h
+ * @file    STM32F0xx/stm32_isr.h
  * @brief   ISR remapper driver header.
  *
  * @addtogroup STM32F0xx_ISR

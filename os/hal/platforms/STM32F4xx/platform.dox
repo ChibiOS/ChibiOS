@@ -343,6 +343,14 @@
  */
 
 /**
+ * @defgroup STM32F1xx_ISR STM32F4xx ISR Support
+ * @details This ISR helper driver is used by the other drivers in order to
+ *          map ISR names to physical vector names.
+ *
+ * @ingroup STM32F4xx_PLATFORM_DRIVERS
+ */
+
+/**
  * @defgroup STM32F4xx_RCC STM32F4xx RCC Support
  * @details This RCC helper driver is used by the other drivers in order to
  *          access the shared RCC resources in a consistent way.
