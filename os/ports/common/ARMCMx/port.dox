@@ -19,7 +19,7 @@
 */
 
 /**
- * @defgroup COMMON_ARMCMx ARM Cortex-Mx
+ * @defgroup COMMON_ARMCMx ARM Cortex-Mx Common Code
  * @ingroup port_common
  */
  
