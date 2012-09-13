@@ -23,10 +23,14 @@ ifeq ($(USE_LINK_GC),)
   USE_LINK_GC = no
 endif
 
-# Enable register caching optimization (read documentation).
-# Option not tested on MSP430, DO NOT USE.
-ifeq ($(USE_CURRP_CACHING),)
-  USE_CURRP_CACHING = no
+# If enabled, this option allows to compile the application in VLE mode.
+ifeq ($(USE_VLE),)
+  USE_VLE = yes
+endif
+
+# Enable this if you want to see the full log while compiling.
+ifeq ($(USE_VERBOSE_COMPILE),)
+  USE_VERBOSE_COMPILE = no
 endif
 
 #
@@ -40,17 +44,17 @@ endif
 # Define project name here
 PROJECT = ch
 
-# Define linker script file here
-LDSCRIPT = ./ch.ld
-
 # Imported source files
 CHIBIOS = ../..
 include $(CHIBIOS)/boards/GENERIC_SPC563/board.mk
 include $(CHIBIOS)/os/hal/platforms/SPC56x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/PPC/port.mk
+include $(CHIBIOS)/os/ports/GCC/PPC/SPC563Mxx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
+
+# Define linker script file here
+LDSCRIPT= $(PORTLD)/SPC563M64.ld
 
 # C sources here.
 CSRC = $(PORTSRC) \
@@ -68,9 +72,7 @@ CSRC = $(PORTSRC) \
 CPPSRC =
 
 # List ASM source files here
-ASMSRC = $(PORTASM) \
-         $(CHIBIOS)/os/ports/GCC/PPC/SPC56x/ivor.s \
-         $(CHIBIOS)/os/ports/GCC/PPC/SPC56x/vectors.s
+ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
@@ -84,9 +86,10 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 # Compiler settings
 #
 
-MCU  = e500mc -meabi -msdata=none -mnew-mnemonics -mregnames
+MCU  = e200zx -meabi -msdata=none -mnew-mnemonics -mregnames
 
-TRGT = powerpc-eabi-
+#TRGT = powerpc-eabi-
+TRGT = ppc-vle-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.
@@ -115,7 +118,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS = -DPPC_VARIANT=PPC_VARIANT_e200z3
+DDEFS =
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =

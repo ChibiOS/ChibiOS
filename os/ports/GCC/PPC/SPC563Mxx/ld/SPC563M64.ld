@@ -45,34 +45,77 @@ __ram_end__             = ORIGIN(ram) + LENGTH(ram);
 SECTIONS
 {
     . = ORIGIN(flash);
-
-    .text : ALIGN(16) SUBALIGN(16)
+    .boot : ALIGN(16) SUBALIGN(16)
     {
         __ivpr_base__ = .;
         KEEP(*(.bam))
+        KEEP(*(.crt0))
         KEEP(*(.handlers))
         . = ALIGN(0x800);
         KEEP(*(.vectors))
-        *(.text .stub .text.* .gnu.linkonce.t.*)
-        *(.glue_7t);
-        *(.glue_7);
-        *(.ctors);
-        *(.dtors);
+    } > flash
+
+    constructors : ALIGN(4) SUBALIGN(4)
+    {
+        PROVIDE(__init_array_start = .);
+        KEEP(*(SORT(.init_array.*)))
+        KEEP(*(.init_array))
+        PROVIDE(__init_array_end = .);
+    } > flash
+
+    destructors : ALIGN(4) SUBALIGN(4) FLAGS(ax)
+    {
+        PROVIDE(__fini_array_start = .);
+        KEEP(*(.fini_array))
+        KEEP(*(SORT(.fini_array.*)))
+        PROVIDE(__fini_array_end = .);
+    } > flash
+
+    .text_vle : ALIGN(16) SUBALIGN(16) FLAGS(axv)
+    {
+        *(.text_vle)
+        *(.text_vle.*)
+        *(.gnu.linkonce.t_vle.*)
+    } > flash
+
+    .text : ALIGN(16) SUBALIGN(16) FLAGS(ax)
+    {
+        *(.text)
+        *(.text.*)
+        *(.gnu.linkonce.t.*)
     } > flash
 
     .rodata : ALIGN(16) SUBALIGN(16)
     {
-        *(.rodata .rodata.* .gnu.linkonce.r.*)
+        *(.glue_7t)
+        *(.glue_7)
+        *(.gcc*)
+        *(.rodata)
+        *(.rodata.*)
         *(.rodata1)
     } > flash
-    
+
     .sdata2 : ALIGN(16) SUBALIGN(16)
     {
         __sdata2_start__ = . + 0x8000;
-        *(.sdata2 .sdata2.* .gnu.linkonce.s2.*)
-        *(.sbss2 .sbss2.* .gnu.linkonce.sb2.*)
+        *(.sdata2)
+        *(.sdata2.*)
+        *(.gnu.linkonce.s2.*)
+        *(.sbss2)
+        *(.sbss2.*)
+        *(.gnu.linkonce.sb2.*)
     } > flash
-    
+
+    .eh_frame_hdr :
+    {
+        *(.eh_frame_hdr)
+    } > flash
+
+    .eh_frame : ONLY_IF_RO
+    {
+        *(.eh_frame)
+    } > flash
+
     .romdata : ALIGN(16) SUBALIGN(16)
     {
         __romdata_start__ = .;
@@ -82,30 +125,33 @@ SECTIONS
     {
         . = ALIGN(4);
         __data_start__ = .;
-        *(.data .data.* .gnu.linkonce.d.*)
+        *(.data)
+        *(.data.*)
+        *(.gnu.linkonce.d.*)
         __sdata_start__ = . + 0x8000;
-        *(.sdata .sdata.* .gnu.linkonce.s.*)
+        *(.sdata)
+        *(.sdata.*)
+        *(.gnu.linkonce.s.*)
         __data_end__ = .;
     } > ram
 
     .sbss :
     {
         __bss_start__ = .;
-        *(.sbss .sbss.* .gnu.linkonce.sb.*)
+        *(.sbss)
+        *(.sbss.*)
+        *(.gnu.linkonce.sb.*)
         *(.scommon)
     } > ram
 
     .bss :
     {
-        *(.bss .bss.* .gnu.linkonce.b.*)
+        *(.bss)
+        *(.bss.*)
+        *(.gnu.linkonce.b.*)
         *(COMMON)
         __bss_end__ = .;
     } > ram
-    
-    /DISCARD/ :
-    {
-        *(.eh_*)
-    }
 
     __heap_base__   = __bss_end__;
     __heap_end__    = __ram_end__ - __stacks_total_size__;

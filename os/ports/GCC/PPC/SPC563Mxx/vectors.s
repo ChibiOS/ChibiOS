@@ -19,28 +19,29 @@
 */
 
 /**
- * @file    SPC56x/vectors.s
- * @brief   SPC56x vectors table.
+ * @file    SPC563Mxx/vectors.s
+ * @brief   SPC563Mxx vectors table.
  *
  * @addtogroup PPC_CORE
  * @{
  */
-/** @cond never */
 
-        /*
-         * BAM info, SWT off, WTE off, VLE off.
-         */
-        .section    .bam
+#if !defined(__DOXYGEN__)
+
+        /* BAM info, SWT off, WTE off, VLE from settings.*/
+        .section    .bam, "ax"
+#if PPC_USE_VLE
+        .long       0x015A0000
+#else
         .long       0x005A0000
+#endif
         .long       _boot_address
 
-        /*
-         * Software vectors table. The vectors are accessed from the IVOR4
-         * handler only. In order to declare an interrupt handler just create
-         * a function withe the same name of a vector, the symbol will
-         * override the weak symbol declared here.
-         */
-        .section    .vectors
+        /* Software vectors table. The vectors are accessed from the IVOR4
+           handler only. In order to declare an interrupt handler just create
+           a function withe the same name of a vector, the symbol will
+           override the weak symbol declared here.*/
+        .section    .vectors, "ax"
         .align		4
         .globl      _vectors
 _vectors:
@@ -1488,8 +1489,10 @@ vector358:
 vector359:
 
         .globl      _unhandled_irq
+        .type       _unhandled_irq, @function
 _unhandled_irq:
          b          _unhandled_irq
 
-/** @endcond */
+#endif /* !defined(__DOXYGEN__) */
+
 /** @} */

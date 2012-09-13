@@ -25,11 +25,13 @@
  * @addtogroup PPC_CORE
  * @{
  */
-/** @cond never */
 
-        .section    .text
+#if !defined(__DOXYGEN__)
+
+        .section    .crt0, "ax"
         .align		2
         .globl      _boot_address
+        .type       _boot_address, @function
 _boot_address:
         /*
          * Stack setup.
@@ -98,17 +100,19 @@ _boot_address:
          */
         .weak       _main_exit_handler
         .globl      _main_exit_handler
+        .type       _main_exit_handler, @function
 _main_exit_handler:
-forever:
-        b           forever
+        b           _main_exit_handler
 
         /*
          * Default initialization code, none.
          */
         .weak       __early_init
         .globl      __early_init
+        .type       __early_init, @function
 __early_init:
         blr
 
-/** @endcond */
+#endif /* !defined(__DOXYGEN__) */
+
 /** @} */

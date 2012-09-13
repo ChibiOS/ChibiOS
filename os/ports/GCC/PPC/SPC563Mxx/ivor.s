@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    SPC56x/ivor.s
+ * @file    SPC563Mxx/ivor.s
  * @brief   PowerPC IVORx handlers.
  *
  * @addtogroup PPC_CORE
@@ -38,7 +38,7 @@
         .equ  INTC_IACKR, 0xfff48010
         .equ  INTC_EOIR,  0xfff48018
 
-        .section    .handlers
+        .section    .handlers, "ax"
 
         /*
          * IVOR10 handler (Book-E decrementer).

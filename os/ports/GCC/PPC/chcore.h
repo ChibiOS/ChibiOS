@@ -33,29 +33,67 @@
 #error "option CH_DBG_ENABLE_STACK_CHECK not supported by this port"
 #endif
 
-/*
- * Port-related configuration parameters.
+/*===========================================================================*/
+/* Port constants (common).                                                  */
+/*===========================================================================*/
+
+/* Added to make the header stand-alone when included from asm.*/
+#ifndef FALSE
+#define FALSE       0
+#endif
+#ifndef TRUE
+#define TRUE        (!FALSE)
+#endif
+
+/**
+ * @name    Supported core variants
+ * @{
  */
+#define PPC_VARIANT_e200z0              200
+#define PPC_VARIANT_e200z3              203
+#define PPC_VARIANT_e200z4              204
+/** @} */
+
+#include "ppcparams.h"
+
+/*===========================================================================*/
+/* Port macros (common).                                                     */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Port configurable parameters (common).                                    */
+/*===========================================================================*/
+
+/**
+ * @brief   Use VLE instruction set.
+ * @note    This parameter is usually set in the Makefile.
+ */
+#if !defined(PPC_USE_VLE)
+#define PPC_USE_VLE                     TRUE
+#endif
 
 /**
  * @brief   Enables the use of the @p WFI instruction.
  */
-#ifndef ENABLE_WFI_IDLE
-#define ENABLE_WFI_IDLE                 0
+#if !defined(PPC_ENABLE_WFI_IDLE)
+#define PPC_ENABLE_WFI_IDLE             FALSE
 #endif
 
-/* Core variants identifiers.*/
-#define PPC_VARIANT_e200z3              3   /**< e200z3 core identifier.    */
-#define PPC_VARIANT_e200z4              4   /**< e200z4 core identifier.    */
+/*===========================================================================*/
+/* Port derived parameters (common).                                         */
+/*===========================================================================*/
 
-/**
- * @brief   Core variant selector.
- * @details This setting affects the predefined architecture strings and
- *          possibly code paths and structures into the port layer.
- */
-#if !defined(PPC_VARIANT) || defined(__DOXYGEN__)
-#define PPC_VARIANT                     PPC_VARIANT_e200z3
+#if PPC_USE_VLE && !PPC_SUPPORTS_VLE
+#error "the selected MCU does not support VLE instructions set"
 #endif
+
+#if !PPC_USE_VLE && !PPC_SUPPORTS_BOOKE
+#error "the selected MCU does not support BookE instructions set"
+#endif
+
+/*===========================================================================*/
+/* Port exported info (common).                                              */
+/*===========================================================================*/
 
 /**
  * @brief   Unique macro for the implemented architecture.
@@ -70,7 +108,9 @@
 /**
  * @brief   Name of the architecture variant.
  */
-#if (PPC_VARIANT == PPC_VARIANT_e200z3) || defined(__DOXYGEN__)
+#if (PPC_VARIANT == PPC_VARIANT_e200z0) || defined(__DOXYGEN__)
+#define CH_CORE_VARIANT_NAME            "e200z0"
+#elif PPC_VARIANT == PPC_VARIANT_e200z3
 #define CH_CORE_VARIANT_NAME            "e200z3"
 #elif PPC_VARIANT == PPC_VARIANT_e200z4
 #define CH_CORE_VARIANT_NAME            "e200z4"
@@ -86,7 +126,17 @@
 /**
  * @brief   Port-specific information string.
  */
-#define CH_PORT_INFO                    "None"
+#if PPC_USE_VLE
+#define CH_PORT_INFO                    "VLE mode"
+#else
+#define CH_PORT_INFO                    "Book-E mode"
+#endif
+
+/*===========================================================================*/
+/* Port implementation part (common).                                        */
+/*===========================================================================*/
+
+#if !defined(_FROM_ASM_)
 
 /**
  * @brief   Base type for stack and memory alignment.
@@ -202,7 +252,7 @@ struct context {
  *          by @p PORT_INT_REQUIRED_STACK.
  */
 #ifndef PORT_IDLE_THREAD_STACK_SIZE
-#define PORT_IDLE_THREAD_STACK_SIZE     0
+#define PORT_IDLE_THREAD_STACK_SIZE     32
 #endif
 
 /**
@@ -214,7 +264,7 @@ struct context {
  *          @p extctx is known to be zero.
  */
 #ifndef PORT_INT_REQUIRED_STACK
-#define PORT_INT_REQUIRED_STACK         128
+#define PORT_INT_REQUIRED_STACK         256
 #endif
 
 /**
@@ -328,6 +378,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* _FROM_ASM_ */
 
 #endif /* _CHCORE_H_ */
 

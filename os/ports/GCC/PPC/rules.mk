@@ -4,11 +4,15 @@
 OPT = $(USE_OPT)
 COPT = $(USE_COPT)
 CPPOPT = $(USE_CPPOPT)
-ifeq ($(USE_CURRP_CACHING),yes)
-  OPT += -ffixed-r7 -DCH_CURRP_REGISTER_CACHE='"r7"'
-endif
 ifeq ($(USE_LINK_GC),yes)
   OPT += -ffunction-sections -fdata-sections
+endif
+
+# VLE option handling.
+ifeq ($(USE_VLE),yes)
+  DDEFS += -DPPC_USE_VLE=1
+  DADEFS += -DPPC_USE_VLE=1
+  MCU += -mvle
 endif
 
 # Source files groups
