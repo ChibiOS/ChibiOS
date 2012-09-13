@@ -53,6 +53,7 @@
   |  |  |  +--SIMIA32/  - Port files for SIMIA32 simulator architecture.
   |  |  +--IAR/         - Ports for the IAR compiler.
   |  |  |  +--ARMCMx/   - Port files for ARMCMx architectures (ARMv6/7-M).
+  |  |  |  +--STM8/     - Port files for STM8 architecture.
   |  |  +--RVCT/        - Ports for the Keil RVCT compiler.
   |  |  |  +--ARMCMx/   - Port files for ARMCMx architectures (ARMv6/7-M).
   |  |  +--cosmic/      - Ports for the Cosmic compiler.
@@ -83,6 +84,8 @@
 
 *** 2.5.1 ***
 - NEW: Added VLE support to the Power Architecture GCC port.
+- NEW: Reorganized the Power Architecture GCC port along the lines of the
+  ARMCMx port, now it can support multiple core types.
 - NEW: Updated the Power Architecture rules.mk file to put object and listing
   files into a ./build directory like ARM ports alread do.
 
