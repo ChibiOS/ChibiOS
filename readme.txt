@@ -81,6 +81,11 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.5.1 ***
+- NEW: Added VLE support to the Power Architecture GCC port.
+- NEW: Updated the Power Architecture rules.mk file to put object and listing
+  files into a ./build directory like ARM ports alread do.
+
 *** 2.5.0 ***
 - FIX: Fixed anomaly in USB enumeration (bug 3565325)(backported to 2.4.3).
 - FIX: Fixed problem with lwIP statistics (bug 3564134)(backported to 2.4.3).
