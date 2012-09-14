@@ -63,7 +63,7 @@ SECTIONS
         PROVIDE(__init_array_end = .);
     } > flash
 
-    destructors : ALIGN(4) SUBALIGN(4) FLAGS(ax)
+    destructors : ALIGN(4) SUBALIGN(4)
     {
         PROVIDE(__fini_array_start = .);
         KEEP(*(.fini_array))
@@ -71,14 +71,14 @@ SECTIONS
         PROVIDE(__fini_array_end = .);
     } > flash
 
-    .text_vle : ALIGN(16) SUBALIGN(16) FLAGS(axv)
+    .text_vle : ALIGN(16) SUBALIGN(16)
     {
         *(.text_vle)
         *(.text_vle.*)
         *(.gnu.linkonce.t_vle.*)
     } > flash
 
-    .text : ALIGN(16) SUBALIGN(16) FLAGS(ax)
+    .text : ALIGN(16) SUBALIGN(16)
     {
         *(.text)
         *(.text.*)
