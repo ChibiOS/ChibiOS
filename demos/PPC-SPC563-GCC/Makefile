@@ -86,6 +86,7 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 # Compiler settings
 #
 
+#MCU  = e500mc -meabi -msdata=none -mnew-mnemonics -mregnames
 MCU  = e200zx -meabi -msdata=none -mnew-mnemonics -mregnames
 
 #TRGT = powerpc-eabi-

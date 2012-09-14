@@ -26,10 +26,12 @@
  * @{
  */
 
+/*
+ * Imports the PPC configuration headers.
+ */
+#define _FROM_ASM_
 #include "chconf.h"
-
-#define FALSE 0
-#define TRUE 1
+#include "chcore.h"
 
 #if !defined(__DOXYGEN__)
         /*

@@ -359,8 +359,8 @@ struct context {
  * @details This port function is implemented as inlined code for performance
  *          reasons.
  */
-#if ENABLE_WFI_IDLE != 0
-#ifndef port_wait_for_interrupt
+#if PPC_ENABLE_WFI_IDLE
+#if !defined(port_wait_for_interrupt)
 #define port_wait_for_interrupt() {                                         \
   asm volatile ("wait" : : : "memory");                                     \
 }

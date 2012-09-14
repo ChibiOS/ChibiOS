@@ -26,6 +26,13 @@
  * @{
  */
 
+/*
+ * Imports the PPC configuration headers.
+ */
+#define _FROM_ASM_
+#include "chconf.h"
+#include "chcore.h"
+
 #if !defined(__DOXYGEN__)
 
         /* BAM info, SWT off, WTE off, VLE from settings.*/
