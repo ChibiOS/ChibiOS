@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    SPC563Mxx/ivor.s
- * @brief   SPC563Mxx IVORx handlers.
+ * @file    SPC560Pxx/ivor.s
+ * @brief   SPC560Pxx IVORx handlers.
  *
  * @addtogroup PPC_CORE
  * @{

@@ -19,13 +19,13 @@
 */
 
 /**
- * @file    SPC563Mxx/ppcparams.h
- * @brief   PowerPC parameters for the SPC563Mxx.
+ * @file    SPC560Pxx/ppcparams.h
+ * @brief   PowerPC parameters for the SPC560Pxx.
  *
- * @defgroup PPC_SPC563Mxx SPC563Mxx/MPC563x Specific Parameters
+ * @defgroup PPC_SPC560Pxx SPC560Pxx/MPC560x Specific Parameters
  * @ingroup PPC_SPECIFIC
  * @details This file contains the PowerPC specific parameters for the
- *          SPC563Mxx/MPC563x platform.
+ *          SPC560Pxx/MPC560x platform.
  * @{
  */
 
@@ -35,12 +35,12 @@
 /**
  * @brief   PPC core model.
  */
-#define PPC_VARIANT             PPC_VARIANT_e200z3
+#define PPC_VARIANT             PPC_VARIANT_e200z0
 
 /**
  * @brief   Book E instruction set support.
  */
-#define PPC_SUPPORTS_BOOKE      TRUE
+#define PPC_SUPPORTS_BOOKE      FALSE
 
 /**
  * @brief   VLE instruction set support.
