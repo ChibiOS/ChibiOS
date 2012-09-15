@@ -29,7 +29,7 @@
 #define _BOARD_H_
 
 /*
- * Setup for the Olimex STM33-P103 proto board.
+ * Setup for the Olimex STM32-P103 proto board.
  */
 
 /*
