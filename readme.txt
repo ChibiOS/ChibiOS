@@ -83,6 +83,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed Data available event not generated in serial_usb driver (bug
+  3567992).
 - NEW: Added VLE support to the Power Architecture GCC port.
 - NEW: Reorganized the Power Architecture GCC port along the lines of the
   ARMCMx port, now it can support multiple core types.

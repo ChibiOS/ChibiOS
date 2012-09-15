@@ -260,6 +260,11 @@ void sduConfigureHookI(USBDriver *usbp) {
   chIQResetI(&sdup->iqueue);
   chOQResetI(&sdup->oqueue);
   chnAddFlagsI(sdup, CHN_CONNECTED);
+
+  /* Starts the first OUT transaction immediately.*/
+  usbPrepareQueuedReceive(usbp, USB_CDC_DATA_AVAILABLE_EP, &sdup->iqueue,
+                          usbp->epc[USB_CDC_DATA_AVAILABLE_EP]->out_maxsize);
+  usbStartReceiveI(usbp, USB_CDC_DATA_AVAILABLE_EP);
 }
 
 /**
