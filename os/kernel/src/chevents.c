@@ -126,7 +126,7 @@ void chEvtUnregister(EventSource *esp, EventListener *elp) {
  *
  * @api
  */
-eventmask_t chEvtClearFlags(eventmask_t mask) {
+eventmask_t chEvtGetAndClearEvents(eventmask_t mask) {
   eventmask_t m;
 
   chSysLock();
@@ -147,7 +147,7 @@ eventmask_t chEvtClearFlags(eventmask_t mask) {
  *
  * @api
  */
-eventmask_t chEvtAddFlags(eventmask_t mask) {
+eventmask_t chEvtAddEvents(eventmask_t mask) {
 
   chSysLock();
 
@@ -155,6 +155,60 @@ eventmask_t chEvtAddFlags(eventmask_t mask) {
 
   chSysUnlock();
   return mask;
+}
+
+/**
+ * @brief   Signals all the Event Listeners registered on the specified Event
+ *          Source.
+ * @details This function variants ORs the specified event flags to all the
+ *          threads registered on the @p EventSource in addition to the event
+ *          flags specified by the threads themselves in the
+ *          @p EventListener objects.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
+ *
+ * @param[in] esp       pointer to the @p EventSource structure
+ * @param[in] flags     the flags set to be added to the listener flags mask
+ *
+ * @iclass
+ */
+void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags) {
+  EventListener *elp;
+
+  chDbgCheckClassI();
+  chDbgCheck(esp != NULL, "chEvtBroadcastMaskI");
+
+  elp = esp->es_next;
+  while (elp != (EventListener *)esp) {
+    elp->el_flags |= flags;
+    chEvtSignalI(elp->el_listener, elp->el_mask);
+    elp = elp->el_next;
+  }
+}
+
+/**
+ * @brief   Returns the flags associated to an @p EventListener.
+ * @details The flags are returned and the @p EventListener flags mask is
+ *          cleared.
+ *
+ * @param[in] elp       pointer to the @p EventListener structure
+ * @return              The flags added to the listener by the associated
+ *                      event source.
+ *
+ * @iclass
+ */
+flagsmask_t chEvtGetAndClearFlags(EventListener *elp) {
+  flagsmask_t flags;
+
+  chSysLock();
+
+  flags = elp->el_flags;
+  elp->el_flags = 0;
+
+  chSysUnlock();
+  return flags;
 }
 
 /**
@@ -220,59 +274,6 @@ void chEvtBroadcastFlags(EventSource *esp, flagsmask_t flags) {
   chEvtBroadcastFlagsI(esp, flags);
   chSchRescheduleS();
   chSysUnlock();
-}
-
-/**
- * @brief   Signals all the Event Listeners registered on the specified Event
- *          Source.
- * @details This function variants ORs the specified event flags to all the
- *          threads registered on the @p EventSource in addition to the event
- *          flags specified by the threads themselves in the
- *          @p EventListener objects.
- * @post    This function does not reschedule so a call to a rescheduling
- *          function must be performed before unlocking the kernel. Note that
- *          interrupt handlers always reschedule on exit so an explicit
- *          reschedule must not be performed in ISRs.
- *
- * @param[in] esp       pointer to the @p EventSource structure
- * @param[in] flags     the flags set to be added to the listener flags mask
- *
- * @iclass
- */
-void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags) {
-  EventListener *elp;
-
-  chDbgCheckClassI();
-  chDbgCheck(esp != NULL, "chEvtBroadcastMaskI");
-
-  elp = esp->es_next;
-  while (elp != (EventListener *)esp) {
-    elp->el_flags |= flags;
-    chEvtSignalI(elp->el_listener, elp->el_mask);
-    elp = elp->el_next;
-  }
-}
-
-/**
- * @brief   Returns the flags associated to an @p EventListener.
- * @details The flags are returned and the @p EventListener flags mask is
- *          cleared.
- *
- * @param[in] elp       pointer to the @p EventListener structure
- * @return              The flags added to the listener by the associated
- *                      event source.
- *
- * @iclass
- */
-flagsmask_t chEvtGetAndClearFlags(EventListener *elp) {
-  flagsmask_t flags;
-
-  chSysLock();
-  flags = elp->el_flags;
-  elp->el_flags = 0;
-  chSysUnlock();
-
-  return flags;
 }
 
 /**
