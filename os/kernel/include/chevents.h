@@ -173,8 +173,10 @@ extern "C" {
   eventmask_t chEvtAddFlags(eventmask_t mask);
   void chEvtSignal(Thread *tp, eventmask_t mask);
   void chEvtSignalI(Thread *tp, eventmask_t mask);
-  void chEvtBroadcastFlags(EventSource *esp, eventmask_t mask);
-  void chEvtBroadcastFlagsI(EventSource *esp, eventmask_t mask);
+  void chEvtBroadcastFlags(EventSource *esp, flagsmask_t flags);
+  void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags);
+  flagsmask_t chEvtGetAndClearFlags(EventListener *elp);
+  flagsmask_t chEvtGetAndClearFlagsI(EventListener *elp);
   void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask);
 #if CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT
   eventmask_t chEvtWaitOne(eventmask_t mask);

@@ -264,11 +264,13 @@ void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags) {
  *
  * @iclass
  */
-flagsmask_t chEvtGetAndClearFlagsI(EventListener *elp) {
+flagsmask_t chEvtGetAndClearFlags(EventListener *elp) {
   flagsmask_t flags;
 
+  chSysLock();
   flags = elp->el_flags;
   elp->el_flags = 0;
+  chSysUnlock();
 
   return flags;
 }
@@ -284,13 +286,11 @@ flagsmask_t chEvtGetAndClearFlagsI(EventListener *elp) {
  *
  * @iclass
  */
-flagsmask_t chEvtGetAndClearFlags(EventListener *elp) {
+flagsmask_t chEvtGetAndClearFlagsI(EventListener *elp) {
   flagsmask_t flags;
 
-  chSysLock();
   flags = elp->el_flags;
   elp->el_flags = 0;
-  chSysUnlock();
 
   return flags;
 }
