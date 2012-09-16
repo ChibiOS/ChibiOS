@@ -17,6 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   Concepts and parts of this file have been contributed by Scott (skute).
+ */
 
 /**
  * @file    chevents.c
@@ -77,10 +80,11 @@ void chEvtRegisterMask(EventSource *esp, EventListener *elp, eventmask_t mask) {
   chDbgCheck((esp != NULL) && (elp != NULL), "chEvtRegisterMask");
 
   chSysLock();
-  elp->el_next = esp->es_next;
-  esp->es_next = elp;
+  elp->el_next     = esp->es_next;
+  esp->es_next     = elp;
   elp->el_listener = currp;
-  elp->el_mask = mask;
+  elp->el_mask     = mask;
+  elp->el_flags    = 0;
   chSysUnlock();
 }
 
@@ -154,25 +158,25 @@ eventmask_t chEvtAddFlags(eventmask_t mask) {
 }
 
 /**
- * @brief   Adds (OR) a set of event flags on the specified @p Thread.
+ * @brief   Adds a set of event flags directly to specified @p Thread.
  *
  * @param[in] tp        the thread to be signaled
  * @param[in] mask      the event flags set to be ORed
  *
  * @api
  */
-void chEvtSignalFlags(Thread *tp, eventmask_t mask) {
+void chEvtSignal(Thread *tp, eventmask_t mask) {
 
   chDbgCheck(tp != NULL, "chEvtSignal");
 
   chSysLock();
-  chEvtSignalFlagsI(tp, mask);
+  chEvtSignalI(tp, mask);
   chSchRescheduleS();
   chSysUnlock();
 }
 
 /**
- * @brief   Adds (OR) a set of event flags on the specified @p Thread.
+ * @brief   Adds a set of event flags directly to specified @p Thread.
  * @post    This function does not reschedule so a call to a rescheduling
  *          function must be performed before unlocking the kernel. Note that
  *          interrupt handlers always reschedule on exit so an explicit
@@ -183,7 +187,7 @@ void chEvtSignalFlags(Thread *tp, eventmask_t mask) {
  *
  * @iclass
  */
-void chEvtSignalFlagsI(Thread *tp, eventmask_t mask) {
+void chEvtSignalI(Thread *tp, eventmask_t mask) {
 
   chDbgCheckClassI();
   chDbgCheck(tp != NULL, "chEvtSignalI");
@@ -206,14 +210,14 @@ void chEvtSignalFlagsI(Thread *tp, eventmask_t mask) {
  *          @p EventListener objects.
  *
  * @param[in] esp       pointer to the @p EventSource structure
- * @param[in] mask      the event flags set to be ORed
+ * @param[in] flags     the flags set to be added to the listener flags mask
  *
  * @api
  */
-void chEvtBroadcastFlags(EventSource *esp, eventmask_t mask) {
+void chEvtBroadcastFlags(EventSource *esp, flagsmask_t flags) {
 
   chSysLock();
-  chEvtBroadcastFlagsI(esp, mask);
+  chEvtBroadcastFlagsI(esp, flags);
   chSchRescheduleS();
   chSysUnlock();
 }
@@ -231,11 +235,11 @@ void chEvtBroadcastFlags(EventSource *esp, eventmask_t mask) {
  *          reschedule must not be performed in ISRs.
  *
  * @param[in] esp       pointer to the @p EventSource structure
- * @param[in] mask      the event flags set to be ORed
+ * @param[in] flags     the flags set to be added to the listener flags mask
  *
  * @iclass
  */
-void chEvtBroadcastFlagsI(EventSource *esp, eventmask_t mask) {
+void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags) {
   EventListener *elp;
 
   chDbgCheckClassI();
@@ -243,9 +247,52 @@ void chEvtBroadcastFlagsI(EventSource *esp, eventmask_t mask) {
 
   elp = esp->es_next;
   while (elp != (EventListener *)esp) {
-    chEvtSignalFlagsI(elp->el_listener, elp->el_mask | mask);
+    elp->el_flags |= flags;
+    chEvtSignalI(elp->el_listener, elp->el_mask);
     elp = elp->el_next;
   }
+}
+
+/**
+ * @brief   Returns the flags associated to an @p EventListener.
+ * @details The flags are returned and the @p EventListener flags mask is
+ *          cleared.
+ *
+ * @param[in] elp       pointer to the @p EventListener structure
+ * @return              The flags added to the listener by the associated
+ *                      event source.
+ *
+ * @iclass
+ */
+flagsmask_t chEvtGetAndClearFlagsI(EventListener *elp) {
+  flagsmask_t flags;
+
+  flags = elp->el_flags;
+  elp->el_flags = 0;
+
+  return flags;
+}
+
+/**
+ * @brief   Returns the flags associated to an @p EventListener.
+ * @details The flags are returned and the @p EventListener flags mask is
+ *          cleared.
+ *
+ * @param[in] elp       pointer to the @p EventListener structure
+ * @return              The flags added to the listener by the associated
+ *                      event source.
+ *
+ * @iclass
+ */
+flagsmask_t chEvtGetAndClearFlags(EventListener *elp) {
+  flagsmask_t flags;
+
+  chSysLock();
+  flags = elp->el_flags;
+  elp->el_flags = 0;
+  chSysUnlock();
+
+  return flags;
 }
 
 /**

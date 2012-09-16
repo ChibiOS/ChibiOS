@@ -46,7 +46,8 @@ typedef uint8_t         tslices_t;      /**< Thread time slices counter.    */
 typedef uint16_t        tprio_t;        /**< Thread priority.               */
 typedef int16_t         msg_t;          /**< Inter-thread message.          */
 typedef int16_t         eventid_t;      /**< Event Id.                      */
-typedef uint16_t        eventmask_t;    /**< Events mask.                   */
+typedef uint16_t        eventmask_t;    /**< Event mask.                    */
+typedef uint16_t        flagsmask_t;    /**< Event flags.                   */
 typedef uint16_t        systime_t;      /**< System time.                   */
 typedef int16_t         cnt_t;          /**< Resources counter.             */
 

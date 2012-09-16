@@ -17,6 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   Concepts and parts of this file have been contributed by Scott (skute).
+ */
 
 /**
  * @file    chevents.h
@@ -45,6 +48,8 @@ struct EventListener {
   eventmask_t           el_mask;        /**< @brief Event flags mask associated
                                                     by the thread to the Event
                                                     Source.                 */
+  flagsmask_t           el_flags;       /**< @brief Flags added to the listener
+                                                    bu the event source.*/
 };
 
 /**
@@ -166,8 +171,8 @@ extern "C" {
   void chEvtUnregister(EventSource *esp, EventListener *elp);
   eventmask_t chEvtClearFlags(eventmask_t mask);
   eventmask_t chEvtAddFlags(eventmask_t mask);
-  void chEvtSignalFlags(Thread *tp, eventmask_t mask);
-  void chEvtSignalFlagsI(Thread *tp, eventmask_t mask);
+  void chEvtSignal(Thread *tp, eventmask_t mask);
+  void chEvtSignalI(Thread *tp, eventmask_t mask);
   void chEvtBroadcastFlags(EventSource *esp, eventmask_t mask);
   void chEvtBroadcastFlagsI(EventSource *esp, eventmask_t mask);
   void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask);

@@ -137,7 +137,7 @@ static void evt2_setup(void) {
 static msg_t thread1(void *p) {
 
   chThdSleepMilliseconds(50);
-  chEvtSignalFlags((Thread *)p, 1);
+  chEvtSignal((Thread *)p, 1);
   return 0;
 }
 
