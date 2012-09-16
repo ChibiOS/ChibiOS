@@ -145,12 +145,21 @@ void rtc_lld_init(void){
   /* Required because access to PRL.*/
   rtc_lld_apb1_sync();
 
-  /* Writes preload register only if its value is not equal to desired value.*/
-  if (STM32_RTCCLK != (((uint32_t)(RTC->PRLH)) << 16) +
-                       ((uint32_t)RTC->PRLL) + 1) {
+  /*
+   * Writes preload register only if its value is not equal to desired value.
+   *
+   * Ref CD00171190: RM0008 Reference manual Cls 18.4.3 The RTC->PRL registers
+   * are write only. We must store the value for the pre-scaler in BKP->DR1
+   * and BKP->DR1 so we know it has been set.
+   * The pre-scaler must not be set on every reset as RTC clock counts are
+   * lost when it is set.
+   */
+  if ((STM32_RTCCLK - 1) != ((((uint32_t)BKP->DR1) << 16) | BKP->DR2)){
     rtc_lld_acquire();
-    RTC->PRLH = (uint16_t)((STM32_RTCCLK - 1) >> 16);
-    RTC->PRLL = (uint16_t)((STM32_RTCCLK - 1) & 0xFFFF);
+    RTC->PRLH = (uint16_t)((STM32_RTCCLK - 1) >> 16) & 0x000F;
+    BKP->DR1  = (uint16_t)((STM32_RTCCLK - 1) >> 16) & 0x000F;
+    RTC->PRLL = (uint16_t)(((STM32_RTCCLK - 1)) & 0xFFFF);
+    BKP->DR2  = (uint16_t)(((STM32_RTCCLK - 1)) & 0xFFFF);
     rtc_lld_release();
   }
 

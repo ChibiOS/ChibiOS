@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed STM32F1x rtc_lld_init glitches rtc on hard reset (bug 3567597).
 - FIX: Fixed STM8L, cosmic compiler: c_lreg not saved (bug 3566342).
 - FIX: Fixed anomaly in USB enumeration (bug 3565325).
 - FIX: Fixed problem with lwIP statistics (bug 3564134).
