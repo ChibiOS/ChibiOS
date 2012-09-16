@@ -218,7 +218,7 @@ struct stm8_startctx {
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_IRQ_HANDLER(id) @far @interrupt void vector##id(void)
+#define PORT_IRQ_HANDLER(id) @far @interrupt @svlreg void vector##id(void)
 
 /**
  * @brief   Port-related initialization code.

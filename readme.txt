@@ -85,6 +85,10 @@
 *** 2.5.1 ***
 - FIX: Fixed Data available event not generated in serial_usb driver (bug
   3567992).
+- FIX: Fixed STM32F1x rtc_lld_init glitches rtc on hard reset (bug 3567597)
+  (backported to 2.4.3).
+- FIX: Fixed STM8L, cosmic compiler: c_lreg not saved (bug 3566342)(backported
+  to 2.2.10 and 2.4.3).
 - NEW: Modified the CAN drivers to use the new event flags mechanism, the
   previous flags handling has been removed.
 - NEW: Modified serial and serial_usb drivers to use the new event flags
