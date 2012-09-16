@@ -94,6 +94,7 @@ typedef void (*stm8func_t)(void);
  */
 struct extctx {
   uint8_t       _next;
+  uint8_t       c_lreg[4];
   uint8_t       c_y[3];
   uint8_t       c_x[3];
   uint8_t       cc;
