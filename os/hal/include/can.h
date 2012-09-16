@@ -137,7 +137,6 @@ extern "C" {
   void canStop(CANDriver *canp);
   msg_t canTransmit(CANDriver *canp, const CANTxFrame *ctfp, systime_t timeout);
   msg_t canReceive(CANDriver *canp, CANRxFrame *crfp, systime_t timeout);
-  canstatus_t canGetAndClearFlags(CANDriver *canp);
 #if CAN_USE_SLEEP_MODE
   void canSleep(CANDriver *canp);
   void canWakeup(CANDriver *canp);

@@ -112,11 +112,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   CAN status flags.
- */
-typedef uint32_t canstatus_t;
-
-/**
  * @brief   CAN transmission frame.
  * @note    Accessing the frame data as word16 or word32 is not portable because
  *          machine data endianness, it can be still useful for a quick filling.
@@ -273,10 +268,6 @@ typedef struct {
    * @brief A CAN bus error happened.
    */
   EventSource               error_event;
-  /**
-   * @brief Error flags set when an error event is broadcasted.
-   */
-  canstatus_t               status;
 #if CAN_USE_SLEEP_MODE || defined (__DOXYGEN__)
   /**
    * @brief Entering sleep state event.

@@ -79,7 +79,6 @@ void canObjectInit(CANDriver *canp) {
   chEvtInit(&canp->rxfull_event);
   chEvtInit(&canp->txempty_event);
   chEvtInit(&canp->error_event);
-  canp->status = 0;
 #if CAN_USE_SLEEP_MODE
   chEvtInit(&canp->sleep_event);
   chEvtInit(&canp->wakeup_event);
@@ -136,7 +135,6 @@ void canStop(CANDriver *canp) {
   chSemResetI(&canp->txsem, 0);
   chSchRescheduleS();
   canp->state  = CAN_STOP;
-  canp->status = 0;
   chSysUnlock();
 }
 
@@ -217,24 +215,6 @@ msg_t canReceive(CANDriver *canp, CANRxFrame *crfp, systime_t timeout) {
   can_lld_receive(canp, crfp);
   chSysUnlock();
   return RDY_OK;
-}
-
-/**
- * @brief   Returns the current status mask and clears it.
- *
- * @param[in] canp      pointer to the @p CANDriver object
- * @return              The status flags mask.
- *
- * @api
- */
-canstatus_t canGetAndClearFlags(CANDriver *canp) {
-  canstatus_t status;
-
-  chSysLock();
-  status = canp->status;
-  canp->status = 0;
-  chSysUnlock();
-  return status;
 }
 
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)

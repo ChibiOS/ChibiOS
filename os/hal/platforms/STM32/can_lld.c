@@ -95,9 +95,8 @@ CH_IRQ_HANDLER(STM32_CAN1_RX0_HANDLER) {
   if ((rf0r & CAN_RF0R_FOVR0) > 0) {
     /* Overflow events handling.*/
     CAN1->RF0R = CAN_RF0R_FOVR0;
-    canAddFlagsI(&CAND1, CAN_OVERFLOW_ERROR);
     chSysLockFromIsr();
-    chEvtBroadcastI(&CAND1.error_event);
+    chEvtBroadcastFlagsI(&CAND1.error_event, CAN_OVERFLOW_ERROR);
     chSysUnlockFromIsr();
   }
 
@@ -138,16 +137,18 @@ CH_IRQ_HANDLER(STM32_CAN1_SCE_HANDLER) {
   }
   /* Error event.*/
   if (msr & CAN_MSR_ERRI) {
-    canstatus_t flags;
+    flagsmask_t flags;
     uint32_t esr = CAN1->ESR;
 
     CAN1->ESR &= ~CAN_ESR_LEC;
-    flags = (canstatus_t)(esr & 7);
+    flags = (flagsmask_t)(esr & 7);
     if ((esr & CAN_ESR_LEC) > 0)
       flags |= CAN_FRAMING_ERROR;
+
     chSysLockFromIsr();
-    canAddFlagsI(&CAND1, flags | (canstatus_t)(flags < 16));
-    chEvtBroadcastI(&CAND1.error_event);
+    /* The content of the ESR register is copied unchanged in the upper
+       half word of the listener flags mask.*/
+    chEvtBroadcastFlagsI(&CAND1.error_event, flags | (flagsmask_t)(esr < 16));
     chSysUnlockFromIsr();
   }
 
