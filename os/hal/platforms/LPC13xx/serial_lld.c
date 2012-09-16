@@ -101,7 +101,7 @@ static void uart_deinit(LPC_UART_TypeDef *u) {
  * @param[in] err       UART LSR register value
  */
 static void set_error(SerialDriver *sdp, IOREG32 err) {
-  chnflags_t sts = 0;
+  flagsmask_t sts = 0;
 
   if (err & LSR_OVERRUN)
     sts |= SD_OVERRUN_ERROR;

@@ -60,7 +60,7 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 static void set_error(SerialDriver *sdp, uint8_t urctl) {
-  chnflags_t sts = 0;
+  flagsmask_t sts = 0;
 
   if (urctl & OE)
     sts |= SD_OVERRUN_ERROR;

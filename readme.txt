@@ -85,14 +85,18 @@
 *** 2.5.1 ***
 - FIX: Fixed Data available event not generated in serial_usb driver (bug
   3567992).
+- NEW: Modified serial and serial_usb drivers to use the new event flags
+  mechanism, the previous flags handling in BaseAsynchronousChannel has
+  been removed.
 - NEW: Improved the kernel events subsystem, now event sources can associate
   source-specific flags to the listener, the flags can then be retrieved
   using the new APIs chEvtGetAndClearFlags() and chEvtGetAndClearFlagsI().
+  Some old APIs have been renamed to increase consistency of the module.
 - NEW: Added VLE support to the Power Architecture GCC port.
 - NEW: Reorganized the Power Architecture GCC port along the lines of the
   ARMCMx port, now it can support multiple core types.
 - NEW: Updated the Power Architecture rules.mk file to put object and listing
-  files into a ./build directory like ARM ports alread do.
+  files into a ./build directory like ARM ports already do.
 
 *** 2.5.0 ***
 - FIX: Fixed anomaly in USB enumeration (bug 3565325)(backported to 2.4.3).

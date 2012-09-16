@@ -94,14 +94,9 @@ static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
   return chIQReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, time);
 }
 
-static chnflags_t getflags(void *ip) {
-  _chn_get_and_clear_flags_impl(ip);
-}
-
 static const struct SerialDriverVMT vmt = {
   write, read, put, get,
-  putt, gett, writet, readt,
-  getflags
+  putt, gett, writet, readt
 };
 
 /*===========================================================================*/
@@ -139,7 +134,6 @@ void sdObjectInit(SerialDriver *sdp, qnotify_t inotify, qnotify_t onotify) {
 
   sdp->vmt = &vmt;
   chEvtInit(&sdp->event);
-  sdp->flags = CHN_NO_ERROR;
   sdp->state = SD_STOP;
   chIQInit(&sdp->iqueue, sdp->ib, SERIAL_BUFFERS_SIZE, inotify, sdp);
   chOQInit(&sdp->oqueue, sdp->ob, SERIAL_BUFFERS_SIZE, onotify, sdp);

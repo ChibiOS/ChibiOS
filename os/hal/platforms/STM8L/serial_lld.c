@@ -115,7 +115,7 @@ static void notify3(GenericQueue *qp) {
  * @notapi
  */
 void sd_lld_set_error(SerialDriver *sdp, uint8_t sr) {
-  chnflags_t sts = 0;
+  flagsmask_t sts = 0;
 
   if (sr & USART_SR_OR)
     sts |= SD_OVERRUN_ERROR;

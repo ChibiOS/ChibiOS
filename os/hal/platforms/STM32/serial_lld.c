@@ -133,7 +133,7 @@ static void usart_deinit(USART_TypeDef *u) {
  * @param[in] isr       USART ISR register value
  */
 static void set_error(SerialDriver *sdp, uint16_t isr) {
-  chnflags_t sts = 0;
+  flagsmask_t sts = 0;
 
   if (isr & USART_ISR_ORE)
     sts |= SD_OVERRUN_ERROR;
@@ -252,7 +252,7 @@ static void usart_deinit(USART_TypeDef *u) {
  * @param[in] sr        USART SR register value
  */
 static void set_error(SerialDriver *sdp, uint16_t sr) {
-  chnflags_t sts = 0;
+  flagsmask_t sts = 0;
 
   if (sr & USART_SR_ORE)
     sts |= SD_OVERRUN_ERROR;

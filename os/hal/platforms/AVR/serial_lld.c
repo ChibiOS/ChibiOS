@@ -70,7 +70,7 @@ static const SerialConfig default_config = {
 /*===========================================================================*/
 
 static void set_error(uint8_t sra, SerialDriver *sdp) {
-  chnflags_t sts = 0;
+  flagsmask_t sts = 0;
   uint8_t dor = 0;
   uint8_t upe = 0;
   uint8_t fe = 0;

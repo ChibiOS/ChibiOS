@@ -117,7 +117,7 @@ static void esci_deinit(volatile struct ESCI_tag *escip) {
  * @param[in] sr        eSCI SR register value
  */
 static void set_error(SerialDriver *sdp, uint32_t sr) {
-  chnflags_t sts = 0;
+  flagsmask_t sts = 0;
 
   if (sr & 0x08000000)
     sts |= SD_OVERRUN_ERROR;

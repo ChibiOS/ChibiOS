@@ -103,14 +103,9 @@ static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
   return chIQReadTimeout(&((SerialUSBDriver *)ip)->iqueue, bp, n, time);
 }
 
-static chnflags_t getflags(void *ip) {
-  _chn_get_and_clear_flags_impl(ip);
-}
-
 static const struct SerialUSBDriverVMT vmt = {
   write, read, put, get,
-  putt, gett, writet, readt,
-  getflags
+  putt, gett, writet, readt
 };
 
 /**
@@ -197,7 +192,6 @@ void sduObjectInit(SerialUSBDriver *sdup) {
 
   sdup->vmt = &vmt;
   chEvtInit(&sdup->event);
-  sdup->flags = CHN_NO_ERROR;
   sdup->state = SDU_STOP;
   chIQInit(&sdup->iqueue, sdup->ib, SERIAL_USB_BUFFERS_SIZE, inotify, sdup);
   chOQInit(&sdup->oqueue, sdup->ob, SERIAL_USB_BUFFERS_SIZE, onotify, sdup);
@@ -256,7 +250,6 @@ void sduStop(SerialUSBDriver *sdup) {
 void sduConfigureHookI(USBDriver *usbp) {
   SerialUSBDriver *sdup = usbp->param;
 
-  sdup->flags = CHN_NO_ERROR;
   chIQResetI(&sdup->iqueue);
   chOQResetI(&sdup->oqueue);
   chnAddFlagsI(sdup, CHN_CONNECTED);

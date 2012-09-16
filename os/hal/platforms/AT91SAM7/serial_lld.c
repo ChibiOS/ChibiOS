@@ -139,7 +139,7 @@ static void usart_deinit(AT91PS_USART u) {
  * @param[in] sdp       communication channel associated to the USART
  */
 static void set_error(SerialDriver *sdp, AT91_REG csr) {
-  chnflags_t sts = 0;
+  flagsmask_t sts = 0;
 
   if (csr & AT91C_US_OVRE)
     sts |= SD_OVERRUN_ERROR;

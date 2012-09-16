@@ -200,7 +200,7 @@ typedef struct {
 
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
 /**
- * @name    I/O status flags
+ * @name    I/O status flags added to the event listener
  * @{
  */
 /** @brief No pending conditions.*/
@@ -218,17 +218,10 @@ typedef struct {
 /** @} */
 
 /**
- * @brief   Type of an I/O condition flags mask.
- */
-typedef uint_fast16_t chnflags_t;
-
-/**
  * @brief   @p BaseAsynchronousChannel specific methods.
  */
 #define _base_asynchronous_channel_methods                                  \
   _base_channel_methods                                                     \
-  /* Channel read method with timeout specification.*/                      \
-  chnflags_t (*getflags)(void *instance);
 
 /**
  * @brief   @p BaseAsynchronousChannel specific data.
@@ -236,9 +229,7 @@ typedef uint_fast16_t chnflags_t;
 #define _base_asynchronous_channel_data                                     \
   _base_channel_data                                                        \
   /* I/O condition event source.*/                                          \
-  EventSource           event;                                              \
-  /* I/O condition flags.*/                                                 \
-  chnflags_t             flags;
+  EventSource           event;
 
 /**
  * @extends BaseChannelVMT
@@ -279,52 +270,21 @@ typedef struct {
 #define chnGetEventSource(ip) (&((ip)->event))
 
 /**
- * @brief   Adds status flags to the channel's mask.
+ * @brief   Adds status flags to the listeners's flags mask.
  * @details This function is usually called from the I/O ISRs in order to
  *          notify I/O conditions such as data events, errors, signal
  *          changes etc.
  *
  * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
  *                      class
- * @param[in] mask      condition flags to be added to the mask
+ * @param[in] flags     condition flags to be added to the listener flags mask
  *
  * @iclass
  */
-#define chnAddFlagsI(ip, mask) {                                            \
-  (ip)->flags |= (mask);                                                    \
-  chEvtBroadcastI(&(ip)->event);                                            \
+#define chnAddFlagsI(ip, flags) {                                           \
+  chEvtBroadcastFlagsI(&(ip)->event, flags);                                \
 }
-
-/**
- * @brief   Returns and clears the status flags associated to the channel.
- *
- * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
- *                      class
- * @return              The condition flags modified since last time this
- *                      function was invoked.
- *
- * @api
- */
-#define chnGetAndClearFlags(ip) ((ip)->vmt->getflags(ip))
 /** @} */
-
-/**
- * @brief   Default implementation of the @p getflags virtual method.
- *
- * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
- *                      class
- * @return              The condition flags modified since last time this
- *                      function was invoked.
- *
- * @notapi
- */
-#define _chn_get_and_clear_flags_impl(ip)                                   \
-  chnflags_t mask;                                                          \
-  chSysLock();                                                              \
-  mask = ((BaseAsynchronousChannel *)(ip))->flags;                          \
-  ((BaseAsynchronousChannel *)(ip))->flags = CHN_NO_ERROR;                  \
-  chSysUnlock();                                                            \
-  return mask
 
 #endif /* CH_USE_EVENTS */
 
