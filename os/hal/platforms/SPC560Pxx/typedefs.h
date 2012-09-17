@@ -18,50 +18,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _BOARD_H_
-#define _BOARD_H_
-
-/*
- * Setup for a generic SPC560Pxx proto board.
+/**
+ * @file    SPC560Pxx/typedefs.h
+ * @brief   Dummy typedefs file.
  */
 
-/*
- * Board identifiers.
- */
-#define BOARD_GENERIC_SPC560P
-#define BOARD_NAME                  "Generic SPC560P"
+#ifndef _TYPEDEFS_H_
+#define _TYPEDEFS_H_
 
-/*
- * Board frequencies.
- */
-#if !defined(SPC560P_XOSC_CLK)
-#define SPC560P_XOSC_CLK            40000000
-#endif
+#include "chtypes.h"
 
-/*
- * I/O definitions.
- */
-#define GPIO_SCI_A_TX   89
-#define GPIO_SCI_A_RX   90
-
-#define GPIO_BUTTON1    179
-#define GPIO_BUTTON2    181
-#define GPIO_BUTTON3    183
-#define GPIO_BUTTON4    187
-
-#define GPIO_LED1       188
-#define GPIO_LED2       189
-#define GPIO_LED3       190
-#define GPIO_LED4       191
-
-#if !defined(_FROM_ASM_)
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void boardInit(void);
-#ifdef __cplusplus
-}
-#endif
-#endif /* _FROM_ASM_ */
-
-#endif /* _BOARD_H_ */
+#endif /* _TYPEDEFS_H_ */

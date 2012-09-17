@@ -28,7 +28,7 @@
  */
 void __early_init(void) {
 
-  spc563_clock_init();
+  spc560p_clock_init();
 }
 
 /*
@@ -36,6 +36,7 @@ void __early_init(void) {
  */
 void boardInit(void) {
 
+#if 0
   /*
    * Various initialization (temporary code).
    */
@@ -49,4 +50,5 @@ void boardInit(void) {
   SIU.PCR[GPIO_BUTTON4].R  = 0x0100;                /* IBE.                 */
   SIU.PCR[GPIO_SCI_A_TX].R = 0x0500;                /* Primary | IBE.       */
   SIU.PCR[GPIO_SCI_A_RX].R = 0x0500;                /* Primary | IBE.       */
+#endif
 }
