@@ -426,6 +426,7 @@ typedef struct {
  * @name GCCFG register bit definitions
  * @{
  */
+#define GCCFG_NOVBUSSENS        (1U<<21)    /**< VBUS sensing disable.      */
 #define GCCFG_SOFOUTEN          (1U<<20)    /**< SOF output enable.         */
 #define GCCFG_VBUSBSEN          (1U<<19)    /**< Enable the VBUS sensing "B"
                                                  device.                    */
