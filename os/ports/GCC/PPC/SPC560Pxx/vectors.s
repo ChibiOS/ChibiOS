@@ -1099,7 +1099,7 @@ vector259:
         .weak       vector260
 vector260:
 
-        .globl      _unhandled_irq
+        .weak      _unhandled_irq
         .type       _unhandled_irq, @function
 _unhandled_irq:
          b          _unhandled_irq

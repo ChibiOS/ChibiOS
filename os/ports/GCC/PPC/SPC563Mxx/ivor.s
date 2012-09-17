@@ -45,44 +45,46 @@
         /*
          * Unhandled exceptions handler.
          */
-         .weak      IVOR0
-IVOR0:
-         .weak      IVOR1
-IVOR1:
-         .weak      IVOR2
-IVOR2:
-         .weak      IVOR3
-IVOR3:
-         .weak      IVOR5
-IVOR5:
-         .weak      IVOR6
-IVOR6:
-         .weak      IVOR7
-IVOR7:
-         .weak      IVOR8
-IVOR8:
-         .weak      IVOR9
-IVOR9:
-         .weak      IVOR11
-IVOR11:
-         .weak      IVOR12
-IVOR12:
-         .weak      IVOR13
-IVOR13:
-         .weak      IVOR14
-IVOR14:
-         .weak      IVOR15
-IVOR15:
-        .globl      _unhandled_exception
+         .weak      _IVOR0
+_IVOR0:
+         .weak      _IVOR1
+_IVOR1:
+         .weak      _IVOR2
+_IVOR2:
+         .weak      _IVOR3
+_IVOR3:
+         .weak      _IVOR5
+_IVOR5:
+         .weak      _IVOR6
+_IVOR6:
+         .weak      _IVOR7
+_IVOR7:
+         .weak      _IVOR8
+_IVOR8:
+         .weak      _IVOR9
+_IVOR9:
+         .weak      _IVOR11
+_IVOR11:
+         .weak      _IVOR12
+_IVOR12:
+         .weak      _IVOR13
+_IVOR13:
+         .weak      _IVOR14
+_IVOR14:
+         .weak      _IVOR15
+_IVOR15:
+        .weak      _unhandled_exception
+        .type       _unhandled_exception, @function
 _unhandled_exception:
         b       _unhandled_exception
 
         /*
-         * IVOR10 handler (Book-E decrementer).
+         * _IVOR10 handler (Book-E decrementer).
          */
         .align		4
-        .globl      IVOR10
-IVOR10:
+        .globl      _IVOR10
+        .type       _IVOR10, @function
+_IVOR10:
         /* Creation of the external stack frame (extctx structure).*/
         stwu        %sp, -80(%sp)           /* Size of the extctx structure.*/
 #if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
@@ -137,14 +139,15 @@ IVOR10:
         cmpli       cr0, %r3, 0
         beq         cr0, .ctxrestore
         bl          chSchDoReschedule
-        b           .ctxrestore
+        b           _ivor_exit
 
         /*
-         * IVOR4 handler (Book-E external interrupt).
+         * _IVOR4 handler (Book-E external interrupt).
          */
         .align		4
-        .globl      IVOR4
-IVOR4:
+        .globl      _IVOR4
+        .type       _IVOR4, @function
+_IVOR4:
         /* Creation of the external stack frame (extctx structure).*/
         stwu        %sp, -80(%sp)           /* Size of the extctx structure.*/
 #if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
@@ -209,11 +212,12 @@ IVOR4:
 #endif
         bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
-        beq         cr0, .ctxrestore
+        beq         cr0, _ivor_exit
         bl          chSchDoReschedule
 
         /* Context restore.*/
-.ctxrestore:
+        .globl
+_ivor_exit:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_unlock
 #endif

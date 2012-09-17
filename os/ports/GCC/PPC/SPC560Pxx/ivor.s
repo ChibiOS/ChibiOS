@@ -46,80 +46,84 @@
          * Fixed IVOR offset table.
          */
         .globl      IVORS
-IVORS:  b           IVOR0
-        .align      16
-        b           IVOR1
-        .align      16
-        b           IVOR2
-        .align      16
-        b           IVOR3
-        .align      16
-        b           IVOR4
-        .align      16
-        b           IVOR5
-        .align      16
-        b           IVOR6
-        .align      16
-        b           IVOR7
-        .align      16
-        b           IVOR8
-        .align      16
-        b           IVOR9
-        .align      16
-        b           IVOR10
-        .align      16
-        b           IVOR11
-        .align      16
-        b           IVOR12
-        .align      16
-        b           IVOR13
-        .align      16
-        b           IVOR14
-        .align      16
-        b           IVOR15
+IVORS:
+IVOR0:  b           IVOR0
+        .align      4
+IVOR1:  b           _IVOR1
+        .align      4
+IVOR2:  b           _IVOR2
+        .align      4
+IVOR3:  b           _IVOR3
+        .align      4
+IVOR4:  b           _IVOR4
+        .align      4
+IVOR5:  b           _IVOR5
+        .align      4
+IVOR6:  b           _IVOR6
+        .align      4
+IVOR7:  b           _IVOR7
+        .align      4
+IVOR8:  b           _IVOR8
+        .align      4
+IVOR9:  b           _IVOR9
+        .align      4
+IVOR10: b           _IVOR10
+        .align      4
+IVOR11: b           _IVOR11
+        .align      4
+IVOR12: b           _IVOR12
+        .align      4
+IVOR13: b           _IVOR13
+        .align      4
+IVOR14: b           _IVOR14
+        .align      4
+IVOR15: b           _IVOR15
 
         /*
          * Unhandled exceptions handler.
          */
-         .weak      IVOR0
-IVOR0:
-         .weak      IVOR1
-IVOR1:
-         .weak      IVOR2
-IVOR2:
-         .weak      IVOR3
-IVOR3:
-         .weak      IVOR5
-IVOR5:
-         .weak      IVOR6
-IVOR6:
-         .weak      IVOR7
-IVOR7:
-         .weak      IVOR8
-IVOR8:
-         .weak      IVOR9
-IVOR9:
-         .weak      IVOR10
-IVOR10:
-         .weak      IVOR11
-IVOR11:
-         .weak      IVOR12
-IVOR12:
-         .weak      IVOR13
-IVOR13:
-         .weak      IVOR14
-IVOR14:
-         .weak      IVOR15
-IVOR15:
+        .weak       _IVOR0
+_IVOR0:
+        .weak       _IVOR1
+_IVOR1:
+        .weak       _IVOR2
+_IVOR2:
+        .weak       _IVOR3
+_IVOR3:
+        .weak       _IVOR5
+_IVOR5:
+        .weak       _IVOR6
+_IVOR6:
+        .weak       _IVOR7
+_IVOR7:
+        .weak       _IVOR8
+_IVOR8:
+        .weak       _IVOR9
+_IVOR9:
+        .weak       _IVOR10
+_IVOR10:
+        .weak       _IVOR11
+_IVOR11:
+        .weak       _IVOR12
+_IVOR12:
+        .weak       _IVOR13
+_IVOR13:
+        .weak       _IVOR14
+_IVOR14:
+        .weak       _IVOR15
+_IVOR15:
+        .weak       _unhandled_exception
+        .type       _unhandled_exception, @function
 _unhandled_exception:
-        b       _unhandled_exception
+        b           _unhandled_exception
 
         /*
          * IVOR4 handler (Book-E external interrupt).
          */
         .align		4
-        .globl      IVOR4
-IVOR4:
+        .globl      _IVOR4
+        .type       _IVOR4, @function
+_IVOR4:
         /* Creation of the external stack frame (extctx structure).*/
         stwu        %sp, -80(%sp)           /* Size of the extctx structure.*/
 #if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
@@ -184,11 +188,12 @@ IVOR4:
 #endif
         bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
-        beq         cr0, .ctxrestore
+        beq         cr0, _ivor_exit
         bl          chSchDoReschedule
 
         /* Context restore.*/
-.ctxrestore:
+        .globl      _ivor_exit
+_ivor_exit:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_unlock
 #endif
