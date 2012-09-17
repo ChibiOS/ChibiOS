@@ -22,20 +22,20 @@
 #define _BOARD_H_
 
 /*
- * Setup for a generic SPC563M proto board.
+ * Setup for a generic SPC560P proto board.
  */
 
 /*
  * Board identifiers.
  */
-#define BOARD_GENERIC_SPC563M
-#define BOARD_NAME "Generic SPC563M"
+#define BOARD_GENERIC_SPC560P
+#define BOARD_NAME "Generic SPC560P"
 
 /*
  * Board frequencies.
  */
 #if !defined(EXTCLK)
-#define EXTCLK          8000000
+#define EXTCLK          40000000
 #endif
 
 /*
