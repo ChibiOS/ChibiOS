@@ -43,66 +43,76 @@
         .section    .handlers, "ax"
 
         /*
-         * IVOR10 handler (Book-E decrementer).
+         * Fixed IVOR offset table.
          */
-        .align		4
-        .globl      IVOR10
+        .globl      IVORS
+IVORS:  b           IVOR0
+        .align      16
+        b           IVOR1
+        .align      16
+        b           IVOR2
+        .align      16
+        b           IVOR3
+        .align      16
+        b           IVOR4
+        .align      16
+        b           IVOR5
+        .align      16
+        b           IVOR6
+        .align      16
+        b           IVOR7
+        .align      16
+        b           IVOR8
+        .align      16
+        b           IVOR9
+        .align      16
+        b           IVOR10
+        .align      16
+        b           IVOR11
+        .align      16
+        b           IVOR12
+        .align      16
+        b           IVOR13
+        .align      16
+        b           IVOR14
+        .align      16
+        b           IVOR15
+
+        /*
+         * Unhandled exceptions handler.
+         */
+         .weak      IVOR0
+IVOR0:
+         .weak      IVOR1
+IVOR1:
+         .weak      IVOR2
+IVOR2:
+         .weak      IVOR3
+IVOR3:
+         .weak      IVOR5
+IVOR5:
+         .weak      IVOR6
+IVOR6:
+         .weak      IVOR7
+IVOR7:
+         .weak      IVOR8
+IVOR8:
+         .weak      IVOR9
+IVOR9:
+         .weak      IVOR10
 IVOR10:
-        /* Creation of the external stack frame (extctx structure).*/
-        stwu        %sp, -80(%sp)           /* Size of the extctx structure.*/
-#if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
-        e_stmvsrrw  8(%sp)                  /* Saves PC, MSR.               */
-        e_stmvsprw  16(%sp)                 /* Saves CR, LR, CTR, XER.      */
-        e_stmvgprw  32(%sp)                 /* Saves GPR0, GPR3...GPR12.    */
-#else /* !(PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI) */
-        stw         %r0, 32(%sp)            /* Saves GPR0.                  */
-        mfSRR0      %r0
-        stw         %r0, 8(%sp)             /* Saves PC.                    */
-        mfSRR1      %r0
-        stw         %r0, 12(%sp)            /* Saves MSR.                   */
-        mfCR        %r0
-        stw         %r0, 16(%sp)            /* Saves CR.                    */
-        mfLR        %r0
-        stw         %r0, 20(%sp)            /* Saves LR.                    */
-        mfCTR       %r0
-        stw         %r0, 24(%sp)            /* Saves CTR.                   */
-        mfXER       %r0
-        stw         %r0, 28(%sp)            /* Saves XER.                   */
-        stw         %r3, 36(%sp)            /* Saves GPR3...GPR12.          */
-        stw         %r4, 40(%sp)
-        stw         %r5, 44(%sp)
-        stw         %r6, 48(%sp)
-        stw         %r7, 52(%sp)
-        stw         %r8, 56(%sp)
-        stw         %r9, 60(%sp)
-        stw         %r10, 64(%sp)
-        stw         %r11, 68(%sp)
-        stw         %r12, 72(%sp)
-#endif /* !(PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI) */
-
-        /* Reset DIE bit in TSR register.*/
-        lis         %r3, 0x0800             /* DIS bit mask.                */
-        mtspr       336, %r3                /* TSR register.                */
-
-#if CH_DBG_SYSTEM_STATE_CHECK
-        bl          dbg_check_enter_isr
-        bl          dbg_check_lock_from_isr
-#endif
-        bl          chSysTimerHandlerI
-#if CH_DBG_SYSTEM_STATE_CHECK
-        bl          dbg_check_unlock_from_isr
-        bl          dbg_check_leave_isr
-#endif
-
-        /* System tick handler invocation.*/
-#if CH_DBG_SYSTEM_STATE_CHECK
-        bl          dbg_check_lock
-#endif
-        bl          chSchIsPreemptionRequired
-        cmpli       cr0, %r3, 0
-        beq         cr0, .ctxrestore
-        bl          chSchDoReschedule
-        b           .ctxrestore
+         .weak      IVOR11
+IVOR11:
+         .weak      IVOR12
+IVOR12:
+         .weak      IVOR13
+IVOR13:
+         .weak      IVOR14
+IVOR14:
+         .weak      IVOR15
+IVOR15:
+_unhandled_exception:
+        b       _unhandled_exception
 
         /*
          * IVOR4 handler (Book-E external interrupt).

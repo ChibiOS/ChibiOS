@@ -309,17 +309,6 @@ struct context {
 #define PORT_IRQ_HANDLER(id) void id(void)
 
 /**
- * @brief   Kernel port layer initialization.
- * @details IVPR4 and IVPR10 initialization, INTC_IACKR_PRC0 initialization.
- */
-#define port_init() {                                                       \
-	asm volatile ("li          %r3, IVOR4@l         \t\n"                   \
-  	              "mtIVOR4     %r3                  \t\n"                   \
-                  "li          %r3, IVOR10@l        \t\n"                   \
-  	              "mtIVOR10    %r3");                                       \
-}
-
-/**
  * @details Implemented as global interrupt disable.
  */
 #define port_lock() asm volatile ("wrteei  0" : : : "memory")
@@ -372,6 +361,7 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void port_init(void);
   void port_halt(void);
   void port_switch(Thread *ntp, Thread *otp);
   void _port_thread_start(void);

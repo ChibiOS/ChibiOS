@@ -29,6 +29,21 @@
 #include "ch.h"
 
 /**
+ * @brief   Kernel port layer initialization.
+ * @details IVOR4 and IVOR10 initialization.
+ */
+void port_init(void) {
+#if PPC_SUPPORTS_IVORS
+    /* The CPU support IVOR registers, the kernel requires IVOR4 and IVOR10
+       and the initialization is performed here.*/
+    asm volatile ("li          %r3, IVOR4@l         \t\n"
+                  "mtIVOR4     %r3                  \t\n"
+                  "li          %r3, IVOR10@l        \t\n"
+                  "mtIVOR10    %r3");
+#endif
+}
+
+/**
  * @brief   Halts the system.
  * @details This function is invoked by the operating system when an
  *          unrecoverable error is detected (for example because a programming

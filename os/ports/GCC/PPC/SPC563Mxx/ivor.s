@@ -43,6 +43,41 @@
         .section    .handlers, "ax"
 
         /*
+         * Unhandled exceptions handler.
+         */
+         .weak      IVOR0
+IVOR0:
+         .weak      IVOR1
+IVOR1:
+         .weak      IVOR2
+IVOR2:
+         .weak      IVOR3
+IVOR3:
+         .weak      IVOR5
+IVOR5:
+         .weak      IVOR6
+IVOR6:
+         .weak      IVOR7
+IVOR7:
+         .weak      IVOR8
+IVOR8:
+         .weak      IVOR9
+IVOR9:
+         .weak      IVOR11
+IVOR11:
+         .weak      IVOR12
+IVOR12:
+         .weak      IVOR13
+IVOR13:
+         .weak      IVOR14
+IVOR14:
+         .weak      IVOR15
+IVOR15:
+        .globl      _unhandled_exception
+_unhandled_exception:
+        b       _unhandled_exception
+
+        /*
          * IVOR10 handler (Book-E decrementer).
          */
         .align		4

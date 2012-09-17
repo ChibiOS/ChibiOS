@@ -38,6 +38,11 @@
 #define PPC_VARIANT             PPC_VARIANT_e200z0
 
 /**
+ * @brief   IVORx registers support.
+ */
+#define PPC_SUPPORTS_IVORS      FALSE
+
+/**
  * @brief   Book E instruction set support.
  */
 #define PPC_SUPPORTS_BOOKE      FALSE

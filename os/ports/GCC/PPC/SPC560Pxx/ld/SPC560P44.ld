@@ -50,8 +50,9 @@ SECTIONS
         __ivpr_base__ = .;
         KEEP(*(.bam))
         KEEP(*(.crt0))
+        . = ALIGN(0x00000800);
         KEEP(*(.handlers))
-        . = ALIGN(0x800);
+        . = ALIGN(0x00001000);
         KEEP(*(.vectors))
     } > flash
 

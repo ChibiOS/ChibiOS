@@ -1,11 +1,11 @@
-# List of the ChibiOS/RT SPC563Mxx port files.
+# List of the ChibiOS/RT SPC560Pxx port files.
 PORTSRC = ${CHIBIOS}/os/ports/GCC/PPC/chcore.c
 
-PORTASM = ${CHIBIOS}/os/ports/GCC/PPC/SPC563Mxx/vectors.s \
-          ${CHIBIOS}/os/ports/GCC/PPC/SPC563Mxx/ivor.s \
+PORTASM = ${CHIBIOS}/os/ports/GCC/PPC/SPC560Pxx/vectors.s \
+          ${CHIBIOS}/os/ports/GCC/PPC/SPC560Pxx/ivor.s \
           ${CHIBIOS}/os/ports/GCC/PPC/crt0.s
 
 PORTINC = ${CHIBIOS}/os/ports/GCC/PPC \
-          ${CHIBIOS}/os/ports/GCC/PPC/SPC563Mxx
+          ${CHIBIOS}/os/ports/GCC/PPC/SPC560Pxx
 
-PORTLD  = ${CHIBIOS}/os/ports/GCC/PPC/SPC563Mxx/ld
+PORTLD  = ${CHIBIOS}/os/ports/GCC/PPC/SPC560Pxx/ld
