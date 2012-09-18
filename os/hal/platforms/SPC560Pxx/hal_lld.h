@@ -24,6 +24,7 @@
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - SPC560P_XOSC_CLK.
+ *          - SPC560P_OSC_BYPASS (optionally).
  *          .
  *
  * @addtogroup HAL
@@ -112,10 +113,65 @@
  * @name    FMPLL_CR register bits definitions
  * @{
  */
-#define SPC560P_FMPLL_ODF_DIV2      (0 << 24)
-#define SPC560P_FMPLL_ODF_DIV4      (1 << 24)
-#define SPC560P_FMPLL_ODF_DIV8      (2 << 24)
-#define SPC560P_FMPLL_ODF_DIV16     (3 << 24)
+#define SPC560P_FMPLL_ODF_DIV2      (0U << 24)
+#define SPC560P_FMPLL_ODF_DIV4      (1U << 24)
+#define SPC560P_FMPLL_ODF_DIV8      (2U << 24)
+#define SPC560P_FMPLL_ODF_DIV16     (3U << 24)
+/** @} */
+
+/**
+ * @name    ME_ME register bits definitions
+ * @{
+ */
+#define SPC560P_ME_ME_RESET         (1U << 0)
+#define SPC560P_ME_ME_TEST          (2U << 0)
+#define SPC560P_ME_ME_SAFE          (4U << 0)
+#define SPC560P_ME_ME_DRUN          (8U << 0)
+#define SPC560P_ME_ME_RUN0          (16U << 0)
+#define SPC560P_ME_ME_RUN1          (32U << 0)
+#define SPC560P_ME_ME_RUN2          (64U << 0)
+#define SPC560P_ME_ME_RUN3          (128U << 0)
+#define SPC560P_ME_ME_HALT0         (256U << 0)
+#define SPC560P_ME_ME_STOP0         (1024U << 0)
+/** @} */
+
+/**
+ * @name    ME_xxx_MC registers bits definitions
+ * @{
+ */
+#define SPC560P_ME_MC_SYSCLK_MASK   (15U << 0)
+#define SPC560P_ME_MC_SYSCLK(n)     ((n) << 0)
+#define SPC560P_ME_MC_SYSCLK_IRC    SPC560P_ME_MC_SYSCLK(0)
+#define SPC560P_ME_MC_SYSCLK_XOSC   SPC560P_ME_MC_SYSCLK(2)
+#define SPC560P_ME_MC_SYSCLK_FMPLL0 SPC560P_ME_MC_SYSCLK(4)
+#define SPC560P_ME_MC_SYSCLK_FMPLL1 SPC560P_ME_MC_SYSCLK(5)
+#define SPC560P_ME_MC_SYSCLK_DISABLED SPC560P_ME_MC_SYSCLK(15)
+#define SPC560P_ME_MC_IRCON         (1U << 4)
+#define SPC560P_ME_MC_XOSC0ON       (1U << 5)
+#define SPC560P_ME_MC_PLL0ON        (1U << 6)
+#define SPC560P_ME_MC_PLL1ON        (1U << 7)
+#define SPC560P_ME_MC_CFLAON_MASK   (3U << 16)
+#define SPC560P_ME_MC_CFLAON(n)     ((n) << 16)
+#define SPC560P_ME_MC_CFLAON_PD     (1U << 16)
+#define SPC560P_ME_MC_CFLAON_LP     (2U << 16)
+#define SPC560P_ME_MC_CFLAON_NORMAL (3U << 16)
+#define SPC560P_ME_MC_DFLAON_MASK   (3U << 18)
+#define SPC560P_ME_MC_DFLAON(n)     ((n) << 18)
+#define SPC560P_ME_MC_DFLAON_PD     (1U << 18)
+#define SPC560P_ME_MC_DFLAON_LP     (2U << 18)
+#define SPC560P_ME_MC_DFLAON_NORMAL (3U << 18)
+#define SPC560P_ME_MC_MVRON         (1U << 20)
+#define SPC560P_ME_MC_PDO           (1U << 23)
+/** @} */
+
+/**
+ * @name    ME_MCTL register bits definitions
+ * @{
+ */
+#define SPC560P_ME_MCTL_KEY         0x5AF0U
+#define SPC560P_ME_MCTL_KEY_INV     0xA50FU
+#define SPC560P_ME_MCTL_MODE_MASK   (15U << 28)
+#define SPC560P_ME_MCTL_MODE(n)     ((n) << 28)
 /** @} */
 
 /*===========================================================================*/
@@ -123,13 +179,10 @@
 /*===========================================================================*/
 
 /**
- * @brief   Clock bypass.
- * @note    If set to @p TRUE then the PLL is not started and initialized, the
- *          external clock is used as-is and the other clock-related settings
- *          are ignored.
+ * @brief   Disables the clocks initialization in the HAL.
  */
-#if !defined(SPC560P_CLK_BYPASS) || defined(__DOXYGEN__)
-#define SPC560P_CLK_BYPASS          FALSE
+#if !defined(SPC560P_NO_INIT) || defined(__DOXYGEN__)
+#define SPC560P_NO_INIT             FALSE
 #endif
 
 /**
@@ -161,6 +214,159 @@
  */
 #if !defined(SPC560P_FMPLL0_ODF) || defined(__DOXYGEN__)
 #define SPC560P_FMPLL0_ODF          SPC560P_FMPLL_ODF_DIV4
+#endif
+
+/**
+ * @brief   FMPLL1 IDF divider value.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ */
+#if !defined(SPC560P_FMPLL1_IDF_VALUE) || defined(__DOXYGEN__)
+#define SPC560P_FMPLL1_IDF_VALUE    5
+#endif
+
+/**
+ * @brief   FMPLL1 NDIV divider value.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ */
+#if !defined(SPC560P_FMPLL1_NDIV_VALUE) || defined(__DOXYGEN__)
+#define SPC560P_FMPLL1_NDIV_VALUE   60
+#endif
+
+/**
+ * @brief   FMPLL1 ODF divider value.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ */
+#if !defined(SPC560P_FMPLL1_ODF) || defined(__DOXYGEN__)
+#define SPC560P_FMPLL1_ODF          SPC560P_FMPLL_ODF_DIV4
+#endif
+
+/**
+ * @brief   Active run modes in ME_ME register.
+ * @note    Modes RESET, SAFE, DRUN, and RUN0 modes are always enabled, there
+ *          is no need to specify them.
+ */
+#if !defined(SPC560P_ME_ME_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_ME_BITS          0
+#endif
+
+/**
+ * @brief   TEST mode settings.
+ */
+#if !defined(SPC560P_ME_TEST_MC_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_TEST_MC_BITS     (SPC560P_ME_MC_SYSCLK_IRC |             \
+                                     SPC560P_ME_MC_IRCON |                  \
+                                     SPC560P_ME_MC_XOSC0ON |                \
+                                     SPC560P_ME_MC_PLL0ON |                 \
+                                     SPC560P_ME_MC_PLL1ON |                 \
+                                     SPC560P_ME_MC_CFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_DFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_MVRON)
+#endif
+
+/**
+ * @brief   SAFE mode settings.
+ */
+#if !defined(SPC560P_ME_SAFE_MC_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_SAFE_MC_BITS     (SPC560P_ME_MC_PDO)
+
+#endif
+
+/**
+ * @brief   DRUN mode settings.
+ */
+#if !defined(SPC560P_ME_DRUN_MC_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_DRUN_MC_BITS     (SPC560P_ME_MC_SYSCLK_FMPLL0 |          \
+                                     SPC560P_ME_MC_IRCON |                  \
+                                     SPC560P_ME_MC_XOSC0ON |                \
+                                     SPC560P_ME_MC_PLL0ON |                 \
+                                     SPC560P_ME_MC_PLL1ON |                 \
+                                     SPC560P_ME_MC_CFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_DFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_MVRON)
+#endif
+
+/**
+ * @brief   RUN0 mode settings.
+ */
+#if !defined(SPC560P_ME_RUN0_MC_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN0_MC_BITS     (SPC560P_ME_MC_SYSCLK_FMPLL0 |          \
+                                     SPC560P_ME_MC_IRCON |                  \
+                                     SPC560P_ME_MC_XOSC0ON |                \
+                                     SPC560P_ME_MC_PLL0ON |                 \
+                                     SPC560P_ME_MC_PLL1ON |                 \
+                                     SPC560P_ME_MC_CFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_DFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_MVRON)
+#endif
+
+/**
+ * @brief   RUN1 mode settings.
+ */
+#if !defined(SPC560P_ME_RUN1_MC_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN1_MC_BITS     (SPC560P_ME_MC_SYSCLK_FMPLL0 |          \
+                                     SPC560P_ME_MC_IRCON |                  \
+                                     SPC560P_ME_MC_XOSC0ON |                \
+                                     SPC560P_ME_MC_PLL0ON |                 \
+                                     SPC560P_ME_MC_PLL1ON |                 \
+                                     SPC560P_ME_MC_CFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_DFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_MVRON)
+#endif
+
+/**
+ * @brief   RUN2 mode settings.
+ */
+#if !defined(SPC560P_ME_RUN2_MC_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN2_MC_BITS     (SPC560P_ME_MC_SYSCLK_FMPLL0 |          \
+                                     SPC560P_ME_MC_IRCON |                  \
+                                     SPC560P_ME_MC_XOSC0ON |                \
+                                     SPC560P_ME_MC_PLL0ON |                 \
+                                     SPC560P_ME_MC_PLL1ON |                 \
+                                     SPC560P_ME_MC_CFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_DFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_MVRON)
+#endif
+
+/**
+ * @brief   RUN3 mode settings.
+ */
+#if !defined(SPC560P_ME_RUN3_MC_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN3_MC_BITS     (SPC560P_ME_MC_SYSCLK_FMPLL0 |          \
+                                     SPC560P_ME_MC_IRCON |                  \
+                                     SPC560P_ME_MC_XOSC0ON |                \
+                                     SPC560P_ME_MC_PLL0ON |                 \
+                                     SPC560P_ME_MC_PLL1ON |                 \
+                                     SPC560P_ME_MC_CFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_DFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_MVRON)
+#endif
+
+/**
+ * @brief   HALT0 mode settings.
+ */
+#if !defined(SPC560P_ME_HALT0_MC_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_HALT0_MC_BITS    (SPC560P_ME_MC_SYSCLK_FMPLL0 |          \
+                                     SPC560P_ME_MC_IRCON |                  \
+                                     SPC560P_ME_MC_XOSC0ON |                \
+                                     SPC560P_ME_MC_PLL0ON |                 \
+                                     SPC560P_ME_MC_PLL1ON |                 \
+                                     SPC560P_ME_MC_CFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_DFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_MVRON)
+#endif
+
+/**
+ * @brief   STOP0 mode settings.
+ */
+#if !defined(SPC560P_ME_STOP0_MC_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_STOP0_MC_BITS    (SPC560P_ME_MC_SYSCLK_FMPLL0 |          \
+                                     SPC560P_ME_MC_IRCON |                  \
+                                     SPC560P_ME_MC_XOSC0ON |                \
+                                     SPC560P_ME_MC_PLL0ON |                 \
+                                     SPC560P_ME_MC_PLL1ON |                 \
+                                     SPC560P_ME_MC_CFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_DFLAON_NORMAL |          \
+                                     SPC560P_ME_MC_MVRON)
 #endif
 
 /*===========================================================================*/
@@ -196,7 +402,6 @@
 #error "invalid SPC560P_FMPLL0_ODF value specified"
 #endif
 
-
 /**
  * @brief   SPC560P_FMPLL0_VCO_CLK clock point.
  */
@@ -210,29 +415,77 @@
 #endif
 
 /**
- * @brief   SPC560P_XOSC_CLK clock point.
+ * @brief   SPC560P_FMPLL0_CLK clock point.
  */
 #define SPC560P_FMPLL0_CLK                                                  \
   (SPC560P_FMPLL0_VCO_CLK / SPC560P_FMPLL0_ODF_VALUE)
 
 /* Check on SPC560P_FMPLL0_CLK.*/
-#if SPC560P_FMPLL0_CLK > SPC560P_FMPLL0_CLK_MAX
+#if (SPC560P_FMPLL0_CLK > SPC560P_FMPLL0_CLK_MAX) && !SPC560P_ALLOW_OVERCLOCK
 #error "SPC560P_FMPLL0_CLK outside acceptable range (0...SPC560P_FMPLL0_CLK_MAX)"
 #endif
 
-/* FMPLL0 activation conditions.*/
-#if 1 || defined(__DOXYGEN__)
-/**
- * @brief   FMPLL0 activation flag.
- */
-#define SPC560P_ACTIVATE_FMPLL0          TRUE
+/* Check on SPC560P_FMPLL1_IDF_VALUE.*/
+#if (SPC560P_FMPLL1_IDF_VALUE < 1) || (SPC560P_FMPLL1_IDF_VALUE > 15)
+#error "invalid SPC560P_FMPLL1_IDF_VALUE value specified"
+#endif
+
+/* Check on SPC560P_FMPLL1_NDIV_VALUE.*/
+#if (SPC560P_FMPLL1_NDIV_VALUE < 32) || (SPC560P_FMPLL1_NDIV_VALUE > 96)
+#error "invalid SPC560P_FMPLL1_NDIV_VALUE value specified"
+#endif
+
+/* Check on SPC560P_FMPLL1_ODF.*/
+#if (SPC560P_FMPLL1_ODF == SPC560P_FMPLL_ODF_DIV2)
+#define SPC560P_FMPLL1_ODF_VALUE    2
+#elif (SPC560P_FMPLL1_ODF == SPC560P_FMPLL_ODF_DIV4)
+#define SPC560P_FMPLL1_ODF_VALUE    4
+#elif (SPC560P_FMPLL1_ODF == SPC560P_FMPLL_ODF_DIV8)
+#define SPC560P_FMPLL1_ODF_VALUE    8
+#elif (SPC560P_FMPLL1_ODF == SPC560P_FMPLL_ODF_DIV16)
+#define SPC560P_FMPLL1_ODF_VALUE    16
 #else
-#define SPC560P_ACTIVATE_FMPLL0          FALSE
+#error "invalid SPC560P_FMPLL1_ODF value specified"
+#endif
+
+/**
+ * @brief   SPC560P_FMPLL1_VCO_CLK clock point.
+ */
+#define SPC560P_FMPLL1_VCO_CLK                                              \
+  ((SPC560P_XOSC_CLK / SPC560P_FMPLL1_IDF_VALUE) * SPC560P_FMPLL1_NDIV_VALUE)
+
+/* Check on FMPLL1 VCO output.*/
+#if (SPC560P_FMPLL1_VCO_CLK < SPC560P_FMPLLVCO_MIN) ||                      \
+    (SPC560P_FMPLL1_VCO_CLK > SPC560P_FMPLLVCO_MAX)
+#error "SPC560P_FMPLL1_CLK outside acceptable range (SPC560P_FMPLLVCO_MIN...SPC560P_FMPLLVCO_MAX)"
+#endif
+
+/**
+ * @brief   SPC560P_FMPLL1_CLK clock point.
+ */
+#define SPC560P_FMPLL1_CLK                                                  \
+  (SPC560P_FMPLL1_VCO_CLK / SPC560P_FMPLL1_ODF_VALUE)
+
+/* Check on SPC560P_FMPLL1_CLK.*/
+#if (SPC560P_FMPLL1_CLK > SPC560P_FMPLL1_CLK_MAX) && !SPC560P_ALLOW_OVERCLOCK
+#error "SPC560P_FMPLL1_CLK outside acceptable range (0...SPC560P_FMPLL1_CLK_MAX)"
 #endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+typedef enum {
+  SPC560P_RUNMODE_TEST  = 1,
+  SPC560P_RUNMODE_SAFE  = 2,
+  SPC560P_RUNMODE_DRUN  = 3,
+  SPC560P_RUNMODE_RUN0  = 4,
+  SPC560P_RUNMODE_RUN1  = 5,
+  SPC560P_RUNMODE_RUN2  = 6,
+  SPC560P_RUNMODE_RUN3  = 7,
+  SPC560P_RUNMODE_HALT0 = 8,
+  SPC560P_RUNMODE_STOP0 = 10
+} spc560prunmode_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -247,6 +500,7 @@ extern "C" {
 #endif
   void hal_lld_init(void);
   void spc560p_clock_init(void);
+  bool_t  halSPC560PSetRunMode(spc560prunmode_t mode);
 #ifdef __cplusplus
 }
 #endif
