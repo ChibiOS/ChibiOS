@@ -74,11 +74,11 @@
 
 static void initgpio(GPIO_TypeDef *gpiop, const stm32_gpio_setup_t *config) {
 
+  gpiop->ODR     = config->odr;
   gpiop->MODER   = config->moder;
   gpiop->OTYPER  = config->otyper;
   gpiop->OSPEEDR = config->ospeedr;
   gpiop->PUPDR   = config->pupdr;
-  gpiop->ODR     = config->odr;
   gpiop->AFRL    = config->afrl;
   gpiop->AFRH    = config->afrh;
 }
