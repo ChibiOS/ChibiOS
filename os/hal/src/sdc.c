@@ -443,13 +443,14 @@ bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
  * @api
  */
 sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp) {
+  sdcflags_t flags;
 
   chDbgCheck(sdcp != NULL, "sdcGetAndClearErrors");
   chDbgAssert(sdcp->state == BLK_READY,
               "sdcGetAndClearErrors(), #1", "invalid state");
 
   chSysLock();
-  sdcflags_t flags = sdcp->errors;
+  flags = sdcp->errors;
   sdcp->errors = SDC_NO_ERROR;
   chSysUnlock();
   return flags;

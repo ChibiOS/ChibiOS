@@ -439,6 +439,7 @@ void mmcStop(MMCDriver *mmcp) {
  */
 bool_t mmcConnect(MMCDriver *mmcp) {
   unsigned i;
+  uint8_t r3[4];
 
   chDbgCheck(mmcp != NULL, "mmcConnect");
 
@@ -466,7 +467,6 @@ bool_t mmcConnect(MMCDriver *mmcp) {
      addresses if possible.
      This method is based on "How to support SDC Ver2 and high capacity cards"
      by ElmChan.*/
-  uint8_t r3[4];
   if (send_command_R3(mmcp, MMCSD_CMD_SEND_IF_COND,
                       MMCSD_CMD8_PATTERN, r3) != 0x05) {
 
