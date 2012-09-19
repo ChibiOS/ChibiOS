@@ -213,8 +213,10 @@ void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec) {
 #else
   RTCTime timespec = {0,0,FALSE};
 #endif
+  struct tm timp;
 
-  stm32_rtc_tm2bcd(localtime(&tv_sec), &timespec);
+  localtime_r(&tv_sec, &timp);
+  stm32_rtc_tm2bcd(&timp, &timespec);
   rtcSetTime(rtcp, &timespec);
 }
 
@@ -255,8 +257,7 @@ void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
   RTCTime timespec = {0,0};
 
   rtcGetTime(rtcp, &timespec);
-  if (timp != NULL) /* this comparison needed to avoid compiler warning */
-    timp = localtime((time_t *)&(timespec.tv_sec));
+  localtime_r((time_t *)&(timespec.tv_sec), timp);
 }
 
 /**
@@ -339,17 +340,18 @@ uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp) {
  * @api
  */
 uint32_t rtcGetTimeFat(RTCDriver *rtcp) {
-  uint32_t fattime = 0;
-  struct tm *timp = NULL;
+  uint32_t fattime;
+  struct tm timp;
 
-  rtcGetTimeTm(rtcp, timp);
+  rtcGetTimeTm(rtcp, &timp);
 
-  fattime |= (timp->tm_sec / 2);
-  fattime |= (timp->tm_min) << 5;
-  fattime |= (timp->tm_hour) << 11;
-  fattime |= (timp->tm_mday) << 16;
-  fattime |= (timp->tm_mon + 1) << 21;
-  fattime |= (timp->tm_year - 80) << 25;
+  fattime  = (timp.tm_sec)       << 1;
+  fattime |= (timp.tm_min)       << 5;
+  fattime |= (timp.tm_hour)      << 11;
+  fattime |= (timp.tm_mday)      << 16;
+  fattime |= (timp.tm_mon + 1)   << 21;
+  fattime |= (timp.tm_year - 80) << 25;
+
   return fattime;
 }
 
