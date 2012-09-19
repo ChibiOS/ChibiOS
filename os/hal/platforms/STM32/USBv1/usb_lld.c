@@ -290,7 +290,6 @@ CH_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
  */
 CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
   uint32_t istr;
-  size_t n;
   USBDriver *usbp = &USBD1;
 
   CH_IRQ_PROLOGUE();
@@ -339,17 +338,19 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
 
   /* Endpoint events handling.*/
   while (istr & ISTR_CTR) {
+    size_t n;
     uint32_t ep;
     uint32_t epr = STM32_USB->EPR[ep = istr & ISTR_EP_ID_MASK];
     const USBEndpointConfig *epcp = usbp->epc[ep];
 
     if (epr & EPR_CTR_TX) {
+      size_t transmitted;
       /* IN endpoint, transmission.*/
       EPR_CLEAR_CTR_TX(ep);
 
-      n = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
-      epcp->in_state->txcnt              += n;
-      epcp->in_state->txsize             -= n;
+      transmitted = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
+      epcp->in_state->txcnt  += transmitted;
+      epcp->in_state->txsize -= transmitted;
       if (epcp->in_state->txsize > 0) {
         /* Transfer not completed, there are more packets to send.*/
         if (epcp->in_state->txsize > epcp->in_maxsize)
@@ -362,7 +363,7 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
                                       epcp->in_state->mode.queue.txqueue,
                                       n);
         else {
-          epcp->in_state->mode.linear.txbuf  += n;
+          epcp->in_state->mode.linear.txbuf += transmitted;
           usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
                                        epcp->in_state->mode.linear.txbuf,
                                        n);

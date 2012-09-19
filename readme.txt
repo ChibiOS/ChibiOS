@@ -83,6 +83,7 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed problem in STM32F1xx USB driver after revision 4598 (bug 3569374).
 - FIX: Fixed GPIO glitch during PAL initialization (bug 3569347)(backported
   to 2.4.3).
 - FIX: Fixed Data available event not generated in serial_usb driver (bug
