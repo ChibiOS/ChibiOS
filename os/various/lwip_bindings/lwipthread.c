@@ -266,7 +266,7 @@ msg_t lwip_thread(void *p) {
   evtStart(&evt);
   chEvtRegisterMask(&evt.et_es, &el0, PERIODIC_TIMER_ID);
   chEvtRegisterMask(macGetReceiveEventSource(&ETHD1), &el1, FRAME_RECEIVED_ID);
-  chEvtAddFlags(PERIODIC_TIMER_ID | FRAME_RECEIVED_ID);
+  chEvtAddEvents(PERIODIC_TIMER_ID | FRAME_RECEIVED_ID);
 
   /* Goes to the final priority after initialization.*/
   chThdSetPriority(LWIP_THREAD_PRIORITY);
