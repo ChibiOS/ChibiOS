@@ -222,7 +222,7 @@ void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]){
 
 
     /**
-     * Now some perform FS tests.
+     * Now perform some FS tests.
      */
 
     FRESULT err;
