@@ -157,6 +157,7 @@ extern "C" {
                    const RTCAlarm *alarmspec);
   void rtcGetAlarm(RTCDriver *rtcp, rtcalarm_t alarm, RTCAlarm *alarmspec);
 #endif
+  uint32_t rtcGetTimeFat(RTCDriver *rtcp);
 #if RTC_SUPPORTS_CALLBACKS
   void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback);
 #endif

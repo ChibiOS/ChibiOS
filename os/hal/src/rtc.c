@@ -167,6 +167,18 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
 
+/**
+ * @brief   Get current time in format suitable for usage in FatFS.
+ *
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @return              FAT time value.
+ *
+ * @api
+ */
+uint32_t rtcGetTimeFat(RTCDriver *rtcp) {
+  return rtc_lld_get_time_fat(rtcp);
+}
+
 #endif /* HAL_USE_RTC */
 
 /** @} */

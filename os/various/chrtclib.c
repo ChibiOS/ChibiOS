@@ -328,8 +328,6 @@ uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp) {
   return (uint64_t)rtcGetTimeUnixSec(rtcp) * 1000000;
 #endif
 }
-#endif /* STM32_RTC_IS_CALENDAR */
-#endif /* (defined(STM32F4XX) || defined(STM32F2XX) || defined(STM32L1XX) || defined(STM32F1XX)) */
 
 /**
  * @brief   Get current time in format suitable for usage in FatFS.
@@ -354,5 +352,7 @@ uint32_t rtcGetTimeFat(RTCDriver *rtcp) {
 
   return fattime;
 }
+#endif /* STM32_RTC_IS_CALENDAR */
+#endif /* (defined(STM32F4XX) || defined(STM32F2XX) || defined(STM32L1XX) || defined(STM32F1XX)) */
 
 /** @} */

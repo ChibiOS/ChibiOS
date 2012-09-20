@@ -266,6 +266,54 @@ void rtcGetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec){
   wakeupspec->wakeup |= (((uint32_t)rtcp->id_rtc->CR) & 0x7) << 16;
 }
 
+/**
+ * @brief   Get current time in format suitable for usage in FatFS.
+ *
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @return              FAT time value.
+ *
+ * @api
+ */
+uint32_t rtc_lld_get_time_fat(RTCDriver *rtcp) {
+  uint32_t fattime;
+  RTCTime timespec;
+  uint32_t tv_time;
+  uint32_t tv_date;
+  uint32_t v;
+
+  rtc_lld_get_time(rtcp, &timespec);
+  tv_time = timespec.tv_time;
+  tv_date = timespec.tv_date;
+
+  v =  (tv_time & RTC_TR_SU) >> RTC_TR_SU_OFFSET;
+  v += ((tv_time & RTC_TR_ST) >> RTC_TR_ST_OFFSET) * 10;
+  fattime  = v << 1;
+
+  v =  (tv_time & RTC_TR_MNU) >> RTC_TR_MNU_OFFSET;
+  v += ((tv_time & RTC_TR_MNT) >> RTC_TR_MNT_OFFSET) * 10;
+  fattime |= v << 5;
+
+  v =  (tv_time & RTC_TR_HU) >> RTC_TR_HU_OFFSET;
+  v += ((tv_time & RTC_TR_HT) >> RTC_TR_HT_OFFSET) * 10;
+  v += 12 * ((tv_time & RTC_TR_PM) >> RTC_TR_PM_OFFSET);
+  fattime |= v << 11;
+
+  v =  (tv_date & RTC_DR_DU) >> RTC_DR_DU_OFFSET;
+  v += ((tv_date & RTC_DR_DT) >> RTC_DR_DT_OFFSET) * 10;
+  fattime |= v << 16;
+
+  v =  (tv_date & RTC_DR_MU) >> RTC_DR_MU_OFFSET;
+  v += ((tv_date & RTC_DR_MT) >> RTC_DR_MT_OFFSET) * 10;
+  fattime |= v << 21;
+
+  v =  (tv_date & RTC_DR_YU) >> RTC_DR_YU_OFFSET;
+  v += ((tv_date & RTC_DR_YT) >> RTC_DR_YT_OFFSET) * 10;
+  v += 2000 - 1900 - 80;
+  fattime |= v << 25;
+
+  return fattime;
+}
+
 #endif /* HAL_USE_RTC */
 
 /** @} */
