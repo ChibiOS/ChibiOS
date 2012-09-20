@@ -281,7 +281,10 @@ uint32_t rtc_lld_get_time_fat(RTCDriver *rtcp) {
   uint32_t tv_date;
   uint32_t v;
 
-  rtc_lld_get_time(rtcp, &timespec);
+  chSysLock();
+  rtcGetTimeI(rtcp, &timespec);
+  chSysUnlock();
+
   tv_time = timespec.tv_time;
   tv_date = timespec.tv_date;
 
