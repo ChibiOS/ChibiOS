@@ -176,6 +176,8 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
  * @api
  */
 uint32_t rtcGetTimeFat(RTCDriver *rtcp) {
+
+  chDbgCheck((rtcp != NULL), "rtcSetTime");
   return rtc_lld_get_time_fat(rtcp);
 }
 
