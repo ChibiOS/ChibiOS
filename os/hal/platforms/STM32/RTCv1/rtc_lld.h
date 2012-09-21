@@ -178,6 +178,7 @@ extern "C" {
                          rtcalarm_t alarm,
                          RTCAlarm *alarmspec);
   void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback);
+  uint32_t rtc_lld_get_time_fat(RTCDriver *rtcp);
 #ifdef __cplusplus
 }
 #endif

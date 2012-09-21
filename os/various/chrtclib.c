@@ -337,13 +337,13 @@ uint64_t rtcGetTimeUnixUsec(RTCDriver *rtcp) {
  *
  * @api
  */
-uint32_t rtcGetTimeFat(RTCDriver *rtcp) {
+uint32_t rtcGetTimeFatFromCounter(RTCDriver *rtcp) {
   uint32_t fattime;
   struct tm timp;
 
   rtcGetTimeTm(rtcp, &timp);
 
-  fattime  = (timp.tm_sec)       << 1;
+  fattime  = (timp.tm_sec)       >> 1;
   fattime |= (timp.tm_min)       << 5;
   fattime |= (timp.tm_hour)      << 11;
   fattime |= (timp.tm_mday)      << 16;
