@@ -32,7 +32,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "chrtclib.h"
 
 #if HAL_USE_RTC || defined(__DOXYGEN__)
 
@@ -299,6 +298,8 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
     rtcp->callback = NULL;
   }
 }
+
+#include "chrtclib.h"
 
 /**
  * @brief   Get current time in format suitable for usage in FatFS.
