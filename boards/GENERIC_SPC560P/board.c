@@ -21,6 +21,31 @@
 #include "ch.h"
 #include "hal.h"
 
+#if HAL_USE_PAL || defined(__DOXYGEN__)
+/* List of the PCR values to be setup initially, the list is terminated by a
+   {0, 0}.*/
+static const spc560p_pcr_init_t spc560p_pcrs_init[] = {
+  {0, 0}
+};
+
+/* Initialization array for the PSMI registers.*/
+static const uint8_t spc560p_padsels_init[36] = {
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0
+};
+
+/**
+ * @brief   PAL setup.
+ */
+const PALConfig pal_default_config =
+{
+  PAL_MODE_UNCONNECTED,
+  spc560p_pcrs_init,
+  spc560p_padsels_init
+};
+#endif
+
 /*
  * Early initialization code.
  * This initialization must be performed just after stack setup and before
