@@ -45,6 +45,25 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   PIT channel 3 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(vector127) {
+
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromIsr();
+  chSysTimerHandlerI();
+  chSysUnlockFromIsr();
+
+  /* Resets the PIT channel 3 IRQ flag.*/
+  PIT.CH[3].TFLG.R = 1;
+
+  CH_IRQ_EPILOGUE();
+}
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -55,11 +74,31 @@
  * @notapi
  */
 void hal_lld_init(void) {
+  extern void _vectors(void);
+  uint32_t reg;
 
   /* The system is switched to the RUN0 mode, the default for normal
      operations.*/
   if (halSPC560PSetRunMode(SPC560P_RUNMODE_RUN0) == CH_FAILED)
     chSysHalt();
+
+  /* INTC initialization, software vector mode, 4 bytes vectors, starting
+     at priority 0.*/
+  INTC.MCR.R        = 0;
+  INTC.CPR.R        = 0;
+  INTC.IACKR.R      = (uint32_t)_vectors;
+
+  /* PIT channel 3 initialization for Kernel ticks, the PIT is configured
+     to run in DRUN,RUN0...RUN3 and HALT0 modes, the clock is gated in other
+     modes.*/
+  INTC.PSR[127].R   = SPC560P_PIT3_IRQ_PRIORITY;
+  ME.PCTL[92].R     = SPC560P_ME_PCTL_RUN(2) | SPC560P_ME_PCTL_LP(2);
+  reg = halSPC560PGetSystemClock() / CH_FREQUENCY - 1;
+  PIT.PITMCR.R      = 1;        /* PIT clock enabled, stop while debugging. */
+  PIT.CH[3].LDVAL.R = reg;
+  PIT.CH[3].CVAL.R  = reg;
+  PIT.CH[3].TFLG.R  = 1;        /* Interrupt flag cleared.                  */
+  PIT.CH[3].TCTRL.R = 3;        /* Timer active, interrupt enabled.         */
 }
 
 /**
@@ -100,11 +139,29 @@ void spc560p_clock_init(void) {
   ME.SAFE.R         = SPC560P_ME_SAFE_MC_BITS;  /* SAFE run mode.           */
   ME.DRUN.R         = SPC560P_ME_DRUN_MC_BITS;  /* DRUN run mode.           */
   ME.RUN[0].R       = SPC560P_ME_RUN0_MC_BITS;  /* RUN0 run mode.           */
-  ME.RUN[1].R       = SPC560P_ME_RUN1_MC_BITS;  /* RUN0 run mode.           */
-  ME.RUN[2].R       = SPC560P_ME_RUN2_MC_BITS;  /* RUN0 run mode.           */
+  ME.RUN[1].R       = SPC560P_ME_RUN1_MC_BITS;  /* RUN1 run mode.           */
+  ME.RUN[2].R       = SPC560P_ME_RUN2_MC_BITS;  /* RUN2 run mode.           */
   ME.RUN[3].R       = SPC560P_ME_RUN3_MC_BITS;  /* RUN0 run mode.           */
   ME.HALT0.R        = SPC560P_ME_HALT0_MC_BITS; /* HALT0 run mode.          */
   ME.STOP0.R        = SPC560P_ME_STOP0_MC_BITS; /* STOP0 run mode.          */
+
+  /* Peripherals run and low power modes initialization.*/
+  ME.RUNPC[0].R     = SPC560P_ME_RUN_PC0_BITS;
+  ME.RUNPC[1].R     = SPC560P_ME_RUN_PC1_BITS;
+  ME.RUNPC[2].R     = SPC560P_ME_RUN_PC2_BITS;
+  ME.RUNPC[3].R     = SPC560P_ME_RUN_PC3_BITS;
+  ME.RUNPC[4].R     = SPC560P_ME_RUN_PC4_BITS;
+  ME.RUNPC[5].R     = SPC560P_ME_RUN_PC5_BITS;
+  ME.RUNPC[6].R     = SPC560P_ME_RUN_PC6_BITS;
+  ME.RUNPC[7].R     = SPC560P_ME_RUN_PC7_BITS;
+  ME.LPPC[0].R      = SPC560P_ME_LP_PC0_BITS;
+  ME.LPPC[1].R      = SPC560P_ME_LP_PC1_BITS;
+  ME.LPPC[2].R      = SPC560P_ME_LP_PC2_BITS;
+  ME.LPPC[3].R      = SPC560P_ME_LP_PC3_BITS;
+  ME.LPPC[4].R      = SPC560P_ME_LP_PC4_BITS;
+  ME.LPPC[5].R      = SPC560P_ME_LP_PC5_BITS;
+  ME.LPPC[6].R      = SPC560P_ME_LP_PC6_BITS;
+  ME.LPPC[7].R      = SPC560P_ME_LP_PC7_BITS;
 
   /* Switches again to DRUN mode (current mode) in order to update the
      settings.*/
@@ -116,8 +173,14 @@ void spc560p_clock_init(void) {
 
 /**
  * @brief   Switches the system to the specified run mode.
+ *
+ * @param[in] mode      one of the possible run modes
+ *
+ * @return              The operation status.
+ * @retval CH_SUCCESS   if the switch operation has been completed.
+ * @retval CH_FAILED    if the switch operation failed.
  */
-bool_t  halSPC560PSetRunMode(spc560prunmode_t mode) {
+bool_t halSPC560PSetRunMode(spc560prunmode_t mode) {
 
   /* Starts a transition process.*/
   ME.MCTL.R = SPC560P_ME_MCTL_MODE(mode) | SPC560P_ME_MCTL_KEY;
@@ -133,9 +196,34 @@ bool_t  halSPC560PSetRunMode(spc560prunmode_t mode) {
 
   /* Verifies that the mode has been effectively switched.*/
   if (ME.GS.B.S_CURRENTMODE != mode)
-    return TRUE;
+    return CH_FAILED;
 
-  return FALSE;
+  return CH_SUCCESS;
 }
+
+#if !SPC560P_NO_INIT || defined(__DOXYGEN__)
+/**
+ * @brief   Returns the system clock under the current run mode.
+ *
+ * @return              The system clock in Hertz.
+ */
+uint32_t halSPC560PGetSystemClock(void) {
+  uint32_t sysclk;
+
+  sysclk = ME.GS.B.S_SYSCLK;
+  switch (sysclk) {
+  case SPC560P_ME_GS_SYSCLK_IRC:
+    return SPC560P_IRC_CLK;
+  case SPC560P_ME_GS_SYSCLK_XOSC:
+    return SPC560P_XOSC_CLK;
+  case SPC560P_ME_GS_SYSCLK_FMPLL0:
+    return SPC560P_FMPLL0_CLK;
+  case SPC560P_ME_GS_SYSCLK_FMPLL1:
+    return SPC560P_FMPLL1_CLK;
+  default:
+    return 0;
+  }
+}
+#endif /* !SPC560P_NO_INIT */
 
 /** @} */

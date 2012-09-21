@@ -120,6 +120,17 @@
 /** @} */
 
 /**
+ * @name    ME_GS register bits definitions
+ * @{
+ */
+#define SPC560P_ME_GS_SYSCLK_MASK   (15U << 0)
+#define SPC560P_ME_GS_SYSCLK_IRC    (0U << 0)
+#define SPC560P_ME_GS_SYSCLK_XOSC   (2U << 0)
+#define SPC560P_ME_GS_SYSCLK_FMPLL0 (4U << 0)
+#define SPC560P_ME_GS_SYSCLK_FMPLL1 (5U << 0)
+/** @} */
+
+/**
  * @name    ME_ME register bits definitions
  * @{
  */
@@ -172,6 +183,38 @@
 #define SPC560P_ME_MCTL_KEY_INV     0xA50FU
 #define SPC560P_ME_MCTL_MODE_MASK   (15U << 28)
 #define SPC560P_ME_MCTL_MODE(n)     ((n) << 28)
+/** @} */
+
+/**
+ * @name    ME_RUN_PCx registers bits definitions
+ * @{
+ */
+#define SPC560P_ME_RUN_PC_TEST      (1U << 1)
+#define SPC560P_ME_RUN_PC_SAFE      (1U << 2)
+#define SPC560P_ME_RUN_PC_DRUN      (1U << 3)
+#define SPC560P_ME_RUN_PC_RUN0      (1U << 4)
+#define SPC560P_ME_RUN_PC_RUN1      (1U << 5)
+#define SPC560P_ME_RUN_PC_RUN2      (1U << 6)
+#define SPC560P_ME_RUN_PC_RUN3      (1U << 7)
+/** @} */
+
+/**
+ * @name    ME_LP_PCx registers bits definitions
+ * @{
+ */
+#define SPC560P_ME_LP_PC_HALT0      (1U << 8)
+#define SPC560P_ME_LP_PC_STOP0      (1U << 10)
+/** @} */
+
+/**
+ * @name    ME_PCTL registers bits definitions
+ * @{
+ */
+#define SPC560P_ME_PCTL_RUN_MASK    (7U << 0)
+#define SPC560P_ME_PCTL_RUN(n)      ((n) << 0)
+#define SPC560P_ME_PCTL_LP_MASK     (7U << 3)
+#define SPC560P_ME_PCTL_LP(n)       ((n) << 3)
+#define SPC560P_ME_PCTL_DBG         (1U << 6)
 /** @} */
 
 /*===========================================================================*/
@@ -369,6 +412,180 @@
                                      SPC560P_ME_MC_MVRON)
 #endif
 
+/**
+ * @brief   Peripheral mode 0 (run mode).
+ * @note    Do not change this setting, it is expected to be the "always run"
+ *          mode.
+ */
+#if !defined(SPC560P_ME_RUN_PC0_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN_PC0_BITS     (SPC560P_ME_RUN_PC_TEST |               \
+                                     SPC560P_ME_RUN_PC_SAFE |               \
+                                     SPC560P_ME_RUN_PC_DRUN |               \
+                                     SPC560P_ME_RUN_PC_RUN0 |               \
+                                     SPC560P_ME_RUN_PC_RUN1 |               \
+                                     SPC560P_ME_RUN_PC_RUN2 |               \
+                                     SPC560P_ME_RUN_PC_RUN3)
+#endif
+
+/**
+ * @brief   Peripheral mode 1 (run mode).
+ * @note    Do not change this setting, it is expected to be the "never run"
+ *          mode.
+ */
+#if !defined(SPC560P_ME_RUN_PC1_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN_PC1_BITS     0
+#endif
+
+/**
+ * @brief   Peripheral mode 2 (run mode).
+ * @note    Do not change this setting, it is expected to be the "only during
+ *          normal run" mode.
+ */
+#if !defined(SPC560P_ME_RUN_PC2_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN_PC2_BITS     (SPC560P_ME_RUN_PC_DRUN |               \
+                                     SPC560P_ME_RUN_PC_RUN0 |               \
+                                     SPC560P_ME_RUN_PC_RUN1 |               \
+                                     SPC560P_ME_RUN_PC_RUN2 |               \
+                                     SPC560P_ME_RUN_PC_RUN3)
+#endif
+
+/**
+ * @brief   Peripheral mode 3 (run mode).
+ * @note    Not defined, available to application-specific modes.
+ */
+#if !defined(SPC560P_ME_RUN_PC3_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN_PC3_BITS     (SPC560P_ME_RUN_PC_RUN0 |               \
+                                     SPC560P_ME_RUN_PC_RUN1 |               \
+                                     SPC560P_ME_RUN_PC_RUN2 |               \
+                                     SPC560P_ME_RUN_PC_RUN3)
+#endif
+
+/**
+ * @brief   Peripheral mode 4 (run mode).
+ * @note    Not defined, available to application-specific modes.
+ */
+#if !defined(SPC560P_ME_RUN_PC4_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN_PC4_BITS     (SPC560P_ME_RUN_PC_RUN0 |               \
+                                     SPC560P_ME_RUN_PC_RUN1 |               \
+                                     SPC560P_ME_RUN_PC_RUN2 |               \
+                                     SPC560P_ME_RUN_PC_RUN3)
+#endif
+
+/**
+ * @brief   Peripheral mode 5 (run mode).
+ * @note    Not defined, available to application-specific modes.
+ */
+#if !defined(SPC560P_ME_RUN_PC5_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN_PC5_BITS     (SPC560P_ME_RUN_PC_RUN0 |               \
+                                     SPC560P_ME_RUN_PC_RUN1 |               \
+                                     SPC560P_ME_RUN_PC_RUN2 |               \
+                                     SPC560P_ME_RUN_PC_RUN3)
+#endif
+
+/**
+ * @brief   Peripheral mode 6 (run mode).
+ * @note    Not defined, available to application-specific modes.
+ */
+#if !defined(SPC560P_ME_RUN_PC6_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN_PC6_BITS     (SPC560P_ME_RUN_PC_RUN0 |               \
+                                     SPC560P_ME_RUN_PC_RUN1 |               \
+                                     SPC560P_ME_RUN_PC_RUN2 |               \
+                                     SPC560P_ME_RUN_PC_RUN3)
+#endif
+
+/**
+ * @brief   Peripheral mode 7 (run mode).
+ * @note    Not defined, available to application-specific modes.
+ */
+#if !defined(SPC560P_ME_RUN_PC7_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_RUN_PC7_BITS     (SPC560P_ME_RUN_PC_RUN0 |               \
+                                     SPC560P_ME_RUN_PC_RUN1 |               \
+                                     SPC560P_ME_RUN_PC_RUN2 |               \
+                                     SPC560P_ME_RUN_PC_RUN3)
+#endif
+
+/**
+ * @brief   Peripheral mode 0 (low power mode).
+ * @note    Do not change this setting, it is expected to be the "always run"
+ *          mode.
+ */
+#if !defined(SPC560P_ME_LP_PC0_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_LP_PC0_BITS      (SPC560P_ME_LP_PC_HALT0 |               \
+                                     SPC560P_ME_LP_PC_STOP0)
+#endif
+
+/**
+ * @brief   Peripheral mode 1 (low power mode).
+ * @note    Do not change this setting, it is expected to be the "never run"
+ *          mode.
+ */
+#if !defined(SPC560P_ME_LP_PC1_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_LP_PC1_BITS      0
+#endif
+
+/**
+ * @brief   Peripheral mode 2 (low power mode).
+ * @note    Do not change this setting, it is expected to be the "halt only"
+ *          mode.
+ */
+#if !defined(SPC560P_ME_LP_PC2_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_LP_PC2_BITS      (SPC560P_ME_LP_PC_HALT0)
+#endif
+
+/**
+ * @brief   Peripheral mode 3 (low power mode).
+ * @note    Do not change this setting, it is expected to be the "stop only"
+ *          mode.
+ */
+#if !defined(SPC560P_ME_LP_PC3_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_LP_PC3_BITS      (SPC560P_ME_LP_PC_STOP0)
+#endif
+
+/**
+ * @brief   Peripheral mode 4 (low power mode).
+ * @note    Not defined, available to application-specific modes.
+ */
+#if !defined(SPC560P_ME_LP_PC4_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_LP_PC4_BITS      (SPC560P_ME_LP_PC_HALT0 |               \
+                                     SPC560P_ME_LP_PC_STOP0)
+#endif
+
+/**
+ * @brief   Peripheral mode 5 (low power mode).
+ * @note    Not defined, available to application-specific modes.
+ */
+#if !defined(SPC560P_ME_LP_PC5_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_LP_PC5_BITS      (SPC560P_ME_LP_PC_HALT0 |               \
+                                     SPC560P_ME_LP_PC_STOP0)
+#endif
+
+/**
+ * @brief   Peripheral mode 6 (low power mode).
+ * @note    Not defined, available to application-specific modes.
+ */
+#if !defined(SPC560P_ME_LP_PC6_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_LP_PC6_BITS      (SPC560P_ME_LP_PC_HALT0 |               \
+                                     SPC560P_ME_LP_PC_STOP0)
+#endif
+
+/**
+ * @brief   Peripheral mode 7 (low power mode).
+ * @note    Not defined, available to application-specific modes.
+ */
+#if !defined(SPC560P_ME_LP_PC7_BITS) || defined(__DOXYGEN__)
+#define SPC560P_ME_LP_PC7_BITS      (SPC560P_ME_LP_PC_HALT0 |               \
+                                     SPC560P_ME_LP_PC_STOP0)
+#endif
+
+/**
+ * @brief   PIT channel 3 IRQ priority.
+ * @note    This PIT channel is allocated permanently for system tick
+ *          generation.
+ */
+#if !defined(SPC560P_PIT3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SPC560P_PIT3_IRQ_PRIORITY   4
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -501,6 +718,9 @@ extern "C" {
   void hal_lld_init(void);
   void spc560p_clock_init(void);
   bool_t  halSPC560PSetRunMode(spc560prunmode_t mode);
+#if !SPC560P_NO_INIT
+uint32_t halSPC560PGetSystemClock(void);
+#endif
 #ifdef __cplusplus
 }
 #endif

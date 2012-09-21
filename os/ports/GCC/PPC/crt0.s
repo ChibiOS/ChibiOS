@@ -44,6 +44,7 @@ _boot_address:
          * IVPR initialization.
          */
         lis         %r4, __ivpr_base__@h
+        ori         %r4, %r4, __ivpr_base__@l
         mtIVPR      %r4    
         /*
          * Small sections registers initialization.

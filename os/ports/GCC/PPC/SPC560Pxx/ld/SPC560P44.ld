@@ -47,13 +47,17 @@ SECTIONS
     . = ORIGIN(flash);
     .boot : ALIGN(16) SUBALIGN(16)
     {
-        __ivpr_base__ = .;
         KEEP(*(.bam))
         KEEP(*(.crt0))
         . = ALIGN(0x00000800);
-        KEEP(*(.handlers))
-        . = ALIGN(0x00001000);
         KEEP(*(.vectors))
+        /* Note, have to waste the first 64KB because the IVPR register
+           requires an alignment of 64KB and the first 64KB cannot be used,
+           IVOR0 would conflict with the BAM word. Applications could
+           allocate code or data in the first 64KB by using special sections.*/
+        . = ALIGN(0x00010000);
+        __ivpr_base__ = .;
+        KEEP(*(.handlers))
     } > flash
 
     constructors : ALIGN(4) SUBALIGN(4)
