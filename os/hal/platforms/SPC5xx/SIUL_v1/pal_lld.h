@@ -114,18 +114,18 @@
 /**
  * @brief   Width, in bits, of an I/O port.
  */
-#define PAL_IOPORTS_WIDTH 32
+#define PAL_IOPORTS_WIDTH 16
 
 /**
  * @brief   Whole port mask.
  * @brief   This macro specifies all the valid bits into a port.
  */
-#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFFFFFF)
+#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFF)
 
 /**
  * @brief   Digital I/O port sized unsigned type.
  */
-typedef uint32_t ioportmask_t;
+typedef uint16_t ioportmask_t;
 
 /**
  * @brief   Digital I/O modes.
@@ -141,12 +141,13 @@ typedef uint16_t iomode_t;
 typedef uint32_t ioportid_t;
 
 /**
- * @brief   PCR register initializer type.
+ * @brief   SIUL register initializer type.
  */
 typedef struct {
-  uint16_t                  pcr_index;
+  uint8_t                   pcr_index;
+  uint8_t                   gpdo_value;
   iomode_t                  pcr_value;
-} spc560p_pcr_init_t;
+} spc560p_siul_init_t;
 
 /**
  * @brief   Generic I/O ports static initializer.
@@ -159,7 +160,7 @@ typedef struct {
  */
 typedef struct {
   iomode_t                  default_mode;
-  const spc560p_pcr_init_t  *pcrs;
+  const spc560p_siul_init_t *inits;
   const uint8_t             *padsels;
 } PALConfig;
 
@@ -170,27 +171,68 @@ typedef struct {
 /**
  * @brief   I/O port 1 identifier.
  */
-#define IOPORT1         0
+#define PA              0
 
 /**
  * @brief   I/O port 2 identifier.
  */
-#define IOPORT2         1
+#define PB              1
 
 /**
  * @brief   I/O port 3 identifier.
  */
-#define IOPORT3         2
+#define PC              2
 
 /**
  * @brief   I/O port 4 identifier.
  */
-#define IOPORT4         3
+#define PD              3
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
 /* functions, if so please put them in pal_lld.c.                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Port bit helper macro.
+ * @note    Overrides the one in @p pal.h.
+ *
+ * @param[in] n         bit position within the port
+ *
+ * @return              The bit mask.
+ */
+#define PAL_PORT_BIT(n) ((ioportmask_t)(0x8000U >> (n)))
+
+/**
+ * @brief   Workaround read port because bad header implementation.
+ *
+ * @param[in] port      port identifier
+ * @return              The port bits.
+ *
+ * @notapi
+ */
+#define PAL_SIUL_READ_PORT(port) (((volatile uint16_t *)SIU.PGPDI)[port])
+
+/**
+ * @brief   Workaround read latch because bad header implementation.
+ *
+ * @param[in] port      port identifier
+ * @return              The port bits.
+ *
+ * @notapi
+ */
+#define PAL_SIUL_READ_LATCH(port) (((volatile uint16_t *)SIU.PGPDO)[port])
+
+/**
+ * @brief   Workaround write port because bad header implementation.
+ *
+ * @param[in] port      port identifier
+ * @param[in] bits      bits to be written on the specified port
+ *
+ * @notapi
+ */
+#define PAL_SIUL_WRITE_PORT(port, bits)                                     \
+  (((volatile uint16_t *)SIU.PGPDO)[port] = (bits))
 
 /**
  * @brief   Low level PAL subsystem initialization.
@@ -209,7 +251,7 @@ typedef struct {
  *
  * @notapi
  */
-#define pal_lld_readport(port) (SIU.PGPDI[port].R)
+#define pal_lld_readport(port) PAL_SIUL_READ_PORT(port)
 
 /**
  * @brief   Reads the output latch.
@@ -221,7 +263,7 @@ typedef struct {
  *
  * @notapi
  */
-#define pal_lld_readlatch(port) (SIU.PGPDO[port].R)
+#define pal_lld_readlatch(port) PAL_SIUL_READ_LATCH(port)
 
 /**
  * @brief   Writes a bits mask on a I/O port.
@@ -231,7 +273,7 @@ typedef struct {
  *
  * @notapi
  */
-#define pal_lld_writeport(port, bits) (SIU.PGPDO[port].R = (bits))
+#define pal_lld_writeport(port, bits) PAL_SIUL_WRITE_PORT(port, bits)
 
 /**
  * @brief   Pads group mode setup.
@@ -264,7 +306,7 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_readpad(port, pad)                                          \
-  (SIU.GPDI.R[((port) * 32) + (15 - (pad))])
+  (SIU.GPDI[((port) * 16) + (pad)].R)
 
 /**
  * @brief   Writes a logical state on an output pad.
@@ -282,7 +324,29 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_writepad(port, pad, bit)                                    \
-  (SIU.GPDO.R[((port) * 32) + (15 - (pad))] = (bit))
+  (SIU.GPDO[((port) * 16) + (pad)].R = (bit))
+
+/**
+ * @brief   Sets a pad logical state to @p PAL_HIGH.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @notapi
+ */
+#define pal_lld_setpad(port, pad)                                           \
+    (SIU.GPDO[((port) * 16) + (pad)].R = 1)
+
+/**
+ * @brief   Clears a pad logical state to @p PAL_LOW.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @notapi
+ */
+#define pal_lld_clearpad(port, pad)                                         \
+    (SIU.GPDO[((port) * 16) + (pad)].R = 0)
 
 /**
  * @brief   Pad mode setup.

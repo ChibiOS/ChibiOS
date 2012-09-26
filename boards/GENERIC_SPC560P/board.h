@@ -41,18 +41,20 @@
 /*
  * I/O definitions.
  */
-#define GPIO_SCI_A_TX   89
-#define GPIO_SCI_A_RX   90
+#define PD_BUTTON1      0
+#define PD_BUTTON2      1
+#define PD_BUTTON3      2
+#define PD_BUTTON4      3
 
-#define GPIO_BUTTON1    179
-#define GPIO_BUTTON2    181
-#define GPIO_BUTTON3    183
-#define GPIO_BUTTON4    187
+#define PD_LED1         4
+#define PD_LED2         5
+#define PD_LED3         6
+#define PD_LED4         7
 
-#define GPIO_LED1       188
-#define GPIO_LED2       189
-#define GPIO_LED3       190
-#define GPIO_LED4       191
+/*
+ * Support macros.
+ */
+#define PCR(port, pin)  (((port) * 16) + (pin))
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus

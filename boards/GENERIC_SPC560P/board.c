@@ -22,10 +22,17 @@
 #include "hal.h"
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
-/* List of the PCR values to be setup initially, the list is terminated by a
-   {0, 0}.*/
-static const spc560p_pcr_init_t spc560p_pcrs_init[] = {
-  {0, 0}
+/* Initial setup of all defined pads, the list is terminated by a {0, 0}.*/
+static const spc560p_siul_init_t spc560p_siul_init[] = {
+  {PCR(PD, PD_BUTTON1), PAL_LOW, PAL_MODE_INPUT},
+  {PCR(PD, PD_BUTTON2), PAL_LOW, PAL_MODE_INPUT},
+  {PCR(PD, PD_BUTTON3), PAL_LOW, PAL_MODE_INPUT},
+  {PCR(PD, PD_BUTTON4), PAL_LOW, PAL_MODE_INPUT},
+  {PCR(PD, PD_LED1), PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PD, PD_LED2), PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PD, PD_LED3), PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PD, PD_LED4), PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {0, 0, 0}
 };
 
 /* Initialization array for the PSMI registers.*/
@@ -40,8 +47,8 @@ static const uint8_t spc560p_padsels_init[36] = {
  */
 const PALConfig pal_default_config =
 {
-  PAL_MODE_UNCONNECTED,
-  spc560p_pcrs_init,
+  PAL_MODE_UNCONNECTED,             /* Default mode for all undefined pads. */
+  spc560p_siul_init,
   spc560p_padsels_init
 };
 #endif

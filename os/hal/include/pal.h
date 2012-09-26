@@ -94,12 +94,12 @@
 /**
  * @brief   Logical low state.
  */
-#define PAL_LOW 0
+#define PAL_LOW                         0
 
 /**
  * @brief   Logical high state.
  */
-#define PAL_HIGH 1
+#define PAL_HIGH                        1
 /** @} */
 
 /*===========================================================================*/
@@ -151,7 +151,9 @@ typedef struct {
  * @param[in] n         bit position within the port
  * @return              The bit mask.
  */
+#if !defined(PAL_PORT_BIT) || defined(__DOXYGEN__)
 #define PAL_PORT_BIT(n) ((ioportmask_t)(1 << (n)))
+#endif
 
 /**
  * @brief   Bits group mask helper.
@@ -160,7 +162,9 @@ typedef struct {
  * @param[in] width         group width
  * @return                  The group mask.
  */
+#if !defined(PAL_GROUP_MASK) || defined(__DOXYGEN__)
 #define PAL_GROUP_MASK(width) ((ioportmask_t)(1 << (width)) - 1)
+#endif
 
 /**
  * @brief   Data part of a static I/O bus initializer.

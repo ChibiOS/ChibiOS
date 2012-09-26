@@ -70,8 +70,9 @@ void _pal_lld_init(const PALConfig *config) {
     SIU.PCR[i].R = config->default_mode;
 
   i = 0;
-  while (config->pcrs[i].pcr_value != 0) {
-    SIU.PCR[config->pcrs[i].pcr_index].R = config->pcrs[i].pcr_value;
+  while (config->inits[i].pcr_value != 0) {
+    SIU.GPDO[config->inits[i].pcr_index].R = config->inits[i].gpdo_value;
+    SIU.PCR[config->inits[i].pcr_index].R  = config->inits[i].pcr_value;
     i++;
   }
 
