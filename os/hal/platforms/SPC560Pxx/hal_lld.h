@@ -35,6 +35,7 @@
 #define _HAL_LLD_H_
 
 #include "xpc560p.h"
+#include "spc560p_registry.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -215,21 +216,6 @@
 #define SPC5_ME_PCTL_LP_MASK        (7U << 3)
 #define SPC5_ME_PCTL_LP(n)          ((n) << 3)
 #define SPC5_ME_PCTL_DBG            (1U << 6)
-/** @} */
-
-/*===========================================================================*/
-/* Platform capabilities.                                                    */
-/*===========================================================================*/
-
-/**
- * @name    SPC560Pxx capabilities
- * @{
- */
-/* SIUL attributes.*/
-#define SPC5_HAS_SIUL               TRUE
-#define SPC5_SIUL_NUM_PORTS         4
-#define SPC5_SIUL_NUM_PCRS          108
-#define SPC5_SIUL_NUM_PADSELS       36
 /** @} */
 
 /*===========================================================================*/

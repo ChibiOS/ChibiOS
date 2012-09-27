@@ -1,0 +1,49 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011,2012 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @file    SPC560Pxx/spc560p_registry.h
+ * @brief   SPC560Pxx capabilities registry.
+ *
+ * @addtogroup HAL
+ * @{
+ */
+
+#ifndef _SPC560P_REGISTRY_H_
+#define _SPC560P_REGISTRY_H_
+
+/*===========================================================================*/
+/* Platform capabilities.                                                    */
+/*===========================================================================*/
+
+/**
+ * @name    SPC560Pxx capabilities
+ * @{
+ */
+/* SIUL attributes.*/
+#define SPC5_HAS_SIUL               TRUE
+#define SPC5_SIUL_NUM_PORTS         4
+#define SPC5_SIUL_NUM_PCRS          108
+#define SPC5_SIUL_NUM_PADSELS       36
+/** @} */
+
+#endif /* _SPC560P_REGISTRY_H_ */
+
+/** @} */
