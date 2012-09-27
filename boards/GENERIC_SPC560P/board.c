@@ -68,19 +68,4 @@ void __early_init(void) {
  */
 void boardInit(void) {
 
-#if 0
-  /*
-   * Various initialization (temporary code).
-   */
-  SIU.PCR[GPIO_LED1].R     = 0x0300;                /* OBE | IBE.           */
-  SIU.PCR[GPIO_LED2].R     = 0x0300;                /* OBE | IBE.           */
-  SIU.PCR[GPIO_LED3].R     = 0x0300;                /* OBE | IBE.           */
-  SIU.PCR[GPIO_LED4].R     = 0x0300;                /* OBE | IBE.           */
-  SIU.PCR[GPIO_BUTTON1].R  = 0x0100;                /* IBE.                 */
-  SIU.PCR[GPIO_BUTTON2].R  = 0x0100;                /* IBE.                 */
-  SIU.PCR[GPIO_BUTTON3].R  = 0x0100;                /* IBE.                 */
-  SIU.PCR[GPIO_BUTTON4].R  = 0x0100;                /* IBE.                 */
-  SIU.PCR[GPIO_SCI_A_TX].R = 0x0500;                /* Primary | IBE.       */
-  SIU.PCR[GPIO_SCI_A_RX].R = 0x0500;                /* Primary | IBE.       */
-#endif
 }

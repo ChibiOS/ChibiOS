@@ -45,7 +45,7 @@
 #undef PAL_MODE_OUTPUT_OPENDRAIN
 
 /**
- * @name    SIUL-specific PAL modes
+ * @name    SIU/SIUL-specific PAL modes
  * @{
  */
 #define PAL_SPC5_SMC                (1U << 14)
@@ -141,7 +141,7 @@ typedef uint16_t iomode_t;
 typedef uint32_t ioportid_t;
 
 /**
- * @brief   SIUL register initializer type.
+ * @brief   SIU/SIUL register initializer type.
  */
 typedef struct {
   uint8_t                   pcr_index;

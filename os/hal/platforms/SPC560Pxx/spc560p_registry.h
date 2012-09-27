@@ -37,6 +37,27 @@
  * @name    SPC560Pxx capabilities
  * @{
  */
+/* LINFlex attributes.*/
+#define SPC5_HAS_LINFLEX0                   TRUE
+#define SPC5_LINFLEX0_RXI_HANDLER           vector79
+#define SPC5_LINFLEX0_TXI_HANDLER           vector80
+#define SPC5_LINFLEX0_ERR_HANDLER           vector81
+#define SPC5_LINFLEX0_RXI_NUMBER            79
+#define SPC5_LINFLEX0_TXI_NUMBER            80
+#define SPC5_LINFLEX0_ERR_NUMBER            81
+
+#define SPC5_HAS_LINFLEX1                   TRUE
+#define SPC5_LINFLEX1_RXI_HANDLER           vector99
+#define SPC5_LINFLEX1_TXI_HANDLER           vector100
+#define SPC5_LINFLEX1_ERR_HANDLER           vector101
+#define SPC5_LINFLEX1_RXI_NUMBER            99
+#define SPC5_LINFLEX1_TXI_NUMBER            100
+#define SPC5_LINFLEX1_ERR_NUMBER            101
+
+#define SPC5_HAS_LINFLEX2                   FALSE
+
+#define SPC5_HAS_LINFLEX3                   FALSE
+
 /* SIU/SIUL attributes.*/
 #define SPC5_HAS_SIU                FALSE
 #define SPC5_SIU_SUPPORTS_PORTS     TRUE
