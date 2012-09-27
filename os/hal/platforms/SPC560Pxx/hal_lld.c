@@ -79,7 +79,7 @@ void hal_lld_init(void) {
 
   /* The system is switched to the RUN0 mode, the default for normal
      operations.*/
-  if (halSPC560PSetRunMode(SPC560P_RUNMODE_RUN0) == CH_FAILED)
+  if (halSPC560PSetRunMode(SPC5_RUNMODE_RUN0) == CH_FAILED)
     chSysHalt();
 
   /* INTC initialization, software vector mode, 4 bytes vectors, starting
@@ -91,8 +91,8 @@ void hal_lld_init(void) {
   /* PIT channel 3 initialization for Kernel ticks, the PIT is configured
      to run in DRUN,RUN0...RUN3 and HALT0 modes, the clock is gated in other
      modes.*/
-  INTC.PSR[127].R   = SPC560P_PIT3_IRQ_PRIORITY;
-  ME.PCTL[92].R     = SPC560P_ME_PCTL_RUN(2) | SPC560P_ME_PCTL_LP(2);
+  INTC.PSR[127].R   = SPC5_PIT3_IRQ_PRIORITY;
+  ME.PCTL[92].R     = SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2);
   reg = halSPC560PGetSystemClock() / CH_FREQUENCY - 1;
   PIT.PITMCR.R      = 1;        /* PIT clock enabled, stop while debugging. */
   PIT.CH[3].LDVAL.R = reg;
@@ -115,60 +115,60 @@ void spc560p_clock_init(void) {
   while (!ME.GS.B.S_RC)
     ;
 
-#if !SPC560P_NO_INIT
+#if !SPC5_NO_INIT
 
-#if defined(SPC560P_OSC_BYPASS)
+#if defined(SPC5_OSC_BYPASS)
   /* If the board is equipped with an oscillator instead of a xtal then the
      bypass must be activated.*/
   CGM.OSC_CTL.B.OSCBYP = TRUE;
-#endif /* SPC560P_ENABLE_XOSC */
+#endif /* SPC5_ENABLE_XOSC */
 
   /* Initialization of the FMPLLs settings.*/
-  CGM.FMPLL[0].CR.R = SPC560P_FMPLL0_ODF |
-                      (SPC560P_FMPLL0_IDF_VALUE << 26) |
-                      (SPC560P_FMPLL0_NDIV_VALUE << 16);
+  CGM.FMPLL[0].CR.R = SPC5_FMPLL0_ODF |
+                      (SPC5_FMPLL0_IDF_VALUE << 26) |
+                      (SPC5_FMPLL0_NDIV_VALUE << 16);
   CGM.FMPLL[0].MR.R = 0;                        /* TODO: Add a setting.     */
-  CGM.FMPLL[1].CR.R = SPC560P_FMPLL1_ODF |
-                      (SPC560P_FMPLL1_IDF_VALUE << 26) |
-                      (SPC560P_FMPLL1_NDIV_VALUE << 16);
+  CGM.FMPLL[1].CR.R = SPC5_FMPLL1_ODF |
+                      (SPC5_FMPLL1_IDF_VALUE << 26) |
+                      (SPC5_FMPLL1_NDIV_VALUE << 16);
   CGM.FMPLL[1].MR.R = 0;                        /* TODO: Add a setting.     */
 
   /* Run modes initialization.*/
-  ME.MER.R          = SPC560P_ME_ME_BITS;       /* Enabled run modes.       */
-  ME.TEST.R         = SPC560P_ME_TEST_MC_BITS;  /* TEST run mode.           */
-  ME.SAFE.R         = SPC560P_ME_SAFE_MC_BITS;  /* SAFE run mode.           */
-  ME.DRUN.R         = SPC560P_ME_DRUN_MC_BITS;  /* DRUN run mode.           */
-  ME.RUN[0].R       = SPC560P_ME_RUN0_MC_BITS;  /* RUN0 run mode.           */
-  ME.RUN[1].R       = SPC560P_ME_RUN1_MC_BITS;  /* RUN1 run mode.           */
-  ME.RUN[2].R       = SPC560P_ME_RUN2_MC_BITS;  /* RUN2 run mode.           */
-  ME.RUN[3].R       = SPC560P_ME_RUN3_MC_BITS;  /* RUN0 run mode.           */
-  ME.HALT0.R        = SPC560P_ME_HALT0_MC_BITS; /* HALT0 run mode.          */
-  ME.STOP0.R        = SPC560P_ME_STOP0_MC_BITS; /* STOP0 run mode.          */
+  ME.MER.R          = SPC5_ME_ME_BITS;          /* Enabled run modes.       */
+  ME.TEST.R         = SPC5_ME_TEST_MC_BITS;     /* TEST run mode.           */
+  ME.SAFE.R         = SPC5_ME_SAFE_MC_BITS;     /* SAFE run mode.           */
+  ME.DRUN.R         = SPC5_ME_DRUN_MC_BITS;     /* DRUN run mode.           */
+  ME.RUN[0].R       = SPC5_ME_RUN0_MC_BITS;     /* RUN0 run mode.           */
+  ME.RUN[1].R       = SPC5_ME_RUN1_MC_BITS;     /* RUN1 run mode.           */
+  ME.RUN[2].R       = SPC5_ME_RUN2_MC_BITS;     /* RUN2 run mode.           */
+  ME.RUN[3].R       = SPC5_ME_RUN3_MC_BITS;     /* RUN0 run mode.           */
+  ME.HALT0.R        = SPC5_ME_HALT0_MC_BITS;    /* HALT0 run mode.          */
+  ME.STOP0.R        = SPC5_ME_STOP0_MC_BITS;    /* STOP0 run mode.          */
 
   /* Peripherals run and low power modes initialization.*/
-  ME.RUNPC[0].R     = SPC560P_ME_RUN_PC0_BITS;
-  ME.RUNPC[1].R     = SPC560P_ME_RUN_PC1_BITS;
-  ME.RUNPC[2].R     = SPC560P_ME_RUN_PC2_BITS;
-  ME.RUNPC[3].R     = SPC560P_ME_RUN_PC3_BITS;
-  ME.RUNPC[4].R     = SPC560P_ME_RUN_PC4_BITS;
-  ME.RUNPC[5].R     = SPC560P_ME_RUN_PC5_BITS;
-  ME.RUNPC[6].R     = SPC560P_ME_RUN_PC6_BITS;
-  ME.RUNPC[7].R     = SPC560P_ME_RUN_PC7_BITS;
-  ME.LPPC[0].R      = SPC560P_ME_LP_PC0_BITS;
-  ME.LPPC[1].R      = SPC560P_ME_LP_PC1_BITS;
-  ME.LPPC[2].R      = SPC560P_ME_LP_PC2_BITS;
-  ME.LPPC[3].R      = SPC560P_ME_LP_PC3_BITS;
-  ME.LPPC[4].R      = SPC560P_ME_LP_PC4_BITS;
-  ME.LPPC[5].R      = SPC560P_ME_LP_PC5_BITS;
-  ME.LPPC[6].R      = SPC560P_ME_LP_PC6_BITS;
-  ME.LPPC[7].R      = SPC560P_ME_LP_PC7_BITS;
+  ME.RUNPC[0].R     = SPC5_ME_RUN_PC0_BITS;
+  ME.RUNPC[1].R     = SPC5_ME_RUN_PC1_BITS;
+  ME.RUNPC[2].R     = SPC5_ME_RUN_PC2_BITS;
+  ME.RUNPC[3].R     = SPC5_ME_RUN_PC3_BITS;
+  ME.RUNPC[4].R     = SPC5_ME_RUN_PC4_BITS;
+  ME.RUNPC[5].R     = SPC5_ME_RUN_PC5_BITS;
+  ME.RUNPC[6].R     = SPC5_ME_RUN_PC6_BITS;
+  ME.RUNPC[7].R     = SPC5_ME_RUN_PC7_BITS;
+  ME.LPPC[0].R      = SPC5_ME_LP_PC0_BITS;
+  ME.LPPC[1].R      = SPC5_ME_LP_PC1_BITS;
+  ME.LPPC[2].R      = SPC5_ME_LP_PC2_BITS;
+  ME.LPPC[3].R      = SPC5_ME_LP_PC3_BITS;
+  ME.LPPC[4].R      = SPC5_ME_LP_PC4_BITS;
+  ME.LPPC[5].R      = SPC5_ME_LP_PC5_BITS;
+  ME.LPPC[6].R      = SPC5_ME_LP_PC6_BITS;
+  ME.LPPC[7].R      = SPC5_ME_LP_PC7_BITS;
 
   /* Switches again to DRUN mode (current mode) in order to update the
      settings.*/
-  if (halSPC560PSetRunMode(SPC560P_RUNMODE_DRUN) == CH_FAILED)
+  if (halSPC560PSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
     chSysHalt();
 
-#endif /* !SPC560P_NO_INIT */
+#endif /* !SPC5_NO_INIT */
 }
 
 /**
@@ -183,8 +183,8 @@ void spc560p_clock_init(void) {
 bool_t halSPC560PSetRunMode(spc560prunmode_t mode) {
 
   /* Starts a transition process.*/
-  ME.MCTL.R = SPC560P_ME_MCTL_MODE(mode) | SPC560P_ME_MCTL_KEY;
-  ME.MCTL.R = SPC560P_ME_MCTL_MODE(mode) | SPC560P_ME_MCTL_KEY_INV;
+  ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY;
+  ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY_INV;
 
   /* Waits the transition process to start.*/
   while (!ME.GS.B.S_MTRANS)
@@ -201,7 +201,7 @@ bool_t halSPC560PSetRunMode(spc560prunmode_t mode) {
   return CH_SUCCESS;
 }
 
-#if !SPC560P_NO_INIT || defined(__DOXYGEN__)
+#if !SPC5_NO_INIT || defined(__DOXYGEN__)
 /**
  * @brief   Returns the system clock under the current run mode.
  *
@@ -212,18 +212,18 @@ uint32_t halSPC560PGetSystemClock(void) {
 
   sysclk = ME.GS.B.S_SYSCLK;
   switch (sysclk) {
-  case SPC560P_ME_GS_SYSCLK_IRC:
-    return SPC560P_IRC_CLK;
-  case SPC560P_ME_GS_SYSCLK_XOSC:
-    return SPC560P_XOSC_CLK;
-  case SPC560P_ME_GS_SYSCLK_FMPLL0:
-    return SPC560P_FMPLL0_CLK;
-  case SPC560P_ME_GS_SYSCLK_FMPLL1:
-    return SPC560P_FMPLL1_CLK;
+  case SPC5_ME_GS_SYSCLK_IRC:
+    return SPC5_IRC_CLK;
+  case SPC5_ME_GS_SYSCLK_XOSC:
+    return SPC5_XOSC_CLK;
+  case SPC5_ME_GS_SYSCLK_FMPLL0:
+    return SPC5_FMPLL0_CLK;
+  case SPC5_ME_GS_SYSCLK_FMPLL1:
+    return SPC5_FMPLL1_CLK;
   default:
     return 0;
   }
 }
-#endif /* !SPC560P_NO_INIT */
+#endif /* !SPC5_NO_INIT */
 
 /** @} */

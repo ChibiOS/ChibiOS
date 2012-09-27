@@ -36,7 +36,7 @@ static const spc560p_siul_init_t spc560p_siul_init[] = {
 };
 
 /* Initialization array for the PSMI registers.*/
-static const uint8_t spc560p_padsels_init[36] = {
+static const uint8_t spc560p_padsels_init[SPC5_SIUL_NUM_PADSELS] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0

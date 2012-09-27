@@ -65,20 +65,21 @@
 void _pal_lld_init(const PALConfig *config) {
   unsigned i;
 
-  /* TODO: Replace 107 with a platform-specific constant.*/
-  for (i = 0; i <= 107; i++)
+  /* Initialize PCR registers for undefined pads.*/
+  for (i = 0; i < SPC5_SIUL_NUM_PCRS; i++)
     SIU.PCR[i].R = config->default_mode;
 
+  /* Initialize PADSEL registers.*/
+  for (i = 0; i < SPC5_SIUL_NUM_PADSELS; i++)
+    SIU.PSMI[i].R = config->padsels[i];
+
+  /* Initialize PCR registers for defined pads.*/
   i = 0;
   while (config->inits[i].pcr_value != 0) {
     SIU.GPDO[config->inits[i].pcr_index].R = config->inits[i].gpdo_value;
     SIU.PCR[config->inits[i].pcr_index].R  = config->inits[i].pcr_value;
     i++;
   }
-
-  /* TODO: Replace 35 with a platform-specific constant.*/
-  for (i = 0; i <= 35; i++)
-    SIU.PSMI[i].R = config->padsels[i];
 }
 
 /**

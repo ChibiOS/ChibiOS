@@ -35,7 +35,7 @@
  * Board frequencies.
  */
 #if !defined(SPC560P_XOSC_CLK)
-#define SPC560P_XOSC_CLK            40000000
+#define SPC5_XOSC_CLK               40000000
 #endif
 
 /*
