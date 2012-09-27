@@ -50,7 +50,7 @@
  * @name    Platform identification
  * @{
  */
-#define PLATFORM_NAME           "SPC560Pxx Chassis and Safety"
+#define PLATFORM_NAME               "SPC560Pxx Chassis and Safety"
 /** @} */
 
 /**

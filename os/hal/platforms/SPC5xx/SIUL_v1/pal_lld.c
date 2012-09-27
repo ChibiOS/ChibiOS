@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    SPC5xx/SIUL_v1/pal_lld.c
- * @brief   SPC5xx SIUL low level driver code.
+ * @file    SPC5xx/SIU_v1/pal_lld.c
+ * @brief   SPC5xx SIU/SIUL low level driver code.
  *
  * @addtogroup PAL
  * @{
@@ -66,11 +66,11 @@ void _pal_lld_init(const PALConfig *config) {
   unsigned i;
 
   /* Initialize PCR registers for undefined pads.*/
-  for (i = 0; i < SPC5_SIUL_NUM_PCRS; i++)
+  for (i = 0; i < SPC5_SIU_NUM_PCRS; i++)
     SIU.PCR[i].R = config->default_mode;
 
   /* Initialize PADSEL registers.*/
-  for (i = 0; i < SPC5_SIUL_NUM_PADSELS; i++)
+  for (i = 0; i < SPC5_SIU_NUM_PADSELS; i++)
     SIU.PSMI[i].R = config->padsels[i];
 
   /* Initialize PCR registers for defined pads.*/
@@ -80,6 +80,48 @@ void _pal_lld_init(const PALConfig *config) {
     SIU.PCR[config->inits[i].pcr_index].R  = config->inits[i].pcr_value;
     i++;
   }
+}
+
+/**
+ * @brief   Reads a group of bits.
+ *
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @return              The group logical states.
+ *
+ * @notapi
+ */
+ioportmask_t _pal_lld_readgroup(ioportid_t port,
+                                ioportmask_t mask,
+                                uint_fast8_t offset) {
+
+  (void)port;
+  (void)mask;
+  (void)offset;
+  return 0;
+}
+
+/**
+ * @brief   Writes a group of bits.
+ *
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @param[in] bits      bits to be written. Values exceeding the group width
+ *                      are masked.
+ *
+ * @notapi
+ */
+void _pal_lld_writegroup(ioportid_t port,
+                         ioportmask_t mask,
+                         uint_fast8_t offset,
+                         ioportmask_t bits) {
+
+  (void)port;
+  (void)mask;
+  (void)offset;
+  (void)bits;
 }
 
 /**
@@ -96,9 +138,14 @@ void _pal_lld_init(const PALConfig *config) {
 void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
                            iomode_t mode) {
-  (void)port;
-  (void)mask;
-  (void)mode;
+  unsigned pcr_index = (unsigned)(port * PAL_IOPORTS_WIDTH);
+  ioportmask_t m1 = 0x8000;
+  while (m1) {
+    if (mask & m1)
+      SIU.PCR[pcr_index].R = mode;
+    m1 >>= 1;
+    ++pcr_index;
+  }
 }
 
 #endif /* HAL_USE_PAL */

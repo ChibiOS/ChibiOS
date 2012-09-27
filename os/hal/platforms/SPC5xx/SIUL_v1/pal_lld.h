@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    SPC5xx/SIUL_v1//pal_lld.h
- * @brief   SPC5xx SIUL low level driver header.
+ * @file    SPC5xx/SIU_v1//pal_lld.h
+ * @brief   SPC5xx SIU/SIUL low level driver header.
  *
  * @addtogroup PAL
  * @{
@@ -147,7 +147,7 @@ typedef struct {
   uint8_t                   pcr_index;
   uint8_t                   gpdo_value;
   iomode_t                  pcr_value;
-} spc560p_siul_init_t;
+} spc560p_siu_init_t;
 
 /**
  * @brief   Generic I/O ports static initializer.
@@ -160,7 +160,7 @@ typedef struct {
  */
 typedef struct {
   iomode_t                  default_mode;
-  const spc560p_siul_init_t *inits;
+  const spc560p_siu_init_t  *inits;
   const uint8_t             *padsels;
 } PALConfig;
 
@@ -204,37 +204,6 @@ typedef struct {
 #define PAL_PORT_BIT(n) ((ioportmask_t)(0x8000U >> (n)))
 
 /**
- * @brief   Workaround read port because bad header implementation.
- *
- * @param[in] port      port identifier
- * @return              The port bits.
- *
- * @notapi
- */
-#define PAL_SIUL_READ_PORT(port) (((volatile uint16_t *)SIU.PGPDI)[port])
-
-/**
- * @brief   Workaround read latch because bad header implementation.
- *
- * @param[in] port      port identifier
- * @return              The port bits.
- *
- * @notapi
- */
-#define PAL_SIUL_READ_LATCH(port) (((volatile uint16_t *)SIU.PGPDO)[port])
-
-/**
- * @brief   Workaround write port because bad header implementation.
- *
- * @param[in] port      port identifier
- * @param[in] bits      bits to be written on the specified port
- *
- * @notapi
- */
-#define PAL_SIUL_WRITE_PORT(port, bits)                                     \
-  (((volatile uint16_t *)SIU.PGPDO)[port] = (bits))
-
-/**
  * @brief   Low level PAL subsystem initialization.
  *
  * @param[in] config    architecture-dependent ports configuration
@@ -243,6 +212,7 @@ typedef struct {
  */
 #define pal_lld_init(config) _pal_lld_init(config)
 
+#if SPC5_SIU_SUPPORTS_PORTS || defined(__DOXYGEN__)
 /**
  * @brief   Reads the physical I/O port states.
  *
@@ -251,7 +221,7 @@ typedef struct {
  *
  * @notapi
  */
-#define pal_lld_readport(port) PAL_SIUL_READ_PORT(port)
+#define pal_lld_readport(port) (((volatile uint16_t *)SIU.PGPDI)[port])
 
 /**
  * @brief   Reads the output latch.
@@ -263,7 +233,7 @@ typedef struct {
  *
  * @notapi
  */
-#define pal_lld_readlatch(port) PAL_SIUL_READ_LATCH(port)
+#define pal_lld_readlatch(port) (((volatile uint16_t *)SIU.PGPDO)[port])
 
 /**
  * @brief   Writes a bits mask on a I/O port.
@@ -273,7 +243,37 @@ typedef struct {
  *
  * @notapi
  */
-#define pal_lld_writeport(port, bits) PAL_SIUL_WRITE_PORT(port, bits)
+#define pal_lld_writeport(port, bits)                                       \
+    (((volatile uint16_t *)SIU.PGPDO)[port] = (bits))
+
+/**
+ * @brief   Reads a group of bits.
+ *
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @return              The group logical states.
+ *
+ * @notapi
+ */
+#define pal_lld_readgroup(port, mask, offset)                               \
+  _pal_lld_readgroup(port, mask, offset)
+
+/**
+ * @brief   Writes a group of bits.
+ *
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @param[in] bits      bits to be written. Values exceeding the group width
+ *                      are masked.
+ *
+ * @notapi
+ */
+#define pal_lld_writegroup(port, mask, offset, bits)                        \
+  _pal_lld_writegroup(port, mask, offset, bits)
+
+#endif /* SPC5_SIU_SUPPORTS_PORTS */
 
 /**
  * @brief   Pads group mode setup.
@@ -370,6 +370,13 @@ extern const PALConfig pal_default_config;
 extern "C" {
 #endif
   void _pal_lld_init(const PALConfig *config);
+  ioportmask_t _pal_lld_readgroup(ioportid_t port,
+                                  ioportmask_t mask,
+                                  uint_fast8_t offset);
+  void _pal_lld_writegroup(ioportid_t port,
+                           ioportmask_t mask,
+                           uint_fast8_t offset,
+                           ioportmask_t bits);
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              iomode_t mode);
