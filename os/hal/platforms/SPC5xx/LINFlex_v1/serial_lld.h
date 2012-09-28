@@ -35,6 +35,70 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    LINIER register bits definitions
+ * @{
+ */
+#define SPC5_LINIER_HRIE                    (1U << 0)
+#define SPC5_LINIER_DTIE                    (1U << 1)
+#define SPC5_LINIER_DRIE                    (1U << 2)
+#define SPC5_LINIER_DBEIE                   (1U << 3)
+#define SPC5_LINIER_DBFIE                   (1U << 4)
+#define SPC5_LINIER_WUIE                    (1U << 5)
+#define SPC5_LINIER_LSIE                    (1U << 6)
+#define SPC5_LINIER_BOIE                    (1U << 7)
+#define SPC5_LINIER_FEIE                    (1U << 8)
+#define SPC5_LINIER_HEIE                    (1U << 11)
+#define SPC5_LINIER_CEIE                    (1U << 12)
+#define SPC5_LINIER_BEIE                    (1U << 13)
+#define SPC5_LINIER_OCIE                    (1U << 14)
+#define SPC5_LINIER_SZIE                    (1U << 15)
+/** @} */
+
+/**
+ * @name    UARTSR register bits definitions
+ * @{
+ */
+#define SPC5_UARTSR_NF                      (1U << 0)
+#define SPC5_UARTSR_DTF                     (1U << 1)
+#define SPC5_UARTSR_DRF                     (1U << 2)
+#define SPC5_UARTSR_WUF                     (1U << 5)
+#define SPC5_UARTSR_RPS                     (1U << 6)
+#define SPC5_UARTSR_BOF                     (1U << 7)
+#define SPC5_UARTSR_FEF                     (1U << 8)
+#define SPC5_UARTSR_RMB                     (1U << 9)
+#define SPC5_UARTSR_PE0                     (1U << 10)
+#define SPC5_UARTSR_PE1                     (1U << 11)
+#define SPC5_UARTSR_PE2                     (1U << 12)
+#define SPC5_UARTSR_PE3                     (1U << 13)
+#define SPC5_UARTSR_OCF                     (1U << 14)
+#define SPC5_UARTSR_SZF                     (1U << 15)
+/** @} */
+
+/**
+ * @name    UARTCR register bits definitions
+ * @{
+ */
+#define SPC5_UARTCR_UART                    (1U << 0)
+#define SPC5_UARTCR_WL                      (1U << 1)
+#define SPC5_UARTCR_PCE                     (1U << 2)
+#define SPC5_UARTCR_OP                      (1U << 3)
+#define SPC5_UARTCR_TXEN                    (1U << 4)
+#define SPC5_UARTCR_RXEN                    (1U << 5)
+/** @} */
+
+/**
+ * @name    Serial driver allowable modes
+ * @{
+ */
+#define SD_MODE_8BITS_PARITY_NONE           0
+#define SD_MODE_8BITS_PARITY_EVEN           (SPC5_UARTCR_WL |               \
+                                             SPC5_UARTCR_PCE)
+#define SD_MODE_8BITS_PARITY_ODD            (SPC5_UARTCR_WL |               \
+                                             SPC5_UARTCR_PCE |              \
+                                             SPC5_UARTCR_OP)
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/

@@ -87,13 +87,26 @@ static const SerialConfig default_config = {
  * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void spc5_linflex_init(SerialDriver *sdp, const SerialConfig *config) {
+  uint32_t div;
   volatile struct LINFLEX_tag *linflexp = sdp->linflexp;
 
-  linflexp->LINFBRR.R = 0;              /* Fractional divider.              */
-  linflexp->LINIBRR.R = 0;              /* Integer divider.                 */
-  linflexp->UARTSR.R = 0xFFFF;          /* Clearing UART status register.   */
-  linflexp->UARTCR.R = config->mode | 1;/* Enforced UART mode.              */
-  linflexp->LINIER.R = 0;               /* Interrupts enabled.              */
+  /* Enters the configuration mode.*/
+  linflexp->LINCR1.R  = 1;                      /* INIT bit.                */
+
+  /* Configures the LINFlex in UART mode with all the required
+     parameters.*/
+  div = halSPC560PGetSystemClock() / (16 * config->speed);
+  linflexp->LINFBRR.R = (uint16_t)(div & 15);   /* Fractional divider.      */
+  linflexp->LINIBRR.R = (uint16_t)(div >> 4);   /* Integer divider.         */
+  linflexp->UARTSR.R  = 0xFFFF;                 /* Clearing UARTSR register.*/
+  linflexp->UARTCR.R  = config->mode |
+                        SPC5_UARTCR_RXEN | SPC5_UARTCR_UART;
+  linflexp->LINIER.R  = SPC5_LINIER_DTIE | SPC5_LINIER_DRIE |
+                        SPC5_LINIER_BOIE | SPC5_LINIER_FEIE |
+                        SPC5_LINIER_SZIE;       /* Interrupts enabled.      */
+
+  /* Leaves the configuration mode.*/
+  linflexp->LINCR1.R  = 0;
 }
 
 /**
@@ -104,38 +117,18 @@ static void spc5_linflex_init(SerialDriver *sdp, const SerialConfig *config) {
  */
 static void spc5_linflex_deinit(volatile struct LINFLEX_tag *linflexp) {
 
-#if 0
-  escip->LPR.R  = 0;
-  escip->SR.R   = 0xFFFFFFFF;
-  escip->CR1.R  = 0;
-  escip->CR2.R  = 0x8000;           /* MDIS on.                             */
-#endif
-}
+  /* Enters the configuration mode.*/
+  linflexp->LINCR1.R  = 1;                      /* INIT bit.                */
 
-/**
- * @brief   Error handling routine.
- *
- * @param[in] sdp       pointer to a @p SerialDriver object
- * @param[in] sr        eSCI SR register value
- */
-static void set_error(SerialDriver *sdp, uint32_t sr) {
-  flagsmask_t sts = 0;
+  /* Resets the LINFlex registers.*/
+  linflexp->LINFBRR.R = 0;                      /* Fractional divider.      */
+  linflexp->LINIBRR.R = 0;                      /* Integer divider.         */
+  linflexp->UARTSR.R  = 0xFFFF;                 /* Clearing UARTSR register.*/
+  linflexp->UARTCR.R  = SPC5_UARTCR_UART;
+  linflexp->LINIER.R  = 0;                      /* Interrupts disabled.     */
 
-#if 0
-  if (sr & 0x08000000)
-    sts |= SD_OVERRUN_ERROR;
-  if (sr & 0x04000000)
-    sts |= SD_NOISE_ERROR;
-  if (sr & 0x02000000)
-    sts |= SD_FRAMING_ERROR;
-  if (sr & 0x01000000)
-    sts |= SD_PARITY_ERROR;
-/*  if (sr & 0x00000000)
-    sts |= SD_BREAK_DETECTED;*/
-#endif
-  chSysLockFromIsr();
-  chnAddFlagsI(sdp, sts);
-  chSysUnlockFromIsr();
+  /* Leaves the configuration mode.*/
+  linflexp->LINCR1.R  = 0;
 }
 
 /**
@@ -144,6 +137,24 @@ static void set_error(SerialDriver *sdp, uint32_t sr) {
  * @param[in] sdp       pointer to a @p SerialDriver object
  */
 static void spc5xx_serve_rxi_interrupt(SerialDriver *sdp) {
+  flagsmask_t sts = 0;
+  uint16_t sr = sdp->linflexp->UARTSR.R;
+
+  sdp->linflexp->UARTSR.R = SPC5_UARTSR_NF | SPC5_UARTSR_DRF |
+                            SPC5_UARTSR_PE0;
+  if (sr & SPC5_UARTSR_NF)
+    sts |= SD_NOISE_ERROR;
+  if (sr & SPC5_UARTSR_PE0)
+    sts |= SD_PARITY_ERROR;
+  if (sts) {
+    chSysLockFromIsr();
+    chnAddFlagsI(sdp, sts);
+    chSysUnlockFromIsr();
+  }
+  if (sr & SPC5_UARTSR_DRF) {
+     sdIncomingDataI(sdp, sdp->linflexp->BDRL.B.DATA0);
+     sdp->linflexp->UARTSR.R = SPC5_UARTSR_RMB;
+  }
 }
 
 /**
@@ -152,6 +163,16 @@ static void spc5xx_serve_rxi_interrupt(SerialDriver *sdp) {
  * @param[in] sdp       pointer to a @p SerialDriver object
  */
 static void spc5xx_serve_txi_interrupt(SerialDriver *sdp) {
+  msg_t b;
+
+  sdp->linflexp->UARTSR.R = SPC5_UARTSR_DTF;
+  b = chOQGetI(&sdp->oqueue);
+  if (b < Q_OK) {
+    chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
+    sdp->linflexp->UARTCR.B.TXEN = 0;
+  }
+  else
+    sdp->linflexp->BDRL.B.DATA0 = b;
 }
 
 /**
@@ -160,12 +181,33 @@ static void spc5xx_serve_txi_interrupt(SerialDriver *sdp) {
  * @param[in] sdp       pointer to a @p SerialDriver object
  */
 static void spc5xx_serve_err_interrupt(SerialDriver *sdp) {
+  flagsmask_t sts = 0;
+  uint16_t sr = sdp->linflexp->UARTSR.R;
+
+  sdp->linflexp->UARTSR.R = SPC5_UARTSR_BOF | SPC5_UARTSR_FEF |
+                            SPC5_UARTSR_SZF;
+  if (sr & SPC5_UARTSR_BOF)
+    sts |= SD_OVERRUN_ERROR;
+  if (sr & SPC5_UARTSR_FEF)
+    sts |= SD_FRAMING_ERROR;
+  if (sr & SPC5_UARTSR_SZF)
+    sts |= SD_BREAK_DETECTED;
+  chSysLockFromIsr();
+  chnAddFlagsI(sdp, sts);
+  chSysUnlockFromIsr();
 }
 
 #if SPC5_SERIAL_USE_LINFLEX0 || defined(__DOXYGEN__)
 static void notify1(GenericQueue *qp) {
 
   (void)qp;
+  if (!SD1.linflexp->UARTCR.B.TXEN) {
+    msg_t b = sdRequestDataI(&SD1);
+    if (b != Q_EMPTY) {
+      SD1.linflexp->UARTCR.B.TXEN = 1;
+      SD1.linflexp->BDRL.B.DATA0 = b;
+    }
+  }
 }
 #endif
 
@@ -173,6 +215,13 @@ static void notify1(GenericQueue *qp) {
 static void notify2(GenericQueue *qp) {
 
   (void)qp;
+  if (!SD2.linflexp->UARTCR.B.TXEN) {
+    msg_t b = sdRequestDataI(&SD2);
+    if (b != Q_EMPTY) {
+      SD2.linflexp->UARTCR.B.TXEN = 1;
+      SD2.linflexp->BDRL.B.DATA0 = b;
+    }
+  }
 }
 #endif
 

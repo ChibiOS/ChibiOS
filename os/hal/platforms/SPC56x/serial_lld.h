@@ -35,7 +35,7 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define SD_MODE_PARITY          0x03        /**< @brief Parity field mask.  */
+#define SD_MODE_PARITY_MASK     0x03        /**< @brief Parity field mask.  */
 #define SD_MODE_PARITY_NONE     0x00        /**< @brief No parity.          */
 #define SD_MODE_PARITY_EVEN     0x01        /**< @brief Even parity.        */
 #define SD_MODE_PARITY_ODD      0x02        /**< @brief Odd parity.         */
