@@ -26,19 +26,18 @@
 #include "ch.h"
 #include "ff.h"
 
-MEMORYPOOL_DECL(fs_sem_pool, sizeof(Semaphore), chCoreAllocI);
-
 #if _FS_REENTRANT
+/*------------------------------------------------------------------------*/
+/* Static array of Synchronization Objects                                */
+/*------------------------------------------------------------------------*/
+static Semaphore ff_sem[_VOLUMES];
+
 /*------------------------------------------------------------------------*/
 /* Create a Synchronization Object                                        */
 /*------------------------------------------------------------------------*/
 int ff_cre_syncobj(BYTE vol, _SYNC_t *sobj) {
 
-  (void)vol;
-
-  *sobj = chPoolAlloc(&fs_sem_pool);
-  if (*sobj == NULL)
-    return FALSE;
+  *sobj = &ff_sem[vol];
   chSemInit(*sobj, 1);
   return TRUE;
 }
@@ -49,7 +48,6 @@ int ff_cre_syncobj(BYTE vol, _SYNC_t *sobj) {
 int ff_del_syncobj(_SYNC_t sobj) {
 
   chSemReset(sobj, 0);
-  chPoolFree(&fs_sem_pool, sobj);
   return TRUE;
 }
 

@@ -83,6 +83,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed FatFS won't compile with _FS_REENTRANT enabled (bug 3570135)
+  (backported to 2.4.3).
 - FIX: Fixed mmc_spi.c won't compile due to misplaced declaration (bug
   3570035)(backported to 2.4.3).
 - FIX: Fixed problem in STM32F1xx USB driver after revision 4598 (bug 3569374).
