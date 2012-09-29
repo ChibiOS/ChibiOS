@@ -83,6 +83,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed double definition of sd1fel and sd2fel breaks Posix simulator
+  (bug 3570532).
 - FIX: Fixed Ethernet PHY power down scheme prevents using LAN8720A (bug
   3570335).
 - FIX: Fixed FatFS won't compile with _FS_REENTRANT enabled (bug 3570135)

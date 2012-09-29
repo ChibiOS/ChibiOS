@@ -18,8 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
@@ -107,7 +105,7 @@ static const ShellConfig shell_cfg2 = {
 /*
  * Console print server done using synchronous messages. This makes the access
  * to the C printf() thread safe and the print operation atomic among threads.
- * In this example the message is the zero termitated string itself.
+ * In this example the message is the zero terminated string itself.
  */
 static msg_t console_thread(void *arg) {
 
@@ -205,7 +203,7 @@ static evhandler_t fhandlers[] = {
  * Simulator main.                                                        *
  *------------------------------------------------------------------------*/
 int main(void) {
-  EventListener sd1fel, sd2fel, tel;
+  EventListener tel;
 
   /*
    * System initializations.
