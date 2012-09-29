@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed FatFS won't compile with _FS_REENTRANT enabled (bug 3570135).
 - FIX: Fixed mmc_spi.c won't compile due to misplaced declaration (bug
   3570035).
 - FIX: Fixed GPIO glitch during PAL initialization (bug 3569347).
