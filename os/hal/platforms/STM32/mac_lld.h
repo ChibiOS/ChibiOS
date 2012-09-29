@@ -155,6 +155,13 @@
 #endif
 
 /**
+ * @brief   Change the PHY power state inside the driver.
+ */
+#if !defined(STM32_ETH1_CHANGE_PHY_STATE) || defined(__DOXYGEN__)
+#define STM32_ETH1_CHANGE_PHY_STATE TRUE
+#endif
+
+/**
  * @brief   ETHD1 interrupt priority level setting.
  */
 #if !defined(STM32_ETH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
