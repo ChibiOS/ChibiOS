@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed mmc_spi.c won't compile due to misplaced declaration (bug
+  3570035).
 - FIX: Fixed GPIO glitch during PAL initialization (bug 3569347).
 - FIX: Fixed STM32F1x rtc_lld_init glitches rtc on hard reset (bug 3567597).
 - FIX: Fixed STM8L, cosmic compiler: c_lreg not saved (bug 3566342).
