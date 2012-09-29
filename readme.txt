@@ -83,6 +83,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed misplaced declarations in lwip_bindings sys_arch.c (bug 3571053)
+  (backported to 2.4.3).
 - FIX: Fixed double definition of sd1fel and sd2fel breaks Posix simulator
   (bug 3570532).
 - FIX: Fixed Ethernet PHY power down scheme prevents using LAN8720A (bug
