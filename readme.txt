@@ -103,6 +103,7 @@
   (backported to 2.4.3).
 - FIX: Fixed STM8L, cosmic compiler: c_lreg not saved (bug 3566342)(backported
   to 2.2.10 and 2.4.3).
+- NEW: Updated STM32F1, F2, F4, L1 ADC drivers to allow HW triggering.
 - NEW: Added a new option STM32_ETH1_CHANGE_PHY_STATE to the STM32 MAC driver,
   this change is connected to bug 3570335.
 - NEW: Modified the CAN drivers to use the new event flags mechanism, the
