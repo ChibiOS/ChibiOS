@@ -41,6 +41,9 @@
 /*
  * I/O definitions.
  */
+#define PB_LIN0_TDX     2
+#define PB_LIN0_RDX     3
+
 #define PD_BUTTON1      0
 #define PD_BUTTON2      1
 #define PD_BUTTON3      2

@@ -290,7 +290,9 @@
  *          is no need to specify them.
  */
 #if !defined(SPC5_ME_ME_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_ME_BITS             0
+#define SPC5_ME_ME_BITS             (SPC5_ME_ME_RUN1 | SPC5_ME_ME_RUN2  |   \
+                                     SPC5_ME_ME_RUN3 | SPC5_ME_ME_HALT0 |   \
+                                     SPC5_ME_ME_STOP0)
 #endif
 
 /**

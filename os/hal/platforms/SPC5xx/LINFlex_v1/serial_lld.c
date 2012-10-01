@@ -72,7 +72,7 @@ SerialDriver SD4;
  */
 static const SerialConfig default_config = {
   SERIAL_DEFAULT_BITRATE,
-  0
+  SD_MODE_8BITS_PARITY_NONE
 };
 
 /*===========================================================================*/
@@ -95,12 +95,12 @@ static void spc5_linflex_init(SerialDriver *sdp, const SerialConfig *config) {
 
   /* Configures the LINFlex in UART mode with all the required
      parameters.*/
-  div = halSPC560PGetSystemClock() / (16 * config->speed);
+  linflexp->UARTCR.R  = SPC5_UARTCR_UART;       /* UART mode FIRST.         */
+  linflexp->UARTCR.R  = SPC5_UARTCR_UART | SPC5_UARTCR_RXEN | config->mode;
+  div = halSPC560PGetSystemClock() / config->speed;
   linflexp->LINFBRR.R = (uint16_t)(div & 15);   /* Fractional divider.      */
   linflexp->LINIBRR.R = (uint16_t)(div >> 4);   /* Integer divider.         */
   linflexp->UARTSR.R  = 0xFFFF;                 /* Clearing UARTSR register.*/
-  linflexp->UARTCR.R  = config->mode |
-                        SPC5_UARTCR_RXEN | SPC5_UARTCR_UART;
   linflexp->LINIER.R  = SPC5_LINIER_DTIE | SPC5_LINIER_DRIE |
                         SPC5_LINIER_BOIE | SPC5_LINIER_FEIE |
                         SPC5_LINIER_SZIE;       /* Interrupts enabled.      */
@@ -152,7 +152,7 @@ static void spc5xx_serve_rxi_interrupt(SerialDriver *sdp) {
     chSysUnlockFromIsr();
   }
   if (sr & SPC5_UARTSR_DRF) {
-     sdIncomingDataI(sdp, sdp->linflexp->BDRL.B.DATA0);
+     sdIncomingDataI(sdp, sdp->linflexp->BDRM.B.DATA4);
      sdp->linflexp->UARTSR.R = SPC5_UARTSR_RMB;
   }
 }
@@ -331,7 +331,6 @@ void sd_lld_init(void) {
 #if SPC5_SERIAL_USE_LINFLEX0
   sdObjectInit(&SD1, NULL, notify1);
   SD1.linflexp = &LINFLEX_0;
-//  ESCI_A.CR2.R    = 0x8000;                 /* MDIS ON.                     */
   INTC.PSR[SPC5_LINFLEX0_RXI_NUMBER].R = SPC5_SERIAL_LINFLEX0_PRIORITY;
   INTC.PSR[SPC5_LINFLEX0_TXI_NUMBER].R = SPC5_SERIAL_LINFLEX0_PRIORITY;
   INTC.PSR[SPC5_LINFLEX0_ERR_NUMBER].R = SPC5_SERIAL_LINFLEX0_PRIORITY;
@@ -340,7 +339,6 @@ void sd_lld_init(void) {
 #if SPC5_SERIAL_USE_LINFLEX1
   sdObjectInit(&SD2, NULL, notify2);
   SD2.linflexp = &LINFLEX_1;
-//  ESCI_B.CR2.R    = 0x8000;                 /* MDIS ON.                     */
   INTC.PSR[SPC5_LINFLEX1_RXI_NUMBER].R = SPC5_SERIAL_LINFLEX1_PRIORITY;
   INTC.PSR[SPC5_LINFLEX1_TXI_NUMBER].R = SPC5_SERIAL_LINFLEX1_PRIORITY;
   INTC.PSR[SPC5_LINFLEX1_ERR_NUMBER].R = SPC5_SERIAL_LINFLEX1_PRIORITY;
@@ -361,6 +359,19 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
   if (config == NULL)
     config = &default_config;
+
+  if (sdp->state == SD_STOP) {
+#if SPC5_SERIAL_USE_LINFLEX0
+    if (&SD1 == sdp) {
+      ME.PCTL[SPC5_LINFLEX0_PCTL].R = SPC5_SERIAL_LINFLEX0_START_PCTL;
+    }
+#endif
+#if SPC5_SERIAL_USE_LINFLEX1
+    if (&SD2 == sdp) {
+      ME.PCTL[SPC5_LINFLEX1_PCTL].R = SPC5_SERIAL_LINFLEX1_START_PCTL;
+    }
+#endif
+  }
   spc5_linflex_init(sdp, config);
 }
 
@@ -373,8 +384,22 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
-  if (sdp->state == SD_READY)
+  if (sdp->state == SD_READY) {
     spc5_linflex_deinit(sdp->linflexp);
+
+#if SPC5_SERIAL_USE_LINFLEX0
+    if (&SD1 == sdp) {
+      ME.PCTL[SPC5_LINFLEX0_PCTL].R = SPC5_SERIAL_LINFLEX0_STOP_PCTL;
+      return;
+    }
+#endif
+#if SPC5_SERIAL_USE_LINFLEX1
+    if (&SD2 == sdp) {
+      ME.PCTL[SPC5_LINFLEX1_PCTL].R = SPC5_SERIAL_LINFLEX1_STOP_PCTL;
+      return;
+    }
+#endif
+  }
 }
 
 #endif /* HAL_USE_SERIAL */

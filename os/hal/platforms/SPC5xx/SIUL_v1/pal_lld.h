@@ -105,6 +105,12 @@
  */
 #define PAL_MODE_OUTPUT_OPENDRAIN       (PAL_SPC5_IBE | PAL_SPC5_OBE |      \
                                          PAL_SPC5_ODE)
+
+/**
+ * @brief   Alternate "n" output pad.
+ */
+#define PAL_MODE_OUTPUT_ALTERNATE(n)    (PAL_SPC5_IBE | PAL_SPC5_OBE |      \
+                                         PAL_SPC5_PA(n))
 /** @} */
 
 /*===========================================================================*/

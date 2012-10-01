@@ -39,6 +39,7 @@
  */
 /* LINFlex attributes.*/
 #define SPC5_HAS_LINFLEX0                   TRUE
+#define SPC5_LINFLEX0_PCTL                  48
 #define SPC5_LINFLEX0_RXI_HANDLER           vector79
 #define SPC5_LINFLEX0_TXI_HANDLER           vector80
 #define SPC5_LINFLEX0_ERR_HANDLER           vector81
@@ -47,6 +48,7 @@
 #define SPC5_LINFLEX0_ERR_NUMBER            81
 
 #define SPC5_HAS_LINFLEX1                   TRUE
+#define SPC5_LINFLEX1_PCTL                  49
 #define SPC5_LINFLEX1_RXI_HANDLER           vector99
 #define SPC5_LINFLEX1_TXI_HANDLER           vector100
 #define SPC5_LINFLEX1_ERR_HANDLER           vector101
