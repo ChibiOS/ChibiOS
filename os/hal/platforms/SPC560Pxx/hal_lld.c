@@ -168,6 +168,12 @@ void spc560p_clock_init(void) {
   if (halSPC560PSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
     chSysHalt();
 
+  /* CFLASH settings calculated for a maximum clock of 64MHz.*/
+  CFLASH.PFCR0.B.BK0_APC  = 2;
+  CFLASH.PFCR0.B.BK0_RWSC = 2;
+  CFLASH.PFCR1.B.BK1_APC  = 2;
+  CFLASH.PFCR1.B.BK1_RWSC = 2;
+
 #endif /* !SPC5_NO_INIT */
 }
 
