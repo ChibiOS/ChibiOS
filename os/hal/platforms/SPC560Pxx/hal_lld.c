@@ -92,7 +92,8 @@ void hal_lld_init(void) {
      to run in DRUN,RUN0...RUN3 and HALT0 modes, the clock is gated in other
      modes.*/
   INTC.PSR[127].R   = SPC5_PIT3_IRQ_PRIORITY;
-  ME.PCTL[92].R     = SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2);
+  halSPC560PSetPeripheralClockMode(92,
+                                   SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2));
   reg = halSPC560PGetSystemClock() / CH_FREQUENCY - 1;
   PIT.PITMCR.R      = 1;        /* PIT clock enabled, stop while debugging. */
   PIT.CH[3].LDVAL.R = reg;
@@ -205,6 +206,23 @@ bool_t halSPC560PSetRunMode(spc560prunmode_t mode) {
     return CH_FAILED;
 
   return CH_SUCCESS;
+}
+
+/**
+ * @brief   Changes the clock mode of a peripheral.
+ *
+ * @param[in] n         index of the @p PCTL register
+ * @param[in] pctl      new value for the @p PCTL register
+ *
+ * @notapi
+ */
+void halSPC560PSetPeripheralClockMode(uint32_t  n, uint32_t pctl) {
+  uint32_t mode;
+
+  ME.PCTL[n].R = pctl;
+  mode = ME.MCTL.B.TARGET_MODE;
+  ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY;
+  ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY_INV;
 }
 
 #if !SPC5_NO_INIT || defined(__DOXYGEN__)

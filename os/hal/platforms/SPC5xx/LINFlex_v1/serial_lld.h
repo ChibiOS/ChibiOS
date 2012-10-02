@@ -135,46 +135,46 @@
 
 /**
  * @brief   LINFlex-0 peripheral configuration when started.
- * @note    The default configuration is 0 (always run) in run mode and
+ * @note    The default configuration is 1 (always run) in run mode and
  *          2 (only halt) in low power mode. The defaults of the run modes
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_SERIAL_LINFLEX0_START_PCTL) || defined(__DOXYGEN__)
-#define SPC5_SERIAL_LINFLEX0_START_PCTL     (SPC5_ME_PCTL_RUN(0) |          \
+#define SPC5_SERIAL_LINFLEX0_START_PCTL     (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #endif
 
 /**
  * @brief   LINFlex-0 peripheral configuration when stopped.
- * @note    The default configuration is 1 (never run) in run mode and
- *          1 (never run) in low power mode. The defaults of the run modes
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_SERIAL_LINFLEX0_STOP_PCTL) || defined(__DOXYGEN__)
-#define SPC5_SERIAL_LINFLEX0_STOP_PCTL      (SPC5_ME_PCTL_RUN(1) |          \
-                                             SPC5_ME_PCTL_LP(1))
+#define SPC5_SERIAL_LINFLEX0_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
 #endif
 
 /**
  * @brief   LINFlex-1 peripheral configuration when started.
- * @note    The default configuration is 0 (always run) in run mode and
+ * @note    The default configuration is 1 (always run) in run mode and
  *          2 (only halt) in low power mode. The defaults of the run modes
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_SERIAL_LINFLEX1_START_PCTL) || defined(__DOXYGEN__)
-#define SPC5_SERIAL_LINFLEX1_START_PCTL     (SPC5_ME_PCTL_RUN(0) |          \
+#define SPC5_SERIAL_LINFLEX1_START_PCTL     (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #endif
 
 /**
  * @brief   LINFlex-1 peripheral configuration when stopped.
- * @note    The default configuration is 1 (never run) in run mode and
- *          1 (never run) in low power mode. The defaults of the run modes
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_SERIAL_LINFLEX1_STOP_PCTL) || defined(__DOXYGEN__)
-#define SPC5_SERIAL_LINFLEX1_STOP_PCTL      (SPC5_ME_PCTL_RUN(1) |          \
-                                             SPC5_ME_PCTL_LP(1))
+#define SPC5_SERIAL_LINFLEX1_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
 #endif
 
 /*===========================================================================*/

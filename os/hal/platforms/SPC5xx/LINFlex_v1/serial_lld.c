@@ -363,12 +363,14 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
   if (sdp->state == SD_STOP) {
 #if SPC5_SERIAL_USE_LINFLEX0
     if (&SD1 == sdp) {
-      ME.PCTL[SPC5_LINFLEX0_PCTL].R = SPC5_SERIAL_LINFLEX0_START_PCTL;
+      halSPC560PSetPeripheralClockMode(SPC5_LINFLEX0_PCTL,
+                                       SPC5_SERIAL_LINFLEX0_START_PCTL);
     }
 #endif
 #if SPC5_SERIAL_USE_LINFLEX1
     if (&SD2 == sdp) {
-      ME.PCTL[SPC5_LINFLEX1_PCTL].R = SPC5_SERIAL_LINFLEX1_START_PCTL;
+      halSPC560PSetPeripheralClockMode(SPC5_LINFLEX1_PCTL,
+                                       SPC5_SERIAL_LINFLEX1_START_PCTL);
     }
 #endif
   }
@@ -389,13 +391,15 @@ void sd_lld_stop(SerialDriver *sdp) {
 
 #if SPC5_SERIAL_USE_LINFLEX0
     if (&SD1 == sdp) {
-      ME.PCTL[SPC5_LINFLEX0_PCTL].R = SPC5_SERIAL_LINFLEX0_STOP_PCTL;
+      halSPC560PSetPeripheralClockMode(SPC5_LINFLEX0_PCTL,
+                                       SPC5_SERIAL_LINFLEX0_STOP_PCTL);
       return;
     }
 #endif
 #if SPC5_SERIAL_USE_LINFLEX1
     if (&SD2 == sdp) {
-      ME.PCTL[SPC5_LINFLEX1_PCTL].R = SPC5_SERIAL_LINFLEX1_STOP_PCTL;
+      halSPC560PSetPeripheralClockMode(SPC5_LINFLEX1_PCTL,
+                                       SPC5_SERIAL_LINFLEX1_STOP_PCTL);
       return;
     }
 #endif

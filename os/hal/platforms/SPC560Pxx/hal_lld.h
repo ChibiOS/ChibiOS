@@ -416,26 +416,26 @@
 
 /**
  * @brief   Peripheral mode 0 (run mode).
- * @note    Do not change this setting, it is expected to be the "always run"
+ * @note    Do not change this setting, it is expected to be the "never run"
  *          mode.
  */
 #if !defined(SPC5_ME_RUN_PC0_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC0_BITS        (SPC5_ME_RUN_PC_TEST |                  \
+#define SPC5_ME_RUN_PC0_BITS        0
+#endif
+
+/**
+ * @brief   Peripheral mode 1 (run mode).
+ * @note    Do not change this setting, it is expected to be the "always run"
+ *          mode.
+ */
+#if !defined(SPC5_ME_RUN_PC1_BITS) || defined(__DOXYGEN__)
+#define SPC5_ME_RUN_PC1_BITS        (SPC5_ME_RUN_PC_TEST |                  \
                                      SPC5_ME_RUN_PC_SAFE |                  \
                                      SPC5_ME_RUN_PC_DRUN |                  \
                                      SPC5_ME_RUN_PC_RUN0 |                  \
                                      SPC5_ME_RUN_PC_RUN1 |                  \
                                      SPC5_ME_RUN_PC_RUN2 |                  \
                                      SPC5_ME_RUN_PC_RUN3)
-#endif
-
-/**
- * @brief   Peripheral mode 1 (run mode).
- * @note    Do not change this setting, it is expected to be the "never run"
- *          mode.
- */
-#if !defined(SPC5_ME_RUN_PC1_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC1_BITS        0
 #endif
 
 /**
@@ -508,21 +508,21 @@
 
 /**
  * @brief   Peripheral mode 0 (low power mode).
- * @note    Do not change this setting, it is expected to be the "always run"
+ * @note    Do not change this setting, it is expected to be the "never run"
  *          mode.
  */
 #if !defined(SPC5_ME_LP_PC0_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC0_BITS         (SPC5_ME_LP_PC_HALT0 |                  \
-                                     SPC5_ME_LP_PC_STOP0)
+#define SPC5_ME_LP_PC0_BITS         0
 #endif
 
 /**
  * @brief   Peripheral mode 1 (low power mode).
- * @note    Do not change this setting, it is expected to be the "never run"
+ * @note    Do not change this setting, it is expected to be the "always run"
  *          mode.
  */
 #if !defined(SPC5_ME_LP_PC1_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC1_BITS         0
+#define SPC5_ME_LP_PC1_BITS         (SPC5_ME_LP_PC_HALT0 |                  \
+                                     SPC5_ME_LP_PC_STOP0)
 #endif
 
 /**
@@ -720,6 +720,7 @@ extern "C" {
   void hal_lld_init(void);
   void spc560p_clock_init(void);
   bool_t  halSPC560PSetRunMode(spc560prunmode_t mode);
+  void halSPC560PSetPeripheralClockMode(uint32_t  n, uint32_t pctl);
 #if !SPC5_NO_INIT
   uint32_t halSPC560PGetSystemClock(void);
 #endif
