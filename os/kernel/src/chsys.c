@@ -83,9 +83,6 @@ void chSysInit(void) {
   port_init();
   _scheduler_init();
   _vt_init();
-#if CH_USE_REGISTRY
-  (void)&ch_debug;
-#endif
 #if CH_USE_MEMCORE
   _core_init();
 #endif
@@ -106,7 +103,11 @@ void chSysInit(void) {
 #endif
   chSysEnable();
 
+#if CH_USE_REGISTRY
+  chRegSetThreadName((const char *)&ch_debug);
+#else
   chRegSetThreadName("main");
+#endif
 
 #if !CH_NO_IDLE_THREAD
   /* This thread has the lowest priority in the system, its role is just to
