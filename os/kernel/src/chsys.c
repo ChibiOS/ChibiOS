@@ -103,11 +103,9 @@ void chSysInit(void) {
 #endif
   chSysEnable();
 
-#if CH_USE_REGISTRY
+  /* Note, &ch_debug points to the string "main" if the registry is
+     active, else the parameter is ignored.*/
   chRegSetThreadName((const char *)&ch_debug);
-#else
-  chRegSetThreadName("main");
-#endif
 
 #if !CH_NO_IDLE_THREAD
   /* This thread has the lowest priority in the system, its role is just to
