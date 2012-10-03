@@ -56,9 +56,9 @@
 /*
  * OS signature in ROM plus debug-related information.
  */
-ROMCONST chroot_t ch_root = {
+volatile ROMCONST chdebug_t ch_debug = {
   "CHRT",
-  (uint8_t)sizeof (chroot_t),
+  (uint8_t)sizeof (chdebug_t),
   (uint8_t)0,
   (uint16_t)((CH_KERNEL_MAJOR << 11) |
              (CH_KERNEL_MINOR << 6) |

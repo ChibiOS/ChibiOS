@@ -83,6 +83,9 @@ void chSysInit(void) {
   port_init();
   _scheduler_init();
   _vt_init();
+#if CH_USE_REGISTRY
+  (void)&ch_debug;
+#endif
 #if CH_USE_MEMCORE
   _core_init();
 #endif

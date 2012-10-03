@@ -55,7 +55,7 @@ typedef struct {
   uint8_t   cf_off_preempt;         /**< @brief Offset of @p p_preempt
                                                 field.                      */
   uint8_t   cf_off_time;            /**< @brief Offset of @p p_time field.  */
-} chroot_t;
+} chdebug_t;
 
 /**
  * @name    Macro Functions
@@ -116,6 +116,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  extern volatile ROMCONST chdebug_t ch_debug;
   Thread *chRegFirstThread(void);
   Thread *chRegNextThread(Thread *tp);
 #ifdef __cplusplus
