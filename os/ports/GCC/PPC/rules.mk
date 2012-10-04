@@ -23,6 +23,9 @@ ifeq ($(USE_VLE),yes)
   DDEFS += -DPPC_USE_VLE=1
   DADEFS += -DPPC_USE_VLE=1
   MCU += -mvle
+else
+  DDEFS += -DPPC_USE_VLE=0
+  DADEFS += -DPPC_USE_VLE=0
 endif
 
 # Source files groups and paths

@@ -121,7 +121,7 @@ void _port_irq_epilogue(regarm_t lr) {
     }
 
     /* Note, returning without unlocking is intentional, this is done in
-       order to keep the rest of the context switching atomic.*/
+       order to keep the rest of the context switch atomic.*/
   }
 }
 
