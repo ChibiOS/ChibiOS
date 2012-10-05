@@ -153,11 +153,11 @@
  */
 #define SPC5_ME_MC_SYSCLK_MASK      (15U << 0)
 #define SPC5_ME_MC_SYSCLK(n)        ((n) << 0)
-#define SPC5_ME_MC_SYSCLK_IRC       SPC5_ME_MC_SYSCLK(0)
-#define SPC5_ME_MC_SYSCLK_XOSC      SPC5_ME_MC_SYSCLK(2)
-#define SPC5_ME_MC_SYSCLK_FMPLL0    SPC5_ME_MC_SYSCLK(4)
-#define SPC5_ME_MC_SYSCLK_FMPLL1    SPC5_ME_MC_SYSCLK(5)
-#define SPC5_ME_MC_SYSCLK_DISABLED  SPC5_ME_MC_SYSCLK(15)
+#define SPC5_ME_MC_SYSCLK_IRC               SPC5_ME_MC_SYSCLK(0)
+#define SPC5_ME_MC_SYSCLK_XOSC              SPC5_ME_MC_SYSCLK(2)
+#define SPC5_ME_MC_SYSCLK_FMPLL0            SPC5_ME_MC_SYSCLK(4)
+#define SPC5_ME_MC_SYSCLK_FMPLL1            SPC5_ME_MC_SYSCLK(5)
+#define SPC5_ME_MC_SYSCLK_DISABLED          SPC5_ME_MC_SYSCLK(15)
 #define SPC5_ME_MC_IRCON            (1U << 4)
 #define SPC5_ME_MC_XOSC0ON          (1U << 5)
 #define SPC5_ME_MC_PLL0ON           (1U << 6)
@@ -290,128 +290,130 @@
  *          is no need to specify them.
  */
 #if !defined(SPC5_ME_ME_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_ME_BITS             (SPC5_ME_ME_RUN1 | SPC5_ME_ME_RUN2  |   \
-                                     SPC5_ME_ME_RUN3 | SPC5_ME_ME_HALT0 |   \
-                                     SPC5_ME_ME_STOP0)
+#define SPC5_ME_ME_BITS                     (SPC5_ME_ME_RUN1 |              \
+                                             SPC5_ME_ME_RUN2 |              \
+                                             SPC5_ME_ME_RUN3 |              \
+                                             SPC5_ME_ME_HALT0 |             \
+                                             SPC5_ME_ME_STOP0)
 #endif
 
 /**
  * @brief   TEST mode settings.
  */
 #if !defined(SPC5_ME_TEST_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_TEST_MC_BITS        (SPC5_ME_MC_SYSCLK_IRC |                \
-                                     SPC5_ME_MC_IRCON |                     \
-                                     SPC5_ME_MC_XOSC0ON |                   \
-                                     SPC5_ME_MC_PLL0ON |                    \
-                                     SPC5_ME_MC_PLL1ON |                    \
-                                     SPC5_ME_MC_CFLAON_NORMAL |             \
-                                     SPC5_ME_MC_DFLAON_NORMAL |             \
-                                     SPC5_ME_MC_MVRON)
+#define SPC5_ME_TEST_MC_BITS                (SPC5_ME_MC_SYSCLK_IRC |        \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_PLL1ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
 #endif
 
 /**
  * @brief   SAFE mode settings.
  */
 #if !defined(SPC5_ME_SAFE_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_SAFE_MC_BITS        (SPC5_ME_MC_PDO)
+#define SPC5_ME_SAFE_MC_BITS                (SPC5_ME_MC_PDO)
 #endif
 
 /**
  * @brief   DRUN mode settings.
  */
 #if !defined(SPC5_ME_DRUN_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_DRUN_MC_BITS        (SPC5_ME_MC_SYSCLK_FMPLL0 |             \
-                                     SPC5_ME_MC_IRCON |                     \
-                                     SPC5_ME_MC_XOSC0ON |                   \
-                                     SPC5_ME_MC_PLL0ON |                    \
-                                     SPC5_ME_MC_PLL1ON |                    \
-                                     SPC5_ME_MC_CFLAON_NORMAL |             \
-                                     SPC5_ME_MC_DFLAON_NORMAL |             \
-                                     SPC5_ME_MC_MVRON)
+#define SPC5_ME_DRUN_MC_BITS                (SPC5_ME_MC_SYSCLK_FMPLL0 |     \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_PLL1ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
 #endif
 
 /**
  * @brief   RUN0 mode settings.
  */
 #if !defined(SPC5_ME_RUN0_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN0_MC_BITS        (SPC5_ME_MC_SYSCLK_FMPLL0 |             \
-                                     SPC5_ME_MC_IRCON |                     \
-                                     SPC5_ME_MC_XOSC0ON |                   \
-                                     SPC5_ME_MC_PLL0ON |                    \
-                                     SPC5_ME_MC_PLL1ON |                    \
-                                     SPC5_ME_MC_CFLAON_NORMAL |             \
-                                     SPC5_ME_MC_DFLAON_NORMAL |             \
-                                     SPC5_ME_MC_MVRON)
+#define SPC5_ME_RUN0_MC_BITS                (SPC5_ME_MC_SYSCLK_FMPLL0 |     \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_PLL1ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
 #endif
 
 /**
  * @brief   RUN1 mode settings.
  */
 #if !defined(SPC5_ME_RUN1_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN1_MC_BITS        (SPC5_ME_MC_SYSCLK_FMPLL0 |             \
-                                     SPC5_ME_MC_IRCON |                     \
-                                     SPC5_ME_MC_XOSC0ON |                   \
-                                     SPC5_ME_MC_PLL0ON |                    \
-                                     SPC5_ME_MC_PLL1ON |                    \
-                                     SPC5_ME_MC_CFLAON_NORMAL |             \
-                                     SPC5_ME_MC_DFLAON_NORMAL |             \
-                                     SPC5_ME_MC_MVRON)
+#define SPC5_ME_RUN1_MC_BITS                (SPC5_ME_MC_SYSCLK_FMPLL0 |     \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_PLL1ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
 #endif
 
 /**
  * @brief   RUN2 mode settings.
  */
 #if !defined(SPC5_ME_RUN2_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN2_MC_BITS        (SPC5_ME_MC_SYSCLK_FMPLL0 |             \
-                                     SPC5_ME_MC_IRCON |                     \
-                                     SPC5_ME_MC_XOSC0ON |                   \
-                                     SPC5_ME_MC_PLL0ON |                    \
-                                     SPC5_ME_MC_PLL1ON |                    \
-                                     SPC5_ME_MC_CFLAON_NORMAL |             \
-                                     SPC5_ME_MC_DFLAON_NORMAL |             \
-                                     SPC5_ME_MC_MVRON)
+#define SPC5_ME_RUN2_MC_BITS                (SPC5_ME_MC_SYSCLK_FMPLL0 |     \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_PLL1ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
 #endif
 
 /**
  * @brief   RUN3 mode settings.
  */
 #if !defined(SPC5_ME_RUN3_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN3_MC_BITS        (SPC5_ME_MC_SYSCLK_FMPLL0 |             \
-                                     SPC5_ME_MC_IRCON |                     \
-                                     SPC5_ME_MC_XOSC0ON |                   \
-                                     SPC5_ME_MC_PLL0ON |                    \
-                                     SPC5_ME_MC_PLL1ON |                    \
-                                     SPC5_ME_MC_CFLAON_NORMAL |             \
-                                     SPC5_ME_MC_DFLAON_NORMAL |             \
-                                     SPC5_ME_MC_MVRON)
+#define SPC5_ME_RUN3_MC_BITS                (SPC5_ME_MC_SYSCLK_FMPLL0 |     \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_PLL1ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
 #endif
 
 /**
  * @brief   HALT0 mode settings.
  */
 #if !defined(SPC5_ME_HALT0_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_HALT0_MC_BITS       (SPC5_ME_MC_SYSCLK_FMPLL0 |             \
-                                     SPC5_ME_MC_IRCON |                     \
-                                     SPC5_ME_MC_XOSC0ON |                   \
-                                     SPC5_ME_MC_PLL0ON |                    \
-                                     SPC5_ME_MC_PLL1ON |                    \
-                                     SPC5_ME_MC_CFLAON_NORMAL |             \
-                                     SPC5_ME_MC_DFLAON_NORMAL |             \
-                                     SPC5_ME_MC_MVRON)
+#define SPC5_ME_HALT0_MC_BITS               (SPC5_ME_MC_SYSCLK_FMPLL0 |     \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_PLL1ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
 #endif
 
 /**
  * @brief   STOP0 mode settings.
  */
 #if !defined(SPC5_ME_STOP0_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_STOP0_MC_BITS       (SPC5_ME_MC_SYSCLK_FMPLL0 |             \
-                                     SPC5_ME_MC_IRCON |                     \
-                                     SPC5_ME_MC_XOSC0ON |                   \
-                                     SPC5_ME_MC_PLL0ON |                    \
-                                     SPC5_ME_MC_PLL1ON |                    \
-                                     SPC5_ME_MC_CFLAON_NORMAL |             \
-                                     SPC5_ME_MC_DFLAON_NORMAL |             \
-                                     SPC5_ME_MC_MVRON)
+#define SPC5_ME_STOP0_MC_BITS               (SPC5_ME_MC_SYSCLK_FMPLL0 |     \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_PLL1ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
 #endif
 
 /**
@@ -420,7 +422,7 @@
  *          mode.
  */
 #if !defined(SPC5_ME_RUN_PC0_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC0_BITS        0
+#define SPC5_ME_RUN_PC0_BITS                0
 #endif
 
 /**
@@ -429,13 +431,13 @@
  *          mode.
  */
 #if !defined(SPC5_ME_RUN_PC1_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC1_BITS        (SPC5_ME_RUN_PC_TEST |                  \
-                                     SPC5_ME_RUN_PC_SAFE |                  \
-                                     SPC5_ME_RUN_PC_DRUN |                  \
-                                     SPC5_ME_RUN_PC_RUN0 |                  \
-                                     SPC5_ME_RUN_PC_RUN1 |                  \
-                                     SPC5_ME_RUN_PC_RUN2 |                  \
-                                     SPC5_ME_RUN_PC_RUN3)
+#define SPC5_ME_RUN_PC1_BITS                (SPC5_ME_RUN_PC_TEST |          \
+                                             SPC5_ME_RUN_PC_SAFE |          \
+                                             SPC5_ME_RUN_PC_DRUN |          \
+                                             SPC5_ME_RUN_PC_RUN0 |          \
+                                             SPC5_ME_RUN_PC_RUN1 |          \
+                                             SPC5_ME_RUN_PC_RUN2 |          \
+                                             SPC5_ME_RUN_PC_RUN3)
 #endif
 
 /**
@@ -444,11 +446,11 @@
  *          normal run" mode.
  */
 #if !defined(SPC5_ME_RUN_PC2_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC2_BITS        (SPC5_ME_RUN_PC_DRUN |                  \
-                                     SPC5_ME_RUN_PC_RUN0 |                  \
-                                     SPC5_ME_RUN_PC_RUN1 |                  \
-                                     SPC5_ME_RUN_PC_RUN2 |                  \
-                                     SPC5_ME_RUN_PC_RUN3)
+#define SPC5_ME_RUN_PC2_BITS                (SPC5_ME_RUN_PC_DRUN |          \
+                                             SPC5_ME_RUN_PC_RUN0 |          \
+                                             SPC5_ME_RUN_PC_RUN1 |          \
+                                             SPC5_ME_RUN_PC_RUN2 |          \
+                                             SPC5_ME_RUN_PC_RUN3)
 #endif
 
 /**
@@ -456,10 +458,10 @@
  * @note    Not defined, available to application-specific modes.
  */
 #if !defined(SPC5_ME_RUN_PC3_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC3_BITS        (SPC5_ME_RUN_PC_RUN0 |                  \
-                                     SPC5_ME_RUN_PC_RUN1 |                  \
-                                     SPC5_ME_RUN_PC_RUN2 |                  \
-                                     SPC5_ME_RUN_PC_RUN3)
+#define SPC5_ME_RUN_PC3_BITS                (SPC5_ME_RUN_PC_RUN0 |          \
+                                             SPC5_ME_RUN_PC_RUN1 |          \
+                                             SPC5_ME_RUN_PC_RUN2 |          \
+                                             SPC5_ME_RUN_PC_RUN3)
 #endif
 
 /**
@@ -467,10 +469,10 @@
  * @note    Not defined, available to application-specific modes.
  */
 #if !defined(SPC5_ME_RUN_PC4_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC4_BITS        (SPC5_ME_RUN_PC_RUN0 |                  \
-                                     SPC5_ME_RUN_PC_RUN1 |                  \
-                                     SPC5_ME_RUN_PC_RUN2 |                  \
-                                     SPC5_ME_RUN_PC_RUN3)
+#define SPC5_ME_RUN_PC4_BITS                (SPC5_ME_RUN_PC_RUN0 |          \
+                                             SPC5_ME_RUN_PC_RUN1 |          \
+                                             SPC5_ME_RUN_PC_RUN2 |          \
+                                             SPC5_ME_RUN_PC_RUN3)
 #endif
 
 /**
@@ -478,10 +480,10 @@
  * @note    Not defined, available to application-specific modes.
  */
 #if !defined(SPC5_ME_RUN_PC5_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC5_BITS        (SPC5_ME_RUN_PC_RUN0 |                  \
-                                     SPC5_ME_RUN_PC_RUN1 |                  \
-                                     SPC5_ME_RUN_PC_RUN2 |                  \
-                                     SPC5_ME_RUN_PC_RUN3)
+#define SPC5_ME_RUN_PC5_BITS                (SPC5_ME_RUN_PC_RUN0 |          \
+                                             SPC5_ME_RUN_PC_RUN1 |          \
+                                             SPC5_ME_RUN_PC_RUN2 |          \
+                                             SPC5_ME_RUN_PC_RUN3)
 #endif
 
 /**
@@ -489,10 +491,10 @@
  * @note    Not defined, available to application-specific modes.
  */
 #if !defined(SPC5_ME_RUN_PC6_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC6_BITS        (SPC5_ME_RUN_PC_RUN0 |                  \
-                                     SPC5_ME_RUN_PC_RUN1 |                  \
-                                     SPC5_ME_RUN_PC_RUN2 |                  \
-                                     SPC5_ME_RUN_PC_RUN3)
+#define SPC5_ME_RUN_PC6_BITS                (SPC5_ME_RUN_PC_RUN0 |          \
+                                             SPC5_ME_RUN_PC_RUN1 |          \
+                                             SPC5_ME_RUN_PC_RUN2 |          \
+                                             SPC5_ME_RUN_PC_RUN3)
 #endif
 
 /**
@@ -500,10 +502,10 @@
  * @note    Not defined, available to application-specific modes.
  */
 #if !defined(SPC5_ME_RUN_PC7_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC7_BITS        (SPC5_ME_RUN_PC_RUN0 |                  \
-                                     SPC5_ME_RUN_PC_RUN1 |                  \
-                                     SPC5_ME_RUN_PC_RUN2 |                  \
-                                     SPC5_ME_RUN_PC_RUN3)
+#define SPC5_ME_RUN_PC7_BITS                (SPC5_ME_RUN_PC_RUN0 |          \
+                                             SPC5_ME_RUN_PC_RUN1 |          \
+                                             SPC5_ME_RUN_PC_RUN2 |          \
+                                             SPC5_ME_RUN_PC_RUN3)
 #endif
 
 /**
@@ -512,7 +514,7 @@
  *          mode.
  */
 #if !defined(SPC5_ME_LP_PC0_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC0_BITS         0
+#define SPC5_ME_LP_PC0_BITS                 0
 #endif
 
 /**
@@ -521,8 +523,8 @@
  *          mode.
  */
 #if !defined(SPC5_ME_LP_PC1_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC1_BITS         (SPC5_ME_LP_PC_HALT0 |                  \
-                                     SPC5_ME_LP_PC_STOP0)
+#define SPC5_ME_LP_PC1_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
+                                             SPC5_ME_LP_PC_STOP0)
 #endif
 
 /**
@@ -531,7 +533,7 @@
  *          mode.
  */
 #if !defined(SPC5_ME_LP_PC2_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC2_BITS         (SPC5_ME_LP_PC_HALT0)
+#define SPC5_ME_LP_PC2_BITS                 (SPC5_ME_LP_PC_HALT0)
 #endif
 
 /**
@@ -540,7 +542,7 @@
  *          mode.
  */
 #if !defined(SPC5_ME_LP_PC3_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC3_BITS         (SPC5_ME_LP_PC_STOP0)
+#define SPC5_ME_LP_PC3_BITS                 (SPC5_ME_LP_PC_STOP0)
 #endif
 
 /**
@@ -548,8 +550,8 @@
  * @note    Not defined, available to application-specific modes.
  */
 #if !defined(SPC5_ME_LP_PC4_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC4_BITS         (SPC5_ME_LP_PC_HALT0 |                  \
-                                     SPC5_ME_LP_PC_STOP0)
+#define SPC5_ME_LP_PC4_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
+                                             SPC5_ME_LP_PC_STOP0)
 #endif
 
 /**
@@ -557,8 +559,8 @@
  * @note    Not defined, available to application-specific modes.
  */
 #if !defined(SPC5_ME_LP_PC5_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC5_BITS         (SPC5_ME_LP_PC_HALT0 |                  \
-                                     SPC5_ME_LP_PC_STOP0)
+#define SPC5_ME_LP_PC5_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
+                                             SPC5_ME_LP_PC_STOP0)
 #endif
 
 /**
@@ -566,8 +568,8 @@
  * @note    Not defined, available to application-specific modes.
  */
 #if !defined(SPC5_ME_LP_PC6_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC6_BITS         (SPC5_ME_LP_PC_HALT0 |                  \
-                                     SPC5_ME_LP_PC_STOP0)
+#define SPC5_ME_LP_PC6_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
+                                             SPC5_ME_LP_PC_STOP0)
 #endif
 
 /**
@@ -575,8 +577,8 @@
  * @note    Not defined, available to application-specific modes.
  */
 #if !defined(SPC5_ME_LP_PC7_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_LP_PC7_BITS         (SPC5_ME_LP_PC_HALT0 |                  \
-                                     SPC5_ME_LP_PC_STOP0)
+#define SPC5_ME_LP_PC7_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
+                                             SPC5_ME_LP_PC_STOP0)
 #endif
 
 /**
@@ -585,7 +587,7 @@
  *          generation.
  */
 #if !defined(SPC5_PIT3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PIT3_IRQ_PRIORITY      4
+#define SPC5_PIT3_IRQ_PRIORITY              4
 #endif
 
 /*===========================================================================*/
@@ -719,8 +721,8 @@ extern "C" {
 #endif
   void hal_lld_init(void);
   void spc560p_clock_init(void);
-  bool_t  halSPC560PSetRunMode(spc560prunmode_t mode);
-  void halSPC560PSetPeripheralClockMode(uint32_t  n, uint32_t pctl);
+  bool_t halSPC560PSetRunMode(spc560prunmode_t mode);
+  void halSPC560PSetPeripheralClockMode(uint32_t n, uint32_t pctl);
 #if !SPC5_NO_INIT
   uint32_t halSPC560PGetSystemClock(void);
 #endif
