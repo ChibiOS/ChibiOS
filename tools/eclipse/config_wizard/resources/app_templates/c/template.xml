@@ -5,7 +5,7 @@
   supplier="chibios.org"
   revision="1.0"
   author="Giovanni Di Sirio"
-  id="xxx"
+  id="org.chibios.tools.eclipse.newchibiproject"
   label="ChibiOS/RT C Application"
   description="Template of a ChibiOS/RT C application based on makefiles."
   preview-icon="icons/chibios.gif">
