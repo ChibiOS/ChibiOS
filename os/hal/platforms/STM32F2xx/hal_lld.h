@@ -959,7 +959,7 @@
 /**
  * @brief   STM32_PLLN field.
  */
-#if ((STM32_PLLN_VALUE >= 192) && (STM32_PLLN_VALUE <= 432)) ||             \
+#if ((STM32_PLLN_VALUE >= 64) && (STM32_PLLN_VALUE <= 432)) ||              \
     defined(__DOXYGEN__)
 #define STM32_PLLN                  (STM32_PLLN_VALUE << 6)
 #else
