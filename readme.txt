@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed optimization disable (-O0) breaks kernel in CortexM/RVCT (bug
+  3573123).
 - FIX: Fixed misplaced declarations in lwip_bindings sys_arch.c (bug 3571053).
 - FIX: Fixed FatFS won't compile with _FS_REENTRANT enabled (bug 3570135).
 - FIX: Fixed mmc_spi.c won't compile due to misplaced declaration (bug
