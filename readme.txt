@@ -83,6 +83,7 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed Typos in STM32F0xx EXT driver (bug 3576193).
 - FIX: Fixed STM32F10X_CL: Wrong CAN1 interrupt number definitions (bug
   3575766).
 - FIX: Fixed superfluous pack #defines cause nasty warning (bug 3575662)

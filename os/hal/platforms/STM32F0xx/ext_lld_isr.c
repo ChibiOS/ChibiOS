@@ -83,7 +83,7 @@ CH_IRQ_HANDLER(EXTI2_3_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & ((2 << 0) | (3 << 1));
+  pr = EXTI->PR & ((1 << 2) | (1 << 3));
   EXTI->PR = pr;
   if (pr & (1 << 2))
     EXTD1.config->channels[2].cb(&EXTD1, 2);
@@ -98,7 +98,7 @@ CH_IRQ_HANDLER(EXTI2_3_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI9_5_IRQHandler) {
+CH_IRQ_HANDLER(EXTI4_15_IRQHandler) {
   uint32_t pr;
 
   CH_IRQ_PROLOGUE();
