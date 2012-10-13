@@ -83,6 +83,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed RCC_APB2ENR_IOPEEN undeclared on STM32F10X_LD_VL devices (bug
+  3575098)(backported to 2.4.3).
 - FIX: Fixed misplaced declarations in lwip_bindings sys_arch.c (bug 3571053)
   (backported to 2.4.3).
 - FIX: Fixed double definition of sd1fel and sd2fel breaks Posix simulator
