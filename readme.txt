@@ -83,6 +83,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed superfluous pack #defines cause nasty warning (bug 3575662)
+  (backported to 2.4.3).
 - FIX: Fixed mac.c won't compile due to misplaced declarations (bug 3575657)
   (backported to 2.4.3).
 - FIX: Fixed STM32F4 ADC prescaler incorrectly initialized (bug 3575297)
