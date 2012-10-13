@@ -80,12 +80,4 @@ typedef uint32_t        mem_ptr_t;
 #define BYTE_ORDER LITTLE_ENDIAN
 #define LWIP_PROVIDE_ERRNO
 
-#define PACK_STRUCT_BEGIN
-#ifdef PACK_STRUCT_STRUCT
-#undef PACK_STRUCT_STRUCT
-#endif
-#define PACK_STRUCT_STRUCT __attribute__ ((__packed__))
-#define PACK_STRUCT_END
-#define PACK_STRUCT_FIELD(x) x
-
 #endif /* __CC_H__ */
