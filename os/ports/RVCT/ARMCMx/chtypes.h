@@ -68,7 +68,6 @@ typedef int32_t         cnt_t;          /**< Resources counter.             */
 
 /**
  * @brief   Packed structure modifier (before).
- * @note    Empty in this port.
  */
 #define PACK_STRUCT_BEGIN __packed
 
