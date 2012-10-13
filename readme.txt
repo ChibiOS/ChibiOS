@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed RCC_APB2ENR_IOPEEN undeclared on STM32F10X_LD_VL devices (bug
+  3575098).
 - FIX: Fixed optimization disable (-O0) breaks kernel in CortexM/RVCT (bug
   3573123).
 - FIX: Fixed misplaced declarations in lwip_bindings sys_arch.c (bug 3571053).
