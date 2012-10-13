@@ -88,7 +88,11 @@ ROMCONST chdebug_t ch_debug = {
 #else
   (uint8_t)0,
 #endif
+#if CH_DBG_THREADS_PROFILING
   (uint8_t)_offsetof(Thread, p_time)
+#else
+  (uint8_t)0
+#endif
 };
 
 /**

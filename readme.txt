@@ -83,6 +83,7 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed compilation issue in chregistry.c (bug 3576776).
 - FIX: Fixed compilation issue in syscalls.c (bug 3576771)(backported
   to 2.4.3).
 - FIX: Fixed Typos in STM32F0xx EXT driver (bug 3576193).
