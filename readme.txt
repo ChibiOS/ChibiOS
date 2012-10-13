@@ -83,6 +83,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed mac.c won't compile due to misplaced declarations (bug 3575657)
+  (backported to 2.4.3).
 - FIX: Fixed STM32F4 ADC prescaler incorrectly initialized (bug 3575297)
   (backported to 2.4.3).
 - FIX: Fixed RCC_APB2ENR_IOPEEN undeclared on STM32F10X_LD_VL devices (bug
