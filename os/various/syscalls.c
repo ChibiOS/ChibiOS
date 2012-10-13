@@ -140,6 +140,7 @@ int _close_r(struct _reent *r, int file)
 
 caddr_t _sbrk_r(struct _reent *r, int incr)
 {
+#if CH_USE_MEMCORE
   void *p;
 
   chDbgCheck(incr > 0, "_sbrk_r");
@@ -151,6 +152,10 @@ caddr_t _sbrk_r(struct _reent *r, int incr)
     return (caddr_t)-1;
   }
   return (caddr_t)p;
+#else
+  __errno_r(r) = ENOMEM;
+  return (caddr_t)-1;
+#endif
 }
 
 /***************************************************************************/
