@@ -83,6 +83,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed STM32F10X_CL: Wrong CAN1 interrupt number definitions (bug
+  3575766).
 - FIX: Fixed superfluous pack #defines cause nasty warning (bug 3575662)
   (backported to 2.4.3).
 - FIX: Fixed mac.c won't compile due to misplaced declarations (bug 3575657)
