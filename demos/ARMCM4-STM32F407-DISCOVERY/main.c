@@ -78,19 +78,6 @@ static PWMConfig pwmcfg = {
 };
 
 /*
- * SPI1 configuration structure.
- * Speed 5.25MHz, CPHA=1, CPOL=1, 8bits frames, MSb transmitted first.
- * The slave select line is the pin GPIOE_CS_SPI on the port GPIOE.
- */
-static const SPIConfig spi1cfg = {
-  NULL,
-  /* HW dependent part.*/
-  GPIOE,
-  GPIOE_CS_SPI,
-  SPI_CR1_BR_0 | SPI_CR1_BR_1 | SPI_CR1_CPOL | SPI_CR1_CPHA
-};
-
-/*
  * SPI2 configuration structure.
  * Speed 21MHz, CPHA=0, CPOL=0, 16bits frames, MSb transmitted first.
  * The slave select line is the pin 12 on the port GPIOA.
