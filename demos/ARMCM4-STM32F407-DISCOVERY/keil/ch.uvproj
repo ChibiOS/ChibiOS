@@ -973,21 +973,6 @@
             </File>
           </Files>
         </Group>
-        <Group>
-          <GroupName>various</GroupName>
-          <Files>
-            <File>
-              <FileName>chprintf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\various\chprintf.c</FilePath>
-            </File>
-            <File>
-              <FileName>lis302dl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\os\various\devices_lib\accel\lis302dl.c</FilePath>
-            </File>
-          </Files>
-        </Group>
       </Groups>
     </Target>
   </Targets>
