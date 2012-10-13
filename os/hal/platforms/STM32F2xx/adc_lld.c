@@ -181,8 +181,6 @@ CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
  */
 void adc_lld_init(void) {
 
-  ADC->CCR = STM32_ADC_ADCPRE;
-
 #if STM32_ADC_USE_ADC1
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
@@ -276,6 +274,10 @@ void adc_lld_start(ADCDriver *adcp) {
       rccEnableADC3(FALSE);
     }
 #endif /* STM32_ADC_USE_ADC3 */
+
+    /* This is a common register but apparently it requires that at least one
+       of the ADCs is clocked in order to allow writing, see bug 3575297.*/
+    ADC->CCR = STM32_ADC_ADCPRE << 16;
 
     /* ADC initial setup, starting the analog part here in order to reduce
        the latency when starting a conversion.*/

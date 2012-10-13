@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed STM32F4 ADC prescaler incorrectly initialized (bug 3575297).
 - FIX: Fixed RCC_APB2ENR_IOPEEN undeclared on STM32F10X_LD_VL devices (bug
   3575098).
 - FIX: Fixed optimization disable (-O0) breaks kernel in CortexM/RVCT (bug
