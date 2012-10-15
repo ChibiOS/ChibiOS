@@ -29,6 +29,7 @@
 #ifndef _HAL_H_
 #define _HAL_H_
 
+#include "ch.h"
 #include "board.h"
 #include "halconf.h"
 
