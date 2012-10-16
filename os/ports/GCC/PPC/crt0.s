@@ -91,6 +91,10 @@ _boot_address:
         b           .dataloop
 .dataend:
         /*
+         * Late initialization.
+         */
+        bl          __late_init
+        /*
          * Main program invocation.
          */
         bl          main
@@ -106,12 +110,21 @@ _main_exit_handler:
         b           _main_exit_handler
 
         /*
-         * Default initialization code, none.
+         * Default early initialization code, none.
          */
         .weak       __early_init
         .globl      __early_init
         .type       __early_init, @function
 __early_init:
+        blr
+
+        /*
+         * Default late initialization code, none.
+         */
+        .weak       __late_init
+        .globl      __late_init
+        .type       __late_init, @function
+__late_init:
         blr
 
 #endif /* !defined(__DOXYGEN__) */
