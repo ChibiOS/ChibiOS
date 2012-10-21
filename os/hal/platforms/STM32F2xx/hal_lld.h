@@ -92,7 +92,7 @@
 #define STM32_PLLIN_MAX         2000000
 
 /**
- * @brief   Maximum PLLs input clock frequency.
+ * @brief   Minimum PLLs input clock frequency.
  */
 #define STM32_PLLIN_MIN         950000
 
@@ -112,7 +112,7 @@
 #define STM32_PLLOUT_MAX        120000000
 
 /**
- * @brief   Maximum PLL output clock frequency.
+ * @brief   Minimum PLL output clock frequency.
  */
 #define STM32_PLLOUT_MIN        24000000
 
@@ -338,7 +338,7 @@
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
-#define STM32_RTC_HAS_SUBSECONDS FALSE
+#define STM32_RTC_HAS_SUBSECONDS TRUE
 #define STM32_RTC_IS_CALENDAR   TRUE
 
 /* SDIO attributes.*/
@@ -653,12 +653,12 @@
 
 /**
  * @brief   PLLQ multiplier value.
- * @note    The allowed values are 4..15.
+ * @note    The allowed values are 2..15.
  * @note    The default value is calculated for a 120MHz system clock from
  *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLQ_VALUE            5
+#define STM32_PLLQ_VALUE            7
 #endif
 
 /**
@@ -716,7 +716,7 @@
 
 /**
  * @brief   MC02 clock source value.
- * @note    The default value outputs SYSCLK / 4 on MC02 pin.
+ * @note    The default value outputs SYSCLK / 5 on MC02 pin.
  */
 #if !defined(STM32_MCO2SEL) || defined(__DOXYGEN__)
 #define STM32_MCO2SEL               STM32_MCO2SEL_SYSCLK
@@ -724,10 +724,10 @@
 
 /**
  * @brief   MC02 prescaler value.
- * @note    The default value outputs SYSCLK / 4 on MC02 pin.
+ * @note    The default value outputs SYSCLK / 5 on MC02 pin.
  */
 #if !defined(STM32_MCO2PRE) || defined(__DOXYGEN__)
-#define STM32_MCO2PRE               STM32_MCO2PRE_DIV4
+#define STM32_MCO2PRE               STM32_MCO2PRE_DIV5
 #endif
 
 /**
@@ -984,7 +984,7 @@
 /**
  * @brief   STM32_PLLQ field.
  */
-#if ((STM32_PLLQ_VALUE >= 4) && (STM32_PLLQ_VALUE <= 15)) ||                \
+#if ((STM32_PLLQ_VALUE >= 2) && (STM32_PLLQ_VALUE <= 15)) ||                \
     defined(__DOXYGEN__)
 #define STM32_PLLQ                  (STM32_PLLQ_VALUE << 24)
 #else
