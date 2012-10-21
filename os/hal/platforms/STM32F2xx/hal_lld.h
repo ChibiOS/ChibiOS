@@ -338,7 +338,7 @@
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC           TRUE
-#define STM32_RTC_HAS_SUBSECONDS TRUE
+#define STM32_RTC_HAS_SUBSECONDS FALSE
 #define STM32_RTC_IS_CALENDAR   TRUE
 
 /* SDIO attributes.*/
@@ -658,7 +658,7 @@
  *          an external 8MHz HSE clock.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLQ_VALUE            7
+#define STM32_PLLQ_VALUE            5
 #endif
 
 /**
