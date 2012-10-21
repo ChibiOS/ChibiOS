@@ -89,7 +89,7 @@
 /**
  * @brief   Minimum PLLs input clock frequency.
  */
-#define STM32_PLLIN_MIN         1000000
+#define STM32_PLLIN_MIN         950000
 
 /**
  * @brief   Maximum PLLs VCO clock frequency.
@@ -97,9 +97,9 @@
 #define STM32_PLLVCO_MAX        432000000
 
 /**
- * @brief   Minimum PLLs VCO clock frequency.
+ * @brief   Maximum PLLs VCO clock frequency.
  */
-#define STM32_PLLVCO_MIN        64000000
+#define STM32_PLLVCO_MIN        192000000
 
 /**
  * @brief   Maximum PLL output clock frequency.
@@ -210,7 +210,7 @@
 #define STM32_MCO1SEL_HSE       (2 << 21)   /**< HSE clock on MCO1 pin.     */
 #define STM32_MCO1SEL_PLL       (3 << 21)   /**< PLL clock on MCO1 pin.     */
 
-#define STM32_I2SSRC_MASK       (1 << 23)   /**< I2SSRC mask.               */
+#define STM32_I2SSRC_MASK       (1 << 23)   /**< I2CSRC mask.               */
 #define STM32_I2SSRC_PLLI2S     (0 << 23)   /**< I2SSRC is PLLI2S.          */
 #define STM32_I2SSRC_CKIN       (1 << 23)   /**< I2S_CKIN is PLLI2S.        */
 
@@ -643,7 +643,7 @@
 
 /**
  * @brief   PLLN multiplier value.
- * @note    The allowed values are 64..432.
+ * @note    The allowed values are 192..432.
  * @note    The default value is calculated for a 168MHz system clock from
  *          an external 8MHz HSE clock.
  */
