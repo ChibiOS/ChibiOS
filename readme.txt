@@ -83,6 +83,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed ARM CMx crt0.c fails at low optimization levels (bug 3578927)
+  (backported to 2.4.3).
 - FIX: Fixed compilation issue in chregistry.c (bug 3576776).
 - FIX: Fixed compilation issue in syscalls.c (bug 3576771)(backported
   to 2.4.3).

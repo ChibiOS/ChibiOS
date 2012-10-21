@@ -5,18 +5,7 @@ X = In progress, some work done.
 ? = Not sure if worth the effort or useful at all.
 N = Decided against.
 
-Version 2.5.0
-* SDC driver port to STM32F2 and STM32F4.
-* Revision of scheduling strategy for threads at equal priority.
-* Handling of Virtual Timer callbacks out of critical zone.
-* Add normal API (not iclass) variants of the VT functions.
-* MMC_SPI driver speedup.
-* FatFs 0.9x integration.
-* USB driver model revision.
-  * STM32 OTG USB cell support for CL, F2, F4 devices.
-* CAN driver test on STM32F2/F4.
-* STM32F0 support.
-  * Specific ADC driver for STM32F0.
+Version 2.5.1
 
 Within 2.5.x:
 X Revision of the RTCv2 driver implementation.
