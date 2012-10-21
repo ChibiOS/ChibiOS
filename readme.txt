@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed ARM CMx crt0.c fails at low optimization levels (bug 3578927).
 - FIX: Fixed compilation issue in syscalls.c (bug 3576771).
 - FIX: Fixed superfluous pack #defines cause nasty warning (bug 3575662).
 - FIX: Fixed mac.c won't compile due to misplaced declarations (bug 3575657).

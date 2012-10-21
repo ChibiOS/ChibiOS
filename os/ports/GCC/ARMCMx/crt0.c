@@ -40,6 +40,17 @@ typedef funcp_t * funcpp_t;
 
 #define SYMVAL(sym) (uint32_t)(((uint8_t *)&(sym)) - ((uint8_t *)0))
 
+/*
+ * Area fill code, it is a macro because here functions cannot be called
+ * until stacks are initialized.
+ */
+#define fill32(start, end, filler) {                                        \
+  uint32_t *p1 = start;                                                     \
+  uint32_t *p2 = end;                                                       \
+  while (p1 < p2)                                                           \
+    *p1++ = filler;                                                         \
+}
+
 /*===========================================================================*/
 /**
  * @name    Startup settings
@@ -232,19 +243,6 @@ __attribute__((weak, naked))
 void _default_exit(void) {
   while (1)
     ;
-}
-
-/**
- * @brief   Memory fill.
- *
- * @param[in] start     fill area start
- * @param[in] end       fill area end
- * @param[in] filler    filler pattern
- */
-static void fill32(uint32_t *start, uint32_t *end, uint32_t filler) {
-
-  while (start < end)
-    *start++ = filler;
 }
 
 /**
