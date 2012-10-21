@@ -93,7 +93,7 @@
 #define STM32_PLLIN_MAX         2000000
 
 /**
- * @brief   Maximum PLLs input clock frequency.
+ * @brief   Minimum PLLs input clock frequency.
  */
 #define STM32_PLLIN_MIN         950000
 
@@ -113,7 +113,7 @@
 #define STM32_PLLOUT_MAX        168000000
 
 /**
- * @brief   Maximum PLL output clock frequency.
+ * @brief   Minimum PLL output clock frequency.
  */
 #define STM32_PLLOUT_MIN        24000000
 
@@ -669,7 +669,7 @@
 
 /**
  * @brief   PLLQ multiplier value.
- * @note    The allowed values are 4..15.
+ * @note    The allowed values are 2..15.
  * @note    The default value is calculated for a 168MHz system clock from
  *          an external 8MHz HSE clock.
  */
@@ -985,7 +985,7 @@
 /**
  * @brief   STM32_PLLN field.
  */
-#if ((STM32_PLLN_VALUE >= 192) && (STM32_PLLN_VALUE <= 432)) ||             \
+#if ((STM32_PLLN_VALUE >= 64) && (STM32_PLLN_VALUE <= 432)) ||              \
     defined(__DOXYGEN__)
 #define STM32_PLLN                  (STM32_PLLN_VALUE << 6)
 #else
@@ -1010,7 +1010,7 @@
 /**
  * @brief   STM32_PLLQ field.
  */
-#if ((STM32_PLLQ_VALUE >= 4) && (STM32_PLLQ_VALUE <= 15)) ||                \
+#if ((STM32_PLLQ_VALUE >= 2) && (STM32_PLLQ_VALUE <= 15)) ||                \
     defined(__DOXYGEN__)
 #define STM32_PLLQ                  (STM32_PLLQ_VALUE << 24)
 #else
