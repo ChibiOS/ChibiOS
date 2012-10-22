@@ -53,7 +53,7 @@
  * @name    Platform identification
  * @{
  */
-#define PLATFORM_NAME           "STM32F0 Entry Level"
+#define PLATFORM_NAME           "STM32F05x Entry Level"
 /** @} */
 
 /**
@@ -91,7 +91,7 @@
 #define STM32_PLLIN_MAX         25000000
 
 /**
- * @brief   Maximum PLLs input clock frequency.
+ * @brief   Minimum PLLs input clock frequency.
  */
 #define STM32_PLLIN_MIN         1000000
 
@@ -101,7 +101,7 @@
 #define STM32_PLLOUT_MAX        48000000
 
 /**
- * @brief   Maximum PLL output clock frequency.
+ * @brief   Minimum PLL output clock frequency.
  */
 #define STM32_PLLOUT_MIN        16000000
 
@@ -197,7 +197,7 @@
  * @name    RCC_CFGR3 register bits definitions
  * @{
  */
-#define STM32_USART1SW_MASK     (3 << 0)    /**< RTC clock source mask.     */
+#define STM32_USART1SW_MASK     (3 << 0)    /**< USART1 clock source mask.  */
 #define STM32_USART1SW_PCLK     (0 << 0)    /**< USART1 clock is PCLK.      */
 #define STM32_USART1SW_SYSCLK   (1 << 0)    /**< USART1 clock is SYSCLK.    */
 #define STM32_USART1SW_LSE      (2 << 0)    /**< USART1 clock is LSE.       */
@@ -223,8 +223,8 @@
  */
 /* ADC attributes.*/
 #define STM32_HAS_ADC1          TRUE
-#define STM32_ADC1_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(1, 0) |            \
-                                 STM32_DMA_STREAM_ID_MSK(1, 1))
+#define STM32_ADC1_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(1, 1) |            \
+                                 STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_ADC1_DMA_CHN      0x00000000
 
 #define STM32_HAS_ADC2          FALSE
@@ -479,6 +479,7 @@
 #if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
 #define STM32_LSE_ENABLED           FALSE
 #endif
+
 /**
  * @brief   Main clock source selection.
  * @note    If the selected clock source is not the PLL then the PLL is not

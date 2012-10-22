@@ -33,6 +33,7 @@
  *          - STM32F10X_XL for Performance eXtra Density devices.
  *          - STM32F10X_CL for Connectivity Line devices.
  *          - STM32F2XX for High-performance STM32 F-2 devices.
+ *          - STM32F30X for Analog & DSP devices.
  *          - STM32F4XX for High-performance STM32 F-4 devices.
  *          - STM32L1XX_MD for Ultra Low Power Medium-density devices.
  *          .
@@ -56,6 +57,9 @@
 
 #elif defined(STM32F2XX)
 #include "stm32f2xx.h"
+
+#elif defined(STM32F30X)
+#include "stm32f30x.h"
 
 #elif defined(STM32F4XX)
 #include "stm32f4xx.h"

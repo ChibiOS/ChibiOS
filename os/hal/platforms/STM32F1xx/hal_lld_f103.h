@@ -45,19 +45,19 @@
  * @{
  */
 #if defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32F1 Performance Line"
+#define PLATFORM_NAME           "STM32F10x Performance Line"
 
 #elif defined(STM32F10X_LD)
-#define PLATFORM_NAME           "STM32F1 Performance Line Low Density"
+#define PLATFORM_NAME           "STM32F10x Performance Line Low Density"
 
 #elif defined(STM32F10X_MD)
-#define PLATFORM_NAME           "STM32F1 Performance Line Medium Density"
+#define PLATFORM_NAME           "STM32F10x Performance Line Medium Density"
 
 #elif defined(STM32F10X_HD)
-#define PLATFORM_NAME           "STM32F1 Performance Line High Density"
+#define PLATFORM_NAME           "STM32F10x Performance Line High Density"
 
 #elif defined(STM32F10X_XL)
-#define PLATFORM_NAME           "STM32F1 Performance Line eXtra Density"
+#define PLATFORM_NAME           "STM32F10x Performance Line eXtra Density"
 
 #else
 #error "unsupported STM32 Performance Line member"

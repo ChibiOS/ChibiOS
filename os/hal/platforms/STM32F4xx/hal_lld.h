@@ -56,9 +56,9 @@
  * @{
  */
 #if defined(STM32F4XX) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32F4 High Performance"
+#define PLATFORM_NAME           "STM32F4xx High Performance"
 #else /* !defined(STM32F4XX) */
-#define PLATFORM_NAME           "STM32F2 High Performance"
+#define PLATFORM_NAME           "STM32F2xx High Performance"
 #endif /* !defined(STM32F4XX) */
 /** @} */
 

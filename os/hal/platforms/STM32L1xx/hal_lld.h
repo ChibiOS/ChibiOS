@@ -53,7 +53,7 @@
  * @name    Platform identification
  * @{
  */
-#define PLATFORM_NAME           "STM32L1 Ultra Low Power Medium Density"
+#define PLATFORM_NAME           "STM32L1xx Ultra Low Power Medium Density"
 /** @} */
 
 /**

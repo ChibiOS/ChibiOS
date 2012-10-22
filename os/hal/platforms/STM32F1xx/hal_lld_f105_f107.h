@@ -44,7 +44,7 @@
  * @name    Platform identification
  * @{
  */
-#define PLATFORM_NAME           "STM32F1 Connectivity Line"
+#define PLATFORM_NAME           "STM32F10x Connectivity Line"
 /** @} */
 
 /**
