@@ -20,7 +20,7 @@
 
 /**
  * @file    STM32F4xx/adc_lld.h
- * @brief   STM32F4xx ADC subsystem low level driver header.
+ * @brief   STM32F4xx/STM32F2xx ADC subsystem low level driver header.
  *
  * @addtogroup ADC
  * @{
@@ -47,7 +47,11 @@
 /**
  * @brief   Maximum ADC clock frequency.
  */
+#if defined(STM32F4XX) || defined(__DOXYGEN__)
 #define STM32_ADCCLK_MAX        36000000
+#else
+#define STM32_ADCCLK_MAX        30000000
+#endif
 /** @} */
 
 /**
@@ -120,8 +124,8 @@
 /**
  * @brief   ADC common clock divider.
  * @note    This setting is influenced by the VDDA voltage and other
- *          external conditions, please refer to the STM32F4xx datasheet
- *          for more info.<br>
+ *          external conditions, please refer to the datasheet for more
+ *          info.<br>
  *          See section 5.3.20 "12-bit ADC characteristics".
  */
 #if !defined(STM32_ADC_ADCPRE) || defined(__DOXYGEN__)

@@ -34,8 +34,7 @@
   |  |  |  +--STM32/    - Drivers for STM32 platform (common).
   |  |  |  +--STM32F0xx/- Drivers for STM32F0xx platform.
   |  |  |  +--STM32F1xx/- Drivers for STM32F1xx platform.
-  |  |  |  +--STM32F2xx/- Drivers for STM32F2xx platform.
-  |  |  |  +--STM32F4xx/- Drivers for STM32F4xx platform.
+  |  |  |  +--STM32F4xx/- Drivers for STM32F4xx/STM32F2xx platforms.
   |  |  |  +--STM32L1xx/- Drivers for STM32L1xx platform.
   |  |  |  +--STM8L/    - Drivers for STM8L platform.
   |  |  |  +--STM8S/    - Drivers for STM8S platform.
@@ -121,6 +120,8 @@
   (backported to 2.4.3).
 - FIX: Fixed STM8L, cosmic compiler: c_lreg not saved (bug 3566342)(backported
   to 2.2.10 and 2.4.3).
+- NEW: Unified the STM32F4xx and STM32F2xx platform code. The STM32F2xx now is
+  only supported as an STM32F4xx variant and not tested separately.
 - NEW: Updated STM32F1, F2, F4, L1 ADC drivers to allow HW triggering.
 - NEW: Added a new option STM32_ETH1_CHANGE_PHY_STATE to the STM32 MAC driver,
   this change is connected to bug 3570335.

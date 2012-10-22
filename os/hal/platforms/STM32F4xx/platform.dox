@@ -19,9 +19,10 @@
 */
 
 /**
- * @defgroup STM32F4xx_DRIVERS STM32F4xx Drivers
+ * @defgroup STM32F4xx_DRIVERS STM32F4xx/STM32F2xx Drivers
  * @details This section describes all the supported drivers on the STM32F4xx
- *          platform and the implementation details of the single drivers.
+ *          and STM32F2xx platform and the implementation details of the single
+ *          drivers.
  *
  * @ingroup platforms
  */

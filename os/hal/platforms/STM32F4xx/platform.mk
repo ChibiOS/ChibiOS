@@ -1,4 +1,4 @@
-# List of all the STM32F4xx platform files.
+# List of all the STM32F2xx/STM32F4xx platform files.
 PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F4xx/stm32_dma.c \
               ${CHIBIOS}/os/hal/platforms/STM32F4xx/hal_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32F4xx/adc_lld.c \

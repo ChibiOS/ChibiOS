@@ -20,7 +20,7 @@
 
 /**
  * @file    STM32F4xx/hal_lld.c
- * @brief   STM32F4xx HAL subsystem low level driver source.
+ * @brief   STM32F4xx/STM32F2xx HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{
@@ -140,9 +140,13 @@ void stm32_clock_init(void) {
   RCC->APB1ENR = RCC_APB1ENR_PWREN;
 
   /* PWR initialization.*/
+#if defined(STM32F4XX) || defined(__DOXYGEN__)
   PWR->CR = STM32_VOS;
   while ((PWR->CSR & PWR_CSR_VOSRDY) == 0)
     ;                           /* Waits until power regulator is stable.   */
+#else
+  PWR->CR = 0;
+#endif
 
   /* Initial clocks setup and wait for HSI stabilization, the MSI clock is
      always enabled because it is the fallback clock when PLL the fails.*/
