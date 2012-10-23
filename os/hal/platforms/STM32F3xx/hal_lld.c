@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32F0xx/hal_lld.c
- * @brief   STM32F0xx HAL subsystem low level driver source.
+ * @file    STM32F3xx/hal_lld.c
+ * @brief   STM32F3xx HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{
@@ -28,10 +28,6 @@
 
 #include "ch.h"
 #include "hal.h"
-
-/* TODO: LSEBYP like in F3.*/
-/* TODO: LSEDRV like in F3.*/
-/* TODO: PREDIV like in F3.*/
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -64,7 +60,13 @@ static void hal_lld_backup_domain_init(void) {
 
   /* If enabled then the LSE is started.*/
 #if STM32_LSE_ENABLED
-  RCC->BDCR |= RCC_BDCR_LSEON;
+#if defined(STM32_LSE_BYPASS)
+  /* LSE Bypass.*/
+  RCC->BDCR = STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSEBYP;
+#else
+  /* No LSE Bypass.*/
+  RCC->BDCR = STM32_LSEDRV | RCC_BDCR_LSEON;
+#endif
   while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
     ;                                     /* Waits until LSE is stable.   */
 #endif
@@ -157,13 +159,6 @@ void stm32_clock_init(void) {
     ;                                       /* Waits until HSE is stable.   */
 #endif
 
-#if STM32_HSE14_ENABLED
-  /* HSI14 activation.*/
-  RCC->CR2 |= RCC_CR2_HSI14ON;
-  while (!(RCC->CR2 & RCC_CR2_HSI14RDY))
-    ;                                       /* Waits until HSI14 is stable. */
-#endif
-
 #if STM32_LSI_ENABLED
   /* LSI activation.*/
   RCC->CSR |= RCC_CSR_LSION;
@@ -180,9 +175,13 @@ void stm32_clock_init(void) {
 #endif
 
   /* Clock settings.*/
-  RCC->CFGR  = STM32_MCOSEL |                STM32_PLLMUL | STM32_PLLXTPRE |
-               STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE   | STM32_HPRE;
-  RCC->CFGR3 = STM32_ADCSW  | STM32_CECSW  | STM32_I2C1SW | STM32_USART1SW;
+  RCC->CFGR  = STM32_MCOSEL    | STM32_USBPRE    | STM32_PLLMUL   |
+               STM32_PLLSRC    | STM32_PPRE1     | STM32_PPRE1    |
+               STM32_HPRE;
+  RCC->CFGR  = STM32_ADC43PRES | STM32_ADC12PRES | STM32_PREDIV;
+  RCC->CFGR3 = STM32_UART5SW   | STM32_UART4SW   | STM32_USART3SW |
+               STM32_USART2SW  | STM32_TIM8SW    | STM32_TIM1SW   |
+               STM32_I2C2SW    | STM32_I2C1SW    | STM32_USART1SW;
 
   /* Flash setup and final clock selection.   */
   FLASH->ACR = STM32_FLASHBITS;
