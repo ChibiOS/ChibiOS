@@ -101,7 +101,7 @@ void hal_lld_init(void) {
 
   /* Reset of all peripherals.*/
   rccResetAPB1(0xFFFFFFFF);
-  rccResetAPB2(!RCC_APB2RSTR_DBGMCURST);
+  rccResetAPB2(0xFFFFFFFF);
 
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
@@ -166,22 +166,21 @@ void stm32_clock_init(void) {
     ;                                       /* Waits until LSI is stable.   */
 #endif
 
+  /* Clock settings.*/
+  RCC->CFGR  = STM32_MCOSEL    | STM32_USBPRE    | STM32_PLLMUL   |
+               STM32_PLLSRC    | STM32_PPRE1     | STM32_PPRE2    |
+               STM32_HPRE;
+  RCC->CFGR2 = STM32_ADC34PRES | STM32_ADC12PRES | STM32_PREDIV;
+  RCC->CFGR3 = STM32_UART5SW   | STM32_UART4SW   | STM32_USART3SW |
+               STM32_USART2SW  | STM32_TIM8SW    | STM32_TIM1SW   |
+               STM32_I2C2SW    | STM32_I2C1SW    | STM32_USART1SW;
+
 #if STM32_ACTIVATE_PLL
   /* PLL activation.*/
-  RCC->CFGR |= STM32_PLLMUL | STM32_PLLXTPRE | STM32_PLLSRC;
   RCC->CR   |= RCC_CR_PLLON;
   while (!(RCC->CR & RCC_CR_PLLRDY))
     ;                                       /* Waits until PLL is stable.   */
 #endif
-
-  /* Clock settings.*/
-  RCC->CFGR  = STM32_MCOSEL    | STM32_USBPRE    | STM32_PLLMUL   |
-               STM32_PLLSRC    | STM32_PPRE1     | STM32_PPRE1    |
-               STM32_HPRE;
-  RCC->CFGR  = STM32_ADC43PRES | STM32_ADC12PRES | STM32_PREDIV;
-  RCC->CFGR3 = STM32_UART5SW   | STM32_UART4SW   | STM32_USART3SW |
-               STM32_USART2SW  | STM32_TIM8SW    | STM32_TIM1SW   |
-               STM32_I2C2SW    | STM32_I2C1SW    | STM32_USART1SW;
 
   /* Flash setup and final clock selection.   */
   FLASH->ACR = STM32_FLASHBITS;

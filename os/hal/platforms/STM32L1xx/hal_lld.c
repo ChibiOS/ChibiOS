@@ -26,6 +26,8 @@
  * @{
  */
 
+/* TODO: LSEBYP like in F3.*/
+
 #include "ch.h"
 #include "hal.h"
 

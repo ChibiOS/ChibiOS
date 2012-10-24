@@ -171,18 +171,19 @@ void stm32_clock_init(void) {
     ;                                       /* Waits until LSI is stable.   */
 #endif
 
+  /* Clock settings.*/
+  RCC->CFGR  = STM32_MCOSEL | STM32_PLLMUL | STM32_PLLXTPRE |
+               STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE     |
+               STM32_HPRE;
+  RCC->CFGR3 = STM32_ADCSW  | STM32_CECSW  | STM32_I2C1SW   |
+               STM32_USART1SW;
+
 #if STM32_ACTIVATE_PLL
   /* PLL activation.*/
-  RCC->CFGR |= STM32_PLLMUL | STM32_PLLXTPRE | STM32_PLLSRC;
   RCC->CR   |= RCC_CR_PLLON;
   while (!(RCC->CR & RCC_CR_PLLRDY))
     ;                                       /* Waits until PLL is stable.   */
 #endif
-
-  /* Clock settings.*/
-  RCC->CFGR  = STM32_MCOSEL |                STM32_PLLMUL | STM32_PLLXTPRE |
-               STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE   | STM32_HPRE;
-  RCC->CFGR3 = STM32_ADCSW  | STM32_CECSW  | STM32_I2C1SW | STM32_USART1SW;
 
   /* Flash setup and final clock selection.   */
   FLASH->ACR = STM32_FLASHBITS;

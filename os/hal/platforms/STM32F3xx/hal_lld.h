@@ -459,49 +459,49 @@
  * @brief   Disables the PWR/RCC initialization in the HAL.
  */
 #if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
-#define STM32_NO_INIT               FALSE
+#define STM32_NO_INIT                       FALSE
 #endif
 
 /**
  * @brief   Enables or disables the programmable voltage detector.
  */
 #if !defined(STM32_PVD_ENABLE) || defined(__DOXYGEN__)
-#define STM32_PVD_ENABLE            FALSE
+#define STM32_PVD_ENABLE                    FALSE
 #endif
 
 /**
  * @brief   Sets voltage level for programmable voltage detector.
  */
 #if !defined(STM32_PLS) || defined(__DOXYGEN__)
-#define STM32_PLS                   STM32_PLS_LEV0
+#define STM32_PLS                           STM32_PLS_LEV0
 #endif
 
 /**
  * @brief   Enables or disables the HSI clock source.
  */
 #if !defined(STM32_HSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI_ENABLED           TRUE
+#define STM32_HSI_ENABLED                   TRUE
 #endif
 
 /**
  * @brief   Enables or disables the LSI clock source.
  */
 #if !defined(STM32_LSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSI_ENABLED           FALSE
+#define STM32_LSI_ENABLED                   TRUE
 #endif
 
 /**
  * @brief   Enables or disables the HSE clock source.
  */
 #if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSE_ENABLED           TRUE
+#define STM32_HSE_ENABLED                   TRUE
 #endif
 
 /**
  * @brief   Enables or disables the LSE clock source.
  */
 #if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSE_ENABLED           FALSE
+#define STM32_LSE_ENABLED                   FALSE
 #endif
 
 /**
@@ -512,7 +512,7 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
-#define STM32_SW                    STM32_SW_PLL
+#define STM32_SW                            STM32_SW_PLL
 #endif
 
 /**
@@ -523,7 +523,7 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
-#define STM32_PLLSRC                STM32_PLLSRC_HSE
+#define STM32_PLLSRC                        STM32_PLLSRC_HSE
 #endif
 
 /**
@@ -534,7 +534,7 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PREDIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_PREDIV_VALUE          1
+#define STM32_PREDIV_VALUE                  1
 #endif
 
 /**
@@ -544,7 +544,7 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLMUL_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLMUL_VALUE          8
+#define STM32_PLLMUL_VALUE                  8
 #endif
 
 /**
@@ -553,126 +553,126 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
-#define STM32_HPRE                  STM32_HPRE_DIV1
+#define STM32_HPRE                          STM32_HPRE_DIV1
 #endif
 
 /**
  * @brief   APB1 prescaler value.
  */
 #if !defined(STM32_PPRE1) || defined(__DOXYGEN__)
-#define STM32_PPRE1                 STM32_PPRE1_DIV1
+#define STM32_PPRE1                         STM32_PPRE1_DIV2
 #endif
 
 /**
  * @brief   APB2 prescaler value.
  */
 #if !defined(STM32_PPRE2) || defined(__DOXYGEN__)
-#define STM32_PPRE2                 STM32_PPRE2_DIV1
+#define STM32_PPRE2                         STM32_PPRE2_DIV1
 #endif
 
 /**
  * @brief   MCO pin setting.
  */
 #if !defined(STM32_MCOSEL) || defined(__DOXYGEN__)
-#define STM32_MCOSEL                STM32_MCOSEL_NOCLOCK
+#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #endif
 
 /**
  * @brief   ADC12 prescaler value.
  */
 #if !defined(STM32_ADC12PRES) || defined(__DOXYGEN__)
-#define STM32_ADC12PRES             STM32_ADC12PRES_DIV1
+#define STM32_ADC12PRES                     STM32_ADC12PRES_DIV1
 #endif
 
 /**
  * @brief   ADC34 prescaler value.
  */
 #if !defined(STM32_ADC34PRES) || defined(__DOXYGEN__)
-#define STM32_ADC34PRES             STM32_ADC34PRES_DIV1
+#define STM32_ADC34PRES                     STM32_ADC34PRES_DIV1
 #endif
 
 /**
  * @brief   USART1 clock source.
  */
 #if !defined(STM32_USART1SW) || defined(__DOXYGEN__)
-#define STM32_USART1SW              STM32_USART1SW_PCLK
+#define STM32_USART1SW                      STM32_USART1SW_PCLK
 #endif
 
 /**
  * @brief   USART2 clock source.
  */
 #if !defined(STM32_USART2SW) || defined(__DOXYGEN__)
-#define STM32_USART2SW              STM32_USART2SW_PCLK
+#define STM32_USART2SW                      STM32_USART2SW_PCLK
 #endif
 
 /**
  * @brief   USART3 clock source.
  */
 #if !defined(STM32_USART3SW) || defined(__DOXYGEN__)
-#define STM32_USART3SW              STM32_USART3SW_PCLK
+#define STM32_USART3SW                      STM32_USART3SW_PCLK
 #endif
 
 /**
  * @brief   UART4 clock source.
  */
 #if !defined(STM32_UART4SW) || defined(__DOXYGEN__)
-#define STM32_UART4SW               STM32_UART4SW_PCLK
+#define STM32_UART4SW                       STM32_UART4SW_PCLK
 #endif
 
 /**
  * @brief   UART5 clock source.
  */
 #if !defined(STM32_UART5SW) || defined(__DOXYGEN__)
-#define STM32_UART5SW               STM32_UART5SW_PCLK
+#define STM32_UART5SW                       STM32_UART5SW_PCLK
 #endif
 
 /**
  * @brief   I2C1 clock source.
  */
 #if !defined(STM32_I2C1SW) || defined(__DOXYGEN__)
-#define STM32_I2C1SW                STM32_I2C1SW_SYSCLK
+#define STM32_I2C1SW                        STM32_I2C1SW_SYSCLK
 #endif
 
 /**
  * @brief   I2C2 clock source.
  */
 #if !defined(STM32_I2C2SW) || defined(__DOXYGEN__)
-#define STM32_I2C2SW                STM32_I2C2SW_SYSCLK
+#define STM32_I2C2SW                        STM32_I2C2SW_SYSCLK
 #endif
 
 /**
  * @brief   TIM1 clock source.
  */
 #if !defined(STM32_TIM1SW) || defined(__DOXYGEN__)
-#define STM32_TIM1SW                STM32_TIM1SW_PCLK2
+#define STM32_TIM1SW                        STM32_TIM1SW_PCLK2
 #endif
 
 /**
  * @brief   TIM8 clock source.
  */
 #if !defined(STM32_TIM8SW) || defined(__DOXYGEN__)
-#define STM32_TIM8SW                STM32_TIM8SW_PCLK2
+#define STM32_TIM8SW                        STM32_TIM8SW_PCLK2
 #endif
 
 /**
  * @brief   RTC clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
-#define STM32_RTCSEL                STM32_RTCSEL_LSI
+#define STM32_RTCSEL                        STM32_RTCSEL_LSI
 #endif
 
 /**
  * @brief   USB clock setting.
  */
 #if !defined(STM32_USB_CLOCK_REQUIRED) || defined(__DOXYGEN__)
-#define STM32_USB_CLOCK_REQUIRED    TRUE
+#define STM32_USB_CLOCK_REQUIRED            TRUE
 #endif
 
 /**
  * @brief   USB prescaler initialization.
  */
 #if !defined(STM32_USBPRE) || defined(__DOXYGEN__)
-#define STM32_USBPRE                STM32_USBPRE_DIV1P5
+#define STM32_USBPRE                        STM32_USBPRE_DIV1P5
 #endif
 /** @} */
 
@@ -683,7 +683,7 @@
 /*
  * Configuration-related checks.
  */
-#if !defined(STM32F3xx_MCUCONF)
+#if !defined(STM32F30x_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32F3xx_MCUCONF not defined"
 #endif
 
@@ -1245,9 +1245,42 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type representing a system clock frequency.
+ */
+typedef uint32_t halclock_t;
+
+/**
+ * @brief   Type of the realtime free counter value.
+ */
+typedef uint32_t halrtcnt_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Returns the current value of the system free running counter.
+ * @note    This service is implemented by returning the content of the
+ *          DWT_CYCCNT register.
+ *
+ * @return              The value of the system free running counter of
+ *                      type halrtcnt_t.
+ *
+ * @notapi
+ */
+#define hal_lld_get_counter_value()         DWT_CYCCNT
+
+/**
+ * @brief   Realtime counter frequency.
+ * @note    The DWT_CYCCNT register is incremented directly by the system
+ *          clock so this function returns STM32_HCLK.
+ *
+ * @return              The realtime counter frequency of type halclock_t.
+ *
+ * @notapi
+ */
+#define hal_lld_get_counter_frequency()     STM32_HCLK
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -1255,8 +1288,8 @@
 
 /* STM32 ISR, DMA and RCC helpers.*/
 /*#include "stm32_isr.h"
-#include "stm32_dma.h"
-#include "stm32_rcc.h"*/
+#include "stm32_dma.h"*/
+#include "stm32_rcc.h"
 
 #ifdef __cplusplus
 extern "C" {
