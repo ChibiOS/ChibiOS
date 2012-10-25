@@ -30,19 +30,29 @@
                             </xs:restriction>
                           </xs:simpleType>
                         </xs:attribute>
+                            <xs:attribute name="LSEBypass" use="required">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:whiteSpace
+                                            value="collapse">
+                                        </xs:whiteSpace>
+                                        <xs:enumeration value="false"></xs:enumeration>
+                                        <xs:enumeration value="true"></xs:enumeration>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:attribute>
                         <xs:attribute name="LSEFrequency"
                           use="required">
                           <xs:simpleType>
                             <xs:restriction base="xs:int">
                               <xs:whiteSpace value="collapse"></xs:whiteSpace>
-
                               <xs:minInclusive value="0"></xs:minInclusive>
                             </xs:restriction>
                           </xs:simpleType>
-                        </xs:attribute>
+                        </xs:attribute>
                       </xs:complexType></xs:element>
                     <xs:element name="ports" type="portsType" maxOccurs="1"
-            minOccurs="1">
+                                minOccurs="1">
           </xs:element>
         </xs:sequence>
       </xs:extension>

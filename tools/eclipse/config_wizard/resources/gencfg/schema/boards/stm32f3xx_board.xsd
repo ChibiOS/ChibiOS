@@ -6,7 +6,7 @@
 	<xs:include schemaLocation="../common/stm32/stm32_gpiov2_port.xsd" />
 	<xs:include schemaLocation="abstract_board.xsd" />
 
-	<xs:complexType name="STM32F4xxBoardType">
+	<xs:complexType name="STM32F3xxBoardType">
 		<xs:complexContent>
             <xs:extension base="AbstractBoardType">
 				<xs:sequence>
@@ -44,7 +44,20 @@
                                         <xs:enumeration value="true"></xs:enumeration>
                                     </xs:restriction>
                                 </xs:simpleType>
-							</xs:attribute>
+                            </xs:attribute>
+                            <xs:attribute name="LSEDrive" use="required">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:whiteSpace
+                                            value="collapse">
+                                        </xs:whiteSpace>
+                                        <xs:enumeration value="3 High Drive (default)"></xs:enumeration>
+                                        <xs:enumeration value="2 Medium-High Drive"></xs:enumeration>
+                                        <xs:enumeration value="1 Medium-Low Drive"></xs:enumeration>
+                                        <xs:enumeration value="0 Low Drive (lowest consumption)"></xs:enumeration>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:attribute>
                             <xs:attribute name="LSEFrequency"
 								use="required">
 								<xs:simpleType>
@@ -52,21 +65,7 @@
 										<xs:whiteSpace
 											value="collapse">
 										</xs:whiteSpace>
-
 										<xs:minInclusive value="0"></xs:minInclusive>
-									</xs:restriction>
-								</xs:simpleType>
-							</xs:attribute>
-							<xs:attribute name="VDD" use="required">
-								<xs:simpleType>
-									<xs:restriction base="xs:int">
-										<xs:whiteSpace
-											value="collapse">
-										</xs:whiteSpace>
-
-										<xs:minInclusive value="180"></xs:minInclusive>
-
-										<xs:maxInclusive value="360"></xs:maxInclusive>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:attribute>
@@ -75,7 +74,6 @@
 					<xs:element name="ports" type="portsType" maxOccurs="1" minOccurs="1">
 					</xs:element>
 				</xs:sequence>
-
 			</xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -94,15 +92,9 @@
         maxOccurs="1" minOccurs="1"></xs:element>
       <xs:element name="GPIOF" type="STM32GPIOv2PortType"
         maxOccurs="1" minOccurs="1"></xs:element>
-      <xs:element name="GPIOG" type="STM32GPIOv2PortType"
-        maxOccurs="1" minOccurs="1"></xs:element>
-      <xs:element name="GPIOH" type="STM32GPIOv2PortType"
-        maxOccurs="1" minOccurs="1"></xs:element>
-      <xs:element name="GPIOI" type="STM32GPIOv2PortType"
-        maxOccurs="1" minOccurs="1"></xs:element>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="board" type="STM32F4xxBoardType"></xs:element>
+  <xs:element name="board" type="STM32F3xxBoardType"></xs:element>
 
 </xs:schema>

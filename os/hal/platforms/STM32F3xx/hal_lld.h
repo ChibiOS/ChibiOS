@@ -25,7 +25,7 @@
  *          @p board.h file:
  *          - STM32_LSECLK.
  *          - STM32_LSEDRV.
- *          - STM32_LSEBYP (optionally).
+ *          - STM32_LSE_BYPASS (optionally).
  *          - STM32_HSECLK.
  *          - STM32_HSE_BYPASS (optionally).
  *          .

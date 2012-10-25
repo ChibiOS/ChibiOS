@@ -5,12 +5,12 @@
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f3xx_board.xsd">
   <configuration_settings>
   	<templates_path>resources/gencfg/processors/boards/stm32f3xx/templates</templates_path>
-  	<output_path>..</output_path>
+  	<output_path>.</output_path>
   </configuration_settings>
-  <board_name>STMicroelectronics STM32F3-Discovery</board_name>
-  <board_id>ST_STM32F3_DISCOVERY</board_id>
+  <board_name>-----human readable board name-----</board_name>
+  <board_id>BOARD_IDENTIFIER</board_id>
   <board_functions></board_functions>
-  <clocks HSEFrequency="8000000" HSEBypass="true" LSEFrequency="0"
+  <clocks HSEFrequency="8000000" HSEBypass="false" LSEFrequency="32768"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
     <GPIOA>
