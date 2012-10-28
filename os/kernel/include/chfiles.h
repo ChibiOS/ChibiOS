@@ -141,7 +141,7 @@ typedef struct {
  *
  * @api
  */
-#define chFileStreamGetSize(ip) ((ip)->vmt->getposition(ip))
+#define chFileStreamGetSize(ip) ((ip)->vmt->getsize(ip))
 
 /**
  * @brief   Returns the current file pointer position.

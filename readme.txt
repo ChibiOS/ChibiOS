@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed bug in abstract file interface (bug 3579660).
 - FIX: Fixed various typos and wrong limits in the STM32F4/F2 HAL driver
   (bug 3578944).
 - FIX: Fixed ARM CMx crt0.c fails at low optimization levels (bug 3578927).
