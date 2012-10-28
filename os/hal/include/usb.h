@@ -161,6 +161,22 @@
   USB_DESC_INDEX(iInterface)
 
 /**
+ * @brief   Interface Association Descriptor helper macro.
+ */
+#define USB_DESC_INTERFACE_ASSOCIATION(bFirstInterface,                     \
+                           bInterfaceCount, bFunctionClass,                 \
+                           bFunctionSubClass, bFunctionProcotol,            \
+                           iInterface)                                      \
+  USB_DESC_BYTE(8),                                                         \
+  USB_DESC_BYTE(USB_DESCRIPTOR_INTERFACE_ASSOCIATION),                      \
+  USB_DESC_BYTE(bFirstInterface),                                           \
+  USB_DESC_BYTE(bInterfaceCount),                                           \
+  USB_DESC_BYTE(bFunctionClass),                                            \
+  USB_DESC_BYTE(bFunctionSubClass),                                         \
+  USB_DESC_BYTE(bFunctionProcotol),                                         \
+  USB_DESC_INDEX(iInterface)
+
+/**
  * @brief   Endpoint Descriptor helper macro.
  */
 #define USB_DESC_ENDPOINT(bEndpointAddress, bmAttributes, wMaxPacketSize,   \
