@@ -151,8 +151,8 @@ static const SPIConfig spi2cfg = {
 };
 
 /*
- * This is a periodic thread that does absolutely nothing except flashing
- * a LED.
+ * This is a periodic thread that reads accelerometer and outputs
+ * result to SPI2 and PWM.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
@@ -306,10 +306,8 @@ int main(void) {
                     NORMALPRIO + 10, Thread1, NULL);
 
   /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state, when the button is
-   * pressed the test procedure is launched with output on the serial
-   * driver 2.
+   * Normal main() thread activity, in this demo it just performs
+   * a shell respawn upon its termination.
    */
   while (TRUE) {
     if (!shelltp) {

@@ -32,6 +32,7 @@ static msg_t Thread1(void *arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (TRUE) {
+      /* TODO */
 //    palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
     chThdSleepMilliseconds(500);
 //    palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
@@ -54,6 +55,8 @@ int main(void) {
   halInit();
   chSysInit();
 
+  /* TODO: inialize serial driver 1 or 2 */
+
   /*
    * Creates the example thread.
    */
@@ -62,10 +65,10 @@ int main(void) {
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state, when the button is
-   * pressed the test procedure is launched with output on the serial
-   * driver 2.
+   * pressed the test procedure is launched.
    */
   while (TRUE) {
+    /* TODO */
 //    if (palReadPad(GPIOA, GPIOA_BUTTON))
 //      TestThread(&SD2);
     chThdSleepMilliseconds(500);

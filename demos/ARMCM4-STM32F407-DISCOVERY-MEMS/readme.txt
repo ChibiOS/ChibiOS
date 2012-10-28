@@ -9,10 +9,10 @@ The demo runs on an ST STM32F4-Discovery board.
 ** The Demo **
 
 The demo shows how to use PWM and SPI drivers using synchronous APIs. The PWM
-driver the four board lets with the data read from the LIS320DL accelerometer.
+driver the four board LEDs with the data read from the LIS320DL accelerometer.
 The data is also transmitted on the SPI2 port.
-By pressing the button located on the board the test procedure is activated
-with output on the serial port SD2 (USART2).
+A simple command shell is activated on virtual serial port SD2 via USB-CDC
+driver (use micro-USB plug on STM32F4-Discovery board).
 
 ** Build Procedure **
 
