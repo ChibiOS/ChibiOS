@@ -340,15 +340,15 @@ typedef struct {
   /**
    * @brief Initialization value for the CR1 register.
    */
-  uint16_t                  cr1;
+  uint32_t                  cr1;
   /**
    * @brief Initialization value for the CR2 register.
    */
-  uint16_t                  cr2;
+  uint32_t                  cr2;
   /**
    * @brief Initialization value for the CR3 register.
    */
-  uint16_t                  cr3;
+  uint32_t                  cr3;
 } UARTConfig;
 
 /**

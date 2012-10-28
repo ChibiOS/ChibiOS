@@ -82,6 +82,7 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed wrong type for UART config registers (bug 3579434).
 - FIX: Fixed various typos and wrong limits in the STM32F4/F2 HAL driver
   (bug 3578944)(backported to 2.4.3).
 - FIX: Fixed ARM CMx crt0.c fails at low optimization levels (bug 3578927)
