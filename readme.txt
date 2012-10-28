@@ -82,6 +82,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed bug in abstract file interface (bug 3579660)(backported to
+  2.2.10 and 2.4.3).
 - FIX: Fixed wrong type for UART config registers (bug 3579434).
 - FIX: Fixed various typos and wrong limits in the STM32F4/F2 HAL driver
   (bug 3578944)(backported to 2.4.3).
