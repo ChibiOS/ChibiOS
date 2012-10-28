@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed double chSysInit() call in MSP430F1611 demo (bug 3581304).
 - FIX: Fixed bug in abstract file interface (bug 3579660).
 - FIX: Fixed various typos and wrong limits in the STM32F4/F2 HAL driver
   (bug 3578944).

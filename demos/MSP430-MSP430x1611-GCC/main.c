@@ -62,15 +62,9 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 2 using the driver default configuration.
+   * Activates the serial driver 1 using the driver default configuration.
    */
   sdStart(&SD1, NULL);
-
-  /*
-   * The main() function becomes a thread here then the interrupts are
-   * enabled and ChibiOS/RT goes live.
-   */
-  chSysInit();
 
   /*
    * Creates the blinker thread.
@@ -79,7 +73,7 @@ int main(void) {
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop.
+   * checking a button and run a test suite if button was pressed.
    */
   while (TRUE) {
     if (!palReadPad(IOPORT6, P6_I_BUTTON))
