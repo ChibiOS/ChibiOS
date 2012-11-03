@@ -131,6 +131,8 @@ CH_IRQ_HANDLER(STM32_CAN1_SCE_HANDLER) {
   CAN1->MSR = CAN_MSR_ERRI | CAN_MSR_WKUI | CAN_MSR_SLAKI;
   /* Wakeup event.*/
   if (msr & CAN_MSR_WKUI) {
+    CAND1.state = CAN_READY;
+    CAND1.can->MCR &= ~CAN_MCR_SLEEP;
     chSysLockFromIsr();
     chEvtBroadcastI(&CAND1.wakeup_event);
     chSysUnlockFromIsr();
