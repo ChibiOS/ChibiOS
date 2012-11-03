@@ -249,7 +249,7 @@
 #define VAL_GPIOA_OSPEEDR   0xFFFFFFFF
 #define VAL_GPIOA_PUPDR     (PIN_PUDR_PULLUP(GPIOA_DCMI_HSYNC) |            \
                              PIN_PUDR_PULLUP(GPIOA_DCMI_PIXCLK) |           \
-                             PIN_PUDR_PULLUP(GPIOA_OTG_FS_VBUS) |           \
+                             PIN_PUDR_PULLDOWN(GPIOA_OTG_FS_VBUS) |         \
                              PIN_PUDR_PULLUP(GPIOA_DCMI_D1) |               \
                              PIN_PUDR_PULLDOWN(GPIOA_SWCLK))
 #define VAL_GPIOA_ODR       0xFFFFFFDF
@@ -303,7 +303,7 @@
 #define VAL_GPIOB_OSPEEDR   0xFFFFFFFF
 #define VAL_GPIOB_PUPDR     (PIN_PUDR_PULLUP(GPIOB_DCMI_D5) |               \
                              PIN_PUDR_PULLUP(GPIOB_DCMI_VSYNC) |            \
-                             PIN_PUDR_PULLUP(GPIOB_OTG_HS_VBUS))
+                             PIN_PUDR_PULLDOWN(GPIOB_OTG_HS_VBUS))
 #define VAL_GPIOB_ODR       0xFFFFFFFC
 #define VAL_GPIOB_AFRL      (PIN_AFIO_AF(GPIOB_I2S3_CK, 6) |                \
                              PIN_AFIO_AF(GPIOB_I2S3_SD, 6))
@@ -369,7 +369,7 @@
  *
  * PD0  - GPIOD_USELESS0        (input pull-up).
  * PD1  - GPIOD_USELESS1        (input pull-up).
- * PD2  - GPIOD_SPI3_CS         (output push-pull).
+ * PD2  - GPIOD_SPI3_CS         (output opendrain).
  * PD3  - GPIOD_LCD_RST         (output push-pull).
  * PD4  - GPIOD_USELESS4        (input pull-up).
  * PD5  - GPIOD_USELESS5        (input pull-up).
@@ -400,7 +400,7 @@
                              PIN_MODE_INPUT(GPIOD_USB_HS_FAULT) |           \
                              PIN_MODE_INPUT(GPIOD_USELESS14) |              \
                              PIN_MODE_INPUT(GPIOD_USELESS15))
-#define VAL_GPIOD_OTYPER    0x00000000
+#define VAL_GPIOD_OTYPER    PIN_OTYPE_OPENDRAIN(GPIOD_SPI3_CS)
 #define VAL_GPIOD_OSPEEDR   0xFFFFFFFF
 #define VAL_GPIOD_PUPDR     (PIN_PUDR_PULLUP(GPIOD_USELESS0) |              \
                              PIN_PUDR_PULLUP(GPIOD_USELESS1) |              \
