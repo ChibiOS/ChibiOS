@@ -362,7 +362,7 @@
  *
  * PD0  - GPIOD_USELESS0        (input pull-up).
  * PD1  - GPIOD_USELESS1        (input pull-up).
- * PD2  - GPIOD_SPI3_CS         (output push-pull).
+ * PD2  - GPIOD_SPI3_CS         (output opendrain).
  * PD3  - GPIOD_LCD_RST         (output push-pull).
  * PD4  - GPIOD_USELESS4        (input pull-up).
  * PD5  - GPIOD_USELESS5        (input pull-up).
@@ -393,7 +393,7 @@
                              PIN_MODE_INPUT(GPIOD_USB_HS_FAULT) |           \
                              PIN_MODE_INPUT(GPIOD_USELESS14) |              \
                              PIN_MODE_INPUT(GPIOD_USELESS15))
-#define VAL_GPIOD_OTYPER    0x00000000
+#define VAL_GPIOD_OTYPER    PIN_OTYPE_OPENDRAIN(GPIOD_SPI3_CS)
 #define VAL_GPIOD_OSPEEDR   0xFFFFFFFF
 #define VAL_GPIOD_PUPDR     (PIN_PUDR_PULLUP(GPIOD_USELESS0) |              \
                              PIN_PUDR_PULLUP(GPIOD_USELESS1) |              \
