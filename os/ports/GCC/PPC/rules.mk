@@ -98,7 +98,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $<
+	@echo Compiling $(<F)
 	@$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
@@ -107,7 +107,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(CFLAGS) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $<
+	@echo Compiling $(<F)
 	@$(CC) -c $(CFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
@@ -116,7 +116,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(AS) -c $(ASFLAGS) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $<
+	@echo Compiling $(<F)
 	@$(AS) -c $(ASFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
@@ -125,7 +125,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo 
 	$(CC) -c $(ASXFLAGS) -I. $(IINCDIR) $< -o $@
 else
-	@echo Compiling $<
+	@echo Compiling $(<F)
 	@$(CC) -c $(ASXFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
