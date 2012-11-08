@@ -64,7 +64,8 @@ typedef struct {
   /** @brief Port 0 setup data.*/
   at91sam7_pio_setup_t P0Data;
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
-    (SAM7_PLATFORM == SAM7X512) || defined(__DOXYGEN__)
+    (SAM7_PLATFORM == SAM7X512) || (SAM7_PLATFORM == SAM7A3) || \
+    defined(__DOXYGEN__)
   /** @brief Port 1 setup data.*/
   at91sam7_pio_setup_t P1Data;
 #endif
@@ -112,7 +113,8 @@ typedef AT91PS_PIO ioportid_t;
  * @brief   PIO port B identifier.
  */
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
-    (SAM7_PLATFORM == SAM7X512) || defined(__DOXYGEN__)
+    (SAM7_PLATFORM == SAM7X512) || (SAM7_PLATFORM == SAM7A3) || \
+    defined(__DOXYGEN__)
 #define IOPORT2         AT91C_BASE_PIOB
 #endif
 

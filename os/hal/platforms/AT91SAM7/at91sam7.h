@@ -31,6 +31,7 @@
 #define SAM7X128        4
 #define SAM7X256        5
 #define SAM7X512        6
+#define SAM7A3          7
 
 #ifndef SAM7_PLATFORM
 #error "SAM7 platform not defined"
@@ -50,6 +51,8 @@
 #include "at91lib/AT91SAM7X256.h"
 #elif SAM7_PLATFORM == SAM7X512
 #include "at91lib/AT91SAM7X512.h"
+#elif SAM7_PLATFORM == SAM7A3
+#include "at91lib/AT91SAM7A3.h"
 #else
 #error "SAM7 platform not supported"
 #endif

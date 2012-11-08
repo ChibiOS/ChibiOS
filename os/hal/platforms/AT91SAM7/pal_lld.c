@@ -63,7 +63,7 @@ void _pal_lld_init(const PALConfig *config) {
 
   uint32_t ports = (1 << AT91C_ID_PIOA);
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
-    (SAM7_PLATFORM == SAM7X512)
+    (SAM7_PLATFORM == SAM7X512) || (SAM7_PLATFORM == SAM7A3)
   ports |= (1 << AT91C_ID_PIOB);
 #endif
   AT91C_BASE_PMC->PMC_PCER = ports;
@@ -87,7 +87,7 @@ void _pal_lld_init(const PALConfig *config) {
    * PIOB setup.
    */
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) || \
-    (SAM7_PLATFORM == SAM7X512)
+    (SAM7_PLATFORM == SAM7X512) || (SAM7_PLATFORM == SAM7A3)
   AT91C_BASE_PIOB->PIO_PPUER  = config->P1Data.pusr;    /* Pull-up as spec.*/
   AT91C_BASE_PIOB->PIO_PPUDR  = ~config->P1Data.pusr;
   AT91C_BASE_PIOB->PIO_PER  = 0xFFFFFFFF;               /* PIO enabled.*/

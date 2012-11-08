@@ -54,7 +54,7 @@ static CH_IRQ_HANDLER(SYSIrqHandler) {
 #if USE_SAM7_DBGU_UART
   if (AT91C_BASE_DBGU->DBGU_CSR & 
     (AT91C_US_RXRDY | AT91C_US_TXRDY | AT91C_US_PARE | AT91C_US_FRAME | AT91C_US_OVRE | AT91C_US_RXBRK)) {
-    sd_lld_serve_interrupt(&SD3);
+    sd_lld_serve_interrupt(&SDDBG);
   }
 #endif  
   AT91C_BASE_AIC->AIC_EOICR = 0;
@@ -93,33 +93,6 @@ bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
  * Board-specific initialization code.
  */
 void boardInit(void) {
-
-  /*
-   * LCD pins setup.
-   */
-  palClearPad(IOPORT2, PIOB_LCD_BL);
-  palSetPadMode(IOPORT2, PIOB_LCD_BL, PAL_MODE_OUTPUT_PUSHPULL);
-
-  palSetPad(IOPORT1, PIOA_LCD_RESET);
-  palSetPadMode(IOPORT1, PIOA_LCD_RESET, PAL_MODE_OUTPUT_PUSHPULL);
-
-  /*
-   * Joystick and buttons setup.
-   */
-  palSetGroupMode(IOPORT1,
-                  PIOA_B1_MASK | PIOA_B2_MASK | PIOA_B3_MASK |
-                  PIOA_B4_MASK | PIOA_B5_MASK,
-                  0,
-                  PAL_MODE_INPUT);
-  palSetGroupMode(IOPORT2, PIOB_SW1_MASK | PIOB_SW2_MASK, 0, PAL_MODE_INPUT);
-
-  /*
-   * MMC/SD slot setup.
-   */
-  palSetGroupMode(IOPORT2,
-                  PIOB_MMC_WP_MASK | PIOB_MMC_CP_MASK,
-                  0,
-                  PAL_MODE_INPUT);
 
   /*
    * PIT Initialization.
