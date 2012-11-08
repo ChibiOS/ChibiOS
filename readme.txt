@@ -82,6 +82,7 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- NEW: AT91SAM7A3 basic support.
 - FIX: Fixed STM32F4xx: Wrong CAN1 SCE interrupt number definition (bug
   3581571).
 - FIX: Fixed STM32_P407: implement mmc_lld_is_card_inserted (bug 3581929)
