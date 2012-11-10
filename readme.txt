@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed missing ; in testmbox.c (bug 3585979).
 - FIX: Fixed STM32_P407: implement mmc_lld_is_card_inserted (bug 3581929).
 - FIX: Fixed double chSysInit() call in MSP430F1611 demo (bug 3581304).
 - FIX: Fixed bug in abstract file interface (bug 3579660).
