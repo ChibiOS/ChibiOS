@@ -8,6 +8,9 @@ N = Decided against.
 Version 2.5.1
 
 Within 2.5.x:
+- SAM4L support.
+- Recursive mutexes.
+X SPC56x support.
 X Revision of the RTCv2 driver implementation.
 X File System infrastructure.
   - FatFs wrapper.

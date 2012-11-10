@@ -82,7 +82,6 @@
 *****************************************************************************
 
 *** 2.5.1 ***
-- NEW: AT91SAM7A3 basic support.
 - FIX: Fixed STM32F4xx: Wrong CAN1 SCE interrupt number definition (bug
   3581571).
 - FIX: Fixed STM32_P407: implement mmc_lld_is_card_inserted (bug 3581929)
@@ -131,6 +130,7 @@
   (backported to 2.4.3).
 - FIX: Fixed STM8L, cosmic compiler: c_lreg not saved (bug 3566342)(backported
   to 2.2.10 and 2.4.3).
+- NEW: AT91SAM7A3 basic support.
 - NEW: Unified the STM32F4xx and STM32F2xx platform code. The STM32F2xx now is
   only supported as an STM32F4xx variant and not tested separately.
 - NEW: Updated STM32F1, F2, F4, L1 ADC drivers to allow HW triggering.
