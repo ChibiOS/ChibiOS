@@ -82,6 +82,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed error in palWritePad() macro (bug 3586230)(backported to 2.2.10
+  and 2.4.3).
 - FIX: Fixed missing ; in testmbox.c (bug 3585979)(backported to 2.4.3).
 - FIX: Fixed STM32F4xx: Wrong CAN1 SCE interrupt number definition (bug
   3581571).
