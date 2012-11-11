@@ -275,7 +275,7 @@ typedef LPC_GPIO_TypeDef *ioportid_t;
  * @notapi
  */
 #define pal_lld_writepad(port, pad, bit)                                    \
-  ((port)->MASKED_ACCESS[(mask) << (pad)] = (bit) << (pad))
+  ((port)->MASKED_ACCESS[1 << (pad)] = (bit) << (pad))
 
 /**
  * @brief   Sets a pad logical state to @p PAL_HIGH.
