@@ -317,7 +317,7 @@ void spiIgnore(SPIDriver *spip, size_t n) {
  * @api
  */
 void spiExchange(SPIDriver *spip, size_t n,
-                     const void *txbuf, void *rxbuf) {
+                 const void *txbuf, void *rxbuf) {
 
   chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL) && (txbuf != NULL),
              "spiExchange");
