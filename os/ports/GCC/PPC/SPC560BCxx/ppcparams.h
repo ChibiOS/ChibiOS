@@ -35,12 +35,12 @@
 /**
  * @brief   PPC core model.
  */
-#define PPC_VARIANT             PPC_VARIANT_e200z0
+#define PPC_VARIANT             PPC_VARIANT_e200z0h
 
 /**
  * @brief   Number of writable bits in IVPR register.
  */
-#define PPC_IVPR_BITS           16
+#define PPC_IVPR_BITS           20
 
 /**
  * @brief   IVORx registers support.

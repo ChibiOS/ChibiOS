@@ -49,9 +49,10 @@
  * @name    Supported core variants
  * @{
  */
-#define PPC_VARIANT_e200z0              200
-#define PPC_VARIANT_e200z3              203
-#define PPC_VARIANT_e200z4              204
+#define PPC_VARIANT_e200z0              20000
+#define PPC_VARIANT_e200z0h             20010
+#define PPC_VARIANT_e200z3              20300
+#define PPC_VARIANT_e200z4              20400
 /** @} */
 
 #include "ppcparams.h"
@@ -110,6 +111,8 @@
  */
 #if (PPC_VARIANT == PPC_VARIANT_e200z0) || defined(__DOXYGEN__)
 #define CH_CORE_VARIANT_NAME            "e200z0"
+#elif PPC_VARIANT == PPC_VARIANT_e200z0h
+#define CH_CORE_VARIANT_NAME            "e200z3h"
 #elif PPC_VARIANT == PPC_VARIANT_e200z3
 #define CH_CORE_VARIANT_NAME            "e200z3"
 #elif PPC_VARIANT == PPC_VARIANT_e200z4

@@ -19,7 +19,7 @@
 */
 
 /*
- * SPC560P44 memory setup.
+ * SPC560B44 memory setup.
  */
 __irq_stack_size__      = 0x0000; /* Not yet used.*/
 __process_stack_size__  = 0x0800;
@@ -28,7 +28,7 @@ MEMORY
 {
     flash     : org = 0x00000000, len = 384k
     dataflash : org = 0x00800000, len = 64k
-    ram       : org = 0x40000000, len = 36k
+    ram       : org = 0x40000000, len = 28k
 }
 
 /*
@@ -51,11 +51,11 @@ SECTIONS
         KEEP(*(.crt0))
         . = ALIGN(0x00000800);
         KEEP(*(.vectors))
-        /* Note, have to waste the first 64KB because the IVPR register
-           requires an alignment of 64KB and the first 64KB cannot be used,
+        /* Note, have to waste the first 4KB because the IVPR register
+           requires an alignment of 4KB and the first 4KB cannot be used,
            IVOR0 would conflict with the BAM word. Applications could
-           allocate code or data in the first 64KB by using special sections.*/
-        . = ALIGN(0x00010000);
+           allocate code or data in the first 4KB by using special sections.*/
+        . = ALIGN(0x00001000);
         __ivpr_base__ = .;
         KEEP(*(.handlers))
     } > flash
