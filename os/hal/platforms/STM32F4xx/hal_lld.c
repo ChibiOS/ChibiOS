@@ -202,9 +202,14 @@ void stm32_clock_init(void) {
   RCC->CFGR |= STM32_MCO2PRE | STM32_MCO2SEL | STM32_MCO1PRE | STM32_MCO1SEL |
                STM32_RTCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
 
-  /* Flash setup.*/
-  FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN | FLASH_ACR_DCEN |
-               STM32_FLASHBITS;
+  /* Flash setup.
+     Some old revisions of F4x MCUs randomly crashes with compiler
+     optimizations enabled AND flash caches enabled. */
+  if ((DBGMCU->IDCODE == 0x20006411) && (SCB->CPUID == 0x410FC241))
+    FLASH->ACR = FLASH_ACR_PRFTEN | STM32_FLASHBITS;
+  else
+    FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN |
+                 FLASH_ACR_DCEN | STM32_FLASHBITS;
 
   /* Switching to the configured clock source if it is different from MSI.*/
 #if (STM32_SW != STM32_SW_HSI)
