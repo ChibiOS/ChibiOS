@@ -79,7 +79,7 @@
             <pin8 ID="I2C1_SCL" Type="OpenDrain" Speed="Maximum" Resistor="Floating"
                 Level="High" Mode="Alternate" Alternate="4" />
             <pin9 ID="I2C1_SDA" Type="OpenDrain" Speed="Maximum" Resistor="Floating"
-                Level="High" Mode="Alternate" Alternate="0" />
+                Level="High" Mode="Alternate" Alternate="4" />
             <pin10 ID="SPI2_SCK" Type="PushPull" Speed="Maximum" Resistor="Floating"
                 Level="High" Mode="Alternate" Alternate="5" />
             <pin11 ID="" Type="PushPull" Speed="Maximum" Resistor="PullUp"

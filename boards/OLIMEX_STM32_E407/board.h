@@ -367,7 +367,7 @@
  * PB6  - PIN6                      (input pullup).
  * PB7  - PIN7                      (input pullup).
  * PB8  - I2C1_SCL                  (alternate 4).
- * PB9  - I2C1_SDA                  (alternate 0).
+ * PB9  - I2C1_SDA                  (alternate 4).
  * PB10 - SPI2_SCK                  (alternate 5).
  * PB11 - PIN11                     (input pullup).
  * PB12 - OTG_HS_ID                 (alternate 12).
@@ -464,7 +464,7 @@
                                      PIN_AFIO_AF(GPIOB_PIN6, 0) |           \
                                      PIN_AFIO_AF(GPIOB_PIN7, 0))
 #define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_I2C1_SCL, 4) |       \
-                                     PIN_AFIO_AF(GPIOB_I2C1_SDA, 0) |       \
+                                     PIN_AFIO_AF(GPIOB_I2C1_SDA, 4) |       \
                                      PIN_AFIO_AF(GPIOB_SPI2_SCK, 5) |       \
                                      PIN_AFIO_AF(GPIOB_PIN11, 0) |          \
                                      PIN_AFIO_AF(GPIOB_OTG_HS_ID, 12) |     \
