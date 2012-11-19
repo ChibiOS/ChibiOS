@@ -104,6 +104,13 @@
                                              SPC5_ME_MC_CFLAON_NORMAL |     \
                                              SPC5_ME_MC_DFLAON_NORMAL |     \
                                              SPC5_ME_MC_MVRON)
+#define SPC5_ME_STANDBY0_MC_BITS            (SPC5_ME_MC_SYSCLK_FMPLL0 |     \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
 #define SPC5_ME_RUN_PC0_BITS                0
 #define SPC5_ME_RUN_PC1_BITS                (SPC5_ME_RUN_PC_TEST |          \
                                              SPC5_ME_RUN_PC_SAFE |          \

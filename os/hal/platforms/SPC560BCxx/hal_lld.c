@@ -141,6 +141,7 @@ void spc_clock_init(void) {
   ME.RUN[3].R       = SPC5_ME_RUN3_MC_BITS;     /* RUN0 run mode.           */
   ME.HALT0.R        = SPC5_ME_HALT0_MC_BITS;    /* HALT0 run mode.          */
   ME.STOP0.R        = SPC5_ME_STOP0_MC_BITS;    /* STOP0 run mode.          */
+  ME.STANDBY0.R     = SPC5_ME_STANDBY0_MC_BITS; /* STANDBY0 run mode.       */
 
   /* Peripherals run and low power modes initialization.*/
   ME.RUNPC[0].R     = SPC5_ME_RUN_PC0_BITS;

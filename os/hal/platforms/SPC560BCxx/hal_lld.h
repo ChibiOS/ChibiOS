@@ -408,6 +408,19 @@
 #endif
 
 /**
+ * @brief   STANDBY0 mode settings.
+ */
+#if !defined(SPC5_ME_STANDBY0_MC_BITS) || defined(__DOXYGEN__)
+#define SPC5_ME_STANDBY0_MC_BITS            (SPC5_ME_MC_SYSCLK_FMPLL0 |     \
+                                             SPC5_ME_MC_IRCON |             \
+                                             SPC5_ME_MC_XOSC0ON |           \
+                                             SPC5_ME_MC_PLL0ON |            \
+                                             SPC5_ME_MC_CFLAON_NORMAL |     \
+                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_MVRON)
+#endif
+
+/**
  * @brief   Peripheral mode 0 (run mode).
  * @note    Do not change this setting, it is expected to be the "never run"
  *          mode.
