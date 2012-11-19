@@ -19,15 +19,15 @@
 */
 
 /**
- * @file    SPC560Pxx/spc560p_registry.h
- * @brief   SPC560Pxx capabilities registry.
+ * @file    SPC560BCxx/spc560bc_registry.h
+ * @brief   SPC560B/Cxx capabilities registry.
  *
  * @addtogroup HAL
  * @{
  */
 
-#ifndef _SPC560P_REGISTRY_H_
-#define _SPC560P_REGISTRY_H_
+#ifndef _SPC560BC_REGISTRY_H_
+#define _SPC560BC_REGISTRY_H_
 
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
@@ -68,6 +68,6 @@
 #define SPC5_SIU_NUM_PADSELS                36
 /** @} */
 
-#endif /* _SPC560P_REGISTRY_H_ */
+#endif /* _SPC560BC_REGISTRY_H_ */
 
 /** @} */
