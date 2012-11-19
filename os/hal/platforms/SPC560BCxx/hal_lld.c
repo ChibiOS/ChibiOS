@@ -116,6 +116,10 @@ void spc_clock_init(void) {
   while (!ME.GS.B.S_FIRC)
     ;
 
+  /* Oscillators dividers setup.*/
+  CGM.FIRC_CTL.B.RCDIV   = SPC5_IRCDIV_VALUE - 1;
+  CGM.FXOSC_CTL.B.OSCDIV = SPC5_XOSCDIV_VALUE - 1;
+
 #if !SPC5_NO_INIT
 
 #if defined(SPC5_OSC_BYPASS)
@@ -126,8 +130,8 @@ void spc_clock_init(void) {
 
   /* Initialization of the FMPLLs settings.*/
   CGM.FMPLL_CR.R = SPC5_FMPLL0_ODF |
-                      ((SPC5_FMPLL0_IDF_VALUE - 1) << 26) |
-                      (SPC5_FMPLL0_NDIV_VALUE << 16);
+                   ((SPC5_FMPLL0_IDF_VALUE - 1) << 26) |
+                   (SPC5_FMPLL0_NDIV_VALUE << 16);
   CGM.FMPLL_MR.R = 0;                           /* TODO: Add a setting.     */
 
   /* Run modes initialization.*/
