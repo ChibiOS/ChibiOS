@@ -582,12 +582,12 @@
 #endif
 
 /**
- * @brief   PIT channel 3 IRQ priority.
+ * @brief   PIT channel 0 IRQ priority.
  * @note    This PIT channel is allocated permanently for system tick
  *          generation.
  */
-#if !defined(SPC5_PIT3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PIT3_IRQ_PRIORITY              4
+#if !defined(SPC5_PIT0_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_PIT0_IRQ_PRIORITY              4
 #endif
 
 /*===========================================================================*/

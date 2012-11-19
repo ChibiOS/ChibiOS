@@ -50,7 +50,7 @@
  *
  * @isr
  */
-CH_IRQ_HANDLER(vector127) {
+CH_IRQ_HANDLER(vector59) {
 
   CH_IRQ_PROLOGUE();
 
@@ -59,7 +59,7 @@ CH_IRQ_HANDLER(vector127) {
   chSysUnlockFromIsr();
 
   /* Resets the PIT channel 3 IRQ flag.*/
-  PIT.CH[3].TFLG.R = 1;
+  PIT.CH[0].TFLG.R = 1;
 
   CH_IRQ_EPILOGUE();
 }
@@ -88,18 +88,18 @@ void hal_lld_init(void) {
   INTC.CPR.R        = 0;
   INTC.IACKR.R      = (uint32_t)_vectors;
 
-  /* PIT channel 3 initialization for Kernel ticks, the PIT is configured
+  /* PIT channel 0 initialization for Kernel ticks, the PIT is configured
      to run in DRUN,RUN0...RUN3 and HALT0 modes, the clock is gated in other
      modes.*/
-  INTC.PSR[127].R   = SPC5_PIT3_IRQ_PRIORITY;
+  INTC.PSR[59].R    = SPC5_PIT0_IRQ_PRIORITY;
   halSPCSetPeripheralClockMode(92,
-                                   SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2));
+                               SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2));
   reg = halSPCGetSystemClock() / CH_FREQUENCY - 1;
   PIT.PITMCR.R      = 1;        /* PIT clock enabled, stop while debugging. */
-  PIT.CH[3].LDVAL.R = reg;
-  PIT.CH[3].CVAL.R  = reg;
-  PIT.CH[3].TFLG.R  = 1;        /* Interrupt flag cleared.                  */
-  PIT.CH[3].TCTRL.R = 3;        /* Timer active, interrupt enabled.         */
+  PIT.CH[0].LDVAL.R = reg;
+  PIT.CH[0].CVAL.R  = reg;
+  PIT.CH[0].TFLG.R  = 1;        /* Interrupt flag cleared.                  */
+  PIT.CH[0].TCTRL.R = 3;        /* Timer active, interrupt enabled.         */
 }
 
 /**
