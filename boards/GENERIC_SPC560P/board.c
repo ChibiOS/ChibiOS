@@ -62,7 +62,7 @@ const PALConfig pal_default_config =
  */
 void __early_init(void) {
 
-  spc560p_clock_init();
+  spc_clock_init();
 }
 
 /*

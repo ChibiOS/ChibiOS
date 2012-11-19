@@ -46,15 +46,15 @@ PROJECT = ch
 
 # Imported source files
 CHIBIOS = ../..
-include $(CHIBIOS)/boards/GENERIC_SPC560P/board.mk
-include $(CHIBIOS)/os/hal/platforms/SPC560Pxx/platform.mk
+include $(CHIBIOS)/boards/GENERIC_SPC560B/board.mk
+include $(CHIBIOS)/os/hal/platforms/SPC560BCxx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/PPC/SPC560Pxx/port.mk
+include $(CHIBIOS)/os/ports/GCC/PPC/SPC560BCxx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
-LDSCRIPT= $(PORTLD)/SPC560P44.ld
+LDSCRIPT= $(PORTLD)/SPC560B50.ld
 
 # C sources here.
 CSRC = $(PORTSRC) \

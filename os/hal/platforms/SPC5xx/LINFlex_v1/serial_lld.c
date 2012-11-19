@@ -97,7 +97,7 @@ static void spc5_linflex_init(SerialDriver *sdp, const SerialConfig *config) {
      parameters.*/
   linflexp->UARTCR.R  = SPC5_UARTCR_UART;       /* UART mode FIRST.         */
   linflexp->UARTCR.R  = SPC5_UARTCR_UART | SPC5_UARTCR_RXEN | config->mode;
-  div = halSPC560PGetSystemClock() / config->speed;
+  div = halSPCGetSystemClock() / config->speed;
   linflexp->LINFBRR.R = (uint16_t)(div & 15);   /* Fractional divider.      */
   linflexp->LINIBRR.R = (uint16_t)(div >> 4);   /* Integer divider.         */
   linflexp->UARTSR.R  = 0xFFFF;                 /* Clearing UARTSR register.*/
@@ -363,14 +363,14 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
   if (sdp->state == SD_STOP) {
 #if SPC5_SERIAL_USE_LINFLEX0
     if (&SD1 == sdp) {
-      halSPC560PSetPeripheralClockMode(SPC5_LINFLEX0_PCTL,
-                                       SPC5_SERIAL_LINFLEX0_START_PCTL);
+      halSPCSetPeripheralClockMode(SPC5_LINFLEX0_PCTL,
+                                   SPC5_SERIAL_LINFLEX0_START_PCTL);
     }
 #endif
 #if SPC5_SERIAL_USE_LINFLEX1
     if (&SD2 == sdp) {
-      halSPC560PSetPeripheralClockMode(SPC5_LINFLEX1_PCTL,
-                                       SPC5_SERIAL_LINFLEX1_START_PCTL);
+      halSPCSetPeripheralClockMode(SPC5_LINFLEX1_PCTL,
+                                   SPC5_SERIAL_LINFLEX1_START_PCTL);
     }
 #endif
   }
@@ -391,15 +391,15 @@ void sd_lld_stop(SerialDriver *sdp) {
 
 #if SPC5_SERIAL_USE_LINFLEX0
     if (&SD1 == sdp) {
-      halSPC560PSetPeripheralClockMode(SPC5_LINFLEX0_PCTL,
-                                       SPC5_SERIAL_LINFLEX0_STOP_PCTL);
+      halSPCSetPeripheralClockMode(SPC5_LINFLEX0_PCTL,
+                                   SPC5_SERIAL_LINFLEX0_STOP_PCTL);
       return;
     }
 #endif
 #if SPC5_SERIAL_USE_LINFLEX1
     if (&SD2 == sdp) {
-      halSPC560PSetPeripheralClockMode(SPC5_LINFLEX1_PCTL,
-                                       SPC5_SERIAL_LINFLEX1_STOP_PCTL);
+      halSPCSetPeripheralClockMode(SPC5_LINFLEX1_PCTL,
+                                   SPC5_SERIAL_LINFLEX1_STOP_PCTL);
       return;
     }
 #endif

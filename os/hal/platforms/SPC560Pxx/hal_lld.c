@@ -79,7 +79,7 @@ void hal_lld_init(void) {
 
   /* The system is switched to the RUN0 mode, the default for normal
      operations.*/
-  if (halSPC560PSetRunMode(SPC5_RUNMODE_RUN0) == CH_FAILED)
+  if (halSPCSetRunMode(SPC5_RUNMODE_RUN0) == CH_FAILED)
     chSysHalt();
 
   /* INTC initialization, software vector mode, 4 bytes vectors, starting
@@ -92,9 +92,9 @@ void hal_lld_init(void) {
      to run in DRUN,RUN0...RUN3 and HALT0 modes, the clock is gated in other
      modes.*/
   INTC.PSR[127].R   = SPC5_PIT3_IRQ_PRIORITY;
-  halSPC560PSetPeripheralClockMode(92,
+  halSPCSetPeripheralClockMode(92,
                                    SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2));
-  reg = halSPC560PGetSystemClock() / CH_FREQUENCY - 1;
+  reg = halSPCGetSystemClock() / CH_FREQUENCY - 1;
   PIT.PITMCR.R      = 1;        /* PIT clock enabled, stop while debugging. */
   PIT.CH[3].LDVAL.R = reg;
   PIT.CH[3].CVAL.R  = reg;
@@ -110,7 +110,7 @@ void hal_lld_init(void) {
  *
  * @special
  */
-void spc560p_clock_init(void) {
+void spc_clock_init(void) {
 
   /* Waiting for IRC stabilization before attempting anything else.*/
   while (!ME.GS.B.S_RC)
@@ -166,7 +166,7 @@ void spc560p_clock_init(void) {
 
   /* Switches again to DRUN mode (current mode) in order to update the
      settings.*/
-  if (halSPC560PSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
+  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
     chSysHalt();
 
   /* CFLASH settings calculated for a maximum clock of 64MHz.*/
@@ -187,7 +187,7 @@ void spc560p_clock_init(void) {
  * @retval CH_SUCCESS   if the switch operation has been completed.
  * @retval CH_FAILED    if the switch operation failed.
  */
-bool_t halSPC560PSetRunMode(spc560prunmode_t mode) {
+bool_t halSPCSetRunMode(spc560prunmode_t mode) {
 
   /* Starts a transition process.*/
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY;
@@ -216,7 +216,7 @@ bool_t halSPC560PSetRunMode(spc560prunmode_t mode) {
  *
  * @notapi
  */
-void halSPC560PSetPeripheralClockMode(uint32_t  n, uint32_t pctl) {
+void halSPCSetPeripheralClockMode(uint32_t  n, uint32_t pctl) {
   uint32_t mode;
 
   ME.PCTL[n].R = pctl;
@@ -231,7 +231,7 @@ void halSPC560PSetPeripheralClockMode(uint32_t  n, uint32_t pctl) {
  *
  * @return              The system clock in Hertz.
  */
-uint32_t halSPC560PGetSystemClock(void) {
+uint32_t halSPCGetSystemClock(void) {
   uint32_t sysclk;
 
   sysclk = ME.GS.B.S_SYSCLK;

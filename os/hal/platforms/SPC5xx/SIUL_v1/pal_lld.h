@@ -153,7 +153,7 @@ typedef struct {
   uint8_t                   pcr_index;
   uint8_t                   gpdo_value;
   iomode_t                  pcr_value;
-} spc560p_siu_init_t;
+} spc_siu_init_t;
 
 /**
  * @brief   Generic I/O ports static initializer.
@@ -166,7 +166,7 @@ typedef struct {
  */
 typedef struct {
   iomode_t                  default_mode;
-  const spc560p_siu_init_t  *inits;
+  const spc_siu_init_t      *inits;
   const uint8_t             *padsels;
 } PALConfig;
 
