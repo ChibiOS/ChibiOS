@@ -26,29 +26,27 @@
 static const spc_siu_init_t spc_siu_init[] = {
   {PCR(PB, PB_LIN0_TDX), PAL_HIGH, PAL_MODE_OUTPUT_ALTERNATE(1)},
   {PCR(PB, PB_LIN0_RDX), PAL_HIGH, PAL_MODE_INPUT},
-  {PCR(PD, PD_BUTTON1),  PAL_LOW,  PAL_MODE_INPUT},
-  {PCR(PD, PD_BUTTON2),  PAL_LOW,  PAL_MODE_INPUT},
-  {PCR(PD, PD_BUTTON3),  PAL_LOW,  PAL_MODE_INPUT},
-  {PCR(PD, PD_BUTTON4),  PAL_LOW,  PAL_MODE_INPUT},
-  {PCR(PD, PD_LED1),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
-  {PCR(PD, PD_LED2),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
-  {PCR(PD, PD_LED3),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
-  {PCR(PD, PD_LED4),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PE, PE_BUTTON1),  PAL_LOW,  PAL_MODE_INPUT},
+  {PCR(PE, PE_BUTTON2),  PAL_LOW,  PAL_MODE_INPUT},
+  {PCR(PE, PE_BUTTON3),  PAL_LOW,  PAL_MODE_INPUT},
+  {PCR(PE, PE_BUTTON4),  PAL_LOW,  PAL_MODE_INPUT},
+  {PCR(PE, PE_LED1),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PE, PE_LED2),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PE, PE_LED3),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PE, PE_LED4),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
   {0, 0, 0}
 };
 
 /* Initialization array for the PSMI registers.*/
 static const uint8_t spc_padsels_init[SPC5_SIU_NUM_PADSELS] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 /**
  * @brief   PAL setup.
  */
-const PALConfig pal_default_config =
-{
+const PALConfig pal_default_config = {
   PAL_MODE_UNCONNECTED,             /* Default mode for all undefined pads. */
   spc_siu_init,
   spc_padsels_init

@@ -56,16 +56,31 @@
 #define SPC5_LINFLEX1_TXI_NUMBER            100
 #define SPC5_LINFLEX1_ERR_NUMBER            101
 
-#define SPC5_HAS_LINFLEX2                   FALSE
+#define SPC5_HAS_LINFLEX2                   TRUE
+#define SPC5_LINFLEX2_PCTL                  50
+#define SPC5_LINFLEX2_RXI_HANDLER           vector119
+#define SPC5_LINFLEX2_TXI_HANDLER           vector120
+#define SPC5_LINFLEX2_ERR_HANDLER           vector121
+#define SPC5_LINFLEX2_RXI_NUMBER            119
+#define SPC5_LINFLEX2_TXI_NUMBER            120
+#define SPC5_LINFLEX2_ERR_NUMBER            121
 
-#define SPC5_HAS_LINFLEX3                   FALSE
+#define SPC5_HAS_LINFLEX3                   TRUE
+#define SPC5_LINFLEX3_PCTL                  51
+#define SPC5_LINFLEX3_RXI_HANDLER           vector122
+#define SPC5_LINFLEX3_TXI_HANDLER           vector123
+#define SPC5_LINFLEX3_ERR_HANDLER           vector124
+#define SPC5_LINFLEX3_RXI_NUMBER            122
+#define SPC5_LINFLEX3_TXI_NUMBER            123
+#define SPC5_LINFLEX3_ERR_NUMBER            124
 
 /* SIU/SIUL attributes.*/
 #define SPC5_HAS_SIU                        FALSE
+#define SPC5_SIU_PCTL                       68
 #define SPC5_SIU_SUPPORTS_PORTS             TRUE
-#define SPC5_SIU_NUM_PORTS                  4
-#define SPC5_SIU_NUM_PCRS                   108
-#define SPC5_SIU_NUM_PADSELS                36
+#define SPC5_SIU_NUM_PORTS                  8
+#define SPC5_SIU_NUM_PCRS                   123
+#define SPC5_SIU_NUM_PADSELS                32
 /** @} */
 
 #endif /* _SPC560BC_REGISTRY_H_ */

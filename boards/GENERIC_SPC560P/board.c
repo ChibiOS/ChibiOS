@@ -47,8 +47,7 @@ static const uint8_t spc_padsels_init[SPC5_SIU_NUM_PADSELS] = {
 /**
  * @brief   PAL setup.
  */
-const PALConfig pal_default_config =
-{
+const PALConfig pal_default_config = {
   PAL_MODE_UNCONNECTED,             /* Default mode for all undefined pads. */
   spc_siu_init,
   spc_padsels_init

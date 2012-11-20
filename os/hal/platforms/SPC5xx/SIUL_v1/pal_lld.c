@@ -65,6 +65,12 @@
 void _pal_lld_init(const PALConfig *config) {
   unsigned i;
 
+#if defined(SPC5_SIU_PCTL)
+  /* SIUL clock gating if present.*/
+  halSPCSetPeripheralClockMode(SPC5_SIU_PCTL,
+                               SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2));
+#endif
+
   /* Initialize PCR registers for undefined pads.*/
   for (i = 0; i < SPC5_SIU_NUM_PCRS; i++)
     SIU.PCR[i].R = config->default_mode;

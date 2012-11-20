@@ -63,7 +63,7 @@
 /* SIU/SIUL attributes.*/
 #define SPC5_HAS_SIU                        FALSE
 #define SPC5_SIU_SUPPORTS_PORTS             TRUE
-#define SPC5_SIU_NUM_PORTS                  4
+#define SPC5_SIU_NUM_PORTS                  8
 #define SPC5_SIU_NUM_PCRS                   108
 #define SPC5_SIU_NUM_PADSELS                36
 /** @} */
