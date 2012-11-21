@@ -345,6 +345,15 @@ struct context {
 #define port_enable() asm volatile ("wrteei  1" : : : "memory")
 
 /**
+ * @brief   Writes to a special register.
+ *
+ * @param[in] spr       special register number
+ * @param[in] val       value to be written
+ */
+#define port_mtspr(spr, val)                                                \
+  asm volatile ("mtspr %0,%1" : : "n" (spr), "r" (val))
+
+/**
  * @details This port function is implemented as inlined code for performance
  *          reasons.
  */

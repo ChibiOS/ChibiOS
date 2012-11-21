@@ -81,6 +81,7 @@
 #define SPC5_SIU_NUM_PORTS                  8
 #define SPC5_SIU_NUM_PCRS                   123
 #define SPC5_SIU_NUM_PADSELS                32
+#define SPC5_SIU_SYSTEM_PINS                32,33,121,122
 /** @} */
 
 #endif /* _SPC560BC_REGISTRY_H_ */

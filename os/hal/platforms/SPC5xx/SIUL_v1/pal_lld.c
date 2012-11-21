@@ -43,6 +43,10 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
+#if defined(SPC5_SIU_SYSTEM_PINS)
+static const unsigned system_pins[] = {SPC5_SIU_SYSTEM_PINS};
+#endif
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -72,8 +76,22 @@ void _pal_lld_init(const PALConfig *config) {
 #endif
 
   /* Initialize PCR registers for undefined pads.*/
-  for (i = 0; i < SPC5_SIU_NUM_PCRS; i++)
+  for (i = 0; i < SPC5_SIU_NUM_PCRS; i++) {
+#if defined(SPC5_SIU_SYSTEM_PINS)
+    /* Handling the case where some SIU pins are not meant to be reprogrammed,
+       for example JTAG pins.*/
+    unsigned j;
+    for (j = 0; j < sizeof system_pins; j++) {
+      if (i == system_pins[j])
+        goto skip;
+    }
     SIU.PCR[i].R = config->default_mode;
+skip:
+    ;
+#else
+    SIU.PCR[i].R = config->default_mode;
+#endif
+  }
 
   /* Initialize PADSEL registers.*/
   for (i = 0; i < SPC5_SIU_NUM_PADSELS; i++)

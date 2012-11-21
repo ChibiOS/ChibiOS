@@ -176,6 +176,9 @@ void spc_clock_init(void) {
   CFLASH.PFCR1.B.BK1_APC  = 2;
   CFLASH.PFCR1.B.BK1_RWSC = 2;
 
+  /* Initialization of e200z0 special registers.*/
+  port_mtspr(1013, 0x00000001);         /* BPEN=1.                          */
+
 #endif /* !SPC5_NO_INIT */
 }
 
