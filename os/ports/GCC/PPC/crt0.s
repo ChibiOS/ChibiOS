@@ -36,8 +36,8 @@ _boot_address:
         /*
          * Stack setup.
          */
-        lis         %r1, __ram_end__@h
-        ori         %r1, %r1, __ram_end__@l
+        lis         %r1, __process_stack_end__@h
+        ori         %r1, %r1, __process_stack_end__@l
         li          %r0, 0
         stwu        %r0, -8(%r1)
         /*
@@ -45,7 +45,7 @@ _boot_address:
          */
         lis         %r4, __ivpr_base__@h
         ori         %r4, %r4, __ivpr_base__@l
-        mtIVPR      %r4    
+        mtIVPR      %r4
         /*
          * Small sections registers initialization.
          */

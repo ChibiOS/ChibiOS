@@ -31,7 +31,40 @@
         /* BAM info, SWT off, WTE off, VLE from settings.*/
         .section    .bam, "ax"
         .long       0x015A0000
-        .long       _boot_address
+        .long       .clear_ecc
+
+        /* RAM clearing, this device requires a write to all RAM location in
+           order to initialize the ECC detection hardware, this is going to
+           slow down the startup but there is no way around.*/
+.clear_ecc:
+        xor         %r16, %r16, %r16
+        xor         %r17, %r17, %r17
+        xor         %r18, %r18, %r18
+        xor         %r19, %r19, %r19
+        xor         %r20, %r20, %r20
+        xor         %r21, %r21, %r21
+        xor         %r22, %r22, %r22
+        xor         %r23, %r23, %r23
+        xor         %r24, %r24, %r24
+        xor         %r25, %r25, %r25
+        xor         %r26, %r26, %r26
+        xor         %r27, %r27, %r27
+        xor         %r28, %r28, %r28
+        xor         %r29, %r29, %r29
+        xor         %r30, %r30, %r30
+        xor         %r31, %r31, %r31
+        lis         %r4, __ram_start__@h
+        ori         %r4, %r4, __ram_start__@l
+        lis         %r5, __ram_end__@h
+        ori         %r5, %r5, __ram_end__@l
+.cleareccloop:
+        cmpl        cr0, %r4, %r5
+        bge         cr0, .cleareccend
+        stmw        %r16, 0(%r4)
+        addi        %r4, %r4, 64
+        b           .cleareccloop
+.cleareccend:
+        b           _boot_address
 
 #endif /* !defined(__DOXYGEN__) */
 
