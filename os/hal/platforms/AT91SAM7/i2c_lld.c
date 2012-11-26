@@ -307,10 +307,74 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   AT91C_BASE_TWI->TWI_IER = AT91C_TWI_RXRDY | AT91C_TWI_NACK;
 
   /* In single data byte master read or write, the START and STOP must both be set. */
-  uint32_t cr = AT91C_TWI_START;
   if (rxbytes == 1)
-    cr |= AT91C_TWI_STOP;
-  AT91C_BASE_TWI->TWI_CR = cr;
+    AT91C_BASE_TWI->TWI_CR = AT91C_TWI_STOP | AT91C_TWI_START;
+  else
+    AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START;
+
+  /* Waits for the operation completion.*/
+  i2cp->thread = chThdSelf();
+  chSchGoSleepS(THD_STATE_SUSPENDED);
+
+  return chThdSelf()->p_u.rdymsg;
+}
+
+/**
+ * @brief   Read data via the I2C bus as master using internal slave addressing.
+ * @details Address bytes must be written in special purpose SAM7 registers.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] addr      slave device address
+ * @param[in] txbuf     pointer to the transmit buffer
+ * @param[in] txbytes   number of bytes to be transmitted
+ * @param[out] rxbuf    pointer to the receive buffer
+ * @param[in] rxbytes   number of bytes to be received
+ * @param[in] timeout   this value is ignored on SAM7 platform.
+ *                      .
+ * @return              The operation status.
+ * @retval RDY_OK       if the function succeeded.
+ * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ *
+ * @notapi
+ */
+msg_t i2c_lld_transceive_timeout(I2CDriver *i2cp, i2caddr_t addr,
+                                 const uint8_t *txbuf, size_t txbytes,
+                                 uint8_t *rxbuf, size_t rxbytes,
+                                 systime_t timeout) {
+  (void)timeout;
+
+  /* delete trash from RHR*/
+  volatile uint32_t fake;
+  fake = AT91C_BASE_TWI->TWI_RHR;
+  (void)fake;
+
+  /* Initializes driver fields.*/
+  i2cp->rxbuf   = rxbuf;
+  i2cp->rxbytes = rxbytes;
+
+  /* tune master mode register */
+  AT91C_BASE_TWI->TWI_MMR = 0;
+  AT91C_BASE_TWI->TWI_MMR |= (addr << 16) | (txbytes << 8) | AT91C_TWI_MREAD;
+
+  /* store internal slave address in TWI_IADR registers */
+  AT91C_BASE_TWI->TWI_IADR = 0;
+  while (txbytes > 0){
+    AT91C_BASE_TWI->TWI_IADR = (AT91C_BASE_TWI->TWI_IADR << 8);
+    AT91C_BASE_TWI->TWI_IADR |= *(txbuf++);
+    txbytes--;
+  }
+
+  /* enable just needed interrupts */
+  AT91C_BASE_TWI->TWI_IER = AT91C_TWI_RXRDY | AT91C_TWI_NACK;
+
+  /* Internal address of I2C slave was set in special Atmel registers.
+   * Now we must call read function. The I2C cell automatically sends
+   * bytes from IADR register to bus and issues repeated start. */
+  if (rxbytes == 1)
+    AT91C_BASE_TWI->TWI_CR = AT91C_TWI_STOP | AT91C_TWI_START;
+  else
+    AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START;
 
   /* Waits for the operation completion.*/
   i2cp->thread = chThdSelf();
@@ -346,24 +410,14 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   (void)timeout;
 
   /* SAM7 specific check */
-  chDbgCheck(((rxbytes == 0) || ((txbytes > 0) && (txbytes < 4) && (rxbuf != NULL))),
-             "i2c_lld_master_transmit_timeout");
+  chDbgCheck(((rxbytes == 0) ||
+             ((txbytes > 0) && (txbytes < 4) && (rxbuf != NULL))),
+               "i2c_lld_master_transmit_timeout");
 
   /* prepare to read through write operation */
   if (rxbytes > 0){
-    AT91C_BASE_TWI->TWI_MMR |= txbytes << 8;
-
-    /* store internal slave address in TWI_IADR registers */
-    AT91C_BASE_TWI->TWI_IADR = 0;
-    while (txbytes > 0){
-      AT91C_BASE_TWI->TWI_IADR = (AT91C_BASE_TWI->TWI_IADR << 8);
-      AT91C_BASE_TWI->TWI_IADR |= *(txbuf++);
-      txbytes--;
-    }
-    /* Internal address of I2C slave was set in special Atmel registers.
-     * Now we must call read function. The I2C cell automatically sends
-     * bytes from IADR register to bus and issues repeated start. */
-    return i2c_lld_master_receive_timeout(i2cp, addr, rxbuf, rxbytes, timeout);
+    return i2c_lld_transceive_timeout(i2cp, addr, txbuf, txbytes, rxbuf,
+                                      rxbytes, timeout);
   }
   else{
     if (txbytes == 1){
