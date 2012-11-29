@@ -190,7 +190,6 @@ int main(void) {
    * Normal main() thread activity.
    */
   while (TRUE) {
-
     if (!shelltp)
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     else if (chThdTerminated(shelltp)) {
