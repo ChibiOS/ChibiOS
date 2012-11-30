@@ -93,11 +93,7 @@
 #define STM32_TIM3_HANDLER          TIM3_IRQHandler
 #define STM32_TIM4_HANDLER          TIM4_IRQHandler
 #define STM32_TIM5_HANDLER          TIM5_IRQHandler
-#ifdef STM32F10X_XL
 #define STM32_TIM8_UP_HANDLER       TIM8_UP_IRQHandler
-#else
-#define STM32_TIM8_UP_HANDLER       TIM8_UP_IRQHandler
-#endif
 #define STM32_TIM8_CC_HANDLER       TIM8_CC_IRQHandler
 
 #if defined(STM32F10X_XL)
