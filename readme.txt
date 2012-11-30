@@ -161,6 +161,10 @@
   ARMCMx port, now it can support multiple core types.
 - NEW: Updated the Power Architecture rules.mk file to put object and listing
   files into a ./build directory like ARM ports already do.
+- CHANGE: The STM32 Serial driver has been split in two distinct versions,
+  one for older devices up the STM32F4xx, the other for new devices starting
+  from the STM32F0xx.
+  (TODO: Update IAR and Keil projects because different paths).
 
 *** 2.5.0 ***
 - FIX: Fixed anomaly in USB enumeration (bug 3565325)(backported to 2.4.3).
