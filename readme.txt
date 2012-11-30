@@ -82,6 +82,10 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed wrong stack initializations in GCC STM32L1xx port files (bug
+  3591321)(backported to 2.4.3).
+- FIX: Fixed different redefinition for __main_stack_end__ symbol (bug
+  3591317)(backported to 2.4.3).
 - FIX: Fixed workaround for errata in STM32F4-A devices (bug 3586425)
   (backported to 2.4.3).
 - FIX: Fixed error in palWritePad() macro (bug 3586230)(backported to 2.2.10
