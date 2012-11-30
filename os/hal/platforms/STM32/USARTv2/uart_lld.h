@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    STM32/uart_lld.h
+ * @file    STM32/USARTv2/uart_lld.h
  * @brief   STM32 low level UART driver header.
  *
  * @addtogroup UART

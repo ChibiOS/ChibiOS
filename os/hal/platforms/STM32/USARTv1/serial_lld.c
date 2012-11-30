@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    STM32/serial_lld.c
+ * @file    STM32/USARTv1/serial_lld.c
  * @brief   STM32 low level serial driver code.
  *
  * @addtogroup SERIAL
