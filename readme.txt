@@ -86,6 +86,7 @@
   3591321)(backported to 2.4.3).
 - FIX: Fixed different redefinition for __main_stack_end__ symbol (bug
   3591317)(backported to 2.4.3).
+- FIX: Fixed errors in STM32F0xx UART driver (bug 3589412).
 - FIX: Fixed workaround for errata in STM32F4-A devices (bug 3586425)
   (backported to 2.4.3).
 - FIX: Fixed error in palWritePad() macro (bug 3586230)(backported to 2.2.10

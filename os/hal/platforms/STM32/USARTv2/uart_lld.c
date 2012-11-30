@@ -93,7 +93,7 @@ UARTDriver UARTD3;
  *
  * @return  The error flags.
  */
-static uartflags_t translate_errors(uint16_t isr) {
+static uartflags_t translate_errors(uint32_t isr) {
   uartflags_t sts = 0;
 
   if (isr & USART_ISR_ORE)
@@ -154,7 +154,7 @@ static void usart_stop(UARTDriver *uartp) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  */
 static void usart_start(UARTDriver *uartp) {
-  uint16_t cr1;
+  uint32_t cr1;
   USART_TypeDef *u = uartp->usart;
 
   /* Defensive programming, starting from a clean state.*/
@@ -183,10 +183,10 @@ static void usart_start(UARTDriver *uartp) {
   else
     cr1 = USART_CR1_UE | USART_CR1_PEIE | USART_CR1_TE | USART_CR1_RE |
           USART_CR1_TCIE;
-  u->CR1 = uartp->config->cr1 | cr1;
   u->CR2 = uartp->config->cr2 | USART_CR2_LBDIE;
   u->CR3 = uartp->config->cr3 | USART_CR3_DMAT | USART_CR3_DMAR |
                                 USART_CR3_EIE;
+  u->CR1 = uartp->config->cr1 | cr1;
 
   /* Starting the receiver idle loop.*/
   set_rx_idle_loop(uartp);
@@ -268,7 +268,7 @@ static void uart_lld_serve_tx_end_irq(UARTDriver *uartp, uint32_t flags) {
  * @param[in] uartp     pointer to the @p UARTDriver object
  */
 static void serve_usart_irq(UARTDriver *uartp) {
-  uint16_t isr;
+  uint32_t isr;
   USART_TypeDef *u = uartp->usart;
   
   /* Reading and clearing status.*/
