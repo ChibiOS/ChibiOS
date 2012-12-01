@@ -83,6 +83,7 @@
   3591321).
 - FIX: Fixed different redefinition for __main_stack_end__ symbol (bug
   3591317).
+- FIX: Fixed errors in STM32F0xx UART driver (bug 3589412).
 - FIX: Fixed workaround for errata in STM32F4-A devices (bug 3586425).
 - FIX: Fixed error in palWritePad() macro (bug 3586230).
 - FIX: Fixed missing ; in testmbox.c (bug 3585979).

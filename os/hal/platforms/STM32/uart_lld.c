@@ -185,10 +185,10 @@ static void usart_start(UARTDriver *uartp) {
   else
     cr1 = USART_CR1_UE | USART_CR1_PEIE | USART_CR1_TE | USART_CR1_RE |
           USART_CR1_TCIE;
-  u->CR1 = uartp->config->cr1 | cr1;
   u->CR2 = uartp->config->cr2 | USART_CR2_LBDIE;
   u->CR3 = uartp->config->cr3 | USART_CR3_DMAT | USART_CR3_DMAR |
                                 USART_CR3_EIE;
+  u->CR1 = uartp->config->cr1 | cr1;
 
   /* Starting the receiver idle loop.*/
   set_rx_idle_loop(uartp);
