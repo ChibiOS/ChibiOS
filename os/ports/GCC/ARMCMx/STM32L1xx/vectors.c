@@ -38,7 +38,7 @@
 #include "ch.h"
 
 #if !defined(__DOXYGEN__)
-extern void __ram_end__(void);
+extern void __main_stack_end__(void);
 extern void ResetHandler(void);
 extern void NMIVector(void);
 extern void HardFaultVector(void);
@@ -108,7 +108,7 @@ extern void VectorF0(void);
 __attribute__ ((section("vectors")))
 #endif
 void  (*_vectors[])(void) = {
-  __ram_end__,        ResetHandler,       NMIVector,          HardFaultVector,
+  __main_stack_end__, ResetHandler,       NMIVector,          HardFaultVector,
   MemManageVector,    BusFaultVector,     UsageFaultVector,   Vector1C,
   Vector20,           Vector24,           Vector28,           SVCallVector,
   DebugMonitorVector, Vector34,           PendSVVector,       SysTickVector,
