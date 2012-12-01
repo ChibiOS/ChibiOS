@@ -1,6 +1,6 @@
 # List of the ChibiOS/RT MSP430 port files.
-PORTSRC = ${CHIBIOS}/os/ports/GCC/MSP430/chcore.c
+PORTSRC =
 
-PORTASM = 
+PORTASM = ${CHIBIOS}/os/ports/GCC/MSP430/chcoreasm.s 
 
 PORTINC = ${CHIBIOS}/os/ports/GCC/MSP430
