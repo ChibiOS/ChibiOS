@@ -56,8 +56,46 @@
 #include "board.h"
 #endif
 
+#if defined(STM32F10X_MD_VL) ||  defined(__DOXYGEN__)
+#define NUM_VECTORS     46
+#elif defined(STM32F10X_HD)  || defined(STM32F10X_XL)
+#define NUM_VECTORS     60
+#elif defined(STM32F10X_CL)
+#define NUM_VECTORS     68
+#else
+#define NUM_VECTORS     43
+#endif
+
+/**
+ * @brief   Type of an IRQ vector.
+ */
+typedef void  (*irq_vector_t)(void);
+
+/**
+ * @brief   Type of a structure representing the whole vectors table.
+ */
+typedef struct {
+  uint32_t      *init_stack;
+  irq_vector_t  reset_vector;
+  irq_vector_t  nmi_vector;
+  irq_vector_t  hardfault_vector;
+  irq_vector_t  memmanage_vector;
+  irq_vector_t  busfault_vector;
+  irq_vector_t  usagefault_vector;
+  irq_vector_t  vector1c;
+  irq_vector_t  vector20;
+  irq_vector_t  vector24;
+  irq_vector_t  vector28;
+  irq_vector_t  svcall_vector;
+  irq_vector_t  debugmonitor_vector;
+  irq_vector_t  vector34;
+  irq_vector_t  pendsv_vector;
+  irq_vector_t  systick_vector;
+  irq_vector_t  vectors[NUM_VECTORS];
+} vectors_t;
+
 #if !defined(__DOXYGEN__)
-extern void __main_stack_end__(void);
+extern uint32_t __main_stack_end__;
 extern void ResetHandler(void);
 extern void NMIVector(void);
 extern void HardFaultVector(void);
@@ -117,12 +155,12 @@ extern void VectorE0(void);
 extern void VectorE4(void);
 extern void VectorE8(void);
 #if defined(STM32F10X_MD_VL) || defined(STM32F10X_HD) ||                    \
-    defined(STM32F10X_XL) || defined(STM32F10X_CL)
+    defined(STM32F10X_XL)    || defined(STM32F10X_CL)
 extern void VectorEC(void);
 extern void VectorF0(void);
 extern void VectorF4(void);
 #endif
-#if defined(STM32F10X_HD) || defined(STM32F10X_XL) || defined(STM32F10X_CL)
+#if defined(STM32F10X_HD)    || defined(STM32F10X_XL) || defined(STM32F10X_CL)
 extern void VectorF8(void);
 extern void VectorFC(void);
 extern void Vector100(void);
@@ -156,36 +194,38 @@ extern void Vector14C(void);
 #if !defined(__DOXYGEN__)
 __attribute__ ((section("vectors")))
 #endif
-void  (*_vectors[])(void) = {
-  __main_stack_end__, ResetHandler,       NMIVector,          HardFaultVector,
+vectors_t _vectors = {
+  &__main_stack_end__,ResetHandler,       NMIVector,          HardFaultVector,
   MemManageVector,    BusFaultVector,     UsageFaultVector,   Vector1C,
   Vector20,           Vector24,           Vector28,           SVCallVector,
   DebugMonitorVector, Vector34,           PendSVVector,       SysTickVector,
-  Vector40,           Vector44,           Vector48,           Vector4C,
-  Vector50,           Vector54,           Vector58,           Vector5C,
-  Vector60,           Vector64,           Vector68,           Vector6C,
-  Vector70,           Vector74,           Vector78,           Vector7C,
-  Vector80,           Vector84,           Vector88,           Vector8C,
-  Vector90,           Vector94,           Vector98,           Vector9C,
-  VectorA0,           VectorA4,           VectorA8,           VectorAC,
-  VectorB0,           VectorB4,           VectorB8,           VectorBC,
-  VectorC0,           VectorC4,           VectorC8,           VectorCC,
-  VectorD0,           VectorD4,           VectorD8,           VectorDC,
-  VectorE0,           VectorE4,           VectorE8,
+  {
+    Vector40,           Vector44,           Vector48,           Vector4C,
+    Vector50,           Vector54,           Vector58,           Vector5C,
+    Vector60,           Vector64,           Vector68,           Vector6C,
+    Vector70,           Vector74,           Vector78,           Vector7C,
+    Vector80,           Vector84,           Vector88,           Vector8C,
+    Vector90,           Vector94,           Vector98,           Vector9C,
+    VectorA0,           VectorA4,           VectorA8,           VectorAC,
+    VectorB0,           VectorB4,           VectorB8,           VectorBC,
+    VectorC0,           VectorC4,           VectorC8,           VectorCC,
+    VectorD0,           VectorD4,           VectorD8,           VectorDC,
+    VectorE0,           VectorE4,           VectorE8,
 #if defined(STM32F10X_MD_VL) || defined(STM32F10X_HD) ||                    \
     defined(STM32F10X_XL)    || defined(STM32F10X_CL)
-  VectorEC,           VectorF0,           VectorF4,
+    VectorEC,           VectorF0,           VectorF4,
 #endif
 #if defined(STM32F10X_HD)    || defined(STM32F10X_XL) || defined(STM32F10X_CL)
-  VectorF8,           VectorFC,           Vector100,          Vector104,
-  Vector108,          Vector10C,          Vector110,          Vector114,
-  Vector118,          Vector11C,          Vector120,          Vector124,
-  Vector128,          Vector12C,
+    VectorF8,           VectorFC,           Vector100,          Vector104,
+    Vector108,          Vector10C,          Vector110,          Vector114,
+    Vector118,          Vector11C,          Vector120,          Vector124,
+    Vector128,          Vector12C,
 #endif
 #if defined(STM32F10X_CL)
-  Vector130,          Vector134,          Vector138,          Vector13C,
-  Vector140,          Vector144,          Vector148,          Vector14C
+    Vector130,          Vector134,          Vector138,          Vector13C,
+    Vector140,          Vector144,          Vector148,          Vector14C
 #endif
+  }
 };
 
 /**

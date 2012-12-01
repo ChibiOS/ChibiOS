@@ -37,8 +37,36 @@
 
 #include "ch.h"
 
+/**
+ * @brief   Type of an IRQ vector.
+ */
+typedef void  (*irq_vector_t)(void);
+
+/**
+ * @brief   Type of a structure representing the whole vectors table.
+ */
+typedef struct {
+  uint32_t      *init_stack;
+  irq_vector_t  reset_vector;
+  irq_vector_t  nmi_vector;
+  irq_vector_t  hardfault_vector;
+  irq_vector_t  memmanage_vector;
+  irq_vector_t  busfault_vector;
+  irq_vector_t  usagefault_vector;
+  irq_vector_t  vector1c;
+  irq_vector_t  vector20;
+  irq_vector_t  vector24;
+  irq_vector_t  vector28;
+  irq_vector_t  svcall_vector;
+  irq_vector_t  debugmonitor_vector;
+  irq_vector_t  vector34;
+  irq_vector_t  pendsv_vector;
+  irq_vector_t  systick_vector;
+  irq_vector_t  vectors[82];
+} vectors_t;
+
 #if !defined(__DOXYGEN__)
-extern void __main_stack_end__(void);
+extern uint32_t __main_stack_end__;
 extern void ResetHandler(void);
 extern void NMIVector(void);
 extern void HardFaultVector(void);
@@ -144,32 +172,34 @@ extern void Vector184(void);
 #if !defined(__DOXYGEN__)
 __attribute__ ((section("vectors")))
 #endif
-void  (*_vectors[])(void) = {
-  __main_stack_end__, ResetHandler,       NMIVector,          HardFaultVector,
+vectors_t _vectors = {
+  &__main_stack_end__,ResetHandler,       NMIVector,          HardFaultVector,
   MemManageVector,    BusFaultVector,     UsageFaultVector,   Vector1C,
   Vector20,           Vector24,           Vector28,           SVCallVector,
   DebugMonitorVector, Vector34,           PendSVVector,       SysTickVector,
-  Vector40,           Vector44,           Vector48,           Vector4C,
-  Vector50,           Vector54,           Vector58,           Vector5C,
-  Vector60,           Vector64,           Vector68,           Vector6C,
-  Vector70,           Vector74,           Vector78,           Vector7C,
-  Vector80,           Vector84,           Vector88,           Vector8C,
-  Vector90,           Vector94,           Vector98,           Vector9C,
-  VectorA0,           VectorA4,           VectorA8,           VectorAC,
-  VectorB0,           VectorB4,           VectorB8,           VectorBC,
-  VectorC0,           VectorC4,           VectorC8,           VectorCC,
-  VectorD0,           VectorD4,           VectorD8,           VectorDC,
-  VectorE0,           VectorE4,           VectorE8,           VectorEC,
-  VectorF0,           VectorF4,           VectorF8,           VectorFC,
-  Vector100,          Vector104,          Vector108,          Vector10C,
-  Vector110,          Vector114,          Vector118,          Vector11C,
-  Vector120,          Vector124,          Vector128,          Vector12C,
-  Vector130,          Vector134,          Vector138,          Vector13C,
-  Vector140,          Vector144,          Vector148,          Vector14C,
-  Vector150,          Vector154,          Vector158,          Vector15C,
-  Vector160,          Vector164,          Vector168,          Vector16C,
-  Vector170,          Vector174,          Vector178,          Vector17C,
-  Vector180,          Vector184
+  {
+    Vector40,           Vector44,           Vector48,           Vector4C,
+    Vector50,           Vector54,           Vector58,           Vector5C,
+    Vector60,           Vector64,           Vector68,           Vector6C,
+    Vector70,           Vector74,           Vector78,           Vector7C,
+    Vector80,           Vector84,           Vector88,           Vector8C,
+    Vector90,           Vector94,           Vector98,           Vector9C,
+    VectorA0,           VectorA4,           VectorA8,           VectorAC,
+    VectorB0,           VectorB4,           VectorB8,           VectorBC,
+    VectorC0,           VectorC4,           VectorC8,           VectorCC,
+    VectorD0,           VectorD4,           VectorD8,           VectorDC,
+    VectorE0,           VectorE4,           VectorE8,           VectorEC,
+    VectorF0,           VectorF4,           VectorF8,           VectorFC,
+    Vector100,          Vector104,          Vector108,          Vector10C,
+    Vector110,          Vector114,          Vector118,          Vector11C,
+    Vector120,          Vector124,          Vector128,          Vector12C,
+    Vector130,          Vector134,          Vector138,          Vector13C,
+    Vector140,          Vector144,          Vector148,          Vector14C,
+    Vector150,          Vector154,          Vector158,          Vector15C,
+    Vector160,          Vector164,          Vector168,          Vector16C,
+    Vector170,          Vector174,          Vector178,          Vector17C,
+    Vector180,          Vector184
+  }
 };
 
 /**
