@@ -31,6 +31,11 @@
 #define BOARD_ATMEL_SAM4L_EK
 #define BOARD_NAME                  "Atmel SAM4L-EK"
 
+/*
+ * Device identifier.
+ */
+#define __ATSAM4LC4C__
+
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {

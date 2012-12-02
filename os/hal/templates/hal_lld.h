@@ -34,6 +34,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Defines the support for realtime counters in the HAL.
+ */
+#define HAL_IMPLEMENTS_COUNTERS TRUE
+
+/**
  * @brief   Platform name.
  */
 #define PLATFORM_NAME   ""
@@ -49,6 +54,16 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Type representing a system clock frequency.
+ */
+typedef uint32_t halclock_t;
+
+/**
+ * @brief   Type of the realtime free counter value.
+ */
+typedef uint32_t halrtcnt_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

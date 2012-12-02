@@ -53,6 +53,10 @@
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
+void sam4l_clock_init(void) {
+
+}
+
 /**
  * @brief   Low level HAL driver initialization.
  *
