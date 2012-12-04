@@ -200,7 +200,8 @@ void i2c_lld_init(void) {
   AT91C_BASE_PIOA->PIO_PPUDR = AT91C_PA0_TWD | AT91C_PA1_TWCK;
 
   AIC_ConfigureIT(AT91C_ID_TWI,
-                  AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL, TWI_IRQHandler);
+                  AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL | SAM7_I2C_I2C1_IRQ_PRIORITY,
+                  TWI_IRQHandler);
 #endif /* STM32_I2C_USE_I2C1 */
 }
 
