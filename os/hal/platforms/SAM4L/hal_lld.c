@@ -55,6 +55,14 @@
 
 void sam4l_clock_init(void) {
 
+#if SAM_USE_PICOCACHE
+    /* Enable the PicoCache.*/
+    sysclk_enable_peripheral_clock(HCACHE);
+    HCACHE->HCACHE_CTRL = HCACHE_CTRL_CEN_YES;
+    while ((HCACHE->HCACHE_SR & HCACHE_SR_CSTS_EN) == 0)
+      ;
+#endif
+
 }
 
 /**
