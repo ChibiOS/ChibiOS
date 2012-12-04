@@ -6,6 +6,12 @@ X = In progress, some work done.
 N = Decided against.
 
 Version 2.5.1
+X Support for STM32F3xx devices.
+X Support for ATSAM4L devices.
+X Support for SPC56xBC devices.
+X Support for SPC56xP devices.
+X Support for SPC56xM devices.
+- Support for SPC56xA devices.
 
 Within 2.5.x:
 - SAM4L support.
@@ -15,7 +21,6 @@ X Revision of the RTCv2 driver implementation.
 X File System infrastructure.
   - FatFs wrapper.
 X Streaming DAC/I2S driver model and STM32 implementation.
-- Support for STM32F3xx devices.
 - Specific I2C driver for STM32F0 and newer devices.
 - STM32 CAN2 support.
 - Unified LPC1xxx HAL.

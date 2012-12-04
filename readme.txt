@@ -143,6 +143,7 @@
   (backported to 2.4.3).
 - FIX: Fixed STM8L, cosmic compiler: c_lreg not saved (bug 3566342)(backported
   to 2.2.10 and 2.4.3).
+- NEW: Initial support for STM32F30x.
 - NEW: AT91SAM7A3 I2C support.
 - NEW: AT91SAM7A3 basic support.
 - NEW: Unified the STM32F4xx and STM32F2xx platform code. The STM32F2xx now is
