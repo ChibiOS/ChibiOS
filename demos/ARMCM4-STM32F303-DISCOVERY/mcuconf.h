@@ -66,3 +66,17 @@
 #define STM32_RTCSEL                        STM32_RTCSEL_LSI
 #define STM32_USB_CLOCK_REQUIRED            TRUE
 #define STM32_USBPRE                        STM32_USBPRE_DIV1P5
+
+/*
+ * SERIAL driver system settings.
+ */
+#define STM32_SERIAL_USE_USART1             TRUE
+#define STM32_SERIAL_USE_USART2             FALSE
+#define STM32_SERIAL_USE_USART3             FALSE
+#define STM32_SERIAL_USE_UART4              FALSE
+#define STM32_SERIAL_USE_UART5              FALSE
+#define STM32_SERIAL_USART1_PRIORITY        12
+#define STM32_SERIAL_USART2_PRIORITY        12
+#define STM32_SERIAL_USART3_PRIORITY        12
+#define STM32_SERIAL_UART4_PRIORITY         12
+#define STM32_SERIAL_UART5_PRIORITY         12

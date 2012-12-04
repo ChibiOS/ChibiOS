@@ -252,7 +252,9 @@ typedef struct {
   uint8_t                   ob[SERIAL_BUFFERS_SIZE];                        \
   /* End of the mandatory fields.*/                                         \
   /* Pointer to the USART registers block.*/                                \
-  USART_TypeDef             *usart;
+  USART_TypeDef             *usart;                                         \
+  /* Clock frequency for this USART.*/                                      \
+  uint32_t                  clock;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

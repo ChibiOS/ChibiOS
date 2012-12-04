@@ -20,7 +20,7 @@
 
 #include "ch.h"
 #include "hal.h"
-//#include "test.h"
+#include "test.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
@@ -74,7 +74,13 @@ int main(void) {
   halInit();
   chSysInit();
 
-  /* TODO: inialize serial driver 1 or 2 */
+  /*
+   * Activates the serial driver 1 using the driver default configuration.
+   * PA9(TX) and PA10(RX) are routed to USART1.
+   */
+  sdStart(&SD1, NULL);
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
 
   /*
    * Creates the example thread.
@@ -87,9 +93,8 @@ int main(void) {
    * pressed the test procedure is launched.
    */
   while (TRUE) {
-    /* TODO */
-//    if (palReadPad(GPIOA, GPIOA_BUTTON))
-//      TestThread(&SD2);
+    if (palReadPad(GPIOA, GPIOA_BUTTON))
+      TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
 }

@@ -196,6 +196,10 @@ void stm32_clock_init(void) {
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE);
+
+  /* USB IRQ relocated to not conflict with CAN.*/
+  SYSCFG->CFGR1 |= SYSCFG_CFGR1_USB_IT_RMP;
+
 #endif /* !STM32_NO_INIT */
 }
 

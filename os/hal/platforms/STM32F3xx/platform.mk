@@ -6,4 +6,5 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F3xx/hal_lld.c \
 # Required include directories
 PLATFORMINC = ${CHIBIOS}/os/hal/platforms/STM32F3xx \
               ${CHIBIOS}/os/hal/platforms/STM32 \
-              ${CHIBIOS}/os/hal/platforms/STM32/GPIOv2
+              ${CHIBIOS}/os/hal/platforms/STM32/GPIOv2 \
+              ${CHIBIOS}/os/hal/platforms/STM32/USARTv2

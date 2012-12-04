@@ -927,6 +927,11 @@
 #endif
 
 /**
+ * @brief   USART2 frequency.
+ */
+#define STM32_USART2CLK             STM32_PCLK
+
+/**
  * @brief   Timers clock.
  */
 #if (STM32_PPRE == STM32_PPRE_DIV1) || defined(__DOXYGEN__)
