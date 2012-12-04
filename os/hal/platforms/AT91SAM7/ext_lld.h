@@ -38,12 +38,12 @@
 /**
  * @brief    Pointer to the SAM7 AIC register block.
  */
-#define SAM7_EXT_AIC    ((AT91PS_AIC *)AT91C_BASE_AIC)
+#define SAM7_EXT_AIC                  ((AT91PS_AIC *)AT91C_BASE_AIC)
 
 /**
  * @brief    Number of channels within one ext driver.
  */
-#define    EXT_MAX_CHANNELS            32
+#define EXT_MAX_CHANNELS              32
 
 /**
  * @brief    Mask of priority bits in interrupt mode register.
@@ -53,12 +53,12 @@
 /**
  * @brief    Shifter for priority bits in interrupt mode register.
  */
-#define SAM7_EXT_PRIORITY_SHIFTER    0
+#define SAM7_EXT_PRIORITY_SHIFTER     0
 
 /**
  * @brief    Shifter for mode bits in interrupt mode register.
  */
-#define SAM7_EXT_MODE_SHIFTER        5
+#define SAM7_EXT_MODE_SHIFTER         5
 
 /*
  * On the SAM7 architecture, a single channel can only be enables or disabled
@@ -80,7 +80,7 @@
  * @name    EXT channels mode
  * @{
  */
-#define EXT_CH_MODE_ENABLED            1        /**< @brief Channel is enabled. */
+#define EXT_CH_MODE_ENABLED           1     /**< @brief Channel is enabled. */
 /** @} */
 
 /**
@@ -98,15 +98,15 @@
 /**
  * @brief   Rising edge callback.
  */
-#define SAM7_EXT_MODE_RISING_EDGE    AT91C_AIC_SRCTYPE_POSITIVE_EDGE
+#define SAM7_EXT_MODE_RISING_EDGE     AT91C_AIC_SRCTYPE_POSITIVE_EDGE
 /**
  * @brief   High-level callback.
  */
-#define SAM7_EXT_MODE_HIGH_LEVEL    AT91C_AIC_SRCTYPE_HIGH_LEVEL
+#define SAM7_EXT_MODE_HIGH_LEVEL      AT91C_AIC_SRCTYPE_HIGH_LEVEL
 /**
  * @brief   Low-level callback.
  */
-#define SAM7_EXT_MODE_LOW_LEVEL        AT91C_AIC_SRCTYPE_EXT_LOW_LEVEL
+#define SAM7_EXT_MODE_LOW_LEVEL       AT91C_AIC_SRCTYPE_EXT_LOW_LEVEL
 /** @} */
 
 /**
@@ -114,7 +114,7 @@
  * @{
  */
 #define SAM7_EXT_PRIOR_HIGHEST        AT91C_AIC_PRIOR_HIGHEST
-#define SAM7_EXT_PRIOR_LOWEST        AT91C_AIC_PRIOR_LOWEST
+#define SAM7_EXT_PRIOR_LOWEST         AT91C_AIC_PRIOR_LOWEST
 /** @} */
 
 /*===========================================================================*/
@@ -152,9 +152,6 @@ typedef struct {
   uint32_t              mode;
   /**
    * @brief Channel callback.
-   * @details  In the STM32 implementation a @p NULL callback pointer is
-   *           valid and configures the channel as an event sources instead
-   *           of an interrupt source.
    */
   extcallback_t         cb;
 } EXTChannelConfig;
@@ -169,12 +166,10 @@ typedef struct {
    */
   EXTChannelConfig      channels[EXT_MAX_CHANNELS];
   /* End of the mandatory fields.*/
-
   /**
    * @brief interrupt mode.
    */
   uint32_t              mode;
-
   /**
    * @brief interrupt priority.
    */
@@ -188,20 +183,21 @@ struct EXTDriver {
   /**
    * @brief Driver state.
    */
-  extstate_t                state;
+  extstate_t            state;
   /**
    * @brief Current configuration data.
    */
-  const EXTConfig           *config;
+  const EXTConfig       *config;
   /* End of the mandatory fields.*/
+
   /**
    * @brief Pointer to the corresponding PIO registers block.
    */
-  AT91PS_PIO                pio;
+  AT91PS_PIO            pio;
   /**
    * @brief peripheral ID of the corresponding PIO block.
    */
-  uint32_t                    pid;
+  uint32_t              pid;
 };
 
 /*===========================================================================*/
@@ -223,7 +219,7 @@ struct EXTDriver {
 #if !defined(__DOXYGEN__)
 extern EXTDriver EXTDA;
 #if (SAM7_PLATFORM == SAM7X128) || (SAM7_PLATFORM == SAM7X256) ||           \
-    (SAM7_PLATFORM == SAM7X512)
+    (SAM7_PLATFORM == SAM7X512) || (SAM7_PLATFORM == SAM7A3)
 extern EXTDriver EXTDB;
 #endif
 #endif
