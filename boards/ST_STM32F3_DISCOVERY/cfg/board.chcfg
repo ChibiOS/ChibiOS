@@ -561,7 +561,7 @@
       <pin3
         ID="SPI1_CS"
         Type="PushPull"
-        Speed="Minimum"
+        Speed="Maximum"
         Resistor="Floating"
         Level="High"
         Mode="Output"

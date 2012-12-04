@@ -111,6 +111,8 @@ void _pal_lld_init(const PALConfig *config) {
   RCC->AHBLPENR |= AHB_LPEN_MASK;
 #elif defined(STM32F0XX)
   rccEnableAHB(AHB_EN_MASK, TRUE);
+#elif defined(STM32F30X)
+  rccEnableAHB(AHB_EN_MASK, TRUE);
 #elif defined(STM32F2XX) || defined(STM32F4XX)
   RCC->AHB1ENR   |= AHB1_EN_MASK;
   RCC->AHB1LPENR |= AHB1_LPEN_MASK;

@@ -653,7 +653,7 @@
  * PE0  - L3GD20_INT1               (input pullup).
  * PE1  - L3GD20_INT2               (input pullup).
  * PE2  - LSM303_DRDY               (input pullup).
- * PE3  - SPI1_CS                   (output pushpull minimum).
+ * PE3  - SPI1_CS                   (output pushpull maximum).
  * PE4  - LSM303_INT1               (input pullup).
  * PE5  - LSM303_INT2               (input pullup).
  * PE6  - PIN6                      (input pullup).
@@ -702,7 +702,7 @@
 #define VAL_GPIOE_OSPEEDR           (PIN_OSPEED_2M(GPIOE_L3GD20_INT1) |     \
                                      PIN_OSPEED_2M(GPIOE_L3GD20_INT2) |     \
                                      PIN_OSPEED_2M(GPIOE_LSM303_DRDY) |     \
-                                     PIN_OSPEED_2M(GPIOE_SPI1_CS) |         \
+                                     PIN_OSPEED_100M(GPIOE_SPI1_CS) |       \
                                      PIN_OSPEED_2M(GPIOE_LSM303_INT1) |     \
                                      PIN_OSPEED_2M(GPIOE_LSM303_INT2) |     \
                                      PIN_OSPEED_2M(GPIOE_PIN6) |            \
