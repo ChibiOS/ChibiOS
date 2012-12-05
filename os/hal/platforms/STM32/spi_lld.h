@@ -189,7 +189,7 @@
 
 #else /* !defined(STM32F0XX) */
 /* Fixed streams for platforms using the old DMA peripheral, the values are
-   valid for both STM32F1xx and STM32L1xx.*/
+   valid for both STM32F1xx, STM32L1xx and STM32F3xx.*/
 #define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
 #define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)

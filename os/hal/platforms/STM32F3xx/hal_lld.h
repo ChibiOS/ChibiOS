@@ -567,7 +567,7 @@
  * @brief   APB2 prescaler value.
  */
 #if !defined(STM32_PPRE2) || defined(__DOXYGEN__)
-#define STM32_PPRE2                         STM32_PPRE2_DIV1
+#define STM32_PPRE2                         STM32_PPRE2_DIV2
 #endif
 
 /**

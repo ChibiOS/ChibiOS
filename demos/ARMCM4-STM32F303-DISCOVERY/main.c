@@ -23,8 +23,7 @@
 #include "test.h"
 
 /*
- * This is a periodic thread that does absolutely nothing except flashing
- * a LED.
+ * This is a periodic thread that does absolutely nothing except flashing LEDs.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {

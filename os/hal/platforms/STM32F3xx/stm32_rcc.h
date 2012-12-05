@@ -389,6 +389,33 @@
  * @api
  */
 #define rccResetSPI2() rccResetAPB1(RCC_APB1RSTR_SPI2RST)
+
+/**
+ * @brief   Enables the SPI3 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSPI3(lp) rccEnableAPB1(RCC_APB1ENR_SPI3EN, lp)
+
+/**
+ * @brief   Disables the SPI3 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableSPI3(lp) rccDisableAPB1(RCC_APB1ENR_SPI3EN, lp)
+
+/**
+ * @brief   Resets the SPI3 peripheral.
+ *
+ * @api
+ */
+#define rccResetSPI3() rccResetAPB1(RCC_APB1RSTR_SPI3RST)
 /** @} */
 
 /**
