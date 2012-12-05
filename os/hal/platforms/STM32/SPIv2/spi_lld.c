@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    STM32/spi_lld.c
+ * @file    STM32/SPIv2/spi_lld.c
  * @brief   STM32 SPI subsystem low level driver source.
  *
  * @addtogroup SPI
@@ -215,6 +215,7 @@ void spi_lld_init(void) {
  * @notapi
  */
 void spi_lld_start(SPIDriver *spip) {
+  uint32_t ds;
 
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (spip->state == SPI_STOP) {
@@ -273,12 +274,8 @@ void spi_lld_start(SPIDriver *spip) {
   }
 
   /* Configuration-specific DMA setup.*/
-#if defined(STM32F0XX) || defined(STM32F30X)
-  if ((spip->config->cr1 & SPI_CR2_DS) <
-      (SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0)) {
-#else /* !defined(STM32F0XX) */
-  if ((spip->config->cr1 & SPI_CR1_DFF) == 0) {
-#endif /* !defined(STM32F0XX) */
+  ds = spip->config->cr2 & SPI_CR2_DS;
+  if (!ds || (ds <= (SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0))) {
     /* Frame width is 8 bits or smaller.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
@@ -296,7 +293,8 @@ void spi_lld_start(SPIDriver *spip) {
   spip->spi->CR1  = 0;
   spip->spi->CR1  = spip->config->cr1 | SPI_CR1_MSTR | SPI_CR1_SSM |
                     SPI_CR1_SSI;
-  spip->spi->CR2  = SPI_CR2_SSOE | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  spip->spi->CR2  = spip->config->cr2 | SPI_CR2_SSOE |
+                    SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
   spip->spi->CR1 |= SPI_CR1_SPE;
 }
 
@@ -314,6 +312,7 @@ void spi_lld_stop(SPIDriver *spip) {
 
     /* SPI disable.*/
     spip->spi->CR1 = 0;
+    spip->spi->CR2 = 0;
     dmaStreamRelease(spip->dmarx);
     dmaStreamRelease(spip->dmatx);
 
