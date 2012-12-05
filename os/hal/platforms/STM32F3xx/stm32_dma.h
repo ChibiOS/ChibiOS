@@ -153,7 +153,7 @@
 #define STM32_DMA_CR_MSIZE_BYTE     0
 #define STM32_DMA_CR_MSIZE_HWORD    DMA_CCR_MSIZE_0
 #define STM32_DMA_CR_MSIZE_WORD     DMA_CCR_MSIZE_1
-#define STM32_DMA_CR_SIZE_MASK      (STM32_DMA_CR_MSIZE_MASK |              \
+#define STM32_DMA_CR_SIZE_MASK      (STM32_DMA_CR_PSIZE_MASK |              \
                                      STM32_DMA_CR_MSIZE_MASK)
 #define STM32_DMA_CR_PL_MASK        DMA_CCR_PL
 #define STM32_DMA_CR_PL(n)          ((n) << 12)

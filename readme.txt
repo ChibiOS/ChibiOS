@@ -82,6 +82,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Fixed DMA reconfiguration problem in STM32 SPI driver (bug 3592809)
+  (backported to 2.4.3).
 - FIX: Fixed wrong stack initializations in GCC STM32L1xx port files (bug
   3591321)(backported to 2.4.3).
 - FIX: Fixed different redefinition for __main_stack_end__ symbol (bug
