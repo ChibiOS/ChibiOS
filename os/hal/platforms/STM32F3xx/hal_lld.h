@@ -544,7 +544,7 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLMUL_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLMUL_VALUE                  8
+#define STM32_PLLMUL_VALUE                  9
 #endif
 
 /**
@@ -1288,7 +1288,7 @@ typedef uint32_t halrtcnt_t;
 
 /* STM32 ISR, DMA and RCC helpers.*/
 #include "stm32_isr.h"
-/*#include "stm32_dma.h"*/
+#include "stm32_dma.h"
 #include "stm32_rcc.h"
 
 #ifdef __cplusplus

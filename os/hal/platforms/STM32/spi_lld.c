@@ -273,7 +273,7 @@ void spi_lld_start(SPIDriver *spip) {
   }
 
   /* Configuration-specific DMA setup.*/
-#if defined(STM32F0XX)
+#if defined(STM32F0XX) || defined(STM32F30X)
   if ((spip->config->cr1 & SPI_CR2_DS) <
       (SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0)) {
 #else /* !defined(STM32F0XX) */

@@ -47,7 +47,7 @@
 #define STM32_SW                            STM32_SW_PLL
 #define STM32_PLLSRC                        STM32_PLLSRC_HSE
 #define STM32_PREDIV_VALUE                  1
-#define STM32_PLLMUL_VALUE                  8
+#define STM32_PLLMUL_VALUE                  9
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE1                         STM32_PPRE1_DIV2
 #define STM32_PPRE2                         STM32_PPRE2_DIV1
@@ -80,3 +80,17 @@
 #define STM32_SERIAL_USART3_PRIORITY        12
 #define STM32_SERIAL_UART4_PRIORITY         12
 #define STM32_SERIAL_UART5_PRIORITY         12
+
+/*
+ * SPI driver system settings.
+ */
+#define STM32_SPI_USE_SPI1                  TRUE
+#define STM32_SPI_USE_SPI2                  FALSE
+#define STM32_SPI_USE_SPI3                  FALSE
+#define STM32_SPI_SPI1_DMA_PRIORITY         1
+#define STM32_SPI_SPI2_DMA_PRIORITY         1
+#define STM32_SPI_SPI3_DMA_PRIORITY         1
+#define STM32_SPI_SPI1_IRQ_PRIORITY         10
+#define STM32_SPI_SPI2_IRQ_PRIORITY         10
+#define STM32_SPI_SPI3_IRQ_PRIORITY         10
+#define STM32_SPI_DMA_ERROR_HOOK(spip)      chSysHalt()
