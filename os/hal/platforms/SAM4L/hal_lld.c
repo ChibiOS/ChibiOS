@@ -55,6 +55,7 @@
 
 void sam4l_clock_init(void) {
 
+#if SAM_NO_INIT
 #if SAM_USE_PICOCACHE
     /* Enable the PicoCache.*/
     sysclk_enable_peripheral_clock(HCACHE);
@@ -63,6 +64,7 @@ void sam4l_clock_init(void) {
       ;
 #endif
 
+#endif /* SAM_NO_INIT */
 }
 
 /**
