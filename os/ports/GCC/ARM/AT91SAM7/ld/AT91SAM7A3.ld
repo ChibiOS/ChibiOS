@@ -19,7 +19,7 @@
 */
 
 /*
- * AT91SAM7X256 memory setup.
+ * AT91SAM7A3 memory setup.
  */
 __und_stack_size__	= 0x0004;
 __abt_stack_size__	= 0x0004;
