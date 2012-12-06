@@ -29,10 +29,6 @@
 #include "ch.h"
 #include "hal.h"
 
-/* TODO: LSEBYP like in F3.*/
-/* TODO: LSEDRV like in F3.*/
-/* TODO: PREDIV like in F3.*/
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -64,7 +60,13 @@ static void hal_lld_backup_domain_init(void) {
 
   /* If enabled then the LSE is started.*/
 #if STM32_LSE_ENABLED
-  RCC->BDCR |= RCC_BDCR_LSEON;
+#if defined(STM32_LSE_BYPASS)
+  /* LSE Bypass.*/
+  RCC->BDCR = STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSEBYP;
+#else
+  /* No LSE Bypass.*/
+  RCC->BDCR = STM32_LSEDRV | RCC_BDCR_LSEON;
+#endif
   while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
     ;                                     /* Waits until LSE is stable.   */
 #endif
@@ -172,10 +174,10 @@ void stm32_clock_init(void) {
 #endif
 
   /* Clock settings.*/
-  RCC->CFGR  = STM32_MCOSEL | STM32_PLLMUL | STM32_PLLXTPRE |
-               STM32_PLLSRC | STM32_ADCPRE | STM32_PPRE     |
-               STM32_HPRE;
-  RCC->CFGR3 = STM32_ADCSW  | STM32_CECSW  | STM32_I2C1SW   |
+  RCC->CFGR  = STM32_MCOSEL | STM32_PLLMUL | STM32_PLLSRC |
+               STM32_ADCPRE | STM32_PPRE   | STM32_HPRE;
+  RCC->CFGR2 = STM32_PREDIV;
+  RCC->CFGR3 = STM32_ADCSW  | STM32_CECSW  | STM32_I2C1SW |
                STM32_USART1SW;
 
 #if STM32_ACTIVATE_PLL

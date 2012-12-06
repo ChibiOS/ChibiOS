@@ -47,8 +47,8 @@
 [#if doc1.board.ethernet_phy.bus_type[0]?string == "RMII"]
 #define BOARD_PHY_RMII
 [/#if]
-[/#if]
 
+[/#if]
 /*
  * Board oscillators-related settings.
 [#if doc1.board.clocks.@LSEFrequency[0]?number == 0]
@@ -62,14 +62,20 @@
 #define STM32_LSECLK                ${doc1.board.clocks.@LSEFrequency[0]}
 #endif
 
+[#if doc1.board.clocks.@LSEBypass[0]?string == "true"]
+#define STM32_LSE_BYPASS
+
+[/#if]
+#define STM32_LSEDRV                (${doc1.board.clocks.@LSEDrive[0]?word_list[0]?number} << 3)
+
 #if !defined(STM32_HSECLK)
 #define STM32_HSECLK                ${doc1.board.clocks.@HSEFrequency[0]}
 #endif
 
 [#if doc1.board.clocks.@HSEBypass[0]?string == "true"]
 #define STM32_HSE_BYPASS
-[/#if]
 
+[/#if]
 /*
  * MCU type as defined in the ST header file stm32f0xx.h.
  */

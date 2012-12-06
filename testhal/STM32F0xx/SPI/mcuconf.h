@@ -120,8 +120,8 @@
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  FALSE
-#define STM32_SPI_USE_SPI2                  FALSE
+#define STM32_SPI_USE_SPI1                  TRUE
+#define STM32_SPI_USE_SPI2                  TRUE
 #define STM32_SPI_SPI1_DMA_PRIORITY         1
 #define STM32_SPI_SPI2_DMA_PRIORITY         1
 #define STM32_SPI_SPI1_IRQ_PRIORITY         2
@@ -131,8 +131,8 @@
 /*
  * UART driver system settings.
  */
-#define STM32_UART_USE_USART1               TRUE
-#define STM32_UART_USE_USART2               TRUE
+#define STM32_UART_USE_USART1               FALSE
+#define STM32_UART_USE_USART2               FALSE
 #define STM32_UART_USART1_IRQ_PRIORITY      3
 #define STM32_UART_USART2_IRQ_PRIORITY      3
 #define STM32_UART_USART1_DMA_PRIORITY      0

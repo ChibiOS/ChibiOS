@@ -31,7 +31,6 @@
 #define BOARD_ST_STM32F0_DISCOVERY
 #define BOARD_NAME                  "ST STM32F0-Discovery"
 
-
 /*
  * Board oscillators-related settings.
  * NOTE: LSE not fitted.
@@ -40,6 +39,8 @@
 #if !defined(STM32_LSECLK)
 #define STM32_LSECLK                0
 #endif
+
+#define STM32_LSEDRV                (3 << 3)
 
 #if !defined(STM32_HSECLK)
 #define STM32_HSECLK                0

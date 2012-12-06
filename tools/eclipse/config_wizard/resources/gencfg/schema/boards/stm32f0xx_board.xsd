@@ -41,6 +41,19 @@
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:attribute>
+                            <xs:attribute name="LSEDrive" use="required">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:whiteSpace
+                                            value="collapse">
+                                        </xs:whiteSpace>
+                                        <xs:enumeration value="3 High Drive (default)"></xs:enumeration>
+                                        <xs:enumeration value="2 Medium-High Drive"></xs:enumeration>
+                                        <xs:enumeration value="1 Medium-Low Drive"></xs:enumeration>
+                                        <xs:enumeration value="0 Low Drive (lowest consumption)"></xs:enumeration>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:attribute>
                         <xs:attribute name="LSEFrequency"
                           use="required">
                           <xs:simpleType>

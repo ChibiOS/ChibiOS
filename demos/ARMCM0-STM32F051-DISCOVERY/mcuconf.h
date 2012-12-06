@@ -47,7 +47,7 @@
 #define STM32_LSE_ENABLED                   FALSE
 #define STM32_SW                            STM32_SW_PLL
 #define STM32_PLLSRC                        STM32_PLLSRC_HSI
-#define STM32_PLLXTPRE                      STM32_PLLXTPRE_DIV1
+#define STM32_PREDIV_VALUE                  1
 #define STM32_PLLMUL_VALUE                  12
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE                          STM32_PPRE_DIV1
