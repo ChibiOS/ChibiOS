@@ -32,7 +32,7 @@ __stacks_total_size__	= __und_stack_size__ + __abt_stack_size__ + __fiq_stack_si
 MEMORY
 {
     flash : org = 0x100000, len = 256k
-    ram : org = 0x200020, len = 64k - 0x20
+    ram : org = 0x200020, len = 32k - 0x20
 }
 
 __ram_start__		= ORIGIN(ram);
