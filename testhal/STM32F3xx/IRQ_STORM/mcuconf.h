@@ -68,6 +68,12 @@
 #define STM32_USBPRE                        STM32_USBPRE_DIV1P5
 
 /*
+ * CAN driver system settings.
+ */
+#define STM32_CAN_USE_CAN1                  TRUE
+#define STM32_CAN_CAN1_IRQ_PRIORITY         11
+
+/*
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  TRUE
