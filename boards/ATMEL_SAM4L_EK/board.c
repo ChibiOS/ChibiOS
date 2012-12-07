@@ -39,7 +39,7 @@ const PALConfig pal_default_config =
  */
 void __early_init(void) {
 
-  sam4l_clock_init();
+  sam_clock_init();
 }
 
 #if HAL_USE_SDC || defined(__DOXYGEN__)

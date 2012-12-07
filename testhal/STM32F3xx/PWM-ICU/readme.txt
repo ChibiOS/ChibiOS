@@ -1,18 +1,18 @@
 *****************************************************************************
-** ChibiOS/RT HAL - EXT driver demo for STM32F4xx.                         **
+** ChibiOS/RT HAL - PWM-ICU drivers demo for STM32F3xx.                    **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32F4-Discovery board.
+The demo runs on an STMicroelectronics STM32F3-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F4xx EXT driver.
+The application demonstrates the use of the STM32F3xx PWM-ICU drivers.
 
 ** Board Setup **
 
-None required.
+- Connect PA15 and PC6 together.
 
 ** Build Procedure **
 

@@ -41,9 +41,102 @@
 #define HAL_IMPLEMENTS_COUNTERS TRUE
 
 /**
- * @brief   Platform name.
+ * @brief   Platform name
  */
 #define PLATFORM_NAME   "SAM4L Series"
+
+/**
+ * @name    BUS IDs
+ * @{
+ */
+#define SAM_CLK_GRP_CPU             0
+#define SAM_CLK_GRP_HSB             1
+#define SAM_CLK_GRP_PBA             2
+#define SAM_CLK_GRP_PBB             3
+#define SAM_CLK_GRP_PBC             4
+#define SAM_CLK_GRP_PBD             5
+/** @} */
+
+/**
+ * @name    Clocks derived from the HSB clock
+ * @{
+ */
+#define SAM_HSB_PDCA_HSB            0
+#define SAM_HSB_HFLASHC_DATA        1
+#define SAM_HSB_HRAMC1_DATA         2
+#define SAM_HSB_USBC_DATA           3
+#define SAM_HSB_CRCCU_DATA          4
+#define SAM_HSB_PBA_BRIDGE          5
+#define SAM_HSB_PBB_BRIDGE          6
+#define SAM_HSB_PBC_BRIDGE          7
+#define SAM_HSB_PBD_BRIDGE          8
+#define SAM_HSB_AESA_HSB            9
+/** @} */
+
+/**
+ * @name    Clocks derived from the PBA clock
+ * @{
+ */
+#define SAM_PBA_IISC                0
+#define SAM_PBA_SPI                 1
+#define SAM_PBA_TC0                 2
+#define SAM_PBA_TC1                 3
+#define SAM_PBA_TWIM0               4
+#define SAM_PBA_TWIS0               5
+#define SAM_PBA_TWIM1               6
+#define SAM_PBA_TWIS1               7
+#define SAM_PBA_USART0              8
+#define SAM_PBA_USART1              9
+#define SAM_PBA_USART2              10
+#define SAM_PBA_USART3              11
+#define SAM_PBA_ADCIFE              12
+#define SAM_PBA_DACC                13
+#define SAM_PBA_ACIFC               14
+#define SAM_PBA_GLOC                15
+#define SAM_PBA_ABDACB              16
+#define SAM_PBA_TRNG                17
+#define SAM_PBA_PARC                18
+#define SAM_PBA_CATB                19
+#define SAM_PBA_TWIM2               21
+#define SAM_PBA_TWIM3               22
+#define SAM_PBA_LCDCA               23
+/** @} */
+
+/**
+ * @name    Clocks derived from the PBB clock
+ * @{
+ */
+#define SAM_PBB_HFLASHC_REGS        0
+#define SAM_PBB_HRAMC1_REGS         1
+#define SAM_PBB_HMATRIX             2
+#define SAM_PBB_PDCA_PB             3
+#define SAM_PBB_CRCCU_REGS          4
+#define SAM_PBB_USBC_REGS           5
+#define SAM_PBB_PEVC                6
+/** @} */
+
+/**
+ * @name    Clocks derived from the PBC clock
+ * @{
+ */
+#define SAM_PBC_PM                  0
+#define SAM_PBC_CHIPID              1
+#define SAM_PBC_SCIF                2
+#define SAM_PBC_FREQM               3
+#define SAM_PBC_GPIO                4
+/* @} */
+
+/**
+ * @name    Clocks derived from the PBD clock
+ * @{
+ */
+#define SAM_PBD_BPM                 0
+#define SAM_PBD_BSCIF               1
+#define SAM_PBD_AST                 2
+#define SAM_PBD_WDT                 3
+#define SAM_PBD_EIC                 4
+#define SAM_PBD_PICOUART            5
+/** @} */
 
 /**
  * @name    MCCTRL register bits definitions
@@ -203,7 +296,9 @@ typedef uint32_t halrtcnt_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sam4l_clock_init(void);
+  void sam_enable_module(uint32_t bus_id, uint32_t module);
+  void sam_disable_module(uint32_t bus_id, uint32_t module);
+  void sam_clock_init(void);
   void hal_lld_init(void);
 #ifdef __cplusplus
 }

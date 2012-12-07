@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo will on an STMicroelectronics STM32F4-Discovery board.
+The demo runs on an STMicroelectronics STM32F4-Discovery board.
 
 ** The Demo **
 

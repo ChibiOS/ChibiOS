@@ -88,14 +88,12 @@ static const SerialConfig default_config =
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
  * @param[in] config    the architecture-dependent serial driver configuration
- * @param[in] clock     clock in Hz for the specified USART/UART
  */
-static void usart_init(SerialDriver *sdp, const SerialConfig *config,
-                       uint32_t clock) {
+static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   USART_TypeDef *u = sdp->usart;
 
   /* Baud rate setting.*/
-  u->BRR = clock / config->sc_speed;
+  u->BRR = (uint16_t)(sdp->clock / config->sc_speed);
 
   /* Note that some bits are enforced.*/
   u->CR2 = config->sc_cr2 | USART_CR2_LBDIE;
@@ -372,31 +370,37 @@ void sd_lld_init(void) {
 #if STM32_SERIAL_USE_USART1
   sdObjectInit(&SD1, NULL, notify1);
   SD1.usart = USART1;
+  SD1.clock = STM32_USART1CLK;
 #endif
 
 #if STM32_SERIAL_USE_USART2
   sdObjectInit(&SD2, NULL, notify2);
   SD2.usart = USART2;
+  SD2.clock = STM32_USART2CLK;
 #endif
 
 #if STM32_SERIAL_USE_USART3
   sdObjectInit(&SD3, NULL, notify3);
   SD3.usart = USART3;
+  SD3.clock = STM32_USART3CLK;
 #endif
 
 #if STM32_SERIAL_USE_UART4
   sdObjectInit(&SD4, NULL, notify4);
   SD4.usart = UART4;
+  SD4.clock = STM32_UART4CLK;
 #endif
 
 #if STM32_SERIAL_USE_UART5
   sdObjectInit(&SD5, NULL, notify5);
   SD5.usart = UART5;
+  SD5.clock = STM32_UART5CLK;
 #endif
 
 #if STM32_SERIAL_USE_USART6
   sdObjectInit(&SD6, NULL, notify6);
   SD6.usart = USART6;
+  SD6.clock = STM32_USART6CLK;
 #endif
 }
 
@@ -421,7 +425,6 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
       rccEnableUSART1(FALSE);
       nvicEnableVector(STM32_USART1_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART1_PRIORITY));
-      usart_init(sdp, config, STM32_USART1CLK);
     }
 #endif
 #if STM32_SERIAL_USE_USART2
@@ -429,7 +432,6 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
       rccEnableUSART2(FALSE);
       nvicEnableVector(STM32_USART2_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART2_PRIORITY));
-      usart_init(sdp, config, STM32_USART2CLK);
     }
 #endif
 #if STM32_SERIAL_USE_USART3
@@ -437,7 +439,6 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
       rccEnableUSART3(FALSE);
       nvicEnableVector(STM32_USART3_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART3_PRIORITY));
-      usart_init(sdp, config, STM32_USART3CLK);
     }
 #endif
 #if STM32_SERIAL_USE_UART4
@@ -445,7 +446,6 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
       rccEnableUART4(FALSE);
       nvicEnableVector(STM32_UART4_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_UART4_PRIORITY));
-      usart_init(sdp, config, STM32_UART4CLK);
     }
 #endif
 #if STM32_SERIAL_USE_UART5
@@ -453,7 +453,6 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
       rccEnableUART5(FALSE);
       nvicEnableVector(STM32_UART5_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_UART5_PRIORITY));
-      usart_init(sdp, config, STM32_UART5CLK);
     }
 #endif
 #if STM32_SERIAL_USE_USART6
@@ -461,10 +460,10 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
       rccEnableUSART6(FALSE);
       nvicEnableVector(STM32_USART6_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_SERIAL_USART6_PRIORITY));
-      usart_init(sdp, config, STM32_USART6CLK);
     }
 #endif
   }
+  usart_init(sdp, config);
 }
 
 /**

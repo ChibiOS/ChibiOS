@@ -170,11 +170,11 @@
 #define STM32_PPRE1_DIV8        (6 << 8)    /**< HCLK divided by 8.         */
 #define STM32_PPRE1_DIV16       (7 << 8)    /**< HCLK divided by 16.        */
 
-#define STM32_PPRE2_DIV1        (0 << 8)    /**< HCLK divided by 1.         */
-#define STM32_PPRE2_DIV2        (4 << 8)    /**< HCLK divided by 2.         */
-#define STM32_PPRE2_DIV4        (5 << 8)    /**< HCLK divided by 4.         */
-#define STM32_PPRE2_DIV8        (6 << 8)    /**< HCLK divided by 8.         */
-#define STM32_PPRE2_DIV16       (7 << 8)    /**< HCLK divided by 16.        */
+#define STM32_PPRE2_DIV1        (0 << 11)   /**< HCLK divided by 1.         */
+#define STM32_PPRE2_DIV2        (4 << 11)   /**< HCLK divided by 2.         */
+#define STM32_PPRE2_DIV4        (5 << 11)   /**< HCLK divided by 4.         */
+#define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
+#define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
 
 #define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI/2. */
 #define STM32_PLLSRC_HSE        (1 << 16)   /**< PLL clock source is

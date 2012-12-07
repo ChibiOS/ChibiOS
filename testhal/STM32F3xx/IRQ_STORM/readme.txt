@@ -1,18 +1,19 @@
 *****************************************************************************
-** ChibiOS/RT HAL - EXT driver demo for STM32F4xx.                         **
+** ChibiOS/RT HAL - IRQ_STORM stress test demo for STM32F3xx.              **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32F4-Discovery board.
+The demo runs on an STMicroelectronics STM32F3-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F4xx EXT driver.
+The application demonstrates the use of the STM32F3xx GPT, PAL and Serial
+drivers in order to implement a system stress demo.
 
 ** Board Setup **
 
-None required.
+None.
 
 ** Build Procedure **
 

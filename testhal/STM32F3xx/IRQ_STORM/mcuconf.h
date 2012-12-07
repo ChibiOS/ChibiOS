@@ -70,14 +70,14 @@
 /*
  * GPT driver system settings.
  */
-#define STM32_GPT_USE_TIM1                  FALSE
-#define STM32_GPT_USE_TIM2                  FALSE
-#define STM32_GPT_USE_TIM3                  FALSE
-#define STM32_GPT_USE_TIM4                  FALSE
-#define STM32_GPT_USE_TIM8                  FALSE
+#define STM32_GPT_USE_TIM1                  TRUE
+#define STM32_GPT_USE_TIM2                  TRUE
+#define STM32_GPT_USE_TIM3                  TRUE
+#define STM32_GPT_USE_TIM4                  TRUE
+#define STM32_GPT_USE_TIM8                  TRUE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         7
-#define STM32_GPT_TIM2_IRQ_PRIORITY         7
-#define STM32_GPT_TIM3_IRQ_PRIORITY         7
+#define STM32_GPT_TIM2_IRQ_PRIORITY         6
+#define STM32_GPT_TIM3_IRQ_PRIORITY         10
 #define STM32_GPT_TIM4_IRQ_PRIORITY         7
 #define STM32_GPT_TIM8_IRQ_PRIORITY         7
 
@@ -113,7 +113,7 @@
 /*
  * SERIAL driver system settings.
  */
-#define STM32_SERIAL_USE_USART1             FALSE
+#define STM32_SERIAL_USE_USART1             TRUE
 #define STM32_SERIAL_USE_USART2             FALSE
 #define STM32_SERIAL_USE_USART3             FALSE
 #define STM32_SERIAL_USE_UART4              FALSE
