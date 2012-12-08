@@ -142,6 +142,10 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
  */
 void rtc_lld_init(void){
 
+  /* RSF bit must be cleared by software after an APB1 reset or an APB1 clock
+     stop. Otherwise its value will not be actual. */
+  RTC->CRL &= ~RTC_CRL_RSF;
+
   /* Required because access to PRL.*/
   rtc_lld_apb1_sync();
 

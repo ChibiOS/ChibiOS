@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Potential problem with RTC_CRL_RSF bit (bug 3593972)
 - FIX: Fixed wrong stack initializations in GCC STM32L1xx port files (bug
   3591321).
 - FIX: Fixed different redefinition for __main_stack_end__ symbol (bug
