@@ -180,8 +180,8 @@
 #define STM32_PLLSRC_HSE        (1 << 16)   /**< PLL clock source is
                                                  HSE/PREDIV.                */
 
-#define STM32_USBPRE_DIV1       (0 << 22)   /**< USB clock is PLLCLK/1.     */
-#define STM32_USBPRE_DIV1P5     (1 << 22)   /**< USB clock is PLLCLK/1.5.   */
+#define STM32_USBPRE_DIV1P5     (0 << 22)   /**< USB clock is PLLCLK/1.5.   */
+#define STM32_USBPRE_DIV1       (1 << 22)   /**< USB clock is PLLCLK/1.     */
 
 #define STM32_MCOSEL_NOCLOCK    (0 << 24)   /**< No clock on MCO pin.       */
 #define STM32_MCOSEL_LSI        (2 << 24)   /**< LSI clock on MCO pin.      */
