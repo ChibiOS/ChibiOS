@@ -66,7 +66,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !HAL_USE_USB && !CH_USE_QUEUES && !CH_USE_EVENTS
+#if !HAL_USE_USB || !CH_USE_QUEUES || !CH_USE_EVENTS
 #error "Serial over USB Driver requires HAL_USE_USB, CH_USE_QUEUES, "
        "CH_USE_EVENTS"
 #endif
