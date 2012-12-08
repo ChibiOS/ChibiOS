@@ -82,6 +82,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Wasting of BKP registers in RTCv1 driver (bug 3594005) (backported
+  to 2.4.3).
 - FIX: Potential problem with RTC_CRL_RSF bit (bug 3593972) (backported
   to 2.4.3).
 - FIX: Fixed DMA reconfiguration problem in STM32 SPI driver (bug 3592809)
