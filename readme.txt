@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Wasting of BKP registers in RTCv1 driver (bug 3594005)
 - FIX: Potential problem with RTC_CRL_RSF bit (bug 3593972)
 - FIX: Fixed wrong stack initializations in GCC STM32L1xx port files (bug
   3591321).
