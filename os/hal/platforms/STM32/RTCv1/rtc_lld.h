@@ -175,6 +175,7 @@ extern RTCDriver RTCD1;
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void rtc_lld_set_prescaler(void);
   void rtc_lld_init(void);
   void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec);
   void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec);

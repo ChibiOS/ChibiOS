@@ -81,6 +81,9 @@ static void hal_lld_backup_domain_init(void) {
 
     /* RTC clock enabled.*/
     RCC->BDCR |= RCC_BDCR_RTCEN;
+
+    /* Prescaler value loaded in registers.*/
+    rtc_lld_set_prescaler();
   }
 #endif /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
 }

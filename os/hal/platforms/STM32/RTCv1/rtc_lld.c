@@ -133,10 +133,24 @@ CH_IRQ_HANDLER(RTC_IRQHandler) {
 /*===========================================================================*/
 
 /**
- * @brief   Enable access to registers and initialize RTC if BKP domain
- *          was previously reseted.
- * @note:   Cold start time of LSE oscillator on STM32 platform 
- *          takes about 3 seconds.
+ * @brief   Load value of RTCCLK to prescaler registers.
+ * @note    The pre-scaler must not be set on every reset as RTC clock
+ *          counts are lost when it is set.
+ * @note    This function designed to be called from
+ *          hal_lld_backup_domain_init(). Because there is only place
+ *          where possible to detect BKP domain reset event reliably.
+ *
+ * @notapi
+ */
+void rtc_lld_set_prescaler(void){
+  rtc_lld_acquire();
+  RTC->PRLH = (uint16_t)((STM32_RTCCLK - 1) >> 16) & 0x000F;
+  RTC->PRLL = (uint16_t)(((STM32_RTCCLK - 1))      & 0xFFFF);
+  rtc_lld_release();
+}
+
+/**
+ * @brief   Initialize RTC.
  *
  * @notapi
  */
@@ -148,24 +162,6 @@ void rtc_lld_init(void){
 
   /* Required because access to PRL.*/
   rtc_lld_apb1_sync();
-
-  /*
-   * Writes preload register only if its value is not equal to desired value.
-   *
-   * Ref CD00171190: RM0008 Reference manual Cls 18.4.3 The RTC->PRL registers
-   * are write only. We must store the value for the pre-scaler in BKP->DR1
-   * and BKP->DR1 so we know it has been set.
-   * The pre-scaler must not be set on every reset as RTC clock counts are
-   * lost when it is set.
-   */
-  if ((STM32_RTCCLK - 1) != ((((uint32_t)BKP->DR1) << 16) | BKP->DR2)){
-    rtc_lld_acquire();
-    RTC->PRLH = (uint16_t)((STM32_RTCCLK - 1) >> 16) & 0x000F;
-    BKP->DR1  = (uint16_t)((STM32_RTCCLK - 1) >> 16) & 0x000F;
-    RTC->PRLL = (uint16_t)(((STM32_RTCCLK - 1)) & 0xFFFF);
-    BKP->DR2  = (uint16_t)(((STM32_RTCCLK - 1)) & 0xFFFF);
-    rtc_lld_release();
-  }
 
   /* All interrupts initially disabled.*/
   rtc_lld_wait_write();
