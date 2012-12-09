@@ -32,6 +32,12 @@
 #define BOARD_NAME                  "Atmel SAM4L-EK"
 
 /*
+ * Clock sources.
+ */
+#define SAM_OSC32K_CLK              32768
+#define SAM_OSC0_CLK                12000000
+
+/*
  * Device identifier.
  */
 #define __ATSAM4LC4C__

@@ -121,6 +121,23 @@ void sam_clock_init(void) {
   SAM_PM_UNLOCK((uint32_t)&PM->PM_PBDSEL);
   PM->PM_PBDSEL = SAM_PBDSEL;
 
+  /* Switching to the selected clock source, enabling it if necessary.*/
+#if SAM_MCCTRL_MCSEL == SAM_MCSEL_RCSYS
+  /* Nothing to do, already running from SYSIRC.*/
+#endif
+#if SAM_MCCTRL_MCSEL == SAM_MCSEL_OSC0
+#endif
+#if SAM_MCCTRL_MCSEL == SAM_MCSEL_PLL
+#endif
+#if SAM_MCCTRL_MCSEL == SAM_MCSEL_DFLL
+#endif
+#if SAM_MCCTRL_MCSEL == SAM_MCSEL_RC80M
+#endif
+#if SAM_MCCTRL_MCSEL == SAM_MCSEL_RCFAST
+#endif
+#if SAM_MCCTRL_MCSEL == SAM_MCSEL_RC1M
+#endif
+
 #endif /* SAM_NO_INIT */
 }
 
