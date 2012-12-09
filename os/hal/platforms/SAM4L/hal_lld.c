@@ -34,7 +34,12 @@
 /*===========================================================================*/
 
 #define SAM_PM_UNLOCK(addr)                                                 \
-  PM->PM_UNLOCK = BPM_UNLOCK_KEY(0xAAu) | BPM_UNLOCK_ADDR(addr)
+  PM->PM_UNLOCK = BPM_UNLOCK_KEY(0xAAu) |                                   \
+                  BPM_UNLOCK_ADDR((uint32_t)(addr) - (uint32_t)PM)
+
+#define SAM_SCIF_UNLOCK(addr)                                               \
+  SCIF->SCIF_UNLOCK = SCIF_UNLOCK_KEY(0xAAu) |                              \
+                      SCIF_UNLOCK_ADDR((uint32_t)(addr) - (uint32_t)SCIF)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -68,7 +73,7 @@ void sam_enable_module(uint32_t bus_id, uint32_t module) {
 
   mask = *(&PM->PM_CPUMASK + bus_id);
   mask |= 1U << module;
-  SAM_PM_UNLOCK(((uint32_t)&PM->PM_CPUMASK - (uint32_t)PM) + (4 * bus_id));
+  SAM_PM_UNLOCK((uint32_t)&PM->PM_CPUMASK + (4 * bus_id));
   *(&PM->PM_CPUMASK + bus_id) |= mask;
 }
 
@@ -84,7 +89,7 @@ void sam_disable_module(uint32_t bus_id, uint32_t module) {
 
   mask = *(&PM->PM_CPUMASK + bus_id);
   mask &= ~(1U << module);
-  SAM_PM_UNLOCK(((uint32_t)&PM->PM_CPUMASK - (uint32_t)PM) + (4 * bus_id));
+  SAM_PM_UNLOCK((uint32_t)&PM->PM_CPUMASK + (4 * bus_id));
   *(&PM->PM_CPUMASK + bus_id) = mask;
 }
 
@@ -110,15 +115,15 @@ void sam_clock_init(void) {
 #endif
 
   /* Setting up prescalers.*/
-  SAM_PM_UNLOCK((uint32_t)&PM->PM_CPUSEL);
+  SAM_PM_UNLOCK(&PM->PM_CPUSEL);
   PM->PM_CPUSEL = SAM_CPUSEL;
-  SAM_PM_UNLOCK((uint32_t)&PM->PM_PBASEL);
+  SAM_PM_UNLOCK(&PM->PM_PBASEL);
   PM->PM_PBASEL = SAM_PBASEL;
-  SAM_PM_UNLOCK((uint32_t)&PM->PM_PBBSEL);
+  SAM_PM_UNLOCK(&PM->PM_PBBSEL);
   PM->PM_PBBSEL = SAM_PBBSEL;
-  SAM_PM_UNLOCK((uint32_t)&PM->PM_PBCSEL);
+  SAM_PM_UNLOCK(&PM->PM_PBCSEL);
   PM->PM_PBCSEL = SAM_PBCSEL;
-  SAM_PM_UNLOCK((uint32_t)&PM->PM_PBDSEL);
+  SAM_PM_UNLOCK(&PM->PM_PBDSEL);
   PM->PM_PBDSEL = SAM_PBDSEL;
 
   /* Switching to the selected clock source, enabling it if necessary.*/
@@ -126,6 +131,11 @@ void sam_clock_init(void) {
   /* Nothing to do, already running from SYSIRC.*/
 #endif
 #if SAM_MCCTRL_MCSEL == SAM_MCSEL_OSC0
+  SAM_SCIF_UNLOCK(&SCIF->SCIF_OSCCTRL0);
+  SCIF->SCIF_OSCCTRL0 = SAM_OSCCTRL_GAIN    | SAM_OSCCTRL_MODE |
+                        SAM_OSCCTRL_STARTUP | SAM_OSCCTRL_OSCEN;
+  while (!(SCIF->SCIF_PCLKSR & SCIF_PCLKSR_OSC0RDY))
+    ;
 #endif
 #if SAM_MCCTRL_MCSEL == SAM_MCSEL_PLL
 #endif

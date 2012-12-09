@@ -26,7 +26,7 @@
  *          - SAM_OSC32K_CLK.
  *          - SAM_OSC32K_MODE_EXT (optional)
  *          - SAM_OSC0_CLK.
- *          - SAM_OSC0_MODE_EXT (optional)
+ *          - SAM_OSCCTRL_MODE
  *          .
  *
  * @addtogroup HAL
@@ -222,6 +222,19 @@
 #define SAM_PMCON_PS1           (1 << 0)
 /** @} */
 
+/**
+ * @name    OSCCTRL0 registers bits definitions
+ * @{
+ */
+#define SAM_OSCCTRL_MODE_EXT    (0 << 0)
+#define SAM_OSCCTRL_MODE_XTAL   (1 << 0)
+#define SAM_OSCCTRL_GAIN_0      (0 << 1)
+#define SAM_OSCCTRL_GAIN_1      (1 << 1)
+#define SAM_OSCCTRL_GAIN_2      (2 << 1)
+#define SAM_OSCCTRL_GAIN_3      (3 << 1)
+#define SAM_OSCCTRL_OSCEN       (1 << 16)
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -320,6 +333,32 @@
 #error "invalid SAM_PMCON_PS value specified"
 #endif
 /** @} */
+
+/* OSC0 mode check.*/
+#if (SAM_OSCCTRL_MODE != SAM_OSCCTRL_MODE_EXT) &&                           \
+    (SAM_OSCCTRL_MODE != SAM_OSCCTRL_MODE_XTAL)
+#error "invalid SAM_OSCCTRL_MODE value specified"
+#endif
+
+/**
+ * @brief   OSC0 gain setting.
+ */
+#if SAM_OSCCTRL_MODE == SAM_OSCCTRL_MODE_EXT
+#define SAM_OSCCTRL_GAIN                    0
+#else
+#if SAM_OSC0_CLK < 12000000
+#define SAM_OSCCTRL_GAIN                    SAM_OSCCTRL_GAIN_0
+#elif SAM_OSC0_CLK < 16000000
+#define SAM_OSCCTRL_GAIN                    SAM_OSCCTRL_GAIN_1
+#else
+#define SAM_OSCCTRL_GAIN                    SAM_OSCCTRL_GAIN_2
+#endif
+#endif
+
+/**
+ * @brief   OSC0 startup setting.
+ */
+#define SAM_OSCCTRL_STARTUP                 SCIF_OSCCTRL0_STARTUP(2)
 
 /**
  * @brief   Selected RCFAST clock frequency.
