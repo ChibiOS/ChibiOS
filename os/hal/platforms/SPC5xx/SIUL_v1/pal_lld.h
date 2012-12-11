@@ -13,7 +13,7 @@
  */
 
 /**
- * @file    SPC5xx/SIU_v1//pal_lld.h
+ * @file    SPC5xx/SIUL_v1/pal_lld.h
  * @brief   SPC5xx SIU/SIUL low level driver header.
  *
  * @addtogroup PAL

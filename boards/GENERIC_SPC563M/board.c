@@ -28,7 +28,7 @@
  */
 void __early_init(void) {
 
-  spc563_clock_init();
+  spc_clock_init();
 }
 
 /*

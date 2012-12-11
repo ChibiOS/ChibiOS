@@ -13,7 +13,7 @@
  */
 
 /**
- * @file    SPC5xx/serial_lld.c
+ * @file    SPC5xx/LINFlex_v1/serial_lld.c
  * @brief   SPC5xx low level serial driver code.
  *
  * @addtogroup SERIAL

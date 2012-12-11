@@ -593,6 +593,13 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/*
+ * Configuration-related checks.
+ */
+#if !defined(SPC560BCxx_MCUCONF)
+#error "Using a wrong mcuconf.h file, SPC560BCxx_MCUCONF not defined"
+#endif
+
 /* Check on the XOSC frequency.*/
 #if (SPC5_XOSC_CLK < SPC5_XOSC_CLK_MIN) ||                                  \
     (SPC5_XOSC_CLK > SPC5_XOSC_CLK_MAX)
