@@ -76,7 +76,7 @@ static void esci_init(SerialDriver *sdp, const SerialConfig *config) {
   escip->CR1.B.SBR = SPC_SYSCLK / (16 * config->sc_speed);
   if (mode & SD_MODE_LOOPBACK)
     escip->CR1.B.LOOPS = 1;
-  switch (mode & SD_MODE_PARITY) {
+  switch (mode & SD_MODE_PARITY_MASK) {
   case SD_MODE_PARITY_ODD:
     escip->CR1.B.PT = 1;
   case SD_MODE_PARITY_EVEN:

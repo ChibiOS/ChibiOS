@@ -137,7 +137,7 @@ _IVOR10:
 #endif
         bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
-        beq         cr0, .ctxrestore
+        beq         cr0, _ivor_exit
         bl          chSchDoReschedule
         b           _ivor_exit
 
