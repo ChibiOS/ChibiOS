@@ -224,6 +224,9 @@ static void notify2(GenericQueue *qp) {
 /*===========================================================================*/
 
 #if SPC5_SERIAL_USE_LINFLEX0 || defined(__DOXYGEN__)
+#if !defined(SPC5_LINFLEX0_RXI_HANDLER)
+#error "SPC5_LINFLEX0_RXI_HANDLER not defined"
+#endif
 /**
  * @brief   LINFlex-0 RXI interrupt handler.
  *
@@ -238,6 +241,9 @@ CH_IRQ_HANDLER(SPC5_LINFLEX0_RXI_HANDLER) {
   CH_IRQ_EPILOGUE();
 }
 
+#if !defined(SPC5_LINFLEX0_TXI_HANDLER)
+#error "SPC5_LINFLEX0_TXI_HANDLER not defined"
+#endif
 /**
  * @brief   LINFlex-0 TXI interrupt handler.
  *
@@ -252,6 +258,9 @@ CH_IRQ_HANDLER(SPC5_LINFLEX0_TXI_HANDLER) {
   CH_IRQ_EPILOGUE();
 }
 
+#if !defined(SPC5_LINFLEX0_ERR_HANDLER)
+#error "SPC5_LINFLEX0_ERR_HANDLER not defined"
+#endif
 /**
  * @brief   LINFlex-0 ERR interrupt handler.
  *
@@ -268,6 +277,9 @@ CH_IRQ_HANDLER(SPC5_LINFLEX0_ERR_HANDLER) {
 #endif
 
 #if SPC5_SERIAL_USE_LINFLEX1 || defined(__DOXYGEN__)
+#if !defined(SPC5_LINFLEX1_RXI_HANDLER)
+#error "SPC5_LINFLEX1_RXI_HANDLER not defined"
+#endif
 /**
  * @brief   LINFlex-1 RXI interrupt handler.
  *
@@ -282,6 +294,9 @@ CH_IRQ_HANDLER(SPC5_LINFLEX1_RXI_HANDLER) {
   CH_IRQ_EPILOGUE();
 }
 
+#if !defined(SPC5_LINFLEX1_TXI_HANDLER)
+#error "SPC5_LINFLEX1_TXI_HANDLER not defined"
+#endif
 /**
  * @brief   LINFlex-1 TXI interrupt handler.
  *
@@ -296,6 +311,9 @@ CH_IRQ_HANDLER(SPC5_LINFLEX1_TXI_HANDLER) {
   CH_IRQ_EPILOGUE();
 }
 
+#if !defined(SPC5_LINFLEX1_ERR_HANDLER)
+#error "SPC5_LINFLEX1_ERR_HANDLER not defined"
+#endif
 /**
  * @brief   LINFlex-1 ERR interrupt handler.
  *

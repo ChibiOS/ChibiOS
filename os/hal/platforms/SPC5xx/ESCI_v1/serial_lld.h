@@ -51,8 +51,8 @@
  * @details If set to @p TRUE the support for eSCI-A is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(SPC_USE_ESCIA) || defined(__DOXYGEN__)
-#define SPC_USE_ESCIA                       TRUE
+#if !defined(SPC5_USE_ESCIA) || defined(__DOXYGEN__)
+#define SPC5_USE_ESCIA                      TRUE
 #endif
 
 /**
@@ -60,22 +60,22 @@
  * @details If set to @p TRUE the support for eSCI-B is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(SPC_USE_ESCIB) || defined(__DOXYGEN__)
-#define SPC_USE_ESCIB                       TRUE
+#if !defined(SPC5_USE_ESCIB) || defined(__DOXYGEN__)
+#define SPC5_USE_ESCIB                      TRUE
 #endif
 
 /**
  * @brief   eSCI-A interrupt priority level setting.
  */
 #if !defined(SPC_ESCIA_PRIORITY) || defined(__DOXYGEN__)
-#define SPC_ESCIA_PRIORITY                  8
+#define SPC5_ESCIA_PRIORITY                 8
 #endif
 
 /**
  * @brief   eSCI-B interrupt priority level setting.
  */
 #if !defined(SPC_ESCIB_PRIORITY) || defined(__DOXYGEN__)
-#define SPC_ESCIB_PRIORITY                  8
+#define SPC5_ESCIB_PRIORITY                 8
 #endif
 
 /*===========================================================================*/
@@ -132,10 +132,10 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if SPC_USE_ESCIA && !defined(__DOXYGEN__)
+#if SPC5_USE_ESCIA && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
 #endif
-#if SPC_USE_ESCIB && !defined(__DOXYGEN__)
+#if SPC5_USE_ESCIB && !defined(__DOXYGEN__)
 extern SerialDriver SD2;
 #endif
 

@@ -55,7 +55,7 @@
 #define SPC5_HAS_LINFLEX3                   FALSE
 
 /* SIU/SIUL attributes.*/
-#define SPC5_HAS_SIU                        FALSE
+#define SPC5_HAS_SIU                        TRUE
 #define SPC5_SIU_SUPPORTS_PORTS             TRUE
 #define SPC5_SIU_NUM_PORTS                  8
 #define SPC5_SIU_NUM_PCRS                   108

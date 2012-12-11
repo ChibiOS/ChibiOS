@@ -24,6 +24,7 @@
 #define _HAL_LLD_H_
 
 #include "mpc563m.h"
+#include "spc563m_registry.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -96,7 +97,7 @@
  * @brief   Disables the clocks initialization in the HAL.
  */
 #if !defined(SPC5_NO_INIT) || defined(__DOXYGEN__)
-#define SPC_NO_INIT                         FALSE
+#define SPC5_NO_INIT                         FALSE
 #endif
 
 /**
@@ -105,15 +106,15 @@
  *          external clock is used as-is and the other clock-related settings
  *          are ignored.
  */
-#if !defined(SPC_CLK_BYPASS) || defined(__DOXYGEN__)
-#define SPC_CLK_BYPASS                      FALSE
+#if !defined(SPC5_CLK_BYPASS) || defined(__DOXYGEN__)
+#define SPC5_CLK_BYPASS                      FALSE
 #endif
 
 /**
  * @brief   Disables the overclock checks.
  */
-#if !defined(SPC_ALLOW_OVERCLOCK) || defined(__DOXYGEN__)
-#define SPC_ALLOW_OVERCLOCK                 FALSE
+#if !defined(SPC5_ALLOW_OVERCLOCK) || defined(__DOXYGEN__)
+#define SPC5_ALLOW_OVERCLOCK                 FALSE
 #endif
 
 /**
@@ -121,23 +122,23 @@
  * @note    Must be in range 0...14.
  * @note    The effective divider factor is this value plus one.
  */
-#if !defined(SPC_CLK_PREDIV) || defined(__DOXYGEN__)
-#define SPC_CLK_PREDIV                      1
+#if !defined(SPC5_CLK_PREDIV) || defined(__DOXYGEN__)
+#define SPC5_CLK_PREDIV                      1
 #endif
 
 /**
  * @brief   Multiplication factor divider.
  * @note    Must be in range 32...96.
  */
-#if !defined(SPC_CLK_MFD) || defined(__DOXYGEN__)
-#define SPC_CLK_MFD                         80
+#if !defined(SPC5_CLK_MFD) || defined(__DOXYGEN__)
+#define SPC5_CLK_MFD                         80
 #endif
 
 /**
  * @brief   Reduced frequency divider.
  */
-#if !defined(SPC_CLK_RFD) || defined(__DOXYGEN__)
-#define SPC_CLK_RFD                         RFD_DIV4
+#if !defined(SPC5_CLK_RFD) || defined(__DOXYGEN__)
+#define SPC5_CLK_RFD                         RFD_DIV4
 #endif
 
 /**
@@ -148,8 +149,8 @@
  *          those are calculated from the system clock and ORed with this
  *          value.
  */
-#if !defined(SPC_FLASH_BIUCR) || defined(__DOXYGEN__)
-#define SPC_FLASH_BIUCR                     (BIUCR_BANK1_TOO |              \
+#if !defined(SPC5_FLASH_BIUCR) || defined(__DOXYGEN__)
+#define SPC5_FLASH_BIUCR                     (BIUCR_BANK1_TOO |              \
                                              BIUCR_MASTER4_PREFETCH |       \
                                              BIUCR_MASTER0_PREFETCH |       \
                                              BIUCR_DPFEN |                  \
@@ -169,50 +170,50 @@
 #error "Using a wrong mcuconf.h file, SPC563Mxx_MCUCONF not defined"
 #endif
 
-#if (SPC_CLK_PREDIV < 0) || (SPC_CLK_PREDIV > 14)
-#error "invalid SPC_CLK_PREDIV value specified"
+#if (SPC5_CLK_PREDIV < 0) || (SPC5_CLK_PREDIV > 14)
+#error "invalid SPC5_CLK_PREDIV value specified"
 #endif
 
-#if (SPC_CLK_MFD < 32) || (SPC_CLK_MFD > 96)
-#error "invalid SPC_CLK_MFD value specified"
+#if (SPC5_CLK_MFD < 32) || (SPC5_CLK_MFD > 96)
+#error "invalid SPC5_CLK_MFD value specified"
 #endif
 
-#if (SPC_CLK_RFD != RFD_DIV2) && (SPC_CLK_RFD != RFD_DIV4) &&         \
-    (SPC_CLK_RFD != RFD_DIV8) && (SPC_CLK_RFD != RFD_DIV16)
-#error "invalid SPC_CLK_RFD value specified"
+#if (SPC5_CLK_RFD != RFD_DIV2) && (SPC5_CLK_RFD != RFD_DIV4) &&         \
+    (SPC5_CLK_RFD != RFD_DIV8) && (SPC5_CLK_RFD != RFD_DIV16)
+#error "invalid SPC5_CLK_RFD value specified"
 #endif
 
 /**
  * @brief   PLL output clock.
  */
-#define SPC_PLLCLK   ((EXTCLK / (SPC_CLK_PREDIV + 1)) * SPC_CLK_MFD)
+#define SPC5_PLLCLK   ((EXTCLK / (SPC5_CLK_PREDIV + 1)) * SPC5_CLK_MFD)
 
-#if (SPC_PLLCLK < 256000000) || (SPC_PLLCLK > 512000000)
+#if (SPC5_PLLCLK < 256000000) || (SPC5_PLLCLK > 512000000)
 #error "VCO frequency out of the acceptable range (256...512)"
 #endif
 
 /**
  * @brief   PLL output clock.
  */
-#if !SPC_CLK_BYPASS || defined(__DOXYGEN__)
-#define SPC_SYSCLK   (SPC_PLLCLK / (1 << (SPC_CLK_RFD + 1)))
+#if !SPC5_CLK_BYPASS || defined(__DOXYGEN__)
+#define SPC5_SYSCLK   (SPC5_PLLCLK / (1 << (SPC5_CLK_RFD + 1)))
 #else
-#define SPC_SYSCLK   EXTCLK
+#define SPC5_SYSCLK         EXTCLK
 #endif
 
-#if (SPC_SYSCLK > 80000000) && !SPC_ALLOW_OVERCLOCK
+#if (SPC5_SYSCLK > 80000000) && !SPC5_ALLOW_OVERCLOCK
 #error "System clock above maximum rated frequency (80MHz)"
 #endif
 
 /**
  * @brief   Flash wait states are a function of the system clock.
  */
-#if (SPC_SYSCLK <= 30000000) || defined(__DOXYGEN__)
-#define SPC_FLASH_WS     (BIUCR_APC_0 | BIUCR_RWSC_0 | BIUCR_WWSC_1)
-#elif SPC_SYSCLK <= 60000000
-#define SPC_FLASH_WS     (BIUCR_APC_1 | BIUCR_RWSC_1 | BIUCR_WWSC_1)
+#if (SPC5_SYSCLK <= 30000000) || defined(__DOXYGEN__)
+#define SPC5_FLASH_WS       (BIUCR_APC_0 | BIUCR_RWSC_0 | BIUCR_WWSC_1)
+#elif SPC5_SYSCLK <= 60000000
+#define SPC5_FLASH_WS       (BIUCR_APC_1 | BIUCR_RWSC_1 | BIUCR_WWSC_1)
 #else
-#define SPC_FLASH_WS     (BIUCR_APC_2 | BIUCR_RWSC_2 | BIUCR_WWSC_1)
+#define SPC5_FLASH_WS       (BIUCR_APC_2 | BIUCR_RWSC_2 | BIUCR_WWSC_1)
 #endif
 
 /*===========================================================================*/

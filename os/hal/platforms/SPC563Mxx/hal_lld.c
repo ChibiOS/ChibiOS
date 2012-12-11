@@ -58,7 +58,7 @@ void hal_lld_init(void) {
                 "mtspr   1013, %%r3": : : "r3");
 
   /* FLASH wait states and prefetching setup.*/
-  CFLASH0.BIUCR.R  = SPC_FLASH_BIUCR | SPC_FLASH_WS;
+  CFLASH0.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
   CFLASH0.BIUCR2.R = 0;
   CFLASH0.PFCR3.R  = 0;
 
@@ -81,7 +81,7 @@ void hal_lld_init(void) {
 
   /* Downcounter timer initialized for system tick use, TB enabled for debug
      and measurements.*/
-  n = SPC_SYSCLK / CH_FREQUENCY;
+  n = SPC5_SYSCLK / CH_FREQUENCY;
   asm volatile ("li      %%r3, 0            \t\n"
                 "mtspr   284, %%r3          \t\n"   /* Clear TBL register.  */
                 "mtspr   285, %%r3          \t\n"   /* Clear TBU register.  */
@@ -110,18 +110,18 @@ void hal_lld_init(void) {
  */
 void spc_clock_init(void) {
 
-#if !SPC_NO_INIT
+#if !SPC5_NO_INIT
   /* PLL activation.*/
   FMPLL.ESYNCR1.B.EMODE     = 1;
   FMPLL.ESYNCR1.B.CLKCFG   &= 1;                    /* Bypass mode, PLL off.*/
   FMPLL.ESYNCR1.B.CLKCFG   |= 2;                    /* PLL on.              */
-  FMPLL.ESYNCR1.B.EPREDIV   = SPC_CLK_PREDIV;
-  FMPLL.ESYNCR1.B.EMFD      = SPC_CLK_MFD;
-  FMPLL.ESYNCR2.B.ERFD      = SPC_CLK_RFD;
+  FMPLL.ESYNCR1.B.EPREDIV   = SPC5_CLK_PREDIV;
+  FMPLL.ESYNCR1.B.EMFD      = SPC5_CLK_MFD;
+  FMPLL.ESYNCR2.B.ERFD      = SPC5_CLK_RFD;
   while (!FMPLL.SYNSR.B.LOCK)
     ;
   FMPLL.ESYNCR1.B.CLKCFG   |= 4;                    /* Clock from the PLL.  */
-#endif /* !SPC_NO_INIT */
+#endif /* !SPC5_NO_INIT */
 }
 
 /** @} */

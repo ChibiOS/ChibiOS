@@ -32,14 +32,14 @@
 /**
  * @brief   eSCI-A serial driver identifier.
  */
-#if SPC_USE_ESCIA || defined(__DOXYGEN__)
+#if SPC5_USE_ESCIA || defined(__DOXYGEN__)
 SerialDriver SD1;
 #endif
 
 /**
  * @brief   eSCI-B serial driver identifier.
  */
-#if SPC_USE_ESCIB || defined(__DOXYGEN__)
+#if SPC5_USE_ESCIB || defined(__DOXYGEN__)
 SerialDriver SD2;
 #endif
 
@@ -73,7 +73,7 @@ static void esci_init(SerialDriver *sdp, const SerialConfig *config) {
   escip->CR2.R  = 0;                /* MDIS off.                            */
   escip->CR1.R  = 0;
   escip->LCR.R  = 0;
-  escip->CR1.B.SBR = SPC_SYSCLK / (16 * config->sc_speed);
+  escip->CR1.B.SBR = SPC5_SYSCLK / (16 * config->sc_speed);
   if (mode & SD_MODE_LOOPBACK)
     escip->CR1.B.LOOPS = 1;
   switch (mode & SD_MODE_PARITY_MASK) {
@@ -161,7 +161,7 @@ static void serve_interrupt(SerialDriver *sdp) {
   }
 }
 
-#if SPC_USE_ESCIA || defined(__DOXYGEN__)
+#if SPC5_USE_ESCIA || defined(__DOXYGEN__)
 static void notify1(GenericQueue *qp) {
 
   (void)qp;
@@ -176,7 +176,7 @@ static void notify1(GenericQueue *qp) {
 }
 #endif
 
-#if SPC_USE_ESCIB || defined(__DOXYGEN__)
+#if SPC5_USE_ESCIB || defined(__DOXYGEN__)
 static void notify2(GenericQueue *qp) {
 
   (void)qp;
@@ -195,13 +195,16 @@ static void notify2(GenericQueue *qp) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if SPC_USE_ESCIA || defined(__DOXYGEN__)
+#if SPC5_USE_ESCIA || defined(__DOXYGEN__)
+#if !defined(SPC5_ESCIA_HANDLER)
+#error "SPC5_ESCIA_HANDLER not defined"
+#endif
 /**
  * @brief   eSCI-A interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(vector146) {
+CH_IRQ_HANDLER(SPC5_ESCIA_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -211,13 +214,16 @@ CH_IRQ_HANDLER(vector146) {
 }
 #endif
 
-#if SPC_USE_ESCIB || defined(__DOXYGEN__)
+#if SPC5_USE_ESCIB || defined(__DOXYGEN__)
+#if !defined(SPC5_ESCIB_HANDLER)
+#error "SPC5_ESCIB_HANDLER not defined"
+#endif
 /**
  * @brief   eSCI-B interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(vector149) {
+CH_IRQ_HANDLER(SPC5_ESCIB_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -238,18 +244,18 @@ CH_IRQ_HANDLER(vector149) {
  */
 void sd_lld_init(void) {
 
-#if SPC_USE_ESCIA
+#if SPC5_USE_ESCIA
   sdObjectInit(&SD1, NULL, notify1);
   SD1.escip       = &ESCI_A;
   ESCI_A.CR2.R    = 0x8000;                 /* MDIS ON.                     */
-  INTC.PSR[146].R = SPC_ESCIA_PRIORITY;
+  INTC.PSR[SPC5_ESCIA_NUMBER].R = SPC5_ESCIA_PRIORITY;
 #endif
 
-#if SPC_USE_ESCIB
+#if SPC5_USE_ESCIB
   sdObjectInit(&SD2, NULL, notify2);
   SD2.escip       = &ESCI_B;
   ESCI_B.CR2.R    = 0x8000;                 /* MDIS ON.                     */
-  INTC.PSR[149].R = SPC_ESCIB_PRIORITY;
+  INTC.PSR[SPC5_ESCIB_NUMBER].R = SPC5_ESCIB_PRIORITY;
 #endif
 }
 

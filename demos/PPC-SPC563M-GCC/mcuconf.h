@@ -28,24 +28,24 @@
 /*
  * HAL driver system settings.
  */
-#define SPC_NO_INIT                         FALSE
-#define SPC_CLK_BYPASS                      FALSE
-#define SPC_ALLOW_OVERCLOCK                 FALSE
-#define SPC_CLK_PREDIV                      1
-#define SPC_CLK_MFD                         80
-#define SPC_CLK_RFD                         RFD_DIV4
-#define SPC_FLASH_BIUCR                     (BIUCR_BANK1_TOO |              \
-                                             BIUCR_MASTER4_PREFETCH |       \
-                                             BIUCR_MASTER0_PREFETCH |       \
-                                             BIUCR_DPFEN |                  \
-                                             BIUCR_IPFEN |                  \
-                                             BIUCR_PFLIM_ON_MISS |          \
-                                             BIUCR_BFEN)
+#define SPC5_NO_INIT                        FALSE
+#define SPC5_CLK_BYPASS                     FALSE
+#define SPC5_ALLOW_OVERCLOCK                FALSE
+#define SPC5_CLK_PREDIV                     1
+#define SPC5_CLK_MFD                        80
+#define SPC5_CLK_RFD                        RFD_DIV4
+#define SPC5_FLASH_BIUCR                    (BIUCR_BANK1_TOO |              \
+                                            BIUCR_MASTER4_PREFETCH |       \
+                                            BIUCR_MASTER0_PREFETCH |       \
+                                            BIUCR_DPFEN |                  \
+                                            BIUCR_IPFEN |                  \
+                                            BIUCR_PFLIM_ON_MISS |          \
+                                            BIUCR_BFEN)
 
 /*
  * SERIAL driver system settings.
  */
-#define SPC_USE_ESCIA                       TRUE
-#define SPC_USE_ESCIB                       TRUE
-#define SPC_ESCIA_PRIORITY                  8
-#define SPC_ESCIB_PRIORITY                  8
+#define SPC5_USE_ESCIA                      TRUE
+#define SPC5_USE_ESCIB                      TRUE
+#define SPC5_ESCIA_PRIORITY                 8
+#define SPC5_ESCIB_PRIORITY                 8
