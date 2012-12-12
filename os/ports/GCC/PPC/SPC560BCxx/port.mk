@@ -1,7 +1,7 @@
 # List of the ChibiOS/RT SPC560BCxx port files.
 PORTSRC = ${CHIBIOS}/os/ports/GCC/PPC/chcore.c
 
-PORTASM = ${CHIBIOS}/os/ports/GCC/PPC/bam.s \
+PORTASM = ${CHIBIOS}/os/ports/GCC/PPC/SPC560BCxx/bam.s \
           ${CHIBIOS}/os/ports/GCC/PPC/crt0.s \
           ${CHIBIOS}/os/ports/GCC/PPC/SPC560BCxx/ivor.s \
           ${CHIBIOS}/os/ports/GCC/PPC/SPC560BCxx/vectors.s

@@ -87,7 +87,7 @@ static void esci_init(SerialDriver *sdp, const SerialConfig *config) {
   }
   escip->LPR.R  = 0;
   escip->CR1.R |= 0x0000002C;       /* RIE, TE, RE to 1.                    */
-  escip->CR2.R |= 0x000F;           /* ORIE, NFIE, FEIE, PFIE to 1.         */
+  escip->CR2.R  = 0x000F;           /* ORIE, NFIE, FEIE, PFIE to 1.         */
 }
 
 /**
