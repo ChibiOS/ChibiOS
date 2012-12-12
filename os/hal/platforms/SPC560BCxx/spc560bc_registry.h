@@ -68,14 +68,13 @@
 #define SPC5_LINFLEX3_TXI_NUMBER            123
 #define SPC5_LINFLEX3_ERR_NUMBER            124
 
-/* SIU/SIUL attributes.*/
-#define SPC5_HAS_SIU                        TRUE
-#define SPC5_SIU_PCTL                       68
-#define SPC5_SIU_SUPPORTS_PORTS             TRUE
-#define SPC5_SIU_NUM_PORTS                  8
-#define SPC5_SIU_NUM_PCRS                   123
-#define SPC5_SIU_NUM_PADSELS                32
-#define SPC5_SIU_SYSTEM_PINS                32,33,121,122
+/* SIUL attributes.*/
+#define SPC5_HAS_SIUL                       TRUE
+#define SPC5_SIUL_PCTL                      68
+#define SPC5_SIUL_NUM_PORTS                 8
+#define SPC5_SIUL_NUM_PCRS                  123
+#define SPC5_SIUL_NUM_PADSELS               32
+#define SPC5_SIUL_SYSTEM_PINS               32,33,121,122
 /** @} */
 
 #endif /* _SPC560BC_REGISTRY_H_ */

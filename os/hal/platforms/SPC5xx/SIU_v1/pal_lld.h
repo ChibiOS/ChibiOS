@@ -14,7 +14,7 @@
 
 /**
  * @file    SPC5xx/SIUL_v1/pal_lld.h
- * @brief   SPC5xx SIUL low level driver header.
+ * @brief   SPC5xx SIU/SIUL low level driver header.
  *
  * @addtogroup PAL
  * @{
@@ -39,7 +39,7 @@
 #undef PAL_MODE_OUTPUT_OPENDRAIN
 
 /**
- * @name    SIUL-specific PAL modes
+ * @name    SIU/SIUL-specific PAL modes
  * @{
  */
 #define PAL_SPC5_SMC                (1U << 14)
@@ -141,7 +141,7 @@ typedef uint16_t iomode_t;
 typedef uint32_t ioportid_t;
 
 /**
- * @brief   SIUL register initializer type.
+ * @brief   SIU/SIUL register initializer type.
  */
 typedef struct {
   uint8_t                   pcr_index;
@@ -232,6 +232,7 @@ typedef struct {
  */
 #define pal_lld_init(config) _pal_lld_init(config)
 
+#if SPC5_SIU_SUPPORTS_PORTS || defined(__DOXYGEN__)
 /**
  * @brief   Reads the physical I/O port states.
  *
@@ -291,6 +292,8 @@ typedef struct {
  */
 #define pal_lld_writegroup(port, mask, offset, bits)                        \
   _pal_lld_writegroup(port, mask, offset, bits)
+
+#endif /* SPC5_SIU_SUPPORTS_PORTS */
 
 /**
  * @brief   Pads group mode setup.

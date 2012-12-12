@@ -54,12 +54,11 @@
 
 #define SPC5_HAS_LINFLEX3                   FALSE
 
-/* SIU/SIUL attributes.*/
-#define SPC5_HAS_SIU                        TRUE
-#define SPC5_SIU_SUPPORTS_PORTS             TRUE
-#define SPC5_SIU_NUM_PORTS                  8
-#define SPC5_SIU_NUM_PCRS                   108
-#define SPC5_SIU_NUM_PADSELS                36
+/* SIUL attributes.*/
+#define SPC5_HAS_SIUL                       TRUE
+#define SPC5_SIUL_NUM_PORTS                 8
+#define SPC5_SIUL_NUM_PCRS                  108
+#define SPC5_SIUL_NUM_PADSELS               36
 /** @} */
 
 #endif /* _SPC560P_REGISTRY_H_ */
