@@ -41,8 +41,8 @@
 /*
  * I/O definitions.
  */
-#define P4_ESCI_A_TX                9
-#define P4_ESCI_A_RX                10
+#define P5_ESCI_A_TX                9
+#define P5_ESCI_A_RX                10
 
 #define P11_BUTTON1                 3
 #define P11_BUTTON2                 5
