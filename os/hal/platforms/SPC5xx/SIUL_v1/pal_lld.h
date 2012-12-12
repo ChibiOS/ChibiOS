@@ -171,42 +171,42 @@ typedef struct {
 /**
  * @brief   I/O port A identifier.
  */
-#define PA              0
+#define PORT_A          0
 
 /**
  * @brief   I/O port B identifier.
  */
-#define PB              1
+#define PORT_B          1
 
 /**
  * @brief   I/O port C identifier.
  */
-#define PC              2
+#define PORT_C          2
 
 /**
  * @brief   I/O port D identifier.
  */
-#define PD              3
+#define PORT_D          3
 
 /**
  * @brief   I/O port E identifier.
  */
-#define PE              4
+#define PORT_E          4
 
 /**
  * @brief   I/O port F identifier.
  */
-#define PF              5
+#define PORT_F          5
 
 /**
  * @brief   I/O port G identifier.
  */
-#define PG              6
+#define PORT_G          6
 
 /**
  * @brief   I/O port H identifier.
  */
-#define PH              7
+#define PORT_H          7
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */

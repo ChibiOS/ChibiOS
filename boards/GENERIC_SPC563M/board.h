@@ -29,30 +29,35 @@
  * Board identifiers.
  */
 #define BOARD_GENERIC_SPC563M
-#define BOARD_NAME "Generic SPC563M"
+#define BOARD_NAME                  "Generic SPC563M"
 
 /*
  * Board frequencies.
  */
-#if !defined(EXTCLK)
-#define EXTCLK          8000000
+#if !defined(SPC5_XOSC_CLK)
+#define SPC5_XOSC_CLK               8000000
 #endif
 
 /*
  * I/O definitions.
  */
-#define GPIO_SCI_A_TX   89
-#define GPIO_SCI_A_RX   90
+#define P4_ESCI_A_TX                9
+#define P4_ESCI_A_RX                10
 
-#define GPIO_BUTTON1    179
-#define GPIO_BUTTON2    181
-#define GPIO_BUTTON3    183
-#define GPIO_BUTTON4    187
+#define P11_BUTTON1                 3
+#define P11_BUTTON2                 5
+#define P11_BUTTON3                 7
+#define P11_BUTTON4                 9
 
-#define GPIO_LED1       188
-#define GPIO_LED2       189
-#define GPIO_LED3       190
-#define GPIO_LED4       191
+#define P11_LED1                    12
+#define P11_LED2                    13
+#define P11_LED3                    14
+#define P11_LED4                    15
+
+/*
+ * Support macros.
+ */
+#define PCR(port, pin)  (((port) * 16) + (pin))
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus

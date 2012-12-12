@@ -13,8 +13,8 @@
  */
 
 /**
- * @file    SPC5xx/SIUL_v1/pal_lld.h
- * @brief   SPC5xx SIU/SIUL low level driver header.
+ * @file    SPC5xx/SIU_v1/pal_lld.h
+ * @brief   SPC5xx SIU low level driver header.
  *
  * @addtogroup PAL
  * @{
@@ -39,17 +39,19 @@
 #undef PAL_MODE_OUTPUT_OPENDRAIN
 
 /**
- * @name    SIU/SIUL-specific PAL modes
+ * @name    SIU-specific PAL modes
  * @{
  */
-#define PAL_SPC5_SMC                (1U << 14)
-#define PAL_SPC5_APC                (1U << 13)
-#define PAL_SPC5_PA_MASK            (3U << 10)
+#define PAL_SPC5_PA_MASK            (15U << 10)
 #define PAL_SPC5_PA(n)              ((n) << 10)
 #define PAL_SPC5_OBE                (1U << 9)
 #define PAL_SPC5_IBE                (1U << 8)
+#define PAL_SPC5_DSC_10PF           (0U << 6)
+#define PAL_SPC5_DSC_20PF           (1U << 6)
+#define PAL_SPC5_DSC_30PF           (2U << 6)
+#define PAL_SPC5_DSC_50PF           (3U << 6)
 #define PAL_SPC5_ODE                (1U << 5)
-#define PAL_SPC5_SRC                (1U << 2)
+#define PAL_SPC5_HYS                (1U << 4)
 #define PAL_SPC5_WPE                (1U << 1)
 #define PAL_SPC5_WPS                (1U << 0)
 /** @} */
@@ -83,11 +85,6 @@
  * @brief   Input pad with weak pull down resistor.
  */
 #define PAL_MODE_INPUT_PULLDOWN         (PAL_SPC5_IBE |PAL_SPC5_WPE)
-
-/**
- * @brief   Analog input mode.
- */
-#define PAL_MODE_INPUT_ANALOG           PAL_SPC5_APC
 
 /**
  * @brief   Push-pull output pad.
@@ -128,17 +125,17 @@
 typedef uint16_t ioportmask_t;
 
 /**
- * @brief   Digital I/O modes.
- */
-typedef uint16_t iomode_t;
-
-/**
  * @brief   Port Identifier.
  * @details This type can be a scalar or some kind of pointer, do not make
  *          any assumption about it, use the provided macros when populating
  *          variables of this type.
  */
 typedef uint32_t ioportid_t;
+
+/**
+ * @brief   Digital I/O modes.
+ */
+typedef uint16_t iomode_t;
 
 /**
  * @brief   SIU/SIUL register initializer type.
@@ -159,9 +156,7 @@ typedef struct {
  *          architecture dependent, fields.
  */
 typedef struct {
-  iomode_t                  default_mode;
   const spc_siu_init_t      *inits;
-  const uint8_t             *padsels;
 } PALConfig;
 
 /*===========================================================================*/
@@ -169,44 +164,42 @@ typedef struct {
 /*===========================================================================*/
 
 /**
- * @brief   I/O port A identifier.
+ * @name    Port identifiers
+ * @{
  */
-#define PA              0
-
-/**
- * @brief   I/O port B identifier.
- */
-#define PB              1
-
-/**
- * @brief   I/O port C identifier.
- */
-#define PC              2
-
-/**
- * @brief   I/O port D identifier.
- */
-#define PD              3
-
-/**
- * @brief   I/O port E identifier.
- */
-#define PE              4
-
-/**
- * @brief   I/O port F identifier.
- */
-#define PF              5
-
-/**
- * @brief   I/O port G identifier.
- */
-#define PG              6
-
-/**
- * @brief   I/O port H identifier.
- */
-#define PH              7
+#define PORT0           0
+#define PORT1           1
+#define PORT2           2
+#define PORT3           3
+#define PORT4           4
+#define PORT5           5
+#define PORT6           6
+#define PORT7           7
+#define PORT8           8
+#define PORT9           9
+#define PORT10          10
+#define PORT11          11
+#define PORT12          12
+#define PORT13          13
+#define PORT14          14
+#define PORT15          15
+#define PORT16          16
+#define PORT17          17
+#define PORT18          18
+#define PORT19          19
+#define PORT20          20
+#define PORT21          21
+#define PORT22          22
+#define PORT23          23
+#define PORT24          24
+#define PORT25          25
+#define PORT26          26
+#define PORT27          27
+#define PORT28          28
+#define PORT29          29
+#define PORT30          30
+#define PORT31          31
+/** @} */
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */

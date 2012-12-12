@@ -103,59 +103,59 @@ static msg_t Thread1(void *arg) {
     unsigned i;
 
     for (i = 0; i < 4; i++) {
-      palClearPad(PE, PE_LED1);
+      palClearPad(PORT_E, PE_LED1);
       chThdSleepMilliseconds(100);
-      palClearPad(PE, PE_LED2);
+      palClearPad(PORT_E, PE_LED2);
       chThdSleepMilliseconds(100);
-      palClearPad(PE, PE_LED3);
+      palClearPad(PORT_E, PE_LED3);
       chThdSleepMilliseconds(100);
-      palClearPad(PE, PE_LED4);
+      palClearPad(PORT_E, PE_LED4);
       chThdSleepMilliseconds(100);
-      palSetPad(PE, PE_LED1);
+      palSetPad(PORT_E, PE_LED1);
       chThdSleepMilliseconds(100);
-      palSetPad(PE, PE_LED2);
+      palSetPad(PORT_E, PE_LED2);
       chThdSleepMilliseconds(100);
-      palSetPad(PE, PE_LED3);
+      palSetPad(PORT_E, PE_LED3);
       chThdSleepMilliseconds(100);
-      palSetPad(PE, PE_LED4);
+      palSetPad(PORT_E, PE_LED4);
       chThdSleepMilliseconds(300);
     }
 
     for (i = 0; i < 4; i++) {
-      palTogglePort(PE, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
-                        PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
+      palTogglePort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
+                            PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
       chThdSleepMilliseconds(500);
-      palTogglePort(PE, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
-                        PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
+      palTogglePort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
+                            PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
       chThdSleepMilliseconds(500);
     }
 
     for (i = 0; i < 4; i++) {
-      palTogglePad(PE, PE_LED1);
+      palTogglePad(PORT_E, PE_LED1);
       chThdSleepMilliseconds(250);
-      palTogglePad(PE, PE_LED1);
-      palTogglePad(PE, PE_LED2);
+      palTogglePad(PORT_E, PE_LED1);
+      palTogglePad(PORT_E, PE_LED2);
       chThdSleepMilliseconds(250);
-      palTogglePad(PE, PE_LED2);
-      palTogglePad(PE, PE_LED3);
+      palTogglePad(PORT_E, PE_LED2);
+      palTogglePad(PORT_E, PE_LED3);
       chThdSleepMilliseconds(250);
-      palTogglePad(PE, PE_LED3);
-      palTogglePad(PE, PE_LED4);
+      palTogglePad(PORT_E, PE_LED3);
+      palTogglePad(PORT_E, PE_LED4);
       chThdSleepMilliseconds(250);
-      palTogglePad(PE, PE_LED4);
+      palTogglePad(PORT_E, PE_LED4);
     }
 
     for (i = 0; i < 4; i++) {
-      palClearPort(PE, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED3));
-      palSetPort(PE, PAL_PORT_BIT(PE_LED2) | PAL_PORT_BIT(PE_LED4));
+      palClearPort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED3));
+      palSetPort(PORT_E, PAL_PORT_BIT(PE_LED2) | PAL_PORT_BIT(PE_LED4));
       chThdSleepMilliseconds(500);
-      palClearPort(PE, PAL_PORT_BIT(PE_LED2) | PAL_PORT_BIT(PE_LED4));
-      palSetPort(PE, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED3));
+      palClearPort(PORT_E, PAL_PORT_BIT(PE_LED2) | PAL_PORT_BIT(PE_LED4));
+      palSetPort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED3));
       chThdSleepMilliseconds(500);
     }
 
-    palSetPort(PE, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
-                   PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
+    palSetPort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
+                       PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
   }
   return 0;
 }

@@ -21,6 +21,30 @@
 #include "ch.h"
 #include "hal.h"
 
+#if HAL_USE_PAL || defined(__DOXYGEN__)
+/* Initial setup of all defined pads, the list is terminated by a {0, 0, 0}.*/
+static const spc_siu_init_t spc_siu_init[] = {
+  {PCR(PORT4,  P4_ESCI_A_TX), PAL_HIGH, PAL_MODE_OUTPUT_ALTERNATE(1)},
+  {PCR(PORT4,  P4_ESCI_A_RX), PAL_HIGH, PAL_MODE_OUTPUT_ALTERNATE(1)},
+  {PCR(PORT11, P11_BUTTON1),  PAL_LOW,  PAL_MODE_INPUT},
+  {PCR(PORT11, P11_BUTTON2),  PAL_LOW,  PAL_MODE_INPUT},
+  {PCR(PORT11, P11_BUTTON3),  PAL_LOW,  PAL_MODE_INPUT},
+  {PCR(PORT11, P11_BUTTON4),  PAL_LOW,  PAL_MODE_INPUT},
+  {PCR(PORT11, P11_LED1),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PORT11, P11_LED2),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PORT11, P11_LED3),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PORT11, P11_LED4),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {0, 0, 0}
+};
+
+/**
+ * @brief   PAL setup.
+ */
+const PALConfig pal_default_config = {
+  spc_siu_init
+};
+#endif
+
 /*
  * Early initialization code.
  * This initialization must be performed just after stack setup and before
@@ -36,6 +60,7 @@ void __early_init(void) {
  */
 void boardInit(void) {
 
+#if 0
   /*
    * Various initialization (temporary code).
    */
@@ -49,4 +74,5 @@ void boardInit(void) {
   SIU.PCR[GPIO_BUTTON4].R  = 0x0100;                /* IBE.                 */
   SIU.PCR[GPIO_SCI_A_TX].R = 0x0500;                /* Primary | IBE.       */
   SIU.PCR[GPIO_SCI_A_RX].R = 0x0500;                /* Primary | IBE.       */
+#endif
 }

@@ -13,8 +13,8 @@
  */
 
 /**
- * @file    SPC5xx/SIUL_v1/pal_lld.c
- * @brief   SPC5xx SIU/SIUL low level driver code.
+ * @file    SPC5xx/SIU_v1/pal_lld.c
+ * @brief   SPC5xx SIU low level driver code.
  *
  * @addtogroup PAL
  * @{
@@ -62,34 +62,6 @@ static const unsigned system_pins[] = {SPC5_SIU_SYSTEM_PINS};
  */
 void _pal_lld_init(const PALConfig *config) {
   unsigned i;
-
-#if defined(SPC5_SIU_PCTL)
-  /* SIUL clock gating if present.*/
-  halSPCSetPeripheralClockMode(SPC5_SIU_PCTL,
-                               SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2));
-#endif
-
-  /* Initialize PCR registers for undefined pads.*/
-  for (i = 0; i < SPC5_SIU_NUM_PCRS; i++) {
-#if defined(SPC5_SIU_SYSTEM_PINS)
-    /* Handling the case where some SIU pins are not meant to be reprogrammed,
-       for example JTAG pins.*/
-    unsigned j;
-    for (j = 0; j < sizeof system_pins; j++) {
-      if (i == system_pins[j])
-        goto skip;
-    }
-    SIU.PCR[i].R = config->default_mode;
-skip:
-    ;
-#else
-    SIU.PCR[i].R = config->default_mode;
-#endif
-  }
-
-  /* Initialize PADSEL registers.*/
-  for (i = 0; i < SPC5_SIU_NUM_PADSELS; i++)
-    SIU.PSMI[i].R = config->padsels[i];
 
   /* Initialize PCR registers for defined pads.*/
   i = 0;

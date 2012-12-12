@@ -186,7 +186,7 @@
 /**
  * @brief   PLL output clock.
  */
-#define SPC5_PLLCLK   ((EXTCLK / (SPC5_CLK_PREDIV + 1)) * SPC5_CLK_MFD)
+#define SPC5_PLLCLK   ((SPC5_XOSC_CLK / (SPC5_CLK_PREDIV + 1)) * SPC5_CLK_MFD)
 
 #if (SPC5_PLLCLK < 256000000) || (SPC5_PLLCLK > 512000000)
 #error "VCO frequency out of the acceptable range (256...512)"
@@ -198,7 +198,7 @@
 #if !SPC5_CLK_BYPASS || defined(__DOXYGEN__)
 #define SPC5_SYSCLK   (SPC5_PLLCLK / (1 << (SPC5_CLK_RFD + 1)))
 #else
-#define SPC5_SYSCLK         EXTCLK
+#define SPC5_SYSCLK         SPC5_XOSC_CLK
 #endif
 
 #if (SPC5_SYSCLK > 80000000) && !SPC5_ALLOW_OVERCLOCK
