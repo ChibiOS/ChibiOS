@@ -82,6 +82,8 @@
 *****************************************************************************
 
 *** 2.5.1 ***
+- FIX: Possible false detect of loaded prescaler in RTCv1 driver (bug 
+  3595489) (backported to 2.4.3).
 - FIX: Unneded RTC initialization when HAL_USE_RTC disabled (bug 3594620)
   (backported to 2.4.3).
 - FIX: Compilation issue with HAL_USE_RTC disabled (bug 3594083) (backported
