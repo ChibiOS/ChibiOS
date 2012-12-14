@@ -150,7 +150,7 @@
  *          value.
  */
 #if !defined(SPC5_FLASH_BIUCR) || defined(__DOXYGEN__)
-#define SPC5_FLASH_BIUCR                     (BIUCR_BANK1_TOO |              \
+#define SPC5_FLASH_BIUCR                    (BIUCR_BANK1_TOO |              \
                                              BIUCR_MASTER4_PREFETCH |       \
                                              BIUCR_MASTER0_PREFETCH |       \
                                              BIUCR_DPFEN |                  \
@@ -207,9 +207,9 @@
  * @brief   PLL output clock.
  */
 #if !SPC5_CLK_BYPASS || defined(__DOXYGEN__)
-#define SPC5_SYSCLK                 (SPC5_PLLCLK / (1 << (SPC5_CLK_RFD + 1)))
+#define SPC5_SYSCLK         (SPC5_PLLCLK / (1 << (SPC5_CLK_RFD + 1)))
 #else
-#define SPC5_SYSCLK                 SPC5_XOSC_CLK
+#define SPC5_SYSCLK         SPC5_XOSC_CLK
 #endif
 
 #if (SPC5_SYSCLK > 80000000) && !SPC5_ALLOW_OVERCLOCK
