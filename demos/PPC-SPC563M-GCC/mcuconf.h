@@ -31,16 +31,16 @@
 #define SPC5_NO_INIT                        FALSE
 #define SPC5_CLK_BYPASS                     FALSE
 #define SPC5_ALLOW_OVERCLOCK                FALSE
-#define SPC5_CLK_PREDIV                     1
-#define SPC5_CLK_MFD                        80
-#define SPC5_CLK_RFD                        RFD_DIV4
+#define SPC5_CLK_PREDIV_VALUE               2
+#define SPC5_CLK_MFD_VALUE                  80
+#define SPC5_CLK_RFD                        SPC5_RFD_DIV4
 #define SPC5_FLASH_BIUCR                    (BIUCR_BANK1_TOO |              \
-                                            BIUCR_MASTER4_PREFETCH |       \
-                                            BIUCR_MASTER0_PREFETCH |       \
-                                            BIUCR_DPFEN |                  \
-                                            BIUCR_IPFEN |                  \
-                                            BIUCR_PFLIM_ON_MISS |          \
-                                            BIUCR_BFEN)
+                                             BIUCR_MASTER4_PREFETCH |       \
+                                             BIUCR_MASTER0_PREFETCH |       \
+                                             BIUCR_DPFEN |                  \
+                                             BIUCR_IPFEN |                  \
+                                             BIUCR_PFLIM_ON_MISS |          \
+                                             BIUCR_BFEN)
 
 /*
  * SERIAL driver system settings.

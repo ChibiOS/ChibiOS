@@ -40,10 +40,10 @@
  */
 #define PLATFORM_NAME           "SPC563M64"
 
-#define RFD_DIV2                0           /**< Divide VCO frequency by 2. */
-#define RFD_DIV4                1           /**< Divide VCO frequency by 4. */
-#define RFD_DIV8                2           /**< Divide VCO frequency by 8. */
-#define RFD_DIV16               3           /**< Divide VCO frequency by 16.*/
+#define SPC5_RFD_DIV2           0           /**< Divide VCO frequency by 2. */
+#define SPC5_RFD_DIV4           1           /**< Divide VCO frequency by 4. */
+#define SPC5_RFD_DIV8           2           /**< Divide VCO frequency by 8. */
+#define SPC5_RFD_DIV16          3           /**< Divide VCO frequency by 16.*/
 
 /**
  * @name    BIUCR register definitions
@@ -119,26 +119,26 @@
 
 /**
  * @brief   External clock pre-divider.
- * @note    Must be in range 0...14.
- * @note    The effective divider factor is this value plus one.
+ * @note    Must be in range 1...15.
+ * @note    The effective divider factor is this value.
  */
 #if !defined(SPC5_CLK_PREDIV) || defined(__DOXYGEN__)
-#define SPC5_CLK_PREDIV                      1
+#define SPC5_CLK_PREDIV_VALUE                2
 #endif
 
 /**
  * @brief   Multiplication factor divider.
  * @note    Must be in range 32...96.
  */
-#if !defined(SPC5_CLK_MFD) || defined(__DOXYGEN__)
-#define SPC5_CLK_MFD                         80
+#if !defined(SPC5_CLK_MFD_VALUE) || defined(__DOXYGEN__)
+#define SPC5_CLK_MFD_VALUE                  80
 #endif
 
 /**
  * @brief   Reduced frequency divider.
  */
 #if !defined(SPC5_CLK_RFD) || defined(__DOXYGEN__)
-#define SPC5_CLK_RFD                         RFD_DIV4
+#define SPC5_CLK_RFD                        RFD_DIV4
 #endif
 
 /**
@@ -170,23 +170,34 @@
 #error "Using a wrong mcuconf.h file, SPC563Mxx_MCUCONF not defined"
 #endif
 
-#if (SPC5_CLK_PREDIV < 0) || (SPC5_CLK_PREDIV > 14)
-#error "invalid SPC5_CLK_PREDIV value specified"
+#if (SPC5_CLK_PREDIV_VALUE < 1) || (SPC5_CLK_PREDIV_VALUE > 15)
+#error "invalid SPC5_CLK_PREDIV_VALUE value specified"
 #endif
 
-#if (SPC5_CLK_MFD < 32) || (SPC5_CLK_MFD > 96)
-#error "invalid SPC5_CLK_MFD value specified"
+#if (SPC5_CLK_MFD_VALUE < 32) || (SPC5_CLK_MFD_VALUE > 96)
+#error "invalid SPC5_CLK_MFD_VALUE value specified"
 #endif
 
-#if (SPC5_CLK_RFD != RFD_DIV2) && (SPC5_CLK_RFD != RFD_DIV4) &&         \
-    (SPC5_CLK_RFD != RFD_DIV8) && (SPC5_CLK_RFD != RFD_DIV16)
+#if (SPC5_CLK_RFD != SPC5_RFD_DIV2) && (SPC5_CLK_RFD != SPC5_RFD_DIV4) &&   \
+    (SPC5_CLK_RFD != SPC5_RFD_DIV8) && (SPC5_CLK_RFD != SPC5_RFD_DIV16)
 #error "invalid SPC5_CLK_RFD value specified"
 #endif
 
 /**
+ * @brief   PLL input divider.
+ */
+#define SPC5_CLK_PREDIV     (SPC5_CLK_PREDIV_VALUE - 1)
+
+/**
+ * @brief   PLL multiplier.
+ */
+#define SPC5_CLK_MFD        (SPC5_CLK_MFD_VALUE)
+
+/**
  * @brief   PLL output clock.
  */
-#define SPC5_PLLCLK   ((SPC5_XOSC_CLK / (SPC5_CLK_PREDIV + 1)) * SPC5_CLK_MFD)
+#define SPC5_PLLCLK         ((SPC5_XOSC_CLK / SPC5_CLK_PREDIV_VALUE) *      \
+                             SPC5_CLK_MFD_VALUE)
 
 #if (SPC5_PLLCLK < 256000000) || (SPC5_PLLCLK > 512000000)
 #error "VCO frequency out of the acceptable range (256...512)"
@@ -196,9 +207,9 @@
  * @brief   PLL output clock.
  */
 #if !SPC5_CLK_BYPASS || defined(__DOXYGEN__)
-#define SPC5_SYSCLK   (SPC5_PLLCLK / (1 << (SPC5_CLK_RFD + 1)))
+#define SPC5_SYSCLK                 (SPC5_PLLCLK / (1 << (SPC5_CLK_RFD + 1)))
 #else
-#define SPC5_SYSCLK         SPC5_XOSC_CLK
+#define SPC5_SYSCLK                 SPC5_XOSC_CLK
 #endif
 
 #if (SPC5_SYSCLK > 80000000) && !SPC5_ALLOW_OVERCLOCK
