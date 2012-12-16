@@ -23,7 +23,7 @@
  */
 
 /**
- * @file    STM32/i2c_lld.h
+ * @file    STM32/I2Cv1/i2c_lld.h
  * @brief   STM32 I2C subsystem low level driver header.
  *
  * @addtogroup I2C
