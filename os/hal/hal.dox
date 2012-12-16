@@ -20,7 +20,7 @@
 
 /**
  * @defgroup IO HAL
- * @brief Hardware Abstraction Layer.
+ * @brief   Hardware Abstraction Layer.
  * @details Under ChibiOS/RT the set of the various device driver interfaces
  * is called the HAL subsystem: Hardware Abstraction Layer. The HAL is the
  * abstract interface between ChibiOS/RT application and hardware.
@@ -73,7 +73,7 @@
 
 /**
  * @defgroup HAL_CONF Configuration
- * @brief @ref HAL Configuration.
+ * @brief   HAL Configuration.
  * @details The file @p halconf.h contains the high level settings for all
  * the drivers supported by the HAL. The low level, platform dependent,
  * settings are contained in the @p mcuconf.h file instead and are describe

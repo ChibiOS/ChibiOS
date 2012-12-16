@@ -642,52 +642,8 @@ WARN_LOGFILE           =
 
 INPUT                  = ../docs/src \
                          ../os/kernel \
-                         ../os/kernel/include \
-                         ../os/kernel/src \
-                         ../os/kernel/templates \
                          ../os/ports \
-                         ../os/ports/common/ARMCMx \
-                         ../os/ports/GCC/ARM \
-                         ../os/ports/GCC/ARM/LPC214x \
-                         ../os/ports/GCC/ARM/AT91SAM7 \
-                         ../os/ports/GCC/ARMCMx \
-                         ../os/ports/GCC/ARMCMx/STM32F1xx \
-                         ../os/ports/GCC/ARMCMx/STM32L1xx \
-                         ../os/ports/GCC/ARMCMx/LPC11xx \
-                         ../os/ports/GCC/ARMCMx/LPC13xx \
-                         ../os/ports/GCC/PPC \
-                         ../os/ports/GCC/AVR \
-                         ../os/ports/GCC/MSP430 \
-                         ../os/ports/IAR/ARMCMx \
-                         ../os/ports/IAR/ARMCMx/STM32F1xx \
-                         ../os/ports/IAR/ARMCMx/STM32L1xx \
-                         ../os/ports/IAR/ARMCMx/LPC11xx \
-                         ../os/ports/IAR/ARMCMx/LPC13xx \
-                         ../os/ports/RVCT/ARMCMx \
-                         ../os/ports/RVCT/ARMCMx/STM32F1xx \
-                         ../os/ports/RVCT/ARMCMx/STM32L1xx \
-                         ../os/ports/RVCT/ARMCMx/LPC11xx \
-                         ../os/ports/RVCT/ARMCMx/LPC13xx \
-                         ../os/ports/cosmic/STM8 \
-                         ../os/ports/RC/STM8 \
                          ../os/hal \
-                         ../os/hal/dox \
-                         ../os/hal/include \
-                         ../os/hal/src \
-                         ../os/hal/templates \
-                         ../os/hal/platforms \
-                         ../os/hal/platforms/AT91SAM7/platform.dox \
-                         ../os/hal/platforms/AVR/platform.dox \
-                         ../os/hal/platforms/LPC11xx/platform.dox \
-                         ../os/hal/platforms/LPC13xx/platform.dox \
-                         ../os/hal/platforms/LPC214x/platform.dox \
-                         ../os/hal/platforms/MSP430/platform.dox \
-                         ../os/hal/platforms/SPC56x/platform.dox \
-                         ../os/hal/platforms/STM32F1xx/platform.dox \
-                         ../os/hal/platforms/STM32F4xx/platform.dox \
-                         ../os/hal/platforms/STM32L1xx/platform.dox \
-                         ../os/hal/platforms/STM8L/platform.dox \
-                         ../os/hal/platforms/STM8S/platform.dox \
                          ../os/various \
                          ../test \
                          ../ext/ext.dox
@@ -742,20 +698,17 @@ FILE_PATTERNS          = *.c \
 # should be searched for input files as well. Possible values are YES and NO.
 # If left blank NO is used.
 
-RECURSIVE              = NO
+RECURSIVE              = YES
 
 # The EXCLUDE tag can be used to specify files and/or directories that should
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = ../os/hal/platforms/STM32F1xx/stm32f10x.h \
-                         ../os/hal/platforms/STM32L1xx/stm32l10x.h \
-                         ../os/hal/platforms/STM8/stm8s.h \
-                         ../os/hal/platforms/STM8/stm8s_type.h \
-                         ../os/hal/platforms/LPC11xx/LPC11xx.h \
-                         ../os/hal/platforms/LPC11xx/system_LPC11xx.h \
-                         ../os/hal/platforms/LPC13xx/LPC13xx.h \
-                         ../os/hal/platforms/LPC13xx/system_LPC13xx.h
+EXCLUDE                = ../os/ports/common/ARMCMx/CMSIS \
+                         ../os/ports/SIMIA32 \
+                         ../os/hal/platforms \
+                         ../os/hal/templates \
+                         ../test/coverage
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

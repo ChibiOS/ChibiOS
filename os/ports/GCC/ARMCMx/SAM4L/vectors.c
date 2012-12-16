@@ -22,7 +22,7 @@
  * @file    GCC/ARMCMx/SAM4L/vectors.c
  * @brief   Interrupt vectors for the ATSAM4L family.
  *
- * @defgroup ARMCMx_STM32F4xx_VECTORS ATSAM4L Interrupt Vectors
+ * @defgroup ARMCMx_SAM4L_VECTORS ATSAM4L Interrupt Vectors
  * @ingroup ARMCMx_SPECIFIC
  * @details Interrupt vectors for the ATSAM4L family.
  * @{
