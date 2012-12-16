@@ -87,6 +87,7 @@
 - FIX: Fixed compilation issue with HAL_USE_RTC disabled (bug 3594083).
 - FIX: Fixed wasting of BKP registers in RTCv1 driver (bug 3594005).
 - FIX: Fixed potential problem with RTC_CRL_RSF bit (bug 3593972).
+- FIX: Fixed STM32F1x rtc_lld_init not functional (bug 3592817).
 - FIX: Fixed DMA reconfiguration problem in STM32 SPI driver (bug 3592809).
 - FIX: Fixed STM32 UART driver redundant initialization (bug 3592764).
 - FIX: Fixed wrong stack initializations in GCC STM32L1xx port files (bug
