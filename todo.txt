@@ -5,13 +5,14 @@ X = In progress, some work done.
 ? = Not sure if worth the effort or useful at all.
 N = Decided against.
 
-Version 2.5.1
-X Support for STM32F3xx devices.
+Version 2.5.2
 X Support for ATSAM4L devices.
-X Support for SPC56xBC devices.
-X Support for SPC56xP devices.
-X Support for SPC56xM devices.
+- Improve support for STM32F3xx devices.
+- Improve support for SPC56xBC devices.
+- Improve support for SPC56xP devices.
+- Improve support for SPC56xM devices.
 - Support for SPC56xA devices.
+- Restructure and improve documentation.
 
 Within 2.5.x:
 - SAM4L support.
