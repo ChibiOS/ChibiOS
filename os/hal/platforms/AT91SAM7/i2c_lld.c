@@ -23,9 +23,9 @@
  */
 
 /**
- * @file    SAM7/i2c_lld.c
- * @brief   SAM7 I2C subsystem low level driver source.
- * @note    I2C peripheral interrupts on SAM7 platform must have highest
+ * @file    AT91SAM7/i2c_lld.c
+ * @brief   AT91SAM7 I2C subsystem low level driver source.
+ * @note    I2C peripheral interrupts on AT91SAM7 platform must have highest
  *          priority in system.
  *
  * @addtogroup I2C
@@ -275,7 +275,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  * @param[out] rxbuf    pointer to the receive buffer
  * @param[in] rxbytes   number of bytes to be received
  * @param[in] timeout   this value is ignored on SAM7 platform.
- *                      .
+ *
  * @return              The operation status.
  * @retval RDY_OK       if the function succeeded.
  * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
@@ -331,7 +331,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
  * @param[out] rxbuf    pointer to the receive buffer
  * @param[in] rxbytes   number of bytes to be received
  * @param[in] timeout   this value is ignored on SAM7 platform.
- *                      .
+ *
  * @return              The operation status.
  * @retval RDY_OK       if the function succeeded.
  * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
@@ -396,7 +396,7 @@ msg_t i2c_lld_transceive_timeout(I2CDriver *i2cp, i2caddr_t addr,
  * @param[out] rxbuf    pointer to the receive buffer
  * @param[in] rxbytes   number of bytes to be received
  * @param[in] timeout   this value is ignored on SAM7 platform.
- *                      .
+ *
  * @return              The operation status.
  * @retval RDY_OK       if the function succeeded.
  * @retval RDY_RESET    if one or more I2C errors occurred, the errors can

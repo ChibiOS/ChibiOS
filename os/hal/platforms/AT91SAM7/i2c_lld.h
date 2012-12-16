@@ -23,8 +23,8 @@
  */
 
 /**
- * @file    SAM72/i2c_lld.h
- * @brief   SAM72 I2C subsystem low level driver header.
+ * @file    AT91SAM7/i2c_lld.h
+ * @brief   AT91SAM7 I2C subsystem low level driver header.
  *
  * @addtogroup I2C
  * @{
