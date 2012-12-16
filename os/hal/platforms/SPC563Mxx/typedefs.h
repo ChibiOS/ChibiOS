@@ -13,7 +13,7 @@
  */
 
 /**
- * @file    SPC56x/typedefs.h
+ * @file    SPC563Mxx/typedefs.h
  * @brief   Dummy typedefs file.
  */
 
