@@ -84,7 +84,7 @@
 *** 2.5.1 ***
 - FIX: Possible false detect of loaded prescaler in RTCv1 driver (bug 
   3595489)(backported to 2.4.3).
-- FIX: Unneded RTC initialization when HAL_USE_RTC disabled (bug 3594620)
+- FIX: Unneeded RTC initialization when HAL_USE_RTC disabled (bug 3594620)
   (backported to 2.4.3).
 - FIX: Compilation issue with HAL_USE_RTC disabled (bug 3594083)(backported
   to 2.4.3).
@@ -92,9 +92,9 @@
   to 2.4.3).
 - FIX: Potential problem with RTC_CRL_RSF bit (bug 3593972)(backported
   to 2.4.3).
-- FIX: Fixed STM32 UART driver redundant initialization (bug 3592809)
+- FIX: Fixed DMA reconfiguration problem in STM32 SPI driver (bug 3592809)
   (backported to 2.4.3).
-- FIX: Fixed DMA reconfiguration problem in STM32 SPI driver (bug 3592764)
+- FIX: Fixed STM32 UART driver redundant initialization (bug 3592764)
   (backported to 2.4.3).
 - FIX: Fixed wrong stack initializations in GCC STM32L1xx port files (bug
   3591321)(backported to 2.4.3).
@@ -158,7 +158,7 @@
 - FIX: Fixed STM8L, cosmic compiler: c_lreg not saved (bug 3566342)(backported
   to 2.2.10 and 2.4.3).
 - NEW: Initial support for STM32F30x (HAL, PAL, CAN, GPT, ICU, PWM, Serial,
-  SPI, USB).
+  SPI, UART, USB).
 - NEW: AT91SAM7A3 I2C support.
 - NEW: AT91SAM7A3 basic support.
 - NEW: Unified the STM32F4xx and STM32F2xx platform code. The STM32F2xx now is

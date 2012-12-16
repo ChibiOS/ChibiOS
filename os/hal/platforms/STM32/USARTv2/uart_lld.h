@@ -130,6 +130,8 @@
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
 #endif
 
+#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
+
 /**
  * @brief   DMA stream used for USART1 RX operations.
  * @note    This option is only available on platforms with enhanced DMA.
@@ -177,6 +179,28 @@
 #if !defined(STM32_UART_USART3_TX_DMA_STREAM) || defined(__DOXYGEN__)
 #define STM32_UART_USART3_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
 #endif
+
+#else /* !STM32_ADVANCED_DMA*/
+
+#if defined(STM32F0XX)
+/* Fixed values for STM32F0xx devices.*/
+#define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
+#define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+#define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
+#define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+#endif /* defined(STM32F0XX) */
+
+#if defined(STM32F30X)
+/* Fixed values for STM32F3xx devices.*/
+#define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
+#define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+#define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
+#define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
+#define STM32_UART_USART3_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
+#define STM32_UART_USART3_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+#endif /* defined(STM32F30X) */
+
+#endif /* !STM32_ADVANCED_DMA*/
 /** @} */
 
 /*===========================================================================*/

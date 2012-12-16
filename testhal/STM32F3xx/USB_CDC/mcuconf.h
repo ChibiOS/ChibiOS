@@ -145,6 +145,20 @@
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      chSysHalt()
 
 /*
+ * UART driver system settings.
+ */
+#define STM32_UART_USE_USART1               FALSE
+#define STM32_UART_USE_USART2               FALSE
+#define STM32_UART_USE_USART3               FALSE
+#define STM32_UART_USART1_IRQ_PRIORITY      12
+#define STM32_UART_USART2_IRQ_PRIORITY      12
+#define STM32_UART_USART3_IRQ_PRIORITY      12
+#define STM32_UART_USART1_DMA_PRIORITY      0
+#define STM32_UART_USART2_DMA_PRIORITY      0
+#define STM32_UART_USART3_DMA_PRIORITY      0
+#define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
+
+/*
  * USB driver system settings.
  */
 #define STM32_USB_USE_USB1                  TRUE

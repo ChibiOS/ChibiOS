@@ -186,17 +186,17 @@
 #define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
 #define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 #define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#endif /* defined(STM32F0XX) */
 
-#else /* !defined(STM32F0XX) */
-/* Fixed streams for platforms using the old DMA peripheral, the values are
-   valid for STM32F3xx.*/
+#if defined(STM32F30X)
+/* Fixed values for STM32F3xx devices.*/
 #define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
 #define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 #define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
 #define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 1)
 #define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 2)
-#endif /* !defined(STM32F0XX) */
+#endif /* defined(STM32F30X) */
 
 #endif /* !STM32_ADVANCED_DMA*/
 /** @} */

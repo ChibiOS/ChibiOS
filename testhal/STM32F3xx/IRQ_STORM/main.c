@@ -214,11 +214,11 @@ int main(void) {
   chSysInit();
 
   /*
-   * Prepares the Serial driver 2 and GPT drivers 2 and 3.
+   * Activates the serial driver 1, PA9 and PA10 are routed to USART1.
    */
   sdStart(&SD1, NULL);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));       /* USART1 TX.       */
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));      /* USART1 RX.       */
 
   /*
    * Activates GPTs.
