@@ -53,6 +53,34 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+void sam_set_optimal_flash_mode(void) {
+
+  if (SAM_PMCON_PS == SAM_PMCON_PS0) {
+    /* Scalability Level 0.*/
+    if (SAM_CPU_CLK > SAM_FLASH0WS_MAX) {
+      /* One wait state required.*/
+      if (SAM_CPU_CLK <= SAM_FLASH1WS_MAX) {
+        /* Fast read mode disabled.*/
+      }
+      else {
+        /* Fast read mode enabled.*/
+      }
+    }
+    else {
+      /* No wait state required.*/
+    }
+  }
+  else {
+    /* Scalability Level 1.*/
+    if (SAM_CPU_CLK > SAM_FLASH0WS_MAX) {
+
+    }
+    else {
+
+    }
+  }
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -130,23 +158,30 @@ void sam_clock_init(void) {
 #if SAM_MCCTRL_MCSEL == SAM_MCSEL_RCSYS
   /* Nothing to do, already running from SYSIRC.*/
 #endif
+
 #if SAM_MCCTRL_MCSEL == SAM_MCSEL_OSC0
   SAM_SCIF_UNLOCK(&SCIF->SCIF_OSCCTRL0);
   SCIF->SCIF_OSCCTRL0 = SAM_OSCCTRL_GAIN    | SAM_OSCCTRL_MODE |
                         SAM_OSCCTRL_STARTUP | SAM_OSCCTRL_OSCEN;
   while (!(SCIF->SCIF_PCLKSR & SCIF_PCLKSR_OSC0RDY))
     ;
-#endif
+  sam_set_optimal_flash_mode();
+#endif /* SAM_MCCTRL_MCSEL == SAM_MCSEL_RCSYS */
+
 #if SAM_MCCTRL_MCSEL == SAM_MCSEL_PLL
-#endif
+#endif /* SAM_MCCTRL_MCSEL == SAM_MCSEL_PLL */
+
 #if SAM_MCCTRL_MCSEL == SAM_MCSEL_DFLL
-#endif
+#endif /* SAM_MCCTRL_MCSEL == SAM_MCSEL_DFLL */
+
 #if SAM_MCCTRL_MCSEL == SAM_MCSEL_RC80M
-#endif
+#endif /* SAM_MCCTRL_MCSEL == SAM_MCSEL_RC80M */
+
 #if SAM_MCCTRL_MCSEL == SAM_MCSEL_RCFAST
-#endif
+#endif /* SAM_MCCTRL_MCSEL == SAM_MCSEL_RCFAST */
+
 #if SAM_MCCTRL_MCSEL == SAM_MCSEL_RC1M
-#endif
+#endif /* SAM_MCCTRL_MCSEL == SAM_MCSEL_RC1M */
 
 #endif /* SAM_NO_INIT */
 }

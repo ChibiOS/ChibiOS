@@ -251,7 +251,7 @@
 #endif
 
 /**
- * @brief   Power mode.
+ * @brief   Power Scalability mode.
  */
 #if !defined(SAM_PMCON_PS) || defined(__DOXYGEN__)
 #define SAM_PMCON_PS                        SAM_PMCON_PS0
@@ -321,6 +321,9 @@
 #define SAM_PBBCLK_MAX                      50000000
 #define SAM_PBCCLK_MAX                      50000000
 #define SAM_PBDCLK_MAX                      50000000
+#define SAM_FLASH0WS_MAX                    18000000
+#define SAM_FLASH1WS_MAX                    36000000
+#define SAM_FLASH1WS_FWU_MAX                12000000
 
 #elif SAM_PMCON_PS == SAM_PMCON_PS1
 #define SAM_CPUCLK_MAX                      12000000
@@ -328,6 +331,9 @@
 #define SAM_PBBCLK_MAX                      12000000
 #define SAM_PBCCLK_MAX                      12000000
 #define SAM_PBDCLK_MAX                      12000000
+#define SAM_FLASH0WS_MAX                    8000000
+#define SAM_FLASH1WS_MAX                    12000000
+#define SAM_FLASH1WS_FWU_MAX                0
 
 #else
 #error "invalid SAM_PMCON_PS value specified"
