@@ -247,13 +247,13 @@ typedef GenericQueue OutputQueue;
 /**
  * @brief   Returns the empty space into an output queue.
  *
- * @param[in] iqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p OutputQueue structure
  * @return              The number of empty bytes in the queue.
  * @retval 0            if the queue is full.
  *
  * @iclass
  */
-#define chOQGetEmptyI(iqp) chQSpaceI(oqp)
+#define chOQGetEmptyI(oqp) chQSpaceI(oqp)
 
 /**
  * @brief   Evaluates to @p TRUE if the specified output queue is empty.
