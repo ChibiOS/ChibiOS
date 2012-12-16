@@ -82,15 +82,17 @@
 *****************************************************************************
 
 *** 2.5.1 ***
-- FIX: Possible false detect of loaded prescaler in RTCv1 driver (bug 
+- FIX: Fixed typo in chOQGetEmptyI() macro (bug 3595910)(backported to 2.2.10
+  and 2.4.3).
+- FIX: Fixed possible false detect of loaded prescaler in RTCv1 driver (bug 
   3595489)(backported to 2.4.3).
-- FIX: Unneeded RTC initialization when HAL_USE_RTC disabled (bug 3594620)
+- FIX: Fixed unneeded RTC initialization when HAL_USE_RTC disabled
+  (bug 3594620)(backported to 2.4.3).
+- FIX: Fixed compilation issue with HAL_USE_RTC disabled (bug 3594083)
   (backported to 2.4.3).
-- FIX: Compilation issue with HAL_USE_RTC disabled (bug 3594083)(backported
+- FIX: Fixed wasting of BKP registers in RTCv1 driver (bug 3594005)(backported
   to 2.4.3).
-- FIX: Wasting of BKP registers in RTCv1 driver (bug 3594005)(backported
-  to 2.4.3).
-- FIX: Potential problem with RTC_CRL_RSF bit (bug 3593972)(backported
+- FIX: Fixed potential problem with RTC_CRL_RSF bit (bug 3593972)(backported
   to 2.4.3).
 - FIX: Fixed DMA reconfiguration problem in STM32 SPI driver (bug 3592809)
   (backported to 2.4.3).
