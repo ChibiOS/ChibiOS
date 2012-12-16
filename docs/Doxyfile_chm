@@ -705,7 +705,7 @@ RECURSIVE              = YES
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
 EXCLUDE                = ../os/ports/common/ARMCMx/CMSIS \
-                         ../os/ports/SIMIA32 \
+                         ../os/ports/GCC/SIMIA32 \
                          ../os/hal/platforms \
                          ../os/hal/templates \
                          ../test/coverage
