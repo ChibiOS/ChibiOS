@@ -708,6 +708,9 @@ EXCLUDE                = ../os/ports/common/ARMCMx/CMSIS \
                          ../os/ports/GCC/SIMIA32 \
                          ../os/hal/platforms \
                          ../os/hal/templates \
+                         ../os/various\devices_lib \
+                         ../os/various\fatfs_bindings \
+                         ../os/various\lwip_bindings \
                          ../test/coverage
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or

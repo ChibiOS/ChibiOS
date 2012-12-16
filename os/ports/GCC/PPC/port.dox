@@ -130,3 +130,10 @@
  * .
  * @ingroup PPC
  */
+
+/**
+ * @defgroup PPC_SPECIFIC Specific Implementations
+ * @details Platform-specific port code.
+ *
+ * @ingroup PPC
+ */
