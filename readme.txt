@@ -92,7 +92,9 @@
   to 2.4.3).
 - FIX: Potential problem with RTC_CRL_RSF bit (bug 3593972)(backported
   to 2.4.3).
-- FIX: Fixed DMA reconfiguration problem in STM32 SPI driver (bug 3592809)
+- FIX: Fixed STM32 UART driver redundant initialization (bug 3592809)
+  (backported to 2.4.3).
+- FIX: Fixed DMA reconfiguration problem in STM32 SPI driver (bug 3592764)
   (backported to 2.4.3).
 - FIX: Fixed wrong stack initializations in GCC STM32L1xx port files (bug
   3591321)(backported to 2.4.3).
