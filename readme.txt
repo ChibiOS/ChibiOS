@@ -81,6 +81,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.5.2 ***
+- NEW: Added support for Olimex board STM32-LCD.
+
 *** 2.5.1 ***
 - FIX: Fixed typo in chOQGetEmptyI() macro (bug 3595910)(backported to 2.2.10
   and 2.4.3).
