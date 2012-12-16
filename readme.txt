@@ -94,6 +94,8 @@
   to 2.4.3).
 - FIX: Fixed potential problem with RTC_CRL_RSF bit (bug 3593972)(backported
   to 2.4.3).
+- FIX: Fixed STM32F1x rtc_lld_init not functional (bug 3592817)(backported
+  to 2.4.3).
 - FIX: Fixed DMA reconfiguration problem in STM32 SPI driver (bug 3592809)
   (backported to 2.4.3).
 - FIX: Fixed STM32 UART driver redundant initialization (bug 3592764)
