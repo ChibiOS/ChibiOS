@@ -81,7 +81,7 @@
 *** 2.4.3 ***
 - FIX: Possible false detect of loaded prescaler in RTCv1 driver (bug 
   3595489) 
-- FIX: Unneded RTC initialization when HAL_USE_RTC disabled (bug 3594620).
+- FIX: Unneeded RTC initialization when HAL_USE_RTC disabled (bug 3594620).
 - FIX: Compilation issue with HAL_USE_RTC disabled (bug 3594083).
 - FIX: Wasting of BKP registers in RTCv1 driver (bug 3594005).
 - FIX: Potential problem with RTC_CRL_RSF bit (bug 3593972).
