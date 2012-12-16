@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<template
+  type="ProjTempl"
+  version="1.0"
+  supplier="chibios.org"
+  revision="1.0"
+  author="Giovanni Di Sirio"
+  id="org.chibios.tools.eclipse.newchibiproject"
+  label="ChibiOS/RT C Application"
+  description="Template of a ChibiOS/RT C application based on makefiles."
+  preview-icon="icons/chibios.gif">
+
+  <property-group
+    id="application-settings"
+    label="Application Settings"
+    description="Application Settings"
+    type="PAGES-ONLY"
+    branding-icon="icons/chibios.gif">
+    <property
+      id="chibiosLocation"
+      label="ChibiOS/RT location"
+      description="ChibiOS/RT installation path"
+      type="browsedir"
+      pattern=".*"
+      default=""
+      size=""
+      mandatory="true"
+      hidden="false"
+      persist="true" />
+    <property
+      id="platform"
+      label="Platform"
+      description="ChibiOS/RT installation path"
+      type="select"
+      pattern=".*"
+      default=""
+      size=""
+      mandatory="true"
+      hidden="false"
+      persist="true">
+      <item
+        value="STM32F0xx"
+        label="STMicroelectronics STM32F0xx" />
+      <item
+        value="STM32F4xx"
+        label="STMicroelectronics STM32F4xx" />
+      <item
+        value="STM32L1xx"
+        label="STMicroelectronics STM32L1xx" />
+    </property>
+  </property-group>
+
+  <process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject">
+    <simple
+      name="name"
+      value="$(projectName)" />
+    <simple
+      name="location"
+      value="$(location)" />
+    <simple
+      name="artifactExtension"
+      value="exe" />
+    <simple
+      name="isCProject"
+      value="true" />
+  </process>
+
+  <!-- Note, type is prefixed by the plugin_id (not the class package). -->
+  <process
+    type="org.chibios.tools.eclipse.config.ApplicationGeneratorProcessRunner">
+    <simple
+      name="name"
+      value="$(projectName)" />
+    <simple
+      name="chibiosLocation"
+      value="$(chibiosLocation)" />
+    <simple
+      name="platform"
+      value="$(platform)" />
+  </process>
+
+</template>

@@ -1,0 +1,5 @@
+sourceRoot: templates
+outputRoot: output
+data: {
+    doc1: xml(../input/stm32f4board.xml)
+}

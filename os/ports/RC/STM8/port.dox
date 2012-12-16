@@ -1,0 +1,95 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011,2012 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @defgroup STM8_RAISONANCE STM8
+ * @details STM8 port for the Raisonance C compiler.
+ *
+ * @section STM8_RAISONANCE_INTRO Introduction
+ * This port supports all STM8 8 bits MCUs.
+ *
+ * @section STM8_RAISONANCE_STATES Mapping of the System States in the STM8 port
+ * The ChibiOS/RT logical @ref system_states are mapped as follow in the STM8
+ * port:
+ * - <b>Init</b>. This state is represented by the startup code and the
+ *   initialization code before @p chSysInit() is executed. It has not a
+ *   special hardware state associated.
+ * - <b>Normal</b>. This is the state the system has after executing
+ *   @p chSysInit(). Interrupts are enabled.
+ * - <b>Suspended</b>. Interrupts are disabled.
+ * - <b>Disabled</b>. Interrupts are disabled. This state is equivalent to the
+ *   Suspended state because there are no fast interrupts in this architecture.
+ * - <b>Sleep</b>. Implemented with "wait" instruction insertion in the idle
+ *   loop.
+ * - <b>S-Locked</b>. Interrupts are disabled.
+ * - <b>I-Locked</b>. This state is equivalent to the SRI state, the
+ *   @p chSysLockI() and @p chSysUnlockI() APIs do nothing (still use them in
+ *   order to formally change state because this may change).
+ * - <b>Serving Regular Interrupt</b>. Normal interrupt service code.
+ * - <b>Serving Fast Interrupt</b>. Not present in this architecture.
+ * - <b>Serving Non-Maskable Interrupt</b>. The STM8 ha non
+ *   maskable interrupt sources that can be associated to this state.
+ * - <b>Halted</b>. Implemented as an infinite loop with interrupts disabled.
+ * .
+ * @section STM8_RAISONANCE_NOTES The STM8 port notes
+ * - The STM8 does not have a dedicated interrupt stack, make sure to reserve
+ *     enough stack space for interrupts in each thread stack. This can be done
+ *     by modifying the @p INT_REQUIRED_STACK macro into
+ *     <b>./os/ports/RC/STM8/chcore.h</b>.
+ * - The kernel currently supports only the small memory model so the
+ *   kernel files should be loaded in the first 64K. Note that this is not
+ *   a problem because upper addresses can be used by the user code, the
+ *   kernel can context switch code running there.
+ * - The configuration option @p CH_OPTIMIZE_SPEED is not currently supported
+ *   because the missing support of the @p inline "C" keyword in the
+ *   compiler.
+ * .
+ * @ingroup raisonance
+ */
+
+/**
+ * @defgroup STM8_RAISONANCE_CONF Configuration Options
+ * @details STM8 Configuration Options. The STM8 port allows some
+ * architecture-specific configurations settings that can be overridden
+ * by redefining them in @p chconf.h. Usually there is no need to change
+ * the default values.
+ * - @p INT_REQUIRED_STACK, this value represent the amount of stack space
+ *   used by the interrupt handlers.<br>
+ *   The default for this value is @p 48, this space is allocated for each
+ *   thread so be careful in order to not waste precious RAM space.
+ * .
+ * @ingroup STM8_RAISONANCE
+ */
+
+/**
+ * @defgroup STM8_RAISONANCE_CORE Core Port Implementation
+ * @details STM8 specific port code, structures and macros.
+ *
+ * @ingroup STM8_RAISONANCE
+ */
+
+ /**
+ * @defgroup STM8_RAISONANCE_STARTUP Startup Support
+ * @details ChibiOS/RT doed not provide startup files for the STM8, there
+ * are no special startup requirement so the normal toolchain-provided
+ * startup files can be used.
+ *
+ * @ingroup STM8_RAISONANCE
+ */

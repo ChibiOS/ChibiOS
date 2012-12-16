@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- STM32F4xx board Template -->
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/hal/stm32f4xx/stm32f4xx_cfg.xsd">
+  <name>hal_configs</name>
+  <brief>Application HAL-related settings.</brief>
+  <configs>
+    <adc_config>
+      <name>adccfg1</name>
+      <brief>Example ADC configuration.</brief>
+      <groups>
+        <group>
+          <name>adcgrpcfg1</name>
+          <brief>Example ADC conversion group configuration.</brief>
+          <circular>true</circular>
+          <conv_callback>conv_callback</conv_callback>
+          <error_callback>error_callback</error_callback>
+          <alignment>0 Samples are Right Aligned</alignment>
+          <resolution>0 12 bits</resolution>
+          <trigger_mode>0 Software</trigger_mode>
+          <trigger_source>0 Timer 1 CC1 event</trigger_source>
+          <discontinuous>2 Two discontinous conversions</discontinuous>
+          <sample_time>
+            <IN0>ADC_SAMPLE_3</IN0>
+            <IN1>ADC_SAMPLE_3</IN1>
+            <IN2>ADC_SAMPLE_3</IN2>
+            <IN3>ADC_SAMPLE_3</IN3>
+            <IN4>ADC_SAMPLE_3</IN4>
+            <IN5>ADC_SAMPLE_3</IN5>
+            <IN6>ADC_SAMPLE_3</IN6>
+            <IN7>ADC_SAMPLE_3</IN7>
+            <IN8>ADC_SAMPLE_3</IN8>
+            <IN9>ADC_SAMPLE_3</IN9>
+            <IN10>ADC_SAMPLE_3</IN10>
+            <IN11>ADC_SAMPLE_3</IN11>
+            <IN12>ADC_SAMPLE_3</IN12>
+            <IN13>ADC_SAMPLE_3</IN13>
+            <IN14>ADC_SAMPLE_3</IN14>
+            <IN15>ADC_SAMPLE_3</IN15>
+            <SENSOR>ADC_SAMPLE_3</SENSOR>
+            <VREFINT>ADC_SAMPLE_3</VREFINT>
+            <VBAT>ADC_SAMPLE_3</VBAT>
+          </sample_time>
+          <channels_sequence>
+            <channel>ADC_CHANNEL_IN0</channel>
+            <channel>ADC_CHANNEL_IN8</channel>
+          </channels_sequence>
+        </group>
+      </groups>
+    </adc_config>
+  </configs>
+</configuration>
