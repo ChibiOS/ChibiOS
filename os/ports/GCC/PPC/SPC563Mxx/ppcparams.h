@@ -22,10 +22,10 @@
  * @file    SPC563Mxx/ppcparams.h
  * @brief   PowerPC parameters for the SPC563Mxx.
  *
- * @defgroup PPC_SPC563Mxx SPC563Mxx/MPC563x Specific Parameters
+ * @defgroup PPC_SPC563Mxx SPC563Mxx Specific Parameters
  * @ingroup PPC_SPECIFIC
  * @details This file contains the PowerPC specific parameters for the
- *          SPC563Mxx/MPC563x platform.
+ *          SPC563Mxx platform.
  * @{
  */
 
