@@ -15,6 +15,10 @@
 /**
  * @file    SPC563Mxx/hal_lld.h
  * @brief   SPC563Mxx HAL subsystem low level driver header.
+ * @pre     This module requires the following macros to be defined in the
+ *          @p board.h file:
+ *          - SPC5_XOSC_CLK.
+ *          .
  *
  * @addtogroup HAL
  * @{

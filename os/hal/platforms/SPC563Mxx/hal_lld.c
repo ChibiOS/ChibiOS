@@ -112,7 +112,7 @@ void spc_clock_init(void) {
 
 #if !SPC5_NO_INIT
   /* PLL activation.*/
-  FMPLL.ESYNCR1.B.EMODE     = 1;
+  FMPLL.ESYNCR1.B.EMODE     = 1;                    /* Enhanced mode on.    */
   FMPLL.ESYNCR1.B.CLKCFG   &= 1;                    /* Bypass mode, PLL off.*/
   FMPLL.ESYNCR1.B.CLKCFG   |= 2;                    /* PLL on.              */
   FMPLL.ESYNCR1.B.EPREDIV   = SPC5_CLK_PREDIV;
