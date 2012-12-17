@@ -116,7 +116,7 @@ void spc_clock_init(void) {
   /* If the board is equipped with an oscillator instead of a xtal then the
      bypass must be activated.*/
   CGM.OSC_CTL.B.OSCBYP = TRUE;
-#endif /* SPC5_ENABLE_XOSC */
+#endif /* SPC5_OSC_BYPASS */
 
   /* Initialization of the FMPLLs settings.*/
   CGM.FMPLL[0].CR.R = SPC5_FMPLL0_ODF |
