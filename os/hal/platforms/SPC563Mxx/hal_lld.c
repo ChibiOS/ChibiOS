@@ -114,6 +114,7 @@ void spc_clock_init(void) {
   /* PLL activation.*/
   FMPLL.ESYNCR1.B.EMODE     = 1;                    /* Enhanced mode on.    */
   FMPLL.ESYNCR1.B.CLKCFG   &= 1;                    /* Bypass mode, PLL off.*/
+#if !SPC5_CLK_BYPASS
   FMPLL.ESYNCR1.B.CLKCFG   |= 2;                    /* PLL on.              */
   FMPLL.ESYNCR1.B.EPREDIV   = SPC5_CLK_PREDIV;
   FMPLL.ESYNCR1.B.EMFD      = SPC5_CLK_MFD;
@@ -121,6 +122,7 @@ void spc_clock_init(void) {
   while (!FMPLL.SYNSR.B.LOCK)
     ;
   FMPLL.ESYNCR1.B.CLKCFG   |= 4;                    /* Clock from the PLL.  */
+#endif /* !SPC5_CLK_BYPASS */
 #endif /* !SPC5_NO_INIT */
 }
 
