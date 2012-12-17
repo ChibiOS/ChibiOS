@@ -16,14 +16,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for a generic SPC563M proto board.
+ * Setup for a generic SPC563Mxx proto board.
  */
 
 /*
  * Board identifiers.
  */
 #define BOARD_GENERIC_SPC563M
-#define BOARD_NAME                  "Generic SPC563M"
+#define BOARD_NAME                  "Generic SPC563Mxx"
 
 /*
  * Board frequencies.

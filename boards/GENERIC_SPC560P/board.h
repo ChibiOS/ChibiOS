@@ -23,7 +23,7 @@
  * Board identifiers.
  */
 #define BOARD_GENERIC_SPC560P
-#define BOARD_NAME                  "Generic SPC560P"
+#define BOARD_NAME                  "Generic SPC560Pxx"
 
 /*
  * Board frequencies.
