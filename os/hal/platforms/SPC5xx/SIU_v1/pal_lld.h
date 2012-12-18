@@ -361,6 +361,20 @@ typedef struct {
     (SIU.GPDO[((port) * 16) + (pad)].R = 0)
 
 /**
+ * @brief   Toggles a pad logical state.
+ * @note    The @ref PAL provides a default software implementation of this
+ *          functionality, implement this function if can optimize it by using
+ *          special hardware functionalities or special coding.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @notapi
+ */
+#define pal_lld_togglepad(port, pad)                                        \
+    (SIU.GPDO[((port) * 16) + (pad)].R = ~SIU.GPDO[((port) * 16) + (pad)].R)
+
+/**
  * @brief   Pad mode setup.
  * @details This function programs a pad with the specified mode.
  * @note    The @ref PAL provides a default software implementation of this
