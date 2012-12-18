@@ -216,7 +216,7 @@ _IVOR4:
         bl          chSchDoReschedule
 
         /* Context restore.*/
-        .globl
+        .globl      _ivor_exit
 _ivor_exit:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_unlock
