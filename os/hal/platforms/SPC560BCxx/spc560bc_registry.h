@@ -28,7 +28,7 @@
 /*===========================================================================*/
 
 /**
- * @name    SPC560Pxx capabilities
+ * @name    SPC560B/Cxx capabilities
  * @{
  */
 /* LINFlex attributes.*/

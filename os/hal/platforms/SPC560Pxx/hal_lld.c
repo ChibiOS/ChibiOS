@@ -181,7 +181,7 @@ void spc_clock_init(void) {
  * @retval CH_SUCCESS   if the switch operation has been completed.
  * @retval CH_FAILED    if the switch operation failed.
  */
-bool_t halSPCSetRunMode(spc560prunmode_t mode) {
+bool_t halSPCSetRunMode(spc5_runmode_t mode) {
 
   /* Starts a transition process.*/
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY;

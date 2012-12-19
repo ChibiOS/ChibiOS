@@ -97,7 +97,7 @@ void hal_lld_init(void) {
 }
 
 /**
- * @brief   SPC560Pxx clocks and PLL initialization.
+ * @brief   SPC560B/Cxx clocks and PLL initialization.
  * @note    All the involved constants come from the file @p board.h and
  *          @p hal_lld.h
  * @note    This function must be invoked only after the system reset.
@@ -185,7 +185,7 @@ void spc_clock_init(void) {
  * @retval CH_SUCCESS   if the switch operation has been completed.
  * @retval CH_FAILED    if the switch operation failed.
  */
-bool_t halSPCSetRunMode(spc560prunmode_t mode) {
+bool_t halSPCSetRunMode(spc5_runmode_t mode) {
 
   /* Starts a transition process.*/
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY;
