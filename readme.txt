@@ -82,6 +82,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed twrong SPI path in platform_f105_f107.mk (bug 3598151).
 - NEW: Added support for Olimex board STM32-LCD.
 
 *** 2.5.1 ***
