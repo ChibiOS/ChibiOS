@@ -106,8 +106,9 @@ ICUDriver ICUD8;
 static void icu_lld_serve_interrupt(ICUDriver *icup) {
   uint16_t sr;
 
-  sr = icup->tim->SR & icup->tim->DIER;
-  icup->tim->SR = 0;
+  sr  = icup->tim->SR;
+  sr &= icup->tim->DIER;
+  icup->tim->SR = ~sr;
   if ((sr & TIM_SR_CC1IF) != 0)
     _icu_isr_invoke_period_cb(icup);
   if ((sr & TIM_SR_CC2IF) != 0)

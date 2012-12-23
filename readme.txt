@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- FIX: Fixed warning in STM32 ICU driver using IAR compiler (bug 3598177).
 - FIX: Fixed typo in chOQGetEmptyI() macro (bug 3595910).
 - FIX: Fixed possible false detect of loaded prescaler in RTCv1 driver (bug 
   3595489).
