@@ -90,11 +90,7 @@ ROMCONST chdebug_t ch_debug = {
 #else
   (uint8_t)0,
 #endif
-#if CH_TIME_QUANTUM > 0
-  (uint8_t)_offsetof(Thread, p_preempt),
-#else
-  (uint8_t)0,
-#endif
+  (uint8_t)0, /* Not used in 2.4.x.*/
 #if CH_DBG_THREADS_PROFILING
   (uint8_t)_offsetof(Thread, p_time)
 #else
