@@ -2,13 +2,13 @@ Platform : PowerPC
 OS Setup : Full kernel
 Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
 Options  : -O2 -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 11952
+Kernel Size = 11968
 
 Platform : PowerPC
 OS Setup : Full kernel
 Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
 Options  : -O2 -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 11460
+Kernel Size = 11476
 
 Platform : PowerPC
 OS Setup : Minimal kernel
@@ -20,13 +20,13 @@ Platform : PowerPC
 OS Setup : Full kernel
 Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
 Options  : -Os -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 10488
+Kernel Size = 10508
 
 Platform : PowerPC
 OS Setup : Full kernel
 Compiler : powerpc-eabi-gcc (Sourcery G++ Lite 4.4-79) 4.4.1
 Options  : -Os -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 9948
+Kernel Size = 9968
 
 Platform : PowerPC
 OS Setup : Minimal kernel
@@ -36,145 +36,145 @@ Kernel Size = 2096
 
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 6180
+Kernel Size = 6316
 
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 5776
+Kernel Size = 5900
 
 Platform : ARM Cortex-M3
 OS Setup : Minimal kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -mthumb
-Kernel Size = 1404
+Kernel Size = 1400
 
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5556
+Kernel Size = 5528
 
 Platform : ARM Cortex-M3
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 5240
+Kernel Size = 5212
 
 Platform : ARM Cortex-M3
 OS Setup : Minimal kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -mthumb
-Kernel Size = 1244
+Kernel Size = 1228
 
 Platform : ARM Cortex-M0
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5504
+Kernel Size = 5660
 
 Platform : ARM Cortex-M0
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 5288
+Kernel Size = 5432
 
 Platform : ARM Cortex-M0
 OS Setup : Minimal kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -mthumb
 Kernel Size = 1280
 
 Platform : ARM Cortex-M0
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5008
+Kernel Size = 5028
 
 Platform : ARM Cortex-M0
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 4856
+Kernel Size = 4876
 
 Platform : ARM Cortex-M0
 OS Setup : Minimal kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -mthumb
 Kernel Size = 1148
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 9232
+Kernel Size = 9248
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 8696
+Kernel Size = 8712
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Minimal kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2
 Kernel Size = 1816
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 8440
+Kernel Size = 8460
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 8068
+Kernel Size = 8088
 
 Platform : ARM7TDMI (ARM mode)
 OS Setup : Minimal kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os
 Kernel Size = 1568
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=TRUE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 6056
+Kernel Size = 6072
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -mthumb -DCH_OPTIMIZE_SPEED=FALSE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 5824
+Kernel Size = 5840
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Minimal kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -O2 -mthumb -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
 Kernel Size = 1308
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=TRUE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 5580
+Kernel Size = 5600
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Full kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -mthumb -DCH_OPTIMIZE_SPEED=FALSE -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
-Kernel Size = 5392
+Kernel Size = 5412
 
 Platform : ARM7TDMI (THUMB mode)
 OS Setup : Minimal kernel
-Compiler : arm-none-eabi-gcc (GCC) 4.6.2
+Compiler : arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 4.6.2 20121016 (release) [ARM/embedded-4_6-branch revision 192487]
 Options  : -Os -mthumb -DTHUMB -DTHUMB_PRESENT -DTHUMB_NO_INTERWORKING
 Kernel Size = 1184
 
@@ -182,35 +182,35 @@ Platform : MSP430
 OS Setup : Full kernel
 Compiler : msp430-gcc (GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched)
 Options  : -O2 -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 6468
+Kernel Size = 6484
 
 Platform : MSP430
 OS Setup : Full kernel
 Compiler : msp430-gcc (GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched)
 Options  : -O2 -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 6044
+Kernel Size = 6060
 
 Platform : MSP430
 OS Setup : Minimal kernel
 Compiler : msp430-gcc (GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched)
 Options  : -O2
-Kernel Size = 1084
+Kernel Size = 1080
 
 Platform : MSP430
 OS Setup : Full kernel
 Compiler : msp430-gcc (GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched)
 Options  : -Os -DCH_OPTIMIZE_SPEED=TRUE
-Kernel Size = 5772
+Kernel Size = 5788
 
 Platform : MSP430
 OS Setup : Full kernel
 Compiler : msp430-gcc (GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched)
 Options  : -Os -DCH_OPTIMIZE_SPEED=FALSE
-Kernel Size = 5472
+Kernel Size = 5488
 
 Platform : MSP430
 OS Setup : Minimal kernel
 Compiler : msp430-gcc (GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched)
 Options  : -Os
-Kernel Size = 908
+Kernel Size = 904
 
