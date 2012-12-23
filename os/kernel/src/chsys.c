@@ -43,7 +43,9 @@
 #include "ch.h"
 
 #if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
-/* Idle thread working area.*/
+/**
+ * @brief   Idle thread working area.
+ */
 WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 
 /**
@@ -108,7 +110,9 @@ void chSysInit(void) {
 #endif
   chSysEnable();
 
-  chRegSetThreadName("main");
+  /* Note, &ch_debug points to the string "main" if the registry is
+     active, else the parameter is ignored.*/
+  chRegSetThreadName((const char *)&ch_debug);
 
 #if !CH_NO_IDLE_THREAD
   /* This thread has the lowest priority in the system, its role is just to

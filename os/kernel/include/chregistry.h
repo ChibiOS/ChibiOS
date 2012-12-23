@@ -37,6 +37,33 @@
 #define _CHREGISTRY_H_
 
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
+
+/**
+ * @brief   ChibiOS/RT memory signature record.
+ */
+typedef struct {
+  char      ch_identifier[4];       /**< @brief Always set to "main".       */
+  uint8_t   ch_zero;                /**< @brief Must be zero.               */
+  uint8_t   ch_size;                /**< @brief Size of this structure.     */
+  uint16_t  ch_version;             /**< @brief Encoded ChibiOS/RT version. */
+  uint8_t   ch_ptrsize;             /**< @brief Size of a pointer.          */
+  uint8_t   ch_timesize;            /**< @brief Size of a @p systime_t.     */
+  uint8_t   ch_threadsize;          /**< @brief Size of a @p Thread struct. */
+  uint8_t   cf_off_prio;            /**< @brief Offset of @p p_prio field.  */
+  uint8_t   cf_off_ctx;             /**< @brief Offset of @p p_ctx field.   */
+  uint8_t   cf_off_newer;           /**< @brief Offset of @p p_newer field. */
+  uint8_t   cf_off_older;           /**< @brief Offset of @p p_older field. */
+  uint8_t   cf_off_name;            /**< @brief Offset of @p p_name field.  */
+  uint8_t   cf_off_stklimit;        /**< @brief Offset of @p p_stklimit
+                                                field.                      */
+  uint8_t   cf_off_state;           /**< @brief Offset of @p p_state field. */
+  uint8_t   cf_off_flags;           /**< @brief Offset of @p p_flags field. */
+  uint8_t   cf_off_refs;            /**< @brief Offset of @p p_refs field.  */
+  uint8_t   cf_off_preempt;         /**< @brief Offset of @p p_preempt
+                                                field.                      */
+  uint8_t   cf_off_time;            /**< @brief Offset of @p p_time field.  */
+} chdebug_t;
+
 /**
  * @name    Macro Functions
  * @{
@@ -96,6 +123,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+  extern ROMCONST chdebug_t ch_debug;
   Thread *chRegFirstThread(void);
   Thread *chRegNextThread(Thread *tp);
 #ifdef __cplusplus

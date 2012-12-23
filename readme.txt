@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.3 ***
+- NEW: Added memory signature record to the registry in order to simplify
+  the implementation of ad-hoc debuggers.
 - FIX: Fixed warning in STM32 ICU driver using IAR compiler (bug 3598177).
 - FIX: Fixed typo in chOQGetEmptyI() macro (bug 3595910).
 - FIX: Fixed possible false detect of loaded prescaler in RTCv1 driver (bug 

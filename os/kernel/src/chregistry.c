@@ -57,6 +57,51 @@
 
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
 
+#define _offsetof(st, m)                                                     \
+  ((size_t)((char *)&((st *)0)->m - (char *)0))
+
+/*
+ * OS signature in ROM plus debug-related information.
+ */
+ROMCONST chdebug_t ch_debug = {
+  "main",
+  (uint8_t)0,
+  (uint8_t)sizeof (chdebug_t),
+  (uint16_t)((CH_KERNEL_MAJOR << 11) |
+             (CH_KERNEL_MINOR << 6) |
+             (CH_KERNEL_PATCH) << 0),
+  (uint8_t)sizeof (void *),
+  (uint8_t)sizeof (systime_t),
+  (uint8_t)sizeof (Thread),
+  (uint8_t)_offsetof(Thread, p_prio),
+  (uint8_t)_offsetof(Thread, p_ctx),
+  (uint8_t)_offsetof(Thread, p_newer),
+  (uint8_t)_offsetof(Thread, p_older),
+  (uint8_t)_offsetof(Thread, p_name),
+#if CH_DBG_ENABLE_STACK_CHECK
+  (uint8_t)_offsetof(Thread, p_stklimit),
+#else
+  (uint8_t)0,
+#endif
+  (uint8_t)_offsetof(Thread, p_state),
+  (uint8_t)_offsetof(Thread, p_flags),
+#if CH_USE_DYNAMIC
+  (uint8_t)_offsetof(Thread, p_refs),
+#else
+  (uint8_t)0,
+#endif
+#if CH_TIME_QUANTUM > 0
+  (uint8_t)_offsetof(Thread, p_preempt),
+#else
+  (uint8_t)0,
+#endif
+#if CH_DBG_THREADS_PROFILING
+  (uint8_t)_offsetof(Thread, p_time)
+#else
+  (uint8_t)0
+#endif
+};
+
 /**
  * @brief   Returns the first thread in the system.
  * @details Returns the most ancient thread in the system, usually this is
