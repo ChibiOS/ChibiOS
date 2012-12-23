@@ -104,7 +104,8 @@ PWMDriver PWMD8;
 static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
   uint16_t sr;
 
-  sr = pwmp->tim->SR & pwmp->tim->DIER;
+  sr  = pwmp->tim->SR;
+  sr &= pwmp->tim->DIER;
   pwmp->tim->SR = ~sr;
   if ((sr & TIM_SR_CC1IF) != 0)
     pwmp->config->channels[0].callback(pwmp);

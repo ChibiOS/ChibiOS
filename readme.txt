@@ -82,7 +82,9 @@
 *****************************************************************************
 
 *** 2.5.2 ***
-- FIX: Fixed twrong SPI path in platform_f105_f107.mk (bug 3598151).
+- FIX: Fixed warning in STM32 ICU driver using IAR compiler (bug 3598177)
+  (backported to 2.4.3).
+- FIX: Fixed wrong SPI path in platform_f105_f107.mk (bug 3598151).
 - NEW: Added support for Olimex board STM32-LCD.
 
 *** 2.5.1 ***
