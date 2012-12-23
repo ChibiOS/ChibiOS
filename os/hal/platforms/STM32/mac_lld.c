@@ -272,8 +272,10 @@ void mac_lld_init(void) {
     ;
 #endif
 
+#if STM32_ETH1_CHANGE_PHY_STATE
   /* PHY in power down mode until the driver will be started.*/
   mii_write(&ETHD1, MII_BMCR, mii_read(&ETHD1, MII_BMCR) | BMCR_PDOWN);
+#endif
 
   /* MAC clocks stopped again.*/
   rccDisableETH(FALSE);
