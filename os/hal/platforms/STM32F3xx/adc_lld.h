@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32F0xx/adc_lld.h
- * @brief   STM32F0xx ADC subsystem low level driver header.
+ * @file    STM32F3xx/adc_lld.h
+ * @brief   STM32F3xx ADC subsystem low level driver header.
  *
  * @addtogroup ADC
  * @{
@@ -40,13 +40,13 @@
  * @{
  */
 #define ADC_SMPR_SMP_1P5        0   /**< @brief 14 cycles conversion time   */
-#define ADC_SMPR_SMP_7P5        1   /**< @brief 21 cycles conversion time.  */
-#define ADC_SMPR_SMP_13P5       2   /**< @brief 28 cycles conversion time.  */
-#define ADC_SMPR_SMP_28P5       3   /**< @brief 41 cycles conversion time.  */
-#define ADC_SMPR_SMP_41P5       4   /**< @brief 54 cycles conversion time.  */
-#define ADC_SMPR_SMP_55P5       5   /**< @brief 68 cycles conversion time.  */
-#define ADC_SMPR_SMP_71P5       6   /**< @brief 84 cycles conversion time.  */
-#define ADC_SMPR_SMP_239P5      7   /**< @brief 252 cycles conversion time. */
+#define ADC_SMPR_SMP_2P5        1   /**< @brief 15 cycles conversion time.  */
+#define ADC_SMPR_SMP_4P5        2   /**< @brief 17 cycles conversion time.  */
+#define ADC_SMPR_SMP_7P5        3   /**< @brief 20 cycles conversion time.  */
+#define ADC_SMPR_SMP_19P5       4   /**< @brief 32 cycles conversion time.  */
+#define ADC_SMPR_SMP_61P5       5   /**< @brief 74 cycles conversion time.  */
+#define ADC_SMPR_SMP_181P5      6   /**< @brief 194 cycles conversion time. */
+#define ADC_SMPR_SMP_601P5      7   /**< @brief 614 cycles conversion time. */
 /** @} */
 
 /**
@@ -82,28 +82,72 @@
 #if !defined(STM32_ADC_USE_ADC1) || defined(__DOXYGEN__)
 #define STM32_ADC_USE_ADC1                  FALSE
 #endif
-
 /**
- * @brief   ADC1 DMA priority (0..3|lowest..highest).
+ * @brief   ADC1+ADC2 driver enable switch.
+ * @details If set to @p TRUE the support for ADC1+ADC2 is included.
+ * @note    The default is @p FALSE.
  */
-#if !defined(STM32_ADC_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_PRIORITY         2
+#if !defined(STM32_ADC_USE_ADC12) || defined(__DOXYGEN__)
+#define STM32_ADC_USE_ADC12                 FALSE
+#endif
+/**
+ * @brief   ADC3 driver enable switch.
+ * @details If set to @p TRUE the support for ADC3 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_ADC_USE_ADC3) || defined(__DOXYGEN__)
+#define STM32_ADC_USE_ADC3                  FALSE
+#endif
+/**
+ * @brief   ADC3+ADC4 driver enable switch.
+ * @details If set to @p TRUE the support for ADC3+ADC4 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_ADC_USE_ADC34) || defined(__DOXYGEN__)
+#define STM32_ADC_USE_ADC34                 FALSE
 #endif
 
 /**
- * @brief   ADC interrupt priority level setting.
+ * @brief   ADC1/ADC2 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_ADC_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_IRQ_PRIORITY              2
+#if !defined(STM32_ADC_ADC12_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_DMA_PRIORITY        2
 #endif
 
 /**
- * @brief   ADC1 DMA interrupt priority level setting.
+ * @brief   ADC3/ADC4 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_ADC_ADC1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     2
+#if !defined(STM32_ADC_ADC34_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC34_DMA_PRIORITY        2
 #endif
 
+/**
+ * @brief   ADC1/ADC2 interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_ADC12_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_IRQ_PRIORITY        2
+#endif
+
+/**
+ * @brief   ADC3/ADC4 interrupt priority level setting.
+ */
+#if !defined(STM32_ADC34_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC34_IRQ_PRIORITY        2
+#endif
+
+/**
+ * @brief   ADC1/ADC2 DMA interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_ADC12_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_DMA_IRQ_PRIORITY    2
+#endif
+
+/**
+ * @brief   ADC3/ADC4 DMA interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_ADC34_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC34_DMA_IRQ_PRIORITY    2
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -114,23 +158,81 @@
 #error "ADC1 not present in the selected device"
 #endif
 
-#if !STM32_ADC_USE_ADC1
+#if STM32_ADC_USE_ADC12 && (!STM32_HAS_ADC1 || !STM32_HAS_ADC2)
+#error "ADC12 not present in the selected device"
+#endif
+
+#if STM32_ADC_USE_ADC3 && !STM32_HAS_ADC3
+#error "ADC3 not present in the selected device"
+#endif
+
+#if STM32_ADC_USE_ADC34 && (!STM32_HAS_ADC3 || !STM32_HAS_ADC4)
+#error "ADC34 not present in the selected device"
+#endif
+
+#if !STM32_ADC_USE_ADC1 || !STM32_ADC_USE_ADC12 ||                          \
+    !STM32_ADC_USE_ADC3 || !STM32_ADC_USE_ADC34
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_IRQ_PRIORITY)
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1"
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC12_DMA_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1 DMA"
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC12_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC1"
+#endif
+
+#if STM32_ADC_USE_ADC12 &&                                                  \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC12"
+#endif
+
+#if STM32_ADC_USE_ADC12 &&                                                  \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC12_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC12 DMA"
+#endif
+
+#if STM32_ADC_USE_ADC12 &&                                                  \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC12_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC12"
+#endif
+
+#if STM32_ADC_USE_ADC3 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC34_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC3"
+#endif
+
+#if STM32_ADC_USE_ADC3 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC34_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC3 DMA"
+#endif
+
+#if STM32_ADC_USE_ADC3 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC34_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC3"
+#endif
+
+#if STM32_ADC_USE_ADC34 &&                                                  \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC34_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC34"
+#endif
+
+#if STM32_ADC_USE_ADC34 &&                                                  \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC34_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC34 DMA"
+#endif
+
+#if STM32_ADC_USE_ADC34 &&                                                  \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC34_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC34"
 #endif
 
 #if !defined(STM32_DMA_REQUIRED)
@@ -303,12 +405,12 @@ struct ADCDriver {
 /*===========================================================================*/
 
 /**
- * @brief   Changes the value of the ADC CCR register.
+ * @brief   Changes the value of the ADC CCR registers.
  * @details Use this function in order to enable or disable the internal
- *          analog sources. See the documentation in the STM32F0xx Reference
+ *          analog sources. See the documentation in the STM32F3xx Reference
  *          Manual.
  */
-#define adcSTM32SetCCR(ccr) (ADC->CCR = (ccr))
+#define adcSTM32SetCCR(adc, ccr) ((adc)->CCR = (ccr))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -316,6 +418,18 @@ struct ADCDriver {
 
 #if STM32_ADC_USE_ADC1 && !defined(__DOXYGEN__)
 extern ADCDriver ADCD1;
+#endif
+
+#if STM32_ADC_USE_ADC12 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD12;
+#endif
+
+#if STM32_ADC_USE_ADC3 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD3;
+#endif
+
+#if STM32_ADC_USE_ADC34 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD34;
 #endif
 
 #ifdef __cplusplus

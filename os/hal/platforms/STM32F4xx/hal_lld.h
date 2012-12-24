@@ -307,6 +307,10 @@
                                  STM32_DMA_STREAM_ID_MSK(2, 1))
 #define STM32_ADC3_DMA_CHN      0x00000022
 
+#define STM32_HAS_ADC4          FALSE
+#define STM32_ADC4_DMA_MSK      0x00000000
+#define STM32_ADC4_DMA_CHN      0x00000000
+
 /* CAN attributes.*/
 #define STM32_HAS_CAN1          TRUE
 #define STM32_HAS_CAN2          TRUE
