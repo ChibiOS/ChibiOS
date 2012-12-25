@@ -36,9 +36,9 @@
 /*===========================================================================*/
 
 #if STM32_ADC_USE_ADC12 || STM32_ADC_USE_ADC34
-#define STM32_ADC_LINKED_MODE               TRUE
+#define STM32_ADC_DUAL_MODE                 TRUE
 #else
-#define STM32_ADC_LINKED_MODE               FALSE
+#define STM32_ADC_DUAL_MODE                 FALSE
 #endif
 
 /*===========================================================================*/
