@@ -261,7 +261,9 @@ typedef uint16_t adc_channels_num_t;
 typedef enum {
   ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
   ADC_ERR_OVERFLOW = 1,                     /**< ADC overflow condition.    */
-  ADC_ERR_AWD = 2                           /**< Analog watchdog triggered. */
+  ADC_ERR_AWD1 = 2                          /**< Watchdog 1 triggered.      */
+  ADC_ERR_AWD2 = 3                          /**< Watchdog 2 triggered.      */
+  ADC_ERR_AWD3 = 4                          /**< Watchdog 3 triggered.      */
 } adcerror_t;
 
 /**

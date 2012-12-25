@@ -31,6 +31,10 @@
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
 #if STM32_HAS_GPIOG
 #define APB2_EN_MASK  (RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |            \
                        RCC_APB2ENR_IOPCEN | RCC_APB2ENR_IOPDEN |            \

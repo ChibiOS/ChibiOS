@@ -31,6 +31,10 @@
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
 #if defined(STM32L1XX_MD)
 #define AHB_EN_MASK     (RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN |          \
                          RCC_AHBENR_GPIOCEN | RCC_AHBENR_GPIODEN |          \
