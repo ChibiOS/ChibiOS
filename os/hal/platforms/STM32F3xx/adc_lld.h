@@ -389,11 +389,15 @@ struct ADCDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief Pointer to the ADCx registers block.
+   * @brief Pointer to the master ADCx registers block.
    */
-  ADC_TypeDef               *adc;
+  ADC_TypeDef               *adcm;
   /**
-   * @brief Pointer to associated SMA channel.
+   * @brief Pointer to the slave ADCx registers block.
+   */
+  ADC_TypeDef               *adc2;
+  /**
+   * @brief Pointer to associated DMA channel.
    */
   const stm32_dma_stream_t  *dmastp;
   /**
