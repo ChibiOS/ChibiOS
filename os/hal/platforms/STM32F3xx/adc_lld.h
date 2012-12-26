@@ -36,6 +36,30 @@
 /*===========================================================================*/
 
 /**
+ * @name    Available analog channels
+ * @{
+ */
+#define ADC_CHANNEL_IN1         1   /**< @brief External analog input 1.    */
+#define ADC_CHANNEL_IN2         2   /**< @brief External analog input 2.    */
+#define ADC_CHANNEL_IN3         3   /**< @brief External analog input 3.    */
+#define ADC_CHANNEL_IN4         4   /**< @brief External analog input 4.    */
+#define ADC_CHANNEL_IN5         5   /**< @brief External analog input 5.    */
+#define ADC_CHANNEL_IN6         6   /**< @brief External analog input 6.    */
+#define ADC_CHANNEL_IN7         7   /**< @brief External analog input 7.    */
+#define ADC_CHANNEL_IN8         8   /**< @brief External analog input 8.    */
+#define ADC_CHANNEL_IN9         9   /**< @brief External analog input 9.    */
+#define ADC_CHANNEL_IN10        10  /**< @brief External analog input 10.   */
+#define ADC_CHANNEL_IN11        11  /**< @brief External analog input 11.   */
+#define ADC_CHANNEL_IN12        12  /**< @brief External analog input 12.   */
+#define ADC_CHANNEL_IN13        13  /**< @brief External analog input 13.   */
+#define ADC_CHANNEL_IN14        14  /**< @brief External analog input 14.   */
+#define ADC_CHANNEL_IN15        15  /**< @brief External analog input 15.   */
+#define ADC_CHANNEL_IN16        16  /**< @brief External analog input 16.   */
+#define ADC_CHANNEL_IN17        17  /**< @brief External analog input 17.   */
+#define ADC_CHANNEL_IN18        18  /**< @brief External analog input 18.   */
+/** @} */
+
+/**
  * @name    Sampling rates
  * @{
  */
@@ -64,6 +88,52 @@
  * @{
  */
 #define ADC_TR(low, high)       (((uint32_t)(high) << 16) | (uint32_t)(low))
+/** @} */
+
+/**
+ * @name    CFGR register configuration helpers
+ * @{
+ */
+#define ADC_CFGR_RES_MASK               (3 << 3)
+#define ADC_CFGR_RES_12BITS             (0 << 3)
+#define ADC_CFGR_RES_10BITS             (1 << 3)
+#define ADC_CFGR_RES_8BITS              (2 << 3)
+#define ADC_CFGR_RES_6BITS              (3 << 3)
+
+#define ADC_CFGR_ALIGN_MASK             (1 << 5)
+#define ADC_CFGR_ALIGN_RIGHT            (0 << 5)
+#define ADC_CFGR_ALIGN_LEFT             (1 << 5)
+
+#define ADC_CFGR_EXTSEL_MASK            (15 << 6)
+#define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 6)
+
+#define ADC_CFGR_EXTEN_MASK             (3 << 10)
+#define ADC_CFGR_EXTEN_DISABLED         (0 << 10)
+#define ADC_CFGR_EXTEN_RISING           (1 << 10)
+#define ADC_CFGR_EXTEN_FALLING          (2 << 10)
+#define ADC_CFGR_EXTEN_BOTH             (3 << 10)
+
+#define ADC_CFGR_DISCEN_MASK            (1 << 16)
+#define ADC_CFGR_DISCEN_DISABLED        (0 << 16)
+#define ADC_CFGR_DISCEN_ENABLED         (1 << 16)
+
+#define ADC_CFGR_DISCNUM_MASK           (7 << 17)
+#define ADC_CFGR_DISCNUM(n)             ((n) << 17)
+
+#define ADC_CFGR_AWD1_DISABLED          0
+#define ADC_CFGR_AWD1_ALL               (1 << 23)
+#define ADC_CFGR_AWD1_SINGLE(n)         (((n) << 26) | (1 << 23) | (1 << 22))
+/** @} */
+
+/**
+ * @name    ADC clock modes
+ * @{
+ */
+#define ADC_CCR_CKMODE_MASK             (3 << 16)
+#define ADC_CCR_CKMODE_ADCCK            (0 << 16)
+#define ADC_CCR_CKMODE_AHB_DIV1         (1 << 16)
+#define ADC_CCR_CKMODE_AHB_DIV2         (2 << 16)
+#define ADC_CCR_CKMODE_AHB_DIV4         (3 << 16)
 /** @} */
 
 /*===========================================================================*/
@@ -147,6 +217,20 @@
  */
 #if !defined(STM32_ADC_ADC34_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC34_DMA_IRQ_PRIORITY    2
+#endif
+
+/**
+ * @brief   ADC1/ADC2 clock source and mode.
+ */
+#if !defined(STM32_ADC_ADC12_CLOCK_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
+#endif
+
+/**
+ * @brief   ADC3/ADC4 clock source and mode.
+ */
+#if !defined(STM32_ADC_ADC34_CLOCK_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
 #endif
 /** @} */
 
@@ -235,6 +319,38 @@
 #error "Invalid DMA priority assigned to ADC34"
 #endif
 
+#if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC12_CLOCK               STM32ADC12CLK
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 1)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 4)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
+#endif
+
+#if STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC34_CLOCK               STM32ADC34CLK
+#elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC34_CLOCK               (STM32_HCLK / 1)
+#elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC34_CLOCK               (STM32_HCLK / 2)
+#elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC34_CLOCK               (STM32_HCLK / 4)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
+#endif
+
+#if STM32_ADC12_CLOCK > 72000000
+#error "STM32_ADC12_CLOCK exceeding maximum frequency (72000000)"
+#endif
+
+#if STM32_ADC34_CLOCK > 72000000
+#error "STM32_ADC34_CLOCK exceeding maximum frequency (72000000)"
+#endif
+
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
 #endif
@@ -317,23 +433,46 @@ typedef struct {
   adcerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
   /**
-   * @brief   ADC CFGR1 register initialization data.
+   * @brief   ADC CFGR register initialization data.
+   * @note    The bits DMAEN, DMACFG, OVRMOD, CONT are enforced internally to the driver.
    */
-  uint32_t                  cfgr1;
+  uint32_t                  cfgr;
   /**
-   * @brief   ADC TR register initialization data.
+   * @brief   ADC TR1 register initialization data.
    */
-  uint32_t                  tr;
+  uint32_t                  tr1;
   /**
-   * @brief   ADC SMPR register initialization data.
+   * @brief   ADC SMPR1 register initialization data.
+   * @details In this field must be specified the sample times for channels
+   *          0...9.
    */
-  uint32_t                  smpr;
+  uint32_t                  smpr1;
   /**
-   * @brief   ADC CHSELR register initialization data.
-   * @details The number of bits at logic level one in this register must
-   *          be equal to the number in the @p num_channels field.
+   * @brief   ADC SMPR2 register initialization data.
+   * @details In this field must be specified the sample times for channels
+   *          10...18.
    */
-  uint32_t                  chselr;
+  uint32_t                  smpr2;
+  /**
+   * @brief   ADC SQR1 register initialization data.
+   * @details Conversion group sequence 1...4 + sequence length.
+   */
+  uint32_t                  sqr1;
+  /**
+   * @brief   ADC SQR2 register initialization data.
+   * @details Conversion group sequence 5...9.
+   */
+  uint32_t                  sqr2;
+  /**
+   * @brief   ADC SQR3 register initialization data.
+   * @details Conversion group sequence 10...15.
+   */
+  uint32_t                  sqr3;
+  /**
+   * @brief   ADC SQR4 register initialization data.
+   * @details Conversion group sequence 16...17.
+   */
+  uint32_t                  sqr4;
 } ADCConversionGroup;
 
 /**
@@ -349,35 +488,35 @@ typedef struct {
  */
 struct ADCDriver {
   /**
-   * @brief Driver state.
+   * @brief   Driver state.
    */
   adcstate_t                state;
   /**
-   * @brief Current configuration data.
+   * @brief   Current configuration data.
    */
   const ADCConfig           *config;
   /**
-   * @brief Current samples buffer pointer or @p NULL.
+   * @brief   Current samples buffer pointer or @p NULL.
    */
   adcsample_t               *samples;
   /**
-   * @brief Current samples buffer depth or @p 0.
+   * @brief   Current samples buffer depth or @p 0.
    */
   size_t                    depth;
   /**
-   * @brief Current conversion group pointer or @p NULL.
+   * @brief   Current conversion group pointer or @p NULL.
    */
   const ADCConversionGroup  *grpp;
 #if ADC_USE_WAIT || defined(__DOXYGEN__)
   /**
-   * @brief Waiting thread.
+   * @brief   Waiting thread.
    */
   Thread                    *thread;
 #endif
 #if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
-   * @brief Mutex protecting the peripheral.
+   * @brief   Mutex protecting the peripheral.
    */
   Mutex                     mutex;
 #elif CH_USE_SEMAPHORES
@@ -389,19 +528,19 @@ struct ADCDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief Pointer to the master ADCx registers block.
+   * @brief   Pointer to the master ADCx registers block.
    */
   ADC_TypeDef               *adcm;
   /**
-   * @brief Pointer to the slave ADCx registers block.
+   * @brief   Pointer to the slave ADCx registers block.
    */
-  ADC_TypeDef               *adc2;
+  ADC_TypeDef               *adcs;
   /**
-   * @brief Pointer to associated DMA channel.
+   * @brief   Pointer to associated DMA channel.
    */
   const stm32_dma_stream_t  *dmastp;
   /**
-   * @brief DMA mode bit mask.
+   * @brief   DMA mode bit mask.
    */
   uint32_t                  dmamode;
 };
@@ -411,12 +550,59 @@ struct ADCDriver {
 /*===========================================================================*/
 
 /**
- * @brief   Changes the value of the ADC CCR registers.
- * @details Use this function in order to enable or disable the internal
- *          analog sources. See the documentation in the STM32F3xx Reference
- *          Manual.
+ * @name    Sequences building helper macros
+ * @{
  */
-#define adcSTM32SetCCR(adc, ccr) ((adc)->CCR = (ccr))
+/**
+ * @brief   Number of channels in a conversion sequence.
+ */
+#define ADC_SQR1_NUM_CH(n)      (((n) - 1) << 0)
+
+#define ADC_SQR1_SQ1_N(n)       ((n) << 6)  /**< @brief 1st channel in seq. */
+#define ADC_SQR1_SQ2_N(n)       ((n) << 12) /**< @brief 2nd channel in seq. */
+#define ADC_SQR1_SQ3_N(n)       ((n) << 18) /**< @brief 3rd channel in seq. */
+#define ADC_SQR1_SQ4_N(n)       ((n) << 24) /**< @brief 4th channel in seq. */
+
+#define ADC_SQR2_SQ5_N(n)       ((n) << 0)  /**< @brief 5th channel in seq. */
+#define ADC_SQR2_SQ6_N(n)       ((n) << 6)  /**< @brief 6th channel in seq. */
+#define ADC_SQR2_SQ7_N(n)       ((n) << 12) /**< @brief 7th channel in seq. */
+#define ADC_SQR2_SQ8_N(n)       ((n) << 18) /**< @brief 8th channel in seq. */
+#define ADC_SQR2_SQ9_N(n)       ((n) << 24) /**< @brief 9th channel in seq. */
+
+#define ADC_SQR3_SQ10_N(n)      ((n) << 0)  /**< @brief 10th channel in seq.*/
+#define ADC_SQR3_SQ11_N(n)      ((n) << 6)  /**< @brief 11th channel in seq.*/
+#define ADC_SQR3_SQ12_N(n)      ((n) << 12) /**< @brief 12th channel in seq.*/
+#define ADC_SQR3_SQ13_N(n)      ((n) << 18) /**< @brief 13th channel in seq.*/
+#define ADC_SQR3_SQ14_N(n)      ((n) << 24) /**< @brief 14th channel in seq.*/
+
+#define ADC_SQR4_SQ15_N(n)      ((n) << 0)  /**< @brief 15th channel in seq.*/
+#define ADC_SQR4_SQ16_N(n)      ((n) << 6)  /**< @brief 16th channel in seq.*/
+/** @} */
+
+/**
+ * @name    Sampling rate settings helper macros
+ * @{
+ */
+#define ADC_SMPR1_SMP_AN1(n)    ((n) << 3)  /**< @brief AN1 sampling time.  */
+#define ADC_SMPR1_SMP_AN2(n)    ((n) << 6)  /**< @brief AN2 sampling time.  */
+#define ADC_SMPR1_SMP_AN3(n)    ((n) << 9)  /**< @brief AN3 sampling time.  */
+#define ADC_SMPR1_SMP_AN4(n)    ((n) << 12) /**< @brief AN4 sampling time.  */
+#define ADC_SMPR1_SMP_AN5(n)    ((n) << 15) /**< @brief AN5 sampling time.  */
+#define ADC_SMPR1_SMP_AN6(n)    ((n) << 18) /**< @brief AN6 sampling time.  */
+#define ADC_SMPR1_SMP_AN7(n)    ((n) << 21) /**< @brief AN7 sampling time.  */
+#define ADC_SMPR1_SMP_AN8(n)    ((n) << 24) /**< @brief AN8 sampling time.  */
+#define ADC_SMPR1_SMP_AN9(n)    ((n) << 27) /**< @brief AN9 sampling time.  */
+
+#define ADC_SMPR2_SMP_AN10(n)   ((n) << 0)  /**< @brief AN10 sampling time. */
+#define ADC_SMPR2_SMP_AN11(n)   ((n) << 3)  /**< @brief AN11 sampling time. */
+#define ADC_SMPR2_SMP_AN12(n)   ((n) << 6)  /**< @brief AN12 sampling time. */
+#define ADC_SMPR2_SMP_AN13(n)   ((n) << 9)  /**< @brief AN13 sampling time. */
+#define ADC_SMPR2_SMP_AN14(n)   ((n) << 12) /**< @brief AN14 sampling time. */
+#define ADC_SMPR2_SMP_AN15(n)   ((n) << 15) /**< @brief AN15 sampling time. */
+#define ADC_SMPR2_SMP_AN16(n)   ((n) << 18) /**< @brief AN16 sampling time. */
+#define ADC_SMPR2_SMP_AN17(n)   ((n) << 21) /**< @brief AN17 sampling time. */
+#define ADC_SMPR2_SMP_AN18(n)   ((n) << 24) /**< @brief AN18 sampling time. */
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -446,6 +632,8 @@ extern "C" {
   void adc_lld_stop(ADCDriver *adcp);
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
+  void adcSTM32SetWatchdog2(uint16_t low, uint16_t high, uint32_t channels);
+  void adcSTM32SetWatchdog3(uint16_t low, uint16_t high, uint32_t channels);
 #ifdef __cplusplus
 }
 #endif

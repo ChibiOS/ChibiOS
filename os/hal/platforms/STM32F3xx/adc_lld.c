@@ -303,6 +303,40 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
   adc_lld_stop_adc(adcp->adc);
 }
 
+/**
+ * @brief   Programs the analog watchdog 2.
+ * @note    This function must be called after starting the driver and
+ *          before starting a conversion.
+ *
+ * @param[in] adc       pointer to the physical ADC to configure
+ * @param[in] low       lower limit, as a 12 bits value
+ * @param[in] high      upper limit, as a 12 bits value
+ * @param[in] channels  bit mask of guarded channels
+ *
+ * @api
+ */
+void adcSTM32SetWatchdog2(ADC_TypeDef *adc, uint16_t low, uint16_t high,
+                          uint32_t channels) {
+
+}
+
+/**
+ * @brief   Programs the analog watchdog 3.
+ * @note    This function must be called after starting the driver and
+ *          before starting a conversion.
+ *
+ * @param[in] adc       pointer to the physical ADC to configure
+ * @param[in] low       lower limit, as a 12 bits value
+ * @param[in] high      upper limit, as a 12 bits value
+ * @param[in] channels  bit mask of guarded channels
+ *
+ * @api
+ */
+void adcSTM32SetWatchdog3(ADC_TypeDef *adc, uint16_t low, uint16_t high,
+                          uint32_t channels) {
+
+}
+
 #endif /* HAL_USE_ADC */
 
 /** @} */
