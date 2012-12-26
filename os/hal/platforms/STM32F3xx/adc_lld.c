@@ -35,12 +35,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#if STM32_ADC_USE_ADC12 || STM32_ADC_USE_ADC34
-#define STM32_ADC_DUAL_MODE                 TRUE
-#else
-#define STM32_ADC_DUAL_MODE                 FALSE
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -48,6 +42,11 @@
 /** @brief ADC1 driver identifier.*/
 #if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
 ADCDriver ADCD1;
+#endif
+
+/** @brief ADC1 driver identifier.*/
+#if STM32_ADC_USE_ADC3 || defined(__DOXYGEN__)
+ADCDriver ADCD3;
 #endif
 
 /*===========================================================================*/
@@ -78,7 +77,7 @@ static void adc_lld_stop_adc(ADC_TypeDef *adc) {
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] flags     pre-shifted content of the ISR register
  */
-static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
+static void adc_lld_serve_dma_interrupt(ADCDriver *adcp, uint32_t flags) {
 
   /* DMA errors handling.*/
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
@@ -102,44 +101,102 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
   }
 }
 
+/**
+ * @brief   ADC ISR service routine.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ * @param[in] isr     pre-shifted content of the ISR register
+ */
+static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
+
+  /* It could be a spurious interrupt caused by overflows after DMA disabling,
+     just ignore it in this case.*/
+  if (adcp->grpp != NULL) {
+    /* Note, an overflow may occur after the conversion ended before the driver
+       is able to stop the ADC, this is why the DMA channel is checked too.*/
+    if ((isr & ADC_ISR_OVR) &&
+        (dmaStreamGetTransactionSize(adcp->dmastp) > 0)) {
+      /* ADC overflow condition, this could happen only if the DMA is unable
+         to read data fast enough.*/
+      _adc_isr_error_code(adcp, ADC_ERR_OVERFLOW);
+    }
+    if (isr & ADC_ISR_AWD) {
+      /* Analog watchdog error.*/
+      _adc_isr_error_code(adcp, ADC_ERR_AWD);
+    }
+  }
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
 /**
- * @brief   ADC interrupt handler.
+ * @brief   ADC1/ADC2 interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(ADC1_COMP_IRQHandler) {
+CH_IRQ_HANDLER(Vector88) {
   uint32_t isr;
 
   CH_IRQ_PROLOGUE();
 
-  isr = ADC1->ISR;
+#if STM32_ADC_DUAL_MODE
+  isr  = ADC1->ISR;
+  isr |= ADC2->ISR;
   ADC1->ISR = isr;
+  ADC2->ISR = isr;
+#else /* !STM32_ADC_DUAL_MODE */
+  isr  = ADC1->ISR;
+  ADC1->ISR = isr;
+#endif /* !STM32_ADC_DUAL_MODE */
 
-  /* It could be a spurious interrupt caused by overflows after DMA disabling,
-     just ignore it in this case.*/
-  if (ADCD1.grpp != NULL) {
-    /* Note, an overflow may occur after the conversion ended before the driver
-       is able to stop the ADC, this is why the DMA channel is checked too.*/
-    if ((isr & ADC_ISR_OVR) &&
-        (dmaStreamGetTransactionSize(ADCD1.dmastp) > 0)) {
-      /* ADC overflow condition, this could happen only if the DMA is unable
-         to read data fast enough.*/
-      _adc_isr_error_code(&ADCD1, ADC_ERR_OVERFLOW);
-    }
-    if (isr & ADC_ISR_AWD) {
-      /* Analog watchdog error.*/
-      _adc_isr_error_code(&ADCD1, ADC_ERR_AWD);
-    }
-  }
+  adc_lld_serve_interrupt(&ADCD1, isr);
 
   CH_IRQ_EPILOGUE();
 }
-#endif
+#endif /* STM32_ADC_USE_ADC1 */
+
+#if STM32_ADC_USE_ADC3 || defined(__DOXYGEN__)
+/**
+ * @brief   ADC3 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(VectorFC) {
+  uint32_t isr;
+
+  CH_IRQ_PROLOGUE();
+
+  isr  = ADC3->ISR;
+  ADC3->ISR = isr;
+
+  adc_lld_serve_interrupt(&ADCD3, isr);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if STM32_ADC_DUAL_MODE
+/**
+ * @brief   ADC4 interrupt handler (as ADC3 slave).
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(Vector134) {
+  uint32_t isr;
+
+  CH_IRQ_PROLOGUE();
+
+  isr  = ADC4->ISR;
+  ADC4->ISR = isr;
+
+  adc_lld_serve_interrupt(&ADCD3, isr);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* STM32_ADC_DUAL_MODE */
+#endif /* STM32_ADC_USE_ADC3 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -194,7 +251,7 @@ void adc_lld_start(ADCDriver *adcp) {
       bool_t b;
       b = dmaStreamAllocate(adcp->dmastp,
                             STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
+                            (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
       chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
