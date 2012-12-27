@@ -420,15 +420,12 @@ void adc_lld_stop(ADCDriver *adcp) {
     /* Releasing the associated DMA channel.*/
     dmaStreamRelease(adcp->dmastp);
 
-    /* Disabling the ADC.*/
-    if (adcp->adcm->CR & ADC_CR_ADEN) {
-      /* Stopping the ongoing conversion, if any.*/
-      adc_lld_stop_adc(adcp);
+    /* Stopping the ongoing conversion, if any.*/
+    adc_lld_stop_adc(adcp);
 
-      /* Disabling ADC analog circuit and regulator.*/
-      adc_lld_analog_off(adcp);
-      adc_lld_vreg_off(adcp);
-    }
+    /* Disabling ADC analog circuit and regulator.*/
+    adc_lld_analog_off(adcp);
+    adc_lld_vreg_off(adcp);
 
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp)
