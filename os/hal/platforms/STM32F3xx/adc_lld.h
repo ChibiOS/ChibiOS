@@ -118,7 +118,7 @@
 #define ADC_CFGR_DISCEN_ENABLED         (1 << 16)
 
 #define ADC_CFGR_DISCNUM_MASK           (7 << 17)
-#define ADC_CFGR_DISCNUM(n)             ((n) << 17)
+#define ADC_CFGR_DISCNUM_VAL(n)         ((n) << 17)
 
 #define ADC_CFGR_AWD1_DISABLED          0
 #define ADC_CFGR_AWD1_ALL               (1 << 23)
@@ -165,57 +165,57 @@
 /**
  * @brief   ADC1/ADC2 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_ADC_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_PRIORITY         2
+#if !defined(STM32_ADC_ADC12_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_DMA_PRIORITY        2
 #endif
 
 /**
  * @brief   ADC3/ADC4 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_ADC_ADC3_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC3_DMA_PRIORITY         2
+#if !defined(STM32_ADC_ADC34_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC34_DMA_PRIORITY        2
 #endif
 
 /**
  * @brief   ADC1/ADC2 interrupt priority level setting.
  */
-#if !defined(STM32_ADC_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_IRQ_PRIORITY         2
+#if !defined(STM32_ADC_ADC12_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_IRQ_PRIORITY        2
 #endif
 
 /**
  * @brief   ADC3/ADC4 interrupt priority level setting.
  */
-#if !defined(STM32_ADC3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC3_IRQ_PRIORITY         2
+#if !defined(STM32_ADC34_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC34_IRQ_PRIORITY        2
 #endif
 
 /**
  * @brief   ADC1/ADC2 DMA interrupt priority level setting.
  */
-#if !defined(STM32_ADC_ADC1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     2
+#if !defined(STM32_ADC_ADC12_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_DMA_IRQ_PRIORITY    2
 #endif
 
 /**
  * @brief   ADC3/ADC4 DMA interrupt priority level setting.
  */
-#if !defined(STM32_ADC_ADC3_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC3_DMA_IRQ_PRIORITY     2
+#if !defined(STM32_ADC_ADC34_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC34_DMA_IRQ_PRIORITY    2
 #endif
 
 /**
  * @brief   ADC1/ADC2 clock source and mode.
  */
-#if !defined(STM32_ADC_ADC1_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_CLOCK_MODE           ADC_CCR_CKMODE_AHB_DIV1
+#if !defined(STM32_ADC_ADC12_CLOCK_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
 #endif
 
 /**
  * @brief   ADC3/ADC4 clock source and mode.
  */
-#if !defined(STM32_ADC_ADC3_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC3_CLOCK_MODE           ADC_CCR_CKMODE_AHB_DIV1
+#if !defined(STM32_ADC_ADC34_CLOCK_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
 #endif
 
 /**
@@ -238,70 +238,70 @@
 #error "ADC3 not present in the selected device"
 #endif
 
-#if !STM32_ADC_USE_ADC1 ||!STM32_ADC_USE_ADC3
+#if !STM32_ADC_USE_ADC1 && !STM32_ADC_USE_ADC3
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC1_IRQ_PRIORITY)
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1"
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC12_DMA_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1 DMA"
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC12_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC1"
 #endif
 
 #if STM32_ADC_USE_ADC3 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC3_IRQ_PRIORITY)
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC34_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC3"
 #endif
 
 #if STM32_ADC_USE_ADC3 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC3_DMA_IRQ_PRIORITY)
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC34_DMA_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC3 DMA"
 #endif
 
 #if STM32_ADC_USE_ADC3 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_PRIORITY)
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC34_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC3"
 #endif
 
-#if STM32_ADC_ADC1_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC1_CLOCK               STM32ADC1CLK
-#elif STM32_ADC_ADC1_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC1_CLOCK               (STM32_HCLK / 1)
-#elif STM32_ADC_ADC1_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC1_CLOCK               (STM32_HCLK / 2)
-#elif STM32_ADC_ADC1_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC1_CLOCK               (STM32_HCLK / 4)
+#if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC12_CLOCK               STM32ADC1CLK
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 1)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC12_CLOCK               (STM32_HCLK / 4)
 #else
-#error "invalid clock mode selected for STM32_ADC_ADC1_CLOCK_MODE"
+#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
 #endif
 
-#if STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC3_CLOCK               STM32ADC3CLK
-#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC3_CLOCK               (STM32_HCLK / 1)
-#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC3_CLOCK               (STM32_HCLK / 2)
-#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC3_CLOCK               (STM32_HCLK / 4)
+#if STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC34_CLOCK               STM32ADC3CLK
+#elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC34_CLOCK               (STM32_HCLK / 1)
+#elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC34_CLOCK               (STM32_HCLK / 2)
+#elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC34_CLOCK               (STM32_HCLK / 4)
 #else
-#error "invalid clock mode selected for STM32_ADC_ADC1_CLOCK_MODE"
+#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
 #endif
 
-#if STM32_ADC1_CLOCK > 72000000
-#error "STM32_ADC1_CLOCK exceeding maximum frequency (72000000)"
+#if STM32_ADC12_CLOCK > 72000000
+#error "STM32_ADC12_CLOCK exceeding maximum frequency (72000000)"
 #endif
 
-#if STM32_ADC3_CLOCK > 72000000
-#error "STM32_ADC3_CLOCK exceeding maximum frequency (72000000)"
+#if STM32_ADC34_CLOCK > 72000000
+#error "STM32_ADC34_CLOCK exceeding maximum frequency (72000000)"
 #endif
 
 #if !defined(STM32_DMA_REQUIRED)
@@ -330,8 +330,8 @@ typedef uint16_t adc_channels_num_t;
 typedef enum {
   ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
   ADC_ERR_OVERFLOW = 1,                     /**< ADC overflow condition.    */
-  ADC_ERR_AWD1 = 2                          /**< Watchdog 1 triggered.      */
-  ADC_ERR_AWD2 = 3                          /**< Watchdog 2 triggered.      */
+  ADC_ERR_AWD1 = 2,                         /**< Watchdog 1 triggered.      */
+  ADC_ERR_AWD2 = 3,                         /**< Watchdog 2 triggered.      */
   ADC_ERR_AWD3 = 4                          /**< Watchdog 3 triggered.      */
 } adcerror_t;
 

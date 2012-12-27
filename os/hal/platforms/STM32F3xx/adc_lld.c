@@ -58,17 +58,106 @@ ADCDriver ADCD3;
 /*===========================================================================*/
 
 /**
+ * @brief   Enables the ADC voltage regulator.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ */
+static void adc_lld_vreg_on(ADCDriver *adcp) {
+
+  adcp->adcm->CR = ADC_CR_ADVREGEN_0;
+#if STM32_ADC_DUAL_MODE
+  adcp->adcs->CR = ADC_CR_ADVREGEN_0;
+#endif
+  halPolledDelay(US2RTT(10));
+}
+
+/**
+ * @brief   Disables the ADC voltage regulator.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ */
+static void adc_lld_vreg_off(ADCDriver *adcp) {
+
+  adcp->adcm->CR = ADC_CR_ADVREGEN_1;
+#if STM32_ADC_DUAL_MODE
+  adcp->adcs->CR = ADC_CR_ADVREGEN_1;
+#endif
+}
+
+/**
+ * @brief   Enables the ADC analog circuit.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ */
+static void adc_lld_analog_on(ADCDriver *adcp) {
+
+  adcp->adcm->CR = ADC_CR_ADEN;
+  while ((adcp->adcm->ISR & ADC_ISR_ADRDY) == 0)
+    ;
+#if STM32_ADC_DUAL_MODE
+  adcp->adcs->CR = ADC_CR_ADEN;
+  while ((adcp->adcs->ISR & ADC_ISR_ADRDY) == 0)
+    ;
+#endif
+}
+
+/**
+ * @brief   Disables the ADC  analog circuit.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ */
+static void adc_lld_analog_off(ADCDriver *adcp) {
+
+  adcp->adcm->CR = ADC_CR_ADDIS;
+  while ((adcp->adcm->CR & ADC_CR_ADDIS) != 0)
+    ;
+#if STM32_ADC_DUAL_MODE
+  adcp->adcs->CR = ADC_CR_ADDIS;
+  while ((adcp->adcs->CR & ADC_CR_ADDIS) != 0)
+    ;
+#endif
+}
+
+/**
+ * @brief   Calibrates and ADC unit.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ */
+static void adc_lld_calibrate(ADCDriver *adcp) {
+
+  chDbgAssert(adcp->adcm->CR == 0, "adc_lld_calibrate(), #1",
+                                   "invalid register state");
+  adcp->adcm->CR |= ADC_CR_ADCAL;
+  while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
+    ;
+#if STM32_ADC_DUAL_MODE
+  chDbgAssert(adcp->adcs->CR == 0, "adc_lld_calibrate(), #2",
+                                   "invalid register state");
+  adcp->adcs->CR |= ADC_CR_ADCAL;
+  while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
+    ;
+#endif
+}
+
+/**
  * @brief   Stops an ongoing conversion, if any.
  *
- * @param[in] adc       pointer to the ADC registers block
+ * @param[in] adcp      pointer to the @p ADCDriver object
  */
-static void adc_lld_stop_adc(ADC_TypeDef *adc) {
+static void adc_lld_stop_adc(ADCDriver *adcp) {
 
-  if (adc->CR & ADC_CR_ADSTART) {
-    adc->CR |= ADC_CR_ADSTP;
-    while (adc->CR & ADC_CR_ADSTP)
+  if (adcp->adcm->CR & ADC_CR_ADSTART) {
+    adcp->adcm->CR |= ADC_CR_ADSTP;
+    while (adcp->adcm->CR & ADC_CR_ADSTP)
       ;
   }
+#if STM32_ADC_DUAL_MODE
+  if (adcp->adcs->CR & ADC_CR_ADSTART) {
+    adcp->adcs->CR |= ADC_CR_ADSTP;
+    while (adcp->adcs->CR & ADC_CR_ADSTP)
+      ;
+  }
+#endif
 }
 
 /**
@@ -120,9 +209,17 @@ static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
          to read data fast enough.*/
       _adc_isr_error_code(adcp, ADC_ERR_OVERFLOW);
     }
-    if (isr & ADC_ISR_AWD) {
+    if (isr & ADC_ISR_AWD1) {
       /* Analog watchdog error.*/
-      _adc_isr_error_code(adcp, ADC_ERR_AWD);
+      _adc_isr_error_code(adcp, ADC_ERR_AWD1);
+    }
+    if (isr & ADC_ISR_AWD2) {
+      /* Analog watchdog error.*/
+      _adc_isr_error_code(adcp, ADC_ERR_AWD2);
+    }
+    if (isr & ADC_ISR_AWD3) {
+      /* Analog watchdog error.*/
+      _adc_isr_error_code(adcp, ADC_ERR_AWD3);
     }
   }
 }
@@ -212,27 +309,40 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC1
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
-  ADCD1.adc = ADC1;
+  ADCD1.adcm = ADC1;
+#if STM32_ADC_DUAL_MODE
+  ADCD1.adcs = ADC2;
+#endif
   ADCD1.dmastp  = STM32_DMA1_STREAM1;
-  ADCD1.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
+  ADCD1.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
+  nvicEnableVector(ADC1_2_IRQn,
+                   CORTEX_PRIORITY_MASK(STM32_ADC_ADC12_IRQ_PRIORITY));
+#endif /* STM32_ADC_USE_ADC1 */
+
+#if STM32_ADC_USE_ADC3
+  /* Driver initialization.*/
+  adcObjectInit(&ADCD1);
+  ADCD3.adcm = ADC3;
+#if STM32_ADC_DUAL_MODE
+  ADCD3.adcs = ADC4;
 #endif
-
-  /* The shared vector is initialized on driver initialization and never
-     disabled.*/
-  nvicEnableVector(ADC1_COMP_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
-
-  /* Calibration procedure.*/
-  rccEnableADC1(FALSE);
-  chDbgAssert(ADC1->CR == 0, "adc_lld_init(), #1", "invalid register state");
-  ADC1->CR |= ADC_CR_ADCAL;
-  while (ADC1->CR & ADC_CR_ADCAL)
-    ;
-  rccDisableADC1(FALSE);
+  ADCD3.dmastp  = STM32_DMA2_STREAM5;
+  ADCD3.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
+                  STM32_DMA_CR_DIR_P2M |
+                  STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
+                  STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
+  nvicEnableVector(ADC3_IRQn,
+                   CORTEX_PRIORITY_MASK(STM32_ADC_ADC34_IRQ_PRIORITY));
+#if STM32_ADC_DUAL_MODE
+  nvicEnableVector(ADC4_IRQn,
+                   CORTEX_PRIORITY_MASK(STM32_ADC_ADC34_IRQ_PRIORITY));
+#endif
+#endif /* STM32_ADC_USE_ADC3 */
 }
 
 /**
@@ -250,30 +360,48 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD1 == adcp) {
       bool_t b;
       b = dmaStreamAllocate(adcp->dmastp,
-                            STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
+                            STM32_ADC_ADC12_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
       chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
+#if STM32_ADC_DUAL_MODE
+      dmaStreamSetPeripheral(adcp->dmastp, &ADC1_2->CDR);
+#else
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
-      rccEnableADC1(FALSE);
-#if STM32_ADCSW == STM32_ADCSW_HSI14
-      /* Clock from HSI14, no need for jitter removal.*/
-      ADC1->CFGR2 = 0x00001000;
-#else
-#if STM32_ADCPRE == STM32_ADCPRE_DIV2
-      ADC1->CFGR2 = 0x00001000 | ADC_CFGR2_JITOFFDIV2;
-#else
-      ADC1->CFGR2 = 0x00001000 | ADC_CFGR2_JITOFFDIV4;
 #endif
-#endif
+      rccEnableADC12(FALSE);
+
+      /* Clock source setting.*/
+      ADC1_2->CCR = ADC_CCR_CKMODE_AHB_DIV1;
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
-    /* ADC initial setup, starting the analog part here in order to reduce
-       the latency when starting a conversion.*/
-    adcp->adc->CR = ADC_CR_ADEN;
-    while (!(adcp->adc->ISR & ADC_ISR_ADRDY))
-      ;
+#if STM32_ADC_USE_ADC3
+    if (&ADCD3 == adcp) {
+      bool_t b;
+      b = dmaStreamAllocate(adcp->dmastp,
+                            STM32_ADC_ADC34_DMA_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                            (void *)adcp);
+      chDbgAssert(!b, "adc_lld_start(), #2", "stream already allocated");
+#if STM32_ADC_DUAL_MODE
+      dmaStreamSetPeripheral(adcp->dmastp, &ADC3_4->CDR);
+#else
+      dmaStreamSetPeripheral(adcp->dmastp, &ADC3->DR);
+#endif
+      rccEnableADC34(FALSE);
+
+      /* Clock source setting.*/
+      ADC3_4->CCR = ADC_CCR_CKMODE_AHB_DIV1;
+    }
+#endif /* STM32_ADC_USE_ADC2 */
+
+    /* Master ADC calibration.*/
+    adc_lld_vreg_on(adcp);
+    adc_lld_calibrate(adcp);
+
+    /* Master ADC enabled here in order to reduce conversions latencies.*/
+    adc_lld_analog_on(adcp);
   }
 }
 
@@ -289,19 +417,27 @@ void adc_lld_stop(ADCDriver *adcp) {
   /* If in ready state then disables the ADC clock and analog part.*/
   if (adcp->state == ADC_READY) {
 
+    /* Releasing the associated DMA channel.*/
     dmaStreamRelease(adcp->dmastp);
 
-    /* Disabling ADC.*/
-    if (adcp->adc->CR & ADC_CR_ADEN) {
-      adc_lld_stop_adc(adcp->adc);
-      adcp->adc->CR |= ADC_CR_ADDIS;
-      while (adcp->adc->CR & ADC_CR_ADDIS)
-        ;
+    /* Disabling the ADC.*/
+    if (adcp->adcm->CR & ADC_CR_ADEN) {
+      /* Stopping the ongoing conversion, if any.*/
+      adc_lld_stop_adc(adcp);
+
+      /* Disabling ADC analog circuit and regulator.*/
+      adc_lld_analog_off(adcp);
+      adc_lld_vreg_off(adcp);
     }
 
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp)
-      rccDisableADC1(FALSE);
+      rccDisableADC12(FALSE);
+#endif
+
+#if STM32_ADC_USE_ADC3
+    if (&ADCD1 == adcp)
+      rccDisableADC34(FALSE);
 #endif
   }
 }

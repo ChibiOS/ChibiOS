@@ -169,29 +169,54 @@
  * @{
  */
 /**
- * @brief   Enables the ADC1 peripheral clock.
+ * @brief   Enables the ADC1/ADC2 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableADC1(lp) rccEnableAPB2(RCC_APB2ENR_ADC1EN, lp)
+#define rccEnableADC12(lp) rccEnableAHB(RCC_AHBENR_ADC12EN, lp)
 
 /**
- * @brief   Disables the ADC1 peripheral clock.
+ * @brief   Disables the ADC1/ADC2 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccDisableADC1(lp) rccDisableAPB2(RCC_APB2ENR_ADC1EN, lp)
+#define rccDisableADC12(lp) rccDisableAHB(RCC_AHBENR_ADC12EN, lp)
 
 /**
- * @brief   Resets the ADC1 peripheral.
+ * @brief   Resets the ADC1/ADC2 peripheral.
  *
  * @api
  */
-#define rccResetADC1() rccResetAPB2(RCC_APB2RSTR_ADC1RST)
+#define rccResetADC12() rccResetAHB(RCC_AHBRSTR_ADC12RST)
+
+/**
+ * @brief   Enables the ADC3/ADC4 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableADC34(lp) rccEnableAHB(RCC_AHBENR_ADC34EN, lp)
+
+/**
+ * @brief   Disables the ADC3/ADC4 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableADC34(lp) rccDisableAHB(RCC_AHBENR_ADC34EN, lp)
+
+/**
+ * @brief   Resets the ADC3/ADC4 peripheral.
+ *
+ * @api
+ */
+#define rccResetADC34() rccResetAHB(RCC_AHBRSTR_ADC34RST)
 /** @} */
 
 /**
