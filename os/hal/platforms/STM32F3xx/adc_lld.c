@@ -35,6 +35,24 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#if STM32_ADC_DUAL_MODE
+#if STM32_ADC_COMPACT_SAMPLES
+  /* Compact type dual mode.*/
+#define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
+#else
+  /* Large type dual mode.*/
+#define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD)
+#endif
+#else /* !STM32_ADC_DUAL_MODE */
+#if STM32_ADC_COMPACT_SAMPLES
+  /* Compact type single mode.*/
+#define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_BYTE | STM32_DMA_CR_PSIZE_BYTE)
+#else
+  /* Large type single mode.*/
+#define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
+#endif
+#endif /* !STM32_ADC_DUAL_MODE */
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -151,13 +169,6 @@ static void adc_lld_stop_adc(ADCDriver *adcp) {
     while (adcp->adcm->CR & ADC_CR_ADSTP)
       ;
   }
-#if STM32_ADC_DUAL_MODE
-  if (adcp->adcs->CR & ADC_CR_ADSTART) {
-    adcp->adcs->CR |= ADC_CR_ADSTP;
-    while (adcp->adcs->CR & ADC_CR_ADSTP)
-      ;
-  }
-#endif
 }
 
 /**
@@ -314,9 +325,9 @@ void adc_lld_init(void) {
   ADCD1.adcs = ADC2;
 #endif
   ADCD1.dmastp  = STM32_DMA1_STREAM1;
-  ADCD1.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
+  ADCD1.dmamode = ADC_DMA_SIZE |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
-                  STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
   nvicEnableVector(ADC1_2_IRQn,
@@ -331,9 +342,9 @@ void adc_lld_init(void) {
   ADCD3.adcs = ADC4;
 #endif
   ADCD3.dmastp  = STM32_DMA2_STREAM5;
-  ADCD3.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
+  ADCD3.dmamode = ADC_DMA_SIZE |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
-                  STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
   nvicEnableVector(ADC3_IRQn,
@@ -450,6 +461,10 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t mode;
   const ADCConversionGroup *grpp = adcp->grpp;
 
+  chDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
+              "adc_lld_start_conversion(), #1",
+              "odd number of channels in dual mode");
+
   /* DMA setup.*/
   mode = adcp->dmamode;
   if (grpp->circular) {
@@ -468,16 +483,43 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
-  adcp->adc->ISR    = adcp->adc->ISR;
-  adcp->adc->IER    = ADC_IER_OVRIE | ADC_IER_AWDIE;
-  adcp->adc->TR     = grpp->tr;
-  adcp->adc->SMPR   = grpp->smpr;
-  adcp->adc->CHSELR = grpp->chselr;
+  adcp->adcm->ISR    = adcp->adcm->ISR;
+  adcp->adcm->IER    = ADC_IER_OVR | ADC_IER_AWD1;
+  adcp->adcm->TR1    = grpp->tr1;
+#if STM32_ADC_DUAL_MODE
+  adcp->adcm->SMPR1  = grpp->smpr[0];
+  adcp->adcm->SMPR2  = grpp->smpr[1];
+  adcp->adcm->SQR1   = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
+  adcp->adcm->SQR2   = grpp->sqr[1];
+  adcp->adcm->SQR3   = grpp->sqr[2];
+  adcp->adcm->SQR4   = grpp->sqr[3];
+  adcp->adcs->SMPR1  = grpp->ssmpr[0];
+  adcp->adcs->SMPR2  = grpp->ssmpr[1];
+  adcp->adcs->SQR1   = grpp->ssqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
+  adcp->adcs->SQR2   = grpp->ssqr[1];
+  adcp->adcs->SQR3   = grpp->ssqr[2];
+  adcp->adcs->SQR4   = grpp->ssqr[3];
 
-  /* ADC configuration and start.*/
-  adcp->adc->CFGR1  = grpp->cfgr1 | ADC_CFGR1_CONT  | ADC_CFGR1_DMACFG |
-                                    ADC_CFGR1_DMAEN;
-  adcp->adc->CR    |= ADC_CR_ADSTART;
+  /* ADC configuration, note some bits are shared between master and slave,
+     here we write everything in the slave too for code simplicity not
+     because it is required.*/
+  adcp->adcm->CFGR   = adcp->adcs->CFGR = grpp->cfgr | ADC_CFGR_CONT;
+
+#else
+  adcp->adcm->SMPR1  = grpp->smpr[0];
+  adcp->adcm->SMPR2  = grpp->smpr[1];
+  adcp->adcm->SQR1   = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels);
+  adcp->adcm->SQR2   = grpp->sqr[1];
+  adcp->adcm->SQR3   = grpp->sqr[2];
+  adcp->adcm->SQR4   = grpp->sqr[3];
+
+  /* ADC configuration.*/
+  adcp->adcm->CFGR   = grpp->cfgr | ADC_CFGR_CONT  | ADC_CFGR_DMACFG |
+                                    ADC_CFGR_DMAEN;
+#endif
+
+  /* Starting conversion.*/
+  adcp->adcm->CR    |= ADC_CR_ADSTART;
 }
 
 /**
@@ -490,41 +532,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
   dmaStreamDisable(adcp->dmastp);
-  adc_lld_stop_adc(adcp->adc);
-}
-
-/**
- * @brief   Programs the analog watchdog 2.
- * @note    This function must be called after starting the driver and
- *          before starting a conversion.
- *
- * @param[in] adc       pointer to the physical ADC to configure
- * @param[in] low       lower limit, as a 12 bits value
- * @param[in] high      upper limit, as a 12 bits value
- * @param[in] channels  bit mask of guarded channels
- *
- * @api
- */
-void adcSTM32SetWatchdog2(ADC_TypeDef *adc, uint16_t low, uint16_t high,
-                          uint32_t channels) {
-
-}
-
-/**
- * @brief   Programs the analog watchdog 3.
- * @note    This function must be called after starting the driver and
- *          before starting a conversion.
- *
- * @param[in] adc       pointer to the physical ADC to configure
- * @param[in] low       lower limit, as a 12 bits value
- * @param[in] high      upper limit, as a 12 bits value
- * @param[in] channels  bit mask of guarded channels
- *
- * @api
- */
-void adcSTM32SetWatchdog3(ADC_TypeDef *adc, uint16_t low, uint16_t high,
-                          uint32_t channels) {
-
+  adc_lld_stop_adc(adcp);
 }
 
 #endif /* HAL_USE_ADC */

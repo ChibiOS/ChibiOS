@@ -224,6 +224,13 @@
 #if !defined(STM32_ADC_DUAL_MODE) || defined(__DOXYGEN__)
 #define STM32_ADC_DUAL_MODE                 FALSE
 #endif
+
+/**
+ * @brief   Makes the ADC samples type an 8bits one.
+ */
+#if !defined(STM32_ADC_COMPACT_SAMPLES) || defined(__DOXYGEN__)
+#define STM32_ADC_COMPACT_SAMPLES           FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -315,7 +322,11 @@
 /**
  * @brief   ADC sample data type.
  */
+#if !STM32_ADC_COMPACT_SAMPLES || defined(__DOXYGEN__)
 typedef uint16_t adcsample_t;
+#else
+typedef uint_t adcsample_t;
+#endif
 
 /**
  * @brief   Channels number in a conversion group.
@@ -566,8 +577,6 @@ extern "C" {
   void adc_lld_stop(ADCDriver *adcp);
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
-  void adcSTM32SetWatchdog2(uint16_t low, uint16_t high, uint32_t channels);
-  void adcSTM32SetWatchdog3(uint16_t low, uint16_t high, uint32_t channels);
 #ifdef __cplusplus
 }
 #endif
