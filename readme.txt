@@ -82,6 +82,8 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed error in STM32 MAC driver degrades performance (bug 3598719)
+  (backported to 2.4.4).
 - FIX: Fixed warning in STM32 ICU driver using IAR compiler (bug 3598177)
   (backported to 2.4.3).
 - FIX: Fixed wrong SPI path in platform_f105_f107.mk (bug 3598151).
