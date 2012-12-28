@@ -536,8 +536,11 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
     }
     /* Invalid frame found, purging.*/
     rdes->rdes0 = STM32_RDES0_OWN;
-    rdes = macp->rxptr = (stm32_eth_rx_descriptor_t *)rdes->rdes3;
+    rdes = (stm32_eth_rx_descriptor_t *)rdes->rdes3;
   }
+
+  /* Next descriptor to check.*/
+  macp->rxptr = rdes;
 
   chSysUnlock();
   return RDY_TIMEOUT;
