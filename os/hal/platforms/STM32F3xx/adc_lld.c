@@ -37,20 +37,27 @@
 
 #if STM32_ADC_DUAL_MODE
 #if STM32_ADC_COMPACT_SAMPLES
-  /* Compact type dual mode.*/
+/* Compact type dual mode.*/
 #define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
-#else
-  /* Large type dual mode.*/
+#define ADC_DMA_MDMA    ADC_CCR_MDMA_HWORD
+
+#else /* !STM32_ADC_COMPACT_SAMPLES */
+/* Large type dual mode.*/
 #define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD)
-#endif
+#define ADC_DMA_MDMA    ADC_CCR_MDMA_WORD
+#endif /* !STM32_ADC_COMPACT_SAMPLES */
+
 #else /* !STM32_ADC_DUAL_MODE */
 #if STM32_ADC_COMPACT_SAMPLES
-  /* Compact type single mode.*/
+/* Compact type single mode.*/
 #define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_BYTE | STM32_DMA_CR_PSIZE_BYTE)
-#else
-  /* Large type single mode.*/
+#define ADC_DMA_MDMA    ADC_CCR_MDMA_DISABLED
+
+#else /* !STM32_ADC_COMPACT_SAMPLES */
+/* Large type single mode.*/
 #define ADC_DMA_SIZE    (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
-#endif
+#define ADC_DMA_MDMA    ADC_CCR_MDMA_DISABLED
+#endif /* !STM32_ADC_COMPACT_SAMPLES */
 #endif /* !STM32_ADC_DUAL_MODE */
 
 /*===========================================================================*/

@@ -126,14 +126,28 @@
 /** @} */
 
 /**
- * @name    ADC clock modes
+ * @name    CCR register configuration helpers
  * @{
  */
+#define ADC_CCR_DUAL_MASK               (31 << 0)
+#define ADC_CCR_DUAL(n)                 ((n) << 0)
+#define ADC_CCR_DELAY_MASK              (15 << 8)
+#define ADC_CCR_DELAY(n)                ((n) << 8)
+#define ADC_CCR_DMACFG_MASK             (1 << 13)
+#define ADC_CCR_DMACFG_ONESHOT          (0 << 13)
+#define ADC_CCR_DMACFG_CIRCULAR         (1 << 13)
+#define ADC_CCR_MDMA_MASK               (3 << 14)
+#define ADC_CCR_MDMA_DISABLED           (0 << 14)
+#define ADC_CCR_MDMA_WORD               (1 << 14)
+#define ADC_CCR_MDMA_HWORD              (3 << 14)
 #define ADC_CCR_CKMODE_MASK             (3 << 16)
 #define ADC_CCR_CKMODE_ADCCK            (0 << 16)
 #define ADC_CCR_CKMODE_AHB_DIV1         (1 << 16)
 #define ADC_CCR_CKMODE_AHB_DIV2         (2 << 16)
 #define ADC_CCR_CKMODE_AHB_DIV4         (3 << 16)
+#define ADC_CCR_VREFEN                  (1 << 22)
+#define ADC_CCR_TSEN                    (1 << 23)
+#define ADC_CCR_VBATEN                  (1 << 24)
 /** @} */
 
 /*===========================================================================*/
@@ -422,7 +436,10 @@ typedef struct {
    * @brief   Slave ADC SQRx register initialization data.
    */
   uint32_t                  ssqr[4];
-
+  /**
+   * @brief   ADC CCR register initialization data.
+   */
+  uint32_t                  ccr;
 #endif /* STM32_ADC_DUAL_MODE */
 } ADCConversionGroup;
 
