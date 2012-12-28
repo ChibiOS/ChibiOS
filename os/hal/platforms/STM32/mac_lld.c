@@ -272,7 +272,7 @@ void mac_lld_init(void) {
     ;
 #endif
 
-#if STM32_ETH1_CHANGE_PHY_STATE
+#if STM32_MAC_ETH1_CHANGE_PHY_STATE
   /* PHY in power down mode until the driver will be started.*/
   mii_write(&ETHD1, MII_BMCR, mii_read(&ETHD1, MII_BMCR) | BMCR_PDOWN);
 #endif
@@ -306,9 +306,10 @@ void mac_lld_start(MACDriver *macp) {
     ;
 
   /* ISR vector enabled.*/
-  nvicEnableVector(ETH_IRQn, CORTEX_PRIORITY_MASK(STM32_ETH1_IRQ_PRIORITY));
+  nvicEnableVector(ETH_IRQn,
+                   CORTEX_PRIORITY_MASK(STM32_MAC_ETH1_IRQ_PRIORITY));
 
-#if STM32_ETH1_CHANGE_PHY_STATE
+#if STM32_MAC_ETH1_CHANGE_PHY_STATE
   /* PHY in power up mode.*/
   mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) & ~BMCR_PDOWN);
 #endif
@@ -327,7 +328,7 @@ void mac_lld_start(MACDriver *macp) {
   /* Transmitter and receiver enabled.
      Note that the complete setup of the MAC is performed when the link
      status is detected.*/
-#if STM32_IP_CHECKSUM_OFFLOAD
+#if STM32_MAC_IP_CHECKSUM_OFFLOAD
   ETH->MACCR = ETH_MACCR_IPCO | ETH_MACCR_RE | ETH_MACCR_TE;
 #else
   ETH->MACCR =                  ETH_MACCR_RE | ETH_MACCR_TE;
@@ -365,7 +366,7 @@ void mac_lld_start(MACDriver *macp) {
 void mac_lld_stop(MACDriver *macp) {
 
   if (macp->state != MAC_STOP) {
-#if STM32_ETH1_CHANGE_PHY_STATE
+#if STM32_MAC_ETH1_CHANGE_PHY_STATE
     /* PHY in power down mode until the driver will be restarted.*/
     mii_write(macp, MII_BMCR, mii_read(macp, MII_BMCR) | BMCR_PDOWN);
 #endif
@@ -482,7 +483,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 
   /* Unlocks the descriptor and returns it to the DMA engine.*/
   tdp->physdesc->tdes1 = tdp->offset;
-  tdp->physdesc->tdes0 = STM32_TDES0_CIC(STM32_IP_CHECKSUM_OFFLOAD) |
+  tdp->physdesc->tdes0 = STM32_TDES0_CIC(STM32_MAC_IP_CHECKSUM_OFFLOAD) |
                          STM32_TDES0_IC | STM32_TDES0_LS | STM32_TDES0_FS |
                          STM32_TDES0_TCH | STM32_TDES0_OWN;
 
@@ -519,9 +520,9 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
      frames are discarded.*/
   while (!(rdes->rdes0 & STM32_RDES0_OWN)) {
     if (!(rdes->rdes0 & (STM32_RDES0_AFM | STM32_RDES0_ES))
-#if STM32_IP_CHECKSUM_OFFLOAD
-        && !(rdes->rdes0 & STM32_RDES0_FT & (STM32_RDES0_IPHCE |
-                                             STM32_RDES0_PCE))
+#if STM32_MAC_IP_CHECKSUM_OFFLOAD
+        && (rdes->rdes0 & STM32_RDES0_FT)
+        && !(rdes->rdes0 & (STM32_RDES0_IPHCE | STM32_RDES0_PCE))
 #endif
         && (rdes->rdes0 & STM32_RDES0_FS) && (rdes->rdes0 & STM32_RDES0_LS)) {
       /* Found a valid one.*/

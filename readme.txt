@@ -82,6 +82,8 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed wrong condition in checksum offload of STM32 MAC driver (bug
+  3598720)(backported to 2.4.4).
 - FIX: Fixed error in STM32 MAC driver degrades performance (bug 3598719)
   (backported to 2.4.4).
 - FIX: Fixed warning in STM32 ICU driver using IAR compiler (bug 3598177)

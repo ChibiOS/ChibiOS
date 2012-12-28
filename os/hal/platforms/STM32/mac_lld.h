@@ -124,21 +124,21 @@
  * @brief   Number of available transmit buffers.
  */
 #if !defined(STM32_MAC_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
-#define STM32_MAC_TRANSMIT_BUFFERS  2
+#define STM32_MAC_TRANSMIT_BUFFERS          2
 #endif
 
 /**
  * @brief   Number of available receive buffers.
  */
 #if !defined(STM32_MAC_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
-#define STM32_MAC_RECEIVE_BUFFERS   4
+#define STM32_MAC_RECEIVE_BUFFERS           4
 #endif
 
 /**
  * @brief   Maximum supported frame size.
  */
 #if !defined(STM32_MAC_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define STM32_MAC_BUFFERS_SIZE      1522
+#define STM32_MAC_BUFFERS_SIZE              1522
 #endif
 
 /**
@@ -151,21 +151,21 @@
  *          single search path is performed.
  */
 #if !defined(STM32_MAC_PHY_TIMEOUT) || defined(__DOXYGEN__)
-#define STM32_MAC_PHY_TIMEOUT       100
+#define STM32_MAC_PHY_TIMEOUT               100
 #endif
 
 /**
  * @brief   Change the PHY power state inside the driver.
  */
-#if !defined(STM32_ETH1_CHANGE_PHY_STATE) || defined(__DOXYGEN__)
-#define STM32_ETH1_CHANGE_PHY_STATE TRUE
+#if !defined(STM32_MAC_ETH1_CHANGE_PHY_STATE) || defined(__DOXYGEN__)
+#define STM32_MAC_ETH1_CHANGE_PHY_STATE     TRUE
 #endif
 
 /**
  * @brief   ETHD1 interrupt priority level setting.
  */
-#if !defined(STM32_ETH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ETH1_IRQ_PRIORITY     13
+#if !defined(STM32_MAC_ETH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_MAC_ETH1_IRQ_PRIORITY         13
 #endif
 
 /**
@@ -181,8 +181,8 @@
  *              calculated in hardware.
  *          .
  */
-#if !defined(STM32_IP_CHECKSUM_OFFLOAD) || defined(__DOXYGEN__)
-#define STM32_IP_CHECKSUM_OFFLOAD   0
+#if !defined(STM32_MAC_IP_CHECKSUM_OFFLOAD) || defined(__DOXYGEN__)
+#define STM32_MAC_IP_CHECKSUM_OFFLOAD       0
 #endif
 /** @} */
 
