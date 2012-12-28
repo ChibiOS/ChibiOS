@@ -36,6 +36,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   This implementation supports the zero-copy mode API.
+ */
+#define MAC_SUPPORTS_ZERO_COPY      TRUE
+
+/**
  * @name    RDES0 constants
  * @{
  */
@@ -332,17 +337,25 @@ extern "C" {
   void mac_lld_stop(MACDriver *macp);
   msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
                                         MACTransmitDescriptor *tdp);
-  size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
-                                           uint8_t *buf,
-                                           size_t size);
   void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp);
   msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
                                        MACReceiveDescriptor *rdp);
+  void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp);
+  bool_t mac_lld_poll_link_status(MACDriver *macp);
+#if MAC_USE_ZERO_COPY
+  uint8_t *mac_lld_get_next_transmit_buffer(MACTransmitDescriptor *tdp,
+                                            size_t size,
+                                            size_t *sizep);
+  const uint8_t *mac_lld_get_next_receive_buffer(MACReceiveDescriptor *rdp,
+                                                 size_t *sizep);
+#else /* !MAC_USE_ZERO_COPY */
+  size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
+                                           uint8_t *buf,
+                                           size_t size);
   size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
                                          uint8_t *buf,
                                          size_t size);
-  void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp);
-  bool_t mac_lld_poll_link_status(MACDriver *macp);
+#endif /* !MAC_USE_ZERO_COPY */
 #ifdef __cplusplus
 }
 #endif

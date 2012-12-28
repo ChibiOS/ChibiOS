@@ -45,8 +45,15 @@
 /**
  * @brief   Enables an event sources for incoming packets.
  */
+#if !defined(MAC_USE_ZERO_COPY) || defined(__DOXYGEN__)
+#define MAC_USE_ZERO_COPY           FALSE
+#endif
+
+/**
+ * @brief   Enables an event sources for incoming packets.
+ */
 #if !defined(MAC_USE_EVENTS) || defined(__DOXYGEN__)
-#define MAC_USE_EVENTS          TRUE
+#define MAC_USE_EVENTS              TRUE
 #endif
 /** @} */
 
@@ -102,6 +109,7 @@ typedef struct MACDriver MACDriver;
 #define macGetReceiveEventSource(macp)  (&(macp)->rdevent)
 #endif
 
+#if !MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
 /**
  * @brief   Writes to a transmit descriptor's stream.
  *
@@ -132,8 +140,9 @@ typedef struct MACDriver MACDriver;
  */
 #define macReadReceiveDescriptor(rdp, buf, size)                            \
     mac_lld_read_receive_descriptor(rdp, buf, size)
+#endif /* !MAC_USE_ZERO_COPY */
 
-#if MAC_SUPPORTS_ZERO_COPY || defined(__DOXYGEN__)
+#if MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
 /**
  * @brief   Returns a pointer to the next transmit buffer in the descriptor
  *          chain.
@@ -154,7 +163,7 @@ typedef struct MACDriver MACDriver;
  * @api
  */
 #define macGetNextTransmitBuffer(tdp, size, sizep)                          \
-  mac_lld_get_next_transmit_buffer(tdp, bufp)
+  mac_lld_get_next_transmit_buffer(tdp, size, sizep)
 
 /**
  * @brief   Returns a pointer to the next receive buffer in the descriptor
@@ -172,7 +181,7 @@ typedef struct MACDriver MACDriver;
  */
 #define magGetNextReceiveBuffer(rdp, sizep)                                 \
   mac_lld_get_next_receive_buffer(rdp, sizep)
-#endif /* MAC_SUPPORTS_ZERO_COPY */
+#endif /* MAC_USE_ZERO_COPY */
 /** @} */
 
 /*===========================================================================*/

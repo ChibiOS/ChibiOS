@@ -434,38 +434,6 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
 }
 
 /**
- * @brief   Writes to a transmit descriptor's stream.
- *
- * @param[in] tdp       pointer to a @p MACTransmitDescriptor structure
- * @param[in] buf       pointer to the buffer containing the data to be
- *                      written
- * @param[in] size      number of bytes to be written
- * @return              The number of bytes written into the descriptor's
- *                      stream, this value can be less than the amount
- *                      specified in the parameter @p size if the maximum
- *                      frame size is reached.
- *
- * @notapi
- */
-size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
-                                         uint8_t *buf,
-                                         size_t size) {
-
-  chDbgAssert(!(tdp->physdesc->tdes0 & STM32_TDES0_OWN),
-              "mac_lld_write_transmit_descriptor(), #1",
-              "attempt to write descriptor already owned by DMA");
-
-  if (size > tdp->size - tdp->offset)
-    size = tdp->size - tdp->offset;
-
-  if (size > 0) {
-    memcpy((uint8_t *)(tdp->physdesc->tdes2) + tdp->offset, buf, size);
-    tdp->offset += size;
-  }
-  return size;
-}
-
-/**
  * @brief   Releases a transmit descriptor and starts the transmission of the
  *          enqueued data as a single frame.
  *
@@ -544,37 +512,6 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
 
   chSysUnlock();
   return RDY_TIMEOUT;
-}
-
-/**
- * @brief   Reads from a receive descriptor's stream.
- *
- * @param[in] rdp       pointer to a @p MACReceiveDescriptor structure
- * @param[in] buf       pointer to the buffer that will receive the read data
- * @param[in] size      number of bytes to be read
- * @return              The number of bytes read from the descriptor's
- *                      stream, this value can be less than the amount
- *                      specified in the parameter @p size if there are
- *                      no more bytes to read.
- *
- * @notapi
- */
-size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
-                                       uint8_t *buf,
-                                       size_t size) {
-
-  chDbgAssert(!(rdp->physdesc->rdes0 & STM32_RDES0_OWN),
-              "mac_lld_read_receive_descriptor(), #1",
-              "attempt to read descriptor already owned by DMA");
-
-  if (size > rdp->size - rdp->offset)
-    size = rdp->size - rdp->offset;
-
-  if (size > 0) {
-    memcpy(buf, (uint8_t *)(rdp->physdesc->rdes2) + rdp->offset, size);
-    rdp->offset += size;
-  }
-  return size;
 }
 
 /**
@@ -674,6 +611,119 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   /* Returns the link status.*/
   return macp->link_up = TRUE;
 }
+
+#if MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
+/**
+ * @brief   Returns a pointer to the next transmit buffer in the descriptor
+ *          chain.
+ * @note    The API guarantees that enough buffers can be requested to fill
+ *          a whole frame.
+ *
+ * @param[in] tdp       pointer to a @p MACTransmitDescriptor structure
+ * @param[in] size      size of the requested buffer. Specify the frame size
+ *                      on the first call then scale the value down subtracting
+ *                      the amount of data already copied into the previous
+ *                      buffers.
+ * @param[out] sizep    pointer to variable receiving the real buffer size.
+ *                      The returned value can be less than the amount
+ *                      requested, this means that more buffers must be
+ *                      requested in order to fill the frame data entirely.
+ * @return              Pointer to the returned buffer.
+ *
+ * @notapi
+ */
+uint8_t *mac_lld_get_next_transmit_buffer(MACTransmitDescriptor *tdp,
+                                          size_t size,
+                                          size_t *sizep) {
+  (void)tdp; (void)size; (void)sizep;
+  return NULL;
+}
+
+/**
+ * @brief   Returns a pointer to the next receive buffer in the descriptor
+ *          chain.
+ * @note    The API guarantees that the descriptor chain contains a whole
+ *          frame.
+ *
+ * @param[in] rdp       pointer to a @p MACReceiveDescriptor structure
+ * @param[out] sizep    pointer to variable receiving the buffer size, it is
+ *                      zero when the last buffer has already been returned.
+ * @return              Pointer to the returned buffer.
+ * @retval NULL         if the buffer chain has been entirely scanned.
+ *
+ * @notapi
+ */
+const uint8_t *mac_lld_get_next_receive_buffer(MACReceiveDescriptor *rdp,
+                                               size_t *sizep) {
+  (void)rdp; (void)sizep;
+  return NULL;
+}
+#endif /* MAC_USE_ZERO_COPY */
+
+#if !MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
+/**
+ * @brief   Writes to a transmit descriptor's stream.
+ *
+ * @param[in] tdp       pointer to a @p MACTransmitDescriptor structure
+ * @param[in] buf       pointer to the buffer containing the data to be
+ *                      written
+ * @param[in] size      number of bytes to be written
+ * @return              The number of bytes written into the descriptor's
+ *                      stream, this value can be less than the amount
+ *                      specified in the parameter @p size if the maximum
+ *                      frame size is reached.
+ *
+ * @notapi
+ */
+size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
+                                         uint8_t *buf,
+                                         size_t size) {
+
+  chDbgAssert(!(tdp->physdesc->tdes0 & STM32_TDES0_OWN),
+              "mac_lld_write_transmit_descriptor(), #1",
+              "attempt to write descriptor already owned by DMA");
+
+  if (size > tdp->size - tdp->offset)
+    size = tdp->size - tdp->offset;
+
+  if (size > 0) {
+    memcpy((uint8_t *)(tdp->physdesc->tdes2) + tdp->offset, buf, size);
+    tdp->offset += size;
+  }
+  return size;
+}
+
+/**
+ * @brief   Reads from a receive descriptor's stream.
+ *
+ * @param[in] rdp       pointer to a @p MACReceiveDescriptor structure
+ * @param[in] buf       pointer to the buffer that will receive the read data
+ * @param[in] size      number of bytes to be read
+ * @return              The number of bytes read from the descriptor's
+ *                      stream, this value can be less than the amount
+ *                      specified in the parameter @p size if there are
+ *                      no more bytes to read.
+ *
+ * @notapi
+ */
+size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
+                                       uint8_t *buf,
+                                       size_t size) {
+
+  chDbgAssert(!(rdp->physdesc->rdes0 & STM32_RDES0_OWN),
+              "mac_lld_read_receive_descriptor(), #1",
+              "attempt to read descriptor already owned by DMA");
+
+  if (size > rdp->size - rdp->offset)
+    size = rdp->size - rdp->offset;
+
+  if (size > 0) {
+    memcpy(buf, (uint8_t *)(rdp->physdesc->rdes2) + rdp->offset, size);
+    rdp->offset += size;
+  }
+  return size;
+}
+#endif /* !MAC_USE_ZERO_COPY */
 
 #endif /* HAL_USE_MAC */
 

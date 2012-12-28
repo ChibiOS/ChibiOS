@@ -35,6 +35,10 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#if MAC_USE_ZERO_COPY && !MAC_SUPPORTS_ZERO_COPY
+#error "MAC_USE_ZERO_COPY not supported by this implementation"
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
