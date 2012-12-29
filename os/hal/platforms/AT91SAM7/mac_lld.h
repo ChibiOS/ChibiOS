@@ -35,6 +35,11 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   This implementation does not support the zero-copy mode API.
+ */
+#define MAC_SUPPORTS_ZERO_COPY      FALSE
+
 #define EMAC_RECEIVE_BUFFERS_SIZE       128     /* Do not modify */
 #define EMAC_TRANSMIT_BUFFERS_SIZE      MAC_BUFFERS_SIZE
 #define EMAC_RECEIVE_DESCRIPTORS                                            \

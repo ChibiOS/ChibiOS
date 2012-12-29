@@ -624,18 +624,26 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
  *                      on the first call then scale the value down subtracting
  *                      the amount of data already copied into the previous
  *                      buffers.
- * @param[out] sizep    pointer to variable receiving the real buffer size.
- *                      The returned value can be less than the amount
- *                      requested, this means that more buffers must be
- *                      requested in order to fill the frame data entirely.
+ * @param[out] sizep    pointer to variable receiving the buffer size, it is
+ *                      zero when the last buffer has already been returned.
+ *                      Note that a returned size lower than the amount
+ *                      requested means that more buffers must be requested
+ *                      in order to fill the frame data entirely.
  * @return              Pointer to the returned buffer.
+ * @retval NULL         if the buffer chain has been entirely scanned.
  *
  * @notapi
  */
 uint8_t *mac_lld_get_next_transmit_buffer(MACTransmitDescriptor *tdp,
                                           size_t size,
                                           size_t *sizep) {
-  (void)tdp; (void)size; (void)sizep;
+
+  if (tdp->offset == 0) {
+    *sizep      = tdp->size;
+    tdp->offset = size;
+    return (uint8_t *)tdp->physdesc->tdes2;
+  }
+  *sizep = 0;
   return NULL;
 }
 
@@ -655,7 +663,14 @@ uint8_t *mac_lld_get_next_transmit_buffer(MACTransmitDescriptor *tdp,
  */
 const uint8_t *mac_lld_get_next_receive_buffer(MACReceiveDescriptor *rdp,
                                                size_t *sizep) {
-  (void)rdp; (void)sizep;
+
+  if (rdp->size > 0) {
+    *sizep      = rdp->size;
+    rdp->offset = rdp->size;
+    rdp->size   = 0;
+    return (uint8_t *)rdp->physdesc->rdes2;
+  }
+  *sizep = 0;
   return NULL;
 }
 #endif /* MAC_USE_ZERO_COPY */
