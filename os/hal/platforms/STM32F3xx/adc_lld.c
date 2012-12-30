@@ -327,6 +327,7 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC1
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
+  ADCD1.adcc = ADC1_2;
   ADCD1.adcm = ADC1;
 #if STM32_ADC_DUAL_MODE
   ADCD1.adcs = ADC2;
@@ -344,6 +345,7 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC3
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
+  ADCD3.adcc = ADC3_4;
   ADCD3.adcm = ADC3;
 #if STM32_ADC_DUAL_MODE
   ADCD3.adcs = ADC4;
@@ -382,15 +384,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
       chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
-#if STM32_ADC_DUAL_MODE
-      dmaStreamSetPeripheral(adcp->dmastp, &ADC1_2->CDR);
-#else
-      dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
-#endif
       rccEnableADC12(FALSE);
-
-      /* Clock source setting.*/
-      ADC1_2->CCR = ADC_CCR_CKMODE_AHB_DIV1;
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -402,17 +396,19 @@ void adc_lld_start(ADCDriver *adcp) {
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
       chDbgAssert(!b, "adc_lld_start(), #2", "stream already allocated");
-#if STM32_ADC_DUAL_MODE
-      dmaStreamSetPeripheral(adcp->dmastp, &ADC3_4->CDR);
-#else
-      dmaStreamSetPeripheral(adcp->dmastp, &ADC3->DR);
-#endif
       rccEnableADC34(FALSE);
-
-      /* Clock source setting.*/
-      ADC3_4->CCR = ADC_CCR_CKMODE_AHB_DIV1;
     }
 #endif /* STM32_ADC_USE_ADC2 */
+
+    /* Setting DMA peripheral-side pointer.*/
+#if STM32_ADC_DUAL_MODE
+      dmaStreamSetPeripheral(adcp->dmastp, &adcp->adcc->CDR);
+#else
+      dmaStreamSetPeripheral(adcp->dmastp, &adcp->adcm->DR);
+#endif
+
+    /* Clock source setting.*/
+    adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
 
     /* Master ADC calibration.*/
     adc_lld_vreg_on(adcp);
@@ -465,7 +461,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-  uint32_t mode;
+  uint32_t mode, ccr;
   const ADCConversionGroup *grpp = adcp->grpp;
 
   chDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
@@ -487,6 +483,14 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
                                             (uint32_t)adcp->depth);
   dmaStreamSetMode(adcp->dmastp, mode);
   dmaStreamEnable(adcp->dmastp);
+
+  /* Configuring the CCR register with the static settings ORed with
+     the user-specified settings in the conversion group configuration
+     structure.*/
+  ccr = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA | grpp->ccr;
+  if (grpp->circular)
+    ccr |= ADC_CCR_DMACFG_CIRCULAR;
+  adcp->adcc->CCR = ccr;
 
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/

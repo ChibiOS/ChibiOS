@@ -412,13 +412,20 @@ typedef struct {
   /* End of the mandatory fields.*/
   /**
    * @brief   ADC CFGR register initialization data.
-   * @note    The bits DMAEN, DMACFG, OVRMOD, CONT are enforced internally to the driver.
+   * @note    The bits DMAEN, DMACFG, OVRMOD, CONT are enforced internally
+   *          to the driver, keep them to zero.
    */
   uint32_t                  cfgr;
   /**
    * @brief   ADC TR1 register initialization data.
    */
   uint32_t                  tr1;
+  /**
+   * @brief   ADC CCR register initialization data.
+   * @note    The bits CKMODE, MDMA, DMACFG are enforced internally to the
+   *          driver, keep them to zero.
+   */
+  uint32_t                  ccr;
   /**
    * @brief   ADC SMPRx registers initialization data.
    */
@@ -436,10 +443,6 @@ typedef struct {
    * @brief   Slave ADC SQRx register initialization data.
    */
   uint32_t                  ssqr[4];
-  /**
-   * @brief   ADC CCR register initialization data.
-   */
-  uint32_t                  ccr;
 #endif /* STM32_ADC_DUAL_MODE */
 } ADCConversionGroup;
 
@@ -495,6 +498,10 @@ struct ADCDriver {
   ADC_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Pointer to the common ADCx_y registers block.
+   */
+  ADC_Common_TypeDef        *adcc;
   /**
    * @brief   Pointer to the master ADCx registers block.
    */
