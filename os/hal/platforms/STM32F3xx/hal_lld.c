@@ -114,7 +114,11 @@ void hal_lld_init(void) {
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
-  /* PWR and BD clocks enabled.*/
+  /* DWT cycle counter enable.*/
+  SCS_DEMCR |= SCS_DEMCR_TRCENA;
+  DWT_CTRL  |= DWT_CTRL_CYCCNTENA;
+
+  /* PWR clock enabled.*/
   rccEnablePWRInterface(FALSE);
 
   /* Initializes the backup domain.*/

@@ -114,7 +114,7 @@ void hal_lld_init(void) {
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
-  /* PWR and BD clocks enabled.*/
+  /* PWR clock enabled.*/
   rccEnablePWRInterface(FALSE);
 
   /* Initializes the backup domain.*/
