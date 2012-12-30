@@ -94,6 +94,10 @@
  * @name    CFGR register configuration helpers
  * @{
  */
+#define ADC_CFGR_DMACFG_MASK            (1 << 1)
+#define ADC_CFGR_DMACFG_ONESHOT         (0 << 1)
+#define ADC_CFGR_DMACFG_CIRCULAR        (1 << 1)
+
 #define ADC_CFGR_RES_MASK               (3 << 3)
 #define ADC_CFGR_RES_12BITS             (0 << 3)
 #define ADC_CFGR_RES_10BITS             (1 << 3)

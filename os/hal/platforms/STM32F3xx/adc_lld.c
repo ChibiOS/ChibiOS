@@ -461,73 +461,75 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-  uint32_t mode, ccr;
+  uint32_t dmamode, ccr, cfgr;
   const ADCConversionGroup *grpp = adcp->grpp;
 
   chDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
               "adc_lld_start_conversion(), #1",
               "odd number of channels in dual mode");
 
-  /* DMA setup.*/
-  mode = adcp->dmamode;
+  /* Calculating control registers values.*/
+  dmamode = adcp->dmamode;
+  ccr     = grpp->ccr | (adcp->adcc->CCR & (ADC_CCR_CKMODE_MASK |
+                                            ADC_CCR_MDMA_MASK));
+  cfgr    = grpp->cfgr;
   if (grpp->circular) {
-    mode |= STM32_DMA_CR_CIRC;
+    dmamode |= STM32_DMA_CR_CIRC;
+#if STM32_ADC_DUAL_MODE
+    ccr  |= ADC_CCR_DMACFG_CIRCULAR;
+    cfgr |= ADC_CFGR_CONT;
+#else
+    cfgr |= ADC_CFGR_CONT | ADC_CFGR_DMACFG | ADC_CFGR_DMAEN;
+#endif
   }
+
+  /* DMA setup.*/
   if (adcp->depth > 1) {
     /* If the buffer depth is greater than one then the half transfer interrupt
        interrupt is enabled in order to allows streaming processing.*/
-    mode |= STM32_DMA_CR_HTIE;
+    dmamode |= STM32_DMA_CR_HTIE;
   }
   dmaStreamSetMemory0(adcp->dmastp, adcp->samples);
   dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
                                             (uint32_t)adcp->depth);
-  dmaStreamSetMode(adcp->dmastp, mode);
+  dmaStreamSetMode(adcp->dmastp, dmamode);
   dmaStreamEnable(adcp->dmastp);
 
   /* Configuring the CCR register with the static settings ORed with
      the user-specified settings in the conversion group configuration
      structure.*/
-  ccr = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA | grpp->ccr;
-  if (grpp->circular)
-    ccr |= ADC_CCR_DMACFG_CIRCULAR;
-  adcp->adcc->CCR = ccr;
+  adcp->adcc->CCR   = ccr;
 
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
-  adcp->adcm->ISR    = adcp->adcm->ISR;
-  adcp->adcm->IER    = ADC_IER_OVR | ADC_IER_AWD1;
-  adcp->adcm->TR1    = grpp->tr1;
+  adcp->adcm->ISR   = adcp->adcm->ISR;
+  adcp->adcm->IER   = ADC_IER_OVR | ADC_IER_AWD1;
+  adcp->adcm->TR1   = grpp->tr1;
 #if STM32_ADC_DUAL_MODE
-  adcp->adcm->SMPR1  = grpp->smpr[0];
-  adcp->adcm->SMPR2  = grpp->smpr[1];
-  adcp->adcm->SQR1   = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
-  adcp->adcm->SQR2   = grpp->sqr[1];
-  adcp->adcm->SQR3   = grpp->sqr[2];
-  adcp->adcm->SQR4   = grpp->sqr[3];
-  adcp->adcs->SMPR1  = grpp->ssmpr[0];
-  adcp->adcs->SMPR2  = grpp->ssmpr[1];
-  adcp->adcs->SQR1   = grpp->ssqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
-  adcp->adcs->SQR2   = grpp->ssqr[1];
-  adcp->adcs->SQR3   = grpp->ssqr[2];
-  adcp->adcs->SQR4   = grpp->ssqr[3];
+  adcp->adcm->SMPR1 = grpp->smpr[0];
+  adcp->adcm->SMPR2 = grpp->smpr[1];
+  adcp->adcm->SQR1  = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
+  adcp->adcm->SQR2  = grpp->sqr[1];
+  adcp->adcm->SQR3  = grpp->sqr[2];
+  adcp->adcm->SQR4  = grpp->sqr[3];
+  adcp->adcs->SMPR1 = grpp->ssmpr[0];
+  adcp->adcs->SMPR2 = grpp->ssmpr[1];
+  adcp->adcs->SQR1  = grpp->ssqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
+  adcp->adcs->SQR2  = grpp->ssqr[1];
+  adcp->adcs->SQR3  = grpp->ssqr[2];
+  adcp->adcs->SQR4  = grpp->ssqr[3];
 
-  /* ADC configuration, note some bits are shared between master and slave,
-     here we write everything in the slave too for code simplicity not
-     because it is required.*/
-  adcp->adcm->CFGR   = adcp->adcs->CFGR = grpp->cfgr | ADC_CFGR_CONT;
-
-#else
-  adcp->adcm->SMPR1  = grpp->smpr[0];
-  adcp->adcm->SMPR2  = grpp->smpr[1];
-  adcp->adcm->SQR1   = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels);
-  adcp->adcm->SQR2   = grpp->sqr[1];
-  adcp->adcm->SQR3   = grpp->sqr[2];
-  adcp->adcm->SQR4   = grpp->sqr[3];
+#else /* !STM32_ADC_DUAL_MODE */
+  adcp->adcm->SMPR1 = grpp->smpr[0];
+  adcp->adcm->SMPR2 = grpp->smpr[1];
+  adcp->adcm->SQR1  = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels);
+  adcp->adcm->SQR2  = grpp->sqr[1];
+  adcp->adcm->SQR3  = grpp->sqr[2];
+  adcp->adcm->SQR4  = grpp->sqr[3];
+#endif /* !STM32_ADC_DUAL_MODE */
 
   /* ADC configuration.*/
-  adcp->adcm->CFGR   = grpp->cfgr | ADC_CFGR_CONT  | ADC_CFGR_DMACFG |
-                                    ADC_CFGR_DMAEN;
-#endif
+  adcp->adcm->CFGR   = cfgr;
 
   /* Starting conversion.*/
   adcp->adcm->CR    |= ADC_CR_ADSTART;
