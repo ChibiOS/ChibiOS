@@ -89,6 +89,7 @@ ADCDriver ADCD3;
  */
 static void adc_lld_vreg_on(ADCDriver *adcp) {
 
+  adcp->adcm->CR = 0;   /* RM 12.4.3.*/
   adcp->adcm->CR = ADC_CR_ADVREGEN_0;
 #if STM32_ADC_DUAL_MODE
   adcp->adcs->CR = ADC_CR_ADVREGEN_0;
@@ -103,6 +104,7 @@ static void adc_lld_vreg_on(ADCDriver *adcp) {
  */
 static void adc_lld_vreg_off(ADCDriver *adcp) {
 
+  adcp->adcm->CR = 0;   /* RM 12.4.3.*/
   adcp->adcm->CR = ADC_CR_ADVREGEN_1;
 #if STM32_ADC_DUAL_MODE
   adcp->adcs->CR = ADC_CR_ADVREGEN_1;
@@ -479,7 +481,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     ccr  |= ADC_CCR_DMACFG_CIRCULAR;
     cfgr |= ADC_CFGR_CONT;
 #else
-    cfgr |= ADC_CFGR_CONT | ADC_CFGR_DMACFG | ADC_CFGR_DMAEN;
+    cfgr |= ADC_CFGR_CONT | ADC_CFGR_DMACFG_CIRCULAR | ADC_CFGR_DMAEN;
 #endif
   }
 
