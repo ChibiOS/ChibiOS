@@ -109,7 +109,6 @@ typedef struct MACDriver MACDriver;
 #define macGetReceiveEventSource(macp)  (&(macp)->rdevent)
 #endif
 
-#if !MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
 /**
  * @brief   Writes to a transmit descriptor's stream.
  *
@@ -140,7 +139,6 @@ typedef struct MACDriver MACDriver;
  */
 #define macReadReceiveDescriptor(rdp, buf, size)                            \
     mac_lld_read_receive_descriptor(rdp, buf, size)
-#endif /* !MAC_USE_ZERO_COPY */
 
 #if MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
 /**

@@ -612,70 +612,6 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   return macp->link_up = TRUE;
 }
 
-#if MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
-/**
- * @brief   Returns a pointer to the next transmit buffer in the descriptor
- *          chain.
- * @note    The API guarantees that enough buffers can be requested to fill
- *          a whole frame.
- *
- * @param[in] tdp       pointer to a @p MACTransmitDescriptor structure
- * @param[in] size      size of the requested buffer. Specify the frame size
- *                      on the first call then scale the value down subtracting
- *                      the amount of data already copied into the previous
- *                      buffers.
- * @param[out] sizep    pointer to variable receiving the buffer size, it is
- *                      zero when the last buffer has already been returned.
- *                      Note that a returned size lower than the amount
- *                      requested means that more buffers must be requested
- *                      in order to fill the frame data entirely.
- * @return              Pointer to the returned buffer.
- * @retval NULL         if the buffer chain has been entirely scanned.
- *
- * @notapi
- */
-uint8_t *mac_lld_get_next_transmit_buffer(MACTransmitDescriptor *tdp,
-                                          size_t size,
-                                          size_t *sizep) {
-
-  if (tdp->offset == 0) {
-    *sizep      = tdp->size;
-    tdp->offset = size;
-    return (uint8_t *)tdp->physdesc->tdes2;
-  }
-  *sizep = 0;
-  return NULL;
-}
-
-/**
- * @brief   Returns a pointer to the next receive buffer in the descriptor
- *          chain.
- * @note    The API guarantees that the descriptor chain contains a whole
- *          frame.
- *
- * @param[in] rdp       pointer to a @p MACReceiveDescriptor structure
- * @param[out] sizep    pointer to variable receiving the buffer size, it is
- *                      zero when the last buffer has already been returned.
- * @return              Pointer to the returned buffer.
- * @retval NULL         if the buffer chain has been entirely scanned.
- *
- * @notapi
- */
-const uint8_t *mac_lld_get_next_receive_buffer(MACReceiveDescriptor *rdp,
-                                               size_t *sizep) {
-
-  if (rdp->size > 0) {
-    *sizep      = rdp->size;
-    rdp->offset = rdp->size;
-    rdp->size   = 0;
-    return (uint8_t *)rdp->physdesc->rdes2;
-  }
-  *sizep = 0;
-  return NULL;
-}
-#endif /* MAC_USE_ZERO_COPY */
-
-#if !MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
 /**
  * @brief   Writes to a transmit descriptor's stream.
  *
@@ -738,7 +674,69 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
   }
   return size;
 }
-#endif /* !MAC_USE_ZERO_COPY */
+
+#if MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
+/**
+ * @brief   Returns a pointer to the next transmit buffer in the descriptor
+ *          chain.
+ * @note    The API guarantees that enough buffers can be requested to fill
+ *          a whole frame.
+ *
+ * @param[in] tdp       pointer to a @p MACTransmitDescriptor structure
+ * @param[in] size      size of the requested buffer. Specify the frame size
+ *                      on the first call then scale the value down subtracting
+ *                      the amount of data already copied into the previous
+ *                      buffers.
+ * @param[out] sizep    pointer to variable receiving the buffer size, it is
+ *                      zero when the last buffer has already been returned.
+ *                      Note that a returned size lower than the amount
+ *                      requested means that more buffers must be requested
+ *                      in order to fill the frame data entirely.
+ * @return              Pointer to the returned buffer.
+ * @retval NULL         if the buffer chain has been entirely scanned.
+ *
+ * @notapi
+ */
+uint8_t *mac_lld_get_next_transmit_buffer(MACTransmitDescriptor *tdp,
+                                          size_t size,
+                                          size_t *sizep) {
+
+  if (tdp->offset == 0) {
+    *sizep      = tdp->size;
+    tdp->offset = size;
+    return (uint8_t *)tdp->physdesc->tdes2;
+  }
+  *sizep = 0;
+  return NULL;
+}
+
+/**
+ * @brief   Returns a pointer to the next receive buffer in the descriptor
+ *          chain.
+ * @note    The API guarantees that the descriptor chain contains a whole
+ *          frame.
+ *
+ * @param[in] rdp       pointer to a @p MACReceiveDescriptor structure
+ * @param[out] sizep    pointer to variable receiving the buffer size, it is
+ *                      zero when the last buffer has already been returned.
+ * @return              Pointer to the returned buffer.
+ * @retval NULL         if the buffer chain has been entirely scanned.
+ *
+ * @notapi
+ */
+const uint8_t *mac_lld_get_next_receive_buffer(MACReceiveDescriptor *rdp,
+                                               size_t *sizep) {
+
+  if (rdp->size > 0) {
+    *sizep      = rdp->size;
+    rdp->offset = rdp->size;
+    rdp->size   = 0;
+    return (uint8_t *)rdp->physdesc->rdes2;
+  }
+  *sizep = 0;
+  return NULL;
+}
+#endif /* MAC_USE_ZERO_COPY */
 
 #endif /* HAL_USE_MAC */
 
