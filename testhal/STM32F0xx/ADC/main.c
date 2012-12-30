@@ -127,7 +127,7 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Activates the ADC1 driver and the thermal sensor.
+   * Activates the ADC1 driver and the temperature sensor.
    */
   adcStart(&ADCD1, NULL);
   adcSTM32SetCCR(ADC_CCR_VBATEN | ADC_CCR_TSEN | ADC_CCR_VREFEN);

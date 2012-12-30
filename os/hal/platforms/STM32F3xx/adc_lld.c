@@ -152,14 +152,14 @@ static void adc_lld_analog_off(ADCDriver *adcp) {
  */
 static void adc_lld_calibrate(ADCDriver *adcp) {
 
-  chDbgAssert(adcp->adcm->CR == 0, "adc_lld_calibrate(), #1",
-                                   "invalid register state");
+  chDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN_0, "adc_lld_calibrate(), #1",
+                                                   "invalid register state");
   adcp->adcm->CR |= ADC_CR_ADCAL;
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
     ;
 #if STM32_ADC_DUAL_MODE
-  chDbgAssert(adcp->adcs->CR == 0, "adc_lld_calibrate(), #2",
-                                   "invalid register state");
+  chDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN_0, "adc_lld_calibrate(), #2",
+                                                   "invalid register state");
   adcp->adcs->CR |= ADC_CR_ADCAL;
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
     ;
