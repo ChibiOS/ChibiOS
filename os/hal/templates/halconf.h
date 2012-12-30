@@ -225,6 +225,13 @@
 /**
  * @brief   Enables an event sources for incoming packets.
  */
+#if !defined(MAC_USE_ZERO_COPY) || defined(__DOXYGEN__)
+#define MAC_USE_ZERO_COPY           FALSE
+#endif
+
+/**
+ * @brief   Enables an event sources for incoming packets.
+ */
 #if !defined(MAC_USE_EVENTS) || defined(__DOXYGEN__)
 #define MAC_USE_EVENTS              TRUE
 #endif
