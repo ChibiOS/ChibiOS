@@ -135,7 +135,7 @@
 #define ADC_CCR_DMACFG_CIRCULAR         (1 << 13)
 #define ADC_CCR_MDMA_MASK               (3 << 14)
 #define ADC_CCR_MDMA_DISABLED           (0 << 14)
-#define ADC_CCR_MDMA_WORD               (1 << 14)
+#define ADC_CCR_MDMA_WORD               (2 << 14)
 #define ADC_CCR_MDMA_HWORD              (3 << 14)
 #define ADC_CCR_CKMODE_MASK             (3 << 16)
 #define ADC_CCR_CKMODE_ADCCK            (0 << 16)

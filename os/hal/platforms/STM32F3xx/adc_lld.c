@@ -491,8 +491,13 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     dmamode |= STM32_DMA_CR_HTIE;
   }
   dmaStreamSetMemory0(adcp->dmastp, adcp->samples);
-  dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
+#if STM32_ADC_DUAL_MODE
+  dmaStreamSetTransactionSize(adcp->dmastp, ((uint32_t)grpp->num_channels/2) *
                                             (uint32_t)adcp->depth);
+#else
+    dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
+                                              (uint32_t)adcp->depth);
+#endif
   dmaStreamSetMode(adcp->dmastp, dmamode);
   dmaStreamEnable(adcp->dmastp);
 
