@@ -90,6 +90,7 @@
   (backported to 2.4.3).
 - FIX: Fixed wrong SPI path in platform_f105_f107.mk (bug 3598151).
 - FIX: Fixed PHY powerdown issues not fixed (bug 3596911).
+- NEW: ADC driver implementation for the STM32F3xx.
 - NEW: Added zero-copy capability to the STM32 MAC driver (experimental and
   not tested yet).
 - NEW: Added an optional zero-copy mode API to the MAC driver model.
