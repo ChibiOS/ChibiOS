@@ -21,7 +21,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#define ADC_GRP1_NUM_CHANNELS   1
+#define ADC_GRP1_NUM_CHANNELS   2
 #define ADC_GRP1_BUF_DEPTH      8
 
 #define ADC_GRP2_NUM_CHANNELS   8
@@ -64,7 +64,7 @@ static const ADCConversionGroup adcgrpcfg1 = {
   NULL,
   adcerrorcallback,
   0,                        /* CFGR    */
-  0,                        /* TR1     */
+  ADC_TR(0, 4095),          /* TR1     */
   0,                        /* CCR     */
   {                         /* SMPR[2] */
     0,

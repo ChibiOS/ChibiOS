@@ -84,13 +84,6 @@
 /** @} */
 
 /**
- * @name    Threashold register initializer
- * @{
- */
-#define ADC_TR(low, high)       (((uint32_t)(high) << 16) | (uint32_t)(low))
-/** @} */
-
-/**
  * @name    CFGR register configuration helpers
  * @{
  */
@@ -529,6 +522,13 @@ struct ADCDriver {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @name    Threashold register initializer
+ * @{
+ */
+#define ADC_TR(low, high)       (((uint32_t)(high) << 16) | (uint32_t)(low))
+/** @} */
 
 /**
  * @name    Sequences building helper macros
