@@ -118,11 +118,11 @@ static void adc_lld_vreg_off(ADCDriver *adcp) {
  */
 static void adc_lld_analog_on(ADCDriver *adcp) {
 
-  adcp->adcm->CR = ADC_CR_ADEN;
+  adcp->adcm->CR |= ADC_CR_ADEN;
   while ((adcp->adcm->ISR & ADC_ISR_ADRDY) == 0)
     ;
 #if STM32_ADC_DUAL_MODE
-  adcp->adcs->CR = ADC_CR_ADEN;
+  adcp->adcs->CR |= ADC_CR_ADEN;
   while ((adcp->adcs->ISR & ADC_ISR_ADRDY) == 0)
     ;
 #endif
@@ -135,11 +135,11 @@ static void adc_lld_analog_on(ADCDriver *adcp) {
  */
 static void adc_lld_analog_off(ADCDriver *adcp) {
 
-  adcp->adcm->CR = ADC_CR_ADDIS;
+  adcp->adcm->CR |= ADC_CR_ADDIS;
   while ((adcp->adcm->CR & ADC_CR_ADDIS) != 0)
     ;
 #if STM32_ADC_DUAL_MODE
-  adcp->adcs->CR = ADC_CR_ADDIS;
+  adcp->adcs->CR |= ADC_CR_ADDIS;
   while ((adcp->adcs->CR & ADC_CR_ADDIS) != 0)
     ;
 #endif
@@ -531,10 +531,10 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #endif /* !STM32_ADC_DUAL_MODE */
 
   /* ADC configuration.*/
-  adcp->adcm->CFGR   = cfgr;
+  adcp->adcm->CFGR  = cfgr;
 
   /* Starting conversion.*/
-  adcp->adcm->CR    |= ADC_CR_ADSTART;
+  adcp->adcm->CR   |= ADC_CR_ADSTART;
 }
 
 /**
