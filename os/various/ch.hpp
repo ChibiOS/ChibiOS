@@ -397,15 +397,14 @@ namespace chibios_rt {
 
     }
 
-
     /**
      * @brief   Creates and starts a system thread.
      *
      * @param[in] tname         the name to be assigned to the thread
      * @param[in] prio          thread priority
      * @return                  Error flag.
-     * @retval false            if the operation failed.
-     * @retval true             if the operation succeeded.
+     * @retval false            if the operation succeeded.
+     * @retval true             if the operation failed.
      *
      * @api
      */
@@ -413,7 +412,7 @@ namespace chibios_rt {
       msg_t _thd_start(void *arg);
 
       thread_ref = chThdCreateStatic(wa, sizeof(wa), prio, _thd_start, this);
-      return thread_ref != NULL;
+      return false;
     }
   };
 
@@ -434,6 +433,8 @@ namespace chibios_rt {
      *
      * @param[in] n             the semaphore counter value, must be greater
      *                          or equal to zero
+     *
+     * @api
      */
     Semaphore(cnt_t n);
 
@@ -442,6 +443,8 @@ namespace chibios_rt {
      *
      * @param[in] n             the new semaphore counter value, must be
      *                          greater or equal to zero
+     *
+     * @api
      */
     void reset(cnt_t n);
 
@@ -450,6 +453,8 @@ namespace chibios_rt {
      *
      * @retval RDY_OK           if the semaphore was signaled or not taken.
      * @retval RDY_RESET        if the semaphore was reset.
+     *
+     * @api
      */
     msg_t wait(void);
 
@@ -461,6 +466,8 @@ namespace chibios_rt {
      * @retval RDY_RESET        if the semaphore was reset.
      * @retval RDY_TIMEOUT      if the semaphore was not signaled or reset
      *                          within the specified timeout.
+     *
+     * @api
      */
     msg_t waitTimeout(systime_t time);
 
@@ -468,6 +475,8 @@ namespace chibios_rt {
      * @brief   Signal operation on the semaphore.
      * @details The semaphore is signaled, the next thread in queue, if any,
      *          is awakened.
+     *
+     * @api
      */
     void signal(void);
 
@@ -479,6 +488,8 @@ namespace chibios_rt {
      * @param[in] wsem          pointer to a @p Semaphore to be wait on
      * @retval RDY_OK           if the semaphore was signaled or not taken.
      * @retval RDY_RESET        if the semaphore was reset.
+     *
+     * @api
      */
     static msg_t signalWait(Semaphore *ssem, Semaphore *wsem);
 #endif /* CH_USE_SEMSW */
@@ -499,6 +510,8 @@ namespace chibios_rt {
     /**
      * @brief   Mutex constructor.
      * @details The embedded @p ::Mutex structure is initialized.
+     *
+     * @api
      */
     Mutex(void);
 
@@ -507,6 +520,8 @@ namespace chibios_rt {
      *
      * @retval TRUE             if the mutex was successfully acquired
      * @retval FALSE            if the lock attempt failed.
+     *
+     * @api
      */
     bool tryLock(void);
 
@@ -515,6 +530,8 @@ namespace chibios_rt {
      * @details Performs a lock operation on the mutex, if the mutex is
      *          already locked then the thread enters the mutex priority
      *          queue and waits.
+     *
+     * @api
      */
     void lock(void);
 
@@ -522,6 +539,8 @@ namespace chibios_rt {
      * @brief   Unlocks the mutex.
      * @details Performs an unlock operation on the mutex, the next waiting
      *          thread, if any, is resumed and locks the mutex.
+     *
+     * @api
      */
     static void unlock(void);
 
@@ -531,6 +550,8 @@ namespace chibios_rt {
      *          the mutexes one by one and not just because the call overhead,
      *          this function does not have any overhead related to the
      *          priority inheritance mechanism.
+     *
+     * @api
      */
     static void unlockAll(void);
   };
@@ -549,18 +570,24 @@ namespace chibios_rt {
     /**
      * @brief   CondVar constructor.
      * @details The embedded @p ::CondVar structure is initialized.
+     *
+     * @api
      */
     CondVar(void);
 
     /**
      * @brief   Signals the CondVar.
      * @details The next thread waiting on the @p CondVar, if any, is awakened.
+     *
+     * @api
      */
     void signal(void);
 
     /**
      * @brief   Broadcasts the CondVar.
      * @details All the threads waiting on the @p CondVar, if any, are awakened.
+     *
+     * @api
      */
     void broadcast(void);
 
@@ -572,6 +599,8 @@ namespace chibios_rt {
      *                          @p chCondSignal().
      * @retval RDY_RESET        if the condvar was signaled using
      *                          @p chCondBroadcast().
+     *
+     * @api
      */
     msg_t wait(void);
 
@@ -587,6 +616,8 @@ namespace chibios_rt {
      *                          @p chCondBroadcast().
      * @retval RDY_TIMEOUT      if the condvar was not signaled within the
      *                          specified timeout.
+     *
+     * @api
      */
     msg_t waitTimeout(systime_t time);
 #endif /* CH_USE_CONDVARS_TIMEOUT */
@@ -608,6 +639,8 @@ namespace chibios_rt {
     /**
      * @brief   Event constructor.
      * @details The embedded @p ::EventSource structure is initialized.
+     *
+     * @api
      */
     Event(void);
 
@@ -617,6 +650,8 @@ namespace chibios_rt {
      * @param[in] elp           pointer to the @p EventListener structure
      * @param[in] eid           numeric identifier assigned to the Event
      *                          Listener
+     *
+     * @api
      */
     void registerOne(EventListener *elp, eventid_t eid);
 
@@ -627,6 +662,8 @@ namespace chibios_rt {
      * @param[in] elp           pointer to the @p EventListener structure
      * @param[in] emask         the mask of event flags to be pended to the
      *                          thread when the event source is broadcasted
+     *
+     * @api
      */
     void registerMask(EventListener *elp, eventmask_t emask);
 
@@ -636,6 +673,8 @@ namespace chibios_rt {
      *          source.
      *
      * @param[in] elp           the listener to be unregistered
+     *
+     * @api
      */
     void unregister(EventListener *elp);
 
@@ -645,6 +684,8 @@ namespace chibios_rt {
      *
      * @param[in] flags         the flags set to be added to the listener
      *                          flags mask
+     *
+     * @api
      */
     void broadcastFlags(flagsmask_t flags);
 
@@ -655,6 +696,8 @@ namespace chibios_rt {
      * @param[in] flags         the events to be cleared
      * @return                  The flags added to the listener by the
      *                          associated event source.
+     *
+     * @api
      */
     static flagsmask_t getAndClearFlags(EventListener *elp);
 
@@ -663,6 +706,8 @@ namespace chibios_rt {
      *
      * @param[in] mask          the events to be cleared
      * @return                  The pending events that were cleared.
+     *
+     * @api
      */
     static eventmask_t getAndClearEvents(eventmask_t mask);
 
@@ -672,6 +717,8 @@ namespace chibios_rt {
      *
      * @param[in] mask          the events to be pended
      * @return                  The current pending events mask.
+     *
+     * @api
      */
     static eventmask_t addEvents(eventmask_t mask);
 
@@ -682,6 +729,8 @@ namespace chibios_rt {
      * @param[in] handlers      an array of @p evhandler_t. The array must be
      *                          have indexes from zero up the higher registered
      *                          event identifier.
+     *
+     * @api
      */
     static void dispatch(const evhandler_t handlers[], eventmask_t mask);
 
@@ -699,6 +748,8 @@ namespace chibios_rt {
      *                          wait for, @p ALL_EVENTS enables all the events
      * @return                  The mask of the lowest id served and cleared
      *                          event.
+     *
+     * @api
      */
     static eventmask_t waitOne(eventmask_t ewmask);
 
@@ -711,6 +762,8 @@ namespace chibios_rt {
      * @param[in] ewmask        mask of the events that the function should
      *                          wait for, @p ALL_EVENTS enables all the events
      * @return                  The mask of the served and cleared events.
+     *
+     * @api
      */
     static eventmask_t waitAny(eventmask_t ewmask);
 
@@ -722,6 +775,8 @@ namespace chibios_rt {
      * @param[in] ewmask        mask of the event ids that the function should
      *                          wait for
      * @return                  The mask of the served and cleared events.
+     *
+     * @api
      */
     static eventmask_t waitAll(eventmask_t ewmask);
 
@@ -743,6 +798,8 @@ namespace chibios_rt {
      * @return                  The mask of the lowest id served and cleared
      *                          event.
      * @retval 0                if the specified timeout expired.
+     *
+     * @api
      */
     static eventmask_t waitOneTimeout(eventmask_t ewmask, systime_t time);
 
@@ -758,6 +815,8 @@ namespace chibios_rt {
      *                          timouts
      * @return                  The mask of the served and cleared events.
      * @retval 0                if the specified timeout expired.
+     *
+     * @api
      */
     static eventmask_t waitAnyTimeout(eventmask_t ewmask, systime_t time);
 
@@ -772,9 +831,10 @@ namespace chibios_rt {
      *                          timouts
      * @return                  The mask of the served and cleared events.
      * @retval 0                if the specified timeout expired.
+     *
+     * @api
      */
     static eventmask_t waitAllTimeout(eventmask_t ewmask, systime_t time);
-
 #endif /* CH_USE_EVENTS_TIMEOUT */
   };
 #endif /* CH_USE_EVENTS */
