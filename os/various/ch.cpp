@@ -32,22 +32,22 @@ namespace chibios_rt {
   /*------------------------------------------------------------------------*
    * chibios_rt::System                                                     *
    *------------------------------------------------------------------------*/
-  void System::Init(void) {
+  void System::init(void) {
 
     chSysInit();
   }
 
-  void System::Lock(void) {
+  void System::lock(void) {
 
     chSysLock();
   }
 
-  void System::Unlock(void) {
+  void System::unlock(void) {
 
     chSysUnlock();
   }
 
-  systime_t System::GetTime(void) {
+  systime_t System::getTime(void) {
 
     return chTimeNow();
   }
@@ -55,107 +55,169 @@ namespace chibios_rt {
   /*------------------------------------------------------------------------*
    * chibios_rt::Timer                                                      *
    *------------------------------------------------------------------------*/
-  void Timer::Set(systime_t time, vtfunc_t vtfunc, void *par) {
+  void Timer::setI(systime_t time, vtfunc_t vtfunc, void *par) {
 
-    chVTSetI(&timer, time, vtfunc, par);
+    chVTSetI(&timer_ref, time, vtfunc, par);
   }
 
-  void Timer::Reset() {
+  void Timer::resetI() {
 
-    chVTResetI(&timer);
+    if (chVTIsArmedI(&timer_ref))
+      chVTResetI(&timer_ref);
   }
 
-  bool Timer::IsArmed(void) {
+  bool Timer::isArmedI(void) {
 
-    return chVTIsArmedI(&timer);
+    return (bool)chVTIsArmedI(&timer_ref);
   }
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::BaseThread                                                 *
+   * chibios_rt::ThreadReference                                            *
    *------------------------------------------------------------------------*/
-  static msg_t thdstart(void *arg) {
+  msg_t ThreadReference::suspend(void) {
+    msg_t msg;
 
-    return ((BaseThread *)arg)->Main();
+    chSysLock();
+
+    chDbgAssert(thread_ref != NULL,
+                "ThreadReference, #1",
+                "already referenced");
+
+    thread_ref = chThdSelf();
+    chSchGoSleepS(THD_STATE_SUSPENDED);
+    msg = thread_ref->p_u.rdymsg;
+
+    chSysUnlock();
+    return msg;
   }
 
-  BaseThread::BaseThread(void *workspace, size_t wsize, tprio_t prio) {
+  msg_t ThreadReference::suspendS(void) {
 
-    thread_ref = chThdCreateStatic(workspace, wsize, prio, thdstart, this);
+    chDbgAssert(thread_ref == NULL,
+                "ThreadReference, #2",
+                "already referenced");
+
+    thread_ref = chThdSelf();
+    chSchGoSleepS(THD_STATE_SUSPENDED);
+    return thread_ref->p_u.rdymsg;
   }
 
-  void BaseThread::Exit(msg_t msg) {
+  void ThreadReference::resume(msg_t msg) {
 
-    chThdExit(msg);
+    chSysLock()
+
+    chDbgAssert(thread_ref != NULL,
+                "ThreadReference, #3",
+                "not referenced");
+
+    if (thread_ref) {
+      Thread *tp = thread_ref;
+      thread_ref = NULL;
+      chSchWakeupS(tp, msg);
+    }
+
+    chSysUnlock();
   }
 
-#if CH_USE_WAITEXIT
-  msg_t BaseThread::Wait(void) {
+  void ThreadReference::resumeI(msg_t msg) {
 
-    return chThdWait(thread_ref);
-  }
-#endif /* CH_USE_WAITEXIT */
+    chDbgAssert(thread_ref != NULL,
+                "ThreadReference, #4",
+                "not referenced");
 
-  void BaseThread::SetPriority(tprio_t newprio) {
-
-    chThdSetPriority(newprio);
-  }
-
-  void BaseThread::Resume(void) {
-
-    chThdResume(thread_ref);
+    if (thread_ref) {
+      Thread *tp = thread_ref;
+      thread_ref = NULL;
+      tp->p_msg = msg;
+      chSchReadyI(tp);
+    }
   }
 
-  void BaseThread::Terminate(void) {
+  void ThreadReference::requestTerminate(void) {
 
     chThdTerminate(thread_ref);
   }
 
-  void BaseThread::Sleep(systime_t n) {
+#if CH_USE_WAITEXIT || defined(__DOXYGEN__)
+    msg_t ThreadReference::wait(void) {
 
-    chThdSleep(n);
+      chDbgAssert(thread_ref != NULL,
+                  "ThreadReference, #5",
+                  "not referenced");
+
+      msg_t msg = chThdWait(thread_ref);
+      thread_ref = NULL;
+      return msg;
+    }
+#endif /* CH_USE_WAITEXIT */
+
+#if CH_USE_MESSAGES || defined(__DOXYGEN__)
+  msg_t ThreadReference::sendMessage(msg_t msg) {
+
+    chDbgAssert(thread_ref != NULL,
+                "ThreadReference, #6",
+                "not referenced");
+
+    return chMsgSend(thread_ref, msg);
   }
 
-  void BaseThread::SleepUntil(systime_t time) {
+  bool ThreadReference::isPendingMessage(void) {
+
+    return (bool)chMsgIsPendingI(thread_ref);
+  }
+#endif /* CH_USE_MESSAGES */
+
+#if CH_USE_DYNAMIC
+#endif /* CH_USE_DYNAMIC */
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::BaseThread                                             *
+   *------------------------------------------------------------------------*/
+  BaseThread::BaseThread() : ThreadReference(NULL) {
+
+  }
+
+  msg_t _thd_start(void *arg) {
+
+    return ((BaseThread *)arg)->Main();
+  }
+
+  void BaseThread::exit(msg_t msg) {
+
+    chThdExit(msg);
+  }
+
+  tprio_t BaseThread::setPriority(tprio_t newprio) {
+
+    return chThdSetPriority(newprio);
+  }
+
+  bool BaseThread::shouldTerminate(void) {
+
+    return (bool)chThdShouldTerminate();
+  }
+
+  void BaseThread::sleep(systime_t interval){
+
+    chThdSleep(interval);
+  }
+
+  void BaseThread::sleepUntil(systime_t time) {
 
     chThdSleepUntil(time);
   }
 
 #if CH_USE_MESSAGES
-  msg_t BaseThread::SendMessage(::Thread* tp, msg_t msg) {
+  msg_t BaseThread::getMessage(ThreadReference* trp) {
 
-    return chMsgSend(tp, msg);
+    return chMsgGet(trp->thread_ref);
   }
 
-  msg_t BaseThread::SendMessage(msg_t msg) {
+  void BaseThread::releaseMessage(ThreadReference* trp, msg_t msg) {
 
-    return chMsgSend(thread_ref, msg);
-  }
-
-  Thread *BaseThread::WaitMessage(void) {
-
-    return chMsgWait();
-  }
-
-  msg_t BaseThread::GetMessage(Thread* tp) {
-
-    return chMsgGet(tp);
-  }
-
-  void BaseThread::ReleaseMessage(Thread* tp, msg_t msg) {
-
-    chMsgRelease(tp, msg);
-  }
-
-  bool BaseThread::IsPendingMessage(void) {
-
-    return chMsgIsPendingI(currp);
+    chMsgRelease(trp->thread_ref, msg);
   }
 #endif /* CH_USE_MESSAGES */
-
-  msg_t BaseThread::Main(void) {
-
-    return 0;
-  }
 
 #if CH_USE_SEMAPHORES
   /*------------------------------------------------------------------------*
@@ -166,28 +228,28 @@ namespace chibios_rt {
     chSemInit(&sem, n);
   }
 
-  void Semaphore::Reset(cnt_t n) {
+  void Semaphore::reset(cnt_t n) {
 
     chSemReset(&sem, n);
   }
 
-  msg_t Semaphore::Wait(void) {
+  msg_t Semaphore::wait(void) {
 
     return chSemWait(&sem);
   }
 
-  msg_t Semaphore::WaitTimeout(systime_t time) {
+  msg_t Semaphore::waitTimeout(systime_t time) {
 
     return chSemWaitTimeout(&sem, time);
   }
 
-  void Semaphore::Signal(void) {
+  void Semaphore::signal(void) {
 
     chSemSignal(&sem);
   }
 
 #if CH_USE_SEMSW
-  msg_t Semaphore::SignalWait(Semaphore *ssem, Semaphore *wsem) {
+  msg_t Semaphore::signalWait(Semaphore *ssem, Semaphore *wsem) {
 
     return chSemSignalWait(&ssem->sem, &wsem->sem);
   }
@@ -203,22 +265,22 @@ namespace chibios_rt {
     chMtxInit(&mutex);
   }
 
-  bool Mutex::TryLock(void) {
+  bool Mutex::tryLock(void) {
 
     return chMtxTryLock(&mutex);
   }
 
-  void Mutex::Lock(void) {
+  void Mutex::lock(void) {
 
     chMtxLock(&mutex);
   }
 
-  void Mutex::Unlock(void) {
+  void Mutex::unlock(void) {
 
     chMtxUnlock();
   }
 
-  void UnlockAll(void) {
+  void Mutex::unlockAll(void) {
 
     chMtxUnlockAll();
   }
@@ -232,23 +294,23 @@ namespace chibios_rt {
     chCondInit(&condvar);
   }
 
-  void CondVar::Signal(void) {
+  void CondVar::signal(void) {
 
     chCondSignal(&condvar);
   }
 
-  void CondVar::Broadcast(void) {
+  void CondVar::broadcast(void) {
 
     chCondBroadcast(&condvar);
   }
 
-  msg_t CondVar::Wait(void) {
+  msg_t CondVar::wait(void) {
 
     return chCondWait(&condvar);
   }
 
 #if CH_USE_CONDVARS_TIMEOUT
-  msg_t CondVar::WaitTimeout(systime_t time) {
+  msg_t CondVar::waitTimeout(systime_t time) {
 
     return chCondWaitTimeout(&condvar, time);
   }
@@ -265,73 +327,73 @@ namespace chibios_rt {
     chEvtInit(&event);
   }
 
-  void Event::Register(EventListener *elp, eventid_t eid) {
+  void Event::registerOne(EventListener *elp, eventid_t eid) {
 
     chEvtRegister(&event,elp, eid);
   }
 
-  void Event::RegisterMask(EventListener *elp, eventmask_t emask) {
+  void Event::registerMask(EventListener *elp, eventmask_t emask) {
 
     chEvtRegisterMask(&event,elp, emask);
   }
 
-  void Event::Unregister(EventListener *elp) {
+  void Event::unregister(EventListener *elp) {
 
     chEvtUnregister(&event, elp);
   }
 
-  void Event::BroadcastFlags(flagsmask_t flags) {
+  void Event::broadcastFlags(flagsmask_t flags) {
 
     chEvtBroadcastFlags(&event, flags);
   }
 
-  flagsmask_t GetAndClearFlags(EventListener *elp) {
+  flagsmask_t Event::getAndClearFlags(EventListener *elp) {
 
     return chEvtGetAndClearFlags(elp);
   }
 
-  eventmask_t Event::GetAndClearEvents(eventmask_t mask) {
+  eventmask_t Event::getAndClearEvents(eventmask_t mask) {
 
     return chEvtGetAndClearEvents(mask);
   }
 
-  eventmask_t Event::AddEvents(eventmask_t mask) {
+  eventmask_t Event::addEvents(eventmask_t mask) {
 
     return chEvtAddEvents(mask);
   }
 
-  void Event::Dispatch(const evhandler_t handlers[], eventmask_t mask) {
+  void Event::dispatch(const evhandler_t handlers[], eventmask_t mask) {
 
     chEvtDispatch(handlers, mask);
   }
 
-  eventmask_t Event::WaitOne(eventmask_t ewmask) {
+  eventmask_t Event::waitOne(eventmask_t ewmask) {
 
     return chEvtWaitOne(ewmask);
   }
 
-  eventmask_t Event::WaitAny(eventmask_t ewmask) {
+  eventmask_t Event::waitAny(eventmask_t ewmask) {
 
     return chEvtWaitAny(ewmask);
   }
 
-  eventmask_t Event::WaitAll(eventmask_t ewmask) {
+  eventmask_t Event::waitAll(eventmask_t ewmask) {
 
     return chEvtWaitAll(ewmask);
   }
 
 #if CH_USE_EVENTS_TIMEOUT
-  eventmask_t Event::WaitOneTimeout(eventmask_t ewmask, systime_t time) {
+  eventmask_t Event::waitOneTimeout(eventmask_t ewmask, systime_t time) {
 
     return chEvtWaitOneTimeout(ewmask, time);
   }
 
-  eventmask_t Event::WaitAnyTimeout(eventmask_t ewmask, systime_t time) {
+  eventmask_t Event::waitAnyTimeout(eventmask_t ewmask, systime_t time) {
 
     return chEvtWaitAnyTimeout(ewmask, time);
   }
 
-  eventmask_t Event::WaitAllTimeout(eventmask_t ewmask, systime_t time) {
+  eventmask_t Event::waitAllTimeout(eventmask_t ewmask, systime_t time) {
 
     return chEvtWaitAllTimeout(ewmask, time);
   }

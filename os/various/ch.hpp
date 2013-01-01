@@ -33,6 +33,9 @@
 
 namespace chibios_rt {
 
+  /*------------------------------------------------------------------------*
+   * chibios_rt::System                                                     *
+   *------------------------------------------------------------------------*/
   /**
    * @brief Class encapsulating the base system functionalities.
    */
@@ -43,32 +46,43 @@ namespace chibios_rt {
      * @details The system is initialized, the idle thread is spawned and the
      *          current instruction flow becomes the main thread with priority
      *          @p NORMALPRIO.
+     *
+     * @api
      */
-    static void Init(void);
+    static void init(void);
 
     /**
      * @brief   Kernel lock.
-     * @note    On some ports it is faster to invoke chSysLock() directly because
-     *          inlining.
+     * @note    On some ports it is faster to invoke chSysLock() directly
+     *          because inlining.
+     *
+     * @special
      */
-    static void Lock(void);
+    static void lock(void);
 
     /**
      * @brief   Kernel unlock.
      * @note    On some ports it is faster to invoke chSysUnlock() directly
      *          because inlining.
+     *
+     * @special
      */
-    static void Unlock(void);
+    static void unlock(void);
 
     /**
      * @brief   Returns the system time as system ticks.
      * @note    The system tick time interval is implementation dependent.
      *
      * @return          The system time.
+     *
+     * @api
      */
-    static systime_t GetTime(void);
+    static systime_t getTime(void);
   };
 
+  /*------------------------------------------------------------------------*
+   * chibios_rt::Timer                                                      *
+   *------------------------------------------------------------------------*/
   /**
    * @brief   Timer class.
    */
@@ -77,7 +91,7 @@ namespace chibios_rt {
     /**
      * @brief   Embedded @p VirtualTimer structure.
      */
-    struct ::VirtualTimer timer;
+    struct ::VirtualTimer timer_ref;
 
     /**
      * @brief   Starts the timer.
@@ -87,30 +101,37 @@ namespace chibios_rt {
      * @param[in] time      the time in system ticks
      * @param[in] vtfunc    the timer callback function
      * @param[in] par       the parameter for the callback function
+     *
+     * @iclass
      */
-    void Set(systime_t time, vtfunc_t vtfunc, void *par);
+    void setI(systime_t time, vtfunc_t vtfunc, void *par);
 
     /**
-     * @brief   Resets the timer.
-     * @note    It must be called with the interrupts disabled.
-     * @note    The timer MUST be active when this function is invoked.
+     * @brief   Resets the timer, if armed.
+     *
+     * @iclass
      */
-    void Reset();
+    void resetI();
 
     /**
      * @brief   Returns the timer status.
      *
      * @retval TRUE         The timer is armed.
      * @retval FALSE        The timer already fired its callback.
+     *
+     * @iclass
      */
-    bool IsArmed(void);
+    bool isArmedI(void);
   };
 
+  /*------------------------------------------------------------------------*
+   * chibios_rt::ThreadReference                                            *
+   *------------------------------------------------------------------------*/
   /**
-   * @brief   Base class for a ChibiOS/RT thread.
-   * @details The thread body is the virtual function @p Main().
+   * @brief     Thread reference class.
+   * @details   This class encapsulates a reference to a system thread.
    */
-  class BaseThread {
+  class ThreadReference {
   public:
     /**
      * @brief   Pointer to the system thread.
@@ -118,169 +139,281 @@ namespace chibios_rt {
     ::Thread *thread_ref;
 
     /**
-     * @brief   Thread constructor.
-     * @details The thread object is initialized and a system thread is
-     *          started.
+     * @brief   Thread reference constructor.
      *
-     * @param[in] workspace     pointer to the workspace area
-     * @param[in] wsize         size of the workspace area
-     * @param[in] prio          thread priority
+     * @param[in] tp            the target thread. This parameter can be
+     *                          @p NULL if the thread is not known at
+     *                          creation time.
+     *
+     * @api
      */
-    BaseThread(void *workspace, size_t wsize, tprio_t prio);
+    ThreadReference(Thread * tp);
 
     /**
-     * @brief Thread exit.
+     * @brief   Suspends the current thread on the reference.
+     * @details The suspended thread becomes the referenced thread. It is
+     *          possible to use this method only if the thread reference
+     *          was set to @p NULL.
      *
-     * @param[in] msg           the exit message
+     * @return                  The incoming message.
+     *
+     * @api
      */
-    static void Exit(msg_t msg);
+    msg_t suspend(void);
 
-#if CH_USE_WAITEXIT
+    /**
+     * @brief   Suspends the current thread on the reference.
+     * @details The suspended thread becomes the referenced thread. It is
+     *          possible to use this method only if the thread reference
+     *          was set to @p NULL.
+     *
+     * @return                  The incoming message.
+     *
+     * @sclass
+     */
+    msg_t suspendS(void);
+
+    /**
+     * @brief   Resumes the currently referenced thread, if any.
+     *
+     * @api
+     */
+    void resume(msg_t msg);
+
+    /**
+     * @brief   Resumes the currently referenced thread, if any.
+     *
+     * @iclass
+     */
+    void resumeI(msg_t msg);
+
+    /**
+     * @brief   Requests thread termination.
+     * @details A termination flag is added to the thread, it is thread
+     *          responsibility to detect it and exit.
+     */
+    void requestTerminate(void);
+
+#if CH_USE_WAITEXIT || defined(__DOXYGEN__)
     /**
      * @brief   Synchronization on Thread exit.
      *
      * @return                  The exit message from the thread.
+     *
+     * @api
      */
-    msg_t Wait(void);
+    msg_t wait(void);
 #endif /* CH_USE_WAITEXIT */
 
-    /**
-     * @brief   Resumes the thread.
-     * @details The thread encapsulated into the object is resumed.
-     */
-    void Resume(void);
-
-    /**
-     * @brief   Changes the thread priority.
-     *
-     * @param[in] newprio       The new priority level
-     */
-    static void SetPriority(tprio_t newprio);
-
-    /**
-     * @brief   Requests thread termination.
-     * @details A termination flag is pended on the thread, it is thread
-     *          responsibility to detect it and exit.
-     */
-    void Terminate(void);
-
-    /**
-     * @brief   Suspends the thread execution for the specified number of
-     *          system ticks.
-     *
-     * @param[in] n             the number of system ticks
-     */
-    static void Sleep(systime_t n);
-
-    /**
-     * @brief   Suspends the thread execution until the specified time arrives.
-     *
-     * @param[in]               time the system time
-     */
-    static void SleepUntil(systime_t time);
-
-#if CH_USE_MESSAGES
-    /**
-     * @brief   Sends a message to the thread and returns the answer.
-     *
-     * @param[in] tp            the target thread
-     * @param[in] msg           the sent message
-     * @return                  The returned message.
-     */
-    static msg_t SendMessage(::Thread *tp, msg_t msg);
-
+#if CH_USE_MESSAGES || defined(__DOXYGEN__)
     /**
      * @brief   Sends a message to the thread and returns the answer.
      *
      * @param[in] msg           the sent message
      * @return                  The returned message.
-     */
-    msg_t SendMessage(msg_t msg);
-
-    /**
-     * @brief   Waits for a message.
      *
-     * @return                  The sebder thread.
+     * @api
      */
-    static Thread *WaitMessage(void);
-
-    /**
-     * @brief   Returns an enqueued message or @p NULL.
-     *
-     * @param[in] tp            the sender thread
-     * @return                  The incoming message.
-     */
-    static msg_t GetMessage(Thread* tp);
-
-    /**
-     * @brief   Releases the next message in queue with a reply.
-     *
-     * @param[in] tp            the sender thread
-     * @param[in] msg           the answer message
-     */
-    static void ReleaseMessage(Thread* tp, msg_t msg);
+    msg_t sendMessage(msg_t msg);
 
     /**
      * @brief   Returns true if there is at least one message in queue.
      *
-     * @retval TRUE             A message is waiting in queue.
-     * @retval FALSE            A message is not waiting in queue.
+     * @retval true             A message is waiting in queue.
+     * @retval false            A message is not waiting in queue.
+     *
+     * @api
      */
-    static bool IsPendingMessage(void);
+    bool isPendingMessage(void);
 #endif /* CH_USE_MESSAGES */
+
+#if CH_USE_DYNAMIC
+#endif /* CH_USE_DYNAMIC */
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::BaseThread                                             *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Abstract base class for a ChibiOS/RT thread.
+   * @details The thread body is the virtual function @p Main().
+   */
+  class BaseThread : ThreadReference{
+  public:
+
+    /**
+     * @brief   BaseThread constructor.
+     *
+     * @api
+     */
+    BaseThread(void);
 
     /**
      * @brief   Thread body function.
      *
      * @return                  The exit message.
+     *
+     * @api
      */
     virtual msg_t Main(void);
+
+    /**
+     * @brief   Creates and starts a system thread.
+     *
+     * @param[in] tname         the name to be assigned to the thread
+     * @param[in] prio          thread priority
+     * @return                  Error flag.
+     * @retval false            if the operation failed.
+     * @retval true             if the operation succeeded.
+     *
+     * @api
+     */
+    virtual bool start(const char *tname, tprio_t prio);
+
+    /**
+     * @brief   Thread exit.
+     *
+     * @param[in] msg           the exit message
+     *
+     * @api
+     */
+    static void exit(msg_t msg);
+
+#if CH_USE_WAITEXIT || defined(__DOXYGEN__)
+    /**
+     * @brief   Synchronization on Thread exit.
+     *
+     * @return                  The exit message from the thread.
+     *
+     * @api
+     */
+    msg_t wait(void);
+#endif /* CH_USE_WAITEXIT */
+
+    /**
+     * @brief   Changes the current thread priority.
+     *
+     * @param[in] newprio       The new priority level
+     * @return                  The old priority level.
+     *
+     * @api
+     */
+    static tprio_t setPriority(tprio_t newprio);
+
+    /**
+     * @brief   Requests thread termination.
+     * @details A termination flag is added to the thread, it is thread
+     *          responsibility to detect it and exit.
+     *
+     * @api
+     */
+    void requestTerminate(void);
+
+    /**
+     * @brief   Determines if there is a pending termination request.
+     *
+     * @return                  The termination status.
+     * @retval false            if there is no termination request pending.
+     * @retval true             if there is a termination request pending.
+     *
+     * @api
+     */
+    bool shouldTerminate(void);
+
+    /**
+     * @brief   Suspends the thread execution for the specified number of
+     *          system ticks.
+     *
+     * @param[in] interval      the number of system ticks
+     *
+     * @api
+     */
+    static void sleep(systime_t interval);
+
+    /**
+     * @brief   Suspends the thread execution until the specified time arrives.
+     *
+     * @param[in]               time the system time
+     *
+     * @api
+     */
+    static void sleepUntil(systime_t time);
+
+#if CH_USE_MESSAGES
+    /**
+     * @brief   Waits for a message.
+     *
+     * @return                  The sender thread.
+     *
+     * @api
+     */
+    static ThreadReference waitMessage(void);
+
+    /**
+     * @brief   Returns an enqueued message or @p NULL.
+     *
+     * @param[in] trp           the sender thread reference
+     * @return                  The incoming message.
+     *
+     * @api
+     */
+    static msg_t getMessage(ThreadReference* trp);
+
+    /**
+     * @brief   Releases the next message in queue with a reply.
+     *
+     * @param[in] trp           the sender thread reference
+     * @param[in] msg           the answer message
+     *
+     * @api
+     */
+    static void releaseMessage(ThreadReference* trp, msg_t msg);
+#endif /* CH_USE_MESSAGES */
   };
 
+  /*------------------------------------------------------------------------*
+   * chibios_rt::BaseStaticThread                                           *
+   *------------------------------------------------------------------------*/
   /**
-   * @brief   Enhanced threads template class.
-   * @details This class introduces thread names and static working area
-   *          allocation.
+   * @brief   Static threads template class.
+   * @details This class introduces static working area allocation.
    *
    * @param N               the working area size for the thread class
    */
   template <int N>
-  class EnhancedThread : public BaseThread {
+  class BaseStaticThread : public BaseThread {
   protected:
     WORKING_AREA(wa, N);                        // Thread working area.
 
   public:
     /**
-     * @brief   The thread name.
-     */
-    const char *name;
-
-    /**
-     * @brief   Full constructor.
-     * @details This constructor allows to set a priority level for the new
-     *          thread.
+     * @brief   Thread constructor.
+     * @details The thread object is initialized but the thread is not
+     *          started here.
      *
-     * @param[in] tname         the name to be assigned to the thread
-     * @param[in] prio          the priority to be assigned to the thread
+     * @api
      */
-    EnhancedThread(const char *tname, tprio_t prio) :
-          BaseThread(wa, sizeof wa, prio) {
+    BaseStaticThread(void) : BaseThread() {
 
-      name = tname;
     }
 
+
     /**
-     * @brief   Simplified constructor.
-     * @details This constructor allows to create a thread by simply
-     *          specifying a name. In is assumed @p NORMALPRIO as initial
-     *          priority.
+     * @brief   Creates and starts a system thread.
      *
      * @param[in] tname         the name to be assigned to the thread
+     * @param[in] prio          thread priority
+     * @return                  Error flag.
+     * @retval false            if the operation failed.
+     * @retval true             if the operation succeeded.
+     *
+     * @api
      */
-    EnhancedThread(const char *tname) :
-          BaseThread(wa, sizeof wa, NORMALPRIO) {
+    bool start(const char *tname, tprio_t prio) {
+      msg_t _thd_start(void *arg);
 
-      name = tname;
+      thread_ref = chThdCreateStatic(wa, sizeof(wa), prio, _thd_start, this);
+      return thread_ref != NULL;
     }
   };
 
@@ -310,7 +443,7 @@ namespace chibios_rt {
      * @param[in] n             the new semaphore counter value, must be
      *                          greater or equal to zero
      */
-    void Reset(cnt_t n);
+    void reset(cnt_t n);
 
     /**
      * @brief   Wait operation on the semaphore.
@@ -318,7 +451,7 @@ namespace chibios_rt {
      * @retval RDY_OK           if the semaphore was signaled or not taken.
      * @retval RDY_RESET        if the semaphore was reset.
      */
-    msg_t Wait(void);
+    msg_t wait(void);
 
     /**
      * @brief   Wait operation on the semaphore with timeout.
@@ -329,14 +462,14 @@ namespace chibios_rt {
      * @retval RDY_TIMEOUT      if the semaphore was not signaled or reset
      *                          within the specified timeout.
      */
-    msg_t WaitTimeout(systime_t time);
+    msg_t waitTimeout(systime_t time);
 
     /**
      * @brief   Signal operation on the semaphore.
      * @details The semaphore is signaled, the next thread in queue, if any,
      *          is awakened.
      */
-    void Signal(void);
+    void signal(void);
 
 #if CH_USE_SEMSW
     /**
@@ -347,7 +480,7 @@ namespace chibios_rt {
      * @retval RDY_OK           if the semaphore was signaled or not taken.
      * @retval RDY_RESET        if the semaphore was reset.
      */
-    static msg_t SignalWait(Semaphore *ssem, Semaphore *wsem);
+    static msg_t signalWait(Semaphore *ssem, Semaphore *wsem);
 #endif /* CH_USE_SEMSW */
   };
 #endif /* CH_USE_SEMAPHORES */
@@ -375,7 +508,7 @@ namespace chibios_rt {
      * @retval TRUE             if the mutex was successfully acquired
      * @retval FALSE            if the lock attempt failed.
      */
-    bool TryLock(void);
+    bool tryLock(void);
 
     /**
      * @brief   Locks the mutex.
@@ -383,14 +516,14 @@ namespace chibios_rt {
      *          already locked then the thread enters the mutex priority
      *          queue and waits.
      */
-    void Lock(void);
+    void lock(void);
 
     /**
      * @brief   Unlocks the mutex.
      * @details Performs an unlock operation on the mutex, the next waiting
      *          thread, if any, is resumed and locks the mutex.
      */
-    static void Unlock(void);
+    static void unlock(void);
 
     /**
      * @brief   Unlocks all the mutexes owned by the invoking thread.
@@ -399,7 +532,7 @@ namespace chibios_rt {
      *          this function does not have any overhead related to the
      *          priority inheritance mechanism.
      */
-    static void UnlockAll(void);
+    static void unlockAll(void);
   };
 
 #if CH_USE_CONDVARS
@@ -423,13 +556,13 @@ namespace chibios_rt {
      * @brief   Signals the CondVar.
      * @details The next thread waiting on the @p CondVar, if any, is awakened.
      */
-    void Signal(void);
+    void signal(void);
 
     /**
      * @brief   Broadcasts the CondVar.
      * @details All the threads waiting on the @p CondVar, if any, are awakened.
      */
-    void Broadcast(void);
+    void broadcast(void);
 
     /**
      * @brief   Waits on the CondVar while releasing the controlling mutex.
@@ -440,7 +573,7 @@ namespace chibios_rt {
      * @retval RDY_RESET        if the condvar was signaled using
      *                          @p chCondBroadcast().
      */
-    msg_t Wait(void);
+    msg_t wait(void);
 
 #if CH_USE_CONDVARS_TIMEOUT
     /**
@@ -455,7 +588,7 @@ namespace chibios_rt {
      * @retval RDY_TIMEOUT      if the condvar was not signaled within the
      *                          specified timeout.
      */
-    msg_t WaitTimeout(systime_t time);
+    msg_t waitTimeout(systime_t time);
 #endif /* CH_USE_CONDVARS_TIMEOUT */
   };
 #endif /* CH_USE_CONDVARS */
@@ -485,7 +618,7 @@ namespace chibios_rt {
      * @param[in] eid           numeric identifier assigned to the Event
      *                          Listener
      */
-    void Register(EventListener *elp, eventid_t eid);
+    void registerOne(EventListener *elp, eventid_t eid);
 
     /**
      * @brief   Registers an Event Listener on an Event Source.
@@ -495,7 +628,7 @@ namespace chibios_rt {
      * @param[in] emask         the mask of event flags to be pended to the
      *                          thread when the event source is broadcasted
      */
-    void RegisterMask(EventListener *elp, eventmask_t emask);
+    void registerMask(EventListener *elp, eventmask_t emask);
 
     /**
      * @brief   Unregisters a listener.
@@ -504,7 +637,7 @@ namespace chibios_rt {
      *
      * @param[in] elp           the listener to be unregistered
      */
-    void Unregister(EventListener *elp);
+    void unregister(EventListener *elp);
 
     /**
      * @brief   Broadcasts an event.
@@ -513,7 +646,7 @@ namespace chibios_rt {
      * @param[in] flags         the flags set to be added to the listener
      *                          flags mask
      */
-    void BroadcastFlags(flagsmask_t flags);
+    void broadcastFlags(flagsmask_t flags);
 
     /**
      * @brief   Clears specified events from the pending events mask.
@@ -523,7 +656,7 @@ namespace chibios_rt {
      * @return                  The flags added to the listener by the
      *                          associated event source.
      */
-    static flagsmask_t GetAndClearFlags(EventListener *elp);
+    static flagsmask_t getAndClearFlags(EventListener *elp);
 
     /**
      * @brief   Clears specified events from the pending events mask.
@@ -531,7 +664,7 @@ namespace chibios_rt {
      * @param[in] mask          the events to be cleared
      * @return                  The pending events that were cleared.
      */
-    static eventmask_t GetAndClearEvents(eventmask_t mask);
+    static eventmask_t getAndClearEvents(eventmask_t mask);
 
     /**
      * @brief   Makes an events mask pending in the current thread.
@@ -540,7 +673,7 @@ namespace chibios_rt {
      * @param[in] mask          the events to be pended
      * @return                  The current pending events mask.
      */
-    static eventmask_t AddEvents(eventmask_t mask);
+    static eventmask_t addEvents(eventmask_t mask);
 
     /**
      * @brief   Invokes the event handlers associated with a mask.
@@ -550,7 +683,7 @@ namespace chibios_rt {
      *                          have indexes from zero up the higher registered
      *                          event identifier.
      */
-    static void Dispatch(const evhandler_t handlers[], eventmask_t mask);
+    static void dispatch(const evhandler_t handlers[], eventmask_t mask);
 
     /**
      * @brief   Waits for a single event.
@@ -567,7 +700,7 @@ namespace chibios_rt {
      * @return                  The mask of the lowest id served and cleared
      *                          event.
      */
-    static eventmask_t WaitOne(eventmask_t ewmask);
+    static eventmask_t waitOne(eventmask_t ewmask);
 
     /**
      * @brief   Waits for any of the specified events.
@@ -579,7 +712,7 @@ namespace chibios_rt {
      *                          wait for, @p ALL_EVENTS enables all the events
      * @return                  The mask of the served and cleared events.
      */
-    static eventmask_t WaitAny(eventmask_t ewmask);
+    static eventmask_t waitAny(eventmask_t ewmask);
 
     /**
      * @brief   Waits for all the specified event flags then clears them.
@@ -590,7 +723,7 @@ namespace chibios_rt {
      *                          wait for
      * @return                  The mask of the served and cleared events.
      */
-    static eventmask_t WaitAll(eventmask_t ewmask);
+    static eventmask_t waitAll(eventmask_t ewmask);
 
 #if CH_USE_EVENTS_TIMEOUT
     /**
@@ -611,7 +744,7 @@ namespace chibios_rt {
      *                          event.
      * @retval 0                if the specified timeout expired.
      */
-    static eventmask_t WaitOneTimeout(eventmask_t ewmask, systime_t time);
+    static eventmask_t waitOneTimeout(eventmask_t ewmask, systime_t time);
 
     /**
      * @brief   Waits for any of the specified events.
@@ -626,7 +759,7 @@ namespace chibios_rt {
      * @return                  The mask of the served and cleared events.
      * @retval 0                if the specified timeout expired.
      */
-    static eventmask_t WaitAnyTimeout(eventmask_t ewmask, systime_t time);
+    static eventmask_t waitAnyTimeout(eventmask_t ewmask, systime_t time);
 
     /**
      * @brief   Waits for all the specified event flags then clears them.
@@ -640,7 +773,7 @@ namespace chibios_rt {
      * @return                  The mask of the served and cleared events.
      * @retval 0                if the specified timeout expired.
      */
-    static eventmask_t WaitAllTimeout(eventmask_t ewmask, systime_t time);
+    static eventmask_t waitAllTimeout(eventmask_t ewmask, systime_t time);
 
 #endif /* CH_USE_EVENTS_TIMEOUT */
   };

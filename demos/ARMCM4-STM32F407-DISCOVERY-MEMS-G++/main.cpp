@@ -24,6 +24,7 @@
 #include "evtimer.h"
 
 using namespace chibios_rt;
+#if 0
 
 /*
  * LED blink sequences.
@@ -130,16 +131,17 @@ static void TimerHandler(eventid_t id) {
     tester.Wait();
   };
 }
+#endif
 
 /*
  * Application entry point.
  */
 int main(void) {
-  static const evhandler_t evhndl[] = {
+/*  static const evhandler_t evhndl[] = {
     TimerHandler
   };
   static EvTimer evt;
-  struct EventListener el0;
+  struct EventListener el0;*/
 
   /*
    * System initializations.
@@ -149,28 +151,28 @@ int main(void) {
    *   RTOS is active.
    */
   halInit();
-  System::Init();
+  System::init();
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
    */
   sdStart(&SD2, NULL);
-
+/*
   evtInit(&evt, 500);                   // Initializes an event timer.
   evtStart(&evt);                       // Starts the event timer.
   chEvtRegister(&evt.et_es, &el0, 0);   // Registers a listener on the source.
-
+*/
   /*
    * Starts several instances of the SequencerThread class, each one operating
    * on a different LED.
    */
-  SequencerThread blinker1(LED1_sequence);
+//  SequencerThread blinker1(LED1_sequence);
 
   /*
    * Serves timer events.
    */
-  while (true)
-    Event::Dispatch(evhndl, Event::WaitOne(ALL_EVENTS));
+//  while (true)
+//    Event::Dispatch(evhndl, Event::WaitOne(ALL_EVENTS));
 
   return 0;
 }
