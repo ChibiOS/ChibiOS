@@ -280,19 +280,24 @@ namespace chibios_rt {
     chEvtUnregister(&event, elp);
   }
 
-  void Event::Broadcast(void) {
+  void Event::BroadcastFlags(flagsmask_t flags) {
 
-    chEvtBroadcast(&event);
+    chEvtBroadcastFlags(&event, flags);
   }
 
-  eventmask_t Event::ClearFlags(eventmask_t mask) {
+  flagsmask_t GetAndClearFlags(EventListener *elp) {
 
-    return chEvtClearFlags(mask);
+    return chEvtGetAndClearFlags(elp);
   }
 
-  eventmask_t Event::AddFlags(eventmask_t mask) {
+  eventmask_t Event::GetAndClearEvents(eventmask_t mask) {
 
-    return chEvtAddFlags(mask);
+    return chEvtGetAndClearEvents(mask);
+  }
+
+  eventmask_t Event::AddEvents(eventmask_t mask) {
+
+    return chEvtAddEvents(mask);
   }
 
   void Event::Dispatch(const evhandler_t handlers[], eventmask_t mask) {

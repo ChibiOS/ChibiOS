@@ -509,8 +509,21 @@ namespace chibios_rt {
     /**
      * @brief   Broadcasts an event.
      * @details All the listeners registered on the event source are signaled.
+     *
+     * @param[in] flags         the flags set to be added to the listener
+     *                          flags mask
      */
-    void Broadcast(void);
+    void BroadcastFlags(flagsmask_t flags);
+
+    /**
+     * @brief   Clears specified events from the pending events mask.
+     *
+     * @param[in] elp           pointer to the @p EventListener structure
+     * @param[in] flags         the events to be cleared
+     * @return                  The flags added to the listener by the
+     *                          associated event source.
+     */
+    static flagsmask_t GetAndClearFlags(EventListener *elp);
 
     /**
      * @brief   Clears specified events from the pending events mask.
@@ -518,7 +531,7 @@ namespace chibios_rt {
      * @param[in] mask          the events to be cleared
      * @return                  The pending events that were cleared.
      */
-    static eventmask_t ClearFlags(eventmask_t mask);
+    static eventmask_t GetAndClearEvents(eventmask_t mask);
 
     /**
      * @brief   Makes an events mask pending in the current thread.
@@ -527,7 +540,7 @@ namespace chibios_rt {
      * @param[in] mask          the events to be pended
      * @return                  The current pending events mask.
      */
-    static eventmask_t AddFlags(eventmask_t mask);
+    static eventmask_t AddEvents(eventmask_t mask);
 
     /**
      * @brief   Invokes the event handlers associated with a mask.
