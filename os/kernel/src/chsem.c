@@ -347,7 +347,7 @@ void chSemAddCounterI(Semaphore *sp, cnt_t n) {
  *          to use this function.
  *
  * @param[in] sps       pointer to a @p Semaphore structure to be signaled
- * @param[in] spw       pointer to a @p Semaphore structure to be wait on
+ * @param[in] spw       pointer to a @p Semaphore structure to wait on
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
  * @retval RDY_OK       if the thread has not stopped on the semaphore or the

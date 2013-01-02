@@ -43,27 +43,27 @@ namespace chibios_rt {
   public:
     /**
      * @brief   ChibiOS/RT initialization.
-     * @details The system is initialized, the idle thread is spawned and the
-     *          current instruction flow becomes the main thread with priority
-     *          @p NORMALPRIO.
+     * @details After executing this function the current instructions stream
+     *          becomes the main thread.
+     * @pre     Interrupts must be still disabled when @p chSysInit() is invoked
+     *          and are internally enabled.
+     * @post    The main thread is created with priority @p NORMALPRIO.
+     * @note    This function has special, architecture-dependent, requirements,
+     *          see the notes into the various port reference manuals.
      *
-     * @api
+     * @special
      */
     static void init(void);
 
     /**
-     * @brief   Kernel lock.
-     * @note    On some ports it is faster to invoke chSysLock() directly
-     *          because inlining.
+     * @brief   Enters the kernel lock mode.
      *
      * @special
      */
     static void lock(void);
 
     /**
-     * @brief   Kernel unlock.
-     * @note    On some ports it is faster to invoke chSysUnlock() directly
-     *          because inlining.
+     * @brief   Leaves the kernel lock mode.
      *
      * @special
      */
@@ -78,6 +78,21 @@ namespace chibios_rt {
      * @api
      */
     static systime_t getTime(void);
+
+    /**
+     * @brief   Checks if the current system time is within the specified time
+     *          window.
+     * @note    When start==end then the function returns always true because the
+     *          whole time range is specified.
+     *
+     * @param[in] start     the start of the time window (inclusive)
+     * @param[in] end       the end of the time window (non inclusive)
+     * @retval true         current time within the specified time window.
+     * @retval false        current time not within the specified time window.
+     *
+     * @api
+     */
+    static bool isTimeWithin(systime_t start, systime_t end);
   };
 
   /*------------------------------------------------------------------------*
@@ -94,13 +109,20 @@ namespace chibios_rt {
     struct ::VirtualTimer timer_ref;
 
     /**
-     * @brief   Starts the timer.
-     * @note    It must be called with the interrupts disabled.
-     * @note    The associated function is invoked by an interrupt handler.
+     * @brief   Enables a virtual timer.
+     * @note    The associated function is invoked from interrupt context.
      *
-     * @param[in] time      the time in system ticks
-     * @param[in] vtfunc    the timer callback function
-     * @param[in] par       the parameter for the callback function
+     * @param[in] time      the number of ticks before the operation timeouts, the
+     *                      special values are handled as follow:
+     *                      - @a TIME_INFINITE is allowed but interpreted as a
+     *                        normal time specification.
+     *                      - @a TIME_IMMEDIATE this value is not allowed.
+     *                      .
+     * @param[in] vtfunc    the timer callback function. After invoking the
+     *                      callback the timer is disabled and the structure can
+     *                      be disposed or reused.
+     * @param[in] par       a parameter that will be passed to the callback
+     *                      function
      *
      * @iclass
      */
@@ -192,17 +214,46 @@ namespace chibios_rt {
     void resumeI(msg_t msg);
 
     /**
-     * @brief   Requests thread termination.
-     * @details A termination flag is added to the thread, it is thread
-     *          responsibility to detect it and exit.
+     * @brief   Requests a thread termination.
+     * @pre     The target thread must be written to invoke periodically
+     *          @p chThdShouldTerminate() and terminate cleanly if it returns
+     *          @p TRUE.
+     * @post    The specified thread will terminate after detecting the termination
+     *          condition.
+     *
+     * @api
      */
     void requestTerminate(void);
 
 #if CH_USE_WAITEXIT || defined(__DOXYGEN__)
     /**
-     * @brief   Synchronization on Thread exit.
+     * @brief   Blocks the execution of the invoking thread until the specified
+     *          thread terminates then the exit code is returned.
+     * @details This function waits for the specified thread to terminate then
+     *          decrements its reference counter, if the counter reaches zero then
+     *          the thread working area is returned to the proper allocator.<br>
+     *          The memory used by the exited thread is handled in different ways
+     *          depending on the API that spawned the thread:
+     *          - If the thread was spawned by @p chThdCreateStatic() or by
+     *            @p chThdCreateI() then nothing happens and the thread working
+     *            area is not released or modified in any way. This is the
+     *            default, totally static, behavior.
+     *          - If the thread was spawned by @p chThdCreateFromHeap() then
+     *            the working area is returned to the system heap.
+     *          - If the thread was spawned by @p chThdCreateFromMemoryPool()
+     *            then the working area is returned to the owning memory pool.
+     *          .
+     * @pre     The configuration option @p CH_USE_WAITEXIT must be enabled in
+     *          order to use this function.
+     * @post    Enabling @p chThdWait() requires 2-4 (depending on the
+     *          architecture) extra bytes in the @p Thread structure.
+     * @post    After invoking @p chThdWait() the thread pointer becomes invalid
+     *          and must not be used as parameter for further system calls.
+     * @note    If @p CH_USE_DYNAMIC is not specified this function just waits for
+     *          the thread termination, no memory allocators are involved.
      *
-     * @return                  The exit message from the thread.
+     * @param[in] tp        pointer to the thread
+     * @return              The exit code from the terminated thread.
      *
      * @api
      */
@@ -311,53 +362,94 @@ namespace chibios_rt {
     static void setName(const char *tname);
 
     /**
-     * @brief   Changes the current thread priority.
+     * @brief   Changes the running thread priority level then reschedules if
+     *          necessary.
+     * @note    The function returns the real thread priority regardless of the
+     *          current priority that could be higher than the real priority
+     *          because the priority inheritance mechanism.
      *
-     * @param[in] newprio       The new priority level
-     * @return                  The old priority level.
+     * @param[in] newprio   the new priority level of the running thread
+     * @return              The old priority level.
      *
      * @api
      */
     static tprio_t setPriority(tprio_t newprio);
 
     /**
-     * @brief   Thread exit.
+     * @brief   Terminates the current thread.
+     * @details The thread goes in the @p THD_STATE_FINAL state holding the
+     *          specified exit status code, other threads can retrieve the
+     *          exit status code by invoking the function @p chThdWait().
+     * @post    Eventual code after this function will never be executed,
+     *          this function never returns. The compiler has no way to
+     *          know this so do not assume that the compiler would remove
+     *          the dead code.
      *
-     * @param[in] msg           the exit message
+     * @param[in] msg       thread exit code
      *
      * @api
      */
     static void exit(msg_t msg);
 
     /**
-     * @brief   Determines if there is a pending termination request.
+     * @brief   Terminates the current thread.
+     * @details The thread goes in the @p THD_STATE_FINAL state holding the
+     *          specified exit status code, other threads can retrieve the
+     *          exit status code by invoking the function @p chThdWait().
+     * @post    Eventual code after this function will never be executed,
+     *          this function never returns. The compiler has no way to
+     *          know this so do not assume that the compiler would remove
+     *          the dead code.
      *
-     * @return                  The termination status.
-     * @retval false            if there is no termination request pending.
-     * @retval true             if there is a termination request pending.
+     * @param[in] msg       thread exit code
      *
-     * @api
+     * @sclass
+     */
+    static void exitS(msg_t msg);
+
+    /**
+     * @brief   Verifies if the current thread has a termination request pending.
+     * @note    Can be invoked in any context.
+     *
+     * @retval TRUE         termination request pending.
+     * @retval FALSE        termination request not pending.
+     *
+     * @special
      */
     static bool shouldTerminate(void);
 
     /**
-     * @brief   Suspends the thread execution for the specified number of
-     *          system ticks.
+     * @brief   Suspends the invoking thread for the specified time.
      *
-     * @param[in] interval      the number of system ticks
+     * @param[in] time      the delay in system ticks, the special values are
+     *                      handled as follow:
+     *                      - @a TIME_INFINITE the thread enters an infinite sleep
+     *                        state.
+     *                      - @a TIME_IMMEDIATE this value is not allowed.
+     *                      .
      *
      * @api
      */
     static void sleep(systime_t interval);
 
     /**
-     * @brief   Suspends the thread execution until the specified time arrives.
+     * @brief   Suspends the invoking thread until the system time arrives to the
+     *          specified value.
      *
-     * @param[in]               time the system time
+     * @param[in] time      absolute system time
      *
      * @api
      */
     static void sleepUntil(systime_t time);
+
+    /**
+     * @brief   Yields the time slot.
+     * @details Yields the CPU control to the next thread in the ready list with
+     *          equal priority, if any.
+     *
+     * @api
+     */
+    static void yield(void);
 
 #if CH_USE_MESSAGES || defined(__DOXYGEN__)
     /**
@@ -530,6 +622,47 @@ namespace chibios_rt {
     static void dispatchEvents(const evhandler_t handlers[],
                                eventmask_t mask);
 #endif /* CH_USE_EVENTS */
+
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+    /**
+     * @brief   Unlocks the next owned mutex in reverse lock order.
+     * @pre     The invoking thread <b>must</b> have at least one owned mutex.
+     * @post    The mutex is unlocked and removed from the per-thread stack of
+     *          owned mutexes.
+     *
+     * @return              A pointer to the unlocked mutex.
+     *
+     * @api
+     */
+    static void unlockMutex(void);
+
+    /**
+     * @brief   Unlocks the next owned mutex in reverse lock order.
+     * @pre     The invoking thread <b>must</b> have at least one owned mutex.
+     * @post    The mutex is unlocked and removed from the per-thread stack of
+     *          owned mutexes.
+     * @post    This function does not reschedule so a call to a rescheduling
+     *          function must be performed before unlocking the kernel.
+     *
+     * @return              A pointer to the unlocked mutex.
+     *
+     * @sclass
+     */
+    static void unlockMutexS(void);
+
+    /**
+     * @brief   Unlocks all the mutexes owned by the invoking thread.
+     * @post    The stack of owned mutexes is emptied and all the found
+     *          mutexes are unlocked.
+     * @note    This function is <b>MUCH MORE</b> efficient than releasing the
+     *          mutexes one by one and not just because the call overhead,
+     *          this function does not have any overhead related to the priority
+     *          inheritance mechanism.
+     *
+     * @api
+     */
+    static void unlockAllMutexes(void);
+#endif /* CH_USE_MUTEXES */
   };
 
   /*------------------------------------------------------------------------*
@@ -745,14 +878,18 @@ namespace chibios_rt {
     /**
      * @brief   Atomic signal and wait operations.
      *
-     * @param[in] ssem          pointer to a @p Semaphore to be signaled
-     * @param[in] wsem          pointer to a @p Semaphore to be wait on
-     * @retval RDY_OK           if the semaphore was signaled or not taken.
-     * @retval RDY_RESET        if the semaphore was reset.
+     * @param[in] ssem          @p Semaphore object to be signaled
+     * @param[in] wsem          @p Semaphore object to wait on
+     * @return                  A message specifying how the invoking thread has been
+     *                          released from the semaphore.
+     * @retval RDY_OK           if the thread has not stopped on the semaphore or the
+     *                          semaphore has been signaled.
+      * @retval RDY_RESET       if the semaphore has been reset using @p chSemReset().
      *
      * @api
      */
-    static msg_t signalWait(Semaphore *ssem, Semaphore *wsem);
+    static msg_t signalWait(chibios_rt::Semaphore *ssem,
+                            chibios_rt::Semaphore *wsem);
 #endif /* CH_USE_SEMSW */
   };
 #endif /* CH_USE_SEMAPHORES */
@@ -772,7 +909,7 @@ namespace chibios_rt {
     struct ::Mutex mutex;
 
     /**
-     * @brief   Mutex constructor.
+     * @brief   Mutex object constructor.
      * @details The embedded @p ::Mutex structure is initialized.
      *
      * @api
@@ -780,44 +917,58 @@ namespace chibios_rt {
     Mutex(void);
 
     /**
-     * @brief   Tries a lock operation on the mutex.
+     * @brief   Tries to lock a mutex.
+     * @details This function attempts to lock a mutex, if the mutex is already
+     *          locked by another thread then the function exits without waiting.
+     * @post    The mutex is locked and inserted in the per-thread stack of owned
+     *          mutexes.
+     * @note    This function does not have any overhead related to the
+     *          priority inheritance mechanism because it does not try to
+     *          enter a sleep state.
      *
-     * @retval TRUE             if the mutex was successfully acquired
-     * @retval FALSE            if the lock attempt failed.
+     * @return              The operation status.
+     * @retval TRUE         if the mutex has been successfully acquired
+     * @retval FALSE        if the lock attempt failed.
      *
      * @api
      */
     bool tryLock(void);
 
     /**
-     * @brief   Locks the mutex.
-     * @details Performs a lock operation on the mutex, if the mutex is
-     *          already locked then the thread enters the mutex priority
-     *          queue and waits.
+     * @brief   Tries to lock a mutex.
+     * @details This function attempts to lock a mutex, if the mutex is already
+     *          taken by another thread then the function exits without waiting.
+     * @post    The mutex is locked and inserted in the per-thread stack of owned
+     *          mutexes.
+     * @note    This function does not have any overhead related to the
+     *          priority inheritance mechanism because it does not try to
+     *          enter a sleep state.
+     *
+     * @return              The operation status.
+     * @retval TRUE         if the mutex has been successfully acquired
+     * @retval FALSE        if the lock attempt failed.
+     *
+     * @sclass
+     */
+    bool tryLockS(void);
+
+    /**
+     * @brief   Locks the specified mutex.
+     * @post    The mutex is locked and inserted in the per-thread stack of owned
+     *          mutexes.
      *
      * @api
      */
     void lock(void);
 
     /**
-     * @brief   Unlocks the mutex.
-     * @details Performs an unlock operation on the mutex, the next waiting
-     *          thread, if any, is resumed and locks the mutex.
+     * @brief   Locks the specified mutex.
+     * @post    The mutex is locked and inserted in the per-thread stack of owned
+     *          mutexes.
      *
-     * @api
+     * @sclass
      */
-    static void unlock(void);
-
-    /**
-     * @brief   Unlocks all the mutexes owned by the invoking thread.
-     * @details This operation is <b>MUCH MORE</b> efficient than releasing
-     *          the mutexes one by one and not just because the call overhead,
-     *          this function does not have any overhead related to the
-     *          priority inheritance mechanism.
-     *
-     * @api
-     */
-    static void unlockAll(void);
+    void lockS(void);
   };
 
 #if CH_USE_CONDVARS || defined(__DOXYGEN__)
@@ -835,7 +986,7 @@ namespace chibios_rt {
     struct ::CondVar condvar;
 
     /**
-     * @brief   CondVar constructor.
+     * @brief   CondVar object constructor.
      * @details The embedded @p ::CondVar structure is initialized.
      *
      * @api
@@ -843,33 +994,76 @@ namespace chibios_rt {
     CondVar(void);
 
     /**
-     * @brief   Signals the CondVar.
-     * @details The next thread waiting on the @p CondVar, if any, is awakened.
+     * @brief   Signals one thread that is waiting on the condition variable.
      *
      * @api
      */
     void signal(void);
 
     /**
-     * @brief   Broadcasts the CondVar.
-     * @details All the threads waiting on the @p CondVar, if any, are awakened.
+     * @brief   Signals one thread that is waiting on the condition variable.
+     * @post    This function does not reschedule so a call to a rescheduling
+     *          function must be performed before unlocking the kernel. Note that
+     *          interrupt handlers always reschedule on exit so an explicit
+     *          reschedule must not be performed in ISRs.
+     *
+     * @iclass
+     */
+    void signalI(void);
+
+    /**
+     * @brief   Signals all threads that are waiting on the condition variable.
      *
      * @api
      */
     void broadcast(void);
 
     /**
-     * @brief   Waits on the CondVar while releasing the controlling mutex.
+     * @brief   Signals all threads that are waiting on the condition variable.
+     * @post    This function does not reschedule so a call to a rescheduling
+     *          function must be performed before unlocking the kernel. Note that
+     *          interrupt handlers always reschedule on exit so an explicit
+     *          reschedule must not be performed in ISRs.
      *
-     * @return                  The wakep mode.
-     * @retval RDY_OK           if the condvar was signaled using
-     *                          @p chCondSignal().
-     * @retval RDY_RESET        if the condvar was signaled using
-     *                          @p chCondBroadcast().
+     * @iclass
+     */
+    void broadcastI(void);
+
+    /**
+     * @brief   Waits on the condition variable releasing the mutex lock.
+     * @details Releases the currently owned mutex, waits on the condition
+     *          variable, and finally acquires the mutex again. All the sequence
+     *          is performed atomically.
+     * @pre     The invoking thread <b>must</b> have at least one owned mutex.
+     *
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the condition variable.
+     * @retval RDY_OK       if the condvar has been signaled using
+     *                      @p chCondSignal().
+     * @retval RDY_RESET    if the condvar has been signaled using
+     *                      @p chCondBroadcast().
      *
      * @api
      */
     msg_t wait(void);
+
+    /**
+     * @brief   Waits on the condition variable releasing the mutex lock.
+     * @details Releases the currently owned mutex, waits on the condition
+     *          variable, and finally acquires the mutex again. All the sequence
+     *          is performed atomically.
+     * @pre     The invoking thread <b>must</b> have at least one owned mutex.
+     *
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the condition variable.
+     * @retval RDY_OK       if the condvar has been signaled using
+     *                      @p chCondSignal().
+     * @retval RDY_RESET    if the condvar has been signaled using
+     *                      @p chCondBroadcast().
+     *
+     * @sclass
+     */
+    msg_t waitS(void);
 
 #if CH_USE_CONDVARS_TIMEOUT || defined(__DOXYGEN__)
     /**

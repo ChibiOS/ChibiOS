@@ -233,7 +233,7 @@ tprio_t chThdSetPriority(tprio_t newprio) {
  *          in the @p THD_STATE_SUSPENDED state.
  * @post    The specified thread is immediately started or put in the ready
  *          list depending on the relative priority levels.
- * @note    Use this function to start threads created with @p chThdInit().
+ * @note    Use this function to start threads created with @p chThdCreateI().
  *
  * @param[in] tp        pointer to the thread
  * @return              The pointer to the thread.
@@ -388,9 +388,9 @@ void chThdExitS(msg_t msg) {
  *          The memory used by the exited thread is handled in different ways
  *          depending on the API that spawned the thread:
  *          - If the thread was spawned by @p chThdCreateStatic() or by
- *            @p chThdInit() then nothing happens and the thread working area
- *            is not released or modified in any way. This is the default,
- *            totally static, behavior.
+ *            @p chThdCreateI() then nothing happens and the thread working
+ *            area is not released or modified in any way. This is the
+ *            default, totally static, behavior.
  *          - If the thread was spawned by @p chThdCreateFromHeap() then
  *            the working area is returned to the system heap.
  *          - If the thread was spawned by @p chThdCreateFromMemoryPool()

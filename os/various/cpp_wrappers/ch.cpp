@@ -52,6 +52,11 @@ namespace chibios_rt {
     return chTimeNow();
   }
 
+  bool isTimeWithin(systime_t start, systime_t end) {
+
+    return (bool)chTimeIsWithin(start, end);
+  }
+
   /*------------------------------------------------------------------------*
    * chibios_rt::Timer                                                      *
    *------------------------------------------------------------------------*/
@@ -209,6 +214,11 @@ namespace chibios_rt {
     chThdExit(msg);
   }
 
+  void BaseThread::exitS(msg_t msg) {
+
+    chThdExitS(msg);
+  }
+
   bool BaseThread::shouldTerminate(void) {
 
     return (bool)chThdShouldTerminate();
@@ -222,6 +232,11 @@ namespace chibios_rt {
   void BaseThread::sleepUntil(systime_t time) {
 
     chThdSleepUntil(time);
+  }
+
+  void BaseThread::yield(void) {
+
+    chThdYield();
   }
 
 #if CH_USE_MESSAGES
@@ -289,6 +304,23 @@ namespace chibios_rt {
   }
 #endif /* CH_USE_EVENTS */
 
+#if CH_USE_MUTEXES
+  void BaseThread::unlockMutex(void) {
+
+    chMtxUnlock();
+  }
+
+  void BaseThread::unlockMutexS(void) {
+
+    chMtxUnlockS();
+  }
+
+  void BaseThread::unlockAllMutexes(void) {
+
+    chMtxUnlockAll();
+  }
+#endif /* CH_USE_MUTEXES */
+
 #if CH_USE_SEMAPHORES
   /*------------------------------------------------------------------------*
    * chibios_rt::Semaphore                                                  *
@@ -349,7 +381,8 @@ namespace chibios_rt {
   }
 
 #if CH_USE_SEMSW
-  msg_t Semaphore::signalWait(Semaphore *ssem, Semaphore *wsem) {
+  msg_t Semaphore::signalWait(chibios_rt::Semaphore *ssem,
+                              chibios_rt::Semaphore *wsem) {
 
     return chSemSignalWait(&ssem->sem, &wsem->sem);
   }
@@ -370,19 +403,19 @@ namespace chibios_rt {
     return chMtxTryLock(&mutex);
   }
 
+  bool Mutex::tryLockS(void) {
+
+    return chMtxTryLockS(&mutex);
+  }
+
   void Mutex::lock(void) {
 
     chMtxLock(&mutex);
   }
 
-  void Mutex::unlock(void) {
+  void Mutex::lockS(void) {
 
-    chMtxUnlock();
-  }
-
-  void Mutex::unlockAll(void) {
-
-    chMtxUnlockAll();
+    chMtxLockS(&mutex);
   }
 
 #if CH_USE_CONDVARS
@@ -399,14 +432,29 @@ namespace chibios_rt {
     chCondSignal(&condvar);
   }
 
+  void CondVar::signalI(void) {
+
+    chCondSignalI(&condvar);
+  }
+
   void CondVar::broadcast(void) {
 
     chCondBroadcast(&condvar);
   }
 
+  void CondVar::broadcastI(void) {
+
+    chCondBroadcastI(&condvar);
+  }
+
   msg_t CondVar::wait(void) {
 
     return chCondWait(&condvar);
+  }
+
+  msg_t CondVar::waitS(void) {
+
+    return chCondWaitS(&condvar);
   }
 
 #if CH_USE_CONDVARS_TIMEOUT
