@@ -7,12 +7,13 @@ N = Decided against.
 
 Version 2.5.2
 X Support for ATSAM4L devices.
-- Improve support for STM32F3xx devices.
+* Improve support for STM32F3xx devices.
 - Improve support for SPC56xBC devices.
 - Improve support for SPC56xP devices.
 - Improve support for SPC56xM devices.
 - Support for SPC56xA devices.
 - Restructure and improve documentation.
+X Update C++ wrapper.
 
 Within 2.5.x:
 - SAM4L support.
@@ -41,7 +42,6 @@ X Streaming DAC/I2S driver model and STM32 implementation.
 - Runtime errors manager in HAL.
 - Critical errors manager in HAL (to replace or complement assertions).
 - Add ADC3 support to the STM32F1xx ADC driver.
-- Update C++ wrapper.
 ? Add the RTC service inside the kernel and port, remove from HAL.
 
 Within 2.x.x

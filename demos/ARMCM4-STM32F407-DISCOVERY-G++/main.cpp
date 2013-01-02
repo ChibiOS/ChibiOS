@@ -21,7 +21,6 @@
 #include "ch.hpp"
 #include "hal.h"
 #include "test.h"
-#include "evtimer.h"
 
 using namespace chibios_rt;
 
@@ -42,25 +41,44 @@ typedef struct {
   uint32_t      value;
 } seqop_t;
 
-// Flashing sequence for LED4.
-static const seqop_t LED4_sequence[] =
-{
-  {BITCLEAR, PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    200},
-  {BITSET,   PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    1800},
-  {GOTO,     0}
-};
-
 // Flashing sequence for LED3.
 static const seqop_t LED3_sequence[] =
 {
-  {SLEEP,    1000},
-  {BITCLEAR, PAL_PORT_BIT(GPIOD_LED3)},
-  {SLEEP,    1800},
-  {BITSET,   PAL_PORT_BIT(GPIOD_LED3)},
+  {BITSET, PAL_PORT_BIT(GPIOD_LED3)},
+  {SLEEP,    800},
+  {BITCLEAR,   PAL_PORT_BIT(GPIOD_LED3)},
   {SLEEP,    200},
-  {GOTO,     1}
+  {GOTO,     0}
+};
+
+// Flashing sequence for LED4.
+static const seqop_t LED4_sequence[] =
+{
+  {BITSET, PAL_PORT_BIT(GPIOD_LED4)},
+  {SLEEP,    600},
+  {BITCLEAR,   PAL_PORT_BIT(GPIOD_LED4)},
+  {SLEEP,    400},
+  {GOTO,     0}
+};
+
+// Flashing sequence for LED5.
+static const seqop_t LED5_sequence[] =
+{
+  {BITSET, PAL_PORT_BIT(GPIOD_LED5)},
+  {SLEEP,    400},
+  {BITCLEAR,   PAL_PORT_BIT(GPIOD_LED5)},
+  {SLEEP,    600},
+  {GOTO,     0}
+};
+
+// Flashing sequence for LED6.
+static const seqop_t LED6_sequence[] =
+{
+  {BITSET, PAL_PORT_BIT(GPIOD_LED6)},
+  {SLEEP,    200},
+  {BITCLEAR,   PAL_PORT_BIT(GPIOD_LED6)},
+  {SLEEP,    800},
+  {GOTO,     0}
 };
 
 /*
@@ -127,6 +145,8 @@ public:
 static TesterThread tester;
 static SequencerThread blinker1(LED3_sequence);
 static SequencerThread blinker2(LED4_sequence);
+static SequencerThread blinker3(LED5_sequence);
+static SequencerThread blinker4(LED6_sequence);
 
 /*
  * Application entry point.
@@ -145,8 +165,11 @@ int main(void) {
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
+   * PA2(TX) and PA3(RX) are routed to USART2.
    */
   sdStart(&SD2, NULL);
+  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 
   /*
    * Starts several instances of the SequencerThread class, each one operating
@@ -154,6 +177,8 @@ int main(void) {
    */
   blinker1.start(NORMALPRIO + 10);
   blinker2.start(NORMALPRIO + 10);
+  blinker3.start(NORMALPRIO + 10);
+  blinker4.start(NORMALPRIO + 10);
 
   /*
    * Serves timer events.

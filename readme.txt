@@ -90,6 +90,9 @@
   (backported to 2.4.3).
 - FIX: Fixed wrong SPI path in platform_f105_f107.mk (bug 3598151).
 - FIX: Fixed PHY powerdown issues not fixed (bug 3596911).
+- NEW: Added new C++ demo for the STM32F4-Discovery.
+- NEW: Updated C++ wrapper with a much more logical classes structure.
+       TODO: Opdate older C++ demos.
 - NEW: ADC driver implementation for the STM32F3xx, the driver supports also
   the dual-ADC mode allowing for a very high combined bandwidth.
 - NEW: Added zero-copy capability to the STM32 MAC driver (experimental and
