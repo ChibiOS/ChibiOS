@@ -106,7 +106,7 @@ namespace chibios_rt {
     /**
      * @brief   Embedded @p VirtualTimer structure.
      */
-    struct ::VirtualTimer timer_ref;
+    ::VirtualTimer timer_ref;
 
     /**
      * @brief   Enables a virtual timer.
@@ -720,7 +720,7 @@ namespace chibios_rt {
     /**
      * @brief   Embedded @p ::Semaphore structure.
      */
-    struct ::Semaphore sem;
+    ::Semaphore sem;
 
     /**
      * @brief   Semaphore constructor.
@@ -906,7 +906,7 @@ namespace chibios_rt {
     /**
      * @brief   Embedded @p ::Mutex structure.
      */
-    struct ::Mutex mutex;
+    ::Mutex mutex;
 
     /**
      * @brief   Mutex object constructor.
@@ -983,7 +983,7 @@ namespace chibios_rt {
     /**
      * @brief   Embedded @p ::CondVar structure.
      */
-    struct ::CondVar condvar;
+    ::CondVar condvar;
 
     /**
      * @brief   CondVar object constructor.
@@ -1192,6 +1192,229 @@ namespace chibios_rt {
     void broadcastFlagsI(flagsmask_t flags);
   };
 #endif /* CH_USE_EVENTS */
+
+#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::Mailbox                                                    *
+   *------------------------------------------------------------------------*/
+  class Mailbox {
+  public:
+    /**
+     * @brief   Embedded @p ::Mailbox structure.
+     */
+    ::Mailbox mb;
+
+    /**
+     * @brief   Mailbox constructor.
+     * @details The embedded @p ::Mailbox structure is initialized.
+     *
+     * @param[in] buf           pointer to the messages buffer as an array of
+     *                          @p msg_t
+     * @param[in] n             number of elements in the buffer array
+     *
+     * @api
+     */
+    Mailbox(msg_t *buf, cnt_t n);
+
+    /**
+     * @brief   Resets a Mailbox object.
+     * @details All the waiting threads are resumed with status @p RDY_RESET and
+     *          the queued messages are lost.
+     *
+     * @api
+     */
+    void reset(void);
+
+    /**
+     * @brief   Posts a message into a mailbox.
+     * @details The invoking thread waits until a empty slot in the mailbox becomes
+     *          available or the specified time runs out.
+     *
+     * @param[in] msg       the message to be posted on the mailbox
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              The operation status.
+     * @retval RDY_OK       if a message has been correctly posted.
+     * @retval RDY_RESET    if the mailbox has been reset while waiting.
+     * @retval RDY_TIMEOUT  if the operation has timed out.
+     *
+     * @api
+     */
+    msg_t post(msg_t msg, systime_t time);
+
+    /**
+     * @brief   Posts a message into a mailbox.
+     * @details The invoking thread waits until a empty slot in the mailbox becomes
+     *          available or the specified time runs out.
+     *
+     * @param[in] msg       the message to be posted on the mailbox
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              The operation status.
+     * @retval RDY_OK       if a message has been correctly posted.
+     * @retval RDY_RESET    if the mailbox has been reset while waiting.
+     * @retval RDY_TIMEOUT  if the operation has timed out.
+     *
+     * @sclass
+     */
+    msg_t postS(msg_t msg, systime_t time);
+
+    /**
+     * @brief   Posts a message into a mailbox.
+     * @details This variant is non-blocking, the function returns a timeout
+     *          condition if the queue is full.
+     *
+     * @param[in] msg       the message to be posted on the mailbox
+     * @return              The operation status.
+     * @retval RDY_OK       if a message has been correctly posted.
+     * @retval RDY_TIMEOUT  if the mailbox is full and the message cannot be
+     *                      posted.
+     *
+     * @iclass
+     */
+    msg_t postI(msg_t msg);
+
+    /**
+     * @brief   Posts an high priority message into a mailbox.
+     * @details The invoking thread waits until a empty slot in the mailbox becomes
+     *          available or the specified time runs out.
+     *
+     * @param[in] msg       the message to be posted on the mailbox
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              The operation status.
+     * @retval RDY_OK       if a message has been correctly posted.
+     * @retval RDY_RESET    if the mailbox has been reset while waiting.
+     * @retval RDY_TIMEOUT  if the operation has timed out.
+     *
+     * @api
+     */
+    msg_t postAhead(msg_t msg, systime_t time);
+
+    /**
+     * @brief   Posts an high priority message into a mailbox.
+     * @details The invoking thread waits until a empty slot in the mailbox becomes
+     *          available or the specified time runs out.
+     *
+     * @param[in] msg       the message to be posted on the mailbox
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              The operation status.
+     * @retval RDY_OK       if a message has been correctly posted.
+     * @retval RDY_RESET    if the mailbox has been reset while waiting.
+     * @retval RDY_TIMEOUT  if the operation has timed out.
+     *
+     * @sclass
+     */
+    msg_t postAheadS(msg_t msg, systime_t time);
+
+    /**
+     * @brief   Posts an high priority message into a mailbox.
+     * @details This variant is non-blocking, the function returns a timeout
+     *          condition if the queue is full.
+     *
+     * @param[in] msg       the message to be posted on the mailbox
+     * @return              The operation status.
+     * @retval RDY_OK       if a message has been correctly posted.
+     * @retval RDY_TIMEOUT  if the mailbox is full and the message cannot be
+     *                      posted.
+     *
+     * @iclass
+     */
+    msg_t postAheadI(msg_t msg);
+
+    /**
+     * @brief   Retrieves a message from a mailbox.
+     * @details The invoking thread waits until a message is posted in the mailbox
+     *          or the specified time runs out.
+     *
+     * @param[out] msgp     pointer to a message variable for the received message
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              The operation status.
+     * @retval RDY_OK       if a message has been correctly fetched.
+     * @retval RDY_RESET    if the mailbox has been reset while waiting.
+     * @retval RDY_TIMEOUT  if the operation has timed out.
+     *
+     * @api
+     */
+    msg_t fetch(msg_t *msgp, systime_t time);
+
+    /**
+     * @brief   Retrieves a message from a mailbox.
+     * @details The invoking thread waits until a message is posted in the mailbox
+     *          or the specified time runs out.
+     *
+     * @param[out] msgp     pointer to a message variable for the received message
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              The operation status.
+     * @retval RDY_OK       if a message has been correctly fetched.
+     * @retval RDY_RESET    if the mailbox has been reset while waiting.
+     * @retval RDY_TIMEOUT  if the operation has timed out.
+     *
+     * @sclass
+     */
+    msg_t fetchS(msg_t *msgp, systime_t time);
+
+    /**
+     * @brief   Retrieves a message from a mailbox.
+     * @details This variant is non-blocking, the function returns a timeout
+     *          condition if the queue is empty.
+     *
+     * @param[out] msgp     pointer to a message variable for the received message
+     * @return              The operation status.
+     * @retval RDY_OK       if a message has been correctly fetched.
+     * @retval RDY_TIMEOUT  if the mailbox is empty and a message cannot be
+     *                      fetched.
+     *
+     * @iclass
+     */
+    msg_t fetchI(msg_t *msgp);
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::MailboxBuffer                                              *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Template class encapsulating a mailbox with its messages buffer.
+   *
+   * @param N                   size of the mailbox
+   */
+  template <int N>
+  class MailboxBuffer : public Mailbox {
+  private:
+    msg_t   mb_buf[N];
+
+  public:
+    /**
+     * @brief   BufferMailbox constructor.
+     *
+     * @api
+     */
+    MailboxBuffer(void) : Mailbox(mb_buf,
+                                  (cnt_t)(sizeof mb_buf / sizeof (msg_t))) {
+    }
+  };
+#endif /* CH_USE_MAILBOXES */
 }
 
 #endif /* _CH_HPP_ */

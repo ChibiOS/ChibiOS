@@ -510,6 +510,67 @@ namespace chibios_rt {
     chEvtBroadcastFlagsI(&ev_source, flags);
   }
 #endif /* CH_USE_EVENTS */
+
+#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::Mailbox                                                    *
+   *------------------------------------------------------------------------*/
+  Mailbox::Mailbox(msg_t *buf, cnt_t n) {
+
+    chMBInit(&mb, buf, n);
+  }
+
+  void Mailbox::reset(void) {
+
+    chMBReset(&mb);
+  }
+
+  msg_t Mailbox::post(msg_t msg, systime_t time) {
+
+    return chMBPost(&mb, msg, time);
+  }
+
+  msg_t Mailbox::postS(msg_t msg, systime_t time) {
+
+    return chMBPostS(&mb, msg, time);
+  }
+
+  msg_t Mailbox::postI(msg_t msg) {
+
+    return chMBPostI(&mb, msg);
+  }
+
+  msg_t Mailbox::postAhead(msg_t msg, systime_t time) {
+
+    return chMBPostAhead(&mb, msg, time);
+  }
+
+  msg_t Mailbox::postAheadS(msg_t msg, systime_t time) {
+
+    return chMBPostAheadS(&mb, msg, time);
+  }
+
+  msg_t Mailbox::postAheadI(msg_t msg) {
+
+    return chMBPostAheadI(&mb, msg);
+  }
+
+  msg_t Mailbox::fetch(msg_t *msgp, systime_t time) {
+
+    return chMBFetch(&mb, msgp, time);
+  }
+
+  msg_t Mailbox::fetchS(msg_t *msgp, systime_t time) {
+
+    return chMBFetchS(&mb, msgp, time);
+  }
+
+  msg_t Mailbox::fetchI(msg_t *msgp) {
+
+    return chMBFetchI(&mb, msgp);
+  }
+
+#endif /* CH_USE_MAILBOXES */
 }
 
 /** @} */
