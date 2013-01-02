@@ -569,8 +569,42 @@ namespace chibios_rt {
 
     return chMBFetchI(&mb, msgp);
   }
-
 #endif /* CH_USE_MAILBOXES */
+
+#if CH_USE_MEMPOOLS
+  /*------------------------------------------------------------------------*
+   * chibios_rt::MemoryPool                                                 *
+   *------------------------------------------------------------------------*/
+  MemoryPool::MemoryPool(size_t size, memgetfunc_t provider) {
+
+    chPoolInit(&pool, size, provider);
+  }
+
+  void MemoryPool::loadArray(void *p, size_t n) {
+
+    chPoolLoadArray(&pool, p, n);
+  }
+
+  void *MemoryPool::allocI(void) {
+
+    return chPoolAlloc(&pool);
+  }
+
+  void *MemoryPool::alloc(void) {
+
+    return chPoolAllocI(&pool);
+  }
+
+  void MemoryPool::free(void *objp) {
+
+    chPoolFree(&pool, objp);
+  }
+
+  void MemoryPool::freeI(void *objp) {
+
+    chPoolFreeI(&pool, objp);
+  }
+#endif /* CH_USE_MEMPOOLS */
 }
 
 /** @} */

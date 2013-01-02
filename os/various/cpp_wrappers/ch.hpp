@@ -1197,6 +1197,9 @@ namespace chibios_rt {
   /*------------------------------------------------------------------------*
    * chibios_rt::Mailbox                                                    *
    *------------------------------------------------------------------------*/
+  /**
+   * @brief   Class encapsulating a mailbox.
+   */
   class Mailbox {
   public:
     /**
@@ -1395,7 +1398,7 @@ namespace chibios_rt {
    * chibios_rt::MailboxBuffer                                              *
    *------------------------------------------------------------------------*/
   /**
-   * @brief   Template class encapsulating a mailbox with its messages buffer.
+   * @brief   Template class encapsulating a mailbox and its messages buffer.
    *
    * @param N                   size of the mailbox
    */
@@ -1415,6 +1418,112 @@ namespace chibios_rt {
     }
   };
 #endif /* CH_USE_MAILBOXES */
+
+#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::MemoryPool                                                 *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Class encapsulating a mailbox.
+   */
+  class MemoryPool {
+  public:
+    /**
+     * @brief   Embedded @p ::MemoryPool structure.
+     */
+    ::MemoryPool pool;
+
+    /**
+     * @brief   MemoryPool constructor.
+     *
+     * @api
+     */
+    MemoryPool(size_t size, memgetfunc_t provider);
+
+    /**
+     * @brief   Loads a memory pool with an array of static objects.
+     * @pre     The memory pool must be already been initialized.
+     * @pre     The array elements must be of the right size for the specified
+     *          memory pool.
+     * @post    The memory pool contains the elements of the input array.
+     *
+     * @param[in] p         pointer to the array first element
+     * @param[in] n         number of elements in the array
+     *
+     * @api
+     */
+    void loadArray(void *p, size_t n);
+
+    /**
+     * @brief   Allocates an object from a memory pool.
+     * @pre     The memory pool must be already been initialized.
+     *
+     * @return              The pointer to the allocated object.
+     * @retval NULL         if pool is empty.
+     *
+     * @iclass
+     */
+    void *allocI(void);
+
+    /**
+     * @brief   Allocates an object from a memory pool.
+     * @pre     The memory pool must be already been initialized.
+     *
+     * @return              The pointer to the allocated object.
+     * @retval NULL         if pool is empty.
+     *
+     * @api
+     */
+    void *alloc(void);
+
+    /**
+     * @brief   Releases an object into a memory pool.
+     * @pre     The memory pool must be already been initialized.
+     * @pre     The freed object must be of the right size for the specified
+     *          memory pool.
+     * @pre     The object must be properly aligned to contain a pointer to void.
+     *
+     * @param[in] objp      the pointer to the object to be released
+     *
+     * @iclass
+     */
+    void free(void *objp);
+
+    /**
+     * @brief   Adds an object to a memory pool.
+     * @pre     The memory pool must be already been initialized.
+     * @pre     The added object must be of the right size for the specified
+     *          memory pool.
+     * @pre     The added object must be memory aligned to the size of
+     *          @p stkalign_t type.
+     * @note    This function is just an alias for @p chPoolFree() and has been
+     *          added for clarity.
+     *
+     * @param[in] objp      the pointer to the object to be added
+     *
+     * @iclass
+     */
+    void freeI(void *objp);
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::MemoryPool                                                 *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Template class encapsulating a mailbox and its elements.
+   */
+  template<class T, size_t N>
+  class MemoryPoolBuffer : MemoryPool {
+  private:
+    T pool_buf[N];
+
+  public:
+    MemoryPoolBuffer(void) : MemoryPool(sizeof (T), NULL) {
+
+      loadArray(pool_buf, N);
+    }
+  };
+#endif /* CH_USE_MEMPOOLS */
 }
 
 #endif /* _CH_HPP_ */
