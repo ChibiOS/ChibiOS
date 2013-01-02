@@ -167,6 +167,18 @@ namespace chibios_rt {
   }
 #endif /* CH_USE_MESSAGES */
 
+#if CH_USE_EVENTS
+    void ThreadReference::signalEvents(eventmask_t mask) {
+
+      chEvtSignal(thread_ref, mask);
+    }
+
+    void ThreadReference::signalEventsI(eventmask_t mask) {
+
+      chEvtSignalI(thread_ref, mask);
+    }
+#endif /* CH_USE_EVENTS */
+
 #if CH_USE_DYNAMIC
 #endif /* CH_USE_DYNAMIC */
 
@@ -182,14 +194,19 @@ namespace chibios_rt {
     return ((BaseThread *)arg)->Main();
   }
 
-  void BaseThread::exit(msg_t msg) {
+  void BaseThread::setName(const char *tname) {
 
-    chThdExit(msg);
+    chRegSetThreadName(tname);
   }
 
   tprio_t BaseThread::setPriority(tprio_t newprio) {
 
     return chThdSetPriority(newprio);
+  }
+
+  void BaseThread::exit(msg_t msg) {
+
+    chThdExit(msg);
   }
 
   bool BaseThread::shouldTerminate(void) {
@@ -218,6 +235,53 @@ namespace chibios_rt {
     chMsgRelease(trp->thread_ref, msg);
   }
 #endif /* CH_USE_MESSAGES */
+
+#if CH_USE_EVENTS
+  eventmask_t BaseThread::getAndClearEvents(eventmask_t mask) {
+
+    return chEvtGetAndClearEvents(mask);
+  }
+
+  eventmask_t BaseThread::addEvents(eventmask_t mask) {
+
+    return chEvtAddEvents(mask);
+  }
+
+  eventmask_t BaseThread::waitOneEvent(eventmask_t ewmask) {
+
+    return chEvtWaitOne(ewmask);
+  }
+
+  eventmask_t BaseThread::waitAnyEvent(eventmask_t ewmask) {
+
+    return chEvtWaitAny(ewmask);
+  }
+
+  eventmask_t BaseThread::waitAllEvents(eventmask_t ewmask) {
+
+    return chEvtWaitAll(ewmask);
+  }
+
+#if CH_USE_EVENTS_TIMEOUT
+  eventmask_t BaseThread::waitOneEventTimeout(eventmask_t ewmask,
+                                              systime_t time) {
+
+    return chEvtWaitOneTimeout(ewmask, time);
+  }
+
+  eventmask_t BaseThread::waitAnyEventTimeout(eventmask_t ewmask,
+                                              systime_t time) {
+
+    return chEvtWaitAnyTimeout(ewmask, time);
+  }
+
+  eventmask_t BaseThread::waitAllEventsTimeout(eventmask_t ewmask,
+                                               systime_t time) {
+
+    return chEvtWaitAllTimeout(ewmask, time);
+  }
+#endif /* CH_USE_EVENTS_TIMEOUT */
+#endif /* CH_USE_EVENTS */
 
 #if CH_USE_SEMAPHORES
   /*------------------------------------------------------------------------*
@@ -320,89 +384,55 @@ namespace chibios_rt {
 
 #if CH_USE_EVENTS
   /*------------------------------------------------------------------------*
+   * chibios_rt::EventListener                                              *
+   *------------------------------------------------------------------------*/
+  flagsmask_t EventListener::getAndClearFlags(void) {
+
+    return chEvtGetAndClearFlags(&ev_listener);
+  }
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::EventSource                                                *
+   *------------------------------------------------------------------------*/
+  EventSource::EventSource(void) {
+
+    ev_source.es_next = (::EventListener *)(void *)&ev_source;
+  }
+
+  void EventSource::registerOne(chibios_rt::EventListener *elp,
+                                eventid_t eid) {
+
+    chEvtRegister(&ev_source, &elp->ev_listener, eid);
+  }
+
+  void EventSource::registerMask(chibios_rt::EventListener *elp,
+                                 eventmask_t emask) {
+
+    chEvtRegisterMask(&ev_source, &elp->ev_listener, emask);
+  }
+
+  void EventSource::unregister(chibios_rt::EventListener *elp) {
+
+    chEvtUnregister(&ev_source, &elp->ev_listener);
+  }
+
+  void EventSource::broadcastFlags(flagsmask_t flags) {
+
+    chEvtBroadcastFlags(&ev_source, flags);
+  }
+
+  void EventSource::broadcastFlagsI(flagsmask_t flags) {
+
+    chEvtBroadcastFlagsI(&ev_source, flags);
+  }
+
+  /*------------------------------------------------------------------------*
    * chibios_rt::Event                                                      *
    *------------------------------------------------------------------------*/
-  Event::Event(void) {
-
-    chEvtInit(&event);
-  }
-
-  void Event::registerOne(EventListener *elp, eventid_t eid) {
-
-    chEvtRegister(&event,elp, eid);
-  }
-
-  void Event::registerMask(EventListener *elp, eventmask_t emask) {
-
-    chEvtRegisterMask(&event,elp, emask);
-  }
-
-  void Event::unregister(EventListener *elp) {
-
-    chEvtUnregister(&event, elp);
-  }
-
-  void Event::broadcastFlags(flagsmask_t flags) {
-
-    chEvtBroadcastFlags(&event, flags);
-  }
-
-  void Event::broadcastFlagsI(flagsmask_t flags) {
-
-    chEvtBroadcastFlagsI(&event, flags);
-  }
-
-  flagsmask_t Event::getAndClearFlags(EventListener *elp) {
-
-    return chEvtGetAndClearFlags(elp);
-  }
-
-  eventmask_t Event::getAndClearEvents(eventmask_t mask) {
-
-    return chEvtGetAndClearEvents(mask);
-  }
-
-  eventmask_t Event::addEvents(eventmask_t mask) {
-
-    return chEvtAddEvents(mask);
-  }
-
   void Event::dispatch(const evhandler_t handlers[], eventmask_t mask) {
 
     chEvtDispatch(handlers, mask);
   }
-
-  eventmask_t Event::waitOne(eventmask_t ewmask) {
-
-    return chEvtWaitOne(ewmask);
-  }
-
-  eventmask_t Event::waitAny(eventmask_t ewmask) {
-
-    return chEvtWaitAny(ewmask);
-  }
-
-  eventmask_t Event::waitAll(eventmask_t ewmask) {
-
-    return chEvtWaitAll(ewmask);
-  }
-
-#if CH_USE_EVENTS_TIMEOUT
-  eventmask_t Event::waitOneTimeout(eventmask_t ewmask, systime_t time) {
-
-    return chEvtWaitOneTimeout(ewmask, time);
-  }
-
-  eventmask_t Event::waitAnyTimeout(eventmask_t ewmask, systime_t time) {
-
-    return chEvtWaitAnyTimeout(ewmask, time);
-  }
-
-  eventmask_t Event::waitAllTimeout(eventmask_t ewmask, systime_t time) {
-
-    return chEvtWaitAllTimeout(ewmask, time);
-  }
-#endif /* CH_USE_EVENTS_TIMEOUT */
 #endif /* CH_USE_EVENTS */
 }
 

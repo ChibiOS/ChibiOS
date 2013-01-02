@@ -129,7 +129,9 @@ namespace chibios_rt {
    *------------------------------------------------------------------------*/
   /**
    * @brief     Thread reference class.
-   * @details   This class encapsulates a reference to a system thread.
+   * @details   This class encapsulates a reference to a system thread. All
+   *            operations involving another thread are performed through
+   *            an object of this type.
    */
   class ThreadReference {
   public:
@@ -229,7 +231,27 @@ namespace chibios_rt {
     bool isPendingMessage(void);
 #endif /* CH_USE_MESSAGES */
 
-#if CH_USE_DYNAMIC
+#if CH_USE_EVENTS || defined(__DOXYGEN__)
+    /**
+     * @brief   Adds a set of event flags directly to specified @p Thread.
+     *
+     * @param[in] mask      the event flags set to be ORed
+     *
+     * @api
+     */
+    void signalEvents(eventmask_t mask);
+
+    /**
+     * @brief   Adds a set of event flags directly to specified @p Thread.
+     *
+     * @param[in] mask      the event flags set to be ORed
+     *
+     * @iclass
+     */
+    void signalEventsI(eventmask_t mask);
+#endif /* CH_USE_EVENTS */
+
+#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
 #endif /* CH_USE_DYNAMIC */
   };
 
@@ -264,39 +286,29 @@ namespace chibios_rt {
     /**
      * @brief   Creates and starts a system thread.
      *
-     * @param[in] tname         the name to be assigned to the thread
      * @param[in] prio          thread priority
-     * @return                  Error flag.
-     * @retval false            if the operation failed.
-     * @retval true             if the operation succeeded.
+     * @return                  A reference to the created thread with
+     *                          reference counter set to one.
      *
      * @api
      */
-    virtual bool start(const char *tname, tprio_t prio){
-      (void) tname;
-      (void) prio;
-      return false;
+    virtual ThreadReference start(tprio_t prio) {
+
+      (void)prio;
+
+      return *this;
     };
 
     /**
-     * @brief   Thread exit.
+     * @brief   Sets the current thread name.
+     * @pre     This function only stores the pointer to the name if the option
+     *          @p CH_USE_REGISTRY is enabled else no action is performed.
      *
-     * @param[in] msg           the exit message
-     *
-     * @api
-     */
-    static void exit(msg_t msg);
-
-#if CH_USE_WAITEXIT || defined(__DOXYGEN__)
-    /**
-     * @brief   Synchronization on Thread exit.
-     *
-     * @return                  The exit message from the thread.
+     * @param[in] p         thread name as a zero terminated string
      *
      * @api
      */
-    msg_t wait(void);
-#endif /* CH_USE_WAITEXIT */
+    static void setName(const char *tname);
 
     /**
      * @brief   Changes the current thread priority.
@@ -309,13 +321,13 @@ namespace chibios_rt {
     static tprio_t setPriority(tprio_t newprio);
 
     /**
-     * @brief   Requests thread termination.
-     * @details A termination flag is added to the thread, it is thread
-     *          responsibility to detect it and exit.
+     * @brief   Thread exit.
+     *
+     * @param[in] msg           the exit message
      *
      * @api
      */
-    void requestTerminate(void);
+    static void exit(msg_t msg);
 
     /**
      * @brief   Determines if there is a pending termination request.
@@ -326,7 +338,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    bool shouldTerminate(void);
+    static bool shouldTerminate(void);
 
     /**
      * @brief   Suspends the thread execution for the specified number of
@@ -347,7 +359,7 @@ namespace chibios_rt {
      */
     static void sleepUntil(systime_t time);
 
-#if CH_USE_MESSAGES
+#if CH_USE_MESSAGES || defined(__DOXYGEN__)
     /**
      * @brief   Waits for a message.
      *
@@ -377,6 +389,135 @@ namespace chibios_rt {
      */
     static void releaseMessage(ThreadReference* trp, msg_t msg);
 #endif /* CH_USE_MESSAGES */
+
+#if CH_USE_EVENTS || defined(__DOXYGEN__)
+    /**
+     * @brief   Clears the pending events specified in the mask.
+     *
+     * @param[in] mask      the events to be cleared
+     * @return              The pending events that were cleared.
+     *
+     * @api
+     */
+    static eventmask_t getAndClearEvents(eventmask_t mask);
+
+    /**
+     * @brief   Adds (OR) a set of event flags on the current thread, this is
+     *          @b much faster than using @p chEvtBroadcast() or @p chEvtSignal().
+     *
+     * @param[in] mask      the event flags to be added
+     * @return              The current pending events mask.
+     *
+     * @api
+     */
+    static eventmask_t addEvents(eventmask_t mask);
+
+    /**
+     * @brief   Waits for a single event.
+     * @details A pending event among those specified in @p ewmask is selected,
+     *          cleared and its mask returned.
+     * @note    One and only one event is served in the function, the one with
+     *          the lowest event id. The function is meant to be invoked into
+     *          a loop in order to serve all the pending events.<br>
+     *          This means that Event Listeners with a lower event identifier
+     *          have an higher priority.
+     *
+     * @param[in] ewmask        mask of the events that the function should
+     *                          wait for, @p ALL_EVENTS enables all the events
+     * @return                  The mask of the lowest id served and cleared
+     *                          event.
+     *
+     * @api
+     */
+    static eventmask_t waitOneEvent(eventmask_t ewmask);
+
+    /**
+     * @brief   Waits for any of the specified events.
+     * @details The function waits for any event among those specified in
+     *          @p ewmask to become pending then the events are cleared and
+     *          returned.
+     *
+     * @param[in] ewmask        mask of the events that the function should
+     *                          wait for, @p ALL_EVENTS enables all the events
+     * @return                  The mask of the served and cleared events.
+     *
+     * @api
+     */
+    static eventmask_t waitAnyEvent(eventmask_t ewmask);
+
+    /**
+     * @brief   Waits for all the specified event flags then clears them.
+     * @details The function waits for all the events specified in @p ewmask
+     *          to become pending then the events are cleared and returned.
+     *
+     * @param[in] ewmask        mask of the event ids that the function should
+     *                          wait for
+     * @return                  The mask of the served and cleared events.
+     *
+     * @api
+     */
+    static eventmask_t waitAllEvents(eventmask_t ewmask);
+
+#if CH_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
+    /**
+     * @brief   Waits for a single event.
+     * @details A pending event among those specified in @p ewmask is selected,
+     *          cleared and its mask returned.
+     * @note    One and only one event is served in the function, the one with
+     *          the lowest event id. The function is meant to be invoked into
+     *          a loop in order to serve all the pending events.<br>
+     *          This means that Event Listeners with a lower event identifier
+     *          have an higher priority.
+     *
+     * @param[in] ewmask        mask of the events that the function should
+     *                          wait for, @p ALL_EVENTS enables all the events
+     *
+     * @param[in] time          the number of ticks before the operation timouts
+     * @return                  The mask of the lowest id served and cleared
+     *                          event.
+     * @retval 0                if the specified timeout expired.
+     *
+     * @api
+     */
+    static eventmask_t waitOneEventTimeout(eventmask_t ewmask,
+                                           systime_t time);
+
+    /**
+     * @brief   Waits for any of the specified events.
+     * @details The function waits for any event among those specified in
+     *          @p ewmask to become pending then the events are cleared and
+     *          returned.
+     *
+     * @param[in] ewmask        mask of the events that the function should
+     *                          wait for, @p ALL_EVENTS enables all the events
+     * @param[in] time          the number of ticks before the operation
+     *                          timouts
+     * @return                  The mask of the served and cleared events.
+     * @retval 0                if the specified timeout expired.
+     *
+     * @api
+     */
+    static eventmask_t waitAnyEventTimeout(eventmask_t ewmask,
+                                           systime_t time);
+
+    /**
+     * @brief   Waits for all the specified event flags then clears them.
+     * @details The function waits for all the events specified in @p ewmask
+     *          to become pending then the events are cleared and returned.
+     *
+     * @param[in] ewmask        mask of the event ids that the function should
+     *                          wait for
+     * @param[in] time          the number of ticks before the operation
+     *                          timouts
+     * @return                  The mask of the served and cleared events.
+     * @retval 0                if the specified timeout expired.
+     *
+     * @api
+     */
+    static eventmask_t waitAllEventsTimeout(eventmask_t ewmask,
+                                            systime_t time);
+#endif /* CH_USE_EVENTS_TIMEOUT */
+#endif /* CH_USE_EVENTS */
   };
 
   /*------------------------------------------------------------------------*
@@ -408,24 +549,24 @@ namespace chibios_rt {
     /**
      * @brief   Creates and starts a system thread.
      *
-     * @param[in] tname         the name to be assigned to the thread
      * @param[in] prio          thread priority
-     * @return                  Error flag.
-     * @retval false            if the operation succeeded.
-     * @retval true             if the operation failed.
+     * @return                  A reference to the created thread with
+     *                          reference counter set to one.
      *
      * @api
      */
-    bool start(const char *tname, tprio_t prio) {
-      (void)tname;
+    ThreadReference start(tprio_t prio) {
       msg_t _thd_start(void *arg);
 
       thread_ref = chThdCreateStatic(wa, sizeof(wa), prio, _thd_start, this);
-      return false;
+      return *this;
     }
   };
 
-#if CH_USE_SEMAPHORES
+#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::Semaphore                                                  *
+   *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating a semaphore.
    */
@@ -489,7 +630,7 @@ namespace chibios_rt {
      */
     void signal(void);
 
-#if CH_USE_SEMSW
+#if CH_USE_SEMSW || defined(__DOXYGEN__)
     /**
      * @brief   Atomic signal and wait operations.
      *
@@ -505,7 +646,10 @@ namespace chibios_rt {
   };
 #endif /* CH_USE_SEMAPHORES */
 
-#if CH_USE_MUTEXES
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::Mutex                                                      *
+   *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating a mutex.
    */
@@ -565,7 +709,10 @@ namespace chibios_rt {
     static void unlockAll(void);
   };
 
-#if CH_USE_CONDVARS
+#if CH_USE_CONDVARS || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::CondVar                                                    *
+   *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating a conditional variable.
    */
@@ -613,7 +760,7 @@ namespace chibios_rt {
      */
     msg_t wait(void);
 
-#if CH_USE_CONDVARS_TIMEOUT
+#if CH_USE_CONDVARS_TIMEOUT || defined(__DOXYGEN__)
     /**
      * @brief   Waits on the CondVar while releasing the controlling mutex.
      *
@@ -634,47 +781,75 @@ namespace chibios_rt {
 #endif /* CH_USE_CONDVARS */
 #endif /* CH_USE_MUTEXES */
 
-#if CH_USE_EVENTS
+#if CH_USE_EVENTS || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::EventListener                                              *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Class encapsulating an event listener.
+   */
+  class EventListener {
+  public:
+    /**
+     * @brief   Embedded @p ::EventListener structure.
+     */
+    struct ::EventListener ev_listener;
+
+    /**
+     * @brief   Returns the pending flags from the listener and clears them.
+     *
+     * @param[in] flags         the events to be cleared
+     * @return                  The flags added to the listener by the
+     *                          associated event source.
+     *
+     * @api
+     */
+    flagsmask_t getAndClearFlags(void);
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::EventSource                                                *
+   *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating an event source.
    */
-  class Event {
+  class EventSource {
   public:
     /**
      * @brief   Embedded @p ::EventSource structure.
      */
-    struct ::EventSource event;
+    struct ::EventSource ev_source;
 
     /**
-     * @brief   Event constructor.
+     * @brief   EventSource object constructor.
      * @details The embedded @p ::EventSource structure is initialized.
      *
      * @api
      */
-    Event(void);
+    EventSource(void);
 
     /**
      * @brief   Registers a listener on the event source.
      *
-     * @param[in] elp           pointer to the @p EventListener structure
+     * @param[in] elp           pointer to the @p EventListener object
      * @param[in] eid           numeric identifier assigned to the Event
      *                          Listener
      *
      * @api
      */
-    void registerOne(EventListener *elp, eventid_t eid);
+    void registerOne(chibios_rt::EventListener *elp, eventid_t eid);
 
     /**
      * @brief   Registers an Event Listener on an Event Source.
      * @note    Multiple Event Listeners can specify the same bits to be added.
      *
-     * @param[in] elp           pointer to the @p EventListener structure
+     * @param[in] elp           pointer to the @p EventListener object
      * @param[in] emask         the mask of event flags to be pended to the
      *                          thread when the event source is broadcasted
      *
      * @api
      */
-    void registerMask(EventListener *elp, eventmask_t emask);
+    void registerMask(chibios_rt::EventListener *elp, eventmask_t emask);
 
     /**
      * @brief   Unregisters a listener.
@@ -685,11 +860,12 @@ namespace chibios_rt {
      *
      * @api
      */
-    void unregister(EventListener *elp);
+    void unregister(chibios_rt::EventListener *elp);
 
     /**
-     * @brief   Broadcasts an event.
-     * @details All the listeners registered on the event source are signaled.
+     * @brief   Broadcasts on an event source.
+     * @details All the listeners registered on the event source are signaled
+     *          and the flags are added to the listener's flags mask.
      *
      * @param[in] flags         the flags set to be added to the listener
      *                          flags mask
@@ -699,48 +875,23 @@ namespace chibios_rt {
     void broadcastFlags(flagsmask_t flags);
 
     /**
-     * @brief   Broadcasts an event.
-     * @details All the listeners registered on the event source are signaled.
+     * @brief   Broadcasts on an event source.
+     * @details All the listeners registered on the event source are signaled
+     *          and the flags are added to the listener's flags mask.
      *
      * @param[in] flags         the flags set to be added to the listener
      *                          flags mask
      *
-     * @api
+     * @iclass
      */
     void broadcastFlagsI(flagsmask_t flags);
+  };
 
-    /**
-     * @brief   Clears specified events from the pending events mask.
-     *
-     * @param[in] elp           pointer to the @p EventListener structure
-     * @param[in] flags         the events to be cleared
-     * @return                  The flags added to the listener by the
-     *                          associated event source.
-     *
-     * @api
-     */
-    static flagsmask_t getAndClearFlags(EventListener *elp);
-
-    /**
-     * @brief   Clears specified events from the pending events mask.
-     *
-     * @param[in] mask          the events to be cleared
-     * @return                  The pending events that were cleared.
-     *
-     * @api
-     */
-    static eventmask_t getAndClearEvents(eventmask_t mask);
-
-    /**
-     * @brief   Makes an events mask pending in the current thread.
-     * @details This functon is @b much faster than using @p Broadcast().
-     *
-     * @param[in] mask          the events to be pended
-     * @return                  The current pending events mask.
-     *
-     * @api
-     */
-    static eventmask_t addEvents(eventmask_t mask);
+  /**
+   * @brief   Class encapsulating an event-related functionalities.
+   */
+  class Event {
+  public:
 
     /**
      * @brief   Invokes the event handlers associated with a mask.
@@ -753,109 +904,6 @@ namespace chibios_rt {
      * @api
      */
     static void dispatch(const evhandler_t handlers[], eventmask_t mask);
-
-    /**
-     * @brief   Waits for a single event.
-     * @details A pending event among those specified in @p ewmask is selected,
-     *          cleared and its mask returned.
-     * @note    One and only one event is served in the function, the one with
-     *          the lowest event id. The function is meant to be invoked into
-     *          a loop in order to serve all the pending events.<br>
-     *          This means that Event Listeners with a lower event identifier
-     *          have an higher priority.
-     *
-     * @param[in] ewmask        mask of the events that the function should
-     *                          wait for, @p ALL_EVENTS enables all the events
-     * @return                  The mask of the lowest id served and cleared
-     *                          event.
-     *
-     * @api
-     */
-    static eventmask_t waitOne(eventmask_t ewmask);
-
-    /**
-     * @brief   Waits for any of the specified events.
-     * @details The function waits for any event among those specified in
-     *          @p ewmask to become pending then the events are cleared and
-     *          returned.
-     *
-     * @param[in] ewmask        mask of the events that the function should
-     *                          wait for, @p ALL_EVENTS enables all the events
-     * @return                  The mask of the served and cleared events.
-     *
-     * @api
-     */
-    static eventmask_t waitAny(eventmask_t ewmask);
-
-    /**
-     * @brief   Waits for all the specified event flags then clears them.
-     * @details The function waits for all the events specified in @p ewmask
-     *          to become pending then the events are cleared and returned.
-     *
-     * @param[in] ewmask        mask of the event ids that the function should
-     *                          wait for
-     * @return                  The mask of the served and cleared events.
-     *
-     * @api
-     */
-    static eventmask_t waitAll(eventmask_t ewmask);
-
-#if CH_USE_EVENTS_TIMEOUT
-    /**
-     * @brief   Waits for a single event.
-     * @details A pending event among those specified in @p ewmask is selected,
-     *          cleared and its mask returned.
-     * @note    One and only one event is served in the function, the one with
-     *          the lowest event id. The function is meant to be invoked into
-     *          a loop in order to serve all the pending events.<br>
-     *          This means that Event Listeners with a lower event identifier
-     *          have an higher priority.
-     *
-     * @param[in] ewmask        mask of the events that the function should
-     *                          wait for, @p ALL_EVENTS enables all the events
-     *
-     * @param[in] time          the number of ticks before the operation timouts
-     * @return                  The mask of the lowest id served and cleared
-     *                          event.
-     * @retval 0                if the specified timeout expired.
-     *
-     * @api
-     */
-    static eventmask_t waitOneTimeout(eventmask_t ewmask, systime_t time);
-
-    /**
-     * @brief   Waits for any of the specified events.
-     * @details The function waits for any event among those specified in
-     *          @p ewmask to become pending then the events are cleared and
-     *          returned.
-     *
-     * @param[in] ewmask        mask of the events that the function should
-     *                          wait for, @p ALL_EVENTS enables all the events
-     * @param[in] time          the number of ticks before the operation
-     *                          timouts
-     * @return                  The mask of the served and cleared events.
-     * @retval 0                if the specified timeout expired.
-     *
-     * @api
-     */
-    static eventmask_t waitAnyTimeout(eventmask_t ewmask, systime_t time);
-
-    /**
-     * @brief   Waits for all the specified event flags then clears them.
-     * @details The function waits for all the events specified in @p ewmask
-     *          to become pending then the events are cleared and returned.
-     *
-     * @param[in] ewmask        mask of the event ids that the function should
-     *                          wait for
-     * @param[in] time          the number of ticks before the operation
-     *                          timouts
-     * @return                  The mask of the served and cleared events.
-     * @retval 0                if the specified timeout expired.
-     *
-     * @api
-     */
-    static eventmask_t waitAllTimeout(eventmask_t ewmask, systime_t time);
-#endif /* CH_USE_EVENTS_TIMEOUT */
   };
 #endif /* CH_USE_EVENTS */
 }

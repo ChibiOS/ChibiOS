@@ -142,7 +142,7 @@ eventmask_t chEvtGetAndClearEvents(eventmask_t mask) {
  * @brief   Adds (OR) a set of event flags on the current thread, this is
  *          @b much faster than using @p chEvtBroadcast() or @p chEvtSignal().
  *
- * @param[in] mask      the event flags to be ORed
+ * @param[in] mask      the event flags to be added
  * @return              The current pending events mask.
  *
  * @api
