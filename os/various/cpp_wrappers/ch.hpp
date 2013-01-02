@@ -601,46 +601,145 @@ namespace chibios_rt {
     Semaphore(cnt_t n);
 
     /**
-     * @brief   Resets a semaphore.
+     * @brief   Performs a reset operation on the semaphore.
+     * @post    After invoking this function all the threads waiting on the
+     *          semaphore, if any, are released and the semaphore counter is set
+     *          to the specified, non negative, value.
+     * @note    The released threads can recognize they were waked up by a reset
+     *          rather than a signal because the @p chSemWait() will return
+     *          @p RDY_RESET instead of @p RDY_OK.
      *
-     * @param[in] n             the new semaphore counter value, must be
-     *                          greater or equal to zero
+     * @param[in] n         the new value of the semaphore counter. The value must
+     *                      be non-negative.
      *
      * @api
      */
     void reset(cnt_t n);
 
     /**
-     * @brief   Wait operation on the semaphore.
+     * @brief   Performs a reset operation on the semaphore.
+     * @post    After invoking this function all the threads waiting on the
+     *          semaphore, if any, are released and the semaphore counter is set
+     *          to the specified, non negative, value.
+     * @post    This function does not reschedule so a call to a rescheduling
+     *          function must be performed before unlocking the kernel. Note that
+     *          interrupt handlers always reschedule on exit so an explicit
+     *          reschedule must not be performed in ISRs.
+     * @note    The released threads can recognize they were waked up by a reset
+     *          rather than a signal because the @p chSemWait() will return
+     *          @p RDY_RESET instead of @p RDY_OK.
      *
-     * @retval RDY_OK           if the semaphore was signaled or not taken.
-     * @retval RDY_RESET        if the semaphore was reset.
+     * @param[in] n         the new value of the semaphore counter. The value must
+     *                      be non-negative.
+     *
+     * @iclass
+     */
+    void resetI(cnt_t n);
+
+    /**
+     * @brief   Performs a wait operation on a semaphore.
+     *
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the semaphore.
+     * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+     *                      semaphore has been signaled.
+     * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
      *
      * @api
      */
     msg_t wait(void);
 
     /**
-     * @brief   Wait operation on the semaphore with timeout.
+     * @brief   Performs a wait operation on a semaphore.
      *
-     * @param[in] time          the number of ticks before the operation fails
-     * @retval RDY_OK           if the semaphore was signaled or not taken.
-     * @retval RDY_RESET        if the semaphore was reset.
-     * @retval RDY_TIMEOUT      if the semaphore was not signaled or reset
-     *                          within the specified timeout.
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the semaphore.
+     * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+     *                      semaphore has been signaled.
+     * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+     *
+     * @sclass
+     */
+    msg_t waitS(void);
+
+    /**
+     * @brief   Performs a wait operation on a semaphore with timeout specification.
+     *
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the semaphore.
+     * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+     *                      semaphore has been signaled.
+     * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+     * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
+     *                      the specified timeout.
      *
      * @api
      */
     msg_t waitTimeout(systime_t time);
 
     /**
-     * @brief   Signal operation on the semaphore.
-     * @details The semaphore is signaled, the next thread in queue, if any,
-     *          is awakened.
+     * @brief   Performs a wait operation on a semaphore with timeout specification.
+     *
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the semaphore.
+     * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+     *                      semaphore has been signaled.
+     * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+     * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
+     *                      the specified timeout.
+     *
+     * @sclass
+     */
+    msg_t waitTimeoutS(systime_t time);
+
+    /**
+     * @brief   Performs a signal operation on a semaphore.
      *
      * @api
      */
     void signal(void);
+
+    /**
+     * @brief   Performs a signal operation on a semaphore.
+     * @post    This function does not reschedule so a call to a rescheduling
+     *          function must be performed before unlocking the kernel. Note that
+     *          interrupt handlers always reschedule on exit so an explicit
+     *          reschedule must not be performed in ISRs.
+     *
+     * @iclass
+     */
+    void signalI(void);
+
+    /**
+     * @brief   Adds the specified value to the semaphore counter.
+     * @post    This function does not reschedule so a call to a rescheduling
+     *          function must be performed before unlocking the kernel. Note that
+     *          interrupt handlers always reschedule on exit so an explicit
+     *          reschedule must not be performed in ISRs.
+     *
+     * @param[in] n         value to be added to the semaphore counter. The value
+     *                      must be positive.
+     *
+     * @iclass
+     */
+    void addCounterI(cnt_t n);
+
+    /**
+     * @brief   Returns the semaphore counter value.
+     *
+     * @iclass
+     */
+    cnt_t getCounterI(void);
 
 #if CH_USE_SEMSW || defined(__DOXYGEN__)
     /**

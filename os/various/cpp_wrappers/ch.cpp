@@ -303,9 +303,19 @@ namespace chibios_rt {
     chSemReset(&sem, n);
   }
 
+  void Semaphore::resetI(cnt_t n) {
+
+    chSemResetI(&sem, n);
+  }
+
   msg_t Semaphore::wait(void) {
 
     return chSemWait(&sem);
+  }
+
+  msg_t Semaphore::waitS(void) {
+
+    return chSemWaitS(&sem);
   }
 
   msg_t Semaphore::waitTimeout(systime_t time) {
@@ -313,9 +323,29 @@ namespace chibios_rt {
     return chSemWaitTimeout(&sem, time);
   }
 
+  msg_t Semaphore::waitTimeoutS(systime_t time) {
+
+    return chSemWaitTimeoutS(&sem, time);
+  }
+
   void Semaphore::signal(void) {
 
     chSemSignal(&sem);
+  }
+
+  void Semaphore::signalI(void) {
+
+    chSemSignalI(&sem);
+  }
+
+  void Semaphore::addCounterI(cnt_t n) {
+
+    chSemAddCounterI(&sem, n);
+  }
+
+  cnt_t Semaphore::getCounterI(void) {
+
+    return chSemGetCounterI(&sem);
   }
 
 #if CH_USE_SEMSW
