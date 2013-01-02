@@ -147,7 +147,9 @@ namespace chibios_rt {
      *
      * @api
      */
-    ThreadReference(Thread * tp);
+    ThreadReference(Thread * tp) : thread_ref(tp) {
+
+    };
 
     /**
      * @brief   Suspends the current thread on the reference.
@@ -238,7 +240,7 @@ namespace chibios_rt {
    * @brief   Abstract base class for a ChibiOS/RT thread.
    * @details The thread body is the virtual function @p Main().
    */
-  class BaseThread : ThreadReference{
+  class BaseThread : public ThreadReference {
   public:
 
     /**
@@ -255,7 +257,9 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual msg_t Main(void);
+    virtual msg_t Main(void) {
+      return 0;
+    };
 
     /**
      * @brief   Creates and starts a system thread.
@@ -268,7 +272,11 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual bool start(const char *tname, tprio_t prio);
+    virtual bool start(const char *tname, tprio_t prio){
+      (void) tname;
+      (void) prio;
+      return false;
+    };
 
     /**
      * @brief   Thread exit.
@@ -409,6 +417,7 @@ namespace chibios_rt {
      * @api
      */
     bool start(const char *tname, tprio_t prio) {
+      (void)tname;
       msg_t _thd_start(void *arg);
 
       thread_ref = chThdCreateStatic(wa, sizeof(wa), prio, _thd_start, this);
@@ -688,6 +697,17 @@ namespace chibios_rt {
      * @api
      */
     void broadcastFlags(flagsmask_t flags);
+
+    /**
+     * @brief   Broadcasts an event.
+     * @details All the listeners registered on the event source are signaled.
+     *
+     * @param[in] flags         the flags set to be added to the listener
+     *                          flags mask
+     *
+     * @api
+     */
+    void broadcastFlagsI(flagsmask_t flags);
 
     /**
      * @brief   Clears specified events from the pending events mask.

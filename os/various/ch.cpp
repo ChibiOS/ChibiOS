@@ -347,6 +347,11 @@ namespace chibios_rt {
     chEvtBroadcastFlags(&event, flags);
   }
 
+  void Event::broadcastFlagsI(flagsmask_t flags) {
+
+    chEvtBroadcastFlagsI(&event, flags);
+  }
+
   flagsmask_t Event::getAndClearFlags(EventListener *elp) {
 
     return chEvtGetAndClearFlags(elp);
