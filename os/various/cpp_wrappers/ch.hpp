@@ -517,6 +517,18 @@ namespace chibios_rt {
     static eventmask_t waitAllEventsTimeout(eventmask_t ewmask,
                                             systime_t time);
 #endif /* CH_USE_EVENTS_TIMEOUT */
+
+    /**
+     * @brief   Invokes the event handlers associated to an event flags mask.
+     *
+     * @param[in] mask      mask of the event flags to be dispatched
+     * @param[in] handlers  an array of @p evhandler_t. The array must have size
+     *                      equal to the number of bits in eventmask_t.
+     *
+     * @api
+     */
+    static void dispatchEvents(const evhandler_t handlers[],
+                               eventmask_t mask);
 #endif /* CH_USE_EVENTS */
   };
 
@@ -783,15 +795,15 @@ namespace chibios_rt {
 
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
-   * chibios_rt::EventListener                                              *
+   * chibios_rt::EvtListener                                              *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating an event listener.
    */
-  class EventListener {
+  class EvtListener {
   public:
     /**
-     * @brief   Embedded @p ::EventListener structure.
+     * @brief   Embedded @p ::EvtListener structure.
      */
     struct ::EventListener ev_listener;
 
@@ -808,48 +820,48 @@ namespace chibios_rt {
   };
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::EventSource                                                *
+   * chibios_rt::EvtSource                                                *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating an event source.
    */
-  class EventSource {
+  class EvtSource {
   public:
     /**
-     * @brief   Embedded @p ::EventSource structure.
+     * @brief   Embedded @p ::EvtSource structure.
      */
     struct ::EventSource ev_source;
 
     /**
-     * @brief   EventSource object constructor.
-     * @details The embedded @p ::EventSource structure is initialized.
+     * @brief   EvtSource object constructor.
+     * @details The embedded @p ::EvtSource structure is initialized.
      *
      * @api
      */
-    EventSource(void);
+    EvtSource(void);
 
     /**
      * @brief   Registers a listener on the event source.
      *
-     * @param[in] elp           pointer to the @p EventListener object
+     * @param[in] elp           pointer to the @p EvtListener object
      * @param[in] eid           numeric identifier assigned to the Event
      *                          Listener
      *
      * @api
      */
-    void registerOne(chibios_rt::EventListener *elp, eventid_t eid);
+    void registerOne(chibios_rt::EvtListener *elp, eventid_t eid);
 
     /**
      * @brief   Registers an Event Listener on an Event Source.
      * @note    Multiple Event Listeners can specify the same bits to be added.
      *
-     * @param[in] elp           pointer to the @p EventListener object
+     * @param[in] elp           pointer to the @p EvtListener object
      * @param[in] emask         the mask of event flags to be pended to the
      *                          thread when the event source is broadcasted
      *
      * @api
      */
-    void registerMask(chibios_rt::EventListener *elp, eventmask_t emask);
+    void registerMask(chibios_rt::EvtListener *elp, eventmask_t emask);
 
     /**
      * @brief   Unregisters a listener.
@@ -860,7 +872,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    void unregister(chibios_rt::EventListener *elp);
+    void unregister(chibios_rt::EvtListener *elp);
 
     /**
      * @brief   Broadcasts on an event source.
@@ -885,25 +897,6 @@ namespace chibios_rt {
      * @iclass
      */
     void broadcastFlagsI(flagsmask_t flags);
-  };
-
-  /**
-   * @brief   Class encapsulating an event-related functionalities.
-   */
-  class Event {
-  public:
-
-    /**
-     * @brief   Invokes the event handlers associated with a mask.
-     *
-     * @param[in] mask          mask of the events to be dispatched
-     * @param[in] handlers      an array of @p evhandler_t. The array must be
-     *                          have indexes from zero up the higher registered
-     *                          event identifier.
-     *
-     * @api
-     */
-    static void dispatch(const evhandler_t handlers[], eventmask_t mask);
   };
 #endif /* CH_USE_EVENTS */
 }

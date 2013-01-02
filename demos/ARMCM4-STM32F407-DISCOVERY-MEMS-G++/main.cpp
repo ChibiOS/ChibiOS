@@ -24,7 +24,6 @@
 #include "evtimer.h"
 
 using namespace chibios_rt;
-#if 0
 
 /*
  * LED blink sequences.
@@ -43,26 +42,25 @@ typedef struct {
   uint32_t      value;
 } seqop_t;
 
-// Flashing sequence for LED1.
-static const seqop_t LED1_sequence[] =
+// Flashing sequence for LED4.
+static const seqop_t LED4_sequence[] =
 {
   {BITCLEAR, PAL_PORT_BIT(GPIOD_LED4)},
   {SLEEP,    200},
   {BITSET,   PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    800},
-  {BITCLEAR, PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    400},
-  {BITSET,   PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    600},
-  {BITCLEAR, PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    600},
-  {BITSET,   PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    400},
-  {BITCLEAR, PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    800},
-  {BITSET,   PAL_PORT_BIT(GPIOD_LED4)},
-  {SLEEP,    200},
+  {SLEEP,    1800},
   {GOTO,     0}
+};
+
+// Flashing sequence for LED3.
+static const seqop_t LED3_sequence[] =
+{
+  {SLEEP,    1000},
+  {BITCLEAR, PAL_PORT_BIT(GPIOD_LED3)},
+  {SLEEP,    1800},
+  {BITSET,   PAL_PORT_BIT(GPIOD_LED3)},
+  {SLEEP,    200},
+  {GOTO,     1}
 };
 
 /*
@@ -70,16 +68,19 @@ static const seqop_t LED1_sequence[] =
  * Any sequencer is just an instance of this class, all the details are
  * totally encapsulated and hidden to the application level.
  */
-class SequencerThread : public EnhancedThread<128> {
+class SequencerThread : public BaseStaticThread<128> {
 private:
   const seqop_t *base, *curr;                   // Thread local variables.
 
 protected:
   virtual msg_t Main(void) {
+
+    setName("sequencer");
+
     while (true) {
       switch(curr->action) {
       case SLEEP:
-        Sleep(curr->value);
+        sleep(curr->value);
         break;
       case GOTO:
         curr = &base[curr->value];
@@ -98,7 +99,7 @@ protected:
   }
 
 public:
-  SequencerThread(const seqop_t *sequence) : EnhancedThread<128>("sequencer") {
+  SequencerThread(const seqop_t *sequence) : BaseStaticThread<128>() {
 
     base = curr = sequence;
   }
@@ -107,41 +108,30 @@ public:
 /*
  * Tester thread class. This thread executes the test suite.
  */
-class TesterThread : public EnhancedThread<256> {
+class TesterThread : public BaseStaticThread<256> {
 
 protected:
   virtual msg_t Main(void) {
+
+    setName("tester");
 
     return TestThread(&SD2);
   }
 
 public:
-  TesterThread(void) : EnhancedThread<256>("tester") {
+  TesterThread(void) : BaseStaticThread<256>() {
   }
 };
 
-/*
- * Executed as an event handler at 500mS intervals.
- */
-static void TimerHandler(eventid_t id) {
-
-  (void)id;
-  if (palReadPad(GPIOA, GPIOA_BUTTON)) {
-    TesterThread tester;
-    tester.Wait();
-  };
-}
-#endif
+/* Static threads instances.*/
+static TesterThread tester;
+static SequencerThread blinker1(LED3_sequence);
+static SequencerThread blinker2(LED4_sequence);
 
 /*
  * Application entry point.
  */
 int main(void) {
-/*  static const evhandler_t evhndl[] = {
-    TimerHandler
-  };
-  static EvTimer evt;
-  struct EventListener el0;*/
 
   /*
    * System initializations.
@@ -157,22 +147,23 @@ int main(void) {
    * Activates the serial driver 2 using the driver default configuration.
    */
   sdStart(&SD2, NULL);
-/*
-  evtInit(&evt, 500);                   // Initializes an event timer.
-  evtStart(&evt);                       // Starts the event timer.
-  chEvtRegister(&evt.et_es, &el0, 0);   // Registers a listener on the source.
-*/
+
   /*
    * Starts several instances of the SequencerThread class, each one operating
    * on a different LED.
    */
-//  SequencerThread blinker1(LED1_sequence);
+  blinker1.start(NORMALPRIO + 10);
+  blinker2.start(NORMALPRIO + 10);
 
   /*
    * Serves timer events.
    */
-//  while (true)
-//    Event::Dispatch(evhndl, Event::WaitOne(ALL_EVENTS));
+  while (true) {
+    if (palReadPad(GPIOA, GPIOA_BUTTON)) {
+      tester.start(NORMALPRIO);
+      tester.wait();
+    };
+  }
 
   return 0;
 }

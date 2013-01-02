@@ -281,6 +281,12 @@ namespace chibios_rt {
     return chEvtWaitAllTimeout(ewmask, time);
   }
 #endif /* CH_USE_EVENTS_TIMEOUT */
+
+  void BaseThread::dispatchEvents(const evhandler_t handlers[],
+                                  eventmask_t mask) {
+
+    chEvtDispatch(handlers, mask);
+  }
 #endif /* CH_USE_EVENTS */
 
 #if CH_USE_SEMAPHORES
@@ -384,54 +390,46 @@ namespace chibios_rt {
 
 #if CH_USE_EVENTS
   /*------------------------------------------------------------------------*
-   * chibios_rt::EventListener                                              *
+   * chibios_rt::EvtListener                                              *
    *------------------------------------------------------------------------*/
-  flagsmask_t EventListener::getAndClearFlags(void) {
+  flagsmask_t EvtListener::getAndClearFlags(void) {
 
     return chEvtGetAndClearFlags(&ev_listener);
   }
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::EventSource                                                *
+   * chibios_rt::EvtSource                                                *
    *------------------------------------------------------------------------*/
-  EventSource::EventSource(void) {
+  EvtSource::EvtSource(void) {
 
-    ev_source.es_next = (::EventListener *)(void *)&ev_source;
+    chEvtInit(&ev_source);
   }
 
-  void EventSource::registerOne(chibios_rt::EventListener *elp,
+  void EvtSource::registerOne(chibios_rt::EvtListener *elp,
                                 eventid_t eid) {
 
     chEvtRegister(&ev_source, &elp->ev_listener, eid);
   }
 
-  void EventSource::registerMask(chibios_rt::EventListener *elp,
+  void EvtSource::registerMask(chibios_rt::EvtListener *elp,
                                  eventmask_t emask) {
 
     chEvtRegisterMask(&ev_source, &elp->ev_listener, emask);
   }
 
-  void EventSource::unregister(chibios_rt::EventListener *elp) {
+  void EvtSource::unregister(chibios_rt::EvtListener *elp) {
 
     chEvtUnregister(&ev_source, &elp->ev_listener);
   }
 
-  void EventSource::broadcastFlags(flagsmask_t flags) {
+  void EvtSource::broadcastFlags(flagsmask_t flags) {
 
     chEvtBroadcastFlags(&ev_source, flags);
   }
 
-  void EventSource::broadcastFlagsI(flagsmask_t flags) {
+  void EvtSource::broadcastFlagsI(flagsmask_t flags) {
 
     chEvtBroadcastFlagsI(&ev_source, flags);
-  }
-
-  /*------------------------------------------------------------------------*
-   * chibios_rt::Event                                                      *
-   *------------------------------------------------------------------------*/
-  void Event::dispatch(const evhandler_t handlers[], eventmask_t mask) {
-
-    chEvtDispatch(handlers, mask);
   }
 #endif /* CH_USE_EVENTS */
 }
