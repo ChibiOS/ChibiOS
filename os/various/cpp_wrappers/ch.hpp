@@ -31,6 +31,9 @@
 #ifndef _CH_HPP_
 #define _CH_HPP_
 
+/**
+ * @brief   ChibiOS kernel-related classes and interfaces.
+ */
 namespace chibios_rt {
 
   /*------------------------------------------------------------------------*
