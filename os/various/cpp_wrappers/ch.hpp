@@ -2083,6 +2083,72 @@ namespace chibios_rt {
     }
   };
 #endif /* CH_USE_MEMPOOLS */
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::BaseSequentialStreamInterface                              *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Interface of a ::BaseSequentialStream.
+   * @note    You can cast a ::BaseSequentialStream to this interface and use
+   *          it, the memory layout is the same.
+   */
+  class BaseSequentialStreamInterface {
+  public:
+    /**
+     * @brief   Sequential Stream write.
+     * @details The function writes data from a buffer to a stream.
+     *
+     * @param[in] bp        pointer to the data buffer
+     * @param[in] n         the maximum amount of data to be transferred
+     * @return              The number of bytes transferred. The return value can
+     *                      be less than the specified number of bytes if an
+     *                      end-of-file condition has been met.
+     *
+     * @api
+     */
+    size_t write(const uint8_t *bp, size_t n) = 0;
+
+    /**
+     * @brief   Sequential Stream read.
+     * @details The function reads data from a stream into a buffer.
+     *
+     * @param[out] bp       pointer to the data buffer
+     * @param[in] n         the maximum amount of data to be transferred
+     * @return              The number of bytes transferred. The return value can
+     *                      be less than the specified number of bytes if an
+     *                      end-of-file condition has been met.
+     *
+     * @api
+     */
+    size_t read(uint8_t *bp, size_t n) = 0;
+
+    /**
+     * @brief   Sequential Stream blocking byte write.
+     * @details This function writes a byte value to a channel. If the channel
+     *          is not ready to accept data then the calling thread is suspended.
+     *
+     * @param[in] b         the byte value to be written to the channel
+     *
+     * @return              The operation status.
+     * @retval Q_OK         if the operation succeeded.
+     * @retval Q_RESET      if an end-of-file condition has been met.
+     *
+     * @api
+     */
+    msg_t put(uint8_t b) = 0;
+
+    /**
+     * @brief   Sequential Stream blocking byte read.
+     * @details This function reads a byte value from a channel. If the data
+     *          is not available then the calling thread is suspended.
+     *
+     * @return              A byte value from the queue.
+     * @retval Q_RESET      if an end-of-file condition has been met.
+     *
+     * @api
+     */
+    msg_t get(void) = 0;
+  };
 }
 
 #endif /* _CH_HPP_ */
