@@ -19,6 +19,7 @@
 */
 
 #include "ch.hpp"
+#include "fs.hpp"
 #include "hal.h"
 #include "test.h"
 

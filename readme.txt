@@ -90,6 +90,12 @@
   (backported to 2.4.3).
 - FIX: Fixed wrong SPI path in platform_f105_f107.mk (bug 3598151).
 - FIX: Fixed PHY powerdown issues not fixed (bug 3596911).
+- NEW: Added an abstract file system interface written in C++, no
+  implementations yet.
+  TODO: Create a FatFS wrapper implementing the interface and using a server
+  thread for synchronization.
+  TODO: Create an implementation over a read-only file system in code space.
+  TODO: Create a descendant interface for hyerarchical file systems.
 - NEW: Added new C++ demo for the STM32F4-Discovery.
 - NEW: Updated C++ wrapper with a much more logical classes structure.
        TODO: Opdate older C++ demos.
