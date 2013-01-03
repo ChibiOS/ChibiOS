@@ -2106,7 +2106,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    size_t write(const uint8_t *bp, size_t n) = 0;
+    virtual size_t write(const uint8_t *bp, size_t n) = 0;
 
     /**
      * @brief   Sequential Stream read.
@@ -2120,7 +2120,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    size_t read(uint8_t *bp, size_t n) = 0;
+    virtual size_t read(uint8_t *bp, size_t n) = 0;
 
     /**
      * @brief   Sequential Stream blocking byte write.
@@ -2135,7 +2135,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    msg_t put(uint8_t b) = 0;
+    virtual msg_t put(uint8_t b) = 0;
 
     /**
      * @brief   Sequential Stream blocking byte read.
@@ -2147,7 +2147,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    msg_t get(void) = 0;
+    virtual msg_t get(void) = 0;
   };
 }
 
