@@ -188,6 +188,16 @@ namespace chibios_rt {
 
     return (bool)chMsgIsPendingI(thread_ref);
   }
+
+  msg_t ThreadReference::getMessage(void) {
+
+    return chMsgGet(thread_ref);
+  }
+
+  void ThreadReference::releaseMessage(msg_t msg) {
+
+    chMsgRelease(thread_ref, msg);
+  }
 #endif /* CH_USE_MESSAGES */
 
 #if CH_USE_EVENTS
@@ -212,9 +222,21 @@ namespace chibios_rt {
 
   }
 
+  msg_t BaseThread::main(void) {
+
+    return 0;
+  }
+
+  ThreadReference BaseThread::start(tprio_t prio) {
+
+    (void)prio;
+
+    return *this;
+  };
+
   msg_t _thd_start(void *arg) {
 
-    return ((BaseThread *)arg)->Main();
+    return ((BaseThread *)arg)->main();
   }
 
   void BaseThread::setName(const char *tname) {
@@ -256,18 +278,6 @@ namespace chibios_rt {
 
     chThdYield();
   }
-
-#if CH_USE_MESSAGES
-  msg_t BaseThread::getMessage(ThreadReference* trp) {
-
-    return chMsgGet(trp->thread_ref);
-  }
-
-  void BaseThread::releaseMessage(ThreadReference* trp, msg_t msg) {
-
-    chMsgRelease(trp->thread_ref, msg);
-  }
-#endif /* CH_USE_MESSAGES */
 
 #if CH_USE_EVENTS
   eventmask_t BaseThread::getAndClearEvents(eventmask_t mask) {

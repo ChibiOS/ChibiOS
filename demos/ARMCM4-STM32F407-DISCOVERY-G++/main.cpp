@@ -92,7 +92,7 @@ private:
   const seqop_t *base, *curr;                   // Thread local variables.
 
 protected:
-  virtual msg_t Main(void) {
+  virtual msg_t main(void) {
 
     setName("sequencer");
 

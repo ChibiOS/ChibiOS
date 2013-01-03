@@ -29,7 +29,7 @@
 #ifndef _FS_HPP_
 #define _FS_HPP_
 
-#include <ch.hpp>
+#include "ch.hpp"
 
 /**
  * @name    Error codes
@@ -122,6 +122,7 @@ namespace chibios_fs {
    *          classes can offer an extended interface.
    */
   class BaseFileSystemInterface {
+  public:
     /**
      * @brief   File system unmount and object destruction.
      */

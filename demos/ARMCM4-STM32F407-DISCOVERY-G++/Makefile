@@ -89,6 +89,7 @@ CSRC = $(PORTSRC) \
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CPPSRC = $(CHCPPSRC) \
+         $(CHIBIOS)/os/fs/fatfs/fatfs_fsimpl.cpp \
          main.cpp
 
 # C sources to be compiled in ARM mode regardless of the global setting.
@@ -117,7 +118,7 @@ ASMSRC = $(PORTASM)
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHCPPINC) \
-         $(CHIBIOS)/os/various $(CHIBIOS)/os/fs
+         $(CHIBIOS)/os/various $(CHIBIOS)/os/fs $(CHIBIOS)/os/fs/fatfs
 
 #
 # Project, sources and paths

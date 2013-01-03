@@ -221,7 +221,7 @@ namespace chibios_rt {
      *
      * @init
      */
-    ThreadReference(Thread * tp) : thread_ref(tp) {
+    ThreadReference(Thread *tp) : thread_ref(tp) {
 
     };
 
@@ -330,6 +330,26 @@ namespace chibios_rt {
      * @api
      */
     bool isPendingMessage(void);
+
+    /**
+     * @brief   Returns an enqueued message or @p NULL.
+     *
+     * @param[in] trp           the sender thread reference
+     * @return                  The incoming message.
+     *
+     * @api
+     */
+    msg_t getMessage(void);
+
+    /**
+     * @brief   Releases the next message in queue with a reply.
+     *
+     * @param[in] trp           the sender thread reference
+     * @param[in] msg           the answer message
+     *
+     * @api
+     */
+    void releaseMessage(msg_t msg);
 #endif /* CH_USE_MESSAGES */
 
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
@@ -380,9 +400,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual msg_t Main(void) {
-      return 0;
-    };
+    virtual msg_t main(void);
 
     /**
      * @brief   Creates and starts a system thread.
@@ -393,12 +411,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual ThreadReference start(tprio_t prio) {
-
-      (void)prio;
-
-      return *this;
-    };
+    virtual ThreadReference start(tprio_t prio);
 
     /**
      * @brief   Sets the current thread name.
@@ -510,26 +523,6 @@ namespace chibios_rt {
      * @api
      */
     static ThreadReference waitMessage(void);
-
-    /**
-     * @brief   Returns an enqueued message or @p NULL.
-     *
-     * @param[in] trp           the sender thread reference
-     * @return                  The incoming message.
-     *
-     * @api
-     */
-    static msg_t getMessage(ThreadReference* trp);
-
-    /**
-     * @brief   Releases the next message in queue with a reply.
-     *
-     * @param[in] trp           the sender thread reference
-     * @param[in] msg           the answer message
-     *
-     * @api
-     */
-    static void releaseMessage(ThreadReference* trp, msg_t msg);
 #endif /* CH_USE_MESSAGES */
 
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
@@ -750,7 +743,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    ThreadReference start(tprio_t prio) {
+    virtual ThreadReference start(tprio_t prio) {
       msg_t _thd_start(void *arg);
 
       thread_ref = chThdCreateStatic(wa, sizeof(wa), prio, _thd_start, this);
