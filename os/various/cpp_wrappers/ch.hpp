@@ -1302,6 +1302,18 @@ namespace chibios_rt {
      * @api
      */
     flagsmask_t getAndClearFlags(void);
+
+    /**
+     * @brief   Returns the flags associated to an @p EventListener.
+     * @details The flags are returned and the @p EventListener flags mask is
+     *          cleared.
+     *
+     * @return              The flags added to the listener by the associated
+     *                      event source.
+     *
+     * @iclass
+     */
+    flagsmask_t getAndClearFlagsI(void);
   };
 
   /*------------------------------------------------------------------------*

@@ -556,6 +556,11 @@ namespace chibios_rt {
     return chEvtGetAndClearFlags(&ev_listener);
   }
 
+  flagsmask_t EvtListener::getAndClearFlagsI(void) {
+
+    return chEvtGetAndClearFlagsI(&ev_listener);
+  }
+
   /*------------------------------------------------------------------------*
    * chibios_rt::EvtSource                                                *
    *------------------------------------------------------------------------*/
