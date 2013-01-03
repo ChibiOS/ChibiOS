@@ -153,8 +153,8 @@ typedef GenericQueue InputQueue;
  *
  * @param[in] iqp       pointer to an @p InputQueue structure.
  * @return              The queue status.
- * @retval FALSE        The queue is not empty.
- * @retval TRUE         The queue is empty.
+ * @retval FALSE        if the queue is not empty.
+ * @retval TRUE         if the queue is empty.
  *
  * @iclass
  */
@@ -165,8 +165,8 @@ typedef GenericQueue InputQueue;
  *
  * @param[in] iqp       pointer to an @p InputQueue structure.
  * @return              The queue status.
- * @retval FALSE        The queue is not full.
- * @retval TRUE         The queue is full.
+ * @retval FALSE        if the queue is not full.
+ * @retval TRUE         if the queue is full.
  *
  * @iclass
  */
@@ -268,8 +268,8 @@ typedef GenericQueue OutputQueue;
  *
  * @param[in] oqp       pointer to an @p OutputQueue structure.
  * @return              The queue status.
- * @retval FALSE        The queue is not empty.
- * @retval TRUE         The queue is empty.
+ * @retval FALSE        if the queue is not empty.
+ * @retval TRUE         if the queue is empty.
  *
  * @iclass
  */
@@ -281,8 +281,8 @@ typedef GenericQueue OutputQueue;
  *
  * @param[in] oqp       pointer to an @p OutputQueue structure.
  * @return              The queue status.
- * @retval FALSE        The queue is not full.
- * @retval TRUE         The queue is full.
+ * @retval FALSE        if the queue is not full.
+ * @retval TRUE         if the queue is full.
  *
  * @iclass
  */

@@ -96,6 +96,53 @@ namespace chibios_rt {
   };
 
   /*------------------------------------------------------------------------*
+   * chibios_rt::System                                                     *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief Class encapsulating the base system functionalities.
+   */
+  class Core {
+  public:
+
+    /**
+     * @brief   Allocates a memory block.
+     * @details The size of the returned block is aligned to the alignment
+     *          type so it is not possible to allocate less
+     *          than <code>MEM_ALIGN_SIZE</code>.
+     *
+     * @param[in] size      the size of the block to be allocated
+     * @return              A pointer to the allocated memory block.
+     * @retval NULL         allocation failed, core memory exhausted.
+     *
+     * @api
+     */
+    static void *alloc(size_t size);
+
+    /**
+     * @brief   Allocates a memory block.
+     * @details The size of the returned block is aligned to the alignment
+     *          type so it is not possible to allocate less than
+     *          <code>MEM_ALIGN_SIZE</code>.
+     *
+     * @param[in] size      the size of the block to be allocated.
+     * @return              A pointer to the allocated memory block.
+     * @retval NULL         allocation failed, core memory exhausted.
+     *
+     * @iclass
+     */
+    static void *allocI(size_t size);
+
+    /**
+     * @brief   Core memory status.
+     *
+     * @return              The size, in bytes, of the free core memory.
+     *
+     * @api
+     */
+    static size_t getStatus(void);
+  };
+
+  /*------------------------------------------------------------------------*
    * chibios_rt::Timer                                                      *
    *------------------------------------------------------------------------*/
   /**
@@ -169,7 +216,7 @@ namespace chibios_rt {
      *                          @p NULL if the thread is not known at
      *                          creation time.
      *
-     * @api
+     * @init
      */
     ThreadReference(Thread * tp) : thread_ref(tp) {
 
@@ -319,7 +366,7 @@ namespace chibios_rt {
     /**
      * @brief   BaseThread constructor.
      *
-     * @api
+     * @init
      */
     BaseThread(void);
 
@@ -685,7 +732,7 @@ namespace chibios_rt {
      * @details The thread object is initialized but the thread is not
      *          started here.
      *
-     * @api
+     * @init
      */
     BaseStaticThread(void) : BaseThread() {
 
@@ -729,7 +776,7 @@ namespace chibios_rt {
      * @param[in] n             the semaphore counter value, must be greater
      *                          or equal to zero
      *
-     * @api
+     * @init
      */
     Semaphore(cnt_t n);
 
@@ -892,6 +939,155 @@ namespace chibios_rt {
                             chibios_rt::Semaphore *wsem);
 #endif /* CH_USE_SEMSW */
   };
+  /*------------------------------------------------------------------------*
+   * chibios_rt::BinarySemaphore                                            *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Class encapsulating a binary semaphore.
+   */
+  class BinarySemaphore {
+  public:
+    /**
+     * @brief   Embedded @p ::Semaphore structure.
+     */
+    ::BinarySemaphore bsem;
+
+    /**
+     * @brief   BinarySemaphore constructor.
+     * @details The embedded @p ::BinarySemaphore structure is initialized.
+     *
+     * @param[in] taken     initial state of the binary semaphore:
+     *                      - @a false, the initial state is not taken.
+     *                      - @a true, the initial state is taken.
+     *                      .
+     *
+     * @init
+     */
+    BinarySemaphore(bool taken);
+
+    /**
+     * @brief   Wait operation on the binary semaphore.
+     *
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the semaphore.
+     * @retval RDY_OK       if the binary semaphore has been successfully taken.
+     * @retval RDY_RESET    if the binary semaphore has been reset using
+     *                      @p bsemReset().
+     *
+     * @api
+     */
+    msg_t wait(void);
+
+    /**
+     * @brief   Wait operation on the binary semaphore.
+     *
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the semaphore.
+     * @retval RDY_OK       if the binary semaphore has been successfully taken.
+     * @retval RDY_RESET    if the binary semaphore has been reset using
+     *                      @p bsemReset().
+     *
+     * @sclass
+     */
+    msg_t waitS(void);
+
+    /**
+     * @brief   Wait operation on the binary semaphore.
+     *
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the semaphore.
+     * @retval RDY_OK       if the binary semaphore has been successfully taken.
+     * @retval RDY_RESET    if the binary semaphore has been reset using
+     *                      @p bsemReset().
+     * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled or reset
+     *                      within the specified timeout.
+     *
+     * @api
+     */
+    msg_t waitTimeout(systime_t time);
+
+    /**
+     * @brief   Wait operation on the binary semaphore.
+     *
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              A message specifying how the invoking thread has been
+     *                      released from the semaphore.
+     * @retval RDY_OK       if the binary semaphore has been successfully taken.
+     * @retval RDY_RESET    if the binary semaphore has been reset using
+     *                      @p bsemReset().
+     * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled or reset
+     *                      within the specified timeout.
+     *
+     * @sclass
+     */
+    msg_t waitTimeoutS(systime_t time);
+
+    /**
+     * @brief   Reset operation on the binary semaphore.
+     * @note    The released threads can recognize they were waked up by a reset
+     *          rather than a signal because the @p bsemWait() will return
+     *          @p RDY_RESET instead of @p RDY_OK.
+     *
+     * @param[in] taken     new state of the binary semaphore
+     *                      - @a FALSE, the new state is not taken.
+     *                      - @a TRUE, the new state is taken.
+     *                      .
+     *
+     * @api
+     */
+    void reset(bool taken);
+
+    /**
+     * @brief   Reset operation on the binary semaphore.
+     * @note    The released threads can recognize they were waked up by a reset
+     *          rather than a signal because the @p bsemWait() will return
+     *          @p RDY_RESET instead of @p RDY_OK.
+     * @note    This function does not reschedule.
+     *
+     * @param[in] taken     new state of the binary semaphore
+     *                      - @a FALSE, the new state is not taken.
+     *                      - @a TRUE, the new state is taken.
+     *                      .
+     *
+     * @iclass
+     */
+    void resetI(bool taken);
+
+    /**
+     * @brief   Performs a signal operation on a binary semaphore.
+     *
+     * @api
+     */
+    void signal(void);
+
+    /**
+     * @brief   Performs a signal operation on a binary semaphore.
+     * @note    This function does not reschedule.
+     *
+     * @iclass
+     */
+    void signalI(void);
+
+    /**
+     * @brief   Returns the binary semaphore current state.
+     *
+     * @return              The binary semaphore current state.
+     * @retval false        if the binary semaphore is not taken.
+     * @retval true         if the binary semaphore is taken.
+     *
+     * @iclass
+     */
+    bool getStateI(void);
+};
 #endif /* CH_USE_SEMAPHORES */
 
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
@@ -912,7 +1108,7 @@ namespace chibios_rt {
      * @brief   Mutex object constructor.
      * @details The embedded @p ::Mutex structure is initialized.
      *
-     * @api
+     * @init
      */
     Mutex(void);
 
@@ -989,7 +1185,7 @@ namespace chibios_rt {
      * @brief   CondVar object constructor.
      * @details The embedded @p ::CondVar structure is initialized.
      *
-     * @api
+     * @init
      */
     CondVar(void);
 
@@ -1129,7 +1325,7 @@ namespace chibios_rt {
      * @brief   EvtSource object constructor.
      * @details The embedded @p ::EvtSource structure is initialized.
      *
-     * @api
+     * @init
      */
     EvtSource(void);
 
@@ -1193,6 +1389,364 @@ namespace chibios_rt {
   };
 #endif /* CH_USE_EVENTS */
 
+#if CH_USE_QUEUES || defined(__DOXYGEN__)
+  /*------------------------------------------------------------------------*
+   * chibios_rt::InputQueue                                                 *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Class encapsulating an input queue.
+   */
+  class InputQueue {
+  private:
+    /**
+     * @brief   Embedded @p ::InputQueue structure.
+     */
+    ::InputQueue iq;
+
+  public:
+    /**
+     * @brief   InputQueue constructor.
+     *
+     * @param[in] bp        pointer to a memory area allocated as queue buffer
+     * @param[in] size      size of the queue buffer
+     * @param[in] infy      pointer to a callback function that is invoked when
+     *                      data is read from the queue. The value can be @p NULL.
+     * @param[in] link      application defined pointer
+     *
+     * @init
+     */
+    InputQueue(uint8_t *bp, size_t size, qnotify_t infy, void *link);
+
+    /**
+     * @brief   Returns the filled space into an input queue.
+     *
+     * @return              The number of full bytes in the queue.
+     * @retval 0            if the queue is empty.
+     *
+     * @iclass
+     */
+    size_t getFullI(void);
+
+    /**
+     * @brief   Returns the empty space into an input queue.
+     *
+     * @return              The number of empty bytes in the queue.
+     * @retval 0            if the queue is full.
+     *
+     * @iclass
+     */
+    size_t getEmptyI(void);
+
+    /**
+     * @brief   Evaluates to @p TRUE if the specified input queue is empty.
+     *
+     * @return              The queue status.
+     * @retval false        if the queue is not empty.
+     * @retval true         if the queue is empty.
+     *
+     * @iclass
+     */
+    bool isEmptyI(void);
+
+    /**
+     * @brief   Evaluates to @p TRUE if the specified input queue is full.
+     *
+     * @return              The queue status.
+     * @retval FALSE        if the queue is not full.
+     * @retval TRUE         if the queue is full.
+     *
+     * @iclass
+     */
+    bool isFullI(void);
+
+    /**
+     * @brief   Resets an input queue.
+     * @details All the data in the input queue is erased and lost, any waiting
+     *          thread is resumed with status @p Q_RESET.
+     * @note    A reset operation can be used by a low level driver in order to
+     *          obtain immediate attention from the high level layers.
+     * @iclass
+     */
+    void resetI(void);
+
+    /**
+     * @brief   Input queue write.
+     * @details A byte value is written into the low end of an input queue.
+     *
+     * @param[in] b         the byte value to be written in the queue
+     * @return              The operation status.
+     * @retval Q_OK         if the operation has been completed with success.
+     * @retval Q_FULL       if the queue is full and the operation cannot be
+     *                      completed.
+     *
+     * @iclass
+     */
+    msg_t putI(uint8_t b);
+
+    /**
+     * @brief   Input queue read.
+     * @details This function reads a byte value from an input queue. If the queue
+     *          is empty then the calling thread is suspended until a byte arrives
+     *          in the queue.
+     *
+     * @return              A byte value from the queue.
+     * @retval Q_RESET      if the queue has been reset.
+     *
+     * @api
+     */
+    msg_t get();
+
+    /**
+     * @brief   Input queue read with timeout.
+     * @details This function reads a byte value from an input queue. If the queue
+     *          is empty then the calling thread is suspended until a byte arrives
+     *          in the queue or a timeout occurs.
+     * @note    The callback is invoked before reading the character from the
+     *          buffer or before entering the state @p THD_STATE_WTQUEUE.
+     *
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              A byte value from the queue.
+     * @retval Q_TIMEOUT    if the specified time expired.
+     * @retval Q_RESET      if the queue has been reset.
+     *
+     * @api
+     */
+    msg_t getTimeout(systime_t time);
+
+    /**
+     * @brief   Input queue read with timeout.
+     * @details The function reads data from an input queue into a buffer. The
+     *          operation completes when the specified amount of data has been
+     *          transferred or after the specified timeout or if the queue has
+     *          been reset.
+     * @note    The function is not atomic, if you need atomicity it is suggested
+     *          to use a semaphore or a mutex for mutual exclusion.
+     * @note    The callback is invoked before reading each character from the
+     *          buffer or before entering the state @p THD_STATE_WTQUEUE.
+     *
+     * @param[out] bp       pointer to the data buffer
+     * @param[in] n         the maximum amount of data to be transferred, the
+     *                      value 0 is reserved
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              The number of bytes effectively transferred.
+     *
+     * @api
+     */
+    size_t readTimeout(uint8_t *bp, size_t n, systime_t time);
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::InputQueueBuffer                                           *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Template class encapsulating an input queue and its buffer.
+   *
+   * @param N                   size of the input queue
+   */
+  template <int N>
+  class InputQueueBuffer : public InputQueue {
+  private:
+    uint8_t iq_buf[N];
+
+  public:
+    /**
+     * @brief   InputQueueBuffer constructor.
+     *
+     * @init
+     */
+    InputQueueBuffer(qnotify_t infy, void *link) : InputQueue(iq_buf, N,
+                                                              infy, link) {
+    }
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::OutputQueue                                                *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Class encapsulating an output queue.
+   */
+  class OutputQueue {
+  private:
+    /**
+     * @brief   Embedded @p ::OutputQueue structure.
+     */
+    ::OutputQueue oq;
+
+  public:
+    /**
+     * @brief   OutputQueue constructor.
+     *
+     * @param[in] bp        pointer to a memory area allocated as queue buffer
+     * @param[in] size      size of the queue buffer
+     * @param[in] onfy      pointer to a callback function that is invoked when
+     *                      data is written to the queue. The value can be @p NULL.
+     * @param[in] link      application defined pointer
+     *
+     * @init
+     */
+    OutputQueue(uint8_t *bp, size_t size, qnotify_t onfy, void *link);
+
+    /**
+     * @brief   Returns the filled space into an output queue.
+     *
+     * @return              The number of full bytes in the queue.
+     * @retval 0            if the queue is empty.
+     *
+     * @iclass
+     */
+    size_t getFullI(void);
+
+    /**
+     * @brief   Returns the empty space into an output queue.
+     *
+     * @return              The number of empty bytes in the queue.
+     * @retval 0            if the queue is full.
+     *
+     * @iclass
+     */
+    size_t getEmptyI(void);
+
+    /**
+     * @brief   Evaluates to @p TRUE if the specified output queue is empty.
+     *
+     * @return              The queue status.
+     * @retval false        if the queue is not empty.
+     * @retval true         if the queue is empty.
+     *
+     * @iclass
+     */
+    bool isEmptyI(void);
+
+    /**
+     * @brief   Evaluates to @p TRUE if the specified output queue is full.
+     *
+     * @return              The queue status.
+     * @retval FALSE        if the queue is not full.
+     * @retval TRUE         if the queue is full.
+     *
+     * @iclass
+     */
+    bool isFullI(void);
+
+    /**
+     * @brief   Resets an output queue.
+     * @details All the data in the output queue is erased and lost, any waiting
+     *          thread is resumed with status @p Q_RESET.
+     * @note    A reset operation can be used by a low level driver in order to
+     *          obtain immediate attention from the high level layers.
+     *
+     * @iclass
+     */
+    void resetI(void);
+
+    /**
+     * @brief   Output queue write.
+     * @details This function writes a byte value to an output queue. If the queue
+     *          is full then the calling thread is suspended until there is space
+     *          in the queue.
+     *
+     * @param[in] b         the byte value to be written in the queue
+     * @return              The operation status.
+     * @retval Q_OK         if the operation succeeded.
+     * @retval Q_RESET      if the queue has been reset.
+     *
+     * @api
+     */
+    msg_t put(uint8_t b);
+
+    /**
+     * @brief   Output queue write with timeout.
+     * @details This function writes a byte value to an output queue. If the queue
+     *          is full then the calling thread is suspended until there is space
+     *          in the queue or a timeout occurs.
+     * @note    The callback is invoked after writing the character into the
+     *          buffer.
+     *
+     * @param[in] b         the byte value to be written in the queue
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              The operation status.
+     * @retval Q_OK         if the operation succeeded.
+     * @retval Q_TIMEOUT    if the specified time expired.
+     * @retval Q_RESET      if the queue has been reset.
+     *
+     * @api
+     */
+    msg_t putTimeout(uint8_t b, systime_t time);
+
+    /**
+     * @brief   Output queue read.
+     * @details A byte value is read from the low end of an output queue.
+     *
+     * @return              The byte value from the queue.
+     * @retval Q_EMPTY      if the queue is empty.
+     *
+     * @iclass
+     */
+    msg_t getI(void);
+
+    /**
+     * @brief   Output queue write with timeout.
+     * @details The function writes data from a buffer to an output queue. The
+     *          operation completes when the specified amount of data has been
+     *          transferred or after the specified timeout or if the queue has
+     *          been reset.
+     * @note    The function is not atomic, if you need atomicity it is suggested
+     *          to use a semaphore or a mutex for mutual exclusion.
+     * @note    The callback is invoked after writing each character into the
+     *          buffer.
+     *
+     * @param[out] bp       pointer to the data buffer
+     * @param[in] n         the maximum amount of data to be transferred, the
+     *                      value 0 is reserved
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the following special values are allowed:
+     *                      - @a TIME_IMMEDIATE immediate timeout.
+     *                      - @a TIME_INFINITE no timeout.
+     *                      .
+     * @return              The number of bytes effectively transferred.
+     *
+     * @api
+     */
+    size_t writeTimeout(const uint8_t *bp, size_t n, systime_t time);
+};
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::OutputQueueBuffer                                          *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Template class encapsulating an output queue and its buffer.
+   *
+   * @param N                   size of the output queue
+   */
+  template <int N>
+  class OutputQueueBuffer : public OutputQueue {
+  private:
+    uint8_t oq_buf[N];
+
+  public:
+    /**
+     * @brief   OutputQueueBuffer constructor.
+     *
+     * @init
+     */
+    OutputQueueBuffer(qnotify_t onfy, void *link) : InputQueue(oq_buf, N,
+                                                               onfy, link) {
+    }
+  };
+#endif /* CH_USE_QUEUES */
+
 #if CH_USE_MAILBOXES || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::Mailbox                                                    *
@@ -1215,7 +1769,7 @@ namespace chibios_rt {
      *                          @p msg_t
      * @param[in] n             number of elements in the buffer array
      *
-     * @api
+     * @init
      */
     Mailbox(msg_t *buf, cnt_t n);
 
@@ -1411,7 +1965,7 @@ namespace chibios_rt {
     /**
      * @brief   BufferMailbox constructor.
      *
-     * @api
+     * @init
      */
     MailboxBuffer(void) : Mailbox(mb_buf,
                                   (cnt_t)(sizeof mb_buf / sizeof (msg_t))) {
@@ -1436,7 +1990,7 @@ namespace chibios_rt {
     /**
      * @brief   MemoryPool constructor.
      *
-     * @api
+     * @init
      */
     MemoryPool(size_t size, memgetfunc_t provider);
 
@@ -1518,6 +2072,11 @@ namespace chibios_rt {
     T pool_buf[N];
 
   public:
+    /**
+     * @brief   MemoryPoolBuffer constructor.
+     *
+     * @init
+     */
     MemoryPoolBuffer(void) : MemoryPool(sizeof (T), NULL) {
 
       loadArray(pool_buf, N);

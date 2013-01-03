@@ -52,9 +52,27 @@ namespace chibios_rt {
     return chTimeNow();
   }
 
-  bool isTimeWithin(systime_t start, systime_t end) {
+  bool System::isTimeWithin(systime_t start, systime_t end) {
 
     return (bool)chTimeIsWithin(start, end);
+  }
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::Core                                                       *
+   *------------------------------------------------------------------------*/
+  void *Core::alloc(size_t size) {
+
+    return chCoreAlloc(size);
+  }
+
+  void *Core::allocI(size_t size) {
+
+    return chCoreAllocI(size);
+  }
+
+  size_t Core::getStatus(void) {
+
+    return chCoreStatus();
   }
 
   /*------------------------------------------------------------------------*
@@ -143,7 +161,7 @@ namespace chibios_rt {
     chThdTerminate(thread_ref);
   }
 
-#if CH_USE_WAITEXIT || defined(__DOXYGEN__)
+#if CH_USE_WAITEXIT
     msg_t ThreadReference::wait(void) {
 
       chDbgAssert(thread_ref != NULL,
@@ -156,7 +174,7 @@ namespace chibios_rt {
     }
 #endif /* CH_USE_WAITEXIT */
 
-#if CH_USE_MESSAGES || defined(__DOXYGEN__)
+#if CH_USE_MESSAGES
   msg_t ThreadReference::sendMessage(msg_t msg) {
 
     chDbgAssert(thread_ref != NULL,
@@ -387,6 +405,59 @@ namespace chibios_rt {
     return chSemSignalWait(&ssem->sem, &wsem->sem);
   }
 #endif /* CH_USE_SEMSW */
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::BinarySemaphore                                            *
+   *------------------------------------------------------------------------*/
+  BinarySemaphore::BinarySemaphore(bool taken) {
+
+    chBSemInit(&bsem, (bool_t)taken);
+  }
+
+  msg_t BinarySemaphore::wait(void) {
+
+    return chBSemWait(&bsem);
+  }
+
+  msg_t BinarySemaphore::waitS(void) {
+
+    return chBSemWaitS(&bsem);
+  }
+
+  msg_t BinarySemaphore::waitTimeout(systime_t time) {
+
+    return chBSemWaitTimeout(&bsem, time);
+  }
+
+  msg_t BinarySemaphore::waitTimeoutS(systime_t time) {
+
+    return chBSemWaitTimeoutS(&bsem, time);
+  }
+
+  void BinarySemaphore::reset(bool taken) {
+
+    chBSemReset(&bsem, (bool_t)taken);
+  }
+
+  void BinarySemaphore::resetI(bool taken) {
+
+    chBSemResetI(&bsem, (bool_t)taken);
+  }
+
+  void BinarySemaphore::signal(void) {
+
+    chBSemSignal(&bsem);
+  }
+
+  void BinarySemaphore::signalI(void) {
+
+    chBSemSignalI(&bsem);
+  }
+
+  bool BinarySemaphore::getStateI(void) {
+
+    return (bool)chBSemGetStateI(&bsem);
+  }
 #endif /* CH_USE_SEMAPHORES */
 
 #if CH_USE_MUTEXES
@@ -511,7 +582,118 @@ namespace chibios_rt {
   }
 #endif /* CH_USE_EVENTS */
 
-#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
+#if CH_USE_QUEUES
+  /*------------------------------------------------------------------------*
+   * chibios_rt::InputQueue                                                 *
+   *------------------------------------------------------------------------*/
+  InputQueue::InputQueue(uint8_t *bp, size_t size,
+                         qnotify_t infy, void *link) {
+
+    chIQInit(&iq, bp, size, infy, link);
+  }
+
+  size_t InputQueue::getFullI(void) {
+
+    return chIQGetFullI(&iq);
+  }
+
+  size_t InputQueue::getEmptyI(void) {
+
+    return chIQGetEmptyI(&iq);
+  }
+
+  bool InputQueue::isEmptyI(void) {
+
+    return (bool)chIQIsEmptyI(&iq);
+  }
+
+  bool InputQueue::isFullI(void) {
+
+    return (bool)chIQIsFullI(&iq);
+  }
+
+  void InputQueue::resetI(void) {
+
+    chIQResetI(&iq);
+  }
+
+  msg_t InputQueue::putI(uint8_t b) {
+
+    return chIQPutI(&iq, b);
+  }
+
+  msg_t InputQueue::get() {
+
+    return chIQGet(&iq);
+  }
+
+  msg_t InputQueue::getTimeout(systime_t time) {
+
+    return chIQGetTimeout(&iq, time);
+  }
+
+  size_t InputQueue::readTimeout(uint8_t *bp, size_t n, systime_t time) {
+
+    return chIQReadTimeout(&iq, bp, n, time);
+  }
+
+  /*------------------------------------------------------------------------*
+   * chibios_rt::OutputQueue                                                *
+   *------------------------------------------------------------------------*/
+  OutputQueue::OutputQueue(uint8_t *bp, size_t size,
+                           qnotify_t onfy, void *link) {
+
+    chOQInit(&oq, bp, size, onfy, link);
+  }
+
+  size_t OutputQueue::getFullI(void) {
+
+    return chOQGetFullI(&oq);
+  }
+
+  size_t OutputQueue::getEmptyI(void) {
+
+    return chOQGetEmptyI(&oq);
+  }
+
+  bool OutputQueue::isEmptyI(void) {
+
+    return (bool)chOQIsEmptyI(&oq);
+  }
+
+  bool OutputQueue::isFullI(void) {
+
+    return (bool)chOQIsFullI(&oq);
+  }
+
+  void OutputQueue::resetI(void) {
+
+    chOQResetI(&oq);
+  }
+
+  msg_t OutputQueue::put(uint8_t b) {
+
+    return chOQPut(&oq, b);
+  }
+
+  msg_t OutputQueue::putTimeout(uint8_t b, systime_t time) {
+
+    return chOQPutTimeout(&oq, b, time);
+  }
+
+  msg_t OutputQueue::getI(void) {
+
+    return chOQGetI(&oq);
+  }
+
+  size_t OutputQueue::writeTimeout(const uint8_t *bp, size_t n,
+                                   systime_t time) {
+
+    return chOQWriteTimeout(&oq, bp, n, time);
+  }
+#endif /* CH_USE_QUEUES */
+
+#if CH_USE_MAILBOXES
   /*------------------------------------------------------------------------*
    * chibios_rt::Mailbox                                                    *
    *------------------------------------------------------------------------*/
