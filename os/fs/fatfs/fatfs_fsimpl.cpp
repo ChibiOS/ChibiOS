@@ -36,6 +36,9 @@
 #define ERR_TERMINATING                 (msg_t)1
 #define ERR_UNKNOWN_MSG                 (msg_t)2
 
+using namespace chibios_rt;
+using namespace chibios_fs;
+
 /**
  * @brief   FatFS wrapper-related classes and interfaces.
  */
@@ -51,11 +54,11 @@ namespace chibios_fatfs {
     start(FATFS_THREAD_PRIORITY);
   }
 
-  FatFSWrapper::FatFSServerThread::~FatFSServerThread() {
+/*  FatFSWrapper::FatFSServerThread::~FatFSServerThread() {
 
     sendMessage(MSG_TERMINATE);
     wait();
-  }
+  }*/
 
   msg_t FatFSWrapper::FatFSServerThread::main() {
     msg_t sts;
@@ -84,9 +87,47 @@ namespace chibios_fatfs {
     server.start(FATFS_THREAD_PRIORITY);
   }
 
-  FatFSWrapper::~FatFSWrapper() {
+/*  FatFSWrapper::~FatFSWrapper() {
 
     server.~FatFSServerThread();
+  }*/
+
+  uint32_t FatFSWrapper::getAndClearLastError(void) {
+
+    return 0;
+  }
+
+  void FatFSWrapper::synchronize(void) {
+
+  }
+
+  void FatFSWrapper::remove(const char *fname) {
+
+    (void)fname;
+  }
+
+  BaseFileStreamInterface *FatFSWrapper::open(const char *fname) {
+
+    (void)fname;
+    return NULL;
+  }
+
+  BaseFileStreamInterface *FatFSWrapper::openForRead(const char *fname) {
+
+    (void)fname;
+    return NULL;
+  }
+
+  BaseFileStreamInterface *FatFSWrapper::openForWrite(const char *fname) {
+
+    (void)fname;
+    return NULL;
+  }
+
+  BaseFileStreamInterface *FatFSWrapper::create(const char *fname) {
+
+    (void)fname;
+    return NULL;
   }
 }
 

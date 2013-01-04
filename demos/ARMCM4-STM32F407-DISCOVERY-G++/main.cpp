@@ -19,11 +19,13 @@
 */
 
 #include "ch.hpp"
-#include "fs.hpp"
 #include "hal.h"
+#include "fs.hpp"
+#include "fatfs_fsimpl.hpp"
 #include "test.h"
 
 using namespace chibios_rt;
+using namespace chibios_fatfs;
 
 /*
  * LED blink sequences.
@@ -148,6 +150,8 @@ static SequencerThread blinker1(LED3_sequence);
 static SequencerThread blinker2(LED4_sequence);
 static SequencerThread blinker3(LED5_sequence);
 static SequencerThread blinker4(LED6_sequence);
+
+static FatFSWrapper fs(NULL);
 
 /*
  * Application entry point.

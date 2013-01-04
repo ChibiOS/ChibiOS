@@ -385,7 +385,6 @@ namespace chibios_rt {
    */
   class BaseThread : public ThreadReference {
   public:
-
     /**
      * @brief   BaseThread constructor.
      *

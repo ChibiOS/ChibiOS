@@ -124,11 +124,6 @@ namespace chibios_fs {
   class BaseFileSystemInterface {
   public:
     /**
-     * @brief   File system unmount and object destruction.
-     */
-    virtual ~BaseFileSystemInterface() = 0;
-
-    /**
      * @brief   Returns an implementation dependent error code.
      *
      * @return              An implementation-dependent error code.

@@ -27,6 +27,7 @@
  */
 
 #include "ch.hpp"
+#include "fs.hpp"
 #include "hal.h"
 
 #ifndef _FS_FATFS_IMPL_HPP_
@@ -47,6 +48,7 @@
 #endif
 
 using namespace chibios_rt;
+using namespace chibios_fs;
 
 /**
  * @brief   FatFS wrapper-related classes and interfaces.
@@ -71,13 +73,17 @@ namespace chibios_fatfs {
       virtual msg_t main(void);
     public:
       FatFSServerThread(::BaseBlockDevice *blkdev);
-      ~FatFSServerThread();
     } server;
 
   public:
     FatFSWrapper(::BaseBlockDevice *blkdev);
-
-    ~FatFSWrapper();
+    virtual uint32_t getAndClearLastError(void);
+    virtual void synchronize(void);
+    virtual void remove(const char *fname);
+    virtual BaseFileStreamInterface *open(const char *fname);
+    virtual BaseFileStreamInterface *openForRead(const char *fname);
+    virtual BaseFileStreamInterface *openForWrite(const char *fname);
+    virtual BaseFileStreamInterface *create(const char *fname);
   };
 }
 

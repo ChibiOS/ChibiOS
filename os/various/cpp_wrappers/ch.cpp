@@ -279,6 +279,14 @@ namespace chibios_rt {
     chThdYield();
   }
 
+#if CH_USE_MESSAGES
+  ThreadReference BaseThread::waitMessage(void) {
+
+    ThreadReference tr(chMsgWait());
+    return tr;
+  }
+#endif /* CH_USE_MESSAGES */
+
 #if CH_USE_EVENTS
   eventmask_t BaseThread::getAndClearEvents(eventmask_t mask) {
 
