@@ -49,18 +49,12 @@ namespace chibios_fatfs {
    *------------------------------------------------------------------------*/
   FatFSWrapper::FatFSServerThread::FatFSServerThread(void) :
       BaseStaticThread<FATFS_THREAD_STACK_SIZE>() {
-
-    start(FATFS_THREAD_PRIORITY);
   }
-
-/*  FatFSWrapper::FatFSServerThread::~FatFSServerThread() {
-
-    sendMessage(MSG_TERMINATE);
-    wait();
-  }*/
 
   msg_t FatFSWrapper::FatFSServerThread::main() {
     msg_t sts;
+
+    setName("fatfs");
 
     /* Synchronous messages processing loop.*/
     while (true) {
