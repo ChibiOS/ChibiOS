@@ -226,6 +226,13 @@ namespace chibios_rt {
     };
 
     /**
+     * @brief   Stops the thread.
+     * @note    The implementation is left to descendant classes and is
+     *          optional.
+     */
+    virtual void stop(void);
+
+    /**
      * @brief   Suspends the current thread on the reference.
      * @details The suspended thread becomes the referenced thread. It is
      *          possible to use this method only if the thread reference
@@ -752,12 +759,12 @@ namespace chibios_rt {
 
 #if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
-   * chibios_rt::Semaphore                                                  *
+   * chibios_rt::CounterSemaphore                                           *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating a semaphore.
    */
-  class Semaphore {
+  class CounterSemaphore {
   public:
     /**
      * @brief   Embedded @p ::Semaphore structure.
@@ -765,7 +772,7 @@ namespace chibios_rt {
     ::Semaphore sem;
 
     /**
-     * @brief   Semaphore constructor.
+     * @brief   CounterSemaphore constructor.
      * @details The embedded @p ::Semaphore structure is initialized.
      *
      * @param[in] n             the semaphore counter value, must be greater
@@ -773,7 +780,7 @@ namespace chibios_rt {
      *
      * @init
      */
-    Semaphore(cnt_t n);
+    CounterSemaphore(cnt_t n);
 
     /**
      * @brief   Performs a reset operation on the semaphore.
@@ -930,8 +937,8 @@ namespace chibios_rt {
      *
      * @api
      */
-    static msg_t signalWait(chibios_rt::Semaphore *ssem,
-                            chibios_rt::Semaphore *wsem);
+    static msg_t signalWait(CounterSemaphore *ssem,
+                            CounterSemaphore *wsem);
 #endif /* CH_USE_SEMSW */
   };
   /*------------------------------------------------------------------------*
@@ -1398,12 +1405,12 @@ namespace chibios_rt {
 
 #if CH_USE_QUEUES || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
-   * chibios_rt::InputQueue                                                 *
+   * chibios_rt::InQueue                                                    *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating an input queue.
    */
-  class InputQueue {
+  class InQueue {
   private:
     /**
      * @brief   Embedded @p ::InputQueue structure.
@@ -1412,7 +1419,7 @@ namespace chibios_rt {
 
   public:
     /**
-     * @brief   InputQueue constructor.
+     * @brief   InQueue constructor.
      *
      * @param[in] bp        pointer to a memory area allocated as queue buffer
      * @param[in] size      size of the queue buffer
@@ -1422,7 +1429,7 @@ namespace chibios_rt {
      *
      * @init
      */
-    InputQueue(uint8_t *bp, size_t size, qnotify_t infy, void *link);
+    InQueue(uint8_t *bp, size_t size, qnotify_t infy, void *link);
 
     /**
      * @brief   Returns the filled space into an input queue.
@@ -1551,7 +1558,7 @@ namespace chibios_rt {
   };
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::InputQueueBuffer                                           *
+   * chibios_rt::InQueueBuffer                                              *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Template class encapsulating an input queue and its buffer.
@@ -1559,28 +1566,28 @@ namespace chibios_rt {
    * @param N                   size of the input queue
    */
   template <int N>
-  class InputQueueBuffer : public InputQueue {
+  class InQueueBuffer : public InQueue {
   private:
     uint8_t iq_buf[N];
 
   public:
     /**
-     * @brief   InputQueueBuffer constructor.
+     * @brief   InQueueBuffer constructor.
      *
      * @init
      */
-    InputQueueBuffer(qnotify_t infy, void *link) : InputQueue(iq_buf, N,
-                                                              infy, link) {
+    InQueueBuffer(qnotify_t infy, void *link) : InQueue(iq_buf, N,
+                                                        infy, link) {
     }
   };
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::OutputQueue                                                *
+   * chibios_rt::OutQueue                                                   *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating an output queue.
    */
-  class OutputQueue {
+  class OutQueue {
   private:
     /**
      * @brief   Embedded @p ::OutputQueue structure.
@@ -1589,7 +1596,7 @@ namespace chibios_rt {
 
   public:
     /**
-     * @brief   OutputQueue constructor.
+     * @brief   OutQueue constructor.
      *
      * @param[in] bp        pointer to a memory area allocated as queue buffer
      * @param[in] size      size of the queue buffer
@@ -1599,7 +1606,7 @@ namespace chibios_rt {
      *
      * @init
      */
-    OutputQueue(uint8_t *bp, size_t size, qnotify_t onfy, void *link);
+    OutQueue(uint8_t *bp, size_t size, qnotify_t onfy, void *link);
 
     /**
      * @brief   Returns the filled space into an output queue.
@@ -1730,7 +1737,7 @@ namespace chibios_rt {
 };
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::OutputQueueBuffer                                          *
+   * chibios_rt::OutQueueBuffer                                             *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Template class encapsulating an output queue and its buffer.
@@ -1738,18 +1745,18 @@ namespace chibios_rt {
    * @param N                   size of the output queue
    */
   template <int N>
-  class OutputQueueBuffer : public OutputQueue {
+  class OutQueueBuffer : public OutQueue {
   private:
     uint8_t oq_buf[N];
 
   public:
     /**
-     * @brief   OutputQueueBuffer constructor.
+     * @brief   OutQueueBuffer constructor.
      *
      * @init
      */
-    OutputQueueBuffer(qnotify_t onfy, void *link) : InputQueue(oq_buf, N,
-                                                               onfy, link) {
+    OutQueueBuffer(qnotify_t onfy, void *link) : OutQueue(oq_buf, N,
+                                                          onfy, link) {
     }
   };
 #endif /* CH_USE_QUEUES */

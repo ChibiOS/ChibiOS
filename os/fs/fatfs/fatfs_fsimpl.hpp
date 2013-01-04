@@ -28,7 +28,6 @@
 
 #include "ch.hpp"
 #include "fs.hpp"
-#include "hal.h"
 
 #ifndef _FS_FATFS_IMPL_HPP_
 #define _FS_FATFS_IMPL_HPP_
@@ -67,16 +66,15 @@ namespace chibios_fatfs {
      * @brief   Class of the internal server thread.
      */
     class FatFSServerThread : public BaseStaticThread<FATFS_THREAD_STACK_SIZE> {
-    private:
-      ::BaseBlockDevice *blkdev;
     protected:
       virtual msg_t main(void);
     public:
-      FatFSServerThread(::BaseBlockDevice *blkdev);
+      FatFSServerThread(void);
+      virtual void stop(void);
     } server;
 
   public:
-    FatFSWrapper(::BaseBlockDevice *blkdev);
+    FatFSWrapper(void);
     virtual uint32_t getAndClearLastError(void);
     virtual void synchronize(void);
     virtual void remove(const char *fname);
@@ -84,6 +82,16 @@ namespace chibios_fatfs {
     virtual BaseFileStreamInterface *openForRead(const char *fname);
     virtual BaseFileStreamInterface *openForWrite(const char *fname);
     virtual BaseFileStreamInterface *create(const char *fname);
+
+    /**
+     * @brief   Mounts the file system.
+     */
+    void mount(void);
+
+    /**
+     * @brief   Unmounts the file system.
+     */
+    void unmount(void);
   };
 }
 

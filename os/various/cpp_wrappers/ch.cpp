@@ -97,6 +97,12 @@ namespace chibios_rt {
   /*------------------------------------------------------------------------*
    * chibios_rt::ThreadReference                                            *
    *------------------------------------------------------------------------*/
+
+  void ThreadReference::stop(void) {
+
+    chDbgPanic("invoked unimplemented method stop()");
+  }
+
   msg_t ThreadReference::suspend(void) {
     msg_t msg;
 
@@ -158,6 +164,10 @@ namespace chibios_rt {
 
   void ThreadReference::requestTerminate(void) {
 
+    chDbgAssert(thread_ref != NULL,
+                "ThreadReference, #5",
+                "not referenced");
+
     chThdTerminate(thread_ref);
   }
 
@@ -165,7 +175,7 @@ namespace chibios_rt {
     msg_t ThreadReference::wait(void) {
 
       chDbgAssert(thread_ref != NULL,
-                  "ThreadReference, #5",
+                  "ThreadReference, #6",
                   "not referenced");
 
       msg_t msg = chThdWait(thread_ref);
@@ -178,7 +188,7 @@ namespace chibios_rt {
   msg_t ThreadReference::sendMessage(msg_t msg) {
 
     chDbgAssert(thread_ref != NULL,
-                "ThreadReference, #6",
+                "ThreadReference, #7",
                 "not referenced");
 
     return chMsgSend(thread_ref, msg);
@@ -186,15 +196,27 @@ namespace chibios_rt {
 
   bool ThreadReference::isPendingMessage(void) {
 
+    chDbgAssert(thread_ref != NULL,
+                "ThreadReference, #7",
+                "not referenced");
+
     return (bool)chMsgIsPendingI(thread_ref);
   }
 
   msg_t ThreadReference::getMessage(void) {
 
+    chDbgAssert(thread_ref != NULL,
+                "ThreadReference, #8",
+                "not referenced");
+
     return chMsgGet(thread_ref);
   }
 
   void ThreadReference::releaseMessage(msg_t msg) {
+
+    chDbgAssert(thread_ref != NULL,
+                "ThreadReference, #9",
+                "not referenced");
 
     chMsgRelease(thread_ref, msg);
   }
@@ -203,10 +225,18 @@ namespace chibios_rt {
 #if CH_USE_EVENTS
     void ThreadReference::signalEvents(eventmask_t mask) {
 
+      chDbgAssert(thread_ref != NULL,
+                  "ThreadReference, #10",
+                  "not referenced");
+
       chEvtSignal(thread_ref, mask);
     }
 
     void ThreadReference::signalEventsI(eventmask_t mask) {
+
+      chDbgAssert(thread_ref != NULL,
+                  "ThreadReference, #11",
+                  "not referenced");
 
       chEvtSignalI(thread_ref, mask);
     }
@@ -359,66 +389,66 @@ namespace chibios_rt {
 
 #if CH_USE_SEMAPHORES
   /*------------------------------------------------------------------------*
-   * chibios_rt::Semaphore                                                  *
+   * chibios_rt::CounterSemaphore                                           *
    *------------------------------------------------------------------------*/
-  Semaphore::Semaphore(cnt_t n) {
+  CounterSemaphore::CounterSemaphore(cnt_t n) {
 
     chSemInit(&sem, n);
   }
 
-  void Semaphore::reset(cnt_t n) {
+  void CounterSemaphore::reset(cnt_t n) {
 
     chSemReset(&sem, n);
   }
 
-  void Semaphore::resetI(cnt_t n) {
+  void CounterSemaphore::resetI(cnt_t n) {
 
     chSemResetI(&sem, n);
   }
 
-  msg_t Semaphore::wait(void) {
+  msg_t CounterSemaphore::wait(void) {
 
     return chSemWait(&sem);
   }
 
-  msg_t Semaphore::waitS(void) {
+  msg_t CounterSemaphore::waitS(void) {
 
     return chSemWaitS(&sem);
   }
 
-  msg_t Semaphore::waitTimeout(systime_t time) {
+  msg_t CounterSemaphore::waitTimeout(systime_t time) {
 
     return chSemWaitTimeout(&sem, time);
   }
 
-  msg_t Semaphore::waitTimeoutS(systime_t time) {
+  msg_t CounterSemaphore::waitTimeoutS(systime_t time) {
 
     return chSemWaitTimeoutS(&sem, time);
   }
 
-  void Semaphore::signal(void) {
+  void CounterSemaphore::signal(void) {
 
     chSemSignal(&sem);
   }
 
-  void Semaphore::signalI(void) {
+  void CounterSemaphore::signalI(void) {
 
     chSemSignalI(&sem);
   }
 
-  void Semaphore::addCounterI(cnt_t n) {
+  void CounterSemaphore::addCounterI(cnt_t n) {
 
     chSemAddCounterI(&sem, n);
   }
 
-  cnt_t Semaphore::getCounterI(void) {
+  cnt_t CounterSemaphore::getCounterI(void) {
 
     return chSemGetCounterI(&sem);
   }
 
 #if CH_USE_SEMSW
-  msg_t Semaphore::signalWait(chibios_rt::Semaphore *ssem,
-                              chibios_rt::Semaphore *wsem) {
+  msg_t CounterSemaphore::signalWait(CounterSemaphore *ssem,
+                                     CounterSemaphore *wsem) {
 
     return chSemSignalWait(&ssem->sem, &wsem->sem);
   }
@@ -607,110 +637,108 @@ namespace chibios_rt {
 
 #if CH_USE_QUEUES
   /*------------------------------------------------------------------------*
-   * chibios_rt::InputQueue                                                 *
+   * chibios_rt::InQueue                                                    *
    *------------------------------------------------------------------------*/
-  InputQueue::InputQueue(uint8_t *bp, size_t size,
-                         qnotify_t infy, void *link) {
+  InQueue::InQueue(uint8_t *bp, size_t size, qnotify_t infy, void *link) {
 
     chIQInit(&iq, bp, size, infy, link);
   }
 
-  size_t InputQueue::getFullI(void) {
+  size_t InQueue::getFullI(void) {
 
     return chIQGetFullI(&iq);
   }
 
-  size_t InputQueue::getEmptyI(void) {
+  size_t InQueue::getEmptyI(void) {
 
     return chIQGetEmptyI(&iq);
   }
 
-  bool InputQueue::isEmptyI(void) {
+  bool InQueue::isEmptyI(void) {
 
     return (bool)chIQIsEmptyI(&iq);
   }
 
-  bool InputQueue::isFullI(void) {
+  bool InQueue::isFullI(void) {
 
     return (bool)chIQIsFullI(&iq);
   }
 
-  void InputQueue::resetI(void) {
+  void InQueue::resetI(void) {
 
     chIQResetI(&iq);
   }
 
-  msg_t InputQueue::putI(uint8_t b) {
+  msg_t InQueue::putI(uint8_t b) {
 
     return chIQPutI(&iq, b);
   }
 
-  msg_t InputQueue::get() {
+  msg_t InQueue::get() {
 
     return chIQGet(&iq);
   }
 
-  msg_t InputQueue::getTimeout(systime_t time) {
+  msg_t InQueue::getTimeout(systime_t time) {
 
     return chIQGetTimeout(&iq, time);
   }
 
-  size_t InputQueue::readTimeout(uint8_t *bp, size_t n, systime_t time) {
+  size_t InQueue::readTimeout(uint8_t *bp, size_t n, systime_t time) {
 
     return chIQReadTimeout(&iq, bp, n, time);
   }
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::OutputQueue                                                *
+   * chibios_rt::OutQueue                                                   *
    *------------------------------------------------------------------------*/
-  OutputQueue::OutputQueue(uint8_t *bp, size_t size,
-                           qnotify_t onfy, void *link) {
+  OutQueue::OutQueue(uint8_t *bp, size_t size, qnotify_t onfy, void *link) {
 
     chOQInit(&oq, bp, size, onfy, link);
   }
 
-  size_t OutputQueue::getFullI(void) {
+  size_t OutQueue::getFullI(void) {
 
     return chOQGetFullI(&oq);
   }
 
-  size_t OutputQueue::getEmptyI(void) {
+  size_t OutQueue::getEmptyI(void) {
 
     return chOQGetEmptyI(&oq);
   }
 
-  bool OutputQueue::isEmptyI(void) {
+  bool OutQueue::isEmptyI(void) {
 
     return (bool)chOQIsEmptyI(&oq);
   }
 
-  bool OutputQueue::isFullI(void) {
+  bool OutQueue::isFullI(void) {
 
     return (bool)chOQIsFullI(&oq);
   }
 
-  void OutputQueue::resetI(void) {
+  void OutQueue::resetI(void) {
 
     chOQResetI(&oq);
   }
 
-  msg_t OutputQueue::put(uint8_t b) {
+  msg_t OutQueue::put(uint8_t b) {
 
     return chOQPut(&oq, b);
   }
 
-  msg_t OutputQueue::putTimeout(uint8_t b, systime_t time) {
+  msg_t OutQueue::putTimeout(uint8_t b, systime_t time) {
 
     return chOQPutTimeout(&oq, b, time);
   }
 
-  msg_t OutputQueue::getI(void) {
+  msg_t OutQueue::getI(void) {
 
     return chOQGetI(&oq);
   }
 
-  size_t OutputQueue::writeTimeout(const uint8_t *bp, size_t n,
-                                   systime_t time) {
+  size_t OutQueue::writeTimeout(const uint8_t *bp, size_t n,
+                                systime_t time) {
 
     return chOQWriteTimeout(&oq, bp, n, time);
   }

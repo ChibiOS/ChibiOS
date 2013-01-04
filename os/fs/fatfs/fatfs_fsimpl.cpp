@@ -47,9 +47,8 @@ namespace chibios_fatfs {
   /*------------------------------------------------------------------------*
    * chibios_fatfs::FatFSWrapper::FatFSServerThread                         *
    *------------------------------------------------------------------------*/
-  FatFSWrapper::FatFSServerThread::FatFSServerThread(::BaseBlockDevice *blkdev) :
-      BaseStaticThread<FATFS_THREAD_STACK_SIZE>(),
-      blkdev(blkdev) {
+  FatFSWrapper::FatFSServerThread::FatFSServerThread(void) :
+      BaseStaticThread<FATFS_THREAD_STACK_SIZE>() {
 
     start(FATFS_THREAD_PRIORITY);
   }
@@ -79,18 +78,28 @@ namespace chibios_fatfs {
     }
   }
 
+  void FatFSWrapper::FatFSServerThread::stop(void) {
+
+    sendMessage(MSG_TERMINATE);
+    wait();
+  }
+
   /*------------------------------------------------------------------------*
    * chibios_fatfs::FatFSWrapper                                           *
    *------------------------------------------------------------------------*/
-  FatFSWrapper::FatFSWrapper(::BaseBlockDevice *blkdev) : server(blkdev) {
+  FatFSWrapper::FatFSWrapper(void) {
+
+  }
+
+  void FatFSWrapper::mount(void) {
 
     server.start(FATFS_THREAD_PRIORITY);
   }
 
-/*  FatFSWrapper::~FatFSWrapper() {
+  void FatFSWrapper::unmount(void) {
 
-    server.~FatFSServerThread();
-  }*/
+    server.stop();
+  }
 
   uint32_t FatFSWrapper::getAndClearLastError(void) {
 
