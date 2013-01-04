@@ -65,13 +65,6 @@ namespace chibios_fs {
   class BaseFileStreamInterface : public chibios_rt::BaseSequentialStreamInterface {
   public:
     /**
-     * @brief   File close and object destruction.
-     *
-     * @api
-     */
-    virtual ~BaseFileStreamInterface(void) = 0;
-
-    /**
      * @brief   Returns an implementation dependent error code.
      *
      * @return              An implementation-dependent error code.
@@ -191,6 +184,13 @@ namespace chibios_fs {
      * @api
      */
     virtual BaseFileStreamInterface *create(const char *fname) = 0;
+
+    /**
+     * @brief   Closes a file.
+     *
+     * @api
+     */
+    virtual void close(BaseFileStreamInterface *file) = 0;
   };
 }
 #endif /* _FS_HPP_ */

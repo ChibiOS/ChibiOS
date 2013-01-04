@@ -44,14 +44,82 @@ using namespace chibios_fs;
  */
 namespace chibios_fatfs {
 
+  typedef struct {
+    uint32_t            msg_code;
+    union {
+      struct {
+
+      };
+    } op;
+  } wmsg_t;
+
   /*------------------------------------------------------------------------*
-   * chibios_fatfs::FatFSWrapper::FatFSServerThread                         *
+   * chibios_fatfs::FatFSFileWrapper                                        *
    *------------------------------------------------------------------------*/
-  FatFSWrapper::FatFSServerThread::FatFSServerThread(void) :
+  FatFSFileWrapper::FatFSFileWrapper(void) : fs(NULL) {
+
+  }
+
+  FatFSFileWrapper::FatFSFileWrapper(FatFSWrapper *fsref) : fs(fsref) {
+
+  }
+
+  size_t FatFSFileWrapper::write(const uint8_t *bp, size_t n) {
+
+    return 0;
+  }
+
+  size_t FatFSFileWrapper::read(uint8_t *bp, size_t n) {
+
+    return 0;
+  }
+
+  msg_t FatFSFileWrapper::put(uint8_t b) {
+
+    return 0;
+  }
+
+  msg_t FatFSFileWrapper::get(void) {
+
+    return 0;
+  }
+
+  uint32_t FatFSFileWrapper::getAndClearLastError(void) {
+
+    return 0;
+  }
+
+  fileoffset_t FatFSFileWrapper::getSize(void) {
+
+    return 0;
+  }
+
+  fileoffset_t FatFSFileWrapper::getPosition(void) {
+
+    return 0;
+  }
+
+  uint32_t FatFSFileWrapper::setPosition(fileoffset_t offset) {
+
+    return 0;
+  }
+
+  /*------------------------------------------------------------------------*
+   * chibios_fatfs::FatFSFilesPool                                          *
+   *------------------------------------------------------------------------*/
+  FatFSFilesPool::FatFSFilesPool(void) : MemoryPoolBuffer<FatFSFileWrapper,
+      FATFS_MAX_FILES>() {
+
+  }
+
+  /*------------------------------------------------------------------------*
+   * chibios_fatfs::FatFSServerThread                                       *
+   *------------------------------------------------------------------------*/
+  FatFSServerThread::FatFSServerThread(void) :
       BaseStaticThread<FATFS_THREAD_STACK_SIZE>() {
   }
 
-  msg_t FatFSWrapper::FatFSServerThread::main() {
+  msg_t FatFSServerThread::main() {
     msg_t sts;
 
     setName("fatfs");
@@ -72,14 +140,14 @@ namespace chibios_fatfs {
     }
   }
 
-  void FatFSWrapper::FatFSServerThread::stop(void) {
+  void FatFSServerThread::stop(void) {
 
     sendMessage(MSG_TERMINATE);
     wait();
   }
 
   /*------------------------------------------------------------------------*
-   * chibios_fatfs::FatFSWrapper                                           *
+   * chibios_fatfs::FatFSWrapper                                            *
    *------------------------------------------------------------------------*/
   FatFSWrapper::FatFSWrapper(void) {
 
@@ -131,6 +199,11 @@ namespace chibios_fatfs {
 
     (void)fname;
     return NULL;
+  }
+
+  void FatFSWrapper::close(BaseFileStreamInterface *file) {
+
+    (void)file;
   }
 }
 

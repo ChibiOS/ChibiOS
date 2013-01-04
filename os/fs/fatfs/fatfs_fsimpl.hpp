@@ -46,6 +46,13 @@
 #define FATFS_THREAD_PRIORITY           NORMALPRIO
 #endif
 
+/**
+ * @brief   Maximum number of open files.
+ */
+#if !defined(FATFS_MAX_FILES) || defined(__DOXYGEN__)
+#define FATFS_MAX_FILES                 16
+#endif
+
 using namespace chibios_rt;
 using namespace chibios_fs;
 
@@ -54,6 +61,59 @@ using namespace chibios_fs;
  */
 namespace chibios_fatfs {
 
+  class FatFSWrapper;
+
+  /*------------------------------------------------------------------------*
+   * chibios_fatfs::FatFSFileWrapper                                        *
+   *------------------------------------------------------------------------*/
+  class FatFSFileWrapper : public BaseFileStreamInterface {
+    friend class FatFSWrapper;
+
+  protected:
+    FatFSWrapper *fs;
+
+  public:
+    FatFSFileWrapper(void);
+    FatFSFileWrapper(FatFSWrapper *fsref);
+
+    virtual size_t write(const uint8_t *bp, size_t n);
+    virtual size_t read(uint8_t *bp, size_t n);
+    virtual msg_t put(uint8_t b);
+    virtual msg_t get(void);
+    virtual uint32_t getAndClearLastError(void);
+    virtual fileoffset_t getSize(void);
+    virtual fileoffset_t getPosition(void);
+    virtual uint32_t setPosition(fileoffset_t offset);
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_fatfs::FatFSFilesPool                                          *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Class of memory pool of @p FatFSFileWrapper objects.
+   */
+  class FatFSFilesPool : public MemoryPoolBuffer<FatFSFileWrapper,
+                                                 FATFS_MAX_FILES> {
+  public:
+    FatFSFilesPool(void);
+  };
+
+  /*------------------------------------------------------------------------*
+   * chibios_fatfs::FatFSServerThread                                       *
+   *------------------------------------------------------------------------*/
+  /**
+   * @brief   Class of the internal server thread.
+   */
+  class FatFSServerThread : public BaseStaticThread<FATFS_THREAD_STACK_SIZE> {
+  private:
+    FatFSFilesPool files;
+  protected:
+    virtual msg_t main(void);
+  public:
+    FatFSServerThread(void);
+    virtual void stop(void);
+  };
+
   /*------------------------------------------------------------------------*
    * chibios_fatfs::FatFSWrapper                                            *
    *------------------------------------------------------------------------*/
@@ -61,17 +121,10 @@ namespace chibios_fatfs {
    * @brief   Class of the FatFS wrapper.
    */
   class FatFSWrapper : public chibios_fs::BaseFileSystemInterface {
+    friend class FatFSFileWrapper;
+
   protected:
-    /**
-     * @brief   Class of the internal server thread.
-     */
-    class FatFSServerThread : public BaseStaticThread<FATFS_THREAD_STACK_SIZE> {
-    protected:
-      virtual msg_t main(void);
-    public:
-      FatFSServerThread(void);
-      virtual void stop(void);
-    } server;
+    FatFSServerThread server;
 
   public:
     FatFSWrapper(void);
@@ -82,6 +135,7 @@ namespace chibios_fatfs {
     virtual BaseFileStreamInterface *openForRead(const char *fname);
     virtual BaseFileStreamInterface *openForWrite(const char *fname);
     virtual BaseFileStreamInterface *create(const char *fname);
+    virtual void close(BaseFileStreamInterface *file);
 
     /**
      * @brief   Mounts the file system.

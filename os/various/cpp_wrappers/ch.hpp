@@ -2081,7 +2081,7 @@ namespace chibios_rt {
    * @brief   Template class encapsulating a mailbox and its elements.
    */
   template<class T, size_t N>
-  class MemoryPoolBuffer : MemoryPool {
+  class MemoryPoolBuffer : public MemoryPool {
   private:
     T pool_buf[N];
 
