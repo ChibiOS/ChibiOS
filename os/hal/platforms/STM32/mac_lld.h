@@ -286,7 +286,6 @@ typedef struct {
    * @brief Available space size.
    */
   size_t                    size;
-  /* End of the mandatory fields.*/
   /**
    * @brief Pointer to the physical descriptor.
    */
@@ -305,7 +304,6 @@ typedef struct {
    * @brief Available data size.
    */
   size_t                size;
-  /* End of the mandatory fields.*/
   /**
    * @brief Pointer to the physical descriptor.
    */

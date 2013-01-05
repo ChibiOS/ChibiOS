@@ -163,10 +163,10 @@ static msg_t shell_thread(void *p) {
       chprintf(chp, "\r\nlogout");
       break;
     }
-    lp = _strtok(line, " \009", &tokp);
+    lp = _strtok(line, " \t", &tokp);
     cmd = lp;
     n = 0;
-    while ((lp = _strtok(NULL, " \009", &tokp)) != NULL) {
+    while ((lp = _strtok(NULL, " \t", &tokp)) != NULL) {
       if (n >= SHELL_MAX_ARGUMENTS) {
         chprintf(chp, "too many arguments\r\n");
         cmd = NULL;

@@ -521,8 +521,8 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
   while (!(rdes->rdes0 & STM32_RDES0_OWN)) {
     if (!(rdes->rdes0 & (STM32_RDES0_AFM | STM32_RDES0_ES))
 #if STM32_IP_CHECKSUM_OFFLOAD
-        && !(rdes->rdes0 & STM32_RDES0_FT & (STM32_RDES0_IPHCE |
-                                             STM32_RDES0_PCE))
+        && (rdes->rdes0 & STM32_RDES0_FT)
+        && !(rdes->rdes0 & (STM32_RDES0_IPHCE | STM32_RDES0_PCE))
 #endif
         && (rdes->rdes0 & STM32_RDES0_FS) && (rdes->rdes0 & STM32_RDES0_LS)) {
       /* Found a valid one.*/
@@ -536,8 +536,11 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
     }
     /* Invalid frame found, purging.*/
     rdes->rdes0 = STM32_RDES0_OWN;
-    macp->rxptr = (stm32_eth_rx_descriptor_t *)rdes->rdes3;
+    rdes = (stm32_eth_rx_descriptor_t *)rdes->rdes3;
   }
+
+  /* Next descriptor to check.*/
+  macp->rxptr = rdes;
 
   chSysUnlock();
   return RDY_TIMEOUT;
