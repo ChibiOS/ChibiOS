@@ -82,6 +82,8 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed small bug in shell argument parsing code in shell_thread (bug
+  3599328)(backported to 2.4.4).
 - FIX: Fixed wrong condition in checksum offload of STM32 MAC driver (bug
   3598720)(backported to 2.4.4).
 - FIX: Fixed error in STM32 MAC driver degrades performance (bug 3598719)
