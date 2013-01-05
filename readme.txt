@@ -78,6 +78,13 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.4.4 ***
+- FIX: Fixed small bug in shell argument parsing code in shell_thread (bug
+  3599328).
+- FIX: Fixed wrong condition in checksum offload of STM32 MAC driver (bug
+  3598720).
+- FIX: Fixed error in STM32 MAC driver degrades performance (bug 3598719).
+
 *** 2.4.3 ***
 - FIX: Fixed warning in STM32 ICU driver using IAR compiler (bug 3598177).
 - FIX: Fixed typo in chOQGetEmptyI() macro (bug 3595910).
