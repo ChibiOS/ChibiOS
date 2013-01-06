@@ -47,6 +47,16 @@ namespace chibios_rt {
     chSysUnlock();
   }
 
+  void System::lockFromIsr(void) {
+
+    chSysLockFromIsr();
+  }
+
+  void System::unlockFromIsr(void) {
+
+    chSysUnlockFromIsr();
+  }
+
   systime_t System::getTime(void) {
 
     return chTimeNow();
@@ -813,6 +823,13 @@ namespace chibios_rt {
     chPoolInit(&pool, size, provider);
   }
 
+  MemoryPool::MemoryPool(size_t size, memgetfunc_t provider, void* p, size_t n) {
+
+    chPoolInit(&pool, size, provider);
+    chPoolLoadArray(&pool, p, n);
+  }
+
+
   void MemoryPool::loadArray(void *p, size_t n) {
 
     chPoolLoadArray(&pool, p, n);
@@ -820,12 +837,12 @@ namespace chibios_rt {
 
   void *MemoryPool::allocI(void) {
 
-    return chPoolAlloc(&pool);
+    return chPoolAllocI(&pool);
   }
 
   void *MemoryPool::alloc(void) {
 
-    return chPoolAllocI(&pool);
+    return chPoolAlloc(&pool);
   }
 
   void MemoryPool::free(void *objp) {

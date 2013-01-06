@@ -73,6 +73,36 @@ namespace chibios_rt {
     static void unlock(void);
 
     /**
+     * @brief   Enters the kernel lock mode from within an interrupt handler.
+     * @note    This API may do nothing on some architectures, it is required
+     *          because on ports that support preemptable interrupt handlers
+     *          it is required to raise the interrupt mask to the same level of
+     *          the system mutual exclusion zone.<br>
+     *          It is good practice to invoke this API before invoking any I-class
+     *          syscall from an interrupt handler.
+     * @note    This API must be invoked exclusively from interrupt handlers.
+     *
+     * @special
+     */
+    static void lockFromIsr(void);
+
+    /**
+     * @brief   Leaves the kernel lock mode from within an interrupt handler.
+     *
+     * @note    This API may do nothing on some architectures, it is required
+     *          because on ports that support preemptable interrupt handlers
+     *          it is required to raise the interrupt mask to the same level of
+     *          the system mutual exclusion zone.<br>
+     *          It is good practice to invoke this API after invoking any I-class
+     *          syscall from an interrupt handler.
+     * @note    This API must be invoked exclusively from interrupt handlers.
+     *
+     * @special
+     */
+    static void unlockFromIsr(void);
+
+
+    /**
      * @brief   Returns the system time as system ticks.
      * @note    The system tick time interval is implementation dependent.
      *
@@ -2004,9 +2034,32 @@ namespace chibios_rt {
     /**
      * @brief   MemoryPool constructor.
      *
+     * @param[in] size      the size of the objects contained in this memory pool,
+     *                      the minimum accepted size is the size of a pointer to
+     *                      void.
+     * @param[in] provider  memory provider function for the memory pool or
+     *                      @p NULL if the pool is not allowed to grow
+     *                      automatically
+     *
      * @init
      */
     MemoryPool(size_t size, memgetfunc_t provider);
+
+    /**
+     * @brief   MemoryPool constructor.
+     *
+     * @param[in] size      the size of the objects contained in this memory pool,
+     *                      the minimum accepted size is the size of a pointer to
+     *                      void.
+     * @param[in] provider  memory provider function for the memory pool or
+     *                      @p NULL if the pool is not allowed to grow
+     *                      automatically
+     * @param[in] p         pointer to the array first element
+     * @param[in] n         number of elements in the array
+     *
+     * @init
+     */
+    MemoryPool(size_t size, memgetfunc_t provider, void* p, size_t n);
 
     /**
      * @brief   Loads a memory pool with an array of static objects.
