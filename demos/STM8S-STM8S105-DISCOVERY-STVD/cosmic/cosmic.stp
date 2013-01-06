@@ -1917,11 +1917,6 @@ Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\ker
 [Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chinline.h]
 ElemType=File
 PathName=..\..\..\os\kernel\include\chinline.h
-Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chioch.h
-
-[Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chioch.h]
-ElemType=File
-PathName=..\..\..\os\kernel\include\chioch.h
 Next=Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chlists.h
 
 [Root.Include Files.Include Files\os.Include Files\os\kernel...\..\..\os\kernel\include\chlists.h]
