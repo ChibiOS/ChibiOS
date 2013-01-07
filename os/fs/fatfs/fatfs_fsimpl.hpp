@@ -92,8 +92,8 @@ namespace chibios_fatfs {
   /**
    * @brief   Class of memory pool of @p FatFSFileWrapper objects.
    */
-  class FatFSFilesPool : public MemoryPoolBuffer<FatFSFileWrapper,
-                                                 FATFS_MAX_FILES> {
+  class FatFSFilesPool : public ObjectsPool<FatFSFileWrapper,
+                                            FATFS_MAX_FILES> {
   public:
     FatFSFilesPool(void);
   };

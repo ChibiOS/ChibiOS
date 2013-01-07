@@ -107,8 +107,8 @@ namespace chibios_fatfs {
   /*------------------------------------------------------------------------*
    * chibios_fatfs::FatFSFilesPool                                          *
    *------------------------------------------------------------------------*/
-  FatFSFilesPool::FatFSFilesPool(void) : MemoryPoolBuffer<FatFSFileWrapper,
-      FATFS_MAX_FILES>() {
+  FatFSFilesPool::FatFSFilesPool(void) : ObjectsPool<FatFSFileWrapper,
+                                                     FATFS_MAX_FILES>() {
 
   }
 

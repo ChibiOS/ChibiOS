@@ -2128,23 +2128,29 @@ namespace chibios_rt {
   };
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::MemoryPool                                                 *
+   * chibios_rt::ObjectsPool                                                *
    *------------------------------------------------------------------------*/
   /**
-   * @brief   Template class encapsulating a mailbox and its elements.
+   * @brief   Template class encapsulating a memory pool and its elements.
    */
   template<class T, size_t N>
-  class MemoryPoolBuffer : public MemoryPool {
+  class ObjectsPool : public MemoryPool {
   private:
-    T pool_buf[N];
+    /* The buffer is declared as an array of pointers to void for two
+       reasons:
+       1) The objects must be properly aligned to hold a pointer as
+          first field.
+       2) There is no need to invoke constructors for object that are
+          into the pool.*/
+    void *pool_buf[(N * sizeof (T)) / sizeof (void *)];
 
   public:
     /**
-     * @brief   MemoryPoolBuffer constructor.
+     * @brief   ObjectsPool constructor.
      *
      * @init
      */
-    MemoryPoolBuffer(void) : MemoryPool(sizeof (T), NULL) {
+    ObjectsPool(void) : MemoryPool(sizeof (T), NULL) {
 
       loadArray(pool_buf, N);
     }
