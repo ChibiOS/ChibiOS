@@ -262,7 +262,7 @@ msg_t lwip_thread(void *p) {
   netif_set_up(&thisif);
 
   /* Setup event sources.*/
-  evtInit(&evt, S2ST(5));
+  evtInit(&evt, LWIP_LINK_POLL_INTERVAL);
   evtStart(&evt);
   chEvtRegisterMask(&evt.et_es, &el0, PERIODIC_TIMER_ID);
   chEvtRegisterMask(macGetReceiveEventSource(&ETHD1), &el1, FRAME_RECEIVED_ID);

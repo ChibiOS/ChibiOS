@@ -177,7 +177,7 @@ typedef struct MACDriver MACDriver;
  *
  * @api
  */
-#define magGetNextReceiveBuffer(rdp, sizep)                                 \
+#define macGetNextReceiveBuffer(rdp, sizep)                                 \
   mac_lld_get_next_receive_buffer(rdp, sizep)
 #endif /* MAC_USE_ZERO_COPY */
 /** @} */
