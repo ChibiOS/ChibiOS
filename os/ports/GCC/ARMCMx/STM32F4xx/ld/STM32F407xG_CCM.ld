@@ -136,7 +136,7 @@ SECTIONS
         . = ALIGN(4);
         *(.bss.default_heap)
         . = ALIGN(4);
-        PROVIDE(_cmmend = .);
+        PROVIDE(_cmm_end = .);
     } > ccmram
 
     .data :
