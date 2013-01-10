@@ -26,7 +26,15 @@
  * @{
  */
 
-#include "ch.h"
+#include <stdint.h>
+
+#if !defined(FALSE)
+#define FALSE       0
+#endif
+
+#if !defined(TRUE)
+#define TRUE        (!FALSE)
+#endif
 
 typedef void (*funcp_t)(void);
 typedef funcp_t * funcpp_t;

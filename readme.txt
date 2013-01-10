@@ -94,7 +94,7 @@
 - FIX: Fixed PHY powerdown issues not fixed (bug 3596911).
 - NEW: Added an abstract file system interface written in C++, no
   implementations yet.
-  TODO: Create a descendant interface for hyerarchical file systems.
+  TODO: Create a descendant interface for hierarchical file systems.
   TODO: Create a FatFS wrapper implementing the interface and using a server
   thread for synchronization.
   TODO: Create an implementation over a read-only file system in code space.
@@ -110,6 +110,8 @@
 - NEW: Added EXT driver to the STM32F3xx platform.
 - NEW: Improved the STM32 EXT driver to support more than 32 channels.
 - NEW: Added support for Olimex board STM32-LCD.
+- CHANGE: Removed dependency between crt0.c (GCC-ARMCMx) and the kernel
+  header ch.h.
 
 *** 2.5.1 ***
 - FIX: Fixed typo in chOQGetEmptyI() macro (bug 3595910)(backported to 2.2.10
