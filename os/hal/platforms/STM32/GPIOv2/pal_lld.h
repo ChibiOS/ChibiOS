@@ -95,9 +95,9 @@
 #define PAL_MODE_RESET                  PAL_STM32_MODE_INPUT
 
 /**
- * @brief   This mode is implemented as output.
+ * @brief   This mode is implemented as input with pull-up.
  */
-#define PAL_MODE_UNCONNECTED            PAL_STM32_MODE_OUTPUT
+#define PAL_MODE_UNCONNECTED            PAL_MODE_INPUT_PULLUP
 
 /**
  * @brief   Regular input high-Z pad.
