@@ -51,7 +51,7 @@
  * @brief   Safe state for <b>unconnected</b> pads.
  * @details The state itself is not specified and is architecture dependent,
  *          it may be mapped on @p PAL_MODE_INPUT_PULLUP,
- *          @p PAL_MODE_INPUT_PULLDOWN or @p PAL_MODE_OUTPUT_PUSHPULL as
+ *          @p PAL_MODE_INPUT_PULLDOWN or @p PAL_MODE_OUTPUT_PUSHPULL for
  *          example.
  */
 #define PAL_MODE_UNCONNECTED            1
