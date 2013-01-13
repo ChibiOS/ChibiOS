@@ -12,6 +12,9 @@ X Support for ATSAM4L devices.
 - Improve support for SPC56xP devices.
 - Improve support for SPC56xM devices.
 - Support for SPC56xA devices.
+- Support for SPC56EL devices.
+- Support for STM32L1xx MD and HD devices.
+- Support for STM32F427 and STM32F437 devices.
 - Restructure and improve documentation.
 X Update C++ wrapper.
 X File System infrastructure.
