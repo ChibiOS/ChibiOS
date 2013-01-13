@@ -84,6 +84,7 @@
 - FIX: Fixed wrong condition in checksum offload of STM32 MAC driver (bug
   3598720).
 - FIX: Fixed error in STM32 MAC driver degrades performance (bug 3598719).
+- NEW: Updated STM32L1xx header to the latest version.
 
 *** 2.4.3 ***
 - FIX: Fixed warning in STM32 ICU driver using IAR compiler (bug 3598177).
