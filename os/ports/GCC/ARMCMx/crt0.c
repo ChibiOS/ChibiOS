@@ -36,6 +36,12 @@
 #define TRUE        (!FALSE)
 #endif
 
+#define SCB_CPACR               *((uint32_t *)0xE000ED88U)
+#define SCB_FPCCR               *((uint32_t *)0xE000EF34U)
+#define SCB_FPDSCR              *((uint32_t *)0xE000EF3CU)
+#define FPCCR_ASPEN             (0x1U << 31)
+#define FPCCR_LSPEN             (0x1U << 30)
+
 typedef void (*funcp_t)(void);
 typedef funcp_t * funcpp_t;
 
