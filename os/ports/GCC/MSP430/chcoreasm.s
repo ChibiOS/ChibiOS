@@ -29,34 +29,37 @@
         .p2align 1, 0
         .weak   _port_switch
 _port_switch:
-         push    r11
-         push    r10
-         push    r9
-         push    r8
-         push    r7
-         push    r6
-         push    r5
-         push    r4
-         mov r1, 6(r14)
-         mov 6(r15), r1
-         pop     r4
-         pop     r5
-         pop     r6
-         pop     r7
-         pop     r8
-         pop     r9
-         pop     r10
-         pop     r11
-         ret
+        push    r11
+        push    r10
+        push    r9
+        push    r8
+        push    r7
+        push    r6
+        push    r5
+        push    r4
+        mov r1, 6(r14)
+        mov 6(r15), r1
+        pop     r4
+        pop     r5
+        pop     r6
+        pop     r7
+        pop     r8
+        pop     r9
+        pop     r10
+        pop     r11
+        ret
 
         .p2align 1, 0
         .weak   _port_thread_start
 _port_thread_start:
-         eint
-         mov     r11, r15
-         call    r10
-         call    #chThdExit
-         ; Falls into _port_halt
+#if CH_DBG_SYSTEM_STATE_CHECK
+        call    #dbg_check_unlock
+#endif
+        eint
+        mov     r11, r15
+        call    r10
+        call    #chThdExit
+        ; Falls into _port_halt
 
         .p2align 1, 0
         .weak   _port_halt
