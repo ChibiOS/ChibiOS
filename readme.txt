@@ -80,6 +80,7 @@
 
 *** 2.4.4 ***
 - FIX: Fixed state checker error in MSP430 port (bug 3601460).
+- FIX: Fixed wrong assertion in UART driver (bug 3600789).
 - FIX: Fixed small bug in shell argument parsing code in shell_thread (bug
   3599328).
 - FIX: Fixed wrong condition in checksum offload of STM32 MAC driver (bug
