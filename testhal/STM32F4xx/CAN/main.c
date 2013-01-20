@@ -21,6 +21,14 @@
 #include "ch.h"
 #include "hal.h"
 
+struct can_instance {
+  CANDriver     *canp;
+  uint32_t      led;
+};
+
+static const struct can_instance can1 = {&CAND1, GPIOD_LED5};
+//static const struct can_instance can2 = {&CAND2, GPIOD_LED3};
+
 /*
  * Internal loopback mode, 500KBaud, automatic wakeup, automatic recover
  * from abort mode.
@@ -37,20 +45,22 @@ static const CANConfig cancfg = {
 /*
  * Receiver thread.
  */
-static WORKING_AREA(can_rx_wa, 256);
+static WORKING_AREA(can_rx1_wa, 256);
+//static WORKING_AREA(can_rx2_wa, 256);
 static msg_t can_rx(void *p) {
+  struct can_instance *cip = p;
   EventListener el;
   CANRxFrame rxmsg;
 
   (void)p;
   chRegSetThreadName("receiver");
-  chEvtRegister(&CAND1.rxfull_event, &el, 0);
+  chEvtRegister(&cip->canp->rxfull_event, &el, 0);
   while(!chThdShouldTerminate()) {
     if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(100)) == 0)
       continue;
-    while (canReceive(&CAND1, &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
+    while (canReceive(cip->canp, &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
       /* Process message.*/
-      palTogglePad(GPIOD, GPIOD_LED5);
+      palTogglePad(GPIOD, cip->led);
     }
   }
   chEvtUnregister(&CAND1.rxfull_event, &el);
@@ -103,8 +113,12 @@ int main(void) {
   /*
    * Starting the transmitter and receiver threads.
    */
-  chThdCreateStatic(can_rx_wa, sizeof(can_rx_wa), NORMALPRIO + 7, can_rx, NULL);
-  chThdCreateStatic(can_tx_wa, sizeof(can_tx_wa), NORMALPRIO + 7, can_tx, NULL);
+  chThdCreateStatic(can_rx1_wa, sizeof(can_rx1_wa), NORMALPRIO + 7,
+                    can_rx, (void *)&can1);
+//  chThdCreateStatic(can_rx2_wa, sizeof(can_rx2_wa), NORMALPRIO + 7,
+//                    can_rx, (void *)&can2);
+  chThdCreateStatic(can_tx_wa, sizeof(can_tx_wa), NORMALPRIO + 7,
+                    can_tx, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
