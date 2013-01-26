@@ -82,6 +82,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed missing parenthesis in use of macro arguments (bug 3601638).
 - FIX: Fixed compile errors in Posix-GCC demo (bug 3601621)(backported
   to 2.4.4).
 - FIX: Fixed state checker error in MSP430 port (bug 3601460)(backported
