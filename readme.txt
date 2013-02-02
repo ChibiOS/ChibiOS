@@ -82,7 +82,10 @@
 *****************************************************************************
 
 *** 2.5.2 ***
-- FIX: Fixed duplicated code in hal_lld.h (STM32F4xx) (bug 3602544).
+- FIX: Fixed adcSTM32EnableTSVREFE must be called AFTER adcStart (bug
+  3602950).
+- FIX: Fixed duplicated code in hal_lld.h (STM32F4xx) (bug 3602544)
+  (backported to 2.4.4).
 - FIX: Fixed #define typo in usb_lld.h (OTGv1) (bug 3602306).
 - FIX: Fixed STM32F0 RCC enable/disable/reset functions for CRC and WWDG
   (bug 3602150).
