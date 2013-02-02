@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.4 ***
+- FIX: Fixed duplicated code in hal_lld.h (STM32F4xx) (bug 3602544).
 - FIX: Fixed compile errors in Posix-GCC demo (bug 3601621).
 - FIX: Fixed state checker error in MSP430 port (bug 3601460).
 - FIX: Fixed wrong assertion in UART driver (bug 3600789).
