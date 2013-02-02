@@ -528,6 +528,60 @@
  * @api
  */
 #define rccResetUSART2() rccResetAPB1(RCC_APB1RSTR_USART2RST)
+
+/**
+ * @brief   Enables the CRC peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCRC(lp) rccEnableAHB(RCC_AHBENR_CRCEN, lp)
+
+/**
+ * @brief   Disables the CRC peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableCRC(lp) rccDisableAHB(RCC_AHBENR_CRCEN, lp)
+
+/**
+ * @brief   Resets the CRC peripheral.
+ *
+ * @api
+ */
+#define rccResetCRC() rccResetAHB(RCC_AHBRSTR_CRCRST)
+
+/**
+ * @brief   Enables the WWDG peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableWWDG(lp) rccEnableAPB1(RCC_APB1ENR_WWDGEN, lp)
+
+/**
+ * @brief   Disables the WWDG peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableWWDG(lp) rccDisableAPB1(RCC_APB1ENR_WWDGEN, lp)
+
+/**
+ * @brief   Resets the WWDG peripheral.
+ *
+ * @api
+ */
+#define rccResetWWDG() rccResetAPB1(RCC_APB1RSTR_WWDGRST)
 /** @} */
 
 /*===========================================================================*/

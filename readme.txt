@@ -82,6 +82,8 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed STM32F0 RCC enable/disable/reset functions for CRC and WWDG
+  (bug 3602150).
 - FIX: Fixed missing parenthesis in use of macro arguments (bug 3601638).
 - FIX: Fixed compile errors in Posix-GCC demo (bug 3601621)(backported
   to 2.4.4).
