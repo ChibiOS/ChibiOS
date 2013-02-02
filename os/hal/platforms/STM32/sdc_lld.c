@@ -1,6 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012 Giovanni Di Sirio.
+                 2011,2012,2013 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -299,7 +299,8 @@ CH_IRQ_HANDLER(STM32_SDIO_HANDLER) {
 
   if (SDCD1.thread != NULL) {
     chSchReadyI(SDCD1.thread);
-    SDCD1.thread = NULL;  }
+    SDCD1.thread = NULL;
+  }
 
   chSysUnlockFromIsr();
 
