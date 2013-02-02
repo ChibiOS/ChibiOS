@@ -106,7 +106,7 @@
 /**
  * @brief   Dedicated data pump threads priority.
  */
-#if !defined(STM32_USB_OTG_THREAD_PRIORITY) || defined(__DOXYGEN__)
+#if !defined(STM32_USB_OTG_THREAD_PRIO) || defined(__DOXYGEN__)
 #define STM32_USB_OTG_THREAD_PRIO           LOWPRIO
 #endif
 

@@ -82,6 +82,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed #define typo in usb_lld.h (OTGv1) (bug 3602306).
 - FIX: Fixed STM32F0 RCC enable/disable/reset functions for CRC and WWDG
   (bug 3602150).
 - FIX: Fixed missing parenthesis in use of macro arguments (bug 3601638).
