@@ -112,6 +112,7 @@
   TODO: Create a FatFS wrapper implementing the interface and using a server
   thread for synchronization.
   TODO: Create an implementation over a read-only file system in code space.
+- NEW: CAN2 support for STM32 added.
 - NEW: Updated STM32L1xx header to the latest version.
 - NEW: Added an option to lwipthread to change the link status poll interval.
 - NEW: Added new C++ demo for the STM32F4-Discovery.
