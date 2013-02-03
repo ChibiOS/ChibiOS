@@ -42,7 +42,7 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief ADC1 driver identifier.*/
+/** @brief CAN1 driver identifier.*/
 #if STM32_CAN_USE_CAN1 || defined(__DOXYGEN__)
 CANDriver CAND1;
 #endif
