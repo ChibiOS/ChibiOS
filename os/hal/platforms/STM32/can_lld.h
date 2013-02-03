@@ -83,7 +83,7 @@
  */
 /**
  * @brief   CAN1 driver enable switch.
- * @details If set to @p TRUE the support for ADC1 is included.
+ * @details If set to @p TRUE the support for CAN1 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_CAN_USE_CAN1) || defined(__DOXYGEN__)
