@@ -496,7 +496,7 @@
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin12
