@@ -26,6 +26,10 @@
  * @{
  */
 
+#define MAS0L_VALID             0x8000
+
+#if !defined(__DOXYGEN__)
+
         .section    .hwinit, "ax"
 
         .align      2
@@ -33,5 +37,7 @@
         .type       _mmuconf, @function
 _mmuconf:
         blr
+
+#endif /* !defined(__DOXYGEN__) */
 
 /** @} */
