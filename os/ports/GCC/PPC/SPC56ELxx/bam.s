@@ -140,6 +140,9 @@
         mtspr       529, r31
         mtspr       530, r31
 
+        /* MMU configuration.*/
+        bl          _mmuconf
+
         b           _boot_address
 
 #endif /* !defined(__DOXYGEN__) */

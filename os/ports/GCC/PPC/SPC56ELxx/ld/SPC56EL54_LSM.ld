@@ -48,6 +48,7 @@ SECTIONS
     {
         __ivpr_base__ = .;
         KEEP(*(.bam))
+        KEEP(*(.hwinit))
         KEEP(*(.crt0))
         KEEP(*(.handlers))
         . = ALIGN(0x800);

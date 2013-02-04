@@ -2,6 +2,7 @@
 PORTSRC = ${CHIBIOS}/os/ports/GCC/PPC/chcore.c
 
 PORTASM = ${CHIBIOS}/os/ports/GCC/PPC/SPC56ELxx/bam.s \
+          ${CHIBIOS}/os/ports/GCC/PPC/SPC56ELxx/mmuconf.s \
           ${CHIBIOS}/os/ports/GCC/PPC/crt0.s \
           ${CHIBIOS}/os/ports/GCC/PPC/SPC56ELxx/ivor.s \
           ${CHIBIOS}/os/ports/GCC/PPC/SPC56ELxx/vectors.s
