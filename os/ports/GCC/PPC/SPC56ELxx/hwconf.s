@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    SPC56ELxx/mmuconf.s
- * @brief   SPC56ELxx MMU initial configuration.
+ * @file    SPC56ELxx/hwconf.s
+ * @brief   SPC56ELxx low level hardware configuration.
  *
  * @addtogroup PPC_CORE
  * @{
@@ -130,9 +130,9 @@
         .section    .hwinit, "ax"
 
         .align      2
-        .globl      _mmuconf
-        .type       _mmuconf, @function
-_mmuconf:
+        .globl      _hwconf
+        .type       _hwconf, @function
+_hwconf:
         /* TLB0 allocated to flash.*/
         e_lis       r3, TLB0_MAS0@h
         mtspr       624, r3         /* MAS0 */

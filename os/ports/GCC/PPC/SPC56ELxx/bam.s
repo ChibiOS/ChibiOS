@@ -140,8 +140,8 @@
         mtspr       529, r31
         mtspr       530, r31
 
-        /* MMU configuration.*/
-        bl          _mmuconf
+        /* HW configuration.*/
+        bl          _hwconf
 
         b           _boot_address
 
