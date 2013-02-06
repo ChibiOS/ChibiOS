@@ -42,6 +42,7 @@ _boot_address:
         stwu        %r0, -8(%r1)
         /*
          * IVPR initialization.
+         * TODO: Remove because it is in core.s now.
          */
         lis         %r4, __ivpr_base__@h
         ori         %r4, %r4, __ivpr_base__@l
