@@ -48,7 +48,7 @@ SECTIONS
     {
         __ivpr_base__ = .;
         KEEP(*(.bam))
-        KEEP(*(.hwconf))
+        KEEP(*(.coreinit))
         KEEP(*(.crt0))
         KEEP(*(.handlers))
         . = ALIGN(0x800);

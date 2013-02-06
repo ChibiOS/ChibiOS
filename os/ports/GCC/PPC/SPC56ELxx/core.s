@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    SPC56ELxx/hwconf.s
- * @brief   SPC56ELxx low level hardware configuration.
+ * @file    SPC56ELxx/core.s
+ * @brief   e200z4 core configuration.
  *
  * @addtogroup PPC_CORE
  * @{
@@ -153,85 +153,165 @@
 
 #if !defined(__DOXYGEN__)
 
+        .section    .handlers, "ax"
+
+        /*
+         * Unhandled exceptions handler.
+         */
+         .weak      _IVOR0
+_IVOR0:
+         .weak      _IVOR1
+_IVOR1:
+         .weak      _IVOR2
+_IVOR2:
+         .weak      _IVOR3
+_IVOR3:
+         .weak      _IVOR5
+_IVOR5:
+         .weak      _IVOR6
+_IVOR6:
+         .weak      _IVOR7
+_IVOR7:
+         .weak      _IVOR8
+_IVOR8:
+         .weak      _IVOR9
+_IVOR9:
+         .weak      _IVOR11
+_IVOR11:
+         .weak      _IVOR12
+_IVOR12:
+         .weak      _IVOR13
+_IVOR13:
+         .weak      _IVOR14
+_IVOR14:
+         .weak      _IVOR15
+_IVOR15:
+        .weak      _unhandled_exception
+        .type       _unhandled_exception, @function
+_unhandled_exception:
+        b       _unhandled_exception
+
         .section    .coreinit, "ax"
 
         .align      2
         .globl      _coreinit
         .type       _coreinit, @function
 _coreinit:
-        /* MSR settings.*/
-        lis         r3, MSR_DEFAULT@h
-        ori         r3, r3, MSR_DEFAULT@l
-        mtMSR       r3
+        /* MSR initialization.*/
+        lis         %r3, MSR_DEFAULT@h
+        ori         %r3, %r3, MSR_DEFAULT@l
+        mtMSR       %r3
 
-        /* TLB0 allocated to flash.*/
-        lis         r3, TLB0_MAS0@h
-        mtspr       624, r3         /* MAS0 */
-        lis         r3, TLB0_MAS1@h
-        ori         r3, r3, TLB0_MAS1@l
-        mtspr       625, r3         /* MAS1 */
-        lis         r3, TLB0_MAS2@h
-        ori         r3, r3, TLB0_MAS2@l
-        mtspr       626, r3         /* MAS2 */
-        lis         r3, TLB0_MAS3@h
-        ori         r3, r3, TLB0_MAS3@l
-        mtspr       627, r3         /* MAS3 */
+        /*
+         * IVPR initialization.
+         */
+        lis         %r3, __ivpr_base__@h
+        ori         %r3, %r3, __ivpr_base__@l
+        mtIVPR      %r3
+
+        /*
+         * IVORs initialization.
+         */
+        lis         %r3, _unhandled_exception@h
+        ori         %r3, %r3, _unhandled_exception@l
+        mtspr       400, %r3    /* IVOR0-15 */
+        mtspr       401, %r3
+        mtspr       402, %r3
+        mtspr       403, %r3
+        mtspr       404, %r3
+        mtspr       405, %r3
+        mtspr       406, %r3
+        mtspr       407, %r3
+        mtspr       408, %r3
+        mtspr       409, %r3
+        mtspr       410, %r3
+        mtspr       411, %r3
+        mtspr       412, %r3
+        mtspr       413, %r3
+        mtspr       414, %r3
+        mtspr       415, %r3
+        mtspr       528, %r3    /* IVOR32-34 */
+        mtspr       529, %r3
+        mtspr       530, %r3
+
+        /*
+         * TLB0 allocated to flash.
+         */
+        lis         %r3, TLB0_MAS0@h
+        mtspr       624, %r3         /* MAS0 */
+        lis         %r3, TLB0_MAS1@h
+        ori         %r3, %r3, TLB0_MAS1@l
+        mtspr       625, %r3         /* MAS1 */
+        lis         %r3, TLB0_MAS2@h
+        ori         %r3, %r3, TLB0_MAS2@l
+        mtspr       626, %r3         /* MAS2 */
+        lis         %r3, TLB0_MAS3@h
+        ori         %r3, %r3, TLB0_MAS3@l
+        mtspr       627, %r3         /* MAS3 */
         tlbwe
 
-        /* TLB1 allocated to external RAM, if any.*/
-        lis         r3, TLB1_MAS0@h
-        mtspr       624, r3         /* MAS0 */
-        lis         r3, TLB1_MAS1@h
-        ori         r3, r3, TLB1_MAS1@l
-        mtspr       625, r3         /* MAS1 */
-        lis         r3, TLB1_MAS2@h
-        ori         r3, r3, TLB1_MAS2@l
-        mtspr       626, r3         /* MAS2 */
-        lis         r3, TLB1_MAS3@h
-        ori         r3, r3, TLB1_MAS3@l
-        mtspr       627, r3         /* MAS3 */
+        /*
+         * TLB1 allocated to external RAM, if any.
+         */
+        lis         %r3, TLB1_MAS0@h
+        mtspr       624, %r3         /* MAS0 */
+        lis         %r3, TLB1_MAS1@h
+        ori         %r3, %r3, TLB1_MAS1@l
+        mtspr       625, %r3         /* MAS1 */
+        lis         %r3, TLB1_MAS2@h
+        ori         %r3, %r3, TLB1_MAS2@l
+        mtspr       626, %r3         /* MAS2 */
+        lis         %r3, TLB1_MAS3@h
+        ori         %r3, %r3, TLB1_MAS3@l
+        mtspr       627, %r3         /* MAS3 */
         tlbwe
 
-        /* TLB2 allocated to internal RAM.*/
-        lis         r3, TLB2_MAS0@h
-        mtspr       624, r3         /* MAS0 */
-        lis         r3, TLB2_MAS1@h
-        ori         r3, r3, TLB2_MAS1@l
-        mtspr       625, r3         /* MAS1 */
-        lis         r3, TLB2_MAS2@h
-        ori         r3, r3, TLB2_MAS2@l
-        mtspr       626, r3         /* MAS2 */
-        lis         r3, TLB2_MAS3@h
-        ori         r3, r3, TLB2_MAS3@l
-        mtspr       627, r3         /* MAS3 */
+        /*
+         * TLB2 allocated to internal RAM.
+         */
+        lis         %r3, TLB2_MAS0@h
+        mtspr       624, %r3         /* MAS0 */
+        lis         %r3, TLB2_MAS1@h
+        ori         %r3, %r3, TLB2_MAS1@l
+        mtspr       625, %r3         /* MAS1 */
+        lis         %r3, TLB2_MAS2@h
+        ori         %r3, %r3, TLB2_MAS2@l
+        mtspr       626, %r3         /* MAS2 */
+        lis         %r3, TLB2_MAS3@h
+        ori         %r3, %r3, TLB2_MAS3@l
+        mtspr       627, %r3         /* MAS3 */
         tlbwe
 
-        /* TLB3 allocated to internal Peripherals Bridge A.*/
-        lis         r3, TLB3_MAS0@h
-        mtspr       624, r3         /* MAS0 */
-        lis         r3, TLB3_MAS1@h
-        ori         r3, r3, TLB3_MAS1@l
-        mtspr       625, r3         /* MAS1 */
-        lis         r3, TLB3_MAS2@h
-        ori         r3, r3, TLB3_MAS2@l
-        mtspr       626, r3         /* MAS2 */
-        lis         r3, TLB3_MAS3@h
-        ori         r3, r3, TLB3_MAS3@l
-        mtspr       627, r3         /* MAS3 */
+        /*
+         * TLB3 allocated to internal Peripherals Bridge A.
+         */
+        lis         %r3, TLB3_MAS0@h
+        mtspr       624, %r3         /* MAS0 */
+        lis         %r3, TLB3_MAS1@h
+        ori         %r3, %r3, TLB3_MAS1@l
+        mtspr       625, %r3         /* MAS1 */
+        lis         %r3, TLB3_MAS2@h
+        ori         %r3, %r3, TLB3_MAS2@l
+        mtspr       626, %r3         /* MAS2 */
+        lis         %r3, TLB3_MAS3@h
+        ori         %r3, %r3, TLB3_MAS3@l
+        mtspr       627, %r3         /* MAS3 */
         tlbwe
 
-        /* TLB4 allocated to internal Peripherals Bridge B.*/
-        lis         r3, TLB4_MAS0@h
-        mtspr       624, r3         /* MAS0 */
-        lis         r3, TLB4_MAS1@h
-        ori         r3, r3, TLB4_MAS1@l
-        mtspr       625, r3         /* MAS1 */
-        lis         r3, TLB4_MAS2@h
-        ori         r3, r3, TLB4_MAS2@l
-        mtspr       626, r3         /* MAS2 */
-        lis         r3, TLB4_MAS3@h
-        ori         r3, r3, TLB4_MAS3@l
-        mtspr       627, r3         /* MAS3 */
+        /*
+         * TLB4 allocated to internal Peripherals Bridge B.
+         */
+        lis         %r3, TLB4_MAS0@h
+        mtspr       624, %r3         /* MAS0 */
+        lis         %r3, TLB4_MAS1@h
+        ori         %r3, %r3, TLB4_MAS1@l
+        mtspr       625, %r3         /* MAS1 */
+        lis         %r3, TLB4_MAS2@h
+        ori         %r3, %r3, TLB4_MAS2@l
+        mtspr       626, %r3         /* MAS2 */
+        lis         %r3, TLB4_MAS3@h
+        ori         %r3, %r3, TLB4_MAS3@l
+        mtspr       627, %r3         /* MAS3 */
         tlbwe
 
         blr

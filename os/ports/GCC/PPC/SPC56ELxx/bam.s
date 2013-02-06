@@ -116,8 +116,7 @@
         mtspr       319, %r31
 
         /* HW configuration.*/
-        bl          _hwconf
-        bl          _ivorinit
+        bl          _coreinit
 
         b           _boot_address
 
