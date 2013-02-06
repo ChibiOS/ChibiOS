@@ -85,63 +85,39 @@
 
         /* Special function registers clearing, required in order to avoid
            possible problems with lockstep mode.*/
-        mtcrf       0xFF, r31
-        mtspr       8, r31      /* LR      */
-        mtspr       9, r31      /* CTR     */
+        mtcrf       0xFF, %r31
+        mtspr       8, %r31      /* LR      */
+        mtspr       9, %r31      /* CTR     */
 
-        mtspr       272, r31    /* SPRG1-7 */
-        mtspr       273, r31
-        mtspr       274, r31
-        mtspr       275, r31
-        mtspr       276, r31
-        mtspr       277, r31
-        mtspr       278, r31
-        mtspr       279, r31
-        mtspr       604, r31    /* SPRG8-9 */
-        mtspr       605, r31
-        mtspr       26, r31     /* SRR0-1  */
-        mtspr       27, r31
-        mtspr       58, r31     /* CSRR0-1 */
-        mtspr       59, r31
-        mtspr       61, r31     /* DEAR    */
-
-        mtspr       22, r31     /* DEC     */
-        mtspr       54, r31     /* DECAR   */
-        mtspr       285, r31    /* TBU     */
-        mtspr       284, r31    /* TBL     */
-
-        mtspr       570, r31    /* MCSRR0  */
-        mtspr       571, r31    /* MCSRR1  */
-
-        mtspr       256, r31    /* USPRG0  */
-
-        mtspr       562, r31    /* DBCNT */
-
-        mtspr       63, r31     /* IVPR    */
-        mtspr       318, r31    /* DVC1-2  */
-        mtspr       319, r31
-        mtspr       400, r31    /* IVOR0-15 */
-        mtspr       401, r31
-        mtspr       402, r31
-        mtspr       403, r31
-        mtspr       404, r31
-        mtspr       405, r31
-        mtspr       406, r31
-        mtspr       407, r31
-        mtspr       408, r31
-        mtspr       409, r31
-        mtspr       410, r31
-        mtspr       411, r31
-        mtspr       412, r31
-        mtspr       413, r31
-        mtspr       414, r31
-        mtspr       415, r31
-        mtspr       528, r31    /* IVOR32-34 */
-        mtspr       529, r31
-        mtspr       530, r31
+        mtspr       272, %r31    /* SPRG1-7 */
+        mtspr       273, %r31
+        mtspr       274, %r31
+        mtspr       275, %r31
+        mtspr       276, %r31
+        mtspr       277, %r31
+        mtspr       278, %r31
+        mtspr       279, %r31
+        mtspr       604, %r31    /* SPRG8-9 */
+        mtspr       605, %r31
+        mtspr       26, %r31     /* SRR0-1  */
+        mtspr       27, %r31
+        mtspr       58, %r31     /* CSRR0-1 */
+        mtspr       59, %r31
+        mtspr       61, %r31     /* DEAR    */
+        mtspr       22, %r31     /* DEC     */
+        mtspr       54, %r31     /* DECAR   */
+        mtspr       285, %r31    /* TBU     */
+        mtspr       284, %r31    /* TBL     */
+        mtspr       570, %r31    /* MCSRR0  */
+        mtspr       571, %r31    /* MCSRR1  */
+        mtspr       256, %r31    /* USPRG0  */
+        mtspr       562, %r31    /* DBCNT */
+        mtspr       318, %r31    /* DVC1-2  */
+        mtspr       319, %r31
 
         /* HW configuration.*/
         bl          _hwconf
+        bl          _ivorinit
 
         b           _boot_address
 

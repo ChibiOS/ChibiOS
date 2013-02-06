@@ -35,27 +35,32 @@
 /**
  * @brief   PPC core model.
  */
-#define PPC_VARIANT             PPC_VARIANT_e200z3
+#define PPC_VARIANT                 PPC_VARIANT_e200z3
 
 /**
  * @brief   IVORx registers support.
  */
-#define PPC_SUPPORTS_IVORS      TRUE
+#define PPC_SUPPORTS_IVORS          TRUE
 
 /**
  * @brief   Book E instruction set support.
  */
-#define PPC_SUPPORTS_BOOKE      TRUE
+#define PPC_SUPPORTS_BOOKE          TRUE
 
 /**
  * @brief   VLE instruction set support.
  */
-#define PPC_SUPPORTS_VLE        TRUE
+#define PPC_SUPPORTS_VLE            TRUE
 
 /**
  * @brief   Supports VLS Load/Store Multiple Volatile instructions.
  */
-#define PPC_SUPPORTS_VLE_MULTI  TRUE
+#define PPC_SUPPORTS_VLE_MULTI      TRUE
+
+/**
+ * @brief   Supports the decrementer timer.
+ */
+#define PPC_SUPPORTS_DECREMENTER    TRUE
 
 #endif /* _PPCPARAMS_H_ */
 

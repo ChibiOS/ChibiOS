@@ -153,12 +153,12 @@
 
 #if !defined(__DOXYGEN__)
 
-        .section    .hwconf, "ax"
+        .section    .coreinit, "ax"
 
         .align      2
-        .globl      _hwconf
-        .type       _hwconf, @function
-_hwconf:
+        .globl      _coreinit
+        .type       _coreinit, @function
+_coreinit:
         /* MSR settings.*/
         lis         r3, MSR_DEFAULT@h
         ori         r3, r3, MSR_DEFAULT@l
