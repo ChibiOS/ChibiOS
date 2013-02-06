@@ -194,8 +194,6 @@ _coreinit:
          * RAM clearing, this device requires a write to all RAM location in
          * order to initialize the ECC detection hardware, this is going to
          * slow down the startup but there is no way around.
-         * Note all registers are cleared in order to avoid possible problems
-         * with lockstep mode.
          */
 .clear_ecc:
         xor         %r0, %r0, %r0
