@@ -28,8 +28,8 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "xpc560p.h"
-#include "spc560p_registry.h"
+#include "xpc56el.h"
+#include "spc56el_registry.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
