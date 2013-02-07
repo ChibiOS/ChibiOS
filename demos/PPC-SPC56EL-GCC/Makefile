@@ -46,9 +46,9 @@ PROJECT = ch
 
 # Imported source files
 CHIBIOS = ../..
-#include $(CHIBIOS)/boards/GENERIC_SPC560EL/board.mk
-#include $(CHIBIOS)/os/hal/platforms/SPC560ELxx/platform.mk
-#include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/boards/GENERIC_SPC56EL/board.mk
+include $(CHIBIOS)/os/hal/platforms/SPC56ELxx/platform.mk
+include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/PPC/SPC56ELxx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 #include $(CHIBIOS)/test/test.mk

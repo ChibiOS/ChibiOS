@@ -53,7 +53,7 @@ CH_IRQ_HANDLER(vector59) {
   chSysUnlockFromIsr();
 
   /* Resets the PIT channel 3 IRQ flag.*/
-  PIT.CH[0].TFLG.R = 1;
+  PIT.CHANNEL[0].TFLG.R = 1;
 
   CH_IRQ_EPILOGUE();
 }
@@ -90,10 +90,10 @@ void hal_lld_init(void) {
                                SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2));
   reg = halSPCGetSystemClock() / CH_FREQUENCY - 1;
   PIT.PITMCR.R      = 1;        /* PIT clock enabled, stop while debugging. */
-  PIT.CH[0].LDVAL.R = reg;
-  PIT.CH[0].CVAL.R  = reg;
-  PIT.CH[0].TFLG.R  = 1;        /* Interrupt flag cleared.                  */
-  PIT.CH[0].TCTRL.R = 3;        /* Timer active, interrupt enabled.         */
+  PIT.CHANNEL[0].LDVAL.R = reg;
+  PIT.CHANNEL[0].CVAL.R  = reg;
+  PIT.CHANNEL[0].TFLG.R  = 1;   /* Interrupt flag cleared.                  */
+  PIT.CHANNEL[0].TCTRL.R = 3;   /* Timer active, interrupt enabled.         */
 }
 
 /**
@@ -107,7 +107,7 @@ void hal_lld_init(void) {
 void spc_clock_init(void) {
 
   /* Waiting for IRC stabilization before attempting anything else.*/
-  while (!ME.GS.B.S_RC)
+  while (!ME.GS.B.S_IRCOSC)
     ;
 
 #if !SPC5_NO_INIT
@@ -130,7 +130,7 @@ void spc_clock_init(void) {
 
   /* Run modes initialization.*/
   ME.MER.R          = SPC5_ME_ME_BITS;          /* Enabled run modes.       */
-  ME.TEST.R         = SPC5_ME_TEST_MC_BITS;     /* TEST run mode.           */
+//  ME.TEST.R         = SPC5_ME_TEST_MC_BITS;     /* TEST run mode.           */
   ME.SAFE.R         = SPC5_ME_SAFE_MC_BITS;     /* SAFE run mode.           */
   ME.DRUN.R         = SPC5_ME_DRUN_MC_BITS;     /* DRUN run mode.           */
   ME.RUN[0].R       = SPC5_ME_RUN0_MC_BITS;     /* RUN0 run mode.           */
@@ -164,10 +164,10 @@ void spc_clock_init(void) {
     chSysHalt();
 
   /* CFLASH settings calculated for a maximum clock of 64MHz.*/
-  CFLASH.PFCR0.B.BK0_APC  = 2;
+/*  CFLASH.PFCR0.B.BK0_APC  = 2;
   CFLASH.PFCR0.B.BK0_RWSC = 2;
   CFLASH.PFCR1.B.BK1_APC  = 2;
-  CFLASH.PFCR1.B.BK1_RWSC = 2;
+  CFLASH.PFCR1.B.BK1_RWSC = 2;*/
 
 #endif /* !SPC5_NO_INIT */
 }
@@ -196,7 +196,7 @@ bool_t halSPCSetRunMode(spc5_runmode_t mode) {
     ;
 
   /* Verifies that the mode has been effectively switched.*/
-  if (ME.GS.B.S_CURRENTMODE != mode)
+  if (ME.GS.B.S_CURRENT_MODE != mode)
     return CH_FAILED;
 
   return CH_SUCCESS;

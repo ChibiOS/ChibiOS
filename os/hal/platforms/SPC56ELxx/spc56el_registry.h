@@ -20,8 +20,8 @@
  * @{
  */
 
-#ifndef _SPC560P_REGISTRY_H_
-#define _SPC560P_REGISTRY_H_
+#ifndef _SPC56EL_REGISTRY_H_
+#define _SPC56EL_REGISTRY_H_
 
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
@@ -61,6 +61,6 @@
 #define SPC5_SIUL_NUM_PADSELS               36
 /** @} */
 
-#endif /* _SPC560P_REGISTRY_H_ */
+#endif /* _SPC56EL_REGISTRY_H_ */
 
 /** @} */

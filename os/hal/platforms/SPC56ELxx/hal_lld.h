@@ -69,7 +69,7 @@
 /**
  * @brief   Maximum FMPLLs input clock frequency.
  */
-#define SPC5_FMPLLIN_MAX            16000000
+#define SPC5_FMPLLIN_MAX            40000000
 
 /**
  * @brief   Maximum FMPLLs VCO clock frequency.
@@ -84,7 +84,7 @@
 /**
  * @brief   Maximum FMPLL0 output clock frequency.
  */
-#define SPC5_FMPLL0_CLK_MAX         64000000
+#define SPC5_FMPLL0_CLK_MAX         120000000
 
 /**
  * @brief   Maximum FMPLL1 output clock frequency.
@@ -102,6 +102,26 @@
  * @{
  */
 #define SPC5_IRC_CLK                16000000    /**< Internal RC oscillator.*/
+/** @} */
+
+/**
+ * @name    MC_CGM_AC3_SC register bits definitions
+ * @{
+ */
+#define SPC5_GCM_AC3_SC_SELCTL_MASK (15U << 24)
+#define SPC5_GCM_AC3_SC_SELCTL(n)   ((n) << 24)
+#define SPC5_GCM_AC3_SC_SELCTL_IRC  SPC5_GCM_AC3_SC_SELCTL(0)
+#define SPC5_GCM_AC3_SC_SELCTL_XOSC SPC5_GCM_AC3_SC_SELCTL(1)
+/** @} */
+
+/**
+ * @name    MC_CGM_AC4_SC register bits definitions
+ * @{
+ */
+#define SPC5_GCM_AC4_SC_SELCTL_MASK (15U << 24)
+#define SPC5_GCM_AC4_SC_SELCTL(n)   ((n) << 24)
+#define SPC5_GCM_AC4_SC_SELCTL_IRC  SPC5_GCM_AC4_SC_SELCTL(0)
+#define SPC5_GCM_AC4_SC_SELCTL_XOSC SPC5_GCM_AC4_SC_SELCTL(1)
 /** @} */
 
 /**
@@ -231,6 +251,13 @@
 #endif
 
 /**
+ * @brief   FMPLL0 Clock source.
+ */
+#if !defined(SPC5_FMPLL0_CLOCK_SOURCE) || defined(__DOXYGEN__)
+#define SPC5_FMPLL0_CLOCK_SOURCE    SPC5_GCM_AC3_SC_SELCTL_XOSC
+#endif
+
+/**
  * @brief   FMPLL0 IDF divider value.
  * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
  */
@@ -252,6 +279,13 @@
  */
 #if !defined(SPC5_FMPLL0_ODF) || defined(__DOXYGEN__)
 #define SPC5_FMPLL0_ODF             SPC5_FMPLL_ODF_DIV4
+#endif
+
+/**
+ * @brief   FMPLL1 Clock source.
+ */
+#if !defined(SPC5_FMPLL1_CLOCK_SOURCE) || defined(__DOXYGEN__)
+#define SPC5_FMPLL1_CLOCK_SOURCE    SPC5_GCM_AC4_SC_SELCTL_XOSC
 #endif
 
 /**
@@ -601,6 +635,15 @@
 #error "invalid SPC5_XOSC_CLK value specified"
 #endif
 
+/* Check on SPC5_FMPLL0_CLOCK_SOURCE.*/
+#if SPC5_FMPLL0_CLOCK_SOURCE == SPC5_GCM_AC3_SC_SELCTL_IRC
+#define SPC5_FMPLL0_INPUT_CLK   SPC5_IRC_CLK
+#elif SPC5_FMPLL0_CLOCK_SOURCE == SPC5_GCM_AC3_SC_SELCTL_XOSC
+#define SPC5_FMPLL0_INPUT_CLK   SPC5_XOSC_CLK
+#else
+#error "invalid SPC5_FMPLL0_CLOCK_SOURCE value specified"
+#endif
+
 /* Check on SPC5_FMPLL0_IDF_VALUE.*/
 #if (SPC5_FMPLL0_IDF_VALUE < 1) || (SPC5_FMPLL0_IDF_VALUE > 15)
 #error "invalid SPC5_FMPLL0_IDF_VALUE value specified"
@@ -628,7 +671,7 @@
  * @brief   SPC5_FMPLL0_VCO_CLK clock point.
  */
 #define SPC5_FMPLL0_VCO_CLK                                                 \
-  ((SPC5_XOSC_CLK / SPC5_FMPLL0_IDF_VALUE) * SPC5_FMPLL0_NDIV_VALUE)
+  ((SPC5_FMPLL0_INPUT_CLK / SPC5_FMPLL0_IDF_VALUE) * SPC5_FMPLL0_NDIV_VALUE)
 
 /* Check on FMPLL0 VCO output.*/
 #if (SPC5_FMPLL0_VCO_CLK < SPC5_FMPLLVCO_MIN) ||                            \
@@ -645,6 +688,15 @@
 /* Check on SPC5_FMPLL0_CLK.*/
 #if (SPC5_FMPLL0_CLK > SPC5_FMPLL0_CLK_MAX) && !SPC5_ALLOW_OVERCLOCK
 #error "SPC5_FMPLL0_CLK outside acceptable range (0...SPC5_FMPLL0_CLK_MAX)"
+#endif
+
+/* Check on SPC5_FMPLL1_CLOCK_SOURCE.*/
+#if SPC5_FMPLL1_CLOCK_SOURCE == SPC5_GCM_AC4_SC_SELCTL_IRC
+#define SPC5_FMPLL1_INPUT_CLK   SPC5_IRC_CLK
+#elif SPC5_FMPLL1_CLOCK_SOURCE == SPC5_GCM_AC4_SC_SELCTL_XOSC
+#define SPC5_FMPLL1_INPUT_CLK   SPC5_XOSC_CLK
+#else
+#error "invalid SPC5_FMPLL1_CLOCK_SOURCE value specified"
 #endif
 
 /* Check on SPC5_FMPLL1_IDF_VALUE.*/
@@ -674,7 +726,7 @@
  * @brief   SPC5_FMPLL1_VCO_CLK clock point.
  */
 #define SPC5_FMPLL1_VCO_CLK                                                 \
-  ((SPC5_XOSC_CLK / SPC5_FMPLL1_IDF_VALUE) * SPC5_FMPLL1_NDIV_VALUE)
+  ((SPC5_FMPLL1_INPUT_CLK / SPC5_FMPLL1_IDF_VALUE) * SPC5_FMPLL1_NDIV_VALUE)
 
 /* Check on FMPLL1 VCO output.*/
 #if (SPC5_FMPLL1_VCO_CLK < SPC5_FMPLLVCO_MIN) ||                            \

@@ -19,7 +19,7 @@
 */
 
 #include "ch.h"
-//#include "hal.h"
+#include "hal.h"
 //#include "test.h"
 //#include "shell.h"
 //#include "chprintf.h"
@@ -175,7 +175,7 @@ int main(void) {
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
    */
-//  halInit();
+  halInit();
   chSysInit();
 
   /*
