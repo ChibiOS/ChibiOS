@@ -256,7 +256,7 @@
 
 /**
  * @brief   FMPLL1 IDF divider value.
- * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=120MHz.
  */
 #if !defined(SPC5_FMPLL1_IDF_VALUE) || defined(__DOXYGEN__)
 #define SPC5_FMPLL1_IDF_VALUE       5
@@ -264,7 +264,7 @@
 
 /**
  * @brief   FMPLL1 NDIV divider value.
- * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=120MHz.
  */
 #if !defined(SPC5_FMPLL1_NDIV_VALUE) || defined(__DOXYGEN__)
 #define SPC5_FMPLL1_NDIV_VALUE      60
@@ -272,7 +272,7 @@
 
 /**
  * @brief   FMPLL1 ODF divider value.
- * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=120MHz.
  */
 #if !defined(SPC5_FMPLL1_ODF) || defined(__DOXYGEN__)
 #define SPC5_FMPLL1_ODF             SPC5_FMPLL_ODF_DIV4

@@ -150,7 +150,6 @@
  * @{
  */
 #define SPC5_ME_ME_RESET            (1U << 0)
-#define SPC5_ME_ME_TEST             (1U << 1)
 #define SPC5_ME_ME_SAFE             (1U << 2)
 #define SPC5_ME_ME_DRUN             (1U << 3)
 #define SPC5_ME_ME_RUN0             (1U << 4)
@@ -204,7 +203,6 @@
  * @name    ME_RUN_PCx registers bits definitions
  * @{
  */
-#define SPC5_ME_RUN_PC_TEST         (1U << 1)
 #define SPC5_ME_RUN_PC_SAFE         (1U << 2)
 #define SPC5_ME_RUN_PC_DRUN         (1U << 3)
 #define SPC5_ME_RUN_PC_RUN0         (1U << 4)
@@ -259,7 +257,7 @@
 
 /**
  * @brief   FMPLL0 IDF divider value.
- * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=120MHz.
  */
 #if !defined(SPC5_FMPLL0_IDF_VALUE) || defined(__DOXYGEN__)
 #define SPC5_FMPLL0_IDF_VALUE       5
@@ -267,15 +265,15 @@
 
 /**
  * @brief   FMPLL0 NDIV divider value.
- * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=120MHz.
  */
 #if !defined(SPC5_FMPLL0_NDIV_VALUE) || defined(__DOXYGEN__)
-#define SPC5_FMPLL0_NDIV_VALUE      32
+#define SPC5_FMPLL0_NDIV_VALUE      60
 #endif
 
 /**
  * @brief   FMPLL0 ODF divider value.
- * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=120MHz.
  */
 #if !defined(SPC5_FMPLL0_ODF) || defined(__DOXYGEN__)
 #define SPC5_FMPLL0_ODF             SPC5_FMPLL_ODF_DIV4
@@ -290,7 +288,7 @@
 
 /**
  * @brief   FMPLL1 IDF divider value.
- * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=120MHz.
  */
 #if !defined(SPC5_FMPLL1_IDF_VALUE) || defined(__DOXYGEN__)
 #define SPC5_FMPLL1_IDF_VALUE       5
@@ -298,7 +296,7 @@
 
 /**
  * @brief   FMPLL1 NDIV divider value.
- * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=120MHz.
  */
 #if !defined(SPC5_FMPLL1_NDIV_VALUE) || defined(__DOXYGEN__)
 #define SPC5_FMPLL1_NDIV_VALUE      60
@@ -306,7 +304,7 @@
 
 /**
  * @brief   FMPLL1 ODF divider value.
- * @note    The default value is calculated for XOSC=40MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=40MHz and PHI=120MHz.
  */
 #if !defined(SPC5_FMPLL1_ODF) || defined(__DOXYGEN__)
 #define SPC5_FMPLL1_ODF             SPC5_FMPLL_ODF_DIV4
@@ -323,20 +321,6 @@
                                              SPC5_ME_ME_RUN3 |              \
                                              SPC5_ME_ME_HALT0 |             \
                                              SPC5_ME_ME_STOP0)
-#endif
-
-/**
- * @brief   TEST mode settings.
- */
-#if !defined(SPC5_ME_TEST_MC_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_TEST_MC_BITS                (SPC5_ME_MC_SYSCLK_IRC |        \
-                                             SPC5_ME_MC_IRCON |             \
-                                             SPC5_ME_MC_XOSC0ON |           \
-                                             SPC5_ME_MC_PLL0ON |            \
-                                             SPC5_ME_MC_PLL1ON |            \
-                                             SPC5_ME_MC_CFLAON_NORMAL |     \
-                                             SPC5_ME_MC_DFLAON_NORMAL |     \
-                                             SPC5_ME_MC_MVRON)
 #endif
 
 /**
@@ -459,8 +443,7 @@
  *          mode.
  */
 #if !defined(SPC5_ME_RUN_PC1_BITS) || defined(__DOXYGEN__)
-#define SPC5_ME_RUN_PC1_BITS                (SPC5_ME_RUN_PC_TEST |          \
-                                             SPC5_ME_RUN_PC_SAFE |          \
+#define SPC5_ME_RUN_PC1_BITS                (SPC5_ME_RUN_PC_SAFE |          \
                                              SPC5_ME_RUN_PC_DRUN |          \
                                              SPC5_ME_RUN_PC_RUN0 |          \
                                              SPC5_ME_RUN_PC_RUN1 |          \
@@ -750,7 +733,6 @@
 /*===========================================================================*/
 
 typedef enum {
-  SPC5_RUNMODE_TEST  = 1,
   SPC5_RUNMODE_SAFE  = 2,
   SPC5_RUNMODE_DRUN  = 3,
   SPC5_RUNMODE_RUN0  = 4,

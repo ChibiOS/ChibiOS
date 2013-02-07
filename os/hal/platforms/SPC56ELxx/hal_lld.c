@@ -130,7 +130,6 @@ void spc_clock_init(void) {
 
   /* Run modes initialization.*/
   ME.MER.R          = SPC5_ME_ME_BITS;          /* Enabled run modes.       */
-//  ME.TEST.R         = SPC5_ME_TEST_MC_BITS;     /* TEST run mode.           */
   ME.SAFE.R         = SPC5_ME_SAFE_MC_BITS;     /* SAFE run mode.           */
   ME.DRUN.R         = SPC5_ME_DRUN_MC_BITS;     /* DRUN run mode.           */
   ME.RUN[0].R       = SPC5_ME_RUN0_MC_BITS;     /* RUN0 run mode.           */
