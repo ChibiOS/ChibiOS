@@ -125,29 +125,22 @@
                                  MAS3_UR | MAS3_SR)
 
 #define TLB1_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(1))
-#define TLB1_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_16M)
-#define TLB1_MAS2               (MAS2_EPN(0x20000000) | MAS2_VLE)
-#define TLB1_MAS3               (MAS3_RPN(0x20000000) |                     \
+#define TLB1_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_128K)
+#define TLB1_MAS2               (MAS2_EPN(0x40000000) | MAS2_VLE | MAS2_I)
+#define TLB1_MAS3               (MAS3_RPN(0x40000000) |                     \
                                  MAS3_UX | MAS3_SX | MAS3_UW | MAS3_SW |    \
                                  MAS3_UR | MAS3_SR)
 
 #define TLB2_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(2))
-#define TLB2_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_128K)
-#define TLB2_MAS2               (MAS2_EPN(0x40000000) | MAS2_VLE | MAS2_I)
-#define TLB2_MAS3               (MAS3_RPN(0x40000000) |                     \
-                                 MAS3_UX | MAS3_SX | MAS3_UW | MAS3_SW |    \
-                                 MAS3_UR | MAS3_SR)
-
-#define TLB3_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(3))
-#define TLB3_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_1M)
-#define TLB3_MAS2               (MAS2_EPN(0xC3F00000) | MAS2_I)
-#define TLB3_MAS3               (MAS3_RPN(0xC3F00000) |                     \
+#define TLB2_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_1M)
+#define TLB2_MAS2               (MAS2_EPN(0xC3F00000) | MAS2_I)
+#define TLB2_MAS3               (MAS3_RPN(0xC3F00000) |                     \
                                  MAS3_UW | MAS3_SW | MAS3_UR | MAS3_SR)
 
-#define TLB4_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(4))
-#define TLB4_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_2M)
-#define TLB4_MAS2               (MAS2_EPN(0xFFE00000) | MAS2_I)
-#define TLB4_MAS3               (MAS3_RPN(0xFFE00000) |                     \
+#define TLB3_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(3))
+#define TLB3_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_2M)
+#define TLB3_MAS2               (MAS2_EPN(0xFFE00000) | MAS2_I)
+#define TLB3_MAS3               (MAS3_RPN(0xFFE00000) |                     \
                                  MAS3_UW | MAS3_SW | MAS3_UR | MAS3_SR)
 /** @} */
 
@@ -328,7 +321,7 @@ _coreinit:
         tlbwe
 
         /*
-         * TLB1 allocated to external RAM, if any.
+         * TLB1 allocated to internal RAM.
          */
         lis         %r3, TLB1_MAS0@h
         mtspr       624, %r3         /* MAS0 */
@@ -344,7 +337,7 @@ _coreinit:
         tlbwe
 
         /*
-         * TLB2 allocated to internal RAM.
+         * TLB2 allocated to internal Peripherals Bridge A.
          */
         lis         %r3, TLB2_MAS0@h
         mtspr       624, %r3         /* MAS0 */
@@ -360,7 +353,7 @@ _coreinit:
         tlbwe
 
         /*
-         * TLB3 allocated to internal Peripherals Bridge A.
+         * TLB3 allocated to internal Peripherals Bridge B.
          */
         lis         %r3, TLB3_MAS0@h
         mtspr       624, %r3         /* MAS0 */
@@ -376,19 +369,47 @@ _coreinit:
         tlbwe
 
         /*
-         * TLB4 allocated to internal Peripherals Bridge B.
+         * Invalidating the remaining TLBs (because debuggers).
          */
-        lis         %r3, TLB4_MAS0@h
-        mtspr       624, %r3         /* MAS0 */
-        lis         %r3, TLB4_MAS1@h
-        ori         %r3, %r3, TLB4_MAS1@l
+        lis         %r3, 0
         mtspr       625, %r3         /* MAS1 */
-        lis         %r3, TLB4_MAS2@h
-        ori         %r3, %r3, TLB4_MAS2@l
         mtspr       626, %r3         /* MAS2 */
-        lis         %r3, TLB4_MAS3@h
-        ori         %r3, %r3, TLB4_MAS3@l
         mtspr       627, %r3         /* MAS3 */
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(4))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(5))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(6))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(7))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(8))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(9))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(10))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(11))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(12))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(13))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(14))@h
+        mtspr       624, %r3         /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(15))@h
+        mtspr       624, %r3         /* MAS0 */
         tlbwe
 
         blr

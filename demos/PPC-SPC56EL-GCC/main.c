@@ -176,7 +176,7 @@ int main(void) {
    *   RTOS is active.
    */
 //  halInit();
-//  chSysInit();
+  chSysInit();
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
@@ -198,7 +198,7 @@ int main(void) {
 //      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
 //      shelltp = NULL;           /* Triggers spawning of a new shell.        */
 //    }
-//    chThdSleepMilliseconds(1000);
+    chThdSleepMilliseconds(1000);
   }
   return 0;
 }
