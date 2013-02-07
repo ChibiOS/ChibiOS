@@ -210,7 +210,7 @@ bool_t halSPCSetRunMode(spc5_runmode_t mode) {
  *
  * @notapi
  */
-void halSPCSetPeripheralClockMode(uint32_t  n, uint32_t pctl) {
+void halSPCSetPeripheralClockMode(uint32_t n, uint32_t pctl) {
   uint32_t mode;
 
   ME.PCTL[n].R = pctl;

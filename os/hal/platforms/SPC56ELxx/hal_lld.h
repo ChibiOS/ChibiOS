@@ -105,23 +105,11 @@
 /** @} */
 
 /**
- * @name    MC_CGM_AC3_SC register bits definitions
+ * @name    FMPLLs register bits definitions
  * @{
  */
-#define SPC5_GCM_AC3_SC_SELCTL_MASK (15U << 24)
-#define SPC5_GCM_AC3_SC_SELCTL(n)   ((n) << 24)
-#define SPC5_GCM_AC3_SC_SELCTL_IRC  SPC5_GCM_AC3_SC_SELCTL(0)
-#define SPC5_GCM_AC3_SC_SELCTL_XOSC SPC5_GCM_AC3_SC_SELCTL(1)
-/** @} */
-
-/**
- * @name    MC_CGM_AC4_SC register bits definitions
- * @{
- */
-#define SPC5_GCM_AC4_SC_SELCTL_MASK (15U << 24)
-#define SPC5_GCM_AC4_SC_SELCTL(n)   ((n) << 24)
-#define SPC5_GCM_AC4_SC_SELCTL_IRC  SPC5_GCM_AC4_SC_SELCTL(0)
-#define SPC5_GCM_AC4_SC_SELCTL_XOSC SPC5_GCM_AC4_SC_SELCTL(1)
+#define SPC5_FMPLL_SRC_IRC          (0 << 24)
+#define SPC5_FMPLL_SRC_XOSC         (1 << 24)
 /** @} */
 
 /**
@@ -251,8 +239,8 @@
 /**
  * @brief   FMPLL0 Clock source.
  */
-#if !defined(SPC5_FMPLL0_CLOCK_SOURCE) || defined(__DOXYGEN__)
-#define SPC5_FMPLL0_CLOCK_SOURCE    SPC5_GCM_AC3_SC_SELCTL_XOSC
+#if !defined(SPC5_FMPLL0_CLK_SRC) || defined(__DOXYGEN__)
+#define SPC5_FMPLL0_CLK_SRC         SPC5_FMPLL_SRC_XOSC
 #endif
 
 /**
@@ -282,8 +270,8 @@
 /**
  * @brief   FMPLL1 Clock source.
  */
-#if !defined(SPC5_FMPLL1_CLOCK_SOURCE) || defined(__DOXYGEN__)
-#define SPC5_FMPLL1_CLOCK_SOURCE    SPC5_GCM_AC4_SC_SELCTL_XOSC
+#if !defined(SPC5_FMPLL1_CLK_SRC) || defined(__DOXYGEN__)
+#define SPC5_FMPLL1_CLK_SRC         SPC5_FMPLL_SRC_XOSC
 #endif
 
 /**
@@ -619,12 +607,12 @@
 #endif
 
 /* Check on SPC5_FMPLL0_CLOCK_SOURCE.*/
-#if SPC5_FMPLL0_CLOCK_SOURCE == SPC5_GCM_AC3_SC_SELCTL_IRC
+#if SPC5_FMPLL0_CLK_SRC == SPC5_FMPLL_SRC_IRC
 #define SPC5_FMPLL0_INPUT_CLK   SPC5_IRC_CLK
-#elif SPC5_FMPLL0_CLOCK_SOURCE == SPC5_GCM_AC3_SC_SELCTL_XOSC
+#elif SPC5_FMPLL0_CLK_SRC == SPC5_FMPLL_SRC_XOSC
 #define SPC5_FMPLL0_INPUT_CLK   SPC5_XOSC_CLK
 #else
-#error "invalid SPC5_FMPLL0_CLOCK_SOURCE value specified"
+#error "invalid SPC5_FMPLL0_CLK_SRC value specified"
 #endif
 
 /* Check on SPC5_FMPLL0_IDF_VALUE.*/
@@ -674,12 +662,12 @@
 #endif
 
 /* Check on SPC5_FMPLL1_CLOCK_SOURCE.*/
-#if SPC5_FMPLL1_CLOCK_SOURCE == SPC5_GCM_AC4_SC_SELCTL_IRC
+#if SPC5_FMPLL1_CLK_SRC == SPC5_FMPLL_SRC_IRC
 #define SPC5_FMPLL1_INPUT_CLK   SPC5_IRC_CLK
-#elif SPC5_FMPLL1_CLOCK_SOURCE == SPC5_GCM_AC4_SC_SELCTL_XOSC
+#elif SPC5_FMPLL1_CLK_SRC == SPC5_FMPLL_SRC_XOSC
 #define SPC5_FMPLL1_INPUT_CLK   SPC5_XOSC_CLK
 #else
-#error "invalid SPC5_FMPLL1_CLOCK_SOURCE value specified"
+#error "invalid SPC5_FMPLL1_CLK_SRC value specified"
 #endif
 
 /* Check on SPC5_FMPLL1_IDF_VALUE.*/
