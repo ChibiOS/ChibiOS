@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/boards/GENERIC_SPC563M</locationURI>
+			<locationURI>CHIBIOS/boards/GENERIC_SPC56EL</locationURI>
 		</link>
 		<link>
 			<name>os</name>

@@ -108,8 +108,8 @@
  * @name    FMPLLs register bits definitions
  * @{
  */
-#define SPC5_FMPLL_SRC_IRC          (0 << 24)
-#define SPC5_FMPLL_SRC_XOSC         (1 << 24)
+#define SPC5_FMPLL_SRC_IRC          (0U << 24)
+#define SPC5_FMPLL_SRC_XOSC         (1U << 24)
 /** @} */
 
 /**
@@ -130,7 +130,6 @@
 #define SPC5_ME_GS_SYSCLK_IRC       (0U << 0)
 #define SPC5_ME_GS_SYSCLK_XOSC      (2U << 0)
 #define SPC5_ME_GS_SYSCLK_FMPLL0    (4U << 0)
-#define SPC5_ME_GS_SYSCLK_FMPLL1    (5U << 0)
 /** @} */
 
 /**
@@ -157,7 +156,6 @@
 #define SPC5_ME_MC_SYSCLK_IRC       SPC5_ME_MC_SYSCLK(0)
 #define SPC5_ME_MC_SYSCLK_XOSC      SPC5_ME_MC_SYSCLK(2)
 #define SPC5_ME_MC_SYSCLK_FMPLL0    SPC5_ME_MC_SYSCLK(4)
-#define SPC5_ME_MC_SYSCLK_FMPLL1    SPC5_ME_MC_SYSCLK(5)
 #define SPC5_ME_MC_SYSCLK_DISABLED  SPC5_ME_MC_SYSCLK(15)
 #define SPC5_ME_MC_IRCON            (1U << 4)
 #define SPC5_ME_MC_XOSC0ON          (1U << 5)
@@ -743,7 +741,7 @@ typedef enum {
 extern "C" {
 #endif
   void hal_lld_init(void);
-  void spc_clock_init(void);
+  void spc_early_init(void);
   bool_t halSPCSetRunMode(spc5_runmode_t mode);
   void halSPCSetPeripheralClockMode(uint32_t n, uint32_t pctl);
 #if !SPC5_NO_INIT

@@ -55,7 +55,7 @@ const PALConfig pal_default_config = {
  */
 void __early_init(void) {
 
-  spc_clock_init();
+  spc_early_init();
 
   /* SWT disabled.*/
   SWT.SR.R = 0xC520;

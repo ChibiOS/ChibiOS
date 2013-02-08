@@ -39,25 +39,6 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   PIT channel 3 interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(vector59) {
-
-  CH_IRQ_PROLOGUE();
-
-  chSysLockFromIsr();
-  chSysTimerHandlerI();
-  chSysUnlockFromIsr();
-
-  /* Resets the PIT channel 3 IRQ flag.*/
-  PIT.CHANNEL[0].TFLG.R = 1;
-
-  CH_IRQ_EPILOGUE();
-}
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -69,7 +50,6 @@ CH_IRQ_HANDLER(vector59) {
  */
 void hal_lld_init(void) {
   extern void _vectors(void);
-  uint32_t reg;
 
   /* The system is switched to the RUN0 mode, the default for normal
      operations.*/
@@ -81,36 +61,46 @@ void hal_lld_init(void) {
   INTC.MCR.R        = 0;
   INTC.CPR.R        = 0;
   INTC.IACKR.R      = (uint32_t)_vectors;
-
-  /* PIT channel 0 initialization for Kernel ticks, the PIT is configured
-     to run in DRUN,RUN0...RUN3 and HALT0 modes, the clock is gated in other
-     modes.*/
-  INTC.PSR[59].R    = SPC5_PIT0_IRQ_PRIORITY;
-  halSPCSetPeripheralClockMode(92,
-                               SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2));
-  reg = halSPCGetSystemClock() / CH_FREQUENCY - 1;
-  PIT.PITMCR.R      = 1;        /* PIT clock enabled, stop while debugging. */
-  PIT.CHANNEL[0].LDVAL.R = reg;
-  PIT.CHANNEL[0].CVAL.R  = reg;
-  PIT.CHANNEL[0].TFLG.R  = 1;   /* Interrupt flag cleared.                  */
-  PIT.CHANNEL[0].TCTRL.R = 3;   /* Timer active, interrupt enabled.         */
 }
 
 /**
- * @brief   SPC56ELxx clocks and PLL initialization.
+ * @brief   SPC56ELxx early initialization.
  * @note    All the involved constants come from the file @p board.h and
  *          @p hal_lld.h
  * @note    This function must be invoked only after the system reset.
  *
  * @special
  */
-void spc_clock_init(void) {
+void spc_early_init(void) {
 
   /* Waiting for IRC stabilization before attempting anything else.*/
   while (!ME.GS.B.S_IRCOSC)
     ;
 
 #if !SPC5_NO_INIT
+
+  /* SSCM initialization. Setting up the most restrictive handling of
+     invalid accesses to peripherals.*/
+  SSCM.ERROR.R = 3;                             /* PAE and RAE bits.        */
+
+  /* Enabling peripheral bridges to allow any operation.*/
+  AIPS.MPROT.R      = 0x77777777;
+  AIPS.PACR0_7.R    = 0;
+  AIPS.PACR8_15.R   = 0;
+  AIPS.PACR16_23.R  = 0;
+  AIPS.PACR24_31.R  = 0;
+  AIPS.OPACR0_7.R   = 0;
+  AIPS.OPACR8_15.R  = 0;
+  AIPS.OPACR16_23.R = 0;
+  AIPS.OPACR24_31.R = 0;
+  AIPS.OPACR32_39.R = 0;
+  AIPS.OPACR40_47.R = 0;
+  AIPS.OPACR48_55.R = 0;
+  AIPS.OPACR56_63.R = 0;
+  AIPS.OPACR64_71.R = 0;
+  AIPS.OPACR72_79.R = 0;
+  AIPS.OPACR80_87.R = 0;
+  AIPS.OPACR88_95.R = 0;
 
 #if defined(SPC5_OSC_BYPASS)
   /* If the board is equipped with an oscillator instead of a xtal then the
@@ -235,8 +225,6 @@ uint32_t halSPCGetSystemClock(void) {
     return SPC5_XOSC_CLK;
   case SPC5_ME_GS_SYSCLK_FMPLL0:
     return SPC5_FMPLL0_CLK;
-  case SPC5_ME_GS_SYSCLK_FMPLL1:
-    return SPC5_FMPLL1_CLK;
   default:
     return 0;
   }
