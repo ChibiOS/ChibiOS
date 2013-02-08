@@ -1,8 +1,8 @@
-# List of all the STM32F3xx platform files.
-PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F3xx/stm32_dma.c \
-              ${CHIBIOS}/os/hal/platforms/STM32F3xx/hal_lld.c \
-              ${CHIBIOS}/os/hal/platforms/STM32F3xx/adc_lld.c \
-              ${CHIBIOS}/os/hal/platforms/STM32F3xx/ext_lld_isr.c \
+# List of all the STM32F30x platform files.
+PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F30x/stm32_dma.c \
+              ${CHIBIOS}/os/hal/platforms/STM32F30x/hal_lld.c \
+              ${CHIBIOS}/os/hal/platforms/STM32F30x/adc_lld.c \
+              ${CHIBIOS}/os/hal/platforms/STM32F30x/ext_lld_isr.c \
               ${CHIBIOS}/os/hal/platforms/STM32/can_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/ext_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/gpt_lld.c \
@@ -15,7 +15,7 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F3xx/stm32_dma.c \
               ${CHIBIOS}/os/hal/platforms/STM32/USBv1/usb_lld.c
 
 # Required include directories
-PLATFORMINC = ${CHIBIOS}/os/hal/platforms/STM32F3xx \
+PLATFORMINC = ${CHIBIOS}/os/hal/platforms/STM32F30x \
               ${CHIBIOS}/os/hal/platforms/STM32 \
               ${CHIBIOS}/os/hal/platforms/STM32/GPIOv2 \
               ${CHIBIOS}/os/hal/platforms/STM32/SPIv2 \

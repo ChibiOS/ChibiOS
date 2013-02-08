@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT HAL - CAN driver demo for STM32F3xx.                         **
+** ChibiOS/RT HAL - CAN driver demo for STM32F30x.                         **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,7 @@ The demo runs on an STMicroelectronics STM32F3-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F3xx CAN driver.
+The application demonstrates the use of the STM32F30x CAN driver.
 
 ** Build Procedure **
 
