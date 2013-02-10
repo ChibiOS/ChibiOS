@@ -384,6 +384,8 @@
 #define STM32_HAS_TIM15         TRUE
 #define STM32_HAS_TIM16         TRUE
 #define STM32_HAS_TIM17         TRUE
+#define STM32_HAS_TIM18         TRUE
+#define STM32_HAS_TIM19         TRUE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1        TRUE
@@ -1017,59 +1019,7 @@
 #endif
 
 /**
- * @brief   UART4 frequency.
- */
-#if STM32_UART4SW == STM32_UART4SW_PCLK
-#define STM32_UART4CLK             STM32_PCLK1
-#elif STM32_UART4SW == STM32_UART4SW_SYSCLK
-#define STM32_UART4CLK             STM32_SYSCLK
-#elif STM32_UART4SW == STM32_UART4SW_LSECLK
-#define STM32_UART4CLK             STM32_LSECLK
-#elif STM32_UART4SW == STM32_UART4SW_HSICLK
-#define STM32_UART4CLK             STM32_HSICLK
-#else
-#error "invalid source selected for UART4 clock"
-#endif
-
-/**
- * @brief   UART5 frequency.
- */
-#if STM32_UART5SW == STM32_UART5SW_PCLK
-#define STM32_UART5CLK             STM32_PCLK1
-#elif STM32_UART5SW == STM32_UART5SW_SYSCLK
-#define STM32_UART5CLK             STM32_SYSCLK
-#elif STM32_UART5SW == STM32_UART5SW_LSECLK
-#define STM32_UART5CLK             STM32_LSECLK
-#elif STM32_UART5SW == STM32_UART5SW_HSICLK
-#define STM32_UART5CLK             STM32_HSICLK
-#else
-#error "invalid source selected for UART5 clock"
-#endif
-
-/**
- * @brief   TIM1 frequency.
- */
-#if STM32_TIM1SW == STM32_TIM1SW_PCLK2
-#define STM32_TIM1CLK               STM32_PCLK2
-#elif STM32_TIM1SW == STM32_TIM1SW_PLLX2
-#define STM32_TIM1CLK               (STM32_PLLCLKOUT * 2)
-#else
-#error "invalid source selected for TIM1 clock"
-#endif
-
-/**
- * @brief   TIM8 frequency.
- */
-#if STM32_TIM8SW == STM32_TIM8SW_PCLK2
-#define STM32_TIM8CLK               STM32_PCLK2
-#elif STM32_TIM8SW == STM32_TIM8SW_PLLX2
-#define STM32_TIM8CLK               (STM32_PLLCLKOUT * 2)
-#else
-#error "invalid source selected for TIM8 clock"
-#endif
-
-/**
- * @brief   Timers 2, 3, 4, 5, 6, 7, 12, 13, 14 frequency.
+ * @brief   Timers 2, 3, 4, 5, 6, 7, 12, 13, 14, 18 frequency.
  */
 #if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK1               (STM32_PCLK1 * 1)
@@ -1078,7 +1028,7 @@
 #endif
 
 /**
- * @brief   Timers 1, 8, 9, 10, 11 frequency.
+ * @brief   Timers 15, 16, 17, 19 frequency.
  */
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)

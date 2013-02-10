@@ -332,6 +332,8 @@
 #define STM32_HAS_TIM15         TRUE
 #define STM32_HAS_TIM16         TRUE
 #define STM32_HAS_TIM17         TRUE
+#define STM32_HAS_TIM18         FALSE
+#define STM32_HAS_TIM19         FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1        TRUE

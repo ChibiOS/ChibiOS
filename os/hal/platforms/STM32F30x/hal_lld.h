@@ -403,6 +403,8 @@
 #define STM32_HAS_TIM15         TRUE
 #define STM32_HAS_TIM16         TRUE
 #define STM32_HAS_TIM17         TRUE
+#define STM32_HAS_TIM18         FALSE
+#define STM32_HAS_TIM19         FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1        TRUE
@@ -1202,7 +1204,7 @@
 #endif
 
 /**
- * @brief   Timers 2, 3, 4, 5, 6, 7, 12, 13, 14 frequency.
+ * @brief   Timers 2, 3, 4, 6, 7 frequency.
  */
 #if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK1               (STM32_PCLK1 * 1)
@@ -1211,7 +1213,7 @@
 #endif
 
 /**
- * @brief   Timers 1, 8, 9, 10, 11 frequency.
+ * @brief   Timers 1, 8, 15, 16, 17 frequency.
  */
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)
