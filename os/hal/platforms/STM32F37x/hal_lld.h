@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32F30x/hal_lld.h
- * @brief   STM32F30x HAL subsystem low level driver header.
+ * @file    STM32F37x/hal_lld.h
+ * @brief   STM32F37x HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
@@ -30,7 +30,7 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F30X for Analog & DSP devices.
+ *          - STM32F37X for Analog & DSP devices.
  *          .
  *
  * @addtogroup HAL
@@ -55,7 +55,7 @@
  * @name    Platform identification
  * @{
  */
-#define PLATFORM_NAME           "STM32F30x Analog & DSP"
+#define PLATFORM_NAME           "STM32F37x Analog & DSP"
 /** @} */
 
 /**
@@ -120,7 +120,27 @@
 /**
  * @brief   Maximum ADC clock frequency.
  */
-#define STM32_ADCCLK_MAX        72000000
+#define STM32_ADCCLK_MAX        14000000
+
+/**
+ * @brief   Minimum ADC clock frequency.
+ */
+#define STM32_ADCCLK_MIN        6000000
+
+/**
+ * @brief   Maximum SDADC clock frequency in fast mode.
+ */
+#define STM32_SDADCCLK_FAST_MAX 6000000
+
+/**
+ * @brief   Maximum SDADC clock frequency in slow mode.
+ */
+#define STM32_SDADCCLK_SLOW_MAX 1500000
+
+/**
+ * @brief   Minimum SDADC clock frequency.
+ */
+#define STM32_SDADCCLK_MIN      500000
 /** @} */
 
 /**
@@ -176,6 +196,11 @@
 #define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
 #define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
 
+#define STM32_ADCPRE_DIV2       (0 << 14)   /**< PPRE2 divided by 2.        */
+#define STM32_ADCPRE_DIV4       (1 << 14)   /**< PPRE2 divided by 4.        */
+#define STM32_ADCPRE_DIV6       (2 << 14)   /**< PPRE2 divided by 6.        */
+#define STM32_ADCPRE_DIV8       (3 << 14)   /**< PPRE2 divided by 8.        */
+
 #define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI/2. */
 #define STM32_PLLSRC_HSE        (1 << 16)   /**< PLL clock source is
                                                  HSE/PREDIV.                */
@@ -209,34 +234,6 @@
  * @{
  */
 #define STM32_PREDIV_MASK       (15 << 0)   /**< PREDIV divisor mask.       */
-#define STM32_ADC12PRES_MASK    (31 << 4)   /**< ADC12 clock source mask.   */
-#define STM32_ADC12PRES_NOCLOCK (0 << 4)    /**< ADC12 clock is disabled.   */
-#define STM32_ADC12PRES_DIV1    (16 << 4)   /**< ADC12 clock is PLL/1.      */
-#define STM32_ADC12PRES_DIV2    (17 << 4)   /**< ADC12 clock is PLL/2.      */
-#define STM32_ADC12PRES_DIV4    (18 << 4)   /**< ADC12 clock is PLL/4.      */
-#define STM32_ADC12PRES_DIV6    (19 << 4)   /**< ADC12 clock is PLL/6.      */
-#define STM32_ADC12PRES_DIV8    (20 << 4)   /**< ADC12 clock is PLL/8.      */
-#define STM32_ADC12PRES_DIV10   (21 << 4)   /**< ADC12 clock is PLL/10.     */
-#define STM32_ADC12PRES_DIV12   (22 << 4)   /**< ADC12 clock is PLL/12.     */
-#define STM32_ADC12PRES_DIV16   (23 << 4)   /**< ADC12 clock is PLL/16.     */
-#define STM32_ADC12PRES_DIV32   (24 << 4)   /**< ADC12 clock is PLL/32.     */
-#define STM32_ADC12PRES_DIV64   (25 << 4)   /**< ADC12 clock is PLL/64.     */
-#define STM32_ADC12PRES_DIV128  (26 << 4)   /**< ADC12 clock is PLL/128.    */
-#define STM32_ADC12PRES_DIV256  (27 << 4)   /**< ADC12 clock is PLL/256.    */
-#define STM32_ADC34PRES_MASK    (31 << 4)   /**< ADC34 clock source mask.   */
-#define STM32_ADC34PRES_NOCLOCK (0 << 4)    /**< ADC34 clock is disabled.   */
-#define STM32_ADC34PRES_DIV1    (16 << 4)   /**< ADC34 clock is PLL/1.      */
-#define STM32_ADC34PRES_DIV2    (17 << 4)   /**< ADC34 clock is PLL/2.      */
-#define STM32_ADC34PRES_DIV4    (18 << 4)   /**< ADC34 clock is PLL/4.      */
-#define STM32_ADC34PRES_DIV6    (19 << 4)   /**< ADC34 clock is PLL/6.      */
-#define STM32_ADC34PRES_DIV8    (20 << 4)   /**< ADC34 clock is PLL/8.      */
-#define STM32_ADC34PRES_DIV10   (21 << 4)   /**< ADC34 clock is PLL/10.     */
-#define STM32_ADC34PRES_DIV12   (22 << 4)   /**< ADC34 clock is PLL/12.     */
-#define STM32_ADC34PRES_DIV16   (23 << 4)   /**< ADC34 clock is PLL/16.     */
-#define STM32_ADC34PRES_DIV32   (24 << 4)   /**< ADC34 clock is PLL/32.     */
-#define STM32_ADC34PRES_DIV64   (25 << 4)   /**< ADC34 clock is PLL/64.     */
-#define STM32_ADC34PRES_DIV128  (26 << 4)   /**< ADC34 clock is PLL/128.    */
-#define STM32_ADC34PRES_DIV256  (27 << 4)   /**< ADC34 clock is PLL/256.    */
 /** @} */
 
 /**
@@ -254,12 +251,6 @@
 #define STM32_I2C2SW_MASK       (1 << 5)    /**< I2C2 clock source mask.   */
 #define STM32_I2C2SW_HSI        (0 << 5)    /**< I2C2 clock is HSI.        */
 #define STM32_I2C2SW_SYSCLK     (1 << 5)    /**< I2C2 clock is SYSCLK.     */
-#define STM32_TIM1SW_MASK       (1 << 8)    /**< TIM1 clock source mask.   */
-#define STM32_TIM1SW_PCLK2      (0 << 8)    /**< TIM1 clock is PCLK2.      */
-#define STM32_TIM1SW_PLLX2      (1 << 10)   /**< TIM1 clock is PLL*2.      */
-#define STM32_TIM8SW_MASK       (1 << 10)   /**< TIM8 clock source mask.   */
-#define STM32_TIM8SW_PCLK2      (0 << 10)   /**< TIM8 clock is PCLK2.      */
-#define STM32_TIM8SW_PLLX2      (1 << 10)   /**< TIM8 clock is PLL*2.      */
 #define STM32_USART2SW_MASK     (3 << 16)   /**< USART2 clock source mask. */
 #define STM32_USART2SW_PCLK     (0 << 16)   /**< USART2 clock is PCLK.     */
 #define STM32_USART2SW_SYSCLK   (1 << 16)   /**< USART2 clock is SYSCLK.   */
@@ -270,16 +261,6 @@
 #define STM32_USART3SW_SYSCLK   (1 << 18)   /**< USART3 clock is SYSCLK.   */
 #define STM32_USART3SW_LSE      (2 << 18)   /**< USART3 clock is LSE.      */
 #define STM32_USART3SW_HSI      (3 << 18)   /**< USART3 clock is HSI.      */
-#define STM32_UART4SW_MASK      (3 << 20)   /**< USART4 clock source mask. */
-#define STM32_UART4SW_PCLK      (0 << 20)   /**< USART4 clock is PCLK.     */
-#define STM32_UART4SW_SYSCLK    (1 << 20)   /**< USART4 clock is SYSCLK.   */
-#define STM32_UART4SW_LSE       (2 << 20)   /**< USART4 clock is LSE.      */
-#define STM32_UART4SW_HSI       (3 << 20)   /**< USART4 clock is HSI.      */
-#define STM32_UART5SW_MASK      (3 << 22)   /**< USART5 clock source mask. */
-#define STM32_UART5SW_PCLK      (0 << 22)   /**< USART5 clock is PCLK.     */
-#define STM32_UART5SW_SYSCLK    (1 << 22)   /**< USART5 clock is SYSCLK.   */
-#define STM32_UART5SW_LSE       (2 << 22)   /**< USART5 clock is LSE.      */
-#define STM32_UART5SW_HSI       (3 << 22)   /**< USART5 clock is HSI.      */
 /** @} */
 
 /*===========================================================================*/
@@ -287,7 +268,7 @@
 /*===========================================================================*/
 
 /**
- * @name    STM32F30x capabilities
+ * @name    STM32F37x capabilities
  * @{
  */
 /* ADC attributes.*/
@@ -578,17 +559,10 @@
 #endif
 
 /**
- * @brief   ADC12 prescaler value.
+ * @brief   ADC prescaler value.
  */
-#if !defined(STM32_ADC12PRES) || defined(__DOXYGEN__)
-#define STM32_ADC12PRES                     STM32_ADC12PRES_DIV1
-#endif
-
-/**
- * @brief   ADC34 prescaler value.
- */
-#if !defined(STM32_ADC34PRES) || defined(__DOXYGEN__)
-#define STM32_ADC34PRES                     STM32_ADC34PRES_DIV1
+#if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
+#define STM32_ADCPRE                        STM32_ADCPRE_DIV2
 #endif
 
 /**
@@ -613,20 +587,6 @@
 #endif
 
 /**
- * @brief   UART4 clock source.
- */
-#if !defined(STM32_UART4SW) || defined(__DOXYGEN__)
-#define STM32_UART4SW                       STM32_UART4SW_PCLK
-#endif
-
-/**
- * @brief   UART5 clock source.
- */
-#if !defined(STM32_UART5SW) || defined(__DOXYGEN__)
-#define STM32_UART5SW                       STM32_UART5SW_PCLK
-#endif
-
-/**
  * @brief   I2C1 clock source.
  */
 #if !defined(STM32_I2C1SW) || defined(__DOXYGEN__)
@@ -638,20 +598,6 @@
  */
 #if !defined(STM32_I2C2SW) || defined(__DOXYGEN__)
 #define STM32_I2C2SW                        STM32_I2C2SW_SYSCLK
-#endif
-
-/**
- * @brief   TIM1 clock source.
- */
-#if !defined(STM32_TIM1SW) || defined(__DOXYGEN__)
-#define STM32_TIM1SW                        STM32_TIM1SW_PCLK2
-#endif
-
-/**
- * @brief   TIM8 clock source.
- */
-#if !defined(STM32_TIM8SW) || defined(__DOXYGEN__)
-#define STM32_TIM8SW                        STM32_TIM8SW_PCLK2
 #endif
 
 /**
@@ -683,8 +629,8 @@
 /*
  * Configuration-related checks.
  */
-#if !defined(STM32F30x_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32F30x_MCUCONF not defined"
+#if !defined(STM32F37x_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F37x_MCUCONF not defined"
 #endif
 
 /*
@@ -709,28 +655,12 @@
 #error "HSI not enabled, required by STM32_USART3SW"
 #endif
 
-#if STM32_UART4SW == STM32_UART4SW_HSI
-#error "HSI not enabled, required by STM32_UART4SW"
-#endif
-
-#if STM32_UART5SW == STM32_UART5SW_HSI
-#error "HSI not enabled, required by STM32_UART5SW"
-#endif
-
 #if STM32_I2C1SW == STM32_I2C1SW_HSI
 #error "HSI not enabled, required by STM32_I2C1SW"
 #endif
 
 #if STM32_I2C2SW == STM32_I2C2SW_HSI
 #error "HSI not enabled, required by STM32_I2C2SW"
-#endif
-
-#if STM32_TIM1SW == STM32_TIM1SW_HSI
-#error "HSI not enabled, required by STM32_TIM1SW"
-#endif
-
-#if STM32_TIM8SW == STM32_TIM8SW_HSI
-#error "HSI not enabled, required by STM32_TIM8SW"
 #endif
 
 #if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSI)
@@ -823,14 +753,6 @@
 #error "LSE not enabled, required by STM32_USART3SW"
 #endif
 
-#if STM32_UART4SW == STM32_UART4SW_LSE
-#error "LSE not enabled, required by STM32_UART4SW"
-#endif
-
-#if STM32_UART5SW == STM32_UART5SW_LSE
-#error "LSE not enabled, required by STM32_UART5SW"
-#endif
-
 #else /* !STM32_LSE_ENABLED */
 
 #if STM32_RTCSEL == STM32_RTCSEL_LSE
@@ -842,10 +764,6 @@
 /* PLL activation conditions.*/
 #if (STM32_SW == STM32_SW_PLL) ||                                           \
     (STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) ||                               \
-    (STM32_TIM1SW == STM32_TIM1SW_PLLX2) ||                                 \
-    (STM32_TIM8SW == STM32_TIM8SW_PLLX2) ||                                 \
-    (STM32_ADC12PRES != STM32_ADC12PRES_NOCLOCK) ||                         \
-    (STM32_ADC34PRES != STM32_ADC34PRES_NOCLOCK) ||                         \
     STM32_USB_CLOCK_REQUIRED ||                                             \
     defined(__DOXYGEN__)
 /**
@@ -1007,79 +925,28 @@
 #endif
 
 /**
- * @brief   ADC12 frequency.
+ * @brief   ADC frequency.
  */
-#if (STM32_ADC12PRES == STM32_ADC12PRES_NOCLOCK) || defined(__DOXYGEN__)
-#define STM32_ADC12CLK              0
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV1
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 1)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV2
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 2)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV4
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 4)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV6
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 6)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV8
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 8)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV10
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 10)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV12
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 12)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV16
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 16)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV32
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 32)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV64
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 64)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV128
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 128)
-#elif STM32_ADC12PRES == STM32_ADC12PRES_DIV256
-#define STM32_ADC12CLK              (STM32_PLLCLKOUT / 256)
+#if (STM32_ADCPRE == STM32_ADCPRE_DIV2) || defined(__DOXYGEN__)
+#define STM32_ADCLK                 (STM32_PCLK2 / 2)
+#elif STM32_ADCPRE == STM32_ADCPRE_DIV4
+#define STM32_ADCLK                 (STM32_PCLK2 / 4)
+#elif STM32_ADCPRE == STM32_ADCPRE_DIV6
+#define STM32_ADCLK                 (STM32_PCLK2 / 6)
+#elif STM32_ADCPRE == STM32_ADCPRE_DIV8
+#define STM32_ADCLK                 (STM32_PCLK2 / 8)
 #else
-#error "invalid STM32_ADC12PRES value specified"
+#error "invalid STM32_ADCPRE value specified"
 #endif
 
-/**
- * @brief   ADC34 frequency.
- */
-#if (STM32_ADC43PRES == STM32_ADC34PRES_NOCLOCK) || defined(__DOXYGEN__)
-#define STM32_ADC34CLK              0
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV1
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 1)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV2
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 2)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV4
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 4)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV6
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 6)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV8
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 8)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV10
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 10)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV12
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 12)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV16
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 16)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV32
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 32)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV64
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 64)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV128
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 128)
-#elif STM32_ADC34PRES == STM32_ADC34PRES_DIV256
-#define STM32_ADC34CLK              (STM32_PLLCLKOUT / 256)
-#else
-#error "invalid STM32_ADC34PRES value specified"
+/* ADC maximum frequency check.*/
+#if STM32_ADCLK > STM32_ADCCLK_MAX
+#error "STM32_ADCLK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 
-/* ADC12 frequency check.*/
-#if STM32_ADC12CLK > STM32_ADCCLK_MAX
-#error "STM32_ADC12CLK exceeding maximum frequency (STM32_ADCCLK_MAX)"
-#endif
-
-/* ADC34 frequency check.*/
-#if STM32_ADC34CLK > STM32_ADCCLK_MAX
-#error "STM32_ADC34CLK exceeding maximum frequency (STM32_ADCCLK_MAX)"
+/* ADC minimum frequency check.*/
+#if STM32ADCLK < STM32_ADCCLK_MIN
+#error "STM32_ADCLK exceeding maximum frequency (STM32_ADCCLK_MIN)"
 #endif
 
 /**
