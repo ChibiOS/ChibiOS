@@ -50,11 +50,23 @@
  */
 void hal_lld_init(void) {
   extern void _vectors(void);
+  uint32_t n;
 
   /* The system is switched to the RUN0 mode, the default for normal
      operations.*/
   if (halSPCSetRunMode(SPC5_RUNMODE_RUN0) == CH_FAILED)
     chSysHalt();
+
+  /* Down-counter timer initialized for system tick use, TB enabled for debug
+     and measurements.*/
+  n = halSPCGetSystemClock() / CH_FREQUENCY;
+  asm volatile ("mtspr   22, %[n]           \t\n"   /* Init. DEC register.  */
+                "mtspr   54, %[n]           \t\n"   /* Init. DECAR register.*/
+                "li      %%r3, 0x4000       \t\n"   /* TBEN bit.            */
+                "mtspr   1008, %%r3         \t\n"   /* HID0 register.       */
+                "lis     %%r3, 0x0440       \t\n"   /* DIE ARE bits.        */
+                "mtspr   340, %%r3"                 /* TCR register.        */
+                : : [n] "r" (n) : "r3");
 
   /* INTC initialization, software vector mode, 4 bytes vectors, starting
      at priority 0.*/
@@ -73,11 +85,18 @@ void hal_lld_init(void) {
  */
 void spc_early_init(void) {
 
+  /* TODO: Check for an invalid ME mode on entry.*/
+
   /* Waiting for IRC stabilization before attempting anything else.*/
   while (!ME.GS.B.S_IRCOSC)
     ;
 
 #if !SPC5_NO_INIT
+
+  /* Enables the branch prediction, clears and enables the BTB into the
+     BUCSR special register (1013).*/
+  asm volatile ("li      %%r3, 0x0201          \t\n"
+                "mtspr   1013, %%r3": : : "r3");
 
   /* SSCM initialization. Setting up the most restrictive handling of
      invalid accesses to peripherals.*/
@@ -103,10 +122,27 @@ void spc_early_init(void) {
   AIPS.OPACR88_95.R = 0;
 
 #if defined(SPC5_OSC_BYPASS)
-  /* If the board is equipped with an oscillator instead of a xtal then the
+  /* If the board is equipped with an oscillator instead of a crystal then the
      bypass must be activated.*/
   CGM.OSC_CTL.B.OSCBYP = TRUE;
 #endif /* SPC5_OSC_BYPASS */
+
+  /* Enable clocks to all peripherals: */
+/*  CGM.SC_DC0.R = 0x80;
+  CGM.AC0_DC0_3.R = 0x80808080;
+  CGM.AC1_DC0_3.R = 0x80808080;
+  CGM.AC2_DC0_3.R = 0x85808080;
+  CGM.AC0_SC.R = 0x04000000;
+  CGM.AC2_SC.R = 0x04000000;*/
+  /* PLLs clock sources.*/
+  CGM.AC3_SC.R = SPC5_FMPLL0_CLK_SRC;
+  CGM.AC4_SC.R = SPC5_FMPLL1_CLK_SRC;
+
+  /* Switches to XOSC in order to check its functionality.*/
+  ME.DRUN.R = SPC5_ME_MC_SYSCLK_IRC | SPC5_ME_MC_IRCON | SPC5_ME_MC_XOSC0ON |           \
+              SPC5_ME_MC_FLAON_NORMAL | SPC5_ME_MC_MVRON;
+  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
+    chSysHalt();
 
   /* Initialization of the FMPLLs settings.*/
   CGM.FMPLL[0].CR.R = SPC5_FMPLL0_ODF |
@@ -114,7 +150,7 @@ void spc_early_init(void) {
                       (SPC5_FMPLL0_NDIV_VALUE << 16);
   CGM.FMPLL[0].MR.R = 0;                        /* TODO: Add a setting.     */
   CGM.FMPLL[1].CR.R = SPC5_FMPLL1_ODF |
-                      (SPC5_FMPLL1_IDF_VALUE << 26) |
+                      ((SPC5_FMPLL1_IDF_VALUE - 1) << 26) |
                       (SPC5_FMPLL1_NDIV_VALUE << 16);
   CGM.FMPLL[1].MR.R = 0;                        /* TODO: Add a setting.     */
 
@@ -147,16 +183,16 @@ void spc_early_init(void) {
   ME.LPPC[6].R      = SPC5_ME_LP_PC6_BITS;
   ME.LPPC[7].R      = SPC5_ME_LP_PC7_BITS;
 
-  /* Switches again to DRUN mode (current mode) in order to update the
-     settings.*/
-  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
-    chSysHalt();
-
   /* CFLASH settings calculated for a maximum clock of 64MHz.*/
 /*  CFLASH.PFCR0.B.BK0_APC  = 2;
   CFLASH.PFCR0.B.BK0_RWSC = 2;
   CFLASH.PFCR1.B.BK1_APC  = 2;
   CFLASH.PFCR1.B.BK1_RWSC = 2;*/
+
+  /* Switches again to DRUN mode (current mode) in order to update the
+     settings.*/
+  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
+    chSysHalt();
 
 #endif /* !SPC5_NO_INIT */
 }
@@ -176,17 +212,10 @@ bool_t halSPCSetRunMode(spc5_runmode_t mode) {
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY;
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY_INV;
 
-  /* Waits the transition process to start.*/
-  while (!ME.GS.B.S_MTRANS)
+  /* Waits for the mode switch.
+     TODO: Check for errors during the switch procedure.*/
+  while (ME.GS.B.S_CURRENT_MODE != mode)
     ;
-
-  /* Waits the transition process to end.*/
-  while (ME.GS.B.S_MTRANS)
-    ;
-
-  /* Verifies that the mode has been effectively switched.*/
-  if (ME.GS.B.S_CURRENT_MODE != mode)
-    return CH_FAILED;
 
   return CH_SUCCESS;
 }

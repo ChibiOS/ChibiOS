@@ -161,16 +161,11 @@
 #define SPC5_ME_MC_XOSC0ON          (1U << 5)
 #define SPC5_ME_MC_PLL0ON           (1U << 6)
 #define SPC5_ME_MC_PLL1ON           (1U << 7)
-#define SPC5_ME_MC_CFLAON_MASK      (3U << 16)
-#define SPC5_ME_MC_CFLAON(n)        ((n) << 16)
-#define SPC5_ME_MC_CFLAON_PD        (1U << 16)
-#define SPC5_ME_MC_CFLAON_LP        (2U << 16)
-#define SPC5_ME_MC_CFLAON_NORMAL    (3U << 16)
-#define SPC5_ME_MC_DFLAON_MASK      (3U << 18)
-#define SPC5_ME_MC_DFLAON(n)        ((n) << 18)
-#define SPC5_ME_MC_DFLAON_PD        (1U << 18)
-#define SPC5_ME_MC_DFLAON_LP        (2U << 18)
-#define SPC5_ME_MC_DFLAON_NORMAL    (3U << 18)
+#define SPC5_ME_MC_FLAON_MASK       ((3U << 16) | (3U << 18))
+#define SPC5_ME_MC_FLAON(n)         (((n) << 16) | ((n) << 18))
+#define SPC5_ME_MC_FLAON_PD         ((1U << 16) | (1U << 18))
+#define SPC5_ME_MC_FLAON_LP         ((2U << 16) | (2U << 18))
+#define SPC5_ME_MC_FLAON_NORMAL     ((3U << 16) | (3U << 18))
 #define SPC5_ME_MC_MVRON            (1U << 20)
 #define SPC5_ME_MC_PDO              (1U << 23)
 /** @} */
@@ -325,8 +320,7 @@
                                              SPC5_ME_MC_XOSC0ON |           \
                                              SPC5_ME_MC_PLL0ON |            \
                                              SPC5_ME_MC_PLL1ON |            \
-                                             SPC5_ME_MC_CFLAON_NORMAL |     \
-                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_FLAON_NORMAL |      \
                                              SPC5_ME_MC_MVRON)
 #endif
 
@@ -339,8 +333,7 @@
                                              SPC5_ME_MC_XOSC0ON |           \
                                              SPC5_ME_MC_PLL0ON |            \
                                              SPC5_ME_MC_PLL1ON |            \
-                                             SPC5_ME_MC_CFLAON_NORMAL |     \
-                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_FLAON_NORMAL |      \
                                              SPC5_ME_MC_MVRON)
 #endif
 
@@ -353,8 +346,7 @@
                                              SPC5_ME_MC_XOSC0ON |           \
                                              SPC5_ME_MC_PLL0ON |            \
                                              SPC5_ME_MC_PLL1ON |            \
-                                             SPC5_ME_MC_CFLAON_NORMAL |     \
-                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_FLAON_NORMAL |      \
                                              SPC5_ME_MC_MVRON)
 #endif
 
@@ -367,8 +359,7 @@
                                              SPC5_ME_MC_XOSC0ON |           \
                                              SPC5_ME_MC_PLL0ON |            \
                                              SPC5_ME_MC_PLL1ON |            \
-                                             SPC5_ME_MC_CFLAON_NORMAL |     \
-                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_FLAON_NORMAL |      \
                                              SPC5_ME_MC_MVRON)
 #endif
 
@@ -381,8 +372,7 @@
                                              SPC5_ME_MC_XOSC0ON |           \
                                              SPC5_ME_MC_PLL0ON |            \
                                              SPC5_ME_MC_PLL1ON |            \
-                                             SPC5_ME_MC_CFLAON_NORMAL |     \
-                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_FLAON_NORMAL |      \
                                              SPC5_ME_MC_MVRON)
 #endif
 
@@ -395,8 +385,7 @@
                                              SPC5_ME_MC_XOSC0ON |           \
                                              SPC5_ME_MC_PLL0ON |            \
                                              SPC5_ME_MC_PLL1ON |            \
-                                             SPC5_ME_MC_CFLAON_NORMAL |     \
-                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_FLAON_NORMAL |      \
                                              SPC5_ME_MC_MVRON)
 #endif
 
@@ -409,8 +398,7 @@
                                              SPC5_ME_MC_XOSC0ON |           \
                                              SPC5_ME_MC_PLL0ON |            \
                                              SPC5_ME_MC_PLL1ON |            \
-                                             SPC5_ME_MC_CFLAON_NORMAL |     \
-                                             SPC5_ME_MC_DFLAON_NORMAL |     \
+                                             SPC5_ME_MC_FLAON_NORMAL |      \
                                              SPC5_ME_MC_MVRON)
 #endif
 
