@@ -124,7 +124,7 @@ void spc_clock_init(void) {
                       (SPC5_FMPLL0_NDIV_VALUE << 16);
   CGM.FMPLL[0].MR.R = 0;                        /* TODO: Add a setting.     */
   CGM.FMPLL[1].CR.R = SPC5_FMPLL1_ODF |
-                      (SPC5_FMPLL1_IDF_VALUE << 26) |
+                      ((SPC5_FMPLL1_IDF_VALUE - 1) << 26) |
                       (SPC5_FMPLL1_NDIV_VALUE << 16);
   CGM.FMPLL[1].MR.R = 0;                        /* TODO: Add a setting.     */
 
