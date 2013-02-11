@@ -123,6 +123,18 @@
 /** @} */
 
 /**
+ * @name    Clock selectors used in the various GCM SC registers
+ * @{
+ */
+#define SPC5_CGM_SS_MASK            (15U << 24)
+#define SPC5_CGM_SS_IRC             (0U << 24)
+#define SPC5_CGM_SS_XOSC            (2U << 24)
+#define SPC5_CGM_SS_FMPLL0          (4U << 24)
+#define SPC5_CGM_SS_FMPLL1          (5U << 24)
+#define SPC5_CGM_SS_FMPLL1_DIV6     (8U << 24)
+/** @} */
+
+/**
  * @name    ME_GS register bits definitions
  * @{
  */
@@ -289,6 +301,21 @@
  */
 #if !defined(SPC5_FMPLL1_ODF) || defined(__DOXYGEN__)
 #define SPC5_FMPLL1_ODF             SPC5_FMPLL_ODF_DIV4
+#endif
+
+/**
+ * @brief   System clock source.
+ */
+#if !defined(SPC5_SYSCLK_SRC) || defined(__DOXYGEN__)
+#define SPC5_SYSCLK_SRC             SPC5_CGM_SS_FMPLL0
+#endif
+
+/**
+ * @brief   System clock divider value.
+ * @note    Zero means disabled clock.
+ */
+#if !defined(SPC5_SYSCLK_DIVIDER_VALUE) || defined(__DOXYGEN__)
+#define SPC5_SYSCLK_DIVIDER_VALUE   1
 #endif
 
 /**
@@ -668,13 +695,13 @@
 
 /* Check on SPC5_FMPLL1_ODF.*/
 #if (SPC5_FMPLL1_ODF == SPC5_FMPLL_ODF_DIV2)
-#define SPC5_FMPLL1_ODF_VALUE    2
+#define SPC5_FMPLL1_ODF_VALUE   2
 #elif (SPC5_FMPLL1_ODF == SPC5_FMPLL_ODF_DIV4)
-#define SPC5_FMPLL1_ODF_VALUE    4
+#define SPC5_FMPLL1_ODF_VALUE   4
 #elif (SPC5_FMPLL1_ODF == SPC5_FMPLL_ODF_DIV8)
-#define SPC5_FMPLL1_ODF_VALUE    8
+#define SPC5_FMPLL1_ODF_VALUE   8
 #elif (SPC5_FMPLL1_ODF == SPC5_FMPLL_ODF_DIV16)
-#define SPC5_FMPLL1_ODF_VALUE    16
+#define SPC5_FMPLL1_ODF_VALUE   16
 #else
 #error "invalid SPC5_FMPLL1_ODF value specified"
 #endif
@@ -700,6 +727,24 @@
 /* Check on SPC5_FMPLL1_CLK.*/
 #if (SPC5_FMPLL1_CLK > SPC5_FMPLL1_CLK_MAX) && !SPC5_ALLOW_OVERCLOCK
 #error "SPC5_FMPLL1_CLK outside acceptable range (0...SPC5_FMPLL1_CLK_MAX)"
+#endif
+
+/* Check on the system clock selector settings.*/
+#if (SPC5_SYSCLK_SRC == SPC5_CGM_SS_IRC) ||                                 \
+    (SPC5_SYSCLK_SRC == SPC5_CGM_SS_XOSC) ||                                \
+    (SPC5_SYSCLK_SRC == SPC5_CGM_SS_FMPLL0)
+#define SPC5_CGM_SC_SS          SPC5_SYSCLK_SRC
+#else
+#error "invalid SPC5_SYSCLK_SRC value specified"
+#endif
+
+/* Check on the system divider settings.*/
+#if SPC5_SYSCLK_DIVIDER_VALUE == 0
+#define SPC5_CGM_SC_DC0         0
+#elif (SPC5_SYSCLK_DIVIDER_VALUE >= 1) && (SPC5_SYSCLK_DIVIDER_VALUE <= 16)
+#define SPC5_CGM_SC_DC0         (0x80 | (SPC5_SYSCLK_DIVIDER_VALUE - 1))
+#else
+#error "invalid SPC5_SYSCLK_DIVIDER_VALUE value specified"
 #endif
 
 /*===========================================================================*/

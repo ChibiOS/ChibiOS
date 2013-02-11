@@ -127,9 +127,11 @@ void spc_early_init(void) {
   CGM.OSC_CTL.B.OSCBYP = TRUE;
 #endif /* SPC5_OSC_BYPASS */
 
-  /* Enable clocks to all peripherals: */
-/*  CGM.SC_DC0.R = 0x80;
-  CGM.AC0_DC0_3.R = 0x80808080;
+  /* Setting the various dividers and source selectors.*/
+  CGM.SC_SS.R  = SPC5_CGM_SC_SS;
+  CGM.SC_DC0.R = SPC5_CGM_SC_DC0;
+
+  /*CGM.AC0_DC0_3.R = 0x80808080;
   CGM.AC1_DC0_3.R = 0x80808080;
   CGM.AC2_DC0_3.R = 0x85808080;
   CGM.AC0_SC.R = 0x04000000;
