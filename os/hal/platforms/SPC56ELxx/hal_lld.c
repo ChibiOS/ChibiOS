@@ -128,7 +128,6 @@ void spc_early_init(void) {
 #endif /* SPC5_OSC_BYPASS */
 
   /* Setting the various dividers and source selectors.*/
-  CGM.SC_SS.R  = SPC5_CGM_SC_SS;
   CGM.SC_DC0.R = SPC5_CGM_SC_DC0;
 
   /*CGM.AC0_DC0_3.R = 0x80808080;
@@ -210,16 +209,21 @@ void spc_early_init(void) {
  */
 bool_t halSPCSetRunMode(spc5_runmode_t mode) {
 
+  /* Clearing status register bits I_IMODE(4) and I_IMTC(1).*/
+  ME.IS.R = 5;
+
   /* Starts a transition process.*/
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY;
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY_INV;
 
-  /* Waits for the mode switch.
-     TODO: Check for errors during the switch procedure.*/
-  while (ME.GS.B.S_CURRENT_MODE != mode)
-    ;
-
-  return CH_SUCCESS;
+  /* Waits for the mode switch.*/
+  while (TRUE) {
+    uint32_t r = ME.IS.R;
+    if (r & 1)
+      return CH_SUCCESS;
+    if (r & 4)
+      return CH_FAILED;
+  }
 }
 
 /**

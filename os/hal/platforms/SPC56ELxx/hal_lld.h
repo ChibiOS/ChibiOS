@@ -304,19 +304,19 @@
 #endif
 
 /**
- * @brief   System clock source.
- */
-#if !defined(SPC5_SYSCLK_SRC) || defined(__DOXYGEN__)
-#define SPC5_SYSCLK_SRC             SPC5_CGM_SS_FMPLL0
-#endif
-
-/**
  * @brief   System clock divider value.
  * @note    Zero means disabled clock.
  */
 #if !defined(SPC5_SYSCLK_DIVIDER_VALUE) || defined(__DOXYGEN__)
 #define SPC5_SYSCLK_DIVIDER_VALUE   1
 #endif
+
+/**
+ * @brief   System clock source.
+ */
+/*#if !defined(SPC5_SYSCLK_SRC) || defined(__DOXYGEN__)
+#define SPC5_SYSCLK_SRC             SPC5_CGM_SS_FMPLL0
+#endif*/
 
 /**
  * @brief   Active run modes in ME_ME register.
@@ -727,15 +727,6 @@
 /* Check on SPC5_FMPLL1_CLK.*/
 #if (SPC5_FMPLL1_CLK > SPC5_FMPLL1_CLK_MAX) && !SPC5_ALLOW_OVERCLOCK
 #error "SPC5_FMPLL1_CLK outside acceptable range (0...SPC5_FMPLL1_CLK_MAX)"
-#endif
-
-/* Check on the system clock selector settings.*/
-#if (SPC5_SYSCLK_SRC == SPC5_CGM_SS_IRC) ||                                 \
-    (SPC5_SYSCLK_SRC == SPC5_CGM_SS_XOSC) ||                                \
-    (SPC5_SYSCLK_SRC == SPC5_CGM_SS_FMPLL0)
-#define SPC5_CGM_SC_SS          SPC5_SYSCLK_SRC
-#else
-#error "invalid SPC5_SYSCLK_SRC value specified"
 #endif
 
 /* Check on the system divider settings.*/
