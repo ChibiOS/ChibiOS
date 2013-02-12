@@ -55,7 +55,7 @@ void hal_lld_init(void) {
   /* The system is switched to the RUN0 mode, the default for normal
      operations.*/
   if (halSPCSetRunMode(SPC5_RUNMODE_RUN0) == CH_FAILED)
-    chSysHalt();
+    chSysHalt();    /* TODO: Add handling.*/
 
   /* Down-counter timer initialized for system tick use, TB enabled for debug
      and measurements.*/
@@ -84,8 +84,6 @@ void hal_lld_init(void) {
  * @special
  */
 void spc_early_init(void) {
-
-  /* TODO: Check for an invalid ME mode on entry.*/
 
   /* Waiting for IRC stabilization before attempting anything else.*/
   while (!ME.GS.B.S_IRCOSC)
@@ -121,6 +119,10 @@ void spc_early_init(void) {
   AIPS.OPACR80_87.R = 0;
   AIPS.OPACR88_95.R = 0;
 
+  /* Check on a safe condition.*/
+  if (ME.GS.B.S_CURRENT_MODE != SPC5_RUNMODE_DRUN)
+    chSysHalt();    /* TODO: Add handling.*/
+
 #if defined(SPC5_OSC_BYPASS)
   /* If the board is equipped with an oscillator instead of a crystal then the
      bypass must be activated.*/
@@ -128,22 +130,21 @@ void spc_early_init(void) {
 #endif /* SPC5_OSC_BYPASS */
 
   /* Setting the various dividers and source selectors.*/
-  CGM.SC_DC0.R = SPC5_CGM_SC_DC0;
-
-  /*CGM.AC0_DC0_3.R = 0x80808080;
-  CGM.AC1_DC0_3.R = 0x80808080;
-  CGM.AC2_DC0_3.R = 0x85808080;
-  CGM.AC0_SC.R = 0x04000000;
-  CGM.AC2_SC.R = 0x04000000;*/
-  /* PLLs clock sources.*/
-  CGM.AC3_SC.R = SPC5_FMPLL0_CLK_SRC;
-  CGM.AC4_SC.R = SPC5_FMPLL1_CLK_SRC;
+  CGM.SC_DC0.R    = SPC5_CGM_SC_DC0;
+  CGM.AC0_DC0_3.R = SPC5_CGM_AC0_DC0 | SPC5_CGM_AC0_DC1;
+  CGM.AC0_SC.R    = SPC5_AUX0CLK_SRC;
+  CGM.AC1_DC0_3.R = SPC5_CGM_AC1_DC0;
+  CGM.AC1_SC.R    = SPC5_AUX1CLK_SRC;
+  CGM.AC2_DC0_3.R = SPC5_CGM_AC2_DC0;
+  CGM.AC2_SC.R    = SPC5_AUX2CLK_SRC;
+  CGM.AC3_SC.R    = SPC5_FMPLL0_CLK_SRC;
+  CGM.AC4_SC.R    = SPC5_FMPLL1_CLK_SRC;
 
   /* Switches to XOSC in order to check its functionality.*/
   ME.DRUN.R = SPC5_ME_MC_SYSCLK_IRC | SPC5_ME_MC_IRCON | SPC5_ME_MC_XOSC0ON |           \
               SPC5_ME_MC_FLAON_NORMAL | SPC5_ME_MC_MVRON;
   if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
-    chSysHalt();
+    chSysHalt();    /* TODO: Add handling.*/
 
   /* Initialization of the FMPLLs settings.*/
   CGM.FMPLL[0].CR.R = SPC5_FMPLL0_ODF |
@@ -184,16 +185,15 @@ void spc_early_init(void) {
   ME.LPPC[6].R      = SPC5_ME_LP_PC6_BITS;
   ME.LPPC[7].R      = SPC5_ME_LP_PC7_BITS;
 
-  /* CFLASH settings calculated for a maximum clock of 64MHz.*/
-/*  CFLASH.PFCR0.B.BK0_APC  = 2;
-  CFLASH.PFCR0.B.BK0_RWSC = 2;
-  CFLASH.PFCR1.B.BK1_APC  = 2;
-  CFLASH.PFCR1.B.BK1_RWSC = 2;*/
+  /* CFLASH settings calculated for a maximum clock of 120MHz.*/
+  CFLASH.PFCR0.B.B02_APC  = 3;
+  CFLASH.PFCR0.B.B02_WWSC = 3;
+  CFLASH.PFCR0.B.B02_RWSC = 3;
 
   /* Switches again to DRUN mode (current mode) in order to update the
      settings.*/
   if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
-    chSysHalt();
+    chSysHalt();    /* TODO: Add handling.*/
 
 #endif /* !SPC5_NO_INIT */
 }
@@ -216,7 +216,7 @@ bool_t halSPCSetRunMode(spc5_runmode_t mode) {
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY;
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY_INV;
 
-  /* Waits for the mode switch.*/
+  /* Waits for the mode switch or an error condition.*/
   while (TRUE) {
     uint32_t r = ME.IS.R;
     if (r & 1)
