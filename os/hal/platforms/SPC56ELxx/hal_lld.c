@@ -137,7 +137,8 @@ void spc_early_init(void) {
   AIPS.OPACR80_87.R = 0;
   AIPS.OPACR88_95.R = 0;
 
-  /* Check on a safe condition.*/
+  /* The system must be in DRUN mode on entry, if this is not the case then
+     it is considered a serious anomaly.*/
   if (ME.GS.B.S_CURRENT_MODE != SPC5_RUNMODE_DRUN) {
     SPC5_CLOCK_FAILURE_HOOK();
   }
