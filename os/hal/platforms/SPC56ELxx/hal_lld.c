@@ -160,22 +160,24 @@ void spc_early_init(void) {
   CGM.AC3_SC.R    = SPC5_FMPLL0_CLK_SRC;
   CGM.AC4_SC.R    = SPC5_FMPLL1_CLK_SRC;
 
-  /* Enables the XOSC in order to check its functionality.*/
+  /* Enables the XOSC in order to check its functionality before proceeding
+     with the initialization.*/
   ME.DRUN.R = SPC5_ME_MC_SYSCLK_IRC | SPC5_ME_MC_IRCON | SPC5_ME_MC_XOSC0ON |           \
               SPC5_ME_MC_FLAON_NORMAL | SPC5_ME_MC_MVRON;
   if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED) {
     SPC5_CLOCK_FAILURE_HOOK();
   }
 
-  /* Initialization of the FMPLLs settings.*/
+  /* Initialization of the FMPLLs settings.
+     TODO: Add settings for the MR registers.*/
   CGM.FMPLL[0].CR.R = SPC5_FMPLL0_ODF |
                       ((SPC5_FMPLL0_IDF_VALUE - 1) << 26) |
                       (SPC5_FMPLL0_NDIV_VALUE << 16);
-  CGM.FMPLL[0].MR.R = 0;                        /* TODO: Add a setting.     */
+  CGM.FMPLL[0].MR.R = 0;
   CGM.FMPLL[1].CR.R = SPC5_FMPLL1_ODF |
                       ((SPC5_FMPLL1_IDF_VALUE - 1) << 26) |
                       (SPC5_FMPLL1_NDIV_VALUE << 16);
-  CGM.FMPLL[1].MR.R = 0;                        /* TODO: Add a setting.     */
+  CGM.FMPLL[1].MR.R = 0;
 
   /* Run modes initialization, note writes to the MC registers are verified
      by a protection mechanism, the operation success is verified at the
@@ -213,7 +215,7 @@ void spc_early_init(void) {
   ME.LPPC[6].R      = SPC5_ME_LP_PC6_BITS;
   ME.LPPC[7].R      = SPC5_ME_LP_PC7_BITS;
 
-  /* CFLASH settings calculated for a maximum clock of 120MHz.*/
+  /* CFLASH settings initialized for a maximum clock of 120MHz.*/
   CFLASH.PFCR0.B.B02_APC  = 3;
   CFLASH.PFCR0.B.B02_WWSC = 3;
   CFLASH.PFCR0.B.B02_RWSC = 3;
