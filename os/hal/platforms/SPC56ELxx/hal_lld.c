@@ -176,7 +176,10 @@ void spc_early_init(void) {
                       (SPC5_FMPLL1_NDIV_VALUE << 16);
   CGM.FMPLL[1].MR.R = 0;                        /* TODO: Add a setting.     */
 
-  /* Run modes initialization.*/
+  /* Run modes initialization, note writes to the MC registers are verified
+     by a protection mechanism, the operation success is verified at the
+     end of the sequence.*/
+  ME.IS.R           = 8;                        /* Resetting I_ICONF status.*/
   ME.MER.R          = SPC5_ME_ME_BITS;          /* Enabled run modes.       */
   ME.SAFE.R         = SPC5_ME_SAFE_MC_BITS;     /* SAFE run mode.           */
   ME.DRUN.R         = SPC5_ME_DRUN_MC_BITS;     /* DRUN run mode.           */
@@ -186,6 +189,10 @@ void spc_early_init(void) {
   ME.RUN[3].R       = SPC5_ME_RUN3_MC_BITS;     /* RUN0 run mode.           */
   ME.HALT0.R        = SPC5_ME_HALT0_MC_BITS;    /* HALT0 run mode.          */
   ME.STOP0.R        = SPC5_ME_STOP0_MC_BITS;    /* STOP0 run mode.          */
+  if (ME.IS.B.I_ICONF) {
+    /* Configuration rejected.*/
+    SPC5_CLOCK_FAILURE_HOOK();
+  }
 
   /* Peripherals run and low power modes initialization.*/
   ME.RUNPC[0].R     = SPC5_ME_RUN_PC0_BITS;
