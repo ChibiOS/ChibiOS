@@ -57,8 +57,8 @@
 /* SIUL attributes.*/
 #define SPC5_HAS_SIUL                       TRUE
 #define SPC5_SIUL_NUM_PORTS                 8
-#define SPC5_SIUL_NUM_PCRS                  108
-#define SPC5_SIUL_NUM_PADSELS               36
+#define SPC5_SIUL_NUM_PCRS                  133
+#define SPC5_SIUL_NUM_PADSELS               44
 /** @} */
 
 #endif /* _SPC56EL_REGISTRY_H_ */
