@@ -159,7 +159,7 @@ void spc_early_init(void) {
   CGM.AC3_SC.R    = SPC5_FMPLL0_CLK_SRC;
   CGM.AC4_SC.R    = SPC5_FMPLL1_CLK_SRC;
 
-  /* Switches to XOSC in order to check its functionality.*/
+  /* Enables the XOSC in order to check its functionality.*/
   ME.DRUN.R = SPC5_ME_MC_SYSCLK_IRC | SPC5_ME_MC_IRCON | SPC5_ME_MC_XOSC0ON |           \
               SPC5_ME_MC_FLAON_NORMAL | SPC5_ME_MC_MVRON;
   if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED) {
