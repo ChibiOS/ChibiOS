@@ -54,8 +54,9 @@ void hal_lld_init(void) {
 
   /* The system is switched to the RUN0 mode, the default for normal
      operations.*/
-  if (halSPCSetRunMode(SPC5_RUNMODE_RUN0) == CH_FAILED)
-    chSysHalt();    /* TODO: Add handling.*/
+  if (halSPCSetRunMode(SPC5_RUNMODE_RUN0) == CH_FAILED) {
+    SPC5_CLOCK_FAILURE_HOOK();
+  }
 
   /* Down-counter timer initialized for system tick use, TB enabled for debug
      and measurements.*/
@@ -73,6 +74,23 @@ void hal_lld_init(void) {
   INTC.MCR.R        = 0;
   INTC.CPR.R        = 0;
   INTC.IACKR.R      = (uint32_t)_vectors;
+}
+
+/**
+ * @brief   Returns the current value of the system free running counter.
+ * @note    This service is implemented by returning the content of the
+ *          DWT_CYCCNT register.
+ *
+ * @return              The value of the system free running counter of
+ *                      type halrtcnt_t.
+ *
+ * @notapi
+ */
+halrtcnt_t hal_lld_get_counter_value(void) {
+  halrtcnt_t cnt;
+
+  asm volatile ("mfspr %0, 284" : "=r" (cnt));
+  return cnt;
 }
 
 /**
@@ -120,8 +138,9 @@ void spc_early_init(void) {
   AIPS.OPACR88_95.R = 0;
 
   /* Check on a safe condition.*/
-  if (ME.GS.B.S_CURRENT_MODE != SPC5_RUNMODE_DRUN)
-    chSysHalt();    /* TODO: Add handling.*/
+  if (ME.GS.B.S_CURRENT_MODE != SPC5_RUNMODE_DRUN) {
+    SPC5_CLOCK_FAILURE_HOOK();
+  }
 
 #if defined(SPC5_OSC_BYPASS)
   /* If the board is equipped with an oscillator instead of a crystal then the
@@ -143,8 +162,9 @@ void spc_early_init(void) {
   /* Switches to XOSC in order to check its functionality.*/
   ME.DRUN.R = SPC5_ME_MC_SYSCLK_IRC | SPC5_ME_MC_IRCON | SPC5_ME_MC_XOSC0ON |           \
               SPC5_ME_MC_FLAON_NORMAL | SPC5_ME_MC_MVRON;
-  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
-    chSysHalt();    /* TODO: Add handling.*/
+  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED) {
+    SPC5_CLOCK_FAILURE_HOOK();
+  }
 
   /* Initialization of the FMPLLs settings.*/
   CGM.FMPLL[0].CR.R = SPC5_FMPLL0_ODF |
@@ -192,8 +212,9 @@ void spc_early_init(void) {
 
   /* Switches again to DRUN mode (current mode) in order to update the
      settings.*/
-  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
-    chSysHalt();    /* TODO: Add handling.*/
+  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED) {
+    SPC5_CLOCK_FAILURE_HOOK();
+  }
 
 #endif /* !SPC5_NO_INIT */
 }

@@ -38,7 +38,7 @@
 /**
  * @brief   Defines the support for realtime counters in the HAL.
  */
-#define HAL_IMPLEMENTS_COUNTERS FALSE
+#define HAL_IMPLEMENTS_COUNTERS     TRUE
 
 /**
  * @name    Platform identification
@@ -642,12 +642,12 @@
 #endif
 
 /**
- * @brief   PIT channel 0 IRQ priority.
- * @note    This PIT channel is allocated permanently for system tick
- *          generation.
+ * @brief   Clock initialization failure hook.
+ * @note    The default is to stop the system and let the RTC restart it.
+ * @note    The hook code must not return.
  */
-#if !defined(SPC5_PIT0_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PIT0_IRQ_PRIORITY              4
+#if !defined(SPC5_CLOCK_FAILURE_HOOK) || defined(__DOXYGEN__)
+#define SPC5_CLOCK_FAILURE_HOOK()           chSysHalt()
 #endif
 
 /*===========================================================================*/
@@ -913,6 +913,19 @@ _
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type representing a system clock frequency.
+ */
+typedef uint32_t halclock_t;
+
+/**
+ * @brief   Type of the realtime free counter value.
+ */
+typedef uint32_t halrtcnt_t;
+
+/**
+ * @brief   Run modes.
+ */
 typedef enum {
   SPC5_RUNMODE_SAFE  = 2,
   SPC5_RUNMODE_DRUN  = 3,
@@ -928,6 +941,15 @@ typedef enum {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Realtime counter frequency.
+ *
+ * @return              The realtime counter frequency of type halclock_t.
+ *
+ * @notapi
+ */
+#define hal_lld_get_counter_frequency() (halclock_t)halSPCGetSystemClock()
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -936,6 +958,7 @@ typedef enum {
 extern "C" {
 #endif
   void hal_lld_init(void);
+  halrtcnt_t hal_lld_get_counter_value(void);
   void spc_early_init(void);
   bool_t halSPCSetRunMode(spc5_runmode_t mode);
   void halSPCSetPeripheralClockMode(uint32_t n, uint32_t pctl);
