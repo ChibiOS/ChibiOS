@@ -67,11 +67,11 @@ void port_halt(void) {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-void port_switch(Thread *ntp, Thread *otp) {
+__attribute__((naked))
+void port_dummy1(void) {
 
-  (void)otp;
-  (void)ntp;
-
+  asm (".global _port_switch");
+  asm ("_port_switch:");
   asm ("subi        %sp, %sp, 80");     /* Size of the intctx structure.    */
   asm ("mflr        %r0");
   asm ("stw         %r0, 84(%sp)");     /* LR into the caller frame.        */
@@ -88,6 +88,7 @@ void port_switch(Thread *ntp, Thread *otp) {
   asm ("lwz         %r0, 84(%sp)");     /* LR from the caller frame.        */
   asm ("mtlr        %r0");
   asm ("addi        %sp, %sp, 80");     /* Size of the intctx structure.    */
+  asm ("blr");
 }
 
 /**
@@ -95,8 +96,11 @@ void port_switch(Thread *ntp, Thread *otp) {
  * @details If the work function returns @p chThdExit() is automatically
  *          invoked.
  */
-void _port_thread_start(void) {
+__attribute__((naked))
+void port_dummy2(void) {
 
+  asm (".global _port_thread_start");
+  asm ("_port_thread_start:");
   chSysUnlock();
   asm ("mr          %r3, %r31");        /* Thread parameter.                */
   asm ("mtctr       %r30");
