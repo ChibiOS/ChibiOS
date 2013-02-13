@@ -20,11 +20,10 @@
 
 #include "ch.h"
 #include "hal.h"
-//#include "test.h"
-//#include "shell.h"
-//#include "chprintf.h"
+#include "test.h"
+#include "shell.h"
+#include "chprintf.h"
 
-#if 0
 #define SHELL_WA_SIZE   THD_WA_SIZE(1024)
 #define TEST_WA_SIZE    THD_WA_SIZE(256)
 
@@ -104,69 +103,68 @@ static msg_t Thread1(void *arg) {
     unsigned i;
 
     for (i = 0; i < 4; i++) {
-      palClearPad(PORT_E, PE_LED1);
+      palClearPad(PORT_D, PD_LED1);
       chThdSleepMilliseconds(100);
-      palClearPad(PORT_E, PE_LED2);
+      palClearPad(PORT_D, PD_LED2);
       chThdSleepMilliseconds(100);
-      palClearPad(PORT_E, PE_LED3);
+      palClearPad(PORT_D, PD_LED3);
       chThdSleepMilliseconds(100);
-      palClearPad(PORT_E, PE_LED4);
+      palClearPad(PORT_D, PD_LED4);
       chThdSleepMilliseconds(100);
-      palSetPad(PORT_E, PE_LED1);
+      palSetPad(PORT_D, PD_LED1);
       chThdSleepMilliseconds(100);
-      palSetPad(PORT_E, PE_LED2);
+      palSetPad(PORT_D, PD_LED2);
       chThdSleepMilliseconds(100);
-      palSetPad(PORT_E, PE_LED3);
+      palSetPad(PORT_D, PD_LED3);
       chThdSleepMilliseconds(100);
-      palSetPad(PORT_E, PE_LED4);
+      palSetPad(PORT_D, PD_LED4);
       chThdSleepMilliseconds(300);
     }
 
     for (i = 0; i < 4; i++) {
-      palTogglePort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
-                            PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
+      palTogglePort(PORT_D, PAL_PORT_BIT(PD_LED1) | PAL_PORT_BIT(PD_LED2) |
+                            PAL_PORT_BIT(PD_LED3) | PAL_PORT_BIT(PD_LED4));
       chThdSleepMilliseconds(500);
-      palTogglePort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
-                            PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
+      palTogglePort(PORT_D, PAL_PORT_BIT(PD_LED1) | PAL_PORT_BIT(PD_LED2) |
+                            PAL_PORT_BIT(PD_LED3) | PAL_PORT_BIT(PD_LED4));
       chThdSleepMilliseconds(500);
     }
 
     for (i = 0; i < 4; i++) {
-      palTogglePad(PORT_E, PE_LED1);
+      palTogglePad(PORT_D, PD_LED1);
       chThdSleepMilliseconds(250);
-      palTogglePad(PORT_E, PE_LED1);
-      palTogglePad(PORT_E, PE_LED2);
+      palTogglePad(PORT_D, PD_LED1);
+      palTogglePad(PORT_D, PD_LED2);
       chThdSleepMilliseconds(250);
-      palTogglePad(PORT_E, PE_LED2);
-      palTogglePad(PORT_E, PE_LED3);
+      palTogglePad(PORT_D, PD_LED2);
+      palTogglePad(PORT_D, PD_LED3);
       chThdSleepMilliseconds(250);
-      palTogglePad(PORT_E, PE_LED3);
-      palTogglePad(PORT_E, PE_LED4);
+      palTogglePad(PORT_D, PD_LED3);
+      palTogglePad(PORT_D, PD_LED4);
       chThdSleepMilliseconds(250);
-      palTogglePad(PORT_E, PE_LED4);
+      palTogglePad(PORT_D, PD_LED4);
     }
 
     for (i = 0; i < 4; i++) {
-      palClearPort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED3));
-      palSetPort(PORT_E, PAL_PORT_BIT(PE_LED2) | PAL_PORT_BIT(PE_LED4));
+      palClearPort(PORT_D, PAL_PORT_BIT(PD_LED1) | PAL_PORT_BIT(PD_LED3));
+      palSetPort(PORT_D, PAL_PORT_BIT(PD_LED2) | PAL_PORT_BIT(PD_LED4));
       chThdSleepMilliseconds(500);
-      palClearPort(PORT_E, PAL_PORT_BIT(PE_LED2) | PAL_PORT_BIT(PE_LED4));
-      palSetPort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED3));
+      palClearPort(PORT_D, PAL_PORT_BIT(PD_LED2) | PAL_PORT_BIT(PD_LED4));
+      palSetPort(PORT_D, PAL_PORT_BIT(PD_LED1) | PAL_PORT_BIT(PD_LED3));
       chThdSleepMilliseconds(500);
     }
 
-    palSetPort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
-                       PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
+    palSetPort(PORT_D, PAL_PORT_BIT(PD_LED1) | PAL_PORT_BIT(PD_LED2) |
+                       PAL_PORT_BIT(PD_LED3) | PAL_PORT_BIT(PD_LED4));
   }
   return 0;
 }
-#endif /* 0 */
 
 /*
  * Application entry point.
  */
 int main(void) {
-//  Thread *shelltp = NULL;
+  Thread *shelltp = NULL;
 
   /*
    * System initializations.
@@ -181,23 +179,23 @@ int main(void) {
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-//  sdStart(&SD1, NULL);
+  sdStart(&SD1, NULL);
 
   /*
    * Creates the blinker thread.
    */
-//  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity.
    */
   while (TRUE) {
-//    if (!shelltp)
-//      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
-//    else if (chThdTerminated(shelltp)) {
-//      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
-//      shelltp = NULL;           /* Triggers spawning of a new shell.        */
-//    }
+    if (!shelltp)
+      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
+    else if (chThdTerminated(shelltp)) {
+      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
+      shelltp = NULL;           /* Triggers spawning of a new shell.        */
+    }
     chThdSleepMilliseconds(1000);
   }
   return 0;

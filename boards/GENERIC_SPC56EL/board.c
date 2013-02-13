@@ -35,7 +35,7 @@ static const spc_siu_init_t spc_siu_init[] = {
 static const uint8_t spc_padsels_init[SPC5_SIUL_NUM_PADSELS] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 /**
