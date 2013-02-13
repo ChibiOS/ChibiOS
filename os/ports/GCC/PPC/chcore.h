@@ -259,9 +259,6 @@ struct context {
  * @brief   Per-thread stack overhead for interrupts servicing.
  * @details This constant is used in the calculation of the correct working
  *          area size.
- *          This value can be zero on those architecture where there is a
- *          separate interrupt stack and the stack space between @p intctx and
- *          @p extctx is known to be zero.
  */
 #ifndef PORT_INT_REQUIRED_STACK
 #define PORT_INT_REQUIRED_STACK         256
