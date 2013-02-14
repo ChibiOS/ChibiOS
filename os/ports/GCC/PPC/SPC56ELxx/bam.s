@@ -28,14 +28,18 @@
 
 #if !defined(__DOXYGEN__)
 
-        /* BAM info, SWT off, WTE off, VLE from settings.*/
+        /* BAM record.*/
         .section    .bam, "ax"
+#if PPC_USE_VLE
         .long       0x015A0000
+#else
+        .long       0x005A0000
+#endif
         .long       .init
 
-        /* HW configuration.*/
 .init:
         bl          _coreinit
+        bl          _ivinit
 
         b           _boot_address
 

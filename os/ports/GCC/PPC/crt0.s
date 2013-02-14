@@ -41,13 +41,6 @@ _boot_address:
         li          %r0, 0
         stwu        %r0, -8(%r1)
         /*
-         * IVPR initialization.
-         * TODO: Remove because it is in core.s now.
-         */
-        lis         %r4, __ivpr_base__@h
-        ori         %r4, %r4, __ivpr_base__@l
-        mtIVPR      %r4
-        /*
          * Small sections registers initialization.
          */
         lis         %r2, __sdata2_start__@h

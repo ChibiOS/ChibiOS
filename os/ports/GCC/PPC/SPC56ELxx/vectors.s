@@ -35,15 +35,6 @@
 
 #if !defined(__DOXYGEN__)
 
-        /* BAM info, SWT off, WTE off, VLE from settings.*/
-        .section    .bam, "ax"
-#if PPC_USE_VLE
-        .long       0x015A0000
-#else
-        .long       0x005A0000
-#endif
-        .long       _boot_address
-
         /* Software vectors table. The vectors are accessed from the IVOR4
            handler only. In order to declare an interrupt handler just create
            a function withe the same name of a vector, the symbol will

@@ -27,26 +27,6 @@
  */
 
 /**
- * @name   MSR register definitions
- * @{
- */
-#define MSR_UCLE                0x04000000
-#define MSR_SPE                 0x02000000
-#define MSR_WE                  0x00040000
-#define MSR_CE                  0x00020000
-#define MSR_EE                  0x00008000
-#define MSR_PR                  0x00004000
-#define MSR_FP                  0x00002000
-#define MSR_ME                  0x00001000
-#define MSR_FE0                 0x00000800
-#define MSR_DE                  0x00000200
-#define MSR_FE1                 0x00000100
-#define MSR_IS                  0x00000020
-#define MSR_DS                  0x00000010
-#define MSR_RI                  0x00000002
-/** @} */
-
-/**
  * @name   MASx registers definitions
  * @{
  */
@@ -115,12 +95,6 @@
 /** @} */
 
 /**
- * @name    MSR default settings
- */
-#define MSR_DEFAULT             (0x00001000)
-/** @} */
-
-/**
  * @name    TLB default settings
  * @{
  */
@@ -158,38 +132,35 @@
 #define LICSR1_DEFAULT          (LICSR1_ICE)
 /** @} */
 
+
+/**
+ * @name   MSR register definitions
+ * @{
+ */
+#define MSR_UCLE                0x04000000
+#define MSR_SPE                 0x02000000
+#define MSR_WE                  0x00040000
+#define MSR_CE                  0x00020000
+#define MSR_EE                  0x00008000
+#define MSR_PR                  0x00004000
+#define MSR_FP                  0x00002000
+#define MSR_ME                  0x00001000
+#define MSR_FE0                 0x00000800
+#define MSR_DE                  0x00000200
+#define MSR_FE1                 0x00000100
+#define MSR_IS                  0x00000020
+#define MSR_DS                  0x00000010
+#define MSR_RI                  0x00000002
+/** @} */
+
+/**
+ * @name   MSR default settings
+ * @{
+ */
+#define MSR_DEFAULT             (MSR_ME)
+/** @} */
+
 #if !defined(__DOXYGEN__)
-
-        .section    .handlers, "ax"
-
-        /*
-         * Unhandled exceptions handler.
-         */
-        .weak       _IVOR0,  _IVOR1,  _IVOR2,  _IVOR3,  _IVOR4,  _IVOR5
-        .weak       _IVOR6,  _IVOR7,  _IVOR8,  _IVOR9,  _IVOR10, _IVOR11
-        .weak       _IVOR12, _IVOR13, _IVOR14, _IVOR15, _IVOR32, _IVOR33
-        .weak       _IVOR34
-        .weak       _unhandled_exception
-_IVOR0:
-_IVOR1:
-_IVOR2:
-_IVOR3:
-_IVOR5:
-_IVOR6:
-_IVOR7:
-_IVOR8:
-_IVOR9:
-_IVOR11:
-_IVOR12:
-_IVOR13:
-_IVOR14:
-_IVOR15:
-_IVOR32:
-_IVOR33:
-_IVOR34:
-        .type       _unhandled_exception, @function
-_unhandled_exception:
-        b           _unhandled_exception
 
         .section    .coreinit, "ax"
 
@@ -285,38 +256,6 @@ _coreinit:
         lis         %r3, MSR_DEFAULT@h
         ori         %r3, %r3, MSR_DEFAULT@l
         mtMSR       %r3
-
-        /*
-         * IVPR initialization.
-         */
-        lis         %r3, __ivpr_base__@h
-        ori         %r3, %r3, __ivpr_base__@l
-        mtIVPR      %r3
-
-        /*
-         * IVORs initialization.
-         */
-        lis         %r3, _unhandled_exception@h
-        ori         %r3, %r3, _unhandled_exception@l
-        mtspr       400, %r3    /* IVOR0-15 */
-        mtspr       401, %r3
-        mtspr       402, %r3
-        mtspr       403, %r3
-        mtspr       404, %r3
-        mtspr       405, %r3
-        mtspr       406, %r3
-        mtspr       407, %r3
-        mtspr       408, %r3
-        mtspr       409, %r3
-        mtspr       410, %r3
-        mtspr       411, %r3
-        mtspr       412, %r3
-        mtspr       413, %r3
-        mtspr       414, %r3
-        mtspr       415, %r3
-        mtspr       528, %r3        /* IVOR32-34 */
-        mtspr       529, %r3
-        mtspr       530, %r3
 
         /*
          * TLB0 allocated to flash.
@@ -434,6 +373,75 @@ _coreinit:
         mtspr       1011, %r3       /* LICSR1 */
 
         blr
+
+        /*
+         * Exception vectors initialization.
+         */
+        .global     _ivinit
+        .type       _ivinit, @function
+_ivinit:
+        /* MSR initialization.*/
+        lis         %r3, MSR_DEFAULT@h
+        ori         %r3, %r3, MSR_DEFAULT@l
+        mtMSR       %r3
+
+        /* IVPR initialization.*/
+        lis         %r3, __ivpr_base__@h
+        ori         %r3, %r3, __ivpr_base__@l
+        mtIVPR      %r3
+
+        /* IVORs initialization.*/
+        lis         %r3, _unhandled_exception@h
+        ori         %r3, %r3, _unhandled_exception@l
+        mtspr       400, %r3    /* IVOR0-15 */
+        mtspr       401, %r3
+        mtspr       402, %r3
+        mtspr       403, %r3
+        mtspr       404, %r3
+        mtspr       405, %r3
+        mtspr       406, %r3
+        mtspr       407, %r3
+        mtspr       408, %r3
+        mtspr       409, %r3
+        mtspr       410, %r3
+        mtspr       411, %r3
+        mtspr       412, %r3
+        mtspr       413, %r3
+        mtspr       414, %r3
+        mtspr       415, %r3
+        mtspr       528, %r3        /* IVOR32-34 */
+        mtspr       529, %r3
+        mtspr       530, %r3
+        blr
+
+        /*
+         * Unhandled exceptions handler.
+         */
+        .weak       _IVOR0,  _IVOR1,  _IVOR2,  _IVOR3,  _IVOR4,  _IVOR5
+        .weak       _IVOR6,  _IVOR7,  _IVOR8,  _IVOR9,  _IVOR10, _IVOR11
+        .weak       _IVOR12, _IVOR13, _IVOR14, _IVOR15, _IVOR32, _IVOR33
+        .weak       _IVOR34
+        .weak       _unhandled_exception
+_IVOR0:
+_IVOR1:
+_IVOR2:
+_IVOR3:
+_IVOR5:
+_IVOR6:
+_IVOR7:
+_IVOR8:
+_IVOR9:
+_IVOR11:
+_IVOR12:
+_IVOR13:
+_IVOR14:
+_IVOR15:
+_IVOR32:
+_IVOR33:
+_IVOR34:
+        .type       _unhandled_exception, @function
+_unhandled_exception:
+        b           _unhandled_exception
 
 #endif /* !defined(__DOXYGEN__) */
 
