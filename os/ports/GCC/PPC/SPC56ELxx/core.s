@@ -169,95 +169,6 @@
         .type       _coreinit, @function
 _coreinit:
         /*
-         * RAM clearing, this device requires a write to all RAM location in
-         * order to initialize the ECC detection hardware, this is going to
-         * slow down the startup but there is no way around.
-         */
-.clear_ecc:
-        xor         %r0, %r0, %r0
-        xor         %r1, %r1, %r1
-        xor         %r2, %r2, %r2
-        xor         %r3, %r3, %r3
-        xor         %r4, %r4, %r4
-        xor         %r5, %r5, %r5
-        xor         %r6, %r6, %r6
-        xor         %r7, %r7, %r7
-        xor         %r8, %r8, %r8
-        xor         %r9, %r9, %r9
-        xor         %r10, %r10, %r10
-        xor         %r11, %r11, %r11
-        xor         %r12, %r12, %r12
-        xor         %r13, %r13, %r13
-        xor         %r14, %r14, %r14
-        xor         %r15, %r15, %r15
-        xor         %r16, %r16, %r16
-        xor         %r17, %r17, %r17
-        xor         %r18, %r18, %r18
-        xor         %r19, %r19, %r19
-        xor         %r20, %r20, %r20
-        xor         %r21, %r21, %r21
-        xor         %r22, %r22, %r22
-        xor         %r23, %r23, %r23
-        xor         %r24, %r24, %r24
-        xor         %r25, %r25, %r25
-        xor         %r26, %r26, %r26
-        xor         %r27, %r27, %r27
-        xor         %r28, %r28, %r28
-        xor         %r29, %r29, %r29
-        xor         %r30, %r30, %r30
-        xor         %r31, %r31, %r31
-        lis         %r4, __ram_start__@h
-        ori         %r4, %r4, __ram_start__@l
-        lis         %r5, __ram_end__@h
-        ori         %r5, %r5, __ram_end__@l
-.cleareccloop:
-        cmpl        %cr0, %r4, %r5
-        bge         %cr0, .cleareccend
-        stmw        %r16, 0(%r4)
-        addi        %r4, %r4, 64
-        b           .cleareccloop
-.cleareccend:
-
-        /*
-         * Special function registers clearing, required in order to avoid
-         * possible problems with lockstep mode.
-         */
-        mtcrf       0xFF, %r31
-        mtspr       9, %r31         /* CTR     */
-        mtspr       22, %r31        /* DEC     */
-        mtspr       26, %r31        /* SRR0-1  */
-        mtspr       27, %r31
-        mtspr       54, %r31        /* DECAR   */
-        mtspr       58, %r31        /* CSRR0-1 */
-        mtspr       59, %r31
-        mtspr       61, %r31        /* DEAR    */
-        mtspr       256, %r31       /* USPRG0  */
-        mtspr       272, %r31       /* SPRG1-7 */
-        mtspr       273, %r31
-        mtspr       274, %r31
-        mtspr       275, %r31
-        mtspr       276, %r31
-        mtspr       277, %r31
-        mtspr       278, %r31
-        mtspr       279, %r31
-        mtspr       285, %r31       /* TBU     */
-        mtspr       284, %r31       /* TBL     */
-        mtspr       318, %r31       /* DVC1-2  */
-        mtspr       319, %r31
-        mtspr       562, %r31       /* DBCNT */
-        mtspr       570, %r31       /* MCSRR0  */
-        mtspr       571, %r31       /* MCSRR1  */
-        mtspr       604, %r31       /* SPRG8-9 */
-        mtspr       605, %r31
-
-        /*
-         * MSR initialization.
-         */
-        lis         %r3, MSR_DEFAULT@h
-        ori         %r3, %r3, MSR_DEFAULT@l
-        mtMSR       %r3
-
-        /*
          * TLB0 allocated to flash.
          */
         lis         %r3, TLB0_MAS0@h
@@ -364,6 +275,114 @@ _coreinit:
         lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(15))@h
         mtspr       624, %r3        /* MAS0 */
         tlbwe
+
+        /*
+         * Enabling peripheral bridges to allow all operations from all
+         * masters. Required in order to enable the following accesses to
+         * peripherals.
+         */
+        lis         %r7, 0xFFF0
+        lis         %r3, 0x7777
+        ori         %r3, %r3, 0x7777
+        stw         %r3, 0(%r7)     /* MPROT */
+        li          %r3, 0
+        stw         %r3, 32(%r7)    /* PACR */
+        stw         %r3, 36(%r7)
+        stw         %r3, 40(%r7)
+        stw         %r3, 44(%r7)
+        stw         %r3, 64(%r7)    /* OPACR */
+        stw         %r3, 68(%r7)
+        stw         %r3, 72(%r7)
+        stw         %r3, 76(%r7)
+        stw         %r3, 80(%r7)
+        stw         %r3, 84(%r7)
+        stw         %r3, 88(%r7)
+        stw         %r3, 92(%r7)
+        stw         %r3, 96(%r7)
+        stw         %r3, 100(%r7)
+        stw         %r3, 104(%r7)
+        stw         %r3, 108(%r7)
+
+        /*
+         * RAM clearing, this device requires a write to all RAM location in
+         * order to initialize the ECC detection hardware, this is going to
+         * slow down the startup but there is no way around.
+         */
+        xor         %r0, %r0, %r0
+        xor         %r1, %r1, %r1
+        xor         %r2, %r2, %r2
+        xor         %r3, %r3, %r3
+        xor         %r4, %r4, %r4
+        xor         %r5, %r5, %r5
+        xor         %r6, %r6, %r6
+        xor         %r7, %r7, %r7
+        xor         %r8, %r8, %r8
+        xor         %r9, %r9, %r9
+        xor         %r10, %r10, %r10
+        xor         %r11, %r11, %r11
+        xor         %r12, %r12, %r12
+        xor         %r13, %r13, %r13
+        xor         %r14, %r14, %r14
+        xor         %r15, %r15, %r15
+        xor         %r16, %r16, %r16
+        xor         %r17, %r17, %r17
+        xor         %r18, %r18, %r18
+        xor         %r19, %r19, %r19
+        xor         %r20, %r20, %r20
+        xor         %r21, %r21, %r21
+        xor         %r22, %r22, %r22
+        xor         %r23, %r23, %r23
+        xor         %r24, %r24, %r24
+        xor         %r25, %r25, %r25
+        xor         %r26, %r26, %r26
+        xor         %r27, %r27, %r27
+        xor         %r28, %r28, %r28
+        xor         %r29, %r29, %r29
+        xor         %r30, %r30, %r30
+        xor         %r31, %r31, %r31
+        lis         %r4, __ram_start__@h
+        ori         %r4, %r4, __ram_start__@l
+        lis         %r5, __ram_end__@h
+        ori         %r5, %r5, __ram_end__@l
+.cleareccloop:
+        cmpl        %cr0, %r4, %r5
+        bge         %cr0, .cleareccend
+        stmw        %r16, 0(%r4)
+        addi        %r4, %r4, 64
+        b           .cleareccloop
+.cleareccend:
+
+        /*
+         * Special function registers clearing, required in order to avoid
+         * possible problems with lockstep mode.
+         */
+        mtcrf       0xFF, %r31
+        mtspr       9, %r31         /* CTR     */
+        mtspr       22, %r31        /* DEC     */
+        mtspr       26, %r31        /* SRR0-1  */
+        mtspr       27, %r31
+        mtspr       54, %r31        /* DECAR   */
+        mtspr       58, %r31        /* CSRR0-1 */
+        mtspr       59, %r31
+        mtspr       61, %r31        /* DEAR    */
+        mtspr       256, %r31       /* USPRG0  */
+        mtspr       272, %r31       /* SPRG1-7 */
+        mtspr       273, %r31
+        mtspr       274, %r31
+        mtspr       275, %r31
+        mtspr       276, %r31
+        mtspr       277, %r31
+        mtspr       278, %r31
+        mtspr       279, %r31
+        mtspr       285, %r31       /* TBU     */
+        mtspr       284, %r31       /* TBL     */
+        mtspr       318, %r31       /* DVC1-2  */
+        mtspr       319, %r31
+        mtspr       562, %r31       /* DBCNT */
+        mtspr       570, %r31       /* MCSRR0  */
+        mtspr       571, %r31       /* MCSRR1  */
+        mtspr       604, %r31       /* SPRG8-9 */
+        mtspr       605, %r31
 
         /*
          * Cache enabled.
