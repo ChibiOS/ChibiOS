@@ -138,25 +138,6 @@ void spc_early_init(void) {
   RGM.FES.R         = 0xFFFF;
   RGM.DES.R         = 0xFFFF;
 
-  /* Enabling peripheral bridges to allow any operation.*/
-/*  AIPS.MPROT.R      = 0x77777777;
-  AIPS.PACR0_7.R    = 0;
-  AIPS.PACR8_15.R   = 0;
-  AIPS.PACR16_23.R  = 0;
-  AIPS.PACR24_31.R  = 0;
-  AIPS.OPACR0_7.R   = 0;
-  AIPS.OPACR8_15.R  = 0;
-  AIPS.OPACR16_23.R = 0;
-  AIPS.OPACR24_31.R = 0;
-  AIPS.OPACR32_39.R = 0;
-  AIPS.OPACR40_47.R = 0;
-  AIPS.OPACR48_55.R = 0;
-  AIPS.OPACR56_63.R = 0;
-  AIPS.OPACR64_71.R = 0;
-  AIPS.OPACR72_79.R = 0;
-  AIPS.OPACR80_87.R = 0;
-  AIPS.OPACR88_95.R = 0;*/
-
   /* The system must be in DRUN mode on entry, if this is not the case then
      it is considered a serious anomaly.*/
   if (ME.GS.B.S_CURRENT_MODE != SPC5_RUNMODE_DRUN) {
