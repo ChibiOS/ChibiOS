@@ -88,10 +88,30 @@
 /** @} */
 
 /**
+ * @name    BUCSR registers definitions
+ * @{
+ */
+#define BUCSR_BPEN              0x00000001
+#define BUCSR_BPRED_MASK        0x00000006
+#define BUCSR_BPRED_0           0x00000000
+#define BUCSR_BPRED_1           0x00000002
+#define BUCSR_BPRED_2           0x00000004
+#define BUCSR_BPRED_3           0x00000006
+#define BUCSR_BALLOC_MASK       0x00000030
+#define BUCSR_BALLOC_0          0x00000030
+#define BUCSR_BALLOC_1          0x00000010
+#define BUCSR_BALLOC_2          0x00000020
+#define BUCSR_BALLOC_3          0x00000030
+#define BUCSR_BALLOC_BFI        0x00000200
+/** @} */
+
+/**
  * @name    LICSR1 registers definitions
  * @{
  */
 #define LICSR1_ICE              0x00000001
+#define LICSR1_ICINV            0x00000002
+#define LICSR1_ICORG            0x00000010
 /** @} */
 
 /**
@@ -119,19 +139,38 @@
                                  MAS3_UW | MAS3_SW | MAS3_UR | MAS3_SR)
 
 #define TLB3_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(3))
-#define TLB3_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_2M)
+#define TLB3_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_1M)
 #define TLB3_MAS2               (MAS2_EPN(0xFFE00000) | MAS2_I)
 #define TLB3_MAS3               (MAS3_RPN(0xFFE00000) |                     \
                                  MAS3_UW | MAS3_SW | MAS3_UR | MAS3_SR)
+
+#define TLB4_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(4))
+#define TLB4_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_1M)
+#define TLB4_MAS2               (MAS2_EPN(0x8FF00000) | MAS2_I)
+#define TLB4_MAS3               (MAS3_RPN(0x8FF00000) |                     \
+                                 MAS3_UW | MAS3_SW | MAS3_UR | MAS3_SR)
+
+#define TLB5_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(5))
+#define TLB5_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_1M)
+#define TLB5_MAS2               (MAS2_EPN(0xFFF00000) | MAS2_I)
+#define TLB5_MAS3               (MAS3_RPN(0xFFF00000) |                     \
+                                 MAS3_UW | MAS3_SW | MAS3_UR | MAS3_SR)
+/** @} */
+
+/**
+ * @name    BUCSR default settings
+ * @{
+ */
+#define BUCSR_DEFAULT           (BUCSR_BPEN | BUCSR_BPRED_0 |               \
+                                 BUCSR_BALLOC_0 | BUCSR_BALLOC_BFI)
 /** @} */
 
 /**
  * @name    LICSR1 default settings
  * @{
  */
-#define LICSR1_DEFAULT          (LICSR1_ICE)
+#define LICSR1_DEFAULT          (LICSR1_ICE | LICSR1_ICORG)
 /** @} */
-
 
 /**
  * @name   MSR register definitions
@@ -157,7 +196,7 @@
  * @name   MSR default settings
  * @{
  */
-#define MSR_DEFAULT             (MSR_ME)
+#define MSR_DEFAULT             (MSR_SPE | MSR_WE | MSR_ME)
 /** @} */
 
 #if !defined(__DOXYGEN__)
@@ -165,25 +204,15 @@
         .section    .coreinit, "ax"
 
         .align      2
+_ramcode:
+        tlbwe
+        isync
+        blr
+
+        .align      2
         .globl      _coreinit
         .type       _coreinit, @function
 _coreinit:
-        /*
-         * TLB0 allocated to flash.
-         */
-        lis         %r3, TLB0_MAS0@h
-        mtspr       624, %r3        /* MAS0 */
-        lis         %r3, TLB0_MAS1@h
-        ori         %r3, %r3, TLB0_MAS1@l
-        mtspr       625, %r3        /* MAS1 */
-        lis         %r3, TLB0_MAS2@h
-        ori         %r3, %r3, TLB0_MAS2@l
-        mtspr       626, %r3        /* MAS2 */
-        lis         %r3, TLB0_MAS3@h
-        ori         %r3, %r3, TLB0_MAS3@l
-        mtspr       627, %r3        /* MAS3 */
-        tlbwe
-
         /*
          * TLB1 allocated to internal RAM.
          */
@@ -233,18 +262,44 @@ _coreinit:
         tlbwe
 
         /*
+         * TLB4 allocated to on-platform peripherals.
+         */
+        lis         %r3, TLB4_MAS0@h
+        mtspr       624, %r3        /* MAS0 */
+        lis         %r3, TLB4_MAS1@h
+        ori         %r3, %r3, TLB4_MAS1@l
+        mtspr       625, %r3        /* MAS1 */
+        lis         %r3, TLB4_MAS2@h
+        ori         %r3, %r3, TLB4_MAS2@l
+        mtspr       626, %r3        /* MAS2 */
+        lis         %r3, TLB4_MAS3@h
+        ori         %r3, %r3, TLB4_MAS3@l
+        mtspr       627, %r3        /* MAS3 */
+        tlbwe
+
+        /*
+         * TLB5 allocated to on-platform peripherals.
+         */
+        lis         %r3, TLB5_MAS0@h
+        mtspr       624, %r3        /* MAS0 */
+        lis         %r3, TLB5_MAS1@h
+        ori         %r3, %r3, TLB5_MAS1@l
+        mtspr       625, %r3        /* MAS1 */
+        lis         %r3, TLB5_MAS2@h
+        ori         %r3, %r3, TLB5_MAS2@l
+        mtspr       626, %r3        /* MAS2 */
+        lis         %r3, TLB5_MAS3@h
+        ori         %r3, %r3, TLB5_MAS3@l
+        mtspr       627, %r3        /* MAS3 */
+        tlbwe
+
+        /*
          * Invalidating the remaining TLBs (because debuggers).
          */
         lis         %r3, 0
         mtspr       625, %r3        /* MAS1 */
         mtspr       626, %r3        /* MAS2 */
         mtspr       627, %r3        /* MAS3 */
-        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(4))@h
-        mtspr       624, %r3        /* MAS0 */
-        tlbwe
-        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(5))@h
-        mtspr       624, %r3        /* MAS0 */
-        tlbwe
         lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(6))@h
         mtspr       624, %r3        /* MAS0 */
         tlbwe
@@ -277,9 +332,7 @@ _coreinit:
         tlbwe
 
         /*
-         * Enabling peripheral bridges to allow all operations from all
-         * masters. Required in order to enable the following accesses to
-         * peripherals.
+         * PBRIDGE programmed to allow all accesses from user mode.
          */
         lis         %r7, 0xFFF0
         lis         %r3, 0x7777
@@ -302,6 +355,19 @@ _coreinit:
         stw         %r3, 100(%r7)
         stw         %r3, 104(%r7)
         stw         %r3, 108(%r7)
+
+e_lis     r6,0xfff3
+e_or2i    r6,0x8010
+e_li      r7,0xC520
+se_stw    r7,0x0(r6)
+e_li      r7,0xD928
+se_stw    r7,0x0(r6)
+
+e_lis     r6,0xfff3
+e_or2i    r6,0x8000
+e_lis     r7,0xff00
+e_or2i    r7,0x10A
+se_stw    r7,0x0(r6) /* # WEN = 0 */
 
         /*
          * RAM clearing, this device requires a write to all RAM location in
@@ -376,8 +442,8 @@ _coreinit:
         mtspr       279, %r31
         mtspr       285, %r31       /* TBU     */
         mtspr       284, %r31       /* TBL     */
-        mtspr       318, %r31       /* DVC1-2  */
-        mtspr       319, %r31
+//        mtspr       318, %r31       /* DVC1-2  */
+//        mtspr       319, %r31
         mtspr       562, %r31       /* DBCNT */
         mtspr       570, %r31       /* MCSRR0  */
         mtspr       571, %r31       /* MCSRR1  */
@@ -385,10 +451,50 @@ _coreinit:
         mtspr       605, %r31
 
         /*
-         * Cache enabled.
+         * *Finally* the TLB0 is re-allocated to flash, note, the final phase
+         * is executed from RAM.
          */
-        mfspr       %r3, 1011       /* LICSR1 */
-        ori         %r3, %r3, LICSR1_DEFAULT
+        lis         %r3, TLB0_MAS0@h
+        mtspr       624, %r3        /* MAS0 */
+        lis         %r3, TLB0_MAS1@h
+        ori         %r3, %r3, TLB0_MAS1@l
+        mtspr       625, %r3        /* MAS1 */
+        lis         %r3, TLB0_MAS2@h
+        ori         %r3, %r3, TLB0_MAS2@l
+        mtspr       626, %r3        /* MAS2 */
+        lis         %r3, TLB0_MAS3@h
+        ori         %r3, %r3, TLB0_MAS3@l
+        mtspr       627, %r3        /* MAS3 */
+        mflr        %r4
+        lis         %r6, _ramcode@h
+        ori         %r6, %r6, _ramcode@l
+        lis         %r7, 0x40010000@h
+        mtctr       %r7
+        lwz         %r3, 0(%r6)
+        stw         %r3, 0(%r7)
+        lwz         %r3, 4(%r6)
+        stw         %r3, 4(%r7)
+        lwz         %r3, 8(%r6)
+        stw         %r3, 8(%r7)
+        bctrl
+        mtlr        %r4
+
+        /*
+         * Branch prediction enabled.
+         */
+        li          %r3, BUCSR_DEFAULT
+        mtspr       1013, %r3       /* BUCSR */
+
+        /*
+         * Cache invalidated and then enabled.
+         */
+        li          %r3, LICSR1_ICINV
+        mtspr       1011, %r3       /* LICSR1 */
+.inv:   mfspr       %r3, 1011       /* LICSR1 */
+        andi.       %r3, %r3, LICSR1_ICINV
+        bne         .inv
+        lis         %r3, LICSR1_DEFAULT@h
+        ori         %r3, %r3, LICSR1_DEFAULT@l
         mtspr       1011, %r3       /* LICSR1 */
 
         blr
@@ -412,6 +518,7 @@ _ivinit:
         /* IVORs initialization.*/
         lis         %r3, _unhandled_exception@h
         ori         %r3, %r3, _unhandled_exception@l
+
         mtspr       400, %r3    /* IVOR0-15 */
         mtspr       401, %r3
         mtspr       402, %r3
@@ -431,6 +538,7 @@ _ivinit:
         mtspr       528, %r3        /* IVOR32-34 */
         mtspr       529, %r3
         mtspr       530, %r3
+
         blr
 
         /*

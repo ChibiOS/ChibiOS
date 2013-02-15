@@ -100,51 +100,51 @@ Settings: SYSCLK=120
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 378081 msgs/S, 756162 ctxswc/S
+--- Score : 378087 msgs/S, 756174 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 312112 msgs/S, 624224 ctxswc/S
---- Result: SUCCESS
-----------------------------------------------------------------------------
---- Test Case 11.3 (Benchmark, messages #3)
 --- Score : 312115 msgs/S, 624230 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
+--- Test Case 11.3 (Benchmark, messages #3)
+--- Score : 312112 msgs/S, 624224 ctxswc/S
+--- Result: SUCCESS
+----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 1099584 ctxswc/S
+--- Score : 1088328 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 244343 threads/S
+--- Score : 250733 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 369918 threads/S
+--- Score : 369919 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 94519 reschedules/S, 567114 ctxswc/S
+--- Score : 92909 reschedules/S, 557454 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 633460 ctxswc/S
+--- Score : 617000 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 1104628 bytes/S
+--- Score : 1084644 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 1295758 timers/S
+--- Score : 1325758 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 1762552 wait+signal/S
+--- Score : 1743316 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 1227172 lock+unlock/S
+--- Score : 1210644 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)

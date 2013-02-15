@@ -109,11 +109,6 @@ void spc_early_init(void) {
 
 #if !SPC5_NO_INIT
 
-  /* Enables the branch prediction, clears and enables the BTB into the
-     BUCSR special register (1013).*/
-  asm volatile ("li      %%r3, 0x0201          \t\n"
-                "mtspr   1013, %%r3": : : "r3");
-
   /* SSCM initialization. Setting up the most restrictive handling of
      invalid accesses to peripherals.*/
   SSCM.ERROR.R = 3;                             /* PAE and RAE bits.        */
