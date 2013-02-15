@@ -196,7 +196,7 @@
  * @name   MSR default settings
  * @{
  */
-#define MSR_DEFAULT             (MSR_SPE | MSR_WE | MSR_ME)
+#define MSR_DEFAULT             (MSR_SPE | MSR_WE | MSR_CE | MSR_ME)
 /** @} */
 
 #if !defined(__DOXYGEN__)
