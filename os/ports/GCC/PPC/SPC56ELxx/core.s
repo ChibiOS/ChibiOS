@@ -404,8 +404,10 @@ _coreinit:
         mtspr       279, %r31
         mtspr       285, %r31       /* TBU     */
         mtspr       284, %r31       /* TBL     */
-//        mtspr       318, %r31       /* DVC1-2  */
-//        mtspr       319, %r31
+#if 0
+        mtspr       318, %r31       /* DVC1-2  */
+        mtspr       319, %r31
+#endif
         mtspr       562, %r31       /* DBCNT */
         mtspr       570, %r31       /* MCSRR0  */
         mtspr       571, %r31       /* MCSRR1  */
