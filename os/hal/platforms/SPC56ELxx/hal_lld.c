@@ -109,6 +109,32 @@ void spc_early_init(void) {
 
 #if !SPC5_NO_INIT
 
+#if SPC5_DISABLE_WATCHDOG
+  /* SWT disabled.*/
+  SWT.SR.R = 0xC520;
+  SWT.SR.R = 0xD928;
+  SWT.CR.R = 0xFF00000A;
+#endif
+
+  /* Enabling peripheral bridges to allow any operation.*/
+  AIPS.MPROT.R      = 0x77777777;
+  AIPS.PACR0_7.R    = 0;
+  AIPS.PACR8_15.R   = 0;
+  AIPS.PACR16_23.R  = 0;
+  AIPS.PACR24_31.R  = 0;
+  AIPS.OPACR0_7.R   = 0;
+  AIPS.OPACR8_15.R  = 0;
+  AIPS.OPACR16_23.R = 0;
+  AIPS.OPACR24_31.R = 0;
+  AIPS.OPACR32_39.R = 0;
+  AIPS.OPACR40_47.R = 0;
+  AIPS.OPACR48_55.R = 0;
+  AIPS.OPACR56_63.R = 0;
+  AIPS.OPACR64_71.R = 0;
+  AIPS.OPACR72_79.R = 0;
+  AIPS.OPACR80_87.R = 0;
+  AIPS.OPACR88_95.R = 0;
+
   /* SSCM initialization. Setting up the most restrictive handling of
      invalid accesses to peripherals.*/
   SSCM.ERROR.R = 3;                             /* PAE and RAE bits.        */

@@ -332,44 +332,6 @@ _coreinit:
         tlbwe
 
         /*
-         * PBRIDGE programmed to allow all accesses from user mode.
-         */
-        lis         %r7, 0xFFF0
-        lis         %r3, 0x7777
-        ori         %r3, %r3, 0x7777
-        stw         %r3, 0(%r7)     /* MPROT */
-        li          %r3, 0
-        stw         %r3, 32(%r7)    /* PACR */
-        stw         %r3, 36(%r7)
-        stw         %r3, 40(%r7)
-        stw         %r3, 44(%r7)
-        stw         %r3, 64(%r7)    /* OPACR */
-        stw         %r3, 68(%r7)
-        stw         %r3, 72(%r7)
-        stw         %r3, 76(%r7)
-        stw         %r3, 80(%r7)
-        stw         %r3, 84(%r7)
-        stw         %r3, 88(%r7)
-        stw         %r3, 92(%r7)
-        stw         %r3, 96(%r7)
-        stw         %r3, 100(%r7)
-        stw         %r3, 104(%r7)
-        stw         %r3, 108(%r7)
-
-e_lis     r6,0xfff3
-e_or2i    r6,0x8010
-e_li      r7,0xC520
-se_stw    r7,0x0(r6)
-e_li      r7,0xD928
-se_stw    r7,0x0(r6)
-
-e_lis     r6,0xfff3
-e_or2i    r6,0x8000
-e_lis     r7,0xff00
-e_or2i    r7,0x10A
-se_stw    r7,0x0(r6) /* # WEN = 0 */
-
-        /*
          * RAM clearing, this device requires a write to all RAM location in
          * order to initialize the ECC detection hardware, this is going to
          * slow down the startup but there is no way around.

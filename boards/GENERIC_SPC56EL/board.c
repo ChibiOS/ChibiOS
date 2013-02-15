@@ -56,11 +56,6 @@ const PALConfig pal_default_config = {
 void __early_init(void) {
 
   spc_early_init();
-
-  /* SWT disabled.*/
-  SWT.SR.R = 0xC520;
-  SWT.SR.R = 0xD928;
-  SWT.CR.R = 0xFF00000A;
 }
 
 /*

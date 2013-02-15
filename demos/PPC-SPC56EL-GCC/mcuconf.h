@@ -30,6 +30,7 @@
  */
 #define SPC5_NO_INIT                        FALSE
 #define SPC5_ALLOW_OVERCLOCK                FALSE
+#define SPC5_DISABLE_WATCHDOG               TRUE
 #define SPC5_FMPLL0_CLK_SRC                 SPC5_FMPLL_SRC_XOSC
 #define SPC5_FMPLL0_IDF_VALUE               5
 #define SPC5_FMPLL0_NDIV_VALUE              60
@@ -151,3 +152,15 @@
 /*
  * SERIAL driver system settings.
  */
+#define SPC5_SERIAL_USE_LINFLEX0            TRUE
+#define SPC5_SERIAL_USE_LINFLEX1            TRUE
+#define SPC5_SERIAL_LINFLEX0_PRIORITY       8
+#define SPC5_SERIAL_LINFLEX1_PRIORITY       8
+#define SPC5_SERIAL_LINFLEX0_START_PCTL     (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_SERIAL_LINFLEX0_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#define SPC5_SERIAL_LINFLEX1_START_PCTL     (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_SERIAL_LINFLEX1_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))

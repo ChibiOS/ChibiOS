@@ -242,6 +242,13 @@
 #endif
 
 /**
+ * @brief   Disables the watchdog on start.
+ */
+#if !defined(SPC5_DISABLE_WATCHDOG) || defined(__DOXYGEN__)
+#define SPC5_DISABLE_WATCHDOG               TRUE
+#endif
+
+/**
  * @brief   FMPLL0 Clock source.
  */
 #if !defined(SPC5_FMPLL0_CLK_SRC) || defined(__DOXYGEN__)
