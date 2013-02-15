@@ -48,6 +48,7 @@ SECTIONS
     .boot : ALIGN(16) SUBALIGN(16)
     {
         KEEP(*(.bam))
+        KEEP(*(.coreinit))
         KEEP(*(.crt0))
         . = ALIGN(0x00000800);
         KEEP(*(.vectors))

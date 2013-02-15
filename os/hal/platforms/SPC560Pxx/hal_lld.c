@@ -73,8 +73,9 @@ void hal_lld_init(void) {
 
   /* The system is switched to the RUN0 mode, the default for normal
      operations.*/
-  if (halSPCSetRunMode(SPC5_RUNMODE_RUN0) == CH_FAILED)
-    chSysHalt();
+  if (halSPCSetRunMode(SPC5_RUNMODE_RUN0) == CH_FAILED) {
+    SPC5_CLOCK_FAILURE_HOOK();
+  }
 
   /* INTC initialization, software vector mode, 4 bytes vectors, starting
      at priority 0.*/
@@ -112,11 +113,41 @@ void spc_clock_init(void) {
 
 #if !SPC5_NO_INIT
 
+#if SPC5_DISABLE_WATCHDOG
+  /* SWT disabled.*/
+  SWT.SR.R = 0xC520;
+  SWT.SR.R = 0xD928;
+  SWT.CR.R = 0xFF00000A;
+#endif
+
+  /* SSCM initialization. Setting up the most restrictive handling of
+     invalid accesses to peripherals.*/
+  SSCM.ERROR.R = 3;                             /* PAE and RAE bits.        */
+
+  /* RGM errors clearing.*/
+  RGM.FES.R         = 0xFFFF;
+  RGM.DES.R         = 0xFFFF;
+
+  /* The system must be in DRUN mode on entry, if this is not the case then
+     it is considered a serious anomaly.*/
+  if (ME.GS.B.S_CURRENTMODE != SPC5_RUNMODE_DRUN) {
+    SPC5_CLOCK_FAILURE_HOOK();
+  }
+
 #if defined(SPC5_OSC_BYPASS)
   /* If the board is equipped with an oscillator instead of a xtal then the
      bypass must be activated.*/
   CGM.OSC_CTL.B.OSCBYP = TRUE;
 #endif /* SPC5_OSC_BYPASS */
+
+  /* Enables the XOSC in order to check its functionality before proceeding
+     with the initialization.*/
+/*  ME.DRUN.R = SPC5_ME_MC_SYSCLK_IRC | SPC5_ME_MC_IRCON | SPC5_ME_MC_XOSC0ON |           \
+              SPC5_ME_MC_CFLAON_NORMAL | SPC5_ME_MC_CFLAON_NORMAL |
+              SPC5_ME_MC_MVRON;
+  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED) {
+    SPC5_CLOCK_FAILURE_HOOK();
+  }*/
 
   /* Initialization of the FMPLLs settings.*/
   CGM.FMPLL[0].CR.R = SPC5_FMPLL0_ODF |
@@ -129,6 +160,7 @@ void spc_clock_init(void) {
   CGM.FMPLL[1].MR.R = 0;                        /* TODO: Add a setting.     */
 
   /* Run modes initialization.*/
+  ME.IS.R           = 8;                        /* Resetting I_ICONF status.*/
   ME.MER.R          = SPC5_ME_ME_BITS;          /* Enabled run modes.       */
   ME.TEST.R         = SPC5_ME_TEST_MC_BITS;     /* TEST run mode.           */
   ME.SAFE.R         = SPC5_ME_SAFE_MC_BITS;     /* SAFE run mode.           */
@@ -139,6 +171,10 @@ void spc_clock_init(void) {
   ME.RUN[3].R       = SPC5_ME_RUN3_MC_BITS;     /* RUN0 run mode.           */
   ME.HALT0.R        = SPC5_ME_HALT0_MC_BITS;    /* HALT0 run mode.          */
   ME.STOP0.R        = SPC5_ME_STOP0_MC_BITS;    /* STOP0 run mode.          */
+  if (ME.IS.B.I_CONF) {
+    /* Configuration rejected.*/
+    SPC5_CLOCK_FAILURE_HOOK();
+  }
 
   /* Peripherals run and low power modes initialization.*/
   ME.RUNPC[0].R     = SPC5_ME_RUN_PC0_BITS;
@@ -158,17 +194,17 @@ void spc_clock_init(void) {
   ME.LPPC[6].R      = SPC5_ME_LP_PC6_BITS;
   ME.LPPC[7].R      = SPC5_ME_LP_PC7_BITS;
 
-  /* Switches again to DRUN mode (current mode) in order to update the
-     settings.*/
-  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED)
-    chSysHalt();
-
   /* CFLASH settings calculated for a maximum clock of 64MHz.*/
   CFLASH.PFCR0.B.BK0_APC  = 2;
   CFLASH.PFCR0.B.BK0_RWSC = 2;
   CFLASH.PFCR1.B.BK1_APC  = 2;
   CFLASH.PFCR1.B.BK1_RWSC = 2;
 
+  /* Switches again to DRUN mode (current mode) in order to update the
+     settings.*/
+  if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED) {
+    SPC5_CLOCK_FAILURE_HOOK();
+  }
 #endif /* !SPC5_NO_INIT */
 }
 
@@ -183,23 +219,21 @@ void spc_clock_init(void) {
  */
 bool_t halSPCSetRunMode(spc5_runmode_t mode) {
 
+  /* Clearing status register bits I_IMODE(4) and I_IMTC(1).*/
+  ME.IS.R = 5;
+
   /* Starts a transition process.*/
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY;
   ME.MCTL.R = SPC5_ME_MCTL_MODE(mode) | SPC5_ME_MCTL_KEY_INV;
 
-  /* Waits the transition process to start.*/
-  while (!ME.GS.B.S_MTRANS)
-    ;
-
-  /* Waits the transition process to end.*/
-  while (ME.GS.B.S_MTRANS)
-    ;
-
-  /* Verifies that the mode has been effectively switched.*/
-  if (ME.GS.B.S_CURRENTMODE != mode)
-    return CH_FAILED;
-
-  return CH_SUCCESS;
+  /* Waits for the mode switch or an error condition.*/
+  while (TRUE) {
+    uint32_t r = ME.IS.R;
+    if (r & 1)
+      return CH_SUCCESS;
+    if (r & 4)
+      return CH_FAILED;
+  }
 }
 
 /**

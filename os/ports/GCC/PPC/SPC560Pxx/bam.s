@@ -28,10 +28,16 @@
 
 #if !defined(__DOXYGEN__)
 
-        /* BAM info, SWT off, WTE off, VLE from settings.*/
+        /* BAM record.*/
         .section    .bam, "ax"
         .long       0x015A0000
-        .long       _boot_address
+        .long       .init
+
+.init:
+        bl          _coreinit
+        bl          _ivinit
+
+        b           _boot_address
 
 #endif /* !defined(__DOXYGEN__) */
 
