@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    PPC/isr.s
+ * @file    PPC/ivor.s
  * @brief   Kernel ISRs.
  *
  * @addtogroup PPC_CORE
