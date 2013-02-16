@@ -75,86 +75,86 @@ extern void DebugMonitorVector(void);
 extern void Vector34(void);
 extern void PendSVVector(void);
 extern void SysTickVector(void);
-extern void Vector40(void);
-extern void Vector44(void);
-extern void Vector48(void);
-extern void Vector4C(void);
-extern void Vector50(void);
-extern void Vector54(void);
-extern void Vector58(void);
-extern void Vector5C(void);
-extern void Vector60(void);
-extern void Vector64(void);
-extern void Vector68(void);
-extern void Vector6C(void);
-extern void Vector70(void);
-extern void Vector74(void);
-extern void Vector78(void);
-extern void Vector7C(void);
-extern void Vector80(void);
-extern void Vector84(void);
-extern void Vector88(void);
-extern void Vector8C(void);
-extern void Vector90(void);
-extern void Vector94(void);
-extern void Vector98(void);
-extern void Vector9C(void);
-extern void VectorA0(void);
-extern void VectorA4(void);
-extern void VectorA8(void);
-extern void VectorAC(void);
-extern void VectorB0(void);
-extern void VectorB4(void);
-extern void VectorB8(void);
-extern void VectorBC(void);
-extern void VectorC0(void);
-extern void VectorC4(void);
-extern void VectorC8(void);
-extern void VectorCC(void);
-extern void VectorD0(void);
-extern void VectorD4(void);
-extern void VectorD8(void);
-extern void VectorDC(void);
-extern void VectorE0(void);
-extern void VectorE4(void);
-extern void VectorE8(void);
-extern void VectorEC(void);
-extern void VectorF0(void);
-extern void VectorF4(void);
-extern void VectorF8(void);
-extern void VectorFC(void);
-extern void Vector100(void);
-extern void Vector104(void);
-extern void Vector108(void);
-extern void Vector10C(void);
-extern void Vector110(void);
-extern void Vector114(void);
-extern void Vector118(void);
-extern void Vector11C(void);
-extern void Vector120(void);
-extern void Vector124(void);
-extern void Vector128(void);
-extern void Vector12C(void);
-extern void Vector130(void);
-extern void Vector134(void);
-extern void Vector138(void);
-extern void Vector13C(void);
-extern void Vector140(void);
-extern void Vector144(void);
-extern void Vector148(void);
-extern void Vector14C(void);
-extern void Vector150(void);
-extern void Vector154(void);
-extern void Vector158(void);
-extern void Vector15C(void);
-extern void Vector160(void);
-extern void Vector164(void);
-extern void Vector168(void);
-extern void Vector16C(void);
-extern void Vector170(void);
-extern void Vector174(void);
-extern void Vector178(void);
-extern void Vector17C(void);
+extern void HFLASHC_Handler(void);
+extern void PDCA_0_Handler(void);
+extern void PDCA_1_Handler(void);
+extern void PDCA_2_Handler(void);
+extern void PDCA_3_Handler(void);
+extern void PDCA_4_Handler(void);
+extern void PDCA_5_Handler(void);
+extern void PDCA_6_Handler(void);
+extern void PDCA_7_Handler(void);
+extern void PDCA_8_Handler(void);
+extern void PDCA_9_Handler(void);
+extern void PDCA_10_Handler(void);
+extern void PDCA_11_Handler(void);
+extern void PDCA_12_Handler(void);
+extern void PDCA_13_Handler(void);
+extern void PDCA_14_Handler(void);
+extern void PDCA_15_Handler(void);
+extern void CRCCU_Handler(void);
+extern void USBC_Handler(void);
+extern void PEVC_TR_Handler(void);
+extern void PEVC_OV_Handler(void);
+extern void AESA_Handler(void);
+extern void PM_Handler(void);
+extern void SCIF_Handler(void);
+extern void FREQM_Handler(void);
+extern void GPIO_0_Handler(void);
+extern void GPIO_1_Handler(void);
+extern void GPIO_2_Handler(void);
+extern void GPIO_3_Handler(void);
+extern void GPIO_4_Handler(void);
+extern void GPIO_5_Handler(void);
+extern void GPIO_6_Handler(void);
+extern void GPIO_7_Handler(void);
+extern void GPIO_8_Handler(void);
+extern void GPIO_9_Handler(void);
+extern void GPIO_10_Handler(void);
+extern void GPIO_11_Handler(void);
+extern void BPM_Handler(void);
+extern void BSCIF_Handler(void);
+extern void AST_ALARM_Handler(void);
+extern void AST_PER_Handler(void);
+extern void AST_OVF_Handler(void);
+extern void AST_READY_Handler(void);
+extern void AST_CLKREADY_Handler(void);
+extern void WDT_Handler(void);
+extern void EIC_1_Handler(void);
+extern void EIC_2_Handler(void);
+extern void EIC_3_Handler(void);
+extern void EIC_4_Handler(void);
+extern void EIC_5_Handler(void);
+extern void EIC_6_Handler(void);
+extern void EIC_7_Handler(void);
+extern void EIC_8_Handler(void);
+extern void IISC_Handler(void);
+extern void SPI_Handler(void);
+extern void TC00_Handler(void);
+extern void TC01_Handler(void);
+extern void TC02_Handler(void);
+extern void TC010_Handler(void);
+extern void TC011_Handler(void);
+extern void TC012_Handler(void);
+extern void TWIM0_Handler(void);
+extern void TWIS0_Handler(void);
+extern void TWIM1_Handler(void);
+extern void TWIS1_Handler(void);
+extern void USART0_Handler(void);
+extern void USART1_Handler(void);
+extern void USART2_Handler(void);
+extern void USART3_Handler(void);
+extern void ADCIFE_Handler(void);
+extern void DACC_Handler(void);
+extern void ACIFC_Handler(void);
+extern void ABDACB_Handler(void);
+extern void TRNG_Handler(void);
+extern void PARC_Handler(void);
+extern void CATB_Handler(void);
+extern void Dummy_Handler(void);
+extern void TWIM2_Handler(void);
+extern void TWIM3_Handler(void);
+extern void LCDCA_Handler(void);
 #endif
 
 /**
@@ -169,26 +169,26 @@ vectors_t _vectors = {
   Vector20,           Vector24,           Vector28,           SVCallVector,
   DebugMonitorVector, Vector34,           PendSVVector,       SysTickVector,
   {
-    Vector40,           Vector44,           Vector48,           Vector4C,
-    Vector50,           Vector54,           Vector58,           Vector5C,
-    Vector60,           Vector64,           Vector68,           Vector6C,
-    Vector70,           Vector74,           Vector78,           Vector7C,
-    Vector80,           Vector84,           Vector88,           Vector8C,
-    Vector90,           Vector94,           Vector98,           Vector9C,
-    VectorA0,           VectorA4,           VectorA8,           VectorAC,
-    VectorB0,           VectorB4,           VectorB8,           VectorBC,
-    VectorC0,           VectorC4,           VectorC8,           VectorCC,
-    VectorD0,           VectorD4,           VectorD8,           VectorDC,
-    VectorE0,           VectorE4,           VectorE8,           VectorEC,
-    VectorF0,           VectorF4,           VectorF8,           VectorFC,
-    Vector100,          Vector104,          Vector108,          Vector10C,
-    Vector110,          Vector114,          Vector118,          Vector11C,
-    Vector120,          Vector124,          Vector128,          Vector12C,
-    Vector130,          Vector134,          Vector138,          Vector13C,
-    Vector140,          Vector144,          Vector148,          Vector14C,
-    Vector150,          Vector154,          Vector158,          Vector15C,
-    Vector160,          Vector164,          Vector168,          Vector16C,
-    Vector170,          Vector174,          Vector178,          Vector17C
+    HFLASHC_Handler,    PDCA_0_Handler,     PDCA_1_Handler,     PDCA_2_Handler,
+    PDCA_3_Handler,	    PDCA_4_Handler,     PDCA_5_Handler,     PDCA_6_Handler,
+    PDCA_7_Handler,     PDCA_8_Handler,     PDCA_9_Handler,     PDCA_10_Handler,
+    PDCA_11_Handler,    PDCA_12_Handler,    PDCA_13_Handler,    PDCA_14_Handler,
+    PDCA_15_Handler,    CRCCU_Handler,      USBC_Handler,       PEVC_TR_Handler,
+    PEVC_OV_Handler,    AESA_Handler,       PM_Handler,         SCIF_Handler,
+    FREQM_Handler,      GPIO_0_Handler,     GPIO_1_Handler,     GPIO_2_Handler,
+    GPIO_3_Handler,     GPIO_4_Handler,     GPIO_5_Handler,     GPIO_6_Handler,
+    GPIO_7_Handler,     GPIO_8_Handler,     GPIO_9_Handler,     GPIO_10_Handler,
+    GPIO_11_Handler,    BPM_Handler,        BSCIF_Handler,      AST_ALARM_Handler,
+    AST_PER_Handler,    AST_OVF_Handler,    AST_READY_Handler,  AST_CLKREADY_Handler,
+    WDT_Handler,        EIC_1_Handler,      EIC_2_Handler,      EIC_3_Handler,
+    EIC_4_Handler,      EIC_5_Handler,      EIC_6_Handler,      EIC_7_Handler,
+    EIC_8_Handler,      IISC_Handler,       SPI_Handler,        TC00_Handler,
+    TC01_Handler,       TC02_Handler,       TC010_Handler,      TC011_Handler,
+    TC012_Handler,      TWIM0_Handler,      TWIS0_Handler,      TWIM1_Handler,
+    TWIS1_Handler,      USART0_Handler,     USART1_Handler,     USART2_Handler,
+    USART3_Handler,     ADCIFE_Handler,     DACC_Handler,       ACIFC_Handler,
+    ABDACB_Handler,     TRNG_Handler,       PARC_Handler,       CATB_Handler,
+    Dummy_Handler,      TWIM2_Handler,      TWIM3_Handler,      LCDCA_Handler
   }
 };
 
@@ -222,85 +222,85 @@ void DebugMonitorVector(void) __attribute__((weak, alias("_unhandled_exception")
 void Vector34(void) __attribute__((weak, alias("_unhandled_exception")));
 void PendSVVector(void) __attribute__((weak, alias("_unhandled_exception")));
 void SysTickVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector40(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector44(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector48(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector4C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector50(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector54(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector58(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector5C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector60(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector64(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector68(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector6C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector70(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector74(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector78(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector7C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector80(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector84(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector88(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector8C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector90(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector94(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector98(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector9C(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorA0(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorA4(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorA8(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorAC(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorB0(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorB4(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorB8(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorBC(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorC0(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorC4(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorC8(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorCC(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorD0(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorD4(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorD8(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorDC(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorE0(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorE4(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorE8(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorEC(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorF0(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorF4(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorF8(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorFC(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector100(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector104(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector108(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector10C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector110(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector114(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector118(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector11C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector120(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector124(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector128(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector12C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector130(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector134(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector138(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector13C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector140(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector144(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector148(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector14C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector150(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector154(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector158(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector15C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector160(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector164(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector168(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector16C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector170(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector174(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector178(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector17C(void) __attribute__((weak, alias("_unhandled_exception")));
+void HFLASHC_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_0_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_1_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_2_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_3_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_4_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_5_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_6_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_7_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_8_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_9_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_10_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_11_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_12_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_13_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_14_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PDCA_15_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void CRCCU_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void USBC_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PEVC_TR_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PEVC_OV_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void AESA_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PM_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void SCIF_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void FREQM_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_0_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_1_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_2_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_3_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_4_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_5_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_6_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_7_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_8_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_9_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_10_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void GPIO_11_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void BPM_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void BSCIF_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void AST_ALARM_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void AST_PER_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void AST_OVF_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void AST_READY_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void AST_CLKREADY_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void WDT_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void EIC_1_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void EIC_2_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void EIC_3_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void EIC_4_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void EIC_5_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void EIC_6_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void EIC_7_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void EIC_8_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void IISC_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void SPI_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TC00_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TC01_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TC02_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TC010_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TC011_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TC012_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TWIM0_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TWIS0_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TWIM1_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TWIS1_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void USART0_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void USART1_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void USART2_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void USART3_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void ADCIFE_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void DACC_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void ACIFC_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void ABDACB_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TRNG_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void PARC_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void CATB_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void Dummy_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TWIM2_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void TWIM3_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void LCDCA_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
 
 /** @} */
