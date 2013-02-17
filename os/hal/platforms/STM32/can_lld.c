@@ -217,7 +217,7 @@ static void can_lld_sce_handler(CANDriver *canp) {
     chSysLockFromIsr();
     /* The content of the ESR register is copied unchanged in the upper
        half word of the listener flags mask.*/
-    chEvtBroadcastFlagsI(&canp->error_event, flags | (flagsmask_t)(esr < 16));
+    chEvtBroadcastFlagsI(&canp->error_event, flags | (flagsmask_t)(esr << 16));
     chSysUnlockFromIsr();
   }
 }

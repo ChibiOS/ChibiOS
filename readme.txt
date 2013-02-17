@@ -85,6 +85,8 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed typo in platforms/STM32/can_lld.c (bug 3604657)(backported
+  to 2.4.4).
 - FIX: Added board files and demo for "WaveShare Open STM32F4 207I-C / 407I-C".
   Added ULPI support to the STM32 USB (OTG-HS) driver.
   Contributed by Dave Camarillo (bug 3603362).
