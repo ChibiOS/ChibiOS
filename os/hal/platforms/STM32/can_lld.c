@@ -153,7 +153,7 @@ CH_IRQ_HANDLER(CAN1_SCE_IRQHandler) {
     if ((esr & CAN_ESR_LEC) > 0)
       flags |= CAN_FRAMING_ERROR;
     chSysLockFromIsr();
-    canAddFlagsI(&CAND1, flags | (canstatus_t)(flags < 16));
+    canAddFlagsI(&CAND1, flags | (canstatus_t)(flags << 16));
     chEvtBroadcastI(&CAND1.error_event);
     chSysUnlockFromIsr();
   }
