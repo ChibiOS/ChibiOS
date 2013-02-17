@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.4 ***
+- FIX: Fixed bug prevents calling adcStartConversionI() within ISR (bug
+  3605053).
 - FIX: Fixed typo in platforms/STM32/can_lld.c (bug 3604657).
 - FIX: Fixed duplicated code in hal_lld.h (STM32F4xx) (bug 3602544).
 - FIX: Fixed compile errors in Posix-GCC demo (bug 3601621).
