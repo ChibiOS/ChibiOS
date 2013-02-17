@@ -228,18 +228,21 @@ typedef enum {
         /* Invokes the callback passing the 2nd half of the buffer.*/       \
         size_t half = (adcp)->depth / 2;                                    \
         size_t half_index = half * (adcp)->grpp->num_channels;              \
-        (adcp)->grpp->end_cb(adcp, (adcp)->samples + half_index, half);     \
+        (adcp)->grpp->end_cb(adcp, (adcp)->samples + half_index, (adcp)->depth - half);     \
       }                                                                     \
       else {                                                                \
         /* Invokes the callback passing the whole buffer.*/                 \
         (adcp)->grpp->end_cb(adcp, (adcp)->samples, (adcp)->depth);         \
       }                                                                     \
-      if ((adcp)->state == ADC_COMPLETE)                                    \
+      if ((adcp)->state == ADC_COMPLETE) {                                  \
         (adcp)->state = ADC_READY;                                          \
+        (adcp)->grpp = NULL;                                                \
+      }                                                                     \
     }                                                                       \
-    else                                                                    \
+    else {                                                                  \
       (adcp)->state = ADC_READY;                                            \
-    (adcp)->grpp = NULL;                                                    \
+      (adcp)->grpp = NULL;                                                  \
+    }                                                                       \
     _adc_wakeup_isr(adcp);                                                  \
   }                                                                         \
 }
