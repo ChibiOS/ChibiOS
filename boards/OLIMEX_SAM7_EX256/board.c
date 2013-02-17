@@ -52,11 +52,12 @@ static CH_IRQ_HANDLER(SYSIrqHandler) {
   }
   
 #if USE_SAM7_DBGU_UART
-  if (AT91C_BASE_DBGU->DBGU_CSR & 
-    (AT91C_US_RXRDY | AT91C_US_TXRDY | AT91C_US_PARE | AT91C_US_FRAME | AT91C_US_OVRE | AT91C_US_RXBRK)) {
-    sd_lld_serve_interrupt(&SD3);
+  if (AT91C_BASE_DBGU->DBGU_CSR &
+      (AT91C_US_RXRDY | AT91C_US_TXRDY | AT91C_US_PARE | AT91C_US_FRAME |
+       AT91C_US_OVRE | AT91C_US_RXBRK)) {
+    sd_lld_serve_interrupt(&SDDBG);
   }
-#endif  
+#endif
   AT91C_BASE_AIC->AIC_EOICR = 0;
   CH_IRQ_EPILOGUE();
 }

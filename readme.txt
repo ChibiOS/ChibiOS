@@ -85,6 +85,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed compile Error OLIMEX_SAM7_EX256/board.c (bug 3605058).
 - FIX: Fixed bug prevents calling adcStartConversionI() within ISR (bug
   3605053)(backported to 2.4.4).
 - FIX: Fixed typo in platforms/STM32/can_lld.c (bug 3604657)(backported
