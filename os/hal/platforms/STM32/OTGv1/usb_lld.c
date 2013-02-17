@@ -884,8 +884,9 @@ void usb_lld_start(USBDriver *usbp) {
       /* OTG HS clock enable and reset.*/
 #if STM32_USE_USB_OTG2_ULPI
       rccEnableAHB1((RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN |
-          RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIOHEN | RCC_AHB1ENR_GPIOIEN),
-          FALSE);
+                     RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIOHEN |
+                     RCC_AHB1ENR_GPIOIEN),
+                    FALSE);
       rccEnableAHB1(RCC_AHB1ENR_OTGHSULPIEN, FALSE);
 #endif
       rccEnableOTG_HS(FALSE);
@@ -908,7 +909,7 @@ void usb_lld_start(USBDriver *usbp) {
                                                     usbp);
 
     /* - Forced device mode.
-       - USB turn-around time = TRDT_VALUE. */
+       - USB turn-around time = TRDT_VALUE.*/
 #if STM32_USE_USB_OTG2_ULPI
     /* High speed ULPI PHY */
     otgp->GUSBCFG = GUSBCFG_FDMOD |  GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_SRPCAP | GUSBCFG_HNPCAP;
@@ -916,7 +917,6 @@ void usb_lld_start(USBDriver *usbp) {
     /* - Full Speed 1.1 PHY.*/
     otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_PHYSEL;
 #endif
-
 
 #if STM32_USE_USB_OTG2_HS
     /* USB 2.0 High Speed PHY.*/
@@ -931,16 +931,14 @@ void usb_lld_start(USBDriver *usbp) {
 
     if (&USBD2 == usbp) {
 #if STM32_USE_USB_OTG2_ULPI
-        otgp->GCCFG = 0;
+      otgp->GCCFG = 0;
 #else
-        otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
+      otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
 #endif
     } else {
       /* Internal FS PHY activation.*/
       otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
     }
-
-
 
     /* Soft core reset.*/
     otg_core_reset(usbp);
