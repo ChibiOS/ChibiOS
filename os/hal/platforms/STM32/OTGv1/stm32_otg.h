@@ -238,6 +238,7 @@ typedef struct {
 #define GUSBCFG_CTXPKT          (1U<<31)    /**< Corrupt Tx packet.         */
 #define GUSBCFG_FDMOD           (1U<<30)    /**< Force Device Mode.         */
 #define GUSBCFG_FHMOD           (1U<<29)    /**< Force Host Mode.           */
+#define GUSBCFG_ULPIEVBUSD      (1U<<20)    /**< ULPI External VBUS Drive   */
 #define GUSBCFG_TRDT_MASK       (15U<<10)   /**< USB Turnaround time field
                                                  mask.                      */
 #define GUSBCFG_TRDT(n)         ((n)<<10)   /**< USB Turnaround time field
@@ -679,6 +680,7 @@ typedef struct {
 #define DSTS_ENUMSPD_MASK       (3U<<1)     /**< Enumerated speed mask.     */
 #define DSTS_ENUMSPD_FS_48      (3U<<1)     /**< Full speed (PHY clock is
                                                  running at 48 MHz).        */
+#define DSTS_ENUMSPD_HS_480     (0U<<1)     /**< High speed                 */
 #define DSTS_SUSPSTS            (1U<<0)     /**< Suspend status.            */
 /** @} */
 

@@ -85,6 +85,9 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Added board files and demo for "WaveShare Open STM32F4 207I-C / 407I-C".
+  Added ULPI support to the STM32 USB (OTG-HS) driver.
+  Contributed by Dave Camarillo (bug 3603362).
 - FIX: Fixed adcSTM32EnableTSVREFE must be called AFTER adcStart (bug
   3602950).
 - FIX: Fixed duplicated code in hal_lld.h (STM32F4xx) (bug 3602544)

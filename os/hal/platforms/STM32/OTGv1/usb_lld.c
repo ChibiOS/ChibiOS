@@ -37,7 +37,8 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define TRDT_VALUE      5
+#define TRDT_VALUE         5
+#define TRDT_HS_VALUE      9
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -605,10 +606,27 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
  */
 static void usb_lld_serve_interrupt(USBDriver *usbp) {
   stm32_otg_t *otgp = usbp->otg;
-  uint32_t sts, src;
+  uint32_t sts, src, dsts_enumspd;
 
   sts = otgp->GINTSTS & otgp->GINTMSK;
+  /* Writing 1's to this register clears those respective interrupt flags.*/
   otgp->GINTSTS = sts;
+
+  if (sts & GINTSTS_WKUPINT) {
+    /* If clocks are gated off, turn them back on (may be the case if coming out
+      of suspend mode).*/
+    if (otgp->PCGCCTL & (PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK)) {
+      /* Set to zero to un-gate the USB core clocks.*/
+      otgp->PCGCCTL &= ~(PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK);
+    }
+
+    /* Clear the Remote Wake-up Signaling */
+    otgp->DCTL |= DCTL_RWUSIG;
+  }
+
+  if (sts & GINTSTS_USBSUSP) {
+    /* Implement suspend mode.*/
+  }
 
   /* Reset interrupt handling.*/
   if (sts & GINTSTS_USBRST) {
@@ -618,7 +636,13 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   /* Enumeration done.*/
   if (sts & GINTSTS_ENUMDNE) {
-    (void)otgp->DSTS;
+    /* Full or High speed timing selection */
+    dsts_enumspd = (otgp->DSTS & DSTS_ENUMSPD_MASK);
+    if( dsts_enumspd == DSTS_ENUMSPD_HS_480 ) {
+        otgp->GUSBCFG = (otgp->GUSBCFG & ~(GUSBCFG_TRDT_MASK)) | GUSBCFG_TRDT(TRDT_HS_VALUE);
+    } else {
+        otgp->GUSBCFG = (otgp->GUSBCFG & ~(GUSBCFG_TRDT_MASK)) | GUSBCFG_TRDT(TRDT_VALUE);
+    }
   }
 
   /* SOF interrupt handling.*/
@@ -858,6 +882,12 @@ void usb_lld_start(USBDriver *usbp) {
 #if STM32_USB_USE_OTG2
     if (&USBD2 == usbp) {
       /* OTG HS clock enable and reset.*/
+#if STM32_USE_USB_OTG2_ULPI
+      rccEnableAHB1((RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN |
+          RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIOHEN | RCC_AHB1ENR_GPIOIEN),
+          FALSE);
+      rccEnableAHB1(RCC_AHB1ENR_OTGHSULPIEN, FALSE);
+#endif
       rccEnableOTG_HS(FALSE);
       rccResetOTG_HS();
 
@@ -878,18 +908,39 @@ void usb_lld_start(USBDriver *usbp) {
                                                     usbp);
 
     /* - Forced device mode.
-       - USB turn-around time = TRDT_VALUE.
-       - Full Speed 1.1 PHY.*/
+       - USB turn-around time = TRDT_VALUE. */
+#if STM32_USE_USB_OTG2_ULPI
+    /* High speed ULPI PHY */
+    otgp->GUSBCFG = GUSBCFG_FDMOD |  GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_SRPCAP | GUSBCFG_HNPCAP;
+#else
+    /* - Full Speed 1.1 PHY.*/
     otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_PHYSEL;
+#endif
 
+
+#if STM32_USE_USB_OTG2_HS
+    /* USB 2.0 High Speed PHY.*/
+    otgp->DCFG = 0x02200000 | DCFG_DSPD_HS;
+#else
     /* 48MHz 1.1 PHY.*/
     otgp->DCFG = 0x02200000 | DCFG_DSPD_FS11;
+#endif
 
     /* PHY enabled.*/
     otgp->PCGCCTL = 0;
 
-    /* Internal FS PHY activation.*/
-    otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
+    if (&USBD2 == usbp) {
+#if STM32_USE_USB_OTG2_ULPI
+        otgp->GCCFG = 0;
+#else
+        otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
+#endif
+    } else {
+      /* Internal FS PHY activation.*/
+      otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
+    }
+
+
 
     /* Soft core reset.*/
     otg_core_reset(usbp);
@@ -905,12 +956,13 @@ void usb_lld_start(USBDriver *usbp) {
     otgp->DIEPMSK  = 0;
     otgp->DOEPMSK  = 0;
     otgp->DAINTMSK = 0;
-    if (usbp->config->sof_cb == NULL)
-      otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM /*| GINTMSK_USBSUSPM |
-                       GINTMSK_ESUSPM  |*/;
-    else
-      otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM /*| GINTMSK_USBSUSPM |
-                       GINTMSK_ESUSPM */ | GINTMSK_SOFM;
+    if (usbp->config->sof_cb == NULL) {
+      otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM | GINTMSK_USBSUSPM |
+                       GINTMSK_ESUSPM  | GINTMSK_SRQM | GINTMSK_WKUM;
+    } else {
+      otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM | GINTMSK_USBSUSPM |
+                       GINTMSK_ESUSPM | GINTMSK_SRQM | GINTMSK_WKUM | GINTMSK_SOFM;
+    }
     otgp->GINTSTS  = 0xFFFFFFFF;         /* Clears all pending IRQs, if any. */
 
     /* Global interrupts enable.*/
@@ -937,17 +989,20 @@ void usb_lld_stop(USBDriver *usbp) {
     otgp->GAHBCFG    = 0;
     otgp->GCCFG      = 0;
 
-#if STM32_USB_USE_USB1
+#if STM32_USB_USE_OTG1
     if (&USBD1 == usbp) {
       nvicDisableVector(STM32_OTG1_NUMBER);
       rccDisableOTG1(FALSE);
     }
 #endif
 
-#if STM32_USB_USE_USB2
+#if STM32_USB_USE_OTG2
     if (&USBD2 == usbp) {
       nvicDisableVector(STM32_OTG2_NUMBER);
-      rccDisableOTG2(FALSE);
+      rccDisableOTG_HS(FALSE);
+#if STM32_USE_USB_OTG2_ULPI
+      rccDisableAHB1(RCC_AHB1ENR_OTGHSULPIEN, FALSE);
+#endif
     }
 #endif
   }
