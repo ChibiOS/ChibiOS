@@ -52,11 +52,6 @@ void hal_lld_init(void) {
   extern void _vectors(void);
   uint32_t n;
 
-  /* Enables the branch prediction, clears and enables the BTB into the
-     BUCSR special register (1013).*/
-  asm volatile ("li      %%r3, 0x0201          \t\n"
-                "mtspr   1013, %%r3": : : "r3");
-
   /* FLASH wait states and prefetching setup.*/
   CFLASH0.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
   CFLASH0.BIUCR2.R = 0;
