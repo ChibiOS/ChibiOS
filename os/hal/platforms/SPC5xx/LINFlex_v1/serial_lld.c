@@ -91,7 +91,7 @@ static void spc5_linflex_init(SerialDriver *sdp, const SerialConfig *config) {
      parameters.*/
   linflexp->UARTCR.R  = SPC5_UARTCR_UART;       /* UART mode FIRST.         */
   linflexp->UARTCR.R  = SPC5_UARTCR_UART | SPC5_UARTCR_RXEN | config->mode;
-  div = halSPCGetSystemClock() / config->speed;
+  div = SPC5_LINFLEX0_CLK / config->speed;
   linflexp->LINFBRR.R = (uint16_t)(div & 15);   /* Fractional divider.      */
   linflexp->LINIBRR.R = (uint16_t)(div >> 4);   /* Integer divider.         */
   linflexp->UARTSR.R  = 0xFFFF;                 /* Clearing UARTSR register.*/
