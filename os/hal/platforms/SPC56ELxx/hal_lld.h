@@ -315,7 +315,7 @@
  * @note    Zero means disabled clock.
  */
 #if !defined(SPC5_SYSCLK_DIVIDER_VALUE) || defined(__DOXYGEN__)
-#define SPC5_SYSCLK_DIVIDER_VALUE           1
+#define SPC5_SYSCLK_DIVIDER_VALUE           2
 #endif
 
 /**
