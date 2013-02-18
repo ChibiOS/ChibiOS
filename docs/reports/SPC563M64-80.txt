@@ -5,14 +5,14 @@ Settings: SYSCLK=80
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.5.0
-*** Compiled:     Feb  8 2012 - 10:21:46
-*** Compiler:     GCC 4.4.1
+*** Kernel:       2.5.2unstable
+*** Compiled:     Feb 18 2013 - 09:39:47
+*** Compiler:     GCC 4.6.3 build on 2013-01-07
 *** Architecture: Power Architecture
 *** Core Variant: e200z3
-*** Port Info:    None
+*** Port Info:    VLE mode
 *** Platform:     SPC563M64
-*** Test Board:   Generic SPC563
+*** Test Board:   Generic SPC563Mxx
 
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (Threads, enqueuing test #1)
@@ -100,63 +100,63 @@ Settings: SYSCLK=80
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 278226 msgs/S, 556452 ctxswc/S
+--- Score : 285269 msgs/S, 570538 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 224935 msgs/S, 449870 ctxswc/S
+--- Score : 237014 msgs/S, 474028 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 224935 msgs/S, 449870 ctxswc/S
+--- Score : 237014 msgs/S, 474028 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 890960 ctxswc/S
+--- Score : 932856 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 178638 threads/S
+--- Score : 187058 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 255935 threads/S
+--- Score : 269848 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 73319 reschedules/S, 439914 ctxswc/S
+--- Score : 78689 reschedules/S, 472134 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 609448 ctxswc/S
+--- Score : 596888 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 766412 bytes/S
+--- Score : 857688 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 1094200 timers/S
+--- Score : 1011640 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 1027008 wait+signal/S
+--- Score : 1058184 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 841232 lock+unlock/S
+--- Score : 880128 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 764 bytes
+--- System: 1052 bytes
 --- Thread: 72 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes
 --- EventS: 4 bytes
---- EventL: 12 bytes
+--- EventL: 16 bytes
 --- Mutex : 16 bytes
 --- CondV.: 8 bytes
---- Queue : 32 bytes
+--- Queue : 36 bytes
 --- MailB.: 40 bytes
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
