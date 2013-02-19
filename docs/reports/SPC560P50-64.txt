@@ -6,7 +6,7 @@ Settings: SYSCLK=64
 *** ChibiOS/RT test suite
 ***
 *** Kernel:       2.5.2unstable
-*** Compiled:     Feb 15 2013 - 16:26:30
+*** Compiled:     Feb 19 2013 - 15:18:24
 *** Compiler:     GCC 4.6.3 build on 2013-01-07
 *** Architecture: Power Architecture
 *** Core Variant: e200z0
@@ -100,15 +100,15 @@ Settings: SYSCLK=64
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 200705 msgs/S, 401410 ctxswc/S
+--- Score : 200701 msgs/S, 401402 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 167518 msgs/S, 335036 ctxswc/S
+--- Score : 167517 msgs/S, 335034 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 167518 msgs/S, 335036 ctxswc/S
+--- Score : 167519 msgs/S, 335038 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
@@ -116,15 +116,15 @@ Settings: SYSCLK=64
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 132967 threads/S
+--- Score : 132691 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 189949 threads/S
+--- Score : 189383 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 51971 reschedules/S, 311826 ctxswc/S
+--- Score : 52143 reschedules/S, 312858 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
@@ -132,19 +132,19 @@ Settings: SYSCLK=64
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 619256 bytes/S
+--- Score : 619280 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 802792 timers/S
+--- Score : 792852 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 818244 wait+signal/S
+--- Score : 850984 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 643052 lock+unlock/S
+--- Score : 649592 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)

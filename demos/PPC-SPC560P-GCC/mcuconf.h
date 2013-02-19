@@ -30,6 +30,14 @@
  */
 #define SPC5_NO_INIT                        FALSE
 #define SPC5_ALLOW_OVERCLOCK                FALSE
+#define SPC5_DISABLE_WATCHDOG               TRUE
+#define SPC5_AUX0CLK_SRC                    SPC5_CGM_SS_FMPLL1
+#define SPC5_MCONTROL_DIVIDER_VALUE         2
+#define SPC5_FMPLL1_CLK_DIVIDER_VALUE       2
+#define SPC5_AUX2CLK_SRC                    SPC5_CGM_SS_FMPLL1
+#define SPC5_SP_CLK_DIVIDER_VALUE           2
+#define SPC5_AUX3CLK_SRC                    SPC5_CGM_SS_FMPLL1
+#define SPC5_FR_CLK_DIVIDER_VALUE           2
 #define SPC5_FMPLL0_IDF_VALUE               5
 #define SPC5_FMPLL0_NDIV_VALUE              32
 #define SPC5_FMPLL0_ODF                     SPC5_FMPLL_ODF_DIV4
@@ -135,6 +143,7 @@
 #define SPC5_ME_LP_PC7_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
                                              SPC5_ME_LP_PC_STOP0)
 #define SPC5_PIT0_IRQ_PRIORITY              4
+#define SPC5_CLOCK_FAILURE_HOOK()           chSysHalt()
 
 /*
  * SERIAL driver system settings.

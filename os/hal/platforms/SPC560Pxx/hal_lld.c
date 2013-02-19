@@ -140,6 +140,16 @@ void spc_clock_init(void) {
   CGM.OSC_CTL.B.OSCBYP = TRUE;
 #endif /* SPC5_OSC_BYPASS */
 
+  /* Setting the various dividers and source selectors.*/
+  CGM.AC0DC.R   = SPC5_CGM_AC0_DC0;
+  CGM.AC0SC.R   = SPC5_AUX0CLK_SRC;
+  CGM.AC1DC.R   = SPC5_CGM_AC1_DC0;
+  CGM.AC1SC.R   = SPC5_AUX1CLK_SRC;
+  CGM.AC2DC.R   = SPC5_CGM_AC2_DC0;
+  CGM.AC2SC.R   = SPC5_AUX2CLK_SRC;
+  CGM.AC3DC.R   = SPC5_CGM_AC3_DC0;
+  CGM.AC3SC.R   = SPC5_AUX3CLK_SRC;
+
   /* Enables the XOSC in order to check its functionality before proceeding
      with the initialization.*/
 /*  ME.DRUN.R = SPC5_ME_MC_SYSCLK_IRC | SPC5_ME_MC_IRCON | SPC5_ME_MC_XOSC0ON |           \
