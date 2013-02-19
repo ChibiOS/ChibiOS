@@ -287,24 +287,24 @@
  * @brief   Peripherals Set 1 clock divider value.
  * @note    Zero means disabled clock.
  */
-#if !defined(SPC5_PHERIPERAL1_CLK_DIV_VALUE) || defined(__DOXYGEN__)
-#define SPC5_PHERIPERAL1_CLK_DIV_VALUE      2
+#if !defined(SPC5_PERIPHERAL1_CLK_DIV_VALUE) || defined(__DOXYGEN__)
+#define SPC5_PERIPHERAL1_CLK_DIV_VALUE      2
 #endif
 
 /**
  * @brief   Peripherals Set 2 clock divider value.
  * @note    Zero means disabled clock.
  */
-#if !defined(SPC5_PHERIPERAL2_CLK_DIV_VALUE) || defined(__DOXYGEN__)
-#define SPC5_PHERIPERAL2_CLK_DIV_VALUE      2
+#if !defined(SPC5_PERIPHERAL2_CLK_DIV_VALUE) || defined(__DOXYGEN__)
+#define SPC5_PERIPHERAL2_CLK_DIV_VALUE      2
 #endif
 
 /**
  * @brief   Peripherals Set 3 clock divider value.
  * @note    Zero means disabled clock.
  */
-#if !defined(SPC5_PHERIPERAL3_CLK_DIV_VALUE) || defined(__DOXYGEN__)
-#define SPC5_PHERIPERAL3_CLK_DIV_VALUE      2
+#if !defined(SPC5_PERIPHERAL3_CLK_DIV_VALUE) || defined(__DOXYGEN__)
+#define SPC5_PERIPHERAL3_CLK_DIV_VALUE      2
 #endif
 
 /**
@@ -703,33 +703,33 @@
 #endif
 
 /* Check on the peripherals set 1 clock divider settings.*/
-#if SPC5_PHERIPERAL1_CLK_DIV_VALUE == 0
+#if SPC5_PERIPHERAL1_CLK_DIV_VALUE == 0
 #define SPC5_CGM_SC_DC0         0
-#elif (SPC5_PHERIPERAL1_CLK_DIV_VALUE >= 1) &&                              \
-      (SPC5_PHERIPERAL1_CLK_DIV_VALUE <= 16)
-#define SPC5_CGM_SC_DC0         (0x80 | (SPC5_PHERIPERAL1_CLK_DIV_VALUE - 1))
+#elif (SPC5_PERIPHERAL1_CLK_DIV_VALUE >= 1) &&                              \
+      (SPC5_PERIPHERAL1_CLK_DIV_VALUE <= 16)
+#define SPC5_CGM_SC_DC0         (0x80 | (SPC5_PERIPHERAL1_CLK_DIV_VALUE - 1))
 #else
-#error "invalid SPC5_PHERIPERAL1_CLK_DIV_VALUE value specified"
+#error "invalid SPC5_PERIPHERAL1_CLK_DIV_VALUE value specified"
 #endif
 
 /* Check on the peripherals set 2 clock divider settings.*/
-#if SPC5_PHERIPERAL2_CLK_DIV_VALUE == 0
+#if SPC5_PERIPHERAL2_CLK_DIV_VALUE == 0
 #define SPC5_CGM_SC_DC1         0
-#elif (SPC5_PHERIPERAL2_CLK_DIV_VALUE >= 1) &&                              \
-      (SPC5_PHERIPERAL2_CLK_DIV_VALUE <= 16)
-#define SPC5_CGM_SC_DC1         (0x80 | (SPC5_PHERIPERAL2_CLK_DIV_VALUE - 1))
+#elif (SPC5_PERIPHERAL2_CLK_DIV_VALUE >= 1) &&                              \
+      (SPC5_PERIPHERAL2_CLK_DIV_VALUE <= 16)
+#define SPC5_CGM_SC_DC1         (0x80 | (SPC5_PERIPHERAL2_CLK_DIV_VALUE - 1))
 #else
-#error "invalid SPC5_PHERIPERAL2_CLK_DIV_VALUE value specified"
+#error "invalid SPC5_PERIPHERAL2_CLK_DIV_VALUE value specified"
 #endif
 
 /* Check on the peripherals set 3 clock divider settings.*/
-#if SPC5_PHERIPERAL3_CLK_DIV_VALUE == 0
+#if SPC5_PERIPHERAL3_CLK_DIV_VALUE == 0
 #define SPC5_CGM_SC_DC2         0
-#elif (SPC5_PHERIPERAL3_CLK_DIV_VALUE >= 1) &&                              \
-      (SPC5_PHERIPERAL3_CLK_DIV_VALUE <= 16)
-#define SPC5_CGM_SC_DC2         (0x80 | (SPC5_PHERIPERAL3_CLK_DIV_VALUE - 1))
+#elif (SPC5_PERIPHERAL3_CLK_DIV_VALUE >= 1) &&                              \
+      (SPC5_PERIPHERAL3_CLK_DIV_VALUE <= 16)
+#define SPC5_CGM_SC_DC2         (0x80 | (SPC5_PERIPHERAL3_CLK_DIV_VALUE - 1))
 #else
-#error "invalid SPC5_PHERIPERAL3_CLK_DIV_VALUE value specified"
+#error "invalid SPC5_PERIPHERAL3_CLK_DIV_VALUE value specified"
 #endif
 
 /*===========================================================================*/

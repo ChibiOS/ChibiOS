@@ -35,9 +35,9 @@
 #define SPC5_FMPLL0_IDF_VALUE               1
 #define SPC5_FMPLL0_NDIV_VALUE              32
 #define SPC5_FMPLL0_ODF                     SPC5_FMPLL_ODF_DIV4
-#define SPC5_PHERIPERAL1_CLK_DIV_VALUE      2
-#define SPC5_PHERIPERAL2_CLK_DIV_VALUE      2
-#define SPC5_PHERIPERAL3_CLK_DIV_VALUE      2
+#define SPC5_PERIPHERAL1_CLK_DIV_VALUE      2
+#define SPC5_PERIPHERAL2_CLK_DIV_VALUE      2
+#define SPC5_PERIPHERAL3_CLK_DIV_VALUE      2
 #define SPC5_ME_ME_BITS                     (SPC5_ME_ME_RUN1 |              \
                                              SPC5_ME_ME_RUN2 |              \
                                              SPC5_ME_ME_RUN3 |              \
