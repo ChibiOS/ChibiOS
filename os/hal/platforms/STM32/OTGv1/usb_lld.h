@@ -74,20 +74,6 @@
 #endif
 
 /**
- * @brief   High Speed support for OTG-HS.
- */
-#if !defined(STM32_USE_USB_OTG2_HS) || defined(__DOXYGEN__)
-#define STM32_USE_USB_OTG2_HS               FALSE
-#endif
-
-/**
- * @brief   ULPI support for OTG-HS.
- */
-#if !defined(STM32_USE_USB_OTG2_ULPI) || defined(__DOXYGEN__)
-#define STM32_USE_USB_OTG2_ULPI             FALSE
-#endif
-
-/**
  * @brief   OTG1 interrupt priority level setting.
  */
 #if !defined(STM32_USB_OTG1_IRQ_PRIORITY) || defined(__DOXYGEN__)
