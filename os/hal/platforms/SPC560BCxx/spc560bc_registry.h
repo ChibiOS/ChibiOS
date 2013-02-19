@@ -41,7 +41,7 @@
 #define SPC5_LINFLEX0_TXI_NUMBER            80
 #define SPC5_LINFLEX0_ERR_NUMBER            81
 #define SPC5_LINFLEX0_CLK                   (halSPCGetSystemClock() /       \
-                                             SPC5_PHERIPERAL1_CLK_DIV_VALUE)
+                                             SPC5_PERIPHERAL1_CLK_DIV_VALUE)
 
 #define SPC5_HAS_LINFLEX1                   TRUE
 #define SPC5_LINFLEX1_PCTL                  49
@@ -52,7 +52,7 @@
 #define SPC5_LINFLEX1_TXI_NUMBER            100
 #define SPC5_LINFLEX1_ERR_NUMBER            101
 #define SPC5_LINFLEX1_CLK                   (halSPCGetSystemClock() /       \
-                                             SPC5_PHERIPERAL1_CLK_DIV_VALUE)
+                                             SPC5_PERIPHERAL1_CLK_DIV_VALUE)
 
 #define SPC5_HAS_LINFLEX2                   TRUE
 #define SPC5_LINFLEX2_PCTL                  50
@@ -62,6 +62,8 @@
 #define SPC5_LINFLEX2_RXI_NUMBER            119
 #define SPC5_LINFLEX2_TXI_NUMBER            120
 #define SPC5_LINFLEX2_ERR_NUMBER            121
+#define SPC5_LINFLEX2_CLK                   (halSPCGetSystemClock() /       \
+                                             SPC5_PERIPHERAL1_CLK_DIV_VALUE)
 
 #define SPC5_HAS_LINFLEX3                   TRUE
 #define SPC5_LINFLEX3_PCTL                  51
@@ -71,6 +73,8 @@
 #define SPC5_LINFLEX3_RXI_NUMBER            122
 #define SPC5_LINFLEX3_TXI_NUMBER            123
 #define SPC5_LINFLEX3_ERR_NUMBER            124
+#define SPC5_LINFLEX3_CLK                   (halSPCGetSystemClock() /       \
+                                             SPC5_PERIPHERAL1_CLK_DIV_VALUE)
 
 /* SIUL attributes.*/
 #define SPC5_HAS_SIUL                       TRUE
