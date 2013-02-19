@@ -20,7 +20,7 @@ endif
 
 # Enable this if you want the linker to remove unused code and data.
 ifeq ($(USE_LINK_GC),)
-  USE_LINK_GC = no
+  USE_LINK_GC = yes
 endif
 
 # If enabled, this option allows to compile the application in VLE mode.
