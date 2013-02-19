@@ -30,6 +30,7 @@
  */
 #define SPC5_NO_INIT                        FALSE
 #define SPC5_ALLOW_OVERCLOCK                FALSE
+#define SPC5_DISABLE_WATCHDOG               TRUE
 #define SPC5_XOSCDIV_VALUE                  1
 #define SPC5_IRCDIV_VALUE                   1
 #define SPC5_FMPLL0_IDF_VALUE               1
