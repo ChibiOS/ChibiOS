@@ -144,6 +144,11 @@ void spc_clock_init(void) {
   CGM.OSC_CTL.B.OSCBYP = TRUE;
 #endif /* SPC5_OSC_BYPASS */
 
+  /* Setting the various dividers and source selectors.*/
+  CGM.SC_DC[0].R    = SPC5_CGM_SC_DC0;
+  CGM.SC_DC[1].R    = SPC5_CGM_SC_DC1;
+  CGM.SC_DC[2].R    = SPC5_CGM_SC_DC2;
+
   /* Initialization of the FMPLLs settings.*/
   CGM.FMPLL_CR.R = SPC5_FMPLL0_ODF |
                    ((SPC5_FMPLL0_IDF_VALUE - 1) << 26) |
