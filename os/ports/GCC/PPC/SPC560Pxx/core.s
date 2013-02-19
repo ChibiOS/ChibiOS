@@ -146,7 +146,7 @@ _ivinit:
 
         blr
 
-        .section    .handlers, "ax"
+        .section    .ivors, "ax"
 
         .globl      IVORS
 IVORS:
@@ -181,6 +181,8 @@ IVOR13: b           _IVOR13
 IVOR14: b           _IVOR14
         .align      4
 IVOR15: b           _IVOR15
+
+        .section    .handlers, "ax"
 
         /*
          * Unhandled exceptions handler.

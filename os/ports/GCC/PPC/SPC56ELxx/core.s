@@ -505,6 +505,8 @@ _ivinit:
 
         blr
 
+        .section    .handlers, "ax"
+
         /*
          * Unhandled exceptions handler.
          */
