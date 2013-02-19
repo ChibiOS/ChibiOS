@@ -156,6 +156,7 @@
 #define SPC5_ME_LP_PC7_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
                                              SPC5_ME_LP_PC_STOP0)
 #define SPC5_PIT0_IRQ_PRIORITY              4
+#define SPC5_CLOCK_FAILURE_HOOK()           chSysHalt()
 
 /*
  * SERIAL driver system settings.
