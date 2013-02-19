@@ -31,6 +31,12 @@
 #define SPC5_NO_INIT                        FALSE
 #define SPC5_ALLOW_OVERCLOCK                FALSE
 #define SPC5_DISABLE_WATCHDOG               TRUE
+#define SPC5_FMPLL0_IDF_VALUE               5
+#define SPC5_FMPLL0_NDIV_VALUE              32
+#define SPC5_FMPLL0_ODF                     SPC5_FMPLL_ODF_DIV4
+#define SPC5_FMPLL1_IDF_VALUE               5
+#define SPC5_FMPLL1_NDIV_VALUE              60
+#define SPC5_FMPLL1_ODF                     SPC5_FMPLL_ODF_DIV4
 #define SPC5_AUX0CLK_SRC                    SPC5_CGM_SS_FMPLL1
 #define SPC5_MCONTROL_DIVIDER_VALUE         2
 #define SPC5_FMPLL1_CLK_DIVIDER_VALUE       2
@@ -38,12 +44,6 @@
 #define SPC5_SP_CLK_DIVIDER_VALUE           2
 #define SPC5_AUX3CLK_SRC                    SPC5_CGM_SS_FMPLL1
 #define SPC5_FR_CLK_DIVIDER_VALUE           2
-#define SPC5_FMPLL0_IDF_VALUE               5
-#define SPC5_FMPLL0_NDIV_VALUE              32
-#define SPC5_FMPLL0_ODF                     SPC5_FMPLL_ODF_DIV4
-#define SPC5_FMPLL1_IDF_VALUE               5
-#define SPC5_FMPLL1_NDIV_VALUE              60
-#define SPC5_FMPLL1_ODF                     SPC5_FMPLL_ODF_DIV4
 #define SPC5_ME_ME_BITS                     (SPC5_ME_ME_RUN1 |              \
                                              SPC5_ME_ME_RUN2 |              \
                                              SPC5_ME_ME_RUN3 |              \
