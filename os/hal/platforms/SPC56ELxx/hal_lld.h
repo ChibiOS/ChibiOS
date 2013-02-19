@@ -912,7 +912,6 @@
 #define SPC5_FLEXCAN_CLK        (SPC5_AUX2_CLK / SPC5_FLEXCAN_DIVIDER_VALUE)
 #else
 #define SPC5_FLEXCAN_CLK        0
-
 #endif
 
 /*===========================================================================*/
