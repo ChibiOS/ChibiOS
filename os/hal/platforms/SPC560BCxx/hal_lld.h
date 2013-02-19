@@ -244,22 +244,6 @@
 #endif
 
 /**
- * @brief   XOSC divider value.
- * @note    The allowed range is 1...32.
- */
-#if !defined(SPC5_XOSCDIV_VALUE) || defined(__DOXYGEN__)
-#define SPC5_XOSCDIV_VALUE                  1
-#endif
-
-/**
- * @brief   Fast IRC divider value.
- * @note    The allowed range is 1...32.
- */
-#if !defined(SPC5_IRCDIV_VALUE) || defined(__DOXYGEN__)
-#define SPC5_IRCDIV_VALUE                   1
-#endif
-
-/**
  * @brief   FMPLL0 IDF divider value.
  * @note    The default value is calculated for XOSC=8MHz and PHI=64MHz.
  */
@@ -281,6 +265,22 @@
  */
 #if !defined(SPC5_FMPLL0_ODF) || defined(__DOXYGEN__)
 #define SPC5_FMPLL0_ODF                     SPC5_FMPLL_ODF_DIV4
+#endif
+
+/**
+ * @brief   XOSC divider value.
+ * @note    The allowed range is 1...32.
+ */
+#if !defined(SPC5_XOSCDIV_VALUE) || defined(__DOXYGEN__)
+#define SPC5_XOSCDIV_VALUE                  1
+#endif
+
+/**
+ * @brief   Fast IRC divider value.
+ * @note    The allowed range is 1...32.
+ */
+#if !defined(SPC5_IRCDIV_VALUE) || defined(__DOXYGEN__)
+#define SPC5_IRCDIV_VALUE                   1
 #endif
 
 /**

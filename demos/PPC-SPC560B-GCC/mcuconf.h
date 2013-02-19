@@ -31,11 +31,11 @@
 #define SPC5_NO_INIT                        FALSE
 #define SPC5_ALLOW_OVERCLOCK                FALSE
 #define SPC5_DISABLE_WATCHDOG               TRUE
-#define SPC5_XOSCDIV_VALUE                  1
-#define SPC5_IRCDIV_VALUE                   1
 #define SPC5_FMPLL0_IDF_VALUE               1
 #define SPC5_FMPLL0_NDIV_VALUE              32
 #define SPC5_FMPLL0_ODF                     SPC5_FMPLL_ODF_DIV4
+#define SPC5_XOSCDIV_VALUE                  1
+#define SPC5_IRCDIV_VALUE                   1
 #define SPC5_PERIPHERAL1_CLK_DIV_VALUE      2
 #define SPC5_PERIPHERAL2_CLK_DIV_VALUE      2
 #define SPC5_PERIPHERAL3_CLK_DIV_VALUE      2
