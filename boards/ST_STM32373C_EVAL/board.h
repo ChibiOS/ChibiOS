@@ -22,21 +22,20 @@
 #define _BOARD_H_
 
 /*
- * Setup for STMicroelectronics STM32F3-Discovery board.
+ * Setup for STMicroelectronics STM32373C-EVAL board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_STM32F3_DISCOVERY
-#define BOARD_NAME                  "STMicroelectronics STM32F3-Discovery"
+#define BOARD_ST STM32373C-EVAL
+#define BOARD_NAME                  "STMicroelectronics STM32373C-EVAL"
 
 /*
  * Board oscillators-related settings.
- * NOTE: LSE not fitted.
  */
 #if !defined(STM32_LSECLK)
-#define STM32_LSECLK                0
+#define STM32_LSECLK                32768
 #endif
 
 #define STM32_LSEDRV                (3 << 3)
@@ -45,12 +44,10 @@
 #define STM32_HSECLK                8000000
 #endif
 
-#define STM32_HSE_BYPASS
-
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32F30X
+#define STM32F37X
 
 /*
  * IO pins assignments.
