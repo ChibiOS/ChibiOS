@@ -56,7 +56,7 @@ static msg_t can_rx(void *p) {
   while(!chThdShouldTerminate()) {
     if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(100)) == 0)
       continue;
-    while (canReceive(cip->canp, &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
+    while (canReceive(cip->canp, 1, &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
       /* Process message.*/
       palTogglePad(GPIOD, cip->led);
     }
@@ -82,8 +82,8 @@ static msg_t can_tx(void * p) {
   txmsg.data32[1] = 0x00FF00FF;
 
   while (!chThdShouldTerminate()) {
-    canTransmit(&CAND1, &txmsg, MS2ST(100));
-    canTransmit(&CAND2, &txmsg, MS2ST(100));
+    canTransmit(&CAND1, CAN_ANY_TX_MAILBOX, &txmsg, MS2ST(100));
+    canTransmit(&CAND2, CAN_ANY_TX_MAILBOX, &txmsg, MS2ST(100));
     chThdSleepMilliseconds(500);
   }
   return 0;

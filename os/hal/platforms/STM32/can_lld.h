@@ -58,7 +58,7 @@
 /**
  * @brief   This implementation supports two receive mailboxes.
  */
-#define CAN_RX_MAILBOXES            3
+#define CAN_RX_MAILBOXES            2
 
 /**
  * @name    CAN registers helper macros

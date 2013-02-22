@@ -510,12 +510,16 @@ void can_lld_transmit(CANDriver *canp,
   switch (mailbox) {
   case CAN_ANY_TX_MAILBOX:
     tmbp = &canp->can->sTxMailBox[(canp->can->TSR & CAN_TSR_CODE) >> 24];
+    break;
   case 1:
     tmbp = &canp->can->sTxMailBox[0];
+    break;
   case 2:
     tmbp = &canp->can->sTxMailBox[1];
+    break;
   case 3:
     tmbp = &canp->can->sTxMailBox[2];
+    break;
   default:
     return;
   }
@@ -546,8 +550,14 @@ void can_lld_transmit(CANDriver *canp,
  */
 bool_t can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
 
-  return mailbox == 0 ? (canp->can->RF0R & CAN_RF0R_FMP0) > 0 :
-                        (canp->can->RF1R & CAN_RF1R_FMP1) > 0;
+  switch (mailbox) {
+  case 1:
+    return (canp->can->RF0R & CAN_RF0R_FMP0) > 0;
+  case 2:
+    return (canp->can->RF1R & CAN_RF1R_FMP1) > 0;
+  default:
+    return FALSE;
+  }
 }
 
 /**
@@ -564,7 +574,8 @@ void can_lld_receive(CANDriver *canp,
                      CANRxFrame *crfp) {
   uint32_t rir, rdtr;
 
-  if (mailbox == 0) {
+  switch (mailbox) {
+  case 1:
     /* Fetches the message.*/
     rir  = canp->can->sFIFOMailBox[0].RIR;
     rdtr = canp->can->sFIFOMailBox[0].RDTR;
@@ -578,8 +589,8 @@ void can_lld_receive(CANDriver *canp,
        events again.*/
     if ((canp->can->RF0R & CAN_RF0R_FMP0) == 0)
       canp->can->IER |= CAN_IER_FMPIE0;
-  }
-  else {
+    break;
+  case 2:
     /* Fetches the message.*/
     rir  = canp->can->sFIFOMailBox[1].RIR;
     rdtr = canp->can->sFIFOMailBox[1].RDTR;
@@ -593,7 +604,12 @@ void can_lld_receive(CANDriver *canp,
        events again.*/
     if ((canp->can->RF1R & CAN_RF1R_FMP1) == 0)
       canp->can->IER |= CAN_IER_FMPIE1;
+    break;
+  default:
+    return;
   }
+
+  /* Decodes the various fields in the RX frame.*/
   crfp->RTR = (rir & CAN_RI0R_RTR) >> 1;
   crfp->IDE = (rir & CAN_RI0R_IDE) >> 2;
   if (crfp->IDE)
