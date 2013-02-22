@@ -467,16 +467,28 @@ void can_lld_stop(CANDriver *canp) {
  * @brief   Determines whether a frame can be transmitted.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_TX_MAILBOX for any mailbox
  *
- * @return The queue space availability.
+ * @return              The queue space availability.
  * @retval FALSE        no space in the transmit queue.
  * @retval TRUE         transmit slot available.
  *
  * @notapi
  */
-bool_t can_lld_can_transmit(CANDriver *canp) {
+bool_t can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
 
-  return (canp->can->TSR & CAN_TSR_TME) != 0;
+  switch (mailbox) {
+  case CAN_ANY_TX_MAILBOX:
+    return (canp->can->TSR & CAN_TSR_TME) != 0;
+  case 1:
+    return (canp->can->TSR & CAN_TSR_TME0) != 0;
+  case 2:
+    return (canp->can->TSR & CAN_TSR_TME1) != 0;
+  case 3:
+    return (canp->can->TSR & CAN_TSR_TME2) != 0;
+  default:
+    return FALSE;
+  }
 }
 
 /**
@@ -484,15 +496,29 @@ bool_t can_lld_can_transmit(CANDriver *canp) {
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] ctfp      pointer to the CAN frame to be transmitted
+ * @param[in] mailbox   mailbox number,  @p CAN_ANY_TX_MAILBOX for any mailbox
  *
  * @notapi
  */
-void can_lld_transmit(CANDriver *canp, const CANTxFrame *ctfp) {
+void can_lld_transmit(CANDriver *canp,
+                      canmbx_t mailbox,
+                      const CANTxFrame *ctfp) {
   uint32_t tir;
   CAN_TxMailBox_TypeDef *tmbp;
 
   /* Pointer to a free transmission mailbox.*/
-  tmbp = &canp->can->sTxMailBox[(canp->can->TSR & CAN_TSR_CODE) >> 24];
+  switch (mailbox) {
+  case CAN_ANY_TX_MAILBOX:
+    tmbp = &canp->can->sTxMailBox[(canp->can->TSR & CAN_TSR_CODE) >> 24];
+  case 1:
+    tmbp = &canp->can->sTxMailBox[0];
+  case 2:
+    tmbp = &canp->can->sTxMailBox[1];
+  case 3:
+    tmbp = &canp->can->sTxMailBox[2];
+  default:
+    return;
+  }
 
   /* Preparing the message.*/
   if (ctfp->IDE)
@@ -510,16 +536,18 @@ void can_lld_transmit(CANDriver *canp, const CANTxFrame *ctfp) {
  * @brief   Determines whether a frame has been received.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number
  *
- * @return The queue space availability.
+ * @return              The queue space availability.
  * @retval FALSE        no space in the transmit queue.
  * @retval TRUE         transmit slot available.
  *
  * @notapi
  */
-bool_t can_lld_can_receive(CANDriver *canp) {
+bool_t can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
 
-  return (canp->can->RF0R & CAN_RF0R_FMP0) > 0;
+  return mailbox == 0 ? (canp->can->RF0R & CAN_RF0R_FMP0) > 0 :
+                        (canp->can->RF1R & CAN_RF1R_FMP1) > 0;
 }
 
 /**
@@ -527,34 +555,54 @@ bool_t can_lld_can_receive(CANDriver *canp) {
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[out] crfp     pointer to the buffer where the CAN frame is copied
+ * @param[in] mailbox   mailbox number
  *
  * @notapi
  */
-void can_lld_receive(CANDriver *canp, CANRxFrame *crfp) {
-  uint32_t r;
+void can_lld_receive(CANDriver *canp,
+                     canmbx_t mailbox,
+                     CANRxFrame *crfp) {
+  uint32_t rir, rdtr;
 
-  /* Fetches the message.*/
-  r = canp->can->sFIFOMailBox[0].RIR;
-  crfp->RTR = (r & CAN_RI0R_RTR) >> 1;
-  crfp->IDE = (r & CAN_RI0R_IDE) >> 2;
+  if (mailbox == 0) {
+    /* Fetches the message.*/
+    rir  = canp->can->sFIFOMailBox[0].RIR;
+    rdtr = canp->can->sFIFOMailBox[0].RDTR;
+    crfp->data32[0] = canp->can->sFIFOMailBox[0].RDLR;
+    crfp->data32[1] = canp->can->sFIFOMailBox[0].RDHR;
+
+    /* Releases the mailbox.*/
+    canp->can->RF0R = CAN_RF0R_RFOM0;
+
+    /* If the queue is empty re-enables the interrupt in order to generate
+       events again.*/
+    if ((canp->can->RF0R & CAN_RF0R_FMP0) == 0)
+      canp->can->IER |= CAN_IER_FMPIE0;
+  }
+  else {
+    /* Fetches the message.*/
+    rir  = canp->can->sFIFOMailBox[1].RIR;
+    rdtr = canp->can->sFIFOMailBox[1].RDTR;
+    crfp->data32[0] = canp->can->sFIFOMailBox[1].RDLR;
+    crfp->data32[1] = canp->can->sFIFOMailBox[1].RDHR;
+
+    /* Releases the mailbox.*/
+    canp->can->RF1R = CAN_RF1R_RFOM1;
+
+    /* If the queue is empty re-enables the interrupt in order to generate
+       events again.*/
+    if ((canp->can->RF1R & CAN_RF1R_FMP1) == 0)
+      canp->can->IER |= CAN_IER_FMPIE1;
+  }
+  crfp->RTR = (rir & CAN_RI0R_RTR) >> 1;
+  crfp->IDE = (rir & CAN_RI0R_IDE) >> 2;
   if (crfp->IDE)
-    crfp->EID = r >> 3;
+    crfp->EID = rir >> 3;
   else
-    crfp->SID = r >> 21;
-  r = canp->can->sFIFOMailBox[0].RDTR;
-  crfp->DLC = r & CAN_RDT0R_DLC;
-  crfp->FMI = (uint8_t)(r >> 8);
-  crfp->TIME = (uint16_t)(r >> 16);
-  crfp->data32[0] = canp->can->sFIFOMailBox[0].RDLR;
-  crfp->data32[1] = canp->can->sFIFOMailBox[0].RDHR;
-
-  /* Releases the mailbox.*/
-  canp->can->RF0R = CAN_RF0R_RFOM0;
-
-  /* If the queue is empty re-enables the interrupt in order to generate
-     events again.*/
-  if ((canp->can->RF0R & CAN_RF0R_FMP0) == 0)
-    canp->can->IER |= CAN_IER_FMPIE0;
+    crfp->SID = rir >> 21;
+  crfp->DLC = rdtr & CAN_RDT0R_DLC;
+  crfp->FMI = (uint8_t)(rdtr >> 8);
+  crfp->TIME = (uint16_t)(rdtr >> 16);
 }
 
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)

@@ -51,6 +51,16 @@
 #define CAN_SUPPORTS_SLEEP          TRUE
 
 /**
+ * @brief   This implementation supports three transmit mailboxes.
+ */
+#define CAN_TX_MAILBOXES            3
+
+/**
+ * @brief   This implementation supports two receive mailboxes.
+ */
+#define CAN_RX_MAILBOXES            3
+
+/**
  * @name    CAN registers helper macros
  * @{
  */
@@ -129,6 +139,11 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Type of a transmission mailbox index.
+ */
+typedef uint32_t canmbx_t;
 
 /**
  * @brief   CAN transmission frame.
@@ -270,14 +285,21 @@ typedef struct {
    *          repeatedly invoking @p chReceive() when listening to this event.
    *          This behavior minimizes the interrupt served by the system
    *          because CAN traffic.
+   * @note    The flags associated to the listeners will indicate which
+   *          receive mailboxes become non-empty.
    */
   EventSource               rxfull_event;
   /**
-   * @brief   One or more transmission slots become available.
+   * @brief   One or more transmission mailbox become available.
+   * @note    The flags associated to the listeners will indicate which
+   *          transmit mailboxes become empty.
+   *
    */
   EventSource               txempty_event;
   /**
    * @brief   A CAN bus error happened.
+   * @note    The flags associated to the listeners will indicate the
+   *          error(s) that have occurred.
    */
   EventSource               error_event;
 #if CAN_USE_SLEEP_MODE || defined (__DOXYGEN__)
@@ -319,10 +341,16 @@ extern "C" {
   void can_lld_init(void);
   void can_lld_start(CANDriver *canp);
   void can_lld_stop(CANDriver *canp);
-  bool_t can_lld_can_transmit(CANDriver *canp);
-  void can_lld_transmit(CANDriver *canp, const CANTxFrame *crfp);
-  bool_t can_lld_can_receive(CANDriver *canp);
-  void can_lld_receive(CANDriver *canp, CANRxFrame *ctfp);
+  bool_t can_lld_is_tx_empty(CANDriver *canp,
+                             canmbx_t mailbox);
+  void can_lld_transmit(CANDriver *canp,
+                        canmbx_t mailbox,
+                        const CANTxFrame *crfp);
+  bool_t can_lld_is_rx_nonempty(CANDriver *canp,
+                                canmbx_t mailbox);
+  void can_lld_receive(CANDriver *canp,
+                       canmbx_t mailbox,
+                       CANRxFrame *ctfp);
 #if CAN_USE_SLEEP_MODE
   void can_lld_sleep(CANDriver *canp);
   void can_lld_wakeup(CANDriver *canp);

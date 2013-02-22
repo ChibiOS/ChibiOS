@@ -24,14 +24,11 @@
 /*
  * Internal loopback mode, 500KBaud, automatic wakeup, automatic recover
  * from abort mode.
- * See section 22.7.7 on the STM32 reference manual.
  */
 static const CANConfig cancfg = {
   CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
   CAN_BTR_LBKM | CAN_BTR_SJW(0) | CAN_BTR_TS2(1) |
-  CAN_BTR_TS1(8) | CAN_BTR_BRP(6),
-  0,
-  NULL
+  CAN_BTR_TS1(8) | CAN_BTR_BRP(6)
 };
 
 /*
@@ -48,7 +45,7 @@ static msg_t can_rx(void *p) {
   while(!chThdShouldTerminate()) {
     if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(100)) == 0)
       continue;
-    while (canReceive(&CAND1, &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
+    while (canReceive(&CAND1, 1, &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
       /* Process message.*/
       palTogglePad(GPIOE, GPIOE_LED3_RED);
     }
@@ -74,7 +71,7 @@ static msg_t can_tx(void * p) {
   txmsg.data32[1] = 0x00FF00FF;
 
   while (!chThdShouldTerminate()) {
-    canTransmit(&CAND1, &txmsg, MS2ST(100));
+    canTransmit(&CAND1, CAN_ANY_TX_MAILBOX, &txmsg, MS2ST(100));
     chThdSleepMilliseconds(500);
   }
   return 0;

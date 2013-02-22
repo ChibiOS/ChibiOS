@@ -61,6 +61,11 @@
 #define CAN_OVERFLOW_ERROR          16
 /** @} */
 
+/**
+ * @brief   Special TX mailbox identifier.
+ */
+#define CAN_ANY_TX_MAILBOX          0
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -135,8 +140,14 @@ extern "C" {
   void canObjectInit(CANDriver *canp);
   void canStart(CANDriver *canp, const CANConfig *config);
   void canStop(CANDriver *canp);
-  msg_t canTransmit(CANDriver *canp, const CANTxFrame *ctfp, systime_t timeout);
-  msg_t canReceive(CANDriver *canp, CANRxFrame *crfp, systime_t timeout);
+  msg_t canTransmit(CANDriver *canp,
+                    canmbx_t mailbox,
+                    const CANTxFrame *ctfp,
+                    systime_t timeout);
+  msg_t canReceive(CANDriver *canp,
+                   canmbx_t mailbox,
+                   CANRxFrame *crfp,
+                   systime_t timeout);
 #if CAN_USE_SLEEP_MODE
   void canSleep(CANDriver *canp);
   void canWakeup(CANDriver *canp);
