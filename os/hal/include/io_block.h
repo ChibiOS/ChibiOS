@@ -21,12 +21,12 @@
 /**
  * @file    io_block.h
  * @brief   I/O block devices access.
- * @details This header defines abstract interfaces useful to access generic
+ * @details This header defines an abstract interface useful to access generic
  *          I/O block devices in a standardized way.
  *
  * @addtogroup IO_BLOCK
- * @details This module define an abstract interface for accessing generic
- *          block devices.
+ * @details This module defines an abstract interface for accessing generic
+ *          block devices.<br>
  *          Note that no code is present, just abstract interfaces-like
  *          structures, you should look at the system as to a set of
  *          abstract C++ classes (even if written in C). This system

@@ -63,11 +63,10 @@ void port_halt(void) {
  *          is responsible for the context switch between 2 threads.
  * @note    The implementation of this code affects <b>directly</b> the context
  *          switch performance so optimize here as much as you can.
- *
- * @param[in] ntp       the thread to be switched in
- * @param[in] otp       the thread to be switched out
  */
+#if !defined(__DOXYGEN__)
 __attribute__((naked))
+#endif
 void port_dummy1(void) {
 
   asm (".global _port_switch");
@@ -96,7 +95,9 @@ void port_dummy1(void) {
  * @details If the work function returns @p chThdExit() is automatically
  *          invoked.
  */
+#if !defined(__DOXYGEN__)
 __attribute__((naked))
+#endif
 void port_dummy2(void) {
 
   asm (".global _port_thread_start");

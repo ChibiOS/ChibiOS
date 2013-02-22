@@ -192,15 +192,15 @@ namespace chibios_rt {
      * @brief   Enables a virtual timer.
      * @note    The associated function is invoked from interrupt context.
      *
-     * @param[in] time      the number of ticks before the operation timeouts, the
-     *                      special values are handled as follow:
+     * @param[in] time      the number of ticks before the operation timeouts,
+     *                      the special values are handled as follow:
      *                      - @a TIME_INFINITE is allowed but interpreted as a
      *                        normal time specification.
      *                      - @a TIME_IMMEDIATE this value is not allowed.
      *                      .
      * @param[in] vtfunc    the timer callback function. After invoking the
-     *                      callback the timer is disabled and the structure can
-     *                      be disposed or reused.
+     *                      callback the timer is disabled and the structure
+     *                      can be disposed or reused.
      * @param[in] par       a parameter that will be passed to the callback
      *                      function
      *
@@ -289,12 +289,16 @@ namespace chibios_rt {
     /**
      * @brief   Resumes the currently referenced thread, if any.
      *
+     * @param[in] msg       the wakeup message
+     *
      * @api
      */
     void resume(msg_t msg);
 
     /**
      * @brief   Resumes the currently referenced thread, if any.
+     *
+     * @param[in] msg       the wakeup message
      *
      * @iclass
      */
@@ -305,8 +309,8 @@ namespace chibios_rt {
      * @pre     The target thread must be written to invoke periodically
      *          @p chThdShouldTerminate() and terminate cleanly if it returns
      *          @p TRUE.
-     * @post    The specified thread will terminate after detecting the termination
-     *          condition.
+     * @post    The specified thread will terminate after detecting the
+     *          termination condition.
      *
      * @api
      */
@@ -317,10 +321,11 @@ namespace chibios_rt {
      * @brief   Blocks the execution of the invoking thread until the specified
      *          thread terminates then the exit code is returned.
      * @details This function waits for the specified thread to terminate then
-     *          decrements its reference counter, if the counter reaches zero then
-     *          the thread working area is returned to the proper allocator.<br>
-     *          The memory used by the exited thread is handled in different ways
-     *          depending on the API that spawned the thread:
+     *          decrements its reference counter, if the counter reaches zero
+     *          then the thread working area is returned to the proper
+     *          allocator.<br>
+     *          The memory used by the exited thread is handled in different
+     *          ways depending on the API that spawned the thread:
      *          - If the thread was spawned by @p chThdCreateStatic() or by
      *            @p chThdCreateI() then nothing happens and the thread working
      *            area is not released or modified in any way. This is the
@@ -334,12 +339,12 @@ namespace chibios_rt {
      *          order to use this function.
      * @post    Enabling @p chThdWait() requires 2-4 (depending on the
      *          architecture) extra bytes in the @p Thread structure.
-     * @post    After invoking @p chThdWait() the thread pointer becomes invalid
-     *          and must not be used as parameter for further system calls.
-     * @note    If @p CH_USE_DYNAMIC is not specified this function just waits for
-     *          the thread termination, no memory allocators are involved.
+     * @post    After invoking @p chThdWait() the thread pointer becomes
+     *          invalid and must not be used as parameter for further system
+     *          calls.
+     * @note    If @p CH_USE_DYNAMIC is not specified this function just waits
+     *          for the thread termination, no memory allocators are involved.
      *
-     * @param[in] tp        pointer to the thread
      * @return              The exit code from the terminated thread.
      *
      * @api
@@ -371,7 +376,6 @@ namespace chibios_rt {
     /**
      * @brief   Returns an enqueued message or @p NULL.
      *
-     * @param[in] trp           the sender thread reference
      * @return                  The incoming message.
      *
      * @api
@@ -381,7 +385,6 @@ namespace chibios_rt {
     /**
      * @brief   Releases the next message in queue with a reply.
      *
-     * @param[in] trp           the sender thread reference
      * @param[in] msg           the answer message
      *
      * @api
@@ -414,7 +417,7 @@ namespace chibios_rt {
   };
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::BaseThread                                             *
+   * chibios_rt::BaseThread                                                 *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Abstract base class for a ChibiOS/RT thread.
@@ -454,7 +457,7 @@ namespace chibios_rt {
      * @pre     This function only stores the pointer to the name if the option
      *          @p CH_USE_REGISTRY is enabled else no action is performed.
      *
-     * @param[in] p         thread name as a zero terminated string
+     * @param[in] tname         thread name as a zero terminated string
      *
      * @api
      */
@@ -507,7 +510,8 @@ namespace chibios_rt {
     static void exitS(msg_t msg);
 
     /**
-     * @brief   Verifies if the current thread has a termination request pending.
+     * @brief   Verifies if the current thread has a termination request
+     *          pending.
      * @note    Can be invoked in any context.
      *
      * @retval TRUE         termination request pending.
@@ -520,10 +524,10 @@ namespace chibios_rt {
     /**
      * @brief   Suspends the invoking thread for the specified time.
      *
-     * @param[in] time      the delay in system ticks, the special values are
+     * @param[in] interval  the delay in system ticks, the special values are
      *                      handled as follow:
-     *                      - @a TIME_INFINITE the thread enters an infinite sleep
-     *                        state.
+     *                      - @a TIME_INFINITE the thread enters an infinite
+     *                        sleep state.
      *                      - @a TIME_IMMEDIATE this value is not allowed.
      *                      .
      *
@@ -532,8 +536,8 @@ namespace chibios_rt {
     static void sleep(systime_t interval);
 
     /**
-     * @brief   Suspends the invoking thread until the system time arrives to the
-     *          specified value.
+     * @brief   Suspends the invoking thread until the system time arrives to
+     *          the specified value.
      *
      * @param[in] time      absolute system time
      *
@@ -543,8 +547,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Yields the time slot.
-     * @details Yields the CPU control to the next thread in the ready list with
-     *          equal priority, if any.
+     * @details Yields the CPU control to the next thread in the ready list
+     *          with equal priority, if any.
      *
      * @api
      */
@@ -574,7 +578,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Adds (OR) a set of event flags on the current thread, this is
-     *          @b much faster than using @p chEvtBroadcast() or @p chEvtSignal().
+     *          @b much faster than using @p chEvtBroadcast() or
+     *          @p chEvtSignal().
      *
      * @param[in] mask      the event flags to be added
      * @return              The current pending events mask.
@@ -643,7 +648,8 @@ namespace chibios_rt {
      * @param[in] ewmask        mask of the events that the function should
      *                          wait for, @p ALL_EVENTS enables all the events
      *
-     * @param[in] time          the number of ticks before the operation timouts
+     * @param[in] time          the number of ticks before the operation
+     *                          timouts
      * @return                  The mask of the lowest id served and cleared
      *                          event.
      * @retval 0                if the specified timeout expired.
@@ -693,8 +699,8 @@ namespace chibios_rt {
      * @brief   Invokes the event handlers associated to an event flags mask.
      *
      * @param[in] mask      mask of the event flags to be dispatched
-     * @param[in] handlers  an array of @p evhandler_t. The array must have size
-     *                      equal to the number of bits in eventmask_t.
+     * @param[in] handlers  an array of @p evhandler_t. The array must have
+     *                      size equal to the number of bits in eventmask_t.
      *
      * @api
      */
@@ -735,8 +741,8 @@ namespace chibios_rt {
      *          mutexes are unlocked.
      * @note    This function is <b>MUCH MORE</b> efficient than releasing the
      *          mutexes one by one and not just because the call overhead,
-     *          this function does not have any overhead related to the priority
-     *          inheritance mechanism.
+     *          this function does not have any overhead related to the
+     *          priority inheritance mechanism.
      *
      * @api
      */
@@ -756,7 +762,7 @@ namespace chibios_rt {
   template <int N>
   class BaseStaticThread : public BaseThread {
   protected:
-    WORKING_AREA(wa, N);                        // Thread working area.
+    WORKING_AREA(wa, N);
 
   public:
     /**
@@ -815,14 +821,14 @@ namespace chibios_rt {
     /**
      * @brief   Performs a reset operation on the semaphore.
      * @post    After invoking this function all the threads waiting on the
-     *          semaphore, if any, are released and the semaphore counter is set
-     *          to the specified, non negative, value.
-     * @note    The released threads can recognize they were waked up by a reset
-     *          rather than a signal because the @p chSemWait() will return
-     *          @p RDY_RESET instead of @p RDY_OK.
+     *          semaphore, if any, are released and the semaphore counter is
+     *          set to the specified, non negative, value.
+     * @note    The released threads can recognize they were waked up by a
+     *          reset rather than a signal because the @p chSemWait() will
+     *          return @p RDY_RESET instead of @p RDY_OK.
      *
-     * @param[in] n         the new value of the semaphore counter. The value must
-     *                      be non-negative.
+     * @param[in] n         the new value of the semaphore counter. The value
+     *                      must be non-negative.
      *
      * @api
      */
@@ -831,18 +837,18 @@ namespace chibios_rt {
     /**
      * @brief   Performs a reset operation on the semaphore.
      * @post    After invoking this function all the threads waiting on the
-     *          semaphore, if any, are released and the semaphore counter is set
-     *          to the specified, non negative, value.
+     *          semaphore, if any, are released and the semaphore counter is
+     *          set to the specified, non negative, value.
      * @post    This function does not reschedule so a call to a rescheduling
-     *          function must be performed before unlocking the kernel. Note that
-     *          interrupt handlers always reschedule on exit so an explicit
-     *          reschedule must not be performed in ISRs.
-     * @note    The released threads can recognize they were waked up by a reset
-     *          rather than a signal because the @p chSemWait() will return
-     *          @p RDY_RESET instead of @p RDY_OK.
+     *          function must be performed before unlocking the kernel. Note
+     *          that interrupt handlers always reschedule on exit so an
+     *          explicit reschedule must not be performed in ISRs.
+     * @note    The released threads can recognize they were waked up by a
+     *          reset rather than a signal because the @p chSemWait() will
+     *          return @p RDY_RESET instead of @p RDY_OK.
      *
-     * @param[in] n         the new value of the semaphore counter. The value must
-     *                      be non-negative.
+     * @param[in] n         the new value of the semaphore counter. The value
+     *                      must be non-negative.
      *
      * @iclass
      */
@@ -851,11 +857,12 @@ namespace chibios_rt {
     /**
      * @brief   Performs a wait operation on a semaphore.
      *
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the semaphore.
-     * @retval RDY_OK       if the thread has not stopped on the semaphore or the
-     *                      semaphore has been signaled.
-     * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the semaphore.
+     * @retval RDY_OK       if the thread has not stopped on the semaphore or
+     *                      the semaphore has been signaled.
+     * @retval RDY_RESET    if the semaphore has been reset using
+     *                      @p chSemReset().
      *
      * @api
      */
@@ -864,51 +871,56 @@ namespace chibios_rt {
     /**
      * @brief   Performs a wait operation on a semaphore.
      *
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the semaphore.
-     * @retval RDY_OK       if the thread has not stopped on the semaphore or the
-     *                      semaphore has been signaled.
-     * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the semaphore.
+     * @retval RDY_OK       if the thread has not stopped on the semaphore or
+     *                      the semaphore has been signaled.
+     * @retval RDY_RESET    if the semaphore has been reset using
+     *                      @p chSemReset().
      *
      * @sclass
      */
     msg_t waitS(void);
 
     /**
-     * @brief   Performs a wait operation on a semaphore with timeout specification.
+     * @brief   Performs a wait operation on a semaphore with timeout
+     *          specification.
      *
      * @param[in] time      the number of ticks before the operation timeouts,
      *                      the following special values are allowed:
      *                      - @a TIME_IMMEDIATE immediate timeout.
      *                      - @a TIME_INFINITE no timeout.
      *                      .
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the semaphore.
-     * @retval RDY_OK       if the thread has not stopped on the semaphore or the
-     *                      semaphore has been signaled.
-     * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
-     * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
-     *                      the specified timeout.
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the semaphore.
+     * @retval RDY_OK       if the thread has not stopped on the semaphore or
+     *                      the semaphore has been signaled.
+     * @retval RDY_RESET    if the semaphore has been reset using
+     *                      @p chSemReset().
+     * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset
+     *                      within the specified timeout.
      *
      * @api
      */
     msg_t waitTimeout(systime_t time);
 
     /**
-     * @brief   Performs a wait operation on a semaphore with timeout specification.
+     * @brief   Performs a wait operation on a semaphore with timeout
+     *          specification.
      *
      * @param[in] time      the number of ticks before the operation timeouts,
      *                      the following special values are allowed:
      *                      - @a TIME_IMMEDIATE immediate timeout.
      *                      - @a TIME_INFINITE no timeout.
      *                      .
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the semaphore.
-     * @retval RDY_OK       if the thread has not stopped on the semaphore or the
-     *                      semaphore has been signaled.
-     * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
-     * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
-     *                      the specified timeout.
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the semaphore.
+     * @retval RDY_OK       if the thread has not stopped on the semaphore or
+     *                      the semaphore has been signaled.
+     * @retval RDY_RESET    if the semaphore has been reset using
+     *                      @p chSemReset().
+     * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset
+     *                      within the specified timeout.
      *
      * @sclass
      */
@@ -924,9 +936,9 @@ namespace chibios_rt {
     /**
      * @brief   Performs a signal operation on a semaphore.
      * @post    This function does not reschedule so a call to a rescheduling
-     *          function must be performed before unlocking the kernel. Note that
-     *          interrupt handlers always reschedule on exit so an explicit
-     *          reschedule must not be performed in ISRs.
+     *          function must be performed before unlocking the kernel. Note
+     *          that interrupt handlers always reschedule on exit so an
+     *          explicit reschedule must not be performed in ISRs.
      *
      * @iclass
      */
@@ -935,12 +947,12 @@ namespace chibios_rt {
     /**
      * @brief   Adds the specified value to the semaphore counter.
      * @post    This function does not reschedule so a call to a rescheduling
-     *          function must be performed before unlocking the kernel. Note that
-     *          interrupt handlers always reschedule on exit so an explicit
+     *          function must be performed before unlocking the kernel. Note
+     *          that interrupt handlers always reschedule on exit so an explicit
      *          reschedule must not be performed in ISRs.
      *
-     * @param[in] n         value to be added to the semaphore counter. The value
-     *                      must be positive.
+     * @param[in] n         value to be added to the semaphore counter. The
+     *                      value must be positive.
      *
      * @iclass
      */
@@ -948,6 +960,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Returns the semaphore counter value.
+     *
+     * @return                  The semaphore counter value.
      *
      * @iclass
      */
@@ -959,11 +973,12 @@ namespace chibios_rt {
      *
      * @param[in] ssem          @p Semaphore object to be signaled
      * @param[in] wsem          @p Semaphore object to wait on
-     * @return                  A message specifying how the invoking thread has been
-     *                          released from the semaphore.
-     * @retval RDY_OK           if the thread has not stopped on the semaphore or the
-     *                          semaphore has been signaled.
-      * @retval RDY_RESET       if the semaphore has been reset using @p chSemReset().
+     * @return                  A message specifying how the invoking thread
+     *                          has been released from the semaphore.
+     * @retval RDY_OK           if the thread has not stopped on the semaphore
+     *                          or the semaphore has been signaled.
+     * @retval RDY_RESET        if the semaphore has been reset using
+     *                          @p chSemReset().
      *
      * @api
      */
@@ -1000,9 +1015,10 @@ namespace chibios_rt {
     /**
      * @brief   Wait operation on the binary semaphore.
      *
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the semaphore.
-     * @retval RDY_OK       if the binary semaphore has been successfully taken.
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the semaphore.
+     * @retval RDY_OK       if the binary semaphore has been successfully
+     *                      taken.
      * @retval RDY_RESET    if the binary semaphore has been reset using
      *                      @p bsemReset().
      *
@@ -1013,9 +1029,10 @@ namespace chibios_rt {
     /**
      * @brief   Wait operation on the binary semaphore.
      *
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the semaphore.
-     * @retval RDY_OK       if the binary semaphore has been successfully taken.
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the semaphore.
+     * @retval RDY_OK       if the binary semaphore has been successfully
+     *                      taken.
      * @retval RDY_RESET    if the binary semaphore has been reset using
      *                      @p bsemReset().
      *
@@ -1031,13 +1048,14 @@ namespace chibios_rt {
      *                      - @a TIME_IMMEDIATE immediate timeout.
      *                      - @a TIME_INFINITE no timeout.
      *                      .
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the semaphore.
-     * @retval RDY_OK       if the binary semaphore has been successfully taken.
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the semaphore.
+     * @retval RDY_OK       if the binary semaphore has been successfully
+     *                      taken.
      * @retval RDY_RESET    if the binary semaphore has been reset using
      *                      @p bsemReset().
-     * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled or reset
-     *                      within the specified timeout.
+     * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled
+     *                      or reset within the specified timeout.
      *
      * @api
      */
@@ -1051,13 +1069,14 @@ namespace chibios_rt {
      *                      - @a TIME_IMMEDIATE immediate timeout.
      *                      - @a TIME_INFINITE no timeout.
      *                      .
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the semaphore.
-     * @retval RDY_OK       if the binary semaphore has been successfully taken.
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the semaphore.
+     * @retval RDY_OK       if the binary semaphore has been successfully
+     *                      taken.
      * @retval RDY_RESET    if the binary semaphore has been reset using
      *                      @p bsemReset().
-     * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled or reset
-     *                      within the specified timeout.
+     * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled
+     *                      or reset within the specified timeout.
      *
      * @sclass
      */
@@ -1065,9 +1084,9 @@ namespace chibios_rt {
 
     /**
      * @brief   Reset operation on the binary semaphore.
-     * @note    The released threads can recognize they were waked up by a reset
-     *          rather than a signal because the @p bsemWait() will return
-     *          @p RDY_RESET instead of @p RDY_OK.
+     * @note    The released threads can recognize they were waked up by a
+     *          reset rather than a signal because the @p bsemWait() will
+     *          return @p RDY_RESET instead of @p RDY_OK.
      *
      * @param[in] taken     new state of the binary semaphore
      *                      - @a FALSE, the new state is not taken.
@@ -1080,9 +1099,9 @@ namespace chibios_rt {
 
     /**
      * @brief   Reset operation on the binary semaphore.
-     * @note    The released threads can recognize they were waked up by a reset
-     *          rather than a signal because the @p bsemWait() will return
-     *          @p RDY_RESET instead of @p RDY_OK.
+     * @note    The released threads can recognize they were waked up by a
+     *          reset rather than a signal because the @p bsemWait() will
+     *          return @p RDY_RESET instead of @p RDY_OK.
      * @note    This function does not reschedule.
      *
      * @param[in] taken     new state of the binary semaphore
@@ -1147,9 +1166,10 @@ namespace chibios_rt {
     /**
      * @brief   Tries to lock a mutex.
      * @details This function attempts to lock a mutex, if the mutex is already
-     *          locked by another thread then the function exits without waiting.
-     * @post    The mutex is locked and inserted in the per-thread stack of owned
-     *          mutexes.
+     *          locked by another thread then the function exits without
+     *          waiting.
+     * @post    The mutex is locked and inserted in the per-thread stack of
+     *          owned mutexes.
      * @note    This function does not have any overhead related to the
      *          priority inheritance mechanism because it does not try to
      *          enter a sleep state.
@@ -1165,9 +1185,10 @@ namespace chibios_rt {
     /**
      * @brief   Tries to lock a mutex.
      * @details This function attempts to lock a mutex, if the mutex is already
-     *          taken by another thread then the function exits without waiting.
-     * @post    The mutex is locked and inserted in the per-thread stack of owned
-     *          mutexes.
+     *          taken by another thread then the function exits without
+     *          waiting.
+     * @post    The mutex is locked and inserted in the per-thread stack of
+     *          owned mutexes.
      * @note    This function does not have any overhead related to the
      *          priority inheritance mechanism because it does not try to
      *          enter a sleep state.
@@ -1182,8 +1203,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Locks the specified mutex.
-     * @post    The mutex is locked and inserted in the per-thread stack of owned
-     *          mutexes.
+     * @post    The mutex is locked and inserted in the per-thread stack of
+     *          owned mutexes.
      *
      * @api
      */
@@ -1191,8 +1212,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Locks the specified mutex.
-     * @post    The mutex is locked and inserted in the per-thread stack of owned
-     *          mutexes.
+     * @post    The mutex is locked and inserted in the per-thread stack of
+     *          owned mutexes.
      *
      * @sclass
      */
@@ -1231,9 +1252,9 @@ namespace chibios_rt {
     /**
      * @brief   Signals one thread that is waiting on the condition variable.
      * @post    This function does not reschedule so a call to a rescheduling
-     *          function must be performed before unlocking the kernel. Note that
-     *          interrupt handlers always reschedule on exit so an explicit
-     *          reschedule must not be performed in ISRs.
+     *          function must be performed before unlocking the kernel. Note
+     *          that interrupt handlers always reschedule on exit so an
+     *          explicit reschedule must not be performed in ISRs.
      *
      * @iclass
      */
@@ -1249,9 +1270,9 @@ namespace chibios_rt {
     /**
      * @brief   Signals all threads that are waiting on the condition variable.
      * @post    This function does not reschedule so a call to a rescheduling
-     *          function must be performed before unlocking the kernel. Note that
-     *          interrupt handlers always reschedule on exit so an explicit
-     *          reschedule must not be performed in ISRs.
+     *          function must be performed before unlocking the kernel. Note
+     *          that interrupt handlers always reschedule on exit so an
+     *          explicit reschedule must not be performed in ISRs.
      *
      * @iclass
      */
@@ -1260,12 +1281,12 @@ namespace chibios_rt {
     /**
      * @brief   Waits on the condition variable releasing the mutex lock.
      * @details Releases the currently owned mutex, waits on the condition
-     *          variable, and finally acquires the mutex again. All the sequence
-     *          is performed atomically.
+     *          variable, and finally acquires the mutex again. All the
+     *          sequence is performed atomically.
      * @pre     The invoking thread <b>must</b> have at least one owned mutex.
      *
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the condition variable.
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the condition variable.
      * @retval RDY_OK       if the condvar has been signaled using
      *                      @p chCondSignal().
      * @retval RDY_RESET    if the condvar has been signaled using
@@ -1278,12 +1299,12 @@ namespace chibios_rt {
     /**
      * @brief   Waits on the condition variable releasing the mutex lock.
      * @details Releases the currently owned mutex, waits on the condition
-     *          variable, and finally acquires the mutex again. All the sequence
-     *          is performed atomically.
+     *          variable, and finally acquires the mutex again. All the
+     *          sequence is performed atomically.
      * @pre     The invoking thread <b>must</b> have at least one owned mutex.
      *
-     * @return              A message specifying how the invoking thread has been
-     *                      released from the condition variable.
+     * @return              A message specifying how the invoking thread has
+     *                      been released from the condition variable.
      * @retval RDY_OK       if the condvar has been signaled using
      *                      @p chCondSignal().
      * @retval RDY_RESET    if the condvar has been signaled using
@@ -1316,7 +1337,7 @@ namespace chibios_rt {
 
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
-   * chibios_rt::EvtListener                                              *
+   * chibios_rt::EvtListener                                                *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating an event listener.
@@ -1324,14 +1345,13 @@ namespace chibios_rt {
   class EvtListener {
   public:
     /**
-     * @brief   Embedded @p ::EvtListener structure.
+     * @brief   Embedded @p ::EventListener structure.
      */
     struct ::EventListener ev_listener;
 
     /**
      * @brief   Returns the pending flags from the listener and clears them.
      *
-     * @param[in] flags         the events to be cleared
      * @return                  The flags added to the listener by the
      *                          associated event source.
      *
@@ -1353,7 +1373,7 @@ namespace chibios_rt {
   };
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::EvtSource                                                *
+   * chibios_rt::EvtSource                                                  *
    *------------------------------------------------------------------------*/
   /**
    * @brief   Class encapsulating an event source.
@@ -1361,13 +1381,13 @@ namespace chibios_rt {
   class EvtSource {
   public:
     /**
-     * @brief   Embedded @p ::EvtSource structure.
+     * @brief   Embedded @p ::EventSource structure.
      */
     struct ::EventSource ev_source;
 
     /**
      * @brief   EvtSource object constructor.
-     * @details The embedded @p ::EvtSource structure is initialized.
+     * @details The embedded @p ::EventSource structure is initialized.
      *
      * @init
      */
@@ -1454,7 +1474,8 @@ namespace chibios_rt {
      * @param[in] bp        pointer to a memory area allocated as queue buffer
      * @param[in] size      size of the queue buffer
      * @param[in] infy      pointer to a callback function that is invoked when
-     *                      data is read from the queue. The value can be @p NULL.
+     *                      data is read from the queue. The value can be
+     *                      @p NULL.
      * @param[in] link      application defined pointer
      *
      * @init
@@ -1529,9 +1550,9 @@ namespace chibios_rt {
 
     /**
      * @brief   Input queue read.
-     * @details This function reads a byte value from an input queue. If the queue
-     *          is empty then the calling thread is suspended until a byte arrives
-     *          in the queue.
+     * @details This function reads a byte value from an input queue. If the
+     *          queue is empty then the calling thread is suspended until a
+     *          byte arrives in the queue.
      *
      * @return              A byte value from the queue.
      * @retval Q_RESET      if the queue has been reset.
@@ -1542,9 +1563,9 @@ namespace chibios_rt {
 
     /**
      * @brief   Input queue read with timeout.
-     * @details This function reads a byte value from an input queue. If the queue
-     *          is empty then the calling thread is suspended until a byte arrives
-     *          in the queue or a timeout occurs.
+     * @details This function reads a byte value from an input queue. If the
+     *          queue is empty then the calling thread is suspended until a
+     *          byte arrives in the queue or a timeout occurs.
      * @note    The callback is invoked before reading the character from the
      *          buffer or before entering the state @p THD_STATE_WTQUEUE.
      *
@@ -1567,8 +1588,8 @@ namespace chibios_rt {
      *          operation completes when the specified amount of data has been
      *          transferred or after the specified timeout or if the queue has
      *          been reset.
-     * @note    The function is not atomic, if you need atomicity it is suggested
-     *          to use a semaphore or a mutex for mutual exclusion.
+     * @note    The function is not atomic, if you need atomicity it is
+     *          suggested to use a semaphore or a mutex for mutual exclusion.
      * @note    The callback is invoked before reading each character from the
      *          buffer or before entering the state @p THD_STATE_WTQUEUE.
      *
@@ -1604,6 +1625,9 @@ namespace chibios_rt {
     /**
      * @brief   InQueueBuffer constructor.
      *
+     * @param[in] infy      input notify callback function
+     * @param[in] link      parameter to be passed to the callback
+     *
      * @init
      */
     InQueueBuffer(qnotify_t infy, void *link) : InQueue(iq_buf, N,
@@ -1631,7 +1655,8 @@ namespace chibios_rt {
      * @param[in] bp        pointer to a memory area allocated as queue buffer
      * @param[in] size      size of the queue buffer
      * @param[in] onfy      pointer to a callback function that is invoked when
-     *                      data is written to the queue. The value can be @p NULL.
+     *                      data is written to the queue. The value can be
+     *                      @p NULL.
      * @param[in] link      application defined pointer
      *
      * @init
@@ -1682,10 +1707,10 @@ namespace chibios_rt {
 
     /**
      * @brief   Resets an output queue.
-     * @details All the data in the output queue is erased and lost, any waiting
-     *          thread is resumed with status @p Q_RESET.
-     * @note    A reset operation can be used by a low level driver in order to
-     *          obtain immediate attention from the high level layers.
+     * @details All the data in the output queue is erased and lost, any
+     *          waiting thread is resumed with status @p Q_RESET.
+     * @note    A reset operation can be used by a low level driver in order
+     *          to obtain immediate attention from the high level layers.
      *
      * @iclass
      */
@@ -1693,9 +1718,9 @@ namespace chibios_rt {
 
     /**
      * @brief   Output queue write.
-     * @details This function writes a byte value to an output queue. If the queue
-     *          is full then the calling thread is suspended until there is space
-     *          in the queue.
+     * @details This function writes a byte value to an output queue. If the
+     *          queue is full then the calling thread is suspended until there
+     *          is space in the queue.
      *
      * @param[in] b         the byte value to be written in the queue
      * @return              The operation status.
@@ -1708,9 +1733,9 @@ namespace chibios_rt {
 
     /**
      * @brief   Output queue write with timeout.
-     * @details This function writes a byte value to an output queue. If the queue
-     *          is full then the calling thread is suspended until there is space
-     *          in the queue or a timeout occurs.
+     * @details This function writes a byte value to an output queue. If the
+     *          queue is full then the calling thread is suspended until there
+     *          is space in the queue or a timeout occurs.
      * @note    The callback is invoked after writing the character into the
      *          buffer.
      *
@@ -1746,8 +1771,8 @@ namespace chibios_rt {
      *          operation completes when the specified amount of data has been
      *          transferred or after the specified timeout or if the queue has
      *          been reset.
-     * @note    The function is not atomic, if you need atomicity it is suggested
-     *          to use a semaphore or a mutex for mutual exclusion.
+     * @note    The function is not atomic, if you need atomicity it is
+     *          suggested to use a semaphore or a mutex for mutual exclusion.
      * @note    The callback is invoked after writing each character into the
      *          buffer.
      *
@@ -1782,6 +1807,9 @@ namespace chibios_rt {
   public:
     /**
      * @brief   OutQueueBuffer constructor.
+     *
+     * @param[in] onfy      output notify callback function
+     * @param[in] link      parameter to be passed to the callback
      *
      * @init
      */
@@ -1819,8 +1847,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Resets a Mailbox object.
-     * @details All the waiting threads are resumed with status @p RDY_RESET and
-     *          the queued messages are lost.
+     * @details All the waiting threads are resumed with status @p RDY_RESET
+     *          and the queued messages are lost.
      *
      * @api
      */
@@ -1828,8 +1856,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Posts a message into a mailbox.
-     * @details The invoking thread waits until a empty slot in the mailbox becomes
-     *          available or the specified time runs out.
+     * @details The invoking thread waits until a empty slot in the mailbox
+     *          becomes available or the specified time runs out.
      *
      * @param[in] msg       the message to be posted on the mailbox
      * @param[in] time      the number of ticks before the operation timeouts,
@@ -1848,8 +1876,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Posts a message into a mailbox.
-     * @details The invoking thread waits until a empty slot in the mailbox becomes
-     *          available or the specified time runs out.
+     * @details The invoking thread waits until a empty slot in the mailbox
+     *          becomes available or the specified time runs out.
      *
      * @param[in] msg       the message to be posted on the mailbox
      * @param[in] time      the number of ticks before the operation timeouts,
@@ -1883,8 +1911,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Posts an high priority message into a mailbox.
-     * @details The invoking thread waits until a empty slot in the mailbox becomes
-     *          available or the specified time runs out.
+     * @details The invoking thread waits until a empty slot in the mailbox
+     *          becomes available or the specified time runs out.
      *
      * @param[in] msg       the message to be posted on the mailbox
      * @param[in] time      the number of ticks before the operation timeouts,
@@ -1903,8 +1931,8 @@ namespace chibios_rt {
 
     /**
      * @brief   Posts an high priority message into a mailbox.
-     * @details The invoking thread waits until a empty slot in the mailbox becomes
-     *          available or the specified time runs out.
+     * @details The invoking thread waits until a empty slot in the mailbox
+     *          becomes available or the specified time runs out.
      *
      * @param[in] msg       the message to be posted on the mailbox
      * @param[in] time      the number of ticks before the operation timeouts,
@@ -1938,12 +1966,12 @@ namespace chibios_rt {
 
     /**
      * @brief   Retrieves a message from a mailbox.
-     * @details The invoking thread waits until a message is posted in the mailbox
-     *          or the specified time runs out.
+     * @details The invoking thread waits until a message is posted in the
+     *          mailbox or the specified time runs out.
      *
-     * @param[out] msgp     pointer to a message variable for the received message
-     * @param[in] time      the number of ticks before the operation timeouts,
-     *                      the following special values are allowed:
+     * @param[out] msgp     pointer to a message variable for the received
+     * @param[in] time      message the number of ticks before the operation
+     *                      timeouts, the following special values are allowed:
      *                      - @a TIME_IMMEDIATE immediate timeout.
      *                      - @a TIME_INFINITE no timeout.
      *                      .
@@ -1958,12 +1986,12 @@ namespace chibios_rt {
 
     /**
      * @brief   Retrieves a message from a mailbox.
-     * @details The invoking thread waits until a message is posted in the mailbox
-     *          or the specified time runs out.
+     * @details The invoking thread waits until a message is posted in the
+     *          mailbox or the specified time runs out.
      *
-     * @param[out] msgp     pointer to a message variable for the received message
-     * @param[in] time      the number of ticks before the operation timeouts,
-     *                      the following special values are allowed:
+     * @param[out] msgp     pointer to a message variable for the received
+     * @param[in] time      message the number of ticks before the operation
+     *                      timeouts, the following special values are allowed:
      *                      - @a TIME_IMMEDIATE immediate timeout.
      *                      - @a TIME_INFINITE no timeout.
      *                      .
@@ -1981,7 +2009,8 @@ namespace chibios_rt {
      * @details This variant is non-blocking, the function returns a timeout
      *          condition if the queue is empty.
      *
-     * @param[out] msgp     pointer to a message variable for the received message
+     * @param[out] msgp     pointer to a message variable for the received
+     *                      message
      * @return              The operation status.
      * @retval RDY_OK       if a message has been correctly fetched.
      * @retval RDY_TIMEOUT  if the mailbox is empty and a message cannot be
@@ -2034,9 +2063,9 @@ namespace chibios_rt {
     /**
      * @brief   MemoryPool constructor.
      *
-     * @param[in] size      the size of the objects contained in this memory pool,
-     *                      the minimum accepted size is the size of a pointer to
-     *                      void.
+     * @param[in] size      the size of the objects contained in this memory
+     *                      pool, the minimum accepted size is the size of
+     *                      a pointer to void.
      * @param[in] provider  memory provider function for the memory pool or
      *                      @p NULL if the pool is not allowed to grow
      *                      automatically
@@ -2048,9 +2077,9 @@ namespace chibios_rt {
     /**
      * @brief   MemoryPool constructor.
      *
-     * @param[in] size      the size of the objects contained in this memory pool,
-     *                      the minimum accepted size is the size of a pointer to
-     *                      void.
+     * @param[in] size      the size of the objects contained in this memory
+     *                      pool, the minimum accepted size is the size of
+     *                      a pointer to void.
      * @param[in] provider  memory provider function for the memory pool or
      *                      @p NULL if the pool is not allowed to grow
      *                      automatically
@@ -2102,7 +2131,8 @@ namespace chibios_rt {
      * @pre     The memory pool must be already been initialized.
      * @pre     The freed object must be of the right size for the specified
      *          memory pool.
-     * @pre     The object must be properly aligned to contain a pointer to void.
+     * @pre     The object must be properly aligned to contain a pointer to
+     *          void.
      *
      * @param[in] objp      the pointer to the object to be released
      *
@@ -2173,9 +2203,9 @@ namespace chibios_rt {
      *
      * @param[in] bp        pointer to the data buffer
      * @param[in] n         the maximum amount of data to be transferred
-     * @return              The number of bytes transferred. The return value can
-     *                      be less than the specified number of bytes if an
-     *                      end-of-file condition has been met.
+     * @return              The number of bytes transferred. The return value
+     *                      can be less than the specified number of bytes if
+     *                      an end-of-file condition has been met.
      *
      * @api
      */
@@ -2187,9 +2217,9 @@ namespace chibios_rt {
      *
      * @param[out] bp       pointer to the data buffer
      * @param[in] n         the maximum amount of data to be transferred
-     * @return              The number of bytes transferred. The return value can
-     *                      be less than the specified number of bytes if an
-     *                      end-of-file condition has been met.
+     * @return              The number of bytes transferred. The return value
+     *                      can be less than the specified number of bytes if
+     *                      an end-of-file condition has been met.
      *
      * @api
      */
@@ -2198,7 +2228,8 @@ namespace chibios_rt {
     /**
      * @brief   Sequential Stream blocking byte write.
      * @details This function writes a byte value to a channel. If the channel
-     *          is not ready to accept data then the calling thread is suspended.
+     *          is not ready to accept data then the calling thread is
+     *          suspended.
      *
      * @param[in] b         the byte value to be written to the channel
      *

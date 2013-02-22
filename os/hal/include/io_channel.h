@@ -21,16 +21,17 @@
 /**
  * @file    io_channel.h
  * @brief   I/O channels access.
- * @details This header defines abstract interfaces useful to access generic
+ * @details This header defines an abstract interface useful to access generic
  *          I/O serial devices in a standardized way.
  *
  * @addtogroup IO_CHANNEL
  * @details This module defines an abstract interface for I/O channels by
- *          extending the @p BaseSequentialStream interface. Note that no code
- *          is present, I/O channels are just abstract interface like
- *          structures, you should look at the systems as to a set of abstract
- *          C++ classes (even if written in C). Specific device drivers can
- *          use/extend the interface and implement them.<br>
+ *          extending the @p BaseSequentialStream interface.<br>
+ *          Note that no code is present, I/O channels are just abstract
+ *          interface like structures, you should look at the systems as
+ *          to a set of abstract C++ classes (even if written in C).
+ *          Specific device drivers can use/extend the interface and
+ *          implement them.<br>
  *          This system has the advantage to make the access to channels
  *          independent from the implementation logic.
  * @{

@@ -81,20 +81,3 @@
  *
  * @ingroup IO
  */
-
-/**
- * @defgroup IO_CHANNEL Abstract I/O Channels
- * @ingroup IO
- */
-
-/**
- * @defgroup IO_BLOCK Abstract I/O Block Device
- * @ingroup IO
- */
-
-/**
- * @defgroup MMCSD MMC/SD Block Devices common ancestor
- * @details This module implements a common ancestor for all device drivers
- *          accessing MMC or SD cards.
- * @ingroup IO
- */

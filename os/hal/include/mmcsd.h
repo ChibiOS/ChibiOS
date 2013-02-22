@@ -21,6 +21,8 @@
 /**
  * @file    mmcsd.h
  * @brief   MMC/SD cards common header.
+ * @details This header defines an abstract interface useful to access MMC/SD
+ *          I/O block devices in a standardized way.
  *
  * @addtogroup MMCSD
  * @{
