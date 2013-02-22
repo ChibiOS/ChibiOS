@@ -137,7 +137,7 @@ static void can_lld_tx_handler(CANDriver *canp) {
   chSysLockFromIsr();
   while (chSemGetCounterI(&canp->txsem) < 0)
     chSemSignalI(&canp->txsem);
-  chEvtBroadcastI(&canp->txempty_event);
+  chEvtBroadcastFlagsI(&canp->txempty_event, CAN_MAILBOX_TO_MASK(1));
   chSysUnlockFromIsr();
 }
 
@@ -158,7 +158,7 @@ static void can_lld_rx0_handler(CANDriver *canp) {
     chSysLockFromIsr();
     while (chSemGetCounterI(&canp->rxsem) < 0)
       chSemSignalI(&canp->rxsem);
-    chEvtBroadcastI(&canp->rxfull_event);
+    chEvtBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(1));
     chSysUnlockFromIsr();
   }
   if ((rf0r & CAN_RF0R_FOVR0) > 0) {
