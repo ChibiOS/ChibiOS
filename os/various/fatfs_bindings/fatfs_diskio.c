@@ -125,7 +125,7 @@ DRESULT disk_read (
     while (count > 0) {
       if (mmcSequentialRead(&MMCD1, buff))
         return RES_ERROR;
-      buff += MMC_SECTOR_SIZE;
+      buff += MMCSD_BLOCK_SIZE;
       count--;
     }
     if (mmcStopSequentialRead(&MMCD1))
@@ -168,7 +168,7 @@ DRESULT disk_write (
     while (count > 0) {
         if (mmcSequentialWrite(&MMCD1, buff))
             return RES_ERROR;
-        buff += MMC_SECTOR_SIZE;
+        buff += MMCSD_BLOCK_SIZE;
         count--;
     }
     if (mmcStopSequentialWrite(&MMCD1))
@@ -205,7 +205,7 @@ DRESULT disk_ioctl (
     case CTRL_SYNC:
         return RES_OK;
     case GET_SECTOR_SIZE:
-        *((WORD *)buff) = MMC_SECTOR_SIZE;
+        *((WORD *)buff) = MMCSD_BLOCK_SIZE;
         return RES_OK;
 #if _USE_ERASE
     case CTRL_ERASE_SECTOR:

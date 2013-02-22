@@ -559,6 +559,7 @@ bool_t mmcDisconnect(MMCDriver *mmcp) {
   chSysUnlock();
 
   /* Wait for the pending write operations to complete.*/
+  spiStart(mmcp->config->spip, mmcp->config->hscfg);
   sync(mmcp);
 
   spiStop(mmcp->config->spip);
@@ -787,6 +788,7 @@ bool_t mmcSync(MMCDriver *mmcp) {
   if (mmcp->state != BLK_READY)
     return CH_FAILED;
 
+  spiStart(mmcp->config->spip, mmcp->config->hscfg);
   sync(mmcp);
   return CH_SUCCESS;
 }
