@@ -145,7 +145,7 @@ void canStop(CANDriver *canp) {
  * @note    Trying to transmit while in sleep mode simply enqueues the thread.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[in] mailbox   mailbox number, @p CAN_ANY_TX_MAILBOX for any mailbox
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  * @param[in] ctfp      pointer to the CAN frame to be transmitted
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -164,8 +164,7 @@ msg_t canTransmit(CANDriver *canp,
                   const CANTxFrame *ctfp,
                   systime_t timeout) {
 
-  chDbgCheck((canp != NULL) && (ctfp != NULL) &&
-             (mailbox <= CAN_TX_MAILBOXES),
+  chDbgCheck((canp != NULL) && (ctfp != NULL) && (mailbox <= CAN_TX_MAILBOXES),
              "canTransmit");
 
   chSysLock();
@@ -189,7 +188,7 @@ msg_t canTransmit(CANDriver *canp,
  * @note    Trying to receive while in sleep mode simply enqueues the thread.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[in] mailbox   mailbox number
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  * @param[out] crfp     pointer to the buffer where the CAN frame is copied
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -210,8 +209,7 @@ msg_t canReceive(CANDriver *canp,
                  CANRxFrame *crfp,
                  systime_t timeout) {
 
-  chDbgCheck((canp != NULL) && (crfp != NULL) &&
-             (mailbox >= 1) && (mailbox < CAN_RX_MAILBOXES),
+  chDbgCheck((canp != NULL) && (crfp != NULL) && (mailbox < CAN_RX_MAILBOXES),
              "canReceive");
 
   chSysLock();

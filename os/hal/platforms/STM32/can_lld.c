@@ -172,16 +172,31 @@ static void can_lld_rx0_handler(CANDriver *canp) {
 
 /**
  * @brief   Common RX1 ISR handler.
- * @note    Not used, must not be invoked, defaulted to an halt.
  *
  * @param[in] canp      pointer to the @p CANDriver object
  *
  * @notapi
  */
 static void can_lld_rx1_handler(CANDriver *canp) {
+  uint32_t rf1r;
 
-  (void)canp;
-  chSysHalt();
+  rf1r = canp->can->RF1R;
+  if ((rf1r & CAN_RF1R_FMP1) > 0) {
+    /* No more receive events until the queue 0 has been emptied.*/
+    canp->can->IER &= ~CAN_IER_FMPIE1;
+    chSysLockFromIsr();
+    while (chSemGetCounterI(&canp->rxsem) < 0)
+      chSemSignalI(&canp->rxsem);
+    chEvtBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(1));
+    chSysUnlockFromIsr();
+  }
+  if ((rf1r & CAN_RF1R_FOVR1) > 0) {
+    /* Overflow events handling.*/
+    canp->can->RF1R = CAN_RF1R_FOVR1;
+    chSysLockFromIsr();
+    chEvtBroadcastFlagsI(&canp->error_event, CAN_OVERFLOW_ERROR);
+    chSysUnlockFromIsr();
+  }
 }
 
 /**
@@ -467,7 +482,7 @@ void can_lld_stop(CANDriver *canp) {
  * @brief   Determines whether a frame can be transmitted.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[in] mailbox   mailbox number, @p CAN_ANY_TX_MAILBOX for any mailbox
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  *
  * @return              The queue space availability.
  * @retval FALSE        no space in the transmit queue.
@@ -478,7 +493,7 @@ void can_lld_stop(CANDriver *canp) {
 bool_t can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
 
   switch (mailbox) {
-  case CAN_ANY_TX_MAILBOX:
+  case CAN_ANY_MAILBOX:
     return (canp->can->TSR & CAN_TSR_TME) != 0;
   case 1:
     return (canp->can->TSR & CAN_TSR_TME0) != 0;
@@ -496,7 +511,7 @@ bool_t can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] ctfp      pointer to the CAN frame to be transmitted
- * @param[in] mailbox   mailbox number,  @p CAN_ANY_TX_MAILBOX for any mailbox
+ * @param[in] mailbox   mailbox number,  @p CAN_ANY_MAILBOX for any mailbox
  *
  * @notapi
  */
@@ -508,7 +523,7 @@ void can_lld_transmit(CANDriver *canp,
 
   /* Pointer to a free transmission mailbox.*/
   switch (mailbox) {
-  case CAN_ANY_TX_MAILBOX:
+  case CAN_ANY_MAILBOX:
     tmbp = &canp->can->sTxMailBox[(canp->can->TSR & CAN_TSR_CODE) >> 24];
     break;
   case 1:
@@ -540,7 +555,7 @@ void can_lld_transmit(CANDriver *canp,
  * @brief   Determines whether a frame has been received.
  *
  * @param[in] canp      pointer to the @p CANDriver object
- * @param[in] mailbox   mailbox number
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  *
  * @return              The queue space availability.
  * @retval FALSE        no space in the transmit queue.
@@ -551,10 +566,12 @@ void can_lld_transmit(CANDriver *canp,
 bool_t can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
 
   switch (mailbox) {
+  case CAN_ANY_MAILBOX:
+    return (canp->can->RF0R & (CAN_RF0R_FMP0 | CAN_RF1R_FMP1)) != 0;
   case 1:
-    return (canp->can->RF0R & CAN_RF0R_FMP0) > 0;
+    return (canp->can->RF0R & CAN_RF0R_FMP0) != 0;
   case 2:
-    return (canp->can->RF1R & CAN_RF1R_FMP1) > 0;
+    return (canp->can->RF1R & CAN_RF1R_FMP1) != 0;
   default:
     return FALSE;
   }
@@ -564,8 +581,8 @@ bool_t can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
  * @brief   Receives a frame from the input queue.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  * @param[out] crfp     pointer to the buffer where the CAN frame is copied
- * @param[in] mailbox   mailbox number
  *
  * @notapi
  */
@@ -574,6 +591,16 @@ void can_lld_receive(CANDriver *canp,
                      CANRxFrame *crfp) {
   uint32_t rir, rdtr;
 
+  if (mailbox == CAN_ANY_MAILBOX) {
+    if ((canp->can->RF0R & CAN_RF0R_FMP0) != 0)
+      mailbox = 1;
+    else if ((canp->can->RF1R & CAN_RF1R_FMP1) != 0)
+      mailbox = 2;
+    else {
+      /* Should not happen, do nothing.*/
+      return;
+    }
+  }
   switch (mailbox) {
   case 1:
     /* Fetches the message.*/
@@ -606,6 +633,7 @@ void can_lld_receive(CANDriver *canp,
       canp->can->IER |= CAN_IER_FMPIE1;
     break;
   default:
+    /* Should not happen, do nothing.*/
     return;
   }
 

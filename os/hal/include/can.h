@@ -62,9 +62,9 @@
 /** @} */
 
 /**
- * @brief   Special TX mailbox identifier.
+ * @brief   Special mailbox identifier.
  */
-#define CAN_ANY_TX_MAILBOX          0
+#define CAN_ANY_MAILBOX             0
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
