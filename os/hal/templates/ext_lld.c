@@ -39,10 +39,10 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   EXTD1 driver identifier.
- */
+/** @brief EXT1 driver identifier.*/
+#if PLATFORM_EXT_USE_EXT1 || defined(__DOXYGEN__)
 EXTDriver EXTD1;
+#endif
 
 /*===========================================================================*/
 /* Driver local variables.                                                   */
@@ -67,8 +67,10 @@ EXTDriver EXTD1;
  */
 void ext_lld_init(void) {
 
+#if PLATFORM_EXT_USE_EXT1
   /* Driver initialization.*/
   extObjectInit(&EXTD1);
+#endif /* PLATFORM_EXT_USE_EXT1 */
 }
 
 /**
@@ -81,9 +83,15 @@ void ext_lld_init(void) {
 void ext_lld_start(EXTDriver *extp) {
 
   if (extp->state == EXT_STOP) {
-    /* Clock activation.*/
+    /* Enables the pehipheral.*/
+#if PLATFORM_EXT_USE_EXT1
+    if (&EXTD1 == extp) {
+
+    }
+#endif /* PLATFORM_EXT_USE_EXT1 */
   }
-  /* Configuration.*/
+  /* Configures the peripheral.*/
+
 }
 
 /**
@@ -95,9 +103,15 @@ void ext_lld_start(EXTDriver *extp) {
  */
 void ext_lld_stop(EXTDriver *extp) {
 
-  if (extp->state == EXT_ACTIVE) {
-    /* Clock deactivation.*/
+  if (extp->state == EXT_READY) {
+    /* Resets the peripheral.*/
 
+    /* Disables the peripheral.*/
+#if PLATFORM_EXT_USE_EXT1
+    if (&EXTD1 == extp) {
+
+    }
+#endif /* PLATFORM_EXT_USE_EXT1 */
   }
 }
 

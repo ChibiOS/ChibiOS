@@ -39,13 +39,23 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   ADC1 driver enable switch.
+ * @details If set to @p TRUE the support for ADC1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(PLATFORM_ADC_USE_ADC1) || defined(__DOXYGEN__)
+#define PLATFORM_ADC_USE_ADC1                  FALSE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if !CH_USE_SEMAPHORES
-#error "the ADC driver requires CH_USE_SEMAPHORES"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -60,6 +70,16 @@ typedef uint16_t adcsample_t;
  * @brief   Channels number in a conversion group.
  */
 typedef uint16_t adc_channels_num_t;
+
+/**
+ * @brief   Possible ADC failure causes.
+ * @note    Error codes are architecture dependent and should not relied
+ *          upon.
+ */
+typedef enum {
+  ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
+  ADC_ERR_OVERFLOW = 1                      /**< ADC overflow condition.    */
+} adcerror_t;
 
 /**
  * @brief   Type of a structure representing an ADC driver.
@@ -77,6 +97,15 @@ typedef struct ADCDriver ADCDriver;
 typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
 
 /**
+ * @brief   ADC error callback type.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object triggering the
+ *                      callback
+ * @param[in] err       ADC error code
+ */
+typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);
+
+/**
  * @brief   Conversion group configuration structure.
  * @details This implementation-dependent structure describes a conversion
  *          operation.
@@ -85,66 +114,66 @@ typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
  */
 typedef struct {
   /**
-   * @brief Enables the circular buffer mode for the group.
+   * @brief   Enables the circular buffer mode for the group.
    */
   bool_t                    circular;
   /**
-   * @brief Number of the analog channels belonging to the conversion group.
+   * @brief   Number of the analog channels belonging to the conversion group.
    */
   adc_channels_num_t        num_channels;
   /**
-   * @brief Callback function associated to the group or @p NULL.
+   * @brief   Callback function associated to the group or @p NULL.
    */
   adccallback_t             end_cb;
+  /**
+   * @brief   Error callback or @p NULL.
+   */
+  adcerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
 } ADCConversionGroup;
 
 /**
  * @brief   Driver configuration structure.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-
+  uint32_t                  dummy;
 } ADCConfig;
 
 /**
  * @brief   Structure representing an ADC driver.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
  */
 struct ADCDriver {
   /**
-   * @brief Driver state.
+   * @brief   Driver state.
    */
   adcstate_t                state;
   /**
-   * @brief Current configuration data.
+   * @brief   Current configuration data.
    */
   const ADCConfig           *config;
   /**
-   * @brief Current samples buffer pointer or @p NULL.
+   * @brief   Current samples buffer pointer or @p NULL.
    */
   adcsample_t               *samples;
   /**
-   * @brief Current samples buffer depth or @p 0.
+   * @brief   Current samples buffer depth or @p 0.
    */
   size_t                    depth;
   /**
-   * @brief Current conversion group pointer or @p NULL.
+   * @brief   Current conversion group pointer or @p NULL.
    */
   const ADCConversionGroup  *grpp;
 #if ADC_USE_WAIT || defined(__DOXYGEN__)
   /**
-   * @brief Waiting thread.
+   * @brief   Waiting thread.
    */
   Thread                    *thread;
-#endif /* SPI_USE_WAIT */
+#endif
 #if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
-   * @brief Mutex protecting the peripheral.
+   * @brief   Mutex protecting the peripheral.
    */
   Mutex                     mutex;
 #elif CH_USE_SEMAPHORES
@@ -164,6 +193,10 @@ struct ADCDriver {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if PLATFORM_ADC_USE_ADC1 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD1;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
