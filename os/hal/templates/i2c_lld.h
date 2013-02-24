@@ -71,14 +71,6 @@ typedef uint16_t i2caddr_t;
 typedef uint32_t i2cflags_t;
 
 /**
- * @brief   I2C completion callback type.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] sts       operation status
- */
-typedef void (*i2ccallback_t)(I2CDriver *i2cp, i2cstatus_t sts);
-
-/**
  * @brief   Driver configuration structure.
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
@@ -99,7 +91,7 @@ typedef struct I2CDriver I2CDriver;
 /**
  * @brief Structure representing an I2C driver.
  */
-struct I2CDriver{
+struct I2CDriver {
   /**
    * @brief   Driver state.
    */
@@ -148,6 +140,7 @@ struct I2CDriver{
 #if !defined(__DOXYGEN__)
 #if PLATFORM_I2C_USE_I2C1
 extern I2CDriver I2CD1;
+#endif
 #endif
 
 #ifdef __cplusplus

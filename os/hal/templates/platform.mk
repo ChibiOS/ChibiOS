@@ -9,7 +9,6 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/templates/hal_lld.c \
               ${CHIBIOS}/os/hal/templates/mac_lld.c \
               ${CHIBIOS}/os/hal/templates/pal_lld.c \
               ${CHIBIOS}/os/hal/templates/pwm_lld.c \
-              ${CHIBIOS}/os/hal/templates/rtc_lld.c \
               ${CHIBIOS}/os/hal/templates/sdc_lld.c \
               ${CHIBIOS}/os/hal/templates/serial_lld.c \
               ${CHIBIOS}/os/hal/templates/spi_lld.c \

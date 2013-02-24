@@ -355,7 +355,7 @@ typedef struct I2CDriver I2CDriver;
 /**
  * @brief Structure representing an I2C driver.
  */
-struct I2CDriver{
+struct I2CDriver {
   /**
    * @brief   Driver state.
    */
