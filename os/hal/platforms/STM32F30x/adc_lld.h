@@ -336,7 +336,7 @@
 #if !STM32_ADC_COMPACT_SAMPLES || defined(__DOXYGEN__)
 typedef uint16_t adcsample_t;
 #else
-typedef uint_t adcsample_t;
+typedef uint8_t adcsample_t;
 #endif
 
 /**

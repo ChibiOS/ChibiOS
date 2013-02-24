@@ -39,6 +39,20 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   GPTD1 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD1 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_GPT_USE_TIM1) || defined(__DOXYGEN__)
+#define STM32_GPT_USE_TIM1                  FALSE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -56,18 +70,6 @@ typedef uint32_t gptfreq_t;
  * @brief   GPT counter type.
  */
 typedef uint16_t gptcnt_t;
-
-/**
- * @brief   Type of a structure representing a GPT driver.
- */
-typedef struct GPTDriver GPTDriver;
-
-/**
- * @brief   GPT notification callback type.
- *
- * @param[in] gptp      pointer to a @p GPTDriver object
- */
-typedef void (*gptcallback_t)(GPTDriver *gptp);
 
 /**
  * @brief   Driver configuration structure.
@@ -114,13 +116,16 @@ struct GPTDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#if STM32_GPT_USE_TIM1 && !defined(__DOXYGEN__)
+extern GPTDriver GPTD1;
+#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
   void gpt_lld_init(void);
   void gpt_lld_start(GPTDriver *gptp);
   void gpt_lld_stop(GPTDriver *gptp);
-  void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval);
+  void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t period);
   void gpt_lld_stop_timer(GPTDriver *gptp);
   void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval);
 #ifdef __cplusplus
