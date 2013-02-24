@@ -85,6 +85,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed errors in MMC_SPI driver state machine (bug 3605794).
 - FIX: Fixed deadlock in Serial_USB driver (bug 3605793).
 - FIX: Fixed compile Error OLIMEX_SAM7_EX256/board.c (bug 3605058).
 - FIX: Fixed bug prevents calling adcStartConversionI() within ISR (bug

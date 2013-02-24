@@ -39,28 +39,28 @@
 
     stop  [label="BLK_STOP\nLow Power"];
     uninit [label="BLK_UNINIT", style="bold"];
-    ready [label="BLK_READY\nClock Enabled"];
+    active [label="BLK_ACTIVE\nClock Enabled"];
     connecting [label="BLK_CONN.ING\nConnecting"];
     disconnecting [label="BLK_DISC.ING\nDisconnecting"];
-    active [label="BLK_ACTIVE\nCard Ready"];
+    ready [label="BLK_READY\nCard Ready"];
     reading [label="BLK_READING\nReading"];
     writing [label="BLK_WRITING\nWriting"];
 
     uninit -> stop [label=" blkInit()", constraint=false];
     stop -> stop [label="\nblkStop()"];
-    stop -> ready [label="\nblkStart()"];
-    ready -> stop [label="\nblkStop()"];
-    ready -> ready [label="\nblkStart()\nblkDisconnect()"];
-    ready -> connecting [label="\nblkConnect()"];
-    connecting -> active [label="\nconnection\nsuccessful"];
-    connecting -> active [label="\nblkConnect()", dir="back"];
-    connecting -> ready [label="\nconnection\nfailed"];
-    disconnecting -> active [label="\nblkDisconnect()", dir="back"];
-    ready -> disconnecting [label="\ndisconnection\nfinished", dir="back"];
-    active -> reading [label="\nblkRead()"];
-    reading -> active [label="\nread finished\nread error"];
-    active -> writing [label="\nblkWrite()"];
-    writing -> active [label="\nwrite finished\nwrite error"];
+    stop -> active [label="\nblkStart()"];
+    active -> stop [label="\nblkStop()"];
+    active -> active [label="\nblkStart()\nblkDisconnect()"];
+    active -> connecting [label="\nblkConnect()"];
+    connecting -> ready [label="\nconnection\nsuccessful"];
+    connecting -> ready [label="\nblkConnect()", dir="back"];
+    connecting -> active [label="\nconnection\nfailed"];
+    disconnecting -> ready [label="\nblkDisconnect()", dir="back"];
+    active -> disconnecting [label="\ndisconnection\nfinished", dir="back"];
+    ready -> reading [label="\nblkRead()"];
+    reading -> ready [label="\nread finished\nread error"];
+    ready -> writing [label="\nblkWrite()"];
+    writing -> ready [label="\nwrite finished\nwrite error"];
   }
  * @enddot
  * @else
@@ -73,28 +73,31 @@
 
     stop  [label="BLK_STOP\nLow Power"];
     uninit [label="BLK_UNINIT", style="bold"];
-    ready [label="BLK_READY\nClock Enabled"];
+    active [label="BLK_ACTIVE\nClock Enabled"];
     connecting [label="BLK_CONN.ING\nConnecting"];
     disconnecting [label="BLK_DISC.ING\nDisconnecting"];
-    active [label="BLK_ACTIVE\nCard Ready"];
+    ready [label="BLK_READY\nCard Ready"];
     reading [label="BLK_READING\nReading"];
     writing [label="BLK_WRITING\nWriting"];
+    syncing [label="BLK_SYNCING\nSynchronizing"];
 
     uninit -> stop [label=" blkInit()", constraint=false];
     stop -> stop [label="\nblkStop()"];
-    stop -> ready [label="\nblkStart()"];
-    ready -> stop [label="\nblkStop()"];
-    ready -> ready [label="\nblkStart()\nblkDisconnect()"];
-    ready -> connecting [label="\nblkConnect()"];
-    connecting -> active [label="\nconnection\nsuccessful"];
-    connecting -> active [label="\nblkConnect()", dir="back"];
-    connecting -> ready [label="\nconnection\nfailed"];
-    disconnecting -> active [label="\nblkDisconnect()", dir="back"];
-    ready -> disconnecting [label="\ndisconnection\nfinished", dir="back"];
-    active -> reading [label="\nblkRead()"];
-    reading -> active [label="\nread finished\nread error"];
-    active -> writing [label="\nblkWrite()"];
-    writing -> active [label="\nwrite finished\nwrite error"];
+    stop -> active [label="\nblkStart()"];
+    active -> stop [label="\nblkStop()"];
+    active -> active [label="\nblkStart()\nblkDisconnect()"];
+    active -> connecting [label="\nblkConnect()"];
+    connecting -> ready [label="\nconnection\nsuccessful"];
+    connecting -> ready [label="\nblkConnect()", dir="back"];
+    connecting -> active [label="\nconnection\nfailed"];
+    disconnecting -> ready [label="\nblkDisconnect()", dir="back"];
+    active -> disconnecting [label="\ndisconnection\nfinished", dir="back"];
+    ready -> reading [label="\nblkRead()"];
+    reading -> ready [label="\nread finished\nread error"];
+    ready -> writing [label="\nblkWrite()"];
+    writing -> ready [label="\nwrite finished\nwrite error"];
+    ready -> syncing [label="\nblkSync()"];
+    syncing -> ready [label="\nsynchronization finished"];
   }
  * @enddot
  * @endif
