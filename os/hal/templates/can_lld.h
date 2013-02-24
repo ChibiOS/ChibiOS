@@ -66,6 +66,7 @@
 #if !defined(PLATFORM_CAN_USE_CAN1) || defined(__DOXYGEN__)
 #define PLATFORM_CAN_USE_CAN1             FALSE
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

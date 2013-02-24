@@ -1,0 +1,302 @@
+/*
+    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
+                 2011,2012,2013 Giovanni Di Sirio.
+
+    This file is part of ChibiOS/RT.
+
+    ChibiOS/RT is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS/RT is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @file    templates/sdc_lld.c
+ * @brief   SDC Driver subsystem low level driver source template.
+ *
+ * @addtogroup SDC
+ * @{
+ */
+
+#include "ch.h"
+#include "hal.h"
+
+#if HAL_USE_SDC || defined(__DOXYGEN__)
+
+/*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
+/** @brief SDCD1 driver identifier.*/
+#if PLATFORM_SDC_USE_SDC1 || defined(__DOXYGEN__)
+SDCDriver SDCD1;
+#endif
+
+/*===========================================================================*/
+/* Driver local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver interrupt handlers.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver exported functions.                                                */
+/*===========================================================================*/
+
+/**
+ * @brief   Low level SDC driver initialization.
+ *
+ * @notapi
+ */
+void sdc_lld_init(void) {
+
+  sdcObjectInit(&SDCD1);
+}
+
+/**
+ * @brief   Configures and activates the SDC peripheral.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+void sdc_lld_start(SDCDriver *sdcp) {
+
+  if (sdcp->state == BLK_STOP) {
+
+  }
+}
+
+/**
+ * @brief   Deactivates the SDC peripheral.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+void sdc_lld_stop(SDCDriver *sdcp) {
+
+  if (sdcp->state != BLK_STOP) {
+
+  }
+}
+
+/**
+ * @brief   Starts the SDIO clock and sets it to init mode (400kHz or less).
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+void sdc_lld_start_clk(SDCDriver *sdcp) {
+
+  (void)sdcp;
+}
+
+/**
+ * @brief   Sets the SDIO clock to data mode (25MHz or less).
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+void sdc_lld_set_data_clk(SDCDriver *sdcp) {
+
+  (void)sdcp;
+}
+
+/**
+ * @brief   Stops the SDIO clock.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @notapi
+ */
+void sdc_lld_stop_clk(SDCDriver *sdcp) {
+
+  (void)sdcp;
+}
+
+/**
+ * @brief   Switches the bus to 4 bits mode.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] mode      bus mode
+ *
+ * @notapi
+ */
+void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
+  uint32_t clk = SDIO->CLKCR & ~SDIO_CLKCR_WIDBUS;
+
+  (void)sdcp;
+
+  switch (mode) {
+  case SDC_MODE_1BIT:
+
+    break;
+  case SDC_MODE_4BIT:
+ 
+    break;
+  case SDC_MODE_8BIT:
+
+    break;
+  }
+}
+
+/**
+ * @brief   Sends an SDIO command with no response expected.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] cmd       card command
+ * @param[in] arg       command argument
+ *
+ * @notapi
+ */
+void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
+
+  (void)sdcp;
+}
+
+/**
+ * @brief   Sends an SDIO command with a short response expected.
+ * @note    The CRC is not verified.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] cmd       card command
+ * @param[in] arg       command argument
+ * @param[out] resp     pointer to the response buffer (one word)
+ *
+ * @return              The operation status.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
+ *
+ * @notapi
+ */
+bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                              uint32_t *resp) {
+ 
+ return CH_SUCCESS;
+}
+
+/**
+ * @brief   Sends an SDIO command with a short response expected and CRC.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] cmd       card command
+ * @param[in] arg       command argument
+ * @param[out] resp     pointer to the response buffer (one word)
+ *
+ * @return              The operation status.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
+ *
+ * @notapi
+ */
+bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                                  uint32_t *resp) {
+
+  (void)sdcp;
+
+  return CH_SUCCESS;
+}
+
+/**
+ * @brief   Sends an SDIO command with a long response expected and CRC.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] cmd       card command
+ * @param[in] arg       command argument
+ * @param[out] resp     pointer to the response buffer (four words)
+ *
+ * @return              The operation status.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
+ *
+ * @notapi
+ */
+bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                                 uint32_t *resp) {
+
+  (void)sdcp;
+
+  return CH_SUCCESS;
+}
+
+/**
+ * @brief   Reads one or more blocks.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] startblk  first block to read
+ * @param[out] buf      pointer to the read buffer
+ * @param[in] n         number of blocks to read
+ *
+ * @return              The operation status.
+ * @retval CH_SUCCESS   operation succeeded.
+ * @retval CH_FAILED    operation failed.
+ *
+ * @notapi
+ */
+bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
+                    uint8_t *buf, uint32_t n) {
+
+  return CH_SUCCESS;
+}
+
+/**
+ * @brief   Writes one or more blocks.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] startblk  first block to write
+ * @param[out] buf      pointer to the write buffer
+ * @param[in] n         number of blocks to write
+ *
+ * @return              The operation status.
+ * @retval CH_SUCCESS  operation succeeded.
+ * @retval CH_FAILED    operation failed.
+ *
+ * @notapi
+ */
+bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
+                     const uint8_t *buf, uint32_t n) {
+
+  return CH_SUCCESS;
+}
+
+/**
+ * @brief   Waits for card idle condition.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @return              The operation status.
+ * @retval CH_SUCCESS   the operation succeeded.
+ * @retval CH_FAILED    the operation failed.
+ *
+ * @api
+ */
+bool_t sdc_lld_sync(SDCDriver *sdcp) {
+
+  (void)sdcp;
+ 
+  return CH_SUCCESS;
+}
+
+#endif /* HAL_USE_SDC */
+
+/** @} */

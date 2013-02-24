@@ -51,6 +51,7 @@
 #if !defined(PLATFORM_I2C_USE_I2C1) || defined(__DOXYGEN__)
 #define PLATFORM_I2C_USE_I2C1               FALSE
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

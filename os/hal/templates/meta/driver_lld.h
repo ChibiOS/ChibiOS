@@ -39,6 +39,19 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   XXX driver enable switch.
+ * @details If set to @p TRUE the support for XXX1 is included.
+ */
+#if !defined(PLATFORM_XXX_USE_XXX1) || defined(__DOXYGEN__)
+#define PLATFORM_XXX_USE_XXX1             FALSE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
