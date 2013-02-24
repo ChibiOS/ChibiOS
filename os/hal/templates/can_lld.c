@@ -70,7 +70,7 @@ void can_lld_init(void) {
 #if PLATFORM_CAN_USE_CAN1
   /* Driver initialization.*/
   canObjectInit(&CAND1);
-#endif
+#endif /* PLATFORM_CAN_USE_CAN1 */
 }
 
 /**
@@ -82,14 +82,16 @@ void can_lld_init(void) {
  */
 void can_lld_start(CANDriver *canp) {
 
-  /* Clock activation.*/
   if (canp->state == CAN_STOP) {
+    /* Enables the pehipheral.*/
 #if PLATFORM_CAN_USE_CAN1
     if (&CAND1 == canp) {
 
     }
-#endif
+#endif /* PLATFORM_CAN_USE_CAN1 */
   }
+  /* Configures the peripheral.*/
+
 }
 
 /**
@@ -101,9 +103,15 @@ void can_lld_start(CANDriver *canp) {
  */
 void can_lld_stop(CANDriver *canp) {
 
-  /* If in ready state then disables the CAN peripheral.*/
   if (canp->state == CAN_READY) {
+    /* Resets the peripheral.*/
 
+    /* Disables the peripheral.*/
+#if PLATFORM_CAN_USE_CAN1
+    if (&CAND1 == canp) {
+
+    }
+#endif /* PLATFORM_CAN_USE_CAN1 */
   }
 }
 

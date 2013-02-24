@@ -39,6 +39,19 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   I2C1 driver enable switch.
+ * @details If set to @p TRUE the support for I2C1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(PLATFORM_I2C_USE_I2C1) || defined(__DOXYGEN__)
+#define PLATFORM_I2C_USE_I2C1               FALSE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -47,11 +60,15 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type representing I2C address.
+ */
+typedef uint16_t i2caddr_t;
 
 /**
- * @brief   Type of a structure representing an I2C driver.
+ * @brief   Type of I2C Driver condition flags.
  */
-typedef struct I2CDriver I2CDriver;
+typedef uint32_t i2cflags_t;
 
 /**
  * @brief   I2C completion callback type.
@@ -66,24 +83,45 @@ typedef void (*i2ccallback_t)(I2CDriver *i2cp, i2cstatus_t sts);
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
  */
+
+/**
+ * @brief Driver configuration structure.
+ */
 typedef struct {
-  /** @brief I2C bus bit rate.*/
-  uint32_t                  ic_speed;
-  /* End of the mandatory fields.*/
+  uint32_t                  dummy;
 } I2CConfig;
 
 /**
- * @brief   Structure representing an I2C driver.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
+ * @brief   Type of a structure representing an I2C driver.
  */
-struct I2CDriver {
-  /** @brief Driver state.*/
-  i2cstate_t                id_state;
-  /** @brief Current configuration data.*/
-  const I2CConfig           *id_config;
-  /** @brief Current callback.*/
-  i2ccallback_t             id_callback;
+typedef struct I2CDriver I2CDriver;
+
+/**
+ * @brief Structure representing an I2C driver.
+ */
+struct I2CDriver{
+  /**
+   * @brief   Driver state.
+   */
+  i2cstate_t                state;
+  /**
+   * @brief   Current configuration data.
+   */
+  const I2CConfig           *config;
+  /**
+   * @brief   Error flags.
+   */
+  i2cflags_t                errors;
+#if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+  /**
+   * @brief   Mutex protecting the bus.
+   */
+  Mutex                     mutex;
+#elif CH_USE_SEMAPHORES
+  Semaphore                 semaphore;
+#endif
+#endif /* I2C_USE_MUTUAL_EXCLUSION */
 #if defined(I2C_DRIVER_EXT_FIELDS)
   I2C_DRIVER_EXT_FIELDS
 #endif
@@ -94,9 +132,23 @@ struct I2CDriver {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Get errors from I2C driver.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
+ */
+#define i2c_lld_get_errors(i2cp) ((i2cp)->errors)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if !defined(__DOXYGEN__)
+#if PLATFORM_I2C_USE_I2C1
+extern I2CDriver I2CD1;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -104,12 +156,13 @@ extern "C" {
   void i2c_lld_init(void);
   void i2c_lld_start(I2CDriver *i2cp);
   void i2c_lld_stop(I2CDriver *i2cp);
-  void i2c_lld_master_start(I2CDriver *i2cp, uint16_t header);
-  void i2c_lld_master_stop(I2CDriver *i2cp);
-  void i2c_lld_master_restart(I2CDriver *i2cp);
-  void i2c_lld_master_transmit(I2CDriver *i2cp, size_t n,
-                               const uint8_t *txbuf);
-  void i2c_lld_master_receive(I2CDriver *i2cp, size_t n, uint8_t *rxbuf);
+  msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
+                                        const uint8_t *txbuf, size_t txbytes,
+                                        uint8_t *rxbuf, size_t rxbytes,
+                                        systime_t timeout);
+  msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
+                                       uint8_t *rxbuf, size_t rxbytes,
+                                       systime_t timeout);
 #ifdef __cplusplus
 }
 #endif

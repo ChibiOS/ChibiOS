@@ -39,6 +39,11 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/** @brief XXX1 driver identifier.*/
+#if PLATFORM_XXX_USE_XXX1 || defined(__DOXYGEN__)
+XXXDriver XXXD1;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -62,6 +67,10 @@
  */
 void xxx_lld_init(void) {
 
+#if PLATFORM_XXX_USE_XXX1
+  /* Driver initialization.*/
+  xxxObjectInit(&XXXD1);
+#endif /* PLATFORM_XXX_USE_XXX1 */
 }
 
 /**
@@ -74,9 +83,15 @@ void xxx_lld_init(void) {
 void xxx_lld_start(XXXDriver *xxxp) {
 
   if (xxxp->state == XXX_STOP) {
-    /* Clock activation.*/
+    /* Enables the pehipheral.*/
+#if PLATFORM_XXX_USE_XXX1
+    if (&XXXD1 == xxxp) {
+
+    }
+#endif /* PLATFORM_XXX_USE_XXX1 */
   }
-  /* Configuration.*/
+  /* Configures the peripheral.*/
+
 }
 
 /**
@@ -89,8 +104,14 @@ void xxx_lld_start(XXXDriver *xxxp) {
 void xxx_lld_stop(XXXDriver *xxxp) {
 
   if (xxxp->state == XXX_READY) {
-    /* Clock deactivation.*/
+    /* Resets the peripheral.*/
 
+    /* Disables the peripheral.*/
+#if PLATFORM_XXX_USE_XXX1
+    if (&XXXD1 == xxxp) {
+
+    }
+#endif /* PLATFORM_XXX_USE_XXX1 */
   }
 }
 

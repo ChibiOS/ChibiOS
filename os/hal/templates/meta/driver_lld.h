@@ -83,6 +83,10 @@ struct XXXDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#if PLATFORM_XXX_USE_XXX1 && !defined(__DOXYGEN__)
+extern XXXDriver XXXD1;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

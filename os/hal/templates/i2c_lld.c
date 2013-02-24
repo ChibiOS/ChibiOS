@@ -39,6 +39,11 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/** @brief I2C1 driver identifier.*/
+#if PLATFORM_I2C_USE_I2C1 || defined(__DOXYGEN__)
+I2CDriver I2CD1;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -62,6 +67,9 @@
  */
 void i2c_lld_init(void) {
 
+#if PLATFORM_I2C_USE_I2C1
+  i2cObjectInit(&I2CD1);
+#endif /* PLATFORM_I2C_USE_I2C1 */
 }
 
 /**
@@ -73,10 +81,16 @@ void i2c_lld_init(void) {
  */
 void i2c_lld_start(I2CDriver *i2cp) {
 
-  if (i2cp->i2c_state == I2C_STOP) {
-    /* Clock activation.*/
+  if (i2cp->state == I2C_STOP) {
+    /* Enables the pehipheral.*/
+#if PLATFORM_I2C_USE_I2C1
+    if (&I2CD1 == i2cp) {
+
+    }
+#endif /* PLATFORM_I2C_USE_I2C1 */
   }
-  /* Configuration.*/
+  /* Configures the peripheral.*/
+
 }
 
 /**
@@ -88,70 +102,79 @@ void i2c_lld_start(I2CDriver *i2cp) {
  */
 void i2c_lld_stop(I2CDriver *i2cp) {
 
+  if (i2cp->state != I2C_STOP) {
+    /* Resets the peripheral.*/
+
+    /* Disables the peripheral.*/
+#if PLATFORM_I2C_USE_I2C1
+    if (&I2CD1 == i2cp) {
+
+    }
+#endif /* PLATFORM_I2C_USE_I2C1 */
+  }
 }
 
 /**
- * @brief   Initiates a master bus transaction.
- * @details This function sends a start bit followed by an one or two bytes
- *          header.
+ * @brief   Receives data via the I2C bus as master.
+ * @details Number of receiving bytes must be more than 1 on STM32F1x. This is
+ *          hardware restriction.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] header    transaction header
+ * @param[in] addr      slave device address
+ * @param[out] rxbuf    pointer to the receive buffer
+ * @param[in] rxbytes   number of bytes to be received
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval RDY_OK       if the function succeeded.
+ * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval RDY_TIMEOUT  if a timeout occurred before operation end. <b>After a
+ *                      timeout the driver must be stopped and restarted
+ *                      because the bus is in an uncertain state</b>.
  *
  * @notapi
  */
-void i2c_lld_master_start(I2CDriver *i2cp, uint16_t header) {
+msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
+                                     uint8_t *rxbuf, size_t rxbytes,
+                                     systime_t timeout) {
 
+  return RDY_OK;
 }
 
 /**
- * @brief   Terminates a master bus transaction.
+ * @brief   Transmits data via the I2C bus as master.
+ * @details Number of receiving bytes must be 0 or more than 1 on STM32F1x.
+ *          This is hardware restriction.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] addr      slave device address
+ * @param[in] txbuf     pointer to the transmit buffer
+ * @param[in] txbytes   number of bytes to be transmitted
+ * @param[out] rxbuf    pointer to the receive buffer
+ * @param[in] rxbytes   number of bytes to be received
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval RDY_OK       if the function succeeded.
+ * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval RDY_TIMEOUT  if a timeout occurred before operation end. <b>After a
+ *                      timeout the driver must be stopped and restarted
+ *                      because the bus is in an uncertain state</b>.
  *
  * @notapi
  */
-void i2c_lld_master_stop(I2CDriver *i2cp) {
+msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
+                                      const uint8_t *txbuf, size_t txbytes,
+                                      uint8_t *rxbuf, size_t rxbytes,
+                                      systime_t timeout) {
 
-}
-
-/**
- * @brief   Sends a restart bit.
- * @details Restart bits are required by some types of I2C transactions.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- *
- * @notapi
- */
-void i2c_lld_master_restart(I2CDriver *i2cp) {
-
-}
-
-/**
- * @brief   Master transmission.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] n         number of bytes to be transmitted
- * @param[in] txbuf     transmit data buffer pointer
- *
- * @notapi
- */
-void i2c_lld_master_transmit(I2CDriver *i2cp, size_t n,
-                             const uint8_t *txbuf) {
-
-}
-
-/**
- * @brief   Master receive.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] n         number of bytes to be transmitted
- * @param[in] rxbuf     receive data buffer pointer
- *
- * @notapi
- */
-void i2c_lld_master_receive(I2CDriver *i2cp, size_t n, uint8_t *rxbuf) {
-
+  return RDY_OK;
 }
 
 #endif /* HAL_USE_I2C */
