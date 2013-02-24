@@ -36,12 +36,12 @@
 /**
  * @brief   Defines the support for realtime counters in the HAL.
  */
-#define HAL_IMPLEMENTS_COUNTERS TRUE
+#define HAL_IMPLEMENTS_COUNTERS             TRUE
 
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME   ""
+#define PLATFORM_NAME                       ""
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
