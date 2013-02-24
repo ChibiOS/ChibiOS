@@ -39,6 +39,11 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/** @brief CAN1 driver identifier.*/
+#if PLATFORM_CAN_USE_CAN1 || defined(__DOXYGEN__)
+CANDriver CAND1;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -62,6 +67,10 @@
  */
 void can_lld_init(void) {
 
+#if PLATFORM_CAN_USE_CAN1
+  /* Driver initialization.*/
+  canObjectInit(&CAND1);
+#endif
 }
 
 /**
@@ -73,6 +82,14 @@ void can_lld_init(void) {
  */
 void can_lld_start(CANDriver *canp) {
 
+  /* Clock activation.*/
+  if (canp->state == CAN_STOP) {
+#if PLATFORM_CAN_USE_CAN1
+    if (&CAND1 == canp) {
+
+    }
+#endif
+  }
 }
 
 /**
@@ -90,20 +107,32 @@ void can_lld_stop(CANDriver *canp) {
   }
 }
 
-
 /**
  * @brief   Determines whether a frame can be transmitted.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
+ *
  * @return              The queue space availability.
  * @retval FALSE        no space in the transmit queue.
  * @retval TRUE         transmit slot available.
  *
  * @notapi
  */
-bool_t can_lld_can_transmit(CANDriver *canp) {
+bool_t can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
 
-  return FALSE;
+  switch (mailbox) {
+  case CAN_ANY_MAILBOX:
+    return FALSE;
+  case 1:
+    return FALSE;
+  case 2:
+    return FALSE;
+  case 3:
+    return FALSE;
+  default:
+    return FALSE;
+  }
 }
 
 /**
@@ -111,10 +140,13 @@ bool_t can_lld_can_transmit(CANDriver *canp) {
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] ctfp      pointer to the CAN frame to be transmitted
+ * @param[in] mailbox   mailbox number,  @p CAN_ANY_MAILBOX for any mailbox
  *
  * @notapi
  */
-void can_lld_transmit(CANDriver *canp, const CANTxFrame *ctfp) {
+void can_lld_transmit(CANDriver *canp,
+                      canmbx_t mailbox,
+                      const CANTxFrame *ctfp) {
 
 }
 
@@ -122,26 +154,40 @@ void can_lld_transmit(CANDriver *canp, const CANTxFrame *ctfp) {
  * @brief   Determines whether a frame has been received.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
+ *
  * @return              The queue space availability.
  * @retval FALSE        no space in the transmit queue.
  * @retval TRUE         transmit slot available.
  *
  * @notapi
  */
-bool_t can_lld_can_receive(CANDriver *canp) {
+bool_t can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
 
-  return FALSE;
+  switch (mailbox) {
+  case CAN_ANY_MAILBOX:
+    return FALSE
+  case 1:
+    return FALSE
+  case 2:
+    return FALSE
+  default:
+    return FALSE;
+  }
 }
 
 /**
  * @brief   Receives a frame from the input queue.
  *
  * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  * @param[out] crfp     pointer to the buffer where the CAN frame is copied
  *
  * @notapi
  */
-void can_lld_receive(CANDriver *canp, CANRxFrame *crfp) {
+void can_lld_receive(CANDriver *canp,
+                     canmbx_t mailbox,
+                     CANRxFrame *crfp) {
 
 }
 

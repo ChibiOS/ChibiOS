@@ -50,6 +50,12 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+/*
+ * Configuration-related checks.
+ */
+#if !defined(PLATFORM_MCUCONF)
+#error "Using a wrong mcuconf.h file, PLATFORM_MCUCONF not defined"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

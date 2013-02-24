@@ -18,16 +18,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ch.h"
-#include "hal.h"
-
 /*
- * Simulator main.
+ * Platform drivers configuration.
+ * The following settings override the default settings present in
+ * the various device driver implementation headers.
+ * Note that the settings for each driver only have effect if the whole
+ * driver is enabled in halconf.h.
  */
-int main(int argc, char *argv[]) {
- 
-  (void)argc;
-  (void)argv;
 
-  return 0;
-}
+#define PLATFORM_MCUCONF
