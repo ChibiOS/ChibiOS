@@ -119,7 +119,7 @@ typedef enum {
  * @{
  */
 /**
- * @bried   Converts a mailbox index to a bit mask.
+ * @brief   Converts a mailbox index to a bit mask.
  */
 #define CAN_MAILBOX_TO_MASK(mbx) (1 << ((mbx) - 1))
 
