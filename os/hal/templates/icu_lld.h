@@ -52,7 +52,7 @@
  * @details If set to @p TRUE the support for ICU1 is included.
  */
 #if !defined(PLATFORM_ICU_USE_ICU1) || defined(__DOXYGEN__)
-#define PLATFORM_ICU_USE_ICU1             FALSE
+#define PLATFORM_ICU_USE_ICU1               FALSE
 #endif
 /** @} */
 

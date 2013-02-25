@@ -50,13 +50,17 @@
 /*===========================================================================*/
 
 /**
- * @brief   OTG1 driver enable switch.
- * @details If set to @p TRUE the support for OTG_FS is included.
- * @note    The default is @p TRUE.
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   USB driver enable switch.
+ * @details If set to @p TRUE the support for USB1 is included.
  */
 #if !defined(PLATFORM_USB_USE_USB1) || defined(__DOXYGEN__)
-#define PLATFORM_USB_USE_USB1               TRUE
+#define PLATFORM_USB_USE_USB1               FALSE
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

@@ -119,6 +119,7 @@
   (backported to 2.4.3).
 - FIX: Fixed wrong SPI path in platform_f105_f107.mk (bug 3598151).
 - FIX: Fixed PHY powerdown issues not fixed (bug 3596911).
+- NEW: Added a build test project for low level device driver templates.
 - NEW: Enhanced CAN driver model, support for mailboxes has been added. STM32
   driver implementation upgraded.
 - NEW: Added ADC and PWM drivers for the AT91SAM7 platform, both donated

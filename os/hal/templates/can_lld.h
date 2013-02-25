@@ -64,7 +64,7 @@
  * @details If set to @p TRUE the support for CAN1 is included.
  */
 #if !defined(PLATFORM_CAN_USE_CAN1) || defined(__DOXYGEN__)
-#define PLATFORM_CAN_USE_CAN1             FALSE
+#define PLATFORM_CAN_USE_CAN1               FALSE
 #endif
 /** @} */
 

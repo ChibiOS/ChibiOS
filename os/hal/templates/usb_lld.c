@@ -39,7 +39,9 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief OTG_FS driver identifier.*/
+/**
+ * @brief   USB1 driver identifier.
+ */
 #if PLATFORM_USB_USE_USB1 || defined(__DOXYGEN__)
 USBDriver USBD1;
 #endif
@@ -65,11 +67,6 @@ static union {
 } ep0_state;
 
 /**
- * @brief   Buffer for the EP0 setup packets.
- */
-static uint8_t ep0setup_buffer[8];
-
-/**
  * @brief   EP0 initialization structure.
  */
 static const USBEndpointConfig ep0config = {
@@ -80,9 +77,7 @@ static const USBEndpointConfig ep0config = {
   0x40,
   0x40,
   &ep0_state.in,
-  &ep0_state.out,
-  1,
-  ep0setup_buffer
+  &ep0_state.out
 };
 
 /*===========================================================================*/
@@ -108,10 +103,10 @@ static const USBEndpointConfig ep0config = {
  */
 void usb_lld_init(void) {
 
-  /* Driver initialization.*/
 #if PLATFORM_USB_USE_USB1
+  /* Driver initialization.*/
   usbObjectInit(&USBD1);
-#endif
+#endif /* PLATFORM_USB_USE_USB1 */
 }
 
 /**
@@ -122,16 +117,17 @@ void usb_lld_init(void) {
  * @notapi
  */
 void usb_lld_start(USBDriver *usbp) {
-  stm32_otg_t *otgp = usbp->otg;
 
   if (usbp->state == USB_STOP) {
-    /* Clock activation.*/
-#if STM32_USB_USE_OTG1
+    /* Enables the pehipheral.*/
+#if PLATFORM_USB_USE_USB1
     if (&USBD1 == usbp) {
 
-    /* Reset procedure enforced on driver start.*/
-    _usb_reset(usbp);
+    }
+#endif /* PLATFORM_USB_USE_USB1 */
   }
+  /* Configures the peripheral.*/
+
 }
 
 /**
@@ -143,9 +139,15 @@ void usb_lld_start(USBDriver *usbp) {
  */
 void usb_lld_stop(USBDriver *usbp) {
 
-  /* If in ready state then disables the USB clock.*/
-  if (usbp->state != USB_STOP) {
+  if (usbp->state == USB_READY) {
+    /* Resets the peripheral.*/
 
+    /* Disables the peripheral.*/
+#if PLATFORM_USB_USE_USB1
+    if (&USBD1 == usbp) {
+
+    }
+#endif /* PLATFORM_USB_USE_USB1 */
   }
 }
 
@@ -174,6 +176,8 @@ void usb_lld_reset(USBDriver *usbp) {
  */
 void usb_lld_set_address(USBDriver *usbp) {
 
+  (void)usbp;
+
 }
 
 /**
@@ -186,6 +190,9 @@ void usb_lld_set_address(USBDriver *usbp) {
  */
 void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
+  (void)ep;
+
 }
 
 /**
@@ -196,6 +203,8 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_disable_endpoints(USBDriver *usbp) {
+
+  (void)usbp;
 
 }
 
@@ -213,6 +222,10 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
  */
 usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
+  (void)ep;
+
+  return EP_STATUS_DISABLED;
 }
 
 /**
@@ -229,6 +242,10 @@ usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
  */
 usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
+  (void)ep;
+
+  return EP_STATUS_DISABLED;
 }
 
 /**
@@ -247,6 +264,10 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
 
+  (void)usbp;
+  (void)ep;
+  (void)buf;
+
 }
 
 /**
@@ -258,14 +279,9 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
  * @notapi
  */
 void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep) {
-  uint32_t pcnt;
-  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  /* Transfer initialization.*/
-  pcnt = (osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
-         usbp->epc[ep]->out_maxsize;
-  usbp->otg->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
-                               DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
+  (void)usbp;
+  (void)ep;
 
 }
 
@@ -278,7 +294,9 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
-  USBInEndpointState *isp = usbp->epc[ep]->in_state;
+
+  (void)usbp;
+  (void)ep;
 
 }
 
@@ -292,6 +310,9 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
+  (void)ep;
+
 }
 
 /**
@@ -303,6 +324,9 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
+
+  (void)usbp;
+  (void)ep;
 
 }
 
@@ -316,6 +340,9 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
+  (void)ep;
+
 }
 
 /**
@@ -327,6 +354,9 @@ void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_stall_in(USBDriver *usbp, usbep_t ep) {
+
+  (void)usbp;
+  (void)ep;
 
 }
 
@@ -340,6 +370,9 @@ void usb_lld_stall_in(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_clear_out(USBDriver *usbp, usbep_t ep) {
 
+  (void)usbp;
+  (void)ep;
+
 }
 
 /**
@@ -351,6 +384,9 @@ void usb_lld_clear_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
+
+  (void)usbp;
+  (void)ep;
 
 }
 

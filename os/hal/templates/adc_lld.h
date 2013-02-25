@@ -49,7 +49,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(PLATFORM_ADC_USE_ADC1) || defined(__DOXYGEN__)
-#define PLATFORM_ADC_USE_ADC1                  FALSE
+#define PLATFORM_ADC_USE_ADC1               FALSE
 #endif
 /** @} */
 

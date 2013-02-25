@@ -39,6 +39,13 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   SD1 driver identifier.
+ */
+#if PLATFORM_SERIAL_USE_SD1 || defined(__DOXYGEN__)
+SerialDriver SD1;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -47,6 +54,7 @@
  * @brief   Driver default configuration.
  */
 static const SerialConfig default_config = {
+  38400
 };
 
 /*===========================================================================*/
@@ -68,6 +76,10 @@ static const SerialConfig default_config = {
  */
 void sd_lld_init(void) {
 
+#if PLATFORM_SERIAL_USE_SD1
+  /* Driver initialization.*/
+  sdObjectInit(&SD1);
+#endif /* PLATFORM_SERIAL_USE_SD1 */
 }
 
 /**
@@ -85,6 +97,16 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
   if (config == NULL)
     config = &default_config;
 
+  if (sdp->state == SD_STOP) {
+    /* Enables the pehipheral.*/
+#if PLATFORM_SERIAL_USE_SD1
+    if (&SD1 == sdp) {
+
+    }
+#endif /* PLATFORM_SD_USE_SD1 */
+  }
+  /* Configures the peripheral.*/
+
 }
 
 /**
@@ -98,6 +120,16 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
  */
 void sd_lld_stop(SerialDriver *sdp) {
 
+  if (sdp->state == SD_READY) {
+    /* Resets the peripheral.*/
+
+    /* Disables the peripheral.*/
+#if PLATFORM_SERIAL_USE_SD1
+    if (&SD1 == sdp) {
+
+    }
+#endif /* PLATFORM_SERIAL_USE_SD1 */
+  }
 }
 
 #endif /* HAL_USE_SERIAL */

@@ -39,6 +39,19 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   SD1 driver enable switch.
+ * @details If set to @p TRUE the support for SD1 is included.
+ */
+#if !defined(PLATFORM_SERIAL_USE_SD1) || defined(__DOXYGEN__)
+#define PLATFORM_SERIAL_USE_SD1             FALSE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -55,7 +68,11 @@
  *          architecture dependent, fields.
  */
 typedef struct {
-
+  /**
+   * @brief Bit rate.
+   */
+  uint32_t                  sc_speed;
+  /* End of the mandatory fields.*/
 } SerialConfig;
 
 /**
@@ -82,6 +99,10 @@ typedef struct {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if PLATFORM_SERIAL_USE_SD1 && !defined(__DOXYGEN__)
+extern SerialDriver SD1;
+#endif
 
 #ifdef __cplusplus
 extern "C" {

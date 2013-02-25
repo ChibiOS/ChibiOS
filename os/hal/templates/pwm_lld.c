@@ -39,6 +39,13 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   PWM1 driver identifier.
+ */
+#if PLATFORM_PWM_USE_PWM1 || defined(__DOXYGEN__)
+PWMDriver PWMD1;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -62,6 +69,10 @@
  */
 void pwm_lld_init(void) {
 
+#if PLATFORM_PWM_USE_PWM1
+  /* Driver initialization.*/
+  pwmObjectInit(&PWMD1);
+#endif /* PLATFORM_PWM_USE_PWM1 */
 }
 
 /**
@@ -74,9 +85,15 @@ void pwm_lld_init(void) {
 void pwm_lld_start(PWMDriver *pwmp) {
 
   if (pwmp->state == PWM_STOP) {
-    /* Clock activation.*/
+    /* Enables the pehipheral.*/
+#if PLATFORM_PWM_USE_PWM1
+    if (&PWMD1 == pwmp) {
+
+    }
+#endif /* PLATFORM_PWM_USE_PWM1 */
   }
-  /* Configuration.*/
+  /* Configures the peripheral.*/
+
 }
 
 /**
@@ -88,6 +105,16 @@ void pwm_lld_start(PWMDriver *pwmp) {
  */
 void pwm_lld_stop(PWMDriver *pwmp) {
 
+  if (pwmp->state == PWM_READY) {
+    /* Resets the peripheral.*/
+
+    /* Disables the peripheral.*/
+#if PLATFORM_PWM_USE_PWM1
+    if (&PWMD1 == pwmp) {
+
+    }
+#endif /* PLATFORM_PWM_USE_PWM1 */
+  }
 }
 
 /**
@@ -107,6 +134,9 @@ void pwm_lld_stop(PWMDriver *pwmp) {
  * @notapi
  */
 void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
+
+  (void)pwmp;
+  (void)period;
 
 }
 
@@ -128,6 +158,10 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
                             pwmchannel_t channel,
                             pwmcnt_t width) {
 
+  (void)pwmp;
+  (void)channel;
+  (void)width;
+
 }
 
 /**
@@ -145,6 +179,9 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
  * @notapi
  */
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
+
+  (void)pwmp;
+  (void)channel;
 
 }
 

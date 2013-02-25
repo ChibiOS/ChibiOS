@@ -221,6 +221,7 @@ typedef struct {
    * @brief Bit rate.
    */
   uint32_t                  sc_speed;
+  /* End of the mandatory fields.*/
   /**
    * @brief Initialization value for the CR1 register.
    */

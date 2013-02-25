@@ -39,6 +39,13 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   UART1 driver identifier.
+ */
+#if PLATFORM_UART_USE_UART1 || defined(__DOXYGEN__)
+UARTDriver UARTD1;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -62,6 +69,10 @@
  */
 void uart_lld_init(void) {
 
+#if PLATFORM_UART_USE_UART1
+  /* Driver initialization.*/
+  uartObjectInit(&UARTD1);
+#endif /* PLATFORM_UART_USE_UART1 */
 }
 
 /**
@@ -73,10 +84,16 @@ void uart_lld_init(void) {
  */
 void uart_lld_start(UARTDriver *uartp) {
 
-  if (uartp->uart_state == UART_STOP) {
-    /* Clock activation.*/
+  if (uartp->state == UART_STOP) {
+    /* Enables the pehipheral.*/
+#if PLATFORM_UART_USE_UART1
+    if (&UARTD1 == uartp) {
+
+    }
+#endif /* PLATFORM_UART_USE_UART1 */
   }
-  /* Configuration.*/
+  /* Configures the peripheral.*/
+
 }
 
 /**
@@ -88,6 +105,16 @@ void uart_lld_start(UARTDriver *uartp) {
  */
 void uart_lld_stop(UARTDriver *uartp) {
 
+  if (uartp->state == UART_READY) {
+    /* Resets the peripheral.*/
+
+    /* Disables the peripheral.*/
+#if PLATFORM_UART_USE_UART1
+    if (&UARTD1 == uartp) {
+
+    }
+#endif /* PLATFORM_UART_USE_UART1 */
+  }
 }
 
 /**
@@ -102,6 +129,10 @@ void uart_lld_stop(UARTDriver *uartp) {
  * @notapi
  */
 void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
+
+  (void)uartp;
+  (void)n;
+  (void)txbuf;
 
 }
 
@@ -118,6 +149,9 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
  */
 size_t uart_lld_stop_send(UARTDriver *uartp) {
 
+  (void)uartp;
+
+  return 0;
 }
 
 /**
@@ -132,6 +166,10 @@ size_t uart_lld_stop_send(UARTDriver *uartp) {
  * @notapi
  */
 void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
+
+  (void)uartp;
+  (void)n;
+  (void)rxbuf;
 
 }
 
@@ -148,6 +186,9 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
  */
 size_t uart_lld_stop_receive(UARTDriver *uartp) {
 
+  (void)uartp;
+
+  return 0;
 }
 
 #endif /* HAL_USE_UART */

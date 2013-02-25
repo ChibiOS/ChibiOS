@@ -53,7 +53,7 @@
  * @details If set to @p TRUE the support for EXT1 is included.
  */
 #if !defined(PLATFORM_EXT_USE_EXT1) || defined(__DOXYGEN__)
-#define PLATFORM_EXT_USE_EXT1             FALSE
+#define PLATFORM_EXT_USE_EXT1               FALSE
 #endif
 /** @} */
 
