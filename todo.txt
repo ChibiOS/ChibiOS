@@ -6,28 +6,29 @@ X = In progress, some work done.
 N = Decided against.
 
 Version 2.5.2
-X Support for ATSAM4L devices.
+* STM32 CAN2 support.
+* Support for ATSAM4L devices.
 * Improve support for STM32F3xx devices.
-- Improve support for SPC56xBC devices.
-- Improve support for SPC56xP devices.
-- Improve support for SPC56xM devices.
-- Support for SPC56xA devices.
-- Support for SPC56EL devices.
+* Update C++ wrapper.
+X Restructure and improve documentation.
+X Support for STM32F37x devices.
+X Improve support for SPC560BC devices.
+X Improve support for SPC560P devices.
+X Improve support for SPC563M devices.
+X Improve support for SPC56EL devices.
+- Support for SPC564A devices.
+- Support for SPC560D devices.
 - Support for STM32L1xx MD and HD devices.
 - Support for STM32F427 and STM32F437 devices.
-- Restructure and improve documentation.
-X Update C++ wrapper.
-X File System infrastructure.
-  - FatFs wrapper.
+- Support for STM32F429 and STM32F439 devices.
 
 Within 2.5.x:
-- SAM4L support.
+X File System infrastructure.
+  X FatFs wrapper.
 - Recursive mutexes.
-X SPC56x support.
 X Revision of the RTCv2 driver implementation.
 X Streaming DAC/I2S driver model and STM32 implementation.
 - Specific I2C driver for STM32F0 and newer devices.
-- STM32 CAN2 support.
 - Unified LPC1xxx HAL.
   - LPC11xx and LPC13xx HALs merged in the unified one.
   - LPC17xx support.
