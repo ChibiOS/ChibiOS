@@ -52,7 +52,7 @@
  * - The STM8 does not have a dedicated interrupt stack, make sure to reserve
  *     enough stack space for interrupts in each thread stack. This can be done
  *     by modifying the @p INT_REQUIRED_STACK macro into
- *     <b>./os/ports/cosmic/STM8/chcore.h</b>.
+ *     <b>./os/ports/IAR/STM8/chcore.h</b>.
  * - The kernel currently supports only the small memory model so the
  *   kernel files should be loaded in the first 64K. Note that this is not
  *   a problem because upper addresses can be used by the user code, the
@@ -61,7 +61,7 @@
  *   because the missing support of the @p inline "C" keyword in the
  *   compiler.
  * .
- * @ingroup cosmic
+ * @ingroup iar
  */
 
 /**

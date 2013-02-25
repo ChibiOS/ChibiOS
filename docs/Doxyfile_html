@@ -707,7 +707,7 @@ RECURSIVE              = YES
 EXCLUDE                = ../os/ports/common/ARMCMx/CMSIS \
                          ../os/ports/GCC/SIMIA32 \
                          ../os/hal/platforms \
-                         ../os/hal/templates \
+                         ../os/hal/templates/meta \
                          ../os/various\devices_lib \
                          ../os/various\fatfs_bindings \
                          ../os/various\lwip_bindings \
