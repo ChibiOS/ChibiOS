@@ -44,6 +44,19 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   MAC driver enable switch.
+ * @details If set to @p TRUE the support for MAC1 is included.
+ */
+#if !defined(PLATFORM_MAC_USE_MAC1) || defined(__DOXYGEN__)
+#define PLATFORM_MAC_USE_MAC1             FALSE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -130,7 +143,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if !defined(__DOXYGEN__)
+#if PLATFORM_MAC_USE_MAC1 && !defined(__DOXYGEN__)
 extern MACDriver ETHD1;
 #endif
 

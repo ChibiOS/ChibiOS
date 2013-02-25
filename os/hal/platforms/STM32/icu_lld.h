@@ -222,7 +222,7 @@ typedef enum {
 typedef uint32_t icufreq_t;
 
 /**
- * @brief   ICU channel.
+ * @brief   ICU channel type.
  */
 typedef enum {
   ICU_CHANNEL_1 = 0,              /**< Use TIMxCH1.      */

@@ -39,7 +39,9 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief EXT1 driver identifier.*/
+/**
+ * @brief   EXT1 driver identifier.
+ */
 #if PLATFORM_EXT_USE_EXT1 || defined(__DOXYGEN__)
 EXTDriver EXTD1;
 #endif
@@ -103,7 +105,7 @@ void ext_lld_start(EXTDriver *extp) {
  */
 void ext_lld_stop(EXTDriver *extp) {
 
-  if (extp->state == EXT_READY) {
+  if (extp->state == EXT_ACTIVE) {
     /* Resets the peripheral.*/
 
     /* Disables the peripheral.*/
@@ -125,6 +127,9 @@ void ext_lld_stop(EXTDriver *extp) {
  */
 void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
 
+  (void)extp;
+  (void)channel;
+
 }
 
 /**
@@ -136,6 +141,9 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
  * @notapi
  */
 void ext_lld_channel_disable(EXTDriver *extp, expchannel_t channel) {
+
+  (void)extp;
+  (void)channel;
 
 }
 

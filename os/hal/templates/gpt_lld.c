@@ -39,7 +39,9 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief GPTD1 driver identifier.*/
+/**
+ * @brief   GPTD1 driver identifier.
+ */
 #if PLATFORM_GPT_USE_GPT1 || defined(__DOXYGEN__)
 GPTDriver GPTD1;
 #endif
@@ -125,6 +127,9 @@ void gpt_lld_stop(GPTDriver *gptp) {
  */
 void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
 
+  (void)gptp;
+  (void)interval;
+
 }
 
 /**
@@ -135,6 +140,8 @@ void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
  * @notapi
  */
 void gpt_lld_stop_timer(GPTDriver *gptp) {
+
+  (void)gptp;
 
 }
 
@@ -150,6 +157,9 @@ void gpt_lld_stop_timer(GPTDriver *gptp) {
  * @notapi
  */
 void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
+
+  (void)gptp;
+  (void)interval;
 
 }
 

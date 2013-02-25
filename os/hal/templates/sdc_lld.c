@@ -39,7 +39,9 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief SDCD1 driver identifier.*/
+/**
+ * @brief   SDCD1 driver identifier.
+ */
 #if PLATFORM_SDC_USE_SDC1 || defined(__DOXYGEN__)
 SDCDriver SDCD1;
 #endif
@@ -143,7 +145,6 @@ void sdc_lld_stop_clk(SDCDriver *sdcp) {
  * @notapi
  */
 void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
-  uint32_t clk = SDIO->CLKCR & ~SDIO_CLKCR_WIDBUS;
 
   (void)sdcp;
 
@@ -172,6 +173,8 @@ void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
 void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
 
   (void)sdcp;
+  (void)cmd;
+  (void)arg;
 }
 
 /**
@@ -191,8 +194,13 @@ void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
  */
 bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                               uint32_t *resp) {
- 
- return CH_SUCCESS;
+
+  (void)sdcp;
+  (void)cmd;
+  (void)arg;
+  (void)resp;
+
+  return CH_SUCCESS;
 }
 
 /**
@@ -213,6 +221,9 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                   uint32_t *resp) {
 
   (void)sdcp;
+  (void)cmd;
+  (void)arg;
+  (void)resp;
 
   return CH_SUCCESS;
 }
@@ -235,6 +246,9 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                  uint32_t *resp) {
 
   (void)sdcp;
+  (void)cmd;
+  (void)arg;
+  (void)resp;
 
   return CH_SUCCESS;
 }
@@ -256,6 +270,11 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
 bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
                     uint8_t *buf, uint32_t n) {
 
+  (void)sdcp;
+  (void)startblk;
+  (void)buf;
+  (void)n;
+
   return CH_SUCCESS;
 }
 
@@ -275,6 +294,11 @@ bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
  */
 bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
                      const uint8_t *buf, uint32_t n) {
+
+  (void)sdcp;
+  (void)startblk;
+  (void)buf;
+  (void)n;
 
   return CH_SUCCESS;
 }

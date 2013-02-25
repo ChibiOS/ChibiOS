@@ -39,7 +39,9 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief CAN1 driver identifier.*/
+/**
+ * @brief   CAN1 driver identifier.
+ */
 #if PLATFORM_CAN_USE_CAN1 || defined(__DOXYGEN__)
 CANDriver CAND1;
 #endif
@@ -129,6 +131,8 @@ void can_lld_stop(CANDriver *canp) {
  */
 bool_t can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
 
+  (void)canp;
+
   switch (mailbox) {
   case CAN_ANY_MAILBOX:
     return FALSE;
@@ -156,6 +160,10 @@ void can_lld_transmit(CANDriver *canp,
                       canmbx_t mailbox,
                       const CANTxFrame *ctfp) {
 
+  (void)canp;
+  (void)mailbox;
+  (void)ctfp;
+
 }
 
 /**
@@ -172,13 +180,16 @@ void can_lld_transmit(CANDriver *canp,
  */
 bool_t can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
 
+  (void)canp;
+  (void)mailbox;
+
   switch (mailbox) {
   case CAN_ANY_MAILBOX:
-    return FALSE
+    return FALSE;
   case 1:
-    return FALSE
+    return FALSE;
   case 2:
-    return FALSE
+    return FALSE;
   default:
     return FALSE;
   }
@@ -197,6 +208,10 @@ void can_lld_receive(CANDriver *canp,
                      canmbx_t mailbox,
                      CANRxFrame *crfp) {
 
+  (void)canp;
+  (void)mailbox;
+  (void)crfp;
+
 }
 
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)
@@ -209,6 +224,8 @@ void can_lld_receive(CANDriver *canp,
  */
 void can_lld_sleep(CANDriver *canp) {
 
+  (void)canp;
+
 }
 
 /**
@@ -219,6 +236,8 @@ void can_lld_sleep(CANDriver *canp) {
  * @notapi
  */
 void can_lld_wakeup(CANDriver *canp) {
+
+  (void)canp;
 
 }
 #endif /* CAN_USE_SLEEP_MODE */

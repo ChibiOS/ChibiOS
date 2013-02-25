@@ -39,7 +39,9 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief XXX1 driver identifier.*/
+/**
+ * @brief   XXX1 driver identifier.
+ */
 #if PLATFORM_XXX_USE_XXX1 || defined(__DOXYGEN__)
 XXXDriver XXXD1;
 #endif

@@ -39,7 +39,9 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief ADC1 driver identifier.*/
+/**
+ * @brief   ADC1 driver identifier.
+ */
 #if PLATFORM_ADC_USE_ADC1 || defined(__DOXYGEN__)
 ADCDriver ADCD1;
 #endif
@@ -124,6 +126,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
 
+  (void)adcp;
 }
 
 /**
@@ -135,6 +138,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
+  (void)adcp;
 }
 
 #endif /* HAL_USE_ADC */

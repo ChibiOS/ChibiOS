@@ -39,6 +39,13 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   ICU1 driver identifier.
+ */
+#if PLATFORM_ICU_USE_ICU1 || defined(__DOXYGEN__)
+ICUDriver ICUD1;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables.                                                   */
 /*===========================================================================*/
@@ -62,6 +69,10 @@
  */
 void icu_lld_init(void) {
 
+#if PLATFORM_ICU_USE_ICU1
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD1);
+#endif /* PLATFORM_ICU_USE_ICU1 */
 }
 
 /**
@@ -74,9 +85,15 @@ void icu_lld_init(void) {
 void icu_lld_start(ICUDriver *icup) {
 
   if (icup->state == ICU_STOP) {
-    /* Clock activation.*/
+    /* Enables the pehipheral.*/
+#if PLATFORM_ICU_USE_ICU1
+    if (&ICUD1 == icup) {
+
+    }
+#endif /* PLATFORM_ICU_USE_ICU1 */
   }
-  /* Configuration.*/
+  /* Configures the peripheral.*/
+
 }
 
 /**
@@ -89,8 +106,14 @@ void icu_lld_start(ICUDriver *icup) {
 void icu_lld_stop(ICUDriver *icup) {
 
   if (icup->state == ICU_READY) {
-    /* Clock deactivation.*/
+    /* Resets the peripheral.*/
 
+    /* Disables the peripheral.*/
+#if PLATFORM_ICU_USE_ICU1
+    if (&ICUD1 == icup) {
+
+    }
+#endif /* PLATFORM_ICU_USE_ICU1 */
   }
 }
 
@@ -103,6 +126,8 @@ void icu_lld_stop(ICUDriver *icup) {
  */
 void icu_lld_enable(ICUDriver *icup) {
 
+  (void)icup;
+
 }
 
 /**
@@ -113,6 +138,8 @@ void icu_lld_enable(ICUDriver *icup) {
  * @notapi
  */
 void icu_lld_disable(ICUDriver *icup) {
+
+  (void)icup;
 
 }
 
@@ -128,6 +155,9 @@ void icu_lld_disable(ICUDriver *icup) {
  */
 icucnt_t icu_lld_get_width(ICUDriver *icup) {
 
+  (void)icup;
+
+  return 0;
 }
 
 /**
@@ -142,6 +172,9 @@ icucnt_t icu_lld_get_width(ICUDriver *icup) {
  */
 icucnt_t icu_lld_get_period(ICUDriver *icup) {
 
+  (void)icup;
+
+  return 0;
 }
 
 #endif /* HAL_USE_ICU */
