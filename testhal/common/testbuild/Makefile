@@ -64,7 +64,7 @@ endif
 PROJECT = ch
 
 # Imported source files and paths
-CHIBIOS = ../..
+CHIBIOS = ../../..
 #include $(CHIBIOS)/boards/ST_STM32F4_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/templates/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
