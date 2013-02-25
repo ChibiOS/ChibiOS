@@ -104,7 +104,7 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_init(config)
+#define pal_lld_init(config) _pal_lld_init(config)
 
 /**
  * @brief   Reads the physical I/O port states.
@@ -114,7 +114,7 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readport(port)
+#define pal_lld_readport(port) 0
 
 /**
  * @brief   Reads the output latch.
@@ -126,7 +126,7 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readlatch(port)
+#define pal_lld_readlatch(port) 0
 
 /**
  * @brief   Writes a bits mask on a I/O port.
@@ -190,7 +190,7 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readgroup(port, mask, offset)
+#define pal_lld_readgroup(port, mask, offset) 0
 
 /**
  * @brief   Writes a group of bits.
@@ -206,7 +206,7 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writegroup(port, mask, offset, bits)
+#define pal_lld_writegroup(port, mask, offset, bits) (void)bits
 
 /**
  * @brief   Pads group mode setup.
@@ -238,7 +238,7 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readpad(port, pad)
+#define pal_lld_readpad(port, pad) PAL_LOW
 
 /**
  * @brief   Writes a logical state on an output pad.
@@ -311,6 +311,21 @@ typedef uint32_t ioportid_t;
  * @notapi
  */
 #define pal_lld_setpadmode(port, pad, mode)
+
+#if !defined(__DOXYGEN__)
+extern const PALConfig pal_default_config;
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _pal_lld_init(const PALConfig *config);
+  void _pal_lld_setgroupmode(ioportid_t port,
+                             ioportmask_t mask,
+                             iomode_t mode);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* HAL_USE_PAL */
 

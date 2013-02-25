@@ -152,12 +152,12 @@ void spc_clock_init(void) {
 
   /* Enables the XOSC in order to check its functionality before proceeding
      with the initialization.*/
-/*  ME.DRUN.R = SPC5_ME_MC_SYSCLK_IRC | SPC5_ME_MC_IRCON | SPC5_ME_MC_XOSC0ON |           \
-              SPC5_ME_MC_CFLAON_NORMAL | SPC5_ME_MC_CFLAON_NORMAL |
-              SPC5_ME_MC_MVRON;
+  ME.DRUN.R = SPC5_ME_MC_SYSCLK_IRC    | SPC5_ME_MC_IRCON         |         \
+              SPC5_ME_MC_XOSC0ON       | SPC5_ME_MC_CFLAON_NORMAL |         \
+              SPC5_ME_MC_DFLAON_NORMAL | SPC5_ME_MC_MVRON;
   if (halSPCSetRunMode(SPC5_RUNMODE_DRUN) == CH_FAILED) {
     SPC5_CLOCK_FAILURE_HOOK();
-  }*/
+  }
 
   /* Initialization of the FMPLLs settings.*/
   CGM.FMPLL[0].CR.R = SPC5_FMPLL0_ODF |
