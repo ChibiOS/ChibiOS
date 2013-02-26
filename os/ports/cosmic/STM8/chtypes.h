@@ -29,14 +29,9 @@
 #ifndef _CHTYPES_H_
 #define _CHTYPES_H_
 
-#define __need_NULL
-#define __need_size_t
 #include <stddef.h>
 
-//#if !defined(_STDINT_H) && !defined(__STDINT_H_)
-//#include <stdint.h>
-//#endif
-
+typedef unsigned char   uint8t;         /**< C99-style boolean.             */
 typedef unsigned char   uint8_t;        /**< C99-style 8 bits unsigned.     */
 typedef signed char     int8_t;         /**< C99-style 8 bits signed.       */
 typedef unsigned int    uint16_t;       /**< C99-style 16 bits unsigned.    */
@@ -47,7 +42,15 @@ typedef uint8_t         uint_fast8_t;   /**< C99-style 8 bits unsigned.     */
 typedef uint16_t        uint_fast16_t;  /**< C99-style 16 bits unsigned.    */
 typedef uint32_t        uint_fast32_t;  /**< C99-style 32 bits unsigned.    */
 
-typedef int8_t          bool_t;         /**< Fast boolean type.             */
+#if !defined(false) || defined(__DOXYGEN__)
+#define false           0
+#endif
+
+#if !defined(true) || defined(__DOXYGEN__)
+#define true            (!false)
+#endif
+
+typedef bool            bool_t;         /**< Fast boolean type.             */
 typedef uint8_t         tmode_t;        /**< Thread flags.                  */
 typedef uint8_t         tstate_t;       /**< Thread state.                  */
 typedef uint8_t         trefs_t;        /**< Thread references counter.     */

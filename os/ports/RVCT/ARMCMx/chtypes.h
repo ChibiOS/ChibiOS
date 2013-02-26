@@ -29,14 +29,11 @@
 #ifndef _CHTYPES_H_
 #define _CHTYPES_H_
 
-#define __need_NULL
-#define __need_size_t
-#define __need_ptrdiff_t
 #include <stddef.h>
-
 #include <stdint.h>
+#include <stdbool.h>
 
-typedef int32_t         bool_t;         /**< Fast boolean type.             */
+typedef bool            bool_t;         /**< Fast boolean type.             */
 typedef uint8_t         tmode_t;        /**< Thread flags.                  */
 typedef uint8_t         tstate_t;       /**< Thread state.                  */
 typedef uint8_t         trefs_t;        /**< Thread references counter.     */
