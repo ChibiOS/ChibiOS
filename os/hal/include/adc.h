@@ -64,8 +64,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if ADC_USE_WAIT && !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
-#error "ADC_USE_WAIT requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
+#if ADC_USE_MUTUAL_EXCLUSION && !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
+#error "ADC_USE_MUTUAL_EXCLUSION requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
 #endif
 
 /*===========================================================================*/
