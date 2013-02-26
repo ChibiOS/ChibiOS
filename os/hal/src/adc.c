@@ -285,7 +285,7 @@ msg_t adcConvert(ADCDriver *adcp,
   chSysLock();
   chDbgAssert(adcp->thread == NULL, "adcConvert(), #1", "already waiting");
   adcStartConversionI(adcp, grpp, samples, depth);
-  (adcp)->thread = chThdSelf();
+  adcp->thread = chThdSelf();
   chSchGoSleepS(THD_STATE_SUSPENDED);
   msg = chThdSelf()->p_u.rdymsg;
   chSysUnlock();
