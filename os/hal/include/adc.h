@@ -64,8 +64,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if ADC_USE_WAIT && !CH_USE_SEMAPHORES
-#error "ADC driver requires CH_USE_SEMAPHORES when ADC_USE_WAIT is enabled"
+#if ADC_USE_WAIT && !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
+#error "ADC_USE_WAIT requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
 #endif
 
 /*===========================================================================*/
