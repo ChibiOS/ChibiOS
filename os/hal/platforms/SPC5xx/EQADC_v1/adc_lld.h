@@ -30,28 +30,110 @@
 /*===========================================================================*/
 
 /**
- * @name    CFIFO commands
+ * @name    Internal registers indexes
  * @{
  */
-#define ADC_CFIFO_CHANNEL_MASK  (0xFFU << 8)/**< @brief Channel number mask.*/
-#define ADC_CFIFO_CHANNEL(n)    ((n) << 8)  /**< @brief Channel number.     */
-#define ADC_CFIFO_FMT_RJU       (0U << 16)  /**< @brief Unsigned samples.   */
-#define ADC_CFIFO_FMT_RJS       (1U << 16)  /**< @brief Signed samples.     */
-#define ADC_CFIFO_TSR           (1U << 17)  /**< @brief Time stamp request. */
-#define ADC_CFIFO_LST_MASK      (3U << 18)  /**< @brief Sample time.        */
-#define ADC_CFIFO_LST_2         (0U << 18)  /**< @brief 2 clock cycles.     */
-#define ADC_CFIFO_LST_8         (1U << 18)  /**< @brief 8 clock cycles.     */
-#define ADC_CFIFO_LST_64        (2U << 18)  /**< @brief 64 clock cycles.    */
-#define ADC_CFIFO_LST_128       (3U << 18)  /**< @brief 128 clock cycles.   */
-#define ADC_CFIFO_MSG_MASK      (15U << 20) /**< @brief Message mask.       */
-#define ADC_CFIFO_MSG_RFIFO(n)  ((n) << 20) /**< @brief Result in RFIFO0..5.*/
-#define ADC_CFIFO_MSG_NULL      (6U << 20)  /**< @brief Null message.       */
-#define ADC_CFIFO_CAL           (1U << 24)  /**< @brief Calibrated result.  */
-#define ADC_CFIFO_BN_MASK       (1U << 25)  /**< @brief Buffer number mask. */
-#define ADC_CFIFO_BN(n)         ((n) << 25) /**< @brief Buffer number.      */
-#define ADC_CFIFO_REP           (1U << 29)  /**< @brief Repeat loop flag.   */
-#define ADC_CFIFO_PAUSE         (1U << 30)  /**< @brief Pause flag.         */
-#define ADC_CFIFO_EOQ           (1U << 31)  /**< @brief End of queue flag.  */
+#define ADC_REG_CR                  0x1
+#define ADC_REG_TSCR                0x2
+#define ADC_REG_TBCR                0x3
+#define ADC_REG_GCCR                0x4
+#define ADC_REG_OCCR                0x5
+#define ADC_REG_AC1GCCR             0x31
+#define ADC_REG_AC1OCCR             0x32
+#define ADC_REG_AC2GCCR             0x35
+#define ADC_REG_AC2OCCR             0x36
+#define ADC_REG_AC1CR               0x30
+#define ADC_REG_AC2CR               0x34
+#define ADC_REG_AC3CR               0x38
+#define ADC_REG_AC4CR               0x3C
+#define ADC_REG_AC5CR               0x40
+#define ADC_REG_AC6CR               0x44
+#define ADC_REG_AC7CR               0x48
+#define ADC_REG_AC8CR               0x4C
+#define ADC_REG_PUDCR(n)            (0x70 + (n))
+#define ADC_REG_PUDCR0              0x70UL
+#define ADC_REG_PUDCR1              0x71UL
+#define ADC_REG_PUDCR2              0x72UL
+#define ADC_REG_PUDCR3              0x73UL
+#define ADC_REG_PUDCR4              0x74UL
+#define ADC_REG_PUDCR5              0x75UL
+#define ADC_REG_PUDCR6              0x76UL
+#define ADC_REG_PUDCR7              0x77UL
+/** @} */
+
+/**
+ * @name    EQADC CFCR registers definitions
+ * @{
+ */
+#define EQADC_CFCR_CFEEE0           (1U << 12)
+#define EQADC_CFCR_STRME0           (1U << 11)
+#define EQADC_CFCR_SSE              (1U << 10)
+#define EQADC_CFCR_CFINV            (1U << 9)
+#define EQADC_CFCR_MODE_MASK        (15U << 4)
+#define EQADC_CFCR_MODE(n)          ((n) << 4)
+#define EQADC_CFCR_MODE_DISABLED    EQADC_CFCR_MODE(0)
+#define EQADC_CFCR_MODE_SWSS        EQADC_CFCR_MODE(1)
+#define EQADC_CFCR_MODE_HWSS_LL     EQADC_CFCR_MODE(2)
+#define EQADC_CFCR_MODE_HWSS_HL     EQADC_CFCR_MODE(3)
+#define EQADC_CFCR_MODE_HWSS_FE     EQADC_CFCR_MODE(4)
+#define EQADC_CFCR_MODE_HWSS_RE     EQADC_CFCR_MODE(5)
+#define EQADC_CFCR_MODE_HWSS_BE     EQADC_CFCR_MODE(6)
+#define EQADC_CFCR_MODE_MODE_SWCS   EQADC_CFCR_MODE(9)
+#define EQADC_CFCR_MODE_HWCS_LL     EQADC_CFCR_MODE(10)
+#define EQADC_CFCR_MODE_HWCS_HL     EQADC_CFCR_MODE(11)
+#define EQADC_CFCR_MODE_HWCS_FE     EQADC_CFCR_MODE(12)
+#define EQADC_CFCR_MODE_HWCS_RE     EQADC_CFCR_MODE(13)
+#define EQADC_CFCR_MODE_HWCS_BE     EQADC_CFCR_MODE(14)
+#define EQADC_CFCR_AMODE0_MASK      (15U << 0)
+#define EQADC_CFCR_AMODE0(n)        ((n) << 0)
+/** @} */
+
+/**
+ * @name    EQADC FISR registers definitions
+ * @{
+ */
+#define EQADC_FISR_POPNXTPTR_MASK   (15U << 0)
+#define EQADC_FISR_RFCTR_MASK       (15U << 4)
+#define EQADC_FISR_TNXTPTR_MASK     (15U << 8)
+#define EQADC_FISR_CFCTR_MASK       (15U << 12)
+#define EQADC_FISR_RFDF             (1U << 17)
+#define EQADC_FISR_RFOF             (1U << 19)
+#define EQADC_FISR_CFFF             (1U << 25)
+#define EQADC_FISR_SSS              (1U << 26)
+#define EQADC_FISR_CFUF             (1U << 27)
+#define EQADC_FISR_EOQF             (1U << 28)
+#define EQADC_FISR_PF               (1U << 29)
+#define EQADC_FISR_TORF             (1U << 30)
+#define EQADC_FISR_NCF              (1U << 31)
+#define EQADC_FISR_CLEAR_MASK       (EQADC_FISR_NCF  | EQADC_FISR_TORF |    \
+                                     EQADC_FISR_PF   | EQADC_FISR_EOQF |    \
+                                     EQADC_FISR_CFUF | EQADC_FISR_RFOF |    \
+                                     EQADC_FISR_RFDF)
+/** @} */
+
+/**
+ * @name    EQADC Conversion commands
+ * @{
+ */
+#define EQADC_CONV_CHANNEL_MASK (0xFFU << 8)/**< @brief Channel number mask.*/
+#define EQADC_CONV_CHANNEL(n)   ((n) << 8)  /**< @brief Channel number.     */
+#define EQADC_CONV_FMT_RJU      (0U << 16)  /**< @brief Unsigned samples.   */
+#define EQADC_CONV_FMT_RJS      (1U << 16)  /**< @brief Signed samples.     */
+#define EQADC_CONV_TSR          (1U << 17)  /**< @brief Time stamp request. */
+#define EQADC_CONV_LST_MASK     (3U << 18)  /**< @brief Sample time.        */
+#define EQADC_CONV_LST_2        (0U << 18)  /**< @brief 2 clock cycles.     */
+#define EQADC_CONV_LST_8        (1U << 18)  /**< @brief 8 clock cycles.     */
+#define EQADC_CONV_LST_64       (2U << 18)  /**< @brief 64 clock cycles.    */
+#define EQADC_CONV_LST_128      (3U << 18)  /**< @brief 128 clock cycles.   */
+#define EQADC_CONV_MSG_MASK     (15U << 20) /**< @brief Message mask.       */
+#define EQADC_CONV_MSG_RFIFO(n) ((n) << 20) /**< @brief Result in RFIFO0..5.*/
+#define EQADC_CONV_MSG_NULL     (6U << 20)  /**< @brief Null message.       */
+#define EQADC_CONV_CAL          (1U << 24)  /**< @brief Calibrated result.  */
+#define EQADC_CONV_BN_MASK      (1U << 25)  /**< @brief Buffer number mask. */
+#define EQADC_CONV_BN(n)        ((n) << 25) /**< @brief Buffer number.      */
+#define EQADC_CONV_REP          (1U << 29)  /**< @brief Repeat loop flag.   */
+#define EQADC_CONV_PAUSE        (1U << 30)  /**< @brief Pause flag.         */
+#define EQADC_CONV_EOQ          (1U << 31)  /**< @brief End of queue flag.  */
 /** @} */
 
 /*===========================================================================*/
@@ -67,17 +149,8 @@
  * @details If set to @p TRUE the support for EQADC1 queue 0 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ADC_USE_EQADC1_Q0) || defined(__DOXYGEN__)
-#define SPC5_ADC_USE_EQADC1_Q0                 FALSE
-#endif
-
-/**
- * @brief   ADCD20 driver enable switch.
- * @details If set to @p TRUE the support for EQADC2 queue 0 is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(SPC5_ADC_USE_EQADC2_Q0) || defined(__DOXYGEN__)
-#define SPC5_ADC_USE_EQADC2_Q0                 FALSE
+#if !defined(SPC5_ADC_USE_EQADC_Q0) || defined(__DOXYGEN__)
+#define SPC5_ADC_USE_EQADC_Q0               FALSE
 #endif
 /** @} */
 
@@ -85,9 +158,29 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if SPC5_ADC_USE_EQADC_Q0 && !SPC5_HAS_EQADC
+#error "EQADC1 not present in the selected device"
+#endif
+
+#if !SPC5_ADC_USE_EQADC_Q0
+#error "ADC driver activated but no EQADC peripheral assigned"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/*!
+ * @brief   FIFO unit numeric IDs.
+ */
+typedef enum {
+  ADC_FIFO_0 = 0,
+  ADC_FIFO_1 = 1,
+  ADC_FIFO_2 = 2,
+  ADC_FIFO_3 = 3,
+  ADC_FIFO_4 = 4,
+  ADC_FIFO_5 = 5
+} adcfifo_t;
 
 /**
  * @brief   ADC command data type.
@@ -241,12 +334,8 @@ struct ADCDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if SPC5_ADC_USE_EQADC1_Q0 && !defined(__DOXYGEN__)
-extern ADCDriver ADCD10;
-#endif
-
-#if SPC5_ADC_USE_EQADC2_Q0 && !defined(__DOXYGEN__)
-extern ADCDriver ADCD20;
+#if SPC5_ADC_USE_EQADC_Q0 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD1;
 #endif
 
 #ifdef __cplusplus

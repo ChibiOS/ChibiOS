@@ -43,6 +43,11 @@
                                              BIUCR_BFEN)
 
 /*
+ * ADC driver settings.
+ */
+#define SPC5_ADC_USE_EQADC_Q0               TRUE
+
+/*
  * SERIAL driver system settings.
  */
 #define SPC5_USE_ESCIA                      TRUE
