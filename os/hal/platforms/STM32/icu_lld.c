@@ -106,9 +106,8 @@ ICUDriver ICUD8;
 static void icu_lld_serve_interrupt(ICUDriver *icup) {
   uint16_t sr;
 
-  sr  = icup->tim->SR;
-  sr &= icup->tim->DIER;
-  icup->tim->SR = ~sr;
+  sr = icup->tim->SR & icup->tim->DIER;
+  icup->tim->SR = 0;
   if ((sr & TIM_SR_CC1IF) != 0)
     _icu_isr_invoke_period_cb(icup);
   if ((sr & TIM_SR_CC2IF) != 0)
@@ -470,7 +469,6 @@ void icu_lld_stop(ICUDriver *icup) {
       rccDisableTIM5(FALSE);
     }
 #endif
-  }
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
       nvicDisableVector(TIM8_CC_IRQn);
@@ -478,6 +476,7 @@ void icu_lld_stop(ICUDriver *icup) {
       rccDisableTIM8(FALSE);
     }
 #endif
+  }
 }
 
 /**

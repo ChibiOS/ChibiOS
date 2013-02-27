@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.4 ***
+- FIX: Fixed misplaced brace in icu_lld.c (bug 3605832).
 - FIX: Fixed bug prevents calling adcStartConversionI() within ISR (bug
   3605053).
 - FIX: Fixed typo in platforms/STM32/can_lld.c (bug 3604657).
