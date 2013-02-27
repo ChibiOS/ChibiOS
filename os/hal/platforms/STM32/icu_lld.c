@@ -538,7 +538,6 @@ void icu_lld_stop(ICUDriver *icup) {
       rccDisableTIM5(FALSE);
     }
 #endif
-  }
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
       nvicDisableVector(STM32_TIM8_UP_NUMBER);
@@ -546,6 +545,7 @@ void icu_lld_stop(ICUDriver *icup) {
       rccDisableTIM8(FALSE);
     }
 #endif
+  }
 }
 
 /**
