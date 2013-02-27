@@ -84,7 +84,7 @@ void i2c_lld_init(void) {
 void i2c_lld_start(I2CDriver *i2cp) {
 
   if (i2cp->state == I2C_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
 

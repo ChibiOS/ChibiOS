@@ -119,7 +119,7 @@ void usb_lld_init(void) {
 void usb_lld_start(USBDriver *usbp) {
 
   if (usbp->state == USB_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_USB_USE_USB1
     if (&USBD1 == usbp) {
 

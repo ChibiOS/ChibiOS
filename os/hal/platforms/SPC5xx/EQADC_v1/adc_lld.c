@@ -1,26 +1,20 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012,2013 Giovanni Di Sirio.
-
-    This file is part of ChibiOS/RT.
-
-    ChibiOS/RT is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
-
-    ChibiOS/RT is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Licensed under ST Liberty SW License Agreement V2, (the "License");
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *        http://www.st.com/software_license_agreement_liberty_v2
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /**
- * @file    templates/adc_lld.c
- * @brief   ADC Driver subsystem low level driver source template.
+ * @file    SPC5xx/EQADC_v1/adc_lld.c
+ * @brief   SPC5xx low level ADC driver code.
  *
  * @addtogroup ADC
  * @{
@@ -40,10 +34,17 @@
 /*===========================================================================*/
 
 /**
- * @brief   ADC1 driver identifier.
+ * @brief   ADCD1 driver identifier.
  */
-#if PLATFORM_ADC_USE_ADC1 || defined(__DOXYGEN__)
-ADCDriver ADCD1;
+#if SPC5_ADC_USE_EQADC1_Q0 || defined(__DOXYGEN__)
+ADCDriver ADCD10;
+#endif
+
+/**
+ * @brief   ADCD20 driver identifier.
+ */
+#if SPC5_ADC_USE_EQADC2_Q0 || defined(__DOXYGEN__)
+ADCDriver ADCD20;
 #endif
 
 /*===========================================================================*/
@@ -69,10 +70,15 @@ ADCDriver ADCD1;
  */
 void adc_lld_init(void) {
 
-#if PLATFORM_ADC_USE_ADC1
+#if SPC5_ADC_USE_EQADC1_Q0
   /* Driver initialization.*/
-  adcObjectInit(&ADCD1);
-#endif /* PLATFORM_ADC_USE_ADC1 */
+  adcObjectInit(&ADCD10);
+#endif /* SPC5_ADC_USE_EQADC1_Q0 */
+
+#if SPC5_ADC_USE_EQADC2_Q0
+  /* Driver initialization.*/
+  adcObjectInit(&ADCD20);
+#endif /* SPC5_ADC_USE_EQADC2_Q0 */
 }
 
 /**
@@ -86,11 +92,11 @@ void adc_lld_start(ADCDriver *adcp) {
 
   if (adcp->state == ADC_STOP) {
     /* Enables the peripheral.*/
-#if PLATFORM_ADC_USE_ADC1
-    if (&ADCD1 == adcp) {
+#if SPC5_ADC_USE_EQADC1_Q0
+    if (&ADCD10 == adcp) {
 
     }
-#endif /* PLATFORM_ADC_USE_ADC1 */
+#endif /* SPC5_ADC_USE_EQADC1_Q0 */
   }
   /* Configures the peripheral.*/
 
@@ -109,11 +115,11 @@ void adc_lld_stop(ADCDriver *adcp) {
     /* Resets the peripheral.*/
 
     /* Disables the peripheral.*/
-#if PLATFORM_ADC_USE_ADC1
+#if SPC5_ADC_USE_EQADC1_Q0
     if (&ADCD1 == adcp) {
 
     }
-#endif /* PLATFORM_ADC_USE_ADC1 */
+#endif /* SPC5_ADC_USE_EQADC1_Q0 */
   }
 }
 

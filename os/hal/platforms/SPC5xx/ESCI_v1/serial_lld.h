@@ -14,7 +14,7 @@
 
 /**
  * @file    SPC5xx/ESCI_v1/serial_lld.c
- * @brief   SPC5xx low level serial driver code.
+ * @brief   SPC5xx low level serial driver header.
  *
  * @addtogroup SERIAL
  * @{

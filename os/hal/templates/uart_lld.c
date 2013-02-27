@@ -85,7 +85,7 @@ void uart_lld_init(void) {
 void uart_lld_start(UARTDriver *uartp) {
 
   if (uartp->state == UART_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_UART_USE_UART1
     if (&UARTD1 == uartp) {
 

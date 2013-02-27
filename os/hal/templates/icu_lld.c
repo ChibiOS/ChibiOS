@@ -85,7 +85,7 @@ void icu_lld_init(void) {
 void icu_lld_start(ICUDriver *icup) {
 
   if (icup->state == ICU_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_ICU_USE_ICU1
     if (&ICUD1 == icup) {
 

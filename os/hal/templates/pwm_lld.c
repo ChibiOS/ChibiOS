@@ -85,7 +85,7 @@ void pwm_lld_init(void) {
 void pwm_lld_start(PWMDriver *pwmp) {
 
   if (pwmp->state == PWM_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_PWM_USE_PWM1
     if (&PWMD1 == pwmp) {
 

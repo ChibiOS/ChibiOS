@@ -85,7 +85,7 @@ void gpt_lld_init(void) {
 void gpt_lld_start(GPTDriver *gptp) {
 
   if (gptp->state == GPT_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_GPT_USE_GPT1
     if (&GPTD1 == gptp) {
 

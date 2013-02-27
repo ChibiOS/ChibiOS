@@ -85,7 +85,7 @@ void spi_lld_init(void) {
 void spi_lld_start(SPIDriver *spip) {
 
   if (spip->state == SPI_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_SPI_USE_SPI1
     if (&SPID1 == spip) {
 

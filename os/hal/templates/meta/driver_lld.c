@@ -85,7 +85,7 @@ void xxx_lld_init(void) {
 void xxx_lld_start(XXXDriver *xxxp) {
 
   if (xxxp->state == XXX_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_XXX_USE_XXX1
     if (&XXXD1 == xxxp) {
 
