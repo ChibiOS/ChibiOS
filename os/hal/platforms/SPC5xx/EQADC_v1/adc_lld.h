@@ -78,7 +78,7 @@
 #define EQADC_CFCR_MODE_HWSS_FE     EQADC_CFCR_MODE(4)
 #define EQADC_CFCR_MODE_HWSS_RE     EQADC_CFCR_MODE(5)
 #define EQADC_CFCR_MODE_HWSS_BE     EQADC_CFCR_MODE(6)
-#define EQADC_CFCR_MODE_MODE_SWCS   EQADC_CFCR_MODE(9)
+#define EQADC_CFCR_MODE_SWCS        EQADC_CFCR_MODE(9)
 #define EQADC_CFCR_MODE_HWCS_LL     EQADC_CFCR_MODE(10)
 #define EQADC_CFCR_MODE_HWCS_HL     EQADC_CFCR_MODE(11)
 #define EQADC_CFCR_MODE_HWCS_FE     EQADC_CFCR_MODE(12)
@@ -112,10 +112,18 @@
 /** @} */
 
 /**
- * @name    EQADC Conversion commands
+ * @name    EQADC conversion/configuration commands
  * @{
  */
-#define EQADC_CONV_CHANNEL_MASK (0xFFU << 8)/**< @brief Channel number mask.*/
+#define EQADC_CONV_CONFIG_SEL1  (8U << 0)   /**< @brief Alt.config.1.       */
+#define EQADC_CONV_CONFIG_SEL2  (9U << 0)   /**< @brief Alt.config.2.       */
+#define EQADC_CONV_CONFIG_SEL3  (10U << 0)  /**< @brief Alt.config.3.       */
+#define EQADC_CONV_CONFIG_SEL4  (11U << 0)  /**< @brief Alt.config.4.       */
+#define EQADC_CONV_CONFIG_SEL5  (12U << 0)  /**< @brief Alt.config.5.       */
+#define EQADC_CONV_CONFIG_SEL6  (13U << 0)  /**< @brief Alt.config.6.       */
+#define EQADC_CONV_CONFIG_SEL7  (14U << 0)  /**< @brief Alt.config.7.       */
+#define EQADC_CONV_CONFIG_SEL8  (15U << 0)  /**< @brief Alt.config.8.       */
+#define EQADC_CONV_CHANNEL_MASK (255U << 8) /**< @brief Channel number mask.*/
 #define EQADC_CONV_CHANNEL(n)   ((n) << 8)  /**< @brief Channel number.     */
 #define EQADC_CONV_FMT_RJU      (0U << 16)  /**< @brief Unsigned samples.   */
 #define EQADC_CONV_FMT_RJS      (1U << 16)  /**< @brief Signed samples.     */
@@ -130,10 +138,58 @@
 #define EQADC_CONV_MSG_NULL     (6U << 20)  /**< @brief Null message.       */
 #define EQADC_CONV_CAL          (1U << 24)  /**< @brief Calibrated result.  */
 #define EQADC_CONV_BN_MASK      (1U << 25)  /**< @brief Buffer number mask. */
-#define EQADC_CONV_BN(n)        ((n) << 25) /**< @brief Buffer number.      */
+#define EQADC_CONV_BN_ADC0      (0U << 25)  /**< @brief ADC0 selection.     */
+#define EQADC_CONV_BN_ADC1      (1U << 25)  /**< @brief ADC1 selection.     */
 #define EQADC_CONV_REP          (1U << 29)  /**< @brief Repeat loop flag.   */
 #define EQADC_CONV_PAUSE        (1U << 30)  /**< @brief Pause flag.         */
 #define EQADC_CONV_EOQ          (1U << 31)  /**< @brief End of queue flag.  */
+/** @} */
+
+/**
+ * @name    EQADC read/write commands
+ * @{
+ */
+#define EQADC_RW_REG_ADDR_MASK  (255U << 0)
+#define EQADC_RW_REG_ADDR(n)    ((n) << 0)
+#define EQADC_RW_VALUE_MASK     (0xFFFF << 8)
+#define EQADC_RW_VALUE(n)       ((n) << 8)
+#define EQADC_RW_WRITE          (0U << 24)
+#define EQADC_RW_READ           (1U << 24)
+#define EQADC_RW_BN_ADC0        (0U << 25)
+#define EQADC_RW_BN_ADC1        (1U << 25)
+#define EQADC_RW_REP            (1U << 29)
+#define EQADC_RW_PAUSE          (1U << 30)
+#define EQADC_RW_EOQ            (1U << 31)
+/** @} */
+
+/**
+ * @name    ADC CR register definitions
+ * @{
+ */
+#define ADC_CR_CLK_PS_MASK      (31U << 0)
+#define ADC_CR_CLK_PS(n)        ((((n) >> 1) - 1) | ((n) & 1 ? ADC_CR_ODD_PS\
+                                                             : 0))
+#define ADC_CR_CLK_SEL          (1U << 5)
+#define ADC_CR_CLK_DTY          (1U << 6)
+#define ADC_CR_ODD_PS           (1U << 7)
+#define ADC_CR_TBSEL_MASK       (3U << 8)
+#define ADC_CR_TBSEL(n)         ((n) << 8)
+#define ADC_CR_EMUX             (1U << 11)
+#define ADC_CR_EN               (1U << 15)
+/** @} */
+
+/**
+ * @name    ADC AxCR registers definitions
+ * @{
+ */
+#define ADC_ACR_PRE_GAIN_MASK   (3U << 0)
+#define ADC_ACR_PRE_GAIN_X1     (0U << 0)
+#define ADC_ACR_PRE_GAIN_X2     (1U << 0)
+#define ADC_ACR_PRE_GAIN_X4     (2U << 0)
+#define ADC_ACR_RESSEL_MASK     (3U << 6)
+#define ADC_ACR_RESSEL_12BITS   (0U << 6)
+#define ADC_ACR_RESSEL_10BITS   (1U << 6)
+#define ADC_ACR_RESSEL_8BITS    (2U << 6)
 /** @} */
 
 /*===========================================================================*/
@@ -145,12 +201,65 @@
  * @{
  */
 /**
- * @brief   ADCD10 driver enable switch.
- * @details If set to @p TRUE the support for EQADC1 queue 0 is included.
+ * @brief   ADCD1 driver enable switch.
+ * @details If set to @p TRUE the support for ADC0 queue 0 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ADC_USE_EQADC_Q0) || defined(__DOXYGEN__)
-#define SPC5_ADC_USE_EQADC_Q0               FALSE
+#if !defined(SPC5_ADC_USE_ADC0_Q0) || defined(__DOXYGEN__)
+#define SPC5_ADC_USE_ADC0_Q0                FALSE
+#endif
+
+/**
+ * @brief   ADCD2 driver enable switch.
+ * @details If set to @p TRUE the support for ADC0 queue 1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SPC5_ADC_USE_ADC0_Q1) || defined(__DOXYGEN__)
+#define SPC5_ADC_USE_ADC0_Q1                FALSE
+#endif
+
+/**
+ * @brief   ADCD3 driver enable switch.
+ * @details If set to @p TRUE the support for ADC0 queue 2 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SPC5_ADC_USE_ADC0_Q2) || defined(__DOXYGEN__)
+#define SPC5_ADC_USE_ADC0_Q2                FALSE
+#endif
+
+/**
+ * @brief   ADCD4 driver enable switch.
+ * @details If set to @p TRUE the support for ADC1 queue 3 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SPC5_ADC_USE_ADC1_Q3) || defined(__DOXYGEN__)
+#define SPC5_ADC_USE_ADC1_Q3                FALSE
+#endif
+
+/**
+ * @brief   ADCD5 driver enable switch.
+ * @details If set to @p TRUE the support for ADC1 queue 4 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SPC5_ADC_USE_ADC1_Q4) || defined(__DOXYGEN__)
+#define SPC5_ADC_USE_ADC1_Q4                FALSE
+#endif
+
+/**
+ * @brief   ADCD6 driver enable switch.
+ * @details If set to @p TRUE the support for ADC1 queue 5 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(SPC5_ADC_USE_ADC1_Q5) || defined(__DOXYGEN__)
+#define SPC5_ADC_USE_ADC1_Q5                FALSE
+#endif
+
+/**
+ *
+ * @brief   EQADC clock prescaler value.
+ */
+#if !defined(SPC5_ADC_CR_CLK_PS) || defined(__DOXYGEN__)
+#define SPC5_ADC_CR_CLK_PS                  ADC_CR_CLK_PS(5)
 #endif
 /** @} */
 
@@ -158,12 +267,19 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if SPC5_ADC_USE_EQADC_Q0 && !SPC5_HAS_EQADC
+#if !SPC5_HAS_EQADC
 #error "EQADC1 not present in the selected device"
 #endif
 
-#if !SPC5_ADC_USE_EQADC_Q0
-#error "ADC driver activated but no EQADC peripheral assigned"
+#define SPC5_ADC_USE_ADC0                   (SPC5_ADC_USE_ADC0_Q0 |         \
+                                             SPC5_ADC_USE_ADC0_Q1 |         \
+                                             SPC5_ADC_USE_ADC0_Q2)
+#define SPC5_ADC_USE_ADC1                   (SPC5_ADC_USE_ADC1_Q3 |         \
+                                             SPC5_ADC_USE_ADC1_Q4 |         \
+                                             SPC5_ADC_USE_ADC1_Q5)
+
+#if !SPC5_ADC_USE_ADC0 && !SPC5_ADC_USE_ADC1
+#error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
 /*===========================================================================*/
@@ -334,8 +450,28 @@ struct ADCDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if SPC5_ADC_USE_EQADC_Q0 && !defined(__DOXYGEN__)
+#if SPC5_ADC_USE_ADC0_Q0 && !defined(__DOXYGEN__)
 extern ADCDriver ADCD1;
+#endif
+
+#if SPC5_ADC_USE_ADC0_Q1 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD2;
+#endif
+
+#if SPC5_ADC_USE_ADC0_Q2 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD3;
+#endif
+
+#if SPC5_ADC_USE_ADC1_Q3 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD4;
+#endif
+
+#if SPC5_ADC_USE_ADC1_Q4 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD5;
+#endif
+
+#if SPC5_ADC_USE_ADC1_Q5 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD6;
 #endif
 
 #ifdef __cplusplus

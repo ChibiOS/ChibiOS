@@ -45,7 +45,13 @@
 /*
  * ADC driver settings.
  */
-#define SPC5_ADC_USE_EQADC_Q0               TRUE
+#define SPC5_ADC_USE_ADC0_Q0                TRUE
+#define SPC5_ADC_USE_ADC0_Q1                FALSE
+#define SPC5_ADC_USE_ADC0_Q2                FALSE
+#define SPC5_ADC_USE_ADC1_Q3                TRUE
+#define SPC5_ADC_USE_ADC1_Q4                FALSE
+#define SPC5_ADC_USE_ADC1_Q5                FALSE
+#define SPC5_ADC_CR_CLK_PS                  ADC_CR_CLK_PS(5)
 
 /*
  * SERIAL driver system settings.
