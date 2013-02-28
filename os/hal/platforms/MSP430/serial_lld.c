@@ -45,7 +45,7 @@ SerialDriver SD2;
 #endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /** @brief Driver default configuration.*/

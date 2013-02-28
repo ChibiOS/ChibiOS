@@ -79,7 +79,7 @@ SPIDriver SPID3;
 #endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 static uint16_t dummytx;

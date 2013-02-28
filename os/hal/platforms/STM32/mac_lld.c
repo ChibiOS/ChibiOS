@@ -65,7 +65,7 @@
 MACDriver ETHD1;
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 static const uint8_t default_mac_address[] = {0xAA, 0x55, 0x13,

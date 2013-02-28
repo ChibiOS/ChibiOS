@@ -53,7 +53,7 @@
 SDCDriver SDCD1;
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 #if STM32_SDC_SDIO_UNALIGNED_SUPPORT

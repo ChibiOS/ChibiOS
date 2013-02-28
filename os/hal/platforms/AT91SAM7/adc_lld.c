@@ -77,7 +77,7 @@
 ADCDriver ADCD1;
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 #define ADCReg1		((AT91S_ADC *)AT91C_ADC_CR)

@@ -87,7 +87,7 @@ PWMDriver PWMD4;
 #endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 #if (SAM7_PLATFORM == SAM7S64) || (SAM7_PLATFORM == SAM7S128) ||            \
