@@ -113,7 +113,6 @@ void ext_lld_stop(EXTDriver *extp) {
   LPC_GPIO_PIN_INT->IST   = EXT_CHANNELS_MASK;
 
   LPC_SYSCON->SYSAHBCLKCTRL &= ~(1<<19);
-
 }
 
 /**
@@ -126,10 +125,10 @@ void ext_lld_stop(EXTDriver *extp) {
  */
 void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
 
-  // program the IOpin for this channel
+  /* program the IOpin for this channel */
   LPC_SYSCON->PINTSEL[channel] = extp->config->channels[channel].iopin;
   
-  // Programming edge irq enables
+  /* Programming edge irq enables */
   if (extp->config->channels[channel].mode & EXT_CH_MODE_RISING_EDGE)
     LPC_GPIO_PIN_INT->SIENR =  (1 << channel);
   else
@@ -143,9 +142,8 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
   LPC_GPIO_PIN_INT->RISE = (1<<channel);
   LPC_GPIO_PIN_INT->FALL = (1<<channel);
   LPC_GPIO_PIN_INT->IST  = (1<<channel);
-  // and enable the irq
+  
   ext_lld_exti_irq_enable( channel );
-
 }
 
 /**
@@ -166,7 +164,6 @@ void ext_lld_channel_disable(EXTDriver *extp, expchannel_t channel) {
   LPC_GPIO_PIN_INT->RISE  =  (1 << channel);
   LPC_GPIO_PIN_INT->FALL  =  (1 << channel);
   LPC_GPIO_PIN_INT->IST   =  (1 << channel);
-
 }
 
 #endif /* HAL_USE_EXT */
