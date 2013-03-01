@@ -62,4 +62,28 @@ void edmaInit(void) {
 
 }
 
+/**
+ * @brief   EDMA channel allocation.
+ *
+ * @param[in] ccfg      channel configuration
+ * @return              The channel TCD pointer.
+ * @retval NULL         if the channel cannot be allocated.
+ *
+ * @special
+ */
+edma_tcd_t *edmaAllocChannel(const edma_channel_config_t *ccfg) {
+
+}
+
+/**
+ * @brief   EDMA channel allocation.
+ *
+ * @param[in] tcd       channel TCD pointer
+ *
+ * @special
+ */
+void edmaReleaseChannel(edma_tcd_t *tcd) {
+
+}
+
 /** @} */

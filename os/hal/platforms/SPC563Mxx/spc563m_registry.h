@@ -31,6 +31,9 @@
  * @name    SPC563Mxx capabilities
  * @{
  */
+/* eDMA attributes.*/
+#define SPC5_EDMA_NCHANNELS                 64
+
 /* eQADC attributes.*/
 #define SPC5_HAS_EQADC                      TRUE
 #define SPC5_EQADC1_HANDLER                 vector146

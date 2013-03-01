@@ -37,19 +37,6 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @name    Configuration options
- * @{
- */
-/**
- * @brief   XXX driver enable switch.
- * @details If set to @p TRUE the support for XXX1 is included.
- */
-#if !defined(PLATFORM_XXX_USE_XXX1) || defined(__DOXYGEN__)
-#define PLATFORM_XXX_USE_XXX1             FALSE
-#endif
-/** @} */
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -73,11 +60,16 @@ typedef struct {
  */
 typedef void (*edma_isr_t)(edma_tcd_t *tcd, void *p);
 
+/**
+ * @brief   Type of an EDMA channel configuration structure.
+ */
 typedef struct {
-  stm32_dmaisr_t        dma_func;       /**< @brief DMA callback function.  */
-  void                  *dma_param;     /**< @brief DMA callback parameter. */
+  uint32_t              dma_periph;     /**< @brief Peripheral associated to
+                                             the channel.                   */
+  edma_isr_t            dma_func;       /**< @brief Channel ISR callback.   */
+  void                  *dma_param;     /**< @brief Channel callback param. */
 
-} edma_channel_descriptor;
+} edma_channel_config_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -91,7 +83,7 @@ typedef struct {
 extern "C" {
 #endif
   void edmaInit(void);
-  edma_tcd_t *edmaAllocChannel(uint32_t periph_id, edma_isr_t isr);
+  edma_tcd_t *edmaAllocChannel(const edma_channel_config_t *ccfg);
   void edmaReleaseChannel(edma_tcd_t *tcd);
 #ifdef __cplusplus
 }
