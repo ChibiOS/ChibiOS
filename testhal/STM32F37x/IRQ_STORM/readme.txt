@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT port for ARM-Cortex-M4 STM32F373.                            **
+** ChibiOS/RT HAL - IRQ_STORM stress test demo for STM32F30x.              **
 *****************************************************************************
 
 ** TARGET **
@@ -8,12 +8,19 @@ The demo runs on an STMicroelectronics STM32373C-EVAL board.
 
 ** The Demo **
 
+The application demonstrates the use of the STM32F30x GPT, PAL and Serial
+drivers in order to implement a system stress demo.
+
+** Board Setup **
+
+- Connect an RS232 transceiver to pins PA9(TX) and PA10(RX).
+- Connect a terminal emulator to the transceiver (38400-N-8-1).
 
 ** Build Procedure **
 
-The demo has been tested by using the free Codesourcery GCC-based toolchain
-and YAGARTO. just modify the TRGT line in the makefile in order to use
-different GCC toolchains.
+The demo has been tested using the free Codesourcery GCC-based toolchain
+and YAGARTO.
+Just modify the TRGT line in the makefile in order to use different GCC ports.
 
 ** Notes **
 

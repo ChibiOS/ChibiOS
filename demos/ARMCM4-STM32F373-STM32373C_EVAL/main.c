@@ -62,7 +62,8 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 2 using. pins are pre-configured in board.h.
+   * Activates the serial driver 2 using the default configuration, pins
+   * are pre-configured in board.h.
    */
   sdStart(&SD2, NULL);
 
