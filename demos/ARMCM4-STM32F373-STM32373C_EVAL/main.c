@@ -31,30 +31,18 @@ static msg_t Thread1(void *arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (TRUE) {
-    palSetPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED3_RED);
-    palSetPad(GPIOE, GPIOE_LED5_ORANGE);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED5_ORANGE);
-    palSetPad(GPIOE, GPIOE_LED7_GREEN);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED7_GREEN);
-    palSetPad(GPIOE, GPIOE_LED9_BLUE);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED9_BLUE);
-    palSetPad(GPIOE, GPIOE_LED10_RED);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED10_RED);
-    palSetPad(GPIOE, GPIOE_LED8_ORANGE);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED8_ORANGE);
-    palSetPad(GPIOE, GPIOE_LED6_GREEN);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED6_GREEN);
-    palSetPad(GPIOE, GPIOE_LED4_BLUE);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED4_BLUE);
+    palSetPad(GPIOE, GPIOC_LED1);
+    chThdSleepMilliseconds(250);
+    palClearPad(GPIOE, GPIOC_LED1);
+    palSetPad(GPIOE, GPIOC_LED2);
+    chThdSleepMilliseconds(250);
+    palClearPad(GPIOE, GPIOC_LED2);
+    palSetPad(GPIOE, GPIOC_LED3);
+    chThdSleepMilliseconds(250);
+    palClearPad(GPIOE, GPIOC_LED3);
+    palSetPad(GPIOE, GPIOC_LED4);
+    chThdSleepMilliseconds(250);
+    palClearPad(GPIOE, GPIOC_LED4);
   }
 }
 
@@ -74,12 +62,9 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 1 using the driver default configuration.
-   * PA9(TX) and PA10(RX) are routed to USART1.
+   * Activates the serial driver 2 using. pins are pre-configured in board.h.
    */
-  sdStart(&SD1, NULL);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
+  sdStart(&SD2, NULL);
 
   /*
    * Creates the example thread.
@@ -92,8 +77,8 @@ int main(void) {
    * pressed the test procedure is launched.
    */
   while (TRUE) {
-    if (palReadPad(GPIOA, GPIOA_BUTTON))
-      TestThread(&SD1);
+    if (palReadPad(GPIOA, GPIOA_WKUP_BUTTON))
+      TestThread(&SD2);
     chThdSleepMilliseconds(500);
   }
 }
