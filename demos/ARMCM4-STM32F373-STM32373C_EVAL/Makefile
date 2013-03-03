@@ -65,15 +65,15 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../..
-include $(CHIBIOS)/boards/ST_STM32F3_DISCOVERY/board.mk
-include $(CHIBIOS)/os/hal/platforms/STM32F30x/platform.mk
+include $(CHIBIOS)/boards/ST_STM32373C_EVAL/board.mk
+include $(CHIBIOS)/os/hal/platforms/STM32F37x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F3xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
-LDSCRIPT= $(PORTLD)/STM32F303xC.ld
+LDSCRIPT= $(PORTLD)/STM32F373xC.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

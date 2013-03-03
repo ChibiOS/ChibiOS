@@ -72,7 +72,7 @@
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID="COMP2 OUT"
+        ID="COMP2_OUT"
         Type="PushPull"
         Speed="Maximum"
         Resistor="Floating"

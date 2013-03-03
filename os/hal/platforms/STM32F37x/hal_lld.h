@@ -564,7 +564,7 @@
  * @brief   ADC prescaler value.
  */
 #if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
-#define STM32_ADCPRE                        STM32_ADCPRE_DIV2
+#define STM32_ADCPRE                        STM32_ADCPRE_DIV4
 #endif
 
 /**
@@ -947,7 +947,7 @@
 #endif
 
 /* ADC minimum frequency check.*/
-#if STM32ADCLK < STM32_ADCCLK_MIN
+#if STM32_ADCLK < STM32_ADCCLK_MIN
 #error "STM32_ADCLK exceeding maximum frequency (STM32_ADCCLK_MIN)"
 #endif
 

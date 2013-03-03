@@ -59,7 +59,7 @@
 #define GPIOA_PIN4                  4
 #define GPIOA_PIN5                  5
 #define GPIOA_PIN6                  6
-#define GPIOA_COMP2 OUT             7
+#define GPIOA_COMP2_OUT             7
 #define GPIOA_I2C2_SMB              8
 #define GPIOA_I2C2_SCL              9
 #define GPIOA_I2C2_SDA              10
@@ -186,7 +186,7 @@
  * PA4  - PIN4                      (input pullup).
  * PA5  - PIN5                      (input floating).
  * PA6  - PIN6                      (input pullup).
- * PA7  - COMP2 OUT                 (output pushpull maximum).
+ * PA7  - COMP2_OUT                 (output pushpull maximum).
  * PA8  - I2C2_SMB                  (input floating).
  * PA9  - I2C2_SCL                  (alternate 4).
  * PA10 - I2C2_SDA                  (alternate 4).
@@ -203,7 +203,7 @@
                                      PIN_MODE_INPUT(GPIOA_PIN4) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN5) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN6) |           \
-                                     PIN_MODE_OUTPUT(GPIOA_COMP2 OUT) |     \
+                                     PIN_MODE_OUTPUT(GPIOA_COMP2_OUT) |     \
                                      PIN_MODE_INPUT(GPIOA_I2C2_SMB) |       \
                                      PIN_MODE_ALTERNATE(GPIOA_I2C2_SCL) |   \
                                      PIN_MODE_ALTERNATE(GPIOA_I2C2_SDA) |   \
@@ -219,7 +219,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN4) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN5) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN6) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_COMP2 OUT) |  \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_COMP2_OUT) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOA_I2C2_SMB) |   \
                                      PIN_OTYPE_OPENDRAIN(GPIOA_I2C2_SCL) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOA_I2C2_SDA) |   \
@@ -235,7 +235,7 @@
                                      PIN_OSPEED_2M(GPIOA_PIN4) |            \
                                      PIN_OSPEED_100M(GPIOA_PIN5) |          \
                                      PIN_OSPEED_2M(GPIOA_PIN6) |            \
-                                     PIN_OSPEED_100M(GPIOA_COMP2 OUT) |     \
+                                     PIN_OSPEED_100M(GPIOA_COMP2_OUT) |     \
                                      PIN_OSPEED_2M(GPIOA_I2C2_SMB) |        \
                                      PIN_OSPEED_100M(GPIOA_I2C2_SCL) |      \
                                      PIN_OSPEED_100M(GPIOA_I2C2_SDA) |      \
@@ -251,7 +251,7 @@
                                      PIN_PUPDR_PULLUP(GPIOA_PIN4) |         \
                                      PIN_PUPDR_FLOATING(GPIOA_PIN5) |       \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN6) |         \
-                                     PIN_PUPDR_FLOATING(GPIOA_COMP2 OUT) |  \
+                                     PIN_PUPDR_FLOATING(GPIOA_COMP2_OUT) |  \
                                      PIN_PUPDR_FLOATING(GPIOA_I2C2_SMB) |   \
                                      PIN_PUPDR_FLOATING(GPIOA_I2C2_SCL) |   \
                                      PIN_PUPDR_FLOATING(GPIOA_I2C2_SDA) |   \
@@ -267,7 +267,7 @@
                                      PIN_ODR_HIGH(GPIOA_PIN4) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN5) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN6) |             \
-                                     PIN_ODR_LOW(GPIOA_COMP2 OUT) |         \
+                                     PIN_ODR_LOW(GPIOA_COMP2_OUT) |         \
                                      PIN_ODR_HIGH(GPIOA_I2C2_SMB) |         \
                                      PIN_ODR_HIGH(GPIOA_I2C2_SCL) |         \
                                      PIN_ODR_HIGH(GPIOA_I2C2_SDA) |         \
@@ -283,7 +283,7 @@
                                      PIN_AFIO_AF(GPIOA_PIN4, 0) |           \
                                      PIN_AFIO_AF(GPIOA_PIN5, 5) |           \
                                      PIN_AFIO_AF(GPIOA_PIN6, 0) |           \
-                                     PIN_AFIO_AF(GPIOA_COMP2 OUT, 0))
+                                     PIN_AFIO_AF(GPIOA_COMP2_OUT, 0))
 #define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_I2C2_SMB, 0) |       \
                                      PIN_AFIO_AF(GPIOA_I2C2_SCL, 4) |       \
                                      PIN_AFIO_AF(GPIOA_I2C2_SDA, 4) |       \
