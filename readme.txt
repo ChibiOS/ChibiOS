@@ -120,6 +120,7 @@
   (backported to 2.4.3).
 - FIX: Fixed wrong SPI path in platform_f105_f107.mk (bug 3598151).
 - FIX: Fixed PHY powerdown issues not fixed (bug 3596911).
+- NEW: Added preliminary support to the STM32F37x family.
 - NEW: Now the general documentation includes data extracted from the low
   level driver templates. Per-platform/architecture documents are no more
   required and will be replaced with technical articles and examples for
