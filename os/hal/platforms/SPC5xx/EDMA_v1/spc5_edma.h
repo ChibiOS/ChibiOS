@@ -92,8 +92,8 @@ typedef struct {
 extern "C" {
 #endif
   void edmaInit(void);
-  edma_channel_t edmaAllocChannel(const edma_channel_config_t *ccfg);
-  void edmaReleaseChannel(edma_channel_t channel);
+  edma_channel_t edmaChannelAllocate(const edma_channel_config_t *ccfg);
+  void edmaChannelRelease(edma_channel_t channel);
 #ifdef __cplusplus
 }
 #endif

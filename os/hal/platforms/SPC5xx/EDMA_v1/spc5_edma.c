@@ -41,7 +41,10 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static edma_channel_config_t channels[SPC5_EDMA_NCHANNELS];
+/**
+ * @brief   Configurations for the various EDMA channels.
+ */
+static const edma_channel_config_t *channels[SPC5_EDMA_NCHANNELS];
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -73,8 +76,23 @@ void edmaInit(void) {
  *
  * @special
  */
-edma_channel_t edmaAllocChannel(const edma_channel_config_t *ccfg) {
+edma_channel_t edmaChannelAllocate(const edma_channel_config_t *ccfg) {
+  edma_channel_t channel;
 
+  chDbgCheck((ccfg != NULL) && (ccfg->dma_func != NULL),
+             "edmaChannelAllocate");
+
+#if SPC5_EDMA_HAS_MUX
+  /* TODO: MUX handling.*/
+  channel = EDMA_ERROR;
+  return channel;
+#else /* !SPC5_EDMA_HAS_MUX */
+  channel = (edma_channel_t)ccfg->dma_periph;
+  if (channels[channel] != NULL)
+    return EDMA_ERROR;  /* Already taken.*/
+  channels[channel] = ccfg;
+  return channel;
+#endif /* !SPC5_EDMA_HAS_MUX */
 }
 
 /**
@@ -84,8 +102,15 @@ edma_channel_t edmaAllocChannel(const edma_channel_config_t *ccfg) {
  *
  * @special
  */
-void edmaReleaseChannel(edma_channel_t channel) {
+void edmaChannelRelease(edma_channel_t channel) {
 
+  chDbgCheck((channel < 0) && (channel >= SPC5_EDMA_NCHANNELS),
+             "edmaChannelAllocate");
+  chDbgAssert(channels[channel] != NULL,
+              "edmaChannelRelease(), #1",
+              "not allocated");
+
+  channels[channel] = NULL;
 }
 
 /** @} */
