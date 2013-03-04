@@ -24,10 +24,13 @@
     the source code for any proprietary components. See the file exception.txt
     for full details of how and when the exception can be applied.
 */
-
+/*
+   This file has been contributed by:
+		Andrew Hannam aka inmarket.
+*/
 /**
- * @file    templates/pwm_lld.h
- * @brief   PWM Driver subsystem low level driver header template.
+ * @file    AT91SAM7/pwm_lld.h
+ * @brief   AT91SAM7 PWM Driver subsystem low level driver header.
  *
  * @addtogroup PWM
  * @{
