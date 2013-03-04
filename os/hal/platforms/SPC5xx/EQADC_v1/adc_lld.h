@@ -255,7 +255,90 @@
 #endif
 
 /**
- *
+ * @brief   EQADC CFIFO0 and RFIFO0 DMA priority.
+ */
+#if !defined(SPC5_ADC_FIFO0_DMA_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC_FIFO0_DMA_PRIO             12
+#endif
+
+/**
+ * @brief   EQADC CFIFO1 and RFIFO1 DMA priority.
+ */
+#if !defined(SPC5_ADC_FIFO1_DMA_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC_FIFO1_DMA_PRIO             12
+#endif
+
+/**
+ * @brief   EQADC CFIFO2 and RFIFO2 DMA priority.
+ */
+#if !defined(SPC5_ADC_FIFO2_DMA_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC_FIFO2_DMA_PRIO             12
+#endif
+
+/**
+ * @brief   EQADC CFIFO3 and RFIFO3 DMA priority.
+ */
+#if !defined(SPC5_ADC_FIFO3_DMA_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC_FIFO3_DMA_PRIO             12
+#endif
+
+/**
+ * @brief   EQADC CFIFO4 and RFIFO4 DMA priority.
+ */
+#if !defined(SPC5_ADC_FIFO4_DMA_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC_FIFO4_DMA_PRIO             12
+#endif
+
+/**
+ * @brief   EQADC CFIFO5 and RFIFO5 DMA priority.
+ */
+#if !defined(SPC5_ADC_FIFO5_DMA_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC_FIFO5_DMA_PRIO             12
+#endif
+
+/**
+ * @brief   EQADC CFIFO0 and RFIFO0 DMA IRQ priority.
+ */
+#if !defined(SPC5_ADC0_FIFO0_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC0_FIFO0_DMA_IRQ_PRIO        12
+#endif
+
+/**
+ * @brief   EQADC CFIFO1 and RFIFO1 DMA IRQ priority.
+ */
+#if !defined(SPC5_ADC0_FIFO1_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC0_FIFO1_DMA_IRQ_PRIO        12
+#endif
+
+/**
+ * @brief   EQADC CFIFO2 and RFIFO2 DMA IRQ priority.
+ */
+#if !defined(SPC5_ADC0_FIFO2_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC0_FIFO2_DMA_IRQ_PRIO        12
+#endif
+
+/**
+ * @brief   EQADC CFIFO3 and RFIFO3 DMA IRQ priority.
+ */
+#if !defined(SPC5_ADC0_FIFO3_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC0_FIFO3_DMA_IRQ_PRIO        12
+#endif
+
+/**
+ * @brief   EQADC CFIFO4 and RFIFO4 DMA IRQ priority.
+ */
+#if !defined(SPC5_ADC0_FIFO4_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC0_FIFO4_DMA_IRQ_PRIO        12
+#endif
+
+/**
+ * @brief   EQADC CFIFO5 and RFIFO5 DMA IRQ priority.
+ */
+#if !defined(SPC5_ADC0_FIFO5_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_ADC0_FIFO5_DMA_IRQ_PRIO        12
+#endif
+
+/**
  * @brief   EQADC clock prescaler value.
  */
 #if !defined(SPC5_ADC_CR_CLK_PS) || defined(__DOXYGEN__)
@@ -447,6 +530,14 @@ struct ADCDriver {
   ADC_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
+  /**
+   * @brief   EDMA channel used for the CFIFO.
+   */
+  edma_channel_t            cfifo_channel;
+  /**
+   * @brief   EDMA channel used for the RFIFO.
+   */
+  edma_channel_t            rfifo_channel;
 };
 
 /*===========================================================================*/

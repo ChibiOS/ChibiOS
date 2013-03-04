@@ -94,8 +94,10 @@ typedef void (*edma_callback_t)(edma_channel_t channel, void *p);
 typedef struct {
   uint8_t               dma_periph;     /**< @brief Peripheral to be
                                              associated to the channel.     */
-  uint8_t               dma_priority;   /**< @brief Priority register value
+  uint8_t               dma_prio;       /**< @brief Priority register value
                                              for this channel.              */
+  uint8_t               dma_irq_prio;   /**< @brief IRQ priority level for
+                                             this channel.                  */
   edma_callback_t       dma_func;       /**< @brief Channel callback.       */
   edma_callback_t       dma_error_func; /**< @brief Channel error callback. */
   void                  *dma_param;     /**< @brief Channel callback param. */
