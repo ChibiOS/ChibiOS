@@ -32,7 +32,8 @@
  * @{
  */
 /* eDMA attributes.*/
-#define SPC5_EDMA_NCHANNELS                 64
+#define SPC5_HAS_EDMAA                      TRUE
+#define SPC5_EDMA_NCHANNELS                 32
 #define SPC5_EDMA_HAS_MUX                   FALSE
 
 /* eQADC attributes.*/

@@ -85,6 +85,8 @@ ADCDriver ADCD6;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static const uint16_t pudcrs[8] = SPC5_ADC_PUDCR;
+
 /*===========================================================================*/
 /* Driver local functions and macros.                                        */
 /*===========================================================================*/
@@ -215,7 +217,9 @@ static void adc_disable(void) {
 }
 
 /**
- * @brief   Calibrates both ADCs.
+ * @brief   Calibrates an ADC unit.
+ *
+ * @param[in] adc       the ADC unit
  *
  * @notapi
  */
@@ -249,6 +253,20 @@ static void adc_calibrate(uint32_t adc) {
   adc_write_register(adc, ADC_REG_AC2OCCR, occ & 0xFFFF);
 }
 
+/**
+ * @brief   Calibrates an ADC unit.
+ *
+ * @param[in] adc       the ADC unit
+ *
+ * @notapi
+ */
+static void adc_setup_resistors(uint32_t adc) {
+  unsigned i;
+
+  for (i = 0; i < 8; i++)
+    adc_write_register(adc, ADC_REG_PUDCR(i), pudcrs[i]);
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -273,17 +291,20 @@ void adc_lld_init(void) {
   cfifo_enable(ADC_FIFO_0, EQADC_CFCR_SSE | EQADC_CFCR_MODE_SWCS, 0);
   adc_enable();
 
-  /* Calibration of both ADC units then programming alternate configs
-     one and two for 10 and 8 bits operations.*/
+  /* Calibration of both ADC units, programming alternate configs
+     one and two for 10 and 8 bits operations, setting up pull up/down
+     resistors.*/
 #if SPC5_ADC_USE_ADC0
   adc_calibrate(EQADC_RW_BN_ADC0);
   adc_write_register(EQADC_RW_BN_ADC0, ADC_REG_AC1CR, ADC_ACR_RESSEL_10BITS);
   adc_write_register(EQADC_RW_BN_ADC0, ADC_REG_AC2CR, ADC_ACR_RESSEL_8BITS);
+  adc_setup_resistors(EQADC_RW_BN_ADC0);
 #endif
 #if SPC5_ADC_USE_ADC1
   adc_calibrate(EQADC_RW_BN_ADC1);
   adc_write_register(EQADC_RW_BN_ADC1, ADC_REG_AC1CR, ADC_ACR_RESSEL_10BITS);
   adc_write_register(EQADC_RW_BN_ADC1, ADC_REG_AC2CR, ADC_ACR_RESSEL_8BITS);
+  adc_setup_resistors(EQADC_RW_BN_ADC1);
 #endif
 
   /* ADCs disabled until the driver is started by the application.*/

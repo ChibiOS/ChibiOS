@@ -42,9 +42,27 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Default EDMA CR register initialization.
+ */
+#if !defined(SPC5_EDMA_ERROR_HANDLER) || defined(__DOXYGEN__)
+#define SPC5_EDMA_CR_SETTING                0x0000C400
+#endif
+
+/**
+ * @brief   EDMA critical error handler, must not return.
+ */
+#if !defined(SPC5_EDMA_ERROR_HANDLER) || defined(__DOXYGEN__)
+#define SPC5_EDMA_ERROR_HANDLER()           chSysHalt()
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !SPC5_HAS_EDMAA
+#error "this device does not have an eDMA unit"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -65,24 +83,45 @@ typedef struct {
 /**
  * @brief   DMA ISR function type.
  *
- * @param[in] tcd       pointer to the TCD associated to this ISR
+ * @param[in] channel   the channel number
  * @param[in] p         parameter for the registered function
  */
-typedef void (*edma_isr_t)(edma_tcd_t *tcd, void *p);
+typedef void (*edma_callback_t)(edma_channel_t channel, void *p);
 
 /**
  * @brief   Type of an EDMA channel configuration structure.
  */
 typedef struct {
-  uint32_t              dma_periph;     /**< @brief Peripheral to be
+  uint8_t               dma_periph;     /**< @brief Peripheral to be
                                              associated to the channel.     */
-  edma_isr_t            dma_func;       /**< @brief Channel ISR callback.   */
+  uint8_t               dma_priority;   /**< @brief Priority register value
+                                             for this channel.              */
+  edma_callback_t       dma_func;       /**< @brief Channel callback.       */
+  edma_callback_t       dma_error_func; /**< @brief Channel error callback. */
   void                  *dma_param;     /**< @brief Channel callback param. */
 } edma_channel_config_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Starts or restarts an EDMA channel.
+ *
+ * @param[in] channel   the channel number
+ *
+ * @api
+ */
+#define edmaChannelStart(channel) (EDMA.SERQR.R = (channel))
+
+/**
+ * @brief   Stops an EDMA channel.
+ *
+ * @param[in] channel   the channel number
+ *
+ * @api
+ */
+#define edmaChannelStop(channel) (EDMA.CERQR.R = (channel))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

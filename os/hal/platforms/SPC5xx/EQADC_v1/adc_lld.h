@@ -261,6 +261,13 @@
 #if !defined(SPC5_ADC_CR_CLK_PS) || defined(__DOXYGEN__)
 #define SPC5_ADC_CR_CLK_PS                  ADC_CR_CLK_PS(5)
 #endif
+
+/**
+ * @brief   Initialization value for PUDCRx registers.
+ */
+#if !defined(SPC5_ADC_PUDCR) || defined(__DOXYGEN__)
+#define SPC5_ADC_PUDCR                     {0, 0, 0, 0, 0, 0, 0, 0}
+#endif
 /** @} */
 
 /*===========================================================================*/
