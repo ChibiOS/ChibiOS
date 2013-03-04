@@ -41,6 +41,8 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static edma_channel_config_t channels[SPC5_EDMA_NCHANNELS];
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -67,22 +69,22 @@ void edmaInit(void) {
  *
  * @param[in] ccfg      channel configuration
  * @return              The channel TCD pointer.
- * @retval NULL         if the channel cannot be allocated.
+ * @retval EDMA_ERROR   if the channel cannot be allocated.
  *
  * @special
  */
-edma_tcd_t *edmaAllocChannel(const edma_channel_config_t *ccfg) {
+edma_channel_t edmaAllocChannel(const edma_channel_config_t *ccfg) {
 
 }
 
 /**
  * @brief   EDMA channel allocation.
  *
- * @param[in] tcd       channel TCD pointer
+ * @param[in] channel   the channel number
  *
  * @special
  */
-void edmaReleaseChannel(edma_tcd_t *tcd) {
+void edmaReleaseChannel(edma_channel_t channel) {
 
 }
 

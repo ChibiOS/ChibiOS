@@ -33,6 +33,11 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   EDMA channel allocation error.
+ */
+#define EDMA_ERROR -1
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -44,6 +49,11 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Type of and EDMA channel number.
+ */
+typedef int32_t edma_channel_t;
 
 /**
  * @brief   Type of an EDMA TCD.
@@ -64,11 +74,10 @@ typedef void (*edma_isr_t)(edma_tcd_t *tcd, void *p);
  * @brief   Type of an EDMA channel configuration structure.
  */
 typedef struct {
-  uint32_t              dma_periph;     /**< @brief Peripheral associated to
-                                             the channel.                   */
+  uint32_t              dma_periph;     /**< @brief Peripheral to be
+                                             associated to the channel.     */
   edma_isr_t            dma_func;       /**< @brief Channel ISR callback.   */
   void                  *dma_param;     /**< @brief Channel callback param. */
-
 } edma_channel_config_t;
 
 /*===========================================================================*/
@@ -83,8 +92,8 @@ typedef struct {
 extern "C" {
 #endif
   void edmaInit(void);
-  edma_tcd_t *edmaAllocChannel(const edma_channel_config_t *ccfg);
-  void edmaReleaseChannel(edma_tcd_t *tcd);
+  edma_channel_t edmaAllocChannel(const edma_channel_config_t *ccfg);
+  void edmaReleaseChannel(edma_channel_t *channel);
 #ifdef __cplusplus
 }
 #endif
