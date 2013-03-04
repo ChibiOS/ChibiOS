@@ -24,10 +24,14 @@
     the source code for any proprietary components. See the file exception.txt
     for full details of how and when the exception can be applied.
 */
+/*
+   This file has been contributed by:
+		Andrew Hannam aka inmarket.
+*/
 
 /**
- * @file    templates/pwm_lld.c
- * @brief   PWM Driver subsystem low level driver source template.
+ * @file    AT91SAM7/pwm_lld.c
+ * @brief   AT91SAM7 PWM Driver subsystem low level driver source.
  *
  * @addtogroup PWM
  * @{
@@ -155,7 +159,7 @@ static const pwmpindefs_t PWMP4 = {{
 #endif
 
 #else
-#error "serial lines not defined for this SAM7 version"
+	#error "PWM pins not defined for this SAM7 version"
 #endif
 
 #if PWM_USE_PWM2 && !defined(__DOXYGEN__)
@@ -234,23 +238,23 @@ void pwm_lld_init(void) {
 
 #if PWM_USE_PWM2 && !defined(__DOXYGEN__)
 	pwmObjectInit(&PWMD2);
-	PWMD1.chbit = 2;
-	PWMD1.reg = AT91C_BASE_PWMC_CH1;
-	PWMD1.pins = &PWMP2;
+	PWMD2.chbit = 2;
+	PWMD2.reg = AT91C_BASE_PWMC_CH1;
+	PWMD2.pins = &PWMP2;
 #endif
 
 #if PWM_USE_PWM3 && !defined(__DOXYGEN__)
 	pwmObjectInit(&PWMD3);
-	PWMD1.chbit = 4;
-	PWMD1.reg = AT91C_BASE_PWMC_CH2;
-	PWMD1.pins = &PWMP3;
+	PWMD3.chbit = 4;
+	PWMD3.reg = AT91C_BASE_PWMC_CH2;
+	PWMD3.pins = &PWMP3;
 #endif
 
 #if PWM_USE_PWM4 && !defined(__DOXYGEN__)
 	pwmObjectInit(&PWMD4);
-	PWMD1.chbit = 8;
-	PWMD1.reg = AT91C_BASE_PWMC_CH3;
-	PWMD1.pins = &PWMP4;
+	PWMD4.chbit = 8;
+	PWMD4.reg = AT91C_BASE_PWMC_CH3;
+	PWMD4.pins = &PWMP4;
 #endif
 
 	/* Turn on PWM in the power management controller */
@@ -278,7 +282,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 		1. Turn the IO pin to a PWM output
 		2. Configuration of Clock if DIVA or DIVB used
 		3. Selection of the clock for each channel (CPRE field in the PWM_CMRx register)
-		4. Configusration of the waveform alignment for each channel (CALG field in the PWM_CMRx register)
+		4. Configuration of the waveform alignment for each channel (CALG field in the PWM_CMRx register)
 		5. Configuration of the output waveform polarity for each channel (CPOL in the PWM_CMRx register)
 		6. Configuration of the period for each channel (CPRD in the PWM_CPRDx register). Writing in
 			PWM_CPRDx Register is possible while the channel is disabled. After validation of the
