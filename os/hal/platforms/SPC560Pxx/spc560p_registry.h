@@ -64,7 +64,6 @@
 
 /* FlexPWM attributes.*/
 #define SPC5_HAS_FLEXPWM0                   TRUE
-#define SPC5_FLEXPWM0_CLK_SOURCE            SPC5_MCONTROL_CLK
 #define SPC5_FLEXPWM0_PCTL                  41
 #define SPC5_FLEXPWM0_RF0_HANDLER           vector179
 #define SPC5_FLEXPWM0_COF0_HANDLER          vector180
@@ -94,13 +93,12 @@
 #define SPC5_FLEXPWM0_CAF3_NUMBER           190
 #define SPC5_FLEXPWM0_FFLAG_NUMBER          191
 #define SPC5_FLEXPWM0_REF_NUMBER            192
-#define SPC5_FLEXPWM0_CLK                   SPC5_FLEXPWM0_CLK_SOURCE
+#define SPC5_FLEXPWM0_CLK                   SPC5_MCONTROL_CLK
 
 #define SPC5_HAS_FLEXPWM1                   FALSE
 
 /* eTimer attributes.*/
 #define SPC5_HAS_ETIMER0                    TRUE
-#define SPC5_ETIMER0_CLK_SOURCE             SPC5_MCONTROL_CLK
 #define SPC5_ETIMER0_PCTL                   38
 #define SPC5_ETIMER0_TC0IR_HANDLER          vector157
 #define SPC5_ETIMER0_TC1IR_HANDLER          vector158
@@ -118,10 +116,9 @@
 #define SPC5_ETIMER0_TC5IR_NUMBER           162
 #define SPC5_ETIMER0_WTIF_NUMBER            165
 #define SPC5_ETIMER0_RCF_NUMBER             167
-#define SPC5_ETIMER0_CLK                    SPC5_ETIMER0_CLK_SOURCE
+#define SPC5_ETIMER0_CLK                    SPC5_MCONTROL_CLK
 
 #define SPC5_HAS_ETIMER1                    TRUE
-#define SPC5_ETIMER1_CLK_SOURCE             SPC5_MCONTROL_CLK
 #define SPC5_ETIMER1_PCTL                   39
 #define SPC5_ETIMER1_TC0IR_HANDLER          vector168
 #define SPC5_ETIMER1_TC1IR_HANDLER          vector169
@@ -137,7 +134,7 @@
 #define SPC5_ETIMER1_TC4IR_NUMBER           172
 #define SPC5_ETIMER1_TC5IR_NUMBER           173
 #define SPC5_ETIMER1_RCF_NUMBER             178
-#define SPC5_ETIMER1_CLK                    SPC5_ETIMER1_CLK_SOURCE
+#define SPC5_ETIMER1_CLK                    SPC5_MCONTROL_CLK
 
 #endif /* _SPC560P_REGISTRY_H_ */
 
