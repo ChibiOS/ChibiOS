@@ -108,6 +108,36 @@ typedef struct {
 /*===========================================================================*/
 
 /**
+ * @brief   Returns the TCD address associated to a channel.
+ *
+ * @param[in] channel   the channel number
+ * @return              A pointer to an @p edma_tcd_t structure.
+ *
+ * @api
+ */
+#define edmaGetTCD(channel) ((edma_tcd_t *)&EDMA.TCD[channel])
+
+/**
+ * @brief   Sets the source address into a TCD.
+ *
+ * @param[in] tcdp      pointer to an @p edma_tcd_t structure
+ *
+ * @api
+ */
+#define edmaChannelSetSourceAddress(tcdp, src)                              \
+  ((tcdp)->word[0] = (uint32_t)(src))
+
+/**
+ * @brief   Sets the destination address into a TCD.
+ *
+ * @param[in] tcdp      pointer to an @p edma_tcd_t structure
+ *
+ * @api
+ */
+#define edmaChannelSetDestinationAddress(tcdp, dst)                         \
+  ((tcdp)->word[4] = (uint32_t)(dst))
+
+/**
  * @brief   Starts or restarts an EDMA channel.
  *
  * @param[in] channel   the channel number
@@ -124,6 +154,38 @@ typedef struct {
  * @api
  */
 #define edmaChannelStop(channel) (EDMA.CERQR.R = (channel))
+
+/**
+ * @brief   EDMA channel setup.
+ *
+ * @param[in] channel   eDMA channel number
+ * @param[in] src       source address
+ * @param[in] dst       destination address
+ * @param[in] soff      source address offset
+ * @param[in] doff      destination address offset
+ * @param[in] ssize     source transfer size
+ * @param[in] dsize     destination transfer size
+ * @param[in] nbytes    minor loop count
+ * @param[in] iter      major loop count
+ * @param[in] dlast     last destination address adjustment
+ * @param[in] slast     last source address adjustment
+ * @param[in] mode      LSW of TCD register 7
+ *
+ * @api
+ */
+#define edmaChannelSetup(channel, src, dst, soff, doff, ssize, dsize,       \
+                         nbytes, iter, slast, dlast,  mode) {               \
+  edma_tcd_t *tcdp = edmaGetTCD(channel);                                   \
+  tcdp->word[0] = (uint32_t)(src);                                          \
+  tcdp->word[1] = ((uint32_t)(ssize) << 24) | ((uint32_t)(dsize) << 16) |   \
+                   (uint32_t)(soff);                                        \
+  tcdp->word[2] = (uint32_t)(nbytes);                                       \
+  tcdp->word[3] = (uint32_t)(slast);                                        \
+  tcdp->word[0] = (uint32_t)(dst);                                          \
+  tcdp->word[5] = ((uint32_t)(iter) << 16) | (uint32_t)(doff);              \
+  tcdp->word[6] = (uint32_t)(dlast);                                        \
+  tcdp->word[7] = ((uint32_t)(iter) << 16) | (uint32_t)(mode);              \
+}
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -531,6 +531,10 @@ struct ADCDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
+   * @brief   CFIFO/RFIFO used by this instance.
+   */
+  adcfifo_t                 fifo;
+  /**
    * @brief   EDMA channel used for the CFIFO.
    */
   edma_channel_t            cfifo_channel;

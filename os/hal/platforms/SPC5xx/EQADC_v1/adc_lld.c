@@ -133,6 +133,24 @@ static const edma_channel_config_t adc_rfifo3_dma_config = {
 /*===========================================================================*/
 
 /**
+ * @brief   Address of a CFIFO push register.
+ *
+ * @param[in] fifo      the FIFO identifier
+ *
+ * @notapi
+ */
+#define CFIFO_PUSH_ADDR(fifo) ((uint32_t *)(&EQADC.CFPR[fifo].R))
+
+/**
+ * @brief   Address of a RFIFO pop register.
+ *
+ * @param[in] fifo      the FIFO identifier
+ *
+ * @notapi
+ */
+#define RFIFO_POP_ADDR(fifo) (((uint16_t *)&EQADC.RFPR[fifo].R) + 1)
+
+/**
  * @brief   Enables a CFIFO.
  *
  * @param[in] fifo      the FIFO identifier
@@ -146,7 +164,6 @@ static void cfifo_enable(adcfifo_t fifo, uint16_t cfcr, uint16_t idcr) {
   EQADC.CFCR[fifo].R = cfcr;
   EQADC.IDCR[fifo].R = idcr;
 }
-
 
 /**
  * @brief   Disables a CFIFO and the associated resources.
@@ -370,13 +387,15 @@ void adc_lld_init(void) {
   adcObjectInit(&ADCD1);
   ADCD1.cfifo_channel = EDMA_ERROR;
   ADCD1.rfifo_channel = EDMA_ERROR;
+  ADCD1.fifo          = ADC_FIFO_0;
 #endif /* SPC5_ADC_USE_EQADC_Q0 */
 
 #if SPC5_ADC_USE_ADC1_Q3
   /* Driver initialization.*/
-  adcObjectInit(&ADCD1);
-  ADCD1.cfifo_channel = EDMA_ERROR;
-  ADCD1.rfifo_channel = EDMA_ERROR;
+  adcObjectInit(&ADCD4);
+  ADCD4.cfifo_channel = EDMA_ERROR;
+  ADCD4.rfifo_channel = EDMA_ERROR;
+  ADCD4.fifo          = ADC_FIFO_3;
 #endif /* SPC5_ADC_USE_ADC1_Q3 */
 
   /* Temporarily enables CFIFO0 for calibration and initialization.*/
@@ -433,8 +452,33 @@ void adc_lld_start(ADCDriver *adcp) {
               (adcp->rfifo_channel != EDMA_ERROR),
               "adc_lld_start(), #1", "channel cannot be allocated");
 
-  /* Configures the peripheral.*/
-
+  /* Setting up TCD parameters that will not change during operations,
+     other parameters are set to a temporary value and will be changed
+     when starting a conversion.*/
+  edmaChannelSetup(adcp->cfifo_channel,         /* channel.                 */
+                   NULL,                        /* source, temporary.       */
+                   CFIFO_PUSH_ADDR(adcp->fifo), /* destination.             */
+                   4,                           /* soff, advance by 4.      */
+                   0,                           /* doff, do not advance.    */
+                   2,                           /* ssize, 32 bits transfers.*/
+                   2,                           /* dsize, 32 bits transfers.*/
+                   4,                           /* nbytes, always four.     */
+                   0,                           /* iter, temporary.         */
+                   0,                           /* slast, temporary.        */
+                   0,                           /* dlast, no dest.adjust.   */
+                   0);                          /* mode, temporary.         */
+  edmaChannelSetup(adcp->rfifo_channel,         /* channel.                 */
+                   RFIFO_POP_ADDR(adcp->fifo),  /* source.                  */
+                   NULL,                        /* destination, temporary.  */
+                   0,                           /* soff, do not advance.    */
+                   2,                           /* doff, advance by two.    */
+                   1,                           /* ssize, 16 bits transfers.*/
+                   1,                           /* dsize, 16 bits transfers.*/
+                   2,                           /* nbytes, always two.      */
+                   0,                           /* iter, temporary.         */
+                   0,                           /* slast, no source adjust. */
+                   0,                           /* dlast, temporary.        */
+                   0);                          /* mode, temporary.         */
 }
 
 /**
@@ -474,7 +518,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
 
-  (void)adcp;
+  /* TODO: ISEL0, ISEL3 setup for HW triggers.*/
 }
 
 /**
