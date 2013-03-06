@@ -652,6 +652,9 @@ void adc_lld_stop(ADCDriver *adcp) {
 
 /**
  * @brief   Starts an ADC conversion.
+ * @note    Because an HW constraint the number of rows in the samples
+ *          array must not be greater than the preconfigured value in
+ *          the conversion group.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  *
@@ -660,6 +663,9 @@ void adc_lld_stop(ADCDriver *adcp) {
 void adc_lld_start_conversion(ADCDriver *adcp) {
   edma_tcd_t *ctcdp = edmaGetTCD(adcp->cfifo_channel);
   edma_tcd_t *rtcdp = edmaGetTCD(adcp->rfifo_channel);
+
+  chDbgAssert(adcp->grpp->num_iterations >= adcp->depth,
+              "adc_lld_start_conversion(), #1", "too many elements");
 
   /* TODO: ISEL0, ISEL3 setup for HW triggers.*/
 
