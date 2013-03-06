@@ -62,6 +62,22 @@
 /** @} */
 
 /**
+ * @name    EQADC IDCR registers definitions
+ * @{
+ */
+#define EQADC_IDCR_NCIE             (1U << 15)
+#define EQADC_IDCR_TORIE            (1U << 14)
+#define EQADC_IDCR_PIE              (1U << 13)
+#define EQADC_IDCR_EOQIE            (1U << 12)
+#define EQADC_IDCR_CFUIE            (1U << 11)
+#define EQADC_IDCR_CFFE             (1U << 9)
+#define EQADC_IDCR_CFFS             (1U << 8)
+#define EQADC_IDCR_RFOIE            (1U << 3)
+#define EQADC_IDCR_RFDE             (1U << 1)
+#define EQADC_IDCR_RFDS             (1U << 0)
+/** @} */
+
+/**
  * @name    EQADC CFCR registers definitions
  * @{
  */
@@ -300,42 +316,42 @@
  * @brief   EQADC CFIFO0 and RFIFO0 DMA IRQ priority.
  */
 #if !defined(SPC5_ADC0_FIFO0_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC0_FIFO0_DMA_IRQ_PRIO        12
+#define SPC5_ADC_FIFO0_DMA_IRQ_PRIO         12
 #endif
 
 /**
  * @brief   EQADC CFIFO1 and RFIFO1 DMA IRQ priority.
  */
 #if !defined(SPC5_ADC0_FIFO1_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC0_FIFO1_DMA_IRQ_PRIO        12
+#define SPC5_ADC_FIFO1_DMA_IRQ_PRIO         12
 #endif
 
 /**
  * @brief   EQADC CFIFO2 and RFIFO2 DMA IRQ priority.
  */
 #if !defined(SPC5_ADC0_FIFO2_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC0_FIFO2_DMA_IRQ_PRIO        12
+#define SPC5_ADC_FIFO2_DMA_IRQ_PRIO         12
 #endif
 
 /**
  * @brief   EQADC CFIFO3 and RFIFO3 DMA IRQ priority.
  */
 #if !defined(SPC5_ADC0_FIFO3_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC0_FIFO3_DMA_IRQ_PRIO        12
+#define SPC5_ADC_FIFO3_DMA_IRQ_PRIO         12
 #endif
 
 /**
  * @brief   EQADC CFIFO4 and RFIFO4 DMA IRQ priority.
  */
 #if !defined(SPC5_ADC0_FIFO4_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC0_FIFO4_DMA_IRQ_PRIO        12
+#define SPC5_ADC_FIFO4_DMA_IRQ_PRIO         12
 #endif
 
 /**
  * @brief   EQADC CFIFO5 and RFIFO5 DMA IRQ priority.
  */
 #if !defined(SPC5_ADC0_FIFO5_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC0_FIFO5_DMA_IRQ_PRIO        12
+#define SPC5_ADC_FIFO5_DMA_IRQ_PRIO         12
 #endif
 
 /**
@@ -409,8 +425,7 @@ typedef uint16_t adc_channels_num_t;
  *          upon.
  */
 typedef enum {
-  ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
-  ADC_ERR_OVERFLOW = 1                      /**< ADC overflow condition.    */
+  ADC_ERR_DMAFAILURE = 0                    /**< DMA operations failure.    */
 } adcerror_t;
 
 /**
@@ -471,6 +486,10 @@ typedef struct {
    *          @p adcStartConversion().
    */
   uint32_t                  num_iterations;
+  /**
+   * @brief   Initialization value for CFCR register.
+   */
+  uint16_t                  cfcr;
   /**
    * @brief   Pointer to an array of low level EQADC commands to be pushed
    *          into the CFIFO during a conversion.

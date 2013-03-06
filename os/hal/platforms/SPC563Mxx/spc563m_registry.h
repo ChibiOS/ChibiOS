@@ -38,8 +38,6 @@
 
 /* eQADC attributes.*/
 #define SPC5_HAS_EQADC                      TRUE
-#define SPC5_EQADC1_HANDLER                 vector146
-#define SPC5_EQADC1_NUMBER                  146
 
 /* eSCI attributes.*/
 #define SPC5_HAS_ESCIA                      TRUE
