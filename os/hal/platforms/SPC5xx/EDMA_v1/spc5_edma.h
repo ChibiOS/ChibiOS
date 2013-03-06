@@ -68,6 +68,14 @@
 #define SPC5_EDMA_ERROR_HANDLER()           chSysHalt()
 #endif
 
+
+/**
+ * @brief   EDMA error handler IRQ priority.
+ */
+#if !defined(SPC5_ADC0_FIFO2_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_EDMA_ERROR_IRQ_PRIO            12
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -96,12 +104,23 @@ typedef struct {
 } edma_tcd_t;
 
 /**
- * @brief   DMA ISR function type.
+ * @brief   DMA callback type.
  *
  * @param[in] channel   the channel number
  * @param[in] p         parameter for the registered function
  */
 typedef void (*edma_callback_t)(edma_channel_t channel, void *p);
+
+/**
+ * @brief   DMA error callback type.
+ *
+ * @param[in] channel   the channel number
+ * @param[in] p         parameter for the registered function
+ * @param[in] esr       content of the ESR register
+ */
+typedef void (*edma_error_callback_t)(edma_channel_t channel,
+                                      void *p,
+                                      uint32_t esr);
 
 /**
  * @brief   Type of an EDMA channel configuration structure.
@@ -114,7 +133,7 @@ typedef struct {
   uint8_t               dma_irq_prio;   /**< @brief IRQ priority level for
                                              this channel.                  */
   edma_callback_t       dma_func;       /**< @brief Channel callback.       */
-  edma_callback_t       dma_error_func; /**< @brief Channel error callback. */
+  edma_error_callback_t dma_error_func; /**< @brief Channel error callback. */
   void                  *dma_param;     /**< @brief Channel callback param. */
 } edma_channel_config_t;
 

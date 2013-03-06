@@ -374,7 +374,7 @@
 /*===========================================================================*/
 
 #if !SPC5_HAS_EQADC
-#error "EQADC1 not present in the selected device"
+#error "EQADC not present in the selected device"
 #endif
 
 #define SPC5_ADC_USE_ADC0                   (SPC5_ADC_USE_ADC0_Q0 |         \
@@ -502,7 +502,14 @@ typedef struct {
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-  uint32_t                  dummy;
+  /**
+   * @brief   ETISR register value for the session.
+   */
+  uint32_t                  etisr;
+  /**
+   * @brief   ISEL3 register value for the session.
+   */
+  uint32_t                  isel3;
 } ADCConfig;
 
 /**

@@ -27,14 +27,16 @@
 
 /* Some forward declarations.*/
 static void adc_serve_rfifo_irq(edma_channel_t channel, void *p);
-static void adc_serve_dma_error_irq(edma_channel_t channel, void *p);
+static void adc_serve_dma_error_irq(edma_channel_t channel,
+                                    void *p,
+                                    uint32_t esr);
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
 /**
- * @brief Calibration constant.
+ * @brief   Calibration constant.
  * @details Ideal conversion result for 75%(VRH - VRL) minus 2.
  */
 #define ADC_IDEAL_RES75_2       12286
@@ -434,16 +436,18 @@ static void adc_serve_rfifo_irq(edma_channel_t channel, void *p) {
  *
  * @param[in] channel   the channel number
  * @param[in] p         parameter for the registered function
+ * @param[in] esr       content of the ESR register
  *
  * @notapi
  */
-static void adc_serve_dma_error_irq(edma_channel_t channel, void *p) {
+static void adc_serve_dma_error_irq(edma_channel_t channel,
+                                    void *p,
+                                    uint32_t esr) {
   ADCDriver *adcp = (ADCDriver *)p;
 
   (void)channel;
+  (void)esr;
 
-  /* DMA, this could help only if the DMA tries to access an unmapped
-     address space or violates alignment rules.*/
   _adc_isr_error_code(adcp, ADC_ERR_DMAFAILURE);
 }
 
@@ -620,6 +624,10 @@ void adc_lld_start(ADCDriver *adcp) {
                    0,                           /* slast, no source adjust. */
                    0,                           /* dlast, temporary.        */
                    0);                          /* mode, temporary.         */
+
+  /* HW triggers setup.*/
+  SIU.ETISR.R = adcp->config->etisr;
+  SIU.ISEL3.R = adcp->config->isel3;
 }
 
 /**
@@ -637,16 +645,6 @@ void adc_lld_stop(ADCDriver *adcp) {
     /* Releases the allocated EDMA channels.*/
     edmaChannelRelease(adcp->cfifo_channel);
     edmaChannelRelease(adcp->rfifo_channel);
-
-    /* Disables the peripheral.*/
-#if SPC5_ADC_USE_ADC0_Q0
-    if (&ADCD1 == adcp) {
-    }
-#endif /* SPC5_ADC_USE_ADC0_Q0 */
-#if SPC5_ADC_USE_ADC1_Q3
-    if (&ADCD1 == adcp) {
-    }
-#endif /* SPC5_ADC_USE_ADC1_Q3 */
   }
 }
 
@@ -666,8 +664,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   chDbgAssert(adcp->grpp->num_iterations >= adcp->depth,
               "adc_lld_start_conversion(), #1", "too many elements");
-
-  /* TODO: ISEL0, ISEL3 setup for HW triggers.*/
 
   /* Updating the variable TCD fields for CFIFO.*/
   edmaTCDSetSourceAddress(ctcdp, adcp->grpp->commands);
