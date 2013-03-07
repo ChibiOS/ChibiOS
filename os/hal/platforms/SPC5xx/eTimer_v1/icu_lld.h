@@ -13,8 +13,8 @@
  */
 
 /**
- * @file
- * @brief   SPC5xx low level icu driver header.
+ * @file    eTimer_v1/icu_lld.c
+ * @brief   SPC5xx low level ICU driver header.
  *
  * @addtogroup ICU
  * @{
@@ -56,7 +56,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD0) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD0	                 TRUE
+#define SPC5_ICU_USE_SMOD0	                TRUE
 #endif
 
 /**
@@ -65,7 +65,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD1) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD1	                 TRUE
+#define SPC5_ICU_USE_SMOD1	                TRUE
 #endif
 
 /**
@@ -74,7 +74,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD2) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD2 	                 TRUE
+#define SPC5_ICU_USE_SMOD2 	                TRUE
 #endif
 
 /**
@@ -83,7 +83,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD3) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD3 	                 TRUE
+#define SPC5_ICU_USE_SMOD3 	                TRUE
 #endif
 
 /**
@@ -92,7 +92,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD4) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD4                   TRUE
+#define SPC5_ICU_USE_SMOD4                  TRUE
 #endif
 
 /**
@@ -101,7 +101,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD5) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD5	                 TRUE
+#define SPC5_ICU_USE_SMOD5	                TRUE
 #endif
 
 /**
@@ -110,7 +110,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD6) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD6                   TRUE
+#define SPC5_ICU_USE_SMOD6                  TRUE
 #endif
 
 /**
@@ -119,7 +119,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD7) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD7                   TRUE
+#define SPC5_ICU_USE_SMOD7                  TRUE
 #endif
 
 /**
@@ -128,7 +128,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD8) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD8                   TRUE
+#define SPC5_ICU_USE_SMOD8                  TRUE
 #endif
 
 /**
@@ -137,7 +137,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD9) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD9                   TRUE
+#define SPC5_ICU_USE_SMOD9                  TRUE
 #endif
 
 /**
@@ -146,7 +146,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD10) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD10                   TRUE
+#define SPC5_ICU_USE_SMOD10                 TRUE
 #endif
 
 /**
@@ -155,21 +155,21 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD11) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD11                   TRUE
+#define SPC5_ICU_USE_SMOD11                 TRUE
 #endif
 
 /**
  * @brief   eTimer0 interrupt priority level setting.
  */
 #if !defined(SPC5_ICU_ETIMER0_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER0_PRIORITY         7
+#define SPC5_ICU_ETIMER0_PRIORITY           7
 #endif
 
 /**
  * @brief   eTimer1 interrupt priority level setting.
  */
 #if !defined(SPC5_ICU_ETIMER1_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER1_PRIORITY         7
+#define SPC5_ICU_ETIMER1_PRIORITY           7
 #endif
 
 /**
@@ -263,7 +263,7 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER0_START_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER0_START_PCTL     (SPC5_ME_PCTL_RUN(1) |          \
+#define SPC5_ICU_ETIMER0_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #endif
 
@@ -274,7 +274,7 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER0_STOP_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER0_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
+#define SPC5_ICU_ETIMER0_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 #endif
 
@@ -285,7 +285,7 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER1_START_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER1_START_PCTL     (SPC5_ME_PCTL_RUN(1) |          \
+#define SPC5_ICU_ETIMER1_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #endif
 
@@ -296,7 +296,7 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER1_STOP_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER1_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
+#define SPC5_ICU_ETIMER1_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 #endif
 /** @} */

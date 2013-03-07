@@ -13,8 +13,8 @@
  */
 
 /**
- * @file
- * @brief   SPC5xx low level icu driver header.
+ * @file    eTimer_v1/icu_lld.c
+ * @brief   SPC5xx low level ICU driver header.
  *
  * @addtogroup ICU
  * @{
@@ -144,11 +144,14 @@ ICUDriver ICUD12;
  * @param[in] index      ICU channel index
  */
 static void spc5_icu_channel_enable(ICUDriver *icup, uint8_t index) {
+
   /* Clear pending IRQs (if any).*/
   icup->etimerp->CHANNEL[index].STS.R = 0xFFFF;
+
   /* Set Capture 1 and Capture 2 Mode.*/
   icup->etimerp->CHANNEL[index].CCCTRL.B.CPT1MODE = 0b10;
   icup->etimerp->CHANNEL[index].CCCTRL.B.CPT2MODE = 0b01;
+
   /* Active interrupts.*/
   if (icup->config->period_cb != NULL || icup->config->width_cb != NULL) {
     icup->etimerp->CHANNEL[index].INTDMA.B.ICF1IE = 1U;
@@ -157,8 +160,10 @@ static void spc5_icu_channel_enable(ICUDriver *icup, uint8_t index) {
   if (icup->config->overflow_cb != NULL) {
     icup->etimerp->CHANNEL[index].INTDMA.B.TOFIE = 1U;
   }
+
   /* Set Capture FIFO Water Mark.*/
   icup->etimerp->CHANNEL[index].CCCTRL.B.CFWM = 0b00;
+
   /* Enable Counter.*/
   if (ICU_SKIP_FIRST_CAPTURE) {
     icup->etimerp->CHANNEL[index].CTRL.B.CNTMODE = 0b011;
@@ -166,6 +171,7 @@ static void spc5_icu_channel_enable(ICUDriver *icup, uint8_t index) {
   else {
     icup->etimerp->CHANNEL[index].CTRL.B.CNTMODE = 0b001;
   }
+
   /* Enable Capture process.*/
   icup->etimerp->CHANNEL[index].CCCTRL.B.ARM = 1U;
 }
@@ -177,13 +183,17 @@ static void spc5_icu_channel_enable(ICUDriver *icup, uint8_t index) {
  * @param[in] index      ICU channel index
  */
 static void spc5_icu_channel_disable(ICUDriver *icup, uint8_t index) {
+
   /* Disable Capture process.*/
   icup->etimerp->CHANNEL[index].CCCTRL.B.ARM = 0;
+
   /* Clear pending IRQs (if any).*/
   icup->etimerp->CHANNEL[index].STS.R = 0xFFFF;
+
   /* Set Capture 1 and Capture 2 Mode to Disabled.*/
   icup->etimerp->CHANNEL[index].CCCTRL.B.CPT1MODE = 0b00;
   icup->etimerp->CHANNEL[index].CCCTRL.B.CPT2MODE = 0b00;
+
   /* Disable interrupts.*/
   if (icup->config->period_cb != NULL || icup->config->width_cb != NULL) {
     icup->etimerp->CHANNEL[index].INTDMA.B.ICF1IE = 0;
@@ -200,20 +210,28 @@ static void spc5_icu_channel_disable(ICUDriver *icup, uint8_t index) {
  * @param[in] index      ICU channel index
  */
 static void spc5_icu_channel_start(ICUDriver *icup, uint8_t index) {
+
   /* Timer disabled.*/
   icup->etimerp->CHANNEL[index].CTRL.B.CNTMODE = 0b000;
+
   /* Clear pending IRQs (if any).*/
   icup->etimerp->CHANNEL[index].STS.R = 0xFFFF;
+
   /* All IRQs and DMA requests disabled.*/
   icup->etimerp->CHANNEL[index].INTDMA.R = 0x0000;
+
   /* Compare Load 1 disabled.*/
   icup->etimerp->CHANNEL[index].CCCTRL.B.CLC1 = 0b000;
+
   /* Compare Load 2 disabled.*/
   icup->etimerp->CHANNEL[index].CCCTRL.B.CLC2 = 0b000;
+
   /* Capture 1 disabled.*/
   icup->etimerp->CHANNEL[index].CCCTRL.B.CPT1MODE = 0b00;
+
   /* Capture 2 disabled.*/
   icup->etimerp->CHANNEL[index].CCCTRL.B.CPT2MODE = 0b00;
+
   /* Counter reset to zero.*/
   icup->etimerp->CHANNEL[index].CNTR.R = 0x0000;
 }
@@ -225,15 +243,17 @@ static void spc5_icu_channel_start(ICUDriver *icup, uint8_t index) {
  * @param[in] index      ICU channel index
  */
 static void spc5_icu_channel_init(ICUDriver *icup, uint8_t index) {
+
 #if !defined(psc)
   uint32_t psc;
 #endif
   psc = (icup->clock / icup->config->frequency);
-  chDbgAssert(
-      (psc <= 0xFFFF) && (((psc) * icup->config->frequency) == icup->clock) &&
-      ((psc == 1) || (psc == 2) || (psc == 4) || (psc == 8) || (psc == 16) ||
-          (psc == 32) || (psc == 64) || (psc == 128)),
-      "icu_lld_start(), #1", "invalid frequency");
+  chDbgAssert((psc <= 0xFFFF) &&
+              (((psc) * icup->config->frequency) == icup->clock) &&
+              ((psc == 1) || (psc == 2) || (psc == 4) ||
+               (psc == 8) || (psc == 16) || (psc == 32) ||
+               (psc == 64) || (psc == 128)),
+              "icu_lld_start(), #1", "invalid frequency");
 
   /* Set primary source and clock prescaler.*/
   switch (psc) {
@@ -262,6 +282,7 @@ static void spc5_icu_channel_init(ICUDriver *icup, uint8_t index) {
     icup->etimerp->CHANNEL[index].CTRL.B.PRISRC = 0b11111;
     break;
   }
+
   /* Set control registers.*/
   icup->etimerp->CHANNEL[index].CTRL.B.ONCE = 0;
   icup->etimerp->CHANNEL[index].CTRL.B.LENGTH = 0;
@@ -314,6 +335,7 @@ static void spc5_icu_channel_init(ICUDriver *icup, uint8_t index) {
  * @param[in] index      ICU channel index
  */
 static void icu_lld_interrupt_management(ICUDriver *icup, uint8_t index) {
+
 #if !defined(sr)
   uint16_t sr;
 #endif
@@ -345,7 +367,7 @@ static void icu_lld_interrupt_management(ICUDriver *icup, uint8_t index) {
         _icu_isr_invoke_width_cb(icup);
       }
     }
-  } else { /* End ICU_SKIP_FIRST_CAPTURE = TRUE*/
+  } else { /* ICU_SKIP_FIRST_CAPTURE = TRUE*/
     if ((sr & 0x0008) != 0) { /* TOF */
       icup->etimerp->CHANNEL[index].STS.B.TOF = 1U;
       _icu_isr_invoke_overflow_cb(icup);
@@ -359,7 +381,7 @@ static void icu_lld_interrupt_management(ICUDriver *icup, uint8_t index) {
       icup->etimerp->CHANNEL[index].STS.B.ICF2 = 1U;
       _icu_isr_invoke_width_cb(icup);
     }
-  } /* End ICU_SKIP_FIRST_CAPTURE = FALSE*/
+  } /* ICU_SKIP_FIRST_CAPTURE = FALSE */
 }
 
 /**
@@ -927,14 +949,14 @@ void icu_lld_init(void) {
  * @notapi
  */
 void icu_lld_start(ICUDriver *icup) {
-  chDbgAssert(
-      (icup->config->channel == ICU_CHANNEL_1) ||
-      (icup->config->channel == ICU_CHANNEL_2) ||
-      (icup->config->channel == ICU_CHANNEL_3) ||
-      (icup->config->channel == ICU_CHANNEL_4) ||
-      (icup->config->channel == ICU_CHANNEL_5) ||
-      (icup->config->channel == ICU_CHANNEL_6),
-      "icu_lld_start(), #1", "invalid input");
+
+  chDbgAssert((icup->config->channel == ICU_CHANNEL_1) ||
+              (icup->config->channel == ICU_CHANNEL_2) ||
+              (icup->config->channel == ICU_CHANNEL_3) ||
+              (icup->config->channel == ICU_CHANNEL_4) ||
+              (icup->config->channel == ICU_CHANNEL_5) ||
+              (icup->config->channel == ICU_CHANNEL_6),
+             "icu_lld_start(), #1", "invalid input");
 
 #if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||        \
     SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
@@ -1005,7 +1027,7 @@ void icu_lld_start(ICUDriver *icup) {
   SMOD11 = 1U;
 #endif
 
-#if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||        \
+#if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||       \
     SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
   /* Set Peripheral Clock.*/
   if (!(SMOD0 || SMOD1 || SMOD2 || SMOD3 || SMOD4 || SMOD5)) {
@@ -1013,7 +1035,7 @@ void icu_lld_start(ICUDriver *icup) {
                                  SPC5_ICU_ETIMER0_START_PCTL);
   }
 #endif
-#if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||        \
+#if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
     SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
   /* Set Peripheral Clock.*/
   if (!(SMOD6 || SMOD7 || SMOD8 || SMOD9 || SMOD10 || SMOD11)) {
@@ -1239,6 +1261,7 @@ void icu_lld_stop(ICUDriver *icup) {
  * @notapi
  */
 void icu_lld_enable(ICUDriver *icup) {
+
 #if SPC5_ICU_USE_SMOD0
   if (&ICUD1 == icup) {
     spc5_icu_channel_enable(icup, 0);
@@ -1320,6 +1343,7 @@ void icu_lld_enable(ICUDriver *icup) {
  * @notapi
  */
 void icu_lld_disable(ICUDriver *icup) {
+
 #if SPC5_ICU_USE_SMOD0
   if (&ICUD1 == icup) {
     spc5_icu_channel_disable(icup, 0);
@@ -1404,6 +1428,7 @@ void icu_lld_disable(ICUDriver *icup) {
  * @notapi
  */
 icucnt_t icu_lld_get_width(ICUDriver *icup) {
+
   return (icucnt_t)*icup->wccrp + 1;
 }
 
@@ -1418,6 +1443,7 @@ icucnt_t icu_lld_get_width(ICUDriver *icup) {
  * @notapi
  */
 icucnt_t icu_lld_get_period(ICUDriver *icup) {
+
   return (icucnt_t)*icup->pccrp + 1;
 }
 

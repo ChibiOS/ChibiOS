@@ -13,8 +13,8 @@
  */
 
 /**
- * @file    SPC560Pxx/pwm_lld.h
- * @brief   SPC560Pxx low level FlexPWM driver header.
+ * @file    FlexPWM_v1/pwm_lld.h
+ * @brief   SPC5xx low level PWM driver header.
  *
  * @addtogroup PWM
  * @{
@@ -33,17 +33,17 @@
  * @name    LINIER register bits definitions
  * @{
  */
-#define SPC5_STS_CMPF0                      (1U << 0)
-#define SPC5_STS_CMPF1                      (1U << 1)
-#define SPC5_STS_CMPF2                      (1U << 2)
-#define SPC5_STS_CMPF3                      (1U << 3)
-#define SPC5_STS_CMPF4                      (1U << 4)
-#define SPC5_STS_CMPF5                      (1U << 5)
-#define SPC5_STS_CFX0                       (1U << 6)
-#define SPC5_STS_CFX1                       (1U << 7)
-#define SPC5_STS_RF                         (1U << 12)
-#define SPC5_STS_REF                        (1U << 13)
-#define SPC5_STS_RUF                        (1U << 14)
+#define SPC5_STS_CMPF0                          (1U << 0)
+#define SPC5_STS_CMPF1                          (1U << 1)
+#define SPC5_STS_CMPF2                          (1U << 2)
+#define SPC5_STS_CMPF3                          (1U << 3)
+#define SPC5_STS_CMPF4                          (1U << 4)
+#define SPC5_STS_CMPF5                          (1U << 5)
+#define SPC5_STS_CFX0                           (1U << 6)
+#define SPC5_STS_CFX1                           (1U << 7)
+#define SPC5_STS_RF                             (1U << 12)
+#define SPC5_STS_REF                            (1U << 13)
+#define SPC5_STS_RUF                            (1U << 14)
 /** @} */
 
 /**
@@ -79,13 +79,13 @@
  * @brief   Edge-Aligned PWM functional mode.
  * @note    This is an SPC5-specific setting.
  */
-#define EDGE_ALIGNED_PWM     0x01
+#define EDGE_ALIGNED_PWM                        0x01
 
 /**
  * @brief   Center-Aligned PWM functional mode.
  * @note    This is an SPC5-specific setting.
  */
-#define CENTER_ALIGNED_PWM     0x02
+#define CENTER_ALIGNED_PWM                      0x02
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -136,28 +136,28 @@
  * @brief   PWMD1 interrupt priority level setting.
  */
 #if !defined(SPC5_PWM_SMOD0_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PWM_SMOD0_PRIORITY          7
+#define SPC5_PWM_SMOD0_PRIORITY             7
 #endif
 
 /**
  * @brief   PWMD2 interrupt priority level setting.
  */
 #if !defined(SPC5_PWM_SMOD1_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PWM_SMOD1_PRIORITY          7
+#define SPC5_PWM_SMOD1_PRIORITY             7
 #endif
 
 /**
  * @brief   PWMD3 interrupt priority level setting.
  */
 #if !defined(SPC5_PWM_SMOD2_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PWM_SMOD2_PRIORITY          7
+#define SPC5_PWM_SMOD2_PRIORITY             7
 #endif
 
 /**
  * @brief   PWMD4 interrupt priority level setting.
  */
 #if !defined(SPC5_PWM_SMOD3_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PWM_SMOD3_PRIORITY          7
+#define SPC5_PWM_SMOD3_PRIORITY             7
 #endif
 
 /**
@@ -167,8 +167,8 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_PWM_FLEXPWM0_START_PCTL) || defined(__DOXYGEN__)
-#define SPC5_PWM_FLEXPWM0_START_PCTL     (SPC5_ME_PCTL_RUN(1) |               \
-                                          SPC5_ME_PCTL_LP(2))
+#define SPC5_PWM_FLEXPWM0_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
 #endif
 
 /**
@@ -178,8 +178,8 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_PWM_FLEXPWM0_STOP_PCTL) || defined(__DOXYGEN__)
-#define SPC5_PWM_FLEXPWM0_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |               \
-                                          SPC5_ME_PCTL_LP(0))
+#define SPC5_PWM_FLEXPWM0_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
 #endif
 
 /*===========================================================================*/
