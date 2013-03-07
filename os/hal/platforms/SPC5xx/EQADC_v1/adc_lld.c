@@ -420,7 +420,7 @@ static void adc_serve_rfifo_irq(edma_channel_t channel, void *p) {
   edma_tcd_t *tcdp = edmaGetTCD(channel);
 
   if (adcp->grpp != NULL) {
-      if (tcdp->hword[10] != tcdp->hword[14]) {
+    if ((tcdp->word[5] >> 16) != (tcdp->word[7] >> 16)) {
       /* Half transfer processing.*/
       _adc_isr_half_code(adcp);
     }
@@ -597,34 +597,6 @@ void adc_lld_start(ADCDriver *adcp) {
               (adcp->rfifo_channel != EDMA_ERROR),
               "adc_lld_start(), #1", "channel cannot be allocated");
 
-  /* Setting up TCD parameters that will not change during operations,
-     other parameters are set to a temporary value and will be changed
-     when starting a conversion.*/
-  edmaChannelSetup(adcp->cfifo_channel,         /* channel.                 */
-                   NULL,                        /* source, temporary.       */
-                   CFIFO_PUSH_ADDR(adcp->fifo), /* destination.             */
-                   4,                           /* soff, advance by 4.      */
-                   0,                           /* doff, do not advance.    */
-                   2,                           /* ssize, 32 bits transfers.*/
-                   2,                           /* dsize, 32 bits transfers.*/
-                   4,                           /* nbytes, always four.     */
-                   0,                           /* iter, temporary.         */
-                   0,                           /* slast, temporary.        */
-                   0,                           /* dlast, no dest.adjust.   */
-                   EDMA_TCD_MODE_DREQ);         /* mode.                    */
-  edmaChannelSetup(adcp->rfifo_channel,         /* channel.                 */
-                   RFIFO_POP_ADDR(adcp->fifo),  /* source.                  */
-                   NULL,                        /* destination, temporary.  */
-                   0,                           /* soff, do not advance.    */
-                   2,                           /* doff, advance by two.    */
-                   1,                           /* ssize, 16 bits transfers.*/
-                   1,                           /* dsize, 16 bits transfers.*/
-                   2,                           /* nbytes, always two.      */
-                   0,                           /* iter, temporary.         */
-                   0,                           /* slast, no source adjust. */
-                   0,                           /* dlast, temporary.        */
-                   0);                          /* mode, temporary.         */
-
   /* HW triggers setup.*/
   SIU.ETISR.R = adcp->config->etisr;
   SIU.ISEL3.R = adcp->config->isel3;
@@ -659,31 +631,44 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-  edma_tcd_t *ctcdp = edmaGetTCD(adcp->cfifo_channel);
-  edma_tcd_t *rtcdp = edmaGetTCD(adcp->rfifo_channel);
 
   chDbgAssert(adcp->grpp->num_iterations >= adcp->depth,
               "adc_lld_start_conversion(), #1", "too many elements");
 
-  /* Updating the variable TCD fields for CFIFO.*/
-  edmaTCDSetSourceAddress(ctcdp, adcp->grpp->commands);
-  edmaTCDSetOuterLoopCount(ctcdp, (uint32_t)adcp->grpp->num_channels *
-                                  (uint32_t)adcp->depth);
-  edmaTCDSetSourceAdjustment(ctcdp,
-                             CPL2((uint32_t)adcp->grpp->num_channels *
-                                  (uint32_t)adcp->depth *
-                                  sizeof(adccommand_t)));
+  /* Setting up CFIFO TCD parameters.*/
+  edmaChannelSetup(adcp->cfifo_channel,         /* channel.                 */
+                   adcp->grpp->commands,        /* src.                     */
+                   CFIFO_PUSH_ADDR(adcp->fifo), /* dst.                     */
+                   4,                           /* soff, advance by 4.      */
+                   0,                           /* doff, do not advance.    */
+                   2,                           /* ssize, 32 bits transfers.*/
+                   2,                           /* dsize, 32 bits transfers.*/
+                   4,                           /* nbytes, always four.     */
+                   (uint32_t)adcp->grpp->num_channels *
+                   (uint32_t)adcp->depth,       /* iter.                    */
+                   CPL2((uint32_t)adcp->grpp->num_channels *
+                        (uint32_t)adcp->depth *
+                        sizeof(adccommand_t)),  /* slast.                   */
+                   0,                           /* dlast, no dest.adjust.   */
+                   EDMA_TCD_MODE_DREQ);         /* mode.                    */
 
-  /* Updating the variable TCD fields for RFIFO.*/
-  edmaTCDSetDestinationAddress(rtcdp, adcp->samples);
-  edmaTCDSetOuterLoopCount(rtcdp, (uint32_t)adcp->grpp->num_channels *
-                                  (uint32_t)adcp->depth);
-  edmaTCDSetDestinationAdjustment(ctcdp,
-                                  CPL2((uint32_t)adcp->grpp->num_channels *
-                                       (uint32_t)adcp->depth *
-                                       sizeof(adcsample_t)));
-  edmaTCDSetMode(rtcdp, EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END |
-                        (adcp->depth > 1) ? EDMA_TCD_MODE_INT_HALF: 0);
+  /* Setting up RFIFO TCD parameters.*/
+  edmaChannelSetup(adcp->rfifo_channel,         /* channel.                 */
+                   RFIFO_POP_ADDR(adcp->fifo),  /* src.                     */
+                   adcp->samples,               /* dst.                     */
+                   0,                           /* soff, do not advance.    */
+                   2,                           /* doff, advance by two.    */
+                   1,                           /* ssize, 16 bits transfers.*/
+                   1,                           /* dsize, 16 bits transfers.*/
+                   2,                           /* nbytes, always two.      */
+                   (uint32_t)adcp->grpp->num_channels *
+                   (uint32_t)adcp->depth,       /* iter.                    */
+                   0,                           /* slast, no source adjust. */
+                   CPL2((uint32_t)adcp->grpp->num_channels *
+                        (uint32_t)adcp->depth *
+                        sizeof(adcsample_t)),   /* dlast.                   */
+                   EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END |
+                   ((adcp->depth > 1) ? EDMA_TCD_MODE_INT_HALF: 0));/* mode.*/
 
   /* Starting DMA channels.*/
   edmaChannelStart(adcp->rfifo_channel);

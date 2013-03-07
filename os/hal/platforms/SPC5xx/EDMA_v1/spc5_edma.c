@@ -711,7 +711,7 @@ edma_channel_t edmaChannelAllocate(const edma_channel_config_t *ccfg) {
   /* Associating the configuration to the channel.*/
   channels[channel] = ccfg;
 
-  /* If an error callback is defined then the erro interrupt source is
+  /* If an error callback is defined then the error interrupt source is
      enabled for the channel.*/
   if (ccfg->dma_error_func != NULL)
     EDMA.SEEIR.R = channel;

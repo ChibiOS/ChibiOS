@@ -93,7 +93,6 @@ typedef int32_t edma_channel_t;
 typedef struct {
   union {
     uint32_t              word[8];
-    uint32_t              hword[16];
   };
 } edma_tcd_t;
 
@@ -148,116 +147,100 @@ typedef struct {
 #define edmaGetTCD(channel) ((edma_tcd_t *)&EDMA.TCD[channel])
 
 /**
- * @brief   Sets the source address into a TCD.
+ * @brief   Sets the word 0 fields into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
- * @param[in] dst       the source address
+ * @param[in] src       the source address
  *
  * @api
  */
-#define edmaTCDSetSourceAddress(tcdp, src)                                  \
+#define edmaTCDSetWord0(tcdp, src)                                          \
   ((tcdp)->word[0] = (uint32_t)(src))
 
 /**
- * @brief   Sets the destination address into a TCD.
- *
- * @param[in] tcdp      pointer to an @p edma_tcd_t structure
- * @param[in] dst       the destination address
- *
- * @api
- */
-#define edmaTCDSetDestinationAddress(tcdp, dst)                             \
-  ((tcdp)->word[4] = (uint32_t)(dst))
-
-/**
- * @brief   Sets the transfer widths into a TCD.
+ * @brief   Sets the word 1 fields into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
  * @param[in] ssize     the source width
  * @param[in] dst       the destination width
+ * @param[in] soff      the source increment value
  *
  * @api
  */
-#define edmaTCDSetTransferWidths(tcdp, ssize, dsize)                        \
-  ((tcdp)->hword[2] = ((uint16_t)((ssize) << 8) | (uint16_t)(dsize)))
+#define edmaTCDSetWord1(tcdp, ssize, dsize, soff)                           \
+  ((tcdp)->word[1] = (((uint32_t)(ssize) << 24) |                           \
+                      ((uint32_t)(dsize) << 16) |                           \
+                      ((uint32_t)(soff) << 0)))
 
 /**
- * @brief   Sets the inner loop counter value into a TCD.
+ * @brief   Sets the word 2 fields into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
  * @param[in] nbytes    the inner counter value
  *
  * @api
  */
-#define edmaTCDSetInnnerLoopCount(tcdp, nbytes)                             \
+#define edmaTCDSetWord2(tcdp, nbytes)                                       \
   ((tcdp)->word[2] = (uint32_t)(nbytes))
 
 /**
- * @brief   Sets the source address increment value into a TCD.
+ * @brief   Sets the word 3 fields into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
- * @param[in] soff      the source increment value
+ * @param[in] slast      the adjustment value
  *
  * @api
  */
-#define edmaTCDSetSetSourceIncrement(tcdp, soff)                            \
-  ((tcdp)->hword[3] = (uint16_t)(soff))
-
-/**
- * @brief   Sets the destination address increment value into a TCD.
- *
- * @param[in] tcdp      pointer to an @p edma_tcd_t structure
- * @param[in] soff      the source increment value
- *
- * @api
- */
-#define edmaTCDSetSetDestinationIncrement(tcdp, doff)                       \
-  ((tcdp)->hword[3] = (uint16_t)(doff))
-
-/**
- * @brief   Sets the outer loop counter value into a TCD.
- *
- * @param[in] tcdp      pointer to an @p edma_tcd_t structure
- * @param[in] iter      the outer counter value
- *
- * @api
- */
-#define edmaTCDSetOuterLoopCount(tcdp, iter) {                              \
-  ((tcdp)->hword[10] = (uint16_t)(iter));                                   \
-  ((tcdp)->hword[14] = (uint16_t)(iter));                                   \
-}
-
-/**
- * @brief   Sets the source address adjustment into a TCD.
- *
- * @param[in] tcdp      pointer to an @p edma_tcd_t structure
- * @param[in] slast     the adjustment value
- *
- * @api
- */
-#define edmaTCDSetSourceAdjustment(tcdp, slast)                             \
+#define edmaTCDSetWord3(tcdp, slast)                                        \
   ((tcdp)->word[3] = (uint32_t)(slast))
 
 /**
- * @brief   Sets the destination address adjustment into a TCD.
+ * @brief   Sets the word 4 fields into a TCD.
+ *
+ * @param[in] tcdp      pointer to an @p edma_tcd_t structure
+ * @param[in] dst       the destination address
+ *
+ * @api
+ */
+#define edmaTCDSetWord4(tcdp, dst)                                          \
+  ((tcdp)->word[4] = (uint32_t)(dst))
+
+/**
+ * @brief   Sets the word 5 fields into a TCD.
+ *
+ * @param[in] tcdp      pointer to an @p edma_tcd_t structure
+ * @param[in] citer     the current outer counter value
+ * @param[in] doff      the destination increment value
+ *
+ * @api
+ */
+#define edmaTCDSetWord5(tcdp, citer, doff)                                  \
+  ((tcdp)->word[5] = (((uint32_t)(citer) << 16) |                           \
+                      ((uint32_t)(doff) << 0)))
+
+/**
+ * @brief   Sets the word 6 fields into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
  * @param[in] dlast     the adjustment value
  *
  * @api
  */
-#define edmaTCDSetDestinationAdjustment(tcdp, dlast)                        \
+#define edmaTCDSetWord6(tcdp, dlast)                                        \
   ((tcdp)->word[6] = (uint32_t)(dlast))
 
 /**
- * @brief   Sets the channel mode bits into a TCD.
+ * @brief   Sets the word 7 fields into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
+ * @param[in] biter     the base outer counter value
  * @param[in] mode      the mode value
  *
  * @api
  */
-#define edmaTCDSetMode(tcdp, mode) ((tcdp)->hword[15] = (uint16_t)(mode))
+#define edmaTCDSetWord7(tcdp, biter, mode)                                  \
+  ((tcdp)->word[7] = (((uint32_t)(biter) << 16) |                           \
+                      ((uint32_t)(mode) << 0)))
 
 /**
  * @brief   Starts or restarts an EDMA channel.
@@ -301,16 +284,14 @@ typedef struct {
 #define edmaChannelSetup(channel, src, dst, soff, doff, ssize, dsize,       \
                          nbytes, iter, slast, dlast, mode) {                \
   edma_tcd_t *tcdp = edmaGetTCD(channel);                                   \
-  edmaTCDSetSourceAddress(tcdp, src);                                       \
-  edmaTCDSetDestinationAddress(tcdp, dst);                                  \
-  edmaTCDSetSetSourceIncrement(tcdp, soff);                                 \
-  edmaTCDSetSetDestinationIncrement(tcdp, doff);                            \
-  edmaTCDSetTransferWidths(tcdp, ssize, dsize);                             \
-  edmaTCDSetInnnerLoopCount(tcdp, nbytes);                                  \
-  edmaTCDSetOuterLoopCount(tcdp, iter);                                     \
-  edmaTCDSetSourceAdjustment(tcdp, slast);                                  \
-  edmaTCDSetDestinationAdjustment(tcdp, dlast);                             \
-  edmaTCDSetMode(tcdp, dlast);                                              \
+  edmaTCDSetWord0(tcdp, src);                                               \
+  edmaTCDSetWord1(tcdp, ssize, dsize, soff);                                \
+  edmaTCDSetWord2(tcdp, nbytes);                                            \
+  edmaTCDSetWord3(tcdp, slast);                                             \
+  edmaTCDSetWord4(tcdp, dst);                                               \
+  edmaTCDSetWord5(tcdp, iter, doff);                                        \
+  edmaTCDSetWord6(tcdp, dlast);                                             \
+  edmaTCDSetWord7(tcdp, iter, mode);                                        \
 }
 
 #if 0
