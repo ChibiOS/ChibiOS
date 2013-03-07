@@ -164,19 +164,6 @@ int main(void) {
       chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
       shelltp = NULL;           /* Triggers spawning of a new shell.        */
     }
-#if 0
-    if (SIU.GPDI[GPIO_BUTTON1].B.PDI) {
-      volatile msg_t result;
-#if 0
-      MemoryStream report;
-
-      msObjectInit(&report, report_buffer, sizeof(report_buffer), 0);
-      result = TestThread(&report);
-#else
-      result = TestThread(&SD1);
-#endif
-    }
-#endif
     chThdSleepMilliseconds(1000);
   }
   return 0;
