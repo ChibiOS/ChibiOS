@@ -69,7 +69,8 @@ CH_IRQ_HANDLER(vector10) {
 
       /* If the channel is not associated then the error is simply discarded
          else the error callback is invoked.*/
-      if (channels[channel] != NULL)
+      if ((channels[channel] != NULL) &&
+          (channels[channel]->dma_error_func != NULL))
         channels[channel]->dma_error_func(channel,
                                           channels[channel]->dma_param,
                                           esr);
@@ -695,8 +696,7 @@ edma_channel_t edmaChannelAllocate(const edma_channel_config_t *ccfg) {
   edma_channel_t channel;
 
   chDbgCheck((ccfg != NULL) && ((ccfg->dma_prio & 15) < 16) &&
-             (ccfg->dma_irq_prio < 16) &&
-             (ccfg->dma_func != NULL) && (ccfg->dma_error_func != NULL),
+             (ccfg->dma_irq_prio < 16),
              "edmaChannelAllocate");
 
 #if SPC5_EDMA_HAS_MUX

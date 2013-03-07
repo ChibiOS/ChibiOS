@@ -126,8 +126,10 @@ typedef struct {
                                              for this channel.              */
   uint8_t               dma_irq_prio;   /**< @brief IRQ priority level for
                                              this channel.                  */
-  edma_callback_t       dma_func;       /**< @brief Channel callback.       */
-  edma_error_callback_t dma_error_func; /**< @brief Channel error callback. */
+  edma_callback_t       dma_func;       /**< @brief Channel callback,
+                                             can be NULL if not required.  */
+  edma_error_callback_t dma_error_func; /**< @brief Channel error callback,
+                                             can be NULL if not required.  */
   void                  *dma_param;     /**< @brief Channel callback param. */
 } edma_channel_config_t;
 
@@ -229,7 +231,7 @@ typedef struct {
  * @brief   Sets the source address adjustment into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
- * @param[in] iter      the adjustment value
+ * @param[in] slast     the adjustment value
  *
  * @api
  */
@@ -240,7 +242,7 @@ typedef struct {
  * @brief   Sets the destination address adjustment into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
- * @param[in] iter      the adjustment value
+ * @param[in] dlast     the adjustment value
  *
  * @api
  */
@@ -251,7 +253,7 @@ typedef struct {
  * @brief   Sets the channel mode bits into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
- * @param[in] iter      the adjustment value
+ * @param[in] mode      the mode value
  *
  * @api
  */
