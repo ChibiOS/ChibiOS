@@ -36,8 +36,8 @@ static PWMConfig pwmcfg = {
   50000,                                    /* Initial PWM period 0.2s.*/
   pwmpcb,
   {
-   {PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH, pwmc1cb},
-   {PWM_OUTPUT_ACTIVE_HIGH, NULL}
+   {PWM_OUTPUT_ACTIVE_HIGH, pwmc1cb},
+   {PWM_OUTPUT_DISABLED, NULL}
   },
   EDGE_ALIGNED_PWM
 };

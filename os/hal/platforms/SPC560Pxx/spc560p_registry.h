@@ -136,6 +136,8 @@
 #define SPC5_ETIMER1_RCF_NUMBER             178
 #define SPC5_ETIMER1_CLK                    SPC5_MCONTROL_CLK
 
+#define SPC5_HAS_ETIMER2                    FALSE
+
 #endif /* _SPC560P_REGISTRY_H_ */
 
 /** @} */

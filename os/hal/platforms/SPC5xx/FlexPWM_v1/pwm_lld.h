@@ -95,7 +95,7 @@
  * @name    Configuration options
  * @{
  */
-
+#if SPC5_HAS_FLEXPWM0
 /**
  * @brief   PWMD1 driver enable switch.
  * @details If set to @p TRUE the support for PWMD1 is included.
@@ -181,6 +181,95 @@
 #define SPC5_PWM_FLEXPWM0_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 #endif
+#endif
+
+#if SPC5_HAS_FLEXPWM1
+/**
+ * @brief   PWMD5 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD4 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(SPC5_PWM_USE_SMOD4) || defined(__DOXYGEN__)
+#define SPC5_PWM_USE_SMOD4                  TRUE
+#endif
+
+/**
+ * @brief   PWMD6 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD4 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(SPC5_PWM_USE_SMOD5) || defined(__DOXYGEN__)
+#define SPC5_PWM_USE_SMOD5                  TRUE
+#endif
+
+/**
+ * @brief   PWMD7 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD4 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(SPC5_PWM_USE_SMOD6) || defined(__DOXYGEN__)
+#define SPC5_PWM_USE_SMOD6                  FALSE
+#endif
+
+/**
+ * @brief   PWMD8 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD4 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(SPC5_PWM_USE_SMOD7) || defined(__DOXYGEN__)
+#define SPC5_PWM_USE_SMOD7                  TRUE
+#endif
+
+/**
+ * @brief   PWMD5 interrupt priority level setting.
+ */
+#if !defined(SPC5_PWM_SMOD4_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_PWM_SMOD4_PRIORITY          7
+#endif
+
+/**
+ * @brief   PWMD6 interrupt priority level setting.
+ */
+#if !defined(SPC5_PWM_SMOD5_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_PWM_SMOD5_PRIORITY          7
+#endif
+
+/**
+ * @brief   PWMD7 interrupt priority level setting.
+ */
+#if !defined(SPC5_PWM_SMOD6_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_PWM_SMOD6_PRIORITY          7
+#endif
+
+/**
+ * @brief   PWMD8 interrupt priority level setting.
+ */
+#if !defined(SPC5_PWM_SMOD7_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_PWM_SMOD7_PRIORITY          7
+#endif
+
+/**
+ * @brief   FlexPWM-1 peripheral configuration when started.
+ * @note    The default configuration is 1 (always run) in run mode and
+ *          2 (only halt) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_PWM_FLEXPWM1_START_PCTL) || defined(__DOXYGEN__)
+#define SPC5_PWM_FLEXPWM1_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#endif
+
+/**
+ * @brief   FlexPWM-1 peripheral configuration when stopped.
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_PWM_FLEXPWM1_STOP_PCTL) || defined(__DOXYGEN__)
+#define SPC5_PWM_FLEXPWM1_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#endif
+#endif
 
 /*===========================================================================*/
 /* Configuration checks.                                                     */
@@ -204,6 +293,27 @@
 
 #if (!SPC5_PWM_USE_SMOD0 && !SPC5_PWM_USE_SMOD1 &&                           \
     !SPC5_PWM_USE_SMOD2 && !SPC5_PWM_USE_SMOD3) && SPC5_PWM_USE_FLEXPWM0
+#error "PWM driver activated but no SubModule assigned"
+#endif
+
+#if SPC5_PWM_USE_SMOD4 && !SPC5_HAS_FLEXPWM1
+#error "SMOD4 not present in the selected device"
+#endif
+
+#if SPC5_PWM_USE_SMOD5 && !SPC5_HAS_FLEXPWM1
+#error "SMOD5 not present in the selected device"
+#endif
+
+#if SPC5_PWM_USE_SMDO6 && !SPC5_HAS_FLEXPWM1
+#error "SMOD6 not present in the selected device"
+#endif
+
+#if SPC5_PWM_USE_SMOD7 && !SPC5_HAS_FLEXPWM1
+#error "SMOD7 not present in the selected device"
+#endif
+
+#if (!SPC5_PWM_USE_SMOD4 && !SPC5_PWM_USE_SMOD5 &&                           \
+    !SPC5_PWM_USE_SMOD6 && !SPC5_PWM_USE_SMOD7) && SPC5_PWM_USE_FLEXPWM1
 #error "PWM driver activated but no SubModule assigned"
 #endif
 
@@ -325,6 +435,22 @@ extern PWMDriver PWMD3;
 
 #if SPC5_PWM_USE_SMOD3 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD4;
+#endif
+
+#if SPC5_PWM_USE_SMOD4 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD5;
+#endif
+
+#if SPC5_PWM_USE_SMOD5 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD6;
+#endif
+
+#if SPC5_PWM_USE_SMOD6 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD7;
+#endif
+
+#if SPC5_PWM_USE_SMOD7 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD8;
 #endif
 
 #ifdef __cplusplus
