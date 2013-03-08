@@ -475,6 +475,7 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+#include "etimer.h"
 
 /**
  * @brief ICU driver mode.
@@ -571,7 +572,7 @@ struct ICUDriver {
   /**
    * @brief Pointer to the eTimerx registers block.
    */
-  volatile struct ETIMER_tag *etimerp;
+  volatile struct spc5_etimer *etimerp;
   /**
    * @brief CCR register used for width capture.
    */

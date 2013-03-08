@@ -740,126 +740,126 @@ void icu_lld_init(void) {
 #if SPC5_ICU_USE_SMOD0
   /* Driver initialization.*/
   icuObjectInit(&ICUD1);
-  ICUD1.etimerp = &ETIMER_0;
+  ICUD1.etimerp = &SPC5_ETIMER_0;
   ICUD1.smod_number = 0;
 #endif
 
 #if SPC5_ICU_USE_SMOD1
   /* Driver initialization.*/
   icuObjectInit(&ICUD2);
-  ICUD2.etimerp = &ETIMER_0;
+  ICUD2.etimerp = &SPC5_ETIMER_0;
   ICUD2.smod_number = 1;
 #endif
 
 #if SPC5_ICU_USE_SMOD2
   /* Driver initialization.*/
   icuObjectInit(&ICUD3);
-  ICUD3.etimerp = &ETIMER_0;
+  ICUD3.etimerp = &SPC5_ETIMER_0;
   ICUD3.smod_number = 2;
 #endif
 
 #if SPC5_ICU_USE_SMOD3
   /* Driver initialization.*/
   icuObjectInit(&ICUD4);
-  ICUD4.etimerp = &ETIMER_0;
+  ICUD4.etimerp = &SPC5_ETIMER_0;
   ICUD4.smod_number = 3;
 #endif
 
 #if SPC5_ICU_USE_SMOD4
   /* Driver initialization.*/
   icuObjectInit(&ICUD5);
-  ICUD5.etimerp = &ETIMER_0;
+  ICUD5.etimerp = &SPC5_ETIMER_0;
   ICUD5.smod_number = 4;
 #endif
 
 #if SPC5_ICU_USE_SMOD5
   /* Driver initialization.*/
   icuObjectInit(&ICUD6);
-  ICUD6.etimerp = &ETIMER_0;
+  ICUD6.etimerp = &SPC5_ETIMER_0;
   ICUD6.smod_number = 5;
 #endif
 
 #if SPC5_ICU_USE_SMOD6
   /* Driver initialization.*/
   icuObjectInit(&ICUD7);
-  ICUD7.etimerp = &ETIMER_1;
+  ICUD7.etimerp = &SPC5_ETIMER_1;
   ICUD7.smod_number = 0;
 #endif
 
 #if SPC5_ICU_USE_SMOD7
   /* Driver initialization.*/
   icuObjectInit(&ICUD8);
-  ICUD8.etimerp = &ETIMER_1;
+  ICUD8.etimerp = &SPC5_ETIMER_1;
   ICUD8.smod_number = 1;
 #endif
 
 #if SPC5_ICU_USE_SMOD8
   /* Driver initialization.*/
   icuObjectInit(&ICUD9);
-  ICUD9.etimerp = &ETIMER_1;
+  ICUD9.etimerp = &SPC5_ETIMER_1;
   ICUD9.smod_number = 2;
 #endif
 
 #if SPC5_ICU_USE_SMOD9
   /* Driver initialization.*/
   icuObjectInit(&ICUD10);
-  ICUD10.etimerp = &ETIMER_1;
+  ICUD10.etimerp = &SPC5_ETIMER_1;
   ICUD10.smod_number = 3;
 #endif
 
 #if SPC5_ICU_USE_SMOD10
   /* Driver initialization.*/
   icuObjectInit(&ICUD11);
-  ICUD11.etimerp = &ETIMER_1;
+  ICUD11.etimerp = &SPC5_ETIMER_1;
   ICUD11.smod_number = 4;
 #endif
 
 #if SPC5_ICU_USE_SMOD11
   /* Driver initialization.*/
   icuObjectInit(&ICUD12);
-  ICUD12.etimerp = &ETIMER_1;
+  ICUD12.etimerp = &SPC5_ETIMER_1;
   ICUD12.smod_number = 5;
 #endif
 
 #if SPC5_ICU_USE_SMOD12
   /* Driver initialization.*/
   icuObjectInit(&ICUD13);
-  ICUD13.etimerp = &ETIMER_2;
+  ICUD13.etimerp = &SPC5_ETIMER_2;
   ICUD13.smod_number = 0;
 #endif
 
 #if SPC5_ICU_USE_SMOD13
   /* Driver initialization.*/
   icuObjectInit(&ICUD14);
-  ICUD14.etimerp = &ETIMER_2;
+  ICUD14.etimerp = &SPC5_ETIMER_2;
   ICUD14.smod_number = 1;
 #endif
 
 #if SPC5_ICU_USE_SMOD14
   /* Driver initialization.*/
   icuObjectInit(&ICUD15);
-  ICUD15.etimerp = &ETIMER_2;
+  ICUD15.etimerp = &SPC5_ETIMER_2;
   ICUD15.smod_number = 2;
 #endif
 
 #if SPC5_ICU_USE_SMOD15
   /* Driver initialization.*/
   icuObjectInit(&ICUD16);
-  ICUD16.etimerp = &ETIMER_2;
+  ICUD16.etimerp = &SPC5_ETIMER_2;
   ICUD16.smod_number = 3;
 #endif
 
 #if SPC5_ICU_USE_SMOD16
   /* Driver initialization.*/
   icuObjectInit(&ICUD17);
-  ICUD17.etimerp = &ETIMER_2;
+  ICUD17.etimerp = &SPC5_ETIMER_2;
   ICUD17.smod_number = 4;
 #endif
 
 #if SPC5_ICU_USE_SMOD17
   /* Driver initialization.*/
   icuObjectInit(&ICUD18);
-  ICUD18.etimerp = &ETIMER_2;
+  ICUD18.etimerp = &SPC5_ETIMER_2;
   ICUD18.smod_number = 5;
 #endif
 

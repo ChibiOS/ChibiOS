@@ -449,10 +449,8 @@ void pwm_lld_disable_submodule_channel(PWMDriver *pwmp,
   pwmp->flexpwmp->MCTRL.B.LDOK |= (0b0000 | (1U << sid));
 }
 
-#if SPC5_PWM_USE_SMOD0 || SPC5_PWM_USE_SMOD1 || SPC5_PWM_USE_SMOD2 ||         \
-    SPC5_PWM_USE_SMOD3 || defined(__DOXYGEN__)
 /**
- * @brief   Common SMOD0...SMOD3 IRQ handler.
+ * @brief   Common SMOD0...SMOD7 IRQ handler.
  * @note    It is assumed that the various sources are only activated if the
  *          associated callback pointer is not equal to @p NULL in order to not
  *          perform an extra check in a potentially critical interrupt handler.
@@ -599,7 +597,6 @@ static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
   }
 #endif
 }
-#endif /* SPC5_PWM_USE_SMOD0 || ... || SPC5_PWM_USE_SMOD7 */
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -907,7 +904,7 @@ void pwm_lld_init(void) {
 #if (SPC5_PWM_USE_SMOD0)
   /* Driver initialization.*/
   pwmObjectInit(&PWMD1);
-  PWMD1.flexpwmp = &FLEXPWM_0;
+  PWMD1.flexpwmp = &SPC5_FLEXPWM_0;
   INTC.PSR[SPC5_FLEXPWM0_RF0_NUMBER].R = SPC5_PWM_SMOD0_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM0_COF0_NUMBER].R = SPC5_PWM_SMOD0_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM0_CAF0_NUMBER].R = SPC5_PWM_SMOD0_PRIORITY;
@@ -918,7 +915,7 @@ void pwm_lld_init(void) {
 #if (SPC5_PWM_USE_SMOD1)
   /* Driver initialization.*/
   pwmObjectInit(&PWMD2);
-  PWMD2.flexpwmp = &FLEXPWM_0;
+  PWMD2.flexpwmp = &SPC5_FLEXPWM_0;
   INTC.PSR[SPC5_FLEXPWM0_RF1_NUMBER].R = SPC5_PWM_SMOD1_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM0_COF1_NUMBER].R = SPC5_PWM_SMOD1_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM0_CAF1_NUMBER].R = SPC5_PWM_SMOD1_PRIORITY;
@@ -929,7 +926,7 @@ void pwm_lld_init(void) {
 #if (SPC5_PWM_USE_SMOD2)
   /* Driver initialization.*/
   pwmObjectInit(&PWMD3);
-  PWMD3.flexpwmp = &FLEXPWM_0;
+  PWMD3.flexpwmp = &SPC5_FLEXPWM_0;
   INTC.PSR[SPC5_FLEXPWM0_RF2_NUMBER].R = SPC5_PWM_SMOD2_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM0_COF2_NUMBER].R = SPC5_PWM_SMOD2_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM0_CAF2_NUMBER].R = SPC5_PWM_SMOD2_PRIORITY;
@@ -940,7 +937,7 @@ void pwm_lld_init(void) {
 #if (SPC5_PWM_USE_SMOD3)
   /* Driver initialization.*/
   pwmObjectInit(&PWMD4);
-  PWMD4.flexpwmp = &FLEXPWM_0;
+  PWMD4.flexpwmp = &SPC5_FLEXPWM_0;
   INTC.PSR[SPC5_FLEXPWM0_RF3_NUMBER].R = SPC5_PWM_SMOD3_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM0_COF3_NUMBER].R = SPC5_PWM_SMOD3_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM0_CAF3_NUMBER].R = SPC5_PWM_SMOD3_PRIORITY;
@@ -951,7 +948,7 @@ void pwm_lld_init(void) {
 #if (SPC5_PWM_USE_SMOD4)
   /* Driver initialization.*/
   pwmObjectInit(&PWMD5);
-  PWMD5.flexpwmp = &FLEXPWM_1;
+  PWMD5.flexpwmp = &SPC5_FLEXPWM_1;
   INTC.PSR[SPC5_FLEXPWM1_RF0_NUMBER].R = SPC5_PWM_SMOD4_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_COF0_NUMBER].R = SPC5_PWM_SMOD4_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_CAF0_NUMBER].R = SPC5_PWM_SMOD4_PRIORITY;
@@ -962,7 +959,7 @@ void pwm_lld_init(void) {
 #if (SPC5_PWM_USE_SMOD5)
   /* Driver initialization.*/
   pwmObjectInit(&PWMD6);
-  PWMD6.flexpwmp = &FLEXPWM_1;
+  PWMD6.flexpwmp = &SPC5_FLEXPWM_1;
   INTC.PSR[SPC5_FLEXPWM1_RF1_NUMBER].R = SPC5_PWM_SMOD5_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_COF1_NUMBER].R = SPC5_PWM_SMOD5_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_CAF1_NUMBER].R = SPC5_PWM_SMOD5_PRIORITY;
@@ -973,7 +970,7 @@ void pwm_lld_init(void) {
 #if (SPC5_PWM_USE_SMOD6)
   /* Driver initialization.*/
   pwmObjectInit(&PWMD3);
-  PWMD7.flexpwmp = &FLEXPWM_1;
+  PWMD7.flexpwmp = &SPC5_FLEXPWM_1;
   INTC.PSR[SPC5_FLEXPWM1_RF2_NUMBER].R = SPC5_PWM_SMOD6_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_COF2_NUMBER].R = SPC5_PWM_SMOD6_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_CAF2_NUMBER].R = SPC5_PWM_SMOD6_PRIORITY;
@@ -984,7 +981,7 @@ void pwm_lld_init(void) {
 #if (SPC5_PWM_USE_SMOD7)
   /* Driver initialization.*/
   pwmObjectInit(&PWMD4);
-  PWMD8.flexpwmp = &FLEXPWM_1;
+  PWMD8.flexpwmp = &SPC5_FLEXPWM_1;
   INTC.PSR[SPC5_FLEXPWM1_RF3_NUMBER].R = SPC5_PWM_SMOD7_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_COF3_NUMBER].R = SPC5_PWM_SMOD7_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_CAF3_NUMBER].R = SPC5_PWM_SMOD7_PRIORITY;

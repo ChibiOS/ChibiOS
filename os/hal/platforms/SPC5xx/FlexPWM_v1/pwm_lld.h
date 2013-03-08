@@ -30,7 +30,7 @@
 /*===========================================================================*/
 
 /**
- * @name    LINIER register bits definitions
+ * @name    STS register bits definitions
  * @{
  */
 #define SPC5_STS_CMPF0                          (1U << 0)
@@ -320,6 +320,7 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+#include "flexpwm.h"
 
 /**
  * @brief PWM mode type.
@@ -409,7 +410,7 @@ struct PWMDriver {
   /**
    * @Pointer to the volatile FlexPWM registers block.
    */
-  volatile struct FLEXPWM_tag  *flexpwmp;
+  volatile struct spc5_flexpwm *flexpwmp;
 };
 
 /*===========================================================================*/
