@@ -736,7 +736,7 @@ static const adccommand_t adcgrpcfg2_commands[ADC_GRP2_NUM_CHANNELS *
 };
 
 const ADCConversionGroup adcgrpcfg2 = {
-  FALSE,
+  TRUE,
   ADC_GRP2_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
