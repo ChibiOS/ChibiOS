@@ -433,6 +433,12 @@ static void adc_serve_rfifo_irq(edma_channel_t channel, void *p) {
       _adc_isr_half_code(adcp);
     }
     else {
+      /* Re-starting DMA channels if in circular mode.*/
+      if (adcp->grpp->circular) {
+        edmaChannelStart(adcp->rfifo_channel);
+        edmaChannelStart(adcp->cfifo_channel);
+      }
+
       /* Transfer complete processing.*/
       _adc_isr_full_code(adcp);
     }
@@ -695,7 +701,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
                         sizeof(adcsample_t)),   /* dlast.                   */
                    EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END |
                    ((adcp->depth > 1) ? EDMA_TCD_MODE_INT_HALF: 0));/* mode.*/
-
 
   /* HW triggers setup.*/
   bitoff = 20 + ((uint32_t)adcp->fifo * 2);
