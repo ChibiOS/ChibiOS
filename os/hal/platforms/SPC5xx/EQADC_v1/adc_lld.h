@@ -554,6 +554,14 @@ typedef struct {
    */
   uint16_t                  cfcr;
   /**
+   * @brief   SIU ETISR.TSEL value for this queue;
+   */
+  uint8_t                   tsel;
+  /**
+   * @brief   SIU ISEL3.ETSEL value for this queue;
+   */
+  uint8_t                   etsel;
+  /**
    * @brief   Number of command iterations stored in @p commands.
    * @note    The total number of array elements must be @p num_channels *
    *          @p num_iterations.
@@ -574,14 +582,7 @@ typedef struct {
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-  /**
-   * @brief   ETISR register value for the session.
-   */
-  uint32_t                  etisr;
-  /**
-   * @brief   ISEL3 register value for the session.
-   */
-  uint32_t                  isel3;
+  uint32_t                  dummy;
 } ADCConfig;
 
 /**

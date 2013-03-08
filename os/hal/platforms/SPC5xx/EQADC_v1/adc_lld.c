@@ -619,10 +619,6 @@ void adc_lld_start(ADCDriver *adcp) {
   chDbgAssert((adcp->cfifo_channel != EDMA_ERROR) &&
               (adcp->rfifo_channel != EDMA_ERROR),
               "adc_lld_start(), #2", "channel cannot be allocated");
-
-  /* HW triggers setup.*/
-  SIU.ETISR.R = adcp->config->etisr;
-  SIU.ISEL3.R = adcp->config->isel3;
 }
 
 /**
@@ -660,6 +656,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
+  uint32_t bitoff;
 
   chDbgAssert(adcp->grpp->num_iterations >= adcp->depth,
               "adc_lld_start_conversion(), #1", "too many elements");
@@ -698,6 +695,15 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
                         sizeof(adcsample_t)),   /* dlast.                   */
                    EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END |
                    ((adcp->depth > 1) ? EDMA_TCD_MODE_INT_HALF: 0));/* mode.*/
+
+
+  /* HW triggers setup.*/
+  bitoff = 20 + ((uint32_t)adcp->fifo * 2);
+  SIU.ETISR.R = (SIU.ETISR.R & ~(3U << bitoff)) |
+                (adcp->grpp->tsel << bitoff);
+  bitoff = (uint32_t)adcp->fifo * 5;
+  SIU.ISEL3.R = (SIU.ISEL3.R & ~(31U << bitoff)) |
+                (adcp->grpp->etsel << bitoff);
 
   /* Starting DMA channels.*/
   edmaChannelStart(adcp->rfifo_channel);

@@ -27,8 +27,6 @@
 //#define ADC_GRP2_NUM_CHANNELS   8
 //#define ADC_GRP2_BUF_DEPTH      16
 
-static ADCConfig adccfg1 = {0, 0};
-
 static adcsample_t samples1[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 //static adcsample_t samples2[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
 
@@ -236,8 +234,8 @@ static const ADCConversionGroup adcgrpcfg1 = {
   ADC_GRP1_NUM_CHANNELS,
   NULL,
   adcerrorcallback,
-//  EQADC_CFCR_SSE | EQADC_CFCR_MODE_SWSS,
   EQADC_CFCR_MODE_SWCS,
+  0, 0,                     /* ISEL, EISEL.*/
   ADC_GRP1_BUF_DEPTH,
   adcgrpcfg1_commands
 };
@@ -298,9 +296,9 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Activates the ADC1 driver and the temperature sensor.
+   * Activates the ADC1 driver (unit zero queue zero).
    */
-  adcStart(&ADCD1, &adccfg1);
+  adcStart(&ADCD1, NULL);
 
   /*
    * Linear conversion.
