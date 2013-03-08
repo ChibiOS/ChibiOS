@@ -121,6 +121,10 @@
   (backported to 2.4.3).
 - FIX: Fixed wrong SPI path in platform_f105_f107.mk (bug 3598151).
 - FIX: Fixed PHY powerdown issues not fixed (bug 3596911).
+- NEW: Added ADC(EQADC), HAL, ICU, PAL, PWM, Serial drivers for SPC5xx
+  platforms, tests to be added on the various sub-families.
+- NEW: Added support for SPC56ELxx, SPC560BCxx, SPC560Pxx and SPC560Mxx
+  platforms.
 - NEW: Added preliminary support to the STM32F37x family.
 - NEW: Now the general documentation includes data extracted from the low
   level driver templates. Per-platform/architecture documents are no more
@@ -133,8 +137,6 @@
   by Andrew Hannam.
 - NEW: Added kernel support for the SAM4L, an Atmel Studio 6 demo for the
   SAM4L-EK board has been added.
-- NEW: Added support for SPC56ELxx, SPC560BCxx, SPC560Pxx and SPC560Mxx
-  platforms.
 - NEW: Added an abstract file system interface written in C++, no
   implementations yet.
   TODO: Create a descendant interface for hierarchical file systems.
