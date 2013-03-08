@@ -236,7 +236,8 @@ static const ADCConversionGroup adcgrpcfg1 = {
   ADC_GRP1_NUM_CHANNELS,
   NULL,
   adcerrorcallback,
-  EQADC_CFCR_SSE | EQADC_CFCR_MODE_SWSS,
+//  EQADC_CFCR_SSE | EQADC_CFCR_MODE_SWSS,
+  EQADC_CFCR_MODE_SWCS,
   ADC_GRP1_BUF_DEPTH,
   adcgrpcfg1_commands
 };

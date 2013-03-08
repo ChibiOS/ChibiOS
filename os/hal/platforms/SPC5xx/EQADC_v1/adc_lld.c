@@ -91,6 +91,14 @@ ADCDriver ADCD6;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of active ADC FIFOs.
+ */
+static uint32_t adc_active_fifos;
+
+/**
+ * @brief   Static setup for input resistors.
+ */
 static const uint16_t pudcrs[8] = SPC5_ADC_PUDCR;
 
 #if SPC5_ADC_USE_ADC0_Q0 || defined(__DOXYGEN__)
@@ -466,6 +474,9 @@ static void adc_serve_dma_error_irq(edma_channel_t channel,
  */
 void adc_lld_init(void) {
 
+  /* FIFOs initially all not in use.*/
+  adc_active_fifos = 0;
+
 #if SPC5_ADC_USE_ADC0_Q0
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
@@ -548,12 +559,15 @@ void adc_lld_init(void) {
  */
 void adc_lld_start(ADCDriver *adcp) {
 
+  chDbgAssert(adc_active_fifos < 6, "adc_lld_start(), #1", "too many FIFOs");
+
   if (adcp->state == ADC_STOP) {
     /* Enables the peripheral.*/
 #if SPC5_ADC_USE_ADC0_Q0
     if (&ADCD1 == adcp) {
       adcp->cfifo_channel = edmaChannelAllocate(&adc_cfifo0_dma_config);
       adcp->rfifo_channel = edmaChannelAllocate(&adc_rfifo0_dma_config);
+      adc_active_fifos++;
     }
 #endif /* SPC5_ADC_USE_ADC0_Q0 */
 
@@ -561,6 +575,7 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD2 == adcp) {
       adcp->cfifo_channel = edmaChannelAllocate(&adc_cfifo1_dma_config);
       adcp->rfifo_channel = edmaChannelAllocate(&adc_rfifo1_dma_config);
+      adc_active_fifos++;
     }
 #endif /* SPC5_ADC_USE_ADC0_Q1 */
 
@@ -568,6 +583,7 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD3 == adcp) {
       adcp->cfifo_channel = edmaChannelAllocate(&adc_cfifo2_dma_config);
       adcp->rfifo_channel = edmaChannelAllocate(&adc_rfifo2_dma_config);
+      adc_active_fifos++;
     }
 #endif /* SPC5_ADC_USE_ADC0_Q2 */
 
@@ -575,6 +591,7 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD4 == adcp) {
       adcp->cfifo_channel = edmaChannelAllocate(&adc_cfifo3_dma_config);
       adcp->rfifo_channel = edmaChannelAllocate(&adc_rfifo3_dma_config);
+      adc_active_fifos++;
     }
 #endif /* SPC5_ADC_USE_ADC1_Q3 */
 
@@ -582,6 +599,7 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD5 == adcp) {
       adcp->cfifo_channel = edmaChannelAllocate(&adc_cfifo4_dma_config);
       adcp->rfifo_channel = edmaChannelAllocate(&adc_rfifo4_dma_config);
+      adc_active_fifos++;
     }
 #endif /* SPC5_ADC_USE_ADC1_Q4 */
 
@@ -589,13 +607,18 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD6 == adcp) {
       adcp->cfifo_channel = edmaChannelAllocate(&adc_cfifo5_dma_config);
       adcp->rfifo_channel = edmaChannelAllocate(&adc_rfifo5_dma_config);
+      adc_active_fifos++;
     }
 #endif /* SPC5_ADC_USE_ADC1_Q5 */
+
+    /* If this is the first FIFO activated then the ADC is enabled.*/
+    if (adc_active_fifos == 1)
+      adc_enable();
   }
 
   chDbgAssert((adcp->cfifo_channel != EDMA_ERROR) &&
               (adcp->rfifo_channel != EDMA_ERROR),
-              "adc_lld_start(), #1", "channel cannot be allocated");
+              "adc_lld_start(), #2", "channel cannot be allocated");
 
   /* HW triggers setup.*/
   SIU.ETISR.R = adcp->config->etisr;
@@ -611,12 +634,18 @@ void adc_lld_start(ADCDriver *adcp) {
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
+  chDbgAssert(adc_active_fifos < 6, "adc_lld_stop(), #1", "too many FIFOs");
+
   if (adcp->state == ADC_READY) {
     /* Resets the peripheral.*/
 
     /* Releases the allocated EDMA channels.*/
     edmaChannelRelease(adcp->cfifo_channel);
     edmaChannelRelease(adcp->rfifo_channel);
+
+    /* If it is the last active FIFO then the ADC is disable too.*/
+    if (--adc_active_fifos == 0)
+      adc_disable();
   }
 }
 
@@ -676,7 +705,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* Enabling CFIFO, conversion starts.*/
   cfifo_enable(adcp->fifo, adcp->grpp->cfcr,
-               EQADC_IDCR_CFFE | EQADC_IDCR_RFDE);
+               EQADC_IDCR_CFFE | EQADC_IDCR_CFFS |
+               EQADC_IDCR_RFDE | EQADC_IDCR_RFDS);
 }
 
 /**
