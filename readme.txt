@@ -87,7 +87,8 @@
 
 *** 2.5.2 ***
 - FIX: Fixed surprising non-CRLF lines in source (bug 3607380).
-- FIX: Fixed CAN_USE_SLEEP_MODE compilation problem (bug 3606616).
+- FIX: Fixed CAN_USE_SLEEP_MODE compilation problem (bug 3606616)(backported
+  to 2.4.4)(backported to 2.2.10).
 - FIX: Fixed missing HSE bypass option for STM32F103 (bug 3606274).
 - FIX: Fixed misplaced brace in icu_lld.c (bug 3605832)(backported to 2.4.4).
 - FIX: Fixed errors in MMC_SPI driver state machine (bug 3605794).
