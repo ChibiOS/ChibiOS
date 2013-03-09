@@ -187,7 +187,7 @@ static void can_lld_rx1_handler(CANDriver *canp) {
     chSysLockFromIsr();
     while (chSemGetCounterI(&canp->rxsem) < 0)
       chSemSignalI(&canp->rxsem);
-    chEvtBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(1));
+    chEvtBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(2));
     chSysUnlockFromIsr();
   }
   if ((rf1r & CAN_RF1R_FOVR1) > 0) {
