@@ -212,40 +212,27 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
  * @brief   Gets SDC errors.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] sta       value of the STA register
  *
  * @notapi
  */
-static void sdc_lld_collect_errors(SDCDriver *sdcp) {
+static void sdc_lld_collect_errors(SDCDriver *sdcp, uint32_t sta) {
   uint32_t errors = SDC_NO_ERROR;
 
-  if (SDIO->STA & SDIO_STA_CCRCFAIL) {
-    SDIO->ICR |= SDIO_ICR_CCRCFAILC;
+  if (sta & SDIO_STA_CCRCFAIL)
     errors |= SDC_CMD_CRC_ERROR;
-  }
-  if (SDIO->STA & SDIO_STA_DCRCFAIL) {
-    SDIO->ICR |= SDIO_ICR_DCRCFAILC;
+  if (sta & SDIO_STA_DCRCFAIL)
     errors |= SDC_DATA_CRC_ERROR;
-  }
-  if (SDIO->STA & SDIO_STA_CTIMEOUT) {
-    SDIO->ICR |= SDIO_ICR_CTIMEOUTC;
+  if (sta & SDIO_STA_CTIMEOUT)
     errors |= SDC_COMMAND_TIMEOUT;
-  }
-  if (SDIO->STA & SDIO_STA_DTIMEOUT) {
-    SDIO->ICR |= SDIO_ICR_CTIMEOUTC;
+  if (sta & SDIO_STA_DTIMEOUT)
     errors |= SDC_DATA_TIMEOUT;
-  }
-  if (SDIO->STA & SDIO_STA_TXUNDERR) {
-    SDIO->ICR |= SDIO_ICR_TXUNDERRC;
+  if (sta & SDIO_STA_TXUNDERR)
     errors |= SDC_TX_UNDERRUN;
-  }
-  if (SDIO->STA & SDIO_STA_RXOVERR) {
-    SDIO->ICR |= SDIO_ICR_RXOVERRC;
+  if (sta & SDIO_STA_RXOVERR)
     errors |= SDC_RX_OVERRUN;
-  }
-  if (SDIO->STA & SDIO_STA_STBITERR) {
-    SDIO->ICR |= SDIO_ICR_STBITERRC;
+  if (sta & SDIO_STA_STBITERR)
     errors |= SDC_STARTBIT_ERROR;
-  }
 
   sdcp->errors |= errors;
 }
@@ -262,13 +249,14 @@ static void sdc_lld_collect_errors(SDCDriver *sdcp) {
 static void sdc_lld_error_cleanup(SDCDriver *sdcp,
                                   uint32_t n,
                                   uint32_t *resp) {
+  uint32_t sta = SDIO->STA;
 
   dmaStreamClearInterrupt(sdcp->dma);
   dmaStreamDisable(sdcp->dma);
   SDIO->ICR   = STM32_SDIO_ICR_ALL_FLAGS;
   SDIO->MASK  = 0;
   SDIO->DCTRL = 0;
-  sdc_lld_collect_errors(sdcp);
+  sdc_lld_collect_errors(sdcp, sta);
   if (n > 1)
     sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_STOP_TRANSMISSION, 0, resp);
 }
@@ -510,9 +498,9 @@ bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
                                SDIO_STA_CCRCFAIL)) == 0)
     ;
-  SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
+  SDIO->ICR = sta;
   if ((sta & (SDIO_STA_CTIMEOUT)) != 0) {
-    sdc_lld_collect_errors(sdcp);
+    sdc_lld_collect_errors(sdcp, sta);
     return CH_FAILED;
   }
   *resp = SDIO->RESP1;
@@ -544,9 +532,9 @@ bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
                                SDIO_STA_CCRCFAIL)) == 0)
     ;
-  SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
+  SDIO->ICR = sta;
   if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0) {
-    sdc_lld_collect_errors(sdcp);
+    sdc_lld_collect_errors(sdcp, sta);
     return CH_FAILED;
   }
   *resp = SDIO->RESP1;
@@ -579,9 +567,9 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   while (((sta = SDIO->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
                                SDIO_STA_CCRCFAIL)) == 0)
     ;
-  SDIO->ICR = SDIO_ICR_CMDRENDC | SDIO_ICR_CTIMEOUTC | SDIO_ICR_CCRCFAILC;
+  SDIO->ICR = sta;
   if ((sta & (STM32_SDIO_STA_ERROR_MASK)) != 0) {
-    sdc_lld_collect_errors(sdcp);
+    sdc_lld_collect_errors(sdcp, sta);
     return CH_FAILED;
   }
   /* Save bytes in reverse order because MSB in response comes first.*/

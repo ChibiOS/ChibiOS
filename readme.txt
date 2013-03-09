@@ -87,6 +87,7 @@
 
 *** 2.5.2 ***
 - FIX: Fixed surprising non-CRLF lines in source (bug 3607380).
+- FIX: Fixed sdc_lld_collect_errors does not collect errors (bug 3606743).
 - FIX: Fixed STM32 CAN broadcast typo (bug 3606675).
 - FIX: Fixed STM32 CAN mailbox receive for second fifo (bug 3606673).
 - FIX: Fixed CAN_USE_SLEEP_MODE compilation problem (bug 3606616)(backported
