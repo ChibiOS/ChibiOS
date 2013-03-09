@@ -569,7 +569,8 @@ bool_t can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
 
   switch (mailbox) {
   case CAN_ANY_MAILBOX:
-    return (canp->can->RF0R & (CAN_RF0R_FMP0 | CAN_RF1R_FMP1)) != 0;
+    return ((canp->can->RF0R & CAN_RF0R_FMP0) != 0 ||
+            (canp->can->RF1R & CAN_RF1R_FMP1) != 0);
   case 1:
     return (canp->can->RF0R & CAN_RF0R_FMP0) != 0;
   case 2:

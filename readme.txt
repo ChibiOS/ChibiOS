@@ -87,6 +87,7 @@
 
 *** 2.5.2 ***
 - FIX: Fixed surprising non-CRLF lines in source (bug 3607380).
+- FIX: Fixed STM32 CAN mailbox receive for second fifo (bug 3606673).
 - FIX: Fixed CAN_USE_SLEEP_MODE compilation problem (bug 3606616)(backported
   to 2.4.4)(backported to 2.2.10).
 - FIX: Fixed missing HSE bypass option for STM32F103 (bug 3606274).
