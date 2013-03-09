@@ -86,6 +86,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed surprising non-CRLF lines in source (bug 3607380).
 - FIX: Fixed misplaced brace in icu_lld.c (bug 3605832)(backported to 2.4.4).
 - FIX: Fixed errors in MMC_SPI driver state machine (bug 3605794).
 - FIX: Fixed deadlock in Serial_USB driver (bug 3605793).

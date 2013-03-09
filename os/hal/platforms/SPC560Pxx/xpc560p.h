@@ -13,8 +13,7 @@
  * HISTORY     : Changes: typo fixed in PSR1 register:SCP -> CSP, MCR: PRESCALE->BITRATE (b16991)
  * HISTORY     : Changes: typo fixed in ME register MTC bit, SSCM fix, CMU changes(b16991)
  * HISTORY     : Changes to CTU Module:  CR register (LC->FC), CLR changed to 24 bits  (b16991)
- 
- * HISTORY	     : Modified to add reserved space in CTU (b16991)
+ * HISTORY      : Modified to add reserved space in CTU (b16991)
  * HISTORY      :  Modified to support ADC on Pictus cut 2 - do not distribute! (ttz778)
  * HISTORY      :  Modified to support CRC on Pictus cut 2 - do not distribute! (r60321)
  * HISTORY      :  Modified to support DSPI0 CS7&8 and new FlexPWM naming on Pictus cut 2 (r60321)
