@@ -36,6 +36,8 @@ __ram_start__           = ORIGIN(ram);
 __ram_size__            = LENGTH(ram);
 __ram_end__             = __ram_start__ + __ram_size__;
 
+ENTRY(ResetHandler)
+
 SECTIONS
 {
     . = 0;
