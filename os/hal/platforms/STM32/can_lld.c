@@ -212,6 +212,7 @@ static void can_lld_sce_handler(CANDriver *canp) {
   msr = canp->can->MSR;
   canp->can->MSR = CAN_MSR_ERRI | CAN_MSR_WKUI | CAN_MSR_SLAKI;
   /* Wakeup event.*/
+#if CAN_USE_SLEEP_MODE
   if (msr & CAN_MSR_WKUI) {
     canp->state = CAN_READY;
     canp->can->MCR &= ~CAN_MCR_SLEEP;
@@ -219,6 +220,7 @@ static void can_lld_sce_handler(CANDriver *canp) {
     chEvtBroadcastI(&canp->wakeup_event);
     chSysUnlockFromIsr();
   }
+#endif /* CAN_USE_SLEEP_MODE */
   /* Error event.*/
   if (msr & CAN_MSR_ERRI) {
     flagsmask_t flags;
