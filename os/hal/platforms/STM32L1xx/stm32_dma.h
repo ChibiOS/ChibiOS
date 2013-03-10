@@ -303,6 +303,8 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @details The function disables the specified stream and then clears any
  *          pending interrupt.
  * @note    This function can be invoked in both ISR or thread context.
+ * @note    Interrupts enabling flags are set to zero after this call, see
+ *          bug 3607518.
  * @pre     The stream must have been allocated using @p dmaStreamAllocate().
  * @post    After use the stream can be released using @p dmaStreamRelease().
  *

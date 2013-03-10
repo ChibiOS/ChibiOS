@@ -339,7 +339,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
     /* Note, the DMA must be enabled before the IRQs.*/
     bool_t b;
     b = dmaStreamAllocate(sdcp->dma, STM32_SDC_SDIO_IRQ_PRIORITY, NULL, NULL);
-    chDbgAssert(!b, "i2c_lld_start(), #3", "stream already allocated");
+    chDbgAssert(!b, "sdc_lld_start(), #1", "stream already allocated");
     dmaStreamSetPeripheral(sdcp->dma, &SDIO->FIFO);
 #if (defined(STM32F4XX) || defined(STM32F2XX))
     dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS | STM32_DMA_FCR_FTH_FULL);

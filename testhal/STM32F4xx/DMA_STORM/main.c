@@ -151,7 +151,7 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 10,
                     Thread1, NULL);
 
-  /* Activates the ADC1 driver and the thermal sensor.*/
+  /* Activates the ADC1 driver and the temperature sensor.*/
   adcStart(&ADCD1, NULL);
   adcSTM32EnableTSVREFE();
 
