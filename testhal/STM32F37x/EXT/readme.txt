@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT HAL - IRQ_STORM stress test demo for STM32F37x.              **
+** ChibiOS/RT HAL - EXT driver demo for STM32F37x.                         **
 *****************************************************************************
 
 ** TARGET **
@@ -8,12 +8,11 @@ The demo runs on an STMicroelectronics STM32373C-EVAL board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F37x GPT, PAL and Serial
-drivers in order to implement a system stress demo.
+The application demonstrates the use of the STM32F37x EXT driver.
 
 ** Board Setup **
 
-- Connect a terminal emulator to serial port connector (38400-N-8-1).
+None required.
 
 ** Build Procedure **
 
