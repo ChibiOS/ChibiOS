@@ -270,7 +270,8 @@ void adc_lld_start(ADCDriver *adcp) {
 
     /* This is a common register but apparently it requires that at least one
        of the ADCs is clocked in order to allow writing, see bug 3575297.*/
-    ADC->CCR = STM32_ADC_ADCPRE << 16;
+    ADC->CCR = (ADC->CCR & (ADC_CCR_TSVREFE | ADC_CCR_VBATE)) |
+               (STM32_ADC_ADCPRE << 16);
 
     /* ADC initial setup, starting the analog part here in order to reduce
        the latency when starting a conversion.*/

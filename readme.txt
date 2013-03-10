@@ -88,6 +88,8 @@
 *** 2.5.2 ***
 - FIX: Fixed spurious interrupt disabling an STM32 DMA stream (bug 3607518)
   (backported to 2.4.4).
+- FIX: Fixed start of any ADC disables VREF and VBAT (bug 3607467)
+  (backported to 2.4.4).
 - FIX: Fixed surprising non-CRLF lines in source (bug 3607380).
 - FIX: Fixed no entry point defined at link time (bug 3607319).
 - FIX: Fixed sdc_lld_collect_errors does not collect errors (bug 3606743).
