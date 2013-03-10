@@ -562,6 +562,7 @@ bool_t sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk) {
   /* Wait for it to return to transfer state to indicate it has finished erasing */
   _sdc_wait_for_transfer_state(sdcp);
 
+  sdcp->state = BLK_READY;
   return CH_SUCCESS;
 
 failed:
