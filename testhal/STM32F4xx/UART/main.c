@@ -158,9 +158,9 @@ int main(void) {
        * handled entirely in background.
        */
       uartStopReceive(&UARTD2);
-//      uartStopSend(&UARTD2);
+      uartStopSend(&UARTD2);
       uartStartReceive(&UARTD2, 16, buffer);
-//      uartStartSend(&UARTD2, 16, message);
+      uartStartSend(&UARTD2, 16, message);
     }
     chThdSleepMilliseconds(500);
   }
