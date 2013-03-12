@@ -190,7 +190,7 @@
 #define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
 #endif /* defined(STM32F0XX) */
 
-#if defined(STM32F30X)
+#if defined(STM32F30X)|| defined(STM32F37X)
 /* Fixed values for STM32F3xx devices.*/
 #define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
 #define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)

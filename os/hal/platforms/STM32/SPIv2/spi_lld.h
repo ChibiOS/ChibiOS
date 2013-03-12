@@ -188,7 +188,7 @@
 #define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
 #endif /* defined(STM32F0XX) */
 
-#if defined(STM32F30X)
+#if defined(STM32F30X) || defined(STM32F37X)
 /* Fixed values for STM32F3xx devices.*/
 #define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
