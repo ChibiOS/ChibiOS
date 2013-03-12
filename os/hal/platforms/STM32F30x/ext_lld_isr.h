@@ -123,8 +123,15 @@
 /**
  * @brief   EXTI20 interrupt priority level setting.
  */
-#if !defined(STM32_EXT_EXTI20_23_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EXT_EXTI20_23_IRQ_PRIORITY    6
+#if !defined(STM32_EXT_EXTI20_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_EXT_EXTI20_IRQ_PRIORITY       6
+#endif
+
+/**
+ * @brief   EXTI21..23 interrupt priority level setting.
+ */
+#if !defined(STM32_EXT_EXTI21_23_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_EXT_EXTI21_23_IRQ_PRIORITY    6
 #endif
 
 /**

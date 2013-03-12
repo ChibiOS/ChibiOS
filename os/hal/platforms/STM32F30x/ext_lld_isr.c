@@ -383,8 +383,10 @@ void ext_lld_exti_irq_enable(void) {
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
   nvicEnableVector(TAMPER_STAMP_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
+  nvicEnableVector(RTC_WKUP_IRQn,
+                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
   nvicEnableVector(COMP1_2_3_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_23_IRQ_PRIORITY));
+                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_23_IRQ_PRIORITY));
   nvicEnableVector(COMP4_5_6_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI30_32_IRQ_PRIORITY));
   nvicEnableVector(COMP7_IRQn,
@@ -409,6 +411,7 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(RTC_Alarm_IRQn);
   nvicDisableVector(USBWakeUp_IRQn);
   nvicDisableVector(TAMPER_STAMP_IRQn);
+  nvicDisableVector(RTC_WKUP_IRQn);
   nvicDisableVector(COMP1_2_3_IRQn);
   nvicDisableVector(COMP4_5_6_IRQn);
   nvicDisableVector(COMP7_IRQn);
