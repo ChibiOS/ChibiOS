@@ -293,14 +293,12 @@ CH_IRQ_HANDLER(Vector140) {
 
   CH_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & ((1 << 21) | (1 << 22) | (1 << 23));
+  pr = EXTI->PR & ((1 << 21) | (1 << 22));
   EXTI->PR = pr;
   if (pr & (1 << 21))
     EXTD1.config->channels[21].cb(&EXTD1, 21);
   if (pr & (1 << 22))
     EXTD1.config->channels[22].cb(&EXTD1, 22);
-  if (pr & (1 << 23))
-    EXTD1.config->channels[23].cb(&EXTD1, 23);
 
   CH_IRQ_EPILOGUE();
 }
@@ -341,8 +339,8 @@ void ext_lld_exti_irq_enable(void) {
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
   nvicEnableVector(RTC_WKUP_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
-  nvicEnableVector(COMP1_2_3_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_22_29_IRQ_PRIORITY));
+  nvicEnableVector(COMP_IRQn,
+                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_22_IRQ_PRIORITY));
 }
 
 /**
@@ -364,7 +362,7 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(USBWakeUp_IRQn);
   nvicDisableVector(TAMPER_STAMP_IRQn);
   nvicDisableVector(RTC_WKUP_IRQn);
-  nvicDisableVector(COMP1_2_3_IRQn);
+  nvicDisableVector(COMP_IRQn);
 }
 
 #endif /* HAL_USE_EXT */

@@ -24,7 +24,7 @@
 static void led5off(void *arg) {
 
   (void)arg;
-  palClearPad(GPIOE, GPIOE_LED10_RED);
+  palClearPad(GPIOC, GPIOC_LED1);
 }
 
 /* Triggered when the button is pressed or released. The LED5 is set to ON.*/
@@ -34,7 +34,7 @@ static void extcb1(EXTDriver *extp, expchannel_t channel) {
   (void)extp;
   (void)channel;
 
-  palSetPad(GPIOE, GPIOE_LED10_RED);
+  palSetPad(GPIOC, GPIOC_LED1);
   chSysLockFromIsr();
   if (chVTIsArmedI(&vt4))
     chVTResetI(&vt4);
