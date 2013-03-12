@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32F30x/ext_lld_isr.c
- * @brief   STM32F30x EXT subsystem low level driver ISR code.
+ * @file    STM32F37x/ext_lld_isr.c
+ * @brief   STM32F37x EXT subsystem low level driver ISR code.
  *
  * @addtogroup EXT
  * @{
@@ -282,9 +282,9 @@ CH_IRQ_HANDLER(Vector4C) {
 }
 #endif
 
-#if !defined(STM32_DISABLE_EXTI21_22_29_HANDLER)
+#if !defined(STM32_DISABLE_EXTI21_23_HANDLER)
 /**
- * @brief   EXTI[21],EXTI[22],EXTI[29] interrupt handler (COMP1, COMP2, COMP3).
+ * @brief   EXTI[21]...EXTI[23] interrupt handler (COMP1, COMP2, COMP3).
  *
  * @isr
  */
@@ -386,7 +386,7 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(RTC_WKUP_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
   nvicEnableVector(COMP1_2_3_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_22_29_IRQ_PRIORITY));
+                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_23_IRQ_PRIORITY));
   nvicEnableVector(COMP4_5_6_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI30_32_IRQ_PRIORITY));
   nvicEnableVector(COMP7_IRQn,

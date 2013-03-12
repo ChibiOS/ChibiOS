@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    STM32F30x/ext_lld_isr.h
- * @brief   STM32F30x EXT subsystem low level driver ISR header.
+ * @file    STM32F37x/ext_lld_isr.h
+ * @brief   STM32F37x EXT subsystem low level driver ISR header.
  *
  * @addtogroup EXT
  * @{
@@ -128,9 +128,9 @@
 #endif
 
 /**
- * @brief   EXTI21,22,29 interrupt priority level setting.
+ * @brief   EXTI21..23 interrupt priority level setting.
  */
-#if !defined(STM32_EXT_EXTI21_22_29_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#if !defined(STM32_EXT_EXTI21_23_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_EXT_EXTI21_22_29_IRQ_PRIORITY 6
 #endif
 
