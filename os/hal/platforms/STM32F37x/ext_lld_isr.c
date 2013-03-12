@@ -282,9 +282,9 @@ CH_IRQ_HANDLER(Vector4C) {
 }
 #endif
 
-#if !defined(STM32_DISABLE_EXTI21_23_HANDLER)
+#if !defined(STM32_DISABLE_EXTI21_22_HANDLER)
 /**
- * @brief   EXTI[21]...EXTI[23] interrupt handler (COMP1, COMP2, COMP3).
+ * @brief   EXTI[21]..EXTI[22] interrupt handler (COMP1, COMP2).
  *
  * @isr
  */
@@ -301,50 +301,6 @@ CH_IRQ_HANDLER(Vector140) {
     EXTD1.config->channels[22].cb(&EXTD1, 22);
   if (pr & (1 << 23))
     EXTD1.config->channels[23].cb(&EXTD1, 23);
-
-  CH_IRQ_EPILOGUE();
-}
-#endif
-
-#if !defined(STM32_DISABLE_EXTI30_32_HANDLER)
-/**
- * @brief   EXTI[30]...EXTI[32] interrupt handler (COMP4, COMP5, COMP6).
- *
- * @isr
- */
-CH_IRQ_HANDLER(Vector144) {
-  uint32_t pr;
-
-  CH_IRQ_PROLOGUE();
-
-  pr = EXTI->PR & ((1 << 30) | (1 << 31));
-  EXTI->PR = pr;
-  if (pr & (1 << 30))
-    EXTD1.config->channels[30].cb(&EXTD1, 30);
-  if (pr & (1 << 31))
-    EXTD1.config->channels[31].cb(&EXTD1, 31);
-
-  pr = EXTI->PR2 & (1 << 0);
-  EXTI->PR2 = pr;
-  if (pr & (1 << 0))
-    EXTD1.config->channels[32].cb(&EXTD1, 32);
-
-  CH_IRQ_EPILOGUE();
-}
-#endif
-
-#if !defined(STM32_DISABLE_EXTI33_HANDLER)
-/**
- * @brief   EXTI[33] interrupt handler (COMP7).
- *
- * @isr
- */
-CH_IRQ_HANDLER(RTC_WKUP_IRQHandler) {
-
-  CH_IRQ_PROLOGUE();
-
-  EXTI->PR2 = (1 << 1);
-  EXTD1.config->channels[33].cb(&EXTD1, 33);
 
   CH_IRQ_EPILOGUE();
 }
@@ -386,11 +342,7 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(RTC_WKUP_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
   nvicEnableVector(COMP1_2_3_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_23_IRQ_PRIORITY));
-  nvicEnableVector(COMP4_5_6_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI30_32_IRQ_PRIORITY));
-  nvicEnableVector(COMP7_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI33_IRQ_PRIORITY));
+                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_22_29_IRQ_PRIORITY));
 }
 
 /**
@@ -413,8 +365,6 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(TAMPER_STAMP_IRQn);
   nvicDisableVector(RTC_WKUP_IRQn);
   nvicDisableVector(COMP1_2_3_IRQn);
-  nvicDisableVector(COMP4_5_6_IRQn);
-  nvicDisableVector(COMP7_IRQn);
 }
 
 #endif /* HAL_USE_EXT */

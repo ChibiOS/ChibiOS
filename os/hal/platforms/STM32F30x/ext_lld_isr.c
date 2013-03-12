@@ -293,14 +293,14 @@ CH_IRQ_HANDLER(Vector140) {
 
   CH_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & ((1 << 21) | (1 << 22) | (1 << 23));
+  pr = EXTI->PR & ((1 << 21) | (1 << 22) | (1 << 29));
   EXTI->PR = pr;
   if (pr & (1 << 21))
     EXTD1.config->channels[21].cb(&EXTD1, 21);
   if (pr & (1 << 22))
     EXTD1.config->channels[22].cb(&EXTD1, 22);
-  if (pr & (1 << 23))
-    EXTD1.config->channels[23].cb(&EXTD1, 23);
+  if (pr & (1 << 29))
+    EXTD1.config->channels[29].cb(&EXTD1, 29);
 
   CH_IRQ_EPILOGUE();
 }

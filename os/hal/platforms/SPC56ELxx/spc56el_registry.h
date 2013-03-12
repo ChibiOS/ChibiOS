@@ -13,7 +13,7 @@
  */
 
 /**
- * @file    SPC56ELxx/spc560p_registry.h
+ * @file    SPC56ELxx/spc56el_registry.h
  * @brief   SPC56ELxx capabilities registry.
  *
  * @addtogroup HAL
@@ -186,6 +186,7 @@
 #define SPC5_ETIMER2_TC5IR_NUMBER           227
 #define SPC5_ETIMER2_RCF_NUMBER             232
 #define SPC5_ETIMER2_CLK                    SPC5_MCONTROL_CLK
+/** @} */
 
 #endif /* _SPC56EL_REGISTRY_H_ */
 
