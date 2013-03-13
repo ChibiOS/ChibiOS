@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>PPC-SPC563M-GCC</name>
+	<name>SPC560Pxx-PWM-ICU</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -27,17 +27,12 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/boards/ST_EVB_SPC563M</locationURI>
+			<locationURI>CHIBIOS/boards/ST_EVB_SPC560P</locationURI>
 		</link>
 		<link>
 			<name>os</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os</locationURI>
-		</link>
-		<link>
-			<name>test</name>
-			<type>2</type>
-			<locationURI>CHIBIOS/test</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

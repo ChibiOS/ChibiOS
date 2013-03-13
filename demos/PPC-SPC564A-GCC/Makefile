@@ -46,7 +46,7 @@ PROJECT = ch
 
 # Imported source files
 CHIBIOS = ../..
-include $(CHIBIOS)/boards/GENERIC_SPC564A/board.mk
+include $(CHIBIOS)/boards/ST_EVB_SPC564A/board.mk
 include $(CHIBIOS)/os/hal/platforms/SPC564Axx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/PPC/SPC564Axx/port.mk
