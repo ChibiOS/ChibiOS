@@ -13,8 +13,8 @@
  */
 
 /**
- * @file    SPC563Mxx/hal_lld.h
- * @brief   SPC563Mxx HAL subsystem low level driver header.
+ * @file    SPC564Axx/hal_lld.h
+ * @brief   SPC564Axx HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - SPC5_XOSC_CLK.
@@ -27,8 +27,8 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "xpc563m.h"
-#include "spc563m_registry.h"
+#include "xpc564a.h"
+#include "spc564a_registry.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -42,7 +42,7 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME           "SPC563Mxx Powertrain"
+#define PLATFORM_NAME           "SPC564Axx Powertrain"
 
 /**
  * @name    ESYNCR2 register definitions
@@ -175,8 +175,8 @@
 /*
  * Configuration-related checks.
  */
-#if !defined(SPC563Mxx_MCUCONF)
-#error "Using a wrong mcuconf.h file, SPC563Mxx_MCUCONF not defined"
+#if !defined(SPC564Axx_MCUCONF)
+#error "Using a wrong mcuconf.h file, SPC564Axx_MCUCONF not defined"
 #endif
 
 #if (SPC5_CLK_PREDIV_VALUE < 1) || (SPC5_CLK_PREDIV_VALUE > 15)
@@ -221,8 +221,8 @@
 #define SPC5_SYSCLK         SPC5_XOSC_CLK
 #endif
 
-#if (SPC5_SYSCLK > 80000000) && !SPC5_ALLOW_OVERCLOCK
-#error "System clock above maximum rated frequency (80MHz)"
+#if (SPC5_SYSCLK > 150000000) && !SPC5_ALLOW_OVERCLOCK
+#error "System clock above maximum rated frequency (150MHz)"
 #endif
 
 /**

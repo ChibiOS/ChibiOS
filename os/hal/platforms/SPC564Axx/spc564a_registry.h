@@ -13,8 +13,8 @@
  */
 
 /**
- * @file    SPC563Mxx/spc563m_registry.h
- * @brief   SPC563Mxx capabilities registry.
+ * @file    SPC564Axx/spc564a_registry.h
+ * @brief   SPC564Axx capabilities registry.
  *
  * @addtogroup HAL
  * @{
@@ -28,12 +28,12 @@
 /*===========================================================================*/
 
 /**
- * @name    SPC563Mxx capabilities
+ * @name    SPC564Axx capabilities
  * @{
  */
 /* eDMA attributes.*/
 #define SPC5_HAS_EDMAA                      TRUE
-#define SPC5_EDMA_NCHANNELS                 32
+#define SPC5_EDMA_NCHANNELS                 64
 #define SPC5_EDMA_HAS_MUX                   FALSE
 
 /* eQADC attributes.*/
@@ -48,7 +48,9 @@
 #define SPC5_ESCIB_HANDLER                  vector149
 #define SPC5_ESCIB_NUMBER                   149
 
-#define SPC5_HAS_ESCIC                      FALSE
+#define SPC5_HAS_ESCIC                      TRUE
+#define SPC5_ESCIB_HANDLER                  vector473
+#define SPC5_ESCIB_NUMBER                   473
 
 /* SIU attributes.*/
 #define SPC5_HAS_SIU                        TRUE
