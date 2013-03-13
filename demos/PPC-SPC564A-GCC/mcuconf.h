@@ -31,9 +31,9 @@
 #define SPC5_NO_INIT                        FALSE
 #define SPC5_CLK_BYPASS                     FALSE
 #define SPC5_ALLOW_OVERCLOCK                FALSE
-#define SPC5_CLK_PREDIV_VALUE               2
-#define SPC5_CLK_MFD_VALUE                  150
-#define SPC5_CLK_RFD                        SPC5_RFD_DIV4
+#define SPC5_CLK_PREDIV_VALUE               8
+#define SPC5_CLK_MFD_VALUE                  60
+#define SPC5_CLK_RFD                        SPC5_RFD_DIV2
 #define SPC5_FLASH_BIUCR                    (BIUCR_BANK1_TOO |              \
                                              BIUCR_MASTER4_PREFETCH |       \
                                              BIUCR_MASTER0_PREFETCH |       \

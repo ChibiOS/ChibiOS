@@ -129,10 +129,9 @@
 /**
  * @brief   External clock pre-divider.
  * @note    Must be in range 1...15.
- * @note    The effective divider factor is this value.
  */
 #if !defined(SPC5_CLK_PREDIV) || defined(__DOXYGEN__)
-#define SPC5_CLK_PREDIV_VALUE               2
+#define SPC5_CLK_PREDIV_VALUE               8
 #endif
 
 /**
@@ -140,14 +139,14 @@
  * @note    Must be in range 32...96.
  */
 #if !defined(SPC5_CLK_MFD_VALUE) || defined(__DOXYGEN__)
-#define SPC5_CLK_MFD_VALUE                  80
+#define SPC5_CLK_MFD_VALUE                  60
 #endif
 
 /**
  * @brief   Reduced frequency divider.
  */
 #if !defined(SPC5_CLK_RFD) || defined(__DOXYGEN__)
-#define SPC5_CLK_RFD                        RFD_DIV4
+#define SPC5_CLK_RFD                        RFD_DIV2
 #endif
 
 /**

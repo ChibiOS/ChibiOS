@@ -29,7 +29,7 @@
  * Board frequencies.
  */
 #if !defined(SPC5_XOSC_CLK)
-#define SPC5_XOSC_CLK               8000000
+#define SPC5_XOSC_CLK               40000000
 #endif
 
 /*

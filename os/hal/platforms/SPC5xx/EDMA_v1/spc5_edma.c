@@ -665,7 +665,7 @@ CH_IRQ_HANDLER(vector42) {
  */
 CH_IRQ_HANDLER(vector210) {
   edma_channel_t channel;
-  uint32_t erl, esr = EDMA.ESR.R;
+  uint32_t erh, esr = EDMA.ESR.R;
 
   CH_IRQ_PROLOGUE();
 

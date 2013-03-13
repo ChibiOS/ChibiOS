@@ -49,8 +49,8 @@
 #define SPC5_ESCIB_NUMBER                   149
 
 #define SPC5_HAS_ESCIC                      TRUE
-#define SPC5_ESCIB_HANDLER                  vector473
-#define SPC5_ESCIB_NUMBER                   473
+#define SPC5_ESCIC_HANDLER                  vector473
+#define SPC5_ESCIC_NUMBER                   473
 
 /* SIU attributes.*/
 #define SPC5_HAS_SIU                        TRUE

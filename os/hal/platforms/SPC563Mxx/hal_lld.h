@@ -129,7 +129,6 @@
 /**
  * @brief   External clock pre-divider.
  * @note    Must be in range 1...15.
- * @note    The effective divider factor is this value.
  */
 #if !defined(SPC5_CLK_PREDIV) || defined(__DOXYGEN__)
 #define SPC5_CLK_PREDIV_VALUE               2
