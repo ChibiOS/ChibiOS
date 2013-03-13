@@ -106,7 +106,7 @@
  * @brief   Disables the clocks initialization in the HAL.
  */
 #if !defined(SPC5_NO_INIT) || defined(__DOXYGEN__)
-#define SPC5_NO_INIT                         FALSE
+#define SPC5_NO_INIT                        FALSE
 #endif
 
 /**
@@ -116,14 +116,14 @@
  *          are ignored.
  */
 #if !defined(SPC5_CLK_BYPASS) || defined(__DOXYGEN__)
-#define SPC5_CLK_BYPASS                      FALSE
+#define SPC5_CLK_BYPASS                     FALSE
 #endif
 
 /**
  * @brief   Disables the overclock checks.
  */
 #if !defined(SPC5_ALLOW_OVERCLOCK) || defined(__DOXYGEN__)
-#define SPC5_ALLOW_OVERCLOCK                 FALSE
+#define SPC5_ALLOW_OVERCLOCK                FALSE
 #endif
 
 /**
@@ -132,7 +132,7 @@
  * @note    The effective divider factor is this value.
  */
 #if !defined(SPC5_CLK_PREDIV) || defined(__DOXYGEN__)
-#define SPC5_CLK_PREDIV_VALUE                2
+#define SPC5_CLK_PREDIV_VALUE               2
 #endif
 
 /**
