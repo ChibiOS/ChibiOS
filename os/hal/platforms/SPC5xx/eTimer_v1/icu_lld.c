@@ -181,6 +181,13 @@ ICUDriver ICUD18;
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of active eTimer Submodules.
+ */
+static uint32_t icu_active_submodules0;
+static uint32_t icu_active_submodules1;
+static uint32_t icu_active_submodules2;
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -201,9 +208,11 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       _icu_isr_invoke_overflow_cb(icup);
     }
     if ((sr & 0x0040) != 0) { /* ICF1 */
-      if (icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE == 0b011) {
+      if (icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE ==
+          SPC5_ETIMER_CNTMODE_RFE_SIHA) {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF1 = 1U;
-        icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE = 0b001;
+        icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE =
+            SPC5_ETIMER_CNTMODE_RE;
       }
       else {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF1 = 1U;
@@ -212,7 +221,8 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       }
     }
     else if ((sr & 0x0080) != 0) { /* ICF2 */
-      if (icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE == 0b011) {
+      if (icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE ==
+          SPC5_ETIMER_CNTMODE_RFE_SIHA) {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF2 = 1U;
         icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0x0000;
       }
@@ -257,62 +267,76 @@ static void spc5_icu_smod_init(ICUDriver *icup) {
   /* Set primary source and clock prescaler.*/
   switch (psc) {
   case 1:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC = 0b11000;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC =
+        SPC5_ETIMER_IP_BUS_CLOCK_DIVIDE_BY_1;
     break;
   case 2:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC = 0b11001;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC =
+        SPC5_ETIMER_IP_BUS_CLOCK_DIVIDE_BY_2;
     break;
   case 4:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC = 0b11010;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC =
+        SPC5_ETIMER_IP_BUS_CLOCK_DIVIDE_BY_4;
     break;
   case 8:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC = 0b11011;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC =
+        SPC5_ETIMER_IP_BUS_CLOCK_DIVIDE_BY_8;
     break;
   case 16:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC = 0b11100;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC =
+        SPC5_ETIMER_IP_BUS_CLOCK_DIVIDE_BY_16;
     break;
   case 32:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC = 0b11101;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC =
+        SPC5_ETIMER_IP_BUS_CLOCK_DIVIDE_BY_32;
     break;
   case 64:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC = 0b11110;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC =
+        SPC5_ETIMER_IP_BUS_CLOCK_DIVIDE_BY_64;
     break;
   case 128:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC = 0b11111;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.PRISRC =
+        SPC5_ETIMER_IP_BUS_CLOCK_DIVIDE_BY_128;
     break;
   }
 
   /* Set control registers.*/
-  icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.ONCE = 0;
-  icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.LENGTH = 0;
-  icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.DIR = 0;
-  icup->etimerp->CHANNEL[icup->smod_number].CTRL2.B.PIPS = 0;
+  icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.ONCE = 0U;
+  icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.LENGTH = 0U;
+  icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.DIR = 0U;
+  icup->etimerp->CHANNEL[icup->smod_number].CTRL2.B.PIPS = 0U;
 
   /* Set secondary source.*/
   switch (icup->config->channel) {
   case ICU_CHANNEL_1:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC = 0b00000;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
+        SPC5_ETIMER_COUNTER_0_INPUT_PIN;
     break;
   case ICU_CHANNEL_2:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC = 0b00001;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
+        SPC5_ETIMER_COUNTER_1_INPUT_PIN;
     break;
   case ICU_CHANNEL_3:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC = 0b00010;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
+        SPC5_ETIMER_COUNTER_2_INPUT_PIN;
     break;
   case ICU_CHANNEL_4:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC = 0b00011;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
+        SPC5_ETIMER_COUNTER_3_INPUT_PIN;
     break;
   case ICU_CHANNEL_5:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC = 0b00100;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
+        SPC5_ETIMER_COUNTER_4_INPUT_PIN;
     break;
   case ICU_CHANNEL_6:
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC = 0b00101;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
+        SPC5_ETIMER_COUNTER_5_INPUT_PIN;
     break;
   }
 
   /* Set secondary source polarity.*/
   if (icup->config->mode == ICU_INPUT_ACTIVE_HIGH) {
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL2.B.SIPS = 0;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL2.B.SIPS = 0U;
   }
   else {
     icup->etimerp->CHANNEL[icup->smod_number].CTRL2.B.SIPS = 1U;
@@ -736,131 +760,135 @@ CH_IRQ_HANDLER(SPC5_ETIMER2_TC5IR_HANDLER) {
  * @notapi
  */
 void icu_lld_init(void) {
+  /* Submodules initially all not in use.*/
+    icu_active_submodules0 = 0;
+    icu_active_submodules1 = 0;
+    icu_active_submodules2 = 0;
 
 #if SPC5_ICU_USE_SMOD0
   /* Driver initialization.*/
   icuObjectInit(&ICUD1);
   ICUD1.etimerp = &SPC5_ETIMER_0;
-  ICUD1.smod_number = 0;
+  ICUD1.smod_number = 0U;
 #endif
 
 #if SPC5_ICU_USE_SMOD1
   /* Driver initialization.*/
   icuObjectInit(&ICUD2);
   ICUD2.etimerp = &SPC5_ETIMER_0;
-  ICUD2.smod_number = 1;
+  ICUD2.smod_number = 1U;
 #endif
 
 #if SPC5_ICU_USE_SMOD2
   /* Driver initialization.*/
   icuObjectInit(&ICUD3);
   ICUD3.etimerp = &SPC5_ETIMER_0;
-  ICUD3.smod_number = 2;
+  ICUD3.smod_number = 2U;
 #endif
 
 #if SPC5_ICU_USE_SMOD3
   /* Driver initialization.*/
   icuObjectInit(&ICUD4);
   ICUD4.etimerp = &SPC5_ETIMER_0;
-  ICUD4.smod_number = 3;
+  ICUD4.smod_number = 3U;
 #endif
 
 #if SPC5_ICU_USE_SMOD4
   /* Driver initialization.*/
   icuObjectInit(&ICUD5);
   ICUD5.etimerp = &SPC5_ETIMER_0;
-  ICUD5.smod_number = 4;
+  ICUD5.smod_number = 4U;
 #endif
 
 #if SPC5_ICU_USE_SMOD5
   /* Driver initialization.*/
   icuObjectInit(&ICUD6);
   ICUD6.etimerp = &SPC5_ETIMER_0;
-  ICUD6.smod_number = 5;
+  ICUD6.smod_number = 5U;
 #endif
 
 #if SPC5_ICU_USE_SMOD6
   /* Driver initialization.*/
   icuObjectInit(&ICUD7);
   ICUD7.etimerp = &SPC5_ETIMER_1;
-  ICUD7.smod_number = 0;
+  ICUD7.smod_number = 0U;
 #endif
 
 #if SPC5_ICU_USE_SMOD7
   /* Driver initialization.*/
   icuObjectInit(&ICUD8);
   ICUD8.etimerp = &SPC5_ETIMER_1;
-  ICUD8.smod_number = 1;
+  ICUD8.smod_number = 1U;
 #endif
 
 #if SPC5_ICU_USE_SMOD8
   /* Driver initialization.*/
   icuObjectInit(&ICUD9);
   ICUD9.etimerp = &SPC5_ETIMER_1;
-  ICUD9.smod_number = 2;
+  ICUD9.smod_number = 2U;
 #endif
 
 #if SPC5_ICU_USE_SMOD9
   /* Driver initialization.*/
   icuObjectInit(&ICUD10);
   ICUD10.etimerp = &SPC5_ETIMER_1;
-  ICUD10.smod_number = 3;
+  ICUD10.smod_number = 3U;
 #endif
 
 #if SPC5_ICU_USE_SMOD10
   /* Driver initialization.*/
   icuObjectInit(&ICUD11);
   ICUD11.etimerp = &SPC5_ETIMER_1;
-  ICUD11.smod_number = 4;
+  ICUD11.smod_number = 4U;
 #endif
 
 #if SPC5_ICU_USE_SMOD11
   /* Driver initialization.*/
   icuObjectInit(&ICUD12);
   ICUD12.etimerp = &SPC5_ETIMER_1;
-  ICUD12.smod_number = 5;
+  ICUD12.smod_number = 5U;
 #endif
 
 #if SPC5_ICU_USE_SMOD12
   /* Driver initialization.*/
   icuObjectInit(&ICUD13);
   ICUD13.etimerp = &SPC5_ETIMER_2;
-  ICUD13.smod_number = 0;
+  ICUD13.smod_number = 0U;
 #endif
 
 #if SPC5_ICU_USE_SMOD13
   /* Driver initialization.*/
   icuObjectInit(&ICUD14);
   ICUD14.etimerp = &SPC5_ETIMER_2;
-  ICUD14.smod_number = 1;
+  ICUD14.smod_number = 1U;
 #endif
 
 #if SPC5_ICU_USE_SMOD14
   /* Driver initialization.*/
   icuObjectInit(&ICUD15);
   ICUD15.etimerp = &SPC5_ETIMER_2;
-  ICUD15.smod_number = 2;
+  ICUD15.smod_number = 2U;
 #endif
 
 #if SPC5_ICU_USE_SMOD15
   /* Driver initialization.*/
   icuObjectInit(&ICUD16);
   ICUD16.etimerp = &SPC5_ETIMER_2;
-  ICUD16.smod_number = 3;
+  ICUD16.smod_number = 3U;
 #endif
 
 #if SPC5_ICU_USE_SMOD16
   /* Driver initialization.*/
   icuObjectInit(&ICUD17);
   ICUD17.etimerp = &SPC5_ETIMER_2;
-  ICUD17.smod_number = 4;
+  ICUD17.smod_number = 4U;
 #endif
 
 #if SPC5_ICU_USE_SMOD17
   /* Driver initialization.*/
   icuObjectInit(&ICUD18);
   ICUD18.etimerp = &SPC5_ETIMER_2;
-  ICUD18.smod_number = 5;
+  ICUD18.smod_number = 5U;
 #endif
 
 #if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 ||								\
@@ -924,158 +952,142 @@ void icu_lld_start(ICUDriver *icup) {
               (icup->config->channel == ICU_CHANNEL_6),
              "icu_lld_start(), #1", "invalid input");
 
-#if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||       \
-    SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
-  uint8_t SMOD0 = 0;
-  uint8_t SMOD1 = 0;
-  uint8_t SMOD2 = 0;
-  uint8_t SMOD3 = 0;
-  uint8_t SMOD4 = 0;
-  uint8_t SMOD5 = 0;
-#endif
-
-#if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
-    SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
-  uint8_t SMOD6 = 0;
-  uint8_t SMOD7 = 0;
-  uint8_t SMOD8 = 0;
-  uint8_t SMOD9 = 0;
-  uint8_t SMOD10 = 0;
-  uint8_t SMOD11 = 0;
-#endif
-
-#if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 || SPC5_ICU_USE_SMOD14 ||    \
-    SPC5_ICU_USE_SMOD15 || SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
-  uint8_t SMOD12 = 0;
-  uint8_t SMOD13 = 0;
-  uint8_t SMOD14 = 0;
-  uint8_t SMOD15 = 0;
-  uint8_t SMOD16 = 0;
-  uint8_t SMOD17 = 0;
-#endif
-
-#if SPC5_ICU_USE_SMOD0
-  if (ICUD1.state == ICU_READY)
-    SMOD0 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD1
-  if (ICUD2.state == ICU_READY)
-  SMOD1 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD2
-  if (ICUD3.state == ICU_READY)
-  SMOD2 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD3
-  if (ICUD4.state == ICU_READY)
-  SMOD3 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD4
-  if (ICUD5.state == ICU_READY)
-  SMOD4 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD5
-  if (ICUD6.state == ICU_READY)
-  SMOD5 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD6
-  if (ICUD7.state == ICU_READY)
-  SMOD6 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD7
-  if (ICUD8.state == ICU_READY)
-  SMOD7 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD8
-  if (ICUD9.state == ICU_READY)
-  SMOD8 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD9
-  if (ICUD10.state == ICU_READY)
-  SMOD9 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD10
-  if (ICUD11.state == ICU_READY)
-  SMOD10 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD11
-  if (ICUD12.state == ICU_READY)
-  SMOD11 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD12
-  if (ICUD13.state == ICU_READY)
-  SMOD12 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD13
-  if (ICUD14.state == ICU_READY)
-  SMOD13 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD14
-  if (ICUD15.state == ICU_READY)
-  SMOD14 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD15
-  if (ICUD16.state == ICU_READY)
-  SMOD15 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD16
-  if (ICUD17.state == ICU_READY)
-  SMOD16 = 1U;
-#endif
-#if SPC5_ICU_USE_SMOD17
-  if (ICUD18.state == ICU_READY)
-  SMOD17 = 1U;
-#endif
-
-#if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||       \
-    SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
-  /* Set Peripheral Clock.*/
-  if (!(SMOD0 || SMOD1 || SMOD2 || SMOD3 || SMOD4 || SMOD5)) {
-    halSPCSetPeripheralClockMode(SPC5_ETIMER0_PCTL,
-                                 SPC5_ICU_ETIMER0_START_PCTL);
-  }
-#endif
-#if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
-    SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
-  /* Set Peripheral Clock.*/
-  if (!(SMOD6 || SMOD7 || SMOD8 || SMOD9 || SMOD10 || SMOD11)) {
-    halSPCSetPeripheralClockMode(SPC5_ETIMER1_PCTL,
-                                 SPC5_ICU_ETIMER1_START_PCTL);
-  }
-#endif
-#if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 || SPC5_ICU_USE_SMOD14 ||    \
-    SPC5_ICU_USE_SMOD15 || SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
-  /* Set Peripheral Clock.*/
-  if (!(SMOD12 || SMOD13 || SMOD14 || SMOD15 || SMOD16 || SMOD17)) {
-    halSPCSetPeripheralClockMode(SPC5_ETIMER2_PCTL,
-                                 SPC5_ICU_ETIMER2_START_PCTL);
-  }
-#endif
+  chDbgAssert(icu_active_submodules0 < 6, "icu_lld_start(), #1",
+              "too many submodules");
+  chDbgAssert(icu_active_submodules1 < 6, "icu_lld_start(), #1",
+                "too many submodules");
+  chDbgAssert(icu_active_submodules2 < 6, "icu_lld_start(), #1",
+                "too many submodules");
 
   if (icup->state == ICU_STOP) {
+#if SPC5_ICU_USE_SMOD0
+    if (&ICUD1 == icup)
+      icu_active_submodules0++;
+#endif
+#if SPC5_ICU_USE_SMOD1
+    if (&ICUD2 == icup)
+      icu_active_submodules0++;
+#endif
+#if SPC5_ICU_USE_SMOD2
+    if (&ICUD3 == icup)
+      icu_active_submodules0++;
+#endif
+#if SPC5_ICU_USE_SMOD3
+    if (&ICUD4 == icup)
+      icu_active_submodules0++;
+#endif
+#if SPC5_ICU_USE_SMOD4
+    if (&ICUD5 == icup)
+      icu_active_submodules0++;
+#endif
+#if SPC5_ICU_USE_SMOD5
+    if (&ICUD6 == icup)
+      icu_active_submodules0++;
+#endif
+#if SPC5_ICU_USE_SMOD6
+    if (&ICUD7 == icup)
+      icu_active_submodules1++;
+#endif
+#if SPC5_ICU_USE_SMOD7
+    if (&ICUD8 == icup)
+      icu_active_submodules1++;
+#endif
+#if SPC5_ICU_USE_SMOD8
+    if (&ICUD9 == icup)
+      icu_active_submodules1++;
+#endif
+#if SPC5_ICU_USE_SMOD9
+    if (&ICUD10 == icup)
+      icu_active_submodules1++;
+#endif
+#if SPC5_ICU_USE_SMOD10
+    if (&ICUD11 == icup)
+      icu_active_submodules1++;
+#endif
+#if SPC5_ICU_USE_SMOD11
+    if (&ICUD12 == icup)
+      icu_active_submodules1++;
+#endif
+#if SPC5_ICU_USE_SMOD12
+    if (&ICUD13 == icup)
+      icu_active_submodules2++;
+#endif
+#if SPC5_ICU_USE_SMOD13
+    if (&ICUD14 == icup)
+      icu_active_submodules2++;
+#endif
+#if SPC5_ICU_USE_SMOD14
+    if (&ICUD15 == icup)
+      icu_active_submodules2++;
+#endif
+#if SPC5_ICU_USE_SMOD15
+    if (&ICUD16 == icup)
+      icu_active_submodules2++;
+#endif
+#if SPC5_ICU_USE_SMOD16
+    if (&ICUD17 == icup)
+      icu_active_submodules2++;
+#endif
+#if SPC5_ICU_USE_SMOD17
+    if (&ICUD18 == icup)
+      icu_active_submodules2++;
+#endif
+
+    /* Set eTimer0 Clock.*/
+#if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||       \
+    SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
+
+    /* If this is the first Submodule activated then the eTimer0 is enabled.*/
+    if (icu_active_submodules0 == 1) {
+      halSPCSetPeripheralClockMode(SPC5_ETIMER0_PCTL,
+                                   SPC5_ICU_ETIMER0_START_PCTL);
+    }
+#endif
+    /* Set eTimer1 Clock.*/
+#if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
+    SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
+    /* If this is the first Submodule activated then the eTimer1 is enabled.*/
+    if (icu_active_submodules1 == 1) {
+      halSPCSetPeripheralClockMode(SPC5_ETIMER1_PCTL,
+                                   SPC5_ICU_ETIMER1_START_PCTL);
+    }
+#endif
+    /* Set eTimer2 Clock.*/
+#if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 || SPC5_ICU_USE_SMOD14 ||    \
+    SPC5_ICU_USE_SMOD15 || SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
+    /* If this is the first Submodule activated then the eTimer2 is enabled.*/
+    if (icu_active_submodules2 == 1) {
+      halSPCSetPeripheralClockMode(SPC5_ETIMER2_PCTL,
+                                   SPC5_ICU_ETIMER2_START_PCTL);
+    }
+#endif
+
     /* Timer disabled.*/
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE = 0b000;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE =
+        SPC5_ETIMER_CNTMODE_NO_OPERATION;
 
     /* Clear pending IRQs (if any).*/
     icup->etimerp->CHANNEL[icup->smod_number].STS.R = 0xFFFF;
 
     /* All IRQs and DMA requests disabled.*/
-    icup->etimerp->CHANNEL[icup->smod_number].INTDMA.R = 0x0000;
+    icup->etimerp->CHANNEL[icup->smod_number].INTDMA.R = 0U;
 
     /* Compare Load 1 disabled.*/
-    icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CLC1 = 0b000;
+    icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CLC1 = 0U;
 
     /* Compare Load 2 disabled.*/
-    icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CLC2 = 0b000;
+    icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CLC2 = 0U;
 
     /* Capture 1 disabled.*/
-    icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT1MODE = 0b00;
+    icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT1MODE =
+        SPC5_ETIMER_CPT1MODE_DISABLED;
 
     /* Capture 2 disabled.*/
-    icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT2MODE = 0b00;
+    icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT2MODE =
+        SPC5_ETIMER_CPT2MODE_DISABLED;
 
     /* Counter reset to zero.*/
-    icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0x0000;
+    icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0U;
   }
 
   /* Configuration.*/
@@ -1090,192 +1102,168 @@ void icu_lld_start(ICUDriver *icup) {
  * @notapi
  */
 void icu_lld_stop(ICUDriver *icup) {
+  chDbgAssert(icu_active_submodules0 < 6, "icu_lld_stop(), #1",
+              "too many submodules");
+  chDbgAssert(icu_active_submodules1 < 6, "icu_lld_stop(), #1",
+              "too many submodules");
+  chDbgAssert(icu_active_submodules2 < 6, "icu_lld_stop(), #1",
+              "too many submodules");
 
   if (icup->state == ICU_READY) {
-
-#if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||       \
-    SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
-    uint8_t SMOD0 = 0;
-    uint8_t SMOD1 = 0;
-    uint8_t SMOD2 = 0;
-    uint8_t SMOD3 = 0;
-    uint8_t SMOD4 = 0;
-    uint8_t SMOD5 = 0;
-#endif
-
-#if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
-    SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
-    uint8_t SMOD6 = 0;
-    uint8_t SMOD7 = 0;
-    uint8_t SMOD8 = 0;
-    uint8_t SMOD9 = 0;
-    uint8_t SMOD10 = 0;
-    uint8_t SMOD11 = 0;
-#endif
-
-#if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 || SPC5_ICU_USE_SMOD14 ||    \
-    SPC5_ICU_USE_SMOD15 || SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
-    uint8_t SMOD12 = 0;
-    uint8_t SMOD13 = 0;
-    uint8_t SMOD14 = 0;
-    uint8_t SMOD15 = 0;
-    uint8_t SMOD16 = 0;
-    uint8_t SMOD17 = 0;
-#endif
 
 #if SPC5_ICU_USE_SMOD0
     if (&ICUD1 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11111110;
-      SMOD0 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xFE;
+      icu_active_submodules0--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD1
     if (&ICUD2 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11111101;
-      SMOD1 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xFD;
+      icu_active_submodules0--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD2
     if (&ICUD3 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11111011;
-      SMOD2 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xFB;
+      icu_active_submodules0--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD3
     if (&ICUD4 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11110111;
-      SMOD3 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xF7;
+      icu_active_submodules0--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD4
     if (&ICUD5 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11101111;
-      SMOD4 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xEF;
+      icu_active_submodules0--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD5
     if (&ICUD6 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11011111;
-      SMOD5 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xDF;
+      icu_active_submodules0--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD6
     if (&ICUD7 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11111110;
-      SMOD6 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xFE;
+      icu_active_submodules1--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD7
     if (&ICUD8 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11111101;
-      SMOD7 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xFD;
+      icu_active_submodules1--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD8
     if (&ICUD9 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11111011;
-      SMOD8 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xFB;
+      icu_active_submodules1--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD9
     if (&ICUD10 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11110111;
-      SMOD9 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xF7;
+      icu_active_submodules1--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD10
     if (&ICUD11 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11101111;
-      SMOD10 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xEF;
+      icu_active_submodules1--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD11
     if (&ICUD12 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11011111;
-      SMOD11 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xDF;
+      icu_active_submodules1--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD12
     if (&ICUD13 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11111110;
-      SMOD12 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xFE;
+      icu_active_submodules2--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD13
     if (&ICUD14 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11111101;
-      SMOD13 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xFD;
+      icu_active_submodules2--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD14
     if (&ICUD15 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11111011;
-      SMOD14 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xFB;
+      icu_active_submodules2--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD15
     if (&ICUD16 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11110111;
-      SMOD5 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xF7;
+      icu_active_submodules2--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD16
     if (&ICUD17 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11101111;
-      SMOD16 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xEF;
+      icu_active_submodules2--;
     }
 #endif
 #if SPC5_ICU_USE_SMOD17
     if (&ICUD18 == icup) {
       /* Disable channel.*/
-      icup->etimerp->ENBL.B.ENBL &= 0b11011111;
-      SMOD17 = 1U;
+      icup->etimerp->ENBL.B.ENBL &= 0xDF;
+      icu_active_submodules2--;
     }
 #endif
-
+    /* eTimer0 clock deactivation.*/
 #if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||       \
     SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
-    if (SMOD0 || SMOD1 || SMOD2 || SMOD3 || SMOD4 || SMOD5) {
-      /* Clock deactivation.*/
+    /* If it is the last active submodules then the eTimer0 is disabled.*/
+    if (icu_active_submodules0 == 0) {
       if (icup->etimerp->ENBL.B.ENBL == 0x00) {
         halSPCSetPeripheralClockMode(SPC5_ETIMER0_PCTL,
                                      SPC5_ICU_ETIMER0_STOP_PCTL);
       }
     }
 #endif
-
+    /* eTimer1 clock deactivation.*/
 #if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
     SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
-    if (SMOD6 || SMOD7 || SMOD8 || SMOD9 || SMOD10 || SMOD11) {
-      /* Clock deactivation.*/
+    /* If it is the last active submodules then the eTimer1 is disabled.*/
+    if (icu_active_submodules1 == 0) {
       if (icup->etimerp->ENBL.B.ENBL == 0x00) {
         halSPCSetPeripheralClockMode(SPC5_ETIMER1_PCTL,
                                      SPC5_ICU_ETIMER1_STOP_PCTL);
       }
     }
 #endif
-
+    /* eTimer2 clock deactivation.*/
 #if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 || SPC5_ICU_USE_SMOD14 ||    \
     SPC5_ICU_USE_SMOD15 || SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
-    if (SMOD12 || SMOD13 || SMOD14 || SMOD15 || SMOD16 || SMOD17) {
-      /* Clock deactivation.*/
+    /* If it is the last active submodules then the eTimer2 is disabled.*/
+    if (icu_active_submodules2 == 0) {
       if (icup->etimerp->ENBL.B.ENBL == 0x00) {
         halSPCSetPeripheralClockMode(SPC5_ETIMER2_PCTL,
                                      SPC5_ICU_ETIMER2_STOP_PCTL);
@@ -1298,8 +1286,10 @@ void icu_lld_enable(ICUDriver *icup) {
   icup->etimerp->CHANNEL[icup->smod_number].STS.R = 0xFFFF;
 
   /* Set Capture 1 and Capture 2 Mode.*/
-  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT1MODE = 0b10;
-  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT2MODE = 0b01;
+  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT1MODE =
+      SPC5_ETIMER_CPT1MODE_RISING_EDGE;
+  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT2MODE =
+      SPC5_ETIMER_CPT2MODE_FALLING_EDGE;
 
   /* Active interrupts.*/
   if (icup->config->period_cb != NULL || icup->config->width_cb != NULL) {
@@ -1311,14 +1301,16 @@ void icu_lld_enable(ICUDriver *icup) {
   }
 
   /* Set Capture FIFO Water Mark.*/
-  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CFWM = 0b00;
+  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CFWM = 0U;
 
   /* Enable Counter.*/
   if (ICU_SKIP_FIRST_CAPTURE) {
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE = 0b011;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE =
+        SPC5_ETIMER_CNTMODE_RFE_SIHA;
   }
   else {
-    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE = 0b001;
+    icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE =
+        SPC5_ETIMER_CNTMODE_RE;
   }
 
   /* Enable Capture process.*/
@@ -1335,22 +1327,24 @@ void icu_lld_enable(ICUDriver *icup) {
 void icu_lld_disable(ICUDriver *icup) {
 
   /* Disable Capture process.*/
-  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.ARM = 0;
+  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.ARM = 0U;
 
   /* Clear pending IRQs (if any).*/
   icup->etimerp->CHANNEL[icup->smod_number].STS.R = 0xFFFF;
 
   /* Set Capture 1 and Capture 2 Mode to Disabled.*/
-  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT1MODE = 0b00;
-  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT2MODE = 0b00;
+  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT1MODE =
+      SPC5_ETIMER_CPT1MODE_DISABLED;
+  icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT2MODE =
+      SPC5_ETIMER_CPT2MODE_DISABLED;
 
   /* Disable interrupts.*/
   if (icup->config->period_cb != NULL || icup->config->width_cb != NULL) {
-    icup->etimerp->CHANNEL[icup->smod_number].INTDMA.B.ICF1IE = 0;
-    icup->etimerp->CHANNEL[icup->smod_number].INTDMA.B.ICF2IE = 0;
+    icup->etimerp->CHANNEL[icup->smod_number].INTDMA.B.ICF1IE = 0U;
+    icup->etimerp->CHANNEL[icup->smod_number].INTDMA.B.ICF2IE = 0U;
   }
   if (icup->config->overflow_cb != NULL)
-    icup->etimerp->CHANNEL[icup->smod_number].INTDMA.B.TOFIE = 0;
+    icup->etimerp->CHANNEL[icup->smod_number].INTDMA.B.TOFIE = 0U;
 }
 
 #endif /* HAL_USE_ICU */

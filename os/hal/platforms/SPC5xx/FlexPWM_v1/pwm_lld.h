@@ -20,6 +20,8 @@
  * @{
  */
 
+#include "spc5_flexpwm.h"
+
 #ifndef _PWM_LLD_H_
 #define _PWM_LLD_H_
 
@@ -47,162 +49,17 @@
 /** @} */
 
 /**
- * @name    CTRL2 register bits definitions
- * @{
- */
-#define SPC5_FLEXPWM_CNTL2_CLKSEL0                      (1U << 0)
-#define SPC5_FLEXPWM_CNTL2_CLKSEL1                      (1U << 1)
-#define SPC5_FLEXPWM_CNTL2_RELOAD_SEL                   (1U << 2)
-#define SPC5_FLEXPWM_CNTL2_FORCE_SEL0                   (1U << 3)
-#define SPC5_FLEXPWM_CNTL2_FORCE_SEL1                   (1U << 4)
-#define SPC5_FLEXPWM_CNTL2_FORCE_SEL2                   (1U << 5)
-#define SPC5_FLEXPWM_CNTL2_FORCE                        (1U << 6)
-#define SPC5_FLEXPWM_CNTL2_FRCEN                        (1U << 7)
-#define SPC5_FLEXPWM_CNTL2_INIT_SEL0                    (1U << 8)
-#define SPC5_FLEXPWM_CNTL2_INIT_SEL1                    (1U << 9)
-#define SPC5_FLEXPWM_CNTL2_PWM_X_INIT                   (1U << 10)
-#define SPC5_FLEXPWM_CNTL2_PWM_B_INIT                   (1U << 11)
-#define SPC5_FLEXPWM_CNTL2_PWM_A_INIT                   (1U << 12)
-#define SPC5_FLEXPWM_CNTL2_INDEP                        (1U << 13)
-#define SPC5_FLEXPWM_CNTL2_WAITEN                       (1U << 14)
-#define SPC5_FLEXPWM_CNTL2_DGBEN                        (1U << 15)
-/** @} */
-
-/**
- * @name    CTRL1 register bits definitions
- * @{
- */
-#define SPC5_FLEXPWM_CNTL1_DBLEN                        (1U << 0)
-#define SPC5_FLEXPWM_CNTL1_PRSC0                        (1U << 4)
-#define SPC5_FLEXPWM_CNTL1_PRSC1                        (1U << 5)
-#define SPC5_FLEXPWM_CNTL1_PRSC2                        (1U << 6)
-#define SPC5_FLEXPWM_CNTL1_FULL                         (1U << 10)
-#define SPC5_FLEXPWM_CNTL1_HALF                         (1U << 11)
-#define SPC5_FLEXPWM_CNTL1_LDFQ0                        (1U << 12)
-#define SPC5_FLEXPWM_CNTL1_LDFQ1                        (1U << 13)
-#define SPC5_FLEXPWM_CNTL1_LDFQ2                        (1U << 14)
-#define SPC5_FLEXPWM_CNTL1_LDFQ3                        (1U << 15)
-/** @} */
-
-/**
- * @name    OCTRL register bits definitions
- * @{
- */
-#define SPC5_FLEXPWM_OCNTL_PWMXFS0                      (1U << 0)
-#define SPC5_FLEXPWM_OCNTL_PWMXFS1                      (1U << 1)
-#define SPC5_FLEXPWM_OCNTL_PWMBFS0                      (1U << 2)
-#define SPC5_FLEXPWM_OCNTL_PWMBFS1                      (1U << 3)
-#define SPC5_FLEXPWM_OCNTL_PWMAFS0                      (1U << 4)
-#define SPC5_FLEXPWM_OCNTL_PWMAFS1                      (1U << 5)
-#define SPC5_FLEXPWM_OCNTL_POLX                         (1U << 8)
-#define SPC5_FLEXPWM_OCNTL_POLB                         (1U << 9)
-#define SPC5_FLEXPWM_OCNTL_POLA                         (1U << 10)
-#define SPC5_FLEXPWM_OCNTL_PWMX_IN                      (1U << 13)
-#define SPC5_FLEXPWM_OCNTL_PWMB_IN                      (1U << 14)
-#define SPC5_FLEXPWM_OCNTL_PWMA_IN                      (1U << 15)
-/** @} */
-
-/**
- * @name    INTEN register bits definitions
- * @{
- */
-#define SPC5_FLEXPWM_INTEN_CMPIE0                       (1U << 0)
-#define SPC5_FLEXPWM_INTEN_CMPIE1                       (1U << 1)
-#define SPC5_FLEXPWM_INTEN_CMPIE2                       (1U << 2)
-#define SPC5_FLEXPWM_INTEN_CMPIE3                       (1U << 3)
-#define SPC5_FLEXPWM_INTEN_CMPIE4                       (1U << 4)
-#define SPC5_FLEXPWM_INTEN_CMPIE5                       (1U << 5)
-#define SPC5_FLEXPWM_INTEN_CX0IE                        (1U << 6)
-#define SPC5_FLEXPWM_INTEN_CX1IE                        (1U << 7)
-#define SPC5_FLEXPWM_INTEN_RIE                          (1U << 12)
-#define SPC5_FLEXPWM_INTEN_REIE                         (1U << 13)
-/** @} */
-
-/**
- * @name    OUTEN register bits definitions
- * @{
- */
-#define SPC5_FLEXPWM_OUTEN_PWMX_EN0                     (1U << 0)
-#define SPC5_FLEXPWM_OUTEN_PWMX_EN1                     (1U << 1)
-#define SPC5_FLEXPWM_OUTEN_PWMX_EN2                     (1U << 2)
-#define SPC5_FLEXPWM_OUTEN_PWMX_EN3                     (1U << 3)
-#define SPC5_FLEXPWM_OUTEN_PWMB_EN0                     (1U << 4)
-#define SPC5_FLEXPWM_OUTEN_PWMB_EN1                     (1U << 5)
-#define SPC5_FLEXPWM_OUTEN_PWMB_EN2                     (1U << 6)
-#define SPC5_FLEXPWM_OUTEN_PWMB_EN3                     (1U << 7)
-#define SPC5_FLEXPWM_OUTEN_PWMA_EN0                     (1U << 8)
-#define SPC5_FLEXPWM_OUTEN_PWMA_EN1                     (1U << 9)
-#define SPC5_FLEXPWM_OUTEN_PWMA_EN2                     (1U << 10)
-#define SPC5_FLEXPWM_OUTEN_PWMA_EN3                     (1U << 11)
-/** @} */
-
-/**
- * @name    MASK register bits definitions
- * @{
- */
-#define SPC5_FLEXPWM_MASK_MASKX0                        (1U << 0)
-#define SPC5_FLEXPWM_MASK_MASKX1                        (1U << 1)
-#define SPC5_FLEXPWM_MASK_MASKX2                        (1U << 2)
-#define SPC5_FLEXPWM_MASK_MASKX3                        (1U << 3)
-#define SPC5_FLEXPWM_MASK_MASKB0                        (1U << 4)
-#define SPC5_FLEXPWM_MASK_MASKB1                        (1U << 5)
-#define SPC5_FLEXPWM_MASK_MASKB2                        (1U << 6)
-#define SPC5_FLEXPWM_MASK_MASKB3                        (1U << 7)
-#define SPC5_FLEXPWM_MASK_MASKA0                        (1U << 8)
-#define SPC5_FLEXPWM_MASK_MASKA1                        (1U << 9)
-#define SPC5_FLEXPWM_MASK_MASKA2                        (1U << 10)
-#define SPC5_FLEXPWM_MASK_MASKA3                        (1U << 11)
-/** @} */
-
-/**
- * @name    MCTRL register bits definitions
- * @{
- */
-#define SPC5_FLEXPWM_MCTRL_LDOK0                        (1U << 0)
-#define SPC5_FLEXPWM_MCTRL_LDOK1                        (1U << 1)
-#define SPC5_FLEXPWM_MCTRL_LODK2                        (1U << 2)
-#define SPC5_FLEXPWM_MCTRL_LDOK3                        (1U << 3)
-#define SPC5_FLEXPWM_MCTRL_CLDOK0                       (1U << 4)
-#define SPC5_FLEXPWM_MCTRL_CLDOK1                       (1U << 5)
-#define SPC5_FLEXPWM_MCTRL_CLDOK2                       (1U << 6)
-#define SPC5_FLEXPWM_MCTRL_CLDOK3                       (1U << 7)
-#define SPC5_FLEXPWM_MCTRL_RUN0                         (1U << 8)
-#define SPC5_FLEXPWM_MCTRL_RUN1                         (1U << 9)
-#define SPC5_FLEXPWM_MCTRL_RUN2                         (1U << 10)
-#define SPC5_FLEXPWM_MCTRL_RUN3                         (1U << 11)
-#define SPC5_FLEXPWM_MCTRL_IPOL0                        (1U << 12)
-#define SPC5_FLEXPWM_MCTRL_IPOL1                        (1U << 13)
-#define SPC5_FLEXPWM_MCTRL_IPOL2                        (1U << 14)
-#define SPC5_FLEXPWM_MCTRL_IPOL3                        (1U << 15)
-/** @} */
-
-/**
  * @name    PSC values definition
  * @{
  */
-#define SPC5_FLEXPWM_PSC_1                  0
-#define SPC5_FLEXPWM_PSC_2                  SPC5_FLEXPWM_CNTL1_PRSC0
-#define SPC5_FLEXPWM_PSC_4                  SPC5_FLEXPWM_CNTL1_PRSC1
-#define SPC5_FLEXPWM_PSC_8                  SPC5_FLEXPWM_CNTL1_PRSC0 ||      \
-                                            SPC5_FLEXPWM_CNTL1_PRSC1
-#define SPC5_FLEXPWM_PSC_16                 SPC5_FLEXPWM_CNTL1_PRSC2
-#define SPC5_FLEXPWM_PSC_32                 SPC5_FLEXPWM_CNTL1_PRSC0 ||      \
-                                            SPC5_FLEXPWM_CNTL1_PRSC2
-#define SPC5_FLEXPWM_PSC_64                 SPC5_FLEXPWM_CNTL1_PRSC1 ||      \
-                                            SPC5_FLEXPWM_CNTL1_PRSC2
-#define SPC5_FLEXPWM_PSC_128                SPC5_FLEXPWM_CNTL1_PRSC0 ||      \
-                                            SPC5_FLEXPWM_CNTL1_PRSC1 ||      \
-                                            SPC5_FLEXPWM_CNTL1_PRSC2
-/** @} */
-
-/**
- * @name    LDOK, CLDOK, RUN, IPOL masks definition
- * @{
- */
-#define SPC5_FLEXPWM_LDOK_MASK              0x000F
-#define SPC5_FLEXPWM_CLDOK_MASK             0x00F0
-#define SPC5_FLEXPWM_RUN_MASK               0x0F00
-#define SPC5_FLEXPWM_IPOL_MASK              0xF000
+#define SPC5_FLEXPWM_PSC_1                              0U
+#define SPC5_FLEXPWM_PSC_2                              1U
+#define SPC5_FLEXPWM_PSC_4                              2U
+#define SPC5_FLEXPWM_PSC_8                              3U
+#define SPC5_FLEXPWM_PSC_16                             4U
+#define SPC5_FLEXPWM_PSC_32                             5U
+#define SPC5_FLEXPWM_PSC_64                             6U
+#define SPC5_FLEXPWM_PSC_128                            7U
 /** @} */
 
 /**
@@ -479,10 +336,9 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
-#include "flexpwm.h"
 
 /**
- * @brief PWM mode type.
+ * @brief   PWM mode type.
  */
 typedef uint32_t pwmmode_t;
 
