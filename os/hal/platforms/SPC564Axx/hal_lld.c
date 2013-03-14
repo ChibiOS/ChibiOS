@@ -52,29 +52,31 @@ void hal_lld_init(void) {
   extern void _vectors(void);
   uint32_t n;
 
-#if 0
   /* FLASH wait states and prefetching setup.*/
-  CFLASH0.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
-  CFLASH0.BIUCR2.R = 0;
-  CFLASH0.PFCR3.R  = 0;
+  FLASH_A.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
+  FLASH_A.BIUCR2.R = 0;
+  FLASH_B.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
+  FLASH_B.BIUCR2.R = 0;
 
-  /* Optimal crossbar settings. The DMA priority is placed above the CPU
-     priority in order to not starve I/O activities while the CPU is
-     executing tight loops (FLASH and SRAM slave ports only).
-     The SRAM is parked on the load/store port, for some unknown reason it
+  /* The SRAM is parked on the load/store port, for some unknown reason it
      is defaulted on the instructions port and this kills performance.*/
-  XBAR.SGPCR3.B.PARK = 4;               /* RAM slave on load/store port.*/
-  XBAR.MPR0.R = 0x00030201;             /* Flash slave port priorities:
-                                            eDMA (1):              0 (highest)
+  XBAR.SGPCR2.B.PARK = 1;               /* RAM slave on load/store port.*/
+
+  /* The DMA priority is placed above the CPU priority in order to not
+     starve I/O activities while the CPU is executing tight loops (FLASH
+     and SRAM slave ports only).*/
+  XBAR.MPR0.R = 0x34000021;             /* Flash slave port priorities:
+                                            eDMA (4):              0 (highest)
                                             Core Instructions (0): 1
-                                            Undocumented (2):      2
-                                            Core Data (4):         3        */
-  XBAR.MPR3.R = 0x00030201;             /* SRAM slave port priorities:
-                                            eDMA (1):              0 (highest)
+                                            Core Data (1):         2
+                                            EBI (7):               3
+                                            Flexray (6):           4        */
+  XBAR.MPR2.R = 0x34000021;             /* SRAM slave port priorities:
+                                            eDMA (4):              0 (highest)
                                             Core Instructions (0): 1
-                                            Undocumented (2):      2
-                                            Core Data (4):         3        */
-#endif
+                                            Core Data (1):         2
+                                            EBI (7):               3
+                                            FlexRay (6):           4        */
 
   /* Downcounter timer initialized for system tick use, TB enabled for debug
      and measurements.*/

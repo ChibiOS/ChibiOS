@@ -2,7 +2,7 @@
 
   Connection Failed Report from
   Basic UDE Target Interface, Version: 1.10.4
-  created: 03/05/13, 10:41:20
+  created: 03/14/13, 16:20:20
 
 ----------------------------------------------------------
 
@@ -16,45 +16,41 @@ UDE version:
   Path:     C:\Program Files\pls\UDE 4.0
 
 Target configuration file:
-  C:\ChibiStudio\chibios\demos\PPC-SPC563M-GCC\UDE\stm_xpc563m64_minimodule_debug_jtag.cfg
+  C:\ChibiStudio\chibios\demos\PPC-SPC564A-GCC\UDE\stm_xpc564a_minimodule_debug_jtag.cfg
 
 Error messages:
   PpcJtagTargIntf: Can't connect target !
-  PpcJtagTargIntf: Failed to open communication channel !
-  UAD2CommDev: Can't connect Universal Access Device 2 !
-Please check:
-- Power supply of UAD2
-- Communication cable to UAD2
+  PpcJtagTargIntf: Failed to access JTAG debug module !
+  UDEDebugServer:  - serial no. -1 was suprised removed . To correct the situation, connect the communication device again and try to establish target communication.
+  UDEDebugServer: Unable to establish connection . To correct the situation, check configuration file entries and try again.
 
 Settings:
-  PortType:  CommDev
-  CommDevSel:  PortType=USB,Type=UAD2
-  JtagViaPod:  y
+  PortType:  Default
+  CommDevSel:  
+  JtagViaPod:  n
   TargetPort:  Default
   JtagTapNumber:  0
   JtagNumOfTaps:  1
   JtagNumIrBefore:  0
   JtagNumIrAfter:  0
-  MaxJtagClk:  1000
+  MaxJtagClk:  5000
   AdaptiveJtagPhaseShift:  y
   JtagMuxPort:  -1
   JtagMuxWaitTime:  5
   JtagIoType:  Jtag
   EtksArbiterMode:  0
-  ConnOption:  Reset
+  ConnOption:  Default
   UseExtReset:  y
   ResetWaitTime:  50
   HaltAfterReset:  y
   ChangeJtagClk:  -1
   ExecInitCmds:  y
-  InvalidateCache:  n
+  InvalidateCache:  y
   ChangeMsr:  n
   ChangeMsrValue:  0x00000000
   ResetPulseLen:  10
   InitScript Script:
     
-    // TLB invalidate
-    SETSPR 0x3F4 0x2 0xFFFFFFFF
     // select TLB 1
     SETSPR 0x274 0x10000108 0xFFFFFFFF
     
@@ -82,9 +78,21 @@ Settings:
     // execute TLB write instruction
     EXECOPCODE 0x7C0007A4
     
-    // programm internal SRAM
+    // programm external memory
     // TLB 1, entry 2
     SETSPR 0x270 0x10020000 0xFFFFFFFF
+    // Valid, protect against invalidation, global entry, size=16MB
+    SETSPR 0x271 0xC0000700 0xFFFFFFFF
+    // effective page number 20000000
+    SETSPR 0x272 0x20000020 0xFFFFFFFF
+    // real page 20000000, UX,SX,UW,SW,UR,SR
+    SETSPR 0x273 0x2000003F 0xFFFFFFFF
+    // execute TLB write instruction
+    EXECOPCODE 0x7C0007A4
+    
+    // programm internal SRAM
+    // TLB 1, entry 3
+    SETSPR 0x270 0x10030000 0xFFFFFFFF
     // Valid, protect against invalidation, global entry, size=256k
     SETSPR 0x271 0xC0000400 0xFFFFFFFF
     // effective page number 40000000, I
@@ -96,7 +104,7 @@ Settings:
     
     // programm peripheral A modules
     // TLB 1, entry 4
-    SETSPR 0x270 0x10030000 0xFFFFFFFF
+    SETSPR 0x270 0x10040000 0xFFFFFFFF
     // Valid, protect against invalidation, global entry, size=1MB
     SETSPR 0x271 0xC0000500 0xFFFFFFFF
     // effective page number C3F00000, I
@@ -106,22 +114,24 @@ Settings:
     // execute TLB write instruction
     EXECOPCODE 0x7C0007A4
     
+    // cache invalidate
+    SETSPR 0x3F3 0x00000003 0x00000003
+    SETSPR 0x3F3 0x00000000 0x00000003
+    
     // setup IVOPR
     // points to internal memory at 0x40000000
     SETSPR 0x3F 0x40000000 0xFFFFFFFF
-    // MMU data error vector offset
-    SETSPR 0x19D 0x0 0xFFFFFFFF
-    // MMU instruction error vector offset
-    
-    // setup clock to 80MHz
-    //SET FMPLL_SYNCR 0x28000000 0xFFFFFFFF
-    //WAIT 0x5
     
     // disable watchdog
-    SET SWT_CR 0xFF00000A
+    SET SWT_SR 0x0000C520
+    SET SWT_SR 0x0000D928
+    SET SWT_MCR 0xFF00000A
     
-    // set NEXUS priority to above cpu instruction for runtime access
-    //SET XBAR_MPR3 0x321
+    // setup clock to 120MHz
+    SET 0xC3F80008 0xF000003C 0xF00F00FF
+    WAIT 0x2
+    SET 0xC3F8000C 0x00000001 0x000000FF
+    WAIT 0x5
     
   SimioAddr:  g_JtagSimioAccess
   FreezeTimers:  y
@@ -132,7 +142,7 @@ Settings:
   ExecOnHaltCmds:  n
   ExecOnHaltCmdsWhileHalted:  n
   OnHaltScript Script:
-    Script is empty
+    
   EnableProgramTimeMeasurement:  n
   TimerForPTM:  Default
   DefUserStreamChannel:  0
@@ -142,12 +152,12 @@ Settings:
   UseRestartWhileRunningHandling:  n
   UseNexus:  y
   DoSramInit:  y
-  ForceCacheFlush:  n
+  ForceCacheFlush:  y
   IgnoreLockedLines:  n
   HandleWdtBug:  n
   ForceEndOfReset:  n
-  UseHwResetMode:  y
-  HwResetMode:  Execute
+  UseHwResetMode:  n
+  HwResetMode:  Simulate
   HandleNexusAccessBug:  n
   UseMasterNexusIfResetState:  y
   UseLocalAddressTranslation:  y
@@ -155,7 +165,7 @@ Settings:
   InitSramOnlyWhenNotInitialized:  n
   InvalidTlbOnReset:  y
   DoNotEnableTrapSwBrp:  n
-  AllowResetOnCheck:  n
+  AllowResetOnCheck:  y
   BootPasswd0:  0xFEEDFACE
   BootPasswd1:  0xCAFEBEEF
   BootPasswd2:  0xFFFFFFFF
@@ -171,21 +181,21 @@ Settings:
 JTAG target infos:
   JTAG-ID:           0x00000000
   UsedJtagClk:       0 kHz
-  ExtVoltage:        0.0 V
-  IntVoltageUsed:    n
+  ExtVoltage:        3276.7 V
+  IntVoltageUsed:    y
 
 Target infos:
   CoreName:  Core
   FullCoreName:  Controller0.Core
-  ExtClock:  12000000
-  IntClock:  80000000
+  ExtClock:  8000000
+  IntClock:  120000000
   SysClock:  0
   HasNexus:  n
   BigEndian:  n
   CanSimio:  n
   CanPhysicalAccess:  n
   HasSpe:  n
-  NumOfSimioChannels:  0
+  NumOfSimioChannels:  2157080748
   JtagId:  0x00000000
   IsEarlyStep:  n
   IsMaster:  y
@@ -220,7 +230,7 @@ Target infos:
   Has Data Value comparators:  y
   Reset Mode:  0x00000002
   STM timer base address:  0xFFF3C000
-  MC_ME base address:  0x00000000
+  MC_ME base address:  0xC3FDC000
   Core in Lockstep mode:  n
   Core in DPM mode:  n
   Core is HSM:  n
@@ -246,15 +256,23 @@ Target infos:
   InactiveAfterReset:  n
 
 Communication device:
-  Type/Firmware:  
-  Serial Number:  0
+  Type/Firmware:  UAD2
+  Serial Number:  326060
 
 Communication protocol handler:
-  LastCmd:      0x0000
-  LastResult:   0x0000
-  ExpBytes:     0 (0x0000)
-  RetBytes:     0 (0x0000)
-  LastTimeout:  0
+  LastCmd:      0x0410
+  LastResult:   0xC023
+  ExpBytes:     576 (0x0240)
+  RetBytes:     576 (0x0240)
+  LastTimeout:  120020
 
 Protocol diagnostic output:
-  Diagnostic output invalid !
+  LastJtagApiAddr:   0x00000000
+  LastJtagApiSpr:    0x00000000
+  LastJtagApiDcr:    0x00000000
+  LastJtagApiError:  0x00000000
+  LastJtagApiStatus: 0x00000000
+  JtagApiErrorLine:  3913
+  JtagApiAddInfo0:   0x00000000
+  JtagApiAddInfo1:   0x00000000
+  ProtErrorLine:     926
