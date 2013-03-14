@@ -52,6 +52,7 @@ void hal_lld_init(void) {
   extern void _vectors(void);
   uint32_t n;
 
+#if 0
   /* FLASH wait states and prefetching setup.*/
   CFLASH0.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
   CFLASH0.BIUCR2.R = 0;
@@ -73,6 +74,7 @@ void hal_lld_init(void) {
                                             Core Instructions (0): 1
                                             Undocumented (2):      2
                                             Core Data (4):         3        */
+#endif
 
   /* Downcounter timer initialized for system tick use, TB enabled for debug
      and measurements.*/

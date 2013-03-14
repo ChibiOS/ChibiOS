@@ -227,12 +227,14 @@
 /**
  * @brief   Flash wait states are a function of the system clock.
  */
-#if (SPC5_SYSCLK <= 30000000) || defined(__DOXYGEN__)
+#if (SPC5_SYSCLK <= 20000000) || defined(__DOXYGEN__)
 #define SPC5_FLASH_WS       (BIUCR_APC_0 | BIUCR_RWSC_0 | BIUCR_WWSC_1)
-#elif SPC5_SYSCLK <= 60000000
+#elif SPC5_SYSCLK <= 40000000
 #define SPC5_FLASH_WS       (BIUCR_APC_1 | BIUCR_RWSC_1 | BIUCR_WWSC_1)
-#else
+#elif SPC5_SYSCLK <= 64000000
 #define SPC5_FLASH_WS       (BIUCR_APC_2 | BIUCR_RWSC_2 | BIUCR_WWSC_1)
+#else
+#define SPC5_FLASH_WS       (BIUCR_APC_3 | BIUCR_RWSC_3 | BIUCR_WWSC_1)
 #endif
 
 /*===========================================================================*/

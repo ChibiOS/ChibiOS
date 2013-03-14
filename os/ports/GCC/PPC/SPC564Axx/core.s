@@ -35,10 +35,26 @@
 /** @} */
 
 /**
+ * @name    LICSR1 registers definitions
+ * @{
+ */
+#define LICSR1_ICE              0x00000001
+#define LICSR1_ICINV            0x00000002
+#define LICSR1_ICORG            0x00000010
+/** @} */
+
+/**
  * @name    BUCSR default settings
  * @{
  */
 #define BUCSR_DEFAULT           (BUCSR_BPEN | BUCSR_BALLOC_BFI)
+/** @} */
+
+/**
+ * @name    LICSR1 default settings
+ * @{
+ */
+#define LICSR1_DEFAULT          (LICSR1_ICE | LICSR1_ICORG)
 /** @} */
 
 /**
@@ -131,6 +147,18 @@ _coreinit:
          */
         li          %r3, BUCSR_DEFAULT
         mtspr       1013, %r3       /* BUCSR */
+
+        /*
+         * Cache invalidated and then enabled.
+         */
+        li          %r3, LICSR1_ICINV
+        mtspr       1011, %r3       /* LICSR1 */
+.inv:   mfspr       %r3, 1011       /* LICSR1 */
+        andi.       %r3, %r3, LICSR1_ICINV
+        bne         .inv
+        lis         %r3, LICSR1_DEFAULT@h
+        ori         %r3, %r3, LICSR1_DEFAULT@l
+        mtspr       1011, %r3       /* LICSR1 */
 
         blr
 
