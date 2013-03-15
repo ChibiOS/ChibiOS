@@ -95,7 +95,7 @@
 #define VAL_PIO0_17             PIN_MODE_NOPULL
 
     /* UART0: TXD = P0.4, RXD  = P0.0)*/
-#define VAL_PINASSIGN0            ((0xFFFF<<16) | (0<<8) | (4))
+#define VAL_PINASSIGN0            ((0xFFFF0000) | (0<<8) | (4))
 /*#define VAL_PINASSIGN1            0xFFFFFFFF*/
 /*#define VAL_PINASSIGN2            0xFFFFFFFF*/
 /*#define VAL_PINASSIGN3            0xFFFFFFFF*/

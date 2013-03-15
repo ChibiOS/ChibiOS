@@ -89,7 +89,7 @@ typedef enum IRQn
   Reserved9_IRQn                = 21,       /*!< Reserved Interrupt                               */
   Reserved10_IRQn               = 22,       /*!< Reserved Interrupt                               */    
   Reserved11_IRQn               = 23,       /*!< Reserved Interrupt                               */
-  PININT0_IRQn               	  = 24,       /*!< External Interrupt 0                             */
+  PININT0_IRQn                  = 24,       /*!< External Interrupt 0                             */
   PININT1_IRQn                  = 25,       /*!< External Interrupt 1                             */  
   PININT2_IRQn                  = 26,       /*!< External Interrupt 2                             */
   PININT3_IRQn                  = 27,       /*!< External Interrupt 3                             */

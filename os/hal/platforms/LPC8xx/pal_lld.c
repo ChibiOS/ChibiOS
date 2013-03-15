@@ -54,7 +54,7 @@
  * @brief   LPC8xx I/O ports configuration.
  * @details GPIO unit registers initialization.
  *
- * @param[in] config    the LPC11xx ports configuration
+ * @param[in] config    the LPC8xx ports configuration
  *
  * @notapi
  */
