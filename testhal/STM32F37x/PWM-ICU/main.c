@@ -38,7 +38,7 @@ static PWMConfig pwmcfg = {
   10000,                                    /* Initial PWM period 1S.       */
   pwmpcb,
   {
-   {PWM_OUTPUT_ACTIVE_HIGH, pwmc1cb},
+   {PWM_OUTPUT_ACTIVE_LOW, pwmc1cb},
    {PWM_OUTPUT_DISABLED, NULL},
    {PWM_OUTPUT_DISABLED, NULL},
    {PWM_OUTPUT_DISABLED, NULL}
@@ -61,7 +61,7 @@ static void icuperiodcb(ICUDriver *icup) {
 }
 
 static ICUConfig icucfg = {
-  ICU_INPUT_ACTIVE_HIGH,
+  ICU_INPUT_ACTIVE_LOW,
   10000,                                    /* 10kHz ICU clock frequency.   */
   icuwidthcb,
   icuperiodcb,
@@ -85,13 +85,13 @@ int main(void) {
   chSysInit();
 
   /*
-   * Initializes the PWM driver 2 and ICU driver 3.
-   * GPIOA15 is the PWM output.
+   * Initializes the PWM driver 5 and ICU driver 3.
+   * GPIOC0 is the PWM output.
    * GPIOC6 is the ICU input.
    * The two pins have to be externally connected together.
    */
-  pwmStart(&PWMD2, &pwmcfg);
-  palSetPadMode(GPIOA, 15, PAL_MODE_ALTERNATE(1));
+  pwmStart(&PWMD5, &pwmcfg);
+  palSetPadMode(GPIOC, 0, PAL_MODE_ALTERNATE(2));
   icuStart(&ICUD3, &icucfg);
   palSetPadMode(GPIOC, 6, PAL_MODE_ALTERNATE(2));
   icuEnable(&ICUD3);
@@ -100,37 +100,35 @@ int main(void) {
   /*
    * Starts the PWM channel 0 using 75% duty cycle.
    */
-  pwmEnableChannel(&PWMD2, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 7500));
+  pwmEnableChannel(&PWMD5, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD5, 7500));
   chThdSleepMilliseconds(5000);
 
   /*
    * Changes the PWM channel 0 to 50% duty cycle.
    */
-  pwmEnableChannel(&PWMD2, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 5000));
+  pwmEnableChannel(&PWMD5, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD5, 5000));
   chThdSleepMilliseconds(5000);
 
   /*
    * Changes the PWM channel 0 to 25% duty cycle.
    */
-  pwmEnableChannel(&PWMD2, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 2500));
+  pwmEnableChannel(&PWMD5, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD5, 2500));
   chThdSleepMilliseconds(5000);
 
   /*
    * Changes PWM period to half second the duty cycle becomes 50%
    * implicitly.
    */
-  pwmChangePeriod(&PWMD2, 5000);
+  pwmChangePeriod(&PWMD5, 5000);
   chThdSleepMilliseconds(5000);
 
   /*
    * Disables channel 0 and stops the drivers.
    */
-  pwmDisableChannel(&PWMD2, 0);
-  pwmStop(&PWMD2);
+  pwmDisableChannel(&PWMD5, 0);
+  pwmStop(&PWMD5);
   icuDisable(&ICUD3);
   icuStop(&ICUD3);
-  palClearPad(GPIOC, GPIOC_LED1);
-  palClearPad(GPIOC, GPIOC_LED2);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.

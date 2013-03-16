@@ -12,7 +12,7 @@ The demo runs on an STMicroelectronics STM32373C-EVAL board.
 
 ** Board Setup **
 
-- Connect PA15 and PC6 together.
+- Connect PC0 and PC6 together.
 
 ** Build Procedure **
 
