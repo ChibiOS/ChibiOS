@@ -137,9 +137,9 @@
 - FIX: Fixed PHY powerdown issues not fixed (bug 3596911).
 - NEW: Added ADC(EQADC), HAL, ICU, PAL, PWM, Serial drivers for SPC5xx
   platforms, tests to be added on the various sub-families.
-- NEW: Added support for SPC56ELxx, SPC560BCxx, SPC560Pxx and SPC560Mxx
-  platforms.
-- NEW: Added preliminary support to the STM32F37x family.
+- NEW: Added support for SPC56ELxx, SPC560BCxx, SPC560Pxx, SPC560Mxx and
+  SPC564Axx platforms.
+- NEW: Added support for the STM32F37x family.
 - NEW: Now the general documentation includes data extracted from the low
   level driver templates. Per-platform/architecture documents are no more
   required and will be replaced with technical articles and examples for
