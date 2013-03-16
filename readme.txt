@@ -32,13 +32,16 @@
   |  |  |  +--LPC8xx/     - Drivers for LPC8xx platform.
   |  |  |  +--MSP430/     - Drivers for MSP430 platform.
   |  |  |  +--SPC5xx/     - Drivers for all SPC5xx platform (common).
-  |  |  |  +--SPC5ELxx/   - Drivers for SPC56ELxx platform.
   |  |  |  +--SPC560BCxx/ - Drivers for SPC560BCxx platform.
   |  |  |  +--SPC560Pxx/  - Drivers for SPC560Pxx platform.
   |  |  |  +--SPC563Mxx/  - Drivers for SPC563Mxx platform.
+  |  |  |  +--SPC564Axx/  - Drivers for SPC564Axx platform.
+  |  |  |  +--SPC5ELxx/   - Drivers for SPC56ELxx platform.
   |  |  |  +--STM32/      - Drivers for STM32 platform (common).
   |  |  |  +--STM32F0xx/  - Drivers for STM32F0xx platform.
   |  |  |  +--STM32F1xx/  - Drivers for STM32F1xx platform.
+  |  |  |  +--STM32F30x/  - Drivers for STM32F30x platform.
+  |  |  |  +--STM32F37x/  - Drivers for STM32F37x platform.
   |  |  |  +--STM32F4xx/  - Drivers for STM32F4xx/STM32F2xx platforms.
   |  |  |  +--STM32L1xx/  - Drivers for STM32L1xx platform.
   |  |  |  +--STM8L/      - Drivers for STM8L platform.
