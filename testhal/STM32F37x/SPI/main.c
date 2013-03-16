@@ -59,7 +59,7 @@ static msg_t spi_thread_1(void *p) {
   chRegSetThreadName("SPI thread 1");
   while (TRUE) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
-    palSetPad(GPIOC, GPIOC_LED2);       /* LED ON.                          */
+    palClearPad(GPIOC, GPIOC_LED2);     /* LED ON.                          */
     spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID2);                  /* Slave Select assertion.          */
     spiExchange(&SPID2, 512,
@@ -80,7 +80,7 @@ static msg_t spi_thread_2(void *p) {
   chRegSetThreadName("SPI thread 2");
   while (TRUE) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
-    palClearPad(GPIOC, GPIOC_LED2);     /* LED OFF.                         */
+    palSetPad(GPIOC, GPIOC_LED2);       /* LED OFF.                         */
     spiStart(&SPID2, &ls_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID2);                  /* Slave Select assertion.          */
     spiExchange(&SPID2, 512,
@@ -126,15 +126,10 @@ int main(void) {
   /*
    * SPI2 I/O pins setup.
    */
-  palSetPadMode(GPIOB, 13, PAL_MODE_ALTERNATE(5) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New SCK.     */
   palSetPadMode(GPIOB, 14, PAL_MODE_ALTERNATE(5) |
                            PAL_STM32_OSPEED_HIGHEST);       /* New MISO.    */
   palSetPadMode(GPIOB, 15, PAL_MODE_ALTERNATE(5) |
                            PAL_STM32_OSPEED_HIGHEST);       /* New MOSI.    */
-  palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New CS.      */
-  palSetPad(GPIOB, 12);
 
   /*
    * Prepare transmit pattern.

@@ -4,11 +4,11 @@
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32F3-Discovery board.
+The demo runs on an STMicroelectronics STM32373C-EVAL board.
 
 ** The Demo **
 
-The demo runs on an STMicroelectronics STM32373C-EVAL board.
+The application demonstrates the use of the STM32F37x PWM and ICU drivers.
 
 ** Board Setup **
 

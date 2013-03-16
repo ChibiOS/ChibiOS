@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32F3-Discovery board.
+The demo runs on an STMicroelectronics STM32373C-EVAL board.
 
 ** The Demo **
 
