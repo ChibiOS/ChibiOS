@@ -169,6 +169,14 @@
 #endif
 
 /**
+ * @brief   SDADC slow mode switch.
+ * @details If set to @p TRUE all SDADCs operate in slow mode.
+ */
+#if !defined(STM32_ADC_SDADC_SLOW_MODE) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC_SLOW_MODE           FALSE
+#endif
+
+/**
  * @brief   ADC1 DMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_ADC_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
