@@ -68,6 +68,21 @@
 #define STM32_USBPRE                        STM32_USBPRE_DIV1P5
 
 /*
+ * ADC driver system settings.
+ */
+#define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_USE_ADC3                  FALSE
+#define STM32_ADC_ADC12_DMA_PRIORITY        2
+#define STM32_ADC_ADC34_DMA_PRIORITY        2
+#define STM32_ADC_ADC12_IRQ_PRIORITY        5
+#define STM32_ADC_ADC34_IRQ_PRIORITY        5
+#define STM32_ADC_ADC12_DMA_IRQ_PRIORITY    5
+#define STM32_ADC_ADC34_DMA_IRQ_PRIORITY    5
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC_ADC34_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC_DUAL_MODE                 FALSE
+
+/*
  * CAN driver system settings.
  */
 #define STM32_CAN_USE_CAN1                  TRUE

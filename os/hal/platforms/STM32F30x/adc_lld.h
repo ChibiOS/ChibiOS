@@ -191,28 +191,28 @@
  * @brief   ADC1/ADC2 interrupt priority level setting.
  */
 #if !defined(STM32_ADC_ADC12_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC12_IRQ_PRIORITY        2
+#define STM32_ADC_ADC12_IRQ_PRIORITY        5
 #endif
 
 /**
  * @brief   ADC3/ADC4 interrupt priority level setting.
  */
 #if !defined(STM32_ADC34_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC34_IRQ_PRIORITY        2
+#define STM32_ADC_ADC34_IRQ_PRIORITY        5
 #endif
 
 /**
  * @brief   ADC1/ADC2 DMA interrupt priority level setting.
  */
 #if !defined(STM32_ADC_ADC12_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC12_DMA_IRQ_PRIORITY    2
+#define STM32_ADC_ADC12_DMA_IRQ_PRIORITY    5
 #endif
 
 /**
  * @brief   ADC3/ADC4 DMA interrupt priority level setting.
  */
 #if !defined(STM32_ADC_ADC34_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC34_DMA_IRQ_PRIORITY    2
+#define STM32_ADC_ADC34_DMA_IRQ_PRIORITY    5
 #endif
 
 /**
