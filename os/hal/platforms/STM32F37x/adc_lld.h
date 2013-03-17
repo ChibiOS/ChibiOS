@@ -137,63 +137,35 @@
  * @{
  */
 /**
- * @brief   ADC common clock divider.
- * @note    This setting is influenced by the VDDA voltage and other
- *          external conditions, please refer to the datasheet for more
- *          info.<br>
- *          See section 5.3.20 "12-bit ADC characteristics".
- */
-#if !defined(STM32_ADC_ADCPRE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADCPRE                    ADC_CCR_ADCPRE_DIV2
-#endif
-
-/**
  * @brief   ADC1 driver enable switch.
  * @details If set to @p TRUE the support for ADC1 is included.
- * @note    The default is @p TRUE.
  */
 #if !defined(STM32_ADC_USE_ADC1) || defined(__DOXYGEN__)
 #define STM32_ADC_USE_ADC1                  FALSE
 #endif
 
+/**
+ * @brief   SDADC1 driver enable switch.
+ * @details If set to @p TRUE the support for SDADC1 is included.
+ */
 #if !defined(STM32_ADC_USE_SDADC1) || defined(__DOXYGEN__)
 #define STM32_ADC_USE_SDADC1                FALSE
 #endif
 
+/**
+ * @brief   SDADC2 driver enable switch.
+ * @details If set to @p TRUE the support for SDADC2 is included.
+ */
 #if !defined(STM32_ADC_USE_SDADC2) || defined(__DOXYGEN__)
 #define STM32_ADC_USE_SDADC2                FALSE
 #endif
 
+/**
+ * @brief   SDADC3 driver enable switch.
+ * @details If set to @p TRUE the support for SDADC3 is included.
+ */
 #if !defined(STM32_ADC_USE_SDADC3) || defined(__DOXYGEN__)
 #define STM32_ADC_USE_SDADC3                FALSE
-#endif
-
-/**
- * @brief   DMA stream used for ADC1 operations.
- */
-#if !defined(STM32_ADC_ADC1_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
-#endif
-
-/**
- * @brief   DMA stream used for SDADC1 operations.
- */
-#if !defined(STM32_ADC_SDADC1_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_ADC_SDADC1_DMA_STREAM         STM32_DMA_STREAM_ID(2, 3)
-#endif
-
-/**
- * @brief   DMA stream used for SDADC2 operations.
- */
-#if !defined(STM32_ADC_SDADC2_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_ADC_SDADC2_DMA_STREAM         STM32_DMA_STREAM_ID(2, 4)
-#endif
-
-/**
- * @brief   DMA stream used for SDADC3 operations.
- */
-#if !defined(STM32_ADC_SDADC3_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_ADC_SDADC3_DMA_STREAM         STM32_DMA_STREAM_ID(2, 5)
 #endif
 
 /**
@@ -227,8 +199,15 @@
 /**
  * @brief   ADC interrupt priority level setting.
  */
-#if !defined(STM32_ADC_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_IRQ_PRIORITY              5
+#if !defined(STM32_ADC_ADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC1_IRQ_PRIORITY         5
+#endif
+
+/**
+ * @brief   ADC DMA interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_ADC1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
 #endif
 
 /**
@@ -251,6 +230,27 @@
 #if !defined(STM32_ADC_SDADC3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC_SDADC3_IRQ_PRIORITY       5
 #endif
+
+/**
+ * @brief   SDADC1 DMA interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_SDADC1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC1_DMA_IRQ_PRIORITY   5
+#endif
+
+/**
+ * @brief   SDADC2 DMA interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_SDADC2_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC2_DMA_IRQ_PRIORITY   5
+#endif
+
+/**
+ * @brief   SDADC3 DMA interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_SDADC3_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC3_DMA_IRQ_PRIORITY   5
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -259,14 +259,6 @@
 
 #if STM32_ADC_USE_ADC1 && !STM32_HAS_ADC1
 #error "ADC1 not present in the selected device"
-#endif
-
-#if STM32_ADC_USE_ADC2 && !STM32_HAS_ADC2
-#error "ADC2 not present in the selected device"
-#endif
-
-#if STM32_ADC_USE_ADC3 && !STM32_HAS_ADC3
-#error "ADC3 not present in the selected device"
 #endif
 
 #if STM32_ADC_USE_SDADC1 && !STM32_HAS_SDADC1
@@ -281,41 +273,70 @@
 #error "SDADC3 not present in the selected device"
 #endif
 
-#if !STM32_ADC_USE_ADC1 && !STM32_ADC_USE_ADC2 && !STM32_ADC_USE_ADC3
-#error "ADC driver activated but no ADC peripheral assigned"
+#if !STM32_ADC_USE_ADC1 && !STM32_ADC_USE_SDADC1 &&                         \
+    !STM32_ADC_USE_SDADC2 && !STM32_ADC_USE_SDADC3
+#error "ADC driver activated but no ADC/SDADC peripheral assigned"
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_MSK)
-#error "invalid DMA stream associated to ADC1"
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC1"
 #endif
 
-#if STM32_ADC_USE_ADC2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC2_DMA_STREAM, STM32_ADC2_DMA_MSK)
-#error "invalid DMA stream associated to ADC2"
+#if STM32_ADC_USE_ADC1 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC1 DMA"
 #endif
 
-#if STM32_ADC_USE_ADC3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC3_DMA_STREAM, STM32_ADC3_DMA_MSK)
-#error "invalid DMA stream associated to ADC3"
+#if STM32_ADC_USE_ADC1 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC1"
 #endif
 
-#if STM32_ADC_USE_SDADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_ADC_SDADC1_DMA_STREAM, STM32_SDADC1_DMA_MSK)
-#error "invalid DMA stream associated to SDADC1"
+#if STM32_ADC_USE_SDADC1 &&                                                 \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SDADC1"
 #endif
 
-#if STM32_ADC_USE_SDADC2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_ADC_SDADC2_DMA_STREAM, STM32_SDADC2_DMA_MSK)
-#error "invalid DMA stream associated to SDADC2"
+#if STM32_ADC_USE_SDADC1 &&                                                 \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC1_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SDADC1 DMA"
 #endif
 
-#if STM32_ADC_USE_SDADC3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_ADC_SDADC3_DMA_STREAM, STM32_SDADC3_DMA_MSK)
-#error "invalid DMA stream associated to SDADC3"
+#if STM32_ADC_USE_SDADC1 &&                                                 \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_SDADC1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SDADC1"
 #endif
 
+#if STM32_ADC_USE_SDADC2 &&                                                 \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC2_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SDADC2"
+#endif
 
+#if STM32_ADC_USE_SDADC2 &&                                                 \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC2_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SDADC2 DMA"
+#endif
+
+#if STM32_ADC_USE_SDADC2 &&                                                 \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_SDADC2_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SDADC2"
+#endif
+
+#if STM32_ADC_USE_SDADC3 &&                                                 \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC3_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SDADC3"
+#endif
+
+#if STM32_ADC_USE_SDADC3 &&                                                 \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC3_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SDADC3 DMA"
+#endif
+
+#if STM32_ADC_USE_SDADC3 &&                                                 \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_SDADC3_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SDADC3"
+#endif
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED

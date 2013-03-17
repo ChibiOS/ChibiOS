@@ -156,77 +156,94 @@
  * @name    PWR_CR register bits definitions
  * @{
  */
-#define STM32_PLS_MASK          (7 << 5)    /**< PLS bits mask.             */
-#define STM32_PLS_LEV0          (0 << 5)    /**< PVD level 0.               */
-#define STM32_PLS_LEV1          (1 << 5)    /**< PVD level 1.               */
-#define STM32_PLS_LEV2          (2 << 5)    /**< PVD level 2.               */
-#define STM32_PLS_LEV3          (3 << 5)    /**< PVD level 3.               */
-#define STM32_PLS_LEV4          (4 << 5)    /**< PVD level 4.               */
-#define STM32_PLS_LEV5          (5 << 5)    /**< PVD level 5.               */
-#define STM32_PLS_LEV6          (6 << 5)    /**< PVD level 6.               */
-#define STM32_PLS_LEV7          (7 << 5)    /**< PVD level 7.               */
+#define STM32_PLS_MASK          (7U << 5)   /**< PLS bits mask.             */
+#define STM32_PLS_LEV0          (0U << 5)   /**< PVD level 0.               */
+#define STM32_PLS_LEV1          (1U << 5)   /**< PVD level 1.               */
+#define STM32_PLS_LEV2          (2U << 5)   /**< PVD level 2.               */
+#define STM32_PLS_LEV3          (3U << 5)   /**< PVD level 3.               */
+#define STM32_PLS_LEV4          (4U << 5)   /**< PVD level 4.               */
+#define STM32_PLS_LEV5          (5U << 5)   /**< PVD level 5.               */
+#define STM32_PLS_LEV6          (6U << 5)   /**< PVD level 6.               */
+#define STM32_PLS_LEV7          (7U << 5)   /**< PVD level 7.               */
 /** @} */
 
 /**
  * @name    RCC_CFGR register bits definitions
  * @{
  */
-#define STM32_SW_HSI            (0 << 0)    /**< SYSCLK source is HSI.      */
-#define STM32_SW_HSE            (1 << 0)    /**< SYSCLK source is HSE.      */
-#define STM32_SW_PLL            (2 << 0)    /**< SYSCLK source is PLL.      */
+#define STM32_SW_HSI            (0U << 0)   /**< SYSCLK source is HSI.      */
+#define STM32_SW_HSE            (1U << 0)   /**< SYSCLK source is HSE.      */
+#define STM32_SW_PLL            (2U << 0)   /**< SYSCLK source is PLL.      */
 
-#define STM32_HPRE_DIV1         (0 << 4)    /**< SYSCLK divided by 1.       */
-#define STM32_HPRE_DIV2         (8 << 4)    /**< SYSCLK divided by 2.       */
-#define STM32_HPRE_DIV4         (9 << 4)    /**< SYSCLK divided by 4.       */
-#define STM32_HPRE_DIV8         (10 << 4)   /**< SYSCLK divided by 8.       */
-#define STM32_HPRE_DIV16        (11 << 4)   /**< SYSCLK divided by 16.      */
-#define STM32_HPRE_DIV64        (12 << 4)   /**< SYSCLK divided by 64.      */
-#define STM32_HPRE_DIV128       (13 << 4)   /**< SYSCLK divided by 128.     */
-#define STM32_HPRE_DIV256       (14 << 4)   /**< SYSCLK divided by 256.     */
-#define STM32_HPRE_DIV512       (15 << 4)   /**< SYSCLK divided by 512.     */
+#define STM32_HPRE_DIV1         (0U << 4)   /**< SYSCLK divided by 1.       */
+#define STM32_HPRE_DIV2         (8u << 4)   /**< SYSCLK divided by 2.       */
+#define STM32_HPRE_DIV4         (9U << 4)   /**< SYSCLK divided by 4.       */
+#define STM32_HPRE_DIV8         (10U << 4)  /**< SYSCLK divided by 8.       */
+#define STM32_HPRE_DIV16        (11U << 4)  /**< SYSCLK divided by 16.      */
+#define STM32_HPRE_DIV64        (12U << 4)  /**< SYSCLK divided by 64.      */
+#define STM32_HPRE_DIV128       (13U << 4)  /**< SYSCLK divided by 128.     */
+#define STM32_HPRE_DIV256       (14U << 4)  /**< SYSCLK divided by 256.     */
+#define STM32_HPRE_DIV512       (15U << 4)  /**< SYSCLK divided by 512.     */
 
-#define STM32_PPRE1_DIV1        (0 << 8)    /**< HCLK divided by 1.         */
-#define STM32_PPRE1_DIV2        (4 << 8)    /**< HCLK divided by 2.         */
-#define STM32_PPRE1_DIV4        (5 << 8)    /**< HCLK divided by 4.         */
-#define STM32_PPRE1_DIV8        (6 << 8)    /**< HCLK divided by 8.         */
-#define STM32_PPRE1_DIV16       (7 << 8)    /**< HCLK divided by 16.        */
+#define STM32_PPRE1_DIV1        (0U << 8)   /**< HCLK divided by 1.         */
+#define STM32_PPRE1_DIV2        (4U << 8)   /**< HCLK divided by 2.         */
+#define STM32_PPRE1_DIV4        (5U << 8)   /**< HCLK divided by 4.         */
+#define STM32_PPRE1_DIV8        (6U << 8)   /**< HCLK divided by 8.         */
+#define STM32_PPRE1_DIV16       (7U << 8)   /**< HCLK divided by 16.        */
 
-#define STM32_PPRE2_DIV1        (0 << 11)   /**< HCLK divided by 1.         */
-#define STM32_PPRE2_DIV2        (4 << 11)   /**< HCLK divided by 2.         */
-#define STM32_PPRE2_DIV4        (5 << 11)   /**< HCLK divided by 4.         */
-#define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
-#define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
+#define STM32_PPRE2_DIV1        (0U << 11)  /**< HCLK divided by 1.         */
+#define STM32_PPRE2_DIV2        (4U << 11)  /**< HCLK divided by 2.         */
+#define STM32_PPRE2_DIV4        (5U << 11)  /**< HCLK divided by 4.         */
+#define STM32_PPRE2_DIV8        (6U << 11)  /**< HCLK divided by 8.         */
+#define STM32_PPRE2_DIV16       (7U << 11)  /**< HCLK divided by 16.        */
 
-#define STM32_ADCPRE_DIV2       (0 << 14)   /**< PPRE2 divided by 2.        */
-#define STM32_ADCPRE_DIV4       (1 << 14)   /**< PPRE2 divided by 4.        */
-#define STM32_ADCPRE_DIV6       (2 << 14)   /**< PPRE2 divided by 6.        */
-#define STM32_ADCPRE_DIV8       (3 << 14)   /**< PPRE2 divided by 8.        */
+#define STM32_ADCPRE_DIV2       (0U << 14)  /**< PPRE2 divided by 2.        */
+#define STM32_ADCPRE_DIV4       (1U << 14)  /**< PPRE2 divided by 4.        */
+#define STM32_ADCPRE_DIV6       (2U << 14)  /**< PPRE2 divided by 6.        */
+#define STM32_ADCPRE_DIV8       (3U << 14)  /**< PPRE2 divided by 8.        */
 
-#define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI/2. */
-#define STM32_PLLSRC_HSE        (1 << 16)   /**< PLL clock source is
+#define STM32_PLLSRC_HSI        (0U << 16)  /**< PLL clock source is HSI/2. */
+#define STM32_PLLSRC_HSE        (1U << 16)  /**< PLL clock source is
                                                  HSE/PREDIV.                */
 
-#define STM32_USBPRE_DIV1P5     (0 << 22)   /**< USB clock is PLLCLK/1.5.   */
-#define STM32_USBPRE_DIV1       (1 << 22)   /**< USB clock is PLLCLK/1.     */
+#define STM32_USBPRE_DIV1P5     (0U << 22)  /**< USB clock is PLLCLK/1.5.   */
+#define STM32_USBPRE_DIV1       (1U << 22)  /**< USB clock is PLLCLK/1.     */
 
-#define STM32_MCOSEL_NOCLOCK    (0 << 24)   /**< No clock on MCO pin.       */
-#define STM32_MCOSEL_LSI        (2 << 24)   /**< LSI clock on MCO pin.      */
-#define STM32_MCOSEL_LSE        (3 << 24)   /**< LSE clock on MCO pin.      */
-#define STM32_MCOSEL_SYSCLK     (4 << 24)   /**< SYSCLK on MCO pin.         */
-#define STM32_MCOSEL_HSI        (5 << 24)   /**< HSI clock on MCO pin.      */
-#define STM32_MCOSEL_HSE        (6 << 24)   /**< HSE clock on MCO pin.      */
-#define STM32_MCOSEL_PLLDIV2    (7 << 24)   /**< PLL/2 clock on MCO pin.    */
+#define STM32_MCOSEL_NOCLOCK    (0U << 24)  /**< No clock on MCO pin.       */
+#define STM32_MCOSEL_LSI        (2U << 24)  /**< LSI clock on MCO pin.      */
+#define STM32_MCOSEL_LSE        (3U << 24)  /**< LSE clock on MCO pin.      */
+#define STM32_MCOSEL_SYSCLK     (4U << 24)  /**< SYSCLK on MCO pin.         */
+#define STM32_MCOSEL_HSI        (5U << 24)  /**< HSI clock on MCO pin.      */
+#define STM32_MCOSEL_HSE        (6U << 24)  /**< HSE clock on MCO pin.      */
+#define STM32_MCOSEL_PLLDIV2    (7U << 24)  /**< PLL/2 clock on MCO pin.    */
+
+#define STM32_SDPRE_DIV2        (16U << 27) /**< SYSCLK divided by 2.       */
+#define STM32_SDPRE_DIV4        (17U << 27) /**< SYSCLK divided by 4.       */
+#define STM32_SDPRE_DIV6        (18U << 27) /**< SYSCLK divided by 6.       */
+#define STM32_SDPRE_DIV8        (19U << 27) /**< SYSCLK divided by 8.       */
+#define STM32_SDPRE_DIV10       (20U << 27) /**< SYSCLK divided by 10.      */
+#define STM32_SDPRE_DIV12       (21U << 27) /**< SYSCLK divided by 12.      */
+#define STM32_SDPRE_DIV14       (22U << 27) /**< SYSCLK divided by 14.      */
+#define STM32_SDPRE_DIV16       (23U << 27) /**< SYSCLK divided by 16.      */
+#define STM32_SDPRE_DIV20       (24U << 27) /**< SYSCLK divided by 20.      */
+#define STM32_SDPRE_DIV24       (25U << 27) /**< SYSCLK divided by 24.      */
+#define STM32_SDPRE_DIV28       (26U << 27) /**< SYSCLK divided by 28.      */
+#define STM32_SDPRE_DIV32       (27U << 27) /**< SYSCLK divided by 32.      */
+#define STM32_SDPRE_DIV36       (28U << 27) /**< SYSCLK divided by 36.      */
+#define STM32_SDPRE_DIV40       (29U << 27) /**< SYSCLK divided by 40.      */
+#define STM32_SDPRE_DIV44       (30U << 27) /**< SYSCLK divided by 44.      */
+#define STM32_SDPRE_DIV48       (31U << 27) /**< SYSCLK divided by 48.      */
 /** @} */
 
 /**
  * @name    RCC_BDCR register bits definitions
  * @{
  */
-#define STM32_RTCSEL_MASK       (3 << 8)    /**< RTC clock source mask.     */
-#define STM32_RTCSEL_NOCLOCK    (0 << 8)    /**< No clock.                  */
-#define STM32_RTCSEL_LSE        (1 << 8)    /**< LSE used as RTC clock.     */
-#define STM32_RTCSEL_LSI        (2 << 8)    /**< LSI used as RTC clock.     */
-#define STM32_RTCSEL_HSEDIV     (3 << 8)    /**< HSE divided by 32 used as
+#define STM32_RTCSEL_MASK       (3U << 8)   /**< RTC clock source mask.     */
+#define STM32_RTCSEL_NOCLOCK    (0U << 8)   /**< No clock.                  */
+#define STM32_RTCSEL_LSE        (1U << 8)   /**< LSE used as RTC clock.     */
+#define STM32_RTCSEL_LSI        (2U << 8)   /**< LSI used as RTC clock.     */
+#define STM32_RTCSEL_HSEDIV     (3U << 8)   /**< HSE divided by 32 used as
                                                  RTC clock.                 */
 /** @} */
 
@@ -234,34 +251,34 @@
  * @name    RCC_CFGR2 register bits definitions
  * @{
  */
-#define STM32_PREDIV_MASK       (15 << 0)   /**< PREDIV divisor mask.       */
+#define STM32_PREDIV_MASK       (15U << 0)  /**< PREDIV divisor mask.       */
 /** @} */
 
 /**
  * @name    RCC_CFGR3 register bits definitions
  * @{
  */
-#define STM32_USART1SW_MASK     (3 << 0)    /**< USART1 clock source mask. */
-#define STM32_USART1SW_PCLK     (0 << 0)    /**< USART1 clock is PCLK.     */
-#define STM32_USART1SW_SYSCLK   (1 << 0)    /**< USART1 clock is SYSCLK.   */
-#define STM32_USART1SW_LSE      (2 << 0)    /**< USART1 clock is LSE.      */
-#define STM32_USART1SW_HSI      (3 << 0)    /**< USART1 clock is HSI.      */
-#define STM32_I2C1SW_MASK       (1 << 4)    /**< I2C1 clock source mask.   */
-#define STM32_I2C1SW_HSI        (0 << 4)    /**< I2C1 clock is HSI.        */
-#define STM32_I2C1SW_SYSCLK     (1 << 4)    /**< I2C1 clock is SYSCLK.     */
-#define STM32_I2C2SW_MASK       (1 << 5)    /**< I2C2 clock source mask.   */
-#define STM32_I2C2SW_HSI        (0 << 5)    /**< I2C2 clock is HSI.        */
-#define STM32_I2C2SW_SYSCLK     (1 << 5)    /**< I2C2 clock is SYSCLK.     */
-#define STM32_USART2SW_MASK     (3 << 16)   /**< USART2 clock source mask. */
-#define STM32_USART2SW_PCLK     (0 << 16)   /**< USART2 clock is PCLK.     */
-#define STM32_USART2SW_SYSCLK   (1 << 16)   /**< USART2 clock is SYSCLK.   */
-#define STM32_USART2SW_LSE      (2 << 16)   /**< USART2 clock is LSE.      */
-#define STM32_USART2SW_HSI      (3 << 16)   /**< USART2 clock is HSI.      */
-#define STM32_USART3SW_MASK     (3 << 18)   /**< USART3 clock source mask. */
-#define STM32_USART3SW_PCLK     (0 << 18)   /**< USART3 clock is PCLK.     */
-#define STM32_USART3SW_SYSCLK   (1 << 18)   /**< USART3 clock is SYSCLK.   */
-#define STM32_USART3SW_LSE      (2 << 18)   /**< USART3 clock is LSE.      */
-#define STM32_USART3SW_HSI      (3 << 18)   /**< USART3 clock is HSI.      */
+#define STM32_USART1SW_MASK     (3U << 0)   /**< USART1 clock source mask. */
+#define STM32_USART1SW_PCLK     (0U << 0)   /**< USART1 clock is PCLK.     */
+#define STM32_USART1SW_SYSCLK   (1U << 0)   /**< USART1 clock is SYSCLK.   */
+#define STM32_USART1SW_LSE      (2U << 0)   /**< USART1 clock is LSE.      */
+#define STM32_USART1SW_HSI      (3U << 0)   /**< USART1 clock is HSI.      */
+#define STM32_I2C1SW_MASK       (1U << 4)   /**< I2C1 clock source mask.   */
+#define STM32_I2C1SW_HSI        (0U << 4)   /**< I2C1 clock is HSI.        */
+#define STM32_I2C1SW_SYSCLK     (1U << 4)   /**< I2C1 clock is SYSCLK.     */
+#define STM32_I2C2SW_MASK       (1U << 5)   /**< I2C2 clock source mask.   */
+#define STM32_I2C2SW_HSI        (0U << 5)   /**< I2C2 clock is HSI.        */
+#define STM32_I2C2SW_SYSCLK     (1U << 5)   /**< I2C2 clock is SYSCLK.     */
+#define STM32_USART2SW_MASK     (3U << 16)  /**< USART2 clock source mask. */
+#define STM32_USART2SW_PCLK     (0U << 16)  /**< USART2 clock is PCLK.     */
+#define STM32_USART2SW_SYSCLK   (1U << 16)  /**< USART2 clock is SYSCLK.   */
+#define STM32_USART2SW_LSE      (2U << 16)  /**< USART2 clock is LSE.      */
+#define STM32_USART2SW_HSI      (3U << 16)  /**< USART2 clock is HSI.      */
+#define STM32_USART3SW_MASK     (3U << 18)  /**< USART3 clock source mask. */
+#define STM32_USART3SW_PCLK     (0U << 18)  /**< USART3 clock is PCLK.     */
+#define STM32_USART3SW_SYSCLK   (1U << 18)  /**< USART3 clock is SYSCLK.   */
+#define STM32_USART3SW_LSE      (2U << 18)  /**< USART3 clock is LSE.      */
+#define STM32_USART3SW_HSI      (3U << 18)  /**< USART3 clock is HSI.      */
 /** @} */
 
 /*===========================================================================*/
@@ -399,6 +416,13 @@
  */
 #if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
 #define STM32_ADCPRE                        STM32_ADCPRE_DIV4
+#endif
+
+/**
+ * @brief   SDADC prescaler value.
+ */
+#if !defined(STM32_SDPRE) || defined(__DOXYGEN__)
+#define STM32_SDPRE                         STM32_SDPRE_DIV12
 #endif
 
 /**
@@ -764,25 +788,74 @@
  * @brief   ADC frequency.
  */
 #if (STM32_ADCPRE == STM32_ADCPRE_DIV2) || defined(__DOXYGEN__)
-#define STM32_ADCLK                 (STM32_PCLK2 / 2)
+#define STM32_ADCCLK                (STM32_PCLK2 / 2)
 #elif STM32_ADCPRE == STM32_ADCPRE_DIV4
-#define STM32_ADCLK                 (STM32_PCLK2 / 4)
+#define STM32_ADCCLK                (STM32_PCLK2 / 4)
 #elif STM32_ADCPRE == STM32_ADCPRE_DIV6
-#define STM32_ADCLK                 (STM32_PCLK2 / 6)
+#define STM32_ADCCLK                (STM32_PCLK2 / 6)
 #elif STM32_ADCPRE == STM32_ADCPRE_DIV8
-#define STM32_ADCLK                 (STM32_PCLK2 / 8)
+#define STM32_ADCCLK                (STM32_PCLK2 / 8)
 #else
 #error "invalid STM32_ADCPRE value specified"
 #endif
 
 /* ADC maximum frequency check.*/
-#if STM32_ADCLK > STM32_ADCCLK_MAX
-#error "STM32_ADCLK exceeding maximum frequency (STM32_ADCCLK_MAX)"
+#if STM32_ADCCLK > STM32_ADCCLK_MAX
+#error "STM32_ADCCLK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 
 /* ADC minimum frequency check.*/
-#if STM32_ADCLK < STM32_ADCCLK_MIN
-#error "STM32_ADCLK exceeding maximum frequency (STM32_ADCCLK_MIN)"
+#if STM32_ADCCLK < STM32_ADCCLK_MIN
+#error "STM32_ADCCLK exceeding maximum frequency (STM32_ADCCLK_MIN)"
+#endif
+
+/**
+ * @brief   SDADC frequency.
+ */
+#if (STM32_SDPRE == STM32_SDPRE_DIV2) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 2)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV4) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 4)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV6) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 6)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV8) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 8)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV10) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 10)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV12) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 12)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV14) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 14)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV16) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 16)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV20) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 20)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV24) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 24)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV28) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 28)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV32) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 32)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV36) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 36)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV40) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 40)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV44) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 44)
+#elif (STM32_SDPRE == STM32_SDPRE_DIV48) || defined(__DOXYGEN__)
+#define STM32_SDADCCLK              (STM32_SYSCLK / 48)
+#else
+#error "invalid STM32_SDPRE value specified"
+#endif
+
+/* SDADC maximum frequency check.*/
+#if STM32_SDADCCLK > STM32_SDADCCLK_FAST_MAX
+#error "STM32_SDADCCLK exceeding maximum frequency (STM32_SDADCCLK_FAST_MAX)"
+#endif
+
+/* SDADC minimum frequency check.*/
+#if STM32_SDADCCLK < STM32_SDADCCLK_MIN
+#error "STM32_SDADCCLK exceeding maximum frequency (STM32_SDADCCLK_MIN)"
 #endif
 
 /**

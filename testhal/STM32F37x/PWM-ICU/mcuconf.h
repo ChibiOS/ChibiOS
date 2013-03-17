@@ -53,6 +53,7 @@
 #define STM32_PPRE2                         STM32_PPRE2_DIV2
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_ADCPRE                        STM32_ADCPRE_DIV4
+#define STM32_SDPRE                         STM32_SDPRE_DIV12
 #define STM32_USART1SW                      STM32_USART1SW_PCLK
 #define STM32_USART2SW                      STM32_USART2SW_PCLK
 #define STM32_USART3SW                      STM32_USART3SW_PCLK
