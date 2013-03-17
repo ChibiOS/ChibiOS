@@ -92,40 +92,27 @@
 /** @} */
 
 /**
- * @name SDADC Channels
- * The SDADC channels are defined as follow:
- *  - in 16-bit LSB the channel mask is set
- *  - in 16-bit MSB the channel number is set 
- *  e.g. for channel 5 definition:  
- *       - the channel mask is 0x00000020 (bit 5 is set) 
- *       - the channel number 5 is 0x00050000 
- *       --> Consequently, channel 5 definition is 0x00000020 | 0x00050000 = 0x00050020
- * @{*/
+ * @name    SDADC JCHGR bit definitions
+ * @{
+ */
+#define SDADC_JCHG_MASK         (511U << 0)
+#define SDADC_JCHG(n)           (1U << (n))
+/** @} */
 
-#define SDADC_Channel_0 ((uint32_t)0x00000001)
-#define SDADC_Channel_1 ((uint32_t)0x00010002)
-#define SDADC_Channel_2 ((uint32_t)0x00020004)
-#define SDADC_Channel_3 ((uint32_t)0x00030008)
-#define SDADC_Channel_4 ((uint32_t)0x00040010)
-#define SDADC_Channel_5 ((uint32_t)0x00050020)
-#define SDADC_Channel_6 ((uint32_t)0x00060040)
-#define SDADC_Channel_7 ((uint32_t)0x00070080)
-#define SDADC_Channel_8 ((uint32_t)0x00080100)
-
-/* Just one channel of the 9 channels can be selected for regular conversion */
-#define IS_SDADC_REGULAR_CHANNEL(CHANNEL) (((CHANNEL) == SDADC_Channel_0)  || \
-                                           ((CHANNEL) == SDADC_Channel_1)  || \
-                                           ((CHANNEL) == SDADC_Channel_2)  || \
-                                           ((CHANNEL) == SDADC_Channel_3)  || \
-                                           ((CHANNEL) == SDADC_Channel_4)  || \
-                                           ((CHANNEL) == SDADC_Channel_5)  || \
-                                           ((CHANNEL) == SDADC_Channel_6)  || \
-                                           ((CHANNEL) == SDADC_Channel_7)  || \
-                                           ((CHANNEL) == SDADC_Channel_8))
-
-/* Any or all of the 9 channels can be selected for injected conversion */
-#define IS_SDADC_INJECTED_CHANNEL(CHANNEL) (((CHANNEL) != 0) && ((CHANNEL) <= 0x000F01FF))
-
+/**
+ * @name    SDADC channels definitions
+ * @{
+ */
+#define SDADC_CHANNEL_0         SDADC_JCHG(0)
+#define SDADC_CHANNEL_1         SDADC_JCHG(1)
+#define SDADC_CHANNEL_2         SDADC_JCHG(2)
+#define SDADC_CHANNEL_3         SDADC_JCHG(3)
+#define SDADC_CHANNEL_4         SDADC_JCHG(4)
+#define SDADC_CHANNEL_5         SDADC_JCHG(5)
+#define SDADC_CHANNEL_6         SDADC_JCHG(6)
+#define SDADC_CHANNEL_7         SDADC_JCHG(7)
+#define SDADC_CHANNEL_8         SDADC_JCHG(8)
+#define SDADC_CHANNEL_9         SDADC_JCHG(9)
 /** @} */
 
 /*===========================================================================*/
@@ -476,11 +463,6 @@ typedef struct {
     } adc;
     struct {
       /**
-       * @brief   SDADC CR1 register initialization data.
-       * @note    All the required bits must be defined into this field
-       */
-      uint32_t                  cr1;
-      /**
        * @brief   SDADC CR2 register initialization data.
        * @note    All the required bits must be defined into this field except
        *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
@@ -489,39 +471,30 @@ typedef struct {
       uint32_t                  cr2;
       /**
        * @brief   SDADC JCHGR register initialization data.
-       * @details Bitfield indicating whether channel i is part of the injected group.
-       *          0 <= i <= 8.  Highest channel, (8), is converted first
        */
       uint32_t                  jchgr;
       /**
        * @brief   SDADC CONF0R register initialization data.
-       * @details In this field are the parameters for configuration 0
        */
       uint32_t                  conf0r;
       /**
        * @brief   SDADC CONF1R register initialization data.
-       * @details In this field are the parameters for configuration 1
        */
       uint32_t                  conf1r;
       /**
        * @brief   SDADC CONF2R register initialization data.
-       * @details In this field are the parameters for configuration 2
        */
       uint32_t                  conf2r;
       /**
        * @brief   SDADC CONFCH1R register initialization data.
-       * @details In this field channels 0-7 are assigned to a configuration.
        */
       uint32_t                  confchr1;
       /**
        * @brief   SDADC CONFCH2R register initialization data.
-       * @details In this field channel 8 is assigned to a configuration.
-       * @details In this field are the parameters for configuration 2
        */
       uint32_t                  confchr2;
-
     } sdadc;
-  } ll; /* union */
+  } u;
 } ADCConversionGroup;
 
 /**
@@ -529,7 +502,10 @@ typedef struct {
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-  uint32_t                  dummy;
+  /**
+   * @brief   SDADC CR1 register initialization data.
+   */
+  uint32_t                  cr1;
 } ADCConfig;
 
 /**
@@ -578,21 +554,20 @@ struct ADCDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief Pointer to the ADCx registers block.
+   * @brief   Pointer to the ADCx registers block.
    */
   ADC_TypeDef               *adc;
 
   /**
-   * @brief Pointer to the SDADCx registers block.
+   * @brief   Pointer to the SDADCx registers block.
    */
   SDADC_TypeDef             *sdadc;
-
   /**
-   * @brief Pointer to associated DMA channel.
+   * @brief   Pointer to associated DMA channel.
    */
   const stm32_dma_stream_t  *dmastp;
   /**
-   * @brief DMA mode bit mask.
+   * @brief   DMA mode bit mask.
    */
   uint32_t                  dmamode;
 };
@@ -676,14 +651,6 @@ struct ADCDriver {
 
 #if STM32_ADC_USE_ADC1 && !defined(__DOXYGEN__)
 extern ADCDriver ADCD1;
-#endif
-
-#if STM32_ADC_USE_ADC2 && !defined(__DOXYGEN__)
-extern ADCDriver ADCD2;
-#endif
-
-#if STM32_ADC_USE_ADC3 && !defined(__DOXYGEN__)
-extern ADCDriver ADCD3;
 #endif
 
 #if STM32_ADC_USE_SDADC1 && !defined(__DOXYGEN__)
