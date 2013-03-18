@@ -440,14 +440,10 @@ typedef struct {
       uint32_t                  cr2;
       /**
        * @brief   ADC LTR register initialization data.
-       * @note    Set to zero in order to disable the low threshold of the
-       *          analog watchdog.
        */
       uint32_t                  ltr;
       /**
        * @brief   ADC HTR register initialization data.
-       * @note    Set to 4095 (0xFFF) in order to disable the high threshold
-       *          of the analog watchdog.
        */
       uint32_t                  htr;
       /**
@@ -662,11 +658,6 @@ extern "C" {
   void adcSTM32EnableVBATE(void);
   void adcSTM32DisableVBATE(void);
 #endif /* STM32_ADC_USE_ADC */
-#if 0
-  void sdadcSTM32VREFSelect(SDADC_VREF_SEL svs);
-  void sdadcSTM32Calibrate(ADCDriver* adcdp, SDADC_NUM_CALIB_SEQ numCalibSequences,
-			 ADCConversionGroup* grpp);
-#endif /* STM32_ADC_USE_SDADC */
 #ifdef __cplusplus
 }
 #endif
