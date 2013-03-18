@@ -369,6 +369,86 @@
 /** @} */
 
 /**
+ * @name    SDADC peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the SDADC1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDADC1(lp) rccEnableAPB2(RCC_APB2ENR_SDADC1EN, lp)
+
+/**
+ * @brief   Disables the SDADC1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableSDADC1(lp) rccDisableAPB2(RCC_APB2ENR_SDADC1EN, lp)
+
+/**
+ * @brief   Resets the SDADC1 peripheral.
+ *
+ * @api
+ */
+#define rccResetSDADC1() rccResetAPB2(RCC_APB2RSTR_SDADC1RST)
+
+/**
+ * @brief   Enables the SDADC2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDADC2(lp) rccEnableAPB2(RCC_APB2ENR_SDADC2EN, lp)
+
+/**
+ * @brief   Disables the SDADC2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableSDADC2(lp) rccDisableAPB2(RCC_APB2ENR_SDADC2EN, lp)
+
+/**
+ * @brief   Resets the SDADC2 peripheral.
+ *
+ * @api
+ */
+#define rccResetSDADC2() rccResetAPB2(RCC_APB2RSTR_SDADC2RST)
+
+/**
+ * @brief   Enables the SDADC3 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDADC3(lp) rccEnableAPB2(RCC_APB2ENR_SDADC3EN, lp)
+
+/**
+ * @brief   Disables the SDADC3 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableSDADC3(lp) rccDisableAPB2(RCC_APB2ENR_SDADC3EN, lp)
+
+/**
+ * @brief   Resets the SDADC3 peripheral.
+ *
+ * @api
+ */
+#define rccResetSDADC3() rccResetAPB2(RCC_APB2RSTR_SDADC3RST)
+/** @} */
+
+/**
  * @name    SPI peripherals specific RCC operations
  * @{
  */

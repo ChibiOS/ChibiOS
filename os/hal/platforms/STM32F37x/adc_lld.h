@@ -252,6 +252,18 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/**
+ * @brief   At least an ADC unit is in use.
+ */
+#define STM32_ADC_USE_ADC   STM32_ADC_USE_ADC1
+
+/**
+ * @brief   At least an SDADC unit is in use.
+ */
+#define STM32_ADC_USE_SDADC (STM32_ADC_USE_SDADC1 ||                        \
+                             STM32_ADC_USE_SDADC2 ||                        \
+                             STM32_ADC_USE_SDADC3)
+
 #if STM32_ADC_USE_ADC1 && !STM32_HAS_ADC1
 #error "ADC1 not present in the selected device"
 #endif
@@ -268,8 +280,7 @@
 #error "SDADC3 not present in the selected device"
 #endif
 
-#if !STM32_ADC_USE_ADC1 && !STM32_ADC_USE_SDADC1 &&                         \
-    !STM32_ADC_USE_SDADC2 && !STM32_ADC_USE_SDADC3
+#if !STM32_ADC_USE_ADC && !STM32_ADC_USE_SDADC
 #error "ADC driver activated but no ADC/SDADC peripheral assigned"
 #endif
 
@@ -419,6 +430,7 @@ typedef struct {
    *         is not NULL, then use the sdadc struct.
    */
   union { 
+#if STM32_ADC_USE_ADC || defined(__DOXYGEN__)
     struct {
       /**
        * @brief   ADC CR1 register initialization data.
@@ -434,33 +446,16 @@ typedef struct {
        */
       uint32_t                  cr2;
       /**
-       * @brief   ADC SMPR1 register initialization data.
-       * @details In this field must be specified the sample times for channels
-       *          10...18.
+       * @brief   ADC SMPRx registers initialization data.
        */
-      uint32_t                  smpr1;
+      uint32_t                  smpr[2];
       /**
-       * @brief   ADC SMPR2 register initialization data.
-       * @details In this field must be specified the sample times for channels
-       *          0...9.
+       * @brief   ADC SQRx register initialization data.
        */
-      uint32_t                  smpr2;
-      /**
-       * @brief   ADC SQR1 register initialization data.
-       * @details Conversion group sequence 13...16 + sequence length.
-       */
-      uint32_t                  sqr1;
-      /**
-       * @brief   ADC SQR2 register initialization data.
-       * @details Conversion group sequence 7...12.
-       */
-      uint32_t                  sqr2;
-      /**
-       * @brief   ADC SQR3 register initialization data.
-       * @details Conversion group sequence 1...6.
-       */
-      uint32_t                  sqr3;
+      uint32_t                  sqr[3];
     } adc;
+#endif /* STM32_ADC_USE_ADC */
+#if STM32_ADC_USE_SDADC || defined(__DOXYGEN__)
     struct {
       /**
        * @brief   SDADC CR2 register initialization data.
@@ -494,6 +489,7 @@ typedef struct {
        */
       uint32_t                  confchr2;
     } sdadc;
+#endif /* STM32_ADC_USE_SDADC */
   } u;
 } ADCConversionGroup;
 
@@ -502,10 +498,14 @@ typedef struct {
  * @note    It could be empty on some architectures.
  */
 typedef struct {
+#if STM32_ADC_USE_SDADC
   /**
    * @brief   SDADC CR1 register initialization data.
    */
   uint32_t                  cr1;
+#else /* !STM32_ADC_USE_SDADC */
+  uint32_t                  dummy;
+#endif /* !STM32_ADC_USE_SDADC */
 } ADCConfig;
 
 /**
@@ -553,15 +553,18 @@ struct ADCDriver {
   ADC_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
+#if STM32_ADC_USE_ADC || defined(__DOXYGEN__)
   /**
    * @brief   Pointer to the ADCx registers block.
    */
   ADC_TypeDef               *adc;
-
+#endif
+#if STM32_ADC_USE_SDADC || defined(__DOXYGEN__)
   /**
    * @brief   Pointer to the SDADCx registers block.
    */
   SDADC_TypeDef             *sdadc;
+#endif
   /**
    * @brief   Pointer to associated DMA channel.
    */
@@ -584,13 +587,10 @@ struct ADCDriver {
  * @brief   Number of channels in a conversion sequence.
  */
 #define ADC_SQR1_NUM_CH(n)      (((n) - 1) << 20)
-
-#define ADC_SQR3_SQ1_N(n)       ((n) << 0)  /**< @brief 1st channel in seq. */
-#define ADC_SQR3_SQ2_N(n)       ((n) << 5)  /**< @brief 2nd channel in seq. */
-#define ADC_SQR3_SQ3_N(n)       ((n) << 10) /**< @brief 3rd channel in seq. */
-#define ADC_SQR3_SQ4_N(n)       ((n) << 15) /**< @brief 4th channel in seq. */
-#define ADC_SQR3_SQ5_N(n)       ((n) << 20) /**< @brief 5th channel in seq. */
-#define ADC_SQR3_SQ6_N(n)       ((n) << 25) /**< @brief 6th channel in seq. */
+#define ADC_SQR1_SQ13_N(n)      ((n) << 0)  /**< @brief 13th channel in seq.*/
+#define ADC_SQR1_SQ14_N(n)      ((n) << 5)  /**< @brief 14th channel in seq.*/
+#define ADC_SQR1_SQ15_N(n)      ((n) << 10) /**< @brief 15th channel in seq.*/
+#define ADC_SQR1_SQ16_N(n)      ((n) << 15) /**< @brief 16th channel in seq.*/
 
 #define ADC_SQR2_SQ7_N(n)       ((n) << 0)  /**< @brief 7th channel in seq. */
 #define ADC_SQR2_SQ8_N(n)       ((n) << 5)  /**< @brief 8th channel in seq. */
@@ -599,10 +599,12 @@ struct ADCDriver {
 #define ADC_SQR2_SQ11_N(n)      ((n) << 20) /**< @brief 11th channel in seq.*/
 #define ADC_SQR2_SQ12_N(n)      ((n) << 25) /**< @brief 12th channel in seq.*/
 
-#define ADC_SQR1_SQ13_N(n)      ((n) << 0)  /**< @brief 13th channel in seq.*/
-#define ADC_SQR1_SQ14_N(n)      ((n) << 5)  /**< @brief 14th channel in seq.*/
-#define ADC_SQR1_SQ15_N(n)      ((n) << 10) /**< @brief 15th channel in seq.*/
-#define ADC_SQR1_SQ16_N(n)      ((n) << 15) /**< @brief 16th channel in seq.*/
+#define ADC_SQR3_SQ1_N(n)       ((n) << 0)  /**< @brief 1st channel in seq. */
+#define ADC_SQR3_SQ2_N(n)       ((n) << 5)  /**< @brief 2nd channel in seq. */
+#define ADC_SQR3_SQ3_N(n)       ((n) << 10) /**< @brief 3rd channel in seq. */
+#define ADC_SQR3_SQ4_N(n)       ((n) << 15) /**< @brief 4th channel in seq. */
+#define ADC_SQR3_SQ5_N(n)       ((n) << 20) /**< @brief 5th channel in seq. */
+#define ADC_SQR3_SQ6_N(n)       ((n) << 25) /**< @brief 6th channel in seq. */
 /** @} */
 
 /**
@@ -633,18 +635,6 @@ struct ADCDriver {
 #define ADC_SMPR1_SMP_VBAT(n)   ((n) << 24) /**< @brief VBAT sampling time. */
 /** @} */
 
-/**
- * @name    Channel config settings helper macros
- * @{
- */
-#define  sdadcSTM32Channel1TO7Config(SDADC_Channel, SDADC_Conf) ((uint32_t) (SDADC_Conf << (( SDADC_Channel >> 16) << 2)))
-#define  sdadcSTM32Channel8Config(SDADC_Channel, SDADC_Conf) ((uint32_t) SDADC_CONF)
-
-#define  sdadcSTM32ChannelSelect(SDADC_Channel) ((uint32_t) (SDADC_Channel & 0xffff0000))
-
-/** @} */
-
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -673,14 +663,12 @@ extern "C" {
   void adc_lld_stop(ADCDriver *adcp);
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
-  void adcSTM32EnableTSVREFE(void);
-  void adcSTM32DisableTSVREFE(void);
-  void adcSTM32EnableVBATE(void);
-  void adcSTM32DisableVBATE(void);
+#if STM32_ADC_USE_SDADC
   void sdadcSTM32SetInitializationMode(ADCDriver* adcdp, bool_t enterInitMode);
   void sdadcSTM32VREFSelect(SDADC_VREF_SEL svs);
   void sdadcSTM32Calibrate(ADCDriver* adcdp, SDADC_NUM_CALIB_SEQ numCalibSequences,
 			 ADCConversionGroup* grpp);
+#endif /* STM32_ADC_USE_SDADC */
 #ifdef __cplusplus
 }
 #endif

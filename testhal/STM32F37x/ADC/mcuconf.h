@@ -67,9 +67,9 @@
  * ADC driver system settings.
  */
 #define STM32_ADC_USE_ADC1                  TRUE
-#define STM32_ADC_USE_SDADC1                TRUE
-#define STM32_ADC_USE_SDADC2                TRUE
-#define STM32_ADC_USE_SDADC3                TRUE
+#define STM32_ADC_USE_SDADC1                FALSE
+#define STM32_ADC_USE_SDADC2                FALSE
+#define STM32_ADC_USE_SDADC3                FALSE
 #define STM32_ADC_SDADC_SLOW_MODE           FALSE
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
 #define STM32_ADC_SDADC1_DMA_PRIORITY       2

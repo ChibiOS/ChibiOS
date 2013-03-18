@@ -8,7 +8,8 @@ The demo runs on an STMicroelectronics STM32373C-EVAL board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F37x ADC/SDADC driver.
+The application demonstrates the use of the STM32F37x ADC driver on the
+ADC peripheral.
 
 ** Board Setup **
 

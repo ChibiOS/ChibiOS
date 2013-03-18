@@ -61,21 +61,22 @@ static const ADCConversionGroup adcgrpcfg1 = {
   ADC_GRP1_NUM_CHANNELS,
   NULL,
   adcerrorcallback,
-  0,                        /* CFGR    */
-  ADC_TR(0, 4095),          /* TR1     */
-  0,                        /* CCR     */
-  {                         /* SMPR[2] */
-    0,
-    0
-  },
-  {                         /* SQR[4]  */
-    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN7) | ADC_SQR1_SQ2_N(ADC_CHANNEL_IN8),
-    0,
-    0,
-    0
+  .u.adc = {
+    0,                      /* CR1     */
+    0,                      /* CR2     */
+    {                       /* SMPR[2] */
+      0,
+      0
+    },
+    {                       /* SQR[3]  */
+      0,
+      0,
+      0
+    }
   }
 };
 
+#if 0
 /*
  * ADC conversion group.
  * Mode:        Continuous, 16 samples of 8 channels, SW triggered.
@@ -104,6 +105,7 @@ static const ADCConversionGroup adcgrpcfg2 = {
     0
   }
 };
+#endif
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
@@ -114,9 +116,9 @@ static msg_t Thread1(void *arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (TRUE) {
-    palSetPad(GPIOE, GPIOE_LED10_RED);
+    palClearPad(GPIOC, GPIOC_LED1);
     chThdSleepMilliseconds(500);
-    palClearPad(GPIOE, GPIOE_LED10_RED);
+    palSetPad(GPIOC, GPIOC_LED1);
     chThdSleepMilliseconds(500);
   }
   return 0;
@@ -162,14 +164,14 @@ int main(void) {
   /*
    * Starts an ADC continuous conversion.
    */
-  adcStartConversion(&ADCD1, &adcgrpcfg2, samples2, ADC_GRP2_BUF_DEPTH);
+//  adcStartConversion(&ADCD1, &adcgrpcfg2, samples2, ADC_GRP2_BUF_DEPTH);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (TRUE) {
-    if (palReadPad(GPIOA, GPIOA_BUTTON)) {
-      adcStopConversion(&ADCD1);
+    if (palReadPad(GPIOA, GPIOA_WKUP_BUTTON)) {
+//      adcStopConversion(&ADCD1);
     }
     chThdSleepMilliseconds(500);
   }
