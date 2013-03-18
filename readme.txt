@@ -142,6 +142,7 @@
   platforms, tests to be added on the various sub-families.
 - NEW: Added support for SPC56ELxx, SPC560BCxx, SPC560Pxx, SPC560Mxx and
   SPC564Axx platforms.
+- NEW: Added ADC/SDADC driver for the STM32F37x family.
 - NEW: Added support for the STM32F37x family.
 - NEW: Now the general documentation includes data extracted from the low
   level driver templates. Per-platform/architecture documents are no more

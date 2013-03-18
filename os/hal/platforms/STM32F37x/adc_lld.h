@@ -156,14 +156,6 @@
 #endif
 
 /**
- * @brief   SDADC slow mode switch.
- * @details If set to @p TRUE all SDADCs operate in slow mode.
- */
-#if !defined(STM32_ADC_SDADC_SLOW_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_SDADC_SLOW_MODE           FALSE
-#endif
-
-/**
  * @brief   ADC1 DMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_ADC_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
@@ -369,7 +361,8 @@ typedef uint16_t adc_channels_num_t;
  */
 typedef enum {
   ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
-  ADC_ERR_OVERFLOW = 1                      /**< ADC overflow condition.    */
+  ADC_ERR_OVERFLOW = 1,                     /**< ADC overflow condition.    */
+  ADC_ERR_AWD1 = 2                          /**< Watchdog 1 triggered.      */
 } adcerror_t;
 
 /**
@@ -446,6 +439,18 @@ typedef struct {
        */
       uint32_t                  cr2;
       /**
+       * @brief   ADC LTR register initialization data.
+       * @note    Set to zero in order to disable the low threshold of the
+       *          analog watchdog.
+       */
+      uint32_t                  ltr;
+      /**
+       * @brief   ADC HTR register initialization data.
+       * @note    Set to 4095 (0xFFF) in order to disable the high threshold
+       *          of the analog watchdog.
+       */
+      uint32_t                  htr;
+      /**
        * @brief   ADC SMPRx registers initialization data.
        */
       uint32_t                  smpr[2];
@@ -459,9 +464,8 @@ typedef struct {
     struct {
       /**
        * @brief   SDADC CR2 register initialization data.
-       * @note    All the required bits must be defined into this field except
-       *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
-       *          enforced inside the driver.
+       * @note    Only the @p SDADC_CR2_JSWSTART, @p SDADC_CR2_JEXTSEL
+       *          and @p SDADC_CR2_JEXTEN can be specified in this field.
        */
       uint32_t                  cr2;
       /**
@@ -469,25 +473,13 @@ typedef struct {
        */
       uint32_t                  jchgr;
       /**
-       * @brief   SDADC CONF0R register initialization data.
+       * @brief   SDADC CONFxR registers initialization data.
        */
-      uint32_t                  conf0r;
+      uint32_t                  confxr[3];
       /**
-       * @brief   SDADC CONF1R register initialization data.
+       * @brief   SDADC CONFCHxR registers initialization data.
        */
-      uint32_t                  conf1r;
-      /**
-       * @brief   SDADC CONF2R register initialization data.
-       */
-      uint32_t                  conf2r;
-      /**
-       * @brief   SDADC CONFCH1R register initialization data.
-       */
-      uint32_t                  confchr1;
-      /**
-       * @brief   SDADC CONFCH2R register initialization data.
-       */
-      uint32_t                  confchr2;
+      uint32_t                  confchr[2];
     } sdadc;
 #endif /* STM32_ADC_USE_SDADC */
   } u;
@@ -663,8 +655,14 @@ extern "C" {
   void adc_lld_stop(ADCDriver *adcp);
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
-#if STM32_ADC_USE_SDADC
-  void sdadcSTM32SetInitializationMode(ADCDriver* adcdp, bool_t enterInitMode);
+  void adcSTM32Calibrate(ADCDriver *adcdp);
+#if STM32_ADC_USE_ADC
+  void adcSTM32EnableTSVREFE(void);
+  void adcSTM32DisableTSVREFE(void);
+  void adcSTM32EnableVBATE(void);
+  void adcSTM32DisableVBATE(void);
+#endif /* STM32_ADC_USE_ADC */
+#if 0
   void sdadcSTM32VREFSelect(SDADC_VREF_SEL svs);
   void sdadcSTM32Calibrate(ADCDriver* adcdp, SDADC_NUM_CALIB_SEQ numCalibSequences,
 			 ADCConversionGroup* grpp);

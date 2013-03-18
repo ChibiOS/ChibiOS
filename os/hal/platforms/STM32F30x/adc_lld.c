@@ -214,7 +214,7 @@ static void adc_lld_serve_dma_interrupt(ADCDriver *adcp, uint32_t flags) {
  * @brief   ADC ISR service routine.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
- * @param[in] isr     pre-shifted content of the ISR register
+ * @param[in] isr       content of the ISR register
  */
 static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
 
