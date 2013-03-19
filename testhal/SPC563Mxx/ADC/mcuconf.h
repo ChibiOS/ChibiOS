@@ -51,7 +51,27 @@
 #define SPC5_ADC_USE_ADC1_Q3                TRUE
 #define SPC5_ADC_USE_ADC1_Q4                TRUE
 #define SPC5_ADC_USE_ADC1_Q5                TRUE
+#define SPC5_ADC_FIFO0_DMA_PRIO             12
+#define SPC5_ADC_FIFO1_DMA_PRIO             12
+#define SPC5_ADC_FIFO2_DMA_PRIO             12
+#define SPC5_ADC_FIFO3_DMA_PRIO             12
+#define SPC5_ADC_FIFO4_DMA_PRIO             12
+#define SPC5_ADC_FIFO5_DMA_PRIO             12
+#define SPC5_ADC_FIFO0_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO1_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO2_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO3_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO4_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO5_DMA_IRQ_PRIO         12
 #define SPC5_ADC_CR_CLK_PS                  ADC_CR_CLK_PS(5)
+#define SPC5_ADC_PUDCR                      {ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE}
 
 /*
  * SERIAL driver system settings.
