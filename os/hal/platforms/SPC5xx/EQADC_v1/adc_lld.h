@@ -588,7 +588,7 @@ typedef struct {
 
 /**
  * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
+ * @note    Empty in this implementation can be ignored.
  */
 typedef struct {
   uint32_t                  dummy;
