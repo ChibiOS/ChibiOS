@@ -53,7 +53,7 @@ void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 }
 
 /*
- * Red LEDs blinker thread, times are in milliseconds.
+ * LED blinker thread, times are in milliseconds.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
@@ -107,7 +107,8 @@ int main(void) {
   adcStartConversion(&ADCD3, &adcgrpcfg2, samples2, ADC_GRP2_BUF_DEPTH);
 
   /*
-   * Normal main() thread activity, in this demo it does nothing.
+   * Normal main() thread activity, once the button is pressed the ADC
+   * conversion is stopped.
    */
   while (TRUE) {
     if (palReadPad(PORT11, P11_BUTTON1)) {
