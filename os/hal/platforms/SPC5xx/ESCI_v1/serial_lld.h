@@ -82,6 +82,18 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if SPC5_USE_ESCIA && !SPC5_HAS_ESCIA
+#error "eSCI-A not present in the selected device"
+#endif
+
+#if SPC5_USE_ESCIB && !SPC5_HAS_ESCIB
+#error "eSCI-B not present in the selected device"
+#endif
+
+#if !SPC5_USE_ESCIA && !SPC5_USE_ESCIB
+#error "SERIAL driver activated but no eSCI peripheral assigned"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
