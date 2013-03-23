@@ -31,8 +31,6 @@
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
 
-int debugzero = 0;
-
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -374,7 +372,7 @@ void adc_lld_start(ADCDriver *adcp) {
       PWR->CR |= PWR_CR_SDADC1EN;
       adcp->sdadc->CR2 = 0;
       adcp->sdadc->CR1 = (adcp->config->cr1 | SDADC_ENFORCED_CR1_FLAGS) &
-                          ~SDADC_FORBIDDEN_CR1_FLAGS;
+                         ~SDADC_FORBIDDEN_CR1_FLAGS;
       adcp->sdadc->CR2 = SDADC_CR2_ADON;
     }
 #endif /* STM32_ADC_USE_SDADC1 */
@@ -391,7 +389,7 @@ void adc_lld_start(ADCDriver *adcp) {
       PWR->CR |= PWR_CR_SDADC2EN;
       adcp->sdadc->CR2 = 0;
       adcp->sdadc->CR1 = (adcp->config->cr1 | SDADC_ENFORCED_CR1_FLAGS) &
-                          ~SDADC_FORBIDDEN_CR1_FLAGS;
+                         ~SDADC_FORBIDDEN_CR1_FLAGS;
       adcp->sdadc->CR2 = SDADC_CR2_ADON;
     }
 #endif /* STM32_ADC_USE_SDADC2 */
@@ -408,7 +406,7 @@ void adc_lld_start(ADCDriver *adcp) {
       PWR->CR |= PWR_CR_SDADC3EN;
       adcp->sdadc->CR2 = 0;
       adcp->sdadc->CR1 = (adcp->config->cr1 | SDADC_ENFORCED_CR1_FLAGS) &
-                          ~SDADC_FORBIDDEN_CR1_FLAGS;
+                         ~SDADC_FORBIDDEN_CR1_FLAGS;
       adcp->sdadc->CR2 = SDADC_CR2_ADON;
     }
 #endif /* STM32_ADC_USE_SDADC3 */
@@ -498,7 +496,11 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
 #if STM32_ADC_USE_ADC
   {
-    uint32_t cr2 = ADC_CR2_ADON;
+    uint32_t cr2 = adcp->adc->CR2 & ADC_CR2_TSVREFE;
+    cr2 |= grpp->u.adc.cr2 | ADC_CR2_DMA | ADC_CR2_ADON;
+    if ((cr2 & ADC_CR2_SWSTART) != 0)
+      cr2 |= ADC_CR2_CONT;
+    adcp->adc->CR2   = cr2;
 
     /* ADC setup.*/
     adcp->adc->SR    = 0;
@@ -514,9 +516,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     /* ADC conversion start, the start is performed using the method
        specified in the CR2 configuration, usually ADC_CR2_SWSTART.*/
     adcp->adc->CR1   = grpp->u.adc.cr1 | ADC_CR1_AWDIE | ADC_CR1_SCAN;
-    if ((grpp->u.adc.cr2 & ADC_CR2_SWSTART) != 0)
-      cr2 |= ADC_CR2_CONT;
-    adcp->adc->CR2 = grpp->u.adc.cr2 | cr2 | ADC_CR2_DMA | ADC_CR2_ADON;
+    adcp->adc->CR2   = adcp->adc->CR2;  /* Triggers the conversion start.*/
   }
 #endif /* STM32_ADC_USE_ADC */
 #if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
