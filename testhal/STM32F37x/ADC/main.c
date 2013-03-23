@@ -149,6 +149,7 @@ int main(void) {
    * measurement.
    */
   adcStart(&ADCD1, NULL);
+  adcSTM32Calibrate(&ADCD1);
   adcSTM32EnableTSVREFE();
   adcSTM32EnableVBATE();
 
