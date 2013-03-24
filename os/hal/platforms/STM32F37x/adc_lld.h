@@ -568,7 +568,7 @@ struct ADCDriver {
 /*===========================================================================*/
 
 /**
- * @name    Sequences building helper macros
+ * @name    Sequences building helper macros for ADC
  * @{
  */
 /**
@@ -622,6 +622,64 @@ struct ADCDriver {
                                                  sampling time.             */
 #define ADC_SMPR1_SMP_VBAT(n)   ((n) << 24) /**< @brief VBAT sampling time. */
 /** @} */
+
+/**
+ * @name    Sequences building helper macros for SDADC
+ * @{
+ */
+#define SDADC_JCHGR_CH(n)           (1U << (n))
+/** @} */
+
+/**
+ * @name    Channel configuration number helper macros for SDADC
+ * @{
+ */
+#define SDADC_CONFCHR1_CH0(n)       ((n) << 0)
+#define SDADC_CONFCHR1_CH1(n)       ((n) << 4)
+#define SDADC_CONFCHR1_CH2(n)       ((n) << 8)
+#define SDADC_CONFCHR1_CH3(n)       ((n) << 12)
+#define SDADC_CONFCHR1_CH4(n)       ((n) << 16)
+#define SDADC_CONFCHR1_CH5(n)       ((n) << 20)
+#define SDADC_CONFCHR1_CH6(n)       ((n) << 24)
+#define SDADC_CONFCHR1_CH7(n)       ((n) << 28)
+#define SDADC_CONFCHR2_CH8(n)       ((n) << 0)
+/** @} */
+
+/**
+ * @name    Configuration registers helper macros for SDADC
+ * @{
+ */
+#define SDADC_CONFR_OFFSET_MASK     (0xFFFU << 0)
+#define SDADC_CONFR_OFFSET(n)       ((n) << 0)
+#define SDADC_CONFR_GAIN_MASK       (7U << 20)
+#define SDADC_CONFR_GAIN_1X         (0U << 20)
+#define SDADC_CONFR_GAIN_2X         (1U << 20)
+#define SDADC_CONFR_GAIN_4X         (2U << 20)
+#define SDADC_CONFR_GAIN_8X         (3U << 20)
+#define SDADC_CONFR_GAIN_16X        (4U << 20)
+#define SDADC_CONFR_GAIN_32X        (5U << 20)
+#define SDADC_CONFR_GAIN_0P5X       (7U << 20)
+#define SDADC_CONFR_SE_MASK         (3U << 26)
+#define SDADC_CONFR_SE_DIFF         (0U << 26)
+#define SDADC_CONFR_SE_SE_OFF       (1U << 26)
+#define SDADC_CONFR_SE_SE_ZV        (3U << 26)
+#define SDADC_CONFR_COMMON_MASK     (3U << 30)
+#define SDADC_CONFR_COMMON_VSSSD    (0U << 30)
+#define SDADC_CONFR_COMMON_VDDSD2   (1U << 30)
+#define SDADC_CONFR_COMMON_VDDSD    (2U << 30)
+/** @} */
+
+#define  SDADC_CONF1R_OFFSET1                    ((uint32_t)0x00000FFF)       /*!< 12-bit calibration offset for configuration 1 */
+#define  SDADC_CONF1R_GAIN1                      ((uint32_t)0x00700000)       /*!< Gain setting for configuration 1 */
+#define  SDADC_CONF1R_GAIN1_0                    ((uint32_t)0x00100000)       /*!< Gain setting for configuration 1 Bit 0 */
+#define  SDADC_CONF1R_GAIN1_1                    ((uint32_t)0x00200000)       /*!< Gain setting for configuration 1 Bit 1 */
+#define  SDADC_CONF1R_GAIN1_2                    ((uint32_t)0x00400000)       /*!< Gain setting for configuration 1 Bit 2 */
+#define  SDADC_CONF1R_SE1                        ((uint32_t)0x0C000000)       /*!< Single ended mode for configuration 1 */
+#define  SDADC_CONF1R_SE1_0                      ((uint32_t)0x04000000)       /*!< Single ended mode for configuration 1 Bit 0 */
+#define  SDADC_CONF1R_SE1_1                      ((uint32_t)0x08000000)       /*!< Single ended mode for configuration 1 Bit 1 */
+#define  SDADC_CONF1R_COMMON1                    ((uint32_t)0xC0000000)       /*!< Common mode for configuration 1 */
+#define  SDADC_CONF1R_COMMON1_0                  ((uint32_t)0x40000000)       /*!< Common mode for configuration 1 Bit 0 */
+#define  SDADC_CONF1R_COMMON1_1                  ((uint32_t)0x40000000)       /*!< Common mode for configuration 1 Bit 1 */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

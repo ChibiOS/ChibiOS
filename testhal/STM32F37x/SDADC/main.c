@@ -53,26 +53,24 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 
 /*
  * ADC conversion group.
- * Mode:        Linear buffer, 8 samples of 2 channels, SW triggered.
- * Channels:    IN7, IN8.
+ * Mode:        Linear buffer, 8 samples of 1 channel, SW triggered.
+ * Channels:    ADC_IN6P.
  */
 static const ADCConversionGroup adcgrpcfg1 = {
   FALSE,
   ADC_GRP1_NUM_CHANNELS,
   NULL,
   adcerrorcallback,
-  .u.adc = {
-    0,                      /* CR1      */
-    0,                      /* CR2      */
-    0,                      /* LTR      */
-    4095,                   /* HTR      */
-    {                       /* SMPR[2]  */
+  .u.sdadc = {
+    SDADC_CR2_JSWSTART,     /* CR2      */
+    SDADC_JCHGR_CH(6),      /* JCHGR    */
+    {                       /* CONFxR[3]*/
+      SDADC_CONFR_GAIN_1X | SDADC_CONFR_SE_DIFF | SDADC_CONFR_COMMON_VSSSD,
       0,
       0
     },
-    {                       /* SQR[3]   */
-      0,
-      0,
+    {                       /* CONFCHR[2]*/
+      SDADC_CONFCHR1_CH6(0),
       0
     }
   }

@@ -572,9 +572,10 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
 #endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
 #if STM32_ADC_USE_ADC
   {
+    uint32_t cr2 = adcp->adc->CR2 & ADC_CR2_TSVREFE;
+    adcp->adc->CR2 = cr2;
     adcp->adc->CR1 = 0;
-    adcp->adc->CR2 = 0;
-    adcp->adc->CR2 = ADC_CR2_ADON;
+    adcp->adc->CR2 = cr2 | ADC_CR2_ADON;
   }
 #endif /* STM32_ADC_USE_ADC */
 #if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
