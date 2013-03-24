@@ -54,7 +54,7 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 /*
  * ADC conversion group.
  * Mode:        Linear buffer, 8 samples of 1 channel, SW triggered.
- * Channels:    ADC_IN6P.
+ * Channels:    ADC_IN5P.
  */
 static const ADCConversionGroup adcgrpcfg1 = {
   FALSE,
@@ -63,14 +63,14 @@ static const ADCConversionGroup adcgrpcfg1 = {
   adcerrorcallback,
   .u.sdadc = {
     SDADC_CR2_JSWSTART,     /* CR2      */
-    SDADC_JCHGR_CH(6),      /* JCHGR    */
+    SDADC_JCHGR_CH(5),      /* JCHGR    */
     {                       /* CONFxR[3]*/
       SDADC_CONFR_GAIN_1X | SDADC_CONFR_SE_DIFF | SDADC_CONFR_COMMON_VSSSD,
       0,
       0
     },
     {                       /* CONFCHR[2]*/
-      SDADC_CONFCHR1_CH6(0),
+      SDADC_CONFCHR1_CH5(0),
       0
     }
   }
