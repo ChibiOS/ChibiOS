@@ -14,7 +14,7 @@
 
 /**
  * @file    eTimer_v1/icu_lld.c
- * @brief   SPC5xx low level ICU driver header.
+ * @brief   SPC5xx low level ICU driver code.
  *
  * @addtogroup ICU
  * @{

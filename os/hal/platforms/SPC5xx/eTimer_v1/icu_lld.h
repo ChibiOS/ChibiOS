@@ -13,7 +13,7 @@
  */
 
 /**
- * @file    eTimer_v1/icu_lld.c
+ * @file    eTimer_v1/icu_lld.h
  * @brief   SPC5xx low level ICU driver header.
  *
  * @addtogroup ICU
@@ -89,8 +89,8 @@
  */
 #if SPC5_HAS_ETIMER0
 /**
- * @brief   ICUD0 driver enable switch.
- * @details If set to @p TRUE the support for ICUD0 is included.
+ * @brief   ICUD1 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD1 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD0) || defined(__DOXYGEN__)
@@ -98,8 +98,8 @@
 #endif
 
 /**
- * @brief   ICUD1 driver enable switch.
- * @details If set to @p TRUE the support for ICUD1 is included.
+ * @brief   ICUD2 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD2 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD1) || defined(__DOXYGEN__)
@@ -107,8 +107,8 @@
 #endif
 
 /**
- * @brief   ICUD2 driver enable switch.
- * @details If set to @p TRUE the support for ICUD2 is included.
+ * @brief   ICUD3 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD3 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD2) || defined(__DOXYGEN__)
@@ -116,8 +116,8 @@
 #endif
 
 /**
- * @brief   ICUD3 driver enable switch.
- * @details If set to @p TRUE the support for ICUD3 is included.
+ * @brief   ICUD4 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD4 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD3) || defined(__DOXYGEN__)
@@ -125,8 +125,8 @@
 #endif
 
 /**
- * @brief   ICUD4 driver enable switch.
- * @details If set to @p TRUE the support for ICUD4 is included.
+ * @brief   ICUD5 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD5 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD4) || defined(__DOXYGEN__)
@@ -134,8 +134,8 @@
 #endif
 
 /**
- * @brief   ICUD5 driver enable switch.
- * @details If set to @p TRUE the support for ICUD5 is included.
+ * @brief   ICUD6 driver enable switch.
+ * @details If set to @p TRUE the support for ICUD6 is included.
  * @note    The default is @p TRUE.
  */
 #if !defined(SPC5_ICU_USE_SMOD5) || defined(__DOXYGEN__)
