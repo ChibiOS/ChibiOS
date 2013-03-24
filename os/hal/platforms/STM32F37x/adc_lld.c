@@ -45,7 +45,6 @@
 #define SDADC_FORBIDDEN_CR2_FLAGS   (SDADC_CR2_RSWSTART   |                 \
                                      SDADC_CR2_RCONT      |                 \
                                      SDADC_CR2_RCH        |                 \
-                                     SDADC_CR2_JSWSTART   |                 \
                                      SDADC_CR2_JCONT      |                 \
                                      SDADC_CR2_STARTCALIB |                 \
                                      SDADC_CR2_CALIBCNT)
@@ -93,6 +92,7 @@ static const ADCConfig adc_lld_default_config = {0};
  * @notapi
  */
 static void adc_lld_serve_dma_interrupt(ADCDriver *adcp, uint32_t flags) {
+
   /* DMA errors handling.*/
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
     /* DMA, this could help only if the DMA tries to access an unmapped
@@ -530,6 +530,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
       ;
 
     /* SDADC setup.*/
+    adcp->sdadc->JCHGR    = grpp->u.sdadc.jchgr;
     adcp->sdadc->CONF0R   = grpp->u.sdadc.confxr[0];
     adcp->sdadc->CONF1R   = grpp->u.sdadc.confxr[1];
     adcp->sdadc->CONF2R   = grpp->u.sdadc.confxr[2];
@@ -542,7 +543,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     /* SDADC conversion start, the start is performed using the method
        specified in the CR2 configuration, usually SDADC_CR2_JSWSTART.*/
     adcp->sdadc->CR2 = cr2;
-//    adcp->sdadc->CR2 = adcp->sdadc->CR2;  /* Triggers the conversion start.*/
   }
 #endif /* STM32_ADC_USE_SDADC */
 #if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
