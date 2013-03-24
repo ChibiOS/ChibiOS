@@ -59,16 +59,6 @@
 ADCDriver ADCD1;
 #endif
 
-/** @brief ADC2 driver identifier.*/
-#if STM32_ADC_USE_ADC2 || defined(__DOXYGEN__)
-ADCDriver ADCD2;
-#endif
-
-/** @brief ADC3 driver identifier.*/
-#if STM32_ADC_USE_ADC3 || defined(__DOXYGEN__)
-ADCDriver ADCD3;
-#endif
-
 /** @brief SDADC1 driver identifier.*/
 #if STM32_ADC_USE_SDADC1 || defined(__DOXYGEN__)
 ADCDriver SDADCD1;
@@ -87,6 +77,8 @@ ADCDriver SDADCD3;
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
+
+static const ADCConfig adc_lld_default_config = {0};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -339,6 +331,9 @@ void adc_lld_init(void) {
  */
 void adc_lld_start(ADCDriver *adcp) {
 
+  if (adcp->config == NULL)
+    adcp->config = &adc_lld_default_config;
+
   /* If in stopped state then enables the ADC and DMA clocks.*/
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
@@ -524,7 +519,10 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
 #if STM32_ADC_USE_SDADC
   {
-    uint32_t cr2 = SDADC_CR2_ADON;
+    uint32_t cr2 = (grpp->u.sdadc.cr2 & ~SDADC_FORBIDDEN_CR2_FLAGS) |
+                   SDADC_CR2_ADON;
+    if ((grpp->u.sdadc.cr2 & SDADC_CR2_JSWSTART) != 0)
+      cr2 |= SDADC_CR2_JCONT;
 
     /* Entering initialization mode.*/
     adcp->sdadc->CR1 |= SDADC_CR1_INIT;
@@ -543,9 +541,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
     /* SDADC conversion start, the start is performed using the method
        specified in the CR2 configuration, usually SDADC_CR2_JSWSTART.*/
-    if ((grpp->u.sdadc.cr2 & SDADC_CR2_JSWSTART) != 0)
-      cr2 |= SDADC_CR2_JCONT;
-    adcp->sdadc->CR2 = (grpp->u.sdadc.cr2 & ~SDADC_FORBIDDEN_CR2_FLAGS) | cr2;
+    adcp->sdadc->CR2 = cr2;
+//    adcp->sdadc->CR2 = adcp->sdadc->CR2;  /* Triggers the conversion start.*/
   }
 #endif /* STM32_ADC_USE_SDADC */
 #if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
@@ -704,80 +701,6 @@ void adcSTM32DisableVBATE(void) {
   SYSCFG->CFGR1 &= ~SYSCFG_CFGR1_VBAT;
 }
 #endif /* STM32_ADC_USE_ADC */
-
-#if 0 || defined(__DOXYGEN__)
-/**
-  * @brief  Configures the calibration sequence.
-  * @note   TODO - UPDATE
-  * @param  ADCDriver*  one of &SDADCD1, &SDADCD2, &SDADCD3
-  * @param  SDADC_CalibrationSequence: Number of calibration sequence to be performed.
-  *          This parameter can be one of the following values:
-  *            @arg SDADC_CalibrationSequence_1: One calibration sequence will be performed
-  *                                      to calculate OFFSET0[11:0] (offset that corresponds to conf0)
-  *            @arg SDADC_CalibrationSequence_2: Two calibration sequences will be performed
-  *                                      to calculate OFFSET0[11:0] and OFFSET1[11:0]
-  *                                      (offsets that correspond to conf0 and conf1)
-  *            @arg SDADC_CalibrationSequence_3: Three calibration sequences will be performed
-  *                                      to calculate OFFSET0[11:0], OFFSET1[11:0], 
-  *                                      and OFFSET2[11:0] (offsets that correspond to conf0, conf1 and conf2)
-  * @retval None
-  */
-void sdadcSTM32Calibrate(ADCDriver* adcp,
-			 SDADC_NUM_CALIB_SEQ numCalibSequences,
-			 ADCConversionGroup* grpp)
-{
-  uint32_t SDADCTimeout = 0;
-  uint32_t tmpcr2 = 0;
-
-  if (!(adcp == &SDADCD1 ||
-	adcp == &SDADCD2 ||
-	adcp == &SDADCD3))
-      return;
-
-  sdadcSTM32SetInitializationMode(adcp, true);
-
-  /* SDADC setup.*/
-  adcp->sdadc->CR2      = grpp->ll.sdadc.cr2;
-  adcp->sdadc->CONF0R   = grpp->ll.sdadc.conf0r;
-  adcp->sdadc->CONF1R   = grpp->ll.sdadc.conf1r;
-  adcp->sdadc->CONF2R   = grpp->ll.sdadc.conf2r;
-  adcp->sdadc->CONFCHR1 = grpp->ll.sdadc.confchr1;
-  adcp->sdadc->CONFCHR2 = grpp->ll.sdadc.confchr2;
-
-  sdadcSTM32SetInitializationMode(adcp, false);
-
-  /* configure calibration to be performed on conf0 */
-  /* Get SDADC_CR2 register value */
-  tmpcr2 = adcp->sdadc->CR2;
-
-  /* Clear the SDADC_CR2_CALIBCNT bits */
-  tmpcr2 &= (uint32_t) (~SDADC_CR2_CALIBCNT);
-  /* Set the calibration sequence */
-  tmpcr2 |= numCalibSequences;
-
-  /* 
-     Write in SDADC_CR2 and
-     start calibration 
-  */
-  adcp->sdadc->CR2 = tmpcr2 | SDADC_CR2_STARTCALIB;
- 
-  /* Set calibration timeout: 5.12 ms at 6 MHz in a single calibration sequence */
-  SDADCTimeout = SDADC_CAL_TIMEOUT;
-
-  /* wait for SDADC Calibration process to end */
-  while (((adcp->sdadc->ISR & SDADC_ISR_EOCALF) == 0) && (--SDADCTimeout != 0));
-
-  if(SDADCTimeout == 0)
-  {
-    /* Calib timeout */
-    port_halt();
-    return;
-  }
-
-  /* cleanup by clearing EOCALF flag */
-  adcp->sdadc->CLRISR |= SDADC_ISR_CLREOCALF;
-}
-#endif /* STM32_ADC_USE_SDADC */
 
 #endif /* HAL_USE_ADC */
 

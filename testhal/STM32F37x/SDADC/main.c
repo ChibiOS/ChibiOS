@@ -21,7 +21,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#define ADC_GRP1_NUM_CHANNELS   2
+#define ADC_GRP1_NUM_CHANNELS   1
 #define ADC_GRP1_BUF_DEPTH      8
 
 #define ADC_GRP2_NUM_CHANNELS   8
@@ -140,38 +140,33 @@ int main(void) {
   chSysInit();
 
   /*
-   * Setting up analog inputs used by the demo.
-   */
-  palSetGroupMode(GPIOC, PAL_PORT_BIT(1) | PAL_PORT_BIT(2),
-                  0, PAL_MODE_INPUT_ANALOG);
-
-  /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Activates the ADC1 driver and the temperature sensor.
+   * Activates the SDADC1 driver.
    */
-  adcStart(&ADCD1, NULL);
+  adcStart(&SDADCD1, NULL);
+  adcSTM32Calibrate(&SDADCD1);
 
   /*
    * Linear conversion.
    */
-  adcConvert(&ADCD1, &adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
+  adcConvert(&SDADCD1, &adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
   chThdSleepMilliseconds(1000);
 
   /*
    * Starts an ADC continuous conversion.
    */
-//  adcStartConversion(&ADCD1, &adcgrpcfg2, samples2, ADC_GRP2_BUF_DEPTH);
+//  adcStartConversion(&SDADC1, &adcgrpcfg2, samples2, ADC_GRP2_BUF_DEPTH);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (TRUE) {
     if (palReadPad(GPIOA, GPIOA_WKUP_BUTTON)) {
-//      adcStopConversion(&ADCD1);
+//      adcStopConversion(&SDADCD1);
     }
     chThdSleepMilliseconds(500);
   }
