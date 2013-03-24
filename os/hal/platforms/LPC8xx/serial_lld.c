@@ -131,7 +131,9 @@ static void serve_interrupt(SerialDriver *sdp) {
     
     if (u->INTSTAT & (STAT_OVERRUN | STAT_DELTARXBRK |
                       STAT_FRAMERR | STAT_PARITYERR) ) {
-      set_error(sdp, u->STAT);
+      IOREG32 stat = u->STAT;
+      set_error(sdp, stat);
+      u->STAT = stat;
     }
 
   }
