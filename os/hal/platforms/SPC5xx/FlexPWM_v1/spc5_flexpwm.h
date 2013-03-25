@@ -13,15 +13,15 @@
  */
 
 /**
- * @file    FlexPWM_v1/flexpwm.h
+ * @file    FlexPWM_v1/spc5_flexpwm.h
  * @brief   SPC5xx FlexPWM header file.
  *
  * @addtogroup PWM
  * @{
  */
 
-#ifndef _FLEXPWM_H_
-#define _FLEXPWM_H_
+#ifndef _SPC5_FLEXPWM_H_
+#define _SPC5_FLEXPWM_H_
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -466,7 +466,6 @@ struct spc5_flexpwm {
   } FFILT; /* Fault FilterRegister */
 
 };
-/* end of FLEXPWM_tag */
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -476,15 +475,15 @@ struct spc5_flexpwm {
  * @name    FlexPWM units references
  * @{
  */
-#if SPC5_HAS_FLEXPWM0
+#if SPC5_HAS_FLEXPWM0 || defined(__DOXYGEN__)
 #define SPC5_FLEXPWM_0      (*(volatile struct spc5_flexpwm *)0xFFE24000UL)
 #endif
 
-#if SPC5_HAS_FLEXPWM1
+#if SPC5_HAS_FLEXPWM1 || defined(__DOXYGEN__)
 #define SPC5_FLEXPWM_1      (*(volatile struct spc5_flexpwm *)0xFFE28000UL)
 #endif
 /** @} */
 
-#endif /* _FLEXPWM_H_ */
+#endif /* _SPC5_FLEXPWM_H_ */
 
 /** @} */

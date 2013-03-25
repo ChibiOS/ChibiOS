@@ -66,7 +66,7 @@ CSRC = $(PORTSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/various/shell.c \
        $(CHIBIOS)/os/various/chprintf.c \
-       adc_cfg.c main.c
+       main.c
 
 # C++ sources here.
 CPPSRC =

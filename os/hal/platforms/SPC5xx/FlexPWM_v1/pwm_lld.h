@@ -20,12 +20,12 @@
  * @{
  */
 
-#include "spc5_flexpwm.h"
-
 #ifndef _PWM_LLD_H_
 #define _PWM_LLD_H_
 
 #if HAL_USE_PWM || defined(__DOXYGEN__)
+
+#include "spc5_flexpwm.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

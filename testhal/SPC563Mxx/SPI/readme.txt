@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT HAL - ADC driver demo for SPC563Mxx.                         **
+** ChibiOS/RT HAL - SPI driver demo for SPC563Mxx.                         **
 *****************************************************************************
 
 ** TARGET **
@@ -9,11 +9,9 @@ XPC56xx EVB Motherboard.
 
 ** The Demo **
 
-The application demonstrates the use of the SPC563Mxx ADC driver.
+The application demonstrates the use of the SPC563Mxx SPI driver.
 
 ** Board Setup **
-
-None.
 
 ** Build Procedure **
 

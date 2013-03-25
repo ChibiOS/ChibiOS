@@ -22,9 +22,10 @@
 
 #ifndef _ICU_LLD_H_
 #define _ICU_LLD_H_
-#include "spc5_etimer.h"
 
 #if HAL_USE_ICU || defined(__DOXYGEN__)
+
+#include "spc5_etimer.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
