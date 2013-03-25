@@ -40,9 +40,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   SPI1 driver identifier.
+ * @brief   SPID1 driver identifier.
  */
-#if SPC5_SPI_USE_SPI1 || defined(__DOXYGEN__)
+#if SPC5_SPI_USE_DSPI1 || defined(__DOXYGEN__)
 SPIDriver SPID1;
 #endif
 

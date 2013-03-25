@@ -84,4 +84,4 @@
 /*
  * SPI driver system settings.
  */
-#define SPC5_SPI_USE_DSPI1                  FALSE
+#define SPC5_SPI_USE_DSPI1                  TRUE

@@ -132,7 +132,7 @@ struct SPIDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if SPC5_SPI_USE_SPI1 && !defined(__DOXYGEN__)
+#if SPC5_SPI_USE_DSPI1 && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;
 #endif
 

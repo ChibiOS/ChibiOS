@@ -100,17 +100,8 @@ int main(void) {
   chSysInit();
 
   /*
-   * SPI2 I/O pins setup.
+   * SPI1 I/O pins setup.
    */
-  palSetPadMode(GPIOB, 13, PAL_MODE_ALTERNATE(5) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New SCK.     */
-  palSetPadMode(GPIOB, 14, PAL_MODE_ALTERNATE(5) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New MISO.    */
-  palSetPadMode(GPIOB, 15, PAL_MODE_ALTERNATE(5) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New MOSI.    */
-  palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New CS.      */
-  palSetPad(GPIOB, 12);
 
   /*
    * Prepare transmit pattern.
