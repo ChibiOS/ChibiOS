@@ -525,10 +525,10 @@ void adc_lld_init(void) {
 
 #if SPC5_ADC_USE_ADC1_Q5
   /* Driver initialization.*/
-  adcObjectInit(&ADCD4);
-  ADCD4.cfifo_channel = EDMA_ERROR;
-  ADCD4.rfifo_channel = EDMA_ERROR;
-  ADCD4.fifo          = ADC_FIFO_5;
+  adcObjectInit(&ADCD6);
+  ADCD6.cfifo_channel = EDMA_ERROR;
+  ADCD6.rfifo_channel = EDMA_ERROR;
+  ADCD6.fifo          = ADC_FIFO_5;
 #endif /* SPC5_ADC_USE_ADC1_Q5 */
 
   /* Temporarily enables CFIFO0 for calibration and initialization.*/
