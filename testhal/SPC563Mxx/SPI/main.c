@@ -50,14 +50,14 @@ static msg_t spi_thread_1(void *p) {
   (void)p;
   chRegSetThreadName("SPI thread 1");
   while (TRUE) {
-    spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
+    spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
     palSetPad(PORT11, P11_LED1);        /* LED ON.                          */
-    spiStart(&SPID1, &hs_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&SPID1);                  /* Slave Select assertion.          */
-    spiExchange(&SPID1, 512,
+    spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
+    spiSelect(&SPID2);                  /* Slave Select assertion.          */
+    spiExchange(&SPID2, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiUnselect(&SPID1);                /* Slave Select de-assertion.       */
-    spiReleaseBus(&SPID1);              /* Ownership release.               */
+    spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
+    spiReleaseBus(&SPID2);              /* Ownership release.               */
   }
   return 0;
 }
@@ -71,14 +71,14 @@ static msg_t spi_thread_2(void *p) {
   (void)p;
   chRegSetThreadName("SPI thread 2");
   while (TRUE) {
-    spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
+    spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
     palClearPad(PORT11, P11_LED1);      /* LED OFF.                         */
-    spiStart(&SPID1, &ls_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&SPID1);                  /* Slave Select assertion.          */
-    spiExchange(&SPID1, 512,
+    spiStart(&SPID2, &ls_spicfg);       /* Setup transfer parameters.       */
+    spiSelect(&SPID2);                  /* Slave Select assertion.          */
+    spiExchange(&SPID2, 512,
                 txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiUnselect(&SPID1);                /* Slave Select de-assertion.       */
-    spiReleaseBus(&SPID1);              /* Ownership release.               */
+    spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
+    spiReleaseBus(&SPID2);              /* Ownership release.               */
   }
   return 0;
 }

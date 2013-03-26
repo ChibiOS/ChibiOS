@@ -254,19 +254,19 @@ struct spc5_dspi {
  * @{
  */
 #if SPC5_HAS_DSPI0 || defined(__DOXYGEN__)
-#define SPC5_DSPI_0     (*(volatile struct spc5_dspi *)0xFFF90000UL)
+#define SPC5_DSPI0      (*(struct spc5_dspi *)0xFFF90000UL)
 #endif
 
 #if SPC5_HAS_DSPI1 || defined(__DOXYGEN__)
-#define SPC5_DSPI_1     (*(volatile struct spc5_dspi *)0xFFF94000UL)
+#define SPC5_DSPI1      (*(struct spc5_dspi *)0xFFF94000UL)
 #endif
 
-#if SPC5_HAS_DSP2 || defined(__DOXYGEN__)
-#define SPC5_DSPI_2     (*(volatile struct spc5_dspi *)0xFFF98000UL)
+#if SPC5_HAS_DSPI2 || defined(__DOXYGEN__)
+#define SPC5_DSPI2      (*(struct spc5_dspi *)0xFFF98000UL)
 #endif
 
 #if SPC5_HAS_DSPI3 || defined(__DOXYGEN__)
-#define SPC5_DSPI_3     (*(volatile struct spc5_dspi *)0xFFF9C000UL)
+#define SPC5_DSPI3      (*(struct spc5_dspi *)0xFFF9C000UL)
 #endif
 /** @} */
 

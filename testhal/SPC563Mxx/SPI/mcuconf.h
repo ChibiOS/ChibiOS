@@ -85,3 +85,8 @@
  * SPI driver system settings.
  */
 #define SPC5_SPI_USE_DSPI1                  TRUE
+#define SPC5_SPI_USE_DSPI2                  TRUE
+#define SPC5_SPI_DSPI1_DMA_PRIO             10
+#define SPC5_SPI_DSPI2_DMA_PRIO             10
+#define SPC5_SPI_DSPI1_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI2_DMA_IRQ_PRIO         10

@@ -31,6 +31,25 @@
  * @name    SPC563Mxx capabilities
  * @{
  */
+/* DSPI attribures.*/
+#define SPC5_HAS_DSPI0                      FALSE
+#define SPC5_HAS_DSPI1                      TRUE
+#define SPC5_HAS_DSPI2                      TRUE
+#define SPC5_HAS_DSPI3                      FALSE
+#define SPC5_DSPI_FIFO_DEPTH                16
+#define SPC5_DSPI1_TX_DMA_DEV_ID            12
+#define SPC5_DSPI1_RX_DMA_DEV_ID            13
+#define SPC5_DSPI2_TX_DMA_DEV_ID            14
+#define SPC5_DSPI2_RX_DMA_DEV_ID            15
+#define SPC5_DSPI1_EOQF_HANDLER             vector132
+#define SPC5_DSPI1_EOQF_NUMBER              132
+#define SPC5_DSPI2_EOQF_HANDLER             vector137
+#define SPC5_DSPI2_EOQF_NUMBER              137
+#define SPC5_DSPI1_ENABLE_CLOCK()
+#define SPC5_DSPI1_DISABLE_CLOCK()
+#define SPC5_DSPI2_ENABLE_CLOCK()
+#define SPC5_DSPI2_DISABLE_CLOCK()
+
 /* eDMA attributes.*/
 #define SPC5_HAS_EDMAA                      TRUE
 #define SPC5_EDMA_NCHANNELS                 32
