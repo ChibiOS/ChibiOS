@@ -240,28 +240,28 @@
  * @brief   PWMD5 interrupt priority level setting.
  */
 #if !defined(SPC5_PWM_SMOD4_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PWM_SMOD4_PRIORITY          7
+#define SPC5_PWM_SMOD4_PRIORITY             7
 #endif
 
 /**
  * @brief   PWMD6 interrupt priority level setting.
  */
 #if !defined(SPC5_PWM_SMOD5_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PWM_SMOD5_PRIORITY          7
+#define SPC5_PWM_SMOD5_PRIORITY             7
 #endif
 
 /**
  * @brief   PWMD7 interrupt priority level setting.
  */
 #if !defined(SPC5_PWM_SMOD6_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PWM_SMOD6_PRIORITY          7
+#define SPC5_PWM_SMOD6_PRIORITY             7
 #endif
 
 /**
  * @brief   PWMD8 interrupt priority level setting.
  */
 #if !defined(SPC5_PWM_SMOD7_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_PWM_SMOD7_PRIORITY          7
+#define SPC5_PWM_SMOD7_PRIORITY             7
 #endif
 
 /**

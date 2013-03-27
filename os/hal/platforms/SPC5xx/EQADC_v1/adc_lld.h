@@ -458,11 +458,11 @@
 #error "EQADC not present in the selected device"
 #endif
 
-#define SPC5_ADC_USE_ADC0                   (SPC5_ADC_USE_ADC0_Q0 |         \
-                                             SPC5_ADC_USE_ADC0_Q1 |         \
+#define SPC5_ADC_USE_ADC0                   (SPC5_ADC_USE_ADC0_Q0 ||        \
+                                             SPC5_ADC_USE_ADC0_Q1 ||        \
                                              SPC5_ADC_USE_ADC0_Q2)
-#define SPC5_ADC_USE_ADC1                   (SPC5_ADC_USE_ADC1_Q3 |         \
-                                             SPC5_ADC_USE_ADC1_Q4 |         \
+#define SPC5_ADC_USE_ADC1                   (SPC5_ADC_USE_ADC1_Q3 ||        \
+                                             SPC5_ADC_USE_ADC1_Q4 ||        \
                                              SPC5_ADC_USE_ADC1_Q5)
 
 #if !SPC5_ADC_USE_ADC0 && !SPC5_ADC_USE_ADC1
