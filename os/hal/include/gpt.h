@@ -76,6 +76,23 @@ typedef void (*gptcallback_t)(GPTDriver *gptp);
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Changes the interval of GPT peripheral.
+ * @details This function changes the interval of a running GPT unit.
+ * @pre     The GPT unit must have been activated using @p gptStart().
+ * @pre     The GPT unit must have been running in continuous mode using
+ *          @p gptStartContinuous().
+ * @post    The GPT unit interval is changed to the new value.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ * @param[in] interval  new cycle time in timer ticks
+ *
+ * @iclass
+ */
+#define stm32_gptChangeIntervalI(gptp, interval) {                            \
+  gpt_lld_change_interval(gptp, interval);                                    \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -89,6 +106,7 @@ extern "C" {
   void gptStop(GPTDriver *gptp);
   void gptStartContinuous(GPTDriver *gptp, gptcnt_t interval);
   void gptStartContinuousI(GPTDriver *gptp, gptcnt_t interval);
+  void stm32_gptChangeInterval(GPTDriver *gptp, gptcnt_t interval);
   void gptStartOneShot(GPTDriver *gptp, gptcnt_t interval);
   void gptStartOneShotI(GPTDriver *gptp, gptcnt_t interval);
   void gptStopTimer(GPTDriver *gptp);

@@ -117,6 +117,30 @@ void gptStop(GPTDriver *gptp) {
 }
 
 /**
+ * @brief   Changes the interval of GPT peripheral.
+ * @details This function changes the interval of a running GPT unit.
+ * @pre     The GPT unit must have been activated using @p gptStart().
+ * @pre     The GPT unit must have been running in continuous mode using
+ *          @p gptStartContinuous().
+ * @post    The GPT unit interval is changed to the new value.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ * @param[in] interval  new cycle time in timer ticks
+ *
+ * @api
+ */
+void stm32_gptChangeInterval(GPTDriver *gptp, gptcnt_t interval) {
+
+  chDbgCheck(gptp != NULL, "gptChangeInterval");
+
+  chSysLock();
+  chDbgAssert(gptp->state == GPT_CONTINUOUS,
+              "gptChangeInterval(), #1", "invalid state");
+  stm32_gptChangeIntervalI(gptp, interval);
+  chSysUnlock();
+}
+
+/**
  * @brief   Starts the timer in continuous mode.
  *
  * @param[in] gptp      pointer to the @p GPTDriver object
