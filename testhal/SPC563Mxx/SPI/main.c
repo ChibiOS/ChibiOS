@@ -119,6 +119,10 @@ int main(void) {
   for (i = 0; i < sizeof(txbuf); i++)
     txbuf[i] = (uint8_t)i;
 
+  spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
+  spiExchange(&SPID2, 512,
+              txbuf, rxbuf);          /* Atomic transfer operations.      */
+
   /*
    * Starting the transmitter and receiver threads.
    */
