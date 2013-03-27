@@ -89,6 +89,106 @@
 /** @} */
 
 /**
+ * @name    CTAR registers definitions
+ * @{
+ */
+#define SPC5_CTAR_DBR                       (1U << 31)
+#define SPC5_CTAR_FMSZ_MASK                 (15U << 27)
+#define SPC5_CTAR_FMSZ(n)                   (((n) - 1) << 27)
+#define SPC5_CTAR_CPOL                      (1U << 26)
+#define SPC5_CTAR_CPHA                      (1U << 25)
+#define SPC5_CTAR_LSBFE                     (1U << 24)
+#define SPC5_CTAR_PCSSCK_MASK               (3U << 22)
+#define SPC5_CTAR_PCSSCK_PRE1               (0U << 22)
+#define SPC5_CTAR_PCSSCK_PRE3               (1U << 22)
+#define SPC5_CTAR_PCSSCK_PRE5               (2U << 22)
+#define SPC5_CTAR_PCSSCK_PRE7               (3U << 22)
+#define SPC5_CTAR_PASC_MASK                 (3U << 20)
+#define SPC5_CTAR_PASC_PRE1                 (0U << 20)
+#define SPC5_CTAR_PASC_PRE3                 (1U << 20)
+#define SPC5_CTAR_PASC_PRE5                 (2U << 20)
+#define SPC5_CTAR_PASC_PRE7                 (3U << 20)
+#define SPC5_CTAR_PDT_MASK                  (3U << 18)
+#define SPC5_CTAR_PDT_PRE1                  (0U << 18)
+#define SPC5_CTAR_PDT_PRE3                  (1U << 18)
+#define SPC5_CTAR_PDT_PRE5                  (2U << 18)
+#define SPC5_CTAR_PDT_PRE7                  (3U << 18)
+#define SPC5_CTAR_PBR_MASK                  (3U << 16)
+#define SPC5_CTAR_PBR_PRE2                  (0U << 16)
+#define SPC5_CTAR_PBR_PRE3                  (1U << 16)
+#define SPC5_CTAR_PBR_PRE5                  (2U << 16)
+#define SPC5_CTAR_PBR_PRE7                  (3U << 16)
+#define SPC5_CTAR_CSSCK_MASK                (15U << 12)
+#define SPC5_CTAR_CSSCK_DIV2                (0U << 12)
+#define SPC5_CTAR_CSSCK_DIV4                (1U << 12)
+#define SPC5_CTAR_CSSCK_DIV6                (2U << 12)
+#define SPC5_CTAR_CSSCK_DIV8                (3U << 12)
+#define SPC5_CTAR_CSSCK_DIV16               (4U << 12)
+#define SPC5_CTAR_CSSCK_DIV32               (5U << 12)
+#define SPC5_CTAR_CSSCK_DIV64               (6U << 12)
+#define SPC5_CTAR_CSSCK_DIV128              (7U << 12)
+#define SPC5_CTAR_CSSCK_DIV256              (8U << 12)
+#define SPC5_CTAR_CSSCK_DIV512              (9U << 12)
+#define SPC5_CTAR_CSSCK_DIV1024             (10U << 12)
+#define SPC5_CTAR_CSSCK_DIV2048             (11U << 12)
+#define SPC5_CTAR_CSSCK_DIV4096             (12U << 12)
+#define SPC5_CTAR_CSSCK_DIV8192             (13U << 12)
+#define SPC5_CTAR_CSSCK_DIV16384            (14U << 12)
+#define SPC5_CTAR_CSSCK_DIV32768            (15U << 12)
+#define SPC5_CTAR_ASC_MASK                  (15U << 8)
+#define SPC5_CTAR_ASC_DIV2                  (0U << 8)
+#define SPC5_CTAR_ASC_DIV4                  (1U << 8)
+#define SPC5_CTAR_ASC_DIV6                  (2U << 8)
+#define SPC5_CTAR_ASC_DIV8                  (3U << 8)
+#define SPC5_CTAR_ASC_DIV16                 (4U << 8)
+#define SPC5_CTAR_ASC_DIV32                 (5U << 8)
+#define SPC5_CTAR_ASC_DIV64                 (6U << 8)
+#define SPC5_CTAR_ASC_DIV128                (7U << 8)
+#define SPC5_CTAR_ASC_DIV256                (8U << 8)
+#define SPC5_CTAR_ASC_DIV512                (9U << 8)
+#define SPC5_CTAR_ASC_DIV1024               (10U << 8)
+#define SPC5_CTAR_ASC_DIV2048               (11U << 8)
+#define SPC5_CTAR_ASC_DIV4096               (12U << 8)
+#define SPC5_CTAR_ASC_DIV8192               (13U << 8)
+#define SPC5_CTAR_ASC_DIV16384              (14U << 8)
+#define SPC5_CTAR_ASC_DIV32768              (15U << 8)
+#define SPC5_CTAR_DT_MASK                   (15U << 4)
+#define SPC5_CTAR_DT_DIV2                   (0U << 4)
+#define SPC5_CTAR_DT_DIV4                   (1U << 4)
+#define SPC5_CTAR_DT_DIV6                   (2U << 4)
+#define SPC5_CTAR_DT_DIV8                   (3U << 4)
+#define SPC5_CTAR_DT_DIV16                  (4U << 4)
+#define SPC5_CTAR_DT_DIV32                  (5U << 4)
+#define SPC5_CTAR_DT_DIV64                  (6U << 4)
+#define SPC5_CTAR_DT_DIV128                 (7U << 4)
+#define SPC5_CTAR_DT_DIV256                 (8U << 4)
+#define SPC5_CTAR_DT_DIV512                 (9U << 4)
+#define SPC5_CTAR_DT_DIV1024                (10U << 4)
+#define SPC5_CTAR_DT_DIV2048                (11U << 4)
+#define SPC5_CTAR_DT_DIV4096                (12U << 4)
+#define SPC5_CTAR_DT_DIV8192                (13U << 4)
+#define SPC5_CTAR_DT_DIV16384               (14U << 4)
+#define SPC5_CTAR_DT_DIV32768               (15U << 4)
+#define SPC5_CTAR_BR_MASK                   (15U << 0)
+#define SPC5_CTAR_BR_DIV2                   (0U << 0)
+#define SPC5_CTAR_BR_DIV4                   (1U << 0)
+#define SPC5_CTAR_BR_DIV6                   (2U << 0)
+#define SPC5_CTAR_BR_DIV8                   (3U << 0)
+#define SPC5_CTAR_BR_DIV16                  (4U << 0)
+#define SPC5_CTAR_BR_DIV32                  (5U << 0)
+#define SPC5_CTAR_BR_DIV64                  (6U << 0)
+#define SPC5_CTAR_BR_DIV128                 (7U << 0)
+#define SPC5_CTAR_BR_DIV256                 (8U << 0)
+#define SPC5_CTAR_BR_DIV512                 (9U << 0)
+#define SPC5_CTAR_BR_DIV1024                (10U << 0)
+#define SPC5_CTAR_BR_DIV2048                (11U << 0)
+#define SPC5_CTAR_BR_DIV4096                (12U << 0)
+#define SPC5_CTAR_BR_DIV8192                (13U << 0)
+#define SPC5_CTAR_BR_DIV16384               (14U << 0)
+#define SPC5_CTAR_BR_DIV32768               (15U << 0)
+/** @} */
+
+/**
  * @name    PUSHR register definitions
  * @{
  */
@@ -198,6 +298,13 @@
 #if !defined(SPC5_SPI_DSPI3_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
 #define SPC5_SPI_DSPI3_DMA_IRQ_PRIO         10
 #endif
+
+/**
+ * @brief   SPI DMA error hook.
+ */
+#if !defined(SPC5_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define SPC5_SPI_DMA_ERROR_HOOK(spip)       chSysHalt()
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -253,6 +360,14 @@ typedef struct {
    */
   spicallback_t         end_cb;
   /* End of the mandatory fields.*/
+  /**
+   * @brief The chip select line port.
+   */
+  ioportid_t            ssport;
+  /**
+   * @brief The chip select line pad number.
+   */
+  uint16_t              sspad;
   /**
    * @brief   DSPI MCR value for this session.
    * @note    Some bits are ignored: CONT_SCKE, DCONF, ROOE, MDIS, DIS_TXF,

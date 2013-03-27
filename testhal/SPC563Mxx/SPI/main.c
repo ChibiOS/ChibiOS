@@ -25,14 +25,24 @@
  * Maximum speed SPI configuration (21MHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig hs_spicfg = {
-  NULL
+  NULL,
+  0,
+  0,
+  0,                                                            /* MCR.     */
+  SPC5_CTAR_FMSZ(8) | SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV2,   /* CTAR0.   */
+  0                                                             /* PUSHR.   */
 };
 
 /*
  * Low speed SPI configuration (328.125kHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig ls_spicfg = {
-  NULL
+  NULL,
+  0,
+  0,
+  0,                                                            /* MCR.     */
+  SPC5_CTAR_FMSZ(8) | SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV256, /* CTAR0.   */
+  0                                                             /* PUSHR.   */
 };
 
 /*
