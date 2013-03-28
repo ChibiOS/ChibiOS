@@ -120,6 +120,8 @@ int main(void) {
     txbuf[i] = (uint8_t)i;
 
   spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
+  spiExchange(&SPID2, 4,
+              txbuf, rxbuf);          /* Atomic transfer operations.      */
   spiExchange(&SPID2, 512,
               txbuf, rxbuf);          /* Atomic transfer operations.      */
 

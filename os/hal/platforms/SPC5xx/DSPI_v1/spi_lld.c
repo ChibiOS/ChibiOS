@@ -114,7 +114,7 @@ static const edma_channel_config_t spi_dspi0_tx_dma_config = {
  * @brief   DMA configuration for DSPI0 RX.
  */
 static const edma_channel_config_t spi_dspi0_rx_dma_config = {
-  SPC5_DSPI0_TX_DMA_DEV_ID, SPC5_SPI_DSPI0_DMA_PRIO, SPC5_SPI_DSPI0_DMA_PRIO,
+  SPC5_DSPI0_RX_DMA_DEV_ID, SPC5_SPI_DSPI0_DMA_PRIO, SPC5_SPI_DSPI0_DMA_PRIO,
   spi_serve_rx_irq, spi_serve_dma_error_irq, &SPID1
 };
 #endif /* SPC5_SPI_USE_DSPI0 */
@@ -132,7 +132,7 @@ static const edma_channel_config_t spi_dspi1_tx_dma_config = {
  * @brief   DMA configuration for DSPI1 RX.
  */
 static const edma_channel_config_t spi_dspi1_rx_dma_config = {
-  SPC5_DSPI1_TX_DMA_DEV_ID, SPC5_SPI_DSPI1_DMA_PRIO, SPC5_SPI_DSPI1_DMA_PRIO,
+  SPC5_DSPI1_RX_DMA_DEV_ID, SPC5_SPI_DSPI1_DMA_PRIO, SPC5_SPI_DSPI1_DMA_PRIO,
   spi_serve_rx_irq, spi_serve_dma_error_irq, &SPID2
 };
 #endif /* SPC5_SPI_USE_DSPI1 */
@@ -150,7 +150,7 @@ static const edma_channel_config_t spi_dspi2_tx_dma_config = {
  * @brief   DMA configuration for DSPI2 RX.
  */
 static const edma_channel_config_t spi_dspi2_rx_dma_config = {
-  SPC5_DSPI2_TX_DMA_DEV_ID, SPC5_SPI_DSPI2_DMA_PRIO, SPC5_SPI_DSPI2_DMA_PRIO,
+  SPC5_DSPI2_RX_DMA_DEV_ID, SPC5_SPI_DSPI2_DMA_PRIO, SPC5_SPI_DSPI2_DMA_PRIO,
   spi_serve_rx_irq, spi_serve_dma_error_irq, &SPID3
 };
 #endif /* SPC5_SPI_USE_DSPI2 */
@@ -168,7 +168,7 @@ static const edma_channel_config_t spi_dspi3_tx_dma_config = {
  * @brief   DMA configuration for DSPI3 RX.
  */
 static const edma_channel_config_t spi_dspi3_rx_dma_config = {
-  SPC5_DSPI3_TX_DMA_DEV_ID, SPC5_SPI_DSPI3_DMA_PRIO, SPC5_SPI_DSPI3_DMA_PRIO,
+  SPC5_DSPI3_RX_DMA_DEV_ID, SPC5_SPI_DSPI3_DMA_PRIO, SPC5_SPI_DSPI3_DMA_PRIO,
   spi_serve_rx_irq, spi_serve_dma_error_irq, &SPID4
 };
 #endif /* SPC5_SPI_USE_DSPI3 */
@@ -487,6 +487,10 @@ void spi_lld_start(SPIDriver *spip) {
       spip->rx_channel = edmaChannelAllocate(&spi_dspi3_rx_dma_config);
     }
 #endif /* SPC5_SPI_USE_DSPI3 */
+
+    chDbgAssert((spip->tx_channel != EDMA_ERROR) &&
+                (spip->rx_channel != EDMA_ERROR),
+                "spi_lld_start(), #1", "channel cannot be allocated");
   }
 
   /* Configures the peripheral.*/
@@ -607,6 +611,9 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 void spi_lld_exchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
 
+  /* Starting transfer.*/
+  spip->dspi->MCR.B.HALT = 0;
+
   /* DMAs require a different setup depending on the frame size.*/
   if (spip->dspi->CTAR[0].B.FMSZ < 8) {
     /* Setting up the RX DMA channel.*/
@@ -636,9 +643,6 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
       spi_start_dma_tx16(spip, n, txbuf);
     }
   }
-
-  /* Starting transfer.*/
-  spip->dspi->MCR.B.HALT = 0;
 }
 
 /**

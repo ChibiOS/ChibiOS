@@ -294,18 +294,6 @@ typedef struct {
   edmaTCDSetWord7(tcdp, iter, mode);                                        \
 }
 
-#if 0
-tcdp->word[0] = (uint32_t)(src);                                          \
-tcdp->word[1] = ((uint32_t)(ssize) << 24) | ((uint32_t)(dsize) << 16) |   \
-                 (uint32_t)(soff);                                        \
-tcdp->word[2] = (uint32_t)(nbytes);                                       \
-tcdp->word[3] = (uint32_t)(slast);                                        \
-tcdp->word[0] = (uint32_t)(dst);                                          \
-tcdp->word[5] = ((uint32_t)(iter) << 16) | (uint32_t)(doff);              \
-tcdp->word[6] = (uint32_t)(dlast);                                        \
-tcdp->word[7] = ((uint32_t)(iter) << 16) | (uint32_t)(mode);
-#endif
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
