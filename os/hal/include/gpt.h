@@ -89,7 +89,7 @@ typedef void (*gptcallback_t)(GPTDriver *gptp);
  *
  * @iclass
  */
-#define stm32_gptChangeIntervalI(gptp, interval) {                            \
+#define gptChangeIntervalI(gptp, interval) {                                  \
   gpt_lld_change_interval(gptp, interval);                                    \
 }
 
@@ -106,7 +106,7 @@ extern "C" {
   void gptStop(GPTDriver *gptp);
   void gptStartContinuous(GPTDriver *gptp, gptcnt_t interval);
   void gptStartContinuousI(GPTDriver *gptp, gptcnt_t interval);
-  void stm32_gptChangeInterval(GPTDriver *gptp, gptcnt_t interval);
+  void gptChangeInterval(GPTDriver *gptp, gptcnt_t interval);
   void gptStartOneShot(GPTDriver *gptp, gptcnt_t interval);
   void gptStartOneShotI(GPTDriver *gptp, gptcnt_t interval);
   void gptStopTimer(GPTDriver *gptp);

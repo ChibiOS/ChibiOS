@@ -129,14 +129,14 @@ void gptStop(GPTDriver *gptp) {
  *
  * @api
  */
-void stm32_gptChangeInterval(GPTDriver *gptp, gptcnt_t interval) {
+void gptChangeInterval(GPTDriver *gptp, gptcnt_t interval) {
 
   chDbgCheck(gptp != NULL, "gptChangeInterval");
 
   chSysLock();
   chDbgAssert(gptp->state == GPT_CONTINUOUS,
               "gptChangeInterval(), #1", "invalid state");
-  stm32_gptChangeIntervalI(gptp, interval);
+  gptChangeIntervalI(gptp, interval);
   chSysUnlock();
 }
 
