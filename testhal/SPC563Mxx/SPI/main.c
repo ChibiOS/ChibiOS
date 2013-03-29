@@ -30,7 +30,7 @@ static const SPIConfig hs_spicfg = {
   0,
   0,                                                            /* MCR.     */
   SPC5_CTAR_FMSZ(8) | SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV2,   /* CTAR0.   */
-  0                                                             /* PUSHR.   */
+  SPC5_PUSHR_CONT | SPC5_PUSHR_PCS(0)                           /* PUSHR.   */
 };
 
 /*
@@ -42,7 +42,7 @@ static const SPIConfig ls_spicfg = {
   0,
   0,                                                            /* MCR.     */
   SPC5_CTAR_FMSZ(8) | SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV256, /* CTAR0.   */
-  0                                                             /* PUSHR.   */
+  SPC5_PUSHR_CONT | SPC5_PUSHR_PCS(0)                           /* PUSHR.   */
 };
 
 /*

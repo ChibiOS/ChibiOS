@@ -248,10 +248,12 @@ static void spi_start_dma_tx8(SPIDriver *spip,
                               size_t n,
                               const uint8_t *txbuf) {
   uint32_t cmd = spip->config->pushr & ~DSPI_PUSHR_EXCLUDED_BITS;
+  uint8_t *cp = (uint8_t *)DSPI_PUSHR8_ADDRESS(spip);
 
   /* The first frame is pushed by the CPU, then the DMA is activated to
      send the following frames.*/
   spip->dspi->PUSHR.R = cmd | (uint32_t)*txbuf++;
+  *cp = 0x55;
 
   /* Setting up TX DMA TCD parameters for 8 bits transfers.*/
   edmaChannelSetup(spip->tx_channel,            /* channel.                 */
@@ -397,20 +399,6 @@ static void spi_serve_dma_error_irq(edma_channel_t channel,
  */
 void spi_lld_init(void) {
 
-  /* Enforcing low power mode for all DSPIs even if not used.*/
-#if SPC5_HAS_DSPI0
-  SPC5_DSPI0.MCR.R = SPC5_MCR_MSTR | SPC5_MCR_MDIS | SPC5_MCR_HALT;
-#endif
-#if SPC5_HAS_DSPI1
-  SPC5_DSPI1.MCR.R = SPC5_MCR_MSTR | SPC5_MCR_MDIS | SPC5_MCR_HALT;
-#endif
-#if SPC5_HAS_DSPI2
-  SPC5_DSPI2.MCR.R = SPC5_MCR_MSTR | SPC5_MCR_MDIS | SPC5_MCR_HALT;
-#endif
-#if SPC5_HAS_DSPI3
-  SPC5_DSPI3.MCR.R = SPC5_MCR_MSTR | SPC5_MCR_MDIS | SPC5_MCR_HALT;
-#endif
-
 #if SPC5_SPI_USE_DSPI0
   /* Driver initialization.*/
   spiObjectInit(&SPID1);
@@ -496,7 +484,8 @@ void spi_lld_start(SPIDriver *spip) {
   /* Configures the peripheral.*/
   spip->dspi->MCR.R     = SPC5_MCR_MSTR | SPC5_MCR_HALT | spip->config->mcr;
   spip->dspi->CTAR[0].R = spip->config->ctar0;
-  spip->dspi->RSER.R    = SPC5_RSER_TFFF_DIRS | SPC5_RSER_RFDF_DIRS;
+  spip->dspi->RSER.R    = SPC5_RSER_TFFF_RE | SPC5_RSER_TFFF_DIRS |
+                          SPC5_RSER_RFDF_RE | SPC5_RSER_RFDF_DIRS;
   spip->dspi->SR.R      = spip->dspi->SR.R;
 }
 
