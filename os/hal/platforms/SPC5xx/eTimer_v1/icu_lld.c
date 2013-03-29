@@ -216,7 +216,7 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       }
       else {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF1 = 1U;
-        icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0x0000;
+        icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0;
         _icu_isr_invoke_period_cb(icup);
       }
     }
@@ -224,7 +224,7 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       if (icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.CNTMODE ==
           SPC5_ETIMER_CNTMODE_RFE_SIHA) {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF2 = 1U;
-        icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0x0000;
+        icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0;
       }
       else {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF2 = 1U;
@@ -238,7 +238,7 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
     }
     if ((sr & 0x0040) != 0) { /* ICF1 */
       icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF1 = 1U;
-      icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0x0000;
+      icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0;
       _icu_isr_invoke_period_cb(icup);
     }
     else if ((sr & 0x0080) != 0) { /* ICF2 */
@@ -1043,6 +1043,7 @@ void icu_lld_start(ICUDriver *icup) {
                                    SPC5_ICU_ETIMER0_START_PCTL);
     }
 #endif
+
     /* Set eTimer1 Clock.*/
 #if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
     SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
@@ -1052,6 +1053,7 @@ void icu_lld_start(ICUDriver *icup) {
                                    SPC5_ICU_ETIMER1_START_PCTL);
     }
 #endif
+
     /* Set eTimer2 Clock.*/
 #if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 || SPC5_ICU_USE_SMOD14 ||    \
     SPC5_ICU_USE_SMOD15 || SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
@@ -1072,17 +1074,13 @@ void icu_lld_start(ICUDriver *icup) {
     /* All IRQs and DMA requests disabled.*/
     icup->etimerp->CHANNEL[icup->smod_number].INTDMA.R = 0U;
 
-    /* Compare Load 1 disabled.*/
+    /* Compare Load 1 and Compare Load 2 disabled.*/
     icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CLC1 = 0U;
-
-    /* Compare Load 2 disabled.*/
     icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CLC2 = 0U;
 
-    /* Capture 1 disabled.*/
+    /* Capture 1 and Capture 2 disabled.*/
     icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT1MODE =
         SPC5_ETIMER_CPT1MODE_DISABLED;
-
-    /* Capture 2 disabled.*/
     icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT2MODE =
         SPC5_ETIMER_CPT2MODE_DISABLED;
 
@@ -1242,29 +1240,31 @@ void icu_lld_stop(ICUDriver *icup) {
     SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
     /* If it is the last active submodules then the eTimer0 is disabled.*/
     if (icu_active_submodules0 == 0) {
-      if (icup->etimerp->ENBL.B.ENBL == 0x00) {
+      if (icup->etimerp->ENBL.B.ENBL == 0) {
         halSPCSetPeripheralClockMode(SPC5_ETIMER0_PCTL,
                                      SPC5_ICU_ETIMER0_STOP_PCTL);
       }
     }
 #endif
+
     /* eTimer1 clock deactivation.*/
 #if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
     SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
     /* If it is the last active submodules then the eTimer1 is disabled.*/
     if (icu_active_submodules1 == 0) {
-      if (icup->etimerp->ENBL.B.ENBL == 0x00) {
+      if (icup->etimerp->ENBL.B.ENBL == 0) {
         halSPCSetPeripheralClockMode(SPC5_ETIMER1_PCTL,
                                      SPC5_ICU_ETIMER1_STOP_PCTL);
       }
     }
 #endif
+
     /* eTimer2 clock deactivation.*/
 #if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 || SPC5_ICU_USE_SMOD14 ||    \
     SPC5_ICU_USE_SMOD15 || SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
     /* If it is the last active submodules then the eTimer2 is disabled.*/
     if (icu_active_submodules2 == 0) {
-      if (icup->etimerp->ENBL.B.ENBL == 0x00) {
+      if (icup->etimerp->ENBL.B.ENBL == 0) {
         halSPCSetPeripheralClockMode(SPC5_ETIMER2_PCTL,
                                      SPC5_ICU_ETIMER2_STOP_PCTL);
       }

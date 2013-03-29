@@ -164,7 +164,6 @@
 /*
  * PWM driver system settings.
  */
-#define SPC5_PWM_USE_FLEXPWM0               TRUE
 #define SPC5_PWM_USE_SMOD0                  TRUE
 #define SPC5_PWM_USE_SMOD1                  FALSE
 #define SPC5_PWM_USE_SMOD2                  FALSE
@@ -181,24 +180,25 @@
 /*
  * ICU driver system settings.
  */
-#define SPC5_ICU_USE_ETIMER0                TRUE
 #define SPC5_ICU_USE_SMOD0                  TRUE
 #define SPC5_ICU_USE_SMOD1                  FALSE
 #define SPC5_ICU_USE_SMOD2                  FALSE
 #define SPC5_ICU_USE_SMOD3                  FALSE
 #define SPC5_ICU_USE_SMOD4                  FALSE
 #define SPC5_ICU_USE_SMOD5                  FALSE
-#define SPC5_ICU_USE_ETIMER1                FALSE
+#define SPC5_ICU_ETIMER0_PRIORITY           7
+#define SPC5_ICU_ETIMER0_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_ICU_ETIMER0_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+
 #define SPC5_ICU_USE_SMOD6                  FALSE
 #define SPC5_ICU_USE_SMOD7                  FALSE
 #define SPC5_ICU_USE_SMOD8                  FALSE
 #define SPC5_ICU_USE_SMOD9                  FALSE
 #define SPC5_ICU_USE_SMOD10                 FALSE
 #define SPC5_ICU_USE_SMOD11                 FALSE
-#define SPC5_ICU_ETIMER0_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
-                                             SPC5_ME_PCTL_LP(2))
-#define SPC5_ICU_ETIMER0_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
-                                             SPC5_ME_PCTL_LP(0))
+#define SPC5_ICU_ETIMER1_PRIORITY           7
 #define SPC5_ICU_ETIMER1_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_ICU_ETIMER1_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \

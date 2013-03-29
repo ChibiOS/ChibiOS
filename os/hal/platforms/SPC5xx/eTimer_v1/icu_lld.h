@@ -92,104 +92,62 @@
 /**
  * @brief   ICUD1 driver enable switch.
  * @details If set to @p TRUE the support for ICUD1 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD0) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD0	                        TRUE
+#define SPC5_ICU_USE_SMOD0                  FALSE
 #endif
 
 /**
  * @brief   ICUD2 driver enable switch.
  * @details If set to @p TRUE the support for ICUD2 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD1) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD1	                        TRUE
+#define SPC5_ICU_USE_SMOD1                  FALSE
 #endif
 
 /**
  * @brief   ICUD3 driver enable switch.
  * @details If set to @p TRUE the support for ICUD3 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD2) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD2 	                        TRUE
+#define SPC5_ICU_USE_SMOD2                  FALSE
 #endif
 
 /**
  * @brief   ICUD4 driver enable switch.
  * @details If set to @p TRUE the support for ICUD4 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD3) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD3 	                        TRUE
+#define SPC5_ICU_USE_SMOD3                  FALSE
 #endif
 
 /**
  * @brief   ICUD5 driver enable switch.
  * @details If set to @p TRUE the support for ICUD5 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD4) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD4                          TRUE
+#define SPC5_ICU_USE_SMOD4                  FALSE
 #endif
 
 /**
  * @brief   ICUD6 driver enable switch.
  * @details If set to @p TRUE the support for ICUD6 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD5) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD5	                        TRUE
+#define SPC5_ICU_USE_SMOD5                  FALSE
 #endif
 
 /**
  * @brief   eTimer0 interrupt priority level setting.
  */
 #if !defined(SPC5_ICU_ETIMER0_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER0_PRIORITY                   7
-#endif
-
-/**
- * @brief   ICUD1 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD0_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD0_IRQ_PRIORITY                 7
-#endif
-
-/**
- * @brief   ICUD2 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD1_IRQ_PRIORITY                 7
-#endif
-
-/**
- * @brief   ICUD3 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD2_IRQ_PRIORITY                 7
-#endif
-
-/**
- * @brief   ICUD4 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD3_IRQ_PRIORITY                 7
-#endif
-
-/**
- * @brief   ICUD5 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD4_IRQ_PRIORITY                 7
-#endif
-
-/**
- * @brief   ICUD6 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD5_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD5_IRQ_PRIORITY                 7
+#define SPC5_ICU_ETIMER0_PRIORITY           7
 #endif
 
 /**
@@ -199,8 +157,8 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER0_START_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER0_START_PCTL                 (SPC5_ME_PCTL_RUN(1) |  \
-                                                     SPC5_ME_PCTL_LP(2))
+#define SPC5_ICU_ETIMER0_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
 #endif
 
 /**
@@ -210,8 +168,8 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER0_STOP_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER0_STOP_PCTL                  (SPC5_ME_PCTL_RUN(0) |  \
-                                                     SPC5_ME_PCTL_LP(0))
+#define SPC5_ICU_ETIMER0_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
 #endif
 #endif
 
@@ -219,104 +177,62 @@
 /**
  * @brief   ICUD6 driver enable switch.
  * @details If set to @p TRUE the support for ICUD6 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD6) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD6                          TRUE
+#define SPC5_ICU_USE_SMOD6                  FALSE
 #endif
 
 /**
  * @brief   ICUD7 driver enable switch.
  * @details If set to @p TRUE the support for ICUD7 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD7) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD7                          TRUE
+#define SPC5_ICU_USE_SMOD7                  FALSE
 #endif
 
 /**
  * @brief   ICUD8 driver enable switch.
  * @details If set to @p TRUE the support for ICUD8 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD8) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD8                          TRUE
+#define SPC5_ICU_USE_SMOD8                  FALSE
 #endif
 
 /**
  * @brief   ICUD9 driver enable switch.
  * @details If set to @p TRUE the support for ICUD9 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD9) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD9                          TRUE
+#define SPC5_ICU_USE_SMOD9                  FALSE
 #endif
 
 /**
  * @brief   ICUD10 driver enable switch.
  * @details If set to @p TRUE the support for ICUD10 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD10) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD10                         TRUE
+#define SPC5_ICU_USE_SMOD10                 FALSE
 #endif
 
 /**
  * @brief   ICUD11 driver enable switch.
  * @details If set to @p TRUE the support for ICUD11 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD11) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD11                         TRUE
+#define SPC5_ICU_USE_SMOD11                 FALSE
 #endif
 
 /**
  * @brief   eTimer1 interrupt priority level setting.
  */
 #if !defined(SPC5_ICU_ETIMER1_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER1_PRIORITY                   7
-#endif
-
-/**
- * @brief   ICUD7 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD6_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD6_IRQ_PRIORITY                 7
-#endif
-
-/**
- * @brief   ICUD8 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD7_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD7_IRQ_PRIORITY                 7
-#endif
-
-/**
- * @brief   ICUD9 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD8_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD8_IRQ_PRIORITY                 7
-#endif
-
-/**
- * @brief   ICUD10 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD9_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD9_IRQ_PRIORITY                 7
-#endif
-
-/**
- * @brief   ICUD11 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD10_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD10_IRQ_PRIORITY                7
-#endif
-
-/**
- * @brief   ICUD12 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD11_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD11_IRQ_PRIORITY                7
+#define SPC5_ICU_ETIMER1_PRIORITY           7
 #endif
 
 /**
@@ -326,8 +242,8 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER1_START_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER1_START_PCTL                 (SPC5_ME_PCTL_RUN(1) |  \
-                                                     SPC5_ME_PCTL_LP(2))
+#define SPC5_ICU_ETIMER1_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
 #endif
 
 /**
@@ -337,8 +253,8 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER1_STOP_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER1_STOP_PCTL                  (SPC5_ME_PCTL_RUN(0) |  \
-                                                     SPC5_ME_PCTL_LP(0))
+#define SPC5_ICU_ETIMER1_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
 #endif
 #endif
 
@@ -346,104 +262,62 @@
 /**
  * @brief   ICUD13 driver enable switch.
  * @details If set to @p TRUE the support for ICUD13 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD12) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD12                         TRUE
+#define SPC5_ICU_USE_SMOD12                 FALSE
 #endif
 
 /**
  * @brief   ICUD14 driver enable switch.
  * @details If set to @p TRUE the support for ICUD14 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD13) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD13                         TRUE
+#define SPC5_ICU_USE_SMOD13                 FALSE
 #endif
 
 /**
  * @brief   ICUD15 driver enable switch.
  * @details If set to @p TRUE the support for ICUD15 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD14) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD14                         TRUE
+#define SPC5_ICU_USE_SMOD14                 FALSE
 #endif
 
 /**
  * @brief   ICUD16 driver enable switch.
  * @details If set to @p TRUE the support for ICUD16 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD15) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD15                         TRUE
+#define SPC5_ICU_USE_SMOD15                 FALSE
 #endif
 
 /**
  * @brief   ICUD17 driver enable switch.
  * @details If set to @p TRUE the support for ICUD17 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD16) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD16                         TRUE
+#define SPC5_ICU_USE_SMOD16                 FALSE
 #endif
 
 /**
  * @brief   ICUD18 driver enable switch.
  * @details If set to @p TRUE the support for ICUD18 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_ICU_USE_SMOD17) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_SMOD17                         TRUE
+#define SPC5_ICU_USE_SMOD17                 FALSE
 #endif
 
 /**
  * @brief   eTimer2 interrupt priority level setting.
  */
-#if !defined(SPC5_ICU_ETIMER12_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER2_PRIORITY                   7
-#endif
-
-/**
- * @brief   ICUD13 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD12_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD12_IRQ_PRIORITY                7
-#endif
-
-/**
- * @brief   ICUD14 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD13_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD13_IRQ_PRIORITY                7
-#endif
-
-/**
- * @brief   ICUD15 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD14_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD14_IRQ_PRIORITY                7
-#endif
-
-/**
- * @brief   ICUD16 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD15_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD15_IRQ_PRIORITY                7
-#endif
-
-/**
- * @brief   ICUD17 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD16_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD16_IRQ_PRIORITY                7
-#endif
-
-/**
- * @brief   ICUD18 interrupt priority level setting.
- */
-#if !defined(SPC5_ICU_SMOD17_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_ICU_SMOD17_IRQ_PRIORITY                7
+#if !defined(SPC5_ICU_ETIMER2_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_ICU_ETIMER2_PRIORITY           7
 #endif
 
 /**
@@ -453,8 +327,8 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER2_START_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER2_START_PCTL                 (SPC5_ME_PCTL_RUN(1) |  \
-                                                     SPC5_ME_PCTL_LP(2))
+#define SPC5_ICU_ETIMER2_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
 #endif
 
 /**
@@ -464,8 +338,8 @@
  *          are defined in @p hal_lld.h.
  */
 #if !defined(SPC5_ICU_ETIMER2_STOP_PCTL) || defined(__DOXYGEN__)
-#define SPC5_ICU_ETIMER2_STOP_PCTL                  (SPC5_ME_PCTL_RUN(0) |  \
-                                                     SPC5_ME_PCTL_LP(0))
+#define SPC5_ICU_ETIMER2_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
 #endif
 #endif
 /** @} */
@@ -474,39 +348,40 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || 							\
-	SPC5_ICU_USE_SMOD2 || SPC5_ICU_USE_SMOD3 || 							\
-	SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5) && !SPC5_HAS_ETIMER0
+#if !SPC5_HAS_ETIMER0
 #error "ETIMER0 not present in the selected device"
 #endif
 
-#if (SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 ||                            \
-    SPC5_ICU_USE_SMOD8 || SPC5_ICU_USE_SMOD9 ||                             \
-    SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11) && !SPC5_HAS_ETIMER1
+#if !SPC5_HAS_ETIMER1
 #error "ETIMER1 not present in the selected device"
 #endif
 
-#if (SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 ||                          \
-    SPC5_ICU_USE_SMOD14 || SPC5_ICU_USE_SMOD15 ||                           \
-    SPC5_ICU_USE_SMOD116 || SPC5_ICU_USE_SMOD17) && !SPC5_HAS_ETIMER2
+#if !SPC5_HAS_ETIMER2
 #error "ETIMER2 not present in the selected device"
 #endif
 
-#if (!SPC5_ICU_USE_SMOD0 && !SPC5_ICU_USE_SMOD1 &&                          \
-    !SPC5_ICU_USE_SMOD2 && !SPC5_ICU_USE_SMOD3 &&                           \
-    !SPC5_ICU_USE_SMOD4 && !SPC5_ICU_USE_SMOD5) && SPC5_ICU_USE_ETIMER0
-#error "ICU driver activated but no SMOD peripheral assigned"
-#endif
+#define SPC5_ICU_USE_ETIMER0                (SPC5_ICU_USE_SMOD6 ||          \
+                                             SPC5_ICU_USE_SMOD7 ||          \
+                                             SPC5_ICU_USE_SMOD8 ||          \
+                                             SPC5_ICU_USE_SMOD9 ||          \
+                                             SPC5_ICU_USE_SMOD10 ||         \
+                                             SPC5_ICU_USE_SMOD11)
 
-#if (!SPC5_ICU_USE_SMOD6 && !SPC5_ICU_USE_SMOD7 &&                          \
-    !SPC5_ICU_USE_SMOD8 && !SPC5_ICU_USE_SMOD9 &&                           \
-    !SPC5_ICU_USE_SMOD10 && !SPC5_ICU_USE_SMOD11) && SPC5_ICU_USE_ETIMER1
-#error "ICU driver activated but no SMOD peripheral assigned"
-#endif
+#define SPC5_ICU_USE_ETIMER1                (SPC5_ICU_USE_SMOD12 ||         \
+                                             SPC5_ICU_USE_SMOD13 ||         \
+                                             SPC5_ICU_USE_SMOD14 ||         \
+                                             SPC5_ICU_USE_SMOD15 ||         \
+                                             SPC5_ICU_USE_SMOD16 ||         \
+                                             SPC5_ICU_USE_SMOD17)
 
-#if (!SPC5_ICU_USE_SMOD12 && !SPC5_ICU_USE_SMOD13 &&                        \
-    !SPC5_ICU_USE_SMOD14 && !SPC5_ICU_USE_SMOD15 &&                         \
-    !SPC5_ICU_USE_SMOD16 && !SPC5_ICU_USE_SMOD17) && SPC5_ICU_USE_ETIMER2
+#define SPC5_ICU_USE_ETIMER2                (SPC5_ICU_USE_SMOD18 ||         \
+                                             SPC5_ICU_USE_SMOD19 ||         \
+                                             SPC5_ICU_USE_SMOD20 ||         \
+                                             SPC5_ICU_USE_SMOD21 ||         \
+                                             SPC5_ICU_USE_SMOD22 ||         \
+                                             SPC5_ICU_USE_SMOD23)
+
+#if !SPC5_ICU_USE_TIMER0 && !SPC5_ICU_USE_TIMER1 && !SPC5_ICU_USE_TIMER2
 #error "ICU driver activated but no SMOD peripheral assigned"
 #endif
 
@@ -519,7 +394,7 @@
  */
 typedef enum {
   ICU_INPUT_ACTIVE_HIGH = 0, /**< Trigger on rising edge.            */
-  ICU_INPUT_ACTIVE_LOW = 1, /**< Trigger on falling edge.           */
+  ICU_INPUT_ACTIVE_LOW = 1,  /**< Trigger on falling edge.           */
 }icumode_t;
 
 /**
@@ -571,12 +446,11 @@ typedef struct {
    * @brief   Callback for timer overflow.
    */
   icucallback_t overflow_cb;
-  /* End of the mandatory fields.*/
   /**
-   * @brief   Timer input channel to be used.
-   * @note    Only inputs TIMx 1 and 2 are supported.
+   * @brief   eTimer input channel to be used.
    */
   icuchannel_t channel;
+  /* End of the mandatory fields.*/
 }ICUConfig;
 
 /**
@@ -596,16 +470,10 @@ struct ICUDriver {
    */
   const ICUConfig *config;
   /**
-   * @brief Pointer to the CAN registers.
-   */
-#if defined(ICU_DRIVER_EXT_FIELDS)
-  ICU_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  /**
    * @brief Timer base clock.
    */
   uint32_t clock;
+  /* End of the mandatory fields.*/
   /**
    * @brief Pointer to the eTimerx registers block.
    */
