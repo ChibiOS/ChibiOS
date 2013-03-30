@@ -77,11 +77,69 @@ ADCDriver SDADCD3;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static const ADCConfig adc_lld_default_config = {0};
+static const ADCConfig adc_lld_default_config = {
+#if STM32_ADC_USE_SDADC
+  0,
+  {
+     0,
+     0,
+     0
+  }
+#else /* !STM32_ADC_USE_SDADC */
+  0
+#endif /* !STM32_ADC_USE_SDADC */
+};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief   Stops, reconfigures and restarts an ADC/SDADC.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ */
+static void adc_lld_reconfig(ADCDriver *adcp) {
+
+#if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
+  if (adcp->adc != NULL)
+#endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
+#if STM32_ADC_USE_ADC
+  {
+    /* ADC initial setup, starting the analog part here in order to reduce
+       the latency when starting a conversion.*/
+    uint32_t cr2 = adcp->adc->CR2 & ADC_CR2_TSVREFE;
+    adcp->adc->CR2 = cr2;
+    adcp->adc->CR1 = 0;
+    adcp->adc->CR2 = cr2 | ADC_CR2_ADON;
+
+  }
+#endif /* STM32_ADC_USE_ADC */
+#if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
+  else if (adcp->sdadc != NULL)
+#endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
+#if STM32_ADC_USE_SDADC
+  {
+    /* SDADC initial setup, starting the analog part here in order to reduce
+       the latency when starting a conversion.*/
+    adcp->sdadc->CR2    = 0;
+    adcp->sdadc->CR1    = (adcp->config->cr1 | SDADC_ENFORCED_CR1_FLAGS) &
+                          ~SDADC_FORBIDDEN_CR1_FLAGS;
+    adcp->sdadc->CONF0R = (adcp->sdadc->CONF0R & SDADC_CONFR_OFFSET_MASK) |
+                          adcp->config->confxr[0];
+    adcp->sdadc->CONF1R = (adcp->sdadc->CONF1R & SDADC_CONFR_OFFSET_MASK) |
+                          adcp->config->confxr[1];
+    adcp->sdadc->CONF2R = (adcp->sdadc->CONF2R & SDADC_CONFR_OFFSET_MASK) |
+                          adcp->config->confxr[2];
+    adcp->sdadc->CR2    = SDADC_CR2_ADON;
+  }
+#endif /* STM32_ADC_USE_SDADC */
+#if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
+else {
+    chDbgAssert(FALSE, "adc_lld_start(), #5", "invalid state");
+  }
+#endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
+}
 
 /**
  * @brief   ADC DMA ISR service routine.
@@ -115,12 +173,14 @@ static void adc_lld_serve_dma_interrupt(ADCDriver *adcp, uint32_t flags) {
   }
 }
 
-#if STM32_ADC_USE_ADC
+#if STM32_ADC_USE_ADC || defined(__DOXYGEN__)
 /**
  * @brief   ADC ISR service routine.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] sr        content of the ISR register
+ *
+ * @notapi
  */
 static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t sr) {
 
@@ -135,12 +195,14 @@ static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t sr) {
 }
 #endif /* STM32_ADC_USE_ADC */
 
-#if STM32_ADC_USE_SDADC
+#if STM32_ADC_USE_SDADC || defined(__DOXYGEN__)
 /**
  * @brief   ADC ISR service routine.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] isr       content of the ISR register
+ *
+ * @notapi
  */
 static void sdadc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
 
@@ -346,12 +408,6 @@ void adc_lld_start(ADCDriver *adcp) {
       chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(FALSE);
-
-      /* ADC initial setup, starting the analog part here in order to reduce
-	     the latency when starting a conversion.*/
-      adcp->adc->CR1 = 0;
-      adcp->adc->CR2 = 0;
-      adcp->adc->CR2 = ADC_CR2_ADON;
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -406,6 +462,8 @@ void adc_lld_start(ADCDriver *adcp) {
     }
 #endif /* STM32_ADC_USE_SDADC3 */
   }
+
+  adc_lld_reconfig(adcp);
 }
 
 /**
@@ -531,9 +589,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
     /* SDADC setup.*/
     adcp->sdadc->JCHGR    = grpp->u.sdadc.jchgr;
-    adcp->sdadc->CONF0R   = grpp->u.sdadc.confxr[0];
-    adcp->sdadc->CONF1R   = grpp->u.sdadc.confxr[1];
-    adcp->sdadc->CONF2R   = grpp->u.sdadc.confxr[2];
     adcp->sdadc->CONFCHR1 = grpp->u.sdadc.confchr[0];
     adcp->sdadc->CONFCHR2 = grpp->u.sdadc.confchr[1];
 
@@ -564,32 +619,9 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
   /* Disabling the associated DMA stream.*/
   dmaStreamDisable(adcp->dmastp);
 
-#if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
-  if (adcp->adc != NULL)
-#endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
-#if STM32_ADC_USE_ADC
-  {
-    uint32_t cr2 = adcp->adc->CR2 & ADC_CR2_TSVREFE;
-    adcp->adc->CR2 = cr2;
-    adcp->adc->CR1 = 0;
-    adcp->adc->CR2 = cr2 | ADC_CR2_ADON;
-  }
-#endif /* STM32_ADC_USE_ADC */
-#if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
-  else if (adcp->sdadc != NULL)
-#endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
-#if STM32_ADC_USE_SDADC
-  {
-    adcp->sdadc->CR1 = 0;
-    adcp->sdadc->CR2 = 0;
-    adcp->sdadc->CR2 = ADC_CR2_ADON;
-  }
-#endif /* STM32_ADC_USE_SDADC */
-#if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
-  else {
-    chDbgAssert(FALSE, "adc_lld_stop_conversion(), #1", "invalid state");
-  }
-#endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
+  /* Stopping and restarting the whole ADC, apparently the only way to stop
+     a conversion.*/
+  adc_lld_reconfig(adcp);
 }
 
 /**

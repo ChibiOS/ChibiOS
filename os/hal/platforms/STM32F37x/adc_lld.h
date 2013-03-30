@@ -469,10 +469,6 @@ typedef struct {
        */
       uint32_t                  jchgr;
       /**
-       * @brief   SDADC CONFxR registers initialization data.
-       */
-      uint32_t                  confxr[3];
-      /**
        * @brief   SDADC CONFCHxR registers initialization data.
        */
       uint32_t                  confchr[2];
@@ -491,6 +487,10 @@ typedef struct {
    * @brief   SDADC CR1 register initialization data.
    */
   uint32_t                  cr1;
+  /**
+   * @brief   SDADC CONFxR registers initialization data.
+   */
+  uint32_t                  confxr[3];
 #else /* !STM32_ADC_USE_SDADC */
   uint32_t                  dummy;
 #endif /* !STM32_ADC_USE_SDADC */
@@ -668,18 +668,6 @@ struct ADCDriver {
 #define SDADC_CONFR_COMMON_VDDSD2   (1U << 30)
 #define SDADC_CONFR_COMMON_VDDSD    (2U << 30)
 /** @} */
-
-#define  SDADC_CONF1R_OFFSET1                    ((uint32_t)0x00000FFF)       /*!< 12-bit calibration offset for configuration 1 */
-#define  SDADC_CONF1R_GAIN1                      ((uint32_t)0x00700000)       /*!< Gain setting for configuration 1 */
-#define  SDADC_CONF1R_GAIN1_0                    ((uint32_t)0x00100000)       /*!< Gain setting for configuration 1 Bit 0 */
-#define  SDADC_CONF1R_GAIN1_1                    ((uint32_t)0x00200000)       /*!< Gain setting for configuration 1 Bit 1 */
-#define  SDADC_CONF1R_GAIN1_2                    ((uint32_t)0x00400000)       /*!< Gain setting for configuration 1 Bit 2 */
-#define  SDADC_CONF1R_SE1                        ((uint32_t)0x0C000000)       /*!< Single ended mode for configuration 1 */
-#define  SDADC_CONF1R_SE1_0                      ((uint32_t)0x04000000)       /*!< Single ended mode for configuration 1 Bit 0 */
-#define  SDADC_CONF1R_SE1_1                      ((uint32_t)0x08000000)       /*!< Single ended mode for configuration 1 Bit 1 */
-#define  SDADC_CONF1R_COMMON1                    ((uint32_t)0xC0000000)       /*!< Common mode for configuration 1 */
-#define  SDADC_CONF1R_COMMON1_0                  ((uint32_t)0x40000000)       /*!< Common mode for configuration 1 Bit 0 */
-#define  SDADC_CONF1R_COMMON1_1                  ((uint32_t)0x40000000)       /*!< Common mode for configuration 1 Bit 1 */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

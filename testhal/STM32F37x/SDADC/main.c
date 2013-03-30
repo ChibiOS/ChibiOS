@@ -24,8 +24,8 @@
 #define ADC_GRP1_NUM_CHANNELS   1
 #define ADC_GRP1_BUF_DEPTH      8
 
-#define ADC_GRP2_NUM_CHANNELS   8
-#define ADC_GRP2_BUF_DEPTH      16
+#define ADC_GRP2_NUM_CHANNELS   1
+#define ADC_GRP2_BUF_DEPTH      32
 
 static adcsample_t samples1[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 static adcsample_t samples2[ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH];
@@ -52,6 +52,18 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 }
 
 /*
+ * SDADC configuration.
+ */
+static const ADCConfig sdadc_config = {
+  0,
+  {
+     SDADC_CONFR_GAIN_1X | SDADC_CONFR_SE_ZERO_VOLT | SDADC_CONFR_COMMON_VSSSD,
+     0,
+     0
+  }
+};
+
+/*
  * ADC conversion group.
  * Mode:        Linear buffer, 8 samples of 1 channel, SW triggered.
  * Channels:    ADC_IN5P.
@@ -64,11 +76,6 @@ static const ADCConversionGroup adcgrpcfg1 = {
   .u.sdadc = {
     SDADC_CR2_JSWSTART,     /* CR2      */
     SDADC_JCHGR_CH(5),      /* JCHGR    */
-    {                       /* CONFxR[3]*/
-      SDADC_CONFR_GAIN_1X | SDADC_CONFR_SE_DIFF | SDADC_CONFR_COMMON_VSSSD,
-      0,
-      0
-    },
     {                       /* CONFCHR[2]*/
       SDADC_CONFCHR1_CH5(0),
       0
@@ -76,36 +83,25 @@ static const ADCConversionGroup adcgrpcfg1 = {
   }
 };
 
-#if 0
 /*
  * ADC conversion group.
- * Mode:        Continuous, 16 samples of 8 channels, SW triggered.
- * Channels:    IN7, IN8, IN7, IN8, IN7, IN8, Sensor, VBat/2.
+ * Mode:        Continuous, 32 samples of 1 channel, SW triggered.
+ * Channels:    ADC_IN5P.
  */
 static const ADCConversionGroup adcgrpcfg2 = {
   TRUE,
   ADC_GRP2_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
-  0,                                /* CFGR    */
-  ADC_TR(0, 4095),                  /* TR1     */
-  ADC_CCR_TSEN | ADC_CCR_VBATEN,    /* CCR     */
-  {                                 /* SMPR[2] */
-    ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_19P5)
-    | ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_19P5),
-    ADC_SMPR2_SMP_AN16(ADC_SMPR_SMP_61P5)
-    | ADC_SMPR2_SMP_AN17(ADC_SMPR_SMP_61P5),
-  },
-  {                                 /* SQR[4]  */
-    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN7)  | ADC_SQR1_SQ2_N(ADC_CHANNEL_IN8) |
-    ADC_SQR1_SQ3_N(ADC_CHANNEL_IN7)  | ADC_SQR1_SQ4_N(ADC_CHANNEL_IN8),
-    ADC_SQR2_SQ5_N(ADC_CHANNEL_IN7)  | ADC_SQR2_SQ6_N(ADC_CHANNEL_IN8) |
-    ADC_SQR2_SQ7_N(ADC_CHANNEL_IN16) | ADC_SQR2_SQ8_N(ADC_CHANNEL_IN17),
-    0,
-    0
+  .u.sdadc = {
+    SDADC_CR2_JSWSTART,     /* CR2      */
+    SDADC_JCHGR_CH(5),      /* JCHGR    */
+    {                       /* CONFCHR[2]*/
+      SDADC_CONFCHR1_CH5(0),
+      0
+    }
   }
 };
-#endif
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
@@ -147,26 +143,25 @@ int main(void) {
   /*
    * Activates the SDADC1 driver.
    */
-  adcStart(&SDADCD1, NULL);
+  adcStart(&SDADCD1, &sdadc_config);
   adcSTM32Calibrate(&SDADCD1);
 
   /*
    * Linear conversion.
    */
   adcConvert(&SDADCD1, &adcgrpcfg1, samples1, ADC_GRP1_BUF_DEPTH);
-  chThdSleepMilliseconds(1000);
 
   /*
    * Starts an ADC continuous conversion.
    */
-//  adcStartConversion(&SDADC1, &adcgrpcfg2, samples2, ADC_GRP2_BUF_DEPTH);
+  adcStartConversion(&SDADCD1, &adcgrpcfg2, samples2, ADC_GRP2_BUF_DEPTH);
 
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (TRUE) {
     if (palReadPad(GPIOA, GPIOA_WKUP_BUTTON)) {
-//      adcStopConversion(&SDADCD1);
+      adcStopConversion(&SDADCD1);
     }
     chThdSleepMilliseconds(500);
   }
