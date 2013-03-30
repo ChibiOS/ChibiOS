@@ -891,9 +891,7 @@ void icu_lld_init(void) {
   ICUD18.smod_number = 5U;
 #endif
 
-#if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 ||								\
-  SPC5_ICU_USE_SMOD2 || SPC5_ICU_USE_SMOD3 ||								\
-  SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
+#if SPC5_ICU_USE_ETIMER0
 
   INTC.PSR[SPC5_ETIMER0_TC0IR_NUMBER].R = SPC5_ICU_ETIMER0_PRIORITY;
   INTC.PSR[SPC5_ETIMER0_TC1IR_NUMBER].R = SPC5_ICU_ETIMER0_PRIORITY;
@@ -906,9 +904,7 @@ void icu_lld_init(void) {
 
 #endif
 
-#if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 ||								\
-  SPC5_ICU_USE_SMOD8 || SPC5_ICU_USE_SMOD9 ||								\
-  SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
+#if SPC5_ICU_USE_ETIMER1
 
   INTC.PSR[SPC5_ETIMER1_TC0IR_NUMBER].R = SPC5_ICU_ETIMER1_PRIORITY;
   INTC.PSR[SPC5_ETIMER1_TC1IR_NUMBER].R = SPC5_ICU_ETIMER1_PRIORITY;
@@ -920,9 +916,7 @@ void icu_lld_init(void) {
 
 #endif
 
-#if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 ||                           \
-  SPC5_ICU_USE_SMOD14 || SPC5_ICU_USE_SMOD15 ||                             \
-  SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
+#if SPC5_ICU_USE_ETIMER2
 
   INTC.PSR[SPC5_ETIMER2_TC0IR_NUMBER].R = SPC5_ICU_ETIMER2_PRIORITY;
   INTC.PSR[SPC5_ETIMER2_TC1IR_NUMBER].R = SPC5_ICU_ETIMER2_PRIORITY;
@@ -1034,8 +1028,7 @@ void icu_lld_start(ICUDriver *icup) {
 #endif
 
     /* Set eTimer0 Clock.*/
-#if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||       \
-    SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
+#if SPC5_ICU_USE_ETIMER0
 
     /* If this is the first Submodule activated then the eTimer0 is enabled.*/
     if (icu_active_submodules0 == 1) {
@@ -1045,8 +1038,7 @@ void icu_lld_start(ICUDriver *icup) {
 #endif
 
     /* Set eTimer1 Clock.*/
-#if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
-    SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
+#if SPC5_ICU_USE_ETIMER1
     /* If this is the first Submodule activated then the eTimer1 is enabled.*/
     if (icu_active_submodules1 == 1) {
       halSPCSetPeripheralClockMode(SPC5_ETIMER1_PCTL,
@@ -1055,8 +1047,7 @@ void icu_lld_start(ICUDriver *icup) {
 #endif
 
     /* Set eTimer2 Clock.*/
-#if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 || SPC5_ICU_USE_SMOD14 ||    \
-    SPC5_ICU_USE_SMOD15 || SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
+#if SPC5_ICU_USE_ETIMER2
     /* If this is the first Submodule activated then the eTimer2 is enabled.*/
     if (icu_active_submodules2 == 1) {
       halSPCSetPeripheralClockMode(SPC5_ETIMER2_PCTL,
@@ -1236,8 +1227,7 @@ void icu_lld_stop(ICUDriver *icup) {
     }
 #endif
     /* eTimer0 clock deactivation.*/
-#if SPC5_ICU_USE_SMOD0 || SPC5_ICU_USE_SMOD1 || SPC5_ICU_USE_SMOD2 ||       \
-    SPC5_ICU_USE_SMOD3 || SPC5_ICU_USE_SMOD4 || SPC5_ICU_USE_SMOD5
+#if SPC5_ICU_USE_ETIMER0
     /* If it is the last active submodules then the eTimer0 is disabled.*/
     if (icu_active_submodules0 == 0) {
       if (icup->etimerp->ENBL.B.ENBL == 0) {
@@ -1248,8 +1238,7 @@ void icu_lld_stop(ICUDriver *icup) {
 #endif
 
     /* eTimer1 clock deactivation.*/
-#if SPC5_ICU_USE_SMOD6 || SPC5_ICU_USE_SMOD7 || SPC5_ICU_USE_SMOD8 ||       \
-    SPC5_ICU_USE_SMOD9 || SPC5_ICU_USE_SMOD10 || SPC5_ICU_USE_SMOD11
+#if SPC5_ICU_USE_ETIMER1
     /* If it is the last active submodules then the eTimer1 is disabled.*/
     if (icu_active_submodules1 == 0) {
       if (icup->etimerp->ENBL.B.ENBL == 0) {
@@ -1260,8 +1249,7 @@ void icu_lld_stop(ICUDriver *icup) {
 #endif
 
     /* eTimer2 clock deactivation.*/
-#if SPC5_ICU_USE_SMOD12 || SPC5_ICU_USE_SMOD13 || SPC5_ICU_USE_SMOD14 ||    \
-    SPC5_ICU_USE_SMOD15 || SPC5_ICU_USE_SMOD16 || SPC5_ICU_USE_SMOD17
+#if SPC5_ICU_USE_ETIMER2
     /* If it is the last active submodules then the eTimer2 is disabled.*/
     if (icu_active_submodules2 == 0) {
       if (icup->etimerp->ENBL.B.ENBL == 0) {

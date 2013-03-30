@@ -1078,8 +1078,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
      * If this is the first FlexPWM0 submodule
      * activated then the FlexPWM0 is enabled.
      */
-#if SPC5_PWM_USE_SMOD0 || SPC5_PWM_USE_SMOD1 ||                             \
-    SPC5_PWM_USE_SMOD2 || SPC5_PWM_USE_SMOD3
+#if SPC5_PWM_USE_FLEXPWM0
     /* Set Peripheral Clock.*/
     if (flexpwm_active_submodules0 == 1) {
       halSPCSetPeripheralClockMode(SPC5_FLEXPWM0_PCTL,
@@ -1087,8 +1086,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     }
 #endif
 
-#if SPC5_PWM_USE_SMOD4 || SPC5_PWM_USE_SMOD5 ||                             \
-    SPC5_PWM_USE_SMOD6 || SPC5_PWM_USE_SMOD7
+#if SPC5_PWM_USE_FLEXPWM1
     /* Set Peripheral Clock.*/
     if (flexpwm_active_submodules1 == 1) {
       halSPCSetPeripheralClockMode(SPC5_FLEXPWM1_PCTL,
@@ -1448,8 +1446,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     }
 #endif
 
-#if SPC5_PWM_USE_SMOD0 || SPC5_PWM_USE_SMOD1 ||                             \
-    SPC5_PWM_USE_SMOD2 || SPC5_PWM_USE_SMOD3
+#if SPC5_PWM_USE_FLEXPWM0
     /* Disable peripheral clock if there is not an activated module.*/
     if (flexpwm_active_submodules0 == 0) {
       halSPCSetPeripheralClockMode(SPC5_FLEXPWM0_PCTL,
@@ -1457,8 +1454,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     }
 #endif
 
-#if SPC5_PWM_USE_SMOD4 || SPC5_PWM_USE_SMOD5 ||                             \
-    SPC5_PWM_USE_SMOD6 || SPC5_PWM_USE_SMOD7
+#if SPC5_PWM_USE_FLEXPWM1
     /* Disable peripheral clock if there is not an activated module.*/
     if (flexpwm_active_submodules1 == 0) {
       halSPCSetPeripheralClockMode(SPC5_FLEXPWM1_PCTL,
