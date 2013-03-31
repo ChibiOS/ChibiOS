@@ -86,6 +86,7 @@ static msg_t spi_thread_2(void *p) {
   }
   return 0;
 }
+
 /*
  * This is a periodic thread that does absolutely nothing except flashing
  * a LED.

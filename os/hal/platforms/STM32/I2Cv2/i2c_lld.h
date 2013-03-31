@@ -49,7 +49,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_I2C_USE_I2C1) || defined(__DOXYGEN__)
-#define STM32_I2C_USE_I2C1              FALSE
+#define STM32_I2C_USE_I2C1                  FALSE
 #endif
 
 /**
@@ -58,39 +58,39 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_I2C_USE_I2C2) || defined(__DOXYGEN__)
-#define STM32_I2C_USE_I2C2              FALSE
+#define STM32_I2C_USE_I2C2                  FALSE
 #endif
 
 /**
  * @brief   I2C1 interrupt priority level setting.
  */
 #if !defined(STM32_I2C_I2C1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C1_IRQ_PRIORITY     10
+#define STM32_I2C_I2C1_IRQ_PRIORITY         10
 #endif
 
 /**
  * @brief   I2C2 interrupt priority level setting.
  */
 #if !defined(STM32_I2C_I2C2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C2_IRQ_PRIORITY     10
+#define STM32_I2C_I2C2_IRQ_PRIORITY         10
 #endif
 
 /**
-* @brief   I2C1 DMA priority (0..3|lowest..highest).
-* @note    The priority level is used for both the TX and RX DMA streams but
-*          because of the streams ordering the RX stream has always priority
-*          over the TX stream.
-*/
+ * @brief   I2C1 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
+ */
 #if !defined(STM32_I2C_I2C1_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_I2C_I2C1_DMA_PRIORITY         1
 #endif
 
 /**
-* @brief   I2C2 DMA priority (0..3|lowest..highest).
-* @note    The priority level is used for both the TX and RX DMA streams but
-*          because of the streams ordering the RX stream has always priority
-*          over the TX stream.
-*/
+ * @brief   I2C2 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
+ */
 #if !defined(STM32_I2C_I2C2_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_I2C_I2C2_DMA_PRIORITY         1
 #endif
@@ -101,21 +101,30 @@
  *          error can only happen because programming errors.
  */
 #if !defined(STM32_I2C_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_I2C_DMA_ERROR_HOOK(i2cp)  chSysHalt()
+#define STM32_I2C_DMA_ERROR_HOOK(i2cp)      chSysHalt()
 #endif
-
-/* Streams for the DMA peripheral.*/
-#define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
-#define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
-#define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
-#define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
-
-#define STM32F0XX_I2C
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Streams for the DMA peripheral.*/
+#if defined(STM32F0XX)
+#define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
+#define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+#define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
+#define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+
+#elif defined(STM32F30X) || defined(STM32F37X)
+#define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
+#define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
+#define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
+#define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+
+#else
+#error "device unsupported by I2Cv2 driver"
+#endif
 
 /** @brief  error checks */
 #if STM32_I2C_USE_I2C1 && !STM32_HAS_I2C1
@@ -188,7 +197,7 @@ typedef enum {
  */
 typedef struct {
   i2copmode_t     op_mode;       /**< @brief Specifies the I2C mode.        */
-  uint32_t        clock_timing;  /**< @brief Specifies the clock timing
+  uint32_t        clock_timing;  /**< @brief Specifies the clock timing.
                                       @note See TRM for further info.       */
   uint32_t        cr1;           /**< @brief I2C register initialization
                                              data.                          */

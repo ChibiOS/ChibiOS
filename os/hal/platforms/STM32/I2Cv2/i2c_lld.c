@@ -57,12 +57,14 @@
 
 #define I2C_MASTER_TC                                                       \
   ((uint32_t)(I2C_ISR_BUSY|I2C_ISR_TC))
+
 #define I2C_ERROR_MASK                                                      \
-  ((uint32_t)(I2C_ISR_BERR|I2C_ISR_ARLO|I2C_ISR_OVR|I2C_ISR_PECERR|         \
-    I2C_ISR_TIMEOUT|I2C_ISR_ALERT))
+  ((uint32_t)(I2C_ISR_BERR | I2C_ISR_ARLO | I2C_ISR_OVR | I2C_ISR_PECERR |  \
+              I2C_ISR_TIMEOUT | I2C_ISR_ALERT))
+
 #define I2C_INT_MASK                                                        \
-  ((uint32_t)(I2C_ISR_TCR|I2C_ISR_TC|I2C_ISR_STOPF|I2C_ISR_NACKF|           \
-    I2C_ISR_ADDR|I2C_ISR_RXNE|I2C_ISR_TXIS))
+  ((uint32_t)(I2C_ISR_TCR | I2C_ISR_TC | I2C_ISR_STOPF | I2C_ISR_NACKF |    \
+              I2C_ISR_ADDR | I2C_ISR_RXNE | I2C_ISR_TXIS))
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -212,6 +214,7 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp, uint32_t flags) {
  * @notapi
  */
 static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp, uint32_t flags) {
+
   /* DMA errors handling.*/
 #if defined(STM32_I2C_DMA_ERROR_HOOK)
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
@@ -235,10 +238,8 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint32_t status) {
   i2cflags_t errors;
 
   /* Clears interrupt flags just to be safe.*/
-  chSysLockFromIsr();
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamDisable(i2cp->dmarx);
-  chSysUnlockFromIsr();
 
   errors = I2CD_NO_ERROR;
 
@@ -279,14 +280,14 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint32_t status) {
 /*===========================================================================*/
 
 #if STM32_I2C_USE_I2C1 || defined(__DOXYGEN__)
+#if defined(STM32_I2C1_GLOBAL_HANDLER) || defined(__DOXYGEN__)
 /**
  * @brief   I2C1 event interrupt handler.
  *
  * @notapi
  */
-CH_IRQ_HANDLER(I2C1_IRQHandler) {
-  volatile I2C_TypeDef *dp = I2CD1.i2c;
-  uint32_t status = dp->ISR;
+CH_IRQ_HANDLER(STM32_I2C1_GLOBAL_HANDLER) {
+  uint32_t status = I2CD1.i2c->ISR;
 
   CH_IRQ_PROLOGUE();
 
@@ -297,17 +298,42 @@ CH_IRQ_HANDLER(I2C1_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
+
+#elif defined(STM32_I2C1_EVENT_HANDLER) && defined(STM32_I2C1_ERROR_HANDLER)
+CH_IRQ_HANDLER(STM32_I2C1_EVENT_HANDLER) {
+  uint32_t status = I2CD1.i2c->ISR;
+
+  CH_IRQ_PROLOGUE();
+
+  i2c_lld_serve_interrupt(&I2CD1, status);
+
+  CH_IRQ_EPILOGUE();
+}
+
+CH_IRQ_HANDLER(STM32_I2C1_ERROR_HANDLER) {
+  uint32_t status = I2CD1.i2c->ISR;
+
+  CH_IRQ_PROLOGUE();
+
+  i2c_lld_serve_error_interrupt(&I2CD1, status);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#else
+#error "I2C1 interrupt handlers not defined"
+#endif
 #endif /* STM32_I2C_USE_I2C1 */
 
 #if STM32_I2C_USE_I2C2 || defined(__DOXYGEN__)
+#if defined(STM32_I2C2_GLOBAL_HANDLER) || defined(__DOXYGEN__)
 /**
  * @brief   I2C2 event interrupt handler.
  *
  * @notapi
  */
-CH_IRQ_HANDLER(I2C2_IRQHandler) {
-  volatile I2C_TypeDef *dp = I2CD2.i2c;
-  uint32_t status = dp->ISR;
+CH_IRQ_HANDLER(STM32_I2C2_GLOBAL_HANDLER) {
+  uint32_t status = I2CD2.i2c->ISR;
 
   CH_IRQ_PROLOGUE();
 
@@ -318,6 +344,31 @@ CH_IRQ_HANDLER(I2C2_IRQHandler) {
 
   CH_IRQ_EPILOGUE();
 }
+
+#elif defined(STM32_I2C2_EVENT_HANDLER) && defined(STM32_I2C2_ERROR_HANDLER)
+CH_IRQ_HANDLER(STM32_I2C2_EVENT_HANDLER) {
+  uint32_t status = I2CD2.i2c->ISR;
+
+  CH_IRQ_PROLOGUE();
+
+  i2c_lld_serve_interrupt(&I2CD2, status);
+
+  CH_IRQ_EPILOGUE();
+}
+
+CH_IRQ_HANDLER(STM32_I2C2_ERROR_HANDLER) {
+  uint32_t status = I2CD2.i2c->ISR;
+
+  CH_IRQ_PROLOGUE();
+
+  i2c_lld_serve_error_interrupt(&I2CD2, status);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#else
+#error "I2C2 interrupt handlers not defined"
+#endif
 #endif /* STM32_I2C_USE_I2C2 */
 
 /*===========================================================================*/
@@ -384,8 +435,18 @@ void i2c_lld_start(I2CDriver *i2cp) {
                             (void *)i2cp);
       chDbgAssert(!b, "i2c_lld_start(), #2", "stream already allocated");
       rccEnableI2C1(FALSE);
-      nvicEnableVector(I2C1_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
+
+#if defined(STM32_I2C1_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicEnableVector(STM32_I2C1_GLOBAL_NUMBER,
+                       CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
+#elif defined(STM32_I2C1_EVENT_NUMBER) && defined(STM32_I2C1_ERROR_NUMBER)
+      nvicEnableVector(STM32_I2C1_EVENT_NUMBER,
+                       CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
+      nvicEnableVector(STM32_I2C1_ERROR_NUMBER,
+                       CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
+#else
+#error "I2C1 interrupt numbers not defined"
+#endif
 
       i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C1_RX_DMA_CHANNEL) |
                        STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
@@ -408,8 +469,18 @@ void i2c_lld_start(I2CDriver *i2cp) {
                             (void *)i2cp);
       chDbgAssert(!b, "i2c_lld_start(), #4", "stream already allocated");
       rccEnableI2C2(FALSE);
-      nvicEnableVector(I2C2_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
+
+#if defined(STM32_I2C2_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicEnableVector(STM32_I2C2_GLOBAL_NUMBER,
+                       CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
+#elif defined(STM32_I2C2_EVENT_NUMBER) && defined(STM32_I2C2_ERROR_NUMBER)
+      nvicEnableVector(STM32_I2C2_EVENT_NUMBER,
+                       CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
+      nvicEnableVector(STM32_I2C2_ERROR_NUMBER,
+                       CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
+#else
+#error "I2C2 interrupt numbers not defined"
+#endif
 
       i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C2_RX_DMA_CHANNEL) |
                        STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
@@ -458,14 +529,30 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
-      nvicDisableVector(I2C1_IRQn);
+#if defined(STM32_I2C1_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicDisableVector(STM32_I2C1_GLOBAL_NUMBER);
+#elif defined(STM32_I2C1_EVENT_NUMBER) && defined(STM32_I2C1_ERROR_NUMBER)
+      nvicDisableVector(STM32_I2C1_EVENT_NUMBER);
+      nvicDisableVector(STM32_I2C1_ERROR_NUMBER);
+#else
+#error "I2C1 interrupt numbers not defined"
+#endif
+
       rccDisableI2C1(FALSE);
     }
 #endif
 
 #if STM32_I2C_USE_I2C2
     if (&I2CD2 == i2cp) {
-      nvicDisableVector(I2C2_IRQn);
+#if defined(STM32_I2C2_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicDisableVector(STM32_I2C2_GLOBAL_NUMBER);
+#elif defined(STM32_I2C2_EVENT_NUMBER) && defined(STM32_I2C2_ERROR_NUMBER)
+      nvicDisableVector(STM32_I2C2_EVENT_NUMBER);
+      nvicDisableVector(STM32_I2C2_ERROR_NUMBER);
+#else
+#error "I2C2 interrupt numbers not defined"
+#endif
+
       rccDisableI2C2(FALSE);
     }
 #endif
@@ -502,9 +589,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   VirtualTimer vt;
   uint32_t addr_cr2 = addr & I2C_CR2_SADD;
 
-#if defined(STM32F0XX_I2C)
   chDbgCheck((rxbytes > 1), "i2c_lld_master_receive_timeout");
-#endif
 
   /* Global timeout for the whole operation.*/
   if (timeout != TIME_INFINITE)
@@ -594,10 +679,8 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   VirtualTimer vt;
   uint32_t addr_cr2 = addr & I2C_CR2_SADD;
 
-#if defined(STM32F0XX_I2C)
   chDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
              "i2c_lld_master_transmit_timeout");
-#endif
 
   /* Global timeout for the whole operation.*/
   if (timeout != TIME_INFINITE)
