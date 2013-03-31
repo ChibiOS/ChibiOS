@@ -497,14 +497,14 @@ void i2c_lld_start(I2CDriver *i2cp) {
   dmaStreamSetPeripheral(i2cp->dmatx, &dp->TXDR);
 
   /* Reset i2c peripheral.*/
-  dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_TCIE | I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
+  dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_TCIE |
+            I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
 
   /* Set slave address field (master mode) */
-  //dp->CR2 = (i2cp->config->cr2 & ~I2C_CR2_SADD) | I2C_CR2_AUTOEND;
   dp->CR2 = (i2cp->config->cr2 & ~I2C_CR2_SADD);
 
   /* Setup I2C parameters.*/
-  dp->TIMINGR = i2cp->config->clock_timing;
+  dp->TIMINGR = i2cp->config->timingr;
 
   /* Ready to go.*/
   dp->CR1 |= I2C_CR1_PE;

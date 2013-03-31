@@ -18,6 +18,20 @@
 #include "hal.h"
 
 /*
+ * Timing values are taken from the RM except the PRESC set to 9 because
+ * the input clock is 72MHz.
+ * The timings are critical, please always refer to the STM32 Reference
+ * Manual before attempting changes.
+ */
+static const I2CConfig i2cconfig = {
+  STM32_TIMINGR_PRESC(8U)  |            /* 72MHz/9 = 8MHz I2CCLK.           */
+  STM32_TIMINGR_SCLDEL(3U) | STM32_TIMINGR_SDADEL(3U) |
+  STM32_TIMINGR_SCLH(3U)   | STM32_TIMINGR_SCLL(9U),
+  0,
+  0
+};
+
+/*
  * This is a periodic thread that does absolutely nothing except flashing
  * a LED.
  */
@@ -48,6 +62,11 @@ int main(void) {
    */
   halInit();
   chSysInit();
+
+  /*
+   * Starting the I2C driver 2.
+   */
+  i2cStart(&I2CD2, &i2cconfig);
 
   /*
    * Starting the blinker thread.

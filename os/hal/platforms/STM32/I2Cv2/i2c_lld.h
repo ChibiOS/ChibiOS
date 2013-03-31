@@ -35,6 +35,22 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    TIMINGR register definitions
+ * @{
+ */
+#define STM32_TIMINGR_PRESC_MASK        (15U << 28)
+#define STM32_TIMINGR_PRESC(n)          ((n) << 28)
+#define STM32_TIMINGR_SCLDEL_MASK       (15U << 20)
+#define STM32_TIMINGR_SCLDEL(n)         ((n) << 20)
+#define STM32_TIMINGR_SDADEL_MASK       (15U << 16)
+#define STM32_TIMINGR_SDADEL(n)         ((n) << 16)
+#define STM32_TIMINGR_SCLH_MASK         (255U << 8)
+#define STM32_TIMINGR_SCLH(n)           ((n) << 8)
+#define STM32_TIMINGR_SCLL_MASK         (255U << 0)
+#define STM32_TIMINGR_SCLL(n)           ((n) << 0)
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -184,25 +200,25 @@ typedef uint16_t i2caddr_t;
 typedef uint32_t i2cflags_t;
 
 /**
- * @brief   Supported modes for the I2C bus.
- */
-typedef enum {
-  OPMODE_I2C = 1,
-  OPMODE_SMBUS_DEVICE = 2,
-  OPMODE_SMBUS_HOST = 3,
-} i2copmode_t;
-
-/**
  * @brief Driver configuration structure.
  */
 typedef struct {
-  i2copmode_t     op_mode;       /**< @brief Specifies the I2C mode.        */
-  uint32_t        clock_timing;  /**< @brief Specifies the clock timing.
-                                      @note See TRM for further info.       */
-  uint32_t        cr1;           /**< @brief I2C register initialization
-                                             data.                          */
-  uint32_t        cr2;           /**< @brief I2C register initialization
-                                             data.                          */
+  /**
+   * @brief   TIMINGR register initialization.
+   * @note    Refer to the STM32 reference manual, the values are affected
+   *          by the system clock settings in mcuconf.h.
+   */
+  uint32_t        timingr;
+  /**
+   * @brief   CR1 register initialization.
+   * @note    Leave to zero unless you know what you are doing.
+   */
+  uint32_t        cr1;
+  /**
+   * @brief   CR2 register initialization.
+   * @note    Only the ADD10 bit can eventually be specified here.
+   */
+  uint32_t        cr2;
 } I2CConfig;
 
 /**
