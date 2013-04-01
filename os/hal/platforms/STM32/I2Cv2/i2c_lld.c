@@ -177,10 +177,20 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
     }
     else {
       dp->CR2 |= I2C_CR2_STOP;
-      wakeup_isr(i2cp, RDY_OK);
     }
   }
+  else if (isr & I2C_ISR_STOPF) {
+    /* Stops the associated DMA streams.*/
+    dmaStreamDisable(i2cp->dmatx);
+    dmaStreamDisable(i2cp->dmarx);
+
+    wakeup_isr(i2cp, RDY_OK);
+  }
   else if (isr & I2C_ISR_NACKF) {
+    /* Stops the associated DMA streams.*/
+    dmaStreamDisable(i2cp->dmatx);
+    dmaStreamDisable(i2cp->dmarx);
+
     i2cp->errors |= I2CD_ACK_FAILURE;
     wakeup_isr(i2cp, RDY_RESET);
   }
@@ -503,8 +513,8 @@ void i2c_lld_start(I2CDriver *i2cp) {
   dmaStreamSetPeripheral(i2cp->dmatx, &dp->TXDR);
 
   /* Reset i2c peripheral.*/
-  dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_NACKIE |
-            I2C_CR1_TCIE | I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
+  dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_STOPIE |
+            I2C_CR1_NACKIE | I2C_CR1_TCIE | I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
 
   /* Set slave address field (master mode) */
   dp->CR2 = (i2cp->config->cr2 & ~I2C_CR2_SADD);

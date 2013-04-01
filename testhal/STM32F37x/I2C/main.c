@@ -92,13 +92,12 @@ int main(void) {
     static const uint8_t cmd[] = {0, 0};
     uint8_t data[16];
 
-    chThdSleepMilliseconds(10);
     msg = i2cMasterTransmitTimeout(&I2CD2, 0x52, cmd, sizeof(cmd),
                                    data, sizeof(data), TIME_INFINITE);
+    msg = msg;
     if (msg != RDY_OK)
       chSysHalt();
     for (i = 0; i < 256; i++) {
-      chThdSleepMilliseconds(10);
       msg = i2cMasterReceiveTimeout(&I2CD2, 0x52,
                                     data, sizeof(data), TIME_INFINITE);
       if (msg != RDY_OK)
