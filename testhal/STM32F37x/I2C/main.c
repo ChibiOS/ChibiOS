@@ -23,10 +23,19 @@
  * The timings are critical, please always refer to the STM32 Reference
  * Manual before attempting changes.
  */
+#if 0
 static const I2CConfig i2cconfig = {
   STM32_TIMINGR_PRESC(8U)  |            /* 72MHz/9 = 8MHz I2CCLK.           */
   STM32_TIMINGR_SCLDEL(3U) | STM32_TIMINGR_SDADEL(3U) |
   STM32_TIMINGR_SCLH(3U)   | STM32_TIMINGR_SCLL(9U),
+  0,
+  0
+};
+#endif
+static const I2CConfig i2cconfig = {
+  STM32_TIMINGR_PRESC(15U) |
+  STM32_TIMINGR_SCLDEL(4U) | STM32_TIMINGR_SDADEL(2U) |
+  STM32_TIMINGR_SCLH(15U)  | STM32_TIMINGR_SCLL(21U),
   0,
   0
 };
@@ -78,6 +87,23 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (TRUE) {
+    unsigned i;
+    msg_t msg;
+    static const uint8_t cmd[] = {0, 0};
+    uint8_t data[16];
+
+    chThdSleepMilliseconds(10);
+    msg = i2cMasterTransmitTimeout(&I2CD2, 0x52, cmd, sizeof(cmd),
+                                   data, sizeof(data), TIME_INFINITE);
+    if (msg != RDY_OK)
+      chSysHalt();
+    for (i = 0; i < 256; i++) {
+      chThdSleepMilliseconds(10);
+      msg = i2cMasterReceiveTimeout(&I2CD2, 0x52,
+                                    data, sizeof(data), TIME_INFINITE);
+      if (msg != RDY_OK)
+        chSysHalt();
+    }
     chThdSleepMilliseconds(500);
   }
   return 0;

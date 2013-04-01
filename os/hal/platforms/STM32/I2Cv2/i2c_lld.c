@@ -56,7 +56,7 @@
 /*===========================================================================*/
 
 #define I2C_MASTER_TC                                                       \
-  ((uint32_t)(I2C_ISR_BUSY|I2C_ISR_TC))
+  ((uint32_t)(I2C_ISR_BUSY | I2C_ISR_TC))
 
 #define I2C_ERROR_MASK                                                      \
   ((uint32_t)(I2C_ISR_BERR | I2C_ISR_ARLO | I2C_ISR_OVR | I2C_ISR_PECERR |  \
@@ -155,13 +155,14 @@ static void i2c_lld_safety_timeout(void *p) {
  * @brief   I2C shared ISR code.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] isr       content of the ISR register to be decoded
  *
  * @notapi
  */
-static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t status) {
+static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  if (status & I2C_MASTER_TC) {
+  if (isr & I2C_ISR_TC) {
     uint8_t rxbytes = dmaStreamGetTransactionSize(i2cp->dmarx);
     if (rxbytes > 0) {
       /* Enable RX DMA */
@@ -178,6 +179,10 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t status) {
       dp->CR2 |= I2C_CR2_STOP;
       wakeup_isr(i2cp, RDY_OK);
     }
+  }
+  else if (isr & I2C_ISR_NACKF) {
+    i2cp->errors |= I2CD_ACK_FAILURE;
+    wakeup_isr(i2cp, RDY_RESET);
   }
 }
 
@@ -231,48 +236,31 @@ static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp, uint32_t flags) {
  * @brief   I2C error handler.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] isr       content of the ISR register to be decoded
  *
  * @notapi
  */
-static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint32_t status) {
-  i2cflags_t errors;
+static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint32_t isr) {
 
   /* Clears interrupt flags just to be safe.*/
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamDisable(i2cp->dmarx);
 
-  errors = I2CD_NO_ERROR;
+  if (isr & I2C_ISR_BERR)
+    i2cp->errors |= I2CD_BUS_ERROR;
 
-  if (status & I2C_ISR_BERR) {                     /* Bus error.           */
-    status &= ~I2C_ISR_BERR;
-    errors |= I2CD_BUS_ERROR;
-  }
-  if (status & I2C_ISR_ARLO) {                     /* Arbitration lost.    */
-    status &= ~I2C_ISR_ARLO;
-    errors |= I2CD_ARBITRATION_LOST;
-  }
-  if (status & I2C_ISR_OVR) {                      /* Overrun.             */
-    status &= ~I2C_ISR_OVR;
-    errors |= I2CD_OVERRUN;
-  }
-  if (status & I2C_ISR_PECERR) {                   /* PEC error.           */
-    status &= ~I2C_ISR_PECERR;
-    errors |= I2CD_PEC_ERROR;
-  }
-  if (status & I2C_ISR_TIMEOUT) {                  /* SMBus Timeout.       */
-    status &= ~I2C_ISR_TIMEOUT;
-    errors |= I2CD_TIMEOUT;
-  }
-  if (status & I2C_ISR_ALERT) {                    /* SMBus alert.         */
-    status &= ~I2C_ISR_ALERT;
-    errors |= I2CD_SMB_ALERT;
-  }
+  if (isr & I2C_ISR_ARLO)
+    i2cp->errors |= I2CD_ARBITRATION_LOST;
+
+  if (isr & I2C_ISR_OVR)
+    i2cp->errors |= I2CD_OVERRUN;
+
+  if (isr & I2C_ISR_TIMEOUT)
+    i2cp->errors |= I2CD_TIMEOUT;
 
   /* If some error has been identified then sends wakes the waiting thread.*/
-  if (errors != I2CD_NO_ERROR) {
-    i2cp->errors = errors;
+  if (i2cp->errors != I2CD_NO_ERROR)
     wakeup_isr(i2cp, RDY_RESET);
-  }
 }
 
 /*===========================================================================*/
@@ -287,35 +275,44 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint32_t status) {
  * @notapi
  */
 CH_IRQ_HANDLER(STM32_I2C1_GLOBAL_HANDLER) {
-  uint32_t status = I2CD1.i2c->ISR;
+  uint32_t isr = I2CD1.i2c->ISR;
 
   CH_IRQ_PROLOGUE();
 
-  if (status & I2C_ERROR_MASK)
-    i2c_lld_serve_error_interrupt(&I2CD1, status);
-  else if (status & I2C_INT_MASK)
-    i2c_lld_serve_interrupt(&I2CD1, status);
+  /* Clearing IRQ bits.*/
+  I2CD1.i2c->ICR = isr;
+
+  if (isr & I2C_ERROR_MASK)
+    i2c_lld_serve_error_interrupt(&I2CD1, isr);
+  else if (isr & I2C_INT_MASK)
+    i2c_lld_serve_interrupt(&I2CD1, isr);
 
   CH_IRQ_EPILOGUE();
 }
 
 #elif defined(STM32_I2C1_EVENT_HANDLER) && defined(STM32_I2C1_ERROR_HANDLER)
 CH_IRQ_HANDLER(STM32_I2C1_EVENT_HANDLER) {
-  uint32_t status = I2CD1.i2c->ISR;
+  uint32_t isr = I2CD1.i2c->ISR;
 
   CH_IRQ_PROLOGUE();
 
-  i2c_lld_serve_interrupt(&I2CD1, status);
+  /* Clearing IRQ bits.*/
+  I2CD1.i2c->ICR = isr & I2C_INT_MASK;
+
+  i2c_lld_serve_interrupt(&I2CD1, isr);
 
   CH_IRQ_EPILOGUE();
 }
 
 CH_IRQ_HANDLER(STM32_I2C1_ERROR_HANDLER) {
-  uint32_t status = I2CD1.i2c->ISR;
+  uint32_t isr = I2CD1.i2c->ISR;
 
   CH_IRQ_PROLOGUE();
 
-  i2c_lld_serve_error_interrupt(&I2CD1, status);
+  /* Clearing IRQ bits.*/
+  I2CD1.i2c->ICR = isr & I2C_ERROR_MASK;
+
+  i2c_lld_serve_error_interrupt(&I2CD1, isr);
 
   CH_IRQ_EPILOGUE();
 }
@@ -333,35 +330,44 @@ CH_IRQ_HANDLER(STM32_I2C1_ERROR_HANDLER) {
  * @notapi
  */
 CH_IRQ_HANDLER(STM32_I2C2_GLOBAL_HANDLER) {
-  uint32_t status = I2CD2.i2c->ISR;
+  uint32_t isr = I2CD2.i2c->ISR;
 
   CH_IRQ_PROLOGUE();
 
-  if (status & I2C_ERROR_MASK)
-    i2c_lld_serve_error_interrupt(&I2CD2, status);
-  else if (status & I2C_INT_MASK)
-    i2c_lld_serve_interrupt(&I2CD2, status);
+  /* Clearing IRQ bits.*/
+  I2CD2.i2c->ICR = isr;
+
+  if (isr & I2C_ERROR_MASK)
+    i2c_lld_serve_error_interrupt(&I2CD2, isr);
+  else if (isr & I2C_INT_MASK)
+    i2c_lld_serve_interrupt(&I2CD2, isr);
 
   CH_IRQ_EPILOGUE();
 }
 
 #elif defined(STM32_I2C2_EVENT_HANDLER) && defined(STM32_I2C2_ERROR_HANDLER)
 CH_IRQ_HANDLER(STM32_I2C2_EVENT_HANDLER) {
-  uint32_t status = I2CD2.i2c->ISR;
+  uint32_t isr = I2CD2.i2c->ISR;
 
   CH_IRQ_PROLOGUE();
 
-  i2c_lld_serve_interrupt(&I2CD2, status);
+  /* Clearing IRQ bits.*/
+  I2CD2.i2c->ICR = isr & I2C_INT_MASK;
+
+  i2c_lld_serve_interrupt(&I2CD2, isr);
 
   CH_IRQ_EPILOGUE();
 }
 
 CH_IRQ_HANDLER(STM32_I2C2_ERROR_HANDLER) {
-  uint32_t status = I2CD2.i2c->ISR;
+  uint32_t isr = I2CD2.i2c->ISR;
 
   CH_IRQ_PROLOGUE();
 
-  i2c_lld_serve_error_interrupt(&I2CD2, status);
+  /* Clearing IRQ bits.*/
+  I2CD2.i2c->ICR = isr & I2C_ERROR_MASK;
+
+  i2c_lld_serve_error_interrupt(&I2CD2, isr);
 
   CH_IRQ_EPILOGUE();
 }
@@ -497,8 +503,8 @@ void i2c_lld_start(I2CDriver *i2cp) {
   dmaStreamSetPeripheral(i2cp->dmatx, &dp->TXDR);
 
   /* Reset i2c peripheral.*/
-  dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_TCIE |
-            I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
+  dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_NACKIE |
+            I2C_CR1_TCIE | I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
 
   /* Set slave address field (master mode) */
   dp->CR2 = (i2cp->config->cr2 & ~I2C_CR2_SADD);
@@ -591,6 +597,9 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   chDbgCheck((rxbytes > 1), "i2c_lld_master_receive_timeout");
 
+  /* Resetting error flags for this transfer.*/
+  i2cp->errors = I2CD_NO_ERROR;
+
   /* Global timeout for the whole operation.*/
   if (timeout != TIME_INFINITE)
     chVTSetI(&vt, timeout, i2c_lld_safety_timeout, (void *)i2cp);
@@ -681,6 +690,9 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   chDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
              "i2c_lld_master_transmit_timeout");
+
+  /* Resetting error flags for this transfer.*/
+  i2cp->errors = I2CD_NO_ERROR;
 
   /* Global timeout for the whole operation.*/
   if (timeout != TIME_INFINITE)
