@@ -8,7 +8,7 @@
   	<output_path>..</output_path>
   </configuration_settings>
   <board_name>STMicroelectronics STM32373C-EVAL</board_name>
-  <board_id>ST STM32373C-EVAL</board_id>
+  <board_id>ST_STM32373C_EVAL</board_id>
   <board_functions></board_functions>
   <subtype>STM32F37X</subtype>
   <clocks HSEFrequency="8000000" HSEBypass="false" LSEFrequency="32768"
@@ -97,7 +97,7 @@
         Alternate="4" />
       <pin10
         ID="I2C2_SDA"
-        Type="PushPull"
+        Type="OpenDrain"
         Speed="Maximum"
         Resistor="Floating"
         Level="High"

@@ -24,7 +24,7 @@
 /*
  * Board identifier.
  */
-#define BOARD_ST STM32373C-EVAL
+#define BOARD_ST_STM32373C_EVAL
 #define BOARD_NAME                  "STMicroelectronics STM32373C-EVAL"
 
 /*
@@ -218,7 +218,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOA_COMP2_OUT) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOA_I2C2_SMB) |   \
                                      PIN_OTYPE_OPENDRAIN(GPIOA_I2C2_SCL) |  \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_I2C2_SDA) |   \
+                                     PIN_OTYPE_OPENDRAIN(GPIOA_I2C2_SDA) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOA_USB_DM) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_USB_DP) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_SWDIO) |      \
