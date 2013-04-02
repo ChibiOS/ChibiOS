@@ -21,8 +21,8 @@
 /*
  * LPC812 memory setup.
  */
-__main_stack_size__     = 0x0200;
-__process_stack_size__  = 0x0200;
+__main_stack_size__     = 0x0100;
+__process_stack_size__  = 0x0100;
 
 MEMORY
 {
