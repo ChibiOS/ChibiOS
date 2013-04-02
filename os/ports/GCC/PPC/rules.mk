@@ -62,10 +62,16 @@ ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
 CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
 ifeq ($(USE_LINK_GC),yes)
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections,$(USE_LDOPT) $(LLIBDIR)
+GCLDFLAGS = ,--gc-sections
 else
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,$(USE_LDOPT) $(LLIBDIR)
+GCLDFLAGS =
 endif
+ifneq ($(USE_LDOPT),)
+XLDFLAGS  =,$(USE_LDOPT)
+else
+XLDFLAGS  =
+endif
+LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch$(GCLDFLAGS)$(XLDFLAGS) $(LLIBDIR)
 
 # Generate dependency information
 CFLAGS   += -MD -MP -MF .dep/$(@F).d
