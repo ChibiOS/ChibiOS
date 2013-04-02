@@ -51,7 +51,7 @@
 #define SPC5_DSPI2_DISABLE_CLOCK()
 
 /* eDMA attributes.*/
-#define SPC5_HAS_EDMAA                      TRUE
+#define SPC5_HAS_EDMA                       TRUE
 #define SPC5_EDMA_NCHANNELS                 32
 #define SPC5_EDMA_HAS_MUX                   FALSE
 

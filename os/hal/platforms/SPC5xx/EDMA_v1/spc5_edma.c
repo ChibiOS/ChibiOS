@@ -23,6 +23,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#if SPC5_HAS_EDMA
+
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -55,17 +57,17 @@ static const edma_channel_config_t *channels[SPC5_EDMA_NCHANNELS];
  */
 CH_IRQ_HANDLER(vector10) {
   edma_channel_t channel;
-  uint32_t erl, esr = SPC5_EDMAA.ESR.R;
+  uint32_t erl, esr = SPC5_EDMA.ESR.R;
 
   CH_IRQ_PROLOGUE();
 
   /* Scanning for errors.*/
   channel = 0;
-  while (((erl = SPC5_EDMAA.ERL.R) != 0) &&
+  while (((erl = SPC5_EDMA.ERL.R) != 0) &&
          (channel < (SPC5_EDMA_NCHANNELS > 32 ? 32 : SPC5_EDMA_NCHANNELS))) {
     if ((erl & (1U << channel)) != 0) {
       /* Error flag cleared.*/
-      SPC5_EDMAA.CER.R = channel;
+      SPC5_EDMA.CER.R = channel;
 
       /* If the channel is not associated then the error is simply discarded
          else the error callback is invoked.*/
@@ -93,7 +95,7 @@ CH_IRQ_HANDLER(vector11) {
   if (channels[0] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 0;
+  SPC5_EDMA.CIRQR.R = 0;
   channels[0]->dma_func(0, channels[0]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -111,7 +113,7 @@ CH_IRQ_HANDLER(vector12) {
   if (channels[1] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 1;
+  SPC5_EDMA.CIRQR.R = 1;
   channels[1]->dma_func(1, channels[1]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -129,7 +131,7 @@ CH_IRQ_HANDLER(vector13) {
   if (channels[2] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 2;
+  SPC5_EDMA.CIRQR.R = 2;
   channels[2]->dma_func(2, channels[2]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -147,7 +149,7 @@ CH_IRQ_HANDLER(vector14) {
   if (channels[3] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 3;
+  SPC5_EDMA.CIRQR.R = 3;
   channels[3]->dma_func(3, channels[3]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -165,7 +167,7 @@ CH_IRQ_HANDLER(vector15) {
   if (channels[4] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 4;
+  SPC5_EDMA.CIRQR.R = 4;
   channels[4]->dma_func(4, channels[4]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -183,7 +185,7 @@ CH_IRQ_HANDLER(vector16) {
   if (channels[5] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 5;
+  SPC5_EDMA.CIRQR.R = 5;
   channels[5]->dma_func(5, channels[5]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -201,7 +203,7 @@ CH_IRQ_HANDLER(vector17) {
   if (channels[6] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 6;
+  SPC5_EDMA.CIRQR.R = 6;
   channels[6]->dma_func(6, channels[6]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -219,7 +221,7 @@ CH_IRQ_HANDLER(vector18) {
   if (channels[7] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 7;
+  SPC5_EDMA.CIRQR.R = 7;
   channels[7]->dma_func(7, channels[7]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -237,7 +239,7 @@ CH_IRQ_HANDLER(vector19) {
   if (channels[8] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 8;
+  SPC5_EDMA.CIRQR.R = 8;
   channels[8]->dma_func(8, channels[8]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -255,7 +257,7 @@ CH_IRQ_HANDLER(vector20) {
   if (channels[9] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 9;
+  SPC5_EDMA.CIRQR.R = 9;
   channels[9]->dma_func(9, channels[9]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -273,7 +275,7 @@ CH_IRQ_HANDLER(vector21) {
   if (channels[10] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 10;
+  SPC5_EDMA.CIRQR.R = 10;
   channels[10]->dma_func(10, channels[10]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -291,7 +293,7 @@ CH_IRQ_HANDLER(vector22) {
   if (channels[11] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 11;
+  SPC5_EDMA.CIRQR.R = 11;
   channels[11]->dma_func(11, channels[11]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -309,7 +311,7 @@ CH_IRQ_HANDLER(vector23) {
   if (channels[12] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 12;
+  SPC5_EDMA.CIRQR.R = 12;
   channels[12]->dma_func(12, channels[12]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -327,7 +329,7 @@ CH_IRQ_HANDLER(vector24) {
   if (channels[13] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 13;
+  SPC5_EDMA.CIRQR.R = 13;
   channels[13]->dma_func(13, channels[13]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -345,7 +347,7 @@ CH_IRQ_HANDLER(vector25) {
   if (channels[14] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 14;
+  SPC5_EDMA.CIRQR.R = 14;
   channels[14]->dma_func(14, channels[14]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -363,7 +365,7 @@ CH_IRQ_HANDLER(vector26) {
   if (channels[15] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 15;
+  SPC5_EDMA.CIRQR.R = 15;
   channels[15]->dma_func(15, channels[15]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -382,7 +384,7 @@ CH_IRQ_HANDLER(vector27) {
   if (channels[16] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 16;
+  SPC5_EDMA.CIRQR.R = 16;
   channels[16]->dma_func(16, channels[16]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -400,7 +402,7 @@ CH_IRQ_HANDLER(vector28) {
   if (channels[17] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 17;
+  SPC5_EDMA.CIRQR.R = 17;
   channels[17]->dma_func(17, channels[17]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -418,7 +420,7 @@ CH_IRQ_HANDLER(vector29) {
   if (channels[18] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 18;
+  SPC5_EDMA.CIRQR.R = 18;
   channels[18]->dma_func(18, channels[18]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -436,7 +438,7 @@ CH_IRQ_HANDLER(vector30) {
   if (channels[19] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 19;
+  SPC5_EDMA.CIRQR.R = 19;
   channels[19]->dma_func(19, channels[19]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -454,7 +456,7 @@ CH_IRQ_HANDLER(vector31) {
   if (channels[20] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 20;
+  SPC5_EDMA.CIRQR.R = 20;
   channels[20]->dma_func(20, channels[20]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -472,7 +474,7 @@ CH_IRQ_HANDLER(vector32) {
   if (channels[21] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 21;
+  SPC5_EDMA.CIRQR.R = 21;
   channels[21]->dma_func(21, channels[21]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -490,7 +492,7 @@ CH_IRQ_HANDLER(vector33) {
   if (channels[22] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 22;
+  SPC5_EDMA.CIRQR.R = 22;
   channels[22]->dma_func(22, channels[22]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -508,7 +510,7 @@ CH_IRQ_HANDLER(vector34) {
   if (channels[23] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 23;
+  SPC5_EDMA.CIRQR.R = 23;
   channels[23]->dma_func(23, channels[23]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -526,7 +528,7 @@ CH_IRQ_HANDLER(vector35) {
   if (channels[24] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 24;
+  SPC5_EDMA.CIRQR.R = 24;
   channels[24]->dma_func(24, channels[24]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -544,7 +546,7 @@ CH_IRQ_HANDLER(vector36) {
   if (channels[25] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 25;
+  SPC5_EDMA.CIRQR.R = 25;
   channels[25]->dma_func(25, channels[25]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -562,7 +564,7 @@ CH_IRQ_HANDLER(vector37) {
   if (channels[26] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 26;
+  SPC5_EDMA.CIRQR.R = 26;
   channels[26]->dma_func(26, channels[26]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -580,7 +582,7 @@ CH_IRQ_HANDLER(vector38) {
   if (channels[27] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 27;
+  SPC5_EDMA.CIRQR.R = 27;
   channels[27]->dma_func(27, channels[27]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -598,7 +600,7 @@ CH_IRQ_HANDLER(vector39) {
   if (channels[28] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 28;
+  SPC5_EDMA.CIRQR.R = 28;
   channels[28]->dma_func(28, channels[28]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -616,7 +618,7 @@ CH_IRQ_HANDLER(vector40) {
   if (channels[29] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 29;
+  SPC5_EDMA.CIRQR.R = 29;
   channels[29]->dma_func(29, channels[29]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -634,7 +636,7 @@ CH_IRQ_HANDLER(vector41) {
   if (channels[30] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 30;
+  SPC5_EDMA.CIRQR.R = 30;
   channels[30]->dma_func(30, channels[30]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -652,7 +654,7 @@ CH_IRQ_HANDLER(vector42) {
   if (channels[31] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 31;
+  SPC5_EDMA.CIRQR.R = 31;
   channels[31]->dma_func(31, channels[31]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -665,17 +667,17 @@ CH_IRQ_HANDLER(vector42) {
  */
 CH_IRQ_HANDLER(vector210) {
   edma_channel_t channel;
-  uint32_t erh, esr = SPC5_EDMAA.ESR.R;
+  uint32_t erh, esr = SPC5_EDMA.ESR.R;
 
   CH_IRQ_PROLOGUE();
 
   /* Scanning for errors.*/
   channel = 32;
-  while (((erh = SPC5_EDMAA.ERH.R) != 0) && (channel < SPC5_EDMA_NCHANNELS)) {
+  while (((erh = SPC5_EDMA.ERH.R) != 0) && (channel < SPC5_EDMA_NCHANNELS)) {
 
     if ((erh & (1U << (channel - 32))) != 0) {
       /* Error flag cleared.*/
-      SPC5_EDMAA.CER.R = channel;
+      SPC5_EDMA.CER.R = channel;
 
       /* If the channel is not associated then the error is simply discarded
          else the error callback is invoked.*/
@@ -703,7 +705,7 @@ CH_IRQ_HANDLER(vector211) {
   if (channels[32] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 32;
+  SPC5_EDMA.CIRQR.R = 32;
   channels[32]->dma_func(32, channels[32]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -721,7 +723,7 @@ CH_IRQ_HANDLER(vector212) {
   if (channels[33] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 33;
+  SPC5_EDMA.CIRQR.R = 33;
   channels[33]->dma_func(33, channels[33]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -739,7 +741,7 @@ CH_IRQ_HANDLER(vector213) {
   if (channels[34] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 34;
+  SPC5_EDMA.CIRQR.R = 34;
   channels[34]->dma_func(34, channels[34]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -757,7 +759,7 @@ CH_IRQ_HANDLER(vector214) {
   if (channels[35] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 35;
+  SPC5_EDMA.CIRQR.R = 35;
   channels[35]->dma_func(35, channels[35]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -775,7 +777,7 @@ CH_IRQ_HANDLER(vector215) {
   if (channels[36] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 36;
+  SPC5_EDMA.CIRQR.R = 36;
   channels[36]->dma_func(36, channels[36]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -793,7 +795,7 @@ CH_IRQ_HANDLER(vector216) {
   if (channels[37] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 37;
+  SPC5_EDMA.CIRQR.R = 37;
   channels[37]->dma_func(37, channels[37]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -811,7 +813,7 @@ CH_IRQ_HANDLER(vector217) {
   if (channels[38] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 38;
+  SPC5_EDMA.CIRQR.R = 38;
   channels[38]->dma_func(38, channels[38]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -829,7 +831,7 @@ CH_IRQ_HANDLER(vector218) {
   if (channels[39] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 39;
+  SPC5_EDMA.CIRQR.R = 39;
   channels[39]->dma_func(39, channels[39]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -847,7 +849,7 @@ CH_IRQ_HANDLER(vector219) {
   if (channels[40] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 40;
+  SPC5_EDMA.CIRQR.R = 40;
   channels[40]->dma_func(40, channels[40]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -865,7 +867,7 @@ CH_IRQ_HANDLER(vector220) {
   if (channels[41] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 41;
+  SPC5_EDMA.CIRQR.R = 41;
   channels[41]->dma_func(41, channels[41]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -883,7 +885,7 @@ CH_IRQ_HANDLER(vector221) {
   if (channels[42] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 42;
+  SPC5_EDMA.CIRQR.R = 42;
   channels[42]->dma_func(42, channels[42]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -901,7 +903,7 @@ CH_IRQ_HANDLER(vector222) {
   if (channels[43] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 43;
+  SPC5_EDMA.CIRQR.R = 43;
   channels[43]->dma_func(43, channels[43]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -919,7 +921,7 @@ CH_IRQ_HANDLER(vector223) {
   if (channels[44] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 44;
+  SPC5_EDMA.CIRQR.R = 44;
   channels[44]->dma_func(44, channels[44]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -937,7 +939,7 @@ CH_IRQ_HANDLER(vector224) {
   if (channels[45] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 45;
+  SPC5_EDMA.CIRQR.R = 45;
   channels[45]->dma_func(45, channels[45]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -955,7 +957,7 @@ CH_IRQ_HANDLER(vector225) {
   if (channels[46] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 46;
+  SPC5_EDMA.CIRQR.R = 46;
   channels[46]->dma_func(46, channels[46]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -973,7 +975,7 @@ CH_IRQ_HANDLER(vector226) {
   if (channels[47] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 47;
+  SPC5_EDMA.CIRQR.R = 47;
   channels[47]->dma_func(47, channels[47]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -991,7 +993,7 @@ CH_IRQ_HANDLER(vector227) {
   if (channels[48] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 48;
+  SPC5_EDMA.CIRQR.R = 48;
   channels[48]->dma_func(48, channels[48]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1009,7 +1011,7 @@ CH_IRQ_HANDLER(vector228) {
   if (channels[49] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 49;
+  SPC5_EDMA.CIRQR.R = 49;
   channels[49]->dma_func(49, channels[49]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1027,7 +1029,7 @@ CH_IRQ_HANDLER(vector229) {
   if (channels[50] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 50;
+  SPC5_EDMA.CIRQR.R = 50;
   channels[50]->dma_func(50, channels[50]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1045,7 +1047,7 @@ CH_IRQ_HANDLER(vector230) {
   if (channels[51] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 51;
+  SPC5_EDMA.CIRQR.R = 51;
   channels[51]->dma_func(51, channels[51]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1063,7 +1065,7 @@ CH_IRQ_HANDLER(vector231) {
   if (channels[52] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 52;
+  SPC5_EDMA.CIRQR.R = 52;
   channels[52]->dma_func(52, channels[52]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1081,7 +1083,7 @@ CH_IRQ_HANDLER(vector232) {
   if (channels[53] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 53;
+  SPC5_EDMA.CIRQR.R = 53;
   channels[53]->dma_func(53, channels[53]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1099,7 +1101,7 @@ CH_IRQ_HANDLER(vector233) {
   if (channels[54] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 54;
+  SPC5_EDMA.CIRQR.R = 54;
   channels[54]->dma_func(54, channels[54]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1117,7 +1119,7 @@ CH_IRQ_HANDLER(vector234) {
   if (channels[55] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 55;
+  SPC5_EDMA.CIRQR.R = 55;
   channels[55]->dma_func(55, channels[55]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1135,7 +1137,7 @@ CH_IRQ_HANDLER(vector235) {
   if (channels[56] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 56;
+  SPC5_EDMA.CIRQR.R = 56;
   channels[56]->dma_func(56, channels[56]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1153,7 +1155,7 @@ CH_IRQ_HANDLER(vector236) {
   if (channels[57] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 57;
+  SPC5_EDMA.CIRQR.R = 57;
   channels[57]->dma_func(57, channels[57]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1171,7 +1173,7 @@ CH_IRQ_HANDLER(vector237) {
   if (channels[58] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 58;
+  SPC5_EDMA.CIRQR.R = 58;
   channels[58]->dma_func(58, channels[58]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1189,7 +1191,7 @@ CH_IRQ_HANDLER(vector238) {
   if (channels[59] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 59;
+  SPC5_EDMA.CIRQR.R = 59;
   channels[59]->dma_func(59, channels[59]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1207,7 +1209,7 @@ CH_IRQ_HANDLER(vector239) {
   if (channels[60] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 60;
+  SPC5_EDMA.CIRQR.R = 60;
   channels[60]->dma_func(60, channels[60]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1225,7 +1227,7 @@ CH_IRQ_HANDLER(vector240) {
   if (channels[61] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 61;
+  SPC5_EDMA.CIRQR.R = 61;
   channels[61]->dma_func(61, channels[61]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1243,7 +1245,7 @@ CH_IRQ_HANDLER(vector241) {
   if (channels[62] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 62;
+  SPC5_EDMA.CIRQR.R = 62;
   channels[62]->dma_func(62, channels[62]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1261,7 +1263,7 @@ CH_IRQ_HANDLER(vector242) {
   if (channels[63] == NULL) {
     SPC5_EDMA_ERROR_HANDLER();
   }
-  SPC5_EDMAA.CIRQR.R = 63;
+  SPC5_EDMA.CIRQR.R = 63;
   channels[63]->dma_func(63, channels[63]->dma_param);
 
   CH_IRQ_EPILOGUE();
@@ -1281,13 +1283,13 @@ CH_IRQ_HANDLER(vector242) {
 void edmaInit(void) {
   unsigned i;
 
-  SPC5_EDMAA.CR.R    = SPC5_EDMA_CR_SETTING;
-  SPC5_EDMAA.ERQRL.R = 0x00000000;
-  SPC5_EDMAA.EEIRL.R = 0x00000000;
-  SPC5_EDMAA.IRQRL.R = 0xFFFFFFFF;
-  SPC5_EDMAA.ERL.R =   0xFFFFFFFF;
+  SPC5_EDMA.CR.R    = SPC5_EDMA_CR_SETTING;
+  SPC5_EDMA.ERQRL.R = 0x00000000;
+  SPC5_EDMA.EEIRL.R = 0x00000000;
+  SPC5_EDMA.IRQRL.R = 0xFFFFFFFF;
+  SPC5_EDMA.ERL.R =   0xFFFFFFFF;
   for (i = 0; i < SPC5_EDMA_NCHANNELS; i++)
-    SPC5_EDMAA.CPR[i].R = 0;
+    SPC5_EDMA.CPR[i].R = 0;
 
   /* Error interrupt source.*/
   INTC.PSR[10].R = SPC5_EDMA_ERROR_IRQ_PRIO;
@@ -1324,7 +1326,7 @@ edma_channel_t edmaChannelAllocate(const edma_channel_config_t *ccfg) {
   /* If an error callback is defined then the error interrupt source is
      enabled for the channel.*/
   if (ccfg->dma_error_func != NULL)
-    SPC5_EDMAA.SEEIR.R = channel;
+    SPC5_EDMA.SEEIR.R = channel;
 
   /* Setting up IRQ priority for the selected channel.*/
   INTC.PSR[11 + channel].R = ccfg->dma_irq_prio;
@@ -1351,9 +1353,9 @@ void edmaChannelRelease(edma_channel_t channel) {
   edmaChannelStop(channel);
 
   /* Clearing ISR sources for the channel.*/
-  SPC5_EDMAA.CIRQR.R = channel;
-  SPC5_EDMAA.CEEIR.R = channel;
-  SPC5_EDMAA.CER.R   = channel;
+  SPC5_EDMA.CIRQR.R = channel;
+  SPC5_EDMA.CEEIR.R = channel;
+  SPC5_EDMA.CER.R   = channel;
 
   /* The channels is flagged as available.*/
   channels[channel] = NULL;
@@ -1400,5 +1402,7 @@ void edmaChannelSetupx(edma_channel_t channel,
   tcdp->word[6] = dlast;
   tcdp->word[7] = (iter << 16) | mode;
 }
+
+#endif /* SPC5_HAS_EDMA */
 
 /** @} */

@@ -23,6 +23,8 @@
 #ifndef _SPC5_EDMA_H_
 #define _SPC5_EDMA_H_
 
+#if SPC5_HAS_EDMA
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -73,10 +75,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if !SPC5_HAS_EDMAA
-#error "this device does not have an eDMA unit"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -648,8 +646,8 @@ typedef struct {
  * @name    eDMA units references
  * @{
  */
-#if SPC5_HAS_EDMAA || defined(__DOXYGEN__)
-#define SPC5_EDMAA      (*(edma_t *)0xFFF44000U)
+#if SPC5_HAS_EDMA || defined(__DOXYGEN__)
+#define SPC5_EDMA       (*(edma_t *)0xFFF44000U)
 #endif
 /** @} */
 
@@ -824,6 +822,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* SPC5_HAS_EDMA */
 
 #endif /* _SPC5_EDMA_H_ */
 

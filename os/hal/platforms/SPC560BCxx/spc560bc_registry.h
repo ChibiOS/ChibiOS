@@ -32,7 +32,7 @@
  * @{
  */
 /* eDMA attributes.*/
-#define SPC5_HAS_EDMAA                      FALSE
+#define SPC5_HAS_EDMA                       FALSE
 
 /* LINFlex attributes.*/
 #define SPC5_HAS_LINFLEX0                   TRUE
