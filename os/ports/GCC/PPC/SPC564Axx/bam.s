@@ -35,9 +35,12 @@
 #else
         .long       0x005A0000
 #endif
-        .long       .init
+        .long       _reset_address
 
-.init:
+        .align      2
+        .globl      _reset_address
+        .type       _reset_address, @function
+_reset_address:
         bl          _coreinit
         bl          _ivinit
 

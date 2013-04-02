@@ -31,9 +31,12 @@
         /* BAM record.*/
         .section    .bam, "ax"
         .long       0x015A0000
-        .long       .init
+        .long       _reset_address
 
-.init:
+        .align      2
+        .globl      _reset_address
+        .type       _reset_address, @function
+_reset_address:
         bl          _coreinit
         bl          _ivinit
 

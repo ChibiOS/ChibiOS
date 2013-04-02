@@ -30,6 +30,8 @@ MEMORY
     ram       : org = 0x40000000, len = 128k
 }
 
+ENTRY(_reset_address)
+
 /*
  * Derived constants.
  */

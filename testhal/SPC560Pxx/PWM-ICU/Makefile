@@ -23,6 +23,11 @@ ifeq ($(USE_LINK_GC),)
   USE_LINK_GC = yes
 endif
 
+# Linker options here.
+ifeq ($(USE_LDOPT),)
+  USE_LDOPT = 
+endif
+
 # If enabled, this option allows to compile the application in VLE mode.
 ifeq ($(USE_VLE),)
   USE_VLE = yes
