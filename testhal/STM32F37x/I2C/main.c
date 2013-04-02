@@ -103,6 +103,7 @@ int main(void) {
         chSysHalt();
     }
     chThdSleepMilliseconds(500);
+    palTogglePad(GPIOC, GPIOC_LED2);
   }
   return 0;
 }

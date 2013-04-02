@@ -179,20 +179,23 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
       dp->CR2 |= I2C_CR2_STOP;
     }
   }
-  else if (isr & I2C_ISR_STOPF) {
-    /* Stops the associated DMA streams.*/
-    dmaStreamDisable(i2cp->dmatx);
-    dmaStreamDisable(i2cp->dmarx);
-
-    wakeup_isr(i2cp, RDY_OK);
-  }
-  else if (isr & I2C_ISR_NACKF) {
-    /* Stops the associated DMA streams.*/
-    dmaStreamDisable(i2cp->dmatx);
-    dmaStreamDisable(i2cp->dmarx);
+  if (isr & I2C_ISR_NACKF) {
+    /* Starts a STOP sequence immediately.*/
+    dp->CR2 |= I2C_CR2_STOP;
 
     i2cp->errors |= I2CD_ACK_FAILURE;
-    wakeup_isr(i2cp, RDY_RESET);
+  }
+  if (isr & I2C_ISR_STOPF) {
+    /* Stops the associated DMA streams.*/
+    dmaStreamDisable(i2cp->dmatx);
+    dmaStreamDisable(i2cp->dmarx);
+
+    if (i2cp->errors) {
+      wakeup_isr(i2cp, RDY_RESET);
+    }
+    else {
+      wakeup_isr(i2cp, RDY_OK);
+    }
   }
 }
 
