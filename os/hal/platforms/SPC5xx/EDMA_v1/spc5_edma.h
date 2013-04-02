@@ -659,7 +659,7 @@ typedef struct {
  *
  * @api
  */
-#define edmaGetTCD(channel) ((edma_tcd_t *)&EDMA.TCD[channel])
+#define edmaGetTCD(channel) ((edma_tcd_t *)&SPC5_EDMA.TCD[channel])
 
 /**
  * @brief   Sets the word 0 fields into a TCD.
@@ -764,7 +764,7 @@ typedef struct {
  *
  * @api
  */
-#define edmaChannelStart(channel) (EDMA.SERQR.R = (channel))
+#define edmaChannelStart(channel) (SPC5_EDMA.SERQR.R = (channel))
 
 /**
  * @brief   Stops an EDMA channel.
@@ -774,8 +774,8 @@ typedef struct {
  * @api
  */
 #define edmaChannelStop(channel) {                                          \
-  EDMA.CERQR.R = (channel);                                                 \
-  EDMA.CDSBR.R = (channel);                                                 \
+  SPC5_EDMA.CERQR.R = (channel);                                            \
+  SPC5_EDMA.CDSBR.R = (channel);                                            \
 }
 
 /**
