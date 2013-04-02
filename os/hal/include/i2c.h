@@ -48,7 +48,10 @@
 #define I2CD_ARBITRATION_LOST       0x02   /**< @brief Arbitration Lost.    */
 #define I2CD_ACK_FAILURE            0x04   /**< @brief Acknowledge Failure. */
 #define I2CD_OVERRUN                0x08   /**< @brief Overrun/Underrun.    */
-#define I2CD_TIMEOUT                0x10   /**< @brief Hardware timeout.    */
+#define I2CD_PEC_ERROR              0x10   /**< @brief PEC Error in
+                                                reception.                  */
+#define I2CD_TIMEOUT                0x20   /**< @brief Hardware timeout.    */
+#define I2CD_SMB_ALERT              0x40   /**< @brief SMBus Alert.         */
 /** @} */
 
 /*===========================================================================*/
