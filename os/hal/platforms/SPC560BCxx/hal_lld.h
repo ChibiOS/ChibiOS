@@ -756,6 +756,8 @@ typedef enum {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#include "spc5_edma.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

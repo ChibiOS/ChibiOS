@@ -31,6 +31,9 @@
  * @name    SPC560B/Cxx capabilities
  * @{
  */
+/* eDMA attributes.*/
+#define SPC5_HAS_EDMAA                      FALSE
+
 /* LINFlex attributes.*/
 #define SPC5_HAS_LINFLEX0                   TRUE
 #define SPC5_LINFLEX0_PCTL                  48
