@@ -94,7 +94,6 @@ int main(void) {
 
     msg = i2cMasterTransmitTimeout(&I2CD2, 0x52, cmd, sizeof(cmd),
                                    data, sizeof(data), TIME_INFINITE);
-    msg = msg;
     if (msg != RDY_OK)
       chSysHalt();
     for (i = 0; i < 256; i++) {
