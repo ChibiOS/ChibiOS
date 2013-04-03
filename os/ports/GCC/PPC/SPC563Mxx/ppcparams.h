@@ -38,6 +38,11 @@
 #define PPC_VARIANT                 PPC_VARIANT_e200z3
 
 /**
+ * @brief   Number of writable bits in IVPR register.
+ */
+#define PPC_IVPR_BITS               16
+
+/**
  * @brief   IVORx registers support.
  */
 #define PPC_SUPPORTS_IVORS          TRUE

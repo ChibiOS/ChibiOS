@@ -35,7 +35,7 @@
 /**
  * @brief   PPC core model.
  */
-#define PPC_VARIANT             PPC_VARIANT_e200z0
+#define PPC_VARIANT                 PPC_VARIANT_e200z0
 
 /**
  * @brief   Number of writable bits in IVPR register.
