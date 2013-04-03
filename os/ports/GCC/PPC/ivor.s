@@ -188,9 +188,9 @@ _ivor_exit:
         bl          dbg_check_unlock
 #endif
 #if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
-        e_lmvgprw  32(%sp)                  /* Restores GPR0, GPR3...GPR12. */
-        e_lmvsprw  16(%sp)                  /* Restores CR, LR, CTR, XER.   */
-        e_lmvsrrw  8(%sp)                   /* Restores PC, MSR.            */
+        e_lmvgprw   32(%sp)                 /* Restores GPR0, GPR3...GPR12. */
+        e_lmvsprw   16(%sp)                 /* Restores CR, LR, CTR, XER.   */
+        e_lmvsrrw   8(%sp)                  /* Restores PC, MSR.            */
 #else /*!(PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI) */
         lwz         %r3, 36(%sp)            /* Restores GPR3...GPR12.       */
         lwz         %r4, 40(%sp)
