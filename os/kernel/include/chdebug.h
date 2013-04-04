@@ -142,7 +142,7 @@ extern ch_trace_buffer_t dbg_trace_buffer;
  * @{
  */
 /**
- * @brief   Function parameter check.
+ * @brief   Function parameters check.
  * @details If the condition check fails then the kernel panics and halts.
  * @note    The condition is tested only if the @p CH_DBG_ENABLE_CHECKS switch
  *          is specified in @p chconf.h else the macro does nothing.
