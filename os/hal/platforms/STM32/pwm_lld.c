@@ -84,7 +84,7 @@ PWMDriver PWMD5;
 
 /**
  * @brief   PWMD8 driver identifier.
- * @note    The driver PWMD5 allocates the timer TIM5 when enabled.
+ * @note    The driver PWMD8 allocates the timer TIM8 when enabled.
  */
 #if STM32_PWM_USE_TIM8 || defined(__DOXYGEN__)
 PWMDriver PWMD8;
