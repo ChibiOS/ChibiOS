@@ -55,6 +55,7 @@ static msg_t blinker(void *arg) {
     palClearPad(GPIOC, GPIOC_LED1);
     chThdSleepMilliseconds(500);
   }
+  return 0;
 }
 
 /*
@@ -95,12 +96,13 @@ int main(void) {
     msg = i2cMasterTransmitTimeout(&I2CD2, 0x52, cmd, sizeof(cmd),
                                    data, sizeof(data), TIME_INFINITE);
     if (msg != RDY_OK)
-      chSysHalt();
+      palTogglePad(GPIOC, GPIOC_LED3);
     for (i = 0; i < 256; i++) {
+      chThdSleepMilliseconds(2);
       msg = i2cMasterReceiveTimeout(&I2CD2, 0x52,
                                     data, sizeof(data), TIME_INFINITE);
       if (msg != RDY_OK)
-        chSysHalt();
+        palTogglePad(GPIOC, GPIOC_LED3);
     }
     chThdSleepMilliseconds(500);
     palTogglePad(GPIOC, GPIOC_LED2);

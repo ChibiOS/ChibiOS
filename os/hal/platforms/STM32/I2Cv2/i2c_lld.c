@@ -35,6 +35,11 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define DMAMODE_COMMON                                                      \
+  (STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |                      \
+   STM32_DMA_CR_MINC       | STM32_DMA_CR_DMEIE      |                      \
+   STM32_DMA_CR_TEIE       | STM32_DMA_CR_TCIE)
+
 #define I2C1_RX_DMA_CHANNEL                                                 \
   STM32_DMA_GETCHANNEL(STM32_I2C_I2C1_RX_DMA_STREAM,                        \
                        STM32_I2C1_RX_DMA_CHN)
@@ -428,9 +433,8 @@ void i2c_lld_init(void) {
 void i2c_lld_start(I2CDriver *i2cp) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  i2cp->dmamode = STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |
-                  STM32_DMA_CR_MINC | STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE |
-                  STM32_DMA_CR_TCIE;
+  i2cp->txdmamode = DMAMODE_COMMON | STM32_DMA_CR_DIR_M2P;
+  i2cp->rxdmamode = DMAMODE_COMMON | STM32_DMA_CR_DIR_P2M;
 
   /* Make sure I2C peripheral is disabled */
   dp->CR1 &= ~I2C_CR1_PE;
@@ -467,8 +471,10 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #error "I2C1 interrupt numbers not defined"
 #endif
 
-      i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C1_RX_DMA_CHANNEL) |
-                       STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
+      i2cp->rxdmamode |= STM32_DMA_CR_CHSEL(I2C1_RX_DMA_CHANNEL) |
+                         STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
+      i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C1_TX_DMA_CHANNEL) |
+                         STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
     }
 #endif /* STM32_I2C_USE_I2C1 */
 
@@ -501,15 +507,13 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #error "I2C2 interrupt numbers not defined"
 #endif
 
-      i2cp->dmamode |= STM32_DMA_CR_CHSEL(I2C2_RX_DMA_CHANNEL) |
-                       STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
+      i2cp->rxdmamode |= STM32_DMA_CR_CHSEL(I2C2_RX_DMA_CHANNEL) |
+                         STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
+      i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C2_TX_DMA_CHANNEL) |
+                         STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
     }
 #endif /* STM32_I2C_USE_I2C2 */
   }
-
-  /* DMA streams mode preparation in advance.*/
-  dmaStreamSetMode(i2cp->dmatx, i2cp->dmamode | STM32_DMA_CR_DIR_M2P);
-  dmaStreamSetMode(i2cp->dmarx, i2cp->dmamode | STM32_DMA_CR_DIR_P2M);
 
   /* I2C registers pointed by the DMA.*/
   dmaStreamSetPeripheral(i2cp->dmarx, &dp->RXDR);
@@ -632,6 +636,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   i2cp->errors = 0;
 
   /* RX DMA setup.*/
+  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
   dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
 
@@ -701,7 +706,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   VirtualTimer vt;
   uint32_t addr_cr2 = addr & I2C_CR2_SADD;
 
-  chDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
+  chDbgCheck(((rxbytes == 0) || ((rxbytes > 0) && (rxbuf != NULL))),
              "i2c_lld_master_transmit_timeout");
 
   /* Resetting error flags for this transfer.*/
@@ -726,10 +731,12 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   i2cp->errors = 0;
 
   /* TX DMA setup.*/
+  dmaStreamSetMode(i2cp->dmatx, i2cp->txdmamode);
   dmaStreamSetMemory0(i2cp->dmatx, txbuf);
   dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
 
   /* RX DMA setup.*/
+  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
   dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
 
