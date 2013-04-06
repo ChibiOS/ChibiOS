@@ -114,12 +114,24 @@
 #define STM32_GPT_USE_TIM4                  TRUE
 #define STM32_GPT_USE_TIM5                  TRUE
 #define STM32_GPT_USE_TIM8                  TRUE
+#define STM32_GPT_USE_TIM7                  TRUE
+#define STM32_GPT_USE_TIM8                  TRUE
+#define STM32_GPT_USE_TIM9                  TRUE
+#define STM32_GPT_USE_TIM11                 TRUE
+#define STM32_GPT_USE_TIM12                 TRUE
+#define STM32_GPT_USE_TIM14                 TRUE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         7
 #define STM32_GPT_TIM2_IRQ_PRIORITY         7
 #define STM32_GPT_TIM3_IRQ_PRIORITY         7
 #define STM32_GPT_TIM4_IRQ_PRIORITY         7
 #define STM32_GPT_TIM5_IRQ_PRIORITY         7
+#define STM32_GPT_TIM6_IRQ_PRIORITY         7
+#define STM32_GPT_TIM7_IRQ_PRIORITY         7
 #define STM32_GPT_TIM8_IRQ_PRIORITY         7
+#define STM32_GPT_TIM9_IRQ_PRIORITY         7
+#define STM32_GPT_TIM11_IRQ_PRIORITY        7
+#define STM32_GPT_TIM12_IRQ_PRIORITY        7
+#define STM32_GPT_TIM14_IRQ_PRIORITY        7
 
 /*
  * I2C driver system settings.

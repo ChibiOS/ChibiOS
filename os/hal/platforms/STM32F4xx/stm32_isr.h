@@ -83,9 +83,14 @@
 #define STM32_TIM3_HANDLER          TIM3_IRQHandler
 #define STM32_TIM4_HANDLER          TIM4_IRQHandler
 #define STM32_TIM5_HANDLER          TIM5_IRQHandler
+#define STM32_TIM6_HANDLER          TIM6_IRQHandler
+#define STM32_TIM7_HANDLER          TIM7_IRQHandler
 #define STM32_TIM8_UP_HANDLER       TIM8_UP_IRQHandler
 #define STM32_TIM8_CC_HANDLER       TIM8_CC_IRQHandler
-#define STM32_TIM9_HANDLER          TIM9_IRQHandler
+#define STM32_TIM9_HANDLER          TIM1_BRK_IRQHandler
+#define STM32_TIM11_HANDLER         TIM1_TRG_COM_IRQHandler
+#define STM32_TIM12_HANDLER         TIM8_BRK_IRQHandler
+#define STM32_TIM14_HANDLER         TIM8_TRG_COM_IRQHandler
 
 #define STM32_TIM1_UP_NUMBER        TIM1_UP_TIM10_IRQn
 #define STM32_TIM1_CC_NUMBER        TIM1_CC_IRQn
@@ -96,6 +101,9 @@
 #define STM32_TIM8_UP_NUMBER        TIM8_UP_TIM13_IRQn
 #define STM32_TIM8_CC_NUMBER        TIM8_CC_IRQn
 #define STM32_TIM9_NUMBER           TIM1_BRK_TIM9_IRQn
+#define STM32_TIM11_NUMBER          TIM1_TRG_COM_TIM11_IRQn
+#define STM32_TIM12_NUMBER          TIM8_BRK_TIM12_IRQn
+#define STM32_TIM14_NUMBER          TIM8_TRG_COM_TIM14_IRQn
 
 /*
  * USART units.

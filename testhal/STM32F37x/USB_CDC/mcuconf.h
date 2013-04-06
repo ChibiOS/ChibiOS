@@ -60,6 +60,25 @@
 #define STM32_USBPRE                        STM32_USBPRE_DIV1P5
 
 /*
+ * ADC driver system settings.
+ */
+#define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_USE_SDADC1                FALSE
+#define STM32_ADC_USE_SDADC2                FALSE
+#define STM32_ADC_USE_SDADC3                FALSE
+#define STM32_ADC_ADC1_DMA_PRIORITY         2
+#define STM32_ADC_SDADC1_DMA_PRIORITY       2
+#define STM32_ADC_SDADC2_DMA_PRIORITY       2
+#define STM32_ADC_SDADC3_DMA_PRIORITY       2
+#define STM32_ADC_IRQ_PRIORITY              5
+#define STM32_ADC_SDADC1_IRQ_PRIORITY       5
+#define STM32_ADC_SDADC2_IRQ_PRIORITY       5
+#define STM32_ADC_SDADC3_IRQ_PRIORITY       5
+#define STM32_ADC_SDADC1_DMA_IRQ_PRIORITY   5
+#define STM32_ADC_SDADC2_DMA_IRQ_PRIORITY   5
+#define STM32_ADC_SDADC3_DMA_IRQ_PRIORITY   5
+
+/*
  * CAN driver system settings.
  */
 #define STM32_CAN_USE_CAN1                  FALSE
@@ -90,10 +109,18 @@
 #define STM32_GPT_USE_TIM3                  FALSE
 #define STM32_GPT_USE_TIM4                  FALSE
 #define STM32_GPT_USE_TIM5                  FALSE
+#define STM32_GPT_USE_TIM6                  FALSE
+#define STM32_GPT_USE_TIM7                  FALSE
+#define STM32_GPT_USE_TIM12                 FALSE
+#define STM32_GPT_USE_TIM14                 FALSE
 #define STM32_GPT_TIM2_IRQ_PRIORITY         7
 #define STM32_GPT_TIM3_IRQ_PRIORITY         7
 #define STM32_GPT_TIM4_IRQ_PRIORITY         7
 #define STM32_GPT_TIM5_IRQ_PRIORITY         7
+#define STM32_GPT_TIM6_IRQ_PRIORITY         7
+#define STM32_GPT_TIM7_IRQ_PRIORITY         7
+#define STM32_GPT_TIM12_IRQ_PRIORITY        7
+#define STM32_GPT_TIM14_IRQ_PRIORITY        7
 
 /*
  * ICU driver system settings.

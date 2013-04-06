@@ -66,11 +66,19 @@
 #define STM32_TIM3_HANDLER          VectorB4
 #define STM32_TIM4_HANDLER          VectorB8
 #define STM32_TIM5_HANDLER          Vector108
+#define STM32_TIM6_HANDLER          Vector118
+#define STM32_TIM7_HANDLER          Vector11C
+#define STM32_TIM12_HANDLER         VectorEC
+#define STM32_TIM14_HANDLER         VectorF4
 
 #define STM32_TIM2_NUMBER           28
 #define STM32_TIM3_NUMBER           29
 #define STM32_TIM4_NUMBER           30
 #define STM32_TIM5_NUMBER           50
+#define STM32_TIM6_NUMBER           54
+#define STM32_TIM7_NUMBER           55
+#define STM32_TIM12_NUMBER          43
+#define STM32_TIM14_NUMBER          45
 
 /*
  * USART units.

@@ -67,6 +67,8 @@
 #define STM32_TIM2_HANDLER          VectorB0
 #define STM32_TIM3_HANDLER          VectorB4
 #define STM32_TIM4_HANDLER          VectorB8
+#define STM32_TIM6_HANDLER          Vector118
+#define STM32_TIM7_HANDLER          Vector11C
 #define STM32_TIM8_UP_HANDLER       VectorF0
 #define STM32_TIM8_CC_HANDLER       VectorF8
 
@@ -75,6 +77,8 @@
 #define STM32_TIM2_NUMBER           28
 #define STM32_TIM3_NUMBER           29
 #define STM32_TIM4_NUMBER           30
+#define STM32_TIM6_NUMBER           54
+#define STM32_TIM7_NUMBER           55
 #define STM32_TIM8_UP_NUMBER        44
 #define STM32_TIM8_CC_NUMBER        46
 
