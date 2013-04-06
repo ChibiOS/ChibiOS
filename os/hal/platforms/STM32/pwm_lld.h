@@ -139,6 +139,15 @@
 #endif
 
 /**
+ * @brief   PWMD9 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD9 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_PWM_USE_TIM9) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM9                  FALSE
+#endif
+
+/**
  * @brief   PWMD1 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -181,6 +190,14 @@
 #endif
 /** @} */
 
+/**
+ * @brief   PWMD9 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM9_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM9_IRQ_PRIORITY         7
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Configuration checks.                                                     */
 /*===========================================================================*/
@@ -209,9 +226,14 @@
 #error "TIM8 not present in the selected device"
 #endif
 
+#if STM32_PWM_USE_TIM9 && !STM32_HAS_TIM9
+#error "TIM9 not present in the selected device"
+#endif
+
 #if !STM32_PWM_USE_TIM1 && !STM32_PWM_USE_TIM2 &&                           \
     !STM32_PWM_USE_TIM3 && !STM32_PWM_USE_TIM4 &&                           \
-    !STM32_PWM_USE_TIM5 && !STM32_PWM_USE_TIM8
+    !STM32_PWM_USE_TIM5 && !STM32_PWM_USE_TIM8 &&                           \
+    !STM32_PWM_USE_TIM8
 #error "PWM driver activated but no TIM peripheral assigned"
 #endif
 
@@ -247,6 +269,11 @@
 #if STM32_PWM_USE_TIM8 &&                                                   \
     !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_PWM_TIM8_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM8"
+#endif
+
+#if STM32_PWM_USE_TIM9 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_PWM_TIM9_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM9"
 #endif
 
 /*===========================================================================*/
@@ -405,6 +432,10 @@ extern PWMDriver PWMD5;
 
 #if STM32_PWM_USE_TIM8 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD8;
+#endif
+
+#if STM32_PWM_USE_TIM9 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD9;
 #endif
 
 #ifdef __cplusplus
