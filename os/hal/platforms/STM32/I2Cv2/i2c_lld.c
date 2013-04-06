@@ -624,6 +624,15 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Releases the lock from high level driver.*/
   chSysUnlock();
 
+  /* Waits until BUSY flag is reset and the STOP from the previous operation
+     is completed, alternatively for a timeout condition.*/
+  while (dp->ISR & I2C_ISR_BUSY) {
+    chSysLock();
+    if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
+      return RDY_TIMEOUT;
+    chSysUnlock();
+  }
+
   /* Adjust slave address (master mode) for 7-bit address mode */
   if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0)
     addr_cr2 = (addr_cr2 & 0x7f) << 1;
@@ -642,15 +651,6 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Enable RX DMA */
   dmaStreamEnable(i2cp->dmarx);
-
-  /* Waits until BUSY flag is reset and the STOP from the previous operation
-     is completed, alternatively for a timeout condition.*/
-  while (dp->ISR & I2C_ISR_BUSY) {
-    chSysLock();
-    if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
-      return RDY_TIMEOUT;
-    chSysUnlock();
-  }
 
   /* This lock will be released in high level driver.*/
   chSysLock();
@@ -719,6 +719,15 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Releases the lock from high level driver.*/
   chSysUnlock();
 
+  /* Waits until BUSY flag is reset and the STOP from the previous operation
+     is completed, alternatively for a timeout condition.*/
+  while (dp->ISR & I2C_ISR_BUSY) {
+    chSysLock();
+    if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
+      return RDY_TIMEOUT;
+    chSysUnlock();
+  }
+
   /* Adjust slave address (master mode) for 7-bit address mode */
   if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0)
     addr_cr2 = (addr_cr2 & 0x7f) << 1;
@@ -742,15 +751,6 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Enable TX DMA */
   dmaStreamEnable(i2cp->dmatx);
-
-  /* Waits until BUSY flag is reset and the STOP from the previous operation
-     is completed, alternatively for a timeout condition.*/
-  while (dp->ISR & I2C_ISR_BUSY) {
-    chSysLock();
-    if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
-      return RDY_TIMEOUT;
-    chSysUnlock();
-  }
 
   /* This lock will be released in high level driver.*/
   chSysLock();

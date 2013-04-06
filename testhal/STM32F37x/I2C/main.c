@@ -98,7 +98,6 @@ int main(void) {
     if (msg != RDY_OK)
       palTogglePad(GPIOC, GPIOC_LED3);
     for (i = 0; i < 256; i++) {
-      chThdSleepMilliseconds(2);
       msg = i2cMasterReceiveTimeout(&I2CD2, 0x52,
                                     data, sizeof(data), TIME_INFINITE);
       if (msg != RDY_OK)
