@@ -199,7 +199,7 @@ typedef struct {
  *
  * @api
  */
-#define blkDisconnect(ip) ((ip)->vmt-disconnect(ip))
+#define blkDisconnect(ip) ((ip)->vmt->disconnect(ip))
 
 /**
  * @brief   Reads one or more blocks.
