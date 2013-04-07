@@ -416,8 +416,8 @@ struct PWMDriver {
  * @notapi
  */
 #define pwm_lld_is_channel_enabled(pwmp, channel)                           \
-  ((pwmp->tim->CCR[channel] == 0) &&                                        \
-   ((pwmp->tim->DIER & (2 << channel)) == 0))
+  ((pwmp->tim->CCR[channel] != 0) ||                                        \
+   ((pwmp->tim->DIER & (2 << channel)) != 0))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

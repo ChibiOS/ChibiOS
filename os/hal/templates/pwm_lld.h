@@ -34,7 +34,7 @@
 /**
  * @brief   Number of PWM channels per PWM driver.
  */
-#define PWM_CHANNELS                            4
+#define PWM_CHANNELS                        4
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -45,11 +45,11 @@
  * @{
  */
 /**
- * @brief   XXX driver enable switch.
- * @details If set to @p TRUE the support for XXX1 is included.
+ * @brief   PWM driver enable switch.
+ * @details If set to @p TRUE the support for PWM1 is included.
  */
-#if !defined(PLATFORM_XXX_USE_XXX1) || defined(__DOXYGEN__)
-#define PLATFORM_XXX_USE_XXX1             FALSE
+#if !defined(PLATFORM_PWM_USE_PWM1) || defined(__DOXYGEN__)
+#define PLATFORM_PWM_USE_PWM1               FALSE
 #endif
 /** @} */
 
@@ -154,12 +154,23 @@ struct PWMDriver {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Returns a PWM channel status.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ *
+ * @notapi
+ */
+#define pwm_lld_is_channel_enabled(pwmp, channel) FALSE
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_XXX_USE_XXX1 && !defined(__DOXYGEN__)
-extern XXXDriver XXXD1;
+#if PLATFORM_PWM_USE_PWM1 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD1;
 #endif
 
 #ifdef __cplusplus
