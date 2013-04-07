@@ -71,7 +71,7 @@ ADCDriver ADCD3;
 #endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -277,7 +277,8 @@ void adc_lld_start(ADCDriver *adcp) {
 
     /* This is a common register but apparently it requires that at least one
        of the ADCs is clocked in order to allow writing, see bug 3575297.*/
-    ADC->CCR = STM32_ADC_ADCPRE << 16;
+    ADC->CCR = (ADC->CCR & (ADC_CCR_TSVREFE | ADC_CCR_VBATE)) |
+               (STM32_ADC_ADCPRE << 16);
 
     /* ADC initial setup, starting the analog part here in order to reduce
        the latency when starting a conversion.*/
@@ -357,7 +358,11 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   /* ADC configuration and start, the start is performed using the method
      specified in the CR2 configuration, usually ADC_CR2_SWSTART.*/
   adcp->adc->CR1   = grpp->cr1 | ADC_CR1_OVRIE | ADC_CR1_SCAN;
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_CONT  | ADC_CR2_DMA |
+  if ((grpp->cr2 & ADC_CR2_SWSTART) != 0)
+    adcp->adc->CR2 = grpp->cr2 | ADC_CR2_CONT  | ADC_CR2_DMA |
+                                 ADC_CR2_DDS   | ADC_CR2_ADON;
+  else
+    adcp->adc->CR2 = grpp->cr2 |                 ADC_CR2_DMA |
                                  ADC_CR2_DDS   | ADC_CR2_ADON;
 }
 
@@ -402,6 +407,7 @@ void adcSTM32DisableTSVREFE(void) {
  * @brief   Enables the VBATE bit.
  * @details The VBATE bit is required in order to sample the VBAT channel.
  * @note    This is an STM32-only functionality.
+ * @note    This function is meant to be called after @p adcStart().
  */
 void adcSTM32EnableVBATE(void) {
 
@@ -412,6 +418,7 @@ void adcSTM32EnableVBATE(void) {
  * @brief   Disables the VBATE bit.
  * @details The VBATE bit is required in order to sample the VBAT channel.
  * @note    This is an STM32-only functionality.
+ * @note    This function is meant to be called after @p adcStart().
  */
 void adcSTM32DisableVBATE(void) {
 

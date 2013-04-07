@@ -127,8 +127,8 @@
 /**
  * @brief   ADC common clock divider.
  * @note    This setting is influenced by the VDDA voltage and other
- *          external conditions, please refer to the STM32F4xx datasheet
- *          for more info.<br>
+ *          external conditions, please refer to the datasheet for more
+ *          info.<br>
  *          See section 5.3.20 "12-bit ADC characteristics".
  */
 #if !defined(STM32_ADC_ADCPRE) || defined(__DOXYGEN__)
@@ -141,7 +141,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_ADC_USE_ADC1) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC1                  TRUE
+#define STM32_ADC_USE_ADC1                  FALSE
 #endif
 
 /**
@@ -150,7 +150,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_ADC_USE_ADC2) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC2                  TRUE
+#define STM32_ADC_USE_ADC2                  FALSE
 #endif
 
 /**
@@ -159,28 +159,28 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(STM32_ADC_USE_ADC3) || defined(__DOXYGEN__)
-#define STM32_ADC_USE_ADC3                  TRUE
+#define STM32_ADC_USE_ADC3                  FALSE
 #endif
 
 /**
  * @brief   DMA stream used for ADC1 operations.
  */
 #if !defined(STM32_ADC_ADC1_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_STREAM        STM32_DMA_STREAM_ID(2, 4)
+#define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
 #endif
 
 /**
  * @brief   DMA stream used for ADC2 operations.
  */
 #if !defined(STM32_ADC_ADC2_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC2_DMA_STREAM        STM32_DMA_STREAM_ID(2, 2)
+#define STM32_ADC_ADC2_DMA_STREAM           STM32_DMA_STREAM_ID(2, 2)
 #endif
 
 /**
  * @brief   DMA stream used for ADC3 operations.
  */
 #if !defined(STM32_ADC_ADC3_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC3_DMA_STREAM        STM32_DMA_STREAM_ID(2, 1)
+#define STM32_ADC_ADC3_DMA_STREAM           STM32_DMA_STREAM_ID(2, 1)
 #endif
 
 /**
@@ -465,7 +465,7 @@ struct ADCDriver {
    */
   ADC_TypeDef               *adc;
   /**
-   * @brief Pointer to associated SMA channel.
+   * @brief Pointer to associated DMA channel.
    */
   const stm32_dma_stream_t  *dmastp;
   /**
