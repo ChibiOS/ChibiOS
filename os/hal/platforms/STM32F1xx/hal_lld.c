@@ -204,6 +204,10 @@ void stm32_clock_init(void) {
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;                                       /* Waits selection complete.    */
 #endif
+
+#if !STM32_HSI_ENABLED
+  RCC->CR &= ~RCC_CR_HSION;
+#endif
 #endif /* !STM32_NO_INIT */
 }
 
@@ -284,6 +288,10 @@ void stm32_clock_init(void) {
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;
+#endif
+
+#if !STM32_HSI_ENABLED
+  RCC->CR &= ~RCC_CR_HSION;
 #endif
 #endif /* !STM32_NO_INIT */
 }

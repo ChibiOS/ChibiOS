@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed STM32F103 HSI configuration (bug #399).
 - FIX: Fixed patch to allow simulator to be restarted quicker (bug #398).
 - FIX: Fixed blkDisconnect macro typo (bug #397).
 - FIX: Fixed STM32 SPI (V2) driver hangs (bug 3608241).
