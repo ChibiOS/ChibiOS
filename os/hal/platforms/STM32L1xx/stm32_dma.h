@@ -66,9 +66,15 @@
 #define STM32_DMA_GETCHANNEL(n, c)  0
 
 /**
- * @name    DMA streams identifiers
- * @{
+ * @brief   Checks if a DMA priority is within the valid range.
+ * @param[in] prio      DMA priority
+ *
+ * @retval              The check result.
+ * @retval FALSE        invalid DMA priority.
+ * @retval TRUE         correct DMA priority.
  */
+#define STM32_DMA_IS_VALID_PRIORITY(prio) (((prio) >= 0) && ((prio) <= 3))
+
 /**
  * @brief   Returns an unique numeric identifier for a DMA stream.
  *
@@ -100,6 +106,10 @@
  */
 #define STM32_DMA_IS_VALID_ID(id, mask) (((1 << (id)) & (mask)))
 
+/**
+ * @name    DMA streams identifiers
+ * @{
+ */
 /**
  * @brief   Returns a pointer to a stm32_dma_stream_t structure.
  *
@@ -300,6 +310,8 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @details The function disables the specified stream and then clears any
  *          pending interrupt.
  * @note    This function can be invoked in both ISR or thread context.
+ * @note    Interrupts enabling flags are set to zero after this call, see
+ *          bug 3607518.
  * @pre     The stream must have been allocated using @p dmaStreamAllocate().
  * @post    After use the stream can be released using @p dmaStreamRelease().
  *
@@ -308,7 +320,8 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define dmaStreamDisable(dmastp) {                                          \
-  (dmastp)->channel->CCR &= ~STM32_DMA_CR_EN;                               \
+  (dmastp)->channel->CCR &= ~(STM32_DMA_CR_TCIE | STM32_DMA_CR_HTIE |       \
+                              STM32_DMA_CR_TEIE | STM32_DMA_CR_EN);         \
   dmaStreamClearInterrupt(dmastp);                                          \
 }
 

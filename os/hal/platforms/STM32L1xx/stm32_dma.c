@@ -292,7 +292,7 @@ bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
                          stm32_dmaisr_t func,
                          void *param) {
 
-  chDbgCheck(dmastp != NULL, "dmaAllocate");
+  chDbgCheck(dmastp != NULL, "dmaStreamAllocate");
 
   /* Checks if the stream is already taken.*/
   if ((dma_streams_mask & (1 << dmastp->selfindex)) != 0)
@@ -333,11 +333,11 @@ bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
  */
 void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
 
-  chDbgCheck(dmastp != NULL, "dmaRelease");
+  chDbgCheck(dmastp != NULL, "dmaStreamRelease");
 
   /* Check if the streams is not taken.*/
   chDbgAssert((dma_streams_mask & (1 << dmastp->selfindex)) != 0,
-              "dmaRelease(), #1", "not allocated");
+              "dmaStreamRelease(), #1", "not allocated");
 
   /* Disables the associated IRQ vector.*/
   nvicDisableVector(dmastp->vector);

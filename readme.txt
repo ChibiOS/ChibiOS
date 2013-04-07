@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.4 ***
+- FIX: Fixed spurious interrupt disabling an STM32 DMA stream (bug 3607518).
 - FIX: Fixed start of any ADC disables VREF and VBAT (bug 3607467).
 - FIX: Fixed CAN_USE_SLEEP_MODE compilation problem (bug 3606616).
 - FIX: Fixed misplaced brace in icu_lld.c (bug 3605832).
