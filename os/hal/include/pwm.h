@@ -211,6 +211,18 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  */
 #define pwmDisableChannelI(pwmp, channel)                                   \
   pwm_lld_disable_channel(pwmp, channel)
+
+/**
+ * @brief   Returns a PWM channel status.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ *
+ * @iclass
+ */
+#define pwmIsChannelEnabledI(pwmp, channel)                                 \
+  pwm_lld_is_channel_enabled(pwmp, channel)
 /** @} */
 
 /*===========================================================================*/

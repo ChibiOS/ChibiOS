@@ -406,6 +406,19 @@ struct PWMDriver {
 #define pwm_lld_change_period(pwmp, period)                                 \
   ((pwmp)->tim->ARR = (uint16_t)((period) - 1))
 
+/**
+ * @brief   Returns a PWM channel status.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ *
+ * @notapi
+ */
+#define pwm_lld_is_channel_enabled(pwmp, channel)                           \
+  ((pwmp->tim->CCR[channel] == 0) &&                                        \
+   ((pwmp->tim->DIER & (2 << channel)) == 0))
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
