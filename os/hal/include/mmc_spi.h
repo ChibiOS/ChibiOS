@@ -65,8 +65,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !HAL_USE_SPI || !CH_USE_EVENTS
-#error "MMC_SPI driver requires HAL_USE_SPI and CH_USE_EVENTS"
+#if !HAL_USE_SPI || !SPI_USE_WAIT || !CH_USE_EVENTS
+#error "MMC_SPI driver requires HAL_USE_SPI, SPI_USE_WAIT and CH_USE_EVENTS"
 #endif
 
 /*===========================================================================*/
