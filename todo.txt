@@ -10,8 +10,8 @@ Version 2.5.2
 * Support for ATSAM4L devices.
 * Improve support for STM32F3xx devices.
 * Update C++ wrapper.
+* Support for STM32F37x devices.
 X Restructure and improve documentation.
-X Support for STM32F37x devices.
 X Improve support for SPC560BC devices.
 X Improve support for SPC560P devices.
 X Improve support for SPC563M devices.
