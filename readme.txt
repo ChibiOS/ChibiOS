@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed patch to allow simulator to be restarted quicker (bug #398).
 - FIX: Fixed blkDisconnect macro typo (bug #397).
 - FIX: Fixed STM32 SPI (V2) driver hangs (bug 3608241).
 - FIX: Fixed fixed I2C malfunction after fixing bug 3607518 (bug 3607549)
