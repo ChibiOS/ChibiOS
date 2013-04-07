@@ -67,11 +67,11 @@
   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY) << 16) | I2C_SR1_SB))
 
 #define I2C_EV6_MASTER_TRA_MODE_SELECTED                                    \
-  ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY|I2C_SR2_TRA) << 16) |              \
-              I2C_SR1_ADDR|I2C_SR1_TXE))
+  ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY | I2C_SR2_TRA) << 16) |          \
+              I2C_SR1_ADDR | I2C_SR1_TXE))
 
 #define I2C_EV6_MASTER_REC_MODE_SELECTED                                    \
-  ((uint32_t)(((I2C_SR2_MSL|I2C_SR2_BUSY)<< 16) | I2C_SR1_ADDR))
+  ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY)<< 16) | I2C_SR1_ADDR))
 
 #define I2C_EV8_2_MASTER_BYTE_TRANSMITTED                                   \
   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY | I2C_SR2_TRA) << 16) |          \
