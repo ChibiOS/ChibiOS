@@ -207,7 +207,7 @@
 
 #endif /* !STM32_ADVANCED_DMA*/
 
-/* Flag for whole STM32F1XX family. */
+/* Flag for the whole STM32F1XX family. */
 #if defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) || \
     defined(STM32F10X_LD)    || defined(STM32F10X_MD)    || \
     defined(STM32F10X_HD)    || defined(STM32F10X_XL)    || \
@@ -362,7 +362,7 @@ typedef struct I2CDriver I2CDriver;
 /**
  * @brief Structure representing an I2C driver.
  */
-struct I2CDriver{
+struct I2CDriver {
   /**
    * @brief   Driver state.
    */
@@ -398,9 +398,13 @@ struct I2CDriver{
    */
   i2caddr_t                 addr;
   /**
-   * @brief     DMA mode bit mask.
+   * @brief RX DMA mode bit mask.
    */
-  uint32_t                  dmamode;
+  uint32_t                  rxdmamode;
+  /**
+   * @brief TX DMA mode bit mask.
+   */
+  uint32_t                  txdmamode;
   /**
    * @brief     Receive DMA channel.
    */
