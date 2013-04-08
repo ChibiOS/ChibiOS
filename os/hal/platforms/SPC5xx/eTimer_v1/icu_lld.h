@@ -88,7 +88,7 @@
  * @name    Configuration options
  * @{
  */
-#if SPC5_HAS_ETIMER0
+#if SPC5_HAS_ETIMER0 || defined(__DOXYGEN__)
 /**
  * @brief   ICUD1 driver enable switch.
  * @details If set to @p TRUE the support for ICUD1 is included.
@@ -173,7 +173,7 @@
 #endif
 #endif
 
-#if SPC5_HAS_ETIMER1
+#if SPC5_HAS_ETIMER1 || defined(__DOXYGEN__)
 /**
  * @brief   ICUD6 driver enable switch.
  * @details If set to @p TRUE the support for ICUD6 is included.
@@ -258,7 +258,7 @@
 #endif
 #endif
 
-#if SPC5_HAS_ETIMER2
+#if SPC5_HAS_ETIMER2 || defined(__DOXYGEN__)
 /**
  * @brief   ICUD13 driver enable switch.
  * @details If set to @p TRUE the support for ICUD13 is included.
@@ -360,28 +360,28 @@
 #error "ETIMER2 not present in the selected device"
 #endif
 
-#define SPC5_ICU_USE_ETIMER0                (SPC5_ICU_USE_SMOD6 ||          \
+#define SPC5_ICU_USE_ETIMER0                (SPC5_ICU_USE_SMOD0 ||          \
+                                             SPC5_ICU_USE_SMOD1 ||          \
+                                             SPC5_ICU_USE_SMOD2 ||          \
+                                             SPC5_ICU_USE_SMOD3 ||          \
+                                             SPC5_ICU_USE_SMOD4 ||          \
+                                             SPC5_ICU_USE_SMOD5)
+
+#define SPC5_ICU_USE_ETIMER1                (SPC5_ICU_USE_SMOD6 ||          \
                                              SPC5_ICU_USE_SMOD7 ||          \
                                              SPC5_ICU_USE_SMOD8 ||          \
                                              SPC5_ICU_USE_SMOD9 ||          \
                                              SPC5_ICU_USE_SMOD10 ||         \
                                              SPC5_ICU_USE_SMOD11)
 
-#define SPC5_ICU_USE_ETIMER1                (SPC5_ICU_USE_SMOD12 ||         \
+#define SPC5_ICU_USE_ETIMER2                (SPC5_ICU_USE_SMOD12 ||         \
                                              SPC5_ICU_USE_SMOD13 ||         \
                                              SPC5_ICU_USE_SMOD14 ||         \
                                              SPC5_ICU_USE_SMOD15 ||         \
                                              SPC5_ICU_USE_SMOD16 ||         \
                                              SPC5_ICU_USE_SMOD17)
 
-#define SPC5_ICU_USE_ETIMER2                (SPC5_ICU_USE_SMOD18 ||         \
-                                             SPC5_ICU_USE_SMOD19 ||         \
-                                             SPC5_ICU_USE_SMOD20 ||         \
-                                             SPC5_ICU_USE_SMOD21 ||         \
-                                             SPC5_ICU_USE_SMOD22 ||         \
-                                             SPC5_ICU_USE_SMOD23)
-
-#if !SPC5_ICU_USE_TIMER0 && !SPC5_ICU_USE_TIMER1 && !SPC5_ICU_USE_TIMER2
+#if !SPC5_ICU_USE_ETIMER0 && !SPC5_ICU_USE_ETIMER1 && !SPC5_ICU_USE_ETIMER2
 #error "ICU driver activated but no SMOD peripheral assigned"
 #endif
 
