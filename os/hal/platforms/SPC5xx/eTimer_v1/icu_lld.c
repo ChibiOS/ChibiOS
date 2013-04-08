@@ -35,7 +35,7 @@
 
 /**
  * @brief   ICUD1 driver identifier.
- * @note    The driver ICUD1 allocates the complex timer SMD0 when enabled.
+ * @note    The driver ICUD1 allocates the complex timer SMOD0 when enabled.
  */
 #if SPC5_ICU_USE_SMOD0 || defined(__DOXYGEN__)
 ICUDriver ICUD1;
@@ -43,7 +43,7 @@ ICUDriver ICUD1;
 
 /**
  * @brief   ICUD2 driver identifier.
- * @note    The driver ICUD2 allocates the complex timer SMD1 when enabled.
+ * @note    The driver ICUD2 allocates the complex timer SMOD1 when enabled.
  */
 #if SPC5_ICU_USE_SMOD1 || defined(__DOXYGEN__)
 ICUDriver ICUD2;
@@ -51,7 +51,7 @@ ICUDriver ICUD2;
 
 /**
  * @brief   ICUD3 driver identifier.
- * @note    The driver ICUD3 allocates the complex timer SMD2 when enabled.
+ * @note    The driver ICUD3 allocates the complex timer SMOD2 when enabled.
  */
 #if SPC5_ICU_USE_SMOD2 || defined(__DOXYGEN__)
 ICUDriver ICUD3;
@@ -59,15 +59,15 @@ ICUDriver ICUD3;
 
 /**
  * @brief   ICUD4 driver identifier.
- * @note    The driver ICUD4 allocates the complex timer SMD3 when enabled.
+ * @note    The driver ICUD4 allocates the complex timer SMOD3 when enabled.
  */
-#if SPC5_ICU_USE_SMD3 || defined(__DOXYGEN__)
+#if SPC5_ICU_USE_SMOD3 || defined(__DOXYGEN__)
 ICUDriver ICUD4;
 #endif
 
 /**
  * @brief   ICUD5 driver identifier.
- * @note    The driver ICUD5 allocates the complex timer SMD4 when enabled.
+ * @note    The driver ICUD5 allocates the complex timer SMOD4 when enabled.
  */
 #if SPC5_ICU_USE_SMOD4 || defined(__DOXYGEN__)
 ICUDriver ICUD5;
@@ -75,7 +75,7 @@ ICUDriver ICUD5;
 
 /**
  * @brief   ICUD6 driver identifier.
- * @note    The driver ICUD6 allocates the complex timer SMD5 when enabled.
+ * @note    The driver ICUD6 allocates the complex timer SMOD5 when enabled.
  */
 #if SPC5_ICU_USE_SMOD5 || defined(__DOXYGEN__)
 ICUDriver ICUD6;
@@ -83,7 +83,7 @@ ICUDriver ICUD6;
 
 /**
  * @brief   ICUD7 driver identifier.
- * @note    The driver ICUD7 allocates the complex timer SMD6 when enabled.
+ * @note    The driver ICUD7 allocates the complex timer SMOD6 when enabled.
  */
 #if SPC5_ICU_USE_SMOD6 || defined(__DOXYGEN__)
 ICUDriver ICUD7;
@@ -91,7 +91,7 @@ ICUDriver ICUD7;
 
 /**
  * @brief   ICUD8 driver identifier.
- * @note    The driver ICUD8 allocates the complex timer SMD7 when enabled.
+ * @note    The driver ICUD8 allocates the complex timer SMOD7 when enabled.
  */
 #if SPC5_ICU_USE_SMOD7 || defined(__DOXYGEN__)
 ICUDriver ICUD8;
@@ -99,7 +99,7 @@ ICUDriver ICUD8;
 
 /**
  * @brief   ICUD9 driver identifier.
- * @note    The driver ICUD9 allocates the complex timer SMD8 when enabled.
+ * @note    The driver ICUD9 allocates the complex timer SMOD8 when enabled.
  */
 #if SPC5_ICU_USE_SMOD8 || defined(__DOXYGEN__)
 ICUDriver ICUD9;
@@ -107,7 +107,7 @@ ICUDriver ICUD9;
 
 /**
  * @brief   ICUD10 driver identifier.
- * @note    The driver ICUD10 allocates the complex timer SMD9 when enabled.
+ * @note    The driver ICUD10 allocates the complex timer SMOD9 when enabled.
  */
 #if SPC5_ICU_USE_SMOD9 || defined(__DOXYGEN__)
 ICUDriver ICUD10;
@@ -115,7 +115,7 @@ ICUDriver ICUD10;
 
 /**
  * @brief   ICUD11 driver identifier.
- * @note    The driver ICUD11 allocates the complex timer SMD10 when enabled.
+ * @note    The driver ICUD11 allocates the complex timer SMOD10 when enabled.
  */
 #if SPC5_ICU_USE_SMOD10 || defined(__DOXYGEN__)
 ICUDriver ICUD11;
@@ -123,7 +123,7 @@ ICUDriver ICUD11;
 
 /**
  * @brief   ICUD12 driver identifier.
- * @note    The driver ICUD12 allocates the complex timer SMD11 when enabled.
+ * @note    The driver ICUD12 allocates the complex timer SMOD11 when enabled.
  */
 #if SPC5_ICU_USE_SMOD11 || defined(__DOXYGEN__)
 ICUDriver ICUD12;
@@ -131,7 +131,7 @@ ICUDriver ICUD12;
 
 /**
  * @brief   ICUD13 driver identifier.
- * @note    The driver ICUD13 allocates the complex timer SMD12 when enabled.
+ * @note    The driver ICUD13 allocates the complex timer SMOD12 when enabled.
  */
 #if SPC5_ICU_USE_SMOD12 || defined(__DOXYGEN__)
 ICUDriver ICUD13;
@@ -139,7 +139,7 @@ ICUDriver ICUD13;
 
 /**
  * @brief   ICUD14 driver identifier.
- * @note    The driver ICUD14 allocates the complex timer SMD13 when enabled.
+ * @note    The driver ICUD14 allocates the complex timer SMOD13 when enabled.
  */
 #if SPC5_ICU_USE_SMOD13 || defined(__DOXYGEN__)
 ICUDriver ICUD14;
@@ -147,7 +147,7 @@ ICUDriver ICUD14;
 
 /**
  * @brief   ICUD15 driver identifier.
- * @note    The driver ICUD15 allocates the complex timer SMD14 when enabled.
+ * @note    The driver ICUD15 allocates the complex timer SMOD14 when enabled.
  */
 #if SPC5_ICU_USE_SMOD14 || defined(__DOXYGEN__)
 ICUDriver ICUD15;
@@ -155,7 +155,7 @@ ICUDriver ICUD15;
 
 /**
  * @brief   ICUD16 driver identifier.
- * @note    The driver ICUD16 allocates the complex timer SMD15 when enabled.
+ * @note    The driver ICUD16 allocates the complex timer SMOD15 when enabled.
  */
 #if SPC5_ICU_USE_SMOD15 || defined(__DOXYGEN__)
 ICUDriver ICUD16;
@@ -163,7 +163,7 @@ ICUDriver ICUD16;
 
 /**
  * @brief   ICUD17 driver identifier.
- * @note    The driver ICUD17 allocates the complex timer SMD16 when enabled.
+ * @note    The driver ICUD17 allocates the complex timer SMOD16 when enabled.
  */
 #if SPC5_ICU_USE_SMOD16 || defined(__DOXYGEN__)
 ICUDriver ICUD17;
@@ -171,7 +171,7 @@ ICUDriver ICUD17;
 
 /**
  * @brief   ICUD18 driver identifier.
- * @note    The driver ICUD18 allocates the complex timer SMD17 when enabled.
+ * @note    The driver ICUD18 allocates the complex timer SMOD17 when enabled.
  */
 #if SPC5_ICU_USE_SMOD17 || defined(__DOXYGEN__)
 ICUDriver ICUD18;
