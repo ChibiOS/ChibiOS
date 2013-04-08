@@ -395,7 +395,7 @@
 typedef enum {
   ICU_INPUT_ACTIVE_HIGH = 0, /**< Trigger on rising edge.            */
   ICU_INPUT_ACTIVE_LOW = 1,  /**< Trigger on falling edge.           */
-}icumode_t;
+} icumode_t;
 
 /**
  * @brief   ICU frequency type.
@@ -412,7 +412,7 @@ typedef enum {
   ICU_CHANNEL_4 = 3, /**< Use SMODxCH4.      */
   ICU_CHANNEL_5 = 4, /**< Use SMODxCH5.      */
   ICU_CHANNEL_6 = 5, /**< Use SMODxCH6.      */
-}icuchannel_t;
+} icuchannel_t;
 
 /**
  * @brief   ICU counter type.
@@ -451,7 +451,7 @@ typedef struct {
    */
   icuchannel_t channel;
   /* End of the mandatory fields.*/
-}ICUConfig;
+} ICUConfig;
 
 /**
  * @brief   Structure representing an ICU driver.
