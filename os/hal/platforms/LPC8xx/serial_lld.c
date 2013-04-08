@@ -77,7 +77,7 @@ static void set_error(SerialDriver *sdp, IOREG32 err) {
     sts |= SD_FRAMING_ERROR;
   if (err & STAT_RXBRK)
     sts |= SD_BREAK_DETECTED;
-    
+
   chSysLockFromIsr();
   chnAddFlagsI(sdp, sts);
   chSysUnlockFromIsr();  
@@ -96,7 +96,7 @@ static void serve_interrupt(SerialDriver *sdp) {
   LPC_USART_TypeDef *u = sdp->uart;
 
   while (u->INTSTAT) {
-  
+
     if (u->INTSTAT & STAT_RXRDY) {
       chSysLockFromIsr();
       if (chIQIsEmptyI(&sdp->iqueue))
@@ -105,7 +105,7 @@ static void serve_interrupt(SerialDriver *sdp) {
         chnAddFlagsI(sdp, SD_OVERRUN_ERROR);
       chSysUnlockFromIsr();
     }
-    
+
     if (u->INTSTAT & STAT_TXRDY) {
       msg_t b;
 
@@ -124,7 +124,7 @@ static void serve_interrupt(SerialDriver *sdp) {
          u->TXDATA = b;
       }
     }
-    
+
     if (u->INTSTAT & (STAT_OVERRUN | STAT_DELTARXBRK |
                       STAT_FRAMERR | STAT_PARITYERR) ) {
       IOREG32 stat = u->STAT;
@@ -265,7 +265,7 @@ void sd_lld_start( SerialDriver *sdp, const SerialConfig *config ) {
     config = &default_config;
 
   if (sdp->state == SD_STOP) {
-  
+
 #if LPC8xx_SERIAL_USE_UART0
     if (&SD1 == sdp) {
       LPC_SYSCON->SYSAHBCLKCTRL |= (1<<14);           // Enable Clk

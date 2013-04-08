@@ -171,7 +171,7 @@ void gpt_lld_init(void) {
 void gpt_lld_start(GPTDriver *gptp) {
 
   if( !clk_enabled ) {
-  
+
     /* Enable clock & reset MRT */
     LPC_SYSCON->SYSAHBCLKCTRL |=  (1<<10);
     LPC_SYSCON->PRESETCTRL    &= ~(1<<7);
@@ -179,7 +179,7 @@ void gpt_lld_start(GPTDriver *gptp) {
 
     nvicEnableVector(MRT_IRQn,
                      CORTEX_PRIORITY_MASK(LPC8xx_GPT_MRT_IRQ_PRIORITY));
-                     
+
     clk_enabled |= gptp->mask;
   }
 
@@ -206,7 +206,7 @@ void gpt_lld_stop(GPTDriver *gptp) {
   /* Shared peripheral - 
      mark this channel as disabled */
   clk_enabled &= ~gptp->mask;
-  
+
   /* All channels disabled? */
   if( !clk_enabled )
   {
@@ -268,7 +268,7 @@ void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
 
   while (gptp->tmr->STAT & (1<<1))
     ;
-    
+
   gptp->tmr->CTRL   = 0;
   gptp->tmr->STAT  |= 1;
 }

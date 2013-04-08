@@ -88,7 +88,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
   case PAL_MODE_INPUT:
     port->DIR0 &= ~mask;
     break;
-    
+
   case PAL_MODE_UNCONNECTED:
     palSetPort(port, PAL_WHOLE_PORT);
     //no break
@@ -96,7 +96,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
     port->DIR0 |=  mask;
     break;
   }
-  
+
   return;
 }
 

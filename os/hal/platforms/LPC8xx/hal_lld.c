@@ -78,7 +78,7 @@ void lpc8xx_clock_init(void) {
   // switch off pull-ups
   LPC_IOCON->PIO0_8   &= ~(3<<3);
   LPC_IOCON->PIO0_9   &= ~(3<<3);
-  
+
   // enable xtalin/xtalout
   LPC_SWM->PINENABLE0 &= ~(3<<4);
 
@@ -126,7 +126,6 @@ void lpc8xx_clock_init(void) {
   /* ABH divider initialization. Set this **before** switching Main clock
      source to ensure AHB clock stays in spec */
   LPC_SYSCON->SYSAHBCLKDIV = LPC8xx_SYSABHCLK_DIV;
-  
 
   /* Main clock source selection.*/
   LPC_SYSCON->MAINCLKSEL = LPC8xx_MAINCLK_SOURCE;

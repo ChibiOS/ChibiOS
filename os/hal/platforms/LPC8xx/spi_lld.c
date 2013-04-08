@@ -56,7 +56,7 @@ static void spi_load_txdata(SPIDriver *spip) {
   if (--spip->txcnt == 0) {
     spi->TXCTRL |= SPI_TXCTRL_EOT;
   }
-  
+
   if (spip->txptr != NULL) {
     if ((spi->TXCTRL & SPI_TXCTRL_FLEN_MASK) > SPI_TXCTRL_FLEN(8)) {
       const uint16_t *p = spip->txptr;
@@ -88,7 +88,7 @@ static void spi_serve_interrupt(SPIDriver *spip) {
     LPC8xx_SPI_ERROR_HOOK(spip);
     spi->STAT = (SPI_STAT_RXOV | SPI_STAT_TXUR);
   }
-  
+
   if (spi->INTSTAT & SPI_STAT_TXRDY) {
     spi_load_txdata( spip );
   }
@@ -230,7 +230,7 @@ void spi_lld_stop(SPIDriver *spip) {
 
   if (spip->state != SPI_STOP) {
     spip->spi->CFG = 0;
-    
+
 #if LPC8xx_SPI_USE_SPI0
     if (&SPID1 == spip) {
       nvicDisableVector(SPI0_IRQn);

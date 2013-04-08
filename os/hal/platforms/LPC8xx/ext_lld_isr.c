@@ -50,7 +50,7 @@
 /*===========================================================================*/
 static void ext_lld_interrupt( uint32_t n ) {
   uint32_t reason;
-  
+
   reason =  ((LPC_PIN_INT->RISE)>> n   ) & 0x01;
   reason |= ((LPC_PIN_INT->FALL)>>(n-1)) & 0x02;
   LPC_PIN_INT->RISE = (1<<n);

@@ -124,13 +124,13 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
 
   /* program the IOpin for this channel */
   LPC_SYSCON->PINTSEL[channel] = extp->config->channels[channel].iopin;
-  
+
   /* Programming edge irq enables */
   if (extp->config->channels[channel].mode & EXT_CH_MODE_RISING_EDGE)
     LPC_PIN_INT->SIENR =  (1 << channel);
   else
     LPC_PIN_INT->CIENR =  (1 << channel);
-    
+
   if (extp->config->channels[channel].mode & EXT_CH_MODE_FALLING_EDGE)
     LPC_PIN_INT->SIENF =  (1 << channel);
   else
@@ -139,7 +139,7 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
   LPC_PIN_INT->RISE = (1<<channel);
   LPC_PIN_INT->FALL = (1<<channel);
   LPC_PIN_INT->IST  = (1<<channel);
-  
+
   ext_lld_exti_irq_enable( channel );
 }
 
