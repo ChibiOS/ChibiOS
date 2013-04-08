@@ -988,7 +988,7 @@ void pwm_lld_init(void) {
 
 #if (SPC5_PWM_USE_SMOD6)
   /* Driver initialization.*/
-  pwmObjectInit(&PWMD3);
+  pwmObjectInit(&PWMD7);
   PWMD7.flexpwmp = &SPC5_FLEXPWM_1;
   INTC.PSR[SPC5_FLEXPWM1_RF2_NUMBER].R = SPC5_PWM_SMOD6_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_COF2_NUMBER].R = SPC5_PWM_SMOD6_PRIORITY;
@@ -999,7 +999,7 @@ void pwm_lld_init(void) {
 
 #if (SPC5_PWM_USE_SMOD7)
   /* Driver initialization.*/
-  pwmObjectInit(&PWMD4);
+  pwmObjectInit(&PWMD8);
   PWMD8.flexpwmp = &SPC5_FLEXPWM_1;
   INTC.PSR[SPC5_FLEXPWM1_RF3_NUMBER].R = SPC5_PWM_SMOD7_PRIORITY;
   INTC.PSR[SPC5_FLEXPWM1_COF3_NUMBER].R = SPC5_PWM_SMOD7_PRIORITY;
