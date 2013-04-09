@@ -238,7 +238,7 @@ int main(void) {
 
   /*
    * Initializes the ADC driver 1 and enable the thermal sensor.
-   * The pin PC0 on the port GPIOC is programmed as analog input.
+   * The pin PC1 on the port GPIOC is programmed as analog input.
    */
   adcStart(&ADCD1, NULL);
   adcSTM32EnableTSVREFE();
