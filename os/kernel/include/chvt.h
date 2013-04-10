@@ -83,7 +83,7 @@ typedef void (*vtfunc_t)(void *);
 typedef struct VirtualTimer VirtualTimer;
 
 /**
- * @extends DeltaList
+ * @extends VTList
  *
  * @brief   Virtual Timer descriptor structure.
  */
