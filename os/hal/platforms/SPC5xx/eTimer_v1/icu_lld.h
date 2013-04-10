@@ -451,7 +451,7 @@ typedef struct {
   /**
    * @brief   Callback for timer overflow.
    */
-  icucallback_t overflow_cb
+  icucallback_t overflow_cb;
   /* End of the mandatory fields.*/
 } ICUConfig;
 
