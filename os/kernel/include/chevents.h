@@ -49,7 +49,7 @@ struct EventListener {
                                                     by the thread to the Event
                                                     Source.                 */
   flagsmask_t           el_flags;       /**< @brief Flags added to the listener
-                                                    bu the event source.*/
+                                                    by the event source.*/
 };
 
 /**
