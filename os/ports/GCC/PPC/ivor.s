@@ -86,11 +86,6 @@ _IVOR10:
         lis         %r3, 0x0800             /* DIS bit mask.                */
         mtspr       336, %r3                /* TSR register.                */
 
-#if PPC_USE_IRQ_PREEMPTION
-        /* Allows preemption while executing the software handler.*/
-        wrteei      1
-#endif
-
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_enter_isr
         bl          dbg_check_lock_from_isr
@@ -99,11 +94,6 @@ _IVOR10:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_unlock_from_isr
         bl          dbg_check_leave_isr
-#endif
-
-#if PPC_USE_IRQ_PREEMPTION
-        /* Prevents preemption again.*/
-        wrteei      0
 #endif
 
         /* System tick handler invocation.*/
