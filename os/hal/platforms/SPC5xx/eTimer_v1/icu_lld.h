@@ -35,6 +35,7 @@
  * @name    Mode options
  * @{
  */
+
 /**
  * @brief   Skip first capture cycle.
  * @details If set to @p TRUE the first capture cycle is skipped.
@@ -78,6 +79,11 @@
 #define SPC5_ETIMER_CPT2MODE_FALLING_EDGE           1U
 #define SPC5_ETIMER_CPT2MODE_RISING_EDGE            2U
 #define SPC5_ETIMER_CPT2MODE_ANY_EDGE               3U
+
+#define SPC5_ETIMER_ROC_DO_NOT_RELOAD               0U
+#define SPC5_ETIMER_ROC_REL_ON_CAP1                 1U
+#define SPC5_ETIMER_ROC_REL_ON_CAP2                 2U
+#define SPC5_ETIMER_ROC_REL_ON_CAP1_CAP2            3U
 /** @} */
 
 /*===========================================================================*/
@@ -445,11 +451,7 @@ typedef struct {
   /**
    * @brief   Callback for timer overflow.
    */
-  icucallback_t overflow_cb;
-  /**
-   * @brief   eTimer input channel to be used.
-   */
-  icuchannel_t channel;
+  icucallback_t overflow_cb
   /* End of the mandatory fields.*/
 } ICUConfig;
 

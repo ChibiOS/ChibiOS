@@ -111,7 +111,7 @@
  * @name    Configuration options
  * @{
  */
-#if SPC5_HAS_FLEXPWM0
+#if SPC5_HAS_FLEXPWM0 || defined(__DOXYGEN__)
 /**
  * @brief   PWMD1 driver enable switch.
  * @details If set to @p TRUE the support for PWMD1 is included.
@@ -199,10 +199,10 @@
 #endif
 #endif
 
-#if SPC5_HAS_FLEXPWM1
+#if SPC5_HAS_FLEXPWM1 || defined(__DOXYGEN__)
 /**
  * @brief   PWMD5 driver enable switch.
- * @details If set to @p TRUE the support for PWMD4 is included.
+ * @details If set to @p TRUE the support for PWMD5 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_PWM_USE_SMOD4) || defined(__DOXYGEN__)
@@ -211,7 +211,7 @@
 
 /**
  * @brief   PWMD6 driver enable switch.
- * @details If set to @p TRUE the support for PWMD4 is included.
+ * @details If set to @p TRUE the support for PWMD6 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_PWM_USE_SMOD5) || defined(__DOXYGEN__)
@@ -220,7 +220,7 @@
 
 /**
  * @brief   PWMD7 driver enable switch.
- * @details If set to @p TRUE the support for PWMD4 is included.
+ * @details If set to @p TRUE the support for PWMD7 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_PWM_USE_SMOD6) || defined(__DOXYGEN__)
@@ -229,7 +229,7 @@
 
 /**
  * @brief   PWMD8 driver enable switch.
- * @details If set to @p TRUE the support for PWMD4 is included.
+ * @details If set to @p TRUE the support for PWMD8 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_PWM_USE_SMOD7) || defined(__DOXYGEN__)
@@ -353,15 +353,15 @@ typedef struct {
  */
 typedef struct {
   /**
-   * @brief   Timer clock in Hz.
-   * @note    The low level can use assertions in order to catch invalid
-   *          frequency specifications.
+   * @brief Timer clock in Hz.
+   * @note  The low level can use assertions in order to catch invalid
+   *        frequency specifications.
    */
   uint32_t                  frequency;
   /**
-   * @brief   PWM period in ticks.
-   * @note    The low level can use assertions in order to catch invalid
-   *          period specifications.
+   * @brief PWM period in ticks.
+   * @note  The low level can use assertions in order to catch invalid
+   *        period specifications.
    */
   pwmcnt_t                  period;
   /**
@@ -394,7 +394,7 @@ struct PWMDriver {
    */
   const PWMConfig           *config;
   /**
-   * @brief   Current PWM period in ticks.
+   * @brief Current PWM period in ticks.
    */
   pwmcnt_t                  period;
 #if defined(PWM_DRIVER_EXT_FIELDS)

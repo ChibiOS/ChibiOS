@@ -188,6 +188,12 @@ static uint32_t icu_active_submodules0;
 static uint32_t icu_active_submodules1;
 static uint32_t icu_active_submodules2;
 
+/**
+ * @brief   Width and Period registers.
+ */
+uint16_t width;
+uint16_t period;
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -216,7 +222,12 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       }
       else {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF1 = 1U;
-        icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0;
+        if (icup->etimerp->CHANNEL[icup->smod_number].CTRL3.B.C1FCNT == 2) {
+          period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+          period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+        } else {
+          period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+        }
         _icu_isr_invoke_period_cb(icup);
       }
     }
@@ -228,6 +239,12 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       }
       else {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF2 = 1U;
+        if (icup->etimerp->CHANNEL[icup->smod_number].CTRL3.B.C2FCNT == 2) {
+          width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+          width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+        } else {
+          width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+        }
         _icu_isr_invoke_width_cb(icup);
       }
     }
@@ -238,11 +255,22 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
     }
     if ((sr & 0x0040) != 0) { /* ICF1 */
       icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF1 = 1U;
-      icup->etimerp->CHANNEL[icup->smod_number].CNTR.R = 0;
+      if (icup->etimerp->CHANNEL[icup->smod_number].CTRL3.B.C1FCNT == 2) {
+        period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+        period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+      } else {
+        period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+      }
       _icu_isr_invoke_period_cb(icup);
     }
     else if ((sr & 0x0080) != 0) { /* ICF2 */
       icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF2 = 1U;
+      if (icup->etimerp->CHANNEL[icup->smod_number].CTRL3.B.C2FCNT == 2) {
+        width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+        width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+      } else {
+        width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+      }
       _icu_isr_invoke_width_cb(icup);
     }
   } /* ICU_SKIP_FIRST_CAPTURE = FALSE */
@@ -307,28 +335,28 @@ static void spc5_icu_smod_init(ICUDriver *icup) {
   icup->etimerp->CHANNEL[icup->smod_number].CTRL2.B.PIPS = 0U;
 
   /* Set secondary source.*/
-  switch (icup->config->channel) {
-  case ICU_CHANNEL_1:
+  switch (icup->smod_number) {
+  case 0:
     icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
         SPC5_ETIMER_COUNTER_0_INPUT_PIN;
     break;
-  case ICU_CHANNEL_2:
+  case 1:
     icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
         SPC5_ETIMER_COUNTER_1_INPUT_PIN;
     break;
-  case ICU_CHANNEL_3:
+  case 2:
     icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
         SPC5_ETIMER_COUNTER_2_INPUT_PIN;
     break;
-  case ICU_CHANNEL_4:
+  case 3:
     icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
         SPC5_ETIMER_COUNTER_3_INPUT_PIN;
     break;
-  case ICU_CHANNEL_5:
+  case 4:
     icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
         SPC5_ETIMER_COUNTER_4_INPUT_PIN;
     break;
-  case ICU_CHANNEL_6:
+  case 5:
     icup->etimerp->CHANNEL[icup->smod_number].CTRL.B.SECSRC =
         SPC5_ETIMER_COUNTER_5_INPUT_PIN;
     break;
@@ -344,8 +372,8 @@ static void spc5_icu_smod_init(ICUDriver *icup) {
 
   /* Direct pointers to the capture registers in order to make reading
    data faster from within callbacks.*/
-  icup->pccrp = &icup->etimerp->CHANNEL[icup->smod_number].CAPT1.R;
-  icup->wccrp = &icup->etimerp->CHANNEL[icup->smod_number].CAPT2.R;
+  icup->pccrp = &period;
+  icup->wccrp = &width;
 
   /* Enable channel.*/
   icup->etimerp->ENBL.B.ENBL |= 1U << (icup->smod_number);
@@ -761,9 +789,13 @@ CH_IRQ_HANDLER(SPC5_ETIMER2_TC5IR_HANDLER) {
  */
 void icu_lld_init(void) {
   /* Submodules initially all not in use.*/
-    icu_active_submodules0 = 0;
-    icu_active_submodules1 = 0;
-    icu_active_submodules2 = 0;
+  icu_active_submodules0 = 0;
+  icu_active_submodules1 = 0;
+  icu_active_submodules2 = 0;
+
+  /* Reset width and period registers.*/
+  width = 0;
+  period = 0;
 
 #if SPC5_ICU_USE_SMOD0
   /* Driver initialization.*/
@@ -1276,6 +1308,8 @@ void icu_lld_enable(ICUDriver *icup) {
   /* Set Capture 1 and Capture 2 Mode.*/
   icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT1MODE =
       SPC5_ETIMER_CPT1MODE_RISING_EDGE;
+  icup->etimerp->CHANNEL[icup->smod_number].CTRL3.B.ROC =
+      SPC5_ETIMER_ROC_REL_ON_CAP1;
   icup->etimerp->CHANNEL[icup->smod_number].CCCTRL.B.CPT2MODE =
       SPC5_ETIMER_CPT2MODE_FALLING_EDGE;
 

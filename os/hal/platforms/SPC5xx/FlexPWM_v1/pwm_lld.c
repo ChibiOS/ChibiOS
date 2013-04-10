@@ -71,7 +71,7 @@ PWMDriver PWMD5;
 
 /**
  * @brief   PWMD6 driver identifier.
- * @note    The driver PWMD6 allocates the timer TIM4 when enabled.
+ * @note    The driver PWMD6 allocates the timer TIM6 when enabled.
  */
 #if SPC5_PWM_USE_SMOD5 || defined(__DOXYGEN__)
 PWMDriver PWMD6;
@@ -79,7 +79,7 @@ PWMDriver PWMD6;
 
 /**
  * @brief   PWMD7 driver identifier.
- * @note    The driver PWMD7 allocates the timer TIM4 when enabled.
+ * @note    The driver PWMD7 allocates the timer TIM7 when enabled.
  */
 #if SPC5_PWM_USE_SMOD6 || defined(__DOXYGEN__)
 PWMDriver PWMD7;
@@ -87,7 +87,7 @@ PWMDriver PWMD7;
 
 /**
  * @brief   PWMD8 driver identifier.
- * @note    The driver PWMD8 allocates the timer TIM4 when enabled.
+ * @note    The driver PWMD8 allocates the timer TIM8 when enabled.
  */
 #if SPC5_PWM_USE_SMOD7 || defined(__DOXYGEN__)
 PWMDriver PWMD8;
