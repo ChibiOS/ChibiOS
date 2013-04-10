@@ -94,7 +94,6 @@
  * @name    Configuration options
  * @{
  */
-#if SPC5_HAS_ETIMER0 || defined(__DOXYGEN__)
 /**
  * @brief   ICUD1 driver enable switch.
  * @details If set to @p TRUE the support for ICUD1 is included.
@@ -177,9 +176,7 @@
 #define SPC5_ICU_ETIMER0_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 #endif
-#endif
 
-#if SPC5_HAS_ETIMER1 || defined(__DOXYGEN__)
 /**
  * @brief   ICUD6 driver enable switch.
  * @details If set to @p TRUE the support for ICUD6 is included.
@@ -262,9 +259,7 @@
 #define SPC5_ICU_ETIMER1_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 #endif
-#endif
 
-#if SPC5_HAS_ETIMER2 || defined(__DOXYGEN__)
 /**
  * @brief   ICUD13 driver enable switch.
  * @details If set to @p TRUE the support for ICUD13 is included.
@@ -347,24 +342,11 @@
 #define SPC5_ICU_ETIMER2_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 #endif
-#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if !SPC5_HAS_ETIMER0
-#error "ETIMER0 not present in the selected device"
-#endif
-
-#if !SPC5_HAS_ETIMER1
-#error "ETIMER1 not present in the selected device"
-#endif
-
-#if !SPC5_HAS_ETIMER2
-#error "ETIMER2 not present in the selected device"
-#endif
 
 #define SPC5_ICU_USE_ETIMER0                (SPC5_ICU_USE_SMOD0 ||          \
                                              SPC5_ICU_USE_SMOD1 ||          \
@@ -386,6 +368,18 @@
                                              SPC5_ICU_USE_SMOD15 ||         \
                                              SPC5_ICU_USE_SMOD16 ||         \
                                              SPC5_ICU_USE_SMOD17)
+
+#if !SPC5_HAS_ETIMER0 && SPC5_ICU_USE_ETIMER0
+#error "ETIMER0 not present in the selected device"
+#endif
+
+#if !SPC5_HAS_ETIMER1 && SPC5_ICU_USE_ETIMER1
+#error "ETIMER1 not present in the selected device"
+#endif
+
+#if !SPC5_HAS_ETIMER2 && SPC5_ICU_USE_ETIMER2
+#error "ETIMER2 not present in the selected device"
+#endif
 
 #if !SPC5_ICU_USE_ETIMER0 && !SPC5_ICU_USE_ETIMER1 && !SPC5_ICU_USE_ETIMER2
 #error "ICU driver activated but no SMOD peripheral assigned"

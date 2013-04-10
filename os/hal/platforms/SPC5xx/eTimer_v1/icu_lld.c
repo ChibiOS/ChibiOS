@@ -223,10 +223,10 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       else {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF1 = 1U;
         if (icup->etimerp->CHANNEL[icup->smod_number].CTRL3.B.C1FCNT == 2) {
-          period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
-          period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+          period = icup->etimerp->CHANNEL[icup->smod_number].CAPT1.R;
+          period = icup->etimerp->CHANNEL[icup->smod_number].CAPT1.R;
         } else {
-          period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+          period = icup->etimerp->CHANNEL[icup->smod_number].CAPT1.R;
         }
         _icu_isr_invoke_period_cb(icup);
       }
@@ -240,10 +240,10 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       else {
         icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF2 = 1U;
         if (icup->etimerp->CHANNEL[icup->smod_number].CTRL3.B.C2FCNT == 2) {
-          width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
-          width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+          width = icup->etimerp->CHANNEL[icup->smod_number].CAPT2.R;
+          width = icup->etimerp->CHANNEL[icup->smod_number].CAPT2.R;
         } else {
-          width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+          width = icup->etimerp->CHANNEL[icup->smod_number].CAPT2.R;
         }
         _icu_isr_invoke_width_cb(icup);
       }
@@ -256,20 +256,20 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
     if ((sr & 0x0040) != 0) { /* ICF1 */
       icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF1 = 1U;
       if (icup->etimerp->CHANNEL[icup->smod_number].CTRL3.B.C1FCNT == 2) {
-        period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
-        period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+        period = icup->etimerp->CHANNEL[icup->smod_number].CAPT1.R;
+        period = icup->etimerp->CHANNEL[icup->smod_number].CAPT1.R;
       } else {
-        period = icup->etimer->CHANNEL[icup->smod_number].CAPT1.R;
+        period = icup->etimerp->CHANNEL[icup->smod_number].CAPT1.R;
       }
       _icu_isr_invoke_period_cb(icup);
     }
     else if ((sr & 0x0080) != 0) { /* ICF2 */
       icup->etimerp->CHANNEL[icup->smod_number].STS.B.ICF2 = 1U;
       if (icup->etimerp->CHANNEL[icup->smod_number].CTRL3.B.C2FCNT == 2) {
-        width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
-        width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+        width = icup->etimerp->CHANNEL[icup->smod_number].CAPT2.R;
+        width = icup->etimerp->CHANNEL[icup->smod_number].CAPT2.R;
       } else {
-        width = icup->etimer->CHANNEL[icup->smod_number].CAPT2.R;
+        width = icup->etimerp->CHANNEL[icup->smod_number].CAPT2.R;
       }
       _icu_isr_invoke_width_cb(icup);
     }
@@ -970,20 +970,12 @@ void icu_lld_init(void) {
  */
 void icu_lld_start(ICUDriver *icup) {
 
-  chDbgAssert((icup->config->channel == ICU_CHANNEL_1) ||
-              (icup->config->channel == ICU_CHANNEL_2) ||
-              (icup->config->channel == ICU_CHANNEL_3) ||
-              (icup->config->channel == ICU_CHANNEL_4) ||
-              (icup->config->channel == ICU_CHANNEL_5) ||
-              (icup->config->channel == ICU_CHANNEL_6),
-             "icu_lld_start(), #1", "invalid input");
-
   chDbgAssert(icu_active_submodules0 < 6, "icu_lld_start(), #1",
               "too many submodules");
   chDbgAssert(icu_active_submodules1 < 6, "icu_lld_start(), #1",
-                "too many submodules");
+              "too many submodules");
   chDbgAssert(icu_active_submodules2 < 6, "icu_lld_start(), #1",
-                "too many submodules");
+              "too many submodules");
 
   if (icup->state == ICU_STOP) {
 #if SPC5_ICU_USE_SMOD0

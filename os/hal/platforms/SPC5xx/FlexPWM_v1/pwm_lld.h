@@ -111,7 +111,6 @@
  * @name    Configuration options
  * @{
  */
-#if SPC5_HAS_FLEXPWM0 || defined(__DOXYGEN__)
 /**
  * @brief   PWMD1 driver enable switch.
  * @details If set to @p TRUE the support for PWMD1 is included.
@@ -197,9 +196,7 @@
 #define SPC5_PWM_FLEXPWM0_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 #endif
-#endif
 
-#if SPC5_HAS_FLEXPWM1 || defined(__DOXYGEN__)
 /**
  * @brief   PWMD5 driver enable switch.
  * @details If set to @p TRUE the support for PWMD5 is included.
@@ -285,18 +282,10 @@
 #define SPC5_PWM_FLEXPWM1_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 #endif
-#endif
 
 /*===========================================================================*/
 /* Configuration checks.                                                     */
 /*===========================================================================*/
-#if !SPC5_HAS_FLEXPWM0
-#error "FlexPWM0 not present in the selected device"
-#endif
-
-#if !SPC5_HAS_FLEXPWM1
-#error "FlexPWM1 not present in the selected device"
-#endif
 
 #define SPC5_PWM_USE_FLEXPWM0               (SPC5_PWM_USE_SMOD0 ||          \
                                              SPC5_PWM_USE_SMOD1 ||          \
@@ -307,6 +296,14 @@
                                              SPC5_PWM_USE_SMOD5 ||          \
                                              SPC5_PWM_USE_SMOD6 ||          \
                                              SPC5_PWM_USE_SMOD7)
+
+#if !SPC5_HAS_FLEXPWM0 && SPC5_PWM_USE_FLEXPWM0
+#error "FlexPWM0 not present in the selected device"
+#endif
+
+#if !SPC5_HAS_FLEXPWM1 && SPC5_PWM_USE_FLEXPWM1
+#error "FlexPWM1 not present in the selected device"
+#endif
 
 #if !SPC5_PWM_USE_FLEXPWM0 && !SPC5_PWM_USE_FLEXPWM1
 #error "PWM driver activated but no PWM peripheral assigned"
