@@ -310,8 +310,8 @@ typedef msg_t (*tfunc_t)(void *);
 /**
  * @brief   Delays the invoking thread for the specified number of seconds.
  * @note    The specified time is rounded up to a value allowed by the real
- *          system clock.
- * @note    The maximum specified value is implementation dependent.
+ *          system tick clock.
+ * @note    The maximum specifiable value is implementation dependent.
  *
  * @param[in] sec       time in seconds, must be different from zero
  *
@@ -323,8 +323,8 @@ typedef msg_t (*tfunc_t)(void *);
  * @brief   Delays the invoking thread for the specified number of
  *          milliseconds.
  * @note    The specified time is rounded up to a value allowed by the real
- *          system clock.
- * @note    The maximum specified value is implementation dependent.
+ *          system tick clock.
+ * @note    The maximum specifiable value is implementation dependent.
  *
  * @param[in] msec      time in milliseconds, must be different from zero
  *
@@ -336,8 +336,8 @@ typedef msg_t (*tfunc_t)(void *);
  * @brief   Delays the invoking thread for the specified number of
  *          microseconds.
  * @note    The specified time is rounded up to a value allowed by the real
- *          system clock.
- * @note    The maximum specified value is implementation dependent.
+ *          system tick clock.
+ * @note    The maximum specifiable value is implementation dependent.
  *
  * @param[in] usec      time in microseconds, must be different from zero
  *
