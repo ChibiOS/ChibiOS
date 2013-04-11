@@ -34,7 +34,7 @@
  */
 void port_init(void) {
 #if PPC_SUPPORTS_IVORS
-    /* The CPU support IVOR registers, the kernel requires IVOR4 and IVOR10
+    /* The CPU supports IVOR registers, the kernel requires IVOR4 and IVOR10
        and the initialization is performed here.*/
     asm volatile ("li          %%r3, _IVOR4@l       \t\n"
                   "mtIVOR4     %%r3                 \t\n"

@@ -209,28 +209,7 @@ _ivinit:
         /*
          * Unhandled exceptions handler.
          */
-        .weak       _IVOR0,  _IVOR1,  _IVOR2,  _IVOR3,  _IVOR4,  _IVOR5
-        .weak       _IVOR6,  _IVOR7,  _IVOR8,  _IVOR9,  _IVOR10, _IVOR11
-        .weak       _IVOR12, _IVOR13, _IVOR14, _IVOR15, _IVOR32, _IVOR33
-        .weak       _IVOR34
         .weak       _unhandled_exception
-_IVOR0:
-_IVOR1:
-_IVOR2:
-_IVOR3:
-_IVOR5:
-_IVOR6:
-_IVOR7:
-_IVOR8:
-_IVOR9:
-_IVOR11:
-_IVOR12:
-_IVOR13:
-_IVOR14:
-_IVOR15:
-_IVOR32:
-_IVOR33:
-_IVOR34:
         .type       _unhandled_exception, @function
 _unhandled_exception:
         b           _unhandled_exception
