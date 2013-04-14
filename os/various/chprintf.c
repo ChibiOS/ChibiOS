@@ -196,6 +196,8 @@ void chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
       break;
     case 'D':
     case 'd':
+    case 'I':
+    case 'i':
       if (is_long)
         l = va_arg(ap, long);
       else
