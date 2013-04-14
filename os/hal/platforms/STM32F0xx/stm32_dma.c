@@ -109,7 +109,7 @@ static dma_isr_redir_t dma_isr_redir[STM32_DMA_STREAMS];
  *
  * @isr
  */
-CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
+CH_IRQ_HANDLER(Vector64) {
   uint32_t flags;
 
   CH_IRQ_PROLOGUE();
@@ -127,7 +127,7 @@ CH_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(DMA1_Ch2_3_IRQHandler) {
+CH_IRQ_HANDLER(Vector68) {
   uint32_t flags;
 
   CH_IRQ_PROLOGUE();
@@ -156,7 +156,7 @@ CH_IRQ_HANDLER(DMA1_Ch2_3_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(DMA1_Ch4_5_IRQHandler) {
+CH_IRQ_HANDLER(Vector6C) {
   uint32_t flags;
 
   CH_IRQ_PROLOGUE();

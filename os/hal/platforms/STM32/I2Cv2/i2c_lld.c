@@ -612,7 +612,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   VirtualTimer vt;
   uint32_t addr_cr2 = addr & I2C_CR2_SADD;
 
-  chDbgCheck((rxbytes > 1), "i2c_lld_master_receive_timeout");
+  chDbgCheck((rxbytes > 0), "i2c_lld_master_receive_timeout");
 
   /* Resetting error flags for this transfer.*/
   i2cp->errors = I2CD_NO_ERROR;

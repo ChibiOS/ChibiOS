@@ -50,11 +50,11 @@
 /*===========================================================================*/
 
 /**
- * @brief   EXTI[0] interrupt handler.
+ * @brief   EXTI[0]...EXTI[1] interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI0_1_IRQHandler) {
+CH_IRQ_HANDLER(Vector54) {
   uint32_t pr;
 
   CH_IRQ_PROLOGUE();
@@ -70,11 +70,11 @@ CH_IRQ_HANDLER(EXTI0_1_IRQHandler) {
 }
 
 /**
- * @brief   EXTI[1] interrupt handler.
+ * @brief   EXTI[2]...EXTI[3] interrupt handler.
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI2_3_IRQHandler) {
+CH_IRQ_HANDLER(Vector58) {
   uint32_t pr;
 
   CH_IRQ_PROLOGUE();
@@ -94,7 +94,7 @@ CH_IRQ_HANDLER(EXTI2_3_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI4_15_IRQHandler) {
+CH_IRQ_HANDLER(Vector5C) {
   uint32_t pr;
 
   CH_IRQ_PROLOGUE();
@@ -136,7 +136,7 @@ CH_IRQ_HANDLER(EXTI4_15_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(PVD_IRQHandler) {
+CH_IRQ_HANDLER(Vector44) {
 
   CH_IRQ_PROLOGUE();
 
@@ -151,7 +151,7 @@ CH_IRQ_HANDLER(PVD_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(RTC_IRQHandler) {
+CH_IRQ_HANDLER(Vector48) {
 
   CH_IRQ_PROLOGUE();
 

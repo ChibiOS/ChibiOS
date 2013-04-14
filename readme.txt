@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed STM32F051 various (bug #400).
 - FIX: Fixed STM32F103 HSI configuration (bug #399).
 - FIX: Fixed patch to allow simulator to be restarted quicker (bug #398).
 - FIX: Fixed blkDisconnect macro typo (bug #397).
