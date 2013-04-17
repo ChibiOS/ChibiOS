@@ -26,6 +26,8 @@
  * @{
  */
 
+#if !defined(__DOXYGEN__)
+
         /* Software vectors table. The vectors are accessed from the IVOR4
            handler only. In order to declare an interrupt handler just create
            a function withe the same name of a vector, the symbol will
