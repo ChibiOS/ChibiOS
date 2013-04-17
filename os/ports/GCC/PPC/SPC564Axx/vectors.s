@@ -772,7 +772,7 @@ vector483:
 vector484:
 vector485:
 
-        .weak      _unhandled_irq
+        .weak       _unhandled_irq
         .type       _unhandled_irq, @function
 _unhandled_irq:
          b          _unhandled_irq
