@@ -2019,6 +2019,32 @@ namespace chibios_rt {
      * @iclass
      */
     msg_t fetchI(msg_t *msgp);
+
+    /**
+     * @brief   Returns the number of free message slots into a mailbox.
+     * @note    Can be invoked in any system state but if invoked out of a
+     *          locked state then the returned value may change after reading.
+     * @note    The returned value can be less than zero when there are waiting
+     *          threads on the internal semaphore.
+     *
+     * @return              The number of empty message slots.
+     *
+     * @iclass
+     */
+    cnt_t getFreeCountI(void);
+
+    /**
+     * @brief   Returns the number of used message slots into a mailbox.
+     * @note    Can be invoked in any system state but if invoked out of a
+     *          locked state then the returned value may change after reading.
+     * @note    The returned value can be less than zero when there are waiting
+     *          threads on the internal semaphore.
+     *
+     * @return              The number of queued messages.
+     *
+     * @iclass
+     */
+    cnt_t getUsedCountI(void);
   };
 
   /*------------------------------------------------------------------------*

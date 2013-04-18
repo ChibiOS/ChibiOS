@@ -812,6 +812,16 @@ namespace chibios_rt {
 
     return chMBFetchI(&mb, msgp);
   }
+
+  cnt_t Mailbox::getFreeCountI(void) {
+
+    return chMBGetFreeCountI(&mb);
+  }
+
+  cnt_t Mailbox::getUsedCountI(void) {
+
+    return chMBGetUsedCountI(&mb);
+  }
 #endif /* CH_USE_MAILBOXES */
 
 #if CH_USE_MEMPOOLS
