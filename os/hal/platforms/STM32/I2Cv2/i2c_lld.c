@@ -167,25 +167,33 @@ static void i2c_lld_safety_timeout(void *p) {
 static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  if (isr & I2C_ISR_TC) {
-    uint8_t rxbytes = dmaStreamGetTransactionSize(i2cp->dmarx);
+  if ((isr & I2C_ISR_TC) && (i2cp->state == I2C_ACTIVE_TX)) {
+    size_t rxbytes;
+
+    /* Make sure no more 'Transfer complete' interrupts.*/
+    dp->CR1 &= ~I2C_CR1_TCIE;
+
+    rxbytes = dmaStreamGetTransactionSize(i2cp->dmarx);
     if (rxbytes > 0) {
+      i2cp->state = I2C_ACTIVE_RX;
+
       /* Enable RX DMA */
       dmaStreamEnable(i2cp->dmarx);
 
       dp->CR2 &= ~I2C_CR2_NBYTES;
-      dp->CR2 |= (uint8_t)rxbytes << 16;
+      dp->CR2 |= rxbytes << 16;
 
       /* Starts the read operation.*/
       dp->CR2 |= I2C_CR2_RD_WRN;
       dp->CR2 |= I2C_CR2_START;
     }
     else {
+      /* Nothing to receive - send STOP immediately.*/
       dp->CR2 |= I2C_CR2_STOP;
     }
   }
   if (isr & I2C_ISR_NACKF) {
-    /* Starts a STOP sequence immediately.*/
+    /* Starts a STOP sequence immediately on error.*/
     dp->CR2 |= I2C_CR2_STOP;
 
     i2cp->errors |= I2CD_ACK_FAILURE;
@@ -519,9 +527,9 @@ void i2c_lld_start(I2CDriver *i2cp) {
   dmaStreamSetPeripheral(i2cp->dmarx, &dp->RXDR);
   dmaStreamSetPeripheral(i2cp->dmatx, &dp->TXDR);
 
-  /* Reset i2c peripheral.*/
+  /* Reset i2c peripheral, the TCIE bit will be handled separately.*/
   dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_STOPIE |
-            I2C_CR1_NACKIE | I2C_CR1_TCIE | I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
+            I2C_CR1_NACKIE | I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
 
   /* Set slave address field (master mode) */
   dp->CR2 = (i2cp->config->cr2 & ~I2C_CR2_SADD);
@@ -633,13 +641,16 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
     chSysUnlock();
   }
 
+  /* This lock will be released in high level driver.*/
+  chSysLock();
+
   /* Adjust slave address (master mode) for 7-bit address mode */
   if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0)
     addr_cr2 = (addr_cr2 & 0x7f) << 1;
 
   /* Set slave address field (master mode) */
   dp->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES);
-  dp->CR2 |= ((uint8_t)rxbytes << 16) | addr_cr2;
+  dp->CR2 |= (rxbytes << 16) | addr_cr2;
 
   /* Initializes driver fields */
   i2cp->errors = 0;
@@ -651,9 +662,6 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Enable RX DMA */
   dmaStreamEnable(i2cp->dmarx);
-
-  /* This lock will be released in high level driver.*/
-  chSysLock();
 
   /* Atomic check on the timer in order to make sure that a timeout didn't
      happen outside the critical zone.*/
@@ -728,13 +736,16 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
     chSysUnlock();
   }
 
+  /* This lock will be released in high level driver.*/
+  chSysLock();
+
   /* Adjust slave address (master mode) for 7-bit address mode */
   if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0)
     addr_cr2 = (addr_cr2 & 0x7f) << 1;
 
   /* Set slave address field (master mode) */
   dp->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES);
-  dp->CR2 |= ((uint8_t)txbytes << 16) | addr_cr2;
+  dp->CR2 |= (txbytes << 16) | addr_cr2;
 
   /* Initializes driver fields */
   i2cp->errors = 0;
@@ -752,15 +763,15 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Enable TX DMA */
   dmaStreamEnable(i2cp->dmatx);
 
-  /* This lock will be released in high level driver.*/
-  chSysLock();
-
   /* Atomic check on the timer in order to make sure that a timeout didn't
      happen outside the critical zone.*/
   if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
     return RDY_TIMEOUT;
 
-  /* Starts the operation.*/
+  /* Transmission complete interrupt enabled.*/
+  dp->CR1 |= I2C_CR1_TCIE;
+
+  /* Starts the operation as the very last thing.*/
   dp->CR2 &= ~I2C_CR2_RD_WRN;
   dp->CR2 |= I2C_CR2_START;
 
