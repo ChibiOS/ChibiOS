@@ -295,6 +295,7 @@
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\..\os\kernel\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\ports\common\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ports\common\ARMCMx\CMSIS\include</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ports\IAR\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ports\IAR\ARMCMx\STM32f4xx</state>
@@ -302,6 +303,8 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\DMAv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\GPIOv2</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\SPIv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\USARTv1</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32f4xx</state>
           <state>$PROJ_DIR$\..\..\..\..\boards\ST_STM32f4_DISCOVERY</state>
           <state>$PROJ_DIR$\..\..\..\..\test</state>
@@ -1222,6 +1225,8 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\DMAv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\GPIOv2</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\SPIv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\USARTv1</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32f4xx</state>
           <state>$PROJ_DIR$\..\..\..\..\boards\ST_STM32f4_DISCOVERY</state>
           <state>$PROJ_DIR$\..\..\..\..\test</state>
@@ -2131,16 +2136,16 @@
         <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\GPIOv2\pal_lld.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\serial_lld.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\USARTv1\serial_lld.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\serial_lld.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\USARTv1\serial_lld.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\spi_lld.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\SPIv1\spi_lld.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\spi_lld.h</name>
+        <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32\SPIv1\spi_lld.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\os\hal\platforms\STM32f4xx\stm32_dma.c</name>
