@@ -346,7 +346,7 @@
               <MiscControls></MiscControls>
               <Define>__heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_IRAM2$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\os\kernel\include;..\..\..\..\os\ports\common\ARMCMx;..\..\..\..\os\ports\common\ARMCMx\CMSIS\include;..\..\..\..\os\ports\RVCT\ARMCMx;..\..\..\..\os\ports\RVCT\ARMCMx\STM32F4xx;..\..\..\..\os\hal\include;..\..\..\..\os\hal\platforms\STM32;..\..\..\..\os\hal\platforms\STM32\GPIOv2;..\..\..\..\os\hal\platforms\STM32F4xx;..\..\..\..\boards\ST_STM32F4_DISCOVERY;..\..\..\..\test</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\kernel\include;..\..\..\..\os\ports\common\ARMCMx;..\..\..\..\os\ports\common\ARMCMx\CMSIS\include;..\..\..\..\os\ports\RVCT\ARMCMx;..\..\..\..\os\ports\RVCT\ARMCMx\STM32F4xx;..\..\..\..\os\hal\include;..\..\..\..\os\hal\platforms\STM32;..\..\..\..\os\hal\platforms\STM32\GPIOv2;..\..\..\..\os\hal\platforms\STM32\USARTv1;..\..\..\..\os\hal\platforms\STM32F4xx;..\..\..\..\boards\ST_STM32F4_DISCOVERY;..\..\..\..\test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -759,12 +759,12 @@
             <File>
               <FileName>serial_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\platforms\STM32\serial_lld.c</FilePath>
+              <FilePath>..\..\..\..\os\hal\platforms\STM32\USARTv1\serial_lld.c</FilePath>
             </File>
             <File>
               <FileName>serial_lld.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\platforms\STM32\serial_lld.h</FilePath>
+              <FilePath>..\..\..\..\os\hal\platforms\STM32\USARTv1\serial_lld.h</FilePath>
             </File>
             <File>
               <FileName>stm32_dma.c</FileName>
