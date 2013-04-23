@@ -132,7 +132,7 @@
  * @brief   External clock pre-divider.
  * @note    Must be in range 1...15.
  */
-#if !defined(SPC5_CLK_PREDIV) || defined(__DOXYGEN__)
+#if !defined(SPC5_CLK_PREDIV_VALUE) || defined(__DOXYGEN__)
 #define SPC5_CLK_PREDIV_VALUE               8
 #endif
 
