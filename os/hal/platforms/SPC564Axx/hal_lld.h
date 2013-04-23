@@ -133,7 +133,7 @@
  * @note    Must be in range 1...15.
  */
 #if !defined(SPC5_CLK_PREDIV_VALUE) || defined(__DOXYGEN__)
-#define SPC5_CLK_PREDIV_VALUE               8
+#define SPC5_CLK_PREDIV_VALUE               2
 #endif
 
 /**
@@ -141,7 +141,7 @@
  * @note    Must be in range 32...96.
  */
 #if !defined(SPC5_CLK_MFD_VALUE) || defined(__DOXYGEN__)
-#define SPC5_CLK_MFD_VALUE                  60
+#define SPC5_CLK_MFD_VALUE                  75
 #endif
 
 /**
