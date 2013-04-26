@@ -225,12 +225,6 @@ msg_t lwip_thread(void *p) {
   chRegSetThreadName("lwipthread");
 
   /* Initializes the thing.*/
-  sys_init();
-  mem_init();
-  memp_init();
-  pbuf_init();
-  netif_init();
-  ip_init();
   tcpip_init(NULL, NULL);
 
   /* TCP/IP parameters, runtime or compile time.*/
