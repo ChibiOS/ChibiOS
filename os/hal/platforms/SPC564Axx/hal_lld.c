@@ -51,7 +51,6 @@
  * @notapi
  */
 void hal_lld_init(void) {
-  extern void _vectors(void);
   uint32_t n;
 
   /* FLASH wait states and prefetching setup.*/

@@ -70,7 +70,6 @@ CH_IRQ_HANDLER(vector59) {
  * @notapi
  */
 void hal_lld_init(void) {
-  extern void _vectors(void);
   uint32_t reg;
 
   /* The system is switched to the RUN0 mode, the default for normal
