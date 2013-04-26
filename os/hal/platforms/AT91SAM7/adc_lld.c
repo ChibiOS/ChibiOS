@@ -227,7 +227,7 @@ void adc_lld_start(ADCDriver *adcp) {
 	if (adcp->state == ADC_STOP) {
 
     	/* Take it out of sleep mode */
-    	/* We could stay in sleep mode provided total conversion rate < 44khz but we can't guarantee that here */
+    	/* We could stay in sleep mode provided total conversion rate < 44kHz but we can't guarantee that here */
     	adc_wake();
 
     	/* TODO: We really should perform a conversion here just to ensure that we are out of sleep mode */

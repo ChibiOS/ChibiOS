@@ -54,7 +54,7 @@ void boardInit(void) {
 }
 
 /**
- * @brief   Inserion monitor function.
+ * @brief   Insertion monitor function.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *
@@ -68,7 +68,7 @@ bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
 /**
  * @brief   Protection detection.
- * @note    Not supported, allways not protected.
+ * @note    Not supported, always not protected.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  *

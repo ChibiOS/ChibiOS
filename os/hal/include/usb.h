@@ -249,7 +249,7 @@ typedef enum {
  */
 typedef enum {
   USB_EP0_WAITING_SETUP,                /**< Waiting for SETUP data.        */
-  USB_EP0_TX,                           /**< Trasmitting.                   */
+  USB_EP0_TX,                           /**< Transmitting.                  */
   USB_EP0_WAITING_STS,                  /**< Waiting status.                */
   USB_EP0_RX,                           /**< Receiving.                     */
   USB_EP0_SENDING_STS,                  /**< Sending status.                */

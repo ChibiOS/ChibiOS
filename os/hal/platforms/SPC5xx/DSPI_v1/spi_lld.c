@@ -174,7 +174,7 @@ static const edma_channel_config_t spi_dspi3_rx_dma_config = {
 /*===========================================================================*/
 
 /**
- * @brief   Starts eception using DMA for frames up to 8 bits.
+ * @brief   Starts reception using DMA for frames up to 8 bits.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be exchanged

@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed several spelling errors (bug #404).
 - FIX: Fixed serial port in STM32F3 discovery test case (bug #402).
 - FIX: Fixed add %i to chprintf (bug #401).
 - FIX: Fixed STM32F051 various (bug #400).
