@@ -69,14 +69,14 @@
  * @brief   Generic 'false' boolean constant.
  */
 #if !defined(FALSE) || defined(__DOXYGEN__)
-#define FALSE       false
+#define FALSE                   false
 #endif
 
 /**
  * @brief   Generic 'true' boolean constant.
  */
 #if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE        true
+#define TRUE                    true
 #endif
 
 /**
