@@ -58,6 +58,8 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#if !defined(_FROM_ASM_)
+
 #if !defined(__DOXYGEN__)
 extern uint32_t _vectors[VECTORS_NUMBER];
 #endif
@@ -69,6 +71,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* !defined(_FROM_ASM_) */
 
 #endif /* _OSAL_H_ */
 
