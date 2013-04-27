@@ -476,6 +476,10 @@ int main(void) {
   usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
 
+  /*
+   * Stopping and restarting the USB in order to test the stop procedure. The
+   * following lines are not usually required.
+   */
   chThdSleepMilliseconds(3000);
   usbDisconnectBus(serusbcfg.usbp);
   usbStop(serusbcfg.usbp);
