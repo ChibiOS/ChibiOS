@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.4 ***
+- FIX: Fixed USB driver cannot be stopped (bug #405).
 - FIX: Fixed fixed I2C malfunction after fixing bug 3607518 (bug 3607549).
 - FIX: Fixed spurious interrupt disabling an STM32 DMA stream (bug 3607518).
 - FIX: Fixed start of any ADC disables VREF and VBAT (bug 3607467).
