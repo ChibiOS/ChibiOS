@@ -927,6 +927,10 @@ void usb_lld_stop(USBDriver *usbp) {
   /* If in ready state then disables the USB clock.*/
   if (usbp->state != USB_STOP) {
 
+    /* Disabling all endpoints in case the driver has been stopped while
+       active.*/
+    otg_disable_ep(usbp);
+
     usbp->txpending = 0;
 
     otgp->DAINTMSK   = 0;

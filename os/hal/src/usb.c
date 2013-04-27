@@ -282,7 +282,8 @@ void usbStop(USBDriver *usbp) {
   chDbgCheck(usbp != NULL, "usbStop");
 
   chSysLock();
-  chDbgAssert((usbp->state == USB_STOP) || (usbp->state == USB_READY),
+  chDbgAssert((usbp->state == USB_STOP) || (usbp->state == USB_READY) ||
+              (usbp->state == USB_SELECTED) || (usbp->state == USB_ACTIVE),
               "usbStop(), #1", "invalid state");
   usb_lld_stop(usbp);
   usbp->state = USB_STOP;

@@ -472,7 +472,14 @@ int main(void) {
    * after a reset.
    */
   usbDisconnectBus(serusbcfg.usbp);
-  chThdSleepMilliseconds(1000);
+  chThdSleepMilliseconds(1500);
+  usbStart(serusbcfg.usbp, &usbcfg);
+  usbConnectBus(serusbcfg.usbp);
+
+  chThdSleepMilliseconds(3000);
+  usbDisconnectBus(serusbcfg.usbp);
+  usbStop(serusbcfg.usbp);
+  chThdSleepMilliseconds(1500);
   usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
 

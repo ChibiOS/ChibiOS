@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    SPC563Axx/core.s
+ * @file    SPC564Axx/core.s
  * @brief   e200z4 core configuration.
  *
  * @addtogroup PPC_CORE

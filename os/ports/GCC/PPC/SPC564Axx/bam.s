@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    SPC563Axx/bam.s
- * @brief   SPC563Axx boot assistant record.
+ * @file    SPC564Axx/bam.s
+ * @brief   SPC564Axx boot assistant record.
  *
  * @addtogroup PPC_CORE
  * @{
