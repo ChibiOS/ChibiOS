@@ -29,8 +29,6 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "usb_cdc.h"
-
 #if HAL_USE_SERIAL_USB || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -117,24 +115,25 @@ static void inotify(GenericQueue *qp) {
 
   /* If the USB driver is not in the appropriate state then transactions
      must not be started.*/
-  if (usbGetDriverStateI(sdup->config->usbp) != USB_ACTIVE)
+  if ((usbGetDriverStateI(sdup->config->usbp) != USB_ACTIVE) ||
+      (sdup->state != SDU_READY))
     return;
 
   /* If there is in the queue enough space to hold at least one packet and
      a transaction is not yet started then a new transaction is started for
      the available space.*/
-  maxsize = sdup->config->usbp->epc[USB_CDC_DATA_AVAILABLE_EP]->out_maxsize;
-  if (!usbGetReceiveStatusI(sdup->config->usbp, USB_CDC_DATA_AVAILABLE_EP) &&
+  maxsize = sdup->config->usbp->epc[sdup->config->bulk_out]->out_maxsize;
+  if (!usbGetReceiveStatusI(sdup->config->usbp, sdup->config->bulk_out) &&
       ((n = chIQGetEmptyI(&sdup->iqueue)) >= maxsize)) {
     chSysUnlock();
 
     n = (n / maxsize) * maxsize;
     usbPrepareQueuedReceive(sdup->config->usbp,
-                            USB_CDC_DATA_AVAILABLE_EP,
+                            sdup->config->bulk_out,
                             &sdup->iqueue, n);
 
     chSysLock();
-    usbStartReceiveI(sdup->config->usbp, USB_CDC_DATA_AVAILABLE_EP);
+    usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out);
   }
 }
 
@@ -147,21 +146,22 @@ static void onotify(GenericQueue *qp) {
 
   /* If the USB driver is not in the appropriate state then transactions
      must not be started.*/
-  if (usbGetDriverStateI(sdup->config->usbp) != USB_ACTIVE)
+  if ((usbGetDriverStateI(sdup->config->usbp) != USB_ACTIVE) ||
+      (sdup->state != SDU_READY))
     return;
 
   /* If there is not an ongoing transaction and the output queue contains
      data then a new transaction is started.*/
-  if (!usbGetTransmitStatusI(sdup->config->usbp, USB_CDC_DATA_REQUEST_EP) &&
+  if (!usbGetTransmitStatusI(sdup->config->usbp, sdup->config->bulk_in) &&
       ((n = chOQGetFullI(&sdup->oqueue)) > 0)) {
     chSysUnlock();
 
     usbPrepareQueuedTransmit(sdup->config->usbp,
-                             USB_CDC_DATA_REQUEST_EP,
+                             sdup->config->bulk_in,
                              &sdup->oqueue, n);
 
     chSysLock();
-    usbStartTransmitI(sdup->config->usbp, USB_CDC_DATA_REQUEST_EP);
+    usbStartTransmitI(sdup->config->usbp, sdup->config->bulk_in);
   }
 }
 
@@ -236,6 +236,12 @@ void sduStop(SerialUSBDriver *sdup) {
   chDbgAssert((sdup->state == SDU_STOP) || (sdup->state == SDU_READY),
               "sduStop(), #1",
               "invalid state");
+
+  chIQResetI(&sdup->iqueue);
+  chOQResetI(&sdup->oqueue);
+  chSchRescheduleS();
+  chnAddFlagsI(sdup, CHN_DISCONNECTED);
+
   sdup->state = SDU_STOP;
   chSysUnlock();
 }
@@ -255,9 +261,9 @@ void sduConfigureHookI(USBDriver *usbp) {
   chnAddFlagsI(sdup, CHN_CONNECTED);
 
   /* Starts the first OUT transaction immediately.*/
-  usbPrepareQueuedReceive(usbp, USB_CDC_DATA_AVAILABLE_EP, &sdup->iqueue,
-                          usbp->epc[USB_CDC_DATA_AVAILABLE_EP]->out_maxsize);
-  usbStartReceiveI(usbp, USB_CDC_DATA_AVAILABLE_EP);
+  usbPrepareQueuedReceive(usbp, sdup->config->bulk_out, &sdup->iqueue,
+                          usbp->epc[sdup->config->bulk_out]->out_maxsize);
+  usbStartReceiveI(usbp, sdup->config->bulk_out);
 }
 
 /**
@@ -308,7 +314,8 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   size_t n;
   SerialUSBDriver *sdup = usbp->param;
 
-  (void)ep;
+  if (sdup->state != SDU_READY)
+    return;
 
   chSysLockFromIsr();
   chnAddFlagsI(sdup, CHN_OUTPUT_EMPTY);
@@ -353,14 +360,15 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   size_t n, maxsize;
   SerialUSBDriver *sdup = usbp->param;
 
-  (void)ep;
+  if (sdup->state != SDU_READY)
+    return;
 
   chSysLockFromIsr();
   chnAddFlagsI(sdup, CHN_INPUT_AVAILABLE);
 
   /* Writes to the input queue can only happen when there is enough space
      to hold at least one packet.*/
-  maxsize = usbp->epc[USB_CDC_DATA_AVAILABLE_EP]->out_maxsize;
+  maxsize = usbp->epc[ep]->out_maxsize;
   if ((n = chIQGetEmptyI(&sdup->iqueue)) >= maxsize) {
     /* The endpoint cannot be busy, we are in the context of the callback,
        so a packet is in the buffer for sure.*/

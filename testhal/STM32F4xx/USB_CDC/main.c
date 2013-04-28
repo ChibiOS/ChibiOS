@@ -21,7 +21,6 @@
 #include "hal.h"
 #include "test.h"
 
-#include "usb_cdc.h"
 #include "shell.h"
 #include "chprintf.h"
 
@@ -30,9 +29,16 @@
 /*===========================================================================*/
 
 /*
+ * Endpoints to be used for USBD2.
+ */
+#define USBD2_DATA_REQUEST_EP           1
+#define USBD2_DATA_AVAILABLE_EP         1
+#define USBD2_INTERRUPT_REQUEST_EP      2
+
+/*
  * Serial over USB Driver structure.
  */
-static SerialUSBDriver SDU1;
+static SerialUSBDriver SDU2;
 
 /*
  * USB Device Descriptor.
@@ -110,7 +116,7 @@ static const uint8_t vcom_configuration_descriptor_data[67] = {
   USB_DESC_BYTE         (0x01),         /* bSlaveInterface0 (Data Class
                                            Interface).                      */
   /* Endpoint 2 Descriptor.*/
-  USB_DESC_ENDPOINT     (USB_CDC_INTERRUPT_REQUEST_EP|0x80,
+  USB_DESC_ENDPOINT     (USBD2_INTERRUPT_REQUEST_EP|0x80,
                          0x03,          /* bmAttributes (Interrupt).        */
                          0x0008,        /* wMaxPacketSize.                  */
                          0xFF),         /* bInterval.                       */
@@ -126,12 +132,12 @@ static const uint8_t vcom_configuration_descriptor_data[67] = {
                                            4.7).                            */
                          0x00),         /* iInterface.                      */
   /* Endpoint 3 Descriptor.*/
-  USB_DESC_ENDPOINT     (USB_CDC_DATA_AVAILABLE_EP,     /* bEndpointAddress.*/
+  USB_DESC_ENDPOINT     (USBD2_DATA_AVAILABLE_EP,       /* bEndpointAddress.*/
                          0x02,          /* bmAttributes (Bulk).             */
                          0x0040,        /* wMaxPacketSize.                  */
                          0x00),         /* bInterval.                       */
   /* Endpoint 1 Descriptor.*/
-  USB_DESC_ENDPOINT     (USB_CDC_DATA_REQUEST_EP|0x80,  /* bEndpointAddress.*/
+  USB_DESC_ENDPOINT     (USBD2_DATA_REQUEST_EP|0x80,    /* bEndpointAddress.*/
                          0x02,          /* bmAttributes (Bulk).             */
                          0x0040,        /* wMaxPacketSize.                  */
                          0x00)          /* bInterval.                       */
@@ -284,8 +290,8 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     /* Enables the endpoints specified into the configuration.
        Note, this callback is invoked from an ISR so I-Class functions
        must be used.*/
-    usbInitEndpointI(usbp, USB_CDC_DATA_REQUEST_EP, &ep1config);
-    usbInitEndpointI(usbp, USB_CDC_INTERRUPT_REQUEST_EP, &ep2config);
+    usbInitEndpointI(usbp, USBD2_DATA_REQUEST_EP, &ep1config);
+    usbInitEndpointI(usbp, USBD2_INTERRUPT_REQUEST_EP, &ep2config);
 
     /* Resetting the state of the CDC subsystem.*/
     sduConfigureHookI(usbp);
@@ -316,7 +322,10 @@ static const USBConfig usbcfg = {
  * Serial over USB driver configuration.
  */
 static const SerialUSBConfig serusbcfg = {
-  &USBD2
+  &USBD2,
+  USBD2_DATA_REQUEST_EP,
+  USBD2_DATA_AVAILABLE_EP,
+  USBD2_INTERRUPT_REQUEST_EP
 };
 
 /*===========================================================================*/
@@ -403,7 +412,7 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chSequentialStreamWrite(&SDU1, buf, sizeof buf - 1);
+    chSequentialStreamWrite(&SDU2, buf, sizeof buf - 1);
   }
   chprintf(chp, "\r\n\nstopped\r\n");
 }
@@ -417,7 +426,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SDU1,
+  (BaseSequentialStream *)&SDU2,
   commands
 };
 
@@ -463,8 +472,8 @@ int main(void) {
   /*
    * Initializes a serial-over-USB CDC driver.
    */
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+  sduObjectInit(&SDU2);
+  sduStart(&SDU2, &serusbcfg);
 
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
@@ -502,7 +511,7 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (!shelltp && (SDU1.config->usbp->state == USB_ACTIVE))
+    if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE))
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     else if (chThdTerminated(shelltp)) {
       chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
