@@ -693,15 +693,16 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
     /* If the transmitted size is less than the requested size and it is a
        multiple of the maximum packet size then a zero size packet must be
        transmitted.*/
-    if ((usbp->ep0n < max) &&
-        ((usbp->ep0n % usbp->epc[0]->in_maxsize) == 0)) {
+    if ((usbp->ep0n < max) && ((usbp->ep0n % usbp->epc[0]->in_maxsize) == 0)) {
       usbPrepareTransmit(usbp, 0, NULL, 0);
       chSysLockFromIsr();
       usbStartTransmitI(usbp, 0);
       chSysUnlockFromIsr();
+      usbp->ep0state = USB_EP0_WAITING_TX0;
       return;
     }
-
+    /* Falls into, it is intentional.*/
+  case USB_EP0_WAITING_TX0:
     /* Transmit phase over, receiving the zero sized status packet.*/
     usbp->ep0state = USB_EP0_WAITING_STS;
     usbPrepareReceive(usbp, 0, NULL, 0);

@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed USB driver possible deadlock under certain configurations (bug
+  #406)(backported to 2.4.4).
 - FIX: Fixed USB driver cannot be stopped (bug #405)(backported to 2.4.4).
 - FIX: Fixed several spelling errors (bug #404).
 - FIX: Fixed serial port in STM32F3 discovery test case (bug #402).
