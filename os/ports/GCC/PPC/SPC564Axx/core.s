@@ -111,7 +111,7 @@
  */
 #define TLB0_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(0))
 #define TLB0_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_256K)
-#define TLB0_MAS2               (MAS2_EPN(0x40000000) | MAS2_VLE | MAS2_I)
+#define TLB0_MAS2               (MAS2_EPN(0x40000000) | MAS2_VLE)
 #define TLB0_MAS3               (MAS3_RPN(0x40000000) |                     \
                                  MAS3_UX | MAS3_SX | MAS3_UW | MAS3_SW |    \
                                  MAS3_UR | MAS3_SR)

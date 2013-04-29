@@ -53,12 +53,6 @@
 void hal_lld_init(void) {
   uint32_t n;
 
-  /* FLASH wait states and prefetching setup.*/
-  FLASH_A.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
-  FLASH_A.BIUCR2.R = 0;
-  FLASH_B.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
-  FLASH_B.BIUCR2.R = 0;
-
   /* The SRAM is parked on the load/store port, for some unknown reason it
      is defaulted on the instructions port and this kills performance.*/
   XBAR.SGPCR2.B.PARK = 1;               /* RAM slave on load/store port.*/
@@ -109,6 +103,13 @@ void hal_lld_init(void) {
  * @special
  */
 void spc_clock_init(void) {
+
+  /* Setting up RAM/Flash wait states and the prefetching bits.*/
+  ECSM.MUDCR.R = SPC5_RAM_WS;
+  FLASH_A.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
+  FLASH_A.BIUCR2.R = 0;
+  FLASH_B.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
+  FLASH_B.BIUCR2.R = 0;
 
 #if !SPC5_NO_INIT
   /* PLL activation.*/

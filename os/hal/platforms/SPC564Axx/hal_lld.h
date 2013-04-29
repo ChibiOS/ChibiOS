@@ -241,6 +241,15 @@
 #define SPC5_FLASH_WS       (BIUCR_APC_4 | BIUCR_RWSC_4 | BIUCR_WWSC_3)
 #endif
 
+/**
+ * @brief   RAM wait states are a function of the system clock.
+ */
+#if (SPC5_SYSCLK <= 98000000) || defined(__DOXYGEN__)
+#define SPC5_RAM_WS         0
+#else
+#define SPC5_RAM_WS         0x40000000
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
