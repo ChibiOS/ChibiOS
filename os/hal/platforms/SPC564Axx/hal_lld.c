@@ -73,19 +73,20 @@ void hal_lld_init(void) {
                                             EBI (7):               3
                                             FlexRay (6):           4        */
 
-  /* Downcounter timer initialized for system tick use, TB enabled for debug
-     and measurements.*/
+  /* Decrementer timer initialized for system tick use, note, it is
+     initialized here because in the OSAL layer the system clock frequency
+     is not yet known.*/
   n = SPC5_SYSCLK / CH_FREQUENCY;
-  asm volatile ("li      %%r3, 0            \t\n"
-                "mtspr   284, %%r3          \t\n"   /* Clear TBL register.  */
-                "mtspr   285, %%r3          \t\n"   /* Clear TBU register.  */
-                "mtspr   22, %[n]           \t\n"   /* Init. DEC register.  */
+  asm volatile ("mtspr   22, %[n]           \t\n"   /* Init. DEC register.  */
                 "mtspr   54, %[n]           \t\n"   /* Init. DECAR register.*/
-                "li      %%r3, 0x4000       \t\n"   /* TBEN bit.            */
-                "mtspr   1008, %%r3         \t\n"   /* HID0 register.       */
                 "lis     %%r3, 0x0440       \t\n"   /* DIE ARE bits.        */
                 "mtspr   340, %%r3"                 /* TCR register.        */
                 : : [n] "r" (n) : "r3");
+
+  /* TB counter enabled for debug and measurements.*/
+  asm volatile ("li      %%r3, 0x4000       \t\n"   /* TBEN bit.            */
+                "mtspr   1008, %%r3"                /* HID0 register.       */
+                : : : "r3");
 
   /* INTC initialization, software vector mode, 4 bytes vectors, starting
      at priority 0.*/

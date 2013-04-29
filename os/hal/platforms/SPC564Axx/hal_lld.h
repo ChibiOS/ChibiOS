@@ -153,7 +153,7 @@
 
 /**
  * @brief   Flash buffer and prefetching settings.
- * @note    Please refer to the SPC563M64 reference manual about the meaning
+ * @note    Please refer to the SPC564Axx reference manual about the meaning
  *          of the following bits, if in doubt DO NOT MODIFY IT.
  * @note    Do not specify the APC, WWSC, RWSC bits in this value because
  *          those are calculated from the system clock and ORed with this
