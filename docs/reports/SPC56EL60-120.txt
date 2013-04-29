@@ -6,7 +6,7 @@ Settings: SYSCLK=120
 *** ChibiOS/RT test suite
 ***
 *** Kernel:       2.5.2unstable
-*** Compiled:     Apr 26 2013 - 13:21:56
+*** Compiled:     Apr 29 2013 - 09:53:43
 *** Compiler:     GCC 4.6.3 build on 2013-01-07
 *** Architecture: Power Architecture
 *** Core Variant: e200z4
@@ -104,15 +104,15 @@ Settings: SYSCLK=120
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 312929 msgs/S, 625858 ctxswc/S
+--- Score : 312927 msgs/S, 625854 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 312931 msgs/S, 625862 ctxswc/S
+--- Score : 312930 msgs/S, 625860 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 1088352 ctxswc/S
+--- Score : 1099584 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
@@ -120,31 +120,31 @@ Settings: SYSCLK=120
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 369917 threads/S
+--- Score : 369919 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 92981 reschedules/S, 557886 ctxswc/S
+--- Score : 94594 reschedules/S, 567564 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 617000 ctxswc/S
+--- Score : 633460 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 1087108 bytes/S
+--- Score : 1107176 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 1339154 timers/S
+--- Score : 1309916 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 1743328 wait+signal/S
+--- Score : 1762552 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 1222972 lock+unlock/S
+--- Score : 1239856 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)

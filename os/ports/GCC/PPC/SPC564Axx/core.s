@@ -31,6 +31,16 @@
  * @{
  */
 #define BUCSR_BPEN              0x00000001
+#define BUCSR_BPRED_MASK        0x00000006
+#define BUCSR_BPRED_0           0x00000000
+#define BUCSR_BPRED_1           0x00000002
+#define BUCSR_BPRED_2           0x00000004
+#define BUCSR_BPRED_3           0x00000006
+#define BUCSR_BALLOC_MASK       0x00000030
+#define BUCSR_BALLOC_0          0x00000000
+#define BUCSR_BALLOC_1          0x00000010
+#define BUCSR_BALLOC_2          0x00000020
+#define BUCSR_BALLOC_3          0x00000030
 #define BUCSR_BALLOC_BFI        0x00000200
 /** @} */
 
@@ -47,7 +57,8 @@
  * @name    BUCSR default settings
  * @{
  */
-#define BUCSR_DEFAULT           (BUCSR_BPEN | BUCSR_BALLOC_BFI)
+#define BUCSR_DEFAULT           (BUCSR_BPEN | BUCSR_BPRED_0 |               \
+                                 BUCSR_BALLOC_0 | BUCSR_BALLOC_BFI)
 /** @} */
 
 /**
