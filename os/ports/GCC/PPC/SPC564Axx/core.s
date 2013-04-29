@@ -27,6 +27,67 @@
  */
 
 /**
+ * @name   MASx registers definitions
+ * @{
+ */
+#define MAS0_TBLMAS_TBL         0x10000000
+#define MAS0_ESEL_MASK          0x000F0000
+#define MAS0_ESEL(n)            ((n) << 16)
+
+#define MAS1_VALID              0x80000000
+#define MAS1_IPROT              0x40000000
+#define MAS1_TID_MASK           0x00FF0000
+#define MAS1_TS                 0x00001000
+#define MAS1_TSISE_MASK         0x00000F80
+#define MAS1_TSISE_1K           0x00000000
+#define MAS1_TSISE_2K           0x00000080
+#define MAS1_TSISE_4K           0x00000100
+#define MAS1_TSISE_8K           0x00000180
+#define MAS1_TSISE_16K          0x00000200
+#define MAS1_TSISE_32K          0x00000280
+#define MAS1_TSISE_64K          0x00000300
+#define MAS1_TSISE_128K         0x00000380
+#define MAS1_TSISE_256K         0x00000400
+#define MAS1_TSISE_512K         0x00000480
+#define MAS1_TSISE_1M           0x00000500
+#define MAS1_TSISE_2M           0x00000580
+#define MAS1_TSISE_4M           0x00000600
+#define MAS1_TSISE_8M           0x00000680
+#define MAS1_TSISE_16M          0x00000700
+#define MAS1_TSISE_32M          0x00000780
+#define MAS1_TSISE_64M          0x00000800
+#define MAS1_TSISE_128M         0x00000880
+#define MAS1_TSISE_256M         0x00000900
+#define MAS1_TSISE_512M         0x00000980
+#define MAS1_TSISE_1G           0x00000A00
+#define MAS1_TSISE_2G           0x00000A80
+#define MAS1_TSISE_4G           0x00000B00
+
+#define MAS2_EPN_MASK           0xFFFFFC00
+#define MAS2_EPN(n)             ((n) & MAS2_EPN_MASK)
+#define MAS2_EBOOK              0x00000000
+#define MAS2_VLE                0x00000020
+#define MAS2_W                  0x00000010
+#define MAS2_I                  0x00000008
+#define MAS2_M                  0x00000004
+#define MAS2_G                  0x00000002
+#define MAS2_E                  0x00000001
+
+#define MAS3_RPN_MASK           0xFFFFFC00
+#define MAS3_RPN(n)             ((n) & MAS3_RPN_MASK)
+#define MAS3_U0                 0x00000200
+#define MAS3_U1                 0x00000100
+#define MAS3_U2                 0x00000080
+#define MAS3_U3                 0x00000040
+#define MAS3_UX                 0x00000020
+#define MAS3_SX                 0x00000010
+#define MAS3_UW                 0x00000008
+#define MAS3_SW                 0x00000004
+#define MAS3_UR                 0x00000002
+#define MAS3_SR                 0x00000001
+/** @} */
+
+/**
  * @name    BUCSR registers definitions
  * @{
  */
@@ -42,6 +103,43 @@
 #define BUCSR_BALLOC_2          0x00000020
 #define BUCSR_BALLOC_3          0x00000030
 #define BUCSR_BALLOC_BFI        0x00000200
+/** @} */
+
+/**
+ * @name    TLB default settings
+ * @{
+ */
+#define TLB0_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(0))
+#define TLB0_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_256K)
+#define TLB0_MAS2               (MAS2_EPN(0x40000000) | MAS2_VLE | MAS2_I)
+#define TLB0_MAS3               (MAS3_RPN(0x40000000) |                     \
+                                 MAS3_UX | MAS3_SX | MAS3_UW | MAS3_SW |    \
+                                 MAS3_UR | MAS3_SR)
+
+#define TLB1_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(1))
+#define TLB1_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_4M)
+#define TLB1_MAS2               (MAS2_EPN(0x00000000) | MAS2_VLE)
+#define TLB1_MAS3               (MAS3_RPN(0x00000000) |                     \
+                                 MAS3_UX | MAS3_SX | MAS3_UW | MAS3_SW |    \
+                                 MAS3_UR | MAS3_SR)
+
+#define TLB2_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(2))
+#define TLB2_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_1M)
+#define TLB2_MAS2               (MAS2_EPN(0xC3F00000) | MAS2_I)
+#define TLB2_MAS3               (MAS3_RPN(0xC3F00000) |                     \
+                                 MAS3_UW | MAS3_SW | MAS3_UR | MAS3_SR)
+
+#define TLB3_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(3))
+#define TLB3_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_1M)
+#define TLB3_MAS2               (MAS2_EPN(0xFFE00000) | MAS2_I)
+#define TLB3_MAS3               (MAS3_RPN(0xFFE00000) |                     \
+                                 MAS3_UW | MAS3_SW | MAS3_UR | MAS3_SR)
+
+#define TLB4_MAS0               (MAS0_TBLMAS_TBL | MAS0_ESEL(4))
+#define TLB4_MAS1               (MAS1_VALID | MAS1_IPROT | MAS1_TSISE_1M)
+#define TLB4_MAS2               (MAS2_EPN(0xFFF00000) | MAS2_I)
+#define TLB4_MAS3               (MAS3_RPN(0xFFF00000) |                     \
+                                 MAS3_UW | MAS3_SW | MAS3_UR | MAS3_SR)
 /** @} */
 
 /**
@@ -100,9 +198,131 @@
         .section    .coreinit, "ax"
 
         .align      2
+_ramcode:
+        tlbwe
+        isync
+        blr
+
+        .align      2
         .globl      _coreinit
         .type       _coreinit, @function
 _coreinit:
+        /*
+         * Invalidating all TLBs except one.
+         */
+        lis         %r3, 0
+        mtspr       625, %r3        /* MAS1 */
+        mtspr       626, %r3        /* MAS2 */
+        mtspr       627, %r3        /* MAS3 */
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(0))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(2))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(3))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(4))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(5))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(6))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(7))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(8))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(9))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(10))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(11))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(12))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(13))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(14))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+        lis         %r3, (MAS0_TBLMAS_TBL | MAS0_ESEL(15))@h
+        mtspr       624, %r3        /* MAS0 */
+        tlbwe
+
+        /*
+         * TLB0 allocated to internal RAM.
+         */
+        lis         %r3, TLB0_MAS0@h
+        mtspr       624, %r3        /* MAS0 */
+        lis         %r3, TLB0_MAS1@h
+        ori         %r3, %r3, TLB0_MAS1@l
+        mtspr       625, %r3        /* MAS1 */
+        lis         %r3, TLB0_MAS2@h
+        ori         %r3, %r3, TLB0_MAS2@l
+        mtspr       626, %r3        /* MAS2 */
+        lis         %r3, TLB0_MAS3@h
+        ori         %r3, %r3, TLB0_MAS3@l
+        mtspr       627, %r3        /* MAS3 */
+        tlbwe
+
+        /*
+         * TLB2 allocated to internal Peripherals Bridge A.
+         */
+        lis         %r3, TLB2_MAS0@h
+        mtspr       624, %r3        /* MAS0 */
+        lis         %r3, TLB2_MAS1@h
+        ori         %r3, %r3, TLB2_MAS1@l
+        mtspr       625, %r3        /* MAS1 */
+        lis         %r3, TLB2_MAS2@h
+        ori         %r3, %r3, TLB2_MAS2@l
+        mtspr       626, %r3        /* MAS2 */
+        lis         %r3, TLB2_MAS3@h
+        ori         %r3, %r3, TLB2_MAS3@l
+        mtspr       627, %r3        /* MAS3 */
+        tlbwe
+
+        /*
+         * TLB3 allocated to internal Peripherals Bridge B.
+         */
+        lis         %r3, TLB3_MAS0@h
+        mtspr       624, %r3        /* MAS0 */
+        lis         %r3, TLB3_MAS1@h
+        ori         %r3, %r3, TLB3_MAS1@l
+        mtspr       625, %r3        /* MAS1 */
+        lis         %r3, TLB3_MAS2@h
+        ori         %r3, %r3, TLB3_MAS2@l
+        mtspr       626, %r3        /* MAS2 */
+        lis         %r3, TLB3_MAS3@h
+        ori         %r3, %r3, TLB3_MAS3@l
+        mtspr       627, %r3        /* MAS3 */
+        tlbwe
+
+        /*
+         * TLB4 allocated to on-platform peripherals.
+         */
+        lis         %r3, TLB4_MAS0@h
+        mtspr       624, %r3        /* MAS0 */
+        lis         %r3, TLB4_MAS1@h
+        ori         %r3, %r3, TLB4_MAS1@l
+        mtspr       625, %r3        /* MAS1 */
+        lis         %r3, TLB4_MAS2@h
+        ori         %r3, %r3, TLB4_MAS2@l
+        mtspr       626, %r3        /* MAS2 */
+        lis         %r3, TLB4_MAS3@h
+        ori         %r3, %r3, TLB4_MAS3@l
+        mtspr       627, %r3        /* MAS3 */
+        tlbwe
 
         /*
          * RAM clearing, this device requires a write to all RAM location in
@@ -152,6 +372,35 @@ _coreinit:
         addi        %r4, %r4, 64
         b           .cleareccloop
 .cleareccend:
+
+        /*
+         * *Finally* the TLB1 is re-allocated to flash, note, the final phase
+         * is executed from RAM.
+         */
+        lis         %r3, TLB1_MAS0@h
+        mtspr       624, %r3        /* MAS0 */
+        lis         %r3, TLB1_MAS1@h
+        ori         %r3, %r3, TLB1_MAS1@l
+        mtspr       625, %r3        /* MAS1 */
+        lis         %r3, TLB1_MAS2@h
+        ori         %r3, %r3, TLB1_MAS2@l
+        mtspr       626, %r3        /* MAS2 */
+        lis         %r3, TLB1_MAS3@h
+        ori         %r3, %r3, TLB1_MAS3@l
+        mtspr       627, %r3        /* MAS3 */
+        mflr        %r4
+        lis         %r6, _ramcode@h
+        ori         %r6, %r6, _ramcode@l
+        lis         %r7, 0x40010000@h
+        mtctr       %r7
+        lwz         %r3, 0(%r6)
+        stw         %r3, 0(%r7)
+        lwz         %r3, 4(%r6)
+        stw         %r3, 4(%r7)
+        lwz         %r3, 8(%r6)
+        stw         %r3, 8(%r7)
+        bctrl
+        mtlr        %r4
 
         /*
          * Branch prediction enabled.
