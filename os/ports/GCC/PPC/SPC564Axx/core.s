@@ -208,7 +208,7 @@ _ramcode:
         .type       _coreinit, @function
 _coreinit:
         /*
-         * Invalidating all TLBs except one.
+         * Invalidating all TLBs except TLB1.
          */
         lis         %r3, 0
         mtspr       625, %r3        /* MAS1 */
