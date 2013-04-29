@@ -498,7 +498,7 @@ _ivinit:
         lis         %r3, _unhandled_exception@h
         ori         %r3, %r3, _unhandled_exception@l
 
-        mtspr       400, %r3    /* IVOR0-15 */
+        mtspr       400, %r3        /* IVOR0-15 */
         mtspr       401, %r3
         mtspr       402, %r3
         mtspr       403, %r3
