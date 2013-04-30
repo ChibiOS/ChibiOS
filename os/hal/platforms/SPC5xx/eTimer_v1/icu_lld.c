@@ -974,9 +974,9 @@ void icu_lld_start(ICUDriver *icup) {
 
   chDbgAssert(icu_active_submodules0 < 6, "icu_lld_start(), #1",
               "too many submodules");
-  chDbgAssert(icu_active_submodules1 < 6, "icu_lld_start(), #1",
+  chDbgAssert(icu_active_submodules1 < 6, "icu_lld_start(), #2",
               "too many submodules");
-  chDbgAssert(icu_active_submodules2 < 6, "icu_lld_start(), #1",
+  chDbgAssert(icu_active_submodules2 < 6, "icu_lld_start(), #3",
               "too many submodules");
 
   if (icup->state == ICU_STOP) {
@@ -1119,9 +1119,9 @@ void icu_lld_start(ICUDriver *icup) {
 void icu_lld_stop(ICUDriver *icup) {
   chDbgAssert(icu_active_submodules0 < 6, "icu_lld_stop(), #1",
               "too many submodules");
-  chDbgAssert(icu_active_submodules1 < 6, "icu_lld_stop(), #1",
+  chDbgAssert(icu_active_submodules1 < 6, "icu_lld_stop(), #2",
               "too many submodules");
-  chDbgAssert(icu_active_submodules2 < 6, "icu_lld_stop(), #1",
+  chDbgAssert(icu_active_submodules2 < 6, "icu_lld_stop(), #3",
               "too many submodules");
 
   if (icup->state == ICU_READY) {
