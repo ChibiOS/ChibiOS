@@ -206,7 +206,6 @@ uint16_t period;
  * @param[in] icup      pointer to the @p ICUDriver object
  */
 static void icu_lld_serve_interrupt(ICUDriver *icup) {
-
   uint16_t sr = icup->etimerp->CHANNEL[icup->smod_number].STS.R &
                 icup->etimerp->CHANNEL[icup->smod_number].INTDMA.R;
 
@@ -287,8 +286,9 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
  */
 static void spc5_icu_smod_init(ICUDriver *icup) {
   uint32_t psc = (icup->clock / icup->config->frequency);
+
   chDbgAssert((psc <= 0xFFFF) &&
-              (((psc) * icup->config->frequency) == icup->clock) &&
+              ((psc * icup->config->frequency) == icup->clock) &&
               ((psc == 1) || (psc == 2) || (psc == 4) ||
                (psc == 8) || (psc == 16) || (psc == 32) ||
                (psc == 64) || (psc == 128)),
@@ -373,7 +373,7 @@ static void spc5_icu_smod_init(ICUDriver *icup) {
   }
 
   /* Direct pointers to the capture registers in order to make reading
-   data faster from within callbacks.*/
+     data faster from within callbacks.*/
   icup->pccrp = &period;
   icup->wccrp = &width;
 
@@ -396,7 +396,8 @@ static void spc5_icu_smod_init(ICUDriver *icup) {
  *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
- */CH_IRQ_HANDLER(SPC5_ETIMER0_TC0IR_HANDLER) {
+ */
+CH_IRQ_HANDLER(SPC5_ETIMER0_TC0IR_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
@@ -790,6 +791,7 @@ CH_IRQ_HANDLER(SPC5_ETIMER2_TC5IR_HANDLER) {
  * @notapi
  */
 void icu_lld_init(void) {
+
   /* Submodules initially all not in use.*/
   icu_active_submodules0 = 0;
   icu_active_submodules1 = 0;
@@ -1117,6 +1119,7 @@ void icu_lld_start(ICUDriver *icup) {
  * @notapi
  */
 void icu_lld_stop(ICUDriver *icup) {
+
   chDbgAssert(icu_active_submodules0 < 6, "icu_lld_stop(), #1",
               "too many submodules");
   chDbgAssert(icu_active_submodules1 < 6, "icu_lld_stop(), #2",
