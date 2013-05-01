@@ -301,7 +301,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     usbInitEndpointI(usbp, USBD1_INTERRUPT_REQUEST_EP, &ep2config);
 
     /* Resetting the state of the CDC subsystem.*/
-    sduConfigureHookI(usbp);
+    sduConfigureHookI(&SDU1);
 
     chSysUnlockFromIsr();
     return;

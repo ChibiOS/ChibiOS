@@ -302,6 +302,20 @@ struct USBDriver {
    */
   const USBEndpointConfig       *epc[USB_MAX_ENDPOINTS + 1];
   /**
+   * @brief   Fields available to user, it can be used to associate an
+   *          application-defined handler to an IN endpoint.
+   * @note    The base index is one, the endpoint zero does not have a
+   *          reserved element in this array.
+   */
+  void                          *in_params[USB_MAX_ENDPOINTS];
+  /**
+   * @brief   Fields available to user, it can be used to associate an
+   *          application-defined handler to an OUT endpoint.
+   * @note    The base index is one, the endpoint zero does not have a
+   *          reserved element in this array.
+   */
+  void                          *out_params[USB_MAX_ENDPOINTS];
+  /**
    * @brief   Endpoint 0 state.
    */
   usbep0state_t                 ep0state;
