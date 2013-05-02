@@ -292,7 +292,7 @@ static void spc5_icu_smod_init(ICUDriver *icup) {
               ((psc == 1) || (psc == 2) || (psc == 4) ||
                (psc == 8) || (psc == 16) || (psc == 32) ||
                (psc == 64) || (psc == 128)),
-              "icu_lld_start(), #1", "invalid frequency");
+              "spc5_icu_smod_init(), #1", "invalid frequency");
 
   /* Set primary source and clock prescaler.*/
   switch (psc) {
