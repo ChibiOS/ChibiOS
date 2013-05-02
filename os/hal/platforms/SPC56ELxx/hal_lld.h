@@ -717,7 +717,7 @@
 /* Check on FMPLL0 VCO output.*/
 #if (SPC5_FMPLL0_VCO_CLK < SPC5_FMPLLVCO_MIN) ||                            \
     (SPC5_FMPLL0_VCO_CLK > SPC5_FMPLLVCO_MAX)
-#error "SPC5_FMPLL0_CLK outside acceptable range (SPC5_FMPLLVCO_MIN...SPC5_FMPLLVCO_MAX)"
+#error "SPC5_FMPLL0_VCO_CLK outside acceptable range (SPC5_FMPLLVCO_MIN...SPC5_FMPLLVCO_MAX)"
 #endif
 
 /**
@@ -772,7 +772,7 @@
 /* Check on FMPLL1 VCO output.*/
 #if (SPC5_FMPLL1_VCO_CLK < SPC5_FMPLLVCO_MIN) ||                            \
     (SPC5_FMPLL1_VCO_CLK > SPC5_FMPLLVCO_MAX)
-#error "SPC5_FMPLL1_CLK outside acceptable range (SPC5_FMPLLVCO_MIN...SPC5_FMPLLVCO_MAX)"
+#error "SPC5_FMPLL1_VCO_CLK outside acceptable range (SPC5_FMPLLVCO_MIN...SPC5_FMPLLVCO_MAX)"
 #endif
 
 /**
