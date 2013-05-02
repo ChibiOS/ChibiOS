@@ -94,16 +94,22 @@
 #define PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW     0x20
 
 /**
+ * @brief   Alignment mode mask.
+ * @note    This is an SPC5-specific setting.
+ */
+#define PWM_ALIGN_MASK                          0x01
+
+/**
  * @brief   Edge-Aligned PWM functional mode.
  * @note    This is an SPC5-specific setting.
  */
-#define EDGE_ALIGNED_PWM                        0x01
+#define PWM_ALIGN_EDGE                          0x00
 
 /**
  * @brief   Center-Aligned PWM functional mode.
  * @note    This is an SPC5-specific setting.
  */
-#define CENTER_ALIGNED_PWM                      0x02
+#define PWM_ALIGN_CENTER                        0x01
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

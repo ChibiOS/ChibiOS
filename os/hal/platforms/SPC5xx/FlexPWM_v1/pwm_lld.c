@@ -179,8 +179,8 @@ void pwm_lld_start_submodule(PWMDriver *pwmp, uint8_t sid) {
   pwmp->flexpwmp->SUB[sid].VAL[1].R = pwmperiod / 2;
 
   /* Sets the submodule channels.*/
-  switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-  case EDGE_ALIGNED_PWM:
+  switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+  case PWM_ALIGN_EDGE:
     /* Setting reloads.*/
     pwmp->flexpwmp->SUB[sid].CTRL.B.HALF = 0;
     pwmp->flexpwmp->SUB[sid].CTRL.B.FULL = 1;
@@ -189,7 +189,7 @@ void pwm_lld_start_submodule(PWMDriver *pwmp, uint8_t sid) {
     pwmp->flexpwmp->SUB[sid].VAL[2].R = ~(pwmperiod / 2) + 1U;
     pwmp->flexpwmp->SUB[sid].VAL[4].R = ~(pwmperiod / 2) + 1U;
     break;
-  case CENTER_ALIGNED_PWM:
+  case PWM_ALIGN_CENTER:
     /* Setting reloads.*/
     pwmp->flexpwmp->SUB[sid].CTRL.B.HALF = 1;
     pwmp->flexpwmp->SUB[sid].CTRL.B.FULL = 0;
@@ -332,14 +332,14 @@ void pwm_lld_enable_submodule_channel(PWMDriver *pwmp,
     }
 
     /* Sets the channel width.*/
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
       if (nwidth >= 0)
         pwmp->flexpwmp->SUB[sid].VAL[3].R = nwidth;
       else
         pwmp->flexpwmp->SUB[sid].VAL[3].R = ~((pwmperiod / 2) - width) + 1U;
       break;
-    case CENTER_ALIGNED_PWM:
+    case PWM_ALIGN_CENTER:
       pwmp->flexpwmp->SUB[sid].VAL[3].R = width / 2;
       pwmp->flexpwmp->SUB[sid].VAL[2].R = ~(width / 2) + 1U;
       break;
@@ -363,14 +363,14 @@ void pwm_lld_enable_submodule_channel(PWMDriver *pwmp,
       }
     }
     /* Sets the channel width.*/
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
       if (nwidth >= 0)
         pwmp->flexpwmp->SUB[sid].VAL[5].R = nwidth;
       else
         pwmp->flexpwmp->SUB[sid].VAL[5].R = ~((pwmperiod / 2) - width) + 1U;
       break;
-    case CENTER_ALIGNED_PWM:
+    case PWM_ALIGN_CENTER:
       pwmp->flexpwmp->SUB[sid].VAL[5].R = width / 2;
       pwmp->flexpwmp->SUB[sid].VAL[4].R = ~(width / 2) + 1U;
       break;
@@ -1609,9 +1609,8 @@ void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
     pwmp->flexpwmp->SUB[0].VAL[0].R = 0;
     pwmp->flexpwmp->SUB[0].VAL[1].R = pwmperiod / 2;
 
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
-
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
       /* Setting active front of PWM channels.*/
       pwmp->flexpwmp->SUB[0].VAL[2].R = ~(pwmperiod / 2) + 1U;
       pwmp->flexpwmp->SUB[0].VAL[4].R = ~(pwmperiod / 2) + 1U;
@@ -1631,8 +1630,8 @@ void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
     pwmp->flexpwmp->SUB[1].VAL[0].R = 0;
     pwmp->flexpwmp->SUB[1].VAL[1].R = pwmperiod / 2;
 
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
 
       /* Setting active front of PWM channels.*/
       pwmp->flexpwmp->SUB[1].VAL[2].R = ~(pwmperiod / 2) + 1U;
@@ -1653,9 +1652,8 @@ void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
     pwmp->flexpwmp->SUB[2].VAL[0].R = 0;
     pwmp->flexpwmp->SUB[2].VAL[1].R = pwmperiod / 2;
 
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
-
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
       /* Setting active front of PWM channels.*/
       pwmp->flexpwmp->SUB[2].VAL[2].R = ~(pwmperiod / 2) + 1U;
       pwmp->flexpwmp->SUB[2].VAL[4].R = ~(pwmperiod / 2) + 1U;
@@ -1675,8 +1673,8 @@ void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
     pwmp->flexpwmp->SUB[3].VAL[0].R = 0;
     pwmp->flexpwmp->SUB[3].VAL[1].R = pwmperiod / 2;
 
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
       /* Setting active front of PWM channels.*/
       pwmp->flexpwmp->SUB[3].VAL[2].R = ~(pwmperiod / 2) + 1U;
       pwmp->flexpwmp->SUB[3].VAL[4].R = ~(pwmperiod / 2) + 1U;
@@ -1696,8 +1694,8 @@ void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
     pwmp->flexpwmp->SUB[0].VAL[0].R = 0;
     pwmp->flexpwmp->SUB[0].VAL[1].R = pwmperiod / 2;
 
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
       /* Setting active front of PWM channels.*/
       pwmp->flexpwmp->SUB[0].VAL[2].R = ~(pwmperiod / 2) + 1U;
       pwmp->flexpwmp->SUB[0].VAL[4].R = ~(pwmperiod / 2) + 1U;
@@ -1717,8 +1715,8 @@ void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
     pwmp->flexpwmp->SUB[1].VAL[0].R = 0;
     pwmp->flexpwmp->SUB[1].VAL[1].R = pwmperiod / 2;
 
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
       /* Setting active front of PWM channels.*/
       pwmp->flexpwmp->SUB[1].VAL[2].R = ~(pwmperiod / 2) + 1U;
       pwmp->flexpwmp->SUB[1].VAL[4].R = ~(pwmperiod / 2) + 1U;
@@ -1738,8 +1736,8 @@ void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
     pwmp->flexpwmp->SUB[2].VAL[0].R = 0;
     pwmp->flexpwmp->SUB[2].VAL[1].R = pwmperiod / 2;
 
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
       /* Setting active front of PWM channels.*/
       pwmp->flexpwmp->SUB[2].VAL[2].R = ~(pwmperiod / 2) + 1U;
       pwmp->flexpwmp->SUB[2].VAL[4].R = ~(pwmperiod / 2) + 1U;
@@ -1759,8 +1757,8 @@ void pwm_lld_change_period(PWMDriver *pwmp, pwmcnt_t period) {
     pwmp->flexpwmp->SUB[3].VAL[0].R = 0;
     pwmp->flexpwmp->SUB[3].VAL[1].R = pwmperiod / 2;
 
-    switch (pwmp->config->mode & PWM_OUTPUT_MASK) {
-    case EDGE_ALIGNED_PWM:
+    switch (pwmp->config->mode & PWM_ALIGN_MASK) {
+    case PWM_ALIGN_EDGE:
       /* Setting active front of PWM channels.*/
       pwmp->flexpwmp->SUB[3].VAL[2].R = ~(pwmperiod / 2) + 1U;
       pwmp->flexpwmp->SUB[3].VAL[4].R = ~(pwmperiod / 2) + 1U;

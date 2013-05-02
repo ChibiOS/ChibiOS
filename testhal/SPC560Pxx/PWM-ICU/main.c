@@ -37,7 +37,7 @@ static PWMConfig pwmcfg = {
    {PWM_OUTPUT_ACTIVE_HIGH, pwmc1cb},
    {PWM_OUTPUT_DISABLED, NULL}
   },
-  EDGE_ALIGNED_PWM
+  PWM_ALIGN_EDGE
 };
 
 icucnt_t last_width, last_period;
