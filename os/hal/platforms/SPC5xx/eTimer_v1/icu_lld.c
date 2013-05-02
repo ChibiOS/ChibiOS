@@ -285,10 +285,10 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
  * @param[in] config    the architecture-dependent ICU driver configuration
  */
 static void spc5_icu_smod_init(ICUDriver *icup) {
-  uint32_t psc = (icup->clock / icup->config->frequency);
+  uint32_t psc = (SPC5_ETIMER0_CLK / icup->config->frequency);
 
   chDbgAssert((psc <= 0xFFFF) &&
-              ((psc * icup->config->frequency) == icup->clock) &&
+              ((psc * icup->config->frequency) == SPC5_ETIMER0_CLK) &&
               ((psc == 1) || (psc == 2) || (psc == 4) ||
                (psc == 8) || (psc == 16) || (psc == 32) ||
                (psc == 64) || (psc == 128)),

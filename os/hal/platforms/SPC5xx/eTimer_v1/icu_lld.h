@@ -458,20 +458,19 @@ struct ICUDriver {
   /**
    * @brief Driver state.
    */
-  icustate_t state;
-  /**
-   * @brief eTimer submodule number.
-   */
-  uint8_t smod_number;
+  icustate_t                state;
   /**
    * @brief Current configuration data.
    */
-  const ICUConfig *config;
-  /**
-   * @brief Timer base clock.
-   */
-  uint32_t clock;
+  const ICUConfig           *config;
+#if defined(ICU_DRIVER_EXT_FIELDS)
+  ICU_DRIVER_EXT_FIELDS
+#endif
   /* End of the mandatory fields.*/
+  /**
+   * @brief eTimer submodule number.
+   */
+  uint32_t                  smod_number;
   /**
    * @brief Pointer to the eTimerx registers block.
    */
@@ -479,11 +478,11 @@ struct ICUDriver {
   /**
    * @brief CCR register used for width capture.
    */
-  volatile vuint16_t *wccrp;
+  volatile vuint16_t        *wccrp;
   /**
    * @brief CCR register used for period capture.
    */
-  volatile vuint16_t *pccrp;
+  volatile vuint16_t        *pccrp;
 };
 
 /*===========================================================================*/
