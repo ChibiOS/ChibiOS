@@ -285,11 +285,6 @@ struct USBDriver {
    */
   const USBConfig               *config;
   /**
-   * @brief   Field available to user, it can be used to associate an
-   *          application-defined handler to the USB driver.
-   */
-  void                          *param;
-  /**
    * @brief   Bit map of the transmitting IN endpoints.
    */
   uint16_t                      transmitting;

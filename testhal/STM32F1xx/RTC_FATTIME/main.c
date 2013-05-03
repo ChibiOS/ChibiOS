@@ -32,6 +32,13 @@
 /*===========================================================================*/
 
 /*
+ * Endpoints to be used for USBD1.
+ */
+#define USBD1_DATA_REQUEST_EP           1
+#define USBD1_DATA_AVAILABLE_EP         1
+#define USBD1_INTERRUPT_REQUEST_EP      2
+
+/*
  * Serial over USB Driver structure.
  */
 static SerialUSBDriver SDU1;
@@ -290,7 +297,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     usbInitEndpointI(usbp, USB_CDC_INTERRUPT_REQUEST_EP, &ep2config);
 
     /* Resetting the state of the CDC subsystem.*/
-    sduConfigureHookI(usbp);
+    sduConfigureHookI(&SDU1);
 
     chSysUnlockFromIsr();
     return;
@@ -318,7 +325,10 @@ static const USBConfig usbcfg = {
  * Serial over USB driver configuration.
  */
 static const SerialUSBConfig serusbcfg = {
-  &USBD1
+  &USBD1,
+  USBD1_DATA_REQUEST_EP,
+  USBD1_DATA_AVAILABLE_EP,
+  USBD1_INTERRUPT_REQUEST_EP
 };
 
 /**
