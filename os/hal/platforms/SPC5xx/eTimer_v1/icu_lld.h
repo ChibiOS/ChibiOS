@@ -468,6 +468,10 @@ struct ICUDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
+   * @brief Clock value for this unit.
+   */
+  uint32_t                  clock;
+  /**
    * @brief eTimer submodule number.
    */
   uint32_t                  smod_number;
