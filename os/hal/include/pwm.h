@@ -176,13 +176,13 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  *          guaranteed.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] period    new cycle time in ticks
+ * @param[in] value     new cycle time in ticks
  *
  * @iclass
  */
-#define pwmChangePeriodI(pwmp, period) {                                    \
-  (pwmp)->period = (period);                                                \
-  pwm_lld_change_period(pwmp, period);                                      \
+#define pwmChangePeriodI(pwmp, value) {                                     \
+  (pwmp)->period = (value);                                                 \
+  pwm_lld_change_period(pwmp, value);                                       \
 }
 
 /**

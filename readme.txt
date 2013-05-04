@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.4 ***
+- FIX: Fixed wrong macro in PWM driver (bug #407).
 - FIX: Fixed USB driver possible deadlock under certain configurations (bug
   #406).
 - FIX: Fixed USB driver cannot be stopped (bug #405).
