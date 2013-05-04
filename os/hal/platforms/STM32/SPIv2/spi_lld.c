@@ -475,10 +475,26 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
  */
 uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
-  spip->spi->DR = frame;
-  while ((spip->spi->SR & SPI_SR_RXNE) == 0)
-    ;
-  return spip->spi->DR;
+  /*
+   * Data register must be accessed with the appropriate data size.
+   * Byte size access (uint8_t *) for transactions that are <= 8-bit.
+   * Halfword size access (uint16_t) for transactions that are <= 8-bit.
+   */
+  if ((spip->config->cr2 & SPI_CR2_DS) <= (SPI_CR2_DS_2 |
+                                           SPI_CR2_DS_1 |
+                                           SPI_CR2_DS_0)) {
+    volatile uint8_t *spidr = (volatile uint8_t *)&spip->spi->DR;
+    *spidr = (uint8_t)frame;
+    while ((spip->spi->SR & SPI_SR_RXNE) == 0)
+      ;
+    return (uint16_t)*spidr;
+  }
+  else {
+    spip->spi->DR = frame;
+    while ((spip->spi->SR & SPI_SR_RXNE) == 0)
+      ;
+    return spip->spi->DR;
+  }
 }
 
 #endif /* HAL_USE_SPI */
