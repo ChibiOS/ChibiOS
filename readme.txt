@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.4 ***
+- FIX: Fixed wrong Keil project in ARMCM3-STM32F107 demo (bug #408).
 - FIX: Fixed wrong macro in PWM driver (bug #407).
 - FIX: Fixed USB driver possible deadlock under certain configurations (bug
   #406).
