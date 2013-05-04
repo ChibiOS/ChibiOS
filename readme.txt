@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed wrong macro in PWM driver (bug #407)(backported to 2.4.4).
 - FIX: Fixed USB driver possible deadlock under certain configurations (bug
   #406)(backported to 2.4.4).
 - FIX: Fixed USB driver cannot be stopped (bug #405)(backported to 2.4.4).
