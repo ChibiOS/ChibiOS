@@ -154,7 +154,7 @@
 - NEW: Added new pwmIsChannelEnabledI() API to the PWM driver, implemented
   in the STM32 driver.
 - NEW: Added support for timers 6, 7, 9, 11, 12, 14 to the STM32 GPT driver.
-- NEW: Added support for timer 9 to the STM32 PWM driver.
+- NEW: Added support for timer 9 to the STM32 PWM and ICU drivers.
 - NEW: Relicensed parts of the distribution tree under the Apache 2.0
   license in order to make specific parts of the code more accessible
   to the open source community and adopters.
