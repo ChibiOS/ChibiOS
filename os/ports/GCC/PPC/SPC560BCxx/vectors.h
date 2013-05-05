@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    vectors.h
+ * @file    SPC560BCxx/vectors.h
  * @brief   ISR vector module header.
  *
  * @addtogroup PPC_CORE
