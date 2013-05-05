@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="../abstract_adc_cfg.xsd" />
+
+  <xs:complexType name="STM32F4AdcCfgType">
+    <xs:complexContent>
+      <xs:extension base="AbstractAdcCfgType">
+        <xs:sequence>
+          <xs:element name="groups" minOccurs="1" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="group" maxOccurs="unbounded"
+                  minOccurs="1" type="STM32F4xxAdcGroupCfgType"></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:complexType name="STM32F4xxAdcGroupCfgType">
+    <xs:complexContent>
+      <xs:extension base="AbstractAdcGroupCfgType">
+        <xs:sequence>
+          <xs:element name="alignment" maxOccurs="1" minOccurs="1">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="0 Samples are Right Aligned"></xs:enumeration>
+                <xs:enumeration value="1 Samples are Left Aligned"></xs:enumeration>
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="resolution" maxOccurs="1" minOccurs="1">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="0 12 bits"></xs:enumeration>
+                <xs:enumeration value="1 10 bits"></xs:enumeration>
+                <xs:enumeration value="2 8 bits"></xs:enumeration>
+                <xs:enumeration value="3 6 bits"></xs:enumeration>
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="trigger_mode" maxOccurs="1" minOccurs="1">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="0 Software"></xs:enumeration>
+                <xs:enumeration value="1 Rising Edge"></xs:enumeration>
+                <xs:enumeration value="2 Falling Edge"></xs:enumeration>
+                <xs:enumeration value="3 Both Edges"></xs:enumeration>
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="trigger_source" maxOccurs="1"
+            minOccurs="1">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="0 Timer 1 CC1 event"></xs:enumeration>
+                <xs:enumeration value="1 Timer 1 CC2 event"></xs:enumeration>
+                <xs:enumeration value="2 Timer 1 CC3 event"></xs:enumeration>
+                <xs:enumeration value="3 Timer 2 CC2 event"></xs:enumeration>
+                <xs:enumeration value="4 Timer 2 CC3 event"></xs:enumeration>
+                <xs:enumeration value="5 Timer 2 CC4 event"></xs:enumeration>
+                <xs:enumeration value="6 Timer 2 TRGO event"></xs:enumeration>
+                <xs:enumeration value="7 Timer 3 CC1 event"></xs:enumeration>
+                <xs:enumeration value="8 Timer 3 TRGO event"></xs:enumeration>
+                <xs:enumeration value="9 Timer 4 CC4 event"></xs:enumeration>
+                <xs:enumeration value="10 Timer 5 CC1 event"></xs:enumeration>
+                <xs:enumeration value="11 Timer 5 CC2 event"></xs:enumeration>
+                <xs:enumeration value="12 Timer 5 CC3 event"></xs:enumeration>
+                <xs:enumeration value="13 Timer 8 CC1 event"></xs:enumeration>
+                <xs:enumeration value="14 Timer 8 CC4 event"></xs:enumeration>
+                <xs:enumeration value="15 EXTI line15"></xs:enumeration>
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="discontinuous" maxOccurs="1"
+            minOccurs="1">
+
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="0 Disabled"></xs:enumeration>
+                <xs:enumeration value="1 One discontinous conversion"></xs:enumeration>
+                <xs:enumeration
+                  value="2 Two discontinous conversions">
+                </xs:enumeration>
+                <xs:enumeration
+                  value="3 Three discontinous conversions">
+                </xs:enumeration>
+                <xs:enumeration
+                  value="4 Four discontinous conversions">
+                </xs:enumeration>
+                <xs:enumeration
+                  value="5 Five discontinous conversions">
+                </xs:enumeration>
+                <xs:enumeration
+                  value="6 Six discontinous conversions">
+                </xs:enumeration>
+                <xs:enumeration
+                  value="7 Seven discontinous conversions">
+                </xs:enumeration>
+                <xs:enumeration
+                  value="8 Eight discontinous conversions">
+                </xs:enumeration>
+                <xs:whiteSpace value="collapse"></xs:whiteSpace>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="sample_time" maxOccurs="1" minOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="IN0" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN1" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN2" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN3" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN4" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN5" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN6" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN7" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN8" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN9" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN10" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN11" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN12" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN13" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN14" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="IN15" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="SENSOR" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="VREFINT" maxOccurs="1"
+                  minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+                <xs:element name="VBAT" maxOccurs="1" minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_SAMPLE_3"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_15"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_28"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_56"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_84"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_112"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_144"></xs:enumeration>
+                      <xs:enumeration value="ADC_SAMPLE_480"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="channels_sequence" maxOccurs="1"
+            minOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="channel" maxOccurs="16"
+                  minOccurs="1">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="ADC_CHANNEL_IN0"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN1"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN2"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN3"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN4"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN5"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN6"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN7"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN8"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN9"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN10"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN11"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN12"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN13"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN14"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_IN15"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_SENSOR"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_VREFINT"></xs:enumeration>
+                      <xs:enumeration value="ADC_CHANNEL_VBAT"></xs:enumeration>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+
+
+
+
+
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>
