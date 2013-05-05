@@ -59,14 +59,14 @@
  * @ingroup ports
  */
 
-/**
+/* *
  * @defgroup cosmic Cosmic Compiler Ports
  * Ports for the Compiler compiler.
  *
  * @ingroup ports
  */
 
-/**
+/* *
  * @defgroup raisonance Raisonance Compiler Ports
  * Ports for the Raisonance compiler.
  *
