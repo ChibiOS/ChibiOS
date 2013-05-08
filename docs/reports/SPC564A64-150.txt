@@ -5,8 +5,8 @@ Settings: SYSCLK=150
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.5.2unstable
-*** Compiled:     Apr 29 2013 - 11:08:09
+*** Kernel:       2.6.0
+*** Compiled:     May  8 2013 - 09:36:12
 *** Compiler:     GCC 4.6.3 build on 2013-01-07
 *** Architecture: Power Architecture
 *** Core Variant: e200z4
@@ -108,7 +108,7 @@ Settings: SYSCLK=150
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 448712 msgs/S, 897424 ctxswc/S
+--- Score : 448711 msgs/S, 897422 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
@@ -116,7 +116,7 @@ Settings: SYSCLK=150
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 358539 threads/S
+--- Score : 358538 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
@@ -124,7 +124,7 @@ Settings: SYSCLK=150
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 137368 reschedules/S, 824208 ctxswc/S
+--- Score : 137367 reschedules/S, 824202 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
@@ -136,7 +136,7 @@ Settings: SYSCLK=150
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 1897166 timers/S
+--- Score : 1897196 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)

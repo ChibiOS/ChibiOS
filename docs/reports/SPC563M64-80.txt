@@ -5,8 +5,8 @@ Settings: SYSCLK=80
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.5.2unstable
-*** Compiled:     Apr 26 2013 - 13:36:25
+*** Kernel:       2.6.0
+*** Compiled:     May  8 2013 - 09:33:29
 *** Compiler:     GCC 4.6.3 build on 2013-01-07
 *** Architecture: Power Architecture
 *** Core Variant: e200z3
@@ -100,7 +100,7 @@ Settings: SYSCLK=80
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 267100 msgs/S, 534200 ctxswc/S
+--- Score : 267101 msgs/S, 534202 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
