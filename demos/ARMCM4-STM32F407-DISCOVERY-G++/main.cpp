@@ -128,7 +128,7 @@ public:
 class TesterThread : public BaseStaticThread<256> {
 
 protected:
-  virtual msg_t Main(void) {
+  virtual msg_t main(void) {
 
     setName("tester");
 
@@ -192,6 +192,7 @@ int main(void) {
       tester.start(NORMALPRIO);
       tester.wait();
     };
+    BaseThread::sleep(MS2ST(500));
   }
 
   return 0;
