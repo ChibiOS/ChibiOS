@@ -411,6 +411,10 @@ void can_lld_start(CANDriver *canp) {
 #endif
 #if STM32_CAN_USE_CAN2
   if (&CAND2 == canp) {
+
+    chDbgAssert(CAND1.state != CAN_STOP,
+                "can_lld_start(), #1", "CAN1 must be started");
+
     nvicEnableVector(STM32_CAN2_TX_NUMBER,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN2_IRQ_PRIORITY));
     nvicEnableVector(STM32_CAN2_RX0_NUMBER,
@@ -453,6 +457,12 @@ void can_lld_stop(CANDriver *canp) {
   if (canp->state == CAN_READY) {
 #if STM32_CAN_USE_CAN1
     if (&CAND1 == canp) {
+
+#if STM32_CAN_USE_CAN2
+      chDbgAssert(CAND2.state == CAN_STOP,
+                  "can_lld_stop(), #1", "CAN2 must be stopped");
+#endif
+
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */
       nvicDisableVector(STM32_CAN1_TX_NUMBER);

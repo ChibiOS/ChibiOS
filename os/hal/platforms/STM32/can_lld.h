@@ -128,6 +128,10 @@
 #error "CAN driver activated but no CAN peripheral assigned"
 #endif
 
+#if !STM32_CAN_USE_CAN1 && STM32_CAN_USE_CAN2
+#error "CAN2 requires CAN1, it cannot operate independently"
+#endif
+
 #if CAN_USE_SLEEP_MODE && !CAN_SUPPORTS_SLEEP
 #error "CAN sleep mode not supported in this architecture"
 #endif
