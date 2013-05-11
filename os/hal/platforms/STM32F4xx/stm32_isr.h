@@ -98,6 +98,8 @@
 #define STM32_TIM3_NUMBER           TIM3_IRQn
 #define STM32_TIM4_NUMBER           TIM4_IRQn
 #define STM32_TIM5_NUMBER           TIM5_IRQn
+#define STM32_TIM6_NUMBER           TIM6_IRQn
+#define STM32_TIM7_NUMBER           TIM7_IRQn
 #define STM32_TIM8_UP_NUMBER        TIM8_UP_TIM13_IRQn
 #define STM32_TIM8_CC_NUMBER        TIM8_CC_IRQn
 #define STM32_TIM9_NUMBER           TIM1_BRK_TIM9_IRQn
