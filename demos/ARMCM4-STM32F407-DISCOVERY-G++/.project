@@ -82,11 +82,6 @@
 			<locationURI>CHIBIOS/boards/ST_STM32F4_DISCOVERY</locationURI>
 		</link>
 		<link>
-			<name>fatfs</name>
-			<type>2</type>
-			<locationURI>CHIBIOS/ext/fatfs</locationURI>
-		</link>
-		<link>
 			<name>os</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os</locationURI>
