@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed STM32 wrong peripherals reset procedure (bug #409)(backported
+  to 2.4.4).
 - FIX: Fixed STM32 SPIv2 polled exchange (bug #372).
 - FIX: Fixed wrong macro in PWM driver (bug #407)(backported to 2.4.4).
 - FIX: Fixed USB driver possible deadlock under certain configurations (bug
