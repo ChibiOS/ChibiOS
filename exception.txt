@@ -25,7 +25,6 @@ in this paragraph.
         ./os/kernel/include
         ./os/ports
         ./os/hal/include
-        ./os/various
       without causing the resulting work to be covered by the GNU General
       Public License.
    2. The files of Non-GPL Code may link to the unmodified ChibiOS/RT
@@ -33,7 +32,6 @@ in this paragraph.
         ./os/kernel/src
         ./os/ports
         ./os/hal/src
-        ./os/various
       without causing the resulting work to be covered by the GNU General
       Public License.
    3. The files of Non-GPL Code may link to, or include, the modified or
