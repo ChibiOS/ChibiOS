@@ -53,6 +53,7 @@ void __early_init(void) {
 void boardInit(void) {
 }
 
+#if HAL_USE_SDC
 /**
  * @brief   Insertion monitor function.
  *
@@ -79,3 +80,4 @@ bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
   (void)sdcp;
   return FALSE;
 }
+#endif /* HAL_USE_SDC */
