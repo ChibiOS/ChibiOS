@@ -101,22 +101,6 @@ void fillbuffers(uint8_t pattern){
 /**
  *
  */
-bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
-  (void)sdcp;
-  return FALSE;
-}
-
-/**
- *
- */
-bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
-  (void)sdcp;
-  return !palReadPad(GPIOE, GPIOE_SDIO_DETECT);
-}
-
-/**
- *
- */
 void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]){
   (void)argc;
   (void)argv;
