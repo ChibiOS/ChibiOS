@@ -252,7 +252,7 @@ namespace chibios_rt {
 #endif /* CH_USE_DYNAMIC */
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::BaseThread                                             *
+   * chibios_rt::BaseThread                                                 *
    *------------------------------------------------------------------------*/
   BaseThread::BaseThread() : ThreadReference(NULL) {
 
