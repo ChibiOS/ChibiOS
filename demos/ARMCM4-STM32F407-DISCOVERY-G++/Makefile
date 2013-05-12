@@ -117,7 +117,7 @@ ASMSRC = $(PORTASM)
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHCPPINC) \
-         $(CHIBIOS)/os/various $(CHIBIOS)/os/fs $(CHIBIOS)/os/fs/fatfs
+         $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths
