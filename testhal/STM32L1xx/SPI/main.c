@@ -53,7 +53,7 @@ static msg_t spi_thread_1(void *p) {
   chRegSetThreadName("SPI thread 1");
   while (TRUE) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
-    palClearPad(GPIOB, GPIOB_LED4);     /* LED ON.                          */
+    palSetPad(GPIOB, GPIOB_LED4);       /* LED ON.                          */
     spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID2);                  /* Slave Select assertion.          */
     spiExchange(&SPID2, 512,
@@ -74,7 +74,7 @@ static msg_t spi_thread_2(void *p) {
   chRegSetThreadName("SPI thread 2");
   while (TRUE) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
-    palSetPad(GPIOB, GPIOB_LED4);       /* LED OFF.                         */
+    palClearPad(GPIOB, GPIOB_LED4);     /* LED OFF.                         */
     spiStart(&SPID2, &ls_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID2);                  /* Slave Select assertion.          */
     spiExchange(&SPID2, 512,
