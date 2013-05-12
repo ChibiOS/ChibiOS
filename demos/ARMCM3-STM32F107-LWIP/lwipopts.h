@@ -177,8 +177,8 @@
 /**
  * MEMP_USE_CUSTOM_POOLS==1: whether to include a user file lwippools.h
  * that defines additional pools beyond the "standard" ones required
- * by lwIP. If you set this to 1, you must have lwippools.h in your
- * inlude path somewhere.
+ * by lwIP. If you set this to 1, you must have lwippools.h in your 
+ * inlude path somewhere. 
  */
 #ifndef MEMP_USE_CUSTOM_POOLS
 #define MEMP_USE_CUSTOM_POOLS           0
@@ -303,9 +303,11 @@
 /**
  * MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts.
  * (requires NO_SYS==0)
+ * The default number of timeouts is calculated here for all enabled modules.
+ * The formula expects settings to be either '0' or '1'.
  */
 #ifndef MEMP_NUM_SYS_TIMEOUT
-#define MEMP_NUM_SYS_TIMEOUT            3
+#define MEMP_NUM_SYS_TIMEOUT            (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT)
 #endif
 
 /**
@@ -455,6 +457,8 @@
  * Additionally, you can define ETHARP_VLAN_CHECK to an u16_t VLAN ID to check.
  * If ETHARP_VLAN_CHECK is defined, only VLAN-traffic for this VLAN is accepted.
  * If ETHARP_VLAN_CHECK is not defined, all traffic is accepted.
+ * Alternatively, define a function/define ETHARP_VLAN_CHECK_FN(eth_hdr, vlan)
+ * that returns 1 to accept a packet or 0 to drop a packet.
  */
 #ifndef ETHARP_SUPPORT_VLAN
 #define ETHARP_SUPPORT_VLAN             0
@@ -585,6 +589,26 @@
  */
 #ifndef IP_SOF_BROADCAST_RECV
 #define IP_SOF_BROADCAST_RECV           0
+#endif
+
+/**
+ * IP_FORWARD_ALLOW_TX_ON_RX_NETIF==1: allow ip_forward() to send packets back
+ * out on the netif where it was received. This should only be used for
+ * wireless networks.
+ * ATTENTION: When this is 1, make sure your netif driver correctly marks incoming
+ * link-layer-broadcast/multicast packets as such using the corresponding pbuf flags!
+ */
+#ifndef IP_FORWARD_ALLOW_TX_ON_RX_NETIF
+#define IP_FORWARD_ALLOW_TX_ON_RX_NETIF 0
+#endif
+
+/**
+ * LWIP_RANDOMIZE_INITIAL_LOCAL_PORTS==1: randomize the local port for the first
+ * local TCP/UDP pcb (default==0). This can prevent creating predictable port
+ * numbers after booting a device.
+ */
+#ifndef LWIP_RANDOMIZE_INITIAL_LOCAL_PORTS
+#define LWIP_RANDOMIZE_INITIAL_LOCAL_PORTS 0
 #endif
 
 /*
@@ -940,10 +964,11 @@
 
 
 /**
- * TCP_SND_BUF: TCP sender buffer space (bytes). 
+ * TCP_SND_BUF: TCP sender buffer space (bytes).
+ * To achieve good performance, this should be at least 2 * TCP_MSS.
  */
 #ifndef TCP_SND_BUF
-#define TCP_SND_BUF                     256
+#define TCP_SND_BUF                     (2 * TCP_MSS)
 #endif
 
 /**
@@ -960,16 +985,32 @@
  * TCP snd_buf for select to return writable (combined with TCP_SNDQUEUELOWAT).
  */
 #ifndef TCP_SNDLOWAT
-#define TCP_SNDLOWAT                    ((TCP_SND_BUF)/2)
+#define TCP_SNDLOWAT                    LWIP_MIN(LWIP_MAX(((TCP_SND_BUF)/2), (2 * TCP_MSS) + 1), (TCP_SND_BUF) - 1)
 #endif
 
 /**
- * TCP_SNDQUEUELOWAT: TCP writable bufs (pbuf count). This must be grater
+ * TCP_SNDQUEUELOWAT: TCP writable bufs (pbuf count). This must be less
  * than TCP_SND_QUEUELEN. If the number of pbufs queued on a pcb drops below
  * this number, select returns writable (combined with TCP_SNDLOWAT).
  */
 #ifndef TCP_SNDQUEUELOWAT
-#define TCP_SNDQUEUELOWAT               ((TCP_SND_QUEUELEN)/2)
+#define TCP_SNDQUEUELOWAT               LWIP_MAX(((TCP_SND_QUEUELEN)/2), 5)
+#endif
+
+/**
+ * TCP_OOSEQ_MAX_BYTES: The maximum number of bytes queued on ooseq per pcb.
+ * Default is 0 (no limit). Only valid for TCP_QUEUE_OOSEQ==0.
+ */
+#ifndef TCP_OOSEQ_MAX_BYTES
+#define TCP_OOSEQ_MAX_BYTES             0
+#endif
+
+/**
+ * TCP_OOSEQ_MAX_PBUFS: The maximum number of pbufs queued on ooseq per pcb.
+ * Default is 0 (no limit). Only valid for TCP_QUEUE_OOSEQ==0.
+ */
+#ifndef TCP_OOSEQ_MAX_PBUFS
+#define TCP_OOSEQ_MAX_PBUFS             0
 #endif
 
 /**
@@ -1026,9 +1067,13 @@
  *     LWIP_EVENT_API==1: The user defines lwip_tcp_event() to receive all
  *         events (accept, sent, etc) that happen in the system.
  *     LWIP_CALLBACK_API==1: The PCB callback function is called directly
- *         for the event.
+ *         for the event. This is the default.
  */
-//#define LWIP_EVENT_API
+#if !defined(LWIP_EVENT_API) && !defined(LWIP_CALLBACK_API)
+#define LWIP_EVENT_API                  0
+#define LWIP_CALLBACK_API               1
+#endif
+
 
 /*
    ----------------------------------
@@ -1087,6 +1132,14 @@
  */
 #ifndef LWIP_NETIF_LINK_CALLBACK
 #define LWIP_NETIF_LINK_CALLBACK        0
+#endif
+
+/**
+ * LWIP_NETIF_REMOVE_CALLBACK==1: Support a callback function that is called
+ * when a netif has been removed
+ */
+#ifndef LWIP_NETIF_REMOVE_CALLBACK
+#define LWIP_NETIF_REMOVE_CALLBACK      0
 #endif
 
 /**
@@ -1206,7 +1259,7 @@
  * sys_mbox_new() when tcpip_init is called.
  */
 #ifndef TCPIP_MBOX_SIZE
-#define TCPIP_MBOX_SIZE                 4
+#define TCPIP_MBOX_SIZE                 MEMP_NUM_PBUF
 #endif
 
 /**
@@ -1394,7 +1447,16 @@
 #endif
 
 /**
- * LWIP_SO_RCVTIMEO==1: Enable SO_RCVTIMEO processing.
+ * LWIP_SO_SNDTIMEO==1: Enable send timeout for sockets/netconns and
+ * SO_SNDTIMEO processing.
+ */
+#ifndef LWIP_SO_SNDTIMEO
+#define LWIP_SO_SNDTIMEO                0
+#endif
+
+/**
+ * LWIP_SO_RCVTIMEO==1: Enable receive timeout for sockets/netconns and
+ * SO_RCVTIMEO processing.
  */
 #ifndef LWIP_SO_RCVTIMEO
 #define LWIP_SO_RCVTIMEO                0
@@ -1736,6 +1798,13 @@
 #ifndef CHECKSUM_GEN_TCP
 #define CHECKSUM_GEN_TCP                1
 #endif
+
+/**
+ * CHECKSUM_GEN_ICMP==1: Generate checksums in software for outgoing ICMP packets.
+ */
+#ifndef CHECKSUM_GEN_ICMP
+#define CHECKSUM_GEN_ICMP               1
+#endif
  
 /**
  * CHECKSUM_CHECK_IP==1: Check checksums in software for incoming IP packets.
@@ -1768,6 +1837,34 @@
 
 /*
    ---------------------------------------
+   ---------- Hook options ---------------
+   ---------------------------------------
+*/
+
+/* Hooks are undefined by default, define them to a function if you need them. */
+
+/**
+ * LWIP_HOOK_IP4_INPUT(pbuf, input_netif):
+ * - called from ip_input() (IPv4)
+ * - pbuf: received struct pbuf passed to ip_input()
+ * - input_netif: struct netif on which the packet has been received
+ * Return values:
+ * - 0: Hook has not consumed the packet, packet is processed as normal
+ * - != 0: Hook has consumed the packet.
+ * If the hook consumed the packet, 'pbuf' is in the responsibility of the hook
+ * (i.e. free it when done).
+ */
+
+/**
+ * LWIP_HOOK_IP4_ROUTE(dest):
+ * - called from ip_route() (IPv4)
+ * - dest: destination IPv4 address
+ * Returns the destination netif or NULL if no destination netif is found. In
+ * that case, ip_route() continues as normal.
+ */
+
+/*
+   ---------------------------------------
    ---------- Debugging options ----------
    ---------------------------------------
 */
@@ -1777,7 +1874,7 @@
  * messages are written.
  */
 #ifndef LWIP_DBG_MIN_LEVEL
-#define LWIP_DBG_MIN_LEVEL              LWIP_DBG_LEVEL_OFF
+#define LWIP_DBG_MIN_LEVEL              LWIP_DBG_LEVEL_ALL
 #endif
 
 /**
