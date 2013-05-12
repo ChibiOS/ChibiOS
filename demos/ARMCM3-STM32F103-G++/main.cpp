@@ -17,7 +17,6 @@
 #include "ch.hpp"
 #include "hal.h"
 #include "test.h"
-#include "evtimer.h"
 
 using namespace chibios_rt;
 
@@ -65,16 +64,16 @@ static const seqop_t LED1_sequence[] =
  * Any sequencer is just an instance of this class, all the details are
  * totally encapsulated and hidden to the application level.
  */
-class SequencerThread : public EnhancedThread<128> {
+class SequencerThread : public BaseStaticThread<128> {
 private:
   const seqop_t *base, *curr;                   // Thread local variables.
 
 protected:
-  virtual msg_t Main(void) {
+  virtual msg_t main(void) {
     while (true) {
       switch(curr->action) {
       case SLEEP:
-        Sleep(curr->value);
+        sleep(curr->value);
         break;
       case GOTO:
         curr = &base[curr->value];
@@ -93,7 +92,7 @@ protected:
   }
 
 public:
-  SequencerThread(const seqop_t *sequence) : EnhancedThread<128>("sequencer") {
+  SequencerThread(const seqop_t *sequence) : BaseStaticThread<128>() {
 
     base = curr = sequence;
   }
@@ -102,40 +101,29 @@ public:
 /*
  * Tester thread class. This thread executes the test suite.
  */
-class TesterThread : public EnhancedThread<256> {
+class TesterThread : public BaseStaticThread<256> {
 
 protected:
-  virtual msg_t Main(void) {
+  virtual msg_t main(void) {
+
+    setName("tester");
 
     return TestThread(&SD2);
   }
 
 public:
-  TesterThread(void) : EnhancedThread<256>("tester") {
+  TesterThread(void) : BaseStaticThread<256>() {
   }
 };
 
-/*
- * Executed as an event handler at 500mS intervals.
- */
-static void TimerHandler(eventid_t id) {
-
-  (void)id;
-  if (palReadPad(GPIOA, GPIOA_BUTTON)) {
-    TesterThread tester;
-    tester.Wait();
-  };
-}
+/* Static threads instances.*/
+static TesterThread tester;
+static SequencerThread blinker1(LED1_sequence);
 
 /*
  * Application entry point.
  */
 int main(void) {
-  static const evhandler_t evhndl[] = {
-    TimerHandler
-  };
-  static EvTimer evt;
-  struct EventListener el0;
 
   /*
    * System initializations.
@@ -145,28 +133,29 @@ int main(void) {
    *   RTOS is active.
    */
   halInit();
-  System::Init();
+  System::init();
 
   /*
    * Activates the serial driver 2 using the driver default configuration.
    */
   sdStart(&SD2, NULL);
 
-  evtInit(&evt, 500);                   // Initializes an event timer.
-  evtStart(&evt);                       // Starts the event timer.
-  chEvtRegister(&evt.et_es, &el0, 0);   // Registers a listener on the source.
-
   /*
    * Starts several instances of the SequencerThread class, each one operating
    * on a different LED.
    */
-  SequencerThread blinker1(LED1_sequence);
+  blinker1.start(NORMALPRIO + 10);
 
   /*
    * Serves timer events.
    */
-  while (true)
-    Event::Dispatch(evhndl, Event::WaitOne(ALL_EVENTS));
+  while (true) {
+    if (palReadPad(GPIOA, GPIOA_BUTTON)) {
+      tester.start(NORMALPRIO);
+      tester.wait();
+    };
+    BaseThread::sleep(MS2ST(500));
+  }
 
   return 0;
 }
