@@ -398,19 +398,22 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
           usb_packet_read_to_buffer(udp,
                                     epcp->out_state->mode.linear.rxbuf,
                                     n);
-          epcp->out_state->mode.linear.rxbuf  += n;
+          epcp->out_state->mode.linear.rxbuf += n;
         }
         /* Transaction data updated.*/
         epcp->out_state->rxcnt              += n;
         epcp->out_state->rxsize             -= n;
         epcp->out_state->rxpkts             -= 1;
-        if (epcp->out_state->rxpkts > 0) {
-          /* Transfer not completed, there are more packets to receive.*/
-          EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
+
+        /* The transaction is completed if the specified number of packets
+           has been received or the current packet is a short packet.*/
+        if ((n < epcp->out_maxsize) || (epcp->out_state->rxpkts == 0)) {
+          /* Transfer complete, invokes the callback.*/
+          _usb_isr_invoke_out_cb(usbp, ep);
         }
         else {
-          /* Transfer completed, invokes the callback.*/
-          _usb_isr_invoke_out_cb(usbp, ep);
+          /* Transfer not complete, there are more packets to receive.*/
+          EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
         }
       }
     }
