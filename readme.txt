@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed wrong STM32 USBv1 driver behavior (bug #410).
 - FIX: Fixed STM32 wrong peripherals reset procedure (bug #409)(backported
   to 2.4.4).
 - FIX: Fixed STM32 SPIv2 polled exchange (bug #372).

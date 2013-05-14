@@ -350,13 +350,11 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
 
       transmitted = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
       epcp->in_state->txcnt  += transmitted;
-      epcp->in_state->txsize -= transmitted;
-      if (epcp->in_state->txsize > 0) {
+      n = epcp->in_state->txsize - epcp->in_state->txcnt;
+      if (n > 0) {
         /* Transfer not completed, there are more packets to send.*/
-        if (epcp->in_state->txsize > epcp->in_maxsize)
+        if (n > epcp->in_maxsize)
           n = epcp->in_maxsize;
-        else
-          n = epcp->in_state->txsize;
 
         if (epcp->in_state->txqueued)
           usb_packet_write_from_queue(USB_GET_DESCRIPTOR(ep),
