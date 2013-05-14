@@ -142,15 +142,14 @@ static void spc5xx_serve_rxi_interrupt(SerialDriver *sdp) {
     sts |= SD_NOISE_ERROR;
   if (sr & SPC5_UARTSR_PE0)
     sts |= SD_PARITY_ERROR;
-  if (sts) {
-    chSysLockFromIsr();
+  chSysLockFromIsr();
+  if (sts)
     chnAddFlagsI(sdp, sts);
-    chSysUnlockFromIsr();
-  }
   if (sr & SPC5_UARTSR_DRF) {
-     sdIncomingDataI(sdp, sdp->linflexp->BDRM.B.DATA4);
-     sdp->linflexp->UARTSR.R = SPC5_UARTSR_RMB;
+    sdIncomingDataI(sdp, sdp->linflexp->BDRM.B.DATA4);
+    sdp->linflexp->UARTSR.R = SPC5_UARTSR_RMB;
   }
+  chSysUnlockFromIsr();
 }
 
 /**
@@ -162,6 +161,7 @@ static void spc5xx_serve_txi_interrupt(SerialDriver *sdp) {
   msg_t b;
 
   sdp->linflexp->UARTSR.R = SPC5_UARTSR_DTF;
+  chSysLockFromIsr();
   b = chOQGetI(&sdp->oqueue);
   if (b < Q_OK) {
     chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
@@ -169,6 +169,7 @@ static void spc5xx_serve_txi_interrupt(SerialDriver *sdp) {
   }
   else
     sdp->linflexp->BDRL.B.DATA0 = b;
+  chSysUnlockFromIsr();
 }
 
 /**
