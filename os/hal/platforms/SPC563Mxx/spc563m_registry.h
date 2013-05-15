@@ -74,6 +74,49 @@
 /* SIU attributes.*/
 #define SPC5_HAS_SIU                        TRUE
 #define SPC5_SIU_SUPPORTS_PORTS             FALSE
+
+/* EMIOS attributes.*/
+#define SPC5_HAS_EMIOS                      TRUE
+
+#define SPC5_EMIOS_NUM_CHANNELS             16
+
+#define SPC5_EMIOS_FLAG_F0_HANDLER          vector51
+#define SPC5_EMIOS_FLAG_F1_HANDLER          vector52
+#define SPC5_EMIOS_FLAG_F2_HANDLER          vector53
+#define SPC5_EMIOS_FLAG_F3_HANDLER          vector54
+#define SPC5_EMIOS_FLAG_F4_HANDLER          vector55
+#define SPC5_EMIOS_FLAG_F5_HANDLER          vector56
+#define SPC5_EMIOS_FLAG_F6_HANDLER          vector57
+#define SPC5_EMIOS_FLAG_F8_HANDLER          vector59
+#define SPC5_EMIOS_FLAG_F9_HANDLER          vector60
+#define SPC5_EMIOS_FLAG_F10_HANDLER         vector61
+#define SPC5_EMIOS_FLAG_F11_HANDLER         vector62
+#define SPC5_EMIOS_FLAG_F12_HANDLER         vector63
+#define SPC5_EMIOS_FLAG_F13_HANDLER         vector64
+#define SPC5_EMIOS_FLAG_F14_HANDLER         vector65
+#define SPC5_EMIOS_FLAG_F15_HANDLER         vector66
+#define SPC5_EMIOS_FLAG_F23_HANDLER         vector209
+#define SPC5_EMIOS_FLAG_F0_NUMBER           51
+#define SPC5_EMIOS_FLAG_F1_NUMBER           52
+#define SPC5_EMIOS_FLAG_F2_NUMBER           53
+#define SPC5_EMIOS_FLAG_F3_NUMBER           54
+#define SPC5_EMIOS_FLAG_F4_NUMBER           55
+#define SPC5_EMIOS_FLAG_F5_NUMBER           56
+#define SPC5_EMIOS_FLAG_F6_NUMBER           57
+#define SPC5_EMIOS_FLAG_F8_NUMBER           59
+#define SPC5_EMIOS_FLAG_F9_NUMBER           60
+#define SPC5_EMIOS_FLAG_F10_NUMBER          61
+#define SPC5_EMIOS_FLAG_F11_NUMBER          62
+#define SPC5_EMIOS_FLAG_F12_NUMBER          63
+#define SPC5_EMIOS_FLAG_F13_NUMBER          64
+#define SPC5_EMIOS_FLAG_F14_NUMBER          65
+#define SPC5_EMIOS_FLAG_F15_NUMBER          66
+#define SPC5_EMIOS_FLAG_F23_NUMBER          209
+
+#define SPC5_EMIOS_CLK                      (64000000 /                     \
+                                             SPC5_EMIOS_GLOBAL_PRESCALER)
+#define SPC5_EMIOS_ENABLE_CLOCK()
+#define SPC5_EMIOS_DISABLE_CLOCK()
 /** @} */
 
 #endif /* _SPC563M_REGISTRY_H_ */
