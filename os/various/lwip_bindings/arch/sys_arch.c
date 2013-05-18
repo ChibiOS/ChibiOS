@@ -90,6 +90,14 @@ void sys_sem_signal(sys_sem_t *sem) {
   chSemSignal(*sem);
 }
 
+/* CHIBIOS FIX: specific variant of this call to be called from within
+   a lock.*/
+void sys_sem_signal_S(sys_sem_t *sem) {
+
+  chSemSignalI(*sem);
+  chSchRescheduleS();
+}
+
 u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout) {
   systime_t time, tmo;
 
