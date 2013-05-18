@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 2.5.2 ***
+- FIX: Fixed wrong RTC vector name in STM32F1/F4/L1 EXT drivers (bug #412).
 - FIX: Fixed wrong STM32 USBv1 driver behavior (bug #410).
 - FIX: Fixed STM32 wrong peripherals reset procedure (bug #409)(backported
   to 2.4.4).
