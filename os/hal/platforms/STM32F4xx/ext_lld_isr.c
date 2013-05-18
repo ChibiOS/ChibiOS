@@ -199,7 +199,7 @@ CH_IRQ_HANDLER(PVD_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(RTCAlarm_IRQHandler) {
+CH_IRQ_HANDLER(RTC_Alarm_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
