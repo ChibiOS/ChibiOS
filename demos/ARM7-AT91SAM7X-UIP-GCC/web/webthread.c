@@ -151,7 +151,7 @@ msg_t WebThread(void *p) {
    * Event sources setup.
    */
   chEvtRegister(macGetReceiveEventSource(&ETHD1), &el0, FRAME_RECEIVED_ID);
-  chEvtAddFlags(EVENT_MASK(FRAME_RECEIVED_ID)); /* In case some frames are already buffered */
+  chEvtAddEvents(EVENT_MASK(FRAME_RECEIVED_ID)); /* In case some frames are already buffered */
 
   evtInit(&evt1, MS2ST(500));
   evtStart(&evt1);

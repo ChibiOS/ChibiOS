@@ -135,7 +135,7 @@ typedef struct {
   /**
    * @brief MAC address.
    */
-  uint8_t               *mac_address;
+  const uint8_t         *mac_address;
   /* End of the mandatory fields.*/
 } MACConfig;
 
