@@ -116,6 +116,11 @@ int main(void) {
     txbuf[i] = (uint8_t)i;
 
   spiStart(&SPID2, &hs_spicfg);
+  SIU.PCR[102].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SCK    */
+  SIU.PCR[103].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SIN    */
+  SIU.PCR[104].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SOUT   */
+  SIU.PCR[105].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* PCS[0] */
+
   spiExchange(&SPID2, 4, txbuf, rxbuf);
   spiExchange(&SPID2, 4, txbuf, rxbuf);
   spiExchange(&SPID2, 4, txbuf, rxbuf);

@@ -743,7 +743,7 @@ typedef struct {
 
 /**
  * @brief   Sets the word 5 fields into a TCD.
- * @note    Transfers are limited to 511 operations using this modality
+ * @note    Transfers are limited to 512 operations using this modality
  *          (citer parameter).
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
@@ -753,7 +753,7 @@ typedef struct {
  *
  * @api
  */
-#define edmaTCDSetWord5LinkedOnMinor(tcdp, linkch, citer, doff)             \
+#define edmaTCDSetWord5Linked(tcdp, linkch, citer, doff)                    \
   ((tcdp)->word[5] = (((uint32_t)0x80000000) |                              \
                       ((uint32_t)(linkch) << 25) |                          \
                       ((uint32_t)(citer) << 16) |                           \
@@ -785,7 +785,7 @@ typedef struct {
 
 /**
  * @brief   Sets the word 7 fields into a TCD.
- * @note    Transfers are limited to 511 operations using this modality
+ * @note    Transfers are limited to 512 operations using this modality
  *          (biter parameter).
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
@@ -795,7 +795,7 @@ typedef struct {
  *
  * @api
  */
-#define edmaTCDSetWord7LinkedOnMinor(tcdp, linkch, biter, mode)             \
+#define edmaTCDSetWord7Linked(tcdp, linkch, biter, mode)                    \
   ((tcdp)->word[7] = (((uint32_t)0x80000000) |                              \
                       ((uint32_t)(linkch) << 25) |                          \
                       ((uint32_t)(biter) << 16) |                           \
@@ -854,8 +854,9 @@ typedef struct {
 }
 
 /**
- * @brief   EDMA channel setup with linked channel on minor loop counter.
- * @note    Transfers are limited to 511 operations using this modality
+ * @brief   EDMA channel setup with linked channel on both minor and major
+ *          loop counters.
+ * @note    Transfers are limited to 512 operations using this modality
  *          (iter parameter).
  *
  * @param[in] channel   eDMA channel number
@@ -874,18 +875,20 @@ typedef struct {
  *
  * @api
  */
-#define edmaChannelSetupLinkedOnMinor(channel, linkch, src, dst, soff,      \
-                                      doff, ssize, dsize, nbytes, iter,     \
-                                      slast, dlast, mode) {                 \
+#define edmaChannelSetupLinked(channel, linkch, src, dst, soff,             \
+                               doff, ssize, dsize, nbytes, iter,            \
+                               slast, dlast, mode) {                        \
   edma_tcd_t *tcdp = edmaGetTCD(channel);                                   \
   edmaTCDSetWord0(tcdp, src);                                               \
   edmaTCDSetWord1(tcdp, ssize, dsize, soff);                                \
   edmaTCDSetWord2(tcdp, nbytes);                                            \
   edmaTCDSetWord3(tcdp, slast);                                             \
   edmaTCDSetWord4(tcdp, dst);                                               \
-  edmaTCDSetWord5LinkedOnMinor(tcdp, linkch, iter, doff);                   \
+  edmaTCDSetWord5Linked(tcdp, linkch, iter, doff);                          \
   edmaTCDSetWord6(tcdp, dlast);                                             \
-  edmaTCDSetWord7LinkedOnMinor(tcdp, linkch, iter, mode);                   \
+  edmaTCDSetWord7Linked(tcdp, linkch, iter, (mode) |                        \
+                                            EDMA_TCD_MODE_MELINK |          \
+                                            EDMA_TCD_MODE_MLINKCH(linkch)); \
 }
 
 /*===========================================================================*/

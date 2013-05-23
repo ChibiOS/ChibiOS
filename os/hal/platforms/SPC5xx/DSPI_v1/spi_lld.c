@@ -283,7 +283,7 @@ static void spi_start_dma_tx8(SPIDriver *spip,
   spip->dspi->PUSHR.R = spip->tx_intbuf | (uint32_t)*txbuf++;
 
   /* Setting up TX1 DMA TCD parameters for 8 bits transfers.*/
-  edmaChannelSetupLinkedOnMinor(
+  edmaChannelSetupLinked(
                    spip->tx1_channel,           /* channel.                 */
                    spip->tx2_channel,           /* linkch.                  */
                    txbuf,                       /* src.                     */
@@ -293,7 +293,7 @@ static void spi_start_dma_tx8(SPIDriver *spip,
                    0,                           /* ssize, 8 bits transfers. */
                    0,                           /* dsize, 8 bits transfers. */
                    1,                           /* nbytes, always one.      */
-                   n/* - 1*/,                       /* iter.                    */
+                   n - 1,                       /* iter.                    */
                    0,                           /* slast, no source adjust. */
                    0,                           /* dlast, no dest.adjust.   */
                    EDMA_TCD_MODE_DREQ);         /* mode.                    */
@@ -691,6 +691,11 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
          the whole transmitted data is pushed here and the TX DMA is not
          activated.*/
       spi_tx_prefill8(spip, n, txbuf);
+/*      uint8_t *p = rxbuf;
+      *p++ = spip->dspi->POPR.R;
+      *p++ = spip->dspi->POPR.R;
+      *p++ = spip->dspi->POPR.R;
+      *p++ = spip->dspi->POPR.R;*/
     }
     else {
       spi_start_dma_tx8(spip, n, txbuf);
