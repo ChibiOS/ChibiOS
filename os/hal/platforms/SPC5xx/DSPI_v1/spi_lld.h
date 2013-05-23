@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    templates/spi_lld.h
- * @brief   SPI Driver subsystem low level driver header template.
+ * @file    SPC5xx/DSPI_v1/spi_lld.h
+ * @brief   SPC5xx SPI subsystem low level driver header.
  *
  * @addtogroup SPI
  * @{
@@ -421,13 +421,23 @@ struct SPIDriver {
    */
   struct spc5_dspi          *dspi;
   /**
+   * @brief   EDMA channel used for data memory to memory copy.
+   */
+  edma_channel_t            tx1_channel;
+  /**
    * @brief   EDMA channel used for transmit.
    */
-  edma_channel_t            tx_channel;
+  edma_channel_t            tx2_channel;
   /**
    * @brief   EDMA channel used for receive.
    */
   edma_channel_t            rx_channel;
+  /**
+   * @brief   TX intermediate buffer.
+   * @note    This field is written by the TX1 DMA channel and read by the
+   *          TX2 DMA channel.
+   */
+  uint32_t                  tx_intbuf;
 };
 
 /*===========================================================================*/

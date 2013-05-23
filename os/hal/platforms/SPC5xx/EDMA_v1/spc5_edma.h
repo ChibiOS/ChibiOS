@@ -44,8 +44,14 @@
 #define EDMA_TCD_MODE_INT_END       (1U << 1)
 #define EDMA_TCD_MODE_INT_HALF      (1U << 2)
 #define EDMA_TCD_MODE_DREQ          (1U << 3)
+#define EDMA_TCD_MODE_SG            (1U << 4)
+#define EDMA_TCD_MODE_MELINK        (1U << 5)
 #define EDMA_TCD_MODE_ACTIVE        (1U << 6)
 #define EDMA_TCD_MODE_DONE          (1U << 7)
+#define EDMA_TCD_MODE_MLINKCH_MASK  (63U << 8)
+#define EDMA_TCD_MODE_MLINKCH(n)    ((uint32_t)(n) << 8)
+#define EDMA_TCD_MODE_BWC_MASK      (3U << 14)
+#define EDMA_TCD_MODE_BWC(n)        ((uint32_t)(n) << 14)
 /** @} */
 
 /*===========================================================================*/
@@ -736,6 +742,24 @@ typedef struct {
                       ((uint32_t)(doff) << 0)))
 
 /**
+ * @brief   Sets the word 5 fields into a TCD.
+ * @note    Transfers are limited to 511 operations using this modality
+ *          (citer parameter).
+ *
+ * @param[in] tcdp      pointer to an @p edma_tcd_t structure
+ * @param[in] linkch    channel linked on minor loop counter
+ * @param[in] citer     the current outer counter value
+ * @param[in] doff      the destination increment value
+ *
+ * @api
+ */
+#define edmaTCDSetWord5LinkedOnMinor(tcdp, linkch, citer, doff)             \
+  ((tcdp)->word[5] = (((uint32_t)0x80000000) |                              \
+                      ((uint32_t)(linkch) << 25) |                          \
+                      ((uint32_t)(citer) << 16) |                           \
+                      ((uint32_t)(doff) << 0)))
+
+/**
  * @brief   Sets the word 6 fields into a TCD.
  *
  * @param[in] tcdp      pointer to an @p edma_tcd_t structure
@@ -757,6 +781,24 @@ typedef struct {
  */
 #define edmaTCDSetWord7(tcdp, biter, mode)                                  \
   ((tcdp)->word[7] = (((uint32_t)(biter) << 16) |                           \
+                      ((uint32_t)(mode) << 0)))
+
+/**
+ * @brief   Sets the word 7 fields into a TCD.
+ * @note    Transfers are limited to 511 operations using this modality
+ *          (biter parameter).
+ *
+ * @param[in] tcdp      pointer to an @p edma_tcd_t structure
+ * @param[in] linkch    channel linked on minor loop counter
+ * @param[in] biter     the base outer counter value
+ * @param[in] mode      the mode value
+ *
+ * @api
+ */
+#define edmaTCDSetWord7LinkedOnMinor(tcdp, linkch, biter, mode)             \
+  ((tcdp)->word[7] = (((uint32_t)0x80000000) |                              \
+                      ((uint32_t)(linkch) << 25) |                          \
+                      ((uint32_t)(biter) << 16) |                           \
                       ((uint32_t)(mode) << 0)))
 
 /**
@@ -809,6 +851,41 @@ typedef struct {
   edmaTCDSetWord5(tcdp, iter, doff);                                        \
   edmaTCDSetWord6(tcdp, dlast);                                             \
   edmaTCDSetWord7(tcdp, iter, mode);                                        \
+}
+
+/**
+ * @brief   EDMA channel setup with linked channel on minor loop counter.
+ * @note    Transfers are limited to 511 operations using this modality
+ *          (iter parameter).
+ *
+ * @param[in] channel   eDMA channel number
+ * @param[in] linkch    channel linked on minor loop counter
+ * @param[in] src       source address
+ * @param[in] dst       destination address
+ * @param[in] soff      source address offset
+ * @param[in] doff      destination address offset
+ * @param[in] ssize     source transfer size
+ * @param[in] dsize     destination transfer size
+ * @param[in] nbytes    minor loop count
+ * @param[in] iter      major loop count
+ * @param[in] dlast     last destination address adjustment
+ * @param[in] slast     last source address adjustment
+ * @param[in] mode      LSW of TCD register 7
+ *
+ * @api
+ */
+#define edmaChannelSetupLinkedOnMinor(channel, linkch, src, dst, soff,      \
+                                      doff, ssize, dsize, nbytes, iter,     \
+                                      slast, dlast, mode) {                 \
+  edma_tcd_t *tcdp = edmaGetTCD(channel);                                   \
+  edmaTCDSetWord0(tcdp, src);                                               \
+  edmaTCDSetWord1(tcdp, ssize, dsize, soff);                                \
+  edmaTCDSetWord2(tcdp, nbytes);                                            \
+  edmaTCDSetWord3(tcdp, slast);                                             \
+  edmaTCDSetWord4(tcdp, dst);                                               \
+  edmaTCDSetWord5LinkedOnMinor(tcdp, linkch, iter, doff);                   \
+  edmaTCDSetWord6(tcdp, dlast);                                             \
+  edmaTCDSetWord7LinkedOnMinor(tcdp, linkch, iter, mode);                   \
 }
 
 /*===========================================================================*/

@@ -1363,48 +1363,6 @@ void edmaChannelRelease(edma_channel_t channel) {
   channels[channel] = NULL;
 }
 
-/**
- * @brief   EDMA channel setup.
- *
- * @param[in] channel   eDMA channel number
- * @param[in] src       source address
- * @param[in] dst       destination address
- * @param[in] soff      source address offset
- * @param[in] doff      destination address offset
- * @param[in] ssize     source transfer size
- * @param[in] dsize     destination transfer size
- * @param[in] nbytes    minor loop count
- * @param[in] iter      major loop count
- * @param[in] dlast_sga Last Destination Address Adjustment or
- *                      Scatter Gather Address
- * @param[in] slast     last source address adjustment
- * @param[in] mode      LSW of TCD register 7
- */
-void edmaChannelSetupx(edma_channel_t channel,
-                      void *src,
-                      void *dst,
-                      uint32_t soff,
-                      uint32_t doff,
-                      uint32_t ssize,
-                      uint32_t dsize,
-                      uint32_t nbytes,
-                      uint32_t iter,
-                      uint32_t slast,
-                      uint32_t dlast,
-                      uint32_t mode) {
-
-  edma_tcd_t *tcdp = edmaGetTCD(channel);
-
-  tcdp->word[0] = (uint32_t)src;
-  tcdp->word[1] = (ssize << 24) | (dsize << 16) | soff;
-  tcdp->word[2] = nbytes;
-  tcdp->word[3] = slast;
-  tcdp->word[0] = (uint32_t)dst;
-  tcdp->word[5] = (iter << 16) | doff;
-  tcdp->word[6] = dlast;
-  tcdp->word[7] = (iter << 16) | mode;
-}
-
 #endif /* SPC5_HAS_EDMA */
 
 /** @} */

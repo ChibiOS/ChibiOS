@@ -115,12 +115,13 @@ int main(void) {
   for (i = 0; i < sizeof(txbuf); i++)
     txbuf[i] = (uint8_t)i;
 
-  spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
-  spiExchange(&SPID2, 4,
-              txbuf, rxbuf);          /* Atomic transfer operations.      */
-  spiExchange(&SPID2, 512,
-              txbuf, rxbuf);          /* Atomic transfer operations.      */
-
+  spiStart(&SPID2, &hs_spicfg);
+  spiExchange(&SPID2, 4, txbuf, rxbuf);
+  spiExchange(&SPID2, 4, txbuf, rxbuf);
+  spiExchange(&SPID2, 4, txbuf, rxbuf);
+  spiExchange(&SPID2, 4, txbuf, rxbuf);
+  spiExchange(&SPID2, 512, txbuf, rxbuf);
+#if 0
   /*
    * Starting the transmitter and receiver threads.
    */
@@ -128,7 +129,7 @@ int main(void) {
                     NORMALPRIO + 1, spi_thread_1, NULL);
   chThdCreateStatic(spi_thread_2_wa, sizeof(spi_thread_2_wa),
                     NORMALPRIO + 1, spi_thread_2, NULL);
-
+#endif
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
