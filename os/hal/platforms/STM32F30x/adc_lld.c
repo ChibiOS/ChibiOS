@@ -342,7 +342,7 @@ void adc_lld_init(void) {
 
 #if STM32_ADC_USE_ADC3
   /* Driver initialization.*/
-  adcObjectInit(&ADCD1);
+  adcObjectInit(&ADCD3);
   ADCD3.adcc = ADC3_4;
   ADCD3.adcm = ADC3;
 #if STM32_ADC_DUAL_MODE
