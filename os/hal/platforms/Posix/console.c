@@ -23,6 +23,7 @@
 #include <stdio.h>
 
 #include "ch.h"
+#include "hal.h"
 #include "console.h"
 
 /*===========================================================================*/
