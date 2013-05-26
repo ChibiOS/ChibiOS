@@ -43,8 +43,7 @@ BaseChannel CD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-
-static size_t writes(void *ip, const uint8_t *bp, size_t n) {
+static size_t write(void *ip, const uint8_t *bp, size_t n) {
   size_t ret;
 
   (void)ip;
@@ -53,22 +52,26 @@ static size_t writes(void *ip, const uint8_t *bp, size_t n) {
   return ret;
 }
 
-static size_t reads(void *ip, uint8_t *bp, size_t n) {
+static size_t read(void *ip, uint8_t *bp, size_t n) {
 
   (void)ip;
   return fread(bp, 1, n, stdin);
 }
 
-static bool_t putwouldblock(void *ip) {
+static msg_t put(void *ip, uint8_t b) {
 
   (void)ip;
-  return FALSE;
+
+  fputc(b, stdout);
+  fflush(stdout);
+  return RDY_OK;
 }
 
-static bool_t getwouldblock(void *ip) {
+static msg_t get(void *ip) {
 
   (void)ip;
-  return TRUE;
+
+  return fgetc(stdin);
 }
 
 static msg_t putt(void *ip, uint8_t b, systime_t time) {
@@ -105,7 +108,8 @@ static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
 }
 
 static const struct BaseChannelVMT vmt = {
-  writes, reads, putwouldblock, getwouldblock, putt, gett, writet, readt
+  write, read, put, get,
+  putt, gett, writet, readt
 };
 
 /*===========================================================================*/
