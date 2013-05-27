@@ -101,8 +101,12 @@
 
 /**
  * @brief   Alternate "n" output pad.
+ * @note    Both the IBE and OBE bits are specified in this mask, the OBE
+ *          bit is not required for some PCRs but in that case it is
+ *          ignored.
  */
-#define PAL_MODE_OUTPUT_ALTERNATE(n)    (PAL_SPC5_IBE | PAL_SPC5_PA(n))
+#define PAL_MODE_OUTPUT_ALTERNATE(n)    (PAL_SPC5_IBE | PAL_SPC5_OBE |      \
+                                         PAL_SPC5_PA(n))
 /** @} */
 
 /*===========================================================================*/
