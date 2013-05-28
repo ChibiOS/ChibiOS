@@ -18,15 +18,15 @@
 #include "hal.h"
 
 /*
- * Maximum speed SPI configuration (21MHz, CPHA=0, CPOL=0, MSb first).
+ * Maximum speed SPI configuration.
  */
 static const SPIConfig hs_spicfg = {
   NULL,
   0,
   0,
   SPC5_MCR_PCSIS0,                                              /* MCR.     */
-  SPC5_CTAR_CSSCK_DIV64 | SPC5_CTAR_ASC_DIV64 | SPC5_CTAR_FMSZ(8) |
-  SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV128,                     /* CTAR0.   */
+  SPC5_CTAR_CSSCK_DIV2 | SPC5_CTAR_ASC_DIV2 | SPC5_CTAR_FMSZ(8) |
+  SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV2,                     /* CTAR0.   */
   SPC5_PUSHR_CONT | SPC5_PUSHR_PCS(0)                           /* PUSHR.   */
 };
 
@@ -37,8 +37,9 @@ static const SPIConfig ls_spicfg = {
   NULL,
   0,
   0,
-  0,                                                            /* MCR.     */
-  SPC5_CTAR_FMSZ(8) | SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV256, /* CTAR0.   */
+  SPC5_MCR_PCSIS0,                                              /* MCR.     */
+  SPC5_CTAR_CSSCK_DIV64 | SPC5_CTAR_ASC_DIV64 | SPC5_CTAR_FMSZ(8) |
+  SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV256,                     /* CTAR0.   */
   SPC5_PUSHR_CONT | SPC5_PUSHR_PCS(0)                           /* PUSHR.   */
 };
 
@@ -58,7 +59,7 @@ static msg_t spi_thread_1(void *p) {
   chRegSetThreadName("SPI thread 1");
   while (TRUE) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
-    palSetPad(PORT11, P11_LED1);        /* LED ON.                          */
+    palClearPad(PORT11, P11_LED1);      /* LED ON.                          */
     spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID2);                  /* Slave Select assertion.          */
     spiExchange(&SPID2, 512,
@@ -79,7 +80,7 @@ static msg_t spi_thread_2(void *p) {
   chRegSetThreadName("SPI thread 2");
   while (TRUE) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
-    palClearPad(PORT11, P11_LED1);      /* LED OFF.                         */
+    palSetPad(PORT11, P11_LED1);        /* LED OFF.                         */
     spiStart(&SPID2, &ls_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID2);                  /* Slave Select assertion.          */
     spiExchange(&SPID2, 512,
@@ -116,19 +117,33 @@ int main(void) {
   for (i = 0; i < sizeof(txbuf); i++)
     txbuf[i] = (uint8_t)i;
 
-  spiStart(&SPID2, &hs_spicfg);
+  /* Starting driver for test.*/
+  spiStart(&SPID2, &ls_spicfg);
   SIU.PCR[102].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SCK    */
   SIU.PCR[103].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SIN    */
   SIU.PCR[104].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SOUT   */
   SIU.PCR[105].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* PCS[0] */
 
-  spiExchange(&SPID2, 4, txbuf, rxbuf);
-  spiExchange(&SPID2, 4, txbuf, rxbuf);
-  spiExchange(&SPID2, 4, txbuf, rxbuf);
+  /* Testing sending and receiving at the same time.*/
   spiExchange(&SPID2, 4, txbuf, rxbuf);
   spiExchange(&SPID2, 32, txbuf, rxbuf);
   spiExchange(&SPID2, 512, txbuf, rxbuf);
-#if 0
+
+  /* Testing clock pulses without data buffering.*/
+  spiIgnore(&SPID2, 4);
+  spiIgnore(&SPID2, 32);
+
+  /* Testing sending data ignoring incoming data.*/
+  spiSend(&SPID2, 4, txbuf);
+  spiSend(&SPID2, 32, txbuf);
+
+  /* Testing receiving data while sending idle bits (high level).*/
+  spiReceive(&SPID2, 4, rxbuf);
+  spiReceive(&SPID2, 32, rxbuf);
+
+  /* Testing stop procedure.*/
+  spiStop(&SPID2);
+
   /*
    * Starting the transmitter and receiver threads.
    */
@@ -136,7 +151,7 @@ int main(void) {
                     NORMALPRIO + 1, spi_thread_1, NULL);
   chThdCreateStatic(spi_thread_2_wa, sizeof(spi_thread_2_wa),
                     NORMALPRIO + 1, spi_thread_2, NULL);
-#endif
+
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */

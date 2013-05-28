@@ -126,7 +126,6 @@ void spiStop(SPIDriver *spip) {
   chSysLock();
   chDbgAssert((spip->state == SPI_STOP) || (spip->state == SPI_READY),
               "spiStop(), #1", "invalid state");
-  spi_lld_unselect(spip);
   spi_lld_stop(spip);
   spip->state = SPI_STOP;
   chSysUnlock();

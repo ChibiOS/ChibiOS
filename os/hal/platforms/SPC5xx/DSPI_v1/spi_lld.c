@@ -102,7 +102,7 @@ SPIDriver SPID4;
  */
 static const edma_channel_config_t spi_dspi0_tx1_dma_config = {
   SPC5_DSPI0_TX1_DMA_DEV_ID, SPC5_SPI_DSPI0_DMA_PRIO, SPC5_SPI_DSPI0_DMA_IRQ_PRIO,
-  NULL, spi_serve_dma_error_irq, &SPID1
+  spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID1
 };
 
 /**
@@ -128,7 +128,7 @@ static const edma_channel_config_t spi_dspi0_rx_dma_config = {
  */
 static const edma_channel_config_t spi_dspi1_tx1_dma_config = {
   SPC5_DSPI1_TX1_DMA_DEV_ID, SPC5_SPI_DSPI1_DMA_PRIO, SPC5_SPI_DSPI1_DMA_IRQ_PRIO,
-  NULL, spi_serve_dma_error_irq, &SPID2
+  spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID2
 };
 
 /**
@@ -154,7 +154,7 @@ static const edma_channel_config_t spi_dspi1_rx_dma_config = {
  */
 static const edma_channel_config_t spi_dspi2_tx1_dma_config = {
   SPC5_DSPI2_TX1_DMA_DEV_ID, SPC5_SPI_DSPI2_DMA_PRIO, SPC5_SPI_DSPI2_DMA_IRQ_PRIO,
-  NULL, spi_serve_dma_error_irq, &SPID3
+  spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID3
 };
 
 /**
@@ -180,7 +180,7 @@ static const edma_channel_config_t spi_dspi2_rx_dma_config = {
  */
 static const edma_channel_config_t spi_dspi3_tx1_dma_config = {
   SPC5_DSPI3_TX1_DMA_DEV_ID, SPC5_SPI_DSPI3_DMA_PRIO, SPC5_SPI_DSPI3_DMA_IRQ_PRIO,
-  NULL, spi_serve_dma_error_irq, &SPID4
+  spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID4
 };
 
 /**
@@ -203,6 +203,33 @@ static const edma_channel_config_t spi_dspi3_rx_dma_config = {
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief   Starts reception using DMA ignoring the received data.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be exchanged
+ *
+ * @notapi
+ */
+static void spi_start_dma_rx_ignore(SPIDriver *spip, size_t n) {
+  static uint32_t datasink;
+
+  edmaChannelSetup(spip->rx_channel,            /* channel.                 */
+                   DSPI_POPR8_ADDRESS(spip),    /* src.                     */
+                   &datasink,                   /* dst.                     */
+                   0,                           /* soff, do not advance.    */
+                   0,                           /* doff, do not advance.    */
+                   0,                           /* ssize, 16 bits transfers.*/
+                   0,                           /* dsize, 16 bits transfers.*/
+                   1,                           /* nbytes, always one.      */
+                   n,                           /* iter.                    */
+                   0,                           /* slast.                   */
+                   0,                           /* dlast.                   */
+                   EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END);     /* mode.*/
+
+  edmaChannelStart(spip->rx_channel);
+}
 
 /**
  * @brief   Starts reception using DMA for frames up to 8 bits.
@@ -260,6 +287,42 @@ static void spi_start_dma_rx16(SPIDriver *spip,
                    EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END); /* mode.    */
 
   edmaChannelStart(spip->rx_channel);
+}
+
+/**
+ * @brief   Starts transmission using DMA for frames up to 8 bits.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be exchanged
+ *
+ * @notapi
+ */
+static void spi_start_dma_tx_ignore(SPIDriver *spip, size_t n) {
+
+  /* Preparing the TX intermediate buffer with the fixed part.*/
+  spip->tx_intbuf = spip->config->pushr | (uint32_t)0xFFFF;
+
+  /* The first frame is pushed by the CPU, then the DMA is activated to
+     send the following frames. This should reduce latency on the operation
+     start.*/
+  spip->dspi->PUSHR.R = spip->tx_last = spip->tx_intbuf;
+
+  /* Setting up TX1 DMA TCD parameters for 32 bits transfers.*/
+  edmaChannelSetup(spip->tx1_channel,           /* channel.                 */
+                   &spip->tx_intbuf,            /* src.                     */
+                   &spip->dspi->PUSHR.R,        /* dst.                     */
+                   0,                           /* soff, do not advance.    */
+                   0,                           /* doff, do not advance.    */
+                   2,                           /* ssize, 32 bits transfers.*/
+                   2,                           /* dsize, 32 bits transfers.*/
+                   4,                           /* nbytes, always four.     */
+                   n - 2,                       /* iter.                    */
+                   0,                           /* slast, no source adjust. */
+                   0,                           /* dlast, no dest.adjust.   */
+                   EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END); /* mode.    */
+
+  /* Starting TX1 DMA channel.*/
+  edmaChannelStart(spip->tx1_channel);
 }
 
 /**
@@ -383,6 +446,27 @@ static void spi_start_dma_tx16(SPIDriver *spip,
 }
 
 /**
+ * @brief   Starts idle bits using FIFO pre-filling.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be exchanged
+ *
+ * @notapi
+ */
+static void spi_tx_prefill_ignore(SPIDriver *spip, size_t n) {
+  uint32_t cmd = spip->config->pushr;
+
+  do {
+    if (--n == 0) {
+      spip->dspi->PUSHR.R = (SPC5_PUSHR_EOQ | cmd | (uint32_t)0xFFFF) &
+                            ~SPC5_PUSHR_CONT;
+      break;
+    }
+    spip->dspi->PUSHR.R = cmd | (uint32_t)0xFFFF;
+  } while (TRUE);
+}
+
+/**
  * @brief   Starts transmission using FIFO pre-filling for frames up to 8 bits.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
@@ -442,7 +526,8 @@ static void spi_tx_prefill16(SPIDriver *spip,
 static void spi_serve_rx_irq(edma_channel_t channel, void *p) {
   SPIDriver *spip = (SPIDriver *)p;
 
-  (void)channel;
+  /* Clearing RX channel state.*/
+  edmaChannelStop(channel);
 
   /* Stops the DSPI and clears the queues.*/
   spip->dspi->MCR.R     = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT |
@@ -455,7 +540,7 @@ static void spi_serve_rx_irq(edma_channel_t channel, void *p) {
 }
 
 /**
- * @brief   Shared TX2 DMA events service routine.
+ * @brief   Shared TX1/TX2 DMA events service routine.
  *
  * @param[in] channel   the channel number
  * @param[in] p         parameter for the registered function
@@ -466,6 +551,10 @@ static void spi_serve_tx_irq(edma_channel_t channel, void *p) {
   SPIDriver *spip = (SPIDriver *)p;
 
   (void)channel;
+
+  /* Clearing TX channels state.*/
+  edmaChannelStop(spip->tx1_channel);
+  edmaChannelStop(spip->tx2_channel);
 
   /* If the TX FIFO is full then the push of the last frame is delagated to
      an interrupt handler else it is performed immediately. Both conditions
@@ -836,9 +925,22 @@ void spi_lld_unselect(SPIDriver *spip) {
  */
 void spi_lld_ignore(SPIDriver *spip, size_t n) {
 
-  (void)spip;
-  (void)n;
+  /* Starting transfer.*/
+  spip->dspi->SR.R  = spip->dspi->SR.R;
+  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
 
+  /* Setting up the RX DMA channel.*/
+  spi_start_dma_rx_ignore(spip, n);
+
+  if (n <= SPC5_DSPI_FIFO_DEPTH) {
+    /* If the total transfer size is smaller than the TX FIFO size then
+       the whole transmitted data is pushed here and the TX DMA is not
+       activated.*/
+    spi_tx_prefill_ignore(spip, n);
+  }
+  else {
+    spi_start_dma_tx_ignore(spip, n);
+  }
 }
 
 /**
@@ -909,10 +1011,36 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
  */
 void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
-  (void)spip;
-  (void)n;
-  (void)txbuf;
+  /* Starting transfer.*/
+  spip->dspi->SR.R  = spip->dspi->SR.R;
+  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
 
+  /* Setting up the RX DMA channel.*/
+  spi_start_dma_rx_ignore(spip, n);
+
+  /* DMAs require a different setup depending on the frame size.*/
+  if (spip->dspi->CTAR[0].B.FMSZ < 8) {
+    if (n <= SPC5_DSPI_FIFO_DEPTH) {
+      /* If the total transfer size is smaller than the TX FIFO size then
+         the whole transmitted data is pushed here and the TX DMA is not
+         activated.*/
+      spi_tx_prefill8(spip, n, txbuf);
+    }
+    else {
+      spi_start_dma_tx8(spip, n, txbuf);
+    }
+  }
+  else {
+    if (n <= SPC5_DSPI_FIFO_DEPTH) {
+      /* If the total transfer size is smaller than the TX FIFO size then
+         the whole transmitted data is pushed here and the TX DMA is not
+         activated.*/
+      spi_tx_prefill16(spip, n, txbuf);
+    }
+    else {
+      spi_start_dma_tx16(spip, n, txbuf);
+    }
+  }
 }
 
 /**
@@ -930,10 +1058,29 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
-  (void)spip;
-  (void)n;
-  (void)rxbuf;
+  /* Starting transfer.*/
+  spip->dspi->SR.R  = spip->dspi->SR.R;
+  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
 
+  /* DMAs require a different setup depending on the frame size.*/
+  if (spip->dspi->CTAR[0].B.FMSZ < 8) {
+    /* Setting up the RX DMA channel.*/
+    spi_start_dma_rx8(spip, n, rxbuf);
+  }
+  else {
+    /* Setting up the RX DMA channel.*/
+    spi_start_dma_rx16(spip, n, rxbuf);
+  }
+
+  if (n <= SPC5_DSPI_FIFO_DEPTH) {
+    /* If the total transfer size is smaller than the TX FIFO size then
+       the whole transmitted data is pushed here and the TX DMA is not
+       activated.*/
+    spi_tx_prefill_ignore(spip, n);
+  }
+  else {
+    spi_start_dma_tx_ignore(spip, n);
+  }
 }
 
 /**
@@ -950,10 +1097,12 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
  */
 uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
-  (void)spip;
-  (void)frame;
-
-  return 0;
+  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
+  spip->dspi->PUSHR.R = (SPC5_PUSHR_EOQ | spip->config->pushr |
+                         (uint32_t)frame) & ~SPC5_PUSHR_CONT;
+  while (!spip->dspi->SR.B.RFDF)
+    ;
+  return (uint16_t)spip->dspi->POPR.R;
 }
 
 #endif /* HAL_USE_SPI */

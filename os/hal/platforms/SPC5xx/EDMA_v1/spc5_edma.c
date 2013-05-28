@@ -1345,7 +1345,7 @@ edma_channel_t edmaChannelAllocate(const edma_channel_config_t *ccfg) {
  */
 void edmaChannelRelease(edma_channel_t channel) {
 
-  chDbgCheck((channel < 0) && (channel >= SPC5_EDMA_NCHANNELS),
+  chDbgCheck((channel >= 0) && (channel < SPC5_EDMA_NCHANNELS),
              "edmaChannelAllocate");
   chDbgAssert(channels[channel] != NULL,
               "edmaChannelRelease(), #1",
