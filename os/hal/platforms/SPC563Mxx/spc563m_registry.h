@@ -47,8 +47,12 @@
 #define SPC5_DSPI2_RX_DMA_DEV_ID            15
 #define SPC5_DSPI1_EOQF_HANDLER             vector132
 #define SPC5_DSPI1_EOQF_NUMBER              132
+#define SPC5_DSPI1_TFFF_HANDLER             vector133
+#define SPC5_DSPI1_TFFF_NUMBER              133
 #define SPC5_DSPI2_EOQF_HANDLER             vector137
 #define SPC5_DSPI2_EOQF_NUMBER              137
+#define SPC5_DSPI2_TFFF_HANDLER             vector138
+#define SPC5_DSPI2_TFFF_NUMBER              138
 #define SPC5_DSPI1_ENABLE_CLOCK()
 #define SPC5_DSPI1_DISABLE_CLOCK()
 #define SPC5_DSPI2_ENABLE_CLOCK()

@@ -25,7 +25,8 @@ static const SPIConfig hs_spicfg = {
   0,
   0,
   SPC5_MCR_PCSIS0,                                              /* MCR.     */
-  SPC5_CTAR_FMSZ(8) | SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV128, /* CTAR0.   */
+  SPC5_CTAR_CSSCK_DIV64 | SPC5_CTAR_ASC_DIV64 | SPC5_CTAR_FMSZ(8) |
+  SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV128,                     /* CTAR0.   */
   SPC5_PUSHR_CONT | SPC5_PUSHR_PCS(0)                           /* PUSHR.   */
 };
 
@@ -125,6 +126,7 @@ int main(void) {
   spiExchange(&SPID2, 4, txbuf, rxbuf);
   spiExchange(&SPID2, 4, txbuf, rxbuf);
   spiExchange(&SPID2, 4, txbuf, rxbuf);
+  spiExchange(&SPID2, 32, txbuf, rxbuf);
   spiExchange(&SPID2, 512, txbuf, rxbuf);
 #if 0
   /*

@@ -301,6 +301,34 @@
 #if !defined(SPC5_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
 #define SPC5_SPI_DMA_ERROR_HOOK(spip)       chSysHalt()
 #endif
+
+/**
+ * @brief   DSPI0 DMA priority.
+ */
+#if !defined(SPC5_SPI_DSPI0_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI0_IRQ_PRIO             10
+#endif
+
+/**
+ * @brief   DSPI1 DMA priority.
+ */
+#if !defined(SPC5_SPI_DSPI1_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI1_IRQ_PRIO             10
+#endif
+
+/**
+ * @brief   DSPI2 DMA priority.
+ */
+#if !defined(SPC5_SPI_DSPI2_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI2_IRQ_PRIO             10
+#endif
+
+/**
+ * @brief   DSPI3 DMA priority.
+ */
+#if !defined(SPC5_SPI_DSPI3_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI3_IRQ_PRIO             10
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -432,6 +460,10 @@ struct SPIDriver {
    * @brief   EDMA channel used for receive.
    */
   edma_channel_t            rx_channel;
+  /**
+   * @brief   Last frame of a transmission sequence.
+   */
+  uint32_t                  tx_last;
   /**
    * @brief   TX intermediate buffer.
    * @note    This field is written by the TX1 DMA channel and read by the

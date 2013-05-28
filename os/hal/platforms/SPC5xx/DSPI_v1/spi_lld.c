@@ -29,6 +29,7 @@
 
 /* Some forward declarations.*/
 static void spi_serve_rx_irq(edma_channel_t channel, void *p);
+static void spi_serve_tx_irq(edma_channel_t channel, void *p);
 static void spi_serve_dma_error_irq(edma_channel_t channel,
                                     void *p,
                                     uint32_t esr);
@@ -109,7 +110,7 @@ static const edma_channel_config_t spi_dspi0_tx1_dma_config = {
  */
 static const edma_channel_config_t spi_dspi0_tx2_dma_config = {
   SPC5_DSPI0_TX2_DMA_DEV_ID, SPC5_SPI_DSPI0_DMA_PRIO, SPC5_SPI_DSPI0_DMA_IRQ_PRIO,
-  NULL, spi_serve_dma_error_irq, &SPID1
+  spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID1
 };
 
 /**
@@ -135,7 +136,7 @@ static const edma_channel_config_t spi_dspi1_tx1_dma_config = {
  */
 static const edma_channel_config_t spi_dspi1_tx2_dma_config = {
   SPC5_DSPI1_TX2_DMA_DEV_ID, SPC5_SPI_DSPI1_DMA_PRIO, SPC5_SPI_DSPI1_DMA_IRQ_PRIO,
-  NULL, spi_serve_dma_error_irq, &SPID2
+  spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID2
 };
 
 /**
@@ -161,7 +162,7 @@ static const edma_channel_config_t spi_dspi2_tx1_dma_config = {
  */
 static const edma_channel_config_t spi_dspi2_tx2_dma_config = {
   SPC5_DSPI2_TX2_DMA_DEV_ID, SPC5_SPI_DSPI2_DMA_PRIO, SPC5_SPI_DSPI2_DMA_IRQ_PRIO,
-  NULL, spi_serve_dma_error_irq, &SPID3
+  spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID3
 };
 
 /**
@@ -187,7 +188,7 @@ static const edma_channel_config_t spi_dspi3_tx1_dma_config = {
  */
 static const edma_channel_config_t spi_dspi3_tx2_dma_config = {
   SPC5_DSPI3_TX2_DMA_DEV_ID, SPC5_SPI_DSPI3_DMA_PRIO, SPC5_SPI_DSPI3_DMA_IRQ_PRIO,
-  NULL, spi_serve_dma_error_irq, &SPID4
+  spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID4
 };
 
 /**
@@ -256,7 +257,7 @@ static void spi_start_dma_rx16(SPIDriver *spip,
                    n,                           /* iter.                    */
                    0,                           /* slast, no source adjust. */
                    0,                           /* dlast.                   */
-                   EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END);     /* mode.*/
+                   EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END); /* mode.    */
 
   edmaChannelStart(spip->rx_channel);
 }
@@ -275,25 +276,25 @@ static void spi_start_dma_tx8(SPIDriver *spip,
                               const uint8_t *txbuf) {
 
   /* Preparing the TX intermediate buffer with the fixed part.*/
-  spip->tx_intbuf = spip->config->pushr & ~DSPI_PUSHR_EXCLUDED_BITS;
+  spip->tx_intbuf = spip->config->pushr;
 
   /* The first frame is pushed by the CPU, then the DMA is activated to
      send the following frames. This should reduce latency on the operation
      start.*/
-  spip->dspi->PUSHR.R = spip->tx_intbuf | (uint32_t)*txbuf++;
+  spip->dspi->PUSHR.R = spip->tx_intbuf | (uint32_t)*txbuf;
 
   /* Setting up TX1 DMA TCD parameters for 8 bits transfers.*/
   edmaChannelSetupLinked(
                    spip->tx1_channel,           /* channel.                 */
                    spip->tx2_channel,           /* linkch.                  */
-                   txbuf,                       /* src.                     */
+                   txbuf + 1,                   /* src.                     */
                    ((const uint8_t *)&spip->tx_intbuf) + 3,     /* dst.     */
                    1,                           /* soff, advance by 1.      */
                    0,                           /* doff, do not advance.    */
                    0,                           /* ssize, 8 bits transfers. */
                    0,                           /* dsize, 8 bits transfers. */
                    1,                           /* nbytes, always one.      */
-                   n - 1,                       /* iter.                    */
+                   n - 2,                       /* iter.                    */
                    0,                           /* slast, no source adjust. */
                    0,                           /* dlast, no dest.adjust.   */
                    EDMA_TCD_MODE_DREQ);         /* mode.                    */
@@ -307,13 +308,18 @@ static void spi_start_dma_tx8(SPIDriver *spip,
                    2,                           /* ssize, 32 bits transfers.*/
                    2,                           /* dsize, 32 bits transfers.*/
                    4,                           /* nbytes, always four.     */
-                   n - 1,                       /* iter.                    */
+                   n - 2,                       /* iter.                    */
                    0,                           /* slast, no source adjust. */
                    0,                           /* dlast, no dest.adjust.   */
-                   EDMA_TCD_MODE_DREQ);         /* mode.                    */
+                   EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END); /* mode.    */
 
-  edmaChannelStart(spip->tx1_channel);
+  /* The last frame will be pushed by the TX DMA operation completion
+     callback.*/
+  spip->tx_last = txbuf[n - 1];
+
+  /* Starting TX DMA channels.*/
   edmaChannelStart(spip->tx2_channel);
+  edmaChannelStart(spip->tx1_channel);
 }
 
 /**
@@ -330,28 +336,28 @@ static void spi_start_dma_tx16(SPIDriver *spip,
                                const uint16_t *txbuf) {
 
   /* Preparing the TX intermediate buffer with the fixed part.*/
-  spip->tx_intbuf = spip->config->pushr & ~DSPI_PUSHR_EXCLUDED_BITS;
+  spip->tx_intbuf = spip->config->pushr;
 
   /* The first frame is pushed by the CPU, then the DMA is activated to
      send the following frames. This should reduce latency on the operation
      start.*/
-  spip->dspi->PUSHR.R = spip->tx_intbuf | (uint32_t)*txbuf++;
+  spip->dspi->PUSHR.R = spip->tx_intbuf | (uint32_t)*txbuf;
 
-  /* Setting up TX1 DMA TCD parameters for 16 bits transfers.*/
-  edmaChannelSetup(spip->tx1_channel,           /* channel.                 */
-                   txbuf,                       /* src.                     */
+  /* Setting up TX1 DMA TCD parameters for 8 bits transfers.*/
+  edmaChannelSetupLinked(
+                   spip->tx1_channel,           /* channel.                 */
+                   spip->tx2_channel,           /* linkch.                  */
+                   txbuf + 1,                   /* src.                     */
                    ((const uint8_t *)&spip->tx_intbuf) + 2,     /* dst.     */
                    1,                           /* soff, advance by 1.      */
                    0,                           /* doff, do not advance.    */
                    1,                           /* ssize, 16 bits transfers.*/
                    1,                           /* dsize, 16 bits transfers.*/
-                   2,                           /* nbytes, always two.      */
-                   n - 1,                       /* iter.                    */
+                   1,                           /* nbytes, always one.      */
+                   n - 2,                       /* iter.                    */
                    0,                           /* slast, no source adjust. */
                    0,                           /* dlast, no dest.adjust.   */
-                   EDMA_TCD_MODE_DREQ |
-                   EDMA_TCD_MODE_MELINK |
-                   EDMA_TCD_MODE_MLINKCH(spip->tx2_channel));   /* mode.    */
+                   EDMA_TCD_MODE_DREQ);         /* mode.                    */
 
   /* Setting up TX2 DMA TCD parameters for 32 bits transfers.*/
   edmaChannelSetup(spip->tx2_channel,           /* channel.                 */
@@ -362,13 +368,18 @@ static void spi_start_dma_tx16(SPIDriver *spip,
                    2,                           /* ssize, 32 bits transfers.*/
                    2,                           /* dsize, 32 bits transfers.*/
                    4,                           /* nbytes, always four.     */
-                   n - 1,                       /* iter.                    */
+                   n - 2,                       /* iter.                    */
                    0,                           /* slast, no source adjust. */
                    0,                           /* dlast, no dest.adjust.   */
-                   EDMA_TCD_MODE_DREQ);         /* mode.                    */
+                   EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END); /* mode.    */
 
-  edmaChannelStart(spip->tx1_channel);
+  /* The last frame will be pushed by the TX DMA operation completion
+     callback.*/
+  spip->tx_last = txbuf[n - 1];
+
+  /* Starting TX DMA channels.*/
   edmaChannelStart(spip->tx2_channel);
+  edmaChannelStart(spip->tx1_channel);
 }
 
 /**
@@ -383,11 +394,12 @@ static void spi_start_dma_tx16(SPIDriver *spip,
 static void spi_tx_prefill8(SPIDriver *spip,
                             size_t n,
                             const uint8_t *txbuf) {
-  uint32_t cmd = spip->config->pushr & ~DSPI_PUSHR_EXCLUDED_BITS;
+  uint32_t cmd = spip->config->pushr;
 
   do {
     if (--n == 0) {
-      spip->dspi->PUSHR.R = SPC5_PUSHR_EOQ | cmd | (uint32_t)*txbuf;
+      spip->dspi->PUSHR.R = (SPC5_PUSHR_EOQ | cmd | (uint32_t)*txbuf) &
+                            ~SPC5_PUSHR_CONT;
       break;
     }
     spip->dspi->PUSHR.R = cmd | (uint32_t)*txbuf;
@@ -407,7 +419,7 @@ static void spi_tx_prefill8(SPIDriver *spip,
 static void spi_tx_prefill16(SPIDriver *spip,
                              size_t n,
                              const uint16_t *txbuf) {
-  uint32_t cmd = spip->config->pushr & ~DSPI_PUSHR_EXCLUDED_BITS;
+  uint32_t cmd = spip->config->pushr;
 
   do {
     if (--n == 0) {
@@ -419,20 +431,63 @@ static void spi_tx_prefill16(SPIDriver *spip,
   } while (TRUE);
 }
 
+/**
+ * @brief   Shared RX DMA events service routine.
+ *
+ * @param[in] channel   the channel number
+ * @param[in] p         parameter for the registered function
+ *
+ * @notapi
+ */
 static void spi_serve_rx_irq(edma_channel_t channel, void *p) {
   SPIDriver *spip = (SPIDriver *)p;
 
   (void)channel;
 
   /* Stops the DSPI and clears the queues.*/
-  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT    |
-                      SPC5_MCR_CLR_TXF | SPC5_MCR_CLR_RXF;
+  spip->dspi->MCR.R     = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT |
+                          SPC5_MCR_CLR_TXF | SPC5_MCR_CLR_RXF |
+                          spip->config->mcr;
 
   /* Portable SPI ISR code defined in the high level driver, note, it is
      a macro.*/
   _spi_isr_code(spip);
 }
 
+/**
+ * @brief   Shared TX2 DMA events service routine.
+ *
+ * @param[in] channel   the channel number
+ * @param[in] p         parameter for the registered function
+ *
+ * @notapi
+ */
+static void spi_serve_tx_irq(edma_channel_t channel, void *p) {
+  SPIDriver *spip = (SPIDriver *)p;
+
+  (void)channel;
+
+  /* If the TX FIFO is full then the push of the last frame is delagated to
+     an interrupt handler else it is performed immediately. Both conditions
+     can be true depending on the SPI speed and ISR latency.*/
+  if (spip->dspi->SR.B.TFFF) {
+    spip->dspi->PUSHR.R = (spip->config->pushr | spip->tx_last | SPC5_PUSHR_EOQ) &
+                          ~SPC5_PUSHR_CONT;
+  }
+  else {
+    spip->dspi->RSER.B.TFFFDIRS = 0;
+  }
+}
+
+/**
+ * @brief   Shared ISR for DMA error events.
+ *
+ * @param[in] channel   the channel number
+ * @param[in] p         parameter for the registered function
+ * @param[in] esr       content of the ESR register
+ *
+ * @notapi
+ */
 static void spi_serve_dma_error_irq(edma_channel_t channel,
                                     void *p,
                                     uint32_t esr) {
@@ -442,7 +497,7 @@ static void spi_serve_dma_error_irq(edma_channel_t channel,
   (void)esr;
 
   /* Stops the DSPI and clears the queues.*/
-  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT    |
+  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT |
                       SPC5_MCR_CLR_TXF | SPC5_MCR_CLR_RXF;
 
   edmaChannelStop(spip->tx1_channel);
@@ -455,6 +510,122 @@ static void spi_serve_dma_error_irq(edma_channel_t channel,
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+#if SPC5_SPI_USE_DSPI0 || defined(__DOXYGEN__)
+#if !defined(SPC5_DSPI0_TFFF_HANDLER)
+#error "SPC5_DSPI0_TFFF_HANDLER not defined"
+#endif
+/**
+ * @brief   DSPI0 TFFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_DSPI0_TFFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromIsr();
+
+  /* Interrupt served and back to DMA mode.*/
+  SPC5_DSPI0.RSER.B.TFFFDIRS = 1;
+  SPC5_DSPI0.SR.B.TFFF = 1;
+
+  /* Pushing last frame.*/
+  SPC5_DSPI0.PUSHR.R = (SPID1.config->pushr | SPID1.tx_last | SPC5_PUSHR_EOQ) &
+                        ~SPC5_PUSHR_CONT;
+
+  chSysUnlockFromIsr();
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* SPC5_SPI_USE_DSPI0 */
+
+#if SPC5_SPI_USE_DSPI1 || defined(__DOXYGEN__)
+#if !defined(SPC5_DSPI1_TFFF_HANDLER)
+#error "SPC5_DSPI1_TFFF_HANDLER not defined"
+#endif
+/**
+ * @brief   DSPI1 TFFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_DSPI1_TFFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromIsr();
+
+  /* Interrupt served and back to DMA mode.*/
+  SPC5_DSPI1.RSER.B.TFFFDIRS = 1;
+  SPC5_DSPI1.SR.B.TFFF = 1;
+
+  /* Pushing last frame.*/
+  SPC5_DSPI1.PUSHR.R = (SPID2.config->pushr | SPID2.tx_last | SPC5_PUSHR_EOQ) &
+                        ~SPC5_PUSHR_CONT;
+
+  chSysUnlockFromIsr();
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* SPC5_SPI_USE_DSPI1 */
+
+#if SPC5_SPI_USE_DSPI2 || defined(__DOXYGEN__)
+#if !defined(SPC5_DSPI2_TFFF_HANDLER)
+#error "SPC5_DSPI2_TFFF_HANDLER not defined"
+#endif
+/**
+ * @brief   DSPI2 TFFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_DSPI2_TFFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromIsr();
+
+  /* Interrupt served and back to DMA mode.*/
+  SPC5_DSPI2.RSER.B.TFFFDIRS = 1;
+  SPC5_DSPI2.SR.B.TFFF = 1;
+
+  /* Pushing last frame.*/
+  SPC5_DSPI2.PUSHR.R = (SPID3.config->pushr | SPID3.tx_last | SPC5_PUSHR_EOQ) &
+                        ~SPC5_PUSHR_CONT;
+
+  chSysUnlockFromIsr();
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* SPC5_SPI_USE_DSPI2 */
+
+#if SPC5_SPI_USE_DSPI3 || defined(__DOXYGEN__)
+#if !defined(SPC5_DSPI3_TFFF_HANDLER)
+#error "SPC5_DSPI3_TFFF_HANDLER not defined"
+#endif
+/**
+ * @brief   DSPI3 TFFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_DSPI3_TFFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromIsr();
+
+  /* Interrupt served and back to DMA mode.*/
+  SPC5_DSPI3.RSER.B.TFFFDIRS = 1;
+  SPC5_DSPI3.SR.B.TFFF = 1;
+
+  /* Pushing last frame.*/
+  SPC5_DSPI3.PUSHR.R = (SPID4.config->pushr | SPID4.tx_last | SPC5_PUSHR_EOQ) &
+                        ~SPC5_PUSHR_CONT;
+
+  chSysUnlockFromIsr();
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* SPC5_SPI_USE_DSPI3 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -474,6 +645,7 @@ void spi_lld_init(void) {
   SPID1.tx1_channel = EDMA_ERROR;
   SPID1.tx2_channel = EDMA_ERROR;
   SPID1.rx_channel  = EDMA_ERROR;
+  INTC.PSR[SPC5_DSPI0_TFFF_NUMBER].R = SPC5_SPI_DSPI0_IRQ_PRIO;
 #endif /* SPC5_SPI_USE_DSPI0 */
 
 #if SPC5_SPI_USE_DSPI1
@@ -483,6 +655,7 @@ void spi_lld_init(void) {
   SPID2.tx1_channel = EDMA_ERROR;
   SPID2.tx2_channel = EDMA_ERROR;
   SPID2.rx_channel  = EDMA_ERROR;
+  INTC.PSR[SPC5_DSPI1_TFFF_NUMBER].R = SPC5_SPI_DSPI1_IRQ_PRIO;
 #endif /* SPC5_SPI_USE_DSPI1 */
 
 #if SPC5_SPI_USE_DSPI2
@@ -492,6 +665,7 @@ void spi_lld_init(void) {
   SPID3.tx1_channel = EDMA_ERROR;
   SPID3.tx2_channel = EDMA_ERROR;
   SPID3.rx_channel  = EDMA_ERROR;
+  INTC.PSR[SPC5_DSPI2_TFFF_NUMBER].R = SPC5_SPI_DSPI2_IRQ_PRIO;
 #endif /* SPC5_SPI_USE_DSPI2 */
 
 #if SPC5_SPI_USE_DSPI03
@@ -501,6 +675,7 @@ void spi_lld_init(void) {
   SPID4.tx1_channel = EDMA_ERROR;
   SPID4.tx2_channel = EDMA_ERROR;
   SPID4.rx_channel  = EDMA_ERROR;
+  INTC.PSR[SPC5_DSPI3_TFFF_NUMBER].R = SPC5_SPI_DSPI3_IRQ_PRIO;
 #endif /* SPC5_SPI_USE_DSPI3 */
 }
 
@@ -512,6 +687,11 @@ void spi_lld_init(void) {
  * @notapi
  */
 void spi_lld_start(SPIDriver *spip) {
+
+  chDbgAssert((spip->config->pushr & DSPI_PUSHR_EXCLUDED_BITS) == 0,
+              "spi_lld_start(), #1", "invalid PUSHR bits specified");
+  chDbgAssert((spip->config->mcr & DSPI_MCR_EXCLUDED_BITS) == 0,
+              "spi_lld_start(), #2", "invalid PUSHR bits specified");
 
   if (spip->state == SPI_STOP) {
     /* Enables the peripheral.*/
@@ -553,12 +733,14 @@ void spi_lld_start(SPIDriver *spip) {
 #endif /* SPC5_SPI_USE_DSPI3 */
 
     chDbgAssert((spip->tx1_channel != EDMA_ERROR) &&
+                (spip->tx2_channel != EDMA_ERROR) &&
                 (spip->rx_channel != EDMA_ERROR),
-                "spi_lld_start(), #1", "channel cannot be allocated");
+                "spi_lld_start(), #3", "channel cannot be allocated");
   }
 
   /* Configures the peripheral.*/
-  spip->dspi->MCR.R     = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT;
+  spip->dspi->MCR.R     = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT |
+                          spip->config->mcr;
   spip->dspi->CTAR[0].R = spip->config->ctar0;
   spip->dspi->RSER.R    = SPC5_RSER_TFFF_RE | SPC5_RSER_TFFF_DIRS |
                           SPC5_RSER_RFDF_RE | SPC5_RSER_RFDF_DIRS;
@@ -678,9 +860,8 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
 
   /* Starting transfer.*/
-  spip->dspi->SR.R       = spip->dspi->SR.R;
-  spip->dspi->MCR.R     = DSPI_MCR_ENFORCED_BITS |
-                          (spip->config->mcr & ~DSPI_MCR_EXCLUDED_BITS);
+  spip->dspi->SR.R  = spip->dspi->SR.R;
+  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
 
   /* DMAs require a different setup depending on the frame size.*/
   if (spip->dspi->CTAR[0].B.FMSZ < 8) {
@@ -692,11 +873,6 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
          the whole transmitted data is pushed here and the TX DMA is not
          activated.*/
       spi_tx_prefill8(spip, n, txbuf);
-/*      uint8_t *p = rxbuf;
-      *p++ = spip->dspi->POPR.R;
-      *p++ = spip->dspi->POPR.R;
-      *p++ = spip->dspi->POPR.R;
-      *p++ = spip->dspi->POPR.R;*/
     }
     else {
       spi_start_dma_tx8(spip, n, txbuf);
