@@ -92,4 +92,6 @@
 #define SPC5_SPI_DSPI2_DMA_PRIO             10
 #define SPC5_SPI_DSPI1_DMA_IRQ_PRIO         10
 #define SPC5_SPI_DSPI2_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI1_IRQ_PRIO             10
+#define SPC5_SPI_DSPI2_IRQ_PRIO             10
 #define SPC5_SPI_DMA_ERROR_HOOK(spip)       chSysHalt()
