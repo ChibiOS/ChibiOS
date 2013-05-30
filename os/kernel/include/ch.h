@@ -83,7 +83,7 @@
  * @brief   Generic 'true' boolean constant.
  */
 #if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                    !0
+#define TRUE                    (!FALSE)
 #endif
 
 /**
