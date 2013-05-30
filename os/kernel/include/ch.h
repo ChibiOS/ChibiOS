@@ -93,7 +93,7 @@
  *          returning a @p bool_t as a status indicator.
  */
 #if !defined(CH_SUCCESS) || defined(__DOXYGEN__)
-#define CH_SUCCESS  FALSE
+#define CH_SUCCESS              FALSE
 #endif
 
 /**
@@ -103,7 +103,7 @@
  *          returning a @p bool_t as a status indicator.
  */
 #if !defined(CH_FAILED) || defined(__DOXYGEN__)
-#define CH_FAILED   TRUE
+#define CH_FAILED               TRUE
 #endif
 /** @} */
 
