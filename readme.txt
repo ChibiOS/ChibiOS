@@ -92,6 +92,7 @@
 - FIX: Fixed lwipthread.h should explicitly include lwip/opts.h (bug #414).
 - FIX: Fixed STM32_PLLI2SCLKOUT miscalculated (bug #413)(backported to 2.4.4).
 - FIX: Fixed wrong RTC vector name in STM32F1/F4/L1 EXT drivers (bug #412).
+- FIX: Fixed fill character error in chprintf (bug #411).
 - FIX: Fixed wrong STM32 USBv1 driver behavior (bug #410).
 - FIX: Fixed STM32 wrong peripherals reset procedure (bug #409)(backported
   to 2.4.4).

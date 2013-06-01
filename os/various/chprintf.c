@@ -137,7 +137,7 @@ void chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
       left_align = TRUE;
     }
     filler = ' ';
-    if (*fmt == '.') {
+    if ((*fmt == '.') || (*fmt == '0')) {
       fmt++;
       filler = '0';
     }
