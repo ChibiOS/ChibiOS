@@ -1189,14 +1189,7 @@
 /**
  * @brief   PLLI2S output clock frequency.
  */
-#define STM32_PLLI2SCLKOUT          (STM32_PLLI2SVCO / STM32_PLLI2SR)
-
-/*
- * PLLI2S output frequency range check.
- */
-#if STM32_PLLI2SCLKOUT > STM32_SPII2S_MAX
-#error "STM32_PLLI2SCLKOUT outside acceptable range (STM32_SPII2S_MAX)"
-#endif
+#define STM32_PLLI2SCLKOUT          (STM32_PLLI2SVCO / STM32_PLLI2SR_VALUE)
 
 /**
  * @brief   MCO1 divider clock.

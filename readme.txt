@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.4 ***
+- FIX: Fixed STM32_PLLI2SCLKOUT miscalculated (bug #413).
 - FIX: Fixed STM32 wrong peripherals reset procedure (bug #409).
 - FIX: Fixed wrong Keil project in ARMCM3-STM32F107 demo (bug #408).
 - FIX: Fixed wrong macro in PWM driver (bug #407).
