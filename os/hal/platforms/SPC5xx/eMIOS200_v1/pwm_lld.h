@@ -62,7 +62,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(SPC5_PWM_USE_EMIOS_CH9) || defined(__DOXYGEN__)
-#define SPC5_PWM_USE_EMIOS_CH9             FALSE
+#define SPC5_PWM_USE_EMIOS_CH9              FALSE
 #endif
 
 /**

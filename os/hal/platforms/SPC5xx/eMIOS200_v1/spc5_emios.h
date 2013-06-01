@@ -67,7 +67,8 @@
 #define EMIOS_CCR_MODE_MC_CME               17
 #define EMIOS_CCR_MODE_MC_UP_DOWN           18
 #define EMIOS_CCR_MODE_OPWMT                38
-#define EMIOS_CCR_MODE_MCB                  84
+#define EMIOS_CCR_MODE_MCB_UP               80
+#define EMIOS_CCR_MODE_MCB_UP_DOWN          84
 #define EMIOS_CCR_MODE_OPWFMB               88
 #define EMIOS_CCR_MODE_OPWMCB_TE            92
 #define EMIOS_CCR_MODE_OPWMCB_LE            93

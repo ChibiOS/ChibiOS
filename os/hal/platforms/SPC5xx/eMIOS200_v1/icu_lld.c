@@ -174,32 +174,32 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
 
   uint32_t sr = icup->emiosp->CH[icup->ch_number].CSR.R;
 
-  if(sr && EMIOSS_OVFL && icup->config->overflow_cb != NULL){
+  if (sr && EMIOSS_OVFL && icup->config->overflow_cb != NULL) {
     icup->emiosp->CH[icup->ch_number].CSR.R |= EMIOSS_OVFLC;
     _icu_isr_invoke_overflow_cb(icup);
   }
-  if (sr && EMIOSS_FLAG){
+  if (sr && EMIOSS_FLAG) {
     icup->emiosp->CH[icup->ch_number].CSR.R |= EMIOSS_FLAGC;
     if (icup->config->mode == ICU_INPUT_ACTIVE_HIGH) {
-      if (icup->emiosp->CH[icup->ch_number].CSR.B.UCIN == 1U  &&        \
+      if (icup->emiosp->CH[icup->ch_number].CSR.B.UCIN == 1U  &&            \
           icup->config->period_cb != NULL) {
         A2_3 = icup->emiosp->CH[icup->ch_number].CADR.R;
         period = A2_3 - A2_1;
         _icu_isr_invoke_period_cb(icup);
         A2_1 = A2_3;
-      } else if (icup->emiosp->CH[icup->ch_number].CSR.B.UCIN == 0 &&   \
+      } else if (icup->emiosp->CH[icup->ch_number].CSR.B.UCIN == 0 &&       \
           icup->config->width_cb != NULL) {
         A2_2 = icup->emiosp->CH[icup->ch_number].CADR.R;
         width = A2_2 - A2_1;
         _icu_isr_invoke_width_cb(icup);
       }
     } else if (icup->config->mode == ICU_INPUT_ACTIVE_LOW) {
-      if (icup->emiosp->CH[icup->ch_number].CSR.B.UCIN == 1U &&         \
+      if (icup->emiosp->CH[icup->ch_number].CSR.B.UCIN == 1U &&             \
           icup->config->width_cb != NULL) {
         A2_2 = icup->emiosp->CH[icup->ch_number].CADR.R;
         width = A2_2 - A2_1;
         _icu_isr_invoke_width_cb(icup);
-      } else if (icup->emiosp->CH[icup->ch_number].CSR.B.UCIN == 0 &&   \
+      } else if (icup->emiosp->CH[icup->ch_number].CSR.B.UCIN == 0 &&       \
           icup->config->period_cb != NULL) {
         A2_3 = icup->emiosp->CH[icup->ch_number].CADR.R;
         period = A2_3 - A2_1;
@@ -208,7 +208,7 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       }
     }
   }
-  if(sr && EMIOSS_OVR){
+  if (sr && EMIOSS_OVR) {
     icup->emiosp->CH[icup->ch_number].CSR.R |= EMIOSS_OVRC;
   }
 
@@ -721,7 +721,7 @@ void icu_lld_start(ICUDriver *icup) {
   icup->emiosp->CH[icup->ch_number].CCR.R |= EMIOSC_UCPREN;
 
   /* Set source polarity.*/
-  if(icup->config->mode == ICU_INPUT_ACTIVE_HIGH){
+  if (icup->config->mode == ICU_INPUT_ACTIVE_HIGH) {
     icup->emiosp->CH[icup->ch_number].CCR.R |= EMIOSC_EDPOL;
   } else {
     icup->emiosp->CH[icup->ch_number].CCR.R &= ~EMIOSC_EDPOL;

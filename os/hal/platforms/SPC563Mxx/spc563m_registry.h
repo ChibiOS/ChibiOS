@@ -39,20 +39,14 @@
 #define SPC5_HAS_DSPI2                      TRUE
 #define SPC5_HAS_DSPI3                      FALSE
 #define SPC5_DSPI_FIFO_DEPTH                16
-#define SPC5_DSPI1_TX1_DMA_DEV_ID           12
-#define SPC5_DSPI1_TX2_DMA_DEV_ID           25
+#define SPC5_DSPI1_TX_DMA_DEV_ID            12
 #define SPC5_DSPI1_RX_DMA_DEV_ID            13
-#define SPC5_DSPI2_TX1_DMA_DEV_ID           14
-#define SPC5_DSPI2_TX2_DMA_DEV_ID           26
+#define SPC5_DSPI2_TX_DMA_DEV_ID            14
 #define SPC5_DSPI2_RX_DMA_DEV_ID            15
 #define SPC5_DSPI1_EOQF_HANDLER             vector132
 #define SPC5_DSPI1_EOQF_NUMBER              132
-#define SPC5_DSPI1_TFFF_HANDLER             vector133
-#define SPC5_DSPI1_TFFF_NUMBER              133
 #define SPC5_DSPI2_EOQF_HANDLER             vector137
 #define SPC5_DSPI2_EOQF_NUMBER              137
-#define SPC5_DSPI2_TFFF_HANDLER             vector138
-#define SPC5_DSPI2_TFFF_NUMBER              138
 #define SPC5_DSPI1_ENABLE_CLOCK()
 #define SPC5_DSPI1_DISABLE_CLOCK()
 #define SPC5_DSPI2_ENABLE_CLOCK()
@@ -119,7 +113,7 @@
 #define SPC5_EMIOS_FLAG_F15_NUMBER          66
 #define SPC5_EMIOS_FLAG_F23_NUMBER          209
 
-#define SPC5_EMIOS_CLK                      (64000000 /                     \
+#define SPC5_EMIOS_CLK                      (SPC5_SYSCLK /                  \
                                              SPC5_EMIOS_GLOBAL_PRESCALER)
 #define SPC5_EMIOS_ENABLE_CLOCK()
 #define SPC5_EMIOS_DISABLE_CLOCK()
