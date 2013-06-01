@@ -24,6 +24,8 @@
 #ifndef _LWIPTHREAD_H_
 #define _LWIPTHREAD_H_
 
+#include <lwip/opt.h>
+
 /** @brief MAC thread priority.*/
 #ifndef LWIP_THREAD_PRIORITY
 #define LWIP_THREAD_PRIORITY                LOWPRIO
