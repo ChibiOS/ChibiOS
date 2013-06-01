@@ -144,6 +144,27 @@
 #define SPC5_ETIMER1_CLK                    SPC5_MCONTROL_CLK
 
 #define SPC5_HAS_ETIMER2                    FALSE
+
+/* FlexCAN attributes.*/
+#define SPC5_HAS_FLEXCAN0                                   TRUE
+#define SPC5_FLEXCAN0_PCTL                                  16
+#define SPC5_FLEXCAN0_MB                                    32
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_HANDLER           vector65
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_HANDLER              vector66
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_WAK_HANDLER               vector67
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_00_03_HANDLER             vector68
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_04_07_HANDLER             vector69
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_08_11_HANDLER             vector70
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_12_15_HANDLER             vector71
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_HANDLER             vector72
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_NUMBER            65
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_NUMBER               66
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_WAK_NUMBER                67
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_00_03_NUMBER              68
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_04_07_NUMBER              69
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_08_11_NUMBER              70
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_12_15_NUMBER              71
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_NUMBER              72
 /** @} */
 
 #endif /* _SPC560P_REGISTRY_H_ */
