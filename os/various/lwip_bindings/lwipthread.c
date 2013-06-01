@@ -59,6 +59,8 @@
 #include "hal.h"
 #include "evtimer.h"
 
+#include "lwipthread.h"
+
 #include "lwip/opt.h"
 
 #include "lwip/def.h"
@@ -70,8 +72,6 @@
 #include <lwip/tcpip.h>
 #include "netif/etharp.h"
 #include "netif/ppp_oe.h"
-
-#include "lwipthread.h"
 
 #define PERIODIC_TIMER_ID       1
 #define FRAME_RECEIVED_ID       2
