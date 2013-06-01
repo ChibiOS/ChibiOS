@@ -25,7 +25,7 @@ struct can_instance {
 static const struct can_instance can1 = {&CAND5, PE_LED1};
 
 /*
- * Internal loopback mode, 1MBaud.
+ * Internal loopback mode, 500kBaud.
  * See chapter 25 on the SPC5 reference manual.
  */
 static const CANConfig cancfg = {
