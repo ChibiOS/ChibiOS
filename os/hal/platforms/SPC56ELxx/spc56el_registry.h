@@ -214,6 +214,8 @@
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_08_11_NUMBER              70
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_12_15_NUMBER              71
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_NUMBER              72
+#define SPC5_FLEXCAN0_ENABLE_CLOCK()                        halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_START_PCTL);
+#define SPC5_FLEXCAN0_DISABLE_CLOCK()                       halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_STOP_PCTL);
 
 #define SPC5_HAS_FLEXCAN1                                   TRUE
 #define SPC5_FLEXCAN1_PCTL                                  17
@@ -234,6 +236,8 @@
 #define SPC5_FLEXCAN1_FLEXCAN_BUF_08_11_NUMBER              90
 #define SPC5_FLEXCAN1_FLEXCAN_BUF_12_15_NUMBER              91
 #define SPC5_FLEXCAN1_FLEXCAN_BUF_16_31_NUMBER              92
+#define SPC5_FLEXCAN1_ENABLE_CLOCK()                        halSPCSetPeripheralClockMode(SPC5_FLEXCAN1_PCTL, SPC5_CAN_FLEXCAN1_START_PCTL);
+#define SPC5_FLEXCAN1_DISABLE_CLOCK()                       halSPCSetPeripheralClockMode(SPC5_FLEXCAN1_PCTL, SPC5_CAN_FLEXCAN1_STOP_PCTL);
 /** @} */
 
 #endif /* _SPC56EL_REGISTRY_H_ */

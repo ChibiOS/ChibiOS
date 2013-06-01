@@ -930,8 +930,6 @@ void can_lld_init(void) {
       SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
   INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_ESR_BOFF_NUMBER].R =
       SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
-  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_ESR_WAK_NUMBER].R =
-      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
   INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_00_03_NUMBER].R =
       SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
   INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_04_07_NUMBER].R =
@@ -1000,43 +998,37 @@ void can_lld_start(CANDriver *canp) {
 #if SPC5_CAN_USE_FLEXCAN0
   /* Set peripheral clock mode.*/
   if(&CAND1 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL,
-                                 SPC5_CAN_FLEXCAN0_START_PCTL);
+    SPC5_FLEXCAN0_ENABLE_CLOCK();
 #endif
 
 #if SPC5_CAN_USE_FLEXCAN1
   /* Set peripheral clock mode.*/
   if(&CAND2 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN1_PCTL,
-                                 SPC5_CAN_FLEXCAN1_START_PCTL);
+    SPC5_FLEXCAN1_ENABLE_CLOCK();
 #endif
 
 #if SPC5_CAN_USE_FLEXCAN2
   /* Set peripheral clock mode.*/
   if(&CAND3 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN2_PCTL,
-                                 SPC5_CAN_FLEXCAN2_START_PCTL);
+    SPC5_FLEXCAN2_ENABLE_CLOCK();
 #endif
 
 #if SPC5_CAN_USE_FLEXCAN3
   /* Set peripheral clock mode.*/
   if(&CAND4 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN3_PCTL,
-                                 SPC5_CAN_FLEXCAN3_START_PCTL);
+    SPC5_FLEXCAN3_ENABLE_CLOCK();
 #endif
 
 #if SPC5_CAN_USE_FLEXCAN4
   /* Set peripheral clock mode.*/
   if(&CAND5 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN4_PCTL,
-                                 SPC5_CAN_FLEXCAN4_START_PCTL);
+    SPC5_FLEXCAN4_ENABLE_CLOCK();
 #endif
 
 #if SPC5_CAN_USE_FLEXCAN5
   /* Set peripheral clock mode.*/
   if(&CAND6 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN5_PCTL,
-                                 SPC5_CAN_FLEXCAN5_START_PCTL);
+    SPC5_FLEXCAN5_ENABLE_CLOCK();
 #endif
 
   /* Entering initialization mode. */
@@ -1268,38 +1260,33 @@ void can_lld_stop(CANDriver *canp) {
 #if SPC5_CAN_USE_FLEXCAN0
   /* Set peripheral clock mode.*/
   if(&CAND1 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL,
-                                 SPC5_CAN_FLEXCAN0_STOP_PCTL);
+    SPC5_FLEXCAN0_DISABLE_CLOCK();
+
 #endif
 #if SPC5_CAN_USE_FLEXCAN1
   /* Set peripheral clock mode.*/
   if(&CAND2 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN1_PCTL,
-                                 SPC5_CAN_FLEXCAN1_STOP_PCTL);
+    SPC5_FLEXCAN1_DISABLE_CLOCK();
 #endif
 #if SPC5_CAN_USE_FLEXCAN2
   /* Set peripheral clock mode.*/
   if(&CAND3 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN2_PCTL,
-                                 SPC5_CAN_FLEXCAN2_STOP_PCTL);
+    SPC5_FLEXCAN2_DISABLE_CLOCK();
 #endif
 #if SPC5_CAN_USE_FLEXCAN3
   /* Set peripheral clock mode.*/
   if(&CAND4 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN3_PCTL,
-                                 SPC5_CAN_FLEXCAN3_STOP_PCTL);
+    SPC5_FLEXCAN3_DISABLE_CLOCK();
 #endif
 #if SPC5_CAN_USE_FLEXCAN4
   /* Set peripheral clock mode.*/
   if(&CAND5 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN4_PCTL,
-                                 SPC5_CAN_FLEXCAN4_STOP_PCTL);
+    SPC5_FLEXCAN4_DISABLE_CLOCK();
 #endif
 #if SPC5_CAN_USE_FLEXCAN5
   /* Set peripheral clock mode.*/
   if(&CAND6 == canp)
-    halSPCSetPeripheralClockMode(SPC5_FLEXCAN5_PCTL,
-                                 SPC5_CAN_FLEXCAN5_STOP_PCTL);
+    SPC5_FLEXCAN5_DISABLE_CLOCK();
 #endif
   }
 }

@@ -165,6 +165,8 @@
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_08_11_NUMBER              70
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_12_15_NUMBER              71
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_NUMBER              72
+#define SPC5_FLEXCAN0_ENABLE_CLOCK()                        halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_START_PCTL);
+#define SPC5_FLEXCAN0_DISABLE_CLOCK()                       halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_STOP_PCTL);
 /** @} */
 
 #endif /* _SPC560P_REGISTRY_H_ */
