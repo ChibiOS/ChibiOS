@@ -2,6 +2,11 @@
 PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/LPC122x/hal_lld.c \
               ${CHIBIOS}/os/hal/platforms/LPC122x/gpt_lld.c \
               ${CHIBIOS}/os/hal/platforms/LPC122x/pal_lld.c \
+              ${CHIBIOS}/os/hal/platforms/LPC122x/ext_lld.c \
+              ${CHIBIOS}/os/hal/platforms/LPC122x/ext_lld_isr.c \
+              ${CHIBIOS}/os/hal/platforms/LPC122x/pwm_lld.c \
+              ${CHIBIOS}/os/hal/platforms/LPC122x/i2c_lld.c \
+              ${CHIBIOS}/os/hal/platforms/LPC122x/rtc_lld.c \
               ${CHIBIOS}/os/hal/platforms/LPC122x/serial_lld.c \
               ${CHIBIOS}/os/hal/platforms/LPC122x/spi_lld.c
 
