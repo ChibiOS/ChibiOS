@@ -1509,7 +1509,11 @@ extern "C" {
         union {
             vuint32_t R;
             struct {
-                vuint32_t:8;
+                vuint32_t:4;
+                vuint32_t F27:1;
+                vuint32_t F26:1;
+                vuint32_t F25:1;
+                vuint32_t F24:1;
                 vuint32_t F23:1;
                 vuint32_t F22:1;
                 vuint32_t F21:1;
@@ -1540,7 +1544,11 @@ extern "C" {
         union {
             vuint32_t R;
             struct {
-                vuint32_t:8;
+                vuint32_t:4;
+                vuint32_t OU27:1;
+                vuint32_t OU26:1;
+                vuint32_t OU25:1;
+                vuint32_t OU24:1;
                 vuint32_t OU23:1;
                 vuint32_t OU22:1;
                 vuint32_t OU21:1;
@@ -1571,7 +1579,11 @@ extern "C" {
         union {
             vuint32_t R;
             struct {
-                vuint32_t:8;
+                vuint32_t:4;
+                vuint32_t CHDIS27:1;
+                vuint32_t CHDIS26:1;
+                vuint32_t CHDIS25:1;
+                vuint32_t CHDIS24:1;
                 vuint32_t CHDIS23:1;
                 vuint32_t CHDIS22:1;
                 vuint32_t CHDIS21:1;

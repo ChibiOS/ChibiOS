@@ -89,6 +89,78 @@
 #define SPC5_SIUL_NUM_PADSELS               32
 #define SPC5_SIUL_SYSTEM_PINS               32,33,121,122
 
+/* eMIOS attributes.*/
+#define SPC5_HAS_EMIOS0                     TRUE
+#define SPC5_EMIOS0_PCTL                    72
+#define SPC5_EMIOS0_GFR_F0F1_HANDLER        vector141
+#define SPC5_EMIOS0_GFR_F2F3_HANDLER        vector142
+#define SPC5_EMIOS0_GFR_F4F5_HANDLER        vector143
+#define SPC5_EMIOS0_GFR_F6F7_HANDLER        vector144
+#define SPC5_EMIOS0_GFR_F8F9_HANDLER        vector145
+#define SPC5_EMIOS0_GFR_F10F11_HANDLER      vector146
+#define SPC5_EMIOS0_GFR_F12F13_HANDLER      vector147
+#define SPC5_EMIOS0_GFR_F14F15_HANDLER      vector148
+#define SPC5_EMIOS0_GFR_F16F17_HANDLER      vector149
+#define SPC5_EMIOS0_GFR_F18F19_HANDLER      vector150
+#define SPC5_EMIOS0_GFR_F20F21_HANDLER      vector151
+#define SPC5_EMIOS0_GFR_F22F23_HANDLER      vector152
+#define SPC5_EMIOS0_GFR_F24F25_HANDLER      vector153
+#define SPC5_EMIOS0_GFR_F26F27_HANDLER      vector154
+#define SPC5_EMIOS0_GFR_F0F1_NUMBER         141
+#define SPC5_EMIOS0_GFR_F2F3_NUMBER         142
+#define SPC5_EMIOS0_GFR_F4F5_NUMBER         143
+#define SPC5_EMIOS0_GFR_F6F7_NUMBER         144
+#define SPC5_EMIOS0_GFR_F8F9_NUMBER         145
+#define SPC5_EMIOS0_GFR_F10F11_NUMBER       146
+#define SPC5_EMIOS0_GFR_F12F13_NUMBER       147
+#define SPC5_EMIOS0_GFR_F14F15_NUMBER       148
+#define SPC5_EMIOS0_GFR_F16F17_NUMBER       149
+#define SPC5_EMIOS0_GFR_F18F19_NUMBER       150
+#define SPC5_EMIOS0_GFR_F20F21_NUMBER       151
+#define SPC5_EMIOS0_GFR_F22F23_NUMBER       152
+#define SPC5_EMIOS0_GFR_F24F25_NUMBER       153
+#define SPC5_EMIOS0_GFR_F26F27_NUMBER       154
+
+#define SPC5_EMIOS0_CLK                     (halSPCGetSystemClock() /         \
+                                             SPC5_PERIPHERAL3_CLK_DIV_VALUE / \
+                                             SPC5_EMIOS0_GLOBAL_PRESCALER)
+
+
+#define SPC5_HAS_EMIOS1                     TRUE
+#define SPC5_EMIOS1_PCTL                    73
+#define SPC5_EMIOS1_GFR_F0F1_HANDLER        vector157
+#define SPC5_EMIOS1_GFR_F2F3_HANDLER        vector158
+#define SPC5_EMIOS1_GFR_F4F5_HANDLER        vector159
+#define SPC5_EMIOS1_GFR_F6F7_HANDLER        vector160
+#define SPC5_EMIOS1_GFR_F8F9_HANDLER        vector161
+#define SPC5_EMIOS1_GFR_F10F11_HANDLER      vector162
+#define SPC5_EMIOS1_GFR_F12F13_HANDLER      vector163
+#define SPC5_EMIOS1_GFR_F14F15_HANDLER      vector164
+#define SPC5_EMIOS1_GFR_F16F17_HANDLER      vector165
+#define SPC5_EMIOS1_GFR_F18F19_HANDLER      vector166
+#define SPC5_EMIOS1_GFR_F20F21_HANDLER      vector167
+#define SPC5_EMIOS1_GFR_F22F23_HANDLER      vector168
+#define SPC5_EMIOS1_GFR_F24F25_HANDLER      vector169
+#define SPC5_EMIOS1_GFR_F26F27_HANDLER      vector170
+#define SPC5_EMIOS1_GFR_F0F1_NUMBER         157
+#define SPC5_EMIOS1_GFR_F2F3_NUMBER         158
+#define SPC5_EMIOS1_GFR_F4F5_NUMBER         159
+#define SPC5_EMIOS1_GFR_F6F7_NUMBER         160
+#define SPC5_EMIOS1_GFR_F8F9_NUMBER         161
+#define SPC5_EMIOS1_GFR_F10F11_NUMBER       162
+#define SPC5_EMIOS1_GFR_F12F13_NUMBER       163
+#define SPC5_EMIOS1_GFR_F14F15_NUMBER       164
+#define SPC5_EMIOS1_GFR_F16F17_NUMBER       165
+#define SPC5_EMIOS1_GFR_F18F19_NUMBER       166
+#define SPC5_EMIOS1_GFR_F20F21_NUMBER       167
+#define SPC5_EMIOS1_GFR_F22F23_NUMBER       168
+#define SPC5_EMIOS1_GFR_F24F25_NUMBER       169
+#define SPC5_EMIOS1_GFR_F26F27_NUMBER       170
+
+#define SPC5_EMIOS1_CLK                     (halSPCGetSystemClock() /         \
+                                             SPC5_PERIPHERAL3_CLK_DIV_VALUE / \
+                                             SPC5_EMIOS1_GLOBAL_PRESCALER)
+
 /* FlexCAN attributes.*/
 #define SPC5_HAS_FLEXCAN0                                   TRUE
 #define SPC5_FLEXCAN0_PCTL                                  16

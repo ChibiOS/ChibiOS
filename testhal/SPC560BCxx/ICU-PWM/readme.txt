@@ -1,19 +1,19 @@
 *****************************************************************************
-** ChibiOS/RT HAL - ICU-PWM driver demo for SPC564Axx.                         **
+** ChibiOS/RT HAL - ICU-PWM driver demo for SPC560BCxx.                         **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics SPC564Axx microcontroller installed on 
+The demo runs on an STMicroelectronics SPC560BCxx microcontroller installed on 
 XPC56xx EVB Motherboard.
 
 ** The Demo **
 
-The application demonstrates the use of the SPC564Axx ICU and PWM drivers.
+The application demonstrates the use of the SPC560BCxx ICU and PWM drivers.
 
 ** Board Setup **
 
-Connect PIN65 and PIN78 together.
+Connect PINA0 and PINA9 together.
 
 ** Build Procedure **
 
