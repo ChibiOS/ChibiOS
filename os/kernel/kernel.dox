@@ -177,4 +177,9 @@
  * @defgroup internals Internals
  * @ingroup kernel
  */
+
+/**
+ * @defgroup core Port
+ * @ingroup kernel
+ */
  
