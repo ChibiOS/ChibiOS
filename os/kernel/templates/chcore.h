@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* * <-disabled
+/**
  * @file    templates/chcore.h
  * @brief   Port related template macros and structures.
  * @details This file is a template of the system driver macros provided by
