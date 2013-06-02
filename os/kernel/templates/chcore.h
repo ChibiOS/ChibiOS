@@ -25,7 +25,7 @@
     for full details of how and when the exception can be applied.
 */
 
-/* * <-disabled
+/**
  * @file    templates/chcore.h
  * @brief   Port related template macros and structures.
  * @details This file is a template of the system driver macros provided by
