@@ -1,5 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    LPC122x RTC driver - Copyright (C) 2013 Marcin Jokel
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
