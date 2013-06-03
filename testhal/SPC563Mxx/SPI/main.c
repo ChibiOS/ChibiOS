@@ -108,16 +108,12 @@ int main(void) {
   chSysInit();
 
   /*
-   * SPI1 I/O pins setup.
-   */
-
-  /*
    * Prepare transmit pattern.
    */
   for (i = 0; i < sizeof(txbuf); i++)
     txbuf[i] = (uint8_t)i;
 
-  /* Starting driver for test.*/
+  /* Starting driver for test, DSPI_B I/O pins setup.*/
   spiStart(&SPID2, &ls_spicfg);
   SIU.PCR[102].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SCK    */
   SIU.PCR[103].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SIN    */
