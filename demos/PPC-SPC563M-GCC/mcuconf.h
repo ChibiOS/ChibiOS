@@ -53,7 +53,27 @@
 #define SPC5_ADC_USE_ADC1_Q3                FALSE
 #define SPC5_ADC_USE_ADC1_Q4                FALSE
 #define SPC5_ADC_USE_ADC1_Q5                FALSE
+#define SPC5_ADC_FIFO0_DMA_PRIO             12
+#define SPC5_ADC_FIFO1_DMA_PRIO             12
+#define SPC5_ADC_FIFO2_DMA_PRIO             12
+#define SPC5_ADC_FIFO3_DMA_PRIO             12
+#define SPC5_ADC_FIFO4_DMA_PRIO             12
+#define SPC5_ADC_FIFO5_DMA_PRIO             12
+#define SPC5_ADC_FIFO0_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO1_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO2_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO3_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO4_DMA_IRQ_PRIO         12
+#define SPC5_ADC_FIFO5_DMA_IRQ_PRIO         12
 #define SPC5_ADC_CR_CLK_PS                  ADC_CR_CLK_PS(5)
+#define SPC5_ADC_PUDCR                      {ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE,                \
+                                             ADC_PUDCR_NONE}
 
 /*
  * SERIAL driver system settings.
@@ -62,3 +82,32 @@
 #define SPC5_USE_ESCIB                      TRUE
 #define SPC5_ESCIA_PRIORITY                 8
 #define SPC5_ESCIB_PRIORITY                 8
+
+/*
+ * SPI driver system settings.
+ */
+#define SPC5_SPI_USE_DSPI1                  FALSE
+#define SPC5_SPI_USE_DSPI2                  FALSE
+#define SPC5_SPI_DSPI1_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI2_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI1_DMA_PRIO             10
+#define SPC5_SPI_DSPI2_DMA_PRIO             10
+#define SPC5_SPI_DSPI1_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI2_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI1_IRQ_PRIO             10
+#define SPC5_SPI_DSPI2_IRQ_PRIO             10
+#define SPC5_SPI_DMA_ERROR_HOOK(spip)       chSysHalt()

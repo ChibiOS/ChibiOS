@@ -47,12 +47,12 @@
 /*
  * ADC driver settings.
  */
-#define SPC5_ADC_USE_ADC0_Q0                TRUE
-#define SPC5_ADC_USE_ADC0_Q1                TRUE
-#define SPC5_ADC_USE_ADC0_Q2                TRUE
-#define SPC5_ADC_USE_ADC1_Q3                TRUE
-#define SPC5_ADC_USE_ADC1_Q4                TRUE
-#define SPC5_ADC_USE_ADC1_Q5                TRUE
+#define SPC5_ADC_USE_ADC0_Q0                FALSE
+#define SPC5_ADC_USE_ADC0_Q1                FALSE
+#define SPC5_ADC_USE_ADC0_Q2                FALSE
+#define SPC5_ADC_USE_ADC1_Q3                FALSE
+#define SPC5_ADC_USE_ADC1_Q4                FALSE
+#define SPC5_ADC_USE_ADC1_Q5                FALSE
 #define SPC5_ADC_FIFO0_DMA_PRIO             12
 #define SPC5_ADC_FIFO1_DMA_PRIO             12
 #define SPC5_ADC_FIFO2_DMA_PRIO             12
@@ -88,6 +88,22 @@
  */
 #define SPC5_SPI_USE_DSPI1                  TRUE
 #define SPC5_SPI_USE_DSPI2                  TRUE
+#define SPC5_SPI_DSPI1_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI2_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
 #define SPC5_SPI_DSPI1_DMA_PRIO             10
 #define SPC5_SPI_DSPI2_DMA_PRIO             10
 #define SPC5_SPI_DSPI1_DMA_IRQ_PRIO         10

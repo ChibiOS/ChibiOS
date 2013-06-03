@@ -38,20 +38,6 @@ static void spi_serve_dma_error_irq(edma_channel_t channel,
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/* Enforced MCR bits.*/
-#define DSPI_MCR_ENFORCED_BITS      (SPC5_MCR_MSTR)
-
-/* Excluded MCR bits.*/
-#define DSPI_MCR_EXCLUDED_BITS      (SPC5_MCR_CONT_SCKE     |               \
-                                     SPC5_MCR_DCONF_MASK    |               \
-                                     SPC5_MCR_ROOE          |               \
-                                     SPC5_MCR_MDIS          |               \
-                                     SPC5_MCR_DIS_TXF       |               \
-                                     SPC5_MCR_DIS_RXF       |               \
-                                     SPC5_MCR_CLR_TXF       |               \
-                                     SPC5_MCR_CLR_RXF       |               \
-                                     SPC5_MCR_HALT)
-
 /* Excluded PUSHR bits.*/
 #define DSPI_PUSHR_EXCLUDED_BITS    (SPC5_PUSHR_CTAS_MASK   |               \
                                      SPC5_PUSHR_EOQ         |               \
@@ -530,9 +516,7 @@ static void spi_serve_rx_irq(edma_channel_t channel, void *p) {
   edmaChannelStop(channel);
 
   /* Stops the DSPI and clears the queues.*/
-  spip->dspi->MCR.R     = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT |
-                          SPC5_MCR_CLR_TXF | SPC5_MCR_CLR_RXF |
-                          spip->config->mcr;
+  spip->dspi->MCR.R |= SPC5_MCR_HALT | SPC5_MCR_CLR_TXF | SPC5_MCR_CLR_RXF;
 
   /* Portable SPI ISR code defined in the high level driver, note, it is
      a macro.*/
@@ -586,8 +570,7 @@ static void spi_serve_dma_error_irq(edma_channel_t channel,
   (void)esr;
 
   /* Stops the DSPI and clears the queues.*/
-  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT |
-                      SPC5_MCR_CLR_TXF | SPC5_MCR_CLR_RXF;
+  spip->dspi->MCR.R |= SPC5_MCR_HALT | SPC5_MCR_CLR_TXF | SPC5_MCR_CLR_RXF;
 
   edmaChannelStop(spip->tx1_channel);
   edmaChannelStop(spip->tx2_channel);
@@ -734,6 +717,8 @@ void spi_lld_init(void) {
   SPID1.tx1_channel = EDMA_ERROR;
   SPID1.tx2_channel = EDMA_ERROR;
   SPID1.rx_channel  = EDMA_ERROR;
+  SPC5_DSPI0.MCR.R  = SPC5_MCR_MSTR | SPC5_MCR_HALT | SPC5_MCR_MDIS |
+                      SPC5_SPI_DSPI0_MCR;
   INTC.PSR[SPC5_DSPI0_TFFF_NUMBER].R = SPC5_SPI_DSPI0_IRQ_PRIO;
 #endif /* SPC5_SPI_USE_DSPI0 */
 
@@ -744,6 +729,8 @@ void spi_lld_init(void) {
   SPID2.tx1_channel = EDMA_ERROR;
   SPID2.tx2_channel = EDMA_ERROR;
   SPID2.rx_channel  = EDMA_ERROR;
+  SPC5_DSPI1.MCR.R  = SPC5_MCR_MSTR | SPC5_MCR_HALT | SPC5_MCR_MDIS |
+                      SPC5_SPI_DSPI1_MCR;
   INTC.PSR[SPC5_DSPI1_TFFF_NUMBER].R = SPC5_SPI_DSPI1_IRQ_PRIO;
 #endif /* SPC5_SPI_USE_DSPI1 */
 
@@ -754,6 +741,8 @@ void spi_lld_init(void) {
   SPID3.tx1_channel = EDMA_ERROR;
   SPID3.tx2_channel = EDMA_ERROR;
   SPID3.rx_channel  = EDMA_ERROR;
+  SPC5_DSPI2.MCR.R  = SPC5_MCR_MSTR | SPC5_MCR_HALT | SPC5_MCR_MDIS |
+                      SPC5_SPI_DSPI2_MCR;
   INTC.PSR[SPC5_DSPI2_TFFF_NUMBER].R = SPC5_SPI_DSPI2_IRQ_PRIO;
 #endif /* SPC5_SPI_USE_DSPI2 */
 
@@ -764,6 +753,8 @@ void spi_lld_init(void) {
   SPID4.tx1_channel = EDMA_ERROR;
   SPID4.tx2_channel = EDMA_ERROR;
   SPID4.rx_channel  = EDMA_ERROR;
+  SPC5_DSPI3.MCR.R  = SPC5_MCR_MSTR | SPC5_MCR_HALT | SPC5_MCR_MDIS |
+                      SPC5_SPI_DSPI3_MCR;
   INTC.PSR[SPC5_DSPI3_TFFF_NUMBER].R = SPC5_SPI_DSPI3_IRQ_PRIO;
 #endif /* SPC5_SPI_USE_DSPI3 */
 }
@@ -779,8 +770,6 @@ void spi_lld_start(SPIDriver *spip) {
 
   chDbgAssert((spip->config->pushr & DSPI_PUSHR_EXCLUDED_BITS) == 0,
               "spi_lld_start(), #1", "invalid PUSHR bits specified");
-  chDbgAssert((spip->config->mcr & DSPI_MCR_EXCLUDED_BITS) == 0,
-              "spi_lld_start(), #2", "invalid PUSHR bits specified");
 
   if (spip->state == SPI_STOP) {
     /* Enables the peripheral.*/
@@ -828,12 +817,11 @@ void spi_lld_start(SPIDriver *spip) {
   }
 
   /* Configures the peripheral.*/
-  spip->dspi->MCR.R     = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_HALT |
-                          spip->config->mcr;
-  spip->dspi->CTAR[0].R = spip->config->ctar0;
-  spip->dspi->RSER.R    = SPC5_RSER_TFFF_RE | SPC5_RSER_TFFF_DIRS |
-                          SPC5_RSER_RFDF_RE | SPC5_RSER_RFDF_DIRS;
-  spip->dspi->SR.R      = spip->dspi->SR.R;
+  spip->dspi->MCR.B.MDIS = 0;
+  spip->dspi->CTAR[0].R  = spip->config->ctar0;
+  spip->dspi->RSER.R     = SPC5_RSER_TFFF_RE | SPC5_RSER_TFFF_DIRS |
+                           SPC5_RSER_RFDF_RE | SPC5_RSER_RFDF_DIRS;
+  spip->dspi->SR.R       = spip->dspi->SR.R;
 }
 
 /**
@@ -852,12 +840,12 @@ void spi_lld_stop(SPIDriver *spip) {
     edmaChannelRelease(spip->rx_channel);
 
     /* Resets the peripheral.*/
-    spip->dspi->CTAR[0].R = 0;
-    spip->dspi->RSER.R    = 0;
-    spip->dspi->SR.R      = spip->dspi->SR.R;
-    spip->dspi->MCR.R     = DSPI_MCR_ENFORCED_BITS | SPC5_MCR_MDIS    |
-                            SPC5_MCR_CLR_TXF | SPC5_MCR_CLR_RXF |
-                            SPC5_MCR_HALT;
+    spip->dspi->CTAR[0].R  = 0;
+    spip->dspi->RSER.R     = 0;
+    spip->dspi->SR.R       = spip->dspi->SR.R;
+    spip->dspi->MCR.R     |= SPC5_MCR_HALT |
+                             SPC5_MCR_CLR_TXF | SPC5_MCR_CLR_RXF;
+    spip->dspi->MCR.B.MDIS = 1;
 
 #if SPC5_SPI_USE_DSPI0
     if (&SPID1 == spip) {
@@ -927,7 +915,7 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   /* Starting transfer.*/
   spip->dspi->SR.R  = spip->dspi->SR.R;
-  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
+  spip->dspi->MCR.B.HALT = 0;
 
   /* Setting up the RX DMA channel.*/
   spi_start_dma_rx_ignore(spip, n);
@@ -963,7 +951,7 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
 
   /* Starting transfer.*/
   spip->dspi->SR.R  = spip->dspi->SR.R;
-  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
+  spip->dspi->MCR.B.HALT = 0;
 
   /* DMAs require a different setup depending on the frame size.*/
   if (spip->dspi->CTAR[0].B.FMSZ < 8) {
@@ -1013,7 +1001,7 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   /* Starting transfer.*/
   spip->dspi->SR.R  = spip->dspi->SR.R;
-  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
+  spip->dspi->MCR.B.HALT = 0;
 
   /* Setting up the RX DMA channel.*/
   spi_start_dma_rx_ignore(spip, n);
@@ -1060,7 +1048,7 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   /* Starting transfer.*/
   spip->dspi->SR.R  = spip->dspi->SR.R;
-  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
+  spip->dspi->MCR.B.HALT = 0;
 
   /* DMAs require a different setup depending on the frame size.*/
   if (spip->dspi->CTAR[0].B.FMSZ < 8) {
@@ -1096,13 +1084,16 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
  * @return              The received data frame from the SPI bus.
  */
 uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
+  uint32_t popr;
 
-  spip->dspi->MCR.R = DSPI_MCR_ENFORCED_BITS | spip->config->mcr;
+  spip->dspi->MCR.B.HALT = 0;
   spip->dspi->PUSHR.R = (SPC5_PUSHR_EOQ | spip->config->pushr |
                          (uint32_t)frame) & ~SPC5_PUSHR_CONT;
   while (!spip->dspi->SR.B.RFDF)
     ;
-  return (uint16_t)spip->dspi->POPR.R;
+  popr = spip->dspi->POPR.R;
+  spip->dspi->MCR.B.HALT = 1;
+  return (uint16_t)popr;
 }
 
 #endif /* HAL_USE_SPI */

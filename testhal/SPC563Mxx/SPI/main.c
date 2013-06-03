@@ -24,10 +24,9 @@ static const SPIConfig hs_spicfg = {
   NULL,
   0,
   0,
-  SPC5_MCR_PCSIS0,                                              /* MCR.     */
   SPC5_CTAR_CSSCK_DIV2 | SPC5_CTAR_ASC_DIV2 | SPC5_CTAR_FMSZ(8) |
   SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV2,                       /* CTAR0.   */
-  SPC5_PUSHR_CONT | SPC5_PUSHR_PCS(0)                           /* PUSHR.   */
+  SPC5_PUSHR_CONT | SPC5_PUSHR_PCS(1)                           /* PUSHR.   */
 };
 
 /*
@@ -37,7 +36,6 @@ static const SPIConfig ls_spicfg = {
   NULL,
   0,
   0,
-  SPC5_MCR_PCSIS0,                                              /* MCR.     */
   SPC5_CTAR_CSSCK_DIV64 | SPC5_CTAR_ASC_DIV64 | SPC5_CTAR_FMSZ(8) |
   SPC5_CTAR_PBR_PRE2 | SPC5_CTAR_BR_DIV256,                     /* CTAR0.   */
   SPC5_PUSHR_CONT | SPC5_PUSHR_PCS(0)                           /* PUSHR.   */
@@ -119,6 +117,7 @@ int main(void) {
   SIU.PCR[103].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SIN    */
   SIU.PCR[104].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* SOUT   */
   SIU.PCR[105].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* PCS[0] */
+  SIU.PCR[106].R = PAL_MODE_OUTPUT_ALTERNATE(1);    /* PCS[1] */
 
   /* Testing sending and receiving at the same time.*/
   spiExchange(&SPID2, 4, txbuf, rxbuf);

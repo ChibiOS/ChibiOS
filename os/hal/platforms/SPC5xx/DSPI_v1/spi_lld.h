@@ -223,6 +223,7 @@
 #if !defined(SPC5_SPI_USE_DSPI1) || defined(__DOXYGEN__)
 #define SPC5_SPI_USE_DSPI1                  FALSE
 #endif
+
 /**
  * @brief   SPID3 driver enable switch.
  * @details If set to @p TRUE the support for DSPI2 is included.
@@ -237,6 +238,62 @@
  */
 #if !defined(SPC5_SPI_USE_DSPI3) || defined(__DOXYGEN__)
 #define SPC5_SPI_USE_DSPI3                  FALSE
+#endif
+
+/**
+ * @brief   DSPI0 MCR PCS defaults.
+ */
+#if !defined(SPC5_SPI_DSPI0_MCR) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI0_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#endif
+
+/**
+ * @brief   DSPI1 MCR PCS defaults.
+ */
+#if !defined(SPC5_SPI_DSPI1_MCR) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI1_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#endif
+
+/**
+ * @brief   DSP2 MCR PCS defaults.
+ */
+#if !defined(SPC5_SPI_DSPI2_MCR) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI2_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#endif
+
+/**
+ * @brief   DSPI3 MCR PCS defaults.
+ */
+#if !defined(SPC5_SPI_DSPI3_MCR) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI3_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
 #endif
 
 /**
@@ -392,12 +449,6 @@ typedef struct {
    * @brief The chip select line pad number.
    */
   uint16_t              sspad;
-  /**
-   * @brief   DSPI MCR value for this session.
-   * @note    Some bits are ignored: CONT_SCKE, DCONF, ROOE, MDIS, DIS_TXF,
-   *          DIS_RXF, CLR_TXF, CLR_RXF, HALT.
-   */
-  uint32_t              mcr;
   /**
    * @brief   DSPI CTAR0 value for this session.
    */
