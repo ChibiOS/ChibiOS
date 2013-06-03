@@ -437,16 +437,16 @@ typedef void (*spicallback_t)(SPIDriver *spip);
  */
 typedef struct {
   /**
-   * @brief Operation complete callback.
+   * @brief   Operation complete callback.
    */
   spicallback_t         end_cb;
   /* End of the mandatory fields.*/
   /**
-   * @brief The chip select line port.
+   * @brief   The chip select line port.
    */
   ioportid_t            ssport;
   /**
-   * @brief The chip select line pad number.
+   * @brief   The chip select line pad number.
    */
   uint16_t              sspad;
   /**
@@ -468,23 +468,23 @@ typedef struct {
  */
 struct SPIDriver {
   /**
-   * @brief Driver state.
+   * @brief   Driver state.
    */
   spistate_t            state;
   /**
-   * @brief Current configuration data.
+   * @brief   Current configuration data.
    */
   const SPIConfig       *config;
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
   /**
-   * @brief Waiting thread.
+   * @brief   Waiting thread.
    */
   Thread                *thread;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
-   * @brief Mutex protecting the bus.
+   * @brief   Mutex protecting the bus.
    */
   Mutex                 mutex;
 #elif CH_USE_SEMAPHORES
