@@ -152,6 +152,7 @@ int main(void) {
    */
   while (TRUE) {
     chThdSleepMilliseconds(500);
+    palTogglePad(PORT11, P11_LED2);
   }
   return 0;
 }
