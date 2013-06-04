@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.0 ***
+- FIX: Fixed  MS2ST() and US2ST() macros error (bug #415).
 - NEW: Added new pwmIsChannelEnabledI() API to the PWM driver, implemented
   in the STM32 driver.
 - NEW: Added support for timers 6, 7, 9, 11, 12, 14 to the STM32 GPT driver.
