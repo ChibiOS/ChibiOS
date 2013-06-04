@@ -882,8 +882,7 @@ void spi_lld_stop(SPIDriver *spip) {
  */
 void spi_lld_select(SPIDriver *spip) {
 
-  (void)spip;
-
+  palClearPad(spip->config->ssport, spip->config->sspad);
 }
 
 /**
@@ -896,8 +895,7 @@ void spi_lld_select(SPIDriver *spip) {
  */
 void spi_lld_unselect(SPIDriver *spip) {
 
-  (void)spip;
-
+  palSetPad(spip->config->ssport, spip->config->sspad);
 }
 
 /**
