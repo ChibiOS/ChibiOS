@@ -50,7 +50,8 @@
  *
  * @api
  */
-#define S2ST(sec)   ((systime_t)((sec) * CH_FREQUENCY))
+#define S2ST(sec)                                                           \
+  ((systime_t)((sec) * CH_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
@@ -62,7 +63,8 @@
  *
  * @api
  */
-#define MS2ST(msec) ((systime_t)(((((msec) - 1L) * CH_FREQUENCY) / 1000L) + 1L))
+#define MS2ST(msec)                                                         \
+  ((systime_t)((((msec) * CH_FREQUENCY - 1L) / 1000L) + 1L))
 
 /**
  * @brief   Microseconds to system ticks.
@@ -74,7 +76,8 @@
  *
  * @api
  */
-#define US2ST(usec) ((systime_t)(((((usec) - 1L) * CH_FREQUENCY) / 1000000L) + 1L))
+#define US2ST(usec)                                                         \
+  ((systime_t)((((usec) * CH_FREQUENCY - 1L) / 1000000L) + 1L))
 /** @} */
 
 /**
