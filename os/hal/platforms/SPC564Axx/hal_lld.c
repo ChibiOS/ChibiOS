@@ -60,6 +60,7 @@ void hal_lld_init(void) {
   /* The DMA priority is placed above the CPU priority in order to not
      starve I/O activities while the CPU is executing tight loops (FLASH
      and SRAM slave ports only).*/
+#if !defined(_SPC564A70_)
   XBAR.MPR0.R = 0x34000021;             /* Flash slave port priorities:
                                             eDMA (4):              0 (highest)
                                             Core Instructions (0): 1
@@ -72,6 +73,18 @@ void hal_lld_init(void) {
                                             Core Data (1):         2
                                             EBI (7):               3
                                             FlexRay (6):           4        */
+#else /* defined(_SPC564A70_) */
+  XBAR.MPR0.R = 0x03000021;             /* Flash slave port priorities:
+                                            eDMA (4):              0 (highest)
+                                            Core Instructions (0): 1
+                                            Core Data (1):         2
+                                            Flexray (6):           3        */
+  XBAR.MPR2.R = 0x03000021;             /* SRAM slave port priorities:
+                                            eDMA (4):              0 (highest)
+                                            Core Instructions (0): 1
+                                            Core Data (1):         2
+                                            FlexRay (6):           3        */
+#endif /* defined(_SPC564A70_) */
 
   /* Decrementer timer initialized for system tick use, note, it is
      initialized here because in the OSAL layer the system clock frequency
@@ -109,8 +122,11 @@ void spc_clock_init(void) {
   ECSM.MUDCR.R = SPC5_RAM_WS;
   FLASH_A.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
   FLASH_A.BIUCR2.R = 0;
+#if !defined(_SPC564A70_)
+  /* The second controller is only present in Andorra 3M or 4M.*/
   FLASH_B.BIUCR.R  = SPC5_FLASH_BIUCR | SPC5_FLASH_WS;
   FLASH_B.BIUCR2.R = 0;
+#endif /* !defined(_SPC564A70_) */
 
 #if !SPC5_NO_INIT
   /* PLL activation.*/

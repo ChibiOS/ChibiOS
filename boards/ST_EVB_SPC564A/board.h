@@ -18,7 +18,7 @@
 #define _BOARD_H_
 
 /*
- * Setup for a generic SPC563Mxx proto board.
+ * Setup for a generic SPC564Axx proto board.
  */
 
 /*

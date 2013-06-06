@@ -22,8 +22,22 @@
  * @{
  */
 
-#ifndef _SPC563M_REGISTRY_H_
-#define _SPC563M_REGISTRY_H_
+#ifndef _SPC564A_REGISTRY_H_
+#define _SPC564A_REGISTRY_H_
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+#if defined(_SPC564A70B4_) || defined(_SPC564A70L7_)
+#define _SPC564A70_
+#elif defined(_SPC564A74B4_) || defined(_SPC564A74L7_)
+#define _SPC564A74_
+#elif defined(_SPC564A80B4_) || defined(_SPC564A80L7_)
+#define _SPC564A80_
+#else
+#error "SPC564Axx platform not defined"
+#endif
 
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
@@ -152,6 +166,6 @@
 #define SPC5_EMIOS_DISABLE_CLOCK()
 /** @} */
 
-#endif /* _SPC563M_REGISTRY_H_ */
+#endif /* _SPC564A_REGISTRY_H_ */
 
 /** @} */
