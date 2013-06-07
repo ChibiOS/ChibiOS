@@ -270,6 +270,10 @@ struct spc5_dspi {
 #if SPC5_HAS_DSPI3 || defined(__DOXYGEN__)
 #define SPC5_DSPI3      (*(struct spc5_dspi *)0xFFF9C000U)
 #endif
+
+#if SPC5_HAS_DSPI4 || defined(__DOXYGEN__)
+#define SPC5_DSPI4      (*(struct spc5_dspi *)0x8FFA0000U)
+#endif
 /** @} */
 
 #endif /* _SPC5_DSPI_H_ */

@@ -142,14 +142,22 @@ void spc_clock_init(void) {
 #endif /* SPC5_OSC_BYPASS */
 
   /* Setting the various dividers and source selectors.*/
+#if SPC5_HAS_AC0
   CGM.AC0DC.R   = SPC5_CGM_AC0_DC0;
   CGM.AC0SC.R   = SPC5_AUX0CLK_SRC;
+#endif
+#if SPC5_HAS_AC1
   CGM.AC1DC.R   = SPC5_CGM_AC1_DC0;
   CGM.AC1SC.R   = SPC5_AUX1CLK_SRC;
+#endif
+#if SPC5_HAS_AC2
   CGM.AC2DC.R   = SPC5_CGM_AC2_DC0;
   CGM.AC2SC.R   = SPC5_AUX2CLK_SRC;
+#endif
+#if SPC5_HAS_AC3
   CGM.AC3DC.R   = SPC5_CGM_AC3_DC0;
   CGM.AC3SC.R   = SPC5_AUX3CLK_SRC;
+#endif
 
   /* Enables the XOSC in order to check its functionality before proceeding
      with the initialization.*/
@@ -165,10 +173,12 @@ void spc_clock_init(void) {
                       ((SPC5_FMPLL0_IDF_VALUE - 1) << 26) |
                       (SPC5_FMPLL0_NDIV_VALUE << 16);
   CGM.FMPLL[0].MR.R = 0;                        /* TODO: Add a setting.     */
+#if SPC5_HAS_FMPLL1
   CGM.FMPLL[1].CR.R = SPC5_FMPLL1_ODF |
                       ((SPC5_FMPLL1_IDF_VALUE - 1) << 26) |
                       (SPC5_FMPLL1_NDIV_VALUE << 16);
   CGM.FMPLL[1].MR.R = 0;                        /* TODO: Add a setting.     */
+#endif
 
   /* Run modes initialization.*/
   ME.IS.R           = 8;                        /* Resetting I_ICONF status.*/
@@ -281,8 +291,10 @@ uint32_t halSPCGetSystemClock(void) {
     return SPC5_XOSC_CLK;
   case SPC5_ME_GS_SYSCLK_FMPLL0:
     return SPC5_FMPLL0_CLK;
+#if SPC5_HAS_FMPLL1
   case SPC5_ME_GS_SYSCLK_FMPLL1:
     return SPC5_FMPLL1_CLK;
+#endif
   default:
     return 0;
   }

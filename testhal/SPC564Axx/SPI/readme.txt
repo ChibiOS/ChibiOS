@@ -1,15 +1,15 @@
 *****************************************************************************
-** ChibiOS/RT HAL - SPI driver demo for SPC563Mxx.                         **
+** ChibiOS/RT HAL - SPI driver demo for SPC564Axx.                         **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics SPC563Mxx microcontroller installed on 
+The demo runs on an STMicroelectronics SPC564Axx microcontroller installed on 
 XPC56xx EVB Motherboard.
 
 ** The Demo **
 
-The application demonstrates the use of the SPC563Mxx SPI driver.
+The application demonstrates the use of the SPC564Axx SPI driver.
 
 ** Board Setup **
 

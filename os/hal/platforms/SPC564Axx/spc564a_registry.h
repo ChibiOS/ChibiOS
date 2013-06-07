@@ -52,6 +52,7 @@
 #define SPC5_HAS_DSPI1                      TRUE
 #define SPC5_HAS_DSPI2                      TRUE
 #define SPC5_HAS_DSPI3                      TRUE
+#define SPC5_HAS_DSPI4                      FALSE
 #define SPC5_DSPI_FIFO_DEPTH                16
 #define SPC5_DSPI1_TX1_DMA_DEV_ID           12
 #define SPC5_DSPI1_TX2_DMA_DEV_ID           24
