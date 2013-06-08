@@ -93,14 +93,14 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   USART_TypeDef *u = sdp->usart;
 
   /* Baud rate setting.*/
-  u->BRR = (uint16_t)(sdp->clock / config->sc_speed);
+  u->BRR = (uint16_t)(sdp->clock / config->speed);
 
   /* Note that some bits are enforced.*/
-  u->CR2 = config->sc_cr2 | USART_CR2_LBDIE;
-  u->CR3 = config->sc_cr3 | USART_CR3_EIE;
-  u->CR1 = config->sc_cr1 | USART_CR1_UE | USART_CR1_PEIE |
-                            USART_CR1_RXNEIE | USART_CR1_TE |
-                            USART_CR1_RE;
+  u->CR2 = config->cr2 | USART_CR2_LBDIE;
+  u->CR3 = config->cr3 | USART_CR3_EIE;
+  u->CR1 = config->cr1 | USART_CR1_UE | USART_CR1_PEIE |
+                         USART_CR1_RXNEIE | USART_CR1_TE |
+                         USART_CR1_RE;
   u->ICR = 0xFFFFFFFF;
 }
 

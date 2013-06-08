@@ -216,20 +216,20 @@ typedef struct {
   /**
    * @brief Bit rate.
    */
-  uint32_t                  sc_speed;
+  uint32_t                  speed;
   /* End of the mandatory fields.*/
   /**
    * @brief Initialization value for the CR1 register.
    */
-  uint16_t                  sc_cr1;
+  uint16_t                  cr1;
   /**
    * @brief Initialization value for the CR2 register.
    */
-  uint16_t                  sc_cr2;
+  uint16_t                  cr2;
   /**
    * @brief Initialization value for the CR3 register.
    */
-  uint16_t                  sc_cr3;
+  uint16_t                  cr3;
 } SerialConfig;
 
 /**
