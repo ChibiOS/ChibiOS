@@ -251,13 +251,6 @@
  */
 
 /**
- * @defgroup ARMCMx_NVIC NVIC Support
- * @details ARM Cortex-Mx NVIC support.
- *
- * @ingroup ARMCMx
- */
-
-/**
  * @defgroup ARMCMx_SPECIFIC Specific Implementations
  * @details Platform-specific port code.
  *
