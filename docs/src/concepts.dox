@@ -62,7 +62,7 @@
  *   preempt (small parts of) the kernel code and are thus able to invoke
  *   operating system APIs from within their handlers. The interrupt handlers
  *   belonging to this class must be written following some rules. See the
- *   @ref system APIs group and the web article
+ *   system APIs group and the web article
  *   <a href="http://chibios.sourceforge.net/dokuwiki/doku.php?id=chibios:howtos:interrupts">
  *   How to write interrupt handlers</a>.
  * - <b>Fast Interrupts</b>. Maskable interrupt sources with the ability
