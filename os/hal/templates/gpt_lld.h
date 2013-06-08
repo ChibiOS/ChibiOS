@@ -108,6 +108,24 @@ struct GPTDriver {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Changes the interval of GPT peripheral.
+ * @details This function changes the interval of a running GPT unit.
+ * @pre     The GPT unit must have been activated using @p gptStart().
+ * @pre     The GPT unit must have been running in continuous mode using
+ *          @p gptStartContinuous().
+ * @post    The GPT unit interval is changed to the new value.
+ * @note    The function has effect at the next cycle start.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ * @param[in] interval  new cycle time in timer ticks
+ * @notapi
+ */
+#define gpt_lld_change_interval(gptp, interval) {                           \
+  (void)gptp;                                                               \
+  (void)interval;                                                           \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
