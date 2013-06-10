@@ -906,7 +906,7 @@ void spi_lld_start(SPIDriver *spip) {
     chDbgAssert((spip->tx1_channel != EDMA_ERROR) &&
                 (spip->tx2_channel != EDMA_ERROR) &&
                 (spip->rx_channel != EDMA_ERROR),
-                "spi_lld_start(), #3", "channel cannot be allocated");
+                "spi_lld_start(), #2", "channel cannot be allocated");
   }
 
   /* Configures the peripheral.*/
