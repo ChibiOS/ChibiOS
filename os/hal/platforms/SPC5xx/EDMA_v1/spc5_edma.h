@@ -609,6 +609,22 @@ typedef struct {
   edma_tcd_t TCD[64];
 } edma_t;
 
+#if SPC5_EDMA_HAS_MUX || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a DMA-MUX peripheral.
+ */
+typedef struct {
+  union {
+    vuint8_t R;
+    struct {
+      vuint8_t ENBL:1;
+      vuint8_t TRIG:1;
+      vuint8_t SOURCE:6;
+    } B;
+  } CHCONFIG[SPC5_EDMA_NCHANNELS];
+} dma_mux_t;
+#endif /* SPC5_EDMA_HAS_MUX */
+
 /**
  * @brief   DMA callback type.
  *
@@ -650,11 +666,16 @@ typedef struct {
 /*===========================================================================*/
 
 /**
- * @name    eDMA units references
+ * @name    Peripherals references
+ *
  * @{
  */
 #if SPC5_HAS_EDMA || defined(__DOXYGEN__)
 #define SPC5_EDMA       (*(edma_t *)0xFFF44000U)
+#endif
+
+#if SPC5_EDMA_HAS_MUX || defined(__DOXYGEN__)
+#define SPC5_DMAMUX     (*(dma_mux_t *)0xFFFDC000UL)
 #endif
 /** @} */
 

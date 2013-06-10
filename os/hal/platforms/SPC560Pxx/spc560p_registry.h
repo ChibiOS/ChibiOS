@@ -90,6 +90,9 @@
 #define SPC5_HAS_DSPI1                      TRUE
 #define SPC5_HAS_DSPI2                      TRUE
 #define SPC5_DSPI_FIFO_DEPTH                5
+#define SPC5_DSPI0_PCTL                     4
+#define SPC5_DSPI1_PCTL                     5
+#define SPC5_DSPI2_PCTL                     6
 #define SPC5_DSPI0_TX1_DMA_DEV_ID           1
 #define SPC5_DSPI0_TX2_DMA_DEV_ID           0
 #define SPC5_DSPI0_RX_DMA_DEV_ID            2
@@ -105,35 +108,47 @@
 #define SPC5_DSPI1_TFFF_NUMBER              96
 #define SPC5_DSPI2_TFFF_HANDLER             vector116
 #define SPC5_DSPI2_TFFF_NUMBER              116
-#define SPC5_DSPI0_ENABLE_CLOCK()
-#define SPC5_DSPI0_DISABLE_CLOCK()
-#define SPC5_DSPI1_ENABLE_CLOCK()
-#define SPC5_DSPI1_DISABLE_CLOCK()
-#define SPC5_DSPI2_ENABLE_CLOCK()
-#define SPC5_DSPI2_DISABLE_CLOCK()
+#define SPC5_DSPI0_ENABLE_CLOCK()                                           \
+  halSPCSetPeripheralClockMode(SPC5_DSPI0_PCTL, SPC5_SPI_DSPI0_START_PCTL)
+#define SPC5_DSPI0_DISABLE_CLOCK()                                          \
+  halSPCSetPeripheralClockMode(SPC5_DSPI0_PCTL, SPC5_SPI_DSPI0_STOP_PCTL)
+#define SPC5_DSPI1_ENABLE_CLOCK()                                           \
+  halSPCSetPeripheralClockMode(SPC5_DSPI1_PCTL, SPC5_SPI_DSPI1_START_PCTL)
+#define SPC5_DSPI1_DISABLE_CLOCK()                                          \
+  halSPCSetPeripheralClockMode(SPC5_DSPI1_PCTL, SPC5_SPI_DSPI1_STOP_PCTL)
+#define SPC5_DSPI2_ENABLE_CLOCK()                                           \
+  halSPCSetPeripheralClockMode(SPC5_DSPI2_PCTL, SPC5_SPI_DSPI2_START_PCTL)
+#define SPC5_DSPI2_DISABLE_CLOCK()                                          \
+  halSPCSetPeripheralClockMode(SPC5_DSPI2_PCTL, SPC5_SPI_DSPI2_STOP_PCTL)
 
 #if defined(_SPC560PXX_MEDIUM_) || defined(_SPC560PXX_LARGE_)
 #define SPC5_HAS_DSPI3                      TRUE
+#define SPC5_DSPI3_PCTL                     7
 #define SPC5_DSPI3_TX1_DMA_DEV_ID           7
 #define SPC5_DSPI3_TX2_DMA_DEV_ID           0
 #define SPC5_DSPI3_RX_DMA_DEV_ID            8
 #define SPC5_DSPI3_TFFF_HANDLER             vector219
 #define SPC5_DSPI3_TFFF_NUMBER              219
-#define SPC5_DSPI3_ENABLE_CLOCK()
-#define SPC5_DSPI3_DISABLE_CLOCK()
+#define SPC5_DSPI3_ENABLE_CLOCK()                                           \
+  halSPCSetPeripheralClockMode(SPC5_DSPI3_PCTL, SPC5_SPI_DSPI3_START_PCTL)
+#define SPC5_DSPI3_DISABLE_CLOCK()                                          \
+  halSPCSetPeripheralClockMode(SPC5_DSPI3_PCTL, SPC5_SPI_DSPI3_STOP_PCTL)
 #else
 #define SPC5_HAS_DSPI3                      FALSE
 #endif
 
 #if defined(_SPC560PXX_LARGE_)
 #define SPC5_HAS_DSPI4                      TRUE
+#define SPC5_DSPI4_PCTL                     8
 #define SPC5_DSPI4_TX1_DMA_DEV_ID           15
 #define SPC5_DSPI4_TX2_DMA_DEV_ID           0
 #define SPC5_DSPI4_RX_DMA_DEV_ID            21
 #define SPC5_DSPI4_TFFF_HANDLER             vector258
 #define SPC5_DSPI4_TFFF_NUMBER              258
-#define SPC5_DSPI4_ENABLE_CLOCK()
-#define SPC5_DSPI4_DISABLE_CLOCK()
+#define SPC5_DSPI4_ENABLE_CLOCK()                                           \
+  halSPCSetPeripheralClockMode(SPC5_DSPI4_PCTL, SPC5_SPI_DSPI4_START_PCTL)
+#define SPC5_DSPI4_DISABLE_CLOCK()                                          \
+  halSPCSetPeripheralClockMode(SPC5_DSPI0_PCTL, SPC5_SPI_DSPI4_STOP_PCTL)
 #else
 #define SPC5_HAS_DSPI4                      FALSE
 #endif
@@ -279,8 +294,10 @@
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_08_11_NUMBER              70
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_12_15_NUMBER              71
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_NUMBER              72
-#define SPC5_FLEXCAN0_ENABLE_CLOCK()                        halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_START_PCTL);
-#define SPC5_FLEXCAN0_DISABLE_CLOCK()                       halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_STOP_PCTL);
+#define SPC5_FLEXCAN0_ENABLE_CLOCK()                                        \
+  halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_START_PCTL)
+#define SPC5_FLEXCAN0_DISABLE_CLOCK()                                       \
+  halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_STOP_PCTL)
 /** @} */
 
 #endif /* _SPC560P_REGISTRY_H_ */

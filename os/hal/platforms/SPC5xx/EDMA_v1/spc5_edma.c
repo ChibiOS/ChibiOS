@@ -1314,12 +1314,22 @@ edma_channel_t edmaChannelAllocate(const edma_channel_config_t *ccfg) {
              "edmaChannelAllocate");
 
 #if SPC5_EDMA_HAS_MUX
-  /* TODO: MUX handling.*/
-  channel = 0;
+  /* Searching for a free channel, we have the MUX so any channel is
+     acceptable.*/
+  for (channel = 0; channel < SPC5_EDMA_NCHANNELS; channel++)
+    if (channels[channel] == NULL)
+      break;
+  if (channel >= SPC5_EDMA_NCHANNELS)
+    return EDMA_ERROR;                          /* No free channels.        */
+
+  /* Programming the MUX.*/
+  SPC5_DMAMUX.CHCONFIG[channel].R = (uint8_t)(0x80 | ccfg->dma_periph);
 #else /* !SPC5_EDMA_HAS_MUX */
+  /* There is no MUX so we can just check that the specified channels is
+     available.*/
   channel = (edma_channel_t)ccfg->dma_periph;
   if (channels[channel] != NULL)
-    return EDMA_ERROR;  /* Already taken.*/
+    return EDMA_ERROR;                          /* Already taken.           */
 #endif /* !SPC5_EDMA_HAS_MUX */
 
   /* Associating the configuration to the channel.*/
@@ -1353,6 +1363,11 @@ void edmaChannelRelease(edma_channel_t channel) {
 
   /* Enforcing a stop.*/
   edmaChannelStop(channel);
+
+#if SPC5_EDMA_HAS_MUX
+  /* Disabling the MUX slot.*/
+  SPC5_DMAMUX.CHCONFIG[channel].R = 0;
+#endif
 
   /* Clearing ISR sources for the channel.*/
   SPC5_EDMA.CIRQR.R = channel;

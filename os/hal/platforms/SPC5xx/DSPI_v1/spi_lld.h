@@ -386,6 +386,116 @@
 #if !defined(SPC5_SPI_DSPI3_IRQ_PRIO) || defined(__DOXYGEN__)
 #define SPC5_SPI_DSPI3_IRQ_PRIO             10
 #endif
+
+/**
+ * @brief   DSPI0 peripheral configuration when started.
+ * @note    The default configuration is 1 (always run) in run mode and
+ *          2 (only halt) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI0_START_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI0_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#endif
+
+/**
+ * @brief   DSPI0 peripheral configuration when stopped.
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI0_STOP_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI0_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#endif
+
+/**
+ * @brief   DSPI1 peripheral configuration when started.
+ * @note    The default configuration is 1 (always run) in run mode and
+ *          2 (only halt) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI1_START_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI1_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#endif
+
+/**
+ * @brief   DSPI1 peripheral configuration when stopped.
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI1_STOP_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI1_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#endif
+
+/**
+ * @brief   DSPI2 peripheral configuration when started.
+ * @note    The default configuration is 1 (always run) in run mode and
+ *          2 (only halt) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI2_START_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI2_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#endif
+
+/**
+ * @brief   DSPI2 peripheral configuration when stopped.
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI2_STOP_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI2_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#endif
+
+/**
+ * @brief   DSPI3 peripheral configuration when started.
+ * @note    The default configuration is 1 (always run) in run mode and
+ *          2 (only halt) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI3_START_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI3_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#endif
+
+/**
+ * @brief   DSPI3 peripheral configuration when stopped.
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI3_STOP_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI3_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#endif
+
+/**
+ * @brief   DSPI4 peripheral configuration when started.
+ * @note    The default configuration is 1 (always run) in run mode and
+ *          2 (only halt) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI4_START_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI4_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#endif
+
+/**
+ * @brief   DSPI4 peripheral configuration when stopped.
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SPI_DSPI4_STOP_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI4_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -408,8 +518,13 @@
 #error "DSPI3 not present in the selected device"
 #endif
 
+#if SPC5_SPI_USE_DSPI4 && !SPC5_HAS_DSPI4
+#error "DSPI4 not present in the selected device"
+#endif
+
 #if !SPC5_SPI_USE_DSPI0 && !SPC5_SPI_USE_DSPI1 &&                           \
-    !SPC5_SPI_USE_DSPI2 && !SPC5_SPI_USE_DSPI3
+    !SPC5_SPI_USE_DSPI2 && !SPC5_SPI_USE_DSPI3 &&                           \
+    !SPC5_SPI_USE_DSPI4
 #error "SPI driver activated but no DSPI peripheral assigned"
 #endif
 
@@ -545,6 +660,10 @@ extern SPIDriver SPID3;
 
 #if SPC5_SPI_USE_DSPI3 && !defined(__DOXYGEN__)
 extern SPIDriver SPID4;
+#endif
+
+#if SPC5_SPI_USE_DSPI4 && !defined(__DOXYGEN__)
+extern SPIDriver SPID5;
 #endif
 
 #ifdef __cplusplus
