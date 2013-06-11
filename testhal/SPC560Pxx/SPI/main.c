@@ -111,7 +111,7 @@ int main(void) {
   for (i = 0; i < sizeof(txbuf); i++)
     txbuf[i] = (uint8_t)i;
 
-  /* Starting driver for test, DSPI_B I/O pins setup.*/
+  /* Starting driver for test, DSPI_1 I/O pins setup.*/
   spiStart(&SPID1, &ls_spicfg);
   SIU.PCR[37].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SCK    */
   SIU.PCR[38].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SOUT   */
