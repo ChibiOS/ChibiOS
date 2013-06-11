@@ -57,7 +57,7 @@ static msg_t spi_thread_1(void *p) {
   chRegSetThreadName("SPI thread 1");
   while (TRUE) {
     spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
-    palClearPad(PORT_D, PD_LED1);      /* LED ON.                          */
+    palClearPad(PORT_D, PD_LED1);       /* LED ON.                          */
     spiStart(&SPID1, &hs_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID1);                  /* Slave Select assertion.          */
     spiExchange(&SPID1, 512,
@@ -78,7 +78,7 @@ static msg_t spi_thread_2(void *p) {
   chRegSetThreadName("SPI thread 2");
   while (TRUE) {
     spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
-    palSetPad(PORT_D, PD_LED1);        /* LED OFF.                         */
+    palSetPad(PORT_D, PD_LED1);         /* LED OFF.                         */
     spiStart(&SPID1, &ls_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID1);                  /* Slave Select assertion.          */
     spiExchange(&SPID1, 512,
@@ -116,7 +116,7 @@ int main(void) {
   SIU.PCR[37].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SCK    */
   SIU.PCR[38].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SOUT   */
   SIU.PCR[36].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* CS[0] */
-  SIU.PCR[35].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* CS[1] */
+  SIU.PCR[54].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* CS[2] */
 
   /* Testing sending and receiving at the same time.*/
   spiExchange(&SPID1, 4, txbuf, rxbuf);
