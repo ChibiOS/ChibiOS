@@ -213,7 +213,7 @@
 #define SPC5_SPI_USE_DSPI1                  TRUE
 #define SPC5_SPI_USE_DSPI2                  TRUE
 #define SPC5_SPI_USE_DSPI3                  TRUE
-#define SPC5_SPI_USE_DSPI4                  TRUE
+#define SPC5_SPI_USE_DSPI4                  FALSE
 #define SPC5_SPI_DSPI0_MCR                  (SPC5_MCR_PCSIS0 |              \
                                              SPC5_MCR_PCSIS1 |              \
                                              SPC5_MCR_PCSIS2 |              \

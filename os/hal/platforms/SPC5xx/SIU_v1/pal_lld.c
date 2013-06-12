@@ -67,7 +67,7 @@ void _pal_lld_init(const PALConfig *config) {
 
   /* Initialize PCR registers for defined pads.*/
   i = 0;
-  while (config->inits[i].pcr_value != 0) {
+  while (config->inits[i].pcr_index != -1) {
     SIU.GPDO[config->inits[i].pcr_index].R = config->inits[i].gpdo_value;
     SIU.PCR[config->inits[i].pcr_index].R  = config->inits[i].pcr_value;
     i++;

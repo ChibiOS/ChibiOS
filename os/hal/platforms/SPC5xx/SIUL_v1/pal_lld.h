@@ -104,8 +104,12 @@
 
 /**
  * @brief   Alternate "n" output pad.
+ * @note    Both the IBE and OBE bits are specified in this mask, the OBE
+ *          bit is not required for some PCRs but in that case it is
+ *          ignored.
  */
-#define PAL_MODE_OUTPUT_ALTERNATE(n)    (PAL_SPC5_IBE | PAL_SPC5_PA(n))
+#define PAL_MODE_OUTPUT_ALTERNATE(n)    (PAL_SPC5_IBE | PAL_SPC5_OBE |      \
+                                         PAL_SPC5_PA(n))
 /** @} */
 
 /*===========================================================================*/
@@ -145,7 +149,7 @@ typedef uint32_t ioportid_t;
  * @brief   SIUL register initializer type.
  */
 typedef struct {
-  uint8_t                   pcr_index;
+  int32_t                   pcr_index;
   uint8_t                   gpdo_value;
   iomode_t                  pcr_value;
 } spc_siu_init_t;
@@ -264,7 +268,7 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_writeport(port, bits)                                       \
-    (((volatile uint16_t *)SIU.PGPDO)[port] = (bits))
+  (((volatile uint16_t *)SIU.PGPDO)[port] = (bits))
 
 /**
  * @brief   Reads a group of bits.
@@ -353,7 +357,7 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_setpad(port, pad)                                           \
-    (SIU.GPDO[((port) * 16) + (pad)].R = 1)
+  (SIU.GPDO[((port) * 16) + (pad)].R = 1)
 
 /**
  * @brief   Clears a pad logical state to @p PAL_LOW.
@@ -364,7 +368,7 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_clearpad(port, pad)                                         \
-    (SIU.GPDO[((port) * 16) + (pad)].R = 0)
+  (SIU.GPDO[((port) * 16) + (pad)].R = 0)
 
 /**
  * @brief   Toggles a pad logical state.
@@ -378,7 +382,7 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_togglepad(port, pad)                                        \
-    (SIU.GPDO[((port) * 16) + (pad)].R = ~SIU.GPDO[((port) * 16) + (pad)].R)
+  (SIU.GPDO[((port) * 16) + (pad)].R = ~SIU.GPDO[((port) * 16) + (pad)].R)
 
 /**
  * @brief   Pad mode setup.

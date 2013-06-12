@@ -146,7 +146,7 @@ typedef uint16_t iomode_t;
  * @brief   SIU/SIUL register initializer type.
  */
 typedef struct {
-  uint8_t                   pcr_index;
+  int32_t                   pcr_index;
   uint8_t                   gpdo_value;
   iomode_t                  pcr_value;
 } spc_siu_init_t;
@@ -262,7 +262,7 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_writeport(port, bits)                                       \
-    (((volatile uint16_t *)SIU.PGPDO)[port] = (bits))
+  (((volatile uint16_t *)SIU.PGPDO)[port] = (bits))
 
 /**
  * @brief   Reads a group of bits.
@@ -353,7 +353,7 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_setpad(port, pad)                                           \
-    (SIU.GPDO[((port) * 16) + (pad)].R = 1)
+  (SIU.GPDO[((port) * 16) + (pad)].R = 1)
 
 /**
  * @brief   Clears a pad logical state to @p PAL_LOW.
@@ -364,7 +364,7 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_clearpad(port, pad)                                         \
-    (SIU.GPDO[((port) * 16) + (pad)].R = 0)
+  (SIU.GPDO[((port) * 16) + (pad)].R = 0)
 
 /**
  * @brief   Toggles a pad logical state.
@@ -378,7 +378,7 @@ typedef struct {
  * @notapi
  */
 #define pal_lld_togglepad(port, pad)                                        \
-    (SIU.GPDO[((port) * 16) + (pad)].R = ~SIU.GPDO[((port) * 16) + (pad)].R)
+  (SIU.GPDO[((port) * 16) + (pad)].R = ~SIU.GPDO[((port) * 16) + (pad)].R)
 
 /**
  * @brief   Pad mode setup.

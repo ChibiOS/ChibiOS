@@ -107,7 +107,7 @@
 #define SPC5_SIUL_PCTL                      68
 #define SPC5_SIUL_NUM_PORTS                 8
 #define SPC5_SIUL_NUM_PCRS                  123
-#define SPC5_SIUL_NUM_PADSELS               32
+#define SPC5_SIUL_NUM_PADSELS               63
 #define SPC5_SIUL_SYSTEM_PINS               32,33,121,122
 /** @} */
 

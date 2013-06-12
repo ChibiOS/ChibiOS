@@ -18,7 +18,7 @@
 #include "hal.h"
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
-/* Initial setup of all defined pads, the list is terminated by a {0, 0, 0}.*/
+/* Initial setup of all defined pads, the list is terminated by a {-1, 0, 0}.*/
 static const spc_siu_init_t spc_siu_init[] = {
   {PCR(PORT_B, PB_LIN0_TDX), PAL_HIGH, PAL_MODE_OUTPUT_ALTERNATE(1)},
   {PCR(PORT_B, PB_LIN0_RDX), PAL_HIGH, PAL_MODE_INPUT},
@@ -30,7 +30,7 @@ static const spc_siu_init_t spc_siu_init[] = {
   {PCR(PORT_E, PE_LED2),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
   {PCR(PORT_E, PE_LED3),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
   {PCR(PORT_E, PE_LED4),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
-  {0, 0, 0}
+  {-1, 0, 0}
 };
 
 /* Initialization array for the PSMI registers.*/
