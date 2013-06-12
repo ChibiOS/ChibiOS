@@ -80,13 +80,13 @@
 /**
  * @brief   Input pad with weak pull up resistor.
  */
-#define PAL_MODE_INPUT_PULLUP           (PAL_SPC5_IBE |PAL_SPC5_WPE |       \
+#define PAL_MODE_INPUT_PULLUP           (PAL_SPC5_IBE | PAL_SPC5_WPE |      \
                                          PAL_SPC5_WPS)
 
 /**
  * @brief   Input pad with weak pull down resistor.
  */
-#define PAL_MODE_INPUT_PULLDOWN         (PAL_SPC5_IBE |PAL_SPC5_WPE)
+#define PAL_MODE_INPUT_PULLDOWN         (PAL_SPC5_IBE | PAL_SPC5_WPE)
 
 /**
  * @brief   Push-pull output pad.
