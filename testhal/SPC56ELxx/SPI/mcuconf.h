@@ -41,7 +41,7 @@
 #define SPC5_FMPLL1_IDF_VALUE               5
 #define SPC5_FMPLL1_NDIV_VALUE              60
 #define SPC5_FMPLL1_ODF                     SPC5_FMPLL_ODF_DIV4
-#define SPC5_SYSCLK_DIVIDER_VALUE           1
+#define SPC5_SYSCLK_DIVIDER_VALUE           2
 #define SPC5_AUX0CLK_SRC                    SPC5_CGM_SS_FMPLL1
 #define SPC5_MCONTROL_DIVIDER_VALUE         15
 #define SPC5_SWG_DIVIDER_VALUE              2
