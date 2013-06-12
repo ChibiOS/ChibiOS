@@ -86,6 +86,7 @@ static const ShellConfig shell_cfg1 = {
   (BaseSequentialStream *)&SD1,
   commands
 };
+#endif
 
 /*
  * LEDs blinker thread, times are in milliseconds.
@@ -156,7 +157,6 @@ static msg_t Thread1(void *arg) {
   }
   return 0;
 }
-#endif
 
 /*
  * Application entry point.
@@ -171,18 +171,18 @@ int main(void) {
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
    */
-//  halInit();
+  halInit();
   chSysInit();
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-//  sdStart(&SD1, NULL);
+  sdStart(&SD1, NULL);
 
   /*
    * Creates the blinker thread.
    */
-//  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity.

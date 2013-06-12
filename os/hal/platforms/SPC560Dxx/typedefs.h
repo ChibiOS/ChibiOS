@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    SPC560BCxx/typedefs.h
+ * @file    SPC560Dxx/typedefs.h
  * @brief   Dummy typedefs file.
  */
 

@@ -186,7 +186,11 @@
 /* SIUL attributes.*/
 #define SPC5_HAS_SIUL                       TRUE
 #define SPC5_SIUL_NUM_PORTS                 8
+#if defined(_SPC560PXX_SMALL_)
+#define SPC5_SIUL_NUM_PCRS                  72
+#else
 #define SPC5_SIUL_NUM_PCRS                  108
+#endif
 #define SPC5_SIUL_NUM_PADSELS               36
 
 /* FlexPWM attributes.*/

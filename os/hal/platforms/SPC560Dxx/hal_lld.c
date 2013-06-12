@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    SPC560BCxx/hal_lld.c
- * @brief   SPC560B/Cxx HAL subsystem low level driver source.
+ * @file    SPC560Dxx/hal_lld.c
+ * @brief   SPC560Dxx HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{

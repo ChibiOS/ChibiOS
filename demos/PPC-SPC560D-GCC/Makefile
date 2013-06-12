@@ -51,12 +51,12 @@ PROJECT = ch
 
 # Imported source files
 CHIBIOS = ../..
-#include $(CHIBIOS)/boards/ST_EVB_SPC560D/board.mk
-#include $(CHIBIOS)/os/hal/platforms/SPC560Dxx/platform.mk
-#include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/boards/ST_EVB_SPC560D/board.mk
+include $(CHIBIOS)/os/hal/platforms/SPC560Dxx/platform.mk
+include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/PPC/SPC560Dxx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
-#include $(CHIBIOS)/test/test.mk
+include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/SPC560D40.ld
@@ -68,10 +68,10 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       $(CHIBIOS)/os/various/evtimer.c \
+       $(CHIBIOS)/os/various/shell.c \
+       $(CHIBIOS)/os/various/chprintf.c \
        main.c
-#       $(CHIBIOS)/os/various/evtimer.c \
-#       $(CHIBIOS)/os/various/shell.c \
-#       $(CHIBIOS)/os/various/chprintf.c \
 
 # C++ sources here.
 CPPSRC =

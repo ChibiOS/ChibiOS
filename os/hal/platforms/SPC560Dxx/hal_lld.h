@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    SPC560BCxx/hal_lld.h
- * @brief   SPC560B/Cxx HAL subsystem low level driver header.
+ * @file    SPC560Dxx/hal_lld.h
+ * @brief   SPC560Dxx HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - SPC5_XOSC_CLK.
@@ -30,8 +30,8 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "xpc560bc.h"
-#include "spc560bc_registry.h"
+#include "xpc560d.h"
+#include "spc560d_registry.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -46,7 +46,7 @@
  * @name    Platform identification
  * @{
  */
-#define PLATFORM_NAME               "SPC560B/Cxx Car Body and Convenience"
+#define PLATFORM_NAME               "SPC560Dxx Car Body and Convenience"
 /** @} */
 
 /**
@@ -64,16 +64,6 @@
 #define SPC5_XOSC_CLK_MIN           4000000
 
 /**
- * @brief   Maximum SXOSC clock frequency.
- */
-#define SPC5_SXOSC_CLK_MAX          40000
-
-/**
- * @brief   Minimum SXOSC clock frequency.
- */
-#define SPC5_SXOSC_CLK_MIN          32000
-
-/**
  * @brief   Maximum FMPLLs input clock frequency.
  */
 #define SPC5_FMPLLIN_MIN            4000000
@@ -81,7 +71,7 @@
 /**
  * @brief   Maximum FMPLLs input clock frequency.
  */
-#define SPC5_FMPLLIN_MAX            64000000
+#define SPC5_FMPLLIN_MAX            48000000
 
 /**
  * @brief   Maximum FMPLLs VCO clock frequency.
@@ -96,7 +86,7 @@
 /**
  * @brief   Maximum FMPLL0 output clock frequency.
  */
-#define SPC5_FMPLL0_CLK_MAX         64000000
+#define SPC5_FMPLL0_CLK_MAX         48000000
 /** @} */
 
 /**
@@ -247,7 +237,7 @@
 
 /**
  * @brief   FMPLL0 IDF divider value.
- * @note    The default value is calculated for XOSC=8MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=8MHz and PHI=48MHz.
  */
 #if !defined(SPC5_FMPLL0_IDF_VALUE) || defined(__DOXYGEN__)
 #define SPC5_FMPLL0_IDF_VALUE               1
@@ -255,18 +245,18 @@
 
 /**
  * @brief   FMPLL0 NDIV divider value.
- * @note    The default value is calculated for XOSC=8MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=8MHz and PHI=48MHz.
  */
 #if !defined(SPC5_FMPLL0_NDIV_VALUE) || defined(__DOXYGEN__)
-#define SPC5_FMPLL0_NDIV_VALUE              32
+#define SPC5_FMPLL0_NDIV_VALUE              48
 #endif
 
 /**
  * @brief   FMPLL0 ODF divider value.
- * @note    The default value is calculated for XOSC=8MHz and PHI=64MHz.
+ * @note    The default value is calculated for XOSC=8MHz and PHI=48MHz.
  */
 #if !defined(SPC5_FMPLL0_ODF) || defined(__DOXYGEN__)
-#define SPC5_FMPLL0_ODF                     SPC5_FMPLL_ODF_DIV4
+#define SPC5_FMPLL0_ODF                     SPC5_FMPLL_ODF_DIV8
 #endif
 
 /**
@@ -639,7 +629,7 @@
  * Configuration-related checks.
  */
 #if !defined(SPC560BCxx_MCUCONF)
-#error "Using a wrong mcuconf.h file, SPC560BCxx_MCUCONF not defined"
+#error "Using a wrong mcuconf.h file, SPC560Dxx_MCUCONF not defined"
 #endif
 
 /* Check on the XOSC frequency.*/
