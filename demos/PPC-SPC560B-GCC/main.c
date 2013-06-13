@@ -173,6 +173,11 @@ int main(void) {
   chSysInit();
 
   /*
+   * Shell manager initialization.
+   */
+  shellInit();
+
+  /*
    * Activates the serial driver 1 using the driver default configuration.
    */
   sdStart(&SD1, NULL);

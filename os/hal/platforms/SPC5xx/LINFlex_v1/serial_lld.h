@@ -27,61 +27,11 @@
 
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
 
+#include "spc5_linflex.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-
-/**
- * @name    LINIER register bits definitions
- * @{
- */
-#define SPC5_LINIER_HRIE                    (1U << 0)
-#define SPC5_LINIER_DTIE                    (1U << 1)
-#define SPC5_LINIER_DRIE                    (1U << 2)
-#define SPC5_LINIER_DBEIE                   (1U << 3)
-#define SPC5_LINIER_DBFIE                   (1U << 4)
-#define SPC5_LINIER_WUIE                    (1U << 5)
-#define SPC5_LINIER_LSIE                    (1U << 6)
-#define SPC5_LINIER_BOIE                    (1U << 7)
-#define SPC5_LINIER_FEIE                    (1U << 8)
-#define SPC5_LINIER_HEIE                    (1U << 11)
-#define SPC5_LINIER_CEIE                    (1U << 12)
-#define SPC5_LINIER_BEIE                    (1U << 13)
-#define SPC5_LINIER_OCIE                    (1U << 14)
-#define SPC5_LINIER_SZIE                    (1U << 15)
-/** @} */
-
-/**
- * @name    UARTSR register bits definitions
- * @{
- */
-#define SPC5_UARTSR_NF                      (1U << 0)
-#define SPC5_UARTSR_DTF                     (1U << 1)
-#define SPC5_UARTSR_DRF                     (1U << 2)
-#define SPC5_UARTSR_WUF                     (1U << 5)
-#define SPC5_UARTSR_RPS                     (1U << 6)
-#define SPC5_UARTSR_BOF                     (1U << 7)
-#define SPC5_UARTSR_FEF                     (1U << 8)
-#define SPC5_UARTSR_RMB                     (1U << 9)
-#define SPC5_UARTSR_PE0                     (1U << 10)
-#define SPC5_UARTSR_PE1                     (1U << 11)
-#define SPC5_UARTSR_PE2                     (1U << 12)
-#define SPC5_UARTSR_PE3                     (1U << 13)
-#define SPC5_UARTSR_OCF                     (1U << 14)
-#define SPC5_UARTSR_SZF                     (1U << 15)
-/** @} */
-
-/**
- * @name    UARTCR register bits definitions
- * @{
- */
-#define SPC5_UARTCR_UART                    (1U << 0)
-#define SPC5_UARTCR_WL                      (1U << 1)
-#define SPC5_UARTCR_PCE                     (1U << 2)
-#define SPC5_UARTCR_OP                      (1U << 3)
-#define SPC5_UARTCR_TXEN                    (1U << 4)
-#define SPC5_UARTCR_RXEN                    (1U << 5)
-/** @} */
 
 /**
  * @name    Serial driver allowable modes
@@ -104,7 +54,7 @@
  * @details If set to @p TRUE the support for LINFlex-0 is included.
  */
 #if !defined(SPC5_SERIAL_USE_LINFLEX0) || defined(__DOXYGEN__)
-#define SPC5_SERIAL_USE_LINFLEX0            TRUE
+#define SPC5_SERIAL_USE_LINFLEX0            FALSE
 #endif
 
 /**
@@ -112,7 +62,23 @@
  * @details If set to @p TRUE the support for LINFlex-1 is included.
  */
 #if !defined(SPC5_SERIAL_USE_LINFLEX1) || defined(__DOXYGEN__)
-#define SPC5_SERIAL_USE_LINFLEX1            TRUE
+#define SPC5_SERIAL_USE_LINFLEX1            FALSE
+#endif
+
+/**
+ * @brief   LINFlex-2 driver enable switch.
+ * @details If set to @p TRUE the support for LINFlex-2 is included.
+ */
+#if !defined(SPC5_SERIAL_USE_LINFLEX2) || defined(__DOXYGEN__)
+#define SPC5_SERIAL_USE_LINFLEX2            FALSE
+#endif
+
+/**
+ * @brief   LINFlex-3 driver enable switch.
+ * @details If set to @p TRUE the support for LINFlex-3 is included.
+ */
+#if !defined(SPC5_SERIAL_USE_LINFLEX3) || defined(__DOXYGEN__)
+#define SPC5_SERIAL_USE_LINFLEX3            FALSE
 #endif
 
 /**
@@ -127,6 +93,20 @@
  */
 #if !defined(SPC5_SERIAL_LINFLEX1_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_SERIAL_LINFLEX1_PRIORITY       8
+#endif
+
+/**
+ * @brief   LINFlex-2 interrupt priority level setting.
+ */
+#if !defined(SPC5_SERIAL_LINFLEX2_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_SERIAL_LINFLEX2_PRIORITY       8
+#endif
+
+/**
+ * @brief   LINFlex-3 interrupt priority level setting.
+ */
+#if !defined(SPC5_SERIAL_LINFLEX3_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_SERIAL_LINFLEX3_PRIORITY       8
 #endif
 
 /**
@@ -170,6 +150,50 @@
  */
 #if !defined(SPC5_SERIAL_LINFLEX1_STOP_PCTL) || defined(__DOXYGEN__)
 #define SPC5_SERIAL_LINFLEX1_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#endif
+
+/**
+ * @brief   LINFlex-2 peripheral configuration when started.
+ * @note    The default configuration is 1 (always run) in run mode and
+ *          2 (only halt) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SERIAL_LINFLEX2_START_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SERIAL_LINFLEX2_START_PCTL     (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#endif
+
+/**
+ * @brief   LINFlex-2 peripheral configuration when stopped.
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SERIAL_LINFLEX2_STOP_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SERIAL_LINFLEX2_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#endif
+
+/**
+ * @brief   LINFlex-3 peripheral configuration when started.
+ * @note    The default configuration is 1 (always run) in run mode and
+ *          2 (only halt) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SERIAL_LINFLEX3_START_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SERIAL_LINFLEX3_START_PCTL     (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#endif
+
+/**
+ * @brief   LINFlex-3 peripheral configuration when stopped.
+ * @note    The default configuration is 0 (never run) in run mode and
+ *          0 (never run) in low power mode. The defaults of the run modes
+ *          are defined in @p hal_lld.h.
+ */
+#if !defined(SPC5_SERIAL_LINFLEX3_STOP_PCTL) || defined(__DOXYGEN__)
+#define SPC5_SERIAL_LINFLEX3_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 #endif
 
@@ -238,7 +262,7 @@ typedef struct {
   uint8_t                   ob[SERIAL_BUFFERS_SIZE];                        \
   /* End of the mandatory fields.*/                                         \
   /* Pointer to the volatile LINFlex registers block.*/                     \
-  volatile struct LINFLEX_tag *linflexp;
+  volatile struct spc5_linflex *linflexp;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

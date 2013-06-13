@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    SPC5xx/edma.h
+ * @file    SPC5xx/spc5_edma.h
  * @brief   EDMA helper driver header.
  *
  * @addtogroup SPC5xx_EDMA

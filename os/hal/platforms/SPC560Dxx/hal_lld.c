@@ -146,9 +146,9 @@ void spc_clock_init(void) {
 #endif /* SPC5_OSC_BYPASS */
 
   /* Setting the various dividers and source selectors.*/
-  CGM.SC_DC[0].R    = SPC5_CGM_SC_DC0;
-  CGM.SC_DC[1].R    = SPC5_CGM_SC_DC1;
-  CGM.SC_DC[2].R    = SPC5_CGM_SC_DC2;
+  CGM.SC_DC0.R     = SPC5_CGM_SC_DC0;
+  CGM.SC_DC1.R     = SPC5_CGM_SC_DC1;
+  CGM.SC_DC2.R     = SPC5_CGM_SC_DC2;
 
   /* Initialization of the FMPLLs settings.*/
   CGM.FMPLL_CR.R = SPC5_FMPLL0_ODF |
@@ -166,10 +166,10 @@ void spc_clock_init(void) {
   ME.RUN[1].R       = SPC5_ME_RUN1_MC_BITS;     /* RUN1 run mode.           */
   ME.RUN[2].R       = SPC5_ME_RUN2_MC_BITS;     /* RUN2 run mode.           */
   ME.RUN[3].R       = SPC5_ME_RUN3_MC_BITS;     /* RUN0 run mode.           */
-  ME.HALT0.R        = SPC5_ME_HALT0_MC_BITS;    /* HALT0 run mode.          */
-  ME.STOP0.R        = SPC5_ME_STOP0_MC_BITS;    /* STOP0 run mode.          */
-  ME.STANDBY0.R     = SPC5_ME_STANDBY0_MC_BITS; /* STANDBY0 run mode.       */
-  if (ME.IS.B.I_CONF) {
+  ME.HALT.R        = SPC5_ME_HALT0_MC_BITS;    /* HALT0 run mode.          */
+  ME.STOP.R        = SPC5_ME_STOP0_MC_BITS;    /* STOP0 run mode.          */
+  ME.STANDBY.R     = SPC5_ME_STANDBY0_MC_BITS; /* STANDBY0 run mode.       */
+  if (ME.IS.B.I_ICONF) {
     /* Configuration rejected.*/
     SPC5_CLOCK_FAILURE_HOOK();
   }

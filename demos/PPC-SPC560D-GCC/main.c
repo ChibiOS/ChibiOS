@@ -15,12 +15,11 @@
 */
 
 #include "ch.h"
-//#include "hal.h"
-//#include "test.h"
-//#include "shell.h"
-//#include "chprintf.h"
+#include "hal.h"
+#include "test.h"
+#include "shell.h"
+#include "chprintf.h"
 
-#if 0
 #define SHELL_WA_SIZE   THD_WA_SIZE(1024)
 #define TEST_WA_SIZE    THD_WA_SIZE(256)
 
@@ -86,7 +85,6 @@ static const ShellConfig shell_cfg1 = {
   (BaseSequentialStream *)&SD1,
   commands
 };
-#endif
 
 /*
  * LEDs blinker thread, times are in milliseconds.
@@ -162,7 +160,7 @@ static msg_t Thread1(void *arg) {
  * Application entry point.
  */
 int main(void) {
-//  Thread *shelltp = NULL;
+  Thread *shelltp = NULL;
 
   /*
    * System initializations.
@@ -173,6 +171,11 @@ int main(void) {
    */
   halInit();
   chSysInit();
+
+  /*
+   * Shell manager initialization.
+   */
+  shellInit();
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
@@ -188,14 +191,12 @@ int main(void) {
    * Normal main() thread activity.
    */
   while (TRUE) {
-#if 0
     if (!shelltp)
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     else if (chThdTerminated(shelltp)) {
       chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
       shelltp = NULL;           /* Triggers spawning of a new shell.        */
     }
-#endif
     chThdSleepMilliseconds(1000);
   }
   return 0;

@@ -84,7 +84,7 @@ static const SerialConfig default_config = {
  */
 static void spc5_linflex_init(SerialDriver *sdp, const SerialConfig *config) {
   uint32_t div;
-  volatile struct LINFLEX_tag *linflexp = sdp->linflexp;
+  volatile struct spc5_linflex *linflexp = sdp->linflexp;
 
   /* Enters the configuration mode.*/
   linflexp->LINCR1.R  = 1;                      /* INIT bit.                */
@@ -111,7 +111,7 @@ static void spc5_linflex_init(SerialDriver *sdp, const SerialConfig *config) {
  *
  * @param[in] linflexp  pointer to a LINFlex I/O block
  */
-static void spc5_linflex_deinit(volatile struct LINFLEX_tag *linflexp) {
+static void spc5_linflex_deinit(volatile struct spc5_linflex *linflexp) {
 
   /* Enters the configuration mode.*/
   linflexp->LINCR1.R  = 1;                      /* INIT bit.                */
@@ -217,6 +217,34 @@ static void notify2(GenericQueue *qp) {
     if (b != Q_EMPTY) {
       SD2.linflexp->UARTCR.B.TXEN = 1;
       SD2.linflexp->BDRL.B.DATA0 = b;
+    }
+  }
+}
+#endif
+
+#if SPC5_SERIAL_USE_LINFLEX2 || defined(__DOXYGEN__)
+static void notify3(GenericQueue *qp) {
+
+  (void)qp;
+  if (!SD3.linflexp->UARTCR.B.TXEN) {
+    msg_t b = sdRequestDataI(&SD3);
+    if (b != Q_EMPTY) {
+      SD3.linflexp->UARTCR.B.TXEN = 1;
+      SD3.linflexp->BDRL.B.DATA0 = b;
+    }
+  }
+}
+#endif
+
+#if SPC5_SERIAL_USE_LINFLEX3 || defined(__DOXYGEN__)
+static void notify4(GenericQueue *qp) {
+
+  (void)qp;
+  if (!SD4.linflexp->UARTCR.B.TXEN) {
+    msg_t b = sdRequestDataI(&SD4);
+    if (b != Q_EMPTY) {
+      SD4.linflexp->UARTCR.B.TXEN = 1;
+      SD4.linflexp->BDRL.B.DATA0 = b;
     }
   }
 }
@@ -332,6 +360,112 @@ CH_IRQ_HANDLER(SPC5_LINFLEX1_ERR_HANDLER) {
 }
 #endif
 
+#if SPC5_SERIAL_USE_LINFLEX2 || defined(__DOXYGEN__)
+#if !defined(SPC5_LINFLEX2_RXI_HANDLER)
+#error "SPC5_LINFLEX2_RXI_HANDLER not defined"
+#endif
+/**
+ * @brief   LINFlex-2 RXI interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_LINFLEX2_RXI_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  spc5xx_serve_rxi_interrupt(&SD3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if !defined(SPC5_LINFLEX2_TXI_HANDLER)
+#error "SPC5_LINFLEX2_TXI_HANDLER not defined"
+#endif
+/**
+ * @brief   LINFlex-2 TXI interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_LINFLEX2_TXI_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  spc5xx_serve_txi_interrupt(&SD3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if !defined(SPC5_LINFLEX2_ERR_HANDLER)
+#error "SPC5_LINFLEX2_ERR_HANDLER not defined"
+#endif
+/**
+ * @brief   LINFlex-2 ERR interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_LINFLEX2_ERR_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  spc5xx_serve_err_interrupt(&SD3);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+#if SPC5_SERIAL_USE_LINFLEX3 || defined(__DOXYGEN__)
+#if !defined(SPC5_LINFLEX3_RXI_HANDLER)
+#error "SPC5_LINFLEX3_RXI_HANDLER not defined"
+#endif
+/**
+ * @brief   LINFlex-3 RXI interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_LINFLEX3_RXI_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  spc5xx_serve_rxi_interrupt(&SD4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if !defined(SPC5_LINFLEX3_TXI_HANDLER)
+#error "SPC5_LINFLEX3_TXI_HANDLER not defined"
+#endif
+/**
+ * @brief   LINFlex-3 TXI interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_LINFLEX3_TXI_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  spc5xx_serve_txi_interrupt(&SD4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if !defined(SPC5_LINFLEX3_ERR_HANDLER)
+#error "SPC5_LINFLEX3_ERR_HANDLER not defined"
+#endif
+/**
+ * @brief   LINFlex-3 ERR interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_LINFLEX3_ERR_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  spc5xx_serve_err_interrupt(&SD4);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -345,7 +479,7 @@ void sd_lld_init(void) {
 
 #if SPC5_SERIAL_USE_LINFLEX0
   sdObjectInit(&SD1, NULL, notify1);
-  SD1.linflexp = &LINFLEX_0;
+  SD1.linflexp = &SPC5_LINFLEX0;
   INTC.PSR[SPC5_LINFLEX0_RXI_NUMBER].R = SPC5_SERIAL_LINFLEX0_PRIORITY;
   INTC.PSR[SPC5_LINFLEX0_TXI_NUMBER].R = SPC5_SERIAL_LINFLEX0_PRIORITY;
   INTC.PSR[SPC5_LINFLEX0_ERR_NUMBER].R = SPC5_SERIAL_LINFLEX0_PRIORITY;
@@ -353,10 +487,26 @@ void sd_lld_init(void) {
 
 #if SPC5_SERIAL_USE_LINFLEX1
   sdObjectInit(&SD2, NULL, notify2);
-  SD2.linflexp = &LINFLEX_1;
+  SD2.linflexp = &SPC5_LINFLEX1;
   INTC.PSR[SPC5_LINFLEX1_RXI_NUMBER].R = SPC5_SERIAL_LINFLEX1_PRIORITY;
   INTC.PSR[SPC5_LINFLEX1_TXI_NUMBER].R = SPC5_SERIAL_LINFLEX1_PRIORITY;
   INTC.PSR[SPC5_LINFLEX1_ERR_NUMBER].R = SPC5_SERIAL_LINFLEX1_PRIORITY;
+#endif
+
+#if SPC5_SERIAL_USE_LINFLEX2
+  sdObjectInit(&SD3, NULL, notify3);
+  SD3.linflexp = &SPC5_LINFLEX2;
+  INTC.PSR[SPC5_LINFLEX2_RXI_NUMBER].R = SPC5_SERIAL_LINFLEX2_PRIORITY;
+  INTC.PSR[SPC5_LINFLEX2_TXI_NUMBER].R = SPC5_SERIAL_LINFLEX2_PRIORITY;
+  INTC.PSR[SPC5_LINFLEX2_ERR_NUMBER].R = SPC5_SERIAL_LINFLEX2_PRIORITY;
+#endif
+
+#if SPC5_SERIAL_USE_LINFLEX3
+  sdObjectInit(&SD4, NULL, notify4);
+  SD4.linflexp = &SPC5_LINFLEX3;
+  INTC.PSR[SPC5_LINFLEX3_RXI_NUMBER].R = SPC5_SERIAL_LINFLEX3_PRIORITY;
+  INTC.PSR[SPC5_LINFLEX3_TXI_NUMBER].R = SPC5_SERIAL_LINFLEX3_PRIORITY;
+  INTC.PSR[SPC5_LINFLEX3_ERR_NUMBER].R = SPC5_SERIAL_LINFLEX3_PRIORITY;
 #endif
 }
 
@@ -388,6 +538,18 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
                                    SPC5_SERIAL_LINFLEX1_START_PCTL);
     }
 #endif
+#if SPC5_SERIAL_USE_LINFLEX2
+    if (&SD3 == sdp) {
+      halSPCSetPeripheralClockMode(SPC5_LINFLEX2_PCTL,
+                                   SPC5_SERIAL_LINFLEX2_START_PCTL);
+    }
+#endif
+#if SPC5_SERIAL_USE_LINFLEX3
+    if (&SD4 == sdp) {
+      halSPCSetPeripheralClockMode(SPC5_LINFLEX3_PCTL,
+                                   SPC5_SERIAL_LINFLEX3_START_PCTL);
+    }
+#endif
   }
   spc5_linflex_init(sdp, config);
 }
@@ -415,6 +577,20 @@ void sd_lld_stop(SerialDriver *sdp) {
     if (&SD2 == sdp) {
       halSPCSetPeripheralClockMode(SPC5_LINFLEX1_PCTL,
                                    SPC5_SERIAL_LINFLEX1_STOP_PCTL);
+      return;
+    }
+#endif
+#if SPC5_SERIAL_USE_LINFLEX2
+    if (&SD3 == sdp) {
+      halSPCSetPeripheralClockMode(SPC5_LINFLEX2_PCTL,
+                                   SPC5_SERIAL_LINFLEX2_STOP_PCTL);
+      return;
+    }
+#endif
+#if SPC5_SERIAL_USE_LINFLEX3
+    if (&SD4 == sdp) {
+      halSPCSetPeripheralClockMode(SPC5_LINFLEX3_PCTL,
+                                   SPC5_SERIAL_LINFLEX3_STOP_PCTL);
       return;
     }
 #endif

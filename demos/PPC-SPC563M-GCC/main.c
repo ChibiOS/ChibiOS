@@ -135,14 +135,14 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 1 using the driver default configuration.
-   */
-  sdStart(&SD1, NULL);
-
-  /*
    * Shell manager initialization.
    */
   shellInit();
+
+  /*
+   * Activates the serial driver 1 using the driver default configuration.
+   */
+  sdStart(&SD1, NULL);
 
   /*
    * Creates the blinker thread.

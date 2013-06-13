@@ -106,9 +106,9 @@
 #define SPC5_HAS_SIUL                       TRUE
 #define SPC5_SIUL_PCTL                      68
 #define SPC5_SIUL_NUM_PORTS                 8
-#define SPC5_SIUL_NUM_PCRS                  123
+#define SPC5_SIUL_NUM_PCRS                  77
 #define SPC5_SIUL_NUM_PADSELS               63
-#define SPC5_SIUL_SYSTEM_PINS               32,33,121,122
+#define SPC5_SIUL_SYSTEM_PINS               32,33
 /** @} */
 
 #endif /* _SPC560D_REGISTRY_H_ */

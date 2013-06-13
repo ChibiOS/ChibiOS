@@ -628,7 +628,7 @@
 /*
  * Configuration-related checks.
  */
-#if !defined(SPC560BCxx_MCUCONF)
+#if !defined(SPC560Dxx_MCUCONF)
 #error "Using a wrong mcuconf.h file, SPC560Dxx_MCUCONF not defined"
 #endif
 
