@@ -74,6 +74,14 @@
 #endif
 
 /**
+ * @brief   SPID5 driver enable switch.
+ * @details If set to @p TRUE the support for DSPI4 is included.
+ */
+#if !defined(SPC5_SPI_USE_DSPI4) || defined(__DOXYGEN__)
+#define SPC5_SPI_USE_DSPI4                  FALSE
+#endif
+
+/**
  * @brief   DSPI0 MCR PCS defaults.
  */
 #if !defined(SPC5_SPI_DSPI0_MCR) || defined(__DOXYGEN__)
@@ -130,31 +138,17 @@
 #endif
 
 /**
- * @brief   DSPI0 DMA priority.
+ * @brief   DSPI4 MCR PCS defaults.
  */
-#if !defined(SPC5_SPI_DSPI0_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_SPI_DSPI0_DMA_PRIO             10
-#endif
-
-/**
- * @brief   DSPI1 DMA priority.
- */
-#if !defined(SPC5_SPI_DSPI1_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_SPI_DSPI1_DMA_PRIO             10
-#endif
-
-/**
- * @brief   DSPI2 DMA priority.
- */
-#if !defined(SPC5_SPI_DSPI2_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_SPI_DSPI2_DMA_PRIO             10
-#endif
-
-/**
- * @brief   DSPI3 DMA priority.
- */
-#if !defined(SPC5_SPI_DSPI3_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_SPI_DSPI3_DMA_PRIO             10
+#if !defined(SPC5_SPI_DSPI4_MCR) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI4_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
 #endif
 
 /**
@@ -183,6 +177,13 @@
  */
 #if !defined(SPC5_SPI_DSPI3_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
 #define SPC5_SPI_DSPI3_DMA_IRQ_PRIO         10
+#endif
+
+/**
+ * @brief   DSPI4 DMA IRQ priority.
+ */
+#if !defined(SPC5_SPI_DSPI4_DMA_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI4_DMA_IRQ_PRIO         10
 #endif
 
 /**
@@ -218,6 +219,13 @@
  */
 #if !defined(SPC5_SPI_DSPI3_IRQ_PRIO) || defined(__DOXYGEN__)
 #define SPC5_SPI_DSPI3_IRQ_PRIO             10
+#endif
+
+/**
+ * @brief   DSPI4 DMA priority.
+ */
+#if !defined(SPC5_SPI_DSPI4_IRQ_PRIO) || defined(__DOXYGEN__)
+#define SPC5_SPI_DSPI4_IRQ_PRIO             10
 #endif
 
 /**

@@ -108,7 +108,7 @@ static const uint16_t pudcrs[8] = SPC5_ADC_PUDCR;
  * @brief   DMA configuration for EQADC CFIFO0.
  */
 static const edma_channel_config_t adc_cfifo0_dma_config = {
-  0, SPC5_ADC_FIFO0_DMA_PRIO, SPC5_ADC_FIFO0_DMA_IRQ_PRIO,
+  0, SPC5_ADC_FIFO0_DMA_IRQ_PRIO,
   NULL, adc_serve_dma_error_irq, &ADCD1
 };
 
@@ -116,7 +116,7 @@ static const edma_channel_config_t adc_cfifo0_dma_config = {
  * @brief   DMA configuration for EQADC RFIFO0.
  */
 static const edma_channel_config_t adc_rfifo0_dma_config = {
-  1, SPC5_ADC_FIFO0_DMA_PRIO, SPC5_ADC_FIFO0_DMA_IRQ_PRIO,
+  1, SPC5_ADC_FIFO0_DMA_IRQ_PRIO,
   adc_serve_rfifo_irq, adc_serve_dma_error_irq, &ADCD1
 };
 #endif /* SPC5_ADC_USE_ADC0_Q0 */
@@ -126,7 +126,7 @@ static const edma_channel_config_t adc_rfifo0_dma_config = {
  * @brief   DMA configuration for EQADC CFIFO1.
  */
 static const edma_channel_config_t adc_cfifo1_dma_config = {
-  2, SPC5_ADC_FIFO1_DMA_PRIO, SPC5_ADC_FIFO1_DMA_IRQ_PRIO,
+  2, SPC5_ADC_FIFO1_DMA_IRQ_PRIO,
   NULL, adc_serve_dma_error_irq, &ADCD2
 };
 
@@ -134,7 +134,7 @@ static const edma_channel_config_t adc_cfifo1_dma_config = {
  * @brief   DMA configuration for EQADC RFIFO1.
  */
 static const edma_channel_config_t adc_rfifo1_dma_config = {
-  3, SPC5_ADC_FIFO1_DMA_PRIO, SPC5_ADC_FIFO1_DMA_IRQ_PRIO,
+  3, SPC5_ADC_FIFO1_DMA_IRQ_PRIO,
   adc_serve_rfifo_irq, adc_serve_dma_error_irq, &ADCD2
 };
 #endif /* SPC5_ADC_USE_ADC0_Q1 */
@@ -144,7 +144,7 @@ static const edma_channel_config_t adc_rfifo1_dma_config = {
  * @brief   DMA configuration for EQADC CFIFO2.
  */
 static const edma_channel_config_t adc_cfifo2_dma_config = {
-  4, SPC5_ADC_FIFO2_DMA_PRIO, SPC5_ADC_FIFO2_DMA_IRQ_PRIO,
+  4, SPC5_ADC_FIFO2_DMA_IRQ_PRIO,
   NULL, adc_serve_dma_error_irq, &ADCD3
 };
 
@@ -152,7 +152,7 @@ static const edma_channel_config_t adc_cfifo2_dma_config = {
  * @brief   DMA configuration for EQADC RFIFO2.
  */
 static const edma_channel_config_t adc_rfifo2_dma_config = {
-  5, SPC5_ADC_FIFO2_DMA_PRIO, SPC5_ADC_FIFO2_DMA_IRQ_PRIO,
+  5, SPC5_ADC_FIFO2_DMA_IRQ_PRIO,
   adc_serve_rfifo_irq, adc_serve_dma_error_irq, &ADCD3
 };
 #endif /* SPC5_ADC_USE_ADC0_Q2 */
@@ -162,7 +162,7 @@ static const edma_channel_config_t adc_rfifo2_dma_config = {
  * @brief   DMA configuration for EQADC CFIFO3.
  */
 static const edma_channel_config_t adc_cfifo3_dma_config = {
-  6, SPC5_ADC_FIFO3_DMA_PRIO, SPC5_ADC_FIFO3_DMA_IRQ_PRIO,
+  6, SPC5_ADC_FIFO3_DMA_IRQ_PRIO,
   NULL, adc_serve_dma_error_irq, &ADCD4
 };
 
@@ -170,7 +170,7 @@ static const edma_channel_config_t adc_cfifo3_dma_config = {
  * @brief   DMA configuration for EQADC RFIFO3.
  */
 static const edma_channel_config_t adc_rfifo3_dma_config = {
-  7, SPC5_ADC_FIFO3_DMA_PRIO, SPC5_ADC_FIFO3_DMA_IRQ_PRIO,
+  7, SPC5_ADC_FIFO3_DMA_IRQ_PRIO,
   adc_serve_rfifo_irq, adc_serve_dma_error_irq, &ADCD4
 };
 #endif /* SPC5_ADC_USE_ADC1_Q3 */
@@ -180,7 +180,7 @@ static const edma_channel_config_t adc_rfifo3_dma_config = {
  * @brief   DMA configuration for EQADC CFIFO4.
  */
 static const edma_channel_config_t adc_cfifo4_dma_config = {
-  8, SPC5_ADC_FIFO4_DMA_PRIO, SPC5_ADC_FIFO4_DMA_IRQ_PRIO,
+  8, SPC5_ADC_FIFO4_DMA_IRQ_PRIO,
   NULL, adc_serve_dma_error_irq, &ADCD5
 };
 
@@ -188,7 +188,7 @@ static const edma_channel_config_t adc_cfifo4_dma_config = {
  * @brief   DMA configuration for EQADC RFIFO4.
  */
 static const edma_channel_config_t adc_rfifo4_dma_config = {
-  9, SPC5_ADC_FIFO4_DMA_PRIO, SPC5_ADC_FIFO4_DMA_IRQ_PRIO,
+  9, SPC5_ADC_FIFO4_DMA_IRQ_PRIO,
   adc_serve_rfifo_irq, adc_serve_dma_error_irq, &ADCD5
 };
 #endif /* SPC5_ADC_USE_ADC1_Q4 */
@@ -198,7 +198,7 @@ static const edma_channel_config_t adc_rfifo4_dma_config = {
  * @brief   DMA configuration for EQADC CFIFO5.
  */
 static const edma_channel_config_t adc_cfifo5_dma_config = {
-  10, SPC5_ADC_FIFO5_DMA_PRIO, SPC5_ADC_FIFO5_DMA_IRQ_PRIO,
+  10, SPC5_ADC_FIFO5_DMA_IRQ_PRIO,
   NULL, adc_serve_dma_error_irq, &ADCD6
 };
 
@@ -206,7 +206,7 @@ static const edma_channel_config_t adc_cfifo5_dma_config = {
  * @brief   DMA configuration for EQADC RFIFO5.
  */
 static const edma_channel_config_t adc_rfifo5_dma_config = {
-  11, SPC5_ADC_FIFO5_DMA_PRIO, SPC5_ADC_FIFO5_DMA_IRQ_PRIO,
+  11, SPC5_ADC_FIFO5_DMA_IRQ_PRIO,
   adc_serve_rfifo_irq, adc_serve_dma_error_irq, &ADCD6
 };
 #endif /* SPC5_ADC_USE_ADC1_Q5 */

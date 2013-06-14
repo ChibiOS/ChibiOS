@@ -347,48 +347,6 @@
 #endif
 
 /**
- * @brief   EQADC CFIFO0 and RFIFO0 DMA priority.
- */
-#if !defined(SPC5_ADC_FIFO0_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC_FIFO0_DMA_PRIO             12
-#endif
-
-/**
- * @brief   EQADC CFIFO1 and RFIFO1 DMA priority.
- */
-#if !defined(SPC5_ADC_FIFO1_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC_FIFO1_DMA_PRIO             12
-#endif
-
-/**
- * @brief   EQADC CFIFO2 and RFIFO2 DMA priority.
- */
-#if !defined(SPC5_ADC_FIFO2_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC_FIFO2_DMA_PRIO             12
-#endif
-
-/**
- * @brief   EQADC CFIFO3 and RFIFO3 DMA priority.
- */
-#if !defined(SPC5_ADC_FIFO3_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC_FIFO3_DMA_PRIO             12
-#endif
-
-/**
- * @brief   EQADC CFIFO4 and RFIFO4 DMA priority.
- */
-#if !defined(SPC5_ADC_FIFO4_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC_FIFO4_DMA_PRIO             12
-#endif
-
-/**
- * @brief   EQADC CFIFO5 and RFIFO5 DMA priority.
- */
-#if !defined(SPC5_ADC_FIFO5_DMA_PRIO) || defined(__DOXYGEN__)
-#define SPC5_ADC_FIFO5_DMA_PRIO             12
-#endif
-
-/**
  * @brief   EQADC CFIFO0 and RFIFO0 DMA IRQ priority.
  */
 #if !defined(SPC5_ADC0_FIFO0_DMA_IRQ_PRIO) || defined(__DOXYGEN__)

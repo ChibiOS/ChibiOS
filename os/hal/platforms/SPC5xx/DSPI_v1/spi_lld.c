@@ -94,7 +94,11 @@ SPIDriver SPID5;
  * @brief   DMA configuration for DSPI0 TX1.
  */
 static const edma_channel_config_t spi_dspi0_tx1_dma_config = {
-  SPC5_DSPI0_TX1_DMA_DEV_ID, SPC5_SPI_DSPI0_DMA_PRIO, SPC5_SPI_DSPI0_DMA_IRQ_PRIO,
+  SPC5_DSPI0_TX1_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI0_TX1_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI0_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID1
 };
 
@@ -102,7 +106,11 @@ static const edma_channel_config_t spi_dspi0_tx1_dma_config = {
  * @brief   DMA configuration for DSPI0 TX2.
  */
 static const edma_channel_config_t spi_dspi0_tx2_dma_config = {
-  SPC5_DSPI0_TX2_DMA_DEV_ID, SPC5_SPI_DSPI0_DMA_PRIO, SPC5_SPI_DSPI0_DMA_IRQ_PRIO,
+  SPC5_DSPI0_TX2_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  0,
+#endif
+  SPC5_SPI_DSPI0_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID1
 };
 
@@ -110,7 +118,11 @@ static const edma_channel_config_t spi_dspi0_tx2_dma_config = {
  * @brief   DMA configuration for DSPI0 RX.
  */
 static const edma_channel_config_t spi_dspi0_rx_dma_config = {
-  SPC5_DSPI0_RX_DMA_DEV_ID, SPC5_SPI_DSPI0_DMA_PRIO, SPC5_SPI_DSPI0_DMA_IRQ_PRIO,
+  SPC5_DSPI0_RX_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI0_RX_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI0_DMA_IRQ_PRIO,
   spi_serve_rx_irq, spi_serve_dma_error_irq, &SPID1
 };
 #endif /* SPC5_SPI_USE_DSPI0 */
@@ -120,7 +132,11 @@ static const edma_channel_config_t spi_dspi0_rx_dma_config = {
  * @brief   DMA configuration for DSPI1 TX1.
  */
 static const edma_channel_config_t spi_dspi1_tx1_dma_config = {
-  SPC5_DSPI1_TX1_DMA_DEV_ID, SPC5_SPI_DSPI1_DMA_PRIO, SPC5_SPI_DSPI1_DMA_IRQ_PRIO,
+  SPC5_DSPI1_TX1_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI1_TX1_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI1_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID2
 };
 
@@ -128,7 +144,11 @@ static const edma_channel_config_t spi_dspi1_tx1_dma_config = {
  * @brief   DMA configuration for DSPI1 TX2.
  */
 static const edma_channel_config_t spi_dspi1_tx2_dma_config = {
-  SPC5_DSPI1_TX2_DMA_DEV_ID, SPC5_SPI_DSPI1_DMA_PRIO, SPC5_SPI_DSPI1_DMA_IRQ_PRIO,
+  SPC5_DSPI1_TX2_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  0,
+#endif
+  SPC5_SPI_DSPI1_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID2
 };
 
@@ -136,7 +156,11 @@ static const edma_channel_config_t spi_dspi1_tx2_dma_config = {
  * @brief   DMA configuration for DSPI1 RX.
  */
 static const edma_channel_config_t spi_dspi1_rx_dma_config = {
-  SPC5_DSPI1_RX_DMA_DEV_ID, SPC5_SPI_DSPI1_DMA_PRIO, SPC5_SPI_DSPI1_DMA_IRQ_PRIO,
+  SPC5_DSPI1_RX_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI1_RX_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI1_DMA_IRQ_PRIO,
   spi_serve_rx_irq, spi_serve_dma_error_irq, &SPID2
 };
 #endif /* SPC5_SPI_USE_DSPI1 */
@@ -146,7 +170,11 @@ static const edma_channel_config_t spi_dspi1_rx_dma_config = {
  * @brief   DMA configuration for DSPI2 TX1.
  */
 static const edma_channel_config_t spi_dspi2_tx1_dma_config = {
-  SPC5_DSPI2_TX1_DMA_DEV_ID, SPC5_SPI_DSPI2_DMA_PRIO, SPC5_SPI_DSPI2_DMA_IRQ_PRIO,
+  SPC5_DSPI2_TX1_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI2_TX1_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI2_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID3
 };
 
@@ -154,7 +182,11 @@ static const edma_channel_config_t spi_dspi2_tx1_dma_config = {
  * @brief   DMA configuration for DSPI2 TX2.
  */
 static const edma_channel_config_t spi_dspi2_tx2_dma_config = {
-  SPC5_DSPI2_TX2_DMA_DEV_ID, SPC5_SPI_DSPI2_DMA_PRIO, SPC5_SPI_DSPI2_DMA_IRQ_PRIO,
+  SPC5_DSPI2_TX2_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  0,
+#endif
+  SPC5_SPI_DSPI2_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID3
 };
 
@@ -162,7 +194,11 @@ static const edma_channel_config_t spi_dspi2_tx2_dma_config = {
  * @brief   DMA configuration for DSPI2 RX.
  */
 static const edma_channel_config_t spi_dspi2_rx_dma_config = {
-  SPC5_DSPI2_RX_DMA_DEV_ID, SPC5_SPI_DSPI2_DMA_PRIO, SPC5_SPI_DSPI2_DMA_IRQ_PRIO,
+  SPC5_DSPI2_RX_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI2_RX_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI2_DMA_IRQ_PRIO,
   spi_serve_rx_irq, spi_serve_dma_error_irq, &SPID3
 };
 #endif /* SPC5_SPI_USE_DSPI2 */
@@ -172,7 +208,11 @@ static const edma_channel_config_t spi_dspi2_rx_dma_config = {
  * @brief   DMA configuration for DSPI3 TX1.
  */
 static const edma_channel_config_t spi_dspi3_tx1_dma_config = {
-  SPC5_DSPI3_TX1_DMA_DEV_ID, SPC5_SPI_DSPI3_DMA_PRIO, SPC5_SPI_DSPI3_DMA_IRQ_PRIO,
+  SPC5_DSPI3_TX1_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI3_TX1_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI3_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID4
 };
 
@@ -180,7 +220,11 @@ static const edma_channel_config_t spi_dspi3_tx1_dma_config = {
  * @brief   DMA configuration for DSPI3 TX2.
  */
 static const edma_channel_config_t spi_dspi3_tx2_dma_config = {
-  SPC5_DSPI3_TX2_DMA_DEV_ID, SPC5_SPI_DSPI3_DMA_PRIO, SPC5_SPI_DSPI3_DMA_IRQ_PRIO,
+  SPC5_DSPI3_TX2_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  0,
+#endif
+  SPC5_SPI_DSPI3_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID4
 };
 
@@ -188,7 +232,11 @@ static const edma_channel_config_t spi_dspi3_tx2_dma_config = {
  * @brief   DMA configuration for DSPI3 RX.
  */
 static const edma_channel_config_t spi_dspi3_rx_dma_config = {
-  SPC5_DSPI3_RX_DMA_DEV_ID, SPC5_SPI_DSPI3_DMA_PRIO, SPC5_SPI_DSPI3_DMA_IRQ_PRIO,
+  SPC5_DSPI3_RX_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI3_RX_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI3_DMA_IRQ_PRIO,
   spi_serve_rx_irq, spi_serve_dma_error_irq, &SPID4
 };
 #endif /* SPC5_SPI_USE_DSPI3 */
@@ -198,7 +246,11 @@ static const edma_channel_config_t spi_dspi3_rx_dma_config = {
  * @brief   DMA configuration for DSPI4 TX1.
  */
 static const edma_channel_config_t spi_dspi4_tx1_dma_config = {
-  SPC5_DSPI4_TX1_DMA_DEV_ID, SPC5_SPI_DSPI4_DMA_PRIO, SPC5_SPI_DSPI4_DMA_IRQ_PRIO,
+  SPC5_DSPI4_TX1_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI4_TX1_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI4_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID5
 };
 
@@ -206,7 +258,11 @@ static const edma_channel_config_t spi_dspi4_tx1_dma_config = {
  * @brief   DMA configuration for DSPI4 TX2.
  */
 static const edma_channel_config_t spi_dspi4_tx2_dma_config = {
-  SPC5_DSPI4_TX2_DMA_DEV_ID, SPC5_SPI_DSPI4_DMA_PRIO, SPC5_SPI_DSPI4_DMA_IRQ_PRIO,
+  SPC5_DSPI4_TX2_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  0,
+#endif
+  SPC5_SPI_DSPI4_DMA_IRQ_PRIO,
   spi_serve_tx_irq, spi_serve_dma_error_irq, &SPID5
 };
 
@@ -214,7 +270,11 @@ static const edma_channel_config_t spi_dspi4_tx2_dma_config = {
  * @brief   DMA configuration for DSPI4 RX.
  */
 static const edma_channel_config_t spi_dspi4_rx_dma_config = {
-  SPC5_DSPI4_RX_DMA_DEV_ID, SPC5_SPI_DSPI4_DMA_PRIO, SPC5_SPI_DSPI4_DMA_IRQ_PRIO,
+  SPC5_DSPI4_RX_DMA_CH_ID,
+#if SPC5_EDMA_HAS_MUX
+  SPC5_DSPI4_RX_DMA_DEV_ID,
+#endif
+  SPC5_SPI_DSPI4_DMA_IRQ_PRIO,
   spi_serve_rx_irq, spi_serve_dma_error_irq, &SPID5
 };
 #endif /* SPC5_SPI_USE_DSPI4 */

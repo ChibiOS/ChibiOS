@@ -31,6 +31,15 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+static const uint8_t g0[16] = {SPC5_EDMA_GROUP0_PRIORITIES};
+#if (SPC5_EDMA_NCHANNELS > 16) || defined(__DOXYGEN__)
+static const uint8_t g1[16] = {SPC5_EDMA_GROUP1_PRIORITIES};
+#endif
+#if (SPC5_EDMA_NCHANNELS > 32) || defined(__DOXYGEN__)
+static const uint8_t g2[16] = {SPC5_EDMA_GROUP2_PRIORITIES};
+static const uint8_t g3[16] = {SPC5_EDMA_GROUP3_PRIORITIES};
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -1290,64 +1299,74 @@ void edmaInit(void) {
   SPC5_EDMA.EEIRL.R = 0x00000000;
   SPC5_EDMA.IRQRL.R = 0xFFFFFFFF;
   SPC5_EDMA.ERL.R =   0xFFFFFFFF;
-  for (i = 0; i < SPC5_EDMA_NCHANNELS; i++)
-    SPC5_EDMA.CPR[i].R = 0;
+#if SPC5_EDMA_NCHANNELS > 32
+  SPC5_EDMA.ERQRH.R = 0x00000000;
+  SPC5_EDMA.EEIRH.R = 0x00000000;
+  SPC5_EDMA.IRQRH.R = 0xFFFFFFFF;
+  SPC5_EDMA.ERH.R =   0xFFFFFFFF;
+#endif
+  /* Initializing all the channels with a different priority withing the
+     channels group.*/
+  for (i = 0; i < 16; i++) {
+    SPC5_EDMA.CPR[i].R = g0[i];
+#if SPC5_EDMA_NCHANNELS > 16
+    SPC5_EDMA.CPR[i + 16].R = g1[i];
+#endif
+#if SPC5_EDMA_NCHANNELS > 32
+    SPC5_EDMA.CPR[i + 32].R = g2[i];
+    SPC5_EDMA.CPR[i + 48].R = g3[i];
+#endif
+  }
 
   /* Error interrupt source.*/
   INTC.PSR[10].R = SPC5_EDMA_ERROR_IRQ_PRIO;
+
+#if defined(SPC5_EDMA_MUX_PCTL)
+  /* DMA MUX PCTL setup, only if required.*/
+  halSPCSetPeripheralClockMode(SPC5_EDMA_MUX_PCTL, SPC5_EDMA_MUX_START_PCTL);
+#endif
 }
 
 /**
  * @brief   EDMA channel allocation.
  *
  * @param[in] ccfg      channel configuration
- * @return              The channel TCD pointer.
+ * @return              The channel number.
  * @retval EDMA_ERROR   if the channel cannot be allocated.
  *
  * @special
  */
 edma_channel_t edmaChannelAllocate(const edma_channel_config_t *ccfg) {
-  edma_channel_t channel;
 
-  chDbgCheck((ccfg != NULL) && ((ccfg->dma_prio & 15) < 16) &&
-             (ccfg->dma_irq_prio < 16),
+  chDbgCheck((ccfg != NULL) && (ccfg->dma_irq_prio < 16),
              "edmaChannelAllocate");
 
-#if SPC5_EDMA_HAS_MUX
-  /* Searching for a free channel, we have the MUX so any channel is
-     acceptable.*/
-  for (channel = 0; channel < SPC5_EDMA_NCHANNELS; channel++)
-    if (channels[channel] == NULL)
-      break;
-  if (channel >= SPC5_EDMA_NCHANNELS)
-    return EDMA_ERROR;                          /* No free channels.        */
-
-  /* Programming the MUX.*/
-  SPC5_DMAMUX.CHCONFIG[channel].R = (uint8_t)(0x80 | ccfg->dma_periph);
-#else /* !SPC5_EDMA_HAS_MUX */
-  /* There is no MUX so we can just check that the specified channels is
-     available.*/
-  channel = (edma_channel_t)ccfg->dma_periph;
-  if (channels[channel] != NULL)
+  /* If the channel is already taken then an error is returned.*/
+  if (channels[ccfg->dma_channel] != NULL)
     return EDMA_ERROR;                          /* Already taken.           */
+
+#if SPC5_EDMA_HAS_MUX
+  /* Programming the MUX.*/
+  SPC5_DMAMUX.CHCONFIG[ccfg->dma_channel].R = (uint8_t)(0x80 |
+                                                        ccfg->dma_periph);
 #endif /* !SPC5_EDMA_HAS_MUX */
 
   /* Associating the configuration to the channel.*/
-  channels[channel] = ccfg;
+  channels[ccfg->dma_channel] = ccfg;
 
   /* If an error callback is defined then the error interrupt source is
      enabled for the channel.*/
   if (ccfg->dma_error_func != NULL)
-    SPC5_EDMA.SEEIR.R = channel;
+    SPC5_EDMA.SEEIR.R = (uint32_t)ccfg->dma_channel;
 
   /* Setting up IRQ priority for the selected channel.*/
-  INTC.PSR[11 + channel].R = ccfg->dma_irq_prio;
+  INTC.PSR[11 + ccfg->dma_channel].R = ccfg->dma_irq_prio;
 
-  return channel;
+  return ccfg->dma_channel;
 }
 
 /**
- * @brief   EDMA channel allocation.
+ * @brief   EDMA channel release.
  *
  * @param[in] channel   the channel number
  *

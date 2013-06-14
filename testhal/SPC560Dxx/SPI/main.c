@@ -30,7 +30,7 @@ static const SPIConfig hs_spicfg = {
 };
 
 /*
- * Low speed SPI configuration (328.125kHz, CPHA=0, CPOL=0, MSb first).
+ * Low speed SPI configuration.
  */
 static const SPIConfig ls_spicfg = {
   NULL,
@@ -57,7 +57,7 @@ static msg_t spi_thread_1(void *p) {
   chRegSetThreadName("SPI thread 1");
   while (TRUE) {
     spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
-    palClearPad(PORT_D, PD_LED1);       /* LED ON.                          */
+    palClearPad(PORT_E, PE_LED1);       /* LED ON.                          */
     spiStart(&SPID1, &hs_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID1);                  /* Slave Select assertion.          */
     spiExchange(&SPID1, 512,
@@ -78,7 +78,7 @@ static msg_t spi_thread_2(void *p) {
   chRegSetThreadName("SPI thread 2");
   while (TRUE) {
     spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
-    palSetPad(PORT_D, PD_LED1);         /* LED OFF.                         */
+    palSetPad(PORT_E, PE_LED1);         /* LED OFF.                         */
     spiStart(&SPID1, &ls_spicfg);       /* Setup transfer parameters.       */
     spiSelect(&SPID1);                  /* Slave Select assertion.          */
     spiExchange(&SPID1, 512,
@@ -113,9 +113,9 @@ int main(void) {
 
   /* Starting driver for test, DSPI_1 I/O pins setup.*/
   spiStart(&SPID1, &ls_spicfg);
-  SIU.PCR[37].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SCK    */
-  SIU.PCR[38].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SOUT   */
-  SIU.PCR[36].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* CS[0] */
+  SIU.PCR[14].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SCK    */
+  SIU.PCR[13].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SOUT   */
+  SIU.PCR[15].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* CS[0] */
   SIU.PCR[35].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* CS[1] */
 
   /* Testing sending and receiving at the same time.*/
@@ -151,7 +151,7 @@ int main(void) {
    */
   while (TRUE) {
     chThdSleepMilliseconds(500);
-    palTogglePad(PORT_D, PD_LED2);
+    palTogglePad(PORT_E, PE_LED2);
   }
   return 0;
 }

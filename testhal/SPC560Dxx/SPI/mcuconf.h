@@ -197,8 +197,8 @@
 /*
  * SPI driver system settings.
  */
-#define SPC5_SPI_USE_DSPI0                  FALSE
-#define SPC5_SPI_USE_DSPI1                  FALSE
+#define SPC5_SPI_USE_DSPI0                  TRUE
+#define SPC5_SPI_USE_DSPI1                  TRUE
 #define SPC5_SPI_DSPI0_MCR                  (SPC5_MCR_PCSIS0 |              \
                                              SPC5_MCR_PCSIS1 |              \
                                              SPC5_MCR_PCSIS2 |              \

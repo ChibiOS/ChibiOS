@@ -42,6 +42,12 @@
 #define SPC5_DSPI_FIFO_DEPTH                4
 #define SPC5_DSPI0_PCTL                     4
 #define SPC5_DSPI1_PCTL                     5
+#define SPC5_DSPI0_TX1_DMA_CH_ID            4
+#define SPC5_DSPI0_TX2_DMA_CH_ID            5
+#define SPC5_DSPI0_RX_DMA_CH_ID             6
+#define SPC5_DSPI1_TX1_DMA_CH_ID            7
+#define SPC5_DSPI1_TX2_DMA_CH_ID            8
+#define SPC5_DSPI1_RX_DMA_CH_ID             9
 #define SPC5_DSPI0_TX1_DMA_DEV_ID           1
 #define SPC5_DSPI0_TX2_DMA_DEV_ID           0
 #define SPC5_DSPI0_RX_DMA_DEV_ID            2
@@ -65,6 +71,7 @@
 #define SPC5_HAS_EDMA                       TRUE
 #define SPC5_EDMA_NCHANNELS                 16
 #define SPC5_EDMA_HAS_MUX                   TRUE
+#define SPC5_EDMA_MUX_PCTL                  23
 
 /* LINFlex attributes.*/
 #define SPC5_HAS_LINFLEX0                   TRUE

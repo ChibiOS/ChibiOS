@@ -94,6 +94,9 @@ void hal_lld_init(void) {
   INTC.MCR.R   = 0;
   INTC.CPR.R   = 0;
   INTC.IACKR.R = (uint32_t)_vectors;
+
+  /* EDMA initialization.*/
+  edmaInit();
 }
 
 /**

@@ -96,6 +96,9 @@ void hal_lld_init(void) {
   PIT.CH[0].CVAL.R  = reg;
   PIT.CH[0].TFLG.R  = 1;        /* Interrupt flag cleared.                  */
   PIT.CH[0].TCTRL.R = 3;        /* Timer active, interrupt enabled.         */
+
+  /* EDMA initialization.*/
+  edmaInit();
 }
 
 /**
