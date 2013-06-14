@@ -23,6 +23,8 @@
  *
  * IRQ priorities:
  * 1...15       Lowest...Highest.
+ * DMA priorities:
+ * 0...15       Highest...Lowest.
  */
 
 #define SPC56ELxx_MCUCONF
@@ -135,6 +137,15 @@
 #define SPC5_CLOCK_FAILURE_HOOK()           chSysHalt()
 
 /*
+ * EDMA driver settings.
+ */
+#define SPC5_EDMA_CR_SETTING                0
+#define SPC5_EDMA_GROUP0_PRIORITIES                                         \
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+#define SPC5_EDMA_ERROR_IRQ_PRIO            2
+#define SPC5_EDMA_ERROR_HANDLER()           chSysHalt()
+
+/*
  * SERIAL driver system settings.
  */
 #define SPC5_SERIAL_USE_LINFLEX0            TRUE
@@ -153,7 +164,7 @@
 /*
  * PWM driver system settings.
  */
-#define SPC5_PWM_USE_SMOD0                  TRUE
+#define SPC5_PWM_USE_SMOD0                  FALSE
 #define SPC5_PWM_USE_SMOD1                  FALSE
 #define SPC5_PWM_USE_SMOD2                  FALSE
 #define SPC5_PWM_USE_SMOD3                  FALSE
@@ -182,7 +193,7 @@
 /*
  * ICU driver system settings.
  */
-#define SPC5_ICU_USE_SMOD0                  TRUE
+#define SPC5_ICU_USE_SMOD0                  FALSE
 #define SPC5_ICU_USE_SMOD1                  FALSE
 #define SPC5_ICU_USE_SMOD2                  FALSE
 #define SPC5_ICU_USE_SMOD3                  FALSE
@@ -248,9 +259,6 @@
                                              SPC5_MCR_PCSIS5 |              \
                                              SPC5_MCR_PCSIS6 |              \
                                              SPC5_MCR_PCSIS7)
-#define SPC5_SPI_DSPI0_DMA_PRIO             10
-#define SPC5_SPI_DSPI1_DMA_PRIO             10
-#define SPC5_SPI_DSPI2_DMA_PRIO             10
 #define SPC5_SPI_DSPI0_DMA_IRQ_PRIO         10
 #define SPC5_SPI_DSPI1_DMA_IRQ_PRIO         10
 #define SPC5_SPI_DSPI2_DMA_IRQ_PRIO         10

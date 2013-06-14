@@ -116,7 +116,7 @@ int main(void) {
   SIU.PCR[14].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SCK    */
   SIU.PCR[13].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* SOUT   */
   SIU.PCR[15].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* CS[0] */
-  SIU.PCR[35].R = PAL_MODE_OUTPUT_ALTERNATE(1);     /* CS[1] */
+  SIU.PCR[28].R = PAL_MODE_OUTPUT_ALTERNATE(3);     /* CS[1] */
 
   /* Testing sending and receiving at the same time.*/
   spiExchange(&SPID1, 4, txbuf, rxbuf);

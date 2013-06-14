@@ -23,6 +23,8 @@
  *
  * IRQ priorities:
  * 1...15       Lowest...Highest.
+ * DMA priorities:
+ * 0...15       Highest...Lowest.
  */
 
 #define SPC56ELxx_MCUCONF
@@ -41,9 +43,9 @@
 #define SPC5_FMPLL1_IDF_VALUE               5
 #define SPC5_FMPLL1_NDIV_VALUE              60
 #define SPC5_FMPLL1_ODF                     SPC5_FMPLL_ODF_DIV4
-#define SPC5_SYSCLK_DIVIDER_VALUE           1
+#define SPC5_SYSCLK_DIVIDER_VALUE           2
 #define SPC5_AUX0CLK_SRC                    SPC5_CGM_SS_FMPLL1
-#define SPC5_MCONTROL_DIVIDER_VALUE         2
+#define SPC5_MCONTROL_DIVIDER_VALUE         15
 #define SPC5_SWG_DIVIDER_VALUE              2
 #define SPC5_AUX1CLK_SRC                    SPC5_CGM_SS_FMPLL1
 #define SPC5_FLEXRAY_DIVIDER_VALUE          2
@@ -104,18 +106,6 @@
                                              SPC5_ME_MC_PLL1ON |            \
                                              SPC5_ME_MC_FLAON_NORMAL |      \
                                              SPC5_ME_MC_MVRON)
-#define SPC5_ME_RUN_PC0_BITS                0
-#define SPC5_ME_RUN_PC1_BITS                (SPC5_ME_RUN_PC_SAFE |          \
-                                             SPC5_ME_RUN_PC_DRUN |          \
-                                             SPC5_ME_RUN_PC_RUN0 |          \
-                                             SPC5_ME_RUN_PC_RUN1 |          \
-                                             SPC5_ME_RUN_PC_RUN2 |          \
-                                             SPC5_ME_RUN_PC_RUN3)
-#define SPC5_ME_RUN_PC2_BITS                (SPC5_ME_RUN_PC_DRUN |          \
-                                             SPC5_ME_RUN_PC_RUN0 |          \
-                                             SPC5_ME_RUN_PC_RUN1 |          \
-                                             SPC5_ME_RUN_PC_RUN2 |          \
-                                             SPC5_ME_RUN_PC_RUN3)
 #define SPC5_ME_RUN_PC3_BITS                (SPC5_ME_RUN_PC_RUN0 |          \
                                              SPC5_ME_RUN_PC_RUN1 |          \
                                              SPC5_ME_RUN_PC_RUN2 |          \
@@ -136,11 +126,6 @@
                                              SPC5_ME_RUN_PC_RUN1 |          \
                                              SPC5_ME_RUN_PC_RUN2 |          \
                                              SPC5_ME_RUN_PC_RUN3)
-#define SPC5_ME_LP_PC0_BITS                 0
-#define SPC5_ME_LP_PC1_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
-                                             SPC5_ME_LP_PC_STOP0)
-#define SPC5_ME_LP_PC2_BITS                 (SPC5_ME_LP_PC_HALT0)
-#define SPC5_ME_LP_PC3_BITS                 (SPC5_ME_LP_PC_STOP0)
 #define SPC5_ME_LP_PC4_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
                                              SPC5_ME_LP_PC_STOP0)
 #define SPC5_ME_LP_PC5_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
@@ -150,6 +135,15 @@
 #define SPC5_ME_LP_PC7_BITS                 (SPC5_ME_LP_PC_HALT0 |          \
                                              SPC5_ME_LP_PC_STOP0)
 #define SPC5_CLOCK_FAILURE_HOOK()           chSysHalt()
+
+/*
+ * EDMA driver settings.
+ */
+#define SPC5_EDMA_CR_SETTING                0
+#define SPC5_EDMA_GROUP0_PRIORITIES                                         \
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+#define SPC5_EDMA_ERROR_IRQ_PRIO            2
+#define SPC5_EDMA_ERROR_HANDLER()           chSysHalt()
 
 /*
  * SERIAL driver system settings.
@@ -165,4 +159,122 @@
 #define SPC5_SERIAL_LINFLEX1_START_PCTL     (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_SERIAL_LINFLEX1_STOP_PCTL      (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+
+/*
+ * PWM driver system settings.
+ */
+#define SPC5_PWM_USE_SMOD0                  FALSE
+#define SPC5_PWM_USE_SMOD1                  FALSE
+#define SPC5_PWM_USE_SMOD2                  FALSE
+#define SPC5_PWM_USE_SMOD3                  FALSE
+#define SPC5_PWM_SMOD0_PRIORITY             7
+#define SPC5_PWM_SMOD1_PRIORITY             7
+#define SPC5_PWM_SMOD2_PRIORITY             7
+#define SPC5_PWM_SMOD3_PRIORITY             7
+#define SPC5_PWM_FLEXPWM0_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_PWM_FLEXPWM0_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+
+#define SPC5_PWM_USE_SMOD4                  FALSE
+#define SPC5_PWM_USE_SMOD5                  FALSE
+#define SPC5_PWM_USE_SMOD6                  FALSE
+#define SPC5_PWM_USE_SMOD7                  FALSE
+#define SPC5_PWM_SMOD4_PRIORITY             7
+#define SPC5_PWM_SMOD5_PRIORITY             7
+#define SPC5_PWM_SMOD6_PRIORITY             7
+#define SPC5_PWM_SMOD7_PRIORITY             7
+#define SPC5_PWM_FLEXPWM1_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_PWM_FLEXPWM1_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+
+/*
+ * ICU driver system settings.
+ */
+#define SPC5_ICU_USE_SMOD0                  FALSE
+#define SPC5_ICU_USE_SMOD1                  FALSE
+#define SPC5_ICU_USE_SMOD2                  FALSE
+#define SPC5_ICU_USE_SMOD3                  FALSE
+#define SPC5_ICU_USE_SMOD4                  FALSE
+#define SPC5_ICU_USE_SMOD5                  FALSE
+#define SPC5_ICU_ETIMER0_PRIORITY           7
+#define SPC5_ICU_ETIMER0_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_ICU_ETIMER0_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+
+#define SPC5_ICU_USE_SMOD6                  FALSE
+#define SPC5_ICU_USE_SMOD7                  FALSE
+#define SPC5_ICU_USE_SMOD8                  FALSE
+#define SPC5_ICU_USE_SMOD9                  FALSE
+#define SPC5_ICU_USE_SMOD10                 FALSE
+#define SPC5_ICU_USE_SMOD11                 FALSE
+#define SPC5_ICU_ETIMER1_PRIORITY           7
+#define SPC5_ICU_ETIMER1_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_ICU_ETIMER1_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+
+#define SPC5_ICU_USE_SMOD12                 FALSE
+#define SPC5_ICU_USE_SMOD13                 FALSE
+#define SPC5_ICU_USE_SMOD14                 FALSE
+#define SPC5_ICU_USE_SMOD15                 FALSE
+#define SPC5_ICU_USE_SMOD16                 FALSE
+#define SPC5_ICU_USE_SMOD17                 FALSE
+#define SPC5_ICU_ETIMER2_PRIORITY           7
+#define SPC5_ICU_ETIMER2_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_ICU_ETIMER2_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+
+/*
+ * SPI driver system settings.
+ */
+#define SPC5_SPI_USE_DSPI0                  FALSE
+#define SPC5_SPI_USE_DSPI1                  FALSE
+#define SPC5_SPI_USE_DSPI2                  FALSE
+#define SPC5_SPI_DSPI0_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI1_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI2_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI0_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI1_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI2_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI0_IRQ_PRIO             10
+#define SPC5_SPI_DSPI1_IRQ_PRIO             10
+#define SPC5_SPI_DSPI2_IRQ_PRIO             10
+#define SPC5_SPI_DMA_ERROR_HOOK(spip)       chSysHalt()
+#define SPC5_SPI_DSPI0_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_SPI_DSPI0_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#define SPC5_SPI_DSPI1_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_SPI_DSPI1_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#define SPC5_SPI_DSPI2_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_SPI_DSPI2_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))

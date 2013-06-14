@@ -23,6 +23,8 @@
  *
  * IRQ priorities:
  * 1...15       Lowest...Highest.
+ * DMA priorities:
+ * 0...15       Highest...Lowest.
  */
 
 #define SPC56ELxx_MCUCONF
@@ -41,7 +43,7 @@
 #define SPC5_FMPLL1_IDF_VALUE               5
 #define SPC5_FMPLL1_NDIV_VALUE              60
 #define SPC5_FMPLL1_ODF                     SPC5_FMPLL_ODF_DIV4
-#define SPC5_SYSCLK_DIVIDER_VALUE           1
+#define SPC5_SYSCLK_DIVIDER_VALUE           2
 #define SPC5_AUX0CLK_SRC                    SPC5_CGM_SS_FMPLL1
 #define SPC5_MCONTROL_DIVIDER_VALUE         15
 #define SPC5_SWG_DIVIDER_VALUE              2
@@ -135,6 +137,15 @@
 #define SPC5_CLOCK_FAILURE_HOOK()           chSysHalt()
 
 /*
+ * EDMA driver settings.
+ */
+#define SPC5_EDMA_CR_SETTING                0
+#define SPC5_EDMA_GROUP0_PRIORITIES                                         \
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+#define SPC5_EDMA_ERROR_IRQ_PRIO            2
+#define SPC5_EDMA_ERROR_HANDLER()           chSysHalt()
+
+/*
  * SERIAL driver system settings.
  */
 #define SPC5_SERIAL_USE_LINFLEX0            TRUE
@@ -216,4 +227,54 @@
 #define SPC5_ICU_ETIMER2_START_PCTL         (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_ICU_ETIMER2_STOP_PCTL          (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+
+/*
+ * SPI driver system settings.
+ */
+#define SPC5_SPI_USE_DSPI0                  FALSE
+#define SPC5_SPI_USE_DSPI1                  FALSE
+#define SPC5_SPI_USE_DSPI2                  FALSE
+#define SPC5_SPI_DSPI0_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI1_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI2_MCR                  (SPC5_MCR_PCSIS0 |              \
+                                             SPC5_MCR_PCSIS1 |              \
+                                             SPC5_MCR_PCSIS2 |              \
+                                             SPC5_MCR_PCSIS3 |              \
+                                             SPC5_MCR_PCSIS4 |              \
+                                             SPC5_MCR_PCSIS5 |              \
+                                             SPC5_MCR_PCSIS6 |              \
+                                             SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI0_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI1_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI2_DMA_IRQ_PRIO         10
+#define SPC5_SPI_DSPI0_IRQ_PRIO             10
+#define SPC5_SPI_DSPI1_IRQ_PRIO             10
+#define SPC5_SPI_DSPI2_IRQ_PRIO             10
+#define SPC5_SPI_DMA_ERROR_HOOK(spip)       chSysHalt()
+#define SPC5_SPI_DSPI0_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_SPI_DSPI0_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#define SPC5_SPI_DSPI1_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_SPI_DSPI1_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
+                                             SPC5_ME_PCTL_LP(0))
+#define SPC5_SPI_DSPI2_START_PCTL           (SPC5_ME_PCTL_RUN(1) |          \
+                                             SPC5_ME_PCTL_LP(2))
+#define SPC5_SPI_DSPI2_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))

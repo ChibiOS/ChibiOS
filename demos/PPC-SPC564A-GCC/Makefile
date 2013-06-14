@@ -59,7 +59,7 @@ include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
-LDSCRIPT= $(PORTLD)/SPC564A80.ld
+LDSCRIPT= $(PORTLD)/SPC564A70.ld
 
 # C sources here.
 CSRC = $(PORTSRC) \
