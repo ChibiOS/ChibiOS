@@ -1,0 +1,160 @@
+
+<ApplicationBuild Header="ch" Extern=".\ch.rapp" Path=".\ch.rapp" OutputFile="..\STM8S-STM8S208-RC/bin\ch.aof" sate="96" AsyncBuild="" >
+	<Group Header="kernel" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
+		<NodeC Path="..\..\os\kernel\src\chcond.c" Header="chcond.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chcond.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chdebug.c" Header="chdebug.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chdebug.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chdynamic.c" Header="chdynamic.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\chdynamic.obj" sate="0" />
+		<NodeC Path="..\..\os\kernel\src\chevents.c" Header="chevents.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chevents.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chheap.c" Header="chheap.c" Marker="0" OutputFile="..\STM8S-STM8S208-RC/bin\chheap.obj" sate="0" AsyncBuild="" >
+			<Options>
+				<Config Header="Standard" >
+					<Set Header="RCST7" >
+						<Section Header="Model" >
+							<Property Header="GlobalMemory" Value="" Removable="1" />
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																					
+						</Section>
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																											
+					</Set>
+																																																																																																																																																																																																																																																																																																																																																																																																												
+				</Config>
+																																																																																																																																																																																																																																																																																																																				
+			</Options>
+																																																																																																																																																																																																																												
+		</NodeC>
+		<NodeC Path="..\..\os\kernel\src\chlists.c" Header="chlists.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chlists.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chmboxes.c" Header="chmboxes.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chmboxes.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chmemcore.c" Header="chmemcore.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chmemcore.obj" sate="0" AsyncBuild="" >		</NodeC>
+		<NodeC Path="..\..\os\kernel\src\chmempools.c" Header="chmempools.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chmempools.obj" sate="0" AsyncBuild="" >		</NodeC>
+		<NodeC Path="..\..\os\kernel\src\chmsg.c" Header="chmsg.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chmsg.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chmtx.c" Header="chmtx.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chmtx.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chqueues.c" Header="chqueues.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chqueues.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chregistry.c" Header="chregistry.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chregistry.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chschd.c" Header="chschd.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chschd.obj" sate="0" AsyncBuild="" >
+			<Options/>
+																																																																																																																																																																																																																												
+		</NodeC>
+		<NodeC Path="..\..\os\kernel\src\chsem.c" Header="chsem.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chsem.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chsys.c" Header="chsys.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chsys.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chthreads.c" Header="chthreads.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chthreads.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\kernel\src\chvt.c" Header="chvt.c" Marker="0" OutputFile="..\STM8S-STM8S208-RC/bin\chvt.obj" sate="0" AsyncBuild="" >
+			<Options>
+				<Config Header="Standard" >
+					<Set Header="RCST7" >
+						<Section Header="Model" >
+							<Property Header="GlobalMemory" Value="" Removable="1" />
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																					
+						</Section>
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																											
+					</Set>
+																																																																																																																																																																																																																																																																																																																																																																																																												
+				</Config>
+																																																																																																																																																																																																																																																																																																																				
+			</Options>
+																																																																																																																																																																																																																												
+		</NodeC>
+																																																																																																																																							
+	</Group>
+	<Group Header="test" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
+		<NodeC Path="..\..\test\test.c" Header="test.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\test.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testbmk.c" Header="testbmk.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testbmk.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testdyn.c" Header="testdyn.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testdyn.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testevt.c" Header="testevt.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testevt.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testheap.c" Header="testheap.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testheap.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testmbox.c" Header="testmbox.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testmbox.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testmsg.c" Header="testmsg.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testmsg.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testmtx.c" Header="testmtx.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testmtx.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testpools.c" Header="testpools.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testpools.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testqueues.c" Header="testqueues.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testqueues.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testsem.c" Header="testsem.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testsem.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\test\testthd.c" Header="testthd.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\testthd.obj" sate="0" AsyncBuild="" />
+																																																																																													
+	</Group>
+	<Group Header="port" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
+		<NodeC Path="..\..\os\ports\RC\STM8\chcore.c" Header="chcore.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\chcore.obj" sate="0" AsyncBuild="" />
+																																																																																																																																							
+	</Group>
+	<Group Header="hal" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
+		<NodeC Path="..\..\os\hal\src\adc.c" Header="adc.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\adc.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\src\can.c" Header="can.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\can.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\src\hal.c" Header="hal.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\hal.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\src\mac.c" Header="mac.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\mac.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\src\mmc_spi.c" Header="mmc_spi.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\mmc_spi.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\src\pal.c" Header="pal.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\pal.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\src\pwm.c" Header="pwm.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\pwm.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\src\serial.c" Header="serial.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\serial.obj" sate="0" AsyncBuild="" />
+		<NodeC Path="..\..\os\hal\src\spi.c" Header="spi.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\spi.obj" sate="0" AsyncBuild="" />
+		<Group Header="stm8s" Marker="-1" AsyncBuild="" OutputFile="" sate="0" >
+			<NodeC Path="..\..\os\hal\platforms\STM8S\hal_lld.c" Header="hal_lld.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\hal_lld.obj" sate="0" />
+			<NodeC Path="..\..\os\hal\platforms\STM8S\pal_lld.c" Header="pal_lld.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\pal_lld.obj" sate="0" />
+			<NodeC Path="..\..\os\hal\platforms\STM8S\serial_lld.c" Header="serial_lld.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\serial_lld.obj" sate="0" />
+			<NodeC Path="..\..\os\hal\platforms\STM8S\spi_lld.c" Header="spi_lld.c" Marker="-1" AsyncBuild="" OutputFile="..\STM8S-STM8S208-RC/bin\spi_lld.obj" sate="0" />
+										
+		</Group>
+																																																																																																																					
+	</Group>
+	<Group Header="board" Marker="-1" OutputFile="" sate="0" AsyncBuild="" >
+		<NodeC Path="..\..\boards\RAISONANCE_REVA_STM8S\board.c" Header="board.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\board.obj" sate="0" AsyncBuild="" />
+																																																																																																																								
+	</Group>
+	<NodeC Path=".\main.c" Header="main.c" Marker="-1" OutputFile="..\STM8S-STM8S208-RC/bin\main.obj" sate="0" AsyncBuild="" />
+	<Options>
+		<Config Header="Standard" >
+			<Set Header="ApplicationBuild" >
+				<Section Header="General" >
+					<Property Header="TargetFamily" Value="ST7" />
+																																																																																																																																																																																																																																																																																																																																																																																																																																					
+				</Section>
+				<Section Header="Directories" >
+					<Property Header="IncDir" Value="$(RkitInc);$(RkitInc)\ST7;..\..\os\kernel\include;..\..\os\ports\RC\STM8;..\..\os\hal\include;..\..\os\hal\platforms\STM8S;..\..\boards\RAISONANCE_REVA_STM8S;..\..\test" Removable="1" />
+					<Property Header="OutDir" Value="$(ApplicationDir)/bin" Removable="1" />
+					<Property Header="ListDir" Value="$(ApplicationDir)/lst" Removable="1" />
+					<Property Header="LinkerOutputDir" Value="Output Directory" Removable="1" />
+																																																																																																																																																																																																																																																																												
+				</Section>
+																																																																																																																																																																																																																
+			</Set>
+			<Set Header="Target" >
+				<Section Header="ProcessorST7" >
+					<Property Header="Processor" Value="STM8S208MB" Removable="1" />
+																																																																																																																																																																																																																																																																																																																																																																																																																																					
+				</Section>
+				<Section Header="ToolSetST7" >
+					<Property Header="BuildToolSetST7" Value="ST7\RaisonanceTools.config" Removable="1" />
+					<Property Header="ArelocInfo" Value="" Removable="1" />
+					<Property Header="Areloc" Value="REM" Removable="1" />
+							
+				</Section>
+				<Section Header="DebugST7" >
+					<Property Header="Startup" Value="1" Removable="1" />
+					<Property Header="DebugTool_STM8" Value="RLINK_STM8" Removable="1" />
+																																																																																																																																																																
+				</Section>
+					
+			</Set>
+			<Set Header="RCST7" >
+				<Section Header="CodeGen" >
+					<Property Header="ENUMTYPE" Value="ET(CHAR)" Removable="1" />
+																																																																																																																																																																																																																																																																																																																																																																																																																												
+				</Section>
+				<Section Header="Model" >
+					<Property Header="GlobalMemory" Value="DGC(DATA)" Removable="1" />
+					<Property Header="ModelP" Value="STM8(SMALL)" Removable="1" />
+																																																																																																																																																																									
+				</Section>
+				<Section Header="OPTIM" >
+					<Property Header="OTLEVEL" Value="3" Removable="1" />
+					<Property Header="SPEEDSIZE" Value="SPEED" Removable="1" />
+																																																																																																																																																																																																													
+				</Section>
+																																																																																																																																			
+			</Set>
+			<Set Header="MAST7" >
+				<Section Header="Set" >
+					<Property Header="Defines" Value="STM8S208RB" Removable="1" />
+																																																																																																																																																																																																																																																																																																																																																																						
+				</Section>
+																																																																																																																																																																																																																																																																																						
+			</Set>
+		</Config>
+	</Options>
+</ApplicationBuild>

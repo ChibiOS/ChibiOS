@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="../../common/doc.xsd" />
+  <xs:include schemaLocation="stm32f4xx_adc_cfg.xsd" />
+
+  <xs:complexType name="STM32F4xxCfgType">
+    <xs:complexContent>
+      <xs:extension base="DocumentedItem">
+        <xs:sequence>
+          <xs:element name="configs" maxOccurs="1" minOccurs="1">
+            <xs:complexType>
+              <xs:sequence maxOccurs="unbounded" minOccurs="1">
+                <xs:choice>
+                  <xs:element name="adc_config" type="STM32F4AdcCfgType"
+                    maxOccurs="1" minOccurs="0">
+                  </xs:element>
+                </xs:choice>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="configuration" type="STM32F4xxCfgType"></xs:element>
+</xs:schema>
