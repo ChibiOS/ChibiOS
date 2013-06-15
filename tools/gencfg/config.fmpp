@@ -1,0 +1,10 @@
+# Change the next line to point to the processor you want to use. Processors
+# are identified by a file named "config.fmpp" under the "processors" root
+# directory.
+inheritConfiguration: processors/boards/stm32f4xx/config.fmpp
+
+# Settings common to all processors. Do not change the following lines.
+freemarkerLinks: {
+    lib: ./lib
+}
+logFile: ./log.fmpp

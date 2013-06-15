@@ -1,0 +1,91 @@
+Status:
+- = Planned.
+X = In progress, some work done.
+* = Done.
+? = Not sure if worth the effort or useful at all.
+N = Decided against.
+
+Version 2.5.2
+* STM32 CAN2 support.
+* Support for ATSAM4L devices.
+* Improve support for STM32F3xx devices.
+* Update C++ wrapper.
+* Support for STM32F37x devices.
+X Restructure and improve documentation.
+X Improve support for SPC560BC devices.
+X Improve support for SPC560P devices.
+X Improve support for SPC563M devices.
+X Improve support for SPC56EL devices.
+- Support for SPC564A devices.
+- Support for SPC560D devices.
+- Support for STM32L1xx MD and HD devices.
+- Support for STM32F427 and STM32F437 devices.
+- Support for STM32F429 and STM32F439 devices.
+
+Within 2.5.x:
+X File System infrastructure.
+  X FatFs wrapper.
+- Recursive mutexes.
+X Revision of the RTCv2 driver implementation.
+X Streaming DAC/I2S driver model and STM32 implementation.
+- Specific I2C driver for STM32F0 and newer devices.
+- Unified LPC1xxx HAL.
+  - LPC11xx and LPC13xx HALs merged in the unified one.
+  - LPC17xx support.
+- NUC140 support.
+- Create a null device driver implementing a stream interface.
+- Add USARTs support to the STM32 SPI driver.
+- Add option to use another counter instead of the systick counter into the
+  trace buffer.
+- Add a chSysIntegrityCheck() API to the kernel.
+- Add guard pages as extra stack checking mechanism. Guard pages should be
+  of the same type of the stack alignment type.
+- Add a CH_THREAD macro for threads declaration in order to hide
+  compiler-specific optimizations for thread functions. All demos will have
+  to be updated.
+- Runtime errors manager in HAL.
+- Critical errors manager in HAL (to replace or complement assertions).
+- Add ADC3 support to the STM32F1xx ADC driver.
+? Add the RTC service inside the kernel and port, remove from HAL.
+
+Within 2.x.x
+- Software I2C implementation using a GPT instance for timings.
+- Static memory allocation hook macros in kernel code.
+X Implement the "transmission end" serial driver event on those platforms
+  supporting the feature, so far only done in STM32 driver.
+- Test suite overhaul, the API should be more generic in order to be used
+  with different subsystems and not just the kernel.
+- Reduce number of demos globally, add demos to a repository or on web site.
+  Required in order to reduce support effort.
+- New device driver models: Clock, Systick, WDG.
+- Add UART4 support to the STM32 UART driver (CL line only, HD has a nasty
+  shared interrupt).
+- Shared DMA channels support in the STM8L HAL.
+- Device drivers for STM8/STM8L (ADC, PWM, bring them on par with STM32).
+- Device drivers for LPC1xxx (ADC, PWM, bring them on par with STM32).
+- Implement USB Mass Storage Class support.
+- Batch testing of the ARM7/ARMCMx port using OpenOCD, with reports.
+X Transactional flash file system implementation.
+- Serial over UART complex driver driver, evaluate from the performance
+  results if to make obsolete the current dedicated Serial driver.
+- Official segmented interrupts support and abstraction in CMx port.
+- MAC driver revision in order to support copy-less operations, this will
+  require changes to lwIP or a new TCP/IP stack however.
+- Threads Pools manager in the library.
+- Dedicated TCP/IP stack.
+? Evaluate if change thread functions to return void is worthwhile. 
+? Add a *very simple* ADC API for single one shot sampling (implement it as
+  an injected conversion on the STM32).
+? Add a switch to enable/disable the priority inheritance algorithm in mutexes.
+? ISO7816 driver over UART driver, both reader and card side.
+? Merge the Coldfire branch in mainline (hardware missing).
+? Merge the H8S branch in mainline (hardware missing).
+
+Ideas for 3.x.x:
+- MMU/MPU support.
+- High resolution timers and tickless kernel.
+- Multicore support.
+
+Side projects:
+X ChibiOS Wizard, UML modeling and ChibiOS applications code and
+  documentation generator.

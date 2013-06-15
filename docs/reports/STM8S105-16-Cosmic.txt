@@ -1,0 +1,7 @@
+***************************************************************************
+Options:  Optimized for speed
+Settings: CPUCLK=16MHz (HSI)
+Compiler: Cosmic STM8 compiler 4.3.6.
+***************************************************************************
+
+FAILED (compiler regression)
