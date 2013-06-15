@@ -1,1 +1,0 @@
-fmpp -C config.fmpp
