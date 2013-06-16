@@ -364,7 +364,7 @@ void chThdExitS(msg_t msg) {
   THREAD_EXT_EXIT_HOOK(tp);
 #endif
 #if CH_USE_WAITEXIT
-  while (notempty(&tp->p_waiting))
+  while (list_notempty(&tp->p_waiting))
     chSchReadyI(list_remove(&tp->p_waiting));
 #endif
 #if CH_USE_REGISTRY

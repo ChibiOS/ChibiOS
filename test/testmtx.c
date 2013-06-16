@@ -446,13 +446,13 @@ static void mtx5_execute(void) {
   chMtxUnlockS();
   chSysUnlock();
 
-  test_assert(3, isempty(&m1.m_queue), "queue not empty");
+  test_assert(3, queue_isempty(&m1.m_queue), "queue not empty");
   test_assert(4, m1.m_owner == NULL, "still owned");
   test_assert(5, chThdGetPriority() == prio, "wrong priority level");
   
   chMtxLock(&m1);
   chMtxUnlockAll();
-  test_assert(6, isempty(&m1.m_queue), "queue not empty");
+  test_assert(6, queue_isempty(&m1.m_queue), "queue not empty");
   test_assert(7, m1.m_owner == NULL, "still owned");
 }
 

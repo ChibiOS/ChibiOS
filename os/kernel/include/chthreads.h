@@ -20,7 +20,7 @@
 
 /**
  * @file    chthreads.h
- * @brief   Threads macros and structures.
+ * @brief   Threads module macros and structures.
  *
  * @addtogroup threads
  * @{
@@ -28,6 +28,10 @@
 
 #ifndef _CHTHREADS_H_
 #define _CHTHREADS_H_
+
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
 
 /**
  * @name    Thread states
@@ -75,6 +79,42 @@
                                          Memory Pool.                       */
 #define THD_TERMINATE           4   /**< @brief Termination requested flag. */
 /** @} */
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
+/* Forward declaration required by the mutexes stack structure present
+   in every thread.*/
+#if CH_USE_MUTEXES
+typedef struct Mutex Mutex;
+#endif
+
+/**
+ * @brief   Generic threads single link list, it works like a stack.
+ */
+typedef struct {
+
+  Thread                *p_next;    /**< @brief Next in the list/queue.     */
+} ThreadsList;
+
+/**
+ * @extends ThreadsList
+ *
+ * @brief   Generic threads bidirectional linked list header and element.
+ */
+typedef struct {
+  Thread                *p_next;    /**< @brief Next in the list/queue.     */
+  Thread                *p_prev;    /**< @brief Previous in the queue.      */
+} ThreadsQueue;
 
 /**
  * @extends ThreadsQueue
@@ -221,6 +261,32 @@ struct Thread {
  */
 typedef msg_t (*tfunc_t)(void *);
 
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
+
+/**
+ * @brief   Data part of a static threads queue initializer.
+ * @details This macro should be used when statically initializing a threads
+ *          queue that is part of a bigger structure.
+ *
+ * @param[in] name      the name of the threads queue variable
+ */
+#define _THREADSQUEUE_DATA(name) {(Thread *)&name, (Thread *)&name}
+
+/**
+ * @brief   Static threads queue initializer.
+ * @details Statically initialized threads queues require no explicit
+ *          initialization using @p queue_init().
+ *
+ * @param[in] name      the name of the threads queue variable
+ */
+#define THREADSQUEUE_DECL(name) ThreadsQueue name = _THREADSQUEUE_DATA(name)
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
 /**
  * @name    Macro Functions
  * @{
@@ -252,14 +318,6 @@ typedef msg_t (*tfunc_t)(void *);
  * @special
  */
 #define chThdGetTicks(tp) ((tp)->p_time)
-
-/**
- * @brief   Returns the pointer to the @p Thread local storage area, if any.
- * @note    Can be invoked in any context.
- *
- * @special
- */
-#define chThdLS() (void *)(currp + 1)
 
 /**
  * @brief   Verifies if the specified thread is in the @p THD_STATE_FINAL state.
@@ -374,6 +432,70 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Threads list initialization.
+ *
+ * @notapi
+ */
+static inline void list_init(ThreadsList *tlp) {
+
+  tlp->p_next = (Thread *)tlp;
+}
+
+/**
+ * @brief   Evaluates to @p TRUE if the specified threads list is empty.
+ *
+ * @notapi
+ */
+static inline bool_t list_isempty(ThreadsList *tlp) {
+
+  return (bool_t)(tlp->p_next == (Thread *)tlp);
+}
+
+/**
+ * @brief   Evaluates to @p TRUE if the specified threads list is not empty.
+ *
+ * @notapi
+ */
+static inline bool_t list_notempty(ThreadsList *tlp) {
+
+  return (bool_t)(tlp->p_next != (Thread *)tlp);
+}
+
+/**
+ * @brief   Threads queue initialization.
+ *
+ * @notapi
+ */
+static inline void queue_init(ThreadsQueue *tqp) {
+
+  tqp->p_next = tqp->p_prev = (Thread *)tqp;
+}
+
+/**
+ * @brief   Evaluates to @p TRUE if the specified threads queue is empty.
+ *
+ * @notapi
+ */
+static inline bool_t queue_isempty(ThreadsQueue *tqp) {
+
+  return (bool_t)(tqp->p_next == (Thread *)tqp);
+}
+
+/**
+ * @brief   Evaluates to @p TRUE if the specified threads queue is not empty.
+ *
+ * @notapi
+ */
+static inline bool_t queue_notempty(ThreadsQueue *tqp) {
+
+  return (bool_t)(tqp->p_next != (Thread *)tqp);
+}
 
 #endif /* _CHTHREADS_H_ */
 

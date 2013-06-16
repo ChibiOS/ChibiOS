@@ -317,7 +317,7 @@ static void otg_fifo_write_from_queue(volatile uint32_t *fifop,
   /* Updating queue.*/
   chSysLock();
   oqp->q_counter += n;
-  while (notempty(&oqp->q_waiting))
+  while (queue_notempty(&oqp->q_waiting))
     chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
   chSchRescheduleS();
   chSysUnlock();
@@ -429,7 +429,7 @@ static void otg_fifo_read_to_queue(volatile uint32_t *fifop,
   /* Updating queue.*/
   chSysLock();
   iqp->q_counter += n;
-  while (notempty(&iqp->q_waiting))
+  while (queue_notempty(&iqp->q_waiting))
     chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
   chSchRescheduleS();
   chSysUnlock();

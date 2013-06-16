@@ -68,7 +68,7 @@ void chCondSignal(CondVar *cp) {
   chDbgCheck(cp != NULL, "chCondSignal");
 
   chSysLock();
-  if (notempty(&cp->c_queue))
+  if (queue_notempty(&cp->c_queue))
     chSchWakeupS(fifo_remove(&cp->c_queue), RDY_OK);
   chSysUnlock();
 }
@@ -89,7 +89,7 @@ void chCondSignalI(CondVar *cp) {
   chDbgCheckClassI();
   chDbgCheck(cp != NULL, "chCondSignalI");
 
-  if (notempty(&cp->c_queue))
+  if (queue_notempty(&cp->c_queue))
     chSchReadyI(fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_OK;
 }
 

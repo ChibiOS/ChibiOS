@@ -86,7 +86,7 @@ extern "C" {
  *
  * @sclass
  */
-#define chMtxQueueNotEmptyS(mp) notempty(&(mp)->m_queue)
+#define chMtxQueueNotEmptyS(mp) queue_notempty(&(mp)->m_queue)
 /** @} */
 
 #endif /* CH_USE_MUTEXES */

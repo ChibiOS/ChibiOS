@@ -100,11 +100,14 @@
 #endif
 /** @} */
 
+typedef struct Thread Thread;
+
 #include "chconf.h"
 #include "chtypes.h"
 #include "chdebug.h"
-#include "chlists.h"
 #include "chcore.h"
+#include "chthreads.h"
+//#include "chlists.h"
 #include "chsys.h"
 #include "chvt.h"
 #include "chschd.h"
@@ -118,7 +121,6 @@
 #include "chmemcore.h"
 #include "chheap.h"
 #include "chmempools.h"
-#include "chthreads.h"
 #include "chdynamic.h"
 #include "chregistry.h"
 #include "chinline.h"
