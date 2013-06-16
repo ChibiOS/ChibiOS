@@ -102,7 +102,7 @@ Thread *chMsgWait(void) {
   chSysLock();
   if (!chMsgIsPendingI(currp))
     chSchGoSleepS(THD_STATE_WTMSG);
-  tp = fifo_remove(&currp->p_msgqueue);
+  tp = queue_fifo_remove(&currp->p_msgqueue);
   tp->p_state = THD_STATE_SNDMSG;
   chSysUnlock();
   return tp;

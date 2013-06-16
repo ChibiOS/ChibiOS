@@ -69,7 +69,7 @@ void chCondSignal(CondVar *cp) {
 
   chSysLock();
   if (queue_notempty(&cp->c_queue))
-    chSchWakeupS(fifo_remove(&cp->c_queue), RDY_OK);
+    chSchWakeupS(queue_fifo_remove(&cp->c_queue), RDY_OK);
   chSysUnlock();
 }
 
@@ -90,7 +90,7 @@ void chCondSignalI(CondVar *cp) {
   chDbgCheck(cp != NULL, "chCondSignalI");
 
   if (queue_notempty(&cp->c_queue))
-    chSchReadyI(fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_OK;
+    chSchReadyI(queue_fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_OK;
 }
 
 /**
@@ -128,7 +128,7 @@ void chCondBroadcastI(CondVar *cp) {
      ready list in FIFO order. The wakeup message is set to @p RDY_RESET in
      order to make a chCondBroadcast() detectable from a chCondSignal().*/
   while (cp->c_queue.p_next != (void *)&cp->c_queue)
-    chSchReadyI(fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_RESET;
+    chSchReadyI(queue_fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_RESET;
 }
 
 /**
@@ -187,7 +187,7 @@ msg_t chCondWaitS(CondVar *cp) {
 
   mp = chMtxUnlockS();
   ctp->p_u.wtobjp = cp;
-  prio_insert(ctp, &cp->c_queue);
+  queue_prio_insert(ctp, &cp->c_queue);
   chSchGoSleepS(THD_STATE_WTCOND);
   msg = ctp->p_u.rdymsg;
   chMtxLockS(mp);
@@ -272,7 +272,7 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
 
   mp = chMtxUnlockS();
   currp->p_u.wtobjp = cp;
-  prio_insert(currp, &cp->c_queue);
+  queue_prio_insert(currp, &cp->c_queue);
   msg = chSchGoSleepTimeoutS(THD_STATE_WTCOND, time);
   if (msg != RDY_TIMEOUT)
     chMtxLockS(mp);

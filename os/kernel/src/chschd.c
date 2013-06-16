@@ -116,7 +116,7 @@ void chSchGoSleepS(tstate_t newstate) {
      time quantum when it will wakeup.*/
   otp->p_preempt = CH_TIME_QUANTUM;
 #endif
-  setcurrp(fifo_remove(&rlist.r_queue));
+  setcurrp(queue_fifo_remove(&rlist.r_queue));
   currp->p_state = THD_STATE_CURRENT;
   chSysSwitch(currp, otp);
 }
@@ -150,7 +150,7 @@ static void wakeup(void *p) {
   case THD_STATE_WTCOND:
 #endif
     /* States requiring dequeuing.*/
-    dequeue(tp);
+    queue_dequeue(tp);
 #endif
   }
   tp->p_u.rdymsg = RDY_TIMEOUT;
@@ -299,7 +299,7 @@ void chSchDoRescheduleBehind(void) {
 
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
-  setcurrp(fifo_remove(&rlist.r_queue));
+  setcurrp(queue_fifo_remove(&rlist.r_queue));
   currp->p_state = THD_STATE_CURRENT;
 #if CH_TIME_QUANTUM > 0
   otp->p_preempt = CH_TIME_QUANTUM;
@@ -324,7 +324,7 @@ void chSchDoRescheduleAhead(void) {
 
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
-  setcurrp(fifo_remove(&rlist.r_queue));
+  setcurrp(queue_fifo_remove(&rlist.r_queue));
   currp->p_state = THD_STATE_CURRENT;
 
   otp->p_state = THD_STATE_READY;

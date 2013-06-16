@@ -132,7 +132,7 @@ void chMtxLockS(Mutex *mp) {
       switch (tp->p_state) {
       case THD_STATE_WTMTX:
         /* Re-enqueues the mutex owner with its new priority.*/
-        prio_insert(dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
+        queue_prio_insert(queue_dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
         tp = ((Mutex *)tp->p_u.wtobjp)->m_owner;
         continue;
 #if CH_USE_CONDVARS |                                                       \
@@ -148,7 +148,7 @@ void chMtxLockS(Mutex *mp) {
       case THD_STATE_SNDMSGQ:
 #endif
         /* Re-enqueues tp with its new priority on the queue.*/
-        prio_insert(dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
+        queue_prio_insert(queue_dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
         break;
 #endif
       case THD_STATE_READY:
@@ -157,13 +157,13 @@ void chMtxLockS(Mutex *mp) {
         tp->p_state = THD_STATE_CURRENT;
 #endif
         /* Re-enqueues tp with its new priority on the ready list.*/
-        chSchReadyI(dequeue(tp));
+        chSchReadyI(queue_dequeue(tp));
         break;
       }
       break;
     }
     /* Sleep on the mutex.*/
-    prio_insert(ctp, &mp->m_queue);
+    queue_prio_insert(ctp, &mp->m_queue);
     ctp->p_u.wtobjp = mp;
     chSchGoSleepS(THD_STATE_WTMTX);
     /* It is assumed that the thread performing the unlock operation assigns
@@ -283,7 +283,7 @@ Mutex *chMtxUnlock(void) {
     ctp->p_prio = newprio;
     /* Awakens the highest priority thread waiting for the unlocked mutex and
        assigns the mutex to it.*/
-    tp = fifo_remove(&ump->m_queue);
+    tp = queue_fifo_remove(&ump->m_queue);
     ump->m_owner = tp;
     ump->m_next = tp->p_mtxlist;
     tp->p_mtxlist = ump;
@@ -342,7 +342,7 @@ Mutex *chMtxUnlockS(void) {
     ctp->p_prio = newprio;
     /* Awakens the highest priority thread waiting for the unlocked mutex and
        assigns the mutex to it.*/
-    tp = fifo_remove(&ump->m_queue);
+    tp = queue_fifo_remove(&ump->m_queue);
     ump->m_owner = tp;
     ump->m_next = tp->p_mtxlist;
     tp->p_mtxlist = ump;
@@ -373,7 +373,7 @@ void chMtxUnlockAll(void) {
       Mutex *ump = ctp->p_mtxlist;
       ctp->p_mtxlist = ump->m_next;
       if (chMtxQueueNotEmptyS(ump)) {
-        Thread *tp = fifo_remove(&ump->m_queue);
+        Thread *tp = queue_fifo_remove(&ump->m_queue);
         ump->m_owner = tp;
         ump->m_next = tp->p_mtxlist;
         tp->p_mtxlist = ump;

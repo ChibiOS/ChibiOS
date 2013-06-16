@@ -100,14 +100,17 @@
 #endif
 /** @} */
 
+/* Forward declaration of the thread structure, it is used in most
+   modules.*/
 typedef struct Thread Thread;
 
+/* Inclusion of all the kernel sub-headers.*/
 #include "chconf.h"
 #include "chtypes.h"
 #include "chdebug.h"
 #include "chcore.h"
 #include "chthreads.h"
-//#include "chlists.h"
+#include "chlists.h"
 #include "chsys.h"
 #include "chvt.h"
 #include "chschd.h"
@@ -123,7 +126,6 @@ typedef struct Thread Thread;
 #include "chmempools.h"
 #include "chdynamic.h"
 #include "chregistry.h"
-#include "chinline.h"
 #include "chqueues.h"
 #include "chstreams.h"
 #include "chfiles.h"

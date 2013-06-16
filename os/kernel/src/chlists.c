@@ -41,7 +41,7 @@
  *
  * @notapi
  */
-void prio_insert(Thread *tp, ThreadsQueue *tqp) {
+void queue_prio_insert(Thread *tp, ThreadsQueue *tqp) {
 
   /* cp iterates over the queue.*/
   Thread *cp = (Thread *)tqp;
@@ -81,7 +81,7 @@ void queue_insert(Thread *tp, ThreadsQueue *tqp) {
  *
  * @notapi
  */
-Thread *fifo_remove(ThreadsQueue *tqp) {
+Thread *queue_fifo_remove(ThreadsQueue *tqp) {
   Thread *tp = tqp->p_next;
 
   (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;
@@ -98,7 +98,7 @@ Thread *fifo_remove(ThreadsQueue *tqp) {
  *
  * @notapi
  */
-Thread *lifo_remove(ThreadsQueue *tqp) {
+Thread *queue_lifo_remove(ThreadsQueue *tqp) {
   Thread *tp = tqp->p_prev;
 
   (tqp->p_prev = tp->p_prev)->p_next = (Thread *)tqp;
@@ -115,7 +115,7 @@ Thread *lifo_remove(ThreadsQueue *tqp) {
  *
  * @notapi
  */
-Thread *dequeue(Thread *tp) {
+Thread *queue_dequeue(Thread *tp) {
 
   tp->p_prev->p_next = tp->p_next;
   tp->p_next->p_prev = tp->p_prev;
