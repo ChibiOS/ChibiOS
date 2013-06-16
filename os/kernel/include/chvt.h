@@ -20,7 +20,7 @@
 
 /**
  * @file    chvt.h
- * @brief   Time macros and structures.
+ * @brief   Time and Virtual Timers module macros and structures.
  *
  * @addtogroup time
  * @{
@@ -28,6 +28,63 @@
 
 #ifndef _CHVT_H_
 #define _CHVT_H_
+
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief   Virtual Timer callback function.
+ */
+typedef void (*vtfunc_t)(void *);
+
+/**
+ * @brief   Virtual Timer structure type.
+ */
+typedef struct VirtualTimer VirtualTimer;
+
+/**
+ * @extends VTList
+ *
+ * @brief   Virtual Timer descriptor structure.
+ */
+struct VirtualTimer {
+  VirtualTimer          *vt_next;   /**< @brief Next timer in the list.     */
+  VirtualTimer          *vt_prev;   /**< @brief Previous timer in the list. */
+  systime_t             vt_time;    /**< @brief Absolute time.              */
+  vtfunc_t              vt_func;    /**< @brief Timer callback function
+                                                pointer.                    */
+  void                  *vt_par;    /**< @brief Timer callback function
+                                                parameter.                  */
+};
+
+/**
+ * @brief   Virtual timers list header.
+ * @note    The timers list is implemented as a double link bidirectional list
+ *          in order to make the unlink time constant, the reset of a virtual
+ *          timer is often used in the code.
+ */
+typedef struct {
+  VirtualTimer          *vt_next;   /**< @brief Next timer in the list.     */
+  VirtualTimer          *vt_prev;   /**< @brief Last timer in the  list.    */
+  volatile systime_t    vt_time;    /**< @brief Current system time.        */
+} VTList;
+
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @name    Time conversion utilities
@@ -73,139 +130,9 @@
   ((systime_t)((((usec) * CH_FREQUENCY - 1L) / 1000000L) + 1L))
 /** @} */
 
-/**
- * @brief   Virtual Timer callback function.
- */
-typedef void (*vtfunc_t)(void *);
-
-/**
- * @brief   Virtual Timer structure type.
- */
-typedef struct VirtualTimer VirtualTimer;
-
-/**
- * @extends VTList
- *
- * @brief   Virtual Timer descriptor structure.
- */
-struct VirtualTimer {
-  VirtualTimer          *vt_next;   /**< @brief Next timer in the delta
-                                                list.                       */
-  VirtualTimer          *vt_prev;   /**< @brief Previous timer in the delta
-                                                list.                       */
-  systime_t             vt_time;    /**< @brief Time delta before timeout.  */
-  vtfunc_t              vt_func;    /**< @brief Timer callback function
-                                                pointer.                    */
-  void                  *vt_par;    /**< @brief Timer callback function
-                                                parameter.                  */
-};
-
-/**
- * @brief   Virtual timers list header.
- * @note    The delta list is implemented as a double link bidirectional list
- *          in order to make the unlink time constant, the reset of a virtual
- *          timer is often used in the code.
- */
-typedef struct {
-  VirtualTimer          *vt_next;   /**< @brief Next timer in the delta
-                                                list.                       */
-  VirtualTimer          *vt_prev;   /**< @brief Last timer in the delta
-                                                list.                       */
-  systime_t             vt_time;    /**< @brief Must be initialized to -1.  */
-  volatile systime_t    vt_systime; /**< @brief System Time counter.        */
-} VTList;
-
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Virtual timers ticker.
- * @note    The system lock is released before entering the callback and
- *          re-acquired immediately after. It is callback's responsibility
- *          to acquire the lock if needed. This is done in order to reduce
- *          interrupts jitter when many timers are in use.
- *
- * @iclass
- */
-#define chVTDoTickI() {                                                     \
-  vtlist.vt_systime++;                                                      \
-  if (&vtlist != (VTList *)vtlist.vt_next) {                                \
-    VirtualTimer *vtp;                                                      \
-                                                                            \
-    --vtlist.vt_next->vt_time;                                              \
-    while (!(vtp = vtlist.vt_next)->vt_time) {                              \
-      vtfunc_t fn = vtp->vt_func;                                           \
-      vtp->vt_func = (vtfunc_t)NULL;                                        \
-      vtp->vt_next->vt_prev = (void *)&vtlist;                              \
-      (&vtlist)->vt_next = vtp->vt_next;                                    \
-      chSysUnlockFromIsr();                                                 \
-      fn(vtp->vt_par);                                                      \
-      chSysLockFromIsr();                                                   \
-    }                                                                       \
-  }                                                                         \
-}
-
-/**
- * @brief   Returns @p TRUE if the specified timer is armed.
- *
- * @iclass
- */
-#define chVTIsArmedI(vtp) ((vtp)->vt_func != NULL)
-
-/**
- * @brief   Enables a virtual timer.
- * @note    The associated function is invoked from interrupt context.
- *
- * @param[out] vtp      the @p VirtualTimer structure pointer
- * @param[in] time      the number of ticks before the operation timeouts, the
- *                      special values are handled as follow:
- *                      - @a TIME_INFINITE is allowed but interpreted as a
- *                        normal time specification.
- *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
- * @param[in] vtfunc    the timer callback function. After invoking the
- *                      callback the timer is disabled and the structure can
- *                      be disposed or reused.
- * @param[in] par       a parameter that will be passed to the callback
- *                      function
- *
- * @api
- */
-#define chVTSet(vtp, time, vtfunc, par) {                                   \
-  chSysLock();                                                              \
-  chVTSetI(vtp, time, vtfunc, par);                                         \
-  chSysUnlock();                                                            \
-}
-
-/**
- * @brief   Disables a Virtual Timer.
- * @note    The timer is first checked and disabled only if armed.
- *
- * @param[in] vtp       the @p VirtualTimer structure pointer
- *
- * @api
- */
-#define chVTReset(vtp) {                                                    \
-  chSysLock();                                                              \
-  if (chVTIsArmedI(vtp))                                                    \
-    chVTResetI(vtp);                                                        \
-  chSysUnlock();                                                            \
-}
-
-/**
- * @brief   Current system time.
- * @details Returns the number of system ticks since the @p chSysInit()
- *          invocation.
- * @note    The counter can reach its maximum and then restart from zero.
- * @note    This function is designed to work with the @p chThdSleepUntil().
- *
- * @return              The system time in ticks.
- *
- * @api
- */
-#define chTimeNow() (vtlist.vt_systime)
-/** @} */
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 extern VTList vtlist;
 
@@ -216,12 +143,187 @@ extern VTList vtlist;
 extern "C" {
 #endif
   void _vt_init(void);
-  void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par);
+  bool_t chVTIsSystemTimeWithin(systime_t start, systime_t end);
+  void chVTSetAbsoluteI(VirtualTimer *vtp, systime_t time,
+                        vtfunc_t vtfunc, void *par);
   void chVTResetI(VirtualTimer *vtp);
-  bool_t chTimeIsWithin(systime_t start, systime_t end);
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Current system time.
+ * @details Returns the number of system ticks since the @p chSysInit()
+ *          invocation.
+ * @note    The counter can reach its maximum and then restart from zero.
+ *
+ * @return              The system time in ticks.
+ *
+ * @iclass
+ */
+static inline systime_t chVTGetSystemTimeI(void) {
+
+  chDbgCheckClassI();
+
+  return vtlist.vt_time;
+}
+
+/**
+ * @brief   Current system time.
+ * @details Returns the number of system ticks since the @p chSysInit()
+ *          invocation.
+ * @note    The counter can reach its maximum and then restart from zero.
+ *
+ * @return              The system time in ticks.
+ *
+ * @api
+ */
+static inline systime_t chVTGetSystemTime(void) {
+  systime_t systime;
+
+  chSysLock()
+  systime = chVTGetSystemTimeI();
+  chSysUnlock();
+  return systime;
+}
+
+/**
+ * @brief   Initializes a @p VirtualTimer object.
+ * @note    Initializing a timer object is not strictly required because
+ *          the function @p chVTSetI() initializes the object too. This
+ *          function is only useful if you need to perform a @p chVTIsArmed()
+ *          check before calling @p chVTSetI().
+ *
+ * @param[out] vtp      the @p VirtualTimer structure pointer
+ *
+ * @init
+ */
+static inline void chVTObjectInit(VirtualTimer *vtp) {
+
+  vtp->vt_func = NULL;
+}
+
+/**
+ * @brief   Returns @p TRUE if the specified timer is armed.
+ * @pre     The timer must have been initialized using @p chVTObjectInit()
+ *          or @p chVTSetI() (or @p chVTSetI() variants).
+ *
+ * @param[in] vtp       the @p VirtualTimer structure pointer
+ * @return              true if the timer is armed.
+ *
+ * @iclass
+ */
+static inline bool_t chVTIsArmedI(VirtualTimer *vtp) {
+
+  chDbgCheckClassI();
+
+  return (bool_t)(vtp->vt_func != NULL);
+}
+
+/**
+ * @brief   Enables a virtual timer.
+ *
+ * @param[out] vtp      the @p VirtualTimer structure pointer
+ * @param[in] delay     the number of ticks before the operation timeouts.
+ * @param[in] vtfunc    the timer callback function. After invoking the
+ *                      callback the timer is disabled and the structure can
+ *                      be disposed or reused.
+ * @param[in] par       a parameter that will be passed to the callback
+ *                      function
+ *
+ * @iclass
+ */
+static inline void chVTSetI(VirtualTimer *vtp, systime_t delay,
+                            vtfunc_t vtfunc, void *par) {
+
+  chVTSetAbsoluteI(vtp, chVTGetSystemTimeI() + delay, vtfunc, par);
+}
+
+/**
+ * @brief   Enables a virtual timer.
+ *
+ * @param[out] vtp      the @p VirtualTimer structure pointer
+ * @param[in] delay     the number of ticks before the operation timeouts.
+ * @param[in] vtfunc    the timer callback function. After invoking the
+ *                      callback the timer is disabled and the structure can
+ *                      be disposed or reused.
+ * @param[in] par       a parameter that will be passed to the callback
+ *                      function
+ *
+ * @api
+ */
+static inline void chVTSet(VirtualTimer *vtp, systime_t delay,
+                           vtfunc_t vtfunc, void *par) {
+
+  chSysLock();
+  chVTSetI(vtp, delay, vtfunc, par);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Disables a Virtual Timer.
+ * @pre     The timer must be in armed state before calling this function.
+ *
+ * @param[in] vtp       the @p VirtualTimer structure pointer
+ *
+ * @iclass
+ */
+static inline void chVTDoResetI(VirtualTimer *vtp) {
+
+  chDbgCheckClassI();
+  chDbgCheck(vtp != NULL, "chVTDoResetI");
+
+  vtp->vt_prev->vt_next = vtp->vt_next;
+  vtp->vt_next->vt_prev = vtp->vt_prev;
+  vtp->vt_func = (vtfunc_t)NULL;
+}
+
+/**
+ * @brief   Disables a Virtual Timer.
+ * @note    The timer is first checked and disabled only if armed.
+ *
+ * @param[in] vtp       the @p VirtualTimer structure pointer
+ *
+ * @api
+ */
+static inline void chVTReset(VirtualTimer *vtp) {
+
+  chSysLock();
+  chVTResetI(vtp);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Virtual timers ticker.
+ * @note    The system lock is released before entering the callback and
+ *          re-acquired immediately after. It is callback's responsibility
+ *          to acquire the lock if needed. This is done in order to reduce
+ *          interrupts jitter when many timers are in use.
+ *
+ * @iclass
+ */
+static inline void chVTDoTickI(void) {
+  systime_t systime = ++vtlist.vt_time;
+
+  chDbgCheckClassI();
+
+  if (&vtlist != (VTList *)vtlist.vt_next) {
+    VirtualTimer *vtp;
+
+    while (((VirtualTimer *)&vtlist != (vtp = vtlist.vt_next)) &&
+           (vtp->vt_time == systime)) {
+      vtfunc_t fn = vtp->vt_func;
+      chVTDoResetI(vtp);
+      chSysUnlockFromIsr();
+      fn(vtp->vt_par);
+      chSysLockFromIsr();
+    }
+  }
+}
 
 #endif /* _CHVT_H_ */
 

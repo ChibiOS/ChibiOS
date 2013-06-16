@@ -92,7 +92,7 @@ namespace chibios_rt {
   void Timer::resetI() {
 
     if (chVTIsArmedI(&timer_ref))
-      chVTResetI(&timer_ref);
+      chVTDoResetI(&timer_ref);
   }
 
   bool Timer::isArmedI(void) {

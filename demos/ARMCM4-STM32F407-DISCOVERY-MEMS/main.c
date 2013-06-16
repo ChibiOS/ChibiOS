@@ -164,7 +164,7 @@ static msg_t Thread1(void *arg) {
   lis302dlWriteRegister(&SPID1, LIS302DL_CTRL_REG3, 0x00);
 
   /* Reader thread loop.*/
-  time = chTimeNow();
+  time = chVTGetSystemTime();
   while (TRUE) {
     int32_t x, y;
     unsigned i;

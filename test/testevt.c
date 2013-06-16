@@ -166,7 +166,7 @@ static void evt2_execute(void) {
    * Test on chEvtWaitOne() with wait.
    */
   test_wait_tick();
-  target_time = chTimeNow() + MS2ST(50);
+  target_time = chVTGetSystemTime() + MS2ST(50);
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
                                  thread1, chThdSelf());
   m = chEvtWaitOne(ALL_EVENTS);
@@ -189,7 +189,7 @@ static void evt2_execute(void) {
    * Test on chEvtWaitAny() with wait.
    */
   test_wait_tick();
-  target_time = chTimeNow() + MS2ST(50);
+  target_time = chVTGetSystemTime() + MS2ST(50);
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
                                  thread1, chThdSelf());
   m = chEvtWaitAny(ALL_EVENTS);
@@ -207,7 +207,7 @@ static void evt2_execute(void) {
   chEvtRegisterMask(&es1, &el1, 1);
   chEvtRegisterMask(&es2, &el2, 4);
   test_wait_tick();
-  target_time = chTimeNow() + MS2ST(50);
+  target_time = chVTGetSystemTime() + MS2ST(50);
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
                                  thread2, "A");
   m = chEvtWaitAll(5);

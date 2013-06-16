@@ -192,22 +192,22 @@ static void thd4_execute(void) {
   test_wait_tick();
 
   /* Timeouts in microseconds.*/
-  time = chTimeNow();
+  time = chVTGetSystemTime();
   chThdSleepMicroseconds(100000);
   test_assert_time_window(1, time + US2ST(100000), time + US2ST(100000) + 1);
 
   /* Timeouts in milliseconds.*/
-  time = chTimeNow();
+  time = chVTGetSystemTime();
   chThdSleepMilliseconds(100);
   test_assert_time_window(2, time + MS2ST(100), time + MS2ST(100) + 1);
 
   /* Timeouts in seconds.*/
-  time = chTimeNow();
+  time = chVTGetSystemTime();
   chThdSleepSeconds(1);
   test_assert_time_window(3, time + S2ST(1), time + S2ST(1) + 1);
 
   /* Absolute timelines.*/
-  time = chTimeNow() + MS2ST(100);
+  time = chVTGetSystemTime() + MS2ST(100);
   chThdSleepUntil(time);
   test_assert_time_window(4, time, time + 1);
 }

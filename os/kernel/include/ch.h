@@ -102,6 +102,7 @@
 
 #include "chconf.h"
 #include "chtypes.h"
+#include "chdebug.h"
 #include "chlists.h"
 #include "chcore.h"
 #include "chsys.h"
@@ -124,7 +125,6 @@
 #include "chqueues.h"
 #include "chstreams.h"
 #include "chfiles.h"
-#include "chdebug.h"
 
 #if !defined(__DOXYGEN__)
 extern WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);

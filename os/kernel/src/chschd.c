@@ -189,7 +189,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
     chVTSetI(&vt, time, wakeup, currp);
     chSchGoSleepS(newstate);
     if (chVTIsArmedI(&vt))
-      chVTResetI(&vt);
+      chVTDoResetI(&vt);
   }
   else
     chSchGoSleepS(newstate);

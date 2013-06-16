@@ -191,7 +191,7 @@ static void mtx2_execute(void) {
   systime_t time;
 
   test_wait_tick();
-  time = chTimeNow();
+  time = chVTGetSystemTime();
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2H, 0);
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-2, thread2M, 0);
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread2L, 0);
@@ -309,7 +309,7 @@ static void mtx3_execute(void) {
   systime_t time;
 
   test_wait_tick();
-  time = chTimeNow();
+  time = chVTGetSystemTime();
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread3LL, 0);
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread3L, 0);
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread3M, 0);

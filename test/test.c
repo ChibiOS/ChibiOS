@@ -183,7 +183,7 @@ bool_t _test_assert_sequence(unsigned point, char *expected) {
 
 bool_t _test_assert_time_window(unsigned point, systime_t start, systime_t end) {
 
-  return _test_assert(point, chTimeIsWithin(start, end));
+  return _test_assert(point, chVTIsSystemTimeWithin(start, end));
 }
 
 /*
@@ -245,7 +245,7 @@ void test_cpu_pulse(unsigned duration) {
 systime_t test_wait_tick(void) {
 
   chThdSleep(1);
-  return chTimeNow();
+  return chVTGetSystemTime();
 }
 
 /*

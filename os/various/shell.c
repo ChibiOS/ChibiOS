@@ -103,7 +103,7 @@ static void cmd_systime(BaseSequentialStream *chp, int argc, char *argv[]) {
     usage(chp, "systime");
     return;
   }
-  chprintf(chp, "%lu\r\n", (unsigned long)chTimeNow());
+  chprintf(chp, "%lu\r\n", (unsigned long)chVTGetSystemTime());
 }
 
 /**

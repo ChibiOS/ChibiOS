@@ -169,7 +169,7 @@ static void sem2_execute(void) {
    * Testing timeout condition.
    */
   test_wait_tick();
-  target_time = chTimeNow() + MS2ST(5 * 500);
+  target_time = chVTGetSystemTime() + MS2ST(5 * 500);
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
     msg = chSemWaitTimeout(&sem1, MS2ST(500));

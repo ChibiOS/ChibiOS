@@ -20,7 +20,7 @@
 
 /**
  * @file    chvt.c
- * @brief   Time and Virtual Timers related code.
+ * @brief   Time and Virtual Timers module code.
  *
  * @addtogroup time
  * @details Time and Virtual Timers related APIs and services.
@@ -29,10 +29,34 @@
 
 #include "ch.h"
 
+/*===========================================================================*/
+/* Module local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
 /**
  * @brief   Virtual timers delta list header.
  */
 VTList vtlist;
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
 /**
  * @brief   Virtual Timers initialization.
@@ -43,72 +67,7 @@ VTList vtlist;
 void _vt_init(void) {
 
   vtlist.vt_next = vtlist.vt_prev = (void *)&vtlist;
-  vtlist.vt_time = (systime_t)-1;
-  vtlist.vt_systime = 0;
-}
-
-/**
- * @brief   Enables a virtual timer.
- * @note    The associated function is invoked from interrupt context.
- *
- * @param[out] vtp      the @p VirtualTimer structure pointer
- * @param[in] time      the number of ticks before the operation timeouts, the
- *                      special values are handled as follow:
- *                      - @a TIME_INFINITE is allowed but interpreted as a
- *                        normal time specification.
- *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
- * @param[in] vtfunc    the timer callback function. After invoking the
- *                      callback the timer is disabled and the structure can
- *                      be disposed or reused.
- * @param[in] par       a parameter that will be passed to the callback
- *                      function
- *
- * @iclass
- */
-void chVTSetI(VirtualTimer *vtp, systime_t time, vtfunc_t vtfunc, void *par) {
-  VirtualTimer *p;
-
-  chDbgCheckClassI();
-  chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (time != TIME_IMMEDIATE),
-             "chVTSetI");
-
-  vtp->vt_par = par;
-  vtp->vt_func = vtfunc;
-  p = vtlist.vt_next;
-  while (p->vt_time < time) {
-    time -= p->vt_time;
-    p = p->vt_next;
-  }
-
-  vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
-  vtp->vt_prev->vt_next = p->vt_prev = vtp;
-  vtp->vt_time = time;
-  if (p != (void *)&vtlist)
-    p->vt_time -= time;
-}
-
-/**
- * @brief   Disables a Virtual Timer.
- * @note    The timer MUST be active when this function is invoked.
- *
- * @param[in] vtp       the @p VirtualTimer structure pointer
- *
- * @iclass
- */
-void chVTResetI(VirtualTimer *vtp) {
-
-  chDbgCheckClassI();
-  chDbgCheck(vtp != NULL, "chVTResetI");
-  chDbgAssert(vtp->vt_func != NULL,
-              "chVTResetI(), #1",
-              "timer not set or already triggered");
-
-  if (vtp->vt_next != (void *)&vtlist)
-    vtp->vt_next->vt_time += vtp->vt_time;
-  vtp->vt_prev->vt_next = vtp->vt_next;
-  vtp->vt_next->vt_prev = vtp->vt_prev;
-  vtp->vt_func = (vtfunc_t)NULL;
+  vtlist.vt_time = 0;
 }
 
 /**
@@ -124,11 +83,74 @@ void chVTResetI(VirtualTimer *vtp) {
  *
  * @api
  */
-bool_t chTimeIsWithin(systime_t start, systime_t end) {
+bool_t chVTIsSystemTimeWithin(systime_t start, systime_t end) {
 
-  systime_t time = chTimeNow();
+  systime_t time = chVTGetSystemTime();
   return end > start ? (time >= start) && (time < end) :
                        (time >= start) || (time < end);
+}
+
+/**
+ * @brief   Enables a virtual timer.
+ * @details The timer is enabled and programmed to trigger at the absolute
+ *          system time specified as parameter.
+ * @note    The associated function is invoked from interrupt context.
+ *
+ * @param[out] vtp      the @p VirtualTimer structure pointer
+ * @param[in] time      absolute system time
+ * @param[in] vtfunc    the timer callback function. After invoking the
+ *                      callback the timer is disabled and the structure can
+ *                      be disposed or reused.
+ * @param[in] par       a parameter that will be passed to the callback
+ *                      function
+ *
+ * @iclass
+ */
+void chVTSetAbsoluteI(VirtualTimer *vtp, systime_t time,
+                      vtfunc_t vtfunc, void *par) {
+  VirtualTimer *p;
+  systime_t systime = vtlist.vt_time;
+
+  chDbgCheckClassI();
+  chDbgCheck((vtp != NULL) && (vtfunc != NULL), "chVTSetI");
+
+  vtp->vt_par = par;
+  vtp->vt_func = vtfunc;
+  vtp->vt_time = time;
+  if (time <= systime) {
+    p = vtlist.vt_prev;
+    while ((p->vt_time <= systime) && (p->vt_time > time))
+      p = p->vt_prev;
+    vtp->vt_next = (vtp->vt_prev = p)->vt_next;
+    vtp->vt_next->vt_prev = p->vt_next = vtp;
+  }
+  else {
+    p = vtlist.vt_next;
+    while ((p->vt_time > systime) && (p->vt_time < time))
+      p = p->vt_next;
+    vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
+    vtp->vt_prev->vt_next = p->vt_prev = vtp;
+  }
+}
+
+/**
+ * @brief   Disables a Virtual Timer.
+ * @note    The timer is first checked and disabled only if armed.
+ *
+ * @param[in] vtp       the @p VirtualTimer structure pointer
+ *
+ * @iclass
+ */
+void chVTResetI(VirtualTimer *vtp) {
+
+  chDbgCheckClassI();
+  chDbgCheck(vtp != NULL, "chVTResetI");
+
+  if (chVTIsArmedI(vtp)) {
+    vtp->vt_prev->vt_next = vtp->vt_next;
+    vtp->vt_next->vt_prev = vtp->vt_prev;
+    vtp->vt_func = (vtfunc_t)NULL;
+  }
 }
 
 /** @} */
