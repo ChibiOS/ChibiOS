@@ -369,6 +369,36 @@
 #error "SPI driver activated but no DSPI peripheral assigned"
 #endif
 
+#if SPC5_SPI_USE_DSPI0 && (!defined(SPC5_SPI_DSPI0_TX1_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI0_TX2_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI0_RX_DMA_CH_ID))
+#error "DMA channels not defined for DSPI0, check mcuconf.h"
+#endif
+
+#if SPC5_SPI_USE_DSPI1 && (!defined(SPC5_SPI_DSPI1_TX1_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI1_TX2_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI1_RX_DMA_CH_ID))
+#error "DMA channels not defined for DSPI1, check mcuconf.h"
+#endif
+
+#if SPC5_SPI_USE_DSPI2 && (!defined(SPC5_SPI_DSPI2_TX1_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI2_TX2_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI2_RX_DMA_CH_ID))
+#error "DMA channels not defined for DSPI2, check mcuconf.h"
+#endif
+
+#if SPC5_SPI_USE_DSPI3 && (!defined(SPC5_SPI_DSPI3_TX1_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI3_TX2_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI3_RX_DMA_CH_ID))
+#error "DMA channels not defined for DSPI3, check mcuconf.h"
+#endif
+
+#if SPC5_SPI_USE_DSPI4 && (!defined(SPC5_SPI_DSPI4_TX1_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI4_TX2_DMA_CH_ID) ||        \
+                           !defined(SPC5_SPI_DSPI4_RX_DMA_CH_ID))
+#error "DMA channels not defined for DSPI4, check mcuconf.h"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

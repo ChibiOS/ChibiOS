@@ -40,12 +40,6 @@
 #define SPC5_HAS_DSPI3                      FALSE
 #define SPC5_HAS_DSPI4                      FALSE
 #define SPC5_DSPI_FIFO_DEPTH                16
-#define SPC5_DSPI1_TX1_DMA_CH_ID            12
-#define SPC5_DSPI1_TX2_DMA_CH_ID            25
-#define SPC5_DSPI1_RX_DMA_CH_ID             13
-#define SPC5_DSPI2_TX1_DMA_CH_ID            14
-#define SPC5_DSPI2_TX2_DMA_CH_ID            26
-#define SPC5_DSPI2_RX_DMA_CH_ID             15
 #define SPC5_DSPI1_EOQF_HANDLER             vector132
 #define SPC5_DSPI1_EOQF_NUMBER              132
 #define SPC5_DSPI1_TFFF_HANDLER             vector133
@@ -63,6 +57,12 @@
 #define SPC5_HAS_EDMA                       TRUE
 #define SPC5_EDMA_NCHANNELS                 32
 #define SPC5_EDMA_HAS_MUX                   FALSE
+#define SPC5_SPI_DSPI1_TX1_DMA_CH_ID        12
+#define SPC5_SPI_DSPI1_TX2_DMA_CH_ID        25
+#define SPC5_SPI_DSPI1_RX_DMA_CH_ID         13
+#define SPC5_SPI_DSPI2_TX1_DMA_CH_ID        14
+#define SPC5_SPI_DSPI2_TX2_DMA_CH_ID        26
+#define SPC5_SPI_DSPI2_RX_DMA_CH_ID         15
 
 /* eQADC attributes.*/
 #define SPC5_HAS_EQADC                      TRUE

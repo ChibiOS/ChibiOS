@@ -222,6 +222,21 @@
                                              SPC5_MCR_PCSIS5 |              \
                                              SPC5_MCR_PCSIS6 |              \
                                              SPC5_MCR_PCSIS7)
+#define SPC5_SPI_DSPI0_TX1_DMA_CH_ID        4
+#define SPC5_SPI_DSPI0_TX2_DMA_CH_ID        5
+#define SPC5_SPI_DSPI0_RX_DMA_CH_ID         6
+#define SPC5_SPI_DSPI1_TX1_DMA_CH_ID        7
+#define SPC5_SPI_DSPI1_TX2_DMA_CH_ID        8
+#define SPC5_SPI_DSPI1_RX_DMA_CH_ID         9
+#define SPC5_SPI_DSPI2_TX1_DMA_CH_ID        10
+#define SPC5_SPI_DSPI2_TX2_DMA_CH_ID        11
+#define SPC5_SPI_DSPI2_RX_DMA_CH_ID         12
+#define SPC5_SPI_DSPI3_TX1_DMA_CH_ID        13
+#define SPC5_SPI_DSPI3_TX2_DMA_CH_ID        14
+#define SPC5_SPI_DSPI3_RX_DMA_CH_ID         15
+#define SPC5_SPI_DSPI4_TX1_DMA_CH_ID        1
+#define SPC5_SPI_DSPI4_TX2_DMA_CH_ID        2
+#define SPC5_SPI_DSPI4_RX_DMA_CH_ID         3
 #define SPC5_SPI_DSPI0_DMA_IRQ_PRIO         10
 #define SPC5_SPI_DSPI1_DMA_IRQ_PRIO         10
 #define SPC5_SPI_DSPI2_DMA_IRQ_PRIO         10

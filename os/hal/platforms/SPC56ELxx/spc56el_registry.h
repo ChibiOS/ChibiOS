@@ -48,15 +48,6 @@
 #define SPC5_DSPI0_PCTL                     4
 #define SPC5_DSPI1_PCTL                     5
 #define SPC5_DSPI2_PCTL                     6
-#define SPC5_DSPI0_TX1_DMA_CH_ID            4
-#define SPC5_DSPI0_TX2_DMA_CH_ID            5
-#define SPC5_DSPI0_RX_DMA_CH_ID             6
-#define SPC5_DSPI1_TX1_DMA_CH_ID            7
-#define SPC5_DSPI1_TX2_DMA_CH_ID            8
-#define SPC5_DSPI1_RX_DMA_CH_ID             9
-#define SPC5_DSPI2_TX1_DMA_CH_ID            10
-#define SPC5_DSPI2_TX2_DMA_CH_ID            11
-#define SPC5_DSPI2_RX_DMA_CH_ID             12
 #define SPC5_DSPI0_TX1_DMA_DEV_ID           1
 #define SPC5_DSPI0_TX2_DMA_DEV_ID           0
 #define SPC5_DSPI0_RX_DMA_DEV_ID            2
