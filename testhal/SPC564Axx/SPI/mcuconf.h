@@ -62,7 +62,7 @@
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 #define SPC5_EDMA_GROUP3_PRIORITIES                                         \
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-#define SPC5_EDMA_ERROR_IRQ_PRIO            2
+#define SPC5_EDMA_ERROR_IRQ_PRIO            12
 #define SPC5_EDMA_ERROR_HANDLER()           chSysHalt()
 
 /*
