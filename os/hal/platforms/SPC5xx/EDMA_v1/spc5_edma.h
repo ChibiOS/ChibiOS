@@ -129,7 +129,7 @@
  * @brief   EDMA error handler IRQ priority.
  */
 #if !defined(SPC5_EDMA_ERROR_IRQ_PRIO) || defined(__DOXYGEN__)
-#define SPC5_EDMA_ERROR_IRQ_PRIO            2
+#define SPC5_EDMA_ERROR_IRQ_PRIO            12
 #endif
 
 /**
