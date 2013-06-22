@@ -161,7 +161,7 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
       icup->emiosp->CH[icup->ch_number].CSR.R |= EMIOSS_OVFLC;
       _icu_isr_invoke_overflow_cb(icup);
     }
-    if (sr && EMIOSS_FLAG){
+    if (sr && EMIOSS_FLAG) {
       icup->emiosp->CH[icup->ch_number].CSR.R |= EMIOSS_FLAGC;
       if (icup->config->mode == ICU_INPUT_ACTIVE_HIGH) {
         if (icup->emiosp->CH[icup->ch_number].CSR.B.UCIN == 1U  &&        \
@@ -191,7 +191,7 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
         }
       }
     }
-    if(sr && EMIOSS_OVR){
+    if (sr && EMIOSS_OVR) {
       icup->emiosp->CH[icup->ch_number].CSR.R |= EMIOSS_OVRC;
     }
 
@@ -489,9 +489,6 @@ void icu_lld_init(void) {
  */
 void icu_lld_start(ICUDriver *icup) {
 
-  //uint32_t emios0_active_channels = get_emios0_active_channels();
-  //uint32_t emios1_active_channels = get_emios1_active_channels();
-
   chDbgAssert(get_emios0_active_channels() < 28, "icu_lld_start(), #1",
                 "too many channels");
 
@@ -568,23 +565,12 @@ void icu_lld_start(ICUDriver *icup) {
               ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
               "icu_lld_start(), #1", "invalid frequency");
 
-  //icup->emiosp->MCR.B.GPREN = 0;
   icup->emiosp->CH[icup->ch_number].CCR.B.UCPEN = 0;
   icup->emiosp->CH[icup->ch_number].CCR.R |=
       EMIOSC_BSL(EMIOS_BSL_INTERNAL_COUNTER) |
       EMIOSC_EDSEL | EMIOS_CCR_MODE_SAIC;
   icup->emiosp->CH[icup->ch_number].CCR.B.UCPRE = psc - 1;
   icup->emiosp->CH[icup->ch_number].CCR.R |= EMIOSC_UCPREN;
-  /*
-  if (icup->emiosp == &EMIOS_0) {
-    icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS0_GLOBAL_PRESCALER);
-  } else if (icup->emiosp == &EMIOS_1) {
-    icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS1_GLOBAL_PRESCALER);
-  }
-  icup->emiosp->MCR.R |= EMIOSMCR_GPREN;
-
-  icup->emiosp->MCR.B.GTBE = 1U;
-  */
 
   /* Set source polarity.*/
   if(icup->config->mode == ICU_INPUT_ACTIVE_HIGH){
@@ -611,9 +597,6 @@ void icu_lld_start(ICUDriver *icup) {
  * @notapi
  */
 void icu_lld_stop(ICUDriver *icup) {
-
-  //uint32_t emios0_active_channels = get_emios0_active_channels();
-  //uint32_t emios1_active_channels = get_emios1_active_channels();
 
   chDbgAssert(get_emios0_active_channels() < 28, "icu_lld_stop(), #1",
               "too many channels");
@@ -745,15 +728,6 @@ void icu_lld_enable(ICUDriver *icup) {
       icup->config->overflow_cb != NULL) {
     icup->emiosp->CH[icup->ch_number].CCR.B.FEN = 1U;
   }
-
-
-
-  /* Enable Global Time Base.*/
-  /*
-  if (icup->emiosp->MCR.B.GTBE == 0) {
-    icup->emiosp->MCR.B.GTBE = 1U;
-  }
-  */
 
 }
 

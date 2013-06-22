@@ -123,7 +123,7 @@
 
 #define SPC5_EMIOS0_CLK                     (halSPCGetSystemClock() /         \
                                              SPC5_PERIPHERAL3_CLK_DIV_VALUE / \
-                                             SPC5_EMIOS0_GLOBAL_PRESCALER)
+                                             SPC5_EMIOS0_GPRE_VALUE)
 
 
 #define SPC5_HAS_EMIOS1                     TRUE
@@ -159,7 +159,7 @@
 
 #define SPC5_EMIOS1_CLK                     (halSPCGetSystemClock() /         \
                                              SPC5_PERIPHERAL3_CLK_DIV_VALUE / \
-                                             SPC5_EMIOS1_GLOBAL_PRESCALER)
+                                             SPC5_EMIOS1_GPRE_VALUE)
 
 /* FlexCAN attributes.*/
 #define SPC5_HAS_FLEXCAN0                                   TRUE

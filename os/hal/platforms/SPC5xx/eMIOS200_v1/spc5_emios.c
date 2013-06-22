@@ -74,7 +74,7 @@ void active_emios_clock(ICUDriver *icup, PWMDriver *pwmp) {
     /* Disable all unified channels.*/
     if (icup != NULL) {
       icup->emiosp->MCR.B.GPREN = 0;
-      icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS_GLOBAL_PRESCALER);
+      icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS_GPRE_VALUE);
       icup->emiosp->MCR.R |= EMIOSMCR_GPREN;
 
       icup->emiosp->MCR.B.GTBE = 1U;
@@ -83,7 +83,7 @@ void active_emios_clock(ICUDriver *icup, PWMDriver *pwmp) {
 
     } else if (pwmp != NULL) {
       pwmp->emiosp->MCR.B.GPREN = 0;
-      pwmp->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS_GLOBAL_PRESCALER);
+      pwmp->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS_GPRE_VALUE);
       pwmp->emiosp->MCR.R |= EMIOSMCR_GPREN;
 
       pwmp->emiosp->MCR.B.GTBE = 1U;

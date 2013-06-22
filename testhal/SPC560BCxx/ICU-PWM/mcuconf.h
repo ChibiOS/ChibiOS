@@ -161,6 +161,9 @@
 #define SPC5_PIT0_IRQ_PRIORITY              4
 #define SPC5_CLOCK_FAILURE_HOOK()           chSysHalt()
 
+#define SPC5_EMIOS0_GPRE_VALUE              200
+#define SPC5_EMIOS1_GPRE_VALUE              200
+
 /*
  * SERIAL driver system settings.
  */
@@ -180,8 +183,6 @@
 /*
  * ICU-PWM driver system settings.
  */
-#define SPC5_EMIOS0_GLOBAL_PRESCALER        200           /* 8-bit GPRE*/
-
 #define SPC5_ICU_USE_EMIOS0_CH0             TRUE
 #define SPC5_ICU_USE_EMIOS0_CH1             TRUE
 #define SPC5_ICU_USE_EMIOS0_CH2             TRUE
@@ -213,8 +214,6 @@
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_EMIOS0_STOP_PCTL               (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
-
-#define SPC5_EMIOS1_GLOBAL_PRESCALER        200           /* 8-bit GPRE*/
 
 #define SPC5_ICU_USE_EMIOS1_CH24            TRUE
 

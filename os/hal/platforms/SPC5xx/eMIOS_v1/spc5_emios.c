@@ -92,7 +92,7 @@ void active_emios0_clock(ICUDriver *icup, PWMDriver *pwmp) {
     /* Disable all unified channels.*/
     if (icup != NULL) {
       icup->emiosp->MCR.B.GPREN = 0;
-      icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS0_GLOBAL_PRESCALER);
+      icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS0_GPRE_VALUE);
       icup->emiosp->MCR.R |= EMIOSMCR_GPREN;
 
       icup->emiosp->MCR.B.GTBE = 1U;
@@ -101,7 +101,7 @@ void active_emios0_clock(ICUDriver *icup, PWMDriver *pwmp) {
 
     } else if (pwmp != NULL) {
       pwmp->emiosp->MCR.B.GPREN = 0;
-      pwmp->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS0_GLOBAL_PRESCALER);
+      pwmp->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS0_GPRE_VALUE);
       pwmp->emiosp->MCR.R |= EMIOSMCR_GPREN;
 
       pwmp->emiosp->MCR.B.GTBE = 1U;
@@ -122,7 +122,7 @@ void active_emios1_clock(ICUDriver *icup, PWMDriver *pwmp) {
     /* Disable all unified channels.*/
     if (icup != NULL) {
       icup->emiosp->MCR.B.GPREN = 0;
-      icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS1_GLOBAL_PRESCALER);
+      icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS1_GPRE_VALUE);
       icup->emiosp->MCR.R |= EMIOSMCR_GPREN;
 
       icup->emiosp->MCR.B.GTBE = 1U;
@@ -131,7 +131,7 @@ void active_emios1_clock(ICUDriver *icup, PWMDriver *pwmp) {
 
     } else if (pwmp != NULL) {
       pwmp->emiosp->MCR.B.GPREN = 0;
-      pwmp->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS1_GLOBAL_PRESCALER);
+      pwmp->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS1_GPRE_VALUE);
       pwmp->emiosp->MCR.R |= EMIOSMCR_GPREN;
 
       pwmp->emiosp->MCR.B.GTBE = 1U;
@@ -148,13 +148,11 @@ void deactive_emios0_clock(ICUDriver *icup, PWMDriver *pwmp) {
   if (emios0_active_channels == 0) {
     if (icup != NULL) {
       if (icup->emiosp->UCDIS.R == 0) {
-        //icup->emiosp->MCR.B.MDIS = 0;
         halSPCSetPeripheralClockMode(SPC5_EMIOS0_PCTL,
                                      SPC5_EMIOS0_STOP_PCTL);
       }
     } else if (pwmp != NULL) {
       if (pwmp->emiosp->UCDIS.R == 0) {
-        //pwmp->emiosp->MCR.B.MDIS = 0;
         halSPCSetPeripheralClockMode(SPC5_EMIOS0_PCTL,
                                      SPC5_EMIOS0_STOP_PCTL);
       }
@@ -167,13 +165,11 @@ void deactive_emios1_clock(ICUDriver *icup, PWMDriver *pwmp) {
   if (emios1_active_channels == 0) {
     if (icup != NULL) {
       if (icup->emiosp->UCDIS.R == 0) {
-        //icup->emiosp->MCR.B.MDIS = 0;
         halSPCSetPeripheralClockMode(SPC5_EMIOS1_PCTL,
                                      SPC5_EMIOS1_STOP_PCTL);
       }
     } else if (pwmp != NULL) {
       if (pwmp->emiosp->UCDIS.R == 0) {
-        //pwmp->emiosp->MCR.B.MDIS = 0;
         halSPCSetPeripheralClockMode(SPC5_EMIOS1_PCTL,
                                      SPC5_EMIOS1_STOP_PCTL);
       }

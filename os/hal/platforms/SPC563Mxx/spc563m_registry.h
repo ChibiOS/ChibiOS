@@ -121,7 +121,7 @@
 #define SPC5_EMIOS_FLAG_F23_NUMBER          209
 
 #define SPC5_EMIOS_CLK                      (SPC5_SYSCLK /                  \
-                                             SPC5_EMIOS_GLOBAL_PRESCALER)
+                                             SPC5_EMIOS_GPRE_VALUE)
 #define SPC5_EMIOS_ENABLE_CLOCK()
 #define SPC5_EMIOS_DISABLE_CLOCK()
 /** @} */

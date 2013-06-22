@@ -43,7 +43,7 @@
                                              BIUCR_IPFEN |                  \
                                              BIUCR_PFLIM_ON_MISS |          \
                                              BIUCR_BFEN)
-#define SPC5_EMIOS_GPRE_VALUE               20
+#define SPC5_EMIOS_GPRE_VALUE               200
 
 /*
  * ADC driver settings.
@@ -105,5 +105,3 @@
 #define SPC5_PWM_USE_EMIOS_CH21             TRUE
 #define SPC5_PWM_USE_EMIOS_CH22             TRUE
 #define SPC5_PWM_USE_EMIOS_CH23             TRUE
-
-#define SPC5_EMIOS_GLOBAL_PRESCALER         200
