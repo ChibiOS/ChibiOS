@@ -124,6 +124,95 @@
                                              SPC5_EMIOS_GPRE_VALUE)
 #define SPC5_EMIOS_ENABLE_CLOCK()
 #define SPC5_EMIOS_DISABLE_CLOCK()
+
+/* FlexCAN attributes.*/
+#define SPC5_HAS_FLEXCAN0                                   TRUE
+#define SPC5_FLEXCAN0_MB                                    64
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_HANDLER              vector152
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_HANDLER           vector153
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_00_HANDLER                vector155
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_01_HANDLER                vector156
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_02_HANDLER                vector157
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_03_HANDLER                vector158
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_04_HANDLER                vector159
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_05_HANDLER                vector160
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_06_HANDLER                vector161
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_07_HANDLER                vector162
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_08_HANDLER                vector163
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_09_HANDLER                vector164
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_10_HANDLER                vector165
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_11_HANDLER                vector166
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_12_HANDLER                vector167
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_13_HANDLER                vector168
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_14_HANDLER                vector169
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_15_HANDLER                vector170
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_HANDLER             vector171
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_32_63_HANDLER             vector172
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_NUMBER               152
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_NUMBER            153
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_00_NUMBER                 155
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_01_NUMBER                 156
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_02_NUMBER                 157
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_03_NUMBER                 158
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_04_NUMBER                 159
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_05_NUMBER                 160
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_06_NUMBER                 161
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_07_NUMBER                 162
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_08_NUMBER                 163
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_09_NUMBER                 164
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_10_NUMBER                 165
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_11_NUMBER                 166
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_12_NUMBER                 167
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_13_NUMBER                 168
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_14_NUMBER                 169
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_15_NUMBER                 170
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_NUMBER              171
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_32_63_NUMBER              172
+#define SPC5_FLEXCAN0_ENABLE_CLOCK()
+#define SPC5_FLEXCAN0_DISABLE_CLOCK()
+
+#define SPC5_HAS_FLEXCAN1                                   TRUE
+#define SPC5_FLEXCAN1_MB                                    32
+#define SPC5_FLEXCAN1_FLEXCAN_ESR_BOFF_HANDLER              vector173
+#define SPC5_FLEXCAN1_FLEXCAN_ESR_ERR_INT_HANDLER           vector174
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_00_HANDLER                vector176
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_01_HANDLER                vector177
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_02_HANDLER                vector178
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_03_HANDLER                vector179
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_04_HANDLER                vector180
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_05_HANDLER                vector181
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_06_HANDLER                vector182
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_07_HANDLER                vector183
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_08_HANDLER                vector184
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_09_HANDLER                vector185
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_10_HANDLER                vector186
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_11_HANDLER                vector187
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_12_HANDLER                vector188
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_13_HANDLER                vector189
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_14_HANDLER                vector190
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_15_HANDLER                vector191
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_16_31_HANDLER             vector192
+#define SPC5_FLEXCAN1_FLEXCAN_ESR_BOFF_NUMBER               173
+#define SPC5_FLEXCAN1_FLEXCAN_ESR_ERR_INT_NUMBER            174
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_00_NUMBER                 176
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_01_NUMBER                 177
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_02_NUMBER                 178
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_03_NUMBER                 179
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_04_NUMBER                 180
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_05_NUMBER                 181
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_06_NUMBER                 182
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_07_NUMBER                 183
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_08_NUMBER                 184
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_09_NUMBER                 185
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_10_NUMBER                 186
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_11_NUMBER                 187
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_12_NUMBER                 188
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_13_NUMBER                 189
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_14_NUMBER                 190
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_15_NUMBER                 191
+#define SPC5_FLEXCAN1_FLEXCAN_BUF_16_31_NUMBER              192
+#define SPC5_FLEXCAN1_ENABLE_CLOCK()
+#define SPC5_FLEXCAN1_DISABLE_CLOCK()
 /** @} */
 
 #endif /* _SPC563M_REGISTRY_H_ */
