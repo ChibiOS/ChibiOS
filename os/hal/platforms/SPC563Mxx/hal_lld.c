@@ -95,6 +95,9 @@ void hal_lld_init(void) {
   INTC.CPR.R   = 0;
   INTC.IACKR.R = (uint32_t)_vectors;
 
+  /* eMIOS initialization.*/
+  EMIOS.MCR.R = (1U << 26) | SPC5_EMIOS_GPRE;       /* GPREN and GPRE.      */
+
   /* EDMA initialization.*/
   edmaInit();
 }

@@ -45,6 +45,7 @@
                                              BIUCR_IPFEN |                  \
                                              BIUCR_PFLIM_ON_MISS |          \
                                              BIUCR_BFEN)
+#define SPC5_EMIOS_GPRE_VALUE               20
 
 /*
  * EDMA driver settings.
