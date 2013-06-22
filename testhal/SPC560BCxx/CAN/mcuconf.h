@@ -181,42 +181,42 @@
 #define SPC5_CAN_USE_FILTERS                TRUE
 
 #define SPC5_CAN_USE_FLEXCAN0               FALSE
-#define SPC5_CAN_FLEXCAN0_PRIORITY          11
+#define SPC5_CAN_FLEXCAN0_IRQ_PRIORITY      11
 #define SPC5_CAN_FLEXCAN0_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_CAN_FLEXCAN0_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 
 #define SPC5_CAN_USE_FLEXCAN1               FALSE
-#define SPC5_CAN_FLEXCAN1_PRIORITY          11
+#define SPC5_CAN_FLEXCAN1_IRQ_PRIORITY      11
 #define SPC5_CAN_FLEXCAN1_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_CAN_FLEXCAN1_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 
 #define SPC5_CAN_USE_FLEXCAN2               FALSE
-#define SPC5_CAN_FLEXCAN2_PRIORITY          11
+#define SPC5_CAN_FLEXCAN2_IRQ_PRIORITY      11
 #define SPC5_CAN_FLEXCAN2_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_CAN_FLEXCAN2_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 
 #define SPC5_CAN_USE_FLEXCAN3               FALSE
-#define SPC5_CAN_FLEXCAN3_PRIORITY          11
+#define SPC5_CAN_FLEXCAN3_IRQ_PRIORITY      11
 #define SPC5_CAN_FLEXCAN3_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_CAN_FLEXCAN3_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 
 #define SPC5_CAN_USE_FLEXCAN4               TRUE
-#define SPC5_CAN_FLEXCAN4_PRIORITY          11
+#define SPC5_CAN_FLEXCAN4_IRQ_PRIORITY      11
 #define SPC5_CAN_FLEXCAN4_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_CAN_FLEXCAN4_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 
 #define SPC5_CAN_USE_FLEXCAN5               FALSE
-#define SPC5_CAN_FLEXCAN5_PRIORITY          11
+#define SPC5_CAN_FLEXCAN5_IRQ_PRIORITY      11
 #define SPC5_CAN_FLEXCAN5_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_CAN_FLEXCAN5_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \

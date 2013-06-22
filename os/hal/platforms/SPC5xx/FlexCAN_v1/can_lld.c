@@ -83,11 +83,47 @@ CANDriver CAND6;
 static void can_lld_tx_handler(CANDriver *canp) {
   uint32_t iflag1, iflag2;
 
-  iflag1 = canp->flexcan->IFRL.R;
-  iflag2 = canp->flexcan->IFRH.R;
   /* No more events until a message is transmitted.*/
+  iflag1 = canp->flexcan->IFRL.R;
   canp->flexcan->IFRL.R = iflag1 & 0xFFFFFF00;
-  canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+
+#if SPC5_CAN_USE_FLEXCAN0 && (SPC5_FLEXCAN0_MB == 64)
+  if(&CAND1 == canp) {
+    iflag2 = canp->flexcan->IFRH.R;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+  }
+#endif
+#if SPC5_CAN_USE_FLEXCAN1 && (SPC5_FLEXCAN1_MB == 64)
+  if(&CAND2 == canp) {
+    iflag2 = canp->flexcan->IFRH.R;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+  }
+#endif
+#if SPC5_CAN_USE_FLEXCAN2 && (SPC5_FLEXCAN2_MB == 64)
+  if(&CAND3 == canp) {
+    iflag2 = canp->flexcan->IFRH.R;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+  }
+#endif
+#if SPC5_CAN_USE_FLEXCAN3 && (SPC5_FLEXCAN3_MB == 64)
+  if(&CAND4 == canp) {
+    iflag2 = canp->flexcan->IFRH.R;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+  }
+#endif
+#if SPC5_CAN_USE_FLEXCAN4 && (SPC5_FLEXCAN4_MB == 64)
+  if(&CAND5 == canp) {
+    iflag2 = canp->flexcan->IFRH.R;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+  }
+#endif
+#if SPC5_CAN_USE_FLEXCAN5 && (SPC5_FLEXCAN5_MB == 64)
+  if(&CAND6 == canp) {
+    iflag2 = canp->flexcan->IFRH.R;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+  }
+#endif
+
   chSysLockFromIsr();
   while (chSemGetCounterI(&canp->txsem) < 0)
     chSemSignalI(&canp->txsem);

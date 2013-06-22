@@ -222,14 +222,14 @@
 #define SPC5_CAN_USE_FILTERS                TRUE
 
 #define SPC5_CAN_USE_FLEXCAN0               TRUE
-#define SPC5_CAN_FLEXCAN0_PRIORITY          11
+#define SPC5_CAN_FLEXCAN0_IRQ_PRIORITY      11
 #define SPC5_CAN_FLEXCAN0_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_CAN_FLEXCAN0_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
 
 #define SPC5_CAN_USE_FLEXCAN1               FALSE
-#define SPC5_CAN_FLEXCAN1_PRIORITY          11
+#define SPC5_CAN_FLEXCAN1_IRQ_PRIORITY      11
 #define SPC5_CAN_FLEXCAN1_START_PCTL        (SPC5_ME_PCTL_RUN(1) |          \
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_CAN_FLEXCAN1_STOP_PCTL         (SPC5_ME_PCTL_RUN(0) |          \
