@@ -86,8 +86,8 @@ static void can_lld_tx_handler(CANDriver *canp) {
   iflag1 = canp->flexcan->IFRL.R;
   iflag2 = canp->flexcan->IFRH.R;
   /* No more events until a message is transmitted.*/
-  canp->flexcan->IFRL.R |= iflag1 & 0xFFFFFF00;
-  canp->flexcan->IFRH.R |= canp->flexcan->IFRH.R & 0xFFFFFFFF;
+  canp->flexcan->IFRL.R = iflag1 & 0xFFFFFF00;
+  canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
   chSysLockFromIsr();
   while (chSemGetCounterI(&canp->txsem) < 0)
     chSemSignalI(&canp->txsem);
@@ -169,7 +169,7 @@ static void can_lld_rx_handler(CANDriver *canp) {
     chSysUnlockFromIsr();
 
     /* Release the mailbox.*/
-    canp->flexcan->IFRL.R |= iflag1 & 0x000000FF;
+    canp->flexcan->IFRL.R = iflag1 & 0x000000FF;
   }
 }
 
@@ -211,6 +211,304 @@ static void can_lld_err_handler(CANDriver *canp) {
 /*===========================================================================*/
 
 #if SPC5_CAN_USE_FLEXCAN0 || defined(__DOXYGEN__)
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+/**
+ * @brief   CAN1 RX interrupt handler for MB 0.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_00_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 RX interrupt handler for MB 1.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_01_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 RX interrupt handler for MB 2.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_02_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 RX interrupt handler for MB 3.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_03_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 RX interrupt handler for MB 4.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_04_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 RX interrupt handler for MB 5.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_05_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 RX interrupt handler for MB 6.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_06_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 RX interrupt handler for MB 7.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_07_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 TX interrupt handler for MB 8.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_08_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 TX interrupt handler for MB 9.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_09_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 TX interrupt handler for MB 10.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_10_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 TX interrupt handler for MB 11.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_11_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 TX interrupt handler for MB 12.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_12_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 TX interrupt handler for MB 13.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_13_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 TX interrupt handler for MB 14.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_14_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 TX interrupt handler for MB 15.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_15_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 TX interrupt handler for MB 16-31.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if (SPC5_FLEXCAN0_MB == 64)
+/**
+ * @brief   CAN1 TX interrupt handler for MB 32-63.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_BUF_32_63_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+/**
+ * @brief   CAN1 ESR_ERR_INT interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN1 ESR_BOFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND1);
+
+  CH_IRQ_EPILOGUE();
+}
+#else
 /**
  * @brief   CAN1 TX interrupt handler for MB 8-11.
  *
@@ -325,15 +623,315 @@ CH_IRQ_HANDLER(SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_HANDLER) {
 
   CH_IRQ_EPILOGUE();
 }
+#endif
 #endif /* SPC5_CAN_USE_FLEXCAN0 */
 
 #if SPC5_CAN_USE_FLEXCAN1 || defined(__DOXYGEN__)
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+/**
+ * @brief   CAN2 RX interrupt handler for MB 0.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_00_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 RX interrupt handler for MB 1.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_01_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 RX interrupt handler for MB 2.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_02_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 RX interrupt handler for MB 3.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_03_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 RX interrupt handler for MB 4.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_04_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 RX interrupt handler for MB 5.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_05_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 RX interrupt handler for MB 6.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_06_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 RX interrupt handler for MB 7.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_07_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 TX interrupt handler for MB 8.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_08_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 TX interrupt handler for MB 9.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_09_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 TX interrupt handler for MB 10.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_10_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 TX interrupt handler for MB 11.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_11_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 TX interrupt handler for MB 12.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_12_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 TX interrupt handler for MB 13.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_13_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 TX interrupt handler for MB 14.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_14_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 TX interrupt handler for MB 15.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_15_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 TX interrupt handler for MB 16-31.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_16_31_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if (SPC5_FLEXCAN1_MB == 64)
+/**
+ * @brief   CAN2 TX interrupt handler for MB 32-63.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_32_63_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+/**
+ * @brief   CAN2 ESR_ERR_INT interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_ESR_ERR_INT_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN2 ESR_BOFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_ESR_BOFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND2);
+
+  CH_IRQ_EPILOGUE();
+}
+#else
 /**
  * @brief   CAN2 TX interrupt handler for MB 8-11.
  *
  * @isr
  */
 CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_BUF_08_11_HANDLER) {
+
 
   CH_IRQ_PROLOGUE();
 
@@ -441,15 +1039,315 @@ CH_IRQ_HANDLER(SPC5_FLEXCAN1_FLEXCAN_ESR_BOFF_HANDLER) {
 
   CH_IRQ_EPILOGUE();
 }
+#endif
 #endif /* SPC5_CAN_USE_FLEXCAN1 */
 
 #if SPC5_CAN_USE_FLEXCAN2 || defined(__DOXYGEN__)
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+/**
+ * @brief   CAN3 RX interrupt handler for MB 0.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_00_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 RX interrupt handler for MB 1.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_01_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 RX interrupt handler for MB 2.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_02_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 RX interrupt handler for MB 3.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_03_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 RX interrupt handler for MB 4.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_04_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 RX interrupt handler for MB 5.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_05_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 RX interrupt handler for MB 6.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_06_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 RX interrupt handler for MB 7.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_07_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 TX interrupt handler for MB 8.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_08_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 TX interrupt handler for MB 9.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_09_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 TX interrupt handler for MB 10.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_10_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 TX interrupt handler for MB 11.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_11_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 TX interrupt handler for MB 12.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_12_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 TX interrupt handler for MB 13.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_13_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 TX interrupt handler for MB 14.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_14_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 TX interrupt handler for MB 15.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_15_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 TX interrupt handler for MB 16-31.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_16_31_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if (SPC5_FLEXCAN2_MB == 64)
+/**
+ * @brief   CAN3 TX interrupt handler for MB 32-63.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_32_63_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+/**
+ * @brief   CAN3 ESR_ERR_INT interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_ESR_ERR_INT_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN3 ESR_BOFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_ESR_BOFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND3);
+
+  CH_IRQ_EPILOGUE();
+}
+#else
 /**
  * @brief   CAN3 TX interrupt handler for MB 8-11.
  *
  * @isr
  */
 CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_BUF_08_11_HANDLER) {
+
 
   CH_IRQ_PROLOGUE();
 
@@ -557,15 +1455,315 @@ CH_IRQ_HANDLER(SPC5_FLEXCAN2_FLEXCAN_ESR_BOFF_HANDLER) {
 
   CH_IRQ_EPILOGUE();
 }
+#endif
 #endif /* SPC5_CAN_USE_FLEXCAN2 */
 
 #if SPC5_CAN_USE_FLEXCAN3 || defined(__DOXYGEN__)
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+/**
+ * @brief   CAN4 RX interrupt handler for MB 0.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_00_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 RX interrupt handler for MB 1.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_01_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 RX interrupt handler for MB 2.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_02_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 RX interrupt handler for MB 3.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_03_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 RX interrupt handler for MB 4.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_04_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 RX interrupt handler for MB 5.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_05_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 RX interrupt handler for MB 6.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_06_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 RX interrupt handler for MB 7.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_07_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 TX interrupt handler for MB 8.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_08_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 TX interrupt handler for MB 9.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_09_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 TX interrupt handler for MB 10.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_10_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 TX interrupt handler for MB 11.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_11_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 TX interrupt handler for MB 12.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_12_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 TX interrupt handler for MB 13.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_13_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 TX interrupt handler for MB 14.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_14_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 TX interrupt handler for MB 15.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_15_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 TX interrupt handler for MB 16-31.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_16_31_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if (SPC5_FLEXCAN3_MB == 64)
+/**
+ * @brief   CAN4 TX interrupt handler for MB 32-63.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_32_63_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+/**
+ * @brief   CAN4 ESR_ERR_INT interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_ESR_ERR_INT_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN4 ESR_BOFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_ESR_BOFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND4);
+
+  CH_IRQ_EPILOGUE();
+}
+#else
 /**
  * @brief   CAN4 TX interrupt handler for MB 8-11.
  *
  * @isr
  */
 CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_BUF_08_11_HANDLER) {
+
 
   CH_IRQ_PROLOGUE();
 
@@ -673,15 +1871,315 @@ CH_IRQ_HANDLER(SPC5_FLEXCAN3_FLEXCAN_ESR_BOFF_HANDLER) {
 
   CH_IRQ_EPILOGUE();
 }
+#endif
 #endif /* SPC5_CAN_USE_FLEXCAN3 */
 
 #if SPC5_CAN_USE_FLEXCAN4 || defined(__DOXYGEN__)
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+/**
+ * @brief   CAN5 RX interrupt handler for MB 0.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_00_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 RX interrupt handler for MB 1.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_01_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 RX interrupt handler for MB 2.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_02_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 RX interrupt handler for MB 3.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_03_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 RX interrupt handler for MB 4.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_04_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 RX interrupt handler for MB 5.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_05_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 RX interrupt handler for MB 6.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_06_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 RX interrupt handler for MB 7.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_07_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 TX interrupt handler for MB 8.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_08_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 TX interrupt handler for MB 9.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_09_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 TX interrupt handler for MB 10.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_10_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 TX interrupt handler for MB 11.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_11_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 TX interrupt handler for MB 12.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_12_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 TX interrupt handler for MB 13.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_13_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 TX interrupt handler for MB 14.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_14_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 TX interrupt handler for MB 15.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_15_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 TX interrupt handler for MB 16-31.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_16_31_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if (SPC5_FLEXCAN4_MB == 64)
+/**
+ * @brief   CAN5 TX interrupt handler for MB 32-63.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_32_63_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+/**
+ * @brief   CAN5 ESR_ERR_INT interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_ESR_ERR_INT_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN5 ESR_BOFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_ESR_BOFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND5);
+
+  CH_IRQ_EPILOGUE();
+}
+#else
 /**
  * @brief   CAN5 TX interrupt handler for MB 8-11.
  *
  * @isr
  */
 CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_BUF_08_11_HANDLER) {
+
 
   CH_IRQ_PROLOGUE();
 
@@ -789,15 +2287,315 @@ CH_IRQ_HANDLER(SPC5_FLEXCAN4_FLEXCAN_ESR_BOFF_HANDLER) {
 
   CH_IRQ_EPILOGUE();
 }
+#endif
 #endif /* SPC5_CAN_USE_FLEXCAN4 */
 
 #if SPC5_CAN_USE_FLEXCAN5 || defined(__DOXYGEN__)
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+/**
+ * @brief   CAN6 RX interrupt handler for MB 0.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_00_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 RX interrupt handler for MB 1.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_01_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 RX interrupt handler for MB 2.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_02_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 RX interrupt handler for MB 3.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_03_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 RX interrupt handler for MB 4.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_04_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 RX interrupt handler for MB 5.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_05_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 RX interrupt handler for MB 6.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_06_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 RX interrupt handler for MB 7.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_07_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_rx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 TX interrupt handler for MB 8.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_08_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 TX interrupt handler for MB 9.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_09_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 TX interrupt handler for MB 10.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_10_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 TX interrupt handler for MB 11.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_11_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 TX interrupt handler for MB 12.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_12_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 TX interrupt handler for MB 13.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_13_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 TX interrupt handler for MB 14.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_14_HANDLER) {
+
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 TX interrupt handler for MB 15.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_15_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 TX interrupt handler for MB 16-31.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_16_31_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+#if (SPC5_FLEXCAN5_MB == 64)
+/**
+ * @brief   CAN6 TX interrupt handler for MB 32-63.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_32_63_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+/**
+ * @brief   CAN6 ESR_ERR_INT interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_ESR_ERR_INT_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   CAN6 ESR_BOFF interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_ESR_BOFF_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  can_lld_err_handler(&CAND6);
+
+  CH_IRQ_EPILOGUE();
+}
+#else
 /**
  * @brief   CAN6 TX interrupt handler for MB 8-11.
  *
  * @isr
  */
 CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_BUF_08_11_HANDLER) {
+
 
   CH_IRQ_PROLOGUE();
 
@@ -905,6 +2703,7 @@ CH_IRQ_HANDLER(SPC5_FLEXCAN5_FLEXCAN_ESR_BOFF_HANDLER) {
 
   CH_IRQ_EPILOGUE();
 }
+#endif
 #endif /* SPC5_CAN_USE_FLEXCAN5 */
 
 /*===========================================================================*/
@@ -922,6 +2721,48 @@ void can_lld_init(void) {
   /* Driver initialization.*/
   canObjectInit(&CAND1);
   CAND1.flexcan = &SPC5_FLEXCAN_0;
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_00_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_01_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_02_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_03_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_04_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_05_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_06_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_07_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_08_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_09_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_10_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_11_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_12_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_13_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_14_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_15_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_32_63_NUMBER].R =
+      SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
+#else
   INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_NUMBER].R =
       SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
   INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_NUMBER].R =
@@ -937,11 +2778,54 @@ void can_lld_init(void) {
   INTC.PSR[SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_NUMBER].R =
       SPC5_CAN_FLEXCAN0_IRQ_PRIORITY;
 #endif
+#endif
 
 #if SPC5_CAN_USE_FLEXCAN1
   /* Driver initialization.*/
   canObjectInit(&CAND2);
   CAND2.flexcan = &SPC5_FLEXCAN_1;
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_ESR_ERR_INT_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_ESR_BOFF_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_00_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_01_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_02_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_03_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_04_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_05_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_06_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_07_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_08_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_09_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_10_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_11_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_12_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_13_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_14_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_15_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_16_31_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_32_63_NUMBER].R =
+      SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
+#else
   INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_ESR_ERR_INT_NUMBER].R =
       SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
   INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_ESR_BOFF_NUMBER].R =
@@ -957,11 +2841,54 @@ void can_lld_init(void) {
   INTC.PSR[SPC5_FLEXCAN1_FLEXCAN_BUF_16_31_NUMBER].R =
       SPC5_CAN_FLEXCAN1_IRQ_PRIORITY;
 #endif
+#endif
 
 #if SPC5_CAN_USE_FLEXCAN2
   /* Driver initialization.*/
   canObjectInit(&CAND3);
   CAND3.flexcan = &SPC5_FLEXCAN_2;
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_ESR_ERR_INT_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_ESR_BOFF_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_00_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_01_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_02_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_03_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_04_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_05_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_06_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_07_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_08_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_09_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_10_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_11_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_12_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_13_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_14_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_15_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_16_31_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_32_63_NUMBER].R =
+      SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
+#else
   INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_ESR_ERR_INT_NUMBER].R =
       SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
   INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_ESR_BOFF_NUMBER].R =
@@ -977,11 +2904,54 @@ void can_lld_init(void) {
   INTC.PSR[SPC5_FLEXCAN2_FLEXCAN_BUF_16_31_NUMBER].R =
       SPC5_CAN_FLEXCAN2_IRQ_PRIORITY;
 #endif
+#endif
 
 #if SPC5_CAN_USE_FLEXCAN3
   /* Driver initialization.*/
   canObjectInit(&CAND4);
   CAND4.flexcan = &SPC5_FLEXCAN_3;
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_ESR_ERR_INT_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_ESR_BOFF_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_00_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_01_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_02_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_03_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_04_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_05_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_06_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_07_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_08_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_09_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_10_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_11_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_12_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_13_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_14_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_15_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_16_31_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_32_63_NUMBER].R =
+      SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
+#else
   INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_ESR_ERR_INT_NUMBER].R =
       SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
   INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_ESR_BOFF_NUMBER].R =
@@ -997,11 +2967,54 @@ void can_lld_init(void) {
   INTC.PSR[SPC5_FLEXCAN3_FLEXCAN_BUF_16_31_NUMBER].R =
       SPC5_CAN_FLEXCAN3_IRQ_PRIORITY;
 #endif
+#endif
 
 #if SPC5_CAN_USE_FLEXCAN4
   /* Driver initialization.*/
   canObjectInit(&CAND5);
   CAND5.flexcan = &SPC5_FLEXCAN_4;
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_ESR_ERR_INT_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_ESR_BOFF_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_00_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_01_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_02_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_03_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_04_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_05_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_06_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_07_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_08_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_09_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_10_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_11_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_12_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_13_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_14_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_15_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_16_31_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_32_63_NUMBER].R =
+      SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
+#else
   INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_ESR_ERR_INT_NUMBER].R =
       SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
   INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_ESR_BOFF_NUMBER].R =
@@ -1017,11 +3030,54 @@ void can_lld_init(void) {
   INTC.PSR[SPC5_FLEXCAN4_FLEXCAN_BUF_16_31_NUMBER].R =
       SPC5_CAN_FLEXCAN4_IRQ_PRIORITY;
 #endif
+#endif
 
 #if SPC5_CAN_USE_FLEXCAN5
   /* Driver initialization.*/
   canObjectInit(&CAND6);
   CAND6.flexcan = &SPC5_FLEXCAN_5;
+#if (defined _SPC563M64L5_ || defined _SPC564A70L7_)
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_ESR_ERR_INT_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_ESR_BOFF_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_00_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_01_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_02_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_03_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_04_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_05_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_06_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_07_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_08_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_09_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_10_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_11_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_12_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_13_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_14_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_15_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_16_31_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+  INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_32_63_NUMBER].R =
+      SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
+#else
   INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_ESR_ERR_INT_NUMBER].R =
       SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
   INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_ESR_BOFF_NUMBER].R =
@@ -1037,6 +3093,7 @@ void can_lld_init(void) {
   INTC.PSR[SPC5_FLEXCAN5_FLEXCAN_BUF_16_31_NUMBER].R =
       SPC5_CAN_FLEXCAN5_IRQ_PRIORITY;
 #endif
+#endif
 }
 
 /**
@@ -1048,43 +3105,47 @@ void can_lld_init(void) {
  */
 void can_lld_start(CANDriver *canp) {
 
-  uint8_t mb_index = 0, id = 0;
+  uint8_t mb_index = 0;
+#if SPC5_CAN_USE_FILTERS
+  uint8_t id = 0;
+#endif
 
   /* Clock activation.*/
 #if SPC5_CAN_USE_FLEXCAN0
   /* Set peripheral clock mode.*/
-  if(&CAND1 == canp)
+  if(&CAND1 == canp) {
     SPC5_FLEXCAN0_ENABLE_CLOCK();
+  }
 #endif
-
 #if SPC5_CAN_USE_FLEXCAN1
   /* Set peripheral clock mode.*/
-  if(&CAND2 == canp)
+  if(&CAND2 == canp) {
     SPC5_FLEXCAN1_ENABLE_CLOCK();
+  }
 #endif
-
 #if SPC5_CAN_USE_FLEXCAN2
   /* Set peripheral clock mode.*/
-  if(&CAND3 == canp)
+  if(&CAND3 == canp) {
     SPC5_FLEXCAN2_ENABLE_CLOCK();
+  }
 #endif
-
 #if SPC5_CAN_USE_FLEXCAN3
   /* Set peripheral clock mode.*/
-  if(&CAND4 == canp)
+  if(&CAND4 == canp) {
     SPC5_FLEXCAN3_ENABLE_CLOCK();
+  }
 #endif
-
 #if SPC5_CAN_USE_FLEXCAN4
   /* Set peripheral clock mode.*/
-  if(&CAND5 == canp)
+  if(&CAND5 == canp) {
     SPC5_FLEXCAN4_ENABLE_CLOCK();
+  }
 #endif
-
 #if SPC5_CAN_USE_FLEXCAN5
   /* Set peripheral clock mode.*/
-  if(&CAND6 == canp)
+  if(&CAND6 == canp) {
     SPC5_FLEXCAN5_ENABLE_CLOCK();
+  }
 #endif
 
   /* Entering initialization mode. */
@@ -1321,34 +3382,39 @@ void can_lld_stop(CANDriver *canp) {
 
 #if SPC5_CAN_USE_FLEXCAN0
   /* Set peripheral clock mode.*/
-  if(&CAND1 == canp)
+  if(&CAND1 == canp) {
     SPC5_FLEXCAN0_DISABLE_CLOCK();
-
+  }
 #endif
 #if SPC5_CAN_USE_FLEXCAN1
   /* Set peripheral clock mode.*/
-  if(&CAND2 == canp)
+  if(&CAND2 == canp) {
     SPC5_FLEXCAN1_DISABLE_CLOCK();
+  }
 #endif
 #if SPC5_CAN_USE_FLEXCAN2
   /* Set peripheral clock mode.*/
-  if(&CAND3 == canp)
+  if(&CAND3 == canp) {
     SPC5_FLEXCAN2_DISABLE_CLOCK();
+  }
 #endif
 #if SPC5_CAN_USE_FLEXCAN3
   /* Set peripheral clock mode.*/
-  if(&CAND4 == canp)
+  if(&CAND4 == canp) {
     SPC5_FLEXCAN3_DISABLE_CLOCK();
+  }
 #endif
 #if SPC5_CAN_USE_FLEXCAN4
   /* Set peripheral clock mode.*/
-  if(&CAND5 == canp)
+  if(&CAND5 == canp) {
     SPC5_FLEXCAN4_DISABLE_CLOCK();
+  }
 #endif
 #if SPC5_CAN_USE_FLEXCAN5
   /* Set peripheral clock mode.*/
-  if(&CAND6 == canp)
+  if(&CAND6 == canp) {
     SPC5_FLEXCAN5_DISABLE_CLOCK();
+  }
 #endif
   }
 }
