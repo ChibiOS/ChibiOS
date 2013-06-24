@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    SPC560BCxx/ppcparams.h
+ * @file    SPC560Dxx/ppcparams.h
  * @brief   PowerPC parameters for the SPC560B/Cxx.
  *
  * @defgroup PPC_SPC560BCxx SPC560BCxx Specific Parameters
