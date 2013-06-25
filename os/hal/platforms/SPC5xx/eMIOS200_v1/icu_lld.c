@@ -711,7 +711,7 @@ void icu_lld_start(ICUDriver *icup) {
   chDbgAssert((psc <= 4) &&
               ((psc * icup->config->frequency) == icup->clock) &&
               ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
-              "icu_lld_start(), #1", "invalid frequency");
+              "icu_lld_start(), #2", "invalid frequency");
 
   icup->emiosp->CH[icup->ch_number].CCR.B.UCPREN = 0;
   icup->emiosp->CH[icup->ch_number].CCR.R |=
