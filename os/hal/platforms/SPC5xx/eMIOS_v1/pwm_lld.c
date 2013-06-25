@@ -887,13 +887,13 @@ void pwm_lld_start(PWMDriver *pwmp) {
     chDbgAssert((psc <= 0xFFFF) &&
                 (((psc) * pwmp->config->frequency) == SPC5_EMIOS0_CLK) &&
                 ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
-                "pwm_lld_start(), #1", "invalid frequency");
+                "pwm_lld_start(), #3", "invalid frequency");
   } else if (pwmp->emiosp == &EMIOS_1) {
     psc = (SPC5_EMIOS1_CLK / pwmp->config->frequency);
     chDbgAssert((psc <= 0xFFFF) &&
                 (((psc) * pwmp->config->frequency) == SPC5_EMIOS1_CLK) &&
                 ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
-                "pwm_lld_start(), #2", "invalid frequency");
+                "pwm_lld_start(), #4", "invalid frequency");
   }
 
 
