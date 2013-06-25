@@ -696,7 +696,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
   chDbgAssert((psc <= 0xFFFF) &&
               (((psc) * pwmp->config->frequency) == SPC5_EMIOS_CLK) &&
               ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
-              "pwm_lld_start(), #1", "invalid frequency");
+              "pwm_lld_start(), #2", "invalid frequency");
 
   if (pwmp->config->mode == PWM_ALIGN_EDGE) {
     pwmp->emiosp->CH[pwmp->ch_number].CCR.B.UCPREN = 0;
