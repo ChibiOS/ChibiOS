@@ -108,3 +108,15 @@
  * .
  * @ingroup AVR_DRIVERS
  */
+
+/**
+ * @defgroup AVR_SPI AVR SPI Support
+ * @details The AVR SPI driver uses the SPI peripheral (USART in SPI mode
+ *          is not supported). It is an interrupt driven implementation.
+ *
+ * @section avr_spi Supported HW resources
+ * The spi driver can support the following hardware resource:
+ * - SPI.
+ * .
+ * @ingroup AVR_DRIVERS
+ */
