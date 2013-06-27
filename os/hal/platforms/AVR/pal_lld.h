@@ -25,6 +25,8 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
+#include "atmega_pins.h"
+
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -210,6 +212,21 @@ typedef avr_gpio_registers_t *ioportid_t;
  */
 #define IOPORT11        ((volatile avr_gpio_registers_t *)&PINL)
 #endif
+
+#if defined(PORTADC) || defined(__DOXYGEN__)
+/**
+ * @brief   GPIO port ADC identifier.
+ */
+#define IOPORTADC			((volatile avr_gpio_registers_t *)&PINADC)
+#endif
+
+#if defined(PORT_SPI1) || defined(__DOXYGEN__)
+/**
+ * @brief   GPIO port SPI1 identifier.
+ */
+#define IOPORTSPI1			((volatile avr_gpio_registers_t *)&PIN_SPI1)
+#endif
+
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */

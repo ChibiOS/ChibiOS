@@ -37,15 +37,60 @@
 /**
  * @brief   Platform name.
  */
-#define PLATFORM_NAME   "ATmega128"
+#define PLATFORM_NAME   "AVR"
+
+/**
+ * @brief  Timer maximum value 
+ */
+#define AVR_TIMER_COUNTER_MAX 255
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/* Work out what the timer interrupt is called on this MCU */
+#ifdef TIMER0_COMPA_vect
+	#define AVR_TIMER_VECT TIMER0_COMPA_vect
+#elif defined(TIMER_COMPA_vect)
+	#define AVR_TIMER_VECT TIMER_COMPA_vect
+#elif defined(TIMER0_COMP_vect)
+	#define AVR_TIMER_VECT TIMER0_COMP_vect
+#else
+	#error "Cannot find interrupt vector name for timer"
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Find the most suitable prescaler setting for the desired CH_FREQUENCY */
+#if ((F_CPU / CH_FREQUENCY) <= AVR_TIMER_COUNTER_MAX)
+  #define AVR_TIMER_PRESCALER 1
+  #define AVR_TIMER_PRESCALER_BITS (0 << CS02)  | (0 << CS01)  | (1 << CS00); /* CLK      */
+#elif ((F_CPU / CH_FREQUENCY / 8) <= AVR_TIMER_COUNTER_MAX)
+  #define AVR_TIMER_PRESCALER 8
+  #define AVR_TIMER_PRESCALER_BITS (0 << CS02)  | (1 << CS01)  | (0 << CS00); /* CLK/8    */
+#elif ((F_CPU / CH_FREQUENCY / 64) <= AVR_TIMER_COUNTER_MAX)
+  #define AVR_TIMER_PRESCALER 64
+  #define AVR_TIMER_PRESCALER_BITS (0 << CS02)  | (1 << CS01)  | (1 << CS00); /* CLK/64   */
+#elif ((F_CPU / CH_FREQUENCY / 256) <= AVR_TIMER_COUNTER_MAX)
+  #define AVR_TIMER_PRESCALER 256
+  #define AVR_TIMER_PRESCALER_BITS (1 << CS02)  | (0 << CS01)  | (0 << CS00); /* CLK/256  */
+#elif ((F_CPU / CH_FREQUENCY / 1024) <= AVR_TIMER_COUNTER_MAX)
+  #define AVR_TIMER_PRESCALER 1024
+  #define AVR_TIMER_PRESCALER_BITS (1 << CS02)  | (0 << CS01)  | (1 << CS00); /* CLK/1024 */
+#else
+  #error "Frequency too low for timer, please set CH_FREQUENCY to a higher value"
+#endif
+
+#define AVR_TIMER_COUNTER F_CPU / CH_FREQUENCY / AVR_TIMER_PRESCALER
+
+/* Test if CH_FREQUENCY can be matched exactly using this timer */
+#define F_CPU_ (AVR_TIMER_COUNTER * AVR_TIMER_PRESCALER * CH_FREQUENCY)
+#if (F_CPU_ != F_CPU)
+    #warning "CH_FREQUENCY cannot be generated exactly using timer"
+#endif
+#undef F_CPU_
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

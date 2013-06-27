@@ -98,6 +98,18 @@
  */
 
 /**
+ * @defgroup AVR_ADC AVR ADC Support
+ * @details The AVR ADC driver uses the ADC and ADCMUX peripherals
+ * in an interrupt driven, one-shot or multiple shot implementation.
+ *
+ * @section avr_adc Supported HW resources
+ * The i2c driver can support the following hardware resource:
+ * - ADC.
+ * .
+ * @ingroup AVR_DRIVERS
+ */
+
+/**
  * @defgroup AVR_I2C AVR I2C Support
  * @details The AVR I2C driver uses the TWI peripheral in an interrupt
  *          driven, implementation.
@@ -112,7 +124,9 @@
 /**
  * @defgroup AVR_SPI AVR SPI Support
  * @details The AVR SPI driver uses the SPI peripheral (USART in SPI mode
- *          is not supported). It is an interrupt driven implementation.
+ * is not supported). It works as an interrupt driven implementation but
+ * a polled mode is available for 8 bit or 16 bit messages. Both master
+ * and slave mode are supported.
  *
  * @section avr_spi Supported HW resources
  * The spi driver can support the following hardware resource:

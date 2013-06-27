@@ -74,10 +74,8 @@ void lcdCmd(uint8_t cmd) {
  * Writes a char on the LCD at the current position.
  */
 void lcdPutc(char c) {
-  uint8_t b;
 
   wait_not_busy();
-  b = c | 0x0F;
   PORTC = (PORTC | PORTC_44780_DATA_MASK | PORTC_44780_RS_MASK) &
           (c | 0x0F);
   e_pulse();

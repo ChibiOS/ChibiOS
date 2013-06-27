@@ -40,8 +40,8 @@
  * @details If set to @p TRUE the support for USART0 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(USE_AVR_USART0) || defined(__DOXYGEN__)
-#define USE_AVR_USART0              TRUE
+#if !defined(AVR_SERIAL_USE_USART0) || defined(__DOXYGEN__)
+  #define AVR_SERIAL_USE_USART0              TRUE
 #endif
 
 /**
@@ -49,8 +49,8 @@
  * @details If set to @p TRUE the support for USART1 is included.
  * @note    The default is @p TRUE.
  */
-#if !defined(USE_AVR_USART1) || defined(__DOXYGEN__)
-#define USE_AVR_USART1              TRUE
+#if !defined(AVR_SERIAL_USE_USART1) || defined(__DOXYGEN__)
+#define AVR_SERIAL_USE_USART1              TRUE
 #endif
 
 /*===========================================================================*/
@@ -134,10 +134,10 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if USE_AVR_USART0 && !defined(__DOXYGEN__)
+#if AVR_SERIAL_USE_USART0 && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
 #endif
-#if USE_AVR_USART1 && !defined(__DOXYGEN__)
+#if AVR_SERIAL_USE_USART1 && !defined(__DOXYGEN__)
 extern SerialDriver SD2;
 #endif
 

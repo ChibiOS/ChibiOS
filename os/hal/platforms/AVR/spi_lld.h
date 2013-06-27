@@ -36,6 +36,10 @@
 /*===========================================================================*/
 
 /** @brief SPI Mode (Polarity/Phase) */
+#define SPI_ROLE_MASTER    0
+#define SPI_ROLE_SLAVE     1
+
+/** @brief SPI Mode (Polarity/Phase) */
 #define SPI_CPOL0_CPHA0    0
 #define SPI_CPOL0_CPHA1    1
 #define SPI_CPOL1_CPHA0    2
@@ -71,8 +75,8 @@
  * @brief   SPI driver enable switch.
  * @details If set to @p TRUE the support for SPI1 is included.
  */
-#if !defined(USE_AVR_SPI) || defined(__DOXYGEN__)
-#define USE_AVR_SPI               FALSE
+#if !defined(AVR_SPI_USE_SPI1) || defined(__DOXYGEN__)
+#define AVR_SPI_USE_SPI1               FALSE
 #endif
 /** @} */
 
@@ -103,6 +107,10 @@ typedef void (*spicallback_t)(SPIDriver *spip);
  *          architecture dependent, fields.
  */
 typedef struct {
+  /**
+   * @brief Role: Master or Slave
+   */
+  uint8_t               role;
   /**
    * @brief Port used of Slave Select
    */
@@ -166,7 +174,7 @@ struct SPIDriver {
   /**
    * @brief   Pointer to the buffer with data to send.
    */
-  const uint8_t             *txbuf;
+  uint8_t                   *txbuf;
   /**
    * @brief   Number of bytes of data to send.
    */
@@ -197,8 +205,8 @@ struct SPIDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if USE_AVR_SPI && !defined(__DOXYGEN__)
-extern SPIDriver SPID;
+#if AVR_SPI_USE_SPI1 && !defined(__DOXYGEN__)
+extern SPIDriver SPID1;
 #endif
 
 #ifdef __cplusplus
@@ -214,7 +222,14 @@ extern "C" {
                         const void *txbuf, void *rxbuf);
   void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf);
   void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
+
+#if AVR_SPI_USE_16BIT_POLLED_EXCHANGE
   uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
+#else
+  uint8_t spi_lld_polled_exchange(SPIDriver *spip, uint8_t frame);
+#endif
+
+
 #ifdef __cplusplus
 }
 #endif

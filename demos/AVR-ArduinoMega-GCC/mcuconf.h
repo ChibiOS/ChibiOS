@@ -41,9 +41,15 @@
 /*
  * SERIAL driver system settings.
  */
-#define USE_AVR_USART0              TRUE
-#define USE_AVR_USART1              FALSE
+#define AVR_SERIAL_USE_USART0       TRUE
+#define AVR_SERIAL_USE_USART1       FALSE
+
+/*
+ * I2C driver system settings.
+ */
+#define USE_AVR_I2C                 FALSE
 
 /*
  * SPI driver system settings.
  */
+#define USE_AVR_SPI                 FALSE
