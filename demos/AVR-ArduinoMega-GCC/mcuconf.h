@@ -52,4 +52,5 @@
 /*
  * SPI driver system settings.
  */
-#define USE_AVR_SPI                 FALSE
+#define AVR_SPI_USE_SPI1            FALSE
+#define AVR_SPI_USE_16BIT_POLLED_EXCHANGE FALSE
