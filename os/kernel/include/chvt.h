@@ -44,7 +44,7 @@
  * @api
  */
 #define S2ST(sec)                                                           \
-  ((systime_t)(((uint32_t)(sec)) * ((uint32_t)CH_FREQUENCY)))
+  ((systime_t)((sec) * CH_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
