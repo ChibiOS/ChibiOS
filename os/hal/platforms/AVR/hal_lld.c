@@ -70,7 +70,7 @@ void hal_lld_init(void) {
   /*
    * Timer 0 setup.
    */
-#ifdef TCCR0A /* Timer has multiple output comparators                       */
+#if defined(TCCR0A) /* Timer has multiple output comparators                       */
   TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
             (0 << COM0A1) | (0 << COM0A0) |              /* OC0A disabled.   */
             (0 << COM0B1) | (0 << COM0B0);               /* OC0B disabled.   */
@@ -83,13 +83,13 @@ void hal_lld_init(void) {
 #elif defined(TCCR0) /* Timer has single output comparator                   */
   TCCR0   = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
             (0 << COM01) | (0 << COM00) |                /* OC0A disabled.   */
-            AVR_TIMER_PRESCALER_BITS;    
+            AVR_TIMER_PRESCALER_BITS;
   OCR0    = AVR_TIMER_COUNTER - 1;
   TCNT0   = 0;                                           /* Reset counter.   */
   TIFR    = (1 << OCF0);                                 /* Reset pending.   */
   TIMSK   = (1 << OCIE0);                                /* IRQ on compare.  */
 #else
-	#error "Neither TCCR0A nor TCCRO registers are defined"
+  #error "Neither TCCR0A nor TCCR0 registers are defined"
 #endif
 }
 

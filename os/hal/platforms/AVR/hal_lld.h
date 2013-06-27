@@ -50,13 +50,13 @@
 
 /* Work out what the timer interrupt is called on this MCU */
 #ifdef TIMER0_COMPA_vect
-	#define AVR_TIMER_VECT TIMER0_COMPA_vect
+  #define AVR_TIMER_VECT TIMER0_COMPA_vect
 #elif defined(TIMER_COMPA_vect)
-	#define AVR_TIMER_VECT TIMER_COMPA_vect
+  #define AVR_TIMER_VECT TIMER_COMPA_vect
 #elif defined(TIMER0_COMP_vect)
-	#define AVR_TIMER_VECT TIMER0_COMP_vect
+  #define AVR_TIMER_VECT TIMER0_COMP_vect
 #else
-	#error "Cannot find interrupt vector name for timer"
+  #error "Cannot find interrupt vector name for timer"
 #endif
 
 /*===========================================================================*/
@@ -83,12 +83,12 @@
   #error "Frequency too low for timer, please set CH_FREQUENCY to a higher value"
 #endif
 
-#define AVR_TIMER_COUNTER F_CPU / CH_FREQUENCY / AVR_TIMER_PRESCALER
+#define AVR_TIMER_COUNTER (F_CPU / CH_FREQUENCY / AVR_TIMER_PRESCALER)
 
 /* Test if CH_FREQUENCY can be matched exactly using this timer */
 #define F_CPU_ (AVR_TIMER_COUNTER * AVR_TIMER_PRESCALER * CH_FREQUENCY)
 #if (F_CPU_ != F_CPU)
-    #warning "CH_FREQUENCY cannot be generated exactly using timer"
+  #warning "CH_FREQUENCY cannot be generated exactly using timer"
 #endif
 #undef F_CPU_
 
