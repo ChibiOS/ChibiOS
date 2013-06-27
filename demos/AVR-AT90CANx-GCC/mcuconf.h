@@ -48,7 +48,7 @@
 /*
  * I2C driver system settings.
  */
-#define USE_AVR_I2C                        FALSE
+#define AVR_I2C_USE_I2C1                   FALSE
 
 /*
  * SPI driver system settings.

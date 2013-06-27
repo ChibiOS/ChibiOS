@@ -71,8 +71,8 @@
  * @details If set to @p TRUE the support for I2C is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(USE_AVR_I2C) || defined(__DOXYGEN__)
-#define USE_AVR_I2C              FALSE
+#if !defined(AVR_I2C_USE_I2C1) || defined(__DOXYGEN__)
+#define AVR_I2C_USE_I2C1           FALSE
 #endif
 /** @} */
 
@@ -195,8 +195,8 @@ typedef struct I2CDriver I2CDriver;
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-#if USE_AVR_I2C
-extern I2CDriver I2CD;
+#if AVR_I2C_USE_I2C1
+extern I2CDriver I2CD1;
 #endif
 #endif /* !defined(__DOXYGEN__) */
 
