@@ -25,6 +25,7 @@
 /*
  * ADC driver system settings.
  */
+#define AVR_ADC_USE_ADC1                   FALSE
 
 /*
  * CAN driver system settings.
@@ -45,5 +46,12 @@
 #define AVR_SERIAL_USE_USART1              TRUE
 
 /*
+ * I2C driver system settings.
+ */
+#define USE_AVR_I2C                        FALSE
+
+/*
  * SPI driver system settings.
  */
+#define AVR_SPI_USE_SPI1                   FALSE
+#define AVR_SPI_USE_16BIT_POLLED_EXCHANGE  FALSE
