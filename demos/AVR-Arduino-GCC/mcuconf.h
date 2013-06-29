@@ -40,6 +40,15 @@
  */
 
 /*
+ * GPT driver system settings.
+ */
+#define AVR_GPT_USE_GPT1                   FALSE
+#define AVR_GPT_USE_GPT2                   FALSE
+#define AVR_GPT_USE_GPT3                   FALSE
+#define AVR_GPT_USE_GPT4                   FALSE
+#define AVR_GPT_USE_GPT5                   FALSE
+
+/*
  * SERIAL driver system settings.
  */
 #define AVR_SERIAL_USE_USART0              TRUE
