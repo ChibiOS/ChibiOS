@@ -154,7 +154,7 @@ struct DACDriver {
   /**
    * @brief   Current samples buffer pointer or @p NULL.
    */
-  dacsample_t               *samples;
+  const dacsample_t         *samples;
   /**
    * @brief   Current samples buffer depth or @p 0.
    */

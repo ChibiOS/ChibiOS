@@ -215,7 +215,7 @@ void dacStopConversion(DACDriver *dacp) {
               (dacp->state == DAC_ACTIVE),
               "dacStopConversion(), #1", "invalid state");
   if (dacp->state != DAC_READY) {
-    adc_lld_stop_conversion(dacp);
+    dac_lld_stop_conversion(dacp);
     dacp->grpp  = NULL;
     dacp->state = DAC_READY;
     _dac_reset_s(dacp);
@@ -243,7 +243,7 @@ void dacStopConversionI(DACDriver *dacp) {
               "dacStopConversionI(), #1", "invalid state");
 
   if (dacp->state != DAC_READY) {
-    adc_lld_stop_conversion(dacp);
+    dac_lld_stop_conversion(dacp);
     dacp->grpp  = NULL;
     dacp->state = DAC_READY;
     _dac_reset_i(dacp);
