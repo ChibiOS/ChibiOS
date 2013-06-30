@@ -3,6 +3,7 @@
 HALSRC = ${CHIBIOS}/os/hal/src/hal.c \
          ${CHIBIOS}/os/hal/src/adc.c \
          ${CHIBIOS}/os/hal/src/can.c \
+         ${CHIBIOS}/os/hal/src/dac.c \
          ${CHIBIOS}/os/hal/src/ext.c \
          ${CHIBIOS}/os/hal/src/gpt.c \
          ${CHIBIOS}/os/hal/src/i2c.c \

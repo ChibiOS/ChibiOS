@@ -305,9 +305,15 @@ extern "C" {
   void dacObjectInit(DACDriver *dacp);
   void dacStart(DACDriver *dacp, const DACConfig *config);
   void dacStop(DACDriver *dacp);
-  void dacStartSend(DACDriver *dacp);
-#if DAC_USE_WAIT
-  void dacSend(DACDriver *dacp);
+  void dacStartConversion(DACDriver *dacp, const DACConversionGroup *grpp,
+                          const dacsample_t *samples, size_t depth);
+  void dacStartConversionI(DACDriver *dacp, const DACConversionGroup *grpp,
+                           const dacsample_t *samples, size_t depth);
+  void dacStopConversion(DACDriver *dacp);
+  void dacStopConversionI(DACDriver *dacp);
+#if DAC_USE_WAIT || defined(__DOXYGEN__)
+  msg_t dacConvert(DACDriver *dacp, const DACConversionGroup *grpp,
+                   const dacsample_t *samples, size_t depth);
 #endif /* DAC_USE_WAIT */
 #if DAC_USE_MUTUAL_EXCLUSION
   void dacAcquireBus(DACDriver *dacp);

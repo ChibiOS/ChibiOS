@@ -196,6 +196,60 @@ void dacStartConversionI(DACDriver *dacp,
   dac_lld_start_conversion(dacp);
 }
 
+/**
+ * @brief   Stops an ongoing conversion.
+ * @details This function stops the currently ongoing conversion and returns
+ *          the driver in the @p DAC_READY state. If there was no conversion
+ *          being processed then the function does nothing.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object
+ *
+ * @api
+ */
+void dacStopConversion(DACDriver *dacp) {
+
+  chDbgCheck(dacp != NULL, "dacStopConversion");
+
+  chSysLock();
+  chDbgAssert((dacp->state == DAC_READY) ||
+              (dacp->state == DAC_ACTIVE),
+              "dacStopConversion(), #1", "invalid state");
+  if (dacp->state != DAC_READY) {
+    adc_lld_stop_conversion(dacp);
+    dacp->grpp  = NULL;
+    dacp->state = DAC_READY;
+    _dac_reset_s(dacp);
+  }
+  chSysUnlock();
+}
+
+/**
+ * @brief   Stops an ongoing conversion.
+ * @details This function stops the currently ongoing conversion and returns
+ *          the driver in the @p DAC_READY state. If there was no conversion
+ *          being processed then the function does nothing.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object
+ *
+ * @iclass
+ */
+void dacStopConversionI(DACDriver *dacp) {
+
+  chDbgCheckClassI();
+  chDbgCheck(dacp != NULL, "dacStopConversionI");
+  chDbgAssert((dacp->state == DAC_READY) ||
+              (dacp->state == DAC_ACTIVE) ||
+              (dacp->state == DAC_COMPLETE),
+              "dacStopConversionI(), #1", "invalid state");
+
+  if (dacp->state != DAC_READY) {
+    adc_lld_stop_conversion(dacp);
+    dacp->grpp  = NULL;
+    dacp->state = DAC_READY;
+    _dac_reset_i(dacp);
+  }
+}
+
 #if DAC_USE_WAIT || defined(__DOXYGEN__)
 /**
  * @brief   Performs a DAC conversion.
