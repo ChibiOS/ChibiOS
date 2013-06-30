@@ -89,14 +89,15 @@
 *****************************************************************************
 
 *** 2.7.0 ***
-- NEW: Added support of UART4 and UART5 (STM32F4x and STM32F2x platforms).
-  Feature request #28.
 - FIX: Fixed missing casts in time-conversion macros (bug #418)(backported
   to 2.6.1, 2.4.4 and 2.2.10).
 - FIX: Fixed STM32 Serial (v2) driver invalid CR registers size (bug #416)
   (backported to 2.6.0).
 - FIX: Fixed MS2ST() and US2ST() macros error (bug #415)(backported to 2.6.0,
   2.4.4, 2.2.10, NilRTOS).
+- NEW: Added DAC driver high level files and low level files templates.
+- NEW: Added support of UART4 and UART5 (STM32F4x and STM32F2x platforms)
+  (feature request #28).
 - NEW: SPI driver for SPC560Pxx, SPC563Mxx, SPC564Axx, SPC56ELAxx, SPC560Dxx.
 - NEW: Support for SPC560Dxx devices.
 - NEW: DMA-MUX support for SPC5xx devices.
