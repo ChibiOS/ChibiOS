@@ -59,16 +59,16 @@
   STM32_DMA_GETCHANNEL(STM32_UART_UART4_RX_DMA_STREAM,                      \
                        STM32_UART4_RX_DMA_CHN)
 
-#define USART4_TX_DMA_CHANNEL                                               \
-  STM32_DMA_GETCHANNEL(STM32_UART_USART4_TX_DMA_STREAM,                     \
+#define UART4_TX_DMA_CHANNEL                                               \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART4_TX_DMA_STREAM,                     \
                        STM32_UART4_TX_DMA_CHN)
 
 #define UART5_RX_DMA_CHANNEL                                                \
   STM32_DMA_GETCHANNEL(STM32_UART_UART5_RX_DMA_STREAM,                      \
                        STM32_UART5_RX_DMA_CHN)
 
-#define USART5_TX_DMA_CHANNEL                                               \
-  STM32_DMA_GETCHANNEL(STM32_UART_USART5_TX_DMA_STREAM,                     \
+#define UART5_TX_DMA_CHANNEL                                               \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART5_TX_DMA_STREAM,                     \
                        STM32_UART5_TX_DMA_CHN)
 
 #define USART6_RX_DMA_CHANNEL                                               \
@@ -393,7 +393,7 @@ CH_IRQ_HANDLER(STM32_USART3_HANDLER) {
 
 #if STM32_UART_USE_UART4 || defined(__DOXYGEN__)
 #if !defined(STM32_UART4_HANDLER)
-#error "STM32_USART4_HANDLER not defined"
+#error "STM32_UART4_HANDLER not defined"
 #endif
 /**
  * @brief   UART4 IRQ handler.
@@ -412,7 +412,7 @@ CH_IRQ_HANDLER(STM32_UART4_HANDLER) {
 
 #if STM32_UART_USE_UART5 || defined(__DOXYGEN__)
 #if !defined(STM32_UART5_HANDLER)
-#error "STM32_USART5_HANDLER not defined"
+#error "STM32_UART5_HANDLER not defined"
 #endif
 /**
  * @brief   UART5 IRQ handler.
@@ -527,7 +527,7 @@ static void uart_check_config(const UARTDriver *uartp) {
   chDbgCheck((cr & STM32_UART45_CR3_CHECK_MASK) == 0,
       "Some flags from CR3 unavailable for this UART");
 }
-#endif /* (STM32_UART_USE_USART4 || STM32_UART_USE_USART5) */
+#endif /* (STM32_UART_USE_UART4 || STM32_UART_USE_UART5) */
 
 /**
  * @brief   Configures and activates the UART peripheral.
