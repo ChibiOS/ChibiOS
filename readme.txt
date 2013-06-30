@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- NEW: Added support of UART4 and UART5 (STM32F4x and STM32F2x platforms).
+  Feature request #28.
 - FIX: Fixed missing casts in time-conversion macros (bug #418)(backported
   to 2.6.1, 2.4.4 and 2.2.10).
 - FIX: Fixed STM32 Serial (v2) driver invalid CR registers size (bug #416)
