@@ -76,7 +76,7 @@
  *          different threads.
  *
  * @param[in] esp       pointer to the  @p EventSource structure
- * @param[in] elp       pointer to the @p EventListener structure
+ * @param[out] elp      pointer to the @p EventListener structure
  * @param[in] mask      the mask of event flags to be ORed to the thread when
  *                      the event source is broadcasted
  *
