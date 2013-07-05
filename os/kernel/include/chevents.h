@@ -122,7 +122,7 @@ typedef void (*evhandler_t)(eventid_t);
  * @note    This function can be invoked before the kernel is initialized
  *          because it just prepares a @p EventSource structure.
  *
- * @param[in] esp       pointer to the @p EventSource structure
+ * @param[out] esp      pointer to the @p EventSource structure
  *
  * @init
  */
