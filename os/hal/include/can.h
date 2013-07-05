@@ -129,16 +129,6 @@ typedef enum {
  * @brief   Converts a mailbox index to a bit mask.
  */
 #define CAN_MAILBOX_TO_MASK(mbx) (1 << ((mbx) - 1))
-
-/**
- * @brief   Adds some flags to the CAN status mask.
- *
- * @param[in] canp      pointer to the @p CANDriver object
- * @param[in] mask      flags to be added to the status mask
- *
- * @iclass
- */
-#define canAddFlagsI(canp, mask) ((canp)->status |= (mask))
 /** @} */
 
 /*===========================================================================*/

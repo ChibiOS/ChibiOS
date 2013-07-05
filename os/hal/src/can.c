@@ -138,10 +138,10 @@ void canStop(CANDriver *canp) {
   chDbgAssert((canp->state == CAN_STOP) || (canp->state == CAN_READY),
               "canStop(), #1", "invalid state");
   can_lld_stop(canp);
+  canp->state  = CAN_STOP;
   chSemResetI(&canp->rxsem, 0);
   chSemResetI(&canp->txsem, 0);
   chSchRescheduleS();
-  canp->state  = CAN_STOP;
   chSysUnlock();
 }
 
