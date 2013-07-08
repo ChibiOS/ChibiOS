@@ -36,20 +36,20 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#if !defined(AVR_PWM_USE_PWM1)
-#define AVR_PWM_USE_PWM1 FALSE
+#if !defined(AVR_PWM_USE_TIM1)
+#define AVR_PWM_USE_TIM1 FALSE
 #endif
-#if !defined(AVR_PWM_USE_PWM2)
-#define AVR_PWM_USE_PWM2 FALSE
+#if !defined(AVR_PWM_USE_TIM2)
+#define AVR_PWM_USE_TIM2 FALSE
 #endif
-#if !defined(AVR_PWM_USE_PWM3)
-#define AVR_PWM_USE_PWM3 FALSE
+#if !defined(AVR_PWM_USE_TIM3)
+#define AVR_PWM_USE_TIM3 FALSE
 #endif
-#if !defined(AVR_PWM_USE_PWM4)
-#define AVR_PWM_USE_PWM4 FALSE
+#if !defined(AVR_PWM_USE_TIM4)
+#define AVR_PWM_USE_TIM4 FALSE
 #endif
-#if !defined(AVR_PWM_USE_PWM5)
-#define AVR_PWM_USE_PWM5 FALSE
+#if !defined(AVR_PWM_USE_TIM5)
+#define AVR_PWM_USE_TIM5 FALSE
 #endif
 
 /*===========================================================================*/
@@ -174,19 +174,19 @@ struct PWMDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if AVR_PWM_USE_PWM1 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
 extern PWMDriver PWMD1;
 #endif
-#if AVR_PWM_USE_PWM2 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
 extern PWMDriver PWMD2;
 #endif
-#if AVR_PWM_USE_PWM3 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM3 || defined(__DOXYGEN__)
 extern PWMDriver PWMD3;
 #endif
-#if AVR_PWM_USE_PWM4 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM4 || defined(__DOXYGEN__)
 extern PWMDriver PWMD4;
 #endif
-#if AVR_PWM_USE_PWM5 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM5 || defined(__DOXYGEN__)
 extern PWMDriver PWMD5;
 #endif
 

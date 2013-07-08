@@ -40,16 +40,16 @@ typedef struct {
 
 static icu_registers_t regs_table[]=
 {
-#if AVR_ICU_USE_ICU1 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM1 || defined(__DOXYGEN__)
   {&TCCR1A, &TCCR1B, &TCNT1, &TIMSK1},
 #endif
-#if AVR_ICU_USE_ICU3 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM3 || defined(__DOXYGEN__)
   {&TCCR3A, &TCCR3B, &TCNT3, &TIMSK3},
 #endif
-#if AVR_ICU_USE_ICU4 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM4 || defined(__DOXYGEN__)
   {&TCCR4A, &TCCR4B, &TCNT4, &TIMSK4},
 #endif
-#if AVR_ICU_USE_ICU5 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM5 || defined(__DOXYGEN__)
   {&TCCR5A, &TCCR5B, &TCNT5, &TIMSK5},
 #endif
 };
@@ -62,25 +62,25 @@ static icu_registers_t regs_table[]=
 /**
  * @brief   ICU1 driver identifier.
  */
-#if AVR_ICU_USE_ICU1 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM1 || defined(__DOXYGEN__)
 ICUDriver ICUD1;
 #endif
 /**
  * @brief   ICU3 driver identifier.
  */
-#if AVR_ICU_USE_ICU3 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM3 || defined(__DOXYGEN__)
 ICUDriver ICUD3;
 #endif
 /**
  * @brief   ICU4 driver identifier.
  */
-#if AVR_ICU_USE_ICU4 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM4 || defined(__DOXYGEN__)
 ICUDriver ICUD4;
 #endif
 /**
  * @brief   ICU5 driver identifier.
  */
-#if AVR_ICU_USE_ICU5 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM5 || defined(__DOXYGEN__)
 ICUDriver ICUD5;
 #endif
 
@@ -117,19 +117,19 @@ static inline void handle_capture_isr(ICUDriver *icup,
 static uint8_t index(ICUDriver *icup)
 {
   uint8_t index = 0;
-#if AVR_ICU_USE_ICU1 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM1 || defined(__DOXYGEN__)
   if (icup == &ICUD1) return index;
   else index++;
 #endif
-#if AVR_ICU_USE_ICU3 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM3 || defined(__DOXYGEN__)
   if (icup == &ICUD3) return index;
   else index++;
 #endif
-#if AVR_ICU_USE_ICU4 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM4 || defined(__DOXYGEN__)
   if (icup == &ICUD4) return index;
   else index++;
 #endif
-#if AVR_ICU_USE_ICU5 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM5 || defined(__DOXYGEN__)
   if (icup == &ICUD5) return index;
   else index++;
 #endif
@@ -139,7 +139,7 @@ static uint8_t index(ICUDriver *icup)
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if AVR_ICU_USE_ICU1 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM1 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(TIMER1_CAPT_vect)
 {
   CH_IRQ_PROLOGUE();
@@ -155,7 +155,7 @@ CH_IRQ_HANDLER(TIMER1_OVF_vect)
 }
 #endif
 
-#if AVR_ICU_USE_ICU3 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM3 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(TIMER3_CAPT_vect)
 {
   CH_IRQ_PROLOGUE();
@@ -171,7 +171,7 @@ CH_IRQ_HANDLER(TIMER3_OVF_vect)
 }
 #endif
 
-#if AVR_ICU_USE_ICU4 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM4 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(TIMER4_CAPT_vect)
 {
   CH_IRQ_PROLOGUE();
@@ -187,7 +187,7 @@ CH_IRQ_HANDLER(TIMER4_OVF_vect)
 }
 #endif
 
-#if AVR_ICU_USE_ICU5 || defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM5 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(TIMER5_CAPT_vect)
 {
   CH_IRQ_PROLOGUE();
@@ -214,16 +214,16 @@ CH_IRQ_HANDLER(TIMER5_OVF_vect)
  */
 void icu_lld_init(void) {
 
-#if AVR_ICU_USE_ICU1
+#if AVR_ICU_USE_TIM1
   icuObjectInit(&ICUD1);
 #endif
-#if AVR_ICU_USE_ICU3
+#if AVR_ICU_USE_TIM3
   icuObjectInit(&ICUD3);
 #endif
-#if AVR_ICU_USE_ICU4
+#if AVR_ICU_USE_TIM4
   icuObjectInit(&ICUD4);
 #endif
-#if AVR_ICU_USE_ICU5
+#if AVR_ICU_USE_TIM5
   icuObjectInit(&ICUD5);
 #endif
 }
@@ -264,11 +264,11 @@ void icu_lld_stop(ICUDriver *icup) {
     /* Resets the peripheral.*/
 
     /* Disables the peripheral.*/
-#if AVR_ICU_USE_ICU1
+#if AVR_ICU_USE_TIM1
     if (&ICUD1 == icup) {
 
     }
-#endif /* AVR_ICU_USE_ICU1 */
+#endif /* AVR_ICU_USE_TIM1 */
   }
 }
 

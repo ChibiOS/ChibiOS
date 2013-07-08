@@ -25,5 +25,5 @@
 /*
  * PWM driver system settings.
  */
-#define AVR_PWM_USE_PWM1                TRUE
-#define AVR_PWM_USE_PWM2                TRUE
+#define AVR_PWM_USE_TIM1                TRUE
+#define AVR_PWM_USE_TIM2                TRUE

@@ -51,23 +51,23 @@ typedef struct {
 
 static timer_registers_t regs_table[]=
 {
-#if AVR_PWM_USE_PWM1 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
 #if defined(OCR1C)
   {&TCCR1A, &TCCR1B, &OCR1AH, &OCR1AL, &OCR1BH, &OCR1BL, &OCR1CH, &OCR1CL, &TIFR1, &TIMSK1},
 #else
   {&TCCR1A, &TCCR1B, &OCR1AH, &OCR1AL, &OCR1BH, &OCR1BL, NULL, NULL, &TIFR1, &TIMSK1},
 #endif
 #endif
-#if AVR_PWM_USE_PWM2 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
   {&TCCR2A, &TCCR2B, &OCR2A, &OCR2A, &OCR2B, &OCR2B, NULL, NULL, &TIFR2, &TIMSK2},
 #endif
-#if AVR_PWM_USE_PWM3 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM3 || defined(__DOXYGEN__)
   {&TCCR3A, &TCCR3B, &OCR3AH, &OCR3AL, &OCR3BH, &OCR3BL, &OCR3CH, &OCR3CL, &TIFR3, &TIMSK3},
 #endif
-#if AVR_PWM_USE_PWM4 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM4 || defined(__DOXYGEN__)
   {&TCCR4A, &TCCR4B, &OCR4AH, &OCR4AL, &OCR4CH, &OCR4CL, &OCR4CH, &OCR4CL, &TIFR4, &TIMSK4},
 #endif
-#if AVR_PWM_USE_PWM5 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM5 || defined(__DOXYGEN__)
   {&TCCR5A, &TCCR5B, &OCR5AH, &OCR5AL, &OCR5BH, &OCR5BL, &OCR5CH, &OCR5CL, &TIFR5, &TIMSK5},
 #endif
 };
@@ -77,19 +77,19 @@ static timer_registers_t regs_table[]=
 /*===========================================================================*/
 
 /** @brief PWM driver identifiers.*/
-#if AVR_PWM_USE_PWM1 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
 PWMDriver PWMD1;
 #endif
-#if AVR_PWM_USE_PWM2 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
 PWMDriver PWMD2;
 #endif
-#if AVR_PWM_USE_PWM3 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM3 || defined(__DOXYGEN__)
 PWMDriver PWMD3;
 #endif
-#if AVR_PWM_USE_PWM4 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM4 || defined(__DOXYGEN__)
 PWMDriver PWMD4;
 #endif
-#if AVR_PWM_USE_PWM5 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM5 || defined(__DOXYGEN__)
 PWMDriver PWMD5;
 #endif
 
@@ -116,23 +116,23 @@ static void config_channel(volatile uint8_t *tccra,
 static uint8_t timer_index(PWMDriver *pwmp)
 {
   uint8_t index = 0;
-#if AVR_PWM_USE_PWM1 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
   if (pwmp == &PWMD1) return index;
   else index++;
 #endif
-#if AVR_PWM_USE_PWM2 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
   if (pwmp == &PWMD2) return index;
   else index++;
 #endif
-#if AVR_PWM_USE_PWM3 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM3 || defined(__DOXYGEN__)
   if (pwmp == &PWMD3) return index;
   else index++;
 #endif
-#if AVR_PWM_USE_PWM4 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM4 || defined(__DOXYGEN__)
   if (pwmp == &PWMD4) return index;
   else index++;
 #endif
-#if AVR_PWM_USE_PWM5 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM5 || defined(__DOXYGEN__)
   if (pwmp == &PWMD5) return index;
   else index++;
 #endif
@@ -145,7 +145,7 @@ static uint8_t timer_index(PWMDriver *pwmp)
 /*
  * interrupt for compare1&2 and clock overflow. pwmd1 & pwmd2
  */
-#if AVR_PWM_USE_PWM1 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(TIMER1_OVF_vect)
 {
   CH_IRQ_PROLOGUE();
@@ -176,7 +176,7 @@ CH_IRQ_HANDLER(TIMER1_COMPC_vect)
 #endif
 #endif
 
-#if AVR_PWM_USE_PWM2 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(TIMER2_OVF_vect)
 {
   CH_IRQ_PROLOGUE();
@@ -199,7 +199,7 @@ CH_IRQ_HANDLER(TIMER2_COMPB_vect)
 }
 #endif
 
-#if AVR_PWM_USE_PWM3 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM3 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(TIMER3_OVF_vect)
 {
   CH_IRQ_PROLOGUE();
@@ -229,7 +229,7 @@ CH_IRQ_HANDLER(TIMER3_COMPC_vect)
 }
 #endif
 
-#if AVR_PWM_USE_PWM4 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM4 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(TIMER4_OVF_vect)
 {
   CH_IRQ_PROLOGUE();
@@ -259,7 +259,7 @@ CH_IRQ_HANDLER(TIMER4_COMPC_vect)
 }
 #endif
 
-#if AVR_PWM_USE_PWM5 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM5 || defined(__DOXYGEN__)
 CH_IRQ_HANDLER(TIMER5_OVF_vect)
 {
   CH_IRQ_PROLOGUE();
@@ -300,31 +300,31 @@ CH_IRQ_HANDLER(TIMER5_COMPC_vect)
  */
 void pwm_lld_init(void)
 {
-#if AVR_PWM_USE_PWM1 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD1);
   TCCR1A = (1 << WGM11) | (1 << WGM10);
   TCCR1B = (0 << WGM13) | (1 << WGM12);
 #endif
 
-#if AVR_PWM_USE_PWM2 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD2);
   TCCR2A = (1 << WGM21) | (1 << WGM20);
   TCCR2B = (0 << WGM22);
 #endif
 
-#if AVR_PWM_USE_PWM3 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM3 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD3);
   TCCR3A = (1 << WGM31) | (1 << WGM30);
   TCCR3B = (0 << WGM33) | (1 << WGM32);
 #endif
 
-#if AVR_PWM_USE_PWM4 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM4 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD4);
   TCCR4A = (1 << WGM41) | (1 << WGM40);
   TCCR4B = (0 << WGM43) | (1 << WGM42);
 #endif
 
-#if AVR_PWM_USE_PWM5 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM5 || defined(__DOXYGEN__)
   pwmObjectInit(&PWMD5);
   TCCR5A = (1 << WGM51) | (1 << WGM50);
   TCCR5B = (0 << WGM53) | (1 << WGM52);
@@ -342,7 +342,7 @@ void pwm_lld_start(PWMDriver *pwmp)
 {
   if (pwmp->state == PWM_STOP) {
 
-#if AVR_PWM_USE_PWM2 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
     if (pwmp == &PWMD2) {
       TCCR2B &= ~((1 << CS22) | (1 << CS21));
       TCCR2B |= (1 << CS20);
@@ -417,7 +417,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
   if (val > MAX_PWM_VALUE)
     val = MAX_PWM_VALUE;
 
-#if AVR_PWM_USE_PWM2 || defined(__DOXYGEN__)
+#if AVR_PWM_USE_TIM2 || defined(__DOXYGEN__)
   if (pwmp == &PWMD2) {
     config_channel(&TCCR2A,
                    7 - 2*channel,

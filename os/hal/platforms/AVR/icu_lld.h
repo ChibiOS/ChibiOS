@@ -43,29 +43,29 @@
  * @brief   ICU driver enable switch.
  * @details If set to @p TRUE the support for ICU1 is included.
  */
-#if !defined(AVR_ICU_USE_ICU1) || defined(__DOXYGEN__)
-#define AVR_ICU_USE_ICU1               FALSE
+#if !defined(AVR_ICU_USE_TIM1) || defined(__DOXYGEN__)
+#define AVR_ICU_USE_TIM1               FALSE
 #endif
 /**
  * @brief   ICU driver enable switch.
  * @details If set to @p TRUE the support for ICU3 is included.
  */
-#if !defined(AVR_ICU_USE_ICU3) || defined(__DOXYGEN__)
-#define AVR_ICU_USE_ICU3               FALSE
+#if !defined(AVR_ICU_USE_TIM3) || defined(__DOXYGEN__)
+#define AVR_ICU_USE_TIM3               FALSE
 #endif
 /**
  * @brief   ICU driver enable switch.
  * @details If set to @p TRUE the support for ICU4 is included.
  */
-#if !defined(AVR_ICU_USE_ICU4) || defined(__DOXYGEN__)
-#define AVR_ICU_USE_ICU4               FALSE
+#if !defined(AVR_ICU_USE_TIM4) || defined(__DOXYGEN__)
+#define AVR_ICU_USE_TIM4               FALSE
 #endif
 /**
  * @brief   ICU driver enable switch.
  * @details If set to @p TRUE the support for ICU5 is included.
  */
-#if !defined(AVR_ICU_USE_ICU5) || defined(__DOXYGEN__)
-#define AVR_ICU_USE_ICU5               FALSE
+#if !defined(AVR_ICU_USE_TIM5) || defined(__DOXYGEN__)
+#define AVR_ICU_USE_TIM5               FALSE
 #endif
 /** @} */
 
@@ -159,16 +159,16 @@ struct ICUDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if AVR_ICU_USE_ICU1 && !defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM1 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD1;
 #endif
-#if AVR_ICU_USE_ICU3 && !defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM3 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD3;
 #endif
-#if AVR_ICU_USE_ICU4 && !defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM4 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD4;
 #endif
-#if AVR_ICU_USE_ICU5 && !defined(__DOXYGEN__)
+#if AVR_ICU_USE_TIM5 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD5;
 #endif
 

@@ -23,4 +23,4 @@
  */
 
 #define AVR_SERIAL_USE_USART0           TRUE
-#define AVR_ICU_USE_ICU3                TRUE
+#define AVR_ICU_USE_TIM3                TRUE

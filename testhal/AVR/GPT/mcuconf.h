@@ -31,5 +31,5 @@
  * GPT driver system settings.
  */
 
-#define AVR_GPT_USE_GPT1                   TRUE
-#define AVR_GPT_USE_GPT2                   TRUE
+#define AVR_GPT_USE_TIM1                   TRUE
+#define AVR_GPT_USE_TIM2                   TRUE

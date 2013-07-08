@@ -45,8 +45,8 @@
  * @details If set to @p TRUE the support for GPT1 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(AVR_GPT_USE_GPT1)
-#define AVR_GPT_USE_GPT1              FALSE
+#if !defined(AVR_GPT_USE_TIM1)
+#define AVR_GPT_USE_TIM1              FALSE
 #endif
 
 /**
@@ -54,8 +54,8 @@
  * @details If set to @p TRUE the support for GPT2 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(AVR_GPT_USE_GPT2)
-#define AVR_GPT_USE_GPT2              FALSE
+#if !defined(AVR_GPT_USE_TIM2)
+#define AVR_GPT_USE_TIM2              FALSE
 #endif
 
 /**
@@ -63,8 +63,8 @@
  * @details If set to @p TRUE the support for GPT3 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(AVR_GPT_USE_GPT3)
-#define AVR_GPT_USE_GPT3              FALSE
+#if !defined(AVR_GPT_USE_TIM3)
+#define AVR_GPT_USE_TIM3              FALSE
 #endif
 
 /**
@@ -72,8 +72,8 @@
  * @details If set to @p TRUE the support for GPT4 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(AVR_GPT_USE_GPT4)
-#define AVR_GPT_USE_GPT4              FALSE
+#if !defined(AVR_GPT_USE_TIM4)
+#define AVR_GPT_USE_TIM4              FALSE
 #endif
 
 /**
@@ -81,8 +81,8 @@
  * @details If set to @p TRUE the support for GPT5 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(AVR_GPT_USE_GPT5)
-#define AVR_GPT_USE_GPT5              FALSE
+#if !defined(AVR_GPT_USE_TIM5)
+#define AVR_GPT_USE_TIM5              FALSE
 #endif
 
 /*===========================================================================*/
@@ -183,19 +183,19 @@ struct GPTDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if AVR_GPT_USE_GPT1 || defined(__DOXYGEN__)
+#if AVR_GPT_USE_TIM1 || defined(__DOXYGEN__)
 extern GPTDriver GPTD1;
 #endif
-#if AVR_GPT_USE_GPT2 || defined(__DOXYGEN__)
+#if AVR_GPT_USE_TIM2 || defined(__DOXYGEN__)
 extern GPTDriver GPTD2;
 #endif
-#if AVR_GPT_USE_GPT3 || defined(__DOXYGEN__)
+#if AVR_GPT_USE_TIM3 || defined(__DOXYGEN__)
 extern GPTDriver GPTD3;
 #endif
-#if AVR_GPT_USE_GPT4 || defined(__DOXYGEN__)
+#if AVR_GPT_USE_TIM4 || defined(__DOXYGEN__)
 extern GPTDriver GPTD4;
 #endif
-#if AVR_GPT_USE_GPT5 || defined(__DOXYGEN__)
+#if AVR_GPT_USE_TIM5 || defined(__DOXYGEN__)
 extern GPTDriver GPTD5;
 #endif
 
