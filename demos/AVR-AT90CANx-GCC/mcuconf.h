@@ -38,6 +38,19 @@
 /*
  * PWM driver system settings.
  */
+#define AVR_PWM_USE_PWM1                   FALSE
+#define AVR_PWM_USE_PWM2                   FALSE
+#define AVR_PWM_USE_PWM3                   FALSE
+#define AVR_PWM_USE_PWM4                   FALSE
+#define AVR_PWM_USE_PWM5                   FALSE
+
+/*
+ * ICU driver system settings.
+ */
+#define AVR_ICU_USE_ICU1                   FALSE
+#define AVR_ICU_USE_ICU3                   FALSE
+#define AVR_ICU_USE_ICU4                   FALSE
+#define AVR_ICU_USE_ICU5                   FALSE
 
 /*
  * GPT driver system settings.
