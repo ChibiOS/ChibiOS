@@ -49,7 +49,7 @@ typedef struct {
   volatile uint8_t *timsk;
 } timer_registers_t;
 
-timer_registers_t regs_table[]=
+static timer_registers_t regs_table[]=
 {
 #if AVR_PWM_USE_PWM1 || defined(__DOXYGEN__)
 #if defined(OCR1C)
