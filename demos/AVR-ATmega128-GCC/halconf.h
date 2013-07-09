@@ -52,6 +52,13 @@
 #endif
 
 /**
+ * @brief   Enables the DAC subsystem.
+ */
+#if !defined(HAL_USE_DAC) || defined(__DOXYGEN__)
+#define HAL_USE_DAC                 FALSE
+#endif
+
+/**
  * @brief   Enables the CAN subsystem.
  */
 #if !defined(HAL_USE_CAN) || defined(__DOXYGEN__)
