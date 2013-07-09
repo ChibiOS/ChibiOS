@@ -27,7 +27,9 @@
     #define SPI1_MOSI           3
     #define SPI1_MISO           4
 
-  #elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega128__)
+  #elif defined(__AVR_ATmega2560__) || \
+        defined(__AVR_ATmega1280__) || \
+        defined(__AVR_ATmega128__)
     #define PINADC              PINF
     #define PORTADC             PORTF
     #define DDRADC              DDRF
@@ -38,6 +40,21 @@
     #define SPI1_SCK            1
     #define SPI1_MOSI           2
     #define SPI1_MISO           3
+
+  #elif defined(__AVR_AT90CAN128__) || \
+        defined(__AVR_AT90CAN64__)  || \
+        defined(__AVR_AT90CAN32__)
+    #define PINADC              PINF
+    #define PORTADC             PORTF
+    #define DDRADC              DDRF
+    #define PIN_SPI1            PINB
+    #define PORT_SPI1           PORTB
+    #define DDR_SPI1            DDRB
+    #define SPI1_SS             0
+    #define SPI1_SCK            1
+    #define SPI1_MOSI           2
+    #define SPI1_MISO           3
+
   #else
     #warning "Device not supported by ADC or SPI driver"
   #endif
