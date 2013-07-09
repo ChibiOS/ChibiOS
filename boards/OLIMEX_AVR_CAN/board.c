@@ -49,17 +49,6 @@ const PALConfig pal_default_config =
 };
 #endif /* HAL_USE_PAL */
 
-CH_IRQ_HANDLER(TIMER0_COMP_vect) {
-
-  CH_IRQ_PROLOGUE();
-
-  chSysLockFromIsr();
-  chSysTimerHandlerI();
-  chSysUnlockFromIsr();
-
-  CH_IRQ_EPILOGUE();
-}
-
 /*
  * Board-specific initialization code.
  */
