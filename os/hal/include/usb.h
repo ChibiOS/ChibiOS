@@ -109,7 +109,7 @@
 /**
  * @brief   Helper macro for BCD values into descriptor strings.
  */
-#define USB_DESC_BCD(bcd)                                                  \
+#define USB_DESC_BCD(bcd)                                                   \
   (uint8_t)((bcd) & 255),                                                   \
   (uint8_t)(((bcd) >> 8) & 255)
 
