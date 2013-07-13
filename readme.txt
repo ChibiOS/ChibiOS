@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed invalid directory links in the demo files (bug #419)backported
+  to 2.6.1).
 - FIX: Fixed missing casts in time-conversion macros (bug #418)(backported
   to 2.6.1, 2.4.4 and 2.2.10).
 - FIX: Fixed PLL2 activation condition is wrong in STM32F107 HAL (bug #417)
