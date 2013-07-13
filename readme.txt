@@ -89,7 +89,9 @@
 *****************************************************************************
 
 *** 2.7.0 ***
-- FIX: Fixed invalid directory links in the demo files (bug #419)backported
+- FIX: Fixed FSMC reset on STM32F4xx (bug #420)(backported to 2.6.1
+  and 2.4.4).
+- FIX: Fixed invalid directory links in the demo files (bug #419)(backported
   to 2.6.1).
 - FIX: Fixed missing casts in time-conversion macros (bug #418)(backported
   to 2.6.1, 2.4.4 and 2.2.10).

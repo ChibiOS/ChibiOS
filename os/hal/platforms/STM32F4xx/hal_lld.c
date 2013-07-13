@@ -97,7 +97,6 @@ void hal_lld_init(void) {
      been initialized in the board initialization file (board.c).*/
   rccResetAHB1(~0);
   rccResetAHB2(~0);
-  rccResetAHB3(~0);
   rccResetAPB1(~RCC_APB1RSTR_PWRRST);
   rccResetAPB2(~0);
 
