@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.4 ***
+- FIX: Fixed PLL2 activation condition is wrong in STM32F107 HAL (bug #417).
 - FIX: Fixed MS2ST() and US2ST() macros error (bug #415).
 - FIX: Fixed STM32_PLLI2SCLKOUT miscalculated (bug #413).
 - FIX: Fixed STM32 wrong peripherals reset procedure (bug #409).
