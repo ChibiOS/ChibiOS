@@ -51,7 +51,7 @@
  * @name    Platform identification
  * @{
  */
-#define PLATFORM_NAME           "STM32F1 Connectivity Line"
+#define PLATFORM_NAME           "STM32F10x Connectivity Line"
 /** @} */
 
 /**
@@ -697,8 +697,7 @@
 #endif
 
 /* PLL2 activation conditions.*/
-#if STM32_OTG_CLOCK_REQUIRED ||                                             \
-    (STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2) ||                          \
+#if ((STM32_PREDIV1SRC == STM32_PREDIV1SRC_PLL2) && STM32_ACTIVATE_PLL1) || \
     (STM32_MCOSEL == STM32_MCOSEL_PLL2DIV2) ||                              \
     defined(__DOXYGEN__)
 /**
@@ -886,7 +885,7 @@
 #elif (STM32_SW == STM32_SW_HSE)
 #define STM32_SYSCLK                STM32_HSECLK
 #else
-#error "invalid STM32_SYSCLK_SW value specified"
+#error "invalid STM32_SW value specified"
 #endif
 
 /* Check on the system clock.*/
