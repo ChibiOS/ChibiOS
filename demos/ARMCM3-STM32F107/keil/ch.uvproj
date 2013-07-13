@@ -409,7 +409,7 @@
             <File>
               <FileName>vectors.s</FileName>
               <FileType>2</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\ports\RVCT\ARMCMx\STM32F1xx\vectors.s</FilePath>
+              <FilePath>..\..\..\os\ports\RVCT\ARMCMx\STM32F1xx\vectors.s</FilePath>
             </File>
             <File>
               <FileName>chcoreasm_v7m.s</FileName>
