@@ -91,6 +91,8 @@
 *** 2.7.0 ***
 - FIX: Fixed missing casts in time-conversion macros (bug #418)(backported
   to 2.6.1, 2.4.4 and 2.2.10).
+- FIX: Fixed PLL2 activation condition is wrong in STM32F107 HAL (bug #417)
+  (backported to 2.6.1 and 2.4.4).
 - FIX: Fixed STM32 Serial (v2) driver invalid CR registers size (bug #416)
   (backported to 2.6.0).
 - FIX: Fixed MS2ST() and US2ST() macros error (bug #415)(backported to 2.6.0,
