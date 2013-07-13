@@ -409,7 +409,7 @@
             <File>
               <FileName>vectors.s</FileName>
               <FileType>2</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\ports\RVCT\ARMCMx\STM32F1xx\vectors.s</FilePath>
+              <FilePath>..\..\..\os\ports\RVCT\ARMCMx\STM32F1xx\vectors.s</FilePath>
             </File>
             <File>
               <FileName>chcoreasm_v7m.s</FileName>
@@ -879,7 +879,7 @@
             <File>
               <FileName>adc_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\hal\platforms\STM32F1xx\adc_lld.c</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\adc_lld.c</FilePath>
             </File>
             <File>
               <FileName>can_lld.c</FileName>
@@ -889,12 +889,12 @@
             <File>
               <FileName>hal_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\hal\platforms\STM32F1xx\hal_lld.c</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\hal_lld.c</FilePath>
             </File>
             <File>
               <FileName>pal_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\hal\platforms\STM32\GPIOv1\pal_lld.c</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.c</FilePath>
             </File>
             <File>
               <FileName>pwm_lld.c</FileName>
@@ -919,7 +919,7 @@
             <File>
               <FileName>adc_lld.h</FileName>
               <FileType>5</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\hal\platforms\STM32F1xx\adc_lld.h</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\adc_lld.h</FilePath>
             </File>
             <File>
               <FileName>can_lld.h</FileName>
@@ -929,17 +929,17 @@
             <File>
               <FileName>hal_lld.h</FileName>
               <FileType>5</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\hal\platforms\STM32F1xx\hal_lld.h</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\hal_lld.h</FilePath>
             </File>
             <File>
               <FileName>hal_lld_f103.h</FileName>
               <FileType>5</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\hal\platforms\STM32F1xx\hal_lld_f103.h</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\hal_lld_f103.h</FilePath>
             </File>
             <File>
               <FileName>pal_lld.h</FileName>
               <FileType>5</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\hal\platforms\STM32\GPIOv1\pal_lld.h</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32\GPIOv1\pal_lld.h</FilePath>
             </File>
             <File>
               <FileName>pwm_lld.h</FileName>
@@ -959,7 +959,7 @@
             <File>
               <FileName>stm32f10x.h</FileName>
               <FileType>5</FileType>
-              <FilePath>D:\Progetti\ChibiOS-RT\os\hal\platforms\STM32F1xx\stm32f10x.h</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32F1xx\stm32f10x.h</FilePath>
             </File>
             <File>
               <FileName>uart_lld.h</FileName>
