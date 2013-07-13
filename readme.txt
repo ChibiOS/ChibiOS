@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.1 ***
+- FIX: Fixed missing casts in time-conversion macros (bug #418).
 - FIX: Fixed PLL2 activation condition is wrong in STM32F107 HAL (bug #417).
 
 *** 2.6.0 ***
