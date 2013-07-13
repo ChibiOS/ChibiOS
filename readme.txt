@@ -71,6 +71,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.6.1 ***
+- FIX: Fixed PLL2 activation condition is wrong in STM32F107 HAL (bug #417).
+
 *** 2.6.0 ***
 - FIX: Fixed  MS2ST() and US2ST() macros error (bug #415).
 - NEW: Added new pwmIsChannelEnabledI() API to the PWM driver, implemented
