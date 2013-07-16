@@ -75,17 +75,18 @@ void _vt_init(void) {
  *          window.
  * @note    When start==end then the function returns always true because the
  *          whole time range is specified.
+ * @note    This function can be called from any context.
  *
+ * @param[in] time      the time to be verified
  * @param[in] start     the start of the time window (inclusive)
  * @param[in] end       the end of the time window (non inclusive)
- * @retval TRUE         current time within the specified time window.
- * @retval FALSE        current time not within the specified time window.
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
  *
- * @api
+ * @special
  */
-bool_t chVTIsSystemTimeWithin(systime_t start, systime_t end) {
+bool chVTIsTimeWithin(systime_t time, systime_t start, systime_t end) {
 
-  systime_t time = chVTGetSystemTime();
   return end > start ? (time >= start) && (time < end) :
                        (time >= start) || (time < end);
 }

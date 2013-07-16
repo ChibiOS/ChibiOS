@@ -56,6 +56,18 @@ typedef void (*vtfunc_t)(void *);
 typedef struct VirtualTimer VirtualTimer;
 
 /**
+ * @brief   Virtual timers list header.
+ * @note    The timers list is implemented as a double link bidirectional list
+ *          in order to make the unlink time constant, the reset of a virtual
+ *          timer is often used in the code.
+ */
+typedef struct {
+  VirtualTimer          *vt_next;   /**< @brief Next timer in the list.     */
+  VirtualTimer          *vt_prev;   /**< @brief Last timer in the  list.    */
+  volatile systime_t    vt_time;    /**< @brief Current system time.        */
+} VTList;
+
+/**
  * @extends VTList
  *
  * @brief   Virtual Timer descriptor structure.
@@ -69,18 +81,6 @@ struct VirtualTimer {
   void                  *vt_par;    /**< @brief Timer callback function
                                                 parameter.                  */
 };
-
-/**
- * @brief   Virtual timers list header.
- * @note    The timers list is implemented as a double link bidirectional list
- *          in order to make the unlink time constant, the reset of a virtual
- *          timer is often used in the code.
- */
-typedef struct {
-  VirtualTimer          *vt_next;   /**< @brief Next timer in the list.     */
-  VirtualTimer          *vt_prev;   /**< @brief Last timer in the  list.    */
-  volatile systime_t    vt_time;    /**< @brief Current system time.        */
-} VTList;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -143,7 +143,7 @@ extern VTList vtlist;
 extern "C" {
 #endif
   void _vt_init(void);
-  bool_t chVTIsSystemTimeWithin(systime_t start, systime_t end);
+  bool chVTIsTimeWithin(systime_t time, systime_t start, systime_t end);
   void chVTSetAbsoluteI(VirtualTimer *vtp, systime_t time,
                         vtfunc_t vtfunc, void *par);
   void chVTResetI(VirtualTimer *vtp);
@@ -185,10 +185,46 @@ static inline systime_t chVTGetSystemTimeI(void) {
 static inline systime_t chVTGetSystemTime(void) {
   systime_t systime;
 
-  chSysLock()
+  chSysLock();
   systime = chVTGetSystemTimeI();
   chSysUnlock();
   return systime;
+}
+
+/**
+ * @brief   Checks if the current system time is within the specified time
+ *          window.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ *
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @api
+ */
+static inline bool chVTIsSystemTimeWithinI(systime_t start, systime_t end) {
+
+  return chVTIsTimeWithin(chVTGetSystemTimeI(), start, end);
+}
+
+/**
+ * @brief   Checks if the current system time is within the specified time
+ *          window.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ *
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @api
+ */
+static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
+
+  return chVTIsTimeWithin(chVTGetSystemTime(), start, end);
 }
 
 /**
@@ -208,7 +244,7 @@ static inline void chVTObjectInit(VirtualTimer *vtp) {
 }
 
 /**
- * @brief   Returns @p TRUE if the specified timer is armed.
+ * @brief   Returns @p true if the specified timer is armed.
  * @pre     The timer must have been initialized using @p chVTObjectInit()
  *          or @p chVTSetI() (or @p chVTSetI() variants).
  *
@@ -217,11 +253,11 @@ static inline void chVTObjectInit(VirtualTimer *vtp) {
  *
  * @iclass
  */
-static inline bool_t chVTIsArmedI(VirtualTimer *vtp) {
+static inline bool chVTIsArmedI(VirtualTimer *vtp) {
 
   chDbgCheckClassI();
 
-  return (bool_t)(vtp->vt_func != NULL);
+  return (bool)(vtp->vt_func != NULL);
 }
 
 /**
