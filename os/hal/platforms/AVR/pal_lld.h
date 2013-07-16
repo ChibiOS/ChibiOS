@@ -25,7 +25,7 @@
 #ifndef _PAL_LLD_H_
 #define _PAL_LLD_H_
 
-#include "atmega_pins.h"
+#include "avr_pins.h"
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 
