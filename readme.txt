@@ -76,6 +76,7 @@
 - FIX: Fixed invalid directory links in the demo files (bug #419).
 - FIX: Fixed missing casts in time-conversion macros (bug #418).
 - FIX: Fixed PLL2 activation condition is wrong in STM32F107 HAL (bug #417).
+- NEW: Added port support for SCP560B64.
 
 *** 2.6.0 ***
 - FIX: Fixed  MS2ST() and US2ST() macros error (bug #415).
