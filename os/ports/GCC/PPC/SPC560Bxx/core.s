@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    SPC560Dxx/core.s
+ * @file    SPC560Bxx/core.s
  * @brief   e200z0 core configuration.
  *
  * @addtogroup PPC_CORE

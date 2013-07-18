@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    SPC560Dxx/vectors.s
- * @brief   SPC560Dxx vectors table.
+ * @file    SPC560Bxx/vectors.s
+ * @brief   SPC560Bxx vectors table.
  *
  * @addtogroup PPC_CORE
  * @{
@@ -33,7 +33,7 @@
            a function withe the same name of a vector, the symbol will
            override the weak symbol declared here.*/
         .section    .vectors, "ax"
-        .align		4
+        .align      4
         .globl      _vectors
 _vectors:
         .long       vector0,    vector1,    vector2,    vector3
@@ -74,7 +74,27 @@ _vectors:
         .long       vector140,  vector141,  vector142,  vector143
         .long       vector144,  vector145,  vector146,  vector147
         .long       vector148,  vector149,  vector150,  vector151
-        .long       vector152,  vector153,  vector154
+        .long       vector152,  vector153,  vector154,  vector155
+        .long       vector156,  vector157,  vector158,  vector159
+        .long       vector160,  vector161,  vector162,  vector163
+        .long       vector164,  vector165,  vector166,  vector167
+        .long       vector168,  vector169,  vector170,  vector171
+        .long       vector172,  vector173,  vector174,  vector175
+        .long       vector176,  vector177,  vector178,  vector179
+        .long       vector180,  vector181,  vector182,  vector183
+        .long       vector184,  vector185,  vector186,  vector187
+        .long       vector188,  vector189,  vector190,  vector191
+        .long       vector192,  vector193,  vector194,  vector195
+        .long       vector196,  vector197,  vector198,  vector199
+        .long       vector200,  vector201,  vector202,  vector203
+        .long       vector204,  vector205,  vector206,  vector207
+        .long       vector208,  vector209,  vector210,  vector211
+        .long       vector212,  vector213,  vector214,  vector215
+        .long       vector216,  vector217,  vector218,  vector219
+        .long       vector220,  vector221,  vector222,  vector223
+        .long       vector224,  vector225,  vector226,  vector227
+        .long       vector228,  vector229,  vector230,  vector231
+        .long       vector232,  vector233
 
         .text
         .align      2
@@ -117,7 +137,27 @@ _vectors:
         .weak       vector140,  vector141,  vector142,  vector143
         .weak       vector144,  vector145,  vector146,  vector147
         .weak       vector148,  vector149,  vector150,  vector151
-        .weak       vector152,  vector153,  vector154
+        .weak       vector152,  vector153,  vector154,  vector155
+        .weak       vector156,  vector157,  vector158,  vector159
+        .weak       vector160,  vector161,  vector162,  vector163
+        .weak       vector164,  vector165,  vector166,  vector167
+        .weak       vector168,  vector169,  vector170,  vector171
+        .weak       vector172,  vector173,  vector174,  vector175
+        .weak       vector176,  vector177,  vector178,  vector179
+        .weak       vector180,  vector181,  vector182,  vector183
+        .weak       vector184,  vector185,  vector186,  vector187
+        .weak       vector188,  vector189,  vector190,  vector191
+        .weak       vector192,  vector193,  vector194,  vector195
+        .weak       vector196,  vector197,  vector198,  vector199
+        .weak       vector200,  vector201,  vector202,  vector203
+        .weak       vector204,  vector205,  vector206,  vector207
+        .weak       vector208,  vector209,  vector210,  vector211
+        .weak       vector212,  vector213,  vector214,  vector215
+        .weak       vector216,  vector217,  vector218,  vector219
+        .weak       vector220,  vector221,  vector222,  vector223
+        .weak       vector224,  vector225,  vector226,  vector227
+        .weak       vector228,  vector229,  vector230,  vector231
+        .weak       vector232,  vector233
 
 vector0:
 vector1:
@@ -274,6 +314,85 @@ vector151:
 vector152:
 vector153:
 vector154:
+vector155:
+vector156:
+vector157:
+vector158:
+vector159:
+vector160:
+vector161:
+vector162:
+vector163:
+vector164:
+vector165:
+vector166:
+vector167:
+vector168:
+vector169:
+vector170:
+vector171:
+vector172:
+vector173:
+vector174:
+vector175:
+vector176:
+vector177:
+vector178:
+vector179:
+vector180:
+vector181:
+vector182:
+vector183:
+vector184:
+vector185:
+vector186:
+vector187:
+vector188:
+vector189:
+vector190:
+vector191:
+vector192:
+vector193:
+vector194:
+vector195:
+vector196:
+vector197:
+vector198:
+vector199:
+vector200:
+vector201:
+vector202:
+vector203:
+vector204:
+vector205:
+vector206:
+vector207:
+vector208:
+vector209:
+vector210:
+vector211:
+vector212:
+vector213:
+vector214:
+vector215:
+vector216:
+vector217:
+vector218:
+vector219:
+vector220:
+vector221:
+vector222:
+vector223:
+vector224:
+vector225:
+vector226:
+vector227:
+vector228:
+vector229:
+vector230:
+vector231:
+vector232:
+vector233:
 
         .weak       _unhandled_irq
         .type       _unhandled_irq, @function

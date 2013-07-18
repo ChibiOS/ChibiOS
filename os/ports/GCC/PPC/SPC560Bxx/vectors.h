@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    SPC560Dxx/vectors.h
+ * @file    SPC560Bxx/vectors.h
  * @brief   ISR vector module header.
  *
  * @addtogroup PPC_CORE
@@ -36,7 +36,7 @@
 /**
  * @brief   Number of ISR vectors available.
  */
-#define VECTORS_NUMBER                      155
+#define VECTORS_NUMBER                      234
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */

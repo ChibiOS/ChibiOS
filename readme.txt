@@ -101,6 +101,7 @@
   (backported to 2.6.0).
 - FIX: Fixed MS2ST() and US2ST() macros error (bug #415)(backported to 2.6.0,
   2.4.4, 2.2.10, NilRTOS).
+- NEW: Added port support for SCP560B64.
 - NEW: Added DAC driver high level files and low level files templates.
 - NEW: Added support of UART4 and UART5 (STM32F4x and STM32F2x platforms)
   (feature request #28).
