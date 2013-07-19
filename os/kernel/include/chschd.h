@@ -29,6 +29,10 @@
 #ifndef _CHSCHD_H_
 #define _CHSCHD_H_
 
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
 /**
  * @name    Wakeup status codes
  * @{
@@ -71,19 +75,23 @@
 #define TIME_INFINITE   ((systime_t)-1)
 /** @} */
 
-/**
- * @brief   Returns the priority of the first thread on the given ready list.
- *
- * @notapi
- */
-#define firstprio(rlp)  ((rlp)->p_next->p_prio)
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
 
 /**
  * @extends threads_queue_t
  *
  * @brief   Ready list header.
  */
-#if !defined(PORT_OPTIMIZED_READYLIST_STRUCT) || defined(__DOXYGEN__)
 typedef struct {
   threads_queue_t       r_queue;    /**< @brief Threads queue.              */
   tprio_t               r_prio;     /**< @brief This field must be
@@ -97,12 +105,18 @@ typedef struct {
   /* End of the fields shared with the Thread structure.*/
   Thread                *r_current; /**< @brief The currently running
                                                 thread.                     */
-} ReadyList;
-#endif /* !defined(PORT_OPTIMIZED_READYLIST_STRUCT) */
+} ready_list_t;
 
-#if !defined(PORT_OPTIMIZED_RLIST_EXT) && !defined(__DOXYGEN__)
-extern ReadyList rlist;
-#endif /* !defined(PORT_OPTIMIZED_RLIST_EXT) */
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
+
+/**
+ * @brief   Returns the priority of the first thread on the given ready list.
+ *
+ * @notapi
+ */
+#define firstprio(rlp)  ((rlp)->p_next->p_prio)
 
 /**
  * @brief   Current thread pointer access macro.
@@ -111,9 +125,7 @@ extern ReadyList rlist;
  * @note    It is forbidden to use this macro in order to change the pointer
  *          (currp = something), use @p setcurrp() instead.
  */
-#if !defined(PORT_OPTIMIZED_CURRP) || defined(__DOXYGEN__)
 #define currp rlist.r_current
-#endif /* !defined(PORT_OPTIMIZED_CURRP) */
 
 /**
  * @brief   Current thread pointer change macro.
@@ -122,9 +134,15 @@ extern ReadyList rlist;
  *
  * @notapi
  */
-#if !defined(PORT_OPTIMIZED_SETCURRP) || defined(__DOXYGEN__)
 #define setcurrp(tp) (currp = (tp))
-#endif /* !defined(PORT_OPTIMIZED_SETCURRP) */
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#if !defined(__DOXYGEN__)
+extern ready_list_t rlist;
+#endif
 
 /*
  * Scheduler APIs.
@@ -133,41 +151,23 @@ extern ReadyList rlist;
 extern "C" {
 #endif
   void _scheduler_init(void);
-#if !defined(PORT_OPTIMIZED_READYI)
   Thread *chSchReadyI(Thread *tp);
-#endif
-#if !defined(PORT_OPTIMIZED_GOSLEEPS)
   void chSchGoSleepS(tstate_t newstate);
-#endif
-#if !defined(PORT_OPTIMIZED_GOSLEEPTIMEOUTS)
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);
-#endif
-#if !defined(PORT_OPTIMIZED_WAKEUPS)
   void chSchWakeupS(Thread *tp, msg_t msg);
-#endif
-#if !defined(PORT_OPTIMIZED_RESCHEDULES)
   void chSchRescheduleS(void);
-#endif
-#if !defined(PORT_OPTIMIZED_ISPREEMPTIONREQUIRED)
-  bool_t chSchIsPreemptionRequired(void);
-#endif
-#if !defined(PORT_OPTIMIZED_DORESCHEDULEBEHIND) || defined(__DOXYGEN__)
+  bool chSchIsPreemptionRequired(void);
   void chSchDoRescheduleBehind(void);
-#endif
-#if !defined(PORT_OPTIMIZED_DORESCHEDULEAHEAD) || defined(__DOXYGEN__)
   void chSchDoRescheduleAhead(void);
-#endif
-#if !defined(PORT_OPTIMIZED_DORESCHEDULE)
   void chSchDoReschedule(void);
-#endif
 #ifdef __cplusplus
 }
 #endif
 
-/**
- * @name    Macro Functions
- * @{
- */
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
 /**
  * @brief   Determines if the current thread must reschedule.
  * @details This function returns @p TRUE if there is a ready thread with
@@ -175,9 +175,12 @@ extern "C" {
  *
  * @iclass
  */
-#if !defined(PORT_OPTIMIZED_ISRESCHREQUIREDI) || defined(__DOXYGEN__)
-#define chSchIsRescRequiredI() (firstprio(&rlist.r_queue) > currp->p_prio)
-#endif /* !defined(PORT_OPTIMIZED_ISRESCHREQUIREDI) */
+static inline bool chSchIsRescRequiredI(void) {
+
+  chDbgCheckClassI();
+
+  return firstprio(&rlist.r_queue) > currp->p_prio;
+}
 
 /**
  * @brief   Determines if yielding is possible.
@@ -186,9 +189,12 @@ extern "C" {
  *
  * @sclass
  */
-#if !defined(PORT_OPTIMIZED_CANYIELDS) || defined(__DOXYGEN__)
-#define chSchCanYieldS() (firstprio(&rlist.r_queue) >= currp->p_prio)
-#endif /* !defined(PORT_OPTIMIZED_CANYIELDS) */
+static inline bool chSchCanYieldS(void) {
+
+  chDbgCheckClassI();
+
+  return firstprio(&rlist.r_queue) >= currp->p_prio;
+}
 
 /**
  * @brief   Yields the time slot.
@@ -197,12 +203,13 @@ extern "C" {
  *
  * @sclass
  */
-#if !defined(PORT_OPTIMIZED_DOYIELDS) || defined(__DOXYGEN__)
-#define chSchDoYieldS() {                                                   \
-  if (chSchCanYieldS())                                                     \
-    chSchDoRescheduleBehind();                                              \
+static inline void chSchDoYieldS(void) {
+
+  chDbgCheckClassS();
+
+  if (chSchCanYieldS())
+    chSchDoRescheduleBehind();
 }
-#endif /* !defined(PORT_OPTIMIZED_DOYIELDS) */
 
 /**
  * @brief   Inline-able preemption code.
@@ -211,26 +218,24 @@ extern "C" {
  *
  * @special
  */
-#if (CH_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
-#define chSchPreemption() {                                                 \
-  tprio_t p1 = firstprio(&rlist.r_queue);                                   \
-  tprio_t p2 = currp->p_prio;                                               \
-  if (currp->p_preempt) {                                                   \
-    if (p1 > p2)                                                            \
-      chSchDoRescheduleAhead();                                             \
-  }                                                                         \
-  else {                                                                    \
-    if (p1 >= p2)                                                           \
-      chSchDoRescheduleBehind();                                            \
-  }                                                                         \
-}
+static inline void chSchPreemption(void) {
+  tprio_t p1 = firstprio(&rlist.r_queue);
+  tprio_t p2 = currp->p_prio;
+
+#if CH_TIME_QUANTUM > 0
+  if (currp->p_preempt) {
+    if (p1 > p2)
+      chSchDoRescheduleAhead();
+  }
+  else {
+    if (p1 >= p2)
+      chSchDoRescheduleBehind();
+  }
 #else /* CH_TIME_QUANTUM == 0 */
-#define chSchPreemption() {                                                 \
-  if (p1 >= p2)                                                             \
-    chSchDoRescheduleAhead();                                               \
-}
+  if (p1 >= p2)
+    chSchDoRescheduleAhead();
 #endif /* CH_TIME_QUANTUM == 0 */
-/** @} */
+}
 
 #endif /* _CHSCHD_H_ */
 

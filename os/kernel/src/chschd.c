@@ -23,22 +23,40 @@
  * @brief   Scheduler code.
  *
  * @addtogroup scheduler
- * @details This module provides the default portable scheduler code,
- *          scheduler functions can be individually captured by the port
- *          layer in order to provide architecture optimized equivalents.
- *          When a function is captured its default code is not built into
- *          the OS image, the optimized version is included instead.
+ * @details This module provides the default portable scheduler code.
  * @{
  */
 
 #include "ch.h"
 
+/*===========================================================================*/
+/* Module local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
 /**
  * @brief   Ready list header.
  */
-#if !defined(PORT_OPTIMIZED_RLIST_VAR) || defined(__DOXYGEN__)
-ReadyList rlist;
-#endif /* !defined(PORT_OPTIMIZED_RLIST_VAR) */
+ready_list_t rlist;
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
 /**
  * @brief   Scheduler initialization.
@@ -70,7 +88,6 @@ void _scheduler_init(void) {
  *
  * @iclass
  */
-#if !defined(PORT_OPTIMIZED_READYI) || defined(__DOXYGEN__)
 Thread *chSchReadyI(Thread *tp) {
   Thread *cp;
 
@@ -93,7 +110,6 @@ Thread *chSchReadyI(Thread *tp) {
   tp->p_prev->p_next = cp->p_prev = tp;
   return tp;
 }
-#endif /* !defined(PORT_OPTIMIZED_READYI) */
 
 /**
  * @brief   Puts the current thread to sleep into the specified state.
@@ -104,7 +120,6 @@ Thread *chSchReadyI(Thread *tp) {
  *
  * @sclass
  */
-#if !defined(PORT_OPTIMIZED_GOSLEEPS) || defined(__DOXYGEN__)
 void chSchGoSleepS(tstate_t newstate) {
   Thread *otp;
 
@@ -120,9 +135,7 @@ void chSchGoSleepS(tstate_t newstate) {
   currp->p_state = THD_STATE_CURRENT;
   chSysSwitch(currp, otp);
 }
-#endif /* !defined(PORT_OPTIMIZED_GOSLEEPS) */
 
-#if !defined(PORT_OPTIMIZED_GOSLEEPTIMEOUTS) || defined(__DOXYGEN__)
 /*
  * Timeout wakeup callback.
  */
@@ -195,7 +208,6 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
     chSchGoSleepS(newstate);
   return currp->p_u.rdymsg;
 }
-#endif /* !defined(PORT_OPTIMIZED_GOSLEEPTIMEOUTS) */
 
 /**
  * @brief   Wakes up a thread.
@@ -214,7 +226,6 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  *
  * @sclass
  */
-#if !defined(PORT_OPTIMIZED_WAKEUPS) || defined(__DOXYGEN__)
 void chSchWakeupS(Thread *ntp, msg_t msg) {
 
   chDbgCheckClassS();
@@ -233,7 +244,6 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
     chSysSwitch(ntp, otp);
   }
 }
-#endif /* !defined(PORT_OPTIMIZED_WAKEUPS) */
 
 /**
  * @brief   Performs a reschedule if a higher priority thread is runnable.
@@ -242,7 +252,6 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
  *
  * @sclass
  */
-#if !defined(PORT_OPTIMIZED_RESCHEDULES) || defined(__DOXYGEN__)
 void chSchRescheduleS(void) {
 
   chDbgCheckClassS();
@@ -250,7 +259,6 @@ void chSchRescheduleS(void) {
   if (chSchIsRescRequiredI())
     chSchDoRescheduleAhead();
 }
-#endif /* !defined(PORT_OPTIMIZED_RESCHEDULES) */
 
 /**
  * @brief   Evaluates if preemption is required.
@@ -265,8 +273,7 @@ void chSchRescheduleS(void) {
  *
  * @special
  */
-#if !defined(PORT_OPTIMIZED_ISPREEMPTIONREQUIRED) || defined(__DOXYGEN__)
-bool_t chSchIsPreemptionRequired(void) {
+bool chSchIsPreemptionRequired(void) {
   tprio_t p1 = firstprio(&rlist.r_queue);
   tprio_t p2 = currp->p_prio;
 #if CH_TIME_QUANTUM > 0
@@ -281,7 +288,6 @@ bool_t chSchIsPreemptionRequired(void) {
   return p1 > p2;
 #endif
 }
-#endif /* !defined(PORT_OPTIMIZED_ISPREEMPTIONREQUIRED) */
 
 /**
  * @brief   Switches to the first thread on the runnable queue.
@@ -293,7 +299,6 @@ bool_t chSchIsPreemptionRequired(void) {
  *
  * @special
  */
-#if !defined(PORT_OPTIMIZED_DORESCHEDULEBEHIND) || defined(__DOXYGEN__)
 void chSchDoRescheduleBehind(void) {
   Thread *otp;
 
@@ -307,7 +312,6 @@ void chSchDoRescheduleBehind(void) {
   chSchReadyI(otp);
   chSysSwitch(currp, otp);
 }
-#endif /* !defined(PORT_OPTIMIZED_DORESCHEDULEBEHIND) */
 
 /**
  * @brief   Switches to the first thread on the runnable queue.
@@ -318,7 +322,6 @@ void chSchDoRescheduleBehind(void) {
  *
  * @special
  */
-#if !defined(PORT_OPTIMIZED_DORESCHEDULEAHEAD) || defined(__DOXYGEN__)
 void chSchDoRescheduleAhead(void) {
   Thread *otp, *cp;
 
@@ -339,7 +342,6 @@ void chSchDoRescheduleAhead(void) {
 
   chSysSwitch(currp, otp);
 }
-#endif /* !defined(PORT_OPTIMIZED_DORESCHEDULEAHEAD) */
 
 /**
  * @brief   Switches to the first thread on the runnable queue.
@@ -351,7 +353,6 @@ void chSchDoRescheduleAhead(void) {
  *
  * @special
  */
-#if !defined(PORT_OPTIMIZED_DORESCHEDULE) || defined(__DOXYGEN__)
 void chSchDoReschedule(void) {
 
 #if CH_TIME_QUANTUM > 0
@@ -373,6 +374,5 @@ void chSchDoReschedule(void) {
   chSchDoRescheduleAhead();
 #endif /* !(CH_TIME_QUANTUM > 0) */
 }
-#endif /* !defined(PORT_OPTIMIZED_DORESCHEDULE) */
 
 /** @} */
