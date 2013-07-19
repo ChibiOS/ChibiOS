@@ -128,7 +128,7 @@ void port_halt(void) {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-void port_switch(Thread *ntp, Thread *otp) {
+void port_switch(thread_t *ntp, thread_t *otp) {
 }
 
 /** @} */

@@ -61,7 +61,7 @@
  * @pre     In order to use the mutex APIs the @p CH_USE_MUTEXES option
  *          must be enabled in @p chconf.h.
  * @post    Enabling mutexes requires 5-12 (depending on the architecture)
- *          extra bytes in the @p Thread structure.
+ *          extra bytes in the @p thread_t structure.
  * @{
  */
 
@@ -112,7 +112,7 @@ void chMtxLock(Mutex *mp) {
  * @sclass
  */
 void chMtxLockS(Mutex *mp) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
 
   chDbgCheckClassS();
   chDbgCheck(mp != NULL, "chMtxLockS");
@@ -122,7 +122,7 @@ void chMtxLockS(Mutex *mp) {
     /* Priority inheritance protocol; explores the thread-mutex dependencies
        boosting the priority of all the affected threads to equal the priority
        of the running thread requesting the mutex.*/
-    Thread *tp = mp->m_owner;
+    thread_t *tp = mp->m_owner;
     /* Does the running thread have higher priority than the mutex
        owning thread? */
     while (tp->p_prio < ctp->p_prio) {
@@ -250,7 +250,7 @@ bool_t chMtxTryLockS(Mutex *mp) {
  * @api
  */
 Mutex *chMtxUnlock(void) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
   Mutex *ump, *mp;
 
   chSysLock();
@@ -260,13 +260,13 @@ Mutex *chMtxUnlock(void) {
   chDbgAssert(ctp->p_mtxlist->m_owner == ctp,
               "chMtxUnlock(), #2",
               "ownership failure");
-  /* Removes the top Mutex from the Thread's owned mutexes list and marks it
+  /* Removes the top Mutex from the thread's owned mutexes list and marks it
      as not owned.*/
   ump = ctp->p_mtxlist;
   ctp->p_mtxlist = ump->m_next;
   /* If a thread is waiting on the mutex then the fun part begins.*/
   if (chMtxQueueNotEmptyS(ump)) {
-    Thread *tp;
+    thread_t *tp;
 
     /* Recalculates the optimal thread priority by scanning the owned
        mutexes list.*/
@@ -310,7 +310,7 @@ Mutex *chMtxUnlock(void) {
  * @sclass
  */
 Mutex *chMtxUnlockS(void) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
   Mutex *ump, *mp;
 
   chDbgCheckClassS();
@@ -327,7 +327,7 @@ Mutex *chMtxUnlockS(void) {
   ctp->p_mtxlist = ump->m_next;
   /* If a thread is waiting on the mutex then the fun part begins.*/
   if (chMtxQueueNotEmptyS(ump)) {
-    Thread *tp;
+    thread_t *tp;
 
     /* Recalculates the optimal thread priority by scanning the owned
        mutexes list.*/
@@ -367,7 +367,7 @@ Mutex *chMtxUnlockS(void) {
  * @api
  */
 void chMtxUnlockAll(void) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
 
   chSysLock();
   if (ctp->p_mtxlist != NULL) {
@@ -375,7 +375,7 @@ void chMtxUnlockAll(void) {
       Mutex *ump = ctp->p_mtxlist;
       ctp->p_mtxlist = ump->m_next;
       if (chMtxQueueNotEmptyS(ump)) {
-        Thread *tp = queue_fifo_remove(&ump->m_queue);
+        thread_t *tp = queue_fifo_remove(&ump->m_queue);
         ump->m_owner = tp;
         ump->m_next = tp->p_mtxlist;
         tp->p_mtxlist = ump;

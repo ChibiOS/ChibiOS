@@ -43,7 +43,7 @@ struct EventListener {
   EventListener         *el_next;       /**< @brief Next Event Listener
                                                     registered on the Event
                                                     Source.                 */
-  Thread                *el_listener;   /**< @brief Thread interested in the
+  thread_t              *el_listener;   /**< @brief Thread interested in the
                                                     Event Source.           */
   eventmask_t           el_mask;        /**< @brief Event flags mask associated
                                                     by the thread to the Event
@@ -173,8 +173,8 @@ extern "C" {
   eventmask_t chEvtAddEvents(eventmask_t mask);
   flagsmask_t chEvtGetAndClearFlags(EventListener *elp);
   flagsmask_t chEvtGetAndClearFlagsI(EventListener *elp);
-  void chEvtSignal(Thread *tp, eventmask_t mask);
-  void chEvtSignalI(Thread *tp, eventmask_t mask);
+  void chEvtSignal(thread_t *tp, eventmask_t mask);
+  void chEvtSignalI(thread_t *tp, eventmask_t mask);
   void chEvtBroadcastFlags(EventSource *esp, flagsmask_t flags);
   void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags);
   void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask);

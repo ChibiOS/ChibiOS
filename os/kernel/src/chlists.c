@@ -65,15 +65,15 @@
  *
  * @notapi
  */
-void queue_prio_insert(Thread *tp, threads_queue_t *tqp) {
+void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
 
   /* cp iterates over the queue.*/
-  Thread *cp = (Thread *)tqp;
+  thread_t *cp = (thread_t *)tqp;
   do {
     /* Iterate to next thread in queue.*/
     cp = cp->p_next;
     /* Not end of queue? and cp has equal or higher priority than tp?.*/
-  } while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio));
+  } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
   /* Insertion on p_prev.*/
   tp->p_next = cp;
   tp->p_prev = cp->p_prev;
@@ -81,22 +81,22 @@ void queue_prio_insert(Thread *tp, threads_queue_t *tqp) {
 }
 
 /**
- * @brief   Inserts a Thread into a queue.
+ * @brief   Inserts a thread into a queue.
  *
  * @param[in] tp        the pointer to the thread to be inserted in the list
  * @param[in] tqp       the pointer to the threads list header
  *
  * @notapi
  */
-void queue_insert(Thread *tp, threads_queue_t *tqp) {
+void queue_insert(thread_t *tp, threads_queue_t *tqp) {
 
-  tp->p_next = (Thread *)tqp;
+  tp->p_next = (thread_t *)tqp;
   tp->p_prev = tqp->p_prev;
   tp->p_prev->p_next = tqp->p_prev = tp;
 }
 
 /**
- * @brief   Removes the first-out Thread from a queue and returns it.
+ * @brief   Removes the first-out thread from a queue and returns it.
  * @note    If the queue is priority ordered then this function returns the
  *          thread with the highest priority.
  *
@@ -105,15 +105,15 @@ void queue_insert(Thread *tp, threads_queue_t *tqp) {
  *
  * @notapi
  */
-Thread *queue_fifo_remove(threads_queue_t *tqp) {
-  Thread *tp = tqp->p_next;
+thread_t *queue_fifo_remove(threads_queue_t *tqp) {
+  thread_t *tp = tqp->p_next;
 
-  (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;
+  (tqp->p_next = tp->p_next)->p_prev = (thread_t *)tqp;
   return tp;
 }
 
 /**
- * @brief   Removes the last-out Thread from a queue and returns it.
+ * @brief   Removes the last-out thread from a queue and returns it.
  * @note    If the queue is priority ordered then this function returns the
  *          thread with the lowest priority.
  *
@@ -122,15 +122,15 @@ Thread *queue_fifo_remove(threads_queue_t *tqp) {
  *
  * @notapi
  */
-Thread *queue_lifo_remove(threads_queue_t *tqp) {
-  Thread *tp = tqp->p_prev;
+thread_t *queue_lifo_remove(threads_queue_t *tqp) {
+  thread_t *tp = tqp->p_prev;
 
-  (tqp->p_prev = tp->p_prev)->p_next = (Thread *)tqp;
+  (tqp->p_prev = tp->p_prev)->p_next = (thread_t *)tqp;
   return tp;
 }
 
 /**
- * @brief   Removes a Thread from a queue and returns it.
+ * @brief   Removes a thread from a queue and returns it.
  * @details The thread is removed from the queue regardless of its relative
  *          position and regardless the used insertion method.
  *
@@ -139,7 +139,7 @@ Thread *queue_lifo_remove(threads_queue_t *tqp) {
  *
  * @notapi
  */
-Thread *queue_dequeue(Thread *tp) {
+thread_t *queue_dequeue(thread_t *tp) {
 
   tp->p_prev->p_next = tp->p_next;
   tp->p_next->p_prev = tp->p_prev;
@@ -147,21 +147,21 @@ Thread *queue_dequeue(Thread *tp) {
 }
 
 /**
- * @brief   Pushes a Thread on top of a stack list.
+ * @brief   Pushes a thread_t on top of a stack list.
  *
  * @param[in] tp    the pointer to the thread to be inserted in the list
  * @param[in] tlp   the pointer to the threads list header
  *
  * @notapi
  */
-void list_insert(Thread *tp, threads_list_t *tlp) {
+void list_insert(thread_t *tp, threads_list_t *tlp) {
 
   tp->p_next = tlp->p_next;
   tlp->p_next = tp;
 }
 
 /**
- * @brief   Pops a Thread from the top of a stack list and returns it.
+ * @brief   Pops a thread from the top of a stack list and returns it.
  * @pre     The list must be non-empty before calling this function.
  *
  * @param[in] tlp       the pointer to the threads list header
@@ -169,9 +169,9 @@ void list_insert(Thread *tp, threads_list_t *tlp) {
  *
  * @notapi
  */
-Thread *list_remove(threads_list_t *tlp) {
+thread_t *list_remove(threads_list_t *tlp) {
 
-  Thread *tp = tlp->p_next;
+  thread_t *tp = tlp->p_next;
   tlp->p_next = tp->p_next;
   return tp;
 }

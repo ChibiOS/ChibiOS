@@ -65,7 +65,7 @@ static msg_t thread(void *p) {
 }
 
 static void msg1_execute(void) {
-  Thread *tp;
+  thread_t *tp;
   msg_t msg;
 
   /*

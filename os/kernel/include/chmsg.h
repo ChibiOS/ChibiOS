@@ -41,7 +41,7 @@
  * @iclass
  */
 #define chMsgIsPendingI(tp) \
-        ((tp)->p_msgqueue.p_next != (Thread *)&(tp)->p_msgqueue)
+        ((tp)->p_msgqueue.p_next != (thread_t *)&(tp)->p_msgqueue)
 
 /**
  * @brief   Returns the message carried by the specified thread.
@@ -71,9 +71,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t chMsgSend(Thread *tp, msg_t msg);
-  Thread * chMsgWait(void);
-  void chMsgRelease(Thread *tp, msg_t msg);
+  msg_t chMsgSend(thread_t *tp, msg_t msg);
+  thread_t * chMsgWait(void);
+  void chMsgRelease(thread_t *tp, msg_t msg);
 #ifdef __cplusplus
 }
 #endif

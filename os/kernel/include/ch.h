@@ -102,7 +102,7 @@
 
 /* Forward declaration of the thread structure, it is used in most
    modules.*/
-typedef struct Thread Thread;
+typedef struct thread thread_t;
 
 /* Inclusion of all the kernel sub-headers.*/
 #include "chconf.h"

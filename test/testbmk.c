@@ -62,7 +62,7 @@ static Mutex mtx1;
 #endif
 
 static msg_t thread1(void *p) {
-  Thread *tp;
+  thread_t *tp;
   msg_t msg;
 
   (void)p;
@@ -77,7 +77,7 @@ static msg_t thread1(void *p) {
 #ifdef __GNUC__
 __attribute__((noinline))
 #endif
-static unsigned int msg_loop_test(Thread *tp) {
+static unsigned int msg_loop_test(thread_t *tp) {
 
   uint32_t n = 0;
   test_wait_tick();
@@ -202,7 +202,7 @@ ROMCONST struct testcase testbmk3 = {
 
 msg_t thread4(void *p) {
   msg_t msg;
-  Thread *self = chThdSelf();
+  thread_t *self = chThdSelf();
 
   (void)p;
   chSysLock();
@@ -215,7 +215,7 @@ msg_t thread4(void *p) {
 }
 
 static void bmk4_execute(void) {
-  Thread *tp;
+  thread_t *tp;
   uint32_t n;
 
   tp = threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread4, NULL);
@@ -635,12 +635,12 @@ static void bmk13_execute(void) {
   test_print("--- System: ");
   test_printn(sizeof(ready_list_t) + sizeof(VTList) +
               PORT_IDLE_THREAD_STACK_SIZE +
-              (sizeof(Thread) + sizeof(struct intctx) +
+              (sizeof(thread_t) + sizeof(struct intctx) +
                sizeof(struct extctx) +
                PORT_INT_REQUIRED_STACK) * 2);
   test_println(" bytes");
   test_print("--- Thread: ");
-  test_printn(sizeof(Thread));
+  test_printn(sizeof(thread_t));
   test_println(" bytes");
   test_print("--- Timer : ");
   test_printn(sizeof(VirtualTimer));

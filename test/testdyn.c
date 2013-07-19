@@ -188,8 +188,8 @@ ROMCONST struct testcase testdyn2 = {
  * coverage.
  */
 
-static bool_t regfind(Thread *tp) {
-  Thread *ftp;
+static bool_t regfind(thread_t *tp) {
+  thread_t *ftp;
   bool_t found = FALSE;
 
   ftp = chRegFirstThread();
@@ -206,7 +206,7 @@ static void dyn3_setup(void) {
 }
 
 static void dyn3_execute(void) {
-  Thread *tp;
+  thread_t *tp;
   tprio_t prio = chThdGetPriority();
 
   /* Testing references increase/decrease and final detach.*/

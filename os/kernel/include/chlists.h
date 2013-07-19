@@ -56,7 +56,7 @@
  *
  * @param[in] name      the name of the threads queue variable
  */
-#define _threads_queue_t_DATA(name) {(Thread *)&name, (Thread *)&name}
+#define _threads_queue_t_DATA(name) {(thread_t *)&name, (thread_t *)&name}
 
 /**
  * @brief   Static threads queue initializer.
@@ -83,7 +83,7 @@
  */
 static inline void list_init(threads_list_t *tlp) {
 
-  tlp->p_next = (Thread *)tlp;
+  tlp->p_next = (thread_t *)tlp;
 }
 
 /**
@@ -91,9 +91,9 @@ static inline void list_init(threads_list_t *tlp) {
  *
  * @notapi
  */
-static inline bool_t list_isempty(threads_list_t *tlp) {
+static inline bool list_isempty(threads_list_t *tlp) {
 
-  return (bool_t)(tlp->p_next == (Thread *)tlp);
+  return (bool)(tlp->p_next == (thread_t *)tlp);
 }
 
 /**
@@ -101,9 +101,9 @@ static inline bool_t list_isempty(threads_list_t *tlp) {
  *
  * @notapi
  */
-static inline bool_t list_notempty(threads_list_t *tlp) {
+static inline bool list_notempty(threads_list_t *tlp) {
 
-  return (bool_t)(tlp->p_next != (Thread *)tlp);
+  return (bool)(tlp->p_next != (thread_t *)tlp);
 }
 
 /**
@@ -113,7 +113,7 @@ static inline bool_t list_notempty(threads_list_t *tlp) {
  */
 static inline void queue_init(threads_queue_t *tqp) {
 
-  tqp->p_next = tqp->p_prev = (Thread *)tqp;
+  tqp->p_next = tqp->p_prev = (thread_t *)tqp;
 }
 
 /**
@@ -121,9 +121,9 @@ static inline void queue_init(threads_queue_t *tqp) {
  *
  * @notapi
  */
-static inline bool_t queue_isempty(threads_queue_t *tqp) {
+static inline bool queue_isempty(threads_queue_t *tqp) {
 
-  return (bool_t)(tqp->p_next == (Thread *)tqp);
+  return (bool)(tqp->p_next == (thread_t *)tqp);
 }
 
 /**
@@ -131,60 +131,60 @@ static inline bool_t queue_isempty(threads_queue_t *tqp) {
  *
  * @notapi
  */
-static inline bool_t queue_notempty(threads_queue_t *tqp) {
+static inline bool queue_notempty(threads_queue_t *tqp) {
 
-  return (bool_t)(tqp->p_next != (Thread *)tqp);
+  return (bool)(tqp->p_next != (thread_t *)tqp);
 }
 
 /* If the performance code path has been chosen then all the following
    functions are inlined into the various kernel modules.*/
 #if CH_OPTIMIZE_SPEED
-static inline void list_insert(Thread *tp, threads_list_t *tlp) {
+static inline void list_insert(thread_t *tp, threads_list_t *tlp) {
 
   tp->p_next = tlp->p_next;
   tlp->p_next = tp;
 }
 
-static inline Thread *list_remove(threads_list_t *tlp) {
+static inline thread_t *list_remove(threads_list_t *tlp) {
 
-  Thread *tp = tlp->p_next;
+  thread_t *tp = tlp->p_next;
   tlp->p_next = tp->p_next;
   return tp;
 }
 
-static inline void queue_prio_insert(Thread *tp, threads_queue_t *tqp) {
+static inline void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
 
-  Thread *cp = (Thread *)tqp;
+  thread_t *cp = (thread_t *)tqp;
   do {
     cp = cp->p_next;
-  } while ((cp != (Thread *)tqp) && (cp->p_prio >= tp->p_prio));
+  } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
   tp->p_next = cp;
   tp->p_prev = cp->p_prev;
   tp->p_prev->p_next = cp->p_prev = tp;
 }
 
-static inline void queue_insert(Thread *tp, threads_queue_t *tqp) {
+static inline void queue_insert(thread_t *tp, threads_queue_t *tqp) {
 
-  tp->p_next = (Thread *)tqp;
+  tp->p_next = (thread_t *)tqp;
   tp->p_prev = tqp->p_prev;
   tp->p_prev->p_next = tqp->p_prev = tp;
 }
 
-static inline Thread *queue_fifo_remove(threads_queue_t *tqp) {
-  Thread *tp = tqp->p_next;
+static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
+  thread_t *tp = tqp->p_next;
 
-  (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;
+  (tqp->p_next = tp->p_next)->p_prev = (thread_t *)tqp;
   return tp;
 }
 
-static inline Thread *queue_lifo_remove(threads_queue_t *tqp) {
-  Thread *tp = tqp->p_prev;
+static inline thread_t *queue_lifo_remove(threads_queue_t *tqp) {
+  thread_t *tp = tqp->p_prev;
 
-  (tqp->p_prev = tp->p_prev)->p_next = (Thread *)tqp;
+  (tqp->p_prev = tp->p_prev)->p_next = (thread_t *)tqp;
   return tp;
 }
 
-static inline Thread *queue_dequeue(Thread *tp) {
+static inline thread_t *queue_dequeue(thread_t *tp) {
 
   tp->p_prev->p_next = tp->p_next;
   tp->p_next->p_prev = tp->p_prev;

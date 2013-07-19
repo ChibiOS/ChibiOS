@@ -70,7 +70,7 @@ union test_buffers test;
 /*
  * Pointers to the spawned threads.
  */
-Thread *threads[MAX_THREADS];
+thread_t *threads[MAX_THREADS];
 
 /*
  * Pointers to the working areas.

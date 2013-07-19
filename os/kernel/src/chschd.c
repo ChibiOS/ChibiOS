@@ -68,7 +68,7 @@ void _scheduler_init(void) {
   queue_init(&rlist.r_queue);
   rlist.r_prio = NOPRIO;
 #if CH_USE_REGISTRY
-  rlist.r_newer = rlist.r_older = (Thread *)&rlist;
+  rlist.r_newer = rlist.r_older = (thread_t *)&rlist;
 #endif
 }
 
@@ -88,8 +88,8 @@ void _scheduler_init(void) {
  *
  * @iclass
  */
-Thread *chSchReadyI(Thread *tp) {
-  Thread *cp;
+thread_t *chSchReadyI(thread_t *tp) {
+  thread_t *cp;
 
   chDbgCheckClassI();
 
@@ -100,7 +100,7 @@ Thread *chSchReadyI(Thread *tp) {
               "invalid state");
 
   tp->p_state = THD_STATE_READY;
-  cp = (Thread *)&rlist.r_queue;
+  cp = (thread_t *)&rlist.r_queue;
   do {
     cp = cp->p_next;
   } while (cp->p_prio >= tp->p_prio);
@@ -121,7 +121,7 @@ Thread *chSchReadyI(Thread *tp) {
  * @sclass
  */
 void chSchGoSleepS(tstate_t newstate) {
-  Thread *otp;
+  thread_t *otp;
 
   chDbgCheckClassS();
 
@@ -140,7 +140,7 @@ void chSchGoSleepS(tstate_t newstate) {
  * Timeout wakeup callback.
  */
 static void wakeup(void *p) {
-  Thread *tp = (Thread *)p;
+  thread_t *tp = (thread_t *)p;
 
   chSysLockFromIsr();
   switch (tp->p_state) {
@@ -221,12 +221,12 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  * @note    The function assumes that the current thread has the highest
  *          priority.
  *
- * @param[in] ntp       the Thread to be made ready
+ * @param[in] ntp       the thread to be made ready
  * @param[in] msg       message to the awakened thread
  *
  * @sclass
  */
-void chSchWakeupS(Thread *ntp, msg_t msg) {
+void chSchWakeupS(thread_t *ntp, msg_t msg) {
 
   chDbgCheckClassS();
 
@@ -238,7 +238,7 @@ void chSchWakeupS(Thread *ntp, msg_t msg) {
   if (ntp->p_prio <= currp->p_prio)
     chSchReadyI(ntp);
   else {
-    Thread *otp = chSchReadyI(currp);
+    thread_t *otp = chSchReadyI(currp);
     setcurrp(ntp);
     ntp->p_state = THD_STATE_CURRENT;
     chSysSwitch(ntp, otp);
@@ -300,7 +300,7 @@ bool chSchIsPreemptionRequired(void) {
  * @special
  */
 void chSchDoRescheduleBehind(void) {
-  Thread *otp;
+  thread_t *otp;
 
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
@@ -323,7 +323,7 @@ void chSchDoRescheduleBehind(void) {
  * @special
  */
 void chSchDoRescheduleAhead(void) {
-  Thread *otp, *cp;
+  thread_t *otp, *cp;
 
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
@@ -331,7 +331,7 @@ void chSchDoRescheduleAhead(void) {
   currp->p_state = THD_STATE_CURRENT;
 
   otp->p_state = THD_STATE_READY;
-  cp = (Thread *)&rlist.r_queue;
+  cp = (thread_t *)&rlist.r_queue;
   do {
     cp = cp->p_next;
   } while (cp->p_prio > otp->p_prio);

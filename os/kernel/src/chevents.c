@@ -28,8 +28,8 @@
  * @addtogroup events
  * @details Event Flags, Event Sources and Event Listeners.
  *          <h2>Operation mode</h2>
- *          Each thread has a mask of pending event flags inside its @p Thread
- *          structure.
+ *          Each thread has a mask of pending event flags inside its
+ *          @p thread_t structure.
  *          Operations defined for event flags:
  *          - <b>Wait</b>, the invoking thread goes to sleep until a certain
  *            AND/OR combination of event flags becomes pending.
@@ -54,7 +54,7 @@
  * @pre     In order to use the Events APIs the @p CH_USE_EVENTS option must be
  *          enabled in @p chconf.h.
  * @post    Enabling events requires 1-4 (depending on the architecture)
- *          extra bytes in the @p Thread structure.
+ *          extra bytes in the @p thread_t structure.
  * @{
  */
 
@@ -212,14 +212,14 @@ flagsmask_t chEvtGetAndClearFlags(EventListener *elp) {
 }
 
 /**
- * @brief   Adds a set of event flags directly to specified @p Thread.
+ * @brief   Adds a set of event flags directly to the specified @p thread_t.
  *
  * @param[in] tp        the thread to be signaled
  * @param[in] mask      the event flags set to be ORed
  *
  * @api
  */
-void chEvtSignal(Thread *tp, eventmask_t mask) {
+void chEvtSignal(thread_t *tp, eventmask_t mask) {
 
   chDbgCheck(tp != NULL, "chEvtSignal");
 
@@ -230,7 +230,7 @@ void chEvtSignal(Thread *tp, eventmask_t mask) {
 }
 
 /**
- * @brief   Adds a set of event flags directly to specified @p Thread.
+ * @brief   Adds a set of event flags directly to the specified @p thread_t.
  * @post    This function does not reschedule so a call to a rescheduling
  *          function must be performed before unlocking the kernel. Note that
  *          interrupt handlers always reschedule on exit so an explicit
@@ -241,7 +241,7 @@ void chEvtSignal(Thread *tp, eventmask_t mask) {
  *
  * @iclass
  */
-void chEvtSignalI(Thread *tp, eventmask_t mask) {
+void chEvtSignalI(thread_t *tp, eventmask_t mask) {
 
   chDbgCheckClassI();
   chDbgCheck(tp != NULL, "chEvtSignalI");
@@ -341,7 +341,7 @@ void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask) {
  * @api
  */
 eventmask_t chEvtWaitOne(eventmask_t mask) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
   eventmask_t m;
 
   chSysLock();
@@ -370,7 +370,7 @@ eventmask_t chEvtWaitOne(eventmask_t mask) {
  * @api
  */
 eventmask_t chEvtWaitAny(eventmask_t mask) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
   eventmask_t m;
 
   chSysLock();
@@ -398,7 +398,7 @@ eventmask_t chEvtWaitAny(eventmask_t mask) {
  * @api
  */
 eventmask_t chEvtWaitAll(eventmask_t mask) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
 
   chSysLock();
 
@@ -437,7 +437,7 @@ eventmask_t chEvtWaitAll(eventmask_t mask) {
  * @api
  */
 eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
   eventmask_t m;
 
   chSysLock();
@@ -480,7 +480,7 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time) {
  * @api
  */
 eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
   eventmask_t m;
 
   chSysLock();
@@ -521,7 +521,7 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time) {
  * @api
  */
 eventmask_t chEvtWaitAllTimeout(eventmask_t mask, systime_t time) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
 
   chSysLock();
 

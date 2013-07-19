@@ -103,7 +103,7 @@ typedef struct Mutex Mutex;
  */
 typedef struct {
 
-  Thread                *p_next;    /**< @brief Next in the list/queue.     */
+  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
 } threads_list_t;
 
 /**
@@ -112,8 +112,8 @@ typedef struct {
  * @brief   Generic threads bidirectional linked list header and element.
  */
 typedef struct {
-  Thread                *p_next;    /**< @brief Next in the list/queue.     */
-  Thread                *p_prev;    /**< @brief Previous in the queue.      */
+  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
+  thread_t              *p_prev;    /**< @brief Previous in the queue.      */
 } threads_queue_t;
 
 /**
@@ -122,18 +122,18 @@ typedef struct {
  * @brief   Structure representing a thread.
  * @note    Not all the listed fields are always needed, by switching off some
  *          not needed ChibiOS/RT subsystems it is possible to save RAM space
- *          by shrinking the @p Thread structure.
+ *          by shrinking the @p thread_t structure.
  */
-typedef struct Thread {
-  Thread                *p_next;    /**< @brief Next in the list/queue.     */
+typedef struct thread {
+  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
   /* End of the fields shared with the threads_list_t structure.*/
-  Thread                *p_prev;    /**< @brief Previous in the queue.      */
+  thread_t              *p_prev;    /**< @brief Previous in the queue.      */
   /* End of the fields shared with the threads_queue_t structure.*/
   tprio_t               p_prio;     /**< @brief Thread priority.            */
   struct context        p_ctx;      /**< @brief Processor context.          */
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
-  Thread                *p_newer;   /**< @brief Newer registry element.     */
-  Thread                *p_older;   /**< @brief Older registry element.     */
+  thread_t              *p_newer;   /**< @brief Newer registry element.     */
+  thread_t              *p_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the ReadyList structure. */
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
@@ -254,10 +254,10 @@ typedef struct Thread {
   /* Extra fields defined in chconf.h.*/
   THREAD_EXT_FIELDS
 #endif
-} Thread;
+} thread_t;
 
 /**
- * @brief Thread function.
+ * @brief   Thread function.
  */
 typedef msg_t (*tfunc_t)(void *);
 
@@ -270,7 +270,7 @@ typedef msg_t (*tfunc_t)(void *);
  * @{
  */
 /**
- * @brief   Returns a pointer to the current @p Thread.
+ * @brief   Returns a pointer to the current @p thread_t.
  * @note    Can be invoked in any context.
  *
  * @special
@@ -386,30 +386,27 @@ typedef msg_t (*tfunc_t)(void *);
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/*
- * Threads APIs.
- */
 #ifdef __cplusplus
 extern "C" {
 #endif
-  Thread *_thread_init(Thread *tp, tprio_t prio);
+   thread_t *_thread_init(thread_t *tp, tprio_t prio);
 #if CH_DBG_FILL_THREADS
   void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v);
 #endif
-  Thread *chThdCreateI(void *wsp, size_t size,
-                       tprio_t prio, tfunc_t pf, void *arg);
-  Thread *chThdCreateStatic(void *wsp, size_t size,
-                            tprio_t prio, tfunc_t pf, void *arg);
+  thread_t *chThdCreateI(void *wsp, size_t size,
+                         tprio_t prio, tfunc_t pf, void *arg);
+  thread_t *chThdCreateStatic(void *wsp, size_t size,
+                              tprio_t prio, tfunc_t pf, void *arg);
   tprio_t chThdSetPriority(tprio_t newprio);
-  Thread *chThdResume(Thread *tp);
-  void chThdTerminate(Thread *tp);
+  thread_t *chThdResume(thread_t *tp);
+  void chThdTerminate(thread_t *tp);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
   void chThdYield(void);
   void chThdExit(msg_t msg);
   void chThdExitS(msg_t msg);
 #if CH_USE_WAITEXIT
-  msg_t chThdWait(Thread *tp);
+  msg_t chThdWait(thread_t *tp);
 #endif
 #ifdef __cplusplus
 }

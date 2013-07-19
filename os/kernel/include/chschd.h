@@ -99,11 +99,11 @@ typedef struct {
   struct context        r_ctx;      /**< @brief Not used, present because
                                                 offsets.                    */
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
-  Thread                *r_newer;   /**< @brief Newer registry element.     */
-  Thread                *r_older;   /**< @brief Older registry element.     */
+  thread_t              *r_newer;   /**< @brief Newer registry element.     */
+  thread_t              *r_older;   /**< @brief Older registry element.     */
 #endif
-  /* End of the fields shared with the Thread structure.*/
-  Thread                *r_current; /**< @brief The currently running
+  /* End of the fields shared with the thread_t structure.*/
+  thread_t              *r_current; /**< @brief The currently running
                                                 thread.                     */
 } ready_list_t;
 
@@ -151,10 +151,10 @@ extern ready_list_t rlist;
 extern "C" {
 #endif
   void _scheduler_init(void);
-  Thread *chSchReadyI(Thread *tp);
+  thread_t *chSchReadyI(thread_t *tp);
   void chSchGoSleepS(tstate_t newstate);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);
-  void chSchWakeupS(Thread *tp, msg_t msg);
+  void chSchWakeupS(thread_t *tp, msg_t msg);
   void chSchRescheduleS(void);
   bool chSchIsPreemptionRequired(void);
   void chSchDoRescheduleBehind(void);

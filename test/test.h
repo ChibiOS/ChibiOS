@@ -162,7 +162,7 @@ extern "C" {
 }
 
 #if !defined(__DOXYGEN__)
-extern Thread *threads[MAX_THREADS];
+extern thread_t *threads[MAX_THREADS];
 extern union test_buffers test;
 extern void * ROMCONST wa[];
 extern bool_t test_timer_done;

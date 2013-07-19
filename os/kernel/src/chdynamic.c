@@ -42,7 +42,7 @@
  *
  * @api
  */
-Thread *chThdAddRef(Thread *tp) {
+thread_t *chThdAddRef(thread_t *tp) {
 
   chSysLock();
   chDbgAssert(tp->p_refs < 255, "chThdAddRef(), #1", "too many references");
@@ -64,7 +64,7 @@ Thread *chThdAddRef(Thread *tp) {
  *
  * @api
  */
-void chThdRelease(Thread *tp) {
+void chThdRelease(thread_t *tp) {
   trefs_t refs;
 
   chSysLock();
@@ -114,16 +114,16 @@ void chThdRelease(Thread *tp) {
  * @param[in] pf        the thread function
  * @param[in] arg       an argument passed to the thread function. It can be
  *                      @p NULL.
- * @return              The pointer to the @p Thread structure allocated for
+ * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread into the working space area.
  * @retval NULL         if the memory cannot be allocated.
  *
  * @api
  */
-Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
-                            tprio_t prio, tfunc_t pf, void *arg) {
+thread_t *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
+                              tprio_t prio, tfunc_t pf, void *arg) {
   void *wsp;
-  Thread *tp;
+  thread_t *tp;
 
   wsp = chHeapAlloc(heapp, size);
   if (wsp == NULL)
@@ -131,9 +131,9 @@ Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
   
 #if CH_DBG_FILL_THREADS
   _thread_memfill((uint8_t *)wsp,
-                  (uint8_t *)wsp + sizeof(Thread),
+                  (uint8_t *)wsp + sizeof(thread_t),
                   CH_THREAD_FILL_VALUE);
-  _thread_memfill((uint8_t *)wsp + sizeof(Thread),
+  _thread_memfill((uint8_t *)wsp + sizeof(thread_t),
                   (uint8_t *)wsp + size,
                   CH_STACK_FILL_VALUE);
 #endif
@@ -163,16 +163,16 @@ Thread *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
  * @param[in] pf        the thread function
  * @param[in] arg       an argument passed to the thread function. It can be
  *                      @p NULL.
- * @return              The pointer to the @p Thread structure allocated for
+ * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread into the working space area.
  * @retval  NULL        if the memory pool is empty.
  *
  * @api
  */
-Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
-                                  tfunc_t pf, void *arg) {
+thread_t *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
+                                    tfunc_t pf, void *arg) {
   void *wsp;
-  Thread *tp;
+  thread_t *tp;
 
   chDbgCheck(mp != NULL, "chThdCreateFromMemoryPool");
 
@@ -182,9 +182,9 @@ Thread *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
   
 #if CH_DBG_FILL_THREADS
   _thread_memfill((uint8_t *)wsp,
-                  (uint8_t *)wsp + sizeof(Thread),
+                  (uint8_t *)wsp + sizeof(thread_t),
                   CH_THREAD_FILL_VALUE);
-  _thread_memfill((uint8_t *)wsp + sizeof(Thread),
+  _thread_memfill((uint8_t *)wsp + sizeof(thread_t),
                   (uint8_t *)wsp + mp->mp_object_size,
                   CH_STACK_FILL_VALUE);
 #endif

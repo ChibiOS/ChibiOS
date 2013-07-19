@@ -426,7 +426,7 @@
 
 /**
  * @brief   Debug option, threads profiling.
- * @details If enabled then a field is added to the @p Thread structure that
+ * @details If enabled then a field is added to the @p thread_t structure that
  *          counts the system ticks occurred while executing the thread.
  *
  * @note    The default is @p TRUE.
@@ -448,7 +448,7 @@
 
 /**
  * @brief   Threads descriptor structure extension.
- * @details User fields added to the end of the @p Thread structure.
+ * @details User fields added to the end of the @p thread_t structure.
  */
 #if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
 #define THREAD_EXT_FIELDS                                                   \

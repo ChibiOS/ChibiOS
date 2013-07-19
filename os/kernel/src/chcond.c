@@ -124,7 +124,7 @@ void chCondBroadcastI(CondVar *cp) {
   chDbgCheckClassI();
   chDbgCheck(cp != NULL, "chCondBroadcastI");
 
-  /* Empties the condition variable queue and inserts all the Threads into the
+  /* Empties the condition variable queue and inserts all the threads into the
      ready list in FIFO order. The wakeup message is set to @p RDY_RESET in
      order to make a chCondBroadcast() detectable from a chCondSignal().*/
   while (cp->c_queue.p_next != (void *)&cp->c_queue)
@@ -175,7 +175,7 @@ msg_t chCondWait(CondVar *cp) {
  * @sclass
  */
 msg_t chCondWaitS(CondVar *cp) {
-  Thread *ctp = currp;
+  thread_t *ctp = currp;
   Mutex *mp;
   msg_t msg;
 

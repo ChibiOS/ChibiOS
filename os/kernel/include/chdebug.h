@@ -105,7 +105,7 @@
  */
 typedef struct {
   systime_t             se_time;    /**< @brief Time of the switch event.   */
-  Thread                *se_tp;     /**< @brief Switched in thread.         */
+  thread_t              *se_tp;     /**< @brief Switched in thread.         */
   void                  *se_wtobjp; /**< @brief Object where going to sleep.*/
   uint8_t               se_state;   /**< @brief Switched out thread state.  */
 } ch_swc_event_t;
@@ -232,7 +232,7 @@ extern "C" {
 #endif
 #if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
   void _trace_init(void);
-  void dbg_trace(Thread *otp);
+  void dbg_trace(thread_t *otp);
 #endif
 #if CH_DBG_ENABLED
   extern const char *dbg_panic_msg;

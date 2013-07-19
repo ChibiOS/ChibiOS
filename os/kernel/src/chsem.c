@@ -305,7 +305,7 @@ void chSemSignalI(Semaphore *sp) {
   if (++sp->s_cnt <= 0) {
     /* Note, it is done this way in order to allow a tail call on
              chSchReadyI().*/
-    Thread *tp = queue_fifo_remove(&sp->s_queue);
+    thread_t *tp = queue_fifo_remove(&sp->s_queue);
     tp->p_u.rdymsg = RDY_OK;
     chSchReadyI(tp);
   }
@@ -373,7 +373,7 @@ msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
   if (++sps->s_cnt <= 0)
     chSchReadyI(queue_fifo_remove(&sps->s_queue))->p_u.rdymsg = RDY_OK;
   if (--spw->s_cnt < 0) {
-    Thread *ctp = currp;
+    thread_t *ctp = currp;
     sem_insert(ctp, &spw->s_queue);
     ctp->p_u.wtobjp = spw;
     chSchGoSleepS(THD_STATE_WTSEM);

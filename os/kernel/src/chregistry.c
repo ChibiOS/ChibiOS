@@ -65,31 +65,31 @@ ROMCONST chdebug_t ch_debug = {
              (CH_KERNEL_PATCH) << 0),
   (uint8_t)sizeof (void *),
   (uint8_t)sizeof (systime_t),
-  (uint8_t)sizeof (Thread),
-  (uint8_t)_offsetof(Thread, p_prio),
-  (uint8_t)_offsetof(Thread, p_ctx),
-  (uint8_t)_offsetof(Thread, p_newer),
-  (uint8_t)_offsetof(Thread, p_older),
-  (uint8_t)_offsetof(Thread, p_name),
+  (uint8_t)sizeof (thread_t),
+  (uint8_t)_offsetof(thread_t, p_prio),
+  (uint8_t)_offsetof(thread_t, p_ctx),
+  (uint8_t)_offsetof(thread_t, p_newer),
+  (uint8_t)_offsetof(thread_t, p_older),
+  (uint8_t)_offsetof(thread_t, p_name),
 #if CH_DBG_ENABLE_STACK_CHECK
-  (uint8_t)_offsetof(Thread, p_stklimit),
+  (uint8_t)_offsetof(thread_t, p_stklimit),
 #else
   (uint8_t)0,
 #endif
-  (uint8_t)_offsetof(Thread, p_state),
-  (uint8_t)_offsetof(Thread, p_flags),
+  (uint8_t)_offsetof(thread_t, p_state),
+  (uint8_t)_offsetof(thread_t, p_flags),
 #if CH_USE_DYNAMIC
-  (uint8_t)_offsetof(Thread, p_refs),
+  (uint8_t)_offsetof(thread_t, p_refs),
 #else
   (uint8_t)0,
 #endif
 #if CH_TIME_QUANTUM > 0
-  (uint8_t)_offsetof(Thread, p_preempt),
+  (uint8_t)_offsetof(thread_t, p_preempt),
 #else
   (uint8_t)0,
 #endif
 #if CH_DBG_THREADS_PROFILING
-  (uint8_t)_offsetof(Thread, p_time)
+  (uint8_t)_offsetof(thread_t, p_time)
 #else
   (uint8_t)0
 #endif
@@ -107,8 +107,8 @@ ROMCONST chdebug_t ch_debug = {
  *
  * @api
  */
-Thread *chRegFirstThread(void) {
-  Thread *tp;
+thread_t *chRegFirstThread(void) {
+  thread_t *tp;
 
   chSysLock();
   tp = rlist.r_newer;
@@ -130,12 +130,12 @@ Thread *chRegFirstThread(void) {
  *
  * @api
  */
-Thread *chRegNextThread(Thread *tp) {
-  Thread *ntp;
+thread_t *chRegNextThread(thread_t *tp) {
+  thread_t *ntp;
 
   chSysLock();
   ntp = tp->p_newer;
-  if (ntp == (Thread *)&rlist)
+  if (ntp == (thread_t *)&rlist)
     ntp = NULL;
 #if CH_USE_DYNAMIC
   else {

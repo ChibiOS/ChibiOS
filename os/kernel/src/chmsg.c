@@ -40,7 +40,7 @@
  * @pre     In order to use the message APIs the @p CH_USE_MESSAGES option
  *          must be enabled in @p chconf.h.
  * @post    Enabling messages requires 6-12 (depending on the architecture)
- *          extra bytes in the @p Thread structure.
+ *          extra bytes in the @p thread_t structure.
  * @{
  */
 
@@ -65,8 +65,8 @@
  *
  * @api
  */
-msg_t chMsgSend(Thread *tp, msg_t msg) {
-  Thread *ctp = currp;
+msg_t chMsgSend(thread_t *tp, msg_t msg) {
+  thread_t *ctp = currp;
 
   chDbgCheck(tp != NULL, "chMsgSend");
 
@@ -96,8 +96,8 @@ msg_t chMsgSend(Thread *tp, msg_t msg) {
  *
  * @api
  */
-Thread *chMsgWait(void) {
-  Thread *tp;
+thread_t *chMsgWait(void) {
+  thread_t *tp;
 
   chSysLock();
   if (!chMsgIsPendingI(currp))
@@ -118,7 +118,7 @@ Thread *chMsgWait(void) {
  *
  * @api
  */
-void chMsgRelease(Thread *tp, msg_t msg) {
+void chMsgRelease(thread_t *tp, msg_t msg) {
 
   chSysLock();
   chDbgAssert(tp->p_state == THD_STATE_SNDMSG,

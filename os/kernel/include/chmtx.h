@@ -37,7 +37,7 @@
 typedef struct Mutex {
   threads_queue_t       m_queue;    /**< @brief Queue of the threads sleeping
                                                 on this Mutex.              */
-  Thread                *m_owner;   /**< @brief Owner @p Thread pointer or
+  thread_t              *m_owner;   /**< @brief Owner @p thread_t pointer or
                                                 @p NULL.                    */
   struct Mutex          *m_next;    /**< @brief Next @p Mutex into an
                                                 owner-list or @p NULL.      */
