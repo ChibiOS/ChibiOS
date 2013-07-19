@@ -124,7 +124,7 @@ typedef struct {
  *          not needed ChibiOS/RT subsystems it is possible to save RAM space
  *          by shrinking the @p Thread structure.
  */
-struct Thread {
+typedef struct Thread {
   Thread                *p_next;    /**< @brief Next in the list/queue.     */
   /* End of the fields shared with the threads_list_t structure.*/
   Thread                *p_prev;    /**< @brief Previous in the queue.      */
@@ -254,7 +254,7 @@ struct Thread {
   /* Extra fields defined in chconf.h.*/
   THREAD_EXT_FIELDS
 #endif
-};
+} Thread;
 
 /**
  * @brief Thread function.
