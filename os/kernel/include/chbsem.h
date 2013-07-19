@@ -83,7 +83,7 @@ typedef struct  {
 /**
  * @brief   Static semaphore initializer.
  * @details Statically initialized semaphores require no explicit
- *          initialization using @p chSemInit().
+ *          initialization using @p chBSemInit().
  *
  * @param[in] name      the name of the semaphore variable
  * @param[in] taken     the semaphore initial state
