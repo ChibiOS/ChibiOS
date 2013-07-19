@@ -35,7 +35,7 @@
  * @brief   Mutex structure.
  */
 typedef struct Mutex {
-  ThreadsQueue          m_queue;    /**< @brief Queue of the threads sleeping
+  threads_queue_t       m_queue;    /**< @brief Queue of the threads sleeping
                                                 on this Mutex.              */
   Thread                *m_owner;   /**< @brief Owner @p Thread pointer or
                                                 @p NULL.                    */
@@ -65,7 +65,7 @@ extern "C" {
  *
  * @param[in] name      the name of the mutex variable
  */
-#define _MUTEX_DATA(name) {_THREADSQUEUE_DATA(name.m_queue), NULL, NULL}
+#define _MUTEX_DATA(name) {_threads_queue_t_DATA(name.m_queue), NULL, NULL}
 
 /**
  * @brief   Static mutex initializer.

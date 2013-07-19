@@ -67,7 +67,8 @@ VTList vtlist;
 void _vt_init(void) {
 
   vtlist.vt_next = vtlist.vt_prev = (void *)&vtlist;
-  vtlist.vt_time = 0;
+  vtlist.vt_time = (systime_t)-1;
+  vtlist.vt_systime = 0;
 }
 
 /**
@@ -93,12 +94,18 @@ bool chVTIsTimeWithin(systime_t time, systime_t start, systime_t end) {
 
 /**
  * @brief   Enables a virtual timer.
- * @details The timer is enabled and programmed to trigger at the absolute
- *          system time specified as parameter.
- * @note    The associated function is invoked from interrupt context.
+ * @details The timer is enabled and programmed to trigger after the delay
+ *          specified as parameter.
+ * @pre     The timer must not be already armed before calling this function.
+ * @note    The callback function is invoked from interrupt context.
  *
  * @param[out] vtp      the @p VirtualTimer structure pointer
- * @param[in] time      absolute system time
+ * @param[in] delay     the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE is allowed but interpreted as a
+ *                        normal time specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
  * @param[in] vtfunc    the timer callback function. After invoking the
  *                      callback the timer is disabled and the structure can
  *                      be disposed or reused.
@@ -107,51 +114,50 @@ bool chVTIsTimeWithin(systime_t time, systime_t start, systime_t end) {
  *
  * @iclass
  */
-void chVTSetAbsoluteI(VirtualTimer *vtp, systime_t time,
-                      vtfunc_t vtfunc, void *par) {
+void chVTDoSetI(VirtualTimer *vtp, systime_t delay,
+                vtfunc_t vtfunc, void *par) {
   VirtualTimer *p;
-  systime_t systime = vtlist.vt_time;
 
   chDbgCheckClassI();
-  chDbgCheck((vtp != NULL) && (vtfunc != NULL), "chVTSetI");
+  chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE),
+             "chVTDoSetI");
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
-  vtp->vt_time = time;
-  if (time <= systime) {
-    p = vtlist.vt_prev;
-    while ((p->vt_time <= systime) && (p->vt_time > time))
-      p = p->vt_prev;
-    vtp->vt_next = (vtp->vt_prev = p)->vt_next;
-    vtp->vt_next->vt_prev = p->vt_next = vtp;
+  p = vtlist.vt_next;
+  while (p->vt_time < delay) {
+    delay -= p->vt_time;
+    p = p->vt_next;
   }
-  else {
-    p = vtlist.vt_next;
-    while ((p->vt_time > systime) && (p->vt_time < time))
-      p = p->vt_next;
-    vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
-    vtp->vt_prev->vt_next = p->vt_prev = vtp;
-  }
+
+  vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
+  vtp->vt_prev->vt_next = p->vt_prev = vtp;
+  vtp->vt_time = delay;
+  if (p != (void *)&vtlist)
+    p->vt_time -= delay;
 }
 
 /**
  * @brief   Disables a Virtual Timer.
- * @note    The timer is first checked and disabled only if armed.
+ * @pre     The timer must be in armed state before calling this function.
  *
  * @param[in] vtp       the @p VirtualTimer structure pointer
  *
  * @iclass
  */
-void chVTResetI(VirtualTimer *vtp) {
+void chVTDoResetI(VirtualTimer *vtp) {
 
   chDbgCheckClassI();
-  chDbgCheck(vtp != NULL, "chVTResetI");
+  chDbgCheck(vtp != NULL, "chVTDoResetI");
+  chDbgAssert(vtp->vt_func != NULL,
+              "chVTDoResetI(), #1",
+              "timer not set or already triggered");
 
-  if (chVTIsArmedI(vtp)) {
-    vtp->vt_prev->vt_next = vtp->vt_next;
-    vtp->vt_next->vt_prev = vtp->vt_prev;
-    vtp->vt_func = (vtfunc_t)NULL;
-  }
+  if (vtp->vt_next != (void *)&vtlist)
+    vtp->vt_next->vt_time += vtp->vt_time;
+  vtp->vt_prev->vt_next = vtp->vt_next;
+  vtp->vt_next->vt_prev = vtp->vt_prev;
+  vtp->vt_func = (vtfunc_t)NULL;
 }
 
 /** @} */

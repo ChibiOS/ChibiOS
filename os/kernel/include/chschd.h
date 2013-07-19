@@ -79,13 +79,13 @@
 #define firstprio(rlp)  ((rlp)->p_next->p_prio)
 
 /**
- * @extends ThreadsQueue
+ * @extends threads_queue_t
  *
  * @brief   Ready list header.
  */
 #if !defined(PORT_OPTIMIZED_READYLIST_STRUCT) || defined(__DOXYGEN__)
 typedef struct {
-  ThreadsQueue          r_queue;    /**< @brief Threads queue.              */
+  threads_queue_t       r_queue;    /**< @brief Threads queue.              */
   tprio_t               r_prio;     /**< @brief This field must be
                                                 initialized to zero.        */
   struct context        r_ctx;      /**< @brief Not used, present because

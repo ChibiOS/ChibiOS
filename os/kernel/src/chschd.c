@@ -186,7 +186,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
   if (TIME_INFINITE != time) {
     VirtualTimer vt;
 
-    chVTSetI(&vt, time, wakeup, currp);
+    chVTDoSetI(&vt, time, wakeup, currp);
     chSchGoSleepS(newstate);
     if (chVTIsArmedI(&vt))
       chVTDoResetI(&vt);

@@ -132,7 +132,8 @@ void chMtxLockS(Mutex *mp) {
       switch (tp->p_state) {
       case THD_STATE_WTMTX:
         /* Re-enqueues the mutex owner with its new priority.*/
-        queue_prio_insert(queue_dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
+        queue_prio_insert(queue_dequeue(tp),
+                          (threads_queue_t *)tp->p_u.wtobjp);
         tp = ((Mutex *)tp->p_u.wtobjp)->m_owner;
         continue;
 #if CH_USE_CONDVARS |                                                       \
@@ -148,7 +149,8 @@ void chMtxLockS(Mutex *mp) {
       case THD_STATE_SNDMSGQ:
 #endif
         /* Re-enqueues tp with its new priority on the queue.*/
-        queue_prio_insert(queue_dequeue(tp), (ThreadsQueue *)tp->p_u.wtobjp);
+        queue_prio_insert(queue_dequeue(tp),
+                          (threads_queue_t *)tp->p_u.wtobjp);
         break;
 #endif
       case THD_STATE_READY:

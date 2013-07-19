@@ -56,7 +56,7 @@
  *
  * @param[in] name      the name of the threads queue variable
  */
-#define _THREADSQUEUE_DATA(name) {(Thread *)&name, (Thread *)&name}
+#define _threads_queue_t_DATA(name) {(Thread *)&name, (Thread *)&name}
 
 /**
  * @brief   Static threads queue initializer.
@@ -65,7 +65,7 @@
  *
  * @param[in] name      the name of the threads queue variable
  */
-#define THREADSQUEUE_DECL(name) ThreadsQueue name = _THREADSQUEUE_DATA(name)
+#define threads_queue_t_DECL(name) threads_queue_t name = _threads_queue_t_DATA(name)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -80,7 +80,7 @@
  *
  * @notapi
  */
-static inline void list_init(ThreadsList *tlp) {
+static inline void list_init(threads_list_t *tlp) {
 
   tlp->p_next = (Thread *)tlp;
 }
@@ -90,7 +90,7 @@ static inline void list_init(ThreadsList *tlp) {
  *
  * @notapi
  */
-static inline bool_t list_isempty(ThreadsList *tlp) {
+static inline bool_t list_isempty(threads_list_t *tlp) {
 
   return (bool_t)(tlp->p_next == (Thread *)tlp);
 }
@@ -100,7 +100,7 @@ static inline bool_t list_isempty(ThreadsList *tlp) {
  *
  * @notapi
  */
-static inline bool_t list_notempty(ThreadsList *tlp) {
+static inline bool_t list_notempty(threads_list_t *tlp) {
 
   return (bool_t)(tlp->p_next != (Thread *)tlp);
 }
@@ -110,7 +110,7 @@ static inline bool_t list_notempty(ThreadsList *tlp) {
  *
  * @notapi
  */
-static inline void queue_init(ThreadsQueue *tqp) {
+static inline void queue_init(threads_queue_t *tqp) {
 
   tqp->p_next = tqp->p_prev = (Thread *)tqp;
 }
@@ -120,7 +120,7 @@ static inline void queue_init(ThreadsQueue *tqp) {
  *
  * @notapi
  */
-static inline bool_t queue_isempty(ThreadsQueue *tqp) {
+static inline bool_t queue_isempty(threads_queue_t *tqp) {
 
   return (bool_t)(tqp->p_next == (Thread *)tqp);
 }
@@ -130,7 +130,7 @@ static inline bool_t queue_isempty(ThreadsQueue *tqp) {
  *
  * @notapi
  */
-static inline bool_t queue_notempty(ThreadsQueue *tqp) {
+static inline bool_t queue_notempty(threads_queue_t *tqp) {
 
   return (bool_t)(tqp->p_next != (Thread *)tqp);
 }
@@ -138,20 +138,20 @@ static inline bool_t queue_notempty(ThreadsQueue *tqp) {
 /* If the performance code path has been chosen then all the following
    functions are inlined into the various kernel modules.*/
 #if CH_OPTIMIZE_SPEED
-static inline void list_insert(Thread *tp, ThreadsList *tlp) {
+static inline void list_insert(Thread *tp, threads_list_t *tlp) {
 
   tp->p_next = tlp->p_next;
   tlp->p_next = tp;
 }
 
-static inline Thread *list_remove(ThreadsList *tlp) {
+static inline Thread *list_remove(threads_list_t *tlp) {
 
   Thread *tp = tlp->p_next;
   tlp->p_next = tp->p_next;
   return tp;
 }
 
-static inline void queue_prio_insert(Thread *tp, ThreadsQueue *tqp) {
+static inline void queue_prio_insert(Thread *tp, threads_queue_t *tqp) {
 
   Thread *cp = (Thread *)tqp;
   do {
@@ -162,21 +162,21 @@ static inline void queue_prio_insert(Thread *tp, ThreadsQueue *tqp) {
   tp->p_prev->p_next = cp->p_prev = tp;
 }
 
-static inline void queue_insert(Thread *tp, ThreadsQueue *tqp) {
+static inline void queue_insert(Thread *tp, threads_queue_t *tqp) {
 
   tp->p_next = (Thread *)tqp;
   tp->p_prev = tqp->p_prev;
   tp->p_prev->p_next = tqp->p_prev = tp;
 }
 
-static inline Thread *queue_fifo_remove(ThreadsQueue *tqp) {
+static inline Thread *queue_fifo_remove(threads_queue_t *tqp) {
   Thread *tp = tqp->p_next;
 
   (tqp->p_next = tp->p_next)->p_prev = (Thread *)tqp;
   return tp;
 }
 
-static inline Thread *queue_lifo_remove(ThreadsQueue *tqp) {
+static inline Thread *queue_lifo_remove(threads_queue_t *tqp) {
   Thread *tp = tqp->p_prev;
 
   (tqp->p_prev = tp->p_prev)->p_next = (Thread *)tqp;

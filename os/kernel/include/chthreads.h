@@ -104,20 +104,20 @@ typedef struct Mutex Mutex;
 typedef struct {
 
   Thread                *p_next;    /**< @brief Next in the list/queue.     */
-} ThreadsList;
+} threads_list_t;
 
 /**
- * @extends ThreadsList
+ * @extends threads_list_t
  *
  * @brief   Generic threads bidirectional linked list header and element.
  */
 typedef struct {
   Thread                *p_next;    /**< @brief Next in the list/queue.     */
   Thread                *p_prev;    /**< @brief Previous in the queue.      */
-} ThreadsQueue;
+} threads_queue_t;
 
 /**
- * @extends ThreadsQueue
+ * @extends threads_queue_t
  *
  * @brief   Structure representing a thread.
  * @note    Not all the listed fields are always needed, by switching off some
@@ -126,9 +126,9 @@ typedef struct {
  */
 struct Thread {
   Thread                *p_next;    /**< @brief Next in the list/queue.     */
-  /* End of the fields shared with the ThreadsList structure. */
+  /* End of the fields shared with the threads_list_t structure.*/
   Thread                *p_prev;    /**< @brief Previous in the queue.      */
-  /* End of the fields shared with the ThreadsQueue structure. */
+  /* End of the fields shared with the threads_queue_t structure.*/
   tprio_t               p_prio;     /**< @brief Thread priority.            */
   struct context        p_ctx;      /**< @brief Processor context.          */
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
@@ -215,13 +215,13 @@ struct Thread {
   /**
    * @brief Termination waiting list.
    */
-  ThreadsList           p_waiting;
+  threads_list_t        p_waiting;
 #endif
 #if CH_USE_MESSAGES || defined(__DOXYGEN__)
   /**
    * @brief Messages queue.
    */
-  ThreadsQueue          p_msgqueue;
+  threads_queue_t       p_msgqueue;
   /**
    * @brief Thread message.
    */

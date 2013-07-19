@@ -507,8 +507,8 @@ static void bmk10_execute(void) {
   test_start_timer(1000);
   do {
     chSysLock();
-    chVTSetI(&vt1, 1, tmo, NULL);
-    chVTSetI(&vt2, 10000, tmo, NULL);
+    chVTDoSetI(&vt1, 1, tmo, NULL);
+    chVTDoSetI(&vt2, 10000, tmo, NULL);
     chVTResetI(&vt1);
     chVTResetI(&vt2);
     chSysUnlock();

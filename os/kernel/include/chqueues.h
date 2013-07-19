@@ -60,7 +60,7 @@ typedef void (*qnotify_t)(GenericQueue *qp);
  *          @ref system_states) and is non-blocking.
  */
 struct GenericQueue {
-  ThreadsQueue          q_waiting;  /**< @brief Queue of waiting threads.   */
+  threads_queue_t       q_waiting;  /**< @brief Queue of waiting threads.   */
   size_t                q_counter;  /**< @brief Resources counter.          */
   uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
   uint8_t               *q_top;     /**< @brief Pointer to the first location
@@ -200,7 +200,7 @@ typedef GenericQueue InputQueue;
  * @param[in] link      application defined pointer
  */
 #define _INPUTQUEUE_DATA(name, buffer, size, inotify, link) {               \
-  _THREADSQUEUE_DATA(name),                                                 \
+  _threads_queue_t_DATA(name),                                                 \
   0,                                                                        \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + (size),                                             \
@@ -317,7 +317,7 @@ typedef GenericQueue OutputQueue;
  * @param[in] link      application defined pointer
  */
 #define _OUTPUTQUEUE_DATA(name, buffer, size, onotify, link) {              \
-  _THREADSQUEUE_DATA(name),                                                 \
+  _threads_queue_t_DATA(name),                                                 \
   (size),                                                                   \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + (size),                                             \
