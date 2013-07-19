@@ -65,7 +65,8 @@
  *
  * @param[in] name      the name of the threads queue variable
  */
-#define threads_queue_t_DECL(name) threads_queue_t name = _threads_queue_t_DATA(name)
+#define threads_queue_t_DECL(name)                                          \
+  threads_queue_t name = _threads_queue_t_DATA(name)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
