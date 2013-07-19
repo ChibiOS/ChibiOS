@@ -56,7 +56,7 @@
  * @brief Kernel Benchmarks header file
  */
 
-static Semaphore sem1;
+static semaphore_t sem1;
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
 static Mutex mtx1;
 #endif
@@ -500,7 +500,7 @@ ROMCONST struct testcase testbmk9 = {
 static void tmo(void *param) {(void)param;}
 
 static void bmk10_execute(void) {
-  static VirtualTimer vt1, vt2;
+  static virtual_timer_t vt1, vt2;
   uint32_t n = 0;
 
   test_wait_tick();
@@ -633,7 +633,7 @@ ROMCONST struct testcase testbmk12 = {
 static void bmk13_execute(void) {
 
   test_print("--- System: ");
-  test_printn(sizeof(ready_list_t) + sizeof(VTList) +
+  test_printn(sizeof(ready_list_t) + sizeof(virtual_timers_list_t) +
               PORT_IDLE_THREAD_STACK_SIZE +
               (sizeof(thread_t) + sizeof(struct intctx) +
                sizeof(struct extctx) +
@@ -643,10 +643,10 @@ static void bmk13_execute(void) {
   test_printn(sizeof(thread_t));
   test_println(" bytes");
   test_print("--- Timer : ");
-  test_printn(sizeof(VirtualTimer));
+  test_printn(sizeof(virtual_timer_t));
   test_println(" bytes");
   test_print("--- Semaph: ");
-  test_printn(sizeof(Semaphore));
+  test_printn(sizeof(semaphore_t));
   test_println(" bytes");
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
   test_print("--- EventS: ");
@@ -663,7 +663,7 @@ static void bmk13_execute(void) {
 #endif
 #if CH_USE_CONDVARS || defined(__DOXYGEN__)
   test_print("--- CondV.: ");
-  test_printn(sizeof(CondVar));
+  test_printn(sizeof(condition_variable_t));
   test_println(" bytes");
 #endif
 #if CH_USE_QUEUES || defined(__DOXYGEN__)

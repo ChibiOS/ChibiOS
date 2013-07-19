@@ -34,6 +34,22 @@
 
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
 typedef struct EventListener EventListener;
 
 /**
@@ -66,6 +82,20 @@ typedef struct EventSource {
  */
 typedef void (*evhandler_t)(eventid_t);
 
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
+
+/**
+ * @brief   All events allowed mask.
+ */
+#define ALL_EVENTS      ((eventmask_t)-1)
+
+/**
+ * @brief   Returns an event mask from an event identifier.
+ */
+#define EVENT_MASK(eid) ((eventmask_t)(1 << (eid)))
+
 /**
  * @brief   Data part of a static event source initializer.
  * @details This macro should be used when statically initializing an event
@@ -83,84 +113,9 @@ typedef void (*evhandler_t)(eventid_t);
  */
 #define EVENTSOURCE_DECL(name) EventSource name = _EVENTSOURCE_DATA(name)
 
-/**
- * @brief   All events allowed mask.
- */
-#define ALL_EVENTS      ((eventmask_t)-1)
-
-/**
- * @brief   Returns an event mask from an event identifier.
- */
-#define EVENT_MASK(eid) ((eventmask_t)(1 << (eid)))
-
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Registers an Event Listener on an Event Source.
- * @note    Multiple Event Listeners can use the same event identifier, the
- *          listener will share the callback function.
- *
- * @param[in] esp       pointer to the  @p EventSource structure
- * @param[out] elp      pointer to the @p EventListener structure
- * @param[in] eid       numeric identifier assigned to the Event Listener. The
- *                      identifier is used as index for the event callback
- *                      function.
- *                      The value must range between zero and the size, in bit,
- *                      of the @p eventid_t type minus one.
- *
- * @api
- */
-#define chEvtRegister(esp, elp, eid) \
-  chEvtRegisterMask(esp, elp, EVENT_MASK(eid))
-
-/**
- * @brief   Initializes an Event Source.
- * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p EventSource structure.
- *
- * @param[in] esp       pointer to the @p EventSource structure
- *
- * @init
- */
-#define chEvtInit(esp) \
-  ((esp)->es_next = (EventListener *)(void *)(esp))
-
-/**
- * @brief   Verifies if there is at least one @p EventListener registered.
- *
- * @param[in] esp       pointer to the @p EventSource structure
- *
- * @iclass
- */
-#define chEvtIsListeningI(esp) \
-  ((void *)(esp) != (void *)(esp)->es_next)
-
-/**
- * @brief   Signals all the Event Listeners registered on the specified Event
- *          Source.
- *
- * @param[in] esp       pointer to the @p EventSource structure
- *
- * @api
- */
-#define chEvtBroadcast(esp) chEvtBroadcastFlags(esp, 0)
-
-/**
- * @brief   Signals all the Event Listeners registered on the specified Event
- *          Source.
- * @post    This function does not reschedule so a call to a rescheduling
- *          function must be performed before unlocking the kernel. Note that
- *          interrupt handlers always reschedule on exit so an explicit
- *          reschedule must not be performed in ISRs.
- *
- * @param[in] esp       pointer to the @p EventSource structure
- *
- * @iclass
- */
-#define chEvtBroadcastI(esp) chEvtBroadcastFlagsI(esp, 0)
-/** @} */
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -197,6 +152,88 @@ extern "C" {
 #define chEvtWaitAny(mask) chEvtWaitAnyTimeout(mask, TIME_INFINITE)
 #define chEvtWaitAll(mask) chEvtWaitAllTimeout(mask, TIME_INFINITE)
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Initializes an Event Source.
+ * @note    This function can be invoked before the kernel is initialized
+ *          because it just prepares a @p EventSource structure.
+ *
+ * @param[in] esp       pointer to the @p EventSource structure
+ *
+ * @init
+ */
+static inline void chEvtInit(EventSource *esp) {
+
+  esp->es_next = (EventListener *)(void *)esp;
+}
+
+/**
+ * @brief   Registers an Event Listener on an Event Source.
+ * @note    Multiple Event Listeners can use the same event identifier, the
+ *          listener will share the callback function.
+ *
+ * @param[in] esp       pointer to the  @p EventSource structure
+ * @param[out] elp      pointer to the @p EventListener structure
+ * @param[in] eid       numeric identifier assigned to the Event Listener. The
+ *                      identifier is used as index for the event callback
+ *                      function.
+ *                      The value must range between zero and the size, in bit,
+ *                      of the @p eventid_t type minus one.
+ *
+ * @api
+ */
+static inline void chEvtRegister(EventSource *esp,
+                                 EventListener *elp,
+                                 eventid_t eid) {
+
+  chEvtRegisterMask(esp, elp, EVENT_MASK(eid));
+}
+
+/**
+ * @brief   Verifies if there is at least one @p EventListener registered.
+ *
+ * @param[in] esp       pointer to the @p EventSource structure
+ *
+ * @iclass
+ */
+static inline bool chEvtIsListeningI(EventSource *esp) {
+
+  return (bool)((void *)esp != (void *)esp->es_next);
+}
+
+/**
+ * @brief   Signals all the Event Listeners registered on the specified Event
+ *          Source.
+ *
+ * @param[in] esp       pointer to the @p EventSource structure
+ *
+ * @api
+ */
+static inline void chEvtBroadcast(EventSource *esp) {
+
+  chEvtBroadcastFlags(esp, 0);
+}
+
+/**
+ * @brief   Signals all the Event Listeners registered on the specified Event
+ *          Source.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
+ *
+ * @param[in] esp       pointer to the @p EventSource structure
+ *
+ * @iclass
+ */
+static inline void chEvtBroadcastI(EventSource *esp) {
+
+  chEvtBroadcastFlagsI(esp, 0);
+}
 
 #endif /* CH_USE_EVENTS */
 

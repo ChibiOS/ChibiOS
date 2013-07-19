@@ -48,10 +48,10 @@ typedef struct {
                                                     after the buffer.       */
   msg_t                 *mb_wrptr;      /**< @brief Write pointer.          */
   msg_t                 *mb_rdptr;      /**< @brief Read pointer.           */
-  Semaphore             mb_fullsem;     /**< @brief Full counter
-                                                    @p Semaphore.           */
-  Semaphore             mb_emptysem;    /**< @brief Empty counter
-                                                    @p Semaphore.           */
+  semaphore_t           mb_fullsem;     /**< @brief Full counter
+                                                    @p semaphore_t.         */
+  semaphore_t           mb_emptysem;    /**< @brief Empty counter
+                                                    @p semaphore_t.         */
 } Mailbox;
 
 #ifdef __cplusplus

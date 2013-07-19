@@ -40,7 +40,7 @@
 /**
  * @brief   Virtual timers delta list header.
  */
-VTList vtlist;
+virtual_timers_list_t vtlist;
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -99,7 +99,7 @@ bool chVTIsTimeWithin(systime_t time, systime_t start, systime_t end) {
  * @pre     The timer must not be already armed before calling this function.
  * @note    The callback function is invoked from interrupt context.
  *
- * @param[out] vtp      the @p VirtualTimer structure pointer
+ * @param[out] vtp      the @p virtual_timer_t structure pointer
  * @param[in] delay     the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE is allowed but interpreted as a
@@ -114,9 +114,9 @@ bool chVTIsTimeWithin(systime_t time, systime_t start, systime_t end) {
  *
  * @iclass
  */
-void chVTDoSetI(VirtualTimer *vtp, systime_t delay,
+void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
                 vtfunc_t vtfunc, void *par) {
-  VirtualTimer *p;
+  virtual_timer_t *p;
 
   chDbgCheckClassI();
   chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE),
@@ -141,11 +141,11 @@ void chVTDoSetI(VirtualTimer *vtp, systime_t delay,
  * @brief   Disables a Virtual Timer.
  * @pre     The timer must be in armed state before calling this function.
  *
- * @param[in] vtp       the @p VirtualTimer structure pointer
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
  *
  * @iclass
  */
-void chVTDoResetI(VirtualTimer *vtp) {
+void chVTDoResetI(virtual_timer_t *vtp) {
 
   chDbgCheckClassI();
   chDbgCheck(vtp != NULL, "chVTDoResetI");

@@ -153,7 +153,7 @@ static void wakeup(void *p) {
     (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
 #if CH_USE_SEMAPHORES
   case THD_STATE_WTSEM:
-    chSemFastSignalI((Semaphore *)tp->p_u.wtobjp);
+    chSemFastSignalI((semaphore_t *)tp->p_u.wtobjp);
     /* Falls into, intentional. */
 #endif
 #if CH_USE_QUEUES
@@ -197,7 +197,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
   chDbgCheckClassS();
 
   if (TIME_INFINITE != time) {
-    VirtualTimer vt;
+    virtual_timer_t vt;
 
     chVTDoSetI(&vt, time, wakeup, currp);
     chSchGoSleepS(newstate);

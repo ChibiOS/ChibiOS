@@ -70,13 +70,13 @@
 /**
  * @brief   Initializes a semaphore with the specified counter value.
  *
- * @param[out] sp       pointer to a @p Semaphore structure
+ * @param[out] sp       pointer to a @p semaphore_t structure
  * @param[in] n         initial value of the semaphore counter. Must be
  *                      non-negative.
  *
  * @init
  */
-void chSemInit(Semaphore *sp, cnt_t n) {
+void chSemInit(semaphore_t *sp, cnt_t n) {
 
   chDbgCheck((sp != NULL) && (n >= 0), "chSemInit");
 
@@ -93,13 +93,13 @@ void chSemInit(Semaphore *sp, cnt_t n) {
  *          rather than a signal because the @p chSemWait() will return
  *          @p RDY_RESET instead of @p RDY_OK.
  *
- * @param[in] sp        pointer to a @p Semaphore structure
+ * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] n         the new value of the semaphore counter. The value must
  *                      be non-negative.
  *
  * @api
  */
-void chSemReset(Semaphore *sp, cnt_t n) {
+void chSemReset(semaphore_t *sp, cnt_t n) {
 
   chSysLock();
   chSemResetI(sp, n);
@@ -120,13 +120,13 @@ void chSemReset(Semaphore *sp, cnt_t n) {
  *          rather than a signal because the @p chSemWait() will return
  *          @p RDY_RESET instead of @p RDY_OK.
  *
- * @param[in] sp        pointer to a @p Semaphore structure
+ * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] n         the new value of the semaphore counter. The value must
  *                      be non-negative.
  *
  * @iclass
  */
-void chSemResetI(Semaphore *sp, cnt_t n) {
+void chSemResetI(semaphore_t *sp, cnt_t n) {
   cnt_t cnt;
 
   chDbgCheckClassI();
@@ -145,7 +145,7 @@ void chSemResetI(Semaphore *sp, cnt_t n) {
 /**
  * @brief   Performs a wait operation on a semaphore.
  *
- * @param[in] sp        pointer to a @p Semaphore structure
+ * @param[in] sp        pointer to a @p semaphore_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
  * @retval RDY_OK       if the thread has not stopped on the semaphore or the
@@ -154,7 +154,7 @@ void chSemResetI(Semaphore *sp, cnt_t n) {
  *
  * @api
  */
-msg_t chSemWait(Semaphore *sp) {
+msg_t chSemWait(semaphore_t *sp) {
   msg_t msg;
 
   chSysLock();
@@ -166,7 +166,7 @@ msg_t chSemWait(Semaphore *sp) {
 /**
  * @brief   Performs a wait operation on a semaphore.
  *
- * @param[in] sp        pointer to a @p Semaphore structure
+ * @param[in] sp        pointer to a @p semaphore_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
  * @retval RDY_OK       if the thread has not stopped on the semaphore or the
@@ -175,7 +175,7 @@ msg_t chSemWait(Semaphore *sp) {
  *
  * @sclass
  */
-msg_t chSemWaitS(Semaphore *sp) {
+msg_t chSemWaitS(semaphore_t *sp) {
 
   chDbgCheckClassS();
   chDbgCheck(sp != NULL, "chSemWaitS");
@@ -196,7 +196,7 @@ msg_t chSemWaitS(Semaphore *sp) {
 /**
  * @brief   Performs a wait operation on a semaphore with timeout specification.
  *
- * @param[in] sp        pointer to a @p Semaphore structure
+ * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -212,7 +212,7 @@ msg_t chSemWaitS(Semaphore *sp) {
  *
  * @api
  */
-msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
+msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time) {
   msg_t msg;
 
   chSysLock();
@@ -224,7 +224,7 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
 /**
  * @brief   Performs a wait operation on a semaphore with timeout specification.
  *
- * @param[in] sp        pointer to a @p Semaphore structure
+ * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -240,7 +240,7 @@ msg_t chSemWaitTimeout(Semaphore *sp, systime_t time) {
  *
  * @sclass
  */
-msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
+msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time) {
 
   chDbgCheckClassS();
   chDbgCheck(sp != NULL, "chSemWaitTimeoutS");
@@ -264,11 +264,11 @@ msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time) {
 /**
  * @brief   Performs a signal operation on a semaphore.
  *
- * @param[in] sp        pointer to a @p Semaphore structure
+ * @param[in] sp        pointer to a @p semaphore_t structure
  *
  * @api
  */
-void chSemSignal(Semaphore *sp) {
+void chSemSignal(semaphore_t *sp) {
 
   chDbgCheck(sp != NULL, "chSemSignal");
   chDbgAssert(((sp->s_cnt >= 0) && queue_isempty(&sp->s_queue)) ||
@@ -289,11 +289,11 @@ void chSemSignal(Semaphore *sp) {
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] sp    pointer to a @p Semaphore structure
+ * @param[in] sp    pointer to a @p semaphore_t structure
  *
  * @iclass
  */
-void chSemSignalI(Semaphore *sp) {
+void chSemSignalI(semaphore_t *sp) {
 
   chDbgCheckClassI();
   chDbgCheck(sp != NULL, "chSemSignalI");
@@ -318,13 +318,13 @@ void chSemSignalI(Semaphore *sp) {
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] sp        pointer to a @p Semaphore structure
+ * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] n         value to be added to the semaphore counter. The value
  *                      must be positive.
  *
  * @iclass
  */
-void chSemAddCounterI(Semaphore *sp, cnt_t n) {
+void chSemAddCounterI(semaphore_t *sp, cnt_t n) {
 
   chDbgCheckClassI();
   chDbgCheck((sp != NULL) && (n > 0), "chSemAddCounterI");
@@ -346,8 +346,8 @@ void chSemAddCounterI(Semaphore *sp, cnt_t n) {
  * @pre     The configuration option @p CH_USE_SEMSW must be enabled in order
  *          to use this function.
  *
- * @param[in] sps       pointer to a @p Semaphore structure to be signaled
- * @param[in] spw       pointer to a @p Semaphore structure to wait on
+ * @param[in] sps       pointer to a @p semaphore_t structure to be signaled
+ * @param[in] spw       pointer to a @p semaphore_t structure to wait on
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
  * @retval RDY_OK       if the thread has not stopped on the semaphore or the
@@ -356,7 +356,7 @@ void chSemAddCounterI(Semaphore *sp, cnt_t n) {
  *
  * @api
  */
-msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw) {
+msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
   msg_t msg;
 
   chDbgCheck((sps != NULL) && (spw != NULL), "chSemSignalWait");

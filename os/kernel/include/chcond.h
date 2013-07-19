@@ -34,37 +34,37 @@
 
 #if CH_USE_CONDVARS || defined(__DOXYGEN__)
 
-/*
- * Module dependencies check.
- */
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
 #if !CH_USE_MUTEXES
 #error "CH_USE_CONDVARS requires CH_USE_MUTEXES"
 #endif
 
-/**
- * @brief   CondVar structure.
- */
-typedef struct CondVar {
-  threads_queue_t       c_queue;        /**< @brief CondVar threads queue.*/
-} CondVar;
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void chCondInit(CondVar *cp);
-  void chCondSignal(CondVar *cp);
-  void chCondSignalI(CondVar *cp);
-  void chCondBroadcast(CondVar *cp);
-  void chCondBroadcastI(CondVar *cp);
-  msg_t chCondWait(CondVar *cp);
-  msg_t chCondWaitS(CondVar *cp);
-#if CH_USE_CONDVARS_TIMEOUT
-  msg_t chCondWaitTimeout(CondVar *cp, systime_t time);
-  msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time);
-#endif
-#ifdef __cplusplus
-}
-#endif
+/**
+ * @brief   condition_variable_t structure.
+ */
+typedef struct condition_variable {
+  threads_queue_t       c_queue;            /**< @brief Condition variable
+                                                 threads queue.             */
+} condition_variable_t;
+
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief Data part of a static condition variable initializer.
@@ -82,7 +82,33 @@ extern "C" {
  *
  * @param[in] name      the name of the condition variable
  */
-#define CONDVAR_DECL(name) CondVar name = _CONDVAR_DATA(name)
+#define CONDVAR_DECL(name) condition_variable_t name = _CONDVAR_DATA(name)
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chCondInit(condition_variable_t *cp);
+  void chCondSignal(condition_variable_t *cp);
+  void chCondSignalI(condition_variable_t *cp);
+  void chCondBroadcast(condition_variable_t *cp);
+  void chCondBroadcastI(condition_variable_t *cp);
+  msg_t chCondWait(condition_variable_t *cp);
+  msg_t chCondWaitS(condition_variable_t *cp);
+#if CH_USE_CONDVARS_TIMEOUT
+  msg_t chCondWaitTimeout(condition_variable_t *cp, systime_t time);
+  msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time);
+#endif
+#ifdef __cplusplus
+}
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
 
 #endif /* CH_USE_CONDVARS */
 

@@ -244,12 +244,12 @@ ROMCONST struct testcase testsem3 = {
  */
 static msg_t thread4(void *p) {
 
-  chBSemSignal((BinarySemaphore *)p);
+  chBSemSignal((binary_semaphore_t *)p);
   return 0;
 }
 
 static void sem4_execute(void) {
-  BinarySemaphore bsem;
+  binary_semaphore_t bsem;
   
   /* Creates a taken binary semaphore.*/
   chBSemInit(&bsem, TRUE);

@@ -31,34 +31,34 @@
 
 #if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
 /**
  * @brief   Semaphore structure.
  */
-typedef struct Semaphore {
+typedef struct semaphore {
   threads_queue_t       s_queue;    /**< @brief Queue of the threads sleeping
                                                 on this semaphore.          */
   cnt_t                 s_cnt;      /**< @brief The semaphore counter.      */
-} Semaphore;
+} semaphore_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void chSemInit(Semaphore *sp, cnt_t n);
-  void chSemReset(Semaphore *sp, cnt_t n);
-  void chSemResetI(Semaphore *sp, cnt_t n);
-  msg_t chSemWait(Semaphore *sp);
-  msg_t chSemWaitS(Semaphore *sp);
-  msg_t chSemWaitTimeout(Semaphore *sp, systime_t time);
-  msg_t chSemWaitTimeoutS(Semaphore *sp, systime_t time);
-  void chSemSignal(Semaphore *sp);
-  void chSemSignalI(Semaphore *sp);
-  void chSemAddCounterI(Semaphore *sp, cnt_t n);
-#if CH_USE_SEMSW
-  msg_t chSemSignalWait(Semaphore *sps, Semaphore *spw);
-#endif
-#ifdef __cplusplus
-}
-#endif
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief   Data part of a static semaphore initializer.
@@ -80,19 +80,48 @@ extern "C" {
  * @param[in] n         the counter initial value, this value must be
  *                      non-negative
  */
-#define SEMAPHORE_DECL(name, n) Semaphore name = _SEMAPHORE_DATA(name, n)
+#define SEMAPHORE_DECL(name, n) semaphore_t name = _SEMAPHORE_DATA(name, n)
 
-/**
- * @name    Macro Functions
- * @{
- */
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chSemInit(semaphore_t *sp, cnt_t n);
+  void chSemReset(semaphore_t *sp, cnt_t n);
+  void chSemResetI(semaphore_t *sp, cnt_t n);
+  msg_t chSemWait(semaphore_t *sp);
+  msg_t chSemWaitS(semaphore_t *sp);
+  msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time);
+  msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time);
+  void chSemSignal(semaphore_t *sp);
+  void chSemSignalI(semaphore_t *sp);
+  void chSemAddCounterI(semaphore_t *sp, cnt_t n);
+#if CH_USE_SEMSW
+  msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw);
+#endif
+#ifdef __cplusplus
+}
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
 /**
  * @brief   Decreases the semaphore counter.
  * @details This macro can be used when the counter is known to be positive.
  *
  * @iclass
  */
-#define chSemFastWaitI(sp)      ((sp)->s_cnt--)
+static inline void chSemFastWaitI(semaphore_t *sp) {
+
+  chDbgCheckClassI();
+
+  sp->s_cnt--;
+}
 
 /**
  * @brief   Increases the semaphore counter.
@@ -101,15 +130,24 @@ extern "C" {
  *
  * @iclass
  */
-#define chSemFastSignalI(sp)    ((sp)->s_cnt++)
+static inline void chSemFastSignalI(semaphore_t *sp) {
+
+  chDbgCheckClassI();
+
+  sp->s_cnt++;
+}
 
 /**
  * @brief   Returns the semaphore counter current value.
  *
  * @iclass
  */
-#define chSemGetCounterI(sp)    ((sp)->s_cnt)
-/** @} */
+static inline cnt_t chSemGetCounterI(semaphore_t *sp) {
+
+  chDbgCheckClassI();
+
+  return sp->s_cnt;
+}
 
 #endif /* CH_USE_SEMAPHORES */
 

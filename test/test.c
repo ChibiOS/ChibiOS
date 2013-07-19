@@ -257,7 +257,7 @@ systime_t test_wait_tick(void) {
  */
 bool_t test_timer_done;
 
-static VirtualTimer vt;
+static virtual_timer_t vt;
 static void tmr(void *p) {
   (void)p;
 

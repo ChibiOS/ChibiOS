@@ -53,7 +53,7 @@ typedef void (*vtfunc_t)(void *);
 /**
  * @brief   Virtual Timer structure type.
  */
-typedef struct VirtualTimer VirtualTimer;
+typedef struct virtual_timer virtual_timer_t;
 
 /**
  * @brief   Virtual timers list header.
@@ -62,22 +62,22 @@ typedef struct VirtualTimer VirtualTimer;
  *          timer is often used in the code.
  */
 typedef struct {
-  VirtualTimer          *vt_next;   /**< @brief Next timer in the delta
+  virtual_timer_t       *vt_next;   /**< @brief Next timer in the delta
                                                 list.                       */
-  VirtualTimer          *vt_prev;   /**< @brief Last timer in the delta
+  virtual_timer_t       *vt_prev;   /**< @brief Last timer in the delta
                                                 list.                       */
   systime_t             vt_time;    /**< @brief Must be initialized to -1.  */
   volatile systime_t    vt_systime; /**< @brief System Time counter.        */
-} VTList;
+} virtual_timers_list_t;
 
 /**
- * @extends VTList
+ * @extends virtual_timers_list_t
  *
  * @brief   Virtual Timer descriptor structure.
  */
-struct VirtualTimer {
-  VirtualTimer          *vt_next;   /**< @brief Next timer in the list.     */
-  VirtualTimer          *vt_prev;   /**< @brief Previous timer in the list. */
+struct virtual_timer {
+  virtual_timer_t       *vt_next;   /**< @brief Next timer in the list.     */
+  virtual_timer_t       *vt_prev;   /**< @brief Previous timer in the list. */
   systime_t             vt_time;    /**< @brief Time delta before timeout.  */
   vtfunc_t              vt_func;    /**< @brief Timer callback function
                                                 pointer.                    */
@@ -137,7 +137,7 @@ struct VirtualTimer {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern VTList vtlist;
+extern virtual_timers_list_t vtlist;
 
 /*
  * Virtual Timers APIs.
@@ -147,9 +147,9 @@ extern "C" {
 #endif
   void _vt_init(void);
   bool chVTIsTimeWithin(systime_t time, systime_t start, systime_t end);
-  void chVTDoSetI(VirtualTimer *vtp, systime_t delay,
+  void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
                   vtfunc_t vtfunc, void *par);
-  void chVTDoResetI(VirtualTimer *vtp);
+  void chVTDoResetI(virtual_timer_t *vtp);
 #ifdef __cplusplus
 }
 #endif
@@ -159,17 +159,17 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @brief   Initializes a @p VirtualTimer object.
+ * @brief   Initializes a @p virtual_timer_t object.
  * @note    Initializing a timer object is not strictly required because
  *          the function @p chVTSetI() initializes the object too. This
  *          function is only useful if you need to perform a @p chVTIsArmed()
  *          check before calling @p chVTSetI().
  *
- * @param[out] vtp      the @p VirtualTimer structure pointer
+ * @param[out] vtp      the @p virtual_timer_t structure pointer
  *
  * @init
  */
-static inline void chVTObjectInit(VirtualTimer *vtp) {
+static inline void chVTObjectInit(virtual_timer_t *vtp) {
 
   vtp->vt_func = NULL;
 }
@@ -251,12 +251,12 @@ static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
  * @pre     The timer must have been initialized using @p chVTObjectInit()
  *          or @p chVTSetI() (or @p chVTSetI() variants).
  *
- * @param[in] vtp       the @p VirtualTimer structure pointer
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
  * @return              true if the timer is armed.
  *
  * @iclass
  */
-static inline bool chVTIsArmedI(VirtualTimer *vtp) {
+static inline bool chVTIsArmedI(virtual_timer_t *vtp) {
 
   chDbgCheckClassI();
 
@@ -267,11 +267,11 @@ static inline bool chVTIsArmedI(VirtualTimer *vtp) {
  * @brief   Disables a Virtual Timer.
  * @note    The timer is first checked and disabled only if armed.
  *
- * @param[in] vtp       the @p VirtualTimer structure pointer
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
  *
  * @iclass
  */
-static inline void chVTResetI(VirtualTimer *vtp) {
+static inline void chVTResetI(virtual_timer_t *vtp) {
 
   if (chVTIsArmedI(vtp))
     chVTDoResetI(vtp);
@@ -281,11 +281,11 @@ static inline void chVTResetI(VirtualTimer *vtp) {
  * @brief   Disables a Virtual Timer.
  * @note    The timer is first checked and disabled only if armed.
  *
- * @param[in] vtp       the @p VirtualTimer structure pointer
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
  *
  * @api
  */
-static inline void chVTReset(VirtualTimer *vtp) {
+static inline void chVTReset(virtual_timer_t *vtp) {
 
   chSysLock();
   chVTResetI(vtp);
@@ -297,7 +297,7 @@ static inline void chVTReset(VirtualTimer *vtp) {
  * @details If the virtual timer was already enabled then it is re-enabled
  *          using the new parameters.
  *
- * @param[in] vtp       the @p VirtualTimer structure pointer
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
  * @param[in] delay     the number of ticks before the operation timeouts.
  * @param[in] vtfunc    the timer callback function. After invoking the
  *                      callback the timer is disabled and the structure can
@@ -307,7 +307,7 @@ static inline void chVTReset(VirtualTimer *vtp) {
  *
  * @iclass
  */
-static inline void chVTSetI(VirtualTimer *vtp, systime_t delay,
+static inline void chVTSetI(virtual_timer_t *vtp, systime_t delay,
                             vtfunc_t vtfunc, void *par) {
 
   chVTResetI(vtp);
@@ -319,7 +319,7 @@ static inline void chVTSetI(VirtualTimer *vtp, systime_t delay,
  * @details If the virtual timer was already enabled then it is re-enabled
  *          using the new parameters.
  *
- * @param[in] vtp       the @p VirtualTimer structure pointer
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
  * @param[in] delay     the number of ticks before the operation timeouts.
  * @param[in] vtfunc    the timer callback function. After invoking the
  *                      callback the timer is disabled and the structure can
@@ -329,7 +329,7 @@ static inline void chVTSetI(VirtualTimer *vtp, systime_t delay,
  *
  * @api
  */
-static inline void chVTSet(VirtualTimer *vtp, systime_t delay,
+static inline void chVTSet(virtual_timer_t *vtp, systime_t delay,
                            vtfunc_t vtfunc, void *par) {
 
   chSysLock();
@@ -351,8 +351,8 @@ static inline void chVTDoTickI(void) {
   chDbgCheckClassI();
 
   vtlist.vt_systime++;
-  if (&vtlist != (VTList *)vtlist.vt_next) {
-    VirtualTimer *vtp;
+  if (&vtlist != (virtual_timers_list_t *)vtlist.vt_next) {
+    virtual_timer_t *vtp;
 
     --vtlist.vt_next->vt_time;
     while (!(vtp = vtlist.vt_next)->vt_time) {

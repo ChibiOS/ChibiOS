@@ -25,14 +25,14 @@
  * @file    chcond.c
  * @brief   Condition Variables code.
  *
- * @addtogroup condvars Condition Variables
+ * @addtogroup condition variables Condition Variables
  * @details This module implements the Condition Variables mechanism. Condition
- *          variables are an extensions to the Mutex subsystem and cannot
+ *          variables are an extensions to the mutex subsystem and cannot
  *          work alone.
  *          <h2>Operation mode</h2>
  *          The condition variable is a synchronization object meant to be
- *          used inside a zone protected by a @p Mutex. Mutexes and CondVars
- *          together can implement a Monitor construct.
+ *          used inside a zone protected by a mutex. Mutexes and condition
+ *          variables together can implement a Monitor construct.
  * @pre     In order to use the condition variable APIs the @p CH_USE_CONDVARS
  *          option must be enabled in @p chconf.h.
  * @{
@@ -40,16 +40,40 @@
 
 #include "ch.h"
 
-#if (CH_USE_CONDVARS && CH_USE_MUTEXES) || defined(__DOXYGEN__)
+#if CH_USE_CONDVARS || defined(__DOXYGEN__)
+
+/*===========================================================================*/
+/* Module local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
 /**
- * @brief   Initializes s @p CondVar structure.
+ * @brief   Initializes s @p condition_variable_t structure.
  *
- * @param[out] cp       pointer to a @p CondVar structure
+ * @param[out] cp       pointer to a @p condition_variable_t structure
  *
  * @init
  */
-void chCondInit(CondVar *cp) {
+void chCondInit(condition_variable_t *cp) {
 
   chDbgCheck(cp != NULL, "chCondInit");
 
@@ -59,11 +83,11 @@ void chCondInit(CondVar *cp) {
 /**
  * @brief   Signals one thread that is waiting on the condition variable.
  *
- * @param[in] cp        pointer to the @p CondVar structure
+ * @param[in] cp        pointer to the @p condition_variable_t structure
  *
  * @api
  */
-void chCondSignal(CondVar *cp) {
+void chCondSignal(condition_variable_t *cp) {
 
   chDbgCheck(cp != NULL, "chCondSignal");
 
@@ -80,11 +104,11 @@ void chCondSignal(CondVar *cp) {
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] cp        pointer to the @p CondVar structure
+ * @param[in] cp        pointer to the @p condition_variable_t structure
  *
  * @iclass
  */
-void chCondSignalI(CondVar *cp) {
+void chCondSignalI(condition_variable_t *cp) {
 
   chDbgCheckClassI();
   chDbgCheck(cp != NULL, "chCondSignalI");
@@ -96,11 +120,11 @@ void chCondSignalI(CondVar *cp) {
 /**
  * @brief   Signals all threads that are waiting on the condition variable.
  *
- * @param[in] cp        pointer to the @p CondVar structure
+ * @param[in] cp        pointer to the @p condition_variable_t structure
  *
  * @api
  */
-void chCondBroadcast(CondVar *cp) {
+void chCondBroadcast(condition_variable_t *cp) {
 
   chSysLock();
   chCondBroadcastI(cp);
@@ -115,11 +139,11 @@ void chCondBroadcast(CondVar *cp) {
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] cp        pointer to the @p CondVar structure
+ * @param[in] cp        pointer to the @p condition_variable_t structure
  *
  * @iclass
  */
-void chCondBroadcastI(CondVar *cp) {
+void chCondBroadcastI(condition_variable_t *cp) {
 
   chDbgCheckClassI();
   chDbgCheck(cp != NULL, "chCondBroadcastI");
@@ -138,17 +162,17 @@ void chCondBroadcastI(CondVar *cp) {
  *          is performed atomically.
  * @pre     The invoking thread <b>must</b> have at least one owned mutex.
  *
- * @param[in] cp        pointer to the @p CondVar structure
+ * @param[in] cp        pointer to the @p condition_variable_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
- * @retval RDY_OK       if the condvar has been signaled using
+ * @retval RDY_OK       if the condition variable has been signaled using
  *                      @p chCondSignal().
- * @retval RDY_RESET    if the condvar has been signaled using
+ * @retval RDY_RESET    if the condition variable has been signaled using
  *                      @p chCondBroadcast().
  *
  * @api
  */
-msg_t chCondWait(CondVar *cp) {
+msg_t chCondWait(condition_variable_t *cp) {
   msg_t msg;
 
   chSysLock();
@@ -164,17 +188,17 @@ msg_t chCondWait(CondVar *cp) {
  *          is performed atomically.
  * @pre     The invoking thread <b>must</b> have at least one owned mutex.
  *
- * @param[in] cp        pointer to the @p CondVar structure
+ * @param[in] cp        pointer to the @p condition_variable_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
- * @retval RDY_OK       if the condvar has been signaled using
+ * @retval RDY_OK       if the condition variable has been signaled using
  *                      @p chCondSignal().
- * @retval RDY_RESET    if the condvar has been signaled using
+ * @retval RDY_RESET    if the condition variable has been signaled using
  *                      @p chCondBroadcast().
  *
  * @sclass
  */
-msg_t chCondWaitS(CondVar *cp) {
+msg_t chCondWaitS(condition_variable_t *cp) {
   thread_t *ctp = currp;
   Mutex *mp;
   msg_t msg;
@@ -206,7 +230,7 @@ msg_t chCondWaitS(CondVar *cp) {
  * @post    Exiting the function because a timeout does not re-acquire the
  *          mutex, the mutex ownership is lost.
  *
- * @param[in] cp        pointer to the @p CondVar structure
+ * @param[in] cp        pointer to the @p condition_variable_t structure
  * @param[in] time      the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE no timeout.
@@ -214,16 +238,16 @@ msg_t chCondWaitS(CondVar *cp) {
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
- * @retval RDY_OK       if the condvar has been signaled using
+ * @retval RDY_OK       if the condition variable has been signaled using
  *                      @p chCondSignal().
- * @retval RDY_RESET    if the condvar has been signaled using
+ * @retval RDY_RESET    if the condition variable has been signaled using
  *                      @p chCondBroadcast().
- * @retval RDY_TIMEOUT  if the condvar has not been signaled within the
- *                      specified timeout.
+ * @retval RDY_TIMEOUT  if the condition variable has not been signaled within
+ *                      the specified timeout.
  *
  * @api
  */
-msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
+msg_t chCondWaitTimeout(condition_variable_t *cp, systime_t time) {
   msg_t msg;
 
   chSysLock();
@@ -243,7 +267,7 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
  * @post    Exiting the function because a timeout does not re-acquire the
  *          mutex, the mutex ownership is lost.
  *
- * @param[in] cp        pointer to the @p CondVar structure
+ * @param[in] cp        pointer to the @p condition_variable_t structure
  * @param[in] time      the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE no timeout.
@@ -251,16 +275,16 @@ msg_t chCondWaitTimeout(CondVar *cp, systime_t time) {
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
- * @retval RDY_OK       if the condvar has been signaled using
+ * @retval RDY_OK       if the condition variable has been signaled using
  *                      @p chCondSignal().
- * @retval RDY_RESET    if the condvar has been signaled using
+ * @retval RDY_RESET    if the condition variable has been signaled using
  *                      @p chCondBroadcast().
- * @retval RDY_TIMEOUT  if the condvar has not been signaled within the
- *                      specified timeout.
+ * @retval RDY_TIMEOUT  if the condition variable has not been signaled within
+ *                      the specified timeout.
  *
  * @sclass
  */
-msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
+msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time) {
   Mutex *mp;
   msg_t msg;
 
@@ -280,6 +304,6 @@ msg_t chCondWaitTimeoutS(CondVar *cp, systime_t time) {
 }
 #endif /* CH_USE_CONDVARS_TIMEOUT */
 
-#endif /* CH_USE_CONDVARS && CH_USE_MUTEXES */
+#endif /* CH_USE_CONDVARS */
 
 /** @} */
