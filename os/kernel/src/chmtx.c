@@ -69,14 +69,34 @@
 
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
 /**
- * @brief   Initializes s @p Mutex structure.
+ * @brief   Initializes s @p mutex_t structure.
  *
- * @param[out] mp       pointer to a @p Mutex structure
+ * @param[out] mp       pointer to a @p mutex_t structure
  *
  * @init
  */
-void chMtxInit(Mutex *mp) {
+void chMtxInit(mutex_t *mp) {
 
   chDbgCheck(mp != NULL, "chMtxInit");
 
@@ -89,11 +109,11 @@ void chMtxInit(Mutex *mp) {
  * @post    The mutex is locked and inserted in the per-thread stack of owned
  *          mutexes.
  *
- * @param[in] mp        pointer to the @p Mutex structure
+ * @param[in] mp        pointer to the @p mutex_t structure
  *
  * @api
  */
-void chMtxLock(Mutex *mp) {
+void chMtxLock(mutex_t *mp) {
 
   chSysLock();
 
@@ -107,11 +127,11 @@ void chMtxLock(Mutex *mp) {
  * @post    The mutex is locked and inserted in the per-thread stack of owned
  *          mutexes.
  *
- * @param[in] mp        pointer to the @p Mutex structure
+ * @param[in] mp        pointer to the @p mutex_t structure
  *
  * @sclass
  */
-void chMtxLockS(Mutex *mp) {
+void chMtxLockS(mutex_t *mp) {
   thread_t *ctp = currp;
 
   chDbgCheckClassS();
@@ -123,18 +143,20 @@ void chMtxLockS(Mutex *mp) {
        boosting the priority of all the affected threads to equal the priority
        of the running thread requesting the mutex.*/
     thread_t *tp = mp->m_owner;
+
     /* Does the running thread have higher priority than the mutex
        owning thread? */
     while (tp->p_prio < ctp->p_prio) {
       /* Make priority of thread tp match the running thread's priority.*/
       tp->p_prio = ctp->p_prio;
+
       /* The following states need priority queues reordering.*/
       switch (tp->p_state) {
       case THD_STATE_WTMTX:
         /* Re-enqueues the mutex owner with its new priority.*/
         queue_prio_insert(queue_dequeue(tp),
                           (threads_queue_t *)tp->p_u.wtobjp);
-        tp = ((Mutex *)tp->p_u.wtobjp)->m_owner;
+        tp = ((mutex_t *)tp->p_u.wtobjp)->m_owner;
         continue;
 #if CH_USE_CONDVARS |                                                       \
     (CH_USE_SEMAPHORES && CH_USE_SEMAPHORES_PRIORITY) |                     \
@@ -164,10 +186,12 @@ void chMtxLockS(Mutex *mp) {
       }
       break;
     }
+
     /* Sleep on the mutex.*/
     queue_prio_insert(ctp, &mp->m_queue);
     ctp->p_u.wtobjp = mp;
     chSchGoSleepS(THD_STATE_WTMTX);
+
     /* It is assumed that the thread performing the unlock operation assigns
        the mutex to this thread.*/
     chDbgAssert(mp->m_owner == ctp, "chMtxLockS(), #1", "not owner");
@@ -191,14 +215,14 @@ void chMtxLockS(Mutex *mp) {
  *          priority inheritance mechanism because it does not try to
  *          enter a sleep state.
  *
- * @param[in] mp        pointer to the @p Mutex structure
+ * @param[in] mp        pointer to the @p mutex_t structure
  * @return              The operation status.
  * @retval TRUE         if the mutex has been successfully acquired
  * @retval FALSE        if the lock attempt failed.
  *
  * @api
  */
-bool_t chMtxTryLock(Mutex *mp) {
+bool_t chMtxTryLock(mutex_t *mp) {
   bool_t b;
 
   chSysLock();
@@ -219,20 +243,21 @@ bool_t chMtxTryLock(Mutex *mp) {
  *          priority inheritance mechanism because it does not try to
  *          enter a sleep state.
  *
- * @param[in] mp        pointer to the @p Mutex structure
+ * @param[in] mp        pointer to the @p mutex_t structure
  * @return              The operation status.
  * @retval TRUE         if the mutex has been successfully acquired
  * @retval FALSE        if the lock attempt failed.
  *
  * @sclass
  */
-bool_t chMtxTryLockS(Mutex *mp) {
+bool_t chMtxTryLockS(mutex_t *mp) {
 
   chDbgCheckClassS();
   chDbgCheck(mp != NULL, "chMtxTryLockS");
 
   if (mp->m_owner != NULL)
     return FALSE;
+
   mp->m_owner = currp;
   mp->m_next = currp->p_mtxlist;
   currp->p_mtxlist = mp;
@@ -249,21 +274,24 @@ bool_t chMtxTryLockS(Mutex *mp) {
  *
  * @api
  */
-Mutex *chMtxUnlock(void) {
+mutex_t *chMtxUnlock(void) {
   thread_t *ctp = currp;
-  Mutex *ump, *mp;
+  mutex_t *ump, *mp;
 
   chSysLock();
+
   chDbgAssert(ctp->p_mtxlist != NULL,
               "chMtxUnlock(), #1",
               "owned mutexes list empty");
   chDbgAssert(ctp->p_mtxlist->m_owner == ctp,
               "chMtxUnlock(), #2",
               "ownership failure");
-  /* Removes the top Mutex from the thread's owned mutexes list and marks it
+
+  /* Removes the top mutex from the thread's owned mutexes list and marks it
      as not owned.*/
   ump = ctp->p_mtxlist;
   ctp->p_mtxlist = ump->m_next;
+
   /* If a thread is waiting on the mutex then the fun part begins.*/
   if (chMtxQueueNotEmptyS(ump)) {
     thread_t *tp;
@@ -280,9 +308,11 @@ Mutex *chMtxUnlock(void) {
         newprio = mp->m_queue.p_next->p_prio;
       mp = mp->m_next;
     }
+
     /* Assigns to the current thread the highest priority among all the
        waiting threads.*/
     ctp->p_prio = newprio;
+
     /* Awakens the highest priority thread waiting for the unlocked mutex and
        assigns the mutex to it.*/
     tp = queue_fifo_remove(&ump->m_queue);
@@ -309,9 +339,9 @@ Mutex *chMtxUnlock(void) {
  *
  * @sclass
  */
-Mutex *chMtxUnlockS(void) {
+mutex_t *chMtxUnlockS(void) {
   thread_t *ctp = currp;
-  Mutex *ump, *mp;
+  mutex_t *ump, *mp;
 
   chDbgCheckClassS();
   chDbgAssert(ctp->p_mtxlist != NULL,
@@ -321,10 +351,11 @@ Mutex *chMtxUnlockS(void) {
               "chMtxUnlockS(), #2",
               "ownership failure");
 
-  /* Removes the top Mutex from the owned mutexes list and marks it as not
+  /* Removes the top mutex from the owned mutexes list and marks it as not
      owned.*/
   ump = ctp->p_mtxlist;
   ctp->p_mtxlist = ump->m_next;
+
   /* If a thread is waiting on the mutex then the fun part begins.*/
   if (chMtxQueueNotEmptyS(ump)) {
     thread_t *tp;
@@ -339,9 +370,11 @@ Mutex *chMtxUnlockS(void) {
          priority will have at least that priority.*/
       if (chMtxQueueNotEmptyS(mp) && (mp->m_queue.p_next->p_prio > newprio))
         newprio = mp->m_queue.p_next->p_prio;
+
       mp = mp->m_next;
     }
     ctp->p_prio = newprio;
+
     /* Awakens the highest priority thread waiting for the unlocked mutex and
        assigns the mutex to it.*/
     tp = queue_fifo_remove(&ump->m_queue);
@@ -372,7 +405,7 @@ void chMtxUnlockAll(void) {
   chSysLock();
   if (ctp->p_mtxlist != NULL) {
     do {
-      Mutex *ump = ctp->p_mtxlist;
+      mutex_t *ump = ctp->p_mtxlist;
       ctp->p_mtxlist = ump->m_next;
       if (chMtxQueueNotEmptyS(ump)) {
         thread_t *tp = queue_fifo_remove(&ump->m_queue);

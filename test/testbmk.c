@@ -58,7 +58,7 @@
 
 static semaphore_t sem1;
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
-static Mutex mtx1;
+static mutex_t mtx1;
 #endif
 
 static msg_t thread1(void *p) {
@@ -650,15 +650,15 @@ static void bmk13_execute(void) {
   test_println(" bytes");
 #if CH_USE_EVENTS || defined(__DOXYGEN__)
   test_print("--- EventS: ");
-  test_printn(sizeof(EventSource));
+  test_printn(sizeof(event_source_t));
   test_println(" bytes");
   test_print("--- EventL: ");
-  test_printn(sizeof(EventListener));
+  test_printn(sizeof(event_listener_t));
   test_println(" bytes");
 #endif
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
   test_print("--- Mutex : ");
-  test_printn(sizeof(Mutex));
+  test_printn(sizeof(mutex_t));
   test_println(" bytes");
 #endif
 #if CH_USE_CONDVARS || defined(__DOXYGEN__)
@@ -673,7 +673,7 @@ static void bmk13_execute(void) {
 #endif
 #if CH_USE_MAILBOXES || defined(__DOXYGEN__)
   test_print("--- MailB.: ");
-  test_printn(sizeof(Mailbox));
+  test_printn(sizeof(mailbox_t));
   test_println(" bytes");
 #endif
 }

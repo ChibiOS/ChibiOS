@@ -31,12 +31,25 @@
 
 #if CH_USE_MAILBOXES || defined(__DOXYGEN__)
 
-/*
- * Module dependencies check.
- */
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
 #if !CH_USE_SEMAPHORES
 #error "CH_USE_MAILBOXES requires CH_USE_SEMAPHORES"
 #endif
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
 
 /**
  * @brief   Structure representing a mailbox object.
@@ -52,79 +65,11 @@ typedef struct {
                                                     @p semaphore_t.         */
   semaphore_t           mb_emptysem;    /**< @brief Empty counter
                                                     @p semaphore_t.         */
-} Mailbox;
+} mailbox_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n);
-  void chMBReset(Mailbox *mbp);
-  msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t timeout);
-  msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t timeout);
-  msg_t chMBPostI(Mailbox *mbp, msg_t msg);
-  msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t timeout);
-  msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t timeout);
-  msg_t chMBPostAheadI(Mailbox *mbp, msg_t msg);
-  msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t timeout);
-  msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t timeout);
-  msg_t chMBFetchI(Mailbox *mbp, msg_t *msgp);
-#ifdef __cplusplus
-}
-#endif
-
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Returns the mailbox buffer size.
- *
- * @param[in] mbp       the pointer to an initialized Mailbox object
- *
- * @iclass
- */
-#define chMBSizeI(mbp)                                                      \
-        ((mbp)->mb_top - (mbp)->mb_buffer)
-
-/**
- * @brief   Returns the number of free message slots into a mailbox.
- * @note    Can be invoked in any system state but if invoked out of a locked
- *          state then the returned value may change after reading.
- * @note    The returned value can be less than zero when there are waiting
- *          threads on the internal semaphore.
- *
- * @param[in] mbp       the pointer to an initialized Mailbox object
- * @return              The number of empty message slots.
- *
- * @iclass
- */
-#define chMBGetFreeCountI(mbp) chSemGetCounterI(&(mbp)->mb_emptysem)
-
-/**
- * @brief   Returns the number of used message slots into a mailbox.
- * @note    Can be invoked in any system state but if invoked out of a locked
- *          state then the returned value may change after reading.
- * @note    The returned value can be less than zero when there are waiting
- *          threads on the internal semaphore.
- *
- * @param[in] mbp       the pointer to an initialized Mailbox object
- * @return              The number of queued messages.
- *
- * @iclass
- */
-#define chMBGetUsedCountI(mbp) chSemGetCounterI(&(mbp)->mb_fullsem)
-
-/**
- * @brief   Returns the next message in the queue without removing it.
- * @pre     A message must be waiting in the queue for this function to work
- *          or it would return garbage. The correct way to use this macro is
- *          to use @p chMBGetFullCountI() and then use this macro, all within
- *          a lock state.
- *
- * @iclass
- */
-#define chMBPeekI(mbp) (*(mbp)->mb_rdptr)
-/** @} */
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief   Data part of a static mailbox initializer.
@@ -154,7 +99,99 @@ extern "C" {
  * @param[in] size      size of the mailbox buffer area
  */
 #define MAILBOX_DECL(name, buffer, size)                                \
-  Mailbox name = _MAILBOX_DATA(name, buffer, size)
+  mailbox_t name = _MAILBOX_DATA(name, buffer, size)
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chMBInit(mailbox_t *mbp, msg_t *buf, cnt_t n);
+  void chMBReset(mailbox_t *mbp);
+  msg_t chMBPost(mailbox_t *mbp, msg_t msg, systime_t timeout);
+  msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t timeout);
+  msg_t chMBPostI(mailbox_t *mbp, msg_t msg);
+  msg_t chMBPostAhead(mailbox_t *mbp, msg_t msg, systime_t timeout);
+  msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t timeout);
+  msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg);
+  msg_t chMBFetch(mailbox_t *mbp, msg_t *msgp, systime_t timeout);
+  msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t timeout);
+  msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp);
+#ifdef __cplusplus
+}
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Returns the mailbox buffer size.
+ *
+ * @param[in] mbp       the pointer to an initialized mailbox_t object
+ *
+ * @iclass
+ */
+static inline size_t chMBSizeI(mailbox_t *mbp) {
+
+  return (size_t)(mbp->mb_top - mbp->mb_buffer);
+}
+
+/**
+ * @brief   Returns the number of free message slots into a mailbox.
+ * @note    Can be invoked in any system state but if invoked out of a locked
+ *          state then the returned value may change after reading.
+ * @note    The returned value can be less than zero when there are waiting
+ *          threads on the internal semaphore.
+ *
+ * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @return              The number of empty message slots.
+ *
+ * @iclass
+ */
+static inline cnt_t chMBGetFreeCountI(mailbox_t *mbp) {
+
+  chDbgCheckClassI();
+
+  return chSemGetCounterI(&mbp->mb_emptysem);
+}
+
+/**
+ * @brief   Returns the number of used message slots into a mailbox.
+ * @note    Can be invoked in any system state but if invoked out of a locked
+ *          state then the returned value may change after reading.
+ * @note    The returned value can be less than zero when there are waiting
+ *          threads on the internal semaphore.
+ *
+ * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @return              The number of queued messages.
+ *
+ * @iclass
+ */
+static inline cnt_t chMBGetUsedCountI(mailbox_t *mbp) {
+
+  chDbgCheckClassI();
+
+  return chSemGetCounterI(&mbp->mb_fullsem);
+}
+
+/**
+ * @brief   Returns the next message in the queue without removing it.
+ * @pre     A message must be waiting in the queue for this function to work
+ *          or it would return garbage. The correct way to use this macro is
+ *          to use @p chMBGetFullCountI() and then use this macro, all within
+ *          a lock state.
+ *
+ * @iclass
+ */
+static inline cnt_t chMBPeekI(mailbox_t *mbp) {
+
+  chDbgCheckClassI();
+
+  return *mbp->mb_rdptr;
+}
 
 #endif /* CH_USE_MAILBOXES */
 

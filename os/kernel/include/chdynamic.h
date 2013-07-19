@@ -74,11 +74,11 @@ extern "C" {
   thread_t *chThdAddRef(thread_t *tp);
   void chThdRelease(thread_t *tp);
 #if CH_USE_HEAP
-  thread_t *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
+  thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
                                 tprio_t prio, tfunc_t pf, void *arg);
 #endif
 #if CH_USE_MEMPOOLS
-  thread_t *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
+  thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
                                       tfunc_t pf, void *arg);
 #endif
 #ifdef __cplusplus

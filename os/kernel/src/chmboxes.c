@@ -53,16 +53,38 @@
 #include "ch.h"
 
 #if CH_USE_MAILBOXES || defined(__DOXYGEN__)
+
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
 /**
- * @brief   Initializes a Mailbox object.
+ * @brief   Initializes a @p mailbox_t object.
  *
- * @param[out] mbp      the pointer to the Mailbox structure to be initialized
+ * @param[out] mbp      the pointer to the @p mailbox_t structure to be
+ *                      initialized
  * @param[in] buf       pointer to the messages buffer as an array of @p msg_t
  * @param[in] n         number of elements in the buffer array
  *
  * @init
  */
-void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n) {
+void chMBInit(mailbox_t *mbp, msg_t *buf, cnt_t n) {
 
   chDbgCheck((mbp != NULL) && (buf != NULL) && (n > 0), "chMBInit");
 
@@ -73,15 +95,15 @@ void chMBInit(Mailbox *mbp, msg_t *buf, cnt_t n) {
 }
 
 /**
- * @brief   Resets a Mailbox object.
+ * @brief   Resets a @p mailbox_t object.
  * @details All the waiting threads are resumed with status @p RDY_RESET and
  *          the queued messages are lost.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  *
  * @api
  */
-void chMBReset(Mailbox *mbp) {
+void chMBReset(mailbox_t *mbp) {
 
   chDbgCheck(mbp != NULL, "chMBReset");
 
@@ -98,7 +120,7 @@ void chMBReset(Mailbox *mbp) {
  * @details The invoking thread waits until a empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -112,7 +134,7 @@ void chMBReset(Mailbox *mbp) {
  *
  * @api
  */
-msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
+msg_t chMBPost(mailbox_t *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chSysLock();
@@ -126,7 +148,7 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
  * @details The invoking thread waits until a empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -140,7 +162,7 @@ msg_t chMBPost(Mailbox *mbp, msg_t msg, systime_t time) {
  *
  * @sclass
  */
-msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
+msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
@@ -162,7 +184,7 @@ msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
  * @details This variant is non-blocking, the function returns a timeout
  *          condition if the queue is full.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
  * @return              The operation status.
  * @retval RDY_OK       if a message has been correctly posted.
@@ -171,7 +193,7 @@ msg_t chMBPostS(Mailbox *mbp, msg_t msg, systime_t time) {
  *
  * @iclass
  */
-msg_t chMBPostI(Mailbox *mbp, msg_t msg) {
+msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
 
   chDbgCheckClassI();
   chDbgCheck(mbp != NULL, "chMBPostI");
@@ -191,7 +213,7 @@ msg_t chMBPostI(Mailbox *mbp, msg_t msg) {
  * @details The invoking thread waits until a empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -205,7 +227,7 @@ msg_t chMBPostI(Mailbox *mbp, msg_t msg) {
  *
  * @api
  */
-msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
+msg_t chMBPostAhead(mailbox_t *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chSysLock();
@@ -219,7 +241,7 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
  * @details The invoking thread waits until a empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -233,7 +255,7 @@ msg_t chMBPostAhead(Mailbox *mbp, msg_t msg, systime_t time) {
  *
  * @sclass
  */
-msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
+msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
@@ -255,7 +277,7 @@ msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
  * @details This variant is non-blocking, the function returns a timeout
  *          condition if the queue is full.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
  * @return              The operation status.
  * @retval RDY_OK       if a message has been correctly posted.
@@ -264,7 +286,7 @@ msg_t chMBPostAheadS(Mailbox *mbp, msg_t msg, systime_t time) {
  *
  * @iclass
  */
-msg_t chMBPostAheadI(Mailbox *mbp, msg_t msg) {
+msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
 
   chDbgCheckClassI();
   chDbgCheck(mbp != NULL, "chMBPostAheadI");
@@ -284,7 +306,7 @@ msg_t chMBPostAheadI(Mailbox *mbp, msg_t msg) {
  * @details The invoking thread waits until a message is posted in the mailbox
  *          or the specified time runs out.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[out] msgp     pointer to a message variable for the received message
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -298,7 +320,7 @@ msg_t chMBPostAheadI(Mailbox *mbp, msg_t msg) {
  *
  * @api
  */
-msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
+msg_t chMBFetch(mailbox_t *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;
 
   chSysLock();
@@ -312,7 +334,7 @@ msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
  * @details The invoking thread waits until a message is posted in the mailbox
  *          or the specified time runs out.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[out] msgp     pointer to a message variable for the received message
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -326,7 +348,7 @@ msg_t chMBFetch(Mailbox *mbp, msg_t *msgp, systime_t time) {
  *
  * @sclass
  */
-msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
+msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
@@ -348,7 +370,7 @@ msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
  * @details This variant is non-blocking, the function returns a timeout
  *          condition if the queue is empty.
  *
- * @param[in] mbp       the pointer to an initialized Mailbox object
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[out] msgp     pointer to a message variable for the received message
  * @return              The operation status.
  * @retval RDY_OK       if a message has been correctly fetched.
@@ -357,7 +379,7 @@ msg_t chMBFetchS(Mailbox *mbp, msg_t *msgp, systime_t time) {
  *
  * @iclass
  */
-msg_t chMBFetchI(Mailbox *mbp, msg_t *msgp) {
+msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp) {
 
   chDbgCheckClassI();
   chDbgCheck((mbp != NULL) && (msgp != NULL), "chMBFetchI");

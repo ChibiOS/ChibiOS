@@ -31,6 +31,22 @@
 
 #if CH_USE_REGISTRY || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
 /**
  * @brief   ChibiOS/RT memory signature record.
  */
@@ -57,39 +73,10 @@ typedef struct {
   uint8_t   cf_off_time;            /**< @brief Offset of @p p_time field.  */
 } chdebug_t;
 
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Sets the current thread name.
- * @pre     This function only stores the pointer to the name if the option
- *          @p CH_USE_REGISTRY is enabled else no action is performed.
- *
- * @param[in] p         thread name as a zero terminated string
- *
- * @api
- */
-#define chRegSetThreadName(p) (currp->p_name = (p))
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
-/**
- * @brief   Returns the name of the specified thread.
- * @pre     This function only returns the pointer to the name if the option
- *          @p CH_USE_REGISTRY is enabled else @p NULL is returned.
- *
- * @param[in] tp        pointer to the thread
- *
- * @return              Thread name as a zero terminated string.
- * @retval NULL         if the thread name has not been set.
- */
-#define chRegGetThreadName(tp) ((tp)->p_name)
-/** @} */
-#else /* !CH_USE_REGISTRY */
-#define chRegSetThreadName(p)
-#define chRegGetThreadName(tp) NULL
-#endif /* !CH_USE_REGISTRY */
-
-#if CH_USE_REGISTRY || defined(__DOXYGEN__)
 /**
  * @brief   Removes a thread from the registry list.
  * @note    This macro is not meant for use in application code.
@@ -113,6 +100,10 @@ typedef struct {
   (tp)->p_older->p_newer = rlist.r_older = (tp);                            \
 }
 
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -122,6 +113,52 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Sets the current thread name.
+ * @pre     This function only stores the pointer to the name if the option
+ *          @p CH_USE_REGISTRY is enabled else no action is performed.
+ *
+ * @param[in] p         thread name as a zero terminated string
+ *
+ * @api
+ */
+static inline void chRegSetThreadName(const char *name) {
+
+#if CH_USE_REGISTRY
+  currp->p_name = name;
+#else
+  (void)name;
+#endif
+}
+
+/**
+ * @brief   Returns the name of the specified thread.
+ * @pre     This function only returns the pointer to the name if the option
+ *          @p CH_USE_REGISTRY is enabled else @p NULL is returned.
+ *
+ * @param[in] tp        pointer to the thread
+ *
+ * @return              Thread name as a zero terminated string.
+ * @retval NULL         if the thread name has not been set.
+ *
+ * @iclass
+ */
+static inline const char *chRegGetThreadNameI(thread_t *tp) {
+
+  chDbgCheckClassI();
+
+#if CH_USE_REGISTRY
+  return tp->p_name;
+#else
+  (void)tp;
+  return NULL;
+#endif
+}
 
 #endif /* CH_USE_REGISTRY */
 

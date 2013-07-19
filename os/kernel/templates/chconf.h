@@ -307,20 +307,6 @@
 #endif
 
 /**
- * @brief   C-runtime allocator.
- * @details If enabled the the heap allocator APIs just wrap the C-runtime
- *          @p malloc() and @p free() functions.
- *
- * @note    The default is @p FALSE.
- * @note    Requires @p CH_USE_HEAP.
- * @note    The C-runtime may or may not require @p CH_USE_MEMCORE, see the
- *          appropriate documentation.
- */
-#if !defined(CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
-#define CH_USE_MALLOC_HEAP              FALSE
-#endif
-
-/**
  * @brief   Memory Pools Allocator APIs.
  * @details If enabled then the memory pools allocator APIs are included
  *          in the kernel.

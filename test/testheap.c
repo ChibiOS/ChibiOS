@@ -48,7 +48,7 @@
 
 #define SIZE 16
 
-static MemoryHeap test_heap;
+static memory_heap_t test_heap;
 
 /**
  * @page test_heap_001 Allocation and fragmentation test

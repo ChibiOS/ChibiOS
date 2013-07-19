@@ -200,7 +200,7 @@ msg_t chCondWait(condition_variable_t *cp) {
  */
 msg_t chCondWaitS(condition_variable_t *cp) {
   thread_t *ctp = currp;
-  Mutex *mp;
+  mutex_t *mp;
   msg_t msg;
 
   chDbgCheckClassS();
@@ -285,7 +285,7 @@ msg_t chCondWaitTimeout(condition_variable_t *cp, systime_t time) {
  * @sclass
  */
 msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time) {
-  Mutex *mp;
+  mutex_t *mp;
   msg_t msg;
 
   chDbgCheckClassS();

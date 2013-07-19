@@ -31,6 +31,26 @@
 
 #if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+#if !CH_USE_MEMCORE
+#error "CH_USE_MEMPOOLS requires CH_USE_MEMCORE"
+#endif
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
 /**
  * @brief   Memory pool free object header.
  */
@@ -46,9 +66,13 @@ typedef struct {
   struct pool_header    *mp_next;       /**< @brief Pointer to the header.  */
   size_t                mp_object_size; /**< @brief Memory pool objects
                                                     size.                   */
-  memgetfunc_t          mp_provider;    /**< @brief Memory blocks provider for
-                                                    this pool.              */
-} MemoryPool;
+  memgetfunc_t          mp_provider;    /**< @brief Memory blocks provider
+                                                    for this pool.          */
+} memory_pool_t;
+
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief   Data part of a static memory pool initializer.
@@ -73,59 +97,70 @@ typedef struct {
  *                     if the pool is not allowed to grow automatically
  */
 #define MEMORYPOOL_DECL(name, size, provider)                               \
-  MemoryPool name = _MEMORYPOOL_DATA(name, size, provider)
+  memory_pool_t name = _MEMORYPOOL_DATA(name, size, provider)
 
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Adds an object to a memory pool.
- * @pre     The memory pool must be already been initialized.
- * @pre     The added object must be of the right size for the specified
- *          memory pool.
- * @pre     The added object must be memory aligned to the size of
- *          @p stkalign_t type.
- * @note    This function is just an alias for @p chPoolFree() and has been
- *          added for clarity.
- *
- * @param[in] mp        pointer to a @p MemoryPool structure
- * @param[in] objp      the pointer to the object to be added
- *
- * @api
- */
-#define chPoolAdd(mp, objp) chPoolFree(mp, objp)
-
-/**
- * @brief   Adds an object to a memory pool.
- * @pre     The memory pool must be already been initialized.
- * @pre     The added object must be of the right size for the specified
- *          memory pool.
- * @pre     The added object must be memory aligned to the size of
- *          @p stkalign_t type.
- * @note    This function is just an alias for @p chPoolFree() and has been
- *          added for clarity.
- *
- * @param[in] mp        pointer to a @p MemoryPool structure
- * @param[in] objp      the pointer to the object to be added
- *
- * @iclass
- */
-#define chPoolAddI(mp, objp) chPoolFreeI(mp, objp)
-/** @} */
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider);
-  void chPoolLoadArray(MemoryPool *mp, void *p, size_t n);
-  void *chPoolAllocI(MemoryPool *mp);
-  void *chPoolAlloc(MemoryPool *mp);
-  void chPoolFreeI(MemoryPool *mp, void *objp);
-  void chPoolFree(MemoryPool *mp, void *objp);
+  void chPoolInit(memory_pool_t *mp, size_t size, memgetfunc_t provider);
+  void chPoolLoadArray(memory_pool_t *mp, void *p, size_t n);
+  void *chPoolAllocI(memory_pool_t *mp);
+  void *chPoolAlloc(memory_pool_t *mp);
+  void chPoolFreeI(memory_pool_t *mp, void *objp);
+  void chPoolFree(memory_pool_t *mp, void *objp);
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Adds an object to a memory pool.
+ * @pre     The memory pool must be already been initialized.
+ * @pre     The added object must be of the right size for the specified
+ *          memory pool.
+ * @pre     The added object must be memory aligned to the size of
+ *          @p stkalign_t type.
+ * @note    This function is just an alias for @p chPoolFree() and has been
+ *          added for clarity.
+ *
+ * @param[in] mp        pointer to a @p memory_pool_t structure
+ * @param[in] objp      the pointer to the object to be added
+ *
+ * @api
+ */
+static inline void chPoolAdd(memory_pool_t *mp, void *objp) {
+
+  chPoolFree(mp, objp);
+}
+
+/**
+ * @brief   Adds an object to a memory pool.
+ * @pre     The memory pool must be already been initialized.
+ * @pre     The added object must be of the right size for the specified
+ *          memory pool.
+ * @pre     The added object must be memory aligned to the size of
+ *          @p stkalign_t type.
+ * @note    This function is just an alias for @p chPoolFree() and has been
+ *          added for clarity.
+ *
+ * @param[in] mp        pointer to a @p memory_pool_t structure
+ * @param[in] objp      the pointer to the object to be added
+ *
+ * @iclass
+ */
+static inline void chPoolAddI(memory_pool_t *mp, void *objp) {
+
+  chDbgCheckClassI();
+
+  chPoolFreeI(mp, objp);
+}
 
 #endif /* CH_USE_MEMPOOLS */
 

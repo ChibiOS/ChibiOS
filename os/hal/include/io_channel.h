@@ -230,7 +230,7 @@ typedef struct {
 #define _base_asynchronous_channel_data                                     \
   _base_channel_data                                                        \
   /* I/O condition event source.*/                                          \
-  EventSource           event;
+  event_source_t        event;
 
 /**
  * @extends BaseChannelVMT
@@ -264,11 +264,11 @@ typedef struct {
  *
  * @param[in] ip        pointer to a @p BaseAsynchronousChannel or derived
  *                      class
- * @return              A pointer to an @p EventSource object.
+ * @return              A pointer to an @p event_source_t object.
  *
  * @api
  */
-#define chnGetEventSource(ip) (&((ip)->event))
+#define chnGetevent_source_t(ip) (&((ip)->event))
 
 /**
  * @brief   Adds status flags to the listeners's flags mask.

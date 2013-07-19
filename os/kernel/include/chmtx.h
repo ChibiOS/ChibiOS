@@ -31,32 +31,37 @@
 
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
 /**
  * @brief   Mutex structure.
  */
-typedef struct Mutex {
+typedef struct mutex {
   threads_queue_t       m_queue;    /**< @brief Queue of the threads sleeping
-                                                on this Mutex.              */
+                                                on this mutex.              */
   thread_t              *m_owner;   /**< @brief Owner @p thread_t pointer or
                                                 @p NULL.                    */
-  struct Mutex          *m_next;    /**< @brief Next @p Mutex into an
+  mutex_t               *m_next;    /**< @brief Next @p mutex_t into an
                                                 owner-list or @p NULL.      */
-} Mutex;
+} mutex_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void chMtxInit(Mutex *mp);
-  void chMtxLock(Mutex *mp);
-  void chMtxLockS(Mutex *mp);
-  bool_t chMtxTryLock(Mutex *mp);
-  bool_t chMtxTryLockS(Mutex *mp);
-  Mutex *chMtxUnlock(void);
-  Mutex *chMtxUnlockS(void);
-  void chMtxUnlockAll(void);
-#ifdef __cplusplus
-}
-#endif
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief   Data part of a static mutex initializer.
@@ -74,20 +79,45 @@ extern "C" {
  *
  * @param[in] name      the name of the mutex variable
  */
-#define MUTEX_DECL(name) Mutex name = _MUTEX_DATA(name)
+#define MUTEX_DECL(name) mutex_t name = _MUTEX_DATA(name)
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void chMtxInit(mutex_t *mp);
+  void chMtxLock(mutex_t *mp);
+  void chMtxLockS(mutex_t *mp);
+  bool_t chMtxTryLock(mutex_t *mp);
+  bool_t chMtxTryLockS(mutex_t *mp);
+  mutex_t *chMtxUnlock(void);
+  mutex_t *chMtxUnlockS(void);
+  void chMtxUnlockAll(void);
+#ifdef __cplusplus
+}
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
 
 /**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Returns @p TRUE if the mutex queue contains at least a waiting
+ * @brief   Returns @p true if the mutex queue contains at least a waiting
  *          thread.
  *
+ * @deprecated
  * @sclass
  */
-#define chMtxQueueNotEmptyS(mp) queue_notempty(&(mp)->m_queue)
-/** @} */
+static inline bool chMtxQueueNotEmptyS(mutex_t *mp) {
+
+  chDbgCheckClassS();
+
+  return queue_notempty(&mp->m_queue);
+}
 
 #endif /* CH_USE_MUTEXES */
 

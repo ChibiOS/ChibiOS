@@ -93,14 +93,16 @@
  * @note    Multiple Event Listeners can specify the same bits to be ORed to
  *          different threads.
  *
- * @param[in] esp       pointer to the  @p EventSource structure
- * @param[in] elp       pointer to the @p EventListener structure
+ * @param[in] esp       pointer to the  @p event_source_t structure
+ * @param[in] elp       pointer to the @p event_listener_t structure
  * @param[in] mask      the mask of event flags to be ORed to the thread when
  *                      the event source is broadcasted
  *
  * @api
  */
-void chEvtRegisterMask(EventSource *esp, EventListener *elp, eventmask_t mask) {
+void chEvtRegisterMask(event_source_t *esp,
+                       event_listener_t *elp,
+                       eventmask_t mask) {
 
   chDbgCheck((esp != NULL) && (elp != NULL), "chEvtRegisterMask");
 
@@ -121,19 +123,19 @@ void chEvtRegisterMask(EventSource *esp, EventListener *elp, eventmask_t mask) {
  *          operations in inverse order of the register operations (elements
  *          are found on top of the list).
  *
- * @param[in] esp       pointer to the  @p EventSource structure
- * @param[in] elp       pointer to the @p EventListener structure
+ * @param[in] esp       pointer to the  @p event_source_t structure
+ * @param[in] elp       pointer to the @p event_listener_t structure
  *
  * @api
  */
-void chEvtUnregister(EventSource *esp, EventListener *elp) {
-  EventListener *p;
+void chEvtUnregister(event_source_t *esp, event_listener_t *elp) {
+  event_listener_t *p;
 
   chDbgCheck((esp != NULL) && (elp != NULL), "chEvtUnregister");
 
-  p = (EventListener *)esp;
+  p = (event_listener_t *)esp;
   chSysLock();
-  while (p->el_next != (EventListener *)esp) {
+  while (p->el_next != (event_listener_t *)esp) {
     if (p->el_next == elp) {
       p->el_next = elp->el_next;
       break;
@@ -186,27 +188,27 @@ eventmask_t chEvtAddEvents(eventmask_t mask) {
  * @brief   Signals all the Event Listeners registered on the specified Event
  *          Source.
  * @details This function variants ORs the specified event flags to all the
- *          threads registered on the @p EventSource in addition to the event
- *          flags specified by the threads themselves in the
- *          @p EventListener objects.
+ *          threads registered on the @p event_source_t in addition to the
+ *          event flags specified by the threads themselves in the
+ *          @p event_listener_t objects.
  * @post    This function does not reschedule so a call to a rescheduling
  *          function must be performed before unlocking the kernel. Note that
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] esp       pointer to the @p EventSource structure
+ * @param[in] esp       pointer to the @p event_source_t structure
  * @param[in] flags     the flags set to be added to the listener flags mask
  *
  * @iclass
  */
-void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags) {
-  EventListener *elp;
+void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
+  event_listener_t *elp;
 
   chDbgCheckClassI();
   chDbgCheck(esp != NULL, "chEvtBroadcastMaskI");
 
   elp = esp->es_next;
-  while (elp != (EventListener *)esp) {
+  while (elp != (event_listener_t *)esp) {
     elp->el_flags |= flags;
     chEvtSignalI(elp->el_listener, elp->el_mask);
     elp = elp->el_next;
@@ -214,18 +216,18 @@ void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags) {
 }
 
 /**
- * @brief   Returns the flags associated to an @p EventListener.
- * @details The flags are returned and the @p EventListener flags mask is
+ * @brief   Returns the flags associated to an @p event_listener_t.
+ * @details The flags are returned and the @p event_listener_t flags mask is
  *          cleared.
  *
- * @param[in] elp       pointer to the @p EventListener structure
+ * @param[in] elp       pointer to the @p event_listener_t structure
  * @return              The flags added to the listener by the associated
  *                      event source.
  *
  * @iclass
  */
-flagsmask_t chEvtGetAndClearFlags(EventListener *elp) {
-  flagsmask_t flags;
+eventflags_t chEvtGetAndClearFlags(event_listener_t *elp) {
+  eventflags_t flags;
 
   chSysLock();
 
@@ -284,16 +286,16 @@ void chEvtSignalI(thread_t *tp, eventmask_t mask) {
  * @brief   Signals all the Event Listeners registered on the specified Event
  *          Source.
  * @details This function variants ORs the specified event flags to all the
- *          threads registered on the @p EventSource in addition to the event
- *          flags specified by the threads themselves in the
- *          @p EventListener objects.
+ *          threads registered on the @p event_source_t in addition to the
+ *          event flags specified by the threads themselves in the
+ *          @p event_listener_t objects.
  *
- * @param[in] esp       pointer to the @p EventSource structure
+ * @param[in] esp       pointer to the @p event_source_t structure
  * @param[in] flags     the flags set to be added to the listener flags mask
  *
  * @api
  */
-void chEvtBroadcastFlags(EventSource *esp, flagsmask_t flags) {
+void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags) {
 
   chSysLock();
   chEvtBroadcastFlagsI(esp, flags);
@@ -302,18 +304,18 @@ void chEvtBroadcastFlags(EventSource *esp, flagsmask_t flags) {
 }
 
 /**
- * @brief   Returns the flags associated to an @p EventListener.
- * @details The flags are returned and the @p EventListener flags mask is
+ * @brief   Returns the flags associated to an @p event_listener_t.
+ * @details The flags are returned and the @p event_listener_t flags mask is
  *          cleared.
  *
- * @param[in] elp       pointer to the @p EventListener structure
+ * @param[in] elp       pointer to the @p event_listener_t structure
  * @return              The flags added to the listener by the associated
  *                      event source.
  *
  * @iclass
  */
-flagsmask_t chEvtGetAndClearFlagsI(EventListener *elp) {
-  flagsmask_t flags;
+eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp) {
+  eventflags_t flags;
 
   flags = elp->el_flags;
   elp->el_flags = 0;
@@ -444,8 +446,8 @@ eventmask_t chEvtWaitAll(eventmask_t mask) {
  * @details The function waits for one event among those specified in
  *          @p mask to become pending then the event is cleared and returned.
  * @note    One and only one event is served in the function, the one with the
- *          lowest event id. The function is meant to be invoked into a loop in
- *          order to serve all the pending events.<br>
+ *          lowest event id. The function is meant to be invoked into a loop
+ *          in order to serve all the pending events.<br>
  *          This means that Event Listeners with a lower event identifier have
  *          an higher priority.
  *

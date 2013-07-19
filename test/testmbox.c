@@ -155,7 +155,7 @@ static void mbox1_execute(void) {
   /*
    * Testing I-Class.
    */
-  chSysLock()
+  chSysLock();
   msg1 = chMBPostI(&mb1, 'A');
   test_assert(22, msg1 == RDY_OK, "wrong wake-up message");
   msg1 = chMBPostI(&mb1, 'B');

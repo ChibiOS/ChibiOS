@@ -48,8 +48,28 @@
 
 #if CH_USE_MEMCORE || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
 static uint8_t *nextmem;
 static uint8_t *endmem;
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
 /**
  * @brief   Low level memory manager initialization.
@@ -60,10 +80,12 @@ void _core_init(void) {
 #if CH_MEMCORE_SIZE == 0
   extern uint8_t __heap_base__[];
   extern uint8_t __heap_end__[];
+
   nextmem = (uint8_t *)MEM_ALIGN_NEXT(__heap_base__);
   endmem = (uint8_t *)MEM_ALIGN_PREV(__heap_end__);
 #else
   static stkalign_t buffer[MEM_ALIGN_NEXT(CH_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
+
   nextmem = (uint8_t *)&buffer[0];
   endmem = (uint8_t *)&buffer[MEM_ALIGN_NEXT(CH_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
 #endif

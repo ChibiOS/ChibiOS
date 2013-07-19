@@ -31,17 +31,55 @@
 
 #if CH_USE_MESSAGES || defined(__DOXYGEN__)
 
-/**
- * @name    Macro Functions
- * @{
- */
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  msg_t chMsgSend(thread_t *tp, msg_t msg);
+  thread_t * chMsgWait(void);
+  void chMsgRelease(thread_t *tp, msg_t msg);
+#ifdef __cplusplus
+}
+#endif
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
 /**
  * @brief   Evaluates to TRUE if the thread has pending messages.
  *
  * @iclass
  */
-#define chMsgIsPendingI(tp) \
-        ((tp)->p_msgqueue.p_next != (thread_t *)&(tp)->p_msgqueue)
+static inline bool chMsgIsPendingI(thread_t *tp) {
+
+  chDbgCheckClassI();
+
+  return (bool)(tp->p_msgqueue.p_next != (thread_t *)&tp->p_msgqueue);
+}
 
 /**
  * @brief   Returns the message carried by the specified thread.
@@ -53,7 +91,10 @@
  *
  * @api
  */
-#define chMsgGet(tp) ((tp)->p_msg)
+static inline msg_t chMsgGet(thread_t *tp) {
+
+  return tp->p_msg;
+}
 
 /**
  * @brief   Releases the thread waiting on top of the messages queue.
@@ -65,18 +106,12 @@
  *
  * @sclass
  */
-#define chMsgReleaseS(tp, msg) chSchWakeupS(tp, msg)
-/** @} */
+static inline void chMsgReleaseS(thread_t *tp, msg_t msg) {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  msg_t chMsgSend(thread_t *tp, msg_t msg);
-  thread_t * chMsgWait(void);
-  void chMsgRelease(thread_t *tp, msg_t msg);
-#ifdef __cplusplus
+  chDbgCheckClassS();
+
+  chSchWakeupS(tp, msg);
 }
-#endif
 
 #endif /* CH_USE_MESSAGES */
 

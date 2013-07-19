@@ -73,14 +73,19 @@ typedef uint32_t        tprio_t;
 typedef int32_t         msg_t;
 
 /**
- * @brief   Event Id, use fastest signed.
+ * @brief   Numeric event identifier, use fastest signed.
  */
 typedef int32_t         eventid_t;
 
 /**
- * @brief   Event Mask, recommended fastest unsigned.
+ * @brief   Mask of event identifiers, recommended fastest unsigned.
  */
 typedef uint32_t        eventmask_t;
+
+/**
+ * @brief   Mask of event flags, recommended fastest unsigned.
+ */
+typedef uint32_t        eventflags_t;
 
 /**
  * @brief   System Time, recommended fastest unsigned.

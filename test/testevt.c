@@ -83,7 +83,7 @@ static void h3(eventid_t id) {(void)id;test_emit_token('C');}
 static ROMCONST evhandler_t evhndl[] = {h1, h2, h3};
 
 static void evt1_execute(void) {
-  EventListener el1, el2;
+  event_listener_t el1, el2;
 
   /*
    * Testing chEvtRegisterMask() and chEvtUnregister().
@@ -148,7 +148,7 @@ static msg_t thread2(void *p) {
 
 static void evt2_execute(void) {
   eventmask_t m;
-  EventListener el1, el2;
+  event_listener_t el1, el2;
   systime_t target_time;
 
   /*

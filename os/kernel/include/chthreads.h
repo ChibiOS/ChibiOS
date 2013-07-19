@@ -95,7 +95,7 @@
 /* Forward declaration required by the mutexes stack structure present
    in every thread.*/
 #if CH_USE_MUTEXES
-typedef struct Mutex Mutex;
+typedef struct mutex mutex_t;
 #endif
 
 /**
@@ -238,7 +238,7 @@ typedef struct thread {
    * @brief List of the mutexes owned by this thread.
    * @note  The list is terminated by a @p NULL in this field.
    */
-  Mutex                 *p_mtxlist;
+  mutex_t               *p_mtxlist;
   /**
    * @brief Thread's own, non-inherited, priority.
    */

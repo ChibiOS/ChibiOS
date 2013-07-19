@@ -35,12 +35,30 @@
 
 #include "ch.h"
 
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
 #if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   Idle thread working area.
  */
-WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+static WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+#endif /* CH_NO_IDLE_THREAD */
 
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+#if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   This function implements the idle thread infinite loop.
  * @details The function puts the processor in the lowest power mode capable
@@ -51,7 +69,7 @@ WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
  *
  * @param[in] p the thread parameter, unused in this scenario
  */
-void _idle_thread(void *p) {
+static void _idle_thread(void *p) {
 
   (void)p;
   chRegSetThreadName("idle");
@@ -61,6 +79,10 @@ void _idle_thread(void *p) {
   }
 }
 #endif /* CH_NO_IDLE_THREAD */
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
 /**
  * @brief   ChibiOS/RT initialization.
@@ -114,6 +136,29 @@ void chSysInit(void) {
   chThdCreateStatic(_idle_thread_wa, sizeof(_idle_thread_wa), IDLEPRIO,
                     (tfunc_t)_idle_thread, NULL);
 #endif
+}
+
+/**
+ * @brief   Halts the system.
+ * @details This function is invoked by the operating system when an
+ *          unrecoverable error is detected, for example because a programming
+ *          error in the application code that triggers an assertion while
+ *          in debug mode.
+ * @note    Can be invoked from any system state.
+ *
+ * @special
+ */
+void chSysHalt(void) {
+
+  chSysDisable();
+
+#if defined(SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
+  SYSTEM_HALT_HOOK();
+#endif
+
+  /* Harmless infinite loop.*/
+  while (true)
+    ;
 }
 
 /**

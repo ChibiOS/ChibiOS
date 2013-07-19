@@ -144,7 +144,7 @@ void chThdRelease(thread_t *tp) {
  *
  * @api
  */
-thread_t *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
+thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
                               tprio_t prio, tfunc_t pf, void *arg) {
   void *wsp;
   thread_t *tp;
@@ -193,7 +193,7 @@ thread_t *chThdCreateFromHeap(MemoryHeap *heapp, size_t size,
  *
  * @api
  */
-thread_t *chThdCreateFromMemoryPool(MemoryPool *mp, tprio_t prio,
+thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
                                     tfunc_t pf, void *arg) {
   void *wsp;
   thread_t *tp;

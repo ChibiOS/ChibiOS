@@ -31,18 +31,34 @@
 
 #if CH_USE_HEAP || defined(__DOXYGEN__)
 
-/*
- * Module dependencies check.
- */
-#if !CH_USE_MEMCORE && !CH_USE_MALLOC_HEAP
-#error "CH_USE_HEAP requires CH_USE_MEMCORE or CH_USE_MALLOC_HEAP"
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+#if !CH_USE_MEMCORE
+#error "CH_USE_HEAP requires CH_USE_MEMCORE"
 #endif
 
 #if !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
 #error "CH_USE_HEAP requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
 #endif
 
-typedef struct memory_heap MemoryHeap;
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief   Type of a memory heap.
+ */
+typedef struct memory_heap memory_heap_t;
 
 /**
  * @brief   Memory heap block header.
@@ -52,7 +68,7 @@ union heap_header {
   struct {
     union {
       union heap_header *next;      /**< @brief Next block in free list.    */
-      MemoryHeap        *heap;      /**< @brief Block owner heap.           */
+      memory_heap_t     *heap;      /**< @brief Block owner heap.           */
     } u;                            /**< @brief Overlapped fields.          */
     size_t              size;       /**< @brief Size of the memory block.   */
   } h;
@@ -66,25 +82,35 @@ struct memory_heap {
                                                 this heap.                  */
   union heap_header     h_free;     /**< @brief Free blocks list header.    */
 #if CH_USE_MUTEXES
-  Mutex                 h_mtx;      /**< @brief Heap access mutex.          */
+  mutex_t               h_mtx;      /**< @brief Heap access mutex.          */
 #else
-  Semaphore             h_sem;      /**< @brief Heap access semaphore.      */
+  semaphore_t           h_sem;      /**< @brief Heap access semaphore.      */
 #endif
 };
+
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void _heap_init(void);
-#if !CH_USE_MALLOC_HEAP
-  void chHeapInit(MemoryHeap *heapp, void *buf, size_t size);
-#endif
-  void *chHeapAlloc(MemoryHeap *heapp, size_t size);
+  void chHeapInit(memory_heap_t *heapp, void *buf, size_t size);
+  void *chHeapAlloc(memory_heap_t *heapp, size_t size);
   void chHeapFree(void *p);
-  size_t chHeapStatus(MemoryHeap *heapp, size_t *sizep);
+  size_t chHeapStatus(memory_heap_t *heapp, size_t *sizep);
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
 
 #endif /* CH_USE_HEAP */
 

@@ -124,7 +124,7 @@ static void usart_deinit(USART_TypeDef *u) {
  * @param[in] isr       USART ISR register value
  */
 static void set_error(SerialDriver *sdp, uint32_t isr) {
-  flagsmask_t sts = 0;
+  eventflags_t sts = 0;
 
   if (isr & USART_ISR_ORE)
     sts |= SD_OVERRUN_ERROR;

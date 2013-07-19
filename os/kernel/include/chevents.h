@@ -50,32 +50,30 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-typedef struct EventListener EventListener;
+typedef struct event_listener event_listener_t;
 
 /**
  * @brief   Event Listener structure.
  */
-struct EventListener {
-  EventListener         *el_next;       /**< @brief Next Event Listener
-                                                    registered on the Event
-                                                    Source.                 */
+struct event_listener {
+  event_listener_t      *el_next;       /**< @brief Next Event Listener
+                                                    registered on the event
+                                                    source.                 */
   thread_t              *el_listener;   /**< @brief Thread interested in the
-                                                    Event Source.           */
-  eventmask_t           el_mask;        /**< @brief Event flags mask associated
-                                                    by the thread to the Event
-                                                    Source.                 */
-  flagsmask_t           el_flags;       /**< @brief Flags added to the listener
+                                                    event source.           */
+  eventmask_t           el_mask;        /**< @brief Event identifiers mask. */
+  eventflags_t          el_flags;       /**< @brief Flags added to the listener
                                                     by the event source.*/
 };
 
 /**
  * @brief   Event Source structure.
  */
-typedef struct EventSource {
-  EventListener         *es_next;       /**< @brief First Event Listener
+typedef struct event_source {
+  event_listener_t      *es_next;       /**< @brief First Event Listener
                                                     registered on the Event
                                                     Source.                 */
-} EventSource;
+} event_source_t;
 
 /**
  * @brief   Event Handler callback function.
@@ -111,7 +109,7 @@ typedef void (*evhandler_t)(eventid_t);
  *
  * @param name          the name of the event source variable
  */
-#define EVENTSOURCE_DECL(name) EventSource name = _EVENTSOURCE_DATA(name)
+#define EVENTSOURCE_DECL(name) event_source_t name = _EVENTSOURCE_DATA(name)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -120,18 +118,18 @@ typedef void (*evhandler_t)(eventid_t);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chEvtRegisterMask(EventSource *esp,
-                         EventListener *elp,
+  void chEvtRegisterMask(event_source_t *esp,
+                         event_listener_t *elp,
                          eventmask_t mask);
-  void chEvtUnregister(EventSource *esp, EventListener *elp);
+  void chEvtUnregister(event_source_t *esp, event_listener_t *elp);
   eventmask_t chEvtGetAndClearEvents(eventmask_t mask);
   eventmask_t chEvtAddEvents(eventmask_t mask);
-  flagsmask_t chEvtGetAndClearFlags(EventListener *elp);
-  flagsmask_t chEvtGetAndClearFlagsI(EventListener *elp);
+  eventflags_t chEvtGetAndClearFlags(event_listener_t *elp);
+  eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp);
   void chEvtSignal(thread_t *tp, eventmask_t mask);
   void chEvtSignalI(thread_t *tp, eventmask_t mask);
-  void chEvtBroadcastFlags(EventSource *esp, flagsmask_t flags);
-  void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags);
+  void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags);
+  void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags);
   void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask);
 #if CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT
   eventmask_t chEvtWaitOne(eventmask_t mask);
@@ -160,15 +158,15 @@ extern "C" {
 /**
  * @brief   Initializes an Event Source.
  * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p EventSource structure.
+ *          because it just prepares a @p event_source_t structure.
  *
- * @param[in] esp       pointer to the @p EventSource structure
+ * @param[in] esp       pointer to the @p event_source_t structure
  *
  * @init
  */
-static inline void chEvtInit(EventSource *esp) {
+static inline void chEvtInit(event_source_t *esp) {
 
-  esp->es_next = (EventListener *)(void *)esp;
+  esp->es_next = (event_listener_t *)(void *)esp;
 }
 
 /**
@@ -176,8 +174,8 @@ static inline void chEvtInit(EventSource *esp) {
  * @note    Multiple Event Listeners can use the same event identifier, the
  *          listener will share the callback function.
  *
- * @param[in] esp       pointer to the  @p EventSource structure
- * @param[out] elp      pointer to the @p EventListener structure
+ * @param[in] esp       pointer to the  @p event_source_t structure
+ * @param[out] elp      pointer to the @p event_listener_t structure
  * @param[in] eid       numeric identifier assigned to the Event Listener. The
  *                      identifier is used as index for the event callback
  *                      function.
@@ -186,21 +184,21 @@ static inline void chEvtInit(EventSource *esp) {
  *
  * @api
  */
-static inline void chEvtRegister(EventSource *esp,
-                                 EventListener *elp,
+static inline void chEvtRegister(event_source_t *esp,
+                                 event_listener_t *elp,
                                  eventid_t eid) {
 
   chEvtRegisterMask(esp, elp, EVENT_MASK(eid));
 }
 
 /**
- * @brief   Verifies if there is at least one @p EventListener registered.
+ * @brief   Verifies if there is at least one @p event_listener_t registered.
  *
- * @param[in] esp       pointer to the @p EventSource structure
+ * @param[in] esp       pointer to the @p event_source_t structure
  *
  * @iclass
  */
-static inline bool chEvtIsListeningI(EventSource *esp) {
+static inline bool chEvtIsListeningI(event_source_t *esp) {
 
   return (bool)((void *)esp != (void *)esp->es_next);
 }
@@ -209,11 +207,11 @@ static inline bool chEvtIsListeningI(EventSource *esp) {
  * @brief   Signals all the Event Listeners registered on the specified Event
  *          Source.
  *
- * @param[in] esp       pointer to the @p EventSource structure
+ * @param[in] esp       pointer to the @p event_source_t structure
  *
  * @api
  */
-static inline void chEvtBroadcast(EventSource *esp) {
+static inline void chEvtBroadcast(event_source_t *esp) {
 
   chEvtBroadcastFlags(esp, 0);
 }
@@ -226,11 +224,11 @@ static inline void chEvtBroadcast(EventSource *esp) {
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] esp       pointer to the @p EventSource structure
+ * @param[in] esp       pointer to the @p event_source_t structure
  *
  * @iclass
  */
-static inline void chEvtBroadcastI(EventSource *esp) {
+static inline void chEvtBroadcastI(event_source_t *esp) {
 
   chEvtBroadcastFlagsI(esp, 0);
 }

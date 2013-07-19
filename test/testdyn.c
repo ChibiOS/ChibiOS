@@ -51,10 +51,10 @@
 
 #if CH_USE_DYNAMIC || defined(__DOXYGEN__)
 #if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
-static MemoryHeap heap1;
+static memory_heap_t heap1;
 #endif
 #if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
-static MemoryPool mp1;
+static memory_pool_t mp1;
 #endif
 
 /**

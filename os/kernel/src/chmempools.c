@@ -39,10 +39,31 @@
 #include "ch.h"
 
 #if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
 /**
  * @brief   Initializes an empty memory pool.
  *
- * @param[out] mp       pointer to a @p MemoryPool structure
+ * @param[out] mp       pointer to a @p memory_pool_t structure
  * @param[in] size      the size of the objects contained in this memory pool,
  *                      the minimum accepted size is the size of a pointer to
  *                      void.
@@ -52,7 +73,7 @@
  *
  * @init
  */
-void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
+void chPoolInit(memory_pool_t *mp, size_t size, memgetfunc_t provider) {
 
   chDbgCheck((mp != NULL) && (size >= sizeof(void *)), "chPoolInit");
 
@@ -68,13 +89,13 @@ void chPoolInit(MemoryPool *mp, size_t size, memgetfunc_t provider) {
  *          memory pool.
  * @post    The memory pool contains the elements of the input array.
  *
- * @param[in] mp        pointer to a @p MemoryPool structure
+ * @param[in] mp        pointer to a @p memory_pool_t structure
  * @param[in] p         pointer to the array first element
  * @param[in] n         number of elements in the array
  *
  * @api
  */
-void chPoolLoadArray(MemoryPool *mp, void *p, size_t n) {
+void chPoolLoadArray(memory_pool_t *mp, void *p, size_t n) {
 
   chDbgCheck((mp != NULL) && (n != 0), "chPoolLoadArray");
 
@@ -89,13 +110,13 @@ void chPoolLoadArray(MemoryPool *mp, void *p, size_t n) {
  * @brief   Allocates an object from a memory pool.
  * @pre     The memory pool must be already been initialized.
  *
- * @param[in] mp        pointer to a @p MemoryPool structure
+ * @param[in] mp        pointer to a @p memory_pool_t structure
  * @return              The pointer to the allocated object.
  * @retval NULL         if pool is empty.
  *
  * @iclass
  */
-void *chPoolAllocI(MemoryPool *mp) {
+void *chPoolAllocI(memory_pool_t *mp) {
   void *objp;
 
   chDbgCheckClassI();
@@ -112,13 +133,13 @@ void *chPoolAllocI(MemoryPool *mp) {
  * @brief   Allocates an object from a memory pool.
  * @pre     The memory pool must be already been initialized.
  *
- * @param[in] mp        pointer to a @p MemoryPool structure
+ * @param[in] mp        pointer to a @p memory_pool_t structure
  * @return              The pointer to the allocated object.
  * @retval NULL         if pool is empty.
  *
  * @api
  */
-void *chPoolAlloc(MemoryPool *mp) {
+void *chPoolAlloc(memory_pool_t *mp) {
   void *objp;
 
   chSysLock();
@@ -134,12 +155,12 @@ void *chPoolAlloc(MemoryPool *mp) {
  *          memory pool.
  * @pre     The object must be properly aligned to contain a pointer to void.
  *
- * @param[in] mp        pointer to a @p MemoryPool structure
+ * @param[in] mp        pointer to a @p memory_pool_t structure
  * @param[in] objp      the pointer to the object to be released
  *
  * @iclass
  */
-void chPoolFreeI(MemoryPool *mp, void *objp) {
+void chPoolFreeI(memory_pool_t *mp, void *objp) {
   struct pool_header *php = objp;
 
   chDbgCheckClassI();
@@ -156,12 +177,12 @@ void chPoolFreeI(MemoryPool *mp, void *objp) {
  *          memory pool.
  * @pre     The object must be properly aligned to contain a pointer to void.
  *
- * @param[in] mp        pointer to a @p MemoryPool structure
+ * @param[in] mp        pointer to a @p memory_pool_t structure
  * @param[in] objp      the pointer to the object to be released
  *
  * @api
  */
-void chPoolFree(MemoryPool *mp, void *objp) {
+void chPoolFree(memory_pool_t *mp, void *objp) {
 
   chSysLock();
   chPoolFreeI(mp, objp);

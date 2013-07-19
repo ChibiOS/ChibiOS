@@ -40,9 +40,9 @@ typedef uint8_t         trefs_t;        /**< Thread references counter.     */
 typedef uint8_t         tslices_t;      /**< Thread time slices counter.    */
 typedef uint32_t        tprio_t;        /**< Thread priority.               */
 typedef int32_t         msg_t;          /**< Inter-thread message.          */
-typedef int32_t         eventid_t;      /**< Event Id.                      */
-typedef uint32_t        eventmask_t;    /**< Event mask.                    */
-typedef uint32_t        flagsmask_t;    /**< Event flags.                   */
+typedef int32_t         eventid_t;      /**< Numeric event identifier.      */
+typedef uint32_t        eventmask_t;    /**< Mask of event identifiers.     */
+typedef uint32_t        eventflags_t;   /**< Mask of event flags.           */
 typedef uint32_t        systime_t;      /**< System time.                   */
 typedef int32_t         cnt_t;          /**< Resources counter.             */
 

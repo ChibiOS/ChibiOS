@@ -29,10 +29,6 @@
  *          are functionally equivalent to the usual @p malloc() and @p free()
  *          library functions. The main difference is that the OS heap APIs
  *          are guaranteed to be thread safe.<br>
- *          By enabling the @p CH_USE_MALLOC_HEAP option the heap manager
- *          will use the runtime-provided @p malloc() and @p free() as
- *          back end for the heap APIs instead of the system provided
- *          allocator.
  * @pre     In order to use the heap APIs the @p CH_USE_HEAP option must
  *          be enabled in @p chconf.h.
  * @{
@@ -42,7 +38,9 @@
 
 #if CH_USE_HEAP || defined(__DOXYGEN__)
 
-#if !CH_USE_MALLOC_HEAP || defined(__DOXYGEN__)
+/*===========================================================================*/
+/* Module local definitions.                                                 */
+/*===========================================================================*/
 
 /*
  * Defaults on the best synchronization mechanism available.
@@ -55,10 +53,30 @@
 #define H_UNLOCK(h)     chSemSignal(&(h)->h_sem)
 #endif
 
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
 /**
  * @brief   Default heap descriptor.
  */
-static MemoryHeap default_heap;
+static memory_heap_t default_heap;
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
 /**
  * @brief   Initializes the default heap.
@@ -80,8 +98,6 @@ void _heap_init(void) {
  * @brief   Initializes a memory heap from a static memory area.
  * @pre     Both the heap buffer base and the heap size must be aligned to
  *          the @p stkalign_t type size.
- * @pre     In order to use this function the option @p CH_USE_MALLOC_HEAP
- *          must be disabled.
  *
  * @param[out] heapp    pointer to the memory heap descriptor to be initialized
  * @param[in] buf       heap buffer base
@@ -89,7 +105,7 @@ void _heap_init(void) {
  *
  * @init
  */
-void chHeapInit(MemoryHeap *heapp, void *buf, size_t size) {
+void chHeapInit(memory_heap_t *heapp, void *buf, size_t size) {
   union heap_header *hp;
 
   chDbgCheck(MEM_IS_ALIGNED(buf) && MEM_IS_ALIGNED(size), "chHeapInit");
@@ -122,7 +138,7 @@ void chHeapInit(MemoryHeap *heapp, void *buf, size_t size) {
  *
  * @api
  */
-void *chHeapAlloc(MemoryHeap *heapp, size_t size) {
+void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
   union heap_header *qp, *hp, *fp;
 
   if (heapp == NULL)
@@ -186,7 +202,7 @@ void *chHeapAlloc(MemoryHeap *heapp, size_t size) {
  */
 void chHeapFree(void *p) {
   union heap_header *qp, *hp;
-  MemoryHeap *heapp;
+  memory_heap_t *heapp;
 
   chDbgCheck(p != NULL, "chHeapFree");
 
@@ -229,8 +245,6 @@ void chHeapFree(void *p) {
  * @brief   Reports the heap status.
  * @note    This function is meant to be used in the test suite, it should
  *          not be really useful for the application code.
- * @note    This function is not implemented when the @p CH_USE_MALLOC_HEAP
- *          configuration option is used (it always returns zero).
  *
  * @param[in] heapp     pointer to a heap descriptor or @p NULL in order to
  *                      access the default heap.
@@ -240,7 +254,7 @@ void chHeapFree(void *p) {
  *
  * @api
  */
-size_t chHeapStatus(MemoryHeap *heapp, size_t *sizep) {
+size_t chHeapStatus(memory_heap_t *heapp, size_t *sizep) {
   union heap_header *qp;
   size_t n, sz;
 
@@ -258,60 +272,6 @@ size_t chHeapStatus(MemoryHeap *heapp, size_t *sizep) {
   H_UNLOCK(heapp);
   return n;
 }
-
-#else /* CH_USE_MALLOC_HEAP */
-
-#include <stdlib.h>
-
-#if CH_USE_MUTEXES
-#define H_LOCK()        chMtxLock(&hmtx)
-#define H_UNLOCK()      chMtxUnlock()
-static Mutex            hmtx;
-#elif CH_USE_SEMAPHORES
-#define H_LOCK()        chSemWait(&hsem)
-#define H_UNLOCK()      chSemSignal(&hsem)
-static Semaphore        hsem;
-#endif
-
-void _heap_init(void) {
-
-#if CH_USE_MUTEXES
-  chMtxInit(&hmtx);
-#else
-  chSemInit(&hsem, 1);
-#endif
-}
-
-void *chHeapAlloc(MemoryHeap *heapp, size_t size) {
-  void *p;
-
-  chDbgCheck(heapp == NULL, "chHeapAlloc");
-
-  H_LOCK();
-  p = malloc(size);
-  H_UNLOCK();
-  return p;
-}
-
-void chHeapFree(void *p) {
-
-  chDbgCheck(p != NULL, "chHeapFree");
-
-  H_LOCK();
-  free(p);
-  H_UNLOCK();
-}
-
-size_t chHeapStatus(MemoryHeap *heapp, size_t *sizep) {
-
-  chDbgCheck(heapp == NULL, "chHeapStatus");
-
-  if (sizep)
-    *sizep = 0;
-  return 0;
-}
-
-#endif /* CH_USE_MALLOC_HEAP */
 
 #endif /* CH_USE_HEAP */
 
