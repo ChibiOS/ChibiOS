@@ -123,7 +123,7 @@ void _port_init(void) {
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));
 }
 
-#if !CH_OPTIMIZE_SPEED
+#if !CH_CFG_OPTIMIZE_SPEED
 void _port_lock(void) {
   register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");

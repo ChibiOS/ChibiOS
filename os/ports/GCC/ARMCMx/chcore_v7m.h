@@ -373,16 +373,16 @@ struct context {
  * @note    In this port this it raises the base priority to kernel level.
  */
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
-#if CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
+#if CH_CFG_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 #define port_lock() {                                                       \
   register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;                 \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");            \
 }
-#else /* !CH_OPTIMIZE_SPEED */
+#else /* !CH_CFG_OPTIMIZE_SPEED */
 #define port_lock() {                                                       \
   asm volatile ("bl      _port_lock" : : : "r3", "lr", "memory");           \
 }
-#endif /* !CH_OPTIMIZE_SPEED */
+#endif /* !CH_CFG_OPTIMIZE_SPEED */
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
 #define port_lock() asm volatile ("cpsid   i" : : : "memory")
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
@@ -394,16 +394,16 @@ struct context {
  * @note    In this port this it lowers the base priority to user level.
  */
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
-#if CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
+#if CH_CFG_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 #define port_unlock() {                                                     \
   register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;               \
   asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");            \
 }
-#else /* !CH_OPTIMIZE_SPEED */
+#else /* !CH_CFG_OPTIMIZE_SPEED */
 #define port_unlock() {                                                     \
   asm volatile ("bl      _port_unlock" : : : "r3", "lr", "memory");         \
 }
-#endif /* !CH_OPTIMIZE_SPEED */
+#endif /* !CH_CFG_OPTIMIZE_SPEED */
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
 #define port_unlock() asm volatile ("cpsie   i" : : : "memory")
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
@@ -510,7 +510,7 @@ extern "C" {
   void _port_exit_from_isr(void);
   void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
-#if !CH_OPTIMIZE_SPEED
+#if !CH_CFG_OPTIMIZE_SPEED
   void _port_lock(void);
   void _port_unlock(void);
 #endif

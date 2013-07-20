@@ -322,12 +322,12 @@ typedef struct {
   ThreadsQueue          r_queue;
   tprio_t               r_prio;
   Thread                *r_current;
-#if CH_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY
   Thread                *r_newer;
   Thread                *r_older;
 #endif
   /* End of the fields shared with the Thread structure.*/
-#if CH_TIME_QUANTUM > 0
+#if CH_CFG_TIME_QUANTUM > 0
   cnt_t                 r_preempt;
 #endif
 } ReadyList;

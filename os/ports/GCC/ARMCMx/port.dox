@@ -237,7 +237,7 @@
  *   stack checking is enabled (<tt>CH_DBG_ENABLE_STACK_CHECK==TRUE</tt>),
  *   it is an alias of @p __process_stack_base__ in this port.
  * - @p __heap_base__ and @p __heap_end__, those symbols are required
- *   if the memory core manager is enabled (<tt>CH_USE_MEMCORE==TRUE</tt>)
+ *   if the memory core manager is enabled (<tt>CH_CFG_USE_MEMCORE==TRUE</tt>)
  *   with a default core size set to zero (<tt>CH_MEMCORE_SIZE==0</tt>).
  * .
  * @ingroup ARMCMx

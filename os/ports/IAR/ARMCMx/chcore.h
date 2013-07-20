@@ -170,17 +170,17 @@ struct intctx {};
  */
 #define PORT_OPTIMIZED_ISPREEMPTIONREQUIRED
 
-#if (CH_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
+#if (CH_CFG_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
 /**
  * @brief   Inline-able version of this kernel function.
  */
 #define chSchIsPreemptionRequired()                                         \
   (currp->p_preempt ? firstprio(&rlist.r_queue) > currp->p_prio :           \
                       firstprio(&rlist.r_queue) >= currp->p_prio)
-#else /* CH_TIME_QUANTUM == 0 */
+#else /* CH_CFG_TIME_QUANTUM == 0 */
 #define chSchIsPreemptionRequired()                                         \
   (firstprio(&rlist.r_queue) > currp->p_prio)
-#endif /* CH_TIME_QUANTUM == 0 */
+#endif /* CH_CFG_TIME_QUANTUM == 0 */
 
 #endif /* _FROM_ASM_ */
 

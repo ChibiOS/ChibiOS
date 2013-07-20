@@ -57,7 +57,7 @@
  *   kernel files should be loaded in the first 64K. Note that this is not
  *   a problem because upper addresses can be used by the user code, the
  *   kernel can context switch code running there.
- * - The configuration option @p CH_OPTIMIZE_SPEED is not currently supported
+ * - The configuration option @p CH_CFG_OPTIMIZE_SPEED is not currently supported
  *   because the missing support of the @p inline "C" keyword in the
  *   compiler.
  * .
