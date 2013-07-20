@@ -509,8 +509,8 @@ static void bmk10_execute(void) {
     chSysLock();
     chVTDoSetI(&vt1, 1, tmo, NULL);
     chVTDoSetI(&vt2, 10000, tmo, NULL);
-    chVTResetI(&vt1);
-    chVTResetI(&vt2);
+    chVTDoResetI(&vt1);
+    chVTDoResetI(&vt2);
     chSysUnlock();
     n++;
 #if defined(SIMULATOR)
