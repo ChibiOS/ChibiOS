@@ -90,37 +90,37 @@ static void can_lld_tx_handler(CANDriver *canp) {
 #if SPC5_CAN_USE_FLEXCAN0 && (SPC5_FLEXCAN0_MB == 64)
   if(&CAND1 == canp) {
     iflag2 = canp->flexcan->IFRH.R;
-    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R;
   }
 #endif
 #if SPC5_CAN_USE_FLEXCAN1 && (SPC5_FLEXCAN1_MB == 64)
   if(&CAND2 == canp) {
     iflag2 = canp->flexcan->IFRH.R;
-    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R;
   }
 #endif
 #if SPC5_CAN_USE_FLEXCAN2 && (SPC5_FLEXCAN2_MB == 64)
   if(&CAND3 == canp) {
     iflag2 = canp->flexcan->IFRH.R;
-    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R;
   }
 #endif
 #if SPC5_CAN_USE_FLEXCAN3 && (SPC5_FLEXCAN3_MB == 64)
   if(&CAND4 == canp) {
     iflag2 = canp->flexcan->IFRH.R;
-    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R;
   }
 #endif
 #if SPC5_CAN_USE_FLEXCAN4 && (SPC5_FLEXCAN4_MB == 64)
   if(&CAND5 == canp) {
     iflag2 = canp->flexcan->IFRH.R;
-    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R;
   }
 #endif
 #if SPC5_CAN_USE_FLEXCAN5 && (SPC5_FLEXCAN5_MB == 64)
   if(&CAND6 == canp) {
     iflag2 = canp->flexcan->IFRH.R;
-    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R & 0xFFFFFFFF;
+    canp->flexcan->IFRH.R = canp->flexcan->IFRH.R;
   }
 #endif
 
