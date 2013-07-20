@@ -83,7 +83,7 @@ static CONDVAR_DECL(c1);
 
 static void mtx1_setup(void) {
 
-  chMtxInit(&m1);
+  chMtxObjectInit(&m1);
 }
 
 static msg_t thread1(void *p) {
@@ -150,7 +150,7 @@ ROMCONST struct testcase testmtx1 = {
 
 static void mtx2_setup(void) {
 
-  chMtxInit(&m1);
+  chMtxObjectInit(&m1);
 }
 
 /* Low priority thread */
@@ -240,8 +240,8 @@ ROMCONST struct testcase testmtx2 = {
 
 static void mtx3_setup(void) {
 
-  chMtxInit(&m1); /* Mutex B.*/
-  chMtxInit(&m2); /* Mutex A.*/
+  chMtxObjectInit(&m1); /* Mutex B.*/
+  chMtxObjectInit(&m2); /* Mutex A.*/
 }
 
 /* Lowest priority thread */
@@ -340,8 +340,8 @@ ROMCONST struct testcase testmtx3 = {
 
 static void mtx4_setup(void) {
 
-  chMtxInit(&m1);
-  chMtxInit(&m2);
+  chMtxObjectInit(&m1);
+  chMtxObjectInit(&m2);
 }
 
 static msg_t thread4a(void *p) {
@@ -427,7 +427,7 @@ ROMCONST struct testcase testmtx4 = {
 
 static void mtx5_setup(void) {
 
-  chMtxInit(&m1);
+  chMtxObjectInit(&m1);
 }
 
 static void mtx5_execute(void) {
@@ -477,8 +477,8 @@ ROMCONST struct testcase testmtx5 = {
 
 static void mtx6_setup(void) {
 
-  chCondInit(&c1);
-  chMtxInit(&m1);
+  chCondObjectInit(&c1);
+  chMtxObjectInit(&m1);
 }
 
 static msg_t thread10(void *p) {
@@ -529,8 +529,8 @@ ROMCONST struct testcase testmtx6 = {
 
 static void mtx7_setup(void) {
 
-  chCondInit(&c1);
-  chMtxInit(&m1);
+  chCondObjectInit(&c1);
+  chMtxObjectInit(&m1);
 }
 
 static void mtx7_execute(void) {
@@ -564,9 +564,9 @@ ROMCONST struct testcase testmtx7 = {
 
 static void mtx8_setup(void) {
 
-  chCondInit(&c1);
-  chMtxInit(&m1);
-  chMtxInit(&m2);
+  chCondObjectInit(&c1);
+  chMtxObjectInit(&m1);
+  chMtxObjectInit(&m2);
 }
 
 static msg_t thread11(void *p) {

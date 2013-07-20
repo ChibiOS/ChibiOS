@@ -70,7 +70,7 @@ static MAILBOX_DECL(mb1, test.wa.T0, MB_SIZE);
 
 static void mbox1_setup(void) {
 
-  chMBInit(&mb1, (msg_t *)test.wa.T0, MB_SIZE);
+  chMBObjectInit(&mb1, (msg_t *)test.wa.T0, MB_SIZE);
 }
 
 static void mbox1_execute(void) {

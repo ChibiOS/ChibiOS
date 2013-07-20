@@ -164,7 +164,7 @@ extern "C" {
  *
  * @init
  */
-static inline void chEvtInit(event_source_t *esp) {
+static inline void chEvtObjectInit(event_source_t *esp) {
 
   esp->es_next = (event_listener_t *)(void *)esp;
 }

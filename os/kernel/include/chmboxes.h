@@ -108,7 +108,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chMBInit(mailbox_t *mbp, msg_t *buf, cnt_t n);
+  void chMBObjectInit(mailbox_t *mbp, msg_t *buf, cnt_t n);
   void chMBReset(mailbox_t *mbp);
   msg_t chMBPost(mailbox_t *mbp, msg_t msg, systime_t timeout);
   msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t timeout);

@@ -267,9 +267,9 @@ void chSchRescheduleS(void) {
  * @note    Not a user function, it is meant to be invoked by the scheduler
  *          itself or from within the port layer.
  *
- * @retval TRUE         if there is a thread that must go in running state
+ * @retval true         if there is a thread that must go in running state
  *                      immediately.
- * @retval FALSE        if preemption is not required.
+ * @retval false        if preemption is not required.
  *
  * @special
  */

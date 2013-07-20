@@ -63,7 +63,7 @@ static memory_heap_t test_heap;
 
 static void heap1_setup(void) {
 
-  chHeapInit(&test_heap, test.buffer, sizeof(union test_buffers));
+  chHeapObjectInit(&test_heap, test.buffer, sizeof(union test_buffers));
 }
 
 static void heap1_execute(void) {

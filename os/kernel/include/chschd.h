@@ -170,7 +170,7 @@ extern "C" {
 
 /**
  * @brief   Determines if the current thread must reschedule.
- * @details This function returns @p TRUE if there is a ready thread with
+ * @details This function returns @p true if there is a ready thread with
  *          higher priority.
  *
  * @iclass
@@ -184,7 +184,7 @@ static inline bool chSchIsRescRequiredI(void) {
 
 /**
  * @brief   Determines if yielding is possible.
- * @details This function returns @p TRUE if there is a ready thread with
+ * @details This function returns @p true if there is a ready thread with
  *          equal or higher priority.
  *
  * @sclass

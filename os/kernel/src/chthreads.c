@@ -280,7 +280,7 @@ thread_t *chThdResume(thread_t *tp) {
  * @brief   Requests a thread termination.
  * @pre     The target thread must be written to invoke periodically
  *          @p chThdShouldTerminate() and terminate cleanly if it returns
- *          @p TRUE.
+ *          @p true.
  * @post    The specified thread will terminate after detecting the termination
  *          condition.
  *
@@ -400,7 +400,7 @@ void chThdExitS(msg_t msg) {
 #endif
   chSchGoSleepS(THD_STATE_FINAL);
   /* The thread never returns here.*/
-  chDbgAssert(FALSE, "chThdExitS(), #1", "zombies apocalypse");
+  chDbgAssert(false, "chThdExitS(), #1", "zombies apocalypse");
 }
 
 #if CH_USE_WAITEXIT || defined(__DOXYGEN__)

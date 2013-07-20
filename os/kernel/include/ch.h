@@ -81,22 +81,22 @@
 
 /**
  * @brief   Generic success constant.
- * @details This constant is functionally equivalent to @p FALSE but more
+ * @details This constant is functionally equivalent to @p false but more
  *          readable, it can be used as return value of all those functions
- *          returning a @p bool_t as a status indicator.
+ *          returning a @p bool as a status indicator.
  */
 #if !defined(CH_SUCCESS) || defined(__DOXYGEN__)
-#define CH_SUCCESS              FALSE
+#define CH_SUCCESS              false
 #endif
 
 /**
  * @brief   Generic failure constant.
- * @details This constant is functionally equivalent to @p TRUE but more
+ * @details This constant is functionally equivalent to @p true but more
  *          readable, it can be used as return value of all those functions
- *          returning a @p bool_t as a status indicator.
+ *          returning a @p bool as a status indicator.
  */
 #if !defined(CH_FAILED) || defined(__DOXYGEN__)
-#define CH_FAILED               TRUE
+#define CH_FAILED               true
 #endif
 /** @} */
 

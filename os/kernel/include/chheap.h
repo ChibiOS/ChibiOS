@@ -100,7 +100,7 @@ struct memory_heap {
 extern "C" {
 #endif
   void _heap_init(void);
-  void chHeapInit(memory_heap_t *heapp, void *buf, size_t size);
+  void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size);
   void *chHeapAlloc(memory_heap_t *heapp, size_t size);
   void chHeapFree(void *p);
   size_t chHeapStatus(memory_heap_t *heapp, size_t *sizep);

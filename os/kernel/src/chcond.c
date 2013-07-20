@@ -73,7 +73,7 @@
  *
  * @init
  */
-void chCondInit(condition_variable_t *cp) {
+void chCondObjectInit(condition_variable_t *cp) {
 
   chDbgCheck(cp != NULL, "chCondInit");
 

@@ -87,7 +87,7 @@ static inline void list_init(threads_list_t *tlp) {
 }
 
 /**
- * @brief   Evaluates to @p TRUE if the specified threads list is empty.
+ * @brief   Evaluates to @p true if the specified threads list is empty.
  *
  * @notapi
  */
@@ -97,7 +97,7 @@ static inline bool list_isempty(threads_list_t *tlp) {
 }
 
 /**
- * @brief   Evaluates to @p TRUE if the specified threads list is not empty.
+ * @brief   Evaluates to @p true if the specified threads list is not empty.
  *
  * @notapi
  */
@@ -117,7 +117,7 @@ static inline void queue_init(threads_queue_t *tqp) {
 }
 
 /**
- * @brief   Evaluates to @p TRUE if the specified threads queue is empty.
+ * @brief   Evaluates to @p true if the specified threads queue is empty.
  *
  * @notapi
  */
@@ -127,7 +127,7 @@ static inline bool queue_isempty(threads_queue_t *tqp) {
 }
 
 /**
- * @brief   Evaluates to @p TRUE if the specified threads queue is not empty.
+ * @brief   Evaluates to @p true if the specified threads queue is not empty.
  *
  * @notapi
  */

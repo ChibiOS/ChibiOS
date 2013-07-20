@@ -71,7 +71,7 @@ static SEMAPHORE_DECL(sem1, 0);
 
 static void sem1_setup(void) {
 
-  chSemInit(&sem1, 0);
+  chSemObjectInit(&sem1, 0);
 }
 
 static msg_t thread1(void *p) {
@@ -127,7 +127,7 @@ ROMCONST struct testcase testsem1 = {
 
 static void sem2_setup(void) {
 
-  chSemInit(&sem1, 0);
+  chSemObjectInit(&sem1, 0);
 }
 
 static msg_t thread2(void *p) {
@@ -203,7 +203,7 @@ ROMCONST struct testcase testsem2 = {
 
 static void sem3_setup(void) {
 
-  chSemInit(&sem1, 0);
+  chSemObjectInit(&sem1, 0);
 }
 
 static msg_t thread3(void *p) {
@@ -252,7 +252,7 @@ static void sem4_execute(void) {
   binary_semaphore_t bsem;
   
   /* Creates a taken binary semaphore.*/
-  chBSemInit(&bsem, TRUE);
+  chBSemObjectInit(&bsem, TRUE);
   chBSemReset(&bsem, TRUE);
   test_assert(1, chBSemGetStateI(&bsem) == TRUE, "not taken");
 

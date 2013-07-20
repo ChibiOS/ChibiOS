@@ -89,11 +89,11 @@ typedef struct mutex {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chMtxInit(mutex_t *mp);
+  void chMtxObjectInit(mutex_t *mp);
   void chMtxLock(mutex_t *mp);
   void chMtxLockS(mutex_t *mp);
-  bool_t chMtxTryLock(mutex_t *mp);
-  bool_t chMtxTryLockS(mutex_t *mp);
+  bool chMtxTryLock(mutex_t *mp);
+  bool chMtxTryLockS(mutex_t *mp);
   mutex_t *chMtxUnlock(void);
   mutex_t *chMtxUnlockS(void);
   void chMtxUnlockAll(void);

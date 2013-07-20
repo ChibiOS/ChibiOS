@@ -106,7 +106,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chPoolInit(memory_pool_t *mp, size_t size, memgetfunc_t provider);
+  void chPoolObjectInit(memory_pool_t *mp, size_t size, memgetfunc_t provider);
   void chPoolLoadArray(memory_pool_t *mp, void *p, size_t n);
   void *chPoolAllocI(memory_pool_t *mp);
   void *chPoolAlloc(memory_pool_t *mp);

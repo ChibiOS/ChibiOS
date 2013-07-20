@@ -65,7 +65,7 @@ static void *null_provider(size_t size) {
 
 static void pools1_setup(void) {
 
-  chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
+  chPoolObjectInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
 }
 
 static void pools1_execute(void) {
@@ -93,7 +93,7 @@ static void pools1_execute(void) {
   test_assert(4, chPoolAlloc(&mp1) == NULL, "list not empty");
 
   /* Covering the case where a provider is unable to return more memory.*/
-  chPoolInit(&mp1, 16, null_provider);
+  chPoolObjectInit(&mp1, 16, null_provider);
   test_assert(5, chPoolAlloc(&mp1) == NULL, "provider returned memory");
 }
 

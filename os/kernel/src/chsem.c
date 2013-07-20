@@ -96,7 +96,7 @@
  *
  * @init
  */
-void chSemInit(semaphore_t *sp, cnt_t n) {
+void chSemObjectInit(semaphore_t *sp, cnt_t n) {
 
   chDbgCheck((sp != NULL) && (n >= 0), "chSemInit");
 

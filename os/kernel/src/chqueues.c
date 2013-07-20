@@ -224,7 +224,7 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
   chDbgCheck(n > 0, "chIQReadTimeout");
 
   chSysLock();
-  while (TRUE) {
+  while (true) {
     if (nfy)
       nfy(iqp);
 
@@ -404,7 +404,7 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
   chDbgCheck(n > 0, "chOQWriteTimeout");
 
   chSysLock();
-  while (TRUE) {
+  while (true) {
     while (chOQIsFullI(oqp)) {
       if (qwait((GenericQueue *)oqp, time) != Q_OK) {
         chSysUnlock();

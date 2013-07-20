@@ -302,8 +302,8 @@ typedef msg_t (*tfunc_t)(void *);
  * @note    Can be invoked in any context.
  *
  * @param[in] tp        pointer to the thread
- * @retval TRUE         thread terminated.
- * @retval FALSE        thread not terminated.
+ * @retval true         thread terminated.
+ * @retval false        thread not terminated.
  *
  * @special
  */
@@ -313,8 +313,8 @@ typedef msg_t (*tfunc_t)(void *);
  * @brief   Verifies if the current thread has a termination request pending.
  * @note    Can be invoked in any context.
  *
- * @retval TRUE         termination request pending.
- * @retval FALSE        termination request not pending.
+ * @retval true         termination request pending.
+ * @retval false        termination request not pending.
  *
  * @special
  */

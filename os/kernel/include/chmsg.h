@@ -70,7 +70,7 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @brief   Evaluates to TRUE if the thread has pending messages.
+ * @brief   Evaluates to @p true if the thread has pending messages.
  *
  * @iclass
  */

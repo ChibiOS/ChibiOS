@@ -73,7 +73,7 @@ static void _idle_thread(void *p) {
 
   (void)p;
   chRegSetThreadName("idle");
-  while (TRUE) {
+  while (true) {
     port_wait_for_interrupt();
     IDLE_LOOP_HOOK();
   }

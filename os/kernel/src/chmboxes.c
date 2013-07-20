@@ -84,14 +84,14 @@
  *
  * @init
  */
-void chMBInit(mailbox_t *mbp, msg_t *buf, cnt_t n) {
+void chMBObjectInit(mailbox_t *mbp, msg_t *buf, cnt_t n) {
 
   chDbgCheck((mbp != NULL) && (buf != NULL) && (n > 0), "chMBInit");
 
   mbp->mb_buffer = mbp->mb_wrptr = mbp->mb_rdptr = buf;
   mbp->mb_top = &buf[n];
-  chSemInit(&mbp->mb_emptysem, n);
-  chSemInit(&mbp->mb_fullsem, 0);
+  chSemObjectInit(&mbp->mb_emptysem, n);
+  chSemObjectInit(&mbp->mb_fullsem, 0);
 }
 
 /**

@@ -77,7 +77,7 @@ static msg_t thread(void *p) {
 #if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
 static void dyn1_setup(void) {
 
-  chHeapInit(&heap1, test.buffer, sizeof(union test_buffers));
+  chHeapObjectInit(&heap1, test.buffer, sizeof(union test_buffers));
 }
 
 static void dyn1_execute(void) {
@@ -135,7 +135,7 @@ ROMCONST struct testcase testdyn1 = {
 
 static void dyn2_setup(void) {
 
-  chPoolInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
+  chPoolObjectInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
 }
 
 static void dyn2_execute(void) {
@@ -202,7 +202,7 @@ static bool_t regfind(thread_t *tp) {
 
 static void dyn3_setup(void) {
 
-  chHeapInit(&heap1, test.buffer, sizeof(union test_buffers));
+  chHeapObjectInit(&heap1, test.buffer, sizeof(union test_buffers));
 }
 
 static void dyn3_execute(void) {

@@ -88,7 +88,7 @@ static void evt1_execute(void) {
   /*
    * Testing chEvtRegisterMask() and chEvtUnregister().
    */
-  chEvtInit(&es1);
+  chEvtObjectInit(&es1);
   chEvtRegisterMask(&es1, &el1, 1);
   chEvtRegisterMask(&es1, &el2, 2);
   test_assert(1, chEvtIsListeningI(&es1), "no listener");
@@ -202,8 +202,8 @@ static void evt2_execute(void) {
   /*
    * Test on chEvtWaitAll().
    */
-  chEvtInit(&es1);
-  chEvtInit(&es2);
+  chEvtObjectInit(&es1);
+  chEvtObjectInit(&es2);
   chEvtRegisterMask(&es1, &el1, 1);
   chEvtRegisterMask(&es2, &el2, 4);
   test_wait_tick();

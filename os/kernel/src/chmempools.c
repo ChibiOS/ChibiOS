@@ -73,7 +73,7 @@
  *
  * @init
  */
-void chPoolInit(memory_pool_t *mp, size_t size, memgetfunc_t provider) {
+void chPoolObjectInit(memory_pool_t *mp, size_t size, memgetfunc_t provider) {
 
   chDbgCheck((mp != NULL) && (size >= sizeof(void *)), "chPoolInit");
 

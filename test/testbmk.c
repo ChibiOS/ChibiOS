@@ -348,7 +348,7 @@ static msg_t thread3(void *p) {
 
 static void bmk7_setup(void) {
 
-  chSemInit(&sem1, 0);
+  chSemObjectInit(&sem1, 0);
 }
 
 static void bmk7_execute(void) {
@@ -541,7 +541,7 @@ ROMCONST struct testcase testbmk10 = {
 
 static void bmk11_setup(void) {
 
-  chSemInit(&sem1, 1);
+  chSemObjectInit(&sem1, 1);
 }
 
 static void bmk11_execute(void) {
@@ -588,7 +588,7 @@ ROMCONST struct testcase testbmk11 = {
 
 static void bmk12_setup(void) {
 
-  chMtxInit(&mtx1);
+  chMtxObjectInit(&mtx1);
 }
 
 static void bmk12_execute(void) {

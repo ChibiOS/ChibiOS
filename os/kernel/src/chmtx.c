@@ -96,7 +96,7 @@
  *
  * @init
  */
-void chMtxInit(mutex_t *mp) {
+void chMtxObjectInit(mutex_t *mp) {
 
   chDbgCheck(mp != NULL, "chMtxInit");
 
@@ -217,13 +217,13 @@ void chMtxLockS(mutex_t *mp) {
  *
  * @param[in] mp        pointer to the @p mutex_t structure
  * @return              The operation status.
- * @retval TRUE         if the mutex has been successfully acquired
- * @retval FALSE        if the lock attempt failed.
+ * @retval true         if the mutex has been successfully acquired
+ * @retval false        if the lock attempt failed.
  *
  * @api
  */
-bool_t chMtxTryLock(mutex_t *mp) {
-  bool_t b;
+bool chMtxTryLock(mutex_t *mp) {
+  bool b;
 
   chSysLock();
 
@@ -245,23 +245,23 @@ bool_t chMtxTryLock(mutex_t *mp) {
  *
  * @param[in] mp        pointer to the @p mutex_t structure
  * @return              The operation status.
- * @retval TRUE         if the mutex has been successfully acquired
- * @retval FALSE        if the lock attempt failed.
+ * @retval true         if the mutex has been successfully acquired
+ * @retval false        if the lock attempt failed.
  *
  * @sclass
  */
-bool_t chMtxTryLockS(mutex_t *mp) {
+bool chMtxTryLockS(mutex_t *mp) {
 
   chDbgCheckClassS();
   chDbgCheck(mp != NULL, "chMtxTryLockS");
 
   if (mp->m_owner != NULL)
-    return FALSE;
+    return false;
 
   mp->m_owner = currp;
   mp->m_next = currp->p_mtxlist;
   currp->p_mtxlist = mp;
-  return TRUE;
+  return true;
 }
 
 /**

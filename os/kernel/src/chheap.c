@@ -88,9 +88,9 @@ void _heap_init(void) {
   default_heap.h_free.h.u.next = (union heap_header *)NULL;
   default_heap.h_free.h.size = 0;
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
-  chMtxInit(&default_heap.h_mtx);
+  chMtxObjectInit(&default_heap.h_mtx);
 #else
-  chSemInit(&default_heap.h_sem, 1);
+  chSemObjectInit(&default_heap.h_sem, 1);
 #endif
 }
 
@@ -105,7 +105,7 @@ void _heap_init(void) {
  *
  * @init
  */
-void chHeapInit(memory_heap_t *heapp, void *buf, size_t size) {
+void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
   union heap_header *hp;
 
   chDbgCheck(MEM_IS_ALIGNED(buf) && MEM_IS_ALIGNED(size), "chHeapInit");
@@ -116,9 +116,9 @@ void chHeapInit(memory_heap_t *heapp, void *buf, size_t size) {
   hp->h.u.next = NULL;
   hp->h.size = size - sizeof(union heap_header);
 #if CH_USE_MUTEXES || defined(__DOXYGEN__)
-  chMtxInit(&heapp->h_mtx);
+  chMtxObjectInit(&heapp->h_mtx);
 #else
-  chSemInit(&heapp->h_sem, 1);
+  chSemObjectInit(&heapp->h_sem, 1);
 #endif
 }
 
@@ -211,7 +211,7 @@ void chHeapFree(void *p) {
   qp = &heapp->h_free;
   H_LOCK(heapp);
 
-  while (TRUE) {
+  while (true) {
     chDbgAssert((hp < qp) || (hp >= LIMIT(qp)),
                 "chHeapFree(), #1",
                 "within free block");

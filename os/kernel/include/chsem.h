@@ -89,7 +89,7 @@ typedef struct semaphore {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chSemInit(semaphore_t *sp, cnt_t n);
+  void chSemObjectInit(semaphore_t *sp, cnt_t n);
   void chSemReset(semaphore_t *sp, cnt_t n);
   void chSemResetI(semaphore_t *sp, cnt_t n);
   msg_t chSemWait(semaphore_t *sp);

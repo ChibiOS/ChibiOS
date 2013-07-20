@@ -117,15 +117,15 @@ typedef struct  {
  *
  * @param[out] bsp      pointer to a @p binary_semaphore_t structure
  * @param[in] taken     initial state of the binary semaphore:
- *                      - @a FALSE, the initial state is not taken.
- *                      - @a TRUE, the initial state is taken.
+ *                      - @a false, the initial state is not taken.
+ *                      - @a true, the initial state is taken.
  *                      .
  *
  * @init
  */
-static inline void chBSemInit(binary_semaphore_t *bsp, bool taken) {
+static inline void chBSemObjectInit(binary_semaphore_t *bsp, bool taken) {
 
-  chSemInit(&bsp->bs_sem, taken ? 0 : 1);
+  chSemObjectInit(&bsp->bs_sem, taken ? 0 : 1);
 }
 
 /**
@@ -225,8 +225,8 @@ static inline msg_t chBSemWaitTimeout(binary_semaphore_t *bsp,
  *
  * @param[in] bsp       pointer to a @p binary_semaphore_t structure
  * @param[in] taken     new state of the binary semaphore
- *                      - @a FALSE, the new state is not taken.
- *                      - @a TRUE, the new state is taken.
+ *                      - @a false, the new state is not taken.
+ *                      - @a true, the new state is taken.
  *                      .
  *
  * @iclass
@@ -246,8 +246,8 @@ static inline void chBSemResetI(binary_semaphore_t *bsp, bool taken) {
  *
  * @param[in] bsp       pointer to a @p binary_semaphore_t structure
  * @param[in] taken     new state of the binary semaphore
- *                      - @a FALSE, the new state is not taken.
- *                      - @a TRUE, the new state is taken.
+ *                      - @a false, the new state is not taken.
+ *                      - @a true, the new state is taken.
  *                      .
  *
  * @api
@@ -293,8 +293,8 @@ static inline void chBSemSignal(binary_semaphore_t *bsp) {
  *
  * @param[in] bsp       pointer to a @p binary_semaphore_t structure
  * @return              The binary semaphore current state.
- * @retval FALSE        if the binary semaphore is not taken.
- * @retval TRUE         if the binary semaphore is taken.
+ * @retval false        if the binary semaphore is not taken.
+ * @retval true         if the binary semaphore is taken.
  *
  * @iclass
  */
@@ -302,7 +302,7 @@ static inline bool chBSemGetStateI(binary_semaphore_t *bsp) {
 
   chDbgCheckClassI();
 
-  return bsp->bs_sem.s_cnt > 0 ? FALSE : TRUE;
+  return bsp->bs_sem.s_cnt > 0 ? false : true;
 }
 
 #endif /* CH_USE_SEMAPHORES */

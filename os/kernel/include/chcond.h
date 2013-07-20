@@ -91,7 +91,7 @@ typedef struct condition_variable {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chCondInit(condition_variable_t *cp);
+  void chCondObjectInit(condition_variable_t *cp);
   void chCondSignal(condition_variable_t *cp);
   void chCondSignalI(condition_variable_t *cp);
   void chCondBroadcast(condition_variable_t *cp);
