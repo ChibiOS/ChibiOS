@@ -188,7 +188,6 @@ ROMCONST struct testcase testsem2 = {
   sem2_execute
 };
 
-#if CH_CFG_USE_SEMSW || defined(__DOXYGEN__)
 /**
  * @page test_sem_003 Atomic signal-wait test
  *
@@ -232,7 +231,6 @@ ROMCONST struct testcase testsem3 = {
   NULL,
   sem3_execute
 };
-#endif /* CH_CFG_USE_SEMSW */
 
 /**
  * @page test_sem_004 Binary Wait and Signal
@@ -293,9 +291,7 @@ ROMCONST struct testcase * ROMCONST patternsem[] = {
 #if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
   &testsem1,
   &testsem2,
-#if CH_CFG_USE_SEMSW || defined(__DOXYGEN__)
   &testsem3,
-#endif
   &testsem4,
 #endif
   NULL
