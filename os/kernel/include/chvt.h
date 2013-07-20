@@ -104,7 +104,7 @@ struct virtual_timer {
  * @api
  */
 #define S2ST(sec)                                                           \
-  ((systime_t)((sec) * CH_FREQUENCY))
+  ((systime_t)((uint32_t)(sec) * (uint32_t)CH_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
@@ -117,7 +117,8 @@ struct virtual_timer {
  * @api
  */
 #define MS2ST(msec)                                                         \
-  ((systime_t)((((msec) * CH_FREQUENCY - 1L) / 1000L) + 1L))
+  ((systime_t)(((((uint32_t)(msec)) * ((uint32_t)CH_FREQUENCY) - 1UL) /     \
+                1000UL) + 1UL))
 
 /**
  * @brief   Microseconds to system ticks.
@@ -130,7 +131,8 @@ struct virtual_timer {
  * @api
  */
 #define US2ST(usec)                                                         \
-  ((systime_t)((((usec) * CH_FREQUENCY - 1L) / 1000000L) + 1L))
+  ((systime_t)(((((uint32_t)(usec)) * ((uint32_t)CH_FREQUENCY) - 1UL) /     \
+                1000000UL) + 1UL))
 /** @} */
 
 /*===========================================================================*/
@@ -188,7 +190,7 @@ static inline systime_t chVTGetSystemTimeI(void) {
 
   chDbgCheckClassI();
 
-  return vtlist.vt_time;
+  return vtlist.vt_systime;
 }
 
 /**
@@ -359,7 +361,7 @@ static inline void chVTDoTickI(void) {
       vtfunc_t fn = vtp->vt_func;
       vtp->vt_func = (vtfunc_t)NULL;
       vtp->vt_next->vt_prev = (void *)&vtlist;
-      (&vtlist)->vt_next = vtp->vt_next;
+      vtlist.vt_next = vtp->vt_next;
       chSysUnlockFromIsr();
       fn(vtp->vt_par);
       chSysLockFromIsr();
