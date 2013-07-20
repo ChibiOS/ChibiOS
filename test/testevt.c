@@ -30,8 +30,8 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_EVENTS
- * - @p CH_USE_EVENTS_TIMEOUT
+ * - @p CH_CFG_USE_EVENTS
+ * - @p CH_CFG_USE_EVENTS_TIMEOUT
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
@@ -47,7 +47,7 @@
  * @brief Events test header file
  */
 
-#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
 
 #define ALLOWED_DELAY MS2ST(5)
 
@@ -228,7 +228,7 @@ ROMCONST struct testcase testevt2 = {
   evt2_execute
 };
 
-#if CH_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
 /**
  * @page test_events_003 Events timeout
  *
@@ -275,20 +275,20 @@ ROMCONST struct testcase testevt3 = {
   NULL,
   evt3_execute
 };
-#endif /* CH_USE_EVENTS_TIMEOUT */
+#endif /* CH_CFG_USE_EVENTS_TIMEOUT */
 
 /**
  * @brief   Test sequence for events.
  */
 ROMCONST struct testcase * ROMCONST patternevt[] = {
-#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
   &testevt1,
   &testevt2,
-#if CH_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
   &testevt3,
 #endif
 #endif
   NULL
 };
 
-#endif /* CH_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS */

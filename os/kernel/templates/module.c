@@ -28,7 +28,7 @@
 
 #include "ch.h"
 
-#if CH_USE_XXX || defined(__DOXYGEN__)
+#if CH_CFG_USE_XXX || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -76,6 +76,6 @@ void chXxxObjectInit(xxx_t *xxxp) {
 
 }
 
-#endif /* CH_USE_XXX */
+#endif /* CH_CFG_USE_XXX */
 
 /** @} */

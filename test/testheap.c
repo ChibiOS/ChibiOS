@@ -30,7 +30,7 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_HEAP
+ * - @p CH_CFG_USE_HEAP
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
@@ -44,7 +44,7 @@
  * @brief Heap header file
  */
 
-#if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP && !CH_CFG_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
 
 #define SIZE 16
 
@@ -146,13 +146,13 @@ ROMCONST struct testcase testheap1 = {
   heap1_execute
 };
 
-#endif /* CH_USE_HEAP.*/
+#endif /* CH_CFG_USE_HEAP.*/
 
 /**
  * @brief   Test sequence for heap.
  */
 ROMCONST struct testcase * ROMCONST patternheap[] = {
-#if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP && !CH_CFG_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
   &testheap1,
 #endif
   NULL

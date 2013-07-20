@@ -29,7 +29,7 @@
 #ifndef _CHMBOXES_H_
 #define _CHMBOXES_H_
 
-#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -43,8 +43,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_USE_SEMAPHORES
-#error "CH_USE_MAILBOXES requires CH_USE_SEMAPHORES"
+#if !CH_CFG_USE_SEMAPHORES
+#error "CH_CFG_USE_MAILBOXES requires CH_CFG_USE_SEMAPHORES"
 #endif
 
 /*===========================================================================*/
@@ -193,7 +193,7 @@ static inline cnt_t chMBPeekI(mailbox_t *mbp) {
   return *mbp->mb_rdptr;
 }
 
-#endif /* CH_USE_MAILBOXES */
+#endif /* CH_CFG_USE_MAILBOXES */
 
 #endif /* _CHMBOXES_H_ */
 

@@ -54,7 +54,7 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-#if !CH_OPTIMIZE_SPEED || defined(__DOXYGEN__)
+#if !CH_CFG_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 /**
  * @brief   Inserts a thread into a priority ordered queue.
  * @note    The insertion is done by scanning the list from the highest
@@ -175,6 +175,6 @@ thread_t *list_remove(threads_list_t *tlp) {
   tlp->p_next = tp->p_next;
   return tp;
 }
-#endif /* CH_OPTIMIZE_SPEED */
+#endif /* CH_CFG_OPTIMIZE_SPEED */
 
 /** @} */

@@ -64,7 +64,7 @@ void hal_lld_init(void) {
     printf("QueryPerformanceFrequency() error");
     exit(1);
   }
-  slice.QuadPart /= CH_FREQUENCY;
+  slice.QuadPart /= CH_CFG_FREQUENCY;
   QueryPerformanceCounter(&nextcnt);
   nextcnt.QuadPart += slice.QuadPart;
 

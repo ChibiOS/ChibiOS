@@ -30,7 +30,7 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_SEMAPHORES
+ * - @p CH_CFG_USE_SEMAPHORES
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
@@ -47,7 +47,7 @@
  * @brief Semaphores test header file
  */
 
-#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 
 #define ALLOWED_DELAY MS2ST(5)
 
@@ -65,7 +65,7 @@ static SEMAPHORE_DECL(sem1, 0);
  * Five threads with randomized priorities are enqueued to a semaphore then
  * awakened one at time.<br>
  * The test expects that the threads reach their goal in FIFO order or
- * priority order depending on the CH_USE_SEMAPHORES_PRIORITY configuration
+ * priority order depending on the CH_CFG_USE_SEMAPHORES_PRIORITY configuration
  * setting.
  */
 
@@ -94,7 +94,7 @@ static void sem1_execute(void) {
   chSemSignal(&sem1);
   chSemSignal(&sem1);
   test_wait_threads();
-#if CH_USE_SEMAPHORES_PRIORITY
+#if CH_CFG_USE_SEMAPHORES_PRIORITY
   test_assert_sequence(1, "ADCEB");
 #else
   test_assert_sequence(1, "ABCDE");
@@ -188,7 +188,7 @@ ROMCONST struct testcase testsem2 = {
   sem2_execute
 };
 
-#if CH_USE_SEMSW || defined(__DOXYGEN__)
+#if CH_CFG_USE_SEMSW || defined(__DOXYGEN__)
 /**
  * @page test_sem_003 Atomic signal-wait test
  *
@@ -232,7 +232,7 @@ ROMCONST struct testcase testsem3 = {
   NULL,
   sem3_execute
 };
-#endif /* CH_USE_SEMSW */
+#endif /* CH_CFG_USE_SEMSW */
 
 /**
  * @page test_sem_004 Binary Wait and Signal
@@ -284,16 +284,16 @@ ROMCONST struct testcase testsem4 = {
   NULL,
   sem4_execute
 };
-#endif /* CH_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES */
 
 /**
  * @brief   Test sequence for semaphores.
  */
 ROMCONST struct testcase * ROMCONST patternsem[] = {
-#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
   &testsem1,
   &testsem2,
-#if CH_USE_SEMSW || defined(__DOXYGEN__)
+#if CH_CFG_USE_SEMSW || defined(__DOXYGEN__)
   &testsem3,
 #endif
   &testsem4,

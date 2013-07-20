@@ -39,14 +39,14 @@
  *          This allocator, alone, is also useful for very simple
  *          applications that just require a simple way to get memory
  *          blocks.
- * @pre     In order to use the core memory manager APIs the @p CH_USE_MEMCORE
+ * @pre     In order to use the core memory manager APIs the @p CH_CFG_USE_MEMCORE
  *          option must be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_MEMCORE || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMCORE || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -77,17 +77,17 @@ static uint8_t *endmem;
  * @notapi
  */
 void _core_init(void) {
-#if CH_MEMCORE_SIZE == 0
+#if CH_CFG_MEMCORE_SIZE == 0
   extern uint8_t __heap_base__[];
   extern uint8_t __heap_end__[];
 
   nextmem = (uint8_t *)MEM_ALIGN_NEXT(__heap_base__);
   endmem = (uint8_t *)MEM_ALIGN_PREV(__heap_end__);
 #else
-  static stkalign_t buffer[MEM_ALIGN_NEXT(CH_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
+  static stkalign_t buffer[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
 
   nextmem = (uint8_t *)&buffer[0];
-  endmem = (uint8_t *)&buffer[MEM_ALIGN_NEXT(CH_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
+  endmem = (uint8_t *)&buffer[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
 #endif
 }
 
@@ -148,6 +148,6 @@ size_t chCoreStatus(void) {
 
   return (size_t)(endmem - nextmem);
 }
-#endif /* CH_USE_MEMCORE */
+#endif /* CH_CFG_USE_MEMCORE */
 
 /** @} */

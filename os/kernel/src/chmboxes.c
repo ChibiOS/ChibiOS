@@ -45,14 +45,14 @@
  *          example) from the posting side and free it on the fetching side.
  *          Another approach is to set a "done" flag into the structure pointed
  *          by the message.
- * @pre     In order to use the mailboxes APIs the @p CH_USE_MAILBOXES option
+ * @pre     In order to use the mailboxes APIs the @p CH_CFG_USE_MAILBOXES option
  *          must be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -393,6 +393,6 @@ msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp) {
   chSemSignalI(&mbp->mb_emptysem);
   return RDY_OK;
 }
-#endif /* CH_USE_MAILBOXES */
+#endif /* CH_CFG_USE_MAILBOXES */
 
 /** @} */

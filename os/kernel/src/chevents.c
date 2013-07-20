@@ -51,7 +51,7 @@
  *          An unlimited number of Event Sources can exists in a system and
  *          each thread can be listening on an unlimited number of
  *          them.
- * @pre     In order to use the Events APIs the @p CH_USE_EVENTS option must be
+ * @pre     In order to use the Events APIs the @p CH_CFG_USE_EVENTS option must be
  *          enabled in @p chconf.h.
  * @post    Enabling events requires 1-4 (depending on the architecture)
  *          extra bytes in the @p thread_t structure.
@@ -60,7 +60,7 @@
 
 #include "ch.h"
 
-#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -350,7 +350,7 @@ void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask) {
   }
 }
 
-#if CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
+#if CH_CFG_OPTIMIZE_SPEED || !CH_CFG_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
 /**
  * @brief   Waits for exactly one of the specified events.
  * @details The function waits for one event among those specified in
@@ -438,9 +438,9 @@ eventmask_t chEvtWaitAll(eventmask_t mask) {
   chSysUnlock();
   return mask;
 }
-#endif /* CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT */
+#endif /* CH_CFG_OPTIMIZE_SPEED || !CH_CFG_USE_EVENTS_TIMEOUT */
 
-#if CH_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
 /**
  * @brief   Waits for exactly one of the specified events.
  * @details The function waits for one event among those specified in
@@ -568,8 +568,8 @@ eventmask_t chEvtWaitAllTimeout(eventmask_t mask, systime_t time) {
   chSysUnlock();
   return mask;
 }
-#endif /* CH_USE_EVENTS_TIMEOUT */
+#endif /* CH_CFG_USE_EVENTS_TIMEOUT */
 
-#endif /* CH_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS */
 
 /** @} */

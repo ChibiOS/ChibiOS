@@ -29,7 +29,7 @@
 #ifndef _CHMEMCORE_H_
 #define _CHMEMCORE_H_
 
-#if CH_USE_MEMCORE || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMCORE || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -107,7 +107,7 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_USE_MEMCORE */
+#endif /* CH_CFG_USE_MEMCORE */
 
 #endif /* _CHMEMCORE_H_ */
 

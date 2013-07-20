@@ -29,7 +29,7 @@
 #ifndef _CHHEAP_H_
 #define _CHHEAP_H_
 
-#if CH_USE_HEAP || defined(__DOXYGEN__)
+#if CH_CFG_USE_HEAP || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -43,12 +43,12 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_USE_MEMCORE
-#error "CH_USE_HEAP requires CH_USE_MEMCORE"
+#if !CH_CFG_USE_MEMCORE
+#error "CH_CFG_USE_HEAP requires CH_CFG_USE_MEMCORE"
 #endif
 
-#if !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
-#error "CH_USE_HEAP requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
+#if !CH_CFG_USE_MUTEXES && !CH_CFG_USE_SEMAPHORES
+#error "CH_CFG_USE_HEAP requires CH_CFG_USE_MUTEXES and/or CH_CFG_USE_SEMAPHORES"
 #endif
 
 /*===========================================================================*/
@@ -81,7 +81,7 @@ struct memory_heap {
   memgetfunc_t          h_provider; /**< @brief Memory blocks provider for
                                                 this heap.                  */
   union heap_header     h_free;     /**< @brief Free blocks list header.    */
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   mutex_t               h_mtx;      /**< @brief Heap access mutex.          */
 #else
   semaphore_t           h_sem;      /**< @brief Heap access semaphore.      */
@@ -112,7 +112,7 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_USE_HEAP */
+#endif /* CH_CFG_USE_HEAP */
 
 #endif /* _CHHEAP_H_ */
 

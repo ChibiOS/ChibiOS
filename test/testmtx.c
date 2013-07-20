@@ -33,8 +33,8 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_MUTEXES
- * - @p CH_USE_CONDVARS
+ * - @p CH_CFG_USE_MUTEXES
+ * - @p CH_CFG_USE_CONDVARS
  * - @p CH_DBG_THREADS_PROFILING
  * .
  * In case some of the required options are not enabled then some or all tests
@@ -56,7 +56,7 @@
  * @brief Mutexes and CondVars test header file
  */
 
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 
 #define ALLOWED_DELAY 5
 
@@ -67,7 +67,7 @@
  */
 static MUTEX_DECL(m1);
 static MUTEX_DECL(m2);
-#if CH_USE_CONDVARS || defined(__DOXYGEN__)
+#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
 static CONDVAR_DECL(c1);
 #endif
 
@@ -463,7 +463,7 @@ ROMCONST struct testcase testmtx5 = {
   mtx5_execute
 };
 
-#if CH_USE_CONDVARS || defined(__DOXYGEN__)
+#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
 /**
  * @page test_mtx_006 Condition Variable signal test
  *
@@ -573,7 +573,7 @@ static msg_t thread11(void *p) {
 
   chMtxLock(&m2);
   chMtxLock(&m1);
-#if CH_USE_CONDVARS_TIMEOUT || defined(__DOXYGEN__)
+#if CH_CFG_USE_CONDVARS_TIMEOUT || defined(__DOXYGEN__)
   chCondWaitTimeout(&c1, TIME_INFINITE);
 #else
   chCondWait(&c1);
@@ -610,14 +610,14 @@ ROMCONST struct testcase testmtx8 = {
   NULL,
   mtx8_execute
 };
-#endif /* CH_USE_CONDVARS */
-#endif /* CH_USE_MUTEXES */
+#endif /* CH_CFG_USE_CONDVARS */
+#endif /* CH_CFG_USE_MUTEXES */
 
 /**
  * @brief   Test sequence for mutexes.
  */
 ROMCONST struct testcase * ROMCONST patternmtx[] = {
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   &testmtx1,
 #if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
   &testmtx2,
@@ -625,7 +625,7 @@ ROMCONST struct testcase * ROMCONST patternmtx[] = {
 #endif
   &testmtx4,
   &testmtx5,
-#if CH_USE_CONDVARS || defined(__DOXYGEN__)
+#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
   &testmtx6,
   &testmtx7,
   &testmtx8,

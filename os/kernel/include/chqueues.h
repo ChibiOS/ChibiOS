@@ -29,7 +29,7 @@
 #ifndef _CHQUEUES_H_
 #define _CHQUEUES_H_
 
-#if CH_USE_QUEUES || defined(__DOXYGEN__)
+#if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
 
 /**
  * @name    Queue functions returned status value
@@ -362,7 +362,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-#endif /* CH_USE_QUEUES */
+
+#endif /* CH_CFG_USE_QUEUES */
 
 #endif /* _CHQUEUES_H_ */
 

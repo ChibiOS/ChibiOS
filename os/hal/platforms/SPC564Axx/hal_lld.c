@@ -89,7 +89,7 @@ void hal_lld_init(void) {
   /* Decrementer timer initialized for system tick use, note, it is
      initialized here because in the OSAL layer the system clock frequency
      is not yet known.*/
-  n = SPC5_SYSCLK / CH_FREQUENCY;
+  n = SPC5_SYSCLK / CH_CFG_FREQUENCY;
   asm volatile ("mtspr   22, %[n]           \t\n"   /* Init. DEC register.  */
                 "mtspr   54, %[n]           \t\n"   /* Init. DECAR register.*/
                 "lis     %%r3, 0x0440       \t\n"   /* DIE ARE bits.        */

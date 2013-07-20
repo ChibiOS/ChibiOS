@@ -58,7 +58,7 @@
  *          The mechanism works with any number of nested mutexes and any
  *          number of involved threads. The algorithm complexity (worst case)
  *          is N with N equal to the number of nested mutexes.
- * @pre     In order to use the mutex APIs the @p CH_USE_MUTEXES option
+ * @pre     In order to use the mutex APIs the @p CH_CFG_USE_MUTEXES option
  *          must be enabled in @p chconf.h.
  * @post    Enabling mutexes requires 5-12 (depending on the architecture)
  *          extra bytes in the @p thread_t structure.
@@ -67,7 +67,7 @@
 
 #include "ch.h"
 
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -158,16 +158,16 @@ void chMtxLockS(mutex_t *mp) {
                           (threads_queue_t *)tp->p_u.wtobjp);
         tp = ((mutex_t *)tp->p_u.wtobjp)->m_owner;
         continue;
-#if CH_USE_CONDVARS |                                                       \
-    (CH_USE_SEMAPHORES && CH_USE_SEMAPHORES_PRIORITY) |                     \
-    (CH_USE_MESSAGES && CH_USE_MESSAGES_PRIORITY)
-#if CH_USE_CONDVARS
+#if CH_CFG_USE_CONDVARS |                                                       \
+    (CH_CFG_USE_SEMAPHORES && CH_CFG_USE_SEMAPHORES_PRIORITY) |                     \
+    (CH_CFG_USE_MESSAGES && CH_CFG_USE_MESSAGES_PRIORITY)
+#if CH_CFG_USE_CONDVARS
       case THD_STATE_WTCOND:
 #endif
-#if CH_USE_SEMAPHORES && CH_USE_SEMAPHORES_PRIORITY
+#if CH_CFG_USE_SEMAPHORES && CH_CFG_USE_SEMAPHORES_PRIORITY
       case THD_STATE_WTSEM:
 #endif
-#if CH_USE_MESSAGES && CH_USE_MESSAGES_PRIORITY
+#if CH_CFG_USE_MESSAGES && CH_CFG_USE_MESSAGES_PRIORITY
       case THD_STATE_SNDMSGQ:
 #endif
         /* Re-enqueues tp with its new priority on the queue.*/
@@ -423,6 +423,6 @@ void chMtxUnlockAll(void) {
   chSysUnlock();
 }
 
-#endif /* CH_USE_MUTEXES */
+#endif /* CH_CFG_USE_MUTEXES */
 
 /** @} */

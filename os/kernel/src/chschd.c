@@ -67,7 +67,7 @@ void _scheduler_init(void) {
 
   queue_init(&rlist.r_queue);
   rlist.r_prio = NOPRIO;
-#if CH_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY
   rlist.r_newer = rlist.r_older = (thread_t *)&rlist;
 #endif
 }
@@ -126,10 +126,10 @@ void chSchGoSleepS(tstate_t newstate) {
   chDbgCheckClassS();
 
   (otp = currp)->p_state = newstate;
-#if CH_TIME_QUANTUM > 0
+#if CH_CFG_TIME_QUANTUM > 0
   /* The thread is renouncing its remaining time slices so it will have a new
      time quantum when it will wakeup.*/
-  otp->p_preempt = CH_TIME_QUANTUM;
+  otp->p_preempt = CH_CFG_TIME_QUANTUM;
 #endif
   setcurrp(queue_fifo_remove(&rlist.r_queue));
   currp->p_state = THD_STATE_CURRENT;
@@ -149,17 +149,17 @@ static void wakeup(void *p) {
        another thread with higher priority.*/
     chSysUnlockFromIsr();
     return;
-#if CH_USE_SEMAPHORES || CH_USE_QUEUES ||                                   \
-    (CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT)
-#if CH_USE_SEMAPHORES
+#if CH_CFG_USE_SEMAPHORES || CH_CFG_USE_QUEUES ||                                   \
+    (CH_CFG_USE_CONDVARS && CH_CFG_USE_CONDVARS_TIMEOUT)
+#if CH_CFG_USE_SEMAPHORES
   case THD_STATE_WTSEM:
     chSemFastSignalI((semaphore_t *)tp->p_u.wtobjp);
     /* Falls into, intentional. */
 #endif
-#if CH_USE_QUEUES
+#if CH_CFG_USE_QUEUES
   case THD_STATE_WTQUEUE:
 #endif
-#if CH_USE_CONDVARS && CH_USE_CONDVARS_TIMEOUT
+#if CH_CFG_USE_CONDVARS && CH_CFG_USE_CONDVARS_TIMEOUT
   case THD_STATE_WTCOND:
 #endif
     /* States requiring dequeuing.*/
@@ -276,7 +276,7 @@ void chSchRescheduleS(void) {
 bool chSchIsPreemptionRequired(void) {
   tprio_t p1 = firstprio(&rlist.r_queue);
   tprio_t p2 = currp->p_prio;
-#if CH_TIME_QUANTUM > 0
+#if CH_CFG_TIME_QUANTUM > 0
   /* If the running thread has not reached its time quantum, reschedule only
      if the first thread on the ready queue has a higher priority.
      Otherwise, if the running thread has used up its time quantum, reschedule
@@ -306,8 +306,8 @@ void chSchDoRescheduleBehind(void) {
   /* Picks the first thread from the ready queue and makes it current.*/
   setcurrp(queue_fifo_remove(&rlist.r_queue));
   currp->p_state = THD_STATE_CURRENT;
-#if CH_TIME_QUANTUM > 0
-  otp->p_preempt = CH_TIME_QUANTUM;
+#if CH_CFG_TIME_QUANTUM > 0
+  otp->p_preempt = CH_CFG_TIME_QUANTUM;
 #endif
   chSchReadyI(otp);
   chSysSwitch(currp, otp);
@@ -355,8 +355,8 @@ void chSchDoRescheduleAhead(void) {
  */
 void chSchDoReschedule(void) {
 
-#if CH_TIME_QUANTUM > 0
-  /* If CH_TIME_QUANTUM is enabled then there are two different scenarios to
+#if CH_CFG_TIME_QUANTUM > 0
+  /* If CH_CFG_TIME_QUANTUM is enabled then there are two different scenarios to
      handle on preemption: time quantum elapsed or not.*/
   if (currp->p_preempt == 0) {
     /* The thread consumed its time quantum so it is enqueued behind threads
@@ -368,11 +368,11 @@ void chSchDoReschedule(void) {
        threads with equal priority and does not acquire a new time quantum.*/
     chSchDoRescheduleAhead();
   }
-#else /* !(CH_TIME_QUANTUM > 0) */
+#else /* !(CH_CFG_TIME_QUANTUM > 0) */
   /* If the round-robin mechanism is disabled then the thread goes always
      ahead of its peers.*/
   chSchDoRescheduleAhead();
-#endif /* !(CH_TIME_QUANTUM > 0) */
+#endif /* !(CH_CFG_TIME_QUANTUM > 0) */
 }
 
 /** @} */

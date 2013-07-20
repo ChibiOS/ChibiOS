@@ -31,7 +31,7 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_MESSAGES
+ * - @p CH_CFG_USE_MESSAGES
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
@@ -45,7 +45,7 @@
  * @brief Messages header file
  */
 
-#if CH_USE_MESSAGES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
 
 /**
  * @page test_msg_001 Messages Server loop
@@ -95,13 +95,13 @@ ROMCONST struct testcase testmsg1 = {
   msg1_execute
 };
 
-#endif /* CH_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES */
 
 /**
  * @brief   Test sequence for messages.
  */
 ROMCONST struct testcase * ROMCONST patternmsg[] = {
-#if CH_USE_MESSAGES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
   &testmsg1,
 #endif
   NULL

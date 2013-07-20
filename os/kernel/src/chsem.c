@@ -51,15 +51,15 @@
  *          also have other uses, queues guards and counters for example.<br>
  *          Semaphores usually use a FIFO queuing strategy but it is possible
  *          to make them order threads by priority by enabling
- *          @p CH_USE_SEMAPHORES_PRIORITY in @p chconf.h.
- * @pre     In order to use the semaphore APIs the @p CH_USE_SEMAPHORES
+ *          @p CH_CFG_USE_SEMAPHORES_PRIORITY in @p chconf.h.
+ * @pre     In order to use the semaphore APIs the @p CH_CFG_USE_SEMAPHORES
  *          option must be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -77,7 +77,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if CH_USE_SEMAPHORES_PRIORITY
+#if CH_CFG_USE_SEMAPHORES_PRIORITY
 #define sem_insert(tp, qp) prio_insert(tp, qp)
 #else
 #define sem_insert(tp, qp) queue_insert(tp, qp)
@@ -360,11 +360,8 @@ void chSemAddCounterI(semaphore_t *sp, cnt_t n) {
   }
 }
 
-#if CH_USE_SEMSW
 /**
  * @brief   Performs atomic signal and wait operations on two semaphores.
- * @pre     The configuration option @p CH_USE_SEMSW must be enabled in order
- *          to use this function.
  *
  * @param[in] sps       pointer to a @p semaphore_t structure to be signaled
  * @param[in] spw       pointer to a @p semaphore_t structure to wait on
@@ -406,8 +403,7 @@ msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
   chSysUnlock();
   return msg;
 }
-#endif /* CH_USE_SEMSW */
 
-#endif /* CH_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES */
 
 /** @} */

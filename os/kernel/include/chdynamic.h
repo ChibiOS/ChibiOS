@@ -29,7 +29,7 @@
 #ifndef _CHDYNAMIC_H_
 #define _CHDYNAMIC_H_
 
-#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
+#if CH_CFG_USE_DYNAMIC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -46,11 +46,11 @@
 /*
  * Module dependencies check.
  */
-#if CH_USE_DYNAMIC && !CH_USE_WAITEXIT
-#error "CH_USE_DYNAMIC requires CH_USE_WAITEXIT"
+#if CH_CFG_USE_DYNAMIC && !CH_CFG_USE_WAITEXIT
+#error "CH_CFG_USE_DYNAMIC requires CH_CFG_USE_WAITEXIT"
 #endif
-#if CH_USE_DYNAMIC && !CH_USE_HEAP && !CH_USE_MEMPOOLS
-#error "CH_USE_DYNAMIC requires CH_USE_HEAP and/or CH_USE_MEMPOOLS"
+#if CH_CFG_USE_DYNAMIC && !CH_CFG_USE_HEAP && !CH_CFG_USE_MEMPOOLS
+#error "CH_CFG_USE_DYNAMIC requires CH_CFG_USE_HEAP and/or CH_CFG_USE_MEMPOOLS"
 #endif
 
 /*===========================================================================*/
@@ -73,11 +73,11 @@ extern "C" {
 #endif
   thread_t *chThdAddRef(thread_t *tp);
   void chThdRelease(thread_t *tp);
-#if CH_USE_HEAP
+#if CH_CFG_USE_HEAP
   thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
                                 tprio_t prio, tfunc_t pf, void *arg);
 #endif
-#if CH_USE_MEMPOOLS
+#if CH_CFG_USE_MEMPOOLS
   thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
                                       tfunc_t pf, void *arg);
 #endif
@@ -89,7 +89,7 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_USE_DYNAMIC */
+#endif /* CH_CFG_USE_DYNAMIC */
 
 #endif /* _CHDYNAMIC_H_ */
 

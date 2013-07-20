@@ -199,7 +199,7 @@ typedef struct {
 #define chnReadTimeout(ip, bp, n, time) ((ip)->vmt->readt(ip, bp, n, time))
 /** @} */
 
-#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
 /**
  * @name    I/O status flags added to the event listener
  * @{
@@ -287,7 +287,7 @@ typedef struct {
 }
 /** @} */
 
-#endif /* CH_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS */
 
 #endif /* _IO_CHANNEL_H_ */
 

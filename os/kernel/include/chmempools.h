@@ -29,7 +29,7 @@
 #ifndef _CHMEMPOOLS_H_
 #define _CHMEMPOOLS_H_
 
-#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -39,8 +39,8 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-#if !CH_USE_MEMCORE
-#error "CH_USE_MEMPOOLS requires CH_USE_MEMCORE"
+#if !CH_CFG_USE_MEMCORE
+#error "CH_CFG_USE_MEMPOOLS requires CH_CFG_USE_MEMCORE"
 #endif
 
 /*===========================================================================*/
@@ -162,7 +162,7 @@ static inline void chPoolAddI(memory_pool_t *mp, void *objp) {
   chPoolFreeI(mp, objp);
 }
 
-#endif /* CH_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS */
 
 #endif /* _CHMEMPOOLS_H_ */
 

@@ -81,7 +81,7 @@ void adcObjectInit(ADCDriver *adcp) {
   adcp->thread   = NULL;
 #endif /* ADC_USE_WAIT */
 #if ADC_USE_MUTUAL_EXCLUSION
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   chMtxInit(&adcp->mutex);
 #else
   chSemInit(&adcp->semaphore, 1);
@@ -309,9 +309,9 @@ void adcAcquireBus(ADCDriver *adcp) {
 
   chDbgCheck(adcp != NULL, "adcAcquireBus");
 
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   chMtxLock(&adcp->mutex);
-#elif CH_USE_SEMAPHORES
+#elif CH_CFG_USE_SEMAPHORES
   chSemWait(&adcp->semaphore);
 #endif
 }
@@ -329,10 +329,10 @@ void adcReleaseBus(ADCDriver *adcp) {
 
   chDbgCheck(adcp != NULL, "adcReleaseBus");
 
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   (void)adcp;
   chMtxUnlock();
-#elif CH_USE_SEMAPHORES
+#elif CH_CFG_USE_SEMAPHORES
   chSemSignal(&adcp->semaphore);
 #endif
 }

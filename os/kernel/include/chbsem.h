@@ -43,7 +43,7 @@
  *          mutexes can only be taken and released by the same thread. Another
  *          difference is that binary semaphores, unlike mutexes, do not
  *          implement the priority inheritance protocol.<br>
- *          In order to use the binary semaphores APIs the @p CH_USE_SEMAPHORES
+ *          In order to use the binary semaphores APIs the @p CH_CFG_USE_SEMAPHORES
  *          option must be enabled in @p chconf.h.
  * @{
  */
@@ -51,7 +51,7 @@
 #ifndef _CHBSEM_H_
 #define _CHBSEM_H_
 
-#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -305,7 +305,7 @@ static inline bool chBSemGetStateI(binary_semaphore_t *bsp) {
   return bsp->bs_sem.s_cnt > 0 ? false : true;
 }
 
-#endif /* CH_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES */
 
 #endif /* _CHBSEM_H_ */
 

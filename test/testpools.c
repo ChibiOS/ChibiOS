@@ -30,7 +30,7 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_MEMPOOLS
+ * - @p CH_CFG_USE_MEMPOOLS
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
@@ -44,7 +44,7 @@
  * @brief Memory Pools test header file
  */
 
-#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
 
 static MEMORYPOOL_DECL(mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
 
@@ -104,13 +104,13 @@ ROMCONST struct testcase testpools1 = {
   pools1_execute
 };
 
-#endif /* CH_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS */
 
 /*
  * @brief   Test sequence for pools.
  */
 ROMCONST struct testcase * ROMCONST patternpools[] = {
-#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
   &testpools1,
 #endif
   NULL

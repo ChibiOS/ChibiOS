@@ -29,7 +29,7 @@
 
 #include "ch.h"
 
-#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
+#if CH_CFG_USE_DYNAMIC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -57,7 +57,7 @@
 
 /**
  * @brief   Adds a reference to a thread object.
- * @pre     The configuration option @p CH_USE_DYNAMIC must be enabled in order
+ * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in order
  *          to use this function.
  *
  * @param[in] tp        pointer to the thread
@@ -80,7 +80,7 @@ thread_t *chThdAddRef(thread_t *tp) {
  * @details If the references counter reaches zero <b>and</b> the thread
  *          is in the @p THD_STATE_FINAL state then the thread's memory is
  *          returned to the proper allocator.
- * @pre     The configuration option @p CH_USE_DYNAMIC must be enabled in order
+ * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in order
  *          to use this function.
  * @note    Static threads are not affected.
  *
@@ -101,17 +101,17 @@ void chThdRelease(thread_t *tp) {
      allocator. Of course static threads are not affected.*/
   if ((refs == 0) && (tp->p_state == THD_STATE_FINAL)) {
     switch (tp->p_flags & THD_MEM_MODE_MASK) {
-#if CH_USE_HEAP
+#if CH_CFG_USE_HEAP
     case THD_MEM_MODE_HEAP:
-#if CH_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY
       REG_REMOVE(tp);
 #endif
       chHeapFree(tp);
       break;
 #endif
-#if CH_USE_MEMPOOLS
+#if CH_CFG_USE_MEMPOOLS
     case THD_MEM_MODE_MEMPOOL:
-#if CH_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY
       REG_REMOVE(tp);
 #endif
       chPoolFree(tp->p_mpool, tp);
@@ -121,10 +121,10 @@ void chThdRelease(thread_t *tp) {
   }
 }
 
-#if CH_USE_HEAP || defined(__DOXYGEN__)
+#if CH_CFG_USE_HEAP || defined(__DOXYGEN__)
 /**
  * @brief   Creates a new thread allocating the memory from the heap.
- * @pre     The configuration options @p CH_USE_DYNAMIC and @p CH_USE_HEAP
+ * @pre     The configuration options @p CH_CFG_USE_DYNAMIC and @p CH_CFG_USE_HEAP
  *          must be enabled in order to use this function.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
@@ -169,13 +169,13 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
   chSysUnlock();
   return tp;
 }
-#endif /* CH_USE_HEAP */
+#endif /* CH_CFG_USE_HEAP */
 
-#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
 /**
  * @brief   Creates a new thread allocating the memory from the specified
  *          memory pool.
- * @pre     The configuration options @p CH_USE_DYNAMIC and @p CH_USE_MEMPOOLS
+ * @pre     The configuration options @p CH_CFG_USE_DYNAMIC and @p CH_CFG_USE_MEMPOOLS
  *          must be enabled in order to use this function.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
@@ -221,8 +221,8 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
   chSysUnlock();
   return tp;
 }
-#endif /* CH_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS */
 
-#endif /* CH_USE_DYNAMIC */
+#endif /* CH_CFG_USE_DYNAMIC */
 
 /** @} */

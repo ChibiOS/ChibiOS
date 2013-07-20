@@ -49,7 +49,7 @@
  *          .
  *          The threads subsystem is implicitly included in kernel however
  *          some of its part may be excluded by disabling them in @p chconf.h,
- *          see the @p CH_USE_WAITEXIT and @p CH_USE_DYNAMIC configuration
+ *          see the @p CH_CFG_USE_WAITEXIT and @p CH_CFG_USE_DYNAMIC configuration
  *          options.
  * @{
  */
@@ -95,37 +95,37 @@ thread_t *_thread_init(thread_t *tp, tprio_t prio) {
   tp->p_prio = prio;
   tp->p_state = THD_STATE_SUSPENDED;
   tp->p_flags = THD_MEM_MODE_STATIC;
-#if CH_TIME_QUANTUM > 0
-  tp->p_preempt = CH_TIME_QUANTUM;
+#if CH_CFG_TIME_QUANTUM > 0
+  tp->p_preempt = CH_CFG_TIME_QUANTUM;
 #endif
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   tp->p_realprio = prio;
   tp->p_mtxlist = NULL;
 #endif
-#if CH_USE_EVENTS
+#if CH_CFG_USE_EVENTS
   tp->p_epending = 0;
 #endif
 #if CH_DBG_THREADS_PROFILING
   tp->p_time = 0;
 #endif
-#if CH_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC
   tp->p_refs = 1;
 #endif
-#if CH_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY
   tp->p_name = NULL;
   REG_INSERT(tp);
 #endif
-#if CH_USE_WAITEXIT
+#if CH_CFG_USE_WAITEXIT
   list_init(&tp->p_waiting);
 #endif
-#if CH_USE_MESSAGES
+#if CH_CFG_USE_MESSAGES
   queue_init(&tp->p_msgqueue);
 #endif
 #if CH_DBG_ENABLE_STACK_CHECK
   tp->p_stklimit = (stkalign_t *)(tp + 1);
 #endif
-#if defined(THREAD_EXT_INIT_HOOK)
-  THREAD_EXT_INIT_HOOK(tp);
+#if defined(CH_CFG_THREAD_INIT_HOOK)
+  CH_CFG_THREAD_INIT_HOOK(tp);
 #endif
   return tp;
 }
@@ -238,7 +238,7 @@ tprio_t chThdSetPriority(tprio_t newprio) {
   chDbgCheck(newprio <= HIGHPRIO, "chThdSetPriority");
 
   chSysLock();
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   oldprio = currp->p_realprio;
   if ((currp->p_prio == currp->p_realprio) || (newprio > currp->p_prio))
     currp->p_prio = newprio;
@@ -385,14 +385,14 @@ void chThdExitS(msg_t msg) {
   thread_t *tp = currp;
 
   tp->p_u.exitcode = msg;
-#if defined(THREAD_EXT_EXIT_HOOK)
-  THREAD_EXT_EXIT_HOOK(tp);
+#if defined(CH_CFG_THREAD_EXIT_HOOK)
+  CH_CFG_THREAD_EXIT_HOOK(tp);
 #endif
-#if CH_USE_WAITEXIT
+#if CH_CFG_USE_WAITEXIT
   while (list_notempty(&tp->p_waiting))
     chSchReadyI(list_remove(&tp->p_waiting));
 #endif
-#if CH_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY
   /* Static threads are immediately removed from the registry because
      there is no memory to recover.*/
   if ((tp->p_flags & THD_MEM_MODE_MASK) == THD_MEM_MODE_STATIC)
@@ -403,7 +403,7 @@ void chThdExitS(msg_t msg) {
   chDbgAssert(false, "chThdExitS(), #1", "zombies apocalypse");
 }
 
-#if CH_USE_WAITEXIT || defined(__DOXYGEN__)
+#if CH_CFG_USE_WAITEXIT || defined(__DOXYGEN__)
 /**
  * @brief   Blocks the execution of the invoking thread until the specified
  *          thread terminates then the exit code is returned.
@@ -421,13 +421,13 @@ void chThdExitS(msg_t msg) {
  *          - If the thread was spawned by @p chThdCreateFromMemoryPool()
  *            then the working area is returned to the owning memory pool.
  *          .
- * @pre     The configuration option @p CH_USE_WAITEXIT must be enabled in
+ * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
  *          order to use this function.
  * @post    Enabling @p chThdWait() requires 2-4 (depending on the
  *          architecture) extra bytes in the @p thread_t structure.
  * @post    After invoking @p chThdWait() the thread pointer becomes invalid
  *          and must not be used as parameter for further system calls.
- * @note    If @p CH_USE_DYNAMIC is not specified this function just waits for
+ * @note    If @p CH_CFG_USE_DYNAMIC is not specified this function just waits for
  *          the thread termination, no memory allocators are involved.
  *
  * @param[in] tp        pointer to the thread
@@ -442,7 +442,7 @@ msg_t chThdWait(thread_t *tp) {
 
   chSysLock();
   chDbgAssert(tp != currp, "chThdWait(), #1", "waiting self");
-#if CH_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC
   chDbgAssert(tp->p_refs > 0, "chThdWait(), #2", "not referenced");
 #endif
   if (tp->p_state != THD_STATE_FINAL) {
@@ -451,11 +451,11 @@ msg_t chThdWait(thread_t *tp) {
   }
   msg = tp->p_u.exitcode;
   chSysUnlock();
-#if CH_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC
   chThdRelease(tp);
 #endif
   return msg;
 }
-#endif /* CH_USE_WAITEXIT */
+#endif /* CH_CFG_USE_WAITEXIT */
 
 /** @} */

@@ -36,14 +36,14 @@
  *            are implemented by pairing an input queue and an output queue
  *            together.
  *          .
- * @pre     In order to use the I/O queues the @p CH_USE_QUEUES option must
+ * @pre     In order to use the I/O queues the @p CH_CFG_USE_QUEUES option must
  *          be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_QUEUES || defined(__DOXYGEN__)
+#if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
 
 /**
  * @brief   Puts the invoking thread into the queue's threads queue.
@@ -426,6 +426,6 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
     chSysLock();
   }
 }
-#endif  /* CH_USE_QUEUES */
+#endif  /* CH_CFG_USE_QUEUES */
 
 /** @} */

@@ -35,7 +35,7 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_QUEUES (and dependent options)
+ * - @p CH_CFG_USE_QUEUES (and dependent options)
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
@@ -50,7 +50,7 @@
  * @brief I/O Queues test header file
  */
 
-#if CH_USE_QUEUES || defined(__DOXYGEN__)
+#if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
 
 #define TEST_QUEUES_SIZE 4
 
@@ -230,13 +230,13 @@ ROMCONST struct testcase testqueues2 = {
   NULL,
   queues2_execute
 };
-#endif /* CH_USE_QUEUES */
+#endif /* CH_CFG_USE_QUEUES */
 
 /**
  * @brief   Test sequence for queues.
  */
 ROMCONST struct testcase * ROMCONST patternqueues[] = {
-#if CH_USE_QUEUES || defined(__DOXYGEN__)
+#if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
   &testqueues1,
   &testqueues2,
 #endif

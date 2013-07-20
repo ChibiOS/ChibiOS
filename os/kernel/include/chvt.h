@@ -104,7 +104,7 @@ struct virtual_timer {
  * @api
  */
 #define S2ST(sec)                                                           \
-  ((systime_t)((uint32_t)(sec) * (uint32_t)CH_FREQUENCY))
+  ((systime_t)((uint32_t)(sec) * (uint32_t)CH_CFG_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
@@ -117,7 +117,7 @@ struct virtual_timer {
  * @api
  */
 #define MS2ST(msec)                                                         \
-  ((systime_t)(((((uint32_t)(msec)) * ((uint32_t)CH_FREQUENCY) - 1UL) /     \
+  ((systime_t)(((((uint32_t)(msec)) * ((uint32_t)CH_CFG_FREQUENCY) - 1UL) /     \
                 1000UL) + 1UL))
 
 /**
@@ -131,7 +131,7 @@ struct virtual_timer {
  * @api
  */
 #define US2ST(usec)                                                         \
-  ((systime_t)(((((uint32_t)(usec)) * ((uint32_t)CH_FREQUENCY) - 1UL) /     \
+  ((systime_t)(((((uint32_t)(usec)) * ((uint32_t)CH_CFG_FREQUENCY) - 1UL) /     \
                 1000000UL) + 1UL))
 /** @} */
 

@@ -98,7 +98,7 @@ typedef struct {
                                                 initialized to zero.        */
   struct context        r_ctx;      /**< @brief Not used, present because
                                                 offsets.                    */
-#if CH_USE_REGISTRY || defined(__DOXYGEN__)
+#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
   thread_t              *r_newer;   /**< @brief Newer registry element.     */
   thread_t              *r_older;   /**< @brief Older registry element.     */
 #endif
@@ -222,7 +222,7 @@ static inline void chSchPreemption(void) {
   tprio_t p1 = firstprio(&rlist.r_queue);
   tprio_t p2 = currp->p_prio;
 
-#if CH_TIME_QUANTUM > 0
+#if CH_CFG_TIME_QUANTUM > 0
   if (currp->p_preempt) {
     if (p1 > p2)
       chSchDoRescheduleAhead();
@@ -231,10 +231,10 @@ static inline void chSchPreemption(void) {
     if (p1 >= p2)
       chSchDoRescheduleBehind();
   }
-#else /* CH_TIME_QUANTUM == 0 */
+#else /* CH_CFG_TIME_QUANTUM == 0 */
   if (p1 >= p2)
     chSchDoRescheduleAhead();
-#endif /* CH_TIME_QUANTUM == 0 */
+#endif /* CH_CFG_TIME_QUANTUM == 0 */
 }
 
 #endif /* _CHSCHD_H_ */

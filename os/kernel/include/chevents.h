@@ -32,7 +32,7 @@
 #ifndef _CHEVENTS_H_
 #define _CHEVENTS_H_
 
-#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -131,12 +131,12 @@ extern "C" {
   void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags);
   void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags);
   void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask);
-#if CH_OPTIMIZE_SPEED || !CH_USE_EVENTS_TIMEOUT
+#if CH_CFG_OPTIMIZE_SPEED || !CH_CFG_USE_EVENTS_TIMEOUT
   eventmask_t chEvtWaitOne(eventmask_t mask);
   eventmask_t chEvtWaitAny(eventmask_t mask);
   eventmask_t chEvtWaitAll(eventmask_t mask);
 #endif
-#if CH_USE_EVENTS_TIMEOUT
+#if CH_CFG_USE_EVENTS_TIMEOUT
   eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time);
   eventmask_t chEvtWaitAllTimeout(eventmask_t mask, systime_t time);
@@ -145,7 +145,7 @@ extern "C" {
 }
 #endif
 
-#if !CH_OPTIMIZE_SPEED && CH_USE_EVENTS_TIMEOUT
+#if !CH_CFG_OPTIMIZE_SPEED && CH_CFG_USE_EVENTS_TIMEOUT
 #define chEvtWaitOne(mask) chEvtWaitOneTimeout(mask, TIME_INFINITE)
 #define chEvtWaitAny(mask) chEvtWaitAnyTimeout(mask, TIME_INFINITE)
 #define chEvtWaitAll(mask) chEvtWaitAllTimeout(mask, TIME_INFINITE)
@@ -233,7 +233,7 @@ static inline void chEvtBroadcastI(event_source_t *esp) {
   chEvtBroadcastFlagsI(esp, 0);
 }
 
-#endif /* CH_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS */
 
 #endif /* _CHEVENTS_H_ */
 

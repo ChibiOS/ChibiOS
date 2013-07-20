@@ -33,7 +33,7 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_MAILBOXES
+ * - @p CH_CFG_USE_MAILBOXES
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
@@ -47,7 +47,7 @@
  * @brief Mailboxes header file
  */
 
-#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
 
 #define ALLOWED_DELAY MS2ST(5)
 #define MB_SIZE 5
@@ -226,13 +226,13 @@ ROMCONST struct testcase testmbox1 = {
   mbox1_execute
 };
 
-#endif /* CH_USE_MAILBOXES */
+#endif /* CH_CFG_USE_MAILBOXES */
 
 /**
  * @brief   Test sequence for mailboxes.
  */
 ROMCONST struct testcase * ROMCONST patternmbox[] = {
-#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
   &testmbox1,
 #endif
   NULL

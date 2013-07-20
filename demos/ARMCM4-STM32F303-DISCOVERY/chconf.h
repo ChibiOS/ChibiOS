@@ -40,8 +40,20 @@
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#if !defined(CH_FREQUENCY) || defined(__DOXYGEN__)
-#define CH_FREQUENCY                    1000
+#if !defined(CH_CFG_FREQUENCY) || defined(__DOXYGEN__)
+#define CH_CFG_FREQUENCY                    1000
+#endif
+
+/**
+ * @brief   Time delta constant for the tick-less mode.
+ * @note    If this value is zero then the system uses the classic
+ *          periodic tick. This value represents the minimum number
+ *          of ticks that is safe to specify in a timeout directive.
+ *          The value one is not valid, timeouts are rounded up to
+ *          this value.
+ */
+#if !defined(CH_CFG_TIMEDELTA) || defined(__DOXYGEN__)
+#define CH_CFG_TIMEDELTA                    0
 #endif
 
 /**
@@ -51,12 +63,13 @@
  *          disables the preemption for threads with equal priority and the
  *          round robin becomes cooperative. Note that higher priority
  *          threads can still preempt, the kernel is always preemptive.
- *
  * @note    Disabling the round robin preemption makes the kernel more compact
  *          and generally faster.
+ * @note    The round robin preemption is not supported in tickless mode and
+ *          must be set to zero in that case.
  */
-#if !defined(CH_TIME_QUANTUM) || defined(__DOXYGEN__)
-#define CH_TIME_QUANTUM                 20
+#if !defined(CH_CFG_TIME_QUANTUM) || defined(__DOXYGEN__)
+#define CH_CFG_TIME_QUANTUM                 20
 #endif
 
 /**
@@ -68,10 +81,10 @@
  *
  * @note    In order to let the OS manage the whole RAM the linker script must
  *          provide the @p __heap_base__ and @p __heap_end__ symbols.
- * @note    Requires @p CH_USE_MEMCORE.
+ * @note    Requires @p CH_CFG_USE_MEMCORE.
  */
-#if !defined(CH_MEMCORE_SIZE) || defined(__DOXYGEN__)
-#define CH_MEMCORE_SIZE                 0
+#if !defined(CH_CFG_MEMCORE_SIZE) || defined(__DOXYGEN__)
+#define CH_CFG_MEMCORE_SIZE                 0
 #endif
 
 /**
@@ -87,8 +100,8 @@
  * @note    Unless an idle thread is spawned the @p main() thread must not
  *          enter a sleep state.
  */
-#if !defined(CH_NO_IDLE_THREAD) || defined(__DOXYGEN__)
-#define CH_NO_IDLE_THREAD               FALSE
+#if !defined(CH_CFG_NO_IDLE_THREAD) || defined(__DOXYGEN__)
+#define CH_CFG_NO_IDLE_THREAD               FALSE
 #endif
 
 /** @} */
@@ -108,8 +121,8 @@
  * @note    This is not related to the compiler optimization options.
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
-#define CH_OPTIMIZE_SPEED               TRUE
+#if !defined(CH_CFG_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
+#define CH_CFG_OPTIMIZE_SPEED               TRUE
 #endif
 
 /** @} */
@@ -127,8 +140,8 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_REGISTRY) || defined(__DOXYGEN__)
-#define CH_USE_REGISTRY                 TRUE
+#if !defined(CH_CFG_USE_REGISTRY) || defined(__DOXYGEN__)
+#define CH_CFG_USE_REGISTRY                 TRUE
 #endif
 
 /**
@@ -138,8 +151,8 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_WAITEXIT) || defined(__DOXYGEN__)
-#define CH_USE_WAITEXIT                 TRUE
+#if !defined(CH_CFG_USE_WAITEXIT) || defined(__DOXYGEN__)
+#define CH_CFG_USE_WAITEXIT                 TRUE
 #endif
 
 /**
@@ -148,8 +161,8 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_SEMAPHORES) || defined(__DOXYGEN__)
-#define CH_USE_SEMAPHORES               TRUE
+#if !defined(CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#define CH_CFG_USE_SEMAPHORES               TRUE
 #endif
 
 /**
@@ -157,23 +170,12 @@
  * @details If enabled then the threads are enqueued on semaphores by
  *          priority rather than in FIFO order.
  *
- * @note    The default is @p FALSE. Enable this if you have special requirements.
- * @note    Requires @p CH_USE_SEMAPHORES.
+ * @note    The default is @p FALSE. Enable this if you have special
+ *          requirements.
+ * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#if !defined(CH_USE_SEMAPHORES_PRIORITY) || defined(__DOXYGEN__)
-#define CH_USE_SEMAPHORES_PRIORITY      FALSE
-#endif
-
-/**
- * @brief   Atomic semaphore API.
- * @details If enabled then the semaphores the @p chSemSignalWait() API
- *          is included in the kernel.
- *
- * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_SEMAPHORES.
- */
-#if !defined(CH_USE_SEMSW) || defined(__DOXYGEN__)
-#define CH_USE_SEMSW                    TRUE
+#if !defined(CH_CFG_USE_SEMAPHORES_PRIORITY) || defined(__DOXYGEN__)
+#define CH_CFG_USE_SEMAPHORES_PRIORITY      FALSE
 #endif
 
 /**
@@ -182,8 +184,8 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_MUTEXES) || defined(__DOXYGEN__)
-#define CH_USE_MUTEXES                  TRUE
+#if !defined(CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MUTEXES                  TRUE
 #endif
 
 /**
@@ -192,10 +194,10 @@
  *          in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_MUTEXES.
+ * @note    Requires @p CH_CFG_USE_MUTEXES.
  */
-#if !defined(CH_USE_CONDVARS) || defined(__DOXYGEN__)
-#define CH_USE_CONDVARS                 TRUE
+#if !defined(CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+#define CH_CFG_USE_CONDVARS                 TRUE
 #endif
 
 /**
@@ -204,10 +206,10 @@
  *          specification are included in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_CONDVARS.
+ * @note    Requires @p CH_CFG_USE_CONDVARS.
  */
-#if !defined(CH_USE_CONDVARS_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_CONDVARS_TIMEOUT         TRUE
+#if !defined(CH_CFG_USE_CONDVARS_TIMEOUT) || defined(__DOXYGEN__)
+#define CH_CFG_USE_CONDVARS_TIMEOUT         TRUE
 #endif
 
 /**
@@ -216,8 +218,8 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_EVENTS) || defined(__DOXYGEN__)
-#define CH_USE_EVENTS                   TRUE
+#if !defined(CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
+#define CH_CFG_USE_EVENTS                   TRUE
 #endif
 
 /**
@@ -226,10 +228,10 @@
  *          are included in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_EVENTS.
+ * @note    Requires @p CH_CFG_USE_EVENTS.
  */
-#if !defined(CH_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_EVENTS_TIMEOUT           TRUE
+#if !defined(CH_CFG_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
+#define CH_CFG_USE_EVENTS_TIMEOUT           TRUE
 #endif
 
 /**
@@ -239,8 +241,8 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_MESSAGES) || defined(__DOXYGEN__)
-#define CH_USE_MESSAGES                 TRUE
+#if !defined(CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MESSAGES                 TRUE
 #endif
 
 /**
@@ -248,11 +250,12 @@
  * @details If enabled then messages are served by priority rather than in
  *          FIFO order.
  *
- * @note    The default is @p FALSE. Enable this if you have special requirements.
- * @note    Requires @p CH_USE_MESSAGES.
+ * @note    The default is @p FALSE. Enable this if you have special
+ *          requirements.
+ * @note    Requires @p CH_CFG_USE_MESSAGES.
  */
-#if !defined(CH_USE_MESSAGES_PRIORITY) || defined(__DOXYGEN__)
-#define CH_USE_MESSAGES_PRIORITY        FALSE
+#if !defined(CH_CFG_USE_MESSAGES_PRIORITY) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MESSAGES_PRIORITY        FALSE
 #endif
 
 /**
@@ -261,10 +264,10 @@
  *          included in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_SEMAPHORES.
+ * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#if !defined(CH_USE_MAILBOXES) || defined(__DOXYGEN__)
-#define CH_USE_MAILBOXES                TRUE
+#if !defined(CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MAILBOXES                TRUE
 #endif
 
 /**
@@ -273,8 +276,8 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_QUEUES) || defined(__DOXYGEN__)
-#define CH_USE_QUEUES                   TRUE
+#if !defined(CH_CFG_USE_QUEUES) || defined(__DOXYGEN__)
+#define CH_CFG_USE_QUEUES                   TRUE
 #endif
 
 /**
@@ -284,8 +287,8 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_MEMCORE) || defined(__DOXYGEN__)
-#define CH_USE_MEMCORE                  TRUE
+#if !defined(CH_CFG_USE_MEMCORE) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MEMCORE                  TRUE
 #endif
 
 /**
@@ -294,12 +297,12 @@
  *          in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_MEMCORE and either @p CH_USE_MUTEXES or
- *          @p CH_USE_SEMAPHORES.
+ * @note    Requires @p CH_CFG_USE_MEMCORE and either @p CH_CFG_USE_MUTEXES or
+ *          @p CH_CFG_USE_SEMAPHORES.
  * @note    Mutexes are recommended.
  */
-#if !defined(CH_USE_HEAP) || defined(__DOXYGEN__)
-#define CH_USE_HEAP                     TRUE
+#if !defined(CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
+#define CH_CFG_USE_HEAP                     TRUE
 #endif
 
 /**
@@ -309,8 +312,8 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_MEMPOOLS) || defined(__DOXYGEN__)
-#define CH_USE_MEMPOOLS                 TRUE
+#if !defined(CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MEMPOOLS                 TRUE
 #endif
 
 /**
@@ -319,11 +322,11 @@
  *          in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_WAITEXIT.
- * @note    Requires @p CH_USE_HEAP and/or @p CH_USE_MEMPOOLS.
+ * @note    Requires @p CH_CFG_USE_WAITEXIT.
+ * @note    Requires @p CH_CFG_USE_HEAP and/or @p CH_CFG_USE_MEMPOOLS.
  */
-#if !defined(CH_USE_DYNAMIC) || defined(__DOXYGEN__)
-#define CH_USE_DYNAMIC                  TRUE
+#if !defined(CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
+#define CH_CFG_USE_DYNAMIC                  TRUE
 #endif
 
 /** @} */
@@ -343,7 +346,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_SYSTEM_STATE_CHECK) || defined(__DOXYGEN__)
-#define CH_DBG_SYSTEM_STATE_CHECK       FALSE
+#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
 #endif
 
 /**
@@ -354,7 +357,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_CHECKS) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_CHECKS            FALSE
+#define CH_DBG_ENABLE_CHECKS                FALSE
 #endif
 
 /**
@@ -366,7 +369,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_ASSERTS) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_ASSERTS           FALSE
+#define CH_DBG_ENABLE_ASSERTS               FALSE
 #endif
 
 /**
@@ -377,7 +380,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_TRACE) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_TRACE             FALSE
+#define CH_DBG_ENABLE_TRACE                 FALSE
 #endif
 
 /**
@@ -391,7 +394,7 @@
  *          @p panic_msg variable set to @p NULL.
  */
 #if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_STACK_CHECK       FALSE
+#define CH_DBG_ENABLE_STACK_CHECK           FALSE
 #endif
 
 /**
@@ -403,7 +406,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_FILL_THREADS) || defined(__DOXYGEN__)
-#define CH_DBG_FILL_THREADS             FALSE
+#define CH_DBG_FILL_THREADS                 FALSE
 #endif
 
 /**
@@ -416,7 +419,7 @@
  *          some test cases into the test suite.
  */
 #if !defined(CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
-#define CH_DBG_THREADS_PROFILING        TRUE
+#define CH_DBG_THREADS_PROFILING            TRUE
 #endif
 
 /** @} */
@@ -432,8 +435,8 @@
  * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p thread_t structure.
  */
-#if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
-#define THREAD_EXT_FIELDS                                                   \
+#if !defined(CH_CFG_THREAD_EXTRA_FIELDS) || defined(__DOXYGEN__)
+#define CH_CFG_THREAD_EXTRA_FIELDS                                          \
   /* Add threads custom fields here.*/
 #endif
 
@@ -444,8 +447,8 @@
  * @note    It is invoked from within @p chThdInit() and implicitly from all
  *          the threads creation APIs.
  */
-#if !defined(THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
-#define THREAD_EXT_INIT_HOOK(tp) {                                          \
+#if !defined(CH_CFG_THREAD_INIT_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
   /* Add threads initialization code here.*/                                \
 }
 #endif
@@ -458,8 +461,8 @@
  * @note    It is also invoked when the threads simply return in order to
  *          terminate.
  */
-#if !defined(THREAD_EXT_EXIT_HOOK) || defined(__DOXYGEN__)
-#define THREAD_EXT_EXIT_HOOK(tp) {                                          \
+#if !defined(CH_CFG_THREAD_EXIT_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_THREAD_EXIT_HOOK(tp) {                                       \
   /* Add threads finalization code here.*/                                  \
 }
 #endif
@@ -468,8 +471,8 @@
  * @brief   Context switch hook.
  * @details This hook is invoked just before switching between threads.
  */
-#if !defined(THREAD_CONTEXT_SWITCH_HOOK) || defined(__DOXYGEN__)
-#define THREAD_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
+#if !defined(CH_CFG_CONTEXT_SWITCH_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
   /* System halt code here.*/                                               \
 }
 #endif
@@ -478,8 +481,8 @@
  * @brief   Idle Loop hook.
  * @details This hook is continuously invoked by the idle thread loop.
  */
-#if !defined(IDLE_LOOP_HOOK) || defined(__DOXYGEN__)
-#define IDLE_LOOP_HOOK() {                                                  \
+#if !defined(CH_CFG_IDLE_LOOP_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_IDLE_LOOP_HOOK() {                                           \
   /* Idle loop code here.*/                                                 \
 }
 #endif
@@ -489,8 +492,8 @@
  * @details This hook is invoked in the system tick handler immediately
  *          after processing the virtual timers queue.
  */
-#if !defined(SYSTEM_TICK_EVENT_HOOK) || defined(__DOXYGEN__)
-#define SYSTEM_TICK_EVENT_HOOK() {                                          \
+#if !defined(CH_CFG_SYSTEM_TICK_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_SYSTEM_TICK_HOOK() {                                         \
   /* System tick event code here.*/                                         \
 }
 #endif
@@ -500,8 +503,8 @@
  * @details This hook is invoked in case to a system halting error before
  *          the system is halted.
  */
-#if !defined(SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
-#define SYSTEM_HALT_HOOK() {                                                \
+#if !defined(CH_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_SYSTEM_HALT_HOOK() {                                         \
   /* System halt code here.*/                                               \
 }
 #endif

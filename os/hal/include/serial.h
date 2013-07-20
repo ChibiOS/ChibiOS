@@ -79,8 +79,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_USE_QUEUES && !CH_USE_EVENTS
-#error "Serial Driver requires CH_USE_QUEUES and CH_USE_EVENTS"
+#if !CH_CFG_USE_QUEUES && !CH_CFG_USE_EVENTS
+#error "Serial Driver requires CH_CFG_USE_QUEUES and CH_CFG_USE_EVENTS"
 #endif
 
 /*===========================================================================*/

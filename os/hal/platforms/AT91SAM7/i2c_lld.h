@@ -137,12 +137,12 @@ struct I2CDriver{
    */
   size_t                    txbytes;
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the bus.
    */
   Mutex                     mutex;
-#elif CH_USE_SEMAPHORES
+#elif CH_CFG_USE_SEMAPHORES
   Semaphore                 semaphore;
 #endif
 #endif /* I2C_USE_MUTUAL_EXCLUSION */

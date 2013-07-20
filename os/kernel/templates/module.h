@@ -31,7 +31,7 @@
 
 #include "ch.h"
 
-#if CH_USE_XXX || defined(__DOXYGEN__)
+#if CH_CFG_USE_XXX || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -70,7 +70,7 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_USE_XXX */
+#endif /* CH_CFG_USE_XXX */
 
 #endif /* _CHXXX_H_ */
 

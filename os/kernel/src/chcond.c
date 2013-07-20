@@ -33,14 +33,14 @@
  *          The condition variable is a synchronization object meant to be
  *          used inside a zone protected by a mutex. Mutexes and condition
  *          variables together can implement a Monitor construct.
- * @pre     In order to use the condition variable APIs the @p CH_USE_CONDVARS
+ * @pre     In order to use the condition variable APIs the @p CH_CFG_USE_CONDVARS
  *          option must be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_CONDVARS || defined(__DOXYGEN__)
+#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -218,14 +218,14 @@ msg_t chCondWaitS(condition_variable_t *cp) {
   return msg;
 }
 
-#if CH_USE_CONDVARS_TIMEOUT || defined(__DOXYGEN__)
+#if CH_CFG_USE_CONDVARS_TIMEOUT || defined(__DOXYGEN__)
 /**
  * @brief   Waits on the condition variable releasing the mutex lock.
  * @details Releases the currently owned mutex, waits on the condition
  *          variable, and finally acquires the mutex again. All the sequence
  *          is performed atomically.
  * @pre     The invoking thread <b>must</b> have at least one owned mutex.
- * @pre     The configuration option @p CH_USE_CONDVARS_TIMEOUT must be enabled
+ * @pre     The configuration option @p CH_CFG_USE_CONDVARS_TIMEOUT must be enabled
  *          in order to use this function.
  * @post    Exiting the function because a timeout does not re-acquire the
  *          mutex, the mutex ownership is lost.
@@ -262,7 +262,7 @@ msg_t chCondWaitTimeout(condition_variable_t *cp, systime_t time) {
  *          variable, and finally acquires the mutex again. All the sequence
  *          is performed atomically.
  * @pre     The invoking thread <b>must</b> have at least one owned mutex.
- * @pre     The configuration option @p CH_USE_CONDVARS_TIMEOUT must be enabled
+ * @pre     The configuration option @p CH_CFG_USE_CONDVARS_TIMEOUT must be enabled
  *          in order to use this function.
  * @post    Exiting the function because a timeout does not re-acquire the
  *          mutex, the mutex ownership is lost.
@@ -302,8 +302,8 @@ msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time) {
     chMtxLockS(mp);
   return msg;
 }
-#endif /* CH_USE_CONDVARS_TIMEOUT */
+#endif /* CH_CFG_USE_CONDVARS_TIMEOUT */
 
-#endif /* CH_USE_CONDVARS */
+#endif /* CH_CFG_USE_CONDVARS */
 
 /** @} */

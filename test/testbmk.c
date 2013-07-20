@@ -57,7 +57,7 @@
  */
 
 static semaphore_t sem1;
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 static mutex_t mtx1;
 #endif
 
@@ -575,7 +575,7 @@ ROMCONST struct testcase testbmk11 = {
   bmk11_execute
 };
 
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 /**
  * @page test_benchmarks_012 Mutexes lock/unlock performance
  *
@@ -648,7 +648,7 @@ static void bmk13_execute(void) {
   test_print("--- Semaph: ");
   test_printn(sizeof(semaphore_t));
   test_println(" bytes");
-#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
   test_print("--- EventS: ");
   test_printn(sizeof(event_source_t));
   test_println(" bytes");
@@ -656,22 +656,22 @@ static void bmk13_execute(void) {
   test_printn(sizeof(event_listener_t));
   test_println(" bytes");
 #endif
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   test_print("--- Mutex : ");
   test_printn(sizeof(mutex_t));
   test_println(" bytes");
 #endif
-#if CH_USE_CONDVARS || defined(__DOXYGEN__)
+#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
   test_print("--- CondV.: ");
   test_printn(sizeof(condition_variable_t));
   test_println(" bytes");
 #endif
-#if CH_USE_QUEUES || defined(__DOXYGEN__)
+#if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
   test_print("--- Queue : ");
   test_printn(sizeof(GenericQueue));
   test_println(" bytes");
 #endif
-#if CH_USE_MAILBOXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
   test_print("--- MailB.: ");
   test_printn(sizeof(mailbox_t));
   test_println(" bytes");
@@ -701,7 +701,7 @@ ROMCONST struct testcase * ROMCONST patternbmk[] = {
   &testbmk9,
   &testbmk10,
   &testbmk11,
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   &testbmk12,
 #endif
   &testbmk13,

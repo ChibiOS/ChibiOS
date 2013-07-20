@@ -90,7 +90,7 @@ void hal_lld_init(void) {
   INTC.PSR[59].R    = SPC5_PIT0_IRQ_PRIORITY;
   halSPCSetPeripheralClockMode(92,
                                SPC5_ME_PCTL_RUN(2) | SPC5_ME_PCTL_LP(2));
-  reg = halSPCGetSystemClock() / CH_FREQUENCY - 1;
+  reg = halSPCGetSystemClock() / CH_CFG_FREQUENCY - 1;
   PIT.PITMCR.R      = 1;        /* PIT clock enabled, stop while debugging. */
   PIT.CH[0].LDVAL.R = reg;
   PIT.CH[0].CVAL.R  = reg;

@@ -130,7 +130,7 @@ extern "C" {
 static inline void chSysSwitch(thread_t *ntp, thread_t *otp) {
 
   dbg_trace(otp);
-  THREAD_CONTEXT_SWITCH_HOOK(ntp, otp);
+  CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);
   port_switch(ntp, otp);
 }
 

@@ -77,7 +77,7 @@ void hal_lld_init(void) {
 
   /* Downcounter timer initialized for system tick use, TB enabled for debug
      and measurements.*/
-  n = SPC5_SYSCLK / CH_FREQUENCY;
+  n = SPC5_SYSCLK / CH_CFG_FREQUENCY;
   asm volatile ("li      %%r3, 0            \t\n"
                 "mtspr   284, %%r3          \t\n"   /* Clear TBL register.  */
                 "mtspr   285, %%r3          \t\n"   /* Clear TBU register.  */

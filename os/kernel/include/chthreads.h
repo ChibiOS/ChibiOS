@@ -94,7 +94,7 @@
 
 /* Forward declaration required by the mutexes stack structure present
    in every thread.*/
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
 typedef struct mutex mutex_t;
 #endif
 
@@ -131,12 +131,12 @@ typedef struct thread {
   /* End of the fields shared with the threads_queue_t structure.*/
   tprio_t               p_prio;     /**< @brief Thread priority.            */
   struct context        p_ctx;      /**< @brief Processor context.          */
-#if CH_USE_REGISTRY || defined(__DOXYGEN__)
+#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
   thread_t              *p_newer;   /**< @brief Newer registry element.     */
   thread_t              *p_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the ReadyList structure. */
-#if CH_USE_REGISTRY || defined(__DOXYGEN__)
+#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
   /**
    * @brief Thread name or @p NULL.
    */
@@ -156,7 +156,7 @@ typedef struct thread {
    * @brief Various thread flags.
    */
   tmode_t               p_flags;
-#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
+#if CH_CFG_USE_DYNAMIC || defined(__DOXYGEN__)
   /**
    * @brief References to this thread.
    */
@@ -165,7 +165,7 @@ typedef struct thread {
   /**
    * @brief Number of ticks remaining to this thread.
    */
-#if (CH_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
+#if (CH_CFG_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
   tslices_t             p_preempt;
 #endif
 #if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
@@ -202,7 +202,7 @@ typedef struct thread {
      *        states.
      */
     void                *wtobjp;
-#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
     /**
      * @brief Enabled events mask.
      * @note  This field is only valid while the thread is in the
@@ -211,13 +211,13 @@ typedef struct thread {
     eventmask_t         ewmask;
 #endif
   }                     p_u;
-#if CH_USE_WAITEXIT || defined(__DOXYGEN__)
+#if CH_CFG_USE_WAITEXIT || defined(__DOXYGEN__)
   /**
    * @brief Termination waiting list.
    */
   threads_list_t        p_waiting;
 #endif
-#if CH_USE_MESSAGES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
   /**
    * @brief Messages queue.
    */
@@ -227,13 +227,13 @@ typedef struct thread {
    */
   msg_t                 p_msg;
 #endif
-#if CH_USE_EVENTS || defined(__DOXYGEN__)
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
   /**
    * @brief Pending events mask.
    */
   eventmask_t           p_epending;
 #endif
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief List of the mutexes owned by this thread.
    * @note  The list is terminated by a @p NULL in this field.
@@ -244,15 +244,15 @@ typedef struct thread {
    */
   tprio_t               p_realprio;
 #endif
-#if (CH_USE_DYNAMIC && CH_USE_MEMPOOLS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_DYNAMIC && CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
   /**
    * @brief Memory Pool where the thread workspace is returned.
    */
   void                  *p_mpool;
 #endif
-#if defined(THREAD_EXT_FIELDS)
+#if defined(CH_CFG_THREAD_EXTRA_FIELDS)
   /* Extra fields defined in chconf.h.*/
-  THREAD_EXT_FIELDS
+  CH_CFG_THREAD_EXTRA_FIELDS
 #endif
 } thread_t;
 
@@ -405,7 +405,7 @@ extern "C" {
   void chThdYield(void);
   void chThdExit(msg_t msg);
   void chThdExitS(msg_t msg);
-#if CH_USE_WAITEXIT
+#if CH_CFG_USE_WAITEXIT
   msg_t chThdWait(thread_t *tp);
 #endif
 #ifdef __cplusplus

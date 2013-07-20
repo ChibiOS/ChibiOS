@@ -29,7 +29,7 @@
 #ifndef _CHREGISTRY_H_
 #define _CHREGISTRY_H_
 
-#if CH_USE_REGISTRY || defined(__DOXYGEN__)
+#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -121,7 +121,7 @@ extern "C" {
 /**
  * @brief   Sets the current thread name.
  * @pre     This function only stores the pointer to the name if the option
- *          @p CH_USE_REGISTRY is enabled else no action is performed.
+ *          @p CH_CFG_USE_REGISTRY is enabled else no action is performed.
  *
  * @param[in] p         thread name as a zero terminated string
  *
@@ -129,7 +129,7 @@ extern "C" {
  */
 static inline void chRegSetThreadName(const char *name) {
 
-#if CH_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY
   currp->p_name = name;
 #else
   (void)name;
@@ -139,7 +139,7 @@ static inline void chRegSetThreadName(const char *name) {
 /**
  * @brief   Returns the name of the specified thread.
  * @pre     This function only returns the pointer to the name if the option
- *          @p CH_USE_REGISTRY is enabled else @p NULL is returned.
+ *          @p CH_CFG_USE_REGISTRY is enabled else @p NULL is returned.
  *
  * @param[in] tp        pointer to the thread
  *
@@ -152,7 +152,7 @@ static inline const char *chRegGetThreadNameI(thread_t *tp) {
 
   chDbgCheckClassI();
 
-#if CH_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY
   return tp->p_name;
 #else
   (void)tp;
@@ -160,7 +160,7 @@ static inline const char *chRegGetThreadNameI(thread_t *tp) {
 #endif
 }
 
-#endif /* CH_USE_REGISTRY */
+#endif /* CH_CFG_USE_REGISTRY */
 
 #endif /* _CHREGISTRY_H_ */
 

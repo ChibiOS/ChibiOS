@@ -78,7 +78,7 @@ void spiObjectInit(SPIDriver *spip) {
   spip->thread = NULL;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   chMtxInit(&spip->mutex);
 #else
   chSemInit(&spip->semaphore, 1);
@@ -405,9 +405,9 @@ void spiAcquireBus(SPIDriver *spip) {
 
   chDbgCheck(spip != NULL, "spiAcquireBus");
 
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   chMtxLock(&spip->mutex);
-#elif CH_USE_SEMAPHORES
+#elif CH_CFG_USE_SEMAPHORES
   chSemWait(&spip->semaphore);
 #endif
 }
@@ -425,10 +425,10 @@ void spiReleaseBus(SPIDriver *spip) {
 
   chDbgCheck(spip != NULL, "spiReleaseBus");
 
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   (void)spip;
   chMtxUnlock();
-#elif CH_USE_SEMAPHORES
+#elif CH_CFG_USE_SEMAPHORES
   chSemSignal(&spip->semaphore);
 #endif
 }

@@ -29,14 +29,14 @@
  *          are functionally equivalent to the usual @p malloc() and @p free()
  *          library functions. The main difference is that the OS heap APIs
  *          are guaranteed to be thread safe.<br>
- * @pre     In order to use the heap APIs the @p CH_USE_HEAP option must
+ * @pre     In order to use the heap APIs the @p CH_CFG_USE_HEAP option must
  *          be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_HEAP || defined(__DOXYGEN__)
+#if CH_CFG_USE_HEAP || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -45,7 +45,7 @@
 /*
  * Defaults on the best synchronization mechanism available.
  */
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 #define H_LOCK(h)       chMtxLock(&(h)->h_mtx)
 #define H_UNLOCK(h)     chMtxUnlock()
 #else
@@ -87,7 +87,7 @@ void _heap_init(void) {
   default_heap.h_provider = chCoreAlloc;
   default_heap.h_free.h.u.next = (union heap_header *)NULL;
   default_heap.h_free.h.size = 0;
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   chMtxObjectInit(&default_heap.h_mtx);
 #else
   chSemObjectInit(&default_heap.h_sem, 1);
@@ -115,7 +115,7 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
   heapp->h_free.h.size = 0;
   hp->h.u.next = NULL;
   hp->h.size = size - sizeof(union heap_header);
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   chMtxObjectInit(&heapp->h_mtx);
 #else
   chSemObjectInit(&heapp->h_sem, 1);
@@ -273,6 +273,6 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *sizep) {
   return n;
 }
 
-#endif /* CH_USE_HEAP */
+#endif /* CH_CFG_USE_HEAP */
 
 /** @} */

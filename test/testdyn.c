@@ -31,9 +31,9 @@
  *
  * <h2>Preconditions</h2>
  * The module requires the following kernel options:
- * - @p CH_USE_DYNAMIC
- * - @p CH_USE_HEAP
- * - @p CH_USE_MEMPOOLS
+ * - @p CH_CFG_USE_DYNAMIC
+ * - @p CH_CFG_USE_HEAP
+ * - @p CH_CFG_USE_MEMPOOLS
  * .
  * In case some of the required options are not enabled then some or all tests
  * may be skipped.
@@ -49,11 +49,11 @@
  * @brief Dynamic thread APIs test header file
  */
 
-#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
-#if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
+#if CH_CFG_USE_DYNAMIC || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP && !CH_CFG_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
 static memory_heap_t heap1;
 #endif
-#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
 static memory_pool_t mp1;
 #endif
 
@@ -74,7 +74,7 @@ static msg_t thread(void *p) {
   return 0;
 }
 
-#if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP && !CH_CFG_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
 static void dyn1_setup(void) {
 
   chHeapObjectInit(&heap1, test.buffer, sizeof(union test_buffers));
@@ -120,9 +120,9 @@ ROMCONST struct testcase testdyn1 = {
   NULL,
   dyn1_execute
 };
-#endif /* (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) */
+#endif /* (CH_CFG_USE_HEAP && !CH_CFG_USE_MALLOC_HEAP) */
 
-#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
 /**
  * @page test_dynamic_002 Threads creation from Memory Pool
  *
@@ -176,9 +176,9 @@ ROMCONST struct testcase testdyn2 = {
   NULL,
   dyn2_execute
 };
-#endif /* CH_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS */
 
-#if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP && CH_USE_REGISTRY) ||              \
+#if (CH_CFG_USE_HEAP && !CH_CFG_USE_MALLOC_HEAP && CH_CFG_USE_REGISTRY) ||              \
     defined(__DOXYGEN__)
 /**
  * @page test_dynamic_003 Registry and References test
@@ -241,21 +241,21 @@ ROMCONST struct testcase testdyn3 = {
   NULL,
   dyn3_execute
 };
-#endif /* CH_USE_HEAP && CH_USE_REGISTRY */
-#endif /* CH_USE_DYNAMIC */
+#endif /* CH_CFG_USE_HEAP && CH_CFG_USE_REGISTRY */
+#endif /* CH_CFG_USE_DYNAMIC */
 
 /**
  * @brief   Test sequence for dynamic APIs.
  */
 ROMCONST struct testcase * ROMCONST patterndyn[] = {
-#if CH_USE_DYNAMIC || defined(__DOXYGEN__)
-#if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
+#if CH_CFG_USE_DYNAMIC || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP && !CH_CFG_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
   &testdyn1,
 #endif
-#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
   &testdyn2,
 #endif
-#if (CH_USE_HEAP && !CH_USE_MALLOC_HEAP && CH_USE_REGISTRY) ||              \
+#if (CH_CFG_USE_HEAP && !CH_CFG_USE_MALLOC_HEAP && CH_CFG_USE_REGISTRY) ||              \
     defined(__DOXYGEN__)
   &testdyn3,
 #endif

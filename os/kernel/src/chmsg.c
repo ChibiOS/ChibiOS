@@ -36,8 +36,8 @@
  *          architectures function pointers can be larger that @p msg_t.<br>
  *          Messages are usually processed in FIFO order but it is possible to
  *          process them in priority order by enabling the
- *          @p CH_USE_MESSAGES_PRIORITY option in @p chconf.h.<br>
- * @pre     In order to use the message APIs the @p CH_USE_MESSAGES option
+ *          @p CH_CFG_USE_MESSAGES_PRIORITY option in @p chconf.h.<br>
+ * @pre     In order to use the message APIs the @p CH_CFG_USE_MESSAGES option
  *          must be enabled in @p chconf.h.
  * @post    Enabling messages requires 6-12 (depending on the architecture)
  *          extra bytes in the @p thread_t structure.
@@ -46,7 +46,7 @@
 
 #include "ch.h"
 
-#if CH_USE_MESSAGES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -64,7 +64,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if CH_USE_MESSAGES_PRIORITY
+#if CH_CFG_USE_MESSAGES_PRIORITY
 #define msg_insert(tp, qp) prio_insert(tp, qp)
 #else
 #define msg_insert(tp, qp) queue_insert(tp, qp)
@@ -147,6 +147,6 @@ void chMsgRelease(thread_t *tp, msg_t msg) {
   chSysUnlock();
 }
 
-#endif /* CH_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES */
 
 /** @} */

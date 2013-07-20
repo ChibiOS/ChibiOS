@@ -119,7 +119,7 @@ ROMCONST struct testcase testthd2 = {
  * <h2>Description</h2>
  * A series of priority changes are performed on the current thread in order
  * to verify that the priority change happens as expected.<br>
- * If the @p CH_USE_MUTEXES option is enabled then the priority changes are
+ * If the @p CH_CFG_USE_MUTEXES option is enabled then the priority changes are
  * also tested under priority inheritance boosted priority state.
  */
 
@@ -138,7 +138,7 @@ static void thd3_execute(void) {
   test_assert(4, chThdGetPriority() == prio,
               "unexpected priority level");
 
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   /* Simulates a priority boost situation (p_prio > p_realprio).*/
   chSysLock();
   chThdSelf()->p_prio += 2;

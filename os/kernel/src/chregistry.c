@@ -42,13 +42,13 @@
  *          terminating threads can pulse an event source and an event handler
  *          can perform a scansion of the registry in order to recover the
  *          memory.
- * @pre     In order to use the threads registry the @p CH_USE_REGISTRY option
+ * @pre     In order to use the threads registry the @p CH_CFG_USE_REGISTRY option
  *          must be enabled in @p chconf.h.
  * @{
  */
 #include "ch.h"
 
-#if CH_USE_REGISTRY || defined(__DOXYGEN__)
+#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -98,12 +98,12 @@ ROMCONST chdebug_t ch_debug = {
 #endif
   (uint8_t)_offsetof(thread_t, p_state),
   (uint8_t)_offsetof(thread_t, p_flags),
-#if CH_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC
   (uint8_t)_offsetof(thread_t, p_refs),
 #else
   (uint8_t)0,
 #endif
-#if CH_TIME_QUANTUM > 0
+#if CH_CFG_TIME_QUANTUM > 0
   (uint8_t)_offsetof(thread_t, p_preempt),
 #else
   (uint8_t)0,
@@ -132,7 +132,7 @@ thread_t *chRegFirstThread(void) {
 
   chSysLock();
   tp = rlist.r_newer;
-#if CH_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC
   tp->p_refs++;
 #endif
   chSysUnlock();
@@ -157,7 +157,7 @@ thread_t *chRegNextThread(thread_t *tp) {
   ntp = tp->p_newer;
   if (ntp == (thread_t *)&rlist)
     ntp = NULL;
-#if CH_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC
   else {
     chDbgAssert(ntp->p_refs < 255, "chRegNextThread(), #1",
                 "too many references");
@@ -165,12 +165,12 @@ thread_t *chRegNextThread(thread_t *tp) {
   }
 #endif
   chSysUnlock();
-#if CH_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC
   chThdRelease(tp);
 #endif
   return ntp;
 }
 
-#endif /* CH_USE_REGISTRY */
+#endif /* CH_CFG_USE_REGISTRY */
 
 /** @} */

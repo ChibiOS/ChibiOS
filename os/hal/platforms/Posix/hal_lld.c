@@ -38,7 +38,7 @@
 /*===========================================================================*/
 
 static struct timeval nextcnt;
-static struct timeval tick = {0, 1000000 / CH_FREQUENCY};
+static struct timeval tick = {0, 1000000 / CH_CFG_FREQUENCY};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */

@@ -138,7 +138,7 @@ static inline bool queue_notempty(threads_queue_t *tqp) {
 
 /* If the performance code path has been chosen then all the following
    functions are inlined into the various kernel modules.*/
-#if CH_OPTIMIZE_SPEED
+#if CH_CFG_OPTIMIZE_SPEED
 static inline void list_insert(thread_t *tp, threads_list_t *tlp) {
 
   tp->p_next = tlp->p_next;
@@ -190,6 +190,6 @@ static inline thread_t *queue_dequeue(thread_t *tp) {
   tp->p_next->p_prev = tp->p_prev;
   return tp;
 }
-#endif /* CH_OPTIMIZE_SPEED */
+#endif /* CH_CFG_OPTIMIZE_SPEED */
 
 #endif /* _CHLISTS_H_ */

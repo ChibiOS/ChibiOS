@@ -78,11 +78,11 @@ void i2cObjectInit(I2CDriver *i2cp) {
   i2cp->config = NULL;
 
 #if I2C_USE_MUTUAL_EXCLUSION
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   chMtxInit(&i2cp->mutex);
 #else
   chSemInit(&i2cp->semaphore, 1);
-#endif /* CH_USE_MUTEXES */
+#endif /* CH_CFG_USE_MUTEXES */
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 
 #if defined(I2C_DRIVER_EXT_INIT_HOOK)
@@ -270,9 +270,9 @@ void i2cAcquireBus(I2CDriver *i2cp) {
 
   chDbgCheck(i2cp != NULL, "i2cAcquireBus");
 
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   chMtxLock(&i2cp->mutex);
-#elif CH_USE_SEMAPHORES
+#elif CH_CFG_USE_SEMAPHORES
   chSemWait(&i2cp->semaphore);
 #endif
 }
@@ -290,9 +290,9 @@ void i2cReleaseBus(I2CDriver *i2cp) {
 
   chDbgCheck(i2cp != NULL, "i2cReleaseBus");
 
-#if CH_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES
   chMtxUnlock();
-#elif CH_USE_SEMAPHORES
+#elif CH_CFG_USE_SEMAPHORES
   chSemSignal(&i2cp->semaphore);
 #endif
 }

@@ -104,7 +104,7 @@ void hal_lld_init(void) {
   rccResetAPB2(0xFFFFFFFF);
 
   /* SysTick initialization using the system clock.*/
-  SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
+  SysTick->LOAD = STM32_HCLK / CH_CFG_FREQUENCY - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |

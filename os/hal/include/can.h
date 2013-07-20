@@ -89,8 +89,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_USE_SEMAPHORES || !CH_USE_EVENTS
-#error "CAN driver requires CH_USE_SEMAPHORES and CH_USE_EVENTS"
+#if !CH_CFG_USE_SEMAPHORES || !CH_CFG_USE_EVENTS
+#error "CAN driver requires CH_CFG_USE_SEMAPHORES and CH_CFG_USE_EVENTS"
 #endif
 
 /*===========================================================================*/

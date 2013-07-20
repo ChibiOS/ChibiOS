@@ -29,7 +29,7 @@
 #ifndef _CHSEM_H_
 #define _CHSEM_H_
 
-#if CH_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -99,9 +99,7 @@ extern "C" {
   void chSemSignal(semaphore_t *sp);
   void chSemSignalI(semaphore_t *sp);
   void chSemAddCounterI(semaphore_t *sp, cnt_t n);
-#if CH_USE_SEMSW
   msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw);
-#endif
 #ifdef __cplusplus
 }
 #endif
@@ -149,7 +147,7 @@ static inline cnt_t chSemGetCounterI(semaphore_t *sp) {
   return sp->s_cnt;
 }
 
-#endif /* CH_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES */
 
 #endif /* _CHSEM_H_ */
 

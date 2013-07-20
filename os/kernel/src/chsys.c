@@ -47,18 +47,18 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
-#if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
+#if !CH_CFG_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   Idle thread working area.
  */
 static WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
-#endif /* CH_NO_IDLE_THREAD */
+#endif /* CH_CFG_NO_IDLE_THREAD */
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
+#if !CH_CFG_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   This function implements the idle thread infinite loop.
  * @details The function puts the processor in the lowest power mode capable
@@ -75,10 +75,10 @@ static void _idle_thread(void *p) {
   chRegSetThreadName("idle");
   while (true) {
     port_wait_for_interrupt();
-    IDLE_LOOP_HOOK();
+    CH_CFG_IDLE_LOOP_HOOK();
   }
 }
-#endif /* CH_NO_IDLE_THREAD */
+#endif /* CH_CFG_NO_IDLE_THREAD */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -105,10 +105,10 @@ void chSysInit(void) {
   port_init();
   _scheduler_init();
   _vt_init();
-#if CH_USE_MEMCORE
+#if CH_CFG_USE_MEMCORE
   _core_init();
 #endif
-#if CH_USE_HEAP
+#if CH_CFG_USE_HEAP
   _heap_init();
 #endif
 #if CH_DBG_ENABLE_TRACE
@@ -129,7 +129,7 @@ void chSysInit(void) {
      active, else the parameter is ignored.*/
   chRegSetThreadName((const char *)&ch_debug);
 
-#if !CH_NO_IDLE_THREAD
+#if !CH_CFG_NO_IDLE_THREAD
   /* This thread has the lowest priority in the system, its role is just to
      serve interrupts in its context while keeping the lowest energy saving
      mode compatible with the system status.*/
@@ -152,8 +152,8 @@ void chSysHalt(void) {
 
   chSysDisable();
 
-#if defined(SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
-  SYSTEM_HALT_HOOK();
+#if defined(CH_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
+  CH_CFG_SYSTEM_HALT_HOOK();
 #endif
 
   /* Harmless infinite loop.*/
@@ -167,7 +167,7 @@ void chSysHalt(void) {
  *          and preempts it when the quantum is used up. Increments system
  *          time and manages the timers.
  * @note    The frequency of the timer determines the system tick granularity
- *          and, together with the @p CH_TIME_QUANTUM macro, the round robin
+ *          and, together with the @p CH_CFG_TIME_QUANTUM macro, the round robin
  *          interval.
  *
  * @iclass
@@ -176,7 +176,7 @@ void chSysTimerHandlerI(void) {
 
   chDbgCheckClassI();
 
-#if CH_TIME_QUANTUM > 0
+#if CH_CFG_TIME_QUANTUM > 0
   /* Running thread has not used up quantum yet? */
   if (currp->p_preempt > 0)
     /* Decrement remaining quantum.*/
@@ -186,8 +186,8 @@ void chSysTimerHandlerI(void) {
   currp->p_time++;
 #endif
   chVTDoTickI();
-#if defined(SYSTEM_TICK_EVENT_HOOK)
-  SYSTEM_TICK_EVENT_HOOK();
+#if defined(CH_CFG_SYSTEM_TICK_HOOK)
+  CH_CFG_SYSTEM_TICK_HOOK();
 #endif
 }
 

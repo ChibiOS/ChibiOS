@@ -29,7 +29,7 @@
 #ifndef _CHMTX_H_
 #define _CHMTX_H_
 
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
+#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -119,7 +119,7 @@ static inline bool chMtxQueueNotEmptyS(mutex_t *mp) {
   return queue_notempty(&mp->m_queue);
 }
 
-#endif /* CH_USE_MUTEXES */
+#endif /* CH_CFG_USE_MUTEXES */
 
 #endif /* _CHMTX_H_ */
 

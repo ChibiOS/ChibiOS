@@ -31,14 +31,14 @@
  *          Memory Pools do not enforce any alignment constraint on the
  *          contained object however the objects must be properly aligned
  *          to contain a pointer to void.
- * @pre     In order to use the memory pools APIs the @p CH_USE_MEMPOOLS option
+ * @pre     In order to use the memory pools APIs the @p CH_CFG_USE_MEMPOOLS option
  *          must be enabled in @p chconf.h.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -189,6 +189,6 @@ void chPoolFree(memory_pool_t *mp, void *objp) {
   chSysUnlock();
 }
 
-#endif /* CH_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS */
 
 /** @} */
