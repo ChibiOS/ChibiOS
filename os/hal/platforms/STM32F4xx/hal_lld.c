@@ -45,12 +45,15 @@
 
 /**
  * @brief   Initializes the backup domain.
+ * @note    WARNING! Changing clock source impossible without resetting
+ *          of the whole BKP domain.
  */
 static void hal_lld_backup_domain_init(void) {
 
   /* Backup domain access enabled and left open.*/
   PWR->CR |= PWR_CR_DBP;
 
+#if HAL_USE_RTC
   /* Reset BKP domain if different clock source selected.*/
   if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
     /* Backup domain reset.*/
@@ -76,6 +79,17 @@ static void hal_lld_backup_domain_init(void) {
     RCC->BDCR |= RCC_BDCR_RTCEN;
   }
 #endif /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
+#endif /* HAL_USE_RTC */
+
+#if HAL_USE_BKPSRAM
+  rccEnableBKPSRAM(false);
+
+  PWR->CSR |= PWR_CSR_BRE;
+  while ((PWR->CSR & PWR_CSR_BRR) == 0)
+    ;                                /* Waits until the regulator is stable */
+#else
+  PWR->CSR &= ~PWR_CSR_BRE;
+#endif /* HAL_USE_BKPSRAM */
 }
 
 /*===========================================================================*/

@@ -387,6 +387,29 @@
 /** @} */
 
 /**
+ * @name    BKPSRAM specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the BKPSRAM peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableBKPSRAM(lp) rccEnableAHB1(RCC_AHB1ENR_BKPSRAMEN, lp)
+
+/**
+ * @brief   Disables the BKPSRAM peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableBKPSRAM(lp) rccDisableAHB1(RCC_AHB1ENR_BKPSRAMEN, lp)
+/** @} */
+
+/**
  * @name    PWR interface specific RCC operations
  * @{
  */
