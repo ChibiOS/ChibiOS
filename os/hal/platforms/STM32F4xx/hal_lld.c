@@ -61,13 +61,6 @@ static void hal_lld_backup_domain_init(void) {
     RCC->BDCR = 0;
   }
 
-  /* If enabled then the LSE is started.*/
-#if STM32_LSE_ENABLED
-  RCC->BDCR |= RCC_BDCR_LSEON;
-  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
-    ;                                     /* Waits until LSE is stable.   */
-#endif
-
 #if STM32_RTCSEL != STM32_RTCSEL_NOCLOCK
   /* If the backup domain hasn't been initialized yet then proceed with
      initialization.*/
