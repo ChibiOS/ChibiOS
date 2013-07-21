@@ -115,7 +115,7 @@
 #endif
 
 /**
- * @brief   Enables the RTC subsystem.
+ * @brief   Enables the BKPSRAM subsystem.
  */
 #if !defined(HAL_USE_BKPSRAM) || defined(__DOXYGEN__)
 #define HAL_USE_BKPSRAM             TRUE
