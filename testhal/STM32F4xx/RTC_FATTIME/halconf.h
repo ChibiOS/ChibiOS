@@ -108,13 +108,6 @@
 #endif
 
 /**
- * @brief   Enables the BKPSRAM subsystem.
- */
-#if !defined(HAL_USE_BKPSRAM) || defined(__DOXYGEN__)
-#define HAL_USE_BKPSRAM             FALSE
-#endif
-
-/**
  * @brief   Enables the SDC subsystem.
  */
 #if !defined(HAL_USE_SDC) || defined(__DOXYGEN__)
