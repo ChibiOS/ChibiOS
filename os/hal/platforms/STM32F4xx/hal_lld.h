@@ -597,6 +597,13 @@
 #endif
 
 /**
+ * @brief   Enables the backup RAM regulator.
+ */
+#if !defined(STM32_BKPRAM_ENABLE) || defined(__DOXYGEN__)
+#define STM32_BKPRAM_ENABLE         FALSE
+#endif
+
+/**
  * @brief   Enables or disables the HSI clock source.
  */
 #if !defined(STM32_HSI_ENABLED) || defined(__DOXYGEN__)
