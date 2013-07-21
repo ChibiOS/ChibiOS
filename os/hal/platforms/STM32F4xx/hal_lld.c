@@ -74,7 +74,7 @@ static void hal_lld_backup_domain_init(void) {
 #endif /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
 #endif /* HAL_USE_RTC */
 
-#if HAL_USE_BKPSRAM
+#if STM32_BKPRAM_ENABLE
   rccEnableBKPSRAM(false);
 
   PWR->CSR |= PWR_CSR_BRE;
@@ -82,7 +82,7 @@ static void hal_lld_backup_domain_init(void) {
     ;                                /* Waits until the regulator is stable */
 #else
   PWR->CSR &= ~PWR_CSR_BRE;
-#endif /* HAL_USE_BKPSRAM */
+#endif /* STM32_BKPRAM_ENABLE */
 }
 
 /*===========================================================================*/
