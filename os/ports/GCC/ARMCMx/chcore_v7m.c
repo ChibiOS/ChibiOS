@@ -32,6 +32,7 @@
 /* Port interrupt handlers.                                                  */
 /*===========================================================================*/
 
+#if CH_CFG_TIMEDELTA == 0
 /**
  * @brief   System Timer vector.
  * @details This interrupt is used as system tick.
@@ -47,6 +48,7 @@ CH_IRQ_HANDLER(SysTickVector) {
 
   CH_IRQ_EPILOGUE();
 }
+#endif /* CH_CFG_TIMEDELTA == 0 */
 
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
 /**
@@ -119,8 +121,10 @@ void _port_init(void) {
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));
   nvicSetSystemHandlerPriority(HANDLER_PENDSV,
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));
+#if CH_CFG_TIMEDELTA == 0
   nvicSetSystemHandlerPriority(HANDLER_SYSTICK,
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));
+#endif
 }
 
 #if !CH_CFG_OPTIMIZE_SPEED

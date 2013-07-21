@@ -518,6 +518,10 @@ extern "C" {
 }
 #endif
 
+#if CH_CFG_TIMEDELTA > 0
+#include "chtimer.h"
+#endif
+
 #endif /* _FROM_ASM_ */
 
 #endif /* _CHCORE_V7M_H_ */

@@ -67,8 +67,12 @@ virtual_timers_list_t vtlist;
 void _vt_init(void) {
 
   vtlist.vt_next = vtlist.vt_prev = (void *)&vtlist;
-  vtlist.vt_time = (systime_t)-1;
+  vtlist.vt_delta = (systime_t)-1;
+#if CH_CFG_TIMEDELTA == 0
   vtlist.vt_systime = 0;
+#else /* CH_CFG_TIMEDELTA > 0 */
+  vtlist.vt_lasttime = 0;
+#endif /* CH_CFG_TIMEDELTA > 0 */
 }
 
 /**
@@ -125,16 +129,42 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
   p = vtlist.vt_next;
-  while (p->vt_time < delay) {
-    delay -= p->vt_time;
+
+#if CH_CFG_TIMEDELTA > 0 || defined(__DOXYGEN__)
+  {
+    systime_t now = port_timer_get_time();
+
+    /* If the requested delay is lower than the minimum safe delta then it
+       is raised to the minimum safe value.*/
+    if (delay < CH_CFG_TIMEDELTA)
+      delay = CH_CFG_TIMEDELTA;
+
+    /* Now the delay is calculated as delta from the last tick interrupt
+       time.*/
+    delay += now - vtlist.vt_lasttime;
+
+    if (&vtlist != (virtual_timers_list_t *)p)
+      port_timer_start_alarm(vtlist.vt_lasttime + delay);
+    else if (delay < p->vt_delta)
+      port_timer_set_alarm(vtlist.vt_lasttime + delay);
+  }
+#endif /* CH_CFG_TIMEDELTA > 0 */
+
+  /* The delta list is scanned in order to find the correct position for
+     this timer. */
+  while (p->vt_delta < delay) {
+    delay -= p->vt_delta;
     p = p->vt_next;
   }
-
+  /* The timer is inserted in the delta list.*/
   vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
   vtp->vt_prev->vt_next = p->vt_prev = vtp;
-  vtp->vt_time = delay;
-  if (p != (void *)&vtlist)
-    p->vt_time -= delay;
+  vtp->vt_delta = delay
+
+  /* Special case when the timer is in last position in the list, the
+     value in the header must be restored.*/;
+  p->vt_delta -= delay;
+  vtlist.vt_delta = (systime_t)-1;
 }
 
 /**
@@ -153,11 +183,28 @@ void chVTDoResetI(virtual_timer_t *vtp) {
               "chVTDoResetI(), #1",
               "timer not set or already triggered");
 
-  if (vtp->vt_next != (void *)&vtlist)
-    vtp->vt_next->vt_time += vtp->vt_time;
+  /* Removing the element from the delta list.*/
+  vtp->vt_next->vt_delta += vtp->vt_delta;
   vtp->vt_prev->vt_next = vtp->vt_next;
   vtp->vt_next->vt_prev = vtp->vt_prev;
   vtp->vt_func = (vtfunc_t)NULL;
+
+  /* The above code changes the value in the header when the removed element
+     is the last of the list, restoring it.*/
+  vtlist.vt_delta = (systime_t)-1;
+
+#if CH_CFG_TIMEDELTA > 0 || defined(__DOXYGEN__)
+  {
+    if (&vtlist == (virtual_timers_list_t *)vtlist.vt_next) {
+      /* Just removed the last element in the list, alarm timer stopped.*/
+      port_timer_stop_alarm();
+    }
+    else {
+      /* The alarm is set to the next element in the delta list.*/
+      port_timer_set_alarm(vtlist.vt_lasttime + vtlist.vt_next->vt_delta);
+    }
+  }
+#endif /* CH_CFG_TIMEDELTA > 0 */
 }
 
 /** @} */

@@ -66,8 +66,17 @@ typedef struct {
                                                 list.                       */
   virtual_timer_t       *vt_prev;   /**< @brief Last timer in the delta
                                                 list.                       */
-  systime_t             vt_time;    /**< @brief Must be initialized to -1.  */
+  systime_t             vt_delta;   /**< @brief Must be initialized to -1.  */
+#if CH_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
   volatile systime_t    vt_systime; /**< @brief System Time counter.        */
+#endif
+#if CH_CFG_TIMEDELTA > 0 || defined(__DOXYGEN__)
+  /**
+   * @brief   System time of the last tick event.
+   */
+  systime_t             vt_lasttime;/**< @brief System time of the last
+                                                tick event.                 */
+#endif
 } virtual_timers_list_t;
 
 /**
@@ -78,7 +87,7 @@ typedef struct {
 struct virtual_timer {
   virtual_timer_t       *vt_next;   /**< @brief Next timer in the list.     */
   virtual_timer_t       *vt_prev;   /**< @brief Previous timer in the list. */
-  systime_t             vt_time;    /**< @brief Time delta before timeout.  */
+  systime_t             vt_delta;   /**< @brief Time delta before timeout.  */
   vtfunc_t              vt_func;    /**< @brief Timer callback function
                                                 pointer.                    */
   void                  *vt_par;    /**< @brief Timer callback function
@@ -190,7 +199,11 @@ static inline systime_t chVTGetSystemTimeI(void) {
 
   chDbgCheckClassI();
 
+#if CH_CFG_TIMEDELTA == 0
   return vtlist.vt_systime;
+#else /* CH_CFG_TIMEDELTA > 0 */
+  return port_timer_get_time();
+#endif /* CH_CFG_TIMEDELTA > 0 */
 }
 
 /**
@@ -352,12 +365,13 @@ static inline void chVTDoTickI(void) {
 
   chDbgCheckClassI();
 
+#if CH_CFG_TIMEDELTA == 0
   vtlist.vt_systime++;
   if (&vtlist != (virtual_timers_list_t *)vtlist.vt_next) {
     virtual_timer_t *vtp;
 
-    --vtlist.vt_next->vt_time;
-    while (!(vtp = vtlist.vt_next)->vt_time) {
+    --vtlist.vt_next->vt_delta;
+    while (!(vtp = vtlist.vt_next)->vt_delta) {
       vtfunc_t fn = vtp->vt_func;
       vtp->vt_func = (vtfunc_t)NULL;
       vtp->vt_next->vt_prev = (void *)&vtlist;
@@ -367,6 +381,22 @@ static inline void chVTDoTickI(void) {
       chSysLockFromIsr();
     }
   }
+#else /* CH_CFG_TIMEDELTA > 0 */
+  if (&vtlist != (virtual_timers_list_t *)vtlist.vt_next) {
+    virtual_timer_t *vtp;
+
+    --vtlist.vt_next->vt_delta;
+    while (!(vtp = vtlist.vt_next)->vt_delta) {
+      vtfunc_t fn = vtp->vt_func;
+      vtp->vt_func = (vtfunc_t)NULL;
+      vtp->vt_next->vt_prev = (void *)&vtlist;
+      vtlist.vt_next = vtp->vt_next;
+      chSysUnlockFromIsr();
+      fn(vtp->vt_par);
+      chSysLockFromIsr();
+    }
+  }
+#endif /* CH_CFG_TIMEDELTA > 0 */
 }
 
 #endif /* _CHVT_H_ */
