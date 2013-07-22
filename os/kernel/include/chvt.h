@@ -382,19 +382,30 @@ static inline void chVTDoTickI(void) {
     }
   }
 #else /* CH_CFG_TIMEDELTA > 0 */
-  if (&vtlist != (virtual_timers_list_t *)vtlist.vt_next) {
-    virtual_timer_t *vtp;
+  virtual_timer_t *vtp;
+  systime_t now = chVTGetSystemTimeI();
+  systime_t delta = now - vtlist.vt_lasttime;
 
-    --vtlist.vt_next->vt_delta;
-    while (!(vtp = vtlist.vt_next)->vt_delta) {
-      vtfunc_t fn = vtp->vt_func;
-      vtp->vt_func = (vtfunc_t)NULL;
-      vtp->vt_next->vt_prev = (void *)&vtlist;
-      vtlist.vt_next = vtp->vt_next;
-      chSysUnlockFromIsr();
-      fn(vtp->vt_par);
-      chSysLockFromIsr();
-    }
+  while ((vtp = vtlist.vt_next)->vt_delta <= delta) {
+    vtfunc_t fn = vtp->vt_func;
+    vtp->vt_func = (vtfunc_t)NULL;
+    vtp->vt_next->vt_prev = (void *)&vtlist;
+    vtlist.vt_next = vtp->vt_next;
+    chSysUnlockFromIsr();
+    fn(vtp->vt_par);
+    chSysLockFromIsr();
+  }
+  if (&vtlist == (virtual_timers_list_t *)vtlist.vt_next) {
+    /* The list is empty, no tick event needed so the alarm timer
+       is stopped.*/
+    port_timer_stop_alarm();
+  }
+  else {
+    /* The delta is subtracted to the next list element, the current time
+       becomes the new delta list base time.*/
+    vtp->vt_delta -= delta;
+    vtlist.vt_lasttime = now;
+    port_timer_set_alarm(now + vtp->vt_delta);
   }
 #endif /* CH_CFG_TIMEDELTA > 0 */
 }

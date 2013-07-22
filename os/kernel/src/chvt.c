@@ -139,14 +139,22 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
     if (delay < CH_CFG_TIMEDELTA)
       delay = CH_CFG_TIMEDELTA;
 
-    /* Now the delay is calculated as delta from the last tick interrupt
-       time.*/
-    delay += now - vtlist.vt_lasttime;
-
-    if (&vtlist != (virtual_timers_list_t *)p)
+    if (&vtlist == (virtual_timers_list_t *)p) {
+      /* The delta list is empty, the current time becomes the new
+         delta list base time.*/
+      vtlist.vt_lasttime = now;
       port_timer_start_alarm(vtlist.vt_lasttime + delay);
-    else if (delay < p->vt_delta)
-      port_timer_set_alarm(vtlist.vt_lasttime + delay);
+    }
+    else {
+      /* Now the delay is calculated as delta from the last tick interrupt
+         time.*/
+      delay += now - vtlist.vt_lasttime;
+
+      /* If the specified delay is closer in time than the first element
+         in the delta list then it becomes the next alarm event in time.*/
+      if (delay < p->vt_delta)
+        port_timer_set_alarm(vtlist.vt_lasttime + delay);
+    }
   }
 #endif /* CH_CFG_TIMEDELTA > 0 */
 
