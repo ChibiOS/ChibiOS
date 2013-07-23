@@ -103,12 +103,18 @@ void hal_lld_init(void) {
   rccResetAPB1(0xFFFFFFFF);
   rccResetAPB2(0xFFFFFFFF);
 
+#if CH_CFG_TIMEDELTA == 0
   /* SysTick initialization using the system clock.*/
   SysTick->LOAD = STM32_HCLK / CH_CFG_FREQUENCY - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
+#else
+  rccEnableAPB1(RCC_APB1ENR_TIM2EN, TRUE);
+  nvicEnableVector(28, CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));
+  TIM2->PSC = STM32_TIMCLK2 / CH_CFG_FREQUENCY - 1;
+#endif
 
   /* DWT cycle counter enable.*/
   SCS_DEMCR |= SCS_DEMCR_TRCENA;

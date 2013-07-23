@@ -124,6 +124,8 @@ void _port_init(void) {
 #if CH_CFG_TIMEDELTA == 0
   nvicSetSystemHandlerPriority(HANDLER_SYSTICK,
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));
+#else
+  port_timer_init();
 #endif
 }
 

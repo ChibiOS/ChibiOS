@@ -53,7 +53,7 @@
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector7C) {
+CH_IRQ_HANDLER(VectorB0) {
 
   CH_IRQ_PROLOGUE();
 

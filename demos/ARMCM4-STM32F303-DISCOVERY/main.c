@@ -18,6 +18,7 @@
 #include "hal.h"
 #include "test.h"
 
+#if 0
 /*
  * This is a periodic thread that does absolutely nothing except flashing LEDs.
  */
@@ -53,6 +54,33 @@ static msg_t Thread1(void *arg) {
     palClearPad(GPIOE, GPIOE_LED4_BLUE);
   }
 }
+#endif
+
+static WORKING_AREA(waThread1, 128);
+static msg_t Thread1(void *arg) {
+
+  (void)arg;
+  chRegSetThreadName("blinker1");
+  while (TRUE) {
+    palSetPad(GPIOE, GPIOE_LED3_RED);
+    chThdSleepMilliseconds(250);
+    palClearPad(GPIOE, GPIOE_LED3_RED);
+    chThdSleepMilliseconds(250);
+  }
+}
+
+static WORKING_AREA(waThread2, 128);
+static msg_t Thread2(void *arg) {
+
+  (void)arg;
+  chRegSetThreadName("blinker2");
+  while (TRUE) {
+    palSetPad(GPIOE, GPIOE_LED4_BLUE);
+    chThdSleepMilliseconds(500);
+    palClearPad(GPIOE, GPIOE_LED4_BLUE);
+    chThdSleepMilliseconds(500);
+  }
+}
 
 /*
  * Application entry point.
@@ -80,7 +108,8 @@ int main(void) {
   /*
    * Creates the example thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+1, Thread1, NULL);
+  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO+2, Thread2, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

@@ -41,6 +41,14 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if CH_CFG_FREQUENCY <= 0
+#error "invalid CH_CFG_FREQUENCY specified"
+#endif
+
+#if (CH_CFG_TIMEDELTA < 0) || (CH_CFG_TIMEDELTA == 1)
+#error "invalid NIL_CFG_TIMEDELTA specified"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -387,6 +395,8 @@ static inline void chVTDoTickI(void) {
   systime_t delta = now - vtlist.vt_lasttime;
 
   while ((vtp = vtlist.vt_next)->vt_delta <= delta) {
+    delta -= vtp->vt_delta;
+    vtlist.vt_lasttime += vtp->vt_delta;
     vtfunc_t fn = vtp->vt_func;
     vtp->vt_func = (vtfunc_t)NULL;
     vtp->vt_next->vt_prev = (void *)&vtlist;
@@ -401,10 +411,7 @@ static inline void chVTDoTickI(void) {
     port_timer_stop_alarm();
   }
   else {
-    /* The delta is subtracted to the next list element, the current time
-       becomes the new delta list base time.*/
-    vtp->vt_delta -= delta;
-    vtlist.vt_lasttime = now;
+    /* Updating the alarm to the next deadline.*/
     port_timer_set_alarm(now + vtp->vt_delta);
   }
 #endif /* CH_CFG_TIMEDELTA > 0 */

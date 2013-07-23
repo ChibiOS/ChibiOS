@@ -414,12 +414,12 @@
  * @details If enabled then a field is added to the @p thread_t structure that
  *          counts the system ticks occurred while executing the thread.
  *
- * @note    The default is @p TRUE.
- * @note    This debug option is defaulted to TRUE because it is required by
- *          some test cases into the test suite.
+ * @note    The default is @p FALSE.
+ * @note    This debug option is not currently compatible with the
+ *          tickless mode.
  */
 #if !defined(CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
-#define CH_DBG_THREADS_PROFILING            TRUE
+#define CH_DBG_THREADS_PROFILING            FALSE
 #endif
 
 /** @} */
