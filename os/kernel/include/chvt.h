@@ -49,6 +49,10 @@
 #error "invalid NIL_CFG_TIMEDELTA specified"
 #endif
 
+#if (CH_CFG_TIMEDELTA > 0) && (CH_CFG_TIME_QUANTUM > 0)
+#error "(CH_CFG_TIMEDELTA > 0) is not compatible with (CH_CFG_TIME_QUANTUM > 0)"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/

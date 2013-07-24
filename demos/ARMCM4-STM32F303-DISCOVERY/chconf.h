@@ -69,7 +69,7 @@
  *          must be set to zero in that case.
  */
 #if !defined(CH_CFG_TIME_QUANTUM) || defined(__DOXYGEN__)
-#define CH_CFG_TIME_QUANTUM                 20
+#define CH_CFG_TIME_QUANTUM                 0
 #endif
 
 /**
