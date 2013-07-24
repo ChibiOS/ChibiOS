@@ -134,9 +134,9 @@ static void set_error(SerialDriver *sdp, uint32_t isr) {
     sts |= SD_FRAMING_ERROR;
   if (isr & USART_ISR_NE)
     sts |= SD_NOISE_ERROR;
-  chSysLockFromIsr();
+  chSysLockFromISR();
   chnAddFlagsI(sdp, sts);
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 /**
@@ -158,20 +158,20 @@ static void serve_interrupt(SerialDriver *sdp) {
     set_error(sdp, isr);
   /* Special case, LIN break detection.*/
   if (isr & USART_ISR_LBD) {
-    chSysLockFromIsr();
+    chSysLockFromISR();
     chnAddFlagsI(sdp, SD_BREAK_DETECTED);
-    chSysUnlockFromIsr();
+    chSysUnlockFromISR();
   }
   /* Data available.*/
   if (isr & USART_ISR_RXNE) {
-    chSysLockFromIsr();
+    chSysLockFromISR();
     sdIncomingDataI(sdp, (uint8_t)u->RDR);
-    chSysUnlockFromIsr();
+    chSysUnlockFromISR();
   }
   /* Transmission buffer empty.*/
   if ((cr1 & USART_CR1_TXEIE) && (isr & USART_ISR_TXE)) {
     msg_t b;
-    chSysLockFromIsr();
+    chSysLockFromISR();
     b = chOQGetI(&sdp->oqueue);
     if (b < Q_OK) {
       chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
@@ -179,13 +179,13 @@ static void serve_interrupt(SerialDriver *sdp) {
     }
     else
       u->TDR = b;
-    chSysUnlockFromIsr();
+    chSysUnlockFromISR();
   }
   /* Physical transmission end.*/
   if (isr & USART_ISR_TC) {
-    chSysLockFromIsr();
+    chSysLockFromISR();
     chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-    chSysUnlockFromIsr();
+    chSysUnlockFromISR();
     u->CR1 = cr1 & ~USART_CR1_TCIE;
   }
 }

@@ -207,7 +207,7 @@ msg_t chSemWaitS(semaphore_t *sp) {
   if (--sp->s_cnt < 0) {
     currp->p_u.wtobjp = sp;
     sem_insert(currp, &sp->s_queue);
-    chSchGoSleepS(THD_STATE_WTSEM);
+    chSchGoSleepS(CH_STATE_WTSEM);
     return currp->p_u.rdymsg;
   }
   return RDY_OK;
@@ -276,7 +276,7 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time) {
     }
     currp->p_u.wtobjp = sp;
     sem_insert(currp, &sp->s_queue);
-    return chSchGoSleepTimeoutS(THD_STATE_WTSEM, time);
+    return chSchGoSleepTimeoutS(CH_STATE_WTSEM, time);
   }
   return RDY_OK;
 }
@@ -393,7 +393,7 @@ msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
     thread_t *ctp = currp;
     sem_insert(ctp, &spw->s_queue);
     ctp->p_u.wtobjp = spw;
-    chSchGoSleepS(THD_STATE_WTSEM);
+    chSchGoSleepS(CH_STATE_WTSEM);
     msg = ctp->p_u.rdymsg;
   }
   else {

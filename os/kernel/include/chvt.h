@@ -384,9 +384,9 @@ static inline void chVTDoTickI(void) {
       vtp->vt_func = (vtfunc_t)NULL;
       vtp->vt_next->vt_prev = (void *)&vtlist;
       vtlist.vt_next = vtp->vt_next;
-      chSysUnlockFromIsr();
+      chSysUnlockFromISR();
       fn(vtp->vt_par);
-      chSysLockFromIsr();
+      chSysLockFromISR();
     }
   }
 #else /* CH_CFG_TIMEDELTA > 0 */
@@ -401,9 +401,9 @@ static inline void chVTDoTickI(void) {
     vtp->vt_func = (vtfunc_t)NULL;
     vtp->vt_next->vt_prev = (void *)&vtlist;
     vtlist.vt_next = vtp->vt_next;
-    chSysUnlockFromIsr();
+    chSysUnlockFromISR();
     fn(vtp->vt_par);
-    chSysLockFromIsr();
+    chSysLockFromISR();
   }
   if (&vtlist == (virtual_timers_list_t *)vtlist.vt_next) {
     /* The list is empty, no tick event needed so the alarm timer

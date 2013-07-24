@@ -152,7 +152,7 @@ void chMtxLockS(mutex_t *mp) {
 
       /* The following states need priority queues reordering.*/
       switch (tp->p_state) {
-      case THD_STATE_WTMTX:
+      case CH_STATE_WTMTX:
         /* Re-enqueues the mutex owner with its new priority.*/
         queue_prio_insert(queue_dequeue(tp),
                           (threads_queue_t *)tp->p_u.wtobjp);
@@ -162,23 +162,23 @@ void chMtxLockS(mutex_t *mp) {
     (CH_CFG_USE_SEMAPHORES && CH_CFG_USE_SEMAPHORES_PRIORITY) |                     \
     (CH_CFG_USE_MESSAGES && CH_CFG_USE_MESSAGES_PRIORITY)
 #if CH_CFG_USE_CONDVARS
-      case THD_STATE_WTCOND:
+      case CH_STATE_WTCOND:
 #endif
 #if CH_CFG_USE_SEMAPHORES && CH_CFG_USE_SEMAPHORES_PRIORITY
-      case THD_STATE_WTSEM:
+      case CH_STATE_WTSEM:
 #endif
 #if CH_CFG_USE_MESSAGES && CH_CFG_USE_MESSAGES_PRIORITY
-      case THD_STATE_SNDMSGQ:
+      case CH_STATE_SNDMSGQ:
 #endif
         /* Re-enqueues tp with its new priority on the queue.*/
         queue_prio_insert(queue_dequeue(tp),
                           (threads_queue_t *)tp->p_u.wtobjp);
         break;
 #endif
-      case THD_STATE_READY:
+      case CH_STATE_READY:
 #if CH_DBG_ENABLE_ASSERTS
         /* Prevents an assertion in chSchReadyI().*/
-        tp->p_state = THD_STATE_CURRENT;
+        tp->p_state = CH_STATE_CURRENT;
 #endif
         /* Re-enqueues tp with its new priority on the ready list.*/
         chSchReadyI(queue_dequeue(tp));
@@ -190,7 +190,7 @@ void chMtxLockS(mutex_t *mp) {
     /* Sleep on the mutex.*/
     queue_prio_insert(ctp, &mp->m_queue);
     ctp->p_u.wtobjp = mp;
-    chSchGoSleepS(THD_STATE_WTMTX);
+    chSchGoSleepS(CH_STATE_WTMTX);
 
     /* It is assumed that the thread performing the unlock operation assigns
        the mutex to this thread.*/

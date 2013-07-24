@@ -37,31 +37,31 @@
  * @name    Thread states
  * @{
  */
-#define THD_STATE_READY         0   /**< @brief Waiting on the ready list.  */
-#define THD_STATE_CURRENT       1   /**< @brief Currently running.          */
-#define THD_STATE_SUSPENDED     2   /**< @brief Created in suspended state. */
-#define THD_STATE_WTSEM         3   /**< @brief Waiting on a semaphore.     */
-#define THD_STATE_WTMTX         4   /**< @brief Waiting on a mutex.         */
-#define THD_STATE_WTCOND        5   /**< @brief Waiting on a condition
+#define CH_STATE_READY          0   /**< @brief Waiting on the ready list.  */
+#define CH_STATE_CURRENT        1   /**< @brief Currently running.          */
+#define CH_STATE_SUSPENDED      2   /**< @brief Created in suspended state. */
+#define CH_STATE_WTSEM          3   /**< @brief Waiting on a semaphore.     */
+#define CH_STATE_WTMTX          4   /**< @brief Waiting on a mutex.         */
+#define CH_STATE_WTCOND         5   /**< @brief Waiting on a condition
                                          variable.                          */
-#define THD_STATE_SLEEPING      6   /**< @brief Waiting in @p chThdSleep()
+#define CH_STATE_SLEEPING       6   /**< @brief Waiting in @p chThdSleep()
                                          or @p chThdSleepUntil().           */
-#define THD_STATE_WTEXIT        7   /**< @brief Waiting in @p chThdWait().  */
-#define THD_STATE_WTOREVT       8   /**< @brief Waiting for an event.       */
-#define THD_STATE_WTANDEVT      9   /**< @brief Waiting for several events. */
-#define THD_STATE_SNDMSGQ       10  /**< @brief Sending a message, in queue.*/
-#define THD_STATE_SNDMSG        11  /**< @brief Sent a message, waiting
+#define CH_STATE_WTEXIT         7   /**< @brief Waiting in @p chThdWait().  */
+#define CH_STATE_WTOREVT        8   /**< @brief Waiting for an event.       */
+#define CH_STATE_WTANDEVT       9   /**< @brief Waiting for several events. */
+#define CH_STATE_SNDMSGQ        10  /**< @brief Sending a message, in queue.*/
+#define CH_STATE_SNDMSG         11  /**< @brief Sent a message, waiting
                                          answer.                            */
-#define THD_STATE_WTMSG         12  /**< @brief Waiting for a message.      */
-#define THD_STATE_WTQUEUE       13  /**< @brief Waiting on an I/O queue.    */
-#define THD_STATE_FINAL         14  /**< @brief Thread terminated.          */
+#define CH_STATE_WTMSG          12  /**< @brief Waiting for a message.      */
+#define CH_STATE_WTQUEUE        13  /**< @brief Waiting on an I/O queue.    */
+#define CH_STATE_FINAL          14  /**< @brief Thread terminated.          */
 
 /**
  * @brief   Thread states as array of strings.
  * @details Each element in an array initialized with this macro can be
  *          indexed using the numeric thread state values.
  */
-#define THD_STATE_NAMES                                                     \
+#define CH_STATE_NAMES                                                     \
   "READY", "CURRENT", "SUSPENDED", "WTSEM", "WTMTX", "WTCOND", "SLEEPING",  \
   "WTEXIT", "WTOREVT", "WTANDEVT", "SNDMSGQ", "SNDMSG", "WTMSG", "WTQUEUE", \
   "FINAL"
@@ -71,13 +71,13 @@
  * @name    Thread flags and attributes
  * @{
  */
-#define THD_MEM_MODE_MASK       3   /**< @brief Thread memory mode mask.    */
-#define THD_MEM_MODE_STATIC     0   /**< @brief Static thread.              */
-#define THD_MEM_MODE_HEAP       1   /**< @brief Thread allocated from a
+#define CH_FLAG_MODE_MASK       3   /**< @brief Thread memory mode mask.    */
+#define CH_FLAG_MODE_STATIC     0   /**< @brief Static thread.              */
+#define CH_FLAG_MODE_HEAP       1   /**< @brief Thread allocated from a
                                          Memory Heap.                       */
-#define THD_MEM_MODE_MEMPOOL    2   /**< @brief Thread allocated from a
+#define CH_FLAG_MODE_MEMPOOL    2   /**< @brief Thread allocated from a
                                          Memory Pool.                       */
-#define THD_TERMINATE           4   /**< @brief Termination requested flag. */
+#define CH_FLAG_TERMINATE       4   /**< @brief Termination requested flag. */
 /** @} */
 
 /*===========================================================================*/
@@ -206,7 +206,7 @@ typedef struct thread {
     /**
      * @brief Enabled events mask.
      * @note  This field is only valid while the thread is in the
-     *        @p THD_STATE_WTOREVT or @p THD_STATE_WTANDEVT states.
+     *        @p CH_STATE_WTOREVT or @p CH_STATE_WTANDEVT states.
      */
     eventmask_t         ewmask;
 #endif
@@ -298,7 +298,7 @@ typedef msg_t (*tfunc_t)(void *);
 #define chThdGetTicks(tp) ((tp)->p_time)
 
 /**
- * @brief   Verifies if the specified thread is in the @p THD_STATE_FINAL state.
+ * @brief   Verifies if the specified thread is in the @p CH_STATE_FINAL state.
  * @note    Can be invoked in any context.
  *
  * @param[in] tp        pointer to the thread
@@ -307,7 +307,7 @@ typedef msg_t (*tfunc_t)(void *);
  *
  * @special
  */
-#define chThdTerminated(tp) ((tp)->p_state == THD_STATE_FINAL)
+#define chThdTerminated(tp) ((tp)->p_state == CH_STATE_FINAL)
 
 /**
  * @brief   Verifies if the current thread has a termination request pending.
@@ -318,7 +318,7 @@ typedef msg_t (*tfunc_t)(void *);
  *
  * @special
  */
-#define chThdShouldTerminate() (currp->p_flags & THD_TERMINATE)
+#define chThdShouldTerminate() (currp->p_flags & CH_FLAG_TERMINATE)
 
 /**
  * @brief   Resumes a thread created with @p chThdCreateI().
@@ -341,7 +341,7 @@ typedef msg_t (*tfunc_t)(void *);
  *
  * @sclass
  */
-#define chThdSleepS(time) chSchGoSleepTimeoutS(THD_STATE_SLEEPING, time)
+#define chThdSleepS(time) chSchGoSleepTimeoutS(CH_STATE_SLEEPING, time)
 
 /**
  * @brief   Delays the invoking thread for the specified number of seconds.

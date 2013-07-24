@@ -94,12 +94,12 @@ thread_t *chSchReadyI(thread_t *tp) {
   chDbgCheckClassI();
 
   /* Integrity checks.*/
-  chDbgAssert((tp->p_state != THD_STATE_READY) &&
-              (tp->p_state != THD_STATE_FINAL),
+  chDbgAssert((tp->p_state != CH_STATE_READY) &&
+              (tp->p_state != CH_STATE_FINAL),
               "chSchReadyI(), #1",
               "invalid state");
 
-  tp->p_state = THD_STATE_READY;
+  tp->p_state = CH_STATE_READY;
   cp = (thread_t *)&rlist.r_queue;
   do {
     cp = cp->p_next;
@@ -132,7 +132,7 @@ void chSchGoSleepS(tstate_t newstate) {
   otp->p_preempt = CH_CFG_TIME_QUANTUM;
 #endif
   setcurrp(queue_fifo_remove(&rlist.r_queue));
-  currp->p_state = THD_STATE_CURRENT;
+  currp->p_state = CH_STATE_CURRENT;
   chSysSwitch(currp, otp);
 }
 
@@ -142,25 +142,25 @@ void chSchGoSleepS(tstate_t newstate) {
 static void wakeup(void *p) {
   thread_t *tp = (thread_t *)p;
 
-  chSysLockFromIsr();
+  chSysLockFromISR();
   switch (tp->p_state) {
-  case THD_STATE_READY:
+  case CH_STATE_READY:
     /* Handling the special case where the thread has been made ready by
        another thread with higher priority.*/
-    chSysUnlockFromIsr();
+    chSysUnlockFromISR();
     return;
 #if CH_CFG_USE_SEMAPHORES || CH_CFG_USE_QUEUES ||                                   \
     (CH_CFG_USE_CONDVARS && CH_CFG_USE_CONDVARS_TIMEOUT)
 #if CH_CFG_USE_SEMAPHORES
-  case THD_STATE_WTSEM:
+  case CH_STATE_WTSEM:
     chSemFastSignalI((semaphore_t *)tp->p_u.wtobjp);
     /* Falls into, intentional. */
 #endif
 #if CH_CFG_USE_QUEUES
-  case THD_STATE_WTQUEUE:
+  case CH_STATE_WTQUEUE:
 #endif
 #if CH_CFG_USE_CONDVARS && CH_CFG_USE_CONDVARS_TIMEOUT
-  case THD_STATE_WTCOND:
+  case CH_STATE_WTCOND:
 #endif
     /* States requiring dequeuing.*/
     queue_dequeue(tp);
@@ -168,7 +168,7 @@ static void wakeup(void *p) {
   }
   tp->p_u.rdymsg = RDY_TIMEOUT;
   chSchReadyI(tp);
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 /**
@@ -240,7 +240,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
   else {
     thread_t *otp = chSchReadyI(currp);
     setcurrp(ntp);
-    ntp->p_state = THD_STATE_CURRENT;
+    ntp->p_state = CH_STATE_CURRENT;
     chSysSwitch(ntp, otp);
   }
 }
@@ -305,7 +305,7 @@ void chSchDoRescheduleBehind(void) {
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
   setcurrp(queue_fifo_remove(&rlist.r_queue));
-  currp->p_state = THD_STATE_CURRENT;
+  currp->p_state = CH_STATE_CURRENT;
 #if CH_CFG_TIME_QUANTUM > 0
   otp->p_preempt = CH_CFG_TIME_QUANTUM;
 #endif
@@ -328,9 +328,9 @@ void chSchDoRescheduleAhead(void) {
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
   setcurrp(queue_fifo_remove(&rlist.r_queue));
-  currp->p_state = THD_STATE_CURRENT;
+  currp->p_state = CH_STATE_CURRENT;
 
-  otp->p_state = THD_STATE_READY;
+  otp->p_state = CH_STATE_READY;
   cp = (thread_t *)&rlist.r_queue;
   do {
     cp = cp->p_next;

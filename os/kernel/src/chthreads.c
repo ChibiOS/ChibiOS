@@ -93,8 +93,8 @@
 thread_t *_thread_init(thread_t *tp, tprio_t prio) {
 
   tp->p_prio = prio;
-  tp->p_state = THD_STATE_SUSPENDED;
-  tp->p_flags = THD_MEM_MODE_STATIC;
+  tp->p_state = CH_STATE_SUSPENDED;
+  tp->p_flags = CH_FLAG_MODE_STATIC;
 #if CH_CFG_TIME_QUANTUM > 0
   tp->p_preempt = CH_CFG_TIME_QUANTUM;
 #endif
@@ -150,7 +150,7 @@ void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
 /**
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized but not inserted in the ready list,
- *          the initial state is @p THD_STATE_SUSPENDED.
+ *          the initial state is @p CH_STATE_SUSPENDED.
  * @post    The initialized thread can be subsequently started by invoking
  *          @p chThdResume(), @p chThdResumeI() or @p chSchWakeupS()
  *          depending on the execution context.
@@ -255,7 +255,7 @@ tprio_t chThdSetPriority(tprio_t newprio) {
 /**
  * @brief   Resumes a suspended thread.
  * @pre     The specified thread pointer must refer to an initialized thread
- *          in the @p THD_STATE_SUSPENDED state.
+ *          in the @p CH_STATE_SUSPENDED state.
  * @post    The specified thread is immediately started or put in the ready
  *          list depending on the relative priority levels.
  * @note    Use this function to start threads created with @p chThdCreateI().
@@ -268,9 +268,9 @@ tprio_t chThdSetPriority(tprio_t newprio) {
 thread_t *chThdResume(thread_t *tp) {
 
   chSysLock();
-  chDbgAssert(tp->p_state == THD_STATE_SUSPENDED,
+  chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
               "chThdResume(), #1",
-              "thread not in THD_STATE_SUSPENDED state");
+              "thread not in CH_STATE_SUSPENDED state");
   chSchWakeupS(tp, RDY_OK);
   chSysUnlock();
   return tp;
@@ -291,7 +291,7 @@ thread_t *chThdResume(thread_t *tp) {
 void chThdTerminate(thread_t *tp) {
 
   chSysLock();
-  tp->p_flags |= THD_TERMINATE;
+  tp->p_flags |= CH_FLAG_TERMINATE;
   chSysUnlock();
 }
 
@@ -348,7 +348,7 @@ void chThdYield(void) {
 
 /**
  * @brief   Terminates the current thread.
- * @details The thread goes in the @p THD_STATE_FINAL state holding the
+ * @details The thread goes in the @p CH_STATE_FINAL state holding the
  *          specified exit status code, other threads can retrieve the
  *          exit status code by invoking the function @p chThdWait().
  * @post    Eventual code after this function will never be executed,
@@ -369,7 +369,7 @@ void chThdExit(msg_t msg) {
 
 /**
  * @brief   Terminates the current thread.
- * @details The thread goes in the @p THD_STATE_FINAL state holding the
+ * @details The thread goes in the @p CH_STATE_FINAL state holding the
  *          specified exit status code, other threads can retrieve the
  *          exit status code by invoking the function @p chThdWait().
  * @post    Eventual code after this function will never be executed,
@@ -395,10 +395,10 @@ void chThdExitS(msg_t msg) {
 #if CH_CFG_USE_REGISTRY
   /* Static threads are immediately removed from the registry because
      there is no memory to recover.*/
-  if ((tp->p_flags & THD_MEM_MODE_MASK) == THD_MEM_MODE_STATIC)
+  if ((tp->p_flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC)
     REG_REMOVE(tp);
 #endif
-  chSchGoSleepS(THD_STATE_FINAL);
+  chSchGoSleepS(CH_STATE_FINAL);
   /* The thread never returns here.*/
   chDbgAssert(false, "chThdExitS(), #1", "zombies apocalypse");
 }
@@ -445,9 +445,9 @@ msg_t chThdWait(thread_t *tp) {
 #if CH_CFG_USE_DYNAMIC
   chDbgAssert(tp->p_refs > 0, "chThdWait(), #2", "not referenced");
 #endif
-  if (tp->p_state != THD_STATE_FINAL) {
+  if (tp->p_state != CH_STATE_FINAL) {
     list_insert(currp, &tp->p_waiting);
-    chSchGoSleepS(THD_STATE_WTEXIT);
+    chSchGoSleepS(CH_STATE_WTEXIT);
   }
   msg = tp->p_u.exitcode;
   chSysUnlock();

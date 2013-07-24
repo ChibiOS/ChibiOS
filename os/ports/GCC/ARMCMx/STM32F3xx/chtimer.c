@@ -59,9 +59,9 @@ CH_IRQ_HANDLER(VectorB0) {
 
   STM32F3_TIM2->SR = 0;
 
-  chSysLockFromIsr();
+  chSysLockFromISR();
   chSysTimerHandlerI();
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 
   CH_IRQ_EPILOGUE();
 }

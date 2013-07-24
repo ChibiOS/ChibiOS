@@ -117,7 +117,7 @@ void chSysInit(void) {
 
   /* Now this instructions flow becomes the main thread.*/
   setcurrp(_thread_init(&mainthread, NORMALPRIO));
-  currp->p_state = THD_STATE_CURRENT;
+  currp->p_state = CH_STATE_CURRENT;
 #if CH_DBG_ENABLE_STACK_CHECK
   /* This is a special case because the main thread thread_t structure is not
      adjacent to its stack area.*/
@@ -189,6 +189,49 @@ void chSysTimerHandlerI(void) {
 #if defined(CH_CFG_SYSTEM_TICK_HOOK)
   CH_CFG_SYSTEM_TICK_HOOK();
 #endif
+}
+
+
+/**
+ * @brief   Returns the execution context and enters the kernel lock mode.
+ * @details This functions enters into a critical zone and can be called
+ *          from any context. Because its flexibility it is less efficient
+ *          than @p chSysLock() which is preferable when the calling context
+ *          is known.
+ *
+ * @return              The previous system status, the encoding of this
+ *                      status word is architecture-dependent but zero is
+ *                      assumed to mean not-locked.
+ *
+ * @special
+ */
+syssts_t chSysGetAndLockX(void)  {
+
+  syssts_t sts = port_get_status();
+  if (!sts) {
+    if (port_get_context())
+      chSysLockFromISR();
+    else
+      chSysLock();
+  }
+  return sts;
+}
+
+/**
+ * @brief   Restores the specified execution status.
+ *
+ * @param[in] sts       the system status to be restored.
+ *
+ * @special
+ */
+void chSysRestoreLockX(syssts_t sts) {
+
+  if (!sts) {
+    if (port_get_context())
+      chSysUnlockFromISR();
+    else
+      chSysUnlock();
+  }
 }
 
 /** @} */

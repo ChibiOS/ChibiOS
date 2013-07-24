@@ -34,6 +34,7 @@
 #include <stdbool.h>
 
 typedef bool            bool_t;         /**< Fast boolean type.             */
+typedef uint32_t        syssts_t;       /**< System status word.            */
 typedef uint8_t         tmode_t;        /**< Thread flags.                  */
 typedef uint8_t         tstate_t;       /**< Thread state.                  */
 typedef uint8_t         trefs_t;        /**< Thread references counter.     */
@@ -47,33 +48,10 @@ typedef uint32_t        systime_t;      /**< System time.                   */
 typedef int32_t         cnt_t;          /**< Resources counter.             */
 
 /**
- * @brief   Inline function modifier.
- */
-#define INLINE inline
-
-/**
  * @brief   ROM constant modifier.
  * @note    It is set to use the "const" keyword in this port.
  */
 #define ROMCONST const
-
-/**
- * @brief   Packed structure modifier (within).
- * @note    It uses the "packed" GCC attribute.
- */
-#define PACK_STRUCT_STRUCT __attribute__((packed))
-
-/**
- * @brief   Packed structure modifier (before).
- * @note    Empty in this port.
- */
-#define PACK_STRUCT_BEGIN
-
-/**
- * @brief   Packed structure modifier (after).
- * @note    Empty in this port.
- */
-#define PACK_STRUCT_END
 
 #endif /* _CHTYPES_H_ */
 

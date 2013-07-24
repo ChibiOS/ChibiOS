@@ -66,7 +66,7 @@ static msg_t qwait(GenericQueue *qp, systime_t time) {
     return Q_TIMEOUT;
   currp->p_u.wtobjp = qp;
   queue_insert(currp, &qp->q_waiting);
-  return chSchGoSleepTimeoutS(THD_STATE_WTQUEUE, time);
+  return chSchGoSleepTimeoutS(CH_STATE_WTQUEUE, time);
 }
 
 /**
@@ -154,7 +154,7 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  *          is empty then the calling thread is suspended until a byte arrives
  *          in the queue or a timeout occurs.
  * @note    The callback is invoked before reading the character from the
- *          buffer or before entering the state @p THD_STATE_WTQUEUE.
+ *          buffer or before entering the state @p CH_STATE_WTQUEUE.
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
  * @param[in] time      the number of ticks before the operation timeouts,
@@ -201,7 +201,7 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
  * @note    The function is not atomic, if you need atomicity it is suggested
  *          to use a semaphore or a mutex for mutual exclusion.
  * @note    The callback is invoked before reading each character from the
- *          buffer or before entering the state @p THD_STATE_WTQUEUE.
+ *          buffer or before entering the state @p CH_STATE_WTQUEUE.
  *
  * @param[in] iqp       pointer to an @p InputQueue structure
  * @param[out] bp       pointer to the data buffer

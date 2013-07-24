@@ -109,6 +109,8 @@ extern "C" {
   void chSysInit(void);
   void chSysHalt(void);
   void chSysTimerHandlerI(void);
+  syssts_t chSysGetAndLockX(void);
+  void chSysRestoreLockX(syssts_t sts);
 #ifdef __cplusplus
 }
 #endif
@@ -214,7 +216,7 @@ static inline void chSysUnlock(void) {
  *
  * @special
  */
-static inline void chSysLockFromIsr(void) {
+static inline void chSysLockFromISR(void) {
 
   port_lock_from_isr();
   dbg_check_lock_from_isr();
@@ -233,7 +235,7 @@ static inline void chSysLockFromIsr(void) {
  *
  * @special
  */
-static inline void chSysUnlockFromIsr(void) {
+static inline void chSysUnlockFromISR(void) {
 
   dbg_check_unlock_from_isr();
   port_unlock_from_isr();

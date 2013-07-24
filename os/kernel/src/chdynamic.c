@@ -78,7 +78,7 @@ thread_t *chThdAddRef(thread_t *tp) {
 /**
  * @brief   Releases a reference to a thread object.
  * @details If the references counter reaches zero <b>and</b> the thread
- *          is in the @p THD_STATE_FINAL state then the thread's memory is
+ *          is in the @p CH_STATE_FINAL state then the thread's memory is
  *          returned to the proper allocator.
  * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in order
  *          to use this function.
@@ -99,10 +99,10 @@ void chThdRelease(thread_t *tp) {
   /* If the references counter reaches zero and the thread is in its
      terminated state then the memory can be returned to the proper
      allocator. Of course static threads are not affected.*/
-  if ((refs == 0) && (tp->p_state == THD_STATE_FINAL)) {
-    switch (tp->p_flags & THD_MEM_MODE_MASK) {
+  if ((refs == 0) && (tp->p_state == CH_STATE_FINAL)) {
+    switch (tp->p_flags & CH_FLAG_MODE_MASK) {
 #if CH_CFG_USE_HEAP
-    case THD_MEM_MODE_HEAP:
+    case CH_FLAG_MODE_HEAP:
 #if CH_CFG_USE_REGISTRY
       REG_REMOVE(tp);
 #endif
@@ -110,7 +110,7 @@ void chThdRelease(thread_t *tp) {
       break;
 #endif
 #if CH_CFG_USE_MEMPOOLS
-    case THD_MEM_MODE_MEMPOOL:
+    case CH_FLAG_MODE_MEMPOOL:
 #if CH_CFG_USE_REGISTRY
       REG_REMOVE(tp);
 #endif
@@ -164,7 +164,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
   
   chSysLock();
   tp = chThdCreateI(wsp, size, prio, pf, arg);
-  tp->p_flags = THD_MEM_MODE_HEAP;
+  tp->p_flags = CH_FLAG_MODE_HEAP;
   chSchWakeupS(tp, RDY_OK);
   chSysUnlock();
   return tp;
@@ -215,7 +215,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
 
   chSysLock();
   tp = chThdCreateI(wsp, mp->mp_object_size, prio, pf, arg);
-  tp->p_flags = THD_MEM_MODE_MEMPOOL;
+  tp->p_flags = CH_FLAG_MODE_MEMPOOL;
   tp->p_mpool = mp;
   chSchWakeupS(tp, RDY_OK);
   chSysUnlock();

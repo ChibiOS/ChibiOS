@@ -224,11 +224,11 @@ static void dyn3_execute(void) {
   /* Detach and let the thread execute and terminate.*/
   chThdRelease(tp);
   test_assert(6, tp->p_refs == 0, "detach failure");
-  test_assert(7, tp->p_state == THD_STATE_READY, "invalid state");
+  test_assert(7, tp->p_state == CH_STATE_READY, "invalid state");
   test_assert(8, regfind(tp), "thread disappeared");
   test_assert(9, regfind(tp), "thread disappeared");
   chThdSleepMilliseconds(50);           /* The thread just terminates.      */
-  test_assert(10, tp->p_state == THD_STATE_FINAL, "invalid state");
+  test_assert(10, tp->p_state == CH_STATE_FINAL, "invalid state");
 
   /* Clearing the zombie by scanning the registry.*/
   test_assert(11, regfind(tp), "thread disappeared");

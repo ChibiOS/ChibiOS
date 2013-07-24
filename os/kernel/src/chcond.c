@@ -212,7 +212,7 @@ msg_t chCondWaitS(condition_variable_t *cp) {
   mp = chMtxUnlockS();
   ctp->p_u.wtobjp = cp;
   queue_prio_insert(ctp, &cp->c_queue);
-  chSchGoSleepS(THD_STATE_WTCOND);
+  chSchGoSleepS(CH_STATE_WTCOND);
   msg = ctp->p_u.rdymsg;
   chMtxLockS(mp);
   return msg;
@@ -297,7 +297,7 @@ msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time) {
   mp = chMtxUnlockS();
   currp->p_u.wtobjp = cp;
   queue_prio_insert(currp, &cp->c_queue);
-  msg = chSchGoSleepTimeoutS(THD_STATE_WTCOND, time);
+  msg = chSchGoSleepTimeoutS(CH_STATE_WTCOND, time);
   if (msg != RDY_TIMEOUT)
     chMtxLockS(mp);
   return msg;
