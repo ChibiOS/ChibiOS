@@ -115,8 +115,14 @@ void chSysInit(void) {
   _trace_init();
 #endif
 
+#if !CH_CFG_NO_IDLE_THREAD
   /* Now this instructions flow becomes the main thread.*/
   setcurrp(_thread_init(&mainthread, NORMALPRIO));
+#else
+  /* Now this instructions flow becomes the main thread.*/
+  setcurrp(_thread_init(&mainthread, IDLEPRIO));
+#endif
+
   currp->p_state = CH_STATE_CURRENT;
 #if CH_DBG_ENABLE_STACK_CHECK
   /* This is a special case because the main thread thread_t structure is not
