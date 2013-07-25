@@ -456,7 +456,11 @@ static inline syssts_t port_get_irq_status(void) {
  */
 static inline bool port_irq_enabled(syssts_t sts) {
 
+#if !CORTEX_SIMPLIFIED_PRIORITY
   return sts >= CORTEX_BASEPRI_KERNEL;
+#else /* CORTEX_SIMPLIFIED_PRIORITY */
+  return (sts & 1) == 0;
+#endif /* CORTEX_SIMPLIFIED_PRIORITY */
 }
 
 /**
