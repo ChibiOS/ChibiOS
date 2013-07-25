@@ -206,16 +206,15 @@ void chSysTimerHandlerI(void) {
  *          is known.
  *
  * @return              The previous system status, the encoding of this
- *                      status word is architecture-dependent but zero is
- *                      assumed to mean not-locked.
+ *                      status word is architecture-dependent and opaque.
  *
  * @special
  */
 syssts_t chSysGetAndLockX(void)  {
 
-  syssts_t sts = port_get_status();
-  if (!sts) {
-    if (port_get_context())
+  syssts_t sts = port_get_irq_status();
+  if (port_irq_enabled(sts)) {
+    if (port_is_isr_context())
       chSysLockFromISR();
     else
       chSysLock();
@@ -232,8 +231,8 @@ syssts_t chSysGetAndLockX(void)  {
  */
 void chSysRestoreLockX(syssts_t sts) {
 
-  if (!sts) {
-    if (port_get_context())
+  if (port_irq_enabled(sts)) {
+    if (port_is_isr_context())
       chSysUnlockFromISR();
     else
       chSysUnlock();

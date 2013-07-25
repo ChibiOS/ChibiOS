@@ -359,7 +359,6 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_halt(void);
   void _port_irq_epilogue(regarm_t lr);
   void _port_switch_from_isr(void);
   void _port_exit_from_isr(void);

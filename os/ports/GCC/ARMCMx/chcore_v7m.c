@@ -29,7 +29,27 @@
 #include "ch.h"
 
 /*===========================================================================*/
-/* Port interrupt handlers.                                                  */
+/* Module local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if CH_CFG_TIMEDELTA == 0
@@ -104,42 +124,8 @@ void PendSVVector(void) {
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
 
 /*===========================================================================*/
-/* Port exported functions.                                                  */
+/* Module exported functions.                                                */
 /*===========================================================================*/
-
-/**
- * @brief   Port-related initialization code.
- */
-void _port_init(void) {
-
-  /* Initialization of the vector table and priority related settings.*/
-  SCB_VTOR = CORTEX_VTOR_INIT;
-  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(CORTEX_PRIGROUP_INIT);
-
-  /* Initialization of the system vectors used by the port.*/
-  nvicSetSystemHandlerPriority(HANDLER_SVCALL,
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));
-  nvicSetSystemHandlerPriority(HANDLER_PENDSV,
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));
-#if CH_CFG_TIMEDELTA == 0
-  nvicSetSystemHandlerPriority(HANDLER_SYSTICK,
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));
-#else
-  port_timer_init();
-#endif
-}
-
-#if !CH_CFG_OPTIMIZE_SPEED
-void _port_lock(void) {
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_KERNEL;
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");
-}
-
-void _port_unlock(void) {
-  register uint32_t tmp asm ("r3") = CORTEX_BASEPRI_DISABLED;
-  asm volatile ("msr     BASEPRI, %0" : : "r" (tmp) : "memory");
-}
-#endif
 
 /**
  * @brief   Exception exit redirection to _port_switch_from_isr().
@@ -248,19 +234,6 @@ void _port_switch(thread_t *ntp, thread_t *otp) {
 #endif
   asm volatile ("pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}"
                 : : : "memory");
-}
-
-/**
- * @brief   Start a thread by invoking its work function.
- * @details If the work function returns @p chThdExit() is automatically
- *          invoked.
- */
-void _port_thread_start(void) {
-
-  chSysUnlock();
-  asm volatile ("mov     r0, r5                                 \n\t"
-                "blx     r4                                     \n\t"
-                "bl      chThdExit");
 }
 
 /** @} */

@@ -30,24 +30,54 @@
 #define _CHCORE_H_
 
 /*===========================================================================*/
-/* Port constants (common).                                                  */
+/* Module constants.                                                         */
 /*===========================================================================*/
 
-/* Added to make the header stand-alone when included from asm.*/
-#ifndef FALSE
+/**
+ * @name    Architecture and Compiler
+ * @{
+ */
+/**
+ * @brief   Macro defining a generic ARM architecture.
+ */
+#define CH_ARCHITECTURE_ARM
+
+/**
+ * @brief   Name of the compiler supported by this port.
+ */
+#define CH_COMPILER_NAME                "GCC " __VERSION__
+/** @} */
+
+/*
+ * Added to make the header stand-alone when included from asm.
+ */
+#if !defined(FALSE)
 #define FALSE       0
 #endif
-#ifndef TRUE
+#if !defined(TRUE)
 #define TRUE        (!FALSE)
 #endif
 
+/**
+ * @name    Cortex-M variants
+ * @{
+ */
 #define CORTEX_M0                       0   /**< @brief Cortex-M0 variant.  */
 #define CORTEX_M1                       1   /**< @brief Cortex-M1 variant.  */
 #define CORTEX_M3                       3   /**< @brief Cortex-M3 variant.  */
 #define CORTEX_M4                       4   /**< @brief Cortex-M4 variant.  */
+/** @} */
 
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
 
 /* Cortex model check, only M0 and M3 supported right now.*/
 #if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M3) ||           \
@@ -58,78 +88,9 @@
 #error "unknown or unsupported Cortex-M model"
 #endif
 
-/**
- * @brief   Total priority levels.
- */
-#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
-
-/**
- * @brief   Minimum priority level.
- * @details This minimum priority level is calculated from the number of
- *          priority bits supported by the specific Cortex-Mx implementation.
- */
-#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
-
-/**
- * @brief   Maximum priority level.
- * @details The maximum allowed priority level is always zero.
- */
-#define CORTEX_MAXIMUM_PRIORITY         0
-
 /*===========================================================================*/
-/* Port macros (common).                                                     */
+/* Module data structures and types.                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Priority level verification macro.
- */
-#define CORTEX_IS_VALID_PRIORITY(n)                                         \
-  (((n) >= 0) && ((n) < CORTEX_PRIORITY_LEVELS))
-
-/**
- * @brief   Priority level verification macro.
- */
-#define CORTEX_IS_VALID_KERNEL_PRIORITY(n)                                  \
-  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
-
-/**
- * @brief   Priority level to priority mask conversion macro.
- */
-#define CORTEX_PRIORITY_MASK(n)                                             \
-  ((n) << (8 - CORTEX_PRIORITY_BITS))
-
-/*===========================================================================*/
-/* Port configurable parameters (common).                                    */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Port derived parameters (common).                                         */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Port exported info (common).                                              */
-/*===========================================================================*/
-
-/**
- * @brief   Macro defining a generic ARM architecture.
- */
-#define CH_ARCHITECTURE_ARM
-
-/**
- * @brief   Name of the compiler supported by this port.
- */
-#define CH_COMPILER_NAME                "GCC " __VERSION__
-
-/*===========================================================================*/
-/* Port implementation part (common).                                        */
-/*===========================================================================*/
-
-/* Includes the sub-architecture-specific part.*/
-#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
-#include "chcore_v6m.h"
-#elif (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4)
-#include "chcore_v7m.h"
-#endif
 
 #if !defined(_FROM_ASM_)
 
@@ -138,7 +99,6 @@
 /* The following declarations are there just for Doxygen documentation, the
    real declarations are inside the sub-headers.*/
 #if defined(__DOXYGEN__)
-
 /**
  * @brief   Stack and memory alignment enforcement.
  * @note    In this architecture the stack alignment is enforced to 64 bits,
@@ -161,10 +121,64 @@ struct extctx {};
  *          switching.
  */
 struct intctx {};
-
 #endif /* defined(__DOXYGEN__) */
 
 #endif /* _FROM_ASM_ */
+
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
+
+/**
+ * @brief   Total priority levels.
+ */
+#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
+
+/**
+ * @brief   Minimum priority level.
+ * @details This minimum priority level is calculated from the number of
+ *          priority bits supported by the specific Cortex-Mx implementation.
+ */
+#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
+
+/**
+ * @brief   Maximum priority level.
+ * @details The maximum allowed priority level is always zero.
+ */
+#define CORTEX_MAXIMUM_PRIORITY         0
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define CORTEX_IS_VALID_PRIORITY(n)                                         \
+  (((n) >= 0) && ((n) < CORTEX_PRIORITY_LEVELS))
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define CORTEX_IS_VALID_KERNEL_PRIORITY(n)                                  \
+  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
+
+/**
+ * @brief   Priority level to priority mask conversion macro.
+ */
+#define CORTEX_PRIORITY_MASK(n)                                             \
+  ((n) << (8 - CORTEX_PRIORITY_BITS))
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+/* Includes the sub-architecture-specific part.*/
+#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
+#include "chcore_v6m.h"
+#elif (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4)
+#include "chcore_v7m.h"
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
 
 #endif /* _CHCORE_H_ */
 
