@@ -128,6 +128,16 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Realtime counter APIs.
+ * @details If enabled then the RT APIs are included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_RT) || defined(__DOXYGEN__)
+#define CH_CFG_USE_RT                       TRUE
+#endif
+
+/**
  * @brief   Threads registry APIs.
  * @details If enabled then the registry APIs are included in the kernel.
  *

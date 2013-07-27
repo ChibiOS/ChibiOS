@@ -109,6 +109,7 @@ typedef struct thread thread_t;
 #include "chtypes.h"
 #include "chdebug.h"
 #include "chcore.h"
+#include "chrt.h"
 #include "chthreads.h"
 #include "chlists.h"
 #include "chsys.h"

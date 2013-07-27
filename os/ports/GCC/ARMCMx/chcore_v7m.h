@@ -74,6 +74,11 @@
 /** @} */
 
 /**
+ * @brief   This port supports a realtime counter.
+ */
+#define CH_PORT_SUPPORTS_RT             TRUE
+
+/**
  * @brief   Disabled value for BASEPRI register.
  */
 #define CORTEX_BASEPRI_DISABLED         0
