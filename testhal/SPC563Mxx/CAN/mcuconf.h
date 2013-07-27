@@ -82,7 +82,7 @@
 #define SPC5_CAN_USE_FILTERS                FALSE
 
 #define SPC5_CAN_USE_FLEXCAN0               TRUE
-#define SPC5_CAN_FLEXCAN0_IRQ_PRIORITY          2
+#define SPC5_CAN_FLEXCAN0_IRQ_PRIORITY      11
 
 #define SPC5_CAN_USE_FLEXCAN1               FALSE
-#define SPC5_CAN_FLEXCAN1_IRQ_PRIORITY          11
+#define SPC5_CAN_FLEXCAN1_IRQ_PRIORITY      11
