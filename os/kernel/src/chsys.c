@@ -105,6 +105,9 @@ void chSysInit(void) {
   port_init();
   _scheduler_init();
   _vt_init();
+#if CH_CFG_USE_RT
+  _rt_init();
+#endif
 #if CH_CFG_USE_MEMCORE
   _core_init();
 #endif

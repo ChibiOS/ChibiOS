@@ -22,7 +22,7 @@
  * @file    chrt.h
  * @brief   Real Time Counter and Measurement module macros and structures.
  *
- * @addtogroup rt_measurement
+ * @addtogroup realtime_counter
  * @{
  */
 
@@ -45,17 +45,29 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_PORT_SUPPORTS_RT
-#error "the port layer does not support the realtime counter functionality"
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a Time Measurement object.
+ * @note    The maximum measurable time period depends on the implementation
+ *          of the realtime counter and its clock frequency.
+ * @note    The measurement is not 100% cycle-accurate, it can be in excess
+ *          of few cycles depending on the compiler and target architecture.
+ * @note    Interrupts can affect measurement if the measurement is performed
+ *          with interrupts enabled.
+ */
+typedef struct {
+  rtcnt_t               last;           /**< @brief Last measurement.       */
+  rtcnt_t               worst;          /**< @brief Worst measurement.      */
+  rtcnt_t               best;           /**< @brief Best measurement.       */
+} time_measurement_t;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
 /**
  * @name    Time conversion utilities for the realtime counter
  * @{
@@ -137,6 +149,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+  bool chRTIsCounterWithin(rtcnt_t start, rtcnt_t end);
+  void chRTPolledDelay(rtcnt_t cycles);
+  void chRTTimeMeasurementObjectInit(time_measurement_t *tmp);
+  NOINLINE void chRTTimeMeasurementStartX(time_measurement_t *tmp);
+  NOINLINE void chRTTimeMeasurementStopX(time_measurement_t *tmp);
 #ifdef __cplusplus
 }
 #endif
@@ -154,74 +171,13 @@ extern "C" {
  *
  * @special
  */
-static inline rtcnt_t chRTGetCounterValue(void) {
+static inline rtcnt_t chRTGetCounterValueX(void) {
 
+#if !CH_PORT_SUPPORTS_RT
   return port_rt_get_counter_value();
-}
-
-/**
- * @brief   Realtime window test.
- * @details This function verifies if the current realtime counter value
- *          lies within the specified range or not. The test takes care
- *          of the realtime counter wrapping to zero on overflow.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
- * @note    This function can be called from any context.
- *
- * @par Example 1
- * Example of a guarded loop using the realtime counter. The loop implements
- * a timeout after one second.
- * @code
- *   rtcnt_t start = chRTGetCounterValue();
- *   rtcnt_t timeout  = start + S2RTC(1);
- *   while (my_condition) {
- *     if (!chRTIsCounterWithin(start, timeout)
- *       return TIMEOUT;
- *     // Do something.
- *   }
- *   // Continue.
- * @endcode
- *
- * @par Example 2
- * Example of a loop that lasts exactly 50 microseconds.
- * @code
- *   rtcnt_t start = chRTGetCounterValue();
- *   rtcnt_t timeout  = start + US2RTC(50);
- *   while (chRTIsCounterWithin(start, timeout)) {
- *     // Do something.
- *   }
- *   // Continue.
- * @endcode
- *
- * @param[in] start     the start of the time window (inclusive)
- * @param[in] end       the end of the time window (non inclusive)
- * @retval true         current time within the specified time window.
- * @retval false        current time not within the specified time window.
- *
- * @special
- */
-static inline bool chRTIsCounterWithin(rtcnt_t start, rtcnt_t end) {
-  rtcnt_t now = chRTGetCounterValue();
-
-  return end > start ? (now >= start) && (now < end) :
-                       (now >= start) || (now < end);
-}
-
-/**
- * @brief   Polled delay.
- * @note    The real delay is always few cycles in excess of the specified
- *          value.
- * @note    This function can be called from any context.
- *
- * @param[in] ticks     number of ticks
- *
- * @special
- */
-static inline void chRTPolledDelay(rtcnt_t ticks) {
-  rtcnt_t start = chRTGetCounterValue();
-  rtcnt_t timeout  = start + (ticks);
-  while (chRTIsCounterWithin(start, timeout))
-    ;
+#else
+  return chVTGetSystemTimeX();
+#endif
 }
 
 #endif /* CH_CFG_USE_RT */

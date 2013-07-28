@@ -202,14 +202,15 @@ static inline void chVTObjectInit(virtual_timer_t *vtp) {
  * @details Returns the number of system ticks since the @p chSysInit()
  *          invocation.
  * @note    The counter can reach its maximum and then restart from zero.
+ * @note    This function can be called from any context but its atomicity
+ *          is not guaranteed on architectures whose word size is less than
+ *          @systime_t size.
  *
  * @return              The system time in ticks.
  *
- * @iclass
+ * @special
  */
-static inline systime_t chVTGetSystemTimeI(void) {
-
-  chDbgCheckClassI();
+static inline systime_t chVTGetSystemTimeX(void) {
 
 #if CH_CFG_TIMEDELTA == 0
   return vtlist.vt_systime;
@@ -232,7 +233,7 @@ static inline systime_t chVTGetSystemTime(void) {
   systime_t systime;
 
   chSysLock();
-  systime = chVTGetSystemTimeI();
+  systime = chVTGetSystemTimeX();
   chSysUnlock();
   return systime;
 }
@@ -252,7 +253,9 @@ static inline systime_t chVTGetSystemTime(void) {
  */
 static inline bool chVTIsSystemTimeWithinI(systime_t start, systime_t end) {
 
-  return chVTIsTimeWithin(chVTGetSystemTimeI(), start, end);
+  chDbgCheckClassI();
+
+  return chVTIsTimeWithin(chVTGetSystemTimeX(), start, end);
 }
 
 /**
@@ -395,7 +398,7 @@ static inline void chVTDoTickI(void) {
   }
 #else /* CH_CFG_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
-  systime_t now = chVTGetSystemTimeI();
+  systime_t now = chVTGetSystemTimeX();
   systime_t delta = now - vtlist.vt_lasttime;
 
   while ((vtp = vtlist.vt_next)->vt_delta <= delta) {

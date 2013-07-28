@@ -54,6 +54,13 @@ typedef int32_t         cnt_t;          /**< Resources counter.             */
  */
 #define ROMCONST const
 
+/**
+ * @brief   Makes functions not inlineable.
+ * @note    If the compiler does not support such attribute then the
+ *          realtime counter precision could be degraded.
+ */
+#define NOINLINE __attribute__((noinline))
+
 #endif /* _CHTYPES_H_ */
 
 /** @} */

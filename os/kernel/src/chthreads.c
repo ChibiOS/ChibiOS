@@ -327,7 +327,7 @@ void chThdSleep(systime_t time) {
 void chThdSleepUntil(systime_t time) {
 
   chSysLock();
-  if ((time -= chVTGetSystemTimeI()) > 0)
+  if ((time -= chVTGetSystemTimeX()) > 0)
     chThdSleepS(time);
   chSysUnlock();
 }
