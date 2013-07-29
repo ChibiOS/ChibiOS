@@ -83,47 +83,9 @@ void _tm_init(void) {
      measurements.*/
   measurement_offset = 0;
   chTMObjectInit(&tm);
-  chTMStartX(&tm);
-  chTMStopX(&tm);
+  chTMStartMeasurementX(&tm);
+  chTMStopMeasurementX(&tm);
   measurement_offset = tm.last;
-}
-
-/**
- * @brief   Realtime window test.
- * @details This function verifies if the current realtime counter value
- *          lies within the specified range or not. The test takes care
- *          of the realtime counter wrapping to zero on overflow.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
- *
- * @param[in] cnt       the counter value to be tested
- * @param[in] start     the start of the time window (inclusive)
- * @param[in] end       the end of the time window (non inclusive)
- * @retval true         current time within the specified time window.
- * @retval false        current time not within the specified time window.
- *
- * @xclass
- */
-bool chTMIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
-
-  return end > start ? (cnt >= start) && (cnt < end) :
-                       (cnt >= start) || (cnt < end);
-}
-
-/**
- * @brief   Polled delay.
- * @note    The real delay is always few cycles in excess of the specified
- *          value.
- *
- * @param[in] cycles    number of cycles
- *
- * @xclass
- */
-void chTMPolledDelayX(rtcnt_t cycles) {
-  rtcnt_t start = chSysGetRealtimeCounterX();
-  rtcnt_t end  = start + cycles;
-  while (chTMIsCounterWithinX(chSysGetRealtimeCounterX(), start, end))
-    ;
 }
 
 /**
@@ -149,7 +111,7 @@ void chTMObjectInit(time_measurement_t *tmp) {
  *
  * @xclass
  */
-NOINLINE void chTMStartX(time_measurement_t *tmp) {
+NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp) {
 
   tmp->last = chSysGetRealtimeCounterX();
 }
@@ -162,7 +124,7 @@ NOINLINE void chTMStartX(time_measurement_t *tmp) {
  *
  * @xclass
  */
-NOINLINE void chTMStopX(time_measurement_t *tmp) {
+NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp) {
 
   tm_stop(tmp, chSysGetRealtimeCounterX());
 }
@@ -181,8 +143,8 @@ NOINLINE void chTMStopX(time_measurement_t *tmp) {
  *
  * @xclass
  */
-NOINLINE void chTMChainToX(time_measurement_t *tmp1,
-                           time_measurement_t *tmp2) {
+NOINLINE void chTMChainMeasurementToX(time_measurement_t *tmp1,
+                                      time_measurement_t *tmp2) {
 
   /* Starts new measurement.*/
   tmp2->last = chSysGetRealtimeCounterX();

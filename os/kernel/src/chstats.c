@@ -67,10 +67,11 @@ kernel_stats_t kernel_stats;
  */
 void _stats_init(void) {
 
-  kernel_stats.nirq = 0;
-  kernel_stats.nctxswc = 0;
-  chTMObjectInit(&kernel_stats.isr);
-  chTMObjectInit(&kernel_stats.critical);
+  kernel_stats.n_irq = 0;
+  kernel_stats.n_ctxswc = 0;
+  chTMObjectInit(&kernel_stats.m_isr);
+  chTMObjectInit(&kernel_stats.m_crit_thd);
+  chTMObjectInit(&kernel_stats.m_crit_isr);
 }
 
 #endif /* CH_DBG_STATISTICS */

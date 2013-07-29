@@ -55,12 +55,15 @@
  * @brief   Type of a kernel statistics structure.
  */
 typedef struct {
-  ucnt_t                nirq;       /**< @brief IRQ number.
-                                         @note  Fast Interrupts are not
-                                                accounted for.              */
-  ucnt_t                nctxswc;    /**< @brief Context switch number.      */
-  time_measurement_t    critical;   /**< @brief Critical zones measurement. */
-  time_measurement_t    isr;        /**< @brief ISR measurement.            */
+  time_measurement_t    *current;   /**< @brief Currently under measurement.*/
+  ucnt_t                n_irq;      /**< @brief Number of IRQs.             */
+  ucnt_t                n_ctxswc;   /**< @brief Number of context switches. */
+  time_measurement_t    m_crit_thd; /**< @brief Measurement of threads
+                                                critical zones duration.    */
+  time_measurement_t    m_crit_isr; /**< @brief Measurement of ISRs critical
+                                                zones duration.             */
+  time_measurement_t    m_isr;      /**< @brief Measurement of ISRs total
+                                                duration.                   */
 } kernel_stats_t;
 
 /*===========================================================================*/
@@ -70,12 +73,12 @@ typedef struct {
 /**
  * @brief   Increases the IRQ counter.
  */
-#define _stats_increase_irq() kernel_stats.nirq++
+#define _stats_increase_irq() kernel_stats.n_irq++
 
 /**
  * @brief   Increases the context switch counter.
  */
-#define _stats_increase_ctxswc() kernel_stats.nctxswc++
+#define _stats_increase_ctxswc() kernel_stats.n_ctxswc++
 
 /*===========================================================================*/
 /* External declarations.                                                    */

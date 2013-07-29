@@ -81,13 +81,11 @@ typedef struct {
 extern "C" {
 #endif
   void _tm_init(void);
-  bool chTMIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end);
-  void chTMPolledDelayX(rtcnt_t cycles);
   void chTMObjectInit(time_measurement_t *tmp);
-  NOINLINE void chTMStartX(time_measurement_t *tmp);
-  NOINLINE void chTMStopX(time_measurement_t *tmp);
-  NOINLINE void chTMChainToX(time_measurement_t *tmp1,
-                             time_measurement_t *tmp2);
+  NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp);
+  NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp);
+  NOINLINE void chTMChainMeasurementToX(time_measurement_t *tmp1,
+                                        time_measurement_t *tmp2);
 #ifdef __cplusplus
 }
 #endif

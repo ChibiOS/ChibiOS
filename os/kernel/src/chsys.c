@@ -29,6 +29,7 @@
  *          - Interrupt Handling.
  *          - Power Management.
  *          - Abnormal Termination.
+ *          - Realtime counter.
  *          .
  * @{
  */
@@ -244,5 +245,50 @@ void chSysRestoreLockX(syssts_t sts) {
       chSysUnlock();
   }
 }
+
+
+#if CH_PORT_SUPPORTS_RT || defined(__DOXYGEN__)
+/**
+ * @brief   Realtime window test.
+ * @details This function verifies if the current realtime counter value
+ *          lies within the specified range or not. The test takes care
+ *          of the realtime counter wrapping to zero on overflow.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ * @note    This function is only available if the port layer supports the
+ *          option @p CH_PORT_SUPPORTS_RT.
+ *
+ * @param[in] cnt       the counter value to be tested
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @xclass
+ */
+bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
+
+  return end > start ? (cnt >= start) && (cnt < end) :
+                       (cnt >= start) || (cnt < end);
+}
+
+/**
+ * @brief   Polled delay.
+ * @note    The real delay is always few cycles in excess of the specified
+ *          value.
+ * @note    This function is only available if the port layer supports the
+ *          option @p CH_PORT_SUPPORTS_RT.
+ *
+ * @param[in] cycles    number of cycles
+ *
+ * @xclass
+ */
+void chSysPolledDelayX(rtcnt_t cycles) {
+  rtcnt_t start = chSysGetRealtimeCounterX();
+  rtcnt_t end  = start + cycles;
+  while (chSysIsCounterWithinX(chSysGetRealtimeCounterX(), start, end))
+    ;
+}
+#endif /* CH_PORT_SUPPORTS_RT */
 
 /** @} */
