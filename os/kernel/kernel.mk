@@ -4,7 +4,7 @@ KERNSRC = ${CHIBIOS}/os/kernel/src/chsys.c \
           ${CHIBIOS}/os/kernel/src/chdebug.c \
           ${CHIBIOS}/os/kernel/src/chlists.c \
           ${CHIBIOS}/os/kernel/src/chvt.c \
-          ${CHIBIOS}/os/kernel/src/chrt.c \
+          ${CHIBIOS}/os/kernel/src/chtm.c \
           ${CHIBIOS}/os/kernel/src/chstats.c \
           ${CHIBIOS}/os/kernel/src/chschd.c \
           ${CHIBIOS}/os/kernel/src/chthreads.c \

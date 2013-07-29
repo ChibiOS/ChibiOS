@@ -128,13 +128,14 @@
 /*===========================================================================*/
 
 /**
- * @brief   Realtime counter APIs.
- * @details If enabled then the RT APIs are included in the kernel.
+ * @brief   Time Measurement APIs.
+ * @details If enabled then the time measurement APIs are included in
+ *          the kernel.
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_CFG_USE_RT) || defined(__DOXYGEN__)
-#define CH_CFG_USE_RT                       TRUE
+#if !defined(CH_CFG_USE_TM) || defined(__DOXYGEN__)
+#define CH_CFG_USE_TM                       TRUE
 #endif
 
 /**

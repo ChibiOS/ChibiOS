@@ -19,28 +19,17 @@
 */
 
 /**
- * @file    chvt.c
- * @brief   Real Time Counter and Measurement module code.
+ * @file    chtm.c
+ * @brief   Time Measurement module code.
  *
- * @addtogroup realtime_counter
- * @details Realtime Counter APIs and services.
- *
- *          <h2>Operation mode</h2>
- *          The realtime counter is a fast HW counter that counts upward at
- *          regular intervals. This counted can be used for small and accurate
- *          delays, time stamp and time measurement.
- *
- *          <h2>Notes</h2>
- *          On those architectures where such a counter is not implemented
- *          the system time counter is used instead. Of course the system
- *          time counter usually has a much lower resolution than a real
- *          HW counter.
+ * @addtogroup time_measurement
+ * @details Time Measurement APIs and services.
  * @{
  */
 
 #include "ch.h"
 
-#if CH_CFG_USE_RT || defined(__DOXYGEN__)
+#if CH_CFG_USE_TM || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -102,10 +91,10 @@ void _rt_init(void) {
  * Example of a guarded loop using the realtime counter. The loop implements
  * a timeout after one second.
  * @code
- *   rtcnt_t start = chRTGetCounterValue();
+ *   rtcnt_t start = chSysGetRealtimeCounterX();
  *   rtcnt_t timeout  = start + S2RTC(RTCCLK, 1);
  *   while (my_condition) {
- *     if (!chRTIsCounterWithin(start, timeout)
+ *     if (!chTMIsCounterWithin(start, timeout)
  *       return TIMEOUT;
  *     // Do something.
  *   }
@@ -115,9 +104,9 @@ void _rt_init(void) {
  * @par Example 2
  * Example of a loop that lasts exactly 50 microseconds.
  * @code
- *   rtcnt_t start = chRTGetCounterValue();
+ *   rtcnt_t start = chSysGetRealtimeCounterX();
  *   rtcnt_t timeout  = start + US2RTC(RTCCLK, 50);
- *   while (chRTIsCounterWithin(start, timeout)) {
+ *   while (chTMIsCounterWithin(start, timeout)) {
  *     // Do something.
  *   }
  *   // Continue.
@@ -130,7 +119,7 @@ void _rt_init(void) {
  *
  * @special
  */
-bool chRTIsCounterWithin(rtcnt_t start, rtcnt_t end) {
+bool chTMIsCounterWithin(rtcnt_t start, rtcnt_t end) {
   rtcnt_t now = chSysGetRealtimeCounterX();
 
   return end > start ? (now >= start) && (now < end) :
@@ -147,7 +136,7 @@ bool chRTIsCounterWithin(rtcnt_t start, rtcnt_t end) {
  *
  * @special
  */
-void chRTPolledDelay(rtcnt_t cycles) {
+void chTMPolledDelay(rtcnt_t cycles) {
   rtcnt_t start = chSysGetRealtimeCounterX();
   rtcnt_t end  = start + cycles;
   while (chRTIsCounterWithin(start, end))
@@ -161,7 +150,7 @@ void chRTPolledDelay(rtcnt_t cycles) {
  *
  * @init
  */
-void chRTTimeMeasurementObjectInit(time_measurement_t *tmp) {
+void chTMObjectInit(time_measurement_t *tmp) {
 
   tmp->best       = (rtcnt_t)-1;
   tmp->worst      = (rtcnt_t)0;
@@ -178,7 +167,7 @@ void chRTTimeMeasurementObjectInit(time_measurement_t *tmp) {
  *
  * @special
  */
-NOINLINE void chRTTimeMeasurementStartX(time_measurement_t *tmp) {
+NOINLINE void chTMStartX(time_measurement_t *tmp) {
 
   tmp->last = chSysGetRealtimeCounterX();
 }
@@ -192,7 +181,7 @@ NOINLINE void chRTTimeMeasurementStartX(time_measurement_t *tmp) {
  *
  * @special
  */
-NOINLINE void chRTTimeMeasurementStopX(time_measurement_t *tmp) {
+NOINLINE void chTMStopX(time_measurement_t *tmp) {
 
   rtcnt_t now = chSysGetRealtimeCounterX();
   tmp->last = now - tmp->last - measurement_offset;
@@ -203,6 +192,6 @@ NOINLINE void chRTTimeMeasurementStopX(time_measurement_t *tmp) {
     tmp->best = tmp->last;
 }
 
-#endif /* CH_CFG_USE_RT */
+#endif /* CH_CFG_USE_TM */
 
 /** @} */

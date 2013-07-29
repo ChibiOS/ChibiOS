@@ -19,17 +19,17 @@
 */
 
 /**
- * @file    chrt.h
- * @brief   Real Time Counter and Measurement module macros and structures.
+ * @file    chtm.h
+ * @brief   Time Measurement module macros and structures.
  *
- * @addtogroup realtime_counter
+ * @addtogroup time_measurement
  * @{
  */
 
-#ifndef _CHRT_H_
-#define _CHRT_H_
+#ifndef _CHTM_H_
+#define _CHTM_H_
 
-#if CH_CFG_USE_RT || defined(__DOXYGEN__)
+#if CH_CFG_USE_TM || defined(__DOXYGEN__)
 
 #define port_rt_get_counter_value() 0
 
@@ -164,8 +164,8 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_CFG_USE_RT */
+#endif /* CH_CFG_USE_TM */
 
-#endif /* _CHRT_H_ */
+#endif /* _CHTM_H_ */
 
 /** @} */
