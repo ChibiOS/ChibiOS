@@ -34,6 +34,7 @@
 #include <stdbool.h>
 
 typedef bool            bool_t;         /**< Fast boolean type.             */
+typedef uint32_t        systime_t;      /**< System time.                   */
 typedef uint32_t        rtcnt_t;        /**< Realtime counter.              */
 typedef uint32_t        syssts_t;       /**< System status word.            */
 typedef uint8_t         tmode_t;        /**< Thread flags.                  */
@@ -45,8 +46,8 @@ typedef int32_t         msg_t;          /**< Inter-thread message.          */
 typedef int32_t         eventid_t;      /**< Numeric event identifier.      */
 typedef uint32_t        eventmask_t;    /**< Mask of event identifiers.     */
 typedef uint32_t        eventflags_t;   /**< Mask of event flags.           */
-typedef uint32_t        systime_t;      /**< System time.                   */
-typedef int32_t         cnt_t;          /**< Resources counter.             */
+typedef int32_t         cnt_t;          /**< Generic signed counter.        */
+typedef uint32_t        ucnt_t;         /**< Generic unsigned counter.      */
 
 /**
  * @brief   ROM constant modifier.

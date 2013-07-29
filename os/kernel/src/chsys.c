@@ -211,7 +211,7 @@ void chSysTimerHandlerI(void) {
  * @return              The previous system status, the encoding of this
  *                      status word is architecture-dependent and opaque.
  *
- * @special
+ * @xclass
  */
 syssts_t chSysGetAndLockX(void)  {
 
@@ -230,7 +230,7 @@ syssts_t chSysGetAndLockX(void)  {
  *
  * @param[in] sts       the system status to be restored.
  *
- * @special
+ * @xclass
  */
 void chSysRestoreLockX(syssts_t sts) {
 

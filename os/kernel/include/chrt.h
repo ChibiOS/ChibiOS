@@ -59,9 +59,10 @@
  *          with interrupts enabled.
  */
 typedef struct {
-  rtcnt_t               last;           /**< @brief Last measurement.       */
-  rtcnt_t               worst;          /**< @brief Worst measurement.      */
   rtcnt_t               best;           /**< @brief Best measurement.       */
+  rtcnt_t               worst;          /**< @brief Worst measurement.      */
+  rtcnt_t               cumulative;     /**< @brief Cumulative measurement. */
+  rtcnt_t               last;           /**< @brief Last measurement.       */
 } time_measurement_t;
 
 /*===========================================================================*/
@@ -149,6 +150,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void _rt_init(void);
   bool chRTIsCounterWithin(rtcnt_t start, rtcnt_t end);
   void chRTPolledDelay(rtcnt_t cycles);
   void chRTTimeMeasurementObjectInit(time_measurement_t *tmp);
@@ -161,24 +163,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Returns the current value of the system real time counter.
- * @note    This function can be called from any context.
- *
- * @return              The value of the system free running counter of
- *                      type rtcnt_t.
- *
- * @special
- */
-static inline rtcnt_t chRTGetCounterValueX(void) {
-
-#if !CH_PORT_SUPPORTS_RT
-  return port_rt_get_counter_value();
-#else
-  return chVTGetSystemTimeX();
-#endif
-}
 
 #endif /* CH_CFG_USE_RT */
 

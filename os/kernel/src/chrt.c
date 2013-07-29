@@ -131,7 +131,7 @@ void _rt_init(void) {
  * @special
  */
 bool chRTIsCounterWithin(rtcnt_t start, rtcnt_t end) {
-  rtcnt_t now = chRTGetCounterValueX();
+  rtcnt_t now = chSysGetRealtimeCounterX();
 
   return end > start ? (now >= start) && (now < end) :
                        (now >= start) || (now < end);
@@ -148,7 +148,7 @@ bool chRTIsCounterWithin(rtcnt_t start, rtcnt_t end) {
  * @special
  */
 void chRTPolledDelay(rtcnt_t cycles) {
-  rtcnt_t start = chRTGetCounterValueX();
+  rtcnt_t start = chSysGetRealtimeCounterX();
   rtcnt_t end  = start + cycles;
   while (chRTIsCounterWithin(start, end))
     ;
@@ -163,9 +163,10 @@ void chRTPolledDelay(rtcnt_t cycles) {
  */
 void chRTTimeMeasurementObjectInit(time_measurement_t *tmp) {
 
-  tmp->last  = (rtcnt_t)0;
-  tmp->worst = (rtcnt_t)0;
-  tmp->best  = (rtcnt_t)-1;
+  tmp->best       = (rtcnt_t)-1;
+  tmp->worst      = (rtcnt_t)0;
+  tmp->cumulative = (rtcnt_t)0;
+  tmp->last       = (rtcnt_t)0;
 }
 
 /**
@@ -179,7 +180,7 @@ void chRTTimeMeasurementObjectInit(time_measurement_t *tmp) {
  */
 NOINLINE void chRTTimeMeasurementStartX(time_measurement_t *tmp) {
 
-  tmp->last = chRTGetCounterValueX();
+  tmp->last = chSysGetRealtimeCounterX();
 }
 
 /**
@@ -193,8 +194,9 @@ NOINLINE void chRTTimeMeasurementStartX(time_measurement_t *tmp) {
  */
 NOINLINE void chRTTimeMeasurementStopX(time_measurement_t *tmp) {
 
-  rtcnt_t now = chRTGetCounterValueX();
+  rtcnt_t now = chSysGetRealtimeCounterX();
   tmp->last = now - tmp->last - measurement_offset;
+  tmp->cumulative += tmp->last;
   if (tmp->last > tmp->worst)
     tmp->worst = tmp->last;
   else if (tmp->last < tmp->best)

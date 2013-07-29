@@ -61,7 +61,8 @@
  */
 #define CH_IRQ_PROLOGUE()                                                   \
   PORT_IRQ_PROLOGUE();                                                      \
-  dbg_check_enter_isr();
+  dbg_check_enter_isr();                                                    \
+  _stats_increase_irq()
 
 /**
  * @brief   IRQ handler exit code.
@@ -73,7 +74,7 @@
  */
 #define CH_IRQ_EPILOGUE()                                                   \
   dbg_check_leave_isr();                                                    \
-  PORT_IRQ_EPILOGUE();
+  PORT_IRQ_EPILOGUE()
 
 /**
  * @brief   Standard normal IRQ handler declaration.
@@ -98,6 +99,23 @@
  */
 #define CH_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
 /** @} */
+
+/**
+ * @brief   Returns the current value of the system real time counter.
+ * @note    This function can be called from any context.
+ * @note    If the port does not support a realtime counter then this
+ *          function returns the system time.
+ *
+ * @return              The value of the system realtime counter of
+ *                      type rtcnt_t.
+ *
+ * @special
+ */
+#if CH_PORT_SUPPORTS_RT || defined(__DOXYGEN__)
+#define chSysGetRealtimeCounterX() (rtcnt_t)port_rt_get_counter_value()
+#else
+#define chSysGetRealtimeCounterX() (rtcnt_t)chVTGetSystemTimeX()
+#endif
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -132,6 +150,7 @@ extern "C" {
 static inline void chSysSwitch(thread_t *ntp, thread_t *otp) {
 
   dbg_trace(otp);
+  _stats_increase_ctxswc();
   CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);
   port_switch(ntp, otp);
 }

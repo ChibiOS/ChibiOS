@@ -342,6 +342,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Debug option, kernel statistics.
+ *
+ * @note    The default is @p FALSE.
+ */
+#if !defined(CH_DBG_STATISTICS) || defined(__DOXYGEN__)
+#define CH_DBG_STATISTICS                   TRUE
+#endif
+
+/**
  * @brief   Debug option, system state check.
  * @details If enabled the correct call protocol for system APIs is checked
  *          at runtime.

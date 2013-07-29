@@ -169,7 +169,7 @@ extern virtual_timers_list_t vtlist;
 extern "C" {
 #endif
   void _vt_init(void);
-  bool chVTIsTimeWithin(systime_t time, systime_t start, systime_t end);
+  bool chVTIsTimeWithinX(systime_t time, systime_t start, systime_t end);
   void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
                   vtfunc_t vtfunc, void *par);
   void chVTDoResetI(virtual_timer_t *vtp);
@@ -208,7 +208,7 @@ static inline void chVTObjectInit(virtual_timer_t *vtp) {
  *
  * @return              The system time in ticks.
  *
- * @special
+ * @xclass
  */
 static inline systime_t chVTGetSystemTimeX(void) {
 
@@ -249,13 +249,13 @@ static inline systime_t chVTGetSystemTime(void) {
  * @retval true         current time within the specified time window.
  * @retval false        current time not within the specified time window.
  *
- * @api
+ * @xclass
  */
-static inline bool chVTIsSystemTimeWithinI(systime_t start, systime_t end) {
+static inline bool chVTIsSystemTimeWithinX(systime_t start, systime_t end) {
 
   chDbgCheckClassI();
 
-  return chVTIsTimeWithin(chVTGetSystemTimeX(), start, end);
+  return chVTIsTimeWithinX(chVTGetSystemTimeX(), start, end);
 }
 
 /**
@@ -273,7 +273,7 @@ static inline bool chVTIsSystemTimeWithinI(systime_t start, systime_t end) {
  */
 static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
 
-  return chVTIsTimeWithin(chVTGetSystemTime(), start, end);
+  return chVTIsTimeWithinX(chVTGetSystemTime(), start, end);
 }
 
 /**

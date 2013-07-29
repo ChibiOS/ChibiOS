@@ -88,9 +88,9 @@ void _vt_init(void) {
  * @retval true         current time within the specified time window.
  * @retval false        current time not within the specified time window.
  *
- * @special
+ * @xclass
  */
-bool chVTIsTimeWithin(systime_t time, systime_t start, systime_t end) {
+bool chVTIsTimeWithinX(systime_t time, systime_t start, systime_t end) {
 
   return end > start ? (time >= start) && (time < end) :
                        (time >= start) || (time < end);
