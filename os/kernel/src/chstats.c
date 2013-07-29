@@ -20,9 +20,9 @@
 
 /**
  * @file    chstats.c
- * @brief   Real Time Counter and Measurement module code.
+ * @brief   Statistics module code.
  *
- * @addtogroup realtime_counter
+ * @addtogroup statistics
  * @details Statistics services.
  * @{
  */
@@ -59,6 +59,19 @@ kernel_stats_t kernel_stats;
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Initializes the statistics module.
+ *
+ * @init
+ */
+void _stats_init(void) {
+
+  kernel_stats.nirq = 0;
+  kernel_stats.nctxswc = 0;
+  chTMObjectInit(&kernel_stats.isr);
+  chTMObjectInit(&kernel_stats.critical);
+}
 
 #endif /* CH_DBG_STATISTICS */
 

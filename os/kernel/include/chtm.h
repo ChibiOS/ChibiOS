@@ -45,6 +45,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !CH_PORT_SUPPORTS_RT
+#error "CH_CFG_USE_TM requires CH_PORT_SUPPORTS_RT"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -69,80 +73,6 @@ typedef struct {
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-/**
- * @name    Time conversion utilities for the realtime counter
- * @{
- */
-/**
- * @brief   Seconds to realtime counter.
- * @details Converts from seconds to realtime counter cycles.
- * @note    The result is rounded upward to the next tick boundary.
- *
- * @param[in] sec       number of seconds
- * @return              The number of cycles.
- *
- * @api
- */
-#define S2RTV(freq, sec) ((freq) * (sec))
-
-/**
- * @brief   Milliseconds to realtime counter.
- * @details Converts from milliseconds to realtime counter cycles.
- * @note    The result is rounded upward to the next tick boundary.
- *
- * @param[in] msec      number of milliseconds
- * @return              The number of cycles.
- *
- * @api
- */
-#define MS2RTC(freq, msec) (rtcnt_t)((((freq) + 999UL) / 1000UL) * (msec))
-
-/**
- * @brief   Microseconds to realtime counter.
- * @details Converts from microseconds to realtime counter cycles.
- * @note    The result is rounded upward to the next tick boundary.
- *
- * @param[in] usec      number of microseconds
- * @return              The number of cycles.
- *
- * @api
- */
-#define US2RTC(freq, usec) (rtcnt_t)((((freq) + 999999UL) / 1000000UL) * (usec))
-
-/**
- * @brief   Realtime counter cycles to seconds.
- * @details Converts from realtime counter cycles number to seconds.
- *
- * @param[in] n         number of cycles
- * @return              The number of seconds.
- *
- * @api
- */
-#define RTC2S(freq, n) (rtcnt_t)((n) / (freq))
-
-/**
- * @brief   Realtime counter cycles to milliseconds.
- * @details Converts from realtime counter cycles number to milliseconds.
- *
- * @param[in] n         number of cycles
- * @return              The number of milliseconds.
- *
- * @api
- */
-#define RTC2MS(freq, n) ((n) / ((freq) / 1000UL))
-
-/**
- * @brief   Realtime counter cycles to microseconds.
- * @details Converts from realtime counter cycles number to microseconds.
- *
- * @param[in] n         number of cycles
- * @return              The number of microseconds.
- *
- * @api
- */
-#define RTC2US(freq, n) ((n) / ((freq) / 1000000UL))
-/** @} */
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -150,12 +80,14 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _rt_init(void);
-  bool chRTIsCounterWithin(rtcnt_t start, rtcnt_t end);
-  void chRTPolledDelay(rtcnt_t cycles);
-  void chRTTimeMeasurementObjectInit(time_measurement_t *tmp);
-  NOINLINE void chRTTimeMeasurementStartX(time_measurement_t *tmp);
-  NOINLINE void chRTTimeMeasurementStopX(time_measurement_t *tmp);
+  void _tm_init(void);
+  bool chTMIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end);
+  void chTMPolledDelayX(rtcnt_t cycles);
+  void chTMObjectInit(time_measurement_t *tmp);
+  NOINLINE void chTMStartX(time_measurement_t *tmp);
+  NOINLINE void chTMStopX(time_measurement_t *tmp);
+  NOINLINE void chTMChainToX(time_measurement_t *tmp1,
+                             time_measurement_t *tmp2);
 #ifdef __cplusplus
 }
 #endif

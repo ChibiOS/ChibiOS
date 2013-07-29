@@ -39,6 +39,10 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+#if !CH_CFG_USE_TM
+#error "CH_DBG_STATISTICS requires CH_CFG_USE_TM"
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -84,6 +88,7 @@ extern kernel_stats_t kernel_stats;
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void _stats_init(void);
 #ifdef __cplusplus
 }
 #endif

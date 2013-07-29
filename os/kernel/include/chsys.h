@@ -101,20 +101,99 @@
 /** @} */
 
 /**
+ * @name    Time conversion utilities for the realtime counter
+ * @{
+ */
+/**
+ * @brief   Seconds to realtime counter.
+ * @details Converts from seconds to realtime counter cycles.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] freq      realtime counter operating frequency
+ * @param[in] sec       number of seconds
+ * @return              The number of cycles.
+ *
+ * @api
+ */
+#define S2RTV(freq, sec) ((freq) * (sec))
+
+/**
+ * @brief   Milliseconds to realtime counter.
+ * @details Converts from milliseconds to realtime counter cycles.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] freq      realtime counter operating frequency
+ * @param[in] msec      number of milliseconds
+ * @return              The number of cycles.
+ *
+ * @api
+ */
+#define MS2RTC(freq, msec) (rtcnt_t)((((freq) + 999UL) / 1000UL) * (msec))
+
+/**
+ * @brief   Microseconds to realtime counter.
+ * @details Converts from microseconds to realtime counter cycles.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] freq      realtime counter operating frequency
+ * @param[in] usec      number of microseconds
+ * @return              The number of cycles.
+ *
+ * @api
+ */
+#define US2RTC(freq, usec) (rtcnt_t)((((freq) + 999999UL) / 1000000UL) * (usec))
+
+/**
+ * @brief   Realtime counter cycles to seconds.
+ * @details Converts from realtime counter cycles number to seconds.
+ *
+ * @param[in] freq      realtime counter operating frequency
+ * @param[in] n         number of cycles
+ * @return              The number of seconds.
+ *
+ * @api
+ */
+#define RTC2S(freq, n) (rtcnt_t)((n) / (freq))
+
+/**
+ * @brief   Realtime counter cycles to milliseconds.
+ * @details Converts from realtime counter cycles number to milliseconds.
+ *
+ * @param[in] freq      realtime counter operating frequency
+ * @param[in] n         number of cycles
+ * @return              The number of milliseconds.
+ *
+ * @api
+ */
+#define RTC2MS(freq, n) ((n) / ((freq) / 1000UL))
+
+/**
+ * @brief   Realtime counter cycles to microseconds.
+ * @details Converts from realtime counter cycles number to microseconds.
+ *
+ * @param[in] freq      realtime counter operating frequency
+ * @param[in] n         number of cycles
+ * @return              The number of microseconds.
+ *
+ * @api
+ */
+#define RTC2US(freq, n) ((n) / ((freq) / 1000000UL))
+/** @} */
+
+/**
  * @brief   Returns the current value of the system real time counter.
  * @note    This function can be called from any context.
- * @note    If the port does not support a realtime counter then this
- *          function returns the system time.
  *
  * @return              The value of the system realtime counter of
- *                      type rtcnt_t.
+ *                      type rtcnt_t. If the port does not support a
+ *                      realtime counter then zero is returned.
  *
- * @special
+ * @xclass
  */
 #if CH_PORT_SUPPORTS_RT || defined(__DOXYGEN__)
 #define chSysGetRealtimeCounterX() (rtcnt_t)port_rt_get_counter_value()
 #else
-#define chSysGetRealtimeCounterX() (rtcnt_t)chVTGetSystemTimeX()
+#define chSysGetRealtimeCounterX() 0
 #endif
 
 /*===========================================================================*/

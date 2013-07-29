@@ -48,7 +48,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Subsystem calibration value.
+ * @brief   Measurement calibration value.
  */
 static rtcnt_t measurement_offset;
 
@@ -56,25 +56,35 @@ static rtcnt_t measurement_offset;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static inline void tm_stop(time_measurement_t *tmp, rtcnt_t now) {
+
+  tmp->last = now - tmp->last - measurement_offset;
+  tmp->cumulative += tmp->last;
+  if (tmp->last > tmp->worst)
+    tmp->worst = tmp->last;
+  else if (tmp->last < tmp->best)
+    tmp->best = tmp->last;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
 /**
- * @brief   Initializes the realtime counter unit.
+ * @brief   Initializes the time measurement unit.
  *
  * @init
  */
-void _rt_init(void) {
+void _tm_init(void) {
   time_measurement_t tm;
 
   /* Time Measurement subsystem calibration, it does a null measurement
      and calculates the call overhead which is subtracted to real
      measurements.*/
   measurement_offset = 0;
-  chRTTimeMeasurementObjectInit(&tm);
-  chRTTimeMeasurementStartX(&tm);
-  chRTTimeMeasurementStopX(&tm);
+  chTMObjectInit(&tm);
+  chTMStartX(&tm);
+  chTMStopX(&tm);
   measurement_offset = tm.last;
 }
 
@@ -85,61 +95,34 @@ void _rt_init(void) {
  *          of the realtime counter wrapping to zero on overflow.
  * @note    When start==end then the function returns always true because the
  *          whole time range is specified.
- * @note    This function can be called from any context.
  *
- * @par Example 1
- * Example of a guarded loop using the realtime counter. The loop implements
- * a timeout after one second.
- * @code
- *   rtcnt_t start = chSysGetRealtimeCounterX();
- *   rtcnt_t timeout  = start + S2RTC(RTCCLK, 1);
- *   while (my_condition) {
- *     if (!chTMIsCounterWithin(start, timeout)
- *       return TIMEOUT;
- *     // Do something.
- *   }
- *   // Continue.
- * @endcode
- *
- * @par Example 2
- * Example of a loop that lasts exactly 50 microseconds.
- * @code
- *   rtcnt_t start = chSysGetRealtimeCounterX();
- *   rtcnt_t timeout  = start + US2RTC(RTCCLK, 50);
- *   while (chTMIsCounterWithin(start, timeout)) {
- *     // Do something.
- *   }
- *   // Continue.
- * @endcode
- *
+ * @param[in] cnt       the counter value to be tested
  * @param[in] start     the start of the time window (inclusive)
  * @param[in] end       the end of the time window (non inclusive)
  * @retval true         current time within the specified time window.
  * @retval false        current time not within the specified time window.
  *
- * @special
+ * @xclass
  */
-bool chTMIsCounterWithin(rtcnt_t start, rtcnt_t end) {
-  rtcnt_t now = chSysGetRealtimeCounterX();
+bool chTMIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
 
-  return end > start ? (now >= start) && (now < end) :
-                       (now >= start) || (now < end);
+  return end > start ? (cnt >= start) && (cnt < end) :
+                       (cnt >= start) || (cnt < end);
 }
 
 /**
  * @brief   Polled delay.
  * @note    The real delay is always few cycles in excess of the specified
  *          value.
- * @note    This function can be called from any context.
  *
  * @param[in] cycles    number of cycles
  *
- * @special
+ * @xclass
  */
-void chTMPolledDelay(rtcnt_t cycles) {
+void chTMPolledDelayX(rtcnt_t cycles) {
   rtcnt_t start = chSysGetRealtimeCounterX();
   rtcnt_t end  = start + cycles;
-  while (chRTIsCounterWithin(start, end))
+  while (chTMIsCounterWithinX(chSysGetRealtimeCounterX(), start, end))
     ;
 }
 
@@ -161,11 +144,10 @@ void chTMObjectInit(time_measurement_t *tmp) {
 /**
  * @brief   Starts a measurement.
  * @pre     The @p time_measurement_t structure must be initialized.
- * @note    This function can be invoked from any context.
  *
  * @param[in,out] tmp   pointer to a @p TimeMeasurement structure
  *
- * @special
+ * @xclass
  */
 NOINLINE void chTMStartX(time_measurement_t *tmp) {
 
@@ -175,23 +157,38 @@ NOINLINE void chTMStartX(time_measurement_t *tmp) {
 /**
  * @brief   Stops a measurement.
  * @pre     The @p time_measurement_t structure must be initialized.
- * @note    This function can be invoked from any context.
  *
  * @param[in,out] tmp   pointer to a @p time_measurement_t structure
  *
- * @special
+ * @xclass
  */
 NOINLINE void chTMStopX(time_measurement_t *tmp) {
 
-  rtcnt_t now = chSysGetRealtimeCounterX();
-  tmp->last = now - tmp->last - measurement_offset;
-  tmp->cumulative += tmp->last;
-  if (tmp->last > tmp->worst)
-    tmp->worst = tmp->last;
-  else if (tmp->last < tmp->best)
-    tmp->best = tmp->last;
+  tm_stop(tmp, chSysGetRealtimeCounterX());
 }
 
 #endif /* CH_CFG_USE_TM */
+
+/**
+ * @brief   Stops a measurement and chains to the next one using the same time
+ *          stamp.
+ *
+ * @param[in,out] tmp1  pointer to the @p time_measurement_t structure to be
+ *                      stopped
+ * @param[in,out] tmp2  pointer to the @p time_measurement_t structure to be
+ *                      started
+ *
+ *
+ * @xclass
+ */
+NOINLINE void chTMChainToX(time_measurement_t *tmp1,
+                           time_measurement_t *tmp2) {
+
+  /* Starts new measurement.*/
+  tmp2->last = chSysGetRealtimeCounterX();
+
+  /* Stops previous measurement using the same time stamp.*/
+  tm_stop(tmp1, tmp2->last);
+}
 
 /** @} */

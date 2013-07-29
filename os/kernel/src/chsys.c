@@ -105,14 +105,17 @@ void chSysInit(void) {
   port_init();
   _scheduler_init();
   _vt_init();
-#if CH_CFG_USE_RT
-  _rt_init();
+#if CH_CFG_USE_TM
+  _tm_init();
 #endif
 #if CH_CFG_USE_MEMCORE
   _core_init();
 #endif
 #if CH_CFG_USE_HEAP
   _heap_init();
+#endif
+#if CH_DBG_STATISTICS
+  _stats_init();
 #endif
 #if CH_DBG_ENABLE_TRACE
   _trace_init();
