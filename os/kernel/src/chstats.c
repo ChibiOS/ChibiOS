@@ -69,9 +69,57 @@ void _stats_init(void) {
 
   kernel_stats.n_irq = 0;
   kernel_stats.n_ctxswc = 0;
-  chTMObjectInit(&kernel_stats.m_isr);
   chTMObjectInit(&kernel_stats.m_crit_thd);
   chTMObjectInit(&kernel_stats.m_crit_isr);
+}
+
+
+/**
+ * @brief   Increases the IRQ counter.
+ */
+void _stats_increase_irq(void) {
+
+  kernel_stats.n_irq++;
+}
+
+/**
+ * @brief   Increases the context switch counter.
+ */
+void _stats_increase_ctxswc(void) {
+
+  kernel_stats.n_ctxswc++;
+}
+
+/**
+ * @brief   Starts the measurement of a thread critical zone.
+ */
+void _stats_start_measure_crit_thd(void) {
+
+  chTMStartMeasurementX(&kernel_stats.m_crit_thd);
+}
+
+/**
+ * @brief   Stops the measurement of a thread critical zone.
+ */
+void _stats_stop_measure_crit_thd(void) {
+
+  chTMStopMeasurementX(&kernel_stats.m_crit_thd);
+}
+
+/**
+ * @brief   Starts the measurement of an ISR critical zone.
+ */
+void _stats_start_measure_crit_isr(void) {
+
+  chTMStartMeasurementX(&kernel_stats.m_crit_isr);
+}
+
+/**
+ * @brief   Stops the measurement of an ISR critical zone.
+ */
+void _stats_stop_measure_crit_isr(void) {
+
+  chTMStopMeasurementX(&kernel_stats.m_crit_isr);
 }
 
 #endif /* CH_DBG_STATISTICS */

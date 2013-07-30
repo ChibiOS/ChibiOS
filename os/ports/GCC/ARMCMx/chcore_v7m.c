@@ -62,9 +62,9 @@ CH_IRQ_HANDLER(SysTickVector) {
 
   CH_IRQ_PROLOGUE();
 
-  chSysLockFromIsr();
+  chSysLockFromISR();
   chSysTimerHandlerI();
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 
   CH_IRQ_EPILOGUE();
 }
@@ -191,9 +191,11 @@ __attribute__((naked))
 #endif
 void _port_switch_from_isr(void) {
 
+  _stats_start_measure_crit_thd();
   dbg_check_lock();
   chSchDoReschedule();
   dbg_check_unlock();
+  _stats_stop_measure_crit_thd();
   asm volatile ("_port_exit_from_isr:" : : : "memory");
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
   asm volatile ("svc     #0");

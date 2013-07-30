@@ -104,7 +104,7 @@ static void sem1_execute(void) {
   chSemAddCounterI(&sem1, 2);
   chSysUnlock();
   test_wait_threads();
-  test_assert(2, chSemGetCounterI(&sem1) == 1, "invalid counter");
+  test_assert_lock(2, chSemGetCounterI(&sem1) == 1, "invalid counter");
 }
 
 ROMCONST struct testcase testsem1 = {
@@ -252,7 +252,7 @@ static void sem4_execute(void) {
   /* Creates a taken binary semaphore.*/
   chBSemObjectInit(&bsem, TRUE);
   chBSemReset(&bsem, TRUE);
-  test_assert(1, chBSemGetStateI(&bsem) == TRUE, "not taken");
+  test_assert_lock(1, chBSemGetStateI(&bsem) == TRUE, "not taken");
 
   /* Starts a signaler thread at a lower priority.*/
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE,
@@ -262,18 +262,18 @@ static void sem4_execute(void) {
   chBSemWait(&bsem);
   
   /* The binary semaphore is expected to be taken.*/
-  test_assert(2, chBSemGetStateI(&bsem) == TRUE, "not taken");
-  
+  test_assert_lock(2, chBSemGetStateI(&bsem) == TRUE, "not taken");
+
   /* Releasing it, check both the binary semaphore state and the underlying
      counter semaphore state..*/
   chBSemSignal(&bsem);
-  test_assert(3, chBSemGetStateI(&bsem) == FALSE, "still taken");
-  test_assert(4, chSemGetCounterI(&bsem.bs_sem) == 1, "unexpected counter");
-  
+  test_assert_lock(3, chBSemGetStateI(&bsem) == FALSE, "still taken");
+  test_assert_lock(4, chSemGetCounterI(&bsem.bs_sem) == 1, "unexpected counter");
+
   /* Checking signaling overflow, the counter must not go beyond 1.*/
   chBSemSignal(&bsem);
-  test_assert(3, chBSemGetStateI(&bsem) == FALSE, "taken");
-  test_assert(5, chSemGetCounterI(&bsem.bs_sem) == 1, "unexpected counter");
+  test_assert_lock(3, chBSemGetStateI(&bsem) == FALSE, "taken");
+  test_assert_lock(5, chSemGetCounterI(&bsem.bs_sem) == 1, "unexpected counter");
 }
 
 ROMCONST struct testcase testsem4 = {

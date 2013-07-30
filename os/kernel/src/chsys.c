@@ -163,7 +163,7 @@ void chSysInit(void) {
  */
 void chSysHalt(void) {
 
-  chSysDisable();
+  port_disable();
 
 #if defined(CH_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
   CH_CFG_SYSTEM_HALT_HOOK();

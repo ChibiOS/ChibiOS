@@ -80,7 +80,7 @@ static void mbox1_execute(void) {
   /*
    * Testing initial space.
    */
-  test_assert(1, chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
+  test_assert_lock(1, chMBGetFreeCountI(&mb1) == MB_SIZE, "wrong size");
 
   /*
    * Testing enqueuing and backward circularity.

@@ -218,7 +218,8 @@ static void bmk4_execute(void) {
   thread_t *tp;
   uint32_t n;
 
-  tp = threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread4, NULL);
+  tp = threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1,
+                                      thread4, NULL);
   n = 0;
   test_wait_tick();
   test_start_timer(1000);

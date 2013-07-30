@@ -62,59 +62,11 @@ typedef struct {
                                                 critical zones duration.    */
   time_measurement_t    m_crit_isr; /**< @brief Measurement of ISRs critical
                                                 zones duration.             */
-  time_measurement_t    m_isr;      /**< @brief Measurement of ISRs total
-                                                duration.                   */
 } kernel_stats_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @brief   Increases the IRQ counter.
- */
-#define _stats_increase_irq() kernel_stats.n_irq++
-
-/**
- * @brief   Increases the context switch counter.
- */
-#define _stats_increase_ctxswc() kernel_stats.n_ctxswc++
-
-/**
- * @brief   Starts the measurement of a thread critical zone.
- */
-#define _stats_start_measure_crit_thd()                                     \
-  chTMStartMeasurementX(&kernel_stats.m_crit_thd)
-
-/**
- * @brief   Stops the measurement of a thread critical zone.
- */
-#define _stats_stop_measure_crit_thd()                                      \
-  chTMStopMeasurementX(&kernel_stats.m_crit_thd)
-
-/**
- * @brief   Starts the measurement of an ISR critical zone.
- */
-#define _stats_start_measure_crit_isr()                                     \
-  chTMStartMeasurementX(&kernel_stats.m_crit_isr)
-
-/**
- * @brief   Stops the measurement of an ISR critical zone.
- */
-#define _stats_stop_measure_crit_isr()                                      \
-  chTMStopMeasurementX(&kernel_stats.m_crit_isr)
-
-/**
- * @brief   Starts the measurement of an ISR duration.
- */
-#define _stats_start_measure_isr()                                          \
-  chTMStartMeasurementX(&kernel_stats.m_crit_isr)
-
-/**
- * @brief   Stops the measurement of an ISR duration.
- */
-#define _stats_stop_measure_isr()                                           \
-  chTMStopMeasurementX(&kernel_stats.m_crit_isr)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -128,6 +80,12 @@ extern kernel_stats_t kernel_stats;
 extern "C" {
 #endif
   void _stats_init(void);
+  void _stats_increase_irq(void);
+  void _stats_increase_ctxswc(void);
+  void _stats_start_measure_crit_thd(void);
+  void _stats_stop_measure_crit_thd(void);
+  void _stats_start_measure_crit_isr(void);
+  void _stats_stop_measure_crit_isr(void);
 #ifdef __cplusplus
 }
 #endif
@@ -145,8 +103,6 @@ extern "C" {
 #define _stats_stop_measure_crit_thd()
 #define _stats_start_measure_crit_isr()
 #define _stats_stop_measure_crit_isr()
-#define _stats_start_measure_isr()
-#define _stats_stop_measure_isr()
 
 #endif /* !CH_DBG_STATISTICS */
 

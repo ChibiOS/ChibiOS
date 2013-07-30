@@ -421,6 +421,10 @@ static inline void port_init(void) {
   SCB_VTOR = CORTEX_VTOR_INIT;
   SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(CORTEX_PRIGROUP_INIT);
 
+  /* DWT cycle counter enable.*/
+  SCS_DEMCR |= SCS_DEMCR_TRCENA;
+  DWT_CTRL  |= DWT_CTRL_CYCCNTENA;
+
   /* Initialization of the system vectors used by the port.*/
   nvicSetSystemHandlerPriority(HANDLER_SVCALL,
     CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));
@@ -593,6 +597,12 @@ static inline void port_wait_for_interrupt(void) {
 #if CORTEX_ENABLE_WFI_IDLE
    asm volatile ("wfi" : : : "memory");
 #endif
+}
+
+
+static inline rtcnt_t port_rt_get_counter_value(void) {
+
+  return DWT_CYCCNT;
 }
 
 #endif /* _FROM_ASM_ */

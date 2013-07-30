@@ -61,7 +61,6 @@
  */
 #define CH_IRQ_PROLOGUE()                                                   \
   PORT_IRQ_PROLOGUE();                                                      \
-  _stats_start_measure_isr();                                               \
   _stats_increase_irq();                                                    \
   dbg_check_enter_isr()
 
@@ -75,7 +74,6 @@
  */
 #define CH_IRQ_EPILOGUE()                                                   \
   dbg_check_leave_isr();                                                    \
-  _stats_stop_measure_isr();                                                \
   PORT_IRQ_EPILOGUE()
 
 /**
@@ -196,6 +194,24 @@
 #define chSysGetRealtimeCounterX() (rtcnt_t)port_rt_get_counter_value()
 #endif
 
+/**
+ * @brief   Performs a context switch.
+ * @note    Not a user function, it is meant to be invoked by the scheduler
+ *          itself or from within the port layer.
+ *
+ * @param[in] ntp       the thread to be switched in
+ * @param[in] otp       the thread to be switched out
+ *
+ * @special
+ */
+#define chSysSwitch(ntp, otp) {                                             \
+                                                                            \
+  dbg_trace(otp);                                                           \
+  _stats_increase_ctxswc();                                                 \
+  CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);                                     \
+  port_switch(ntp, otp);                                                    \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -219,24 +235,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Performs a context switch.
- * @note    Not a user function, it is meant to be invoked by the scheduler
- *          itself or from within the port layer.
- *
- * @param[in] ntp       the thread to be switched in
- * @param[in] otp       the thread to be switched out
- *
- * @special
- */
-static inline void chSysSwitch(thread_t *ntp, thread_t *otp) {
-
-  dbg_trace(otp);
-  _stats_increase_ctxswc();
-  CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);
-  port_switch(ntp, otp);
-}
 
 /**
  * @brief   Raises the system interrupt priority mask to the maximum level.
