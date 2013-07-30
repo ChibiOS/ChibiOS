@@ -80,6 +80,42 @@ typedef struct {
  */
 #define _stats_increase_ctxswc() kernel_stats.n_ctxswc++
 
+/**
+ * @brief   Starts the measurement of a thread critical zone.
+ */
+#define _stats_start_measure_crit_thd()                                     \
+  chTMStartMeasurementX(&kernel_stats.m_crit_thd)
+
+/**
+ * @brief   Stops the measurement of a thread critical zone.
+ */
+#define _stats_stop_measure_crit_thd()                                      \
+  chTMStopMeasurementX(&kernel_stats.m_crit_thd)
+
+/**
+ * @brief   Starts the measurement of an ISR critical zone.
+ */
+#define _stats_start_measure_crit_isr()                                     \
+  chTMStartMeasurementX(&kernel_stats.m_crit_isr)
+
+/**
+ * @brief   Stops the measurement of an ISR critical zone.
+ */
+#define _stats_stop_measure_crit_isr()                                      \
+  chTMStopMeasurementX(&kernel_stats.m_crit_isr)
+
+/**
+ * @brief   Starts the measurement of an ISR duration.
+ */
+#define _stats_start_measure_isr()                                          \
+  chTMStartMeasurementX(&kernel_stats.m_crit_isr)
+
+/**
+ * @brief   Stops the measurement of an ISR duration.
+ */
+#define _stats_stop_measure_isr()                                           \
+  chTMStopMeasurementX(&kernel_stats.m_crit_isr)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -105,6 +141,12 @@ extern "C" {
 /* Stub functions for when the statistics module is disabled. */
 #define _stats_increase_irq()
 #define _stats_increase_ctxswc()
+#define _stats_start_measure_crit_thd()
+#define _stats_stop_measure_crit_thd()
+#define _stats_start_measure_crit_isr()
+#define _stats_stop_measure_crit_isr()
+#define _stats_start_measure_isr()
+#define _stats_stop_measure_isr()
 
 #endif /* !CH_DBG_STATISTICS */
 

@@ -61,8 +61,9 @@
  */
 #define CH_IRQ_PROLOGUE()                                                   \
   PORT_IRQ_PROLOGUE();                                                      \
-  dbg_check_enter_isr();                                                    \
-  _stats_increase_irq()
+  _stats_start_measure_isr();                                               \
+  _stats_increase_irq();                                                    \
+  dbg_check_enter_isr()
 
 /**
  * @brief   IRQ handler exit code.
@@ -74,6 +75,7 @@
  */
 #define CH_IRQ_EPILOGUE()                                                   \
   dbg_check_leave_isr();                                                    \
+  _stats_stop_measure_isr();                                                \
   PORT_IRQ_EPILOGUE()
 
 /**
@@ -290,6 +292,7 @@ static inline void chSysEnable(void) {
 static inline void chSysLock(void)  {
 
   port_lock();
+  _stats_start_measure_crit_thd();
   dbg_check_lock();
 }
 
@@ -301,6 +304,7 @@ static inline void chSysLock(void)  {
 static inline void chSysUnlock(void) {
 
   dbg_check_unlock();
+  _stats_stop_measure_crit_thd();
   port_unlock();
 }
 
@@ -319,6 +323,7 @@ static inline void chSysUnlock(void) {
 static inline void chSysLockFromISR(void) {
 
   port_lock_from_isr();
+  _stats_start_measure_crit_isr();
   dbg_check_lock_from_isr();
 }
 
@@ -338,6 +343,7 @@ static inline void chSysLockFromISR(void) {
 static inline void chSysUnlockFromISR(void) {
 
   dbg_check_unlock_from_isr();
+  _stats_stop_measure_crit_isr();
   port_unlock_from_isr();
 }
 

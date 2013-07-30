@@ -56,9 +56,11 @@ static rtcnt_t measurement_offset;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static inline void tm_stop(time_measurement_t *tmp, rtcnt_t now) {
+static inline void tm_stop(time_measurement_t *tmp,
+                           rtcnt_t now,
+                           rtcnt_t offset) {
 
-  tmp->last = now - tmp->last - measurement_offset;
+  tmp->last = now - tmp->last - offset;
   tmp->cumulative += tmp->last;
   if (tmp->last > tmp->worst)
     tmp->worst = tmp->last;
@@ -126,7 +128,7 @@ NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp) {
  */
 NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp) {
 
-  tm_stop(tmp, chSysGetRealtimeCounterX());
+  tm_stop(tmp, chSysGetRealtimeCounterX(), measurement_offset);
 }
 
 #endif /* CH_CFG_USE_TM */
@@ -150,7 +152,7 @@ NOINLINE void chTMChainMeasurementToX(time_measurement_t *tmp1,
   tmp2->last = chSysGetRealtimeCounterX();
 
   /* Stops previous measurement using the same time stamp.*/
-  tm_stop(tmp1, tmp2->last);
+  tm_stop(tmp1, tmp2->last, 0);
 }
 
 /** @} */
