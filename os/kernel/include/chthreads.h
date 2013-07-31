@@ -250,6 +250,9 @@ typedef struct thread {
    */
   void                  *p_mpool;
 #endif
+#if CH_DBG_STATISTICS || defined(__DOXYGEN__)
+  time_measurement_t    p_stats;
+#endif
 #if defined(CH_CFG_THREAD_EXTRA_FIELDS)
   /* Extra fields defined in chconf.h.*/
   CH_CFG_THREAD_EXTRA_FIELDS

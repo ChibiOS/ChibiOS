@@ -55,7 +55,6 @@
  * @brief   Type of a kernel statistics structure.
  */
 typedef struct {
-  time_measurement_t    *current;   /**< @brief Currently under measurement.*/
   ucnt_t                n_irq;      /**< @brief Number of IRQs.             */
   ucnt_t                n_ctxswc;   /**< @brief Number of context switches. */
   time_measurement_t    m_crit_thd; /**< @brief Measurement of threads
@@ -81,7 +80,7 @@ extern "C" {
 #endif
   void _stats_init(void);
   void _stats_increase_irq(void);
-  void _stats_increase_ctxswc(void);
+  void _stats_ctxswc(thread_t *ntp, thread_t *otp);
   void _stats_start_measure_crit_thd(void);
   void _stats_stop_measure_crit_thd(void);
   void _stats_start_measure_crit_isr(void);
@@ -98,7 +97,7 @@ extern "C" {
 
 /* Stub functions for when the statistics module is disabled. */
 #define _stats_increase_irq()
-#define _stats_increase_ctxswc()
+#define _stats_ctxswc(old, new)
 #define _stats_start_measure_crit_thd()
 #define _stats_stop_measure_crit_thd()
 #define _stats_start_measure_crit_isr()

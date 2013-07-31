@@ -207,7 +207,7 @@
 #define chSysSwitch(ntp, otp) {                                             \
                                                                             \
   dbg_trace(otp);                                                           \
-  _stats_increase_ctxswc();                                                 \
+  _stats_ctxswc(ntp, otp);                                                  \
   CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);                                     \
   port_switch(ntp, otp);                                                    \
 }

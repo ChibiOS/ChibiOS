@@ -83,11 +83,12 @@ void _stats_increase_irq(void) {
 }
 
 /**
- * @brief   Increases the context switch counter.
+ * @brief   Updates context switch related statistics.
  */
-void _stats_increase_ctxswc(void) {
+void _stats_ctxswc(thread_t *ntp, thread_t *otp) {
 
   kernel_stats.n_ctxswc++;
+  chTMChainMeasurementToX(&otp->p_stats, &ntp->p_stats);
 }
 
 /**
