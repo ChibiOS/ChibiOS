@@ -86,3 +86,6 @@
 
 #define SPC5_CAN_USE_FLEXCAN1               FALSE
 #define SPC5_CAN_FLEXCAN1_PRIORITY          11
+
+#define SPC5_CAN_USE_FLEXCAN2               FALSE
+#define SPC5_CAN_FLEXCAN2_PRIORITY          11
