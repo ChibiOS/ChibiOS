@@ -63,8 +63,9 @@
 typedef struct {
   rtcnt_t               best;           /**< @brief Best measurement.       */
   rtcnt_t               worst;          /**< @brief Worst measurement.      */
-  rtcnt_t               cumulative;     /**< @brief Cumulative measurement. */
   rtcnt_t               last;           /**< @brief Last measurement.       */
+  ucnt_t                n;              /**< @brief Number of measurements. */
+  rttime_t              cumulative;     /**< @brief Cumulative measurement. */
 } time_measurement_t;
 
 /*===========================================================================*/

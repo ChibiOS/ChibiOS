@@ -60,8 +60,9 @@ static inline void tm_stop(time_measurement_t *tmp,
                            rtcnt_t now,
                            rtcnt_t offset) {
 
+  tmp->n++;
   tmp->last = now - tmp->last - offset;
-  tmp->cumulative += tmp->last;
+  tmp->cumulative += (rttime_t)tmp->last;
   if (tmp->last > tmp->worst)
     tmp->worst = tmp->last;
   else if (tmp->last < tmp->best)
@@ -101,8 +102,9 @@ void chTMObjectInit(time_measurement_t *tmp) {
 
   tmp->best       = (rtcnt_t)-1;
   tmp->worst      = (rtcnt_t)0;
-  tmp->cumulative = (rtcnt_t)0;
   tmp->last       = (rtcnt_t)0;
+  tmp->n          = (ucnt_t)0;
+  tmp->cumulative = (rttime_t)0;
 }
 
 /**
