@@ -233,7 +233,7 @@
 #if !STM32_PWM_USE_TIM1 && !STM32_PWM_USE_TIM2 &&                           \
     !STM32_PWM_USE_TIM3 && !STM32_PWM_USE_TIM4 &&                           \
     !STM32_PWM_USE_TIM5 && !STM32_PWM_USE_TIM8 &&                           \
-    !STM32_PWM_USE_TIM8
+    !STM32_PWM_USE_TIM9
 #error "PWM driver activated but no TIM peripheral assigned"
 #endif
 
