@@ -91,8 +91,9 @@
 *** 2.7.0 ***
 - FIX: Fixed wrong RTC macro names in STM32L1xx HAL (bug #422)(backported to
   2.6.1 and 2.4.5).
-- FIX: Fixed FSMC reset on STM32F4xx (bug #420)(backported to 2.6.1
-  and 2.4.4).
+- FIX: Fixed CodeSourcery personal version fails to build with undefined
+  errno_r (bug #421)(backported to 2.6.1).
+- FIX: Fixed FSMC reset on STM32F4xx (bug #420)(backported to 2.6.1 and 2.4.4).
 - FIX: Fixed invalid directory links in the demo files (bug #419)(backported
   to 2.6.1).
 - FIX: Fixed missing casts in time-conversion macros (bug #418)(backported
