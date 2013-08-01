@@ -956,13 +956,13 @@
  * @brief   RTC/LCD clock.
  */
 #if (STM32_RTCSEL == STM32_RTCSEL_NOCLOCK) || defined(__DOXYGEN__)
-#define STM_RTCCLK                  0
+#define STM32_RTCCLK                  0
 #elif STM32_RTCSEL == STM32_RTCSEL_LSE
-#define STM_RTCCLK                  STM32_LSECLK
+#define STM32_RTCCLK                  STM32_LSECLK
 #elif STM32_RTCSEL == STM32_RTCSEL_LSI
-#define STM_RTCCLK                  STM32_LSICLK
+#define STM32_RTCCLK                  STM32_LSICLK
 #elif STM32_RTCSEL == STM32_RTCSEL_HSEDIV
-#define STM_RTCCLK                  STM32_HSEDIVCLK
+#define STM32_RTCCLK                  STM32_HSEDIVCLK
 #else
 #error "invalid STM32_RTCSEL value specified"
 #endif

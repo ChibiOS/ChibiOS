@@ -78,6 +78,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.4.5 ***
+- FIX: Fixed wrong RTC macro names in STM32L1xx HAL (bug #422).
+
 *** 2.4.4 ***
 - FIX: Fixed FSMC reset on STM32F4xx (bug #420).
 - FIX: Fixed missing casts in time-conversion macros (bug #418).
