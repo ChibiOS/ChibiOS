@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed error in Guards of pwm_lld.h from STM32 (bug #423)(backported to
+  2.6.1).
 - FIX: Fixed wrong RTC macro names in STM32L1xx HAL (bug #422)(backported to
   2.6.1 and 2.4.5).
 - FIX: Fixed CodeSourcery personal version fails to build with undefined
