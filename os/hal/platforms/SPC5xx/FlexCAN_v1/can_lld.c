@@ -81,6 +81,7 @@ CANDriver CAND6;
  */
 static void can_lld_tx_handler(CANDriver *canp) {
   uint32_t iflag1, iflag2;
+  (void)iflag2;
 
   /* No more events until a message is transmitted.*/
   iflag1 = canp->flexcan->IFRL.R;
