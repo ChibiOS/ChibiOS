@@ -971,7 +971,7 @@
 #define rccResetTIM8() rccResetAPB2(RCC_APB2RSTR_TIM8RST)
 
 /**
- * @brief   Enables the TIM89peripheral clock.
+ * @brief   Enables the TIM9peripheral clock.
  * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
