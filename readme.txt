@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.1 ***
+- FIX: Fixed conditional code error in STM32 PWM driver (bug #424).
 - FIX: Fixed error in Guards of pwm_lld.h from STM32 (bug #423).
 - FIX: Fixed wrong RTC macro names in STM32L1xx HAL (bug #422).
 - FIX: Fixed CodeSourcery personal version fails to build with undefined

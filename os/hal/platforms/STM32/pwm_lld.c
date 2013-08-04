@@ -100,10 +100,9 @@ PWMDriver PWMD9;
 /*===========================================================================*/
 
 #if STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || STM32_PWM_USE_TIM4 ||       \
-    STM32_PWM_USE_TIM5 || STM32_PWM_USE_TIM8 || STM32_PWM_USE_TIM9 ||       \
-    defined(__DOXYGEN__)
+    STM32_PWM_USE_TIM5 || STM32_PWM_USE_TIM9 || defined(__DOXYGEN__)
 /**
- * @brief   Common TIM2...TIM5 IRQ handler.
+ * @brief   Common TIM2...TIM5,TIM9 IRQ handler.
  * @note    It is assumed that the various sources are only activated if the
  *          associated callback pointer is not equal to @p NULL in order to not
  *          perform an extra check in a potentially critical interrupt handler.
