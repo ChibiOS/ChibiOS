@@ -249,7 +249,7 @@ void canSleep(CANDriver *canp) {
   if (canp->state == CAN_READY) {
     can_lld_sleep(canp);
     canp->state = CAN_SLEEP;
-    osalEventBroadcastI(&canp->sleep_event);
+    osalEventBroadcastFlagsI(&canp->sleep_event, 0);
     osalOsRescheduleS();
   }
   osalSysUnlock();
@@ -272,8 +272,8 @@ void canWakeup(CANDriver *canp) {
   if (canp->state == CAN_SLEEP) {
     can_lld_wakeup(canp);
     canp->state = CAN_READY;
-    osalEventBroadcastI(&canp->wakeup_event);
-    chSchRescheduleS();
+    osalEventBroadcastFlagsI(&canp->wakeup_event, 0);
+    osalOsRescheduleS();
   }
   osalSysUnlock();
 }

@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_CAN || defined(__DOXYGEN__)
@@ -130,11 +129,10 @@ static void can_lld_tx_handler(CANDriver *canp) {
 
   /* No more events until a message is transmitted.*/
   canp->can->TSR = CAN_TSR_RQCP0 | CAN_TSR_RQCP1 | CAN_TSR_RQCP2;
-  chSysLockFromIsr();
-  while (chSemGetCounterI(&canp->txsem) < 0)
-    chSemSignalI(&canp->txsem);
-  chEvtBroadcastFlagsI(&canp->txempty_event, CAN_MAILBOX_TO_MASK(1));
-  chSysUnlockFromIsr();
+  osalSysLockFromISR();
+  osalQueueWakeupAllI(&canp->txqueue, MSG_OK);
+  osalEventBroadcastFlagsI(&canp->txempty_event, CAN_MAILBOX_TO_MASK(1));
+  osalSysUnlockFromISR();
 }
 
 /**
@@ -151,18 +149,17 @@ static void can_lld_rx0_handler(CANDriver *canp) {
   if ((rf0r & CAN_RF0R_FMP0) > 0) {
     /* No more receive events until the queue 0 has been emptied.*/
     canp->can->IER &= ~CAN_IER_FMPIE0;
-    chSysLockFromIsr();
-    while (chSemGetCounterI(&canp->rxsem) < 0)
-      chSemSignalI(&canp->rxsem);
-    chEvtBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(1));
-    chSysUnlockFromIsr();
+    osalSysLockFromISR();
+    osalQueueWakeupAllI(&canp->rxqueue, MSG_OK);
+    osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(1));
+    osalSysUnlockFromISR();
   }
   if ((rf0r & CAN_RF0R_FOVR0) > 0) {
     /* Overflow events handling.*/
     canp->can->RF0R = CAN_RF0R_FOVR0;
-    chSysLockFromIsr();
-    chEvtBroadcastFlagsI(&canp->error_event, CAN_OVERFLOW_ERROR);
-    chSysUnlockFromIsr();
+    osalSysLockFromISR();
+    osalEventBroadcastFlagsI(&canp->error_event, CAN_OVERFLOW_ERROR);
+    osalSysUnlockFromISR();
   }
 }
 
@@ -180,18 +177,17 @@ static void can_lld_rx1_handler(CANDriver *canp) {
   if ((rf1r & CAN_RF1R_FMP1) > 0) {
     /* No more receive events until the queue 0 has been emptied.*/
     canp->can->IER &= ~CAN_IER_FMPIE1;
-    chSysLockFromIsr();
-    while (chSemGetCounterI(&canp->rxsem) < 0)
-      chSemSignalI(&canp->rxsem);
-    chEvtBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(2));
-    chSysUnlockFromIsr();
+    osalSysLockFromISR();
+    osalQueueWakeupAllI(&canp->rxqueue, MSG_OK);
+    osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(2));
+    osalSysUnlockFromISR();
   }
   if ((rf1r & CAN_RF1R_FOVR1) > 0) {
     /* Overflow events handling.*/
     canp->can->RF1R = CAN_RF1R_FOVR1;
-    chSysLockFromIsr();
-    chEvtBroadcastFlagsI(&canp->error_event, CAN_OVERFLOW_ERROR);
-    chSysUnlockFromIsr();
+    osalSysLockFromISR();
+    osalEventBroadcastFlagsI(&canp->error_event, CAN_OVERFLOW_ERROR);
+    osalSysUnlockFromISR();
   }
 }
 
@@ -212,26 +208,26 @@ static void can_lld_sce_handler(CANDriver *canp) {
   if (msr & CAN_MSR_WKUI) {
     canp->state = CAN_READY;
     canp->can->MCR &= ~CAN_MCR_SLEEP;
-    chSysLockFromIsr();
-    chEvtBroadcastI(&canp->wakeup_event);
-    chSysUnlockFromIsr();
+    osalSysLockFromISR();
+    osalEventBroadcastFlagsI(&canp->wakeup_event, 0);
+    osalSysUnlockFromISR();
   }
 #endif /* CAN_USE_SLEEP_MODE */
   /* Error event.*/
   if (msr & CAN_MSR_ERRI) {
-    flagsmask_t flags;
+    eventflags_t flags;
     uint32_t esr = canp->can->ESR;
 
     canp->can->ESR &= ~CAN_ESR_LEC;
-    flags = (flagsmask_t)(esr & 7);
+    flags = (eventflags_t)(esr & 7);
     if ((esr & CAN_ESR_LEC) > 0)
       flags |= CAN_FRAMING_ERROR;
 
-    chSysLockFromIsr();
+    osalSysLockFromISR();
     /* The content of the ESR register is copied unchanged in the upper
        half word of the listener flags mask.*/
-    chEvtBroadcastFlagsI(&canp->error_event, flags | (flagsmask_t)(esr << 16));
-    chSysUnlockFromIsr();
+    osalEventBroadcastFlagsI(&canp->error_event, flags | (eventflags_t)(esr << 16));
+    osalSysUnlockFromISR();
   }
 }
 
@@ -245,13 +241,13 @@ static void can_lld_sce_handler(CANDriver *canp) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_CAN1_TX_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_CAN1_TX_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   can_lld_tx_handler(&CAND1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /*
@@ -259,13 +255,13 @@ CH_IRQ_HANDLER(STM32_CAN1_TX_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_CAN1_RX0_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_CAN1_RX0_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   can_lld_rx0_handler(&CAND1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -273,13 +269,13 @@ CH_IRQ_HANDLER(STM32_CAN1_RX0_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_CAN1_RX1_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_CAN1_RX1_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   can_lld_rx1_handler(&CAND1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -287,13 +283,13 @@ CH_IRQ_HANDLER(STM32_CAN1_RX1_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_CAN1_SCE_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_CAN1_SCE_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   can_lld_sce_handler(&CAND1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_CAN_USE_CAN1 */
 
@@ -303,13 +299,13 @@ CH_IRQ_HANDLER(STM32_CAN1_SCE_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_CAN2_TX_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_CAN2_TX_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   can_lld_tx_handler(&CAND2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /*
@@ -317,13 +313,13 @@ CH_IRQ_HANDLER(STM32_CAN2_TX_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_CAN2_RX0_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_CAN2_RX0_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   can_lld_rx0_handler(&CAND2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -331,13 +327,13 @@ CH_IRQ_HANDLER(STM32_CAN2_RX0_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_CAN2_RX1_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_CAN2_RX1_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   can_lld_rx1_handler(&CAND2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -345,13 +341,13 @@ CH_IRQ_HANDLER(STM32_CAN2_RX1_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_CAN2_SCE_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_CAN2_SCE_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   can_lld_sce_handler(&CAND2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_CAN_USE_CAN2 */
 
@@ -412,8 +408,8 @@ void can_lld_start(CANDriver *canp) {
 #if STM32_CAN_USE_CAN2
   if (&CAND2 == canp) {
 
-    chDbgAssert(CAND1.state != CAN_STOP,
-                "can_lld_start(), #1", "CAN1 must be started");
+    osalDbgAssert(CAND1.state != CAN_STOP,
+                  "can_lld_start(), #1", "CAN1 must be started");
 
     nvicEnableVector(STM32_CAN2_TX_NUMBER,
                      CORTEX_PRIORITY_MASK(STM32_CAN_CAN2_IRQ_PRIORITY));
@@ -431,7 +427,7 @@ void can_lld_start(CANDriver *canp) {
   canp->state = CAN_STARTING;
   canp->can->MCR = CAN_MCR_INRQ;
   while ((canp->can->MSR & CAN_MSR_INAK) == 0)
-    chThdSleepS(1);
+    osalThreadSleepS(1);
   /* BTR initialization.*/
   canp->can->BTR = canp->config->btr;
   /* MCR initialization.*/
@@ -459,8 +455,8 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND1 == canp) {
 
 #if STM32_CAN_USE_CAN2
-      chDbgAssert(CAND2.state == CAN_STOP,
-                  "can_lld_stop(), #1", "CAN2 must be stopped");
+      osalDbgAssert(CAND2.state == CAN_STOP,
+                    "can_lld_stop(), #1", "CAN2 must be stopped");
 #endif
 
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
@@ -698,17 +694,16 @@ void can_lld_wakeup(CANDriver *canp) {
  */
 void canSTM32SetFilters(uint32_t can2sb, uint32_t num, const CANFilter *cfp) {
 
-  chDbgCheck((can2sb > 1) && (can2sb < STM32_CAN_MAX_FILTERS) &&
-             (num < STM32_CAN_MAX_FILTERS),
-             "canSTM32SetFilters");
+  osalDbgCheck((can2sb > 1) && (can2sb < STM32_CAN_MAX_FILTERS) &&
+               (num < STM32_CAN_MAX_FILTERS));
 
 #if STM32_CAN_USE_CAN1
-  chDbgAssert(CAND1.state == CAN_STOP,
-              "canSTM32SetFilters(), #1", "invalid state");
+  osalDbgAssert(CAND1.state == CAN_STOP,
+                "canSTM32SetFilters(), #1", "invalid state");
 #endif
 #if STM32_CAN_USE_CAN2
-  chDbgAssert(CAND2.state == CAN_STOP,
-              "canSTM32SetFilters(), #2", "invalid state");
+  osalDbgAssert(CAND2.state == CAN_STOP,
+                "canSTM32SetFilters(), #2", "invalid state");
 #endif
 
   can_lld_set_filters(can2sb, num, cfp);

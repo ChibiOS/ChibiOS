@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
@@ -148,14 +147,14 @@ static void adc_lld_analog_off(ADCDriver *adcp) {
  */
 static void adc_lld_calibrate(ADCDriver *adcp) {
 
-  chDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN_0, "adc_lld_calibrate(), #1",
-                                                   "invalid register state");
+  osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN_0, "adc_lld_calibrate(), #1",
+                                                     "invalid register state");
   adcp->adcm->CR |= ADC_CR_ADCAL;
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
     ;
 #if STM32_ADC_DUAL_MODE
-  chDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN_0, "adc_lld_calibrate(), #2",
-                                                   "invalid register state");
+  osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN_0, "adc_lld_calibrate(), #2",
+                                                     "invalid register state");
   adcp->adcs->CR |= ADC_CR_ADCAL;
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
     ;
@@ -250,10 +249,10 @@ static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector88) {
+OSAL_IRQ_HANDLER(Vector88) {
   uint32_t isr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
 #if STM32_ADC_DUAL_MODE
   isr  = ADC1->ISR;
@@ -267,7 +266,7 @@ CH_IRQ_HANDLER(Vector88) {
 
   adc_lld_serve_interrupt(&ADCD1, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -277,17 +276,17 @@ CH_IRQ_HANDLER(Vector88) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(VectorFC) {
+OSAL_IRQ_HANDLER(VectorFC) {
   uint32_t isr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   isr  = ADC3->ISR;
   ADC3->ISR = isr;
 
   adc_lld_serve_interrupt(&ADCD3, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #if STM32_ADC_DUAL_MODE
@@ -296,17 +295,17 @@ CH_IRQ_HANDLER(VectorFC) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector134) {
+OSAL_IRQ_HANDLER(Vector134) {
   uint32_t isr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   isr  = ADC4->ISR;
   ADC4->ISR = isr;
 
   adc_lld_serve_interrupt(&ADCD3, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ADC_DUAL_MODE */
 #endif /* STM32_ADC_USE_ADC3 */
@@ -381,7 +380,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             STM32_ADC_ADC12_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
+      osalDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
       rccEnableADC12(FALSE);
     }
 #endif /* STM32_ADC_USE_ADC1 */
@@ -393,7 +392,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             STM32_ADC_ADC34_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #2", "stream already allocated");
+      osalDbgAssert(!b, "adc_lld_start(), #2", "stream already allocated");
       rccEnableADC34(FALSE);
     }
 #endif /* STM32_ADC_USE_ADC2 */
@@ -462,9 +461,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t dmamode, ccr, cfgr;
   const ADCConversionGroup *grpp = adcp->grpp;
 
-  chDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
-              "adc_lld_start_conversion(), #1",
-              "odd number of channels in dual mode");
+  osalDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
+                "adc_lld_start_conversion(), #1",
+                "odd number of channels in dual mode");
 
   /* Calculating control registers values.*/
   dmamode = adcp->dmamode;
