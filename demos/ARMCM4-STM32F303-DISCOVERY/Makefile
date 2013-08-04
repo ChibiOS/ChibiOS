@@ -66,8 +66,9 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../..
 include $(CHIBIOS)/boards/ST_STM32F3_DISCOVERY/board.mk
-include $(CHIBIOS)/os/hal/platforms/STM32F30x/platform.mk
-include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/halnew/hal.mk
+include $(CHIBIOS)/os/halnew/osal/chibios/osal.mk
+include $(CHIBIOS)/os/halnew/platforms/STM32F30x/platform.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F3xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
@@ -81,6 +82,7 @@ CSRC = $(PORTSRC) \
        $(KERNSRC) \
        $(TESTSRC) \
        $(HALSRC) \
+       $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        main.c
@@ -113,7 +115,7 @@ TCPPSRC =
 ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+         $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various/devices_lib/accel \
          $(CHIBIOS)/os/various
 

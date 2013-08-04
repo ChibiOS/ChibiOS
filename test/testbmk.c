@@ -442,6 +442,7 @@ ROMCONST struct testcase testbmk8 = {
   bmk8_execute
 };
 
+#if 0
 /**
  * @page test_benchmarks_009 I/O Queues throughput
  *
@@ -488,6 +489,7 @@ ROMCONST struct testcase testbmk9 = {
   NULL,
   bmk9_execute
 };
+#endif
 
 /**
  * @page test_benchmarks_010 Virtual Timers set/reset performance
@@ -699,7 +701,7 @@ ROMCONST struct testcase * ROMCONST patternbmk[] = {
   &testbmk6,
   &testbmk7,
   &testbmk8,
-  &testbmk9,
+//  &testbmk9,
   &testbmk10,
   &testbmk11,
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)

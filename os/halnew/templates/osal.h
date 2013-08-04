@@ -93,14 +93,9 @@ typedef uint32_t osal_sts_t;
 typedef int32_t msg_t;
 
 /**
- * @brief   Type of a thread.
- * @note    The content of this structure is not part of the API and should
- *          not be relied upon. Implementers may define this structure in
- *          an entirely different way.
+ * @brief   Type of system time counter.
  */
-typedef struct {
-  volatile msg_t        message;
-} thread_t;
+typedef uint32_t systime_t;
 
 /**
  * @brief   Type of a thread reference.
@@ -213,11 +208,6 @@ typedef struct {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
-
-#if !defined(__DOXYGEN__)
-extern virtual_timers_list_t vtlist;
-extern const char *osal_halt_msg;
-#endif
 
 #ifdef __cplusplus
 extern "C" {
