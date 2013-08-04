@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_PWM || defined(__DOXYGEN__)
@@ -100,10 +99,9 @@ PWMDriver PWMD9;
 /*===========================================================================*/
 
 #if STM32_PWM_USE_TIM2 || STM32_PWM_USE_TIM3 || STM32_PWM_USE_TIM4 ||       \
-    STM32_PWM_USE_TIM5 || STM32_PWM_USE_TIM8 || STM32_PWM_USE_TIM9 ||       \
-    defined(__DOXYGEN__)
+    STM32_PWM_USE_TIM5 || STM32_PWM_USE_TIM9 || defined(__DOXYGEN__)
 /**
- * @brief   Common TIM2...TIM5 IRQ handler.
+ * @brief   Common TIM2...TIM5,TIM9 IRQ handler.
  * @note    It is assumed that the various sources are only activated if the
  *          associated callback pointer is not equal to @p NULL in order to not
  *          perform an extra check in a potentially critical interrupt handler.
@@ -127,7 +125,7 @@ static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
   if ((sr & TIM_SR_UIF) != 0)
     pwmp->config->callback(pwmp);
 }
-#endif /* STM32_PWM_USE_TIM2 || ... || STM32_PWM_USE_TIM5 */
+#endif
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */

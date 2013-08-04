@@ -339,19 +339,15 @@ struct SPIDriver{
   const SPIConfig           *config;
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
   /**
-   * @brief Waiting thread.
+   * @brief   Waiting thread.
    */
-  Thread                    *thread;
+  thread_reference_t        thread;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
-   * @brief Mutex protecting the bus.
+   * @brief   Mutex protecting the peripheral.
    */
-  Mutex                     mutex;
-#elif CH_USE_SEMAPHORES
-  Semaphore                 semaphore;
-#endif
+  mutex_t                   mutex;
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 #if defined(SPI_DRIVER_EXT_FIELDS)
   SPI_DRIVER_EXT_FIELDS

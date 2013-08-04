@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_SPI || defined(__DOXYGEN__)
@@ -222,12 +221,12 @@ void spi_lld_start(SPIDriver *spip) {
                             STM32_SPI_SPI1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
-      chDbgAssert(!b, "spi_lld_start(), #1", "stream already allocated");
+      osalDbgAssert(!b, "spi_lld_start(), #1", "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
-      chDbgAssert(!b, "spi_lld_start(), #2", "stream already allocated");
+      osalDbgAssert(!b, "spi_lld_start(), #2", "stream already allocated");
       rccEnableSPI1(FALSE);
     }
 #endif
@@ -238,12 +237,12 @@ void spi_lld_start(SPIDriver *spip) {
                             STM32_SPI_SPI2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
-      chDbgAssert(!b, "spi_lld_start(), #3", "stream already allocated");
+      osalDbgAssert(!b, "spi_lld_start(), #3", "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
-      chDbgAssert(!b, "spi_lld_start(), #4", "stream already allocated");
+      osalDbgAssert(!b, "spi_lld_start(), #4", "stream already allocated");
       rccEnableSPI2(FALSE);
     }
 #endif
@@ -254,12 +253,12 @@ void spi_lld_start(SPIDriver *spip) {
                             STM32_SPI_SPI3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
-      chDbgAssert(!b, "spi_lld_start(), #5", "stream already allocated");
+      osalDbgAssert(!b, "spi_lld_start(), #5", "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
-      chDbgAssert(!b, "spi_lld_start(), #6", "stream already allocated");
+      osalDbgAssert(!b, "spi_lld_start(), #6", "stream already allocated");
       rccEnableSPI3(FALSE);
     }
 #endif

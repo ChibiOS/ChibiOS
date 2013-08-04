@@ -77,7 +77,7 @@ void spiObjectInit(SPIDriver *spip) {
   spip->thread = NULL;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION
-  osalMutexInit(&spip->mutex);
+  osalMutexObjectInit(&spip->mutex);
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 #if defined(SPI_DRIVER_EXT_INIT_HOOK)
   SPI_DRIVER_EXT_INIT_HOOK(spip);
