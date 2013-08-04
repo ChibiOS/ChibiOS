@@ -90,7 +90,7 @@
 
 *** 2.7.0 ***
 - FIX: Fixed conditional code error in STM32 PWM driver (bug #424)(backported
-  to 2.6.1 and 2.4.5).
+  to 2.6.1).
 - FIX: Fixed error in Guards of pwm_lld.h from STM32 (bug #423)(backported to
   2.6.1).
 - FIX: Fixed wrong RTC macro names in STM32L1xx HAL (bug #422)(backported to
