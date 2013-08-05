@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed UART4 and 5 marked as not present in STM32F30x devices (bug #426)
+  (backported to 2.6.1).
 - FIX: Fixed conditional code error in STM32 PWM driver (bug #424)(backported
   to 2.6.1).
 - FIX: Fixed error in Guards of pwm_lld.h from STM32 (bug #423)(backported to
