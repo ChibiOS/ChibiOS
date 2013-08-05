@@ -19,14 +19,16 @@
 */
 
 /**
- * @file    hal.c
- * @brief   HAL subsystem code.
+ * @file    st.c
+ * @brief   ST Driver code.
  *
- * @addtogroup HAL
+ * @addtogroup ST
  * @{
  */
 
 #include "hal.h"
+
+#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -37,7 +39,11 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver local variables and types.                                         */
+/* Driver local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver local variables.                                                   */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -49,84 +55,17 @@
 /*===========================================================================*/
 
 /**
- * @brief   HAL initialization.
- * @details This function invokes the low level initialization code then
- *          initializes all the drivers enabled in the HAL. Finally the
- *          board-specific initialization is performed by invoking
- *          @p boardInit() (usually defined in @p board.c).
+ * @brief   ST Driver initialization.
+ * @note    This function is implicitly invoked by @p halInit(), there is
+ *          no need to explicitly initialize the driver.
  *
  * @init
  */
-void halInit(void) {
+void stInit(void) {
 
-  /* Initializes the OS Abstraction Layer.*/
-  osalInit();
-
-  /* Platform low level initializations.*/
-  hal_lld_init();
-
-#if HAL_USE_TM || defined(__DOXYGEN__)
-  tmInit();
-#endif
-#if HAL_USE_PAL || defined(__DOXYGEN__)
-  palInit(&pal_default_config);
-#endif
-#if HAL_USE_ADC || defined(__DOXYGEN__)
-  adcInit();
-#endif
-#if HAL_USE_CAN || defined(__DOXYGEN__)
-  canInit();
-#endif
-#if HAL_USE_EXT || defined(__DOXYGEN__)
-  extInit();
-#endif
-#if HAL_USE_GPT || defined(__DOXYGEN__)
-  gptInit();
-#endif
-#if HAL_USE_I2C || defined(__DOXYGEN__)
-  i2cInit();
-#endif
-#if HAL_USE_ICU || defined(__DOXYGEN__)
-  icuInit();
-#endif
-#if HAL_USE_MAC || defined(__DOXYGEN__)
-  macInit();
-#endif
-#if HAL_USE_PWM || defined(__DOXYGEN__)
-  pwmInit();
-#endif
-#if HAL_USE_SERIAL || defined(__DOXYGEN__)
-  sdInit();
-#endif
-#if HAL_USE_SDC || defined(__DOXYGEN__)
-  sdcInit();
-#endif
-#if HAL_USE_SPI || defined(__DOXYGEN__)
-  spiInit();
-#endif
-#if HAL_USE_UART || defined(__DOXYGEN__)
-  uartInit();
-#endif
-#if HAL_USE_USB || defined(__DOXYGEN__)
-  usbInit();
-#endif
-#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
-  mmcInit();
-#endif
-#if HAL_USE_SERIAL_USB || defined(__DOXYGEN__)
-  sduInit();
-#endif
-#if HAL_USE_RTC || defined(__DOXYGEN__)
-  rtcInit();
-#endif
-
-  /* Board specific initialization.*/
-  boardInit();
-
-#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
-  /* System tick service if the underlying OS requires it.*/
-  stInit();
-#endif
+  st_lld_init();
 }
+
+#endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
 
 /** @} */

@@ -19,52 +19,17 @@
 */
 
 /**
- * @file    hal.h
- * @brief   HAL subsystem header.
+ * @file    st.h
+ * @brief   ST Driver macros and structures.
  *
- * @addtogroup HAL
+ * @addtogroup ST
  * @{
  */
 
-#ifndef _HAL_H_
-#define _HAL_H_
+#ifndef _ST_H_
+#define _ST_H_
 
-#include "osal.h"
-#include "st.h"
-#include "board.h"
-#include "halconf.h"
-
-#include "hal_lld.h"
-
-/* Abstract interfaces.*/
-#include "hal_streams.h"
-#include "hal_channels.h"
-//#include "io_block.h"
-//#include "mmcsd.h"
-
-/* Shared headers.*/
-#include "hal_queues.h"
-
-/* Normal drivers.*/
-#include "pal.h"
-#include "adc.h"
-#include "can.h"
-//#include "ext.h"
-//#include "gpt.h"
-//#include "i2c.h"
-#include "icu.h"
-//#include "mac.h"
-#include "pwm.h"
-//#include "rtc.h"
-#include "serial.h"
-//#include "sdc.h"
-#include "spi.h"
-//#include "uart.h"
-//#include "usb.h"
-
-/* Complex drivers.*/
-//#include "mmc_spi.h"
-//#include "serial_usb.h"
+#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -82,6 +47,8 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+#include "st_lld.h"
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -93,11 +60,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void halInit(void);
+  void stInit(void);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _HAL_H_ */
+#endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
+
+#endif /* _ST_H_ */
 
 /** @} */

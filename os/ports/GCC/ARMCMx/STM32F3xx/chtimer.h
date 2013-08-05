@@ -45,46 +45,34 @@
 /*===========================================================================*/
 
 typedef struct {
-  volatile uint16_t     CR1;
-  uint16_t              _resvd0;
-  volatile uint16_t     CR2;
-  uint16_t              _resvd1;
-  volatile uint16_t     SMCR;
-  uint16_t              _resvd2;
-  volatile uint16_t     DIER;
-  uint16_t              _resvd3;
-  volatile uint16_t     SR;
-  uint16_t              _resvd4;
-  volatile uint16_t     EGR;
-  uint16_t              _resvd5;
-  volatile uint16_t     CCMR1;
-  uint16_t              _resvd6;
-  volatile uint16_t     CCMR2;
-  uint16_t              _resvd7;
-  volatile uint16_t     CCER;
-  uint16_t              _resvd8;
+  volatile uint32_t     CR1;
+  volatile uint32_t     CR2;
+  volatile uint32_t     SMCR;
+  volatile uint32_t     DIER;
+  volatile uint32_t     SR;
+  volatile uint32_t     EGR;
+  volatile uint32_t     CCMR1;
+  volatile uint32_t     CCMR2;
+  volatile uint32_t     CCER;
   volatile uint32_t     CNT;
-  volatile uint16_t     PSC;
-  uint16_t              _resvd9;
+  volatile uint32_t     PSC;
   volatile uint32_t     ARR;
-  volatile uint16_t     RCR;
-  uint16_t              _resvd10;
+  volatile uint32_t     RCR;
   volatile uint32_t     CCR[4];
-  volatile uint16_t     BDTR;
-  uint16_t              _resvd11;
-  volatile uint16_t     DCR;
-  uint16_t              _resvd12;
-  volatile uint16_t     DMAR;
-  uint16_t              _resvd13;
-  volatile uint16_t     OR;
-  uint16_t              _resvd14;
-} stm32f0_tim_t;
+  volatile uint32_t     BDTR;
+  volatile uint32_t     DCR;
+  volatile uint32_t     DMAR;
+  volatile uint32_t     OR;
+  volatile uint32_t     CCMR3;
+  volatile uint32_t     CCR5;
+  volatile uint32_t     CCR6;
+} local_stm32_tim_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-#define STM32F3_TIM2    ((stm32f0_tim_t *)0x40000000)
+#define STM32F3_TIM2    ((local_stm32_tim_t *)0x40000000)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
