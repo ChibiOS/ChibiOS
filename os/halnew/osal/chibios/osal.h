@@ -95,7 +95,7 @@
 /**
  * @brief   Required systick frequency or resolution.
  */
-#define OSAL_SYSTICK_FREQUENCY              CH_CFG_FREQUENCY
+#define OSAL_SYSTICK_FREQUENCY              CH_CFG_ST_FREQUENCY
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -121,6 +121,13 @@ typedef int32_t msg_t;
  * @brief   Type of system time counter.
  */
 typedef uint32_t systime_t;
+#endif
+
+#if 0
+/**
+ * @brief   Type of realtime counter.
+ */
+typedef uint32_t rtcnt_t;
 #endif
 
 /**
@@ -307,6 +314,20 @@ static inline void osalSysLockFromISR(void) {
 static inline void osalSysUnlockFromISR(void) {
 
   chSysUnlockFromISR();
+}
+
+/**
+ * @brief   Polled delay.
+ * @note    The real delay is always few cycles in excess of the specified
+ *          value.
+ *
+ * @param[in] cycles    number of cycles
+ *
+ * @xclass
+ */
+static inline void osalSysPolledDelayX(rtcnt_t cycles) {
+
+  chSysPolledDelayX(cycles);
 }
 
 /**

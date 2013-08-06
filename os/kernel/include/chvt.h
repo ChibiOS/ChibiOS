@@ -41,12 +41,12 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if CH_CFG_FREQUENCY <= 0
-#error "invalid CH_CFG_FREQUENCY specified"
+#if CH_CFG_ST_FREQUENCY <= 0
+#error "invalid CH_CFG_ST_FREQUENCY specified"
 #endif
 
 #if (CH_CFG_TIMEDELTA < 0) || (CH_CFG_TIMEDELTA == 1)
-#error "invalid NIL_CFG_TIMEDELTA specified"
+#error "invalid CH_CFG_TIMEDELTA specified"
 #endif
 
 #if (CH_CFG_TIMEDELTA > 0) && (CH_CFG_TIME_QUANTUM > 0)
@@ -125,7 +125,7 @@ struct virtual_timer {
  * @api
  */
 #define S2ST(sec)                                                           \
-  ((systime_t)((uint32_t)(sec) * (uint32_t)CH_CFG_FREQUENCY))
+  ((systime_t)((uint32_t)(sec) * (uint32_t)CH_CFG_ST_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
@@ -138,8 +138,8 @@ struct virtual_timer {
  * @api
  */
 #define MS2ST(msec)                                                         \
-  ((systime_t)(((((uint32_t)(msec)) * ((uint32_t)CH_CFG_FREQUENCY) - 1UL) /     \
-                1000UL) + 1UL))
+  ((systime_t)(((((uint32_t)(msec)) *                                       \
+                 ((uint32_t)CH_CFG_ST_FREQUENCY) - 1UL) / 1000UL) + 1UL))
 
 /**
  * @brief   Microseconds to system ticks.
@@ -152,8 +152,8 @@ struct virtual_timer {
  * @api
  */
 #define US2ST(usec)                                                         \
-  ((systime_t)(((((uint32_t)(usec)) * ((uint32_t)CH_CFG_FREQUENCY) - 1UL) /     \
-                1000000UL) + 1UL))
+  ((systime_t)(((((uint32_t)(usec)) *                                       \
+                 ((uint32_t)CH_CFG_ST_FREQUENCY) - 1UL) / 1000000UL) + 1UL))
 /** @} */
 
 /*===========================================================================*/

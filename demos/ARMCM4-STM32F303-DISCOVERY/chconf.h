@@ -40,8 +40,17 @@
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#if !defined(CH_CFG_FREQUENCY) || defined(__DOXYGEN__)
-#define CH_CFG_FREQUENCY                    10000
+#if !defined(CH_CFG_ST_FREQUENCY) || defined(__DOXYGEN__)
+#define CH_CFG_ST_FREQUENCY                 10000
+#endif
+
+/**
+ * @brief   Realtime Counter frequency.
+ * @details Frequency of the system counter used for realtime delays and
+ *          measurements.
+ */
+#if !defined(CH_CFG_RTC_FREQUENCY) || defined(__DOXYGEN__)
+#define CH_CFG_RTC_FREQUENCY                72000000
 #endif
 
 /**
