@@ -19,10 +19,10 @@
 */
 
 /**
- * @file    ARM/chcoreasm.s
- * @brief   ARM7/9 architecture port low level code.
+ * @file    ARMCMx/GCC/chcoreasm_v7m.s
+ * @brief   ARMv7-M architecture port low level code.
  *
- * @addtogroup ARM_CORE
+ * @addtogroup ARMCMx_CORE
  * @{
  */
 
@@ -39,12 +39,12 @@
 
 #if !defined(__DOXYGEN__)
 
-                    .syntax unified
-                    .cpu cortex-m4
-                    .fpu softvfp
+                .syntax unified
+                .cpu cortex-m4
+                .fpu softvfp
 
-                    .thumb
-                    .text
+                .thumb
+                .text
 
 /*
  * Thread trampoline code.
@@ -54,20 +54,20 @@
  * register R5 contains the thread parameter. The function chThdExit() is
  * called on thread function return.
  */
-                    .thumb_func
-                    .globl _port_thread_start
+                .thumb_func
+                .globl _port_thread_start
 _port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
-                    bl      dbg_check_unlock
+                bl      dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-                    bl      _stats_stop_measure_crit_thd
+                bl      _stats_stop_measure_crit_thd
 #endif
-                    movs    r3, #0
-                    msr     BASEPRI, r3
-                    mov     r0, r5
-                    blx     r4
-                    bl      chThdExit
+                movs    r3, #0
+                msr     BASEPRI, r3
+                mov     r0, r5
+                blx     r4
+                bl      chThdExit
 
 #endif /* !defined(__DOXYGEN__) */
 
