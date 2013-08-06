@@ -316,6 +316,7 @@ static inline void osalSysUnlockFromISR(void) {
   chSysUnlockFromISR();
 }
 
+#if CH_PORT_SUPPORTS_RT || defined(__DOXYGEN__)
 /**
  * @brief   Polled delay.
  * @note    The real delay is always few cycles in excess of the specified
@@ -329,6 +330,7 @@ static inline void osalSysPolledDelayX(rtcnt_t cycles) {
 
   chSysPolledDelayX(cycles);
 }
+#endif
 
 /**
  * @brief   Systick callback for the underlying OS.

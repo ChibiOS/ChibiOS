@@ -246,7 +246,6 @@ void chSysRestoreLockX(syssts_t sts) {
   }
 }
 
-
 #if CH_PORT_SUPPORTS_RT || defined(__DOXYGEN__)
 /**
  * @brief   Realtime window test.
