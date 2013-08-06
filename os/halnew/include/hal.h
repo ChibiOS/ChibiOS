@@ -30,11 +30,11 @@
 #define _HAL_H_
 
 #include "osal.h"
-#include "st.h"
 #include "board.h"
 #include "halconf.h"
 
 #include "hal_lld.h"
+
 
 /* Abstract interfaces.*/
 #include "hal_streams.h"
@@ -59,6 +59,7 @@
 #include "serial.h"
 //#include "sdc.h"
 #include "spi.h"
+#include "st.h"
 //#include "uart.h"
 //#include "usb.h"
 

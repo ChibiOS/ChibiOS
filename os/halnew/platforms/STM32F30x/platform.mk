@@ -8,6 +8,7 @@ PLATFORMSRC = ${CHIBIOS}/os/halnew/platforms/STM32F30x/stm32_dma.c \
               ${CHIBIOS}/os/halnew/platforms/STM32/gpt_lld.c \
               ${CHIBIOS}/os/halnew/platforms/STM32/icu_lld.c \
               ${CHIBIOS}/os/halnew/platforms/STM32/pwm_lld.c \
+              ${CHIBIOS}/os/halnew/platforms/STM32/st_lld.c \
               ${CHIBIOS}/os/halnew/platforms/STM32/GPIOv2/pal_lld.c \
               ${CHIBIOS}/os/halnew/platforms/STM32/I2Cv2/i2c_lld.c \
               ${CHIBIOS}/os/halnew/platforms/STM32/RTCv2/rtc_lld.c \

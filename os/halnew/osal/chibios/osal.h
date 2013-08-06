@@ -74,6 +74,29 @@
 /** @} */
 #endif
 
+/**
+ * @name    Systick modes.
+ * @{
+ */
+#define OSAL_ST_MODE_NONE                   0
+#define OSAL_ST_MODE_PERIODIC               1
+#define OSAL_ST_MODE_FREERUNNING            2
+/** @} */
+
+/**
+ * @brief   Systick mode required by the underlying OS.
+ */
+#if (CH_CFG_TIMEDELTA == 0) || defined(__DOXYGEN__)
+#define OSAL_ST_MODE                        OSAL_ST_MODE_PERIODIC
+#else
+#define OSAL_ST_MODE                        OSAL_ST_MODE_FREERUNNING
+#endif
+
+/**
+ * @brief   Required systick frequency or resolution.
+ */
+#define OSAL_SYSTICK_FREQUENCY              CH_CFG_FREQUENCY
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -285,6 +308,18 @@ static inline void osalSysUnlockFromISR(void) {
 
   chSysUnlockFromISR();
 }
+
+/**
+ * @brief   Systick callback for the underlying OS.
+ * @note    This callback is only defined if the OSAL requires such a
+ *          service from the HAL.
+ */
+#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
+static inline void osalOsTimerHandlerI(void) {
+
+  chSysTimerHandlerI();
+}
+#endif
 
 /**
  * @brief   Checks if a reschedule is required and performs it.

@@ -83,7 +83,7 @@ OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
   STM32_TIM2->SR = 0;
 
   osalSysLockFromISR();
-  osalTimerHandlerI();
+  osalOsTimerHandlerI();
   osalSysUnlockFromISR();
 
   OSAL_IRQ_EPILOGUE();
