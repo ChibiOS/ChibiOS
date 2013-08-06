@@ -1,14 +1,14 @@
-# List of the ChibiOS/RT Cortex-M4 STM32 port files.
-PORTSRC = ${CHIBIOS}/os/portsnew/ARMCMx/chcore.c \
-          ${CHIBIOS}/os/portsnew/ARMCMx/chcore_v7m.c \
-          $(CHIBIOS)/os/portsnew/ARMCMx/GCC/crt0.c \
-          $(CHIBIOS)/os/portsnew/ARMCMx/GCC/vectors.c \
+# List of the ChibiOS/RT Cortex-M4 STM32F30x port files.
+PORTSRC = ${CHIBIOS}/os/kernel/ports/ARMCMx/chcore.c \
+          ${CHIBIOS}/os/kernel/ports/ARMCMx/chcore_v7m.c \
+          $(CHIBIOS)/os/kernel/ports/ARMCMx/GCC/crt0.c \
+          $(CHIBIOS)/os/kernel/ports/ARMCMx/GCC/vectors.c \
           
-PORTASM = $(CHIBIOS)/os/portsnew/ARMCMx/GCC/chcoreasm.s
+PORTASM = $(CHIBIOS)/os/kernel/ports/ARMCMx/GCC/chcoreasm.s
 
-PORTINC = ${CHIBIOS}/os/portsnew/ARMCMx \
-          ${CHIBIOS}/os/portsnew/ARMCMx/GCC \
-          ${CHIBIOS}/os/portsnew/ARMCMx/common/CMSIS/include \
-          ${CHIBIOS}/os/portsnew/ARMCMx/GCC/STM32F30x
+PORTINC = ${CHIBIOS}/os/kernel/ports/ARMCMx \
+          ${CHIBIOS}/os/kernel/ports/ARMCMx/GCC \
+          ${CHIBIOS}/os/kernel/ports/ARMCMx/GCC/STM32F30x \
+          ${CHIBIOS}/os/kernel/ports/ARMCMx/common/CMSIS/include
 
 PORTLD  = ${CHIBIOS}/os/ports/GCC/ld
