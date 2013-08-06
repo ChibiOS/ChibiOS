@@ -52,7 +52,7 @@
 /**
  * @brief   Idle thread working area.
  */
-static WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+static WORKING_AREA(_idle_thread_wa, CH_PORT_IDLE_THREAD_STACK_SIZE);
 #endif /* CH_CFG_NO_IDLE_THREAD */
 
 /*===========================================================================*/

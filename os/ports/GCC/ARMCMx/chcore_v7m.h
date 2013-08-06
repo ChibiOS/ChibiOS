@@ -96,8 +96,8 @@
  *          a stack frame when compiling without optimizations. You may
  *          reduce this value to zero when compiling with optimizations.
  */
-#if !defined(PORT_IDLE_THREAD_STACK_SIZE)
-#define PORT_IDLE_THREAD_STACK_SIZE     16
+#if !defined(CH_PORT_IDLE_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
+#define CH_PORT_IDLE_THREAD_STACK_SIZE  16
 #endif
 
 /**
@@ -109,8 +109,8 @@
  *          with compiler optimizations disabled. The value can be reduced
  *          when compiler optimizations are enabled.
  */
-#if !defined(PORT_INT_REQUIRED_STACK)
-#define PORT_INT_REQUIRED_STACK         32
+#if !defined(CH_PORT_INT_REQUIRED_STACK) || defined(__DOXYGEN__)
+#define CH_PORT_INT_REQUIRED_STACK      32
 #endif
 
 /**
@@ -330,7 +330,7 @@ struct context {
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(thread_t) +                       \
                                    sizeof(struct intctx) +                  \
                                    sizeof(struct extctx) +                  \
-                                   (n) + (PORT_INT_REQUIRED_STACK))
+                                   (n) + (CH_PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   Static working area allocation.
