@@ -177,7 +177,7 @@ typedef enum IRQn
   WWDG_IRQn                   = 0,      /*!< Window WatchDog Interrupt                                         */
   PVD_IRQn                    = 1,      /*!< PVD through EXTI Line detection Interrupt                         */
   TAMPER_STAMP_IRQn           = 2,      /*!< Tamper and TimeStamp interrupts                                   */
-  RTC_WKUP_IRQn               = 3,      /*!< RTC Wakeup interrupt through the  lines 17, 19 & 20           */
+  RTC_WKUP_IRQn               = 3,      /*!< RTC Wakeup interrupt through the EXTI lines 17, 19 & 20           */
   FLASH_IRQn                  = 4,      /*!< FLASH global Interrupt                                            */
   RCC_IRQn                    = 5,      /*!< RCC global Interrupt                                              */
   EXTI0_IRQn                  = 6,      /*!< EXTI Line0 Interrupt                                              */
