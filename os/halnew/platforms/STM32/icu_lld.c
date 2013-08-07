@@ -400,10 +400,8 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD1 == icup) {
       rccEnableTIM1(FALSE);
       rccResetTIM1();
-      nvicEnableVector(STM32_TIM1_UP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
-      nvicEnableVector(STM32_TIM1_CC_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_ICU_TIM1_IRQ_PRIORITY);
+      nvicEnableVector(STM32_TIM1_CC_NUMBER, STM32_ICU_TIM1_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK2;
     }
 #endif
@@ -411,8 +409,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD2 == icup) {
       rccEnableTIM2(FALSE);
       rccResetTIM2();
-      nvicEnableVector(STM32_TIM2_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM2_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM2_NUMBER, STM32_ICU_TIM2_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif
@@ -420,8 +417,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD3 == icup) {
       rccEnableTIM3(FALSE);
       rccResetTIM3();
-      nvicEnableVector(STM32_TIM3_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM3_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM3_NUMBER, STM32_ICU_TIM3_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif
@@ -429,8 +425,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD4 == icup) {
       rccEnableTIM4(FALSE);
       rccResetTIM4();
-      nvicEnableVector(STM32_TIM4_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM4_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM4_NUMBER, STM32_ICU_TIM4_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif
@@ -438,8 +433,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD5 == icup) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
-      nvicEnableVector(STM32_TIM5_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM5_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM5_NUMBER, STM32_ICU_TIM5_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif
@@ -447,10 +441,8 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD8 == icup) {
       rccEnableTIM8(FALSE);
       rccResetTIM8();
-      nvicEnableVector(STM32_TIM8_UP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
-      nvicEnableVector(STM32_TIM8_CC_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_ICU_TIM8_IRQ_PRIORITY);
+      nvicEnableVector(STM32_TIM8_CC_NUMBER, STM32_ICU_TIM8_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK2;
     }
 #endif
@@ -458,8 +450,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD9 == icup) {
       rccEnableTIM9(FALSE);
       rccResetTIM9();
-      nvicEnableVector(STM32_TIM9_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM9_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM9_NUMBER, STM32_ICU_TIM9_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif

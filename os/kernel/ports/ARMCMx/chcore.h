@@ -166,7 +166,7 @@ struct intctx {};
 /**
  * @brief   Priority level to priority mask conversion macro.
  */
-#define CORTEX_PRIORITY_MASK(n)                                             \
+#define CORTEX_PRIO_MASK(n)                                                 \
   ((n) << (8 - CORTEX_PRIORITY_BITS))
 
 /*===========================================================================*/

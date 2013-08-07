@@ -197,7 +197,7 @@
  * @note    In compact kernel mode this constant value is enforced to zero.
  */
 #define CORTEX_BASEPRI_KERNEL                                               \
-  CORTEX_PRIORITY_MASK(CORTEX_MAX_KERNEL_PRIORITY)
+  CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 #else
 
 #define CORTEX_MAX_KERNEL_PRIORITY      1

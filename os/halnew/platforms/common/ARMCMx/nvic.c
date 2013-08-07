@@ -37,7 +37,7 @@
  */
 void nvicEnableVector(uint32_t n, uint32_t prio) {
 
-  NVIC->IP[n]        = prio << (8 - __NVIC_PRIO_BITS);
+  NVIC->IP[n]        = NVIC_PRIORITY_MASK(prio);
   NVIC->ICPR[n >> 5] = 1 << (n & 0x1F);
   NVIC->ISER[n >> 5] = 1 << (n & 0x1F);
 }

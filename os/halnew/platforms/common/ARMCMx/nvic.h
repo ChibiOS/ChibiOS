@@ -29,6 +29,11 @@
 #ifndef _NVIC_H_
 #define _NVIC_H_
 
+/**
+ * @brief   Priority level to priority mask conversion macro.
+ */
+#define NVIC_PRIORITY_MASK(prio) ((prio) << (8 - __NVIC_PRIO_BITS))
+
 #ifdef __cplusplus
 extern "C" {
 #endif

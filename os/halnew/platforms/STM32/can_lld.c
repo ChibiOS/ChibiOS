@@ -394,14 +394,10 @@ void can_lld_start(CANDriver *canp) {
   /* Clock activation.*/
 #if STM32_CAN_USE_CAN1
   if (&CAND1 == canp) {
-    nvicEnableVector(STM32_CAN1_TX_NUMBER,
-                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    nvicEnableVector(STM32_CAN1_RX0_NUMBER,
-                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    nvicEnableVector(STM32_CAN1_RX1_NUMBER,
-                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
-    nvicEnableVector(STM32_CAN1_SCE_NUMBER,
-                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN1_IRQ_PRIORITY));
+    nvicEnableVector(STM32_CAN1_TX_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN1_RX0_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN1_RX1_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN1_SCE_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
     rccEnableCAN1(FALSE);
   }
 #endif
@@ -411,14 +407,10 @@ void can_lld_start(CANDriver *canp) {
     osalDbgAssert(CAND1.state != CAN_STOP,
                   "can_lld_start(), #1", "CAN1 must be started");
 
-    nvicEnableVector(STM32_CAN2_TX_NUMBER,
-                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN2_IRQ_PRIORITY));
-    nvicEnableVector(STM32_CAN2_RX0_NUMBER,
-                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN2_IRQ_PRIORITY));
-    nvicEnableVector(STM32_CAN2_RX1_NUMBER,
-                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN2_IRQ_PRIORITY));
-    nvicEnableVector(STM32_CAN2_SCE_NUMBER,
-                     CORTEX_PRIORITY_MASK(STM32_CAN_CAN2_IRQ_PRIORITY));
+    nvicEnableVector(STM32_CAN2_TX_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN2_RX0_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN2_RX1_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
+    nvicEnableVector(STM32_CAN2_SCE_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
     rccEnableCAN2(FALSE);
   }
 #endif

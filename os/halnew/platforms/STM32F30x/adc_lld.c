@@ -335,8 +335,7 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
-  nvicEnableVector(ADC1_2_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_ADC_ADC12_IRQ_PRIORITY));
+  nvicEnableVector(ADC1_2_IRQn, STM32_ADC_ADC12_IRQ_PRIORITY);
 #endif /* STM32_ADC_USE_ADC1 */
 
 #if STM32_ADC_USE_ADC3
@@ -353,11 +352,9 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
-  nvicEnableVector(ADC3_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_ADC_ADC34_IRQ_PRIORITY));
+  nvicEnableVector(ADC3_IRQn, STM32_ADC_ADC34_IRQ_PRIORITY);
 #if STM32_ADC_DUAL_MODE
-  nvicEnableVector(ADC4_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_ADC_ADC34_IRQ_PRIORITY));
+  nvicEnableVector(ADC4_IRQn, STM32_ADC_ADC34_IRQ_PRIORITY);
 #endif
 #endif /* STM32_ADC_USE_ADC3 */
 }

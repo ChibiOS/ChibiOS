@@ -407,10 +407,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD1 == pwmp) {
       rccEnableTIM1(FALSE);
       rccResetTIM1();
-      nvicEnableVector(STM32_TIM1_UP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
-      nvicEnableVector(STM32_TIM1_CC_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_PWM_TIM1_IRQ_PRIORITY);
+      nvicEnableVector(STM32_TIM1_CC_NUMBER, STM32_PWM_TIM1_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK2;
     }
 #endif
@@ -418,8 +416,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD2 == pwmp) {
       rccEnableTIM2(FALSE);
       rccResetTIM2();
-      nvicEnableVector(STM32_TIM2_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM2_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM2_NUMBER, STM32_PWM_TIM2_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif
@@ -427,8 +424,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD3 == pwmp) {
       rccEnableTIM3(FALSE);
       rccResetTIM3();
-      nvicEnableVector(STM32_TIM3_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM3_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM3_NUMBER, STM32_PWM_TIM3_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif
@@ -436,8 +432,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD4 == pwmp) {
       rccEnableTIM4(FALSE);
       rccResetTIM4();
-      nvicEnableVector(STM32_TIM4_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM4_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM4_NUMBER, STM32_PWM_TIM4_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif
@@ -446,8 +441,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD5 == pwmp) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
-      nvicEnableVector(STM32_TIM5_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM5_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM5_NUMBER, STM32_PWM_TIM5_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif
@@ -455,10 +449,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD8 == pwmp) {
       rccEnableTIM8(FALSE);
       rccResetTIM8();
-      nvicEnableVector(STM32_TIM8_UP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
-      nvicEnableVector(STM32_TIM8_CC_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_PWM_TIM8_IRQ_PRIORITY);
+      nvicEnableVector(STM32_TIM8_CC_NUMBER, STM32_PWM_TIM8_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK2;
     }
 #endif
@@ -466,8 +458,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD9 == pwmp) {
       rccEnableTIM9(FALSE);
       rccResetTIM9();
-      nvicEnableVector(STM32_TIM9_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM9_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM9_NUMBER, STM32_PWM_TIM9_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif

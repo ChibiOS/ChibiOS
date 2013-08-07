@@ -422,43 +422,37 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
       rccEnableUSART1(FALSE);
-      nvicEnableVector(STM32_USART1_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART1_PRIORITY));
+      nvicEnableVector(STM32_USART1_NUMBER, STM32_SERIAL_USART1_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
       rccEnableUSART2(FALSE);
-      nvicEnableVector(STM32_USART2_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART2_PRIORITY));
+      nvicEnableVector(STM32_USART2_NUMBER, STM32_SERIAL_USART2_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
       rccEnableUSART3(FALSE);
-      nvicEnableVector(STM32_USART3_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART3_PRIORITY));
+      nvicEnableVector(STM32_USART3_NUMBER, STM32_SERIAL_USART3_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
       rccEnableUART4(FALSE);
-      nvicEnableVector(STM32_UART4_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_UART4_PRIORITY));
+      nvicEnableVector(STM32_UART4_NUMBER, STM32_SERIAL_UART4_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
       rccEnableUART5(FALSE);
-      nvicEnableVector(STM32_UART5_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_UART5_PRIORITY));
+      nvicEnableVector(STM32_UART5_NUMBER, STM32_SERIAL_UART5_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_USART6
     if (&SD6 == sdp) {
       rccEnableUSART6(FALSE);
-      nvicEnableVector(STM32_USART6_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART6_PRIORITY));
+      nvicEnableVector(STM32_USART6_NUMBER, STM32_SERIAL_USART6_PRIORITY);
     }
 #endif
   }
