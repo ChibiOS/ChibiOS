@@ -1,5 +1,6 @@
 # List of all the STM32F30x platform files.
-PLATFORMSRC = ${CHIBIOS}/os/halnew/platforms/STM32F30x/stm32_dma.c \
+PLATFORMSRC = ${CHIBIOS}/os/halnew/platforms/common/ARMCMx/nvic.c \
+              ${CHIBIOS}/os/halnew/platforms/STM32F30x/stm32_dma.c \
               ${CHIBIOS}/os/halnew/platforms/STM32F30x/hal_lld.c \
               ${CHIBIOS}/os/halnew/platforms/STM32F30x/adc_lld.c \
               ${CHIBIOS}/os/halnew/platforms/STM32F30x/ext_lld_isr.c \
@@ -18,7 +19,8 @@ PLATFORMSRC = ${CHIBIOS}/os/halnew/platforms/STM32F30x/stm32_dma.c \
               ${CHIBIOS}/os/halnew/platforms/STM32/USBv1/usb_lld.c
 
 # Required include directories
-PLATFORMINC = ${CHIBIOS}/os/halnew/platforms/STM32F30x \
+PLATFORMINC = ${CHIBIOS}/os/halnew/platforms/common/ARMCMx \
+              ${CHIBIOS}/os/halnew/platforms/STM32F30x \
               ${CHIBIOS}/os/halnew/platforms/STM32 \
               ${CHIBIOS}/os/halnew/platforms/STM32/GPIOv2 \
               ${CHIBIOS}/os/halnew/platforms/STM32/I2Cv2 \

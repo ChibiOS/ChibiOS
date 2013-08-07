@@ -31,11 +31,11 @@
 #include "chcore.h"
 
 #if !defined(FALSE) || defined(__DOXYGEN__)
-#define FALSE                   0
+#define FALSE   0
 #endif
 
 #if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                    1
+#define TRUE    1
 #endif
 
 #if !defined(__DOXYGEN__)
@@ -56,7 +56,7 @@
  * Performs a context switch between two threads.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl _port_switch
+                .globl  _port_switch
 _port_switch:
                 push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
 #if CORTEX_USE_FPU
@@ -78,7 +78,7 @@ _port_switch:
  * called on thread function return.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl _port_thread_start
+                .globl  _port_thread_start
 _port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      dbg_check_unlock
@@ -98,7 +98,7 @@ _port_thread_start:
  * Exception handlers return here for context switching.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl _port_switch_from_isr
+                .globl  _port_switch_from_isr
 _port_switch_from_isr:
 #if CH_DBG_STATISTICS
                 bl      _stats_start_measure_crit_thd
@@ -113,6 +113,7 @@ _port_switch_from_isr:
 #if CH_DBG_STATISTICS
                 bl      _stats_stop_measure_crit_thd
 #endif
+                .globl  _port_exit_from_isr
 _port_exit_from_isr:
 #if CORTEX_SIMPLIFIED_PRIORITY
                 mov     r3, #SCB_ICSR :AND: 0xFFFF
