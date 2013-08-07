@@ -177,7 +177,7 @@ typedef enum IRQn
   WWDG_IRQn                   = 0,      /*!< Window WatchDog Interrupt                                         */
   PVD_IRQn                    = 1,      /*!< PVD through EXTI Line detection Interrupt                         */
   TAMPER_STAMP_IRQn           = 2,      /*!< Tamper and TimeStamp interrupts                                   */
-  RTC_WKUP_IRQn               = 3,      /*!< RTC Wakeup interrupt through the EXTI lines 17, 19 & 20           */
+  RTC_WKUP_IRQn               = 3,      /*!< RTC Wakeup interrupt through the  lines 17, 19 & 20           */
   FLASH_IRQn                  = 4,      /*!< FLASH global Interrupt                                            */
   RCC_IRQn                    = 5,      /*!< RCC global Interrupt                                              */
   EXTI0_IRQn                  = 6,      /*!< EXTI Line0 Interrupt                                              */
@@ -247,7 +247,8 @@ typedef enum IRQn
   */
 
 #include "core_cm4.h"            /* Cortex-M4 processor and core peripherals */
-#include "system_stm32f30x.h"    /* STM32F30x System Header */
+/* CHIBIOS FIX */
+/*#include "system_stm32f30x.h"*/    /* STM32F30x System Header */
 #include <stdint.h>
 
 /** @addtogroup Exported_types
@@ -553,7 +554,8 @@ typedef struct
 /** 
   * @brief General Purpose I/O
   */
-
+/* CHIBIOS FIX */
+#if 0
 typedef struct
 {
   __IO uint32_t MODER;        /*!< GPIO port mode register,                                  Address offset: 0x00 */
@@ -571,6 +573,7 @@ typedef struct
   __IO uint16_t BRR;          /*!< GPIO bit reset register,                                  Address offset: 0x28 */
   uint16_t RESERVED3;         /*!< Reserved,                                                                 0x2A */
 }GPIO_TypeDef;
+#endif
 
 /** 
   * @brief Operational Amplifier (OPAMP)
@@ -1028,7 +1031,9 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 /********************  Bit definition for ADC_ISR register  ********************/
-#define ADC_ISR_ADRD          ((uint32_t)0x00000001)   /*!< ADC Ready (ADRDY) flag  */
+/* CHIBIOS FIX */
+//#define ADC_ISR_ADRD         ((uint32_t)0x00000001) /*!< ADC Ready (ADRDY) flag  */
+#define ADC_ISR_ADRDY         ((uint32_t)0x00000001) /*!< ADC Ready (ADRDY) flag  */
 #define ADC_ISR_EOSMP         ((uint32_t)0x00000002) /*!< ADC End of Sampling flag */
 #define ADC_ISR_EOC           ((uint32_t)0x00000004) /*!< ADC End of Regular Conversion flag */
 #define ADC_ISR_EOS           ((uint32_t)0x00000008) /*!< ADC End of Regular sequence of Conversions flag */
@@ -4749,8 +4754,11 @@ typedef struct
 #define  RCC_APB1ENR_SPI3EN                  ((uint32_t)0x00008000)        /*!< SPI3 clock enable */
 #define  RCC_APB1ENR_USART2EN                ((uint32_t)0x00020000)        /*!< USART 2 clock enable */
 #define  RCC_APB1ENR_USART3EN                ((uint32_t)0x00040000)        /*!< USART 3 clock enable */
-#define  RCC_APB1ENR_UART3EN                 ((uint32_t)0x00080000)        /*!< UART 3 clock enable */
-#define  RCC_APB1ENR_UART4EN                 ((uint32_t)0x00100000)        /*!< UART 4 clock enable */
+/* CHIBIOS FIX */
+#define  RCC_APB1ENR_UART4EN                 ((uint32_t)0x00080000)        /*!< UART 3 clock enable */
+#define  RCC_APB1ENR_UART5EN                 ((uint32_t)0x00100000)        /*!< UART 4 clock enable */
+//#define  RCC_APB1ENR_UART3EN                 ((uint32_t)0x00080000)        /*!< UART 3 clock enable */
+//#define  RCC_APB1ENR_UART4EN                 ((uint32_t)0x00100000)        /*!< UART 4 clock enable */
 #define  RCC_APB1ENR_I2C1EN                  ((uint32_t)0x00200000)        /*!< I2C 1 clock enable */
 #define  RCC_APB1ENR_I2C2EN                  ((uint32_t)0x00400000)        /*!< I2C 2 clock enable */
 #define  RCC_APB1ENR_USBEN                   ((uint32_t)0x00800000)        /*!< USB clock enable */

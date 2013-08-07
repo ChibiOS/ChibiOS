@@ -45,35 +45,9 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-typedef struct {
-  volatile uint32_t     CR1;
-  volatile uint32_t     CR2;
-  volatile uint32_t     SMCR;
-  volatile uint32_t     DIER;
-  volatile uint32_t     SR;
-  volatile uint32_t     EGR;
-  volatile uint32_t     CCMR1;
-  volatile uint32_t     CCMR2;
-  volatile uint32_t     CCER;
-  volatile uint32_t     CNT;
-  volatile uint32_t     PSC;
-  volatile uint32_t     ARR;
-  volatile uint32_t     RCR;
-  volatile uint32_t     CCR[4];
-  volatile uint32_t     BDTR;
-  volatile uint32_t     DCR;
-  volatile uint32_t     DMAR;
-  volatile uint32_t     OR;
-  volatile uint32_t     CCMR3;
-  volatile uint32_t     CCR5;
-  volatile uint32_t     CCR6;
-} local_stm32_tim_t;
-
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
-
-#define STM32F3_TIM2    ((local_stm32_tim_t *)0x40000000)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -90,13 +64,13 @@ typedef struct {
  */
 static inline void port_timer_init(void) {
 
-  STM32F3_TIM2->ARR     = 0xFFFFFFFF;
-  STM32F3_TIM2->CCMR1   = 0;
-  STM32F3_TIM2->CCR[0]  = 0;
-  STM32F3_TIM2->DIER    = 0;
-  STM32F3_TIM2->CR2     = 0;
-  STM32F3_TIM2->EGR     = 1;            /* UG, CNT initialized.             */
-  STM32F3_TIM2->CR1     = 1;            /* CEN */
+  TIM2->ARR   = 0xFFFFFFFF;
+  TIM2->CCMR1 = 0;
+  TIM2->CCR1  = 0;
+  TIM2->DIER  = 0;
+  TIM2->CR2   = 0;
+  TIM2->EGR   = TIM_EGR_UG;
+  TIM2->CR1   = TIM_CR1_CEN;
 }
 
 /**
@@ -108,7 +82,7 @@ static inline void port_timer_init(void) {
  */
 static inline systime_t port_timer_get_time(void) {
 
-  return STM32F3_TIM2->CNT;
+  return TIM2->CNT;
 }
 
 /**
@@ -122,13 +96,13 @@ static inline systime_t port_timer_get_time(void) {
  */
 static inline void port_timer_start_alarm(systime_t time) {
 
-  chDbgAssert((STM32F3_TIM2->DIER & 2) == 0,
+  chDbgAssert((TIM2->DIER & 2) == 0,
               "port_timer_start_alarm(), #1",
               "already started");
 
-  STM32F3_TIM2->CCR[0]  = time;
-  STM32F3_TIM2->SR      = 0;
-  STM32F3_TIM2->DIER    = 2;            /* CC1IE */
+  TIM2->CCR1  = time;
+  TIM2->SR      = 0;
+  TIM2->DIER    = 2;            /* CC1IE */
 }
 
 /**
@@ -138,11 +112,11 @@ static inline void port_timer_start_alarm(systime_t time) {
  */
 static inline void port_timer_stop_alarm(void) {
 
-  chDbgAssert((STM32F3_TIM2->DIER & 2) != 0,
+  chDbgAssert((TIM2->DIER & 2) != 0,
               "port_timer_stop_alarm(), #1",
               "not started");
 
-  STM32F3_TIM2->DIER    = 0;
+  TIM2->DIER    = 0;
 }
 
 /**
@@ -154,11 +128,11 @@ static inline void port_timer_stop_alarm(void) {
  */
 static inline void port_timer_set_alarm(systime_t time) {
 
-  chDbgAssert((STM32F3_TIM2->DIER & 2) != 0,
+  chDbgAssert((TIM2->DIER & 2) != 0,
               "port_timer_set_alarm(), #1",
               "not started");
 
-  STM32F3_TIM2->CCR[0]  = time;
+  TIM2->CCR1  = time;
 }
 
 /**
@@ -170,11 +144,11 @@ static inline void port_timer_set_alarm(systime_t time) {
  */
 static inline systime_t port_timer_get_alarm(void) {
 
-  chDbgAssert((STM32F3_TIM2->DIER & 2) != 0,
+  chDbgAssert((TIM2->DIER & 2) != 0,
               "port_timer_get_alarm(), #1",
               "not started");
 
-  return STM32F3_TIM2->CCR[0];
+  return TIM2->CCR1;
 }
 
 #endif /* _CHTIMER_H_ */
