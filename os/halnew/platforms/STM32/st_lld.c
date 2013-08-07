@@ -57,7 +57,7 @@
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(SysTickVector) {
+OSAL_IRQ_HANDLER(SysTick_Handler) {
 
   OSAL_IRQ_PROLOGUE();
 

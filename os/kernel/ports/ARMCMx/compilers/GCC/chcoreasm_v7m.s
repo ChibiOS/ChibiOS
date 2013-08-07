@@ -26,6 +26,7 @@
  * @{
  */
 
+#define _FROM_ASM_
 #include "chconf.h"
 #include "chcore.h"
 
@@ -39,6 +40,11 @@
 
 #if !defined(__DOXYGEN__)
 
+
+                .set    CONTEXT_OFFSET, 12
+                .set    SCB_ICSR, 0xE000ED04
+                .set    ICSR_PENDSVSET, 0x10000000
+
                 .syntax unified
                 .cpu cortex-m4
                 .fpu softvfp
@@ -46,14 +52,31 @@
                 .thumb
                 .text
 
-/*
- * Thread trampoline code.
+/*--------------------------------------------------------------------------*
+ * Performs a context switch between two threads.
+ *--------------------------------------------------------------------------*/
+                .thumb_func
+                .globl _port_switch
+_port_switch:
+                push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+#if CORTEX_USE_FPU
+                vpush   {s16-s31}
+#endif
+                str     sp, [r1, #CONTEXT_OFFSET]
+                ldr     sp, [r0, #CONTEXT_OFFSET]
+#if CORTEX_USE_FPU
+                vpop    {s16-s31}
+#endif
+                pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+
+/*--------------------------------------------------------------------------*
+ * Start a thread by invoking its work function.
  *
  * Threads execution starts here, the code leaves the system critical zone
  * and then jumps into the thread function passed in register R4. The
  * register R5 contains the thread parameter. The function chThdExit() is
  * called on thread function return.
- */
+ *--------------------------------------------------------------------------*/
                 .thumb_func
                 .globl _port_thread_start
 _port_thread_start:
@@ -68,6 +91,39 @@ _port_thread_start:
                 mov     r0, r5
                 blx     r4
                 bl      chThdExit
+
+/*--------------------------------------------------------------------------*
+ * Post-IRQ switch code.
+ *
+ * Exception handlers return here for context switching.
+ *--------------------------------------------------------------------------*/
+                .thumb_func
+                .globl _port_switch_from_isr
+_port_switch_from_isr:
+#if CH_DBG_STATISTICS
+                bl      _stats_start_measure_crit_thd
+#endif
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      dbg_check_lock
+#endif
+                bl      chSchDoReschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      dbg_check_unlock
+#endif
+#if CH_DBG_STATISTICS
+                bl      _stats_stop_measure_crit_thd
+#endif
+_port_exit_from_isr:
+#if CORTEX_SIMPLIFIED_PRIORITY
+                mov     r3, #SCB_ICSR :AND: 0xFFFF
+                movt    r3, #SCB_ICSR :SHR: 16
+                mov     r2, #ICSR_PENDSVSET
+                str     r2, [r3, #0]
+                cpsie   i
+#else /* !CORTEX_SIMPLIFIED_PRIORITY */
+                svc     #0
+#endif /* !CORTEX_SIMPLIFIED_PRIORITY */
+.L1:            b       .L1
 
 #endif /* !defined(__DOXYGEN__) */
 

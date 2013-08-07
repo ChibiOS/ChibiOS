@@ -216,6 +216,8 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
 #if !defined(_FROM_ASM_)
 
 /**
@@ -418,22 +420,22 @@ extern "C" {
 static inline void port_init(void) {
 
   /* Initialization of the vector table and priority related settings.*/
-  SCB_VTOR = CORTEX_VTOR_INIT;
-  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(CORTEX_PRIGROUP_INIT);
+  SCB->VTOR = CORTEX_VTOR_INIT;
+
+  /* Initializing priority grouping.*/
+  NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
 
   /* DWT cycle counter enable.*/
-  SCS_DEMCR |= SCS_DEMCR_TRCENA;
-  DWT_CTRL  |= DWT_CTRL_CYCCNTENA;
+  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
   /* Initialization of the system vectors used by the port.*/
-  nvicSetSystemHandlerPriority(HANDLER_SVCALL,
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL));
-  nvicSetSystemHandlerPriority(HANDLER_PENDSV,
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));
-#if CH_CFG_TIMEDELTA == 0
-  nvicSetSystemHandlerPriority(HANDLER_SYSTICK,
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));
-#else
+  NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);
+  NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
+
+#if CH_CFG_TIMEDELTA > 0
+  /* TODO: Remove initialization, all the timers handling has to be performed
+           outside the port layer.*/
   port_timer_init();
 #endif
 }
@@ -595,13 +597,13 @@ static inline void port_enable(void) {
 static inline void port_wait_for_interrupt(void) {
 
 #if CORTEX_ENABLE_WFI_IDLE
-   asm volatile ("wfi" : : : "memory");
+  __WFI;
 #endif
 }
 
 static inline rtcnt_t port_rt_get_counter_value(void) {
 
-  return DWT_CYCCNT;
+  return DWT->CYCCNT;
 }
 
 #endif /* !defined(_FROM_ASM_) */

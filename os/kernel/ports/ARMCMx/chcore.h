@@ -70,6 +70,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
 #if !defined(_FROM_ASM_)
 
 /*
@@ -93,6 +95,8 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
 #if !defined(_FROM_ASM_)
 
 /* The following declarations are there just for Doxygen documentation, the

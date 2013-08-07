@@ -69,8 +69,8 @@ include $(CHIBIOS)/boards/ST_STM32F3_DISCOVERY/board.mk
 include $(CHIBIOS)/os/halnew/hal.mk
 include $(CHIBIOS)/os/halnew/osal/chibios/osal.mk
 include $(CHIBIOS)/os/halnew/platforms/STM32F30x/platform.mk
-include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F3xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/os/kernel/ports/ARMCMx/devices/STM32F30x/port.mk
 include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
@@ -209,8 +209,10 @@ ULIBS =
 ifeq ($(USE_FPU),yes)
   USE_OPT += -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -fsingle-precision-constant
   DDEFS += -DCORTEX_USE_FPU=TRUE
+  DADEFS += -DCORTEX_USE_FPU=TRUE
 else
   DDEFS += -DCORTEX_USE_FPU=FALSE
+  DADEFS += -DCORTEX_USE_FPU=FALSE
 endif
 
 ifeq ($(USE_FWLIB),yes)
@@ -220,4 +222,4 @@ ifeq ($(USE_FWLIB),yes)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include $(CHIBIOS)/os/ports/GCC/ARMCMx/rules.mk
+include $(CHIBIOS)/os/kernel/ports/ARMCMx/compilers/GCC/rules.mk

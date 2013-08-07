@@ -41,7 +41,7 @@
 /**
  * @brief   Type of an IRQ vector.
  */
-typedef void  (*irq_vector_t)(void) __attribute__((weak, alias("_unhandled_exception")));
+typedef void  (*irq_vector_t)(void);
 
 /**
  * @brief   Type of a structure representing the whole vectors table.
@@ -457,6 +457,7 @@ void Vector3F4(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector3F8(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector3FC(void) __attribute__((weak, alias("_unhandled_exception")));
 #endif
+#endif /* !defined(__DOXYGEN__) */
 
 /**
  * @brief   STM32 vectors table.
