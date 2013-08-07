@@ -149,18 +149,22 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#if SPC5_HAS_EMIOS0
 void reset_emios0_active_channels(void);
-void reset_emios1_active_channels(void);
 uint32_t get_emios0_active_channels(void);
-uint32_t get_emios1_active_channels(void);
 void increase_emios0_active_channels(void);
 void decrease_emios0_active_channels(void);
+void active_emios0_clock(ICUDriver *icup, PWMDriver *pwmp);
+void deactive_emios0_clock(ICUDriver *icup, PWMDriver *pwmp);
+#endif
+#if SPC5_HAS_EMIOS1
+void reset_emios1_active_channels(void);
+uint32_t get_emios1_active_channels(void);
 void increase_emios1_active_channels(void);
 void decrease_emios1_active_channels(void);
-void active_emios0_clock(ICUDriver *icup, PWMDriver *pwmp);
 void active_emios1_clock(ICUDriver *icup, PWMDriver *pwmp);
-void deactive_emios0_clock(ICUDriver *icup, PWMDriver *pwmp);
 void deactive_emios1_clock(ICUDriver *icup, PWMDriver *pwmp);
+#endif
 
 #endif /* HAL_USE_ICU */
 

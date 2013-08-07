@@ -380,8 +380,12 @@ void icu_lld_init(void) {
   A2_3 = 0U;
 
   /* eMIOSx channels initially all not in use.*/
+#if SPC5_HAS_EMIOS0
   reset_emios0_active_channels();
+#endif
+#if SPC5_HAS_EMIOS1
   reset_emios1_active_channels();
+#endif
 
 #if SPC5_ICU_USE_EMIOS0_CH0
   /* Driver initialization.*/
@@ -489,11 +493,14 @@ void icu_lld_init(void) {
  */
 void icu_lld_start(ICUDriver *icup) {
 
-  chDbgAssert(get_emios0_active_channels() < 28, "icu_lld_start(), #1",
+#if SPC5_HAS_EMIOS0
+  chDbgAssert(get_emios0_active_channels() < 25, "icu_lld_start(), #1",
                 "too many channels");
-
-  chDbgAssert(get_emios1_active_channels() < 28, "icu_lld_start(), #2",
+#endif
+#if SPC5_HAS_EMIOS1
+  chDbgAssert(get_emios1_active_channels() < 25, "icu_lld_start(), #2",
                 "too many channels");
+#endif
 
   if (icup->state == ICU_STOP) {
     /* Enables the peripheral.*/
@@ -598,10 +605,14 @@ void icu_lld_start(ICUDriver *icup) {
  */
 void icu_lld_stop(ICUDriver *icup) {
 
-  chDbgAssert(get_emios0_active_channels() < 28, "icu_lld_stop(), #1",
+#if SPC5_HAS_EMIOS0
+  chDbgAssert(get_emios0_active_channels() < 25, "icu_lld_stop(), #1",
               "too many channels");
-  chDbgAssert(get_emios1_active_channels() < 28, "icu_lld_stop(), #2",
+#endif
+#if SPC5_HAS_EMIOS1
+  chDbgAssert(get_emios1_active_channels() < 25, "icu_lld_stop(), #2",
               "too many channels");
+#endif
 
   if (icup->state == ICU_READY) {
 

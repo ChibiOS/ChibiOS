@@ -696,8 +696,12 @@ CH_IRQ_HANDLER(SPC5_EMIOS1_GFR_F22F23_HANDLER) {
  */
 void pwm_lld_init(void) {
   /* eMIOSx channels initially all not in use.*/
+#if SPC5_HAS_EMIOS0
   reset_emios0_active_channels();
+#endif
+#if SPC5_HAS_EMIOS1
   reset_emios1_active_channels();
+#endif
 
 #if SPC5_PWM_USE_EMIOS0_GROUP0
   /* Driver initialization.*/
@@ -772,10 +776,14 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
   uint32_t psc = 0, i = 0;
 
-  chDbgAssert(get_emios0_active_channels() < 28,
+#if SPC5_HAS_EMIOS0
+  chDbgAssert(get_emios0_active_channels() < 25,
               "pwm_lld_start(), #1", "too many channels");
-  chDbgAssert(get_emios1_active_channels() < 28,
+#endif
+#if SPC5_HAS_EMIOS1
+  chDbgAssert(get_emios1_active_channels() < 25,
               "pwm_lld_start(), #2", "too many channels");
+#endif
 
   if (pwmp->state == PWM_STOP) {
 #if SPC5_PWM_USE_EMIOS0_GROUP0
@@ -882,6 +890,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 #endif
 
   /* Set clock prescaler and control register.*/
+#if SPC5_HAS_EMIOS0 && SPC5_HAS_EMIOS1
   if (pwmp->emiosp == &EMIOS_0) {
     psc = (SPC5_EMIOS0_CLK / pwmp->config->frequency);
     chDbgAssert((psc <= 0xFFFF) &&
@@ -895,7 +904,23 @@ void pwm_lld_start(PWMDriver *pwmp) {
                 ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
                 "pwm_lld_start(), #4", "invalid frequency");
   }
-
+#elif SPC5_HAS_EMIOS0
+  if (pwmp->emiosp == &EMIOS_0) {
+    psc = (SPC5_EMIOS0_CLK / pwmp->config->frequency);
+    chDbgAssert((psc <= 0xFFFF) &&
+                (((psc) * pwmp->config->frequency) == SPC5_EMIOS0_CLK) &&
+                ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
+                "pwm_lld_start(), #3", "invalid frequency");
+  }
+#elif SPC5_HAS_EMIOS1
+  if (pwmp->emiosp == &EMIOS_1) {
+    psc = (SPC5_EMIOS1_CLK / pwmp->config->frequency);
+    chDbgAssert((psc <= 0xFFFF) &&
+                (((psc) * pwmp->config->frequency) == SPC5_EMIOS1_CLK) &&
+                ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
+                "pwm_lld_start(), #3", "invalid frequency");
+  }
+#endif
 
 #if SPC5_PWM_USE_EMIOS0_GROUP0
   if (&PWMD1 == pwmp) {
@@ -1310,10 +1335,14 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 
   uint32_t i = 0;
 
-  chDbgAssert(get_emios0_active_channels() < 28, "pwm_lld_stop(), #1",
+#if SPC5_HAS_EMIOS0
+  chDbgAssert(get_emios0_active_channels() < 25, "pwm_lld_stop(), #1",
               "too many channels");
-  chDbgAssert(get_emios1_active_channels() < 28, "pwm_lld_stop(), #2",
+#endif
+#if SPC5_HAS_EMIOS1
+  chDbgAssert(get_emios1_active_channels() < 25, "pwm_lld_stop(), #2",
               "too many channels");
+#endif
 
   if (pwmp->state == PWM_READY) {
 
