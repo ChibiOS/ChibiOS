@@ -398,10 +398,10 @@ struct context {
 extern "C" {
 #endif
   void _port_irq_epilogue(void);
-  void _port_switch_from_isr(void);
-  void _port_exit_from_isr(void);
   void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
+  void _port_switch_from_isr(void);
+  void _port_exit_from_isr(void);
 #ifdef __cplusplus
 }
 #endif
