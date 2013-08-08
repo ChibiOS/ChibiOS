@@ -40,10 +40,10 @@
  * @{
  */
 /**
- * @brief   SysTick timer priority mask.
+ * @brief   SysTick timer priority.
  */
-#if !defined(ST_TIMER_PRIORITY_MASK) || defined(__DOXYGEN__)
-#define ST_TIMER_PRIORITY_MASK              0x80
+#if !defined(ST_TIMER_PRIORITY) || defined(__DOXYGEN__)
+#define ST_TIMER_PRIORITY                   8
 #endif
 /** @} */
 

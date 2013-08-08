@@ -104,7 +104,7 @@ void st_lld_init(void) {
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   /* Free running counter mode.*/
   rccEnableTIM2(FALSE);
-  nvicEnableVector(STM32_TIM2_NUMBER, ST_TIMER_PRIORITY_MASK);
+  nvicEnableVector(STM32_TIM2_NUMBER, ST_TIMER_PRIORITY);
   STM32_TIM2->PSC = STM32_TIMCLK2 / OSAL_SYSTICK_FREQUENCY - 1;
 #endif
 
@@ -117,7 +117,7 @@ void st_lld_init(void) {
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
-  nvicSetSystemHandlerPriority(HANDLER_SYSTICK, ST_TIMER_PRIORITY_MASK);
+  nvicSetSystemHandlerPriority(SysTick_IRQn, ST_TIMER_PRIORITY);
 #endif
 }
 

@@ -57,8 +57,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void nvicEnableVector(uint32_t n, uint32_t prio);
-  void nvicDisableVector(uint32_t n);
+  void nvicEnableVector(IRQn_Type n, uint32_t prio);
+  void nvicDisableVector(IRQn_Type n);
+  void nvicSetSystemHandlerPriority(IRQn_Type handler, uint32_t prio);
 #ifdef __cplusplus
 }
 #endif
