@@ -26,8 +26,8 @@
  * @{
  */
 
-#ifndef _CHTIMER_H_
-#define _CHTIMER_H_
+#ifndef _SYSTICK_H_
+#define _SYSTICK_H_
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -56,22 +56,6 @@
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Timer unit initialization.
- *
- * @notapi
- */
-static inline void port_timer_init(void) {
-
-  TIM2->ARR   = 0xFFFFFFFF;
-  TIM2->CCMR1 = 0;
-  TIM2->CCR1  = 0;
-  TIM2->DIER  = 0;
-  TIM2->CR2   = 0;
-  TIM2->EGR   = TIM_EGR_UG;
-  TIM2->CR1   = TIM_CR1_CEN;
-}
 
 /**
  * @brief   Returns the system time.
@@ -151,6 +135,6 @@ static inline systime_t port_timer_get_alarm(void) {
   return TIM2->CCR1;
 }
 
-#endif /* _CHTIMER_H_ */
+#endif /* _SYSTICK_H_ */
 
 /** @} */

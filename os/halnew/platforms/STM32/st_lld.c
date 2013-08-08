@@ -104,8 +104,19 @@ void st_lld_init(void) {
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   /* Free running counter mode.*/
   rccEnableTIM2(FALSE);
+
+  /* Initializing the counter in free running mode.*/
+  STM32_TIM2->PSC    = STM32_TIMCLK2 / OSAL_SYSTICK_FREQUENCY - 1;
+  STM32_TIM2->ARR    = 0xFFFFFFFF;
+  STM32_TIM2->CCMR1  = 0;
+  STM32_TIM2->CCR[0] = 0;
+  STM32_TIM2->DIER   = 0;
+  STM32_TIM2->CR2    = 0;
+  STM32_TIM2->EGR    = TIM_EGR_UG;
+  STM32_TIM2->CR1    = TIM_CR1_CEN;
+
+  /* IRQ enabled.*/
   nvicEnableVector(STM32_TIM2_NUMBER, ST_TIMER_PRIORITY);
-  STM32_TIM2->PSC = STM32_TIMCLK2 / OSAL_SYSTICK_FREQUENCY - 1;
 #endif
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
@@ -117,6 +128,7 @@ void st_lld_init(void) {
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
+  /* IRQ enabled.*/
   nvicSetSystemHandlerPriority(SysTick_IRQn, ST_TIMER_PRIORITY);
 #endif
 }

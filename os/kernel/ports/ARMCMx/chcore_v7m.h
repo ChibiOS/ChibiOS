@@ -429,14 +429,10 @@ static inline void port_init(void) {
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
   /* Initialization of the system vectors used by the port.*/
+#if !CORTEX_SIMPLIFIED_PRIORITY
   NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);
-  NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
-
-#if CH_CFG_TIMEDELTA > 0
-  /* TODO: Remove initialization, all the timers handling has to be performed
-           outside the port layer.*/
-  port_timer_init();
 #endif
+  NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
 }
 
 /**

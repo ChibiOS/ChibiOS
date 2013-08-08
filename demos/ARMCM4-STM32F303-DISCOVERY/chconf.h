@@ -41,7 +41,7 @@
  *          setting also defines the system tick time unit.
  */
 #if !defined(CH_CFG_ST_FREQUENCY) || defined(__DOXYGEN__)
-#define CH_CFG_ST_FREQUENCY                 1000
+#define CH_CFG_ST_FREQUENCY                 10000
 #endif
 
 /**
@@ -62,7 +62,7 @@
  *          this value.
  */
 #if !defined(CH_CFG_TIMEDELTA) || defined(__DOXYGEN__)
-#define CH_CFG_TIMEDELTA                    0
+#define CH_CFG_TIMEDELTA                    2
 #endif
 
 /**
