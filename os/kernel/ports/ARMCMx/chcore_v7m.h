@@ -449,9 +449,9 @@ static inline syssts_t port_get_irq_status(void) {
   register uint32_t sts;
 
 #if !CORTEX_SIMPLIFIED_PRIORITY
-  asm volatile ("mrs     %0, BASEPRI" : "=r" (sts) : : "memory");
+  sts = __get_BASEPRI();
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
-  asm volatile ("mrs     %0, PRIMASK" : "=r" (sts) : : "memory");
+  sts = __get_PRIMASK();
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
   return sts;
 }
@@ -482,10 +482,8 @@ static inline bool port_irq_enabled(syssts_t sts) {
  * @retval true         running in ISR mode.
  */
 static inline bool port_is_isr_context(void) {
-  uint32_t ipsr;
 
-  asm volatile ("MRS %0, ipsr" : "=r" (ipsr));
-  return (bool)((ipsr & 0x1FF) != 0);
+  return (bool)((__get_IPSR() & 0x1FF) != 0);
 }
 
 /**
@@ -497,10 +495,9 @@ static inline bool port_is_isr_context(void) {
 static inline void port_lock(void) {
 
 #if !CORTEX_SIMPLIFIED_PRIORITY
-  register uint32_t basepri = CORTEX_BASEPRI_KERNEL;
-  asm volatile ("msr     BASEPRI, %0" : : "r" (basepri) : "memory");
+  __set_BASEPRI(CORTEX_BASEPRI_KERNEL);
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
-  asm volatile ("cpsid   i" : : : "memory");
+  __disable_irq();
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
 }
 
@@ -513,10 +510,9 @@ static inline void port_lock(void) {
 static inline void port_unlock(void) {
 
 #if !CORTEX_SIMPLIFIED_PRIORITY
-  register uint32_t basepri = CORTEX_BASEPRI_DISABLED;
-  asm volatile ("msr     BASEPRI, %0" : : "r" (basepri) : "memory");
+  __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
-  asm volatile ("cpsie   i" : : : "memory");
+  __enable_irq();
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
 }
 
@@ -552,7 +548,7 @@ static inline void port_unlock_from_isr(void) {
  */
 static inline void port_disable(void) {
 
-  asm volatile ("cpsid   i" : : : "memory");
+  __disable_irq();
 }
 
 /**
@@ -563,11 +559,10 @@ static inline void port_disable(void) {
 static inline void port_suspend(void) {
 
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
-  register uint32_t basepri = CORTEX_BASEPRI_KERNEL;
-  asm volatile ("msr     BASEPRI, %0                    \n\t"
-                "cpsie   i" : : "r" (basepri) : "memory");
+  __set_BASEPRI(CORTEX_BASEPRI_KERNEL);
+  __enable_irq();
 #else
-  asm volatile ("cpsid   i" : : : "memory");
+  __disable_irq();
 #endif
 }
 
@@ -578,12 +573,9 @@ static inline void port_suspend(void) {
 static inline void port_enable(void) {
 
 #if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
-  register uint32_t basepri = CORTEX_BASEPRI_DISABLED;
-  asm volatile ("msr     BASEPRI, %0                    \n\t"
-                "cpsie   i" : : "r" (basepri) : "memory");
-#else
-  asm volatile ("cpsie   i" : : : "memory");
+  __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
 #endif
+  __enable_irq();
 }
 
 /**
