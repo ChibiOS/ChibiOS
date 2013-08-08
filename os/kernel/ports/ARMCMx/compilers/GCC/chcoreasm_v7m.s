@@ -47,7 +47,11 @@
 
                 .syntax unified
                 .cpu cortex-m4
+#if CORTEX_USE_FPU
+                .fpu fpv4-sp-d16
+#else
                 .fpu softvfp
+#endif
 
                 .thumb
                 .text
@@ -86,8 +90,12 @@ _port_thread_start:
 #if CH_DBG_STATISTICS
                 bl      _stats_stop_measure_crit_thd
 #endif
+#if !CORTEX_SIMPLIFIED_PRIORITY
                 movs    r3, #0
                 msr     BASEPRI, r3
+#else /* CORTEX_SIMPLIFIED_PRIORITY */
+                cpsie   i
+#endif /* CORTEX_SIMPLIFIED_PRIORITY */
                 mov     r0, r5
                 blx     r4
                 bl      chThdExit
@@ -116,9 +124,9 @@ _port_switch_from_isr:
                 .globl  _port_exit_from_isr
 _port_exit_from_isr:
 #if CORTEX_SIMPLIFIED_PRIORITY
-                mov     r3, #SCB_ICSR :AND: 0xFFFF
-                movt    r3, #SCB_ICSR :SHR: 16
-                mov     r2, #ICSR_PENDSVSET
+                movw    r3, #:lower16:SCB_ICSR
+                movt    r3, #:upper16:SCB_ICSR
+                mov     r2, ICSR_PENDSVSET
                 str     r2, [r3, #0]
                 cpsie   i
 #else /* !CORTEX_SIMPLIFIED_PRIORITY */

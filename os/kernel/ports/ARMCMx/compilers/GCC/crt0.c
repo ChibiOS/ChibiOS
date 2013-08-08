@@ -258,7 +258,7 @@ void _default_exit(void) {
 #if !defined(__DOXYGEN__)
 __attribute__((naked))
 #endif
-void ResetHandler(void) {
+void Reset_Handler(void) {
   uint32_t psp, reg;
 
   /* Process Stack initialization, it is allocated starting from the

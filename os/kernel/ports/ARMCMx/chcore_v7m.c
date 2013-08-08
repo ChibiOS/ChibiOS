@@ -69,9 +69,9 @@ void SVC_Handler(void) {
   ctxp++;
 
 #if CORTEX_USE_FPU
-  /* Restoring the special register SCB_FPCCR.*/
-  SCB_FPCCR = (uint32_t)ctxp->fpccr;
-  SCB_FPCAR = SCB_FPCAR + sizeof (struct extctx);
+  /* Restoring the special register FPCCR.*/
+  FPU->FPCCR = (uint32_t)ctxp->fpccr;
+  FPU->FPCAR = FPU->FPCAR + sizeof (struct extctx);
 #endif
 
   /* Writing back the modified PSP value.*/
@@ -99,9 +99,9 @@ void PendSV_Handler(void) {
   ctxp++;
 
 #if CORTEX_USE_FPU
-  /* Restoring the special register SCB_FPCCR.*/
-  SCB_FPCCR = (uint32_t)ctxp->fpccr;
-  SCB_FPCAR = SCB_FPCAR + sizeof (struct extctx);
+  /* Restoring the special register FPCCR.*/
+  FPU->FPCCR = (uint32_t)ctxp->fpccr;
+  FPU->FPCAR = FPU->FPCAR + sizeof (struct extctx);
 #endif
 
   /* Writing back the modified PSP value.*/
@@ -156,11 +156,11 @@ void _port_irq_epilogue(void) {
 
       /* Saving the special register SCB_FPCCR into the reserved offset of
          the Cortex-M4 exception frame.*/
-      (ctxp + 1)->fpccr = (regarm_t)(fpccr = SCB_FPCCR);
+      (ctxp + 1)->fpccr = (regarm_t)(fpccr = FPU->FPCCR);
 
       /* Now the FPCCR is modified in order to not restore the FPU status
          from the artificial return context.*/
-      SCB_FPCCR = fpccr | FPCCR_LSPACT;
+      FPU->FPCCR = fpccr | FPU_FPCCR_LSPACT_Msk;
     }
 #endif
 

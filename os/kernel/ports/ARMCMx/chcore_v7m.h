@@ -200,17 +200,16 @@
   CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 #else
 
-#define CORTEX_MAX_KERNEL_PRIORITY      1
-#define CORTEX_BASEPRI_KERNEL           0
+#define CORTEX_MAX_KERNEL_PRIORITY      0
 #endif
 
 /**
  * @brief   PendSV priority level.
- * @note    This priority is enforced to be equal to @p CORTEX_BASEPRI_KERNEL,
- *          this handler always have the highest priority that cannot preempt
- *          the kernel.
+ * @note    This priority is enforced to be equal to
+ *          @p CORTEX_MAX_KERNEL_PRIORITY, this handler always have the
+ *          highest priority that cannot preempt the kernel.
  */
-#define CORTEX_PRIORITY_PENDSV          CORTEX_BASEPRI_KERNEL
+#define CORTEX_PRIORITY_PENDSV          CORTEX_MAX_KERNEL_PRIORITY
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -468,7 +467,7 @@ static inline syssts_t port_get_irq_status(void) {
 static inline bool port_irq_enabled(syssts_t sts) {
 
 #if !CORTEX_SIMPLIFIED_PRIORITY
-  return sts >= CORTEX_BASEPRI_KERNEL;
+  return sts == CORTEX_BASEPRI_DISABLED;
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
   return (sts & 1) == 0;
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
