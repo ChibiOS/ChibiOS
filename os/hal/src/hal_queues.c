@@ -41,7 +41,7 @@
 
 #include "hal.h"
 
-#if !defined(_CHIBIOS_RT_) || !CH_USE_QUEUES || defined(__DOXYGEN__)
+#if !defined(_CHIBIOS_RT_) || !CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
 
 /**
  * @brief   Initializes an input queue.

@@ -31,7 +31,7 @@
 
 /* The ChibiOS/RT kernel provides the following definitions by itself, this
    check is performed in order to avoid conflicts. */
-#if !defined(_CHIBIOS_RT_) || !CH_USE_QUEUES
+#if !defined(_CHIBIOS_RT_) || !CH_CFG_USE_QUEUES
 
 /**
  * @name    Queue functions returned status value
