@@ -66,9 +66,9 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../..
 include $(CHIBIOS)/boards/ST_STM32F3_DISCOVERY/board.mk
-include $(CHIBIOS)/os/halnew/hal.mk
-include $(CHIBIOS)/os/halnew/osal/chibios/osal.mk
-include $(CHIBIOS)/os/halnew/platforms/STM32F30x/platform.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/osal/chibios/osal.mk
+include $(CHIBIOS)/os/hal/platforms/STM32F30x/platform.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/os/kernel/ports/ARMCMx/devices/STM32F30x/port.mk
 include $(CHIBIOS)/test/test.mk
