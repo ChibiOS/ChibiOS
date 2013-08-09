@@ -121,18 +121,6 @@
 #endif
 
 /**
- * @brief   SYSTICK handler priority.
- * @note    The default SYSTICK handler priority is calculated as the priority
- *          level in the middle of the numeric priorities range.
- */
-#if !defined(CORTEX_PRIORITY_SYSTICK)
-#define CORTEX_PRIORITY_SYSTICK         (CORTEX_PRIORITY_LEVELS >> 1)
-#elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
-/* If it is externally redefined then better perform a validity check on it.*/
-#error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
-#endif
-
-/**
  * @brief   FPU support in context switch.
  * @details Activating this option activates the FPU support in the kernel.
  */
@@ -147,6 +135,8 @@
 /**
  * @brief   Simplified priority handling flag.
  * @details Activating this option makes the Kernel work in compact mode.
+ *          In compact mode interrupts are disabled globally instead of
+ *          raising the priority mask to some intermediate level.
  */
 #if !defined(CORTEX_SIMPLIFIED_PRIORITY)
 #define CORTEX_SIMPLIFIED_PRIORITY      FALSE
@@ -194,7 +184,6 @@
 
 /**
  * @brief   BASEPRI level within kernel lock.
- * @note    In compact kernel mode this constant value is enforced to zero.
  */
 #define CORTEX_BASEPRI_KERNEL                                               \
   CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
@@ -382,7 +371,7 @@ struct context {
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \
-  register struct intctx *r13 asm ("r13");                                  \
+  struct intctx *r13 = __get_PSP();                                         \
   if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
     chDbgPanic("stack overflow");                                           \
   _port_switch(ntp, otp);                                                   \
