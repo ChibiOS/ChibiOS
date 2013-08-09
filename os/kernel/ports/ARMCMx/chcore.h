@@ -43,9 +43,20 @@
 #define CH_ARCHITECTURE_ARM
 
 /**
- * @brief   Name of the compiler supported by this port.
+ * @brief   Compiler name and version.
  */
+#if defined(__GNUC__) || defined(__DOXYGEN__)
 #define CH_COMPILER_NAME                "GCC " __VERSION__
+
+#elif defined(__ICCARM__)
+#define CH_COMPILER_NAME                "IAR"
+
+#elif defined(__CC_ARM)
+#define CH_COMPILER_NAME                "RVCT"
+
+#else
+#error "unsupported compiler"
+#endif
 /** @} */
 
 /**
