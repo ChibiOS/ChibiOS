@@ -47,10 +47,10 @@
 /**
  * @brief   Type of a generic I/O queue structure.
  */
-typedef struct GenericQueue GenericQueue;
+typedef struct io_queue_t io_queue_t;
 
 /** @brief Queue notification callback type.*/
-typedef void (*qnotify_t)(GenericQueue *qp);
+typedef void (*qnotify_t)(io_queue_t *qp);
 
 /**
  * @brief   Generic I/O queue structure.
@@ -61,7 +61,7 @@ typedef void (*qnotify_t)(GenericQueue *qp);
  *          lock zone (see <b>I-Locked</b> and <b>S-Locked</b> states in
  *          @ref system_states) and is non-blocking.
  */
-struct GenericQueue {
+struct io_queue_t {
   threads_queue_t       q_waiting;  /**< @brief Waiting thread.             */
   size_t                q_counter;  /**< @brief Resources counter.          */
   uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
@@ -80,7 +80,7 @@ struct GenericQueue {
 /**
  * @brief   Returns the queue's buffer size.
  *
- * @param[in] qp        pointer to a @p GenericQueue structure.
+ * @param[in] qp        pointer to a @p io_queue_t structure.
  * @return              The buffer size.
  *
  * @iclass
@@ -92,7 +92,7 @@ struct GenericQueue {
  * @details Returns the used space if used on an input queue or the empty
  *          space if used on an output queue.
  *
- * @param[in] qp        pointer to a @p GenericQueue structure.
+ * @param[in] qp        pointer to a @p io_queue_t structure.
  * @return              The buffer space.
  *
  * @iclass
@@ -103,7 +103,7 @@ struct GenericQueue {
  * @brief   Returns the queue application-defined link.
  * @note    This function can be called in any context.
  *
- * @param[in] qp        pointer to a @p GenericQueue structure.
+ * @param[in] qp        pointer to a @p io_queue_t structure.
  * @return              The application-defined link.
  *
  * @special
@@ -112,7 +112,7 @@ struct GenericQueue {
 /** @} */
 
 /**
- * @extends GenericQueue
+ * @extends io_queue_t
  *
  * @brief   Type of an input queue structure.
  * @details This structure represents a generic asymmetrical input queue.
@@ -122,7 +122,7 @@ struct GenericQueue {
  *          Reading the queue can be a blocking operation and is supposed to
  *          be performed by a system thread.
  */
-typedef GenericQueue InputQueue;
+typedef io_queue_t input_queue_t;
 
 /**
  * @name    Macro Functions
@@ -131,7 +131,7 @@ typedef GenericQueue InputQueue;
 /**
  * @brief   Returns the filled space into an input queue.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @return              The number of full bytes in the queue.
  * @retval 0            if the queue is empty.
  *
@@ -142,7 +142,7 @@ typedef GenericQueue InputQueue;
 /**
  * @brief   Returns the empty space into an input queue.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @return              The number of empty bytes in the queue.
  * @retval 0            if the queue is full.
  *
@@ -153,7 +153,7 @@ typedef GenericQueue InputQueue;
 /**
  * @brief   Evaluates to @p TRUE if the specified input queue is empty.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure.
+ * @param[in] iqp       pointer to an @p input_queue_t structure.
  * @return              The queue status.
  * @retval FALSE        if the queue is not empty.
  * @retval TRUE         if the queue is empty.
@@ -165,7 +165,7 @@ typedef GenericQueue InputQueue;
 /**
  * @brief   Evaluates to @p TRUE if the specified input queue is full.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure.
+ * @param[in] iqp       pointer to an @p input_queue_t structure.
  * @return              The queue status.
  * @retval FALSE        if the queue is not full.
  * @retval TRUE         if the queue is full.
@@ -181,7 +181,7 @@ typedef GenericQueue InputQueue;
  *          is empty then the calling thread is suspended until a byte arrives
  *          in the queue.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @return              A byte value from the queue.
  * @retval Q_RESET      if the queue has been reset.
  *
@@ -224,10 +224,10 @@ typedef GenericQueue InputQueue;
  * @param[in] link      application defined pointer
  */
 #define INPUTQUEUE_DECL(name, buffer, size, inotify, link)                  \
-  InputQueue name = _INPUTQUEUE_DATA(name, buffer, size, inotify, link)
+  input_queue_t name = _INPUTQUEUE_DATA(name, buffer, size, inotify, link)
 
 /**
- * @extends GenericQueue
+ * @extends io_queue_t
  *
  * @brief   Type of an output queue structure.
  * @details This structure represents a generic asymmetrical output queue.
@@ -237,7 +237,7 @@ typedef GenericQueue InputQueue;
  *          Writing the queue can be a blocking operation and is supposed to
  *          be performed by a system thread.
  */
-typedef GenericQueue OutputQueue;
+typedef io_queue_t output_queue_t;
 
 /**
  * @name    Macro Functions
@@ -246,7 +246,7 @@ typedef GenericQueue OutputQueue;
 /**
  * @brief   Returns the filled space into an output queue.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @return              The number of full bytes in the queue.
  * @retval 0            if the queue is empty.
  *
@@ -257,7 +257,7 @@ typedef GenericQueue OutputQueue;
 /**
  * @brief   Returns the empty space into an output queue.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @return              The number of empty bytes in the queue.
  * @retval 0            if the queue is full.
  *
@@ -268,7 +268,7 @@ typedef GenericQueue OutputQueue;
 /**
  * @brief   Evaluates to @p TRUE if the specified output queue is empty.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure.
+ * @param[in] oqp       pointer to an @p output_queue_t structure.
  * @return              The queue status.
  * @retval FALSE        if the queue is not empty.
  * @retval TRUE         if the queue is empty.
@@ -281,7 +281,7 @@ typedef GenericQueue OutputQueue;
 /**
  * @brief   Evaluates to @p TRUE if the specified output queue is full.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure.
+ * @param[in] oqp       pointer to an @p output_queue_t structure.
  * @return              The queue status.
  * @retval FALSE        if the queue is not full.
  * @retval TRUE         if the queue is full.
@@ -296,7 +296,7 @@ typedef GenericQueue OutputQueue;
  *          is full then the calling thread is suspended until there is space
  *          in the queue.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[in] b         the byte value to be written in the queue
  * @return              The operation status.
  * @retval Q_OK         if the operation succeeded.
@@ -341,25 +341,25 @@ typedef GenericQueue OutputQueue;
  * @param[in] link      application defined pointer
  */
 #define OUTPUTQUEUE_DECL(name, buffer, size, onotify, link)                 \
-  OutputQueue name = _OUTPUTQUEUE_DATA(name, buffer, size, onotify, link)
+  output_queue_t name = _OUTPUTQUEUE_DATA(name, buffer, size, onotify, link)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void iqObjectInit(InputQueue *iqp, uint8_t *bp, size_t size,
+  void iqObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
                     qnotify_t infy, void *link);
-  void iqResetI(InputQueue *iqp);
-  msg_t iqPutI(InputQueue *iqp, uint8_t b);
-  msg_t iqGetTimeout(InputQueue *iqp, systime_t time);
-  size_t iqReadTimeout(InputQueue *iqp, uint8_t *bp,
+  void iqResetI(input_queue_t *iqp);
+  msg_t iqPutI(input_queue_t *iqp, uint8_t b);
+  msg_t iqGetTimeout(input_queue_t *iqp, systime_t time);
+  size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
                        size_t n, systime_t time);
 
-  void oqObjectInit(OutputQueue *oqp, uint8_t *bp, size_t size,
+  void oqObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
                     qnotify_t onfy, void *link);
-  void oqResetI(OutputQueue *oqp);
-  msg_t oqPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time);
-  msg_t oqGetI(OutputQueue *oqp);
-  size_t oqWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
+  void oqResetI(output_queue_t *oqp);
+  msg_t oqPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time);
+  msg_t oqGetI(output_queue_t *oqp);
+  size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
                         size_t n, systime_t time);
 #ifdef __cplusplus
 }

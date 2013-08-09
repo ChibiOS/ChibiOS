@@ -50,7 +50,7 @@
  * @note    The callback is invoked from within the S-Locked system state,
  *          see @ref system_states.
  *
- * @param[out] iqp      pointer to an @p InputQueue structure
+ * @param[out] iqp      pointer to an @p input_queue_t structure
  * @param[in] bp        pointer to a memory area allocated as queue buffer
  * @param[in] size      size of the queue buffer
  * @param[in] infy      pointer to a callback function that is invoked when
@@ -59,7 +59,7 @@
  *
  * @init
  */
-void iqObjectInit(InputQueue *iqp, uint8_t *bp, size_t size,
+void iqObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
                   qnotify_t infy, void *link) {
 
   osalQueueObjectInit(&iqp->q_waiting);
@@ -77,11 +77,11 @@ void iqObjectInit(InputQueue *iqp, uint8_t *bp, size_t size,
  * @note    A reset operation can be used by a low level driver in order to
  *          obtain immediate attention from the high level layers.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  *
  * @iclass
  */
-void iqResetI(InputQueue *iqp) {
+void iqResetI(input_queue_t *iqp) {
 
   osalDbgCheckClassI();
 
@@ -94,7 +94,7 @@ void iqResetI(InputQueue *iqp) {
  * @brief   Input queue write.
  * @details A byte value is written into the low end of an input queue.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[in] b         the byte value to be written in the queue
  * @return              The operation status.
  * @retval Q_OK         if the operation has been completed with success.
@@ -103,7 +103,7 @@ void iqResetI(InputQueue *iqp) {
  *
  * @iclass
  */
-msg_t iqPutI(InputQueue *iqp, uint8_t b) {
+msg_t iqPutI(input_queue_t *iqp, uint8_t b) {
 
   osalDbgCheckClassI();
 
@@ -128,7 +128,7 @@ msg_t iqPutI(InputQueue *iqp, uint8_t b) {
  * @note    The callback is invoked before reading the character from the
  *          buffer or before entering the state @p THD_STATE_WTQUEUE.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -140,7 +140,7 @@ msg_t iqPutI(InputQueue *iqp, uint8_t b) {
  *
  * @api
  */
-msg_t iqGetTimeout(InputQueue *iqp, systime_t time) {
+msg_t iqGetTimeout(input_queue_t *iqp, systime_t time) {
   uint8_t b;
 
   osalSysLock();
@@ -175,7 +175,7 @@ msg_t iqGetTimeout(InputQueue *iqp, systime_t time) {
  * @note    The callback is invoked before reading each character from the
  *          buffer or before entering the state @p THD_STATE_WTQUEUE.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[out] bp       pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
@@ -188,8 +188,8 @@ msg_t iqGetTimeout(InputQueue *iqp, systime_t time) {
  *
  * @api
  */
-size_t iqReadTimeout(InputQueue *iqp, uint8_t *bp,
-                       size_t n, systime_t time) {
+size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
+                     size_t n, systime_t time) {
   qnotify_t nfy = iqp->q_notify;
   size_t r = 0;
 
@@ -228,7 +228,7 @@ size_t iqReadTimeout(InputQueue *iqp, uint8_t *bp,
  * @note    The callback is invoked from within the S-Locked system state,
  *          see @ref system_states.
  *
- * @param[out] oqp      pointer to an @p OutputQueue structure
+ * @param[out] oqp      pointer to an @p output_queue_t structure
  * @param[in] bp        pointer to a memory area allocated as queue buffer
  * @param[in] size      size of the queue buffer
  * @param[in] onfy      pointer to a callback function that is invoked when
@@ -237,7 +237,7 @@ size_t iqReadTimeout(InputQueue *iqp, uint8_t *bp,
  *
  * @init
  */
-void oqObjectInit(OutputQueue *oqp, uint8_t *bp, size_t size,
+void oqObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
                   qnotify_t onfy, void *link) {
 
   osalQueueObjectInit(&oqp->q_waiting);
@@ -255,11 +255,11 @@ void oqObjectInit(OutputQueue *oqp, uint8_t *bp, size_t size,
  * @note    A reset operation can be used by a low level driver in order to
  *          obtain immediate attention from the high level layers.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  *
  * @iclass
  */
-void oqResetI(OutputQueue *oqp) {
+void oqResetI(output_queue_t *oqp) {
 
   osalDbgCheckClassI();
 
@@ -276,7 +276,7 @@ void oqResetI(OutputQueue *oqp) {
  * @note    The callback is invoked after writing the character into the
  *          buffer.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[in] b         the byte value to be written in the queue
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -290,7 +290,7 @@ void oqResetI(OutputQueue *oqp) {
  *
  * @api
  */
-msg_t oqPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
+msg_t oqPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time) {
 
   osalSysLock();
   while (oqIsFullI(oqp)) {
@@ -318,13 +318,13 @@ msg_t oqPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
  * @brief   Output queue read.
  * @details A byte value is read from the low end of an output queue.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @return              The byte value from the queue.
  * @retval Q_EMPTY      if the queue is empty.
  *
  * @iclass
  */
-msg_t oqGetI(OutputQueue *oqp) {
+msg_t oqGetI(output_queue_t *oqp) {
   uint8_t b;
 
   osalDbgCheckClassI();
@@ -353,7 +353,7 @@ msg_t oqGetI(OutputQueue *oqp) {
  * @note    The callback is invoked after writing each character into the
  *          buffer.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[out] bp       pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
@@ -366,8 +366,8 @@ msg_t oqGetI(OutputQueue *oqp) {
  *
  * @api
  */
-size_t oqWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
-                        size_t n, systime_t time) {
+size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
+                      size_t n, systime_t time) {
   qnotify_t nfy = oqp->q_notify;
   size_t w = 0;
 
