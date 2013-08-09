@@ -671,7 +671,7 @@ static void bmk13_execute(void) {
 #endif
 #if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
   test_print("--- Queue : ");
-  test_printn(sizeof(GenericQueue));
+  test_printn(sizeof(io_queue_t));
   test_println(" bytes");
 #endif
 #if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)

@@ -190,7 +190,7 @@ static void serve_interrupt(SerialDriver *sdp) {
 }
 
 #if STM32_SERIAL_USE_USART1 || defined(__DOXYGEN__)
-static void notify1(GenericQueue *qp) {
+static void notify1(io_queue_t *qp) {
 
   (void)qp;
   USART1->CR1 |= USART_CR1_TXEIE;
@@ -198,7 +198,7 @@ static void notify1(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_USART2 || defined(__DOXYGEN__)
-static void notify2(GenericQueue *qp) {
+static void notify2(io_queue_t *qp) {
 
   (void)qp;
   USART2->CR1 |= USART_CR1_TXEIE;
@@ -206,7 +206,7 @@ static void notify2(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_USART3 || defined(__DOXYGEN__)
-static void notify3(GenericQueue *qp) {
+static void notify3(io_queue_t *qp) {
 
   (void)qp;
   USART3->CR1 |= USART_CR1_TXEIE;
@@ -214,7 +214,7 @@ static void notify3(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_UART4 || defined(__DOXYGEN__)
-static void notify4(GenericQueue *qp) {
+static void notify4(io_queue_t *qp) {
 
   (void)qp;
   UART4->CR1 |= USART_CR1_TXEIE;
@@ -222,7 +222,7 @@ static void notify4(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_UART5 || defined(__DOXYGEN__)
-static void notify5(GenericQueue *qp) {
+static void notify5(io_queue_t *qp) {
 
   (void)qp;
   UART5->CR1 |= USART_CR1_TXEIE;
@@ -230,7 +230,7 @@ static void notify5(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
-static void notify6(GenericQueue *qp) {
+static void notify6(io_queue_t *qp) {
 
   (void)qp;
   USART6->CR1 |= USART_CR1_TXEIE;

@@ -59,8 +59,8 @@
  *
  * @init
  */
-void iqInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy,
-            void *link) {
+void iqObjectInit(InputQueue *iqp, uint8_t *bp, size_t size,
+                  qnotify_t infy, void *link) {
 
   osalQueueObjectInit(&iqp->q_waiting);
   iqp->q_counter = 0;
@@ -237,8 +237,8 @@ size_t iqReadTimeout(InputQueue *iqp, uint8_t *bp,
  *
  * @init
  */
-void oqInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy,
-              void *link) {
+void oqObjectInit(OutputQueue *oqp, uint8_t *bp, size_t size,
+                  qnotify_t onfy, void *link) {
 
   osalQueueObjectInit(&oqp->q_waiting);
   oqp->q_counter = size;

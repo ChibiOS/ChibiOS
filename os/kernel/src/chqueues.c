@@ -45,10 +45,30 @@
 
 #if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Module local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
 /**
  * @brief   Puts the invoking thread into the queue's threads queue.
  *
- * @param[out] qp       pointer to an @p GenericQueue structure
+ * @param[out] qp       pointer to an @p io_queue_t structure
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -60,7 +80,7 @@
  * @retval Q_RESET      if the queue has been reset.
  * @retval Q_TIMEOUT    if the queue operation timed out.
  */
-static msg_t qwait(GenericQueue *qp, systime_t time) {
+static msg_t qwait(io_queue_t *qp, systime_t time) {
 
   if (TIME_IMMEDIATE == time)
     return Q_TIMEOUT;
@@ -69,6 +89,10 @@ static msg_t qwait(GenericQueue *qp, systime_t time) {
   return chSchGoSleepTimeoutS(CH_STATE_WTQUEUE, time);
 }
 
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
 /**
  * @brief   Initializes an input queue.
  * @details A Semaphore is internally initialized and works as a counter of
@@ -76,7 +100,7 @@ static msg_t qwait(GenericQueue *qp, systime_t time) {
  * @note    The callback is invoked from within the S-Locked system state,
  *          see @ref system_states.
  *
- * @param[out] iqp      pointer to an @p InputQueue structure
+ * @param[out] iqp      pointer to an @p input_queue_t structure
  * @param[in] bp        pointer to a memory area allocated as queue buffer
  * @param[in] size      size of the queue buffer
  * @param[in] infy      pointer to a callback function that is invoked when
@@ -85,8 +109,8 @@ static msg_t qwait(GenericQueue *qp, systime_t time) {
  *
  * @init
  */
-void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy,
-              void *link) {
+void chIQObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
+                    qnotify_t infy, void *link) {
 
   queue_init(&iqp->q_waiting);
   iqp->q_counter = 0;
@@ -103,11 +127,11 @@ void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy,
  * @note    A reset operation can be used by a low level driver in order to
  *          obtain immediate attention from the high level layers.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  *
  * @iclass
  */
-void chIQResetI(InputQueue *iqp) {
+void chIQResetI(input_queue_t *iqp) {
 
   chDbgCheckClassI();
 
@@ -121,7 +145,7 @@ void chIQResetI(InputQueue *iqp) {
  * @brief   Input queue write.
  * @details A byte value is written into the low end of an input queue.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[in] b         the byte value to be written in the queue
  * @return              The operation status.
  * @retval Q_OK         if the operation has been completed with success.
@@ -130,7 +154,7 @@ void chIQResetI(InputQueue *iqp) {
  *
  * @iclass
  */
-msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
+msg_t chIQPutI(input_queue_t *iqp, uint8_t b) {
 
   chDbgCheckClassI();
 
@@ -156,7 +180,7 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  * @note    The callback is invoked before reading the character from the
  *          buffer or before entering the state @p CH_STATE_WTQUEUE.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -168,7 +192,7 @@ msg_t chIQPutI(InputQueue *iqp, uint8_t b) {
  *
  * @api
  */
-msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
+msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
   uint8_t b;
 
   chSysLock();
@@ -177,7 +201,7 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
 
   while (chIQIsEmptyI(iqp)) {
     msg_t msg;
-    if ((msg = qwait((GenericQueue *)iqp, time)) < Q_OK) {
+    if ((msg = qwait((io_queue_t *)iqp, time)) < Q_OK) {
       chSysUnlock();
       return msg;
     }
@@ -203,7 +227,7 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
  * @note    The callback is invoked before reading each character from the
  *          buffer or before entering the state @p CH_STATE_WTQUEUE.
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[out] bp       pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
@@ -216,7 +240,7 @@ msg_t chIQGetTimeout(InputQueue *iqp, systime_t time) {
  *
  * @api
  */
-size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
+size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
                        size_t n, systime_t time) {
   qnotify_t nfy = iqp->q_notify;
   size_t r = 0;
@@ -229,7 +253,7 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
       nfy(iqp);
 
     while (chIQIsEmptyI(iqp)) {
-      if (qwait((GenericQueue *)iqp, time) != Q_OK) {
+      if (qwait((io_queue_t *)iqp, time) != Q_OK) {
         chSysUnlock();
         return r;
       }
@@ -256,7 +280,7 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
  * @note    The callback is invoked from within the S-Locked system state,
  *          see @ref system_states.
  *
- * @param[out] oqp      pointer to an @p OutputQueue structure
+ * @param[out] oqp      pointer to an @p output_queue_t structure
  * @param[in] bp        pointer to a memory area allocated as queue buffer
  * @param[in] size      size of the queue buffer
  * @param[in] onfy      pointer to a callback function that is invoked when
@@ -265,8 +289,8 @@ size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
  *
  * @init
  */
-void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy,
-              void *link) {
+void chOQObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
+                    qnotify_t onfy, void *link) {
 
   queue_init(&oqp->q_waiting);
   oqp->q_counter = size;
@@ -283,11 +307,11 @@ void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy,
  * @note    A reset operation can be used by a low level driver in order to
  *          obtain immediate attention from the high level layers.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  *
  * @iclass
  */
-void chOQResetI(OutputQueue *oqp) {
+void chOQResetI(output_queue_t *oqp) {
 
   chDbgCheckClassI();
 
@@ -305,7 +329,7 @@ void chOQResetI(OutputQueue *oqp) {
  * @note    The callback is invoked after writing the character into the
  *          buffer.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[in] b         the byte value to be written in the queue
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -319,13 +343,13 @@ void chOQResetI(OutputQueue *oqp) {
  *
  * @api
  */
-msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
+msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time) {
 
   chSysLock();
   while (chOQIsFullI(oqp)) {
     msg_t msg;
 
-    if ((msg = qwait((GenericQueue *)oqp, time)) < Q_OK) {
+    if ((msg = qwait((io_queue_t *)oqp, time)) < Q_OK) {
       chSysUnlock();
       return msg;
     }
@@ -347,13 +371,13 @@ msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time) {
  * @brief   Output queue read.
  * @details A byte value is read from the low end of an output queue.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @return              The byte value from the queue.
  * @retval Q_EMPTY      if the queue is empty.
  *
  * @iclass
  */
-msg_t chOQGetI(OutputQueue *oqp) {
+msg_t chOQGetI(output_queue_t *oqp) {
   uint8_t b;
 
   chDbgCheckClassI();
@@ -383,7 +407,7 @@ msg_t chOQGetI(OutputQueue *oqp) {
  * @note    The callback is invoked after writing each character into the
  *          buffer.
  *
- * @param[in] oqp       pointer to an @p OutputQueue structure
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[out] bp       pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
@@ -396,7 +420,7 @@ msg_t chOQGetI(OutputQueue *oqp) {
  *
  * @api
  */
-size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
+size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
                         size_t n, systime_t time) {
   qnotify_t nfy = oqp->q_notify;
   size_t w = 0;
@@ -406,7 +430,7 @@ size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
   chSysLock();
   while (true) {
     while (chOQIsFullI(oqp)) {
-      if (qwait((GenericQueue *)oqp, time) != Q_OK) {
+      if (qwait((io_queue_t *)oqp, time) != Q_OK) {
         chSysUnlock();
         return w;
       }

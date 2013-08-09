@@ -54,7 +54,7 @@
 
 #define TEST_QUEUES_SIZE 4
 
-static void notify(GenericQueue *qp) {
+static void notify(io_queue_t *qp) {
   (void)qp;
 }
 
@@ -77,7 +77,7 @@ static OUTPUTQUEUE_DECL(oq, test.wa.T1, TEST_QUEUES_SIZE, notify, NULL);
 
 static void queues1_setup(void) {
 
-  chIQInit(&iq, wa[0], TEST_QUEUES_SIZE, notify, NULL);
+  chIQObjectInit(&iq, wa[0], TEST_QUEUES_SIZE, notify, NULL);
 }
 
 static msg_t thread1(void *p) {
@@ -164,7 +164,7 @@ ROMCONST struct testcase testqueues1 = {
 
 static void queues2_setup(void) {
 
-  chOQInit(&oq, wa[0], TEST_QUEUES_SIZE, notify, NULL);
+  chOQObjectInit(&oq, wa[0], TEST_QUEUES_SIZE, notify, NULL);
 }
 
 static msg_t thread2(void *p) {

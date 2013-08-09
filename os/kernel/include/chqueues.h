@@ -31,6 +31,10 @@
 
 #if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
+
 /**
  * @name    Queue functions returned status value
  * @{
@@ -42,13 +46,25 @@
 #define Q_FULL          -4          /**< @brief Queue full,                 */
 /** @} */
 
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
 /**
  * @brief   Type of a generic I/O queue structure.
  */
-typedef struct GenericQueue GenericQueue;
+typedef struct io_queue io_queue_t;
 
 /** @brief Queue notification callback type.*/
-typedef void (*qnotify_t)(GenericQueue *qp);
+typedef void (*qnotify_t)(io_queue_t *qp);
 
 /**
  * @brief   Generic I/O queue structure.
@@ -59,7 +75,7 @@ typedef void (*qnotify_t)(GenericQueue *qp);
  *          lock zone (see <b>I-Locked</b> and <b>S-Locked</b> states in
  *          @ref system_states) and is non-blocking.
  */
-struct GenericQueue {
+struct io_queue {
   threads_queue_t       q_waiting;  /**< @brief Queue of waiting threads.   */
   size_t                q_counter;  /**< @brief Resources counter.          */
   uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
@@ -72,45 +88,7 @@ struct GenericQueue {
 };
 
 /**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Returns the queue's buffer size.
- *
- * @param[in] qp        pointer to a @p GenericQueue structure.
- * @return              The buffer size.
- *
- * @iclass
- */
-#define chQSizeI(qp) ((size_t)((qp)->q_top - (qp)->q_buffer))
-
-/**
- * @brief   Queue space.
- * @details Returns the used space if used on an input queue or the empty
- *          space if used on an output queue.
- *
- * @param[in] qp        pointer to a @p GenericQueue structure.
- * @return              The buffer space.
- *
- * @iclass
- */
-#define chQSpaceI(qp) ((qp)->q_counter)
-
-/**
- * @brief   Returns the queue application-defined link.
- * @note    This function can be called in any context.
- *
- * @param[in] qp        pointer to a @p GenericQueue structure.
- * @return              The application-defined link.
- *
- * @special
- */
-#define chQGetLink(qp) ((qp)->q_link)
-/** @} */
-
-/**
- * @extends GenericQueue
+ * @extends io_queue_t
  *
  * @brief   Type of an input queue structure.
  * @details This structure represents a generic asymmetrical input queue.
@@ -120,73 +98,24 @@ struct GenericQueue {
  *          Reading the queue can be a blocking operation and is supposed to
  *          be performed by a system thread.
  */
-typedef GenericQueue InputQueue;
+typedef io_queue_t input_queue_t;
 
 /**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Returns the filled space into an input queue.
+ * @extends io_queue_t
  *
- * @param[in] iqp       pointer to an @p InputQueue structure
- * @return              The number of full bytes in the queue.
- * @retval 0            if the queue is empty.
- *
- * @iclass
+ * @brief   Type of an output queue structure.
+ * @details This structure represents a generic asymmetrical output queue.
+ *          Reading from the queue is non-blocking and can be performed from
+ *          interrupt handlers or from within a kernel lock zone (see
+ *          <b>I-Locked</b> and <b>S-Locked</b> states in @ref system_states).
+ *          Writing the queue can be a blocking operation and is supposed to
+ *          be performed by a system thread.
  */
-#define chIQGetFullI(iqp) chQSpaceI(iqp)
+typedef io_queue_t output_queue_t;
 
-/**
- * @brief   Returns the empty space into an input queue.
- *
- * @param[in] iqp       pointer to an @p InputQueue structure
- * @return              The number of empty bytes in the queue.
- * @retval 0            if the queue is full.
- *
- * @iclass
- */
-#define chIQGetEmptyI(iqp) (chQSizeI(iqp) - chQSpaceI(iqp))
-
-/**
- * @brief   Evaluates to @p true if the specified input queue is empty.
- *
- * @param[in] iqp       pointer to an @p InputQueue structure.
- * @return              The queue status.
- * @retval false        if the queue is not empty.
- * @retval true         if the queue is empty.
- *
- * @iclass
- */
-#define chIQIsEmptyI(iqp) ((bool_t)(chQSpaceI(iqp) <= 0))
-
-/**
- * @brief   Evaluates to @p true if the specified input queue is full.
- *
- * @param[in] iqp       pointer to an @p InputQueue structure.
- * @return              The queue status.
- * @retval false        if the queue is not full.
- * @retval true         if the queue is full.
- *
- * @iclass
- */
-#define chIQIsFullI(iqp) ((bool_t)(((iqp)->q_wrptr == (iqp)->q_rdptr) &&   \
-                                   ((iqp)->q_counter != 0)))
-
-/**
- * @brief   Input queue read.
- * @details This function reads a byte value from an input queue. If the queue
- *          is empty then the calling thread is suspended until a byte arrives
- *          in the queue.
- *
- * @param[in] iqp       pointer to an @p InputQueue structure
- * @return              A byte value from the queue.
- * @retval Q_RESET      if the queue has been reset.
- *
- * @api
- */
-#define chIQGet(iqp) chIQGetTimeout(iqp, TIME_INFINITE)
-/** @} */
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief   Data part of a static input queue initializer.
@@ -200,7 +129,7 @@ typedef GenericQueue InputQueue;
  * @param[in] link      application defined pointer
  */
 #define _INPUTQUEUE_DATA(name, buffer, size, inotify, link) {               \
-  _threads_queue_t_DATA(name),                                                 \
+  _threads_queue_t_DATA(name),                                              \
   0,                                                                        \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + (size),                                             \
@@ -222,88 +151,7 @@ typedef GenericQueue InputQueue;
  * @param[in] link      application defined pointer
  */
 #define INPUTQUEUE_DECL(name, buffer, size, inotify, link)                  \
-  InputQueue name = _INPUTQUEUE_DATA(name, buffer, size, inotify, link)
-
-/**
- * @extends GenericQueue
- *
- * @brief   Type of an output queue structure.
- * @details This structure represents a generic asymmetrical output queue.
- *          Reading from the queue is non-blocking and can be performed from
- *          interrupt handlers or from within a kernel lock zone (see
- *          <b>I-Locked</b> and <b>S-Locked</b> states in @ref system_states).
- *          Writing the queue can be a blocking operation and is supposed to
- *          be performed by a system thread.
- */
-typedef GenericQueue OutputQueue;
-
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Returns the filled space into an output queue.
- *
- * @param[in] oqp       pointer to an @p OutputQueue structure
- * @return              The number of full bytes in the queue.
- * @retval 0            if the queue is empty.
- *
- * @iclass
- */
-#define chOQGetFullI(oqp) (chQSizeI(oqp) - chQSpaceI(oqp))
-
-/**
- * @brief   Returns the empty space into an output queue.
- *
- * @param[in] oqp       pointer to an @p OutputQueue structure
- * @return              The number of empty bytes in the queue.
- * @retval 0            if the queue is full.
- *
- * @iclass
- */
-#define chOQGetEmptyI(oqp) chQSpaceI(oqp)
-
-/**
- * @brief   Evaluates to @p true if the specified output queue is empty.
- *
- * @param[in] oqp       pointer to an @p OutputQueue structure.
- * @return              The queue status.
- * @retval false        if the queue is not empty.
- * @retval true         if the queue is empty.
- *
- * @iclass
- */
-#define chOQIsEmptyI(oqp) ((bool_t)(((oqp)->q_wrptr == (oqp)->q_rdptr) &&   \
-                                    ((oqp)->q_counter != 0)))
-
-/**
- * @brief   Evaluates to @p true if the specified output queue is full.
- *
- * @param[in] oqp       pointer to an @p OutputQueue structure.
- * @return              The queue status.
- * @retval false        if the queue is not full.
- * @retval true         if the queue is full.
- *
- * @iclass
- */
-#define chOQIsFullI(oqp) ((bool_t)(chQSpaceI(oqp) <= 0))
-
-/**
- * @brief   Output queue write.
- * @details This function writes a byte value to an output queue. If the queue
- *          is full then the calling thread is suspended until there is space
- *          in the queue.
- *
- * @param[in] oqp       pointer to an @p OutputQueue structure
- * @param[in] b         the byte value to be written in the queue
- * @return              The operation status.
- * @retval Q_OK         if the operation succeeded.
- * @retval Q_RESET      if the queue has been reset.
- *
- * @api
- */
-#define chOQPut(oqp, b) chOQPutTimeout(oqp, b, TIME_INFINITE)
- /** @} */
+  input_queue_t name = _INPUTQUEUE_DATA(name, buffer, size, inotify, link)
 
 /**
  * @brief   Data part of a static output queue initializer.
@@ -317,7 +165,7 @@ typedef GenericQueue OutputQueue;
  * @param[in] link      application defined pointer
  */
 #define _OUTPUTQUEUE_DATA(name, buffer, size, onotify, link) {              \
-  _threads_queue_t_DATA(name),                                                 \
+  _threads_queue_t_DATA(name),                                              \
   (size),                                                                   \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + (size),                                             \
@@ -339,29 +187,242 @@ typedef GenericQueue OutputQueue;
  * @param[in] link      application defined pointer
  */
 #define OUTPUTQUEUE_DECL(name, buffer, size, onotify, link)                 \
-  OutputQueue name = _OUTPUTQUEUE_DATA(name, buffer, size, onotify, link)
+  output_queue_t name = _OUTPUTQUEUE_DATA(name, buffer, size, onotify, link)
+
+/**
+ * @name    Macro Functions
+ * @{
+ */
+/**
+ * @brief   Returns the queue's buffer size.
+ *
+ * @param[in] qp        pointer to a @p io_queue_t structure.
+ * @return              The buffer size.
+ *
+ * @iclass
+ */
+#define chQSizeI(qp) ((size_t)((qp)->q_top - (qp)->q_buffer))
+
+/**
+ * @brief   Queue space.
+ * @details Returns the used space if used on an input queue or the empty
+ *          space if used on an output queue.
+ *
+ * @param[in] qp        pointer to a @p io_queue_t structure.
+ * @return              The buffer space.
+ *
+ * @iclass
+ */
+#define chQSpaceI(qp) ((qp)->q_counter)
+
+/**
+ * @brief   Returns the queue application-defined link.
+ *
+ * @param[in] qp        pointer to a @p io_queue_t structure.
+ * @return              The application-defined link.
+ *
+ * @xclass
+ */
+#define chQGetLinkX(qp) ((qp)->q_link)
+/** @} */
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chIQInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy,
-                void *link);
-  void chIQResetI(InputQueue *iqp);
-  msg_t chIQPutI(InputQueue *iqp, uint8_t b);
-  msg_t chIQGetTimeout(InputQueue *iqp, systime_t time);
-  size_t chIQReadTimeout(InputQueue *iqp, uint8_t *bp,
+  void chIQObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
+                      qnotify_t infy, void *link);
+  void chIQResetI(input_queue_t *iqp);
+  msg_t chIQPutI(input_queue_t *iqp, uint8_t b);
+  msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time);
+  size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
                          size_t n, systime_t time);
 
-  void chOQInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy,
-                void *link);
-  void chOQResetI(OutputQueue *oqp);
-  msg_t chOQPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time);
-  msg_t chOQGetI(OutputQueue *oqp);
-  size_t chOQWriteTimeout(OutputQueue *oqp, const uint8_t *bp,
+  void chOQObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
+                      qnotify_t onfy, void *link);
+  void chOQResetI(output_queue_t *oqp);
+  msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time);
+  msg_t chOQGetI(output_queue_t *oqp);
+  size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
                           size_t n, systime_t time);
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Returns the filled space into an input queue.
+ *
+ * @param[in] iqp       pointer to an @p input_queue_t structure
+ * @return              The number of full bytes in the queue.
+ * @retval 0            if the queue is empty.
+ *
+ * @iclass
+ */
+static inline size_t chIQGetFullI(input_queue_t *iqp) {
+
+  chDbgCheckClassI();
+
+  return (size_t)chQSpaceI(iqp);
+}
+
+/**
+ * @brief   Returns the empty space into an input queue.
+ *
+ * @param[in] iqp       pointer to an @p input_queue_t structure
+ * @return              The number of empty bytes in the queue.
+ * @retval 0            if the queue is full.
+ *
+ * @iclass
+ */
+static inline size_t chIQGetEmptyI(input_queue_t *iqp) {
+
+  chDbgCheckClassI();
+
+  return (size_t)(chQSizeI(iqp) - chQSpaceI(iqp));
+}
+
+/**
+ * @brief   Evaluates to @p true if the specified input queue is empty.
+ *
+ * @param[in] iqp       pointer to an @p input_queue_t structure.
+ * @return              The queue status.
+ * @retval false        if the queue is not empty.
+ * @retval true         if the queue is empty.
+ *
+ * @iclass
+ */
+static inline bool chIQIsEmptyI(input_queue_t *iqp) {
+
+  chDbgCheckClassI();
+
+  return (bool)(chQSpaceI(iqp) <= 0);
+}
+
+/**
+ * @brief   Evaluates to @p true if the specified input queue is full.
+ *
+ * @param[in] iqp       pointer to an @p input_queue_t structure.
+ * @return              The queue status.
+ * @retval false        if the queue is not full.
+ * @retval true         if the queue is full.
+ *
+ * @iclass
+ */
+static inline bool chIQIsFullI(input_queue_t *iqp) {
+
+  chDbgCheckClassI();
+
+  return (bool)((iqp->q_wrptr == iqp->q_rdptr) && (iqp->q_counter != 0));
+}
+
+/**
+ * @brief   Input queue read.
+ * @details This function reads a byte value from an input queue. If the queue
+ *          is empty then the calling thread is suspended until a byte arrives
+ *          in the queue.
+ *
+ * @param[in] iqp       pointer to an @p input_queue_t structure
+ * @return              A byte value from the queue.
+ * @retval Q_RESET      if the queue has been reset.
+ *
+ * @api
+ */
+static inline msg_t chIQGet(input_queue_t *iqp) {
+
+  return chIQGetTimeout(iqp, TIME_INFINITE);
+}
+
+/**
+ * @brief   Returns the filled space into an output queue.
+ *
+ * @param[in] oqp       pointer to an @p output_queue_t structure
+ * @return              The number of full bytes in the queue.
+ * @retval 0            if the queue is empty.
+ *
+ * @iclass
+ */
+static inline size_t chOQGetFullI(output_queue_t *oqp) {
+
+  chDbgCheckClassI();
+
+  return (size_t)(chQSizeI(oqp) - chQSpaceI(oqp));
+}
+
+/**
+ * @brief   Returns the empty space into an output queue.
+ *
+ * @param[in] oqp       pointer to an @p output_queue_t structure
+ * @return              The number of empty bytes in the queue.
+ * @retval 0            if the queue is full.
+ *
+ * @iclass
+ */
+static inline size_t chOQGetEmptyI(output_queue_t *oqp) {
+
+  chDbgCheckClassI();
+
+  return (size_t)chQSpaceI(oqp);
+}
+
+/**
+ * @brief   Evaluates to @p true if the specified output queue is empty.
+ *
+ * @param[in] oqp       pointer to an @p output_queue_t structure.
+ * @return              The queue status.
+ * @retval false        if the queue is not empty.
+ * @retval true         if the queue is empty.
+ *
+ * @iclass
+ */
+static inline bool chOQIsEmptyI(output_queue_t *oqp) {
+
+  chDbgCheckClassI();
+
+  return (bool)((oqp->q_wrptr == oqp->q_rdptr) && (oqp->q_counter != 0));
+}
+
+/**
+ * @brief   Evaluates to @p true if the specified output queue is full.
+ *
+ * @param[in] oqp       pointer to an @p output_queue_t structure.
+ * @return              The queue status.
+ * @retval false        if the queue is not full.
+ * @retval true         if the queue is full.
+ *
+ * @iclass
+ */
+static inline bool chOQIsFullI(output_queue_t *oqp) {
+
+  chDbgCheckClassI();
+
+  return (bool)(chQSpaceI(oqp) <= 0);
+}
+
+/**
+ * @brief   Output queue write.
+ * @details This function writes a byte value to an output queue. If the queue
+ *          is full then the calling thread is suspended until there is space
+ *          in the queue.
+ *
+ * @param[in] oqp       pointer to an @p output_queue_t structure
+ * @param[in] b         the byte value to be written in the queue
+ * @return              The operation status.
+ * @retval Q_OK         if the operation succeeded.
+ * @retval Q_RESET      if the queue has been reset.
+ *
+ * @api
+ */
+static inline msg_t chOQPut(output_queue_t *oqp, uint8_t b) {
+
+  return chOQPutTimeout(oqp, b, TIME_INFINITE);
+}
 
 #endif /* CH_CFG_USE_QUEUES */
 

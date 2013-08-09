@@ -346,16 +346,16 @@ typedef GenericQueue OutputQueue;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void iqInit(InputQueue *iqp, uint8_t *bp, size_t size, qnotify_t infy,
-              void *link);
+  void iqObjectInit(InputQueue *iqp, uint8_t *bp, size_t size,
+                    qnotify_t infy, void *link);
   void iqResetI(InputQueue *iqp);
   msg_t iqPutI(InputQueue *iqp, uint8_t b);
   msg_t iqGetTimeout(InputQueue *iqp, systime_t time);
   size_t iqReadTimeout(InputQueue *iqp, uint8_t *bp,
                        size_t n, systime_t time);
 
-  void oqInit(OutputQueue *oqp, uint8_t *bp, size_t size, qnotify_t onfy,
-              void *link);
+  void oqObjectInit(OutputQueue *oqp, uint8_t *bp, size_t size,
+                    qnotify_t onfy, void *link);
   void oqResetI(OutputQueue *oqp);
   msg_t oqPutTimeout(OutputQueue *oqp, uint8_t b, systime_t time);
   msg_t oqGetI(OutputQueue *oqp);
@@ -383,12 +383,14 @@ extern "C" {
 #define oqIsEmptyI(oqp)                     chOQIsEmptyI(oqp)
 #define oqIsFullI(oqp)                      chOQIsFullI(oqp)
 #define oqPut(oqp, b)                       chOQPut(oqp, b)
-#define iqInit(iqp, bp, size, infy, link)   chIQInit(iqp, bp, size, infy, link)
+#define iqObjectInit(iqp, bp, size, infy, link)                             \
+  chIQObjectInit(iqp, bp, size, infy, link)
 #define iqResetI(iqp)                       chIQResetI(iqp)
 #define iqPutI(iqp, b)                      chIQPutI(iqp, b)
 #define iqGetTimeout(iqp, time)             chIQGetTimeout(iqp, time)
 #define iqReadTimeout(iqp, bp, n, time)     chIQReadTimeout(iqp, bp, n, time)
-#define oqInit(oqp, bp, size, onfy, link)   chOQInit(oqp, bp, size, onfy, link)
+#define oqObjectInit(oqp, bp, size, onfy, link)                             \
+  chOQObjectInit(oqp, bp, size, onfy, link)
 #define oqResetI(oqp)                       chOQResetI(oqp)
 #define oqPutTimeout(oqp, b, time)          chOQPutTimeout(oqp, b, time)
 #define oqGetI(oqp)                         chOQGetI(oqp)
