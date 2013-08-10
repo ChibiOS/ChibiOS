@@ -42,8 +42,8 @@
  *          terminating threads can pulse an event source and an event handler
  *          can perform a scansion of the registry in order to recover the
  *          memory.
- * @pre     In order to use the threads registry the @p CH_CFG_USE_REGISTRY option
- *          must be enabled in @p chconf.h.
+ * @pre     In order to use the threads registry the @p CH_CFG_USE_REGISTRY
+ *          option must be enabled in @p chconf.h.
  * @{
  */
 #include "ch.h"
@@ -66,7 +66,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#define _offsetof(st, m)                                                     \
+#define _offsetof(st, m)                                                    \
   ((size_t)((char *)&((st *)0)->m - (char *)0))
 
 /*===========================================================================*/
@@ -131,7 +131,7 @@ thread_t *chRegFirstThread(void) {
   thread_t *tp;
 
   chSysLock();
-  tp = rlist.r_newer;
+  tp = ch.rlist.r_newer;
 #if CH_CFG_USE_DYNAMIC
   tp->p_refs++;
 #endif
@@ -155,7 +155,7 @@ thread_t *chRegNextThread(thread_t *tp) {
 
   chSysLock();
   ntp = tp->p_newer;
-  if (ntp == (thread_t *)&rlist)
+  if (ntp == (thread_t *)&ch.rlist)
     ntp = NULL;
 #if CH_CFG_USE_DYNAMIC
   else {

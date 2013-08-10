@@ -58,38 +58,14 @@
 /*===========================================================================*/
 
 /**
- * @brief   Virtual Timer callback function.
+ * @brief   Type of a Virtual Timer callback function.
  */
 typedef void (*vtfunc_t)(void *);
 
 /**
- * @brief   Virtual Timer structure type.
+ * @brief   Type of a Virtual Timer structure.
  */
 typedef struct virtual_timer virtual_timer_t;
-
-/**
- * @brief   Virtual timers list header.
- * @note    The timers list is implemented as a double link bidirectional list
- *          in order to make the unlink time constant, the reset of a virtual
- *          timer is often used in the code.
- */
-typedef struct {
-  virtual_timer_t       *vt_next;   /**< @brief Next timer in the delta
-                                                list.                       */
-  virtual_timer_t       *vt_prev;   /**< @brief Last timer in the delta
-                                                list.                       */
-  systime_t             vt_delta;   /**< @brief Must be initialized to -1.  */
-#if CH_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
-  volatile systime_t    vt_systime; /**< @brief System Time counter.        */
-#endif
-#if CH_CFG_TIMEDELTA > 0 || defined(__DOXYGEN__)
-  /**
-   * @brief   System time of the last tick event.
-   */
-  systime_t             vt_lasttime;/**< @brief System time of the last
-                                                tick event.                 */
-#endif
-} virtual_timers_list_t;
 
 /**
  * @extends virtual_timers_list_t
@@ -160,8 +136,6 @@ struct virtual_timer {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern virtual_timers_list_t vtlist;
-
 /*
  * Virtual Timers APIs.
  */
@@ -213,7 +187,7 @@ static inline void chVTObjectInit(virtual_timer_t *vtp) {
 static inline systime_t chVTGetSystemTimeX(void) {
 
 #if CH_CFG_TIMEDELTA == 0
-  return vtlist.vt_systime;
+  return ch.vtlist.vt_systime;
 #else /* CH_CFG_TIMEDELTA > 0 */
   return port_timer_get_time();
 #endif /* CH_CFG_TIMEDELTA > 0 */
@@ -381,16 +355,16 @@ static inline void chVTDoTickI(void) {
   chDbgCheckClassI();
 
 #if CH_CFG_TIMEDELTA == 0
-  vtlist.vt_systime++;
-  if (&vtlist != (virtual_timers_list_t *)vtlist.vt_next) {
+  ch.vtlist.vt_systime++;
+  if (&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.vt_next) {
     virtual_timer_t *vtp;
 
-    --vtlist.vt_next->vt_delta;
-    while (!(vtp = vtlist.vt_next)->vt_delta) {
+    --ch.vtlist.vt_next->vt_delta;
+    while (!(vtp = ch.vtlist.vt_next)->vt_delta) {
       vtfunc_t fn = vtp->vt_func;
       vtp->vt_func = (vtfunc_t)NULL;
-      vtp->vt_next->vt_prev = (void *)&vtlist;
-      vtlist.vt_next = vtp->vt_next;
+      vtp->vt_next->vt_prev = (void *)&ch.vtlist;
+      ch.vtlist.vt_next = vtp->vt_next;
       chSysUnlockFromISR();
       fn(vtp->vt_par);
       chSysLockFromISR();
@@ -399,20 +373,20 @@ static inline void chVTDoTickI(void) {
 #else /* CH_CFG_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
   systime_t now = chVTGetSystemTimeX();
-  systime_t delta = now - vtlist.vt_lasttime;
+  systime_t delta = now - ch.vtlist.vt_lasttime;
 
-  while ((vtp = vtlist.vt_next)->vt_delta <= delta) {
+  while ((vtp = ch.vtlist.vt_next)->vt_delta <= delta) {
     delta -= vtp->vt_delta;
-    vtlist.vt_lasttime += vtp->vt_delta;
+    ch.vtlist.vt_lasttime += vtp->vt_delta;
     vtfunc_t fn = vtp->vt_func;
     vtp->vt_func = (vtfunc_t)NULL;
-    vtp->vt_next->vt_prev = (void *)&vtlist;
-    vtlist.vt_next = vtp->vt_next;
+    vtp->vt_next->vt_prev = (void *)&ch.vtlist;
+    ch.vtlist.vt_next = vtp->vt_next;
     chSysUnlockFromISR();
     fn(vtp->vt_par);
     chSysLockFromISR();
   }
-  if (&vtlist == (virtual_timers_list_t *)vtlist.vt_next) {
+  if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
     /* The list is empty, no tick event needed so the alarm timer
        is stopped.*/
     port_timer_stop_alarm();

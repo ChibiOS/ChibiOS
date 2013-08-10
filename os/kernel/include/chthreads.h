@@ -99,24 +99,6 @@ typedef struct mutex mutex_t;
 #endif
 
 /**
- * @brief   Generic threads single link list, it works like a stack.
- */
-typedef struct {
-
-  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
-} threads_list_t;
-
-/**
- * @extends threads_list_t
- *
- * @brief   Generic threads bidirectional linked list header and element.
- */
-typedef struct {
-  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
-  thread_t              *p_prev;    /**< @brief Previous in the queue.      */
-} threads_queue_t;
-
-/**
  * @extends threads_queue_t
  *
  * @brief   Structure representing a thread.

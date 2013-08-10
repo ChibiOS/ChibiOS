@@ -95,9 +95,9 @@ typedef struct {
  * @param[in] tp        thread to add to the registry
  */
 #define REG_INSERT(tp) {                                                    \
-  (tp)->p_newer = (thread_t *)&rlist;                                       \
-  (tp)->p_older = rlist.r_older;                                            \
-  (tp)->p_older->p_newer = rlist.r_older = (tp);                            \
+  (tp)->p_newer = (thread_t *)&ch.rlist;                                    \
+  (tp)->p_older = ch.rlist.r_older;                                         \
+  (tp)->p_older->p_newer = ch.rlist.r_older = (tp);                         \
 }
 
 /*===========================================================================*/

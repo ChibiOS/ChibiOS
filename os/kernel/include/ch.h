@@ -100,9 +100,9 @@
 #endif
 /** @} */
 
-/* Forward declaration of the thread structure, it is used in most
-   modules.*/
+/* Forward declarations.*/
 typedef struct thread thread_t;
+typedef struct virtual_timer virtual_timer_t;
 
 /* Inclusion of all the kernel sub-headers.*/
 #include "chconf.h"
@@ -111,6 +111,7 @@ typedef struct thread thread_t;
 #include "chcore.h"
 #include "chtm.h"
 #include "chstats.h"
+#include "chglobal.h"
 #include "chsys.h"
 #include "chvt.h"
 #include "chthreads.h"

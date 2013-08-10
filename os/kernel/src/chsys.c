@@ -48,6 +48,11 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   System data structures.
+ */
+ch_system_t ch;
+
 #if !CH_CFG_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**
  * @brief   Idle thread working area.

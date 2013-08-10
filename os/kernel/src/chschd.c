@@ -37,11 +37,6 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   Ready list header.
- */
-ready_list_t rlist;
-
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -65,10 +60,10 @@ ready_list_t rlist;
  */
 void _scheduler_init(void) {
 
-  queue_init(&rlist.r_queue);
-  rlist.r_prio = NOPRIO;
+  queue_init(&ch.rlist.r_queue);
+  ch.rlist.r_prio = NOPRIO;
 #if CH_CFG_USE_REGISTRY
-  rlist.r_newer = rlist.r_older = (thread_t *)&rlist;
+  ch.rlist.r_newer = ch.rlist.r_older = (thread_t *)&ch.rlist;
 #endif
 }
 
@@ -100,7 +95,7 @@ thread_t *chSchReadyI(thread_t *tp) {
               "invalid state");
 
   tp->p_state = CH_STATE_READY;
-  cp = (thread_t *)&rlist.r_queue;
+  cp = (thread_t *)&ch.rlist.r_queue;
   do {
     cp = cp->p_next;
   } while (cp->p_prio >= tp->p_prio);
@@ -131,7 +126,7 @@ void chSchGoSleepS(tstate_t newstate) {
      time quantum when it will wakeup.*/
   otp->p_preempt = CH_CFG_TIME_QUANTUM;
 #endif
-  setcurrp(queue_fifo_remove(&rlist.r_queue));
+  setcurrp(queue_fifo_remove(&ch.rlist.r_queue));
   currp->p_state = CH_STATE_CURRENT;
   chSysSwitch(currp, otp);
 }
@@ -149,7 +144,7 @@ static void wakeup(void *p) {
        another thread with higher priority.*/
     chSysUnlockFromISR();
     return;
-#if CH_CFG_USE_SEMAPHORES || CH_CFG_USE_QUEUES ||                                   \
+#if CH_CFG_USE_SEMAPHORES || CH_CFG_USE_QUEUES ||                           \
     (CH_CFG_USE_CONDVARS && CH_CFG_USE_CONDVARS_TIMEOUT)
 #if CH_CFG_USE_SEMAPHORES
   case CH_STATE_WTSEM:
@@ -274,7 +269,7 @@ void chSchRescheduleS(void) {
  * @special
  */
 bool chSchIsPreemptionRequired(void) {
-  tprio_t p1 = firstprio(&rlist.r_queue);
+  tprio_t p1 = firstprio(&ch.rlist.r_queue);
   tprio_t p2 = currp->p_prio;
 #if CH_CFG_TIME_QUANTUM > 0
   /* If the running thread has not reached its time quantum, reschedule only
@@ -304,7 +299,7 @@ void chSchDoRescheduleBehind(void) {
 
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
-  setcurrp(queue_fifo_remove(&rlist.r_queue));
+  setcurrp(queue_fifo_remove(&ch.rlist.r_queue));
   currp->p_state = CH_STATE_CURRENT;
 #if CH_CFG_TIME_QUANTUM > 0
   otp->p_preempt = CH_CFG_TIME_QUANTUM;
@@ -327,11 +322,11 @@ void chSchDoRescheduleAhead(void) {
 
   otp = currp;
   /* Picks the first thread from the ready queue and makes it current.*/
-  setcurrp(queue_fifo_remove(&rlist.r_queue));
+  setcurrp(queue_fifo_remove(&ch.rlist.r_queue));
   currp->p_state = CH_STATE_CURRENT;
 
   otp->p_state = CH_STATE_READY;
-  cp = (thread_t *)&rlist.r_queue;
+  cp = (thread_t *)&ch.rlist.r_queue;
   do {
     cp = cp->p_next;
   } while (cp->p_prio > otp->p_prio);
@@ -356,8 +351,8 @@ void chSchDoRescheduleAhead(void) {
 void chSchDoReschedule(void) {
 
 #if CH_CFG_TIME_QUANTUM > 0
-  /* If CH_CFG_TIME_QUANTUM is enabled then there are two different scenarios to
-     handle on preemption: time quantum elapsed or not.*/
+  /* If CH_CFG_TIME_QUANTUM is enabled then there are two different scenarios
+     to handle on preemption: time quantum elapsed or not.*/
   if (currp->p_preempt == 0) {
     /* The thread consumed its time quantum so it is enqueued behind threads
        with same priority level, however, it acquires a new time quantum.*/

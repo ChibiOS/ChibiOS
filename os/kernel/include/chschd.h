@@ -87,26 +87,6 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @extends threads_queue_t
- *
- * @brief   Ready list header.
- */
-typedef struct {
-  threads_queue_t       r_queue;    /**< @brief Threads queue.              */
-  tprio_t               r_prio;     /**< @brief This field must be
-                                                initialized to zero.        */
-  struct context        r_ctx;      /**< @brief Not used, present because
-                                                offsets.                    */
-#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
-  thread_t              *r_newer;   /**< @brief Newer registry element.     */
-  thread_t              *r_older;   /**< @brief Older registry element.     */
-#endif
-  /* End of the fields shared with the thread_t structure.*/
-  thread_t              *r_current; /**< @brief The currently running
-                                                thread.                     */
-} ready_list_t;
-
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -125,7 +105,7 @@ typedef struct {
  * @note    It is forbidden to use this macro in order to change the pointer
  *          (currp = something), use @p setcurrp() instead.
  */
-#define currp rlist.r_current
+#define currp ch.rlist.r_current
 
 /**
  * @brief   Current thread pointer change macro.
@@ -139,10 +119,6 @@ typedef struct {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
-
-#if !defined(__DOXYGEN__)
-extern ready_list_t rlist;
-#endif
 
 /*
  * Scheduler APIs.
@@ -179,7 +155,7 @@ static inline bool chSchIsRescRequiredI(void) {
 
   chDbgCheckClassI();
 
-  return firstprio(&rlist.r_queue) > currp->p_prio;
+  return firstprio(&ch.rlist.r_queue) > currp->p_prio;
 }
 
 /**
@@ -193,7 +169,7 @@ static inline bool chSchCanYieldS(void) {
 
   chDbgCheckClassI();
 
-  return firstprio(&rlist.r_queue) >= currp->p_prio;
+  return firstprio(&ch.rlist.r_queue) >= currp->p_prio;
 }
 
 /**
@@ -219,7 +195,7 @@ static inline void chSchDoYieldS(void) {
  * @special
  */
 static inline void chSchPreemption(void) {
-  tprio_t p1 = firstprio(&rlist.r_queue);
+  tprio_t p1 = firstprio(&ch.rlist.r_queue);
   tprio_t p2 = currp->p_prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
