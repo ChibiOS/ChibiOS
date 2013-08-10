@@ -69,8 +69,8 @@ include $(CHIBIOS)/boards/ST_STM32F3_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/osal/chibios/osal.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F30x/platform.mk
-include $(CHIBIOS)/os/kernel/kernel.mk
-include $(CHIBIOS)/os/kernel/ports/ARMCMx/devices/STM32F30x/port.mk
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/rt/ports/ARMCMx/devices/STM32F30x/port.mk
 include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
@@ -222,4 +222,4 @@ ifeq ($(USE_FWLIB),yes)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include $(CHIBIOS)/os/kernel/ports/ARMCMx/compilers/GCC/rules.mk
+include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/rules.mk

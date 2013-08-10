@@ -22,4 +22,4 @@ KERNSRC = ${CHIBIOS}/os/rt/src/chsys.c \
           ${CHIBIOS}/os/rt/src/chmempools.c
 
 # Required include directories
-KERNINC = ${CHIBIOS}/os/kernel/include
+KERNINC = ${CHIBIOS}/os/rt/include
