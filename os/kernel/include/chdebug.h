@@ -93,8 +93,8 @@
 #define dbg_check_unlock_from_isr()
 #define dbg_check_enter_isr()
 #define dbg_check_leave_isr()
-#define chDbgCheckClassI();
-#define chDbgCheckClassS();
+#define chDbgCheckClassI()
+#define chDbgCheckClassS()
 #endif
 
 /*===========================================================================*/
