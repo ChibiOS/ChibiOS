@@ -118,8 +118,7 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
   virtual_timer_t *p;
 
   chDbgCheckClassI();
-  chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE),
-             "chVTDoSetI");
+  chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
@@ -181,10 +180,8 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
 void chVTDoResetI(virtual_timer_t *vtp) {
 
   chDbgCheckClassI();
-  chDbgCheck(vtp != NULL, "chVTDoResetI");
-  chDbgAssert(vtp->vt_func != NULL,
-              "chVTDoResetI(), #1",
-              "timer not set or already triggered");
+  chDbgCheck(vtp != NULL);
+  chDbgAssert(vtp->vt_func != NULL, "timer not set or already triggered");
 
   /* Removing the element from the delta list.*/
   vtp->vt_next->vt_delta += vtp->vt_delta;

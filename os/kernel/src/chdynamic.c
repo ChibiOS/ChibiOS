@@ -69,7 +69,7 @@
 thread_t *chThdAddRef(thread_t *tp) {
 
   chSysLock();
-  chDbgAssert(tp->p_refs < 255, "chThdAddRef(), #1", "too many references");
+  chDbgAssert(tp->p_refs < 255, "too many references");
   tp->p_refs++;
   chSysUnlock();
   return tp;
@@ -92,7 +92,7 @@ void chThdRelease(thread_t *tp) {
   trefs_t refs;
 
   chSysLock();
-  chDbgAssert(tp->p_refs > 0, "chThdRelease(), #1", "not referenced");
+  chDbgAssert(tp->p_refs > 0, "not referenced");
   refs = --tp->p_refs;
   chSysUnlock();
 
@@ -198,7 +198,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
   void *wsp;
   thread_t *tp;
 
-  chDbgCheck(mp != NULL, "chThdCreateFromMemoryPool");
+  chDbgCheck(mp != NULL);
 
   wsp = chPoolAlloc(mp);
   if (wsp == NULL)

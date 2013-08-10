@@ -154,7 +154,7 @@ void sdStart(SerialDriver *sdp, const SerialConfig *config) {
 
   osalSysLock();
   osalDbgAssert((sdp->state == SD_STOP) || (sdp->state == SD_READY),
-                "sdStart(), #1", "invalid state");
+                "invalid state");
   sd_lld_start(sdp, config);
   sdp->state = SD_READY;
   osalSysUnlock();
@@ -175,7 +175,7 @@ void sdStop(SerialDriver *sdp) {
 
   osalSysLock();
   osalDbgAssert((sdp->state == SD_STOP) || (sdp->state == SD_READY),
-              "sdStop(), #1", "invalid state");
+                "invalid state");
   sd_lld_stop(sdp);
   sdp->state = SD_STOP;
   oqResetI(&sdp->oqueue);

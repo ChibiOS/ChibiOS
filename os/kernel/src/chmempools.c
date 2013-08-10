@@ -75,7 +75,7 @@
  */
 void chPoolObjectInit(memory_pool_t *mp, size_t size, memgetfunc_t provider) {
 
-  chDbgCheck((mp != NULL) && (size >= sizeof(void *)), "chPoolInit");
+  chDbgCheck((mp != NULL) && (size >= sizeof(void *)));
 
   mp->mp_next = NULL;
   mp->mp_object_size = size;
@@ -97,7 +97,7 @@ void chPoolObjectInit(memory_pool_t *mp, size_t size, memgetfunc_t provider) {
  */
 void chPoolLoadArray(memory_pool_t *mp, void *p, size_t n) {
 
-  chDbgCheck((mp != NULL) && (n != 0), "chPoolLoadArray");
+  chDbgCheck((mp != NULL) && (n != 0));
 
   while (n) {
     chPoolAdd(mp, p);
@@ -120,7 +120,7 @@ void *chPoolAllocI(memory_pool_t *mp) {
   void *objp;
 
   chDbgCheckClassI();
-  chDbgCheck(mp != NULL, "chPoolAllocI");
+  chDbgCheck(mp != NULL);
 
   if ((objp = mp->mp_next) != NULL)
     mp->mp_next = mp->mp_next->ph_next;
@@ -164,7 +164,7 @@ void chPoolFreeI(memory_pool_t *mp, void *objp) {
   struct pool_header *php = objp;
 
   chDbgCheckClassI();
-  chDbgCheck((mp != NULL) && (objp != NULL), "chPoolFreeI");
+  chDbgCheck((mp != NULL) && (objp != NULL));
 
   php->ph_next = mp->mp_next;
   mp->mp_next = php;

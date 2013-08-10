@@ -80,9 +80,7 @@ static inline systime_t port_timer_get_time(void) {
  */
 static inline void port_timer_start_alarm(systime_t time) {
 
-  chDbgAssert((TIM2->DIER & 2) == 0,
-              "port_timer_start_alarm(), #1",
-              "already started");
+  chDbgAssert((TIM2->DIER & 2) == 0, "already started");
 
   TIM2->CCR1  = time;
   TIM2->SR      = 0;
@@ -96,9 +94,7 @@ static inline void port_timer_start_alarm(systime_t time) {
  */
 static inline void port_timer_stop_alarm(void) {
 
-  chDbgAssert((TIM2->DIER & 2) != 0,
-              "port_timer_stop_alarm(), #1",
-              "not started");
+  chDbgAssert((TIM2->DIER & 2) != 0, "not started");
 
   TIM2->DIER    = 0;
 }
@@ -112,9 +108,7 @@ static inline void port_timer_stop_alarm(void) {
  */
 static inline void port_timer_set_alarm(systime_t time) {
 
-  chDbgAssert((TIM2->DIER & 2) != 0,
-              "port_timer_set_alarm(), #1",
-              "not started");
+  chDbgAssert((TIM2->DIER & 2) != 0, "not started");
 
   TIM2->CCR1  = time;
 }
@@ -128,9 +122,7 @@ static inline void port_timer_set_alarm(systime_t time) {
  */
 static inline systime_t port_timer_get_alarm(void) {
 
-  chDbgAssert((TIM2->DIER & 2) != 0,
-              "port_timer_get_alarm(), #1",
-              "not started");
+  chDbgAssert((TIM2->DIER & 2) != 0, "not started");
 
   return TIM2->CCR1;
 }

@@ -91,7 +91,6 @@ thread_t *chSchReadyI(thread_t *tp) {
   /* Integrity checks.*/
   chDbgAssert((tp->p_state != CH_STATE_READY) &&
               (tp->p_state != CH_STATE_FINAL),
-              "chSchReadyI(), #1",
               "invalid state");
 
   tp->p_state = CH_STATE_READY;

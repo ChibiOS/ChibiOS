@@ -102,7 +102,7 @@ void adcStart(ADCDriver *adcp, const ADCConfig *config) {
 
   osalSysLock();
   osalDbgAssert((adcp->state == ADC_STOP) || (adcp->state == ADC_READY),
-                "adcStart(), #1", "invalid state");
+                "invalid state");
   adcp->config = config;
   adc_lld_start(adcp);
   adcp->state = ADC_READY;
@@ -122,7 +122,7 @@ void adcStop(ADCDriver *adcp) {
 
   osalSysLock();
   osalDbgAssert((adcp->state == ADC_STOP) || (adcp->state == ADC_READY),
-                "adcStop(), #1", "invalid state");
+                "invalid state");
   adc_lld_stop(adcp);
   adcp->state = ADC_STOP;
   osalSysUnlock();
@@ -183,7 +183,7 @@ void adcStartConversionI(ADCDriver *adcp,
   osalDbgAssert((adcp->state == ADC_READY) ||
                 (adcp->state == ADC_COMPLETE) ||
                 (adcp->state == ADC_ERROR),
-                "adcStartConversionI(), #1", "not ready");
+                "not ready");
 
   adcp->samples  = samples;
   adcp->depth    = depth;
@@ -207,9 +207,8 @@ void adcStopConversion(ADCDriver *adcp) {
   osalDbgCheck(adcp != NULL);
 
   osalSysLock();
-  osalDbgAssert((adcp->state == ADC_READY) ||
-                (adcp->state == ADC_ACTIVE),
-                "adcStopConversion(), #1", "invalid state");
+  osalDbgAssert((adcp->state == ADC_READY) || (adcp->state == ADC_ACTIVE),
+                "invalid state");
   if (adcp->state != ADC_READY) {
     adc_lld_stop_conversion(adcp);
     adcp->grpp  = NULL;
@@ -236,7 +235,7 @@ void adcStopConversionI(ADCDriver *adcp) {
   osalDbgAssert((adcp->state == ADC_READY) ||
                 (adcp->state == ADC_ACTIVE) ||
                 (adcp->state == ADC_COMPLETE),
-                "adcStopConversionI(), #1", "invalid state");
+                "invalid state");
 
   if (adcp->state != ADC_READY) {
     adc_lld_stop_conversion(adcp);
@@ -277,7 +276,7 @@ msg_t adcConvert(ADCDriver *adcp,
   msg_t msg;
 
   osalSysLock();
-  osalDbgAssert(adcp->thread == NULL, "adcConvert(), #1", "already waiting");
+  osalDbgAssert(adcp->thread == NULL, "already waiting");
   adcStartConversionI(adcp, grpp, samples, depth);
   msg = osalThreadSuspendS(&adcp->thread);
   osalSysUnlock();

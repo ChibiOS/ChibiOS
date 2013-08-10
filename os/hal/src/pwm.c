@@ -94,7 +94,7 @@ void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
 
   osalSysLock();
   osalDbgAssert((pwmp->state == PWM_STOP) || (pwmp->state == PWM_READY),
-                "pwmStart(), #1", "invalid state");
+                "invalid state");
   pwmp->config = config;
   pwmp->period = config->period;
   pwm_lld_start(pwmp);
@@ -115,7 +115,7 @@ void pwmStop(PWMDriver *pwmp) {
 
   osalSysLock();
   osalDbgAssert((pwmp->state == PWM_STOP) || (pwmp->state == PWM_READY),
-                "pwmStop(), #1", "invalid state");
+                "invalid state");
   pwm_lld_stop(pwmp);
   pwmp->state = PWM_STOP;
   osalSysUnlock();
@@ -141,8 +141,7 @@ void pwmChangePeriod(PWMDriver *pwmp, pwmcnt_t period) {
   osalDbgCheck(pwmp != NULL);
 
   osalSysLock();
-  osalDbgAssert(pwmp->state == PWM_READY,
-                "pwmChangePeriod(), #1", "invalid state");
+  osalDbgAssert(pwmp->state == PWM_READY, "invalid state");
   pwmChangePeriodI(pwmp, period);
   osalSysUnlock();
 }
@@ -168,8 +167,7 @@ void pwmEnableChannel(PWMDriver *pwmp,
   osalDbgCheck((pwmp != NULL) && (channel < PWM_CHANNELS));
 
   osalSysLock();
-  osalDbgAssert(pwmp->state == PWM_READY,
-                "pwmEnableChannel(), #1", "not ready");
+  osalDbgAssert(pwmp->state == PWM_READY, "not ready");
   pwm_lld_enable_channel(pwmp, channel, width);
   osalSysUnlock();
 }
@@ -193,8 +191,7 @@ void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel) {
   osalDbgCheck((pwmp != NULL) && (channel < PWM_CHANNELS));
 
   osalSysLock();
-  osalDbgAssert(pwmp->state == PWM_READY,
-                "pwmDisableChannel(), #1", "not ready");
+  osalDbgAssert(pwmp->state == PWM_READY, "not ready");
   pwm_lld_disable_channel(pwmp, channel);
   osalSysUnlock();
 }

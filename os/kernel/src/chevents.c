@@ -104,7 +104,7 @@ void chEvtRegisterMask(event_source_t *esp,
                        event_listener_t *elp,
                        eventmask_t mask) {
 
-  chDbgCheck((esp != NULL) && (elp != NULL), "chEvtRegisterMask");
+  chDbgCheck((esp != NULL) && (elp != NULL));
 
   chSysLock();
   elp->el_next     = esp->es_next;
@@ -131,7 +131,7 @@ void chEvtRegisterMask(event_source_t *esp,
 void chEvtUnregister(event_source_t *esp, event_listener_t *elp) {
   event_listener_t *p;
 
-  chDbgCheck((esp != NULL) && (elp != NULL), "chEvtUnregister");
+  chDbgCheck((esp != NULL) && (elp != NULL));
 
   p = (event_listener_t *)esp;
   chSysLock();
@@ -205,7 +205,7 @@ void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
   event_listener_t *elp;
 
   chDbgCheckClassI();
-  chDbgCheck(esp != NULL, "chEvtBroadcastMaskI");
+  chDbgCheck(esp != NULL);
 
   elp = esp->es_next;
   while (elp != (event_listener_t *)esp) {
@@ -248,7 +248,7 @@ eventflags_t chEvtGetAndClearFlags(event_listener_t *elp) {
  */
 void chEvtSignal(thread_t *tp, eventmask_t mask) {
 
-  chDbgCheck(tp != NULL, "chEvtSignal");
+  chDbgCheck(tp != NULL);
 
   chSysLock();
   chEvtSignalI(tp, mask);
@@ -271,7 +271,7 @@ void chEvtSignal(thread_t *tp, eventmask_t mask) {
 void chEvtSignalI(thread_t *tp, eventmask_t mask) {
 
   chDbgCheckClassI();
-  chDbgCheck(tp != NULL, "chEvtSignalI");
+  chDbgCheck(tp != NULL);
 
   tp->p_epending |= mask;
   /* Test on the AND/OR conditions wait states.*/
@@ -335,14 +335,12 @@ eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp) {
 void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask) {
   eventid_t eid;
 
-  chDbgCheck(handlers != NULL, "chEvtDispatch");
+  chDbgCheck(handlers != NULL);
 
   eid = 0;
   while (mask) {
     if (mask & EVENT_MASK(eid)) {
-      chDbgAssert(handlers[eid] != NULL,
-                  "chEvtDispatch(), #1",
-                  "null handler");
+      chDbgAssert(handlers[eid] != NULL, "null handler");
       mask &= ~EVENT_MASK(eid);
       handlers[eid](eid);
     }

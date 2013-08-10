@@ -88,7 +88,7 @@
 msg_t chMsgSend(thread_t *tp, msg_t msg) {
   thread_t *ctp = currp;
 
-  chDbgCheck(tp != NULL, "chMsgSend");
+  chDbgCheck(tp != NULL);
 
   chSysLock();
   ctp->p_msg = msg;
@@ -141,8 +141,7 @@ thread_t *chMsgWait(void) {
 void chMsgRelease(thread_t *tp, msg_t msg) {
 
   chSysLock();
-  chDbgAssert(tp->p_state == CH_STATE_SNDMSG,
-              "chMsgRelease(), #1", "invalid state");
+  chDbgAssert(tp->p_state == CH_STATE_SNDMSG, "invalid state");
   chMsgReleaseS(tp, msg);
   chSysUnlock();
 }

@@ -96,7 +96,7 @@ void osalSysHalt(const char *reason) {
  */
 msg_t osalThreadSuspendS(thread_reference_t *trp) {
 
-  chDbgAssert(*trp == NULL, "osalThreadSuspendS(), #1", "not NULL");
+  chDbgAssert(*trp == NULL, "not NULL");
 
   *trp = (thread_reference_t)chThdSelf();
   chSchGoSleepS(CH_STATE_SUSPENDED);
@@ -118,7 +118,7 @@ void osalThreadResumeI(thread_reference_t *trp, msg_t msg) {
   if (*trp != NULL) {
 
     chDbgAssert((*trp)->p_state == CH_STATE_SUSPENDED,
-                "osalThreadResumeI(), #1", "not THD_STATE_SUSPENDED");
+                "not THD_STATE_SUSPENDED");
 
     (*trp)->p_u.rdymsg = msg;
     chSchReadyI((thread_t *)*trp);
@@ -141,8 +141,7 @@ void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
   if (*trp != NULL) {
     thread_t *tp = (thread_t *)*trp;
 
-    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
-                "osalThreadResumeS(), #1", "not THD_STATE_SUSPENDED");
+    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED, "not THD_STATE_SUSPENDED");
 
     *trp = NULL;
     chSchWakeupS(tp, msg);

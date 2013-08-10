@@ -98,7 +98,7 @@
  */
 void chMtxObjectInit(mutex_t *mp) {
 
-  chDbgCheck(mp != NULL, "chMtxInit");
+  chDbgCheck(mp != NULL);
 
   queue_init(&mp->m_queue);
   mp->m_owner = NULL;
@@ -135,7 +135,7 @@ void chMtxLockS(mutex_t *mp) {
   thread_t *ctp = currp;
 
   chDbgCheckClassS();
-  chDbgCheck(mp != NULL, "chMtxLockS");
+  chDbgCheck(mp != NULL);
 
   /* Is the mutex already locked? */
   if (mp->m_owner != NULL) {
@@ -194,8 +194,8 @@ void chMtxLockS(mutex_t *mp) {
 
     /* It is assumed that the thread performing the unlock operation assigns
        the mutex to this thread.*/
-    chDbgAssert(mp->m_owner == ctp, "chMtxLockS(), #1", "not owner");
-    chDbgAssert(ctp->p_mtxlist == mp, "chMtxLockS(), #2", "not owned");
+    chDbgAssert(mp->m_owner == ctp, "not owner");
+    chDbgAssert(ctp->p_mtxlist == mp, "not owned");
   }
   else {
     /* It was not owned, inserted in the owned mutexes list.*/
@@ -253,7 +253,7 @@ bool chMtxTryLock(mutex_t *mp) {
 bool chMtxTryLockS(mutex_t *mp) {
 
   chDbgCheckClassS();
-  chDbgCheck(mp != NULL, "chMtxTryLockS");
+  chDbgCheck(mp != NULL);
 
   if (mp->m_owner != NULL)
     return false;
@@ -280,12 +280,8 @@ mutex_t *chMtxUnlock(void) {
 
   chSysLock();
 
-  chDbgAssert(ctp->p_mtxlist != NULL,
-              "chMtxUnlock(), #1",
-              "owned mutexes list empty");
-  chDbgAssert(ctp->p_mtxlist->m_owner == ctp,
-              "chMtxUnlock(), #2",
-              "ownership failure");
+  chDbgAssert(ctp->p_mtxlist != NULL, "owned mutexes list empty");
+  chDbgAssert(ctp->p_mtxlist->m_owner == ctp, "ownership failure");
 
   /* Removes the top mutex from the thread's owned mutexes list and marks it
      as not owned.*/
@@ -344,12 +340,8 @@ mutex_t *chMtxUnlockS(void) {
   mutex_t *ump, *mp;
 
   chDbgCheckClassS();
-  chDbgAssert(ctp->p_mtxlist != NULL,
-              "chMtxUnlockS(), #1",
-              "owned mutexes list empty");
-  chDbgAssert(ctp->p_mtxlist->m_owner == ctp,
-              "chMtxUnlockS(), #2",
-              "ownership failure");
+  chDbgAssert(ctp->p_mtxlist != NULL, "owned mutexes list empty");
+  chDbgAssert(ctp->p_mtxlist->m_owner == ctp, "ownership failure");
 
   /* Removes the top mutex from the owned mutexes list and marks it as not
      owned.*/

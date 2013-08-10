@@ -245,7 +245,7 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
   qnotify_t nfy = iqp->q_notify;
   size_t r = 0;
 
-  chDbgCheck(n > 0, "chIQReadTimeout");
+  chDbgCheck(n > 0);
 
   chSysLock();
   while (true) {
@@ -425,7 +425,7 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
   qnotify_t nfy = oqp->q_notify;
   size_t w = 0;
 
-  chDbgCheck(n > 0, "chOQWriteTimeout");
+  chDbgCheck(n > 0);
 
   chSysLock();
   while (true) {

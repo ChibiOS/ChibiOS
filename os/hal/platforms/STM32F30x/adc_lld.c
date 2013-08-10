@@ -147,14 +147,12 @@ static void adc_lld_analog_off(ADCDriver *adcp) {
  */
 static void adc_lld_calibrate(ADCDriver *adcp) {
 
-  osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN_0, "adc_lld_calibrate(), #1",
-                                                     "invalid register state");
+  osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN_0, "invalid register state");
   adcp->adcm->CR |= ADC_CR_ADCAL;
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
     ;
 #if STM32_ADC_DUAL_MODE
-  osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN_0, "adc_lld_calibrate(), #2",
-                                                     "invalid register state");
+  osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN_0, "invalid register state");
   adcp->adcs->CR |= ADC_CR_ADCAL;
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
     ;
@@ -377,7 +375,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             STM32_ADC_ADC12_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
-      osalDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableADC12(FALSE);
     }
 #endif /* STM32_ADC_USE_ADC1 */
@@ -389,7 +387,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             STM32_ADC_ADC34_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
-      osalDbgAssert(!b, "adc_lld_start(), #2", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableADC34(FALSE);
     }
 #endif /* STM32_ADC_USE_ADC2 */
@@ -459,7 +457,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   const ADCConversionGroup *grpp = adcp->grpp;
 
   osalDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
-                "adc_lld_start_conversion(), #1",
                 "odd number of channels in dual mode");
 
   /* Calculating control registers values.*/

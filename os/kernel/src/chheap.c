@@ -108,7 +108,7 @@ void _heap_init(void) {
 void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
   union heap_header *hp;
 
-  chDbgCheck(MEM_IS_ALIGNED(buf) && MEM_IS_ALIGNED(size), "chHeapInit");
+  chDbgCheck(MEM_IS_ALIGNED(buf) && MEM_IS_ALIGNED(size));
 
   heapp->h_provider = (memgetfunc_t)NULL;
   heapp->h_free.h.u.next = hp = buf;
@@ -204,7 +204,7 @@ void chHeapFree(void *p) {
   union heap_header *qp, *hp;
   memory_heap_t *heapp;
 
-  chDbgCheck(p != NULL, "chHeapFree");
+  chDbgCheck(p != NULL);
 
   hp = (union heap_header *)p - 1;
   heapp = hp->h.u.heap;
@@ -212,9 +212,7 @@ void chHeapFree(void *p) {
   H_LOCK(heapp);
 
   while (true) {
-    chDbgAssert((hp < qp) || (hp >= LIMIT(qp)),
-                "chHeapFree(), #1",
-                "within free block");
+    chDbgAssert((hp < qp) || (hp >= LIMIT(qp)), "within free block");
 
     if (((qp == &heapp->h_free) || (hp > qp)) &&
         ((qp->h.u.next == NULL) || (hp < qp->h.u.next))) {

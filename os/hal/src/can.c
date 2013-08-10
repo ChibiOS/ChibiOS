@@ -104,7 +104,7 @@ void canStart(CANDriver *canp, const CANConfig *config) {
   osalDbgAssert((canp->state == CAN_STOP) ||
                 (canp->state == CAN_STARTING) ||
                 (canp->state == CAN_READY),
-                "canStart(), #1", "invalid state");
+                "invalid state");
   while (canp->state == CAN_STARTING)
     osalThreadSleepS(1);
   if (canp->state == CAN_STOP) {
@@ -128,7 +128,7 @@ void canStop(CANDriver *canp) {
 
   osalSysLock();
   osalDbgAssert((canp->state == CAN_STOP) || (canp->state == CAN_READY),
-                "canStop(), #1", "invalid state");
+                "invalid state");
   can_lld_stop(canp);
   canp->state  = CAN_STOP;
   osalQueueWakeupAllI(&canp->rxqueue, MSG_RESET);
@@ -168,7 +168,7 @@ msg_t canTransmit(CANDriver *canp,
 
   osalSysLock();
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
-                "canTransmit(), #1", "invalid state");
+                "invalid state");
   while ((canp->state == CAN_SLEEP) || !can_lld_is_tx_empty(canp, mailbox)) {
     msg_t msg = osalQueueGoSleepTimeoutS(&canp->txqueue, timeout);
     if (msg != MSG_OK) {
@@ -213,7 +213,7 @@ msg_t canReceive(CANDriver *canp,
 
   osalSysLock();
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
-                "canReceive(), #1", "invalid state");
+                "invalid state");
   while ((canp->state == CAN_SLEEP) || !can_lld_is_rx_nonempty(canp, mailbox)) {
     msg_t msg = osalQueueGoSleepTimeoutS(&canp->rxqueue, timeout);
     if (msg != MSG_OK) {
@@ -245,7 +245,7 @@ void canSleep(CANDriver *canp) {
 
   osalSysLock();
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
-                "canSleep(), #1", "invalid state");
+                "invalid state");
   if (canp->state == CAN_READY) {
     can_lld_sleep(canp);
     canp->state = CAN_SLEEP;
@@ -268,7 +268,7 @@ void canWakeup(CANDriver *canp) {
 
   osalSysLock();
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
-                "canWakeup(), #1", "invalid state");
+                "invalid state");
   if (canp->state == CAN_SLEEP) {
     can_lld_wakeup(canp);
     canp->state = CAN_READY;

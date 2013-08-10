@@ -89,7 +89,7 @@ void icuStart(ICUDriver *icup, const ICUConfig *config) {
 
   osalSysLock();
   osalDbgAssert((icup->state == ICU_STOP) || (icup->state == ICU_READY),
-                "icuStart(), #1", "invalid state");
+                "invalid state");
   icup->config = config;
   icu_lld_start(icup);
   icup->state = ICU_READY;
@@ -109,7 +109,7 @@ void icuStop(ICUDriver *icup) {
 
   osalSysLock();
   osalDbgAssert((icup->state == ICU_STOP) || (icup->state == ICU_READY),
-                "icuStop(), #1", "invalid state");
+                "invalid state");
   icu_lld_stop(icup);
   icup->state = ICU_STOP;
   osalSysUnlock();
@@ -127,7 +127,7 @@ void icuEnable(ICUDriver *icup) {
   osalDbgCheck(icup != NULL);
 
   osalSysLock();
-  osalDbgAssert(icup->state == ICU_READY, "icuEnable(), #1", "invalid state");
+  osalDbgAssert(icup->state == ICU_READY, "invalid state");
   icu_lld_enable(icup);
   icup->state = ICU_WAITING;
   osalSysUnlock();
@@ -147,7 +147,7 @@ void icuDisable(ICUDriver *icup) {
   osalSysLock();
   osalDbgAssert((icup->state == ICU_READY) || (icup->state == ICU_WAITING) ||
                 (icup->state == ICU_ACTIVE) || (icup->state == ICU_IDLE),
-                "icuDisable(), #1", "invalid state");
+                "invalid state");
   icu_lld_disable(icup);
   icup->state = ICU_READY;
   osalSysUnlock();

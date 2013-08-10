@@ -392,7 +392,7 @@ void icu_lld_start(ICUDriver *icup) {
 
   osalDbgAssert((icup->config->channel == ICU_CHANNEL_1) ||
                 (icup->config->channel == ICU_CHANNEL_2),
-                "icu_lld_start(), #1", "invalid input");
+                "invalid input");
 
   if (icup->state == ICU_STOP) {
     /* Clock activation and timer reset.*/
@@ -469,7 +469,7 @@ void icu_lld_start(ICUDriver *icup) {
   psc = (icup->clock / icup->config->frequency) - 1;
   osalDbgAssert((psc <= 0xFFFF) &&
                 ((psc + 1) * icup->config->frequency) == icup->clock,
-                "icu_lld_start(), #1", "invalid frequency");
+                "invalid frequency");
   icup->tim->PSC  = (uint16_t)psc;
   icup->tim->ARR   = 0xFFFF;
 

@@ -188,8 +188,8 @@ typedef struct {
 
 /**
  * @brief   Condition assertion.
- * @details If the condition check fails then the OSAL panics with the
- *          specified message and halts.
+ * @details If the condition check fails then the OSAL panics with a
+ *          message and halts.
  * @note    The condition is tested only if the @p OSAL_ENABLE_ASSERTIONS
  *          switch is enabled.
  * @note    The convention for the message is the following:<br>
@@ -198,12 +198,11 @@ typedef struct {
  *          comment in the code about the assertion.
  *
  * @param[in] c         the condition to be verified to be true
- * @param[in] msg       the text message
  * @param[in] remark    a remark string
  *
  * @api
  */
-#define osalDbgAssert(c, msg, remark) chDbgAssert(c, msg, remark)
+#define osalDbgAssert(c, remark) chDbgAssert(c, remark)
 
 /**
  * @brief   Function parameters check.
@@ -215,7 +214,7 @@ typedef struct {
  *
  * @api
  */
-#define osalDbgCheck(c) chDbgCheck(c, __FUNCTION__)
+#define osalDbgCheck(c) chDbgCheck(c)
 
 /**
  * @brief   I-Class state check.

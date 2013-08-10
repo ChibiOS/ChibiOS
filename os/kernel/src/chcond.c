@@ -75,7 +75,7 @@
  */
 void chCondObjectInit(condition_variable_t *cp) {
 
-  chDbgCheck(cp != NULL, "chCondInit");
+  chDbgCheck(cp != NULL);
 
   queue_init(&cp->c_queue);
 }
@@ -89,7 +89,7 @@ void chCondObjectInit(condition_variable_t *cp) {
  */
 void chCondSignal(condition_variable_t *cp) {
 
-  chDbgCheck(cp != NULL, "chCondSignal");
+  chDbgCheck(cp != NULL);
 
   chSysLock();
   if (queue_notempty(&cp->c_queue))
@@ -111,7 +111,7 @@ void chCondSignal(condition_variable_t *cp) {
 void chCondSignalI(condition_variable_t *cp) {
 
   chDbgCheckClassI();
-  chDbgCheck(cp != NULL, "chCondSignalI");
+  chDbgCheck(cp != NULL);
 
   if (queue_notempty(&cp->c_queue))
     chSchReadyI(queue_fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_OK;
@@ -146,7 +146,7 @@ void chCondBroadcast(condition_variable_t *cp) {
 void chCondBroadcastI(condition_variable_t *cp) {
 
   chDbgCheckClassI();
-  chDbgCheck(cp != NULL, "chCondBroadcastI");
+  chDbgCheck(cp != NULL);
 
   /* Empties the condition variable queue and inserts all the threads into the
      ready list in FIFO order. The wakeup message is set to @p RDY_RESET in
@@ -204,10 +204,8 @@ msg_t chCondWaitS(condition_variable_t *cp) {
   msg_t msg;
 
   chDbgCheckClassS();
-  chDbgCheck(cp != NULL, "chCondWaitS");
-  chDbgAssert(ctp->p_mtxlist != NULL,
-              "chCondWaitS(), #1",
-              "not owning a mutex");
+  chDbgCheck(cp != NULL);
+  chDbgAssert(ctp->p_mtxlist != NULL, "not owning a mutex");
 
   mp = chMtxUnlockS();
   ctp->p_u.wtobjp = cp;
@@ -289,10 +287,8 @@ msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time) {
   msg_t msg;
 
   chDbgCheckClassS();
-  chDbgCheck((cp != NULL) && (time != TIME_IMMEDIATE), "chCondWaitTimeoutS");
-  chDbgAssert(currp->p_mtxlist != NULL,
-              "chCondWaitTimeoutS(), #1",
-              "not owning a mutex");
+  chDbgCheck((cp != NULL) && (time != TIME_IMMEDIATE));
+  chDbgAssert(currp->p_mtxlist != NULL, "not owning a mutex");
 
   mp = chMtxUnlockS();
   currp->p_u.wtobjp = cp;

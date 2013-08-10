@@ -183,8 +183,7 @@ thread_t *chThdCreateI(void *wsp, size_t size,
   chDbgCheckClassI();
 
   chDbgCheck((wsp != NULL) && (size >= THD_WA_SIZE(0)) &&
-             (prio <= HIGHPRIO) && (pf != NULL),
-             "chThdCreateI");
+             (prio <= HIGHPRIO) && (pf != NULL));
   SETUP_CONTEXT(wsp, size, pf, arg);
   return _thread_init(tp, prio);
 }
@@ -238,7 +237,7 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
 tprio_t chThdSetPriority(tprio_t newprio) {
   tprio_t oldprio;
 
-  chDbgCheck(newprio <= HIGHPRIO, "chThdSetPriority");
+  chDbgCheck(newprio <= HIGHPRIO);
 
   chSysLock();
 #if CH_CFG_USE_MUTEXES
@@ -272,7 +271,6 @@ thread_t *chThdResume(thread_t *tp) {
 
   chSysLock();
   chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
-              "chThdResume(), #1",
               "thread not in CH_STATE_SUSPENDED state");
   chSchWakeupS(tp, RDY_OK);
   chSysUnlock();
@@ -312,7 +310,7 @@ void chThdTerminate(thread_t *tp) {
  */
 void chThdSleep(systime_t time) {
 
-  chDbgCheck(time != TIME_IMMEDIATE, "chThdSleep");
+  chDbgCheck(time != TIME_IMMEDIATE);
 
   chSysLock();
   chThdSleepS(time);
@@ -403,7 +401,7 @@ void chThdExitS(msg_t msg) {
 #endif
   chSchGoSleepS(CH_STATE_FINAL);
   /* The thread never returns here.*/
-  chDbgAssert(false, "chThdExitS(), #1", "zombies apocalypse");
+  chDbgAssert(false, "zombies apocalypse");
 }
 
 #if CH_CFG_USE_WAITEXIT || defined(__DOXYGEN__)
@@ -441,12 +439,12 @@ void chThdExitS(msg_t msg) {
 msg_t chThdWait(thread_t *tp) {
   msg_t msg;
 
-  chDbgCheck(tp != NULL, "chThdWait");
+  chDbgCheck(tp != NULL);
 
   chSysLock();
-  chDbgAssert(tp != currp, "chThdWait(), #1", "waiting self");
+  chDbgAssert(tp != currp, "waiting self");
 #if CH_CFG_USE_DYNAMIC
-  chDbgAssert(tp->p_refs > 0, "chThdWait(), #2", "not referenced");
+  chDbgAssert(tp->p_refs > 0, "not referenced");
 #endif
   if (tp->p_state != CH_STATE_FINAL) {
     list_insert(currp, &tp->p_waiting);

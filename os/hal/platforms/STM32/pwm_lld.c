@@ -488,9 +488,9 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
   /* Timer configuration.*/
   psc = (pwmp->clock / pwmp->config->frequency) - 1;
-  chDbgAssert((psc <= 0xFFFF) &&
-              ((psc + 1) * pwmp->config->frequency) == pwmp->clock,
-              "pwm_lld_start(), #1", "invalid frequency");
+  osalDbgAssert((psc <= 0xFFFF) &&
+                ((psc + 1) * pwmp->config->frequency) == pwmp->clock,
+                "invalid frequency");
   pwmp->tim->PSC  = (uint16_t)psc;
   pwmp->tim->ARR  = (uint16_t)(pwmp->period - 1);
   pwmp->tim->CR2  = pwmp->config->cr2;

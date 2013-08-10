@@ -404,8 +404,7 @@ void can_lld_start(CANDriver *canp) {
 #if STM32_CAN_USE_CAN2
   if (&CAND2 == canp) {
 
-    osalDbgAssert(CAND1.state != CAN_STOP,
-                  "can_lld_start(), #1", "CAN1 must be started");
+    osalDbgAssert(CAND1.state != CAN_STOP, "CAN1 must be started");
 
     nvicEnableVector(STM32_CAN2_TX_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
     nvicEnableVector(STM32_CAN2_RX0_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
@@ -447,8 +446,7 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND1 == canp) {
 
 #if STM32_CAN_USE_CAN2
-      osalDbgAssert(CAND2.state == CAN_STOP,
-                    "can_lld_stop(), #1", "CAN2 must be stopped");
+      osalDbgAssert(CAND2.state == CAN_STOP, "CAN2 must be stopped");
 #endif
 
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
@@ -690,12 +688,10 @@ void canSTM32SetFilters(uint32_t can2sb, uint32_t num, const CANFilter *cfp) {
                (num < STM32_CAN_MAX_FILTERS));
 
 #if STM32_CAN_USE_CAN1
-  osalDbgAssert(CAND1.state == CAN_STOP,
-                "canSTM32SetFilters(), #1", "invalid state");
+  osalDbgAssert(CAND1.state == CAN_STOP, "invalid state");
 #endif
 #if STM32_CAN_USE_CAN2
-  osalDbgAssert(CAND2.state == CAN_STOP,
-                "canSTM32SetFilters(), #2", "invalid state");
+  osalDbgAssert(CAND2.state == CAN_STOP, "invalid state");
 #endif
 
   can_lld_set_filters(can2sb, num, cfp);

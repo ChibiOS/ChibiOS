@@ -86,7 +86,7 @@
  */
 void chMBObjectInit(mailbox_t *mbp, msg_t *buf, cnt_t n) {
 
-  chDbgCheck((mbp != NULL) && (buf != NULL) && (n > 0), "chMBInit");
+  chDbgCheck((mbp != NULL) && (buf != NULL) && (n > 0));
 
   mbp->mb_buffer = mbp->mb_wrptr = mbp->mb_rdptr = buf;
   mbp->mb_top = &buf[n];
@@ -105,7 +105,7 @@ void chMBObjectInit(mailbox_t *mbp, msg_t *buf, cnt_t n) {
  */
 void chMBReset(mailbox_t *mbp) {
 
-  chDbgCheck(mbp != NULL, "chMBReset");
+  chDbgCheck(mbp != NULL);
 
   chSysLock();
   mbp->mb_wrptr = mbp->mb_rdptr = mbp->mb_buffer;
@@ -166,7 +166,7 @@ msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
-  chDbgCheck(mbp != NULL, "chMBPostS");
+  chDbgCheck(mbp != NULL);
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
   if (rdymsg == RDY_OK) {
@@ -196,7 +196,7 @@ msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t time) {
 msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
 
   chDbgCheckClassI();
-  chDbgCheck(mbp != NULL, "chMBPostI");
+  chDbgCheck(mbp != NULL);
 
   if (chSemGetCounterI(&mbp->mb_emptysem) <= 0)
     return RDY_TIMEOUT;
@@ -259,7 +259,7 @@ msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t time) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
-  chDbgCheck(mbp != NULL, "chMBPostAheadS");
+  chDbgCheck(mbp != NULL);
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
   if (rdymsg == RDY_OK) {
@@ -289,7 +289,7 @@ msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t time) {
 msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
 
   chDbgCheckClassI();
-  chDbgCheck(mbp != NULL, "chMBPostAheadI");
+  chDbgCheck(mbp != NULL);
 
   if (chSemGetCounterI(&mbp->mb_emptysem) <= 0)
     return RDY_TIMEOUT;
@@ -352,7 +352,7 @@ msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t time) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
-  chDbgCheck((mbp != NULL) && (msgp != NULL), "chMBFetchS");
+  chDbgCheck((mbp != NULL) && (msgp != NULL));
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, time);
   if (rdymsg == RDY_OK) {
@@ -382,7 +382,7 @@ msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t time) {
 msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp) {
 
   chDbgCheckClassI();
-  chDbgCheck((mbp != NULL) && (msgp != NULL), "chMBFetchI");
+  chDbgCheck((mbp != NULL) && (msgp != NULL));
 
   if (chSemGetCounterI(&mbp->mb_fullsem) <= 0)
     return RDY_TIMEOUT;

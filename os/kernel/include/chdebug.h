@@ -177,49 +177,43 @@ typedef struct {
  *          is specified in @p chconf.h else the macro does nothing.
  *
  * @param[in] c         the condition to be verified to be true
- * @param[in] func      the undecorated function name
  *
  * @api
  */
 #if !defined(chDbgCheck)
-#define chDbgCheck(c, func) {                                               \
+#define chDbgCheck(c) {                                                     \
   if (!(c))                                                                 \
-    chDbgPanic(__QUOTE_THIS(func)"()");                                     \
+    chDbgPanic("C:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));    \
 }
 #endif /* !defined(chDbgCheck) */
 
 #else /* !CH_DBG_ENABLE_CHECKS */
-#define chDbgCheck(c, func) {                                               \
-  (void)(c), (void)__QUOTE_THIS(func)"()";                                  \
-}
+#define chDbgCheck(c) {(void)(c);}
 #endif /* !CH_DBG_ENABLE_CHECKS */
 
 #if CH_DBG_ENABLE_ASSERTS || defined(__DOXYGEN__)
 /**
  * @brief   Condition assertion.
- * @details If the condition check fails then the kernel panics with the
- *          specified message and halts.
+ * @details If the condition check fails then the kernel panics with a
+ *          message and halts.
  * @note    The condition is tested only if the @p CH_DBG_ENABLE_ASSERTS switch
  *          is specified in @p chconf.h else the macro does nothing.
- * @note    The convention for the message is the following:<br>
- *          @<function_name@>(), #@<assert_number@>
  * @note    The remark string is not currently used except for putting a
  *          comment in the code about the assertion.
  *
  * @param[in] c         the condition to be verified to be true
- * @param[in] m         the text message
  * @param[in] r         a remark string
  *
  * @api
  */
 #if !defined(chDbgAssert)
-#define chDbgAssert(c, m, r) {                                              \
+#define chDbgAssert(c, r) {                                                 \
   if (!(c))                                                                 \
-    chDbgPanic(m);                                                          \
+    chDbgPanic("A:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));    \
 }
 #endif /* !defined(chDbgAssert) */
 #else /* !CH_DBG_ENABLE_ASSERTS */
-#define chDbgAssert(c, m, r) {(void)(c);}
+#define chDbgAssert(c, r) {(void)(c);}
 #endif /* !CH_DBG_ENABLE_ASSERTS */
 /** @} */
 
