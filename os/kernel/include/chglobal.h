@@ -120,6 +120,18 @@ typedef struct ch_system {
    * @brief   Virtual timers delta list header.
    */
   virtual_timers_list_t vtlist;
+#if CH_CFG_USE_TM || defined(__DOXYGEN__)
+  /**
+   * @brief   Measurement calibration value.
+   */
+  rtcnt_t               measurement_offset;
+#endif
+#if CH_DBG_STATISTICS || defined(__DOXYGEN__)
+  /**
+   * @brief   Global kernel statistics.
+   */
+  kernel_stats_t        kernel_stats;
+#endif
 #if CH_DBG_ENABLED || defined(__DOXYGEN__)
   /**
    * @brief   Pointer to the panic message.

@@ -47,11 +47,6 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   Measurement calibration value.
- */
-static rtcnt_t measurement_offset;
-
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -84,11 +79,11 @@ void _tm_init(void) {
   /* Time Measurement subsystem calibration, it does a null measurement
      and calculates the call overhead which is subtracted to real
      measurements.*/
-  measurement_offset = 0;
+  ch.measurement_offset = 0;
   chTMObjectInit(&tm);
   chTMStartMeasurementX(&tm);
   chTMStopMeasurementX(&tm);
-  measurement_offset = tm.last;
+  ch.measurement_offset = tm.last;
 }
 
 /**
@@ -130,7 +125,7 @@ NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp) {
  */
 NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp) {
 
-  tm_stop(tmp, chSysGetRealtimeCounterX(), measurement_offset);
+  tm_stop(tmp, chSysGetRealtimeCounterX(), ch.measurement_offset);
 }
 
 #endif /* CH_CFG_USE_TM */

@@ -39,11 +39,6 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   Global kernel statistics.
- */
-kernel_stats_t kernel_stats;
-
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -67,19 +62,18 @@ kernel_stats_t kernel_stats;
  */
 void _stats_init(void) {
 
-  kernel_stats.n_irq = 0;
-  kernel_stats.n_ctxswc = 0;
-  chTMObjectInit(&kernel_stats.m_crit_thd);
-  chTMObjectInit(&kernel_stats.m_crit_isr);
+  ch.kernel_stats.n_irq = 0;
+  ch.kernel_stats.n_ctxswc = 0;
+  chTMObjectInit(&ch.kernel_stats.m_crit_thd);
+  chTMObjectInit(&ch.kernel_stats.m_crit_isr);
 }
-
 
 /**
  * @brief   Increases the IRQ counter.
  */
 void _stats_increase_irq(void) {
 
-  kernel_stats.n_irq++;
+  ch.kernel_stats.n_irq++;
 }
 
 /**
@@ -87,7 +81,7 @@ void _stats_increase_irq(void) {
  */
 void _stats_ctxswc(thread_t *ntp, thread_t *otp) {
 
-  kernel_stats.n_ctxswc++;
+  ch.kernel_stats.n_ctxswc++;
   chTMChainMeasurementToX(&otp->p_stats, &ntp->p_stats);
 }
 
@@ -96,7 +90,7 @@ void _stats_ctxswc(thread_t *ntp, thread_t *otp) {
  */
 void _stats_start_measure_crit_thd(void) {
 
-  chTMStartMeasurementX(&kernel_stats.m_crit_thd);
+  chTMStartMeasurementX(&ch.kernel_stats.m_crit_thd);
 }
 
 /**
@@ -104,7 +98,7 @@ void _stats_start_measure_crit_thd(void) {
  */
 void _stats_stop_measure_crit_thd(void) {
 
-  chTMStopMeasurementX(&kernel_stats.m_crit_thd);
+  chTMStopMeasurementX(&ch.kernel_stats.m_crit_thd);
 }
 
 /**
@@ -112,7 +106,7 @@ void _stats_stop_measure_crit_thd(void) {
  */
 void _stats_start_measure_crit_isr(void) {
 
-  chTMStartMeasurementX(&kernel_stats.m_crit_isr);
+  chTMStartMeasurementX(&ch.kernel_stats.m_crit_isr);
 }
 
 /**
@@ -120,7 +114,7 @@ void _stats_start_measure_crit_isr(void) {
  */
 void _stats_stop_measure_crit_isr(void) {
 
-  chTMStopMeasurementX(&kernel_stats.m_crit_isr);
+  chTMStopMeasurementX(&ch.kernel_stats.m_crit_isr);
 }
 
 #endif /* CH_DBG_STATISTICS */
