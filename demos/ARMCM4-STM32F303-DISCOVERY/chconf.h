@@ -290,7 +290,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_CFG_USE_QUEUES) || defined(__DOXYGEN__)
-#define CH_CFG_USE_QUEUES                   FALSE
+#define CH_CFG_USE_QUEUES                   TRUE
 #endif
 
 /**

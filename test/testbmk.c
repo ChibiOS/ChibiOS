@@ -442,7 +442,7 @@ ROMCONST struct testcase testbmk8 = {
   bmk8_execute
 };
 
-#if 0
+#if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
 /**
  * @page test_benchmarks_009 I/O Queues throughput
  *
@@ -456,9 +456,9 @@ ROMCONST struct testcase testbmk8 = {
 static void bmk9_execute(void) {
   uint32_t n;
   static uint8_t ib[16];
-  static InputQueue iq;
+  static input_queue_t iq;
 
-  chIQInit(&iq, ib, sizeof(ib), NULL, NULL);
+  chIQObjectInit(&iq, ib, sizeof(ib), NULL, NULL);
   n = 0;
   test_wait_tick();
   test_start_timer(1000);
@@ -489,7 +489,7 @@ ROMCONST struct testcase testbmk9 = {
   NULL,
   bmk9_execute
 };
-#endif
+#endif /* CH_CFG_USE_QUEUES */
 
 /**
  * @page test_benchmarks_010 Virtual Timers set/reset performance
@@ -701,7 +701,9 @@ ROMCONST struct testcase * ROMCONST patternbmk[] = {
   &testbmk6,
   &testbmk7,
   &testbmk8,
-//  &testbmk9,
+#if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
+  &testbmk9,
+#endif
   &testbmk10,
   &testbmk11,
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
