@@ -120,6 +120,30 @@ typedef struct ch_system {
    * @brief   Virtual timers delta list header.
    */
   virtual_timers_list_t vtlist;
+#if CH_DBG_ENABLED || defined(__DOXYGEN__)
+  /**
+   * @brief   Pointer to the panic message.
+   * @details This pointer is meant to be accessed through the debugger, it is
+   *          written once and then the system is halted.
+   */
+  const char            *dbg_panic_msg;
+#endif
+#if CH_DBG_SYSTEM_STATE_CHECK || defined(__DOXYGEN__)
+  /**
+   * @brief   ISR nesting level.
+   */
+  cnt_t                 dbg_isr_cnt;
+  /**
+   * @brief   Lock nesting level.
+   */
+  cnt_t                 dbg_lock_cnt;
+#endif
+#if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
+  /**
+   * @brief   Public trace buffer.
+   */
+  ch_trace_buffer_t     dbg_trace_buffer;
+#endif
 } ch_system_t;
 
 /*===========================================================================*/

@@ -51,29 +51,38 @@
 #include "ch.h"
 
 /*===========================================================================*/
-/* System state checker related code and variables.                          */
+/* Module local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
 /*===========================================================================*/
 
 #if CH_DBG_SYSTEM_STATE_CHECK || defined(__DOXYGEN__)
-
-/**
- * @brief   ISR nesting level.
- */
-cnt_t dbg_isr_cnt;
-
-/**
- * @brief   Lock nesting level.
- */
-cnt_t dbg_lock_cnt;
-
 /**
  * @brief   Guard code for @p chSysDisable().
  *
  * @notapi
  */
-void dbg_check_disable(void) {
+void _dbg_check_disable(void) {
 
-  if ((dbg_isr_cnt != 0) || (dbg_lock_cnt != 0))
+  if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt != 0))
     chDbgPanic("SV#1");
 }
 
@@ -82,9 +91,9 @@ void dbg_check_disable(void) {
  *
  * @notapi
  */
-void dbg_check_suspend(void) {
+void _dbg_check_suspend(void) {
 
-  if ((dbg_isr_cnt != 0) || (dbg_lock_cnt != 0))
+  if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt != 0))
     chDbgPanic("SV#2");
 }
 
@@ -93,9 +102,9 @@ void dbg_check_suspend(void) {
  *
  * @notapi
  */
-void dbg_check_enable(void) {
+void _dbg_check_enable(void) {
 
-  if ((dbg_isr_cnt != 0) || (dbg_lock_cnt != 0))
+  if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt != 0))
     chDbgPanic("SV#3");
 }
 
@@ -104,11 +113,11 @@ void dbg_check_enable(void) {
  *
  * @notapi
  */
-void dbg_check_lock(void) {
+void _dbg_check_lock(void) {
 
-  if ((dbg_isr_cnt != 0) || (dbg_lock_cnt != 0))
+  if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt != 0))
     chDbgPanic("SV#4");
-  dbg_enter_lock();
+  _dbg_enter_lock();
 }
 
 /**
@@ -116,11 +125,11 @@ void dbg_check_lock(void) {
  *
  * @notapi
  */
-void dbg_check_unlock(void) {
+void _dbg_check_unlock(void) {
 
-  if ((dbg_isr_cnt != 0) || (dbg_lock_cnt <= 0))
+  if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt <= 0))
     chDbgPanic("SV#5");
-  dbg_leave_lock();
+  _dbg_leave_lock();
 }
 
 /**
@@ -128,11 +137,11 @@ void dbg_check_unlock(void) {
  *
  * @notapi
  */
-void dbg_check_lock_from_isr(void) {
+void _dbg_check_lock_from_isr(void) {
 
-  if ((dbg_isr_cnt <= 0) || (dbg_lock_cnt != 0))
+  if ((ch.dbg_isr_cnt <= 0) || (ch.dbg_lock_cnt != 0))
     chDbgPanic("SV#6");
-  dbg_enter_lock();
+  _dbg_enter_lock();
 }
 
 /**
@@ -140,11 +149,11 @@ void dbg_check_lock_from_isr(void) {
  *
  * @notapi
  */
-void dbg_check_unlock_from_isr(void) {
+void _dbg_check_unlock_from_isr(void) {
 
-  if ((dbg_isr_cnt <= 0) || (dbg_lock_cnt <= 0))
+  if ((ch.dbg_isr_cnt <= 0) || (ch.dbg_lock_cnt <= 0))
     chDbgPanic("SV#7");
-  dbg_leave_lock();
+  _dbg_leave_lock();
 }
 
 /**
@@ -152,12 +161,12 @@ void dbg_check_unlock_from_isr(void) {
  *
  * @notapi
  */
-void dbg_check_enter_isr(void) {
+void _dbg_check_enter_isr(void) {
 
   port_lock_from_isr();
-  if ((dbg_isr_cnt < 0) || (dbg_lock_cnt != 0))
+  if ((ch.dbg_isr_cnt < 0) || (ch.dbg_lock_cnt != 0))
     chDbgPanic("SV#8");
-  dbg_isr_cnt++;
+  ch.dbg_isr_cnt++;
   port_unlock_from_isr();
 }
 
@@ -166,12 +175,12 @@ void dbg_check_enter_isr(void) {
  *
  * @notapi
  */
-void dbg_check_leave_isr(void) {
+void _dbg_check_leave_isr(void) {
 
   port_lock_from_isr();
-  if ((dbg_isr_cnt <= 0) || (dbg_lock_cnt != 0))
+  if ((ch.dbg_isr_cnt <= 0) || (ch.dbg_lock_cnt != 0))
     chDbgPanic("SV#9");
-  dbg_isr_cnt--;
+  ch.dbg_isr_cnt--;
   port_unlock_from_isr();
 }
 
@@ -185,7 +194,7 @@ void dbg_check_leave_isr(void) {
  */
 void chDbgCheckClassI(void) {
 
-  if ((dbg_isr_cnt < 0) || (dbg_lock_cnt <= 0))
+  if ((ch.dbg_isr_cnt < 0) || (ch.dbg_lock_cnt <= 0))
     chDbgPanic("SV#10");
 }
 
@@ -199,30 +208,21 @@ void chDbgCheckClassI(void) {
  */
 void chDbgCheckClassS(void) {
 
-  if ((dbg_isr_cnt != 0) || (dbg_lock_cnt <= 0))
+  if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt <= 0))
     chDbgPanic("SV#11");
 }
 
 #endif /* CH_DBG_SYSTEM_STATE_CHECK */
 
-/*===========================================================================*/
-/* Trace related code and variables.                                         */
-/*===========================================================================*/
-
 #if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
-/**
- * @brief   Public trace buffer.
- */
-ch_trace_buffer_t dbg_trace_buffer;
-
 /**
  * @brief   Trace circular buffer subsystem initialization.
  * @note    Internal use only.
  */
 void _trace_init(void) {
 
-  dbg_trace_buffer.tb_size = CH_TRACE_BUFFER_SIZE;
-  dbg_trace_buffer.tb_ptr = &dbg_trace_buffer.tb_buffer[0];
+  ch.dbg_trace_buffer.tb_size = CH_DBG_TRACE_BUFFER_SIZE;
+  ch.dbg_trace_buffer.tb_ptr = &ch.dbg_trace_buffer.tb_buffer[0];
 }
 
 /**
@@ -232,30 +232,19 @@ void _trace_init(void) {
  *
  * @notapi
  */
-void dbg_trace(thread_t *otp) {
+void _dbg_trace(thread_t *otp) {
 
-  dbg_trace_buffer.tb_ptr->se_time   = chVTGetSystemTimeX();
-  dbg_trace_buffer.tb_ptr->se_tp     = currp;
-  dbg_trace_buffer.tb_ptr->se_wtobjp = otp->p_u.wtobjp;
-  dbg_trace_buffer.tb_ptr->se_state  = (uint8_t)otp->p_state;
-  if (++dbg_trace_buffer.tb_ptr >=
-      &dbg_trace_buffer.tb_buffer[CH_TRACE_BUFFER_SIZE])
-    dbg_trace_buffer.tb_ptr = &dbg_trace_buffer.tb_buffer[0];
+  ch.dbg_trace_buffer.tb_ptr->se_time   = chVTGetSystemTimeX();
+  ch.dbg_trace_buffer.tb_ptr->se_tp     = currp;
+  ch.dbg_trace_buffer.tb_ptr->se_wtobjp = otp->p_u.wtobjp;
+  ch.dbg_trace_buffer.tb_ptr->se_state  = (uint8_t)otp->p_state;
+  if (++ch.dbg_trace_buffer.tb_ptr >=
+      &ch.dbg_trace_buffer.tb_buffer[CH_DBG_TRACE_BUFFER_SIZE])
+    ch.dbg_trace_buffer.tb_ptr = &ch.dbg_trace_buffer.tb_buffer[0];
 }
 #endif /* CH_DBG_ENABLE_TRACE */
 
-/*===========================================================================*/
-/* Panic related code and variables.                                         */
-/*===========================================================================*/
-
 #if CH_DBG_ENABLED || defined(__DOXYGEN__)
-/**
- * @brief   Pointer to the panic message.
- * @details This pointer is meant to be accessed through the debugger, it is
- *          written once and then the system is halted.
- */
-const char *dbg_panic_msg;
-
 /**
  * @brief   Prints a panic message on the console and then halts the system.
  *
@@ -263,7 +252,7 @@ const char *dbg_panic_msg;
  */
 void chDbgPanic(const char *msg) {
 
-  dbg_panic_msg = msg;
+  ch.dbg_panic_msg = msg;
   chSysHalt();
 }
 #endif /* CH_DBG_ENABLED */

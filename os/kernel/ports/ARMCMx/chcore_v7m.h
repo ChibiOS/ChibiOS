@@ -371,7 +371,7 @@ struct context {
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \
-  struct intctx *r13 = __get_PSP();                                         \
+  struct intctx *r13 = (struct intctx *)__get_PSP();                        \
   if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
     chDbgPanic("stack overflow");                                           \
   _port_switch(ntp, otp);                                                   \
