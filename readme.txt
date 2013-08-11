@@ -73,6 +73,8 @@
 
 *** 2.6.1 ***
 - FIX: Fixed UART4 and 5 marked as not present in STM32F30x devices (bug #426).
+- FIX: Fixed warning in STM32 ICU/PWM drivers when used on STM32F3xx (bug
+  #425).
 - FIX: Fixed conditional code error in STM32 PWM driver (bug #424).
 - FIX: Fixed error in Guards of pwm_lld.h from STM32 (bug #423).
 - FIX: Fixed wrong RTC macro names in STM32L1xx HAL (bug #422).

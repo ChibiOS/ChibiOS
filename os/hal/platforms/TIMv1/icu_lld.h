@@ -25,6 +25,8 @@
 #ifndef _ICU_LLD_H_
 #define _ICU_LLD_H_
 
+#include "stm32_tim.h"
+
 #if HAL_USE_ICU || defined(__DOXYGEN__)
 
 /*===========================================================================*/

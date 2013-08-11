@@ -25,6 +25,8 @@
 #ifndef _GPT_LLD_H_
 #define _GPT_LLD_H_
 
+#include "stm32_tim.h"
+
 #if HAL_USE_GPT || defined(__DOXYGEN__)
 
 /*===========================================================================*/
