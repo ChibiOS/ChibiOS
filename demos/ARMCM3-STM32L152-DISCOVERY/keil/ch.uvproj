@@ -789,7 +789,7 @@
             <File>
               <FileName>pwm_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\os\hal\platforms\STM32\pwm_lld.c</FilePath>
+              <FilePath>..\..\..\os\hal\platforms\STM32\TIMv1\pwm_lld.c</FilePath>
             </File>
             <File>
               <FileName>serial_lld.c</FileName>

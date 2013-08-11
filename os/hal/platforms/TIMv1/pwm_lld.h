@@ -25,6 +25,8 @@
 #ifndef _PWM_LLD_H_
 #define _PWM_LLD_H_
 
+#include "stm32_tim.h"
+
 #if HAL_USE_PWM || defined(__DOXYGEN__)
 
 /*===========================================================================*/

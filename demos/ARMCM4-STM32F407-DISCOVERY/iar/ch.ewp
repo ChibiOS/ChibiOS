@@ -1088,6 +1088,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
+          <state>CORTEX_USE_FPU=FALSE</state>
           <state>NDEBUG</state>
         </option>
         <option>
@@ -1382,7 +1383,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state></state>
+          <state>CORTEX_USE_FPU=FALSE</state>
         </option>
         <option>
           <name>AList</name>
@@ -2134,10 +2135,10 @@
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv2\pal_lld.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\pwm_lld.c</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\TIMv1\pwm_lld.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\pwm_lld.h</name>
+        <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\TIMv1\pwm_lld.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\USARTv1\serial_lld.c</name>
