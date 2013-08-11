@@ -304,6 +304,7 @@
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv2</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\SPIv1</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\TIMv1</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\USARTv1</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F4xx</state>
           <state>$PROJ_DIR$\..\..\..\os\various</state>
@@ -1229,6 +1230,7 @@
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv2</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\SPIv1</state>
+          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\TIMv1</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\USARTv1</state>
           <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F4xx</state>
           <state>$PROJ_DIR$\..\..\..\os\various</state>
