@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_PWM || defined(__DOXYGEN__)
@@ -144,14 +143,14 @@ static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   STM32_TIM1->SR = ~STM32_TIM_SR_UIF;
   PWMD1.config->callback(&PWMD1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #if !defined(STM32_TIM1_CC_HANDLER)
@@ -165,10 +164,10 @@ CH_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
   uint16_t sr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   sr = STM32_TIM1->SR & STM32_TIM1->DIER;
   STM32_TIM1->SR = ~(STM32_TIM_SR_CC1IF | STM32_TIM_SR_CC2IF |
@@ -182,7 +181,7 @@ CH_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
   if ((sr & STM32_TIM_SR_CC4IF) != 0)
     PWMD1.config->channels[3].callback(&PWMD1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_PWM_USE_TIM1 */
 
@@ -195,13 +194,13 @@ CH_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM2_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pwm_lld_serve_interrupt(&PWMD2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_PWM_USE_TIM2 */
 
@@ -214,13 +213,13 @@ CH_IRQ_HANDLER(STM32_TIM2_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM3_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM3_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pwm_lld_serve_interrupt(&PWMD3);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_PWM_USE_TIM3 */
 
@@ -233,13 +232,13 @@ CH_IRQ_HANDLER(STM32_TIM3_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM4_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM4_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pwm_lld_serve_interrupt(&PWMD4);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_PWM_USE_TIM4 */
 
@@ -252,13 +251,13 @@ CH_IRQ_HANDLER(STM32_TIM4_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM5_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM5_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pwm_lld_serve_interrupt(&PWMD5);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_PWM_USE_TIM5 */
 
@@ -274,14 +273,14 @@ CH_IRQ_HANDLER(STM32_TIM5_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   STM32_TIM8->SR = ~TIM_SR_UIF;
   PWMD8.config->callback(&PWMD8);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #if !defined(STM32_TIM8_CC_HANDLER)
@@ -295,10 +294,10 @@ CH_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
   uint16_t sr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   sr = STM32_TIM8->SR & STM32_TIM8->DIER;
   STM32_TIM8->SR = ~(STM32_TIM_SR_CC1IF | STM32_TIM_SR_CC2IF |
@@ -312,7 +311,7 @@ CH_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
   if ((sr & STM32_TIM_SR_CC4IF) != 0)
     PWMD8.config->channels[3].callback(&PWMD8);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_PWM_USE_TIM8 */
 
@@ -325,13 +324,13 @@ CH_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM9_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM9_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pwm_lld_serve_interrupt(&PWMD9);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_PWM_USE_TIM9 */
 
@@ -408,10 +407,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD1 == pwmp) {
       rccEnableTIM1(FALSE);
       rccResetTIM1();
-      nvicEnableVector(STM32_TIM1_UP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
-      nvicEnableVector(STM32_TIM1_CC_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM1_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_PWM_TIM1_IRQ_PRIORITY);
+      nvicEnableVector(STM32_TIM1_CC_NUMBER, STM32_PWM_TIM1_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK2;
     }
 #endif
@@ -419,8 +416,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD2 == pwmp) {
       rccEnableTIM2(FALSE);
       rccResetTIM2();
-      nvicEnableVector(STM32_TIM2_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM2_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM2_NUMBER, STM32_PWM_TIM2_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif
@@ -428,8 +424,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD3 == pwmp) {
       rccEnableTIM3(FALSE);
       rccResetTIM3();
-      nvicEnableVector(STM32_TIM3_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM3_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM3_NUMBER, STM32_PWM_TIM3_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif
@@ -437,8 +432,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD4 == pwmp) {
       rccEnableTIM4(FALSE);
       rccResetTIM4();
-      nvicEnableVector(STM32_TIM4_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM4_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM4_NUMBER, STM32_PWM_TIM4_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif
@@ -447,8 +441,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD5 == pwmp) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
-      nvicEnableVector(STM32_TIM5_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM5_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM5_NUMBER, STM32_PWM_TIM5_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif
@@ -456,10 +449,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD8 == pwmp) {
       rccEnableTIM8(FALSE);
       rccResetTIM8();
-      nvicEnableVector(STM32_TIM8_UP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
-      nvicEnableVector(STM32_TIM8_CC_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM8_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_PWM_TIM8_IRQ_PRIORITY);
+      nvicEnableVector(STM32_TIM8_CC_NUMBER, STM32_PWM_TIM8_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK2;
     }
 #endif
@@ -467,8 +458,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     if (&PWMD9 == pwmp) {
       rccEnableTIM9(FALSE);
       rccResetTIM9();
-      nvicEnableVector(STM32_TIM9_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_PWM_TIM9_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM9_NUMBER, STM32_PWM_TIM9_IRQ_PRIORITY);
       pwmp->clock = STM32_TIMCLK1;
     }
 #endif
@@ -494,9 +484,9 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
   /* Timer configuration.*/
   psc = (pwmp->clock / pwmp->config->frequency) - 1;
-  chDbgAssert((psc <= 0xFFFF) &&
-              ((psc + 1) * pwmp->config->frequency) == pwmp->clock,
-              "pwm_lld_start(), #1", "invalid frequency");
+  osalDbgAssert((psc <= 0xFFFF) &&
+                ((psc + 1) * pwmp->config->frequency) == pwmp->clock,
+                "invalid frequency");
   pwmp->tim->PSC  = (uint16_t)psc;
   pwmp->tim->ARR  = (uint16_t)(pwmp->period - 1);
   pwmp->tim->CR2  = pwmp->config->cr2;

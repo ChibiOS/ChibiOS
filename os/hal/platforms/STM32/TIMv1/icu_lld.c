@@ -26,7 +26,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_ICU || defined(__DOXYGEN__)
@@ -145,13 +144,13 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   icu_lld_serve_interrupt(&ICUD1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #if !defined(STM32_TIM1_CC_HANDLER)
@@ -165,13 +164,13 @@ CH_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   icu_lld_serve_interrupt(&ICUD1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ICU_USE_TIM1 */
 
@@ -187,13 +186,13 @@ CH_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM2_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   icu_lld_serve_interrupt(&ICUD2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ICU_USE_TIM2 */
 
@@ -209,13 +208,13 @@ CH_IRQ_HANDLER(STM32_TIM2_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM3_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM3_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   icu_lld_serve_interrupt(&ICUD3);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ICU_USE_TIM3 */
 
@@ -231,13 +230,13 @@ CH_IRQ_HANDLER(STM32_TIM3_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM4_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM4_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   icu_lld_serve_interrupt(&ICUD4);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ICU_USE_TIM4 */
 
@@ -253,13 +252,13 @@ CH_IRQ_HANDLER(STM32_TIM4_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM5_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM5_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   icu_lld_serve_interrupt(&ICUD5);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ICU_USE_TIM5 */
 
@@ -275,13 +274,13 @@ CH_IRQ_HANDLER(STM32_TIM5_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   icu_lld_serve_interrupt(&ICUD8);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #if !defined(STM32_TIM8_CC_HANDLER)
@@ -295,13 +294,13 @@ CH_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   icu_lld_serve_interrupt(&ICUD8);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ICU_USE_TIM8 */
 
@@ -317,13 +316,13 @@ CH_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_TIM9_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM9_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   icu_lld_serve_interrupt(&ICUD9);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ICU_USE_TIM9 */
 
@@ -391,9 +390,9 @@ void icu_lld_init(void) {
 void icu_lld_start(ICUDriver *icup) {
   uint32_t psc;
 
-  chDbgAssert((icup->config->channel == ICU_CHANNEL_1) ||
-              (icup->config->channel == ICU_CHANNEL_2),
-              "icu_lld_start(), #1", "invalid input");
+  osalDbgAssert((icup->config->channel == ICU_CHANNEL_1) ||
+                (icup->config->channel == ICU_CHANNEL_2),
+                "invalid input");
 
   if (icup->state == ICU_STOP) {
     /* Clock activation and timer reset.*/
@@ -401,10 +400,8 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD1 == icup) {
       rccEnableTIM1(FALSE);
       rccResetTIM1();
-      nvicEnableVector(STM32_TIM1_UP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
-      nvicEnableVector(STM32_TIM1_CC_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM1_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_ICU_TIM1_IRQ_PRIORITY);
+      nvicEnableVector(STM32_TIM1_CC_NUMBER, STM32_ICU_TIM1_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK2;
     }
 #endif
@@ -412,8 +409,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD2 == icup) {
       rccEnableTIM2(FALSE);
       rccResetTIM2();
-      nvicEnableVector(STM32_TIM2_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM2_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM2_NUMBER, STM32_ICU_TIM2_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif
@@ -421,8 +417,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD3 == icup) {
       rccEnableTIM3(FALSE);
       rccResetTIM3();
-      nvicEnableVector(STM32_TIM3_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM3_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM3_NUMBER, STM32_ICU_TIM3_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif
@@ -430,8 +425,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD4 == icup) {
       rccEnableTIM4(FALSE);
       rccResetTIM4();
-      nvicEnableVector(STM32_TIM4_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM4_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM4_NUMBER, STM32_ICU_TIM4_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif
@@ -439,8 +433,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD5 == icup) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
-      nvicEnableVector(STM32_TIM5_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM5_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM5_NUMBER, STM32_ICU_TIM5_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif
@@ -448,10 +441,8 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD8 == icup) {
       rccEnableTIM8(FALSE);
       rccResetTIM8();
-      nvicEnableVector(STM32_TIM8_UP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
-      nvicEnableVector(STM32_TIM8_CC_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM8_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_ICU_TIM8_IRQ_PRIORITY);
+      nvicEnableVector(STM32_TIM8_CC_NUMBER, STM32_ICU_TIM8_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK2;
     }
 #endif
@@ -459,8 +450,7 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD9 == icup) {
       rccEnableTIM9(FALSE);
       rccResetTIM9();
-      nvicEnableVector(STM32_TIM9_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM9_IRQ_PRIORITY));
+      nvicEnableVector(STM32_TIM9_NUMBER, STM32_ICU_TIM9_IRQ_PRIORITY);
       icup->clock = STM32_TIMCLK1;
     }
 #endif
@@ -477,9 +467,9 @@ void icu_lld_start(ICUDriver *icup) {
 
   /* Timer configuration.*/
   psc = (icup->clock / icup->config->frequency) - 1;
-  chDbgAssert((psc <= 0xFFFF) &&
-              ((psc + 1) * icup->config->frequency) == icup->clock,
-              "icu_lld_start(), #1", "invalid frequency");
+  osalDbgAssert((psc <= 0xFFFF) &&
+                ((psc + 1) * icup->config->frequency) == icup->clock,
+                "invalid frequency");
   icup->tim->PSC  = (uint16_t)psc;
   icup->tim->ARR   = 0xFFFF;
 

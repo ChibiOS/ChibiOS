@@ -87,71 +87,9 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   STM32 TIM registers block.
- * @note    Redefined from the ST headers because the non uniform
- *          declaration of the CCR registers among the various
- *          sub-families.
- */
-typedef struct {
-  volatile uint16_t     CR1;
-  uint16_t              _resvd0;
-  volatile uint16_t     CR2;
-  uint16_t              _resvd1;
-  volatile uint16_t     SMCR;
-  uint16_t              _resvd2;
-  volatile uint16_t     DIER;
-  uint16_t              _resvd3;
-  volatile uint16_t     SR;
-  uint16_t              _resvd4;
-  volatile uint16_t     EGR;
-  uint16_t              _resvd5;
-  volatile uint16_t     CCMR1;
-  uint16_t              _resvd6;
-  volatile uint16_t     CCMR2;
-  uint16_t              _resvd7;
-  volatile uint16_t     CCER;
-  uint16_t              _resvd8;
-  volatile uint32_t     CNT;
-  volatile uint16_t     PSC;
-  uint16_t              _resvd9;
-  volatile uint32_t     ARR;
-  volatile uint16_t     RCR;
-  uint16_t              _resvd10;
-  volatile uint32_t     CCR[4];
-  volatile uint16_t     BDTR;
-  uint16_t              _resvd11;
-  volatile uint16_t     DCR;
-  uint16_t              _resvd12;
-  volatile uint16_t     DMAR;
-  uint16_t              _resvd13;
-  volatile uint16_t     OR;
-  uint16_t              _resvd14;
-} stm32_tim_t;
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @name    TIM units references
- * @{
- */
-#define STM32_TIM1      ((stm32_tim_t *)TIM1_BASE)
-#define STM32_TIM2      ((stm32_tim_t *)TIM2_BASE)
-#define STM32_TIM3      ((stm32_tim_t *)TIM3_BASE)
-#define STM32_TIM4      ((stm32_tim_t *)TIM4_BASE)
-#define STM32_TIM5      ((stm32_tim_t *)TIM5_BASE)
-#define STM32_TIM6      ((stm32_tim_t *)TIM6_BASE)
-#define STM32_TIM7      ((stm32_tim_t *)TIM7_BASE)
-#define STM32_TIM8      ((stm32_tim_t *)TIM8_BASE)
-#define STM32_TIM9      ((stm32_tim_t *)TIM9_BASE)
-#define STM32_TIM10     ((stm32_tim_t *)TIM10_BASE)
-#define STM32_TIM11     ((stm32_tim_t *)TIM11_BASE)
-#define STM32_TIM12     ((stm32_tim_t *)TIM12_BASE)
-#define STM32_TIM13     ((stm32_tim_t *)TIM13_BASE)
-#define STM32_TIM14     ((stm32_tim_t *)TIM14_BASE)
-/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
