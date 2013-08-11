@@ -115,15 +115,15 @@ static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
   sr  = pwmp->tim->SR;
   sr &= pwmp->tim->DIER;
   pwmp->tim->SR = ~sr;
-  if ((sr & TIM_SR_CC1IF) != 0)
+  if ((sr & STM32_TIM_SR_CC1IF) != 0)
     pwmp->config->channels[0].callback(pwmp);
-  if ((sr & TIM_SR_CC2IF) != 0)
+  if ((sr & STM32_TIM_SR_CC2IF) != 0)
     pwmp->config->channels[1].callback(pwmp);
-  if ((sr & TIM_SR_CC3IF) != 0)
+  if ((sr & STM32_TIM_SR_CC3IF) != 0)
     pwmp->config->channels[2].callback(pwmp);
-  if ((sr & TIM_SR_CC4IF) != 0)
+  if ((sr & STM32_TIM_SR_CC4IF) != 0)
     pwmp->config->channels[3].callback(pwmp);
-  if ((sr & TIM_SR_UIF) != 0)
+  if ((sr & STM32_TIM_SR_UIF) != 0)
     pwmp->config->callback(pwmp);
 }
 #endif /* STM32_PWM_USE_TIM2 || ... || STM32_PWM_USE_TIM5 */
@@ -148,7 +148,7 @@ CH_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
-  STM32_TIM1->SR = ~TIM_SR_UIF;
+  STM32_TIM1->SR = ~STM32_TIM_SR_UIF;
   PWMD1.config->callback(&PWMD1);
 
   CH_IRQ_EPILOGUE();
@@ -171,15 +171,15 @@ CH_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
   CH_IRQ_PROLOGUE();
 
   sr = STM32_TIM1->SR & STM32_TIM1->DIER;
-  STM32_TIM1->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF |
-                     TIM_SR_CC3IF | TIM_SR_CC4IF);
-  if ((sr & TIM_SR_CC1IF) != 0)
+  STM32_TIM1->SR = ~(STM32_TIM_SR_CC1IF | STM32_TIM_SR_CC2IF |
+                     STM32_TIM_SR_CC3IF | STM32_TIM_SR_CC4IF);
+  if ((sr & STM32_TIM_SR_CC1IF) != 0)
     PWMD1.config->channels[0].callback(&PWMD1);
-  if ((sr & TIM_SR_CC2IF) != 0)
+  if ((sr & STM32_TIM_SR_CC2IF) != 0)
     PWMD1.config->channels[1].callback(&PWMD1);
-  if ((sr & TIM_SR_CC3IF) != 0)
+  if ((sr & STM32_TIM_SR_CC3IF) != 0)
     PWMD1.config->channels[2].callback(&PWMD1);
-  if ((sr & TIM_SR_CC4IF) != 0)
+  if ((sr & STM32_TIM_SR_CC4IF) != 0)
     PWMD1.config->channels[3].callback(&PWMD1);
 
   CH_IRQ_EPILOGUE();
@@ -301,15 +301,15 @@ CH_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
   CH_IRQ_PROLOGUE();
 
   sr = STM32_TIM8->SR & STM32_TIM8->DIER;
-  STM32_TIM8->SR = ~(TIM_SR_CC1IF | TIM_SR_CC2IF |
-                     TIM_SR_CC3IF | TIM_SR_CC4IF);
-  if ((sr & TIM_SR_CC1IF) != 0)
+  STM32_TIM8->SR = ~(STM32_TIM_SR_CC1IF | STM32_TIM_SR_CC2IF |
+                     STM32_TIM_SR_CC3IF | STM32_TIM_SR_CC4IF);
+  if ((sr & STM32_TIM_SR_CC1IF) != 0)
     PWMD8.config->channels[0].callback(&PWMD8);
-  if ((sr & TIM_SR_CC2IF) != 0)
+  if ((sr & STM32_TIM_SR_CC2IF) != 0)
     PWMD8.config->channels[1].callback(&PWMD8);
-  if ((sr & TIM_SR_CC3IF) != 0)
+  if ((sr & STM32_TIM_SR_CC3IF) != 0)
     PWMD8.config->channels[2].callback(&PWMD8);
-  if ((sr & TIM_SR_CC4IF) != 0)
+  if ((sr & STM32_TIM_SR_CC4IF) != 0)
     PWMD8.config->channels[3].callback(&PWMD8);
 
   CH_IRQ_EPILOGUE();
@@ -475,14 +475,10 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
     /* All channels configured in PWM1 mode with preload enabled and will
        stay that way until the driver is stopped.*/
-    pwmp->tim->CCMR1 = TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 |
-                       TIM_CCMR1_OC1PE |
-                       TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 |
-                       TIM_CCMR1_OC2PE;
-    pwmp->tim->CCMR2 = TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 |
-                       TIM_CCMR2_OC3PE |
-                       TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 |
-                       TIM_CCMR2_OC4PE;
+    pwmp->tim->CCMR1 = STM32_TIM_CCMR1_OC1M(6) | STM32_TIM_CCMR1_OC1PE |
+                       STM32_TIM_CCMR1_OC2M(6) | STM32_TIM_CCMR1_OC2PE;
+    pwmp->tim->CCMR2 = STM32_TIM_CCMR2_OC3M(6) | STM32_TIM_CCMR2_OC3PE |
+                       STM32_TIM_CCMR2_OC4M(6) | STM32_TIM_CCMR2_OC4PE;
   }
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
@@ -509,33 +505,33 @@ void pwm_lld_start(PWMDriver *pwmp) {
   ccer = 0;
   switch (pwmp->config->channels[0].mode & PWM_OUTPUT_MASK) {
   case PWM_OUTPUT_ACTIVE_LOW:
-    ccer |= TIM_CCER_CC1P;
+    ccer |= STM32_TIM_CCER_CC1P;
   case PWM_OUTPUT_ACTIVE_HIGH:
-    ccer |= TIM_CCER_CC1E;
+    ccer |= STM32_TIM_CCER_CC1E;
   default:
     ;
   }
   switch (pwmp->config->channels[1].mode & PWM_OUTPUT_MASK) {
   case PWM_OUTPUT_ACTIVE_LOW:
-    ccer |= TIM_CCER_CC2P;
+    ccer |= STM32_TIM_CCER_CC2P;
   case PWM_OUTPUT_ACTIVE_HIGH:
-    ccer |= TIM_CCER_CC2E;
+    ccer |= STM32_TIM_CCER_CC2E;
   default:
     ;
   }
   switch (pwmp->config->channels[2].mode & PWM_OUTPUT_MASK) {
   case PWM_OUTPUT_ACTIVE_LOW:
-    ccer |= TIM_CCER_CC3P;
+    ccer |= STM32_TIM_CCER_CC3P;
   case PWM_OUTPUT_ACTIVE_HIGH:
-    ccer |= TIM_CCER_CC3E;
+    ccer |= STM32_TIM_CCER_CC3E;
   default:
     ;
   }
   switch (pwmp->config->channels[3].mode & PWM_OUTPUT_MASK) {
   case PWM_OUTPUT_ACTIVE_LOW:
-    ccer |= TIM_CCER_CC4P;
+    ccer |= STM32_TIM_CCER_CC4P;
   case PWM_OUTPUT_ACTIVE_HIGH:
-    ccer |= TIM_CCER_CC4E;
+    ccer |= STM32_TIM_CCER_CC4E;
   default:
     ;
   }
@@ -551,25 +547,25 @@ void pwm_lld_start(PWMDriver *pwmp) {
 #endif
     switch (pwmp->config->channels[0].mode & PWM_COMPLEMENTARY_OUTPUT_MASK) {
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW:
-      ccer |= TIM_CCER_CC1NP;
+      ccer |= STM32_TIM_CCER_CC1NP;
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH:
-      ccer |= TIM_CCER_CC1NE;
+      ccer |= STM32_TIM_CCER_CC1NE;
     default:
       ;
     }
     switch (pwmp->config->channels[1].mode & PWM_COMPLEMENTARY_OUTPUT_MASK) {
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW:
-      ccer |= TIM_CCER_CC2NP;
+      ccer |= STM32_TIM_CCER_CC2NP;
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH:
-      ccer |= TIM_CCER_CC2NE;
+      ccer |= STM32_TIM_CCER_CC2NE;
     default:
       ;
     }
     switch (pwmp->config->channels[2].mode & PWM_COMPLEMENTARY_OUTPUT_MASK) {
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW:
-      ccer |= TIM_CCER_CC3NP;
+      ccer |= STM32_TIM_CCER_CC3NP;
     case PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH:
-      ccer |= TIM_CCER_CC3NE;
+      ccer |= STM32_TIM_CCER_CC3NE;
     default:
       ;
     }
@@ -577,18 +573,18 @@ void pwm_lld_start(PWMDriver *pwmp) {
 #endif /* STM32_PWM_USE_ADVANCED*/
 
   pwmp->tim->CCER = ccer;
-  pwmp->tim->EGR  = TIM_EGR_UG;             /* Update event.                */
-  pwmp->tim->DIER = pwmp->config->callback == NULL ? 0 : TIM_DIER_UIE;
+  pwmp->tim->EGR  = STM32_TIM_EGR_UG;       /* Update event.                */
+  pwmp->tim->DIER = pwmp->config->callback == NULL ? 0 : STM32_TIM_DIER_UIE;
   pwmp->tim->SR   = 0;                      /* Clear pending IRQs.          */
 #if STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM8
 #if STM32_PWM_USE_ADVANCED
-  pwmp->tim->BDTR = pwmp->config->bdtr | TIM_BDTR_MOE;
+  pwmp->tim->BDTR = pwmp->config->bdtr | STM32_TIM_BDTR_MOE;
 #else
-  pwmp->tim->BDTR = TIM_BDTR_MOE;
+  pwmp->tim->BDTR = STM32_TIM_BDTR_MOE;
 #endif
 #endif
   /* Timer configured and started.*/
-  pwmp->tim->CR1  = TIM_CR1_ARPE | TIM_CR1_URS | TIM_CR1_CEN;
+  pwmp->tim->CR1  = STM32_TIM_CR1_ARPE | STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
 }
 
 /**
