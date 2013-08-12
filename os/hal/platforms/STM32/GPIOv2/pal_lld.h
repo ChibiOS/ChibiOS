@@ -130,6 +130,21 @@
                                          PAL_STM32_OTYPE_OPENDRAIN)
 /** @} */
 
+/**
+ * @name    GPIO ports definitions
+ * @{
+ */
+#define GPIOA                           ((stm32_gpio_t *)GPIOA_BASE)
+#define GPIOB                           ((stm32_gpio_t *)GPIOB_BASE)
+#define GPIOC                           ((stm32_gpio_t *)GPIOC_BASE)
+#define GPIOD                           ((stm32_gpio_t *)GPIOD_BASE)
+#define GPIOE                           ((stm32_gpio_t *)GPIOE_BASE)
+#define GPIOF                           ((stm32_gpio_t *)GPIOF_BASE)
+#define GPIOG                           ((stm32_gpio_t *)GPIOG_BASE)
+#define GPIOH                           ((stm32_gpio_t *)GPIOH_BASE)
+#define GPIOI                           ((stm32_gpio_t *)GPIOI_BASE)
+/** @} */
+
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
 /*===========================================================================*/
@@ -155,7 +170,8 @@ typedef struct {
   volatile uint32_t     LCKR;
   volatile uint32_t     AFRL;
   volatile uint32_t     AFRH;
-} GPIO_TypeDef;
+  volatile uint32_t     BRR;
+} stm32_gpio_t;
 
 /**
  * @brief   GPIO port setup info.
@@ -242,7 +258,7 @@ typedef uint32_t iomode_t;
  *          any assumption about it, use the provided macros when populating
  *          variables of this type.
  */
-typedef GPIO_TypeDef * ioportid_t;
+typedef stm32_gpio_t * ioportid_t;
 
 /*===========================================================================*/
 /* I/O Ports Identifiers.                                                    */

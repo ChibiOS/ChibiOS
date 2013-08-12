@@ -247,8 +247,7 @@ typedef enum IRQn
   */
 
 #include "core_cm4.h"            /* Cortex-M4 processor and core peripherals */
-/* CHIBIOS FIX */
-/*#include "system_stm32f30x.h"*/    /* STM32F30x System Header */
+#include "system_stm32f30x.h"    /* STM32F30x System Header */
 #include <stdint.h>
 
 /** @addtogroup Exported_types
@@ -554,8 +553,6 @@ typedef struct
 /** 
   * @brief General Purpose I/O
   */
-/* CHIBIOS FIX */
-#if 0
 typedef struct
 {
   __IO uint32_t MODER;        /*!< GPIO port mode register,                                  Address offset: 0x00 */
@@ -573,7 +570,6 @@ typedef struct
   __IO uint16_t BRR;          /*!< GPIO bit reset register,                                  Address offset: 0x28 */
   uint16_t RESERVED3;         /*!< Reserved,                                                                 0x2A */
 }GPIO_TypeDef;
-#endif
 
 /** 
   * @brief Operational Amplifier (OPAMP)

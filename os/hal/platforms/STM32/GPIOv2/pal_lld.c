@@ -73,7 +73,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static void initgpio(GPIO_TypeDef *gpiop, const stm32_gpio_setup_t *config) {
+static void initgpio(stm32_gpio_t *gpiop, const stm32_gpio_setup_t *config) {
 
   gpiop->OTYPER  = config->otyper;
   gpiop->OSPEEDR = config->ospeedr;

@@ -42,15 +42,18 @@
 #ifndef _STM32_H_
 #define _STM32_H_
 
+
+#if defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||                 \
+    defined(STM32F10X_HD_VL) || defined(STM32F10X_LD)    ||                 \
+    defined(STM32F10X_MD)    || defined(STM32F10X_HD)    ||                 \
+    defined(STM32F10X_XL)    || defined(STM32F10X_CL)    ||                 \
+    defined(__DOXYGEN__)
+#include "stm32f10x.h"
+
+#else /* !STM32F1XX_XX */
+
 #if defined(STM32F0XX)
 #include "stm32f0xx.h"
-
-#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
-      defined(STM32F10X_HD_VL) || defined(STM32F10X_LD)    ||               \
-      defined(STM32F10X_MD)    || defined(STM32F10X_HD)    ||               \
-      defined(STM32F10X_XL)    || defined(STM32F10X_CL)    ||               \
-      defined(__DOXYGEN__)
-#include "stm32f10x.h"
 
 #elif defined(STM32F2XX)
 #include "stm32f2xx.h"
@@ -70,6 +73,23 @@
 #else
 #error "STM32 device not specified"
 #endif
+
+/* Discarded definitions from the ST headers, the PAL driver uses its own
+   definitions in order to have an unified handling for all devices.
+   Unfortunately the ST headers have no uniform definitions for the same
+   objects across the various sub-families.*/
+#undef GPIOA
+#undef GPIOB
+#undef GPIOC
+#undef GPIOD
+#undef GPIOE
+#undef GPIOF
+#undef GPIOG
+#undef GPIOH
+#undef GPIOI
+
+#endif /* !STM32F1XX_XX */
+
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
