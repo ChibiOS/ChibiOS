@@ -38,8 +38,8 @@
 /* Abstract interfaces.*/
 #include "hal_streams.h"
 #include "hal_channels.h"
-//#include "io_block.h"
-//#include "mmcsd.h"
+#include "hal_ioblock.h"
+#include "hal_mmcsd.h"
 
 /* Shared headers.*/
 #include "hal_queues.h"
@@ -63,7 +63,7 @@
 //#include "usb.h"
 
 /* Complex drivers.*/
-//#include "mmc_spi.h"
+#include "mmc_spi.h"
 //#include "serial_usb.h"
 
 /*===========================================================================*/
