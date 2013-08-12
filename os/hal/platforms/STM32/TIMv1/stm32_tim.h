@@ -15,11 +15,11 @@
 */
 
 /**
- * @file    stm32_timh
+ * @file    stm32_tim.h
  * @brief   STM32 TIM registers layout header.
  * @note    This file requires definitions from the ST STM32 header file.
  *
- * @addtogroup STM32_TIM
+ * @addtogroup STM32_TIMv1
  * @{
  */
 
