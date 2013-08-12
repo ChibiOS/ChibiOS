@@ -59,7 +59,7 @@
 //#include "sdc.h"
 #include "spi.h"
 #include "st.h"
-//#include "uart.h"
+#include "uart.h"
 //#include "usb.h"
 
 /* Complex drivers.*/

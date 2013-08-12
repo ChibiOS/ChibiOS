@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_UART || defined(__DOXYGEN__)
@@ -296,13 +295,13 @@ static void serve_usart_irq(UARTDriver *uartp) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_USART1_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   serve_usart_irq(&UARTD1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_UART_USE_USART1 */
 
@@ -315,13 +314,13 @@ CH_IRQ_HANDLER(STM32_USART1_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_USART2_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   serve_usart_irq(&UARTD2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_UART_USE_USART2 */
 
@@ -334,13 +333,13 @@ CH_IRQ_HANDLER(STM32_USART2_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_USART3_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART3_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   serve_usart_irq(&UARTD3);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_UART_USE_USART3 */
 
@@ -397,15 +396,14 @@ void uart_lld_start(UARTDriver *uartp) {
                             STM32_UART_USART1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #1", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(uartp->dmatx,
                             STM32_UART_USART1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #2", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableUSART1(FALSE);
-      nvicEnableVector(STM32_USART1_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_UART_USART1_IRQ_PRIORITY));
+      nvicEnableVector(STM32_USART1_NUMBER, STM32_UART_USART1_IRQ_PRIORITY);
       uartp->dmamode |= STM32_DMA_CR_CHSEL(USART1_RX_DMA_CHANNEL) |
                         STM32_DMA_CR_PL(STM32_UART_USART1_DMA_PRIORITY);
     }
@@ -418,15 +416,14 @@ void uart_lld_start(UARTDriver *uartp) {
                             STM32_UART_USART2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #3", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(uartp->dmatx,
                             STM32_UART_USART2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #4", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableUSART2(FALSE);
-      nvicEnableVector(STM32_USART2_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_UART_USART2_IRQ_PRIORITY));
+      nvicEnableVector(STM32_USART2_NUMBER, STM32_UART_USART2_IRQ_PRIORITY);
       uartp->dmamode |= STM32_DMA_CR_CHSEL(USART2_RX_DMA_CHANNEL) |
                         STM32_DMA_CR_PL(STM32_UART_USART2_DMA_PRIORITY);
     }
@@ -439,15 +436,14 @@ void uart_lld_start(UARTDriver *uartp) {
                             STM32_UART_USART3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #5", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(uartp->dmatx,
                             STM32_UART_USART3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #6", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableUSART3(FALSE);
-      nvicEnableVector(STM32_USART3_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_UART_USART3_IRQ_PRIORITY));
+      nvicEnableVector(STM32_USART3_NUMBER, STM32_UART_USART3_IRQ_PRIORITY);
       uartp->dmamode |= STM32_DMA_CR_CHSEL(USART3_RX_DMA_CHANNEL) |
                         STM32_DMA_CR_PL(STM32_UART_USART3_DMA_PRIORITY);
     }
