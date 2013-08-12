@@ -19,52 +19,17 @@
 */
 
 /**
- * @file    hal.h
- * @brief   HAL subsystem header.
+ * @file    gpt.h
+ * @brief   GPT Driver macros and structures.
  *
- * @addtogroup HAL
+ * @addtogroup GPT
  * @{
  */
 
-#ifndef _HAL_H_
-#define _HAL_H_
+#ifndef _GPT_H_
+#define _GPT_H_
 
-#include "osal.h"
-#include "board.h"
-#include "halconf.h"
-
-#include "hal_lld.h"
-
-/* Abstract interfaces.*/
-#include "hal_streams.h"
-#include "hal_channels.h"
-//#include "io_block.h"
-//#include "mmcsd.h"
-
-/* Shared headers.*/
-#include "hal_queues.h"
-
-/* Normal drivers.*/
-#include "pal.h"
-#include "adc.h"
-#include "can.h"
-//#include "ext.h"
-#include "gpt.h"
-//#include "i2c.h"
-#include "icu.h"
-//#include "mac.h"
-#include "pwm.h"
-//#include "rtc.h"
-#include "serial.h"
-//#include "sdc.h"
-#include "spi.h"
-#include "st.h"
-//#include "uart.h"
-//#include "usb.h"
-
-/* Complex drivers.*/
-//#include "mmc_spi.h"
-//#include "serial_usb.h"
+#if HAL_USE_GPT || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -82,9 +47,51 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Driver state machine possible states.
+ */
+typedef enum {
+  GPT_UNINIT = 0,                   /**< Not initialized.                   */
+  GPT_STOP = 1,                     /**< Stopped.                           */
+  GPT_READY = 2,                    /**< Ready.                             */
+  GPT_CONTINUOUS = 3,               /**< Active in continuous mode.         */
+  GPT_ONESHOT = 4                   /**< Active in one shot mode.           */
+} gptstate_t;
+
+/**
+ * @brief   Type of a structure representing a GPT driver.
+ */
+typedef struct GPTDriver GPTDriver;
+
+/**
+ * @brief   GPT notification callback type.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ */
+typedef void (*gptcallback_t)(GPTDriver *gptp);
+
+#include "gpt_lld.h"
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Changes the interval of GPT peripheral.
+ * @details This function changes the interval of a running GPT unit.
+ * @pre     The GPT unit must have been activated using @p gptStart().
+ * @pre     The GPT unit must have been running in continuous mode using
+ *          @p gptStartContinuous().
+ * @post    The GPT unit interval is changed to the new value.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ * @param[in] interval  new cycle time in timer ticks
+ *
+ * @iclass
+ */
+#define gptChangeIntervalI(gptp, interval) {                                  \
+  gpt_lld_change_interval(gptp, interval);                                    \
+}
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -93,11 +100,24 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void halInit(void);
+  void gptInit(void);
+  void gptObjectInit(GPTDriver *gptp);
+  void gptStart(GPTDriver *gptp, const GPTConfig *config);
+  void gptStop(GPTDriver *gptp);
+  void gptStartContinuous(GPTDriver *gptp, gptcnt_t interval);
+  void gptStartContinuousI(GPTDriver *gptp, gptcnt_t interval);
+  void gptChangeInterval(GPTDriver *gptp, gptcnt_t interval);
+  void gptStartOneShot(GPTDriver *gptp, gptcnt_t interval);
+  void gptStartOneShotI(GPTDriver *gptp, gptcnt_t interval);
+  void gptStopTimer(GPTDriver *gptp);
+  void gptStopTimerI(GPTDriver *gptp);
+  void gptPolledDelay(GPTDriver *gptp, gptcnt_t interval);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _HAL_H_ */
+#endif /* HAL_USE_GPT */
+
+#endif /* _GPT_H_ */
 
 /** @} */
