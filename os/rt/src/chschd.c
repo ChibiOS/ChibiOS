@@ -87,8 +87,7 @@ thread_t *chSchReadyI(thread_t *tp) {
   thread_t *cp;
 
   chDbgCheckClassI();
-
-  /* Integrity checks.*/
+  chDbgCheck(tp != NULL);
   chDbgAssert((tp->p_state != CH_STATE_READY) &&
               (tp->p_state != CH_STATE_FINAL),
               "invalid state");
@@ -216,7 +215,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
  *          priority.
  *
  * @param[in] ntp       the thread to be made ready
- * @param[in] msg       message to the awakened thread
+ * @param[in] msg       the wakeup message
  *
  * @sclass
  */
@@ -224,13 +223,17 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
 
   chDbgCheckClassS();
 
+  /* Storing the message to be retrieved by the target thread when it will
+     restart execution.*/
   ntp->p_u.rdymsg = msg;
+
   /* If the waken thread has a not-greater priority than the current
      one then it is just inserted in the ready list else it made
      running immediately and the invoking thread goes in the ready
      list instead.*/
-  if (ntp->p_prio <= currp->p_prio)
+  if (ntp->p_prio <= currp->p_prio) {
     chSchReadyI(ntp);
+  }
   else {
     thread_t *otp = chSchReadyI(currp);
     setcurrp(ntp);

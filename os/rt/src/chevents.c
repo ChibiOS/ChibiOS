@@ -278,8 +278,10 @@ void chEvtSignalI(thread_t *tp, eventmask_t mask) {
   if (((tp->p_state == CH_STATE_WTOREVT) &&
        ((tp->p_epending & tp->p_u.ewmask) != 0)) ||
       ((tp->p_state == CH_STATE_WTANDEVT) &&
-       ((tp->p_epending & tp->p_u.ewmask) == tp->p_u.ewmask)))
-    chSchReadyI(tp)->p_u.rdymsg = RDY_OK;
+       ((tp->p_epending & tp->p_u.ewmask) == tp->p_u.ewmask))) {
+    tp->p_u.rdymsg = RDY_OK;
+    chSchReadyI(tp);
+  }
 }
 
 /**

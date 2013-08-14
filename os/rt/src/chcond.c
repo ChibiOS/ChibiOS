@@ -113,8 +113,11 @@ void chCondSignalI(condition_variable_t *cp) {
   chDbgCheckClassI();
   chDbgCheck(cp != NULL);
 
-  if (queue_notempty(&cp->c_queue))
-    chSchReadyI(queue_fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_OK;
+  if (queue_notempty(&cp->c_queue)) {
+    thread_t *tp = queue_fifo_remove(&cp->c_queue);
+    tp->p_u.rdymsg = RDY_OK;
+    chSchReadyI(tp);
+  }
 }
 
 /**
