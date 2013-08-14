@@ -50,7 +50,11 @@
 #endif
 
 #if (CH_CFG_TIMEDELTA > 0) && (CH_CFG_TIME_QUANTUM > 0)
-#error "(CH_CFG_TIMEDELTA > 0) is not compatible with (CH_CFG_TIME_QUANTUM > 0)"
+#error "CH_CFG_TIME_QUANTUM not supported in tickless mode"
+#endif
+
+#if (CH_CFG_TIMEDELTA > 0) && CH_DBG_THREADS_PROFILING
+#error "CH_DBG_THREADS_PROFILING not supported in tickless mode"
 #endif
 
 /*===========================================================================*/
