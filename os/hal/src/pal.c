@@ -59,11 +59,12 @@
  * @note    The function internally uses the @p palReadGroup() macro. The use
  *          of this function is preferred when you value code size, readability
  *          and error checking over speed.
+ * @note    The function can be called from any context.
  *
  * @param[in] bus       the I/O bus, pointer to a @p IOBus structure
  * @return              The bus logical states.
  *
- * @api
+ * @special
  */
 ioportmask_t palReadBus(IOBus *bus) {
 
@@ -81,13 +82,14 @@ ioportmask_t palReadBus(IOBus *bus) {
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
+ * @note    The function can be called from any context.
  *
  * @param[in] bus       the I/O bus, pointer to a @p IOBus structure
  * @param[in] bits      the bits to be written on the I/O bus. Values exceeding
  *                      the bus width are masked so most significant bits are
  *                      lost.
  *
- * @api
+ * @special
  */
 void palWriteBus(IOBus *bus, ioportmask_t bits) {
 
@@ -105,11 +107,12 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
+ * @note    The function can be called from any context.
  *
  * @param[in] bus       the I/O bus, pointer to a @p IOBus structure
  * @param[in] mode      the mode
  *
- * @api
+ * @special
  */
 void palSetBusMode(IOBus *bus, iomode_t mode) {
 
