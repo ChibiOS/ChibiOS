@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.5 ***
+- FIX: Fixed PAL driver documentation error (bug #427).
 - FIX: Fixed wrong RTC macro names in STM32L1xx HAL (bug #422).
 
 *** 2.4.4 ***

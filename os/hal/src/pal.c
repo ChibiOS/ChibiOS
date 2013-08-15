@@ -1,6 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012 Giovanni Di Sirio.
+                 2011,2012,2013 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -47,7 +47,7 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -67,16 +67,16 @@
  * @note    The function internally uses the @p palReadGroup() macro. The use
  *          of this function is preferred when you value code size, readability
  *          and error checking over speed.
+ * @note    The function can be called from any context.
  *
  * @param[in] bus       the I/O bus, pointer to a @p IOBus structure
  * @return              The bus logical states.
  *
- * @api
+ * @special
  */
 ioportmask_t palReadBus(IOBus *bus) {
 
-  chDbgCheck((bus != NULL) &&
-             (bus->offset < PAL_IOPORTS_WIDTH), "palReadBus");
+  osalDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH));
 
   return palReadGroup(bus->portid, bus->mask, bus->offset);
 }
@@ -90,18 +90,18 @@ ioportmask_t palReadBus(IOBus *bus) {
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
+ * @note    The function can be called from any context.
  *
  * @param[in] bus       the I/O bus, pointer to a @p IOBus structure
  * @param[in] bits      the bits to be written on the I/O bus. Values exceeding
  *                      the bus width are masked so most significant bits are
  *                      lost.
  *
- * @api
+ * @special
  */
 void palWriteBus(IOBus *bus, ioportmask_t bits) {
 
-  chDbgCheck((bus != NULL) &&
-             (bus->offset < PAL_IOPORTS_WIDTH), "palWriteBus");
+  osalDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH));
 
   palWriteGroup(bus->portid, bus->mask, bus->offset, bits);
 }
@@ -115,16 +115,16 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
+ * @note    The function can be called from any context.
  *
  * @param[in] bus       the I/O bus, pointer to a @p IOBus structure
  * @param[in] mode      the mode
  *
- * @api
+ * @special
  */
 void palSetBusMode(IOBus *bus, iomode_t mode) {
 
-  chDbgCheck((bus != NULL) &&
-             (bus->offset < PAL_IOPORTS_WIDTH), "palSetBusMode");
+  osalDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH));
 
   palSetGroupMode(bus->portid, bus->mask, bus->offset, mode);
 }
