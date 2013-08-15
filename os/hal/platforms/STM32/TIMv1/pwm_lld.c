@@ -112,7 +112,7 @@ static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
   uint16_t sr;
 
   sr  = pwmp->tim->SR;
-  sr &= pwmp->tim->DIER;
+  sr &= pwmp->tim->DIER & STM32_TIM_DIER_IRQ_MASK;
   pwmp->tim->SR = ~sr;
   if ((sr & STM32_TIM_SR_CC1IF) != 0)
     pwmp->config->channels[0].callback(pwmp);
@@ -169,9 +169,8 @@ OSAL_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  sr = STM32_TIM1->SR & STM32_TIM1->DIER;
-  STM32_TIM1->SR = ~(STM32_TIM_SR_CC1IF | STM32_TIM_SR_CC2IF |
-                     STM32_TIM_SR_CC3IF | STM32_TIM_SR_CC4IF);
+  sr = STM32_TIM1->SR & STM32_TIM1->DIER & STM32_TIM_DIER_IRQ_MASK;
+  STM32_TIM1->SR = ~sr;
   if ((sr & STM32_TIM_SR_CC1IF) != 0)
     PWMD1.config->channels[0].callback(&PWMD1);
   if ((sr & STM32_TIM_SR_CC2IF) != 0)
@@ -299,9 +298,8 @@ OSAL_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  sr = STM32_TIM8->SR & STM32_TIM8->DIER;
-  STM32_TIM8->SR = ~(STM32_TIM_SR_CC1IF | STM32_TIM_SR_CC2IF |
-                     STM32_TIM_SR_CC3IF | STM32_TIM_SR_CC4IF);
+  sr = STM32_TIM8->SR & STM32_TIM8->DIER & STM32_TIM_DIER_IRQ_MASK;
+  STM32_TIM8->SR = ~sr;
   if ((sr & STM32_TIM_SR_CC1IF) != 0)
     PWMD8.config->channels[0].callback(&PWMD8);
   if ((sr & STM32_TIM_SR_CC2IF) != 0)
@@ -473,7 +471,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
     pwmp->tim->CR1    = 0;                  /* Timer disabled.              */
-    pwmp->tim->DIER   = 0;                  /* All IRQs disabled.           */
+    pwmp->tim->DIER   = pwmp->config->dier &/* DMA-related DIER settings.   */
+                        ~STM32_TIM_DIER_IRQ_MASK;
     pwmp->tim->SR     = 0;                  /* Clear eventual pending IRQs. */
     pwmp->tim->CCR[0] = 0;                  /* Comparator 1 disabled.       */
     pwmp->tim->CCR[1] = 0;                  /* Comparator 2 disabled.       */
@@ -562,19 +561,20 @@ void pwm_lld_start(PWMDriver *pwmp) {
   }
 #endif /* STM32_PWM_USE_ADVANCED*/
 
-  pwmp->tim->CCER = ccer;
-  pwmp->tim->EGR  = STM32_TIM_EGR_UG;       /* Update event.                */
-  pwmp->tim->DIER = pwmp->config->callback == NULL ? 0 : STM32_TIM_DIER_UIE;
-  pwmp->tim->SR   = 0;                      /* Clear pending IRQs.          */
+  pwmp->tim->CCER  = ccer;
+  pwmp->tim->EGR   = STM32_TIM_EGR_UG;      /* Update event.                */
+  pwmp->tim->DIER |= pwmp->config->callback == NULL ? 0 : STM32_TIM_DIER_UIE;
+  pwmp->tim->SR    = 0;                     /* Clear pending IRQs.          */
 #if STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM8
 #if STM32_PWM_USE_ADVANCED
-  pwmp->tim->BDTR = pwmp->config->bdtr | STM32_TIM_BDTR_MOE;
+  pwmp->tim->BDTR  = pwmp->config->bdtr | STM32_TIM_BDTR_MOE;
 #else
-  pwmp->tim->BDTR = STM32_TIM_BDTR_MOE;
+  pwmp->tim->BDTR  = STM32_TIM_BDTR_MOE;
 #endif
 #endif
   /* Timer configured and started.*/
-  pwmp->tim->CR1  = STM32_TIM_CR1_ARPE | STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
+  pwmp->tim->CR1   = STM32_TIM_CR1_ARPE | STM32_TIM_CR1_URS |
+                     STM32_TIM_CR1_CEN;
 }
 
 /**
