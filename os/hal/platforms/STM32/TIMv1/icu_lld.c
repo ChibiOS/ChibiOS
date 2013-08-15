@@ -112,7 +112,7 @@ static void icu_lld_serve_interrupt(ICUDriver *icup) {
   uint16_t sr;
 
   sr  = icup->tim->SR;
-  sr &= icup->tim->DIER;
+  sr &= icup->tim->DIER & STM32_TIM_DIER_IRQ_MASK;
   icup->tim->SR = ~sr;
   if (icup->config->channel == ICU_CHANNEL_1) {
     if ((sr & STM32_TIM_SR_CC1IF) != 0)
@@ -468,7 +468,8 @@ void icu_lld_start(ICUDriver *icup) {
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
     icup->tim->CR1    = 0;                  /* Timer disabled.              */
-    icup->tim->DIER   = 0;                  /* All IRQs disabled.           */
+    icup->tim->DIER   = icup->config->dier &/* DMA-related DIER settings.   */
+                        ~STM32_TIM_DIER_IRQ_MASK;
     icup->tim->SR     = 0;                  /* Clear eventual pending IRQs. */
     icup->tim->CCR[0] = 0;                  /* Comparator 1 disabled.       */
     icup->tim->CCR[1] = 0;                  /* Comparator 2 disabled.       */
@@ -631,9 +632,11 @@ void icu_lld_enable(ICUDriver *icup) {
  */
 void icu_lld_disable(ICUDriver *icup) {
 
-  icup->tim->CR1  = 0;                      /* Initially stopped.           */
-  icup->tim->SR   = 0;                      /* Clear pending IRQs (if any). */
-  icup->tim->DIER = 0;                      /* Interrupts disabled.         */
+  icup->tim->CR1   = 0;                     /* Initially stopped.           */
+  icup->tim->SR    = 0;                     /* Clear pending IRQs (if any). */
+
+  /* All interrupts disabled.*/
+  icup->tim->DIER &= ~STM32_TIM_DIER_IRQ_MASK;
 }
 
 #endif /* HAL_USE_ICU */
