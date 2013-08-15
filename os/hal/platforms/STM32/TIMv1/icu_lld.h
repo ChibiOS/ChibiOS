@@ -292,7 +292,7 @@ typedef struct {
    */
   icuchannel_t              channel;
   /**
-   * @brief TIM CR2 register initialization data.
+   * @brief TIM DIER register initialization data.
    * @note  The value of this field should normally be equal to zero.
    * @note  Only the DMA-related bits can be specified in this field.
    */
