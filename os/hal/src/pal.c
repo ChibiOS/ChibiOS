@@ -69,7 +69,8 @@
  */
 ioportmask_t palReadBus(IOBus *bus) {
 
-  osalDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH));
+  chDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH),
+             "palReadBus");
 
   return palReadGroup(bus->portid, bus->mask, bus->offset);
 }
@@ -94,7 +95,8 @@ ioportmask_t palReadBus(IOBus *bus) {
  */
 void palWriteBus(IOBus *bus, ioportmask_t bits) {
 
-  osalDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH));
+  chDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH),
+             "palWriteBus");
 
   palWriteGroup(bus->portid, bus->mask, bus->offset, bits);
 }
@@ -117,7 +119,8 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
  */
 void palSetBusMode(IOBus *bus, iomode_t mode) {
 
-  osalDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH));
+  chDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH),
+             "palSetBusMode");
 
   palSetGroupMode(bus->portid, bus->mask, bus->offset, mode);
 }
