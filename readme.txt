@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed PAL driver documentation error (bug #427)(backported to 2.6.1
+  and 2.4.5).
 - FIX: Fixed UART4 and 5 marked as not present in STM32F30x devices (bug #426)
   (backported to 2.6.1).
 - FIX: Fixed warning in STM32 ICU/PWM drivers when used on STM32F3xx
