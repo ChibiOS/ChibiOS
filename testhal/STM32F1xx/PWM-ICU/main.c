@@ -40,6 +40,7 @@ static PWMConfig pwmcfg = {
    {PWM_OUTPUT_DISABLED, NULL}
   },
   0,
+  0,
 #if STM32_PWM_USE_ADVANCED
   0
 #endif
@@ -63,7 +64,8 @@ static ICUConfig icucfg = {
   icuwidthcb,
   icuperiodcb,
   NULL,
-  ICU_CHANNEL_1
+  ICU_CHANNEL_1,
+  0
 };
 
 /*

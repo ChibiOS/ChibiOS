@@ -73,6 +73,7 @@ static PWMConfig pwmcfg = {
     {PWM_OUTPUT_DISABLED, NULL}
   },
   /* HW dependent part.*/
+  0,
   0
 };
 

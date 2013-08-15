@@ -84,7 +84,12 @@
 - FIX: Fixed invalid directory links in the demo files (bug #419).
 - FIX: Fixed missing casts in time-conversion macros (bug #418).
 - FIX: Fixed PLL2 activation condition is wrong in STM32F107 HAL (bug #417).
+- NEW: Added initializer for the DIER register to the STM32 GPT, ICU and
+  PWM drivers.
+- NEW: Added support for 32bits counters to the STM32 GPT driver.
 - NEW: Added port support for SCP560B64.
+- CHANGE: Moved the STM32 GPT, ICU and PWM low level drivers under
+  ./os/hal/platform/STM32/TIMv1. Updated all the impacted project files.
 
 *** 2.6.0 ***
 - FIX: Fixed  MS2ST() and US2ST() macros error (bug #415).

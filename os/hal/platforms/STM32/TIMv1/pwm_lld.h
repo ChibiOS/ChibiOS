@@ -345,14 +345,20 @@ typedef struct {
    * @brief TIM CR2 register initialization data.
    * @note  The value of this field should normally be equal to zero.
    */
-  uint16_t                  cr2;
+  uint32_t                  cr2;
 #if STM32_PWM_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief TIM BDTR (break & dead-time) register initialization data.
    * @note  The value of this field should normally be equal to zero.
    */                                                                     \
-  uint16_t                  bdtr;
+   uint32_t                 bdtr;
 #endif
+   /**
+    * @brief TIM CR2 register initialization data.
+    * @note  The value of this field should normally be equal to zero.
+    * @note  Only the DMA-related bits can be specified in this field.
+    */
+   uint32_t                 dier;
 } PWMConfig;
 
 /**

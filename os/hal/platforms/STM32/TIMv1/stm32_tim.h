@@ -121,6 +121,17 @@
 #define STM32_TIM_DIER_CC4DE                (1U << 12)
 #define STM32_TIM_DIER_COMDE                (1U << 13)
 #define STM32_TIM_DIER_TDE                  (1U << 14)
+
+#define STM32_TIM_DIER_IRQ_MASK             (STM32_TIM_DIER_UIE   |         \
+                                             STM32_TIM_DIER_CC1IE |         \
+                                             STM32_TIM_DIER_CC2IE |         \
+                                             STM32_TIM_DIER_CC3IE |         \
+                                             STM32_TIM_DIER_CC4IE |         \
+                                             STM32_TIM_DIER_COMIE |         \
+                                             STM32_TIM_DIER_TIE   |         \
+                                             STM32_TIM_DIER_BIE   |         \
+                                             STM32_TIM_DIER_UDE)
+
 /** @} */
 
 /**
