@@ -620,7 +620,7 @@ void icu_lld_enable(ICUDriver *icup) {
   }
   if (icup->config->overflow_cb != NULL)
     icup->tim->DIER |= STM32_TIM_DIER_UIE;
-  icup->tim->CR1  = STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
+  icup->tim->CR1 = STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
 }
 
 /**
