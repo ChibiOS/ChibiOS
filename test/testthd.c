@@ -65,11 +65,11 @@ static msg_t thread(void *p) {
 
 static void thd1_execute(void) {
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread, "E");
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread, "D");
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread, "C");
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread, "B");
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread, "A");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
   test_wait_threads();
   test_assert_sequence(1, "ABCDE");
 }
@@ -93,13 +93,13 @@ ROMCONST struct testcase testthd1 = {
 
 static void thd2_execute(void) {
 
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread, "D");
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread, "E");
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread, "A");
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread, "B");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
   /* Done this way for coverage of chThdCreateI() and chThdResume().*/
   chSysLock();
-  threads[2] = chThdCreateI(wa[2], WA_SIZE, chThdGetPriority()-3, thread, "C");
+  threads[2] = chThdCreateI(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
   chSysUnlock();
   chThdResume(threads[2]);
   test_wait_threads();
@@ -126,47 +126,47 @@ ROMCONST struct testcase testthd2 = {
 static void thd3_execute(void) {
   tprio_t prio, p1;
 
-  prio = chThdGetPriority();
+  prio = chThdGetPriorityX();
   p1 = chThdSetPriority(prio + 1);
   test_assert(1, p1 == prio,
               "unexpected returned priority level");
-  test_assert(2, chThdGetPriority() == prio + 1,
+  test_assert(2, chThdGetPriorityX() == prio + 1,
               "unexpected priority level");
   p1 = chThdSetPriority(p1);
   test_assert(3, p1 == prio + 1,
               "unexpected returned priority level");
-  test_assert(4, chThdGetPriority() == prio,
+  test_assert(4, chThdGetPriorityX() == prio,
               "unexpected priority level");
 
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   /* Simulates a priority boost situation (p_prio > p_realprio).*/
   chSysLock();
-  chThdSelf()->p_prio += 2;
+  chThdGetSelfX()->p_prio += 2;
   chSysUnlock();
-  test_assert(5, chThdGetPriority() == prio + 2,
+  test_assert(5, chThdGetPriorityX() == prio + 2,
               "unexpected priority level");
 
   /* Tries to raise but below the boost level. */
   p1 = chThdSetPriority(prio + 1);
   test_assert(6, p1 == prio,
               "unexpected returned priority level");
-  test_assert(7, chThdSelf()->p_prio == prio + 2,
+  test_assert(7, chThdGetSelfX()->p_prio == prio + 2,
               "unexpected priority level");
-  test_assert(8, chThdSelf()->p_realprio == prio + 1,
+  test_assert(8, chThdGetSelfX()->p_realprio == prio + 1,
               "unexpected returned real priority level");
 
   /* Tries to raise above the boost level. */
   p1 = chThdSetPriority(prio + 3);
   test_assert(9, p1 == prio + 1,
               "unexpected returned priority level");
-  test_assert(10, chThdSelf()->p_prio == prio + 3,
+  test_assert(10, chThdGetSelfX()->p_prio == prio + 3,
               "unexpected priority level");
-  test_assert(11, chThdSelf()->p_realprio == prio + 3,
+  test_assert(11, chThdGetSelfX()->p_realprio == prio + 3,
               "unexpected real priority level");
 
   chSysLock();
-  chThdSelf()->p_prio = prio;
-  chThdSelf()->p_realprio = prio;
+  chThdGetSelfX()->p_prio = prio;
+  chThdGetSelfX()->p_realprio = prio;
   chSysUnlock();
 #endif
 }

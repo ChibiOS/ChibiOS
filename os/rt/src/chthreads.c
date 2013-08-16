@@ -93,7 +93,7 @@
 thread_t *_thread_init(thread_t *tp, tprio_t prio) {
 
   tp->p_prio = prio;
-  tp->p_state = CH_STATE_SUSPENDED;
+  tp->p_state = CH_STATE_WTSTART;
   tp->p_flags = CH_FLAG_MODE_STATIC;
 #if CH_CFG_TIME_QUANTUM > 0
   tp->p_preempt = CH_CFG_TIME_QUANTUM;
@@ -153,9 +153,9 @@ void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
 /**
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized but not inserted in the ready list,
- *          the initial state is @p CH_STATE_SUSPENDED.
+ *          the initial state is @p CH_STATE_WTSTART.
  * @post    The initialized thread can be subsequently started by invoking
- *          @p chThdResume(), @p chThdResumeI() or @p chSchWakeupS()
+ *          @p chThdStart(), @p chThdStartI() or @p chSchWakeupS()
  *          depending on the execution context.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
@@ -309,8 +309,6 @@ void chThdTerminate(thread_t *tp) {
  * @api
  */
 void chThdSleep(systime_t time) {
-
-  chDbgCheck(time != TIME_IMMEDIATE);
 
   chSysLock();
   chThdSleepS(time);

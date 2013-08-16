@@ -83,11 +83,11 @@ static msg_t thread1(void *p) {
 
 static void sem1_execute(void) {
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+5, thread1, "A");
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()+1, thread1, "B");
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()+3, thread1, "C");
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()+4, thread1, "D");
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()+2, thread1, "E");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+5, thread1, "A");
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()+1, thread1, "B");
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()+3, thread1, "C");
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()+4, thread1, "D");
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+2, thread1, "E");
   chSemSignal(&sem1);
   chSemSignal(&sem1);
   chSemSignal(&sem1);
@@ -99,7 +99,7 @@ static void sem1_execute(void) {
 #else
   test_assert_sequence(1, "ABCDE");
 #endif
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+5, thread1, "A");
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+5, thread1, "A");
   chSysLock();
   chSemAddCounterI(&sem1, 2);
   chSysUnlock();
@@ -157,7 +157,7 @@ static void sem2_execute(void) {
   /*
    * Testing not timeout condition.
    */
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                  thread2, 0);
   msg = chSemWaitTimeout(&sem1, MS2ST(500));
   test_wait_threads();
@@ -215,7 +215,7 @@ static msg_t thread3(void *p) {
 
 static void sem3_execute(void) {
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread3, 0);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread3, 0);
   chSemSignalWait(&sem1, &sem1);
   test_assert(1, queue_isempty(&sem1.s_queue), "queue not empty");
   test_assert(2, sem1.s_cnt == 0, "counter not zero");
@@ -256,7 +256,7 @@ static void sem4_execute(void) {
 
   /* Starts a signaler thread at a lower priority.*/
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE,
-                                 chThdGetPriority()-1, thread4, &bsem);
+                                 chThdGetPriorityX()-1, thread4, &bsem);
                                  
   /* Waits to be signaled.*/
   chBSemWait(&bsem);

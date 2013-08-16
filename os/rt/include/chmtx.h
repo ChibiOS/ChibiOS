@@ -48,16 +48,21 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a mutex structure.
+ */
+typedef struct mutex mutex_t;
+
+/**
  * @brief   Mutex structure.
  */
-typedef struct mutex {
+struct mutex {
   threads_queue_t       m_queue;    /**< @brief Queue of the threads sleeping
                                                 on this mutex.              */
   thread_t              *m_owner;   /**< @brief Owner @p thread_t pointer or
                                                 @p NULL.                    */
   mutex_t               *m_next;    /**< @brief Next @p mutex_t into an
                                                 owner-list or @p NULL.      */
-} mutex_t;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */

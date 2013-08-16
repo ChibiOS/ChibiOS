@@ -138,7 +138,7 @@ static void queues1_execute(void) {
   chIQResetI(&iq);
   chSysUnlock();
   test_assert_lock(11, chIQGetFullI(&iq) == 0, "still full");
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread1, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread1, NULL);
   test_assert_lock(12, chIQGetFullI(&iq) == 0, "not empty");
   test_wait_threads();
 
@@ -203,7 +203,7 @@ static void queues2_execute(void) {
   n = chOQWriteTimeout(&oq, wa[1], TEST_QUEUES_SIZE * 2, TIME_IMMEDIATE);
   test_assert(6, n == TEST_QUEUES_SIZE, "wrong returned size");
   test_assert_lock(7, chOQIsFullI(&oq), "not full");
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread2, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread2, NULL);
   test_assert_lock(8, chOQGetFullI(&oq) == TEST_QUEUES_SIZE, "not empty");
   test_wait_threads();
 

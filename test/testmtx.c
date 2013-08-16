@@ -96,7 +96,7 @@ static msg_t thread1(void *p) {
 
 static void mtx1_execute(void) {
 
-  tprio_t prio = chThdGetPriority(); /* Because priority inheritance.*/
+  tprio_t prio = chThdGetPriorityX(); /* Because priority inheritance.*/
   chMtxLock(&m1);
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread1, "E");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread1, "D");
@@ -105,7 +105,7 @@ static void mtx1_execute(void) {
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread1, "A");
   chMtxUnlock();
   test_wait_threads();
-  test_assert(1, prio == chThdGetPriority(), "wrong priority level");
+  test_assert(1, prio == chThdGetPriorityX(), "wrong priority level");
   test_assert_sequence(2, "ABCDE");
 }
 
@@ -192,9 +192,9 @@ static void mtx2_execute(void) {
 
   test_wait_tick();
   time = chVTGetSystemTime();
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread2H, 0);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-2, thread2M, 0);
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread2L, 0);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, thread2H, 0);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-2, thread2M, 0);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread2L, 0);
   test_wait_threads();
   test_assert_sequence(1, "ABC");
   test_assert_time_window(2, time + MS2ST(100), time + MS2ST(100) + ALLOWED_DELAY);
@@ -310,11 +310,11 @@ static void mtx3_execute(void) {
 
   test_wait_tick();
   time = chVTGetSystemTime();
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-5, thread3LL, 0);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-4, thread3L, 0);
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread3M, 0);
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-2, thread3H, 0);
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread3HH, 0);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread3LL, 0);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread3L, 0);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread3M, 0);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread3H, 0);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread3HH, 0);
   test_wait_threads();
   test_assert_sequence(1, "ABCDE");
   test_assert_time_window(2, time + MS2ST(110), time + MS2ST(110) + ALLOWED_DELAY);
@@ -365,46 +365,46 @@ static msg_t thread4b(void *p) {
 static void mtx4_execute(void) {
   tprio_t p, p1, p2;
 
-  p = chThdGetPriority();
+  p = chThdGetPriorityX();
   p1 = p + 1;
   p2 = p + 2;
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, p1, thread4a, "B");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, p2, thread4b, "A");
   chMtxLock(&m2);
-  test_assert(1, chThdGetPriority() == p, "wrong priority level");
+  test_assert(1, chThdGetPriorityX() == p, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(2, chThdGetPriority() == p1, "wrong priority level");
+  test_assert(2, chThdGetPriorityX() == p1, "wrong priority level");
   chMtxLock(&m1);
-  test_assert(3, chThdGetPriority() == p1, "wrong priority level");
+  test_assert(3, chThdGetPriorityX() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(4, chThdGetPriority() == p2, "wrong priority level");
+  test_assert(4, chThdGetPriorityX() == p2, "wrong priority level");
   chMtxUnlock();
-  test_assert(5, chThdGetPriority() == p1, "wrong priority level");
+  test_assert(5, chThdGetPriorityX() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(6, chThdGetPriority() == p1, "wrong priority level");
+  test_assert(6, chThdGetPriorityX() == p1, "wrong priority level");
   chMtxUnlockAll();
-  test_assert(7, chThdGetPriority() == p, "wrong priority level");
+  test_assert(7, chThdGetPriorityX() == p, "wrong priority level");
   test_wait_threads();
 
   /* Test repeated in order to cover chMtxUnlockS().*/
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, p1, thread4a, "D");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, p2, thread4b, "C");
   chMtxLock(&m2);
-  test_assert(8, chThdGetPriority() == p, "wrong priority level");
+  test_assert(8, chThdGetPriorityX() == p, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(9, chThdGetPriority() == p1, "wrong priority level");
+  test_assert(9, chThdGetPriorityX() == p1, "wrong priority level");
   chMtxLock(&m1);
-  test_assert(10, chThdGetPriority() == p1, "wrong priority level");
+  test_assert(10, chThdGetPriorityX() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(11, chThdGetPriority() == p2, "wrong priority level");
+  test_assert(11, chThdGetPriorityX() == p2, "wrong priority level");
   chSysLock();
   chMtxUnlockS();
   chSysUnlock();
-  test_assert(12, chThdGetPriority() == p1, "wrong priority level");
+  test_assert(12, chThdGetPriorityX() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
-  test_assert(13, chThdGetPriority() == p1, "wrong priority level");
+  test_assert(13, chThdGetPriorityX() == p1, "wrong priority level");
   chMtxUnlockAll();
-  test_assert(14, chThdGetPriority() == p, "wrong priority level");
+  test_assert(14, chThdGetPriorityX() == p, "wrong priority level");
   test_wait_threads();
 }
 
@@ -434,7 +434,7 @@ static void mtx5_execute(void) {
   bool_t b;
   tprio_t prio;
 
-  prio = chThdGetPriority();
+  prio = chThdGetPriorityX();
 
   b = chMtxTryLock(&m1);
   test_assert(1, b, "already locked");
@@ -448,7 +448,7 @@ static void mtx5_execute(void) {
 
   test_assert(3, queue_isempty(&m1.m_queue), "queue not empty");
   test_assert(4, m1.m_owner == NULL, "still owned");
-  test_assert(5, chThdGetPriority() == prio, "wrong priority level");
+  test_assert(5, chThdGetPriorityX() == prio, "wrong priority level");
   
   chMtxLock(&m1);
   chMtxUnlockAll();
@@ -492,7 +492,7 @@ static msg_t thread10(void *p) {
 
 static void mtx6_execute(void) {
 
-  tprio_t prio = chThdGetPriority();
+  tprio_t prio = chThdGetPriorityX();
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread10, "E");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread10, "D");
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread10, "C");
@@ -535,7 +535,7 @@ static void mtx7_setup(void) {
 
 static void mtx7_execute(void) {
 
-  tprio_t prio = chThdGetPriority();
+  tprio_t prio = chThdGetPriorityX();
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread10, "E");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread10, "D");
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread10, "C");
@@ -594,7 +594,7 @@ static msg_t thread12(void *p) {
 
 static void mtx8_execute(void) {
 
-  tprio_t prio = chThdGetPriority();
+  tprio_t prio = chThdGetPriorityX();
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread11, "A");
   threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread10, "C");
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread12, "B");

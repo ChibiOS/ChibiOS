@@ -71,8 +71,8 @@ static void msg1_execute(void) {
   /*
    * Testing the whole messages loop.
    */
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() + 1,
-                                 thread, chThdSelf());
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() + 1,
+                                 thread, chThdGetSelfX());
   tp = chMsgWait();
   msg = chMsgGet(tp);
   chMsgRelease(tp, msg);

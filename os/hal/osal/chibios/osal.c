@@ -98,9 +98,9 @@ msg_t osalThreadSuspendS(thread_reference_t *trp) {
 
   chDbgAssert(*trp == NULL, "not NULL");
 
-  *trp = (thread_reference_t)chThdSelf();
+  *trp = (thread_reference_t)chThdGetSelfX();
   chSchGoSleepS(CH_STATE_SUSPENDED);
-  return chThdSelf()->p_msg;
+  return chThdGetSelfX()->p_msg;
 }
 
 /**

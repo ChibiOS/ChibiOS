@@ -105,7 +105,7 @@ static unsigned int msg_loop_test(thread_t *tp) {
 static void bmk1_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread1, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, thread1, NULL);
   n = msg_loop_test(threads[0]);
   test_wait_threads();
   test_print("--- Score : ");
@@ -134,7 +134,7 @@ ROMCONST struct testcase testbmk1 = {
 static void bmk2_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread1, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread1, NULL);
   n = msg_loop_test(threads[0]);
   test_wait_threads();
   test_print("--- Score : ");
@@ -169,11 +169,11 @@ static msg_t thread2(void *p) {
 static void bmk3_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1, thread1, NULL);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-2, thread2, NULL);
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-3, thread2, NULL);
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-4, thread2, NULL);
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-5, thread2, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread1, NULL);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-2, thread2, NULL);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread2, NULL);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-4, thread2, NULL);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-5, thread2, NULL);
   n = msg_loop_test(threads[0]);
   test_wait_threads();
   test_print("--- Score : ");
@@ -202,7 +202,7 @@ ROMCONST struct testcase testbmk3 = {
 
 msg_t thread4(void *p) {
   msg_t msg;
-  thread_t *self = chThdSelf();
+  thread_t *self = chThdGetSelfX();
 
   (void)p;
   chSysLock();
@@ -218,7 +218,7 @@ static void bmk4_execute(void) {
   thread_t *tp;
   uint32_t n;
 
-  tp = threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+1,
+  tp = threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1,
                                       thread4, NULL);
   n = 0;
   test_wait_tick();
@@ -267,7 +267,7 @@ static void bmk5_execute(void) {
 
   uint32_t n = 0;
   void *wap = wa[0];
-  tprio_t prio = chThdGetPriority() - 1;
+  tprio_t prio = chThdGetPriorityX() - 1;
   test_wait_tick();
   test_start_timer(1000);
   do {
@@ -306,7 +306,7 @@ static void bmk6_execute(void) {
 
   uint32_t n = 0;
   void *wap = wa[0];
-  tprio_t prio = chThdGetPriority() + 1;
+  tprio_t prio = chThdGetPriorityX() + 1;
   test_wait_tick();
   test_start_timer(1000);
   do {
@@ -342,7 +342,7 @@ ROMCONST struct testcase testbmk6 = {
 static msg_t thread3(void *p) {
 
   (void)p;
-  while (!chThdShouldTerminate())
+  while (!chThdShouldTerminateX())
     chSemWait(&sem1);
   return 0;
 }
@@ -355,11 +355,11 @@ static void bmk7_setup(void) {
 static void bmk7_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()+5, thread3, NULL);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()+4, thread3, NULL);
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()+3, thread3, NULL);
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()+2, thread3, NULL);
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()+1, thread3, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+5, thread3, NULL);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()+4, thread3, NULL);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()+3, thread3, NULL);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()+2, thread3, NULL);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+1, thread3, NULL);
 
   n = 0;
   test_wait_tick();
@@ -410,7 +410,7 @@ static msg_t thread8(void *p) {
 #if defined(SIMULATOR)
     ChkIntSources();
 #endif
-  } while(!chThdShouldTerminate());
+  } while(!chThdShouldTerminateX());
   return 0;
 }
 
@@ -420,11 +420,11 @@ static void bmk8_execute(void) {
   n = 0;
   test_wait_tick();
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriority()-1, thread8, (void *)&n);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
 
   chThdSleepSeconds(1);
   test_terminate_threads();

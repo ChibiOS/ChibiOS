@@ -224,10 +224,10 @@ void test_wait_threads(void) {
 void test_cpu_pulse(unsigned duration) {
   systime_t start, end, now;
 
-  start = chThdSelf()->p_time;
+  start = chThdGetTicksX(chThdGetSelfX());
   end = start + MS2ST(duration);
   do {
-    now = chThdSelf()->p_time;
+    now = chThdGetTicksX(chThdGetSelfX());
 #if defined(SIMULATOR)
     ChkIntSources();
 #endif

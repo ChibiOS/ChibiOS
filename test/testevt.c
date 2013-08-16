@@ -167,8 +167,8 @@ static void evt2_execute(void) {
    */
   test_wait_tick();
   target_time = chVTGetSystemTime() + MS2ST(50);
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
-                                 thread1, chThdSelf());
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                                 thread1, chThdGetSelfX());
   m = chEvtWaitOne(ALL_EVENTS);
   test_assert_time_window(4, target_time, target_time + ALLOWED_DELAY);
   test_assert(5, m == 1, "single event error");
@@ -190,8 +190,8 @@ static void evt2_execute(void) {
    */
   test_wait_tick();
   target_time = chVTGetSystemTime() + MS2ST(50);
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
-                                 thread1, chThdSelf());
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
+                                 thread1, chThdGetSelfX());
   m = chEvtWaitAny(ALL_EVENTS);
   test_assert_time_window(9, target_time, target_time + ALLOWED_DELAY);
   test_assert(10, m == 1, "single event error");
@@ -208,7 +208,7 @@ static void evt2_execute(void) {
   chEvtRegisterMask(&es2, &el2, 4);
   test_wait_tick();
   target_time = chVTGetSystemTime() + MS2ST(50);
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                  thread2, "A");
   m = chEvtWaitAll(5);
   test_assert_time_window(12, target_time, target_time + ALLOWED_DELAY);

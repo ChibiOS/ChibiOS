@@ -83,7 +83,7 @@ static void dyn1_setup(void) {
 static void dyn1_execute(void) {
   size_t n, sz;
   void *p1;
-  tprio_t prio = chThdGetPriority();
+  tprio_t prio = chThdGetPriorityX();
 
   (void)chHeapStatus(&heap1, &sz);
   /* Starting threads from the heap. */
@@ -140,7 +140,7 @@ static void dyn2_setup(void) {
 
 static void dyn2_execute(void) {
   int i;
-  tprio_t prio = chThdGetPriority();
+  tprio_t prio = chThdGetPriorityX();
 
   /* Adding the WAs to the pool. */
   for (i = 0; i < 4; i++)
@@ -207,7 +207,7 @@ static void dyn3_setup(void) {
 
 static void dyn3_execute(void) {
   thread_t *tp;
-  tprio_t prio = chThdGetPriority();
+  tprio_t prio = chThdGetPriorityX();
 
   /* Testing references increase/decrease and final detach.*/
   tp = chThdCreateFromHeap(&heap1, WA_SIZE, prio-1, thread, "A");
