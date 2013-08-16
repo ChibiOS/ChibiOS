@@ -85,6 +85,7 @@
 - FIX: Fixed invalid directory links in the demo files (bug #419).
 - FIX: Fixed missing casts in time-conversion macros (bug #418).
 - FIX: Fixed PLL2 activation condition is wrong in STM32F107 HAL (bug #417).
+- NEW: Improvements to the STM32F4xx backup domain initialization.
 - NEW: Added initializer for the DIER register to the STM32 GPT, ICU and
   PWM drivers.
 - NEW: Added support for 32bits counters to the STM32 GPT driver.
