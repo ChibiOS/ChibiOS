@@ -121,7 +121,7 @@
  * @brief   SPI DMA error hook.
  */
 #if !defined(STM32_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_SPI_DMA_ERROR_HOOK(spip)      chSysHalt()
+#define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 #endif
 
 #if STM32_ADVANCED_DMA || defined(__DOXYGEN__)

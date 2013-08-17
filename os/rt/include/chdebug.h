@@ -71,13 +71,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if CH_DBG_ENABLE_ASSERTS     || CH_DBG_ENABLE_CHECKS      ||               \
-    CH_DBG_ENABLE_STACK_CHECK || CH_DBG_SYSTEM_STATE_CHECK
-#define CH_DBG_ENABLED              TRUE
-#else
-#define CH_DBG_ENABLED              FALSE
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -159,12 +152,6 @@ typedef struct {
 #define _dbg_trace(otp)
 #endif
 
-/* When the debug features are disabled this function is replaced by an empty
-   macro.*/
-#if !CH_DBG_ENABLED
-#define chDbgPanic(msg) {}
-#endif
-
 /**
  * @name    Macro Functions
  * @{
@@ -183,7 +170,7 @@ typedef struct {
 #if !defined(chDbgCheck)
 #define chDbgCheck(c) {                                                     \
   if (!(c))                                                                 \
-    chDbgPanic("C:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));    \
+    chSysHalt("C:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));     \
 }
 #endif /* !defined(chDbgCheck) */
 
@@ -209,7 +196,7 @@ typedef struct {
 #if !defined(chDbgAssert)
 #define chDbgAssert(c, r) {                                                 \
   if (!(c))                                                                 \
-    chDbgPanic("A:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));    \
+  chSysHalt("A:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));       \
 }
 #endif /* !defined(chDbgAssert) */
 #else /* !CH_DBG_ENABLE_ASSERTS */
@@ -240,9 +227,6 @@ extern "C" {
 #if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
   void _trace_init(void);
   void _dbg_trace(thread_t *otp);
-#endif
-#if CH_DBG_ENABLED
-  void chDbgPanic(const char *msg);
 #endif
 #ifdef __cplusplus
 }

@@ -216,7 +216,7 @@
 extern "C" {
 #endif
   void chSysInit(void);
-  void chSysHalt(void);
+  void chSysHalt(const char *reason);
   void chSysTimerHandlerI(void);
   syssts_t chSysGetAndLockX(void);
   void chSysRestoreLockX(syssts_t sts);

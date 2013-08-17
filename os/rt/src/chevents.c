@@ -279,7 +279,7 @@ void chEvtSignalI(thread_t *tp, eventmask_t mask) {
        ((tp->p_epending & tp->p_u.ewmask) != 0)) ||
       ((tp->p_state == CH_STATE_WTANDEVT) &&
        ((tp->p_epending & tp->p_u.ewmask) == tp->p_u.ewmask))) {
-    tp->p_u.rdymsg = RDY_OK;
+    tp->p_u.rdymsg = MSG_OK;
     chSchReadyI(tp);
   }
 }
@@ -475,7 +475,7 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time) {
       return (eventmask_t)0;
     }
     ctp->p_u.ewmask = mask;
-    if (chSchGoSleepTimeoutS(CH_STATE_WTOREVT, time) < RDY_OK) {
+    if (chSchGoSleepTimeoutS(CH_STATE_WTOREVT, time) < MSG_OK) {
       chSysUnlock();
       return (eventmask_t)0;
     }
@@ -518,7 +518,7 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time) {
       return (eventmask_t)0;
     }
     ctp->p_u.ewmask = mask;
-    if (chSchGoSleepTimeoutS(CH_STATE_WTOREVT, time) < RDY_OK) {
+    if (chSchGoSleepTimeoutS(CH_STATE_WTOREVT, time) < MSG_OK) {
       chSysUnlock();
       return (eventmask_t)0;
     }
@@ -558,7 +558,7 @@ eventmask_t chEvtWaitAllTimeout(eventmask_t mask, systime_t time) {
       return (eventmask_t)0;
     }
     ctp->p_u.ewmask = mask;
-    if (chSchGoSleepTimeoutS(CH_STATE_WTANDEVT, time) < RDY_OK) {
+    if (chSchGoSleepTimeoutS(CH_STATE_WTANDEVT, time) < MSG_OK) {
       chSysUnlock();
       return (eventmask_t)0;
     }

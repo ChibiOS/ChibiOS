@@ -37,10 +37,10 @@
  * @name    Wakeup status codes
  * @{
  */
-#define RDY_OK          0           /**< @brief Normal wakeup message.      */
-#define RDY_TIMEOUT     -1          /**< @brief Wakeup caused by a timeout
+#define MSG_OK          0           /**< @brief Normal wakeup message.      */
+#define MSG_TIMEOUT     -1          /**< @brief Wakeup caused by a timeout
                                          condition.                         */
-#define RDY_RESET       -2          /**< @brief Wakeup caused by a reset
+#define MSG_RESET       -2          /**< @brief Wakeup caused by a reset
                                          condition.                         */
 /** @} */
 

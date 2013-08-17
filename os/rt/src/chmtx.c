@@ -315,7 +315,7 @@ mutex_t *chMtxUnlock(void) {
     ump->m_owner = tp;
     ump->m_next = tp->p_mtxlist;
     tp->p_mtxlist = ump;
-    chSchWakeupS(tp, RDY_OK);
+    chSchWakeupS(tp, MSG_OK);
   }
   else
     ump->m_owner = NULL;

@@ -165,7 +165,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
   chSysLock();
   tp = chThdCreateI(wsp, size, prio, pf, arg);
   tp->p_flags = CH_FLAG_MODE_HEAP;
-  chSchWakeupS(tp, RDY_OK);
+  chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
   return tp;
 }
@@ -217,7 +217,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
   tp = chThdCreateI(wsp, mp->mp_object_size, prio, pf, arg);
   tp->p_flags = CH_FLAG_MODE_MEMPOOL;
   tp->p_mpool = mp;
-  chSchWakeupS(tp, RDY_OK);
+  chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
   return tp;
 }

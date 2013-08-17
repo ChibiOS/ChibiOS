@@ -36,13 +36,6 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   Pointer to a halt error message.
- * @note    The message is meant to be retrieved by the debugger after the
- *          system halt caused by an unexpected error.
- */
-const char *osal_halt_msg;
-
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -58,27 +51,5 @@ const char *osal_halt_msg;
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
-
-/**
- * @brief   OSAL module initialization.
- *
- * @api
- */
-void osalInit(void) {
-
-}
-
-/**
- * @brief   System halt with error message.
- *
- * @param[in] reason    the halt message pointer
- *
- * @api
- */
-void osalSysHalt(const char *reason) {
-
-  osal_halt_msg = reason;
-  chSysHalt();
-}
 
 /** @} */

@@ -209,7 +209,7 @@ msg_t thread4(void *p) {
   do {
     chSchGoSleepS(CH_STATE_SUSPENDED);
     msg = self->p_u.rdymsg;
-  } while (msg == RDY_OK);
+  } while (msg == MSG_OK);
   chSysUnlock();
   return 0;
 }
@@ -225,10 +225,10 @@ static void bmk4_execute(void) {
   test_start_timer(1000);
   do {
     chSysLock();
-    chSchWakeupS(tp, RDY_OK);
-    chSchWakeupS(tp, RDY_OK);
-    chSchWakeupS(tp, RDY_OK);
-    chSchWakeupS(tp, RDY_OK);
+    chSchWakeupS(tp, MSG_OK);
+    chSchWakeupS(tp, MSG_OK);
+    chSchWakeupS(tp, MSG_OK);
+    chSchWakeupS(tp, MSG_OK);
     chSysUnlock();
     n += 4;
 #if defined(SIMULATOR)
@@ -236,7 +236,7 @@ static void bmk4_execute(void) {
 #endif
   } while (!test_timer_done);
   chSysLock();
-  chSchWakeupS(tp, RDY_TIMEOUT);
+  chSchWakeupS(tp, MSG_TIMEOUT);
   chSysUnlock();
 
   test_wait_threads();

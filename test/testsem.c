@@ -150,7 +150,7 @@ static void sem2_execute(void) {
    * Testing special case TIME_IMMEDIATE.
    */
   msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
-  test_assert(1, msg == RDY_TIMEOUT, "wrong wake-up message");
+  test_assert(1, msg == MSG_TIMEOUT, "wrong wake-up message");
   test_assert(2, queue_isempty(&sem1.s_queue), "queue not empty");
   test_assert(3, sem1.s_cnt == 0, "counter not zero");
 
@@ -161,7 +161,7 @@ static void sem2_execute(void) {
                                  thread2, 0);
   msg = chSemWaitTimeout(&sem1, MS2ST(500));
   test_wait_threads();
-  test_assert(4, msg == RDY_OK, "wrong wake-up message");
+  test_assert(4, msg == MSG_OK, "wrong wake-up message");
   test_assert(5, queue_isempty(&sem1.s_queue), "queue not empty");
   test_assert(6, sem1.s_cnt == 0, "counter not zero");
 
@@ -173,7 +173,7 @@ static void sem2_execute(void) {
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
     msg = chSemWaitTimeout(&sem1, MS2ST(500));
-    test_assert(7, msg == RDY_TIMEOUT, "wrong wake-up message");
+    test_assert(7, msg == MSG_TIMEOUT, "wrong wake-up message");
     test_assert(8, queue_isempty(&sem1.s_queue), "queue not empty");
     test_assert(9, sem1.s_cnt == 0, "counter not zero");
   }

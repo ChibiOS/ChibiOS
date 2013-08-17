@@ -123,7 +123,7 @@
  *          error can only happen because programming errors.
  */
 #if !defined(STM32_UART_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_UART_DMA_ERROR_HOOK(uartp)    chSysHalt()
+#define STM32_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
 #endif
 
 #if STM32_ADVANCED_DMA || defined(__DOXYGEN__)

@@ -93,7 +93,7 @@ void chCondSignal(condition_variable_t *cp) {
 
   chSysLock();
   if (queue_notempty(&cp->c_queue))
-    chSchWakeupS(queue_fifo_remove(&cp->c_queue), RDY_OK);
+    chSchWakeupS(queue_fifo_remove(&cp->c_queue), MSG_OK);
   chSysUnlock();
 }
 
@@ -115,7 +115,7 @@ void chCondSignalI(condition_variable_t *cp) {
 
   if (queue_notempty(&cp->c_queue)) {
     thread_t *tp = queue_fifo_remove(&cp->c_queue);
-    tp->p_u.rdymsg = RDY_OK;
+    tp->p_u.rdymsg = MSG_OK;
     chSchReadyI(tp);
   }
 }
@@ -152,10 +152,10 @@ void chCondBroadcastI(condition_variable_t *cp) {
   chDbgCheck(cp != NULL);
 
   /* Empties the condition variable queue and inserts all the threads into the
-     ready list in FIFO order. The wakeup message is set to @p RDY_RESET in
+     ready list in FIFO order. The wakeup message is set to @p MSG_RESET in
      order to make a chCondBroadcast() detectable from a chCondSignal().*/
   while (cp->c_queue.p_next != (void *)&cp->c_queue)
-    chSchReadyI(queue_fifo_remove(&cp->c_queue))->p_u.rdymsg = RDY_RESET;
+    chSchReadyI(queue_fifo_remove(&cp->c_queue))->p_u.rdymsg = MSG_RESET;
 }
 
 /**
@@ -168,9 +168,9 @@ void chCondBroadcastI(condition_variable_t *cp) {
  * @param[in] cp        pointer to the @p condition_variable_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
- * @retval RDY_OK       if the condition variable has been signaled using
+ * @retval MSG_OK       if the condition variable has been signaled using
  *                      @p chCondSignal().
- * @retval RDY_RESET    if the condition variable has been signaled using
+ * @retval MSG_RESET    if the condition variable has been signaled using
  *                      @p chCondBroadcast().
  *
  * @api
@@ -194,9 +194,9 @@ msg_t chCondWait(condition_variable_t *cp) {
  * @param[in] cp        pointer to the @p condition_variable_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
- * @retval RDY_OK       if the condition variable has been signaled using
+ * @retval MSG_OK       if the condition variable has been signaled using
  *                      @p chCondSignal().
- * @retval RDY_RESET    if the condition variable has been signaled using
+ * @retval MSG_RESET    if the condition variable has been signaled using
  *                      @p chCondBroadcast().
  *
  * @sclass
@@ -239,11 +239,11 @@ msg_t chCondWaitS(condition_variable_t *cp) {
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
- * @retval RDY_OK       if the condition variable has been signaled using
+ * @retval MSG_OK       if the condition variable has been signaled using
  *                      @p chCondSignal().
- * @retval RDY_RESET    if the condition variable has been signaled using
+ * @retval MSG_RESET    if the condition variable has been signaled using
  *                      @p chCondBroadcast().
- * @retval RDY_TIMEOUT  if the condition variable has not been signaled within
+ * @retval MSG_TIMEOUT  if the condition variable has not been signaled within
  *                      the specified timeout.
  *
  * @api
@@ -276,11 +276,11 @@ msg_t chCondWaitTimeout(condition_variable_t *cp, systime_t time) {
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
- * @retval RDY_OK       if the condition variable has been signaled using
+ * @retval MSG_OK       if the condition variable has been signaled using
  *                      @p chCondSignal().
- * @retval RDY_RESET    if the condition variable has been signaled using
+ * @retval MSG_RESET    if the condition variable has been signaled using
  *                      @p chCondBroadcast().
- * @retval RDY_TIMEOUT  if the condition variable has not been signaled within
+ * @retval MSG_TIMEOUT  if the condition variable has not been signaled within
  *                      the specified timeout.
  *
  * @sclass
@@ -297,7 +297,7 @@ msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time) {
   currp->p_u.wtobjp = cp;
   queue_prio_insert(currp, &cp->c_queue);
   msg = chSchGoSleepTimeoutS(CH_STATE_WTCOND, time);
-  if (msg != RDY_TIMEOUT)
+  if (msg != MSG_TIMEOUT)
     chMtxLockS(mp);
   return msg;
 }

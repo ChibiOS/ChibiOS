@@ -111,7 +111,7 @@ void chSemObjectInit(semaphore_t *sp, cnt_t n) {
  *          to the specified, non negative, value.
  * @note    The released threads can recognize they were waked up by a reset
  *          rather than a signal because the @p chSemWait() will return
- *          @p RDY_RESET instead of @p RDY_OK.
+ *          @p MSG_RESET instead of @p MSG_OK.
  *
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] n         the new value of the semaphore counter. The value must
@@ -138,7 +138,7 @@ void chSemReset(semaphore_t *sp, cnt_t n) {
  *          reschedule must not be performed in ISRs.
  * @note    The released threads can recognize they were waked up by a reset
  *          rather than a signal because the @p chSemWait() will return
- *          @p RDY_RESET instead of @p RDY_OK.
+ *          @p MSG_RESET instead of @p MSG_OK.
  *
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] n         the new value of the semaphore counter. The value must
@@ -158,7 +158,7 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
   cnt = sp->s_cnt;
   sp->s_cnt = n;
   while (++cnt <= 0)
-    chSchReadyI(queue_lifo_remove(&sp->s_queue))->p_u.rdymsg = RDY_RESET;
+    chSchReadyI(queue_lifo_remove(&sp->s_queue))->p_u.rdymsg = MSG_RESET;
 }
 
 /**
@@ -167,9 +167,9 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ * @retval MSG_OK       if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
- * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+ * @retval MSG_RESET    if the semaphore has been reset using @p chSemReset().
  *
  * @api
  */
@@ -188,9 +188,9 @@ msg_t chSemWait(semaphore_t *sp) {
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ * @retval MSG_OK       if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
- * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+ * @retval MSG_RESET    if the semaphore has been reset using @p chSemReset().
  *
  * @sclass
  */
@@ -208,7 +208,7 @@ msg_t chSemWaitS(semaphore_t *sp) {
     chSchGoSleepS(CH_STATE_WTSEM);
     return currp->p_u.rdymsg;
   }
-  return RDY_OK;
+  return MSG_OK;
 }
 
 /**
@@ -222,10 +222,10 @@ msg_t chSemWaitS(semaphore_t *sp) {
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ * @retval MSG_OK       if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
- * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
- * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
+ * @retval MSG_RESET    if the semaphore has been reset using @p chSemReset().
+ * @retval MSG_TIMEOUT  if the semaphore has not been signaled or reset within
  *                      the specified timeout.
  *
  * @api
@@ -250,10 +250,10 @@ msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time) {
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ * @retval MSG_OK       if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
- * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
- * @retval RDY_TIMEOUT  if the semaphore has not been signaled or reset within
+ * @retval MSG_RESET    if the semaphore has been reset using @p chSemReset().
+ * @retval MSG_TIMEOUT  if the semaphore has not been signaled or reset within
  *                      the specified timeout.
  *
  * @sclass
@@ -269,13 +269,13 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time) {
   if (--sp->s_cnt < 0) {
     if (TIME_IMMEDIATE == time) {
       sp->s_cnt++;
-      return RDY_TIMEOUT;
+      return MSG_TIMEOUT;
     }
     currp->p_u.wtobjp = sp;
     sem_insert(currp, &sp->s_queue);
     return chSchGoSleepTimeoutS(CH_STATE_WTSEM, time);
   }
-  return RDY_OK;
+  return MSG_OK;
 }
 
 /**
@@ -294,7 +294,7 @@ void chSemSignal(semaphore_t *sp) {
 
   chSysLock();
   if (++sp->s_cnt <= 0)
-    chSchWakeupS(queue_fifo_remove(&sp->s_queue), RDY_OK);
+    chSchWakeupS(queue_fifo_remove(&sp->s_queue), MSG_OK);
   chSysUnlock();
 }
 
@@ -321,7 +321,7 @@ void chSemSignalI(semaphore_t *sp) {
     /* Note, it is done this way in order to allow a tail call on
              chSchReadyI().*/
     thread_t *tp = queue_fifo_remove(&sp->s_queue);
-    tp->p_u.rdymsg = RDY_OK;
+    tp->p_u.rdymsg = MSG_OK;
     chSchReadyI(tp);
   }
 }
@@ -349,7 +349,7 @@ void chSemAddCounterI(semaphore_t *sp, cnt_t n) {
 
   while (n > 0) {
     if (++sp->s_cnt <= 0)
-      chSchReadyI(queue_fifo_remove(&sp->s_queue))->p_u.rdymsg = RDY_OK;
+      chSchReadyI(queue_fifo_remove(&sp->s_queue))->p_u.rdymsg = MSG_OK;
     n--;
   }
 }
@@ -361,9 +361,9 @@ void chSemAddCounterI(semaphore_t *sp, cnt_t n) {
  * @param[in] spw       pointer to a @p semaphore_t structure to wait on
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval RDY_OK       if the thread has not stopped on the semaphore or the
+ * @retval MSG_OK       if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
- * @retval RDY_RESET    if the semaphore has been reset using @p chSemReset().
+ * @retval MSG_RESET    if the semaphore has been reset using @p chSemReset().
  *
  * @api
  */
@@ -380,7 +380,7 @@ msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
 
   chSysLock();
   if (++sps->s_cnt <= 0)
-    chSchReadyI(queue_fifo_remove(&sps->s_queue))->p_u.rdymsg = RDY_OK;
+    chSchReadyI(queue_fifo_remove(&sps->s_queue))->p_u.rdymsg = MSG_OK;
   if (--spw->s_cnt < 0) {
     thread_t *ctp = currp;
     sem_insert(ctp, &spw->s_queue);
@@ -390,7 +390,7 @@ msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
   }
   else {
     chSchRescheduleS();
-    msg = RDY_OK;
+    msg = MSG_OK;
   }
   chSysUnlock();
   return msg;

@@ -83,7 +83,7 @@
 void _dbg_check_disable(void) {
 
   if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt != 0))
-    chDbgPanic("SV#1");
+    chSysHalt("SV#1");
 }
 
 /**
@@ -94,7 +94,7 @@ void _dbg_check_disable(void) {
 void _dbg_check_suspend(void) {
 
   if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt != 0))
-    chDbgPanic("SV#2");
+    chSysHalt("SV#2");
 }
 
 /**
@@ -105,7 +105,7 @@ void _dbg_check_suspend(void) {
 void _dbg_check_enable(void) {
 
   if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt != 0))
-    chDbgPanic("SV#3");
+    chSysHalt("SV#3");
 }
 
 /**
@@ -116,7 +116,7 @@ void _dbg_check_enable(void) {
 void _dbg_check_lock(void) {
 
   if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt != 0))
-    chDbgPanic("SV#4");
+    chSysHalt("SV#4");
   _dbg_enter_lock();
 }
 
@@ -128,7 +128,7 @@ void _dbg_check_lock(void) {
 void _dbg_check_unlock(void) {
 
   if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt <= 0))
-    chDbgPanic("SV#5");
+    chSysHalt("SV#5");
   _dbg_leave_lock();
 }
 
@@ -140,7 +140,7 @@ void _dbg_check_unlock(void) {
 void _dbg_check_lock_from_isr(void) {
 
   if ((ch.dbg_isr_cnt <= 0) || (ch.dbg_lock_cnt != 0))
-    chDbgPanic("SV#6");
+    chSysHalt("SV#6");
   _dbg_enter_lock();
 }
 
@@ -152,7 +152,7 @@ void _dbg_check_lock_from_isr(void) {
 void _dbg_check_unlock_from_isr(void) {
 
   if ((ch.dbg_isr_cnt <= 0) || (ch.dbg_lock_cnt <= 0))
-    chDbgPanic("SV#7");
+    chSysHalt("SV#7");
   _dbg_leave_lock();
 }
 
@@ -165,7 +165,7 @@ void _dbg_check_enter_isr(void) {
 
   port_lock_from_isr();
   if ((ch.dbg_isr_cnt < 0) || (ch.dbg_lock_cnt != 0))
-    chDbgPanic("SV#8");
+    chSysHalt("SV#8");
   ch.dbg_isr_cnt++;
   port_unlock_from_isr();
 }
@@ -179,7 +179,7 @@ void _dbg_check_leave_isr(void) {
 
   port_lock_from_isr();
   if ((ch.dbg_isr_cnt <= 0) || (ch.dbg_lock_cnt != 0))
-    chDbgPanic("SV#9");
+    chSysHalt("SV#9");
   ch.dbg_isr_cnt--;
   port_unlock_from_isr();
 }
@@ -195,7 +195,7 @@ void _dbg_check_leave_isr(void) {
 void chDbgCheckClassI(void) {
 
   if ((ch.dbg_isr_cnt < 0) || (ch.dbg_lock_cnt <= 0))
-    chDbgPanic("SV#10");
+    chSysHalt("SV#10");
 }
 
 /**
@@ -209,7 +209,7 @@ void chDbgCheckClassI(void) {
 void chDbgCheckClassS(void) {
 
   if ((ch.dbg_isr_cnt != 0) || (ch.dbg_lock_cnt <= 0))
-    chDbgPanic("SV#11");
+    chSysHalt("SV#11");
 }
 
 #endif /* CH_DBG_SYSTEM_STATE_CHECK */
@@ -243,18 +243,5 @@ void _dbg_trace(thread_t *otp) {
     ch.dbg_trace_buffer.tb_ptr = &ch.dbg_trace_buffer.tb_buffer[0];
 }
 #endif /* CH_DBG_ENABLE_TRACE */
-
-#if CH_DBG_ENABLED || defined(__DOXYGEN__)
-/**
- * @brief   Prints a panic message on the console and then halts the system.
- *
- * @param[in] msg       the pointer to the panic message string
- */
-void chDbgPanic(const char *msg) {
-
-  ch.dbg_panic_msg = msg;
-  chSysHalt();
-}
-#endif /* CH_DBG_ENABLED */
 
 /** @} */

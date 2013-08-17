@@ -67,7 +67,7 @@
  *                      .
  * @return              The message from @p osalQueueWakeupOneI() or
  *                      @p osalQueueWakeupAllI() functions.
- * @retval RDY_TIMEOUT  if the thread has not been dequeued within the
+ * @retval MSG_TIMEOUT  if the thread has not been dequeued within the
  *                      specified timeout or if the function has been
  *                      invoked with @p TIME_IMMEDIATE as timeout
  *                      specification.
@@ -77,7 +77,7 @@
 msg_t chQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t time) {
 
   if (TIME_IMMEDIATE == time)
-    return RDY_TIMEOUT;
+    return MSG_TIMEOUT;
 
   queue_insert(currp, tqp);
   return chSchGoSleepTimeoutS(CH_STATE_QUEUED, time);

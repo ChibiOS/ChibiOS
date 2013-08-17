@@ -159,7 +159,7 @@ static void wakeup(void *p) {
     /* States requiring dequeuing.*/
     queue_dequeue(tp);
   }
-  tp->p_u.rdymsg = RDY_TIMEOUT;
+  tp->p_u.rdymsg = MSG_TIMEOUT;
   chSchReadyI(tp);
   chSysUnlockFromISR();
 }
@@ -169,7 +169,7 @@ static void wakeup(void *p) {
  *          timeout specification.
  * @details The thread goes into a sleeping state, if it is not awakened
  *          explicitly within the specified timeout then it is forcibly
- *          awakened with a @p RDY_TIMEOUT low level message. The possible
+ *          awakened with a @p MSG_TIMEOUT low level message. The possible
  *          @ref thread_states are defined into @p threads.h.
  *
  * @param[in] newstate  the new thread state
@@ -181,7 +181,7 @@ static void wakeup(void *p) {
  *                      - @a TIME_IMMEDIATE this value is not allowed.
  *                      .
  * @return              The wakeup message.
- * @retval RDY_TIMEOUT if a timeout occurs.
+ * @retval MSG_TIMEOUT  if a timeout occurs.
  *
  * @sclass
  */

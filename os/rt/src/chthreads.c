@@ -217,7 +217,7 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
                   CH_DBG_STACK_FILL_VALUE);
 #endif
   chSysLock();
-  chSchWakeupS(tp = chThdCreateI(wsp, size, prio, pf, arg), RDY_OK);
+  chSchWakeupS(tp = chThdCreateI(wsp, size, prio, pf, arg), MSG_OK);
   chSysUnlock();
   return tp;
 }

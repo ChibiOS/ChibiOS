@@ -55,6 +55,7 @@
 #define OSAL_FAILED                         TRUE
 /** @} */
 
+#if 0
 /**
  * @name    Messages
  * @{
@@ -63,6 +64,7 @@
 #define MSG_RESET                           RDY_RESET
 #define MSG_TIMEOUT                         RDY_TIMEOUT
 /** @} */
+#endif
 
 #if 0
 /**
@@ -257,8 +259,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void osalInit(void);
-  void osalSysHalt(const char *reason);
+
 #ifdef __cplusplus
 }
 #endif
@@ -266,6 +267,27 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   OSAL module initialization.
+ *
+ * @api
+ */
+static inline void osalInit(void) {
+
+}
+
+/**
+ * @brief   System halt with error message.
+ *
+ * @param[in] reason    the halt message pointer
+ *
+ * @api
+ */
+static inline void osalSysHalt(const char *reason) {
+
+  chSysHalt(reason);
+}
 
 /**
  * @brief   Enters a critical zone from thread context.

@@ -166,12 +166,18 @@ void chSysInit(void) {
  *
  * @special
  */
-void chSysHalt(void) {
+void chSysHalt(const char *reason) {
 
   port_disable();
 
+#if CH_DBG_ENABLED
+  ch.dbg_panic_msg = reason;
+#else
+  (void)reason;
+#endif
+
 #if defined(CH_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
-  CH_CFG_SYSTEM_HALT_HOOK();
+  CH_CFG_SYSTEM_HALT_HOOK(reason);
 #endif
 
   /* Harmless infinite loop.*/
