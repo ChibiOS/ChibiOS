@@ -75,9 +75,6 @@ void osalInit(void) {
  *
  * @api
  */
-#if !defined(__DOXYGEN__)
-__attribute__((weak))
-#endif
 void osalSysHalt(const char *reason) {
 
   osal_halt_msg = reason;
