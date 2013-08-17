@@ -117,7 +117,7 @@
  *          error can only happen because programming errors.
  */
 #if !defined(STM32_I2C_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_I2C_DMA_ERROR_HOOK(i2cp)      chSysHalt()
+#define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
 #endif
 /** @} */
 
@@ -125,21 +125,20 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Streams for the DMA peripheral.*/
+/* TODO: Move the following DMA settings in the STM32F0XX registry.*/
 #if defined(STM32F0XX)
 #define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
 #define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
 #define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
 #define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+#endif
 
-#elif defined(STM32F30X) || defined(STM32F37X)
+/* TODO: Move the following DMA settings in the STM32F37X registry.*/
+#if defined(STM32F37X)
 #define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
 #define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
 #define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
 #define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
-
-#else
-#error "device unsupported by I2Cv2 driver"
 #endif
 
 /** @brief  error checks */
@@ -155,6 +154,41 @@
 #error "I2C driver activated but no I2C peripheral assigned"
 #endif
 
+#if STM32_I2C_USE_I2C1 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_I2C_I2C1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C1"
+#endif
+
+#if STM32_I2C_USE_I2C2 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_I2C_I2C2_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C2"
+#endif
+
+#if STM32_I2C_USE_I2C1 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C1"
+#endif
+
+#if STM32_I2C_USE_I2C2 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C2_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C2"
+#endif
+
+/* The following checks are only required when there is a DMA able to
+   reassign streams to different channels.*/
+#if STM32_ADVANCED_DMA
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_I2C_USE_I2C1 && (!defined(STM32_I2C_I2C1_RX_DMA_STREAM) ||        \
+                           !defined(STM32_I2C_I2C1_TX_DMA_STREAM))
+#error "I2C1 DMA streams not defined"
+#endif
+
+#if STM32_I2C_USE_I2C2 && (!defined(STM32_I2C_I2C2_RX_DMA_STREAM) ||        \
+                           !defined(STM32_I2C_I2C2_TX_DMA_STREAM))
+#error "I2C2 DMA streams not defined"
+#endif
+
+/* Check on the validity of the assigned DMA channels.*/
 #if STM32_I2C_USE_I2C1 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C1_RX_DMA_STREAM,                    \
                            STM32_I2C1_RX_DMA_MSK)
@@ -178,6 +212,7 @@
                            STM32_I2C2_TX_DMA_MSK)
 #error "invalid DMA stream associated to I2C2 TX"
 #endif
+#endif /* STM32_ADVANCED_DMA */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
@@ -243,14 +278,7 @@ struct I2CDriver{
    */
   i2cflags_t                errors;
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
-  /**
-   * @brief   Mutex protecting the bus.
-   */
-  Mutex                     mutex;
-#elif CH_USE_SEMAPHORES
-  Semaphore                 semaphore;
-#endif
+  mutex_t                   mutex;
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 #if defined(I2C_DRIVER_EXT_FIELDS)
   I2C_DRIVER_EXT_FIELDS
@@ -259,7 +287,7 @@ struct I2CDriver{
   /**
    * @brief   Thread waiting for I/O completion.
    */
-  Thread                    *thread;
+  thread_t                  *thread;
   /**
    * @brief     Current slave address without R/W bit.
    */

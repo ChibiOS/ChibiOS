@@ -124,58 +124,7 @@
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 #endif
 
-#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
-
-/**
- * @brief   DMA stream used for SPI1 RX operations.
- * @note    This option is only available on platforms with enhanced DMA.
- */
-#if !defined(STM32_SPI_SPI1_RX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 0)
-#endif
-
-/**
- * @brief   DMA stream used for SPI1 TX operations.
- * @note    This option is only available on platforms with enhanced DMA.
- */
-#if !defined(STM32_SPI_SPI1_TX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 3)
-#endif
-
-/**
- * @brief   DMA stream used for SPI2 RX operations.
- * @note    This option is only available on platforms with enhanced DMA.
- */
-#if !defined(STM32_SPI_SPI2_RX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
-#endif
-
-/**
- * @brief   DMA stream used for SPI2 TX operations.
- * @note    This option is only available on platforms with enhanced DMA.
- */
-#if !defined(STM32_SPI_SPI2_TX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
-#endif
-
-/**
- * @brief   DMA stream used for SPI3 RX operations.
- * @note    This option is only available on platforms with enhanced DMA.
- */
-#if !defined(STM32_SPI_SPI3_RX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 0)
-#endif
-
-/**
- * @brief   DMA stream used for SPI3 TX operations.
- * @note    This option is only available on platforms with enhanced DMA.
- */
-#if !defined(STM32_SPI_SPI3_TX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 7)
-#endif
-
-#else /* !STM32_ADVANCED_DMA */
-
+/* TODO: Move the following DMA settings in the STM32F0XX registry.*/
 #if defined(STM32F0XX)
 /* Fixed values for STM32F0xx devices.*/
 #define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
@@ -184,7 +133,8 @@
 #define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
 #endif /* defined(STM32F0XX) */
 
-#if defined(STM32F30X) || defined(STM32F37X)
+/* TODO: Move the following DMA settings in the STM32F37X registry.*/
+#if defined(STM32F37X)
 /* Fixed values for STM32F3xx devices.*/
 #define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
@@ -193,8 +143,6 @@
 #define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 1)
 #define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 2)
 #endif /* defined(STM32F30X) */
-
-#endif /* !STM32_ADVANCED_DMA*/
 /** @} */
 
 /*===========================================================================*/
@@ -247,6 +195,26 @@
 #error "Invalid DMA priority assigned to SPI3"
 #endif
 
+/* The following checks are only required when there is a DMA able to
+   reassign streams to different channels.*/
+#if STM32_ADVANCED_DMA
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI1_TX_DMA_STREAM))
+#error "SPI1 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI2 && (!defined(STM32_SPI_SPI2_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI2_TX_DMA_STREAM))
+#error "SPI2 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI3_TX_DMA_STREAM))
+#error "SPI3 DMA streams not defined"
+#endif
+
+/* Check on the validity of the assigned DMA channels.*/
 #if STM32_SPI_USE_SPI1 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_RX_DMA_STREAM, STM32_SPI1_RX_DMA_MSK)
 #error "invalid DMA stream associated to SPI1 RX"
@@ -276,6 +244,7 @@
     !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_TX_DMA_STREAM, STM32_SPI3_TX_DMA_MSK)
 #error "invalid DMA stream associated to SPI3 TX"
 #endif
+#endif /* STM32_ADVANCED_DMA */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED

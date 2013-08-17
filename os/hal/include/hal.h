@@ -50,7 +50,7 @@
 #include "can.h"
 #include "ext.h"
 #include "gpt.h"
-//#include "i2c.h"
+#include "i2c.h"
 #include "icu.h"
 //#include "mac.h"
 #include "pwm.h"
