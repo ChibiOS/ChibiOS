@@ -65,30 +65,6 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   Puts the invoking thread into the queue's threads queue.
- *
- * @param[out] qp       pointer to an @p io_queue_t structure
- * @param[in] time      the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
- * @return              A message specifying how the invoking thread has been
- *                      released from threads queue.
- * @retval Q_OK         is the normal exit, thread signaled.
- * @retval Q_RESET      if the queue has been reset.
- * @retval Q_TIMEOUT    if the queue operation timed out.
- */
-static msg_t qwait(io_queue_t *qp, systime_t time) {
-
-  if (TIME_IMMEDIATE == time)
-    return Q_TIMEOUT;
-  currp->p_u.wtobjp = qp;
-  queue_insert(currp, &qp->q_waiting);
-  return chSchGoSleepTimeoutS(CH_STATE_WTQUEUE, time);
-}
-
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -112,7 +88,7 @@ static msg_t qwait(io_queue_t *qp, systime_t time) {
 void chIQObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
                     qnotify_t infy, void *link) {
 
-  queue_init(&iqp->q_waiting);
+  chQueueObjectInit(&iqp->q_waiting);
   iqp->q_counter = 0;
   iqp->q_buffer = iqp->q_rdptr = iqp->q_wrptr = bp;
   iqp->q_top = bp + size;
@@ -137,8 +113,7 @@ void chIQResetI(input_queue_t *iqp) {
 
   iqp->q_rdptr = iqp->q_wrptr = iqp->q_buffer;
   iqp->q_counter = 0;
-  while (queue_notempty(&iqp->q_waiting))
-    chSchReadyI(queue_fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_RESET;
+  chQueueWakeupAllI(&iqp->q_waiting, Q_RESET);
 }
 
 /**
@@ -166,8 +141,7 @@ msg_t chIQPutI(input_queue_t *iqp, uint8_t b) {
   if (iqp->q_wrptr >= iqp->q_top)
     iqp->q_wrptr = iqp->q_buffer;
 
-  if (queue_notempty(&iqp->q_waiting))
-    chSchReadyI(queue_fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
+  chQueueWakeupOneI(&iqp->q_waiting, Q_OK);
 
   return Q_OK;
 }
@@ -201,7 +175,7 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
 
   while (chIQIsEmptyI(iqp)) {
     msg_t msg;
-    if ((msg = qwait((io_queue_t *)iqp, time)) < Q_OK) {
+    if ((msg = chQueueGoSleepTimeoutS(&iqp->q_waiting, time)) < Q_OK) {
       chSysUnlock();
       return msg;
     }
@@ -253,7 +227,7 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
       nfy(iqp);
 
     while (chIQIsEmptyI(iqp)) {
-      if (qwait((io_queue_t *)iqp, time) != Q_OK) {
+      if (chQueueGoSleepTimeoutS(&iqp->q_waiting, time) != Q_OK) {
         chSysUnlock();
         return r;
       }
@@ -292,7 +266,7 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
 void chOQObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
                     qnotify_t onfy, void *link) {
 
-  queue_init(&oqp->q_waiting);
+  chQueueObjectInit(&oqp->q_waiting);
   oqp->q_counter = size;
   oqp->q_buffer = oqp->q_rdptr = oqp->q_wrptr = bp;
   oqp->q_top = bp + size;
@@ -317,8 +291,7 @@ void chOQResetI(output_queue_t *oqp) {
 
   oqp->q_rdptr = oqp->q_wrptr = oqp->q_buffer;
   oqp->q_counter = chQSizeI(oqp);
-  while (queue_notempty(&oqp->q_waiting))
-    chSchReadyI(queue_fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_RESET;
+  chQueueWakeupAllI(&oqp->q_waiting, Q_RESET);
 }
 
 /**
@@ -349,7 +322,7 @@ msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time) {
   while (chOQIsFullI(oqp)) {
     msg_t msg;
 
-    if ((msg = qwait((io_queue_t *)oqp, time)) < Q_OK) {
+    if ((msg = chQueueGoSleepTimeoutS(&oqp->q_waiting, time)) < Q_OK) {
       chSysUnlock();
       return msg;
     }
@@ -390,8 +363,7 @@ msg_t chOQGetI(output_queue_t *oqp) {
   if (oqp->q_rdptr >= oqp->q_top)
     oqp->q_rdptr = oqp->q_buffer;
 
-  if (queue_notempty(&oqp->q_waiting))
-    chSchReadyI(queue_fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
+  chQueueWakeupOneI(&oqp->q_waiting, Q_OK);
 
   return b;
 }
@@ -430,7 +402,7 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
   chSysLock();
   while (true) {
     while (chOQIsFullI(oqp)) {
-      if (qwait((io_queue_t *)oqp, time) != Q_OK) {
+      if (chQueueGoSleepTimeoutS(&oqp->q_waiting, time) != Q_OK) {
         chSysUnlock();
         return w;
       }

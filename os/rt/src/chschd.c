@@ -147,22 +147,17 @@ static void wakeup(void *p) {
        another thread with higher priority.*/
     chSysUnlockFromISR();
     return;
-#if CH_CFG_USE_SEMAPHORES || CH_CFG_USE_QUEUES ||                           \
-    (CH_CFG_USE_CONDVARS && CH_CFG_USE_CONDVARS_TIMEOUT)
 #if CH_CFG_USE_SEMAPHORES
   case CH_STATE_WTSEM:
     chSemFastSignalI((semaphore_t *)tp->p_u.wtobjp);
     /* Falls into, intentional. */
 #endif
-#if CH_CFG_USE_QUEUES
-  case CH_STATE_WTQUEUE:
-#endif
 #if CH_CFG_USE_CONDVARS && CH_CFG_USE_CONDVARS_TIMEOUT
   case CH_STATE_WTCOND:
 #endif
+  case CH_STATE_QUEUED:
     /* States requiring dequeuing.*/
     queue_dequeue(tp);
-#endif
   }
   tp->p_u.rdymsg = RDY_TIMEOUT;
   chSchReadyI(tp);

@@ -223,6 +223,21 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
 }
 
 /**
+ * @brief   Resumes a thread created with @p chThdCreateI().
+ *
+ * @param[in] tp        pointer to the thread
+ *
+ * @api
+ */
+thread_t *chThdStart(thread_t *tp) {
+
+  chSysLock();
+  tp = chThdStartI(tp);
+  chSysUnlock();
+  return tp;
+}
+
+/**
  * @brief   Changes the running thread priority level then reschedules if
  *          necessary.
  * @note    The function returns the real thread priority regardless of the
@@ -255,26 +270,84 @@ tprio_t chThdSetPriority(tprio_t newprio) {
 }
 
 /**
- * @brief   Resumes a suspended thread.
- * @pre     The specified thread pointer must refer to an initialized thread
- *          in the @p CH_STATE_SUSPENDED state.
- * @post    The specified thread is immediately started or put in the ready
- *          list depending on the relative priority levels.
- * @note    Use this function to start threads created with @p chThdCreateI().
+ * @brief   Sends the current thread sleeping and sets a reference variable.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
  *
- * @param[in] tp        pointer to the thread
- * @return              The pointer to the thread.
+ * @param[in] trp       a pointer to a thread reference object
+ * @return              The wake up message.
+ *
+ * @sclass
+ */
+msg_t chThreadSuspendS(thread_reference_t *trp) {
+
+  chDbgAssert(*trp == NULL, "not NULL");
+
+  *trp = (thread_reference_t)chThdGetSelfX();
+  chSchGoSleepS(CH_STATE_SUSPENDED);
+  return chThdGetSelfX()->p_msg;
+}
+
+/**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must not reschedule because it can be called from
+ *          ISR context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chThreadResumeI(thread_reference_t *trp, msg_t msg) {
+
+  if (*trp != NULL) {
+
+    chDbgAssert((*trp)->p_state == CH_STATE_SUSPENDED,
+                "not THD_STATE_SUSPENDED");
+
+    (*trp)->p_u.rdymsg = msg;
+    chSchReadyI(*trp);
+    *trp = NULL;
+  }
+}
+
+/**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chThreadResumeS(thread_reference_t *trp, msg_t msg) {
+
+  if (*trp != NULL) {
+
+    chDbgAssert((*trp)->p_state == CH_STATE_SUSPENDED,
+                "not THD_STATE_SUSPENDED");
+
+    *trp = NULL;
+    chSchWakeupS(*trp, msg);
+  }
+}
+
+/**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
  *
  * @api
  */
-thread_t *chThdResume(thread_t *tp) {
+void chThreadResume(thread_reference_t *trp, msg_t msg) {
 
   chSysLock();
-  chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
-              "thread not in CH_STATE_SUSPENDED state");
-  chSchWakeupS(tp, RDY_OK);
+  chThreadResumeS(trp, msg);
   chSysUnlock();
-  return tp;
 }
 
 /**

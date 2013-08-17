@@ -41,20 +41,20 @@
 #define CH_STATE_CURRENT        1   /**< @brief Currently running.          */
 #define CH_STATE_WTSTART        2   /**< @brief Created but not started.    */
 #define CH_STATE_SUSPENDED      3   /**< @brief Created in suspended state. */
-#define CH_STATE_WTSEM          4   /**< @brief Waiting on a semaphore.     */
-#define CH_STATE_WTMTX          5   /**< @brief Waiting on a mutex.         */
-#define CH_STATE_WTCOND         6   /**< @brief Waiting on a condition
+#define CH_STATE_QUEUED         4  /**< @brief Waiting on an I/O queue.    */
+#define CH_STATE_WTSEM          5   /**< @brief Waiting on a semaphore.     */
+#define CH_STATE_WTMTX          6   /**< @brief Waiting on a mutex.         */
+#define CH_STATE_WTCOND         7   /**< @brief Waiting on a condition
                                          variable.                          */
-#define CH_STATE_SLEEPING       7   /**< @brief Waiting in @p chThdSleep()
+#define CH_STATE_SLEEPING       8   /**< @brief Waiting in @p chThdSleep()
                                          or @p chThdSleepUntil().           */
-#define CH_STATE_WTEXIT         8   /**< @brief Waiting in @p chThdWait().  */
-#define CH_STATE_WTOREVT        9   /**< @brief Waiting for an event.       */
-#define CH_STATE_WTANDEVT       10   /**< @brief Waiting for several events. */
-#define CH_STATE_SNDMSGQ        11  /**< @brief Sending a message, in queue.*/
-#define CH_STATE_SNDMSG         12  /**< @brief Sent a message, waiting
+#define CH_STATE_WTEXIT         9   /**< @brief Waiting in @p chThdWait().  */
+#define CH_STATE_WTOREVT        10  /**< @brief Waiting for an event.       */
+#define CH_STATE_WTANDEVT       11  /**< @brief Waiting for several events. */
+#define CH_STATE_SNDMSGQ        12  /**< @brief Sending a message, in queue.*/
+#define CH_STATE_SNDMSG         13  /**< @brief Sent a message, waiting
                                          answer.                            */
-#define CH_STATE_WTMSG          13  /**< @brief Waiting for a message.      */
-#define CH_STATE_WTQUEUE        14  /**< @brief Waiting on an I/O queue.    */
+#define CH_STATE_WTMSG          14  /**< @brief Waiting for a message.      */
 #define CH_STATE_FINAL          15  /**< @brief Thread terminated.          */
 
 /**
@@ -63,9 +63,9 @@
  *          indexed using the numeric thread state values.
  */
 #define CH_STATE_NAMES                                                     \
-  "READY", "WTSTART", "CURRENT", "SUSPENDED", "WTSEM", "WTMTX", "WTCOND",  \
-  "SLEEPING", "WTEXIT", "WTOREVT", "WTANDEVT", "SNDMSGQ", "SNDMSG",        \
-  "WTMSG", "WTQUEUE", "FINAL"
+  "READY", "WTSTART", "CURRENT", "SUSPENDED", "QUEUED", "WTSEM", "WTMTX",  \
+  "WTCOND", "SLEEPING", "WTEXIT", "WTOREVT", "WTANDEVT", "SNDMSGQ",        \
+  "SNDMSG", "WTMSG", "FINAL"
 /** @} */
 
 /**
@@ -93,6 +93,10 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a thread reference.
+ */
+typedef thread_t * thread_reference_t;
 
 /**
  * @brief   Thread function.
@@ -161,8 +165,12 @@ extern "C" {
                          tprio_t prio, tfunc_t pf, void *arg);
   thread_t *chThdCreateStatic(void *wsp, size_t size,
                               tprio_t prio, tfunc_t pf, void *arg);
+  thread_t *chThdStart(thread_t *tp);
   tprio_t chThdSetPriority(tprio_t newprio);
-  thread_t *chThdResume(thread_t *tp);
+  msg_t chThreadSuspendS(thread_reference_t *trp);
+  void chThreadResumeI(thread_reference_t *trp, msg_t msg);
+  void chThreadResumeS(thread_reference_t *trp, msg_t msg);
+  void chThreadResume(thread_reference_t *trp, msg_t msg);
   void chThdTerminate(thread_t *tp);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
@@ -249,7 +257,7 @@ static inline bool chThdShouldTerminateX(void) {
  *
  * @param[in] tp        pointer to the thread
  *
- * @xclass
+ * @iclass
  */
 static inline thread_t *chThdStartI(thread_t *tp) {
 

@@ -20,9 +20,9 @@
 
 /**
  * @file    chlists.h
- * @brief   Thread queues/lists inlined code.
+ * @brief   Thread queues and lists header.
  *
- * @addtogroup internals
+ * @addtogroup queues_list
  * @{
  */
 
@@ -71,6 +71,16 @@
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  msg_t chQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t time);
+  void chQueueWakeupOneI(threads_queue_t *tqp, msg_t msg);
+  void chQueueWakeupAllI(threads_queue_t *tqp, msg_t msg);
+#ifdef __cplusplus
+}
+#endif
 
 /*===========================================================================*/
 /* Module inline functions.                                                  */
@@ -191,5 +201,17 @@ static inline thread_t *queue_dequeue(thread_t *tp) {
   return tp;
 }
 #endif /* CH_CFG_OPTIMIZE_SPEED */
+
+/**
+ * @brief   Initializes a threads queue object.
+ *
+ * @param[out] tqp      pointer to the threads queue object
+ *
+ * @init
+ */
+static inline void chQueueObjectInit(threads_queue_t *tqp) {
+
+  queue_init(tqp);
+}
 
 #endif /* _CHLISTS_H_ */

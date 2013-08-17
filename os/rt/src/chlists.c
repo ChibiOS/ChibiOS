@@ -20,12 +20,9 @@
 
 /**
  * @file    chlists.c
- * @brief   Thread queues/lists code.
+ * @brief   Thread queues and lists code.
  *
- * @addtogroup internals
- * @details All the functions present in this module, while public, are not
- *          OS APIs and should not be directly used in the user applications
- *          code.
+ * @addtogroup queues_list
  * @{
  */
 #include "ch.h"
@@ -53,6 +50,80 @@
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Enqueues the caller thread.
+ * @details The caller thread is enqueued and put to sleep until it is
+ *          dequeued or the specified timeouts expires.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] time      the timeout in system ticks, the special values are
+ *                      handled as follow:
+ *                      - @a TIME_INFINITE the thread enters an infinite sleep
+ *                        state.
+ *                      - @a TIME_IMMEDIATE the thread is not enqueued and
+ *                        the function returns @p MSG_TIMEOUT as if a timeout
+ *                        occurred.
+ *                      .
+ * @return              The message from @p osalQueueWakeupOneI() or
+ *                      @p osalQueueWakeupAllI() functions.
+ * @retval RDY_TIMEOUT  if the thread has not been dequeued within the
+ *                      specified timeout or if the function has been
+ *                      invoked with @p TIME_IMMEDIATE as timeout
+ *                      specification.
+ *
+ * @sclass
+ */
+msg_t chQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t time) {
+
+  if (TIME_IMMEDIATE == time)
+    return RDY_TIMEOUT;
+
+  queue_insert(currp, tqp);
+  return chSchGoSleepTimeoutS(CH_STATE_QUEUED, time);
+}
+
+/**
+ * @brief   Dequeues and wakes up one thread from the queue, if any.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chQueueWakeupOneI(threads_queue_t *tqp, msg_t msg) {
+
+  if (queue_notempty(tqp)) {
+    thread_t *tp = queue_fifo_remove(tqp);
+
+    chDbgAssert(tp->p_state == CH_STATE_QUEUED,
+                "not CH_STATE_QUEUED");
+
+    tp->p_u.rdymsg = msg;
+    chSchReadyI(tp);
+  }
+}
+
+/**
+ * @brief   Dequeues and wakes up all threads from the queue.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chQueueWakeupAllI(threads_queue_t *tqp, msg_t msg) {
+
+  while (queue_notempty(tqp)) {
+    thread_t *tp = queue_fifo_remove(tqp);
+
+    chDbgAssert(tp->p_state == CH_STATE_QUEUED,
+                "not CH_STATE_QUEUED");
+
+    tp->p_u.rdymsg = msg;
+    chSchReadyI(tp);
+  }
+}
 
 #if !CH_CFG_OPTIMIZE_SPEED || defined(__DOXYGEN__)
 /**

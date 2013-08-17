@@ -130,10 +130,12 @@ typedef uint32_t systime_t;
 typedef uint32_t rtcnt_t;
 #endif
 
+#if 0
 /**
  * @brief   Type of a thread reference.
  */
 typedef thread_t * thread_reference_t;
+#endif
 
 #if 0
 /**
@@ -257,12 +259,6 @@ extern "C" {
 #endif
   void osalInit(void);
   void osalSysHalt(const char *reason);
-  msg_t osalThreadSuspendS(thread_reference_t *trp);
-  void osalThreadResumeI(thread_reference_t *trp, msg_t msg);
-  void osalThreadResumeS(thread_reference_t *trp, msg_t msg);
-  msg_t osalQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t time);
-  void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg);
-  void osalQueueWakeupAllI(threads_queue_t *tqp, msg_t msg);
 #ifdef __cplusplus
 }
 #endif
@@ -392,6 +388,117 @@ static inline void osalThreadSleep(systime_t time) {
 }
 
 /**
+ * @brief   Sends the current thread sleeping and sets a reference variable.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @return              The wake up message.
+ *
+ * @sclass
+ */
+static inline msg_t osalThreadSuspendS(thread_reference_t *trp) {
+
+  return osalThreadSuspendS(trp);
+}
+
+/**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must not reschedule because it can be called from
+ *          ISR context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+static inline void osalThreadResumeI(thread_reference_t *trp, msg_t msg) {
+
+  chThreadResumeI(trp, msg);
+}
+
+/**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
+
+  chThreadResumeS(trp, msg);
+}
+
+/**
+ * @brief   Initializes a threads queue object.
+ *
+ * @param[out] tqp      pointer to the threads queue object
+ *
+ * @init
+ */
+static inline void osalQueueObjectInit(threads_queue_t *tqp) {
+
+  queue_init(tqp);
+}
+
+/**
+ * @brief   Enqueues the caller thread.
+ * @details The caller thread is enqueued and put to sleep until it is
+ *          dequeued or the specified timeouts expires.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] time      the timeout in system ticks, the special values are
+ *                      handled as follow:
+ *                      - @a TIME_INFINITE the thread enters an infinite sleep
+ *                        state.
+ *                      - @a TIME_IMMEDIATE the thread is not enqueued and
+ *                        the function returns @p MSG_TIMEOUT as if a timeout
+ *                        occurred.
+ *                      .
+ * @return              The message from @p osalQueueWakeupOneI() or
+ *                      @p osalQueueWakeupAllI() functions.
+ * @retval RDY_TIMEOUT  if the thread has not been dequeued within the
+ *                      specified timeout or if the function has been
+ *                      invoked with @p TIME_IMMEDIATE as timeout
+ *                      specification.
+ *
+ * @sclass
+ */
+static inline msg_t osalQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t time) {
+
+  return chQueueGoSleepTimeoutS(tqp, time);
+}
+
+/**
+ * @brief   Dequeues and wakes up one thread from the queue, if any.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+static inline void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg) {
+
+  chQueueWakeupOneI(tqp, msg);
+}
+
+/**
+ * @brief   Dequeues and wakes up all threads from the queue.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+static inline void osalQueueWakeupAllI(threads_queue_t *tqp, msg_t msg) {
+
+  chQueueWakeupAllI(tqp, msg);
+}
+
+/**
  * @brief   Initializes an event flags object.
  *
  * @param[out] esp      pointer to the event flags object
@@ -492,18 +599,6 @@ static inline void osalMutexUnlock(mutex_t *mp) {
 #else
   *mp = 0;
 #endif
-}
-
-/**
- * @brief   Initializes a threads queue object.
- *
- * @param[out] tqp      pointer to the threads queue object
- *
- * @init
- */
-static inline void osalQueueObjectInit(threads_queue_t *tqp) {
-
-  queue_init(tqp);
 }
 
 #endif /* _OSAL_H_ */
