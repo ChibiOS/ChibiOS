@@ -87,10 +87,6 @@
 #define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 
 #define STM32_HAS_I2C3                      FALSE
-#define STM32_I2C3_RX_DMA_MSK               0
-#define STM32_I2C3_RX_DMA_CHN               0x00000000
-#define STM32_I2C3_TX_DMA_MSK               0
-#define STM32_I2C3_TX_DMA_CHN               0x00000000
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
