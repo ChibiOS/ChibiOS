@@ -5,8 +5,8 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.6.0
-*** Compiled:     May 11 2013 - 16:47:41
+*** Kernel:       2.6.1
+*** Compiled:     Aug 18 2013 - 09:22:23
 *** Compiler:     GCC 4.7.3 20130312 (release) [ARM/embedded-4_7-branch revision
  196615]
 *** Architecture: ARMv7-ME
@@ -141,7 +141,7 @@ Settings: SYSCLK=72, ACR=0x12 (2 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 778552 wait+signal/S
+--- Score : 778556 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
