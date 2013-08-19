@@ -196,7 +196,7 @@ typedef struct {
 #if !defined(chDbgAssert)
 #define chDbgAssert(c, r) {                                                 \
   if (!(c))                                                                 \
-  chSysHalt("A:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));       \
+    chSysHalt("A:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));     \
 }
 #endif /* !defined(chDbgAssert) */
 #else /* !CH_DBG_ENABLE_ASSERTS */
