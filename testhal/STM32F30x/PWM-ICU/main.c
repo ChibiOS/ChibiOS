@@ -83,13 +83,13 @@ int main(void) {
   chSysInit();
 
   /*
-   * Initializes the PWM driver 2 and ICU driver 3.
-   * GPIOA15 is the PWM output.
-   * GPIOC6 is the ICU input.
+   * Initializes the PWM driver 4 and ICU driver 3.
+   * GPIOD12 is the PWM output channel 0.
+   * GPIOC6 is the ICU input ICU_CHANNEL_1.
    * The two pins have to be externally connected together.
    */
-  pwmStart(&PWMD2, &pwmcfg);
-  palSetPadMode(GPIOA, 15, PAL_MODE_ALTERNATE(1));
+  pwmStart(&PWMD4, &pwmcfg);
+  palSetPadMode(GPIOD, 12, PAL_MODE_ALTERNATE(2));
   icuStart(&ICUD3, &icucfg);
   palSetPadMode(GPIOC, 6, PAL_MODE_ALTERNATE(2));
   icuEnable(&ICUD3);
@@ -98,33 +98,33 @@ int main(void) {
   /*
    * Starts the PWM channel 0 using 75% duty cycle.
    */
-  pwmEnableChannel(&PWMD2, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 7500));
+  pwmEnableChannel(&PWMD4, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 7500));
   chThdSleepMilliseconds(5000);
 
   /*
    * Changes the PWM channel 0 to 50% duty cycle.
    */
-  pwmEnableChannel(&PWMD2, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 5000));
+  pwmEnableChannel(&PWMD4, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 5000));
   chThdSleepMilliseconds(5000);
 
   /*
    * Changes the PWM channel 0 to 25% duty cycle.
    */
-  pwmEnableChannel(&PWMD2, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD2, 2500));
+  pwmEnableChannel(&PWMD4, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD4, 2500));
   chThdSleepMilliseconds(5000);
 
   /*
    * Changes PWM period to half second the duty cycle becomes 50%
    * implicitly.
    */
-  pwmChangePeriod(&PWMD2, 5000);
+  pwmChangePeriod(&PWMD4, 5000);
   chThdSleepMilliseconds(5000);
 
   /*
    * Disables channel 0 and stops the drivers.
    */
-  pwmDisableChannel(&PWMD2, 0);
-  pwmStop(&PWMD2);
+  pwmDisableChannel(&PWMD4, 0);
+  pwmStop(&PWMD4);
   icuDisable(&ICUD3);
   icuStop(&ICUD3);
   palClearPad(GPIOE, GPIOE_LED4_BLUE);

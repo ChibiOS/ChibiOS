@@ -12,7 +12,7 @@ The application demonstrates the use of the STM32F30x PWM-ICU drivers.
 
 ** Board Setup **
 
-- Connect PA15 and PC6 together.
+- Connect PD12 (PWM output) and PC6 (ICU input) together.
 
 ** Build Procedure **
 

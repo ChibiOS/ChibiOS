@@ -46,12 +46,12 @@
 #define MSG_SEND_LEFT   0
 #define MSG_SEND_RIGHT  1
 
-static bool_t saturated;
+static bool saturated;
 
 /*
  * Mailboxes and buffers.
  */
-static Mailbox mb[NUM_THREADS];
+static mailbox_t mb[NUM_THREADS];
 static msg_t b[NUM_THREADS][MAILBOX_SIZE];
 
 /*
@@ -101,7 +101,7 @@ static msg_t WorkerThread(void *arg) {
       /* If this thread is not at the end of a chain re-sending the message,
          note this check works because the variable target is unsigned.*/
       msg = chMBPost(&mb[target], msg, TIME_IMMEDIATE);
-      if (msg != RDY_OK)
+      if (msg != MSG_OK)
         saturated = TRUE;
     }
     else {
@@ -121,11 +121,11 @@ static void gpt2cb(GPTDriver *gptp) {
   msg_t msg;
 
   (void)gptp;
-  chSysLockFromIsr();
+  chSysLockFromISR();
   msg = chMBPostI(&mb[0], MSG_SEND_RIGHT);
-  if (msg != RDY_OK)
+  if (msg != MSG_OK)
     saturated = TRUE;
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 /*
@@ -135,11 +135,11 @@ static void gpt3cb(GPTDriver *gptp) {
   msg_t msg;
 
   (void)gptp;
-  chSysLockFromIsr();
+  chSysLockFromISR();
   msg = chMBPostI(&mb[NUM_THREADS - 1], MSG_SEND_LEFT);
-  if (msg != RDY_OK)
+  if (msg != MSG_OK)
     saturated = TRUE;
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 /*
@@ -221,14 +221,14 @@ int main(void) {
   /*
    * Activates GPTs.
    */
-  gptStart(&GPTD2, &gpt2cfg);
+  gptStart(&GPTD4, &gpt2cfg);
   gptStart(&GPTD3, &gpt3cfg);
 
   /*
    * Initializes the mailboxes and creates the worker threads.
    */
   for (i = 0; i < NUM_THREADS; i++) {
-    chMBInit(&mb[i], b[i], MAILBOX_SIZE);
+    chMBObjectInit(&mb[i], b[i], MAILBOX_SIZE);
     chThdCreateStatic(waWorkerThread[i], sizeof waWorkerThread[i],
                       NORMALPRIO - 20, WorkerThread, (void *)i);
   }
@@ -291,10 +291,10 @@ int main(void) {
     saturated = FALSE;
     threshold = 0;
     for (interval = 2000; interval >= 10; interval -= interval / 10) {
-      gptStartContinuous(&GPTD2, interval - 1); /* Slightly out of phase.*/
+      gptStartContinuous(&GPTD4, interval - 1); /* Slightly out of phase.*/
       gptStartContinuous(&GPTD3, interval + 1); /* Slightly out of phase.*/
       chThdSleepMilliseconds(1000);
-      gptStopTimer(&GPTD2);
+      gptStopTimer(&GPTD4);
       gptStopTimer(&GPTD3);
       if (!saturated)
         print(".");
@@ -315,7 +315,7 @@ int main(void) {
     if (threshold > worst)
       worst = threshold;
   }
-  gptStopTimer(&GPTD2);
+  gptStopTimer(&GPTD4);
   gptStopTimer(&GPTD3);
 
   print("Worst case at ");
