@@ -147,6 +147,9 @@ static void wakeup(void *p) {
        another thread with higher priority.*/
     chSysUnlockFromISR();
     return;
+  case CH_STATE_SUSPENDED:
+    *(thread_reference_t *)tp->p_u.wtobjp = NULL;
+    break;
 #if CH_CFG_USE_SEMAPHORES
   case CH_STATE_WTSEM:
     chSemFastSignalI((semaphore_t *)tp->p_u.wtobjp);

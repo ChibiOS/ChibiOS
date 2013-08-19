@@ -78,6 +78,13 @@
 #endif
 
 /**
+ * @brief   I2C timeout on busy condition in milliseconds.
+ */
+#if !defined(STM32_I2C_BUSY_TIMEOUT) || defined(__DOXYGEN__)
+#define STM32_I2C_BUSY_TIMEOUT              50
+#endif
+
+/**
  * @brief   I2C1 interrupt priority level setting.
  */
 #if !defined(STM32_I2C_I2C1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -287,7 +294,7 @@ struct I2CDriver{
   /**
    * @brief   Thread waiting for I/O completion.
    */
-  thread_t                  *thread;
+  thread_reference_t        thread;
   /**
    * @brief     Current slave address without R/W bit.
    */

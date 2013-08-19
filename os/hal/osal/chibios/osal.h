@@ -383,7 +383,6 @@ static inline void osalSysUnlockFromISR(void) {
   chSysUnlockFromISR();
 }
 
-#if CH_PORT_SUPPORTS_RT || defined(__DOXYGEN__)
 /**
  * @brief   Polled delay.
  * @note    The real delay is always few cycles in excess of the specified
@@ -393,6 +392,7 @@ static inline void osalSysUnlockFromISR(void) {
  *
  * @xclass
  */
+#if CH_PORT_SUPPORTS_RT || defined(__DOXYGEN__)
 static inline void osalSysPolledDelayX(rtcnt_t cycles) {
 
   chSysPolledDelayX(cycles);
@@ -510,7 +510,32 @@ static inline void osalThreadSleep(systime_t time) {
  */
 static inline msg_t osalThreadSuspendS(thread_reference_t *trp) {
 
-  return osalThreadSuspendS(trp);
+  return chThreadSuspendS(trp);
+}
+
+/**
+ * @brief   Sends the current thread sleeping and sets a reference variable.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] timeout   the timeout in system ticks, the special values are
+ *                      handled as follow:
+ *                      - @a TIME_INFINITE the thread enters an infinite sleep
+ *                        state.
+ *                      - @a TIME_IMMEDIATE the thread is not enqueued and
+ *                        the function returns @p MSG_TIMEOUT as if a timeout
+ *                        occurred.
+ *                      .
+ * @return              The wake up message.
+ * @retval MSG_TIMEOUT  if the operation timed out.
+ *
+ * @sclass
+ */
+static inline msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp,
+                                              systime_t timeout) {
+
+  return chThreadSuspendTimeoutS(trp, timeout);
 }
 
 /**

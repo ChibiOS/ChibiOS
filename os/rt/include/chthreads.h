@@ -168,6 +168,7 @@ extern "C" {
   thread_t *chThdStart(thread_t *tp);
   tprio_t chThdSetPriority(tprio_t newprio);
   msg_t chThreadSuspendS(thread_reference_t *trp);
+  msg_t chThreadSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
   void chThreadResumeI(thread_reference_t *trp, msg_t msg);
   void chThreadResumeS(thread_reference_t *trp, msg_t msg);
   void chThreadResume(thread_reference_t *trp, msg_t msg);

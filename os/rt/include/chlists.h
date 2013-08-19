@@ -75,7 +75,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t chQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t time);
+  msg_t chQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t timeout);
   void chQueueWakeupOneI(threads_queue_t *tqp, msg_t msg);
   void chQueueWakeupAllI(threads_queue_t *tqp, msg_t msg);
 #ifdef __cplusplus

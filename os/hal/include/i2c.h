@@ -93,6 +93,32 @@ typedef enum {
 /*===========================================================================*/
 
 /**
+ * @brief   Wakes up the waiting thread notifying no errors.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
+ */
+#define _i2c_wakeup_isr(i2cp) do {                                          \
+  osalSysLockFromISR();                                                     \
+  osalThreadResumeI(&(i2cp)->thread, MSG_OK);                               \
+  osalSysUnlockFromISR();                                                   \
+} while(0)
+
+/**
+ * @brief   Wakes up the waiting thread notifying errors.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ *
+ * @notapi
+ */
+#define _i2c_wakeup_error_isr(i2cp) do {                                    \
+  osalSysLockFromISR();                                                     \
+  osalThreadResumeI(&(i2cp)->thread, MSG_RESET);                            \
+  osalSysUnlockFromISR();                                                   \
+} while(0)
+
+/**
  * @brief   Wrap i2cMasterTransmitTimeout function with TIME_INFINITE timeout.
  * @api
  */

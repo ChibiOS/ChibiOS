@@ -57,7 +57,7 @@
  *          dequeued or the specified timeouts expires.
  *
  * @param[in] tqp       pointer to the threads queue object
- * @param[in] time      the timeout in system ticks, the special values are
+ * @param[in] timeout   the timeout in system ticks, the special values are
  *                      handled as follow:
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state.
@@ -74,13 +74,13 @@
  *
  * @sclass
  */
-msg_t chQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t time) {
+msg_t chQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t timeout) {
 
-  if (TIME_IMMEDIATE == time)
+  if (TIME_IMMEDIATE == timeout)
     return MSG_TIMEOUT;
 
   queue_insert(currp, tqp);
-  return chSchGoSleepTimeoutS(CH_STATE_QUEUED, time);
+  return chSchGoSleepTimeoutS(CH_STATE_QUEUED, timeout);
 }
 
 /**

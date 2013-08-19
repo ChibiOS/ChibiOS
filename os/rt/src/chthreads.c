@@ -280,12 +280,46 @@ tprio_t chThdSetPriority(tprio_t newprio) {
  * @sclass
  */
 msg_t chThreadSuspendS(thread_reference_t *trp) {
+  thread_t *tp = chThdGetSelfX();
 
   chDbgAssert(*trp == NULL, "not NULL");
 
-  *trp = (thread_reference_t)chThdGetSelfX();
+  *trp = tp;
+  tp->p_u.wtobjp = &trp;
   chSchGoSleepS(CH_STATE_SUSPENDED);
   return chThdGetSelfX()->p_msg;
+}
+
+/**
+ * @brief   Sends the current thread sleeping and sets a reference variable.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] timeout   the timeout in system ticks, the special values are
+ *                      handled as follow:
+ *                      - @a TIME_INFINITE the thread enters an infinite sleep
+ *                        state.
+ *                      - @a TIME_IMMEDIATE the thread is not enqueued and
+ *                        the function returns @p MSG_TIMEOUT as if a timeout
+ *                        occurred.
+ *                      .
+ * @return              The wake up message.
+ * @retval MSG_TIMEOUT  if the operation timed out.
+ *
+ * @sclass
+ */
+msg_t chThreadSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
+  thread_t *tp = chThdGetSelfX();
+
+  chDbgAssert(*trp == NULL, "not NULL");
+
+  if (TIME_IMMEDIATE == timeout)
+    return MSG_TIMEOUT;
+
+  *trp = tp;
+  tp->p_u.wtobjp = &trp;
+  return chSchGoSleepTimeoutS(CH_STATE_SUSPENDED, timeout);
 }
 
 /**
