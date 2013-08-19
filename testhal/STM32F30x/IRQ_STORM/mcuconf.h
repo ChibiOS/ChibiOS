@@ -110,7 +110,7 @@
 #define STM32_GPT_USE_TIM2                  TRUE
 #define STM32_GPT_USE_TIM3                  TRUE
 #define STM32_GPT_USE_TIM4                  TRUE
-#define STM32_GPT_USE_TIM8                  TRUE
+#define STM32_GPT_USE_TIM6                  TRUE
 #define STM32_GPT_USE_TIM7                  TRUE
 #define STM32_GPT_USE_TIM8                  TRUE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         7
