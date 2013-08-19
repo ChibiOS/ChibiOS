@@ -114,7 +114,7 @@
  *
  * @api
  */
-#define S2RTV(sec) (CH_CFG_RTC_FREQUENCY * (sec))
+#define S2RTC(sec) (CH_CFG_RTC_FREQUENCY * (sec))
 
 /**
  * @brief   Milliseconds to realtime counter.

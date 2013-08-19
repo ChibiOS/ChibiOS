@@ -191,6 +191,10 @@ typedef struct {
 /*===========================================================================*/
 
 /**
+ * @name    Debug related macros
+ * @{
+ */
+/**
  * @brief   Condition assertion.
  * @details If the condition check fails then the OSAL panics with a
  *          message and halts.
@@ -225,6 +229,7 @@ typedef struct {
  * @note    Not implemented in this simplified OSAL.
  */
 #define osalDbgCheckClassI() chDbgCheckClassI()
+/** @} */
 
 /**
  * @brief   S-Class state check.
@@ -232,6 +237,10 @@ typedef struct {
  */
 #define osalDbgCheckClassS() chDbgCheckClassS()
 
+/**
+ * @name    IRQ service routines wrappers
+ * @{
+ */
 /**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers.
@@ -251,6 +260,47 @@ typedef struct {
  * @param[in] id        a vector name as defined in @p vectors.s
  */
 #define OSAL_IRQ_HANDLER(id) CH_IRQ_HANDLER(id)
+/** @} */
+
+/**
+ * @name    Time conversion utilities
+ * @{
+ */
+/**
+ * @brief   Seconds to system ticks.
+ * @details Converts from seconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] sec       number of seconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+#define OSAL_S2ST(sec) S2ST(sec)
+
+/**
+ * @brief   Milliseconds to system ticks.
+ * @details Converts from milliseconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] msec      number of milliseconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+#define OSAL_MS2ST(msec) MS2ST(msec)
+/**
+ * @brief   Microseconds to system ticks.
+ * @details Converts from microseconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] usec      number of microseconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+#define OSAL_US2ST(usec) US2ST(usec)
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -373,6 +423,45 @@ static inline void osalOsTimerHandlerI(void) {
 static inline void osalOsRescheduleS(void) {
 
   chSchRescheduleS();
+}
+
+/**
+ * @brief   Current system time.
+ * @details Returns the number of system ticks since the @p chSysInit()
+ *          invocation.
+ * @note    The counter can reach its maximum and then restart from zero.
+ * @note    This function can be called from any context but its atomicity
+ *          is not guaranteed on architectures whose word size is less than
+ *          @systime_t size.
+ *
+ * @return              The system time in ticks.
+ *
+ * @xclass
+ */
+static inline systime_t osalOsGetSystemTimeX(void) {
+
+  return chVTGetSystemTimeX();
+}
+
+/**
+ * @brief   Checks if the specified time is within the specified time window.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ * @note    This function can be called from any context.
+ *
+ * @param[in] time      the time to be verified
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @xclass
+ */
+static inline bool osalOsIsTimeWithinX(systime_t time,
+                                       systime_t start,
+                                       systime_t end) {
+
+  return chVTIsTimeWithinX(time, start, end);
 }
 
 /**
