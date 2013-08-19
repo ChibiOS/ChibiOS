@@ -23,8 +23,8 @@
  * @brief   I/O Queues code.
  *
  * @addtogroup io_queues
- * @details ChibiOS/RT queues are mostly used in serial-like device drivers.
- *          The device drivers are usually designed to have a lower side
+ * @details Queues are mostly used in serial-like device drivers.
+ *          Serial device drivers are usually designed to have a lower side
  *          (lower driver, it is usually an interrupt service routine) and an
  *          upper side (upper driver, accessed by the application threads).<br>
  *          There are several kind of queues:<br>
