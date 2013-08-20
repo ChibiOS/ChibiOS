@@ -132,14 +132,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* TODO: Move the following DMA settings in the STM32F0XX registry.*/
-#if defined(STM32F0XX)
-#define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
-#define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
-#define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
-#define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
-#endif
-
 /* TODO: Move the following DMA settings in the STM32F37X registry.*/
 #if defined(STM32F37X)
 #define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)

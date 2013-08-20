@@ -761,7 +761,8 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* STM32 ISR, DMA and RCC helpers.*/
+/* Various helpers.*/
+#include "nvic.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"

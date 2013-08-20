@@ -124,15 +124,6 @@
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 #endif
 
-/* TODO: Move the following DMA settings in the STM32F0XX registry.*/
-#if defined(STM32F0XX)
-/* Fixed values for STM32F0xx devices.*/
-#define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
-#define STM32_SPI_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
-#define STM32_SPI_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
-#define STM32_SPI_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
-#endif /* defined(STM32F0XX) */
-
 /* TODO: Move the following DMA settings in the STM32F37X registry.*/
 #if defined(STM32F37X)
 /* Fixed values for STM32F3xx devices.*/

@@ -120,8 +120,9 @@ _port_switch_from_isr:
 #endif
                 .globl  _port_exit_from_isr
 _port_exit_from_isr:
-                ldr     r3, .L2
-                ldr     r2, .L3
+                ldr     r2, .L2
+                ldr     r3, .L3
+                str     r3, [r2, #0]
 #if CORTEX_ALTERNATE_SWITCH
                 cpsie   i
 #endif
