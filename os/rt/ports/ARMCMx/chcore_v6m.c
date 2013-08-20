@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    GCC/ARMCMx/chcore_v6m.c
+ * @file    ARMCMx/chcore_v6m.c
  * @brief   ARMv6-M architecture port code.
  *
  * @addtogroup ARMCMx_V6M_CORE
@@ -58,7 +58,7 @@
  * @details The NMI vector is used for exception mode re-entering after a
  *          context switch.
  */
-void NMIVector(void) {
+void NMI_Handler(void) {
 
   /* The extctx structure is pointed by the PSP register.*/
   struct extctx *ctxp = (struct extctx *)__get_PSP();
@@ -81,7 +81,7 @@ void NMIVector(void) {
  * @details The PendSV vector is used for exception mode re-entering after a
  *          context switch.
  */
-void PendSVVector(void) {
+void PendSV_Handler(void) {
 
   /* The extctx structure is pointed by the PSP register.*/
   struct extctx *ctxp = (struct extctx *)__get_PSP();
