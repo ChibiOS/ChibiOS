@@ -19,10 +19,10 @@
 */
 
 /**
- * @file    STM32F0xx/systick.h
+ * @file    STM32F30x/systick.h
  * @brief   System timer header file.
  *
- * @addtogroup STM32F0XX_TIMER
+ * @addtogroup STM32F30X_TIMER
  * @{
  */
 
