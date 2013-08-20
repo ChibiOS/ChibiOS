@@ -59,12 +59,12 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../..
-include $(CHIBIOS)/boards/ST_STM32F0_DISCOVERY/board.mk
-include $(CHIBIOS)/os/hal/platforms/STM32F0xx/platform.mk
+#include $(CHIBIOS)/boards/ST_STM32F0_DISCOVERY/board.mk
+#include $(CHIBIOS)/os/hal/platforms/STM32F0xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F0xx/port.mk
-include $(CHIBIOS)/os/kernel/kernel.mk
-include $(CHIBIOS)/test/test.mk
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/rt/ports/ARMCMx/devices/STM32F0xx/port.mk
+#include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/STM32F051x8.ld
@@ -204,4 +204,4 @@ ifeq ($(USE_FWLIB),yes)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include $(CHIBIOS)/os/ports/GCC/ARMCMx/rules.mk
+include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/rules.mk

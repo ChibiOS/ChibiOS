@@ -128,8 +128,6 @@ NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp) {
   tm_stop(tmp, chSysGetRealtimeCounterX(), ch.measurement_offset);
 }
 
-#endif /* CH_CFG_USE_TM */
-
 /**
  * @brief   Stops a measurement and chains to the next one using the same time
  *          stamp.
@@ -151,5 +149,7 @@ NOINLINE void chTMChainMeasurementToX(time_measurement_t *tmp1,
   /* Stops previous measurement using the same time stamp.*/
   tm_stop(tmp1, tmp2->last, 0);
 }
+
+#endif /* CH_CFG_USE_TM */
 
 /** @} */

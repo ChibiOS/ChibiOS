@@ -46,11 +46,11 @@
                 .set    ICSR_PENDSVSET, 0x10000000
 
                 .syntax unified
-                .cpu cortex-m4
+                .cpu    cortex-m4
 #if CORTEX_USE_FPU
-                .fpu fpv4-sp-d16
+                .fpu    fpv4-sp-d16
 #else
-                .fpu softvfp
+                .fpu    softvfp
 #endif
 
                 .thumb

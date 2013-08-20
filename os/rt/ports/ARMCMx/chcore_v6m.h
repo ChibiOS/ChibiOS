@@ -16,13 +16,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-                                      ---
-
-    A special exception to the GPL can be applied should you wish to distribute
-    a combined work that includes ChibiOS/RT, without being obliged to provide
-    the source code for any proprietary components. See the file exception.txt
-    for full details of how and when the exception can be applied.
 */
 
 /**
@@ -37,96 +30,14 @@
 #define _CHCORE_V6M_H_
 
 /*===========================================================================*/
-/* Port constants.                                                           */
+/* Module constants.                                                         */
 /*===========================================================================*/
 
 /**
- * @brief   PendSV priority level.
- * @note    This priority is enforced to be equal to @p 0,
- *          this handler always has the highest priority that cannot preempt
- *          the kernel.
+ * @name    Architecture and Compiler
+ * @{
  */
-#define CORTEX_PRIORITY_PENDSV          0
-
-/*===========================================================================*/
-/* Port macros.                                                              */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Port configurable parameters.                                             */
-/*===========================================================================*/
-
-/**
- * @brief   Stack size for the system idle thread.
- * @details This size depends on the idle thread implementation, usually
- *          the idle thread should take no more space than those reserved
- *          by @p PORT_INT_REQUIRED_STACK.
- * @note    In this port it is set to 16 because the idle thread does have
- *          a stack frame when compiling without optimizations. You may
- *          reduce this value to zero when compiling with optimizations.
- */
-#if !defined(PORT_IDLE_THREAD_STACK_SIZE)
-#define PORT_IDLE_THREAD_STACK_SIZE     16
-#endif
-
-/**
- * @brief   Per-thread stack overhead for interrupts servicing.
- * @details This constant is used in the calculation of the correct working
- *          area size.
- * @note    In this port this value is conservatively set to 32 because the
- *          function @p chSchDoReschedule() can have a stack frame, especially
- *          with compiler optimizations disabled. The value can be reduced
- *          when compiler optimizations are enabled.
- */
-#if !defined(PORT_INT_REQUIRED_STACK)
-#define PORT_INT_REQUIRED_STACK         32
-#endif
-
-/**
- * @brief   Enables the use of the WFI instruction in the idle thread loop.
- */
-#if !defined(CORTEX_ENABLE_WFI_IDLE)
-#define CORTEX_ENABLE_WFI_IDLE          FALSE
-#endif
-
-/**
- * @brief   SYSTICK handler priority.
- * @note    The default SYSTICK handler priority is calculated as the priority
- *          level in the middle of the numeric priorities range.
- */
-#if !defined(CORTEX_PRIORITY_SYSTICK)
-#define CORTEX_PRIORITY_SYSTICK         (CORTEX_PRIORITY_LEVELS >> 1)
-#elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SYSTICK)
-/* If it is externally redefined then better perform a validity check on it.*/
-#error "invalid priority level specified for CORTEX_PRIORITY_SYSTICK"
-#endif
-
-/**
- * @brief   Alternate preemption method.
- * @details Activating this option will make the Kernel use the PendSV
- *          handler for preemption instead of the NMI handler.
- */
-#ifndef CORTEX_ALTERNATE_SWITCH
-#define CORTEX_ALTERNATE_SWITCH         FALSE
-#endif
-
-/*===========================================================================*/
-/* Port derived parameters.                                                  */
-/*===========================================================================*/
-
-/**
- * @brief   Maximum usable priority for normal ISRs.
- */
-#if CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
-#define CORTEX_MAX_KERNEL_PRIORITY      1
-#else
-#define CORTEX_MAX_KERNEL_PRIORITY      0
-#endif
-
-/*===========================================================================*/
-/* Port exported info.                                                       */
-/*===========================================================================*/
-
+#if (CORTEX_MODEL == CORTEX_M0) || defined(__DOXYGEN__)
 /**
  * @brief   Macro defining the specific ARM architecture.
  */
@@ -140,10 +51,12 @@
 /**
  * @brief   Name of the architecture variant.
  */
-#if (CORTEX_MODEL == CORTEX_M0) || defined(__DOXYGEN__)
 #define CH_CORE_VARIANT_NAME            "Cortex-M0"
-#elif (CORTEX_MODEL == CORTEX_M1)
-#define CH_CORE_VARIANT_NAME            "Cortex-M1"
+
+#elif (CORTEX_MODEL == CORTEX_M0PLUS)
+#define CH_ARCHITECTURE_ARM_v6M
+#define CH_ARCHITECTURE_NAME            "ARMv6-M"
+#define CH_CORE_VARIANT_NAME            "Cortex-M0+"
 #endif
 
 /**
@@ -154,9 +67,82 @@
 #else
 #define CH_PORT_INFO                    "Preemption through PendSV"
 #endif
+/** @} */
+
+/**
+ * @brief   This port does not support a realtime counter.
+ */
+#define CH_PORT_SUPPORTS_RT             FALSE
+
+/**
+ * @brief   PendSV priority level.
+ * @note    This priority is enforced to be equal to @p 0,
+ *          this handler always has the highest priority that cannot preempt
+ *          the kernel.
+ */
+#define CORTEX_PRIORITY_PENDSV          0
 
 /*===========================================================================*/
-/* Port implementation part.                                                 */
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief   Stack size for the system idle thread.
+ * @details This size depends on the idle thread implementation, usually
+ *          the idle thread should take no more space than those reserved
+ *          by @p PORT_INT_REQUIRED_STACK.
+ * @note    In this port it is set to 16 because the idle thread does have
+ *          a stack frame when compiling without optimizations. You may
+ *          reduce this value to zero when compiling with optimizations.
+ */
+#if !defined(CH_PORT_IDLE_THREAD_STACK_SIZE)
+#define CH_PORT_IDLE_THREAD_STACK_SIZE  16
+#endif
+
+/**
+ * @brief   Per-thread stack overhead for interrupts servicing.
+ * @details This constant is used in the calculation of the correct working
+ *          area size.
+ * @note    In this port this value is conservatively set to 32 because the
+ *          function @p chSchDoReschedule() can have a stack frame, especially
+ *          with compiler optimizations disabled. The value can be reduced
+ *          when compiler optimizations are enabled.
+ */
+#if !defined(CH_PORT_INT_REQUIRED_STACK)
+#define CH_PORT_INT_REQUIRED_STACK      32
+#endif
+
+/**
+ * @brief   Enables the use of the WFI instruction in the idle thread loop.
+ */
+#if !defined(CORTEX_ENABLE_WFI_IDLE)
+#define CORTEX_ENABLE_WFI_IDLE          FALSE
+#endif
+
+/**
+ * @brief   Alternate preemption method.
+ * @details Activating this option will make the Kernel use the PendSV
+ *          handler for preemption instead of the NMI handler.
+ */
+#ifndef CORTEX_ALTERNATE_SWITCH
+#define CORTEX_ALTERNATE_SWITCH         FALSE
+#endif
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/**
+ * @brief   Maximum usable priority for normal ISRs.
+ */
+#if CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+#define CORTEX_MAX_KERNEL_PRIORITY      1
+#else
+#define CORTEX_MAX_KERNEL_PRIORITY      0
+#endif
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
 /*===========================================================================*/
 
 #if !defined(_FROM_ASM_)
@@ -170,7 +156,7 @@ typedef void *regarm_t;
     to not have duplicated structure names into the documentation.*/
 #if !defined(__DOXYGEN__)
 
-typedef uint64_t stkalign_t __attribute__ ((aligned (8)));
+typedef uint64_t stkalign_t;
 
 struct extctx {
   regarm_t      r0;
@@ -198,13 +184,17 @@ struct intctx {
 #endif /* !defined(__DOXYGEN__) */
 
 /**
- * @brief   Platform dependent part of the @p Thread structure.
+ * @brief   Platform dependent part of the @p thread_t structure.
  * @details In this port the structure just holds a pointer to the @p intctx
  *          structure representing the stack pointer at context switch time.
  */
 struct context {
   struct intctx *r13;
 };
+
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
@@ -228,10 +218,10 @@ struct context {
 /**
  * @brief   Computes the thread working area global size.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
+#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(thread_t) +                       \
                                    sizeof(struct intctx) +                  \
                                    sizeof(struct extctx) +                  \
-                                   (n) + (PORT_INT_REQUIRED_STACK))
+                                   (n) + (CH_PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   Static working area allocation.
@@ -271,78 +261,6 @@ struct context {
 #define PORT_FAST_IRQ_HANDLER(id) void id(void)
 
 /**
- * @brief   Port-related initialization code.
- */
-#define port_init() {                                                       \
-  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);                            \
-  nvicSetSystemHandlerPriority(HANDLER_PENDSV,                              \
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_PENDSV));                          \
-  nvicSetSystemHandlerPriority(HANDLER_SYSTICK,                             \
-    CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SYSTICK));                         \
-}
-
-/**
- * @brief   Kernel-lock action.
- * @details Usually this function just disables interrupts but may perform
- *          more actions.
- */
-#define port_lock() asm volatile ("cpsid   i" : : : "memory")
-
-/**
- * @brief   Kernel-unlock action.
- * @details Usually this function just enables interrupts but may perform
- *          more actions.
- */
-#define port_unlock() asm volatile ("cpsie   i" : : : "memory")
-
-/**
- * @brief   Kernel-lock action from an interrupt handler.
- * @details This function is invoked before invoking I-class APIs from
- *          interrupt handlers. The implementation is architecture dependent,
- *          in its simplest form it is void.
- * @note    Same as @p port_lock() in this port.
- */
-#define port_lock_from_isr() port_lock()
-
-/**
- * @brief   Kernel-unlock action from an interrupt handler.
- * @details This function is invoked after invoking I-class APIs from interrupt
- *          handlers. The implementation is architecture dependent, in its
- *          simplest form it is void.
- * @note    Same as @p port_lock() in this port.
- */
-#define port_unlock_from_isr() port_unlock()
-
-/**
- * @brief   Disables all the interrupt sources.
- */
-#define port_disable() asm volatile ("cpsid   i" : : : "memory")
-
-/**
- * @brief   Disables the interrupt sources below kernel-level priority.
- */
-#define port_suspend() asm volatile ("cpsid   i" : : : "memory")
-
-/**
- * @brief   Enables all the interrupt sources.
- */
-#define port_enable() asm volatile ("cpsie   i" : : : "memory")
-
-/**
- * @brief   Enters an architecture-dependent IRQ-waiting mode.
- * @details The function is meant to return when an interrupt becomes pending.
- *          The simplest implementation is an empty function or macro but this
- *          would not take advantage of architecture-specific power saving
- *          modes.
- * @note    Implemented as an inlined @p WFI instruction.
- */
-#if CORTEX_ENABLE_WFI_IDLE || defined(__DOXYGEN__)
-#define port_wait_for_interrupt() asm volatile ("wfi" : : : "memory")
-#else
-#define port_wait_for_interrupt()
-#endif
-
-/**
  * @brief   Performs a context switch between two threads.
  * @details This is the most critical code in any port, this function
  *          is responsible for the context switch between 2 threads.
@@ -356,12 +274,16 @@ struct context {
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \
-  register struct intctx *r13 asm ("r13");                                  \
+  struct intctx *r13 = (struct intctx *)__get_PSP();                        \
   if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
-    chDbgPanic("stack overflow");                                           \
+    chSysHalt("stack overflow");                                            \
   _port_switch(ntp, otp);                                                   \
 }
 #endif
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -370,11 +292,136 @@ extern "C" {
   void _port_irq_epilogue(regarm_t lr);
   void _port_switch_from_isr(void);
   void _port_exit_from_isr(void);
-  void _port_switch(Thread *ntp, Thread *otp);
+  void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Port-related initialization code.
+ */
+static inline void port_init(void) {
+
+  NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
+}
+
+/**
+ * @brief   Returns a word encoding the current interrupts status.
+ *
+ * @return              The interrupts status.
+ */
+static inline syssts_t port_get_irq_status(void) {
+
+  return __get_PRIMASK();
+}
+
+/**
+ * @brief   Checks the interrupt status.
+ *
+ * @param[in] sts       the interrupt status word
+ *
+ * @return              The interrupt status.
+ * @retvel false        the word specified a disabled interrupts status.
+ * @retvel true         the word specified an enabled interrupts status.
+ */
+static inline bool port_irq_enabled(syssts_t sts) {
+
+  return (sts & 1) == 0;
+}
+
+/**
+ * @brief   Determines the current execution context.
+ *
+ * @return              The execution context.
+ * @retval false        not running in ISR mode.
+ * @retval true         running in ISR mode.
+ */
+static inline bool port_is_isr_context(void) {
+
+  return (bool)((__get_IPSR() & 0x1FF) != 0);
+}
+
+/**
+ * @brief   Kernel-lock action.
+ * @details In this port this function disables interrupts globally.
+ */
+static inline void port_lock(void) {
+
+  __disable_irq();
+}
+
+/**
+ * @brief   Kernel-unlock action.
+ * @details In this port this function enables interrupts globally.
+ */
+static inline void port_unlock(void) {
+
+  __enable_irq();
+}
+
+/**
+ * @brief   Kernel-lock action from an interrupt handler.
+ * @details In this port this function disables interrupts globally.
+ * @note    Same as @p port_lock() in this port.
+ */
+static inline void port_lock_from_isr(void) {
+
+  port_lock();
+}
+
+/**
+ * @brief   Kernel-unlock action from an interrupt handler.
+ * @details In this port this function enables interrupts globally.
+ * @note    Same as @p port_lock() in this port.
+ */
+static inline void port_unlock_from_isr(void) {
+
+  port_unlock();
+}
+
+/**
+ * @brief   Disables all the interrupt sources.
+ */
+static inline void port_disable(void) {
+
+  __disable_irq();
+}
+
+/**
+ * @brief   Disables the interrupt sources below kernel-level priority.
+ */
+static inline void port_suspend(void) {
+
+  __disable_irq();
+}
+
+/**
+ * @brief   Enables all the interrupt sources.
+ */
+static inline void port_enable(void) {
+
+  __enable_irq();
+}
+
+/**
+ * @brief   Enters an architecture-dependent IRQ-waiting mode.
+ * @details The function is meant to return when an interrupt becomes pending.
+ *          The simplest implementation is an empty function or macro but this
+ *          would not take advantage of architecture-specific power saving
+ *          modes.
+ * @note    Implemented as an inlined @p WFI instruction.
+ */
+static inline void port_wait_for_interrupt(void) {
+
+#if CORTEX_ENABLE_WFI_IDLE
+  __WFI;
+#endif
+}
 
 #endif /* _FROM_ASM_ */
 

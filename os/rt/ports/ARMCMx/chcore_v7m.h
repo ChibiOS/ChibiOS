@@ -472,9 +472,8 @@ static inline bool port_is_isr_context(void) {
 
 /**
  * @brief   Kernel-lock action.
- * @details Usually this function just disables interrupts but may perform
- *          more actions.
- * @note    In this port this it raises the base priority to kernel level.
+ * @details In this port this function raises the base priority to kernel
+ *          level.
  */
 static inline void port_lock(void) {
 
@@ -487,9 +486,8 @@ static inline void port_lock(void) {
 
 /**
  * @brief   Kernel-unlock action.
- * @details Usually this function just enables interrupts but may perform
- *          more actions.
- * @note    In this port this it lowers the base priority to user level.
+ * @details In this port this function lowers the base priority to user
+ *          level.
  */
 static inline void port_unlock(void) {
 
@@ -502,9 +500,8 @@ static inline void port_unlock(void) {
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
- * @details This function is invoked before invoking I-class APIs from
- *          interrupt handlers. The implementation is architecture dependent,
- *          in its simplest form it is void.
+ * @details In this port this function raises the base priority to kernel
+ *          level.
  * @note    Same as @p port_lock() in this port.
  */
 static inline void port_lock_from_isr(void) {
@@ -514,9 +511,8 @@ static inline void port_lock_from_isr(void) {
 
 /**
  * @brief   Kernel-unlock action from an interrupt handler.
- * @details This function is invoked after invoking I-class APIs from interrupt
- *          handlers. The implementation is architecture dependent, in its
- *          simplest form it is void.
+ * @details In this port this function lowers the base priority to user
+ *          level.
  * @note    Same as @p port_unlock() in this port.
  */
 static inline void port_unlock_from_isr(void) {
@@ -526,7 +522,6 @@ static inline void port_unlock_from_isr(void) {
 
 /**
  * @brief   Disables all the interrupt sources.
- * @note    Of course non-maskable interrupt sources are not included.
  * @note    In this port it disables all the interrupt sources by raising
  *          the priority mask to level 0.
  */
