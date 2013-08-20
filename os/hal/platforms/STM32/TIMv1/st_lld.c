@@ -116,7 +116,7 @@ void st_lld_init(void) {
   STM32_TIM2->CR1    = TIM_CR1_CEN;
 
   /* IRQ enabled.*/
-  nvicEnableVector(STM32_TIM2_NUMBER, ST_TIMER_PRIORITY);
+  nvicEnableVector(STM32_TIM2_NUMBER, STM32_ST_IRQ_PRIORITY);
 #endif
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
@@ -129,7 +129,7 @@ void st_lld_init(void) {
                   SysTick_CTRL_TICKINT_Msk;
 
   /* IRQ enabled.*/
-  nvicSetSystemHandlerPriority(SysTick_IRQn, ST_TIMER_PRIORITY);
+  nvicSetSystemHandlerPriority(SysTick_IRQn, STM32_ST_IRQ_PRIORITY);
 #endif
 }
 

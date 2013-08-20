@@ -59,11 +59,12 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
-include $(CHIBIOS)/boards/ST_STM32F0_DISCOVERY/board.mk
-include $(CHIBIOS)/os/hal/platforms/STM32F0xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F0xx/port.mk
-include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/os/hal/osal/chibios/osal.mk
+include $(CHIBIOS)/os/hal/boards/ST_STM32F0_DISCOVERY/board.mk
+include $(CHIBIOS)/os/hal/platforms/STM32F0xx/platform.mk
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/rt/ports/ARMCMx/devices/STM32F0xx/port.mk
 #include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
@@ -75,6 +76,7 @@ CSRC = $(PORTSRC) \
        $(KERNSRC) \
        $(TESTSRC) \
        $(HALSRC) \
+       $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        main.c
@@ -107,7 +109,7 @@ TCPPSRC =
 ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+         $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various
 
 #
@@ -204,4 +206,4 @@ ifeq ($(USE_FWLIB),yes)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include $(CHIBIOS)/os/ports/GCC/ARMCMx/rules.mk
+include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/rules.mk

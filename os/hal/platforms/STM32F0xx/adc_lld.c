@@ -102,10 +102,10 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector70) {
+OSAL_IRQ_HANDLER(Vector70) {
   uint32_t isr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   isr = ADC1->ISR;
   ADC1->ISR = isr;
@@ -127,7 +127,7 @@ CH_IRQ_HANDLER(Vector70) {
     }
   }
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -156,12 +156,11 @@ void adc_lld_init(void) {
 
   /* The shared vector is initialized on driver initialization and never
      disabled.*/
-  nvicEnableVector(ADC1_COMP_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
+  nvicEnableVector(ADC1_COMP_IRQn, STM32_ADC_IRQ_PRIORITY);
 
   /* Calibration procedure.*/
   rccEnableADC1(FALSE);
-  chDbgAssert(ADC1->CR == 0, "adc_lld_init(), #1", "invalid register state");
+  osalDbgAssert(ADC1->CR == 0, "invalid register state");
   ADC1->CR |= ADC_CR_ADCAL;
   while (ADC1->CR & ADC_CR_ADCAL)
     ;
@@ -186,7 +185,7 @@ void adc_lld_start(ADCDriver *adcp) {
                             STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
                             (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(FALSE);
 #if STM32_ADCSW == STM32_ADCSW_HSI14

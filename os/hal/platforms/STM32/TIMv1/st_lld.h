@@ -42,10 +42,10 @@
  * @{
  */
 /**
- * @brief   SysTick timer priority.
+ * @brief   SysTick timer IRQ priority.
  */
-#if !defined(ST_TIMER_PRIORITY) || defined(__DOXYGEN__)
-#define ST_TIMER_PRIORITY                   8
+#if !defined(STM32_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ST_IRQ_PRIORITY               8
 #endif
 /** @} */
 
