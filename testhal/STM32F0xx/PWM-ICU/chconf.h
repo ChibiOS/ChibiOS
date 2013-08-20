@@ -41,7 +41,7 @@
  *          setting also defines the system tick time unit.
  */
 #if !defined(CH_CFG_ST_FREQUENCY) || defined(__DOXYGEN__)
-#define CH_CFG_ST_FREQUENCY                 1000
+#define CH_CFG_ST_FREQUENCY                 10000
 #endif
 
 /**
@@ -62,7 +62,7 @@
  *          this value.
  */
 #if !defined(CH_CFG_TIMEDELTA) || defined(__DOXYGEN__)
-#define CH_CFG_TIMEDELTA                    0
+#define CH_CFG_TIMEDELTA                    2
 #endif
 
 /**
@@ -357,7 +357,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_STATISTICS) || defined(__DOXYGEN__)
-#define CH_DBG_STATISTICS                   TRUE
+#define CH_DBG_STATISTICS                   FALSE
 #endif
 
 /**
@@ -441,7 +441,7 @@
  *          tickless mode.
  */
 #if !defined(CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
-#define CH_DBG_THREADS_PROFILING            TRUE
+#define CH_DBG_THREADS_PROFILING            FALSE
 #endif
 
 /** @} */

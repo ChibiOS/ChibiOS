@@ -100,11 +100,39 @@
 
 /* TIM attributes.*/
 #define STM32_HAS_TIM1                      TRUE
+#define STM32_TIM1_IS_32BITS                FALSE
+#define STM32_TIM1_CHANNELS                 4
+
 #define STM32_HAS_TIM2                      TRUE
+#define STM32_TIM2_IS_32BITS                TRUE
+#define STM32_TIM2_CHANNELS                 4
+
 #define STM32_HAS_TIM3                      TRUE
+#define STM32_TIM3_IS_32BITS                FALSE
+#define STM32_TIM3_CHANNELS                 4
+
+#define STM32_HAS_TIM6                      TRUE
+#define STM32_TIM6_IS_32BITS                FALSE
+#define STM32_TIM6_CHANNELS                 0
+
+#define STM32_HAS_TIM14                     TRUE
+#define STM32_TIM14_IS_32BITS               FALSE
+#define STM32_TIM14_CHANNELS                1
+
+#define STM32_HAS_TIM15                     TRUE
+#define STM32_TIM15_IS_32BITS               FALSE
+#define STM32_TIM15_CHANNELS                2
+
+#define STM32_HAS_TIM16                     TRUE
+#define STM32_TIM16_IS_32BITS               FALSE
+#define STM32_TIM16_CHANNELS                2
+
+#define STM32_HAS_TIM17                     TRUE
+#define STM32_TIM17_IS_32BITS               FALSE
+#define STM32_TIM17_CHANNELS                2
+
 #define STM32_HAS_TIM4                      FALSE
 #define STM32_HAS_TIM5                      FALSE
-#define STM32_HAS_TIM6                      TRUE
 #define STM32_HAS_TIM7                      FALSE
 #define STM32_HAS_TIM8                      FALSE
 #define STM32_HAS_TIM9                      FALSE
@@ -112,10 +140,6 @@
 #define STM32_HAS_TIM11                     FALSE
 #define STM32_HAS_TIM12                     FALSE
 #define STM32_HAS_TIM13                     FALSE
-#define STM32_HAS_TIM14                     TRUE
-#define STM32_HAS_TIM15                     TRUE
-#define STM32_HAS_TIM16                     TRUE
-#define STM32_HAS_TIM17                     TRUE
 #define STM32_HAS_TIM18                     FALSE
 #define STM32_HAS_TIM19                     FALSE
 
