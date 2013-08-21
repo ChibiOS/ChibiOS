@@ -5067,7 +5067,9 @@ typedef struct
 #define  RCC_AHB1RSTR_DMA1RST                ((uint32_t)0x00200000)
 #define  RCC_AHB1RSTR_DMA2RST                ((uint32_t)0x00400000)
 #define  RCC_AHB1RSTR_ETHMACRST              ((uint32_t)0x02000000)
-#define  RCC_AHB1RSTR_OTGHRST                ((uint32_t)0x10000000)
+/* CHIBIOS FIX */
+/*#define  RCC_AHB1RSTR_OTGHRST                ((uint32_t)0x10000000)*/
+#define  RCC_AHB1RSTR_OTGHSRST                ((uint32_t)0x10000000)
 
 /********************  Bit definition for RCC_AHB2RSTR register  **************/
 #define  RCC_AHB2RSTR_DCMIRST                ((uint32_t)0x00000001)
