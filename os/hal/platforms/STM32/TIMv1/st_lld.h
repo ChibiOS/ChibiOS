@@ -17,6 +17,8 @@
 /**
  * @file    STM32/st_lld.h
  * @brief   ST Driver subsystem low level driver header.
+ * @details This header is designed to be include-able without having to
+ *          include other files from the HAL.
  *
  * @addtogroup ST
  * @{
@@ -25,8 +27,7 @@
 #ifndef _ST_LLD_H_
 #define _ST_LLD_H_
 
-#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
-
+#include "stm32_registry.h"
 #include "stm32_tim.h"
 
 /*===========================================================================*/
@@ -37,34 +38,9 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @name    Configuration options
- * @{
- */
-/**
- * @brief   SysTick timer IRQ priority.
- */
-#if !defined(STM32_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ST_IRQ_PRIORITY               8
-#endif
-/** @} */
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if !(OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) &&                             \
-    !(OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING)
-#error "invalid OSAL_ST_MODE setting in osal.h"
-#endif
-
-#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) && !STM32_HAS_TIM2
-#error "TIM2 not present in the selected device"
-#endif
-
-#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) && !STM32_TIM2_IS_32BITS
-#error "TIM2 is not a 32 bits timer"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -90,7 +66,67 @@ extern "C" {
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
+/**
+ * @brief   Returns the time counter value.
+ *
+ * @return              The counter value.
+ *
+ * @notapi
+ */
+static inline systime_t st_lld_get_counter(void) {
+
+  return (systime_t)(STM32_TIM2->CNT);
+}
+
+/**
+ * @brief   Starts the alarm.
+ * @note    Makes sure that no spurious alarms are triggered after
+ *          this call.
+ *
+ * @param[in] time      the time to be set for the first alarm
+ *
+ * @notapi
+ */
+static inline void st_lld_start_alarm(systime_t time) {
+
+  STM32_TIM2->CCR[0] = time;
+  STM32_TIM2->SR     = 0;
+  STM32_TIM2->DIER   = STM32_TIM_DIER_CC1IE;
+}
+
+/**
+ * @brief   Stops the alarm interrupt.
+ *
+ * @notapi
+ */
+static inline void st_lld_stop_alarm(void) {
+
+  STM32_TIM2->DIER = 0;
+}
+
+/**
+ * @brief   Sets the alarm time.
+ *
+ * @param[in] time      the time to be set for the next alarm
+ *
+ * @notapi
+ */
+static inline void st_lld_set_alarm(systime_t time) {
+
+  STM32_TIM2->CCR[0] = (uint32_t)time;
+}
+
+/**
+ * @brief   Returns the current alarm time.
+ *
+ * @return              The currently set alarm time.
+ *
+ * @notapi
+ */
+static inline systime_t st_lld_get_alarm(void) {
+
+  return (systime_t)STM32_TIM2->CCR[0];
+}
 
 #endif /* _ST_LLD_H_ */
 

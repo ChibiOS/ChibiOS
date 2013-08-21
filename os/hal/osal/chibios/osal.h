@@ -107,6 +107,12 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !(OSAL_ST_MODE == OSAL_ST_MODE_NONE) &&                                 \
+    !(OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) &&                             \
+    !(OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING)
+#error "invalid OSAL_ST_MODE setting in osal.h"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/

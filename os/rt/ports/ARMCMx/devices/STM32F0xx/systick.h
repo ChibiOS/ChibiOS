@@ -19,15 +19,22 @@
 */
 
 /**
- * @file    STM32F30x/systick.h
+ * @file    ARMCMx/systick.h
  * @brief   System timer header file.
  *
- * @addtogroup STM32F30X_TIMER
+ * @addtogroup ARMCMx_SYSTICK
  * @{
  */
 
 #ifndef _SYSTICK_H_
 #define _SYSTICK_H_
+
+#if defined(CH_PORT_DO_NOT_USE_ST)
+#include "systick_ext.h"
+
+#else /* !defined(CH_PORT_DO_NOT_USE_ST) */
+
+#include "st.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -66,7 +73,7 @@
  */
 static inline systime_t port_timer_get_time(void) {
 
-  return TIM2->CNT;
+  return stGetCounter();
 }
 
 /**
@@ -80,11 +87,7 @@ static inline systime_t port_timer_get_time(void) {
  */
 static inline void port_timer_start_alarm(systime_t time) {
 
-  chDbgAssert((TIM2->DIER & 2) == 0, "already started");
-
-  TIM2->CCR1  = time;
-  TIM2->SR      = 0;
-  TIM2->DIER    = 2;            /* CC1IE */
+  stStartAlarm(time);
 }
 
 /**
@@ -94,9 +97,7 @@ static inline void port_timer_start_alarm(systime_t time) {
  */
 static inline void port_timer_stop_alarm(void) {
 
-  chDbgAssert((TIM2->DIER & 2) != 0, "not started");
-
-  TIM2->DIER    = 0;
+  stStopAlarm();
 }
 
 /**
@@ -108,9 +109,7 @@ static inline void port_timer_stop_alarm(void) {
  */
 static inline void port_timer_set_alarm(systime_t time) {
 
-  chDbgAssert((TIM2->DIER & 2) != 0, "not started");
-
-  TIM2->CCR1  = time;
+  stSetAlarm(time);
 }
 
 /**
@@ -122,10 +121,10 @@ static inline void port_timer_set_alarm(systime_t time) {
  */
 static inline systime_t port_timer_get_alarm(void) {
 
-  chDbgAssert((TIM2->DIER & 2) != 0, "not started");
-
-  return TIM2->CCR1;
+  return stGetAlarm();
 }
+
+#endif /* !defined(CH_PORT_DO_NOT_USE_ST) */
 
 #endif /* _SYSTICK_H_ */
 

@@ -26,6 +26,29 @@
 
 #if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
 
+/* The following checks and settings are unusually done here because the
+   file st.h needs to not have external dependencies. In this case there
+   would be a dependency on osal.h and mcuconf.h.*/
+#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) && !STM32_HAS_TIM2
+#error "TIM2 not present in the selected device"
+#endif
+
+#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) && !STM32_TIM2_IS_32BITS
+#error "TIM2 is not a 32 bits timer"
+#endif
+
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   SysTick timer IRQ priority.
+ */
+#if !defined(STM32_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ST_IRQ_PRIORITY               8
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/

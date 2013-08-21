@@ -21,6 +21,8 @@
 /**
  * @file    st.h
  * @brief   ST Driver macros and structures.
+ * @details This header is designed to be include-able without having to
+ *          include other files from the HAL.
  *
  * @addtogroup ST
  * @{
@@ -28,8 +30,6 @@
 
 #ifndef _ST_H_
 #define _ST_H_
-
-#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -53,6 +53,66 @@
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    Macro Functions
+ * @{
+ */
+/**
+ * @brief   Returns the time counter value.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @return              The counter value.
+ *
+ * @api
+ */
+#define stGetCounter() st_lld_get_counter()
+
+/**
+ * @brief   Starts the alarm.
+ * @note    Makes sure that no spurious alarms are triggered after
+ *          this call.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] time      the time to be set for the first alarm
+ *
+ * @api
+ */
+#define stStartAlarm(time) st_lld_start_alarm(time)
+
+/**
+ * @brief   Stops the alarm interrupt.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @api
+ */
+#define stStopAlarm() st_lld_stop_alarm()
+
+/**
+ * @brief   Sets the alarm time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] time      the time to be set for the next alarm
+ *
+ * @api
+ */
+#define stSetAlarm(time) st_lld_set_alarm(time)
+
+/**
+ * @brief   Returns the current alarm time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @return              The currently set alarm time.
+ *
+ * @api
+ */
+#define stGetAlarm() st_lld_get_alarm()
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -64,8 +124,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
 
 #endif /* _ST_H_ */
 
