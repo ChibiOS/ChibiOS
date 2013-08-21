@@ -41,6 +41,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if CH_CFG_ST_FREQUENCY <= 0
+#error "invalid CH_CFG_ST_FREQUENCY specified"
+#endif
+
 #if (CH_CFG_TIMEDELTA < 0) || (CH_CFG_TIMEDELTA == 1)
 #error "invalid CH_CFG_TIMEDELTA specified"
 #endif
