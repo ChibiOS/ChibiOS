@@ -395,7 +395,7 @@ extern "C" {
 #endif
 
 #if CH_CFG_TIMEDELTA > 0
-#include "systick.h"
+#include "chcore_timer.h"
 #endif
 
 /*===========================================================================*/

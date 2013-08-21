@@ -19,15 +19,25 @@
 */
 
 /**
- * @file    STM32F0xx/systick.h
+ * @file    ARMCMx/chcore_timer.h
  * @brief   System timer header file.
  *
- * @addtogroup STM32F0XX_TIMER
+ * @addtogroup ARMCMx_TIMER
  * @{
  */
 
-#ifndef _SYSTICK_H_
-#define _SYSTICK_H_
+#ifndef _CHCORE_TIMER_H_
+#define _CHCORE_TIMER_H_
+
+#if defined(CH_PORT_DO_NOT_USE_ST)
+/* If, for some reason, the use of the HAL-provided ST timer port interface
+   is not wanted, it is possible to provide the timer interface into a custom
+   module.*/
+#include "chcore_timer_ext.h"
+
+#else /* !defined(CH_PORT_DO_NOT_USE_ST) */
+
+#include "st.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -66,7 +76,7 @@
  */
 static inline systime_t port_timer_get_time(void) {
 
-  return TIM2->CNT;
+  return stGetCounter();
 }
 
 /**
@@ -80,11 +90,7 @@ static inline systime_t port_timer_get_time(void) {
  */
 static inline void port_timer_start_alarm(systime_t time) {
 
-  chDbgAssert((TIM2->DIER & 2) == 0, "already started");
-
-  TIM2->CCR1  = time;
-  TIM2->SR      = 0;
-  TIM2->DIER    = 2;            /* CC1IE */
+  stStartAlarm(time);
 }
 
 /**
@@ -94,9 +100,7 @@ static inline void port_timer_start_alarm(systime_t time) {
  */
 static inline void port_timer_stop_alarm(void) {
 
-  chDbgAssert((TIM2->DIER & 2) != 0, "not started");
-
-  TIM2->DIER    = 0;
+  stStopAlarm();
 }
 
 /**
@@ -108,9 +112,7 @@ static inline void port_timer_stop_alarm(void) {
  */
 static inline void port_timer_set_alarm(systime_t time) {
 
-  chDbgAssert((TIM2->DIER & 2) != 0, "not started");
-
-  TIM2->CCR1  = time;
+  stSetAlarm(time);
 }
 
 /**
@@ -122,11 +124,11 @@ static inline void port_timer_set_alarm(systime_t time) {
  */
 static inline systime_t port_timer_get_alarm(void) {
 
-  chDbgAssert((TIM2->DIER & 2) != 0, "not started");
-
-  return TIM2->CCR1;
+  return stGetAlarm();
 }
 
-#endif /* _SYSTICK_H_ */
+#endif /* !defined(CH_PORT_DO_NOT_USE_ST) */
+
+#endif /* _CHCORE_TIMER_H_ */
 
 /** @} */
