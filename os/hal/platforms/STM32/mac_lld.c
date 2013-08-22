@@ -26,9 +26,10 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "mii.h"
 
 #if HAL_USE_MAC || defined(__DOXYGEN__)
+
+#include "mii.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */

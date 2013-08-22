@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
@@ -133,7 +132,7 @@ static void usart_deinit(USART_TypeDef *u) {
  * @param[in] sr        USART SR register value
  */
 static void set_error(SerialDriver *sdp, uint16_t sr) {
-  flagsmask_t sts = 0;
+  eventflags_t sts = 0;
 
   if (sr & USART_SR_ORE)
     sts |= SD_OVERRUN_ERROR;
@@ -143,9 +142,9 @@ static void set_error(SerialDriver *sdp, uint16_t sr) {
     sts |= SD_FRAMING_ERROR;
   if (sr & USART_SR_NE)
     sts |= SD_NOISE_ERROR;
-  chSysLockFromIsr();
+  osalSysLockFromISR();
   chnAddFlagsI(sdp, sts);
-  chSysUnlockFromIsr();
+  osalSysUnlockFromISR();
 }
 
 /**
@@ -164,42 +163,42 @@ static void serve_interrupt(SerialDriver *sdp) {
     set_error(sdp, sr);
   /* Special case, LIN break detection.*/
   if (sr & USART_SR_LBD) {
-    chSysLockFromIsr();
+    osalSysLockFromISR();
     chnAddFlagsI(sdp, SD_BREAK_DETECTED);
-    chSysUnlockFromIsr();
+    osalSysUnlockFromISR();
     u->SR &= ~USART_SR_LBD;
   }
   /* Data available.*/
   if (sr & USART_SR_RXNE) {
-    chSysLockFromIsr();
+    osalSysLockFromISR();
     sdIncomingDataI(sdp, (uint8_t)dr);
-    chSysUnlockFromIsr();
+    osalSysUnlockFromISR();
   }
   /* Transmission buffer empty.*/
   if ((cr1 & USART_CR1_TXEIE) && (sr & USART_SR_TXE)) {
     msg_t b;
-    chSysLockFromIsr();
-    b = chOQGetI(&sdp->oqueue);
+    osalSysLockFromISR();
+    b = oqGetI(&sdp->oqueue);
     if (b < Q_OK) {
       chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
       u->CR1 = (cr1 & ~USART_CR1_TXEIE) | USART_CR1_TCIE;
     }
     else
       u->DR = b;
-    chSysUnlockFromIsr();
+    osalSysUnlockFromISR();
   }
   /* Physical transmission end.*/
   if (sr & USART_SR_TC) {
-    chSysLockFromIsr();
+    osalSysLockFromISR();
     chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-    chSysUnlockFromIsr();
+    osalSysUnlockFromISR();
     u->CR1 = cr1 & ~USART_CR1_TCIE;
     u->SR &= ~USART_SR_TC;
   }
 }
 
 #if STM32_SERIAL_USE_USART1 || defined(__DOXYGEN__)
-static void notify1(GenericQueue *qp) {
+static void notify1(io_queue_t *qp) {
 
   (void)qp;
   USART1->CR1 |= USART_CR1_TXEIE;
@@ -207,7 +206,7 @@ static void notify1(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_USART2 || defined(__DOXYGEN__)
-static void notify2(GenericQueue *qp) {
+static void notify2(io_queue_t *qp) {
 
   (void)qp;
   USART2->CR1 |= USART_CR1_TXEIE;
@@ -215,7 +214,7 @@ static void notify2(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_USART3 || defined(__DOXYGEN__)
-static void notify3(GenericQueue *qp) {
+static void notify3(io_queue_t *qp) {
 
   (void)qp;
   USART3->CR1 |= USART_CR1_TXEIE;
@@ -223,7 +222,7 @@ static void notify3(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_UART4 || defined(__DOXYGEN__)
-static void notify4(GenericQueue *qp) {
+static void notify4(io_queue_t *qp) {
 
   (void)qp;
   UART4->CR1 |= USART_CR1_TXEIE;
@@ -231,7 +230,7 @@ static void notify4(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_UART5 || defined(__DOXYGEN__)
-static void notify5(GenericQueue *qp) {
+static void notify5(io_queue_t *qp) {
 
   (void)qp;
   UART5->CR1 |= USART_CR1_TXEIE;
@@ -239,7 +238,7 @@ static void notify5(GenericQueue *qp) {
 #endif
 
 #if STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
-static void notify6(GenericQueue *qp) {
+static void notify6(io_queue_t *qp) {
 
   (void)qp;
   USART6->CR1 |= USART_CR1_TXEIE;
@@ -259,13 +258,13 @@ static void notify6(GenericQueue *qp) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_USART1_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   serve_interrupt(&SD1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -278,13 +277,13 @@ CH_IRQ_HANDLER(STM32_USART1_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_USART2_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   serve_interrupt(&SD2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -297,13 +296,13 @@ CH_IRQ_HANDLER(STM32_USART2_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_USART3_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART3_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   serve_interrupt(&SD3);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -316,13 +315,13 @@ CH_IRQ_HANDLER(STM32_USART3_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_UART4_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_UART4_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   serve_interrupt(&SD4);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -335,13 +334,13 @@ CH_IRQ_HANDLER(STM32_UART4_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_UART5_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_UART5_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   serve_interrupt(&SD5);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -354,13 +353,13 @@ CH_IRQ_HANDLER(STM32_UART5_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_USART6_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART6_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   serve_interrupt(&SD6);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -425,43 +424,37 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
       rccEnableUSART1(FALSE);
-      nvicEnableVector(STM32_USART1_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART1_PRIORITY));
+      nvicEnableVector(STM32_USART1_NUMBER, STM32_SERIAL_USART1_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
       rccEnableUSART2(FALSE);
-      nvicEnableVector(STM32_USART2_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART2_PRIORITY));
+      nvicEnableVector(STM32_USART2_NUMBER, STM32_SERIAL_USART2_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
       rccEnableUSART3(FALSE);
-      nvicEnableVector(STM32_USART3_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART3_PRIORITY));
+      nvicEnableVector(STM32_USART3_NUMBER, STM32_SERIAL_USART3_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
       rccEnableUART4(FALSE);
-      nvicEnableVector(STM32_UART4_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_UART4_PRIORITY));
+      nvicEnableVector(STM32_UART4_NUMBER, STM32_SERIAL_UART4_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
       rccEnableUART5(FALSE);
-      nvicEnableVector(STM32_UART5_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_UART5_PRIORITY));
+      nvicEnableVector(STM32_UART5_NUMBER, STM32_SERIAL_UART5_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_USART6
     if (&SD6 == sdp) {
       rccEnableUSART6(FALSE);
-      nvicEnableVector(STM32_USART6_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_SERIAL_USART6_PRIORITY));
+      nvicEnableVector(STM32_USART6_NUMBER, STM32_SERIAL_USART6_PRIORITY);
     }
 #endif
   }

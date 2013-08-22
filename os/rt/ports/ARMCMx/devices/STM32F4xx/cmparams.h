@@ -66,7 +66,7 @@
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
-#include "stm32f0xx.h"
+#include "stm32f4xx.h"
 
 #if !CORTEX_HAS_MPU != !__MPU_PRESENT
 #error "CMSIS __MPU_PRESENT mismatch"

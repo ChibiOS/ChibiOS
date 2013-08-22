@@ -1,5 +1,6 @@
 # List of all the STM32F2xx/STM32F4xx platform files.
-PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F4xx/stm32_dma.c \
+PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/common/ARMCMx/nvic.c \
+              ${CHIBIOS}/os/hal/platforms/STM32F4xx/stm32_dma.c \
               ${CHIBIOS}/os/hal/platforms/STM32F4xx/hal_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32F4xx/adc_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32F4xx/ext_lld_isr.c \
@@ -15,11 +16,13 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/STM32F4xx/stm32_dma.c \
               ${CHIBIOS}/os/hal/platforms/STM32/TIMv1/gpt_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/TIMv1/icu_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/TIMv1/pwm_lld.c \
+              ${CHIBIOS}/os/hal/platforms/STM32/TIMv1/st_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/USARTv1/serial_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/USARTv1/uart_lld.c
 
 # Required include directories
-PLATFORMINC = ${CHIBIOS}/os/hal/platforms/STM32F4xx \
+PLATFORMINC = ${CHIBIOS}/os/hal/platforms/common/ARMCMx \
+              ${CHIBIOS}/os/hal/platforms/STM32F4xx \
               ${CHIBIOS}/os/hal/platforms/STM32 \
               ${CHIBIOS}/os/hal/platforms/STM32/GPIOv2 \
               ${CHIBIOS}/os/hal/platforms/STM32/I2Cv1 \

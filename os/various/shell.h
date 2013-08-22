@@ -63,17 +63,17 @@ typedef struct {
 } ShellConfig;
 
 #if !defined(__DOXYGEN__)
-extern EventSource shell_terminated;
+extern event_source_t shell_terminated;
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void shellInit(void);
-  Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio);
-  Thread *shellCreateStatic(const ShellConfig *scp, void *wsp,
-                            size_t size, tprio_t prio);
-  bool_t shellGetLine(BaseSequentialStream *chp, char *line, unsigned size);
+  thread_t *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio);
+  thread_t *shellCreateStatic(const ShellConfig *scp, void *wsp,
+                              size_t size, tprio_t prio);
+  bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size);
 #ifdef __cplusplus
 }
 #endif
