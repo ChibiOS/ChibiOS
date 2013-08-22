@@ -44,8 +44,8 @@
  * @{
  */
 #define STM_OK               Q_OK
-#define STM_TIMEOUT          Q_RESET
-#define STM_RESET            Q_TIMEOUT
+#define STM_TIMEOUT          Q_TIMEOUT
+#define STM_RESET            Q_RESET
 /** @} */
 
 /* The ChibiOS/RT kernel provides the following definitions by itself, this
