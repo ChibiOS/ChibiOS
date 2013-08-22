@@ -129,7 +129,7 @@ void st_lld_init(void) {
   rccEnableTIM2(FALSE);
 
   /* Initializing the counter in free running mode.*/
-  STM32_TIM2->PSC    = STM32_TIMCLK2 / OSAL_SYSTICK_FREQUENCY - 1;
+  STM32_TIM2->PSC    = STM32_TIMCLK1 / OSAL_SYSTICK_FREQUENCY - 1;
   STM32_TIM2->ARR    = 0xFFFFFFFF;
   STM32_TIM2->CCMR1  = 0;
   STM32_TIM2->CCR[0] = 0;
