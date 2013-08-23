@@ -12,7 +12,7 @@ The application demonstrates the use of the STM32F4xx PWM-ICU drivers.
 
 ** Board Setup **
 
-- Connect PA15 and PC6 together.
+- Connect PA8 and PC6 together.
 
 ** Build Procedure **
 
