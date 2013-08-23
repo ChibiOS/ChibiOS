@@ -175,7 +175,7 @@ typedef struct {
 #endif /* !defined(chDbgCheck) */
 
 #else /* !CH_DBG_ENABLE_CHECKS */
-#define chDbgCheck(c) {(void)(c);}
+#define chDbgCheck(c) /*{(void)(c);}*/
 #endif /* !CH_DBG_ENABLE_CHECKS */
 
 #if CH_DBG_ENABLE_ASSERTS || defined(__DOXYGEN__)
@@ -200,7 +200,7 @@ typedef struct {
 }
 #endif /* !defined(chDbgAssert) */
 #else /* !CH_DBG_ENABLE_ASSERTS */
-#define chDbgAssert(c, r) {(void)(c);}
+#define chDbgAssert(c, r) /*{(void)(c);}*/
 #endif /* !CH_DBG_ENABLE_ASSERTS */
 /** @} */
 

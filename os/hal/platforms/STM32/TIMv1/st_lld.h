@@ -128,6 +128,20 @@ static inline systime_t st_lld_get_alarm(void) {
   return (systime_t)STM32_TIM2->CCR[0];
 }
 
+/**
+ * @brief   Determines if the alarm is active.
+ *
+ * @return              The alarm status.
+ * @retval false        if the alarm is not active.
+ * @retval true         is the alarm is active
+ *
+ * @notapi
+ */
+static inline bool st_lld_is_alarm_active(void) {
+
+  return (bool)((STM32_TIM2->DIER & STM32_TIM_DIER_CC1IE) != 0);
+}
+
 #endif /* _ST_LLD_H_ */
 
 /** @} */

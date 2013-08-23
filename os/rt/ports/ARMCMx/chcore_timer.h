@@ -37,6 +37,7 @@
 
 #else /* !defined(CH_PORT_DO_NOT_USE_ST) */
 
+/* This is the only header in the HAL designed to be include-able alone.*/
 #include "st.h"
 
 /*===========================================================================*/
@@ -90,6 +91,8 @@ static inline systime_t port_timer_get_time(void) {
  */
 static inline void port_timer_start_alarm(systime_t time) {
 
+  chDbgAssert(stIsAlarmActive() == false, "already active");
+
   stStartAlarm(time);
 }
 
@@ -99,6 +102,8 @@ static inline void port_timer_start_alarm(systime_t time) {
  * @notapi
  */
 static inline void port_timer_stop_alarm(void) {
+
+  chDbgAssert(stIsAlarmActive() != false, "not active");
 
   stStopAlarm();
 }
@@ -112,6 +117,8 @@ static inline void port_timer_stop_alarm(void) {
  */
 static inline void port_timer_set_alarm(systime_t time) {
 
+  chDbgAssert(stIsAlarmActive() != false, "not active");
+
   stSetAlarm(time);
 }
 
@@ -123,6 +130,8 @@ static inline void port_timer_set_alarm(systime_t time) {
  * @notapi
  */
 static inline systime_t port_timer_get_alarm(void) {
+
+  chDbgAssert(stIsAlarmActive() != false, "not active");
 
   return stGetAlarm();
 }

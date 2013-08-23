@@ -111,6 +111,17 @@
  * @api
  */
 #define stGetAlarm() st_lld_get_alarm()
+
+/**
+ * @brief   Determines if the alarm is active.
+ *
+ * @return              The alarm status.
+ * @retval false        if the alarm is not active.
+ * @retval true         is the alarm is active
+ *
+ * @api
+ */
+#define stIsAlarmActive() st_lld_is_alarm_active()
 /** @} */
 
 /*===========================================================================*/
