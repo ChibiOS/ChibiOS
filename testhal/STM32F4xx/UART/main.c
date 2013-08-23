@@ -57,8 +57,7 @@ static void txend2(UARTDriver *uartp) {
   (void)uartp;
   palSetPad(GPIOD, GPIOD_LED5);
   chSysLockFromISR();
-  if (chVTIsArmedI(&vt5))
-    chVTResetI(&vt5);
+  chVTResetI(&vt5);
   chVTSetI(&vt5, MS2ST(200), led5off, NULL);
   chSysUnlockFromISR();
 }
@@ -84,8 +83,7 @@ static void rxchar(UARTDriver *uartp, uint16_t c) {
   /* Flashing the LED each time a character is received.*/
   palSetPad(GPIOD, GPIOD_LED4);
   chSysLockFromISR();
-  if (chVTIsArmedI(&vt4))
-    chVTResetI(&vt4);
+  chVTResetI(&vt4);
   chVTSetI(&vt4, MS2ST(200), led4off, NULL);
   chSysUnlockFromISR();
 }
@@ -100,8 +98,7 @@ static void rxend(UARTDriver *uartp) {
   /* Flashing the LED each time a character is received.*/
   palSetPad(GPIOD, GPIOD_LED3);
   chSysLockFromISR();
-  if (chVTIsArmedI(&vt3))
-    chVTResetI(&vt3);
+  chVTResetI(&vt3);
   chVTSetI(&vt3, MS2ST(200), led3off, NULL);
   chSysUnlockFromISR();
 }
