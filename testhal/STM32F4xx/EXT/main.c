@@ -25,19 +25,18 @@ static void led5off(void *arg) {
 
 /* Triggered when the button is pressed or released. The LED5 is set to ON.*/
 static void extcb1(EXTDriver *extp, expchannel_t channel) {
-  static VirtualTimer vt4;
+  static virtual_timer_t vt4;
 
   (void)extp;
   (void)channel;
 
   palSetPad(GPIOD, GPIOD_LED5);
-  chSysLockFromIsr();
-  if (chVTIsArmedI(&vt4))
-    chVTResetI(&vt4);
+  chSysLockFromISR();
+  chVTResetI(&vt4);
 
   /* LED4 set to OFF after 200mS.*/
   chVTSetI(&vt4, MS2ST(200), led5off, NULL);
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 static const EXTConfig extcfg = {
