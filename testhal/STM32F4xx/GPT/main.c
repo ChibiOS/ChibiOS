@@ -20,13 +20,13 @@
 /*
  * GPT2 callback.
  */
-static void gpt2cb(GPTDriver *gptp) {
+static void gpt4cb(GPTDriver *gptp) {
 
   (void)gptp;
   palSetPad(GPIOD, GPIOD_LED5);
-  chSysLockFromIsr();
+  chSysLockFromISR();
   gptStartOneShotI(&GPTD3, 1000);   /* 0.1 second pulse.*/
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 /*
@@ -41,9 +41,9 @@ static void gpt3cb(GPTDriver *gptp) {
 /*
  * GPT2 configuration.
  */
-static const GPTConfig gpt2cfg = {
+static const GPTConfig gpt4cfg = {
   10000,    /* 10kHz timer clock.*/
-  gpt2cb,   /* Timer callback.*/
+  gpt4cb,   /* Timer callback.*/
   0
 };
 
@@ -74,8 +74,8 @@ int main(void) {
   /*
    * Initializes the GPT drivers 2 and 3.
    */
-  gptStart(&GPTD2, &gpt2cfg);
-  gptPolledDelay(&GPTD2, 10); /* Small delay.*/
+  gptStart(&GPTD4, &gpt4cfg);
+  gptPolledDelay(&GPTD4, 10); /* Small delay.*/
   gptStart(&GPTD3, &gpt3cfg);
   gptPolledDelay(&GPTD3, 10); /* Small delay.*/
 
@@ -85,12 +85,12 @@ int main(void) {
    */
   while (TRUE) {
     palSetPad(GPIOD, GPIOD_LED4);
-    gptStartContinuous(&GPTD2, 5000);
+    gptStartContinuous(&GPTD4, 5000);
     chThdSleepMilliseconds(5000);
-    gptStopTimer(&GPTD2);
+    gptStopTimer(&GPTD4);
     palClearPad(GPIOD, GPIOD_LED4);
-    gptStartContinuous(&GPTD2, 2500);
+    gptStartContinuous(&GPTD4, 2500);
     chThdSleepMilliseconds(5000);
-    gptStopTimer(&GPTD2);
+    gptStopTimer(&GPTD4);
   }
 }
