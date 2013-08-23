@@ -259,7 +259,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_UART_UART4_RX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_UART_UART4_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+#define STM32_UART_UART4_RX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 2)
 #endif
 
 /**
@@ -267,7 +267,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_UART_UART4_TX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_UART_UART4_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+#define STM32_UART_UART4_TX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 4)
 #endif
 
 /**
@@ -275,7 +275,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_UART_UART5_RX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_UART_UART5_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 0)
+#define STM32_UART_UART5_RX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 0)
 #endif
 
 /**
@@ -283,7 +283,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_UART_UART5_TX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_UART_UART5_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
+#define STM32_UART_UART5_TX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 7)
 #endif
 
 /**
