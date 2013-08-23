@@ -107,10 +107,10 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
+OSAL_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
   uint32_t sr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
 #if STM32_ADC_USE_ADC1
   sr = ADC1->SR;
@@ -154,7 +154,7 @@ CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
   /* TODO: Add here analog watchdog handling.*/
 #endif /* STM32_ADC_USE_ADC3 */
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -210,7 +210,7 @@ void adc_lld_init(void) {
 
   /* The shared vector is initialized on driver initialization and never
      disabled.*/
-  nvicEnableVector(ADC_IRQn, CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
+  nvicEnableVector(ADC_IRQn, STM32_ADC_IRQ_PRIORITY);
 }
 
 /**
@@ -226,12 +226,12 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(adcp->dmastp,
                             STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
                             (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(FALSE);
     }
@@ -239,12 +239,12 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC2
     if (&ADCD2 == adcp) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(adcp->dmastp,
                             STM32_ADC_ADC2_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
                             (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #2", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC2->DR);
       rccEnableADC2(FALSE);
     }
@@ -252,12 +252,12 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC3
     if (&ADCD3 == adcp) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(adcp->dmastp,
                             STM32_ADC_ADC3_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
                             (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #3", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC3->DR);
       rccEnableADC3(FALSE);
     }
