@@ -79,7 +79,8 @@
 *****************************************************************************
 
 *** 2.4.5 ***
-- FIX: Fixed PAL driver errors( bug #429).
+- FIX: Fixed PAL driver errors (bug #429).
+- FIX: Fixed USB HAL driver compile error (bug #428).
 - FIX: Fixed PAL driver documentation error (bug #427).
 - FIX: Fixed wrong RTC macro names in STM32L1xx HAL (bug #422).
 
