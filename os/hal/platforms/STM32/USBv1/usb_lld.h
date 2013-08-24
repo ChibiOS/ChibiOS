@@ -318,7 +318,7 @@ struct USBDriver {
  *
  * @notapi
  */
-#define usb_lld_fetch_word(p) (*(uint16_t *)(p))
+#define usb_lld_fetch_word(p) ((uint16_t)*(p) | ((uint16_t)*((p) + 1) << 8))
 
 /**
  * @brief   Returns the current frame number.
