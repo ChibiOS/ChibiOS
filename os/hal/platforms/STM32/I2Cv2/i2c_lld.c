@@ -13,10 +13,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-/*
-   Concepts and parts of this file have been contributed by Uladzimir Pylinsky
-   aka barthess.
- */
 
 /**
  * @file    STM32/I2Cv2/i2c_lld.c
@@ -574,13 +570,16 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   uint32_t addr_cr2 = addr & I2C_CR2_SADD;
   systime_t start, end;
 
-  osalDbgCheck((rxbytes > 0));
-
   /* Resetting error flags for this transfer.*/
   i2cp->errors = I2C_NO_ERROR;
 
   /* Releases the lock from high level driver.*/
   osalSysUnlock();
+
+  /* RX DMA setup.*/
+  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
+  dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
+  dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
 
   /* Calculating the time window for the timeout on the busy bus condition.*/
   start = osalOsGetSystemTimeX();
@@ -593,7 +592,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
     /* If the bus is not busy then the operation can continue, note, the
        loop is exited in the locked state.*/
-    if (dp->ISR & I2C_ISR_BUSY)
+    if ((dp->ISR & I2C_ISR_BUSY) == 0)
       break;
 
     /* If the system time went outside the allowed window then a timeout
@@ -611,14 +610,6 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Set slave address field (master mode) */
   dp->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES);
   dp->CR2 |= (rxbytes << 16) | addr_cr2;
-
-  /* Initializes driver fields */
-  i2cp->errors = 0;
-
-  /* RX DMA setup.*/
-  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
-  dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
-  dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
 
   /* Enable RX DMA */
   dmaStreamEnable(i2cp->dmarx);
@@ -664,13 +655,21 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   uint32_t addr_cr2 = addr & I2C_CR2_SADD;
   systime_t start, end;
 
-  osalDbgCheck(((rxbytes == 0) || ((rxbytes > 0) && (rxbuf != NULL))));
-
   /* Resetting error flags for this transfer.*/
   i2cp->errors = I2C_NO_ERROR;
 
   /* Releases the lock from high level driver.*/
   osalSysUnlock();
+
+  /* TX DMA setup.*/
+  dmaStreamSetMode(i2cp->dmatx, i2cp->txdmamode);
+  dmaStreamSetMemory0(i2cp->dmatx, txbuf);
+  dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
+
+  /* RX DMA setup.*/
+  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
+  dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
+  dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
 
   /* Calculating the time window for the timeout on the busy bus condition.*/
   start = osalOsGetSystemTimeX();
@@ -683,7 +682,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
     /* If the bus is not busy then the operation can continue, note, the
        loop is exited in the locked state.*/
-    if (dp->ISR & I2C_ISR_BUSY)
+    if ((dp->ISR & I2C_ISR_BUSY) == 0)
       break;
 
     /* If the system time went outside the allowed window then a timeout
@@ -701,19 +700,6 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Set slave address field (master mode) */
   dp->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES);
   dp->CR2 |= (txbytes << 16) | addr_cr2;
-
-  /* Initializes driver fields */
-  i2cp->errors = 0;
-
-  /* TX DMA setup.*/
-  dmaStreamSetMode(i2cp->dmatx, i2cp->txdmamode);
-  dmaStreamSetMemory0(i2cp->dmatx, txbuf);
-  dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
-
-  /* RX DMA setup.*/
-  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
-  dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
-  dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
 
   /* Enable TX DMA */
   dmaStreamEnable(i2cp->dmatx);

@@ -54,7 +54,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_I2C_USE_I2C1) || defined(__DOXYGEN__)
-#define STM32_I2C_USE_I2C1              FALSE
+#define STM32_I2C_USE_I2C1                  FALSE
 #endif
 
 /**
@@ -63,7 +63,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_I2C_USE_I2C2) || defined(__DOXYGEN__)
-#define STM32_I2C_USE_I2C2              FALSE
+#define STM32_I2C_USE_I2C2                  FALSE
 #endif
 
 /**
@@ -72,28 +72,35 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_I2C_USE_I2C3) || defined(__DOXYGEN__)
-#define STM32_I2C_USE_I2C3              FALSE
+#define STM32_I2C_USE_I2C3                  FALSE
+#endif
+
+/**
+ * @brief   I2C timeout on busy condition in milliseconds.
+ */
+#if !defined(STM32_I2C_BUSY_TIMEOUT) || defined(__DOXYGEN__)
+#define STM32_I2C_BUSY_TIMEOUT              50
 #endif
 
 /**
  * @brief   I2C1 interrupt priority level setting.
  */
 #if !defined(STM32_I2C_I2C1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C1_IRQ_PRIORITY     10
+#define STM32_I2C_I2C1_IRQ_PRIORITY         10
 #endif
 
 /**
  * @brief   I2C2 interrupt priority level setting.
  */
 #if !defined(STM32_I2C_I2C2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C2_IRQ_PRIORITY     10
+#define STM32_I2C_I2C2_IRQ_PRIORITY         10
 #endif
 
 /**
  * @brief   I2C3 interrupt priority level setting.
  */
 #if !defined(STM32_I2C_I2C3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C3_IRQ_PRIORITY     10
+#define STM32_I2C_I2C3_IRQ_PRIORITY         10
 #endif
 
 /**
@@ -132,7 +139,7 @@
  *          error can only happen because programming errors.
  */
 #if !defined(STM32_I2C_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_I2C_DMA_ERROR_HOOK(i2cp)  chSysHalt()
+#define STM32_I2C_DMA_ERROR_HOOK(i2cp)      chSysHalt("DMA failure")
 #endif
 
 #if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
@@ -142,7 +149,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_I2C_I2C1_RX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 0)
+#define STM32_I2C_I2C1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 0)
 #endif
 
 /**
@@ -150,7 +157,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_I2C_I2C1_TX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
+#define STM32_I2C_I2C1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 6)
 #endif
 
 /**
@@ -158,7 +165,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_I2C_I2C2_RX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+#define STM32_I2C_I2C2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #endif
 
 /**
@@ -166,7 +173,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_I2C_I2C2_TX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
+#define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 7)
 #endif
 
 /**
@@ -174,7 +181,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_I2C_I2C3_RX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C3_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
+#define STM32_I2C_I2C3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #endif
 
 /**
@@ -182,17 +189,17 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_I2C_I2C3_TX_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_I2C_I2C3_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+#define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 #endif
 
 #else /* !STM32_ADVANCED_DMA */
 
 /* Fixed streams for platforms using the old DMA peripheral, the values are
    valid for both STM32F1xx and STM32L1xx.*/
-#define STM32_I2C_I2C1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 7)
-#define STM32_I2C_I2C1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 6)
-#define STM32_I2C_I2C2_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
-#define STM32_I2C_I2C2_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+#define STM32_I2C_I2C1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 7)
+#define STM32_I2C_I2C1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 6)
+#define STM32_I2C_I2C2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 
 #endif /* !STM32_ADVANCED_DMA*/
 
@@ -365,14 +372,10 @@ struct I2CDriver {
    */
   i2cflags_t                errors;
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the bus.
    */
-  Mutex                     mutex;
-#elif CH_USE_SEMAPHORES
-  Semaphore                 semaphore;
-#endif
+  mutex_t                   mutex;
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 #if defined(I2C_DRIVER_EXT_FIELDS)
   I2C_DRIVER_EXT_FIELDS
@@ -381,7 +384,7 @@ struct I2CDriver {
   /**
    * @brief   Thread waiting for I/O completion.
    */
-  Thread                    *thread;
+  thread_reference_t        thread;
   /**
    * @brief     Current slave address without R/W bit.
    */

@@ -109,7 +109,7 @@ static const I2CConfig i2cfg2 = {
  * Application entry point.
  */
 int main(void) {
-  msg_t status = RDY_OK;
+  msg_t status = MSG_OK;
   systime_t tmo = MS2ST(4);
 
   /*
@@ -143,7 +143,7 @@ int main(void) {
   status = i2cMasterTransmitTimeout(&I2CD2, mma8451_addr, txbuf, 2, rxbuf, 0, tmo);
   i2cReleaseBus(&I2CD2);
 
-  if (status != RDY_OK){
+  if (status != MSG_OK){
     errors = i2cGetErrors(&I2CD2);
   }
 
@@ -159,7 +159,7 @@ int main(void) {
     status = i2cMasterTransmitTimeout(&I2CD2, mma8451_addr, txbuf, 1, rxbuf, 6, tmo);
     i2cReleaseBus(&I2CD2);
 
-    if (status != RDY_OK){
+    if (status != MSG_OK){
       errors = i2cGetErrors(&I2CD2);
     }
 

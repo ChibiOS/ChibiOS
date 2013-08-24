@@ -26,7 +26,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_I2C || defined(__DOXYGEN__)
@@ -111,25 +110,6 @@ I2CDriver I2CD3;
 /*===========================================================================*/
 
 /**
- * @brief   Wakes up the waiting thread.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] msg       wakeup message
- *
- * @notapi
- */
-#define wakeup_isr(i2cp, msg) {                                             \
-  chSysLockFromIsr();                                                       \
-  if ((i2cp)->thread != NULL) {                                             \
-    Thread *tp = (i2cp)->thread;                                            \
-    (i2cp)->thread = NULL;                                                  \
-    tp->p_u.rdymsg = (msg);                                                 \
-    chSchReadyI(tp);                                                        \
-  }                                                                         \
-  chSysUnlockFromIsr();                                                     \
-}
-
-/**
  * @brief   Aborts an I2C transaction.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
@@ -151,27 +131,6 @@ static void i2c_lld_abort_operation(I2CDriver *i2cp) {
 }
 
 /**
- * @brief   Handling of stalled I2C transactions.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- *
- * @notapi
- */
-static void i2c_lld_safety_timeout(void *p) {
-  I2CDriver *i2cp = (I2CDriver *)p;
-
-  chSysLockFromIsr();
-  if (i2cp->thread) {
-    Thread *tp = i2cp->thread;
-    i2c_lld_abort_operation(i2cp);
-    i2cp->thread = NULL;
-    tp->p_u.rdymsg = RDY_TIMEOUT;
-    chSchReadyI(tp);
-  }
-  chSysUnlockFromIsr();
-}
-
-/**
  * @brief   Set clock speed.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
@@ -184,8 +143,9 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
   int32_t clock_speed = i2cp->config->clock_speed;
   i2cdutycycle_t duty = i2cp->config->duty_cycle;
 
-  chDbgCheck((i2cp != NULL) && (clock_speed > 0) && (clock_speed <= 4000000),
-             "i2c_lld_set_clock");
+  osalDbgCheck((i2cp != NULL) &&
+               (clock_speed > 0) &&
+               (clock_speed <= 4000000));
 
   /* CR2 Configuration.*/
   dp->CR2 &= (uint16_t)~I2C_CR2_FREQ;
@@ -197,19 +157,15 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
 
   if (clock_speed <= 100000) {
     /* Configure clock_div in standard mode.*/
-    chDbgAssert(duty == STD_DUTY_CYCLE,
-                "i2c_lld_set_clock(), #1",
-                "Invalid standard mode duty cycle");
+    osalDbgAssert(duty == STD_DUTY_CYCLE, "invalid standard mode duty cycle");
 
     /* Standard mode clock_div calculate: Tlow/Thigh = 1/1.*/
-    chDbgAssert((STM32_PCLK1 % (clock_speed * 2)) == 0,
-                "i2c_lld_set_clock(), #2",
-                "PCLK1 must be divided without remainder");
+    osalDbgAssert((STM32_PCLK1 % (clock_speed * 2)) == 0,
+                  "PCLK1 must be divisible without remainder");
     clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 2));
 
-    chDbgAssert(clock_div >= 0x04,
-                "i2c_lld_set_clock(), #3",
-                "Clock divider less then 0x04 not allowed");
+    osalDbgAssert(clock_div >= 0x04,
+                  "clock divider less then 0x04 not allowed");
     regCCR |= (clock_div & I2C_CCR_CCR);
 
     /* Sets the Maximum Rise Time for standard mode.*/
@@ -217,37 +173,33 @@ static void i2c_lld_set_clock(I2CDriver *i2cp) {
   }
   else if (clock_speed <= 400000) {
     /* Configure clock_div in fast mode.*/
-    chDbgAssert((duty == FAST_DUTY_CYCLE_2) || (duty == FAST_DUTY_CYCLE_16_9),
-                "i2c_lld_set_clock(), #4",
-                "Invalid fast mode duty cycle");
+    osalDbgAssert((duty == FAST_DUTY_CYCLE_2) ||
+                  (duty == FAST_DUTY_CYCLE_16_9),
+                  "invalid fast mode duty cycle");
 
     if (duty == FAST_DUTY_CYCLE_2) {
       /* Fast mode clock_div calculate: Tlow/Thigh = 2/1.*/
-      chDbgAssert((STM32_PCLK1 % (clock_speed * 3)) == 0,
-                  "i2c_lld_set_clock(), #5",
-                  "PCLK1 must be divided without remainder");
+      osalDbgAssert((STM32_PCLK1 % (clock_speed * 3)) == 0,
+                    "PCLK1 must be divided without remainder");
       clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 3));
     }
     else if (duty == FAST_DUTY_CYCLE_16_9) {
       /* Fast mode clock_div calculate: Tlow/Thigh = 16/9.*/
-      chDbgAssert((STM32_PCLK1 % (clock_speed * 25)) == 0,
-                  "i2c_lld_set_clock(), #6",
-                  "PCLK1 must be divided without remainder");
+      osalDbgAssert((STM32_PCLK1 % (clock_speed * 25)) == 0,
+                    "PCLK1 must be divided without remainder");
       clock_div = (uint16_t)(STM32_PCLK1 / (clock_speed * 25));
       regCCR |= I2C_CCR_DUTY;
     }
 
-    chDbgAssert(clock_div >= 0x01,
-                    "i2c_lld_set_clock(), #7",
-                    "Clock divider less then 0x04 not allowed");
+    osalDbgAssert(clock_div >= 0x01,
+                  "clock divider less then 0x04 not allowed");
     regCCR |= (I2C_CCR_FS | (clock_div & I2C_CCR_CCR));
 
     /* Sets the Maximum Rise Time for fast mode.*/
     dp->TRISE = (I2C_CLK_FREQ * 300 / 1000) + 1;
   }
 
-  chDbgAssert((clock_div <= I2C_CCR_CCR),
-              "i2c_lld_set_clock(), #8", "the selected clock is too low");
+  osalDbgAssert((clock_div <= I2C_CCR_CCR), "the selected clock is too low");
 
   dp->CCR = regCCR;
 }
@@ -320,7 +272,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
     }
     dp->CR2 &= ~I2C_CR2_ITEVTEN;
     dp->CR1 |= I2C_CR1_STOP;
-    wakeup_isr(i2cp, RDY_OK);
+    _i2c_wakeup_isr(i2cp);
     break;
   default:
     break;
@@ -355,7 +307,7 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp, uint32_t flags) {
   dp->CR2 &= ~I2C_CR2_LAST;
   dp->CR1 &= ~I2C_CR1_ACK;
   dp->CR1 |= I2C_CR1_STOP;
-  wakeup_isr(i2cp, RDY_OK);
+  _i2c_wakeup_isr(i2cp);
 }
 
 /**
@@ -398,35 +350,35 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint16_t sr) {
   dmaStreamDisable(i2cp->dmatx);
   dmaStreamDisable(i2cp->dmarx);
 
-  i2cp->errors = I2CD_NO_ERROR;
+  i2cp->errors = I2C_NO_ERROR;
 
   if (sr & I2C_SR1_BERR)                            /* Bus error.           */
-    i2cp->errors |= I2CD_BUS_ERROR;
+    i2cp->errors |= I2C_BUS_ERROR;
 
   if (sr & I2C_SR1_ARLO)                            /* Arbitration lost.    */
-    i2cp->errors |= I2CD_ARBITRATION_LOST;
+    i2cp->errors |= I2C_ARBITRATION_LOST;
 
   if (sr & I2C_SR1_AF) {                            /* Acknowledge fail.    */
     i2cp->i2c->CR2 &= ~I2C_CR2_ITEVTEN;
     i2cp->i2c->CR1 |= I2C_CR1_STOP;                 /* Setting stop bit.    */
-    i2cp->errors |= I2CD_ACK_FAILURE;
+    i2cp->errors |= I2C_ACK_FAILURE;
   }
 
   if (sr & I2C_SR1_OVR)                             /* Overrun.             */
-    i2cp->errors |= I2CD_OVERRUN;
+    i2cp->errors |= I2C_OVERRUN;
 
   if (sr & I2C_SR1_TIMEOUT)                         /* SMBus Timeout.       */
-    i2cp->errors |= I2CD_TIMEOUT;
+    i2cp->errors |= I2C_TIMEOUT;
 
   if (sr & I2C_SR1_PECERR)                          /* PEC error.           */
-    i2cp->errors |= I2CD_PEC_ERROR;
+    i2cp->errors |= I2C_PEC_ERROR;
 
   if (sr & I2C_SR1_SMBALERT)                        /* SMBus alert.         */
-    i2cp->errors |= I2CD_SMB_ALERT;
+    i2cp->errors |= I2C_SMB_ALERT;
 
   /* If some error has been identified then sends wakes the waiting thread.*/
-  if (i2cp->errors != I2CD_NO_ERROR)
-    wakeup_isr(i2cp, RDY_RESET);
+  if (i2cp->errors != I2C_NO_ERROR)
+    _i2c_wakeup_error_isr(i2cp);
 }
 
 /*===========================================================================*/
@@ -439,27 +391,27 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint16_t sr) {
  *
  * @notapi
  */
-CH_IRQ_HANDLER(I2C1_EV_IRQHandler) {
+OSAL_IRQ_HANDLER(I2C1_EV_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   i2c_lld_serve_event_interrupt(&I2CD1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
  * @brief   I2C1 error interrupt handler.
  */
-CH_IRQ_HANDLER(I2C1_ER_IRQHandler) {
+OSAL_IRQ_HANDLER(I2C1_ER_IRQHandler) {
   uint16_t sr = I2CD1.i2c->SR1;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   I2CD1.i2c->SR1 = ~(sr & I2C_ERROR_MASK);
   i2c_lld_serve_error_interrupt(&I2CD1, sr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_I2C_USE_I2C1 */
 
@@ -469,13 +421,13 @@ CH_IRQ_HANDLER(I2C1_ER_IRQHandler) {
  *
  * @notapi
  */
-CH_IRQ_HANDLER(I2C2_EV_IRQHandler) {
+OSAL_IRQ_HANDLER(I2C2_EV_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   i2c_lld_serve_event_interrupt(&I2CD2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -483,15 +435,15 @@ CH_IRQ_HANDLER(I2C2_EV_IRQHandler) {
  *
  * @notapi
  */
-CH_IRQ_HANDLER(I2C2_ER_IRQHandler) {
+OSAL_IRQ_HANDLER(I2C2_ER_IRQHandler) {
   uint16_t sr = I2CD2.i2c->SR1;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   I2CD2.i2c->SR1 = ~(sr & I2C_ERROR_MASK);
   i2c_lld_serve_error_interrupt(&I2CD2, sr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_I2C_USE_I2C2 */
 
@@ -501,13 +453,13 @@ CH_IRQ_HANDLER(I2C2_ER_IRQHandler) {
  *
  * @notapi
  */
-CH_IRQ_HANDLER(I2C3_EV_IRQHandler) {
+OSAL_IRQ_HANDLER(I2C3_EV_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   i2c_lld_serve_event_interrupt(&I2CD3);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -515,15 +467,15 @@ CH_IRQ_HANDLER(I2C3_EV_IRQHandler) {
  *
  * @notapi
  */
-CH_IRQ_HANDLER(I2C3_ER_IRQHandler) {
+OSAL_IRQ_HANDLER(I2C3_ER_IRQHandler) {
   uint16_t sr = I2CD3.i2c->SR1;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   I2CD3.i2c->SR1 = ~(sr & I2C_ERROR_MASK);
   i2c_lld_serve_error_interrupt(&I2CD3, sr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_I2C_USE_I2C3 */
 
@@ -587,24 +539,22 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
-      bool_t b;
+      bool b;
 
       rccResetI2C1();
       b = dmaStreamAllocate(i2cp->dmarx,
                             STM32_I2C_I2C1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)i2c_lld_serve_rx_end_irq,
                             (void *)i2cp);
-      chDbgAssert(!b, "i2c_lld_start(), #1", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(i2cp->dmatx,
                             STM32_I2C_I2C1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
                             (void *)i2cp);
-      chDbgAssert(!b, "i2c_lld_start(), #2", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableI2C1(FALSE);
-      nvicEnableVector(I2C1_EV_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
-      nvicEnableVector(I2C1_ER_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C1_IRQ_PRIORITY));
+      nvicEnableVector(I2C1_EV_IRQn, STM32_I2C_I2C1_IRQ_PRIORITY);
+      nvicEnableVector(I2C1_ER_IRQn, STM32_I2C_I2C1_IRQ_PRIORITY);
 
       i2cp->rxdmamode |= STM32_DMA_CR_CHSEL(I2C1_RX_DMA_CHANNEL) |
                        STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
@@ -615,24 +565,22 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
 #if STM32_I2C_USE_I2C2
     if (&I2CD2 == i2cp) {
-      bool_t b;
+      bool b;
 
       rccResetI2C2();
       b = dmaStreamAllocate(i2cp->dmarx,
                             STM32_I2C_I2C2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)i2c_lld_serve_rx_end_irq,
                             (void *)i2cp);
-      chDbgAssert(!b, "i2c_lld_start(), #3", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(i2cp->dmatx,
                             STM32_I2C_I2C2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
                             (void *)i2cp);
-      chDbgAssert(!b, "i2c_lld_start(), #4", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableI2C2(FALSE);
-      nvicEnableVector(I2C2_EV_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
-      nvicEnableVector(I2C2_ER_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C2_IRQ_PRIORITY));
+      nvicEnableVector(I2C2_EV_IRQn, STM32_I2C_I2C2_IRQ_PRIORITY);
+      nvicEnableVector(I2C2_ER_IRQn, STM32_I2C_I2C2_IRQ_PRIORITY);
 
       i2cp->rxdmamode |= STM32_DMA_CR_CHSEL(I2C2_RX_DMA_CHANNEL) |
                        STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
@@ -643,24 +591,22 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
 #if STM32_I2C_USE_I2C3
     if (&I2CD3 == i2cp) {
-      bool_t b;
+      bool b;
 
       rccResetI2C3();
       b = dmaStreamAllocate(i2cp->dmarx,
                             STM32_I2C_I2C3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)i2c_lld_serve_rx_end_irq,
                             (void *)i2cp);
-      chDbgAssert(!b, "i2c_lld_start(), #5", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(i2cp->dmatx,
                             STM32_I2C_I2C3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
                             (void *)i2cp);
-      chDbgAssert(!b, "i2c_lld_start(), #6", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableI2C3(FALSE);
-      nvicEnableVector(I2C3_EV_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C3_IRQ_PRIORITY));
-      nvicEnableVector(I2C3_ER_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_I2C_I2C3_IRQ_PRIORITY));
+      nvicEnableVector(I2C3_EV_IRQn, STM32_I2C_I2C3_IRQ_PRIORITY);
+      nvicEnableVector(I2C3_ER_IRQn, STM32_I2C_I2C3_IRQ_PRIORITY);
 
       i2cp->rxdmamode |= STM32_DMA_CR_CHSEL(I2C3_RX_DMA_CHANNEL) |
                        STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
@@ -744,10 +690,10 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The operation status.
- * @retval RDY_OK       if the function succeeded.
- * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
  *                      be retrieved using @p i2cGetErrors().
- * @retval RDY_TIMEOUT  if a timeout occurred before operation end. <b>After a
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end. <b>After a
  *                      timeout the driver must be stopped and restarted
  *                      because the bus is in an uncertain state</b>.
  *
@@ -757,56 +703,57 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      uint8_t *rxbuf, size_t rxbytes,
                                      systime_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
-  VirtualTimer vt;
+  systime_t start, end;
 
 #if defined(STM32F1XX_I2C)
-  chDbgCheck((rxbytes > 1), "i2c_lld_master_receive_timeout");
+  osalDbgCheck((rxbytes > 1), "i2c_lld_master_receive_timeout");
 #endif
 
-  /* Global timeout for the whole operation.*/
-  if (timeout != TIME_INFINITE)
-    chVTSetI(&vt, timeout, i2c_lld_safety_timeout, (void *)i2cp);
-
-  /* Releases the lock from high level driver.*/
-  chSysUnlock();
+  /* Resetting error flags for this transfer.*/
+  i2cp->errors = I2C_NO_ERROR;
 
   /* Initializes driver fields, LSB = 1 -> receive.*/
   i2cp->addr = (addr << 1) | 0x01;
-  i2cp->errors = 0;
+
+  /* Releases the lock from high level driver.*/
+  osalSysUnlock();
 
   /* RX DMA setup.*/
   dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
   dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
 
-  /* Waits until BUSY flag is reset and the STOP from the previous operation
-     is completed, alternatively for a timeout condition.*/
-  while ((dp->SR2 & I2C_SR2_BUSY) || (dp->CR1 & I2C_CR1_STOP)) {
-    chSysLock();
-    if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
-      return RDY_TIMEOUT;
-    chSysUnlock();
+  /* Calculating the time window for the timeout on the busy bus condition.*/
+  start = osalOsGetSystemTimeX();
+  end = start + OSAL_MS2ST(STM32_I2C_BUSY_TIMEOUT);
+
+  /* Waits until BUSY flag is reset or, alternatively, for a timeout
+     condition.*/
+  while (true) {
+    osalSysLock();
+
+    /* If the bus is not busy then the operation can continue, note, the
+       loop is exited in the locked state.*/
+    if (!(dp->SR2 & I2C_SR2_BUSY) && !(dp->CR1 & I2C_CR1_STOP))
+      break;
+
+    /* If the system time went outside the allowed window then a timeout
+       condition is returned.*/
+    if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end))
+      return MSG_TIMEOUT;
+
+    osalSysUnlock();
   }
 
   /* This lock will be released in high level driver.*/
-  chSysLock();
-
-  /* Atomic check on the timer in order to make sure that a timeout didn't
-     happen outside the critical zone.*/
-  if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
-    return RDY_TIMEOUT;
+  osalSysLock();
 
   /* Starts the operation.*/
   dp->CR2 |= I2C_CR2_ITEVTEN;
   dp->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
 
   /* Waits for the operation completion or a timeout.*/
-  i2cp->thread = chThdSelf();
-  chSchGoSleepS(THD_STATE_SUSPENDED);
-  if ((timeout != TIME_INFINITE) && chVTIsArmedI(&vt))
-    chVTResetI(&vt);
-
-  return chThdSelf()->p_u.rdymsg;
+  return osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
 }
 
 /**
@@ -825,10 +772,10 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The operation status.
- * @retval RDY_OK       if the function succeeded.
- * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
  *                      be retrieved using @p i2cGetErrors().
- * @retval RDY_TIMEOUT  if a timeout occurred before operation end. <b>After a
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end. <b>After a
  *                      timeout the driver must be stopped and restarted
  *                      because the bus is in an uncertain state</b>.
  *
@@ -839,23 +786,20 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       uint8_t *rxbuf, size_t rxbytes,
                                       systime_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
-  VirtualTimer vt;
+  systime_t start, end;
 
 #if defined(STM32F1XX_I2C)
-  chDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))),
-             "i2c_lld_master_transmit_timeout");
+  osalDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))));
 #endif
 
-  /* Global timeout for the whole operation.*/
-  if (timeout != TIME_INFINITE)
-    chVTSetI(&vt, timeout, i2c_lld_safety_timeout, (void *)i2cp);
+  /* Resetting error flags for this transfer.*/
+  i2cp->errors = I2C_NO_ERROR;
+
+  /* Initializes driver fields, LSB = 1 -> receive.*/
+  i2cp->addr = (addr << 1) | 0x01;
 
   /* Releases the lock from high level driver.*/
-  chSysUnlock();
-
-  /* Initializes driver fields, LSB = 0 -> write.*/
-  i2cp->addr = addr << 1;
-  i2cp->errors = 0;
+  osalSysUnlock();
 
   /* TX DMA setup.*/
   dmaStreamSetMode(i2cp->dmatx, i2cp->txdmamode);
@@ -867,34 +811,37 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
 
-  /* Waits until BUSY flag is reset and the STOP from the previous operation
-     is completed, alternatively for a timeout condition.*/
-  while ((dp->SR2 & I2C_SR2_BUSY) || (dp->CR1 & I2C_CR1_STOP)) {
-    chSysLock();
-    if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
-      return RDY_TIMEOUT;
-    chSysUnlock();
+  /* Calculating the time window for the timeout on the busy bus condition.*/
+  start = osalOsGetSystemTimeX();
+  end = start + OSAL_MS2ST(STM32_I2C_BUSY_TIMEOUT);
+
+  /* Waits until BUSY flag is reset or, alternatively, for a timeout
+     condition.*/
+  while (true) {
+    osalSysLock();
+
+    /* If the bus is not busy then the operation can continue, note, the
+       loop is exited in the locked state.*/
+    if (!(dp->SR2 & I2C_SR2_BUSY) && !(dp->CR1 & I2C_CR1_STOP))
+      break;
+
+    /* If the system time went outside the allowed window then a timeout
+       condition is returned.*/
+    if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end))
+      return MSG_TIMEOUT;
+
+    osalSysUnlock();
   }
 
   /* This lock will be released in high level driver.*/
-  chSysLock();
-
-  /* Atomic check on the timer in order to make sure that a timeout didn't
-     happen outside the critical zone.*/
-  if ((timeout != TIME_INFINITE) && !chVTIsArmedI(&vt))
-    return RDY_TIMEOUT;
+  osalSysLock();
 
   /* Starts the operation.*/
   dp->CR2 |= I2C_CR2_ITEVTEN;
   dp->CR1 |= I2C_CR1_START;
 
   /* Waits for the operation completion or a timeout.*/
-  i2cp->thread = chThdSelf();
-  chSchGoSleepS(THD_STATE_SUSPENDED);
-  if ((timeout != TIME_INFINITE) && chVTIsArmedI(&vt))
-    chVTResetI(&vt);
-
-  return chThdSelf()->p_u.rdymsg;
+  return osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
 }
 
 #endif /* HAL_USE_I2C */
