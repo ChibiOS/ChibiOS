@@ -13,7 +13,8 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/common/ARMCMx/nvic.c \
               ${CHIBIOS}/os/hal/platforms/STM32/TIMv1/pwm_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/TIMv1/st_lld.c \
               ${CHIBIOS}/os/hal/platforms/STM32/USARTv2/serial_lld.c \
-              ${CHIBIOS}/os/hal/platforms/STM32/USARTv2/uart_lld.c
+              ${CHIBIOS}/os/hal/platforms/STM32/USARTv2/uart_lld.c \
+              ${CHIBIOS}/os/hal/platforms/STM32/USBv1/usb_lld.c
 
 # Required include directories
 PLATFORMINC = ${CHIBIOS}/os/hal/platforms/common/ARMCMx \
@@ -23,4 +24,5 @@ PLATFORMINC = ${CHIBIOS}/os/hal/platforms/common/ARMCMx \
               ${CHIBIOS}/os/hal/platforms/STM32/I2Cv2 \
               ${CHIBIOS}/os/hal/platforms/STM32/SPIv2 \
               ${CHIBIOS}/os/hal/platforms/STM32/TIMv1 \
-              ${CHIBIOS}/os/hal/platforms/STM32/USARTv2
+              ${CHIBIOS}/os/hal/platforms/STM32/USARTv2 \
+              ${CHIBIOS}/os/hal/platforms/STM32/USBv1

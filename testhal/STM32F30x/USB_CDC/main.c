@@ -292,7 +292,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
   case USB_EVENT_ADDRESS:
     return;
   case USB_EVENT_CONFIGURED:
-    chSysLockFromIsr();
+    chSysLockFromISR();
 
     /* Enables the endpoints specified into the configuration.
        Note, this callback is invoked from an ISR so I-Class functions
@@ -303,7 +303,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     /* Resetting the state of the CDC subsystem.*/
     sduConfigureHookI(&SDU1);
 
-    chSysUnlockFromIsr();
+    chSysUnlockFromISR();
     return;
   case USB_EVENT_SUSPEND:
     return;
@@ -357,34 +357,34 @@ static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
-  static const char *states[] = {THD_STATE_NAMES};
-  Thread *tp;
+  static const char *states[] = {CH_STATE_NAMES};
+  thread_t *tp;
 
   (void)argv;
   if (argc > 0) {
     chprintf(chp, "Usage: threads\r\n");
     return;
   }
-  chprintf(chp, "    addr    stack prio refs     state time\r\n");
+  chprintf(chp, "    addr    stack prio refs     state\r\n");
   tp = chRegFirstThread();
   do {
     chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s %lu\r\n",
-            (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-            (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
-            states[tp->p_state], (uint32_t)tp->p_time);
+             (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
+             (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
+             states[tp->p_state]);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
 }
 
 static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
-  Thread *tp;
+  thread_t *tp;
 
   (void)argv;
   if (argc > 0) {
     chprintf(chp, "Usage: test\r\n");
     return;
   }
-  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
+  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriorityX(),
                            TestThread, chp);
   if (tp == NULL) {
     chprintf(chp, "out of memory\r\n");
@@ -462,7 +462,7 @@ static msg_t Thread1(void *arg) {
  * Application entry point.
  */
 int main(void) {
-  Thread *shelltp = NULL;
+  thread_t *shelltp = NULL;
 
   /*
    * System initializations.
@@ -507,7 +507,7 @@ int main(void) {
   while (TRUE) {
     if (!shelltp && (SDU1.config->usbp->state == USB_ACTIVE))
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
-    else if (chThdTerminated(shelltp)) {
+    else if (chThdTerminatedX(shelltp)) {
       chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
       shelltp = NULL;           /* Triggers spawning of a new shell.        */
     }

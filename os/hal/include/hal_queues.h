@@ -372,7 +372,7 @@ extern "C" {
    this module will use the ChibiOS queues code.*/
 #define qSizeI(qp)                          chQSizeI(qp)
 #define qSpaceI(qp)                         chQSpaceI(qp)
-#define qGetLink(qp)                        chQGetLink(qp)
+#define qGetLink(qp)                        chQGetLinkX(qp)
 #define iqGetFullI(iqp)                     chIQGetFullI(iqp)
 #define iqGetEmptyI(iqp)                    chIQGetEmptyI(iqp)
 #define iqIsEmptyI(iqp)                     chIQIsEmptyI(iqp)

@@ -32,7 +32,7 @@
 /**
  * @brief   Shell termination event source.
  */
-EventSource shell_terminated;
+event_source_t shell_terminated;
 
 static char *_strtok(char *str, const char *delim, char **saveptr) {
   char *token;
@@ -133,12 +133,12 @@ static bool_t cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
  *
  * @param[in] p         pointer to a @p BaseSequentialStream object
  * @return              Termination reason.
- * @retval RDY_OK       terminated by command.
- * @retval RDY_RESET    terminated by reset condition on the I/O channel.
+ * @retval MSG_OK       terminated by command.
+ * @retval MSG_RESET    terminated by reset condition on the I/O channel.
  */
 static msg_t shell_thread(void *p) {
   int n;
-  msg_t msg = RDY_OK;
+  msg_t msg = MSG_OK;
   BaseSequentialStream *chp = ((ShellConfig *)p)->sc_channel;
   const ShellCommand *scp = ((ShellConfig *)p)->sc_commands;
   char *lp, *cmd, *tokp, line[SHELL_MAX_LINE_LENGTH];
@@ -203,12 +203,12 @@ static msg_t shell_thread(void *p) {
  */
 void shellInit(void) {
 
-  chEvtInit(&shell_terminated);
+  chEvtObjectInit(&shell_terminated);
 }
 
 /**
  * @brief   Spawns a new shell.
- * @pre     @p CH_USE_MALLOC_HEAP and @p CH_USE_DYNAMIC must be enabled.
+ * @pre     @p CH_CFG_USE_HEAP and @p CH_CFG_USE_DYNAMIC must be enabled.
  *
  * @param[in] scp       pointer to a @p ShellConfig object
  * @param[in] size      size of the shell working area to be allocated
@@ -216,8 +216,8 @@ void shellInit(void) {
  * @return              A pointer to the shell thread.
  * @retval NULL         thread creation failed because memory allocation.
  */
-#if CH_USE_HEAP && CH_USE_DYNAMIC
-Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
+#if CH_CFG_USE_HEAP && CH_CFG_USE_DYNAMIC
+thread_t *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
 
   return chThdCreateFromHeap(NULL, size, prio, shell_thread, (void *)scp);
 }
@@ -232,7 +232,7 @@ Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
  * @param[in] prio      priority level for the new shell
  * @return              A pointer to the shell thread.
  */
-Thread *shellCreateStatic(const ShellConfig *scp, void *wsp,
+thread_t *shellCreateStatic(const ShellConfig *scp, void *wsp,
                           size_t size, tprio_t prio) {
 
   return chThdCreateStatic(wsp, size, prio, shell_thread, (void *)scp);

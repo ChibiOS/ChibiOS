@@ -134,7 +134,7 @@ typedef struct {
       /**
        * @brief   Pointer to the output queue.
        */
-      OutputQueue               *txqueue;
+      output_queue_t            *txqueue;
     } queue;
     /* End of the mandatory fields.*/
   } mode;
@@ -167,7 +167,7 @@ typedef struct {
       /**
        * @brief   Pointer to the input queue.
        */
-      InputQueue               *rxqueue;
+      input_queue_t            *rxqueue;
     } queue;
   } mode;
   /* End of the mandatory fields.*/

@@ -112,7 +112,7 @@ static uint32_t usb_pm_alloc(USBDriver *usbp, size_t size) {
 
   next = usbp->pmnext;
   usbp->pmnext += size;
-  chDbgAssert(usbp->pmnext <= USB_PMA_SIZE, "usb_pm_alloc(), #1", "PMA overflow");
+  osalDbgAssert(usbp->pmnext <= USB_PMA_SIZE, "PMA overflow");
   return next;
 }
 
@@ -144,14 +144,14 @@ static void usb_packet_read_to_buffer(stm32_usb_descriptor_t *udp,
  * @brief   Reads from a dedicated packet buffer.
  *
  * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
- * @param[in] iqp       pointer to an @p InputQueue object
+ * @param[in] iqp       pointer to an @p input_queue_t object
  * @param[in] n         maximum number of bytes to copy. This value must
  *                      not exceed the maximum packet size for this endpoint.
  *
  * @notapi
  */
 static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
-                                     InputQueue *iqp, size_t n) {
+                                     input_queue_t *iqp, size_t n) {
   size_t nhw;
   uint32_t *pmap= USB_ADDR2PTR(udp->RXADDR0);
 
@@ -176,11 +176,11 @@ static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
   }
 
   /* Updating queue.*/
-  chSysLockFromIsr();
+  osalSysLockFromISR();
   iqp->q_counter += n;
-  while (notempty(&iqp->q_waiting))
-    chSchReadyI(fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
-  chSysUnlockFromIsr();
+  while (queue_notempty(&iqp->q_waiting))
+    chSchReadyI(queue_fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
+  osalSysUnlockFromISR();
 }
 
 /**
@@ -220,7 +220,7 @@ static void usb_packet_write_from_buffer(stm32_usb_descriptor_t *udp,
  * @notapi
  */
 static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
-                                        OutputQueue *oqp, size_t n) {
+                                        output_queue_t *oqp, size_t n) {
   size_t nhw;
   uint32_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
 
@@ -250,13 +250,13 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
      function can be called from both ISR and thread context so the kind
      of lock function to be invoked cannot be decided beforehand.*/
   port_lock();
-  dbg_enter_lock();
+  _dbg_enter_lock();
 
   oqp->q_counter += n;
-  while (notempty(&oqp->q_waiting))
-    chSchReadyI(fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
+  while (queue_notempty(&oqp->q_waiting))
+    chSchReadyI(queue_fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
 
-  dbg_leave_lock();
+  _dbg_leave_lock();
   port_unlock();
 }
 
@@ -366,9 +366,9 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
                                        epcp->in_state->mode.linear.txbuf,
                                        n);
         }
-        chSysLockFromIsr();
+        osalSysLockFromISR();
         usb_lld_start_in(usbp, ep);
-        chSysUnlockFromIsr();
+        osalSysUnlockFromISR();
       }
       else {
         /* Transfer completed, invokes the callback.*/
@@ -456,10 +456,8 @@ void usb_lld_start(USBDriver *usbp) {
       STM32_USB->CNTR = CNTR_FRES;
       /* Enabling the USB IRQ vectors, this also gives enough time to allow
          the transceiver power up (1uS).*/
-      nvicEnableVector(STM32_USB1_HP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_USB_USB1_HP_IRQ_PRIORITY));
-      nvicEnableVector(STM32_USB1_LP_NUMBER,
-                       CORTEX_PRIORITY_MASK(STM32_USB_USB1_LP_IRQ_PRIORITY));
+      nvicEnableVector(STM32_USB1_HP_NUMBER, STM32_USB_USB1_HP_IRQ_PRIORITY);
+      nvicEnableVector(STM32_USB1_LP_NUMBER, STM32_USB_USB1_LP_IRQ_PRIORITY);
       /* Releases the USB reset.*/
       STM32_USB->CNTR = 0;
     }
