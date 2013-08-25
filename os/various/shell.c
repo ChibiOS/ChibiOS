@@ -219,7 +219,7 @@ void shellInit(void) {
 
 /**
  * @brief   Spawns a new shell.
- * @pre     @p CH_USE_MALLOC_HEAP and @p CH_USE_DYNAMIC must be enabled.
+ * @pre     @p CH_USE_HEAP and @p CH_USE_DYNAMIC must be enabled.
  *
  * @param[in] scp       pointer to a @p ShellConfig object
  * @param[in] size      size of the shell working area to be allocated
