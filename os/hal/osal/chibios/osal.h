@@ -119,6 +119,13 @@
 
 #if 0
 /**
+ * @brief   Type of a system status word.
+ */
+typedef uint32_t syssts_t;
+#endif
+
+#if 0
+/**
  * @brief   Type of a message.
  */
 typedef int32_t msg_t;
@@ -387,6 +394,35 @@ static inline void osalSysLockFromISR(void) {
 static inline void osalSysUnlockFromISR(void) {
 
   chSysUnlockFromISR();
+}
+
+/**
+ * @brief   Returns the execution context and enters the kernel lock mode.
+ * @details This functions enters into a critical zone and can be called
+ *          from any context. Because its flexibility it is less efficient
+ *          than @p chSysLock() which is preferable when the calling context
+ *          is known.
+ *
+ * @return              The previous system status, the encoding of this
+ *                      status word is architecture-dependent and opaque.
+ *
+ * @xclass
+ */
+static inline syssts_t osalSysGetAndLockX(void)  {
+
+  return chSysGetAndLockX();
+}
+
+/**
+ * @brief   Restores the specified execution status.
+ *
+ * @param[in] sts       the system status to be restored.
+ *
+ * @xclass
+ */
+static inline void osalSysRestoreLockX(syssts_t sts) {
+
+  chSysRestoreLockX(sts);
 }
 
 /**

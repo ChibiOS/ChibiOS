@@ -114,7 +114,7 @@ typedef struct {
   /**
    * @brief   Buffer mode, queue or linear.
    */
-  bool_t                        txqueued;
+  bool                          txqueued;
   /**
    * @brief   Requested transmit transfer size.
    */
@@ -147,7 +147,7 @@ typedef struct {
   /**
    * @brief   Buffer mode, queue or linear.
    */
-  bool_t                        rxqueued;
+  bool                          rxqueued;
   /**
    * @brief   Requested receive transfer size.
    */

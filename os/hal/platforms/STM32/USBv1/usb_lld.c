@@ -24,7 +24,6 @@
 
 #include <string.h>
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_USB || defined(__DOXYGEN__)
@@ -177,9 +176,10 @@ static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
 
   /* Updating queue.*/
   osalSysLockFromISR();
+
   iqp->q_counter += n;
-  while (queue_notempty(&iqp->q_waiting))
-    chSchReadyI(queue_fifo_remove(&iqp->q_waiting))->p_u.rdymsg = Q_OK;
+  osalQueueWakeupAllI(&iqp->q_waiting, Q_OK);
+
   osalSysUnlockFromISR();
 }
 
@@ -222,6 +222,7 @@ static void usb_packet_write_from_buffer(stm32_usb_descriptor_t *udp,
 static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
                                         output_queue_t *oqp, size_t n) {
   size_t nhw;
+  syssts_t sts;
   uint32_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
 
   udp->TXCOUNT0 = (uint16_t)n;
@@ -246,18 +247,13 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
       oqp->q_rdptr = oqp->q_buffer;
   }
 
-  /* Updating queue. Note, the lock is done in this unusual way because this
-     function can be called from both ISR and thread context so the kind
-     of lock function to be invoked cannot be decided beforehand.*/
-  port_lock();
-  _dbg_enter_lock();
+  /* Updating queue.*/
+  sts = osalSysGetAndLockX();
 
   oqp->q_counter += n;
-  while (queue_notempty(&oqp->q_waiting))
-    chSchReadyI(queue_fifo_remove(&oqp->q_waiting))->p_u.rdymsg = Q_OK;
+  osalQueueWakeupAllI(&oqp->q_waiting, Q_OK);
 
-  _dbg_leave_lock();
-  port_unlock();
+  osalSysRestoreLockX(sts);
 }
 
 /*===========================================================================*/

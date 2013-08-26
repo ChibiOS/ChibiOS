@@ -215,7 +215,6 @@ void chSysTimerHandlerI(void) {
 #endif
 }
 
-
 /**
  * @brief   Returns the execution context and enters the kernel lock mode.
  * @details This functions enters into a critical zone and can be called
