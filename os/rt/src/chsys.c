@@ -221,6 +221,7 @@ void chSysTimerHandlerI(void) {
  *          from any context. Because its flexibility it is less efficient
  *          than @p chSysLock() which is preferable when the calling context
  *          is known.
+ * @post    The system is in a critical zone.
  *
  * @return              The previous system status, the encoding of this
  *                      status word is architecture-dependent and opaque.
@@ -241,6 +242,8 @@ syssts_t chSysGetStatusAndLockX(void)  {
 
 /**
  * @brief   Restores the specified execution status.
+ * @note    A call to @p chSchRescheduleS() is automatically performed
+ *          is exiting the critical zone and if in proper context.
  *
  * @param[in] sts       the system status to be restored.
  *
