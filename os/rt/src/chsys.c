@@ -227,7 +227,7 @@ void chSysTimerHandlerI(void) {
  *
  * @xclass
  */
-syssts_t chSysGetAndLockX(void)  {
+syssts_t chSysGetStatusAndLockX(void)  {
 
   syssts_t sts = port_get_irq_status();
   if (port_irq_enabled(sts)) {
@@ -246,13 +246,15 @@ syssts_t chSysGetAndLockX(void)  {
  *
  * @xclass
  */
-void chSysRestoreLockX(syssts_t sts) {
+void chSysRestoreLockAndRescheduleX(syssts_t sts) {
 
   if (port_irq_enabled(sts)) {
     if (port_is_isr_context())
       chSysUnlockFromISR();
-    else
+    else {
+      chSchRescheduleS();
       chSysUnlock();
+    }
   }
 }
 

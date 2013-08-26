@@ -408,9 +408,9 @@ static inline void osalSysUnlockFromISR(void) {
  *
  * @xclass
  */
-static inline syssts_t osalSysGetAndLockX(void)  {
+static inline syssts_t osalSysGetStatusAndLockX(void)  {
 
-  return chSysGetAndLockX();
+  return chSysGetStatusAndLockX();
 }
 
 /**
@@ -420,9 +420,9 @@ static inline syssts_t osalSysGetAndLockX(void)  {
  *
  * @xclass
  */
-static inline void osalSysRestoreLockX(syssts_t sts) {
+static inline void osalSysRestoreLockAndRescheduleX(syssts_t sts) {
 
-  chSysRestoreLockX(sts);
+  chSysRestoreLockAndRescheduleX(sts);
 }
 
 /**

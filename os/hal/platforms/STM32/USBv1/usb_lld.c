@@ -248,12 +248,12 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
   }
 
   /* Updating queue.*/
-  sts = osalSysGetAndLockX();
+  sts = osalSysGetStatusAndLockX();
 
   oqp->q_counter += n;
   osalQueueWakeupAllI(&oqp->q_waiting, Q_OK);
 
-  osalSysRestoreLockX(sts);
+  osalSysRestoreLockAndRescheduleX(sts);
 }
 
 /*===========================================================================*/
