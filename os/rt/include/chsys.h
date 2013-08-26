@@ -219,7 +219,7 @@ extern "C" {
   void chSysHalt(const char *reason);
   void chSysTimerHandlerI(void);
   syssts_t chSysGetStatusAndLockX(void);
-  void chSysRestoreLockAndRescheduleX(syssts_t sts);
+  void chSysRestoreStatusX(syssts_t sts);
 #if CH_PORT_SUPPORTS_RT
   bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end);
   void chSysPolledDelayX(rtcnt_t cycles);

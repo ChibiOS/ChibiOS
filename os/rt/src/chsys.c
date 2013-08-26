@@ -216,7 +216,7 @@ void chSysTimerHandlerI(void) {
 }
 
 /**
- * @brief   Returns the execution context and enters the kernel lock mode.
+ * @brief   Returns the execution status and enters a critical zone.
  * @details This functions enters into a critical zone and can be called
  *          from any context. Because its flexibility it is less efficient
  *          than @p chSysLock() which is preferable when the calling context
@@ -241,15 +241,15 @@ syssts_t chSysGetStatusAndLockX(void)  {
 }
 
 /**
- * @brief   Restores the specified execution status.
+ * @brief   Restores the specified execution status and leaves a critical zone.
  * @note    A call to @p chSchRescheduleS() is automatically performed
- *          is exiting the critical zone and if in proper context.
+ *          if exiting the critical zone and if not in ISR context.
  *
  * @param[in] sts       the system status to be restored.
  *
  * @xclass
  */
-void chSysRestoreLockAndRescheduleX(syssts_t sts) {
+void chSysRestoreStatusX(syssts_t sts) {
 
   if (port_irq_enabled(sts)) {
     if (port_is_isr_context())

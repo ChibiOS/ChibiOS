@@ -397,11 +397,12 @@ static inline void osalSysUnlockFromISR(void) {
 }
 
 /**
- * @brief   Returns the execution context and enters the kernel lock mode.
+ * @brief   Returns the execution status and enters a critical zone.
  * @details This functions enters into a critical zone and can be called
  *          from any context. Because its flexibility it is less efficient
  *          than @p chSysLock() which is preferable when the calling context
  *          is known.
+ * @post    The system is in a critical zone.
  *
  * @return              The previous system status, the encoding of this
  *                      status word is architecture-dependent and opaque.
@@ -414,15 +415,17 @@ static inline syssts_t osalSysGetStatusAndLockX(void)  {
 }
 
 /**
- * @brief   Restores the specified execution status.
+ * @brief   Restores the specified execution status and leaves a critical zone.
+ * @note    A call to @p chSchRescheduleS() is automatically performed
+ *          if exiting the critical zone and if not in ISR context.
  *
  * @param[in] sts       the system status to be restored.
  *
  * @xclass
  */
-static inline void osalSysRestoreLockAndRescheduleX(syssts_t sts) {
+static inline void osalSysRestoreStatusX(syssts_t sts) {
 
-  chSysRestoreLockAndRescheduleX(sts);
+  chSysRestoreStatusX(sts);
 }
 
 /**
