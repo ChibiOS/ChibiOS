@@ -101,6 +101,7 @@ SECTIONS
         . = ALIGN(8);
     } > flash
 
+    . = ALIGN(4);
     _etext = .;
     _textdata = _etext;
 

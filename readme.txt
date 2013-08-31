@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed possible unalignment in GCC Cortex-M scatter files (bug #430)
+  (backported to 2.6.2 and 2.4.6).
 - FIX: Fixed PAL driver documentation error (bug #427)(backported to 2.6.1
   and 2.4.5).
 - FIX: Fixed UART4 and 5 marked as not present in STM32F30x devices (bug #426)
