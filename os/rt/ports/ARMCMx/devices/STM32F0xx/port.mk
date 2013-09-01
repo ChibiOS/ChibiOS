@@ -7,6 +7,7 @@ PORTSRC = ${CHIBIOS}/os/rt/ports/ARMCMx/chcore.c \
 PORTASM = $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/chcoreasm_v6m.s
 
 PORTINC = ${CHIBIOS}/os/ext/CMSIS/include \
+          ${CHIBIOS}/os/ext/CMSIS/ST \
           ${CHIBIOS}/os/rt/ports/ARMCMx \
           ${CHIBIOS}/os/rt/ports/ARMCMx/compilers/GCC \
           ${CHIBIOS}/os/rt/ports/ARMCMx/devices/STM32F0xx
