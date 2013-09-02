@@ -50,7 +50,7 @@
  *          measurements.
  */
 #if !defined(CH_CFG_RTC_FREQUENCY) || defined(__DOXYGEN__)
-#define CH_CFG_RTC_FREQUENCY                72000000
+#define CH_CFG_RTC_FREQUENCY                168000000
 #endif
 
 /**

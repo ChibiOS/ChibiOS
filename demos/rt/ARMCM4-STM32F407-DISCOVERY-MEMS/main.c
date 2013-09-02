@@ -50,33 +50,32 @@ static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
 
 static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   static const char *states[] = {CH_THD_STATE_NAMES};
-  Thread *tp;
+  thread_t *tp;
 
   (void)argv;
   if (argc > 0) {
     chprintf(chp, "Usage: threads\r\n");
     return;
   }
-  chprintf(chp, "    addr    stack prio refs     state time\r\n");
+  chprintf(chp, "    addr    stack prio refs     state\r\n");
   tp = chRegFirstThread();
   do {
-    chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s %lu\r\n",
+    chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s\r\n",
              (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-             (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
-             states[tp->p_state], (uint32_t)tp->p_time);
+             (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1));
     tp = chRegNextThread(tp);
   } while (tp != NULL);
 }
 
 static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
-  Thread *tp;
+  thread_t *tp;
 
   (void)argv;
   if (argc > 0) {
     chprintf(chp, "Usage: test\r\n");
     return;
   }
-  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
+  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriorityX(),
                            TestThread, chp);
   if (tp == NULL) {
     chprintf(chp, "out of memory\r\n");
@@ -223,7 +222,7 @@ static msg_t Thread1(void *arg) {
  * Application entry point.
  */
 int main(void) {
-  Thread *shelltp = NULL;
+  thread_t *shelltp = NULL;
 
   /*
    * System initializations.
