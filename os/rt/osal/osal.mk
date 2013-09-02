@@ -1,5 +1,5 @@
 # OSAL files.
-OSALSRC += ${CHIBIOS}/os/hal/osal/chibios/osal.c
+OSALSRC += ${CHIBIOS}/os/rt/osal/osal.c
 
 # Required include directories
-OSALINC += ${CHIBIOS}/os/hal/osal/chibios
+OSALINC += ${CHIBIOS}/os/rt/osal
