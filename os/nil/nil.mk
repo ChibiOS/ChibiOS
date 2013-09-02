@@ -1,5 +1,5 @@
-# List of all the Nil RTOS kernel files.
-KERNSRC = ${NILRTOS}/os/kernel/nil.c
+# List of all the ChibiOS/NIL kernel files.
+KERNSRC = ${CHIBIOS}/os/nil/src/nil.c
 
 # Required include directories
-KERNINC = ${NILRTOS}/os/kernel
+KERNINC = ${CHIBIOS}/os/nil/include
