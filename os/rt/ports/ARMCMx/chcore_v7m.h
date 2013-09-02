@@ -219,7 +219,7 @@ typedef void *regarm_t;
 
 typedef uint64_t stkalign_t;
 
-struct extctx {
+struct port_extctx {
   regarm_t      r0;
   regarm_t      r1;
   regarm_t      r2;
@@ -250,7 +250,7 @@ struct extctx {
 #endif /* CORTEX_USE_FPU */
 };
 
-struct intctx {
+struct port_intctx {
 #if CORTEX_USE_FPU
   regarm_t      s16;
   regarm_t      s17;
@@ -284,11 +284,12 @@ struct intctx {
 
 /**
  * @brief   Platform dependent part of the @p thread_t structure.
- * @details In this port the structure just holds a pointer to the @p intctx
- *          structure representing the stack pointer at context switch time.
+ * @details In this port the structure just holds a pointer to the
+ *          @p port_intctx structure representing the stack pointer
+ *          at context switch time.
  */
 struct context {
-  struct intctx *r13;
+  struct port_intctx *r13;
 };
 
 /*===========================================================================*/
@@ -298,12 +299,12 @@ struct context {
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
- *          by an @p intctx structure.
+ *          by an @p port_intctx structure.
  */
 #define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
-  tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
-                                     wsize -                                \
-                                     sizeof(struct intctx));                \
+  tp->p_ctx.r13 = (struct port_intctx *)((uint8_t *)workspace +             \
+                                         wsize -                            \
+                                         sizeof(struct port_intctx));       \
   tp->p_ctx.r13->r4 = (void *)(pf);                                         \
   tp->p_ctx.r13->r5 = (void *)(arg);                                        \
   tp->p_ctx.r13->lr = (void *)(_port_thread_start);                         \
@@ -318,8 +319,8 @@ struct context {
  * @brief   Computes the thread working area global size.
  */
 #define THD_WA_SIZE(n) STACK_ALIGN(sizeof(thread_t) +                       \
-                                   sizeof(struct intctx) +                  \
-                                   sizeof(struct extctx) +                  \
+                                   sizeof(struct port_intctx) +             \
+                                   sizeof(struct port_extctx) +             \
                                    (n) + (CH_PORT_INT_REQUIRED_STACK))
 
 /**
@@ -371,7 +372,7 @@ struct context {
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \
-  struct intctx *r13 = (struct intctx *)__get_PSP();                        \
+  struct port_intctx *r13 = (struct port_intctx *)__get_PSP();              \
   if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
     chSysHalt("stack overflow");                                            \
   _port_switch(ntp, otp);                                                   \

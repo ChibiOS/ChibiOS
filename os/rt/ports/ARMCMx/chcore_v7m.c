@@ -61,8 +61,8 @@
  */
 void SVC_Handler(void) {
 
-  /* The extctx structure is pointed by the PSP register.*/
-  struct extctx *ctxp = (struct extctx *)__get_PSP();
+  /* The port_extctx structure is pointed by the PSP register.*/
+  struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
@@ -91,8 +91,8 @@ void SVC_Handler(void) {
  */
 void PendSV_Handler(void) {
 
-  /* The extctx structure is pointed by the PSP register.*/
-  struct extctx *ctxp = (struct extctx *)__get_PSP();
+  /* The port_extctx structure is pointed by the PSP register.*/
+  struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
@@ -101,7 +101,7 @@ void PendSV_Handler(void) {
 #if CORTEX_USE_FPU
   /* Restoring the special register FPCCR.*/
   FPU->FPCCR = (uint32_t)ctxp->fpccr;
-  FPU->FPCAR = FPU->FPCAR + sizeof (struct extctx);
+  FPU->FPCAR = FPU->FPCAR + sizeof (struct port_extctx);
 #endif
 
   /* Writing back the modified PSP value.*/
@@ -121,8 +121,8 @@ void _port_irq_epilogue(void) {
   port_lock_from_isr();
   if ((SCB->ICSR & SCB_ICSR_RETTOBASE_Msk) != 0) {
 
-    /* The extctx structure is pointed by the PSP register.*/
-    struct extctx *ctxp = (struct extctx *)__get_PSP();
+    /* The port_extctx structure is pointed by the PSP register.*/
+    struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
 
     /* Adding an artificial exception return context, there is no need to
        populate it fully.*/

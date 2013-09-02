@@ -60,8 +60,8 @@
  */
 void NMI_Handler(void) {
 
-  /* The extctx structure is pointed by the PSP register.*/
-  struct extctx *ctxp = (struct extctx *)__get_PSP();
+  /* The port_extctx structure is pointed by the PSP register.*/
+  struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
@@ -83,8 +83,8 @@ void NMI_Handler(void) {
  */
 void PendSV_Handler(void) {
 
-  /* The extctx structure is pointed by the PSP register.*/
-  struct extctx *ctxp = (struct extctx *)__get_PSP();
+  /* The port_extctx structure is pointed by the PSP register.*/
+  struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
@@ -107,7 +107,7 @@ void PendSV_Handler(void) {
 void _port_irq_epilogue(regarm_t lr) {
 
   if (lr != (regarm_t)0xFFFFFFF1) {
-    struct extctx *ctxp;
+    struct port_extctx *ctxp;
 
     port_lock_from_isr();
 

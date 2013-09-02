@@ -128,14 +128,14 @@ typedef uint64_t stkalign_t;
  *          preemption-capable interrupt handler.
  * @note    It is implemented to match the Cortex-Mx exception context.
  */
-struct extctx {};
+struct port_extctx {};
 
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
  *          switching.
  */
-struct intctx {};
+struct port_intctx {};
 #endif /* defined(__DOXYGEN__) */
 
 #endif /* !defined(_FROM_ASM_) */
