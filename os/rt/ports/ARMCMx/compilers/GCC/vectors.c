@@ -28,14 +28,17 @@
  * @{
  */
 
-#include "ch.h"
+#include <stdbool.h>
+#include <stdint.h>
 
-#if (CORTEX_NUM_VECTORS & 3) != 0
-#error "the constant CORTEX_NUM_VECTORS must be a multiple of 4"
+#include "cmparams.h"
+
+#if (CORTEX_NUM_VECTORS & 7) != 0
+#error "the constant CORTEX_NUM_VECTORS must be a multiple of 8"
 #endif
 
-#if (CORTEX_NUM_VECTORS < 4) || (CORTEX_NUM_VECTORS > 240)
-#error "the constant CORTEX_NUM_VECTORS must be between 4 and 240 inclusive"
+#if (CORTEX_NUM_VECTORS < 8) || (CORTEX_NUM_VECTORS > 240)
+#error "the constant CORTEX_NUM_VECTORS must be between 8 and 240 inclusive"
 #endif
 
 /**
@@ -78,7 +81,7 @@ __attribute__ ((naked))
 #endif
 void _unhandled_exception(void) {
 
-  while (TRUE)
+  while (true)
     ;
 }
 

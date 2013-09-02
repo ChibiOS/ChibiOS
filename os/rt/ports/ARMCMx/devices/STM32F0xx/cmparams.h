@@ -40,12 +40,12 @@
 /**
  * @brief   Memory Protection unit presence.
  */
-#define CORTEX_HAS_MPU          FALSE
+#define CORTEX_HAS_MPU          0
 
 /**
  * @brief   Floating Point unit presence.
  */
-#define CORTEX_HAS_FPU          FALSE
+#define CORTEX_HAS_FPU          0
 
 /**
  * @brief   Number of bits in priority masks.

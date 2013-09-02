@@ -40,12 +40,12 @@
 /**
  * @brief   Memory Protection unit presence.
  */
-#define CORTEX_HAS_MPU          TRUE
+#define CORTEX_HAS_MPU          1
 
 /**
  * @brief   Floating Point unit presence.
  */
-#define CORTEX_HAS_FPU          TRUE
+#define CORTEX_HAS_FPU          1
 
 /**
  * @brief   Number of bits in priority masks.
@@ -57,7 +57,7 @@
  * @note    This number does not include the 16 system vectors and must be
  *          rounded to a multiple of 4.
  */
-#define CORTEX_NUM_VECTORS      84
+#define CORTEX_NUM_VECTORS      88
 
 /* The following code is not processed when the file is included from an
    asm module.*/
