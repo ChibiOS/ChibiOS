@@ -55,10 +55,10 @@ THD_FUNCTION(Thread2, arg) {
  * Threads static table, one entry per thread. The number of entries must
  * match NIL_CFG_NUM_THREADS.
  */
-NIL_THREADS_TABLE_BEGIN()
-  NIL_THREADS_TABLE_ENTRY("thread1", Thread1, NULL, waThread1, sizeof(waThread1))
-  NIL_THREADS_TABLE_ENTRY("thread2", Thread2, NULL, waThread2, sizeof(waThread2))
-NIL_THREADS_TABLE_END()
+THD_TABLE_BEGIN
+  THD_TABLE_ENTRY("thread1", Thread1, NULL, waThread1, sizeof(waThread1))
+  THD_TABLE_ENTRY("thread2", Thread2, NULL, waThread2, sizeof(waThread2))
+THD_TABLE_END
 
 /*
  * Application entry point.

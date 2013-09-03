@@ -297,19 +297,19 @@ typedef struct {
 /**
  * @brief   Start of user threads table.
  */
-#define NIL_THREADS_TABLE_BEGIN()                                           \
+#define THD_TABLE_BEGIN                                                     \
   const thread_config_t nil_thd_configs[NIL_CFG_NUM_THREADS + 1] = {
 
 /**
  * @brief   Entry of user threads table
  */
-#define NIL_THREADS_TABLE_ENTRY(name, funcp, arg, wap, size)                \
+#define THD_TABLE_ENTRY(name, funcp, arg, wap, size)                        \
   {name, funcp, arg, wap, size},
 
 /**
  * @brief   End of user threads table.
  */
-#define NIL_THREADS_TABLE_END()                                             \
+#define THD_TABLE_END                                                       \
   {"idle", 0, NULL, NULL, 0}                                                \
 };
 /** @} */
