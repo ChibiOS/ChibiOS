@@ -46,7 +46,7 @@
 
 #if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
 
-static MEMORYPOOL_DECL(mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
+static MEMORYPOOL_DECL(mp1, THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE), NULL);
 
 /**
  * @page test_pools_001 Allocation and enqueuing test
@@ -65,7 +65,7 @@ static void *null_provider(size_t size) {
 
 static void pools1_setup(void) {
 
-  chPoolObjectInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
+  chPoolObjectInit(&mp1, THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE), NULL);
 }
 
 static void pools1_execute(void) {

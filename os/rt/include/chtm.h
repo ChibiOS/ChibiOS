@@ -43,8 +43,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_PORT_SUPPORTS_RT
-#error "CH_CFG_USE_TM requires CH_PORT_SUPPORTS_RT"
+#if !PORT_SUPPORTS_RT
+#error "CH_CFG_USE_TM requires PORT_SUPPORTS_RT"
 #endif
 
 /*===========================================================================*/

@@ -637,10 +637,10 @@ static void bmk13_execute(void) {
 
   test_print("--- System: ");
   test_printn(sizeof(ready_list_t) + sizeof(virtual_timers_list_t) +
-              CH_PORT_IDLE_THREAD_STACK_SIZE +
+              PORT_IDLE_THREAD_STACK_SIZE +
               (sizeof(thread_t) + sizeof(struct port_intctx) +
                sizeof(struct port_extctx) +
-               CH_PORT_INT_REQUIRED_STACK) * 2);
+               PORT_INT_REQUIRED_STACK) * 2);
   test_println(" bytes");
   test_print("--- Thread: ");
   test_printn(sizeof(thread_t));

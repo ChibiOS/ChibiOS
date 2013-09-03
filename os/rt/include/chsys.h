@@ -179,14 +179,14 @@
 /**
  * @brief   Returns the current value of the system real time counter.
  * @note    This function is only available if the port layer supports the
- *          option @p CH_PORT_SUPPORTS_RT.
+ *          option @p PORT_SUPPORTS_RT.
  *
  * @return              The value of the system realtime counter of
  *                      type rtcnt_t.
  *
  * @xclass
  */
-#if CH_PORT_SUPPORTS_RT || defined(__DOXYGEN__)
+#if PORT_SUPPORTS_RT || defined(__DOXYGEN__)
 #define chSysGetRealtimeCounterX() (rtcnt_t)port_rt_get_counter_value()
 #endif
 
@@ -220,7 +220,7 @@ extern "C" {
   void chSysTimerHandlerI(void);
   syssts_t chSysGetStatusAndLockX(void);
   void chSysRestoreStatusX(syssts_t sts);
-#if CH_PORT_SUPPORTS_RT
+#if PORT_SUPPORTS_RT
   bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end);
   void chSysPolledDelayX(rtcnt_t cycles);
 #endif

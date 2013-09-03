@@ -87,14 +87,17 @@ static void dyn1_execute(void) {
 
   (void)chHeapStatus(&heap1, &sz);
   /* Starting threads from the heap. */
-  threads[0] = chThdCreateFromHeap(&heap1, THD_WA_SIZE(THREADS_STACK_SIZE),
+  threads[0] = chThdCreateFromHeap(&heap1,
+                                   THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
                                    prio-1, thread, "A");
-  threads[1] = chThdCreateFromHeap(&heap1, THD_WA_SIZE(THREADS_STACK_SIZE),
+  threads[1] = chThdCreateFromHeap(&heap1,
+                                   THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
                                    prio-2, thread, "B");
   /* Allocating the whole heap in order to make the thread creation fail.*/
   (void)chHeapStatus(&heap1, &n);
   p1 = chHeapAlloc(&heap1, n);
-  threads[2] = chThdCreateFromHeap(&heap1, THD_WA_SIZE(THREADS_STACK_SIZE),
+  threads[2] = chThdCreateFromHeap(&heap1,
+                                   THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
                                    prio-3, thread, "C");
   chHeapFree(p1);
 
@@ -135,7 +138,7 @@ ROMCONST struct testcase testdyn1 = {
 
 static void dyn2_setup(void) {
 
-  chPoolObjectInit(&mp1, THD_WA_SIZE(THREADS_STACK_SIZE), NULL);
+  chPoolObjectInit(&mp1, THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE), NULL);
 }
 
 static void dyn2_execute(void) {

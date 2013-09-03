@@ -41,38 +41,38 @@
 /**
  * @brief   Macro defining the specific ARM architecture.
  */
-#define CH_ARCHITECTURE_ARM_v6M
+#define PORT_ARCHITECTURE_ARM_v6M
 
 /**
  * @brief   Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME            "ARMv6-M"
+#define PORT_ARCHITECTURE_NAME          "ARMv6-M"
 
 /**
  * @brief   Name of the architecture variant.
  */
-#define CH_CORE_VARIANT_NAME            "Cortex-M0"
+#define PORT_CORE_VARIANT_NAME          "Cortex-M0"
 
 #elif (CORTEX_MODEL == CORTEX_M0PLUS)
-#define CH_ARCHITECTURE_ARM_v6M
-#define CH_ARCHITECTURE_NAME            "ARMv6-M"
-#define CH_CORE_VARIANT_NAME            "Cortex-M0+"
+#define PORT_ARCHITECTURE_ARM_v6M
+#define PORT_ARCHITECTURE_NAME          "ARMv6-M"
+#define PORT_CORE_VARIANT_NAME          "Cortex-M0+"
 #endif
 
 /**
  * @brief   Port-specific information string.
  */
 #if !CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
-#define CH_PORT_INFO                    "Preemption through NMI"
+#define PORT_INFO                       "Preemption through NMI"
 #else
-#define CH_PORT_INFO                    "Preemption through PendSV"
+#define PORT_INFO                       "Preemption through PendSV"
 #endif
 /** @} */
 
 /**
  * @brief   This port does not support a realtime counter.
  */
-#define CH_PORT_SUPPORTS_RT             FALSE
+#define PORT_SUPPORTS_RT                FALSE
 
 /**
  * @brief   PendSV priority level.
@@ -95,8 +95,8 @@
  *          a stack frame when compiling without optimizations. You may
  *          reduce this value to zero when compiling with optimizations.
  */
-#if !defined(CH_PORT_IDLE_THREAD_STACK_SIZE)
-#define CH_PORT_IDLE_THREAD_STACK_SIZE  16
+#if !defined(PORT_IDLE_THREAD_STACK_SIZE)
+#define PORT_IDLE_THREAD_STACK_SIZE     16
 #endif
 
 /**
@@ -108,8 +108,8 @@
  *          with compiler optimizations disabled. The value can be reduced
  *          when compiler optimizations are enabled.
  */
-#if !defined(CH_PORT_INT_REQUIRED_STACK)
-#define CH_PORT_INT_REQUIRED_STACK      32
+#if !defined(PORT_INT_REQUIRED_STACK)
+#define PORT_INT_REQUIRED_STACK         32
 #endif
 
 /**
@@ -202,7 +202,7 @@ struct context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
+#define PORT_SETUP_CONTEXT(workspace, wsize, pf, arg) {                     \
   tp->p_ctx.r13 = (struct port_intctx *)((uint8_t *)workspace +             \
                                          wsize -                            \
                                          sizeof(struct port_intctx));       \
@@ -212,24 +212,11 @@ struct context {
 }
 
 /**
- * @brief   Enforces a correct alignment for a stack area size value.
- */
-#define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
-
-/**
  * @brief   Computes the thread working area global size.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(thread_t) +                       \
-                                   sizeof(struct port_intctx) +             \
-                                   sizeof(struct port_extctx) +             \
-                                   (n) + (CH_PORT_INT_REQUIRED_STACK))
-
-/**
- * @brief   Static working area allocation.
- * @details This macro is used to allocate a static thread working area
- *          aligned as both position and size.
- */
-#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
+#define PORT_WA_SIZE(n) (sizeof(struct port_intctx) +                       \
+                         sizeof(struct port_extctx) +                       \
+                         (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   IRQ prologue code.

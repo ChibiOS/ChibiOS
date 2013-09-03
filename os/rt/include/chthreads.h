@@ -108,6 +108,46 @@ typedef msg_t (*tfunc_t)(void *);
 /*===========================================================================*/
 
 /**
+ * @name    Working Areas and Alignment
+ */
+/**
+ * @brief   Enforces a correct alignment for a stack area size value.
+ *
+ * @param[in] n         the stack size to be aligned to the next stack
+ *                      alignment boundary
+ * @return              The aligned stack size.
+ *
+ * @api
+ */
+#define THD_ALIGN_STACK_SIZE(n)                                             \
+  ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
+
+/**
+ * @brief   Calculates the total Working Area size.
+ *
+ * @param[in] n         the stack size to be assigned to the thread
+ * @return              The total used memory in bytes.
+ *
+ * @api
+ */
+#define THD_WORKING_AREA_SIZE(n)                                            \
+  THD_ALIGN_STACK_SIZE(sizeof(thread_t) + PORT_WA_SIZE(n))
+
+/**
+ * @brief   Static working area allocation.
+ * @details This macro is used to allocate a static thread working area
+ *          aligned as both position and size.
+ *
+ * @param[in] s         the name to be assigned to the stack array
+ * @param[in] n         the stack size to be assigned to the thread
+ *
+ * @api
+ */
+#define THD_WORKING_AREA(s, n)                                              \
+  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof(stkalign_t)]
+/** @} */
+
+/**
  * @name    Macro Functions
  * @{
  */

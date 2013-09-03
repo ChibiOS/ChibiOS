@@ -322,19 +322,19 @@ msg_t TestThread(void *p) {
   test_println(CH_KERNEL_VERSION);
   test_print("*** Compiled:     ");
   test_println(__DATE__ " - " __TIME__);
-#ifdef CH_COMPILER_NAME
+#ifdef PORT_COMPILER_NAME
   test_print("*** Compiler:     ");
-  test_println(CH_COMPILER_NAME);
+  test_println(PORT_COMPILER_NAME);
 #endif
   test_print("*** Architecture: ");
-  test_println(CH_ARCHITECTURE_NAME);
-#ifdef CH_CORE_VARIANT_NAME
+  test_println(PORT_ARCHITECTURE_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
   test_print("*** Core Variant: ");
-  test_println(CH_CORE_VARIANT_NAME);
+  test_println(PORT_CORE_VARIANT_NAME);
 #endif
-#ifdef CH_PORT_INFO
+#ifdef PORT_INFO
   test_print("*** Port Info:    ");
-  test_println(CH_PORT_INFO);
+  test_println(PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
   test_print("*** Platform:     ");

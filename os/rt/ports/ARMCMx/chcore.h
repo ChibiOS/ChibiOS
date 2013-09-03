@@ -40,19 +40,19 @@
 /**
  * @brief   Macro defining a generic ARM architecture.
  */
-#define CH_ARCHITECTURE_ARM
+#define PORT_ARCHITECTURE_ARM
 
 /**
  * @brief   Compiler name and version.
  */
 #if defined(__GNUC__) || defined(__DOXYGEN__)
-#define CH_COMPILER_NAME                "GCC " __VERSION__
+#define PORT_COMPILER_NAME              "GCC " __VERSION__
 
 #elif defined(__ICCARM__)
-#define CH_COMPILER_NAME                "IAR"
+#define PORT_COMPILER_NAME              "IAR"
 
 #elif defined(__CC_ARM)
-#define CH_COMPILER_NAME                "RVCT"
+#define PORT_COMPILER_NAME              "RVCT"
 
 #else
 #error "unsupported compiler"

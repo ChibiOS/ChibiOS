@@ -21,7 +21,7 @@
 /*
  * Blue LED blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread1, 128);
+static THD_WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
@@ -37,7 +37,7 @@ static msg_t Thread1(void *arg) {
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread2, 128);
+static THD_WORKING_AREA(waThread2, 128);
 static msg_t Thread2(void *arg) {
 
   (void)arg;

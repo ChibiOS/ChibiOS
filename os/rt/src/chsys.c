@@ -57,7 +57,7 @@ ch_system_t ch;
 /**
  * @brief   Idle thread working area.
  */
-static WORKING_AREA(_idle_thread_wa, CH_PORT_IDLE_THREAD_STACK_SIZE);
+static THD_WORKING_AREA(_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 #endif /* CH_CFG_NO_IDLE_THREAD */
 
 /*===========================================================================*/

@@ -73,15 +73,15 @@ static void cmd_info(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   chprintf(chp, "Kernel:       %s\r\n", CH_KERNEL_VERSION);
-#ifdef CH_COMPILER_NAME
-  chprintf(chp, "Compiler:     %s\r\n", CH_COMPILER_NAME);
+#ifdef PORT_COMPILER_NAME
+  chprintf(chp, "Compiler:     %s\r\n", PORT_COMPILER_NAME);
 #endif
   chprintf(chp, "Architecture: %s\r\n", CH_ARCHITECTURE_NAME);
-#ifdef CH_CORE_VARIANT_NAME
-  chprintf(chp, "Core Variant: %s\r\n", CH_CORE_VARIANT_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
+  chprintf(chp, "Core Variant: %s\r\n", PORT_CORE_VARIANT_NAME);
 #endif
-#ifdef CH_PORT_INFO
-  chprintf(chp, "Port Info:    %s\r\n", CH_PORT_INFO);
+#ifdef PORT_INFO
+  chprintf(chp, "Port Info:    %s\r\n", PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
   chprintf(chp, "Platform:     %s\r\n", PLATFORM_NAME);
