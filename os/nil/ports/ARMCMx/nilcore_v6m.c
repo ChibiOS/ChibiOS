@@ -19,14 +19,14 @@
 */
 
 /**
- * @file    ARMCMx/chcore_v6m.c
+ * @file    ARMCMx/nilcore_v6m.c
  * @brief   ARMv6-M architecture port code.
  *
  * @addtogroup ARMCMx_V6M_CORE
  * @{
  */
 
-#include "ch.h"
+#include "nil.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -124,17 +124,8 @@ void _port_irq_epilogue(regarm_t lr) {
     /* Setting up a fake XPSR register value.*/
     ctxp->xpsr = (regarm_t)0x01000000;
 
-    /* The exit sequence is different depending on if a preemption is
-       required or not.*/
-    if (chSchIsPreemptionRequired()) {
-      /* Preemption is required we need to enforce a context switch.*/
-      ctxp->pc = (void *)_port_switch_from_isr;
-    }
-    else {
-      /* Preemption not required, we just need to exit the exception
-         atomically.*/
-      ctxp->pc = (void *)_port_exit_from_isr;
-    }
+    /* The context switch is handled outside the ISR context..*/
+    ctxp->pc = (regarm_t)_port_switch_from_isr;
 
     /* Note, returning without unlocking is intentional, this is done in
        order to keep the rest of the context switch atomic.*/

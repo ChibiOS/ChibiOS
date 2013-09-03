@@ -19,15 +19,15 @@
 */
 
 /**
- * @file    ARMCMx/chcore.h
+ * @file    ARMCMx/nilcore.h
  * @brief   ARM Cortex-Mx port macros and structures.
  *
  * @addtogroup ARMCMx_CORE
  * @{
  */
 
-#ifndef _CHCORE_H_
-#define _CHCORE_H_
+#ifndef _NILCORE_H_
+#define _NILCORE_H_
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -191,11 +191,11 @@ struct port_intctx {};
 /* Includes the sub-architecture-specific part.*/
 #if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M0PLUS) ||       \
     (CORTEX_MODEL == CORTEX_M1)
-#include "chcore_v6m.h"
+#include "nilcore_v6m.h"
 #elif (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4)
-#include "chcore_v7m.h"
+#include "nilcore_v7m.h"
 #endif
 
-#endif /* _CHCORE_H_ */
+#endif /* _NILCORE_H_ */
 
 /** @} */

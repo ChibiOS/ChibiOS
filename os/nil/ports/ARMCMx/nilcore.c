@@ -19,14 +19,14 @@
 */
 
 /**
- * @file    ARMCMx/chcore.c
+ * @file    ARMCMx/nilcore.c
  * @brief   ARM Cortex-Mx port code.
  *
  * @addtogroup ARMCMx_CORE
  * @{
  */
 
-#include "ch.h"
+#include "nil.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -51,5 +51,20 @@
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Halts the system.
+ * @note    The function is declared as a weak symbol, it is possible
+ *          to redefine it in your application code.
+ */
+#if !defined(__DOXYGEN__)
+__attribute__((naked, weak))
+#endif
+void port_halt(void) {
+
+  port_disable();
+  while (true) {
+  }
+}
 
 /** @} */

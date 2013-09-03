@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    ARMCMx/chcore_timer.h
+ * @file    ARMCMx/nilcore_timer.h
  * @brief   System timer header file.
  *
  * @addtogroup ARMCMx_TIMER
@@ -33,7 +33,7 @@
 /* If, for some reason, the use of the HAL-provided ST timer port interface
    is not wanted, it is possible to provide the timer interface into a custom
    module.*/
-#include "chcore_timer_ext.h"
+#include "nilcore_timer_ext.h"
 
 #else /* !defined(PORT_DO_NOT_USE_ST) */
 
