@@ -431,7 +431,7 @@ static void mtx5_setup(void) {
 }
 
 static void mtx5_execute(void) {
-  bool_t b;
+  bool b;
   tprio_t prio;
 
   prio = chThdGetPriorityX();

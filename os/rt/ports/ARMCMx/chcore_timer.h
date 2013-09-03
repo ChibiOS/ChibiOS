@@ -60,6 +60,42 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Starts the alarm.
+ * @note    Makes sure that no spurious alarms are triggered after
+ *          this call.
+ *
+ * @param[in] time      the time to be set for the first alarm
+ *
+ * @notapi
+ */
+#define port_timer_start_alarm(time) {                                      \
+  chDbgAssert(stIsAlarmActive() == false, "already active");                \
+  stStartAlarm(time);                                                       \
+}
+
+/**
+ * @brief   Stops the alarm interrupt.
+ *
+ * @notapi
+ */
+#define port_timer_stop_alarm() {                                           \
+  chDbgAssert(stIsAlarmActive() != false, "not active");                    \
+  stStopAlarm();                                                            \
+}
+
+/**
+ * @brief   Sets the alarm time.
+ *
+ * @param[in] time      the time to be set for the next alarm
+ *
+ * @notapi
+ */
+#define port_timer_set_alarm(time) {                                        \
+  chDbgAssert(stIsAlarmActive() != false, "not active");                    \
+  stSetAlarm(time);                                                         \
+}
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -81,48 +117,6 @@ static inline systime_t port_timer_get_time(void) {
 }
 
 /**
- * @brief   Starts the alarm.
- * @note    Makes sure that no spurious alarms are triggered after
- *          this call.
- *
- * @param[in] time      the time to be set for the first alarm
- *
- * @notapi
- */
-static inline void port_timer_start_alarm(systime_t time) {
-
-  chDbgAssert(stIsAlarmActive() == false, "already active");
-
-  stStartAlarm(time);
-}
-
-/**
- * @brief   Stops the alarm interrupt.
- *
- * @notapi
- */
-static inline void port_timer_stop_alarm(void) {
-
-  chDbgAssert(stIsAlarmActive() != false, "not active");
-
-  stStopAlarm();
-}
-
-/**
- * @brief   Sets the alarm time.
- *
- * @param[in] time      the time to be set for the next alarm
- *
- * @notapi
- */
-static inline void port_timer_set_alarm(systime_t time) {
-
-  chDbgAssert(stIsAlarmActive() != false, "not active");
-
-  stSetAlarm(time);
-}
-
-/**
  * @brief   Returns the current alarm time.
  *
  * @return              The currently set alarm time.
@@ -130,8 +124,6 @@ static inline void port_timer_set_alarm(systime_t time) {
  * @notapi
  */
 static inline systime_t port_timer_get_alarm(void) {
-
-  chDbgAssert(stIsAlarmActive() != false, "not active");
 
   return stGetAlarm();
 }

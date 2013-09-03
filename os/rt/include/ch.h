@@ -62,44 +62,6 @@
 #define CH_KERNEL_PATCH         0
 /** @} */
 
-/**
- * @name    Common constants
- */
-/**
- * @brief   Generic 'false' boolean constant.
- */
-#if !defined(FALSE) || defined(__DOXYGEN__)
-#define FALSE                   0
-#endif
-
-/**
- * @brief   Generic 'true' boolean constant.
- */
-#if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                    (!FALSE)
-#endif
-
-/**
- * @brief   Generic success constant.
- * @details This constant is functionally equivalent to @p false but more
- *          readable, it can be used as return value of all those functions
- *          returning a @p bool as a status indicator.
- */
-#if !defined(CH_SUCCESS) || defined(__DOXYGEN__)
-#define CH_SUCCESS              false
-#endif
-
-/**
- * @brief   Generic failure constant.
- * @details This constant is functionally equivalent to @p true but more
- *          readable, it can be used as return value of all those functions
- *          returning a @p bool as a status indicator.
- */
-#if !defined(CH_FAILED) || defined(__DOXYGEN__)
-#define CH_FAILED               true
-#endif
-/** @} */
-
 /* Forward declarations.*/
 typedef struct thread thread_t;
 typedef struct virtual_timer virtual_timer_t;
@@ -114,10 +76,10 @@ extern "C" {
 #endif
 
 /* Inclusion of all the kernel sub-headers.*/
-#include "chconf.h"
 #include "chtypes.h"
-#include "chdebug.h"
+#include "chconf.h"
 #include "chcore.h"
+#include "chdebug.h"
 #include "chtm.h"
 #include "chstats.h"
 #include "chsys.h"

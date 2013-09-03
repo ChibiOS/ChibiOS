@@ -188,9 +188,9 @@ ROMCONST struct testcase testdyn2 = {
  * coverage.
  */
 
-static bool_t regfind(thread_t *tp) {
+static bool regfind(thread_t *tp) {
   thread_t *ftp;
-  bool_t found = FALSE;
+  bool found = false;
 
   ftp = chRegFirstThread();
   do {

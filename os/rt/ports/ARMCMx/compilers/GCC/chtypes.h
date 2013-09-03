@@ -33,7 +33,24 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef bool            bool_t;         /**< Fast boolean type.             */
+/**
+ * @name    Common constants
+ */
+/**
+ * @brief   Generic 'false' boolean constant.
+ */
+#if !defined(FALSE) || defined(__DOXYGEN__)
+#define FALSE                   0
+#endif
+
+/**
+ * @brief   Generic 'true' boolean constant.
+ */
+#if !defined(TRUE) || defined(__DOXYGEN__)
+#define TRUE                    (!FALSE)
+#endif
+/** @} */
+
 typedef uint32_t        systime_t;      /**< System time.                   */
 typedef uint32_t        rtcnt_t;        /**< Realtime counter.              */
 typedef uint64_t        rttime_t;       /**< Time accumulator.              */
