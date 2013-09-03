@@ -1,15 +1,14 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012,2013 Giovanni Di Sirio.
+    ChibiOS/NIL - Copyright (C) 2012,2013 Giovanni Di Sirio.
 
-    This file is part of ChibiOS/RT.
+    This file is part of ChibiOS/NIL.
 
-    ChibiOS/RT is free software; you can redistribute it and/or modify
+    ChibiOS/NIL is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
-    ChibiOS/RT is distributed in the hope that it will be useful,
+    ChibiOS/NIL is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
@@ -19,15 +18,15 @@
 */
 
 /**
- * @file    ARMCMx/GCC/chtypes.h
+ * @file    ARMCMx/GCC/niltypes.h
  * @brief   ARM Cortex-Mx port system types.
  *
  * @addtogroup ARMCMx_CORE
  * @{
  */
 
-#ifndef _CHTYPES_H_
-#define _CHTYPES_H_
+#ifndef _NILTYPES_H_
+#define _NILTYPES_H_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -51,19 +50,11 @@
 #endif
 /** @} */
 
+typedef uint32_t        syssts_t;       /**< System status word.            */
 typedef uint32_t        systime_t;      /**< System time.                   */
 typedef uint32_t        rtcnt_t;        /**< Realtime counter.              */
-typedef uint64_t        rttime_t;       /**< Time accumulator.              */
-typedef uint32_t        syssts_t;       /**< System status word.            */
-typedef uint8_t         tmode_t;        /**< Thread flags.                  */
 typedef uint8_t         tstate_t;       /**< Thread state.                  */
-typedef uint8_t         trefs_t;        /**< Thread references counter.     */
-typedef uint8_t         tslices_t;      /**< Thread time slices counter.    */
-typedef uint32_t        tprio_t;        /**< Thread priority.               */
 typedef int32_t         msg_t;          /**< Inter-thread message.          */
-typedef int32_t         eventid_t;      /**< Numeric event identifier.      */
-typedef uint32_t        eventmask_t;    /**< Mask of event identifiers.     */
-typedef uint32_t        eventflags_t;   /**< Mask of event flags.           */
 typedef int32_t         cnt_t;          /**< Generic signed counter.        */
 typedef uint32_t        ucnt_t;         /**< Generic unsigned counter.      */
 
@@ -80,6 +71,6 @@ typedef uint32_t        ucnt_t;         /**< Generic unsigned counter.      */
  */
 #define NOINLINE __attribute__((noinline))
 
-#endif /* _CHTYPES_H_ */
+#endif /* _NILTYPES_H_ */
 
 /** @} */
