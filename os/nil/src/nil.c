@@ -65,7 +65,7 @@ nil_system_t nil;
  *
  * @special
  */
-void nilSysInit(void) {
+void chSysInit(void) {
   thread_ref_t tr;
   const thread_config_t *tcp;
 
@@ -76,7 +76,7 @@ void nilSysInit(void) {
   for (tr = &nil.threads[0], tcp = nil_thd_configs;
        tr < &nil.threads[NIL_CFG_NUM_THREADS];
        tr++, tcp++) {
-    tr->state = NIL_THD_READY;
+    tr->state = NIL_STATE_READY;
     tr->timeout = 0;
 
     /* Port dependent thread initialization.*/
@@ -94,7 +94,7 @@ void nilSysInit(void) {
   port_switch(nil.threads, &nil.threads[NIL_CFG_NUM_THREADS]);
 
   /* Interrupts enabled for the idle thread.*/
-  nilSysEnable();
+  chSysEnable();
 }
 
 /**
@@ -107,7 +107,7 @@ void nilSysInit(void) {
  *
  * @special
  */
-void nilSysHalt(const char *reason) {
+void chSysHalt(const char *reason) {
 
   port_disable();
 
@@ -133,7 +133,7 @@ void nilSysHalt(const char *reason) {
  *
  * @iclass
  */
-void nilSysTimerHandlerI(void) {
+void chSysTimerHandlerI(void) {
 
 #if NIL_CFG_TIMEDELTA == 0
   thread_ref_t tr = &nil.threads[0];
@@ -142,7 +142,7 @@ void nilSysTimerHandlerI(void) {
     /* Is the thread in a wait state with timeout?.*/
     if (tr->timeout > 0) {
 
-      nilDbgAssert(!NIL_THD_IS_READY(tr), "is ready");
+      chDbgAssert(!NIL_THD_IS_READY(tr), "is ready");
 
      /* Did the timer reach zero?*/
       if (--tr->timeout == 0) {
@@ -152,30 +152,30 @@ void nilSysTimerHandlerI(void) {
           tr->u1.semp->cnt++;
         else if (NIL_THD_IS_SUSP(tr))
           tr->u1.trp = NULL;
-        nilSchReadyI(tr, MSG_TIMEOUT);
+        chSchReadyI(tr, MSG_TIMEOUT);
       }
     }
     /* Lock released in order to give a preemption chance on those
        architectures supporting IRQ preemption.*/
-    nilSysUnlockFromISR();
+    chSysUnlockFromISR();
     tr++;
-    nilSysLockFromISR();
+    chSysLockFromISR();
   } while (tr < &nil.threads[NIL_CFG_NUM_THREADS]);
 #else
   thread_ref_t tr = &nil.threads[0];
   systime_t next = 0;
 
-  nilDbgAssert(nil.nexttime == port_timer_get_alarm(),
-               "nilSysTimerHandlerI(), #1", "time mismatch");
+  chDbgAssert(nil.nexttime == port_timer_get_alarm(),
+               "chSysTimerHandlerI(), #1", "time mismatch");
 
   do {
     /* Is the thread in a wait state with timeout?.*/
     if (tr->timeout > 0) {
 
-      nilDbgAssert(!NIL_THD_IS_READY(tr),
-                   "nilSysTimerHandlerI(), #2", "is ready");
-      nilDbgAssert(tr->timeout >= nil.nexttime - nil.lasttime,
-                   "nilSysTimerHandlerI(), #3", "skipped one");
+      chDbgAssert(!NIL_THD_IS_READY(tr),
+                   "chSysTimerHandlerI(), #2", "is ready");
+      chDbgAssert(tr->timeout >= nil.nexttime - nil.lasttime,
+                   "chSysTimerHandlerI(), #3", "skipped one");
 
       tr->timeout -= nil.nexttime - nil.lasttime;
       if (tr->timeout == 0) {
@@ -185,7 +185,7 @@ void nilSysTimerHandlerI(void) {
           tr->u1.semp->cnt++;
         else if (NIL_THD_IS_SUSP(tr))
           tr->u1.trp = NULL;
-        nilSchReadyI(tr, NIL_MSG_TMO);
+        chSchReadyI(tr, NIL_MSG_TMO);
       }
       else {
         if (tr->timeout <= next - 1)
@@ -194,9 +194,9 @@ void nilSysTimerHandlerI(void) {
     }
     /* Lock released in order to give a preemption chance on those
        architectures supporting IRQ preemption.*/
-    nilSysUnlockFromISR();
+    chSysUnlockFromISR();
     tr++;
-    nilSysLockFromISR();
+    chSysLockFromISR();
   } while (tr < &nil.threads[NIL_CFG_NUM_THREADS]);
   nil.lasttime = nil.nexttime;
   if (next > 0) {
@@ -218,16 +218,16 @@ void nilSysTimerHandlerI(void) {
  *
  * @return              The same reference passed as parameter.
  */
-thread_ref_t nilSchReadyI(thread_ref_t tr, msg_t msg) {
+thread_ref_t chSchReadyI(thread_ref_t tr, msg_t msg) {
 
-  nilDbgAssert((tr >= nil.threads) &&
+  chDbgAssert((tr >= nil.threads) &&
                (tr < &nil.threads[NIL_CFG_NUM_THREADS]),
                "pointer out of range");
-  nilDbgAssert(!NIL_THD_IS_READY(tr), "already ready");
-  nilDbgAssert(nil.next <= nil.current, "priority ordering");
+  chDbgAssert(!NIL_THD_IS_READY(tr), "already ready");
+  chDbgAssert(nil.next <= nil.current, "priority ordering");
 
   tr->u1.msg = msg;
-  tr->state = NIL_THD_READY;
+  tr->state = NIL_STATE_READY;
   tr->timeout = 0;
   if (tr < nil.next)
     nil.next = tr;
@@ -239,7 +239,7 @@ thread_ref_t nilSchReadyI(thread_ref_t tr, msg_t msg) {
  *
  * @sclass
  */
-void nilSchRescheduleS() {
+void chSchRescheduleS() {
   thread_ref_t otr = nil.current;
   thread_ref_t ntr = nil.next;
 
@@ -271,10 +271,10 @@ void nilSchRescheduleS() {
  *
  * @sclass
  */
-msg_t nilSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
+msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
   thread_ref_t ntr, otr = nil.current;
 
-  nilDbgAssert(otr != &nil.threads[NIL_CFG_NUM_THREADS],
+  chDbgAssert(otr != &nil.threads[NIL_CFG_NUM_THREADS],
                "idle cannot sleep");
 
   /* Storing the wait object for the current thread.*/
@@ -282,7 +282,7 @@ msg_t nilSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
 
 #if NIL_CFG_TIMEDELTA > 0
   if (timeout != TIME_INFINITE) {
-    systime_t time = nilTimeNowI() + timeout;
+    systime_t time = chTimeNowI() + timeout;
 
     /* TIMEDELTA makes sure to have enough time to reprogram the timer
        before the free-running timer counter reaches the selected timeout.*/
@@ -297,7 +297,7 @@ msg_t nilSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
     else {
       /* Special case, there are already other threads with a timeout
          activated, evaluating the order.*/
-      if (nilTimeIsWithin(time, nil.lasttime, nil.nexttime)) {
+      if (chTimeIsWithin(time, nil.lasttime, nil.nexttime)) {
         port_timer_set_alarm(time);
         nil.nexttime = time;
       }
@@ -329,7 +329,7 @@ msg_t nilSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
 
     /* Points to the next thread in lowering priority order.*/
     ntr++;
-    nilDbgAssert(ntr <= &nil.threads[NIL_CFG_NUM_THREADS],
+    chDbgAssert(ntr <= &nil.threads[NIL_CFG_NUM_THREADS],
                  "pointer out of range");
   }
 }
@@ -348,13 +348,13 @@ msg_t nilSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
  *
  * @sclass
  */
-msg_t nilThdSuspendTimeoutS(thread_ref_t *trp, systime_t timeout) {
+msg_t chThdSuspendTimeoutS(thread_ref_t *trp, systime_t timeout) {
 
-  nilDbgAssert(*trp == NULL, "not NULL");
+  chDbgAssert(*trp == NULL, "not NULL");
 
   *trp = nil.current;
   nil.current->u1.trp = trp;
-  return nilSchGoSleepTimeoutS(NIL_THD_SUSP, timeout);
+  return chSchGoSleepTimeoutS(NIL_STATE_SUSP, timeout);
 }
 
 /**
@@ -367,15 +367,15 @@ msg_t nilThdSuspendTimeoutS(thread_ref_t *trp, systime_t timeout) {
  *
  * @iclass
  */
-void nilThdResumeI(thread_ref_t *trp, msg_t msg) {
+void chThdResumeI(thread_ref_t *trp, msg_t msg) {
 
   if (*trp != NULL) {
     thread_ref_t tr = *trp;
 
-    nilDbgAssert(NIL_THD_IS_SUSP(tr), "not suspended");
+    chDbgAssert(NIL_THD_IS_SUSP(tr), "not suspended");
 
     *trp = NULL;
-    nilSchReadyI(tr, msg);
+    chSchReadyI(tr, msg);
   }
 }
 
@@ -386,11 +386,11 @@ void nilThdResumeI(thread_ref_t *trp, msg_t msg) {
  *
  * @api
  */
-void nilThdSleep(systime_t time) {
+void chThdSleep(systime_t time) {
 
-  nilSysLock();
-  nilThdSleepS(time);
-  nilSysUnlock();
+  chSysLock();
+  chThdSleepS(time);
+  chSysUnlock();
 }
 
 /**
@@ -401,30 +401,30 @@ void nilThdSleep(systime_t time) {
  *
  * @api
  */
-void nilThdSleepUntil(systime_t time) {
+void chThdSleepUntil(systime_t time) {
 
-  nilSysLock();
-  nilThdSleepUntilS(time);
-  nilSysUnlock();
+  chSysLock();
+  chThdSleepUntilS(time);
+  chSysUnlock();
 }
 
 /**
  * @brief   Current system time.
- * @details Returns the number of system ticks since the @p nilSysInit()
+ * @details Returns the number of system ticks since the @p chSysInit()
  *          invocation.
  * @note    The counter can reach its maximum and then restart from zero.
- * @note    This function is designed to work with the @p nilThdSleepUntil().
+ * @note    This function is designed to work with the @p chThdSleepUntil().
  *
  * @return              The system time in ticks.
  *
  * @api
  */
-systime_t nilTimeNow(void) {
+systime_t chTimeNow(void) {
   systime_t time;
 
-  nilSysLock();
-  time = nilTimeNowI();
-  nilSysUnlock();
+  chSysLock();
+  time = chTimeNowI();
+  chSysUnlock();
   return time;
 }
 
@@ -442,10 +442,10 @@ systime_t nilTimeNow(void) {
  *
  * @api
  */
-bool nilTimeNowIsWithin(systime_t start, systime_t end) {
+bool chTimeNowIsWithin(systime_t start, systime_t end) {
 
-  systime_t time = nilTimeNow();
-  return nilTimeIsWithin(time, start, end);
+  systime_t time = chTimeNow();
+  return chTimeIsWithin(time, start, end);
 }
 
 /**
@@ -461,18 +461,18 @@ bool nilTimeNowIsWithin(systime_t start, systime_t end) {
  *                      released from the semaphore.
  * @retval NIL_MSG_OK   if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
- * @retval NIL_MSG_RST  if the semaphore has been reset using @p nilSemReset().
+ * @retval NIL_MSG_RST  if the semaphore has been reset using @p chSemReset().
  * @retval NIL_MSG_TMO  if the semaphore has not been signaled or reset within
  *                      the specified timeout.
  *
  * @api
  */
-msg_t nilSemWaitTimeout(semaphore_t *sp, systime_t timeout) {
+msg_t chSemWaitTimeout(semaphore_t *sp, systime_t timeout) {
   msg_t msg;
 
-  nilSysLock();
-  msg = nilSemWaitTimeoutS(sp, timeout);
-  nilSysUnlock();
+  chSysLock();
+  msg = chSemWaitTimeoutS(sp, timeout);
+  chSysUnlock();
   return msg;
 }
 
@@ -489,13 +489,13 @@ msg_t nilSemWaitTimeout(semaphore_t *sp, systime_t timeout) {
  *                      released from the semaphore.
  * @retval NIL_MSG_OK   if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
- * @retval NIL_MSG_RST  if the semaphore has been reset using @p nilSemReset().
+ * @retval NIL_MSG_RST  if the semaphore has been reset using @p chSemReset().
  * @retval NIL_MSG_TMO  if the semaphore has not been signaled or reset within
  *                      the specified timeout.
  *
  * @sclass
  */
-msg_t nilSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
+msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
 
   /* Note, the semaphore counter is a volatile variable so accesses are
      manually optimized.*/
@@ -505,7 +505,7 @@ msg_t nilSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
       return MSG_TIMEOUT;
     sp->cnt = cnt - 1;
     nil.current->u1.semp = sp;
-    return nilSchGoSleepTimeoutS(NIL_THD_WTSEM, timeout);
+    return chSchGoSleepTimeoutS(NIL_STATE_WTSEM, timeout);
   }
   sp->cnt = cnt - 1;
   return MSG_OK;
@@ -522,12 +522,12 @@ msg_t nilSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
  *
  * @api
  */
-void nilSemSignal(semaphore_t *sp) {
+void chSemSignal(semaphore_t *sp) {
 
-  nilSysLock();
-  nilSemSignalI(sp);
-  nilSchRescheduleS();
-  nilSysUnlock();
+  chSysLock();
+  chSemSignalI(sp);
+  chSchRescheduleS();
+  chSysUnlock();
 }
 
 /**
@@ -541,7 +541,7 @@ void nilSemSignal(semaphore_t *sp) {
  *
  * @iclass
  */
-void nilSemSignalI(semaphore_t *sp) {
+void chSemSignalI(semaphore_t *sp) {
 
   if (++sp->cnt <= 0) {
     thread_ref_t tr = nil.threads;
@@ -549,9 +549,9 @@ void nilSemSignalI(semaphore_t *sp) {
       /* Is this thread waiting on this semaphore?*/
       if (tr->u1.semp == sp) {
 
-        nilDbgAssert(NIL_THD_IS_WTSEM(tr), "not waiting");
+        chDbgAssert(NIL_THD_IS_WTSEM(tr), "not waiting");
 
-        nilSchReadyI(tr, MSG_OK);
+        chSchReadyI(tr, MSG_OK);
         return;
       }
       tr++;
@@ -575,12 +575,12 @@ void nilSemSignalI(semaphore_t *sp) {
  *
  * @api
  */
-void nilSemReset(semaphore_t *sp, cnt_t n) {
+void chSemReset(semaphore_t *sp, cnt_t n) {
 
-  nilSysLock();
-  nilSemResetI(sp, n);
-  nilSchRescheduleS();
-  nilSysUnlock();
+  chSysLock();
+  chSemResetI(sp, n);
+  chSchRescheduleS();
+  chSysUnlock();
 }
 
 /**
@@ -599,7 +599,7 @@ void nilSemReset(semaphore_t *sp, cnt_t n) {
  *
  * @iclass
  */
-void nilSemResetI(semaphore_t *sp, cnt_t n) {
+void chSemResetI(semaphore_t *sp, cnt_t n) {
   thread_ref_t tr;
   cnt_t cnt;
 
@@ -610,10 +610,10 @@ void nilSemResetI(semaphore_t *sp, cnt_t n) {
     /* Is this thread waiting on this semaphore?*/
     if (tr->u1.semp == sp) {
 
-      nilDbgAssert(NIL_THD_IS_WTSEM(tr), "not waiting");
+      chDbgAssert(NIL_THD_IS_WTSEM(tr), "not waiting");
 
       cnt++;
-      nilSchReadyI(tr, MSG_RESET);
+      chSchReadyI(tr, MSG_RESET);
     }
     tr++;
   }

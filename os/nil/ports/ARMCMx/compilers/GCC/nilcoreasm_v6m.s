@@ -89,7 +89,7 @@ _port_thread_start:
                 mov     r0, r5
                 blx     r4
                 mov     r3, #0
-                bl      nilSysHalt
+                bl      chSysHalt
 
 /*--------------------------------------------------------------------------*
  * Post-IRQ switch code.
@@ -99,7 +99,7 @@ _port_thread_start:
                 .thumb_func
                 .globl  _port_switch_from_isr
 _port_switch_from_isr:
-                bl      nilSchRescheduleS
+                bl      chSchRescheduleS
                 .globl  _port_exit_from_isr
 _port_exit_from_isr:
                 ldr     r2, .L2

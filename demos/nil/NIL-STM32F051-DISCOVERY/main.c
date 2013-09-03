@@ -29,9 +29,9 @@ THD_FUNCTION(Thread1, arg) {
 
   while (true) {
 //    gpioSetPad(GPIOC, GPIOC_LED4);
-    nilThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(500);
 //    gpioClearPad(GPIOC, GPIOC_LED4);
-    nilThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(500);
   }
 }
 
@@ -45,9 +45,9 @@ THD_FUNCTION(Thread2, arg) {
 
   while (true) {
 //    gpioSetPad(GPIOC, GPIOC_LED3);
-    nilThdSleepMilliseconds(250);
+    chThdSleepMilliseconds(250);
 //    gpioClearPad(GPIOC, GPIOC_LED3);
-    nilThdSleepMilliseconds(250);
+    chThdSleepMilliseconds(250);
   }
 }
 
@@ -71,7 +71,7 @@ int main(void) {
    * - Nil RTOS initialization.
    */
 //  hwInit();
-  nilSysInit();
+  chSysInit();
 
   /* This is now the idle thread loop, you may perform here a low priority
      task but you must never try to sleep or wait in this loop.*/

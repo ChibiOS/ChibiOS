@@ -43,11 +43,11 @@
  */
 #define _NIL_                           /**< @brief Nil RTOS identification.*/
 
-#define NIL_KERNEL_VERSION      "0.1.0alpha"
+#define CH_KERNEL_VERSION      "0.1.0alpha"
 
-#define NIL_KERNEL_MAJOR        0
-#define NIL_KERNEL_MINOR        1
-#define NIL_KERNEL_PATCH        0
+#define CH_KERNEL_MAJOR        0
+#define CH_KERNEL_MINOR        1
+#define CH_KERNEL_PATCH        0
 /** @} */
 
 /**
@@ -84,14 +84,14 @@
  * @name    Thread state related macros
  * @{
  */
-#define NIL_THD_READY           0   /**< @brief Thread ready or executing.  */
-#define NIL_THD_SLEEPING        1   /**< @brief Thread sleeping.            */
-#define NIL_THD_SUSP            2   /**< @brief Thread suspended.           */
-#define NIL_THD_WTSEM           3   /**< @brief Thread waiting on semaphore.*/
-#define NIL_THD_IS_READY(tr)    ((tr)->state == NIL_THD_READY)
-#define NIL_THD_IS_SLEEPING(tr) ((tr)->state == NIL_THD_SLEEPING)
-#define NIL_THD_IS_SUSP(tr)     ((tr)->state == NIL_THD_SUSP)
-#define NIL_THD_IS_WTSEM(tr)    ((tr)->state == NIL_THD_WTSEM)
+#define NIL_STATE_READY         0   /**< @brief Thread ready or executing.  */
+#define NIL_STATE_SLEEPING      1   /**< @brief Thread sleeping.            */
+#define NIL_STATE_SUSP          2   /**< @brief Thread suspended.           */
+#define NIL_STATE_WTSEM         3   /**< @brief Thread waiting on semaphore.*/
+#define NIL_THD_IS_READY(tr)    ((tr)->state == NIL_STATE_READY)
+#define NIL_THD_IS_SLEEPING(tr) ((tr)->state == NIL_STATE_SLEEPING)
+#define NIL_THD_IS_SUSP(tr)     ((tr)->state == NIL_STATE_SUSP)
+#define NIL_THD_IS_WTSEM(tr)    ((tr)->state == NIL_STATE_WTSEM)
 /** @} */
 
 /*===========================================================================*/
@@ -163,9 +163,9 @@
 #endif
 
 #if NIL_CFG_ENABLE_ASSERTS
-#define NIL_DBG_ENABLED                 TRUE
+#define CH_DBG_ENABLED                 TRUE
 #else
-#define NIL_DBG_ENABLED                 FALSE
+#define CH_DBG_ENABLED                 FALSE
 #endif
 
 /*===========================================================================*/
@@ -222,7 +222,7 @@ struct nil_thread {
   intctx_t              *ctxp;  /**< @brief Pointer to internal context.    */
   tstate_t              state;  /**< @brief Thread state.                   */
   /* Note, the following union contains a pointer while the thread is in a
-     sleeping state (!NIL_THD_IS_READY()) else contains the wake-up message.*/
+     sleeping state (!CH_THD_IS_READY()) else contains the wake-up message.*/
   union {
     msg_t               msg;    /**< @brief Wake-up message.                */
     void                *p;     /**< @brief Generic pointer.                */
@@ -271,7 +271,7 @@ typedef struct {
    * @brief   Thread structures for all the defined threads.
    */
   thread_t          threads[NIL_CFG_NUM_THREADS + 1];
-#if NIL_DBG_ENABLED || defined(__DOXYGEN__)
+#if CH_DBG_ENABLED || defined(__DOXYGEN__)
   /**
    * @brief   Panic message.
    * @note    This field is only present if some debug options have been
@@ -288,7 +288,7 @@ typedef struct {
 /**
  * @brief   String quotation macro.
  */
-#define __NIL_QUOTE(p) #p
+#define __CH_QUOTE(p) #p
 
 /**
  * @name    Threads tables definition macros
@@ -375,7 +375,7 @@ typedef struct {
  *
  * @special
  */
-#define NIL_IRQ_PROLOGUE() PORT_IRQ_PROLOGUE()
+#define CH_IRQ_PROLOGUE() PORT_IRQ_PROLOGUE()
 
 /**
  * @brief   IRQ handler exit code.
@@ -383,7 +383,7 @@ typedef struct {
  *
  * @special
  */
-#define NIL_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()
+#define CH_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()
 
 /**
  * @brief   Standard normal IRQ handler declaration.
@@ -392,7 +392,7 @@ typedef struct {
  *
  * @special
  */
-#define NIL_IRQ_HANDLER(id) PORT_IRQ_HANDLER(id)
+#define CH_IRQ_HANDLER(id) PORT_IRQ_HANDLER(id)
 /** @} */
 
 /**
@@ -406,7 +406,7 @@ typedef struct {
  *
  * @special
  */
-#define NIL_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
+#define CH_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
 /** @} */
 
 /**
@@ -464,28 +464,28 @@ typedef struct {
  *
  * @special
  */
-#define nilSysDisable() port_disable()
+#define chSysDisable() port_disable()
 
 /**
  * @brief   Enters the kernel lock mode.
  *
  * @special
  */
-#define nilSysEnable() port_enable()
+#define chSysEnable() port_enable()
 
 /**
  * @brief   Enters the kernel lock mode.
  *
  * @special
  */
-#define nilSysLock() port_lock()
+#define chSysLock() port_lock()
 
 /**
  * @brief   Leaves the kernel lock mode.
  *
  * @special
  */
-#define nilSysUnlock() port_unlock()
+#define chSysUnlock() port_unlock()
 
 /**
  * @brief   Enters the kernel lock mode from within an interrupt handler.
@@ -499,7 +499,7 @@ typedef struct {
  *
  * @special
  */
-#define nilSysLockFromISR() port_lock_from_isr()
+#define chSysLockFromISR() port_lock_from_isr()
 
 /**
  * @brief   Leaves the kernel lock mode from within an interrupt handler.
@@ -514,7 +514,7 @@ typedef struct {
  *
  * @special
  */
-#define nilSysUnlockFromISR() port_unlock_from_isr()
+#define chSysUnlockFromISR() port_unlock_from_isr()
 
 /**
  * @brief   Delays the invoking thread for the specified number of seconds.
@@ -526,7 +526,7 @@ typedef struct {
  *
  * @api
  */
-#define nilThdSleepSeconds(sec) nilThdSleep(S2ST(sec))
+#define chThdSleepSeconds(sec) chThdSleep(S2ST(sec))
 
 /**
  * @brief   Delays the invoking thread for the specified number of
@@ -539,7 +539,7 @@ typedef struct {
  *
  * @api
  */
-#define nilThdSleepMilliseconds(msec) nilThdSleep(MS2ST(msec))
+#define chThdSleepMilliseconds(msec) chThdSleep(MS2ST(msec))
 
 /**
  * @brief   Delays the invoking thread for the specified number of
@@ -552,7 +552,7 @@ typedef struct {
  *
  * @api
  */
-#define nilThdSleepMicroseconds(usec) nilThdSleep(US2ST(usec))
+#define chThdSleepMicroseconds(usec) chThdSleep(US2ST(usec))
 
 /**
  * @brief   Suspends the invoking thread for the specified time.
@@ -561,7 +561,7 @@ typedef struct {
  *
  * @sclass
  */
-#define nilThdSleepS(timeout) nilSchGoSleepTimeoutS(NIL_THD_SLEEPING, timeout)
+#define chThdSleepS(timeout) chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, timeout)
 
 /**
  * @brief   Suspends the invoking thread until the system time arrives to the
@@ -571,8 +571,8 @@ typedef struct {
  *
  * @sclass
  */
-#define nilThdSleepUntilS(time)                                             \
-  nilSchGoSleepTimeoutS(NIL_THD_SLEEPING, (time) - nilTimeNow())
+#define chThdSleepUntilS(time)                                             \
+  chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, (time) - chTimeNow())
 
 /**
  * @brief   Initializes a semaphore with the specified counter value.
@@ -583,7 +583,7 @@ typedef struct {
  *
  * @init
  */
-#define nilSemInit(sp, n) ((sp)->cnt = n)
+#define chSemInit(sp, n) ((sp)->cnt = n)
 
 /**
  * @brief   Performs a wait operation on a semaphore.
@@ -591,13 +591,13 @@ typedef struct {
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval NIL_MSG_OK   if the thread has not stopped on the semaphore or the
+ * @retval CH_MSG_OK   if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
- * @retval NIL_MSG_RST  if the semaphore has been reset using @p nilSemReset().
+ * @retval CH_MSG_RST  if the semaphore has been reset using @p chSemReset().
  *
  * @api
  */
-#define nilSemWait(sp) nilSemWaitTimeout(sp, TIME_INFINITE)
+#define chSemWait(sp) chSemWaitTimeout(sp, TIME_INFINITE)
 
 /**
  * @brief   Performs a wait operation on a semaphore.
@@ -605,29 +605,29 @@ typedef struct {
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval NIL_MSG_OK   if the thread has not stopped on the semaphore or the
+ * @retval CH_MSG_OK   if the thread has not stopped on the semaphore or the
  *                      semaphore has been signaled.
- * @retval NIL_MSG_RST  if the semaphore has been reset using @p nilSemReset().
+ * @retval CH_MSG_RST  if the semaphore has been reset using @p chSemReset().
  *
  * @sclass
  */
-#define nilSemWaitS(sp) nilSemWaitTimeoutS(sp, TIME_INFINITE)
+#define chSemWaitS(sp) chSemWaitTimeoutS(sp, TIME_INFINITE)
 
 /**
  * @brief   Current system time.
- * @details Returns the number of system ticks since the @p nilSysInit()
+ * @details Returns the number of system ticks since the @p chSysInit()
  *          invocation.
  * @note    The counter can reach its maximum and then restart from zero.
- * @note    This function is designed to work with the @p nilThdSleepUntil().
+ * @note    This function is designed to work with the @p chThdSleepUntil().
  *
  * @return              The system time in ticks.
  *
  * @iclass
  */
 #if NIL_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
-#define nilTimeNowI() (nil.systime)
+#define chTimeNowI() (nil.systime)
 #else
-#define nilTimeNowI() port_timer_get_time()
+#define chTimeNowI() port_timer_get_time()
 #endif
 
 /**
@@ -644,7 +644,7 @@ typedef struct {
  *
  * @api
  */
-#define nilTimeIsWithin(time, start, end)                                   \
+#define chTimeIsWithin(time, start, end)                                   \
   ((end) > (start) ? ((time) >= (start)) && ((time) < (end)) :              \
                      ((time) >= (start)) || ((time) < (end)))
 
@@ -663,14 +663,14 @@ typedef struct {
  *
  * @api
  */
-#if !defined(nilDbgAssert)
-#define nilDbgAssert(c, r) {                                                \
+#if !defined(chDbgAssert)
+#define chDbgAssert(c, r) {                                                \
   if (!(c))                                                                 \
-    nilSysHalt("A:"__NIL_QUOTE(__FUNCTION__)":"__NIL_QUOTE(__LINE__));      \
+    chSysHalt("A:"__CH_QUOTE(__FUNCTION__)":"__CH_QUOTE(__LINE__));      \
 }
-#endif /* !defined(nilDbgAssert) */
+#endif /* !defined(chDbgAssert) */
 #else /* !NIL_CFG_ENABLE_ASSERTS */
-#define nilDbgAssert(c, r) /*{(void)(c);}*/
+#define chDbgAssert(c, r) /*{(void)(c);}*/
 #endif /* !NIL_CFG_ENABLE_ASSERTS */
 /** @} */
 
@@ -686,24 +686,24 @@ extern const thread_config_t nil_thd_configs[NIL_CFG_NUM_THREADS + 1];
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void nilSysInit(void);
-  void nilSysHalt(const char *reason);
-  void nilSysTimerHandlerI(void);
-  thread_ref_t nilSchReadyI(thread_ref_t trp, msg_t msg);
-  msg_t nilSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);
-  void nilSchRescheduleS(void);
-  msg_t nilThdSuspendTimeoutS(thread_ref_t *trp, systime_t timeout);
-  void nilThdResumeI(thread_ref_t *trp, msg_t msg);
-  void nilThdSleep(systime_t time);
-  void nilThdSleepUntil(systime_t time);
-  systime_t nilTimeNow(void);
-  bool nilTimeNowIsWithin(systime_t start, systime_t end);
-  msg_t nilSemWaitTimeout(semaphore_t *sp, systime_t time);
-  msg_t nilSemWaitTimeoutS(semaphore_t *sp, systime_t time);
-  void nilSemSignal(semaphore_t *sp);
-  void nilSemSignalI(semaphore_t *sp);
-  void nilSemReset(semaphore_t *sp, cnt_t n);
-  void nilSemResetI(semaphore_t *sp, cnt_t n);
+  void chSysInit(void);
+  void chSysHalt(const char *reason);
+  void chSysTimerHandlerI(void);
+  thread_ref_t chSchReadyI(thread_ref_t trp, msg_t msg);
+  msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);
+  void chSchRescheduleS(void);
+  msg_t chThdSuspendTimeoutS(thread_ref_t *trp, systime_t timeout);
+  void chThdResumeI(thread_ref_t *trp, msg_t msg);
+  void chThdSleep(systime_t time);
+  void chThdSleepUntil(systime_t time);
+  systime_t chTimeNow(void);
+  bool chTimeNowIsWithin(systime_t start, systime_t end);
+  msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time);
+  msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time);
+  void chSemSignal(semaphore_t *sp);
+  void chSemSignalI(semaphore_t *sp);
+  void chSemReset(semaphore_t *sp, cnt_t n);
+  void chSemResetI(semaphore_t *sp, cnt_t n);
 #ifdef __cplusplus
 }
 #endif
