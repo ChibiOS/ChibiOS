@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    ARMCMx/GCC/chcoreasm_v6m.s
+ * @file    ARMCMx/GCC/nilcoreasm_v6m.s
  * @brief   ARMv6-M architecture port low level code.
  *
  * @addtogroup ARMCMx_CORE
@@ -27,8 +27,8 @@
  */
 
 #define _FROM_ASM_
-#include "chconf.h"
-#include "chcore.h"
+#include "nilconf.h"
+#include "nilcore.h"
 
 #if !defined(FALSE) || defined(__DOXYGEN__)
 #define FALSE   0
@@ -41,7 +41,7 @@
 #if !defined(__DOXYGEN__)
 
 
-                .set    CONTEXT_OFFSET, 12
+                .set    CONTEXT_OFFSET, 0
                 .set    SCB_ICSR, 0xE000ED04
                 .set    ICSR_PENDSVSET, 0x10000000
                 .set    ICSR_NMIPENDSET, 0x80000000
@@ -86,16 +86,11 @@ _port_switch:
                 .thumb_func
                 .globl  _port_thread_start
 _port_thread_start:
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
-#endif
-#if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
-#endif
                 cpsie   i
                 mov     r0, r5
                 blx     r4
-                bl      chThdExit
+                mov     r3, #0
+                bl      nilSysHalt
 
 /*--------------------------------------------------------------------------*
  * Post-IRQ switch code.
@@ -105,19 +100,7 @@ _port_thread_start:
                 .thumb_func
                 .globl  _port_switch_from_isr
 _port_switch_from_isr:
-#if CH_DBG_STATISTICS
-                bl      _stats_start_measure_crit_thd
-#endif
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_lock
-#endif
-                bl      chSchDoReschedule
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
-#endif
-#if CH_DBG_STATISTICS
-                bl      _stats_stop_measure_crit_thd
-#endif
+                bl      nilSchRescheduleS
                 .globl  _port_exit_from_isr
 _port_exit_from_isr:
                 ldr     r2, .L2

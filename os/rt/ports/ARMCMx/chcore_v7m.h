@@ -312,6 +312,7 @@ struct context {
 
 /**
  * @brief   Computes the thread working area global size.
+ * @note    There is no need to perform alignments in this macro.
  */
 #define PORT_WA_SIZE(n) (sizeof(struct port_intctx) +                       \
                          sizeof(struct port_extctx) +                       \
