@@ -301,13 +301,13 @@ struct context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#define PORT_SETUP_CONTEXT(workspace, wsize, pf, arg) {                     \
-  tp->p_ctx.r13 = (struct port_intctx *)((uint8_t *)workspace +             \
+#define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
+  (tp)->p_ctx.r13 = (struct port_intctx *)((uint8_t *)workspace +           \
                                          wsize -                            \
                                          sizeof(struct port_intctx));       \
-  tp->p_ctx.r13->r4 = (regarm_t)(pf);                                       \
-  tp->p_ctx.r13->r5 = (regarm_t)(arg);                                      \
-  tp->p_ctx.r13->lr = (regarm_t)(_port_thread_start);                       \
+  (tp)->p_ctx.r13->r4 = (regarm_t)(pf);                                     \
+  (tp)->p_ctx.r13->r5 = (regarm_t)(arg);                                    \
+  (tp)->p_ctx.r13->lr = (regarm_t)(_port_thread_start);                     \
 }
 
 /**

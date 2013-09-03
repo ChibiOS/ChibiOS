@@ -71,6 +71,12 @@ typedef uint32_t        ucnt_t;         /**< Generic unsigned counter.      */
  */
 #define NOINLINE __attribute__((noinline))
 
+/**
+ * @brief   Thread function declaration macro optimized for GCC.
+ */
+#define PORT_THD_FUNCTION(tname, arg)                                       \
+  __attribute__((noreturn)) void tname(void *arg)
+
 #endif /* _NILTYPES_H_ */
 
 /** @} */

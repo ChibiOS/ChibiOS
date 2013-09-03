@@ -112,7 +112,7 @@ void _port_irq_epilogue(regarm_t lr) {
     port_lock_from_isr();
 
     /* The extctx structure is pointed by the PSP register.*/
-    ctxp = (struct extctx *)__get_PSP();
+    ctxp = (struct port_extctx *)__get_PSP();
 
     /* Adding an artificial exception return context, there is no need to
        populate it fully.*/

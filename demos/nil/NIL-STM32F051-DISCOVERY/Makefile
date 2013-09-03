@@ -64,7 +64,7 @@ CHIBIOS = ../../..
 #include $(CHIBIOS)/os/hal/ports/STM32F0xx/platform.mk
 include $(CHIBIOS)/os/nil/nil.mk
 #include $(CHIBIOS)/os/rt/osal/osal.mk
-include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_stm32f0xx.mk
+include $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/mk/port_stm32f0xx.mk
 #include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here

@@ -184,7 +184,7 @@ thread_t *chThdCreateI(void *wsp, size_t size,
   chDbgCheck((wsp != NULL) && (size >= THD_WA_SIZE(0)) &&
              (prio <= HIGHPRIO) && (pf != NULL));
 
-  PORT_SETUP_CONTEXT(wsp, size, pf, arg);
+  PORT_SETUP_CONTEXT(tp, wsp, size, pf, arg);
   return _thread_init(tp, prio);
 }
 

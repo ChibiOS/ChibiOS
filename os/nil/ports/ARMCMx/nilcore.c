@@ -52,19 +52,4 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   Halts the system.
- * @note    The function is declared as a weak symbol, it is possible
- *          to redefine it in your application code.
- */
-#if !defined(__DOXYGEN__)
-__attribute__((naked, weak))
-#endif
-void port_halt(void) {
-
-  port_disable();
-  while (true) {
-  }
-}
-
 /** @} */

@@ -202,13 +202,13 @@ struct context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#define PORT_SETUP_CONTEXT(workspace, wsize, pf, arg) {                     \
-  tp->p_ctx.r13 = (struct port_intctx *)((uint8_t *)workspace +             \
-                                         wsize -                            \
-                                         sizeof(struct port_intctx));       \
-  tp->p_ctx.r13->r4 = (regarm_t)(pf);                                       \
-  tp->p_ctx.r13->r5 = (regarm_t)(arg);                                      \
-  tp->p_ctx.r13->lr = (regarm_t)(_port_thread_start);                       \
+#define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
+  (tp)->ctxp = (struct port_intctx *)((uint8_t *)workspace +                \
+                                      (size_t)wsize -                       \
+                                      sizeof(struct port_intctx));          \
+  (tp)->ctxp->r4 = (regarm_t)(pf);                                          \
+  (tp)->ctxp->r5 = (regarm_t)(arg);                                         \
+  (tp)->ctxp->lr = (regarm_t)(_port_thread_start);                          \
 }
 
 /**
@@ -270,8 +270,8 @@ struct context {
 }
 #endif
 
-#if CH_CFG_TIMEDELTA > 0
-#include "chcore_timer.h"
+#if NIL_CFG_TIMEDELTA > 0
+#include "nilcore_timer.h"
 #endif
 
 /*===========================================================================*/
@@ -281,7 +281,6 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_halt(void);
   void _port_irq_epilogue(regarm_t lr);
   void _port_switch_from_isr(void);
   void _port_exit_from_isr(void);

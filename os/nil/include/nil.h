@@ -43,39 +43,21 @@
  */
 #define _NIL_                           /**< @brief Nil RTOS identification.*/
 
-#define NIL_KERNEL_VERSION      "0.0.1" /**< @brief Kernel version string.  */
+#define NIL_KERNEL_VERSION      "0.1.0alpha"
 
-#define NIL_KERNEL_MAJOR        0       /**< @brief Version major number.   */
-#define NIL_KERNEL_MINOR        0       /**< @brief Version minor number.   */
-#define NIL_KERNEL_PATCH        1       /**< @brief Version patch number.   */
+#define NIL_KERNEL_MAJOR        0
+#define NIL_KERNEL_MINOR        1
+#define NIL_KERNEL_PATCH        0
 /** @} */
 
 /**
- * @name    Common constants
- */
-/**
- * @brief   Generic 'false' boolean constant.
- */
-#if !defined(FALSE) || defined(__DOXYGEN__)
-#define FALSE                   0
-#endif
-
-/**
- * @brief   Generic 'true' boolean constant.
- */
-#if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                    !FALSE
-#endif
-/** @} */
-
-/**
- * @name    Wakeup status codes
+ * @name    Wakeup messages
  * @{
  */
-#define NIL_MSG_OK              0   /**< @brief Normal wakeup message.      */
-#define NIL_MSG_TMO             -1  /**< @brief Wake-up caused by a timeout
+#define MSG_OK                  0   /**< @brief Normal wakeup message.      */
+#define MSG_TIMEOUT             -1  /**< @brief Wake-up caused by a timeout
                                          condition.                         */
-#define NIL_MSG_RST             -2  /**< @brief Wake-up caused by a reset
+#define MSG_RESET               -2  /**< @brief Wake-up caused by a reset
                                          condition.                         */
 /** @} */
 
@@ -295,13 +277,18 @@ typedef struct {
    * @note    This field is only present if some debug options have been
    *          activated.
    */
-  const char        *dbg_msg;
+  const char        *dbg_panic_msg;
 #endif
 } nil_system_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   String quotation macro.
+ */
+#define __NIL_QUOTE(p) #p
 
 /**
  * @name    Threads tables definition macros
@@ -325,18 +312,153 @@ typedef struct {
 #define NIL_THREADS_TABLE_END()                                             \
   {"idle", 0, NULL, NULL, 0}                                                \
 };
+/** @} */
 
+/**
+ * @name    Working Areas and Alignment
+ */
+/**
+ * @brief   Enforces a correct alignment for a stack area size value.
+ *
+ * @param[in] n         the stack size to be aligned to the next stack
+ *                      alignment boundary
+ * @return              The aligned stack size.
+ *
+ * @api
+ */
+#define THD_ALIGN_STACK_SIZE(n)                                             \
+  ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
+
+/**
+ * @brief   Calculates the total Working Area size.
+ *
+ * @param[in] n         the stack size to be assigned to the thread
+ * @return              The total used memory in bytes.
+ *
+ * @api
+ */
+#define THD_WORKING_AREA_SIZE(n)                                            \
+  THD_ALIGN_STACK_SIZE(sizeof(thread_t) + PORT_WA_SIZE(n))
+
+/**
+ * @brief   Static working area allocation.
+ * @details This macro is used to allocate a static thread working area
+ *          aligned as both position and size.
+ *
+ * @param[in] s         the name to be assigned to the stack array
+ * @param[in] n         the stack size to be assigned to the thread
+ *
+ * @api
+ */
+#define THD_WORKING_AREA(s, n)                                              \
+  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof(stkalign_t)]
+/** @} */
+
+/**
+ * @name    Threads abstraction macros
+ */
+/**
+ * @brief   Thread declaration macro.
+ * @note    Thread declarations should be performed using this macro because
+ *          the port layer could define optimizations for thread functions.
+ */
+#define THD_FUNCTION(tname, arg) PORT_THD_FUNCTION(tname, arg)
+/** @} */
+
+/**
+ * @name    ISRs abstraction macros
+ */
+/**
+ * @brief   IRQ handler enter code.
+ * @note    Usually IRQ handlers functions are also declared naked.
+ * @note    On some architectures this macro can be empty.
+ *
+ * @special
+ */
+#define NIL_IRQ_PROLOGUE() PORT_IRQ_PROLOGUE()
+
+/**
+ * @brief   IRQ handler exit code.
+ * @note    Usually IRQ handlers function are also declared naked.
+ *
+ * @special
+ */
+#define NIL_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()
+
+/**
+ * @brief   Standard normal IRQ handler declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
+ *
+ * @special
+ */
+#define NIL_IRQ_HANDLER(id) PORT_IRQ_HANDLER(id)
+/** @} */
+
+/**
+ * @name    Fast ISRs abstraction macros
+ */
+/**
+ * @brief   Standard fast IRQ handler declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
+ * @note    Not all architectures support fast interrupts.
+ *
+ * @special
+ */
+#define NIL_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
+/** @} */
+
+/**
+ * @name    Time conversion utilities
+ * @{
+ */
+/**
+ * @brief   Seconds to system ticks.
+ * @details Converts from seconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] sec       number of seconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+#define S2ST(sec)                                                           \
+  ((systime_t)((sec) * NIL_CFG_FREQUENCY))
+
+/**
+ * @brief   Milliseconds to system ticks.
+ * @details Converts from milliseconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] msec      number of milliseconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+#define MS2ST(msec)                                                         \
+  ((systime_t)(((((uint32_t)(msec)) * ((uint32_t)NIL_CFG_FREQUENCY) - 1UL) /\
+                1000UL) + 1UL))
+
+/**
+ * @brief   Microseconds to system ticks.
+ * @details Converts from microseconds to system ticks number.
+ * @note    The result is rounded upward to the next tick boundary.
+ *
+ * @param[in] usec      number of microseconds
+ * @return              The number of ticks.
+ *
+ * @api
+ */
+#define US2ST(usec)                                                         \
+  ((systime_t)(((((uint32_t)(usec)) * ((uint32_t)NIL_CFG_FREQUENCY) - 1UL) /\
+                1000000UL) + 1UL))
 /** @} */
 
 /**
  * @name    Macro Functions
  * @{
  */
-/**
- * @brief   System halt state.
- */
-#define nilSysHalt() port_halt()
-
 /**
  * @brief   Enters the kernel lock mode.
  *
@@ -525,137 +647,31 @@ typedef struct {
 #define nilTimeIsWithin(time, start, end)                                   \
   ((end) > (start) ? ((time) >= (start)) && ((time) < (end)) :              \
                      ((time) >= (start)) || ((time) < (end)))
-/** @} */
-
-/**
- * @name    Threads abstraction macros
- */
-/**
- * @brief   Thread declaration macro.
- * @note    Thread declarations should be performed using this macro because
- *          the port layer could define optimizations for thread functions.
- */
-#define NIL_THREAD(tname, arg) PORT_THREAD(tname, arg)
 
 #if NIL_CFG_ENABLE_ASSERTS || defined(__DOXYGEN__)
 /**
  * @brief   Condition assertion.
- * @details If the condition check fails then the kernel panics with the
- *          specified message and halts.
+ * @details If the condition check fails then the kernel panics with a
+ *          message and halts.
  * @note    The condition is tested only if the @p NIL_CFG_ENABLE_ASSERTS
- *          switch is specified in @p nilconf.h else the macro does nothing.
- * @note    The convention for the message is the following:<br>
- *          @<function_name@>(), #@<assert_number@>
+ *          switch is specified in @p chconf.h else the macro does nothing.
  * @note    The remark string is not currently used except for putting a
  *          comment in the code about the assertion.
  *
  * @param[in] c         the condition to be verified to be true
- * @param[in] m         the text message
  * @param[in] r         a remark string
  *
  * @api
  */
 #if !defined(nilDbgAssert)
-#define nilDbgAssert(c, m, r) {                                             \
-  if (!(c)) {                                                               \
-    nil.dbg_msg = (m);                                                      \
-    nilSysHalt();                                                           \
-  }                                                                         \
+#define nilDbgAssert(c, r) {                                                \
+  if (!(c))                                                                 \
+    nilSysHalt("A:"__NIL_QUOTE(__FUNCTION__)":"__NIL_QUOTE(__LINE__));      \
 }
-#endif /* !defined(chDbgAssert) */
+#endif /* !defined(nilDbgAssert) */
 #else /* !NIL_CFG_ENABLE_ASSERTS */
-#define nilDbgAssert(c, m, r) {(void)(c);}
+#define nilDbgAssert(c, r) /*{(void)(c);}*/
 #endif /* !NIL_CFG_ENABLE_ASSERTS */
-/** @} */
-
-/**
- * @name    ISRs abstraction macros
- */
-/**
- * @brief   IRQ handler enter code.
- * @note    Usually IRQ handlers functions are also declared naked.
- * @note    On some architectures this macro can be empty.
- *
- * @special
- */
-#define NIL_IRQ_PROLOGUE() PORT_IRQ_PROLOGUE()
-
-/**
- * @brief   IRQ handler exit code.
- * @note    Usually IRQ handlers function are also declared naked.
- *
- * @special
- */
-#define NIL_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()
-
-/**
- * @brief   Standard normal IRQ handler declaration.
- * @note    @p id can be a function name or a vector number depending on the
- *          port implementation.
- *
- * @special
- */
-#define NIL_IRQ_HANDLER(id) PORT_IRQ_HANDLER(id)
-/** @} */
-
-/**
- * @name    Fast ISRs abstraction macros
- */
-/**
- * @brief   Standard fast IRQ handler declaration.
- * @note    @p id can be a function name or a vector number depending on the
- *          port implementation.
- * @note    Not all architectures support fast interrupts.
- *
- * @special
- */
-#define NIL_FAST_IRQ_HANDLER(id) PORT_FAST_IRQ_HANDLER(id)
-/** @} */
-
-/**
- * @name    Time conversion utilities
- * @{
- */
-/**
- * @brief   Seconds to system ticks.
- * @details Converts from seconds to system ticks number.
- * @note    The result is rounded upward to the next tick boundary.
- *
- * @param[in] sec       number of seconds
- * @return              The number of ticks.
- *
- * @api
- */
-#define S2ST(sec)                                                           \
-  ((systime_t)((sec) * NIL_CFG_FREQUENCY))
-
-/**
- * @brief   Milliseconds to system ticks.
- * @details Converts from milliseconds to system ticks number.
- * @note    The result is rounded upward to the next tick boundary.
- *
- * @param[in] msec      number of milliseconds
- * @return              The number of ticks.
- *
- * @api
- */
-#define MS2ST(msec)                                                         \
-  ((systime_t)(((((uint32_t)(msec)) * ((uint32_t)NIL_CFG_FREQUENCY) - 1UL) /\
-                1000UL) + 1UL))
-
-/**
- * @brief   Microseconds to system ticks.
- * @details Converts from microseconds to system ticks number.
- * @note    The result is rounded upward to the next tick boundary.
- *
- * @param[in] usec      number of microseconds
- * @return              The number of ticks.
- *
- * @api
- */
-#define US2ST(usec)                                                         \
-  ((systime_t)(((((uint32_t)(usec)) * ((uint32_t)NIL_CFG_FREQUENCY) - 1UL) /\
-                1000000UL) + 1UL))
 /** @} */
 
 /*===========================================================================*/
@@ -671,6 +687,7 @@ extern const thread_config_t nil_thd_configs[NIL_CFG_NUM_THREADS + 1];
 extern "C" {
 #endif
   void nilSysInit(void);
+  void nilSysHalt(const char *reason);
   void nilSysTimerHandlerI(void);
   thread_ref_t nilSchReadyI(thread_ref_t trp, msg_t msg);
   msg_t nilSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);

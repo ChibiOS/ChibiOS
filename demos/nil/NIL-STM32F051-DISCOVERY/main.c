@@ -18,20 +18,19 @@
 */
 
 #include "nil.h"
-#include "hwinit.h"
 
 /*
  * Thread 1.
  */
-NIL_WORKING_AREA(waThread1, 128);
-NIL_THREAD(Thread1, arg) {
+THD_WORKING_AREA(waThread1, 128);
+THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
 
   while (true) {
-    gpioSetPad(GPIOC, GPIOC_LED4);
+//    gpioSetPad(GPIOC, GPIOC_LED4);
     nilThdSleepMilliseconds(500);
-    gpioClearPad(GPIOC, GPIOC_LED4);
+//    gpioClearPad(GPIOC, GPIOC_LED4);
     nilThdSleepMilliseconds(500);
   }
 }
@@ -39,15 +38,15 @@ NIL_THREAD(Thread1, arg) {
 /*
  * Thread 2.
  */
-NIL_WORKING_AREA(waThread2, 128);
-NIL_THREAD(Thread2, arg) {
+THD_WORKING_AREA(waThread2, 128);
+THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
 
   while (true) {
-    gpioSetPad(GPIOC, GPIOC_LED3);
+//    gpioSetPad(GPIOC, GPIOC_LED3);
     nilThdSleepMilliseconds(250);
-    gpioClearPad(GPIOC, GPIOC_LED3);
+//    gpioClearPad(GPIOC, GPIOC_LED3);
     nilThdSleepMilliseconds(250);
   }
 }
@@ -71,7 +70,7 @@ int main(void) {
    * - HW specific initialization.
    * - Nil RTOS initialization.
    */
-  hwInit();
+//  hwInit();
   nilSysInit();
 
   /* This is now the idle thread loop, you may perform here a low priority
