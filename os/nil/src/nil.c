@@ -165,17 +165,14 @@ void chSysTimerHandlerI(void) {
   thread_reference_t tr = &nil.threads[0];
   systime_t next = 0;
 
-  chDbgAssert(nil.nexttime == port_timer_get_alarm(),
-               "chSysTimerHandlerI(), #1", "time mismatch");
+  chDbgAssert(nil.nexttime == port_timer_get_alarm(), "time mismatch");
 
   do {
     /* Is the thread in a wait state with timeout?.*/
     if (tr->timeout > 0) {
 
-      chDbgAssert(!NIL_THD_IS_READY(tr),
-                   "chSysTimerHandlerI(), #2", "is ready");
-      chDbgAssert(tr->timeout >= nil.nexttime - nil.lasttime,
-                   "chSysTimerHandlerI(), #3", "skipped one");
+      chDbgAssert(!NIL_THD_IS_READY(tr), "is ready");
+      chDbgAssert(tr->timeout >= nil.nexttime - nil.lasttime, "skipped one");
 
       tr->timeout -= nil.nexttime - nil.lasttime;
       if (tr->timeout == 0) {
@@ -185,7 +182,7 @@ void chSysTimerHandlerI(void) {
           tr->u1.semp->cnt++;
         else if (NIL_THD_IS_SUSP(tr))
           tr->u1.trp = NULL;
-        chSchReadyI(tr, NIL_MSG_TMO);
+        chSchReadyI(tr, MSG_TIMEOUT);
       }
       else {
         if (tr->timeout <= next - 1)
@@ -328,7 +325,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
 
 #if NIL_CFG_TIMEDELTA > 0
   if (timeout != TIME_INFINITE) {
-    systime_t time = chTimeNowI() + timeout;
+    systime_t time = chVTGetSystemTimeX() + timeout;
 
     /* TIMEDELTA makes sure to have enough time to reprogram the timer
        before the free-running timer counter reaches the selected timeout.*/
@@ -343,7 +340,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
     else {
       /* Special case, there are already other threads with a timeout
          activated, evaluating the order.*/
-      if (chTimeIsWithin(time, nil.lasttime, nil.nexttime)) {
+      if (chVTIsTimeWithinX(time, nil.lasttime, nil.nexttime)) {
         port_timer_set_alarm(time);
         nil.nexttime = time;
       }

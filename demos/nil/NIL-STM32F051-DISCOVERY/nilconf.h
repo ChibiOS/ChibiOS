@@ -41,7 +41,7 @@
 /**
  * @brief   System tick frequency.
  */
-#define NIL_CFG_ST_FREQUENCY                1000
+#define NIL_CFG_ST_FREQUENCY                50000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -51,7 +51,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define NIL_CFG_TIMEDELTA                   0
+#define NIL_CFG_TIMEDELTA                   2
 
 /**
  * @brief   Events Flags APIs.
