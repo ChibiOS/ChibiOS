@@ -160,7 +160,7 @@ typedef io_queue_t input_queue_t;
  *
  * @iclass
  */
-#define iqIsEmptyI(iqp) ((bool_t)(qSpaceI(iqp) <= 0))
+#define iqIsEmptyI(iqp) ((bool)(qSpaceI(iqp) <= 0))
 
 /**
  * @brief   Evaluates to @p TRUE if the specified input queue is full.
@@ -172,8 +172,8 @@ typedef io_queue_t input_queue_t;
  *
  * @iclass
  */
-#define iqIsFullI(iqp) ((bool_t)(((iqp)->q_wrptr == (iqp)->q_rdptr) &&      \
-                                   ((iqp)->q_counter != 0)))
+#define iqIsFullI(iqp) ((bool)(((iqp)->q_wrptr == (iqp)->q_rdptr) &&        \
+                               ((iqp)->q_counter != 0)))
 
 /**
  * @brief   Input queue read.
@@ -275,8 +275,8 @@ typedef io_queue_t output_queue_t;
  *
  * @iclass
  */
-#define oqIsEmptyI(oqp) ((bool_t)(((oqp)->q_wrptr == (oqp)->q_rdptr) &&     \
-                                    ((oqp)->q_counter != 0)))
+#define oqIsEmptyI(oqp) ((bool)(((oqp)->q_wrptr == (oqp)->q_rdptr) &&       \
+                                ((oqp)->q_counter != 0)))
 
 /**
  * @brief   Evaluates to @p TRUE if the specified output queue is full.
@@ -288,7 +288,7 @@ typedef io_queue_t output_queue_t;
  *
  * @iclass
  */
-#define oqIsFullI(oqp) ((bool_t)(qSpaceI(oqp) <= 0))
+#define oqIsFullI(oqp) ((bool)(qSpaceI(oqp) <= 0))
 
 /**
  * @brief   Output queue write.

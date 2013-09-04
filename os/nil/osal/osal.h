@@ -107,6 +107,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !NIL_CFG_USE_EVENTS
+#error "OSAL requires NIL_CFG_USE_EVENTS=TRUE"
+#endif
+
 #if !(OSAL_ST_MODE == OSAL_ST_MODE_NONE) &&                                 \
     !(OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) &&                             \
     !(OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING)
@@ -152,12 +156,6 @@ typedef uint32_t rtcnt_t;
 typedef thread_t * thread_reference_t;
 #endif
 
-typedef (*eventcallback_t)()
-/**
- * @brief   Type of an event flags mask.
- */
-typedef uint32_t eventflags_t;
-
 /**
  * @brief   Type of an event flags object.
  * @note    The content of this structure is not part of the API and should
@@ -166,10 +164,33 @@ typedef uint32_t eventflags_t;
  * @note    Retrieval and clearing of the flags are not defined in this
  *          API and are implementation-dependent.
  */
-typedef struct {
-  volatile eventflags_t flags;      /**< @brief Flags stored into the
-                                                object.                     */
-} eventsource_t;
+typedef struct event_source event_source_t;
+
+/**
+ * @brief   Type of an event source callback.
+ * @note    This type is not part of the OSAL API and is provided
+ *          exclusively as an example and for convenience.
+ */
+typedef void (*eventcallback_t)(event_source_t *);
+
+/**
+ * @brief   Type of an event flags mask.
+ */
+typedef uint32_t eventflags_t;
+
+/**
+ * @brief   Events source object.
+ * @note    The content of this structure is not part of the API and should
+ *          not be relied upon. Implementers may define this structure in
+ *          an entirely different way.
+ * @note    Retrieval and clearing of the flags are not defined in this
+ *          API and are implementation-dependent.
+ */
+struct event_source {
+  volatile eventflags_t flags;      /**< @brief Stored event flags.         */
+  eventcallback_t       cb;         /**< @brief Event source callback.      */
+  void                  *param;     /**< @brief User defined field.         */
+};
 
 /**
  * @brief   Type of a mutex.
@@ -653,9 +674,11 @@ static inline msg_t osalQueueGoSleepTimeoutS(threads_queue_t *tqp,
  *
  * @init
  */
-static inline void osalEventObjectInit(eventsource_t *esp) {
+static inline void osalEventObjectInit(event_source_t *esp) {
 
-  chEvtObjectInit(esp);
+  esp->flags = 0;
+  esp->cb    = NULL;
+  esp->param = NULL;
 }
 
 /**
@@ -666,10 +689,12 @@ static inline void osalEventObjectInit(eventsource_t *esp) {
  *
  * @iclass
  */
-static inline void osalEventBroadcastFlagsI(eventsource_t *esp,
+static inline void osalEventBroadcastFlagsI(event_source_t *esp,
                                             eventflags_t flags) {
 
-  chEvtBroadcastFlagsI(esp, flags);
+  esp->flags |= flags;
+  if (esp->cb != NULL)
+    esp->cb(esp);
 }
 
 /**
@@ -680,10 +705,13 @@ static inline void osalEventBroadcastFlagsI(eventsource_t *esp,
  *
  * @iclass
  */
-static inline void osalEventBroadcastFlags(eventsource_t *esp,
+static inline void osalEventBroadcastFlags(event_source_t *esp,
                                            eventflags_t flags) {
 
-  chEvtBroadcastFlags(esp, flags);
+  chSysLock();
+  osalEventBroadcastFlagsI(esp, flags);
+  chSchRescheduleS();
+  chSysUnlock();
 }
 
 /**

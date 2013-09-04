@@ -211,6 +211,52 @@ void chSysTimerHandlerI(void) {
 }
 
 /**
+ * @brief   Returns the execution status and enters a critical zone.
+ * @details This functions enters into a critical zone and can be called
+ *          from any context. Because its flexibility it is less efficient
+ *          than @p chSysLock() which is preferable when the calling context
+ *          is known.
+ * @post    The system is in a critical zone.
+ *
+ * @return              The previous system status, the encoding of this
+ *                      status word is architecture-dependent and opaque.
+ *
+ * @xclass
+ */
+syssts_t chSysGetStatusAndLockX(void)  {
+
+  syssts_t sts = port_get_irq_status();
+  if (port_irq_enabled(sts)) {
+    if (port_is_isr_context())
+      chSysLockFromISR();
+    else
+      chSysLock();
+  }
+  return sts;
+}
+
+/**
+ * @brief   Restores the specified execution status and leaves a critical zone.
+ * @note    A call to @p chSchRescheduleS() is automatically performed
+ *          if exiting the critical zone and if not in ISR context.
+ *
+ * @param[in] sts       the system status to be restored.
+ *
+ * @xclass
+ */
+void chSysRestoreStatusX(syssts_t sts) {
+
+  if (port_irq_enabled(sts)) {
+    if (port_is_isr_context())
+      chSysUnlockFromISR();
+    else {
+      chSchRescheduleS();
+      chSysUnlock();
+    }
+  }
+}
+
+/**
  * @brief   Makes the specified thread ready for execution.
  *
  * @param[in] tr        reference to the @p thread_t object
@@ -409,43 +455,23 @@ void chThdSleepUntil(systime_t time) {
 }
 
 /**
- * @brief   Current system time.
- * @details Returns the number of system ticks since the @p chSysInit()
- *          invocation.
- * @note    The counter can reach its maximum and then restart from zero.
- * @note    This function is designed to work with the @p chThdSleepUntil().
- *
- * @return              The system time in ticks.
- *
- * @api
- */
-systime_t chTimeNow(void) {
-  systime_t time;
-
-  chSysLock();
-  time = chTimeNowI();
-  chSysUnlock();
-  return time;
-}
-
-/**
- * @brief   Checks if the current system time is within the specified time
- *          window.
+ * @brief   Checks if the specified time is within the specified time window.
  * @note    When start==end then the function returns always true because the
  *          whole time range is specified.
+ * @note    This function can be called from any context.
  *
+ * @param[in] time      the time to be verified
  * @param[in] start     the start of the time window (inclusive)
  * @param[in] end       the end of the time window (non inclusive)
- *
  * @retval true         current time within the specified time window.
  * @retval false        current time not within the specified time window.
  *
- * @api
+ * @xclass
  */
-bool chTimeNowIsWithin(systime_t start, systime_t end) {
+bool chVTIsTimeWithinX(systime_t time, systime_t start, systime_t end) {
 
-  systime_t time = chTimeNow();
-  return chTimeIsWithin(time, start, end);
+  return end > start ? (time >= start) && (time < end) :
+                       (time >= start) || (time < end);
 }
 
 /**
@@ -623,6 +649,83 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
     chDbgAssert(tr < &nil.threads[NIL_CFG_NUM_THREADS],
                 "pointer out of range");
   }
+}
+
+/**
+ * @brief   Adds a set of event flags directly to the specified @p thread_t.
+ *
+ * @param[in] tp        the thread to be signaled
+ * @param[in] mask      the event flags set to be ORed
+ *
+ * @api
+ */
+void chEvtSignal(thread_t *tp, eventmask_t mask) {
+
+  chSysLock();
+  chEvtSignalI(tp, mask);
+  chSchRescheduleS();
+  chSysUnlock();
+}
+
+/**
+ * @brief   Adds a set of event flags directly to the specified @p thread_t.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
+ *
+ * @param[in] tp        the thread to be signaled
+ * @param[in] mask      the event flags set to be ORed
+ *
+ * @iclass
+ */
+void chEvtSignalI(thread_t *tp, eventmask_t mask) {
+
+  tp->epmask |= mask;
+  if (NIL_THD_IS_WTOREVT(tp) && ((tp->epmask & tp->u1.ewmask) != 0))
+    chSchReadyI(tp, MSG_OK);
+}
+
+/**
+ * @brief   Waits for any of the specified events.
+ * @details The function waits for any event among those specified in
+ *          @p mask to become pending then the events are cleared and
+ *          returned.
+ *
+ * @param[in] mask      mask of the event flags that the function should wait
+ *                      for, @p ALL_EVENTS enables all the events
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The mask of the served and cleared events.
+ * @retval 0            if the operation has timed out.
+ *
+ * @api
+ */
+eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t timeout) {
+  thread_t *ctp = nil.current;
+  eventmask_t m;
+
+  chSysLock();
+
+  if ((m = (ctp->epmask & mask)) == 0) {
+    if (TIME_IMMEDIATE == timeout) {
+      chSysUnlock();
+      return (eventmask_t)0;
+    }
+    ctp->u1.ewmask = mask;
+    if (chSchGoSleepTimeoutS(NIL_STATE_WTOREVT, timeout) < MSG_OK) {
+      chSysUnlock();
+      return (eventmask_t)0;
+    }
+    m = ctp->epmask & mask;
+  }
+  ctp->epmask &= ~m;
+
+  chSysUnlock();
+  return m;
 }
 
 /** @} */

@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "hal.h"
 #include "nil.h"
 
 /*
@@ -28,9 +29,9 @@ THD_FUNCTION(Thread1, arg) {
   (void)arg;
 
   while (true) {
-//    gpioSetPad(GPIOC, GPIOC_LED4);
+    palSetPad(GPIOC, GPIOC_LED4);
     chThdSleepMilliseconds(500);
-//    gpioClearPad(GPIOC, GPIOC_LED4);
+    palSetPad(GPIOC, GPIOC_LED4);
     chThdSleepMilliseconds(500);
   }
 }
@@ -44,9 +45,9 @@ THD_FUNCTION(Thread2, arg) {
   (void)arg;
 
   while (true) {
-//    gpioSetPad(GPIOC, GPIOC_LED3);
+    palSetPad(GPIOC, GPIOC_LED3);
     chThdSleepMilliseconds(250);
-//    gpioClearPad(GPIOC, GPIOC_LED3);
+    palSetPad(GPIOC, GPIOC_LED3);
     chThdSleepMilliseconds(250);
   }
 }
@@ -66,15 +67,19 @@ THD_TABLE_END
 int main(void) {
 
   /*
-   * System initializations:
-   * - HW specific initialization.
-   * - Nil RTOS initialization.
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
    */
-//  hwInit();
+  halInit();
   chSysInit();
 
   /* This is now the idle thread loop, you may perform here a low priority
-     task but you must never try to sleep or wait in this loop.*/
+     task but you must never try to sleep or wait in this loop. Note that
+     this tasks runs at the lowest priority level so any instruction added
+     here will be executed after all other tasks have been started.*/
   while (true) {
   }
 }

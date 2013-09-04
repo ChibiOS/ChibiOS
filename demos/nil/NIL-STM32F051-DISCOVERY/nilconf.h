@@ -41,7 +41,7 @@
 /**
  * @brief   System tick frequency.
  */
-#define NIL_CFG_FREQUENCY                   1000
+#define NIL_CFG_ST_FREQUENCY                1000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -52,6 +52,16 @@
  *          this value.
  */
 #define NIL_CFG_TIMEDELTA                   0
+
+/**
+ * @brief   Events Flags APIs.
+ * @details If enabled then the event flags APIs are included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(NIL_CFG_USE_EVENTS) || defined(__DOXYGEN__)
+#define NIL_CFG_USE_EVENTS                  TRUE
+#endif
 
 /**
  * @brief   System assertions.

@@ -55,6 +55,7 @@ typedef uint32_t        systime_t;      /**< System time.                   */
 typedef uint32_t        rtcnt_t;        /**< Realtime counter.              */
 typedef uint8_t         tstate_t;       /**< Thread state.                  */
 typedef int32_t         msg_t;          /**< Inter-thread message.          */
+typedef uint32_t        eventmask_t;    /**< Mask of event identifiers.     */
 typedef int32_t         cnt_t;          /**< Generic signed counter.        */
 typedef uint32_t        ucnt_t;         /**< Generic unsigned counter.      */
 

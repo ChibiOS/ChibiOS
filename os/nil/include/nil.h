@@ -88,10 +88,27 @@
 #define NIL_STATE_SLEEPING      1   /**< @brief Thread sleeping.            */
 #define NIL_STATE_SUSP          2   /**< @brief Thread suspended.           */
 #define NIL_STATE_WTSEM         3   /**< @brief Thread waiting on semaphore.*/
+#define NIL_STATE_WTOREVT       4   /**< @brief Thread waiting for events.  */
 #define NIL_THD_IS_READY(tr)    ((tr)->state == NIL_STATE_READY)
 #define NIL_THD_IS_SLEEPING(tr) ((tr)->state == NIL_STATE_SLEEPING)
 #define NIL_THD_IS_SUSP(tr)     ((tr)->state == NIL_STATE_SUSP)
 #define NIL_THD_IS_WTSEM(tr)    ((tr)->state == NIL_STATE_WTSEM)
+#define NIL_THD_IS_WTOREVT(tr)  ((tr)->state == NIL_STATE_WTOREVT)
+/** @} */
+
+/**
+ * @name    Events related macros
+ * @{
+ */
+/**
+ * @brief   All events allowed mask.
+ */
+#define ALL_EVENTS              ((eventmask_t)-1)
+
+/**
+ * @brief   Returns an event mask from an event identifier.
+ */
+#define EVENT_MASK(eid)         ((eventmask_t)(1 << (eid)))
 /** @} */
 
 /*===========================================================================*/
@@ -110,8 +127,8 @@
 /**
  * @brief   System timer resolution in Hz.
  */
-#if !defined(NIL_CFG_FREQUENCY) || defined(__DOXYGEN__)
-#define NIL_CFG_FREQUENCY                   100
+#if !defined(NIL_CFG_ST_FREQUENCY) || defined(__DOXYGEN__)
+#define NIL_CFG_ST_FREQUENCY                100
 #endif
 
 /**
@@ -124,6 +141,16 @@
  */
 #if !defined(NIL_CFG_TIMEDELTA) || defined(__DOXYGEN__)
 #define NIL_CFG_TIMEDELTA                   0
+#endif
+
+/**
+ * @brief   Events Flags APIs.
+ * @details If enabled then the event flags APIs are included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(NIL_CFG_USE_EVENTS) || defined(__DOXYGEN__)
+#define NIL_CFG_USE_EVENTS                  TRUE
 #endif
 
 /**
@@ -154,8 +181,8 @@
        "ChibiOS/RT instead"
 #endif
 
-#if NIL_CFG_FREQUENCY <= 0
-#error "invalid NIL_CFG_FREQUENCY specified"
+#if NIL_CFG_ST_FREQUENCY <= 0
+#error "invalid NIL_CFG_ST_FREQUENCY specified"
 #endif
 
 #if (NIL_CFG_TIMEDELTA < 0) || (NIL_CFG_TIMEDELTA == 1)
@@ -228,9 +255,15 @@ struct nil_thread {
     void                *p;     /**< @brief Generic pointer.                */
     thread_reference_t  *trp;   /**< @brief Pointer to thread reference.    */
     semaphore_t         *semp;  /**< @brief Pointer to semaphore.           */
+#if NIL_CFG_USE_EVENTS
+    eventmask_t         ewmask; /**< @brief Enabled events mask.            */
+#endif
   } u1;
   volatile systime_t    timeout;/**< @brief Timeout counter, zero
                                             if disabled.                    */
+#if NIL_CFG_USE_EVENTS
+  eventmask_t           epmask; /**< @brief Pending events mask.            */
+#endif
   /* Optional extra fields.*/
   NIL_CFG_THREAD_EXT_FIELDS
 };
@@ -244,40 +277,40 @@ typedef struct {
   /**
    * @brief   Pointer to the running thread.
    */
-  thread_reference_t      current;
+  thread_reference_t    current;
   /**
    * @brief   Pointer to the next thread to be executed.
    * @note    This pointer must point at the same thread pointed by @p currp
    *          or to an higher priority thread if a switch is required.
    */
-  thread_reference_t      next;
+  thread_reference_t    next;
 #if NIL_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
   /**
    * @brief   System time.
    */
-  systime_t         systime;
+  systime_t             systime;
 #endif
 #if NIL_CFG_TIMEDELTA > 0 || defined(__DOXYGEN__)
   /**
    * @brief   System time of the last tick event.
    */
-  systime_t         lasttime;
+  systime_t             lasttime;
   /**
    * @brief   Time of the next scheduled tick event.
    */
-  systime_t         nexttime;
+  systime_t             nexttime;
 #endif
   /**
    * @brief   Thread structures for all the defined threads.
    */
-  thread_t          threads[NIL_CFG_NUM_THREADS + 1];
+  thread_t              threads[NIL_CFG_NUM_THREADS + 1];
 #if CH_DBG_ENABLED || defined(__DOXYGEN__)
   /**
    * @brief   Panic message.
    * @note    This field is only present if some debug options have been
    *          activated.
    */
-  const char        *dbg_panic_msg;
+  const char            *dbg_panic_msg;
 #endif
 } nil_system_t;
 
@@ -424,7 +457,7 @@ typedef struct {
  * @api
  */
 #define S2ST(sec)                                                           \
-  ((systime_t)((sec) * NIL_CFG_FREQUENCY))
+  ((systime_t)((sec) * NIL_CFG_ST_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
@@ -437,8 +470,8 @@ typedef struct {
  * @api
  */
 #define MS2ST(msec)                                                         \
-  ((systime_t)(((((uint32_t)(msec)) * ((uint32_t)NIL_CFG_FREQUENCY) - 1UL) /\
-                1000UL) + 1UL))
+  ((systime_t)(((((uint32_t)(msec)) *                                       \
+                 ((uint32_t)NIL_CFG_ST_FREQUENCY) - 1UL) / 1000UL) + 1UL))
 
 /**
  * @brief   Microseconds to system ticks.
@@ -451,8 +484,8 @@ typedef struct {
  * @api
  */
 #define US2ST(usec)                                                         \
-  ((systime_t)(((((uint32_t)(usec)) * ((uint32_t)NIL_CFG_FREQUENCY) - 1UL) /\
-                1000000UL) + 1UL))
+  ((systime_t)(((((uint32_t)(usec)) *                                       \
+                 ((uint32_t)NIL_CFG_ST_FREQUENCY) - 1UL) / 1000000UL) + 1UL))
 /** @} */
 
 /**
@@ -572,7 +605,7 @@ typedef struct {
  * @sclass
  */
 #define chThdSleepUntilS(time)                                             \
-  chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, (time) - chTimeNow())
+  chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, (time) - chVTGetSystemTimeX())
 
 /**
  * @brief   Initializes a semaphore with the specified counter value.
@@ -625,35 +658,19 @@ typedef struct {
  * @details Returns the number of system ticks since the @p chSysInit()
  *          invocation.
  * @note    The counter can reach its maximum and then restart from zero.
- * @note    This function is designed to work with the @p chThdSleepUntil().
+ * @note    This function can be called from any context but its atomicity
+ *          is not guaranteed on architectures whose word size is less than
+ *          @systime_t size.
  *
  * @return              The system time in ticks.
  *
- * @iclass
+ * @xclass
  */
 #if NIL_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
-#define chTimeNowI() (nil.systime)
+#define chVTGetSystemTimeX() (nil.systime)
 #else
-#define chTimeNowI() port_timer_get_time()
+#define chVTGetSystemTimeX() port_timer_get_time()
 #endif
-
-/**
- * @brief   Checks if the specified time is within the specified time window.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
- *
- * @param[in] time      the time to be verified
- * @param[in] start     the start of the time window (inclusive)
- * @param[in] end       the end of the time window (non inclusive)
- *
- * @retval true         current time within the specified time window.
- * @retval false        current time not within the specified time window.
- *
- * @api
- */
-#define chTimeIsWithin(time, start, end)                                   \
-  ((end) > (start) ? ((time) >= (start)) && ((time) < (end)) :              \
-                     ((time) >= (start)) || ((time) < (end)))
 
 #if NIL_CFG_ENABLE_ASSERTS || defined(__DOXYGEN__)
 /**
@@ -671,9 +688,9 @@ typedef struct {
  * @api
  */
 #if !defined(chDbgAssert)
-#define chDbgAssert(c, r) {                                                \
+#define chDbgAssert(c, r) {                                                 \
   if (!(c))                                                                 \
-    chSysHalt("A:"__CH_QUOTE(__FUNCTION__)":"__CH_QUOTE(__LINE__));      \
+    chSysHalt("A:"__CH_QUOTE(__FUNCTION__)":"__CH_QUOTE(__LINE__));         \
 }
 #endif /* !defined(chDbgAssert) */
 #else /* !NIL_CFG_ENABLE_ASSERTS */
@@ -696,6 +713,8 @@ extern "C" {
   void chSysInit(void);
   void chSysHalt(const char *reason);
   void chSysTimerHandlerI(void);
+  syssts_t chSysGetStatusAndLockX(void);
+  void chSysRestoreStatusX(syssts_t sts);
   thread_reference_t chSchReadyI(thread_reference_t trp, msg_t msg);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);
   void chSchRescheduleS(void);
@@ -703,14 +722,16 @@ extern "C" {
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
-  systime_t chTimeNow(void);
-  bool chTimeNowIsWithin(systime_t start, systime_t end);
+  bool chVTIsTimeWithinX(systime_t time, systime_t start, systime_t end);
   msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time);
   msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time);
   void chSemSignal(semaphore_t *sp);
   void chSemSignalI(semaphore_t *sp);
   void chSemReset(semaphore_t *sp, cnt_t n);
   void chSemResetI(semaphore_t *sp, cnt_t n);
+  void chEvtSignal(thread_t *tp, eventmask_t mask);
+  void chEvtSignalI(thread_t *tp, eventmask_t mask);
+  eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t timeout);
 #ifdef __cplusplus
 }
 #endif
