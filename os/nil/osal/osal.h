@@ -33,7 +33,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "ch.h"
+#include "nil.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -71,8 +71,8 @@
  * @name    Special time constants
  * @{
  */
-#define TIME_IMMEDIATE      ((systime_t)0)
-#define TIME_INFINITE       ((systime_t)-1)
+#define TIME_IMMEDIATE                      ((systime_t)0)
+#define TIME_INFINITE                       ((systime_t)-1)
 /** @} */
 #endif
 
@@ -88,7 +88,7 @@
 /**
  * @brief   Systick mode required by the underlying OS.
  */
-#if (CH_CFG_TIMEDELTA == 0) || defined(__DOXYGEN__)
+#if (NIL_CFG_TIMEDELTA == 0) || defined(__DOXYGEN__)
 #define OSAL_ST_MODE                        OSAL_ST_MODE_PERIODIC
 #else
 #define OSAL_ST_MODE                        OSAL_ST_MODE_FREERUNNING
@@ -97,7 +97,7 @@
 /**
  * @brief   Required systick frequency or resolution.
  */
-#define OSAL_SYSTICK_FREQUENCY              CH_CFG_ST_FREQUENCY
+#define OSAL_SYSTICK_FREQUENCY              NIL_CFG_ST_FREQUENCY
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -152,14 +152,12 @@ typedef uint32_t rtcnt_t;
 typedef thread_t * thread_reference_t;
 #endif
 
-#if 0
+typedef (*eventcallback_t)()
 /**
  * @brief   Type of an event flags mask.
  */
 typedef uint32_t eventflags_t;
-#endif
 
-#if 0
 /**
  * @brief   Type of an event flags object.
  * @note    The content of this structure is not part of the API and should
@@ -171,22 +169,15 @@ typedef uint32_t eventflags_t;
 typedef struct {
   volatile eventflags_t flags;      /**< @brief Flags stored into the
                                                 object.                     */
-} event_source_t;
-#endif
+} eventsource_t;
 
 /**
  * @brief   Type of a mutex.
  * @note    If the OS does not support mutexes or there is no OS then them
  *          mechanism can be simulated.
  */
-#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
-#elif CH_CFG_USE_SEMAPHORES
 typedef semaphore_t mutex_t;
-#else
-typedef uint32_t mutex_t;
-#endif
 
-#if 0
 /**
  * @brief   Type of a thread queue.
  * @details A thread queue is a queue of sleeping threads, queued threads
@@ -195,9 +186,8 @@ typedef uint32_t mutex_t;
  *          because there are no real threads.
  */
 typedef struct {
-  thread_reference_t    tr;
+  semaphore_t   sem;
 } threads_queue_t;
-#endif
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -235,20 +225,20 @@ typedef struct {
  *
  * @api
  */
-#define osalDbgCheck(c) chDbgCheck(c)
+#define osalDbgCheck(c) /*chDbgCheck(c)*/
 
 /**
  * @brief   I-Class state check.
  * @note    Not implemented in this simplified OSAL.
  */
-#define osalDbgCheckClassI() chDbgCheckClassI()
+#define osalDbgCheckClassI() /*chDbgCheckClassI()*/
 /** @} */
 
 /**
  * @brief   S-Class state check.
  * @note    Not implemented in this simplified OSAL.
  */
-#define osalDbgCheckClassS() chDbgCheckClassS()
+#define osalDbgCheckClassS() /*chDbgCheckClassS()*/
 
 /**
  * @name    IRQ service routines wrappers
@@ -322,7 +312,8 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+   void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg);
+   void osalQueueWakeupAllI(threads_queue_t *tqp, msg_t msg);
 #ifdef __cplusplus
 }
 #endif
@@ -555,7 +546,7 @@ static inline void osalThreadSleep(systime_t time) {
  */
 static inline msg_t osalThreadSuspendS(thread_reference_t *trp) {
 
-  return chThreadSuspendS(trp);
+  return chThdSuspendTimeoutS(trp, TIME_INFINITE);
 }
 
 /**
@@ -580,7 +571,7 @@ static inline msg_t osalThreadSuspendS(thread_reference_t *trp) {
 static inline msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp,
                                               systime_t timeout) {
 
-  return chThreadSuspendTimeoutS(trp, timeout);
+  return chThdSuspendTimeoutS(trp, timeout);
 }
 
 /**
@@ -595,7 +586,7 @@ static inline msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp,
  */
 static inline void osalThreadResumeI(thread_reference_t *trp, msg_t msg) {
 
-  chThreadResumeI(trp, msg);
+  chThdResumeI(trp, msg);
 }
 
 /**
@@ -610,7 +601,8 @@ static inline void osalThreadResumeI(thread_reference_t *trp, msg_t msg) {
  */
 static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
 
-  chThreadResumeS(trp, msg);
+  chThdResumeI(trp, msg);
+  chSchRescheduleS();
 }
 
 /**
@@ -622,7 +614,7 @@ static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
  */
 static inline void osalQueueObjectInit(threads_queue_t *tqp) {
 
-  queue_init(tqp);
+  chSemObjectInit(&tqp->sem, 0);
 }
 
 /**
@@ -651,33 +643,7 @@ static inline void osalQueueObjectInit(threads_queue_t *tqp) {
 static inline msg_t osalQueueGoSleepTimeoutS(threads_queue_t *tqp,
                                              systime_t time) {
 
-  return chQueueGoSleepTimeoutS(tqp, time);
-}
-
-/**
- * @brief   Dequeues and wakes up one thread from the queue, if any.
- *
- * @param[in] tqp       pointer to the threads queue object
- * @param[in] msg       the message code
- *
- * @iclass
- */
-static inline void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg) {
-
-  chQueueWakeupOneI(tqp, msg);
-}
-
-/**
- * @brief   Dequeues and wakes up all threads from the queue.
- *
- * @param[in] tqp       pointer to the threads queue object
- * @param[in] msg       the message code
- *
- * @iclass
- */
-static inline void osalQueueWakeupAllI(threads_queue_t *tqp, msg_t msg) {
-
-  chQueueWakeupAllI(tqp, msg);
+  return chSemWaitTimeout(&tqp->sem, time);
 }
 
 /**
@@ -687,7 +653,7 @@ static inline void osalQueueWakeupAllI(threads_queue_t *tqp, msg_t msg) {
  *
  * @init
  */
-static inline void osalEventObjectInit(event_source_t *esp) {
+static inline void osalEventObjectInit(eventsource_t *esp) {
 
   chEvtObjectInit(esp);
 }
@@ -700,7 +666,7 @@ static inline void osalEventObjectInit(event_source_t *esp) {
  *
  * @iclass
  */
-static inline void osalEventBroadcastFlagsI(event_source_t *esp,
+static inline void osalEventBroadcastFlagsI(eventsource_t *esp,
                                             eventflags_t flags) {
 
   chEvtBroadcastFlagsI(esp, flags);
@@ -714,7 +680,7 @@ static inline void osalEventBroadcastFlagsI(event_source_t *esp,
  *
  * @iclass
  */
-static inline void osalEventBroadcastFlags(event_source_t *esp,
+static inline void osalEventBroadcastFlags(eventsource_t *esp,
                                            eventflags_t flags) {
 
   chEvtBroadcastFlags(esp, flags);
@@ -729,13 +695,7 @@ static inline void osalEventBroadcastFlags(event_source_t *esp,
  */
 static inline void osalMutexObjectInit(mutex_t *mp) {
 
-#if CH_CFG_USE_MUTEXES
-  chMtxObjectInit(mp);
-#elif CH_CFG_USE_SEMAPHORES
   chSemObjectInit((semaphore_t *)mp, 1);
-#else
- *mp = 0;
-#endif
 }
 
 /*
@@ -749,13 +709,7 @@ static inline void osalMutexObjectInit(mutex_t *mp) {
  */
 static inline void osalMutexLock(mutex_t *mp) {
 
-#if CH_CFG_USE_MUTEXES
-  chMtxLock(mp);
-#elif CH_CFG_USE_SEMAPHORES
   chSemWait((semaphore_t *)mp);
-#else
-  *mp = 1;
-#endif
 }
 
 /**
@@ -773,14 +727,7 @@ static inline void osalMutexLock(mutex_t *mp) {
  */
 static inline void osalMutexUnlock(mutex_t *mp) {
 
-#if CH_CFG_USE_MUTEXES
-  (void)mp;
-  chMtxUnlock();
-#elif CH_CFG_USE_SEMAPHORES
   chSemSignal((semaphore_t *)mp);
-#else
-  *mp = 0;
-#endif
 }
 
 #endif /* _OSAL_H_ */

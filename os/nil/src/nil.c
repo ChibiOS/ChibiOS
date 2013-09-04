@@ -66,7 +66,7 @@ nil_system_t nil;
  * @special
  */
 void chSysInit(void) {
-  thread_ref_t tr;
+  thread_reference_t tr;
   const thread_config_t *tcp;
 
   /* Port layer initialization.*/
@@ -136,7 +136,7 @@ void chSysHalt(const char *reason) {
 void chSysTimerHandlerI(void) {
 
 #if NIL_CFG_TIMEDELTA == 0
-  thread_ref_t tr = &nil.threads[0];
+  thread_reference_t tr = &nil.threads[0];
   nil.systime++;
   do {
     /* Is the thread in a wait state with timeout?.*/
@@ -162,7 +162,7 @@ void chSysTimerHandlerI(void) {
     chSysLockFromISR();
   } while (tr < &nil.threads[NIL_CFG_NUM_THREADS]);
 #else
-  thread_ref_t tr = &nil.threads[0];
+  thread_reference_t tr = &nil.threads[0];
   systime_t next = 0;
 
   chDbgAssert(nil.nexttime == port_timer_get_alarm(),
@@ -218,7 +218,7 @@ void chSysTimerHandlerI(void) {
  *
  * @return              The same reference passed as parameter.
  */
-thread_ref_t chSchReadyI(thread_ref_t tr, msg_t msg) {
+thread_reference_t chSchReadyI(thread_reference_t tr, msg_t msg) {
 
   chDbgAssert((tr >= nil.threads) &&
                (tr < &nil.threads[NIL_CFG_NUM_THREADS]),
@@ -240,8 +240,8 @@ thread_ref_t chSchReadyI(thread_ref_t tr, msg_t msg) {
  * @sclass
  */
 void chSchRescheduleS() {
-  thread_ref_t otr = nil.current;
-  thread_ref_t ntr = nil.next;
+  thread_reference_t otr = nil.current;
+  thread_reference_t ntr = nil.next;
 
   if (ntr != otr) {
     nil.current = ntr;
@@ -272,7 +272,7 @@ void chSchRescheduleS() {
  * @sclass
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
-  thread_ref_t ntr, otr = nil.current;
+  thread_reference_t ntr, otr = nil.current;
 
   chDbgAssert(otr != &nil.threads[NIL_CFG_NUM_THREADS],
                "idle cannot sleep");
@@ -348,7 +348,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
  *
  * @sclass
  */
-msg_t chThdSuspendTimeoutS(thread_ref_t *trp, systime_t timeout) {
+msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
 
   chDbgAssert(*trp == NULL, "not NULL");
 
@@ -367,10 +367,10 @@ msg_t chThdSuspendTimeoutS(thread_ref_t *trp, systime_t timeout) {
  *
  * @iclass
  */
-void chThdResumeI(thread_ref_t *trp, msg_t msg) {
+void chThdResumeI(thread_reference_t *trp, msg_t msg) {
 
   if (*trp != NULL) {
-    thread_ref_t tr = *trp;
+    thread_reference_t tr = *trp;
 
     chDbgAssert(NIL_THD_IS_SUSP(tr), "not suspended");
 
@@ -544,7 +544,7 @@ void chSemSignal(semaphore_t *sp) {
 void chSemSignalI(semaphore_t *sp) {
 
   if (++sp->cnt <= 0) {
-    thread_ref_t tr = nil.threads;
+    thread_reference_t tr = nil.threads;
     while (true) {
       /* Is this thread waiting on this semaphore?*/
       if (tr->u1.semp == sp) {
@@ -555,6 +555,9 @@ void chSemSignalI(semaphore_t *sp) {
         return;
       }
       tr++;
+
+      chDbgAssert(tr < &nil.threads[NIL_CFG_NUM_THREADS],
+                  "pointer out of range");
     }
   }
 }
@@ -600,7 +603,7 @@ void chSemReset(semaphore_t *sp, cnt_t n) {
  * @iclass
  */
 void chSemResetI(semaphore_t *sp, cnt_t n) {
-  thread_ref_t tr;
+  thread_reference_t tr;
   cnt_t cnt;
 
   cnt = sp->cnt;
@@ -616,6 +619,9 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
       chSchReadyI(tr, MSG_RESET);
     }
     tr++;
+
+    chDbgAssert(tr < &nil.threads[NIL_CFG_NUM_THREADS],
+                "pointer out of range");
   }
 }
 

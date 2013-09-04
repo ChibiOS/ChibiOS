@@ -213,7 +213,7 @@ struct nil_thread_cfg {
 /**
  * @brief   Type of a thread reference.
  */
-typedef thread_t * thread_ref_t;
+typedef thread_t * thread_reference_t;
 
 /**
  * @brief   Structure representing a thread.
@@ -226,7 +226,7 @@ struct nil_thread {
   union {
     msg_t               msg;    /**< @brief Wake-up message.                */
     void                *p;     /**< @brief Generic pointer.                */
-    thread_ref_t        *trp;   /**< @brief Pointer to thread reference.    */
+    thread_reference_t  *trp;   /**< @brief Pointer to thread reference.    */
     semaphore_t         *semp;  /**< @brief Pointer to semaphore.           */
   } u1;
   volatile systime_t    timeout;/**< @brief Timeout counter, zero
@@ -244,13 +244,13 @@ typedef struct {
   /**
    * @brief   Pointer to the running thread.
    */
-  thread_ref_t      current;
+  thread_reference_t      current;
   /**
    * @brief   Pointer to the next thread to be executed.
    * @note    This pointer must point at the same thread pointed by @p currp
    *          or to an higher priority thread if a switch is required.
    */
-  thread_ref_t      next;
+  thread_reference_t      next;
 #if NIL_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
   /**
    * @brief   System time.
@@ -583,7 +583,7 @@ typedef struct {
  *
  * @init
  */
-#define chSemInit(sp, n) ((sp)->cnt = n)
+#define chSemObjectInit(sp, n) ((sp)->cnt = n)
 
 /**
  * @brief   Performs a wait operation on a semaphore.
@@ -612,6 +612,13 @@ typedef struct {
  * @sclass
  */
 #define chSemWaitS(sp) chSemWaitTimeoutS(sp, TIME_INFINITE)
+
+/**
+ * @brief   Returns the semaphore counter current value.
+ *
+ * @iclass
+ */
+#define chSemGetCounterI(sp) ((sp)->cnt)
 
 /**
  * @brief   Current system time.
@@ -689,11 +696,11 @@ extern "C" {
   void chSysInit(void);
   void chSysHalt(const char *reason);
   void chSysTimerHandlerI(void);
-  thread_ref_t chSchReadyI(thread_ref_t trp, msg_t msg);
+  thread_reference_t chSchReadyI(thread_reference_t trp, msg_t msg);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);
   void chSchRescheduleS(void);
-  msg_t chThdSuspendTimeoutS(thread_ref_t *trp, systime_t timeout);
-  void chThdResumeI(thread_ref_t *trp, msg_t msg);
+  msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
+  void chThdResumeI(thread_reference_t *trp, msg_t msg);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
   systime_t chTimeNow(void);
