@@ -31,7 +31,7 @@ THD_FUNCTION(Thread1, arg) {
   while (true) {
     palSetPad(GPIOC, GPIOC_LED4);
     chThdSleepMilliseconds(500);
-    palSetPad(GPIOC, GPIOC_LED4);
+    palClearPad(GPIOC, GPIOC_LED4);
     chThdSleepMilliseconds(500);
   }
 }
@@ -47,8 +47,30 @@ THD_FUNCTION(Thread2, arg) {
   while (true) {
     palSetPad(GPIOC, GPIOC_LED3);
     chThdSleepMilliseconds(250);
-    palSetPad(GPIOC, GPIOC_LED3);
+    palClearPad(GPIOC, GPIOC_LED3);
     chThdSleepMilliseconds(250);
+  }
+}
+
+/*
+ * Thread 3.
+ */
+THD_WORKING_AREA(waThread3, 128);
+THD_FUNCTION(Thread3, arg) {
+
+  (void)arg;
+
+  /*
+   * Activates the serial driver 1 using the driver default configuration.
+   * PA9 and PA10 are routed to USART1.
+   */
+  sdStart(&SD1, NULL);
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(1));       /* USART1 TX.       */
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(1));      /* USART1 RX.       */
+
+  while (true) {
+    chnWrite(&SD1, (const uint8_t *)"Hello World!\r\n", 14);
+    chThdSleepMilliseconds(2000);
   }
 }
 
@@ -57,8 +79,9 @@ THD_FUNCTION(Thread2, arg) {
  * match NIL_CFG_NUM_THREADS.
  */
 THD_TABLE_BEGIN
-  THD_TABLE_ENTRY("thread1", Thread1, NULL, waThread1, sizeof(waThread1))
-  THD_TABLE_ENTRY("thread2", Thread2, NULL, waThread2, sizeof(waThread2))
+  THD_TABLE_ENTRY("blinker1", Thread1, NULL, waThread1, sizeof(waThread1))
+  THD_TABLE_ENTRY("blinker2", Thread2, NULL, waThread2, sizeof(waThread2))
+  THD_TABLE_ENTRY("hello", Thread3, NULL, waThread3, sizeof(waThread3))
 THD_TABLE_END
 
 /*
