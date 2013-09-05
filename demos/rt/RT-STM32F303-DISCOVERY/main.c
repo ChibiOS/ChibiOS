@@ -27,7 +27,7 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOE, GPIOE_LED3_RED);
     chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED3_RED);
@@ -61,7 +61,7 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   chRegSetThreadName("blinker1");
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOE, GPIOE_LED3_RED);
     chThdSleepMilliseconds(250);
     palClearPad(GPIOE, GPIOE_LED3_RED);
@@ -74,7 +74,7 @@ static msg_t Thread2(void *arg) {
 
   (void)arg;
   chRegSetThreadName("blinker2");
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOE, GPIOE_LED4_BLUE);
     chThdSleepMilliseconds(500);
     palClearPad(GPIOE, GPIOE_LED4_BLUE);

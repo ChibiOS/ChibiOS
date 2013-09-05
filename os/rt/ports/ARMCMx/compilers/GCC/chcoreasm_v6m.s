@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    ARMCMx/GCC/chcoreasm_v6m.s
+ * @file    chcoreasm_v6m.s
  * @brief   ARMv6-M architecture port low level code.
  *
  * @addtogroup ARMCMx_CORE
@@ -39,7 +39,6 @@
 #endif
 
 #if !defined(__DOXYGEN__)
-
 
                 .set    CONTEXT_OFFSET, 12
                 .set    SCB_ICSR, 0xE000ED04

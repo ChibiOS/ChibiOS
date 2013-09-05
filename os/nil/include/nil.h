@@ -550,6 +550,17 @@ typedef struct {
 #define chSysUnlockFromISR() port_unlock_from_isr()
 
 /**
+ * @brief   Evaluates if a reschedule is required.
+ *
+ * @retval true         if there is a thread that must go in running state
+ *                      immediately.
+ * @retval false        if preemption is not required.
+ *
+ * @iclass
+ */
+#define chSchIsRescRequiredI() ((bool)(nil.current != nil.next))
+
+/**
  * @brief   Delays the invoking thread for the specified number of seconds.
  * @note    The specified time is rounded up to a value allowed by the real
  *          system clock.
@@ -716,8 +727,8 @@ extern "C" {
   syssts_t chSysGetStatusAndLockX(void);
   void chSysRestoreStatusX(syssts_t sts);
   thread_reference_t chSchReadyI(thread_reference_t trp, msg_t msg);
-  msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);
   void chSchRescheduleS(void);
+  msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);
   msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
   void chThdSleep(systime_t time);

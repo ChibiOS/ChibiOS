@@ -19,7 +19,7 @@
 */
 
 /**
- * @file    ARMCMx/chcore_timer.h
+ * @file    chcore_timer.h
  * @brief   System timer header file.
  *
  * @addtogroup ARMCMx_TIMER

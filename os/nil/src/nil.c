@@ -278,22 +278,22 @@ thread_reference_t chSchReadyI(thread_reference_t tr, msg_t msg) {
 }
 
 /**
- * @brief   Reschedules.
+ * @brief   Reschedules if needed.
  *
  * @sclass
  */
-void chSchRescheduleS() {
-  thread_reference_t otr = nil.current;
-  thread_reference_t ntr = nil.next;
+void chSchRescheduleS(void) {
 
-  if (ntr != otr) {
-    nil.current = ntr;
+  if (chSchIsRescRequiredI()) {
+    thread_reference_t otr = nil.current;
+
+    nil.current = nil.next;
 #if defined(NIL_CFG_IDLE_LEAVE_HOOK)
     if (otr == &nil.threads[NIL_CFG_NUM_THREADS]) {
       NIL_CFG_IDLE_LEAVE_HOOK();
     }
 #endif
-    port_switch(ntr, otr);
+    port_switch(nil.next, otr);
   }
 }
 
