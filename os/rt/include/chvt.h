@@ -257,7 +257,7 @@ static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
 /**
  * @brief   Returns @p true if the specified timer is armed.
  * @pre     The timer must have been initialized using @p chVTObjectInit()
- *          or @p chVTSetI() (or @p chVTSetI() variants).
+ *          or @p chVTDoSetI().
  *
  * @param[in] vtp       the @p virtual_timer_t structure pointer
  * @return              true if the timer is armed.
@@ -274,6 +274,8 @@ static inline bool chVTIsArmedI(virtual_timer_t *vtp) {
 /**
  * @brief   Disables a Virtual Timer.
  * @note    The timer is first checked and disabled only if armed.
+ * @pre     The timer must have been initialized using @p chVTObjectInit()
+ *          or @p chVTDoSetI().
  *
  * @param[in] vtp       the @p virtual_timer_t structure pointer
  *
@@ -288,6 +290,8 @@ static inline void chVTResetI(virtual_timer_t *vtp) {
 /**
  * @brief   Disables a Virtual Timer.
  * @note    The timer is first checked and disabled only if armed.
+ * @pre     The timer must have been initialized using @p chVTObjectInit()
+ *          or @p chVTDoSetI().
  *
  * @param[in] vtp       the @p virtual_timer_t structure pointer
  *
@@ -304,6 +308,8 @@ static inline void chVTReset(virtual_timer_t *vtp) {
  * @brief   Enables a virtual timer.
  * @details If the virtual timer was already enabled then it is re-enabled
  *          using the new parameters.
+ * @pre     The timer must have been initialized using @p chVTObjectInit()
+ *          or @p chVTDoSetI().
  *
  * @param[in] vtp       the @p virtual_timer_t structure pointer
  * @param[in] delay     the number of ticks before the operation timeouts.
@@ -326,6 +332,8 @@ static inline void chVTSetI(virtual_timer_t *vtp, systime_t delay,
  * @brief   Enables a virtual timer.
  * @details If the virtual timer was already enabled then it is re-enabled
  *          using the new parameters.
+ * @pre     The timer must have been initialized using @p chVTObjectInit()
+ *          or @p chVTDoSetI().
  *
  * @param[in] vtp       the @p virtual_timer_t structure pointer
  * @param[in] delay     the number of ticks before the operation timeouts.

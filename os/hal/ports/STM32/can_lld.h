@@ -341,13 +341,11 @@ extern "C" {
   void can_lld_init(void);
   void can_lld_start(CANDriver *canp);
   void can_lld_stop(CANDriver *canp);
-  bool_t can_lld_is_tx_empty(CANDriver *canp,
-                             canmbx_t mailbox);
+  bool can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox);
   void can_lld_transmit(CANDriver *canp,
                         canmbx_t mailbox,
                         const CANTxFrame *crfp);
-  bool_t can_lld_is_rx_nonempty(CANDriver *canp,
-                                canmbx_t mailbox);
+  bool can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox);
   void can_lld_receive(CANDriver *canp,
                        canmbx_t mailbox,
                        CANRxFrame *ctfp);

@@ -76,7 +76,7 @@ static void cmd_info(BaseSequentialStream *chp, int argc, char *argv[]) {
 #ifdef PORT_COMPILER_NAME
   chprintf(chp, "Compiler:     %s\r\n", PORT_COMPILER_NAME);
 #endif
-  chprintf(chp, "Architecture: %s\r\n", CH_ARCHITECTURE_NAME);
+  chprintf(chp, "Architecture: %s\r\n", PORT_ARCHITECTURE_NAME);
 #ifdef PORT_CORE_VARIANT_NAME
   chprintf(chp, "Core Variant: %s\r\n", PORT_CORE_VARIANT_NAME);
 #endif
@@ -115,7 +115,7 @@ static ShellCommand local_commands[] = {
   {NULL, NULL}
 };
 
-static bool_t cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
+static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
                       char *name, int argc, char *argv[]) {
 
   while (scp->sc_name != NULL) {
@@ -248,7 +248,7 @@ thread_t *shellCreateStatic(const ShellConfig *scp, void *wsp,
  * @retval TRUE         the channel was reset or CTRL-D pressed.
  * @retval FALSE        operation successful.
  */
-bool_t shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
+bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
   char *p = line;
 
   while (TRUE) {

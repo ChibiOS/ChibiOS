@@ -218,7 +218,7 @@ extern "C" {
   void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config);
   void sduStop(SerialUSBDriver *sdup);
   void sduConfigureHookI(SerialUSBDriver *sdup);
-  bool_t sduRequestsHook(USBDriver *usbp);
+  bool sduRequestsHook(USBDriver *usbp);
   void sduDataTransmitted(USBDriver *usbp, usbep_t ep);
   void sduDataReceived(USBDriver *usbp, usbep_t ep);
   void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep);

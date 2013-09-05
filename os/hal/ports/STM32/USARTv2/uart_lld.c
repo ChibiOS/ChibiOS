@@ -391,7 +391,7 @@ void uart_lld_start(UARTDriver *uartp) {
   if (uartp->state == UART_STOP) {
 #if STM32_UART_USE_USART1
     if (&UARTD1 == uartp) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(uartp->dmarx,
                             STM32_UART_USART1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
@@ -411,7 +411,7 @@ void uart_lld_start(UARTDriver *uartp) {
 
 #if STM32_UART_USE_USART2
     if (&UARTD2 == uartp) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(uartp->dmarx,
                             STM32_UART_USART2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
@@ -431,7 +431,7 @@ void uart_lld_start(UARTDriver *uartp) {
 
 #if STM32_UART_USE_USART3
     if (&UARTD3 == uartp) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(uartp->dmarx,
                             STM32_UART_USART3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,

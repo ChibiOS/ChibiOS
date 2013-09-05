@@ -46,7 +46,7 @@
 #define MSG_SEND_LEFT   0
 #define MSG_SEND_RIGHT  1
 
-static bool_t saturated;
+static bool saturated;
 
 /*
  * Mailboxes and buffers.
@@ -57,7 +57,7 @@ static msg_t b[NUM_THREADS][MAILBOX_SIZE];
 /*
  * Test worker threads.
  */
-static WORKING_AREA(waWorkerThread[NUM_THREADS], 128);
+static THD_WORKING_AREA(waWorkerThread[NUM_THREADS], 128);
 static msg_t WorkerThread(void *arg) {
   static volatile unsigned x = 0;
   static unsigned cnt = 0;
@@ -239,19 +239,19 @@ int main(void) {
   println(CH_KERNEL_VERSION);
   print("*** Compiled:     ");
   println(__DATE__ " - " __TIME__);
-#ifdef CH_COMPILER_NAME
+#ifdef PORT_COMPILER_NAME
   print("*** Compiler:     ");
-  println(CH_COMPILER_NAME);
+  println(PORT_COMPILER_NAME);
 #endif
   print("*** Architecture: ");
-  println(CH_ARCHITECTURE_NAME);
-#ifdef CH_CORE_VARIANT_NAME
+  println(PORT_ARCHITECTURE_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
   print("*** Core Variant: ");
-  println(CH_CORE_VARIANT_NAME);
+  println(PORT_CORE_VARIANT_NAME);
 #endif
-#ifdef CH_PORT_INFO
+#ifdef PORT_INFO
   print("*** Port Info:    ");
-  println(CH_PORT_INFO);
+  println(PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
   print("*** Platform:     ");

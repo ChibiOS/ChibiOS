@@ -289,7 +289,7 @@ void sduConfigureHookI(SerialUSBDriver *sdup) {
  * @retval TRUE         Message handled internally.
  * @retval FALSE        Message not handled.
  */
-bool_t sduRequestsHook(USBDriver *usbp) {
+bool sduRequestsHook(USBDriver *usbp) {
 
   if ((usbp->setup[0] & USB_RTYPE_TYPE_MASK) == USB_RTYPE_TYPE_CLASS) {
     switch (usbp->setup[1]) {

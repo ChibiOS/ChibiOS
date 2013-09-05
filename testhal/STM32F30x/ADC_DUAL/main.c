@@ -128,7 +128,7 @@ static const ADCConversionGroup adcgrpcfg2 = {
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread1, 128);
+static THD_WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;

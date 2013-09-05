@@ -319,7 +319,7 @@ typedef void (*usbeventcb_t)(USBDriver *usbp, usbevent_t event);
  * @retval FALSE        Request not recognized by the handler.
  * @retval TRUE         Request handled.
  */
-typedef bool_t (*usbreqhandler_t)(USBDriver *usbp);
+typedef bool (*usbreqhandler_t)(USBDriver *usbp);
 
 /**
  * @brief   Type of an USB descriptor-retrieving callback.
@@ -553,10 +553,10 @@ extern "C" {
                                input_queue_t *iqp, size_t n);
   void usbPrepareQueuedTransmit(USBDriver *usbp, usbep_t ep,
                                 output_queue_t *oqp, size_t n);
-  bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep);
-  bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep);
-  bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep);
-  bool_t usbStallTransmitI(USBDriver *usbp, usbep_t ep);
+  bool usbStartReceiveI(USBDriver *usbp, usbep_t ep);
+  bool usbStartTransmitI(USBDriver *usbp, usbep_t ep);
+  bool usbStallReceiveI(USBDriver *usbp, usbep_t ep);
+  bool usbStallTransmitI(USBDriver *usbp, usbep_t ep);
   void _usb_reset(USBDriver *usbp);
   void _usb_ep0setup(USBDriver *usbp, usbep_t ep);
   void _usb_ep0in(USBDriver *usbp, usbep_t ep);

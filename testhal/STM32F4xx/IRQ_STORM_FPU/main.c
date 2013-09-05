@@ -44,7 +44,7 @@ static bool saturated;
 /*
  * Test worker thread.
  */
-static WORKING_AREA(waWorkerThread, 128);
+static THD_WORKING_AREA(waWorkerThread, 128);
 static msg_t WorkerThread(void *arg) {
 
   (void)arg;
@@ -66,7 +66,7 @@ static msg_t WorkerThread(void *arg) {
 /*
  * Test periodic thread.
  */
-static WORKING_AREA(waPeriodicThread, 128);
+static THD_WORKING_AREA(waPeriodicThread, 128);
 static msg_t PeriodicThread(void *arg) {
 
   (void)arg;
@@ -218,19 +218,19 @@ int main(void) {
   println(CH_KERNEL_VERSION);
   print("*** Compiled:     ");
   println(__DATE__ " - " __TIME__);
-#ifdef CH_COMPILER_NAME
+#ifdef PORT_COMPILER_NAME
   print("*** Compiler:     ");
-  println(CH_COMPILER_NAME);
+  println(PORT_COMPILER_NAME);
 #endif
   print("*** Architecture: ");
-  println(CH_ARCHITECTURE_NAME);
-#ifdef CH_CORE_VARIANT_NAME
+  println(PORT_ARCHITECTURE_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
   print("*** Core Variant: ");
-  println(CH_CORE_VARIANT_NAME);
+  println(PORT_CORE_VARIANT_NAME);
 #endif
-#ifdef CH_PORT_INFO
+#ifdef PORT_INFO
   print("*** Port Info:    ");
-  println(CH_PORT_INFO);
+  println(PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
   print("*** Platform:     ");

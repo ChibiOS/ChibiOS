@@ -77,7 +77,7 @@ static void set_address(USBDriver *usbp) {
  * @retval FALSE        Request not recognized by the handler or error.
  * @retval TRUE         Request handled.
  */
-static bool_t default_handler(USBDriver *usbp) {
+static bool default_handler(USBDriver *usbp) {
   const USBDescriptor *dp;
 
   /* Decoding the request.*/
@@ -471,7 +471,7 @@ void usbPrepareQueuedTransmit(USBDriver *usbp, usbep_t ep,
  *
  * @iclass
  */
-bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep) {
+bool usbStartReceiveI(USBDriver *usbp, usbep_t ep) {
 
   osalDbgCheckClassI();
   osalDbgCheck(usbp != NULL);
@@ -498,7 +498,7 @@ bool_t usbStartReceiveI(USBDriver *usbp, usbep_t ep) {
  *
  * @iclass
  */
-bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
+bool usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
 
   osalDbgCheckClassI();
   osalDbgCheck(usbp != NULL);
@@ -523,7 +523,7 @@ bool_t usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
  *
  * @iclass
  */
-bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
+bool usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
 
   osalDbgCheckClassI();
   osalDbgCheck(usbp != NULL);
@@ -547,7 +547,7 @@ bool_t usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
  *
  * @iclass
  */
-bool_t usbStallTransmitI(USBDriver *usbp, usbep_t ep) {
+bool usbStallTransmitI(USBDriver *usbp, usbep_t ep) {
 
   osalDbgCheckClassI();
   osalDbgCheck(usbp != NULL);

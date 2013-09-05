@@ -179,7 +179,7 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(adcp->dmastp,
                             STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,

@@ -454,10 +454,10 @@ void dmaInit(void) {
  *
  * @special
  */
-bool_t dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
-                         uint32_t priority,
-                         stm32_dmaisr_t func,
-                         void *param) {
+bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
+                       uint32_t priority,
+                       stm32_dmaisr_t func,
+                       void *param) {
 
   osalDbgCheck(dmastp != NULL);
 

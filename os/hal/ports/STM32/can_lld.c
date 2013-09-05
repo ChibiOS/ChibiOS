@@ -484,7 +484,7 @@ void can_lld_stop(CANDriver *canp) {
  *
  * @notapi
  */
-bool_t can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
+bool can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
 
   switch (mailbox) {
   case CAN_ANY_MAILBOX:
@@ -557,7 +557,7 @@ void can_lld_transmit(CANDriver *canp,
  *
  * @notapi
  */
-bool_t can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
+bool can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
 
   switch (mailbox) {
   case CAN_ANY_MAILBOX:

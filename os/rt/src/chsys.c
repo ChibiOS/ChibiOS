@@ -261,7 +261,7 @@ void chSysRestoreStatusX(syssts_t sts) {
   }
 }
 
-#if CH_PORT_SUPPORTS_RT || defined(__DOXYGEN__)
+#if PORT_SUPPORTS_RT || defined(__DOXYGEN__)
 /**
  * @brief   Realtime window test.
  * @details This function verifies if the current realtime counter value
@@ -270,7 +270,7 @@ void chSysRestoreStatusX(syssts_t sts) {
  * @note    When start==end then the function returns always true because the
  *          whole time range is specified.
  * @note    This function is only available if the port layer supports the
- *          option @p CH_PORT_SUPPORTS_RT.
+ *          option @p PORT_SUPPORTS_RT.
  *
  * @param[in] cnt       the counter value to be tested
  * @param[in] start     the start of the time window (inclusive)
@@ -291,7 +291,7 @@ bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
  * @note    The real delay is always few cycles in excess of the specified
  *          value.
  * @note    This function is only available if the port layer supports the
- *          option @p CH_PORT_SUPPORTS_RT.
+ *          option @p PORT_SUPPORTS_RT.
  *
  * @param[in] cycles    number of cycles
  *
@@ -303,6 +303,6 @@ void chSysPolledDelayX(rtcnt_t cycles) {
   while (chSysIsCounterWithinX(chSysGetRealtimeCounterX(), start, end))
     ;
 }
-#endif /* CH_PORT_SUPPORTS_RT */
+#endif /* PORT_SUPPORTS_RT */
 
 /** @} */

@@ -35,7 +35,7 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 
   (void)adcp;
   (void)err;
-  chSysHalt();
+  chSysHalt("ADC error");
 }
 
 /*
@@ -73,21 +73,23 @@ static const SPIConfig hs_spicfg = {
 static void tmo(void *p) {
 
   (void)p;
-  chSysHalt();
+  chSysHalt("timeout");
 }
 
 /*
  * SPI thread.
  */
-static WORKING_AREA(waSPI1, 1024);
-static WORKING_AREA(waSPI2, 1024);
-static WORKING_AREA(waSPI3, 1024);
+static THD_WORKING_AREA(waSPI1, 1024);
+static THD_WORKING_AREA(waSPI2, 1024);
+static THD_WORKING_AREA(waSPI3, 1024);
 static msg_t spi_thread(void *p) {
   unsigned i;
   SPIDriver *spip = (SPIDriver *)p;
-  VirtualTimer vt;
+  virtual_timer_t vt;
   uint8_t txbuf[256];
   uint8_t rxbuf[256];
+
+  chVTObjectInit(&vt);
 
   /* Prepare transmit pattern.*/
   for (i = 0; i < sizeof(txbuf); i++)
@@ -97,17 +99,12 @@ static msg_t spi_thread(void *p) {
   while (TRUE) {
     /* Starts a VT working as watchdog to catch a malfunction in the SPI
        driver.*/
-    chSysLock();
-    chVTSetI(&vt, MS2ST(10), tmo, NULL);
-    chSysUnlock();
+    chVTSet(&vt, MS2ST(10), tmo, NULL);
 
     spiExchange(spip, sizeof(txbuf), txbuf, rxbuf);
 
     /* Stops the watchdog.*/
-    chSysLock();
-    if (chVTIsArmedI(&vt))
-      chVTResetI(&vt);
-    chSysUnlock();
+    chVTReset(&vt);
   }
 }
 
@@ -115,7 +112,7 @@ static msg_t spi_thread(void *p) {
  * This is a periodic thread that does absolutely nothing except flashing
  * a LED.
  */
-static WORKING_AREA(waThread1, 128);
+static THD_WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
@@ -166,9 +163,9 @@ int main(void) {
 
   /* Allocating two DMA2 streams for memory copy operations.*/
   if (dmaStreamAllocate(STM32_DMA2_STREAM6, 0, NULL, NULL))
-    chSysHalt();
+    chSysHalt("DMA already in use");
   if (dmaStreamAllocate(STM32_DMA2_STREAM7, 0, NULL, NULL))
-    chSysHalt();
+    chSysHalt("DMA already in use");
   for (i = 0; i < sizeof (patterns1); i++)
     patterns1[i] = (uint8_t)i;
   for (i = 0; i < sizeof (patterns2); i++)
@@ -177,13 +174,13 @@ int main(void) {
   /* Normal main() thread activity, it does continues memory copy operations
      using 2 DMA streams at the lowest priority.*/
   while (TRUE) {
-    VirtualTimer vt;
+    virtual_timer_t vt;
+
+    chVTObjectInit(&vt);
 
     /* Starts a VT working as watchdog to catch a malfunction in the DMA
        driver.*/
-    chSysLock();
-    chVTSetI(&vt, MS2ST(10), tmo, NULL);
-    chSysUnlock();
+    chVTSet(&vt, MS2ST(10), tmo, NULL);
 
     /* Copy pattern 1.*/
     dmaStartMemCopy(STM32_DMA2_STREAM6,
@@ -197,9 +194,9 @@ int main(void) {
     dmaWaitCompletion(STM32_DMA2_STREAM6);
     dmaWaitCompletion(STM32_DMA2_STREAM7);
     if (memcmp(patterns1, buf1, sizeof (patterns1)))
-      chSysHalt();
+      chSysHalt("pattern error");
     if (memcmp(patterns1, buf2, sizeof (patterns1)))
-      chSysHalt();
+      chSysHalt("pattern error");
 
     /* Copy pattern 2.*/
     dmaStartMemCopy(STM32_DMA2_STREAM6,
@@ -213,15 +210,12 @@ int main(void) {
     dmaWaitCompletion(STM32_DMA2_STREAM6);
     dmaWaitCompletion(STM32_DMA2_STREAM7);
     if (memcmp(patterns2, buf1, sizeof (patterns2)))
-      chSysHalt();
+      chSysHalt("pattern error");
     if (memcmp(patterns2, buf2, sizeof (patterns2)))
-      chSysHalt();
+      chSysHalt("pattern error");
 
     /* Stops the watchdog.*/
-    chSysLock();
-    if (chVTIsArmedI(&vt))
-      chVTResetI(&vt);
-    chSysUnlock();
+    chVTReset(&vt);
 
     chThdSleepMilliseconds(2);
   }

@@ -71,7 +71,7 @@ void SVC_Handler(void) {
 #if CORTEX_USE_FPU
   /* Restoring the special register FPCCR.*/
   FPU->FPCCR = (uint32_t)ctxp->fpccr;
-  FPU->FPCAR = FPU->FPCAR + sizeof (struct extctx);
+  FPU->FPCAR = FPU->FPCAR + sizeof (struct port_extctx);
 #endif
 
   /* Writing back the modified PSP value.*/

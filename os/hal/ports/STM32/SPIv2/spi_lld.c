@@ -216,7 +216,7 @@ void spi_lld_start(SPIDriver *spip) {
   if (spip->state == SPI_STOP) {
 #if STM32_SPI_USE_SPI1
     if (&SPID1 == spip) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
@@ -232,7 +232,7 @@ void spi_lld_start(SPIDriver *spip) {
 #endif
 #if STM32_SPI_USE_SPI2
     if (&SPID2 == spip) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
@@ -248,7 +248,7 @@ void spi_lld_start(SPIDriver *spip) {
 #endif
 #if STM32_SPI_USE_SPI3
     if (&SPID3 == spip) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(spip->dmarx,
                             STM32_SPI_SPI3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,

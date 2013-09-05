@@ -66,11 +66,11 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/osal/chibios/osal.mk
 include $(CHIBIOS)/os/hal/boards/NONSTANDARD_STM32F4_BARTHESS1/board.mk
-include $(CHIBIOS)/os/hal/platforms/STM32F4xx/platform.mk
+include $(CHIBIOS)/os/hal/ports/STM32F4xx/platform.mk
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/ports/ARMCMx/devices/STM32F4xx/port.mk
+include $(CHIBIOS)/os/rt/osal/osal.mk
+include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_stm32f4xx.mk
 #include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
@@ -222,4 +222,4 @@ ifeq ($(USE_FWLIB),yes)
   USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
-include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/rules.mk
+include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/rules.mk
