@@ -264,7 +264,7 @@ struct context {
 #else
 #define port_switch(ntp, otp) {                                             \
   struct port_intctx *r13 = (struct port_intctx *)__get_PSP();              \
-  if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
+  if ((stkalign_t *)(r13 - 1) < (otp)->p_stklimit)                          \
     chSysHalt("stack overflow");                                            \
   _port_switch(ntp, otp);                                                   \
 }

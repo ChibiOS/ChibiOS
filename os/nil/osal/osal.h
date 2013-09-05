@@ -246,7 +246,7 @@ typedef struct {
  *
  * @api
  */
-#define osalDbgCheck(c) /*chDbgCheck(c)*/
+#define osalDbgCheck(c) chDbgAssert(c, "parameter check")
 
 /**
  * @brief   I-Class state check.

@@ -79,9 +79,9 @@ THD_FUNCTION(Thread3, arg) {
  * match NIL_CFG_NUM_THREADS.
  */
 THD_TABLE_BEGIN
-  THD_TABLE_ENTRY("blinker1", Thread1, NULL, waThread1, sizeof(waThread1))
-  THD_TABLE_ENTRY("blinker2", Thread2, NULL, waThread2, sizeof(waThread2))
-  THD_TABLE_ENTRY("hello", Thread3, NULL, waThread3, sizeof(waThread3))
+  THD_TABLE_ENTRY(waThread1, "blinker1", Thread1, NULL)
+  THD_TABLE_ENTRY(waThread2, "blinker2", Thread2, NULL)
+  THD_TABLE_ENTRY(waThread3, "hello", Thread3, NULL)
 THD_TABLE_END
 
 /*

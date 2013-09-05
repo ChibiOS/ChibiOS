@@ -192,9 +192,8 @@ struct port_intctx {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
-  (tp)->ctxp = (struct port_intctx *)((uint8_t *)workspace +                \
-                                      (size_t)wsize -                       \
+#define PORT_SETUP_CONTEXT(tp, wend, pf, arg) {                             \
+  (tp)->ctxp = (struct port_intctx *)(((uint8_t *)(wend)) -                 \
                                       sizeof(struct port_intctx));          \
   (tp)->ctxp->r4 = (regarm_t)(pf);                                          \
   (tp)->ctxp->r5 = (regarm_t)(arg);                                         \
@@ -254,7 +253,7 @@ struct port_intctx {
 #else
 #define port_switch(ntp, otp) {                                             \
   struct port_intctx *r13 = (struct port_intctx *)__get_PSP();              \
-  if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
+  if ((stkalign_t *)(r13 - 1) < (otp)->stklim)                              \
     chSysHalt("stack overflow");                                            \
   _port_switch(ntp, otp);                                                   \
 }

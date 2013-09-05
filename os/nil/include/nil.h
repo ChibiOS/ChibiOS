@@ -30,8 +30,11 @@
 #ifndef _NIL_H_
 #define _NIL_H_
 
+typedef struct nil_thread thread_t;
+
 #include "nilconf.h"
 #include "niltypes.h"
+#include "nilcore.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -197,9 +200,21 @@
 #endif
 
 #if NIL_CFG_ENABLE_ASSERTS
-#define CH_DBG_ENABLED                 TRUE
+#define NIL_DBG_ENABLED                 TRUE
 #else
-#define CH_DBG_ENABLED                 FALSE
+#define NIL_DBG_ENABLED                 FALSE
+#endif
+
+/** Boundaries of the idle thread boundaries, only required if stack checking
+    is enabled.*/
+#if NIL_CFG_ENABLE_STACK_CHECK
+extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
+
+#define THD_IDLE_BASE                   (&__main_thread_stack_base__)
+#define THD_IDLE_END                    (&__main_thread_stack_end__)
+#else
+#define THD_IDLE_BASE                   NULL
+#define THD_IDLE_END                    NULL
 #endif
 
 /*===========================================================================*/
@@ -237,11 +252,11 @@ typedef struct nil_thread thread_t;
  * @brief   Structure representing a thread static configuration.
  */
 struct nil_thread_cfg {
+  stkalign_t        *wbase;     /**< @brief Thread working area base.       */
+  stkalign_t        *wend;      /**< @brief Thread working area end.        */
   const char        *namep;     /**< @brief Thread name, for debugging.     */
   tfunc_t           funcp;      /**< @brief Thread function.                */
   void              *arg;       /**< @brief Thread function argument.       */
-  void              *wap;       /**< @brief Thread working area base.       */
-  size_t            size;       /**< @brief Thread working area size.       */
 };
 
 /**
@@ -270,6 +285,9 @@ struct nil_thread {
                                             if disabled.                    */
 #if NIL_CFG_USE_EVENTS
   eventmask_t           epmask; /**< @brief Pending events mask.            */
+#endif
+#if NIL_CFG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
+  stkalign_t            *stklim;/**< @brief Thread stack boundary.          */
 #endif
   /* Optional extra fields.*/
   NIL_CFG_THREAD_EXT_FIELDS
@@ -311,7 +329,7 @@ typedef struct {
    * @brief   Thread structures for all the defined threads.
    */
   thread_t              threads[NIL_CFG_NUM_THREADS + 1];
-#if CH_DBG_ENABLED || defined(__DOXYGEN__)
+#if NIL_DBG_ENABLED || defined(__DOXYGEN__)
   /**
    * @brief   Panic message.
    * @note    This field is only present if some debug options have been
@@ -343,14 +361,14 @@ typedef struct {
 /**
  * @brief   Entry of user threads table
  */
-#define THD_TABLE_ENTRY(name, funcp, arg, wap, size)                        \
-  {name, funcp, arg, wap, size},
+#define THD_TABLE_ENTRY(wap, name, funcp, arg)                              \
+  {wap, (wap) + sizeof (wap), name, funcp, arg},
 
 /**
  * @brief   End of user threads table.
  */
 #define THD_TABLE_END                                                       \
-  {"idle", 0, NULL, NULL, 0}                                                \
+  {THD_IDLE_BASE, THD_IDLE_END, "idle", 0, NULL}                            \
 };
 /** @} */
 
@@ -753,10 +771,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-/* Late inclusion, this is done in order to let the port layer access
-   the OS services like assertions.*/
-#include "nilcore.h"
 
 #endif /* _NIL_H_ */
 

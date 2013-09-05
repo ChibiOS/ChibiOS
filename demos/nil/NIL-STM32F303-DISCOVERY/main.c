@@ -65,8 +65,8 @@ THD_FUNCTION(Thread3, arg) {
    * PA9 and PA10 are routed to USART1.
    */
   sdStart(&SD1, NULL);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(1));       /* USART1 TX.       */
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(1));      /* USART1 RX.       */
+  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));       /* USART1 TX.       */
+  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));      /* USART1 RX.       */
 
   while (true) {
     chnWrite(&SD1, (const uint8_t *)"Hello World!\r\n", 14);
@@ -79,9 +79,9 @@ THD_FUNCTION(Thread3, arg) {
  * match NIL_CFG_NUM_THREADS.
  */
 THD_TABLE_BEGIN
-  THD_TABLE_ENTRY("blinker1", Thread1, NULL, waThread1, sizeof(waThread1))
-  THD_TABLE_ENTRY("blinker2", Thread2, NULL, waThread2, sizeof(waThread2))
-  THD_TABLE_ENTRY("hello", Thread3, NULL, waThread3, sizeof(waThread3))
+  THD_TABLE_ENTRY(waThread1, "blinker1", Thread1, NULL)
+  THD_TABLE_ENTRY(waThread2, "blinker2", Thread2, NULL)
+  THD_TABLE_ENTRY(waThread3, "hello", Thread3, NULL)
 THD_TABLE_END
 
 /*

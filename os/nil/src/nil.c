@@ -62,6 +62,9 @@ nil_system_t nil;
  * @details Initializes the kernel structures, the current instructions flow
  *          becomes the idle thread upon return. The idle thread must not
  *          invoke any kernel primitive able to change state to not runnable.
+ * @note    This function assumes that the @p nil global variable has been
+ *          zeroed by the runtime environment. If this is not the case then
+ *          make sure to clear it before calling this function.
  *
  * @special
  */
@@ -73,28 +76,34 @@ void chSysInit(void) {
   port_init();
 
   /* Iterates through the list of defined threads.*/
-  for (tp = &nil.threads[0], tcp = nil_thd_configs;
-       tp < &nil.threads[NIL_CFG_NUM_THREADS];
-       tp++, tcp++) {
-    tp->state = NIL_STATE_READY;
-    tp->timeout = 0;
-#if NIL_CFG_USE_EVENTS
-    tp->epmask = 0;
+  tp = &nil.threads[0];
+  tcp = nil_thd_configs;
+  while (tp < &nil.threads[NIL_CFG_NUM_THREADS]) {
+#if NIL_CFG_ENABLE_STACK_CHECK
+    tp->stklim  = (stkalign_t *)tcp->wbase;
 #endif
 
     /* Port dependent thread initialization.*/
-    PORT_SETUP_CONTEXT(tp, tcp->wap, tcp->size, tcp->funcp, tcp->arg);
+    PORT_SETUP_CONTEXT(tp, tcp->wend, tcp->funcp, tcp->arg);
 
     /* Initialization hook.*/
 #if defined(NIL_CFG_THREAD_EXT_INIT_HOOK)
     NIL_CFG_THREAD_EXT_INIT_HOOK(tp);
 #endif
+
+    tp++, tcp++;
   }
+
+#if NIL_CFG_ENABLE_STACK_CHECK
+  /* The idle thread is a special case because its stack is set up by the
+     runtime environment.*/
+  tp->stklim  = THD_IDLE_BASE;
+#endif
 
   /* Runs the highest priority thread, the current one becomes the null
      thread.*/
   nil.current = nil.next = nil.threads;
-  port_switch(nil.threads, &nil.threads[NIL_CFG_NUM_THREADS]);
+  port_switch(nil.current, tp);
 
   /* Interrupts enabled for the idle thread.*/
   chSysEnable();

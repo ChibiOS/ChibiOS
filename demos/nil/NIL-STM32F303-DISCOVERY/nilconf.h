@@ -59,14 +59,17 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(NIL_CFG_USE_EVENTS) || defined(__DOXYGEN__)
 #define NIL_CFG_USE_EVENTS                  TRUE
-#endif
 
 /**
  * @brief   System assertions.
  */
 #define NIL_CFG_ENABLE_ASSERTS              FALSE
+
+/**
+ * @brief   Stack check.
+ */
+#define NIL_CFG_ENABLE_STACK_CHECK          FALSE
 
 /**
  * @brief   Threads descriptor structure extension.
