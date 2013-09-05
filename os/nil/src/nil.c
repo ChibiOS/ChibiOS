@@ -66,25 +66,28 @@ nil_system_t nil;
  * @special
  */
 void chSysInit(void) {
-  thread_reference_t tr;
+  thread_t *tp;
   const thread_config_t *tcp;
 
   /* Port layer initialization.*/
   port_init();
 
   /* Iterates through the list of defined threads.*/
-  for (tr = &nil.threads[0], tcp = nil_thd_configs;
-       tr < &nil.threads[NIL_CFG_NUM_THREADS];
-       tr++, tcp++) {
-    tr->state = NIL_STATE_READY;
-    tr->timeout = 0;
+  for (tp = &nil.threads[0], tcp = nil_thd_configs;
+       tp < &nil.threads[NIL_CFG_NUM_THREADS];
+       tp++, tcp++) {
+    tp->state = NIL_STATE_READY;
+    tp->timeout = 0;
+#if NIL_CFG_USE_EVENTS
+    tp->epmask = 0;
+#endif
 
     /* Port dependent thread initialization.*/
-    PORT_SETUP_CONTEXT(tr, tcp->wap, tcp->size, tcp->funcp, tcp->arg);
+    PORT_SETUP_CONTEXT(tp, tcp->wap, tcp->size, tcp->funcp, tcp->arg);
 
     /* Initialization hook.*/
 #if defined(NIL_CFG_THREAD_EXT_INIT_HOOK)
-    NIL_CFG_THREAD_EXT_INIT_HOOK(tr);
+    NIL_CFG_THREAD_EXT_INIT_HOOK(tp);
 #endif
   }
 
@@ -136,65 +139,65 @@ void chSysHalt(const char *reason) {
 void chSysTimerHandlerI(void) {
 
 #if NIL_CFG_TIMEDELTA == 0
-  thread_reference_t tr = &nil.threads[0];
+  thread_t *tp = &nil.threads[0];
   nil.systime++;
   do {
     /* Is the thread in a wait state with timeout?.*/
-    if (tr->timeout > 0) {
+    if (tp->timeout > 0) {
 
-      chDbgAssert(!NIL_THD_IS_READY(tr), "is ready");
+      chDbgAssert(!NIL_THD_IS_READY(tp), "is ready");
 
      /* Did the timer reach zero?*/
-      if (--tr->timeout == 0) {
+      if (--tp->timeout == 0) {
         /* Timeout on semaphores requires a special handling because the
            semaphore counter must be incremented.*/
-        if (NIL_THD_IS_WTSEM(tr))
-          tr->u1.semp->cnt++;
-        else if (NIL_THD_IS_SUSP(tr))
-          tr->u1.trp = NULL;
-        chSchReadyI(tr, MSG_TIMEOUT);
+        if (NIL_THD_IS_WTSEM(tp))
+          tp->u1.semp->cnt++;
+        else if (NIL_THD_IS_SUSP(tp))
+          tp->u1.trp = NULL;
+        chSchReadyI(tp, MSG_TIMEOUT);
       }
     }
     /* Lock released in order to give a preemption chance on those
        architectures supporting IRQ preemption.*/
     chSysUnlockFromISR();
-    tr++;
+    tp++;
     chSysLockFromISR();
-  } while (tr < &nil.threads[NIL_CFG_NUM_THREADS]);
+  } while (tp < &nil.threads[NIL_CFG_NUM_THREADS]);
 #else
-  thread_reference_t tr = &nil.threads[0];
+  thread_t *tp = &nil.threads[0];
   systime_t next = 0;
 
   chDbgAssert(nil.nexttime == port_timer_get_alarm(), "time mismatch");
 
   do {
     /* Is the thread in a wait state with timeout?.*/
-    if (tr->timeout > 0) {
+    if (tp->timeout > 0) {
 
-      chDbgAssert(!NIL_THD_IS_READY(tr), "is ready");
-      chDbgAssert(tr->timeout >= nil.nexttime - nil.lasttime, "skipped one");
+      chDbgAssert(!NIL_THD_IS_READY(tp), "is ready");
+      chDbgAssert(tp->timeout >= nil.nexttime - nil.lasttime, "skipped one");
 
-      tr->timeout -= nil.nexttime - nil.lasttime;
-      if (tr->timeout == 0) {
+      tp->timeout -= nil.nexttime - nil.lasttime;
+      if (tp->timeout == 0) {
         /* Timeout on semaphores requires a special handling because the
            semaphore counter must be incremented.*/
-        if (NIL_THD_IS_WTSEM(tr))
-          tr->u1.semp->cnt++;
-        else if (NIL_THD_IS_SUSP(tr))
-          tr->u1.trp = NULL;
-        chSchReadyI(tr, MSG_TIMEOUT);
+        if (NIL_THD_IS_WTSEM(tp))
+          tp->u1.semp->cnt++;
+        else if (NIL_THD_IS_SUSP(tp))
+          tp->u1.trp = NULL;
+        chSchReadyI(tp, MSG_TIMEOUT);
       }
       else {
-        if (tr->timeout <= next - 1)
-          next = tr->timeout;
+        if (tp->timeout <= next - 1)
+          next = tp->timeout;
       }
     }
     /* Lock released in order to give a preemption chance on those
        architectures supporting IRQ preemption.*/
     chSysUnlockFromISR();
-    tr++;
+    tp++;
     chSysLockFromISR();
-  } while (tr < &nil.threads[NIL_CFG_NUM_THREADS]);
+  } while (tp < &nil.threads[NIL_CFG_NUM_THREADS]);
   nil.lasttime = nil.nexttime;
   if (next > 0) {
     nil.nexttime += next;
@@ -256,25 +259,25 @@ void chSysRestoreStatusX(syssts_t sts) {
 /**
  * @brief   Makes the specified thread ready for execution.
  *
- * @param[in] tr        reference to the @p thread_t object
+ * @param[in] tp        pointer to the @p thread_t object
  * @param[in] msg       the wakeup message
  *
  * @return              The same reference passed as parameter.
  */
-thread_reference_t chSchReadyI(thread_reference_t tr, msg_t msg) {
+thread_t *chSchReadyI(thread_t *tp, msg_t msg) {
 
-  chDbgAssert((tr >= nil.threads) &&
-               (tr < &nil.threads[NIL_CFG_NUM_THREADS]),
-               "pointer out of range");
-  chDbgAssert(!NIL_THD_IS_READY(tr), "already ready");
+  chDbgAssert((tp >= nil.threads) &&
+              (tp < &nil.threads[NIL_CFG_NUM_THREADS]),
+              "pointer out of range");
+  chDbgAssert(!NIL_THD_IS_READY(tp), "already ready");
   chDbgAssert(nil.next <= nil.current, "priority ordering");
 
-  tr->u1.msg = msg;
-  tr->state = NIL_STATE_READY;
-  tr->timeout = 0;
-  if (tr < nil.next)
-    nil.next = tr;
-  return tr;
+  tp->u1.msg = msg;
+  tp->state = NIL_STATE_READY;
+  tp->timeout = 0;
+  if (tp < nil.next)
+    nil.next = tp;
+  return tp;
 }
 
 /**
@@ -285,15 +288,15 @@ thread_reference_t chSchReadyI(thread_reference_t tr, msg_t msg) {
 void chSchRescheduleS(void) {
 
   if (chSchIsRescRequiredI()) {
-    thread_reference_t otr = nil.current;
+    thread_t *otp = nil.current;
 
     nil.current = nil.next;
 #if defined(NIL_CFG_IDLE_LEAVE_HOOK)
-    if (otr == &nil.threads[NIL_CFG_NUM_THREADS]) {
+    if (otp == &nil.threads[NIL_CFG_NUM_THREADS]) {
       NIL_CFG_IDLE_LEAVE_HOOK();
     }
 #endif
-    port_switch(nil.next, otr);
+    port_switch(nil.next, otp);
   }
 }
 
@@ -315,13 +318,13 @@ void chSchRescheduleS(void) {
  * @sclass
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
-  thread_reference_t ntr, otr = nil.current;
+  thread_t *ntp, *otp = nil.current;
 
-  chDbgAssert(otr != &nil.threads[NIL_CFG_NUM_THREADS],
+  chDbgAssert(otp != &nil.threads[NIL_CFG_NUM_THREADS],
                "idle cannot sleep");
 
   /* Storing the wait object for the current thread.*/
-  otr->state = newstate;
+  otp->state = newstate;
 
 #if NIL_CFG_TIMEDELTA > 0
   if (timeout != TIME_INFINITE) {
@@ -347,33 +350,33 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
     }
 
     /* Timeout settings.*/
-    otr->timeout = time - nil.lasttime;
+    otp->timeout = time - nil.lasttime;
   }
 #else
 
   /* Timeout settings.*/
-  otr->timeout = timeout;
+  otp->timeout = timeout;
 #endif
 
   /* Scanning the whole threads array.*/
-  ntr = nil.threads;
+  ntp = nil.threads;
   while (true) {
     /* Is this thread ready to execute?*/
-    if (NIL_THD_IS_READY(ntr)) {
-      nil.current = nil.next = ntr;
+    if (NIL_THD_IS_READY(ntp)) {
+      nil.current = nil.next = ntp;
 #if defined(NIL_CFG_IDLE_ENTER_HOOK)
-      if (ntr == &nil.threads[NIL_CFG_NUM_THREADS]) {
+      if (ntp == &nil.threads[NIL_CFG_NUM_THREADS]) {
         NIL_CFG_IDLE_ENTER_HOOK();
       }
 #endif
-      port_switch(ntr, otr);
+      port_switch(ntp, otp);
       return nil.current->u1.msg;
     }
 
     /* Points to the next thread in lowering priority order.*/
-    ntr++;
-    chDbgAssert(ntr <= &nil.threads[NIL_CFG_NUM_THREADS],
-                 "pointer out of range");
+    ntp++;
+    chDbgAssert(ntp <= &nil.threads[NIL_CFG_NUM_THREADS],
+                "pointer out of range");
   }
 }
 
@@ -626,24 +629,24 @@ void chSemReset(semaphore_t *sp, cnt_t n) {
  * @iclass
  */
 void chSemResetI(semaphore_t *sp, cnt_t n) {
-  thread_reference_t tr;
+  thread_t *tp;
   cnt_t cnt;
 
   cnt = sp->cnt;
   sp->cnt = n;
-  tr = nil.threads;
+  tp = nil.threads;
   while (cnt < 0) {
     /* Is this thread waiting on this semaphore?*/
-    if (tr->u1.semp == sp) {
+    if (tp->u1.semp == sp) {
 
-      chDbgAssert(NIL_THD_IS_WTSEM(tr), "not waiting");
+      chDbgAssert(NIL_THD_IS_WTSEM(tp), "not waiting");
 
       cnt++;
-      chSchReadyI(tr, MSG_RESET);
+      chSchReadyI(tp, MSG_RESET);
     }
-    tr++;
+    tp++;
 
-    chDbgAssert(tr < &nil.threads[NIL_CFG_NUM_THREADS],
+    chDbgAssert(tp < &nil.threads[NIL_CFG_NUM_THREADS],
                 "pointer out of range");
   }
 }

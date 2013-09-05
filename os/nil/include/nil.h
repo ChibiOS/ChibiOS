@@ -161,6 +161,13 @@
 #endif
 
 /**
+ * @brief   Stack check.
+ */
+#if !defined(NIL_CFG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
+#define NIL_CFG_ENABLE_STACK_CHECK          FALSE
+#endif
+
+/**
  * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p thread_t structure.
  */
@@ -249,7 +256,7 @@ struct nil_thread {
   intctx_t              *ctxp;  /**< @brief Pointer to internal context.    */
   tstate_t              state;  /**< @brief Thread state.                   */
   /* Note, the following union contains a pointer while the thread is in a
-     sleeping state (!CH_THD_IS_READY()) else contains the wake-up message.*/
+     sleeping state (!NIL_THD_IS_READY()) else contains the wake-up message.*/
   union {
     msg_t               msg;    /**< @brief Wake-up message.                */
     void                *p;     /**< @brief Generic pointer.                */
@@ -277,13 +284,13 @@ typedef struct {
   /**
    * @brief   Pointer to the running thread.
    */
-  thread_reference_t    current;
+  thread_t              *current;
   /**
    * @brief   Pointer to the next thread to be executed.
    * @note    This pointer must point at the same thread pointed by @p currp
    *          or to an higher priority thread if a switch is required.
    */
-  thread_reference_t    next;
+  thread_t              *next;
 #if NIL_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
   /**
    * @brief   System time.
@@ -726,7 +733,7 @@ extern "C" {
   void chSysTimerHandlerI(void);
   syssts_t chSysGetStatusAndLockX(void);
   void chSysRestoreStatusX(syssts_t sts);
-  thread_reference_t chSchReadyI(thread_reference_t trp, msg_t msg);
+  thread_t *chSchReadyI(thread_t *tp, msg_t msg);
   void chSchRescheduleS(void);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);
   msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
