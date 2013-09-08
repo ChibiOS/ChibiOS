@@ -24,7 +24,6 @@
 
 /* TODO: LSEBYP like in F3.*/
 
-#include "ch.h"
 #include "hal.h"
 
 /*===========================================================================*/
@@ -97,17 +96,6 @@ void hal_lld_init(void) {
   rccResetAHB(~RCC_AHBRSTR_FLITFRST);
   rccResetAPB1(~RCC_APB1RSTR_PWRRST);
   rccResetAPB2(~0);
-
-  /* SysTick initialization using the system clock.*/
-  SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
-  SysTick->VAL = 0;
-  SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
-                  SysTick_CTRL_ENABLE_Msk |
-                  SysTick_CTRL_TICKINT_Msk;
-
-  /* DWT cycle counter enable.*/
-  SCS_DEMCR |= SCS_DEMCR_TRCENA;
-  DWT_CTRL  |= DWT_CTRL_CYCCNTENA;
 
   /* PWR clock enabled.*/
   rccEnablePWRInterface(FALSE);

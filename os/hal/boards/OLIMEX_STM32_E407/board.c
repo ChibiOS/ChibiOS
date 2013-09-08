@@ -14,7 +14,6 @@
     limitations under the License.
 */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)

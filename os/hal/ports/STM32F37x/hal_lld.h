@@ -965,48 +965,15 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type representing a system clock frequency.
- */
-typedef uint32_t halclock_t;
-
-/**
- * @brief   Type of the realtime free counter value.
- */
-typedef uint32_t halrtcnt_t;
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @brief   Returns the current value of the system free running counter.
- * @note    This service is implemented by returning the content of the
- *          DWT_CYCCNT register.
- *
- * @return              The value of the system free running counter of
- *                      type halrtcnt_t.
- *
- * @notapi
- */
-#define hal_lld_get_counter_value()         DWT_CYCCNT
-
-/**
- * @brief   Realtime counter frequency.
- * @note    The DWT_CYCCNT register is incremented directly by the system
- *          clock so this function returns STM32_HCLK.
- *
- * @return              The realtime counter frequency of type halclock_t.
- *
- * @notapi
- */
-#define hal_lld_get_counter_frequency()     STM32_HCLK
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* STM32 ISR, DMA and RCC helpers.*/
+/* Various helpers.*/
 #include "nvic.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"

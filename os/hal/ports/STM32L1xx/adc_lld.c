@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
@@ -88,10 +87,10 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(ADC1_IRQHandler) {
+OSAL_IRQ_HANDLER(ADC1_IRQHandler) {
   uint32_t sr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   sr = ADC1->SR;
   ADC1->SR = 0;
@@ -105,7 +104,7 @@ CH_IRQ_HANDLER(ADC1_IRQHandler) {
   }
   /* TODO: Add here analog watchdog handling.*/
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -134,7 +133,7 @@ void adc_lld_init(void) {
 
   /* The shared vector is initialized on driver initialization and never
      disabled.*/
-  nvicEnableVector(ADC1_IRQn, CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
+  nvicEnableVector(ADC1_IRQn, STM32_ADC_IRQ_PRIORITY);
 }
 
 /**
@@ -150,12 +149,11 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
-      bool_t b;
-      b = dmaStreamAllocate(adcp->dmastp,
-                            STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
-                            (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
+      bool b = dmaStreamAllocate(adcp->dmastp,
+                                 STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
+                                 (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
+                                 (void *)adcp);
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(FALSE);
     }

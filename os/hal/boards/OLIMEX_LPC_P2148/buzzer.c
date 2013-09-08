@@ -22,7 +22,6 @@
  * goes silent.
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #include "buzzer.h"

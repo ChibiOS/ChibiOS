@@ -14,7 +14,6 @@
     limitations under the License.
 */
 
-#include "ch.h"
 #include "hal.h"
 
 #define VAL_TC0_PRESCALER 0

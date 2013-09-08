@@ -45,7 +45,7 @@
 /**
  * @brief   Floating Point unit presence.
  */
-#define CORTEX_HAS_FPU          1
+#define CORTEX_HAS_FPU          0
 
 /**
  * @brief   Number of bits in priority masks.

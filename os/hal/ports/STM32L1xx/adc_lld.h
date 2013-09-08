@@ -235,7 +235,7 @@ typedef struct {
   /**
    * @brief   Enables the circular buffer mode for the group.
    */
-  bool_t                    circular;
+  bool                      circular;
   /**
    * @brief   Number of the analog channels belonging to the conversion group.
    */

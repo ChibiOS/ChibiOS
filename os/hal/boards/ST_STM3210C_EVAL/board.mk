@@ -1,5 +1,5 @@
 # List of all the board related files.
-BOARDSRC = ${CHIBIOS}/boards/ST_STM3210C_EVAL/board.c
+BOARDSRC = ${CHIBIOS}/os/hal/boards/ST_STM3210C_EVAL/board.c
 
 # Required include directories
-BOARDINC = ${CHIBIOS}/boards/ST_STM3210C_EVAL
+BOARDINC = ${CHIBIOS}/os/hal/boards/ST_STM3210C_EVAL
