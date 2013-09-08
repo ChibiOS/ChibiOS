@@ -19,13 +19,13 @@
 */
 
 /**
- * @file    STM32F3xx/cmparams.h
- * @brief   ARM Cortex-M4 parameters for the STM32F3xx.
+ * @file    STM32L1xx/cmparams.h
+ * @brief   ARM Cortex-M4 parameters for the STM32L1xx.
  *
- * @defgroup ARMCMx_STM32F3xx STM32F3xx Specific Parameters
+ * @defgroup ARMCMx_STM32L1xx STM32L1xx Specific Parameters
  * @ingroup ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M4 specific parameters for the
- *          STM32F3xx platform.
+ *          STM32L1xx platform.
  * @{
  */
 
@@ -35,7 +35,7 @@
 /**
  * @brief   Cortex core model.
  */
-#define CORTEX_MODEL            CORTEX_M4
+#define CORTEX_MODEL            CORTEX_M3
 
 /**
  * @brief   Memory Protection unit presence.
@@ -57,7 +57,7 @@
  * @note    This number does not include the 16 system vectors and must be
  *          rounded to a multiple of 8.
  */
-#define CORTEX_NUM_VECTORS      88
+#define CORTEX_NUM_VECTORS      64
 
 /* The following code is not processed when the file is included from an
    asm module.*/
@@ -66,7 +66,7 @@
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
-#include "stm32f30x.h"
+#include "stm32l1xx.h"
 
 #if !CORTEX_HAS_MPU != !__MPU_PRESENT
 #error "CMSIS __MPU_PRESENT mismatch"
