@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    STM32F4xx/adc_lld.c
- * @brief   STM32F4xx/STM32F2xx ADC subsystem low level driver source.
+ * @file    STM32F37x/adc_lld.c
+ * @brief   STM32F37x ADC subsystem low level driver source.
  *
  * @addtogroup ADC
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
@@ -132,7 +131,7 @@ static void adc_lld_reconfig(ADCDriver *adcp) {
 #endif /* STM32_ADC_USE_SDADC */
 #if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
 else {
-    chDbgAssert(FALSE, "adc_lld_start(), #5", "invalid state");
+    osalDbgAssert(FALSE, "invalid state");
   }
 #endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
 }
@@ -227,16 +226,16 @@ static void sdadc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector88) {
+OSAL_IRQ_HANDLER(Vector88) {
   uint32_t sr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   sr  = ADC1->SR;
   ADC1->SR = 0;
   adc_lld_serve_interrupt(&ADCD1, sr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -246,16 +245,16 @@ CH_IRQ_HANDLER(Vector88) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector134) {
+OSAL_IRQ_HANDLER(Vector134) {
   uint32_t isr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   isr  = SDADC1->ISR;
   SDADC1->CLRISR = isr;
   sdadc_lld_serve_interrupt(&SDADCD1, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ADC_USE_SDADC1 */
 
@@ -265,16 +264,16 @@ CH_IRQ_HANDLER(Vector134) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector138) {
+OSAL_IRQ_HANDLER(Vector138) {
   uint32_t isr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   isr  = SDADC2->ISR;
   SDADC2->CLRISR = isr;
   sdadc_lld_serve_interrupt(&SDADCD2, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ADC_USE_SDADC2 */
 
@@ -284,16 +283,16 @@ CH_IRQ_HANDLER(Vector138) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector13C) {
+OSAL_IRQ_HANDLER(Vector13C) {
   uint32_t isr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   isr  = SDADC3->ISR;
   SDADC3->CLRISR = isr;
   sdadc_lld_serve_interrupt(&SDADCD3, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ADC_USE_SDADC3 */
 
@@ -322,7 +321,7 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
-  nvicEnableVector(ADC1_IRQn, CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
+  nvicEnableVector(ADC1_IRQn, STM32_ADC_IRQ_PRIORITY);
 #endif
 
 #if STM32_ADC_USE_SDADC1
@@ -339,8 +338,7 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
-  nvicEnableVector(SDADC1_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_ADC_SDADC1_IRQ_PRIORITY));
+  nvicEnableVector(SDADC1_IRQn, STM32_ADC_SDADC1_IRQ_PRIORITY);
 #endif
 
 #if STM32_ADC_USE_SDADC2
@@ -357,8 +355,7 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
-  nvicEnableVector(SDADC2_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_ADC_SDADC2_IRQ_PRIORITY));
+  nvicEnableVector(SDADC2_IRQn, STM32_ADC_SDADC2_IRQ_PRIORITY);
 #endif
 
 #if STM32_ADC_USE_SDADC3
@@ -375,8 +372,7 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
-  nvicEnableVector(SDADC3_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_ADC_SDADC3_IRQ_PRIORITY));
+  nvicEnableVector(SDADC3_IRQn, STM32_ADC_SDADC3_IRQ_PRIORITY);
 #endif
 }
 
@@ -396,12 +392,11 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
-      bool_t b;
-      b = dmaStreamAllocate(adcp->dmastp,
-                            STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
-                            (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
+      bool b = dmaStreamAllocate(adcp->dmastp,
+                                 STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
+                                 (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                 (void *)adcp);
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(FALSE);
     }
@@ -409,11 +404,11 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_SDADC1
     if (&SDADCD1 == adcp) {
-      bool_t b = dmaStreamAllocate(adcp->dmastp,
-                                   STM32_ADC_SDADC1_DMA_IRQ_PRIORITY,
-                                   (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
-                                   (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #2", "stream already allocated");
+      bool b = dmaStreamAllocate(adcp->dmastp,
+                                 STM32_ADC_SDADC1_DMA_IRQ_PRIORITY,
+                                 (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                 (void *)adcp);
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &SDADC1->JDATAR);
       rccEnableSDADC1(FALSE);
       PWR->CR |= PWR_CR_SDADC1EN;
@@ -426,11 +421,11 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_SDADC2
     if (&SDADCD2 == adcp) {
-      bool_t b = dmaStreamAllocate(adcp->dmastp,
-                                   STM32_ADC_SDADC2_DMA_IRQ_PRIORITY,
-                                   (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
-                                   (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #3", "stream already allocated");
+      bool b = dmaStreamAllocate(adcp->dmastp,
+                                 STM32_ADC_SDADC2_DMA_IRQ_PRIORITY,
+                                 (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                 (void *)adcp);
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &SDADC2->JDATAR);
       rccEnableSDADC1(FALSE);
       PWR->CR |= PWR_CR_SDADC2EN;
@@ -443,11 +438,11 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_SDADC3
     if (&SDADCD3 == adcp) {
-      bool_t b = dmaStreamAllocate(adcp->dmastp,
-                                   STM32_ADC_SDADC3_DMA_IRQ_PRIORITY,
-                                   (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
-                                   (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #4", "stream already allocated");
+      bool b = dmaStreamAllocate(adcp->dmastp,
+                                 STM32_ADC_SDADC3_DMA_IRQ_PRIORITY,
+                                 (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                 (void *)adcp);
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &SDADC3->JDATAR);
       rccEnableSDADC1(FALSE);
       PWR->CR |= PWR_CR_SDADC3EN;
@@ -598,7 +593,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #endif /* STM32_ADC_USE_SDADC */
 #if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
   else {
-    chDbgAssert(FALSE, "adc_lld_start_conversion(), #1", "invalid state");
+    osalDbgAssert(FALSE, "invalid state");
   }
 #endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
 }
@@ -632,10 +627,10 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
  */
 void adcSTM32Calibrate(ADCDriver *adcp) {
 
-  chDbgAssert((adcp->state == ADC_READY) ||
+  osalDbgAssert((adcp->state == ADC_READY) ||
               (adcp->state == ADC_COMPLETE) ||
               (adcp->state == ADC_ERROR),
-              "adcSTM32Calibrate(), #1", "not ready");
+              "not ready");
 
 #if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
   if (adcp->adc != NULL)
@@ -673,7 +668,7 @@ void adcSTM32Calibrate(ADCDriver *adcp) {
 #endif /* STM32_ADC_USE_SDADC */
 #if STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC
   else {
-    chDbgAssert(FALSE, "adcSTM32Calibrate(), #2", "invalid state");
+    osalDbgAssert(FALSE, "invalid state");
   }
 #endif /* STM32_ADC_USE_ADC && STM32_ADC_USE_SDADC */
 }

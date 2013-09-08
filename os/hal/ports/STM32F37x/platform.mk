@@ -1,5 +1,6 @@
 # List of all the STM32F37x platform files.
-PLATFORMSRC = ${CHIBIOS}/os/hal/ports/STM32F37x/stm32_dma.c \
+PLATFORMSRC = ${CHIBIOS}/os/hal/ports/common/ARMCMx/nvic.c \
+              ${CHIBIOS}/os/hal/ports/STM32F37x/stm32_dma.c \
               ${CHIBIOS}/os/hal/ports/STM32F37x/hal_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32F37x/adc_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32F37x/ext_lld_isr.c \
@@ -12,12 +13,14 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/ports/STM32F37x/stm32_dma.c \
               ${CHIBIOS}/os/hal/ports/STM32/TIMv1/gpt_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/TIMv1/icu_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/TIMv1/pwm_lld.c \
+              ${CHIBIOS}/os/hal/ports/STM32/TIMv1/st_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/USARTv2/serial_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/USARTv2/uart_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/USBv1/usb_lld.c
 
 # Required include directories
-PLATFORMINC = ${CHIBIOS}/os/hal/ports/STM32F37x \
+PLATFORMINC = ${CHIBIOS}/os/hal/ports/common/ARMCMx \
+              ${CHIBIOS}/os/hal/ports/STM32F37x \
               ${CHIBIOS}/os/hal/ports/STM32 \
               ${CHIBIOS}/os/hal/ports/STM32/GPIOv2 \
               ${CHIBIOS}/os/hal/ports/STM32/I2Cv2 \

@@ -1007,6 +1007,7 @@ typedef uint32_t halrtcnt_t;
 /*===========================================================================*/
 
 /* STM32 ISR, DMA and RCC helpers.*/
+#include "nvic.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"

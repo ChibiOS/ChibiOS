@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 /*===========================================================================*/
@@ -102,17 +101,6 @@ void hal_lld_init(void) {
   /* Reset of all peripherals.*/
   rccResetAPB1(0xFFFFFFFF);
   rccResetAPB2(0xFFFFFFFF);
-
-  /* SysTick initialization using the system clock.*/
-  SysTick->LOAD = STM32_HCLK / CH_FREQUENCY - 1;
-  SysTick->VAL = 0;
-  SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
-                  SysTick_CTRL_ENABLE_Msk |
-                  SysTick_CTRL_TICKINT_Msk;
-
-  /* DWT cycle counter enable.*/
-  SCS_DEMCR |= SCS_DEMCR_TRCENA;
-  DWT_CTRL  |= DWT_CTRL_CYCCNTENA;
 
   /* PWR clock enabled.*/
   rccEnablePWRInterface(FALSE);

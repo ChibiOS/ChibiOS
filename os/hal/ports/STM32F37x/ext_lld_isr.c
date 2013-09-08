@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_EXT || defined(__DOXYGEN__)
@@ -55,14 +54,14 @@
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector58) {
+OSAL_IRQ_HANDLER(Vector58) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 0);
   EXTD1.config->channels[0].cb(&EXTD1, 0);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -72,14 +71,14 @@ CH_IRQ_HANDLER(Vector58) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector5C) {
+OSAL_IRQ_HANDLER(Vector5C) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 1);
   EXTD1.config->channels[1].cb(&EXTD1, 1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -89,14 +88,14 @@ CH_IRQ_HANDLER(Vector5C) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector60) {
+OSAL_IRQ_HANDLER(Vector60) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 2);
   EXTD1.config->channels[2].cb(&EXTD1, 2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -106,14 +105,14 @@ CH_IRQ_HANDLER(Vector60) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector64) {
+OSAL_IRQ_HANDLER(Vector64) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 3);
   EXTD1.config->channels[3].cb(&EXTD1, 3);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -123,14 +122,14 @@ CH_IRQ_HANDLER(Vector64) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector68) {
+OSAL_IRQ_HANDLER(Vector68) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 4);
   EXTD1.config->channels[4].cb(&EXTD1, 4);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -140,10 +139,10 @@ CH_IRQ_HANDLER(Vector68) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector9C) {
+OSAL_IRQ_HANDLER(Vector9C) {
   uint32_t pr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pr = EXTI->PR & ((1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9));
   EXTI->PR = pr;
@@ -158,7 +157,7 @@ CH_IRQ_HANDLER(Vector9C) {
   if (pr & (1 << 9))
     EXTD1.config->channels[9].cb(&EXTD1, 9);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -168,10 +167,10 @@ CH_IRQ_HANDLER(Vector9C) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(VectorE0) {
+OSAL_IRQ_HANDLER(VectorE0) {
   uint32_t pr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pr = EXTI->PR & ((1 << 10) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) |
                    (1 << 15));
@@ -189,7 +188,7 @@ CH_IRQ_HANDLER(VectorE0) {
   if (pr & (1 << 15))
     EXTD1.config->channels[15].cb(&EXTD1, 15);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -199,14 +198,14 @@ CH_IRQ_HANDLER(VectorE0) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector44) {
+OSAL_IRQ_HANDLER(Vector44) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 16);
   EXTD1.config->channels[16].cb(&EXTD1, 16);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -216,14 +215,14 @@ CH_IRQ_HANDLER(Vector44) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(VectorE4) {
+OSAL_IRQ_HANDLER(VectorE4) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 17);
   EXTD1.config->channels[17].cb(&EXTD1, 17);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -233,14 +232,14 @@ CH_IRQ_HANDLER(VectorE4) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(VectorE8) {
+OSAL_IRQ_HANDLER(VectorE8) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 18);
   EXTD1.config->channels[18].cb(&EXTD1, 18);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -250,14 +249,14 @@ CH_IRQ_HANDLER(VectorE8) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector48) {
+OSAL_IRQ_HANDLER(Vector48) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 19);
   EXTD1.config->channels[19].cb(&EXTD1, 19);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -267,14 +266,14 @@ CH_IRQ_HANDLER(Vector48) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector4C) {
+OSAL_IRQ_HANDLER(Vector4C) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 20);
   EXTD1.config->channels[20].cb(&EXTD1, 20);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -284,10 +283,10 @@ CH_IRQ_HANDLER(Vector4C) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(Vector140) {
+OSAL_IRQ_HANDLER(Vector140) {
   uint32_t pr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pr = EXTI->PR & ((1 << 21) | (1 << 22));
   EXTI->PR = pr;
@@ -296,7 +295,7 @@ CH_IRQ_HANDLER(Vector140) {
   if (pr & (1 << 22))
     EXTD1.config->channels[22].cb(&EXTD1, 22);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -311,32 +310,19 @@ CH_IRQ_HANDLER(Vector140) {
  */
 void ext_lld_exti_irq_enable(void) {
 
-  nvicEnableVector(EXTI0_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI0_IRQ_PRIORITY));
-  nvicEnableVector(EXTI1_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI1_IRQ_PRIORITY));
-  nvicEnableVector(EXTI2_TS_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI2_IRQ_PRIORITY));
-  nvicEnableVector(EXTI3_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI3_IRQ_PRIORITY));
-  nvicEnableVector(EXTI4_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI4_IRQ_PRIORITY));
-  nvicEnableVector(EXTI9_5_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI5_9_IRQ_PRIORITY));
-  nvicEnableVector(EXTI15_10_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI10_15_IRQ_PRIORITY));
-  nvicEnableVector(PVD_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI16_IRQ_PRIORITY));
-  nvicEnableVector(RTC_Alarm_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI17_IRQ_PRIORITY));
-  nvicEnableVector(USBWakeUp_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
-  nvicEnableVector(TAMPER_STAMP_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
-  nvicEnableVector(RTC_WKUP_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI20_IRQ_PRIORITY));
-  nvicEnableVector(COMP_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI21_22_IRQ_PRIORITY));
+  nvicEnableVector(EXTI0_IRQn, STM32_EXT_EXTI0_IRQ_PRIORITY);
+  nvicEnableVector(EXTI1_IRQn, STM32_EXT_EXTI1_IRQ_PRIORITY);
+  nvicEnableVector(EXTI2_TS_IRQn, STM32_EXT_EXTI2_IRQ_PRIORITY);
+  nvicEnableVector(EXTI3_IRQn, STM32_EXT_EXTI3_IRQ_PRIORITY);
+  nvicEnableVector(EXTI4_IRQn, STM32_EXT_EXTI4_IRQ_PRIORITY);
+  nvicEnableVector(EXTI9_5_IRQn, STM32_EXT_EXTI5_9_IRQ_PRIORITY);
+  nvicEnableVector(EXTI15_10_IRQn, STM32_EXT_EXTI10_15_IRQ_PRIORITY);
+  nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
+  nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
+  nvicEnableVector(USBWakeUp_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
+  nvicEnableVector(TAMPER_STAMP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
+  nvicEnableVector(RTC_WKUP_IRQn, STM32_EXT_EXTI20_IRQ_PRIORITY);
+  nvicEnableVector(COMP_IRQn, STM32_EXT_EXTI21_22_IRQ_PRIORITY);
 }
 
 /**
