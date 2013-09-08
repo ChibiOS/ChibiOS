@@ -22,7 +22,7 @@
  * ST32F051x8 memory setup.
  */
 __main_stack_size__     = 0x0400;
-__process_stack_size__  = 0x0400;
+__process_stack_size__  = 0x0200;
 
 MEMORY
 {
