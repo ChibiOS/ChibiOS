@@ -29,9 +29,9 @@ THD_FUNCTION(Thread1, arg) {
   (void)arg;
 
   while (true) {
-//    palSetPad(GPIOE, GPIOE_LED3_RED);
+    palSetPad(GPIOB, GPIOB_LED4);
     chThdSleepMilliseconds(250);
-//    palClearPad(GPIOE, GPIOE_LED3_RED);
+    palClearPad(GPIOB, GPIOB_LED4);
     chThdSleepMilliseconds(250);
   }
 }
@@ -45,9 +45,9 @@ THD_FUNCTION(Thread2, arg) {
   (void)arg;
 
   while (true) {
-//    palSetPad(GPIOE, GPIOE_LED4_BLUE);
+    palSetPad(GPIOB, GPIOB_LED3);
     chThdSleepMilliseconds(500);
-//    palClearPad(GPIOE, GPIOE_LED4_BLUE);
+    palClearPad(GPIOB, GPIOB_LED3);
     chThdSleepMilliseconds(500);
   }
 }
