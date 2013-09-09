@@ -51,11 +51,11 @@ typedef funcp_t * funcpp_t;
  * Area fill code, it is a macro because here functions cannot be called
  * until stacks are initialized.
  */
-static void fill32(void *start, void *end, uint32_t filler) {
-  uint32_t *p1 = start;
-  uint32_t *p2 = end;
-  while (p1 < p2)
-    *p1++ = filler;
+#define fill32(start, end, filler) {                                        \
+  uint32_t *p1 = (start);                                                   \
+  uint32_t *p2 = (end);                                                     \
+  while (p1 < p2)                                                           \
+    *p1++ = (filler);                                                       \
 }
 
 /*===========================================================================*/
@@ -245,7 +245,7 @@ void __late_init(void) {}
  * @note    This function is a weak symbol.
  */
 #if !defined(__DOXYGEN__)
-__attribute__((weak, naked))
+__attribute__((noreturn, weak))
 #endif
 void _default_exit(void) {
   while (1)
