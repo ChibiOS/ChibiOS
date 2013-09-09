@@ -4,6 +4,21 @@
 # Processing options coming from the upper Makefile.
 #
 
+# Compiler options
+OPT = $(USE_OPT)
+COPT = $(USE_COPT)
+CPPOPT = $(USE_CPPOPT)
+
+# Garbage collection
+ifeq ($(USE_LINK_GC),yes)
+  OPT += -ffunction-sections -fdata-sections -fno-common
+endif
+
+# Link time optimizations
+ifeq ($(USE_LTO),yes)
+  OPT += -flto
+endif
+
 # FPU-related options
 ifeq ($(USE_FPU),yes)
   USE_OPT += -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -fsingle-precision-constant
@@ -44,14 +59,6 @@ ifeq ($(BUILDDIR),.)
 endif
 OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex \
            $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).dmp
-
-# Automatic compiler options
-OPT = $(USE_OPT)
-COPT = $(USE_COPT)
-CPPOPT = $(USE_CPPOPT)
-ifeq ($(USE_LINK_GC),yes)
-  OPT += -ffunction-sections -fdata-sections -fno-common
-endif
 
 # Source files groups and paths
 ifeq ($(USE_THUMB),yes)
@@ -96,7 +103,7 @@ ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
 ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
 CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
-LDFLAGS   = $(MCFLAGS) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH),--script=$(LDSCRIPT),$(LDOPT)
+LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH),--script=$(LDSCRIPT),$(LDOPT)
 
 # Thumb interwork enabled only if needed because it kills performance.
 ifneq ($(TSRC),)

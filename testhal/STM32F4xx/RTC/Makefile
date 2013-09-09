@@ -23,6 +23,11 @@ ifeq ($(USE_LINK_GC),)
   USE_LINK_GC = yes
 endif
 
+# Enable this if you want link time optimizations (LTO)
+ifeq ($(USE_LTO),)
+  USE_LTO = yes
+endif
+
 # If enabled, this option allows to compile the application in THUMB mode.
 ifeq ($(USE_THUMB),)
   USE_THUMB = yes
