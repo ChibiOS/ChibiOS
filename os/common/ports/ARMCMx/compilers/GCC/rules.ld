@@ -18,20 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
- * ST32F407xG memory setup.
- */
-__main_stack_size__     = 0x0400;
-__process_stack_size__  = 0x0200;
-
-MEMORY
-{
-    flash : org = 0x08000000, len = 1M
-    ram : org = 0x20000000, len = 112k
-    ethram : org = 0x2001C000, len = 16k
-    ccmram : org = 0x10000000, len = 64k
-}
-
 __ram_start__           = ORIGIN(ram);
 __ram_size__            = LENGTH(ram);
 __ram_end__             = __ram_start__ + __ram_size__;
@@ -119,28 +105,7 @@ SECTIONS
         . = ALIGN(8);
         __process_stack_end__ = .;
         __main_thread_stack_end__ = .;
-    } > ccmram
-
-    .ccm :
-    {
-        PROVIDE(_cmm_start = .);
-        . = ALIGN(4);
-        *(.bss.mainthread.*)
-        . = ALIGN(4);
-        *(.bss._idle_thread_wa)
-        . = ALIGN(4);
-        *(.bss.rlist)
-        . = ALIGN(4);
-        *(.bss.vtlist)
-        . = ALIGN(4);
-        *(.bss.endmem)
-        . = ALIGN(4);
-        *(.bss.nextmem)
-        . = ALIGN(4);
-        *(.bss.default_heap)
-        . = ALIGN(4);
-        PROVIDE(_cmm_end = .);
-    } > ccmram
+    } > ram
 
     .data :
     {

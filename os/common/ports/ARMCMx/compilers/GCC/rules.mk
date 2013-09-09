@@ -1,5 +1,40 @@
 # ARM Cortex-Mx common makefile scripts and rules.
 
+##############################################################################
+# Processing options coming from the upper Makefile.
+#
+
+# FPU-related options
+ifeq ($(USE_FPU),yes)
+  USE_OPT += -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+  DDEFS += -DCORTEX_USE_FPU=TRUE
+  DADEFS += -DCORTEX_USE_FPU=TRUE
+else
+  DDEFS += -DCORTEX_USE_FPU=FALSE
+  DADEFS += -DCORTEX_USE_FPU=FALSE
+endif
+
+# Garbage collection
+ifeq ($(USE_LINK_GC),yes)
+  LDOPT := --gc-sections
+else
+  LDOPT :=
+endif
+
+# Process stack size
+ifeq ($(USE_PROCESS_STACKSIZE),)
+  LDOPT := $(LDOPT),--defsym=__process_stack_size__=0x400
+else
+  LDOPT := $(LDOPT),--defsym=__process_stack_size__=$(USE_PROCESS_STACKSIZE)
+endif
+
+# Exceptions stack size
+ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
+  LDOPT := $(LDOPT),--defsym=__main_stack_size__=0x400
+else
+  LDOPT := $(LDOPT),--defsym=__main_stack_size__=$(USE_EXCEPTIONS_STACKSIZE)
+endif
+
 # Output directory and files
 ifeq ($(BUILDDIR),)
   BUILDDIR = build
@@ -61,11 +96,7 @@ ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
 ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
 CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
-ifeq ($(USE_LINK_GC),yes)
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--gc-sections $(LLIBDIR)
-else
-  LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch $(LLIBDIR)
-endif
+LDFLAGS   = $(MCFLAGS) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH),--script=$(LDSCRIPT),$(LDOPT)
 
 # Thumb interwork enabled only if needed because it kills performance.
 ifneq ($(TSRC),)
