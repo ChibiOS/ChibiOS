@@ -76,9 +76,6 @@ typedef struct {
  *
  * @notapi
  */
-#if !defined(__DOXYGEN__)
-__attribute__ ((naked))
-#endif
 void _unhandled_exception(void) {
 
   while (true)
@@ -466,7 +463,7 @@ void Vector3FC(void) __attribute__((weak, alias("_unhandled_exception")));
  * @brief   STM32 vectors table.
  */
 #if !defined(__DOXYGEN__)
-__attribute__ ((section("vectors")))
+__attribute__ ((used, section("vectors")))
 #endif
 vectors_t _vectors = {
   &__main_stack_end__,Reset_Handler,      NMI_Handler,        HardFault_Handler,
