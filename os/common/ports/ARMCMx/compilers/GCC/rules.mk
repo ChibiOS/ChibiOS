@@ -197,7 +197,7 @@ endif
 
 $(ASMXOBJS) : $(OBJDIR)/%.o : %.S Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
-	@echo 
+	@echo
 	$(CC) -c $(ASXFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $(<F)
