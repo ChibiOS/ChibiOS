@@ -152,6 +152,7 @@ LD   = $(TRGT)gcc
 CP   = $(TRGT)objcopy
 AS   = $(TRGT)gcc -x assembler-with-cpp
 OD   = $(TRGT)objdump
+SZ   = $(TRGT)size
 HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 

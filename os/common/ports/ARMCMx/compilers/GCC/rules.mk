@@ -242,12 +242,16 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 else
 	@echo Creating $@
 	@$(OD) $(ODFLAGS) $< > $@
+	@echo
+	@$(SZ) $<
+	@echo
 	@echo Done
 endif
 
 clean:
 	@echo Cleaning
 	-rm -fR .dep $(BUILDDIR)
+	@echo
 	@echo Done
 
 #
