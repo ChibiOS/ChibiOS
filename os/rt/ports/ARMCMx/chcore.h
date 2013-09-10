@@ -196,6 +196,12 @@ struct port_intctx {};
 #include "chcore_v7m.h"
 #endif
 
+#if !defined(_FROM_ASM_)
+#if CH_CFG_TIMEDELTA > 0
+#include "chcore_timer.h"
+#endif
+#endif /* !defined(_FROM_ASM_) */
+
 #endif /* _CHCORE_H_ */
 
 /** @} */
