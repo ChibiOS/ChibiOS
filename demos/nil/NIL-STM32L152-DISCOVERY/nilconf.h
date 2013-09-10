@@ -51,7 +51,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define NIL_CFG_TIMEDELTA                   2
+#define NIL_CFG_TIMEDELTA                   0
 
 /**
  * @brief   Events Flags APIs.

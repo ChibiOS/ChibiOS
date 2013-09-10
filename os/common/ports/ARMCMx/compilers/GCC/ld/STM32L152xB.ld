@@ -19,7 +19,7 @@
 */
 
 /*
- * ST32L152xB memory setup.
+ * STM32L152xB memory setup.
  */
 MEMORY
 {

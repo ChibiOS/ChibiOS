@@ -19,7 +19,7 @@
 */
 
 /*
- * ST32F051x8 memory setup.
+ * STM32F051x8 memory setup.
  */
 MEMORY
 {

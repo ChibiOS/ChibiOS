@@ -19,7 +19,7 @@
 */
 
 /*
- * ST32F373xC memory setup.
+ * STM32F373xC memory setup.
  */
 MEMORY
 {

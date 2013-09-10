@@ -52,11 +52,6 @@ ifeq ($(USE_FPU),)
   USE_FPU = no
 endif
 
-# Enable this if you really want to use the STM FWLib.
-ifeq ($(USE_FWLIB),)
-  USE_FWLIB = no
-endif
-
 #
 # Architecture or project specific options
 ##############################################################################
@@ -215,13 +210,6 @@ ifeq ($(USE_FPU),yes)
   DDEFS += -DCORTEX_USE_FPU=TRUE
 else
   DDEFS += -DCORTEX_USE_FPU=FALSE
-endif
-
-ifeq ($(USE_FWLIB),yes)
-  include $(CHIBIOS)/ext/stm32lib/stm32lib.mk
-  CSRC += $(STM32SRC)
-  INCDIR += $(STM32INC)
-  USE_OPT += -DUSE_STDPERIPH_DRIVER
 endif
 
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/rules.mk

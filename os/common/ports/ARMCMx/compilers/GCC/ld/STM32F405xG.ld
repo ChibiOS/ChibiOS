@@ -19,7 +19,7 @@
 */
 
 /*
- * ST32F405xG memory setup.
+ * STM32F405xG memory setup.
  */
 MEMORY
 {

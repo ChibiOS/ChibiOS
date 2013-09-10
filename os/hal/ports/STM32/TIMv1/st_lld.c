@@ -26,16 +26,33 @@
 
 #if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
 
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+
 /* The following checks and settings are unusually done here because the
    file st.h needs to not have external dependencies. In this case there
    would be a dependency on osal.h and mcuconf.h.*/
-#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) && !STM32_HAS_TIM2
+#if !defined(HAL_ST_USE_TIM5)
+
+#if !STM32_HAS_TIM2
 #error "TIM2 not present in the selected device"
 #endif
 
-#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) && !STM32_TIM2_IS_32BITS
+#if !STM32_TIM2_IS_32BITS
 #error "TIM2 is not a 32 bits timer"
 #endif
+
+#else /* defined(HAL_ST_USE_TIM5) */
+
+#if !STM32_HAS_TIM5
+#error "TIM5 not present in the selected device"
+#endif
+
+#if !STM32_TIM5_IS_32BITS
+#error "TIM5 is not a 32 bits timer"
+#endif
+#endif /* defined(HAL_ST_USE_TIM5) */
+
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 /**
  * @name    Configuration options
@@ -90,7 +107,7 @@ OSAL_IRQ_HANDLER(SysTick_Handler) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 /**
@@ -99,11 +116,15 @@ OSAL_IRQ_HANDLER(SysTick_Handler) {
  *
  * @isr
  */
+#if !defined(HAL_ST_USE_TIM5)
 OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
+#else
+OSAL_IRQ_HANDLER(STM32_TIM5_HANDLER) {
+#endif
 
   OSAL_IRQ_PROLOGUE();
 
-  STM32_TIM2->SR = 0;
+  ST_TIM->SR = 0;
 
   osalSysLockFromISR();
   osalOsTimerHandlerI();
@@ -111,7 +132,7 @@ OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -126,21 +147,29 @@ void st_lld_init(void) {
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   /* Free running counter mode.*/
+#if !defined(HAL_ST_USE_TIM5)
   rccEnableTIM2(FALSE);
+#else
+  rccEnableTIM5(FALSE);
+#endif
 
   /* Initializing the counter in free running mode.*/
-  STM32_TIM2->PSC    = STM32_TIMCLK1 / OSAL_SYSTICK_FREQUENCY - 1;
-  STM32_TIM2->ARR    = 0xFFFFFFFF;
-  STM32_TIM2->CCMR1  = 0;
-  STM32_TIM2->CCR[0] = 0;
-  STM32_TIM2->DIER   = 0;
-  STM32_TIM2->CR2    = 0;
-  STM32_TIM2->EGR    = TIM_EGR_UG;
-  STM32_TIM2->CR1    = TIM_CR1_CEN;
+  ST_TIM->PSC    = STM32_TIMCLK1 / OSAL_SYSTICK_FREQUENCY - 1;
+  ST_TIM->ARR    = 0xFFFFFFFF;
+  ST_TIM->CCMR1  = 0;
+  ST_TIM->CCR[0] = 0;
+  ST_TIM->DIER   = 0;
+  ST_TIM->CR2    = 0;
+  ST_TIM->EGR    = TIM_EGR_UG;
+  ST_TIM->CR1    = TIM_CR1_CEN;
 
   /* IRQ enabled.*/
+#if !defined(HAL_ST_USE_TIM5)
   nvicEnableVector(STM32_TIM2_NUMBER, STM32_ST_IRQ_PRIORITY);
+#else
+  nvicEnableVector(STM32_TIM5_NUMBER, STM32_ST_IRQ_PRIORITY);
 #endif
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
   /* Periodic systick mode, the Cortex-Mx internal systick timer is used
@@ -153,7 +182,7 @@ void st_lld_init(void) {
 
   /* IRQ enabled.*/
   nvicSetSystemHandlerPriority(SysTick_IRQn, STM32_ST_IRQ_PRIORITY);
-#endif
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
 }
 
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
