@@ -88,7 +88,7 @@
 /**
  * @brief   Systick mode required by the underlying OS.
  */
-#if (CH_CFG_TIMEDELTA == 0) || defined(__DOXYGEN__)
+#if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
 #define OSAL_ST_MODE                        OSAL_ST_MODE_PERIODIC
 #else
 #define OSAL_ST_MODE                        OSAL_ST_MODE_FREERUNNING

@@ -45,15 +45,15 @@
 #error "invalid CH_CFG_ST_FREQUENCY specified"
 #endif
 
-#if (CH_CFG_TIMEDELTA < 0) || (CH_CFG_TIMEDELTA == 1)
-#error "invalid CH_CFG_TIMEDELTA specified"
+#if (CH_CFG_ST_TIMEDELTA < 0) || (CH_CFG_ST_TIMEDELTA == 1)
+#error "invalid CH_CFG_ST_TIMEDELTA specified"
 #endif
 
-#if (CH_CFG_TIMEDELTA > 0) && (CH_CFG_TIME_QUANTUM > 0)
+#if (CH_CFG_ST_TIMEDELTA > 0) && (CH_CFG_TIME_QUANTUM > 0)
 #error "CH_CFG_TIME_QUANTUM not supported in tickless mode"
 #endif
 
-#if (CH_CFG_TIMEDELTA > 0) && CH_DBG_THREADS_PROFILING
+#if (CH_CFG_ST_TIMEDELTA > 0) && CH_DBG_THREADS_PROFILING
 #error "CH_DBG_THREADS_PROFILING not supported in tickless mode"
 #endif
 
@@ -190,11 +190,11 @@ static inline void chVTObjectInit(virtual_timer_t *vtp) {
  */
 static inline systime_t chVTGetSystemTimeX(void) {
 
-#if CH_CFG_TIMEDELTA == 0
+#if CH_CFG_ST_TIMEDELTA == 0
   return ch.vtlist.vt_systime;
-#else /* CH_CFG_TIMEDELTA > 0 */
+#else /* CH_CFG_ST_TIMEDELTA > 0 */
   return port_timer_get_time();
-#endif /* CH_CFG_TIMEDELTA > 0 */
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
 /**
@@ -366,7 +366,7 @@ static inline void chVTDoTickI(void) {
 
   chDbgCheckClassI();
 
-#if CH_CFG_TIMEDELTA == 0
+#if CH_CFG_ST_TIMEDELTA == 0
   ch.vtlist.vt_systime++;
   if (&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.vt_next) {
     virtual_timer_t *vtp;
@@ -382,7 +382,7 @@ static inline void chVTDoTickI(void) {
       chSysLockFromISR();
     }
   }
-#else /* CH_CFG_TIMEDELTA > 0 */
+#else /* CH_CFG_ST_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
   systime_t now = chVTGetSystemTimeX();
   systime_t delta = now - ch.vtlist.vt_lasttime;
@@ -407,7 +407,7 @@ static inline void chVTDoTickI(void) {
     /* Updating the alarm to the next deadline.*/
     port_timer_set_alarm(now + vtp->vt_delta);
   }
-#endif /* CH_CFG_TIMEDELTA > 0 */
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
 #endif /* _CHVT_H_ */

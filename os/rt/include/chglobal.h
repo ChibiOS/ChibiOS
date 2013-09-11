@@ -236,10 +236,10 @@ typedef struct {
   virtual_timer_t       *vt_prev;   /**< @brief Last timer in the delta
                                                 list.                       */
   systime_t             vt_delta;   /**< @brief Must be initialized to -1.  */
-#if CH_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
+#if CH_CFG_ST_TIMEDELTA == 0 || defined(__DOXYGEN__)
   volatile systime_t    vt_systime; /**< @brief System Time counter.        */
 #endif
-#if CH_CFG_TIMEDELTA > 0 || defined(__DOXYGEN__)
+#if CH_CFG_ST_TIMEDELTA > 0 || defined(__DOXYGEN__)
   /**
    * @brief   System time of the last tick event.
    */

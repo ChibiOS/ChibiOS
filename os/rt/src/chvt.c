@@ -63,11 +63,11 @@ void _vt_init(void) {
 
   ch.vtlist.vt_next = ch.vtlist.vt_prev = (void *)&ch.vtlist;
   ch.vtlist.vt_delta = (systime_t)-1;
-#if CH_CFG_TIMEDELTA == 0
+#if CH_CFG_ST_TIMEDELTA == 0
   ch.vtlist.vt_systime = 0;
-#else /* CH_CFG_TIMEDELTA > 0 */
+#else /* CH_CFG_ST_TIMEDELTA > 0 */
   ch.vtlist.vt_lasttime = 0;
-#endif /* CH_CFG_TIMEDELTA > 0 */
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
 /**
@@ -123,14 +123,14 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
   vtp->vt_func = vtfunc;
   p = ch.vtlist.vt_next;
 
-#if CH_CFG_TIMEDELTA > 0 || defined(__DOXYGEN__)
+#if CH_CFG_ST_TIMEDELTA > 0 || defined(__DOXYGEN__)
   {
     systime_t now = port_timer_get_time();
 
     /* If the requested delay is lower than the minimum safe delta then it
        is raised to the minimum safe value.*/
-    if (delay < CH_CFG_TIMEDELTA)
-      delay = CH_CFG_TIMEDELTA;
+    if (delay < CH_CFG_ST_TIMEDELTA)
+      delay = CH_CFG_ST_TIMEDELTA;
 
     if (&ch.vtlist == (virtual_timers_list_t *)p) {
       /* The delta list is empty, the current time becomes the new
@@ -149,7 +149,7 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
         port_timer_set_alarm(ch.vtlist.vt_lasttime + delay);
     }
   }
-#endif /* CH_CFG_TIMEDELTA > 0 */
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
   /* The delta list is scanned in order to find the correct position for
      this timer. */
@@ -192,7 +192,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
      is the last of the list, restoring it.*/
   ch.vtlist.vt_delta = (systime_t)-1;
 
-#if CH_CFG_TIMEDELTA > 0 || defined(__DOXYGEN__)
+#if CH_CFG_ST_TIMEDELTA > 0 || defined(__DOXYGEN__)
   {
     if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
       /* Just removed the last element in the list, alarm timer stopped.*/
@@ -204,7 +204,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
                            ch.vtlist.vt_next->vt_delta);
     }
   }
-#endif /* CH_CFG_TIMEDELTA > 0 */
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
 /** @} */
