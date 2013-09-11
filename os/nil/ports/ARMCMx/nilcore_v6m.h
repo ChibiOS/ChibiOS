@@ -147,17 +147,9 @@
 
 #if !defined(_FROM_ASM_)
 
-/**
- * @brief   Generic ARM register.
- */
-typedef void *regarm_t;
-
  /* The documentation of the following declarations is in chconf.h in order
     to not have duplicated structure names into the documentation.*/
 #if !defined(__DOXYGEN__)
-
-typedef uint64_t stkalign_t;
-
 struct port_extctx {
   regarm_t      r0;
   regarm_t      r1;
@@ -180,7 +172,6 @@ struct port_intctx {
   regarm_t      r7;
   regarm_t      lr;
 };
-
 #endif /* !defined(__DOXYGEN__) */
 
 /*===========================================================================*/

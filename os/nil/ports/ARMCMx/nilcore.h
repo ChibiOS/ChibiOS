@@ -110,17 +110,32 @@
    asm module.*/
 #if !defined(_FROM_ASM_)
 
-/* The following declarations are there just for Doxygen documentation, the
-   real declarations are inside the sub-headers being specific for the
-   sub-architectures.*/
-#if defined(__DOXYGEN__)
 /**
- * @brief   Stack and memory alignment enforcement.
+ * @brief   Type of system time.
+ */
+#if (NIL_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
+typedef uint32_t systime_t;
+#else
+typedef uint16_t systime_t;
+#endif
+
+/**
+ * @brief   Type of a generic ARM register.
+ */
+typedef void *regarm_t;
+
+/**
+ * @brief   Type of stack and memory alignment enforcement.
  * @note    In this architecture the stack alignment is enforced to 64 bits,
  *          32 bits alignment is supported by hardware but deprecated by ARM,
  *          the implementation choice is to not offer the option.
  */
 typedef uint64_t stkalign_t;
+
+/* The following declarations are there just for Doxygen documentation, the
+   real declarations are inside the sub-headers being specific for the
+   sub-architectures.*/
+#if defined(__DOXYGEN__)
 
 /**
  * @brief   Interrupt saved context.

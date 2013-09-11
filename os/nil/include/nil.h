@@ -128,7 +128,18 @@ typedef struct nil_thread thread_t;
 #endif
 
 /**
- * @brief   System timer resolution in Hz.
+ * @brief   System time counter resolution.
+ * @note    Allowed values are 16 or 32 bits.
+ */
+#if !defined(NIL_CFG_ST_RESOLUTION) || defined(__DOXYGEN__)
+#define NIL_CFG_ST_RESOLUTION               32
+#endif
+
+/**
+ * @brief   System tick frequency.
+ * @note    This value together with the @p NIL_CFG_ST_RESOLUTION
+ *          option defines the maximum amount of time allowed for
+ *          timeouts.
  */
 #if !defined(NIL_CFG_ST_FREQUENCY) || defined(__DOXYGEN__)
 #define NIL_CFG_ST_FREQUENCY                100
@@ -191,12 +202,17 @@ typedef struct nil_thread thread_t;
        "ChibiOS/RT instead"
 #endif
 
+#if (NIL_CFG_ST_RESOLUTION != 16) && (NIL_CFG_ST_RESOLUTION != 32)
+#error "invalid NIL_CFG_ST_RESOLUTION specified, must be 16 or 32"
+#endif
+
 #if NIL_CFG_ST_FREQUENCY <= 0
-#error "invalid NIL_CFG_ST_FREQUENCY specified"
+#error "invalid NIL_CFG_ST_FREQUENCY specified, must be greated than zero"
 #endif
 
 #if (NIL_CFG_ST_TIMEDELTA < 0) || (NIL_CFG_ST_TIMEDELTA == 1)
-#error "invalid NIL_CFG_ST_TIMEDELTA specified"
+#error "invalid NIL_CFG_ST_TIMEDELTA specified, must "                      \
+       "be zero or greater than one"
 #endif
 
 #if NIL_CFG_ENABLE_ASSERTS
