@@ -41,12 +41,17 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if (CH_CFG_ST_RESOLUTION != 16) && (CH_CFG_ST_RESOLUTION != 32)
+#error "invalid CH_CFG_ST_RESOLUTION specified, must be 16 or 32"
+#endif
+
 #if CH_CFG_ST_FREQUENCY <= 0
-#error "invalid CH_CFG_ST_FREQUENCY specified"
+#error "invalid CH_CFG_ST_FREQUENCY specified, must be greated than zero"
 #endif
 
 #if (CH_CFG_ST_TIMEDELTA < 0) || (CH_CFG_ST_TIMEDELTA == 1)
-#error "invalid CH_CFG_ST_TIMEDELTA specified"
+#error "invalid CH_CFG_ST_TIMEDELTA specified, must "                       \
+       "be zero or greater than one"
 #endif
 
 #if (CH_CFG_ST_TIMEDELTA > 0) && (CH_CFG_TIME_QUANTUM > 0)

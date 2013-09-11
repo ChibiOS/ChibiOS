@@ -136,7 +136,6 @@ typedef uint64_t stkalign_t;
    real declarations are inside the sub-headers being specific for the
    sub-architectures.*/
 #if defined(__DOXYGEN__)
-
 /**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a

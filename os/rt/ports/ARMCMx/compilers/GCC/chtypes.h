@@ -51,7 +51,6 @@
 #endif
 /** @} */
 
-typedef uint32_t        systime_t;      /**< System time.                   */
 typedef uint32_t        rtcnt_t;        /**< Realtime counter.              */
 typedef uint64_t        rttime_t;       /**< Time accumulator.              */
 typedef uint32_t        syssts_t;       /**< System status word.            */
