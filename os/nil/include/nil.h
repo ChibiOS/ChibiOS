@@ -142,8 +142,8 @@ typedef struct nil_thread thread_t;
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#if !defined(NIL_CFG_TIMEDELTA) || defined(__DOXYGEN__)
-#define NIL_CFG_TIMEDELTA                   0
+#if !defined(NIL_CFG_ST_TIMEDELTA) || defined(__DOXYGEN__)
+#define NIL_CFG_ST_TIMEDELTA                0
 #endif
 
 /**
@@ -195,8 +195,8 @@ typedef struct nil_thread thread_t;
 #error "invalid NIL_CFG_ST_FREQUENCY specified"
 #endif
 
-#if (NIL_CFG_TIMEDELTA < 0) || (NIL_CFG_TIMEDELTA == 1)
-#error "invalid NIL_CFG_TIMEDELTA specified"
+#if (NIL_CFG_ST_TIMEDELTA < 0) || (NIL_CFG_ST_TIMEDELTA == 1)
+#error "invalid NIL_CFG_ST_TIMEDELTA specified"
 #endif
 
 #if NIL_CFG_ENABLE_ASSERTS
@@ -309,13 +309,13 @@ typedef struct {
    *          or to an higher priority thread if a switch is required.
    */
   thread_t              *next;
-#if NIL_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
+#if NIL_CFG_ST_TIMEDELTA == 0 || defined(__DOXYGEN__)
   /**
    * @brief   System time.
    */
   systime_t             systime;
 #endif
-#if NIL_CFG_TIMEDELTA > 0 || defined(__DOXYGEN__)
+#if NIL_CFG_ST_TIMEDELTA > 0 || defined(__DOXYGEN__)
   /**
    * @brief   System time of the last tick event.
    */
@@ -702,7 +702,7 @@ typedef struct {
  *
  * @xclass
  */
-#if NIL_CFG_TIMEDELTA == 0 || defined(__DOXYGEN__)
+#if NIL_CFG_ST_TIMEDELTA == 0 || defined(__DOXYGEN__)
 #define chVTGetSystemTimeX() (nil.systime)
 #else
 #define chVTGetSystemTimeX() port_timer_get_time()

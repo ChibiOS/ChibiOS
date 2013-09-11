@@ -197,7 +197,7 @@ struct port_intctx {};
 #endif
 
 #if !defined(_FROM_ASM_)
-#if NIL_CFG_TIMEDELTA > 0
+#if NIL_CFG_ST_TIMEDELTA > 0
 #include "nilcore_timer.h"
 #endif
 #endif /* !defined(_FROM_ASM_) */

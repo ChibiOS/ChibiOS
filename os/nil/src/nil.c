@@ -147,7 +147,7 @@ void chSysHalt(const char *reason) {
  */
 void chSysTimerHandlerI(void) {
 
-#if NIL_CFG_TIMEDELTA == 0
+#if NIL_CFG_ST_TIMEDELTA == 0
   thread_t *tp = &nil.threads[0];
   nil.systime++;
   do {
@@ -335,14 +335,14 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
   /* Storing the wait object for the current thread.*/
   otp->state = newstate;
 
-#if NIL_CFG_TIMEDELTA > 0
+#if NIL_CFG_ST_TIMEDELTA > 0
   if (timeout != TIME_INFINITE) {
     systime_t time = chVTGetSystemTimeX() + timeout;
 
     /* TIMEDELTA makes sure to have enough time to reprogram the timer
        before the free-running timer counter reaches the selected timeout.*/
-    if (timeout < NIL_CFG_TIMEDELTA)
-      timeout = NIL_CFG_TIMEDELTA;
+    if (timeout < NIL_CFG_ST_TIMEDELTA)
+      timeout = NIL_CFG_ST_TIMEDELTA;
 
     if (nil.lasttime == nil.nexttime) {
       /* Special case, first thread asking for a timeout.*/
