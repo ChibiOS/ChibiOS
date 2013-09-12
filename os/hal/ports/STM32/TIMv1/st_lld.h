@@ -27,9 +27,9 @@
 #ifndef _ST_LLD_H_
 #define _ST_LLD_H_
 
+#include "mcuconf.h"
 #include "stm32_registry.h"
 #include "stm32_tim.h"
-#include "mcuconf.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -40,14 +40,25 @@
 /*===========================================================================*/
 
 /**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   SysTick timer IRQ priority.
+ */
+#if !defined(STM32_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ST_IRQ_PRIORITY               8
+#endif
+
+/**
  * @brief   TIMx unit (by number) to be used for free running operations.
  * @note    You must select a 32 bits timer if a 32 bits @p systick_t type
- *          is required or a 16 bits timer if a 16 bits @p systick_t type
  *          is required.
  */
 #if !defined(STM32_ST_USE_TIMER) || defined(__DOXYGEN__)
 #define STM32_ST_USE_TIMER                  2
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

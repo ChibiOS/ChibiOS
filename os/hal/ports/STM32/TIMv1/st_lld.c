@@ -26,80 +26,84 @@
 
 #if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
 
+
+/*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 
-/* The following checks and settings are unusually done here because the
-   file st.h needs to not have external dependencies. In this case there
-   would be a dependency on osal.h and mcuconf.h.*/
+#if (OSAL_ST_RESOLUTION == 32)
+#define ST_ARR_INIT                         0xFFFFFFFF
+#else
+#define ST_ARR_INIT                         0x0000FFFF
+#endif
+
 #if STM32_ST_USE_TIMER == 2
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM2_IS_32BITS
 #error "TIM2 is not a 32bits timer"
 #endif
-#if (OSAL_ST_RESOLUTION == 16) && STM32_TIM2_IS_32BITS
-#error "TIM2 is not a 16bits timer"
-#endif
 
 #define ST_HANDLER                          STM32_TIM2_HANDLER
 #define ST_NUMBER                           STM32_TIM2_NUMBER
+#define ST_CLOCK_SRC                        STM32_TIMCLK1
 #define ST_ENABLE_CLOCK()                   rccEnableTIM2(FALSE)
 
 #elif STM32_ST_USE_TIMER == 3
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM3_IS_32BITS
 #error "TIM3 is not a 32bits timer"
 #endif
-#if (OSAL_ST_RESOLUTION == 16) && STM32_TIM3_IS_32BITS
-#error "TIM3 is not a 16bits timer"
-#endif
 
 #define ST_HANDLER                          STM32_TIM3_HANDLER
 #define ST_NUMBER                           STM32_TIM3_NUMBER
+#define ST_CLOCK_SRC                        STM32_TIMCLK1
 #define ST_ENABLE_CLOCK()                   rccEnableTIM3(FALSE)
 
 #elif STM32_ST_USE_TIMER == 4
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM4_IS_32BITS
 #error "TIM4 is not a 32bits timer"
 #endif
-#if (OSAL_ST_RESOLUTION == 16) && STM32_TIM4_IS_32BITS
-#error "TIM4 is not a 16bits timer"
-#endif
 
 #define ST_HANDLER                          STM32_TIM4_HANDLER
 #define ST_NUMBER                           STM32_TIM4_NUMBER
+#define ST_CLOCK_SRC                        STM32_TIMCLK1
 #define ST_ENABLE_CLOCK()                   rccEnableTIM4(FALSE)
 
 #elif STM32_ST_USE_TIMER == 5
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM5_IS_32BITS
 #error "TIM5 is not a 32bits timer"
 #endif
-#if (OSAL_ST_RESOLUTION == 16) && STM32_TIM5_IS_32BITS
-#error "TIM5 is not a 16bits timer"
-#endif
 
 #define ST_HANDLER                          STM32_TIM5_HANDLER
 #define ST_NUMBER                           STM32_TIM5_NUMBER
+#define ST_CLOCK_SRC                        STM32_TIMCLK1
 #define ST_ENABLE_CLOCK()                   rccEnableTIM5(FALSE)
 
 #else
 #error "STM32_ST_USE_TIMER specifies an unsupported timer"
 #endif
 
+#if ST_CLOCK_SRC % OSAL_SYSTICK_FREQUENCY != 0
+#error "the selected ST frequency is not obtainable because integer rounding"
+#endif
+
+#if (ST_CLOCK_SRC / OSAL_SYSTICK_FREQUENCY) - 1 > 0xFFFF
+#error "the selected ST frequency is not obtainable because TIM timer prescaler limits"
+#endif
+
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
-/**
- * @name    Configuration options
- * @{
- */
-/**
- * @brief   SysTick timer IRQ priority.
- */
-#if !defined(STM32_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ST_IRQ_PRIORITY               8
-#endif
-/** @} */
+#if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
 
-/*===========================================================================*/
-/* Driver local definitions.                                                 */
-/*===========================================================================*/
+#if STM32_HCLK % OSAL_SYSTICK_FREQUENCY != 0
+#error "the selected ST frequency is not obtainable because integer rounding"
+#endif
+
+#if (STM32_HCLK / OSAL_SYSTICK_FREQUENCY) - 1 > 0xFFFFFF
+#error "the selected ST frequency is not obtainable because SysTick timer counter limits"
+#endif
+
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -179,8 +183,8 @@ void st_lld_init(void) {
   ST_ENABLE_CLOCK();
 
   /* Initializing the counter in free running mode.*/
-  STM32_ST_TIM->PSC    = STM32_TIMCLK1 / OSAL_SYSTICK_FREQUENCY - 1;
-  STM32_ST_TIM->ARR    = 0xFFFFFFFF;
+  STM32_ST_TIM->PSC    = (ST_CLOCK_SRC / OSAL_SYSTICK_FREQUENCY) - 1;
+  STM32_ST_TIM->ARR    = ST_ARR_INIT;
   STM32_ST_TIM->CCMR1  = 0;
   STM32_ST_TIM->CCR[0] = 0;
   STM32_ST_TIM->DIER   = 0;
@@ -195,7 +199,7 @@ void st_lld_init(void) {
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
   /* Periodic systick mode, the Cortex-Mx internal systick timer is used
      in this mode.*/
-  SysTick->LOAD = STM32_HCLK / OSAL_SYSTICK_FREQUENCY - 1;
+  SysTick->LOAD = (STM32_HCLK / OSAL_SYSTICK_FREQUENCY) - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |
