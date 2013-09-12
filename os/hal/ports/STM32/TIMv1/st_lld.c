@@ -31,26 +31,45 @@
 /* The following checks and settings are unusually done here because the
    file st.h needs to not have external dependencies. In this case there
    would be a dependency on osal.h and mcuconf.h.*/
-#if !defined(HAL_ST_USE_TIM5)
-
-#if !STM32_HAS_TIM2
-#error "TIM2 not present in the selected device"
+#if STM32_ST_USE_TIMER == 2
+#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM2_IS_32BITS
+#error "TIM2 is not a 32bits timer"
 #endif
 
-#if !STM32_TIM2_IS_32BITS
-#error "TIM2 is not a 32 bits timer"
+#define ST_HANDLER                          STM32_TIM2_HANDLER
+#define ST_NUMBER                           STM32_TIM2_NUMBER
+#define ST_ENABLE_CLOCK()                   rccEnableTIM2(FALSE)
+
+#elif STM32_ST_USE_TIMER == 5
+#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM5_IS_32BITS
+#error "TIM5 is not a 32bits timer"
 #endif
 
-#else /* defined(HAL_ST_USE_TIM5) */
+#define ST_HANDLER                          STM32_TIM5_HANDLER
+#define ST_NUMBER                           STM32_TIM5_NUMBER
+#define ST_ENABLE_CLOCK()                   rccEnableTIM5(FALSE)
 
-#if !STM32_HAS_TIM5
-#error "TIM5 not present in the selected device"
+#elif STM32_ST_USE_TIMER == 6
+#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM6_IS_32BITS
+#error "TIM6 is not a 32bits timer"
 #endif
 
-#if !STM32_TIM5_IS_32BITS
-#error "TIM5 is not a 32 bits timer"
+#define ST_HANDLER                          STM32_TIM6_HANDLER
+#define ST_NUMBER                           STM32_TIM6_NUMBER
+#define ST_ENABLE_CLOCK()                   rccEnableTIM6(FALSE)
+
+#elif STM32_ST_USE_TIMER == 7
+#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM7_IS_32BITS
+#error "TIM7 is not a 32bits timer"
 #endif
-#endif /* defined(HAL_ST_USE_TIM5) */
+
+#define ST_HANDLER                          STM32_TIM7_HANDLER
+#define ST_NUMBER                           STM32_TIM7_NUMBER
+#define ST_ENABLE_CLOCK()                   rccEnableTIM7(FALSE)
+
+#else
+#error "STM32_ST_USE_TIMER specifies an unsupported timer"
+#endif
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
@@ -116,15 +135,11 @@ OSAL_IRQ_HANDLER(SysTick_Handler) {
  *
  * @isr
  */
-#if !defined(HAL_ST_USE_TIM5)
-OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
-#else
-OSAL_IRQ_HANDLER(STM32_TIM5_HANDLER) {
-#endif
+OSAL_IRQ_HANDLER(ST_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  ST_TIM->SR = 0;
+  STM32_ST_TIM->SR = 0;
 
   osalSysLockFromISR();
   osalOsTimerHandlerI();
@@ -147,28 +162,22 @@ void st_lld_init(void) {
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   /* Free running counter mode.*/
-#if !defined(HAL_ST_USE_TIM5)
-  rccEnableTIM2(FALSE);
-#else
-  rccEnableTIM5(FALSE);
-#endif
+
+  /* Enabling timer clock.*/
+  ST_ENABLE_CLOCK();
 
   /* Initializing the counter in free running mode.*/
-  ST_TIM->PSC    = STM32_TIMCLK1 / OSAL_SYSTICK_FREQUENCY - 1;
-  ST_TIM->ARR    = 0xFFFFFFFF;
-  ST_TIM->CCMR1  = 0;
-  ST_TIM->CCR[0] = 0;
-  ST_TIM->DIER   = 0;
-  ST_TIM->CR2    = 0;
-  ST_TIM->EGR    = TIM_EGR_UG;
-  ST_TIM->CR1    = TIM_CR1_CEN;
+  STM32_ST_TIM->PSC    = STM32_TIMCLK1 / OSAL_SYSTICK_FREQUENCY - 1;
+  STM32_ST_TIM->ARR    = 0xFFFFFFFF;
+  STM32_ST_TIM->CCMR1  = 0;
+  STM32_ST_TIM->CCR[0] = 0;
+  STM32_ST_TIM->DIER   = 0;
+  STM32_ST_TIM->CR2    = 0;
+  STM32_ST_TIM->EGR    = TIM_EGR_UG;
+  STM32_ST_TIM->CR1    = TIM_CR1_CEN;
 
   /* IRQ enabled.*/
-#if !defined(HAL_ST_USE_TIM5)
-  nvicEnableVector(STM32_TIM2_NUMBER, STM32_ST_IRQ_PRIORITY);
-#else
-  nvicEnableVector(STM32_TIM5_NUMBER, STM32_ST_IRQ_PRIORITY);
-#endif
+  nvicEnableVector(ST_NUMBER, STM32_ST_IRQ_PRIORITY);
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC

@@ -38,14 +38,33 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   TIMx unit (by number) to be used for free running operations.
+ * @note    You must select a 32 bits timer if a 32 bits systick_t is
+ *          required.
+ */
+#if !defined(STM32_ST_USE_TIMER) || defined(__DOXYGEN__)
+#define STM32_ST_USE_TIMER                  2
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !defined(HAL_ST_USE_TIM5)
-#define ST_TIM                              STM32_TIM2
+#if STM32_ST_USE_TIMER == 2
+#define STM32_ST_TIM                              STM32_TIM2
+
+#elif STM32_ST_USE_TIMER == 5
+#define STM32_ST_TIM                              STM32_TIM5
+
+#elif STM32_ST_USE_TIMER == 6
+#define STM32_ST_TIM                              STM32_TIM6
+
+#elif STM32_ST_USE_TIMER == 7
+#define STM32_ST_TIM                              STM32_TIM7
+
 #else
-#define ST_TIM                              STM32_TIM5
+#error "STM32_ST_USE_TIMER specifies an unsupported timer"
 #endif
 
 /*===========================================================================*/
@@ -81,7 +100,7 @@ extern "C" {
  */
 static inline systime_t st_lld_get_counter(void) {
 
-  return (systime_t)(ST_TIM->CNT);
+  return (systime_t)STM32_ST_TIM->CNT;
 }
 
 /**
@@ -95,9 +114,9 @@ static inline systime_t st_lld_get_counter(void) {
  */
 static inline void st_lld_start_alarm(systime_t time) {
 
-  ST_TIM->CCR[0] = time;
-  ST_TIM->SR     = 0;
-  ST_TIM->DIER   = STM32_TIM_DIER_CC1IE;
+  STM32_ST_TIM->CCR[0] = (uint32_t)time;
+  STM32_ST_TIM->SR     = 0;
+  STM32_ST_TIM->DIER   = STM32_TIM_DIER_CC1IE;
 }
 
 /**
@@ -107,7 +126,7 @@ static inline void st_lld_start_alarm(systime_t time) {
  */
 static inline void st_lld_stop_alarm(void) {
 
-  ST_TIM->DIER = 0;
+  STM32_ST_TIM->DIER = 0;
 }
 
 /**
@@ -119,7 +138,7 @@ static inline void st_lld_stop_alarm(void) {
  */
 static inline void st_lld_set_alarm(systime_t time) {
 
-  ST_TIM->CCR[0] = (uint32_t)time;
+  STM32_ST_TIM->CCR[0] = (uint32_t)time;
 }
 
 /**
@@ -131,7 +150,7 @@ static inline void st_lld_set_alarm(systime_t time) {
  */
 static inline systime_t st_lld_get_alarm(void) {
 
-  return (systime_t)ST_TIM->CCR[0];
+  return (systime_t)STM32_ST_TIM->CCR[0];
 }
 
 /**
@@ -145,7 +164,7 @@ static inline systime_t st_lld_get_alarm(void) {
  */
 static inline bool st_lld_is_alarm_active(void) {
 
-  return (bool)((ST_TIM->DIER & STM32_TIM_DIER_CC1IE) != 0);
+  return (bool)((STM32_ST_TIM->DIER & STM32_TIM_DIER_CC1IE) != 0);
 }
 
 #endif /* _ST_LLD_H_ */

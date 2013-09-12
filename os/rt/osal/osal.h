@@ -86,6 +86,13 @@
 /** @} */
 
 /**
+ * @name    Systick resolution.
+ * @{
+ */
+#define OSAL_ST_RESOLUTION                  CH_CFG_ST_RESOLUTION
+/** @} */
+
+/**
  * @brief   Systick mode required by the underlying OS.
  */
 #if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
@@ -111,6 +118,10 @@
     !(OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) &&                             \
     !(OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING)
 #error "invalid OSAL_ST_MODE setting in osal.h"
+#endif
+
+#if (OSAL_ST_RESOLUTION != 16) && (OSAL_ST_RESOLUTION != 32)
+#error "invalid OSAL_ST_RESOLUTION, must be 16 or 32"
 #endif
 
 /*===========================================================================*/
