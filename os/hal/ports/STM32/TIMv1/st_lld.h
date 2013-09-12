@@ -29,6 +29,7 @@
 
 #include "stm32_registry.h"
 #include "stm32_tim.h"
+#include "mcuconf.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -40,8 +41,9 @@
 
 /**
  * @brief   TIMx unit (by number) to be used for free running operations.
- * @note    You must select a 32 bits timer if a 32 bits systick_t is
- *          required.
+ * @note    You must select a 32 bits timer if a 32 bits @p systick_t type
+ *          is required or a 16 bits timer if a 16 bits @p systick_t type
+ *          is required.
  */
 #if !defined(STM32_ST_USE_TIMER) || defined(__DOXYGEN__)
 #define STM32_ST_USE_TIMER                  2
@@ -52,16 +54,28 @@
 /*===========================================================================*/
 
 #if STM32_ST_USE_TIMER == 2
+#if !STM32_HAS_TIM2
+#error "TIM2 not present"
+#endif
 #define STM32_ST_TIM                              STM32_TIM2
 
+#elif STM32_ST_USE_TIMER == 3
+#if !STM32_HAS_TIM3
+#error "TIM3 not present"
+#endif
+#define STM32_ST_TIM                              STM32_TIM3
+
+#elif STM32_ST_USE_TIMER == 4
+#if !STM32_HAS_TIM4
+#error "TIM4 not present"
+#endif
+#define STM32_ST_TIM                              STM32_TIM4
+
 #elif STM32_ST_USE_TIMER == 5
+#if !STM32_HAS_TIM5
+#error "TIM5 not present"
+#endif
 #define STM32_ST_TIM                              STM32_TIM5
-
-#elif STM32_ST_USE_TIMER == 6
-#define STM32_ST_TIM                              STM32_TIM6
-
-#elif STM32_ST_USE_TIMER == 7
-#define STM32_ST_TIM                              STM32_TIM7
 
 #else
 #error "STM32_ST_USE_TIMER specifies an unsupported timer"

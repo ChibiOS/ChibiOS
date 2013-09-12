@@ -35,37 +35,49 @@
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM2_IS_32BITS
 #error "TIM2 is not a 32bits timer"
 #endif
+#if (OSAL_ST_RESOLUTION == 16) && STM32_TIM2_IS_32BITS
+#error "TIM2 is not a 16bits timer"
+#endif
 
 #define ST_HANDLER                          STM32_TIM2_HANDLER
 #define ST_NUMBER                           STM32_TIM2_NUMBER
 #define ST_ENABLE_CLOCK()                   rccEnableTIM2(FALSE)
 
+#elif STM32_ST_USE_TIMER == 3
+#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM3_IS_32BITS
+#error "TIM3 is not a 32bits timer"
+#endif
+#if (OSAL_ST_RESOLUTION == 16) && STM32_TIM3_IS_32BITS
+#error "TIM3 is not a 16bits timer"
+#endif
+
+#define ST_HANDLER                          STM32_TIM3_HANDLER
+#define ST_NUMBER                           STM32_TIM3_NUMBER
+#define ST_ENABLE_CLOCK()                   rccEnableTIM3(FALSE)
+
+#elif STM32_ST_USE_TIMER == 4
+#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM4_IS_32BITS
+#error "TIM4 is not a 32bits timer"
+#endif
+#if (OSAL_ST_RESOLUTION == 16) && STM32_TIM4_IS_32BITS
+#error "TIM4 is not a 16bits timer"
+#endif
+
+#define ST_HANDLER                          STM32_TIM4_HANDLER
+#define ST_NUMBER                           STM32_TIM4_NUMBER
+#define ST_ENABLE_CLOCK()                   rccEnableTIM4(FALSE)
+
 #elif STM32_ST_USE_TIMER == 5
 #if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM5_IS_32BITS
 #error "TIM5 is not a 32bits timer"
+#endif
+#if (OSAL_ST_RESOLUTION == 16) && STM32_TIM5_IS_32BITS
+#error "TIM5 is not a 16bits timer"
 #endif
 
 #define ST_HANDLER                          STM32_TIM5_HANDLER
 #define ST_NUMBER                           STM32_TIM5_NUMBER
 #define ST_ENABLE_CLOCK()                   rccEnableTIM5(FALSE)
-
-#elif STM32_ST_USE_TIMER == 6
-#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM6_IS_32BITS
-#error "TIM6 is not a 32bits timer"
-#endif
-
-#define ST_HANDLER                          STM32_TIM6_HANDLER
-#define ST_NUMBER                           STM32_TIM6_NUMBER
-#define ST_ENABLE_CLOCK()                   rccEnableTIM6(FALSE)
-
-#elif STM32_ST_USE_TIMER == 7
-#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM7_IS_32BITS
-#error "TIM7 is not a 32bits timer"
-#endif
-
-#define ST_HANDLER                          STM32_TIM7_HANDLER
-#define ST_NUMBER                           STM32_TIM7_NUMBER
-#define ST_ENABLE_CLOCK()                   rccEnableTIM7(FALSE)
 
 #else
 #error "STM32_ST_USE_TIMER specifies an unsupported timer"
