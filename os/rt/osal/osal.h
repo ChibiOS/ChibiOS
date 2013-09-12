@@ -71,8 +71,8 @@
  * @name    Special time constants
  * @{
  */
-#define TIME_IMMEDIATE      ((systime_t)0)
-#define TIME_INFINITE       ((systime_t)-1)
+#define TIME_IMMEDIATE                      ((systime_t)0)
+#define TIME_INFINITE                       ((systime_t)-1)
 /** @} */
 #endif
 
@@ -86,11 +86,18 @@
 /** @} */
 
 /**
- * @name    Systick resolution.
+ * @name    Systick parameters.
  * @{
  */
+/**
+ * @brief   Size in bits of the @p systick_t type.
+ */
 #define OSAL_ST_RESOLUTION                  CH_CFG_ST_RESOLUTION
-/** @} */
+
+/**
+ * @brief   Required systick frequency or resolution.
+ */
+#define OSAL_ST_FREQUENCY                   CH_CFG_ST_FREQUENCY
 
 /**
  * @brief   Systick mode required by the underlying OS.
@@ -100,11 +107,7 @@
 #else
 #define OSAL_ST_MODE                        OSAL_ST_MODE_FREERUNNING
 #endif
-
-/**
- * @brief   Required systick frequency or resolution.
- */
-#define OSAL_SYSTICK_FREQUENCY              CH_CFG_ST_FREQUENCY
+/** @} */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */

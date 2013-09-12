@@ -86,6 +86,20 @@
 /** @} */
 
 /**
+ * @name    Systick parameters.
+ * @{
+ */
+/**
+ * @brief   Size in bits of the @p systick_t type.
+ */
+#define OSAL_ST_RESOLUTION                  NIL_CFG_ST_RESOLUTION
+
+/**
+ * @brief   Required systick frequency or resolution.
+ */
+#define OSAL_ST_FREQUENCY                   NIL_CFG_ST_FREQUENCY
+
+/**
  * @brief   Systick mode required by the underlying OS.
  */
 #if (NIL_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
@@ -93,11 +107,7 @@
 #else
 #define OSAL_ST_MODE                        OSAL_ST_MODE_FREERUNNING
 #endif
-
-/**
- * @brief   Required systick frequency or resolution.
- */
-#define OSAL_SYSTICK_FREQUENCY              NIL_CFG_ST_FREQUENCY
+/** @} */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -115,6 +125,10 @@
     !(OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) &&                             \
     !(OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING)
 #error "invalid OSAL_ST_MODE setting in osal.h"
+#endif
+
+#if (OSAL_ST_RESOLUTION != 16) && (OSAL_ST_RESOLUTION != 32)
+#error "invalid OSAL_ST_RESOLUTION, must be 16 or 32"
 #endif
 
 /*===========================================================================*/

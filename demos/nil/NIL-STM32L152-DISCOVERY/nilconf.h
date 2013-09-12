@@ -52,6 +52,12 @@
 /*===========================================================================*/
 
 /**
+ * @brief   System time counter resolution.
+ * @note    Allowed values are 16 or 32 bits.
+ */
+#define NIL_CFG_ST_RESOLUTION               16
+
+/**
  * @brief   System tick frequency.
  */
 #define NIL_CFG_ST_FREQUENCY                1000
@@ -64,7 +70,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define NIL_CFG_ST_TIMEDELTA                0
+#define NIL_CFG_ST_TIMEDELTA                2
 
 /** @} */
 
