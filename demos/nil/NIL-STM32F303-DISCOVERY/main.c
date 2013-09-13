@@ -21,39 +21,63 @@
 #include "nil.h"
 
 /*
- * Thread 1.
+ * Blinker thread #1.
  */
-THD_WORKING_AREA(waThread1, 128);
-THD_FUNCTION(Thread1, arg) {
+static THD_WORKING_AREA(waThread1, 128);
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
 
   while (true) {
     palSetPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(250);
+    chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(250);
+    chThdSleepMilliseconds(125);
+    palSetPad(GPIOE, GPIOE_LED7_GREEN);
+    chThdSleepMilliseconds(125);
+    palClearPad(GPIOE, GPIOE_LED7_GREEN);
+    chThdSleepMilliseconds(125);
+    palSetPad(GPIOE, GPIOE_LED10_RED);
+    chThdSleepMilliseconds(125);
+    palClearPad(GPIOE, GPIOE_LED10_RED);
+    chThdSleepMilliseconds(125);
+    palSetPad(GPIOE, GPIOE_LED6_GREEN);
+    chThdSleepMilliseconds(125);
+    palClearPad(GPIOE, GPIOE_LED6_GREEN);
+    chThdSleepMilliseconds(125);
   }
 }
 
 /*
- * Thread 2.
+ * Blinker thread #2.
  */
-THD_WORKING_AREA(waThread2, 128);
-THD_FUNCTION(Thread2, arg) {
+static THD_WORKING_AREA(waThread2, 128);
+static THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
 
   while (true) {
+    chThdSleepMilliseconds(125);
+    palSetPad(GPIOE, GPIOE_LED5_ORANGE);
+    chThdSleepMilliseconds(125);
+    palClearPad(GPIOE, GPIOE_LED5_ORANGE);
+    chThdSleepMilliseconds(125);
+    palSetPad(GPIOE, GPIOE_LED9_BLUE);
+    chThdSleepMilliseconds(125);
+    palClearPad(GPIOE, GPIOE_LED9_BLUE);
+    chThdSleepMilliseconds(125);
+    palSetPad(GPIOE, GPIOE_LED8_ORANGE);
+    chThdSleepMilliseconds(125);
+    palClearPad(GPIOE, GPIOE_LED8_ORANGE);
+    chThdSleepMilliseconds(125);
     palSetPad(GPIOE, GPIOE_LED4_BLUE);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED4_BLUE);
-    chThdSleepMilliseconds(500);
   }
 }
 
 /*
- * Thread 3.
+ * Hello thread.
  */
 THD_WORKING_AREA(waThread3, 128);
 THD_FUNCTION(Thread3, arg) {

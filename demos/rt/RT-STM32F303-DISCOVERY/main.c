@@ -19,71 +19,57 @@
 #include "test.h"
 
 /*
- * Flasher thread #1.
+ * Blinker thread #1.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
+
   chRegSetThreadName("blinker");
   while (true) {
     palSetPad(GPIOE, GPIOE_LED3_RED);
     chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED3_RED);
-    palSetPad(GPIOE, GPIOE_LED5_ORANGE);
     chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED5_ORANGE);
     palSetPad(GPIOE, GPIOE_LED7_GREEN);
     chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED7_GREEN);
-    palSetPad(GPIOE, GPIOE_LED9_BLUE);
     chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED9_BLUE);
     palSetPad(GPIOE, GPIOE_LED10_RED);
     chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED10_RED);
-    palSetPad(GPIOE, GPIOE_LED8_ORANGE);
     chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED8_ORANGE);
     palSetPad(GPIOE, GPIOE_LED6_GREEN);
     chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED6_GREEN);
-    palSetPad(GPIOE, GPIOE_LED4_BLUE);
     chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED4_BLUE);
   }
 }
 
 /*
- * Flasher thread #2.
+ * Blinker thread #2.
  */
 static THD_WORKING_AREA(waThread2, 128);
 static THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
+
   chRegSetThreadName("blinker");
   while (true) {
-    palSetPad(GPIOE, GPIOE_LED3_RED);
     chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED3_RED);
     palSetPad(GPIOE, GPIOE_LED5_ORANGE);
     chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED5_ORANGE);
-    palSetPad(GPIOE, GPIOE_LED7_GREEN);
     chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED7_GREEN);
     palSetPad(GPIOE, GPIOE_LED9_BLUE);
     chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED9_BLUE);
-    palSetPad(GPIOE, GPIOE_LED10_RED);
     chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED10_RED);
     palSetPad(GPIOE, GPIOE_LED8_ORANGE);
     chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED8_ORANGE);
-    palSetPad(GPIOE, GPIOE_LED6_GREEN);
     chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED6_GREEN);
     palSetPad(GPIOE, GPIOE_LED4_BLUE);
     chThdSleepMilliseconds(125);
     palClearPad(GPIOE, GPIOE_LED4_BLUE);
