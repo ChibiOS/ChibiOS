@@ -337,29 +337,32 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
 
 #if NIL_CFG_ST_TIMEDELTA > 0
   if (timeout != TIME_INFINITE) {
-    systime_t time = chVTGetSystemTimeX() + timeout;
+    systime_t abstime;
 
     /* TIMEDELTA makes sure to have enough time to reprogram the timer
        before the free-running timer counter reaches the selected timeout.*/
     if (timeout < NIL_CFG_ST_TIMEDELTA)
       timeout = NIL_CFG_ST_TIMEDELTA;
 
+    /* Absolute time of the timeout event.*/
+    abstime = chVTGetSystemTimeX() + timeout;
+
     if (nil.lasttime == nil.nexttime) {
       /* Special case, first thread asking for a timeout.*/
-      port_timer_start_alarm(time);
-      nil.nexttime = time;
+      port_timer_start_alarm(abstime);
+      nil.nexttime = abstime;
     }
     else {
       /* Special case, there are already other threads with a timeout
          activated, evaluating the order.*/
-      if (chVTIsTimeWithinX(time, nil.lasttime, nil.nexttime)) {
-        port_timer_set_alarm(time);
-        nil.nexttime = time;
+      if (chVTIsTimeWithinX(abstime, nil.lasttime, nil.nexttime)) {
+        port_timer_set_alarm(abstime);
+        nil.nexttime = abstime;
       }
     }
 
     /* Timeout settings.*/
-    otp->timeout = time - nil.lasttime;
+    otp->timeout = abstime - nil.lasttime;
   }
 #else
 
