@@ -148,6 +148,17 @@ typedef msg_t (*tfunc_t)(void *);
 /** @} */
 
 /**
+ * @name    Threads abstraction macros
+ */
+/**
+ * @brief   Thread declaration macro.
+ * @note    Thread declarations should be performed using this macro because
+ *          the port layer could define optimizations for thread functions.
+ */
+#define THD_FUNCTION(tname, arg) PORT_THD_FUNCTION(tname, arg)
+/** @} */
+
+/**
  * @name    Macro Functions
  * @{
  */

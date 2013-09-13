@@ -22,7 +22,7 @@
  * Blue LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker1");
@@ -38,7 +38,7 @@ static msg_t Thread1(void *arg) {
  * Green LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread2, 128);
-static msg_t Thread2(void *arg) {
+static THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker2");
