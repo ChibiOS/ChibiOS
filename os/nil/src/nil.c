@@ -163,7 +163,7 @@ void chSysTimerHandlerI(void) {
         if (NIL_THD_IS_WTSEM(tp))
           tp->u1.semp->cnt++;
         else if (NIL_THD_IS_SUSP(tp))
-          tp->u1.trp = NULL;
+          *tp->u1.trp = NULL;
         chSchReadyI(tp, MSG_TIMEOUT);
       }
     }
