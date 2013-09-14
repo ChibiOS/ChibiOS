@@ -31,8 +31,8 @@ SerialUSBDriver SDU1;
 /* Command line related.                                                     */
 /*===========================================================================*/
 
-#define SHELL_WA_SIZE   THD_WA_SIZE(2048)
-#define TEST_WA_SIZE    THD_WA_SIZE(256)
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+#define TEST_WA_SIZE    THD_WORKING_AREA_SIZE(256)
 
 static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
   size_t n, size;
@@ -49,7 +49,7 @@ static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
-  static const char *states[] = {CH_THD_STATE_NAMES};
+  static const char *states[] = {CH_STATE_NAMES};
   thread_t *tp;
 
   (void)argv;
@@ -62,7 +62,8 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   do {
     chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s\r\n",
              (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-             (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1));
+             (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
+             states[tp->p_state]);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
 }
@@ -150,8 +151,8 @@ static const SPIConfig spi2cfg = {
  * This is a periodic thread that reads accelerometer and outputs
  * result to SPI2 and PWM.
  */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_WORKING_AREA(waThread1, 128);
+static THD_FUNCTION(Thread1, arg) {
   static int8_t xbuf[4], ybuf[4];   /* Last accelerometer data.*/
   systime_t time;                   /* Next deadline.*/
 
@@ -164,7 +165,7 @@ static msg_t Thread1(void *arg) {
   lis302dlWriteRegister(&SPID1, LIS302DL_CTRL_REG3, 0x00);
 
   /* Reader thread loop.*/
-  time = chTimeNow();
+  time = chVTGetSystemTime();
   while (TRUE) {
     int32_t x, y;
     unsigned i;
@@ -314,7 +315,7 @@ int main(void) {
     }
     else {
       /* If the previous shell exited.*/
-      if (chThdTerminated(shelltp)) {
+      if (chThdTerminatedX(shelltp)) {
         /* Recovers memory of the previous shell.*/
         chThdRelease(shelltp);
         shelltp = NULL;

@@ -96,7 +96,10 @@ CSRC = $(PORTSRC) \
        $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       main.c
+       $(CHIBIOS)/os/various/devices_lib/accel/lis302dl.c \
+       $(CHIBIOS)/os/various/shell.c \
+       $(CHIBIOS)/os/various/chprintf.c \
+       usbcfg.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -127,6 +130,7 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
+         $(CHIBIOS)/os/various/devices_lib/accel \
          $(CHIBIOS)/os/various
 
 #

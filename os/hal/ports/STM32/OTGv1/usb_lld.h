@@ -198,7 +198,7 @@ typedef struct {
   /**
    * @brief   Buffer mode, queue or linear.
    */
-  bool_t                        txqueued;
+  bool                          txqueued;
   /**
    * @brief   Requested transmit transfer size.
    */
@@ -218,7 +218,7 @@ typedef struct {
       /**
        * @brief   Pointer to the output queue.
        */
-      OutputQueue               *txqueue;
+      output_queue_t            *txqueue;
     } queue;
   } mode;
 } USBInEndpointState;
@@ -230,7 +230,7 @@ typedef struct {
   /**
    * @brief   Buffer mode, queue or linear.
    */
-  bool_t                        rxqueued;
+  bool                          rxqueued;
   /**
    * @brief   Requested receive transfer size.
    */
@@ -250,7 +250,7 @@ typedef struct {
       /**
        * @brief   Pointer to the input queue.
        */
-      InputQueue               *rxqueue;
+      input_queue_t            *rxqueue;
     } queue;
   } mode;
 } USBOutEndpointState;
@@ -442,17 +442,9 @@ struct USBDriver {
    */
   uint32_t                      txpending;
   /**
-   * @brief   Pointer to the thread.
-   */
-  Thread                        *thd_ptr;
-  /**
    * @brief   Pointer to the thread when it is sleeping or @p NULL.
    */
-  Thread                        *thd_wait;
-  /**
-   * @brief   Working area for the dedicated data pump thread;
-   */
-  WORKING_AREA(wa_pump, STM32_USB_OTG_THREAD_STACK_SIZE);
+  thread_reference_t            wait;
 };
 
 /*===========================================================================*/
@@ -523,6 +515,7 @@ extern "C" {
   void usb_lld_stall_in(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_out(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_in(USBDriver *usbp, usbep_t ep);
+  msg_t usb_lld_pump(void *p);
 #ifdef __cplusplus
 }
 #endif
