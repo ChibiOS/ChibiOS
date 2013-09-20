@@ -74,15 +74,15 @@
 /**
  * @brief   Write timeout in milliseconds.
  */
-#if !defined(SDC_WRITE_TIMEOUT_MS) || defined(__DOXYGEN__)
-#define SDC_WRITE_TIMEOUT_MS                250
+#if !defined(STM32_SDC_WRITE_TIMEOUT_MS) || defined(__DOXYGEN__)
+#define STM32_SDC_WRITE_TIMEOUT_MS          250
 #endif
 
 /**
  * @brief   Read timeout in milliseconds.
  */
-#if !defined(SDC_READ_TIMEOUT_MS) || defined(__DOXYGEN__)
-#define SDC_READ_TIMEOUT_MS                 5
+#if !defined(STM32_SDC_READ_TIMEOUT_MS) || defined(__DOXYGEN__)
+#define STM32_SDC_READ_TIMEOUT_MS           5
 #endif
 
 /**
@@ -92,21 +92,6 @@
 #if !defined(STM32_SDC_SDIO_UNALIGNED_SUPPORT) || defined(__DOXYGEN__)
 #define STM32_SDC_SDIO_UNALIGNED_SUPPORT    TRUE
 #endif
-
-#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
-
-/**
- * @brief   DMA stream used for SDC operations.
- * @note    This option is only available on platforms with enhanced DMA.
- */
-#if !defined(STM32_SDC_SDIO_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_SDC_SDIO_DMA_STREAM           STM32_DMA_STREAM_ID(2, 3)
-#endif
-
-#else /* !STM32_ADVANCED_DMA*/
-#define STM32_SDC_SDIO_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
-
-#endif /* !STM32_ADVANCED_DMA*/
 /** @} */
 
 /*===========================================================================*/
@@ -124,6 +109,20 @@
 #if !STM32_DMA_IS_VALID_PRIORITY(STM32_SDC_SDIO_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SDIO"
 #endif
+
+/* The following checks are only required when there is a DMA able to
+   reassign streams to different channels.*/
+#if STM32_ADVANCED_DMA
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if !defined(STM32_SDC_SDIO_DMA_STREAM)
+#error "SDIO DMA streams not defined"
+#endif
+
+/* Check on the validity of the assigned DMA channels.*/
+#if !STM32_DMA_IS_VALID_ID(STM32_SDC_SDIO_DMA_STREAM, STM32_SDC_SDIO_DMA_MSK)
+#error "invalid DMA stream associated to SDIO"
+#endif
+#endif /* STM32_ADVANCED_DMA */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
@@ -245,7 +244,7 @@ struct SDCDriver {
   /**
    * @brief Thread waiting for I/O completion IRQ.
    */
-  Thread                    *thread;
+  thread_reference_t        thread;
   /**
    * @brief     DMA mode bit mask.
    */
@@ -286,19 +285,19 @@ extern "C" {
   void sdc_lld_stop_clk(SDCDriver *sdcp);
   void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode);
   void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg);
-  bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
-                                uint32_t *resp);
-  bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
-                                    uint32_t *resp);
-  bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
-                                   uint32_t *resp);
-  bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
-                      uint8_t *buf, uint32_t n);
-  bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
-                       const uint8_t *buf, uint32_t n);
-  bool_t sdc_lld_sync(SDCDriver *sdcp);
-  bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp);
-  bool_t sdc_lld_is_write_protected(SDCDriver *sdcp);
+  bool sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                              uint32_t *resp);
+  bool sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                                  uint32_t *resp);
+  bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                                 uint32_t *resp);
+  bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
+                    uint8_t *buf, uint32_t n);
+  bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
+                     const uint8_t *buf, uint32_t n);
+  bool sdc_lld_sync(SDCDriver *sdcp);
+  bool sdc_lld_is_card_inserted(SDCDriver *sdcp);
+  bool sdc_lld_is_write_protected(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
 #endif

@@ -60,7 +60,7 @@ void boardInit(void) {
  *
  * @notapi
  */
-bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
   return !palReadPad(GPIOE, GPIOE_SDIO_DETECT);
@@ -74,7 +74,7 @@ bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
  *
  * @notapi
  */
-bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
+bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
   (void)sdcp;
   return FALSE;
