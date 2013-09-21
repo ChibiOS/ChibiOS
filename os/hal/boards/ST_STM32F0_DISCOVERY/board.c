@@ -51,7 +51,7 @@ void __early_init(void) {
 /**
  * @brief   MMC_SPI card detection.
  */
-bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 
   (void)mmcp;
   /* TODO: Fill the implementation.*/
@@ -61,7 +61,7 @@ bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 /**
  * @brief   MMC_SPI card write protection detection.
  */
-bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
+bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
   (void)mmcp;
   /* TODO: Fill the implementation.*/

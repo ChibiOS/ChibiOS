@@ -46,13 +46,13 @@ void __early_init(void) {
 
 #if HAL_USE_SDC
 /* Board-related functions related to the SDC driver.*/
-bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
   return !palReadPad(GPIOF, GPIOF_SD_DETECT);
 }
 
-bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
+bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
   (void)sdcp;
   return FALSE;

@@ -50,19 +50,19 @@ void __early_init(void) {
 /**
  * @brief   MMC_SPI card detection.
  */
-bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
-  static bool_t last_status = FALSE;
+bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+  static bool last_status = FALSE;
   (void)mmcp;
 
   if ((palReadLatch(GPIOD) & PAL_PORT_BIT(GPIOD_SPI3_CS)) == 0)
     return last_status;
-  return last_status = (bool_t)palReadPad(GPIOD, GPIOD_SPI3_CS);
+  return last_status = (bool)palReadPad(GPIOD, GPIOD_SPI3_CS);
 }
 
 /**
  * @brief   MMC_SPI card write protection detection.
  */
-bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
+bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
   (void)mmcp;
   /* TODO: Fill the implementation.*/

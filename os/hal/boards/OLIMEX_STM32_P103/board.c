@@ -44,13 +44,13 @@ void __early_init(void) {
 
 #if HAL_USE_MMC_SPI
 /* Board-related functions related to the MMC_SPI driver.*/
-bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 
   (void)mmcp;
   return palReadPad(GPIOC, GPIOC_MMCCP);
 }
 
-bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
+bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
   (void)mmcp;
   return !palReadPad(GPIOC, GPIOC_MMCWP);
