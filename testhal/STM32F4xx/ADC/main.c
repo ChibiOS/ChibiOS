@@ -89,7 +89,7 @@ static const ADCConversionGroup adcgrpcfg2 = {
 };
 
 /*
- * Red LEDs blinker thread, times are in milliseconds.
+ * Red LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {

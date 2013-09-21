@@ -153,16 +153,22 @@
 #endif
 
 #define STM32_SDC_WRITE_TIMEOUT                                             \
-  (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
+  (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) *                    \
+   STM32_SDC_WRITE_TIMEOUT_MS)
 #define STM32_SDC_READ_TIMEOUT                                              \
-  (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
+  (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) *                    \
+   STM32_SDC_READ_TIMEOUT_MS)
 
-#else
+#else /* !(defined(STM32F4XX) || defined(STM32F2XX)) */
+
 #define STM32_SDC_WRITE_TIMEOUT                                             \
-  (((STM32_HCLK / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_WRITE_TIMEOUT_MS)
+  (((STM32_HCLK / (STM32_SDIO_DIV_HS + 2)) / 1000) *                        \
+   STM32_SDC_WRITE_TIMEOUT_MS)
 #define STM32_SDC_READ_TIMEOUT                                              \
-  (((STM32_HCLK / (STM32_SDIO_DIV_HS + 2)) / 1000) * SDC_READ_TIMEOUT_MS)
-#endif
+  (((STM32_HCLK / (STM32_SDIO_DIV_HS + 2)) / 1000) *                        \
+   STM32_SDC_READ_TIMEOUT_MS)
+
+#endif /* !(defined(STM32F4XX) || defined(STM32F2XX)) */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

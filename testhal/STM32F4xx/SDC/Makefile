@@ -77,7 +77,7 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/boards/NONSTANDARD_STM32F4_BARTHESS1/board.mk
+include $(CHIBIOS)/os/hal/boards/OLIMEX_STM32_E407/board.mk
 include $(CHIBIOS)/os/hal/ports/STM32F4xx/platform.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/osal/osal.mk
@@ -96,10 +96,6 @@ CSRC = $(PORTSRC) \
        $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(FATFSSRC) \
-       $(CHIBIOS)/os/various/evtimer.c \
-       $(CHIBIOS)/os/various/syscalls.c \
-       $(CHIBIOS)/os/various/shell.c \
        $(CHIBIOS)/os/various/chprintf.c \
        main.c
 
@@ -132,7 +128,6 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(FATFSINC) \
          $(CHIBIOS)/os/various
 
 #
