@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo runs on an Olimex ST_STM3210E_EVAL board.
+The demo runs on an Olimex STM32-E407 board.
 
 ** The Demo **
 

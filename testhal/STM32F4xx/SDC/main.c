@@ -51,8 +51,14 @@ static msg_t Thread1(void *arg) {
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
-void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]) {
+#define SDC_BURST_SIZE      16
 
+/* Buffer for block read/write operations, note that an extra byte is
+   allocated in order to support unaligned operations.*/
+static uint8_t buf[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE + 1];
+
+void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
+  static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
   if (argc != 1) {
     chprintf(chp, "Usage: sdiotest read|write|all\r\n");
     return;
@@ -65,15 +71,18 @@ void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   /* Connection to the card.*/
-  chprintf(chp, "Connecting: ");
+  chprintf(chp, "Connecting... ");
   if (sdcConnect(&SDCD1)) {
     chprintf(chp, "failed\r\n");
     return;
   }
-  chprintf(chp, "OK\r\n");
-  chprintf(chp, "*** Card CSD content is: ");
-  chprintf(chp, "%X %X %X %X \r\n", (&SDCD1)->csd[3], (&SDCD1)->csd[2],
-                                    (&SDCD1)->csd[1], (&SDCD1)->csd[0]);
+  chprintf(chp, "OK\r\n\r\nCard Info\r\n");
+  chprintf(chp, "CSD      : %08X %8X %08X %08X \r\n",
+           SDCD1.csd[3], SDCD1.csd[2], SDCD1.csd[1], SDCD1.csd[0]);
+  chprintf(chp, "CID      : %08X %8X %08X %08X \r\n",
+           SDCD1.cid[3], SDCD1.cid[2], SDCD1.cid[1], SDCD1.cid[0]);
+  chprintf(chp, "Mode     : %s\r\n", mode[SDCD1.cardmode]);
+  chprintf(chp, "Capacity : %DMB\r\n", SDCD1.capacity / 2048);
 
   if ((strcmp(argv[0], "read") == 0) ||
       (strcmp(argv[0], "all") == 0)) {
@@ -83,10 +92,13 @@ void cmd_sdiotest(BaseSequentialStream *chp, int argc, char *argv[]) {
       (strcmp(argv[0], "all") == 0)) {
 
   }
+
+  /* Card disconnect and command end.*/
+  sdcDisconnect(&SDCD1);
 }
 
 static const ShellCommand commands[] = {
-  {"sdio", cmd_sdiotest},
+  {"sdc", cmd_sdc},
   {NULL, NULL}
 };
 
