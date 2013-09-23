@@ -719,7 +719,6 @@ typedef struct {
 #define chVTGetSystemTimeX() port_timer_get_time()
 #endif
 
-#if NIL_CFG_ENABLE_ASSERTS || defined(__DOXYGEN__)
 /**
  * @brief   Condition assertion.
  * @details If the condition check fails then the kernel panics with a
@@ -736,13 +735,10 @@ typedef struct {
  */
 #if !defined(chDbgAssert)
 #define chDbgAssert(c, r) {                                                 \
-  if (!(c))                                                                 \
-    chSysHalt(__func__);                                                \
+  if (NIL_CFG_ENABLE_ASSERTS && !(c))                                       \
+    chSysHalt(__func__);                                                    \
 }
 #endif /* !defined(chDbgAssert) */
-#else /* !NIL_CFG_ENABLE_ASSERTS */
-#define chDbgAssert(c, r) {if (0) (void)(c);}
-#endif /* !NIL_CFG_ENABLE_ASSERTS */
 /** @} */
 
 /*===========================================================================*/

@@ -154,7 +154,6 @@ typedef struct {
  * @name    Macro Functions
  * @{
  */
-#if CH_DBG_ENABLE_CHECKS || defined(__DOXYGEN__)
 /**
  * @brief   Function parameters check.
  * @details If the condition check fails then the kernel panics and halts.
@@ -167,16 +166,11 @@ typedef struct {
  */
 #if !defined(chDbgCheck)
 #define chDbgCheck(c) {                                                     \
-  if (!(c))                                                                 \
-    chSysHalt(__func__);                                                \
+  if (CH_DBG_ENABLE_CHECKS && !(c))                                         \
+    chSysHalt(__func__);                                                    \
 }
 #endif /* !defined(chDbgCheck) */
 
-#else /* !CH_DBG_ENABLE_CHECKS */
-#define chDbgCheck(c) {if (0) (void)(c);}
-#endif /* !CH_DBG_ENABLE_CHECKS */
-
-#if CH_DBG_ENABLE_ASSERTS || defined(__DOXYGEN__)
 /**
  * @brief   Condition assertion.
  * @details If the condition check fails then the kernel panics with a
@@ -193,13 +187,10 @@ typedef struct {
  */
 #if !defined(chDbgAssert)
 #define chDbgAssert(c, r) {                                                 \
-  if (!(c))                                                                 \
-    chSysHalt(__func__);                                                \
+  if (CH_DBG_ENABLE_ASSERTS && !(c))                                        \
+    chSysHalt(__func__);                                                    \
 }
 #endif /* !defined(chDbgAssert) */
-#else /* !CH_DBG_ENABLE_ASSERTS */
-#define chDbgAssert(c, r) {if (0) (void)(c);}
-#endif /* !CH_DBG_ENABLE_ASSERTS */
 /** @} */
 
 /*===========================================================================*/
