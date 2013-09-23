@@ -360,11 +360,6 @@ typedef struct {
 /*===========================================================================*/
 
 /**
- * @brief   String quotation macro.
- */
-#define __CH_QUOTE(p) #p
-
-/**
  * @name    Threads tables definition macros
  * @{
  */
@@ -742,11 +737,11 @@ typedef struct {
 #if !defined(chDbgAssert)
 #define chDbgAssert(c, r) {                                                 \
   if (!(c))                                                                 \
-    chSysHalt("A:"__CH_QUOTE(__FUNCTION__)":"__CH_QUOTE(__LINE__));         \
+    chSysHalt(__func__);                                                \
 }
 #endif /* !defined(chDbgAssert) */
 #else /* !NIL_CFG_ENABLE_ASSERTS */
-#define chDbgAssert(c, r) /*{(void)(c);}*/
+#define chDbgAssert(c, r) {if (0) (void)(c);}
 #endif /* !NIL_CFG_ENABLE_ASSERTS */
 /** @} */
 

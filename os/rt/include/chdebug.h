@@ -121,8 +121,6 @@ typedef struct {
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-#define __QUOTE_THIS(p) #p
-
 #if CH_DBG_SYSTEM_STATE_CHECK
 #define _dbg_enter_lock() (ch.dbg_lock_cnt = 1)
 #define _dbg_leave_lock() (ch.dbg_lock_cnt = 0)
@@ -170,12 +168,12 @@ typedef struct {
 #if !defined(chDbgCheck)
 #define chDbgCheck(c) {                                                     \
   if (!(c))                                                                 \
-    chSysHalt("C:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));     \
+    chSysHalt(__func__);                                                \
 }
 #endif /* !defined(chDbgCheck) */
 
 #else /* !CH_DBG_ENABLE_CHECKS */
-#define chDbgCheck(c) /*{(void)(c);}*/
+#define chDbgCheck(c) {if (0) (void)(c);}
 #endif /* !CH_DBG_ENABLE_CHECKS */
 
 #if CH_DBG_ENABLE_ASSERTS || defined(__DOXYGEN__)
@@ -196,11 +194,11 @@ typedef struct {
 #if !defined(chDbgAssert)
 #define chDbgAssert(c, r) {                                                 \
   if (!(c))                                                                 \
-    chSysHalt("A:"__QUOTE_THIS(__FUNCTION__)":"__QUOTE_THIS(__LINE__));     \
+    chSysHalt(__func__);                                                \
 }
 #endif /* !defined(chDbgAssert) */
 #else /* !CH_DBG_ENABLE_ASSERTS */
-#define chDbgAssert(c, r) /*{(void)(c);}*/
+#define chDbgAssert(c, r) {if (0) (void)(c);}
 #endif /* !CH_DBG_ENABLE_ASSERTS */
 /** @} */
 
