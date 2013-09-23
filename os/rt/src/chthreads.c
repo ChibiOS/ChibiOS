@@ -335,13 +335,14 @@ msg_t chThreadSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
 void chThreadResumeI(thread_reference_t *trp, msg_t msg) {
 
   if (*trp != NULL) {
+    thread_t *tp = *trp;
 
-    chDbgAssert((*trp)->p_state == CH_STATE_SUSPENDED,
+    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
                 "not THD_STATE_SUSPENDED");
 
-    (*trp)->p_u.rdymsg = msg;
-    chSchReadyI(*trp);
     *trp = NULL;
+    tp->p_u.rdymsg = msg;
+    chSchReadyI(tp);
   }
 }
 
@@ -358,12 +359,13 @@ void chThreadResumeI(thread_reference_t *trp, msg_t msg) {
 void chThreadResumeS(thread_reference_t *trp, msg_t msg) {
 
   if (*trp != NULL) {
-
-    chDbgAssert((*trp)->p_state == CH_STATE_SUSPENDED,
+    thread_t *tp = *trp;
+	
+    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
                 "not THD_STATE_SUSPENDED");
 
     *trp = NULL;
-    chSchWakeupS(*trp, msg);
+    chSchWakeupS(tp, msg);
   }
 }
 
