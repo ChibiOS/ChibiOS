@@ -180,8 +180,8 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  *
  * @return              The operation status.
- * @retval CH_SUCCESS   operation succeeded.
- * @retval CH_FAILED    operation failed.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
  *
  * @api
  */
@@ -194,8 +194,8 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  *
  * @return              The operation status.
- * @retval CH_SUCCESS   operation succeeded.
- * @retval CH_FAILED    operation failed.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
  *
  * @api
  */
@@ -210,8 +210,8 @@ typedef struct {
  * @param[in] n         number of blocks to read
  *
  * @return              The operation status.
- * @retval CH_SUCCESS   operation succeeded.
- * @retval CH_FAILED    operation failed.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
  *
  * @api
  */
@@ -227,8 +227,8 @@ typedef struct {
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
- * @retval CH_SUCCESS   operation succeeded.
- * @retval CH_FAILED    operation failed.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
  *
  * @api
  */
@@ -241,8 +241,8 @@ typedef struct {
  * @param[in] ip        pointer to a @p BaseBlockDevice or derived class
  *
  * @return              The operation status.
- * @retval CH_SUCCESS   operation succeeded.
- * @retval CH_FAILED    operation failed.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
  *
  * @api
  */
@@ -255,8 +255,8 @@ typedef struct {
  * @param[out] bdip     pointer to a @p BlockDeviceInfo structure
  *
  * @return              The operation status.
- * @retval CH_SUCCESS   operation succeeded.
- * @retval CH_FAILED    operation failed.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
  *
  * @api
  */

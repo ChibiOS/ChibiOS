@@ -59,6 +59,9 @@ static uint8_t buf[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE + 1];
 
 void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
   static const char *mode[] = {"SDV11", "SDV20", "MMC", NULL};
+  systime_t start, end;
+  uint32_t n, startblk;
+
   if (argc != 1) {
     chprintf(chp, "Usage: sdiotest read|write|all\r\n");
     return;
@@ -84,9 +87,26 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "Mode     : %s\r\n", mode[SDCD1.cardmode]);
   chprintf(chp, "Capacity : %DMB\r\n", SDCD1.capacity / 2048);
 
+  /* The test is performed in the middle of the flash area.*/
+  startblk = (SDCD1.capacity / MMCSD_BLOCK_SIZE) / 2;
+
   if ((strcmp(argv[0], "read") == 0) ||
       (strcmp(argv[0], "all") == 0)) {
 
+    /* Single block read performance.*/
+    chprintf(chp, "Single block read performance: ");
+    start = chVTGetSystemTime();
+    end = start + MS2ST(1000);
+    n = 0;
+    do {
+      if (blkRead(&SDCD1, startblk, buf, MMCSD_BLOCK_SIZE)) {
+        chprintf(chp, "failed\r\n");
+        break;
+      }
+      chThdSleepMilliseconds(1);
+      n++;
+    } while (chVTIsSystemTimeWithin(start, end));
+    chprintf(chp, "%D blocks per second\r\n", n);
   }
   if ((strcmp(argv[0], "write") == 0) ||
       (strcmp(argv[0], "all") == 0)) {
