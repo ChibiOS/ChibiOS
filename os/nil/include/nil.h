@@ -724,7 +724,7 @@ typedef struct {
  * @details If the condition check fails then the kernel panics with a
  *          message and halts.
  * @note    The condition is tested only if the @p NIL_CFG_ENABLE_ASSERTS
- *          switch is specified in @p chconf.h else the macro does nothing.
+ *          switch is specified in @p nilconf.h else the macro does nothing.
  * @note    The remark string is not currently used except for putting a
  *          comment in the code about the assertion.
  *
@@ -734,10 +734,10 @@ typedef struct {
  * @api
  */
 #if !defined(chDbgAssert)
-#define chDbgAssert(c, r) {                                                 \
+#define chDbgAssert(c, r) do {                                              \
   if (NIL_CFG_ENABLE_ASSERTS && !(c))                                       \
     chSysHalt(__func__);                                                    \
-}
+} while (0)
 #endif /* !defined(chDbgAssert) */
 /** @} */
 
