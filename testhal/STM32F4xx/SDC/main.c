@@ -99,7 +99,7 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
     end = start + MS2ST(1000);
     n = 0;
     do {
-      if (blkRead(&SDCD1, startblk, buf, MMCSD_BLOCK_SIZE)) {
+      if (blkRead(&SDCD1, startblk, buf, 1)) {
         chprintf(chp, "failed\r\n");
         break;
       }

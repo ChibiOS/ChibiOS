@@ -259,11 +259,11 @@ struct SDCDriver {
    * @brief     Transmit DMA channel.
    */
   const stm32_dma_stream_t  *dma;
+#if CH_DBG_ENABLE_ASSERTS || defined(__DOXYGEN__)
   /**
    * @brief     Pointer to the SDIO registers block.
    * @note      Used only for dubugging purpose.
    */
-#if CH_DBG_ENABLE_ASSERTS
   SDIO_TypeDef              *sdio;
 #endif
 };
