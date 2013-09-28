@@ -403,7 +403,7 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
 
   /* Enables the associated IRQ vector if a callback is defined.*/
   if (func != NULL)
-    nvicEnableVector(dmastp->vector, CORTEX_PRIORITY_MASK(priority));
+    nvicEnableVector(dmastp->vector, priority);
 
   return FALSE;
 }
