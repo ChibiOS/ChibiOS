@@ -515,8 +515,7 @@ struct ADCDriver {
   /**
    * @brief Current conversion group pointer or @p NULL.
    */
-  const ADCConversionGroup    *grpp;
-
+  const ADCConversionGroup  *grpp;
 #if ADC_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
