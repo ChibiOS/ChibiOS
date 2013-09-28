@@ -21,10 +21,11 @@
 /*
  * This is a periodic thread that does absolutely nothing except flashing LEDs.
  */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_WORKING_AREA(waThread1, 128);
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
+
   chRegSetThreadName("blinker");
   while (TRUE) {
     palClearPad(GPIOC, GPIOC_LED1);
