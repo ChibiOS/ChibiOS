@@ -48,10 +48,11 @@ static uint8_t rxbuf[512];
 /*
  * SPI bus contender 1.
  */
-static WORKING_AREA(spi_thread_1_wa, 256);
-static msg_t spi_thread_1(void *p) {
+static THD_WORKING_AREA(spi_thread_1_wa, 256);
+static THD_FUNCTION(spi_thread_1, p) {
 
   (void)p;
+
   chRegSetThreadName("SPI thread 1");
   while (TRUE) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
@@ -69,10 +70,11 @@ static msg_t spi_thread_1(void *p) {
 /*
  * SPI bus contender 2.
  */
-static WORKING_AREA(spi_thread_2_wa, 256);
-static msg_t spi_thread_2(void *p) {
+static THD_WORKING_AREA(spi_thread_2_wa, 256);
+static THD_FUNCTION(spi_thread_2, p) {
 
   (void)p;
+
   chRegSetThreadName("SPI thread 2");
   while (TRUE) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
@@ -91,10 +93,11 @@ static msg_t spi_thread_2(void *p) {
  * This is a periodic thread that does absolutely nothing except flashing
  * a LED.
  */
-static WORKING_AREA(blinker_wa, 128);
-static msg_t blinker(void *arg) {
+static THD_WORKING_AREA(blinker_wa, 128);
+static THD_FUNCTION(blinker, arg) {
 
   (void)arg;
+
   chRegSetThreadName("blinker");
   while (TRUE) {
     palSetPad(GPIOC, GPIOC_LED1);
