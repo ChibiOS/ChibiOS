@@ -116,6 +116,7 @@
   (backported to 2.6.0).
 - FIX: Fixed MS2ST() and US2ST() macros error (bug #415)(backported to 2.6.0,
   2.4.4, 2.2.10, NilRTOS).
+- NEW: Added support for STM32F0xx platform in RTCv2 driver.
 - NEW: Improvements to the STM32F4xx backup domain initialization.
 - NEW: Added initializer for the DIER register to the STM32 GPT, ICU and
   PWM drivers.
