@@ -47,22 +47,6 @@ static RTCWakeup wakeupspec;
 static RTCAlarm alarmspec;
 static time_t unix_time;
 
-/* libc stub */
-int _getpid(void) {return 1;}
-/* libc stub */
-void _exit(int i) {(void)i;}
-/* libc stub */
-#include <errno.h>
-#undef errno
-extern int errno;
-int _kill(int pid, int sig) {
-  (void)pid;
-  (void)sig;
-  errno = EINVAL;
-  return -1;
-}
-
-
 /* sleep indicator thread */
 static WORKING_AREA(blinkWA, 128);
 static msg_t blink_thd(void *arg){
