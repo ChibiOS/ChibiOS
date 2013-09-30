@@ -110,7 +110,7 @@ static dma_isr_redir_t dma_isr_redir[STM32_DMA_STREAMS];
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector6C) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -128,7 +128,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector70) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -146,7 +146,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector74) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -164,7 +164,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector78) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -182,7 +182,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector7C) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -200,7 +200,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch6_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector80) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -218,7 +218,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch6_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch7_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector84) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -301,7 +301,7 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
 
   /* Enables the associated IRQ vector if a callback is defined.*/
   if (func != NULL)
-    nvicEnableVector(dmastp->vector, CORTEX_PRIORITY_MASK(priority));
+    nvicEnableVector(dmastp->vector, priority);
 
   return FALSE;
 }

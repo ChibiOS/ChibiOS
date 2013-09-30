@@ -117,7 +117,7 @@ static msg_t WorkerThread(void *arg) {
 /*
  * GPT2 callback.
  */
-static void gpt2cb(GPTDriver *gptp) {
+static void gpt4cb(GPTDriver *gptp) {
   msg_t msg;
 
   (void)gptp;
@@ -145,9 +145,9 @@ static void gpt3cb(GPTDriver *gptp) {
 /*
  * GPT2 configuration.
  */
-static const GPTConfig gpt2cfg = {
+static const GPTConfig gpt4cfg = {
   1000000,  /* 1MHz timer clock.*/
-  gpt2cb,   /* Timer callback.*/
+  gpt4cb,   /* Timer callback.*/
   0
 };
 
@@ -221,7 +221,7 @@ int main(void) {
   /*
    * Activates GPTs.
    */
-  gptStart(&GPTD4, &gpt2cfg);
+  gptStart(&GPTD4, &gpt4cfg);
   gptStart(&GPTD3, &gpt3cfg);
 
   /*
