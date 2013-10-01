@@ -36,7 +36,6 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "stm32.h"
 #include "stm32_registry.h"
 
 /*===========================================================================*/

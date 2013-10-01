@@ -130,6 +130,20 @@
                                          PAL_STM32_OTYPE_OPENDRAIN)
 /** @} */
 
+/* Discarded definitions from the ST headers, the PAL driver uses its own
+   definitions in order to have an unified handling for all devices.
+   Unfortunately the ST headers have no uniform definitions for the same
+   objects across the various sub-families.*/
+#undef GPIOA
+#undef GPIOB
+#undef GPIOC
+#undef GPIOD
+#undef GPIOE
+#undef GPIOF
+#undef GPIOG
+#undef GPIOH
+#undef GPIOI
+
 /**
  * @name    GPIO ports definitions
  * @{
