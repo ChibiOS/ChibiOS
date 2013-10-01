@@ -54,7 +54,7 @@
  */
 #if defined(STM32F40XX) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F40x/STM32F41x High Performance"
-#if defined(STM32F42XX)
+#elif defined(STM32F42XX)
 #define PLATFORM_NAME           "STM32F42x/STM32F43x High Performance"
 #else /* !defined(STM32F40XX) */
 #define PLATFORM_NAME           "STM32F2xx High Performance"
@@ -566,6 +566,13 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/*
+ * MCU variant check.
+ */
+#if defined(STM32F42XX)
+#error "unsupported STM32F4XX variant"
+#endif
 
 #if defined(STM32F40XX) || defined(__DOXYGEN__)
 /*
