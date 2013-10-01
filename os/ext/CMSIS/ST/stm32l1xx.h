@@ -68,7 +68,7 @@
 
 #if !defined (STM32L1XX_MD) && !defined (STM32L1XX_MDP) && !defined (STM32L1XX_HD)
 
-  #define STM32L1XX_MD     /*!< - Ultra Low Power Medium-density devices: STM32L151x6xx, STM32L151x8xx,
+/*  #define STM32L1XX_MD */   /*!< - Ultra Low Power Medium-density devices: STM32L151x6xx, STM32L151x8xx,
                                      STM32L151xBxx, STM32L152x6xx, STM32L152x8xx and STM32L152xBxx. 
                                    - Ultra Low Power Medium-density Value Line devices: STM32L100x6xx,
                                      STM32L100x8xx and STM32L100xBxx.  */
@@ -83,7 +83,9 @@
   */
 
 #if !defined (STM32L1XX_MD) && !defined (STM32L1XX_MDP) && !defined (STM32L1XX_HD)
- #error "Please select first the target STM32L1xx device used in your application (in stm32l1xx.h file)"
+/* CHIBIOS FIX */
+#include "board.h"
+// #error "Please select first the target STM32L1xx device used in your application (in stm32l1xx.h file)"
 #endif
 
 #if !defined  USE_STDPERIPH_DRIVER

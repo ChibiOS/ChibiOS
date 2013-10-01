@@ -67,7 +67,7 @@
 
 #if !defined (STM32F0XX_LD)  && !defined (STM32F0XX_MD)
   /* #define STM32F0XX_LD*/ /*!< STM32F0xx Low-density devices are STM32F050xx and STM32F060xx microcontrollers where the Flash memory ranges between 16 and 32 Kbytes */
-  #define STM32F0XX_MD      /*!< STM32F0xx Medium-density devices are STM32F051xx and STM32F061xx microcontrollers where the Flash memory ranges between 16 and 64 Kbytes */  
+  /* #define STM32F0XX_MD*/ /*!< STM32F0xx Medium-density devices are STM32F051xx and STM32F061xx microcontrollers where the Flash memory ranges between 16 and 64 Kbytes */  
 #endif
 /*  Tip: To avoid modifying this file each time you need to switch between these
         devices, you can define the device in your toolchain compiler preprocessor.

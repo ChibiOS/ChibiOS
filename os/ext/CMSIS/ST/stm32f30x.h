@@ -66,7 +66,7 @@
   */
 
 #if !defined (STM32F30X) 
-  #define STM32F30X
+/*  #define STM32F30X */
 #endif
 
 /*  Tip: To avoid modifying this file each time you need to switch between these

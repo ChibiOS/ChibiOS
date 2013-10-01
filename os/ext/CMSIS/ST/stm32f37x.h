@@ -63,7 +63,7 @@
   */
 
 #if !defined (STM32F37X) 
-  #define STM32F37X
+/*  #define STM32F37X */
 #endif
 
 /*  Tip: To avoid modifying this file each time you need to switch between these
@@ -71,7 +71,9 @@
   */
 
 #if !defined (STM32F37X)
- #error "Please select first the target STM32F37X device used in your application (in stm32f37x.h file)"
+/* CHIBIOS FIX */
+#include "board.h"
+// #error "Please select first the target STM32F37X device used in your application (in stm32f37x.h file)"
 #endif
 
 #if !defined  (USE_STDPERIPH_DRIVER)

@@ -63,6 +63,13 @@
    asm module.*/
 #if !defined(_FROM_ASM_)
 
+/* If the device type is not externally defined, for example from the Makefile,
+   then a file named board.h is included. This file must contain a device
+   definition compatible with the vendor include file.*/
+#if !defined(STM32F0XX_LD)  && !defined(STM32F0XX_MD)
+#include "board.h"
+#endif
+
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
