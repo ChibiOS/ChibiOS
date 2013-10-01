@@ -26,7 +26,8 @@
  *          .
  *          One of the following macros must also be defined:
  *          - STM32F2XX for High-performance STM32 F-2 devices.
- *          - STM32F4XX for High-performance STM32 F-4 devices.
+ *          - STM32F40XX for High-performance STM32 F-4 devices.
+ *          - STM32F42XX for High-performance STM32 F-4 devices.
  *          .
  *
  * @addtogroup HAL
@@ -51,18 +52,20 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32F4xx High Performance"
-#else /* !defined(STM32F4XX) */
+#if defined(STM32F40XX) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F40x/STM32F41x High Performance"
+#if defined(STM32F42XX)
+#define PLATFORM_NAME           "STM32F42x/STM32F43x High Performance"
+#else /* !defined(STM32F40XX) */
 #define PLATFORM_NAME           "STM32F2xx High Performance"
-#endif /* !defined(STM32F4XX) */
+#endif /* !defined(STM32F40XX) */
 /** @} */
 
 /**
  * @name    Absolute Maximum Ratings
  * @{
  */
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
+#if defined(STM32F40XX) || defined(__DOXYGEN__)
 /**
  * @brief   Maximum HSE clock frequency.
  */
@@ -128,7 +131,7 @@
  */
 #define STM32_SPII2S_MAX        37500000
 
-#else /* !defined(STM32F4XX) */
+#else /* !defined(STM32F40XX) */
 #define STM32_SYSCLK_MAX        120000000
 #define STM32_HSECLK_MAX        26000000
 #define STM32_HSECLK_MIN        1000000
@@ -143,7 +146,7 @@
 #define STM32_PCLK1_MAX         30000000
 #define STM32_PCLK2_MAX         60000000
 #define STM32_SPII2S_MAX        37500000
-#endif /* !defined(STM32F4XX) */
+#endif /* !defined(STM32F40XX) */
 /** @} */
 
 /**
@@ -158,7 +161,7 @@
  * @name    PWR_CR register bits definitions
  * @{
  */
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
+#if defined(STM32F40XX) || defined(__DOXYGEN__)
 #define STM32_VOS_MASK          (1 << 14)   /**< Core voltage mask.         */
 #define STM32_VOS_LOW           (0 << 14)   /**< Core voltage set to low.   */
 #define STM32_VOS_HIGH          (1 << 14)   /**< Core voltage set to high.  */
@@ -354,7 +357,7 @@
 #define STM32_SW                    STM32_SW_PLL
 #endif
 
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
+#if defined(STM32F40XX) || defined(__DOXYGEN__)
 /**
  * @brief   Core voltage selection.
  * @note    This setting affects all the performance and clock related
@@ -416,7 +419,7 @@
 #define STM32_PLLQ_VALUE            7
 #endif
 
-#else /* !defined(STM32F4XX) */
+#else /* !defined(STM32F40XX) */
 /**
  * @brief   Clock source for the PLLs.
  * @note    This setting has only effect if the PLL is selected as the
@@ -467,7 +470,7 @@
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLQ_VALUE            5
 #endif
-#endif /* !defined(STM32F4XX) */
+#endif /* !defined(STM32F40XX) */
 
 /**
  * @brief   AHB prescaler value.
@@ -564,7 +567,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
+#if defined(STM32F40XX) || defined(__DOXYGEN__)
 /*
  * Configuration-related checks.
  */
@@ -582,20 +585,20 @@
 #define STM32_SYSCLK_MAX            144000000
 #endif
 
-#else /* !defined(STM32F4XX) */
+#else /* !defined(STM32F40XX) */
 /*
  * Configuration-related checks.
  */
 #if !defined(STM32F2xx_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32F2xx_MCUCONF not defined"
 #endif
-#endif /* !defined(STM32F4XX) */
+#endif /* !defined(STM32F40XX) */
 
 /**
  * @brief   Maximum frequency thresholds and wait states for flash access.
  * @note    The values are valid for 2.7V to 3.6V supply range.
  */
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
+#if defined(STM32F40XX) || defined(__DOXYGEN__)
 #if ((STM32_VDD >= 270) && (STM32_VDD <= 360)) || defined(__DOXYGEN__)
 #define STM32_0WS_THRESHOLD         30000000
 #define STM32_1WS_THRESHOLD         60000000
@@ -636,7 +639,7 @@
 #error "invalid VDD voltage specified"
 #endif
 
-#else /* !defined(STM32F4XX) */
+#else /* !defined(STM32F40XX) */
 #if ((STM32_VDD >= 270) && (STM32_VDD <= 360)) || defined(__DOXYGEN__)
 #define STM32_0WS_THRESHOLD         30000000
 #define STM32_1WS_THRESHOLD         60000000
@@ -676,7 +679,7 @@
 #else
 #error "invalid VDD voltage specified"
 #endif
-#endif /* !defined(STM32F4XX) */
+#endif /* !defined(STM32F40XX) */
 
 /*
  * HSI related checks.

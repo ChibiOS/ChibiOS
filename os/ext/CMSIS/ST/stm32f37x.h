@@ -71,9 +71,7 @@
   */
 
 #if !defined (STM32F37X)
-/* CHIBIOS FIX */
-#include "board.h"
-// #error "Please select first the target STM32F37X device used in your application (in stm32f37x.h file)"
+ #error "Please select first the target STM32F37X device used in your application (in stm32f37x.h file)"
 #endif
 
 #if !defined  (USE_STDPERIPH_DRIVER)

@@ -25,6 +25,8 @@
  *          .
  *          One of the following macros must also be defined:
  *          - STM32L1XX_MD for Ultra Low Power Medium-density devices.
+ *          - STM32L1XX_MDP for Ultra Low Power Medium-density Plus devices.
+ *          - STM32L1XX_HD for Ultra Low Power Medium-density devices.
  *          .
  *
  * @addtogroup HAL
@@ -357,6 +359,13 @@
  */
 #if !defined(STM32L1xx_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L1xx_MCUCONF not defined"
+#endif
+
+/*
+ * MCU variant check.
+ */
+#if defined(STM32L1XX_MDP) || defined(STM32L1XX_HD)
+#error "unsupported STM32L1XX variant"
 #endif
 
 /* Voltage related limits.*/

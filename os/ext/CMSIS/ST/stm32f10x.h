@@ -93,9 +93,7 @@
   */
 
 #if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD) && !defined (STM32F10X_HD_VL) && !defined (STM32F10X_XL) && !defined (STM32F10X_CL)
-/* CHIBIOS FIX */
-#include "board.h"
-// #error "Please select first the target STM32F10x device used in your application (in stm32f10x.h file)"
+ #error "Please select first the target STM32F10x device used in your application (in stm32f10x.h file)"
 #endif
 
 #if !defined  USE_STDPERIPH_DRIVER

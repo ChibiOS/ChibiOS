@@ -26,7 +26,8 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F0XX for Entry Level devices.
+ *          - STM32F0XX_LD for Low Density Entry Level devices.
+ *          - STM32F0XX_MD for Medium Density Entry Level devices.
  *          .
  *
  * @addtogroup HAL

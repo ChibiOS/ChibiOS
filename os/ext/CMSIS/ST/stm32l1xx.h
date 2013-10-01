@@ -83,9 +83,7 @@
   */
 
 #if !defined (STM32L1XX_MD) && !defined (STM32L1XX_MDP) && !defined (STM32L1XX_HD)
-/* CHIBIOS FIX */
-#include "board.h"
-// #error "Please select first the target STM32L1xx device used in your application (in stm32l1xx.h file)"
+ #error "Please select first the target STM32L1xx device used in your application (in stm32l1xx.h file)"
 #endif
 
 #if !defined  USE_STDPERIPH_DRIVER

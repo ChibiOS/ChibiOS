@@ -26,6 +26,7 @@
  *          One of the following macros must also be defined:
  *          - STM32F10X_LD_VL for Value Line Low Density devices.
  *          - STM32F10X_MD_VL for Value Line Medium Density devices.
+ *          - STM32F10X_HD_VL for Value Line High Density devices.
  *          - STM32F10X_LD for Performance Low Density devices.
  *          - STM32F10X_MD for Performance Medium Density devices.
  *          - STM32F10X_HD for Performance High Density devices.
