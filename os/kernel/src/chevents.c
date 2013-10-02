@@ -197,7 +197,7 @@ void chEvtBroadcastFlagsI(EventSource *esp, flagsmask_t flags) {
  * @return              The flags added to the listener by the associated
  *                      event source.
  *
- * @iclass
+ * @api
  */
 flagsmask_t chEvtGetAndClearFlags(EventListener *elp) {
   flagsmask_t flags;
