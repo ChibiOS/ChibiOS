@@ -24,7 +24,6 @@
 
 #include <string.h>
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_MAC || defined(__DOXYGEN__)

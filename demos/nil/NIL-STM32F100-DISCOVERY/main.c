@@ -21,63 +21,39 @@
 #include "nil.h"
 
 /*
- * Blinker thread #1.
+ * Thread 1.
  */
-static THD_WORKING_AREA(waThread1, 128);
-static THD_FUNCTION(Thread1, arg) {
+THD_WORKING_AREA(waThread1, 128);
+THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
 
   while (true) {
-    palSetPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(125);
-    palSetPad(GPIOE, GPIOE_LED7_GREEN);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED7_GREEN);
-    chThdSleepMilliseconds(125);
-    palSetPad(GPIOE, GPIOE_LED10_RED);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED10_RED);
-    chThdSleepMilliseconds(125);
-    palSetPad(GPIOE, GPIOE_LED6_GREEN);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED6_GREEN);
-    chThdSleepMilliseconds(125);
+    palSetPad(GPIOC, GPIOC_LED4);
+    chThdSleepMilliseconds(250);
+    palClearPad(GPIOC, GPIOC_LED4);
+    chThdSleepMilliseconds(250);
   }
 }
 
 /*
- * Blinker thread #2.
+ * Thread 2.
  */
-static THD_WORKING_AREA(waThread2, 128);
-static THD_FUNCTION(Thread2, arg) {
+THD_WORKING_AREA(waThread2, 128);
+THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
 
   while (true) {
-    chThdSleepMilliseconds(125);
-    palSetPad(GPIOE, GPIOE_LED5_ORANGE);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED5_ORANGE);
-    chThdSleepMilliseconds(125);
-    palSetPad(GPIOE, GPIOE_LED9_BLUE);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED9_BLUE);
-    chThdSleepMilliseconds(125);
-    palSetPad(GPIOE, GPIOE_LED8_ORANGE);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED8_ORANGE);
-    chThdSleepMilliseconds(125);
-    palSetPad(GPIOE, GPIOE_LED4_BLUE);
-    chThdSleepMilliseconds(125);
-    palClearPad(GPIOE, GPIOE_LED4_BLUE);
+    palSetPad(GPIOC, GPIOC_LED3);
+    chThdSleepMilliseconds(500);
+    palClearPad(GPIOC, GPIOC_LED3);
+    chThdSleepMilliseconds(500);
   }
 }
 
 /*
- * Hello thread.
+ * Thread 3.
  */
 THD_WORKING_AREA(waThread3, 128);
 THD_FUNCTION(Thread3, arg) {
@@ -86,11 +62,8 @@ THD_FUNCTION(Thread3, arg) {
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
-   * PA9 and PA10 are routed to USART1.
    */
   sdStart(&SD1, NULL);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));       /* USART1 TX.       */
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));      /* USART1 RX.       */
 
   while (true) {
     chnWrite(&SD1, (const uint8_t *)"Hello World!\r\n", 14);

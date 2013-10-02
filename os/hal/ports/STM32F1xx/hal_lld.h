@@ -41,9 +41,47 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
+#include "stm32_registry.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Platform identification
+ * @{
+ */
+#if defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F1xx"
+
+#elif defined(STM32F10X_LD_VL)
+#define PLATFORM_NAME           "STM32F100 Value Line Low Density"
+
+#elif defined(STM32F10X_MD_VL)
+#define PLATFORM_NAME           "STM32F100 Value Line Medium Density"
+
+#elif defined(STM32F10X_HD_VL)
+#define PLATFORM_NAME           "STM32F100 Value Line High Density"
+
+#elif defined(STM32F10X_LD)
+#define PLATFORM_NAME           "STM32F10x Performance Line Low Density"
+
+#elif defined(STM32F10X_MD)
+#define PLATFORM_NAME           "STM32F10x Performance Line Medium Density"
+
+#elif defined(STM32F10X_HD)
+#define PLATFORM_NAME           "STM32F10x Performance Line High Density"
+
+#elif defined(STM32F10X_XL)
+#define PLATFORM_NAME           "STM32F10x Performance Line eXtra Density"
+
+#elif defined(STM32F10X_CL)
+#define PLATFORM_NAME           "STM32F10x Connectivity Line"
+
+#else
+#error "unsupported or unrecognized STM32F1xx member"
+#endif
+/** @} */
 
 /**
  * @name    Internal clock sources
@@ -134,16 +172,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if defined(__DOXYGEN__)
-/**
- * @name    Platform identification
- * @{
- */
-#define PLATFORM_NAME           "STM32"
-/** @} */
-
-#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
-      defined(STM32F10X_HD_VL) || defined(__DOXYGEN__)
+#if defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||                 \
+    defined(STM32F10X_HD_VL) || defined(__DOXYGEN__)
 #include "hal_lld_f100.h"
 
 #elif defined(STM32F10X_LD) || defined(STM32F10X_MD) ||                     \
@@ -153,9 +183,6 @@
 
 #elif defined(STM32F10X_CL) || defined(__DOXYGEN__)
 #include "hal_lld_f105_f107.h"
-
-#else
-#error "unspecified, unsupported or invalid STM32 platform"
 #endif
 
 /*===========================================================================*/
@@ -170,7 +197,8 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* STM32 ISR, DMA and RCC helpers.*/
+/* Various helpers.*/
+#include "nvic.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"

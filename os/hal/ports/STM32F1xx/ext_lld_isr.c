@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_EXT || defined(__DOXYGEN__)
@@ -54,14 +53,14 @@
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI0_IRQHandler) {
+OSAL_IRQ_HANDLER(EXTI0_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 0);
   EXTD1.config->channels[0].cb(&EXTD1, 0);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -69,14 +68,14 @@ CH_IRQ_HANDLER(EXTI0_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI1_IRQHandler) {
+OSAL_IRQ_HANDLER(EXTI1_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 1);
   EXTD1.config->channels[1].cb(&EXTD1, 1);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -84,14 +83,14 @@ CH_IRQ_HANDLER(EXTI1_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI2_IRQHandler) {
+OSAL_IRQ_HANDLER(EXTI2_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 2);
   EXTD1.config->channels[2].cb(&EXTD1, 2);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -99,14 +98,14 @@ CH_IRQ_HANDLER(EXTI2_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI3_IRQHandler) {
+OSAL_IRQ_HANDLER(EXTI3_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 3);
   EXTD1.config->channels[3].cb(&EXTD1, 3);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -114,14 +113,14 @@ CH_IRQ_HANDLER(EXTI3_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI4_IRQHandler) {
+OSAL_IRQ_HANDLER(EXTI4_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 4);
   EXTD1.config->channels[4].cb(&EXTD1, 4);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -129,10 +128,10 @@ CH_IRQ_HANDLER(EXTI4_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI9_5_IRQHandler) {
+OSAL_IRQ_HANDLER(EXTI9_5_IRQHandler) {
   uint32_t pr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pr = EXTI->PR & ((1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9));
   EXTI->PR = pr;
@@ -147,7 +146,7 @@ CH_IRQ_HANDLER(EXTI9_5_IRQHandler) {
   if (pr & (1 << 9))
     EXTD1.config->channels[9].cb(&EXTD1, 9);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -155,10 +154,10 @@ CH_IRQ_HANDLER(EXTI9_5_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(EXTI15_10_IRQHandler) {
+OSAL_IRQ_HANDLER(EXTI15_10_IRQHandler) {
   uint32_t pr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   pr = EXTI->PR & ((1 << 10) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) |
                    (1 << 15));
@@ -176,7 +175,7 @@ CH_IRQ_HANDLER(EXTI15_10_IRQHandler) {
   if (pr & (1 << 15))
     EXTD1.config->channels[15].cb(&EXTD1, 15);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -184,14 +183,14 @@ CH_IRQ_HANDLER(EXTI15_10_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(PVD_IRQHandler) {
+OSAL_IRQ_HANDLER(PVD_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 16);
   EXTD1.config->channels[16].cb(&EXTD1, 16);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -199,14 +198,14 @@ CH_IRQ_HANDLER(PVD_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(RTC_Alarm_IRQHandler) {
+OSAL_IRQ_HANDLER(RTC_Alarm_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 17);
   EXTD1.config->channels[17].cb(&EXTD1, 17);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #if defined(STM32F10X_CL)
@@ -215,14 +214,14 @@ CH_IRQ_HANDLER(RTC_Alarm_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(OTG_FS_WKUP_IRQHandler) {
+OSAL_IRQ_HANDLER(OTG_FS_WKUP_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 18);
   EXTD1.config->channels[18].cb(&EXTD1, 18);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /**
@@ -230,14 +229,14 @@ CH_IRQ_HANDLER(OTG_FS_WKUP_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(ETH_WKUP_IRQHandler) {
+OSAL_IRQ_HANDLER(ETH_WKUP_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 19);
   EXTD1.config->channels[19].cb(&EXTD1, 19);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
       defined(STM32F10X_HD_VL)
@@ -248,14 +247,14 @@ CH_IRQ_HANDLER(ETH_WKUP_IRQHandler) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(USB_FS_WKUP_IRQHandler) {
+OSAL_IRQ_HANDLER(USB_FS_WKUP_IRQHandler) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   EXTI->PR = (1 << 18);
   EXTD1.config->channels[18].cb(&EXTD1, 18);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
@@ -270,37 +269,25 @@ CH_IRQ_HANDLER(USB_FS_WKUP_IRQHandler) {
  */
 void ext_lld_exti_irq_enable(void) {
 
-  nvicEnableVector(EXTI0_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI0_IRQ_PRIORITY));
-  nvicEnableVector(EXTI1_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI1_IRQ_PRIORITY));
-  nvicEnableVector(EXTI2_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI2_IRQ_PRIORITY));
-  nvicEnableVector(EXTI3_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI3_IRQ_PRIORITY));
-  nvicEnableVector(EXTI4_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI4_IRQ_PRIORITY));
-  nvicEnableVector(EXTI9_5_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI5_9_IRQ_PRIORITY));
-  nvicEnableVector(EXTI15_10_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI10_15_IRQ_PRIORITY));
-  nvicEnableVector(PVD_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI16_IRQ_PRIORITY));
-  nvicEnableVector(RTC_Alarm_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI17_IRQ_PRIORITY));
+  nvicEnableVector(EXTI0_IRQn, STM32_EXT_EXTI0_IRQ_PRIORITY);
+  nvicEnableVector(EXTI1_IRQn, STM32_EXT_EXTI1_IRQ_PRIORITY);
+  nvicEnableVector(EXTI2_IRQn, STM32_EXT_EXTI2_IRQ_PRIORITY);
+  nvicEnableVector(EXTI3_IRQn, STM32_EXT_EXTI3_IRQ_PRIORITY);
+  nvicEnableVector(EXTI4_IRQn, STM32_EXT_EXTI4_IRQ_PRIORITY);
+  nvicEnableVector(EXTI9_5_IRQn, STM32_EXT_EXTI5_9_IRQ_PRIORITY);
+  nvicEnableVector(EXTI15_10_IRQn, STM32_EXT_EXTI10_15_IRQ_PRIORITY);
+  nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
+  nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
 #if defined(STM32F10X_CL)
   /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
-  nvicEnableVector(OTG_FS_WKUP_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
-  nvicEnableVector(ETH_WKUP_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI19_IRQ_PRIORITY));
+  nvicEnableVector(OTG_FS_WKUP_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
+  nvicEnableVector(ETH_WKUP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
 #elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
       defined(STM32F10X_HD_VL)
   /* EXTI vectors specific to STM32F1xx Value Line.*/
 #else
   /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
-  nvicEnableVector(USB_FS_WKUP_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_EXT_EXTI18_IRQ_PRIORITY));
+  nvicEnableVector(USB_FS_WKUP_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
 #endif
 }
 

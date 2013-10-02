@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
