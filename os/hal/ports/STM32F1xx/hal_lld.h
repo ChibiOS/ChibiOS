@@ -41,16 +41,9 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "stm32.h"
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Defines the support for realtime counters in the HAL.
- */
-#define HAL_IMPLEMENTS_COUNTERS TRUE
 
 /**
  * @name    Internal clock sources
@@ -78,16 +71,6 @@
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
-
-/**
- * @name    STM32F1xx capabilities
- * @{
- */
-/* RTC attributes.*/
-#define STM32_HAS_RTC           TRUE
-#define STM32_RTC_HAS_SUBSECONDS TRUE
-#define STM32_RTC_IS_CALENDAR   FALSE
-/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -175,63 +158,13 @@
 #error "unspecified, unsupported or invalid STM32 platform"
 #endif
 
-/* There are differences in vector names in the various sub-families,
-   normalizing.*/
-#if defined(STM32F10X_XL)
-#define TIM1_BRK_IRQn       TIM1_BRK_TIM9_IRQn
-#define TIM1_UP_IRQn        TIM1_UP_TIM10_IRQn
-#define TIM1_TRG_COM_IRQn   TIM1_TRG_COM_TIM11_IRQn
-#define TIM8_BRK_IRQn       TIM8_BRK_TIM12_IRQn
-#define TIM8_UP_IRQn        TIM8_UP_TIM13_IRQn
-#define TIM8_TRG_COM_IRQn   TIM8_TRG_COM_TIM14_IRQn
-
-#elif defined(STM32F10X_LD_VL)|| defined(STM32F10X_MD_VL) ||                \
-      defined(STM32F10X_HD_VL)
-#define TIM1_BRK_IRQn       TIM1_BRK_TIM15_IRQn
-#define TIM1_UP_IRQn        TIM1_UP_TIM16_IRQn
-#define TIM1_TRG_COM_IRQn   TIM1_TRG_COM_TIM17_IRQn
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type representing a system clock frequency.
- */
-typedef uint32_t halclock_t;
-
-/**
- * @brief   Type of the realtime free counter value.
- */
-typedef uint32_t halrtcnt_t;
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @brief   Returns the current value of the system free running counter.
- * @note    This service is implemented by returning the content of the
- *          DWT_CYCCNT register.
- *
- * @return              The value of the system free running counter of
- *                      type halrtcnt_t.
- *
- * @notapi
- */
-#define hal_lld_get_counter_value()         DWT_CYCCNT
-
-/**
- * @brief   Realtime counter frequency.
- * @note    The DWT_CYCCNT register is incremented directly by the system
- *          clock so this function returns STM32_HCLK.
- *
- * @return              The realtime counter frequency of type halclock_t.
- *
- * @notapi
- */
-#define hal_lld_get_counter_frequency()     STM32_HCLK
 
 /*===========================================================================*/
 /* External declarations.                                                    */
