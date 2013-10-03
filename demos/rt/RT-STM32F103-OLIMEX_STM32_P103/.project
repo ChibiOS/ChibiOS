@@ -86,5 +86,10 @@
 			<type>2</type>
 			<locationURI>CHIBIOS/os</locationURI>
 		</link>
+		<link>
+			<name>test</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/test</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

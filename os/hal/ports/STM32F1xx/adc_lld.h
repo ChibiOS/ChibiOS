@@ -184,7 +184,7 @@ typedef struct {
   /**
    * @brief   Enables the circular buffer mode for the group.
    */
-  bool_t                    circular;
+  bool                      circular;
   /**
    * @brief   Number of the analog channels belonging to the conversion group.
    */
@@ -276,17 +276,13 @@ struct ADCDriver {
   /**
    * @brief Waiting thread.
    */
-  Thread                    *thread;
+  thread_reference_t        thread;
 #endif
 #if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the peripheral.
    */
-  Mutex                     mutex;
-#elif CH_USE_SEMAPHORES
-  Semaphore                 semaphore;
-#endif
+  mutex_t                   mutex;
 #endif /* ADC_USE_MUTUAL_EXCLUSION */
 #if defined(ADC_DRIVER_EXT_FIELDS)
   ADC_DRIVER_EXT_FIELDS

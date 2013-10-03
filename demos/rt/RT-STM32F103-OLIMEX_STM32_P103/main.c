@@ -54,7 +54,7 @@ int main(void) {
    * Activates the serial driver 1 using the driver default configuration.
    * PA9(TX) and PA10(RX) are routed to USART1.
    */
-  sdStart(&SD1, NULL);
+  sdStart(&SD2, NULL);
 
   /*
    * Creates the example thread.
@@ -68,7 +68,7 @@ int main(void) {
    */
   while (TRUE) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
-      TestThread(&SD1);
+      TestThread(&SD2);
     chThdSleepMilliseconds(500);
   }
 }

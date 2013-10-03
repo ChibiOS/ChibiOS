@@ -277,7 +277,7 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(EXTI9_5_IRQn, STM32_EXT_EXTI5_9_IRQ_PRIORITY);
   nvicEnableVector(EXTI15_10_IRQn, STM32_EXT_EXTI10_15_IRQ_PRIORITY);
   nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
-  nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
+  nvicEnableVector(RTCAlarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
 #if defined(STM32F10X_CL)
   /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
   nvicEnableVector(OTG_FS_WKUP_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
@@ -287,7 +287,7 @@ void ext_lld_exti_irq_enable(void) {
   /* EXTI vectors specific to STM32F1xx Value Line.*/
 #else
   /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
-  nvicEnableVector(USB_FS_WKUP_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
+  nvicEnableVector(USBWakeUp_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
 #endif
 }
 
@@ -306,7 +306,7 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(EXTI9_5_IRQn);
   nvicDisableVector(EXTI15_10_IRQn);
   nvicDisableVector(PVD_IRQn);
-  nvicDisableVector(RTC_Alarm_IRQn);
+  nvicDisableVector(RTCAlarm_IRQn);
 #if defined(STM32F10X_CL)
   /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
   nvicDisableVector(OTG_FS_WKUP_IRQn);
@@ -316,7 +316,7 @@ void ext_lld_exti_irq_disable(void) {
   /* EXTI vectors specific to STM32F1xx Value Line.*/
 #else
   /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
-  nvicDisableVector(USB_FS_WKUP_IRQn);
+  nvicDisableVector(USBWakeUp_IRQn);
 #endif
 }
 

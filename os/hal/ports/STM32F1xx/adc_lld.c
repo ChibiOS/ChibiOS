@@ -132,12 +132,12 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
-      bool_t b;
+      bool b;
       b = dmaStreamAllocate(adcp->dmastp,
                             STM32_ADC_ADC1_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
                             (void *)adcp);
-      chDbgAssert(!b, "adc_lld_start(), #1", "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
       rccEnableADC1(FALSE);
     }
