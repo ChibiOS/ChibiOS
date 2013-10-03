@@ -72,6 +72,8 @@
 *****************************************************************************
 
 *** 2.6.2 ***
+- FIX: Fixed duplicate STM32_GPT_USE_TIM8 definition in some mcuconf.h files
+  (bug #431).
 - FIX: Fixed possible unalignment in GCC Cortex-M scatter files (bug #430).
 
 *** 2.6.1 ***
