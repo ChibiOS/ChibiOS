@@ -205,9 +205,9 @@
 
 /* Flag for the whole STM32F1XX family. */
 #if defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) || \
-    defined(STM32F10X_LD)    || defined(STM32F10X_MD)    || \
-    defined(STM32F10X_HD)    || defined(STM32F10X_XL)    || \
-                                defined(STM32F10X_CL)
+    defined(STM32F10X_HD_VL) || defined(STM32F10X_LD)    || \
+    defined(STM32F10X_MD)    || defined(STM32F10X_HD)    || \
+    defined(STM32F10X_XL)    || defined(STM32F10X_CL)
 #define STM32F1XX_I2C
 #endif
 /** @} */
@@ -234,6 +234,51 @@
 #error "I2C driver activated but no I2C peripheral assigned"
 #endif
 
+#if STM32_I2C_USE_I2C1 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_I2C_I2C1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C1"
+#endif
+
+#if STM32_I2C_USE_I2C2 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_I2C_I2C2_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C2"
+#endif
+
+#if STM32_I2C_USE_I2C3 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_I2C_I2C3_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C3"
+#endif
+
+#if STM32_I2C_USE_I2C1 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C1"
+#endif
+
+#if STM32_I2C_USE_I2C2 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C2_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C2"
+#endif
+
+#if STM32_I2C_USE_I2C3 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C3_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C3"
+#endif
+
+/* The following checks are only required when there is a DMA able to
+   reassign streams to different channels.*/
+#if STM32_ADVANCED_DMA
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_I2C_USE_I2C1 && (!defined(STM32_I2C_I2C1_RX_DMA_STREAM) ||        \
+                           !defined(STM32_I2C_I2C1_TX_DMA_STREAM))
+#error "I2C1 DMA streams not defined"
+#endif
+
+#if STM32_I2C_USE_I2C2 && (!defined(STM32_I2C_I2C2_RX_DMA_STREAM) ||        \
+                           !defined(STM32_I2C_I2C2_TX_DMA_STREAM))
+#error "I2C2 DMA streams not defined"
+#endif
+
+/* Check on the validity of the assigned DMA channels.*/
 #if STM32_I2C_USE_I2C1 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C1_RX_DMA_STREAM,                    \
                            STM32_I2C1_RX_DMA_MSK)
@@ -269,6 +314,7 @@
                            STM32_I2C3_TX_DMA_MSK)
 #error "invalid DMA stream associated to I2C3 TX"
 #endif
+#endif /* STM32_ADVANCED_DMA */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED

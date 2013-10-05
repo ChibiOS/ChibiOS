@@ -706,7 +706,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   systime_t start, end;
 
 #if defined(STM32F1XX_I2C)
-  osalDbgCheck((rxbytes > 1), "i2c_lld_master_receive_timeout");
+  osalDbgCheck(rxbytes > 1);
 #endif
 
   /* Resetting error flags for this transfer.*/
@@ -789,7 +789,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   systime_t start, end;
 
 #if defined(STM32F1XX_I2C)
-  osalDbgCheck(((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL))));
+  osalDbgCheck((rxbytes == 0) || ((rxbytes > 1) && (rxbuf != NULL)));
 #endif
 
   /* Resetting error flags for this transfer.*/
