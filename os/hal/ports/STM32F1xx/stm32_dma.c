@@ -122,7 +122,7 @@ static dma_isr_redir_t dma_isr_redir[STM32_DMA_STREAMS];
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector6C) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -140,7 +140,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch1_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector70) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -158,7 +158,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch2_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector74) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -176,7 +176,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch3_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector78) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -194,7 +194,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch4_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector7C) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -212,7 +212,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch5_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch6_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector80) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -230,7 +230,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch6_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA1_Ch7_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector84) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -249,7 +249,7 @@ OSAL_IRQ_HANDLER(DMA1_Ch7_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA2_Ch1_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector120) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -267,7 +267,7 @@ OSAL_IRQ_HANDLER(DMA2_Ch1_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector124) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -285,7 +285,7 @@ OSAL_IRQ_HANDLER(DMA2_Ch2_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA2_Ch3_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector128) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -304,7 +304,7 @@ OSAL_IRQ_HANDLER(DMA2_Ch3_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA2_Ch4_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector12C) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
@@ -322,7 +322,7 @@ OSAL_IRQ_HANDLER(DMA2_Ch4_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(DMA2_Ch5_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector130) {
   uint32_t flags;
 
   OSAL_IRQ_PROLOGUE();
