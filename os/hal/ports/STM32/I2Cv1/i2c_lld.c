@@ -745,9 +745,6 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
     osalSysUnlock();
   }
 
-  /* This lock will be released in high level driver.*/
-  osalSysLock();
-
   /* Starts the operation.*/
   dp->CR2 |= I2C_CR2_ITEVTEN;
   dp->CR1 |= I2C_CR1_START | I2C_CR1_ACK;
@@ -832,9 +829,6 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
     osalSysUnlock();
   }
-
-  /* This lock will be released in high level driver.*/
-  osalSysLock();
 
   /* Starts the operation.*/
   dp->CR2 |= I2C_CR2_ITEVTEN;
