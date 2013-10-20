@@ -20,13 +20,18 @@
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
+ *          - STM32_LSEDRV.
+ *          - STM32_LSE_BYPASS (optionally).
  *          - STM32_HSECLK.
  *          - STM32_HSE_BYPASS (optionally).
  *          - STM32_VDD (as hundredths of Volt).
  *          .
  *          One of the following macros must also be defined:
  *          - STM32F2XX for High-performance STM32 F-2 devices.
- *          - STM32F4XX for High-performance STM32 F-4 devices.
+ *          - STM32F401xx for High-performance STM32 F-4 devices.
+ *          - STM32F40_41xxx for High-performance STM32 F-4 devices.
+ *          - STM32F427_437xx for High-performance STM32 F-4 devices.
+ *          - STM32F429_439xx for High-performance STM32 F-4 devices.
  *          .
  *
  * @addtogroup HAL
@@ -51,32 +56,60 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32F4xx High Performance"
-#else /* !defined(STM32F4XX) */
+#if defined(STM32F429_439xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F429/F439 High Performance with DSP and FPU"
+#elif defined(STM32F427_437xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F427/F437 High Performance with DSP and FPU"
+#elif defined(STM32F40_41xxx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F407/F417 High Performance with DSP and FPU"
+#elif defined(STM32F401) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F401 High Performance with DSP and FPU"
+#elif defined(STM32F2XX) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F2xx High Performance"
-#endif /* !defined(STM32F4XX) */
+#else
+#error "STM32F2xx/F4xx device not specified"
+#endif
 /** @} */
 
 /**
  * @name    Absolute Maximum Ratings
  * @{
  */
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
+/**
+ * @name    Absolute Maximum Ratings
+ * @{
+ */
+#if defined(STM32F429_439xx) || defined(STM32F429_439xx) ||                 \
+    defined(__DOXYGEN__)
 /**
  * @brief   Maximum HSE clock frequency.
  */
 #define STM32_HSECLK_MAX        26000000
 
 /**
+ * @brief   Maximum HSE clock frequency using an external source.
+ */
+#define STM32_HSECLK_BYP_MAX    50000000
+
+/**
  * @brief   Minimum HSE clock frequency.
  */
-#define STM32_HSECLK_MIN        1000000
+#define STM32_HSECLK_MIN        4000000
+
+/**
+ * @brief   Minimum HSE clock frequency.
+ */
+#define STM32_HSECLK_BYP_MIN    1000000
 
 /**
  * @brief   Maximum LSE clock frequency.
  */
-#define STM32_LSECLK_MAX        1000000
+#define STM32_LSECLK_MAX        32768
+
+/**
+ * @brief   Maximum LSE clock frequency.
+ */
+#define STM32_LSECLK_BYP_MAX    1000000
 
 /**
  * @brief   Minimum LSE clock frequency.
@@ -86,7 +119,7 @@
 /**
  * @brief   Maximum PLLs input clock frequency.
  */
-#define STM32_PLLIN_MAX         2000000
+#define STM32_PLLIN_MAX         2100000
 
 /**
  * @brief   Minimum PLLs input clock frequency.
@@ -106,7 +139,7 @@
 /**
  * @brief   Maximum PLL output clock frequency.
  */
-#define STM32_PLLOUT_MAX        168000000
+#define STM32_PLLOUT_MAX        180000000
 
 /**
  * @brief   Minimum PLL output clock frequency.
@@ -116,23 +149,65 @@
 /**
  * @brief   Maximum APB1 clock frequency.
  */
-#define STM32_PCLK1_MAX         42000000
+#define STM32_PCLK1_MAX         (STM32_PLLOUT_MAX /4)
 
 /**
  * @brief   Maximum APB2 clock frequency.
  */
-#define STM32_PCLK2_MAX         84000000
+#define STM32_PCLK2_MAX         (STM32_PLLOUT_MAX / 2)
 
 /**
  * @brief   Maximum SPI/I2S clock frequency.
  */
 #define STM32_SPII2S_MAX        37500000
+#endif /* STM32F40_41xxx */
 
-#else /* !defined(STM32F4XX) */
+#if defined(STM32F40_41xxx) || defined(__DOXYGEN__)
+#define STM32_HSECLK_MAX        26000000
+#define STM32_HSECLK_BYP_MAX    50000000
+#define STM32_HSECLK_MIN        4000000
+#define STM32_HSECLK_BYP_MIN    1000000
+#define STM32_LSECLK_MAX        32768
+#define STM32_LSECLK_BYP_MAX    1000000
+#define STM32_LSECLK_MIN        32768
+#define STM32_PLLIN_MAX         2100000
+#define STM32_PLLIN_MIN         950000
+#define STM32_PLLVCO_MAX        432000000
+#define STM32_PLLVCO_MIN        192000000
+#define STM32_PLLOUT_MAX        168000000
+#define STM32_PLLOUT_MIN        24000000
+#define STM32_PCLK1_MAX         42000000
+#define STM32_PCLK2_MAX         84000000
+#define STM32_SPII2S_MAX        37500000
+#endif /* STM32F40_41xxx */
+
+#if defined(STM32F401) || defined(__DOXYGEN__)
+#define STM32_HSECLK_MAX        26000000
+#define STM32_HSECLK_BYP_MAX    50000000
+#define STM32_HSECLK_MIN        4000000
+#define STM32_HSECLK_BYP_MIN    1000000
+#define STM32_LSECLK_MAX        32768
+#define STM32_LSECLK_BYP_MAX    1000000
+#define STM32_LSECLK_MIN        32768
+#define STM32_PLLIN_MAX         2100000
+#define STM32_PLLIN_MIN         950000
+#define STM32_PLLVCO_MAX        432000000
+#define STM32_PLLVCO_MIN        192000000
+#define STM32_PLLOUT_MAX        168000000
+#define STM32_PLLOUT_MIN        24000000
+#define STM32_PCLK1_MAX         42000000
+#define STM32_PCLK2_MAX         84000000
+#define STM32_SPII2S_MAX        37500000
+#endif /* STM32F40_41xxx */
+
+#if defined(STM32F2XX)
 #define STM32_SYSCLK_MAX        120000000
 #define STM32_HSECLK_MAX        26000000
+#define STM32_HSECLK_BYP_MAX    26000000
 #define STM32_HSECLK_MIN        1000000
-#define STM32_LSECLK_MAX        1000000
+#define STM32_HSECLK_BYP_MIN    1000000
+#define STM32_LSECLK_MAX        32768
+#define STM32_LSECLK_BYP_MAX    1000000
 #define STM32_LSECLK_MIN        32768
 #define STM32_PLLIN_MAX         2000000
 #define STM32_PLLIN_MIN         950000
@@ -143,7 +218,7 @@
 #define STM32_PCLK1_MAX         30000000
 #define STM32_PCLK2_MAX         60000000
 #define STM32_SPII2S_MAX        37500000
-#endif /* !defined(STM32F4XX) */
+#endif /* defined(STM32F2XX) */
 /** @} */
 
 /**
@@ -163,6 +238,19 @@
 #define STM32_VOS_LOW           (0 << 14)   /**< Core voltage set to low.   */
 #define STM32_VOS_HIGH          (1 << 14)   /**< Core voltage set to high.  */
 #endif
+
+#if defined(STM32F429_439xx) || defined(STM32F427_437xx) ||                 \
+    defined(STM32F401) || defined(__DOXYGEN__)
+#define STM32_VOS_MASK          (3 << 14)   /**< Scale Mode mask.           */
+#elif defined(STM32F40_41xxx) || defined(__DOXYGEN__)
+#define STM32_VOS_MASK          (1 << 14)   /**< Scale Mode mask.           */
+#else
+#endif
+
+#define STM32_VOS_SCALE3        (1 << 14)   /**< Scale 3 mode.              */
+#define STM32_VOS_SCALE2        (2 << 14)   /**< Scale 2 mode.              */
+#define STM32_VOS_SCALE1        (3 << 14)   /**< Scale 2 mode.              */
+
 #define STM32_PLS_MASK          (7 << 5)    /**< PLS bits mask.             */
 #define STM32_PLS_LEV0          (0 << 5)    /**< PVD level 0.               */
 #define STM32_PLS_LEV1          (1 << 5)    /**< PVD level 1.               */
@@ -859,6 +947,14 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/*
+ * Generic STM32F4XX identifier for backward compatibility.
+ */
+#if defined(STM32F401xx)     || defined(STM32F40_41xxx)  ||                 \
+    defined(STM32F427_437xx) || defined(STM32F429_439xx)
+#define STM32F4XX
+#endif
+
 #if defined(STM32F4XX) || defined(__DOXYGEN__)
 /*
  * Configuration-related checks.
@@ -871,7 +967,7 @@
  * @brief   Maximum SYSCLK.
  * @note    It is a function of the core voltage setting.
  */
-#if (STM32_VOS == STM32_VOS_HIGH) || defined(__DOXYGEN__)
+#if (STM32_VOS == STM32_VOS_SCALE1) || defined(__DOXYGEN__)
 #define STM32_SYSCLK_MAX            168000000
 #else
 #define STM32_SYSCLK_MAX            144000000

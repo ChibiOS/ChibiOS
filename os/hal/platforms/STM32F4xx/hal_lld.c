@@ -153,7 +153,7 @@ void stm32_clock_init(void) {
 
   /* PWR initialization.*/
 #if defined(STM32F4XX) || defined(__DOXYGEN__)
-  PWR->CR = STM32_VOS;
+  PWR->CR = STM32_VOS & STM32_VOS_MASK;
   while ((PWR->CSR & PWR_CSR_VOSRDY) == 0)
     ;                           /* Waits until power regulator is stable.   */
 #else
