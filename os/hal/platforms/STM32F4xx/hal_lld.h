@@ -53,17 +53,21 @@
 #define HAL_IMPLEMENTS_COUNTERS TRUE
 
 /**
- * @name    Platform identification
+ * @name    Platform identification macros
  * @{
  */
 #if defined(STM32F429_439xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F429/F439 High Performance with DSP and FPU"
+#define STM32F4XX
 #elif defined(STM32F427_437xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F427/F437 High Performance with DSP and FPU"
+#define STM32F4XX
 #elif defined(STM32F40_41xxx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F407/F417 High Performance with DSP and FPU"
+#define STM32F4XX
 #elif defined(STM32F401) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F401 High Performance with DSP and FPU"
+#define STM32F4XX
 #elif defined(STM32F2XX) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F2xx High Performance"
 #else
@@ -81,6 +85,11 @@
  */
 #if defined(STM32F429_439xx) || defined(STM32F429_439xx) ||                 \
     defined(__DOXYGEN__)
+/**
+ * @brief   Absolute maximum system clock.
+ */
+#define STM32_SYSCLK_MAX        180000000
+
 /**
  * @brief   Maximum HSE clock frequency.
  */
@@ -159,10 +168,11 @@
 /**
  * @brief   Maximum SPI/I2S clock frequency.
  */
-#define STM32_SPII2S_MAX        37500000
+#define STM32_SPII2S_MAX        45000000
 #endif /* STM32F40_41xxx */
 
 #if defined(STM32F40_41xxx) || defined(__DOXYGEN__)
+#define STM32_SYSCLK_MAX        168000000
 #define STM32_HSECLK_MAX        26000000
 #define STM32_HSECLK_BYP_MAX    50000000
 #define STM32_HSECLK_MIN        4000000
@@ -178,10 +188,11 @@
 #define STM32_PLLOUT_MIN        24000000
 #define STM32_PCLK1_MAX         42000000
 #define STM32_PCLK2_MAX         84000000
-#define STM32_SPII2S_MAX        37500000
+#define STM32_SPII2S_MAX        42000000
 #endif /* STM32F40_41xxx */
 
 #if defined(STM32F401) || defined(__DOXYGEN__)
+#define STM32_SYSCLK_MAX        84000000
 #define STM32_HSECLK_MAX        26000000
 #define STM32_HSECLK_BYP_MAX    50000000
 #define STM32_HSECLK_MIN        4000000
@@ -193,11 +204,11 @@
 #define STM32_PLLIN_MIN         950000
 #define STM32_PLLVCO_MAX        432000000
 #define STM32_PLLVCO_MIN        192000000
-#define STM32_PLLOUT_MAX        168000000
+#define STM32_PLLOUT_MAX        84000000
 #define STM32_PLLOUT_MIN        24000000
 #define STM32_PCLK1_MAX         42000000
 #define STM32_PCLK2_MAX         84000000
-#define STM32_SPII2S_MAX        37500000
+#define STM32_SPII2S_MAX        42000000
 #endif /* STM32F40_41xxx */
 
 #if defined(STM32F2XX)
@@ -217,7 +228,7 @@
 #define STM32_PLLOUT_MIN        24000000
 #define STM32_PCLK1_MAX         30000000
 #define STM32_PCLK2_MAX         60000000
-#define STM32_SPII2S_MAX        37500000
+#define STM32_SPII2S_MAX        30000000
 #endif /* defined(STM32F2XX) */
 /** @} */
 
@@ -233,24 +244,9 @@
  * @name    PWR_CR register bits definitions
  * @{
  */
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
-#define STM32_VOS_MASK          (1 << 14)   /**< Core voltage mask.         */
-#define STM32_VOS_LOW           (0 << 14)   /**< Core voltage set to low.   */
-#define STM32_VOS_HIGH          (1 << 14)   /**< Core voltage set to high.  */
-#endif
-
-#if defined(STM32F429_439xx) || defined(STM32F427_437xx) ||                 \
-    defined(STM32F401) || defined(__DOXYGEN__)
-#define STM32_VOS_MASK          (3 << 14)   /**< Scale Mode mask.           */
-#elif defined(STM32F40_41xxx) || defined(__DOXYGEN__)
-#define STM32_VOS_MASK          (1 << 14)   /**< Scale Mode mask.           */
-#else
-#endif
-
-#define STM32_VOS_SCALE3        (1 << 14)   /**< Scale 3 mode.              */
-#define STM32_VOS_SCALE2        (2 << 14)   /**< Scale 2 mode.              */
-#define STM32_VOS_SCALE1        (3 << 14)   /**< Scale 2 mode.              */
-
+#define STM32_VOS_SCALE3        (PWR_CR_VOS_0)
+#define STM32_VOS_SCALE2        (PWR_CR_VOS_1)
+#define STM32_VOS_SCALE1        (PWR_CR_VOS_1 | PWR_CR_VOS_0)
 #define STM32_PLS_MASK          (7 << 5)    /**< PLS bits mask.             */
 #define STM32_PLS_LEV0          (0 << 5)    /**< PVD level 0.               */
 #define STM32_PLS_LEV1          (1 << 5)    /**< PVD level 1.               */
@@ -739,16 +735,6 @@
 
 #if defined(STM32F4XX) || defined(__DOXYGEN__)
 /**
- * @brief   Core voltage selection.
- * @note    This setting affects all the performance and clock related
- *          settings, the maximum performance is only obtainable selecting
- *          the maximum voltage.
- */
-#if !defined(STM32_VOS) || defined(__DOXYGEN__)
-#define STM32_VOS                   STM32_VOS_HIGH
-#endif
-
-/**
  * @brief   Clock source for the PLLs.
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
@@ -947,30 +933,12 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/*
- * Generic STM32F4XX identifier for backward compatibility.
- */
-#if defined(STM32F401xx)     || defined(STM32F40_41xxx)  ||                 \
-    defined(STM32F427_437xx) || defined(STM32F429_439xx)
-#define STM32F4XX
-#endif
-
 #if defined(STM32F4XX) || defined(__DOXYGEN__)
 /*
  * Configuration-related checks.
  */
 #if !defined(STM32F4xx_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32F4xx_MCUCONF not defined"
-#endif
-
-/**
- * @brief   Maximum SYSCLK.
- * @note    It is a function of the core voltage setting.
- */
-#if (STM32_VOS == STM32_VOS_SCALE1) || defined(__DOXYGEN__)
-#define STM32_SYSCLK_MAX            168000000
-#else
-#define STM32_SYSCLK_MAX            144000000
 #endif
 
 #else /* !defined(STM32F4XX) */
@@ -986,16 +954,18 @@
  * @brief   Maximum frequency thresholds and wait states for flash access.
  * @note    The values are valid for 2.7V to 3.6V supply range.
  */
-#if defined(STM32F4XX) || defined(__DOXYGEN__)
+#if defined(STM32F429_439xx) || defined(STM32F427_437xx) ||                 \
+    defined(STM32F40_41xxx) || defined(__DOXYGEN__)
 #if ((STM32_VDD >= 270) && (STM32_VDD <= 360)) || defined(__DOXYGEN__)
 #define STM32_0WS_THRESHOLD         30000000
 #define STM32_1WS_THRESHOLD         60000000
 #define STM32_2WS_THRESHOLD         90000000
 #define STM32_3WS_THRESHOLD         120000000
 #define STM32_4WS_THRESHOLD         150000000
-#define STM32_5WS_THRESHOLD         168000000
+#define STM32_5WS_THRESHOLD         180000000
 #define STM32_6WS_THRESHOLD         0
 #define STM32_7WS_THRESHOLD         0
+#define STM32_8WS_THRESHOLD         0
 #elif (STM32_VDD >= 240) && (STM32_VDD < 270)
 #define STM32_0WS_THRESHOLD         24000000
 #define STM32_1WS_THRESHOLD         48000000
@@ -1004,31 +974,79 @@
 #define STM32_4WS_THRESHOLD         120000000
 #define STM32_5WS_THRESHOLD         144000000
 #define STM32_6WS_THRESHOLD         168000000
+#define STM32_7WS_THRESHOLD         180000000
+#define STM32_8WS_THRESHOLD         0
+#elif (STM32_VDD >= 210) && (STM32_VDD < 240)
+#define STM32_0WS_THRESHOLD         22000000
+#define STM32_1WS_THRESHOLD         44000000
+#define STM32_2WS_THRESHOLD         66000000
+#define STM32_3WS_THRESHOLD         88000000
+#define STM32_4WS_THRESHOLD         110000000
+#define STM32_5WS_THRESHOLD         132000000
+#define STM32_6WS_THRESHOLD         154000000
+#define STM32_7WS_THRESHOLD         176000000
+#define STM32_8WS_THRESHOLD         180000000
+#elif (STM32_VDD >= 180) && (STM32_VDD < 210)
+#define STM32_0WS_THRESHOLD         20000000
+#define STM32_1WS_THRESHOLD         40000000
+#define STM32_2WS_THRESHOLD         60000000
+#define STM32_3WS_THRESHOLD         80000000
+#define STM32_4WS_THRESHOLD         100000000
+#define STM32_5WS_THRESHOLD         120000000
+#define STM32_6WS_THRESHOLD         140000000
+#define STM32_7WS_THRESHOLD         168000000
+#define STM32_8WS_THRESHOLD         0
+#else
+#error "invalid VDD voltage specified"
+#endif
+
+#elif defined(STM32F401)
+#if (STM32_VDD >= 270) && (STM32_VDD <= 360)
+#define STM32_0WS_THRESHOLD         30000000
+#define STM32_1WS_THRESHOLD         60000000
+#define STM32_2WS_THRESHOLD         84000000
+#define STM32_3WS_THRESHOLD         0
+#define STM32_4WS_THRESHOLD         0
+#define STM32_5WS_THRESHOLD         0
+#define STM32_6WS_THRESHOLD         0
 #define STM32_7WS_THRESHOLD         0
+#define STM32_8WS_THRESHOLD         0
+#elif (STM32_VDD >= 240) && (STM32_VDD < 270)
+#define STM32_0WS_THRESHOLD         24000000
+#define STM32_1WS_THRESHOLD         48000000
+#define STM32_2WS_THRESHOLD         72000000
+#define STM32_3WS_THRESHOLD         84000000
+#define STM32_4WS_THRESHOLD         0
+#define STM32_5WS_THRESHOLD         0
+#define STM32_6WS_THRESHOLD         0
+#define STM32_7WS_THRESHOLD         0
+#define STM32_8WS_THRESHOLD         0
 #elif (STM32_VDD >= 210) && (STM32_VDD < 240)
 #define STM32_0WS_THRESHOLD         18000000
 #define STM32_1WS_THRESHOLD         36000000
 #define STM32_2WS_THRESHOLD         54000000
 #define STM32_3WS_THRESHOLD         72000000
-#define STM32_4WS_THRESHOLD         90000000
-#define STM32_5WS_THRESHOLD         108000000
-#define STM32_6WS_THRESHOLD         120000000
-#define STM32_7WS_THRESHOLD         138000000
+#define STM32_4WS_THRESHOLD         840000000
+#define STM32_5WS_THRESHOLD         0
+#define STM32_6WS_THRESHOLD         0
+#define STM32_7WS_THRESHOLD         0
+#define STM32_8WS_THRESHOLD         0
 #elif (STM32_VDD >= 180) && (STM32_VDD < 210)
 #define STM32_0WS_THRESHOLD         16000000
 #define STM32_1WS_THRESHOLD         32000000
 #define STM32_2WS_THRESHOLD         48000000
 #define STM32_3WS_THRESHOLD         64000000
-#define STM32_4WS_THRESHOLD         80000000
-#define STM32_5WS_THRESHOLD         96000000
-#define STM32_6WS_THRESHOLD         112000000
-#define STM32_7WS_THRESHOLD         128000000
+#define STM32_4WS_THRESHOLD         800000000
+#define STM32_5WS_THRESHOLD         840000000
+#define STM32_6WS_THRESHOLD         0
+#define STM32_7WS_THRESHOLD         0
+#define STM32_8WS_THRESHOLD         0
 #else
 #error "invalid VDD voltage specified"
 #endif
 
-#else /* !defined(STM32F4XX) */
-#if ((STM32_VDD >= 270) && (STM32_VDD <= 360)) || defined(__DOXYGEN__)
+#else /* STM32F2XX */
+#if (STM32_VDD >= 270) && (STM32_VDD <= 360)
 #define STM32_0WS_THRESHOLD         30000000
 #define STM32_1WS_THRESHOLD         60000000
 #define STM32_2WS_THRESHOLD         90000000
@@ -1067,7 +1085,7 @@
 #else
 #error "invalid VDD voltage specified"
 #endif
-#endif /* !defined(STM32F4XX) */
+#endif /* STM32F2XX */
 
 /*
  * HSI related checks.
@@ -1300,6 +1318,43 @@
 /* Check on the system clock.*/
 #if STM32_SYSCLK > STM32_SYSCLK_MAX
 #error "STM32_SYSCLK above maximum rated frequency (STM32_SYSCLK_MAX)"
+#endif
+
+/* Calculating VOS settings, it is different for each sub-platform.*/
+#if defined(STM32F429_439xx) || defined(STM32F427_437xx) ||                 \
+    defined(__DOXYGEN__)
+#if STM32_SYSCLK <= 120000000
+#define STM32_VOS                   STM32_VOS_SCALE3
+#define STM32_OVERDRIVE_REQUIRED    FALSE
+#elif STM32_SYSCLK <= 144000000
+#define STM32_VOS                   STM32_VOS_SCALE2
+#define STM32_OVERDRIVE_REQUIRED    FALSE
+#elif STM32_SYSCLK <= 168000000
+#define STM32_VOS                   STM32_VOS_SCALE1
+#define STM32_OVERDRIVE_REQUIRED    FALSE
+#else
+#define STM32_VOS                   STM32_VOS_SCALE1
+#define STM32_OVERDRIVE_REQUIRED    TRUE
+#endif
+
+#elif defined(STM32F40_41xxx)
+#if STM32_SYSCLK <= 144000000
+#define STM32_VOS                   STM32_VOS_SCALE2
+#else
+#define STM32_VOS                   STM32_VOS_SCALE1
+#endif
+#define STM32_OVERDRIVE_REQUIRED    FALSE
+
+#elif defined(STM32F401)
+#if STM32_SYSCLK <= 60000000
+#define STM32_VOS                   STM32_VOS_SCALE3
+#else
+#define STM32_VOS                   STM32_VOS_SCALE2
+#endif
+#define STM32_OVERDRIVE_REQUIRED    FALSE
+
+#else /* STM32F2XX */
+#define STM32_OVERDRIVE_REQUIRED    FALSE
 #endif
 
 /**
@@ -1575,8 +1630,10 @@
 #define STM32_FLASHBITS             0x00000005
 #elif STM32_HCLK <= STM32_6WS_THRESHOLD
 #define STM32_FLASHBITS             0x00000006
-#else
+#elif STM32_HCLK <= STM32_7WS_THRESHOLD
 #define STM32_FLASHBITS             0x00000007
+#else
+#define STM32_FLASHBITS             0x00000008
 #endif
 
 /* There are differences in vector names in the various sub-families,
