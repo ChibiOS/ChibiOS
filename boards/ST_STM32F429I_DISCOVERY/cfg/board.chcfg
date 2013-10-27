@@ -31,7 +31,7 @@
         ID="MEMS_INT1"
         Type="PushPull"
         Speed="Minimum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Level="High"
         Mode="Input"
         Alternate="0" />
@@ -39,7 +39,7 @@
         ID="MEMS_INT2"
         Type="PushPull"
         Speed="Minimum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Level="High"
         Mode="Input"
         Alternate="0" />
@@ -140,7 +140,7 @@
         Mode="Alternate"
         Alternate="0" />
       <pin15
-        ID="TP_INT1"
+        ID="TP_INT"
         Type="PushPull"
         Speed="Minimum"
         Resistor="Floating"
@@ -169,7 +169,7 @@
         ID="BOOT1"
         Type="PushPull"
         Speed="Maximum"
-        Resistor="Floating"
+        Resistor="PullUp"
         Level="High"
         Mode="Input"
         Alternate="0" />
@@ -908,16 +908,16 @@
         Type="PushPull"
         Speed="Maximum"
         Resistor="Floating"
-        Level="High"
+        Level="Low"
         Mode="Output"
         Alternate="0" />
       <pin14
         ID="LED4_RED"
         Type="PushPull"
-        Speed="Minimum"
-        Resistor="PullUp"
-        Level="High"
-        Mode="Input"
+        Speed="Maximum"
+        Resistor="Floating"
+        Level="Low"
+        Mode="Output"
         Alternate="0" />
       <pin15
         ID="FMC_SDNCAS"

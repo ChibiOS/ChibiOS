@@ -74,7 +74,7 @@
 #define GPIOA_LCD_R5                12
 #define GPIOA_SWDIO                 13
 #define GPIOA_SWCLK                 14
-#define GPIOA_TP_INT1               15
+#define GPIOA_TP_INT                15
 
 #define GPIOB_LCD_R3                0
 #define GPIOB_LCD_R6                1
@@ -238,8 +238,8 @@
  * GPIOA setup:
  *
  * PA0  - BUTTON                    (input floating).
- * PA1  - MEMS_INT1                 (input pullup).
- * PA2  - MEMS_INT2                 (input pullup).
+ * PA1  - MEMS_INT1                 (input floating).
+ * PA2  - MEMS_INT2                 (input floating).
  * PA3  - LCD_B5                    (alternate 14).
  * PA4  - LCD_VSYNC                 (alternate 14).
  * PA5  - PIN5                      (input pullup).
@@ -252,7 +252,7 @@
  * PA12 - LCD_R5                    (alternate 14).
  * PA13 - SWDIO                     (alternate 0).
  * PA14 - SWCLK                     (alternate 0).
- * PA15 - TP_INT1                   (input floating).
+ * PA15 - TP_INT                    (input floating).
  */
 #define VAL_GPIOA_MODER             (PIN_MODE_INPUT(GPIOA_BUTTON) |         \
                                      PIN_MODE_INPUT(GPIOA_MEMS_INT1) |      \
@@ -269,7 +269,7 @@
                                      PIN_MODE_ALTERNATE(GPIOA_LCD_R5) |     \
                                      PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_SWCLK) |      \
-                                     PIN_MODE_INPUT(GPIOA_TP_INT1))
+                                     PIN_MODE_INPUT(GPIOA_TP_INT))
 #define VAL_GPIOA_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOA_BUTTON) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_MEMS_INT1) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOA_MEMS_INT2) |  \
@@ -285,7 +285,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOA_LCD_R5) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_SWDIO) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOA_SWCLK) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_TP_INT1))
+                                     PIN_OTYPE_PUSHPULL(GPIOA_TP_INT))
 #define VAL_GPIOA_OSPEEDR           (PIN_OSPEED_2M(GPIOA_BUTTON) |          \
                                      PIN_OSPEED_2M(GPIOA_MEMS_INT1) |       \
                                      PIN_OSPEED_2M(GPIOA_MEMS_INT2) |       \
@@ -301,10 +301,10 @@
                                      PIN_OSPEED_100M(GPIOA_LCD_R5) |        \
                                      PIN_OSPEED_100M(GPIOA_SWDIO) |         \
                                      PIN_OSPEED_100M(GPIOA_SWCLK) |         \
-                                     PIN_OSPEED_2M(GPIOA_TP_INT1))
+                                     PIN_OSPEED_2M(GPIOA_TP_INT))
 #define VAL_GPIOA_PUPDR             (PIN_PUPDR_FLOATING(GPIOA_BUTTON) |     \
-                                     PIN_PUPDR_PULLUP(GPIOA_MEMS_INT1) |    \
-                                     PIN_PUPDR_PULLUP(GPIOA_MEMS_INT2) |    \
+                                     PIN_PUPDR_FLOATING(GPIOA_MEMS_INT1) |  \
+                                     PIN_PUPDR_FLOATING(GPIOA_MEMS_INT2) |  \
                                      PIN_PUPDR_FLOATING(GPIOA_LCD_B5) |     \
                                      PIN_PUPDR_FLOATING(GPIOA_LCD_VSYNC) |  \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN5) |         \
@@ -317,7 +317,7 @@
                                      PIN_PUPDR_FLOATING(GPIOA_LCD_R5) |     \
                                      PIN_PUPDR_PULLUP(GPIOA_SWDIO) |        \
                                      PIN_PUPDR_PULLDOWN(GPIOA_SWCLK) |      \
-                                     PIN_PUPDR_FLOATING(GPIOA_TP_INT1))
+                                     PIN_PUPDR_FLOATING(GPIOA_TP_INT))
 #define VAL_GPIOA_ODR               (PIN_ODR_HIGH(GPIOA_BUTTON) |           \
                                      PIN_ODR_HIGH(GPIOA_MEMS_INT1) |        \
                                      PIN_ODR_HIGH(GPIOA_MEMS_INT2) |        \
@@ -333,7 +333,7 @@
                                      PIN_ODR_HIGH(GPIOA_LCD_R5) |           \
                                      PIN_ODR_HIGH(GPIOA_SWDIO) |            \
                                      PIN_ODR_HIGH(GPIOA_SWCLK) |            \
-                                     PIN_ODR_HIGH(GPIOA_TP_INT1))
+                                     PIN_ODR_HIGH(GPIOA_TP_INT))
 #define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_BUTTON, 0) |         \
                                      PIN_AFIO_AF(GPIOA_MEMS_INT1, 0) |      \
                                      PIN_AFIO_AF(GPIOA_MEMS_INT2, 0) |      \
@@ -349,14 +349,14 @@
                                      PIN_AFIO_AF(GPIOA_LCD_R5, 14) |        \
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
                                      PIN_AFIO_AF(GPIOA_SWCLK, 0) |          \
-                                     PIN_AFIO_AF(GPIOA_TP_INT1, 0))
+                                     PIN_AFIO_AF(GPIOA_TP_INT, 0))
 
 /*
  * GPIOB setup:
  *
  * PB0  - LCD_R3                    (alternate 14).
  * PB1  - LCD_R6                    (alternate 14).
- * PB2  - BOOT1                     (input floating).
+ * PB2  - BOOT1                     (input pullup).
  * PB3  - SWO                       (alternate 0).
  * PB4  - PIN4                      (input pullup).
  * PB5  - FMC_SDCKE1                (alternate 12).
@@ -421,7 +421,7 @@
                                      PIN_OSPEED_100M(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_PUPDR             (PIN_PUPDR_FLOATING(GPIOB_LCD_R3) |     \
                                      PIN_PUPDR_FLOATING(GPIOB_LCD_R6) |     \
-                                     PIN_PUPDR_FLOATING(GPIOB_BOOT1) |      \
+                                     PIN_PUPDR_PULLUP(GPIOB_BOOT1) |        \
                                      PIN_PUPDR_FLOATING(GPIOB_SWO) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN4) |         \
                                      PIN_PUPDR_FLOATING(GPIOB_FMC_SDCKE1) | \
@@ -953,7 +953,7 @@
  * PG11 - LCD_B3                    (alternate 14).
  * PG12 - LCD_B4                    (alternate 14).
  * PG13 - LED3_GREEN                (output pushpull maximum).
- * PG14 - LED4_RED                  (input pullup).
+ * PG14 - LED4_RED                  (output pushpull maximum).
  * PG15 - FMC_SDNCAS                (alternate 12).
  */
 #define VAL_GPIOG_MODER             (PIN_MODE_ALTERNATE(GPIOG_FMC_A10) |    \
@@ -970,7 +970,7 @@
                                      PIN_MODE_ALTERNATE(GPIOG_LCD_B3) |     \
                                      PIN_MODE_ALTERNATE(GPIOG_LCD_B4) |     \
                                      PIN_MODE_OUTPUT(GPIOG_LED3_GREEN) |    \
-                                     PIN_MODE_INPUT(GPIOG_LED4_RED) |       \
+                                     PIN_MODE_OUTPUT(GPIOG_LED4_RED) |      \
                                      PIN_MODE_ALTERNATE(GPIOG_FMC_SDNCAS))
 #define VAL_GPIOG_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOG_FMC_A10) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOG_FMC_A11) |    \
@@ -1002,7 +1002,7 @@
                                      PIN_OSPEED_100M(GPIOG_LCD_B3) |        \
                                      PIN_OSPEED_100M(GPIOG_LCD_B4) |        \
                                      PIN_OSPEED_100M(GPIOG_LED3_GREEN) |    \
-                                     PIN_OSPEED_2M(GPIOG_LED4_RED) |        \
+                                     PIN_OSPEED_100M(GPIOG_LED4_RED) |      \
                                      PIN_OSPEED_100M(GPIOG_FMC_SDNCAS))
 #define VAL_GPIOG_PUPDR             (PIN_PUPDR_FLOATING(GPIOG_FMC_A10) |    \
                                      PIN_PUPDR_FLOATING(GPIOG_FMC_A11) |    \
@@ -1018,7 +1018,7 @@
                                      PIN_PUPDR_FLOATING(GPIOG_LCD_B3) |     \
                                      PIN_PUPDR_FLOATING(GPIOG_LCD_B4) |     \
                                      PIN_PUPDR_FLOATING(GPIOG_LED3_GREEN) | \
-                                     PIN_PUPDR_PULLUP(GPIOG_LED4_RED) |     \
+                                     PIN_PUPDR_FLOATING(GPIOG_LED4_RED) |   \
                                      PIN_PUPDR_FLOATING(GPIOG_FMC_SDNCAS))
 #define VAL_GPIOG_ODR               (PIN_ODR_HIGH(GPIOG_FMC_A10) |          \
                                      PIN_ODR_HIGH(GPIOG_FMC_A11) |          \
@@ -1033,8 +1033,8 @@
                                      PIN_ODR_HIGH(GPIOG_LCD_G3) |           \
                                      PIN_ODR_HIGH(GPIOG_LCD_B3) |           \
                                      PIN_ODR_HIGH(GPIOG_LCD_B4) |           \
-                                     PIN_ODR_HIGH(GPIOG_LED3_GREEN) |       \
-                                     PIN_ODR_HIGH(GPIOG_LED4_RED) |         \
+                                     PIN_ODR_LOW(GPIOG_LED3_GREEN) |        \
+                                     PIN_ODR_LOW(GPIOG_LED4_RED) |          \
                                      PIN_ODR_HIGH(GPIOG_FMC_SDNCAS))
 #define VAL_GPIOG_AFRL              (PIN_AFIO_AF(GPIOG_FMC_A10, 12) |       \
                                      PIN_AFIO_AF(GPIOG_FMC_A11, 12) |       \
