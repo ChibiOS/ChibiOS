@@ -316,6 +316,7 @@ typedef struct {
  * @api
  */
 #define OSAL_MS2ST(msec) MS2ST(msec)
+
 /**
  * @brief   Microseconds to system ticks.
  * @details Converts from microseconds to system ticks number.
