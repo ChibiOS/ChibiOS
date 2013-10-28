@@ -13,7 +13,7 @@ The application demonstrates the use of the SPC563Mxx ICU and PWM drivers.
 
 ** Board Setup **
 
-Connect PIN63 and PIN80 together.
+Connect PIN63 and PIN65 together.
 
 ** Build Procedure **
 

@@ -80,20 +80,20 @@
 /*
  * ICU - PWM driver system settings.
  */
-#define SPC5_ICU_USE_EMIOS_CH0              TRUE
 #define SPC5_ICU_USE_EMIOS_CH1              TRUE
 #define SPC5_ICU_USE_EMIOS_CH2              TRUE
 #define SPC5_ICU_USE_EMIOS_CH3              TRUE
 #define SPC5_ICU_USE_EMIOS_CH4              TRUE
 #define SPC5_ICU_USE_EMIOS_CH5              TRUE
 #define SPC5_ICU_USE_EMIOS_CH6              TRUE
-#define SPC5_ICU_USE_EMIOS_CH8              TRUE
+#define SPC5_ICU_USE_EMIOS_CH11             TRUE
+#define SPC5_ICU_USE_EMIOS_CH13             TRUE
 
+#define SPC5_PWM_USE_EMIOS_CH0              TRUE
+#define SPC5_PWM_USE_EMIOS_CH8              TRUE
 #define SPC5_PWM_USE_EMIOS_CH9              TRUE
 #define SPC5_PWM_USE_EMIOS_CH10             TRUE
-#define SPC5_PWM_USE_EMIOS_CH11             TRUE
 #define SPC5_PWM_USE_EMIOS_CH12             TRUE
-#define SPC5_PWM_USE_EMIOS_CH13             TRUE
 #define SPC5_PWM_USE_EMIOS_CH14             TRUE
 #define SPC5_PWM_USE_EMIOS_CH15             TRUE
 #define SPC5_PWM_USE_EMIOS_CH23             TRUE
