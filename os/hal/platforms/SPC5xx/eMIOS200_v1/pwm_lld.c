@@ -39,46 +39,46 @@
 
 /**
  * @brief   PWMD1 driver identifier.
- * @note    The driver PWMD1 allocates the unified channel EMIOS_CH9
+ * @note    The driver PWMD1 allocates the unified channel EMIOS_CH0
  *          when enabled.
  */
-#if SPC5_PWM_USE_EMIOS_CH9 || defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH0 || defined(__DOXYGEN__)
 PWMDriver PWMD1;
 #endif
 
 /**
  * @brief   PWMD2 driver identifier.
- * @note    The driver PWMD2 allocates the unified channel EMIOS_CH10
+ * @note    The driver PWMD2 allocates the unified channel EMIOS_CH8
  *          when enabled.
  */
-#if SPC5_PWM_USE_EMIOS_CH10 || defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH8 || defined(__DOXYGEN__)
 PWMDriver PWMD2;
 #endif
 
 /**
  * @brief   PWMD3 driver identifier.
- * @note    The driver PWMD3 allocates the unified channel EMIOS_CH11
+ * @note    The driver PWMD3 allocates the unified channel EMIOS_CH9
  *          when enabled.
  */
-#if SPC5_PWM_USE_EMIOS_CH11 || defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH9 || defined(__DOXYGEN__)
 PWMDriver PWMD3;
 #endif
 
 /**
  * @brief   PWMD4 driver identifier.
- * @note    The driver PWMD4 allocates the unified channel EMIOS_CH12
+ * @note    The driver PWMD4 allocates the unified channel EMIOS_CH10
  *          when enabled.
  */
-#if SPC5_PWM_USE_EMIOS_CH12 || defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH10 || defined(__DOXYGEN__)
 PWMDriver PWMD4;
 #endif
 
 /**
  * @brief   PWMD5 driver identifier.
- * @note    The driver PWMD5 allocates the unified channel EMIOS_CH13
+ * @note    The driver PWMD5 allocates the unified channel EMIOS_CH12
  *          when enabled.
  */
-#if SPC5_PWM_USE_EMIOS_CH13 || defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH12 || defined(__DOXYGEN__)
 PWMDriver PWMD5;
 #endif
 
@@ -109,6 +109,7 @@ PWMDriver PWMD7;
 PWMDriver PWMD8;
 #endif
 
+#if SPC5_EMIOS_NUM_CHANNELS == 24
 /**
  * @brief   PWMD9 driver identifier.
  * @note    The driver PWMD9 allocates the unified channel EMIOS_CH19
@@ -143,6 +144,7 @@ PWMDriver PWMD11;
  */
 #if SPC5_PWM_USE_EMIOS_CH22 || defined(__DOXYGEN__)
 PWMDriver PWMD12;
+#endif
 #endif
 
 /*===========================================================================*/
@@ -196,6 +198,50 @@ static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if SPC5_PWM_USE_EMIOS_CH0
+#if !defined(SPC5_EMIOS_FLAG_F0_HANDLER)
+#error "SPC5_EMIOS_FLAG_F0_HANDLER not defined"
+#endif
+/**
+ * @brief   EMIOS Channel 0 interrupt handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F0_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  pwm_lld_serve_interrupt(&PWMD1);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* SPC5_PWM_USE_EMIOS_CH0 */
+
+#if SPC5_PWM_USE_EMIOS_CH8
+#if !defined(SPC5_EMIOS_FLAG_F8_HANDLER)
+#error "SPC5_EMIOS_FLAG_F8_HANDLER not defined"
+#endif
+/**
+ * @brief   EMIOS Channel 8 interrupt handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F8_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  pwm_lld_serve_interrupt(&PWMD2);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* SPC5_PWM_USE_EMIOS_CH8 */
+
 #if SPC5_PWM_USE_EMIOS_CH9
 #if !defined(SPC5_EMIOS_FLAG_F9_HANDLER)
 #error "SPC5_EMIOS_FLAG_F9_HANDLER not defined"
@@ -212,7 +258,7 @@ CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F9_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
-  pwm_lld_serve_interrupt(&PWMD1);
+  pwm_lld_serve_interrupt(&PWMD3);
 
   CH_IRQ_EPILOGUE();
 }
@@ -234,33 +280,11 @@ CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F10_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
-  pwm_lld_serve_interrupt(&PWMD2);
+  pwm_lld_serve_interrupt(&PWMD4);
 
   CH_IRQ_EPILOGUE();
 }
 #endif /* SPC5_PWM_USE_EMIOS_CH10 */
-
-#if SPC5_PWM_USE_EMIOS_CH11
-#if !defined(SPC5_EMIOS_FLAG_F11_HANDLER)
-#error "SPC5_EMIOS_FLAG_F11_HANDLER not defined"
-#endif
-/**
- * @brief   EMIOS Channel 11 interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F11_HANDLER) {
-
-  CH_IRQ_PROLOGUE();
-
-  pwm_lld_serve_interrupt(&PWMD3);
-
-  CH_IRQ_EPILOGUE();
-}
-#endif /* SPC5_PWM_USE_EMIOS_CH11 */
 
 #if SPC5_PWM_USE_EMIOS_CH12
 #if !defined(SPC5_EMIOS_FLAG_F12_HANDLER)
@@ -278,33 +302,11 @@ CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F12_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 
-  pwm_lld_serve_interrupt(&PWMD4);
-
-  CH_IRQ_EPILOGUE();
-}
-#endif /* SPC5_PWM_USE_EMIOS_CH12 */
-
-#if SPC5_PWM_USE_EMIOS_CH13
-#if !defined(SPC5_EMIOS_FLAG_F13_HANDLER)
-#error "SPC5_EMIOS_FLAG_F13_HANDLER not defined"
-#endif
-/**
- * @brief   EMIOS Channel 13 interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F13_HANDLER) {
-
-  CH_IRQ_PROLOGUE();
-
   pwm_lld_serve_interrupt(&PWMD5);
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* SPC5_PWM_USE_EMIOS_CH13 */
+#endif /* SPC5_PWM_USE_EMIOS_CH12 */
 
 #if SPC5_PWM_USE_EMIOS_CH14
 #if !defined(SPC5_EMIOS_FLAG_F14_HANDLER)
@@ -350,6 +352,29 @@ CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F15_HANDLER) {
 }
 #endif /* SPC5_PWM_USE_EMIOS_CH15 */
 
+#if SPC5_PWM_USE_EMIOS_CH23
+#if !defined(SPC5_EMIOS_FLAG_F23_HANDLER)
+#error "SPC5_EMIOS_FLAG_F23_HANDLER not defined"
+#endif
+/**
+ * @brief   EMIOS Channel 23 interrupt handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F23_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  pwm_lld_serve_interrupt(&PWMD8);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* SPC5_PWM_USE_EMIOS_CH23 */
+
+#if SPC5_EMIOS_NUM_CHANNELS == 24
 #if SPC5_PWM_USE_EMIOS_CH19
 #if !defined(SPC5_EMIOS_FLAG_F19_HANDLER)
 #error "SPC5_EMIOS_FLAG_F19_HANDLER not defined"
@@ -437,28 +462,7 @@ CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F22_HANDLER) {
   CH_IRQ_EPILOGUE();
 }
 #endif /* SPC5_PWM_USE_EMIOS_CH22 */
-
-#if SPC5_PWM_USE_EMIOS_CH23
-#if !defined(SPC5_EMIOS_FLAG_F23_HANDLER)
-#error "SPC5_EMIOS_FLAG_F23_HANDLER not defined"
 #endif
-/**
- * @brief   EMIOS Channel 23 interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
- *
- * @isr
- */
-CH_IRQ_HANDLER(SPC5_EMIOS_FLAG_F23_HANDLER) {
-
-  CH_IRQ_PROLOGUE();
-
-  pwm_lld_serve_interrupt(&PWMD8);
-
-  CH_IRQ_EPILOGUE();
-}
-#endif /* SPC5_PWM_USE_EMIOS_CH23 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -473,40 +477,40 @@ void pwm_lld_init(void) {
   /* eMIOSx channels initially all not in use.*/
   reset_emios_active_channels();
 
-#if SPC5_PWM_USE_EMIOS_CH9
+#if SPC5_PWM_USE_EMIOS_CH0
   /* Driver initialization.*/
   pwmObjectInit(&PWMD1);
   PWMD1.emiosp = &EMIOS;
-  PWMD1.ch_number = 9U;
+  PWMD1.ch_number = 0U;
+#endif /* SPC5_PWM_USE_EMIOS_CH0 */
+
+#if SPC5_PWM_USE_EMIOS_CH8
+  /* Driver initialization.*/
+  pwmObjectInit(&PWMD2);
+  PWMD2.emiosp = &EMIOS;
+  PWMD2.ch_number = 8U;
+#endif /* SPC5_PWM_USE_EMIOS_CH8 */
+
+#if SPC5_PWM_USE_EMIOS_CH9
+  /* Driver initialization.*/
+  pwmObjectInit(&PWMD3);
+  PWMD3.emiosp = &EMIOS;
+  PWMD3.ch_number = 9U;
 #endif /* SPC5_PWM_USE_EMIOS_CH9 */
 
 #if SPC5_PWM_USE_EMIOS_CH10
   /* Driver initialization.*/
-  pwmObjectInit(&PWMD2);
-  PWMD2.emiosp = &EMIOS;
-  PWMD2.ch_number = 10U;
+  pwmObjectInit(&PWMD4);
+  PWMD4.emiosp = &EMIOS;
+  PWMD4.ch_number = 10U;
 #endif /* SPC5_PWM_USE_EMIOS_CH10 */
-
-#if SPC5_PWM_USE_EMIOS_CH11
-  /* Driver initialization.*/
-  pwmObjectInit(&PWMD3);
-  PWMD3.emiosp = &EMIOS;
-  PWMD3.ch_number = 11U;
-#endif /* SPC5_PWM_USE_EMIOS_CH11 */
 
 #if SPC5_PWM_USE_EMIOS_CH12
   /* Driver initialization.*/
-  pwmObjectInit(&PWMD4);
-  PWMD4.emiosp = &EMIOS;
-  PWMD4.ch_number = 12U;
-#endif /* SPC5_PWM_USE_EMIOS_CH12 */
-
-#if SPC5_PWM_USE_EMIOS_CH13
-  /* Driver initialization.*/
   pwmObjectInit(&PWMD5);
   PWMD5.emiosp = &EMIOS;
-  PWMD5.ch_number = 13U;
-#endif /* SPC5_PWM_USE_EMIOS_CH13 */
+  PWMD5.ch_number = 12U;
+#endif /* SPC5_PWM_USE_EMIOS_CH12 */
 
 #if SPC5_PWM_USE_EMIOS_CH14
   /* Driver initialization.*/
@@ -529,6 +533,7 @@ void pwm_lld_init(void) {
   PWMD8.ch_number = 23U;
 #endif /* SPC5_PWM_USE_EMIOS_CH23 */
 
+#if SPC5_EMIOS_NUM_CHANNELS == 24
 #if SPC5_PWM_USE_EMIOS_CH19
   /* Driver initialization.*/
   pwmObjectInit(&PWMD9);
@@ -556,26 +561,27 @@ void pwm_lld_init(void) {
   PWMD12.emiosp = &EMIOS;
   PWMD12.ch_number = 22U;
 #endif /* SPC5_PWM_USE_EMIOS_CH22 */
+#endif
 
 #if SPC5_PWM_USE_EMIOS
 
 #if SPC5_EMIOS_NUM_CHANNELS == 16
+    INTC.PSR[SPC5_EMIOS_FLAG_F0_NUMBER].R = SPC5_EMIOS_FLAG_F0_PRIORITY;
+    INTC.PSR[SPC5_EMIOS_FLAG_F8_NUMBER].R = SPC5_EMIOS_FLAG_F8_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F9_NUMBER].R = SPC5_EMIOS_FLAG_F9_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F10_NUMBER].R = SPC5_EMIOS_FLAG_F10_PRIORITY;
-    INTC.PSR[SPC5_EMIOS_FLAG_F11_NUMBER].R = SPC5_EMIOS_FLAG_F11_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F12_NUMBER].R = SPC5_EMIOS_FLAG_F12_PRIORITY;
-    INTC.PSR[SPC5_EMIOS_FLAG_F13_NUMBER].R = SPC5_EMIOS_FLAG_F13_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F14_NUMBER].R = SPC5_EMIOS_FLAG_F14_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F15_NUMBER].R = SPC5_EMIOS_FLAG_F15_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F23_NUMBER].R = SPC5_EMIOS_FLAG_F23_PRIORITY;
 #endif
 
 #if SPC5_EMIOS_NUM_CHANNELS == 24
+    INTC.PSR[SPC5_EMIOS_FLAG_F0_NUMBER].R = SPC5_EMIOS_FLAG_F0_PRIORITY;
+    INTC.PSR[SPC5_EMIOS_FLAG_F8_NUMBER].R = SPC5_EMIOS_FLAG_F8_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F9_NUMBER].R = SPC5_EMIOS_FLAG_F9_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F10_NUMBER].R = SPC5_EMIOS_FLAG_F10_PRIORITY;
-    INTC.PSR[SPC5_EMIOS_FLAG_F11_NUMBER].R = SPC5_EMIOS_FLAG_F11_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F12_NUMBER].R = SPC5_EMIOS_FLAG_F12_PRIORITY;
-    INTC.PSR[SPC5_EMIOS_FLAG_F13_NUMBER].R = SPC5_EMIOS_FLAG_F13_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F14_NUMBER].R = SPC5_EMIOS_FLAG_F14_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F15_NUMBER].R = SPC5_EMIOS_FLAG_F15_PRIORITY;
     INTC.PSR[SPC5_EMIOS_FLAG_F19_NUMBER].R = SPC5_EMIOS_FLAG_F19_PRIORITY;
@@ -604,35 +610,35 @@ void pwm_lld_start(PWMDriver *pwmp) {
               "pwm_lld_start(), #1", "too many channels");
 
   if (pwmp->state == PWM_STOP) {
-#if SPC5_PWM_USE_EMIOS_CH9
+#if SPC5_PWM_USE_EMIOS_CH0
     if (&PWMD1 == pwmp) {
+      increase_emios_active_channels();
+    }
+#endif /* SPC5_PWM_USE_EMIOS_CH0 */
+
+#if SPC5_PWM_USE_EMIOS_CH8
+    if (&PWMD2 == pwmp) {
+      increase_emios_active_channels();
+    }
+#endif /* SPC5_PWM_USE_EMIOS_CH8 */
+
+#if SPC5_PWM_USE_EMIOS_CH9
+    if (&PWMD3 == pwmp) {
       increase_emios_active_channels();
     }
 #endif /* SPC5_PWM_USE_EMIOS_CH9 */
 
 #if SPC5_PWM_USE_EMIOS_CH10
-    if (&PWMD2 == pwmp) {
+    if (&PWMD4 == pwmp) {
       increase_emios_active_channels();
     }
 #endif /* SPC5_PWM_USE_EMIOS_CH10 */
 
-#if SPC5_PWM_USE_EMIOS_CH11
-    if (&PWMD3 == pwmp) {
-      increase_emios_active_channels();
-    }
-#endif /* SPC5_PWM_USE_EMIOS_CH11 */
-
 #if SPC5_PWM_USE_EMIOS_CH12
-    if (&PWMD4 == pwmp) {
-      increase_emios_active_channels();
-    }
-#endif /* SPC5_PWM_USE_EMIOS_CH12 */
-
-#if SPC5_PWM_USE_EMIOS_CH13
     if (&PWMD5 == pwmp) {
       increase_emios_active_channels();
     }
-#endif /* SPC5_PWM_USE_EMIOS_CH13 */
+#endif /* SPC5_PWM_USE_EMIOS_CH12 */
 
 #if SPC5_PWM_USE_EMIOS_CH14
     if (&PWMD6 == pwmp) {
@@ -652,6 +658,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
     }
 #endif /* SPC5_PWM_USE_EMIOS_CH23 */
 
+#if SPC5_EMIOS_NUM_CHANNELS == 24
 #if SPC5_PWM_USE_EMIOS_CH19
     if (&PWMD9 == pwmp) {
       increase_emios_active_channels();
@@ -675,6 +682,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       increase_emios_active_channels();
     }
 #endif /* SPC5_PWM_USE_EMIOS_CH22 */
+#endif
 
     /* Set eMIOS Clock.*/
 #if SPC5_PWM_USE_EMIOS
@@ -696,7 +704,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
   chDbgAssert((psc <= 0xFFFF) &&
               (((psc) * pwmp->config->frequency) == SPC5_EMIOS_CLK) &&
               ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
-              "pwm_lld_start(), #2", "invalid frequency");
+              "pwm_lld_start(), #1", "invalid frequency");
 
   if (pwmp->config->mode == PWM_ALIGN_EDGE) {
     pwmp->emiosp->CH[pwmp->ch_number].CCR.B.UCPREN = 0;
@@ -740,8 +748,26 @@ void pwm_lld_stop(PWMDriver *pwmp) {
   if (pwmp->state == PWM_READY) {
 
     /* Disables the peripheral.*/
-#if SPC5_PWM_USE_EMIOS_CH9
+#if SPC5_PWM_USE_EMIOS_CH0
     if (&PWMD1 == pwmp) {
+      /* Reset UC Control Register.*/
+      pwmp->emiosp->CH[pwmp->ch_number].CCR.R = 0;
+
+      decrease_emios_active_channels();
+    }
+#endif /* SPC5_PWM_USE_EMIOS_CH0 */
+
+#if SPC5_PWM_USE_EMIOS_CH8
+    if (&PWMD2 == pwmp) {
+      /* Reset UC Control Register.*/
+      pwmp->emiosp->CH[pwmp->ch_number].CCR.R = 0;
+
+      decrease_emios_active_channels();
+    }
+#endif /* SPC5_PWM_USE_EMIOS_CH8 */
+
+#if SPC5_PWM_USE_EMIOS_CH9
+    if (&PWMD3 == pwmp) {
       /* Reset UC Control Register.*/
       pwmp->emiosp->CH[pwmp->ch_number].CCR.R = 0;
 
@@ -750,7 +776,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 #endif /* SPC5_PWM_USE_EMIOS_CH9 */
 
 #if SPC5_PWM_USE_EMIOS_CH10
-    if (&PWMD2 == pwmp) {
+    if (&PWMD4 == pwmp) {
       /* Reset UC Control Register.*/
       pwmp->emiosp->CH[pwmp->ch_number].CCR.R = 0;
 
@@ -758,32 +784,14 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     }
 #endif /* SPC5_PWM_USE_EMIOS_CH10 */
 
-#if SPC5_PWM_USE_EMIOS_CH11
-    if (&PWMD3 == pwmp) {
-      /* Reset UC Control Register.*/
-      pwmp->emiosp->CH[pwmp->ch_number].CCR.R = 0;
-
-      decrease_emios_active_channels();
-    }
-#endif /* SPC5_PWM_USE_EMIOS_CH11 */
-
 #if SPC5_PWM_USE_EMIOS_CH12
-    if (&PWMD4 == pwmp) {
-      /* Reset UC Control Register.*/
-      pwmp->emiosp->CH[pwmp->ch_number].CCR.R = 0;
-
-      decrease_emios_active_channels();
-    }
-#endif /* SPC5_PWM_USE_EMIOS_CH12 */
-
-#if SPC5_PWM_USE_EMIOS_CH13
     if (&PWMD5 == pwmp) {
       /* Reset UC Control Register.*/
       pwmp->emiosp->CH[pwmp->ch_number].CCR.R = 0;
 
       decrease_emios_active_channels();
     }
-#endif /* SPC5_PWM_USE_EMIOS_CH13 */
+#endif /* SPC5_PWM_USE_EMIOS_CH12 */
 
 #if SPC5_PWM_USE_EMIOS_CH14
     if (&PWMD6 == pwmp) {
@@ -812,6 +820,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     }
 #endif /* SPC5_PWM_USE_EMIOS_CH23 */
 
+#if SPC5_EMIOS_NUM_CHANNELS == 24
 #if SPC5_PWM_USE_EMIOS_CH19
     if (&PWMD9 == pwmp) {
       /* Reset UC Control Register.*/
@@ -847,6 +856,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
       decrease_emios_active_channels();
     }
 #endif /* SPC5_PWM_USE_EMIOS_CH22 */
+#endif
 
     /* eMIOS clock deactivation.*/
 #if SPC5_PWM_USE_EMIOS

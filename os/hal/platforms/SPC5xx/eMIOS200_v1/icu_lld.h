@@ -44,8 +44,8 @@
  * @details If set to @p TRUE the support for ICUD1 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ICU_USE_EMIOS_CH0) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_EMIOS_CH0              FALSE
+#if !defined(SPC5_ICU_USE_EMIOS_CH1) || defined(__DOXYGEN__)
+#define SPC5_ICU_USE_EMIOS_CH1              FALSE
 #endif
 
 /**
@@ -53,8 +53,8 @@
  * @details If set to @p TRUE the support for ICUD2 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ICU_USE_EMIOS_CH1) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_EMIOS_CH1              FALSE
+#if !defined(SPC5_ICU_USE_EMIOS_CH2) || defined(__DOXYGEN__)
+#define SPC5_ICU_USE_EMIOS_CH2              FALSE
 #endif
 
 /**
@@ -62,8 +62,8 @@
  * @details If set to @p TRUE the support for ICUD3 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ICU_USE_EMIOS_CH2) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_EMIOS_CH2              FALSE
+#if !defined(SPC5_ICU_USE_EMIOS_CH3) || defined(__DOXYGEN__)
+#define SPC5_ICU_USE_EMIOS_CH3              FALSE
 #endif
 
 /**
@@ -71,8 +71,8 @@
  * @details If set to @p TRUE the support for ICUD4 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ICU_USE_EMIOS_CH3) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_EMIOS_CH3              FALSE
+#if !defined(SPC5_ICU_USE_EMIOS_CH4) || defined(__DOXYGEN__)
+#define SPC5_ICU_USE_EMIOS_CH4              FALSE
 #endif
 
 /**
@@ -80,8 +80,8 @@
  * @details If set to @p TRUE the support for ICUD5 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ICU_USE_EMIOS_CH4) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_EMIOS_CH4              FALSE
+#if !defined(SPC5_ICU_USE_EMIOS_CH5) || defined(__DOXYGEN__)
+#define SPC5_ICU_USE_EMIOS_CH5              FALSE
 #endif
 
 /**
@@ -89,8 +89,8 @@
  * @details If set to @p TRUE the support for ICUD6 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ICU_USE_EMIOS_CH5) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_EMIOS_CH5              FALSE
+#if !defined(SPC5_ICU_USE_EMIOS_CH6) || defined(__DOXYGEN__)
+#define SPC5_ICU_USE_EMIOS_CH6              FALSE
 #endif
 
 /**
@@ -98,8 +98,8 @@
  * @details If set to @p TRUE the support for ICUD7 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ICU_USE_EMIOS_CH6) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_EMIOS_CH6              FALSE
+#if !defined(SPC5_ICU_USE_EMIOS_CH11) || defined(__DOXYGEN__)
+#define SPC5_ICU_USE_EMIOS_CH11             FALSE
 #endif
 
 /**
@@ -107,10 +107,11 @@
  * @details If set to @p TRUE the support for ICUD8 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_ICU_USE_EMIOS_CH8) || defined(__DOXYGEN__)
-#define SPC5_ICU_USE_EMIOS_CH8              FALSE
+#if !defined(SPC5_ICU_USE_EMIOS_CH13) || defined(__DOXYGEN__)
+#define SPC5_ICU_USE_EMIOS_CH13             FALSE
 #endif
 
+#if SPC5_EMIOS_NUM_CHANNELS == 24
 /**
  * @brief   ICUD9 driver enable switch.
  * @details If set to @p TRUE the support for ICUD9 is included.
@@ -146,63 +147,65 @@
 #if !defined(SPC5_ICU_USE_EMIOS_CH18) || defined(__DOXYGEN__)
 #define SPC5_ICU_USE_EMIOS_CH18             FALSE
 #endif
-
-/**
- * @brief   ICUD1 interrupt priority level setting.
- */
-#if !defined(SPC5_EMIOS_FLAG_F0_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_EMIOS_FLAG_F0_PRIORITY         7
 #endif
 
 /**
- * @brief   ICUD2 interrupt priority level setting.
+ * @brief   ICUD1 interrupt priority level setting.
  */
 #if !defined(SPC5_EMIOS_FLAG_F1_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F1_PRIORITY         7
 #endif
 
 /**
- * @brief   ICUD3 interrupt priority level setting.
+ * @brief   ICUD2 interrupt priority level setting.
  */
 #if !defined(SPC5_EMIOS_FLAG_F2_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F2_PRIORITY         7
 #endif
 
 /**
- * @brief   ICUD4 interrupt priority level setting.
+ * @brief   ICUD3 interrupt priority level setting.
  */
 #if !defined(SPC5_EMIOS_FLAG_F3_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F3_PRIORITY         7
 #endif
 
 /**
- * @brief   ICUD5 interrupt priority level setting.
+ * @brief   ICUD4 interrupt priority level setting.
  */
 #if !defined(SPC5_EMIOS_FLAG_F4_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F4_PRIORITY         7
 #endif
 
 /**
- * @brief   ICUD6 interrupt priority level setting.
+ * @brief   ICUD5 interrupt priority level setting.
  */
 #if !defined(SPC5_EMIOS_FLAG_F5_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F5_PRIORITY         7
 #endif
 
 /**
- * @brief   ICUD7 interrupt priority level setting.
+ * @brief   ICUD6 interrupt priority level setting.
  */
 #if !defined(SPC5_EMIOS_FLAG_F6_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F6_PRIORITY         7
 #endif
 
 /**
- * @brief   ICUD8 interrupt priority level setting.
+ * @brief   ICUD7 interrupt priority level setting.
  */
-#if !defined(SPC5_EMIOS_FLAG_F8_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_EMIOS_FLAG_F8_PRIORITY         7
+#if !defined(SPC5_EMIOS_FLAG_F11_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_EMIOS_FLAG_F11_PRIORITY        7
 #endif
 
+/**
+ * @brief   ICUD8 interrupt priority level setting.
+ */
+#if !defined(SPC5_EMIOS_FLAG_F13_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_EMIOS_FLAG_F13_PRIORITY        7
+#endif
+
+#if SPC5_EMIOS_NUM_CHANNELS == 24
 /**
  * @brief   ICUD9 interrupt priority level setting.
  */
@@ -230,6 +233,7 @@
 #if !defined(SPC5_EMIOS_FLAG_F18_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F18_PRIORITY        7
 #endif
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -239,19 +243,29 @@
 #if !SPC5_HAS_EMIOS
 #error "EMIOS not present in the selected device"
 #endif
-
-#define SPC5_ICU_USE_EMIOS                  (SPC5_ICU_USE_EMIOS_CH0 ||      \
-                                             SPC5_ICU_USE_EMIOS_CH1 ||      \
-                                             SPC5_ICU_USE_EMIOS_CH2 ||      \
-                                             SPC5_ICU_USE_EMIOS_CH3 ||      \
-                                             SPC5_ICU_USE_EMIOS_CH4 ||      \
-                                             SPC5_ICU_USE_EMIOS_CH5 ||      \
-                                             SPC5_ICU_USE_EMIOS_CH6 ||      \
-                                             SPC5_ICU_USE_EMIOS_CH7 ||      \
-                                             SPC5_ICU_USE_EMIOS_CH8 || 		\
+#if SPC5_EMIOS_NUM_CHANNELS == 16
+#define SPC5_ICU_USE_EMIOS                  (SPC5_ICU_USE_EMIOS_CH1  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH2  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH3  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH4  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH5  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH6  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH11 ||     \
+                                             SPC5_ICU_USE_EMIOS_CH13)
+#elif SPC5_EMIOS_NUM_CHANNELS == 24
+#define SPC5_ICU_USE_EMIOS                  (SPC5_ICU_USE_EMIOS_CH1  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH2  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH3  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH4  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH5  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH6  ||     \
+                                             SPC5_ICU_USE_EMIOS_CH11 ||     \
+                                             SPC5_ICU_USE_EMIOS_CH13 ||     \
+                                             SPC5_ICU_USE_EMIOS_CH7  ||     \
                                              SPC5_ICU_USE_EMIOS_CH16 ||     \
                                              SPC5_ICU_USE_EMIOS_CH17 ||     \
                                              SPC5_ICU_USE_EMIOS_CH18)
+#endif
 
 #if !SPC5_ICU_USE_EMIOS
 #error "ICU driver activated but no Channels assigned"
@@ -376,35 +390,35 @@ struct ICUDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if SPC5_ICU_USE_EMIOS_CH0 && !defined(__DOXYGEN__)
+#if SPC5_ICU_USE_EMIOS_CH1 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD1;
 #endif
 
-#if SPC5_ICU_USE_EMIOS_CH1 && !defined(__DOXYGEN__)
+#if SPC5_ICU_USE_EMIOS_CH2 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD2;
 #endif
 
-#if SPC5_ICU_USE_EMIOS_CH2 && !defined(__DOXYGEN__)
+#if SPC5_ICU_USE_EMIOS_CH3 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD3;
 #endif
 
-#if SPC5_ICU_USE_EMIOS_CH3 && !defined(__DOXYGEN__)
+#if SPC5_ICU_USE_EMIOS_CH4 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD4;
 #endif
 
-#if SPC5_ICU_USE_EMIOS_CH4 && !defined(__DOXYGEN__)
+#if SPC5_ICU_USE_EMIOS_CH5 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD5;
 #endif
 
-#if SPC5_ICU_USE_EMIOS_CH5 && !defined(__DOXYGEN__)
+#if SPC5_ICU_USE_EMIOS_CH6 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD6;
 #endif
 
-#if SPC5_ICU_USE_EMIOS_CH6 && !defined(__DOXYGEN__)
+#if SPC5_ICU_USE_EMIOS_CH11 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD7;
 #endif
 
-#if SPC5_ICU_USE_EMIOS_CH8 && !defined(__DOXYGEN__)
+#if SPC5_ICU_USE_EMIOS_CH13 && !defined(__DOXYGEN__)
 extern ICUDriver ICUD8;
 #endif
 

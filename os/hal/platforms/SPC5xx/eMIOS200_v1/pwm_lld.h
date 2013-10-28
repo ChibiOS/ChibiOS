@@ -61,8 +61,8 @@
  * @details If set to @p TRUE the support for PWMD1 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_PWM_USE_EMIOS_CH9) || defined(__DOXYGEN__)
-#define SPC5_PWM_USE_EMIOS_CH9              FALSE
+#if !defined(SPC5_PWM_USE_EMIOS_CH0) || defined(__DOXYGEN__)
+#define SPC5_PWM_USE_EMIOS_CH0              FALSE
 #endif
 
 /**
@@ -70,8 +70,8 @@
  * @details If set to @p TRUE the support for PWMD2 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_PWM_USE_EMIOS_CH10) || defined(__DOXYGEN__)
-#define SPC5_PWM_USE_EMIOS_CH10             FALSE
+#if !defined(SPC5_PWM_USE_EMIOS_CH8) || defined(__DOXYGEN__)
+#define SPC5_PWM_USE_EMIOS_CH8              FALSE
 #endif
 
 /**
@@ -79,8 +79,8 @@
  * @details If set to @p TRUE the support for PWMD3 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_PWM_USE_EMIOS_CH11) || defined(__DOXYGEN__)
-#define SPC5_PWM_USE_EMIOS_CH11             FALSE
+#if !defined(SPC5_PWM_USE_EMIOS_CH9) || defined(__DOXYGEN__)
+#define SPC5_PWM_USE_EMIOS_CH9              FALSE
 #endif
 
 /**
@@ -88,8 +88,8 @@
  * @details If set to @p TRUE the support for PWMD4 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_PWM_USE_EMIOS_CH12) || defined(__DOXYGEN__)
-#define SPC5_PWM_USE_EMIOS_CH12             FALSE
+#if !defined(SPC5_PWM_USE_EMIOS_CH10) || defined(__DOXYGEN__)
+#define SPC5_PWM_USE_EMIOS_CH10             FALSE
 #endif
 
 /**
@@ -97,8 +97,8 @@
  * @details If set to @p TRUE the support for PWMD5 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(SPC5_PWM_USE_EMIOS_CH13) || defined(__DOXYGEN__)
-#define SPC5_PWM_USE_EMIOS_CH13             FALSE
+#if !defined(SPC5_PWM_USE_EMIOS_CH12) || defined(__DOXYGEN__)
+#define SPC5_PWM_USE_EMIOS_CH12             FALSE
 #endif
 
 /**
@@ -128,6 +128,7 @@
 #define SPC5_PWM_USE_EMIOS_CH23             FALSE
 #endif
 
+#if SPC5_EMIOS_NUM_CHANNELS == 24
 /**
  * @brief   PWMD9 driver enable switch.
  * @details If set to @p TRUE the support for PWMD9 is included.
@@ -163,40 +164,41 @@
 #if !defined(SPC5_PWM_USE_EMIOS_CH22) || defined(__DOXYGEN__)
 #define SPC5_PWM_USE_EMIOS_CH22             FALSE
 #endif
+#endif
 
 /**
  * @brief   PWMD1 interrupt priority level setting.
+ */
+#if !defined(SPC5_EMIOS_FLAG_F0_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_EMIOS_FLAG_F0_PRIORITY         7
+#endif
+
+/**
+ * @brief   PWMD2 interrupt priority level setting.
+ */
+#if !defined(SPC5_EMIOS_FLAG_F8_PRIORITY) || defined(__DOXYGEN__)
+#define SPC5_EMIOS_FLAG_F8_PRIORITY         7
+#endif
+
+/**
+ * @brief   PWMD3 interrupt priority level setting.
  */
 #if !defined(SPC5_EMIOS_FLAG_F9_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F9_PRIORITY         7
 #endif
 
 /**
- * @brief   PWMD2 interrupt priority level setting.
+ * @brief   PWMD4 interrupt priority level setting.
  */
 #if !defined(SPC5_EMIOS_FLAG_F10_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F10_PRIORITY        7
 #endif
 
 /**
- * @brief   PWMD3 interrupt priority level setting.
- */
-#if !defined(SPC5_EMIOS_FLAG_F11_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_EMIOS_FLAG_F11_PRIORITY        7
-#endif
-
-/**
- * @brief   PWMD4 interrupt priority level setting.
+ * @brief   PWMD5 interrupt priority level setting.
  */
 #if !defined(SPC5_EMIOS_FLAG_F12_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F12_PRIORITY        7
-#endif
-
-/**
- * @brief   PWMD5 interrupt priority level setting.
- */
-#if !defined(SPC5_EMIOS_FLAG_F13_PRIORITY) || defined(__DOXYGEN__)
-#define SPC5_EMIOS_FLAG_F13_PRIORITY        7
 #endif
 
 /**
@@ -220,6 +222,7 @@
 #define SPC5_EMIOS_FLAG_F23_PRIORITY        7
 #endif
 
+#if SPC5_EMIOS_NUM_CHANNELS == 24
 /**
  * @brief   PWMD9 interrupt priority level setting.
  */
@@ -247,6 +250,7 @@
 #if !defined(SPC5_EMIOS_FLAG_F22_PRIORITY) || defined(__DOXYGEN__)
 #define SPC5_EMIOS_FLAG_F22_PRIORITY        7
 #endif
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -257,18 +261,29 @@
 #error "EMIOS not present in the selected device"
 #endif
 
-#define SPC5_PWM_USE_EMIOS                  (SPC5_PWM_USE_EMIOS_CH9  ||    \
+#if SPC5_EMIOS_NUM_CHANNELS == 16
+#define SPC5_PWM_USE_EMIOS                  (SPC5_PWM_USE_EMIOS_CH0  ||    \
+                                             SPC5_PWM_USE_EMIOS_CH8  ||    \
+                                             SPC5_PWM_USE_EMIOS_CH9  ||    \
                                              SPC5_PWM_USE_EMIOS_CH10 ||    \
-                                             SPC5_PWM_USE_EMIOS_CH11 ||    \
                                              SPC5_PWM_USE_EMIOS_CH12 ||    \
-                                             SPC5_PWM_USE_EMIOS_CH13 ||    \
                                              SPC5_PWM_USE_EMIOS_CH14 ||    \
                                              SPC5_PWM_USE_EMIOS_CH15 ||    \
+                                             SPC5_PWM_USE_EMIOS_CH23)
+#elif SPC5_EMIOS_NUM_CHANNELS == 24
+#define SPC5_PWM_USE_EMIOS                  (SPC5_PWM_USE_EMIOS_CH0  ||    \
+                                             SPC5_PWM_USE_EMIOS_CH8  ||    \
+                                             SPC5_PWM_USE_EMIOS_CH9  ||    \
+                                             SPC5_PWM_USE_EMIOS_CH10 ||    \
+                                             SPC5_PWM_USE_EMIOS_CH12 ||    \
+                                             SPC5_PWM_USE_EMIOS_CH14 ||    \
+                                             SPC5_PWM_USE_EMIOS_CH15 ||    \
+                                             SPC5_PWM_USE_EMIOS_CH23 ||    \
                                              SPC5_PWM_USE_EMIOS_CH19 ||    \
                                              SPC5_PWM_USE_EMIOS_CH20 ||    \
                                              SPC5_PWM_USE_EMIOS_CH21 ||    \
-                                             SPC5_PWM_USE_EMIOS_CH22 ||    \
-                                             SPC5_PWM_USE_EMIOS_CH23)
+                                             SPC5_PWM_USE_EMIOS_CH22)
+#endif
 
 #if !SPC5_PWM_USE_EMIOS
 #error "PWM driver activated but no Channels assigned"
@@ -387,23 +402,23 @@ struct PWMDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if SPC5_PWM_USE_EMIOS_CH9 && !defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH0 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD1;
 #endif
 
-#if SPC5_PWM_USE_EMIOS_CH10 && !defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH8 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD2;
 #endif
 
-#if SPC5_PWM_USE_EMIOS_CH11 && !defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH9 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD3;
 #endif
 
-#if SPC5_PWM_USE_EMIOS_CH12 && !defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH10 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD4;
 #endif
 
-#if SPC5_PWM_USE_EMIOS_CH13 && !defined(__DOXYGEN__)
+#if SPC5_PWM_USE_EMIOS_CH12 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD5;
 #endif
 
