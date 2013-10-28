@@ -67,7 +67,7 @@ static ICUConfig icucfg = {
 int main(void) {
 
   /* Initialization of all the imported components in the order specified in
-	 the application wizard. The function is generated automatically.*/
+     the application wizard. The function is generated automatically.*/
   componentsInit();
 
   palClearPad(PORT11, P11_LED4);
@@ -79,55 +79,55 @@ int main(void) {
    * The two pins have to be externally connected together.
    */
 
+  /* Sets PIN63 alternative function.*/
+  SIU.PCR[179].R = 0b0000011000001100;
+
   /* Sets PIN65 alternative function.*/
   SIU.PCR[181].R = 0b0000010100001100;
 
-  /* Sets PIN78 alternative function.*/
-  SIU.PCR[193].R = 0b0000011000001100;
-
-  icuStart(&ICUD3, &icucfg);
-  icuEnable(&ICUD3);
-  pwmStart(&PWMD6, &pwmcfg);
+  icuStart(&ICUD2, &icucfg);
+  icuEnable(&ICUD2);
+  pwmStart(&PWMD1, &pwmcfg);
 
   chThdSleepMilliseconds(2000);
 
   /*
    * Starts the PWM channel 0 using 75% duty cycle.
    */
-  pwmEnableChannel(&PWMD6, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD6, 7500));
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 7500));
   chThdSleepMilliseconds(5000);
 
   /*
    * Changes the PWM channel 0 to 50% duty cycle.
    */
-  pwmEnableChannel(&PWMD6, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD6, 5000));
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 5000));
   chThdSleepMilliseconds(5000);
 
   /*
    * Changes the PWM channel 0 to 25% duty cycle.
    */
-  pwmEnableChannel(&PWMD6, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD6, 2500));
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 2500));
   chThdSleepMilliseconds(5000);
 
   /*
    * Changes PWM period and the PWM channel 0 to 50% duty cycle.
    */
-  pwmChangePeriod(&PWMD6, 25000);
-  pwmEnableChannel(&PWMD6, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD6, 5000));
+  pwmChangePeriod(&PWMD1, 25000);
+  pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 5000));
   chThdSleepMilliseconds(5000);
 
   /*
    * Disables PWM channel 0 and stops the drivers.
    */
-  pwmDisableChannel(&PWMD6, 0);
-  pwmStop(&PWMD6);
+  pwmDisableChannel(&PWMD1, 0);
+  pwmStop(&PWMD1);
 
   /*
    * Disables and stops the ICU drivers.
    */
 
-  icuDisable(&ICUD3);
-  icuStop(&ICUD3);
+  icuDisable(&ICUD2);
+  icuStop(&ICUD2);
 
   palClearPad(PORT11, P11_LED3);
   palClearPad(PORT11, P11_LED4);

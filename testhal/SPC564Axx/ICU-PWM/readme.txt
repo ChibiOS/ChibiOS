@@ -13,7 +13,7 @@ The application demonstrates the use of the SPC564Axx ICU and PWM drivers.
 
 ** Board Setup **
 
-Connect PIN65 and PIN78 together.
+Connect PIN65 and PIN65 together.
 
 ** Build Procedure **
 
