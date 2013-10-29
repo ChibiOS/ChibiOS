@@ -110,6 +110,28 @@
 #define SPC5_SIUL_NUM_PCRS                  77
 #define SPC5_SIUL_NUM_PADSELS               63
 #define SPC5_SIUL_SYSTEM_PINS               32,33
+
+/* FlexCAN attributes.*/
+#define SPC5_HAS_FLEXCAN0                                   TRUE
+#define SPC5_FLEXCAN0_PCTL                                  16
+#define SPC5_FLEXCAN0_MB                                    32
+#define SPC5_FLEXCAN0_SHARED_IRQ                            TRUE
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_HANDLER           vector65
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_HANDLER              vector66
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_00_03_HANDLER             vector68
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_04_07_HANDLER             vector69
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_08_11_HANDLER             vector70
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_12_15_HANDLER             vector71
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_HANDLER             vector72
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_NUMBER            65
+#define SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_NUMBER               66
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_00_03_NUMBER              68
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_04_07_NUMBER              69
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_08_11_NUMBER              70
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_12_15_NUMBER              71
+#define SPC5_FLEXCAN0_FLEXCAN_BUF_16_31_NUMBER              72
+#define SPC5_FLEXCAN0_ENABLE_CLOCK()                        halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_START_PCTL);
+#define SPC5_FLEXCAN0_DISABLE_CLOCK()                       halSPCSetPeripheralClockMode(SPC5_FLEXCAN0_PCTL, SPC5_CAN_FLEXCAN0_STOP_PCTL);
 /** @} */
 
 #endif /* _SPC560D_REGISTRY_H_ */

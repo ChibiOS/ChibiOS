@@ -282,6 +282,7 @@
 #define SPC5_HAS_FLEXCAN0                                   TRUE
 #define SPC5_FLEXCAN0_PCTL                                  16
 #define SPC5_FLEXCAN0_MB                                    32
+#define SPC5_FLEXCAN0_SHARED_IRQ                            TRUE
 #define SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_HANDLER           vector65
 #define SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_HANDLER              vector66
 #define SPC5_FLEXCAN0_FLEXCAN_ESR_WAK_HANDLER               vector67

@@ -128,6 +128,7 @@
 /* FlexCAN attributes.*/
 #define SPC5_HAS_FLEXCAN0                                   TRUE
 #define SPC5_FLEXCAN0_MB                                    64
+#define SPC5_FLEXCAN0_SHARED_IRQ                            FALSE
 #define SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_HANDLER              vector152
 #define SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_HANDLER           vector153
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_00_HANDLER                vector155
@@ -173,6 +174,7 @@
 
 #define SPC5_HAS_FLEXCAN1                                   TRUE
 #define SPC5_FLEXCAN1_MB                                    32
+#define SPC5_FLEXCAN1_SHARED_IRQ                            FALSE
 #define SPC5_FLEXCAN1_FLEXCAN_ESR_BOFF_HANDLER              vector173
 #define SPC5_FLEXCAN1_FLEXCAN_ESR_ERR_INT_HANDLER           vector174
 #define SPC5_FLEXCAN1_FLEXCAN_BUF_00_HANDLER                vector176

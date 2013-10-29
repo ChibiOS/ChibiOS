@@ -165,6 +165,7 @@
 #define SPC5_HAS_FLEXCAN0                                   TRUE
 #define SPC5_FLEXCAN0_PCTL                                  16
 #define SPC5_FLEXCAN0_MB                                    64
+#define SPC5_FLEXCAN0_SHARED_IRQ                            TRUE
 #define SPC5_FLEXCAN0_FLEXCAN_ESR_ERR_INT_HANDLER           vector65
 #define SPC5_FLEXCAN0_FLEXCAN_ESR_BOFF_HANDLER              vector66
 #define SPC5_FLEXCAN0_FLEXCAN_BUF_00_03_HANDLER             vector68
@@ -187,6 +188,7 @@
 #define SPC5_HAS_FLEXCAN1                                   TRUE
 #define SPC5_FLEXCAN1_PCTL                                  17
 #define SPC5_FLEXCAN1_MB                                    64
+#define SPC5_FLEXCAN1_SHARED_IRQ                            TRUE
 #define SPC5_FLEXCAN1_FLEXCAN_ESR_ERR_INT_HANDLER           vector85
 #define SPC5_FLEXCAN1_FLEXCAN_ESR_BOFF_HANDLER              vector86
 #define SPC5_FLEXCAN1_FLEXCAN_BUF_00_03_HANDLER             vector88
@@ -209,6 +211,7 @@
 #define SPC5_HAS_FLEXCAN2                                   TRUE
 #define SPC5_FLEXCAN2_PCTL                                  18
 #define SPC5_FLEXCAN2_MB                                    64
+#define SPC5_FLEXCAN2_SHARED_IRQ                            TRUE
 #define SPC5_FLEXCAN2_FLEXCAN_ESR_ERR_INT_HANDLER           vector105
 #define SPC5_FLEXCAN2_FLEXCAN_ESR_BOFF_HANDLER              vector106
 #define SPC5_FLEXCAN2_FLEXCAN_BUF_00_03_HANDLER             vector108
@@ -231,6 +234,7 @@
 #define SPC5_HAS_FLEXCAN3                                   TRUE
 #define SPC5_FLEXCAN3_PCTL                                  19
 #define SPC5_FLEXCAN3_MB                                    64
+#define SPC5_FLEXCAN3_SHARED_IRQ                            TRUE
 #define SPC5_FLEXCAN3_FLEXCAN_ESR_ERR_INT_HANDLER           vector173
 #define SPC5_FLEXCAN3_FLEXCAN_ESR_BOFF_HANDLER              vector174
 #define SPC5_FLEXCAN3_FLEXCAN_BUF_00_03_HANDLER             vector176
@@ -253,6 +257,7 @@
 #define SPC5_HAS_FLEXCAN4                                   TRUE
 #define SPC5_FLEXCAN4_PCTL                                  20
 #define SPC5_FLEXCAN4_MB                                    64
+#define SPC5_FLEXCAN4_SHARED_IRQ                            TRUE
 #define SPC5_FLEXCAN4_FLEXCAN_ESR_ERR_INT_HANDLER           vector190
 #define SPC5_FLEXCAN4_FLEXCAN_ESR_BOFF_HANDLER              vector191
 #define SPC5_FLEXCAN4_FLEXCAN_BUF_00_03_HANDLER             vector193
@@ -275,6 +280,7 @@
 #define SPC5_HAS_FLEXCAN5                                   TRUE
 #define SPC5_FLEXCAN5_PCTL                                  21
 #define SPC5_FLEXCAN5_MB                                    64
+#define SPC5_FLEXCAN5_SHARED_IRQ                            TRUE
 #define SPC5_FLEXCAN5_FLEXCAN_ESR_ERR_INT_HANDLER           vector202
 #define SPC5_FLEXCAN5_FLEXCAN_ESR_BOFF_HANDLER              vector203
 #define SPC5_FLEXCAN5_FLEXCAN_BUF_00_03_HANDLER             vector205
