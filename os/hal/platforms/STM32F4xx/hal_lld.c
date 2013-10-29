@@ -154,8 +154,6 @@ void stm32_clock_init(void) {
   /* PWR initialization.*/
 #if defined(STM32F4XX) || defined(__DOXYGEN__)
   PWR->CR = STM32_VOS;
-  while ((PWR->CSR & PWR_CSR_VOSRDY) == 0)
-    ;                           /* Waits until power regulator is stable.   */
 #else
   PWR->CR = 0;
 #endif
@@ -192,6 +190,11 @@ void stm32_clock_init(void) {
                  STM32_PLLM;
   RCC->CR |= RCC_CR_PLLON;
 
+  /* Synchronization with voltage regulator stabilization.*/
+#if defined(STM32F4XX)
+  while ((PWR->CSR & PWR_CSR_VOSRDY) == 0)
+    ;                           /* Waits until power regulator is stable.   */
+
 #if STM32_OVERDRIVE_REQUIRED
   /* Overdrive activation performed after activating the PLL in order to save
      time as recommended in RM in "Entering Over-drive mode" paragraph.*/
@@ -201,7 +204,8 @@ void stm32_clock_init(void) {
   PWR->CR |= PWR_CR_ODSWEN;
   while (!(PWR->CSR & PWR_CSR_ODSWRDY)
       ;
-#endif
+#endif /* STM32_OVERDRIVE_REQUIRED */
+#endif /* defined(STM32F4XX) */
 
   /* Waiting for PLL lock.*/
   while (!(RCC->CR & RCC_CR_PLLRDY))
