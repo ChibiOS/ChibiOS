@@ -199,10 +199,10 @@ void stm32_clock_init(void) {
   /* Overdrive activation performed after activating the PLL in order to save
      time as recommended in RM in "Entering Over-drive mode" paragraph.*/
   PWR->CR |= PWR_CR_ODEN;
-  while (!(PWR->CSR & PWR_CSR_ODRDY)
+  while (!(PWR->CSR & PWR_CSR_ODRDY))
       ;
   PWR->CR |= PWR_CR_ODSWEN;
-  while (!(PWR->CSR & PWR_CSR_ODSWRDY)
+  while (!(PWR->CSR & PWR_CSR_ODSWRDY))
       ;
 #endif /* STM32_OVERDRIVE_REQUIRED */
 #endif /* defined(STM32F4XX) */
