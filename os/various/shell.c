@@ -138,7 +138,6 @@ static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
  */
 static msg_t shell_thread(void *p) {
   int n;
-  msg_t msg = MSG_OK;
   BaseSequentialStream *chp = ((ShellConfig *)p)->sc_channel;
   const ShellCommand *scp = ((ShellConfig *)p)->sc_commands;
   char *lp, *cmd, *tokp, line[SHELL_MAX_LINE_LENGTH];
@@ -190,20 +189,37 @@ static msg_t shell_thread(void *p) {
       }
     }
   }
+  shellExit(MSG_OK);
+  /* Never executed, silencing a warning.*/
+  return 0;
+}
+
+/**
+ * @brief   Shell manager initialization.
+ *
+ * @api
+ */
+void shellInit(void) {
+
+  chEvtObjectInit(&shell_terminated);
+}
+
+/**
+ * @brief   Terminates the shell.
+ * @note    Must be invoked from the command handlers.
+ * @note    Does not return.
+ *
+ * @param[in] msg       shell exit code
+ *
+ * @api
+ */
+void shellExit(msg_t msg) {
+
   /* Atomically broadcasting the event source and terminating the thread,
      there is not a chSysUnlock() because the thread terminates upon return.*/
   chSysLock();
   chEvtBroadcastI(&shell_terminated);
   chThdExitS(msg);
-  return 0; /* Never executed.*/
-}
-
-/**
- * @brief   Shell manager initialization.
- */
-void shellInit(void) {
-
-  chEvtObjectInit(&shell_terminated);
 }
 
 /**
@@ -215,6 +231,8 @@ void shellInit(void) {
  * @param[in] prio      priority level for the new shell
  * @return              A pointer to the shell thread.
  * @retval NULL         thread creation failed because memory allocation.
+ *
+ * @api
  */
 #if CH_CFG_USE_HEAP && CH_CFG_USE_DYNAMIC
 thread_t *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
@@ -231,9 +249,11 @@ thread_t *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
  * @param[in] size      size of the shell working area
  * @param[in] prio      priority level for the new shell
  * @return              A pointer to the shell thread.
+ *
+ * @api
  */
 thread_t *shellCreateStatic(const ShellConfig *scp, void *wsp,
-                          size_t size, tprio_t prio) {
+                            size_t size, tprio_t prio) {
 
   return chThdCreateStatic(wsp, size, prio, shell_thread, (void *)scp);
 }
@@ -247,6 +267,8 @@ thread_t *shellCreateStatic(const ShellConfig *scp, void *wsp,
  * @return              The operation status.
  * @retval TRUE         the channel was reset or CTRL-D pressed.
  * @retval FALSE        operation successful.
+ *
+ * @api
  */
 bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
   char *p = line;

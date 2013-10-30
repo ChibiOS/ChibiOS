@@ -70,6 +70,7 @@ extern event_source_t shell_terminated;
 extern "C" {
 #endif
   void shellInit(void);
+  void shellExit(msg_t msg);
   thread_t *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio);
   thread_t *shellCreateStatic(const ShellConfig *scp, void *wsp,
                               size_t size, tprio_t prio);
