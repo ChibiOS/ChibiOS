@@ -75,6 +75,8 @@
 - FIX: Fixed duplicate STM32_GPT_USE_TIM8 definition in some mcuconf.h files
   (bug #431).
 - FIX: Fixed possible unalignment in GCC Cortex-M scatter files (bug #430).
+- NEW: Added a new function shellExit() to the shell. It allows to exit the
+  shell from any command handler.
 
 *** 2.6.1 ***
 - FIX: Fixed PAL driver documentation error (bug #427).
