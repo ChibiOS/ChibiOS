@@ -116,6 +116,8 @@
   (backported to 2.6.0).
 - FIX: Fixed MS2ST() and US2ST() macros error (bug #415)(backported to 2.6.0,
   2.4.4, 2.2.10, NilRTOS).
+- NEW: Improved time range check in the kernel, new API chTimeElapsedSince()
+  introduced. The API chTimeIsWithin() is now a macro.
 - NEW: Added a new function shellExit() to the shell. It allows to exit the
   shell from any command handler.
 - NEW: Added support for STM32F401/STM32F42x/STM32F43x devices.
