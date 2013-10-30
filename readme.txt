@@ -116,6 +116,8 @@
   (backported to 2.6.0).
 - FIX: Fixed MS2ST() and US2ST() macros error (bug #415)(backported to 2.6.0,
   2.4.4, 2.2.10, NilRTOS).
+- NEW: Added a new function shellExit() to the shell. It allows to exit the
+  shell from any command handler.
 - NEW: Added support for STM32F401/STM32F42x/STM32F43x devices.
 - NEW: Added support for STM32F0xx platform in RTCv2 driver.
 - NEW: Improvements to the STM32F4xx backup domain initialization.
