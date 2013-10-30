@@ -251,6 +251,8 @@ Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
  * @param[in] size      size of the shell working area
  * @param[in] prio      priority level for the new shell
  * @return              A pointer to the shell thread.
+ *
+ * @api
  */
 Thread *shellCreateStatic(const ShellConfig *scp, void *wsp,
                           size_t size, tprio_t prio) {
