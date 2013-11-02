@@ -154,7 +154,6 @@ void stm32_clock_init(void) {
      Trim fields are not altered from reset values.*/
   RCC->CFGR  = 0;
   RCC->ICSCR = (RCC->ICSCR & ~STM32_MSIRANGE_MASK) | STM32_MSIRANGE;
-  RCC->CSR   = RCC_CSR_RMVF;
   RCC->CR    = RCC_CR_MSION;
   while ((RCC->CR & RCC_CR_MSIRDY) == 0)
     ;                           /* Waits until MSI is stable.               */
