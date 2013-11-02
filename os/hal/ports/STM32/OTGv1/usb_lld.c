@@ -112,11 +112,15 @@ static const stm32_otg_params_t hsparams = {
 static void otg_core_reset(USBDriver *usbp) {
   stm32_otg_t *otgp = usbp->otg;
 
+  halPolledDelay(32);
+
   /* Core reset and delay of at least 3 PHY cycles.*/
   otgp->GRSTCTL = GRSTCTL_CSRST;
   while ((otgp->GRSTCTL & GRSTCTL_CSRST) != 0)
     ;
-  osalSysPolledDelayX(12);
+
+  halPolledDelay(12);
+
   /* Wait AHB idle condition.*/
   while ((otgp->GRSTCTL & GRSTCTL_AHBIDL) == 0)
     ;
