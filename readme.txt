@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed STM32 OTG-FS wrong upper memory limit (bug #437)(backported
+  to 2.6.2).
 - FIX: Fixed timing issue in the STM32 OTGv1 USB driver (bug #436)(backported
   to 2.6.2).
 - FIX: Fixed STM32L1 remove reset flag (bug #435)(backported to 2.6.2).
