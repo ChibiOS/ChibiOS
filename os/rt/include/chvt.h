@@ -152,7 +152,6 @@ struct virtual_timer {
 extern "C" {
 #endif
   void _vt_init(void);
-  bool chVTIsTimeWithinX(systime_t time, systime_t start, systime_t end);
   void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
                   vtfunc_t vtfunc, void *par);
   void chVTDoResetI(virtual_timer_t *vtp);
@@ -219,6 +218,40 @@ static inline systime_t chVTGetSystemTime(void) {
   systime = chVTGetSystemTimeX();
   chSysUnlock();
   return systime;
+}
+
+/**
+ * @brief   Returns the elapsed time since the specified start time.
+ *
+ * @param[in] start     start time
+ * @return              The elapsed time.
+ *
+ * @xclass
+ */
+static inline systime_t chVTTimeElapsedSinceX(systime_t start) {
+
+  return chVTGetSystemTimeX() - start;
+}
+
+/**
+ * @brief   Checks if the specified time is within the specified time window.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ * @note    This function can be called from any context.
+ *
+ * @param[in] time      the time to be verified
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @xclass
+ */
+static inline bool chVTIsTimeWithinX(systime_t time,
+                                     systime_t start,
+                                     systime_t end) {
+
+  return (bool)(time - start < end - start);
 }
 
 /**

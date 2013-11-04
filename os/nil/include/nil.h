@@ -720,6 +720,23 @@ typedef struct {
 #endif
 
 /**
+ * @brief   Checks if the specified time is within the specified time window.
+ * @note    When start==end then the function returns always true because the
+ *          whole time range is specified.
+ * @note    This function can be called from any context.
+ *
+ * @param[in] time      the time to be verified
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @xclass
+ */
+#define chVTIsTimeWithinX(time, start, end)                                 \
+  ((bool)((time) - (start) < (end) - (start)))
+
+/**
  * @brief   Condition assertion.
  * @details If the condition check fails then the kernel panics with a
  *          message and halts.
@@ -765,7 +782,6 @@ extern "C" {
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
-  bool chVTIsTimeWithinX(systime_t time, systime_t start, systime_t end);
   msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time);
   msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time);
   void chSemSignal(semaphore_t *sp);
