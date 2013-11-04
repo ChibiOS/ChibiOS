@@ -143,7 +143,7 @@ typedef struct {
  *
  * @api
  */
-#define chnWrite(ip, bp, n) streamSequentialStreamWrite(ip, bp, n)
+#define chnWrite(ip, bp, n) streamWrite(ip, bp, n)
 
 /**
  * @brief   Channel blocking write with timeout.
@@ -177,7 +177,7 @@ typedef struct {
  *
  * @api
  */
-#define chnRead(ip, bp, n) streamSequentialStreamRead(ip, bp, n)
+#define chnRead(ip, bp, n) streamRead(ip, bp, n)
 
 /**
  * @brief   Channel blocking read with timeout.

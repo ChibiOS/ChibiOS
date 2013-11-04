@@ -90,6 +90,8 @@ typedef struct {
   _base_sequential_stream_data
 } BaseSequentialStream;
 
+#endif /* !defined(_CHIBIOS_RT_)*/
+
 /**
  * @name    Macro Functions (BaseSequentialStream)
  * @{
@@ -107,7 +109,7 @@ typedef struct {
  *
  * @api
  */
-#define streamSequentialStreamWrite(ip, bp, n) ((ip)->vmt->write(ip, bp, n))
+#define streamWrite(ip, bp, n) ((ip)->vmt->write(ip, bp, n))
 
 /**
  * @brief   Sequential Stream read.
@@ -122,7 +124,7 @@ typedef struct {
  *
  * @api
  */
-#define streamSequentialStreamRead(ip, bp, n) ((ip)->vmt->read(ip, bp, n))
+#define streamRead(ip, bp, n) ((ip)->vmt->read(ip, bp, n))
 
 /**
  * @brief   Sequential Stream blocking byte write.
@@ -138,7 +140,7 @@ typedef struct {
  *
  * @api
  */
-#define streamSequentialStreamPut(ip, b) ((ip)->vmt->put(ip, b))
+#define streamPut(ip, b) ((ip)->vmt->put(ip, b))
 
 /**
  * @brief   Sequential Stream blocking byte read.
@@ -152,10 +154,8 @@ typedef struct {
  *
  * @api
  */
-#define streamSequentialStreamGet(ip) ((ip)->vmt->get(ip))
+#define streamGet(ip) ((ip)->vmt->get(ip))
 /** @} */
-
-#endif /* !defined(_CHIBIOS_RT_)*/
 
 #endif /* _HAL_STREAMS_H_ */
 
