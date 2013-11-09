@@ -380,12 +380,8 @@ void icu_lld_init(void) {
   A2_3 = 0U;
 
   /* eMIOSx channels initially all not in use.*/
-#if SPC5_HAS_EMIOS0
   reset_emios0_active_channels();
-#endif
-#if SPC5_HAS_EMIOS1
   reset_emios1_active_channels();
-#endif
 
 #if SPC5_ICU_USE_EMIOS0_CH0
   /* Driver initialization.*/
@@ -493,14 +489,11 @@ void icu_lld_init(void) {
  */
 void icu_lld_start(ICUDriver *icup) {
 
-#if SPC5_HAS_EMIOS0
-  chDbgAssert(get_emios0_active_channels() < 25, "icu_lld_start(), #1",
+  chDbgAssert(get_emios0_active_channels() < 28, "icu_lld_start(), #1",
                 "too many channels");
-#endif
-#if SPC5_HAS_EMIOS1
-  chDbgAssert(get_emios1_active_channels() < 25, "icu_lld_start(), #2",
+
+  chDbgAssert(get_emios1_active_channels() < 28, "icu_lld_start(), #2",
                 "too many channels");
-#endif
 
   if (icup->state == ICU_STOP) {
     /* Enables the peripheral.*/
@@ -547,12 +540,12 @@ void icu_lld_start(ICUDriver *icup) {
 
     /* Set eMIOS0 Clock.*/
 #if SPC5_ICU_USE_EMIOS0
-    active_emios0_clock(icup, NULL);
+    icu_active_emios0_clock(icup);
 #endif
 
     /* Set eMIOS1 Clock.*/
 #if SPC5_ICU_USE_EMIOS1
-    active_emios1_clock(icup, NULL);
+    icu_active_emios1_clock(icup);
 #endif
 
   }
@@ -570,7 +563,7 @@ void icu_lld_start(ICUDriver *icup) {
   chDbgAssert((psc <= 0xFFFF) &&
               (((psc) * icup->config->frequency) == icup->clock) &&
               ((psc == 1) || (psc == 2) || (psc == 3) || (psc == 4)),
-              "icu_lld_start(), #3", "invalid frequency");
+              "icu_lld_start(), #1", "invalid frequency");
 
   icup->emiosp->CH[icup->ch_number].CCR.B.UCPEN = 0;
   icup->emiosp->CH[icup->ch_number].CCR.R |=
@@ -605,14 +598,10 @@ void icu_lld_start(ICUDriver *icup) {
  */
 void icu_lld_stop(ICUDriver *icup) {
 
-#if SPC5_HAS_EMIOS0
-  chDbgAssert(get_emios0_active_channels() < 25, "icu_lld_stop(), #1",
+  chDbgAssert(get_emios0_active_channels() < 28, "icu_lld_stop(), #1",
               "too many channels");
-#endif
-#if SPC5_HAS_EMIOS1
-  chDbgAssert(get_emios1_active_channels() < 25, "icu_lld_stop(), #2",
+  chDbgAssert(get_emios1_active_channels() < 28, "icu_lld_stop(), #2",
               "too many channels");
-#endif
 
   if (icup->state == ICU_READY) {
 
@@ -700,12 +689,12 @@ void icu_lld_stop(ICUDriver *icup) {
 
     /* eMIOS0 clock deactivation.*/
 #if SPC5_ICU_USE_EMIOS0
-    deactive_emios0_clock(icup, NULL);
+    icu_deactive_emios0_clock(icup);
 #endif
 
     /* eMIOS1 clock deactivation.*/
 #if SPC5_ICU_USE_EMIOS1
-    deactive_emios1_clock(icup, NULL);
+    icu_deactive_emios1_clock(icup);
 #endif
   }
 }
