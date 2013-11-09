@@ -51,20 +51,13 @@ static uint32_t emios1_active_channels;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if SPC5_HAS_EMIOS0
 void reset_emios0_active_channels() {
   emios0_active_channels = 0;
 }
 
-void reset_emios1_active_channels() {
-  emios1_active_channels = 0;
-}
-
 uint32_t get_emios0_active_channels() {
   return emios0_active_channels;
-}
-
-uint32_t get_emios1_active_channels() {
-  return emios1_active_channels;
 }
 
 void increase_emios0_active_channels() {
@@ -73,14 +66,6 @@ void increase_emios0_active_channels() {
 
 void decrease_emios0_active_channels() {
   emios0_active_channels--;
-}
-
-void increase_emios1_active_channels() {
-  emios1_active_channels++;
-}
-
-void decrease_emios1_active_channels() {
-  emios1_active_channels--;
 }
 
 #if HAL_USE_ICU
@@ -99,6 +84,16 @@ void icu_active_emios0_clock(ICUDriver *icup) {
 
     icup->emiosp->UCDIS.R = 0xFFFFFFFF;
 
+  }
+}
+
+void icu_deactive_emios0_clock(ICUDriver *icup) {
+  /* If it is the last active channels then the eMIOS0 is disabled.*/
+  if (emios0_active_channels == 0) {
+    if (icup->emiosp->UCDIS.R == 0) {
+      halSPCSetPeripheralClockMode(SPC5_EMIOS0_PCTL,
+                                   SPC5_EMIOS0_STOP_PCTL);
+    }
   }
 }
 #endif
@@ -121,7 +116,35 @@ void pwm_active_emios0_clock(PWMDriver *pwmp) {
 
   }
 }
+
+void pwm_deactive_emios0_clock(PWMDriver *pwmp) {
+  /* If it is the last active channels then the eMIOS0 is disabled.*/
+  if (emios0_active_channels == 0) {
+    if (pwmp->emiosp->UCDIS.R == 0) {
+      halSPCSetPeripheralClockMode(SPC5_EMIOS0_PCTL,
+                                   SPC5_EMIOS0_STOP_PCTL);
+    }
+  }
+}
 #endif
+#endif
+
+#if SPC5_HAS_EMIOS1
+void reset_emios1_active_channels() {
+  emios1_active_channels = 0;
+}
+
+uint32_t get_emios1_active_channels() {
+  return emios1_active_channels;
+}
+
+void increase_emios1_active_channels() {
+  emios1_active_channels++;
+}
+
+void decrease_emios1_active_channels() {
+  emios1_active_channels--;
+}
 
 #if HAL_USE_ICU
 void icu_active_emios1_clock(ICUDriver *icup) {
@@ -139,6 +162,16 @@ void icu_active_emios1_clock(ICUDriver *icup) {
 
     icup->emiosp->UCDIS.R = 0xFFFFFFFF;
 
+  }
+}
+
+void icu_deactive_emios1_clock(ICUDriver *icup) {
+  /* If it is the last active channels then the eMIOS1 is disabled.*/
+  if (emios1_active_channels == 0) {
+    if (icup->emiosp->UCDIS.R == 0) {
+      halSPCSetPeripheralClockMode(SPC5_EMIOS1_PCTL,
+                                   SPC5_EMIOS1_STOP_PCTL);
+    }
   }
 }
 #endif
@@ -161,45 +194,7 @@ void pwm_active_emios1_clock(PWMDriver *pwmp) {
 
   }
 }
-#endif
 
-#if HAL_USE_ICU
-void icu_deactive_emios0_clock(ICUDriver *icup) {
-  /* If it is the last active channels then the eMIOS0 is disabled.*/
-  if (emios0_active_channels == 0) {
-    if (icup->emiosp->UCDIS.R == 0) {
-      halSPCSetPeripheralClockMode(SPC5_EMIOS0_PCTL,
-                                   SPC5_EMIOS0_STOP_PCTL);
-    }
-  }
-}
-#endif
-
-#if HAL_USE_PWM
-void pwm_deactive_emios0_clock(PWMDriver *pwmp) {
-  /* If it is the last active channels then the eMIOS0 is disabled.*/
-  if (emios0_active_channels == 0) {
-    if (pwmp->emiosp->UCDIS.R == 0) {
-      halSPCSetPeripheralClockMode(SPC5_EMIOS0_PCTL,
-                                   SPC5_EMIOS0_STOP_PCTL);
-    }
-  }
-}
-#endif
-
-#if HAL_USE_ICU
-void icu_deactive_emios1_clock(ICUDriver *icup) {
-  /* If it is the last active channels then the eMIOS1 is disabled.*/
-  if (emios1_active_channels == 0) {
-    if (icup->emiosp->UCDIS.R == 0) {
-      halSPCSetPeripheralClockMode(SPC5_EMIOS1_PCTL,
-                                   SPC5_EMIOS1_STOP_PCTL);
-    }
-  }
-}
-#endif
-
-#if HAL_USE_PWM
 void pwm_deactive_emios1_clock(PWMDriver *pwmp) {
   /* If it is the last active channels then the eMIOS1 is disabled.*/
   if (emios1_active_channels == 0) {
@@ -209,6 +204,7 @@ void pwm_deactive_emios1_clock(PWMDriver *pwmp) {
     }
   }
 }
+#endif
 #endif
 
 /*===========================================================================*/
