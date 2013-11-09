@@ -702,7 +702,7 @@ void icu_lld_start(ICUDriver *icup) {
 
     /* Set eMIOS Clock.*/
 #if SPC5_ICU_USE_EMIOS
-    active_emios_clock(icup, NULL);
+    icu_active_emios_clock(icup);
 #endif
 
   }

@@ -66,34 +66,43 @@ void decrease_emios_active_channels() {
   emios_active_channels--;
 }
 
-void active_emios_clock(ICUDriver *icup, PWMDriver *pwmp) {
+#if HAL_USE_ICU
+void icu_active_emios_clock(ICUDriver *icup) {
   /* If this is the first Channel activated then the eMIOS0 is enabled.*/
   if (emios_active_channels == 1) {
     SPC5_EMIOS_ENABLE_CLOCK();
 
     /* Disable all unified channels.*/
-    if (icup != NULL) {
-      icup->emiosp->MCR.B.GPREN = 0;
-      icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS_GPRE_VALUE);
-      icup->emiosp->MCR.R |= EMIOSMCR_GPREN;
+    icup->emiosp->MCR.B.GPREN = 0;
+    icup->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS_GPRE_VALUE);
+    icup->emiosp->MCR.R |= EMIOSMCR_GPREN;
 
-      icup->emiosp->MCR.B.GTBE = 1U;
+    icup->emiosp->MCR.B.GTBE = 1U;
 
-      icup->emiosp->UCDIS.R = 0xFFFFFFFF;
-
-    } else if (pwmp != NULL) {
-      pwmp->emiosp->MCR.B.GPREN = 0;
-      pwmp->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS_GPRE_VALUE);
-      pwmp->emiosp->MCR.R |= EMIOSMCR_GPREN;
-
-      pwmp->emiosp->MCR.B.GTBE = 1U;
-
-      pwmp->emiosp->UCDIS.R = 0xFFFFFFFF;
-
-    }
+    icup->emiosp->UCDIS.R = 0xFFFFFFFF;
 
   }
 }
+#endif
+
+#if HAL_USE_PWM
+void pwm_active_emios_clock(PWMDriver *pwmp) {
+  /* If this is the first Channel activated then the eMIOS0 is enabled.*/
+  if (emios_active_channels == 1) {
+    SPC5_EMIOS_ENABLE_CLOCK();
+
+    /* Disable all unified channels.*/
+    pwmp->emiosp->MCR.B.GPREN = 0;
+    pwmp->emiosp->MCR.R = EMIOSMCR_GPRE(SPC5_EMIOS_GPRE_VALUE);
+    pwmp->emiosp->MCR.R |= EMIOSMCR_GPREN;
+
+    pwmp->emiosp->MCR.B.GTBE = 1U;
+
+    pwmp->emiosp->UCDIS.R = 0xFFFFFFFF;
+
+  }
+}
+#endif
 
 void deactive_emios_clock() {
   /* If it is the last active channels then the eMIOS0 is disabled.*/

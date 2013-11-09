@@ -105,7 +105,12 @@ void reset_emios_active_channels(void);
 uint32_t get_emios_active_channels(void);;
 void increase_emios_active_channels(void);
 void decrease_emios_active_channels(void);
-void active_emios_clock(ICUDriver *icup, PWMDriver *pwmp);
+#if HAL_USE_ICU
+void icu_active_emios_clock(ICUDriver *icup);
+#endif
+#if HAL_USE_PWM
+void pwm_active_emios_clock(PWMDriver *pwmp);
+#endif
 void deactive_emios_clock(void);
 
 #endif /* HAL_USE_ICU || HAL_USE_PWM */

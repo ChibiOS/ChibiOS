@@ -686,7 +686,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
     /* Set eMIOS Clock.*/
 #if SPC5_PWM_USE_EMIOS
-    active_emios_clock(NULL, pwmp);
+    pwm_active_emios_clock(pwmp);
 #endif
 
   }
