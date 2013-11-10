@@ -154,8 +154,6 @@ void stm32_clock_init(void) {
   /* PWR initialization.*/
 #if defined(STM32F4XX) || defined(__DOXYGEN__)
   PWR->CR = STM32_VOS;
-  while ((PWR->CSR & PWR_CSR_VOSRDY) == 0)
-    ;                           /* Waits until power regulator is stable.   */
 #else
   PWR->CR = 0;
 #endif
@@ -191,16 +189,37 @@ void stm32_clock_init(void) {
   RCC->PLLCFGR = STM32_PLLQ | STM32_PLLSRC | STM32_PLLP | STM32_PLLN |
                  STM32_PLLM;
   RCC->CR |= RCC_CR_PLLON;
+
+  /* Synchronization with voltage regulator stabilization.*/
+#if defined(STM32F4XX)
+  while ((PWR->CSR & PWR_CSR_VOSRDY) == 0)
+    ;                           /* Waits until power regulator is stable.   */
+
+#if STM32_OVERDRIVE_REQUIRED
+  /* Overdrive activation performed after activating the PLL in order to save
+     time as recommended in RM in "Entering Over-drive mode" paragraph.*/
+  PWR->CR |= PWR_CR_ODEN;
+  while (!(PWR->CSR & PWR_CSR_ODRDY))
+      ;
+  PWR->CR |= PWR_CR_ODSWEN;
+  while (!(PWR->CSR & PWR_CSR_ODSWRDY))
+      ;
+#endif /* STM32_OVERDRIVE_REQUIRED */
+#endif /* defined(STM32F4XX) */
+
+  /* Waiting for PLL lock.*/
   while (!(RCC->CR & RCC_CR_PLLRDY))
-    ;                           /* Waits until PLL is stable.               */
-#endif
+    ;
+#endif /* STM32_OVERDRIVE_REQUIRED */
 
 #if STM32_ACTIVATE_PLLI2S
   /* PLLI2S activation.*/
   RCC->PLLI2SCFGR = STM32_PLLI2SR | STM32_PLLI2SN;
   RCC->CR |= RCC_CR_PLLI2SON;
+
+  /* Waiting for PLL lock.*/
   while (!(RCC->CR & RCC_CR_PLLI2SRDY))
-    ;                           /* Waits until PLLI2S is stable.            */
+    ;
 #endif
 
   /* Other clock-related settings (dividers, MCO etc).*/

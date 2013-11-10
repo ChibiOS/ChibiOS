@@ -80,10 +80,14 @@
 - FIX: Fixed duplicate STM32_GPT_USE_TIM8 definition in some mcuconf.h files
   (bug #431).
 - FIX: Fixed possible unalignment in GCC Cortex-M scatter files (bug #430).
-- NEW: Improved time range check in the kernel, new API chTimeElapsedSince()
-  introduced. The API chTimeIsWithin() is now a macro.
 - NEW: Added a new function shellExit() to the shell. It allows to exit the
   shell from any command handler.
+- NEW: Added support for STM32F401/STM32F42x/STM32F43x devices.
+- NEW: Improved time range check in the kernel, new API chTimeElapsedSince()
+  introduced. The API chTimeIsWithin() is now a macro.
+- NEW: Added support for STM32F0xx platform in RTCv2 driver.
+- NEW: Improvements to the STM32F4xx backup domain initialization.
+- NEW: Added support for STM32F4xx backup RAM.
 
 *** 2.6.1 ***
 - FIX: Fixed PAL driver documentation error (bug #427).
