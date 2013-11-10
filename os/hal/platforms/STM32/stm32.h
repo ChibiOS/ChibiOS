@@ -61,7 +61,8 @@
 #elif defined(STM32F37X)
 #include "stm32f37x.h"
 
-#elif defined(STM32F4XX)
+#elif defined(STM32F401xx)     || defined(STM32F40_41xxx)  ||               \
+      defined(STM32F427_437xx) || defined(STM32F429_439xx)
 #include "stm32f4xx.h"
 
 #elif defined(STM32L1XX_MD)
