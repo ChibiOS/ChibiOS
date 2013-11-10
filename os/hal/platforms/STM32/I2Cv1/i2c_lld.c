@@ -302,7 +302,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   case I2C_EV5_MASTER_MODE_SELECT:
     if ((i2cp->addr >> 8) > 0) { 
       /* 10-bit address: 1 1 1 1 0 X X R/W */
-      dp->DR = 0xF0 | (0x1 & i2cp->addr) | (0x3 & (i2cp->addr >> 9));
+      dp->DR = 0xF0 | (0x6 & (i2cp->addr >> 8)) | (0x1 & i2cp->addr);
     } else {
       dp->DR = i2cp->addr;
     }
