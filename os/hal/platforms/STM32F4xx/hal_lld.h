@@ -65,7 +65,7 @@
 #elif defined(STM32F40_41xxx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F407/F417 High Performance with DSP and FPU"
 #define STM32F4XX
-#elif defined(STM32F401) || defined(__DOXYGEN__)
+#elif defined(STM32F401xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F401 High Performance with DSP and FPU"
 #define STM32F4XX
 #elif defined(STM32F2XX) || defined(__DOXYGEN__)
@@ -191,7 +191,7 @@
 #define STM32_SPII2S_MAX        42000000
 #endif /* STM32F40_41xxx */
 
-#if defined(STM32F401) || defined(__DOXYGEN__)
+#if defined(STM32F401xx) || defined(__DOXYGEN__)
 #define STM32_SYSCLK_MAX        84000000
 #define STM32_HSECLK_MAX        26000000
 #define STM32_HSECLK_BYP_MAX    50000000
@@ -416,10 +416,12 @@
 #define STM32_HAS_GPIOC         TRUE
 #define STM32_HAS_GPIOD         TRUE
 #define STM32_HAS_GPIOE         TRUE
+#define STM32_HAS_GPIOH         TRUE
+#if !defined(STM32F401xx)
 #define STM32_HAS_GPIOF         TRUE
 #define STM32_HAS_GPIOG         TRUE
-#define STM32_HAS_GPIOH         TRUE
 #define STM32_HAS_GPIOI         TRUE
+#endif
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1          TRUE
@@ -1000,7 +1002,7 @@
 #error "invalid VDD voltage specified"
 #endif
 
-#elif defined(STM32F401)
+#elif defined(STM32F401xx)
 #if (STM32_VDD >= 270) && (STM32_VDD <= 360)
 #define STM32_0WS_THRESHOLD         30000000
 #define STM32_1WS_THRESHOLD         60000000
@@ -1345,7 +1347,7 @@
 #endif
 #define STM32_OVERDRIVE_REQUIRED    FALSE
 
-#elif defined(STM32F401)
+#elif defined(STM32F401xx)
 #if STM32_SYSCLK <= 60000000
 #define STM32_VOS                   STM32_VOS_SCALE3
 #else
