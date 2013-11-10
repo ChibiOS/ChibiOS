@@ -158,11 +158,15 @@ void stm32_clock_init(void) {
   PWR->CR = 0;
 #endif
 
-  /* Initial clocks setup and wait for HSI stabilization, the MSI clock is
-     always enabled because it is the fallback clock when PLL the fails.*/
-  RCC->CR |= RCC_CR_HSION;
-  while ((RCC->CR & RCC_CR_HSIRDY) == 0)
-    ;                           /* Waits until HSI is stable.               */
+  /* HSI setup, it enforces the reset situation in order to handle possible
+     problems with JTAG probes and re-initializations.*/
+  RCC->CR |= RCC_CR_HSION;                  /* Make sure HSI is ON.         */
+  while (!(RCC->CR & RCC_CR_HSIRDY))
+    ;                                       /* Wait until HSI is stable.    */
+  RCC->CR &= RCC_CR_HSITRIM | RCC_CR_HSION; /* CR Reset value.              */
+  RCC->CFGR = 0;                            /* CFGR reset value.            */
+  while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI)
+    ;                                       /* Waits until HSI is selected. */
 
 #if STM32_HSE_ENABLED
   /* HSE activation.*/
@@ -223,8 +227,8 @@ void stm32_clock_init(void) {
 #endif
 
   /* Other clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR |= STM32_MCO2PRE | STM32_MCO2SEL | STM32_MCO1PRE | STM32_MCO1SEL |
-               STM32_RTCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
+  RCC->CFGR = STM32_MCO2PRE | STM32_MCO2SEL | STM32_MCO1PRE | STM32_MCO1SEL |
+              STM32_RTCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
 
   /* Flash setup.*/
 #if defined(STM32_USE_REVISION_A_FIX)
