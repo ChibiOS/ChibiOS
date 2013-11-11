@@ -136,6 +136,7 @@ static const ShellConfig shell_cfg1 = {
  * Application entry point.
  */
 int main(void) {
+  static THD_WORKING_AREA(wa_usb_lld_pump, STM32_USB_OTG_THREAD_STACK_SIZE);
   thread_t *shelltp = NULL;
 
   /*
@@ -164,6 +165,8 @@ int main(void) {
    * Note, a delay is inserted in order to not have to disconnect the cable
    * after a reset.
    */
+  chThdCreateStatic(wa_usb_lld_pump, sizeof(wa_usb_lld_pump),
+                    STM32_USB_OTG_THREAD_PRIO, usb_lld_pump, serusbcfg.usbp);
   usbDisconnectBus(serusbcfg.usbp);
   chThdSleepMilliseconds(1000);
   usbStart(serusbcfg.usbp, &usbcfg);
