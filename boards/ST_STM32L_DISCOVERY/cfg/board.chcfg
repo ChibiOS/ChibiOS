@@ -11,9 +11,11 @@
   <board_id>ST_STM32L_DISCOVERY</board_id>
   <board_functions></board_functions>
   <clocks
-    HSEFrequency="0"
-    HSEBypass="true"
-    LSEFrequency="32768" />
+     HSEFrequency="0"
+     HSEBypass="true"
+     LSEFrequency="32768"
+     LSEBypass="false"
+  />
   <ports>
     <GPIOA>
       <pin0
