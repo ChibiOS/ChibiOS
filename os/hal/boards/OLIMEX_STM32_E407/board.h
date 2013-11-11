@@ -52,9 +52,9 @@
 #define STM32_VDD                   330
 
 /*
- * MCU type as defined in the ST header file stm32f4xx.h.
+ * MCU type as defined in the ST header.
  */
-#define STM32F4XX
+#define STM32F401xx
 
 /*
  * IO pins assignments.

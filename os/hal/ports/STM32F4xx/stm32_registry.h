@@ -25,10 +25,6 @@
 #ifndef _STM32_REGISTRY_H_
 #define _STM32_REGISTRY_H_
 
-#if defined(STM32F40XX) || defined(STM32F427X)
-#define STM32F4XX
-#endif
-
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
