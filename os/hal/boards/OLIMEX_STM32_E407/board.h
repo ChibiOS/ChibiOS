@@ -44,7 +44,6 @@
 #define STM32_HSECLK                12000000
 #endif
 
-
 /*
  * Board voltages.
  * Required for performance limits calculation.
@@ -54,7 +53,7 @@
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32F401xx
+#define STM32F40_41xxx
 
 /*
  * IO pins assignments.

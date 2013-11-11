@@ -40,7 +40,6 @@
 #define STM32_HSECLK                8000000
 #endif
 
-
 /*
  * Board voltages.
  * Required for performance limits calculation.
