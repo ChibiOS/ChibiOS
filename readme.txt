@@ -91,6 +91,8 @@
 *** 2.7.0 ***
 - FIX: Fixed UART4/5-related bugs in STM32 USARTv1 UART driver (bug #440)
   (backported to 2.6.2).
+- FIX: Fixed race condition in STM32 DMA interrupt (bug #439)(backported
+  to 2.6.2).
 - FIX: Fixed STM32 OTG-FS wrong upper memory limit (bug #437)(backported
   to 2.6.2).
 - FIX: Fixed timing issue in the STM32 OTGv1 USB driver (bug #436)(backported
