@@ -88,6 +88,8 @@
 - NEW: Added support for STM32F0xx platform in RTCv2 driver.
 - NEW: Improvements to the STM32F4xx backup domain initialization.
 - NEW: Added support for STM32F4xx backup RAM.
+- NEW: Added support of UART4 and UART5 (STM32F4xx and STM32F2xx platforms)
+  (feature request #28).
 
 *** 2.6.1 ***
 - FIX: Fixed PAL driver documentation error (bug #427).
