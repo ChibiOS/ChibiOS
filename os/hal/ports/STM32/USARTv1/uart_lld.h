@@ -80,7 +80,7 @@
  * @details If set to @p TRUE the support for UART5 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(STM32_UART_USE_UART4) || defined(__DOXYGEN__)
+#if !defined(STM32_UART_USE_UART5) || defined(__DOXYGEN__)
 #define STM32_UART_USE_UART5                FALSE
 #endif
 
@@ -222,24 +222,24 @@
 #endif
 
 #if STM32_UART_USE_UART4 
-  #if !STM32_HAS_UART4
-  #error "UART4 not present in the selected device"
-  #endif
-
-  #if !defined(STM32F2XX) && !defined(STM32F4XX)
-  #error "UART4 DMA access not supported in this platform"
-  #endif
+#if !STM32_HAS_UART4
+#error "UART4 not present in the selected device"
 #endif
+
+#if !defined(STM32F2XX) && !defined(STM32F4XX)
+#error "UART4 DMA access not supported in this platform"
+#endif
+#endif /* STM32_UART_USE_UART4 */
 
 #if STM32_UART_USE_UART5
-  #if !STM32_HAS_UART5
-  #error "UART5 not present in the selected device"
-  #endif
-
-  #if !defined(STM32F2XX) && !defined(STM32F4XX)
-  #error "UART5 DMA access not supported in this platform"
-  #endif
+#if !STM32_HAS_UART5
+#error "UART5 not present in the selected device"
 #endif
+
+#if !defined(STM32F2XX) && !defined(STM32F4XX)
+#error "UART5 DMA access not supported in this platform"
+#endif
+#endif /* STM32_UART_USE_UART5 */
 
 #if STM32_UART_USE_USART6 && !STM32_HAS_USART6
 #error "USART6 not present in the selected device"
@@ -383,15 +383,33 @@
 #endif
 
 #if STM32_UART_USE_UART4 &&                                                 \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_UART4_RX_DMA_STREAM,                  \
+                           STM32_UART4_RX_DMA_MSK)
+#error "invalid DMA stream associated to UART4 RX"
+#endif
+
+#if STM32_UART_USE_UART4 &&                                                 \
     !STM32_DMA_IS_VALID_ID(STM32_UART_UART4_TX_DMA_STREAM,                  \
                            STM32_UART4_TX_DMA_MSK)
 #error "invalid DMA stream associated to UART4 TX"
 #endif
 
 #if STM32_UART_USE_UART5 &&                                                 \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_UART5_RX_DMA_STREAM,                  \
+                           STM32_UART5_RX_DMA_MSK)
+#error "invalid DMA stream associated to UART5 RX"
+#endif
+
+#if STM32_UART_USE_UART5 &&                                                 \
     !STM32_DMA_IS_VALID_ID(STM32_UART_UART5_TX_DMA_STREAM,                  \
                            STM32_UART5_TX_DMA_MSK)
 #error "invalid DMA stream associated to UART5 TX"
+#endif
+
+#if STM32_UART_USE_USART6 &&                                                \
+    !STM32_DMA_IS_VALID_ID(STM32_UART_USART6_RX_DMA_STREAM,                 \
+                           STM32_USART6_RX_DMA_MSK)
+#error "invalid DMA stream associated to USART6 RX"
 #endif
 
 #if STM32_UART_USE_USART6 &&                                                \

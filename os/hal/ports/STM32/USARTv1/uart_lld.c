@@ -78,6 +78,14 @@
   STM32_DMA_GETCHANNEL(STM32_UART_USART6_TX_DMA_STREAM,                     \
                        STM32_USART6_TX_DMA_CHN)
 
+#define STM32_UART45_CR2_CHECK_MASK                                         \
+  (USART_CR2_STOP_0 | USART_CR2_CLKEN | USART_CR2_CPOL | USART_CR2_CPHA |   \
+   USART_CR2_LBCL)
+
+#define STM32_UART45_CR3_CHECK_MASK                                         \
+  (USART_CR3_CTSIE | USART_CR3_CTSE | USART_CR3_RTSE | USART_CR3_SCEN |     \
+   USART_CR3_NACK)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -571,6 +579,12 @@ void uart_lld_start(UARTDriver *uartp) {
 #if STM32_UART_USE_UART4
     if (&UARTD4 == uartp) {
       bool b;
+
+      chDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+                  "specified invalid bits in UART4 CR2 register settings");
+      chDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+                  "specified invalid bits in UART4 CR3 register settings");
+
       b = dmaStreamAllocate(uartp->dmarx,
                             STM32_UART_UART4_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
@@ -591,6 +605,12 @@ void uart_lld_start(UARTDriver *uartp) {
 #if STM32_UART_USE_UART5
     if (&UARTD5 == uartp) {
       bool b;
+
+      chDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+                  "specified invalid bits in UART5 CR2 register settings");
+      chDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+                  "specified invalid bits in UART5 CR3 register settings");
+
       b = dmaStreamAllocate(uartp->dmarx,
                             STM32_UART_UART5_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
