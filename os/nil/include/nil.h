@@ -720,6 +720,17 @@ typedef struct {
 #endif
 
 /**
+ * @brief   Returns the elapsed time since the specified start time.
+ *
+ * @param[in] start     start time
+ * @return              The elapsed time.
+ *
+ * @xclass
+ */
+#define chVTTimeElapsedSinceX(start)                                        \
+  ((systime_t)(chVTGetSystemTimeX() - start))
+
+/**
  * @brief   Checks if the specified time is within the specified time window.
  * @note    When start==end then the function returns always true because the
  *          whole time range is specified.
