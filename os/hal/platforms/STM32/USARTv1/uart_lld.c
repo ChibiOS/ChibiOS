@@ -59,16 +59,16 @@
   STM32_DMA_GETCHANNEL(STM32_UART_UART4_RX_DMA_STREAM,                      \
                        STM32_UART4_RX_DMA_CHN)
 
-#define UART4_TX_DMA_CHANNEL                                               \
-  STM32_DMA_GETCHANNEL(STM32_UART_UART4_TX_DMA_STREAM,                     \
+#define UART4_TX_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART4_TX_DMA_STREAM,                      \
                        STM32_UART4_TX_DMA_CHN)
 
 #define UART5_RX_DMA_CHANNEL                                                \
   STM32_DMA_GETCHANNEL(STM32_UART_UART5_RX_DMA_STREAM,                      \
                        STM32_UART5_RX_DMA_CHN)
 
-#define UART5_TX_DMA_CHANNEL                                               \
-  STM32_DMA_GETCHANNEL(STM32_UART_UART5_TX_DMA_STREAM,                     \
+#define UART5_TX_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_UART_UART5_TX_DMA_STREAM,                      \
                        STM32_UART5_TX_DMA_CHN)
 
 #define USART6_RX_DMA_CHANNEL                                               \
