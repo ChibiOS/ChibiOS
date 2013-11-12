@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** 2.4.6 ***
+- FIX: Fixed race condition in STM32 DMA interrupt (bug #439).
 - FIX: Fixed possible unalignment in GCC Cortex-M scatter files (bug #430).
 
 *** 2.4.5 ***
