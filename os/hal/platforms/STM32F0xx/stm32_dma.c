@@ -115,7 +115,7 @@ CH_IRQ_HANDLER(Vector64) {
   CH_IRQ_PROLOGUE();
 
   flags = (DMA1->ISR >> 0) & STM32_DMA_ISR_MASK;
-  DMA1->IFCR = STM32_DMA_ISR_MASK << 0;
+  DMA1->IFCR = flags << 0;
   if (dma_isr_redir[0].dma_func)
     dma_isr_redir[0].dma_func(dma_isr_redir[0].dma_param, flags);
 
@@ -135,7 +135,7 @@ CH_IRQ_HANDLER(Vector68) {
   /* Check on channel 2.*/
   flags = (DMA1->ISR >> 4) & STM32_DMA_ISR_MASK;
   if (flags & STM32_DMA_ISR_MASK) {
-    DMA1->IFCR = STM32_DMA_ISR_MASK << 4;
+    DMA1->IFCR = flags << 4;
     if (dma_isr_redir[1].dma_func)
       dma_isr_redir[1].dma_func(dma_isr_redir[1].dma_param, flags);
   }
@@ -143,7 +143,7 @@ CH_IRQ_HANDLER(Vector68) {
   /* Check on channel 3.*/
   flags = (DMA1->ISR >> 8) & STM32_DMA_ISR_MASK;
   if (flags & STM32_DMA_ISR_MASK) {
-    DMA1->IFCR = STM32_DMA_ISR_MASK << 8;
+    DMA1->IFCR = flags << 8;
     if (dma_isr_redir[2].dma_func)
       dma_isr_redir[2].dma_func(dma_isr_redir[2].dma_param, flags);
   }
@@ -164,7 +164,7 @@ CH_IRQ_HANDLER(Vector6C) {
   /* Check on channel 4.*/
   flags = (DMA1->ISR >> 12) & STM32_DMA_ISR_MASK;
   if (flags & STM32_DMA_ISR_MASK) {
-    DMA1->IFCR = STM32_DMA_ISR_MASK << 12;
+    DMA1->IFCR = flags << 12;
     if (dma_isr_redir[3].dma_func)
       dma_isr_redir[3].dma_func(dma_isr_redir[3].dma_param, flags);
   }
@@ -172,7 +172,7 @@ CH_IRQ_HANDLER(Vector6C) {
   /* Check on channel 5.*/
   flags = (DMA1->ISR >> 16) & STM32_DMA_ISR_MASK;
   if (flags & STM32_DMA_ISR_MASK) {
-    DMA1->IFCR = STM32_DMA_ISR_MASK << 16;
+    DMA1->IFCR = flags << 16;
     if (dma_isr_redir[4].dma_func)
       dma_isr_redir[4].dma_func(dma_isr_redir[4].dma_param, flags);
   }
