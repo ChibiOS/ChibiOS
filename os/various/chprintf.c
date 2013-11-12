@@ -13,8 +13,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 /*
-   Concepts and parts of this file have been contributed by Fabio Utzig.
+   Concepts and parts of this file have been contributed by Fabio Utzig,
+   chvprintf() added by Brent Roman.
  */
 
 /**
@@ -24,8 +26,6 @@
  * @addtogroup chprintf
  * @{
  */
-
-#include <stdarg.h>
 
 #include "ch.h"
 #include "chprintf.h"
@@ -86,7 +86,7 @@ static char *ftoa(char *p, double num) {
 
 /**
  * @brief   System formatted output function.
- * @details This function implements a minimal @p printf() like functionality
+ * @details This function implements a minimal @p vprintf()-like functionality
  *          with output on a @p BaseSequentialStream.
  *          The general parameters format is: %[-][width|*][.precision|*][l|L]p.
  *          The following parameter types (p) are supported:
@@ -104,9 +104,11 @@ static char *ftoa(char *p, double num) {
  *
  * @param[in] chp       pointer to a @p BaseSequentialStream implementing object
  * @param[in] fmt       formatting string
+ * @param[in] ap        list of parameters
+ *
+ * @api
  */
-void chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
-  va_list ap;
+void chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
   char *p, *s, c, filler;
   int i, precision, width;
   bool_t is_long, left_align;
@@ -118,13 +120,10 @@ void chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
   char tmpbuf[MAX_FILLER + 1];
 #endif
 
-  va_start(ap, fmt);
   while (TRUE) {
     c = *fmt++;
-    if (c == 0) {
-      va_end(ap);
+    if (c == 0)
       return;
-    }
     if (c != '%') {
       chSequentialStreamPut(chp, (uint8_t)c);
       continue;
