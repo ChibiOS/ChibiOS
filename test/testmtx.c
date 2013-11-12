@@ -399,6 +399,7 @@ static void mtx4_execute(void) {
   test_assert(11, chThdGetPriorityX() == p2, "wrong priority level");
   chSysLock();
   chMtxUnlockS();
+  chSchRescheduleS();
   chSysUnlock();
   test_assert(12, chThdGetPriorityX() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);

@@ -71,6 +71,13 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if CH_DBG_ENABLE_ASSERTS     || CH_DBG_ENABLE_CHECKS      ||               \
+    CH_DBG_ENABLE_STACK_CHECK || CH_DBG_SYSTEM_STATE_CHECK
+#define CH_DBG_ENABLED              TRUE
+#else
+#define CH_DBG_ENABLED              FALSE
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/

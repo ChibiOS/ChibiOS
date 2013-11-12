@@ -299,6 +299,14 @@ static inline void chSysUnlock(void) {
 
   _dbg_check_unlock();
   _stats_stop_measure_crit_thd();
+
+  /* The following condition can be triggered by the use of i-class functions
+     in a critical section not followed by a chSchResceduleS(), this means
+     that the current thread has a lower priority than the next thread in
+     the ready list.*/
+  chDbgAssert(ch.rlist.r_current->p_prio >= ch.rlist.r_queue.p_next->p_prio,
+              "priority violation, missing reschedule");
+
   port_unlock();
 }
 

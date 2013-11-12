@@ -102,6 +102,7 @@ static void sem1_execute(void) {
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+5, thread1, "A");
   chSysLock();
   chSemAddCounterI(&sem1, 2);
+  chSchRescheduleS();
   chSysUnlock();
   test_wait_threads();
   test_assert_lock(2, chSemGetCounterI(&sem1) == 1, "invalid counter");
