@@ -121,7 +121,7 @@ OSAL_IRQ_HANDLER(Vector6C) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA1->ISR >> 0) & STM32_DMA_ISR_MASK;
-  DMA1->IFCR = STM32_DMA_ISR_MASK << 0;
+  DMA1->IFCR = flags << 0;
   if (dma_isr_redir[0].dma_func)
     dma_isr_redir[0].dma_func(dma_isr_redir[0].dma_param, flags);
 
@@ -139,7 +139,7 @@ OSAL_IRQ_HANDLER(Vector70) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA1->ISR >> 4) & STM32_DMA_ISR_MASK;
-  DMA1->IFCR = STM32_DMA_ISR_MASK << 4;
+  DMA1->IFCR = flags << 4;
   if (dma_isr_redir[1].dma_func)
     dma_isr_redir[1].dma_func(dma_isr_redir[1].dma_param, flags);
 
@@ -157,7 +157,7 @@ OSAL_IRQ_HANDLER(Vector74) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA1->ISR >> 8) & STM32_DMA_ISR_MASK;
-  DMA1->IFCR = STM32_DMA_ISR_MASK << 8;
+  DMA1->IFCR = flags << 8;
   if (dma_isr_redir[2].dma_func)
     dma_isr_redir[2].dma_func(dma_isr_redir[2].dma_param, flags);
 
@@ -175,7 +175,7 @@ OSAL_IRQ_HANDLER(Vector78) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA1->ISR >> 12) & STM32_DMA_ISR_MASK;
-  DMA1->IFCR = STM32_DMA_ISR_MASK << 12;
+  DMA1->IFCR = flags << 12;
   if (dma_isr_redir[3].dma_func)
     dma_isr_redir[3].dma_func(dma_isr_redir[3].dma_param, flags);
 
@@ -193,7 +193,7 @@ OSAL_IRQ_HANDLER(Vector7C) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA1->ISR >> 16) & STM32_DMA_ISR_MASK;
-  DMA1->IFCR = STM32_DMA_ISR_MASK << 16;
+  DMA1->IFCR = flags << 16;
   if (dma_isr_redir[4].dma_func)
     dma_isr_redir[4].dma_func(dma_isr_redir[4].dma_param, flags);
 
@@ -211,7 +211,7 @@ OSAL_IRQ_HANDLER(Vector80) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA1->ISR >> 20) & STM32_DMA_ISR_MASK;
-  DMA1->IFCR = STM32_DMA_ISR_MASK << 20;
+  DMA1->IFCR = flags << 20;
   if (dma_isr_redir[5].dma_func)
     dma_isr_redir[5].dma_func(dma_isr_redir[5].dma_param, flags);
 
@@ -229,7 +229,7 @@ OSAL_IRQ_HANDLER(Vector84) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA1->ISR >> 24) & STM32_DMA_ISR_MASK;
-  DMA1->IFCR = STM32_DMA_ISR_MASK << 24;
+  DMA1->IFCR = flags << 24;
   if (dma_isr_redir[6].dma_func)
     dma_isr_redir[6].dma_func(dma_isr_redir[6].dma_param, flags);
 
@@ -247,7 +247,7 @@ OSAL_IRQ_HANDLER(Vector120) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA2->ISR >> 0) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 0;
+  DMA2->IFCR = flags << 0;
   if (dma_isr_redir[7].dma_func)
     dma_isr_redir[7].dma_func(dma_isr_redir[7].dma_param, flags);
 
@@ -265,7 +265,7 @@ OSAL_IRQ_HANDLER(Vector124) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA2->ISR >> 4) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 4;
+  DMA2->IFCR = flags << 4;
   if (dma_isr_redir[8].dma_func)
     dma_isr_redir[8].dma_func(dma_isr_redir[8].dma_param, flags);
 
@@ -283,7 +283,7 @@ OSAL_IRQ_HANDLER(Vector128) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA2->ISR >> 8) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 8;
+  DMA2->IFCR = flags << 8;
   if (dma_isr_redir[9].dma_func)
     dma_isr_redir[9].dma_func(dma_isr_redir[9].dma_param, flags);
 
@@ -301,7 +301,7 @@ OSAL_IRQ_HANDLER(Vector12C) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA2->ISR >> 12) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 12;
+  DMA2->IFCR = flags << 12;
   if (dma_isr_redir[10].dma_func)
     dma_isr_redir[10].dma_func(dma_isr_redir[10].dma_param, flags);
 
@@ -319,7 +319,7 @@ OSAL_IRQ_HANDLER(Vector130) {
   OSAL_IRQ_PROLOGUE();
 
   flags = (DMA2->ISR >> 16) & STM32_DMA_ISR_MASK;
-  DMA2->IFCR = STM32_DMA_ISR_MASK << 16;
+  DMA2->IFCR = flags << 16;
   if (dma_isr_redir[11].dma_func)
     dma_isr_redir[11].dma_func(dma_isr_redir[11].dma_param, flags);
 
