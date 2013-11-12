@@ -79,13 +79,13 @@
   STM32_DMA_GETCHANNEL(STM32_UART_USART6_TX_DMA_STREAM,                     \
                        STM32_USART6_TX_DMA_CHN)
 
-#if (STM32_UART_USE_UART4 || STM32_UART_USE_UART5)
-  #define STM32_UART45_CR2_CHECK_MASK (USART_CR2_STOP_0 | USART_CR2_CLKEN | \
-                        USART_CR2_CPOL | USART_CR2_CPHA | USART_CR2_LBCL)
+#define STM32_UART45_CR2_CHECK_MASK                                         \
+  (USART_CR2_STOP_0 | USART_CR2_CLKEN | USART_CR2_CPOL | USART_CR2_CPHA |   \
+   USART_CR2_LBCL)
 
-  #define STM32_UART45_CR3_CHECK_MASK (USART_CR3_CTSIE | USART_CR3_CTSE |   \
-                       USART_CR3_RTSE | USART_CR3_SCEN | USART_CR3_NACK)
-#endif
+#define STM32_UART45_CR3_CHECK_MASK                                         \
+  (USART_CR3_CTSIE | USART_CR3_CTSE | USART_CR3_RTSE | USART_CR3_SCEN |     \
+   USART_CR3_NACK)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -508,28 +508,6 @@ void uart_lld_init(void) {
 }
 
 /**
- * @brief   Check CR2 and CR3 values for compatibility with UART4, UART5.
- *
- * @param[in] uartp     pointer to the @p UARTDriver object
- *
- * @notapi
- */
-#if (STM32_UART_USE_UART4 || STM32_UART_USE_UART5)
-static void uart_check_config(const UARTDriver *uartp) {
-
-  uint16_t cr;
-
-  cr = uartp->config->cr2;
-  chDbgCheck((cr & STM32_UART45_CR2_CHECK_MASK) == 0,
-      "Some flags from CR2 unavailable for this UART");
-
-  cr = uartp->config->cr3;
-  chDbgCheck((cr & STM32_UART45_CR3_CHECK_MASK) == 0,
-      "Some flags from CR3 unavailable for this UART");
-}
-#endif /* (STM32_UART_USE_UART4 || STM32_UART_USE_UART5) */
-
-/**
  * @brief   Configures and activates the UART peripheral.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
@@ -537,14 +515,6 @@ static void uart_check_config(const UARTDriver *uartp) {
  * @notapi
  */
 void uart_lld_start(UARTDriver *uartp) {
-
-#if STM32_UART_USE_UART4
-  if (uartp == &UARTD4)
-    uart_check_config(uartp);
-#elif STM32_UART_USE_UART5
-  else if (uartp == &UARTD5)
-    uart_check_config(uartp);
-#endif
 
   if (uartp->state == UART_STOP) {
 #if STM32_UART_USE_USART1
@@ -613,16 +583,24 @@ void uart_lld_start(UARTDriver *uartp) {
 #if STM32_UART_USE_UART4
     if (&UARTD4 == uartp) {
       bool_t b;
+
+      chDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+                  "uart_lld_start(), #7",
+                  "specified invalid bits in UART4 CR2 register settings");
+      chDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+                  "uart_lld_start(), #8",
+                  "specified invalid bits in UART4 CR3 register settings");
+
       b = dmaStreamAllocate(uartp->dmarx,
                             STM32_UART_UART4_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #7", "stream already allocated");
+      chDbgAssert(!b, "uart_lld_start(), #9", "stream already allocated");
       b = dmaStreamAllocate(uartp->dmatx,
                             STM32_UART_UART4_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #8", "stream already allocated");
+      chDbgAssert(!b, "uart_lld_start(), #10", "stream already allocated");
       rccEnableUART4(FALSE);
       nvicEnableVector(STM32_UART4_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_UART_UART4_IRQ_PRIORITY));
@@ -634,16 +612,24 @@ void uart_lld_start(UARTDriver *uartp) {
 #if STM32_UART_USE_UART5
     if (&UARTD5 == uartp) {
       bool_t b;
+
+      chDbgAssert((uartp->config->cr2 & STM32_UART45_CR2_CHECK_MASK) == 0,
+                  "uart_lld_start(), #11",
+                  "specified invalid bits in UART5 CR2 register settings");
+      chDbgAssert((uartp->config->cr3 & STM32_UART45_CR3_CHECK_MASK) == 0,
+                  "uart_lld_start(), #12",
+                  "specified invalid bits in UART5 CR3 register settings");
+
       b = dmaStreamAllocate(uartp->dmarx,
                             STM32_UART_UART5_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #9", "stream already allocated");
+      chDbgAssert(!b, "uart_lld_start(), #13", "stream already allocated");
       b = dmaStreamAllocate(uartp->dmatx,
                             STM32_UART_UART5_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #10", "stream already allocated");
+      chDbgAssert(!b, "uart_lld_start(), #14", "stream already allocated");
       rccEnableUART5(FALSE);
       nvicEnableVector(STM32_UART5_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_UART_UART5_IRQ_PRIORITY));
@@ -659,12 +645,12 @@ void uart_lld_start(UARTDriver *uartp) {
                             STM32_UART_USART6_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_rx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #11", "stream already allocated");
+      chDbgAssert(!b, "uart_lld_start(), #15", "stream already allocated");
       b = dmaStreamAllocate(uartp->dmatx,
                             STM32_UART_USART6_IRQ_PRIORITY,
                             (stm32_dmaisr_t)uart_lld_serve_tx_end_irq,
                             (void *)uartp);
-      chDbgAssert(!b, "uart_lld_start(), #12", "stream already allocated");
+      chDbgAssert(!b, "uart_lld_start(), #16", "stream already allocated");
       rccEnableUSART6(FALSE);
       nvicEnableVector(STM32_USART6_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_UART_USART6_IRQ_PRIORITY));

@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed UART4/5-related bugs in STM32 USARTv1 UART driver (bug #440)
+  (backported to 2.6.2).
 - FIX: Fixed STM32 OTG-FS wrong upper memory limit (bug #437)(backported
   to 2.6.2).
 - FIX: Fixed timing issue in the STM32 OTGv1 USB driver (bug #436)(backported
@@ -137,7 +139,7 @@
 - NEW: Added support for STM32F4xx backup RAM.
 - NEW: Added port support for SCP560B64.
 - NEW: Added DAC driver high level files and low level files templates.
-- NEW: Added support of UART4 and UART5 (STM32F4x and STM32F2x platforms)
+- NEW: Added support of UART4 and UART5 (STM32F4xx and STM32F2xx platforms)
   (feature request #28).
 - NEW: SPI driver for SPC560Pxx, SPC563Mxx, SPC564Axx, SPC56ELAxx, SPC560Dxx.
 - NEW: Support for SPC560Dxx devices.
