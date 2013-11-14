@@ -33,6 +33,27 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Special time constants
+ * @{
+ */
+/**
+ * @brief   Zero time specification for some functions with a timeout
+ *          specification.
+ * @note    Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
+ *          see the specific function documentation.
+ */
+#define TIME_IMMEDIATE  ((systime_t)0)
+
+/**
+ * @brief   Infinite time specification for all functions with a timeout
+ *          specification.
+ * @note    Not all functions accept @p TIME_INFINITE as timeout parameter,
+ *          see the specific function documentation.
+ */
+#define TIME_INFINITE   ((systime_t)-1)
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -350,7 +371,12 @@ static inline void chVTReset(virtual_timer_t *vtp) {
  *          or @p chVTDoSetI().
  *
  * @param[in] vtp       the @p virtual_timer_t structure pointer
- * @param[in] delay     the number of ticks before the operation timeouts.
+ * @param[in] delay     the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE is allowed but interpreted as a
+ *                        normal time specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
  * @param[in] vtfunc    the timer callback function. After invoking the
  *                      callback the timer is disabled and the structure can
  *                      be disposed or reused.
@@ -374,7 +400,12 @@ static inline void chVTSetI(virtual_timer_t *vtp, systime_t delay,
  *          or @p chVTDoSetI().
  *
  * @param[in] vtp       the @p virtual_timer_t structure pointer
- * @param[in] delay     the number of ticks before the operation timeouts.
+ * @param[in] delay     the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE is allowed but interpreted as a
+ *                        normal time specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
  * @param[in] vtfunc    the timer callback function. After invoking the
  *                      callback the timer is disabled and the structure can
  *                      be disposed or reused.

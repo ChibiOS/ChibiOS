@@ -56,25 +56,6 @@
 #define ABSPRIO         255         /**< @brief Greatest possible priority. */
 /** @} */
 
-/**
- * @name    Special time constants
- * @{
- */
-/**
- * @brief   Zero time specification for some functions with a timeout
- *          specification.
- * @note    Not all functions accept @p TIME_IMMEDIATE as timeout parameter,
- *          see the specific function documentation.
- */
-#define TIME_IMMEDIATE  ((systime_t)0)
-
-/**
- * @brief   Infinite time specification for all functions with a timeout
- *          specification.
- */
-#define TIME_INFINITE   ((systime_t)-1)
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
