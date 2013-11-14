@@ -66,7 +66,7 @@
 typedef struct thread thread_t;
 typedef struct virtual_timer virtual_timer_t;
 
-/* Inclusion of all the kernel sub-headers.*/
+/* Core headers.*/
 #include "chtypes.h"
 #include "chconf.h"
 #include "chcore.h"
@@ -77,6 +77,8 @@ typedef struct virtual_timer virtual_timer_t;
 #include "chsys.h"
 #include "chvt.h"
 #include "chthreads.h"
+
+/* Optional subsystems headers.*/
 #include "chregistry.h"
 #include "chsem.h"
 #include "chbsem.h"

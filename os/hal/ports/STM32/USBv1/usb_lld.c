@@ -178,7 +178,7 @@ static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
   osalSysLockFromISR();
 
   iqp->q_counter += n;
-  osalQueueWakeupAllI(&iqp->q_waiting, Q_OK);
+  osalThreadDequeueAllI(&iqp->q_waiting, Q_OK);
 
   osalSysUnlockFromISR();
 }
@@ -251,7 +251,7 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
   sts = osalSysGetStatusAndLockX();
 
   oqp->q_counter += n;
-  osalQueueWakeupAllI(&oqp->q_waiting, Q_OK);
+  osalThreadDequeueAllI(&oqp->q_waiting, Q_OK);
 
   osalSysRestoreStatusX(sts);
 }

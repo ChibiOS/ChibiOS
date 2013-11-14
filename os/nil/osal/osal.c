@@ -60,7 +60,7 @@
  *
  * @iclass
  */
-void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg) {
+void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg) {
   semaphore_t *sp = &tqp->sem;
 
   if (chSemGetCounterI(&tqp->sem) < 0) {
@@ -90,7 +90,7 @@ void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg) {
  *
  * @iclass
  */
-void osalQueueWakeupAllI(threads_queue_t *tqp, msg_t msg) {
+void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg) {
   semaphore_t *sp = &tqp->sem;
   thread_reference_t tr;
   cnt_t cnt;

@@ -62,7 +62,7 @@
 void iqObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
                   qnotify_t infy, void *link) {
 
-  osalQueueObjectInit(&iqp->q_waiting);
+  osalThreadQueueObjectInit(&iqp->q_waiting);
   iqp->q_counter = 0;
   iqp->q_buffer  = iqp->q_rdptr = iqp->q_wrptr = bp;
   iqp->q_top     = bp + size;
@@ -87,7 +87,7 @@ void iqResetI(input_queue_t *iqp) {
 
   iqp->q_rdptr = iqp->q_wrptr = iqp->q_buffer;
   iqp->q_counter = 0;
-  osalQueueWakeupAllI(&iqp->q_waiting, Q_RESET);
+  osalThreadDequeueAllI(&iqp->q_waiting, Q_RESET);
 }
 
 /**
@@ -115,7 +115,7 @@ msg_t iqPutI(input_queue_t *iqp, uint8_t b) {
   if (iqp->q_wrptr >= iqp->q_top)
     iqp->q_wrptr = iqp->q_buffer;
 
-  osalQueueWakeupOneI(&iqp->q_waiting, Q_OK);
+  osalThreadDequeueNextI(&iqp->q_waiting, Q_OK);
 
   return Q_OK;
 }
@@ -149,7 +149,7 @@ msg_t iqGetTimeout(input_queue_t *iqp, systime_t time) {
 
   while (iqIsEmptyI(iqp)) {
     msg_t msg;
-    if ((msg = osalQueueGoSleepTimeoutS(&iqp->q_waiting, time)) < Q_OK) {
+    if ((msg = osalThreadEnqueueTimeoutS(&iqp->q_waiting, time)) < Q_OK) {
       osalSysUnlock();
       return msg;
     }
@@ -201,7 +201,7 @@ size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
       nfy(iqp);
 
     while (iqIsEmptyI(iqp)) {
-      if (osalQueueGoSleepTimeoutS(&iqp->q_waiting, time) != Q_OK) {
+      if (osalThreadEnqueueTimeoutS(&iqp->q_waiting, time) != Q_OK) {
         osalSysUnlock();
         return r;
       }
@@ -240,7 +240,7 @@ size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
 void oqObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
                   qnotify_t onfy, void *link) {
 
-  osalQueueObjectInit(&oqp->q_waiting);
+  osalThreadQueueObjectInit(&oqp->q_waiting);
   oqp->q_counter = size;
   oqp->q_buffer  = oqp->q_rdptr = oqp->q_wrptr = bp;
   oqp->q_top     = bp + size;
@@ -265,7 +265,7 @@ void oqResetI(output_queue_t *oqp) {
 
   oqp->q_rdptr = oqp->q_wrptr = oqp->q_buffer;
   oqp->q_counter = qSizeI(oqp);
-  osalQueueWakeupAllI(&oqp->q_waiting, Q_RESET);
+  osalThreadDequeueAllI(&oqp->q_waiting, Q_RESET);
 }
 
 /**
@@ -296,7 +296,7 @@ msg_t oqPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time) {
   while (oqIsFullI(oqp)) {
     msg_t msg;
 
-    if ((msg = osalQueueGoSleepTimeoutS(&oqp->q_waiting, time)) < Q_OK) {
+    if ((msg = osalThreadEnqueueTimeoutS(&oqp->q_waiting, time)) < Q_OK) {
       osalSysUnlock();
       return msg;
     }
@@ -337,7 +337,7 @@ msg_t oqGetI(output_queue_t *oqp) {
   if (oqp->q_rdptr >= oqp->q_top)
     oqp->q_rdptr = oqp->q_buffer;
 
-  osalQueueWakeupOneI(&oqp->q_waiting, Q_OK);
+  osalThreadDequeueNextI(&oqp->q_waiting, Q_OK);
 
   return b;
 }
@@ -376,7 +376,7 @@ size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
   osalSysLock();
   while (TRUE) {
     while (oqIsFullI(oqp)) {
-      if (osalQueueGoSleepTimeoutS(&oqp->q_waiting, time) != Q_OK) {
+      if (osalThreadEnqueueTimeoutS(&oqp->q_waiting, time) != Q_OK) {
         osalSysUnlock();
         return w;
       }

@@ -130,7 +130,7 @@ static void can_lld_tx_handler(CANDriver *canp) {
   /* No more events until a message is transmitted.*/
   canp->can->TSR = CAN_TSR_RQCP0 | CAN_TSR_RQCP1 | CAN_TSR_RQCP2;
   osalSysLockFromISR();
-  osalQueueWakeupAllI(&canp->txqueue, MSG_OK);
+  osalThreadDequeueAllI(&canp->txqueue, MSG_OK);
   osalEventBroadcastFlagsI(&canp->txempty_event, CAN_MAILBOX_TO_MASK(1));
   osalSysUnlockFromISR();
 }
@@ -150,7 +150,7 @@ static void can_lld_rx0_handler(CANDriver *canp) {
     /* No more receive events until the queue 0 has been emptied.*/
     canp->can->IER &= ~CAN_IER_FMPIE0;
     osalSysLockFromISR();
-    osalQueueWakeupAllI(&canp->rxqueue, MSG_OK);
+    osalThreadDequeueAllI(&canp->rxqueue, MSG_OK);
     osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(1));
     osalSysUnlockFromISR();
   }
@@ -178,7 +178,7 @@ static void can_lld_rx1_handler(CANDriver *canp) {
     /* No more receive events until the queue 0 has been emptied.*/
     canp->can->IER &= ~CAN_IER_FMPIE1;
     osalSysLockFromISR();
-    osalQueueWakeupAllI(&canp->rxqueue, MSG_OK);
+    osalThreadDequeueAllI(&canp->rxqueue, MSG_OK);
     osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(2));
     osalSysUnlockFromISR();
   }

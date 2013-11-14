@@ -347,8 +347,8 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-   void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg);
-   void osalQueueWakeupAllI(threads_queue_t *tqp, msg_t msg);
+   void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg);
+   void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg);
 #ifdef __cplusplus
 }
 #endif
@@ -647,7 +647,7 @@ static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
  *
  * @init
  */
-static inline void osalQueueObjectInit(threads_queue_t *tqp) {
+static inline void osalThreadQueueObjectInit(threads_queue_t *tqp) {
 
   chSemObjectInit(&tqp->sem, 0);
 }
@@ -675,8 +675,8 @@ static inline void osalQueueObjectInit(threads_queue_t *tqp) {
  *
  * @sclass
  */
-static inline msg_t osalQueueGoSleepTimeoutS(threads_queue_t *tqp,
-                                             systime_t time) {
+static inline msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp,
+                                              systime_t time) {
 
   return chSemWaitTimeout(&tqp->sem, time);
 }

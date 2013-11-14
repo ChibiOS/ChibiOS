@@ -73,8 +73,8 @@ void canObjectInit(CANDriver *canp) {
 
   canp->state    = CAN_STOP;
   canp->config   = NULL;
-  osalQueueObjectInit(&canp->txqueue);
-  osalQueueObjectInit(&canp->rxqueue);
+  osalThreadQueueObjectInit(&canp->txqueue);
+  osalThreadQueueObjectInit(&canp->rxqueue);
   osalEventObjectInit(&canp->rxfull_event);
   osalEventObjectInit(&canp->txempty_event);
   osalEventObjectInit(&canp->error_event);
@@ -131,8 +131,8 @@ void canStop(CANDriver *canp) {
                 "invalid state");
   can_lld_stop(canp);
   canp->state  = CAN_STOP;
-  osalQueueWakeupAllI(&canp->rxqueue, MSG_RESET);
-  osalQueueWakeupAllI(&canp->txqueue, MSG_RESET);
+  osalThreadDequeueAllI(&canp->rxqueue, MSG_RESET);
+  osalThreadDequeueAllI(&canp->txqueue, MSG_RESET);
   osalOsRescheduleS();
   osalSysUnlock();
 }
@@ -170,7 +170,7 @@ msg_t canTransmit(CANDriver *canp,
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
                 "invalid state");
   while ((canp->state == CAN_SLEEP) || !can_lld_is_tx_empty(canp, mailbox)) {
-    msg_t msg = osalQueueGoSleepTimeoutS(&canp->txqueue, timeout);
+    msg_t msg = osalThreadEnqueueTimeoutS(&canp->txqueue, timeout);
     if (msg != MSG_OK) {
       osalSysUnlock();
       return msg;
@@ -215,7 +215,7 @@ msg_t canReceive(CANDriver *canp,
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
                 "invalid state");
   while ((canp->state == CAN_SLEEP) || !can_lld_is_rx_nonempty(canp, mailbox)) {
-    msg_t msg = osalQueueGoSleepTimeoutS(&canp->rxqueue, timeout);
+    msg_t msg = osalThreadEnqueueTimeoutS(&canp->rxqueue, timeout);
     if (msg != MSG_OK) {
       osalSysUnlock();
       return msg;
