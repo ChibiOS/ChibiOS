@@ -159,6 +159,29 @@ typedef msg_t (*tfunc_t)(void *);
 /** @} */
 
 /**
+ * @name    Threads queues
+ */
+/**
+ * @brief   Data part of a static threads queue object initializer.
+ * @details This macro should be used when statically initializing a threads
+ *          queue that is part of a bigger structure.
+ *
+ * @param[in] name      the name of the threads queue variable
+ */
+#define _threads_queue_t_DATA(name) {(thread_t *)&name, (thread_t *)&name}
+
+/**
+ * @brief   Static threads queue object initializer.
+ * @details Statically initialized threads queues require no explicit
+ *          initialization using @p queue_init().
+ *
+ * @param[in] name      the name of the threads queue variable
+ */
+#define threads_queue_t_DECL(name)                                          \
+  threads_queue_t name = _threads_queue_t_DATA(name)
+/** @} */
+
+/**
  * @name    Macro Functions
  * @{
  */
@@ -218,11 +241,14 @@ extern "C" {
                               tprio_t prio, tfunc_t pf, void *arg);
   thread_t *chThdStart(thread_t *tp);
   tprio_t chThdSetPriority(tprio_t newprio);
-  msg_t chThreadSuspendS(thread_reference_t *trp);
-  msg_t chThreadSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
-  void chThreadResumeI(thread_reference_t *trp, msg_t msg);
-  void chThreadResumeS(thread_reference_t *trp, msg_t msg);
-  void chThreadResume(thread_reference_t *trp, msg_t msg);
+  msg_t chThdSuspendS(thread_reference_t *trp);
+  msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
+  void chThdResumeI(thread_reference_t *trp, msg_t msg);
+  void chThdResumeS(thread_reference_t *trp, msg_t msg);
+  void chThdResume(thread_reference_t *trp, msg_t msg);
+  msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout);
+  void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg);
+  void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg);
   void chThdTerminate(thread_t *tp);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
@@ -335,6 +361,18 @@ static inline void chThdSleepS(systime_t time) {
   chDbgCheck(time != TIME_IMMEDIATE);
 
   chSchGoSleepTimeoutS(CH_STATE_SLEEPING, time);
+}
+
+/**
+ * @brief   Initializes a threads queue object.
+ *
+ * @param[out] tqp      pointer to the threads queue object
+ *
+ * @init
+ */
+static inline void chThdQueueObjectInit(threads_queue_t *tqp) {
+
+  queue_init(tqp);
 }
 
 #endif /* _CHTHREADS_H_ */

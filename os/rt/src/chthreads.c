@@ -270,123 +270,6 @@ tprio_t chThdSetPriority(tprio_t newprio) {
 }
 
 /**
- * @brief   Sends the current thread sleeping and sets a reference variable.
- * @note    This function must reschedule, it can only be called from thread
- *          context.
- *
- * @param[in] trp       a pointer to a thread reference object
- * @return              The wake up message.
- *
- * @sclass
- */
-msg_t chThreadSuspendS(thread_reference_t *trp) {
-  thread_t *tp = chThdGetSelfX();
-
-  chDbgAssert(*trp == NULL, "not NULL");
-
-  *trp = tp;
-  tp->p_u.wtobjp = &trp;
-  chSchGoSleepS(CH_STATE_SUSPENDED);
-  return chThdGetSelfX()->p_msg;
-}
-
-/**
- * @brief   Sends the current thread sleeping and sets a reference variable.
- * @note    This function must reschedule, it can only be called from thread
- *          context.
- *
- * @param[in] trp       a pointer to a thread reference object
- * @param[in] timeout   the timeout in system ticks, the special values are
- *                      handled as follow:
- *                      - @a TIME_INFINITE the thread enters an infinite sleep
- *                        state.
- *                      - @a TIME_IMMEDIATE the thread is not enqueued and
- *                        the function returns @p MSG_TIMEOUT as if a timeout
- *                        occurred.
- *                      .
- * @return              The wake up message.
- * @retval MSG_TIMEOUT  if the operation timed out.
- *
- * @sclass
- */
-msg_t chThreadSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
-  thread_t *tp = chThdGetSelfX();
-
-  chDbgAssert(*trp == NULL, "not NULL");
-
-  if (TIME_IMMEDIATE == timeout)
-    return MSG_TIMEOUT;
-
-  *trp = tp;
-  tp->p_u.wtobjp = &trp;
-  return chSchGoSleepTimeoutS(CH_STATE_SUSPENDED, timeout);
-}
-
-/**
- * @brief   Wakes up a thread waiting on a thread reference object.
- * @note    This function must not reschedule because it can be called from
- *          ISR context.
- *
- * @param[in] trp       a pointer to a thread reference object
- * @param[in] msg       the message code
- *
- * @iclass
- */
-void chThreadResumeI(thread_reference_t *trp, msg_t msg) {
-
-  if (*trp != NULL) {
-    thread_t *tp = *trp;
-
-    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
-                "not THD_STATE_SUSPENDED");
-
-    *trp = NULL;
-    tp->p_u.rdymsg = msg;
-    chSchReadyI(tp);
-  }
-}
-
-/**
- * @brief   Wakes up a thread waiting on a thread reference object.
- * @note    This function must reschedule, it can only be called from thread
- *          context.
- *
- * @param[in] trp       a pointer to a thread reference object
- * @param[in] msg       the message code
- *
- * @iclass
- */
-void chThreadResumeS(thread_reference_t *trp, msg_t msg) {
-
-  if (*trp != NULL) {
-    thread_t *tp = *trp;
-	
-    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
-                "not THD_STATE_SUSPENDED");
-
-    *trp = NULL;
-    chSchWakeupS(tp, msg);
-  }
-}
-
-/**
- * @brief   Wakes up a thread waiting on a thread reference object.
- * @note    This function must reschedule, it can only be called from thread
- *          context.
- *
- * @param[in] trp       a pointer to a thread reference object
- * @param[in] msg       the message code
- *
- * @api
- */
-void chThreadResume(thread_reference_t *trp, msg_t msg) {
-
-  chSysLock();
-  chThreadResumeS(trp, msg);
-  chSysUnlock();
-}
-
-/**
  * @brief   Requests a thread termination.
  * @pre     The target thread must be written to invoke periodically
  *          @p chThdShouldTerminate() and terminate cleanly if it returns
@@ -565,5 +448,197 @@ msg_t chThdWait(thread_t *tp) {
   return msg;
 }
 #endif /* CH_CFG_USE_WAITEXIT */
+
+/**
+ * @brief   Sends the current thread sleeping and sets a reference variable.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @return              The wake up message.
+ *
+ * @sclass
+ */
+msg_t chThdSuspendS(thread_reference_t *trp) {
+  thread_t *tp = chThdGetSelfX();
+
+  chDbgAssert(*trp == NULL, "not NULL");
+
+  *trp = tp;
+  tp->p_u.wtobjp = &trp;
+  chSchGoSleepS(CH_STATE_SUSPENDED);
+  return chThdGetSelfX()->p_msg;
+}
+
+/**
+ * @brief   Sends the current thread sleeping and sets a reference variable.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] timeout   the timeout in system ticks, the special values are
+ *                      handled as follow:
+ *                      - @a TIME_INFINITE the thread enters an infinite sleep
+ *                        state.
+ *                      - @a TIME_IMMEDIATE the thread is not enqueued and
+ *                        the function returns @p MSG_TIMEOUT as if a timeout
+ *                        occurred.
+ *                      .
+ * @return              The wake up message.
+ * @retval MSG_TIMEOUT  if the operation timed out.
+ *
+ * @sclass
+ */
+msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
+  thread_t *tp = chThdGetSelfX();
+
+  chDbgAssert(*trp == NULL, "not NULL");
+
+  if (TIME_IMMEDIATE == timeout)
+    return MSG_TIMEOUT;
+
+  *trp = tp;
+  tp->p_u.wtobjp = &trp;
+  return chSchGoSleepTimeoutS(CH_STATE_SUSPENDED, timeout);
+}
+
+/**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must not reschedule because it can be called from
+ *          ISR context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chThdResumeI(thread_reference_t *trp, msg_t msg) {
+
+  if (*trp != NULL) {
+    thread_t *tp = *trp;
+
+    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
+                "not THD_STATE_SUSPENDED");
+
+    *trp = NULL;
+    tp->p_u.rdymsg = msg;
+    chSchReadyI(tp);
+  }
+}
+
+/**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chThdResumeS(thread_reference_t *trp, msg_t msg) {
+
+  if (*trp != NULL) {
+    thread_t *tp = *trp;
+
+    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
+                "not THD_STATE_SUSPENDED");
+
+    *trp = NULL;
+    chSchWakeupS(tp, msg);
+  }
+}
+
+/**
+ * @brief   Wakes up a thread waiting on a thread reference object.
+ * @note    This function must reschedule, it can only be called from thread
+ *          context.
+ *
+ * @param[in] trp       a pointer to a thread reference object
+ * @param[in] msg       the message code
+ *
+ * @api
+ */
+void chThdResume(thread_reference_t *trp, msg_t msg) {
+
+  chSysLock();
+  chThdResumeS(trp, msg);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Enqueues the caller thread on a threads queue object.
+ * @details The caller thread is enqueued and put to sleep until it is
+ *          dequeued or the specified timeouts expires.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] timeout   the timeout in system ticks, the special values are
+ *                      handled as follow:
+ *                      - @a TIME_INFINITE the thread enters an infinite sleep
+ *                        state.
+ *                      - @a TIME_IMMEDIATE the thread is not enqueued and
+ *                        the function returns @p MSG_TIMEOUT as if a timeout
+ *                        occurred.
+ *                      .
+ * @return              The message from @p osalQueueWakeupOneI() or
+ *                      @p osalQueueWakeupAllI() functions.
+ * @retval MSG_TIMEOUT  if the thread has not been dequeued within the
+ *                      specified timeout or if the function has been
+ *                      invoked with @p TIME_IMMEDIATE as timeout
+ *                      specification.
+ *
+ * @sclass
+ */
+msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout) {
+
+  if (TIME_IMMEDIATE == timeout)
+    return MSG_TIMEOUT;
+
+  queue_insert(currp, tqp);
+  return chSchGoSleepTimeoutS(CH_STATE_QUEUED, timeout);
+}
+
+/**
+ * @brief   Dequeues and wakes up one thread from the threads queue object,
+ *          if any.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
+
+  if (queue_notempty(tqp)) {
+    thread_t *tp = queue_fifo_remove(tqp);
+
+    chDbgAssert(tp->p_state == CH_STATE_QUEUED,
+                "not CH_STATE_QUEUED");
+
+    tp->p_u.rdymsg = msg;
+    chSchReadyI(tp);
+  }
+}
+
+/**
+ * @brief   Dequeues and wakes up all threads from the threads queue object.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg) {
+
+  while (queue_notempty(tqp)) {
+    thread_t *tp = queue_fifo_remove(tqp);
+
+    chDbgAssert(tp->p_state == CH_STATE_QUEUED,
+                "not CH_STATE_QUEUED");
+
+    tp->p_u.rdymsg = msg;
+    chSchReadyI(tp);
+  }
+}
 
 /** @} */

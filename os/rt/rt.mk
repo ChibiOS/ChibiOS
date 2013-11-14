@@ -2,11 +2,10 @@
 # from this list, you can disable parts of the kernel by editing chconf.h.
 KERNSRC = ${CHIBIOS}/os/rt/src/chsys.c \
           ${CHIBIOS}/os/rt/src/chdebug.c \
-          ${CHIBIOS}/os/rt/src/chlists.c \
-          ${CHIBIOS}/os/rt/src/chvt.c \
           ${CHIBIOS}/os/rt/src/chtm.c \
           ${CHIBIOS}/os/rt/src/chstats.c \
           ${CHIBIOS}/os/rt/src/chschd.c \
+          ${CHIBIOS}/os/rt/src/chvt.c \
           ${CHIBIOS}/os/rt/src/chthreads.c \
           ${CHIBIOS}/os/rt/src/chdynamic.c \
           ${CHIBIOS}/os/rt/src/chregistry.c \

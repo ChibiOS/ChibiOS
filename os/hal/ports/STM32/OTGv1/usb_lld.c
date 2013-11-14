@@ -305,7 +305,7 @@ static void otg_fifo_write_from_queue(volatile uint32_t *fifop,
   /* Updating queue.*/
   osalSysLock();
   oqp->q_counter += n;
-  osalQueueWakeupAllI(&oqp->q_waiting, Q_OK);
+  osalThreadDequeueAllI(&oqp->q_waiting, Q_OK);
   osalOsRescheduleS();
   osalSysUnlock();
 }
@@ -416,7 +416,7 @@ static void otg_fifo_read_to_queue(volatile uint32_t *fifop,
   /* Updating queue.*/
   osalSysLock();
   iqp->q_counter += n;
-  osalQueueWakeupAllI(&iqp->q_waiting, Q_OK);
+  osalThreadDequeueAllI(&iqp->q_waiting, Q_OK);
   osalOsRescheduleS();
   osalSysUnlock();
 }

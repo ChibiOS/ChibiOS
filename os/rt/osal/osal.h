@@ -570,7 +570,7 @@ static inline void osalThreadSleep(systime_t time) {
  */
 static inline msg_t osalThreadSuspendS(thread_reference_t *trp) {
 
-  return chThreadSuspendS(trp);
+  return chThdSuspendS(trp);
 }
 
 /**
@@ -595,7 +595,7 @@ static inline msg_t osalThreadSuspendS(thread_reference_t *trp) {
 static inline msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp,
                                               systime_t timeout) {
 
-  return chThreadSuspendTimeoutS(trp, timeout);
+  return chThdSuspendTimeoutS(trp, timeout);
 }
 
 /**
@@ -610,7 +610,7 @@ static inline msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp,
  */
 static inline void osalThreadResumeI(thread_reference_t *trp, msg_t msg) {
 
-  chThreadResumeI(trp, msg);
+  chThdResumeI(trp, msg);
 }
 
 /**
@@ -625,7 +625,7 @@ static inline void osalThreadResumeI(thread_reference_t *trp, msg_t msg) {
  */
 static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
 
-  chThreadResumeS(trp, msg);
+  chThdResumeS(trp, msg);
 }
 
 /**
@@ -635,9 +635,9 @@ static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
  *
  * @init
  */
-static inline void osalQueueObjectInit(threads_queue_t *tqp) {
+static inline void osalThreadQueueObjectInit(threads_queue_t *tqp) {
 
-  queue_init(tqp);
+  chThdQueueObjectInit(tqp);
 }
 
 /**
@@ -663,10 +663,10 @@ static inline void osalQueueObjectInit(threads_queue_t *tqp) {
  *
  * @sclass
  */
-static inline msg_t osalQueueGoSleepTimeoutS(threads_queue_t *tqp,
-                                             systime_t time) {
+static inline msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp,
+                                           systime_t time) {
 
-  return chQueueGoSleepTimeoutS(tqp, time);
+  return chThdEnqueueTimeoutS(tqp, time);
 }
 
 /**
@@ -677,9 +677,9 @@ static inline msg_t osalQueueGoSleepTimeoutS(threads_queue_t *tqp,
  *
  * @iclass
  */
-static inline void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg) {
+static inline void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
-  chQueueWakeupOneI(tqp, msg);
+  chThdDequeueNextI(tqp, msg);
 }
 
 /**
@@ -690,9 +690,9 @@ static inline void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg) {
  *
  * @iclass
  */
-static inline void osalQueueWakeupAllI(threads_queue_t *tqp, msg_t msg) {
+static inline void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg) {
 
-  chQueueWakeupAllI(tqp, msg);
+  chThdDequeueAllI(tqp, msg);
 }
 
 /**

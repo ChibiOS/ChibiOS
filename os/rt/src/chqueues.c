@@ -88,7 +88,7 @@
 void chIQObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
                     qnotify_t infy, void *link) {
 
-  chQueueObjectInit(&iqp->q_waiting);
+  chThdQueueObjectInit(&iqp->q_waiting);
   iqp->q_counter = 0;
   iqp->q_buffer = iqp->q_rdptr = iqp->q_wrptr = bp;
   iqp->q_top = bp + size;
@@ -113,7 +113,7 @@ void chIQResetI(input_queue_t *iqp) {
 
   iqp->q_rdptr = iqp->q_wrptr = iqp->q_buffer;
   iqp->q_counter = 0;
-  chQueueWakeupAllI(&iqp->q_waiting, Q_RESET);
+  chThdDequeueAllI(&iqp->q_waiting, Q_RESET);
 }
 
 /**
@@ -141,7 +141,7 @@ msg_t chIQPutI(input_queue_t *iqp, uint8_t b) {
   if (iqp->q_wrptr >= iqp->q_top)
     iqp->q_wrptr = iqp->q_buffer;
 
-  chQueueWakeupOneI(&iqp->q_waiting, Q_OK);
+  chThdDequeueNextI(&iqp->q_waiting, Q_OK);
 
   return Q_OK;
 }
@@ -175,7 +175,7 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
 
   while (chIQIsEmptyI(iqp)) {
     msg_t msg;
-    if ((msg = chQueueGoSleepTimeoutS(&iqp->q_waiting, time)) < Q_OK) {
+    if ((msg = chThdEnqueueTimeoutS(&iqp->q_waiting, time)) < Q_OK) {
       chSysUnlock();
       return msg;
     }
@@ -227,7 +227,7 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
       nfy(iqp);
 
     while (chIQIsEmptyI(iqp)) {
-      if (chQueueGoSleepTimeoutS(&iqp->q_waiting, time) != Q_OK) {
+      if (chThdEnqueueTimeoutS(&iqp->q_waiting, time) != Q_OK) {
         chSysUnlock();
         return r;
       }
@@ -266,7 +266,7 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
 void chOQObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
                     qnotify_t onfy, void *link) {
 
-  chQueueObjectInit(&oqp->q_waiting);
+  chThdQueueObjectInit(&oqp->q_waiting);
   oqp->q_counter = size;
   oqp->q_buffer = oqp->q_rdptr = oqp->q_wrptr = bp;
   oqp->q_top = bp + size;
@@ -291,7 +291,7 @@ void chOQResetI(output_queue_t *oqp) {
 
   oqp->q_rdptr = oqp->q_wrptr = oqp->q_buffer;
   oqp->q_counter = chQSizeI(oqp);
-  chQueueWakeupAllI(&oqp->q_waiting, Q_RESET);
+  chThdDequeueAllI(&oqp->q_waiting, Q_RESET);
 }
 
 /**
@@ -322,7 +322,7 @@ msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time) {
   while (chOQIsFullI(oqp)) {
     msg_t msg;
 
-    if ((msg = chQueueGoSleepTimeoutS(&oqp->q_waiting, time)) < Q_OK) {
+    if ((msg = chThdEnqueueTimeoutS(&oqp->q_waiting, time)) < Q_OK) {
       chSysUnlock();
       return msg;
     }
@@ -363,7 +363,7 @@ msg_t chOQGetI(output_queue_t *oqp) {
   if (oqp->q_rdptr >= oqp->q_top)
     oqp->q_rdptr = oqp->q_buffer;
 
-  chQueueWakeupOneI(&oqp->q_waiting, Q_OK);
+  chThdDequeueNextI(&oqp->q_waiting, Q_OK);
 
   return b;
 }
@@ -402,7 +402,7 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
   chSysLock();
   while (true) {
     while (chOQIsFullI(oqp)) {
-      if (chQueueGoSleepTimeoutS(&oqp->q_waiting, time) != Q_OK) {
+      if (chThdEnqueueTimeoutS(&oqp->q_waiting, time) != Q_OK) {
         chSysUnlock();
         return w;
       }

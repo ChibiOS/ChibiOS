@@ -66,15 +66,6 @@
 typedef struct thread thread_t;
 typedef struct virtual_timer virtual_timer_t;
 
-/* This function is special, it must be accessible from all modules.*/
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void chSysHalt(const char *reason);
-#ifdef __cplusplus
-}
-#endif
-
 /* Inclusion of all the kernel sub-headers.*/
 #include "chtypes.h"
 #include "chconf.h"
@@ -82,11 +73,9 @@ extern "C" {
 #include "chdebug.h"
 #include "chtm.h"
 #include "chstats.h"
-#include "chglobal.h"
+#include "chschd.h"
 #include "chsys.h"
 #include "chvt.h"
-#include "chlists.h"
-#include "chschd.h"
 #include "chthreads.h"
 #include "chregistry.h"
 #include "chsem.h"

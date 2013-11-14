@@ -37,6 +37,11 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   System data structures.
+ */
+ch_system_t ch;
+
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -66,6 +71,129 @@ void _scheduler_init(void) {
   ch.rlist.r_newer = ch.rlist.r_older = (thread_t *)&ch.rlist;
 #endif
 }
+
+#if !CH_CFG_OPTIMIZE_SPEED || defined(__DOXYGEN__)
+/**
+ * @brief   Inserts a thread into a priority ordered queue.
+ * @note    The insertion is done by scanning the list from the highest
+ *          priority toward the lowest.
+ *
+ * @param[in] tp        the pointer to the thread to be inserted in the list
+ * @param[in] tqp       the pointer to the threads list header
+ *
+ * @notapi
+ */
+void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
+
+  /* cp iterates over the queue.*/
+  thread_t *cp = (thread_t *)tqp;
+  do {
+    /* Iterate to next thread in queue.*/
+    cp = cp->p_next;
+    /* Not end of queue? and cp has equal or higher priority than tp?.*/
+  } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
+  /* Insertion on p_prev.*/
+  tp->p_next = cp;
+  tp->p_prev = cp->p_prev;
+  tp->p_prev->p_next = cp->p_prev = tp;
+}
+
+/**
+ * @brief   Inserts a thread into a queue.
+ *
+ * @param[in] tp        the pointer to the thread to be inserted in the list
+ * @param[in] tqp       the pointer to the threads list header
+ *
+ * @notapi
+ */
+void queue_insert(thread_t *tp, threads_queue_t *tqp) {
+
+  tp->p_next = (thread_t *)tqp;
+  tp->p_prev = tqp->p_prev;
+  tp->p_prev->p_next = tqp->p_prev = tp;
+}
+
+/**
+ * @brief   Removes the first-out thread from a queue and returns it.
+ * @note    If the queue is priority ordered then this function returns the
+ *          thread with the highest priority.
+ *
+ * @param[in] tqp       the pointer to the threads list header
+ * @return              The removed thread pointer.
+ *
+ * @notapi
+ */
+thread_t *queue_fifo_remove(threads_queue_t *tqp) {
+  thread_t *tp = tqp->p_next;
+
+  (tqp->p_next = tp->p_next)->p_prev = (thread_t *)tqp;
+  return tp;
+}
+
+/**
+ * @brief   Removes the last-out thread from a queue and returns it.
+ * @note    If the queue is priority ordered then this function returns the
+ *          thread with the lowest priority.
+ *
+ * @param[in] tqp   the pointer to the threads list header
+ * @return          The removed thread pointer.
+ *
+ * @notapi
+ */
+thread_t *queue_lifo_remove(threads_queue_t *tqp) {
+  thread_t *tp = tqp->p_prev;
+
+  (tqp->p_prev = tp->p_prev)->p_next = (thread_t *)tqp;
+  return tp;
+}
+
+/**
+ * @brief   Removes a thread from a queue and returns it.
+ * @details The thread is removed from the queue regardless of its relative
+ *          position and regardless the used insertion method.
+ *
+ * @param[in] tp        the pointer to the thread to be removed from the queue
+ * @return              The removed thread pointer.
+ *
+ * @notapi
+ */
+thread_t *queue_dequeue(thread_t *tp) {
+
+  tp->p_prev->p_next = tp->p_next;
+  tp->p_next->p_prev = tp->p_prev;
+  return tp;
+}
+
+/**
+ * @brief   Pushes a thread_t on top of a stack list.
+ *
+ * @param[in] tp    the pointer to the thread to be inserted in the list
+ * @param[in] tlp   the pointer to the threads list header
+ *
+ * @notapi
+ */
+void list_insert(thread_t *tp, threads_list_t *tlp) {
+
+  tp->p_next = tlp->p_next;
+  tlp->p_next = tp;
+}
+
+/**
+ * @brief   Pops a thread from the top of a stack list and returns it.
+ * @pre     The list must be non-empty before calling this function.
+ *
+ * @param[in] tlp       the pointer to the threads list header
+ * @return              The removed thread pointer.
+ *
+ * @notapi
+ */
+thread_t *list_remove(threads_list_t *tlp) {
+
+  thread_t *tp = tlp->p_next;
+  tlp->p_next = tp->p_next;
+  return tp;
+}
+#endif /* CH_CFG_OPTIMIZE_SPEED */
 
 /**
  * @brief   Inserts a thread in the Ready List.
