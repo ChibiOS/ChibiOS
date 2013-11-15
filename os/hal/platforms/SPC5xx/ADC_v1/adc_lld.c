@@ -195,6 +195,7 @@ static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
 #if !defined(SPC5_ADC0_WD_HANDLER)
 #error "SPC5_ADC0_WD_HANDLER not defined"
 #endif
+
 /**
  * @brief   ADC0 Watch Dog interrupt handler.
  * @note    It is assumed that the various sources are only activated if the
@@ -207,8 +208,9 @@ OSAL_IRQ_HANDLER(SPC5_ADC0_WD_HANDLER) {
   uint32_t isr;
 
   OSAL_IRQ_PROLOGUE();
-  isr = ADCD1.adc_tagp->WTISR.R;
 
+  isr = ADCD1.adc_tagp->WTISR.R;
+  ADCD1.adc_tagp->WTISR.R = isr;
   adc_lld_serve_interrupt(&ADCD1, isr);
 
   OSAL_IRQ_EPILOGUE();
@@ -233,7 +235,7 @@ OSAL_IRQ_HANDLER(SPC5_ADC1_WD_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   isr = ADCD2.adc_tagp->WTISR.R;
-
+  ADCD2.adc_tagp->WTISR.R = isr;
   adc_lld_serve_interrupt(&ADCD2, isr);
 
   OSAL_IRQ_EPILOGUE();
@@ -302,7 +304,7 @@ void adc_lld_start(ADCDriver *adcp) {
 #endif /* SPC5_ADC_USE_ADC1 */
 
     osalDbgAssert((adcp->adc_dma_channel != EDMA_ERROR),
-                "adc_lld_start(), #1", "DMA channel cannot be allocated");
+                  "adc_lld_start(), #1", "DMA channel cannot be allocated");
 
     /* Configures the peripheral.*/
 
@@ -325,7 +327,11 @@ void adc_lld_start(ADCDriver *adcp) {
     /* Sets ADC Normal Mode.*/
     adcp->adc_tagp->MCR.B.PWDN = 0;
 
+    /* Power up delay.*/
+    /* TODO: add a delay of 5uS.*/
+
     /* Sets analog clock.*/
+    /* TODO: make it a static option, move in adc_lld_init().*/
     if (adcp->config->clock == HALF_PERIPHERAL_SET_CLOCK_FREQUENCY) {
       adcp->adc_tagp->MCR.B.ADCLKSEL = 0;
     } else if (adcp->config->clock == PERIPHERAL_SET_CLOCK_FREQUENCY) {
@@ -353,6 +359,8 @@ void adc_lld_stop(ADCDriver *adcp) {
     edmaChannelRelease(adcp->adc_dma_channel);
 
     /* Clears thresholds’ values and deactives watchdog threshold interrupts.*/
+    /* TODO: make the number of WD registers a parameter in the registry, modify
+       the configuration structure.*/
     if (adcp->grpp->wtimr != 0) {
       adcp->adc_tagp->TRC[0].R = 0;
       adcp->adc_tagp->TRC[1].R = 0;
@@ -402,12 +410,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   //osalDbgAssert(adcp->grpp->num_channels*2 >= adcp->depth,
   //            "adc_lld_start_conversion(), #1", "too many elements");
 
-  /* Active DMA.*/
-  adcp->adc_tagp->DMAE.R = ADC_DMAE_DMAEN;
-
   /* Setting up DMA TCD parameters.*/
   edmaChannelSetup(adcp->adc_dma_channel,                                   /* channel.                 */
-                   adcp->adc_tagp->CDR[adcp->grpp->init_channel].B.CDATA,   /* src.                     */
+                   ((uint8_t *)adcp->adc_tagp->CDR[adcp->grpp->init_channel].R) + 2,   /* src.                     */
                    adcp->samples,                                           /* dst.                     */
                    4,                                                       /* soff, advance by four.   */
                    2,                                                       /* doff, advance by two.    */
@@ -423,6 +428,11 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
                    EDMA_TCD_MODE_DREQ | EDMA_TCD_MODE_INT_END |
                    ((adcp->depth > 1) ? EDMA_TCD_MODE_INT_HALF: 0));        /* mode.					*/
 
+  /* Active DMA.*/
+  adcp->adc_tagp->DMAE.R = ADC_DMAE_DMAEN;
+
+  /* TODO: make the number of WD registers a parameter in the registry, modify
+     the configuration structure.*/
   /* Sets thresholds’ values and active watchdog threshold interrupts if any.*/
   if (adcp->grpp->wtimr != 0) {
     adcp->adc_tagp->TRC[0].R = adcp->grpp->trcr[0];
@@ -436,6 +446,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->adc_tagp->WTIMR.R = adcp->grpp->wtimr;
   }
 
+  /* mask = ((1 << nchannels) - 1) << firstchannel.*/
+  /* TODO: Make the channels a mash in the configuration and just assign it.*/
   /* Active ADC channels for the conversion and sets the ADC DMA channels.*/
   for (i = adcp->grpp->init_channel; i <= adcp->grpp->final_channel; i++) {
     adcp->adc_tagp->NCMR[0].R |= 1U << i;
