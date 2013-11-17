@@ -267,7 +267,7 @@ struct ICUDriver {
   /**
    * @brief eMIOSx channel number.
    */
-  uint32_t                   ch_number;
+  uint32_t                  ch_number;
   /**
    * @brief Current configuration data.
    */
