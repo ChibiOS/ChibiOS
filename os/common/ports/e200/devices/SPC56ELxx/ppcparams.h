@@ -67,6 +67,11 @@
  */
 #define PPC_SUPPORTS_DECREMENTER    TRUE
 
+/**
+ * @brief   Number of interrupt sources.
+ */
+#define PPC_VECTORS_NUMBER          288
+
 #endif /* _PPCPARAMS_H_ */
 
 /** @} */
