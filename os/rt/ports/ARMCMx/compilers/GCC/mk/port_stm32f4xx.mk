@@ -1,4 +1,4 @@
-# List of the ChibiOS/RT Cortex-M0 STM32F4xx port files.
+# List of the ChibiOS/RT Cortex-M4 STM32F4xx port files.
 PORTSRC = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/crt0.c \
           $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/vectors.c \
           ${CHIBIOS}/os/rt/ports/ARMCMx/chcore.c \
