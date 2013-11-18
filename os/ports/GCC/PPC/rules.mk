@@ -8,7 +8,8 @@ ifeq ($(BUILDDIR),.)
   BUILDDIR = build
 endif
 OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex \
-           $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).dmp
+           $(BUILDDIR)/$(PROJECT).mot $(BUILDDIR)/$(PROJECT).bin \
+           $(BUILDDIR)/$(PROJECT).dmp
 
 # Automatic compiler options
 OPT = $(USE_OPT)
@@ -152,6 +153,14 @@ else
 	@$(HEX) $< $@
 endif
 
+%.mot: %.elf $(LDSCRIPT)
+ifeq ($(USE_VERBOSE_COMPILE),yes)
+	$(MOT) $< $@
+else
+	@echo Creating $@
+	@$(MOT) $< $@
+endif
+
 %.bin: %.elf $(LDSCRIPT)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	$(BIN) $< $@
@@ -166,12 +175,16 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 else
 	@echo Creating $@
 	@$(OD) $(ODFLAGS) $< > $@
+	@echo
+	@$(SZ) $<
+	@echo
 	@echo Done
 endif
 
 clean:
 	@echo Cleaning
 	-rm -fR .dep $(BUILDDIR)
+	@echo
 	@echo Done
 
 #
