@@ -195,7 +195,6 @@ static void adc_lld_serve_interrupt(ADCDriver *adcp, uint32_t isr) {
 #if !defined(SPC5_ADC0_WD_HANDLER)
 #error "SPC5_ADC0_WD_HANDLER not defined"
 #endif
-
 /**
  * @brief   ADC0 Watch Dog interrupt handler.
  * @note    It is assumed that the various sources are only activated if the
@@ -304,41 +303,24 @@ void adc_lld_start(ADCDriver *adcp) {
 #if SPC5_ADC_USE_ADC0
     if (&ADCD1 == adcp) {
       adcp->adc_dma_channel = edmaChannelAllocate(&adc_adc0_dma_config);
+      halSPCSetPeripheralClockMode(SPC5_ADC0_PCTL,
+                                   SPC5_ADC_ADC0_START_PCTL);
     }
 #endif /* SPC5_ADC_USE_ADC0 */
 
 #if SPC5_ADC_USE_ADC1
     if (&ADCD2 == adcp) {
       adcp->adc_dma_channel = edmaChannelAllocate(&adc_adc1_dma_config);
+      halSPCSetPeripheralClockMode(SPC5_ADC1_PCTL,
+                                   SPC5_ADC_ADC1_START_PCTL);
     }
 #endif /* SPC5_ADC_USE_ADC1 */
 
     osalDbgAssert((adcp->adc_dma_channel != EDMA_ERROR),
                   "adc_lld_start(), #1", "DMA channel cannot be allocated");
 
-    /* Configures the peripheral.*/
-
-    /* Sets ADC0 Clock.*/
-#if SPC5_ADC_USE_ADC0
-    if (&ADCD1 == adcp) {
-      halSPCSetPeripheralClockMode(SPC5_ADC0_PCTL,
-                                   SPC5_ADC_ADC0_START_PCTL);
-    }
-#endif
-
-    /* Sets ADC1 Clock.*/
-#if SPC5_ADC_USE_ADC1
-    if (&ADCD2 == adcp) {
-      halSPCSetPeripheralClockMode(SPC5_ADC1_PCTL,
-                                   SPC5_ADC_ADC1_START_PCTL);
-    }
-#endif
-
     /* Sets ADC Normal Mode.*/
     adcp->adc_tagp->MCR.B.PWDN = 0;
-
-    /* Power up delay.*/
-    osalThreadSleep(US2ST(5));
 
     /* Sets MCR Register.*/
     adcp->adc_tagp->MCR.R = ADC_MCR_OWREN | ADC_MCR_MODE;
