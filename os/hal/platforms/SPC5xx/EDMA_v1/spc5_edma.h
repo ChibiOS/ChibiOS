@@ -90,6 +90,7 @@
                                              EDMA_CR_GRP2PRI(2) |           \
                                              EDMA_CR_GRP1PRI(1) |           \
                                              EDMA_CR_GRP0PRI(0) |           \
+                                             EDMA_CR_EMLM       |           \
                                              EDMA_CR_ERGA)
 #endif
 
