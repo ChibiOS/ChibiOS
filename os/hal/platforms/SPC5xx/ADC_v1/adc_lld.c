@@ -271,12 +271,22 @@ void adc_lld_init(void) {
   INTC.PSR[SPC5_ADC0_EOC_NUMBER].R = SPC5_ADC_ADC0_EOC_PRIORITY;
   INTC.PSR[SPC5_ADC0_ER_NUMBER].R = SPC5_ADC_ADC0_ER_PRIORITY;
   INTC.PSR[SPC5_ADC0_WD_NUMBER].R = SPC5_ADC_ADC0_WD_PRIORITY;
+
+  /* Sets peripheral clock.*/
+  halSPCSetPeripheralClockMode(SPC5_ADC0_PCTL, SPC5_ADC_ADC0_START_PCTL);
+  ADCD1.adc_tagp->MCR.B.ADCLKSEL = SPC5_ADC_ADC0_CLK_FREQUENCY;
+  halSPCSetPeripheralClockMode(SPC5_ADC0_PCTL, SPC5_ADC_ADC0_STOP_PCTL);
 #endif
 
 #if SPC5_ADC_USE_ADC1
   INTC.PSR[SPC5_ADC1_EOC_NUMBER].R = SPC5_ADC_ADC1_EOC_PRIORITY;
   INTC.PSR[SPC5_ADC1_ER_NUMBER].R = SPC5_ADC_ADC1_ER_PRIORITY;
   INTC.PSR[SPC5_ADC1_WD_NUMBER].R = SPC5_ADC_ADC1_WD_PRIORITY;
+
+  /* Sets peripheral clock.*/
+  halSPCSetPeripheralClockMode(SPC5_ADC1_PCTL, SPC5_ADC_ADC1_START_PCTL);
+  ADCD2.adc_tagp->MCR.B.ADCLKSEL = SPC5_ADC_ADC1_CLK_FREQUENCY;
+  halSPCSetPeripheralClockMode(SPC5_ADC1_PCTL, SPC5_ADC_ADC1_STOP_PCTL);
 #endif
 }
 
@@ -328,15 +338,7 @@ void adc_lld_start(ADCDriver *adcp) {
     adcp->adc_tagp->MCR.B.PWDN = 0;
 
     /* Power up delay.*/
-    /* TODO: add a delay of 5uS.*/
-
-    /* Sets analog clock.*/
-    /* TODO: make it a static option, move in adc_lld_init().*/
-    if (adcp->config->clock == HALF_PERIPHERAL_SET_CLOCK_FREQUENCY) {
-      adcp->adc_tagp->MCR.B.ADCLKSEL = 0;
-    } else if (adcp->config->clock == PERIPHERAL_SET_CLOCK_FREQUENCY) {
-      adcp->adc_tagp->MCR.B.ADCLKSEL = 1;
-    }
+    osalThreadSleep(US2ST(5));
 
     /* Sets MCR Register.*/
     adcp->adc_tagp->MCR.R = ADC_MCR_OWREN | ADC_MCR_MODE;
@@ -358,22 +360,54 @@ void adc_lld_stop(ADCDriver *adcp) {
     /* Releases the allocated DMA channel.*/
     edmaChannelRelease(adcp->adc_dma_channel);
 
-    /* Clears thresholds’ values and deactives watchdog threshold interrupts.*/
-    /* TODO: make the number of WD registers a parameter in the registry, modify
-       the configuration structure.*/
-    if (adcp->grpp->wtimr != 0) {
-      adcp->adc_tagp->TRC[0].R = 0;
-      adcp->adc_tagp->TRC[1].R = 0;
-      adcp->adc_tagp->TRC[2].R = 0;
-      adcp->adc_tagp->TRC[3].R = 0;
-      adcp->adc_tagp->THRHLR[0].R = 0;
-      adcp->adc_tagp->THRHLR[1].R = 0;
-      adcp->adc_tagp->THRHLR[2].R = 0;
-      adcp->adc_tagp->THRHLR[3].R = 0;
-      adcp->adc_tagp->WTIMR.R = 0;
-    }
+    /* Clears thresholds’ values and deactive watchdog threshold interrupts.*/
+#if SPC5_ADC_NTRESHOLD == 4
+    adcp->adc_tagp->TRC[0].R = 0;
+    adcp->adc_tagp->TRC[1].R = 0;
+    adcp->adc_tagp->TRC[2].R = 0;
+    adcp->adc_tagp->TRC[3].R = 0;
+    adcp->adc_tagp->THRHLR[0].R = 0;
+    adcp->adc_tagp->THRHLR[1].R = 0;
+    adcp->adc_tagp->THRHLR[2].R = 0;
+    adcp->adc_tagp->THRHLR[3].R = 0;
+    adcp->adc_tagp->WTIMR.R = 0;
 
-    /* Deactives ADC channels and the ADC DMA channels.*/
+    /* Disables the watchdog interrupts if any.*/
+    adcp->adc_tagp->CIMR[0].R = 0;
+
+    /* Clears watchdog interrupts if any.*/
+    adcp->adc_tagp->WTISR.R = 0xFFFF;
+#elif SPC5_ADC_NTRESHOLD == 16
+    adcp->adc_tagp->THRHLR[0].R = 0;
+    adcp->adc_tagp->THRHLR[1].R = 0;
+    adcp->adc_tagp->THRHLR[2].R = 0;
+    adcp->adc_tagp->THRHLR[3].R = 0;
+    adcp->adc_tagp->THRHLR_2[0].R = 0;
+    adcp->adc_tagp->THRHLR_2[1].R = 0;
+    adcp->adc_tagp->THRHLR_2[2].R = 0;
+    adcp->adc_tagp->THRHLR_2[3].R = 0;
+    adcp->adc_tagp->THRHLR_2[4].R = 0;
+    adcp->adc_tagp->THRHLR_2[5].R = 0;
+    adcp->adc_tagp->THRHLR_2[6].R = 0;
+    adcp->adc_tagp->THRHLR_2[7].R = 0;
+    adcp->adc_tagp->THRHLR_2[8].R = 0;
+    adcp->adc_tagp->THRHLR_2[9].R = 0;
+    adcp->adc_tagp->THRHLR_2[10].R = 0;
+    adcp->adc_tagp->THRHLR_2[11].R = 0;
+    adcp->adc_tagp->CWSEL[0].R = 0;
+    adcp->adc_tagp->CWSEL[1].R = 0;
+    adcp->adc_tagp->CWENR[0].R = 0;
+    adcp->adc_tagp->AWORR[0].R = 0;
+    adcp->adc_tagp->WTIMR.R = 0;
+
+    /* Disables the watchdog interrupts if any.*/
+    adcp->adc_tagp->CIMR[0].R = 0;
+
+    /* Clears watchdog interrupts if any.*/
+    adcp->adc_tagp->WTISR.R = 0xFFFFFFFF;
+#endif
+
+    /* Deactive ADC channels and the ADC DMA channels.*/
     adcp->adc_tagp->NCMR[0].R = 0;
     adcp->adc_tagp->DMAR[0].R = 0;
 
@@ -405,14 +439,12 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
+  uint32_t ch_mask;
   uint8_t i;
-
-  //osalDbgAssert(adcp->grpp->num_channels*2 >= adcp->depth,
-  //            "adc_lld_start_conversion(), #1", "too many elements");
 
   /* Setting up DMA TCD parameters.*/
   edmaChannelSetup(adcp->adc_dma_channel,                                   /* channel.                 */
-                   ((uint8_t *)adcp->adc_tagp->CDR[adcp->grpp->init_channel].R) + 2,   /* src.                     */
+                   ((uint8_t *)&adcp->adc_tagp->CDR[adcp->grpp->init_channel].R) + 2,   /* src.                     */
                    adcp->samples,                                           /* dst.                     */
                    4,                                                       /* soff, advance by four.   */
                    2,                                                       /* doff, advance by two.    */
@@ -434,25 +466,111 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   /* TODO: make the number of WD registers a parameter in the registry, modify
      the configuration structure.*/
   /* Sets thresholds’ values and active watchdog threshold interrupts if any.*/
-  if (adcp->grpp->wtimr != 0) {
-    adcp->adc_tagp->TRC[0].R = adcp->grpp->trcr[0];
-    adcp->adc_tagp->TRC[1].R = adcp->grpp->trcr[1];
-    adcp->adc_tagp->TRC[2].R = adcp->grpp->trcr[2];
-    adcp->adc_tagp->TRC[3].R = adcp->grpp->trcr[3];
-    adcp->adc_tagp->THRHLR[0].R = adcp->grpp->thrhlr[0];
-    adcp->adc_tagp->THRHLR[1].R = adcp->grpp->thrhlr[1];
-    adcp->adc_tagp->THRHLR[2].R = adcp->grpp->thrhlr[2];
-    adcp->adc_tagp->THRHLR[3].R = adcp->grpp->thrhlr[3];
-    adcp->adc_tagp->WTIMR.R = adcp->grpp->wtimr;
-  }
+#if SPC5_ADC_NTRESHOLD == 4
+  for (i = 0; i < SPC5_ADC_NTRESHOLD; i++) {
+    switch (adcp->grpp->thresholds[i].threshold_mode){
+    case ADC_THRHLR_DISABLED:
+      break;
+    case ADC_THRHLR_HIGHER:
+      /* Sets threshold registers.*/
+      adcp->adc_tagp->TRC[i].R = (1U << 15) | adcp->grpp->thresholds[i].adc_ch;
+      adcp->adc_tagp->THRHLR[i].B.THRH = adcp->grpp->thresholds[i].high_threshold_value;
 
-  /* mask = ((1 << nchannels) - 1) << firstchannel.*/
-  /* TODO: Make the channels a mash in the configuration and just assign it.*/
-  /* Active ADC channels for the conversion and sets the ADC DMA channels.*/
-  for (i = adcp->grpp->init_channel; i <= adcp->grpp->final_channel; i++) {
-    adcp->adc_tagp->NCMR[0].R |= 1U << i;
-    adcp->adc_tagp->DMAR[0].R |= 1U << i;
+      /* Active interrupts.*/
+      adcp->adc_tagp->WTIMR.R = 1U << (4U + i);
+      adcp->adc_tagp->CIMR[0].R = 1U << adcp->grpp->thresholds[i].adc_ch;
+      break;
+    case ADC_THRHLR_LOWER:
+      /* Sets threshold registers.*/
+      adcp->adc_tagp->TRC[i].R = (1U << 15) | adcp->grpp->thresholds[i].adc_ch;
+      adcp->adc_tagp->THRHLR[i].B.THRH = adcp->grpp->thresholds[i].high_threshold_value;
+
+      /* Active interrupts.*/
+      adcp->adc_tagp->WTIMR.R = 1U << i;
+      adcp->adc_tagp->CIMR[0].R = 1U << adcp->grpp->thresholds[i].adc_ch;
+      break;
+    case ADC_THRHLR_BOTH_HL:
+      /* Sets threshold registers.*/
+      adcp->adc_tagp->TRC[i].R = (1U << 15) | adcp->grpp->thresholds[i].adc_ch;
+      adcp->adc_tagp->THRHLR[i].B.THRL = adcp->grpp->thresholds[i].low_threshold_value;
+      adcp->adc_tagp->THRHLR[i].B.THRH = adcp->grpp->thresholds[i].high_threshold_value;
+
+      /* Active interrupts.*/
+      adcp->adc_tagp->WTIMR.R = (1U << i) | (1U << (4U + i));
+      adcp->adc_tagp->CIMR[0].R = 1U << adcp->grpp->thresholds[i].adc_ch;
+      break;
+    }
   }
+#elif SPC5_ADC_NTRESHOLD == 16
+  for (i = 0; i < SPC5_ADC_NTRESHOLD; i++) {
+    switch (adcp->grpp->thresholds[i].threshold_mode){
+    case ADC_THRHLR_DISABLED:
+      break;
+    case ADC_THRHLR_HIGHER:
+      /* Sets threshold registers.*/
+      if (adcp->grpp->thresholds[i].adc_ch > 7U) {
+        adcp->adc_tagp->CWSEL[1].R = i << ((adcp->grpp->thresholds[i].adc_ch - 8U) * 4U);
+      } else {
+        adcp->adc_tagp->CWSEL[0].R = i << (adcp->grpp->thresholds[i].adc_ch * 4U);
+      }
+
+      adcp->adc_tagp->CWENR[0].R = 1U << adcp->grpp->thresholds[i].adc_ch;
+      if (i > 4U) {
+        adcp->adc_tagp->THRHLR_2[i - 4U].B.THRH = adcp->grpp->thresholds[i].high_threshold_value;
+      } else {
+        adcp->adc_tagp->THRHLR[i].B.THRH = adcp->grpp->thresholds[i].high_threshold_value;
+      }
+
+      /* Active interrupts.*/
+      adcp->adc_tagp->WTIMR.R = 1U << (1U + i * 2U);
+      adcp->adc_tagp->CIMR[0].R = 1U << adcp->grpp->thresholds[i].adc_ch;
+      break;
+    case ADC_THRHLR_LOWER:
+      /* Sets threshold registers.*/
+      if (adcp->grpp->thresholds[i].adc_ch > 7U) {
+        adcp->adc_tagp->CWSEL[1].R = i << ((adcp->grpp->thresholds[i].adc_ch - 8U) * 4U);
+      } else {
+        adcp->adc_tagp->CWSEL[0].R = i << (adcp->grpp->thresholds[i].adc_ch * 4U);
+      }
+      adcp->adc_tagp->CWENR[0].R = 1U << adcp->grpp->thresholds[i].adc_ch;
+      if (i > 4U) {
+        adcp->adc_tagp->THRHLR_2[i - 4U].B.THRH = adcp->grpp->thresholds[i].high_threshold_value;
+      } else {
+        adcp->adc_tagp->THRHLR[i].B.THRH = adcp->grpp->thresholds[i].high_threshold_value;
+      }
+
+      /* Active interrupts.*/
+      adcp->adc_tagp->WTIMR.R = 1U << (i * 2U);
+      adcp->adc_tagp->CIMR[0].R = 1U << adcp->grpp->thresholds[i].adc_ch;
+      break;
+    case ADC_THRHLR_BOTH_HL:
+      /* Sets threshold registers.*/
+      if (adcp->grpp->thresholds[i].adc_ch > 7U) {
+        adcp->adc_tagp->CWSEL[1].R = i << ((adcp->grpp->thresholds[i].adc_ch - 8U) * 4U);
+      } else {
+        adcp->adc_tagp->CWSEL[0].R = i << (adcp->grpp->thresholds[i].adc_ch * 4U);
+      }
+      adcp->adc_tagp->CWENR[0].R = 1U << adcp->grpp->thresholds[i].adc_ch;
+      if (i > 4U) {
+        adcp->adc_tagp->THRHLR_2[i - 4U].B.THRL = adcp->grpp->thresholds[i].low_threshold_value;
+        adcp->adc_tagp->THRHLR_2[i - 4U].B.THRH = adcp->grpp->thresholds[i].high_threshold_value;
+      } else {
+        adcp->adc_tagp->THRHLR[i].B.THRL = adcp->grpp->thresholds[i].low_threshold_value;
+        adcp->adc_tagp->THRHLR[i].B.THRH = adcp->grpp->thresholds[i].high_threshold_value;
+      }
+
+      /* Active interrupts.*/
+      adcp->adc_tagp->WTIMR.R = (1U << (1U + i * 2U)) | (1U << (i * 2U));
+      adcp->adc_tagp->CIMR[0].R = 1U << adcp->grpp->thresholds[i].adc_ch;
+      break;
+    }
+  }
+#endif
+
+  /* Active ADC channels for the conversion and sets the ADC DMA channels.*/
+  ch_mask = ((1 << adcp->grpp->num_channels) - 1) << adcp->grpp->init_channel;
+  adcp->adc_tagp->NCMR[0].R = ch_mask;
+  adcp->adc_tagp->DMAR[0].R = ch_mask;
 
   /* Sets ADC conversion timing register.*/
   adcp->adc_tagp->CTR[0].R = adcp->grpp->ctr;

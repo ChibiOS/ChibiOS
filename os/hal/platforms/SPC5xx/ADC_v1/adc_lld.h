@@ -37,42 +37,23 @@
  * @name    Analog channel identifiers
  * @{
  */
-#if SPC5_HAS_ADC0 || defined(__DOXYGEN__)
-#define ADC0_CHN_AN0                    0U
-#define ADC0_CHN_AN1                    1U
-#define ADC0_CHN_AN2                    2U
-#define ADC0_CHN_AN3                    3U
-#define ADC0_CHN_AN4                    4U
-#define ADC0_CHN_AN5                    5U
-#define ADC0_CHN_AN6                    6U
-#define ADC0_CHN_AN7                    7U
-#define ADC0_CHN_AN8                    8U
-#define ADC0_CHN_AN9                    9U
-#define ADC0_CHN_AN10                   10U
-#define ADC0_CHN_AN11                   11U
-#define ADC0_CHN_AN12                   12U
-#define ADC0_CHN_AN13                   13U
-#define ADC0_CHN_AN14                   14U
-#define ADC0_CHN_AN15                   15U
-#endif
-
-#if SPC5_HAS_ADC1 || defined(__DOXYGEN__)
-#define ADC1_CHN_AN0                    0U
-#define ADC1_CHN_AN1                    1U
-#define ADC1_CHN_AN2                    2U
-#define ADC1_CHN_AN3                    3U
-#define ADC1_CHN_AN4                    4U
-#define ADC1_CHN_AN5                    5U
-#define ADC1_CHN_AN6                    6U
-#define ADC1_CHN_AN7                    7U
-#define ADC1_CHN_AN8                    8U
-#define ADC1_CHN_AN9                    9U
-#define ADC1_CHN_AN10                   10U
-#define ADC1_CHN_AN11                   11U
-#define ADC1_CHN_AN12                   12U
-#define ADC1_CHN_AN13                   13U
-#define ADC1_CHN_AN14                   14U
-#define ADC1_CHN_AN15                   15U
+#if SPC5_HAS_ADC0 || SPC5_HAS_ADC1 || defined(__DOXYGEN__)
+#define ADC_CHN_AN0                     0U
+#define ADC_CHN_AN1                     1U
+#define ADC_CHN_AN2                     2U
+#define ADC_CHN_AN3                     3U
+#define ADC_CHN_AN4                     4U
+#define ADC_CHN_AN5                     5U
+#define ADC_CHN_AN6                     6U
+#define ADC_CHN_AN7                     7U
+#define ADC_CHN_AN8                     8U
+#define ADC_CHN_AN9                     9U
+#define ADC_CHN_AN10                    10U
+#define ADC_CHN_AN11                    11U
+#define ADC_CHN_AN12                    12U
+#define ADC_CHN_AN13                    13U
+#define ADC_CHN_AN14                    14U
+#define ADC_CHN_AN15                    15U
 #endif
 /** @} */
 
@@ -324,6 +305,17 @@ typedef enum {
 } adc_clock;
 
 /**
+ * @brief   ADC thresholds.
+ */
+typedef enum {
+  ADC_THRHLR_DISABLED = 0,                 /**< Watchdog threshold disabled.                 */
+  ADC_THRHLR_HIGHER = 1,                   /**< Watchdog higher threshold enabled.           */
+  ADC_THRHLR_LOWER = 2,                    /**< Watchdog lower threshold enabled.            */
+  ADC_THRHLR_BOTH_HL = 3,                  /**< Watchdog higher and lower thresholds enabled.*/
+
+} adcthrhlr_t;
+
+/**
  * @brief   ADC sample data type.
  */
 typedef uint16_t adcsample_t;
@@ -348,6 +340,7 @@ typedef enum {
   ADC_ERR_AWD2_LT = 6,                      /**< Watchdog 2 triggered Lower Threshold.      */
   ADC_ERR_AWD3_HT = 7,                      /**< Watchdog 3 triggered Higher Threshold.     */
   ADC_ERR_AWD3_LT = 8,                      /**< Watchdog 3 triggered Lower Threshold.      */
+
 } adcerror_t;
 
 /**
@@ -375,6 +368,28 @@ typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
 typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);
 
 /**
+ * @brief   ADC threshold structure.
+ */
+typedef struct {
+  /**
+   * @brief   ADC channel watchdog mode selection.
+   */
+  adcthrhlr_t               threshold_mode;
+  /**
+   * @brief   ADC channel selection.
+   */
+  uint16_t                  adc_ch;
+  /**
+   * @brief   ADC channel high threshold value.
+   */
+  uint16_t                  high_threshold_value;
+  /**
+   * @brief   ADC channel low threshold value.
+   */
+  uint16_t                  low_threshold_value;
+} ADCThrhlr;
+
+/**
  * @brief   Conversion group configuration structure.
  * @details This implementation-dependent structure describes a conversion
  *          operation.
@@ -400,17 +415,13 @@ typedef struct {
   adcerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
   /**
-   * @brief   ADC WTIMR register initialization data.
+   * @brief   ADC Threshold configuration data.
    */
-  uint32_t                  wtimr;
-  /**
-   * @brief   ADC TRCx register initialization data.
-   */
-  uint32_t                  trcr[4];
-  /**
-   * @brief   ADC THRHLRx register initialization data.
-   */
-  uint32_t                  thrhlr[4];
+#if SPC5_ADC_NTRESHOLD == 4
+  ADCThrhlr                 thresholds[4];
+#elif SPC5_ADC_NTRESHOLD == 16
+  ADCThrhlr                 thresholds[16];
+#endif
   /**
    * @brief   ADC CTR0 register initialization data.
    */
@@ -423,21 +434,14 @@ typedef struct {
    * @brief   ADC Initial conversion channel.
    */
   uint32_t                  init_channel;
-  /**
-   * @brief   ADC Final conversion channel.
-   */
-  uint32_t                  final_channel;
 } ADCConversionGroup;
 
 /**
  * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
+ * @note    Empty in this implementation can be ignored.
  */
 typedef struct {
-  /**
-   * @brief   Analog clock frequency.
-   */
-  adc_clock                 clock;
+  uint32_t                  dummy;
 } ADCConfig;
 
 /**
