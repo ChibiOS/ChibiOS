@@ -190,9 +190,9 @@ typedef void *regppc_t;
 /**
  * @brief   Mandatory part of a stack frame.
  */
-struct eabi_frame {
-  regppc_t      slink;          /**< Stack back link.                       */
-  regppc_t      shole;          /**< Stack hole for LR storage.             */
+struct port_eabi_frame {
+  uint32_t      slink;          /**< Stack back link.                       */
+  uint32_t      shole;          /**< Stack hole for LR storage.             */
 };
 
 /**
@@ -202,8 +202,8 @@ struct eabi_frame {
  * @note    R2 and R13 are not saved because those are assumed to be immutable
  *          during the system life cycle.
  */
-struct extctx {
-  struct eabi_frame frame;
+struct port_extctx {
+  struct port_eabi_frame frame;
   /* Start of the e_stmvsrrw frame (offset 8).*/
   regppc_t      pc;
   regppc_t      msr;
@@ -236,7 +236,7 @@ struct extctx {
  * @note    LR is stored in the caller contex so it is not present in this
  *          structure.
  */
-struct intctx {
+struct port_intctx {
   regppc_t      cr;                 /* Part of it is not volatile...        */
   regppc_t      r14;
   regppc_t      r15;
@@ -262,10 +262,10 @@ struct intctx {
 /**
  * @brief   Platform dependent part of the @p Thread structure.
  * @details This structure usually contains just the saved stack pointer
- *          defined as a pointer to a @p intctx structure.
+ *          defined as a pointer to a @p port_intctx structure.
  */
 struct context {
-  struct intctx *sp;
+  struct port_intctx *sp;
 };
 
 #endif /* !defined(_FROM_ASM_) */
@@ -277,15 +277,15 @@ struct context {
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
- *          by an @p intctx structure.
+ *          by an @p port_intctx structure.
  */
 #define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
   uint8_t *sp = (uint8_t *)(workspace) +                                    \
                            (wsize) -                                        \
-                           sizeof(struct eabi_frame);                       \
-  ((struct eabi_frame *)sp)->slink = 0;                                     \
-  ((struct eabi_frame *)sp)->shole = _port_thread_start;                    \
-  (tp)->p_ctx.sp = (struct intctx *)(sp - sizeof(struct intctx));           \
+                           sizeof(struct port_eabi_frame);                  \
+  ((struct port_eabi_frame *)sp)->slink = 0;                                \
+  ((struct port_eabi_frame *)sp)->shole = (uint32_t)_port_thread_start;     \
+  (tp)->p_ctx.sp = (struct port_intctx *)(sp - sizeof(struct port_intctx)); \
   (tp)->p_ctx.sp->r31 = (regppc_t)(arg);                                    \
   (tp)->p_ctx.sp->r30 = (regppc_t)(pf);                                     \
 }
@@ -340,7 +340,7 @@ struct context {
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \
-  register struct intctx *sp asm ("%r1");                                   \
+  register struct port_intctx *sp asm ("%r1");                              \
   if ((stkalign_t *)(sp - 1) < otp->p_stklimit)                             \
     chDbgPanic("stack overflow");                                           \
   _port_switch(ntp, otp);                                                   \
@@ -363,7 +363,6 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_init(void);
   void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
 #ifdef __cplusplus
@@ -377,6 +376,61 @@ extern "C" {
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)
+
+/**
+ * @brief   Kernel port layer initialization.
+ * @details IVOR4 and IVOR10 initialization.
+ */
+static inline void port_init(void) {
+
+#if PPC_SUPPORTS_IVORS
+    /* The CPU supports IVOR registers, the kernel requires IVOR4 and IVOR10
+       and the initialization is performed here.*/
+    asm volatile ("li          %%r3, _IVOR4@l       \t\n"
+                  "mtIVOR4     %%r3                 \t\n"
+                  "li          %%r3, _IVOR10@l      \t\n"
+                  "mtIVOR10    %%r3" : : : "memory");
+#endif
+}
+
+/**
+ * @brief   Returns a word encoding the current interrupts status.
+ *
+ * @return              The interrupts status.
+ */
+static inline syssts_t port_get_irq_status(void) {
+  uint32_t sts;
+
+  sts = 0;
+  return sts;
+}
+
+/**
+ * @brief   Checks the interrupt status.
+ *
+ * @param[in] sts       the interrupt status word
+ *
+ * @return              The interrupt status.
+ * @retvel false        the word specified a disabled interrupts status.
+ * @retvel true         the word specified an enabled interrupts status.
+ */
+static inline bool port_irq_enabled(syssts_t sts) {
+
+  return (sts & 1) == 0;
+}
+
+/**
+ * @brief   Determines the current execution context.
+ *
+ * @return              The execution context.
+ * @retval false        not running in ISR mode.
+ * @retval true         running in ISR mode.
+ */
+static inline bool port_is_isr_context(void) {
+
+//  return (bool)((__get_IPSR() & 0x1FF) != 0);
+  return false;
+}
 
 /**
  * @brief   Kernel-lock action.

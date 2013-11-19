@@ -28,34 +28,29 @@
 
 #include "ch.h"
 
-/**
- * @brief   Kernel port layer initialization.
- * @details IVOR4 and IVOR10 initialization.
- */
-void port_init(void) {
-#if PPC_SUPPORTS_IVORS
-    /* The CPU supports IVOR registers, the kernel requires IVOR4 and IVOR10
-       and the initialization is performed here.*/
-    asm volatile ("li          %%r3, _IVOR4@l       \t\n"
-                  "mtIVOR4     %%r3                 \t\n"
-                  "li          %%r3, _IVOR10@l      \t\n"
-                  "mtIVOR10    %%r3" : : : "memory");
-#endif
-}
+/*===========================================================================*/
+/* Module local definitions.                                                 */
+/*===========================================================================*/
 
-/**
- * @brief   Halts the system.
- * @details This function is invoked by the operating system when an
- *          unrecoverable error is detected (for example because a programming
- *          error in the application code that triggers an assertion while
- *          in debug mode).
- */
-void port_halt(void) {
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
 
-  port_disable();
-  while (TRUE) {
-  }
-}
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
 /**
  * @brief   Performs a context switch between two threads.
@@ -65,9 +60,9 @@ void port_halt(void) {
  *          switch performance so optimize here as much as you can.
  */
 #if !defined(__DOXYGEN__)
-__attribute__((naked))
+__attribute__((naked, required))
 #endif
-void port_dummy1(void) {
+static void port_dummy1(void) {
 
   asm (".global _port_switch");
   asm ("_port_switch:");
@@ -96,9 +91,9 @@ void port_dummy1(void) {
  *          invoked.
  */
 #if !defined(__DOXYGEN__)
-__attribute__((naked))
+__attribute__((naked, required))
 #endif
-void port_dummy2(void) {
+static void port_dummy2(void) {
 
   asm (".global _port_thread_start");
   asm ("_port_thread_start:");

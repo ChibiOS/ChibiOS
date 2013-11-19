@@ -29,8 +29,6 @@ SECTIONS
     . = ORIGIN(flash);
     .boot0 : ALIGN(16) SUBALIGN(16)
     {
-        . += ${conf.instance.runtime_settings.load_address[0]?trim};
-        . = ALIGN(0x10000);
         __ivpr_base__ = .;
         KEEP(*(.boot))
     } > flash

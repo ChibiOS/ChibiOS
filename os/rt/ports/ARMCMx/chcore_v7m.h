@@ -396,7 +396,7 @@ static inline void port_init(void) {
  * @return              The interrupts status.
  */
 static inline syssts_t port_get_irq_status(void) {
-  register uint32_t sts;
+  uint32_t sts;
 
 #if !CORTEX_SIMPLIFIED_PRIORITY
   sts = __get_BASEPRI();
