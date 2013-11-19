@@ -136,6 +136,7 @@ typedef io_queue_t GenericQueue;
 typedef input_queue_t InputQueue;
 typedef output_queue_t OutputQueue;
 typedef bool bool_t;
+#define OSAL_FREQUENCY OSAL_ST_FREQUENCY
 
 #if 0
 /**
