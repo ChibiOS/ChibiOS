@@ -29,10 +29,6 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-#if CH_DBG_ENABLE_STACK_CHECK
-#error "option CH_DBG_ENABLE_STACK_CHECK not supported by this port"
-#endif
-
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -360,6 +356,10 @@ struct context {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -368,6 +368,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* Module inline functions.                                                  */

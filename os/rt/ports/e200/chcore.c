@@ -60,9 +60,9 @@
  *          switch performance so optimize here as much as you can.
  */
 #if !defined(__DOXYGEN__)
-__attribute__((naked, required))
+__attribute__((naked))
 #endif
-static void port_dummy1(void) {
+void port_dummy1(void) {
 
   asm (".global _port_switch");
   asm ("_port_switch:");
@@ -91,9 +91,9 @@ static void port_dummy1(void) {
  *          invoked.
  */
 #if !defined(__DOXYGEN__)
-__attribute__((naked, required))
+__attribute__((naked))
 #endif
-static void port_dummy2(void) {
+void port_dummy2(void) {
 
   asm (".global _port_thread_start");
   asm ("_port_thread_start:");

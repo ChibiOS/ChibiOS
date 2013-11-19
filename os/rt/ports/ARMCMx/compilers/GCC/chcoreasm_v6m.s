@@ -26,10 +26,6 @@
  * @{
  */
 
-#define _FROM_ASM_
-#include "chconf.h"
-#include "chcore.h"
-
 #if !defined(FALSE) || defined(__DOXYGEN__)
 #define FALSE   0
 #endif
@@ -37,6 +33,10 @@
 #if !defined(TRUE) || defined(__DOXYGEN__)
 #define TRUE    1
 #endif
+
+#define _FROM_ASM_
+#include "chconf.h"
+#include "chcore.h"
 
 #if !defined(__DOXYGEN__)
 
