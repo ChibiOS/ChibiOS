@@ -34,36 +34,79 @@
 #endif
 
 /*===========================================================================*/
-/* Port constants (common).                                                  */
+/* Module constants.                                                         */
 /*===========================================================================*/
 
-/* Added to make the header stand-alone when included from asm.*/
-#ifndef FALSE
-#define FALSE       0
-#endif
-#ifndef TRUE
-#define TRUE        (!FALSE)
-#endif
+/**
+ * @name    Architecture and Compiler
+ * @{
+ */
+/**
+ * @brief   Macro defining an PPC architecture.
+ */
+#define PORT_ARCHITECTURE_PPC
 
 /**
- * @name    Supported core variants
+ * @brief   Macro defining the specific PPC architecture.
+ */
+#define PORT_ARCHITECTURE_PPC_E200
+
+/**
+ * @brief   Name of the implemented architecture.
+ */
+#define PORT_ARCHITECTURE_NAME          "Power Architecture"
+
+/**
+ * @brief   Compiler name and version.
+ */
+#if defined(__GNUC__) || defined(__DOXYGEN__)
+#define PORT_COMPILER_NAME              "GCC " __VERSION__
+
+#else
+#error "unsupported compiler"
+#endif
+/** @} */
+
+/**
+ * @name    E200 core variants
  * @{
  */
 #define PPC_VARIANT_e200z0              200
+#define PPC_VARIANT_e200z2              202
 #define PPC_VARIANT_e200z3              203
 #define PPC_VARIANT_e200z4              204
 /** @} */
 
-#include "vectors.h"
+/* Inclusion of the PPC implementation specific parameters.*/
 #include "ppcparams.h"
 
 /*===========================================================================*/
-/* Port macros (common).                                                     */
+/* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/*===========================================================================*/
-/* Port configurable parameters (common).                                    */
-/*===========================================================================*/
+/**
+ * @brief   Stack size for the system idle thread.
+ * @details This size depends on the idle thread implementation, usually
+ *          the idle thread should take no more space than those reserved
+ *          by @p PORT_INT_REQUIRED_STACK.
+ * @note    In this port it is set to 32 because the idle thread does have
+ *          a stack frame when compiling without optimizations. You may
+ *          reduce this value to zero when compiling with optimizations.
+ */
+#if !defined(PORT_IDLE_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
+#define PORT_IDLE_THREAD_STACK_SIZE     32
+#endif
+
+/**
+ * @brief   Per-thread stack overhead for interrupts servicing.
+ * @details This constant is used in the calculation of the correct working
+ *          area size.
+ * @note    In this port this value is conservatively is set to 256 because
+ *          there is no separate interrupts stack (yet).
+ */
+#if !defined(PORT_INT_REQUIRED_STACK) || defined(__DOXYGEN__)
+#define PORT_INT_REQUIRED_STACK         256
+#endif
 
 /**
  * @brief   Use VLE instruction set.
@@ -81,7 +124,7 @@
 #endif
 
 /*===========================================================================*/
-/* Port derived parameters (common).                                         */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 #if PPC_USE_VLE && !PPC_SUPPORTS_VLE
@@ -92,59 +135,52 @@
 #error "the selected MCU does not support BookE instructions set"
 #endif
 
-/*===========================================================================*/
-/* Port exported info (common).                                              */
-/*===========================================================================*/
-
-/**
- * @brief   Unique macro for the implemented architecture.
- */
-#define CH_ARCHITECTURE_PPC
-
-/**
- * @brief   Name of the implemented architecture.
- */
-#define CH_ARCHITECTURE_NAME            "Power Architecture"
-
 /**
  * @brief   Name of the architecture variant.
  */
 #if (PPC_VARIANT == PPC_VARIANT_e200z0) || defined(__DOXYGEN__)
-#define CH_CORE_VARIANT_NAME            "e200z0"
+#define PORT_CORE_VARIANT_NAME          "e200z0"
+#elif PPC_VARIANT == PPC_VARIANT_e200z2
+#define PORT_CORE_VARIANT_NAME          "e200z2"
 #elif PPC_VARIANT == PPC_VARIANT_e200z3
-#define CH_CORE_VARIANT_NAME            "e200z3"
+#define PORT_CORE_VARIANT_NAME          "e200z3"
 #elif PPC_VARIANT == PPC_VARIANT_e200z4
-#define CH_CORE_VARIANT_NAME            "e200z4"
+#define PORT_CORE_VARIANT_NAME          "e200z4"
 #else
 #error "unknown or unsupported PowerPC variant specified"
 #endif
 
 /**
- * @brief   Name of the compiler supported by this port.
- */
-#define CH_COMPILER_NAME                "GCC " __VERSION__
-
-/**
  * @brief   Port-specific information string.
  */
 #if PPC_USE_VLE
-#define CH_PORT_INFO                    "VLE mode"
+#define PORT_INFO                       "VLE mode"
 #else
-#define CH_PORT_INFO                    "Book-E mode"
+#define PORT_INFO                       "Book-E mode"
 #endif
 
 /*===========================================================================*/
-/* Port implementation part (common).                                        */
+/* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
 #if !defined(_FROM_ASM_)
 
 /**
- * @brief   Base type for stack and memory alignment.
+ * @brief   Type of system time.
  */
-typedef struct {
-  uint8_t a[8];
-} stkalign_t __attribute__((aligned(8)));
+#if (CH_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
+typedef uint32_t systime_t;
+#else
+typedef uint16_t systime_t;
+#endif
+
+/**
+ * @brief   Type of stack and memory alignment enforcement.
+ * @note    In this architecture the stack alignment is enforced to 64 bits.
+ */
+typedef uint64_t stkalign_t;
 
 /**
  * @brief   Generic PPC register.
@@ -191,7 +227,7 @@ struct extctx {
   regppc_t      padding;
  };
 
- /**
+/**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
  *          switching.
@@ -232,58 +268,35 @@ struct context {
   struct intctx *sp;
 };
 
+#endif /* !defined(_FROM_ASM_) */
+
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
+
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
  *          by an @p intctx structure.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                          \
-  uint8_t *sp = (uint8_t *)workspace + wsize - sizeof(struct eabi_frame);   \
+#define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
+  uint8_t *sp = (uint8_t *)(workspace) +                                    \
+                           (wsize) -                                        \
+                           sizeof(struct eabi_frame);                       \
   ((struct eabi_frame *)sp)->slink = 0;                                     \
   ((struct eabi_frame *)sp)->shole = _port_thread_start;                    \
-  tp->p_ctx.sp = (struct intctx *)(sp - sizeof(struct intctx));             \
-  tp->p_ctx.sp->r31 = arg;                                                  \
-  tp->p_ctx.sp->r30 = pf;                                                   \
+  (tp)->p_ctx.sp = (struct intctx *)(sp - sizeof(struct intctx));           \
+  (tp)->p_ctx.sp->r31 = (regppc_t)(arg);                                    \
+  (tp)->p_ctx.sp->r30 = (regppc_t)(pf);                                     \
 }
 
 /**
- * @brief   Stack size for the system idle thread.
- * @details This size depends on the idle thread implementation, usually
- *          the idle thread should take no more space than those reserved
- *          by @p PORT_INT_REQUIRED_STACK.
- */
-#ifndef PORT_IDLE_THREAD_STACK_SIZE
-#define PORT_IDLE_THREAD_STACK_SIZE     32
-#endif
-
-/**
- * @brief   Per-thread stack overhead for interrupts servicing.
- * @details This constant is used in the calculation of the correct working
- *          area size.
- */
-#ifndef PORT_INT_REQUIRED_STACK
-#define PORT_INT_REQUIRED_STACK         256
-#endif
-
-/**
- * @brief   Enforces a correct alignment for a stack area size value.
- */
-#define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
-
-/**
  * @brief   Computes the thread working area global size.
+ * @note    There is no need to perform alignments in this macro.
  */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                         \
-                                   sizeof(struct intctx) +                  \
-                                   sizeof(struct extctx) +                  \
-                                   (n) + (PORT_INT_REQUIRED_STACK))
-
-/**
- * @brief   Static working area allocation.
- * @details This macro is used to allocate a static thread working area
- *          aligned as both position and size.
- */
-#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
+#define PORT_WA_SIZE(n) (sizeof(struct port_intctx) +                       \
+                         sizeof(struct port_extctx) +                       \
+                         (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   IRQ prologue code.
@@ -307,40 +320,11 @@ struct context {
 #define PORT_IRQ_HANDLER(id) void id(void)
 
 /**
- * @details Implemented as global interrupt disable.
+ * @brief   Fast IRQ handler function declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
  */
-#define port_lock() asm volatile ("wrteei  0" : : : "memory")
-
-/**
- * @details Implemented as global interrupt enable.
- */
-#define port_unlock() asm volatile("wrteei  1" : : : "memory")
-
-/**
- * @details Implemented as global interrupt disable.
- */
-#define port_lock_from_isr() /*asm ("wrteei  0")*/
-
-/**
- * @details Implemented as global interrupt enable.
- */
-#define port_unlock_from_isr() /*asm ("wrteei  1")*/
-
-/**
- * @details Implemented as global interrupt disable.
- */
-#define port_disable() asm volatile ("wrteei  0" : : : "memory")
-
-/**
- * @details Same as @p port_disable() in this port, there is no difference
- *          between the two states.
- */
-#define port_suspend() asm volatile ("wrteei  0" : : : "memory")
-
-/**
- * @details Implemented as global interrupt enable.
- */
-#define port_enable() asm volatile ("wrteei  1" : : : "memory")
+#define PORT_FAST_IRQ_HANDLER(id) void id(void)
 
 /**
  * @brief   Performs a context switch between two threads.
@@ -370,34 +354,113 @@ struct context {
  * @param[in] val       value to be written
  */
 #define port_mtspr(spr, val)                                                \
-  asm volatile ("mtspr %0,%1" : : "n" (spr), "r" (val))
+  asm volatile ("mtspr   %0, %1" : : "n" (spr), "r" (val))
 
-/**
- * @details This port function is implemented as inlined code for performance
- *          reasons.
- */
-#if PPC_ENABLE_WFI_IDLE
-#if !defined(port_wait_for_interrupt)
-#define port_wait_for_interrupt() {                                         \
-  asm volatile ("wait" : : : "memory");                                     \
-}
-#endif
-#else
-#define port_wait_for_interrupt()
-#endif
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void port_init(void);
-  void port_halt(void);
-  void _port_switch(Thread *ntp, Thread *otp);
+  void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _FROM_ASM_ */
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
+
+/**
+ * @brief   Kernel-lock action.
+ * @note    Implemented as global interrupt disable.
+ */
+static inline void port_lock(void) {
+
+  asm volatile ("wrteei  0" : : : "memory");
+}
+
+/**
+ * @brief   Kernel-unlock action.
+ * @note    Implemented as global interrupt enable.
+ */
+static inline void port_unlock(void) {
+
+  asm volatile("wrteei  1" : : : "memory");
+}
+
+/**
+ * @brief   Kernel-lock action from an interrupt handler.
+ * @note    Implementation not needed.
+ */
+static inline void port_lock_from_isr(void) {
+
+}
+
+/**
+ * @brief   Kernel-unlock action from an interrupt handler.
+ * @note    Implementation not needed.
+ */
+static inline void port_unlock_from_isr(void) {
+
+}
+
+/**
+ * @brief   Disables all the interrupt sources.
+ * @note    Implemented as global interrupt disable.
+ */
+static inline void port_disable(void) {
+
+  asm volatile ("wrteei  0" : : : "memory");
+}
+
+/**
+ * @brief   Disables the interrupt sources below kernel-level priority.
+ * @note    Same as @p port_disable() in this port, there is no difference
+ *          between the two states.
+ */
+static inline void port_suspend(void) {
+
+  asm volatile ("wrteei  0" : : : "memory");
+}
+
+/**
+ * @brief   Enables all the interrupt sources.
+ * @note    Implemented as global interrupt enable.
+ */
+static inline void port_enable(void) {
+
+  asm volatile ("wrteei  1" : : : "memory");
+}
+
+/**
+ * @brief   Enters an architecture-dependent IRQ-waiting mode.
+ * @details The function is meant to return when an interrupt becomes pending.
+ *          The simplest implementation is an empty function or macro but this
+ *          would not take advantage of architecture-specific power saving
+ *          modes.
+ * @note    Implemented as an inlined @p wait instruction.
+ */
+static inline void port_wait_for_interrupt(void) {
+
+#if PPC_ENABLE_WFI_IDLE
+  asm volatile ("wait" : : : "memory");
+#endif
+}
+
+static inline rtcnt_t port_rt_get_counter_value(void) {
+
+  return 0;
+}
+
+#endif /* !defined(_FROM_ASM_) */
 
 #endif /* _CHCORE_H_ */
 
