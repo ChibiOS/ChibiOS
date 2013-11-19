@@ -60,7 +60,7 @@
 /**
  * @brief   Returns the time counter value.
  * @note    This functionality is only available in free running mode, the
- *          behavior in periodic mode is undefined.
+ *          behaviour in periodic mode is undefined.
  *
  * @return              The counter value.
  *
@@ -73,7 +73,7 @@
  * @note    Makes sure that no spurious alarms are triggered after
  *          this call.
  * @note    This functionality is only available in free running mode, the
- *          behavior in periodic mode is undefined.
+ *          behaviour in periodic mode is undefined.
  *
  * @param[in] time      the time to be set for the first alarm
  *
@@ -84,7 +84,7 @@
 /**
  * @brief   Stops the alarm interrupt.
  * @note    This functionality is only available in free running mode, the
- *          behavior in periodic mode is undefined.
+ *          behaviour in periodic mode is undefined.
  *
  * @api
  */
@@ -93,7 +93,7 @@
 /**
  * @brief   Sets the alarm time.
  * @note    This functionality is only available in free running mode, the
- *          behavior in periodic mode is undefined.
+ *          behaviour in periodic mode is undefined.
  *
  * @param[in] time      the time to be set for the next alarm
  *
@@ -104,7 +104,7 @@
 /**
  * @brief   Returns the current alarm time.
  * @note    This functionality is only available in free running mode, the
- *          behavior in periodic mode is undefined.
+ *          behaviour in periodic mode is undefined.
  *
  * @return              The currently set alarm time.
  *
