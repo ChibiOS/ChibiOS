@@ -19,10 +19,10 @@
 */
 
 /**
- * @file    ARMCMx/compilers/GCC/chtypes.h
- * @brief   ARM Cortex-Mx port system types.
+ * @file    PPC/chtypes.h
+ * @brief   PowerPC architecture port system types.
  *
- * @addtogroup ARMCMx_CORE
+ * @addtogroup PPC_CORE
  * @{
  */
 

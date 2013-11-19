@@ -70,7 +70,7 @@
 /**
  * @brief   Number of interrupt sources.
  */
-#define PPC_VECTORS_NUMBER          288
+#define PPC_NUM_VECTORS             256
 
 #endif /* _PPCPARAMS_H_ */
 

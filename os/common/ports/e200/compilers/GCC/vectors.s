@@ -39,385 +39,385 @@
         .globl      _vectors
 _vectors:
         .long       vector0,    vector1,    vector2,    vector3
-#if PPC_VECTORS_NUMBER > 4
+#if PPC_NUM_VECTORS > 4
         .long       vector4,    vector5,    vector6,    vector7
 #endif
-#if PPC_VECTORS_NUMBER > 8
+#if PPC_NUM_VECTORS > 8
         .long       vector8,    vector9,    vector10,   vector11
 #endif
-#if PPC_VECTORS_NUMBER > 12
+#if PPC_NUM_VECTORS > 12
         .long       vector12,   vector13,   vector14,   vector15
 #endif
-#if PPC_VECTORS_NUMBER > 16
+#if PPC_NUM_VECTORS > 16
         .long       vector16,   vector17,   vector18,   vector19
 #endif
-#if PPC_VECTORS_NUMBER > 20
+#if PPC_NUM_VECTORS > 20
         .long       vector20,   vector21,   vector22,   vector23
 #endif
-#if PPC_VECTORS_NUMBER > 24
+#if PPC_NUM_VECTORS > 24
         .long       vector24,   vector25,   vector26,   vector27
 #endif
-#if PPC_VECTORS_NUMBER > 28
+#if PPC_NUM_VECTORS > 28
         .long       vector28,   vector29,   vector30,   vector31
 #endif
-#if PPC_VECTORS_NUMBER > 32
+#if PPC_NUM_VECTORS > 32
         .long       vector32,   vector33,   vector34,   vector35
 #endif
-#if PPC_VECTORS_NUMBER > 36
+#if PPC_NUM_VECTORS > 36
         .long       vector36,   vector37,   vector38,   vector39
 #endif
-#if PPC_VECTORS_NUMBER > 40
+#if PPC_NUM_VECTORS > 40
         .long       vector40,   vector41,   vector42,   vector43
 #endif
-#if PPC_VECTORS_NUMBER > 44
+#if PPC_NUM_VECTORS > 44
         .long       vector44,   vector45,   vector46,   vector47
 #endif
-#if PPC_VECTORS_NUMBER > 48
+#if PPC_NUM_VECTORS > 48
         .long       vector48,   vector49,   vector50,   vector51
 #endif
-#if PPC_VECTORS_NUMBER > 52
+#if PPC_NUM_VECTORS > 52
         .long       vector52,   vector53,   vector54,   vector55
 #endif
-#if PPC_VECTORS_NUMBER > 56
+#if PPC_NUM_VECTORS > 56
         .long       vector56,   vector57,   vector58,   vector59
 #endif
-#if PPC_VECTORS_NUMBER > 60
+#if PPC_NUM_VECTORS > 60
         .long       vector60,   vector61,   vector62,   vector63
 #endif
-#if PPC_VECTORS_NUMBER > 64
+#if PPC_NUM_VECTORS > 64
         .long       vector64,   vector65,   vector66,   vector67
 #endif
-#if PPC_VECTORS_NUMBER > 68
+#if PPC_NUM_VECTORS > 68
         .long       vector68,   vector69,   vector70,   vector71
 #endif
-#if PPC_VECTORS_NUMBER > 72
+#if PPC_NUM_VECTORS > 72
         .long       vector72,   vector73,   vector74,   vector75
 #endif
-#if PPC_VECTORS_NUMBER > 76
+#if PPC_NUM_VECTORS > 76
         .long       vector76,   vector77,   vector78,   vector79
 #endif
-#if PPC_VECTORS_NUMBER > 80
+#if PPC_NUM_VECTORS > 80
         .long       vector80,   vector81,   vector82,   vector83
 #endif
-#if PPC_VECTORS_NUMBER > 84
+#if PPC_NUM_VECTORS > 84
         .long       vector84,   vector85,   vector86,   vector87
 #endif
-#if PPC_VECTORS_NUMBER > 88
+#if PPC_NUM_VECTORS > 88
         .long       vector88,   vector89,   vector90,   vector91
 #endif
-#if PPC_VECTORS_NUMBER > 92
+#if PPC_NUM_VECTORS > 92
         .long       vector92,   vector93,   vector94,   vector95
 #endif
-#if PPC_VECTORS_NUMBER > 96
+#if PPC_NUM_VECTORS > 96
         .long       vector96,   vector97,   vector98,   vector99
 #endif
-#if PPC_VECTORS_NUMBER > 100
+#if PPC_NUM_VECTORS > 100
         .long       vector100,  vector101,  vector102,  vector103
 #endif
-#if PPC_VECTORS_NUMBER > 104
+#if PPC_NUM_VECTORS > 104
         .long       vector104,  vector105,  vector106,  vector107
 #endif
-#if PPC_VECTORS_NUMBER > 108
+#if PPC_NUM_VECTORS > 108
         .long       vector108,  vector109,  vector110,  vector111
 #endif
-#if PPC_VECTORS_NUMBER > 112
+#if PPC_NUM_VECTORS > 112
         .long       vector112,  vector113,  vector114,  vector115
 #endif
-#if PPC_VECTORS_NUMBER > 116
+#if PPC_NUM_VECTORS > 116
         .long       vector116,  vector117,  vector118,  vector119
 #endif
-#if PPC_VECTORS_NUMBER > 120
+#if PPC_NUM_VECTORS > 120
         .long       vector120,  vector121,  vector122,  vector123
 #endif
-#if PPC_VECTORS_NUMBER > 124
+#if PPC_NUM_VECTORS > 124
         .long       vector124,  vector125,  vector126,  vector127
 #endif
-#if PPC_VECTORS_NUMBER > 128
+#if PPC_NUM_VECTORS > 128
         .long       vector128,  vector129,  vector130,  vector131
 #endif
-#if PPC_VECTORS_NUMBER > 132
+#if PPC_NUM_VECTORS > 132
         .long       vector132,  vector133,  vector134,  vector135
 #endif
-#if PPC_VECTORS_NUMBER > 136
+#if PPC_NUM_VECTORS > 136
         .long       vector136,  vector137,  vector138,  vector139
 #endif
-#if PPC_VECTORS_NUMBER > 140
+#if PPC_NUM_VECTORS > 140
         .long       vector140,  vector141,  vector142,  vector143
 #endif
-#if PPC_VECTORS_NUMBER > 144
+#if PPC_NUM_VECTORS > 144
         .long       vector144,  vector145,  vector146,  vector147
 #endif
-#if PPC_VECTORS_NUMBER > 148
+#if PPC_NUM_VECTORS > 148
         .long       vector148,  vector149,  vector150,  vector151
 #endif
-#if PPC_VECTORS_NUMBER > 152
+#if PPC_NUM_VECTORS > 152
         .long       vector152,  vector153,  vector154,  vector155
 #endif
-#if PPC_VECTORS_NUMBER > 156
+#if PPC_NUM_VECTORS > 156
         .long       vector156,  vector157,  vector158,  vector159
 #endif
-#if PPC_VECTORS_NUMBER > 160
+#if PPC_NUM_VECTORS > 160
         .long       vector160,  vector161,  vector162,  vector163
 #endif
-#if PPC_VECTORS_NUMBER > 164
+#if PPC_NUM_VECTORS > 164
         .long       vector164,  vector165,  vector166,  vector167
 #endif
-#if PPC_VECTORS_NUMBER > 168
+#if PPC_NUM_VECTORS > 168
         .long       vector168,  vector169,  vector170,  vector171
 #endif
-#if PPC_VECTORS_NUMBER > 172
+#if PPC_NUM_VECTORS > 172
         .long       vector172,  vector173,  vector174,  vector175
 #endif
-#if PPC_VECTORS_NUMBER > 176
+#if PPC_NUM_VECTORS > 176
         .long       vector176,  vector177,  vector178,  vector179
 #endif
-#if PPC_VECTORS_NUMBER > 180
+#if PPC_NUM_VECTORS > 180
         .long       vector180,  vector181,  vector182,  vector183
 #endif
-#if PPC_VECTORS_NUMBER > 184
+#if PPC_NUM_VECTORS > 184
         .long       vector184,  vector185,  vector186,  vector187
 #endif
-#if PPC_VECTORS_NUMBER > 188
+#if PPC_NUM_VECTORS > 188
         .long       vector188,  vector189,  vector190,  vector191
 #endif
-#if PPC_VECTORS_NUMBER > 192
+#if PPC_NUM_VECTORS > 192
         .long       vector192,  vector193,  vector194,  vector195
 #endif
-#if PPC_VECTORS_NUMBER > 196
+#if PPC_NUM_VECTORS > 196
         .long       vector196,  vector197,  vector198,  vector199
 #endif
-#if PPC_VECTORS_NUMBER > 200
+#if PPC_NUM_VECTORS > 200
         .long       vector200,  vector201,  vector202,  vector203
 #endif
-#if PPC_VECTORS_NUMBER > 204
+#if PPC_NUM_VECTORS > 204
         .long       vector204,  vector205,  vector206,  vector207
 #endif
-#if PPC_VECTORS_NUMBER > 208
+#if PPC_NUM_VECTORS > 208
         .long       vector208,  vector209,  vector210,  vector211
 #endif
-#if PPC_VECTORS_NUMBER > 212
+#if PPC_NUM_VECTORS > 212
         .long       vector212,  vector213,  vector214,  vector215
 #endif
-#if PPC_VECTORS_NUMBER > 216
+#if PPC_NUM_VECTORS > 216
         .long       vector216,  vector217,  vector218,  vector219
 #endif
-#if PPC_VECTORS_NUMBER > 220
+#if PPC_NUM_VECTORS > 220
         .long       vector220,  vector221,  vector222,  vector223
 #endif
-#if PPC_VECTORS_NUMBER > 224
+#if PPC_NUM_VECTORS > 224
         .long       vector224,  vector225,  vector226,  vector227
 #endif
-#if PPC_VECTORS_NUMBER > 228
+#if PPC_NUM_VECTORS > 228
         .long       vector228,  vector229,  vector230,  vector231
 #endif
-#if PPC_VECTORS_NUMBER > 232
+#if PPC_NUM_VECTORS > 232
         .long       vector232,  vector233,  vector234,  vector235
 #endif
-#if PPC_VECTORS_NUMBER > 236
+#if PPC_NUM_VECTORS > 236
         .long       vector236,  vector237,  vector238,  vector239
 #endif
-#if PPC_VECTORS_NUMBER > 240
+#if PPC_NUM_VECTORS > 240
         .long       vector240,  vector241,  vector242,  vector243
 #endif
-#if PPC_VECTORS_NUMBER > 244
+#if PPC_NUM_VECTORS > 244
         .long       vector244,  vector245,  vector246,  vector247
 #endif
-#if PPC_VECTORS_NUMBER > 248
+#if PPC_NUM_VECTORS > 248
         .long       vector248,  vector249,  vector250,  vector251
 #endif
-#if PPC_VECTORS_NUMBER > 252
+#if PPC_NUM_VECTORS > 252
         .long       vector252,  vector253,  vector254,  vector255
 #endif
-#if PPC_VECTORS_NUMBER > 256
+#if PPC_NUM_VECTORS > 256
         .long       vector256,  vector257,  vector258,  vector259
 #endif
-#if PPC_VECTORS_NUMBER > 260
+#if PPC_NUM_VECTORS > 260
         .long       vector260,  vector261,  vector262,  vector263
 #endif
-#if PPC_VECTORS_NUMBER > 264
+#if PPC_NUM_VECTORS > 264
         .long       vector264,  vector265,  vector266,  vector267
 #endif
-#if PPC_VECTORS_NUMBER > 268
+#if PPC_NUM_VECTORS > 268
         .long       vector268,  vector269,  vector270,  vector271
 #endif
-#if PPC_VECTORS_NUMBER > 272
+#if PPC_NUM_VECTORS > 272
         .long       vector272,  vector273,  vector274,  vector275
 #endif
-#if PPC_VECTORS_NUMBER > 276
+#if PPC_NUM_VECTORS > 276
         .long       vector276,  vector277,  vector278,  vector279
 #endif
-#if PPC_VECTORS_NUMBER > 280
+#if PPC_NUM_VECTORS > 280
         .long       vector280,  vector281,  vector282,  vector283
 #endif
-#if PPC_VECTORS_NUMBER > 284
+#if PPC_NUM_VECTORS > 284
         .long       vector284,  vector285,  vector286,  vector287
 #endif
-#if PPC_VECTORS_NUMBER > 288
+#if PPC_NUM_VECTORS > 288
         .long       vector288,  vector289,  vector290,  vector291
 #endif
-#if PPC_VECTORS_NUMBER > 292
+#if PPC_NUM_VECTORS > 292
         .long       vector292,  vector293,  vector294,  vector295
 #endif
-#if PPC_VECTORS_NUMBER > 296
+#if PPC_NUM_VECTORS > 296
         .long       vector296,  vector297,  vector298,  vector299
 #endif
-#if PPC_VECTORS_NUMBER > 300
+#if PPC_NUM_VECTORS > 300
         .long       vector300,  vector301,  vector302,  vector303
 #endif
-#if PPC_VECTORS_NUMBER > 304
+#if PPC_NUM_VECTORS > 304
         .long       vector304,  vector305,  vector306,  vector307
 #endif
-#if PPC_VECTORS_NUMBER > 308
+#if PPC_NUM_VECTORS > 308
         .long       vector308,  vector309,  vector310,  vector311
 #endif
-#if PPC_VECTORS_NUMBER > 312
+#if PPC_NUM_VECTORS > 312
         .long       vector312,  vector313,  vector314,  vector315
 #endif
-#if PPC_VECTORS_NUMBER > 316
+#if PPC_NUM_VECTORS > 316
         .long       vector316,  vector317,  vector318,  vector319
 #endif
-#if PPC_VECTORS_NUMBER > 320
+#if PPC_NUM_VECTORS > 320
         .long       vector320,  vector321,  vector322,  vector323
 #endif
-#if PPC_VECTORS_NUMBER > 324
+#if PPC_NUM_VECTORS > 324
         .long       vector324,  vector325,  vector326,  vector327
 #endif
-#if PPC_VECTORS_NUMBER > 328
+#if PPC_NUM_VECTORS > 328
         .long       vector328,  vector329,  vector330,  vector331
 #endif
-#if PPC_VECTORS_NUMBER > 332
+#if PPC_NUM_VECTORS > 332
         .long       vector332,  vector333,  vector334,  vector335
 #endif
-#if PPC_VECTORS_NUMBER > 336
+#if PPC_NUM_VECTORS > 336
         .long       vector336,  vector337,  vector338,  vector339
 #endif
-#if PPC_VECTORS_NUMBER > 340
+#if PPC_NUM_VECTORS > 340
         .long       vector340,  vector341,  vector342,  vector343
 #endif
-#if PPC_VECTORS_NUMBER > 344
+#if PPC_NUM_VECTORS > 344
         .long       vector344,  vector345,  vector346,  vector347
 #endif
-#if PPC_VECTORS_NUMBER > 348
+#if PPC_NUM_VECTORS > 348
         .long       vector348,  vector349,  vector350,  vector351
 #endif
-#if PPC_VECTORS_NUMBER > 352
+#if PPC_NUM_VECTORS > 352
         .long       vector352,  vector353,  vector354,  vector355
 #endif
-#if PPC_VECTORS_NUMBER > 356
+#if PPC_NUM_VECTORS > 356
         .long       vector356,  vector357,  vector358,  vector359
 #endif
-#if PPC_VECTORS_NUMBER > 360
+#if PPC_NUM_VECTORS > 360
         .long       vector360,  vector361,  vector362,  vector363
 #endif
-#if PPC_VECTORS_NUMBER > 364
+#if PPC_NUM_VECTORS > 364
         .long       vector364,  vector365,  vector366,  vector367
 #endif
-#if PPC_VECTORS_NUMBER > 368
+#if PPC_NUM_VECTORS > 368
         .long       vector368,  vector369,  vector370,  vector371
 #endif
-#if PPC_VECTORS_NUMBER > 372
+#if PPC_NUM_VECTORS > 372
         .long       vector372,  vector373,  vector374,  vector375
 #endif
-#if PPC_VECTORS_NUMBER > 376
+#if PPC_NUM_VECTORS > 376
         .long       vector376,  vector377,  vector378,  vector379
 #endif
-#if PPC_VECTORS_NUMBER > 380
+#if PPC_NUM_VECTORS > 380
         .long       vector380,  vector381,  vector382,  vector383
 #endif
-#if PPC_VECTORS_NUMBER > 384
+#if PPC_NUM_VECTORS > 384
         .long       vector384,  vector385,  vector386,  vector387
 #endif
-#if PPC_VECTORS_NUMBER > 388
+#if PPC_NUM_VECTORS > 388
         .long       vector388,  vector389,  vector390,  vector391
 #endif
-#if PPC_VECTORS_NUMBER > 392
+#if PPC_NUM_VECTORS > 392
         .long       vector392,  vector393,  vector394,  vector395
 #endif
-#if PPC_VECTORS_NUMBER > 396
+#if PPC_NUM_VECTORS > 396
         .long       vector396,  vector397,  vector398,  vector399
 #endif
-#if PPC_VECTORS_NUMBER > 400
+#if PPC_NUM_VECTORS > 400
         .long       vector400,  vector401,  vector402,  vector403
 #endif
-#if PPC_VECTORS_NUMBER > 404
+#if PPC_NUM_VECTORS > 404
         .long       vector404,  vector405,  vector406,  vector407
 #endif
-#if PPC_VECTORS_NUMBER > 408
+#if PPC_NUM_VECTORS > 408
         .long       vector408,  vector409,  vector410,  vector411
 #endif
-#if PPC_VECTORS_NUMBER > 412
+#if PPC_NUM_VECTORS > 412
         .long       vector412,  vector413,  vector414,  vector415
 #endif
-#if PPC_VECTORS_NUMBER > 416
+#if PPC_NUM_VECTORS > 416
         .long       vector416,  vector417,  vector418,  vector419
 #endif
-#if PPC_VECTORS_NUMBER > 420
+#if PPC_NUM_VECTORS > 420
         .long       vector420,  vector421,  vector422,  vector423
 #endif
-#if PPC_VECTORS_NUMBER > 424
+#if PPC_NUM_VECTORS > 424
         .long       vector424,  vector425,  vector426,  vector427
 #endif
-#if PPC_VECTORS_NUMBER > 428
+#if PPC_NUM_VECTORS > 428
         .long       vector428,  vector429,  vector430,  vector431
 #endif
-#if PPC_VECTORS_NUMBER > 432
+#if PPC_NUM_VECTORS > 432
         .long       vector432,  vector433,  vector434,  vector435
 #endif
-#if PPC_VECTORS_NUMBER > 436
+#if PPC_NUM_VECTORS > 436
         .long       vector436,  vector437,  vector438,  vector439
 #endif
-#if PPC_VECTORS_NUMBER > 440
+#if PPC_NUM_VECTORS > 440
         .long       vector440,  vector441,  vector442,  vector443
 #endif
-#if PPC_VECTORS_NUMBER > 444
+#if PPC_NUM_VECTORS > 444
         .long       vector444,  vector445,  vector446,  vector447
 #endif
-#if PPC_VECTORS_NUMBER > 448
+#if PPC_NUM_VECTORS > 448
         .long       vector448,  vector449,  vector450,  vector451
 #endif
-#if PPC_VECTORS_NUMBER > 452
+#if PPC_NUM_VECTORS > 452
         .long       vector452,  vector453,  vector454,  vector455
 #endif
-#if PPC_VECTORS_NUMBER > 456
+#if PPC_NUM_VECTORS > 456
         .long       vector456,  vector457,  vector458,  vector459
 #endif
-#if PPC_VECTORS_NUMBER > 460
+#if PPC_NUM_VECTORS > 460
         .long       vector460,  vector461,  vector462,  vector463
 #endif
-#if PPC_VECTORS_NUMBER > 464
+#if PPC_NUM_VECTORS > 464
         .long       vector464,  vector465,  vector466,  vector467
 #endif
-#if PPC_VECTORS_NUMBER > 468
+#if PPC_NUM_VECTORS > 468
         .long       vector468,  vector469,  vector470,  vector471
 #endif
-#if PPC_VECTORS_NUMBER > 472
+#if PPC_NUM_VECTORS > 472
         .long       vector472,  vector473,  vector474,  vector475
 #endif
-#if PPC_VECTORS_NUMBER > 476
+#if PPC_NUM_VECTORS > 476
         .long       vector476,  vector477,  vector478,  vector479
 #endif
-#if PPC_VECTORS_NUMBER > 480
+#if PPC_NUM_VECTORS > 480
         .long       vector480,  vector481,  vector482,  vector483
 #endif
-#if PPC_VECTORS_NUMBER > 484
+#if PPC_NUM_VECTORS > 484
         .long       vector484,  vector485,  vector486,  vector487
 #endif
-#if PPC_VECTORS_NUMBER > 488
+#if PPC_NUM_VECTORS > 488
         .long       vector488,  vector489,  vector490,  vector491
 #endif
-#if PPC_VECTORS_NUMBER > 492
+#if PPC_NUM_VECTORS > 492
         .long       vector492,  vector493,  vector494,  vector495
 #endif
-#if PPC_VECTORS_NUMBER > 496
+#if PPC_NUM_VECTORS > 496
         .long       vector496,  vector497,  vector498,  vector499
 #endif
-#if PPC_VECTORS_NUMBER > 500
+#if PPC_NUM_VECTORS > 500
         .long       vector500,  vector501,  vector502,  vector503
 #endif
-#if PPC_VECTORS_NUMBER > 504
+#if PPC_NUM_VECTORS > 504
         .long       vector504,  vector505,  vector506,  vector507
 #endif
-#if PPC_VECTORS_NUMBER > 508
+#if PPC_NUM_VECTORS > 508
         .long       vector508,  vector509,  vector510,  vector511
 #endif
 
