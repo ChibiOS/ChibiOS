@@ -75,6 +75,7 @@
 
 /* Inclusion of the PPC implementation specific parameters.*/
 #include "ppcparams.h"
+#include "vectors.h"
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -408,6 +409,9 @@ static inline void port_init(void) {
                 "li          %%r3, _IVOR10@l      \t\n"
                 "mtIVOR10    %%r3" : : : "r3", "memory");
 #endif
+
+  /* Interrupt controller initialization.*/
+  intc_init();
 }
 
 /**

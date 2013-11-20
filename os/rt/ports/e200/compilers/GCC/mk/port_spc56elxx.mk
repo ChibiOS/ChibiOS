@@ -6,7 +6,8 @@ PORTASM = $(CHIBIOS)/os/common/ports/e200/devices/SPC56ELxx/boot.s \
           $(CHIBIOS)/os/common/ports/e200/compilers/GCC/ivor.s \
           $(CHIBIOS)/os/common/ports/e200/compilers/GCC/crt0.s
 
-PORTINC = ${CHIBIOS}/os/common/ports/e200/devices/SPC56ELxx \
+PORTINC = ${CHIBIOS}/os/common/ports/e200/compilers/GCC \
+          ${CHIBIOS}/os/common/ports/e200/devices/SPC56ELxx \
           ${CHIBIOS}/os/rt/ports/e200 \
           ${CHIBIOS}/os/rt/ports/e200/compilers/GCC
 

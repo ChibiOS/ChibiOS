@@ -35,6 +35,10 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+#define INTC_MCR        *((volatile uint32_t *)0xfff48000)
+#define INTC_CPR        *((volatile uint32_t *)0xfff48008)
+#define INTC_IACKR      *((volatile uint32_t *)0xfff48010)
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -56,7 +60,7 @@
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-extern uint32_t _vectors[PPC_VECTORS_NUMBER];
+extern uint32_t _vectors[PPC_NUM_VECTORS];
 #endif
 
 #ifdef __cplusplus
@@ -66,6 +70,17 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+static inline void intc_init(void) {
+
+  INTC_MCR   = 0;
+  INTC_CPR   = 0;
+  INTC_IACKR = (uint32_t)_vectors;
+}
 
 #endif /* _VECTORS_H_ */
 
