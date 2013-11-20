@@ -58,8 +58,8 @@
         .globl      _IVOR10
         .type       _IVOR10, @function
 _IVOR10:
-        /* Creation of the external stack frame (extctx structure).*/
-        stwu        %sp, -80(%sp)           /* Size of the extctx structure.*/
+        /* Saving the external context (port_extctx structure).*/
+        stwu        %sp, -80(%sp)
 #if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
         e_stmvsrrw  8(%sp)                  /* Saves PC, MSR.               */
         e_stmvsprw  16(%sp)                 /* Saves CR, LR, CTR, XER.      */
@@ -89,6 +89,11 @@ _IVOR10:
         stw         %r11, 68(%sp)
         stw         %r12, 72(%sp)
 #endif /* !(PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI) */
+
+        /* Increasing the SPGR0 register.*/
+        mfspr       %r0, 272
+        eaddi       %r0, %r0, 1
+        mtspr       272, %r0
 
         /* Reset DIE bit in TSR register.*/
         lis         %r3, 0x0800             /* DIS bit mask.                */
@@ -122,8 +127,8 @@ _IVOR10:
         .globl      _IVOR4
         .type       _IVOR4, @function
 _IVOR4:
-        /* Creation of the external stack frame (extctx structure).*/
-        stwu        %sp, -80(%sp)           /* Size of the extctx structure.*/
+        /* Saving the external context (port_extctx structure).*/
+        stwu        %sp, -80(%sp)
 #if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
         e_stmvsrrw  8(%sp)                  /* Saves PC, MSR.               */
         e_stmvsprw  16(%sp)                 /* Saves CR, LR, CTR, XER.      */
@@ -153,6 +158,11 @@ _IVOR4:
         stw         %r11, 68(%sp)
         stw         %r12, 72(%sp)
 #endif /* !(PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI) */
+
+        /* Increasing the SPGR0 register.*/
+        mfspr       %r0, 272
+        eaddi       %r0, %r0, 1
+        mtspr       272, %r0
 
         /* Software vector address from the INTC register.*/
         lis         %r3, INTC_IACKR@h
@@ -195,6 +205,13 @@ _ivor_exit:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_unlock
 #endif
+
+        /* Decreasing the SPGR0 register.*/
+        mfspr       %r0, 272
+        eaddi       %r0, %r0, -1
+        mtspr       272, %r0
+
+        /* Restoring the external context.*/
 #if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
         e_lmvgprw   32(%sp)                 /* Restores GPR0, GPR3...GPR12. */
         e_lmvsprw   16(%sp)                 /* Restores CR, LR, CTR, XER.   */

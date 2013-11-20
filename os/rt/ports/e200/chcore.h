@@ -347,10 +347,19 @@ struct context {
  * @brief   Writes to a special register.
  *
  * @param[in] spr       special register number
- * @param[in] val       value to be written
+ * @param[in] val       value to be written, must be an automatic variable
  */
-#define port_mtspr(spr, val)                                                \
-  asm volatile ("mtspr   %0, %1" : : "n" (spr), "r" (val))
+#define port_write_spr(spr, val)                                            \
+  asm volatile ("mtspr   %[p0], %[p1]" : : [p0] "n" (spr), [p1] "r" (val))
+
+/**
+ * @brief   Writes to a special register.
+ *
+ * @param[in] spr       special register number
+ * @param[in] val       returned value, must be an automatic variable
+ */
+#define port_read_spr(spr, val)                                             \
+  asm volatile ("mfspr   %[p0], %[p1]" : [p0] "=r" (val) : [p1] "n" (spr))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -384,14 +393,20 @@ extern "C" {
  * @details IVOR4 and IVOR10 initialization.
  */
 static inline void port_init(void) {
+  uint32_t n;
+
+  /* Initializing the SPRG0 register to zero, it is required for interrupts
+     handling.*/
+  n = 0;
+  port_write_spr(272, n);
 
 #if PPC_SUPPORTS_IVORS
-    /* The CPU supports IVOR registers, the kernel requires IVOR4 and IVOR10
-       and the initialization is performed here.*/
-    asm volatile ("li          %%r3, _IVOR4@l       \t\n"
-                  "mtIVOR4     %%r3                 \t\n"
-                  "li          %%r3, _IVOR10@l      \t\n"
-                  "mtIVOR10    %%r3" : : : "memory");
+  /* The CPU supports IVOR registers, the kernel requires IVOR4 and IVOR10
+     and the initialization is performed here.*/
+  asm volatile ("li          %%r3, _IVOR4@l       \t\n"
+                "mtIVOR4     %%r3                 \t\n"
+                "li          %%r3, _IVOR10@l      \t\n"
+                "mtIVOR10    %%r3" : : : "r3", "memory");
 #endif
 }
 
@@ -403,7 +418,7 @@ static inline void port_init(void) {
 static inline syssts_t port_get_irq_status(void) {
   uint32_t sts;
 
-  sts = 0;
+  asm volatile ("mfmsr   %[p0]" : [p0] "=r" (sts) :);
   return sts;
 }
 
@@ -418,7 +433,7 @@ static inline syssts_t port_get_irq_status(void) {
  */
 static inline bool port_irq_enabled(syssts_t sts) {
 
-  return (sts & 1) == 0;
+  return (bool)((sts & (1 << 15)) != 0);
 }
 
 /**
@@ -429,9 +444,12 @@ static inline bool port_irq_enabled(syssts_t sts) {
  * @retval true         running in ISR mode.
  */
 static inline bool port_is_isr_context(void) {
+  uint32_t sprg0;
 
-//  return (bool)((__get_IPSR() & 0x1FF) != 0);
-  return false;
+  /* The SPRG0 register is increased before entering interrupt handlers and
+     decreased at the end.*/
+  port_read_spr(272, sprg0);
+  return (bool)(sprg0 > 0);
 }
 
 /**
