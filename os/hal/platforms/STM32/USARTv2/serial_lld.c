@@ -156,18 +156,21 @@ static void serve_interrupt(SerialDriver *sdp) {
   /* Error condition detection.*/
   if (isr & (USART_ISR_ORE | USART_ISR_NE | USART_ISR_FE  | USART_ISR_PE))
     set_error(sdp, isr);
+
   /* Special case, LIN break detection.*/
   if (isr & USART_ISR_LBD) {
     chSysLockFromIsr();
     chnAddFlagsI(sdp, SD_BREAK_DETECTED);
     chSysUnlockFromIsr();
   }
+
   /* Data available.*/
   if (isr & USART_ISR_RXNE) {
     chSysLockFromIsr();
     sdIncomingDataI(sdp, (uint8_t)u->RDR);
     chSysUnlockFromIsr();
   }
+
   /* Transmission buffer empty.*/
   if ((cr1 & USART_CR1_TXEIE) && (isr & USART_ISR_TXE)) {
     msg_t b;
@@ -181,6 +184,7 @@ static void serve_interrupt(SerialDriver *sdp) {
       u->TDR = b;
     chSysUnlockFromIsr();
   }
+
   /* Physical transmission end.*/
   if (isr & USART_ISR_TC) {
     chSysLockFromIsr();

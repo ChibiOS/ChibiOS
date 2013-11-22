@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed lost incoming characters in STM32 USARTv1 driver (bug #442)
+  (backported to 2.4.6 and 2.6.2).
 - FIX: Fixed UART4/5-related bugs in STM32 USARTv1 UART driver (bug #440)
   (backported to 2.6.2).
 - FIX: Fixed race condition in STM32 DMA interrupt (bug #439)(backported
