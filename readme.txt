@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.2 ***
+- FIX: Fixed lost incoming characters in STM32 USARTv1 driver (bug #442).
 - FIX: Fixed STM32 OTG-FS wrong upper memory limit (bug #437).
 - FIX: Fixed race condition in STM32 DMA interrupt (bug #439).
 - FIX: Fixed timing issue in the STM32 OTGv1 USB driver (bug #436).
