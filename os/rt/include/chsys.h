@@ -145,35 +145,38 @@
 /**
  * @brief   Realtime counter cycles to seconds.
  * @details Converts from realtime counter cycles number to seconds.
+ * @note    The result is rounded up to the next second boundary.
  *
  * @param[in] n         number of cycles
  * @return              The number of seconds.
  *
  * @api
  */
-#define RTC2S(n) (rtcnt_t)(CH_CFG_RTC_FREQUENCY / (freq))
+#define RTC2S(n) ((((n) - 1UL) / CH_CFG_RTC_FREQUENCY) + 1UL)
 
 /**
  * @brief   Realtime counter cycles to milliseconds.
  * @details Converts from realtime counter cycles number to milliseconds.
+ * @note    The result is rounded up to the next millisecond boundary.
  *
  * @param[in] n         number of cycles
  * @return              The number of milliseconds.
  *
  * @api
  */
-#define RTC2MS(n) ((n) / (CH_CFG_RTC_FREQUENCY / 1000UL))
+#define RTC2MS(n) ((((n) - 1UL) / (CH_CFG_RTC_FREQUENCY / 1000UL)) + 1UL)
 
 /**
  * @brief   Realtime counter cycles to microseconds.
  * @details Converts from realtime counter cycles number to microseconds.
+ * @note    The result is rounded up to the next microsecond boundary.
  *
  * @param[in] n         number of cycles
  * @return              The number of microseconds.
  *
  * @api
  */
-#define RTC2US(n) ((n) / (CH_CFG_RTC_FREQUENCY / 1000000UL))
+#define RTC2US(n) ((((n) - 1UL) / (CH_CFG_RTC_FREQUENCY / 1000000UL)) + 1UL)
 /** @} */
 
 /**
