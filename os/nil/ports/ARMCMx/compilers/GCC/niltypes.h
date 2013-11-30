@@ -77,6 +77,11 @@ typedef uint32_t        ucnt_t;         /**< Generic unsigned counter.      */
 #define PORT_THD_FUNCTION(tname, arg)                                       \
   __attribute__((noreturn)) void tname(void *arg)
 
+/**
+ * @brief   Packed variable specifier.
+ */
+#define PACKED_VAR __attribute__((packed))
+
 #endif /* _NILTYPES_H_ */
 
 /** @} */
