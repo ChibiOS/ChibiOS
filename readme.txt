@@ -100,6 +100,7 @@
 - FIX: Fixed timing issue in the STM32 OTGv1 USB driver (bug #436)(backported
   to 2.6.2).
 - FIX: Fixed STM32L1 remove reset flag (bug #435)(backported to 2.6.2).
+- FIX: Fixed unaligned data access in USB LLD (bug #434)(backported to 2.6.2).
 - FIX: Fixed add RTC to STM32L1 (bug #433)(backported to 2.6.2).
 - FIX: Fixed support 10-bit addresses in STM32 I2C driver (bug #432)
   (backported to 2.6.2).

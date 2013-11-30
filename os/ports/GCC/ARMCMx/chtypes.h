@@ -75,6 +75,11 @@ typedef int32_t         cnt_t;          /**< Resources counter.             */
  */
 #define PACK_STRUCT_END
 
+/**
+ * @brief   Packed variable specifier.
+ */
+#define PACKED_VAR __attribute__((packed))
+
 #endif /* _CHTYPES_H_ */
 
 /** @} */
