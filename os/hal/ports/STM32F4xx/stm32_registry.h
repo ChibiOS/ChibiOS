@@ -81,10 +81,16 @@
 #define STM32_HAS_GPIOC                     TRUE
 #define STM32_HAS_GPIOD                     TRUE
 #define STM32_HAS_GPIOE                     TRUE
+#define STM32_HAS_GPIOH                     TRUE
+#if !defined(STM32F401xx)
 #define STM32_HAS_GPIOF                     TRUE
 #define STM32_HAS_GPIOG                     TRUE
-#define STM32_HAS_GPIOH                     TRUE
 #define STM32_HAS_GPIOI                     TRUE
+#else
+#define STM32_HAS_GPIOF                     FALSE
+#define STM32_HAS_GPIOG                     FALSE
+#define STM32_HAS_GPIOI                     FALSE
+#endif
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
@@ -145,6 +151,34 @@
 #define STM32_SPI3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 5) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_SPI3_TX_DMA_CHN               0x00000000
+
+#if defined(STM32F429_439xx)
+#define STM32_HAS_SPI4                      TRUE
+#define STM32_SPI4_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 0) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
+#define STM32_SPI4_RX_DMA_CHN               0x00005004
+#define STM32_SPI4_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 4))
+#define STM32_SPI4_TX_DMA_CHN               0x00050040
+
+#define STM32_HAS_SPI5                      TRUE
+#define STM32_SPI5_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 3) |            \
+                                             STM32_DMA_STREAM_ID_MSK(2, 5))
+#define STM32_SPI5_RX_DMA_CHN               0x00702000
+#define STM32_SPI5_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 4) |            \
+                                             STM32_DMA_STREAM_ID_MSK(2, 6))
+#define STM32_SPI5_TX_DMA_CHN               0x07020000
+
+#define STM32_HAS_SPI6                      TRUE
+#define STM32_SPI6_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 6))
+#define STM32_SPI6_RX_DMA_CHN               0x01000000
+#define STM32_SPI6_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 5))
+#define STM32_SPI6_TX_DMA_CHN               0x00100000
+#else /* !defined(STM32F429_439xx) */
+#define STM32_HAS_SPI4                      FALSE
+#define STM32_HAS_SPI5                      FALSE
+#define STM32_HAS_SPI6                      FALSE
+#endif /* !defined(STM32F429_439xx) */
 
 /* TIM attributes.*/
 #define STM32_HAS_TIM1                      TRUE

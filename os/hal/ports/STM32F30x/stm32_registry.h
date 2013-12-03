@@ -106,6 +106,10 @@
 #define STM32_SPI_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 1)
 #define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(2, 2)
 
+#define STM32_HAS_SPI4                      FALSE
+#define STM32_HAS_SPI5                      FALSE
+#define STM32_HAS_SPI6                      FALSE
+
 /* TIM attributes.*/
 #define STM32_TIM_MAX_CHANNELS              6
 
