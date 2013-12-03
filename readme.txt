@@ -91,6 +91,8 @@
 *** 2.7.0 ***
 - FIX: Fixed wrong definition in STM32F37x ADC driver (bug #444)(backported
   to 2.6.2).
+- FIX: Fixed wrong CORTEX_PRIORITY_PENDSV value (bug #443)(backported to
+  2.4.6 and 2.6.2).
 - FIX: Fixed lost incoming characters in STM32 USARTv1 driver (bug #442)
   (backported to 2.4.6 and 2.6.2).
 - FIX: Fixed UART4/5-related bugs in STM32 USARTv1 UART driver (bug #440)
