@@ -420,6 +420,10 @@
 #define STM32_HAS_GPIOF         TRUE
 #define STM32_HAS_GPIOG         TRUE
 #define STM32_HAS_GPIOI         TRUE
+#else
+#define STM32_HAS_GPIOF         FALSE
+#define STM32_HAS_GPIOG         FALSE
+#define STM32_HAS_GPIOI         FALSE
 #endif
 
 /* I2C attributes.*/
