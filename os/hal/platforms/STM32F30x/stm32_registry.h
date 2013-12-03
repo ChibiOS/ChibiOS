@@ -140,6 +140,10 @@
 #define STM32_SPI3_TX_DMA_MSK   STM32_DMA_STREAM_ID_MSK(2, 2)
 #define STM32_SPI3_TX_DMA_CHN   0x00000000
 
+#define STM32_HAS_SPI4          FALSE
+#define STM32_HAS_SPI5          FALSE
+#define STM32_HAS_SPI6          FALSE
+
 /* TIM attributes.*/
 #define STM32_HAS_TIM1          TRUE
 #define STM32_HAS_TIM2          TRUE

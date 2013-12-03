@@ -482,6 +482,35 @@
                                  STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_SPI3_TX_DMA_CHN   0x00000000
 
+#ifdef STM32F429_439xx
+#define STM32_HAS_SPI4          TRUE
+#define STM32_SPI4_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(2, 0) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 3))
+#define STM32_SPI4_RX_DMA_CHN   0x00005004
+#define STM32_SPI4_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(2, 1) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 4))
+#define STM32_SPI4_TX_DMA_CHN   0x00050040
+
+#define STM32_HAS_SPI5          TRUE
+#define STM32_SPI5_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(2, 3) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 5))
+#define STM32_SPI5_RX_DMA_CHN   0x00702000
+#define STM32_SPI5_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(2, 4) |            \
+                                 STM32_DMA_STREAM_ID_MSK(2, 6))
+#define STM32_SPI5_TX_DMA_CHN   0x07020000
+
+#define STM32_HAS_SPI6          TRUE
+#define STM32_SPI6_RX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(2, 6))
+#define STM32_SPI6_RX_DMA_CHN   0x01000000
+#define STM32_SPI6_TX_DMA_MSK   (STM32_DMA_STREAM_ID_MSK(2, 5))
+#define STM32_SPI6_TX_DMA_CHN   0x00100000
+
+#else
+#define STM32_HAS_SPI4          FALSE
+#define STM32_HAS_SPI5          FALSE
+#define STM32_HAS_SPI6          FALSE
+#endif /* STM32F429_439xx */
+
 /* TIM attributes.*/
 #define STM32_HAS_TIM1          TRUE
 #define STM32_HAS_TIM2          TRUE
@@ -640,13 +669,13 @@
 #define I2C3_EV_IRQHandler      Vector160   /**< I2C3 Event.                */
 #define I2C3_ER_IRQHandler      Vector164   /**< I2C3 Error.                */
 #define OTG_HS_EP1_OUT_IRQHandler Vector168 /**< USB OTG HS End Point 1 Out.*/
-#define OTG_HS_EP1_IN_IRQHandler Vector16C  /**< USB OTG HS End Point 1 In. */                                                 
+#define OTG_HS_EP1_IN_IRQHandler Vector16C  /**< USB OTG HS End Point 1 In. */
 #define OTG_HS_WKUP_IRQHandler  Vector170   /**< USB OTG HS Wakeup through
                                                  EXTI line.                 */
-#define OTG_HS_IRQHandler       Vector174   /**< USB OTG HS.                */ 
-#define DCMI_IRQHandler         Vector178   /**< DCMI.                      */ 
-#define CRYP_IRQHandler         Vector17C   /**< CRYP.                      */ 
-#define HASH_RNG_IRQHandler     Vector180   /**< Hash and Rng.              */ 
+#define OTG_HS_IRQHandler       Vector174   /**< USB OTG HS.                */
+#define DCMI_IRQHandler         Vector178   /**< DCMI.                      */
+#define CRYP_IRQHandler         Vector17C   /**< CRYP.                      */
+#define HASH_RNG_IRQHandler     Vector180   /**< Hash and Rng.              */
 #if defined(STM32F4XX) || defined(__DOXYGEN__)
 #define FPU_IRQHandler          Vector184   /**< Floating Point Unit.       */
 #endif
@@ -1691,7 +1720,7 @@ typedef uint32_t halrtcnt_t;
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* STM32 ISR, DMA and RCC helpers.*/
+/* STM32 helpers and custom drivers.*/
 #include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"
