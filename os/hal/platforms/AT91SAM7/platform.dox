@@ -134,3 +134,18 @@
  * .
  * @ingroup AT91SAM7
  */
+
+/**
+ * @defgroup AT91SAM7_CAN AT91SAM7 CAN Support
+ * @details The CAN driver supports the AT91SAM7 CAN peripherals.
+ *
+ * @section at91sam7_can_1 Supported HW resources
+ * - CAN.
+ * .
+ * @section at91sam7_can_1 AT91SAM7 CAN driver implementation features
+ * - one send mailbox and seven receive mailboxes.
+ * - wakeup event on receive data.
+ * - deactivate unused mailbox to decrease memory usage and CPU usage
+ * .
+ * @ingroup AT91SAM7
+ */

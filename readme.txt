@@ -155,6 +155,7 @@
 - NEW: SPI driver for SPC560Pxx, SPC563Mxx, SPC564Axx, SPC56ELAxx, SPC560Dxx.
 - NEW: Support for SPC560Dxx devices.
 - NEW: DMA-MUX support for SPC5xx devices.
+- NEW: Added CAN driver for AT91SAM7.
 - CHANGE: Moved the STM32 GPT, ICU and PWM low level drivers under
   ./os/hal/platform/STM32/TIMv1. Updated all the impacted project files.
 
