@@ -322,7 +322,8 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
-  nvicEnableVector(ADC1_IRQn, CORTEX_PRIORITY_MASK(STM32_ADC_IRQ_PRIORITY));
+  nvicEnableVector(ADC1_IRQn,
+                   CORTEX_PRIORITY_MASK(STM32_ADC_ADC1_IRQ_PRIORITY));
 #endif
 
 #if STM32_ADC_USE_SDADC1
