@@ -73,6 +73,7 @@
 
 *** 2.6.2 ***
 - FIX: Fixed wrong definition in STM32F37x ADC driver (bug #444).
+- FIX: Fixed wrong CORTEX_PRIORITY_PENDSV value (bug #443).
 - FIX: Fixed lost incoming characters in STM32 USARTv1 driver (bug #442).
 - FIX: Fixed STM32 OTG-FS wrong upper memory limit (bug #437).
 - FIX: Fixed race condition in STM32 DMA interrupt (bug #439).
