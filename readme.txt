@@ -135,7 +135,7 @@
   (backported to 2.6.0).
 - FIX: Fixed MS2ST() and US2ST() macros error (bug #415)(backported to 2.6.0,
   2.4.4, 2.2.10, NilRTOS).
-- NEW: Added chvprintf() function to the chprintf module.
+- NEW: Added chvprintf() and chsnprintf() functions to the chprintf module.
 - NEW: Improved time range check in the kernel, new API chTimeElapsedSince()
   introduced. The API chTimeIsWithin() is now a macro.
 - NEW: Added a new function shellExit() to the shell. It allows to exit the

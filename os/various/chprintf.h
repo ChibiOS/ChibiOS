@@ -38,6 +38,7 @@
 extern "C" {
 #endif
   void chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap);
+  int chsnprintf(char *str, size_t size, const char *fmt, ...);
 #ifdef __cplusplus
 }
 #endif
