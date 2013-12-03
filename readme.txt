@@ -85,6 +85,7 @@
 - FIX: Fixed duplicate STM32_GPT_USE_TIM8 definition in some mcuconf.h files
   (bug #431).
 - FIX: Fixed possible unalignment in GCC Cortex-M scatter files (bug #430).
+- NEW: Added SPI4/SPI5/SPI6 support to the STM32v1 SPIv1 low level driver.
 - NEW: Added chvprintf() and chsnprintf() functions to the chprintf module.
 - NEW: Added a new function shellExit() to the shell. It allows to exit the
   shell from any command handler.
