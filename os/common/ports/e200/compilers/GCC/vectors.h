@@ -35,9 +35,15 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
+
 #define INTC_MCR        *((volatile uint32_t *)0xfff48000)
 #define INTC_CPR        *((volatile uint32_t *)0xfff48008)
 #define INTC_IACKR      *((volatile uint32_t *)0xfff48010)
+
+#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -59,6 +65,10 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
+
 #if !defined(__DOXYGEN__)
 extern uint32_t _vectors[PPC_NUM_VECTORS];
 #endif
@@ -71,9 +81,15 @@ extern "C" {
 }
 #endif
 
+#endif /* !defined(_FROM_ASM_) */
+
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
 
 static inline void intc_init(void) {
 
@@ -81,6 +97,8 @@ static inline void intc_init(void) {
   INTC_CPR   = 0;
   INTC_IACKR = (uint32_t)_vectors;
 }
+
+#endif /* !defined(_FROM_ASM_) */
 
 #endif /* _VECTORS_H_ */
 

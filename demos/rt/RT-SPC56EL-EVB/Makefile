@@ -73,7 +73,7 @@ PROJECT = ch
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC56EL/board.mk
-include $(CHIBIOS)/os/hal/ports/SPC56ELxx/platform.mk
+include $(CHIBIOS)/os/hal/ports/SPC5/SPC56ELxx/platform.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/osal/osal.mk
 include $(CHIBIOS)/os/rt/ports/e200/compilers/GCC/mk/port_spc56elxx.mk
