@@ -196,7 +196,7 @@ typedef struct {
 
 #define AIRCR_VECTKEY           0x05FA0000U
 #define AIRCR_PRIGROUP_MASK     (0x7U << 8)
-#define AIRCR_PRIGROUP(n)       ((n##U) << 8)
+#define AIRCR_PRIGROUP(n)       ((n) << 8)
 
 /**
  * @brief Structure representing the FPU I/O space.

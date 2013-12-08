@@ -70,12 +70,10 @@
  * @brief   Per-thread stack overhead for interrupts servicing.
  * @details This constant is used in the calculation of the correct working
  *          area size.
- *          This value can be zero on those architecture where there is a
- *          separate interrupt stack and the stack space between @p intctx and
- *          @p extctx is known to be zero.
- * @note    In this port it is conservatively set to 32 because the function
- *          @p chSchDoReschedule() can have a stack frame, especially with
- *          compiler optimizations disabled.
+ * @note    In this port this value is conservatively set to 32 because the
+ *          function @p chSchDoReschedule() can have a stack frame, especially
+ *          with compiler optimizations disabled. The value can be reduced
+ *          when compiler optimizations are enabled.
  */
 #if !defined(PORT_INT_REQUIRED_STACK)
 #define PORT_INT_REQUIRED_STACK         32
@@ -138,21 +136,37 @@
  * @brief   NVIC VTOR initialization expression.
  */
 #if !defined(CORTEX_VTOR_INIT) || defined(__DOXYGEN__)
-#define CORTEX_VTOR_INIT              0x00000000
+#define CORTEX_VTOR_INIT                0x00000000
+#endif
+
+/**
+ * @brief   NVIC PRIGROUP initialization expression.
+ * @details The default assigns all available priority bits as preemption
+ *          priority with no sub-priority.
+ */
+#if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
+#define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
 #endif
 
 /*===========================================================================*/
 /* Port derived parameters.                                                  */
 /*===========================================================================*/
 
+#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
+/**
+ * @brief   Maximum usable priority for normal ISRs.
+ */
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
+
 /**
  * @brief   BASEPRI level within kernel lock.
  * @note    In compact kernel mode this constant value is enforced to zero.
  */
-#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
 #define CORTEX_BASEPRI_KERNEL                                               \
-  CORTEX_PRIORITY_MASK(CORTEX_PRIORITY_SVCALL+1)
+  CORTEX_PRIORITY_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 #else
+
+#define CORTEX_MAX_KERNEL_PRIORITY      1
 #define CORTEX_BASEPRI_KERNEL           0
 #endif
 
@@ -301,9 +315,9 @@ struct context {
   tp->p_ctx.r13 = (struct intctx *)((uint8_t *)workspace +                  \
                                      wsize -                                \
                                      sizeof(struct intctx));                \
-  tp->p_ctx.r13->r4 = pf;                                                   \
-  tp->p_ctx.r13->r5 = arg;                                                  \
-  tp->p_ctx.r13->lr = _port_thread_start;                                   \
+  tp->p_ctx.r13->r4 = (void *)(pf);                                         \
+  tp->p_ctx.r13->r5 = (void *)(arg);                                        \
+  tp->p_ctx.r13->lr = (void *)(_port_thread_start);                         \
 }
 
 /**

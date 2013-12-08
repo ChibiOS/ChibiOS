@@ -94,6 +94,12 @@
   (((n) >= 0) && ((n) < CORTEX_PRIORITY_LEVELS))
 
 /**
+ * @brief   Priority level verification macro.
+ */
+#define CORTEX_IS_VALID_KERNEL_PRIORITY(n)                                  \
+  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
+
+/**
  * @brief   Priority level to priority mask conversion macro.
  */
 #define CORTEX_PRIORITY_MASK(n)                                             \

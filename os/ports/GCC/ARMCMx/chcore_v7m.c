@@ -119,7 +119,7 @@ void _port_init(void) {
 
   /* Initialization of the vector table and priority related settings.*/
   SCB_VTOR = CORTEX_VTOR_INIT;
-  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(0);
+  SCB_AIRCR = AIRCR_VECTKEY | AIRCR_PRIGROUP(CORTEX_PRIGROUP_INIT);
 
   /* Initialization of the system vectors used by the port.*/
   nvicSetSystemHandlerPriority(HANDLER_SVCALL,
@@ -164,7 +164,7 @@ void _port_irq_epilogue(void) {
        required or not.*/
     if (chSchIsPreemptionRequired()) {
       /* Preemption is required we need to enforce a context switch.*/
-      ctxp->pc = _port_switch_from_isr;
+      ctxp->pc = (void *)_port_switch_from_isr;
 #if CORTEX_USE_FPU
       /* Triggering a lazy FPU state save.*/
       asm volatile ("vmrs    APSR_nzcv, FPSCR" : : : "memory");
@@ -173,7 +173,7 @@ void _port_irq_epilogue(void) {
     else {
       /* Preemption not required, we just need to exit the exception
          atomically.*/
-      ctxp->pc = _port_exit_from_isr;
+      ctxp->pc = (void *)_port_exit_from_isr;
     }
 
 #if CORTEX_USE_FPU
@@ -191,7 +191,7 @@ void _port_irq_epilogue(void) {
 #endif
 
     /* Note, returning without unlocking is intentional, this is done in
-       order to keep the rest of the context switching atomic.*/
+       order to keep the rest of the context switch atomic.*/
     return;
   }
   port_unlock_from_isr();
