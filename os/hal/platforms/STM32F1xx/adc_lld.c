@@ -70,13 +70,13 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
     _adc_isr_error_code(adcp, ADC_ERR_DMAFAILURE);
   }
   else {
-    if ((flags & STM32_DMA_ISR_HTIF) != 0) {
-      /* Half transfer processing.*/
-      _adc_isr_half_code(adcp);
-    }
     if ((flags & STM32_DMA_ISR_TCIF) != 0) {
       /* Transfer complete processing.*/
       _adc_isr_full_code(adcp);
+    }
+    else if ((flags & STM32_DMA_ISR_HTIF) != 0) {
+      /* Half transfer processing.*/
+      _adc_isr_half_code(adcp);
     }
   }
 }
@@ -188,29 +188,31 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-  uint32_t mode, n;
+  uint32_t mode, cr2;
   const ADCConversionGroup *grpp = adcp->grpp;
 
   /* DMA setup.*/
   mode = adcp->dmamode;
-  if (grpp->circular)
+  if (grpp->circular) {
     mode |= STM32_DMA_CR_CIRC;
-  if (adcp->depth > 1) {
-    /* If the buffer depth is greater than one then the half transfer interrupt
-       interrupt is enabled in order to allows streaming processing.*/
-    mode |= STM32_DMA_CR_HTIE;
-    n = (uint32_t)grpp->num_channels * (uint32_t)adcp->depth;
+    if (adcp->depth > 1) {
+      /* If circular buffer depth > 1, then the half transfer interrupt
+         is enabled in order to allow streaming processing.*/
+      mode |= STM32_DMA_CR_HTIE;
+    }
   }
-  else
-    n = (uint32_t)grpp->num_channels;
   dmaStreamSetMemory0(adcp->dmastp, adcp->samples);
-  dmaStreamSetTransactionSize(adcp->dmastp, n);
+  dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
+                                            (uint32_t)adcp->depth);
   dmaStreamSetMode(adcp->dmastp, mode);
   dmaStreamEnable(adcp->dmastp);
 
   /* ADC setup.*/
   adcp->adc->CR1   = grpp->cr1 | ADC_CR1_SCAN;
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_DMA | ADC_CR2_CONT | ADC_CR2_ADON;
+  cr2 = grpp->cr2 | ADC_CR2_DMA | ADC_CR2_ADON;
+  if ((cr2 & (ADC_CR2_EXTTRIG | ADC_CR2_JEXTTRIG)) == 0)
+    cr2 |= ADC_CR2_CONT;
+  adcp->adc->CR2   = grpp->cr2 | cr2;
   adcp->adc->SMPR1 = grpp->smpr1;
   adcp->adc->SMPR2 = grpp->smpr2;
   adcp->adc->SQR1  = grpp->sqr1;
@@ -218,7 +220,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->adc->SQR3  = grpp->sqr3;
 
   /* ADC start by writing ADC_CR2_ADON a second time.*/
-  adcp->adc->CR2   = grpp->cr2 | ADC_CR2_DMA | ADC_CR2_CONT | ADC_CR2_ADON;
+  adcp->adc->CR2   = cr2;
 }
 
 /**

@@ -79,6 +79,8 @@
 *****************************************************************************
 
 *** 2.4.6 ***
+- FIX: Fixed spurious half buffer callback in STM32 ADC drivers (bug #446).
+- FIX: Fixed callbacks changes to the ADC high level driver (bug #445).
 - FIX: Fixed wrong CORTEX_PRIORITY_PENDSV value (bug #443).
 - FIX: Fixed lost incoming characters in STM32 USARTv1 driver (bug #442).
 - FIX: Fixed race condition in STM32 DMA interrupt (bug #439).
