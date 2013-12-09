@@ -89,6 +89,10 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed spurious half buffer callback in STM32 ADC drivers (bug #446)
+  (backported to 2.4.6 and 2.6.2).
+- FIX: Fixed callbacks changes to the ADC high level driver (bug #445)
+  (backported to 2.4.6 and 2.6.2).
 - FIX: Fixed wrong definition in STM32F37x ADC driver (bug #444)(backported
   to 2.6.2).
 - FIX: Fixed wrong CORTEX_PRIORITY_PENDSV value (bug #443)(backported to
