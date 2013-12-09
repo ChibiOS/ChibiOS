@@ -194,13 +194,13 @@ static void adc_lld_serve_dma_interrupt(ADCDriver *adcp, uint32_t flags) {
     /* It is possible that the conversion group has already be reset by the
        ADC error handler, in this case this interrupt is spurious.*/
     if (adcp->grpp != NULL) {
-      if ((flags & STM32_DMA_ISR_HTIF) != 0) {
-        /* Half transfer processing.*/
-        _adc_isr_half_code(adcp);
-      }
       if ((flags & STM32_DMA_ISR_TCIF) != 0) {
         /* Transfer complete processing.*/
         _adc_isr_full_code(adcp);
+      }
+      else if ((flags & STM32_DMA_ISR_HTIF) != 0) {
+        /* Half transfer processing.*/
+        _adc_isr_half_code(adcp);
       }
     }
   }
@@ -478,14 +478,14 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #else
     cfgr |= ADC_CFGR_DMACFG_CIRCULAR;
 #endif
+    if (adcp->depth > 1) {
+      /* If circular buffer depth > 1, then the half transfer interrupt
+         is enabled in order to allow streaming processing.*/
+      dmamode |= STM32_DMA_CR_HTIE;
+    }
   }
 
   /* DMA setup.*/
-  if (adcp->depth > 1) {
-    /* If the buffer depth is greater than one then the half transfer interrupt
-       interrupt is enabled in order to allows streaming processing.*/
-    dmamode |= STM32_DMA_CR_HTIE;
-  }
   dmaStreamSetMemory0(adcp->dmastp, adcp->samples);
 #if STM32_ADC_DUAL_MODE
   dmaStreamSetTransactionSize(adcp->dmastp, ((uint32_t)grpp->num_channels/2) *
