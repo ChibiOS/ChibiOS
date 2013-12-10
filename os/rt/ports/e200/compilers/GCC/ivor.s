@@ -99,24 +99,28 @@ _IVOR10:
         lis         %r3, 0x0800             /* DIS bit mask.                */
         mtspr       336, %r3                /* TSR register.                */
 
+#if PPC_USE_IRQ_PREEMPTION
+        /* Allows preemption while executing the software handler.*/
+        wrteei      1
+#endif
+
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_enter_isr
         bl          dbg_check_lock_from_isr
 #endif
+        /* System tick handler invocation.*/
         bl          chSysTimerHandlerI
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_unlock_from_isr
         bl          dbg_check_leave_isr
 #endif
 
-        /* System tick handler invocation.*/
-#if CH_DBG_SYSTEM_STATE_CHECK
-        bl          dbg_check_lock
+#if PPC_USE_IRQ_PREEMPTION
+        /* Prevents preemption again.*/
+        wrteei      0
 #endif
-        bl          chSchIsPreemptionRequired
-        cmpli       cr0, %r3, 0
-        beq         cr0, _ivor_exit
-        bl          chSchDoReschedule
+
+        /* Jumps to the common IVOR epilogue code.*/
         b           _ivor_exit
 #endif /* PPC_SUPPORTS_DECREMENTER */
 
@@ -190,26 +194,25 @@ _IVOR4:
         ori         %r3, %r3, INTC_EOIR@l
         stw         %r3, 0(%r3)             /* Writing any value should do. */
 
-        /* Verifies if a reschedule is required.*/
+        /* Common IVOR epilogue code, context restore.*/
+        .globl      _ivor_exit
+_ivor_exit:
+        /* Decreasing the SPGR0 register.*/
+        mfspr       %r0, 272
+        eaddi       %r0, %r0, -1
+        mtspr       272, %r0
+
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_lock
 #endif
         bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
-        beq         cr0, _ivor_exit
+        beq         cr0, .noresch
         bl          chSchDoReschedule
-
-        /* Context restore.*/
-        .globl      _ivor_exit
-_ivor_exit:
+.noresch:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          dbg_check_unlock
 #endif
-
-        /* Decreasing the SPGR0 register.*/
-        mfspr       %r0, 272
-        eaddi       %r0, %r0, -1
-        mtspr       272, %r0
 
         /* Restoring the external context.*/
 #if PPC_USE_VLE && PPC_SUPPORTS_VLE_MULTI
