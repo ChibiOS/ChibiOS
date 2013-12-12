@@ -152,7 +152,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_SPI3_TX_DMA_CHN               0x00000000
 
-#if defined(STM32F429_439xx)
+#if defined(STM32F427_437xx) || defined(STM32F429_439xx)
 #define STM32_HAS_SPI4                      TRUE
 #define STM32_SPI4_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 0) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 3))
@@ -174,11 +174,12 @@
 #define STM32_SPI6_RX_DMA_CHN               0x01000000
 #define STM32_SPI6_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 5))
 #define STM32_SPI6_TX_DMA_CHN               0x00100000
-#else /* !defined(STM32F429_439xx) */
+
+#else /* !(defined(STM32F427_437xx) || defined(STM32F429_439xx)) */
 #define STM32_HAS_SPI4                      FALSE
 #define STM32_HAS_SPI5                      FALSE
 #define STM32_HAS_SPI6                      FALSE
-#endif /* !defined(STM32F429_439xx) */
+#endif /* !(defined(STM32F427_437xx) || defined(STM32F429_439xx)) */
 
 /* TIM attributes.*/
 #define STM32_HAS_TIM1                      TRUE
