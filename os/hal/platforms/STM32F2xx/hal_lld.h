@@ -828,9 +828,7 @@
 #error "HSI not enabled, required by STM32_MCO1SEL"
 #endif
 
-#if (STM32_MCO2SEL == STM32_MCO2SEL_HSI) ||                                 \
-    ((STM32_MCO2SEL == STM32_MCO2SEL_PLL) &&                                \
-     (STM32_PLLSRC == STM32_PLLSRC_HSI))
+#if (STM32_MCO2SEL == STM32_MCO2SEL_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSI)
 #error "HSI not enabled, required by STM32_MCO2SEL"
 #endif
 
