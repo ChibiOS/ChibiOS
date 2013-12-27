@@ -402,7 +402,11 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM1();
       nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_ICU_TIM1_IRQ_PRIORITY);
       nvicEnableVector(STM32_TIM1_CC_NUMBER, STM32_ICU_TIM1_IRQ_PRIORITY);
+#if defined(STM32_TIM1CLK)
+      icup->clock = STM32_TIM1CLK;
+#else
       icup->clock = STM32_TIMCLK2;
+#endif
     }
 #endif
 #if STM32_ICU_USE_TIM2
@@ -443,7 +447,11 @@ void icu_lld_start(ICUDriver *icup) {
       rccResetTIM8();
       nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_ICU_TIM8_IRQ_PRIORITY);
       nvicEnableVector(STM32_TIM8_CC_NUMBER, STM32_ICU_TIM8_IRQ_PRIORITY);
+#if defined(STM32_TIM8CLK)
+      icup->clock = STM32_TIM8CLK;
+#else
       icup->clock = STM32_TIMCLK2;
+#endif
     }
 #endif
 #if STM32_ICU_USE_TIM9
