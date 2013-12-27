@@ -89,7 +89,9 @@
 *****************************************************************************
 
 *** 2.7.0 ***
-- FIX: Fixed rong MCO2 check in STM32F4xx HAL driver (bug #447)(backported
+- FIX: Fixed STM32F30x TIM1/TIM8 alternate clock source setting not
+  recognized (bug #448)(backported to 2.6.2).
+- FIX: Fixed wrong MCO2 check in STM32F4xx HAL driver (bug #447)(backported
   to 2.4.6 and 2.6.2).
 - FIX: Fixed spurious half buffer callback in STM32 ADC drivers (bug #446)
   (backported to 2.4.6 and 2.6.2).
