@@ -79,7 +79,7 @@
 *****************************************************************************
 
 *** 2.4.6 ***
-- FIX: Fixed rong MCO2 check in STM32F4xx HAL driver (bug #447).
+- FIX: Fixed wrong MCO2 check in STM32F4xx HAL driver (bug #447).
 - FIX: Fixed spurious half buffer callback in STM32 ADC drivers (bug #446).
 - FIX: Fixed callbacks changes to the ADC high level driver (bug #445).
 - FIX: Fixed wrong CORTEX_PRIORITY_PENDSV value (bug #443).
