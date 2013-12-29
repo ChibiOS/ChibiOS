@@ -68,6 +68,7 @@ void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg) {
     while (true) {
       /* Is this thread waiting on this semaphore?*/
       if (tr->u1.semp == sp) {
+        sp->cnt++;
 
         chDbgAssert(NIL_THD_IS_WTSEM(tr), "not waiting");
 

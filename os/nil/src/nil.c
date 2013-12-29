@@ -566,6 +566,7 @@ void chSemSignalI(semaphore_t *sp) {
     while (true) {
       /* Is this thread waiting on this semaphore?*/
       if (tr->u1.semp == sp) {
+        sp->cnt++;
 
         chDbgAssert(NIL_THD_IS_WTSEM(tr), "not waiting");
 
