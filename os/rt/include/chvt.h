@@ -480,7 +480,7 @@ static inline void chVTDoTickI(void) {
     while (!(vtp = ch.vtlist.vt_next)->vt_delta) {
       vtfunc_t fn = vtp->vt_func;
       vtp->vt_func = (vtfunc_t)NULL;
-      vtp->vt_next->vt_prev = (void *)&ch.vtlist;
+      vtp->vt_next->vt_prev = (virtual_timer_t *)&ch.vtlist;
       ch.vtlist.vt_next = vtp->vt_next;
       chSysUnlockFromISR();
       fn(vtp->vt_par);
@@ -497,7 +497,7 @@ static inline void chVTDoTickI(void) {
     ch.vtlist.vt_lasttime += vtp->vt_delta;
     vtfunc_t fn = vtp->vt_func;
     vtp->vt_func = (vtfunc_t)NULL;
-    vtp->vt_next->vt_prev = (void *)&ch.vtlist;
+    vtp->vt_next->vt_prev = (virtual_timer_t *)&ch.vtlist;
     ch.vtlist.vt_next = vtp->vt_next;
     chSysUnlockFromISR();
     fn(vtp->vt_par);
