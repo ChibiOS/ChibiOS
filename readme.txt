@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.2 ***
+- FIX: Fixed wrong STM32_TIM_CCMR2_OCxM macros on STM32F30x (bug #449).
 - FIX: Fixed STM32F30x TIM1/TIM8 alternate clock source setting not
   recognized (bug #448).
 - FIX: Fixed wrong MCO2 check in STM32F4xx HAL driver (bug #447).
