@@ -802,7 +802,7 @@
 
 /* ADC minimum frequency check.*/
 #if STM32_ADCCLK < STM32_ADCCLK_MIN
-#error "STM32_ADCCLK exceeding maximum frequency (STM32_ADCCLK_MIN)"
+#error "STM32_ADCCLK exceeding minimum frequency (STM32_ADCCLK_MIN)"
 #endif
 
 /**
