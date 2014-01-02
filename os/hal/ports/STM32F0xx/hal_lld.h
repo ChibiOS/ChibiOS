@@ -26,8 +26,9 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F0XX_LD for Low Density Entry Level devices.
- *          - STM32F0XX_MD for Medium Density Entry Level devices.
+ *          - STM32F030 for Value Line devices.
+ *          - STM32F0XX_LD for Low Density devices.
+ *          - STM32F0XX_MD for Medium Density devices.
  *          .
  *
  * @addtogroup HAL
@@ -44,10 +45,24 @@
 /*===========================================================================*/
 
 /**
- * @name    Platform identification
+ * @name    Platform identification macros
  * @{
  */
-#define PLATFORM_NAME           "STM32F05x Entry Level"
+#if defined(STM32F0XX_MD) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F051xx/F061xx Entry Level Medium Density devices"
+#define STM32F0XX
+
+#elif defined(STM32F0XX_LD)
+#define PLATFORM_NAME           "STM32F050xx/F060xx Entry Level Low Density devices"
+#define STM32F0XX
+
+#elif defined(STM32F030)
+#define PLATFORM_NAME           "STM32F050xx/F060xx Entry Level Value Line devices"
+#define STM32F0XX
+
+#else
+#error "STM32F0xx device not specified"
+#endif
 /** @} */
 
 /**
