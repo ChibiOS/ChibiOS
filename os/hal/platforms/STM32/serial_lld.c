@@ -175,7 +175,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     chSysLockFromIsr();
     chIOAddFlagsI(sdp, SD_BREAK_DETECTED);
     chSysUnlockFromIsr();
-    u->SR &= ~USART_SR_LBD;
+    u->SR = ~USART_SR_LBD;
   }
 
   /* Data available.*/
@@ -208,8 +208,8 @@ static void serve_interrupt(SerialDriver *sdp) {
     chSysLockFromIsr();
     chIOAddFlagsI(sdp, IO_TRANSMISSION_END);
     chSysUnlockFromIsr();
-    u->CR1 = cr1 & ~USART_CR1_TCIE;
-    u->SR &= ~USART_SR_TC;
+    u->CR1 = cr1 & ~(USART_CR1_TXEIE | USART_CR1_TCIE);
+    u->SR = ~USART_SR_TC;
   }
 }
 #endif
