@@ -130,10 +130,18 @@ void _pal_lld_init(const PALConfig *config) {
   /*
    * Initial GPIO setup.
    */
+#if STM32_HAS_GPIOA
   initgpio(GPIOA, &config->PAData);
+#endif
+#if STM32_HAS_GPIOB
   initgpio(GPIOB, &config->PBData);
+#endif
+#if STM32_HAS_GPIOC
   initgpio(GPIOC, &config->PCData);
+#endif
+#if STM32_HAS_GPIOD
   initgpio(GPIOD, &config->PDData);
+#endif
 #if STM32_HAS_GPIOE
   initgpio(GPIOE, &config->PEData);
 #endif
