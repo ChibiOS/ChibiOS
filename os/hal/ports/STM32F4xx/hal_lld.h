@@ -58,17 +58,22 @@
 #if defined(STM32F429_439xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F429/F439 High Performance with DSP and FPU"
 #define STM32F4XX
-#elif defined(STM32F427_437xx) || defined(__DOXYGEN__)
+
+#elif defined(STM32F427_437xx)
 #define PLATFORM_NAME           "STM32F427/F437 High Performance with DSP and FPU"
 #define STM32F4XX
-#elif defined(STM32F40_41xxx) || defined(__DOXYGEN__)
+
+#elif defined(STM32F40_41xxx)
 #define PLATFORM_NAME           "STM32F407/F417 High Performance with DSP and FPU"
 #define STM32F4XX
-#elif defined(STM32F401xx) || defined(__DOXYGEN__)
+
+#elif defined(STM32F401xx)
 #define PLATFORM_NAME           "STM32F401 High Performance with DSP and FPU"
 #define STM32F4XX
-#elif defined(STM32F2XX) || defined(__DOXYGEN__)
+
+#elif defined(STM32F2XX)
 #define PLATFORM_NAME           "STM32F2xx High Performance"
+
 #else
 #error "STM32F2xx/F4xx device not specified"
 #endif

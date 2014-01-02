@@ -30,7 +30,7 @@
 /*===========================================================================*/
 
 /**
- * @name    STM32F30x capabilities
+ * @name    STM32F4xx capabilities
  * @{
  */
 /* ADC attributes.*/
