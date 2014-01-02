@@ -10,6 +10,7 @@
   <board_name>ST STM32F0-Discovery</board_name>
   <board_id>ST_STM32F0_DISCOVERY</board_id>
   <board_functions></board_functions>
+  <subtype>STM32F0XX_MD</subtype>
   <clocks HSEFrequency="0" HSEBypass="true" LSEFrequency="0"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
