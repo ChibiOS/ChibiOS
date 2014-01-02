@@ -91,6 +91,7 @@
 - FIX: Fixed duplicate STM32_GPT_USE_TIM8 definition in some mcuconf.h files
   (bug #431).
 - FIX: Fixed possible unalignment in GCC Cortex-M scatter files (bug #430).
+- NEW: Added support for STM32F030xx/050xx/060xx devices.
 - NEW: Added BOARD_OTG_NOVBUSSENS board option for STM32 OTG.
 - NEW: Added SPI4/SPI5/SPI6 support to the STM32v1 SPIv1 low level driver.
 - NEW: Added chvprintf() and chsnprintf() functions to the chprintf module.

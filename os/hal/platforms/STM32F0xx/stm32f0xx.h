@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx.h
   * @author  MCD Application Team
-  * @version V1.0.1
-  * @date    20-April-2012
+  * @version V1.2.1
+  * @date    22-November-2013
   * @brief   CMSIS Cortex-M0 Device Peripheral Access Layer Header File. 
   *          This file contains all the peripheral register's definitions, bits 
   *          definitions and memory mapping for STM32F0xx devices.  
@@ -25,7 +25,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
@@ -65,20 +65,28 @@
    application 
   */
 
-#if !defined (STM32F0XX)
-  #define STM32F0XX    /*!< STM32F0XX: STM32F0xx devices */
+#if !defined (STM32F0XX_LD)  && !defined (STM32F0XX_MD) && !defined (STM32F030)
+  /* #define STM32F0XX_LD */ /*!< STM32F0xx Low-density devices are STM32F050xx and STM32F060xx microcontrollers where the Flash memory ranges between 16 and 32 Kbytes */
+  /* #define STM32F0XX_MD */     /*!< STM32F0xx Medium-density devices are STM32F051xx and STM32F061xx microcontrollers where the Flash memory ranges between 16 and 64 Kbytes */  
+    #define STM32F030  /*!< STM32F030 devices are STM32F030xx value line microcontrollers */
 #endif
 /*  Tip: To avoid modifying this file each time you need to switch between these
         devices, you can define the device in your toolchain compiler preprocessor.
-
- STM32F0xx devices are:
-    - STM32F050xx microcontrollers where the Flash memory density can go up to 32 Kbytes.
-    - STM32F051xx microcontrollers where the Flash memory density can go up to 64 Kbytes.
   */
 
-#if !defined (STM32F0XX)
- #error "Please select first the target STM32F0xx device used in your application (in stm32f0xx.h file)"
+/* Old STM32F0XX definition, maintained for legacy purpose */
+#if defined(STM32F0XX)
+  #define STM32F0XX_MD
 #endif /* STM32F0XX */
+
+/* Old STM32F030X6/X8 definition, maintained for legacy purpose */
+#if defined (STM32F030X8) || defined (STM32F030X6)
+  #define    STM32F030
+#endif /* STM32F030X8 or  STM32F030X6 */
+
+#if !defined (STM32F0XX_LD)  && !defined (STM32F0XX_MD) && !defined (STM32F030)
+ #error "Please select first the target STM32F0xx device used in your application (in stm32f0xx.h file)"
+#endif
 
 #if !defined  USE_STDPERIPH_DRIVER
 /**
@@ -105,7 +113,7 @@
    Timeout value 
    */
 #if !defined  (HSE_STARTUP_TIMEOUT)
-#define HSE_STARTUP_TIMEOUT   ((uint16_t)0x0500) /*!< Time out for HSE start up */
+#define HSE_STARTUP_TIMEOUT   ((uint16_t)0x5000) /*!< Time out for HSE start up */
 #endif /* HSE_STARTUP_TIMEOUT */
 
 /**
@@ -113,7 +121,7 @@
    Timeout value 
    */
 #if !defined  (HSI_STARTUP_TIMEOUT)
-#define HSI_STARTUP_TIMEOUT   ((uint16_t)0x0500) /*!< Time out for HSI start up */
+#define HSI_STARTUP_TIMEOUT   ((uint16_t)0x5000) /*!< Time out for HSI start up */
 #endif /* HSI_STARTUP_TIMEOUT */
 
 #if !defined  (HSI_VALUE) 
@@ -139,10 +147,10 @@
 #endif /* LSE_VALUE */
 
 /**
- * @brief STM32F0xx Standard Peripheral Library version number V1.0.1
+ * @brief STM32F0xx Standard Peripheral Library version number V1.2.1
    */
 #define __STM32F0XX_STDPERIPH_VERSION_MAIN   (0x01) /*!< [31:24] main version */
-#define __STM32F0XX_STDPERIPH_VERSION_SUB1   (0x00) /*!< [23:16] sub1 version */
+#define __STM32F0XX_STDPERIPH_VERSION_SUB1   (0x02) /*!< [23:16] sub1 version */
 #define __STM32F0XX_STDPERIPH_VERSION_SUB2   (0x01) /*!< [15:8]  sub2 version */
 #define __STM32F0XX_STDPERIPH_VERSION_RC     (0x00) /*!< [7:0]  release candidate */ 
 #define __STM32F0XX_STDPERIPH_VERSION        ((__STM32F0XX_STDPERIPH_VERSION_MAIN << 24)\
@@ -176,8 +184,8 @@ typedef enum IRQn
   SVC_IRQn                    = -5,     /*!< 11 Cortex-M0 SV Call Interrupt                          */
   PendSV_IRQn                 = -2,     /*!< 14 Cortex-M0 Pend SV Interrupt                          */
   SysTick_IRQn                = -1,     /*!< 15 Cortex-M0 System Tick Interrupt                      */
-
-/******  STM32F-0 specific Interrupt Numbers *********************************************************/
+#if defined (STM32F0XX_MD)
+/******  STM32F0XX_MD  specific Interrupt Numbers ****************************************************/
   WWDG_IRQn                   = 0,      /*!< Window WatchDog Interrupt                               */
   PVD_IRQn                    = 1,      /*!< PVD through EXTI Line detect Interrupt                  */
   RTC_IRQn                    = 2,      /*!< RTC through EXTI Line Interrupt                         */
@@ -186,7 +194,7 @@ typedef enum IRQn
   EXTI0_1_IRQn                = 5,      /*!< EXTI Line 0 and 1 Interrupts                            */
   EXTI2_3_IRQn                = 6,      /*!< EXTI Line 2 and 3 Interrupts                            */
   EXTI4_15_IRQn               = 7,      /*!< EXTI Line 4 to 15 Interrupts                            */
-  TS_IRQn                     = 8,      /*!< TS Interrupt                                            */
+  TS_IRQn                     = 8,      /*!< Touch sense controller Interrupt                        */
   DMA1_Channel1_IRQn          = 9,      /*!< DMA1 Channel 1 Interrupt                                */
   DMA1_Channel2_3_IRQn        = 10,     /*!< DMA1 Channel 2 and Channel 3 Interrupts                 */
   DMA1_Channel4_5_IRQn        = 11,     /*!< DMA1 Channel 4 and Channel 5 Interrupts                 */
@@ -207,6 +215,57 @@ typedef enum IRQn
   USART1_IRQn                 = 27,     /*!< USART1 Interrupt                                        */
   USART2_IRQn                 = 28,     /*!< USART2 Interrupt                                        */
   CEC_IRQn                    = 30      /*!< CEC Interrupt                                           */
+#elif defined (STM32F0XX_LD)
+/******  STM32F0XX_LD specific Interrupt Numbers *****************************************************/
+  WWDG_IRQn                   = 0,      /*!< Window WatchDog Interrupt                               */
+  PVD_IRQn                    = 1,      /*!< PVD through EXTI Line detect Interrupt                  */
+  RTC_IRQn                    = 2,      /*!< RTC through EXTI Line Interrupt                         */
+  FLASH_IRQn                  = 3,      /*!< FLASH Interrupt                                         */
+  RCC_IRQn                    = 4,      /*!< RCC Interrupt                                           */
+  EXTI0_1_IRQn                = 5,      /*!< EXTI Line 0 and 1 Interrupts                            */
+  EXTI2_3_IRQn                = 6,      /*!< EXTI Line 2 and 3 Interrupts                            */
+  EXTI4_15_IRQn               = 7,      /*!< EXTI Line 4 to 15 Interrupts                            */
+  DMA1_Channel1_IRQn          = 9,      /*!< DMA1 Channel 1 Interrupt                                */
+  DMA1_Channel2_3_IRQn        = 10,     /*!< DMA1 Channel 2 and Channel 3 Interrupts                 */
+  DMA1_Channel4_5_IRQn        = 11,     /*!< DMA1 Channel 4 and Channel 5 Interrupts                 */
+  ADC1_IRQn                   = 12,     /*!< ADC1 Interrupt                                          */
+  TIM1_BRK_UP_TRG_COM_IRQn    = 13,     /*!< TIM1 Break, Update, Trigger and Commutation Interrupts  */
+  TIM1_CC_IRQn                = 14,     /*!< TIM1 Capture Compare Interrupt                          */
+  TIM2_IRQn                   = 15,     /*!< TIM2 Interrupt                                          */
+  TIM3_IRQn                   = 16,     /*!< TIM3 Interrupt                                          */
+  TIM14_IRQn                  = 19,     /*!< TIM14 Interrupt                                         */
+  TIM16_IRQn                  = 21,     /*!< TIM16 Interrupt                                         */
+  TIM17_IRQn                  = 22,     /*!< TIM17 Interrupt                                         */
+  I2C1_IRQn                   = 23,     /*!< I2C1 Interrupt                                          */
+  SPI1_IRQn                   = 25,     /*!< SPI1 Interrupt                                          */
+  USART1_IRQn                 = 27      /*!< USART1 Interrupt                                        */
+#elif defined (STM32F030)
+/******  STM32F030 specific Interrupt Numbers ********************************************************/
+  WWDG_IRQn                   = 0,      /*!< Window WatchDog Interrupt                               */
+  RTC_IRQn                    = 2,      /*!< RTC through EXTI Line Interrupt                         */
+  FLASH_IRQn                  = 3,      /*!< FLASH Interrupt                                         */
+  RCC_IRQn                    = 4,      /*!< RCC Interrupt                                           */
+  EXTI0_1_IRQn                = 5,      /*!< EXTI Line 0 and 1 Interrupts                            */
+  EXTI2_3_IRQn                = 6,      /*!< EXTI Line 2 and 3 Interrupts                            */
+  EXTI4_15_IRQn               = 7,      /*!< EXTI Line 4 to 15 Interrupts                            */
+  DMA1_Channel1_IRQn          = 9,      /*!< DMA1 Channel 1 Interrupt                                */
+  DMA1_Channel2_3_IRQn        = 10,     /*!< DMA1 Channel 2 and Channel 3 Interrupts                 */
+  DMA1_Channel4_5_IRQn        = 11,     /*!< DMA1 Channel 4 and Channel 5 Interrupts                 */
+  ADC1_IRQn                   = 12,     /*!< ADC1 Interrupt                                          */
+  TIM1_BRK_UP_TRG_COM_IRQn    = 13,     /*!< TIM1 Break, Update, Trigger and Commutation Interrupts  */
+  TIM1_CC_IRQn                = 14,     /*!< TIM1 Capture Compare Interrupt                          */
+  TIM3_IRQn                   = 16,     /*!< TIM3 Interrupt                                          */
+  TIM14_IRQn                  = 19,     /*!< TIM14 Interrupt                                         */
+  TIM15_IRQn                  = 20,     /*!< TIM15 Interrupt                                         */
+  TIM16_IRQn                  = 21,     /*!< TIM16 Interrupt                                         */
+  TIM17_IRQn                  = 22,     /*!< TIM17 Interrupt                                         */
+  I2C1_IRQn                   = 23,     /*!< I2C1 Interrupt                                          */
+  I2C2_IRQn                   = 24,     /*!< I2C2 Interrupt                                          */
+  SPI1_IRQn                   = 25,     /*!< SPI1 Interrupt                                          */
+  SPI2_IRQn                   = 26,     /*!< SPI2 Interrupt                                          */
+  USART1_IRQn                 = 27,     /*!< USART1 Interrupt                                        */
+  USART2_IRQn                 = 28      /*!< USART2 Interrupt                                        */
+#endif /* STM32F0XX_MD */
 } IRQn_Type;
 
 /**
@@ -1392,7 +1451,7 @@ typedef struct
 /* Old BOOT1 bit definition, maintained for legacy purpose */
 #define FLASH_OBR_BOOT1                      FLASH_OBR_nBOOT1
 
-/* Old BOOT1 bit definition, maintained for legacy purpose */
+/* Old OBR_VDDA bit definition, maintained for legacy purpose */
 #define FLASH_OBR_VDDA_ANALOG                FLASH_OBR_VDDA_MONITOR
 
 /******************  Bit definition for FLASH_WRPR register  ******************/
@@ -2005,6 +2064,18 @@ typedef struct
 #define  RCC_CFGR_MCO_HSE                    ((uint32_t)0x06000000)        /*!< HSE clock selected as MCO source  */
 #define  RCC_CFGR_MCO_PLL                    ((uint32_t)0x07000000)        /*!< PLL clock divided by 2 selected as MCO source */
 
+#define  RCC_CFGR_MCO_PRE                    ((uint32_t)0x70000000)        /*!< MCO prescaler (only for STM32F0XX_LD and STM32FO30X6 devices)*/
+#define  RCC_CFGR_MCO_PRE_1                  ((uint32_t)0x00000000)        /*!< MCO is divided by 1 (only for STM32F0XX_LD and STM32FO30X6 devices)*/
+#define  RCC_CFGR_MCO_PRE_2                  ((uint32_t)0x10000000)        /*!< MCO is divided by 2 (only for STM32F0XX_LD and STM32FO30X6 devices)*/
+#define  RCC_CFGR_MCO_PRE_4                  ((uint32_t)0x20000000)        /*!< MCO is divided by 4 (only for STM32F0XX_LD and STM32FO30X6 devices)*/
+#define  RCC_CFGR_MCO_PRE_8                  ((uint32_t)0x30000000)        /*!< MCO is divided by 8 (only for STM32F0XX_LD and STM32FO30X6 devices)*/
+#define  RCC_CFGR_MCO_PRE_16                 ((uint32_t)0x40000000)        /*!< MCO is divided by 16 (only for STM32F0XX_LD and STM32FO30X6 devices)*/
+#define  RCC_CFGR_MCO_PRE_32                 ((uint32_t)0x50000000)        /*!< MCO is divided by 32 (only for STM32F0XX_LD and STM32FO30X6 devices)*/
+#define  RCC_CFGR_MCO_PRE_64                 ((uint32_t)0x60000000)        /*!< MCO is divided by 64 (only for STM32F0XX_LD and STM32FO30X6 devices)*/
+#define  RCC_CFGR_MCO_PRE_128                ((uint32_t)0x70000000)        /*!< MCO is divided by 128 (only for STM32F0XX_LD and STM32FO30X6 devices)*/
+
+#define  RCC_CFGR_PLLNODIV                   ((uint32_t)0x80000000)        /*!< PLL is not divided to MCO (only for STM32F0XX_LD and STM32FO30X6 devices) */
+
 /*!<******************  Bit definition for RCC_CIR register  ********************/
 #define  RCC_CIR_LSIRDYF                     ((uint32_t)0x00000001)        /*!< LSI Ready Interrupt flag */
 #define  RCC_CIR_LSERDYF                     ((uint32_t)0x00000002)        /*!< LSE Ready Interrupt flag */
@@ -2548,6 +2619,9 @@ typedef struct
 #define SYSCFG_CFGR1_I2C_FMP_PB7            ((uint32_t)0x00020000) /*!< I2C PB7 Fast mode plus */
 #define SYSCFG_CFGR1_I2C_FMP_PB8            ((uint32_t)0x00040000) /*!< I2C PB8 Fast mode plus */
 #define SYSCFG_CFGR1_I2C_FMP_PB9            ((uint32_t)0x00080000) /*!< I2C PB9 Fast mode plus */
+#define SYSCFG_CFGR1_I2C_FMP_I2C1           ((uint32_t)0x00100000) /*!< Enable Fast Mode Plus on PB10, PB11, PF6 and PF7(only for STM32F0XX_LD and STM32FO30X6 devices) */
+#define SYSCFG_CFGR1_I2C_FMP_PA9            ((uint32_t)0x00400000) /*!< Enable Fast Mode Plus on PA9 (only for STM32F0XX_LD and STM32FO30X6 devices) */
+#define SYSCFG_CFGR1_I2C_FMP_PA10           ((uint32_t)0x00800000) /*!< Enable Fast Mode Plus on PA10(only for STM32F0XX_LD and STM32FO30X6 devices) */
 
 /*****************  Bit definition for SYSCFG_EXTICR1 register  ***************/
 #define SYSCFG_EXTICR1_EXTI0            ((uint16_t)0x000F) /*!< EXTI 0 configuration */
