@@ -41,7 +41,7 @@
 #define CH_STATE_CURRENT        1   /**< @brief Currently running.          */
 #define CH_STATE_WTSTART        2   /**< @brief Created but not started.    */
 #define CH_STATE_SUSPENDED      3   /**< @brief Created in suspended state. */
-#define CH_STATE_QUEUED         4  /**< @brief Waiting on an I/O queue.    */
+#define CH_STATE_QUEUED         4   /**< @brief Waiting on an I/O queue.    */
 #define CH_STATE_WTSEM          5   /**< @brief Waiting on a semaphore.     */
 #define CH_STATE_WTMTX          6   /**< @brief Waiting on a mutex.         */
 #define CH_STATE_WTCOND         7   /**< @brief Waiting on a condition
