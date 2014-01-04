@@ -71,10 +71,6 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if !defined(__DOXYGEN__)
-extern kernel_stats_t kernel_stats;
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
