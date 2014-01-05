@@ -125,6 +125,7 @@ thread_t *_thread_init(thread_t *tp, tprio_t prio) {
   tp->p_stklimit = (stkalign_t *)(tp + 1);
 #endif
 #if CH_DBG_STATISTICS || defined(__DOXYGEN__)
+  chTMObjectInit(&tp->p_stats);
   chTMStartMeasurementX(&tp->p_stats);
 #endif
 #if defined(CH_CFG_THREAD_INIT_HOOK)
