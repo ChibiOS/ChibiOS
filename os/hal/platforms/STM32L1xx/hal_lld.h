@@ -354,10 +354,10 @@
 #define DAC_IRQHandler          Vector94    /**< DAC.                       */
 #define COMP_IRQHandler         Vector98    /**< Comparator through EXTI.   */
 #define EXTI9_5_IRQHandler      Vector9C    /**< EXTI Line 9..5.            */
-#define TIM9_IRQHandler         VectorA0    /**< TIM9.                      */
-#define TIM10_IRQHandler        VectorA4    /**< TIM10.                     */
-#define TIM11_IRQHandler        VectorA8    /**< TIM11.                     */
-#define LCD_IRQHandler          VectorAC    /**< LCD.                       */
+#define LCD_IRQHandler          VectorA0    /**< LCD.                       */
+#define TIM9_IRQHandler         VectorA4    /**< TIM9.                      */
+#define TIM10_IRQHandler        VectorA8    /**< TIM10.                     */
+#define TIM11_IRQHandler        VectorAC    /**< TIM11.                     */
 #define TIM2_IRQHandler         VectorB0    /**< TIM2.                      */
 #define TIM3_IRQHandler         VectorB4    /**< TIM3.                      */
 #define TIM4_IRQHandler         VectorB8    /**< TIM4.                      */
