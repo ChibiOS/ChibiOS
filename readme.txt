@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed wrong vector names for STM32Lxx (bug #451)(backported
+  to 2.4.6 and 2.6.2).
 - FIX: Fixed wrong STM32_TIM_CCMR2_OCxM macros on STM32F30x (bug #449)
   (backported to 2.6.2).
 - FIX: Fixed STM32F30x TIM1/TIM8 alternate clock source setting not
