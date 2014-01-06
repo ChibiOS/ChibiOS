@@ -281,7 +281,7 @@ unsigned_common:
  * @param[in] str       pointer to a buffer
  * @param[in] size      maximum size of the buffer
  * @param[in] fmt       formatting string
- * @param[in] ap        list of parameters
+ * @return              The size of the generated string.
  *
  * @api
  */
