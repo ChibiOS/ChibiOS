@@ -538,6 +538,11 @@ static inline void port_wait_for_interrupt(void) {
 #endif
 }
 
+/**
+ * @brief   Returns the current value of the realtime counter.
+ *
+ * @return              The realtime counter value.
+ */
 static inline rtcnt_t port_rt_get_counter_value(void) {
 
   return DWT->CYCCNT;
