@@ -71,6 +71,10 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.6.3 ***
+- FIX: Fixed corrupted mcuconf.h file in ARMCM4-STM32F407-DISCOVERY demo
+  (bug #452).
+
 *** 2.6.2 ***
 - FIX: Fixed wrong vector names for STM32Lxx.
 - FIX: Fixed wrong STM32_TIM_CCMR2_OCxM macros on STM32F30x (bug #449).
