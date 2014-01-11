@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed chprintf() does not compile in strict C90 mode (bug #453)
+  (backported to 2.6.3).
 - FIX: Fixed wrong vector names for STM32Lxx (bug #451)(backported
   to 2.4.6 and 2.6.2).
 - FIX: Fixed wrong STM32_TIM_CCMR2_OCxM macros on STM32F30x (bug #449)
