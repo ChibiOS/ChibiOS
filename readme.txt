@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed memstreams.c missing from simulator makefiles (bug #454)
+  (backported to 2.6.3).
 - FIX: Fixed chprintf() does not compile in strict C90 mode (bug #453)
   (backported to 2.6.3).
 - FIX: Fixed wrong vector names for STM32Lxx (bug #451)(backported
