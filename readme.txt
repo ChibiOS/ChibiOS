@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.3 ***
+- FIX: Fixed chprintf() does not compile in strict C90 mode (bug #453).
 - FIX: Fixed corrupted mcuconf.h file in ARMCM4-STM32F407-DISCOVERY demo
   (bug #452).
 
