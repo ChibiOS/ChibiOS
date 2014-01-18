@@ -549,7 +549,7 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   stm32_otg_t *otgp = usbp->otg;
   uint32_t epint = otgp->ie[ep].DIEPINT;
 
-  otgp->ie[ep].DIEPINT = 0xFFFFFFFF;
+  otgp->ie[ep].DIEPINT = epint;
 
   if (epint & DIEPINT_TOC) {
     /* Timeouts not handled yet, not sure how to handle.*/
@@ -582,7 +582,7 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
   uint32_t epint = otgp->oe[ep].DOEPINT;
 
   /* Resets all EP IRQ sources.*/
-  otgp->oe[ep].DOEPINT = 0xFFFFFFFF;
+  otgp->oe[ep].DOEPINT = epint;
 
   if ((epint & DOEPINT_STUP) && (otgp->DOEPMSK & DOEPMSK_STUPM)) {
     /* Setup packets handling, setup packets are handled using a
