@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed race condition in STM32 SDC driver (bug #458)(backported
+  to 2.6.3).
 - FIX: Fixed race condition in STM32 OTG driver (bug #457)(backported
   to 2.6.3).
 - FIX: Fixed memstreams.c missing from simulator makefiles (bug #454)
