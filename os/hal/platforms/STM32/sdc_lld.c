@@ -618,16 +618,16 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_MASK_DATAENDIE;
   SDIO->DLEN  = n * MMCSD_BLOCK_SIZE;
 
-  /* Talk to card what we want from it.*/
-  if (sdc_lld_prepare_read(sdcp, startblk, n, resp) == TRUE)
-    goto error;
-
   /* Transaction starts just after DTEN bit setting.*/
   SDIO->DCTRL = SDIO_DCTRL_DTDIR |
                 SDIO_DCTRL_DBLOCKSIZE_3 |
                 SDIO_DCTRL_DBLOCKSIZE_0 |
                 SDIO_DCTRL_DMAEN |
                 SDIO_DCTRL_DTEN;
+
+  /* Talk to card what we want from it.*/
+  if (sdc_lld_prepare_read(sdcp, startblk, n, resp) == TRUE)
+    goto error;
   if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
     goto error;
 
