@@ -66,6 +66,71 @@ void stInit(void) {
   st_lld_init();
 }
 
+
+/**
+ * @brief   Starts the alarm.
+ * @note    Makes sure that no spurious alarms are triggered after
+ *          this call.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] time      the time to be set for the first alarm
+ *
+ * @api
+ */
+void stStartAlarm(systime_t time) {
+
+  osalDbgAssert(stIsAlarmActive() == false, "already active");
+
+  st_lld_start_alarm(time);
+}
+
+/**
+ * @brief   Stops the alarm interrupt.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @api
+ */
+void stStopAlarm(void) {
+
+  osalDbgAssert(stIsAlarmActive() != false, "not active");
+
+  st_lld_stop_alarm();
+}
+
+/**
+ * @brief   Sets the alarm time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] time      the time to be set for the next alarm
+ *
+ * @api
+ */
+void stSetAlarm(systime_t time) {
+
+  osalDbgAssert(stIsAlarmActive() != false, "not active");
+
+  st_lld_set_alarm(time);
+}
+
+/**
+ * @brief   Returns the current alarm time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @return              The currently set alarm time.
+ *
+ * @api
+ */
+systime_t stGetAlarm(void) {
+
+  osalDbgAssert(stIsAlarmActive() != false, "not active");
+
+  return st_lld_get_alarm();
+}
+
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
 
 /** @} */

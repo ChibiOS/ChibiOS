@@ -69,50 +69,6 @@
 #define stGetCounter() st_lld_get_counter()
 
 /**
- * @brief   Starts the alarm.
- * @note    Makes sure that no spurious alarms are triggered after
- *          this call.
- * @note    This functionality is only available in free running mode, the
- *          behaviour in periodic mode is undefined.
- *
- * @param[in] time      the time to be set for the first alarm
- *
- * @api
- */
-#define stStartAlarm(time) st_lld_start_alarm(time)
-
-/**
- * @brief   Stops the alarm interrupt.
- * @note    This functionality is only available in free running mode, the
- *          behaviour in periodic mode is undefined.
- *
- * @api
- */
-#define stStopAlarm() st_lld_stop_alarm()
-
-/**
- * @brief   Sets the alarm time.
- * @note    This functionality is only available in free running mode, the
- *          behaviour in periodic mode is undefined.
- *
- * @param[in] time      the time to be set for the next alarm
- *
- * @api
- */
-#define stSetAlarm(time) st_lld_set_alarm(time)
-
-/**
- * @brief   Returns the current alarm time.
- * @note    This functionality is only available in free running mode, the
- *          behaviour in periodic mode is undefined.
- *
- * @return              The currently set alarm time.
- *
- * @api
- */
-#define stGetAlarm() st_lld_get_alarm()
-
-/**
  * @brief   Determines if the alarm is active.
  *
  * @return              The alarm status.
@@ -132,6 +88,10 @@
 extern "C" {
 #endif
   void stInit(void);
+  void stStartAlarm(systime_t time);
+  void stStopAlarm(void);
+  void stSetAlarm(systime_t time);
+  systime_t stGetAlarm(void);
 #ifdef __cplusplus
 }
 #endif

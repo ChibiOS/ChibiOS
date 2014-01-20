@@ -60,6 +60,14 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
 /**
  * @brief   Starts the alarm.
  * @note    Makes sure that no spurious alarms are triggered after
@@ -69,9 +77,9 @@
  *
  * @notapi
  */
-#define port_timer_start_alarm(time) {                                      \
-  chDbgAssert(stIsAlarmActive() == false, "already active");                \
-  stStartAlarm(time);                                                       \
+static inline void port_timer_start_alarm(systime_t time) {
+
+  stStartAlarm(time);
 }
 
 /**
@@ -79,9 +87,9 @@
  *
  * @notapi
  */
-#define port_timer_stop_alarm() {                                           \
-  chDbgAssert(stIsAlarmActive() != false, "not active");                    \
-  stStopAlarm();                                                            \
+static inline void port_timer_stop_alarm(void) {
+
+  stStopAlarm();
 }
 
 /**
@@ -91,18 +99,10 @@
  *
  * @notapi
  */
-#define port_timer_set_alarm(time) {                                        \
-  chDbgAssert(stIsAlarmActive() != false, "not active");                    \
-  stSetAlarm(time);                                                         \
+static inline void port_timer_set_alarm(systime_t time) {
+
+  stSetAlarm(time);
 }
-
-/*===========================================================================*/
-/* External declarations.                                                    */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Module inline functions.                                                  */
-/*===========================================================================*/
 
 /**
  * @brief   Returns the system time.
