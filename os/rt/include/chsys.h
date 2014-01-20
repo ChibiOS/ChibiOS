@@ -107,76 +107,85 @@
 /**
  * @brief   Seconds to realtime counter.
  * @details Converts from seconds to realtime counter cycles.
- * @note    The result is rounded upward to the next tick boundary.
+ * @note    The macro assumes that @p freq >= @p 1.
  *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
  * @param[in] sec       number of seconds
  * @return              The number of cycles.
  *
  * @api
  */
-#define S2RTC(sec) (CH_CFG_RTC_FREQUENCY * (sec))
+#define S2RTC(freq, sec) ((freq) * (sec))
 
 /**
  * @brief   Milliseconds to realtime counter.
  * @details Converts from milliseconds to realtime counter cycles.
- * @note    The result is rounded upward to the next tick boundary.
+ * @note    The result is rounded upward to the next millisecond boundary.
+ * @note    The macro assumes that @p freq >= @p 1000.
  *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
  * @param[in] msec      number of milliseconds
  * @return              The number of cycles.
  *
  * @api
  */
-#define MS2RTC(msec) (rtcnt_t)(((CH_CFG_RTC_FREQUENCY + 999UL) /            \
-                                1000UL) * (msec))
+#define MS2RTC(freq, msec) (rtcnt_t)((((freq) + 999UL) / 1000UL) * (msec))
 
 /**
  * @brief   Microseconds to realtime counter.
  * @details Converts from microseconds to realtime counter cycles.
- * @note    The result is rounded upward to the next tick boundary.
+ * @note    The result is rounded upward to the next microsecond boundary.
+ * @note    The macro assumes that @p freq >= @p 1000000.
  *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
  * @param[in] usec      number of microseconds
  * @return              The number of cycles.
  *
  * @api
  */
-#define US2RTC(usec) (rtcnt_t)(((CH_CFG_RTC_FREQUENCY + 999999UL) /         \
-                                1000000UL) * (usec))
+#define US2RTC(freq, usec) (rtcnt_t)((((freq) + 999999UL) / 1000000UL) * (usec))
 
 /**
  * @brief   Realtime counter cycles to seconds.
  * @details Converts from realtime counter cycles number to seconds.
  * @note    The result is rounded up to the next second boundary.
+ * @note    The macro assumes that @p freq >= @p 1.
  *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
  * @param[in] n         number of cycles
  * @return              The number of seconds.
  *
  * @api
  */
-#define RTC2S(n) ((((n) - 1UL) / CH_CFG_RTC_FREQUENCY) + 1UL)
+#define RTC2S(freq, n) ((((n) - 1UL) / (freq)) + 1UL)
 
 /**
  * @brief   Realtime counter cycles to milliseconds.
  * @details Converts from realtime counter cycles number to milliseconds.
  * @note    The result is rounded up to the next millisecond boundary.
+ * @note    The macro assumes that @p freq >= @p 1000.
  *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
  * @param[in] n         number of cycles
  * @return              The number of milliseconds.
  *
  * @api
  */
-#define RTC2MS(n) ((((n) - 1UL) / (CH_CFG_RTC_FREQUENCY / 1000UL)) + 1UL)
+#define RTC2MS(freq, n) ((((n) - 1UL) / ((freq) / 1000UL)) + 1UL)
 
 /**
  * @brief   Realtime counter cycles to microseconds.
  * @details Converts from realtime counter cycles number to microseconds.
  * @note    The result is rounded up to the next microsecond boundary.
+ * @note    The macro assumes that @p freq >= @p 1000000.
  *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
  * @param[in] n         number of cycles
  * @return              The number of microseconds.
  *
  * @api
  */
-#define RTC2US(n) ((((n) - 1UL) / (CH_CFG_RTC_FREQUENCY / 1000000UL)) + 1UL)
+#define RTC2US(freq, n) ((((n) - 1UL) / ((freq) / 1000000UL)) + 1UL)
 /** @} */
 
 /**

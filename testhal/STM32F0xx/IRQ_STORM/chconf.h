@@ -57,14 +57,7 @@
  *          this value.
  */
 #define CH_CFG_ST_TIMEDELTA                 2
-
-/**
- * @brief   Realtime Counter frequency.
- * @details Frequency of the system counter used for realtime delays and
- *          measurements.
- */
-#define CH_CFG_RTC_FREQUENCY                0
-
+ports/STM32/STM32
 /** @} */
 
 /*===========================================================================*/
