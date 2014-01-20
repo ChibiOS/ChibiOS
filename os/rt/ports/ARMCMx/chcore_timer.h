@@ -29,14 +29,6 @@
 #ifndef _CHCORE_TIMER_H_
 #define _CHCORE_TIMER_H_
 
-#if defined(PORT_DO_NOT_USE_ST)
-/* If, for some reason, the use of the HAL-provided ST timer port interface
-   is not wanted, it is possible to provide the timer interface into a custom
-   module.*/
-#include "chcore_timer_ext.h"
-
-#else /* !defined(PORT_DO_NOT_USE_ST) */
-
 /* This is the only header in the HAL designed to be include-able alone.*/
 #include "st.h"
 
@@ -127,8 +119,6 @@ static inline systime_t port_timer_get_alarm(void) {
 
   return stGetAlarm();
 }
-
-#endif /* !defined(PORT_DO_NOT_USE_ST) */
 
 #endif /* _CHCORE_TIMER_H_ */
 
