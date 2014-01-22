@@ -57,7 +57,7 @@
  *          this value.
  */
 #define CH_CFG_ST_TIMEDELTA                 2
-ports/STM32/STM32
+
 /** @} */
 
 /*===========================================================================*/
@@ -137,7 +137,7 @@ ports/STM32/STM32
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_TM                       TRUE
+#define CH_CFG_USE_TM                       FALSE
 
 /**
  * @brief   Threads registry APIs.

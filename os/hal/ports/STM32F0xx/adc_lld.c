@@ -155,7 +155,7 @@ void adc_lld_init(void) {
 
   /* The shared vector is initialized on driver initialization and never
      disabled.*/
-  nvicEnableVector(ADC1_COMP_IRQn, STM32_ADC_IRQ_PRIORITY);
+  nvicEnableVector(12, STM32_ADC_IRQ_PRIORITY);
 
   /* Calibration procedure.*/
   rccEnableADC1(FALSE);
