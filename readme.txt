@@ -72,6 +72,8 @@
 *****************************************************************************
 
 *** 2.6.3 ***
+- FIX: Fixed compile error in STM32F0xx ADC driver when STM32F0XX_LD devices
+  are selected (bug #460).
 - FIX: Fixed race condition in STM32 SDC driver (bug #458).
 - FIX: Fixed race condition in STM32 OTG driver (bug #457).
 - FIX: Fixed memstreams.c missing from simulator makefiles (bug #454).
