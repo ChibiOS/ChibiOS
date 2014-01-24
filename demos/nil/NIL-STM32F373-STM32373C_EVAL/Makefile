@@ -78,7 +78,7 @@ PROJECT = ch
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ST_STM32373C_EVAL/board.mk
-include $(CHIBIOS)/os/hal/ports/STM32F37x/platform.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F37x/platform.mk
 include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/mk/port_stm32f37x.mk
