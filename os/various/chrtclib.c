@@ -36,8 +36,8 @@
 #if (defined(STM32F4XX) || defined(STM32F2XX) || defined(STM32L1XX) ||        \
      defined(STM32F30X) || defined(STM32F37X) ||                              \
      defined(STM32F1XX) || defined(STM32F10X_MD) || defined(STM32F10X_LD) ||  \
-     defined(STM32F10X_HD) || defined(STM32F0XX) || defined(LPC122X) ||       \
-     defined(__DOXYGEN__))
+     defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(STM32F0XX) ||  \
+     defined(LPC122X) || defined(__DOXYGEN__))
 #if STM32_RTC_IS_CALENDAR
 /**
  * @brief   Converts from STM32 BCD to canonicalized time format.
