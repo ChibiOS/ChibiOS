@@ -79,8 +79,8 @@ CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/OLIMEX_STM32_P103/board.mk
 include $(CHIBIOS)/os/hal/ports/STM32F1xx/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/osal/osal.mk
 include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_stm32f1xx.mk
 #include $(CHIBIOS)/test/test.mk
 

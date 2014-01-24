@@ -89,7 +89,7 @@ static void adc_lld_vreg_on(ADCDriver *adcp) {
 #if STM32_ADC_DUAL_MODE
   adcp->adcs->CR = ADC_CR_ADVREGEN_0;
 #endif
-  osalSysPolledDelayX(US2RTC(10));
+  osalSysPolledDelayX(US2RTC(STM32_HCLK, 10));
 }
 
 /**
