@@ -77,6 +77,16 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Enables an alternative timer implementation.
+ * @details Usually the port uses a timer interface defined in the file
+ *          @p nilcore_timer.h, if this option is enabled then the file
+ *          @p nilcore_timer_alt.h is included instead.
+ */
+#if !defined(PORT_USE_ALT_TIMER)
+#define PORT_USE_ALT_TIMER              FALSE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -212,7 +222,11 @@ struct port_intctx {};
 
 #if !defined(_FROM_ASM_)
 #if NIL_CFG_ST_TIMEDELTA > 0
+#if !PORT_USE_ALT_TIMER
 #include "nilcore_timer.h"
+#else /* PORT_USE_ALT_TIMER */
+#include "nilcore_timer_alt.h"
+#endif /* PORT_USE_ALT_TIMER */
 #endif
 #endif /* !defined(_FROM_ASM_) */
 

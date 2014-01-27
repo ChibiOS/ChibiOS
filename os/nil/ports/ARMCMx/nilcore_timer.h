@@ -29,14 +29,6 @@
 #ifndef _NILCORE_TIMER_H_
 #define _NILCORE_TIMER_H_
 
-#if defined(PORT_DO_NOT_USE_ST)
-/* If, for some reason, the use of the HAL-provided ST timer port interface
-   is not wanted, it is possible to provide the timer interface into a custom
-   module.*/
-#include "nilcore_timer_ext.h"
-
-#else /* !defined(PORT_DO_NOT_USE_ST) */
-
 /* This is the only header in the HAL designed to be include-able alone.*/
 #include "st.h"
 
@@ -60,6 +52,14 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
 /**
  * @brief   Starts the alarm.
  * @note    Makes sure that no spurious alarms are triggered after
@@ -69,9 +69,9 @@
  *
  * @notapi
  */
-#define port_timer_start_alarm(time) {                                      \
-  chDbgAssert(stIsAlarmActive() == false, "already active");                \
-  stStartAlarm(time);                                                       \
+static inline void port_timer_start_alarm(systime_t time) {
+
+  stStartAlarm(time);
 }
 
 /**
@@ -79,9 +79,9 @@
  *
  * @notapi
  */
-#define port_timer_stop_alarm() {                                           \
-  chDbgAssert(stIsAlarmActive() != false, "not active");                    \
-  stStopAlarm();                                                            \
+static inline void port_timer_stop_alarm(void) {
+
+  stStopAlarm();
 }
 
 /**
@@ -91,18 +91,10 @@
  *
  * @notapi
  */
-#define port_timer_set_alarm(time) {                                        \
-  chDbgAssert(stIsAlarmActive() != false, "not active");                    \
-  stSetAlarm(time);                                                         \
+static inline void port_timer_set_alarm(systime_t time) {
+
+  stSetAlarm(time);
 }
-
-/*===========================================================================*/
-/* External declarations.                                                    */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Module inline functions.                                                  */
-/*===========================================================================*/
 
 /**
  * @brief   Returns the system time.
@@ -127,8 +119,6 @@ static inline systime_t port_timer_get_alarm(void) {
 
   return stGetAlarm();
 }
-
-#endif /* !defined(PORT_DO_NOT_USE_ST) */
 
 #endif /* _NILCORE_TIMER_H_ */
 
