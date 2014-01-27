@@ -20,7 +20,7 @@
 
 /**
  * @file    templates/nilcore.c
- * @brief   Pport code.
+ * @brief   Port code.
  *
  * @addtogroup NIL_CORE
  * @{
