@@ -29,6 +29,9 @@
 #ifndef _NILCORE_H_
 #define _NILCORE_H_
 
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -40,17 +43,17 @@
 /**
  * @brief   Macro defining the port architecture.
  */
-#define PORT_ARCHITECTURE_XXX
+#define PORT_ARCHITECTURE_AVR
 
 /**
  * @brief   Name of the implemented architecture.
  */
-#define PORT_ARCHITECTURE_NAME          "XXX"
+#define PORT_ARCHITECTURE_NAME          "AVR"
 
 /**
  * @brief   Name of the architecture variant.
  */
-#define PORT_CORE_VARIANT_NAME          "XXXX-Y"
+#define PORT_CORE_VARIANT_NAME          "MegaAVR"
 
 /**
  * @brief   Compiler name and version.
@@ -65,7 +68,7 @@
 /**
  * @brief   Port-specific information string.
  */
-#define PORT_INFO                       "port description"
+#define PORT_INFO                       "16 bits code addressing"
 
 /**
  * @brief   This port supports a realtime counter.
@@ -82,15 +85,17 @@
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved
  *          by @p PORT_INT_REQUIRED_STACK.
+ * @note    In this port it is set to 8.
  */
 #if !defined(PORT_IDLE_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define PORT_IDLE_THREAD_STACK_SIZE     16
+#define PORT_IDLE_THREAD_STACK_SIZE     8
 #endif
 
 /**
  * @brief   Per-thread stack overhead for interrupts servicing.
  * @details This constant is used in the calculation of the correct working
  *          area size.
+ * @note    In this port the default is 32 bytes per thread.
  */
 #if !defined(PORT_INT_REQUIRED_STACK) || defined(__DOXYGEN__)
 #define PORT_INT_REQUIRED_STACK         32
@@ -130,7 +135,7 @@ typedef uint16_t systime_t;
 /**
  * @brief   Type of stack and memory alignment enforcement.
  */
-typedef uint64_t stkalign_t;
+typedef uint8_t stkalign_t;
 
 /**
  * @brief   Interrupt saved context.
@@ -138,7 +143,23 @@ typedef uint64_t stkalign_t;
  *          preemption-capable interrupt handler.
  */
 struct port_extctx {
-
+  uint8_t       _next;
+  uint8_t       r31;
+  uint8_t       r30;
+  uint8_t       r27;
+  uint8_t       r26;
+  uint8_t       r25;
+  uint8_t       r24;
+  uint8_t       r23;
+  uint8_t       r22;
+  uint8_t       r21;
+  uint8_t       r20;
+  uint8_t       r19;
+  uint8_t       r18;
+  uint8_t       sr;
+  uint8_t       r1;
+  uint8_t       r0;
+  uint16_t      pc;
 };
 
 /**
@@ -147,7 +168,27 @@ struct port_extctx {
  *          switching.
  */
 struct port_intctx {
-
+  uint8_t       _next;
+  uint8_t       r29;
+  uint8_t       r28;
+  uint8_t       r17;
+  uint8_t       r16;
+  uint8_t       r15;
+  uint8_t       r14;
+  uint8_t       r13;
+  uint8_t       r12;
+  uint8_t       r11;
+  uint8_t       r10;
+  uint8_t       r9;
+  uint8_t       r8;
+  uint8_t       r7;
+  uint8_t       r6;
+  uint8_t       r5;
+  uint8_t       r4;
+  uint8_t       r3;
+  uint8_t       r2;
+  uint8_t       pcl;
+  uint8_t       pch;
 };
 
 #endif /* !defined(_FROM_ASM_) */
@@ -157,41 +198,57 @@ struct port_intctx {
 /*===========================================================================*/
 
 /**
- * @brief   Platform dependent part of the @p chThdCreateI() API.
+ * @brief   Platform dependent thread stack setup.
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
 #define PORT_SETUP_CONTEXT(tp, wend, pf, arg) {                             \
+    (tp)->ctxp.sp = (struct port_intctx*)(((uint8_t *)(wend)) -             \
+                                           sizeof(struct port_intctx));     \
+    (tp)->ctxp.sp->r2  = (uint8_t)(pf);                                     \
+    (tp)->ctxp.sp->r3  = (uint8_t)((pf) >> 8);                              \
+    (tp)->ctxp.sp->r4  = (uint8_t)(arg);                                    \
+    (tp)->ctxp.sp->r5  = (uint8_t)((arg) >> 8);                             \
+    (tp)->ctxp.sp->pcl = (uint8_t)(_port_thread_start >> 8);                \
+    (tp)->ctxp.sp->pch = (uint8_t)_port_thread_start;                       \
 }
 
 /**
  * @brief   Computes the thread working area global size.
  * @note    There is no need to perform alignments in this macro.
  */
-#define PORT_WA_SIZE(n) (sizeof(struct port_intctx) +                       \
-                         sizeof(struct port_extctx) +                       \
+#define PORT_WA_SIZE(n) ((sizeof(struct port_intctx) - 1) +                 \
+                         (sizeof(struct port_extctx) - 1) +                 \
                          (n) + (PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
+ * @note    This code tricks the compiler to save all the specified registers
+ *          by "touching" them.
  */
-#define PORT_IRQ_PROLOGUE()
+#define PORT_IRQ_PROLOGUE() {                                               \
+  asm ("" : : : "r18", "r19", "r20", "r21", "r22", "r23", "r24",            \
+                "r25", "r26", "r27", "r30", "r31");                         \
+}
 
 /**
  * @brief   IRQ epilogue code.
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() _port_irq_epilogue()
+#define PORT_IRQ_EPILOGUE() {                                               \
+  if (chSchIsRescRequiredI())                                               \
+    chSchRescheduleS();                                                     \
+}
 
 /**
  * @brief   IRQ handler function declaration.
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_IRQ_HANDLER(id) void id(void)
+#define PORT_IRQ_HANDLER(id) ISR(id)
 
 /**
  * @brief   Fast IRQ handler function declaration.

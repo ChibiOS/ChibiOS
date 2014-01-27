@@ -157,7 +157,7 @@ struct port_intctx {
 /*===========================================================================*/
 
 /**
- * @brief   Platform dependent part of the @p chThdCreateI() API.
+ * @brief   Platform dependent thread stack setup.
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
