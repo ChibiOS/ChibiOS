@@ -238,10 +238,7 @@ struct port_intctx {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() {                                               \
-  if (chSchIsRescRequiredI())                                               \
-    chSchRescheduleS();                                                     \
-}
+#define PORT_IRQ_EPILOGUE() chSchRescheduleS()
 
 /**
  * @brief   IRQ handler function declaration.
@@ -255,7 +252,7 @@ struct port_intctx {
  * @note    @p id can be a function name or a vector number depending on the
  *          port implementation.
  */
-#define PORT_FAST_IRQ_HANDLER(id) void id(void)
+#define PORT_FAST_IRQ_HANDLER(id) ISR(id)
 
 /**
  * @brief   Performs a context switch between two threads.
@@ -345,6 +342,7 @@ static inline bool port_is_isr_context(void) {
  */
 static inline void port_lock(void) {
 
+  asm volatile ("cli" : : : "memory");
 }
 
 /**
@@ -352,10 +350,12 @@ static inline void port_lock(void) {
  */
 static inline void port_unlock(void) {
 
+  asm volatile ("sei" : : : "memory");
 }
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
+ * @note    This function is empty in this port.
  */
 static inline void port_lock_from_isr(void) {
 
@@ -363,6 +363,7 @@ static inline void port_lock_from_isr(void) {
 
 /**
  * @brief   Kernel-unlock action from an interrupt handler.
+ * @note    This function is empty in this port.
  */
 static inline void port_unlock_from_isr(void) {
 
@@ -373,6 +374,7 @@ static inline void port_unlock_from_isr(void) {
  */
 static inline void port_disable(void) {
 
+  asm volatile ("cli" : : : "memory");
 }
 
 /**
@@ -380,6 +382,7 @@ static inline void port_disable(void) {
  */
 static inline void port_suspend(void) {
 
+  asm volatile ("cli" : : : "memory");
 }
 
 /**
@@ -387,6 +390,7 @@ static inline void port_suspend(void) {
  */
 static inline void port_enable(void) {
 
+  asm volatile ("sei" : : : "memory");
 }
 
 /**
@@ -398,6 +402,7 @@ static inline void port_enable(void) {
  */
 static inline void port_wait_for_interrupt(void) {
 
+  asm volatile ("sleep" : : : "memory");
 }
 
 /**
