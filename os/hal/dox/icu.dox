@@ -54,6 +54,7 @@
     ready -> waiting [label="\nicuEnable()"];
     waiting -> active [label="\nStart Front"];
     waiting -> ready [label="\nicuDisable()"];
+    waiting -> waiting [label="\nStop Front"];
     active -> idle [label="\nStop Front\n>width_cb<"];
     active -> ready [label="\nicuDisable()\nicuDisableI()"];
     idle -> active [label="\nStart Front\n>period_cb<"];
@@ -83,6 +84,7 @@
     ready -> waiting [label="\nicuEnable()"];
     waiting -> active [label="\nStart Front"];
     waiting -> ready [label="\nicuDisable()"];
+    waiting -> waiting [label="\nStop Front"];
     active -> idle [label="\nStop Front\n>width_cb<"];
     active -> ready [label="\nicuDisable()\nicuDisableI()"];
     idle -> active [label="\nStart Front\n>period_cb<"];
