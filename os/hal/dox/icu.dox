@@ -1,6 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012 Giovanni Di Sirio.
+                 2011,2012,2013 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -61,6 +61,7 @@
     ready -> waiting [label="\nicuEnable()"];
     waiting -> active [label="\nStart Front"];
     waiting -> ready [label="\nicuDisable()"];
+    waiting -> waiting [label="\nStop Front"];
     active -> idle [label="\nStop Front\n>width_cb<"];
     active -> ready [label="\nicuDisable()\nicuDisableI()"];
     idle -> active [label="\nStart Front\n>period_cb<"];
@@ -90,6 +91,7 @@
     ready -> waiting [label="\nicuEnable()"];
     waiting -> active [label="\nStart Front"];
     waiting -> ready [label="\nicuDisable()"];
+    waiting -> waiting [label="\nStop Front"];
     active -> idle [label="\nStop Front\n>width_cb<"];
     active -> ready [label="\nicuDisable()\nicuDisableI()"];
     idle -> active [label="\nStart Front\n>period_cb<"];

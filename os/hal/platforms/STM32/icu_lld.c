@@ -488,6 +488,7 @@ void icu_lld_stop(ICUDriver *icup) {
  */
 void icu_lld_enable(ICUDriver *icup) {
 
+  icup->tim->EGR |= STM32_TIM_EGR_UG;
   icup->tim->SR   = 0;                      /* Clear pending IRQs (if any). */
   if (icup->config->period_cb != NULL)
     icup->tim->DIER |= TIM_DIER_CC1IE;
