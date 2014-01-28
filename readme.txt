@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.3 ***
+- FIX: Fixed spurious callback in ICU driver (bug #461).
 - FIX: Fixed compile error in STM32F0xx ADC driver when STM32F0XX_LD devices
   are selected (bug #460).
 - FIX: Fixed race condition in STM32 SDC driver (bug #458).
