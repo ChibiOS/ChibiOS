@@ -383,7 +383,6 @@ _unhandled_exception PROC
                 EXPORT  Vector54                [WEAK]
                 EXPORT  Vector58                [WEAK]
                 EXPORT  Vector5C                [WEAK]
-#endif
 #if CORTEX_NUM_VECTORS > 8
                 EXPORT  Vector60                [WEAK]
                 EXPORT  Vector64                [WEAK]

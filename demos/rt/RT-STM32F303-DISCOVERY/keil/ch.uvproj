@@ -354,10 +354,10 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>--c99</MiscControls>
               <Define>__heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_RAM1$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x;..\..\..\..\os\ext\CMSIS\include;..\..\..\..\os\ext\CMSIS\ST;..\..\..\..\os\rt\ports\ARMCMx;..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\STM32\STM32F30x;..\..\..\..\os\hal\ports\STM32\LLD;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x;..\..\..\..\os\ext\CMSIS\include;..\..\..\..\os\ext\CMSIS\ST;..\..\..\..\os\rt\ports\ARMCMx;..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F30x;..\..\..\..\os\hal\ports\STM32\LLD;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -373,7 +373,7 @@
               <MiscControls>--cpreproc</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\boards\ST_STM32F4_DISCOVERY;..\..\..\os\ports\RVCT\ARMCMx\STM32F4xx</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -903,6 +903,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\USBv1\usb_lld.h</FilePath>
             </File>
+            <File>
+              <FileName>nvic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\common\ARMCMx\nvic.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1127,6 +1132,131 @@
               <FileName>board.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY\board.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>test</GroupName>
+          <Files>
+            <File>
+              <FileName>test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\test.c</FilePath>
+            </File>
+            <File>
+              <FileName>test.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\test.h</FilePath>
+            </File>
+            <File>
+              <FileName>testbmk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testbmk.c</FilePath>
+            </File>
+            <File>
+              <FileName>testbmk.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testbmk.h</FilePath>
+            </File>
+            <File>
+              <FileName>testdyn.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testdyn.c</FilePath>
+            </File>
+            <File>
+              <FileName>testdyn.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testdyn.h</FilePath>
+            </File>
+            <File>
+              <FileName>testevt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testevt.c</FilePath>
+            </File>
+            <File>
+              <FileName>testevt.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testevt.h</FilePath>
+            </File>
+            <File>
+              <FileName>testheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testheap.c</FilePath>
+            </File>
+            <File>
+              <FileName>testheap.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testheap.h</FilePath>
+            </File>
+            <File>
+              <FileName>testmbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testmbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>testmbox.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testmbox.h</FilePath>
+            </File>
+            <File>
+              <FileName>testmsg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testmsg.c</FilePath>
+            </File>
+            <File>
+              <FileName>testmsg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testmsg.h</FilePath>
+            </File>
+            <File>
+              <FileName>testmtx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testmtx.c</FilePath>
+            </File>
+            <File>
+              <FileName>testmtx.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testmtx.h</FilePath>
+            </File>
+            <File>
+              <FileName>testpools.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testpools.c</FilePath>
+            </File>
+            <File>
+              <FileName>testpools.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testpools.h</FilePath>
+            </File>
+            <File>
+              <FileName>testqueues.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testqueues.c</FilePath>
+            </File>
+            <File>
+              <FileName>testqueues.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testqueues.h</FilePath>
+            </File>
+            <File>
+              <FileName>testsem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testsem.c</FilePath>
+            </File>
+            <File>
+              <FileName>testsem.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testsem.h</FilePath>
+            </File>
+            <File>
+              <FileName>testthd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\testthd.c</FilePath>
+            </File>
+            <File>
+              <FileName>testthd.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\testthd.h</FilePath>
             </File>
           </Files>
         </Group>
