@@ -55,7 +55,7 @@
  * @param[in] n         the interrupt number
  * @param[in] prio      the interrupt priority mask
  */
-void nvicEnableVector(IRQn_Type n, uint32_t prio) {
+void nvicEnableVector(uint32_t n, uint32_t prio) {
 
   NVIC->IP[n]        = NVIC_PRIORITY_MASK(prio);
   NVIC->ICPR[n >> 5] = 1 << (n & 0x1F);
@@ -68,22 +68,10 @@ void nvicEnableVector(IRQn_Type n, uint32_t prio) {
  *
  * @param[in] n         the interrupt number
  */
-void nvicDisableVector(IRQn_Type n) {
+void nvicDisableVector(uint32_t n) {
 
   NVIC->ICER[n >> 5] = 1 << (n & 0x1F);
   NVIC->IP[n]        = 0;
-}
-
-/**
- * @brief   Changes the priority of a system handler.
- * @note    The parameters are not tested for correctness.
- *
- * @param[in] handler   the system handler number
- * @param[in] prio      the system handler priority mask
- */
-void nvicSetSystemHandlerPriority(IRQn_Type handler, uint32_t prio) {
-
-  SCB->SHP[((uint32_t)(handler) & 15) - 4] = NVIC_PRIORITY_MASK(prio);
 }
 
 /** @} */
