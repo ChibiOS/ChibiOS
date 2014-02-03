@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    nilcoreasm_v7m.s
+ * @file    ARMCMx/compilers/GCC/nilcoreasm_v7m.s
  * @brief   ARMv7-M architecture port low level code.
  *
- * @addtogroup ARMCMx_CORE
+ * @addtogroup ARMCMx_GCC_CORE
  * @{
  */
 

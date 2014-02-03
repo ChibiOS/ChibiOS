@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMCMx/GCC/niltypes.h
+ * @file    ARMCMx/compilers/GCC/niltypes.h
  * @brief   ARM Cortex-Mx port system types.
  *
- * @addtogroup ARMCMx_CORE
+ * @addtogroup ARMCMx_GCC_CORE
  * @{
  */
 
