@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    GCC/crt0.c
- * @brief   Generic GCC ARMvx-M (Cortex-M0/M1/M3/M4) startup file.
+ * @file    ARMCMx/GCC/crt0.c
+ * @brief   Generic GCC Cortex-Mx startup file.
  *
  * @addtogroup ARMCMx_GCC_STARTUP
  * @{

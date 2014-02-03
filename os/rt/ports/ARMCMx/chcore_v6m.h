@@ -205,9 +205,16 @@ struct port_intctx {
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
  */
+#if defined(__GNUC__) || defined(__DOXYGEN__)
 #define PORT_IRQ_PROLOGUE()                                                 \
-  regarm_t _saved_lr;                                                       \
-  asm volatile ("mov     %0, lr" : "=r" (_saved_lr) : : "memory")
+  regarm_t _saved_lr = (regarm_t)__builtin_return_address(0)
+#elif defined(__ICCARM__)
+#define PORT_IRQ_PROLOGUE()                                                 \
+  regarm_t _saved_lr = (regarm_t)__get_LR()
+#elif defined(__CC_ARM)
+#define PORT_IRQ_PROLOGUE()                                                 \
+  regarm_t _saved_lr = (regarm_t)__return_address()
+#endif
 
 /**
  * @brief   IRQ epilogue code.

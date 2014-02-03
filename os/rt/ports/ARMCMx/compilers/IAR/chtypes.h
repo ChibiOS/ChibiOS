@@ -22,7 +22,7 @@
  * @file    ARMCMx/compilers/IAR/chtypes.h
  * @brief   ARM Cortex-Mx port system types.
  *
- * @addtogroup IAR_ARMCMx_CORE
+ * @addtogroup ARMCMx_IAR_CORE
  * @{
  */
 

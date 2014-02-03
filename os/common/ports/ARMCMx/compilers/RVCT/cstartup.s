@@ -18,6 +18,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file    ARMCMx/RVCT/cstartup.s
+ * @brief   Generic RVCT Cortex-Mx startup file.
+ *
+ * @addtogroup ARMCMx_RVCT_STARTUP
+ * @{
+ */
+
+#if !defined(__DOXYGEN__)
+
 ;/* <<< Use Configuration Wizard in Context Menu >>> */
 
 ;// <h> Main Stack Configuration (IRQ Stack)
@@ -119,3 +129,7 @@ __user_initial_stackheap
                 ENDIF
 
                 END
+
+#endif /* !defined(__DOXYGEN__) */
+
+/**< @} */

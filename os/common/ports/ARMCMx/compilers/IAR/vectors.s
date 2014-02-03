@@ -18,8 +18,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file    ARMCMx/IAR/vectors.c
+ * @brief   Interrupt vectors for Cortex-Mx devices.
+ *
+ * @defgroup ARMCMx_IAR_VECTORS Cortex-Mx Interrupt Vectors
+ * @{
+ */
+
 #define _FROM_ASM_
 #include "cmparams.h"
+
+#if !defined(__DOXYGEN__)
 
 #if (CORTEX_NUM_VECTORS & 7) != 0
 #error "the constant CORTEX_NUM_VECTORS must be a multiple of 8"
@@ -994,3 +1004,7 @@ _unhandled_exception
         b       _unhandled_exception
 
         END
+
+#endif /* !defined(__DOXYGEN__) */
+
+/**< @} */

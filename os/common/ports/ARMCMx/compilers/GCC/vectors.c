@@ -19,12 +19,10 @@
 */
 
 /**
- * @file    GCC/ARMCMx/STM32F4xx/vectors.c
- * @brief   Interrupt vectors for the STM32F4xx family.
+ * @file    ARMCMx/GCC/vectors.c
+ * @brief   Interrupt vectors for Cortex-Mx devices.
  *
- * @defgroup ARMCMx_STM32F4xx_VECTORS STM32F4xx Interrupt Vectors
- * @ingroup ARMCMx_SPECIFIC
- * @details Interrupt vectors for the STM32F4xx family.
+ * @defgroup ARMCMx_VECTORS Cortex-Mx Interrupt Vectors
  * @{
  */
 

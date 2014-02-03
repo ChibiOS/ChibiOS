@@ -18,12 +18,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
- * Imports the Cortex-Mx configuration headers.
+/**
+ * @file    compilers/RVCT/chcoreasm_v6m.s
+ * @brief   ARMv6-M architecture port low level code.
+ *
+ * @addtogroup ARMCMx_RVCT_CORE
+ * @{
  */
+
 #define _FROM_ASM_
 #include "chconf.h"
 #include "chcore.h"
+
+#if !defined(__DOXYGEN__)
 
 CONTEXT_OFFSET  EQU     12
 SCB_ICSR        EQU     0xE000ED04
@@ -106,3 +113,7 @@ waithere        b       waithere
                 ENDP
 
                 END
+
+#endif /* !defined(__DOXYGEN__) */
+
+/** @} */

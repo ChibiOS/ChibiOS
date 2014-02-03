@@ -18,8 +18,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file    ARMCMx/RVCT/vectors.c
+ * @brief   Interrupt vectors for Cortex-Mx devices.
+ *
+ * @defgroup ARMCMx_RVCT_VECTORS Cortex-Mx Interrupt Vectors
+ * @{
+ */
+
 #define _FROM_ASM_
 #include "cmparams.h"
+
+#if !defined(__DOXYGEN__)
 
 #if (CORTEX_NUM_VECTORS & 7) != 0
 #error "the constant CORTEX_NUM_VECTORS must be a multiple of 8"
@@ -990,3 +1000,7 @@ Vector3FC
                 ENDP
 
                 END
+
+#endif /* !defined(__DOXYGEN__) */
+
+/**< @} */

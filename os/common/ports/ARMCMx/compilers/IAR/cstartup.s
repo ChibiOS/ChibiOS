@@ -18,6 +18,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file    ARMCMx/IAR/cstartup.s
+ * @brief   Generic IAR Cortex-Mx startup file.
+ *
+ * @addtogroup ARMCMx_IAR_STARTUP
+ * @{
+ */
+
+#if !defined(__DOXYGEN__)
+
         MODULE  ?cstartup
 
 CONTROL_MODE_PRIVILEGED SET 0
@@ -66,3 +76,7 @@ __early_init:
         bx      lr
 
         END
+
+#endif /* !defined(__DOXYGEN__) */
+
+/**< @} */

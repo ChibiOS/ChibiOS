@@ -22,7 +22,7 @@
  * @file    ARMCMx/compilers/RVCT/chtypes.h
  * @brief   ARM Cortex-Mx port system types.
  *
- * @addtogroup RVCT_ARMCMx_CORE
+ * @addtogroup ARMCMx_RVCT_CORE
  * @{
  */
 
