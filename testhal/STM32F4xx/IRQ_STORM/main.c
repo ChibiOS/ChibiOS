@@ -286,7 +286,9 @@ int main(void) {
     println("");
     saturated = FALSE;
     threshold = 0;
-    for (interval = 2000; interval >= 10; interval -= interval / 10) {
+    for (interval = 2000;
+        interval >= 2;
+        interval -= (interval + 9) / 10) {
       gptStartContinuous(&GPTD4, interval - 1); /* Slightly out of phase.*/
       gptStartContinuous(&GPTD3, interval + 1); /* Slightly out of phase.*/
       chThdSleepMilliseconds(1000);

@@ -23,8 +23,8 @@ ifeq ($(USE_LTO),yes)
 endif
 
 # FPU-related options
-ifeq ($(USE_FPU),yes)
-  USE_OPT += -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+ifneq ($(USE_FPU),no)
+  OPT += -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16 -fsingle-precision-constant
   DDEFS += -DCORTEX_USE_FPU=TRUE
   DADEFS += -DCORTEX_USE_FPU=TRUE
 else
