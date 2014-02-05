@@ -205,7 +205,7 @@ void st_lld_init(void) {
                   SysTick_CTRL_TICKINT_Msk;
 
   /* IRQ enabled.*/
-  nvicSetSystemHandlerPriority(SysTick_IRQn, STM32_ST_IRQ_PRIORITY);
+  nvicSetSystemHandlerPriority(HANDLER_SYSTICK, STM32_ST_IRQ_PRIORITY);
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
 }
 

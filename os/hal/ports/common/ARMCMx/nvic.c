@@ -50,10 +50,9 @@
 
 /**
  * @brief   Sets the priority of an interrupt handler and enables it.
- * @note    The parameters are not tested for correctness.
  *
  * @param[in] n         the interrupt number
- * @param[in] prio      the interrupt priority mask
+ * @param[in] prio      the interrupt priority
  */
 void nvicEnableVector(uint32_t n, uint32_t prio) {
 
@@ -64,7 +63,6 @@ void nvicEnableVector(uint32_t n, uint32_t prio) {
 
 /**
  * @brief   Disables an interrupt handler.
- * @note    The parameters are not tested for correctness.
  *
  * @param[in] n         the interrupt number
  */
@@ -72,6 +70,19 @@ void nvicDisableVector(uint32_t n) {
 
   NVIC->ICER[n >> 5] = 1 << (n & 0x1F);
   NVIC->IP[n]        = 0;
+}
+
+/**
+ * @brief   Changes the priority of a system handler.
+ *
+ * @param[in] handler   the system handler number
+ * @param[in] prio      the system handler priority
+ */
+void nvicSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
+
+  osalDbgCheck((handler >= 4) && (handler <= 15));
+
+  SCB->SHP[handler - 4] = NVIC_PRIORITY_MASK(prio);
 }
 
 /** @} */
