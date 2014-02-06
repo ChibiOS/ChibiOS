@@ -474,7 +474,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state>CORTEX_USE_FPU=FALSE</state>
+          <state>CORTEX_USE_FPU=TRUE</state>
         </option>
         <option>
           <name>AList</name>
@@ -696,7 +696,7 @@
         </option>
         <option>
           <name>IlinkMapFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IlinkLogFile</name>
@@ -1057,7 +1057,7 @@
         </option>
         <option>
           <name>GenLowLevelInterface</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GEndianModeBE</name>
@@ -1126,8 +1126,7 @@
         </option>
         <option>
           <name>CCDefines</name>
-          <state>CORTEX_USE_FPU=FALSE</state>
-          <state>NDEBUG</state>
+          <state>CORTEX_USE_FPU=TRUE</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1143,15 +1142,15 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListCMessages</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCListAssFile</name>
@@ -1159,7 +1158,7 @@
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -1192,7 +1191,7 @@
         </option>
         <option>
           <name>CCDebugInfo</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IEndianMode</name>
@@ -1232,7 +1231,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -1257,23 +1256,26 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
-          <state>$PROJ_DIR$\..\..\..\os\kernel\include</state>
-          <state>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx</state>
-          <state>$PROJ_DIR$\..\..\..\os\ports\common\ARMCMx\CMSIS\include</state>
-          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx</state>
-          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F4xx</state>
-          <state>$PROJ_DIR$\..\..\..\os\hal\include</state>
-          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32</state>
-          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\DMAv1</state>
-          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\GPIOv2</state>
-          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\SPIv1</state>
-          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\TIMv1</state>
-          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32\USARTv1</state>
-          <state>$PROJ_DIR$\..\..\..\os\hal\platforms\STM32F4xx</state>
-          <state>$PROJ_DIR$\..\..\..\os\various</state>
-          <state>$PROJ_DIR$\..\..\..\os\various\devices_lib\accel</state>
-          <state>$PROJ_DIR$\..\..\..\boards\ST_STM32F4_DISCOVERY</state>
-          <state>$PROJ_DIR$\..\..\..\test</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx\compilers\IAR</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\rt\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\osal\rt</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\common\ARMCMx</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\RTCv2</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\SPIv2</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\test</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1298,7 +1300,7 @@
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>2</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
@@ -1418,7 +1420,7 @@
         </option>
         <option>
           <name>ADebug</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AltRegisterNames</name>
@@ -1426,11 +1428,11 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state>CORTEX_USE_FPU=FALSE</state>
+          <state>CORTEX_USE_FPU=TRUE</state>
         </option>
         <option>
           <name>AList</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>AListHeader</name>
@@ -1523,8 +1525,8 @@
         <option>
           <name>AUserIncludes</name>
           <state>$PROJ_DIR$\..</state>
-          <state>$PROJ_DIR$\..\..\..\os\ports\IAR\ARMCMx\STM32F4xx</state>
-          <state>$PROJ_DIR$\..\..\..\boards\ST_STM32F4_DISCOVERY</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx</state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -1550,7 +1552,7 @@
         <option>
           <name>OOCOutputFormat</name>
           <version>2</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OCOutputOverride</name>
@@ -1558,7 +1560,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>ch.hex</state>
+          <state>ch.srec</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -1566,7 +1568,7 @@
         </option>
         <option>
           <name>OOCObjCopyEnable</name>
-          <state>1</state>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -1652,23 +1654,23 @@
         </option>
         <option>
           <name>IlinkLogFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogInitialization</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogModule</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogSection</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogVeneer</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkIcfOverride</name>
@@ -1807,15 +1809,15 @@
         </option>
         <option>
           <name>IlinkLogAutoLibSelect</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogRedirSymbols</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogUnusedFragments</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkCrcReverseByteOrder</name>
@@ -1827,7 +1829,7 @@
         </option>
         <option>
           <name>IlinkOptInline</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkOptExceptionsAllow</name>
@@ -1908,6 +1910,9 @@
       <data/>
     </settings>
   </configuration>
+  <mfc>
+    <configuration>Release</configuration>
+  </mfc>
   <group>
     <name>os</name>
     <group>
@@ -2031,6 +2036,129 @@
       </group>
       <group>
         <name>port</name>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\adc_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\adc_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\can_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\can_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\ext_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\ext_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\ext_lld_isr.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\ext_lld_isr.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\gpt_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\gpt_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\hal_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\hal_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2\i2c_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2\i2c_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\icu_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\icu_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\common\ARMCMx\nvic.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\common\ARMCMx\nvic.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2\pal_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2\pal_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\pwm_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\pwm_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\RTCv2\rtc_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\RTCv2\rtc_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2\serial_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2\serial_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\SPIv2\spi_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\SPIv2\spi_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\st_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\st_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_dma.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_dma.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_isr.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_rcc.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_registry.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\stm32_tim.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1\stm32_usb.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2\uart_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2\uart_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1\usb_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1\usb_lld.h</name>
+        </file>
       </group>
       <group>
         <name>src</name>
