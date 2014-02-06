@@ -42,6 +42,11 @@
  */
 #define PORT_ARCHITECTURE_ARM
 
+/* The following code is not processed when the file is included from an
+   asm module because those intrinsic macros are not necessarily defined
+   by the assembler too.*/
+#if !defined(_FROM_ASM_)
+
 /**
  * @brief   Compiler name and version.
  */
@@ -57,6 +62,9 @@
 #else
 #error "unsupported compiler"
 #endif
+
+#endif /* !defined(_FROM_ASM_) */
+
 /** @} */
 
 /**

@@ -137,7 +137,8 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
     delay -= p->vt_delta;
     p = p->vt_next;
   }
-  /* The timer is inserted in the delta list.*/
+
+  /* The timer is inserted in the delta list.*/
   vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
   vtp->vt_prev->vt_next = p->vt_prev = vtp;
   vtp->vt_delta = delay

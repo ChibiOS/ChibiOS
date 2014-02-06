@@ -87,31 +87,6 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a Virtual Timer callback function.
- */
-typedef void (*vtfunc_t)(void *);
-
-/**
- * @brief   Type of a Virtual Timer structure.
- */
-typedef struct virtual_timer virtual_timer_t;
-
-/**
- * @extends virtual_timers_list_t
- *
- * @brief   Virtual Timer descriptor structure.
- */
-struct virtual_timer {
-  virtual_timer_t       *vt_next;   /**< @brief Next timer in the list.     */
-  virtual_timer_t       *vt_prev;   /**< @brief Previous timer in the list. */
-  systime_t             vt_delta;   /**< @brief Time delta before timeout.  */
-  vtfunc_t              vt_func;    /**< @brief Timer callback function
-                                                pointer.                    */
-  void                  *vt_par;    /**< @brief Timer callback function
-                                                parameter.                  */
-};
-
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/

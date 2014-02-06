@@ -62,10 +62,6 @@
 #define CH_KERNEL_PATCH         0
 /** @} */
 
-/* Forward declarations.*/
-typedef struct thread thread_t;
-typedef struct virtual_timer virtual_timer_t;
-
 /* Core headers.*/
 #include "chtypes.h"
 #include "chconf.h"

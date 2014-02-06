@@ -69,21 +69,28 @@
 /*===========================================================================*/
 
 /**
- * @brief   Generic threads single link list, it works like a stack.
+ * @extends threads_queue_t
+ *
+ * @brief   Type of a thread structure.
  */
-typedef struct {
-  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
-} threads_list_t;
+typedef struct thread thread_t;
 
 /**
  * @extends threads_list_t
  *
- * @brief   Generic threads bidirectional linked list header and element.
+ * @brief   Type of a generic threads bidirectional linked list header and element.
  */
 typedef struct {
   thread_t              *p_next;    /**< @brief Next in the list/queue.     */
   thread_t              *p_prev;    /**< @brief Previous in the queue.      */
 } threads_queue_t;
+
+/**
+ * @brief   Type of a generic threads single link list, it works like a stack.
+ */
+typedef struct {
+  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
+} threads_list_t;
 
 /**
  * @extends threads_queue_t
@@ -106,14 +113,12 @@ typedef struct {
 } ready_list_t;
 
 /**
- * @extends threads_queue_t
- *
  * @brief   Structure representing a thread.
  * @note    Not all the listed fields are always needed, by switching off some
  *          not needed ChibiOS/RT subsystems it is possible to save RAM space
- *          by shrinking the @p thread_t structure.
+ *          by shrinking this structure.
  */
-typedef struct thread {
+struct thread {
   thread_t              *p_next;    /**< @brief Next in the list/queue.     */
   /* End of the fields shared with the threads_list_t structure.*/
   thread_t              *p_prev;    /**< @brief Previous in the queue.      */
@@ -246,7 +251,32 @@ typedef struct thread {
   /* Extra fields defined in chconf.h.*/
   CH_CFG_THREAD_EXTRA_FIELDS
 #endif
-} thread_t;
+};
+
+/**
+ * @brief   Type of a Virtual Timer callback function.
+ */
+typedef void (*vtfunc_t)(void *);
+
+/**
+ * @brief   Type of a Virtual Timer structure.
+ */
+typedef struct virtual_timer virtual_timer_t;
+
+/**
+ * @extends virtual_timers_list_t
+ *
+ * @brief   Virtual Timer descriptor structure.
+ */
+struct virtual_timer {
+  virtual_timer_t       *vt_next;   /**< @brief Next timer in the list.     */
+  virtual_timer_t       *vt_prev;   /**< @brief Previous timer in the list. */
+  systime_t             vt_delta;   /**< @brief Time delta before timeout.  */
+  vtfunc_t              vt_func;    /**< @brief Timer callback function
+                                                pointer.                    */
+  void                  *vt_par;    /**< @brief Timer callback function
+                                                parameter.                  */
+};
 
 /**
  * @brief   Virtual timers list header.

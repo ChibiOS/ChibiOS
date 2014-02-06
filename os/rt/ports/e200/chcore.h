@@ -340,7 +340,7 @@ struct context {
   register struct port_intctx *sp asm ("%r1");                              \
   if ((stkalign_t *)(sp - 1) < otp->p_stklimit)                             \
     chDbgPanic("stack overflow");                                           \
-  _port_switch(ntp, otp);                                                   \
+  _port_switch((void *)ntp, (void *)otp);                                   \
 }
 #endif
 
@@ -373,7 +373,7 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _port_switch(thread_t *ntp, thread_t *otp);
+  void _port_switch(void *ntp, void *otp);
   void _port_thread_start(void);
 #ifdef __cplusplus
 }
