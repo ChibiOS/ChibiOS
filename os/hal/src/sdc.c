@@ -200,6 +200,9 @@ bool sdcConnect(SDCDriver *sdcp) {
   /* Card clock initialization.*/
   sdc_lld_start_clk(sdcp);
 
+  /* Clock activation delay.*/
+  osalThreadSleep(MS2ST(STM32_SDC_CLOCK_ACTIVATION_DELAY));
+
   /* Enforces the initial card state.*/
   sdc_lld_send_cmd_none(sdcp, MMCSD_CMD_GO_IDLE_STATE, 0);
 
