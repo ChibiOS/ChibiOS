@@ -254,7 +254,7 @@ struct port_intctx {
   struct port_intctx *r13 = (struct port_intctx *)__get_PSP();              \
   if ((stkalign_t *)(r13 - 1) < (otp)->p_stklimit)                          \
     chSysHalt("stack overflow");                                            \
-  _port_switch((void *)ntp, (void *)otp);                                   \
+  _port_switch(ntp, otp);                                                   \
 }
 #endif
 
@@ -266,7 +266,7 @@ struct port_intctx {
 extern "C" {
 #endif
   void _port_irq_epilogue(regarm_t lr);
-  void _port_switch(void *ntp, void *otp);
+  void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
   void _port_switch_from_isr(void);
   void _port_exit_from_isr(void);
