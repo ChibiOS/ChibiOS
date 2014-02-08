@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed TM32 SDC driver clock activation issue (bug #464)(backported to
+  2.6.3).
 - FIX: Fixed spurious callback in ICU driver (bug #461)(backported to 2.6.3
   and 2.4.6).
 - FIX: Fixed compile error in STM32F0xx ADC driver when STM32F0XX_LD devices
