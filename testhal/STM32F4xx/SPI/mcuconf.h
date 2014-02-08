@@ -203,6 +203,17 @@
 #define STM32_PWM_TIM9_IRQ_PRIORITY         7
 
 /*
+ * SDC driver system settings.
+ */
+#define STM32_SDC_SDIO_DMA_PRIORITY         3
+#define STM32_SDC_SDIO_IRQ_PRIORITY         9
+#define STM32_SDC_WRITE_TIMEOUT_MS          250
+#define STM32_SDC_READ_TIMEOUT_MS           25
+#define STM32_SDC_CLOCK_ACTIVATION_DELAY    10
+#define STM32_SDC_SDIO_UNALIGNED_SUPPORT    TRUE
+#define STM32_SDC_SDIO_DMA_STREAM           STM32_DMA_STREAM_ID(2, 3)
+
+/*
  * SERIAL driver system settings.
  */
 #define STM32_SERIAL_USE_USART1             FALSE
