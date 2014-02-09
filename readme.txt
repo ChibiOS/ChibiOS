@@ -78,6 +78,7 @@
   are selected (bug #460).
 - FIX: Fixed race condition in STM32 SDC driver (bug #458).
 - FIX: Fixed race condition in STM32 OTG driver (bug #457).
+- FIX: Fixed add PHY id of LAN8710A (bug #455)(backported to 2.6.3).
 - FIX: Fixed memstreams.c missing from simulator makefiles (bug #454).
 - FIX: Fixed chprintf() does not compile in strict C90 mode (bug #453).
 - FIX: Fixed corrupted mcuconf.h file in ARMCM4-STM32F407-DISCOVERY demo
