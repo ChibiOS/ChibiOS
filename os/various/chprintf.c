@@ -77,10 +77,10 @@ static char *ftoa(char *p, double num) {
   long l;
   unsigned long precision = FLOAT_PRECISION;
 
-  l = num;
+  l = (long)num;
   p = long_to_string_with_divisor(p, l, 10, 0);
   *p++ = '.';
-  l = (num - l) * precision;
+  l = (long)((num - l) * precision);
   return long_to_string_with_divisor(p, l, 10, precision / 10);
 }
 #endif
@@ -250,8 +250,8 @@ unsigned_common:
         chSequentialStreamPut(chp, (uint8_t)filler);
       while (++width != 0);
     }
-    while (--i >= 0)
-      chSequentialStreamPut(chp, (uint8_t)*s++);
+    chSequentialStreamWrite(chp, (uint8_t*)s, i);
+    s += i;
 
     while (width) {
       chSequentialStreamPut(chp, (uint8_t)filler);
