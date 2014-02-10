@@ -257,7 +257,7 @@ msg_t test_execute(BaseSequentialStream *stream) {
       test_print(test_suite[i][j]->name);
       test_println(")");
 #if TEST_DELAY_BETWEEN_TESTS > 0
-      osalThreadSleep(OSAL_MS2ST(TEST_DELAY_BETWEEN_TESTS));
+      osalThreadSleepMilliseconds(TEST_DELAY_BETWEEN_TESTS);
 #endif
       execute_test(test_suite[i][j]);
       if (test_local_fail) {

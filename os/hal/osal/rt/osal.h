@@ -337,6 +337,49 @@ typedef struct {
 #define OSAL_US2ST(usec) US2ST(usec)
 /** @} */
 
+/**
+ * @name    Sleep macros using absolute time
+ * @{
+ */
+/**
+ * @brief   Delays the invoking thread for the specified number of seconds.
+ * @note    The specified time is rounded up to a value allowed by the real
+ *          system tick clock.
+ * @note    The maximum specifiable value is implementation dependent.
+ *
+ * @param[in] sec       time in seconds, must be different from zero
+ *
+ * @api
+ */
+#define osalThreadSleepSeconds(sec) osalThreadSleep(OSAL_S2ST(sec))
+
+/**
+ * @brief   Delays the invoking thread for the specified number of
+ *          milliseconds.
+ * @note    The specified time is rounded up to a value allowed by the real
+ *          system tick clock.
+ * @note    The maximum specifiable value is implementation dependent.
+ *
+ * @param[in] msec      time in milliseconds, must be different from zero
+ *
+ * @api
+ */
+#define osalThreadSleepMilliseconds(msec) osalThreadSleep(OSAL_MS2ST(msec))
+
+/**
+ * @brief   Delays the invoking thread for the specified number of
+ *          microseconds.
+ * @note    The specified time is rounded up to a value allowed by the real
+ *          system tick clock.
+ * @note    The maximum specifiable value is implementation dependent.
+ *
+ * @param[in] usec      time in microseconds, must be different from zero
+ *
+ * @api
+ */
+#define osalThreadSleepMicroseconds(usec) osalThreadSleep(OSAL_US2ST(usec))
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
