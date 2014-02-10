@@ -35,6 +35,7 @@
  */
 const testcase_t * const *test_suite[] = {
   test_sequence_000,
+  test_sequence_001,
   NULL
 };
 

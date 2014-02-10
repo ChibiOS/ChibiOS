@@ -28,6 +28,7 @@
 #include "nil.h"
 
 #include "test_sequence_000.h"
+#include "test_sequence_001.h"
 
 /*===========================================================================*/
 /* Default definitions.                                                      */
@@ -35,7 +36,7 @@
 
 /* Global test suite name, it is printed on top of the test
    report header.*/
-#define TEST_SUITE_NAME                     "ChibiOS/RT Test Suite"
+#define TEST_SUITE_NAME                     "ChibiOS/NIL Test Suite"
 
 /*===========================================================================*/
 /* External declarations.                                                    */

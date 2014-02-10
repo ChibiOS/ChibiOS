@@ -62,7 +62,7 @@ static void test_XXX_000_setup(void) {
 
 }
 
-static void test_XXX_000}_teardown(void) {
+static void test_XXX_000_teardown(void) {
 
 }
 

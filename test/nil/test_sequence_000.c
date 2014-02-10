@@ -24,10 +24,11 @@
  * File: @ref test_sequence_000.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/Nil functionalities related to threading.
+ * This sequence tests the ChibiOS/NIL functionalities related to threading.
  *
  * <h2>Test Cases</h2>
  * - @subpage test_000_000
+ * - @subpage test_000_001
  * .
  */
 
@@ -70,12 +71,12 @@ static void test_000_000_execute(void) {
 }
 
 static const testcase_t test_000_000 = {
-  "Brief description",
+  "System Tick Counter functionality",
   NULL,
   NULL,
   test_000_000_execute
 };
-#endif /* TEST_000_000_CONDITION */
+#endif /* TRUE */
 
 #if TRUE || defined(__DOXYGEN__)
 /**
@@ -109,7 +110,7 @@ static void test_000_001_execute(void) {
     time = chVTGetSystemTimeX();
     chThdSleep(100);
     test_assert_time_window(time + 100,
-                            time + 101,
+                            time + 100 + 1,
                             "out of time window");
   }
 
@@ -145,15 +146,24 @@ static void test_000_001_execute(void) {
                             time + S2ST(1) + 1,
                             "out of time window");
   }
+
+  test_set_step(5);
+  {
+    time = chVTGetSystemTimeX();
+    chThdSleepUntil(time + 100);
+    test_assert_time_window(time + 100,
+                            time + 100 + 1,
+                            "out of time window");
+  }
 }
 
 static const testcase_t test_000_001 = {
-  "Brief description",
+  "Thread Sleep functionality",
   NULL,
   NULL,
   test_000_001_execute
 };
-#endif /* TEST_000_001_CONDITION */
+#endif /* TRUE */
 
  /****************************************************************************
  * Exported data.
@@ -163,10 +173,10 @@ static const testcase_t test_000_001 = {
  * @brief   Sequence brief description.
  */
 const testcase_t * const test_sequence_000[] = {
-#if 1 || defined(__DOXYGEN__)
+#if TRUE || defined(__DOXYGEN__)
   &test_000_000,
 #endif
-#if 1 || defined(__DOXYGEN__)
+#if TRUE || defined(__DOXYGEN__)
   &test_000_001,
 #endif
   NULL
