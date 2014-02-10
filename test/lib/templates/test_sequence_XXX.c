@@ -80,7 +80,7 @@ static const testcase_t test_XXX_000 = {
   test_XXX_000_teardown,
   test_XXX_000_execute
 };
- #endif /* TEST_XXX_000_CONDITION */
+#endif /* TEST_XXX_000_CONDITION */
 
  /****************************************************************************
  * Exported data.
