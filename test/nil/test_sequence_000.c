@@ -129,7 +129,7 @@ static void test_000_001_execute(void) {
   test_set_step(3);
   {
     time = chVTGetSystemTimeX();
-    chThdSleepMicroseconds(100);
+    chThdSleepMilliseconds(100);
     test_assert_time_window(time + MS2ST(100),
                             time + MS2ST(100) + 1,
                             "out of time window");
