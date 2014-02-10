@@ -19,15 +19,16 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_001 Semaphores functionality
+ * @page test_sequence_000 Threads Functionality
  *
- * File: @ref test_sequence_001.c
+ * File: @ref test_sequence_000.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/NIL functionalities related to semaphores.
+ * This sequence tests the ChibiOS/NIL functionalities related to threading.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_001_000
+ * - @subpage test_000_000
+ * - @subpage test_000_001
  * .
  */
 
@@ -35,7 +36,6 @@
  * Shared code.
  ****************************************************************************/
 
-static semaphore_t sem1;
 
 /****************************************************************************
  * Test cases.
@@ -43,124 +43,125 @@ static semaphore_t sem1;
 
 #if TRUE || defined(__DOXYGEN__)
 /**
- * @page test_001_000 Semaphores primitives, no state change
+ * @page test_000_000 System Tick Counter functionality
  *
  * <h2>Description</h2>
- * Wait, Signal and Reset primitives are tested. The testing thread does not
- * trigger a state change.
+ * The functionality of the API @p chVTGetSystemTimeX() is tested.
  *
  * <h2>Conditions</h2>
  * None.
  *
  * <h2>Test Steps</h2>
- * - The function chSemWait() is invoked, the Semaphore counter is tested
- *   for correct value after the call.
- * - The function chSemSignal() is invoked, the Semaphore counter is tested
- *   for correct value after the call.
- * - The function chSemReset() is invoked, the Semaphore counter is tested
- *   for correct value after the call.
+ * - A System Tick Counter increment is expected, the test simply hangs if
+ *   it does not happen.
  * .
  */
 
-static void test_001_000_setup(void) {
+static void test_000_000_execute(void) {
+  systime_t time;
 
-  chSemObjectInit(&sem1, 1);
-}
-
-static void test_001_000_teardown(void) {
-
-  chSemReset(&sem1, 0);
-}
-
-static void test_001_000_execute(void) {
-
-  /* The function chSemWait() is invoked, the Semaphore counter is tested
-     for correct value after the call.*/
+  /* A System Tick Counter increment is expected, the test simply hangs if
+     it does not happen.*/
   test_set_step(1);
   {
-    chSemWait(&sem1);
-    test_assert_lock(chSemGetCounterI(&sem1) == 0,
-                     "wrong counter value");
-  }
-
-  /* The function chSemSignal() is invoked, the Semaphore counter is tested
-     for correct value after the call.*/
-  test_set_step(2);
-  {
-    chSemSignal(&sem1);
-    test_assert_lock(chSemGetCounterI(&sem1) == 1,
-                     "wrong counter value");
-  }
-
-  /* The function chSemReset() is invoked, the Semaphore counter is tested
-     for correct value after the call.*/
-  test_set_step(3);
-  {
-    chSemReset(&sem1, 2);
-    test_assert_lock(chSemGetCounterI(&sem1) == 2,
-                     "wrong counter value");
+    time = chVTGetSystemTimeX();
+    while (time == chVTGetSystemTimeX()) {
+    }
   }
 }
 
-static const testcase_t test_001_000 = {
-  "Brief description",
-  test_001_000_setup,
-  test_001_000_teardown,
-  test_001_000_execute
+static const testcase_t test_000_000 = {
+  "System Tick Counter functionality",
+  NULL,
+  NULL,
+  test_000_000_execute
 };
 #endif /* TRUE */
 
 #if TRUE || defined(__DOXYGEN__)
 /**
- * @page test_001_000 Semaphores timeout
+ * @page test_000_001 Thread Sleep functionality
  *
  * <h2>Description</h2>
- * Timeouts on semaphores are tested.
+ * The functionality of the API @p chThdSleep() and derivatives is tested.
  *
  * <h2>Conditions</h2>
  * None.
  *
  * <h2>Test Steps</h2>
- * - The function chSemWaitTimeout() is invoked, after return the system
- *   time, the counter and the returned message are tested.
+ * - The current system time is read then a sleep is performed for 100 system
+ *   ticks and on exit the system time is verified again.
+ * - The current system time is read then a sleep is performed for 100000
+ *   microseconds and on exit the system time is verified again.
+ * - The current system time is read then a sleep is performed for 100
+ *   milliseconds and on exit the system time is verified again.
+ * - The current system time is read then a sleep is performed for 1
+ *   second and on exit the system time is verified again.
  * .
  */
 
-static void test_001_001_setup(void) {
-
-  chSemObjectInit(&sem1, 0);
-}
-
-static void test_001_001_teardown(void) {
-
-  chSemReset(&sem1, 0);
-}
-
-static void test_001_001_execute(void) {
+static void test_000_001_execute(void) {
   systime_t time;
-  msg_t msg;
 
-  /* The function chSemWaitTimeout() is invoked, after return the system
-     time, the counter and the returned message are tested.*/
+  /* The current system time is read then a sleep is performed for 100 system
+     ticks and on exit the system time is verified again.*/
   test_set_step(1);
   {
     time = chVTGetSystemTimeX();
-    msg = chSemWaitTimeout(&sem1, 100);
+    chThdSleep(100);
     test_assert_time_window(time + 100,
                             time + 100 + 1,
                             "out of time window");
-    test_assert_lock(chSemGetCounterI(&sem1) == 0,
-                     "wrong counter value");
-    test_assert(MSG_TIMEOUT == msg,
-                "wrong timeout message");
+  }
+
+  /* The current system time is read then a sleep is performed for 100000
+     microseconds and on exit the system time is verified again.*/
+  test_set_step(2);
+  {
+    time = chVTGetSystemTimeX();
+    chThdSleepMicroseconds(100);
+    test_assert_time_window(time + US2ST(100),
+                            time + US2ST(100) + 1,
+                            "out of time window");
+  }
+
+  /* The current system time is read then a sleep is performed for 100
+     milliseconds and on exit the system time is verified again.*/
+  test_set_step(3);
+  {
+    time = chVTGetSystemTimeX();
+    chThdSleepMilliseconds(100);
+    test_assert_time_window(time + MS2ST(100),
+                            time + MS2ST(100) + 1,
+                            "out of time window");
+  }
+
+  /* The current system time is read then a sleep is performed for 1
+     second and on exit the system time is verified again.*/
+  test_set_step(4);
+  {
+    time = chVTGetSystemTimeX();
+    chThdSleepSeconds(1);
+    test_assert_time_window(time + S2ST(1),
+                            time + S2ST(1) + 1,
+                            "out of time window");
+  }
+
+  test_set_step(5);
+  {
+    time = chVTGetSystemTimeX();
+    chThdSleepUntil(time + 100);
+    test_assert_time_window(time + 100,
+                            time + 100 + 1,
+                            "out of time window");
   }
 }
 
-static const testcase_t test_001_001 = {
-  "Brief description",
-  test_001_001_setup,
-  test_001_001_teardown,
-  test_001_001_execute
+static const testcase_t test_000_001 = {
+  "Thread Sleep functionality",
+  NULL,
+  NULL,
+  test_000_001_execute
 };
 #endif /* TRUE */
 
@@ -171,12 +172,12 @@ static const testcase_t test_001_001 = {
 /**
  * @brief   Sequence brief description.
  */
-const testcase_t * const test_sequence_001[] = {
+const testcase_t * const test_sequence_000[] = {
 #if TRUE || defined(__DOXYGEN__)
-  &test_001_000,
+  &test_000_000,
 #endif
 #if TRUE || defined(__DOXYGEN__)
-  &test_001_001,
+  &test_000_001,
 #endif
   NULL
 };
