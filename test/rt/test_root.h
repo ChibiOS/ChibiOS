@@ -15,31 +15,43 @@
 */
 
 /**
- * @file    test_root.c
- * @brief   Test Suite root structures code.
+ * @file    test_root.h
+ * @brief   Test Suite root structures header.
  *
  * @addtogroup CH_TEST_ROOT
  * @{
  */
 
-#include "hal.h"
-#include "ch_test.h"
-#include "test_root.h"
+#ifndef _TEST_ROOT_H_
+#define _TEST_ROOT_H_
+
+#include "test_sequence_000.h"
 
 /*===========================================================================*/
-/* Module exported variables.                                                */
+/* Default definitions.                                                      */
 /*===========================================================================*/
 
-/**
- * @brief   Array of all the test sequences.
- */
-const testcase_t * const *test_suite[] = {
-  test_sequence_000,
-  NULL
-};
+/* Global test suite name, it is printed on top of the test
+   report header.*/
+#define TEST_SUITE_NAME                     "ChibiOS/RT Test Suite"
 
 /*===========================================================================*/
-/* Shared code.                                                              */
+/* External declarations.                                                    */
 /*===========================================================================*/
+
+extern const testcase_t * const *test_suite[];
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
+
+/*===========================================================================*/
+/* Shared definitions.                                                       */
+/*===========================================================================*/
+
+#endif /* _TEST_ROOT_H_ */
 
 /** @} */

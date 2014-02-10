@@ -130,7 +130,8 @@ bool _test_assert_time_window(systime_t start,
                               systime_t end,
                               const char *msg) {
 
-  return _test_assert(osalVTIsSystemTimeWithin(start, end), msg);
+  return _test_assert(osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end),
+                      msg);
 }
 
 /**
@@ -256,7 +257,7 @@ msg_t test_execute(BaseSequentialStream *stream) {
       test_print(test_suite[i][j]->name);
       test_println(")");
 #if TEST_DELAY_BETWEEN_TESTS > 0
-      osalThreadSleepMilliseconds(TEST_DELAY_BETWEEN_TESTS);
+      osalThreadSleep(OSAL_MS2ST(TEST_DELAY_BETWEEN_TESTS));
 #endif
       execute_test(test_suite[i][j]);
       if (test_local_fail) {

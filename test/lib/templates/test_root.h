@@ -25,7 +25,15 @@
 #ifndef _TEST_ROOT_H_
 #define _TEST_ROOT_H_
 
-#include "test_000.h"
+#include "test_sequence_000.h"
+
+/*===========================================================================*/
+/* Default definitions.                                                      */
+/*===========================================================================*/
+
+/* Global test suite name, it is printed on top of the test
+   report header.*/
+#define TEST_SUITE_NAME                     "Test Suite"
 
 /*===========================================================================*/
 /* External declarations.                                                    */
