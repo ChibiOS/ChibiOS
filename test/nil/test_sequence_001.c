@@ -19,16 +19,16 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_000 Threads Functionality
+ * @page test_sequence_001 Threads Functionality
  *
- * File: @ref test_sequence_000.c
+ * File: @ref test_sequence_001.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/NIL functionalities related to threading.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_000_000
- * - @subpage test_000_001
+ * - @subpage test_001_001
+ * - @subpage test_001_002
  * .
  */
 
@@ -43,7 +43,7 @@
 
 #if TRUE || defined(__DOXYGEN__)
 /**
- * @page test_000_000 System Tick Counter functionality
+ * @page test_001_001 System Tick Counter functionality
  *
  * <h2>Description</h2>
  * The functionality of the API @p chVTGetSystemTimeX() is tested.
@@ -57,7 +57,7 @@
  * .
  */
 
-static void test_000_000_execute(void) {
+static void test_001_001_execute(void) {
   systime_t time;
 
   /* A System Tick Counter increment is expected, the test simply hangs if
@@ -70,17 +70,17 @@ static void test_000_000_execute(void) {
   }
 }
 
-static const testcase_t test_000_000 = {
+static const testcase_t test_001_001 = {
   "System Tick Counter functionality",
   NULL,
   NULL,
-  test_000_000_execute
+  test_001_001_execute
 };
 #endif /* TRUE */
 
 #if TRUE || defined(__DOXYGEN__)
 /**
- * @page test_000_001 Thread Sleep functionality
+ * @page test_001_002 Thread Sleep functionality
  *
  * <h2>Description</h2>
  * The functionality of the API @p chThdSleep() and derivatives is tested.
@@ -100,7 +100,7 @@ static const testcase_t test_000_000 = {
  * .
  */
 
-static void test_000_001_execute(void) {
+static void test_001_002_execute(void) {
   systime_t time;
 
   /* The current system time is read then a sleep is performed for 100 system
@@ -157,11 +157,11 @@ static void test_000_001_execute(void) {
   }
 }
 
-static const testcase_t test_000_001 = {
+static const testcase_t test_001_002 = {
   "Thread Sleep functionality",
   NULL,
   NULL,
-  test_000_001_execute
+  test_001_002_execute
 };
 #endif /* TRUE */
 
@@ -172,12 +172,12 @@ static const testcase_t test_000_001 = {
 /**
  * @brief   Sequence brief description.
  */
-const testcase_t * const test_sequence_000[] = {
+const testcase_t * const test_sequence_001[] = {
 #if TRUE || defined(__DOXYGEN__)
-  &test_000_000,
+  &test_001_001,
 #endif
 #if TRUE || defined(__DOXYGEN__)
-  &test_000_001,
+  &test_001_002,
 #endif
   NULL
 };

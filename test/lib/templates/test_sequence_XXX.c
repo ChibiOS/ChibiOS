@@ -27,7 +27,7 @@
  * Sequence detailed description.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_XXX_000
+ * - @subpage test_XXX_001
  * .
  */
 
@@ -42,7 +42,7 @@
 
 #if TEST_XXX_000_CONDITION || defined(__DOXYGEN__)
 /**
- * @page test_XXX_000 Brief description
+ * @page test_XXX_001 Brief description
  *
  * <h2>Description</h2>
  * Detailed description.
@@ -50,7 +50,7 @@
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - TEST_XXX_000_CONDITION
+ * - TEST_XXX_001_CONDITION
  * .
  *
  * <h2>Test Steps</h2>
@@ -58,15 +58,15 @@
  * .
  */
 
-static void test_XXX_000_setup(void) {
+static void test_XXX_001_setup(void) {
 
 }
 
-static void test_XXX_000_teardown(void) {
+static void test_XXX_001_teardown(void) {
 
 }
 
-static void test_XXX_000_execute(void) {
+static void test_XXX_001_execute(void) {
 
   /* Step description.*/
   test_set_step(1);
@@ -74,13 +74,13 @@ static void test_XXX_000_execute(void) {
   }
 }
 
-static const testcase_t test_XXX_000 = {
+static const testcase_t test_XXX_001 = {
   "Brief description",
-  test_XXX_000_setup,
-  test_XXX_000_teardown,
-  test_XXX_000_execute
+  test_XXX_001_setup,
+  test_XXX_001_teardown,
+  test_XXX_001_execute
 };
-#endif /* TEST_XXX_000_CONDITION */
+#endif /* TEST_XXX_001_CONDITION */
 
  /****************************************************************************
  * Exported data.
@@ -90,8 +90,8 @@ static const testcase_t test_XXX_000 = {
  * @brief   Sequence brief description.
  */
 const testcase_t * const test_sequence_XXX[] = {
-#if TEST_XXX_000_CONDITION || defined(__DOXYGEN__)
-  &test_XXX_000,
+#if TEST_XXX_001_CONDITION || defined(__DOXYGEN__)
+  &test_XXX_001,
 #endif
   NULL
 };

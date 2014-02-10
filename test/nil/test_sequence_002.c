@@ -19,15 +19,16 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_001 Semaphores functionality
+ * @page test_sequence_002 Semaphores functionality
  *
- * File: @ref test_sequence_001.c
+ * File: @ref test_sequence_002.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/NIL functionalities related to semaphores.
  *
  * <h2>Test Cases</h2>
- * - @subpage test_001_000
+ * - @subpage test_002_001
+ * - @subpage test_002_002
  * .
  */
 
@@ -43,7 +44,7 @@ static semaphore_t sem1;
 
 #if TRUE || defined(__DOXYGEN__)
 /**
- * @page test_001_000 Semaphores primitives, no state change
+ * @page test_002_001 Semaphore primitives, no state change
  *
  * <h2>Description</h2>
  * Wait, Signal and Reset primitives are tested. The testing thread does not
@@ -62,17 +63,17 @@ static semaphore_t sem1;
  * .
  */
 
-static void test_001_000_setup(void) {
+static void test_002_001_setup(void) {
 
   chSemObjectInit(&sem1, 1);
 }
 
-static void test_001_000_teardown(void) {
+static void test_002_001_teardown(void) {
 
   chSemReset(&sem1, 0);
 }
 
-static void test_001_000_execute(void) {
+static void test_002_001_execute(void) {
 
   /* The function chSemWait() is invoked, the Semaphore counter is tested
      for correct value after the call.*/
@@ -102,17 +103,17 @@ static void test_001_000_execute(void) {
   }
 }
 
-static const testcase_t test_001_000 = {
-  "Brief description",
-  test_001_000_setup,
-  test_001_000_teardown,
-  test_001_000_execute
+static const testcase_t test_002_001 = {
+  "semaphore primitives, no state change",
+  test_002_001_setup,
+  test_002_001_teardown,
+  test_002_001_execute
 };
 #endif /* TRUE */
 
 #if TRUE || defined(__DOXYGEN__)
 /**
- * @page test_001_000 Semaphores timeout
+ * @page test_002_002 Semaphore timeouts
  *
  * <h2>Description</h2>
  * Timeouts on semaphores are tested.
@@ -126,17 +127,17 @@ static const testcase_t test_001_000 = {
  * .
  */
 
-static void test_001_001_setup(void) {
+static void test_002_002_setup(void) {
 
   chSemObjectInit(&sem1, 0);
 }
 
-static void test_001_001_teardown(void) {
+static void test_002_002_teardown(void) {
 
   chSemReset(&sem1, 0);
 }
 
-static void test_001_001_execute(void) {
+static void test_002_002_execute(void) {
   systime_t time;
   msg_t msg;
 
@@ -156,11 +157,11 @@ static void test_001_001_execute(void) {
   }
 }
 
-static const testcase_t test_001_001 = {
-  "Brief description",
-  test_001_001_setup,
-  test_001_001_teardown,
-  test_001_001_execute
+static const testcase_t test_002_002 = {
+  "semaphore timeouts",
+  test_002_002_setup,
+  test_002_002_teardown,
+  test_002_002_execute
 };
 #endif /* TRUE */
 
@@ -171,12 +172,12 @@ static const testcase_t test_001_001 = {
 /**
  * @brief   Sequence brief description.
  */
-const testcase_t * const test_sequence_001[] = {
+const testcase_t * const test_sequence_002[] = {
 #if TRUE || defined(__DOXYGEN__)
-  &test_001_000,
+  &test_002_001,
 #endif
 #if TRUE || defined(__DOXYGEN__)
-  &test_001_001,
+  &test_002_002,
 #endif
   NULL
 };

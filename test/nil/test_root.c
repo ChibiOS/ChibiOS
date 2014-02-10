@@ -34,8 +34,8 @@
  * @brief   Array of all the test sequences.
  */
 const testcase_t * const *test_suite[] = {
-  test_sequence_000,
   test_sequence_001,
+  test_sequence_002,
   NULL
 };
 
