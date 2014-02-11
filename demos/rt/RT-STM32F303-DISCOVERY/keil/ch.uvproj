@@ -1151,122 +1151,122 @@
             <File>
               <FileName>test.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\test.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\test.c</FilePath>
             </File>
             <File>
               <FileName>test.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\test.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\test.h</FilePath>
             </File>
             <File>
               <FileName>testbmk.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testbmk.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testbmk.c</FilePath>
             </File>
             <File>
               <FileName>testbmk.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testbmk.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testbmk.h</FilePath>
             </File>
             <File>
               <FileName>testdyn.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testdyn.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testdyn.c</FilePath>
             </File>
             <File>
               <FileName>testdyn.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testdyn.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testdyn.h</FilePath>
             </File>
             <File>
               <FileName>testevt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testevt.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testevt.c</FilePath>
             </File>
             <File>
               <FileName>testevt.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testevt.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testevt.h</FilePath>
             </File>
             <File>
               <FileName>testheap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testheap.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testheap.c</FilePath>
             </File>
             <File>
               <FileName>testheap.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testheap.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testheap.h</FilePath>
             </File>
             <File>
               <FileName>testmbox.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testmbox.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testmbox.c</FilePath>
             </File>
             <File>
               <FileName>testmbox.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testmbox.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testmbox.h</FilePath>
             </File>
             <File>
               <FileName>testmsg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testmsg.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testmsg.c</FilePath>
             </File>
             <File>
               <FileName>testmsg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testmsg.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testmsg.h</FilePath>
             </File>
             <File>
               <FileName>testmtx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testmtx.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testmtx.c</FilePath>
             </File>
             <File>
               <FileName>testmtx.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testmtx.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testmtx.h</FilePath>
             </File>
             <File>
               <FileName>testpools.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testpools.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testpools.c</FilePath>
             </File>
             <File>
               <FileName>testpools.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testpools.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testpools.h</FilePath>
             </File>
             <File>
               <FileName>testqueues.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testqueues.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testqueues.c</FilePath>
             </File>
             <File>
               <FileName>testqueues.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testqueues.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testqueues.h</FilePath>
             </File>
             <File>
               <FileName>testsem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testsem.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testsem.c</FilePath>
             </File>
             <File>
               <FileName>testsem.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testsem.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testsem.h</FilePath>
             </File>
             <File>
               <FileName>testthd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\testthd.c</FilePath>
+              <FilePath>..\..\..\..\test\rt\testthd.c</FilePath>
             </File>
             <File>
               <FileName>testthd.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\testthd.h</FilePath>
+              <FilePath>..\..\..\..\test\rt\testthd.h</FilePath>
             </File>
           </Files>
         </Group>

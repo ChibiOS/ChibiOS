@@ -77,7 +77,7 @@ include $(CHIBIOS)/os/hal/ports/SPC5/SPC56ELxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/e200/compilers/GCC/mk/port_spc56elxx.mk
-include $(CHIBIOS)/test/test.mk
+include $(CHIBIOS)/test/rt/test.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/SPC56EL60_LSM.ld

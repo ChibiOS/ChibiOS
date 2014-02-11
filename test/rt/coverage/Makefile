@@ -36,7 +36,7 @@ DLIBDIR =
 # List all default libraries here
 DLIBS = -lws2_32
  
-# Must be a directory in ${CHIBIOS}/os/hal/platforms
+# Must be a directory in $(CHIBIOS)/os/hal/platforms
 HOST_TYPE = Win32
 
 #
@@ -62,11 +62,11 @@ UADEFS =
 # Imported source files
 CHIBIOS = ../..
 include $(CHIBIOS)/boards/simulator/board.mk
-include ${CHIBIOS}/os/hal/hal.mk
-include ${CHIBIOS}/os/hal/platforms/$(HOST_TYPE)/platform.mk
-include ${CHIBIOS}/os/ports/GCC/SIMIA32/port.mk
-include ${CHIBIOS}/os/kernel/kernel.mk
-include ${CHIBIOS}/test/test.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/platforms/$(HOST_TYPE)/platform.mk
+include $(CHIBIOS)/os/ports/GCC/SIMIA32/port.mk
+include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/test/rt/test.mk
 
 # List C source files here
 SRC  = ${PORTSRC} \
@@ -75,7 +75,7 @@ SRC  = ${PORTSRC} \
        ${HALSRC} \
        ${PLATFORMSRC} \
        $(BOARDSRC) \
-       ${CHIBIOS}/os/hal/platforms/$(HOST_TYPE)/console.c \
+       $(CHIBIOS)/os/hal/platforms/$(HOST_TYPE)/console.c \
        main.c
 
 # List ASM source files here

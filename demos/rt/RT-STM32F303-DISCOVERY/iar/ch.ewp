@@ -2396,76 +2396,76 @@
   <group>
     <name>test</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\test.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\test.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\test.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\test.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testbmk.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testbmk.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testbmk.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testbmk.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testdyn.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testdyn.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testdyn.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testdyn.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testevt.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testevt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testevt.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testevt.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testheap.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testheap.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testheap.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testheap.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testmbox.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testmbox.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testmbox.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testmbox.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testmsg.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testmsg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testmsg.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testmsg.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testmtx.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testmtx.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testmtx.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testmtx.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testpools.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testpools.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testpools.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testpools.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testqueues.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testqueues.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testqueues.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testqueues.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testsem.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testsem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testsem.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testsem.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testthd.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testthd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\test\testthd.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testthd.h</name>
     </file>
   </group>
   <file>

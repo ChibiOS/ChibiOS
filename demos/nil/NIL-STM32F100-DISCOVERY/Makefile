@@ -82,7 +82,7 @@ include $(CHIBIOS)/os/hal/ports/STM32/STM32F1xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/mk/port_stm32f1xx.mk
-#include $(CHIBIOS)/test/test.mk
+#include $(CHIBIOS)/test/rt/test.mk
 
 # Define linker script file here
 LDSCRIPT = $(PORTLD)/STM32F100xB.ld
