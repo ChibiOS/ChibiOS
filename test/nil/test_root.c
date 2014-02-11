@@ -44,6 +44,7 @@ const testcase_t * const *test_suite[] = {
 /*===========================================================================*/
 
 semaphore_t gsem1, gsem2;
+thread_reference_t gtr1;
 
 /*
  * Support thread.
@@ -63,6 +64,7 @@ THD_FUNCTION(test_support, arg) {
     if (chSemGetCounterI(&gsem1) < 0)
       chSemSignalI(&gsem1);
     chSemResetI(&gsem2, 0);
+    chThdResumeI(&gtr1, MSG_OK);
     chSchRescheduleS();
     chSysUnlock();
 

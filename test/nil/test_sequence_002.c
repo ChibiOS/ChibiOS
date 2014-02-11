@@ -38,6 +38,7 @@
  ****************************************************************************/
 
 static semaphore_t sem1;
+static thread_reference_t tr1;
 
 /****************************************************************************
  * Test cases.
@@ -86,7 +87,7 @@ static void test_002_001_execute(void) {
     test_assert_lock(chSemGetCounterI(&sem1) == 0,
                      "wrong counter value");
     test_assert(MSG_OK == msg,
-                "wrong timeout message");
+                "wrong returned message");
   }
 
   /* The function chSemSignal() is invoked, after return the counter
@@ -128,6 +129,12 @@ static const testcase_t test_002_001 = {
  * None.
  *
  * <h2>Test Steps</h2>
+ * - The function chSemWait() is invoked, after return the counter and
+ *   the returned message are tested. The semaphore is signaled by another
+ *   thread.
+ * - The function chSemWait() is invoked, after return the counter and
+ *   the returned message are tested. The semaphore is reset by another
+ *   thread.
  * .
  */
 
@@ -154,7 +161,7 @@ static void test_002_002_execute(void) {
     test_assert_lock(chSemGetCounterI(&gsem1) == 0,
                      "wrong counter value");
     test_assert(MSG_OK == msg,
-                "wrong timeout message");
+                "wrong returned message");
   }
 
   /* The function chSemWait() is invoked, after return the counter and
@@ -168,7 +175,7 @@ static void test_002_002_execute(void) {
     test_assert_lock(chSemGetCounterI(&gsem2) == 0,
                      "wrong counter value");
     test_assert(MSG_RESET == msg,
-                "wrong timeout message");
+                "wrong returned message");
   }
 }
 
@@ -225,9 +232,9 @@ static void test_002_003_execute(void) {
                 "wrong timeout message");
   }
 
-  /* The function chSemWait() is invoked, after return the system
+  /* The function chSemWaitTimeout() is invoked, after return the system
      time, the counter and the returned message are tested.*/
-  test_set_step(1);
+  test_set_step(2);
   {
     time = chVTGetSystemTimeX();
     msg = chSemWaitTimeout(&sem1, 100);
@@ -249,6 +256,73 @@ static const testcase_t test_002_003 = {
 };
 #endif /* TRUE */
 
+#if TRUE || defined(__DOXYGEN__)
+/**
+ * @page test_002_004 Suspend and Resume functionality
+ *
+ * <h2>Description</h2>
+ * The functionality of chThdSuspendTimeoutS() and chThdResumeI() is
+ * tested.
+ *
+ * <h2>Conditions</h2>
+ * None.
+ *
+ * <h2>Test Steps</h2>
+ * - The function chThdSuspendTimeoutS() is invoked, the thread is
+ *   remotely resumed with message @p MSG_OK. On return the message
+ *   and the state of the reference are tested.
+ * - The function chThdSuspendTimeoutS() is invoked, the thread is
+ *   not resumed so a timeout must occur. On return the message
+ *   and the state of the reference are tested.
+ * .
+ */
+
+static void test_002_004_setup(void) {
+
+  tr1 = NULL;
+}
+
+static void test_002_004_execute(void) {
+  systime_t time;
+  msg_t msg;
+
+  /* The function chThdSuspendTimeoutS() is invoked, the thread is
+     remotely resumed with message @p MSG_OK. On return the message
+     and the state of the reference are tested.*/
+  test_set_step(1);
+  {
+    msg = chThdSuspendTimeoutS(&gtr1, TIME_INFINITE);
+    test_assert(NULL == gtr1,
+                "not NULL");
+    test_assert(MSG_OK == msg,
+                "wrong returned message");
+  }
+
+  /* The function chThdSuspendTimeoutS() is invoked, the thread is
+     not resumed so a timeout must occur. On return the message
+     and the state of the reference are tested.*/
+  test_set_step(2);
+  {
+    time = chVTGetSystemTimeX();
+    msg = chThdSuspendTimeoutS(&gtr1, 100);
+    test_assert_time_window(time + 100,
+                            time + 100 + 1,
+                            "out of time window");
+    test_assert(NULL == gtr1,
+                "not NULL");
+    test_assert(MSG_TIMEOUT == msg,
+                "wrong returned message");
+  }
+}
+
+static const testcase_t test_002_004 = {
+  "suspend and resume functionality",
+  test_002_004_setup,
+  NULL,
+  test_002_004_execute
+};
+#endif /* TRUE */
+
  /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -265,6 +339,9 @@ const testcase_t * const test_sequence_002[] = {
 #endif
 #if TRUE || defined(__DOXYGEN__)
   &test_002_003,
+#endif
+#if TRUE || defined(__DOXYGEN__)
+  &test_002_004,
 #endif
   NULL
 };
