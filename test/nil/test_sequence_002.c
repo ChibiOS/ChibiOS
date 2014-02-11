@@ -222,9 +222,9 @@ static void test_002_003_execute(void) {
   test_set_step(1);
   {
     time = chVTGetSystemTimeX();
-    msg = chSemWaitTimeout(&sem1, 100);
-    test_assert_time_window(time + 100,
-                            time + 100 + 1,
+    msg = chSemWaitTimeout(&sem1, MS2ST(1000));
+    test_assert_time_window(time + MS2ST(1000),
+                            time + MS2ST(1000) + 1,
                             "out of time window");
     test_assert_lock(chSemGetCounterI(&sem1) == 0,
                      "wrong counter value");
@@ -237,9 +237,9 @@ static void test_002_003_execute(void) {
   test_set_step(2);
   {
     time = chVTGetSystemTimeX();
-    msg = chSemWaitTimeout(&sem1, 100);
-    test_assert_time_window(time + 100,
-                            time + 100 + 1,
+    msg = chSemWaitTimeout(&sem1, MS2ST(1000));
+    test_assert_time_window(time + MS2ST(1000),
+                            time + MS2ST(1000) + 1,
                             "out of time window");
     test_assert_lock(chSemGetCounterI(&sem1) == 0,
                      "wrong counter value");
@@ -304,11 +304,11 @@ static void test_002_004_execute(void) {
   test_set_step(2);
   {
     time = chVTGetSystemTimeX();
-    msg = chThdSuspendTimeoutS(&gtr1, 100);
-    test_assert_time_window(time + 100,
-                            time + 100 + 1,
+    msg = chThdSuspendTimeoutS(&tr1, MS2ST(1000));
+    test_assert_time_window(time + MS2ST(1000),
+                            time + MS2ST(1000) + 1,
                             "out of time window");
-    test_assert(NULL == gtr1,
+    test_assert(NULL == tr1,
                 "not NULL");
     test_assert(MSG_TIMEOUT == msg,
                 "wrong returned message");
@@ -320,6 +320,91 @@ static const testcase_t test_002_004 = {
   test_002_004_setup,
   NULL,
   test_002_004_execute
+};
+#endif /* TRUE */
+
+#if TRUE || defined(__DOXYGEN__)
+/**
+ * @page test_002_005 Events functionality
+ *
+ * <h2>Description</h2>
+ * Event flags functionality is tested.
+ *
+ * <h2>Conditions</h2>
+ * None.
+ *
+ * <h2>Test Steps</h2>
+ * - A set of event flags are set on the current thread then the
+ *   function chVTGetSystemTimeX() is invoked, the function is supposed to
+ *   return immediately because the event flags are already pending,
+ *   after return the events mask is tested.
+ * - The pending event flags mask is cleared then the function
+ *   chVTGetSystemTimeX() is invoked, after return the events
+ *   mask is tested. The thread is signaled by another thread.
+ * -
+ * . The function chVTGetSystemTimeX() is invoked, no event can
+ *   wakeup the thread, the function must return because timeout.
+ */
+
+static void test_002_005_setup(void) {
+
+  chSemObjectInit(&sem1, 0);
+}
+
+static void test_002_005_execute(void) {
+  systime_t time;
+  eventmask_t events;
+
+  /* A set of event flags are set on the current thread then the
+     function chVTGetSystemTimeX() is invoked, the function is supposed to
+     return immediately because the event flags are already pending,
+     after return the events mask is tested.*/
+  test_set_step(1);
+  {
+    time = chVTGetSystemTimeX();
+    chEvtSignalI(chThdGetSelfX(), 0x55);
+    events = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(1000));
+    test_assert((eventmask_t)0 != events,
+                "timed out");
+    test_assert((eventmask_t)0x55 == events,
+                "wrong events mask");
+  }
+
+  /* The pending event flags mask is cleared then the function
+     chVTGetSystemTimeX() is invoked, after return the events
+     mask is tested. The thread is signaled by another thread.*/
+  test_set_step(2);
+  {
+    time = chVTGetSystemTimeX();
+    chThdGetSelfX()->epmask = 0;
+    events = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(1000));
+    test_assert((eventmask_t)0 != events,
+                "timed out");
+    test_assert((eventmask_t)0x55 == events,
+                "wrong events mask");
+  }
+
+  /* The function chVTGetSystemTimeX() is invoked, no event can
+     wakeup the thread, the function must return because timeout.*/
+  test_set_step(3);
+  {
+    chSysLock();
+    time = chVTGetSystemTimeX();
+    events = chEvtWaitAnyTimeoutS(0, MS2ST(1000));
+    chSysUnlock();
+    test_assert_time_window(time + MS2ST(1000),
+                            time + MS2ST(1000) + 1,
+                            "out of time window");
+    test_assert((eventmask_t)0 == events,
+                "wrong events mask");
+  }
+}
+
+static const testcase_t test_002_005 = {
+  "events functionality",
+  test_002_005_setup,
+  NULL,
+  test_002_005_execute
 };
 #endif /* TRUE */
 
@@ -342,6 +427,9 @@ const testcase_t * const test_sequence_002[] = {
 #endif
 #if TRUE || defined(__DOXYGEN__)
   &test_002_004,
+#endif
+#if TRUE || defined(__DOXYGEN__)
+  &test_002_005,
 #endif
   NULL
 };

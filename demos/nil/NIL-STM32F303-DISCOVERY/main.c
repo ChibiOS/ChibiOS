@@ -111,7 +111,7 @@ THD_FUNCTION(Thread3, arg) {
 THD_TABLE_BEGIN
   THD_TABLE_ENTRY(waThread1, "blinker1", Thread1, NULL)
   THD_TABLE_ENTRY(waThread2, "blinker2", Thread2, NULL)
-  THD_TABLE_ENTRY(wa_test_support, "test_support", test_support, NULL)
+  THD_TABLE_ENTRY(wa_test_support, "test_support", test_support, (void *)&nil.threads[3])
   THD_TABLE_ENTRY(waThread3, "tester", Thread3, NULL)
 THD_TABLE_END
 

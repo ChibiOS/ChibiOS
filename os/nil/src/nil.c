@@ -489,7 +489,9 @@ msg_t chSemWaitTimeout(semaphore_t *sp, systime_t timeout) {
   msg_t msg;
 
   chSysLock();
+
   msg = chSemWaitTimeoutS(sp, timeout);
+
   chSysUnlock();
   return msg;
 }
@@ -599,8 +601,10 @@ void chSemSignalI(semaphore_t *sp) {
 void chSemReset(semaphore_t *sp, cnt_t n) {
 
   chSysLock();
+
   chSemResetI(sp, n);
   chSchRescheduleS();
+
   chSysUnlock();
 }
 
@@ -654,8 +658,10 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
 void chEvtSignal(thread_t *tp, eventmask_t mask) {
 
   chSysLock();
+
   chEvtSignalI(tp, mask);
   chSchRescheduleS();
+
   chSysUnlock();
 }
 
@@ -697,10 +703,37 @@ void chEvtSignalI(thread_t *tp, eventmask_t mask) {
  * @api
  */
 eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t timeout) {
-  thread_t *ctp = nil.current;
   eventmask_t m;
 
   chSysLock();
+
+  m = chEvtWaitAnyTimeoutS(mask, timeout);
+
+  chSysUnlock();
+  return m;
+}
+
+/**
+ * @brief   Waits for any of the specified events.
+ * @details The function waits for any event among those specified in
+ *          @p mask to become pending then the events are cleared and
+ *          returned.
+ *
+ * @param[in] mask      mask of the event flags that the function should wait
+ *                      for, @p ALL_EVENTS enables all the events
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The mask of the served and cleared events.
+ * @retval 0            if the operation has timed out.
+ *
+ * @sclass
+ */
+eventmask_t chEvtWaitAnyTimeoutS(eventmask_t mask, systime_t timeout) {
+  thread_t *ctp = nil.current;
+  eventmask_t m;
 
   if ((m = (ctp->epmask & mask)) == 0) {
     if (TIME_IMMEDIATE == timeout) {
@@ -715,8 +748,6 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t timeout) {
     m = ctp->epmask & mask;
   }
   ctp->epmask &= ~m;
-
-  chSysUnlock();
   return m;
 }
 

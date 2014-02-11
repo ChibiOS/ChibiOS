@@ -597,6 +597,13 @@ typedef struct {
 #define chSchIsRescRequiredI() ((bool)(nil.current != nil.next))
 
 /**
+ * @brief   Returns a pointer to the current @p thread_t.
+ *
+ * @xclass
+ */
+#define chThdGetSelfX() nil.current
+
+/**
  * @brief   Delays the invoking thread for the specified number of seconds.
  * @note    The specified time is rounded up to a value allowed by the real
  *          system clock.
@@ -802,6 +809,7 @@ extern "C" {
   void chEvtSignal(thread_t *tp, eventmask_t mask);
   void chEvtSignalI(thread_t *tp, eventmask_t mask);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t timeout);
+  eventmask_t chEvtWaitAnyTimeoutS(eventmask_t mask, systime_t timeout);
 #ifdef __cplusplus
 }
 #endif
