@@ -447,7 +447,9 @@ void chThdResumeI(thread_reference_t *trp, msg_t msg) {
 void chThdSleep(systime_t time) {
 
   chSysLock();
+
   chThdSleepS(time);
+
   chSysUnlock();
 }
 
@@ -462,7 +464,9 @@ void chThdSleep(systime_t time) {
 void chThdSleepUntil(systime_t time) {
 
   chSysLock();
+
   chThdSleepUntilS(time);
+
   chSysUnlock();
 }
 
@@ -545,8 +549,10 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
 void chSemSignal(semaphore_t *sp) {
 
   chSysLock();
+
   chSemSignalI(sp);
   chSchRescheduleS();
+
   chSysUnlock();
 }
 
