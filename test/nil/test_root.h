@@ -47,6 +47,9 @@ extern const testcase_t * const *test_suite[];
 #ifdef __cplusplus
 extern "C" {
 #endif
+  extern semaphore_t gsem1, gsem2;
+  extern THD_WORKING_AREA(wa_test_support, 128);
+  THD_FUNCTION(test_support, arg);
 #ifdef __cplusplus
 }
 #endif

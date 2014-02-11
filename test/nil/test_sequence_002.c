@@ -19,12 +19,13 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_002 Semaphores functionality
+ * @page test_sequence_002 Synchronization primitives
  *
  * File: @ref test_sequence_002.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/NIL functionalities related to semaphores.
+ * This sequence tests the ChibiOS/NIL functionalities related to
+ * threads synchronization.
  *
  * <h2>Test Cases</h2>
  * - @subpage test_002_001
@@ -54,12 +55,12 @@ static semaphore_t sem1;
  * None.
  *
  * <h2>Test Steps</h2>
- * - The function chSemWait() is invoked, the Semaphore counter is tested
- *   for correct value after the call.
- * - The function chSemSignal() is invoked, the Semaphore counter is tested
- *   for correct value after the call.
- * - The function chSemReset() is invoked, the Semaphore counter is tested
- *   for correct value after the call.
+ * - The function chSemWait() is invoked, after return the counter and
+ *   the returned message are tested.
+ * - The function chSemSignal() is invoked, after return the counter
+ *   is tested.
+ * - The function chSemReset() is invoked, after return the counter
+ *   is tested.
  * .
  */
 
@@ -75,17 +76,21 @@ static void test_002_001_teardown(void) {
 
 static void test_002_001_execute(void) {
 
-  /* The function chSemWait() is invoked, the Semaphore counter is tested
-     for correct value after the call.*/
+  /* The function chSemWait() is invoked, after return the counter and
+     the returned message are tested.*/
   test_set_step(1);
   {
-    chSemWait(&sem1);
+    msg_t msg;
+
+    msg = chSemWait(&sem1);
     test_assert_lock(chSemGetCounterI(&sem1) == 0,
                      "wrong counter value");
+    test_assert(MSG_OK == msg,
+                "wrong timeout message");
   }
 
-  /* The function chSemSignal() is invoked, the Semaphore counter is tested
-     for correct value after the call.*/
+  /* The function chSemSignal() is invoked, after return the counter
+     is tested.*/
   test_set_step(2);
   {
     chSemSignal(&sem1);
@@ -93,8 +98,8 @@ static void test_002_001_execute(void) {
                      "wrong counter value");
   }
 
-  /* The function chSemReset() is invoked, the Semaphore counter is tested
-     for correct value after the call.*/
+  /* The function chSemReset() is invoked, after return the counter
+     is tested.*/
   test_set_step(3);
   {
     chSemReset(&sem1, 2);
@@ -113,17 +118,16 @@ static const testcase_t test_002_001 = {
 
 #if TRUE || defined(__DOXYGEN__)
 /**
- * @page test_002_002 Semaphore timeouts
+ * @page test_002_002 Semaphore primitives, with state change
  *
  * <h2>Description</h2>
- * Timeouts on semaphores are tested.
+ * Wait, Signal and Reset primitives are tested. The testing thread
+ * triggers a state change.
  *
  * <h2>Conditions</h2>
  * None.
  *
  * <h2>Test Steps</h2>
- * - The function chSemWaitTimeout() is invoked, after return the system
- *   time, the counter and the returned message are tested.
  * .
  */
 
@@ -138,6 +142,71 @@ static void test_002_002_teardown(void) {
 }
 
 static void test_002_002_execute(void) {
+
+  /* The function chSemWait() is invoked, after return the counter and
+     the returned message are tested. The semaphore is signaled by another
+     thread.*/
+  test_set_step(1);
+  {
+    msg_t msg;
+
+    msg = chSemWait(&gsem1);
+    test_assert_lock(chSemGetCounterI(&gsem1) == 0,
+                     "wrong counter value");
+    test_assert(MSG_OK == msg,
+                "wrong timeout message");
+  }
+
+  /* The function chSemWait() is invoked, after return the counter and
+     the returned message are tested. The semaphore is reset by another
+     thread.*/
+  test_set_step(2);
+  {
+    msg_t msg;
+
+    msg = chSemWait(&gsem2);
+    test_assert_lock(chSemGetCounterI(&gsem2) == 0,
+                     "wrong counter value");
+    test_assert(MSG_RESET == msg,
+                "wrong timeout message");
+  }
+}
+
+static const testcase_t test_002_002 = {
+  "semaphore primitives, with state change",
+  test_002_002_setup,
+  test_002_002_teardown,
+  test_002_002_execute
+};
+#endif /* TRUE */
+
+#if TRUE || defined(__DOXYGEN__)
+/**
+ * @page test_002_003 Semaphores timeout
+ *
+ * <h2>Description</h2>
+ * Timeout on semaphores is tested.
+ *
+ * <h2>Conditions</h2>
+ * None.
+ *
+ * <h2>Test Steps</h2>
+ * - The function chSemWaitTimeout() is invoked, after return the system
+ *   time, the counter and the returned message are tested.
+ * .
+ */
+
+static void test_002_003_setup(void) {
+
+  chSemObjectInit(&sem1, 0);
+}
+
+static void test_002_003_teardown(void) {
+
+  chSemReset(&sem1, 0);
+}
+
+static void test_002_003_execute(void) {
   systime_t time;
   msg_t msg;
 
@@ -155,13 +224,28 @@ static void test_002_002_execute(void) {
     test_assert(MSG_TIMEOUT == msg,
                 "wrong timeout message");
   }
+
+  /* The function chSemWait() is invoked, after return the system
+     time, the counter and the returned message are tested.*/
+  test_set_step(1);
+  {
+    time = chVTGetSystemTimeX();
+    msg = chSemWaitTimeout(&sem1, 100);
+    test_assert_time_window(time + 100,
+                            time + 100 + 1,
+                            "out of time window");
+    test_assert_lock(chSemGetCounterI(&sem1) == 0,
+                     "wrong counter value");
+    test_assert(MSG_TIMEOUT == msg,
+                "wrong timeout message");
+  }
 }
 
-static const testcase_t test_002_002 = {
-  "semaphore timeouts",
-  test_002_002_setup,
-  test_002_002_teardown,
-  test_002_002_execute
+static const testcase_t test_002_003 = {
+  "semaphores timeout",
+  test_002_003_setup,
+  test_002_003_teardown,
+  test_002_003_execute
 };
 #endif /* TRUE */
 
@@ -178,6 +262,9 @@ const testcase_t * const test_sequence_002[] = {
 #endif
 #if TRUE || defined(__DOXYGEN__)
   &test_002_002,
+#endif
+#if TRUE || defined(__DOXYGEN__)
+  &test_002_003,
 #endif
   NULL
 };

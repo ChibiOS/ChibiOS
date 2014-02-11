@@ -78,7 +78,7 @@ static THD_FUNCTION(Thread2, arg) {
 }
 
 /*
- * Hello thread.
+ * Tester thread.
  */
 THD_WORKING_AREA(waThread3, 128);
 THD_FUNCTION(Thread3, arg) {
@@ -111,6 +111,7 @@ THD_FUNCTION(Thread3, arg) {
 THD_TABLE_BEGIN
   THD_TABLE_ENTRY(waThread1, "blinker1", Thread1, NULL)
   THD_TABLE_ENTRY(waThread2, "blinker2", Thread2, NULL)
+  THD_TABLE_ENTRY(wa_test_support, "test_support", test_support, NULL)
   THD_TABLE_ENTRY(waThread3, "tester", Thread3, NULL)
 THD_TABLE_END
 

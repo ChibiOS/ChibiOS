@@ -43,4 +43,31 @@ const testcase_t * const *test_suite[] = {
 /* Shared code.                                                              */
 /*===========================================================================*/
 
+semaphore_t gsem1, gsem2;
+
+/*
+ * Support thread.
+ */
+THD_WORKING_AREA(wa_test_support, 128);
+THD_FUNCTION(test_support, arg) {
+
+  (void)arg;
+
+  /* Initializing global resources.*/
+  chSemObjectInit(&gsem1, 0);
+  chSemObjectInit(&gsem2, 0);
+
+  /* Waiting for button push and activation of the test suite.*/
+  while (true) {
+    chSysLock();
+    if (chSemGetCounterI(&gsem1) < 0)
+      chSemSignalI(&gsem1);
+    chSemResetI(&gsem2, 0);
+    chSchRescheduleS();
+    chSysUnlock();
+
+    chThdSleepMilliseconds(500);
+  }
+}
+
 /** @} */
