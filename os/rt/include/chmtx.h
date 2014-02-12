@@ -62,6 +62,9 @@ struct mutex {
                                                 @p NULL.                    */
   mutex_t               *m_next;    /**< @brief Next @p mutex_t into an
                                                 owner-list or @p NULL.      */
+#if CH_CFG_USE_MUTEXES_RECURSIVE || defined(__DOXYGEN__)
+  cnt_t                 m_taken;    /**< @brief Mutex recursion counter.    */
+#endif
 };
 
 /*===========================================================================*/
@@ -75,7 +78,11 @@ struct mutex {
  *
  * @param[in] name      the name of the mutex variable
  */
+#if CH_CFG_USE_MUTEXES_RECURSIVE || defined(__DOXYGEN__)
+#define _MUTEX_DATA(name) {_threads_queue_t_DATA(name.m_queue), NULL, NULL, 0}
+#else
 #define _MUTEX_DATA(name) {_threads_queue_t_DATA(name.m_queue), NULL, NULL}
+#endif
 
 /**
  * @brief   Static mutex initializer.
@@ -99,8 +106,8 @@ extern "C" {
   void chMtxLockS(mutex_t *mp);
   bool chMtxTryLock(mutex_t *mp);
   bool chMtxTryLockS(mutex_t *mp);
-  mutex_t *chMtxUnlock(void);
-  mutex_t *chMtxUnlockS(void);
+  void chMtxUnlock(mutex_t *mp);
+  void chMtxUnlockS(mutex_t *mp);
   void chMtxUnlockAll(void);
 #ifdef __cplusplus
 }
@@ -122,6 +129,17 @@ static inline bool chMtxQueueNotEmptyS(mutex_t *mp) {
   chDbgCheckClassS();
 
   return queue_notempty(&mp->m_queue);
+}
+
+/**
+ * @brief   Returns the next mutex in the mutexes stack of the current thread.
+ *
+ * @return              A pointer to the next mutex in the stack.
+ * @retval NULL         if the stack is empty.
+ */
+static inline mutex_t *chMtxGetNextMutex(void) {
+
+  return chThdGetSelfX()->p_mtxlist;
 }
 
 #endif /* CH_CFG_USE_MUTEXES */

@@ -184,6 +184,15 @@
 #define CH_CFG_USE_MUTEXES                  TRUE
 
 /**
+ * @brief   Enables recursive behavior on mutexes.
+ * @note    Recursive mutexes are heavier and have an increased
+ *          memory footprint.
+ *
+ * @note    The default is @p FALSE.
+ */
+#define CH_CFG_USE_MUTEXES_RECURSIVE        TRUE
+
+/**
  * @brief   Conditional Variables APIs.
  * @details If enabled then the conditional variables APIs are included
  *          in the kernel.

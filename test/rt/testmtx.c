@@ -90,7 +90,7 @@ static msg_t thread1(void *p) {
 
   chMtxLock(&m1);
   test_emit_token(*(char *)p);
-  chMtxUnlock();
+  chMtxUnlock(&m1);
   return 0;
 }
 
@@ -103,7 +103,7 @@ static void mtx1_execute(void) {
   threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread1, "C");
   threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread1, "B");
   threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread1, "A");
-  chMtxUnlock();
+  chMtxUnlock(&m1);
   test_wait_threads();
   test_assert(1, prio == chThdGetPriorityX(), "wrong priority level");
   test_assert_sequence(2, "ABCDE");
@@ -349,7 +349,7 @@ static msg_t thread4a(void *p) {
   (void)p;
   chThdSleepMilliseconds(50);
   chMtxLock(&m2);
-  chMtxUnlock();
+  chMtxUnlock(&m2);
   return 0;
 }
 
@@ -358,7 +358,7 @@ static msg_t thread4b(void *p) {
   (void)p;
   chThdSleepMilliseconds(150);
   chMtxLock(&m1);
-  chMtxUnlock();
+  chMtxUnlock(&m1);
   return 0;
 }
 
@@ -378,7 +378,7 @@ static void mtx4_execute(void) {
   test_assert(3, chThdGetPriorityX() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
   test_assert(4, chThdGetPriorityX() == p2, "wrong priority level");
-  chMtxUnlock();
+  chMtxUnlock(&m1);
   test_assert(5, chThdGetPriorityX() == p1, "wrong priority level");
   chThdSleepMilliseconds(100);
   test_assert(6, chThdGetPriorityX() == p1, "wrong priority level");
@@ -398,7 +398,7 @@ static void mtx4_execute(void) {
   chThdSleepMilliseconds(100);
   test_assert(11, chThdGetPriorityX() == p2, "wrong priority level");
   chSysLock();
-  chMtxUnlockS();
+  chMtxUnlockS(&m1);
   chSchRescheduleS();
   chSysUnlock();
   test_assert(12, chThdGetPriorityX() == p1, "wrong priority level");
@@ -444,7 +444,7 @@ static void mtx5_execute(void) {
   test_assert(2, !b, "not locked");
 
   chSysLock();
-  chMtxUnlockS();
+  chMtxUnlockS(&m1);
   chSysUnlock();
 
   test_assert(3, queue_isempty(&m1.m_queue), "queue not empty");
@@ -487,7 +487,7 @@ static msg_t thread10(void *p) {
   chMtxLock(&m1);
   chCondWait(&c1);
   test_emit_token(*(char *)p);
-  chMtxUnlock();
+  chMtxUnlock(&m1);
   return 0;
 }
 
@@ -580,8 +580,8 @@ static msg_t thread11(void *p) {
   chCondWait(&c1);
 #endif
   test_emit_token(*(char *)p);
-  chMtxUnlock();
-  chMtxUnlock();
+  chMtxUnlock(&m1);
+  chMtxUnlock(&m2);
   return 0;
 }
 
@@ -589,7 +589,7 @@ static msg_t thread12(void *p) {
 
   chMtxLock(&m2);
   test_emit_token(*(char *)p);
-  chMtxUnlock();
+  chMtxUnlock(&m2);
   return 0;
 }
 

@@ -601,13 +601,13 @@ static void bmk12_execute(void) {
   test_start_timer(1000);
   do {
     chMtxLock(&mtx1);
-    chMtxUnlock();
+    chMtxUnlock(&mtx1);
     chMtxLock(&mtx1);
-    chMtxUnlock();
+    chMtxUnlock(&mtx1);
     chMtxLock(&mtx1);
-    chMtxUnlock();
+    chMtxUnlock(&mtx1);
     chMtxLock(&mtx1);
-    chMtxUnlock();
+    chMtxUnlock(&mtx1);
     n++;
 #if defined(SIMULATOR)
     ChkIntSources();

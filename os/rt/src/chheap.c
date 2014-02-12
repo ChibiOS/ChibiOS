@@ -47,7 +47,7 @@
  */
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 #define H_LOCK(h)       chMtxLock(&(h)->h_mtx)
-#define H_UNLOCK(h)     chMtxUnlock()
+#define H_UNLOCK(h)     chMtxUnlock(&(h)->h_mtx)
 #else
 #define H_LOCK(h)       chSemWait(&(h)->h_sem)
 #define H_UNLOCK(h)     chSemSignal(&(h)->h_sem)

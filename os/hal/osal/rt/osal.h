@@ -839,8 +839,7 @@ static inline void osalMutexLock(mutex_t *mp) {
 static inline void osalMutexUnlock(mutex_t *mp) {
 
 #if CH_CFG_USE_MUTEXES
-  (void)mp;
-  chMtxUnlock();
+  chMtxUnlock(mp);
 #elif CH_CFG_USE_SEMAPHORES
   chSemSignal((semaphore_t *)mp);
 #else
