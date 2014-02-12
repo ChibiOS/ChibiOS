@@ -432,10 +432,10 @@ static void mtx5_setup(void) {
 }
 
 static void mtx5_execute(void) {
-  bool b;
-  tprio_t prio;
 
-  prio = chThdGetPriorityX();
+#if !CH_CFG_USE_MUTEXES_RECURSIVE
+  bool b;
+  tprio_t prio = chThdGetPriorityX();
 
   b = chMtxTryLock(&m1);
   test_assert(1, b, "already locked");
@@ -450,6 +450,7 @@ static void mtx5_execute(void) {
   test_assert(3, queue_isempty(&m1.m_queue), "queue not empty");
   test_assert(4, m1.m_owner == NULL, "still owned");
   test_assert(5, chThdGetPriorityX() == prio, "wrong priority level");
+#endif /* !CH_CFG_USE_MUTEXES_RECURSIVE */
   
   chMtxLock(&m1);
   chMtxUnlockAll();

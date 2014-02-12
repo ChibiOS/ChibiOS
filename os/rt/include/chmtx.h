@@ -63,7 +63,7 @@ struct mutex {
   mutex_t               *m_next;    /**< @brief Next @p mutex_t into an
                                                 owner-list or @p NULL.      */
 #if CH_CFG_USE_MUTEXES_RECURSIVE || defined(__DOXYGEN__)
-  cnt_t                 m_taken;    /**< @brief Mutex recursion counter.    */
+  cnt_t                 m_cnt;      /**< @brief Mutex recursion counter.    */
 #endif
 };
 
