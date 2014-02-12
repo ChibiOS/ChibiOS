@@ -210,7 +210,7 @@ msg_t chCondWaitS(condition_variable_t *cp) {
   chDbgCheck(cp != NULL);
   chDbgAssert(ctp->p_mtxlist != NULL, "not owning a mutex");
 
-  mp = chMtxGetNextMutex();
+  mp = chMtxGetNextMutexS();
   chMtxUnlockS(mp);
   ctp->p_u.wtobjp = cp;
   queue_prio_insert(ctp, &cp->c_queue);
@@ -294,7 +294,7 @@ msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time) {
   chDbgCheck((cp != NULL) && (time != TIME_IMMEDIATE));
   chDbgAssert(currp->p_mtxlist != NULL, "not owning a mutex");
 
-  mp = chMtxGetNextMutex();
+  mp = chMtxGetNextMutexS();
   chMtxUnlockS(mp);
   currp->p_u.wtobjp = cp;
   queue_prio_insert(currp, &cp->c_queue);

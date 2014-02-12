@@ -136,8 +136,10 @@ static inline bool chMtxQueueNotEmptyS(mutex_t *mp) {
  *
  * @return              A pointer to the next mutex in the stack.
  * @retval NULL         if the stack is empty.
+ *
+ * @sclass
  */
-static inline mutex_t *chMtxGetNextMutex(void) {
+static inline mutex_t *chMtxGetNextMutexS(void) {
 
   return chThdGetSelfX()->p_mtxlist;
 }
