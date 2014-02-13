@@ -333,8 +333,10 @@ typedef struct ch_system {
    * @brief   Pointer to the panic message.
    * @details This pointer is meant to be accessed through the debugger, it is
    *          written once and then the system is halted.
+   * @note    Accesses to this pointer must never be optimized out so the
+   *          field itself is declared volatile.
    */
-  const char            *dbg_panic_msg;
+  const char            * volatile dbg_panic_msg;
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK || defined(__DOXYGEN__)
   /**
