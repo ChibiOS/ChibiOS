@@ -42,7 +42,7 @@
 /**
  * @brief   SPI1 driver enable switch.
  * @details If set to @p TRUE the support for SPI1 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SPI_USE_SPI1) || defined(__DOXYGEN__)
 #define STM32_SPI_USE_SPI1                  FALSE
@@ -51,7 +51,7 @@
 /**
  * @brief   SPI2 driver enable switch.
  * @details If set to @p TRUE the support for SPI2 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SPI_USE_SPI2) || defined(__DOXYGEN__)
 #define STM32_SPI_USE_SPI2                  FALSE
@@ -60,7 +60,7 @@
 /**
  * @brief   SPI3 driver enable switch.
  * @details If set to @p TRUE the support for SPI3 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SPI_USE_SPI3) || defined(__DOXYGEN__)
 #define STM32_SPI_USE_SPI3                  FALSE
