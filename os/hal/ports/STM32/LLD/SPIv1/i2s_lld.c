@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    STM32/i2s_lld.c
+ * @file    i2s_lld.c
  * @brief   I2S Driver subsystem low level driver source template.
  *
  * @addtogroup I2S
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_I2S || defined(__DOXYGEN__)
@@ -35,6 +34,16 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/** @brief I2S2 driver identifier.*/
+#if STM32_I2S_USE_SPI2 || defined(__DOXYGEN__)
+I2SDriver I2SD2;
+#endif
+
+/** @brief I2S3 driver identifier.*/
+#if STM32_I2S_USE_SPI3 || defined(__DOXYGEN__)
+I2SDriver I2SD3;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -42,6 +51,51 @@
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief   Shared end-of-rx service routine.
+ *
+ * @param[in] i2sp      pointer to the @p I2SDriver object
+ * @param[in] flags     pre-shifted content of the ISR register
+ */
+static void i2s_lld_serve_rx_interrupt(I2SDriver *i2sp, uint32_t flags) {
+
+  /* DMA errors handling.*/
+#if defined(STM32_I2S_DMA_ERROR_HOOK)
+  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
+    STM32_I2S_DMA_ERROR_HOOK(i2sp);
+  }
+#else
+  (void)flags;
+#endif
+
+  /* Stop everything.*/
+  dmaStreamDisable(i2sp->dmatx);
+  dmaStreamDisable(i2sp->dmarx);
+
+  /* Portable I2S ISR code defined in the high level driver, note, it is
+     a macro.*/
+  _i2s_isr_code(i2sp);
+}
+
+/**
+ * @brief   Shared end-of-tx service routine.
+ *
+ * @param[in] i2sp      pointer to the @p I2SDriver object
+ * @param[in] flags     pre-shifted content of the ISR register
+ */
+static void i2s_lld_serve_tx_interrupt(I2SDriver *i2sp, uint32_t flags) {
+
+  /* DMA errors handling.*/
+#if defined(STM32_I2S_DMA_ERROR_HOOK)
+  (void)i2sp;
+  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
+    STM32_I2S_DMA_ERROR_HOOK(i2sp);
+  }
+#else
+  (void)flags;
+#endif
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -58,13 +112,13 @@
  */
 void i2s_lld_init(void) {
 
-#if STM32_I2S_USE_I2S2
-  spiObjectInit(&I2SD2);
+#if STM32_I2S_USE_SPI2
+  i2sObjectInit(&I2SD2);
   I2SD2.spi = SPI2;
 #endif
 
-#if STM32_I2S_USE_I2S3
-  spiObjectInit(&I2SD3);
+#if STM32_I2S_USE_SPI3
+  i2sObjectInit(&I2SD3);
   I2SD3.spi = SPI3;
 #endif
 }
@@ -80,25 +134,35 @@ void i2s_lld_start(I2SDriver *i2sp) {
 
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (i2sp->state == I2S_STOP) {
-#if STM32_SPI_USE_SPI2
-    if (&SPID2 == spip) {
-      bool_t b;
-      b = dmaStreamAllocate(spip->dma,
-                            STM32_I2S_I2S2_IRQ_PRIORITY,
+#if STM32_I2S_USE_SPI2
+    if (&I2SD2 == i2sp) {
+      bool b;
+      b = dmaStreamAllocate(i2sp->dmarx,
+                            STM32_I2S_SPI2_IRQ_PRIORITY,
                             (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
-                            (void *)spip);
-      chDbgAssert(!b, "spi_lld_start(), #1", "stream already allocated");
+                            (void *)i2sp);
+      osalDbgAssert(!b, "stream already allocated");
+      b = dmaStreamAllocate(i2sp->dmatx,
+                            STM32_I2S_SPI2_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
+                            (void *)i2sp);
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI2(FALSE);
     }
 #endif
-#if STM32_SPI_USE_SPI3
-    if (&SPID3 == spip) {
-      bool_t b;
-      b = dmaStreamAllocate(spip->dma,
-                            STM32_I2S_I2S3_IRQ_PRIORITY,
+#if STM32_I2S_USE_SPI3
+    if (&I2SD3 == i2sp) {
+      bool b;
+      b = dmaStreamAllocate(i2sp->dmarx,
+                            STM32_I2S_SPI3_IRQ_PRIORITY,
                             (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
-                            (void *)spip);
-      chDbgAssert(!b, "spi_lld_start(), #2", "stream already allocated");
+                            (void *)i2sp);
+      osalDbgAssert(!b, "stream already allocated");
+      b = dmaStreamAllocate(i2sp->dmatx,
+                            STM32_I2S_SPI3_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
+                            (void *)i2sp);
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI3(FALSE);
     }
 #endif
@@ -115,9 +179,23 @@ void i2s_lld_start(I2SDriver *i2sp) {
  */
 void i2s_lld_stop(I2SDriver *i2sp) {
 
+  /* If in ready state then disables the SPI clock.*/
   if (i2sp->state == I2S_READY) {
-    /* Clock deactivation.*/
 
+    /* SPI disable.*/
+    i2sp->spi->CR1 = 0;
+    i2sp->spi->CR2 = 0;
+    dmaStreamRelease(i2sp->dmarx);
+    dmaStreamRelease(i2sp->dmatx);
+
+#if STM32_I2S_USE_SPI2
+    if (&I2SD2 == i2sp)
+      rccDisableSPI2(FALSE);
+#endif
+#if STM32_I2S_USE_SPI3
+    if (&I2SD3 == i2sp)
+      rccDisableSPI3(FALSE);
+#endif
   }
 }
 
@@ -129,17 +207,6 @@ void i2s_lld_stop(I2SDriver *i2sp) {
  * @notapi
  */
 void i2s_lld_start_exchange(I2SDriver *i2sp) {
-
-}
-
-/**
- * @brief   Starts a I2S data exchange in continuous mode.
- *
- * @param[in] i2sp      pointer to the @p I2SDriver object
- *
- * @notapi
- */
-void i2s_lld_start_exchange_continuous(I2SDriver *i2sp) {
 
 }
 

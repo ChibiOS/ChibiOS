@@ -12,6 +12,7 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/ports/common/ARMCMx/nvic.c \
  			  ${CHIBIOS}/os/hal/ports/STM32/LLD/I2Cv1/i2c_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/OTGv1/usb_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/RTCv2/rtc_lld.c \
+              ${CHIBIOS}/os/hal/ports/STM32/LLD/SPIv1/i2s_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/SPIv1/spi_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/TIMv1/gpt_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/TIMv1/icu_lld.c \

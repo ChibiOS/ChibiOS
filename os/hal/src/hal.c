@@ -83,6 +83,9 @@ void halInit(void) {
 #if HAL_USE_I2C || defined(__DOXYGEN__)
   i2cInit();
 #endif
+#if HAL_USE_I2S || defined(__DOXYGEN__)
+  i2sInit();
+#endif
 #if HAL_USE_ICU || defined(__DOXYGEN__)
   icuInit();
 #endif
