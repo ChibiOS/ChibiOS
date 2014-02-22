@@ -80,9 +80,9 @@ void nvicDisableVector(uint32_t n) {
  */
 void nvicSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
 
-  osalDbgCheck((handler >= 4) && (handler <= 15));
+  osalDbgCheck(handler <= 12);
 
-  SCB->SHP[handler - 4] = NVIC_PRIORITY_MASK(prio);
+  SCB->SHP[handler] = NVIC_PRIORITY_MASK(prio);
 }
 
 /** @} */
