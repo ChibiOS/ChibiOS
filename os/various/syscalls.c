@@ -139,7 +139,6 @@ caddr_t _sbrk_r(struct _reent *r, int incr)
 
   chDbgCheck(incr > 0, "_sbrk_r");
 
-  (void)r;
   p = chCoreAlloc((size_t)incr);
   if (p == NULL) {
     __errno_r(r) = ENOMEM;
@@ -147,6 +146,7 @@ caddr_t _sbrk_r(struct _reent *r, int incr)
   }
   return (caddr_t)p;
 #else
+  (void)incr;
   __errno_r(r) = ENOMEM;
   return (caddr_t)-1;
 #endif
