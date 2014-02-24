@@ -18,14 +18,19 @@
 #define _BOARD_H_
 
 /*
- * Setup for a generic SPC56ELxx board.
+ * Setup for a generic SPC56ECxx board.
  */
 
 /*
  * Board identifiers.
  */
-#define BOARD_SPC56ELXX_EVB
-#define BOARD_NAME                  "EVB with SPC56ELxx Mini Module"
+#define BOARD_SPC56ECXX_EVB
+#define BOARD_NAME                  "EVB with SPC56ECxx Mini Module"
+
+/*
+ * Device identifier.
+ */
+#define _SPC56EC74L8_
 
 /*
  * Board frequencies.
@@ -39,14 +44,14 @@
  */
 #define PB_LIN0_TDX                 2
 #define PB_LIN0_RDX                 3
-#define PD_BUTTON1                  0
-#define PD_BUTTON2                  1
-#define PD_BUTTON3                  2
-#define PD_BUTTON4                  3
-#define PD_LED1                     4
-#define PD_LED2                     5
-#define PD_LED3                     6
-#define PD_LED4                     7
+#define PE_BUTTON1                  0
+#define PE_BUTTON2                  1
+#define PE_BUTTON3                  2
+#define PE_BUTTON4                  3
+#define PE_LED1                     4
+#define PE_LED2                     5
+#define PE_LED3                     6
+#define PE_LED4                     7
 
 /*
  * Support macros.

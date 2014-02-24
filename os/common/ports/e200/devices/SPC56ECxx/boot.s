@@ -19,8 +19,8 @@
 */
 
 /**
- * @file    SPC56ELxx/boot.s
- * @brief   SPC56ELxx boot-related code.
+ * @file    SPC56ECxx/boot.s
+ * @brief   SPC56ECxx boot-related code.
  *
  * @addtogroup PPC_BOOT
  * @{
@@ -44,7 +44,9 @@
         .globl      _reset_address
         .type       _reset_address, @function
 _reset_address:
+#if BOOT_PERFORM_CORE_INIT
         bl          _coreinit
+#endif
         bl          _ivinit
 
 #if BOOT_RELOCATE_IN_RAM
@@ -80,11 +82,9 @@ _ramcode:
         tlbwe
         isync
         blr
-#endif /* BOOT_PERFORM_CORE_INIT */
 
         .align      2
 _coreinit:
-#if BOOT_PERFORM_CORE_INIT
         /*
          * Invalidating all TLBs except TLB0.
          */
@@ -266,7 +266,6 @@ _coreinit:
         addi        %r4, %r4, 64
         b           .cleareccloop
 .cleareccend:
-#endif /* BOOT_PERFORM_CORE_INIT */
 
         /*
          * Special function registers clearing, required in order to avoid
@@ -302,7 +301,6 @@ _coreinit:
         mtspr       604, %r31       /* SPRG8-9 */
         mtspr       605, %r31
 
-#if BOOT_PERFORM_CORE_INIT
         /*
          * *Finally* the TLB0 is re-allocated to flash, note, the final phase
          * is executed from RAM.
@@ -331,7 +329,6 @@ _coreinit:
         stw         %r3, 8(%r7)
         bctrl
         mtlr        %r4
-#endif /* BOOT_PERFORM_CORE_INIT */
 
         /*
          * Branch prediction enabled.
@@ -352,6 +349,7 @@ _coreinit:
         mtspr       1011, %r3       /* LICSR1 */
 
         blr
+#endif /* BOOT_PERFORM_CORE_INIT */
 
         /*
          * Exception vectors initialization.
