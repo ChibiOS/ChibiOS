@@ -147,6 +147,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all user C define here, like -D_DEBUG=1
+#UDEFS = -DSPC56ECXX_FMPLL_CLOCK_ERRATA_WORKAROUND
 UDEFS =
 
 # Define ASM defines here
