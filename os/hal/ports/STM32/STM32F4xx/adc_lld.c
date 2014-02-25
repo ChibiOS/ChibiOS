@@ -154,7 +154,7 @@ OSAL_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
   /* TODO: Add here analog watchdog handling.*/
 #endif /* STM32_ADC_USE_ADC3 */
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
