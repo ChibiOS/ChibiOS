@@ -29,7 +29,6 @@ SECTIONS
     . = ORIGIN(flash);
     .boot0 : ALIGN(16) SUBALIGN(16)
     {
-        __ivpr_base__ = .;
         KEEP(*(.boot))
     } > flash
 
@@ -40,6 +39,10 @@ SECTIONS
         /* The vectors table requires a 2kB alignment.*/
         . = ALIGN(0x800);
         KEEP(*(.vectors))
+        /* The IVPR register requires a 4kB alignment.*/
+        . = ALIGN(0x1000);
+        __ivpr_base__ = .;
+        KEEP(*(.ivors))
     } > flash
 
     constructors : ALIGN(4) SUBALIGN(4)
