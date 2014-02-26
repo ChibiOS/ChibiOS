@@ -23,6 +23,11 @@ ifeq ($(USE_LINK_GC),)
   USE_LINK_GC = yes
 endif
 
+# Linker extra options here.
+ifeq ($(USE_LDOPT),)
+  USE_LDOPT = 
+endif
+
 # Enable this if you want link time optimizations (LTO)
 ifeq ($(USE_LTO),)
   USE_LTO = no

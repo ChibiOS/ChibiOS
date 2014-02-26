@@ -17,6 +17,11 @@ else
   LDOPT :=
 endif
 
+# Linker extra options
+ifneq ($(USE_LDOPT),)
+  LDOPT := $(LDOPT),$(USE_LDOPT)
+endif
+
 # Link time optimizations
 ifeq ($(USE_LTO),yes)
   OPT += -flto
