@@ -1,6 +1,10 @@
-# PPC makefile scripts and rules.
+# e200z common makefile scripts and rules.
 
-# Automatic compiler options
+##############################################################################
+# Processing options coming from the upper Makefile.
+#
+
+# Compiler options
 OPT = $(USE_OPT)
 COPT = $(USE_COPT)
 CPPOPT = $(USE_CPPOPT)
@@ -69,15 +73,15 @@ ASMXOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
 OBJS	  = $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CPPOBJS)
 
 # Paths
-IINCDIR = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
-LLIBDIR = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
+IINCDIR   = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
+LLIBDIR   = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
 
 # Macros
-DEFS    = $(DDEFS) $(UDEFS)
-ADEFS   = $(DADEFS) $(UADEFS)
+DEFS      = $(DDEFS) $(UDEFS)
+ADEFS 	  = $(DADEFS) $(UADEFS)
 
 # Libs
-LIBS    = $(DLIBS) $(ULIBS)
+LIBS      = $(DLIBS) $(ULIBS)
 
 # Various settings
 MCFLAGS   = -mcpu=$(MCU)
@@ -86,7 +90,7 @@ ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
 ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
 CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
-LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH),$(LDOPT),--script=$(LDSCRIPT)
+LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH),--script=$(LDSCRIPT),$(LDOPT)
 
 # Generate dependency information
 CFLAGS   += -MD -MP -MF .dep/$(@F).d
@@ -143,7 +147,7 @@ endif
 
 $(ASMXOBJS) : $(OBJDIR)/%.o : %.S Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
-	@echo 
+	@echo
 	$(CC) -c $(ASXFLAGS) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $(<F)
