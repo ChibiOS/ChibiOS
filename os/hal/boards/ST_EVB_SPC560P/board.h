@@ -18,14 +18,19 @@
 #define _BOARD_H_
 
 /*
- * Setup for a generic SPC560Pxx proto board.
+ * Setup for a generic SPC560Pxx board.
  */
 
 /*
  * Board identifiers.
  */
-#define BOARD_GENERIC_SPC560P
-#define BOARD_NAME                  "Generic SPC560Pxx"
+#define BOARD_SPC560PXX_EVB
+#define BOARD_NAME                  "EVB with SPC560Pxx Mini Module"
+
+/*
+ * Device identifier.
+ */
+#define _SPC560P50L5_
 
 /*
  * Board frequencies.
@@ -37,18 +42,16 @@
 /*
  * I/O definitions.
  */
-#define PB_LIN0_TDX     2
-#define PB_LIN0_RDX     3
-
-#define PD_BUTTON1      0
-#define PD_BUTTON2      1
-#define PD_BUTTON3      2
-#define PD_BUTTON4      3
-
-#define PD_LED1         4
-#define PD_LED2         5
-#define PD_LED3         6
-#define PD_LED4         7
+#define PB_LIN0_TDX                 2
+#define PB_LIN0_RDX                 3
+#define PD_BUTTON1                  0
+#define PD_BUTTON2                  1
+#define PD_BUTTON3                  2
+#define PD_BUTTON4                  3
+#define PD_LED1                     4
+#define PD_LED2                     5
+#define PD_LED3                     6
+#define PD_LED4                     7
 
 /*
  * Support macros.
