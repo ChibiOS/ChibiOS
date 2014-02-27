@@ -24,8 +24,8 @@
 /*
  * Board identifiers.
  */
-#define BOARD_GENERIC_SPC563M
-#define BOARD_NAME                  "Generic SPC563Mxx"
+#define BOARD_SPC563MXX_EVB
+#define BOARD_NAME                  "EVB with SPC563Mxx Mini Module"
 
 /*
  * Board frequencies.
@@ -39,12 +39,10 @@
  */
 #define P5_ESCI_A_TX                9
 #define P5_ESCI_A_RX                10
-
 #define P11_BUTTON1                 3
 #define P11_BUTTON2                 5
 #define P11_BUTTON3                 7
 #define P11_BUTTON4                 9
-
 #define P11_LED1                    12
 #define P11_LED2                    13
 #define P11_LED3                    14

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>RT-SPC560P-EVB</name>
+	<name>RT-SPC560D-EVB</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/ST_EVB_SPC560P</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/ST_EVB_SPC560D</locationURI>
 		</link>
 		<link>
 			<name>os</name>

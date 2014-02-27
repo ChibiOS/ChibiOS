@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -mno-spe -msoft-float
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -77,15 +77,15 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC560P/board.mk
-include $(CHIBIOS)/os/hal/ports/SPC5/SPC560Pxx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC563M/board.mk
+include $(CHIBIOS)/os/hal/ports/SPC5/SPC563Mxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/ports/e200/compilers/GCC/mk/port_spc560pxx.mk
+include $(CHIBIOS)/os/rt/ports/e200/compilers/GCC/mk/port_spc563mxx.mk
 include $(CHIBIOS)/test/rt/test.mk
 
 # Define linker script file here
-LDSCRIPT= $(PORTLD)/SPC560P50.ld
+LDSCRIPT= $(PORTLD)/SPC563M64.ld
 
 # C sources here.
 CSRC = $(PORTSRC) \

@@ -77,15 +77,15 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC560P/board.mk
-include $(CHIBIOS)/os/hal/ports/SPC5/SPC560Pxx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC560D/board.mk
+include $(CHIBIOS)/os/hal/ports/SPC5/SPC560Dxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/ports/e200/compilers/GCC/mk/port_spc560pxx.mk
+include $(CHIBIOS)/os/rt/ports/e200/compilers/GCC/mk/port_spc560dxx.mk
 include $(CHIBIOS)/test/rt/test.mk
 
 # Define linker script file here
-LDSCRIPT= $(PORTLD)/SPC560P50.ld
+LDSCRIPT= $(PORTLD)/SPC560D40.ld
 
 # C sources here.
 CSRC = $(PORTSRC) \
