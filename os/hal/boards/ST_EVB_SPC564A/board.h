@@ -24,8 +24,13 @@
 /*
  * Board identifiers.
  */
-#define BOARD_GENERIC_SPC564A
-#define BOARD_NAME                  "Generic SPC564Axx"
+#define BOARD_SPC564AXX_EVB
+#define BOARD_NAME                  "EVB with SPC564Axx Mini Module"
+
+/*
+ * Device identifier.
+ */
+#define _SPC564A80L7_
 
 /*
  * Board frequencies.
@@ -39,12 +44,10 @@
  */
 #define P5_ESCI_A_TX                9
 #define P5_ESCI_A_RX                10
-
 #define P11_BUTTON1                 3
 #define P11_BUTTON2                 5
 #define P11_BUTTON3                 7
 #define P11_BUTTON4                 9
-
 #define P11_LED1                    12
 #define P11_LED2                    13
 #define P11_LED3                    14
