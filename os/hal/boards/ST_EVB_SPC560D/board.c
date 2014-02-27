@@ -19,31 +19,36 @@
 #if HAL_USE_PAL || defined(__DOXYGEN__)
 /* Initial setup of all defined pads, the list is terminated by a {-1, 0, 0}.*/
 static const spc_siu_init_t spc_siu_init[] = {
-  {PCR(PORT_B, PB_LIN0_TDX), PAL_HIGH, PAL_MODE_OUTPUT_ALTERNATE(1)},
-  {PCR(PORT_B, PB_LIN0_RDX), PAL_HIGH, PAL_MODE_INPUT},
-  {PCR(PORT_E, PE_BUTTON1),  PAL_LOW,  PAL_MODE_INPUT},
-  {PCR(PORT_E, PE_BUTTON2),  PAL_LOW,  PAL_MODE_INPUT},
-  {PCR(PORT_E, PE_BUTTON3),  PAL_LOW,  PAL_MODE_INPUT},
-  {PCR(PORT_E, PE_BUTTON4),  PAL_LOW,  PAL_MODE_INPUT},
-  {PCR(PORT_E, PE_LED1),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
-  {PCR(PORT_E, PE_LED2),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
-  {PCR(PORT_E, PE_LED3),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
-  {PCR(PORT_E, PE_LED4),     PAL_HIGH, PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PORT_B, PB_LIN0_TDX), PAL_HIGH,   PAL_MODE_OUTPUT_ALTERNATE(1)},
+  {PCR(PORT_B, PB_LIN0_RDX), PAL_HIGH,   PAL_MODE_INPUT},
+  {PCR(PORT_E, PE_BUTTON1), PAL_LOW,    PAL_MODE_INPUT},
+  {PCR(PORT_E, PE_BUTTON2), PAL_LOW,    PAL_MODE_INPUT},
+  {PCR(PORT_E, PE_BUTTON3), PAL_LOW,    PAL_MODE_INPUT},
+  {PCR(PORT_E, PE_BUTTON4), PAL_LOW,    PAL_MODE_INPUT},
+  {PCR(PORT_E, PE_LED1),    PAL_HIGH,   PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PORT_E, PE_LED2),    PAL_HIGH,   PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PORT_E, PE_LED3),    PAL_HIGH,   PAL_MODE_OUTPUT_PUSHPULL},
+  {PCR(PORT_E, PE_LED4),    PAL_HIGH,   PAL_MODE_OUTPUT_PUSHPULL},
   {-1, 0, 0}
 };
 
 /* Initialization array for the PSMI registers.*/
 static const uint8_t spc_padsels_init[SPC5_SIUL_NUM_PADSELS] = {
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,
 };
 
 /**
  * @brief   PAL setup.
  */
 const PALConfig pal_default_config = {
-  PAL_MODE_UNCONNECTED,             /* Default mode for all undefined pads. */
+  PAL_MODE_UNCONNECTED,
   spc_siu_init,
   spc_padsels_init
 };
@@ -63,5 +68,4 @@ void __early_init(void) {
  * Board-specific initialization code.
  */
 void boardInit(void) {
-
 }
