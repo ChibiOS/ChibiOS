@@ -74,6 +74,9 @@ void halInit(void) {
 #if HAL_USE_CAN || defined(__DOXYGEN__)
   canInit();
 #endif
+#if HAL_USE_DAC || defined(__DOXYGEN__)
+  dacInit();
+#endif
 #if HAL_USE_EXT || defined(__DOXYGEN__)
   extInit();
 #endif

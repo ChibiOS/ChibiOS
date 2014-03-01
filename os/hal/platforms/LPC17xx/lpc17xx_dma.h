@@ -217,6 +217,13 @@ typedef struct {
   volatile uint32_t config;         /**< @brief Configuration.          */
 } lpc17xx_dma_channel_config_t;
 
+typedef struct {
+  volatile uint32_t srcaddr;        /**< @brief Source address.         */
+  volatile uint32_t dstaddr;        /**< @brief Destination address.    */
+  volatile uint32_t lli;            /**< @brief Linked List Item.       */
+  volatile uint32_t control;        /**< @brief Control.                */
+} lpc17xx_dma_lli_config_t;
+
 /**
  * @brief   DMA channel number.
  */
@@ -312,7 +319,7 @@ typedef void (*lpc17xx_dmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define dmaChannelLinkedList(dmach, addr)                                 \
-  _lpc17xx_dma_channel_config_t[dmach]->CLLI = (((uint32_t)(addr)) << 2)
+  _lpc17xx_dma_channel_config_t[dmach]->CLLI = ((uint32_t)(addr))
 
 /**
  * @brief   Set control configuration to a DMA channel.
