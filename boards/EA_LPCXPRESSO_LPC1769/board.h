@@ -35,6 +35,10 @@
 #define BOARD_PHY_RMII
 
 //#define BOARD_PHY_ADDRESS
+
+#define LPC17xx_HAS_CAN1        TRUE
+#define LPC17xx_HAS_CAN2        TRUE
+
 /*
  * Board frequencies.
  */
@@ -44,7 +48,8 @@
 /*
  * GPIO 0 initial setup.
  */
-#define VAL_GPIO0DIR            PAL_PORT_BIT(GPIO0_LED2_RED)
+#define VAL_GPIO0DIR            PAL_PORT_BIT(GPIO0_LED2_RED) | \
+                                PAL_PORT_BIT(GPIO0_LED3_EXT)
 #define VAL_GPIO0DATA           0x00000000
 
 /*
@@ -75,6 +80,7 @@
  * Pin definitions.
  */
 #define GPIO0_LED2_RED          22
+#define GPIO0_LED3_EXT          28  /* Connect LED to board. */
 
 #define GPIO2_PIN12_TO_GND      12
 

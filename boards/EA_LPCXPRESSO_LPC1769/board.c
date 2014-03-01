@@ -32,6 +32,7 @@ const PALConfig pal_default_config = {
 };
 #endif
 
+#if HAL_USE_MAC
 /*
  * Board Ethernet pins configuration.
  * ENET_REF_CLK pin must be set before macInit().
@@ -51,6 +52,7 @@ static void board_eth_pin_config(void) {
   LPC_PINCON->PINMODE3 |= (2UL << 2) | (2UL << 0);          /* Disable pull-up on ENET_MDIO P1.17, ENET_MDC P1.16 */
 
 }
+#endif
 
 /*
  * Early initialization code.
@@ -88,4 +90,14 @@ void boardInit(void) {
 
   /* DAC pin config */
   /* DAC pin set in dac_lld_start() */
+
+#if HAL_USE_CAN
+  /* CAN config i/o */
+  LPC_PINCON->PINSEL0  |= (1UL << 2) | (1UL << 0);      /* Set CAN1 TD1 P0.1 and RD1 P0.0 pins. */
+  LPC_PINCON->PINMODE0 |= (2UL << 2) | (2UL << 0);      /* Disable pull-up on TD1 and RD1 pins.*/
+
+  LPC_PINCON->PINSEL0  |= (2UL << 10) | (2UL << 8);     /* Set CAN2 TD2 P0.5 and RD2 P0.4 pins. */
+  LPC_PINCON->PINMODE0 |= (2UL << 10) | (2UL << 8);     /* Disable pull-up on TD1 and RD1 pins.*/
+#endif
+
 }
