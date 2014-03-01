@@ -18,20 +18,25 @@
 #include "hal.h"
 #include "test.h"
 
+#include "lwipthread.h"
+
+#include "web/web.h"
+
 /*
- * Red LED blinker thread, times are in milliseconds.
+ * Green LED blinker thread, times are in milliseconds.
  */
 static WORKING_AREA(waThread1, 128);
 static msg_t Thread1(void *arg) {
 
   (void)arg;
-  chRegSetThreadName("blinker1");
+  chRegSetThreadName("blinker");
   while (TRUE) {
-    palTogglePad(GPIO0, GPIO0_LED2_RED);
+    palClearPad(GPIO0, GPIO0_LED2_RED);
+    chThdSleepMilliseconds(500);
+    palSetPad(GPIO0, GPIO0_LED2_RED);
     chThdSleepMilliseconds(500);
   }
 }
-
 
 /*
  * Application entry point.
@@ -49,24 +54,34 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the SD1 and SPI1 drivers.
+   * Activates the serial driver 6 using the driver default configuration.
    */
-  sdStart(&SD1, NULL);                  /* Default: 38400,8,N,1.            */
+  sdStart(&SD1, NULL);
 
   /*
-   * Creates the blinker threads.
+   * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
+  /*
+   * Creates the LWIP threads (it changes priority internally).
+   */
+  chThdCreateStatic(wa_lwip_thread, LWIP_THREAD_STACK_SIZE, NORMALPRIO + 1,
+                    lwip_thread, NULL);
 
   /*
-   * Normal main() thread activity, in this demo it updates the 7-segments
-   * display on the LPCXpresso main board using the SPI driver.
+   * Creates the HTTP thread (it changes priority internally).
    */
+  chThdCreateStatic(wa_http_server, sizeof(wa_http_server), NORMALPRIO + 1,
+                    http_server, NULL);
 
+  /*
+   * Normal main() thread activity, in this demo it does nothing except
+   * sleeping in a loop and check the button state.
+   */
   while (TRUE) {
-    if (!palReadPad(GPIO2, GPIO2_PIN12_TO_GND))
+    if (palReadPad(GPIO2, GPIO2_PIN12_TO_GND) == 0)
       TestThread(&SD1);
-    }
-    chThdSleepMilliseconds(100);
+    chThdSleepMilliseconds(500);
+  }
 }

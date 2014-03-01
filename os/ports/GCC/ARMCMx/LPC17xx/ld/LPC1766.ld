@@ -104,6 +104,15 @@ SECTIONS
     _etext = .;
     _textdata = _etext;
 
+    .eth_ram (NOLOAD) :
+    {
+        . = ALIGN(4);
+        PROVIDE(_eth_ram_start = .);
+        *(.eth_ram)
+        . = ALIGN(4);
+        PROVIDE(_eth_ram_end = .);
+    } > ramahb
+    
     .stacks :
     {
         . = ALIGN(8);

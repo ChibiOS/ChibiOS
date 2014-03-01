@@ -76,7 +76,7 @@
  */
 #define GPIO0_LED2_RED          22
 
-#define GPIO2_SW_TO_GND         12
+#define GPIO2_PIN12_TO_GND      12
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus

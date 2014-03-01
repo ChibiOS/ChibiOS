@@ -19,7 +19,7 @@
 */
 
 /*
- * LPC1766 memory setup.
+ * LPC1769 memory setup.
  */
 __main_stack_size__     = 0x0200;
 __process_stack_size__  = 0x0200;
@@ -103,6 +103,15 @@ SECTIONS
 
     _etext = .;
     _textdata = _etext;
+    
+    .eth_ram (NOLOAD) :
+    {
+        . = ALIGN(4);
+        PROVIDE(_eth_ram_start = .);
+        *(.eth_ram)
+        . = ALIGN(4);
+        PROVIDE(_eth_ram_end = .);
+    } > ramahb
 
     .stacks :
     {

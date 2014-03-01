@@ -8,7 +8,8 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/platforms/LPC17xx/hal_lld.c \
               ${CHIBIOS}/os/hal/platforms/LPC17xx/rtc_lld.c \
               ${CHIBIOS}/os/hal/platforms/LPC17xx/i2c_lld.c \
               ${CHIBIOS}/os/hal/platforms/LPC17xx/spi_lld.c \
-              ${CHIBIOS}/os/hal/platforms/LPC17xx/dac_lld.c
+              ${CHIBIOS}/os/hal/platforms/LPC17xx/dac_lld.c \
+              ${CHIBIOS}/os/hal/platforms/LPC17xx/mac_lld.c
              
          
 # Required include directories

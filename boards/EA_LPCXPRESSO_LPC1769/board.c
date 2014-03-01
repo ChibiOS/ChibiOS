@@ -33,6 +33,26 @@ const PALConfig pal_default_config = {
 #endif
 
 /*
+ * Board Ethernet pins configuration.
+ * ENET_REF_CLK pin must be set before macInit().
+ */
+static void board_eth_pin_config(void) {
+
+  /* Ethernet pin config  */
+  LPC_PINCON->PINSEL2 |= (1UL << 30) | (1UL << 28) | (1UL << 20) | (1UL << 18) \
+    | (1UL << 16) | (1UL << 8) | (1UL << 2) | (1UL << 0);    /* Set Ethernet ENET_REF_CLK P1.15, ENET_RX_ER P1.14,
+                                                             ENET_RXD1 P1.10, ENET_RXD0 P1.9, ENET_CRS P1.8, ENET_TX_EN P1.4,
+                                                             ENET_TXD1 P1.1, ENET_TXD0 P1.0 pins. */
+  LPC_PINCON->PINMODE2 |= (2UL << 30) | (2UL << 28) | (2UL << 20) | (2UL << 18) \
+    | (2UL << 16) | (2UL << 8) | (2UL << 2) | (2UL << 0);    /* Disable pull-up on ENET_REF_CLK P1.15, ENET_RX_ER P1.14,
+                                                             ENET_RXD1 P1.10, ENET_RXD0 P1.9, ENET_CRS P1.8, ENET_TX_EN P1.4,
+                                                             ENET_TXD1 P1.1, ENET_TXD0 P1.0 pins. */
+  LPC_PINCON->PINSEL3 |= (1UL << 2) | (1UL << 0);           /* Set ENET_MDIO P1.17, ENET_MDC P1.16 */
+  LPC_PINCON->PINMODE3 |= (2UL << 2) | (2UL << 0);          /* Disable pull-up on ENET_MDIO P1.17, ENET_MDC P1.16 */
+
+}
+
+/*
  * Early initialization code.
  * This initialization must be performed just after stack setup and before
  * any other initialization.
@@ -40,6 +60,9 @@ const PALConfig pal_default_config = {
 void __early_init(void) {
 
   LPC17xx_clock_init();
+#if HAL_USE_MAC
+  board_eth_pin_config();
+#endif
 }
 
 /*
@@ -50,19 +73,19 @@ void boardInit(void) {
   /*
    * Extra, board-specific, initializations.
    */
-  LPC_PINCON->PINSEL0  |= (1UL << 4) | (1UL << 6); 	    /* Set UART0 TXD0 P0.2 and RXD0 P0.3 pins.*/
-  LPC_PINCON->PINMODE0 |= (2UL << 4) | (2UL << 6); 	    /* Disable pull-up on UART0 TXD0 and RXD0 pins.*/
+  /* UART0 pin config */
+  LPC_PINCON->PINSEL0  |= (1UL << 4) | (1UL << 6);      /* Set UART0 TXD0 P0.2 and RXD0 P0.3 pins.*/
+  LPC_PINCON->PINMODE0 |= (2UL << 4) | (2UL << 6);      /* Disable pull-up on UART0 TXD0 and RXD0 pins.*/
 
-  LPC_PINCON->PINSEL3  |= (1UL << 22); 	                /* Set CLKOUT P1.27 pin.*/
-  LPC_PINCON->PINMODE3 |= (2UL << 22); 	                /* Disable pull-up on CLKOUT pin. */
+  /* CLKOUT pin config */
+  /* LPC_PINCON->PINSEL3  |= (1UL << 22);  */           /* Set CLKOUT P1.27 pin.*/
+  /* LPC_PINCON->PINMODE3 |= (2UL << 22);  */           /* Disable pull-up on CLKOUT pin. */
 
-  /* I2C1 config */
+  /* I2C1 pin config */
   LPC_PINCON->PINSEL1 |= (3UL << 8) | (3UL << 6);       /* Set I2C1 SCL1 P0.20, SDA1 P0.19 pins. */
   LPC_PINCON->PINMODE1 |= (2UL << 8) | (2UL << 6);      /* Disable pull-up on I2C1 SCL1 P0.20, SDA1 P0.19 pins. */
   LPC_PINCON->PINMODE_OD0 |= (1UL << 20) | (1UL << 19); /* Set I2C1 SCL1 P0.20, SDA1 P0.19 as open drain pins. */
 
-  /* ADC config */
-  LPC_PINCON->PINMODE1 |= (2UL << 16) | (2UL << 14);    /* Disable pull-up on AD0.1 P0.24 and AD0.0 P0.23 pins.*/
-  LPC_PINCON->PINSEL1 |= (1UL << 16) | (1UL << 14);     /* Set AD0.1 P0.24 and AD0.0 P0.23 pins.*/
-
+  /* DAC pin config */
+  /* DAC pin set in dac_lld_start() */
 }
