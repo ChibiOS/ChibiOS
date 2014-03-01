@@ -20,6 +20,7 @@
  * @brief   LPC17xx ADC subsystem low level driver source.
  * @note    Values in samples buffer are from DR register.
  *          To get ADC values make conversion (DR >> 6) & 0x03FF.
+ *          DMA only support one ADC channel.
  * @addtogroup ADC
  * @{
  */
@@ -45,6 +46,8 @@ ADCDriver ADCD1;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static lpc17xx_dma_lli_config_t lpc_adc_lli[2] __attribute__((aligned(0x10)));
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -58,25 +61,16 @@ ADCDriver ADCD1;
 static void adc_serve_dma_interrupt(ADCDriver *adcp, uint32_t flags) {
   (void) flags;
 
-  adcp->num++;
-  if (adcp->num == 1) {
-    dmaChannelSrcAddr(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.srcaddr);
-    dmaChannelDstAddr(LPC17xx_ADC_DMA_CHANNEL, \
-                      &adcp->samples[adcp->nsamples/2]);
-    dmaChannelControl(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.control);
-    dmaChannelConfig(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.config);
+  if ((flags & (1 << LPC17xx_ADC_DMA_CHANNEL)) != 0) {
+     _adc_isr_error_code(adcp, flags);              /* DMA errors handling.*/
+   }
+  else if (adcp->half_buffer == false) {
     _adc_isr_half_code(adcp);
-
+    adcp->half_buffer = true;
   }
   else {
-    adcp->num = 0;
-    if (adcp->grpp->circular == TRUE) {
-      dmaChannelSrcAddr(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.srcaddr);
-      dmaChannelDstAddr(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.dstaddr);
-      dmaChannelControl(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.control);
-      dmaChannelConfig(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.config);
-     }
     _adc_isr_full_code(adcp);
+    adcp->half_buffer = false;
   }
 }
 #endif
@@ -204,7 +198,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t dummy;
   uint32_t cr;
   uint8_t i;
+
 #if LPC17xx_ADC_USE_DMA
+  uint32_t dma_ch_config;
   uint8_t ch;
 #endif
 
@@ -217,19 +213,21 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   }
 
 #if LPC17xx_ADC_USE_DMA
+  adcp->half_buffer = false;
+
   ch = 0;
   for (i = 0; i < 8; i++) {
     if (cr & (1UL << i)) {
-      ch = i;                  /* Get enabled channel number */
+      ch = i;                  /* Get number of first enabled channel. */
       break;
     }
   }
 
   /* DMA configuration */
-  adcp->adc_dma_cfg.srcaddr = (uint32_t)&adcp->adc->DR[ch];
-  adcp->adc_dma_cfg.dstaddr = (uint32_t)&adcp->samples[0];
-  adcp->adc_dma_cfg.lli = 0;
-  adcp->adc_dma_cfg.control =
+  lpc_adc_lli[0].srcaddr = (uint32_t)&adcp->adc->DR[ch];
+  lpc_adc_lli[0].dstaddr = (uint32_t)&adcp->samples[0];
+  lpc_adc_lli[0].lli = (uint32_t) &lpc_adc_lli[1];
+  lpc_adc_lli[0].control =
     DMA_CTRL_TRANSFER_SIZE(adcp->nsamples/2)    |
     DMA_CTRL_SRC_BSIZE_1                        |
     DMA_CTRL_DST_BSIZE_1                        |
@@ -242,17 +240,29 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     DMA_CTRL_PROT3_NONCACHE                     |
     DMA_CTRL_INT;
 
-  adcp->adc_dma_cfg.config =
+  lpc_adc_lli[1].srcaddr = lpc_adc_lli[0].srcaddr;
+  lpc_adc_lli[1].dstaddr = (uint32_t)&adcp->samples[adcp->nsamples/2];
+  lpc_adc_lli[1].control = lpc_adc_lli[0].control;
+
+  if (adcp->grpp->circular == true) {
+    lpc_adc_lli[1].lli = (uint32_t) &lpc_adc_lli[0];
+  }
+  else {
+    lpc_adc_lli[1].lli = 0;
+  }
+
+  dma_ch_config =
     DMA_CFG_CH_ENABLE           |
     DMA_CFG_SRC_PERIPH(DMA_ADC) |
     DMA_CFG_TTYPE_P2M           |
     DMA_CFG_IE                  |
     DMA_CFG_ITC;
 
-  dmaChannelSrcAddr(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.srcaddr);
-  dmaChannelDstAddr(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.dstaddr);
-  dmaChannelControl(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.control);
-  dmaChannelConfig(LPC17xx_ADC_DMA_CHANNEL, adcp->adc_dma_cfg.config);
+  dmaChannelSrcAddr(LPC17xx_ADC_DMA_CHANNEL, lpc_adc_lli[0].srcaddr);
+  dmaChannelDstAddr(LPC17xx_ADC_DMA_CHANNEL, lpc_adc_lli[0].dstaddr);
+  dmaChannelLinkedList(LPC17xx_ADC_DMA_CHANNEL, lpc_adc_lli[0].lli);
+  dmaChannelControl(LPC17xx_ADC_DMA_CHANNEL, lpc_adc_lli[0].control);
+  dmaChannelConfig(LPC17xx_ADC_DMA_CHANNEL, dma_ch_config);
 #endif
 
   /* ADC configuration and conversion start. */

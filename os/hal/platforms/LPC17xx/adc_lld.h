@@ -20,6 +20,7 @@
  * @brief   LPC17xx ADC subsystem low level driver header.
  * @note    Values in samples buffer are from DR register.
  *          To get ADC values make conversion (DR >> 6) & 0x03FF.
+ *          DMA only support one ADC channel.
  * @addtogroup ADC
  * @{
  */
@@ -308,9 +309,9 @@ struct ADCDriver {
   uint32_t                  num;
 #if LPC17xx_ADC_USE_DMA
   /**
-   * @brief ADC DMA configuration structure.
+   * @brief Half buffer indicator.
    */
-  lpc17xx_dma_channel_config_t  adc_dma_cfg;
+  bool_t                    half_buffer;
 #endif
 };
 
