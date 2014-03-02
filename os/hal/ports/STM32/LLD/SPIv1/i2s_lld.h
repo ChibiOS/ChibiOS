@@ -16,7 +16,7 @@
 
 /**
  * @file    i2s_lld.h
- * @brief   I2S Driver subsystem low level driver header template.
+ * @brief   STM32 I2S subsystem low level driver header.
  *
  * @addtogroup I2S
  * @{
@@ -177,11 +177,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   I2S mode type.
- */
-typedef uint32_t i2smode_t;
-
-/**
  * @brief   Type of a structure representing an I2S driver.
  */
 typedef struct I2SDriver I2SDriver;
@@ -201,10 +196,6 @@ typedef void (*i2scallback_t)(I2SDriver *i2sp, size_t offset, size_t n);
  */
 typedef struct {
   /**
-   * @brief   I2S mode selection.
-   */
-  i2smode_t                 mode;
-  /**
    * @brief   Transmission buffer pointer.
    * @note    Can be @p NULL if TX is not required.
    */
@@ -215,9 +206,9 @@ typedef struct {
    */
   void                      *rx_buffer;
   /**
-   * @brief   TX and RX buffers size in number of samples.
+   * @brief   TX and RX buffers size as number of samples.
    */
-  size_t                    depth;
+  size_t                    size;
   /**
    * @brief   Callback function called during streaming.
    */

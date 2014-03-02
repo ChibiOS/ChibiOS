@@ -41,10 +41,6 @@
  */
 #define I2S_MODE_SLAVE          0
 #define I2S_MODE_MASTER         1
-#define I2S_MODE_TX             2
-#define I2S_MODE_RX             4
-#define I2S_MODE_TXRX           (I2S_MODE_TX | I2S_MODE_RX)
-#define I2S_MODE_CONTINUOUS     16
 /** @} */
 
 /*===========================================================================*/
@@ -84,6 +80,10 @@ typedef enum {
  * @brief   Starts a I2S data exchange.
  *
  * @param[in] i2sp      pointer to the @p I2SDriver object
+ * @param[in] n         size of the transmit buffer, must be even and greater
+ *                      than zero
+ * @param[out] txbuf    the pointer to the transmit buffer
+ * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @iclass
  */
@@ -141,8 +141,8 @@ typedef enum {
   if ((i2sp)->config->end_cb) {                                             \
     (i2sp)->state = I2S_COMPLETE;                                           \
     (i2sp)->config->end_cb(i2sp,                                            \
-                           (i2sp)->config->depth / 2,                       \
-                           (i2sp)->config->depth / 2);                      \
+                           (i2sp)->config->size / 2,                        \
+                           (i2sp)->config->size / 2);                       \
     if ((i2sp)->state == I2S_COMPLETE)                                      \
       (i2sp)->state = I2S_READY;                                            \
   }                                                                         \
@@ -163,7 +163,7 @@ extern "C" {
   void i2sStart(I2SDriver *i2sp, const I2SConfig *config);
   void i2sStop(I2SDriver *i2sp);
   void i2sStartExchange(I2SDriver *i2sp);
-  void i2sStopExchange(I2SDriver *i2sp);
+  void i2sStopTransfer(I2SDriver *i2sp);
 #ifdef __cplusplus
 }
 #endif

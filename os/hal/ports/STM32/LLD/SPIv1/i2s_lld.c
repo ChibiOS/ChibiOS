@@ -16,7 +16,7 @@
 
 /**
  * @file    i2s_lld.c
- * @brief   I2S Driver subsystem low level driver source template.
+ * @brief   STM32 I2S subsystem low level driver source.
  *
  * @addtogroup I2S
  * @{
@@ -132,42 +132,55 @@ void i2s_lld_init(void) {
  */
 void i2s_lld_start(I2SDriver *i2sp) {
 
+  osalDbgAssert(!((i2sp->config->tx_buffer != NULL) &&
+                  (i2sp->config->rx_buffer != NULL)),
+                "full duplex not supported");
+
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (i2sp->state == I2S_STOP) {
 #if STM32_I2S_USE_SPI2
     if (&I2SD2 == i2sp) {
       bool b;
-      b = dmaStreamAllocate(i2sp->dmarx,
-                            STM32_I2S_SPI2_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
-                            (void *)i2sp);
-      osalDbgAssert(!b, "stream already allocated");
-      b = dmaStreamAllocate(i2sp->dmatx,
-                            STM32_I2S_SPI2_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
-                            (void *)i2sp);
-      osalDbgAssert(!b, "stream already allocated");
+      if (NULL != i2sp->config->rx_buffer) {
+        b = dmaStreamAllocate(i2sp->dmarx,
+                              STM32_I2S_SPI2_IRQ_PRIORITY,
+                              (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
+                              (void *)i2sp);
+        osalDbgAssert(!b, "stream already allocated");
+      }
+      if (NULL != i2sp->config->tx_buffer) {
+        b = dmaStreamAllocate(i2sp->dmatx,
+                              STM32_I2S_SPI2_IRQ_PRIORITY,
+                              (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
+                              (void *)i2sp);
+        osalDbgAssert(!b, "stream already allocated");
+      }
       rccEnableSPI2(FALSE);
     }
 #endif
 #if STM32_I2S_USE_SPI3
     if (&I2SD3 == i2sp) {
       bool b;
-      b = dmaStreamAllocate(i2sp->dmarx,
-                            STM32_I2S_SPI3_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
-                            (void *)i2sp);
-      osalDbgAssert(!b, "stream already allocated");
-      b = dmaStreamAllocate(i2sp->dmatx,
-                            STM32_I2S_SPI3_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
-                            (void *)i2sp);
-      osalDbgAssert(!b, "stream already allocated");
+      if (NULL != i2sp->config->rx_buffer) {
+        b = dmaStreamAllocate(i2sp->dmarx,
+                              STM32_I2S_SPI3_IRQ_PRIORITY,
+                              (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
+                              (void *)i2sp);
+        osalDbgAssert(!b, "stream already allocated");
+      }
+      if (NULL != i2sp->config->tx_buffer) {
+        b = dmaStreamAllocate(i2sp->dmatx,
+                              STM32_I2S_SPI3_IRQ_PRIORITY,
+                              (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
+                              (void *)i2sp);
+        osalDbgAssert(!b, "stream already allocated");
+      }
       rccEnableSPI3(FALSE);
     }
 #endif
   }
   /* Configuration.*/
+  i2sp->spi->CR1 = 0;
 }
 
 /**
@@ -183,10 +196,11 @@ void i2s_lld_stop(I2SDriver *i2sp) {
   if (i2sp->state == I2S_READY) {
 
     /* SPI disable.*/
-    i2sp->spi->CR1 = 0;
     i2sp->spi->CR2 = 0;
-    dmaStreamRelease(i2sp->dmarx);
-    dmaStreamRelease(i2sp->dmatx);
+    if (NULL != i2sp->config->rx_buffer)
+      dmaStreamRelease(i2sp->dmarx);
+    if (NULL != i2sp->config->tx_buffer)
+      dmaStreamRelease(i2sp->dmatx);
 
 #if STM32_I2S_USE_SPI2
     if (&I2SD2 == i2sp)
