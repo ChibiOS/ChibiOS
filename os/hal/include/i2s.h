@@ -118,9 +118,9 @@ typedef enum {
  *
  * @notapi
  */
-#define _i2S_isr_half_code(i2sp) {                                          \
-  if ((i2sp)->end_cb != NULL) {                                             \
-    (i2sp)->end_cb(i2sp, 0, (i2sp)->config->depth / 2);                     \
+#define _i2s_isr_half_code(i2sp) {                                          \
+  if ((i2sp)->config->end_cb != NULL) {                                     \
+    (i2sp)->config->end_cb(i2sp, 0, (i2sp)->config->size / 2);              \
   }                                                                         \
 }
 
@@ -137,7 +137,7 @@ typedef enum {
  *
  * @notapi
  */
-#define _i2s_isr_code(i2sp) {                                               \
+#define _i2s_isr_full_code(i2sp) {                                               \
   if ((i2sp)->config->end_cb) {                                             \
     (i2sp)->state = I2S_COMPLETE;                                           \
     (i2sp)->config->end_cb(i2sp,                                            \

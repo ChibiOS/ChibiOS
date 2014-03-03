@@ -118,22 +118,25 @@ I2SDriver I2SD3;
  */
 static void i2s_lld_serve_rx_interrupt(I2SDriver *i2sp, uint32_t flags) {
 
+  (void)i2sp;
+
   /* DMA errors handling.*/
 #if defined(STM32_I2S_DMA_ERROR_HOOK)
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
     STM32_I2S_DMA_ERROR_HOOK(i2sp);
   }
-#else
-  (void)flags;
 #endif
 
-  /* Stop everything.*/
-  dmaStreamDisable(i2sp->dmatx);
-  dmaStreamDisable(i2sp->dmarx);
-
-  /* Portable I2S ISR code defined in the high level driver, note, it is
-     a macro.*/
-  _i2s_isr_code(i2sp);
+  /* Callbacks handling, note it is portable code defined in the high
+     level driver.*/
+  if ((flags & STM32_DMA_ISR_TCIF) != 0) {
+    /* Transfer complete processing.*/
+    _i2s_isr_full_code(i2sp);
+  }
+  else if ((flags & STM32_DMA_ISR_HTIF) != 0) {
+    /* Half transfer processing.*/
+    _i2s_isr_half_code(i2sp);
+  }
 }
 #endif
 
@@ -147,15 +150,25 @@ static void i2s_lld_serve_rx_interrupt(I2SDriver *i2sp, uint32_t flags) {
  */
 static void i2s_lld_serve_tx_interrupt(I2SDriver *i2sp, uint32_t flags) {
 
+  (void)i2sp;
+
   /* DMA errors handling.*/
 #if defined(STM32_I2S_DMA_ERROR_HOOK)
-  (void)i2sp;
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
     STM32_I2S_DMA_ERROR_HOOK(i2sp);
   }
-#else
-  (void)flags;
 #endif
+
+  /* Callbacks handling, note it is portable code defined in the high
+     level driver.*/
+  if ((flags & STM32_DMA_ISR_TCIF) != 0) {
+    /* Transfer complete processing.*/
+    _i2s_isr_full_code(i2sp);
+  }
+  else if ((flags & STM32_DMA_ISR_HTIF) != 0) {
+    /* Half transfer processing.*/
+    _i2s_isr_half_code(i2sp);
+  }
 }
 #endif
 
@@ -333,7 +346,7 @@ void i2s_lld_start(I2SDriver *i2sp) {
     dmaStreamSetMode(i2sp->dmatx, i2sp->txdmamode | dmasize);
   }
 
-  /* I2S configuration.*/
+  /* I2S (re)configuration.*/
   i2sp->spi->I2SPR   = i2sp->config->i2spr;
   i2sp->spi->I2SCFGR = i2sp->config->i2scfgr | i2sp->cfg | SPI_I2SCFGR_I2SMOD;
 }
@@ -377,6 +390,22 @@ void i2s_lld_stop(I2SDriver *i2sp) {
  */
 void i2s_lld_start_exchange(I2SDriver *i2sp) {
 
+  /* RX DMA setup.*/
+  if (NULL != i2sp->dmarx) {
+    dmaStreamSetMemory0(i2sp->dmarx, i2sp->config->rx_buffer);
+    dmaStreamSetTransactionSize(i2sp->dmarx, i2sp->config->size);
+    dmaStreamEnable(i2sp->dmarx);
+  }
+
+  /* TX DMA setup.*/
+  if (NULL != i2sp->dmatx) {
+    dmaStreamSetMemory0(i2sp->dmatx, i2sp->config->tx_buffer);
+    dmaStreamSetTransactionSize(i2sp->dmatx, i2sp->config->size);
+    dmaStreamEnable(i2sp->dmatx);
+  }
+
+  /* Starting transfer.*/
+  i2sp->spi->I2SCFGR |= SPI_I2SCFGR_I2SE;
 }
 
 /**
@@ -390,6 +419,14 @@ void i2s_lld_start_exchange(I2SDriver *i2sp) {
  */
 void i2s_lld_stop_exchange(I2SDriver *i2sp) {
 
+  /* Stop DMAs.*/
+  if (NULL != i2sp->dmatx)
+    dmaStreamDisable(i2sp->dmatx);
+  if (NULL != i2sp->dmarx)
+    dmaStreamDisable(i2sp->dmarx);
+
+  /* Stop transfer.*/
+  i2sp->spi->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
 }
 
 #endif /* HAL_USE_I2S */
