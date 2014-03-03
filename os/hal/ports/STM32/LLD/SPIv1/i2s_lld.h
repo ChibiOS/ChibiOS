@@ -31,6 +31,27 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Static I2S modes
+ * @{
+ */
+#define STM32_I2S_MODE_SLAVE                0
+#define STM32_I2S_MODE_MASTER               1
+#define STM32_I2S_MODE_RX                   2
+#define STM32_I2S_MODE_TX                   4
+#define STM32_I2S_MODE_RXTX                 (STM32_I2S_MODE_RX |            \
+                                             STM32_I2S_MODE_TX)
+/** @} */
+
+/**
+ * @name    Mode checks
+ * @{
+ */
+#define STM32_I2S_IS_MASTER(mode)           ((mode) & STM32_I2S_MODE_MASTER)
+#define STM32_I2S_RX_ENABLED(mode)          ((mode) & STM32_I2S_MODE_RX)
+#define STM32_I2S_TX_ENABLED(mode)          ((mode) & STM32_I2S_MODE_TX)
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -55,6 +76,22 @@
  */
 #if !defined(STM32_I2S_USE_SPI3) || defined(__DOXYGEN__)
 #define STM32_I2S_USE_SPI3                  FALSE
+#endif
+
+/**
+ * @brief   I2S2 mode.
+ */
+#if !defined(STM32_I2S_SPI2_MODE) || defined(__DOXYGEN__)
+#define STM32_I2S_SPI2_MODE                 (STM32_I2S_MODE_MASTER |        \
+                                             STM32_I2S_MODE_RX)
+#endif
+
+/**
+ * @brief   I2S3 mode.
+ */
+#if !defined(STM32_I2S_SPI3_MODE) || defined(__DOXYGEN__)
+#define STM32_I2S_SPI3_MODE                 (STM32_I2S_MODE_MASTER |        \
+                                             STM32_I2S_MODE_RX)
 #endif
 
 /**
@@ -109,7 +146,6 @@
 #error "I2S driver activated but no SPI peripheral assigned"
 #endif
 
-
 #if STM32_I2S_USE_SPI2 &&                                                   \
     !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_I2S_SPI2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SPI2"
@@ -120,7 +156,6 @@
 #error "Invalid IRQ priority assigned to SPI3"
 #endif
 
-
 #if STM32_I2S_USE_SPI2 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_I2S_SPI2_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SPI2"
@@ -130,7 +165,6 @@
     !STM32_DMA_IS_VALID_PRIORITY(STM32_I2S_SPI3_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SPI3"
 #endif
-
 
 /* The following checks are only required when there is a DMA able to
    reassign streams to different channels.*/
@@ -251,11 +285,15 @@ struct I2SDriver {
    */
   SPI_TypeDef               *spi;
   /**
-   * @brief   Receive DMA stream.
+   * @brief   Calculated part of the I2SCFGR register.
+   */
+  uint16_t                  cfg;
+  /**
+   * @brief   Receive DMA stream or @p NULL.
    */
   const stm32_dma_stream_t  *dmarx;
   /**
-   * @brief   Transmit DMA stream.
+   * @brief   Transmit DMA stream or @p NULL.
    */
   const stm32_dma_stream_t  *dmatx;
   /**
@@ -281,7 +319,7 @@ extern I2SDriver I2SD2;
 #endif
 
 #if STM32_I2S_USE_I2S3 && !defined(__DOXYGEN__)
-extern I2SDriver SPI3;
+extern I2SDriver I2SD3;
 #endif
 
 #ifdef __cplusplus
