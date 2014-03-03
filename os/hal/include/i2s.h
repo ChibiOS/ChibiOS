@@ -163,7 +163,7 @@ extern "C" {
   void i2sStart(I2SDriver *i2sp, const I2SConfig *config);
   void i2sStop(I2SDriver *i2sp);
   void i2sStartExchange(I2SDriver *i2sp);
-  void i2sStopTransfer(I2SDriver *i2sp);
+  void i2sStopExchange(I2SDriver *i2sp);
 #ifdef __cplusplus
 }
 #endif

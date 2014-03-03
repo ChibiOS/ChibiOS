@@ -17,6 +17,28 @@
 #include "ch.h"
 #include "hal.h"
 
+#define I2S_BUF_SIZE            256
+
+static uint16_t i2s_rx_buf[I2S_BUF_SIZE];
+
+static void i2scallback(I2SDriver *i2sp, size_t offset, size_t n);
+
+static const I2SConfig i2scfg = {
+  NULL,
+  i2s_rx_buf,
+  I2S_BUF_SIZE,
+  i2scallback,
+  0,
+  16
+};
+
+static void i2scallback(I2SDriver *i2sp, size_t offset, size_t n) {
+
+  (void)i2sp;
+  (void)offset;
+  (void)n;
+}
+
 /*
  * Application entry point.
  */
@@ -33,9 +55,22 @@ int main(void) {
   chSysInit();
 
   /*
-   * Normal main() thread activity, in this demo it does nothing.
+   * Starting and configuring the I2S driver 2.
+   */
+  i2sStart(&I2SD2, &i2scfg);
+
+  /*
+   * Starting continuous I2S transfer.
+   */
+  i2sStartExchange(&I2SD2);
+
+  /*
+   * Normal main() thread activity, if the button is pressed then the I2s
+   * transfer is stopped.
    */
   while (TRUE) {
+    if (palReadPad(GPIOA, GPIOA_BUTTON))
+      i2sStopExchange(&I2SD2);
     chThdSleepMilliseconds(500);
   }
   return 0;

@@ -419,14 +419,22 @@ void i2s_lld_start_exchange(I2SDriver *i2sp) {
  */
 void i2s_lld_stop_exchange(I2SDriver *i2sp) {
 
-  /* Stop DMAs.*/
-  if (NULL != i2sp->dmatx)
+  /* Stop TX DMA, if enabled.*/
+  if (NULL != i2sp->dmatx) {
     dmaStreamDisable(i2sp->dmatx);
+
+    /* From the RM: To switch off the I2S, by clearing I2SE, it is mandatory
+       to wait for TXE = 1 and BSY = 0.*/
+    while ((i2sp->spi->SR & (SPI_SR_TXE | SPI_SR_BSY)) != SPI_SR_TXE)
+      ;
+  }
+
+  /* Stop SPI/I2S peripheral.*/
+  i2sp->spi->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
+
+  /* Stop RX DMA, if enabled.*/
   if (NULL != i2sp->dmarx)
     dmaStreamDisable(i2sp->dmarx);
-
-  /* Stop transfer.*/
-  i2sp->spi->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
 }
 
 #endif /* HAL_USE_I2S */
