@@ -58,6 +58,8 @@ int main(void) {
    * Starting and configuring the I2S driver 2.
    */
   i2sStart(&I2SD2, &i2scfg);
+  palSetPadMode(GPIOB, 10, PAL_MODE_ALTERNATE(5));
+  palSetPadMode(GPIOC, 3, PAL_MODE_ALTERNATE(5));
 
   /*
    * Starting continuous I2S transfer.

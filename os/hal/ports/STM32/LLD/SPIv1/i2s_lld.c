@@ -195,6 +195,7 @@ void i2s_lld_init(void) {
   I2SD2.dmarx     = STM32_DMA_STREAM(STM32_I2S_SPI2_RX_DMA_STREAM);
   I2SD2.rxdmamode = STM32_DMA_CR_CHSEL(I2S2_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_I2S_SPI2_DMA_PRIORITY) |
+                    STM32_DMA_CR_MSIZE_HWORD |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_MINC |
                     STM32_DMA_CR_CIRC |
@@ -210,6 +211,7 @@ void i2s_lld_init(void) {
   I2SD2.dmatx     = STM32_DMA_STREAM(STM32_I2S_SPI2_TX_DMA_STREAM);
   I2SD2.txdmamode = STM32_DMA_CR_CHSEL(I2S2_TX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_I2S_SPI2_DMA_PRIORITY) |
+                    STM32_DMA_CR_MSIZE_HWORD |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_MINC |
                     STM32_DMA_CR_CIRC |
@@ -231,6 +233,7 @@ void i2s_lld_init(void) {
   I2SD3.dmarx     = STM32_DMA_STREAM(STM32_I2S_SPI3_RX_DMA_STREAM);
   I2SD3.rxdmamode = STM32_DMA_CR_CHSEL(I2S3_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_I2S_SPI3_DMA_PRIORITY) |
+                    STM32_DMA_CR_MSIZE_HWORD |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_MINC |
                     STM32_DMA_CR_CIRC |
@@ -246,6 +249,7 @@ void i2s_lld_init(void) {
   I2SD3.dmatx     = STM32_DMA_STREAM(STM32_I2S_SPI3_TX_DMA_STREAM);
   I2SD3.txdmamode = STM32_DMA_CR_CHSEL(I2S3_TX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_I2S_SPI3_DMA_PRIORITY) |
+                    STM32_DMA_CR_MSIZE_HWORD |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_MINC |
                     STM32_DMA_CR_CIRC |
@@ -271,7 +275,6 @@ void i2s_lld_start(I2SDriver *i2sp) {
 
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (i2sp->state == I2S_STOP) {
-    uint32_t dmasize;
 
 #if STM32_I2S_USE_SPI2
     if (&I2SD2 == i2sp) {
@@ -336,14 +339,14 @@ void i2s_lld_start(I2SDriver *i2sp) {
     }
 #endif
 
-    /* DMA configuration.*/
-    if ((i2sp->config->i2scfgr & (SPI_I2SCFGR_DATLEN |
-                                  SPI_I2SCFGR_CHLEN)) == 0)
-      dmasize = STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
-    else
-      dmasize = STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_WORD;
-    dmaStreamSetMode(i2sp->dmarx, i2sp->rxdmamode | dmasize);
-    dmaStreamSetMode(i2sp->dmatx, i2sp->txdmamode | dmasize);
+    if (NULL != i2sp->dmarx) {
+      dmaStreamSetMode(i2sp->dmarx, i2sp->rxdmamode);
+      dmaStreamSetPeripheral(i2sp->dmarx, &i2sp->spi->DR);
+    }
+    if (NULL != i2sp->dmatx) {
+      dmaStreamSetMode(i2sp->dmatx, i2sp->txdmamode);
+      dmaStreamSetPeripheral(i2sp->dmatx, &i2sp->spi->DR);
+    }
   }
 
   /* I2S (re)configuration.*/
@@ -389,18 +392,24 @@ void i2s_lld_stop(I2SDriver *i2sp) {
  * @notapi
  */
 void i2s_lld_start_exchange(I2SDriver *i2sp) {
+  size_t size = i2sp->config->size;
+
+  /* In 32 bit modes the DMA has to perform double operations because fetches
+     are always performed using 16 bit accesses.*/
+  if ((i2sp->config->i2scfgr & (SPI_I2SCFGR_DATLEN | SPI_I2SCFGR_CHLEN)) != 0)
+    size *= 2;
 
   /* RX DMA setup.*/
   if (NULL != i2sp->dmarx) {
     dmaStreamSetMemory0(i2sp->dmarx, i2sp->config->rx_buffer);
-    dmaStreamSetTransactionSize(i2sp->dmarx, i2sp->config->size);
+    dmaStreamSetTransactionSize(i2sp->dmarx, size);
     dmaStreamEnable(i2sp->dmarx);
   }
 
   /* TX DMA setup.*/
   if (NULL != i2sp->dmatx) {
     dmaStreamSetMemory0(i2sp->dmatx, i2sp->config->tx_buffer);
-    dmaStreamSetTransactionSize(i2sp->dmatx, i2sp->config->size);
+    dmaStreamSetTransactionSize(i2sp->dmatx, size);
     dmaStreamEnable(i2sp->dmatx);
   }
 
