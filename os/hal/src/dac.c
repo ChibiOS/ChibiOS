@@ -1,6 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012 Giovanni Di Sirio.
+                 2011,2012,2013 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -97,11 +97,14 @@ void dacStart(DACDriver *dacp, const DACConfig *config) {
   osalDbgCheck((dacp != NULL) && (config != NULL));
 
   osalSysLock();
+
   osalDbgAssert((dacp->state == DAC_STOP) || (dacp->state == DAC_READY),
-              "invalid state");
+                "invalid state");
+
   dacp->config = config;
   dac_lld_start(dacp);
   dacp->state = DAC_READY;
+
   osalSysUnlock();
 }
 
@@ -119,10 +122,13 @@ void dacStop(DACDriver *dacp) {
   osalDbgCheck(dacp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((dacp->state == DAC_STOP) || (dacp->state == DAC_READY),
-              "invalid state");
+                "invalid state");
+
   dac_lld_stop(dacp);
   dacp->state = DAC_STOP;
+
   osalSysUnlock();
 }
 
@@ -177,11 +183,11 @@ void dacStartConversionI(DACDriver *dacp,
 
   osalDbgCheckClassI();
   osalDbgCheck((dacp != NULL) && (grpp != NULL) && (samples != NULL) &&
-             ((depth == 1) || ((depth & 1) == 0)));
+               ((depth == 1) || ((depth & 1) == 0)));
   osalDbgAssert((dacp->state == DAC_READY) ||
-              (dacp->state == DAC_COMPLETE) ||
-              (dacp->state == DAC_ERROR),
-              "not ready");
+                (dacp->state == DAC_COMPLETE) ||
+                (dacp->state == DAC_ERROR),
+                "not ready");
 
   dacp->samples  = samples;
   dacp->depth    = depth;
@@ -205,15 +211,18 @@ void dacStopConversion(DACDriver *dacp) {
   osalDbgCheck(dacp != NULL);
 
   osalSysLock();
+
   osalDbgAssert((dacp->state == DAC_READY) ||
-              (dacp->state == DAC_ACTIVE),
-              "invalid state");
+                (dacp->state == DAC_ACTIVE),
+                "invalid state");
+
   if (dacp->state != DAC_READY) {
     dac_lld_stop_conversion(dacp);
     dacp->grpp  = NULL;
     dacp->state = DAC_READY;
     _dac_reset_s(dacp);
   }
+
   osalSysUnlock();
 }
 
@@ -232,9 +241,9 @@ void dacStopConversionI(DACDriver *dacp) {
   osalDbgCheckClassI();
   osalDbgCheck(dacp != NULL);
   osalDbgAssert((dacp->state == DAC_READY) ||
-              (dacp->state == DAC_ACTIVE) ||
-              (dacp->state == DAC_COMPLETE),
-              "invalid state");
+                (dacp->state == DAC_ACTIVE) ||
+                (dacp->state == DAC_COMPLETE),
+                "invalid state");
 
   if (dacp->state != DAC_READY) {
     dac_lld_stop_conversion(dacp);
@@ -259,11 +268,11 @@ void dacStopConversionI(DACDriver *dacp) {
  * @param[in] depth     buffer depth (matrix rows number). The buffer depth
  *                      must be one or an even number.
  * @return              The operation result.
- * @retval RDY_OK       Conversion finished.
- * @retval RDY_RESET    The conversion has been stopped using
+ * @retval MSG_OK       Conversion finished.
+ * @retval MSG_RESET    The conversion has been stopped using
  *                      @p acdStopConversion() or @p acdStopConversionI(),
  *                      the result buffer may contain incorrect data.
- * @retval RDY_TIMEOUT  The conversion has been stopped because an hardware
+ * @retval MSG_TIMEOUT  The conversion has been stopped because an hardware
  *                      error.
  *
  * @api
@@ -275,9 +284,10 @@ msg_t dacConvert(DACDriver *dacp,
   msg_t msg;
 
   osalSysLock();
-  osalDbgAssert(dacp->thread == NULL, "already waiting");
+
   dacStartConversionI(dacp, grpp, samples, depth);
   msg = osalThreadSuspendS(&dacp->thread);
+
   osalSysUnlock();
   return msg;
 }
