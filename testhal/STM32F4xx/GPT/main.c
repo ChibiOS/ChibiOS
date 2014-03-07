@@ -44,6 +44,7 @@ static void gpt3cb(GPTDriver *gptp) {
 static const GPTConfig gpt4cfg = {
   10000,    /* 10kHz timer clock.*/
   gpt4cb,   /* Timer callback.*/
+  0,
   0
 };
 
@@ -53,6 +54,7 @@ static const GPTConfig gpt4cfg = {
 static const GPTConfig gpt3cfg = {
   10000,    /* 10kHz timer clock.*/
   gpt3cb,   /* Timer callback.*/
+  0,
   0
 };
 

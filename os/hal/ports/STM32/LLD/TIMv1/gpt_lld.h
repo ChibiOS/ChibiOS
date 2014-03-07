@@ -387,6 +387,11 @@ typedef struct {
   gptcallback_t             callback;
   /* End of the mandatory fields.*/
   /**
+   * @brief TIM CR2 register initialization data.
+   * @note  The value of this field should normally be equal to zero.
+   */
+  uint32_t                  cr2;
+  /**
    * @brief TIM DIER register initialization data.
    * @note  The value of this field should normally be equal to zero.
    * @note  Only the DMA-related bits can be specified in this field.
