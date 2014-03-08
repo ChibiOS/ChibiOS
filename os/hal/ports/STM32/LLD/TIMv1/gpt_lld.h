@@ -383,6 +383,8 @@ typedef struct {
   /**
    * @brief   Timer callback pointer.
    * @note    This callback is invoked on GPT counter events.
+   * @note    This callback can be set to @p NULL but in that case the
+   *          one-shot mode cannot be used.
    */
   gptcallback_t             callback;
   /* End of the mandatory fields.*/

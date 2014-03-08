@@ -198,6 +198,7 @@ void gptStartOneShotI(GPTDriver *gptp, gptcnt_t interval) {
 
   osalDbgCheckClassI();
   osalDbgCheck(gptp != NULL);
+  osalDbgCheck(gptp->config->callback != NULL);
   osalDbgAssert(gptp->state == GPT_READY,
                 "invalid state");
 

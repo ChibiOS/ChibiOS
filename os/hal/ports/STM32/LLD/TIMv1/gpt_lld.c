@@ -716,7 +716,8 @@ void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
      SR bit 0 goes to 1. This is because the clearing of CNT has been inserted
      before the clearing of SR, to give it some time.*/
   gptp->tim->SR    = 0;                         /* Clear pending IRQs.      */
-  gptp->tim->DIER |= STM32_TIM_DIER_UIE;        /* Update Event IRQ enabled.*/
+  if (NULL != gptp->config->callback)
+    gptp->tim->DIER |= STM32_TIM_DIER_UIE;      /* Update Event IRQ enabled.*/
   gptp->tim->CR1   = STM32_TIM_CR1_URS | STM32_TIM_CR1_CEN;
 }
 
