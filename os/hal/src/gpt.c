@@ -118,9 +118,7 @@ void gptStop(GPTDriver *gptp) {
 /**
  * @brief   Changes the interval of GPT peripheral.
  * @details This function changes the interval of a running GPT unit.
- * @pre     The GPT unit must have been activated using @p gptStart().
- * @pre     The GPT unit must have been running in continuous mode using
- *          @p gptStartContinuous().
+ * @pre     The GPT unit must be running in continuous mode.
  * @post    The GPT unit interval is changed to the new value.
  *
  * @param[in] gptp      pointer to a @p GPTDriver object

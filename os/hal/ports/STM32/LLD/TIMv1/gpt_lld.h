@@ -432,18 +432,41 @@ struct GPTDriver {
 /**
  * @brief   Changes the interval of GPT peripheral.
  * @details This function changes the interval of a running GPT unit.
- * @pre     The GPT unit must have been activated using @p gptStart().
- * @pre     The GPT unit must have been running in continuous mode using
- *          @p gptStartContinuous().
+ * @pre     The GPT unit must be running in continuous mode.
  * @post    The GPT unit interval is changed to the new value.
  * @note    The function has effect at the next cycle start.
  *
  * @param[in] gptp      pointer to a @p GPTDriver object
  * @param[in] interval  new cycle time in timer ticks
+ *
  * @notapi
  */
 #define gpt_lld_change_interval(gptp, interval)                               \
   ((gptp)->tim->ARR = (uint32_t)((interval) - 1))
+
+/**
+ * @brief   Returns the interval of GPT peripheral.
+ * @pre     The GPT unit must be running in continuous mode.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ * @return              The current interval.
+ *
+ * @notapi
+ */
+#define gpt_lld_get_interval(gptp) ((gptcnt_t)(gptp)->tim->ARR + 1)
+
+/**
+ * @brief   Returns the counter value of GPT peripheral.
+ * @pre     The GPT unit must be running in continuous mode.
+ * @note    The nature of the counter is not defined, it may count upward
+ *          or downward, it could be continuously running or not.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ * @return              The current counter value.
+ *
+ * @notapi
+ */
+#define gpt_lld_get_counter(gptp) ((gptcnt_t)(gptp)->tim->CNT)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
