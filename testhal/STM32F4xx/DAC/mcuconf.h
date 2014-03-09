@@ -88,6 +88,19 @@
 #define STM32_CAN_CAN2_IRQ_PRIORITY         11
 
 /*
+ * DAC driver system settings.
+ */
+#define STM32_DAC_USE_CHN1                  TRUE
+#define STM32_DAC_USE_CHN2                  FALSE
+#define STM32_DAC_CHN1_IRQ_PRIORITY         10
+#define STM32_DAC_CHN2_IRQ_PRIORITY         10
+#define STM32_DAC_CHN1_DMA_PRIORITY         2
+#define STM32_DAC_CHN2_DMA_PRIORITY         2
+#define STM32_DAC_DMA_ERROR_HOOK(dacp)      osalSysHalt()
+#define STM32_DAC_CHN1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 3)
+#define STM32_DAC_CHN2_DMA_STREAM           STM32_DMA_STREAM_ID(1, 4)
+
+/*
  * EXT driver system settings.
  */
 #define STM32_EXT_EXTI0_IRQ_PRIORITY        6

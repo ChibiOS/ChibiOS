@@ -163,7 +163,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_DAC_CHN1_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_DAC_CHN1_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_DAC_CHN1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 3)
 #endif
 
 /**
@@ -171,7 +171,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_DAC_CHN2_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_DAC_CHN2_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
+#define STM32_DAC_CHN2_DMA_STREAM           STM32_DMA_STREAM_ID(1, 4)
 #endif
 
 /**
@@ -179,7 +179,7 @@
  * @note    This option is only available on platforms with enhanced DMA.
  */
 #if !defined(STM32_DAC_CHN3_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_DAC_CHN3_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
+#define STM32_DAC_CHN3_DMA_STREAM           STM32_DMA_STREAM_ID(1, 5)
 #endif
 
 /*===========================================================================*/
@@ -202,6 +202,23 @@
 #error "DAC driver activated but no DAC peripheral assigned"
 #endif
 
+/* The following checks are only required when there is a DMA able to
+   reassign streams to different channels.*/
+#if STM32_ADVANCED_DMA
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_DAC_USE_CHN1 && !defined(STM32_DAC_CHN1_DMA_STREAM)
+#error "DAC1 CHN1 DMA stream not defined"
+#endif
+
+#if STM32_DAC_USE_CHN2 && !defined(STM32_DAC_CHN2_DMA_STREAM)
+#error "DAC1 CHN2 DMA stream not defined"
+#endif
+
+#if STM32_DAC_USE_CHN3 && !defined(STM32_DAC_CHN3_DMA_STREAM)
+#error "DAC1 CHN3 DMA stream not defined"
+#endif
+
+/* Check on the validity of the assigned DMA channels.*/
 #if STM32_DAC_USE_CHN1 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_DAC_CHN1_DMA_STREAM, STM32_DAC_CHN1_DMA_MSK)
 #error "invalid DMA stream associated to DAC CHN1"
@@ -216,6 +233,7 @@
     !STM32_DMA_IS_VALID_ID(STM32_DAC_CHN3_DMA_STREAM, STM32_DAC_CHN3_DMA_MSK)
 #error "invalid DMA stream associated to DAC CHN3"
 #endif
+#endif /* STM32_ADVANCED_DMA */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
