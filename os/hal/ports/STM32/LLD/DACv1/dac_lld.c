@@ -79,7 +79,6 @@ DACDriver DACD3;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-
 /**
  * @brief   Shared end/half-of-tx service routine.
  *
@@ -87,6 +86,7 @@ DACDriver DACD3;
  * @param[in] flags     pre-shifted content of the ISR register
  */
 static void dac_lld_serve_tx_interrupt(DACDriver *dacp, uint32_t flags) {
+
 #if defined(STM32_DAC_DMA_ERROR_HOOK)
   (void)dacp;
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {

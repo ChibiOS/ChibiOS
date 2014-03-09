@@ -265,7 +265,7 @@ typedef enum {
   DAC_DHRM_12BIT_RIGHT = 0,
   DAC_DHRM_12BIT_LEFT = 1,
   DAC_DHRM_8BIT_RIGHT = 2,
-#if defined(STM32_HAS_DAC_CHN2) && STM32_HAS_DAC_CHN2 && !defined(__DOXYGEN__)
+#if STM32_HAS_DAC_CHN2 && !defined(__DOXYGEN__)
   DAC_DHRM_12BIT_RIGHT_DUAL = 3,
   DAC_DHRM_12BIT_LEFT_DUAL = 4,
   DAC_DHRM_8BIT_RIGHT_DUAL = 5
@@ -279,15 +279,15 @@ typedef struct {
   /**
    * @brief Number of DAC channels.
    */
-  uint16_t              num_channels;
+  uint32_t                  num_channels;
   /**
    * @brief Operation complete callback or @p NULL.
    */
-  daccallback_t     end_cb;
+  daccallback_t             end_cb;
   /**
    * @brief Error handling callback or @p NULL.
    */
-  daccallback_t      error_cb;
+  daccallback_t             error_cb;
   
 } DACConversionGroup;
 
@@ -303,7 +303,7 @@ typedef struct {
   /**
    * @brief   DAC data holding register mode.
    */
-  dacdhrmode_t       dhrm;
+  dacdhrmode_t              dhrm;
   /**
    * @brief DAC initialization data.
    */
@@ -321,15 +321,15 @@ struct DACDriver {
   /**
    * @brief Conversion group.
    */
-  const DACConversionGroup *grpp;
+  const DACConversionGroup  *grpp;
   /**
    * @brief Samples buffer pointer.
    */
-  const dacsample_t *samples;
+  const dacsample_t         *samples;
   /**
    * @brief Samples buffer size.
    */
-  uint16_t depth;
+  uint16_t                  depth;
   /**
    * @brief Current configuration data.
    */
@@ -338,13 +338,13 @@ struct DACDriver {
   /**
    * @brief Waiting thread.
    */
-  thread_reference_t                    thread;
+  thread_reference_t        thread;
 #endif /* DAC_USE_WAIT */
 #if DAC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the bus.
    */
-  mutex_t                     mutex;
+  mutex_t                   mutex;
 #endif /* DAC_USE_MUTUAL_EXCLUSION */
 #if defined(DAC_DRIVER_EXT_FIELDS)
   DAC_DRIVER_EXT_FIELDS
