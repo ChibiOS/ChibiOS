@@ -71,6 +71,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.6.4 ***
+- FIX: Fixed simulated IO message is corrupted in simulator (bug #468).
+
 *** 2.6.3 ***
 - FIX: Fixed TM32 SDC driver clock activation issue (bug #464).
 - FIX: Fixed spurious callback in ICU driver (bug #461).
