@@ -221,7 +221,7 @@ static void can_lld_rx_handler(CANDriver *canp) {
 static void can_lld_err_handler(CANDriver *canp) {
 
   uint32_t esr = canp->flexcan->ESR.R;
-  eventflags_t flags = 0;
+  flagsmask_t flags = 0;
 
   /* Error event.*/
   if ((esr & CAN_ESR_TWRN_INT) || (esr & CAN_ESR_RWRN_INT)) {
