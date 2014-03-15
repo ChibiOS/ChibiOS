@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed simulated IO message is corrupted in simulator (bug #468)
+  (backported to 2.6.4).
 - FIX: Fixed TM32 SDC driver clock activation issue (bug #464)(backported to
   2.6.3).
 - FIX: Fixed can_lld.c referencing unknown type (bug #463).
