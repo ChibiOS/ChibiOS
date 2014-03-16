@@ -129,10 +129,10 @@ int _close_r(struct _reent *r, int file)
 
 caddr_t _sbrk_r(struct _reent *r, int incr)
 {
-#if CH_USE_MEMCORE
+#if CH_CFG_USE_MEMCORE
   void *p;
 
-  chDbgCheck(incr > 0, "_sbrk_r");
+  chDbgCheck(incr > 0);
 
   p = chCoreAlloc((size_t)incr);
   if (p == NULL) {

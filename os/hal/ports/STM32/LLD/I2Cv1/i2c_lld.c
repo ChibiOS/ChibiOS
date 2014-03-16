@@ -403,7 +403,7 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint16_t sr) {
  *
  * @notapi
  */
-OSAL_IRQ_HANDLER(I2C1_EV_IRQHandler) {
+OSAL_IRQ_HANDLER(STM32_I2C1_EVENT_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -415,7 +415,7 @@ OSAL_IRQ_HANDLER(I2C1_EV_IRQHandler) {
 /**
  * @brief   I2C1 error interrupt handler.
  */
-OSAL_IRQ_HANDLER(I2C1_ER_IRQHandler) {
+OSAL_IRQ_HANDLER(STM32_I2C1_ERROR_HANDLER) {
   uint16_t sr = I2CD1.i2c->SR1;
 
   OSAL_IRQ_PROLOGUE();
@@ -433,7 +433,7 @@ OSAL_IRQ_HANDLER(I2C1_ER_IRQHandler) {
  *
  * @notapi
  */
-OSAL_IRQ_HANDLER(I2C2_EV_IRQHandler) {
+OSAL_IRQ_HANDLER(STM32_I2C2_EVENT_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -447,7 +447,7 @@ OSAL_IRQ_HANDLER(I2C2_EV_IRQHandler) {
  *
  * @notapi
  */
-OSAL_IRQ_HANDLER(I2C2_ER_IRQHandler) {
+OSAL_IRQ_HANDLER(STM32_I2C2_ERROR_HANDLER) {
   uint16_t sr = I2CD2.i2c->SR1;
 
   OSAL_IRQ_PROLOGUE();
@@ -804,8 +804,8 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Resetting error flags for this transfer.*/
   i2cp->errors = I2C_NO_ERROR;
 
-  /* Initializes driver fields, LSB = 1 -> receive.*/
-  i2cp->addr = (addr << 1) | 0x01;
+  /* Initializes driver fields, LSB = 0 -> transmit.*/
+  i2cp->addr = (addr << 1);
 
   /* Releases the lock from high level driver.*/
   osalSysUnlock();

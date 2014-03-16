@@ -55,6 +55,19 @@
 #define STM32_CAN2_SCE_NUMBER       66
 
 /*
+ * I2C units.
+ */
+#define STM32_I2C1_EVENT_HANDLER    VectorBC
+#define STM32_I2C1_ERROR_HANDLER    VectorC0
+#define STM32_I2C1_EVENT_NUMBER     31
+#define STM32_I2C1_ERROR_NUMBER     32
+
+#define STM32_I2C2_EVENT_HANDLER    VectorC4
+#define STM32_I2C2_ERROR_HANDLER    VectorC8
+#define STM32_I2C2_EVENT_NUMBER     33
+#define STM32_I2C2_ERROR_NUMBER     34
+
+/*
  * OTG units.
  */
 #define STM32_OTG1_HANDLER          Vector14C
@@ -123,7 +136,15 @@
 #define STM32_UART4_NUMBER          52
 #define STM32_UART5_NUMBER          53
 #define STM32_USART6_NUMBER         71
+
+/*
+ * Ethernet
+ */
+#define ETH_IRQHandler          Vector134
+
 /** @} */
+
+
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
