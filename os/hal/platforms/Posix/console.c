@@ -74,36 +74,36 @@ static msg_t get(void *ip) {
   return fgetc(stdin);
 }
 
-static msg_t putt(void *ip, uint8_t b, systime_t time) {
+static msg_t putt(void *ip, uint8_t b, systime_t timeout) {
 
   (void)ip;
-  (void)time;
+  (void)timeout;
   fputc(b, stdout);
   fflush(stdout);
   return RDY_OK;
 }
 
-static msg_t gett(void *ip, systime_t time) {
+static msg_t gett(void *ip, systime_t timeout) {
 
   (void)ip;
-  (void)time;
+  (void)timeout;
   return fgetc(stdin);
 }
 
-static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t time) {
+static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
   size_t ret;
 
   (void)ip;
-  (void)time;
+  (void)timeout;
   ret = fwrite(bp, 1, n, stdout);
   fflush(stdout);
   return ret;
 }
 
-static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
+static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
 
   (void)ip;
-  (void)time;
+  (void)timeout;
   return fread(bp, 1, n, stdin);
 }
 
