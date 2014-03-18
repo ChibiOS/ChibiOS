@@ -253,10 +253,10 @@
 #define STM32_I2C2SW_SYSCLK     (1 << 5)    /**< I2C2 clock is SYSCLK.     */
 #define STM32_TIM1SW_MASK       (1 << 8)    /**< TIM1 clock source mask.   */
 #define STM32_TIM1SW_PCLK2      (0 << 8)    /**< TIM1 clock is PCLK2.      */
-#define STM32_TIM1SW_PLLX2      (1 << 10)   /**< TIM1 clock is PLL*2.      */
-#define STM32_TIM8SW_MASK       (1 << 10)   /**< TIM8 clock source mask.   */
-#define STM32_TIM8SW_PCLK2      (0 << 10)   /**< TIM8 clock is PCLK2.      */
-#define STM32_TIM8SW_PLLX2      (1 << 10)   /**< TIM8 clock is PLL*2.      */
+#define STM32_TIM1SW_PLLX2      (1 << 8)    /**< TIM1 clock is PLL*2.      */
+#define STM32_TIM8SW_MASK       (1 << 9)    /**< TIM8 clock source mask.   */
+#define STM32_TIM8SW_PCLK2      (0 << 9)    /**< TIM8 clock is PCLK2.      */
+#define STM32_TIM8SW_PLLX2      (1 << 9)    /**< TIM8 clock is PLL*2.      */
 #define STM32_USART2SW_MASK     (3 << 16)   /**< USART2 clock source mask. */
 #define STM32_USART2SW_PCLK     (0 << 16)   /**< USART2 clock is PCLK.     */
 #define STM32_USART2SW_SYSCLK   (1 << 16)   /**< USART2 clock is SYSCLK.   */

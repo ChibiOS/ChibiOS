@@ -89,6 +89,9 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed wrong TIM1 and TIM8 macros in STM32F30x HAL driver (bug #473)
+  (backported to 2.6.4).
+- FIX: Fixed STM32 SDC driver clock activation issue (bug #464)(backported to
 - FIX: Fixed simulated IO message is corrupted in simulator (bug #468)
   (backported to 2.6.4).
 - FIX: Fixed TM32 SDC driver clock activation issue (bug #464)(backported to
