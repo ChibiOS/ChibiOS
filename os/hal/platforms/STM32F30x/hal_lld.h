@@ -220,20 +220,20 @@
 #define STM32_ADC12PRES_DIV64   (25 << 4)   /**< ADC12 clock is PLL/64.     */
 #define STM32_ADC12PRES_DIV128  (26 << 4)   /**< ADC12 clock is PLL/128.    */
 #define STM32_ADC12PRES_DIV256  (27 << 4)   /**< ADC12 clock is PLL/256.    */
-#define STM32_ADC34PRES_MASK    (31 << 4)   /**< ADC34 clock source mask.   */
-#define STM32_ADC34PRES_NOCLOCK (0 << 4)    /**< ADC34 clock is disabled.   */
-#define STM32_ADC34PRES_DIV1    (16 << 4)   /**< ADC34 clock is PLL/1.      */
-#define STM32_ADC34PRES_DIV2    (17 << 4)   /**< ADC34 clock is PLL/2.      */
-#define STM32_ADC34PRES_DIV4    (18 << 4)   /**< ADC34 clock is PLL/4.      */
-#define STM32_ADC34PRES_DIV6    (19 << 4)   /**< ADC34 clock is PLL/6.      */
-#define STM32_ADC34PRES_DIV8    (20 << 4)   /**< ADC34 clock is PLL/8.      */
-#define STM32_ADC34PRES_DIV10   (21 << 4)   /**< ADC34 clock is PLL/10.     */
-#define STM32_ADC34PRES_DIV12   (22 << 4)   /**< ADC34 clock is PLL/12.     */
-#define STM32_ADC34PRES_DIV16   (23 << 4)   /**< ADC34 clock is PLL/16.     */
-#define STM32_ADC34PRES_DIV32   (24 << 4)   /**< ADC34 clock is PLL/32.     */
-#define STM32_ADC34PRES_DIV64   (25 << 4)   /**< ADC34 clock is PLL/64.     */
-#define STM32_ADC34PRES_DIV128  (26 << 4)   /**< ADC34 clock is PLL/128.    */
-#define STM32_ADC34PRES_DIV256  (27 << 4)   /**< ADC34 clock is PLL/256.    */
+#define STM32_ADC34PRES_MASK    (31 << 9)   /**< ADC34 clock source mask.   */
+#define STM32_ADC34PRES_NOCLOCK (0 << 9)    /**< ADC34 clock is disabled.   */
+#define STM32_ADC34PRES_DIV1    (16 << 9)   /**< ADC34 clock is PLL/1.      */
+#define STM32_ADC34PRES_DIV2    (17 << 9)   /**< ADC34 clock is PLL/2.      */
+#define STM32_ADC34PRES_DIV4    (18 << 9)   /**< ADC34 clock is PLL/4.      */
+#define STM32_ADC34PRES_DIV6    (19 << 9)   /**< ADC34 clock is PLL/6.      */
+#define STM32_ADC34PRES_DIV8    (20 << 9)   /**< ADC34 clock is PLL/8.      */
+#define STM32_ADC34PRES_DIV10   (21 << 9)   /**< ADC34 clock is PLL/10.     */
+#define STM32_ADC34PRES_DIV12   (22 << 9)   /**< ADC34 clock is PLL/12.     */
+#define STM32_ADC34PRES_DIV16   (23 << 9)   /**< ADC34 clock is PLL/16.     */
+#define STM32_ADC34PRES_DIV32   (24 << 9)   /**< ADC34 clock is PLL/32.     */
+#define STM32_ADC34PRES_DIV64   (25 << 9)   /**< ADC34 clock is PLL/64.     */
+#define STM32_ADC34PRES_DIV128  (26 << 9)   /**< ADC34 clock is PLL/128.    */
+#define STM32_ADC34PRES_DIV256  (27 << 9)   /**< ADC34 clock is PLL/256.    */
 /** @} */
 
 /**
