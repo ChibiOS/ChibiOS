@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.4 ***
+- FIX: Fixed wrong ADC34 macros in STM32F30x HAL driver (bug #474).
 - FIX: Fixed wrong TIM1 and TIM8 macros in STM32F30x HAL driver (bug #473).
 - FIX: Fixed simulated IO message is corrupted in simulator (bug #468).
 
