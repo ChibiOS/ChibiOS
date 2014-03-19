@@ -20,7 +20,7 @@
 
 /**
  * @file    STM32/RTCv2/rtc_lld.c
- * @brief   STM32L1xx/STM32F2xx/STM32F4xx RTC low level driver.
+ * @brief   RTC low level driver.
  *
  * @addtogroup RTC
  * @{
@@ -64,10 +64,10 @@ RTCDriver RTCD1;
  *
  * @notapi
  */
-#define rtc_lld_enter_init() {                                                \
-  RTCD1.id_rtc->ISR |= RTC_ISR_INIT;                                          \
-  while ((RTCD1.id_rtc->ISR & RTC_ISR_INITF) == 0)                            \
-    ;                                                                         \
+#define rtc_lld_enter_init() {                                              \
+  RTCD1.id_rtc->ISR |= RTC_ISR_INIT;                                        \
+  while ((RTCD1.id_rtc->ISR & RTC_ISR_INITF) == 0)                          \
+    ;                                                                       \
 }
 
 /**
@@ -164,16 +164,17 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
  * @note      Default value after BKP domain reset for both comparators is 0.
  * @note      Function does not performs any checks of alarm time validity.
  *
- * @param[in] rtcp      Pointer to RTC driver structure.
- * @param[in] alarm     Alarm identifier. Can be 1 or 2.
- * @param[in] alarmspec Pointer to a @p RTCAlarm structure.
+ * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in] alarm     alarm identifier starting from zero
+ * @param[in] alarmspec pointer to a @p RTCAlarm structure
  *
  * @api
  */
 void rtc_lld_set_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        const RTCAlarm *alarmspec) {
-  if (alarm == 1){
+
+  if (alarm == 0) {
     if (alarmspec != NULL){
       rtcp->id_rtc->CR &= ~RTC_CR_ALRAE;
       while(!(rtcp->id_rtc->ISR & RTC_ISR_ALRAWF))
@@ -209,7 +210,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
  * @brief   Get alarm time.
  *
  * @param[in] rtcp       pointer to RTC driver structure
- * @param[in] alarm      alarm identifier
+ * @param[in] alarm      alarm identifier starting from zero
  * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
  * @api
@@ -217,7 +218,8 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
 void rtc_lld_get_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        RTCAlarm *alarmspec) {
-  if (alarm == 1)
+
+  if (alarm == 0)
     alarmspec->tv_datetime = rtcp->id_rtc->ALRMAR;
 #if RTC_ALARMS == 2
   else
