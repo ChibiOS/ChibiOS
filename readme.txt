@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed several macro errors in STM32L1xx HAL driver (bug #476)
+  (backported to 2.6.4).
 - FIX: Fixed wrong STM32 RTCv2 alarms implementation (bug #475)(backported
   to 2.6.4).
 - FIX: Fixed wrong ADC34 macros in STM32F30x HAL driver (bug #474)
