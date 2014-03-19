@@ -554,7 +554,7 @@
 /**
  * @brief   HSE divider toward RTC setting.
  */
-#if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
+#if !defined(STM32_RTCPRE) || defined(__DOXYGEN__)
 #define STM32_RTCPRE                STM32_RTCPRE_DIV2
 #endif
 /** @} */
@@ -666,7 +666,7 @@
     (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                   \
     ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                                  \
      (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                                 \
-    (STM_RTC_SOURCE == STM32_RTCSEL_HSEDIV)
+    (STM32_RTCSEL == STM32_RTCSEL_HSEDIV)
 #error "required HSE clock is not enabled"
 #endif
 #endif /* !STM32_HSE_ENABLED */
@@ -674,7 +674,7 @@
 /* LSI related checks.*/
 #if STM32_LSI_ENABLED
 #else /* !STM32_LSI_ENABLED */
-#if STM_RTCCLK == STM32_LSICLK
+#if STM32_RTCCLK == STM32_LSICLK
 #error "required LSI clock is not enabled"
 #endif
 #endif /* !STM32_LSI_ENABLED */
@@ -688,7 +688,7 @@
 #error "STM32_LSECLK outside acceptable range (1...1000kHz)"
 #endif
 #else /* !STM32_LSE_ENABLED */
-#if STM_RTCCLK == STM32_LSECLK
+#if STM32_RTCCLK == STM32_LSECLK
 #error "required LSE clock is not enabled"
 #endif
 #endif /* !STM32_LSE_ENABLED */
@@ -902,19 +902,19 @@
  * @brief   MCO divider clock.
  */
 #if (STM32_MCOSEL == STM32_MCOSEL_NOCLOCK) || defined(__DOXYGEN__)
-#define STM_MCODIVCLK               0
+#define STM32_MCODIVCLK             0
 #elif STM32_MCOSEL == STM32_MCOSEL_HSI
-#define STM_MCODIVCLK               STM32_HSICLK
+#define STM32_MCODIVCLK             STM32_HSICLK
 #elif STM32_MCOSEL == STM32_MCOSEL_MSI
-#define STM_MCODIVCLK               STM32_MSICLK
+#define STM32_MCODIVCLK             STM32_MSICLK
 #elif STM32_MCOSEL == STM32_MCOSEL_HSE
-#define STM_MCODIVCLK               STM32_HSECLK
+#define STM32_MCODIVCLK             STM32_HSECLK
 #elif STM32_MCOSEL == STM32_MCOSEL_PLL
-#define STM_MCODIVCLK               STM32_PLLCLKOUT
+#define STM32_MCODIVCLK             STM32_PLLCLKOUT
 #elif STM32_MCOSEL == STM32_MCOSEL_LSI
-#define STM_MCODIVCLK               STM32_LSICLK
+#define STM32_MCODIVCLK             STM32_LSICLK
 #elif STM32_MCOSEL == STM32_MCOSEL_LSE
-#define STM_MCODIVCLK               STM32_LSECLK
+#define STM32_MCODIVCLK             STM32_LSECLK
 #else
 #error "invalid STM32_MCOSEL value specified"
 #endif
@@ -923,15 +923,15 @@
  * @brief   MCO output pin clock.
  */
 #if (STM32_MCOPRE == STM32_MCOPRE_DIV1) || defined(__DOXYGEN__)
-#define STM_MCOCLK                  STM_MCODIVCLK
+#define STM32_MCOCLK                STM32_MCODIVCLK
 #elif STM32_MCOPRE == STM32_MCOPRE_DIV2
-#define STM_MCOCLK                  (STM_MCODIVCLK / 2)
+#define STM32_MCOCLK                (STM32_MCODIVCLK / 2)
 #elif STM32_MCOPRE == STM32_MCOPRE_DIV4
-#define STM_MCOCLK                  (STM_MCODIVCLK / 4)
+#define STM32_MCOCLK                (STM32_MCODIVCLK / 4)
 #elif STM32_MCOPRE == STM32_MCOPRE_DIV8
-#define STM_MCOCLK                  (STM_MCODIVCLK / 8)
+#define STM32_MCOCLK                (STM32_MCODIVCLK / 8)
 #elif STM32_MCOPRE == STM32_MCOPRE_DIV16
-#define STM_MCOCLK                  (STM_MCODIVCLK / 16)
+#define STM32_MCOCLK                (STM32_MCODIVCLK / 16)
 #else
 #error "invalid STM32_MCOPRE value specified"
 #endif
