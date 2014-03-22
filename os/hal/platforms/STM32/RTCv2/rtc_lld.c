@@ -238,7 +238,7 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  * @api
  */
 #if RTC_HAS_PERIODIC_WAKEUPS
-void rtcSetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec){
+void rtcSetPeriodicWakeup_v2(RTCDriver *rtcp, const RTCWakeup *wakeupspec){
   chDbgCheck((wakeupspec->wakeup != 0x30000),
               "rtc_lld_set_periodic_wakeup, forbidden combination");
 

@@ -210,7 +210,7 @@ extern "C" {
                          rtcalarm_t alarm,
                          RTCAlarm *alarmspec);
 #if RTC_HAS_PERIODIC_WAKEUPS
-  void rtcSetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec);
+  void rtcSetPeriodicWakeup_v2(RTCDriver *rtcp, const RTCWakeup *wakeupspec);
   void rtcGetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec);
 #endif /* RTC_HAS_PERIODIC_WAKEUPS */
   uint32_t rtc_lld_get_time_fat(RTCDriver *rtcp);
