@@ -327,7 +327,7 @@ static inline bool chThdTerminatedX(thread_t *tp) {
  */
 static inline bool chThdShouldTerminateX(void) {
 
-  return (bool)(chThdGetSelfX()->p_flags & CH_FLAG_TERMINATE);
+  return (bool)((chThdGetSelfX()->p_flags & CH_FLAG_TERMINATE) != 0);
 }
 
 /**
