@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.4 ***
+- FIX: Fixed problem in STM32 SDADC driver initialization (bug #479).
 - FIX: Fixed spurious callback in STM32 EXT driver (bug #477).
 - FIX: Fixed several macro errors in STM32L1xx HAL driver (bug #476).
 - FIX: Fixed wrong STM32 RTCv2 alarms implementation (bug #475).
