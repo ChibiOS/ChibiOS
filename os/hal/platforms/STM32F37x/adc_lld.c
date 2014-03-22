@@ -433,7 +433,7 @@ void adc_lld_start(ADCDriver *adcp) {
                                    (void *)adcp);
       chDbgAssert(!b, "adc_lld_start(), #3", "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &SDADC2->JDATAR);
-      rccEnableSDADC1(FALSE);
+      rccEnableSDADC2(FALSE);
       PWR->CR |= PWR_CR_SDADC2EN;
       adcp->sdadc->CR2 = 0;
       adcp->sdadc->CR1 = (adcp->config->cr1 | SDADC_ENFORCED_CR1_FLAGS) &
@@ -450,7 +450,7 @@ void adc_lld_start(ADCDriver *adcp) {
                                    (void *)adcp);
       chDbgAssert(!b, "adc_lld_start(), #4", "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &SDADC3->JDATAR);
-      rccEnableSDADC1(FALSE);
+      rccEnableSDADC3(FALSE);
       PWR->CR |= PWR_CR_SDADC3EN;
       adcp->sdadc->CR2 = 0;
       adcp->sdadc->CR1 = (adcp->config->cr1 | SDADC_ENFORCED_CR1_FLAGS) &
@@ -589,11 +589,16 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->sdadc->CONFCHR1 = grpp->u.sdadc.confchr[0];
     adcp->sdadc->CONFCHR2 = grpp->u.sdadc.confchr[1];
 
+    /* SDADC trigger modes, this write must be performed when
+       SDADC_CR1_INIT=1.*/
+    adcp->sdadc->CR2 = cr2;
+
     /* Leaving initialization mode.*/
     adcp->sdadc->CR1 &= ~SDADC_CR1_INIT;
 
-    /* SDADC conversion start, the start is performed using the method
-       specified in the CR2 configuration, usually SDADC_CR2_JSWSTART.*/
+    /* Special case, if SDADC_CR2_JSWSTART is specified it has to be
+       written after SDADC_CR1_INIT has been set to zero. Just a write is
+       performed, any other bit is ingore if not in initialization mode.*/
     adcp->sdadc->CR2 = cr2;
   }
 #endif /* STM32_ADC_USE_SDADC */
