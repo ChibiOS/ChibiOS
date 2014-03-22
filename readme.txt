@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed problem in STM32 SDADC driver initialization (bug #479)
+  (backported to 2.6.4).
 - FIX: Fixed spurious callback in STM32 EXT driver (bug #477)(backported
   to 2.6.4).
 - FIX: Fixed several macro errors in STM32L1xx HAL driver (bug #476)
