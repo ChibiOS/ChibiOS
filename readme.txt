@@ -80,6 +80,10 @@
 - FIX: Fixed wrong ADC34 macros in STM32F30x HAL driver (bug #474).
 - FIX: Fixed wrong TIM1 and TIM8 macros in STM32F30x HAL driver (bug #473).
 - FIX: Fixed simulated IO message is corrupted in simulator (bug #468).
+- FIX: Fixed typo in STMxx demo makefiles (bug #466).
+- FIX: Fixed wrong multilib handling in ChibiOS buildsystem (bug #465).
+- NEW: Improved makefiles backported from the 3.0 branch, make sure to use
+  Makefiles taken from this version in your projects.
 
 *** 2.6.3 ***
 - FIX: Fixed TM32 SDC driver clock activation issue (bug #464).
