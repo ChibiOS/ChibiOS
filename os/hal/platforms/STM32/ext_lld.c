@@ -128,7 +128,10 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
                       EXT_MODE_GPIO_MASK) >>
                      EXT_MODE_GPIO_OFF) << ((channel & 3) * 4);
 
-#if defined(STM32F1XX)
+#if defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||                 \
+    defined(STM32F10X_HD_VL) || defined(STM32F10X_LD)    ||                 \
+    defined(STM32F10X_MD)    || defined(STM32F10X_HD)    ||                 \
+    defined(STM32F10X_XL)    || defined(STM32F10X_CL)
     AFIO->EXTICR[n] = (AFIO->EXTICR[n] & mask) | port;
 #else /* !defined(STM32F1XX) */
     SYSCFG->EXTICR[n] = (SYSCFG->EXTICR[n] & mask) | port;
