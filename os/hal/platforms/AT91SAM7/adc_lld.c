@@ -117,6 +117,7 @@ ADCDriver ADCD1;
 									if ((isr & AT91C_ADC_EOC5)) dummy = ADCReg1->ADC_CDR5;		\
 									if ((isr & AT91C_ADC_EOC6)) dummy = ADCReg1->ADC_CDR6;		\
 									if ((isr & AT91C_ADC_EOC7)) dummy = ADCReg1->ADC_CDR7;		\
+									(void) dummy;												\
 								}
 #define adc_stop()				{																\
 									adc_disable();												\
@@ -160,6 +161,9 @@ static void handleint(void) {
 
 		/* Half transfer processing.*/
 		} else if ((isr & AT91C_ADC_ENDRX)) {
+			// Make sure we get a full complete next time.
+			ADCReg1->ADC_RNPR = 0;
+			ADCReg1->ADC_RNCR = 0;
 			_adc_isr_half_code(&ADCD1);
 		}
 
