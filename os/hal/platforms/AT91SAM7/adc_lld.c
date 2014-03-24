@@ -261,6 +261,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
 	uint32_t			i;
+	(void)				adcp;
 
 	/* Make sure everything is stopped first */
 	adc_stop();
@@ -289,8 +290,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
 	/* Set up the DMA */
 	ADCReg1->ADC_RPR = (uint32_t)ADCD1.samples;
-	if (adcp->depth <= 1) {
-		ADCReg1->ADC_RCR = ADCD1.grpp->num_channels;
+	if (ADCD1.depth <= 1 || !ADCD1.grpp->circular) {
+		ADCReg1->ADC_RCR = ADCD1.depth * ADCD1.grpp->num_channels;
 		ADCReg1->ADC_RNPR = 0;
 		ADCReg1->ADC_RNCR = 0;
 	} else {
