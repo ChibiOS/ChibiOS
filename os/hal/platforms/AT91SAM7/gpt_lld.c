@@ -74,16 +74,7 @@
  */
 static void gpt_lld_serve_interrupt(GPTDriver *gptp) {
 	// Read the status to clear the interrupts
-	{
-		uint32_t	isr = gptp->tc->TC_SR;
-		(void)		isr;
-	}
-
-	// Clear one-shot
-	if (gptp->state == GPT_ONESHOT) {
-		gptp->state = GPT_READY;                // Back in GPT_READY state.
-		gptp->tc->TC_IDR = 0xFFFFFFFF;			// Disable interrupts (not really needed but safer)
-	}
+	{ uint32_t	isr = gptp->tc->TC_SR; (void) isr; }
 
 	// Do the callback
 	gptp->config->callback(gptp);
@@ -386,11 +377,7 @@ void gpt_lld_stop(GPTDriver *gptp) {
  * @notapi
  */
 void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
-
-	if (gptp->config->clocksource != GPT_CLOCK_FREQUENCY) {
-		gptp->tc->TC_RC = interval;
-		gptp->tc->TC_RA = interval/2;
-	}
+	gpt_lld_change_interval(gptp, interval);
 	gptp->tc->TC_CMR &= ~AT91C_TC_CPCDIS;
 	gptp->tc->TC_CCR = AT91C_TC_CLKEN|AT91C_TC_SWTRG;
 	gptp->tc->TC_IER = AT91C_TC_CPCS|AT91C_TC_COVFS;
@@ -423,7 +410,30 @@ void gpt_lld_stop_timer(GPTDriver *gptp) {
  * @notapi
  */
 void gpt_lld_change_interval(GPTDriver *gptp, gptcnt_t interval) {
-	if (gptp->config->clocksource != GPT_CLOCK_FREQUENCY) {
+	if (gptp->config->clocksource == GPT_CLOCK_FREQUENCY) {
+		uint32_t	rc, cmr;
+
+		// Reset the timer to the (possibly) new frequency value
+		rc = (MCK/2)/gptp->config->frequency;
+		if (rc < (0x10000<<0)) {
+			cmr = AT91C_TC_CLKS_TIMER_DIV1_CLOCK;
+		} else if (rc < (0x10000<<2)) {
+			rc >>= 2;
+			cmr = AT91C_TC_CLKS_TIMER_DIV2_CLOCK;
+		} else if (rc < (0x10000<<4)) {
+			rc >>= 4;
+			cmr = AT91C_TC_CLKS_TIMER_DIV3_CLOCK;
+		} else if (rc < (0x10000<<6)) {
+			rc >>= 6;
+			cmr = AT91C_TC_CLKS_TIMER_DIV4_CLOCK;
+		} else {
+			rc >>= 9;
+			cmr = AT91C_TC_CLKS_TIMER_DIV5_CLOCK;
+		}
+		gptp->tc->TC_CMR = (gptp->tc->TC_CMR & AT91C_TC_CLKS) | cmr;
+		gptp->tc->TC_RC = rc;
+		gptp->tc->TC_RA = rc/2;
+	} else {
 		gptp->tc->TC_RC = interval;
 		gptp->tc->TC_RA = interval/2;
 	}
@@ -442,10 +452,7 @@ void gpt_lld_change_interval(GPTDriver *gptp, gptcnt_t interval) {
  */
 void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
 
-	if (gptp->config->clocksource != GPT_CLOCK_FREQUENCY) {
-		gptp->tc->TC_RC = interval;
-		gptp->tc->TC_RA = interval/2;
-	}
+	gpt_lld_change_interval(gptp, interval);
 	gptp->tc->TC_CMR |= AT91C_TC_CPCDIS;
 	gptp->tc->TC_CCR = AT91C_TC_CLKEN|AT91C_TC_SWTRG;
 	while (!(gptp->tc->TC_SR & (AT91C_TC_CPCS|AT91C_TC_COVFS)));
