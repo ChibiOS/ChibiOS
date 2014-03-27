@@ -174,10 +174,9 @@ void gpt_lld_init(void) {
  * @notapi
  */
 void gpt_lld_start(GPTDriver *gptp) {
-	uint32_t	cmr, rc, bmr;
+	uint32_t	cmr, bmr;
 
 	bmr = *AT91C_TCB_BMR;
-	rc = 65535;
 	cmr = (AT91C_TC_ASWTRG_CLEAR | AT91C_TC_ACPC_CLEAR | AT91C_TC_ACPA_SET |
             AT91C_TC_WAVE  | AT91C_TC_WAVESEL_UP_AUTO);
 
@@ -197,23 +196,8 @@ void gpt_lld_start(GPTDriver *gptp) {
 		}
 		break;
 	case GPT_CLOCK_FREQUENCY:
-	    /* Set the Mode of the Timer Counter and calculate the period */
-		rc = (MCK/2)/gptp->config->frequency;
-		if (rc < (0x10000<<0)) {
-			cmr |= AT91C_TC_CLKS_TIMER_DIV1_CLOCK;
-		} else if (rc < (0x10000<<2)) {
-			rc >>= 2;
-			cmr |= AT91C_TC_CLKS_TIMER_DIV2_CLOCK;
-		} else if (rc < (0x10000<<4)) {
-			rc >>= 4;
-			cmr |= AT91C_TC_CLKS_TIMER_DIV3_CLOCK;
-		} else if (rc < (0x10000<<6)) {
-			rc >>= 6;
-			cmr |= AT91C_TC_CLKS_TIMER_DIV4_CLOCK;
-		} else {
-			rc >>= 9;
-			cmr |= AT91C_TC_CLKS_TIMER_DIV5_CLOCK;
-		}
+	    /* The mode and period will be calculated when the timer is started */
+		cmr |= AT91C_TC_CLKS_TIMER_DIV5_CLOCK;
 		break;
 	case GPT_CLOCK_RE_TCLK0:
 	case GPT_CLOCK_FE_TCLK0:
@@ -349,8 +333,8 @@ void gpt_lld_start(GPTDriver *gptp) {
 	gptp->tc->TC_CCR = AT91C_TC_CLKDIS;
 	gptp->tc->TC_IDR = 0xFFFFFFFF;
 	gptp->tc->TC_CMR = cmr;
-	gptp->tc->TC_RC = rc;
-	gptp->tc->TC_RA = rc/2;
+	gptp->tc->TC_RC = 65535;
+	gptp->tc->TC_RA = 32768;
 	*AT91C_TCB_BMR = bmr;
 	cmr = gptp->tc->TC_SR;			// Clear any pending interrupts
 }
@@ -380,7 +364,8 @@ void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
 	gpt_lld_change_interval(gptp, interval);
 	gptp->tc->TC_CMR &= ~AT91C_TC_CPCDIS;
 	gptp->tc->TC_CCR = AT91C_TC_CLKEN|AT91C_TC_SWTRG;
-	gptp->tc->TC_IER = AT91C_TC_CPCS|AT91C_TC_COVFS;
+	if (gptp->config->callback)
+		gptp->tc->TC_IER = AT91C_TC_CPCS|AT91C_TC_COVFS;
 }
 
 /**
