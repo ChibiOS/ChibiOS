@@ -12,7 +12,7 @@ CPPOPT = $(USE_CPPOPT)
 # Garbage collection
 ifeq ($(USE_LINK_GC),yes)
   OPT += -ffunction-sections -fdata-sections -fno-common
-  LDOPT := --gc-sections
+  LDOPT := ,--gc-sections
 else
   LDOPT :=
 endif
@@ -38,20 +38,6 @@ ifneq ($(USE_FPU),no)
 else
   DDEFS += -DCORTEX_USE_FPU=FALSE
   DADEFS += -DCORTEX_USE_FPU=FALSE
-endif
-
-# Process stack size
-ifeq ($(USE_PROCESS_STACKSIZE),)
-  LDOPT := $(LDOPT),--defsym=__process_stack_size__=0x400
-else
-  LDOPT := $(LDOPT),--defsym=__process_stack_size__=$(USE_PROCESS_STACKSIZE)
-endif
-
-# Exceptions stack size
-ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
-  LDOPT := $(LDOPT),--defsym=__main_stack_size__=0x400
-else
-  LDOPT := $(LDOPT),--defsym=__main_stack_size__=$(USE_EXCEPTIONS_STACKSIZE)
 endif
 
 # Output directory and files
@@ -107,7 +93,7 @@ ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
 ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
 CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
-LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH),--script=$(LDSCRIPT),$(LDOPT)
+LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH),--script=$(LDSCRIPT)$(LDOPT)
 
 # Thumb interwork enabled only if needed because it kills performance.
 ifneq ($(TSRC),)
