@@ -362,7 +362,10 @@ void gpt_lld_stop(GPTDriver *gptp) {
  */
 void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
 	gpt_lld_change_interval(gptp, interval);
-	gptp->tc->TC_CMR &= ~AT91C_TC_CPCDIS;
+	if (gptp->state == GPT_ONESHOT)
+		gptp->tc->TC_CMR |= AT91C_TC_CPCDIS;
+	else
+		gptp->tc->TC_CMR &= ~AT91C_TC_CPCDIS;
 	gptp->tc->TC_CCR = AT91C_TC_CLKEN|AT91C_TC_SWTRG;
 	if (gptp->config->callback)
 		gptp->tc->TC_IER = AT91C_TC_CPCS|AT91C_TC_COVFS;
@@ -415,7 +418,7 @@ void gpt_lld_change_interval(GPTDriver *gptp, gptcnt_t interval) {
 			rc >>= 9;
 			cmr = AT91C_TC_CLKS_TIMER_DIV5_CLOCK;
 		}
-		gptp->tc->TC_CMR = (gptp->tc->TC_CMR & AT91C_TC_CLKS) | cmr;
+		gptp->tc->TC_CMR = (gptp->tc->TC_CMR & ~AT91C_TC_CLKS) | cmr;
 		gptp->tc->TC_RC = rc;
 		gptp->tc->TC_RA = rc/2;
 	} else {
