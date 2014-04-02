@@ -1,0 +1,6 @@
+exec device = RX62N
+speed auto
+savebin ram_dump.bin, 0x00000000, 0x18000
+r
+g
+q

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="rx62n_demo" />
+		<Option pch_mode="2" />
+		<Option compiler="kpit_rx_gcc_compiler" />
+		<Build>
+			<Target title="Release_ram">
+				<Option output="bin/Release_ram/rx62n_demo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release_ram/" />
+				<Option type="1" />
+				<Option compiler="kpit_rx_gcc_compiler" />
+				<Compiler>
+					<Add option="-Os" />
+					<Add option="-nofpu" />
+					<Add option="-DRAMRUN=1" />
+				</Compiler>
+				<Linker>
+					<Add option="-T../../os/ports/GCC/RX/RX62N/ld/R5F562N8xxxx_ram.ld" />
+					<Add option="-nostdlib" />
+					<Add library="c" />
+					<Add library="m" />
+					<Add directory="d:/Program Files/KPIT/GNURXv12.03-ELF/rx-elf/rx-elf/rx-elf/lib/no-fpu-libs" />
+					<Add directory="d:/Program Files/KPIT/GNURXv12.03-ELF/rx-elf/rx-elf/lib/gcc/rx-elf/4.7-GNURX_v12.03/no-fpu-libs" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="rx-elf-objcopy -O binary -R fvectors $(TARGET_OUTPUT_FILE)  $(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).bin" />
+					<Add after="rx-elf-objcopy -O binary -j fvectors $(TARGET_OUTPUT_FILE)  $(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME)_vectors_0xFFFFFF80.bin" />
+					<Add after="rx-elf-size $(TARGET_OUTPUT_FILE)" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-fomit-frame-pointer" />
+			<Add option="-Wall" />
+			<Add option="-std=gnu99" />
+			<Add option="-funsigned-char" />
+			<Add option="-fshort-enums" />
+			<Add option="-Wswitch" />
+			<Add option="-Wunused-variable" />
+			<Add option="-Wno-pointer-sign" />
+			<Add option="-ffunction-sections" />
+			<Add option="-mcpu=rx600" />
+			<Add option="-mlittle-endian-data" />
+			<Add option="-D__RX_LITTLE_ENDIAN__=1" />
+			<Add directory="." />
+			<Add directory="../../os/kernel/include" />
+			<Add directory="../../os/ports/GCC/RX" />
+			<Add directory="../../os/ports/GCC/RX/RX62N" />
+			<Add directory="../../boards/RPBRX62N" />
+			<Add directory="../../os/hal/include" />
+			<Add directory="../../os/hal/platforms/RX62N" />
+			<Add directory="../../boards/RENESAS_RPBRX62N" />
+			<Add directory="../../test" />
+			<Add directory="../../os/various" />
+		</Compiler>
+		<Linker>
+			<Add option="-Wl,-Map=obj\map.txt" />
+			<Add option="-nostartfiles" />
+			<Add option="-Wl,--relax" />
+			<Add option="-Wl,--gc-sections" />
+		</Linker>
+		<Unit filename="../../boards/RENESAS_RPBRX62N/board.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../boards/RENESAS_RPBRX62N/board.h" />
+		<Unit filename="../../os/hal/include/hal.h" />
+		<Unit filename="../../os/hal/include/pal.h" />
+		<Unit filename="../../os/hal/include/serial.h" />
+		<Unit filename="../../os/hal/include/serial_usb.h" />
+		<Unit filename="../../os/hal/include/usb.h" />
+		<Unit filename="../../os/hal/platforms/Rx62n/hal_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/hal/platforms/Rx62n/hal_lld.h" />
+		<Unit filename="../../os/hal/platforms/Rx62n/iodefine_gcc62n.h" />
+		<Unit filename="../../os/hal/platforms/Rx62n/pal_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/hal/platforms/Rx62n/pal_lld.h" />
+		<Unit filename="../../os/hal/platforms/Rx62n/serial_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/hal/platforms/Rx62n/serial_lld.h" />
+		<Unit filename="../../os/hal/platforms/Rx62n/usb_lld.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/hal/platforms/Rx62n/usb_lld.h" />
+		<Unit filename="../../os/hal/src/hal.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/hal/src/pal.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/hal/src/serial.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/hal/src/serial_usb.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/hal/src/usb.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/include/ch.h" />
+		<Unit filename="../../os/kernel/include/chbsem.h" />
+		<Unit filename="../../os/kernel/include/chcond.h" />
+		<Unit filename="../../os/kernel/include/chdebug.h" />
+		<Unit filename="../../os/kernel/include/chdynamic.h" />
+		<Unit filename="../../os/kernel/include/chevents.h" />
+		<Unit filename="../../os/kernel/include/chfiles.h" />
+		<Unit filename="../../os/kernel/include/chheap.h" />
+		<Unit filename="../../os/kernel/include/chinline.h" />
+		<Unit filename="../../os/kernel/include/chlists.h" />
+		<Unit filename="../../os/kernel/include/chmboxes.h" />
+		<Unit filename="../../os/kernel/include/chmemcore.h" />
+		<Unit filename="../../os/kernel/include/chmempools.h" />
+		<Unit filename="../../os/kernel/include/chmsg.h" />
+		<Unit filename="../../os/kernel/include/chmtx.h" />
+		<Unit filename="../../os/kernel/include/chqueues.h" />
+		<Unit filename="../../os/kernel/include/chregistry.h" />
+		<Unit filename="../../os/kernel/include/chschd.h" />
+		<Unit filename="../../os/kernel/include/chsem.h" />
+		<Unit filename="../../os/kernel/include/chstreams.h" />
+		<Unit filename="../../os/kernel/include/chsys.h" />
+		<Unit filename="../../os/kernel/include/chthreads.h" />
+		<Unit filename="../../os/kernel/include/chvt.h" />
+		<Unit filename="../../os/kernel/src/chcond.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chdebug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chdynamic.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chevents.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chheap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chlists.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chmboxes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chmemcore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chmempools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chmsg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chmtx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chqueues.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chregistry.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chschd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chsem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chsys.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chthreads.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/kernel/src/chvt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/ports/GCC/RX/RX62N/ld/R5F562N8xxxx_ram.ld" />
+		<Unit filename="../../os/ports/GCC/RX/RX62N/rxparams.h" />
+		<Unit filename="../../os/ports/GCC/RX/RX62N/vectors.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/ports/GCC/RX/chcore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/ports/GCC/RX/chcore.h" />
+		<Unit filename="../../os/ports/GCC/RX/chtypes.h" />
+		<Unit filename="../../os/ports/GCC/RX/crt0.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/various/chprintf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/various/chprintf.h" />
+		<Unit filename="../../os/various/shell.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../os/various/shell.h" />
+		<Unit filename="../../test/test.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/test.h" />
+		<Unit filename="../../test/testbmk.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testbmk.h" />
+		<Unit filename="../../test/testdyn.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testdyn.h" />
+		<Unit filename="../../test/testevt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testevt.h" />
+		<Unit filename="../../test/testheap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testheap.h" />
+		<Unit filename="../../test/testmbox.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testmbox.h" />
+		<Unit filename="../../test/testmsg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testmsg.h" />
+		<Unit filename="../../test/testmtx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testmtx.h" />
+		<Unit filename="../../test/testpools.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testpools.h" />
+		<Unit filename="../../test/testqueues.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testqueues.h" />
+		<Unit filename="../../test/testsem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testsem.h" />
+		<Unit filename="../../test/testthd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../test/testthd.h" />
+		<Unit filename="chconf.h" />
+		<Unit filename="halconf.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mcuconf.h" />
+		<Unit filename="usb_descriptors.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

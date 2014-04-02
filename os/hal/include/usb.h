@@ -78,6 +78,12 @@
 #define USB_EARLY_SET_ADDRESS               0
 #define USB_LATE_SET_ADDRESS                1
 
+#define USB_EP0_STATUS_STAGE_SW             0
+#define USB_EP0_STATUS_STAGE_HW             1
+
+#define USB_SET_ADDRESS_ACK_SW              0
+#define USB_SET_ADDRESS_ACK_HW              1
+
 /**
  * @name    Helper macros for USB descriptors
  * @{
@@ -444,6 +450,9 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
   (usbp)->ep0n     = (n);                                                   \
   (usbp)->ep0endcb = (endcb);                                               \
 }
+
+#define usbSetupEnd(usbp, ep)                                               \
+  usb_lld_end_transaction(usbp, ep)
 
 /**
  * @brief   Reads a setup packet from the dedicated packet buffer.

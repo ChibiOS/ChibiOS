@@ -627,7 +627,13 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
       return;
     }
   }
-
+#if (USB_SET_ADDRESS_ACK_HANDLING == USB_SET_ADDRESS_ACK_HW)
+  if (usbp->setup[1] == USB_REQ_SET_ADDRESS)
+  {
+    /* Zero-length packet sent by hardware */
+    return;
+  }
+#endif
   /* Transfer preparation. The request handler must have populated
      correctly the fields ep0next, ep0n and ep0endcb using the macro
      usbSetupTransfer().*/
@@ -649,10 +655,14 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
       /* No transmission phase, directly receiving the zero sized status
          packet.*/
       usbp->ep0state = USB_EP0_WAITING_STS;
+#if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
       usbPrepareReceive(usbp, 0, NULL, 0);
       chSysLockFromIsr();
       usbStartReceiveI(usbp, 0);
       chSysUnlockFromIsr();
+#else
+      usbSetupEnd(usbp, ep);
+#endif
     }
   }
   else {
@@ -669,10 +679,14 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
       /* No receive phase, directly sending the zero sized status
          packet.*/
       usbp->ep0state = USB_EP0_SENDING_STS;
+#if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
       usbPrepareTransmit(usbp, 0, NULL, 0);
       chSysLockFromIsr();
       usbStartTransmitI(usbp, 0);
       chSysUnlockFromIsr();
+#else
+    usbSetupEnd(usbp, ep);
+#endif
     }
   }
 }
@@ -709,10 +723,14 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
   case USB_EP0_WAITING_TX0:
     /* Transmit phase over, receiving the zero sized status packet.*/
     usbp->ep0state = USB_EP0_WAITING_STS;
+#if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
     usbPrepareReceive(usbp, 0, NULL, 0);
     chSysLockFromIsr();
     usbStartReceiveI(usbp, 0);
     chSysUnlockFromIsr();
+#else
+    usbSetupEnd(usbp, ep);
+#endif
     return;
   case USB_EP0_SENDING_STS:
     /* Status packet sent, invoking the callback if defined.*/
@@ -749,16 +767,22 @@ void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
   case USB_EP0_RX:
     /* Receive phase over, sending the zero sized status packet.*/
     usbp->ep0state = USB_EP0_SENDING_STS;
+#if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
     usbPrepareTransmit(usbp, 0, NULL, 0);
     chSysLockFromIsr();
     usbStartTransmitI(usbp, 0);
     chSysUnlockFromIsr();
+#else
+    usbSetupEnd(usbp, ep);
+#endif
     return;
   case USB_EP0_WAITING_STS:
     /* Status packet received, it must be zero sized, invoking the callback
        if defined.*/
+#if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
     if (usbGetReceiveTransactionSizeI(usbp, 0) != 0)
       break;
+#endif
     if (usbp->ep0endcb != NULL)
       usbp->ep0endcb(usbp);
     usbp->ep0state = USB_EP0_WAITING_SETUP;

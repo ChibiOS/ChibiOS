@@ -1,0 +1,6 @@
+exec device = RX62N
+speed auto
+loadbin rx62n_demo.bin, 0x00000000
+r
+g
+q
