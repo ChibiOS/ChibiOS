@@ -65,8 +65,8 @@ CANDriver CAND2;
  * @notapi
  */
 static void can_lld_set_filters(uint32_t can2sb,
-                         uint32_t num,
-                         const CANFilter *cfp) {
+                                uint32_t num,
+                                const CANFilter *cfp) {
 
   /* Temporarily enabling CAN1 clock.*/
   rccEnableCAN1(FALSE);
@@ -383,7 +383,6 @@ void can_lld_init(void) {
 #else
   can_lld_set_filters(STM32_CAN_MAX_FILTERS, 0, NULL);
 #endif
-
 }
 
 /**
