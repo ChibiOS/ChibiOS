@@ -534,7 +534,7 @@ static inline void port_enable(void) {
 static inline void port_wait_for_interrupt(void) {
 
 #if CORTEX_ENABLE_WFI_IDLE
-  __WFI;
+  __WFI();
 #endif
 }
 
