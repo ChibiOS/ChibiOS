@@ -328,7 +328,7 @@ struct I2SDriver {
 extern I2SDriver I2SD2;
 #endif
 
-#if STM32_I2S_USE_I2S3 && !defined(__DOXYGEN__)
+#if STM32_I2S_USE_SPI3 && !defined(__DOXYGEN__)
 extern I2SDriver I2SD3;
 #endif
 
