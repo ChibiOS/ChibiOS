@@ -861,6 +861,10 @@ void usb_lld_start(USBDriver *usbp) {
       rccEnableOTG_HS(FALSE);
       rccResetOTG_HS();
 
+      /* Workaround for the problem described here:
+         http://forum.chibios.org/phpbb/viewtopic.php?f=16&t=1798 */
+      rccDisableOTG_HSULPI(TRUE);
+
       /* Enables IRQ vector.*/
       nvicEnableVector(STM32_OTG2_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_USB_OTG2_IRQ_PRIORITY));

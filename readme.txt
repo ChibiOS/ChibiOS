@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.4 ***
+- FIX: Fixed OTG HS failure when WFI instruction is enabled (bug #482).
 - FIX: Fixed wrong STM32F4 TIM6 vector number symbol (bug #480).
 - FIX: Fixed problem in STM32 SDADC driver initialization (bug #479).
 - FIX: Fixed chThdShouldTerminate() documentation incorrect (bug #478).
