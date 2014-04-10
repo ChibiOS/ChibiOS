@@ -195,6 +195,7 @@ void i2s_lld_init(void) {
   I2SD2.dmarx     = STM32_DMA_STREAM(STM32_I2S_SPI2_RX_DMA_STREAM);
   I2SD2.rxdmamode = STM32_DMA_CR_CHSEL(I2S2_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_I2S_SPI2_DMA_PRIORITY) |
+                    STM32_DMA_CR_PSIZE_HWORD |
                     STM32_DMA_CR_MSIZE_HWORD |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_MINC |
@@ -211,6 +212,7 @@ void i2s_lld_init(void) {
   I2SD2.dmatx     = STM32_DMA_STREAM(STM32_I2S_SPI2_TX_DMA_STREAM);
   I2SD2.txdmamode = STM32_DMA_CR_CHSEL(I2S2_TX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_I2S_SPI2_DMA_PRIORITY) |
+                    STM32_DMA_CR_PSIZE_HWORD |
                     STM32_DMA_CR_MSIZE_HWORD |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_MINC |
@@ -233,6 +235,7 @@ void i2s_lld_init(void) {
   I2SD3.dmarx     = STM32_DMA_STREAM(STM32_I2S_SPI3_RX_DMA_STREAM);
   I2SD3.rxdmamode = STM32_DMA_CR_CHSEL(I2S3_RX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_I2S_SPI3_DMA_PRIORITY) |
+                    STM32_DMA_CR_PSIZE_HWORD |
                     STM32_DMA_CR_MSIZE_HWORD |
                     STM32_DMA_CR_DIR_P2M |
                     STM32_DMA_CR_MINC |
@@ -249,6 +252,7 @@ void i2s_lld_init(void) {
   I2SD3.dmatx     = STM32_DMA_STREAM(STM32_I2S_SPI3_TX_DMA_STREAM);
   I2SD3.txdmamode = STM32_DMA_CR_CHSEL(I2S3_TX_DMA_CHANNEL) |
                     STM32_DMA_CR_PL(STM32_I2S_SPI3_DMA_PRIORITY) |
+                    STM32_DMA_CR_PSIZE_HWORD |
                     STM32_DMA_CR_MSIZE_HWORD |
                     STM32_DMA_CR_DIR_M2P |
                     STM32_DMA_CR_MINC |
