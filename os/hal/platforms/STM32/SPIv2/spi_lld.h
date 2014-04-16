@@ -328,7 +328,7 @@ typedef struct {
 /**
  * @brief   Structure representing a SPI driver.
  */
-struct SPIDriver{
+struct SPIDriver {
   /**
    * @brief Driver state.
    */
