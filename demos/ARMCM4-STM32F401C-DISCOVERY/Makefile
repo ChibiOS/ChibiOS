@@ -64,8 +64,8 @@ endif
 PROJECT = ch
 
 # Imported source files and paths
-CHIBIOS = ../ChibiOSStandardSVNTrunk
-include boards/ST_STM32F401_DISCOVERY/board.mk
+CHIBIOS = ../..
+include $(CHIBIOS)/boards/ST_STM32F401C_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F4xx/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F4xx/port.mk
@@ -73,7 +73,7 @@ include $(CHIBIOS)/os/kernel/kernel.mk
 include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
-LDSCRIPT= ld/STM32F401xC.ld
+LDSCRIPT= $(PORTLD)/STM32F401xC.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

@@ -17,16 +17,27 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
-		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>board</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/boards/ST_STM32F401C_DISCOVERY</locationURI>
+		</link>
+		<link>
+			<name>os</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/os</locationURI>
+		</link>
+		<link>
+			<name>test</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/test</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
