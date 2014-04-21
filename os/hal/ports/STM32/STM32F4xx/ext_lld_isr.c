@@ -268,7 +268,7 @@ OSAL_IRQ_HANDLER(Vector48) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* defined(STM32F401xx) */
+#endif /* !defined(STM32F401xx) */
 
 /**
  * @brief   EXTI[22] interrupt handler (RTC_WKUP).
