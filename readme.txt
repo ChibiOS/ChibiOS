@@ -89,6 +89,7 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed STM32L1 Plus Compilation Problems (bug #484)(backported to 2.6.4).
 - FIX: Fixed OTG HS failure when WFI instruction is enabled (bug #482)
   (backported to 2.6.4).
 - FIX: Fixed wrong STM32F4 TIM6 vector number symbol (bug #480)

@@ -25,6 +25,8 @@
  *          .
  *          One of the following macros must also be defined:
  *          - STM32L1XX_MD for Ultra Low Power Medium-density devices.
+ *          - STM32L1XX_MDP for Ultra Low Power Medium-density Plus devices.
+ *          - STM32L1XX_HD for Ultra Low Power High-density devices.
  *          .
  *
  * @addtogroup HAL
@@ -49,7 +51,21 @@
  * @name    Platform identification
  * @{
  */
+#if defined(STM32L1XX_MD) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32L1xx Ultra Low Power Medium Density"
+#define STM32L1XX
+
+#elif defined(STM32L1XX_MDP)
+#define PLATFORM_NAME           "STM32L1xx Ultra Low Power Medium Density Plus"
+#define STM32L1XX
+
+#elif defined(STM32L1XX_HD)
+#define PLATFORM_NAME           "STM32L1xx Ultra Low Power High Density"
+#define STM32L1XX
+
+#else
+#error "STM32L1xx device not specified"
+#endif
 /** @} */
 
 /**
