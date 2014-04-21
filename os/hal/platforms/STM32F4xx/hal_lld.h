@@ -401,7 +401,7 @@
 #define STM32_CAN_MAX_FILTERS   28
 
 /* DAC attributes.*/
-#define STM32_HAS_DAC           TRUE
+#define STM32_HAS_DAC           FALSE
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA      TRUE
@@ -409,7 +409,11 @@
 #define STM32_HAS_DMA2          TRUE
 
 /* ETH attributes.*/
+#if !defined(STM32F401xx)
 #define STM32_HAS_ETH           TRUE
+#else /* defined(STM32F401xx) */
+#define STM32_HAS_ETH           FALSE
+#endif /* defined(STM32F401xx) */
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_CHANNELS 23
@@ -425,11 +429,11 @@
 #define STM32_HAS_GPIOF         TRUE
 #define STM32_HAS_GPIOG         TRUE
 #define STM32_HAS_GPIOI         TRUE
-#else
+#else /* defined(STM32F401xx) */
 #define STM32_HAS_GPIOF         FALSE
 #define STM32_HAS_GPIOG         FALSE
 #define STM32_HAS_GPIOI         FALSE
-#endif
+#endif /* defined(STM32F401xx) */
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1          TRUE
@@ -590,6 +594,7 @@
 #define STM32_UART5_RX_DMA_CHN  0x00000004
 #define STM32_UART5_TX_DMA_MSK  (STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_UART5_TX_DMA_CHN  0x40000000
+
 #else /* defined(STM32F401xx) */
 #define STM32_HAS_USART3        FALSE
 #define STM32_HAS_UART4         FALSE
