@@ -132,6 +132,10 @@ SECTIONS
     {
         PROVIDE(_cmm_start = .);
         . = ALIGN(4);
+        *(.ccm)
+        . = ALIGN(4);
+        *(.ccm.*)
+        . = ALIGN(4);
         *(.bss.mainthread.*)
         . = ALIGN(4);
         *(.bss._idle_thread_wa)
