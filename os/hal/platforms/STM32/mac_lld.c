@@ -297,9 +297,11 @@ void mac_lld_start(MACDriver *macp) {
 
   /* MAC clocks activation and commanded reset procedure.*/
   rccEnableETH(FALSE);
+#if defined(STM32_MAC_DMABMR_SR)
   ETH->DMABMR |= ETH_DMABMR_SR;
   while(ETH->DMABMR & ETH_DMABMR_SR)
     ;
+#endif
 
   /* ISR vector enabled.*/
   nvicEnableVector(ETH_IRQn,
