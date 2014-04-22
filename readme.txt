@@ -85,6 +85,8 @@
 - FIX: Fixed wrong STM32 RTCv2 alarms implementation (bug #475).
 - FIX: Fixed wrong ADC34 macros in STM32F30x HAL driver (bug #474).
 - FIX: Fixed wrong TIM1 and TIM8 macros in STM32F30x HAL driver (bug #473).
+- FIX: Fixed chprintf()/chSequentialStreamWrite() crash with size of 0
+  or NULL (bug #472).
 - FIX: Fixed simulated IO message is corrupted in simulator (bug #468).
 - FIX: Fixed typo in STMxx demo makefiles (bug #466).
 - FIX: Fixed wrong multilib handling in ChibiOS buildsystem (bug #465).
