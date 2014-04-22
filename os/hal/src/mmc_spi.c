@@ -447,6 +447,7 @@ bool mmcConnect(MMCDriver *mmcp) {
 
   /* Connection procedure in progress.*/
   mmcp->state = BLK_CONNECTING;
+  mmcp->block_addresses = FALSE;
 
   /* Slow clock mode and 128 clock pulses.*/
   spiStart(mmcp->config->spip, mmcp->config->lscfg);
