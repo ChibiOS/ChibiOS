@@ -72,6 +72,8 @@
 *****************************************************************************
 
 *** 2.6.4 ***
+- FIX: Fixed MMC_SPI driver block_addresses is not initialized after
+  reconnection (bug #485).
 - FIX: Fixed STM32L1 Plus Compilation Problems (bug #484).
 - FIX: Fixed OTG HS failure when WFI instruction is enabled (bug #482).
 - FIX: Fixed wrong STM32F4 TIM6 vector number symbol (bug #480).
