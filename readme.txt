@@ -87,6 +87,7 @@
 - FIX: Fixed wrong multilib handling in ChibiOS buildsystem (bug #465).
 - NEW: Improved makefiles backported from the 3.0 branch, make sure to use
   Makefiles taken from this version in your projects.
+- CHANGE: Made optional the STM32 MAC DMABMR SR reset procedure.
 
 *** 2.6.3 ***
 - FIX: Fixed TM32 SDC driver clock activation issue (bug #464).
