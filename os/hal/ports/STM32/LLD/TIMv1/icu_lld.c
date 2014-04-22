@@ -459,7 +459,7 @@ void icu_lld_start(ICUDriver *icup) {
       rccEnableTIM9(FALSE);
       rccResetTIM9();
       nvicEnableVector(STM32_TIM9_NUMBER, STM32_ICU_TIM9_IRQ_PRIORITY);
-      icup->clock = STM32_TIMCLK1;
+      icup->clock = STM32_TIMCLK2;
     }
 #endif
   }
