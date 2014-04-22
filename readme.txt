@@ -212,6 +212,7 @@
 - NEW: Added CAN driver for AT91SAM7.
 - CHANGE: Moved the STM32 GPT, ICU and PWM low level drivers under
   ./os/hal/platform/STM32/TIMv1. Updated all the impacted project files.
+- CHANGE: Made optional the STM32 MAC DMABMR SR reset procedure.
 
 *** 2.5.2 ***
 - FIX: Fixed lwipthread.h should explicitly include lwip/opts.h (bug #414).
