@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed wrong STM32 TIM9 clock source in PWM and ICU drivers (bug #486)
+  (backported to 2.6.4).
 - FIX: Fixed MMC_SPI driver block_addresses is not initialized after
   reconnection (bug #485)(backported to 2.6.4).
 - FIX: Fixed STM32L1 Plus Compilation Problems (bug #484)(backported to 2.6.4).

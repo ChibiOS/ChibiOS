@@ -475,7 +475,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
       rccResetTIM9();
       nvicEnableVector(STM32_TIM9_NUMBER,
                        CORTEX_PRIORITY_MASK(STM32_PWM_TIM9_IRQ_PRIORITY));
-      pwmp->clock = STM32_TIMCLK1;
+      pwmp->clock = STM32_TIMCLK2;
     }
 #endif
 
