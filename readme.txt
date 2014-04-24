@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed invalid cast in PWM_FRACTION_TO_WIDTH() macro (bug #487)
+  (backported to 2.4.6 and 2.6.4).
 - FIX: Fixed wrong STM32 TIM9 clock source in PWM and ICU drivers (bug #486)
   (backported to 2.6.4).
 - FIX: Fixed MMC_SPI driver block_addresses is not initialized after
