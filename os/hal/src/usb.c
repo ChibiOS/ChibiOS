@@ -628,8 +628,7 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
     }
   }
 #if (USB_SET_ADDRESS_ACK_HANDLING == USB_SET_ADDRESS_ACK_HW)
-  if (usbp->setup[1] == USB_REQ_SET_ADDRESS)
-  {
+  if (usbp->setup[1] == USB_REQ_SET_ADDRESS) {
     /* Zero-length packet sent by hardware */
     return;
   }
@@ -661,7 +660,7 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
       usbStartReceiveI(usbp, 0);
       chSysUnlockFromIsr();
 #else
-      usbSetupEnd(usbp, ep);
+      usb_lld_end_setup(usbp, ep);
 #endif
     }
   }
@@ -685,7 +684,7 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
       usbStartTransmitI(usbp, 0);
       chSysUnlockFromIsr();
 #else
-    usbSetupEnd(usbp, ep);
+      usb_lld_end_setup(usbp, ep);
 #endif
     }
   }
@@ -729,7 +728,7 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
     usbStartReceiveI(usbp, 0);
     chSysUnlockFromIsr();
 #else
-    usbSetupEnd(usbp, ep);
+    usb_lld_end_setup(usbp, ep);
 #endif
     return;
   case USB_EP0_SENDING_STS:
@@ -773,7 +772,7 @@ void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
     usbStartTransmitI(usbp, 0);
     chSysUnlockFromIsr();
 #else
-    usbSetupEnd(usbp, ep);
+    usb_lld_end_setup(usbp, ep);
 #endif
     return;
   case USB_EP0_WAITING_STS:

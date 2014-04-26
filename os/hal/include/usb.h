@@ -451,9 +451,6 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
   (usbp)->ep0endcb = (endcb);                                               \
 }
 
-#define usbSetupEnd(usbp, ep)                                               \
-  usb_lld_end_transaction(usbp, ep)
-
 /**
  * @brief   Reads a setup packet from the dedicated packet buffer.
  * @details This function must be invoked in the context of the @p setup_cb

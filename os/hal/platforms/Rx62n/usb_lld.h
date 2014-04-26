@@ -457,7 +457,7 @@ struct USBDriver {
  *
  * @notapi
  */
-#define usb_lld_end_transaction(usbp, ep)                                   \
+#define usb_lld_end_setup(usbp, ep)                                         \
   ((usbp)->usb->DCPCTR.BIT.CCPL=1)
 
 /**
