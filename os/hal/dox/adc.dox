@@ -61,7 +61,7 @@
     stop -> stop [label="\nadcStop()"];
     ready -> active [label="\nadcStartConversion() (async)\nadcConvert() (sync)"];
     active -> ready [label="\nadcStopConversion()\nsync return"];
-    active -> active [label="\nasync callback (half buffer)\nasync callback (full buffer circular)\n>acg_endcb<"];
+    active -> active [label="\nasync callback (half buffer, circular)\nasync callback (full buffer)\n>acg_endcb<"];
     active -> complete [label="\n\nasync callback (full buffer)\n>end_cb<"];
     active -> error [label="\n\nasync callback (error)\n>error_cb<"];
     complete -> active [label="\nadcStartConversionI()\nthen\ncallback return"];
@@ -92,7 +92,7 @@
     stop -> stop [label="\nadcStop()"];
     ready -> active [label="\nadcStartConversion() (async)\nadcConvert() (sync)"];
     active -> ready [label="\nadcStopConversion()\nsync return"];
-    active -> active [label="\nasync callback (half buffer)\nasync callback (full buffer circular)\n>acg_endcb<"];
+    active -> active [label="\nasync callback (half buffer, circular)\nasync callback (full buffer)\n>acg_endcb<"];
     active -> complete [label="\n\nasync callback (full buffer)\n>end_cb<"];
     active -> error [label="\n\nasync callback (error)\n>error_cb<"];
     complete -> active [label="\nadcStartConversionI()\nthen\ncallback return"];
@@ -138,8 +138,7 @@
  * The driver is able to invoke callbacks during the conversion process. A
  * callback is invoked when the operation has been completed or, in circular
  * mode, when the buffer has been filled and the operation is restarted. In
- * linear and circular modes a callback is also invoked when the buffer is
- * half filled.<br>
+ * circular mode a callback is also invoked when the buffer is half filled.<br>
  * The "half filled" and "filled" callbacks in circular mode allow to
  * implement "streaming processing" of the sampled data, while the driver is
  * busy filling one half of the buffer the application can process the
