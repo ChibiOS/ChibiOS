@@ -1208,7 +1208,7 @@ msg_t usb_lld_pump(void *p) {
   USBDriver *usbp = (USBDriver *)p;
   stm32_otg_t *otgp = usbp->otg;
 
-#if defined(__CHIBIOS_RT__)
+#if defined(_CHIBIOS_RT_)
   chRegSetThreadName("usb_lld_pump");
 #endif
   osalSysLock();
