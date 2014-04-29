@@ -231,15 +231,16 @@ typedef enum IRQn
 
 #ifdef STM32L1XX_MDP
   TIM7_IRQn                   = 44,     /*!< TIM7 global Interrupt                                   */
-  TIM5_IRQn                   = 46,     /*!< TIM5 global Interrupt                                   */
-  SPI3_IRQn                   = 47,     /*!< SPI3 global Interrupt                                   */
-  DMA2_Channel1_IRQn          = 50,     /*!< DMA2 Channel 1 global Interrupt                         */
-  DMA2_Channel2_IRQn          = 51,     /*!< DMA2 Channel 2 global Interrupt                         */
-  DMA2_Channel3_IRQn          = 52,     /*!< DMA2 Channel 3 global Interrupt                         */
-  DMA2_Channel4_IRQn          = 53,     /*!< DMA2 Channel 4 global Interrupt                         */
-  DMA2_Channel5_IRQn          = 54,     /*!< DMA2 Channel 5 global Interrupt                         */
-  AES_IRQn                    = 55,     /*!< AES global Interrupt                                    */
-  COMP_ACQ_IRQn               = 56      /*!< Comparator Channel Acquisition global Interrupt         */
+  /* CHIBIOS FIX */
+  TIM5_IRQn                   = 45,     /*!< TIM5 global Interrupt                                   */
+  SPI3_IRQn                   = 46,     /*!< SPI3 global Interrupt                                   */
+  DMA2_Channel1_IRQn          = 47,     /*!< DMA2 Channel 1 global Interrupt                         */
+  DMA2_Channel2_IRQn          = 48,     /*!< DMA2 Channel 2 global Interrupt                         */
+  DMA2_Channel3_IRQn          = 49,     /*!< DMA2 Channel 3 global Interrupt                         */
+  DMA2_Channel4_IRQn          = 50,     /*!< DMA2 Channel 4 global Interrupt                         */
+  DMA2_Channel5_IRQn          = 51,     /*!< DMA2 Channel 5 global Interrupt                         */
+  AES_IRQn                    = 52,     /*!< AES global Interrupt                                    */
+  COMP_ACQ_IRQn               = 53      /*!< Comparator Channel Acquisition global Interrupt         */
 #endif
 
 #ifdef STM32L1XX_HD
