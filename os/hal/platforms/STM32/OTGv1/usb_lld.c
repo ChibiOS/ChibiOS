@@ -1217,7 +1217,7 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep) {
   pcnt = (osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
          usbp->epc[ep]->out_maxsize;
   usbp->otg->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
-                               DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
+                               DOEPTSIZ_XFRSIZ(osp->rxsize);
 
 }
 
