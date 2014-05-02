@@ -226,6 +226,10 @@ typedef struct {
       OutputQueue               *txqueue;
     } queue;
   } mode;
+  /**
+   * @brief   Total transmit transfer size.
+   */
+  size_t                        totsize;
 } USBInEndpointState;
 
 /**
