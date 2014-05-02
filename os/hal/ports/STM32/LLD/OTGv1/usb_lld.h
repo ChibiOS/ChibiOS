@@ -226,6 +226,10 @@ typedef struct {
       output_queue_t            *txqueue;
     } queue;
   } mode;
+  /**
+   * @brief   Total transmit transfer size.
+   */
+  size_t                        totsize;
 } USBInEndpointState;
 
 /**
@@ -450,6 +454,16 @@ struct USBDriver {
    * @brief   Pointer to the thread when it is sleeping or @p NULL.
    */
   thread_reference_t            wait;
+#if defined(_CHIBIOS_RT_)
+  /**
+   * @brief   Pointer to the thread.
+   */
+  thread_reference_t            tr;
+  /**
+   * @brief   Working area for the dedicated data pump thread;
+   */
+  THD_WORKING_AREA(wa_pump, STM32_USB_OTG_THREAD_STACK_SIZE);
+#endif
 };
 
 /*===========================================================================*/

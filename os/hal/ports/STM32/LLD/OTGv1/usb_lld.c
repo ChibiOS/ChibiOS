@@ -32,7 +32,9 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define TRDT_VALUE      5
+#define TRDT_VALUE              5
+
+#define EP0_MAX_INSIZE          64
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -538,7 +540,23 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   }
   if ((epint & DIEPINT_XFRC) && (otgp->DIEPMSK & DIEPMSK_XFRCM)) {
     /* Transmit transfer complete.*/
-    _usb_isr_invoke_in_cb(usbp, ep);
+    USBInEndpointState *isp = usbp->epc[ep]->in_state;
+
+    if (isp->txsize < isp->totsize) {
+      /* In case the transaction covered only part of the total transfer
+         then another transaction is immediately started in order to
+         cover the remaining.*/
+      isp->txsize = isp->totsize - isp->txsize;
+      isp->txcnt  = 0;
+      usb_lld_prepare_transmit(usbp, ep);
+      osalSysLockFromISR();
+      usb_lld_start_in(usbp, ep);
+      osalSysUnlockFromISR();
+    }
+    else {
+      /* End on IN transfer.*/
+      _usb_isr_invoke_in_cb(usbp, ep);
+    }
   }
   if ((epint & DIEPINT_TXFE) &&
       (otgp->DIEPEMPMSK & DIEPEMPMSK_INEPTXFEM(ep))) {
@@ -713,6 +731,23 @@ void usb_lld_init(void) {
   USBD1.wait      = NULL;
   USBD1.otg       = OTG_FS;
   USBD1.otgparams = &fsparams;
+
+#if defined(_CHIBIOS_RT_)
+  USBD1.tr = NULL;
+  /* Filling the thread working area here because the function
+     @p chThdCreateI() does not do it.*/
+#if CH_DBG_FILL_THREADS
+  {
+    void *wsp = USBD1.wa_pump;
+    _thread_memfill((uint8_t *)wsp,
+                    (uint8_t *)wsp + sizeof(Thread),
+                    CH_DBG_THREAD_FILL_VALUE);
+    _thread_memfill((uint8_t *)wsp + sizeof(Thread),
+                    (uint8_t *)wsp + sizeof(USBD1.wa_pump) - sizeof(Thread),
+                    CH_DBG_STACK_FILL_VALUE);
+  }
+#endif /* CH_DBG_FILL_THREADS */
+#endif /* defined(_CHIBIOS_RT_) */
 #endif
 
 #if STM32_USB_USE_OTG2
@@ -720,6 +755,23 @@ void usb_lld_init(void) {
   USBD2.wait      = NULL;
   USBD2.otg       = OTG_HS;
   USBD2.otgparams = &hsparams;
+
+#if defined(_CHIBIOS_RT_)
+  USBD2.tr = NULL;
+  /* Filling the thread working area here because the function
+     @p chThdCreateI() does not do it.*/
+#if CH_DBG_FILL_THREADS
+  {
+    void *wsp = USBD2.wa_pump;
+    _thread_memfill((uint8_t *)wsp,
+                    (uint8_t *)wsp + sizeof(Thread),
+                    CH_DBG_THREAD_FILL_VALUE);
+    _thread_memfill((uint8_t *)wsp + sizeof(Thread),
+                    (uint8_t *)wsp + sizeof(USBD2.wa_pump) - sizeof(Thread),
+                    CH_DBG_STACK_FILL_VALUE);
+  }
+#endif /* CH_DBG_FILL_THREADS */
+#endif /* defined(_CHIBIOS_RT_) */
 #endif
 }
 
@@ -764,6 +816,17 @@ void usb_lld_start(USBDriver *usbp) {
 #endif
 
     usbp->txpending = 0;
+
+#if defined(_CHIBIOS_RT_)
+    /* Creates the data pump threads in a suspended state. Note, it is
+       created only once, the first time @p usbStart() is invoked.*/
+    if (usbp->tr == NULL)
+      usbp->tr = usbp->wait = chThdCreateI(usbp->wa_pump,
+                                           sizeof usbp->wa_pump,
+                                           STM32_USB_OTG_THREAD_PRIO,
+                                           usb_lld_pump,
+                                           usbp);
+#endif
 
     /* - Forced device mode.
        - USB turn-around time = TRDT_VALUE.
@@ -1083,7 +1146,7 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep) {
   pcnt = (osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
          usbp->epc[ep]->out_maxsize;
   usbp->otg->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
-                               DOEPTSIZ_XFRSIZ(usbp->epc[ep]->out_maxsize);
+                               DOEPTSIZ_XFRSIZ(osp->rxsize);
 
 }
 
@@ -1099,18 +1162,21 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
   /* Transfer initialization.*/
+  isp->totsize = isp->txsize;
   if (isp->txsize == 0) {
     /* Special case, sending zero size packet.*/
     usbp->otg->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(1) | DIEPTSIZ_XFRSIZ(0);
   }
   else {
+    if ((ep == 0) && (isp->txsize  > EP0_MAX_INSIZE))
+      isp->txsize = EP0_MAX_INSIZE;
+
     /* Normal case.*/
     uint32_t pcnt = (isp->txsize + usbp->epc[ep]->in_maxsize - 1) /
                     usbp->epc[ep]->in_maxsize;
     usbp->otg->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
-                                 DIEPTSIZ_XFRSIZ(usbp->epc[ep]->in_state->txsize);
+                                 DIEPTSIZ_XFRSIZ(isp->txsize);
   }
-
 }
 
 /**
