@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed configuration descriptors larger than 127 bytes don't
+  work (bug #373)(backported to 2.6.4).
 - FIX: Fixed invalid cast in PWM_FRACTION_TO_WIDTH() macro (bug #487)
   (backported to 2.4.6 and 2.6.4).
 - FIX: Fixed wrong STM32 TIM9 clock source in PWM and ICU drivers (bug #486)
