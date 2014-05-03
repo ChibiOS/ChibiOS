@@ -89,6 +89,8 @@
 *****************************************************************************
 
 *** 2.7.0 ***
+- FIX: Fixed insufficient ISR-reserved stack in ARMCMx port when
+  optimizations are disabled (bug #494)(backported to 2.6.4).
 - FIX: Fixed configuration descriptors larger than 127 bytes don't
   work (bug #373)(backported to 2.6.4).
 - FIX: Fixed invalid cast in PWM_FRACTION_TO_WIDTH() macro (bug #487)
