@@ -740,10 +740,10 @@ void usb_lld_init(void) {
   {
     void *wsp = USBD1.wa_pump;
     _thread_memfill((uint8_t *)wsp,
-                    (uint8_t *)wsp + sizeof(Thread),
+                    (uint8_t *)wsp + sizeof(thread_t),
                     CH_DBG_THREAD_FILL_VALUE);
-    _thread_memfill((uint8_t *)wsp + sizeof(Thread),
-                    (uint8_t *)wsp + sizeof(USBD1.wa_pump) - sizeof(Thread),
+    _thread_memfill((uint8_t *)wsp + sizeof(thread_t),
+                    (uint8_t *)wsp + sizeof(USBD1.wa_pump) - sizeof(thread_t),
                     CH_DBG_STACK_FILL_VALUE);
   }
 #endif /* CH_DBG_FILL_THREADS */
@@ -764,10 +764,10 @@ void usb_lld_init(void) {
   {
     void *wsp = USBD2.wa_pump;
     _thread_memfill((uint8_t *)wsp,
-                    (uint8_t *)wsp + sizeof(Thread),
+                    (uint8_t *)wsp + sizeof(thread_t),
                     CH_DBG_THREAD_FILL_VALUE);
-    _thread_memfill((uint8_t *)wsp + sizeof(Thread),
-                    (uint8_t *)wsp + sizeof(USBD2.wa_pump) - sizeof(Thread),
+    _thread_memfill((uint8_t *)wsp + sizeof(thread_t),
+                    (uint8_t *)wsp + sizeof(USBD2.wa_pump) - sizeof(thread_t),
                     CH_DBG_STACK_FILL_VALUE);
   }
 #endif /* CH_DBG_FILL_THREADS */
