@@ -112,7 +112,7 @@ static char *ftoa(char *p, double num) {
 void chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
   char *p, *s, c, filler;
   int i, precision, width;
-  bool_t is_long, left_align;
+  bool is_long, left_align;
   long l;
 #if CHPRINTF_USE_FLOAT
   float f;

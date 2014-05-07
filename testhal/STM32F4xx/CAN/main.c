@@ -39,21 +39,21 @@ static const CANConfig cancfg = {
 /*
  * Receiver thread.
  */
-static WORKING_AREA(can_rx1_wa, 256);
-static WORKING_AREA(can_rx2_wa, 256);
+static THD_WORKING_AREA(can_rx1_wa, 256);
+static THD_WORKING_AREA(can_rx2_wa, 256);
 static msg_t can_rx(void *p) {
   struct can_instance *cip = p;
-  EventListener el;
+  event_listener_t el;
   CANRxFrame rxmsg;
 
   (void)p;
   chRegSetThreadName("receiver");
   chEvtRegister(&cip->canp->rxfull_event, &el, 0);
-  while(!chThdShouldTerminate()) {
+  while(!chThdShouldTerminateX()) {
     if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(100)) == 0)
       continue;
     while (canReceive(cip->canp, CAN_ANY_MAILBOX,
-                      &rxmsg, TIME_IMMEDIATE) == RDY_OK) {
+                      &rxmsg, TIME_IMMEDIATE) == MSG_OK) {
       /* Process message.*/
       palTogglePad(GPIOD, cip->led);
     }
@@ -65,7 +65,7 @@ static msg_t can_rx(void *p) {
 /*
  * Transmitter thread.
  */
-static WORKING_AREA(can_tx_wa, 256);
+static THD_WORKING_AREA(can_tx_wa, 256);
 static msg_t can_tx(void * p) {
   CANTxFrame txmsg;
 
@@ -78,7 +78,7 @@ static msg_t can_tx(void * p) {
   txmsg.data32[0] = 0x55AA55AA;
   txmsg.data32[1] = 0x00FF00FF;
 
-  while (!chThdShouldTerminate()) {
+  while (!chThdShouldTerminateX()) {
     canTransmit(&CAND1, CAN_ANY_MAILBOX, &txmsg, MS2ST(100));
     canTransmit(&CAND2, CAN_ANY_MAILBOX, &txmsg, MS2ST(100));
     chThdSleepMilliseconds(500);

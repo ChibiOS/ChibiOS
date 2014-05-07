@@ -39,12 +39,12 @@ float ff2(float par1, float par2, float par3, float par4);
 /* Test related code.                                                        */
 /*===========================================================================*/
 
-static bool_t saturated;
+static bool saturated;
 
 /*
  * Test worker thread.
  */
-static WORKING_AREA(waWorkerThread, 128);
+static THD_WORKING_AREA(waWorkerThread, 128);
 static msg_t WorkerThread(void *arg) {
 
   (void)arg;
@@ -59,14 +59,14 @@ static msg_t WorkerThread(void *arg) {
     f4 = ff1(6.0f);
     f5 = ff2(f5, f4, f5, f4);
     if (f5 != 324.0f)
-      chSysHalt();
+      chSysHalt("float corrupion #1");
   }
 }
 
 /*
  * Test periodic thread.
  */
-static WORKING_AREA(waPeriodicThread, 128);
+static THD_WORKING_AREA(waPeriodicThread, 128);
 static msg_t PeriodicThread(void *arg) {
 
   (void)arg;
@@ -81,7 +81,7 @@ static msg_t PeriodicThread(void *arg) {
     f4 = ff1(7.0f);
     f5 = ff2(f5, f4, f5, f4);
     if (f5 != 484.0f)
-      chSysHalt();
+      chSysHalt("float corrupion #2");
     chThdSleepSeconds(1);
   }
 }
@@ -89,7 +89,7 @@ static msg_t PeriodicThread(void *arg) {
 /*
  * GPT2 callback.
  */
-static void gpt2cb(GPTDriver *gptp) {
+static void gpt4cb(GPTDriver *gptp) {
   float f1, f2, f3, f4, f5;
 
   (void)gptp;
@@ -101,7 +101,7 @@ static void gpt2cb(GPTDriver *gptp) {
   f4 = ff1(5.0f);
   f5 = ff2(f5, f4, f5, f4);
   if (f5 != 196.0f)
-    chSysHalt();
+    chSysHalt("float corrupion #3");
 }
 
 /*
@@ -119,15 +119,16 @@ static void gpt3cb(GPTDriver *gptp) {
   f4 = ff1(4.0f);
   f5 = ff2(f5, f4, f5, f4);
   if (f5 != 100.0f)
-    chSysHalt();
+    chSysHalt("float corrupion #4");
 }
 
 /*
  * GPT2 configuration.
  */
-static const GPTConfig gpt2cfg = {
+static const GPTConfig gpt4cfg = {
   1000000,  /* 1MHz timer clock.*/
-  gpt2cb,   /* Timer callback.*/
+  gpt4cb,   /* Timer callback.*/
+  0,
   0
 };
 
@@ -137,6 +138,7 @@ static const GPTConfig gpt2cfg = {
 static const GPTConfig gpt3cfg = {
   1000000,  /* 1MHz timer clock.*/
   gpt3cb,   /* Timer callback.*/
+  0,
   0
 };
 
@@ -197,7 +199,7 @@ int main(void) {
   sdStart(&SD2, NULL);          /* Default is 38400-8-N-1.*/
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
   palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
-  gptStart(&GPTD2, &gpt2cfg);
+  gptStart(&GPTD4, &gpt4cfg);
   gptStart(&GPTD3, &gpt3cfg);
 
   /*
@@ -218,19 +220,19 @@ int main(void) {
   println(CH_KERNEL_VERSION);
   print("*** Compiled:     ");
   println(__DATE__ " - " __TIME__);
-#ifdef CH_COMPILER_NAME
+#ifdef PORT_COMPILER_NAME
   print("*** Compiler:     ");
-  println(CH_COMPILER_NAME);
+  println(PORT_COMPILER_NAME);
 #endif
   print("*** Architecture: ");
-  println(CH_ARCHITECTURE_NAME);
-#ifdef CH_CORE_VARIANT_NAME
+  println(PORT_ARCHITECTURE_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
   print("*** Core Variant: ");
-  println(CH_CORE_VARIANT_NAME);
+  println(PORT_CORE_VARIANT_NAME);
 #endif
-#ifdef CH_PORT_INFO
+#ifdef PORT_INFO
   print("*** Port Info:    ");
-  println(CH_PORT_INFO);
+  println(PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
   print("*** Platform:     ");
@@ -260,10 +262,10 @@ int main(void) {
     saturated = FALSE;
     threshold = 0;
     for (interval = 2000; interval >= 10; interval -= interval / 10) {
-      gptStartContinuous(&GPTD2, interval - 1); /* Slightly out of phase.*/
+      gptStartContinuous(&GPTD4, interval - 1); /* Slightly out of phase.*/
       gptStartContinuous(&GPTD3, interval + 1); /* Slightly out of phase.*/
       chThdSleepMilliseconds(1000);
-      gptStopTimer(&GPTD2);
+      gptStopTimer(&GPTD4);
       gptStopTimer(&GPTD3);
       if (!saturated)
         print(".");
@@ -284,7 +286,7 @@ int main(void) {
     if (threshold > worst)
       worst = threshold;
   }
-  gptStopTimer(&GPTD2);
+  gptStopTimer(&GPTD4);
   gptStopTimer(&GPTD3);
 
   print("Worst case at ");

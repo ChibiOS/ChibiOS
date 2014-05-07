@@ -41,9 +41,6 @@
  */
 #define I2S_MODE_SLAVE          0
 #define I2S_MODE_MASTER         1
-#define I2S_MODE_TX             2
-#define I2S_MODE_RX             4
-#define I2S_MODE_TXRX           (I2S_MODE_TX | I2S_MODE_RX)
 /** @} */
 
 /*===========================================================================*/
@@ -69,11 +66,6 @@ typedef enum {
   I2S_COMPLETE = 4                  /**< Transmission complete.             */
 } i2sstate_t;
 
-/**
- * @brief   Type of a structure representing a I2S driver.
- */
-typedef struct I2SDriver I2SDriver;
-
 #include "i2s_lld.h"
 
 /*===========================================================================*/
@@ -88,23 +80,15 @@ typedef struct I2SDriver I2SDriver;
  * @brief   Starts a I2S data exchange.
  *
  * @param[in] i2sp      pointer to the @p I2SDriver object
+ * @param[in] n         size of the transmit buffer, must be even and greater
+ *                      than zero
+ * @param[out] txbuf    the pointer to the transmit buffer
+ * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @iclass
  */
 #define i2sStartExchangeI(i2sp) {                                           \
   i2s_lld_start_exchange(i2sp);                                             \
-  (i2sp)->state = I2S_ACTIVE;                                               \
-}
-
-/**
- * @brief   Starts a I2S data exchange in continuous mode.
- *
- * @param[in] i2sp      pointer to the @p I2SDriver object
- *
- * @iclass
- */
-#define i2sStartExchangeContinuousI(i2sp) {                                 \
-  i2s_lld_start_exchange_continuous(i2sp);                                  \
   (i2sp)->state = I2S_ACTIVE;                                               \
 }
 
@@ -122,6 +106,49 @@ typedef struct I2SDriver I2SDriver;
   (i2sp)->state = I2S_READY;                                                \
 }
 
+/**
+ * @brief   Common ISR code, half buffer event.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] i2sp      pointer to the @p I2CDriver object
+ *
+ * @notapi
+ */
+#define _i2s_isr_half_code(i2sp) {                                          \
+  if ((i2sp)->config->end_cb != NULL) {                                     \
+    (i2sp)->config->end_cb(i2sp, 0, (i2sp)->config->size / 2);              \
+  }                                                                         \
+}
+
+/**
+ * @brief   Common ISR code.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] i2sp      pointer to the @p I2CDriver object
+ *
+ * @notapi
+ */
+#define _i2s_isr_full_code(i2sp) {                                               \
+  if ((i2sp)->config->end_cb) {                                             \
+    (i2sp)->state = I2S_COMPLETE;                                           \
+    (i2sp)->config->end_cb(i2sp,                                            \
+                           (i2sp)->config->size / 2,                        \
+                           (i2sp)->config->size / 2);                       \
+    if ((i2sp)->state == I2S_COMPLETE)                                      \
+      (i2sp)->state = I2S_READY;                                            \
+  }                                                                         \
+  else                                                                      \
+    (i2sp)->state = I2S_READY;                                              \
+}
 /** @} */
 
 /*===========================================================================*/

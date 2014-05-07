@@ -31,7 +31,6 @@
 
 #include <string.h>
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
@@ -49,23 +48,23 @@
 /*===========================================================================*/
 
 /* Forward declarations required by mmc_vmt.*/
-static bool_t mmc_read(void *instance, uint32_t startblk,
+static bool mmc_read(void *instance, uint32_t startblk,
                        uint8_t *buffer, uint32_t n);
-static bool_t mmc_write(void *instance, uint32_t startblk,
+static bool mmc_write(void *instance, uint32_t startblk,
                         const uint8_t *buffer, uint32_t n);
 
 /**
  * @brief   Virtual methods table.
  */
 static const struct MMCDriverVMT mmc_vmt = {
-  (bool_t (*)(void *))mmc_lld_is_card_inserted,
-  (bool_t (*)(void *))mmc_lld_is_write_protected,
-  (bool_t (*)(void *))mmcConnect,
-  (bool_t (*)(void *))mmcDisconnect,
+  (bool (*)(void *))mmc_lld_is_card_inserted,
+  (bool (*)(void *))mmc_lld_is_write_protected,
+  (bool (*)(void *))mmcConnect,
+  (bool (*)(void *))mmcDisconnect,
   mmc_read,
   mmc_write,
-  (bool_t (*)(void *))mmcSync,
-  (bool_t (*)(void *, BlockDeviceInfo *))mmcGetInfo
+  (bool (*)(void *))mmcSync,
+  (bool (*)(void *, BlockDeviceInfo *))mmcGetInfo
 };
 
 /**
@@ -100,7 +99,7 @@ static const uint8_t crc7_lookup_table[256] = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static bool_t mmc_read(void *instance, uint32_t startblk,
+static bool mmc_read(void *instance, uint32_t startblk,
                 uint8_t *buffer, uint32_t n) {
 
   if (mmcStartSequentialRead((MMCDriver *)instance, startblk))
@@ -116,7 +115,7 @@ static bool_t mmc_read(void *instance, uint32_t startblk,
   return CH_SUCCESS;
 }
 
-static bool_t mmc_write(void *instance, uint32_t startblk,
+static bool mmc_write(void *instance, uint32_t startblk,
                  const uint8_t *buffer, uint32_t n) {
 
   if (mmcStartSequentialWrite((MMCDriver *)instance, startblk))
@@ -298,7 +297,7 @@ static uint8_t send_command_R3(MMCDriver *mmcp, uint8_t cmd, uint32_t arg,
  *
  * @notapi
  */
-static bool_t read_CxD(MMCDriver *mmcp, uint8_t cmd, uint32_t cxd[4]) {
+static bool read_CxD(MMCDriver *mmcp, uint8_t cmd, uint32_t cxd[4]) {
   unsigned i;
   uint8_t *bp, buf[16];
 
@@ -395,9 +394,9 @@ void mmcObjectInit(MMCDriver *mmcp) {
  */
 void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
 
-  chDbgCheck((mmcp != NULL) && (config != NULL), "mmcStart");
-  chDbgAssert((mmcp->state == BLK_STOP) || (mmcp->state == BLK_ACTIVE),
-              "mmcStart(), #1", "invalid state");
+  osalDbgCheck((mmcp != NULL) && (config != NULL));
+  osalDbgAssert((mmcp->state == BLK_STOP) || (mmcp->state == BLK_ACTIVE),
+                "invalid state");
 
   mmcp->config = config;
   mmcp->state = BLK_ACTIVE;
@@ -412,9 +411,9 @@ void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
  */
 void mmcStop(MMCDriver *mmcp) {
 
-  chDbgCheck(mmcp != NULL, "mmcStop");
-  chDbgAssert((mmcp->state == BLK_STOP) || (mmcp->state == BLK_ACTIVE),
-              "mmcStop(), #1", "invalid state");
+  osalDbgCheck(mmcp != NULL);
+  osalDbgAssert((mmcp->state == BLK_STOP) || (mmcp->state == BLK_ACTIVE),
+                "invalid state");
 
   spiStop(mmcp->config->spip);
   mmcp->state = BLK_STOP;
@@ -437,14 +436,14 @@ void mmcStop(MMCDriver *mmcp) {
  *
  * @api
  */
-bool_t mmcConnect(MMCDriver *mmcp) {
+bool mmcConnect(MMCDriver *mmcp) {
   unsigned i;
   uint8_t r3[4];
 
-  chDbgCheck(mmcp != NULL, "mmcConnect");
+  osalDbgCheck(mmcp != NULL);
 
-  chDbgAssert((mmcp->state == BLK_ACTIVE) || (mmcp->state == BLK_READY),
-              "mmcConnect(), #1", "invalid state");
+  osalDbgAssert((mmcp->state == BLK_ACTIVE) || (mmcp->state == BLK_READY),
+                "invalid state");
 
   /* Connection procedure in progress.*/
   mmcp->state = BLK_CONNECTING;
@@ -545,19 +544,19 @@ failed:
  *
  * @api
  */
-bool_t mmcDisconnect(MMCDriver *mmcp) {
+bool mmcDisconnect(MMCDriver *mmcp) {
 
-  chDbgCheck(mmcp != NULL, "mmcDisconnect");
+  osalDbgCheck(mmcp != NULL);
 
-  chSysLock();
-  chDbgAssert((mmcp->state == BLK_ACTIVE) || (mmcp->state == BLK_READY),
-              "mmcDisconnect(), #1", "invalid state");
+  osalSysLock();
+  osalDbgAssert((mmcp->state == BLK_ACTIVE) || (mmcp->state == BLK_READY),
+                "invalid state");
   if (mmcp->state == BLK_ACTIVE) {
-    chSysUnlock();
+    osalSysUnlock();
     return CH_SUCCESS;
   }
   mmcp->state = BLK_DISCONNECTING;
-  chSysUnlock();
+  osalSysUnlock();
 
   /* Wait for the pending write operations to complete.*/
   spiStart(mmcp->config->spip, mmcp->config->hscfg);
@@ -580,11 +579,10 @@ bool_t mmcDisconnect(MMCDriver *mmcp) {
  *
  * @api
  */
-bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
+bool mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
 
-  chDbgCheck(mmcp != NULL, "mmcStartSequentialRead");
-  chDbgAssert(mmcp->state == BLK_READY,
-              "mmcStartSequentialRead(), #1", "invalid state");
+  osalDbgCheck(mmcp != NULL);
+  osalDbgAssert(mmcp->state == BLK_READY, "invalid state");
 
   /* Read operation in progress.*/
   mmcp->state = BLK_READING;
@@ -619,10 +617,10 @@ bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk) {
  *
  * @api
  */
-bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
+bool mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
   int i;
 
-  chDbgCheck((mmcp != NULL) && (buffer != NULL), "mmcSequentialRead");
+  osalDbgCheck((mmcp != NULL) && (buffer != NULL));
 
   if (mmcp->state != BLK_READING)
     return CH_FAILED;
@@ -654,11 +652,11 @@ bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer) {
  *
  * @api
  */
-bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
+bool mmcStopSequentialRead(MMCDriver *mmcp) {
   static const uint8_t stopcmd[] = {0x40 | MMCSD_CMD_STOP_TRANSMISSION,
                                     0, 0, 0, 0, 1, 0xFF};
 
-  chDbgCheck(mmcp != NULL, "mmcStopSequentialRead");
+  osalDbgCheck(mmcp != NULL);
 
   if (mmcp->state != BLK_READING)
     return CH_FAILED;
@@ -686,11 +684,10 @@ bool_t mmcStopSequentialRead(MMCDriver *mmcp) {
  *
  * @api
  */
-bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
+bool mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
 
-  chDbgCheck(mmcp != NULL, "mmcStartSequentialWrite");
-  chDbgAssert(mmcp->state == BLK_READY,
-              "mmcStartSequentialWrite(), #1", "invalid state");
+  osalDbgCheck(mmcp != NULL);
+  osalDbgAssert(mmcp->state == BLK_READY, "invalid state");
 
   /* Write operation in progress.*/
   mmcp->state = BLK_WRITING;
@@ -723,11 +720,11 @@ bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk) {
  *
  * @api
  */
-bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
+bool mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
   static const uint8_t start[] = {0xFF, 0xFC};
   uint8_t b[1];
 
-  chDbgCheck((mmcp != NULL) && (buffer != NULL), "mmcSequentialWrite");
+  osalDbgCheck((mmcp != NULL) && (buffer != NULL));
 
   if (mmcp->state != BLK_WRITING)
     return CH_FAILED;
@@ -759,10 +756,10 @@ bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer) {
  *
  * @api
  */
-bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
+bool mmcStopSequentialWrite(MMCDriver *mmcp) {
   static const uint8_t stop[] = {0xFD, 0xFF};
 
-  chDbgCheck(mmcp != NULL, "mmcStopSequentialWrite");
+  osalDbgCheck(mmcp != NULL);
 
   if (mmcp->state != BLK_WRITING)
     return CH_FAILED;
@@ -786,9 +783,9 @@ bool_t mmcStopSequentialWrite(MMCDriver *mmcp) {
  *
  * @api
  */
-bool_t mmcSync(MMCDriver *mmcp) {
+bool mmcSync(MMCDriver *mmcp) {
 
-  chDbgCheck(mmcp != NULL, "mmcSync");
+  osalDbgCheck(mmcp != NULL);
 
   if (mmcp->state != BLK_READY)
     return CH_FAILED;
@@ -816,9 +813,9 @@ bool_t mmcSync(MMCDriver *mmcp) {
  *
  * @api
  */
-bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip) {
+bool mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip) {
 
-  chDbgCheck((mmcp != NULL) && (bdip != NULL), "mmcGetInfo");
+  osalDbgCheck((mmcp != NULL) && (bdip != NULL));
 
   if (mmcp->state != BLK_READY)
     return CH_FAILED;
@@ -842,9 +839,9 @@ bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip) {
  *
  * @api
  */
-bool_t mmcErase(MMCDriver *mmcp, uint32_t startblk, uint32_t endblk) {
+bool mmcErase(MMCDriver *mmcp, uint32_t startblk, uint32_t endblk) {
 
-  chDbgCheck((mmcp != NULL), "mmcErase");
+  osalDbgCheck((mmcp != NULL));
 
   /* Erase operation in progress.*/
   mmcp->state = BLK_WRITING;

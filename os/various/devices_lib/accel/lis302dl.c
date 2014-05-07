@@ -22,7 +22,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 #include "lis302dl.h"
 
@@ -81,7 +80,7 @@ void lis302dlWriteRegister(SPIDriver *spip, uint8_t reg, uint8_t value) {
   default:
     /* Reserved register must not be written, according to the datasheet
        this could permanently damage the device.*/
-    chDbgAssert(FALSE, "lis302dlWriteRegister(), #1", "reserved register");
+    osalDbgAssert(FALSE, "reserved register");
   case LIS302DL_WHO_AM_I:
   case LIS302DL_HP_FILTER_RESET:
   case LIS302DL_STATUS_REG:

@@ -67,10 +67,10 @@ static msg_t put(void *ip, uint8_t b) {
   MemoryStream *msp = ip;
 
   if (msp->size - msp->eos <= 0)
-    return RDY_RESET;
+    return MSG_RESET;
   *(msp->buffer + msp->eos) = b;
   msp->eos += 1;
-  return RDY_OK;
+  return MSG_OK;
 }
 
 static msg_t get(void *ip) {
@@ -78,7 +78,7 @@ static msg_t get(void *ip) {
   MemoryStream *msp = ip;
 
   if (msp->eos - msp->offset <= 0)
-    return RDY_RESET;
+    return MSG_RESET;
   b = *(msp->buffer + msp->offset);
   msp->offset += 1;
   return b;

@@ -31,13 +31,6 @@
 #include "mcuconf.h"
 
 /**
- * @brief   Enables the TM subsystem.
- */
-#if !defined(HAL_USE_TM) || defined(__DOXYGEN__)
-#define HAL_USE_TM                  TRUE
-#endif
-
-/**
  * @brief   Enables the PAL subsystem.
  */
 #if !defined(HAL_USE_PAL) || defined(__DOXYGEN__)
@@ -77,6 +70,12 @@
  */
 #if !defined(HAL_USE_I2C) || defined(__DOXYGEN__)
 #define HAL_USE_I2C                 FALSE
+#endif
+/**
+ * @brief   Enables the I2S subsystem.
+ */
+#if !defined(HAL_USE_I2S) || defined(__DOXYGEN__)
+#define HAL_USE_I2S                 FALSE
 #endif
 
 /**

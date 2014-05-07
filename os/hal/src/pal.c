@@ -26,7 +26,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)
@@ -69,8 +68,7 @@
  */
 ioportmask_t palReadBus(IOBus *bus) {
 
-  chDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH),
-             "palReadBus");
+  osalDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH));
 
   return palReadGroup(bus->portid, bus->mask, bus->offset);
 }
@@ -95,8 +93,7 @@ ioportmask_t palReadBus(IOBus *bus) {
  */
 void palWriteBus(IOBus *bus, ioportmask_t bits) {
 
-  chDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH),
-             "palWriteBus");
+  osalDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH));
 
   palWriteGroup(bus->portid, bus->mask, bus->offset, bits);
 }
@@ -119,8 +116,7 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
  */
 void palSetBusMode(IOBus *bus, iomode_t mode) {
 
-  chDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH),
-             "palSetBusMode");
+  osalDbgCheck((bus != NULL) && (bus->offset < PAL_IOPORTS_WIDTH));
 
   palSetGroupMode(bus->portid, bus->mask, bus->offset, mode);
 }

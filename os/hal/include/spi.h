@@ -64,10 +64,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if SPI_USE_MUTUAL_EXCLUSION && !CH_USE_MUTEXES && !CH_USE_SEMAPHORES
-#error "SPI_USE_MUTUAL_EXCLUSION requires CH_USE_MUTEXES and/or CH_USE_SEMAPHORES"
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -229,12 +225,7 @@ typedef enum {
  *
  * @notapi
  */
-#define _spi_wait_s(spip) {                                                 \
-  chDbgAssert((spip)->thread == NULL,                                       \
-              "_spi_wait(), #1", "already waiting");                        \
-  (spip)->thread = chThdSelf();                                             \
-  chSchGoSleepS(THD_STATE_SUSPENDED);                                       \
-}
+#define _spi_wait_s(spip) osalThreadSuspendS(&(spip)->thread)
 
 /**
  * @brief   Wakes up the waiting thread.
@@ -244,14 +235,9 @@ typedef enum {
  * @notapi
  */
 #define _spi_wakeup_isr(spip) {                                             \
-  chSysLockFromIsr();                                                       \
-  if ((spip)->thread != NULL) {                                             \
-    Thread *tp = (spip)->thread;                                            \
-    (spip)->thread = NULL;                                                  \
-    tp->p_u.rdymsg = RDY_OK;                                                \
-    chSchReadyI(tp);                                                        \
-  }                                                                         \
-  chSysUnlockFromIsr();                                                     \
+  osalSysLockFromISR();                                                     \
+  osalThreadResumeI(&(spip)->thread, MSG_OK);                               \
+  osalSysUnlockFromISR();                                                   \
 }
 #else /* !SPI_USE_WAIT */
 #define _spi_wait_s(spip)

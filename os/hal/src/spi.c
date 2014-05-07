@@ -26,7 +26,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_SPI || defined(__DOXYGEN__)
@@ -78,11 +77,7 @@ void spiObjectInit(SPIDriver *spip) {
   spip->thread = NULL;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION
-#if CH_USE_MUTEXES
-  chMtxInit(&spip->mutex);
-#else
-  chSemInit(&spip->semaphore, 1);
-#endif
+  osalMutexObjectInit(&spip->mutex);
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 #if defined(SPI_DRIVER_EXT_INIT_HOOK)
   SPI_DRIVER_EXT_INIT_HOOK(spip);
@@ -99,15 +94,15 @@ void spiObjectInit(SPIDriver *spip) {
  */
 void spiStart(SPIDriver *spip, const SPIConfig *config) {
 
-  chDbgCheck((spip != NULL) && (config != NULL), "spiStart");
+  osalDbgCheck((spip != NULL) && (config != NULL));
 
-  chSysLock();
-  chDbgAssert((spip->state == SPI_STOP) || (spip->state == SPI_READY),
-              "spiStart(), #1", "invalid state");
+  osalSysLock();
+  osalDbgAssert((spip->state == SPI_STOP) || (spip->state == SPI_READY),
+                "invalid state");
   spip->config = config;
   spi_lld_start(spip);
   spip->state = SPI_READY;
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -121,14 +116,14 @@ void spiStart(SPIDriver *spip, const SPIConfig *config) {
  */
 void spiStop(SPIDriver *spip) {
 
-  chDbgCheck(spip != NULL, "spiStop");
+  osalDbgCheck(spip != NULL);
 
-  chSysLock();
-  chDbgAssert((spip->state == SPI_STOP) || (spip->state == SPI_READY),
-              "spiStop(), #1", "invalid state");
+  osalSysLock();
+  osalDbgAssert((spip->state == SPI_STOP) || (spip->state == SPI_READY),
+                "invalid state");
   spi_lld_stop(spip);
   spip->state = SPI_STOP;
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -140,12 +135,12 @@ void spiStop(SPIDriver *spip) {
  */
 void spiSelect(SPIDriver *spip) {
 
-  chDbgCheck(spip != NULL, "spiSelect");
+  osalDbgCheck(spip != NULL);
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiSelect(), #1", "not ready");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiSelectI(spip);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -158,12 +153,12 @@ void spiSelect(SPIDriver *spip) {
  */
 void spiUnselect(SPIDriver *spip) {
 
-  chDbgCheck(spip != NULL, "spiUnselect");
+  osalDbgCheck(spip != NULL);
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiUnselect(), #1", "not ready");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiUnselectI(spip);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -181,12 +176,12 @@ void spiUnselect(SPIDriver *spip) {
  */
 void spiStartIgnore(SPIDriver *spip, size_t n) {
 
-  chDbgCheck((spip != NULL) && (n > 0), "spiStartIgnore");
+  osalDbgCheck((spip != NULL) && (n > 0));
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiStartIgnore(), #1", "not ready");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiStartIgnoreI(spip, n);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -209,13 +204,12 @@ void spiStartIgnore(SPIDriver *spip, size_t n) {
 void spiStartExchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
 
-  chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL) && (txbuf != NULL),
-             "spiStartExchange");
+  osalDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL) && (txbuf != NULL));
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiStartExchange(), #1", "not ready");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiStartExchangeI(spip, n, txbuf, rxbuf);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -235,13 +229,12 @@ void spiStartExchange(SPIDriver *spip, size_t n,
  */
 void spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
-  chDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL),
-             "spiStartSend");
+  osalDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL));
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiStartSend(), #1", "not ready");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiStartSendI(spip, n, txbuf);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -261,13 +254,12 @@ void spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
 
-  chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL),
-             "spiStartReceive");
+  osalDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL));
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiStartReceive(), #1", "not ready");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiStartReceiveI(spip, n, rxbuf);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
@@ -287,14 +279,14 @@ void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
  */
 void spiIgnore(SPIDriver *spip, size_t n) {
 
-  chDbgCheck((spip != NULL) && (n > 0), "spiIgnoreWait");
+  osalDbgCheck((spip != NULL) && (n > 0));
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiIgnore(), #1", "not ready");
-  chDbgAssert(spip->config->end_cb == NULL, "spiIgnore(), #2", "has callback");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
+  osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartIgnoreI(spip, n);
   _spi_wait_s(spip);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -318,16 +310,15 @@ void spiIgnore(SPIDriver *spip, size_t n) {
 void spiExchange(SPIDriver *spip, size_t n,
                  const void *txbuf, void *rxbuf) {
 
-  chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL) && (txbuf != NULL),
-             "spiExchange");
+  osalDbgCheck((spip != NULL) && (n > 0) &&
+               (rxbuf != NULL) && (txbuf != NULL));
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiExchange(), #1", "not ready");
-  chDbgAssert(spip->config->end_cb == NULL,
-              "spiExchange(), #2", "has callback");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
+  osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartExchangeI(spip, n, txbuf, rxbuf);
   _spi_wait_s(spip);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -348,14 +339,14 @@ void spiExchange(SPIDriver *spip, size_t n,
  */
 void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
-  chDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL), "spiSend");
+  osalDbgCheck((spip != NULL) && (n > 0) && (txbuf != NULL));
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiSend(), #1", "not ready");
-  chDbgAssert(spip->config->end_cb == NULL, "spiSend(), #2", "has callback");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
+  osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartSendI(spip, n, txbuf);
   _spi_wait_s(spip);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -376,16 +367,14 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
 
-  chDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL),
-             "spiReceive");
+  osalDbgCheck((spip != NULL) && (n > 0) && (rxbuf != NULL));
 
-  chSysLock();
-  chDbgAssert(spip->state == SPI_READY, "spiReceive(), #1", "not ready");
-  chDbgAssert(spip->config->end_cb == NULL,
-              "spiReceive(), #2", "has callback");
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
+  osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartReceiveI(spip, n, rxbuf);
   _spi_wait_s(spip);
-  chSysUnlock();
+  osalSysUnlock();
 }
 #endif /* SPI_USE_WAIT */
 
@@ -403,13 +392,9 @@ void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
  */
 void spiAcquireBus(SPIDriver *spip) {
 
-  chDbgCheck(spip != NULL, "spiAcquireBus");
+  osalDbgCheck(spip != NULL);
 
-#if CH_USE_MUTEXES
-  chMtxLock(&spip->mutex);
-#elif CH_USE_SEMAPHORES
-  chSemWait(&spip->semaphore);
-#endif
+  osalMutexLock(&spip->mutex);
 }
 
 /**
@@ -423,14 +408,9 @@ void spiAcquireBus(SPIDriver *spip) {
  */
 void spiReleaseBus(SPIDriver *spip) {
 
-  chDbgCheck(spip != NULL, "spiReleaseBus");
+  osalDbgCheck(spip != NULL);
 
-#if CH_USE_MUTEXES
-  (void)spip;
-  chMtxUnlock();
-#elif CH_USE_SEMAPHORES
-  chSemSignal(&spip->semaphore);
-#endif
+  osalMutexUnlock(&spip->mutex);
 }
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 

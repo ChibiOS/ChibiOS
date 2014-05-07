@@ -17,20 +17,21 @@
 #include "ch.h"
 #include "hal.h"
 
-static VirtualTimer vt1, vt2;
+static virtual_timer_t vt1, vt2;
 
 static void restart(void *p) {
 
   (void)p;
 
-  chSysLockFromIsr();
+  chSysLockFromISR();
   uartStartSendI(&UARTD2, 14, "Hello World!\r\n");
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 static void ledoff(void *p) {
 
   (void)p;
+
   palSetPad(IOPORT3, GPIOC_LED);
 }
 
@@ -41,6 +42,7 @@ static void ledoff(void *p) {
 static void txend1(UARTDriver *uartp) {
 
   (void)uartp;
+
   palClearPad(IOPORT3, GPIOC_LED);
 }
 
@@ -50,12 +52,12 @@ static void txend1(UARTDriver *uartp) {
 static void txend2(UARTDriver *uartp) {
 
   (void)uartp;
+
   palSetPad(IOPORT3, GPIOC_LED);
-  chSysLockFromIsr();
-  if (chVTIsArmedI(&vt1))
-    chVTResetI(&vt1);
-  chVTSetI(&vt1, MS2ST(5000), restart, NULL);
-  chSysUnlockFromIsr();
+  chSysLockFromISR();
+  chVTResetI(&vt1);
+  chVTDoSetI(&vt1, MS2ST(5000), restart, NULL);
+  chSysUnlockFromISR();
 }
 
 /*
@@ -76,13 +78,13 @@ static void rxchar(UARTDriver *uartp, uint16_t c) {
 
   (void)uartp;
   (void)c;
+
   /* Flashing the LED each time a character is received.*/
   palClearPad(IOPORT3, GPIOC_LED);
-  chSysLockFromIsr();
-  if (chVTIsArmedI(&vt2))
-    chVTResetI(&vt2);
-  chVTSetI(&vt2, MS2ST(200), ledoff, NULL);
-  chSysUnlockFromIsr();
+  chSysLockFromISR();
+  chVTResetI(&vt2);
+  chVTDoSetI(&vt2, MS2ST(200), ledoff, NULL);
+  chSysUnlockFromISR();
 }
 
 /*

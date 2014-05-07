@@ -32,7 +32,7 @@
 /**
  * @brief   Shell termination event source.
  */
-EventSource shell_terminated;
+event_source_t shell_terminated;
 
 static char *_strtok(char *str, const char *delim, char **saveptr) {
   char *token;
@@ -73,15 +73,15 @@ static void cmd_info(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   chprintf(chp, "Kernel:       %s\r\n", CH_KERNEL_VERSION);
-#ifdef CH_COMPILER_NAME
-  chprintf(chp, "Compiler:     %s\r\n", CH_COMPILER_NAME);
+#ifdef PORT_COMPILER_NAME
+  chprintf(chp, "Compiler:     %s\r\n", PORT_COMPILER_NAME);
 #endif
-  chprintf(chp, "Architecture: %s\r\n", CH_ARCHITECTURE_NAME);
-#ifdef CH_CORE_VARIANT_NAME
-  chprintf(chp, "Core Variant: %s\r\n", CH_CORE_VARIANT_NAME);
+  chprintf(chp, "Architecture: %s\r\n", PORT_ARCHITECTURE_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
+  chprintf(chp, "Core Variant: %s\r\n", PORT_CORE_VARIANT_NAME);
 #endif
-#ifdef CH_PORT_INFO
-  chprintf(chp, "Port Info:    %s\r\n", CH_PORT_INFO);
+#ifdef PORT_INFO
+  chprintf(chp, "Port Info:    %s\r\n", PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
   chprintf(chp, "Platform:     %s\r\n", PLATFORM_NAME);
@@ -103,7 +103,7 @@ static void cmd_systime(BaseSequentialStream *chp, int argc, char *argv[]) {
     usage(chp, "systime");
     return;
   }
-  chprintf(chp, "%lu\r\n", (unsigned long)chTimeNow());
+  chprintf(chp, "%lu\r\n", (unsigned long)chVTGetSystemTime());
 }
 
 /**
@@ -115,7 +115,7 @@ static ShellCommand local_commands[] = {
   {NULL, NULL}
 };
 
-static bool_t cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
+static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
                       char *name, int argc, char *argv[]) {
 
   while (scp->sc_name != NULL) {
@@ -133,10 +133,8 @@ static bool_t cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
  *
  * @param[in] p         pointer to a @p BaseSequentialStream object
  * @return              Termination reason.
- * @retval RDY_OK       terminated by command.
- * @retval RDY_RESET    terminated by reset condition on the I/O channel.
- *
- * @notapi
+ * @retval MSG_OK       terminated by command.
+ * @retval MSG_RESET    terminated by reset condition on the I/O channel.
  */
 static msg_t shell_thread(void *p) {
   int n;
@@ -191,7 +189,7 @@ static msg_t shell_thread(void *p) {
       }
     }
   }
-  shellExit(RDY_OK);
+  shellExit(MSG_OK);
   /* Never executed, silencing a warning.*/
   return 0;
 }
@@ -203,7 +201,7 @@ static msg_t shell_thread(void *p) {
  */
 void shellInit(void) {
 
-  chEvtInit(&shell_terminated);
+  chEvtObjectInit(&shell_terminated);
 }
 
 /**
@@ -226,7 +224,7 @@ void shellExit(msg_t msg) {
 
 /**
  * @brief   Spawns a new shell.
- * @pre     @p CH_USE_HEAP and @p CH_USE_DYNAMIC must be enabled.
+ * @pre     @p CH_CFG_USE_HEAP and @p CH_CFG_USE_DYNAMIC must be enabled.
  *
  * @param[in] scp       pointer to a @p ShellConfig object
  * @param[in] size      size of the shell working area to be allocated
@@ -236,8 +234,8 @@ void shellExit(msg_t msg) {
  *
  * @api
  */
-#if CH_USE_HEAP && CH_USE_DYNAMIC
-Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
+#if CH_CFG_USE_HEAP && CH_CFG_USE_DYNAMIC
+thread_t *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
 
   return chThdCreateFromHeap(NULL, size, prio, shell_thread, (void *)scp);
 }
@@ -254,8 +252,8 @@ Thread *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
  *
  * @api
  */
-Thread *shellCreateStatic(const ShellConfig *scp, void *wsp,
-                          size_t size, tprio_t prio) {
+thread_t *shellCreateStatic(const ShellConfig *scp, void *wsp,
+                            size_t size, tprio_t prio) {
 
   return chThdCreateStatic(wsp, size, prio, shell_thread, (void *)scp);
 }
@@ -272,7 +270,7 @@ Thread *shellCreateStatic(const ShellConfig *scp, void *wsp,
  *
  * @api
  */
-bool_t shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
+bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
   char *p = line;
 
   while (TRUE) {

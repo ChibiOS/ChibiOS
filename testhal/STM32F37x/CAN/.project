@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/boards/ST_STM32373C_EVAL</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/ST_STM32373C_EVAL</locationURI>
 		</link>
 		<link>
 			<name>os</name>

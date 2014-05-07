@@ -26,7 +26,6 @@
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_I2S || defined(__DOXYGEN__)
@@ -86,15 +85,15 @@ void i2sObjectInit(I2SDriver *i2sp) {
  */
 void i2sStart(I2SDriver *i2sp, const I2SConfig *config) {
 
-  chDbgCheck((i2sp != NULL) && (config != NULL), "i2sStart");
+  osalDbgCheck((i2sp != NULL) && (config != NULL));
 
-  chSysLock();
-  chDbgAssert((i2sp->state == I2S_STOP) || (i2sp->state == I2S_READY),
-              "i2sStart(), #1", "invalid state");
+  osalSysLock();
+  osalDbgAssert((i2sp->state == I2S_STOP) || (i2sp->state == I2S_READY),
+                "invalid state");
   i2sp->config = config;
   i2s_lld_start(i2sp);
   i2sp->state = I2S_READY;
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -106,14 +105,14 @@ void i2sStart(I2SDriver *i2sp, const I2SConfig *config) {
  */
 void i2sStop(I2SDriver *i2sp) {
 
-  chDbgCheck(i2sp != NULL, "i2sStop");
+  osalDbgCheck(i2sp != NULL);
 
-  chSysLock();
-  chDbgAssert((i2sp->state == I2S_STOP) || (i2sp->state == I2S_READY),
-              "i2sStop(), #1", "invalid state");
+  osalSysLock();
+  osalDbgAssert((i2sp->state == I2S_STOP) || (i2sp->state == I2S_READY),
+                "invalid state");
   i2s_lld_stop(i2sp);
   i2sp->state = I2S_STOP;
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -125,31 +124,12 @@ void i2sStop(I2SDriver *i2sp) {
  */
 void i2sStartExchange(I2SDriver *i2sp) {
 
-  chDbgCheck(i2sp != NULL "i2sStartExchange");
+  osalDbgCheck(i2sp != NULL);
 
-  chSysLock();
-  chDbgAssert(i2sp->state == I2S_READY,
-              "i2sStartExchange(), #1", "not ready");
+  osalSysLock();
+  osalDbgAssert(i2sp->state == I2S_READY, "not ready");
   i2sStartExchangeI(i2sp);
-  chSysUnlock();
-}
-
-/**
- * @brief   Starts a I2S data exchange in continuous mode.
- *
- * @param[in] i2sp      pointer to the @p I2SDriver object
- *
- * @api
- */
-void i2sStartExchangeContinuous(I2SDriver *i2sp) {
-
-  chDbgCheck(i2sp != NULL "i2sStartExchangeContinuous");
-
-  chSysLock();
-  chDbgAssert(i2sp->state == I2S_READY,
-              "i2sStartExchangeContinuous(), #1", "not ready");
-  i2sStartExchangeContinuousI(i2sp);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -163,15 +143,15 @@ void i2sStartExchangeContinuous(I2SDriver *i2sp) {
  */
 void i2sStopExchange(I2SDriver *i2sp) {
 
-  chDbgCheck((i2sp != NULL), "i2sStopExchange");
+  osalDbgCheck((i2sp != NULL));
 
-  chSysLock();
-  chDbgAssert((i2sp->state == I2S_READY) ||
-              (i2sp->state == I2S_ACTIVE) ||
-              (i2sp->state == I2S_COMPLETE),
-              "i2sStopExchange(), #1", "not ready");
+  osalSysLock();
+  osalDbgAssert((i2sp->state == I2S_READY) ||
+                (i2sp->state == I2S_ACTIVE) ||
+                (i2sp->state == I2S_COMPLETE),
+                "invalid state");
   i2sStopExchangeI(i2sp);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 #endif /* HAL_USE_I2S */

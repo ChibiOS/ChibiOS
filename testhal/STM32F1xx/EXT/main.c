@@ -17,7 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 
-static VirtualTimer vt;
+static virtual_timer_t vt;
 
 /* LED set to OFF after 200mS.*/
 static void ledoff(void *arg) {
@@ -32,10 +32,9 @@ static void extcb1(EXTDriver *extp, expchannel_t channel) {
   (void)extp;
   (void)channel;
   palClearPad(GPIOC, GPIOC_LED);
-  chSysLockFromIsr();
-  if (!chVTIsArmedI(&vt))
-    chVTSetI(&vt, MS2ST(200), ledoff, NULL);
-  chSysUnlockFromIsr();
+  chSysLockFromISR();
+  chVTSetI(&vt, MS2ST(200), ledoff, NULL);
+  chSysUnlockFromISR();
 }
 
 /* Triggered when the LED goes OFF.*/

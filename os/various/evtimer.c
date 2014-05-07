@@ -25,40 +25,61 @@
 #include "ch.h"
 #include "evtimer.h"
 
-static void tmrcb(void *p) {
-  EvTimer *etp = p;
+/*===========================================================================*/
+/* Module local definitions.                                                 */
+/*===========================================================================*/
 
-  chSysLockFromIsr();
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+static void tmrcb(void *p) {
+  event_timer_t *etp = p;
+
+  chSysLockFromISR();
   chEvtBroadcastI(&etp->et_es);
-  chVTSetI(&etp->et_vt, etp->et_interval, tmrcb, etp);
-  chSysUnlockFromIsr();
+  chVTDoSetI(&etp->et_vt, etp->et_interval, tmrcb, etp);
+  chSysUnlockFromISR();
+}
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
+/**
+ * @brief Initializes an @p event_timer_t structure.
+ *
+ * @param[out] etp      the @p event_timer_t structure to be initialized
+ * @param[in] time      the interval in system ticks
+ */
+void evtObjectInit(event_timer_t *etp, systime_t time) {
+
+  chEvtObjectInit(&etp->et_es);
+  chVTObjectInit(&etp->et_vt);
+  etp->et_interval = time;
 }
 
 /**
- * @brief Starts the timer
+ * @brief   Starts the timer
  * @details If the timer was already running then the function has no effect.
  *
- * @param etp pointer to an initialized @p EvTimer structure.
+ * @param[in] etp       pointer to an initialized @p event_timer_t structure.
  */
-void evtStart(EvTimer *etp) {
+void evtStart(event_timer_t *etp) {
 
-  chSysLock();
-
-  if (!chVTIsArmedI(&etp->et_vt))
-    chVTSetI(&etp->et_vt, etp->et_interval, tmrcb, etp);
-
-  chSysUnlock();
-}
-
-/**
- * @brief Stops the timer.
- * @details If the timer was already stopped then the function has no effect.
- *
- * @param etp pointer to an initialized @p EvTimer structure.
- */
-void evtStop(EvTimer *etp) {
-
-  chVTReset(&etp->et_vt);
+  chVTSet(&etp->et_vt, etp->et_interval, tmrcb, etp);
 }
 
 /** @} */

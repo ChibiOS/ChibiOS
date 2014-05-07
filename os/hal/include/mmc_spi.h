@@ -124,7 +124,7 @@ typedef struct {
   /***
    * @brief Addresses use blocks instead of bytes.
    */
-  bool_t                block_addresses;
+  bool                block_addresses;
 } MMCDriver;
 
 /*===========================================================================*/
@@ -175,19 +175,19 @@ extern "C" {
   void mmcObjectInit(MMCDriver *mmcp);
   void mmcStart(MMCDriver *mmcp, const MMCConfig *config);
   void mmcStop(MMCDriver *mmcp);
-  bool_t mmcConnect(MMCDriver *mmcp);
-  bool_t mmcDisconnect(MMCDriver *mmcp);
-  bool_t mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk);
-  bool_t mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer);
-  bool_t mmcStopSequentialRead(MMCDriver *mmcp);
-  bool_t mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk);
-  bool_t mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer);
-  bool_t mmcStopSequentialWrite(MMCDriver *mmcp);
-  bool_t mmcSync(MMCDriver *mmcp);
-  bool_t mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip);
-  bool_t mmcErase(MMCDriver *mmcp, uint32_t startblk, uint32_t endblk);
-  bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp);
-  bool_t mmc_lld_is_write_protected(MMCDriver *mmcp);
+  bool mmcConnect(MMCDriver *mmcp);
+  bool mmcDisconnect(MMCDriver *mmcp);
+  bool mmcStartSequentialRead(MMCDriver *mmcp, uint32_t startblk);
+  bool mmcSequentialRead(MMCDriver *mmcp, uint8_t *buffer);
+  bool mmcStopSequentialRead(MMCDriver *mmcp);
+  bool mmcStartSequentialWrite(MMCDriver *mmcp, uint32_t startblk);
+  bool mmcSequentialWrite(MMCDriver *mmcp, const uint8_t *buffer);
+  bool mmcStopSequentialWrite(MMCDriver *mmcp);
+  bool mmcSync(MMCDriver *mmcp);
+  bool mmcGetInfo(MMCDriver *mmcp, BlockDeviceInfo *bdip);
+  bool mmcErase(MMCDriver *mmcp, uint32_t startblk, uint32_t endblk);
+  bool mmc_lld_is_card_inserted(MMCDriver *mmcp);
+  bool mmc_lld_is_write_protected(MMCDriver *mmcp);
 #ifdef __cplusplus
 }
 #endif

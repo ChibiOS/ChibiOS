@@ -17,7 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 
-static VirtualTimer vt3, vt4, vt5;
+static virtual_timer_t vt3, vt4, vt5;
 
 static const uint8_t message[] = "0123456789ABCDEF";
 static uint8_t buffer[16];
@@ -56,11 +56,10 @@ static void txend2(UARTDriver *uartp) {
 
   (void)uartp;
   palSetPad(GPIOD, GPIOD_LED5);
-  chSysLockFromIsr();
-  if (chVTIsArmedI(&vt5))
-    chVTResetI(&vt5);
+  chSysLockFromISR();
+  chVTResetI(&vt5);
   chVTSetI(&vt5, MS2ST(200), led5off, NULL);
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 /*
@@ -83,11 +82,10 @@ static void rxchar(UARTDriver *uartp, uint16_t c) {
   (void)c;
   /* Flashing the LED each time a character is received.*/
   palSetPad(GPIOD, GPIOD_LED4);
-  chSysLockFromIsr();
-  if (chVTIsArmedI(&vt4))
-    chVTResetI(&vt4);
+  chSysLockFromISR();
+  chVTResetI(&vt4);
   chVTSetI(&vt4, MS2ST(200), led4off, NULL);
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 /*
@@ -99,11 +97,10 @@ static void rxend(UARTDriver *uartp) {
 
   /* Flashing the LED each time a character is received.*/
   palSetPad(GPIOD, GPIOD_LED3);
-  chSysLockFromIsr();
-  if (chVTIsArmedI(&vt3))
-    chVTResetI(&vt3);
+  chSysLockFromISR();
+  chVTResetI(&vt3);
   chVTSetI(&vt3, MS2ST(200), led3off, NULL);
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 }
 
 /*

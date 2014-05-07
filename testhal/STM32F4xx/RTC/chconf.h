@@ -28,21 +28,44 @@
 #ifndef _CHCONF_H_
 #define _CHCONF_H_
 
-#define PORT_IDLE_THREAD_STACK_SIZE     32
-#define CORTEX_USE_FPU                  FALSE
+/*===========================================================================*/
+/**
+ * @name System timers settings
+ * @{
+ */
+/*===========================================================================*/
 
-/*===========================================================================*/
-/* Kernel parameters.                                                        */
-/*===========================================================================*/
+/**
+ * @brief   System time counter resolution.
+ * @note    Allowed values are 16 or 32 bits.
+ */
+#define CH_CFG_ST_RESOLUTION                32
 
 /**
  * @brief   System tick frequency.
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
  */
-#if !defined(CH_FREQUENCY) || defined(__DOXYGEN__)
-#define CH_FREQUENCY                    1000
-#endif
+#define CH_CFG_ST_FREQUENCY                 10000
+
+/**
+ * @brief   Time delta constant for the tick-less mode.
+ * @note    If this value is zero then the system uses the classic
+ *          periodic tick. This value represents the minimum number
+ *          of ticks that is safe to specify in a timeout directive.
+ *          The value one is not valid, timeouts are rounded up to
+ *          this value.
+ */
+#define CH_CFG_ST_TIMEDELTA                 2
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name Kernel parameters and options
+ * @{
+ */
+/*===========================================================================*/
 
 /**
  * @brief   Round robin interval.
@@ -51,13 +74,12 @@
  *          disables the preemption for threads with equal priority and the
  *          round robin becomes cooperative. Note that higher priority
  *          threads can still preempt, the kernel is always preemptive.
- *
  * @note    Disabling the round robin preemption makes the kernel more compact
  *          and generally faster.
+ * @note    The round robin preemption is not supported in tickless mode and
+ *          must be set to zero in that case.
  */
-#if !defined(CH_TIME_QUANTUM) || defined(__DOXYGEN__)
-#define CH_TIME_QUANTUM                 0//20
-#endif
+#define CH_CFG_TIME_QUANTUM                 0
 
 /**
  * @brief   Managed RAM size.
@@ -68,31 +90,25 @@
  *
  * @note    In order to let the OS manage the whole RAM the linker script must
  *          provide the @p __heap_base__ and @p __heap_end__ symbols.
- * @note    Requires @p CH_USE_MEMCORE.
+ * @note    Requires @p CH_CFG_USE_MEMCORE.
  */
-#if !defined(CH_MEMCORE_SIZE) || defined(__DOXYGEN__)
-#define CH_MEMCORE_SIZE                 0
-#endif
+#define CH_CFG_MEMCORE_SIZE                 0
 
 /**
  * @brief   Idle thread automatic spawn suppression.
  * @details When this option is activated the function @p chSysInit()
- *          does not spawn the idle thread automatically. The application has
- *          then the responsibility to do one of the following:
- *          - Spawn a custom idle thread at priority @p IDLEPRIO.
- *          - Change the main() thread priority to @p IDLEPRIO then enter
- *            an endless loop. In this scenario the @p main() thread acts as
- *            the idle thread.
- *          .
- * @note    Unless an idle thread is spawned the @p main() thread must not
- *          enter a sleep state.
- */
-#if !defined(CH_NO_IDLE_THREAD) || defined(__DOXYGEN__)
-#define CH_NO_IDLE_THREAD               FALSE
-#endif
+ *          does not spawn the idle thread. The application @p main()
+ *          function becomes the idle thread and must implement an
+ *          infinite loop. */
+#define CH_CFG_NO_IDLE_THREAD               FALSE
+
+/** @} */
 
 /*===========================================================================*/
-/* Performance options.                                                      */
+/**
+ * @name Performance options
+ * @{
+ */
 /*===========================================================================*/
 
 /**
@@ -103,13 +119,25 @@
  * @note    This is not related to the compiler optimization options.
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_OPTIMIZE_SPEED) || defined(__DOXYGEN__)
-#define CH_OPTIMIZE_SPEED               FALSE
-#endif
+#define CH_CFG_OPTIMIZE_SPEED               TRUE
+
+/** @} */
 
 /*===========================================================================*/
-/* Subsystem options.                                                        */
+/**
+ * @name Subsystem options
+ * @{
+ */
 /*===========================================================================*/
+
+/**
+ * @brief   Time Measurement APIs.
+ * @details If enabled then the time measurement APIs are included in
+ *          the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_TM                       TRUE
 
 /**
  * @brief   Threads registry APIs.
@@ -117,9 +145,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_REGISTRY) || defined(__DOXYGEN__)
-#define CH_USE_REGISTRY                 TRUE
-#endif
+#define CH_CFG_USE_REGISTRY                 TRUE
 
 /**
  * @brief   Threads synchronization APIs.
@@ -128,9 +154,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_WAITEXIT) || defined(__DOXYGEN__)
-#define CH_USE_WAITEXIT                 TRUE
-#endif
+#define CH_CFG_USE_WAITEXIT                 TRUE
 
 /**
  * @brief   Semaphores APIs.
@@ -138,33 +162,18 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_SEMAPHORES) || defined(__DOXYGEN__)
-#define CH_USE_SEMAPHORES               TRUE
-#endif
+#define CH_CFG_USE_SEMAPHORES               TRUE
 
 /**
  * @brief   Semaphores queuing mode.
  * @details If enabled then the threads are enqueued on semaphores by
  *          priority rather than in FIFO order.
  *
- * @note    The default is @p FALSE. Enable this if you have special requirements.
- * @note    Requires @p CH_USE_SEMAPHORES.
+ * @note    The default is @p FALSE. Enable this if you have special
+ *          requirements.
+ * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#if !defined(CH_USE_SEMAPHORES_PRIORITY) || defined(__DOXYGEN__)
-#define CH_USE_SEMAPHORES_PRIORITY      FALSE
-#endif
-
-/**
- * @brief   Atomic semaphore API.
- * @details If enabled then the semaphores the @p chSemSignalWait() API
- *          is included in the kernel.
- *
- * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_SEMAPHORES.
- */
-#if !defined(CH_USE_SEMSW) || defined(__DOXYGEN__)
-#define CH_USE_SEMSW                    TRUE
-#endif
+#define CH_CFG_USE_SEMAPHORES_PRIORITY      FALSE
 
 /**
  * @brief   Mutexes APIs.
@@ -172,9 +181,17 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_MUTEXES) || defined(__DOXYGEN__)
-#define CH_USE_MUTEXES                  TRUE
-#endif
+#define CH_CFG_USE_MUTEXES                  TRUE
+
+/**
+ * @brief   Enables recursive behavior on mutexes.
+ * @note    Recursive mutexes are heavier and have an increased
+ *          memory footprint.
+ *
+ * @note    The default is @p FALSE.
+ * @note    Requires @p CH_CFG_USE_MUTEXES.
+ */
+#define CH_CFG_USE_MUTEXES_RECURSIVE        FALSE
 
 /**
  * @brief   Conditional Variables APIs.
@@ -182,11 +199,9 @@
  *          in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_MUTEXES.
+ * @note    Requires @p CH_CFG_USE_MUTEXES.
  */
-#if !defined(CH_USE_CONDVARS) || defined(__DOXYGEN__)
-#define CH_USE_CONDVARS                 FALSE
-#endif
+#define CH_CFG_USE_CONDVARS                 TRUE
 
 /**
  * @brief   Conditional Variables APIs with timeout.
@@ -194,11 +209,9 @@
  *          specification are included in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_CONDVARS.
+ * @note    Requires @p CH_CFG_USE_CONDVARS.
  */
-#if !defined(CH_USE_CONDVARS_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_CONDVARS_TIMEOUT         TRUE
-#endif
+#define CH_CFG_USE_CONDVARS_TIMEOUT         TRUE
 
 /**
  * @brief   Events Flags APIs.
@@ -206,9 +219,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_EVENTS) || defined(__DOXYGEN__)
-#define CH_USE_EVENTS                   TRUE
-#endif
+#define CH_CFG_USE_EVENTS                   TRUE
 
 /**
  * @brief   Events Flags APIs with timeout.
@@ -216,11 +227,9 @@
  *          are included in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_EVENTS.
+ * @note    Requires @p CH_CFG_USE_EVENTS.
  */
-#if !defined(CH_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_EVENTS_TIMEOUT           FALSE
-#endif
+#define CH_CFG_USE_EVENTS_TIMEOUT           TRUE
 
 /**
  * @brief   Synchronous Messages APIs.
@@ -229,21 +238,18 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_MESSAGES) || defined(__DOXYGEN__)
-#define CH_USE_MESSAGES                 TRUE
-#endif
+#define CH_CFG_USE_MESSAGES                 TRUE
 
 /**
  * @brief   Synchronous Messages queuing mode.
  * @details If enabled then messages are served by priority rather than in
  *          FIFO order.
  *
- * @note    The default is @p FALSE. Enable this if you have special requirements.
- * @note    Requires @p CH_USE_MESSAGES.
+ * @note    The default is @p FALSE. Enable this if you have special
+ *          requirements.
+ * @note    Requires @p CH_CFG_USE_MESSAGES.
  */
-#if !defined(CH_USE_MESSAGES_PRIORITY) || defined(__DOXYGEN__)
-#define CH_USE_MESSAGES_PRIORITY        FALSE
-#endif
+#define CH_CFG_USE_MESSAGES_PRIORITY        FALSE
 
 /**
  * @brief   Mailboxes APIs.
@@ -251,11 +257,9 @@
  *          included in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_SEMAPHORES.
+ * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
-#if !defined(CH_USE_MAILBOXES) || defined(__DOXYGEN__)
-#define CH_USE_MAILBOXES                TRUE
-#endif
+#define CH_CFG_USE_MAILBOXES                TRUE
 
 /**
  * @brief   I/O Queues APIs.
@@ -263,9 +267,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_QUEUES) || defined(__DOXYGEN__)
-#define CH_USE_QUEUES                   TRUE
-#endif
+#define CH_CFG_USE_QUEUES                   TRUE
 
 /**
  * @brief   Core Memory Manager APIs.
@@ -274,9 +276,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_MEMCORE) || defined(__DOXYGEN__)
-#define CH_USE_MEMCORE                  TRUE
-#endif
+#define CH_CFG_USE_MEMCORE                  TRUE
 
 /**
  * @brief   Heap Allocator APIs.
@@ -284,27 +284,11 @@
  *          in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_MEMCORE and either @p CH_USE_MUTEXES or
- *          @p CH_USE_SEMAPHORES.
+ * @note    Requires @p CH_CFG_USE_MEMCORE and either @p CH_CFG_USE_MUTEXES or
+ *          @p CH_CFG_USE_SEMAPHORES.
  * @note    Mutexes are recommended.
  */
-#if !defined(CH_USE_HEAP) || defined(__DOXYGEN__)
-#define CH_USE_HEAP                     FALSE
-#endif
-
-/**
- * @brief   C-runtime allocator.
- * @details If enabled the the heap allocator APIs just wrap the C-runtime
- *          @p malloc() and @p free() functions.
- *
- * @note    The default is @p FALSE.
- * @note    Requires @p CH_USE_HEAP.
- * @note    The C-runtime may or may not require @p CH_USE_MEMCORE, see the
- *          appropriate documentation.
- */
-#if !defined(CH_USE_MALLOC_HEAP) || defined(__DOXYGEN__)
-#define CH_USE_MALLOC_HEAP              FALSE
-#endif
+#define CH_CFG_USE_HEAP                     TRUE
 
 /**
  * @brief   Memory Pools Allocator APIs.
@@ -313,9 +297,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(CH_USE_MEMPOOLS) || defined(__DOXYGEN__)
-#define CH_USE_MEMPOOLS                 TRUE
-#endif
+#define CH_CFG_USE_MEMPOOLS                 TRUE
 
 /**
  * @brief   Dynamic Threads APIs.
@@ -323,16 +305,27 @@
  *          in the kernel.
  *
  * @note    The default is @p TRUE.
- * @note    Requires @p CH_USE_WAITEXIT.
- * @note    Requires @p CH_USE_HEAP and/or @p CH_USE_MEMPOOLS.
+ * @note    Requires @p CH_CFG_USE_WAITEXIT.
+ * @note    Requires @p CH_CFG_USE_HEAP and/or @p CH_CFG_USE_MEMPOOLS.
  */
-#if !defined(CH_USE_DYNAMIC) || defined(__DOXYGEN__)
-#define CH_USE_DYNAMIC                  FALSE
-#endif
+#define CH_CFG_USE_DYNAMIC                  TRUE
+
+/** @} */
 
 /*===========================================================================*/
-/* Debug options.                                                            */
+/**
+ * @name Debug options
+ * @{
+ */
 /*===========================================================================*/
+
+/**
+ * @brief   Debug option, kernel statistics.
+ *
+ * @note    The default is @p FALSE.
+ */
+#define CH_DBG_STATISTICS                   TRUE
+
 /**
  * @brief   Debug option, system state check.
  * @details If enabled the correct call protocol for system APIs is checked
@@ -340,9 +333,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_SYSTEM_STATE_CHECK) || defined(__DOXYGEN__)
-#define CH_DBG_SYSTEM_STATE_CHECK       TRUE
-#endif
+#define CH_DBG_SYSTEM_STATE_CHECK           TRUE
 
 /**
  * @brief   Debug option, parameters checks.
@@ -351,9 +342,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_ENABLE_CHECKS) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_CHECKS            TRUE
-#endif
+#define CH_DBG_ENABLE_CHECKS                TRUE
 
 /**
  * @brief   Debug option, consistency checks.
@@ -363,9 +352,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_ENABLE_ASSERTS) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_ASSERTS           TRUE
-#endif
+#define CH_DBG_ENABLE_ASSERTS               TRUE
 
 /**
  * @brief   Debug option, trace buffer.
@@ -374,9 +361,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_ENABLE_TRACE) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_TRACE             TRUE
-#endif
+#define CH_DBG_ENABLE_TRACE                 TRUE
 
 /**
  * @brief   Debug option, stack checks.
@@ -388,9 +373,7 @@
  * @note    The default failure mode is to halt the system with the global
  *          @p panic_msg variable set to @p NULL.
  */
-#if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_STACK_CHECK       TRUE
-#endif
+#define CH_DBG_ENABLE_STACK_CHECK           TRUE
 
 /**
  * @brief   Debug option, stacks initialization.
@@ -400,35 +383,34 @@
  *
  * @note    The default is @p FALSE.
  */
-#if !defined(CH_DBG_FILL_THREADS) || defined(__DOXYGEN__)
-#define CH_DBG_FILL_THREADS             TRUE
-#endif
+#define CH_DBG_FILL_THREADS                 TRUE
 
 /**
  * @brief   Debug option, threads profiling.
- * @details If enabled then a field is added to the @p Thread structure that
+ * @details If enabled then a field is added to the @p thread_t structure that
  *          counts the system ticks occurred while executing the thread.
  *
- * @note    The default is @p TRUE.
- * @note    This debug option is defaulted to TRUE because it is required by
- *          some test cases into the test suite.
+ * @note    The default is @p FALSE.
+ * @note    This debug option is not currently compatible with the
+ *          tickless mode.
  */
-#if !defined(CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
-#define CH_DBG_THREADS_PROFILING        TRUE
-#endif
+#define CH_DBG_THREADS_PROFILING            FALSE
+
+/** @} */
 
 /*===========================================================================*/
-/* Kernel hooks.                                                             */
+/**
+ * @name Kernel hooks
+ * @{
+ */
 /*===========================================================================*/
 
 /**
  * @brief   Threads descriptor structure extension.
- * @details User fields added to the end of the @p Thread structure.
+ * @details User fields added to the end of the @p thread_t structure.
  */
-#if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
-#define THREAD_EXT_FIELDS                                                   \
+#define CH_CFG_THREAD_EXTRA_FIELDS                                          \
   /* Add threads custom fields here.*/
-#endif
 
 /**
  * @brief   Threads initialization hook.
@@ -437,11 +419,9 @@
  * @note    It is invoked from within @p chThdInit() and implicitly from all
  *          the threads creation APIs.
  */
-#if !defined(THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
-#define THREAD_EXT_INIT_HOOK(tp) {                                          \
+#define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
   /* Add threads initialization code here.*/                                \
 }
-#endif
 
 /**
  * @brief   Threads finalization hook.
@@ -451,53 +431,63 @@
  * @note    It is also invoked when the threads simply return in order to
  *          terminate.
  */
-#if !defined(THREAD_EXT_EXIT_HOOK) || defined(__DOXYGEN__)
-#define THREAD_EXT_EXIT_HOOK(tp) {                                          \
+#define CH_CFG_THREAD_EXIT_HOOK(tp) {                                       \
   /* Add threads finalization code here.*/                                  \
 }
-#endif
 
 /**
  * @brief   Context switch hook.
  * @details This hook is invoked just before switching between threads.
  */
-#if !defined(THREAD_CONTEXT_SWITCH_HOOK) || defined(__DOXYGEN__)
-#define THREAD_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
+#define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
   /* System halt code here.*/                                               \
 }
-#endif
+
+/**
+ * @brief   Idle thread enter hook.
+ * @note    This hook is invoked within a critical zone, no OS functions
+ *          should be invoked from here.
+ * @note    This macro can be used to activate a power saving mode.
+ */
+#define CH_CFG_IDLE_ENTER_HOOK() {                                         \
+}
+
+/**
+ * @brief   Idle thread leave hook.
+ * @note    This hook is invoked within a critical zone, no OS functions
+ *          should be invoked from here.
+ * @note    This macro can be used to deactivate a power saving mode.
+ */
+#define CH_CFG_IDLE_LEAVE_HOOK() {                                         \
+}
 
 /**
  * @brief   Idle Loop hook.
  * @details This hook is continuously invoked by the idle thread loop.
  */
-#if !defined(IDLE_LOOP_HOOK) || defined(__DOXYGEN__)
-#define IDLE_LOOP_HOOK() {                                                  \
+#define CH_CFG_IDLE_LOOP_HOOK() {                                           \
   /* Idle loop code here.*/                                                 \
 }
-#endif
 
 /**
  * @brief   System tick event hook.
  * @details This hook is invoked in the system tick handler immediately
  *          after processing the virtual timers queue.
  */
-#if !defined(SYSTEM_TICK_EVENT_HOOK) || defined(__DOXYGEN__)
-#define SYSTEM_TICK_EVENT_HOOK() {                                          \
+#define CH_CFG_SYSTEM_TICK_HOOK() {                                         \
   /* System tick event code here.*/                                         \
 }
-#endif
 
 /**
  * @brief   System halt hook.
  * @details This hook is invoked in case to a system halting error before
  *          the system is halted.
  */
-#if !defined(SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
-#define SYSTEM_HALT_HOOK() {                                                \
+#define CH_CFG_SYSTEM_HALT_HOOK(reason) {                                   \
   /* System halt code here.*/                                               \
 }
-#endif
+
+/** @} */
 
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in chcore.h).    */

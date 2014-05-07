@@ -33,15 +33,10 @@
 
 #include "chrtclib.h"
 
-#if HAL_USE_RTC || defined(__DOXYGEN__)
-
-#if (defined(STM32F4XX) || defined(STM32F2XX) || defined(STM32L1XX) ||        \
-     defined(STM32F30X) || defined(STM32F37X) ||                              \
-     defined(STM32F1XX) || defined(STM32F10X_MD) || defined(STM32F10X_LD) ||  \
-     defined(STM32F10X_HD) || defined(STM32F10X_CL) || defined(STM32F0XX) ||  \
-     defined(LPC122X) || defined(LPC17XX) || defined(__DOXYGEN__))
-#if STM32_RTC_IS_CALENDAR || LPC17xx_RTC_IS_CALENDAR
-
+#if (defined(STM32F4XX) || defined(STM32F2XX) || defined(STM32L1XX) || \
+     defined(STM32F30X) || defined(STM32F37X) || \
+     defined(STM32F1XX) || defined(STM32F10X_MD) || defined(STM32F10X_LD) || \
+     defined(STM32F10X_HD) || defined(LPC122X) || defined(__DOXYGEN__))
 #if STM32_RTC_IS_CALENDAR
 /**
  * @brief   Converts from STM32 BCD to canonicalized time format.
@@ -139,47 +134,6 @@ static void stm32_rtc_tm2bcd(struct tm *timp, RTCTime *timespec) {
   timespec->tv_time |= ((v / 10) << RTC_TR_ST_OFFSET) & RTC_TR_ST;
   timespec->tv_time |= (v % 10) << RTC_TR_SU_OFFSET;
 }
-#endif
-
-#if LPC17xx_RTC_IS_CALENDAR
-/**
- * @brief   Converts from LPC17xx RTC format to canonicalized time format.
- *
- * @param[out] timp     pointer to a @p tm structure as defined in time.h
- * @param[in] timespec  pointer to a @p RTCTime structure
- *
- * @notapi
- */
-static void lpc17xx_rtc_format2tm(struct tm *timp, RTCTime *timespec) {
-  timp->tm_sec  = timespec->sec;
-  timp->tm_min  = timespec->min;
-  timp->tm_hour = timespec->hour;
-  timp->tm_mday = timespec->dom;
-  timp->tm_mon  = timespec->month - 1;
-  timp->tm_year = timespec->year - 1900;
-  timp->tm_wday = timespec->dow;
-  timp->tm_yday = timespec->doy - 1;
-}
-
-/**
- * @brief   Converts from LPC17xx RTC format to canonicalized time format.
- *
- * @param[out] timp     pointer to a @p tm structure as defined in time.h
- * @param[in] timespec  pointer to a @p RTCTime structure
- *
- * @notapi
- */
-static void lpc17xx_rtc_tm2format(struct tm *timp, RTCTime *timespec) {
-  timespec->sec   = timp->tm_sec;
-  timespec->min   = timp->tm_min;
-  timespec->hour  = timp->tm_hour;
-  timespec->dom   = timp->tm_mday;
-  timespec->month = timp->tm_mon + 1;
-  timespec->year  = timp->tm_year + 1900;
-  timespec->dow   = timp->tm_wday;
-  timespec->doy   = timp->tm_yday + 1;
-}
-#endif
 
 /**
  * @brief   Gets raw time from RTC and converts it to canonicalized format.
@@ -190,7 +144,6 @@ static void lpc17xx_rtc_tm2format(struct tm *timp, RTCTime *timespec) {
  * @api
  */
 void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
-#if STM32_RTC_IS_CALENDAR
 #if STM32_RTC_HAS_SUBSECONDS
   RTCTime timespec = {0,0,FALSE,0};
 #else
@@ -199,14 +152,6 @@ void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
 
   rtcGetTime(rtcp, &timespec);
   stm32_rtc_bcd2tm(timp, &timespec);
-#endif
-
-#if LPC17xx_RTC_IS_CALENDAR
-  RTCTime timespec;
-
-  rtcGetTime(rtcp, &timespec);
-  lpc17xx_rtc_format2tm(timp, &timespec);
-#endif
 }
 
 /**
@@ -218,7 +163,6 @@ void rtcGetTimeTm(RTCDriver *rtcp, struct tm *timp) {
  * @api
  */
 void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp) {
-#if STM32_RTC_IS_CALENDAR
 #if STM32_RTC_HAS_SUBSECONDS
   RTCTime timespec = {0,0,FALSE,0};
 #else
@@ -227,14 +171,6 @@ void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp) {
 
   stm32_rtc_tm2bcd(timp, &timespec);
   rtcSetTime(rtcp, &timespec);
-#endif
-
-#if LPC17xx_RTC_IS_CALENDAR
-  RTCTime timespec;
-
-  lpc17xx_rtc_tm2format(timp, &timespec);
-  rtcSetTime(rtcp, &timespec);
-#endif
 }
 
 /**
@@ -246,7 +182,6 @@ void rtcSetTimeTm(RTCDriver *rtcp, struct tm *timp) {
  * @api
  */
 time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
-#if STM32_RTC_IS_CALENDAR
 #if STM32_RTC_HAS_SUBSECONDS
   RTCTime timespec = {0,0,FALSE,0};
 #else
@@ -258,16 +193,6 @@ time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
   stm32_rtc_bcd2tm(&timp, &timespec);
 
   return mktime(&timp);
-#endif
-
-#if LPC17xx_RTC_IS_CALENDAR
-  RTCTime timespec;
-  struct tm timp;
-
-  rtcGetTime(rtcp, &timespec);
-  lpc17xx_rtc_format2tm(&timp, &timespec);
-  return mktime(&timp);
-#endif
 }
 
 /**
@@ -280,7 +205,6 @@ time_t rtcGetTimeUnixSec(RTCDriver *rtcp) {
  * @api
  */
 void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec) {
-#if STM32_RTC_IS_CALENDAR
 #if STM32_RTC_HAS_SUBSECONDS
   RTCTime timespec = {0,0,FALSE,0};
 #else
@@ -291,16 +215,6 @@ void rtcSetTimeUnixSec(RTCDriver *rtcp, time_t tv_sec) {
   localtime_r(&tv_sec, &timp);
   stm32_rtc_tm2bcd(&timp, &timespec);
   rtcSetTime(rtcp, &timespec);
-#endif
-
-#if LPC17xx_RTC_IS_CALENDAR
-  RTCTime timespec;
-  struct tm timp;
-
-  localtime_r(&tv_sec, &timp);
-  lpc17xx_rtc_tm2format(&timp, &timespec);
-  rtcSetTime(rtcp, &timespec);
-#endif
 }
 
 /**
@@ -439,9 +353,7 @@ uint32_t rtcGetTimeFatFromCounter(RTCDriver *rtcp) {
 
   return fattime;
 }
-#endif /* STM32_RTC_IS_CALENDAR  || LPC17xx_RTC_IS_CALENDAR */
+#endif /* STM32_RTC_IS_CALENDAR */
 #endif /* (defined(STM32F4XX) || defined(STM32F2XX) || defined(STM32L1XX) || defined(STM32F1XX)) */
-
-#endif /* HAL_USE_RTC */
 
 /** @} */

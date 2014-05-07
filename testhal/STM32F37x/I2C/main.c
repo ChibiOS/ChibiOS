@@ -44,10 +44,11 @@ static const I2CConfig i2cconfig = {
  * This is a periodic thread that does absolutely nothing except flashing
  * a LED.
  */
-static WORKING_AREA(blinker_wa, 128);
-static msg_t blinker(void *arg) {
+static THD_WORKING_AREA(blinker_wa, 128);
+static THD_FUNCTION(blinker, arg) {
 
   (void)arg;
+
   chRegSetThreadName("blinker");
   while (TRUE) {
     palSetPad(GPIOC, GPIOC_LED1);
@@ -95,12 +96,12 @@ int main(void) {
 
     msg = i2cMasterTransmitTimeout(&I2CD2, 0x52, cmd, sizeof(cmd),
                                    data, sizeof(data), TIME_INFINITE);
-    if (msg != RDY_OK)
+    if (msg != MSG_OK)
       palTogglePad(GPIOC, GPIOC_LED3);
     for (i = 0; i < 256; i++) {
       msg = i2cMasterReceiveTimeout(&I2CD2, 0x52,
                                     data, sizeof(data), TIME_INFINITE);
-      if (msg != RDY_OK)
+      if (msg != MSG_OK)
         palTogglePad(GPIOC, GPIOC_LED3);
     }
     chThdSleepMilliseconds(500);

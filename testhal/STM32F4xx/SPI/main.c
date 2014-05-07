@@ -46,7 +46,7 @@ static uint8_t rxbuf[512];
 /*
  * SPI bus contender 1.
  */
-static WORKING_AREA(spi_thread_1_wa, 256);
+static THD_WORKING_AREA(spi_thread_1_wa, 256);
 static msg_t spi_thread_1(void *p) {
 
   (void)p;
@@ -67,7 +67,7 @@ static msg_t spi_thread_1(void *p) {
 /*
  * SPI bus contender 2.
  */
-static WORKING_AREA(spi_thread_2_wa, 256);
+static THD_WORKING_AREA(spi_thread_2_wa, 256);
 static msg_t spi_thread_2(void *p) {
 
   (void)p;

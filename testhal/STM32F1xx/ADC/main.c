@@ -89,10 +89,11 @@ static const ADCConversionGroup adcgrpcfg2 = {
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_WORKING_AREA(waThread1, 128);
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
+
   chRegSetThreadName("blinker");
   while (TRUE) {
     palClearPad(IOPORT3, GPIOC_LED);

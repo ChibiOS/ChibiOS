@@ -36,30 +36,30 @@
 /*===========================================================================*/
 
 /**
- * @name    SD cart types
+ * @name    SD card types
  * @{
  */
-#define SDC_MODE_CARDTYPE_MASK          0xF     /**< @brief Card type mask. */
-#define SDC_MODE_CARDTYPE_SDV11         0       /**< @brief Card is SD V1.1.*/
-#define SDC_MODE_CARDTYPE_SDV20         1       /**< @brief Card is SD V2.0.*/
-#define SDC_MODE_CARDTYPE_MMC           2       /**< @brief Card is MMC.    */
-#define SDC_MODE_HIGH_CAPACITY          0x10    /**< @brief High cap.card.  */
+#define SDC_MODE_CARDTYPE_MASK              0xF /**< @brief Card type mask. */
+#define SDC_MODE_CARDTYPE_SDV11             0
+#define SDC_MODE_CARDTYPE_SDV20             1
+#define SDC_MODE_CARDTYPE_MMC               2
+#define SDC_MODE_HIGH_CAPACITY              0x10
 /** @} */
 
 /**
  * @name    SDC bus error conditions
  * @{
  */
-#define SDC_NO_ERROR          0           /**< @brief No error.             */
-#define SDC_CMD_CRC_ERROR     1           /**< @brief Command CRC error.    */
-#define SDC_DATA_CRC_ERROR    2           /**< @brief Data CRC error.       */
-#define SDC_DATA_TIMEOUT      4           /**< @brief HW write timeout.     */
-#define SDC_COMMAND_TIMEOUT   8           /**< @brief HW read timeout.      */
-#define SDC_TX_UNDERRUN       16          /**< @brief TX buffer underrun.   */
-#define SDC_RX_OVERRUN        32          /**< @brief RX buffer overrun.    */
-#define SDC_STARTBIT_ERROR    64          /**< @brief Start bit missing.    */
-#define SDC_OVERFLOW_ERROR    128         /**< @brief Card overflow error.  */
-#define SDC_UNHANDLED_ERROR   0xFFFFFFFF
+#define SDC_NO_ERROR                        0
+#define SDC_CMD_CRC_ERROR                   1
+#define SDC_DATA_CRC_ERROR                  2
+#define SDC_DATA_TIMEOUT                    4
+#define SDC_COMMAND_TIMEOUT                 8
+#define SDC_TX_UNDERRUN                     16
+#define SDC_RX_OVERRUN                      32
+#define SDC_STARTBIT_ERROR                  64
+#define SDC_OVERFLOW_ERROR                  128
+#define SDC_UNHANDLED_ERROR                 0xFFFFFFFF
 /** @} */
 
 /*===========================================================================*/
@@ -75,7 +75,7 @@
  * @note    Attempts are performed at 10mS intervals.
  */
 #if !defined(SDC_INIT_RETRY) || defined(__DOXYGEN__)
-#define SDC_INIT_RETRY                  100
+#define SDC_INIT_RETRY                      100
 #endif
 
 /**
@@ -84,7 +84,7 @@
  *          at @p FALSE.
  */
 #if !defined(SDC_MMC_SUPPORT) || defined(__DOXYGEN__)
-#define SDC_MMC_SUPPORT                 FALSE
+#define SDC_MMC_SUPPORT                     FALSE
 #endif
 
 /**
@@ -94,7 +94,7 @@
  *          lower priority, this may slow down the driver a bit however.
  */
 #if !defined(SDC_NICE_WAITING) || defined(__DOXYGEN__)
-#define SDC_NICE_WAITING                TRUE
+#define SDC_NICE_WAITING                    TRUE
 #endif
 /** @} */
 
@@ -160,17 +160,17 @@ extern "C" {
   void sdcObjectInit(SDCDriver *sdcp);
   void sdcStart(SDCDriver *sdcp, const SDCConfig *config);
   void sdcStop(SDCDriver *sdcp);
-  bool_t sdcConnect(SDCDriver *sdcp);
-  bool_t sdcDisconnect(SDCDriver *sdcp);
-  bool_t sdcRead(SDCDriver *sdcp, uint32_t startblk,
-                 uint8_t *buffer, uint32_t n);
-  bool_t sdcWrite(SDCDriver *sdcp, uint32_t startblk,
-                  const uint8_t *buffer, uint32_t n);
+  bool sdcConnect(SDCDriver *sdcp);
+  bool sdcDisconnect(SDCDriver *sdcp);
+  bool sdcRead(SDCDriver *sdcp, uint32_t startblk,
+               uint8_t *buffer, uint32_t n);
+  bool sdcWrite(SDCDriver *sdcp, uint32_t startblk,
+                const uint8_t *buffer, uint32_t n);
   sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp);
-  bool_t sdcSync(SDCDriver *sdcp);
-  bool_t sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip);
-  bool_t sdcErase(SDCDriver *mmcp, uint32_t startblk, uint32_t endblk);
-  bool_t _sdc_wait_for_transfer_state(SDCDriver *sdcp);
+  bool sdcSync(SDCDriver *sdcp);
+  bool sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip);
+  bool sdcErase(SDCDriver *mmcp, uint32_t startblk, uint32_t endblk);
+  bool _sdc_wait_for_transfer_state(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
 #endif

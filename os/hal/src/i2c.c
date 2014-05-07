@@ -29,7 +29,6 @@
  * @addtogroup I2C
  * @{
  */
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_I2C || defined(__DOXYGEN__)
@@ -62,6 +61,7 @@
  * @init
  */
 void i2cInit(void) {
+
   i2c_lld_init();
 }
 
@@ -78,11 +78,7 @@ void i2cObjectInit(I2CDriver *i2cp) {
   i2cp->config = NULL;
 
 #if I2C_USE_MUTUAL_EXCLUSION
-#if CH_USE_MUTEXES
-  chMtxInit(&i2cp->mutex);
-#else
-  chSemInit(&i2cp->semaphore, 1);
-#endif /* CH_USE_MUTEXES */
+  osalMutexObjectInit(&i2cp->mutex);
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 
 #if defined(I2C_DRIVER_EXT_INIT_HOOK)
@@ -100,17 +96,15 @@ void i2cObjectInit(I2CDriver *i2cp) {
  */
 void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 
-  chDbgCheck((i2cp != NULL) && (config != NULL), "i2cStart");
-  chDbgAssert((i2cp->state == I2C_STOP) || (i2cp->state == I2C_READY) ||
-              (i2cp->state == I2C_LOCKED),
-              "i2cStart(), #1",
-              "invalid state");
+  osalDbgCheck((i2cp != NULL) && (config != NULL));
+  osalDbgAssert((i2cp->state == I2C_STOP) || (i2cp->state == I2C_READY) ||
+                (i2cp->state == I2C_LOCKED), "invalid state");
 
-  chSysLock();
+  osalSysLock();
   i2cp->config = config;
   i2c_lld_start(i2cp);
   i2cp->state = I2C_READY;
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -122,16 +116,14 @@ void i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
  */
 void i2cStop(I2CDriver *i2cp) {
 
-  chDbgCheck(i2cp != NULL, "i2cStop");
-  chDbgAssert((i2cp->state == I2C_STOP) || (i2cp->state == I2C_READY) ||
-              (i2cp->state == I2C_LOCKED),
-              "i2cStop(), #1",
-              "invalid state");
+  osalDbgCheck(i2cp != NULL);
+  osalDbgAssert((i2cp->state == I2C_STOP) || (i2cp->state == I2C_READY) ||
+                (i2cp->state == I2C_LOCKED), "invalid state");
 
-  chSysLock();
+  osalSysLock();
   i2c_lld_stop(i2cp);
   i2cp->state = I2C_STOP;
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -144,7 +136,7 @@ void i2cStop(I2CDriver *i2cp) {
  */
 i2cflags_t i2cGetErrors(I2CDriver *i2cp) {
 
-  chDbgCheck(i2cp != NULL, "i2cGetErrors");
+  osalDbgCheck(i2cp != NULL);
 
   return i2c_lld_get_errors(i2cp);
 }
@@ -168,10 +160,10 @@ i2cflags_t i2cGetErrors(I2CDriver *i2cp) {
  *                      .
  *
  * @return              The operation status.
- * @retval RDY_OK       if the function succeeded.
- * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
  *                      be retrieved using @p i2cGetErrors().
- * @retval RDY_TIMEOUT  if a timeout occurred before operation end.
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
  *
  * @api
  */
@@ -184,25 +176,23 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
                                systime_t timeout) {
   msg_t rdymsg;
 
-  chDbgCheck((i2cp != NULL) && (addr != 0) &&
-             (txbytes > 0) && (txbuf != NULL) &&
-             ((rxbytes == 0) || ((rxbytes > 0) && (rxbuf != NULL))) &&
-             (timeout != TIME_IMMEDIATE),
-             "i2cMasterTransmitTimeout");
+  osalDbgCheck((i2cp != NULL) && (addr != 0) &&
+               (txbytes > 0) && (txbuf != NULL) &&
+               ((rxbytes == 0) || ((rxbytes > 0) && (rxbuf != NULL))) &&
+               (timeout != TIME_IMMEDIATE));
 
-  chDbgAssert(i2cp->state == I2C_READY,
-              "i2cMasterTransmitTimeout(), #1", "not ready");
+  osalDbgAssert(i2cp->state == I2C_READY, "not ready");
 
-  chSysLock();
-  i2cp->errors = I2CD_NO_ERROR;
+  osalSysLock();
+  i2cp->errors = I2C_NO_ERROR;
   i2cp->state = I2C_ACTIVE_TX;
   rdymsg = i2c_lld_master_transmit_timeout(i2cp, addr, txbuf, txbytes,
                                            rxbuf, rxbytes, timeout);
-  if (rdymsg == RDY_TIMEOUT)
+  if (rdymsg == MSG_TIMEOUT)
     i2cp->state = I2C_LOCKED;
   else
     i2cp->state = I2C_READY;
-  chSysUnlock();
+  osalSysUnlock();
   return rdymsg;
 }
 
@@ -219,10 +209,10 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
  *                      .
  *
  * @return              The operation status.
- * @retval RDY_OK       if the function succeeded.
- * @retval RDY_RESET    if one or more I2C errors occurred, the errors can
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
  *                      be retrieved using @p i2cGetErrors().
- * @retval RDY_TIMEOUT  if a timeout occurred before operation end.
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end.
  *
  * @api
  */
@@ -234,23 +224,21 @@ msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,
 
   msg_t rdymsg;
 
-  chDbgCheck((i2cp != NULL) && (addr != 0) &&
-             (rxbytes > 0) && (rxbuf != NULL) &&
-             (timeout != TIME_IMMEDIATE),
-             "i2cMasterReceiveTimeout");
+  osalDbgCheck((i2cp != NULL) && (addr != 0) &&
+               (rxbytes > 0) && (rxbuf != NULL) &&
+               (timeout != TIME_IMMEDIATE));
 
-  chDbgAssert(i2cp->state == I2C_READY,
-              "i2cMasterReceive(), #1", "not ready");
+  osalDbgAssert(i2cp->state == I2C_READY, "not ready");
 
-  chSysLock();
-  i2cp->errors = I2CD_NO_ERROR;
+  osalSysLock();
+  i2cp->errors = I2C_NO_ERROR;
   i2cp->state = I2C_ACTIVE_RX;
   rdymsg = i2c_lld_master_receive_timeout(i2cp, addr, rxbuf, rxbytes, timeout);
-  if (rdymsg == RDY_TIMEOUT)
+  if (rdymsg == MSG_TIMEOUT)
     i2cp->state = I2C_LOCKED;
   else
     i2cp->state = I2C_READY;
-  chSysUnlock();
+  osalSysUnlock();
   return rdymsg;
 }
 
@@ -268,13 +256,9 @@ msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,
  */
 void i2cAcquireBus(I2CDriver *i2cp) {
 
-  chDbgCheck(i2cp != NULL, "i2cAcquireBus");
+  osalDbgCheck(i2cp != NULL);
 
-#if CH_USE_MUTEXES
-  chMtxLock(&i2cp->mutex);
-#elif CH_USE_SEMAPHORES
-  chSemWait(&i2cp->semaphore);
-#endif
+  osalMutexLock(&i2cp->mutex);
 }
 
 /**
@@ -288,13 +272,9 @@ void i2cAcquireBus(I2CDriver *i2cp) {
  */
 void i2cReleaseBus(I2CDriver *i2cp) {
 
-  chDbgCheck(i2cp != NULL, "i2cReleaseBus");
+  osalDbgCheck(i2cp != NULL);
 
-#if CH_USE_MUTEXES
-  chMtxUnlock();
-#elif CH_USE_SEMAPHORES
-  chSemSignal(&i2cp->semaphore);
-#endif
+  osalMutexUnlock(&i2cp->mutex);
 }
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 
