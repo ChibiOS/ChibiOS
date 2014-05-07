@@ -40,88 +40,98 @@
 
 #if !defined(__DOXYGEN__)
 
-        MODULE  ?chcoreasm_v7m
+                MODULE  ?chcoreasm_v7m
 
-        AAPCS INTERWORK, VFP_COMPATIBLE
-        PRESERVE8
+                AAPCS INTERWORK, VFP_COMPATIBLE
+                PRESERVE8
 
 CONTEXT_OFFSET  SET 12
 SCB_ICSR        SET 0xE000ED04
 ICSR_PENDSVSET  SET 0x10000000
 
-        SECTION .text:CODE:NOROOT(2)
+                SECTION .text:CODE:NOROOT(2)
 
-        EXTERN  chThdExit
-        EXTERN  chSchDoReschedule
+                EXTERN  chThdExit
+                EXTERN  chSchDoReschedule
+#if CH_DBG_STATISTICS
+                EXTERN   _stats_start_measure_crit_thd
+                EXTERN   _stats_stop_measure_crit_thd
+#endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-        EXTERN  dbg_check_unlock
-        EXTERN  dbg_check_lock
+                EXTERN  _dbg_check_unlock
+                EXTERN  _dbg_check_lock
 #endif
 
-        THUMB
+                THUMB
 
 /*
  * Performs a context switch between two threads.
  */
-        PUBLIC _port_switch
+                PUBLIC _port_switch
 _port_switch:
-        push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+                push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
 #if CORTEX_USE_FPU
-        vpush   {s16-s31}
+                vpush   {s16-s31}
 #endif
-        str     sp, [r1, #CONTEXT_OFFSET]
-        ldr     sp, [r0, #CONTEXT_OFFSET]
+                str     sp, [r1, #CONTEXT_OFFSET]
+                ldr     sp, [r0, #CONTEXT_OFFSET]
 #if CORTEX_USE_FPU
-        vpop    {s16-s31}
+                vpop    {s16-s31}
 #endif
-        pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+                pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
 /*
  * Start a thread by invoking its work function.
  * If the work function returns @p chThdExit() is automatically invoked.
  */
-        PUBLIC  _port_thread_start
+                PUBLIC  _port_thread_start
 _port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
-        bl      dbg_check_unlock
+                bl      _dbg_check_unlock
 #endif
 #if CORTEX_SIMPLIFIED_PRIORITY
-        cpsie   i
+                cpsie   i
 #else
-        movs    r3, #CORTEX_BASEPRI_DISABLED
-        msr     BASEPRI, r3
+                movs    r3, #CORTEX_BASEPRI_DISABLED
+                msr     BASEPRI, r3
 #endif
-        mov     r0, r5
-        blx     r4
-        bl      chThdExit
+                mov     r0, r5
+                blx     r4
+                bl      chThdExit
 
 /*
  * Post-IRQ switch code.
  * Exception handlers return here for context switching.
  */
-        PUBLIC  _port_switch_from_isr
-        PUBLIC  _port_exit_from_isr
+                PUBLIC  _port_switch_from_isr
+                PUBLIC  _port_exit_from_isr
 _port_switch_from_isr:
-#if CH_DBG_SYSTEM_STATE_CHECK
-        bl      dbg_check_lock
+#if CH_DBG_STATISTICS
+                bl      _stats_start_measure_crit_thd
 #endif
-        bl      chSchDoReschedule
 #if CH_DBG_SYSTEM_STATE_CHECK
-        bl      dbg_check_unlock
+                bl      _dbg_check_lock
+#endif
+                bl      chSchDoReschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      _dbg_check_unlock
+#endif
+#if CH_DBG_STATISTICS
+                bl      _stats_stop_measure_crit_thd
 #endif
 _port_exit_from_isr:
 #if CORTEX_SIMPLIFIED_PRIORITY
-        mov     r3, #LWRD SCB_ICSR
-        movt    r3, #HWRD SCB_ICSR
-        mov	r2, #ICSR_PENDSVSET
-        str	r2, [r3]
-        cpsie   i
-.L3:    b       .L3
+                mov     r3, #LWRD SCB_ICSR
+                movt    r3, #HWRD SCB_ICSR
+                mov	r2, #ICSR_PENDSVSET
+                str	r2, [r3]
+                cpsie   i
 #else
-        svc     #0
+                svc     #0
 #endif
+.L3:            b       .L3
 
-        END
+                END
 
 #endif /* !defined(__DOXYGEN__) */
 

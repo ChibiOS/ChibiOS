@@ -105,14 +105,14 @@ _IVOR10:
 #endif
 
 #if CH_DBG_SYSTEM_STATE_CHECK
-        bl          dbg_check_enter_isr
-        bl          dbg_check_lock_from_isr
+        bl          _dbg_check_enter_isr
+        bl          _dbg_check_lock_from_isr
 #endif
         /* System tick handler invocation.*/
         bl          chSysTimerHandlerI
 #if CH_DBG_SYSTEM_STATE_CHECK
-        bl          dbg_check_unlock_from_isr
-        bl          dbg_check_leave_isr
+        bl          _dbg_check_unlock_from_isr
+        bl          _dbg_check_leave_isr
 #endif
 
 #if PPC_USE_IRQ_PREEMPTION
@@ -202,8 +202,11 @@ _ivor_exit:
         eaddi       %r0, %r0, -1
         mtspr       272, %r0
 
+#if CH_DBG_STATISTICS
+        bl          _stats_start_measure_crit_thd
+#endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-        bl          dbg_check_lock
+        bl          _dbg_check_lock
 #endif
         bl          chSchIsPreemptionRequired
         cmpli       cr0, %r3, 0
@@ -211,7 +214,10 @@ _ivor_exit:
         bl          chSchDoReschedule
 .noresch:
 #if CH_DBG_SYSTEM_STATE_CHECK
-        bl          dbg_check_unlock
+        bl          _dbg_check_unlock
+#endif
+#if CH_DBG_STATISTICS
+        bl          _stats_stop_measure_crit_thd
 #endif
 
         /* Restoring the external context.*/

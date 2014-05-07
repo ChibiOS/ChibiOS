@@ -49,9 +49,13 @@ SCB_ICSR        EQU     0xE000ED04
 
                 IMPORT  chThdExit
                 IMPORT  chSchDoReschedule
+#if CH_DBG_STATISTICS
+                IMPORT   _stats_start_measure_crit_thd
+                IMPORT   _stats_stop_measure_crit_thd
+#endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                IMPORT  dbg_check_unlock
-                IMPORT  dbg_check_lock
+                IMPORT  _dbg_check_unlock
+                IMPORT  _dbg_check_lock
 #endif
 
 /*
@@ -84,7 +88,7 @@ _port_switch    PROC
                 EXPORT  _port_thread_start
 _port_thread_start PROC
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_unlock
+                bl      _dbg_check_unlock
 #endif
                 cpsie   i
                 mov     r0, r5
@@ -99,12 +103,18 @@ _port_thread_start PROC
                 EXPORT  _port_switch_from_isr
                 EXPORT  _port_exit_from_isr
 _port_switch_from_isr PROC
+#if CH_DBG_STATISTICS
+                bl      _stats_start_measure_crit_thd
+#endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_lock
+                bl      _dbg_check_lock
 #endif
                 bl      chSchDoReschedule
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_unlock
+                bl      _dbg_check_unlock
+#endif
+#if CH_DBG_STATISTICS
+                bl      _stats_stop_measure_crit_thd
 #endif
 _port_exit_from_isr
                 ldr     r2, =SCB_ICSR

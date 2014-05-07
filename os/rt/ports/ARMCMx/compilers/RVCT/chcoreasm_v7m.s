@@ -50,9 +50,13 @@ ICSR_PENDSVSET  EQU     0x10000000
 
                 IMPORT  chThdExit
                 IMPORT  chSchDoReschedule
+#if CH_DBG_STATISTICS
+                IMPORT   _stats_start_measure_crit_thd
+                IMPORT   _stats_stop_measure_crit_thd
+#endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                IMPORT  dbg_check_unlock
-                IMPORT  dbg_check_lock
+                IMPORT  _dbg_check_unlock
+                IMPORT  _dbg_check_lock
 #endif
 
 /*
@@ -79,7 +83,7 @@ _port_switch    PROC
                 EXPORT  _port_thread_start
 _port_thread_start PROC
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_unlock
+                bl      _dbg_check_unlock
 #endif
 #if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
@@ -99,12 +103,18 @@ _port_thread_start PROC
                 EXPORT  _port_switch_from_isr
                 EXPORT  _port_exit_from_isr
 _port_switch_from_isr PROC
+#if CH_DBG_STATISTICS
+                bl      _stats_start_measure_crit_thd
+#endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_lock
+                bl      _dbg_check_lock
 #endif
                 bl      chSchDoReschedule
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_unlock
+                bl      _dbg_check_unlock
+#endif
+#if CH_DBG_STATISTICS
+                bl      _stats_stop_measure_crit_thd
 #endif
 _port_exit_from_isr
 #if CORTEX_SIMPLIFIED_PRIORITY
@@ -113,10 +123,10 @@ _port_exit_from_isr
                 mov     r2, #ICSR_PENDSVSET
                 str     r2, [r3, #0]
                 cpsie   i
-waithere        b       waithere
 #else
                 svc     #0
 #endif
+waithere        b       waithere
                 ENDP
 
                 END
