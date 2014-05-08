@@ -817,17 +817,6 @@ void usb_lld_start(USBDriver *usbp) {
 
     usbp->txpending = 0;
 
-#if defined(_CHIBIOS_RT_)
-    /* Creates the data pump threads in a suspended state. Note, it is
-       created only once, the first time @p usbStart() is invoked.*/
-    if (usbp->tr == NULL)
-      usbp->tr = usbp->wait = chThdCreateI(usbp->wa_pump,
-                                           sizeof usbp->wa_pump,
-                                           STM32_USB_OTG_THREAD_PRIO,
-                                           usb_lld_pump,
-                                           usbp);
-#endif
-
     /* - Forced device mode.
        - USB turn-around time = TRDT_VALUE.
        - Full Speed 1.1 PHY.*/
@@ -868,6 +857,17 @@ void usb_lld_start(USBDriver *usbp) {
       otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM /*| GINTMSK_USBSUSPM |
                        GINTMSK_ESUSPM */ | GINTMSK_SOFM;
     otgp->GINTSTS  = 0xFFFFFFFF;         /* Clears all pending IRQs, if any. */
+
+#if defined(_CHIBIOS_RT_)
+    /* Creates the data pump thread. Note, it is created only once.*/
+    if (usbp->tr == NULL) {
+      usbp->tr = chThdCreateI(usbp->wa_pump, sizeof usbp->wa_pump,
+                              STM32_USB_OTG_THREAD_PRIO,
+                              usb_lld_pump, usbp);
+      chThdStartI(usbp->tr);
+      chSchRescheduleS();
+  }
+#endif
 
     /* Global interrupts enable.*/
     otgp->GAHBCFG |= GAHBCFG_GINTMSK;
