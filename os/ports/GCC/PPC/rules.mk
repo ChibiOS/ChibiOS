@@ -74,6 +74,7 @@ endif
 LDFLAGS = $(MCFLAGS) -nostartfiles -T$(LDSCRIPT) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch$(GCLDFLAGS)$(XLDFLAGS) $(LLIBDIR)
 
 # Generate dependency information
+ASFLAGS  += -MD -MP -MF .dep/$(@F).d
 CFLAGS   += -MD -MP -MF .dep/$(@F).d
 CPPFLAGS += -MD -MP -MF .dep/$(@F).d
 
