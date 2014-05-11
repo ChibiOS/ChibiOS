@@ -124,7 +124,7 @@ typedef struct {
   /***
    * @brief Addresses use blocks instead of bytes.
    */
-  bool                block_addresses;
+  bool                  block_addresses;
 } MMCDriver;
 
 /*===========================================================================*/
