@@ -71,6 +71,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.6.5 ***
+- FIX: Fixed missing make dependencies for asm files (bug #501).
+
 *** 2.6.4 ***
 - FIX: Fixed insufficient ISR-reserved stack in ARMCMx port when
   optimizations are disabled (bug #494).

@@ -39,6 +39,7 @@ else
 endif
 
 # Generate dependency information
+ASFLAGS += -MD -MP -MF .dep/$(@F).d
 CPFLAGS += -MD -MP -MF .dep/$(@F).d
 
 #
