@@ -73,6 +73,7 @@
 
 *** 2.6.5 ***
 - FIX: Fixed missing make dependencies for asm files (bug #501).
+- FIX:  STM32L1 Plus Clock and I2C (bug #495).
 
 *** 2.6.4 ***
 - FIX: Fixed insufficient ISR-reserved stack in ARMCMx port when
