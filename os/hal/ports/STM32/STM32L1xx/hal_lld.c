@@ -120,7 +120,6 @@ void hal_lld_init(void) {
  *
  * @special
  */
-#if defined(STM32L1XX_MD) || defined(__DOXYGEN__)
 /**
  * @brief   Clocks and internal voltage initialization.
  */
@@ -216,8 +215,5 @@ void stm32_clock_init(void) {
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE);
 }
-#else
-void stm32_clock_init(void) {}
-#endif
 
 /** @} */
