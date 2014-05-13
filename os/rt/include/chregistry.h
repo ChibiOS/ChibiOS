@@ -78,6 +78,26 @@ typedef struct {
 /*===========================================================================*/
 
 /**
+ * @name    Macro Functions
+ * @{
+ */
+/**
+ * @brief   Sets the current thread name.
+ * @pre     This function only stores the pointer to the name if the option
+ *          @p CH_CFG_USE_REGISTRY is enabled else no action is performed.
+ *
+ * @param[in] p         thread name as a zero terminated string
+ *
+ * @api
+ */
+#define chRegSetThreadName(p) (ch.rlist.r_current->p_name = (p))
+/** @} */
+#else /* !CH_CFG_USE_REGISTRY */
+#define chRegSetThreadName(p)
+#endif /* !CH_CFG_USE_REGISTRY */
+
+#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
+/**
  * @brief   Removes a thread from the registry list.
  * @note    This macro is not meant for use in application code.
  *
@@ -117,24 +137,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Sets the current thread name.
- * @pre     This function only stores the pointer to the name if the option
- *          @p CH_CFG_USE_REGISTRY is enabled else no action is performed.
- *
- * @param[in] p         thread name as a zero terminated string
- *
- * @api
- */
-static inline void chRegSetThreadName(const char *name) {
-
-#if CH_CFG_USE_REGISTRY
-  currp->p_name = name;
-#else
-  (void)name;
-#endif
-}
 
 /**
  * @brief   Returns the name of the specified thread.
