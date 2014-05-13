@@ -735,7 +735,7 @@ typedef struct {
  * @xclass
  */
 #define chVTTimeElapsedSinceX(start)                                        \
-  ((systime_t)(chVTGetSystemTimeX() - start))
+  ((systime_t)(chVTGetSystemTimeX() - (start)))
 
 /**
  * @brief   Checks if the specified time is within the specified time window.
@@ -752,7 +752,7 @@ typedef struct {
  * @xclass
  */
 #define chVTIsTimeWithinX(time, start, end)                                 \
-  ((bool)((time) - (start) < (end) - (start)))
+  ((bool)((systime_t)((time) - (start)) < (systime_t)((end) - (start))))
 
 /**
  * @brief   Condition assertion.

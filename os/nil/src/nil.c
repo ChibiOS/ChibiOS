@@ -197,7 +197,7 @@ void chSysTimerHandlerI(void) {
         chSchReadyI(tp, MSG_TIMEOUT);
       }
       else {
-        if (tp->timeout <= next - 1)
+        if (tp->timeout <= (systime_t)(next - 1))
           next = tp->timeout;
       }
     }
