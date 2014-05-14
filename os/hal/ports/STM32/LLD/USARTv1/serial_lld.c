@@ -159,8 +159,8 @@ static void serve_interrupt(SerialDriver *sdp) {
   if (sr & USART_SR_LBD) {
     osalSysLockFromISR();
     chnAddFlagsI(sdp, SD_BREAK_DETECTED);
-    osalSysUnlockFromISR();
     u->SR = ~USART_SR_LBD;
+    osalSysUnlockFromISR();
   }
 
   /* Data available.*/
@@ -191,10 +191,11 @@ static void serve_interrupt(SerialDriver *sdp) {
   /* Physical transmission end.*/
   if (sr & USART_SR_TC) {
     osalSysLockFromISR();
-    chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-    osalSysUnlockFromISR();
-    u->CR1 = cr1 & ~(USART_CR1_TXEIE | USART_CR1_TCIE);
+    if (oqIsEmptyI(&sdp->oqueue))
+      chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
+    u->CR1 = cr1 & ~USART_CR1_TCIE;
     u->SR = ~USART_SR_TC;
+    osalSysUnlockFromISR();
   }
 }
 
