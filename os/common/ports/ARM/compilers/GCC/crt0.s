@@ -46,12 +46,12 @@
 /*
  * Reset handler.
  */
-        .global ResetHandler
-ResetHandler:
+        .global Reset_Handler
+Reset_Handler:
         /*
          * Stack pointers initialization.
          */
-        ldr     r0, =__ram_end__
+        ldr     r0, =___stacks_end__
         /* Undefined */
         msr     CPSR_c, #MODE_UND | I_BIT | F_BIT
         mov     sp, r0
