@@ -188,9 +188,10 @@ static void serve_interrupt(SerialDriver *sdp) {
   /* Physical transmission end.*/
   if (isr & USART_ISR_TC) {
     chSysLockFromIsr();
-    chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-    chSysUnlockFromIsr();
+    if (chOQIsEmptyI(&sdp->oqueue))
+      chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
     u->CR1 = cr1 & ~USART_CR1_TCIE;
+    chSysUnlockFromIsr();
   }
 }
 
