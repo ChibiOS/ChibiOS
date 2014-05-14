@@ -1,18 +1,8 @@
-# ARM common makefile scripts and rules.
+# ARM Cortex-Mx common makefile scripts and rules.
 
 ##############################################################################
 # Processing options coming from the upper Makefile.
 #
-
-# Output directory and files
-ifeq ($(BUILDDIR),)
-  BUILDDIR = build
-endif
-ifeq ($(BUILDDIR),.)
-  BUILDDIR = build
-endif
-OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex \
-           $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).dmp
 
 # Compiler options
 OPT = $(USE_OPT)
@@ -36,6 +26,58 @@ endif
 ifeq ($(USE_LTO),yes)
   OPT += -flto
 endif
+
+# Undefined state stack size
+ifeq ($(USE_UND_STACKSIZE),)
+  LDOPT := $(LDOPT),--defsym=__und_stack_size__=8
+else
+  LDOPT := $(LDOPT),--defsym=__und_stack_size__=$(USE_UND_STACKSIZE)
+endif
+
+# Abort stack size
+ifeq ($(USE_ABT_STACKSIZE),)
+  LDOPT := $(LDOPT),--defsym=__abt_stack_size__=8
+else
+  LDOPT := $(LDOPT),--defsym=__abt_stack_size__=$(USE_ABT_STACKSIZE)
+endif
+
+# FIQ stack size
+ifeq ($(USE_FIQ_STACKSIZE),)
+  LDOPT := $(LDOPT),--defsym=__fiq_stack_size__=64
+else
+  LDOPT := $(LDOPT),--defsym=__fiq_stack_size__=$(USE_FIQ_STACKSIZE)
+endif
+
+# IRQ stack size
+ifeq ($(USE_IRQ_STACKSIZE),)
+  LDOPT := $(LDOPT),--defsym=__irq_stack_size__=0x400
+else
+  LDOPT := $(LDOPT),--defsym=__irq_stack_size__=$(USE_IRQ_STACKSIZE)
+endif
+
+# Supervisor stack size
+ifeq ($(USE_SUPERVISOR_STACKSIZE),)
+  LDOPT := $(LDOPT),--defsym=__svc_stack_size__=8
+else
+  LDOPT := $(LDOPT),--defsym=__svc_stack_size__=$(USE_SUPERVISOR_STACKSIZE)
+endif
+
+# System stack size
+ifeq ($(USE_SYSTEM_STACKSIZE),)
+  LDOPT := $(LDOPT),--defsym=__sys_stack_size__=0x400
+else
+  LDOPT := $(LDOPT),--defsym=__sys_stack_size__=$(USE_SYSTEM_STACKSIZE)
+endif
+
+# Output directory and files
+ifeq ($(BUILDDIR),)
+  BUILDDIR = build
+endif
+ifeq ($(BUILDDIR),.)
+  BUILDDIR = build
+endif
+OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex \
+           $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).dmp
 
 # Source files groups and paths
 ifeq ($(USE_THUMB),yes)
@@ -182,7 +224,7 @@ endif
 
 $(ASMXOBJS) : $(OBJDIR)/%.o : %.S Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
-	@echo 
+	@echo
 	$(CC) -c $(ASXFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 else
 	@echo Compiling $(<F)
