@@ -48,18 +48,22 @@
  */
 #if defined(STM32L1XX_MD) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32L1xx Ultra Low Power Medium Density"
-#define STM32L1XX
 
 #elif defined(STM32L1XX_MDP)
 #define PLATFORM_NAME           "STM32L1xx Ultra Low Power Medium Density Plus"
-#define STM32L1XX
 
 #elif defined(STM32L1XX_HD)
 #define PLATFORM_NAME           "STM32L1xx Ultra Low Power High Density"
-#define STM32L1XX
 
 #else
 #error "STM32L1xx device not specified"
+#endif
+
+/**
+ * @brief   Sub-family identifier.
+ */
+#if !defined(STM32L1XX) || defined(__DOXYGEN__)
+#define STM32L1XX
 #endif
 /** @} */
 

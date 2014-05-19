@@ -47,6 +47,13 @@
  * @{
  */
 #define PLATFORM_NAME           "STM32F30x Analog & DSP"
+
+/**
+ * @brief   Sub-family identifier.
+ */
+#if !defined(STM32F30X) || defined(__DOXYGEN__)
+#define STM32F30X
+#endif
 /** @} */
 
 /**

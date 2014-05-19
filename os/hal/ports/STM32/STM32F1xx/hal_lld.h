@@ -81,6 +81,13 @@
 #else
 #error "unsupported or unrecognized STM32F1xx member"
 #endif
+
+/**
+ * @brief   Sub-family identifier.
+ */
+#if !defined(STM32F1XX) || defined(__DOXYGEN__)
+#define STM32F1XX
+#endif
 /** @} */
 
 /**
