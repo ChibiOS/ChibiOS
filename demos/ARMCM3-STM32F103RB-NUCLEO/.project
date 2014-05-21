@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ARMCM3-STM32F103_INEMO_DISCOVERY</name>
+	<name>ARMCM3-STM32F103RB-NUCLEO</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/boards/ST_NUCLEO_F103RB</locationURI>
+			<locationURI>CHIBIOS/boards/ST_INEMO_M1_DISCOVERY</locationURI>
 		</link>
 		<link>
 			<name>os</name>
