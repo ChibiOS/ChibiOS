@@ -76,6 +76,9 @@
   implementation (bug #503).
 - FIX: Fixed missing make dependencies for asm files (bug #501).
 - FIX: STM32L1 Plus Clock and I2C (bug #495).
+- NEW: Added support for STMicroelectronics STEVAL-MKI121V1 also known as
+  INEMO-M1 Discovery board. A simple demo application using USB has been
+  added.
 
 *** 2.6.4 ***
 - FIX: Fixed insufficient ISR-reserved stack in ARMCMx port when
