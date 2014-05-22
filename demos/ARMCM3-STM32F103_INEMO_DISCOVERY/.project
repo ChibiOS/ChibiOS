@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/boards/ST_NUCLEO_F103RB</locationURI>
+			<locationURI>CHIBIOS/boards/ST_INEMO_M1_DISCOVERY</locationURI>
 		</link>
 		<link>
 			<name>os</name>
