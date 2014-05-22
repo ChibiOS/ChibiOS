@@ -39,7 +39,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="PPC-SPC56EL-GCC.null.2129661677" name="PPC-SPC56EL-GCC"/>
+		<project id="RT-SPC563M-EVB.null.2129661677" name="RT-SPC563M-EVB"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -50,7 +50,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/RT-SPC56EL-EVB"/>
+			<resource resourceType="PROJECT" workspacePath="/RT-SPC563M-EVB"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
