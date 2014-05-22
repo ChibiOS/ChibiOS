@@ -31,8 +31,17 @@
  * Board frequencies.
  */
 #define STM32_LSECLK            0
+
+#if defined(NUCLEO_EXTERNAL_OSCILLATOR)
 #define STM32_HSECLK            8000000
 #define STM32_HSE_BYPASS
+
+#elif defined(NUCLEO_HSE_CRYSTAL)
+#define STM32_HSECLK            8000000
+
+#else
+#define STM32_HSECLK            0
+#endif
 
 /*
  * MCU type, supported types are defined in ./os/hal/platforms/hal_lld.h.
@@ -126,12 +135,13 @@
  * Everything input with pull-up except:
  * PA2  - Alternate output          (GPIOA_USART_TX).
  * PA3  - Normal input              (GPIOA_USART_RX).
+ * PA5  - Push Pull output          (GPIOA_LED_GREEN).
  * PA13 - Pull-up input             (GPIOA_SWDIO).
  * PA14 - Pull-down input           (GPIOA_SWCLK).
  */
-#define VAL_GPIOACRL            0x88884B88      /*  PA7...PA0 */
+#define VAL_GPIOACRL            0x88384B88      /*  PA7...PA0 */
 #define VAL_GPIOACRH            0x88888888      /* PA15...PA8 */
-#define VAL_GPIOAODR            0xFFFFBFFF
+#define VAL_GPIOAODR            0xFFFFBFDF
 
 /*
  * Port B setup.
