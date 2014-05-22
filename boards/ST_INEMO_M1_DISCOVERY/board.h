@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_INEMO_M1_DISCOVERY
-#define BOARD_NAME              "ST INEMO-M1 Discovery"
+#define BOARD_NAME              "STMicroelectronics INEMO-M1 Discovery"
 
 /*
  * Board frequencies.

@@ -25,7 +25,7 @@
  * Board identifier.
  */
 #define BOARD_ST_NUCLEO_F103RB
-#define BOARD_NAME              "NUCLEO-F103RB"
+#define BOARD_NAME              "STMicroelectronics NUCLEO-F103RB"
 
 /*
  * Board frequencies.
@@ -146,6 +146,7 @@
 /*
  * Port B setup.
  * Everything input with pull-up except:
+ * PB3  - Pull-up input             (GPIOA_SWO).
  */
 #define VAL_GPIOBCRL            0x88888888      /*  PB7...PB0 */
 #define VAL_GPIOBCRH            0x88888888      /* PB15...PB8 */
