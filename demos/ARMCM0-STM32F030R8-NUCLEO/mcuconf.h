@@ -78,19 +78,19 @@
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  FALSE
-#define STM32_GPT_USE_TIM2                  FALSE
 #define STM32_GPT_USE_TIM3                  FALSE
+#define STM32_GPT_USE_TIM14                 FALSE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         2
-#define STM32_GPT_TIM2_IRQ_PRIORITY         2
 #define STM32_GPT_TIM3_IRQ_PRIORITY         2
+#define STM32_GPT_TIM14_IRQ_PRIORITY        2
 
 /*
  * I2C driver system settings.
  */
 #define STM32_I2C_USE_I2C1                  FALSE
 #define STM32_I2C_USE_I2C2                  FALSE
-#define STM32_I2C_I2C1_IRQ_PRIORITY         10
-#define STM32_I2C_I2C2_IRQ_PRIORITY         10
+#define STM32_I2C_I2C1_IRQ_PRIORITY         3
+#define STM32_I2C_I2C2_IRQ_PRIORITY         3
 #define STM32_I2C_I2C1_DMA_PRIORITY         1
 #define STM32_I2C_I2C2_DMA_PRIORITY         1
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      chSysHalt()
@@ -99,10 +99,8 @@
  * ICU driver system settings.
  */
 #define STM32_ICU_USE_TIM1                  FALSE
-#define STM32_ICU_USE_TIM2                  FALSE
 #define STM32_ICU_USE_TIM3                  FALSE
 #define STM32_ICU_TIM1_IRQ_PRIORITY         3
-#define STM32_ICU_TIM2_IRQ_PRIORITY         3
 #define STM32_ICU_TIM3_IRQ_PRIORITY         3
 
 /*
@@ -110,10 +108,8 @@
  */
 #define STM32_PWM_USE_ADVANCED              FALSE
 #define STM32_PWM_USE_TIM1                  FALSE
-#define STM32_PWM_USE_TIM2                  FALSE
 #define STM32_PWM_USE_TIM3                  FALSE
 #define STM32_PWM_TIM1_IRQ_PRIORITY         3
-#define STM32_PWM_TIM2_IRQ_PRIORITY         3
 #define STM32_PWM_TIM3_IRQ_PRIORITY         3
 
 /*

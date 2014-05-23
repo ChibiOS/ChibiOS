@@ -83,6 +83,8 @@
   demo application has been added.
 - NEW: Added support for STMicroelectronics NUCLEO-F401RE board. A simple
   demo application has been added.
+- NEW: Added support for STMicroelectronics NUCLEO-F030R8 board. A simple
+  demo application has been added.
 
 *** 2.6.4 ***
 - FIX: Fixed insufficient ISR-reserved stack in ARMCMx port when
