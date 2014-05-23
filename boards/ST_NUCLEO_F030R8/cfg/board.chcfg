@@ -38,7 +38,7 @@
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="7" />
+        Alternate="1" />
       <pin3
         ID="USART_RX"
         Type="PushPull"
@@ -46,7 +46,7 @@
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="7" ></pin3>
+        Alternate="1" ></pin3>
       <pin4
         ID=""
         Type="PushPull"

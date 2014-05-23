@@ -63,7 +63,7 @@
 #define STM32F0XX
 
 #elif defined(STM32F030)
-#define PLATFORM_NAME           "STM32F050xx/F060xx Entry Level Value Line devices"
+#define PLATFORM_NAME           "STM32F030xx Entry Level Value Line devices"
 #define STM32F0XX
 
 #else
