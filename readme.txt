@@ -79,12 +79,11 @@
 - NEW: Added support for STMicroelectronics STEVAL-MKI121V1 also known as
   INEMO-M1 Discovery board. A simple demo application using USB has been
   added.
-- NEW: Added support for STMicroelectronics NUCLEO-F103RB board. A simple
-  demo application has been added.
-- NEW: Added support for STMicroelectronics NUCLEO-F401RE board. A simple
-  demo application has been added.
-- NEW: Added support for STMicroelectronics NUCLEO-F030R8 board. A simple
-  demo application has been added.
+- NEW: Added support for STMicroelectronics NUCLEO-F103RB board.
+- NEW: Added support for STMicroelectronics NUCLEO-F401RE board.
+- NEW: Added support for STMicroelectronics NUCLEO-F030R8 board.
+- NEW: Added support for STMicroelectronics NUCLEO-L152RE board (not tested
+  because lack of support in OpenOCD).
 
 *** 2.6.4 ***
 - FIX: Fixed insufficient ISR-reserved stack in ARMCMx port when
