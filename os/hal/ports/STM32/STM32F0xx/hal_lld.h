@@ -55,7 +55,7 @@
 #define PLATFORM_NAME           "STM32F050xx/F060xx Entry Level Low Density devices"
 
 #elif defined(STM32F030)
-#define PLATFORM_NAME           "STM32F050xx/F060xx Entry Level Value Line devices"
+#define PLATFORM_NAME           "STM32F030xx Entry Level Value Line devices"
 
 #else
 #error "STM32F0xx device not specified"
