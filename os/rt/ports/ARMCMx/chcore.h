@@ -165,7 +165,7 @@ struct port_extctx {};
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
- *          switching.
+ *          switch.
  */
 struct port_intctx {};
 #endif /* defined(__DOXYGEN__) */
