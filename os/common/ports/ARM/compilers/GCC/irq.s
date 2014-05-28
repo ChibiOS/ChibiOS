@@ -43,6 +43,13 @@ IrqHandler:
                 ldr     lr, =_port_irq_common
                 bx      r0
 
+                .weak   _port_irq_common
+_port_irq_common:
+                // This exit sequence is usually replaced by the RTOS
+                // specific one.
+                ldmfd   sp!, {r0-r3, r12, lr}
+                subs    pc, lr, #4
+
 #endif
 
 /** @} */
