@@ -35,7 +35,7 @@
 /**
  * @brief   ARM core model.
  */
-#define ARM_MODEL               ARM_MODEL_ARM7TDMI
+#define ARM_CORE                ARM_CORE_ARM7TDMI
 
 /**
  * @brief   Thumb-capable.
@@ -52,14 +52,10 @@
  */
 #define ARM_WFI_IMPL            (PCON = 1)
 
-/* The following code is not processed when the file is included from an
-   asm module.*/
-#if !defined(_FROM_ASM_)
-
-/* Including the device header.*/
-#include "lpc214x.h"
-
-#endif /* !defined(_FROM_ASM_) */
+/**
+ * @brief   Address of the IRQ vector register in the interrupt controller.
+ */
+#define ARM_IRQ_VECTOR_REG      0xFFFFF030
 
 #endif /* _ARMPARAMS_H_ */
 

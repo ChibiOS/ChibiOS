@@ -15,9 +15,10 @@
 */
 
 #include "ch.h"
-#include "hal.h"
-#include "test.h"
+//#include "hal.h"
+//#include "test.h"
 
+#if 0
 #define BOTH_BUTTONS (PAL_PORT_BIT(PA_BUTTON1) | PAL_PORT_BIT(PA_BUTTON2))
 
 /*
@@ -57,6 +58,7 @@ static msg_t Thread2(void *arg) {
   }
   return 0;
 }
+#endif
 
 /*
  * Application entry point.
@@ -70,22 +72,22 @@ int main(void) {
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
    */
-  halInit();
+//  halInit();
   chSysInit();
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-  sdStart(&SD1, NULL);
+//  sdStart(&SD1, NULL);
 
   /*
    * If a button is pressed during the reset then the blinking leds threads
    * are not started in order to make accurate benchmarks.
    */
-  if ((palReadPort(IOPORT1) & BOTH_BUTTONS) == BOTH_BUTTONS) {
-    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-    chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
-  }
+//  if ((palReadPort(IOPORT1) & BOTH_BUTTONS) == BOTH_BUTTONS) {
+//    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+//    chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
+//  }
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
@@ -93,10 +95,10 @@ int main(void) {
    * or print "Hello World!" on serial driver 1.
    */
   while (TRUE) {
-    if (!palReadPad(IOPORT1, PA_BUTTON1))
-      sdWrite(&SD1, (uint8_t *)"Hello World!\r\n", 14);
-    if (!palReadPad(IOPORT1, PA_BUTTON2))
-      TestThread(&SD1);
+//    if (!palReadPad(IOPORT1, PA_BUTTON1))
+//      sdWrite(&SD1, (uint8_t *)"Hello World!\r\n", 14);
+//    if (!palReadPad(IOPORT1, PA_BUTTON2))
+//      TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
   return 0;

@@ -42,6 +42,11 @@
  */
 #define PORT_ARCHITECTURE_ARM
 
+/* The following code is not processed when the file is included from an
+   asm module because those intrinsic macros are not necessarily defined
+   by the assembler too.*/
+#if !defined(_FROM_ASM_)
+
 /**
  * @brief   Compiler name and version.
  */
@@ -127,13 +132,13 @@
 /* ARM core check.*/
 #if (ARM_CORE == ARM_CORE_ARM7TDMI) || defined(__DOXYGEN__)
 #define PORT_ARCHITECTURE_ARM_ARM7
-#define PORT_ARCHITECTURE_NAME          "ARM7"
-#define PORT_CORE_VARIANT_NAME          "ARMv4"
+#define PORT_ARCHITECTURE_NAME          "ARMv4T"
+#define PORT_CORE_VARIANT_NAME          "ARM7"
 
 #elif ARM_CORE == ARM_CORE_ARM9
 #define PORT_ARCHITECTURE_ARM_ARM9
-#define PORT_ARCHITECTURE_NAME          "ARM9"
-#define PORT_CORE_VARIANT_NAME          "ARMv5"
+#define PORT_ARCHITECTURE_NAME          "ARMv5T"
+#define PORT_CORE_VARIANT_NAME          "ARM9"
 
 #elif ARM_CORE == ARM_CORE_CORTEX_A8
 #define PORT_ARCHITECTURE_ARM_CORTEXA8
@@ -185,9 +190,9 @@ typedef uint16_t systime_t;
 typedef uint64_t stkalign_t;
 
 /**
- * @brief   Generic PPC register.
+ * @brief   Generic ARM register.
  */
-typedef void *regppc_t;
+typedef void *regarm_t;
 
 /**
  * @brief   Interrupt saved context.
@@ -195,14 +200,14 @@ typedef void *regppc_t;
  *          interrupt handler.
  */
 struct port_extctx {
-  regarm_t      spsr_irq;
-  regarm_t      lr_irq;
-  regarm_t      r0;
-  regarm_t      r1;
-  regarm_t      r2;
-  regarm_t      r3;
-  regarm_t      r12;
-  regarm_t      lr_usr;
+  regarm_t              spsr_irq;
+  regarm_t              lr_irq;
+  regarm_t              r0;
+  regarm_t              r1;
+  regarm_t              r2;
+  regarm_t              r3;
+  regarm_t              r12;
+  regarm_t              lr_usr;
 };
 
 /**
@@ -211,15 +216,15 @@ struct port_extctx {
  *          switch.
  */
 struct port_intctx {
-  regarm_t      r4;
-  regarm_t      r5;
-  regarm_t      r6;
-  regarm_t      r7;
-  regarm_t      r8;
-  regarm_t      r9;
-  regarm_t      r10;
-  regarm_t      r11;
-  regarm_t      lr;
+  regarm_t              r4;
+  regarm_t              r5;
+  regarm_t              r6;
+  regarm_t              r7;
+  regarm_t              r8;
+  regarm_t              r9;
+  regarm_t              r10;
+  regarm_t              r11;
+  regarm_t              lr;
 };
 
 /**
@@ -228,11 +233,9 @@ struct port_intctx {
  *          @p port_intctx structure representing the stack pointer
  *          at context switch time.
  */
-struct port_context {
-  struct intctx *r13;
+struct context {
+  struct port_intctx    *r13;
 };
-
-#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -336,9 +339,9 @@ struct port_context {
 extern "C" {
 #endif
 #ifdef THUMB
-  void _port_switch_thumb(Thread *ntp, Thread *otp);
+  void _port_switch_thumb(thread_t *ntp, thread_t *otp);
 #else
-  void _port_switch_arm(Thread *ntp, Thread *otp);
+  void _port_switch_arm(thread_t *ntp, thread_t *otp);
 #endif
   void _port_thread_start(void);
 #ifdef __cplusplus

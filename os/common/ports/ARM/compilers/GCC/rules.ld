@@ -37,9 +37,10 @@ SECTIONS
     . = 0;
     _text = .;
 
-    startup : ALIGN(16) SUBALIGN(16)
+    boot : ALIGN(16) SUBALIGN(16)
     {
         KEEP(*(vectors))
+        KEEP(*(irq))
     } > flash
 
     constructors : ALIGN(4) SUBALIGN(4)

@@ -26,6 +26,9 @@
  * @{
  */
 
+#define __FROM_ASM__
+#include "armparams.h"
+
 #if !defined(__DOXYGEN__)
 
                 .section irq
@@ -39,7 +42,8 @@
                 .global IrqHandler
 IrqHandler:
                 stmfd   sp!, {r0-r3, r12, lr}
-                ldr     r0, [pc, #ARM_IRQ_REGISTER_OFFSET]
+                ldr     r0, =ARM_IRQ_VECTOR_REG
+                ldr     r0, [r0]
                 ldr     lr, =_port_irq_common
                 bx      r0
 

@@ -146,7 +146,7 @@ bssloop:
                 ldr     r1, =_main_exit_handler
                 bx      r1
                 .code   32
-#else /* !defined(THUMB_NO_INTERWORKING)
+#else /* !defined(THUMB_NO_INTERWORKING) */
                 bl      main
                 b       _main_exit_handler
 #endif /* !defined(THUMB_NO_INTERWORKING) */
@@ -172,7 +172,6 @@ _main_exit_handler:
 __early_init:
                 bx      lr
                 .code   32
-#endif
 
 /*
  * Default late initialization code. It is declared weak in order to be
@@ -188,6 +187,7 @@ __early_init:
 __late_init:
                 bx      lr
                 .code   32
-#endif
+
+#endif /* !defined(__DOXYGEN__) */
 
 /** @} */
