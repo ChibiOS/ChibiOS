@@ -472,6 +472,9 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   chDbgAssert((dma_streams_mask & (1 << dmastp->selfindex)) != 0,
               "dmaStreamRelease(), #1", "not allocated");
 
+  /* Marks the stream as not allocated.*/
+  dma_streams_mask &= ~(1 << dmastp->selfindex);
+
   /* Disables the associated IRQ vector.*/
 #if !(STM32_HAS_DMA2 && !defined(STM32F10X_CL)) || defined(__DOXYGEN__)
   nvicDisableVector(dmastp->vector);
@@ -485,9 +488,6 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
       nvicDisableVector(dmastp->vector);
   }
 #endif/* STM32_HAS_DMA2 && !STM32F10X_CL */
-
-  /* Marks the stream as not allocated.*/
-  dma_streams_mask &= ~(1 << dmastp->selfindex);
 
   /* Shutting down clocks that are no more required, if any.*/
   if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0)
