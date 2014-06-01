@@ -74,9 +74,9 @@
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
-#define STM32_I2C1_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 3)
+#define STM32_I2C1_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 7)
 #define STM32_I2C1_RX_DMA_CHN               0x00000000
-#define STM32_I2C1_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 2)
+#define STM32_I2C1_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 6)
 #define STM32_I2C1_TX_DMA_CHN               0x00000000
 
 #define STM32_HAS_I2C2                      TRUE
