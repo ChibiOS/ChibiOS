@@ -53,7 +53,7 @@
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(EXTI0_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector58) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -68,7 +68,7 @@ OSAL_IRQ_HANDLER(EXTI0_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(EXTI1_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector5C) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -83,7 +83,7 @@ OSAL_IRQ_HANDLER(EXTI1_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(EXTI2_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector60) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -98,7 +98,7 @@ OSAL_IRQ_HANDLER(EXTI2_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(EXTI3_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector64) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -113,7 +113,7 @@ OSAL_IRQ_HANDLER(EXTI3_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(EXTI4_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector68) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -128,7 +128,7 @@ OSAL_IRQ_HANDLER(EXTI4_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(EXTI9_5_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector9C) {
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
@@ -154,7 +154,7 @@ OSAL_IRQ_HANDLER(EXTI9_5_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(EXTI15_10_IRQHandler) {
+OSAL_IRQ_HANDLER(VectorE0) {
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
@@ -183,7 +183,7 @@ OSAL_IRQ_HANDLER(EXTI15_10_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(PVD_IRQHandler) {
+OSAL_IRQ_HANDLER(Veector44) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -198,7 +198,7 @@ OSAL_IRQ_HANDLER(PVD_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(RTC_Alarm_IRQHandler) {
+OSAL_IRQ_HANDLER(VectorE4) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -214,7 +214,7 @@ OSAL_IRQ_HANDLER(RTC_Alarm_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(OTG_FS_WKUP_IRQHandler) {
+OSAL_IRQ_HANDLER(VectorE8) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -229,7 +229,7 @@ OSAL_IRQ_HANDLER(OTG_FS_WKUP_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(ETH_WKUP_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector138) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -247,7 +247,7 @@ OSAL_IRQ_HANDLER(ETH_WKUP_IRQHandler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(USB_FS_WKUP_IRQHandler) {
+OSAL_IRQ_HANDLER(VectorE8) {
 
   OSAL_IRQ_PROLOGUE();
 
