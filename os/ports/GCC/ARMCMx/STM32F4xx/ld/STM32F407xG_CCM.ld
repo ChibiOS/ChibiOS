@@ -117,7 +117,7 @@ SECTIONS
         __main_thread_stack_end__ = .;
     } > ccmram
 
-    .ccm :
+    .ccm (NOLOAD):
     {
         PROVIDE(_cmm_start = .);
         . = ALIGN(4);
