@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.5 ***
+- FIX: Fixed STM32L1 Medium Density Plus RTC Subseconds (bug #509).
 - FIX: Fixed stm32 CCM .ld file needs NOLOAD (bug #506).
 - FIX: Fixed dereference possibly null pointer before checking for nulliness
   in STM32 RTCv2 driver (bug #505).
