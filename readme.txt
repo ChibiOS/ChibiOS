@@ -72,6 +72,8 @@
 *****************************************************************************
 
 *** 2.6.5 ***
+- FIX: Fixed dereference possibly null pointer before checking for nulliness
+  in STM32 RTCv2 driver (bug #505).
 - FIX: Fixed race condition in STM32 (F1, F2, F4, L1) serial driver
   implementation (bug #503).
 - FIX: Fixed missing make dependencies for asm files (bug #501).
