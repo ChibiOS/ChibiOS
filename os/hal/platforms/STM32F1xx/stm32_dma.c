@@ -473,7 +473,18 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
               "dmaStreamRelease(), #1", "not allocated");
 
   /* Disables the associated IRQ vector.*/
+#if !(STM32_HAS_DMA2 && !defined(STM32F10X_CL)) || defined(__DOXYGEN__)
   nvicDisableVector(dmastp->vector);
+#else
+  /* Check unless it is 10 or 11 stream. If yes, make additional check before
+     disabling IRQ.*/
+  if (dmastp->selfindex < 10)
+    nvicDisableVector(dmastp->vector);
+  else {
+    if (dma_streams_mask & (3 << 10) == 0)
+      nvicDisableVector(dmastp->vector);
+  }
+#endif/* STM32_HAS_DMA2 && !STM32F10X_CL */
 
   /* Marks the stream as not allocated.*/
   dma_streams_mask &= ~(1 << dmastp->selfindex);
