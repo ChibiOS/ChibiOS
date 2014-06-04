@@ -47,10 +47,21 @@
                 .text
 
 /*
- * Interrupt enable/disable functions, only present if there is THUMB code in
- * the system because those are inlined in ARM code.
+ * The following functions are only present if there is THUMB code in
+ * the system.
  */
 #if defined(THUMB_PRESENT)
+                .balign 16
+                .code   16
+                .thumb_func
+                .global _port_get_cpsr
+_port_get_cpsr:
+                mov     r0, pc
+                bx      r0
+.code 32
+                mrs     r0, CPSR
+                bx      lr
+
                 .balign 16
                 .code   16
                 .thumb_func

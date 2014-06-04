@@ -285,7 +285,7 @@ static inline void port_init(void) {
  */
 static inline syssts_t port_get_irq_status(void) {
 
-  return __get_PRIMASK();
+  return (syssts_t)__get_PRIMASK();
 }
 
 /**

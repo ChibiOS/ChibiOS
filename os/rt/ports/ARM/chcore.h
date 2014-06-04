@@ -338,6 +338,9 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
+#ifdef THUMB_PRESENT
+  syssts_t _port_get_cpsr(void);
+#endif
 #ifdef THUMB
   void _port_switch_thumb(thread_t *ntp, thread_t *otp);
 #else
@@ -357,6 +360,55 @@ extern "C" {
  */
 static inline void port_init(void) {
 
+}
+
+/**
+ * @brief   Returns a word encoding the current interrupts status.
+ *
+ * @return              The interrupts status.
+ */
+static inline syssts_t port_get_irq_status(void) {
+  syssts_t sts;
+
+#ifdef THUMB
+  sts = _port_get_cpsr();
+#else
+  asm volatile ("mrs     %[p0], CPSR" : [p0] "=r" (sts) :);
+#endif
+  return sts;
+}
+
+/**
+ * @brief   Checks the interrupt status.
+ *
+ * @param[in] sts       the interrupt status word
+ *
+ * @return              The interrupt status.
+ * @retvel false        the word specified a disabled interrupts status.
+ * @retvel true         the word specified an enabled interrupts status.
+ */
+static inline bool port_irq_enabled(syssts_t sts) {
+
+  return (sts & 0x80) == 0;
+}
+
+/**
+ * @brief   Determines the current execution context.
+ *
+ * @return              The execution context.
+ * @retval false        not running in ISR mode.
+ * @retval true         running in ISR mode.
+ */
+static inline bool port_is_isr_context(void) {
+  syssts_t sts;
+
+#ifdef THUMB
+  sts = _port_get_cpsr();
+#else
+  asm volatile ("mrs     %[p0], CPSR" : [p0] "=r" (sts) :);
+#endif
+
+  return (sts & 0x1F) == 0x12;
 }
 
 /**
@@ -446,6 +498,21 @@ static inline void port_enable(void) {
   asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr", "memory");
 #else
   asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
+#endif
+}
+
+/**
+ * @brief   Enters an architecture-dependent IRQ-waiting mode.
+ * @details The function is meant to return when an interrupt becomes pending.
+ *          The simplest implementation is an empty function or macro but this
+ *          would not take advantage of architecture-specific power saving
+ *          modes.
+ * @note    Implemented as an inlined @p WFI instruction.
+ */
+static inline void port_wait_for_interrupt(void) {
+
+#if ARM_ENABLE_WFI_IDLE
+  ARM_WFI_IMPL;
 #endif
 }
 
