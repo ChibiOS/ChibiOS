@@ -114,6 +114,9 @@ static void can_lld_set_filters(uint32_t can2sb,
 #if STM32_HAS_CAN2
     CAN1->FS1R = 1 | (1 << can2sb);
     CAN1->FA1R = 1 | (1 << can2sb);
+#else
+    CAN1->FS1R = 1;
+    CAN1->FA1R = 1;
 #endif
   }
   CAN1->FMR &= ~CAN_FMR_FINIT;
@@ -688,7 +691,7 @@ void can_lld_wakeup(CANDriver *canp) {
 void canSTM32SetFilters(uint32_t can2sb, uint32_t num, const CANFilter *cfp) {
 
   osalDbgCheck((can2sb >= 1) && (can2sb < STM32_CAN_MAX_FILTERS) &&
-               (num <? STM32_CAN_MAX_FILTERS));
+               (num <= STM32_CAN_MAX_FILTERS));
 
 #if STM32_CAN_USE_CAN1
   osalDbgAssert(CAND1.state == CAN_STOP, "invalid state");
