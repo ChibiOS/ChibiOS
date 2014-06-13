@@ -36,32 +36,51 @@
 /*===========================================================================*/
 
 /**
- * @brief   Two alarm comparators available on STM32F4x.
+ * @brief   Callback support int the driver.
  */
-#define RTC_ALARMS                  2
+#define RTC_SUPPORTS_CALLBACKS              STM32_RTC_HAS_INTERRUPTS
 
 /**
- * @brief   Data offsets in RTC date and time registers.
+ * @name    Data offsets in RTC date and time registers
+ * @{
  */
-#define RTC_TR_PM_OFFSET    22
-#define RTC_TR_HT_OFFSET    20
-#define RTC_TR_HU_OFFSET    16
-#define RTC_TR_MNT_OFFSET   12
-#define RTC_TR_MNU_OFFSET   8
-#define RTC_TR_ST_OFFSET    4
-#define RTC_TR_SU_OFFSET    0
+#define RTC_TR_PM_OFFSET                    22
+#define RTC_TR_HT_OFFSET                    20
+#define RTC_TR_HU_OFFSET                    16
+#define RTC_TR_MNT_OFFSET                   12
+#define RTC_TR_MNU_OFFSET                   8
+#define RTC_TR_ST_OFFSET                    4
+#define RTC_TR_SU_OFFSET                    0
 
-#define RTC_DR_YT_OFFSET    20
-#define RTC_DR_YU_OFFSET    16
-#define RTC_DR_WDU_OFFSET   13
-#define RTC_DR_MT_OFFSET    12
-#define RTC_DR_MU_OFFSET    8
-#define RTC_DR_DT_OFFSET    4
-#define RTC_DR_DU_OFFSET    0
+#define RTC_DR_YT_OFFSET                    20
+#define RTC_DR_YU_OFFSET                    16
+#define RTC_DR_WDU_OFFSET                   13
+#define RTC_DR_MT_OFFSET                    12
+#define RTC_DR_MU_OFFSET                    8
+#define RTC_DR_DT_OFFSET                    4
+#define RTC_DR_DU_OFFSET                    0
+/** @} */
+
+/**
+ * @brief   RTC PRES register initializer.
+ */
+#define RTC_PRES(a, s)                      ((((a) - 1) << 16) | ((s) - 1))
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   RTC PRES register initialization.
+ * @note    The default is calculated for a 32768Hz clock.
+ */
+#if !defined(STM32_RTC_PRES_VALUE) || defined(__DOXYGEN__)
+#define STM32_RTC_PRES_VALUE                RTC_PRES(32, 1024)
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -77,12 +96,8 @@
 #error "invalid source selected for RTC clock"
 #endif
 
-#if !defined(RTC_USE_INTERRUPTS) || defined(__DOXYGEN__)
-#define RTC_USE_INTERRUPTS                FALSE
-#endif
-
 #if STM32_PCLK1 < (STM32_RTCCLK * 7)
-#error "STM32_PCLK1 frequency is too low to handle RTC without ugly workaround"
+#error "STM32_PCLK1 frequency is too low"
 #endif
 
 /*===========================================================================*/
@@ -90,82 +105,13 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure representing an RTC alarm time stamp.
- */
-typedef struct RTCAlarm RTCAlarm;
-
-/**
- * @brief   Type of a structure representing an RTC wakeup period.
- */
-typedef struct RTCWakeup RTCWakeup;
-
-/**
- * @brief   Type of a structure representing an RTC callbacks config.
- */
-typedef struct RTCCallbackConfig RTCCallbackConfig;
-
-/**
- * @brief   Type of an RTC alarm.
- * @details Meaningful on platforms with more than 1 alarm comparator.
- */
-typedef uint32_t rtcalarm_t;
-
-/**
- * @brief   Structure representing an RTC time stamp.
- */
-struct RTCTime {
-  /**
-   * @brief RTC date register in STM32 BCD format.
-   */
-  uint32_t tv_date;
-  /**
-   * @brief RTC time register in STM32 BCD format.
-   */
-  uint32_t tv_time;
-  /**
-   * @brief Set this to TRUE to use 12 hour notation.
-   */
-  bool_t h12;
-  /**
-   * @brief Fractional part of time.
-   */
-#if STM32_RTC_HAS_SUBSECONDS
-  uint32_t tv_msec;
-#endif
-};
-
-/**
- * @brief   Structure representing an RTC alarm time stamp.
- */
-struct RTCAlarm {
-  /**
-   * @brief Date and time of alarm in STM32 BCD.
-   */
-  uint32_t tv_datetime;
-};
-
-/**
- * @brief   Structure representing an RTC periodic wakeup period.
- */
-struct RTCWakeup {
-  /**
-   * @brief   RTC WUTR register.
-   * @details Bits [15:0] contain value of WUTR register
-   *          Bits [18:16] contain value of WUCKSEL bits in CR register
-   *
-   * @note    ((WUTR == 0) || (WUCKSEL == 3)) is forbidden combination.
-   */
-  uint32_t wakeup;
-};
-
-/**
  * @brief   Structure representing an RTC driver.
  */
-struct RTCDriver{
+struct RTCDriver {
   /**
    * @brief Pointer to the RTC registers block.
    */
-  RTC_TypeDef               *id_rtc;
+  RTC_TypeDef               *rtc;
 };
 
 /*===========================================================================*/
@@ -184,17 +130,16 @@ extern RTCDriver RTCD1;
 extern "C" {
 #endif
   void rtc_lld_init(void);
-  void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec);
-  void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec);
+  void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec);
+  void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec);
+#if STM32_RTC_NUM_ALARMS > 0
   void rtc_lld_set_alarm(RTCDriver *rtcp,
                          rtcalarm_t alarm,
                          const RTCAlarm *alarmspec);
   void rtc_lld_get_alarm(RTCDriver *rtcp,
                          rtcalarm_t alarm,
                          RTCAlarm *alarmspec);
-  void rtcSetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec);
-  void rtcGetPeriodicWakeup_v2(RTCDriver *rtcp, RTCWakeup *wakeupspec);
-  uint32_t rtc_lld_get_time_fat(RTCDriver *rtcp);
+#endif
 #ifdef __cplusplus
 }
 #endif

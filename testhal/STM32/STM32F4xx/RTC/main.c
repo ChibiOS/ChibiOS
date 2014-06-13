@@ -14,6 +14,10 @@
     limitations under the License.
 */
 
+#include "ch.h"
+#include "hal.h"
+
+#if 0
 /*
 This structure is used to hold the values representing a calendar time.
 It contains the following members, with the meanings as shown.
@@ -197,7 +201,7 @@ static const ShellConfig shell_cfg1 = {
   (BaseSequentialStream  *)&SD2,
   commands
 };
-
+#endif
 
 /**
  * Main function.
@@ -206,8 +210,9 @@ int main(void){
 
   halInit();
   chSysInit();
-  chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
+//  chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
 
+#if 0
 #if !WAKEUP_TEST
   /* switch off wakeup */
   rtcSetPeriodicWakeup_v2(&RTCD1, NULL);
@@ -232,6 +237,7 @@ int main(void){
   chThdSleepSeconds(3);
   func_sleep();
 #endif /* !WAKEUP_TEST */
+#endif
 
   return 0;
 }

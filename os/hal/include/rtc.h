@@ -63,7 +63,6 @@
 #define RTC_DAY_FRIDAY              5
 #define RTC_DAY_SATURDAY            6
 #define RTC_DAY_SUNDAY              7
-
 /** @} */
 
 /*===========================================================================*/
@@ -173,7 +172,7 @@ extern "C" {
   void rtcInit(void);
   void rtcSetTime(RTCDriver *rtcp, const RTCDateTime *timespec);
   void rtcGetTime(RTCDriver *rtcp, RTCDateTime *timespec);
-#if RTC_ALARMS > 0
+#if STM32_RTC_NUM_ALARMS > 0
   void rtcSetAlarm(RTCDriver *rtcp,
                    rtcalarm_t alarm,
                    const RTCAlarm *alarmspec);

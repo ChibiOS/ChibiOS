@@ -126,6 +126,8 @@
 #define STM32_RTC_HAS_SUBSECONDS            FALSE
 #endif
 #define STM32_RTC_IS_CALENDAR               TRUE
+#define STM32_RTC_NUM_ALARMS                /*2*/0
+#define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
