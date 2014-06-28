@@ -172,12 +172,12 @@ void _port_irq_epilogue(void) {
        required or not.*/
     if (chSchIsPreemptionRequired()) {
       /* Preemption is required we need to enforce a context switch.*/
-      ctxp->pc = (void *)_port_switch_from_isr;
+      ctxp->pc = (regarm_t)_port_switch_from_isr;
     }
     else {
       /* Preemption not required, we just need to exit the exception
          atomically.*/
-      ctxp->pc = (void *)_port_exit_from_isr;
+      ctxp->pc = (regarm_t)_port_exit_from_isr;
     }
 
     /* Note, returning without unlocking is intentional, this is done in
