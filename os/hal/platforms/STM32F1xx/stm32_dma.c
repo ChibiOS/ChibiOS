@@ -476,7 +476,7 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   dma_streams_mask &= ~(1 << dmastp->selfindex);
 
   /* Disables the associated IRQ vector.*/
-#if !(STM32_HAS_DMA2 && !defined(STM32F10X_CL)) || defined(__DOXYGEN__)
+#if !(STM32_HAS_DMA2 && !defined(STM32F10X_CL))
   nvicDisableVector(dmastp->vector);
 #else
   /* Check unless it is 10 or 11 stream. If yes, make additional check before
@@ -484,10 +484,10 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   if (dmastp->selfindex < 10)
     nvicDisableVector(dmastp->vector);
   else {
-    if (dma_streams_mask & (3 << 10) == 0)
+    if ((dma_streams_mask & (3 << 10)) == 0)
       nvicDisableVector(dmastp->vector);
   }
-#endif/* STM32_HAS_DMA2 && !STM32F10X_CL */
+#endif /* STM32_HAS_DMA2 && !STM32F10X_CL */
 
   /* Shutting down clocks that are no more required, if any.*/
   if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0)
