@@ -93,6 +93,7 @@
 - NEW: Added support for STMicroelectronics NUCLEO-F030R8 board.
 - NEW: Added support for STMicroelectronics NUCLEO-L152RE board (not tested
   because lack of support in OpenOCD).
+- CHANGE: Made mii_read() and mii_write() public in the STM32 MAC driver.
 
 *** 2.6.4 ***
 - FIX: Fixed insufficient ISR-reserved stack in ARMCMx port when
