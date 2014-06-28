@@ -74,6 +74,7 @@
 *** 2.6.5 ***
 - FIX: Fixed race condition in Cortex-M4 port with FPU and fast interrupts
   (bug #513).
+- FIX: Fixed STM32F1xx warning in stm32_dma.c (bug #512).
 - FIX: Fixed invalid checks in canSTM32SetFilters() function (bug #511).
 - FIX: Fixed missing check when disabling STM32F1 shared DMA IRQs (bug #510).
 - FIX: Fixed STM32L1 Medium Density Plus RTC Subseconds (bug #509).
