@@ -66,6 +66,11 @@ void SVCallVector(void) {
   struct extctx *ctxp;
   register uint32_t psp __asm("psp");
 
+#if CORTEX_USE_FPU
+  /* Enforcing unstacking of the FP part of the context.*/
+  SCB_FPCCR &= ~FPCCR_LSPACT;
+#endif
+
   /* Current PSP value.*/
   ctxp = (struct extctx *)psp;
 
@@ -73,11 +78,7 @@ void SVCallVector(void) {
      point to the real one.*/
   ctxp++;
 
-#if CORTEX_USE_FPU
-  /* Restoring the special register SCB_FPCCR.*/
-  SCB_FPCCR = (uint32_t)ctxp->fpccr;
-  SCB_FPCAR = SCB_FPCAR + sizeof (struct extctx);
-#endif
+  /* Restoring real position of the original stack frame.*/
   psp = (uint32_t)ctxp;
   port_unlock_from_isr();
 }
@@ -94,6 +95,11 @@ void PendSVVector(void) {
   struct extctx *ctxp;
   register uint32_t psp __asm("psp");
 
+#if CORTEX_USE_FPU
+  /* Enforcing unstacking of the FP part of the context.*/
+  SCB_FPCCR &= ~FPCCR_LSPACT;
+#endif
+
   /* Current PSP value.*/
   ctxp = (struct extctx *)psp;
 
@@ -101,11 +107,7 @@ void PendSVVector(void) {
      point to the real one.*/
   ctxp++;
 
-#if CORTEX_USE_FPU
-  /* Restoring the special register SCB_FPCCR.*/
-  SCB_FPCCR = (uint32_t)ctxp->fpccr;
-  SCB_FPCAR = SCB_FPCAR + sizeof (struct extctx);
-#endif
+  /* Restoring real position of the original stack frame.*/
   psp = (uint32_t)ctxp;
 }
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
@@ -165,20 +167,21 @@ void _port_irq_epilogue(void) {
     /* Current PSP value.*/
     ctxp = (struct extctx *)psp;
 
-    /* Adding an artificial exception return context, there is no need to
-       populate it fully.*/
-    ctxp--;
-    psp = (uint32_t)ctxp;
-    ctxp->xpsr = (regarm_t)0x01000000;
-
-    /* The exit sequence is different depending on if a preemption is
-       required or not.*/
-    if (chSchIsPreemptionRequired()) {
 #if CORTEX_USE_FPU
       /* Triggering a lazy FPU state save.*/
       register uint32_t fpscr __asm("fpscr");
       ctxp->r0 = (regarm_t)fpscr;
 #endif
+
+    /* Adding an artificial exception return context, there is no need to
+       populate it fully.*/
+    ctxp--;
+    ctxp->xpsr = (regarm_t)0x01000000;
+    psp = (uint32_t)ctxp;
+
+    /* The exit sequence is different depending on if a preemption is
+       required or not.*/
+    if (chSchIsPreemptionRequired()) {
       /* Preemption is required we need to enforce a context switch.*/
       ctxp->pc = (regarm_t)_port_switch_from_isr;
     }
@@ -187,20 +190,6 @@ void _port_irq_epilogue(void) {
          atomically.*/
       ctxp->pc = (regarm_t)_port_exit_from_isr;
     }
-
-#if CORTEX_USE_FPU
-    {
-      uint32_t fpccr;
-
-      /* Saving the special register SCB_FPCCR into the reserved offset of
-         the Cortex-M4 exception frame.*/
-      (ctxp + 1)->fpccr = (regarm_t)(fpccr = SCB_FPCCR);
-
-      /* Now the FPCCR is modified in order to not restore the FPU status
-         from the artificial return context.*/
-      SCB_FPCCR = fpccr | FPCCR_LSPACT;
-    }
-#endif
 
     /* Note, returning without unlocking is intentional, this is done in
        order to keep the rest of the context switch atomic.*/
