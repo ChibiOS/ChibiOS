@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS/RT - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -61,20 +61,6 @@ const PALConfig pal_default_config =
 #endif /* HAL_USE_PAL */
 
 /**
- * @brief   Timer0 interrupt handler.
- */
-CH_IRQ_HANDLER(TIMER0_COMPA_vect) {
-
-  CH_IRQ_PROLOGUE();
-
-  chSysLockFromIsr();
-  chSysTimerHandlerI();
-  chSysUnlockFromIsr();
-
-  CH_IRQ_EPILOGUE();
-}
-
-/**
  * Board-specific initialization code.
  */
 void boardInit(void) {
@@ -94,7 +80,7 @@ void boardInit(void) {
             (0 << COM0B1) | (0 << COM0B0);               /* OC0B disabled.   */
   TCCR0B  = (0 << WGM02) |                               /* CTC mode.        */
             (0 << CS02)  | (1 << CS01)  | (1 << CS00);   /* CLK/64 clock.    */
-  OCR0A   = F_CPU / 64 / CH_FREQUENCY - 1;
+  OCR0A   = F_CPU / 64 / CH_CFG_ST_FREQUENCY - 1;
   TCNT0   = 0;                                           /* Reset counter.   */
   TIFR0   = (1 << OCF0A);                                /* Reset pending.   */
   TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare.  */
