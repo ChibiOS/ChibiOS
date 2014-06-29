@@ -60,21 +60,21 @@
  * @note    The PendSV vector is only used in advanced kernel mode.
  */
 void SVC_Handler(void) {
+  struct port_extctx *ctxp;
+
+#if CORTEX_USE_FPU
+  /* Enforcing unstacking of the FP part of the context.*/
+  SCB_FPCCR &= ~FPCCR_LSPACT;
+#endif
 
   /* The port_extctx structure is pointed by the PSP register.*/
-  struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
+  ctxp = (struct port_extctx *)__get_PSP();
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
   ctxp++;
 
-#if CORTEX_USE_FPU
-  /* Restoring the special register FPCCR.*/
-  FPU->FPCCR = (uint32_t)ctxp->fpccr;
-  FPU->FPCAR = FPU->FPCAR + sizeof (struct port_extctx);
-#endif
-
-  /* Writing back the modified PSP value.*/
+  /* Restoring real position of the original stack frame.*/
   __set_PSP((uint32_t)ctxp);
 
   /* Restoring the normal interrupts status.*/
@@ -90,19 +90,19 @@ void SVC_Handler(void) {
  * @note    The PendSV vector is only used in compact kernel mode.
  */
 void PendSV_Handler(void) {
+  struct port_extctx *ctxp;
+
+#if CORTEX_USE_FPU
+  /* Enforcing unstacking of the FP part of the context.*/
+  SCB_FPCCR &= ~FPCCR_LSPACT;
+#endif
 
   /* The port_extctx structure is pointed by the PSP register.*/
-  struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
+  ctxp = (struct port_extctx *)__get_PSP();
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
   ctxp++;
-
-#if CORTEX_USE_FPU
-  /* Restoring the special register FPCCR.*/
-  FPU->FPCCR = (uint32_t)ctxp->fpccr;
-  FPU->FPCAR = FPU->FPCAR + sizeof (struct port_extctx);
-#endif
 
   /* Writing back the modified PSP value.*/
   __set_PSP((uint32_t)ctxp);
@@ -120,49 +120,37 @@ void _port_irq_epilogue(void) {
 
   port_lock_from_isr();
   if ((SCB->ICSR & SCB_ICSR_RETTOBASE_Msk) != 0) {
+    struct port_extctx *ctxp;
+
+#if CORTEX_USE_FPU
+      /* Enforcing a lazy FPU state save by accessing the FPCSR register.*/
+      (void) __get_FPSCR();
+#endif
 
     /* The port_extctx structure is pointed by the PSP register.*/
-    struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
+    ctxp = (struct port_extctx *)__get_PSP();
 
     /* Adding an artificial exception return context, there is no need to
        populate it fully.*/
     ctxp--;
 
-    /* Writing back the modified PSP value.*/
-    __set_PSP((uint32_t)ctxp);
-
     /* Setting up a fake XPSR register value.*/
     ctxp->xpsr = (regarm_t)0x01000000;
+
+    /* Writing back the modified PSP value.*/
+    __set_PSP((uint32_t)ctxp);
 
     /* The exit sequence is different depending on if a preemption is
        required or not.*/
     if (chSchIsRescRequiredI()) {
       /* Preemption is required we need to enforce a context switch.*/
       ctxp->pc = (regarm_t)_port_switch_from_isr;
-#if CORTEX_USE_FPU
-      /* Enforcing a lazy FPU state save by accessing the FPCSR register.*/
-      (void) __get_FPSCR();
-#endif
     }
     else {
       /* Preemption not required, we just need to exit the exception
          atomically.*/
       ctxp->pc = (regarm_t)_port_exit_from_isr;
     }
-
-#if CORTEX_USE_FPU
-    {
-      uint32_t fpccr;
-
-      /* Saving the special register SCB_FPCCR into the reserved offset of
-         the Cortex-M4 exception frame.*/
-      (ctxp + 1)->fpccr = (regarm_t)(fpccr = FPU->FPCCR);
-
-      /* Now the FPCCR is modified in order to not restore the FPU status
-         from the artificial return context.*/
-      FPU->FPCCR = fpccr | FPU_FPCCR_LSPACT_Msk;
-    }
-#endif
 
     /* Note, returning without unlocking is intentional, this is done in
        order to keep the rest of the context switch atomic.*/

@@ -238,7 +238,7 @@ struct port_extctx {
   regarm_t      s14;
   regarm_t      s15;
   regarm_t      fpscr;
-  regarm_t      fpccr;
+  regarm_t      reserved;
 #endif /* CORTEX_USE_FPU */
 };
 
@@ -396,12 +396,12 @@ static inline void port_init(void) {
  * @return              The interrupts status.
  */
 static inline syssts_t port_get_irq_status(void) {
-  syssts_t sts;
+  uint32_t sts;
 
 #if !CORTEX_SIMPLIFIED_PRIORITY
-  sts = (syssts_t)__get_BASEPRI();
+  sts = __get_BASEPRI();
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
-  sts = (syssts_t)__get_PRIMASK();
+  sts = __get_PRIMASK();
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
   return sts;
 }
