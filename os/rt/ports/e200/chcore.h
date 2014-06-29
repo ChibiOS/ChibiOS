@@ -257,7 +257,7 @@ struct port_intctx {
 };
 
 /**
- * @brief   Platform dependent part of the @p Thread structure.
+ * @brief   Platform dependent part of the @p thread_t structure.
  * @details This structure usually contains just the saved stack pointer
  *          defined as a pointer to a @p port_intctx structure.
  */
