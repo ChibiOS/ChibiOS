@@ -409,6 +409,15 @@ extern "C" {
   void chSchDoRescheduleBehind(void);
   void chSchDoRescheduleAhead(void);
   void chSchDoReschedule(void);
+#if !CH_CFG_OPTIMIZE_SPEED
+  void queue_prio_insert(thread_t *tp, threads_queue_t *tqp);
+  void queue_insert(thread_t *tp, threads_queue_t *tqp);
+  thread_t *queue_fifo_remove(threads_queue_t *tqp);
+  thread_t *queue_lifo_remove(threads_queue_t *tqp);
+  thread_t *queue_dequeue(thread_t *tp);
+  void list_insert(thread_t *tp, threads_list_t *tlp);
+  thread_t *list_remove(threads_list_t *tlp);
+#endif /* CH_CFG_OPTIMIZE_SPEED */
 #ifdef __cplusplus
 }
 #endif
