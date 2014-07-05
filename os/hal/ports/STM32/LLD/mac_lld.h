@@ -245,16 +245,16 @@ struct MACDriver {
   /**
    * @brief Transmit semaphore.
    */
-  Semaphore             tdsem;
+  semaphore_t           tdsem;
   /**
    * @brief Receive semaphore.
    */
-  Semaphore             rdsem;
+  semaphore_t           rdsem;
 #if MAC_USE_EVENTS || defined(__DOXYGEN__)
   /**
    * @brief Receive event.
    */
-  EventSource           rdevent;
+  event_source_t        rdevent;
 #endif
   /* End of the mandatory fields.*/
   /**

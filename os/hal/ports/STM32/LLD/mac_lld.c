@@ -123,9 +123,10 @@ static void mii_find_phy(MACDriver *macp) {
   uint32_t i;
 
 #if STM32_MAC_PHY_TIMEOUT > 0
-  halrtcnt_t start = halGetCounterValue();
-  halrtcnt_t timeout  = start + MS2RTT(STM32_MAC_PHY_TIMEOUT);
-  while (halIsCounterWithin(start, timeout)) {
+  rtcnt_t start = chSysGetRealtimeCounterX();
+  rtcnt_t timeout  = start + MS2RTC(STM32_HCLK,STM32_MAC_PHY_TIMEOUT);
+  rtcnt_t time = start;
+  while (chSysIsCounterWithinX(time, start, timeout)) {
 #endif
     for (i = 0; i < 31; i++) {
       macp->phyaddr = i << 11;
@@ -136,10 +137,11 @@ static void mii_find_phy(MACDriver *macp) {
       }
     }
 #if STM32_MAC_PHY_TIMEOUT > 0
+    time = chSysGetRealtimeCounterX();
   }
 #endif
   /* Wrong or defective board.*/
-  chSysHalt();
+  osalSysHalt("MAC failure");
 }
 #endif
 
@@ -183,19 +185,19 @@ CH_IRQ_HANDLER(ETH_IRQHandler) {
 
   if (dmasr & ETH_DMASR_RS) {
     /* Data Received.*/
-    chSysLockFromIsr();
+    osalSysLockFromISR();
     chSemResetI(&ETHD1.rdsem, 0);
 #if MAC_USE_EVENTS
     chEvtBroadcastI(&ETHD1.rdevent);
 #endif
-    chSysUnlockFromIsr();
+    osalSysUnlockFromISR();
   }
 
   if (dmasr & ETH_DMASR_TS) {
     /* Data Transmitted.*/
-    chSysLockFromIsr();
+    osalSysLockFromISR();
     chSemResetI(&ETHD1.tdsem, 0);
-    chSysUnlockFromIsr();
+    osalSysUnlockFromISR();
   }
 
   CH_IRQ_EPILOGUE();
@@ -266,7 +268,7 @@ void mac_lld_init(void) {
   /* PHY soft reset procedure.*/
   mii_write(&ETHD1, MII_BMCR, BMCR_RESET);
 #if defined(BOARD_PHY_RESET_DELAY)
-  halPolledDelay(BOARD_PHY_RESET_DELAY);
+  chSysPolledDelayX(BOARD_PHY_RESET_DELAY);
 #endif
   while (mii_read(&ETHD1, MII_BMCR) & BMCR_RESET)
     ;
@@ -308,8 +310,7 @@ void mac_lld_start(MACDriver *macp) {
 #endif
 
   /* ISR vector enabled.*/
-  nvicEnableVector(ETH_IRQn,
-                   CORTEX_PRIORITY_MASK(STM32_MAC_ETH1_IRQ_PRIORITY));
+  nvicEnableVector(ETH_IRQn, STM32_MAC_ETH1_IRQ_PRIORITY);
 
 #if STM32_MAC_ETH1_CHANGE_PHY_STATE
   /* PHY in power up mode.*/
@@ -405,9 +406,9 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
   stm32_eth_tx_descriptor_t *tdes;
 
   if (!macp->link_up)
-    return RDY_TIMEOUT;
+    return MSG_TIMEOUT;
 
-  chSysLock();
+  osalSysLock();
 
   /* Get Current TX descriptor.*/
   tdes = macp->txptr;
@@ -415,8 +416,8 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
   /* Ensure that descriptor isn't owned by the Ethernet DMA or locked by
      another thread.*/
   if (tdes->tdes0 & (STM32_TDES0_OWN | STM32_TDES0_LOCKED)) {
-    chSysUnlock();
-    return RDY_TIMEOUT;
+    osalSysUnlock();
+    return MSG_TIMEOUT;
   }
 
   /* Marks the current descriptor as locked using a reserved bit.*/
@@ -425,14 +426,14 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
   /* Next TX descriptor to use.*/
   macp->txptr = (stm32_eth_tx_descriptor_t *)tdes->tdes3;
 
-  chSysUnlock();
+  osalSysUnlock();
 
   /* Set the buffer size and configuration.*/
   tdp->offset   = 0;
   tdp->size     = STM32_MAC_BUFFERS_SIZE;
   tdp->physdesc = tdes;
 
-  return RDY_OK;
+  return MSG_OK;
 }
 
 /**
@@ -445,11 +446,10 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
  */
 void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 
-  chDbgAssert(!(tdp->physdesc->tdes0 & STM32_TDES0_OWN),
-              "mac_lld_release_transmit_descriptor(), #1",
+  osalDbgAssert(!(tdp->physdesc->tdes0 & STM32_TDES0_OWN),
               "attempt to release descriptor already owned by DMA");
 
-  chSysLock();
+  osalSysLock();
 
   /* Unlocks the descriptor and returns it to the DMA engine.*/
   tdp->physdesc->tdes1 = tdp->offset;
@@ -463,7 +463,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
     ETH->DMATPDR = ETH_DMASR_TBUS; /* Any value is OK.*/
   }
 
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -481,7 +481,7 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
                                      MACReceiveDescriptor *rdp) {
   stm32_eth_rx_descriptor_t *rdes;
 
-  chSysLock();
+  osalSysLock();
 
   /* Get Current RX descriptor.*/
   rdes = macp->rxptr;
@@ -501,8 +501,8 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
       rdp->physdesc = rdes;
       macp->rxptr   = (stm32_eth_rx_descriptor_t *)rdes->rdes3;
 
-      chSysUnlock();
-      return RDY_OK;
+      osalSysUnlock();
+      return MSG_OK;
     }
     /* Invalid frame found, purging.*/
     rdes->rdes0 = STM32_RDES0_OWN;
@@ -512,8 +512,8 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
   /* Next descriptor to check.*/
   macp->rxptr = rdes;
 
-  chSysUnlock();
-  return RDY_TIMEOUT;
+  osalSysUnlock();
+  return MSG_TIMEOUT;
 }
 
 /**
@@ -527,11 +527,10 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
  */
 void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 
-  chDbgAssert(!(rdp->physdesc->rdes0 & STM32_RDES0_OWN),
-              "mac_lld_release_receive_descriptor(), #1",
+  osalDbgAssert(!(rdp->physdesc->rdes0 & STM32_RDES0_OWN),
               "attempt to release descriptor already owned by DMA");
 
-  chSysLock();
+  osalSysLock();
 
   /* Give buffer back to the Ethernet DMA.*/
   rdp->physdesc->rdes0 = STM32_RDES0_OWN;
@@ -542,7 +541,7 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
     ETH->DMARPDR = ETH_DMASR_RBUS; /* Any value is OK.*/
   }
 
-  chSysUnlock();
+  osalSysUnlock();
 }
 
 /**
@@ -632,8 +631,7 @@ size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
                                          uint8_t *buf,
                                          size_t size) {
 
-  chDbgAssert(!(tdp->physdesc->tdes0 & STM32_TDES0_OWN),
-              "mac_lld_write_transmit_descriptor(), #1",
+  osalDbgAssert(!(tdp->physdesc->tdes0 & STM32_TDES0_OWN),
               "attempt to write descriptor already owned by DMA");
 
   if (size > tdp->size - tdp->offset)
@@ -663,8 +661,7 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
                                        uint8_t *buf,
                                        size_t size) {
 
-  chDbgAssert(!(rdp->physdesc->rdes0 & STM32_RDES0_OWN),
-              "mac_lld_read_receive_descriptor(), #1",
+  osalDbgAssert(!(rdp->physdesc->rdes0 & STM32_RDES0_OWN),
               "attempt to read descriptor already owned by DMA");
 
   if (size > rdp->size - rdp->offset)
