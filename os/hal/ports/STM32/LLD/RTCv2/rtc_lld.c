@@ -34,6 +34,22 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define RTC_TR_PM_OFFSET                    22
+#define RTC_TR_HT_OFFSET                    20
+#define RTC_TR_HU_OFFSET                    16
+#define RTC_TR_MNT_OFFSET                   12
+#define RTC_TR_MNU_OFFSET                   8
+#define RTC_TR_ST_OFFSET                    4
+#define RTC_TR_SU_OFFSET                    0
+
+#define RTC_DR_YT_OFFSET                    20
+#define RTC_DR_YU_OFFSET                    16
+#define RTC_DR_WDU_OFFSET                   13
+#define RTC_DR_MT_OFFSET                    12
+#define RTC_DR_MU_OFFSET                    8
+#define RTC_DR_DT_OFFSET                    4
+#define RTC_DR_DU_OFFSET                    0
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -95,7 +111,15 @@ static inline void rtc_exit_init(void) {
  * @notapi
  */
 static void rtc_decode_time(uint32_t tr, RTCDateTime *timespec) {
+  uint32_t n;
 
+  n  = ((tr >> RTC_TR_HT_OFFSET) & 3)   * 36000000;
+  n += ((tr >> RTC_TR_HU_OFFSET) & 15)  * 3600000;
+  n += ((tr >> RTC_TR_MNT_OFFSET) & 7)  * 600000;
+  n += ((tr >> RTC_TR_MNU_OFFSET) & 15) * 60000;
+  n += ((tr >> RTC_TR_ST_OFFSET) & 7)   * 10000;
+  n += ((tr >> RTC_TR_SU_OFFSET) & 15)  * 1000;
+  timespec->millisecond = n;
 }
 
 /**
@@ -156,7 +180,7 @@ static uint32_t rtc_encode_date(const RTCDateTime *timespec) {
   uint32_t n, dr = 0;
 
   /* Year conversion. Note, only years last two digits are considered.*/
-  n = 1980 + timespec->year;
+  n = RTC_BASE_YEAR + timespec->year;
   dr = dr | ((n % 10) << RTC_DR_YU_OFFSET);
   n /= 10;
   dr = dr | ((n % 10) << RTC_DR_YT_OFFSET);
@@ -207,8 +231,9 @@ void rtc_lld_init(void) {
     rtc_enter_init();
 
     RTCD1.rtc->CR   = 0;
-    RTCD1.rtc->PRER = STM32_RTC_PRES_VALUE;
-    RTCD1.rtc->PRER = STM32_RTC_PRES_VALUE;
+    RTCD1.rtc->ISR  = 0;
+    RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
+    RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
 
     rtc_exit_init();
   }
@@ -253,14 +278,21 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
 
   rtc_regs_sync();
 
+  /* Decoding day time, this starts the atomic read sequence, see "Reading
+     the calendar" in the RTC documentation.*/
+  rtc_decode_time(rtcp->rtc->TR, timespec);
+
+  /* If the RTC is capable of sub-second counting then the value is
+     normalized in milliseconds and added to the time.*/
 #if STM32_RTC_HAS_SUBSECONDS
-  subs = (1000 * ((rtcp->rtc->PRER & 0x7FFF) - rtcp->rtc->SSR)) /
-         ((rtcp->rtc->PRER & 0x7FFF) + 1);
+  subs = (((rtcp->rtc->SSR << 16) / STM32_RTC_PRESS_VALUE) * 1000) >> 16);
 #else
   subs = 0;
 #endif /* STM32_RTC_HAS_SUBSECONDS */
-/*  timespec->tv_time = rtcp->rtc->TR;
-  timespec->tv_date = rtcp->rtc->DR;*/
+  timespec->millisecond += subs;
+
+  /* Decoding date, this concludes the atomic read sequence.*/
+  rtc_decode_date(rtcp->rtc->DR, timespec);
 }
 
 #if (STM32_RTC_NUM_ALARMS > 0) || defined(__DOXYGEN__)
@@ -279,6 +311,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
 void rtc_lld_set_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        const RTCAlarm *alarmspec) {
+
   if (alarm == 1){
     if (alarmspec != NULL){
       rtcp->id_rtc->CR &= ~RTC_CR_ALRAE;

@@ -40,6 +40,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Base year of the calendar.
+ */
+#define RTC_BASE_YEAR               1980
+
+/**
  * @name    Date/Time bit masks for FAT format
  * @{
  */
@@ -86,12 +91,12 @@ typedef struct RTCDriver RTCDriver;
  * @brief   Type of a structure representing an RTC date/time stamp.
  */
 typedef struct {
-  uint32_t      year:8;
-  uint32_t      month: 4;
-  uint32_t      dstflag: 1;
-  uint32_t      dayofweek: 3;
-  uint32_t      day: 5;
-  uint32_t      millisecond: 27;
+  uint32_t      year:8;             /**< @brief Years since 1980.           */
+  uint32_t      month: 4;           /**< @brief Months 1..12.               */
+  uint32_t      dstflag: 1;         /**< @brief DST correction flag.        */
+  uint32_t      dayofweek: 3;       /**< @brief Day of week 1..7.           */
+  uint32_t      day: 5;             /**< @brief Day of the month 1..31.     */
+  uint32_t      millisecond: 27;    /**< @brief Milliseconds since midnight.*/
 } RTCDateTime;
 
 #include "rtc_lld.h"
@@ -108,7 +113,8 @@ typedef struct {
  *
  * @iclass
  */
-#define rtcSetTimeI(rtcp, timespec) rtc_lld_set_time(rtcp, timespec)
+#define rtcSetTimeI(rtcp, timespec)                                         \
+  rtc_lld_set_time(rtcp, timespec)
 
 /**
  * @brief   Get current time.
@@ -118,7 +124,8 @@ typedef struct {
  *
  * @iclass
  */
-#define rtcGetTimeI(rtcp, timespec) rtc_lld_get_time(rtcp, timespec)
+#define rtcGetTimeI(rtcp, timespec)                                         \
+  rtc_lld_get_time(rtcp, timespec)
 
 #if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
 /**
@@ -159,7 +166,8 @@ typedef struct {
  *
  * @iclass
  */
-#define rtcSetCallbackI(rtcp, callback) rtc_lld_set_callback(rtcp, callback)
+#define rtcSetCallbackI(rtcp, callback)                                     \
+  rtc_lld_set_callback(rtcp, callback)
 #endif /* RTC_SUPPORTS_CALLBACKS */
 
 /*===========================================================================*/

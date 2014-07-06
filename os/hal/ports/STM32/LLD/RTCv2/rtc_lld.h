@@ -41,30 +41,9 @@
 #define RTC_SUPPORTS_CALLBACKS              STM32_RTC_HAS_INTERRUPTS
 
 /**
- * @name    Data offsets in RTC date and time registers
- * @{
+ * @brief   RTC PRER register initializer.
  */
-#define RTC_TR_PM_OFFSET                    22
-#define RTC_TR_HT_OFFSET                    20
-#define RTC_TR_HU_OFFSET                    16
-#define RTC_TR_MNT_OFFSET                   12
-#define RTC_TR_MNU_OFFSET                   8
-#define RTC_TR_ST_OFFSET                    4
-#define RTC_TR_SU_OFFSET                    0
-
-#define RTC_DR_YT_OFFSET                    20
-#define RTC_DR_YU_OFFSET                    16
-#define RTC_DR_WDU_OFFSET                   13
-#define RTC_DR_MT_OFFSET                    12
-#define RTC_DR_MU_OFFSET                    8
-#define RTC_DR_DT_OFFSET                    4
-#define RTC_DR_DU_OFFSET                    0
-/** @} */
-
-/**
- * @brief   RTC PRES register initializer.
- */
-#define RTC_PRES(a, s)                      ((((a) - 1) << 16) | ((s) - 1))
+#define RTC_PRER(a, s)                      ((((a) - 1) << 16) | ((s) - 1))
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -78,9 +57,18 @@
  * @brief   RTC PRES register initialization.
  * @note    The default is calculated for a 32768Hz clock.
  */
-#if !defined(STM32_RTC_PRES_VALUE) || defined(__DOXYGEN__)
-#define STM32_RTC_PRES_VALUE                RTC_PRES(32, 1024)
+#if !defined(STM32_RTC_PRESA_VALUE) || defined(__DOXYGEN__)
+#define STM32_RTC_PRESA_VALUE               32
 #endif
+
+/**
+ * @brief   RTC PRESS divider initialization.
+ * @note    The default is calculated for a 32768Hz clock.
+ */
+#if !defined(STM32_RTC_PRESS_VALUE) || defined(__DOXYGEN__)
+#define STM32_RTC_PRESS_VALUE               1024
+#endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -99,6 +87,12 @@
 #if STM32_PCLK1 < (STM32_RTCCLK * 7)
 #error "STM32_PCLK1 frequency is too low"
 #endif
+
+/**
+ * @brief   Initialization for the RTC_PRER register.
+ */
+#define STM32_RTC_PRER_BITS                 RTC_PRER(STM32_RTC_PRESA_VALUE, \
+                                                     STM32_RTC_PRESS_VALUE)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
