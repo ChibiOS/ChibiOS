@@ -132,6 +132,14 @@ static void rtc_decode_time(uint32_t tr, RTCDateTime *timespec) {
  */
 static void rtc_decode_date(uint32_t dr, RTCDateTime *timespec) {
 
+  timespec->year  = RTC_BASE_YEAR +
+                    (((dr >> RTC_DR_YT_OFFSET) & 15) * 10) +
+                     ((dr >> RTC_DR_YU_OFFSET) & 15);
+  timespec->month = (((dr >> RTC_TR_MNT_OFFSET) & 1) * 10) +
+                     ((dr >> RTC_TR_MNU_OFFSET) & 15);
+  timespec->day   = (((dr >> RTC_DR_DT_OFFSET) & 3) * 10) +
+                     ((dr >> RTC_DR_DU_OFFSET) & 15);
+  timespec->dayofweek = (dr >> RTC_DR_WDU_OFFSET) & 1;
 }
 
 /**
