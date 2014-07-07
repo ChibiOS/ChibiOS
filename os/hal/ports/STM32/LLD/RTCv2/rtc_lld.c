@@ -320,32 +320,32 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        const RTCAlarm *alarmspec) {
 
-  if (alarm == 1){
-    if (alarmspec != NULL){
-      rtcp->id_rtc->CR &= ~RTC_CR_ALRAE;
-      while(!(rtcp->id_rtc->ISR & RTC_ISR_ALRAWF))
+  if (alarm == 1) {
+    if (alarmspec != NULL) {
+      rtcp->rtc->CR &= ~RTC_CR_ALRAE;
+      while (!(rtcp->rtc->ISR & RTC_ISR_ALRAWF))
         ;
-      rtcp->id_rtc->ALRMAR = alarmspec->tv_datetime;
-      rtcp->id_rtc->CR |= RTC_CR_ALRAE;
-      rtcp->id_rtc->CR |= RTC_CR_ALRAIE;
+      rtcp->rtc->ALRMAR = alarmspec->alrmr;
+      rtcp->rtc->CR |= RTC_CR_ALRAE;
+      rtcp->rtc->CR |= RTC_CR_ALRAIE;
     }
     else {
-      rtcp->id_rtc->CR &= ~RTC_CR_ALRAIE;
-      rtcp->id_rtc->CR &= ~RTC_CR_ALRAE;
+      rtcp->rtc->CR &= ~RTC_CR_ALRAIE;
+      rtcp->rtc->CR &= ~RTC_CR_ALRAE;
     }
   }
-  else{
-    if (alarmspec != NULL){
-      rtcp->id_rtc->CR &= ~RTC_CR_ALRBE;
-      while(!(rtcp->id_rtc->ISR & RTC_ISR_ALRBWF))
+  else {
+    if (alarmspec != NULL) {
+      rtcp->rtc->CR &= ~RTC_CR_ALRBE;
+      while (!(rtcp->rtc->ISR & RTC_ISR_ALRBWF))
         ;
-      rtcp->id_rtc->ALRMBR = alarmspec->tv_datetime;
-      rtcp->id_rtc->CR |= RTC_CR_ALRBE;
-      rtcp->id_rtc->CR |= RTC_CR_ALRBIE;
+      rtcp->rtc->ALRMBR = alarmspec->alrmr;
+      rtcp->rtc->CR |= RTC_CR_ALRBE;
+      rtcp->rtc->CR |= RTC_CR_ALRBIE;
     }
     else {
-      rtcp->id_rtc->CR &= ~RTC_CR_ALRBIE;
-      rtcp->id_rtc->CR &= ~RTC_CR_ALRBE;
+      rtcp->rtc->CR &= ~RTC_CR_ALRBIE;
+      rtcp->rtc->CR &= ~RTC_CR_ALRBE;
     }
   }
 }
@@ -363,11 +363,60 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        RTCAlarm *alarmspec) {
   if (alarm == 1)
-    alarmspec->tv_datetime = rtcp->id_rtc->ALRMAR;
+    alarmspec->alrmr = rtcp->rtc->ALRMAR;
   else
-    alarmspec->tv_datetime = rtcp->id_rtc->ALRMBR;
+    alarmspec->alrmr = rtcp->rtc->ALRMBR;
 }
 #endif /* STM32_RTC_NUM_ALARMS > 0 */
+
+
+#if STM32_RTC_HAS_PERIODIC_WAKEUPS || defined(__DOXYGEN__)
+/**
+ * @brief     Sets time of periodic wakeup.
+ *
+ * @note      Default value after BKP domain reset is 0x0000FFFF
+ *
+ * @param[in] rtcp       pointer to RTC driver structure
+ * @param[in] wakeupspec pointer to a @p RTCWakeup structure
+ *
+ * @api
+ */
+void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec) {
+
+  if (wakeupspec != NULL) {
+    osalDbgCheck(wakeupspec->wutr != 0x30000);
+
+    rtcp->rtc->CR &= ~RTC_CR_WUTE;
+    while (!(rtcp->rtc->ISR & RTC_ISR_WUTWF))
+      ;
+    rtcp->rtc->WUTR = wakeupspec->wutr & 0xFFFF;
+    rtcp->rtc->CR   = (wakeupspec->wutr >> 16) & 0x7;
+    rtcp->rtc->CR |= RTC_CR_WUTIE;
+    rtcp->rtc->CR |= RTC_CR_WUTE;
+  }
+  else {
+    rtcp->rtc->CR &= ~RTC_CR_WUTIE;
+    rtcp->rtc->CR &= ~RTC_CR_WUTE;
+  }
+}
+
+/**
+ * @brief     Gets time of periodic wakeup.
+ *
+ * @note      Default value after BKP domain reset is 0x0000FFFF
+ *
+ * @param[in] rtcp        pointer to RTC driver structure
+ * @param[out] wakeupspec pointer to a @p RTCWakeup structure
+ *
+ * @api
+ */
+void rtcSTM32GetPeriodicWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec) {
+
+  wakeupspec->wutr  = 0;
+  wakeupspec->wutr |= rtcp->rtc->WUTR;
+  wakeupspec->wutr |= (((uint32_t)rtcp->rtc->CR) & 0x7) << 16;
+}
+#endif /* STM32_RTC_HAS_PERIODIC_WAKEUPS */
 
 #endif /* HAL_USE_RTC */
 

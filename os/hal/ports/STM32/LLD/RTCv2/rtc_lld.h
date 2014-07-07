@@ -38,12 +38,31 @@
 /**
  * @brief   Callback support int the driver.
  */
-#define RTC_SUPPORTS_CALLBACKS              STM32_RTC_HAS_INTERRUPTS
+#define RTC_SUPPORTS_CALLBACKS      STM32_RTC_HAS_INTERRUPTS
 
 /**
  * @brief   RTC PRER register initializer.
  */
-#define RTC_PRER(a, s)                      ((((a) - 1) << 16) | ((s) - 1))
+#define RTC_PRER(a, s)              ((((a) - 1) << 16) | ((s) - 1))
+
+/**
+ * @name    Alarm helper macros
+ * @{
+ */
+#define RTC_ALRM_MSK4               (1U << 31)
+#define RTC_ALRM_WDSEL              (1U << 30)
+#define RTC_ALRM_DT(n)              ((n) << 28)
+#define RTC_ALRM_DU(n)              ((n) << 24)
+#define RTC_ALRM_MSK3               (1U << 23)
+#define RTC_ALRM_HT(n)              ((n) << 20)
+#define RTC_ALRM_HU(n)              ((n) << 16)
+#define RTC_ALRM_MSK2               (1U << 15)
+#define RTC_ALRM_MNT(n)             ((n) << 12)
+#define RTC_ALRM_MNU(n)             ((n) << 8)
+#define RTC_ALRM_MSK1               (1U << 7)
+#define RTC_ALRM_ST(n)              ((n) << 4)
+#define RTC_ALRM_SU(n)              ((n) << 0)
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -99,11 +118,39 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of an RTC alarm number.
+ */
+typedef uint32_t rtcalarm_t;
+
+/**
+ * @brief   Type of a structure representing an RTC alarm time stamp.
+ */
+typedef struct {
+  /**
+   * @brief   Type of an alarm as encoded in RTC ALRMxR registers.
+   */
+  uint32_t                  alrmr;
+} RTCAlarm;
+
+#if STM32_RTC_HAS_PERIODIC_WAKEUPS
+/**
+ * @brief   Type of a wakeup as encoded in RTC WUTR register.
+ */
+typedef struct {
+  /**
+   * @brief   Wakeup as encoded in RTC WUTR register.
+   * @note    ((WUTR == 0) || (WUCKSEL == 3)) are a forbidden combination.
+   */
+  uint32_t                  wutr;
+} RTCWakeup;
+#endif
+
+/**
  * @brief   Structure representing an RTC driver.
  */
 struct RTCDriver {
   /**
-   * @brief Pointer to the RTC registers block.
+   * @brief   Pointer to the RTC registers block.
    */
   RTC_TypeDef               *rtc;
 };
@@ -134,6 +181,10 @@ extern "C" {
                          rtcalarm_t alarm,
                          RTCAlarm *alarmspec);
 #endif
+#if STM32_RTC_HAS_PERIODIC_WAKEUPS
+  void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec);
+  void rtcSTM32GetPeriodicWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec);
+#endif /* STM32_RTC_HAS_PERIODIC_WAKEUPS */
 #ifdef __cplusplus
 }
 #endif
