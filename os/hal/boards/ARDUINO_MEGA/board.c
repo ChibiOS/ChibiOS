@@ -72,16 +72,4 @@ void boardInit(void) {
   EICRB  = 0x00;
   EIMSK  = 0x00;
 
-  /*
-   * Timer 0 setup.
-   */
-  TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM0A1) | (0 << COM0A0) |              /* OC0A disabled.   */
-            (0 << COM0B1) | (0 << COM0B0);               /* OC0B disabled.   */
-  TCCR0B  = (0 << WGM02) |                               /* CTC mode.        */
-            (0 << CS02)  | (1 << CS01)  | (1 << CS00);   /* CLK/64 clock.    */
-  OCR0A   = F_CPU / 64 / CH_CFG_ST_FREQUENCY - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
-  TIFR0   = (1 << OCF0A);                                /* Reset pending.   */
-  TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare.  */
 }
