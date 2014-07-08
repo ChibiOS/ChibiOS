@@ -85,9 +85,9 @@ typedef struct {
   /* Driver state.*/                                                        \
   sdstate_t                 state;                                          \
   /* Input queue.*/                                                         \
-  InputQueue                iqueue;                                         \
+  input_queue_t             iqueue;                                         \
   /* Output queue.*/                                                        \
-  OutputQueue               oqueue;                                         \
+  output_queue_t            oqueue;                                         \
   /* Input circular buffer.*/                                               \
   uint8_t                   ib[SERIAL_BUFFERS_SIZE];                        \
   /* Output circular buffer.*/                                              \
