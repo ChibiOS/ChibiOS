@@ -67,7 +67,7 @@
 #if !defined(__DOXYGEN__)
 __attribute__((naked, weak))
 #endif
-void port_switch(Thread *ntp, Thread *otp) {
+void _port_switch(thread_t *ntp, thread_t *otp) {
 
   asm volatile ("push    r2");
   asm volatile ("push    r3");
@@ -90,14 +90,14 @@ void port_switch(Thread *ntp, Thread *otp) {
 
   asm volatile ("movw    r30, r22");
   asm volatile ("in      r0, 0x3d");
-  asm volatile ("std     Z+5, r0");
+  asm volatile ("std     Z+0, r0");
   asm volatile ("in      r0, 0x3e");
-  asm volatile ("std     Z+6, r0");
+  asm volatile ("std     Z+1, r0");
 
   asm volatile ("movw    r30, r24");
-  asm volatile ("ldd     r0, Z+5");
+  asm volatile ("ldd     r0, Z+0");
   asm volatile ("out     0x3d, r0");
-  asm volatile ("ldd     r0, Z+6");
+  asm volatile ("ldd     r0, Z+1");
   asm volatile ("out     0x3e, r0");
 
   asm volatile ("pop     r29");
