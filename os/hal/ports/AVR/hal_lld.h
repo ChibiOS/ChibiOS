@@ -63,32 +63,38 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Find the most suitable prescaler setting for the desired CH_CFG_ST_FREQUENCY */
-#if ((F_CPU / CH_CFG_ST_FREQUENCY) <= AVR_TIMER_COUNTER_MAX)
+#ifdef _NIL_
+#define CFG_ST_FREQUENCY NIL_CFG_ST_FREQUENCY
+#else
+#define CFG_ST_FREQUENCY CH_CFG_ST_FREQUENCY
+#endif
+
+/* Find the most suitable prescaler setting for the desired CFG_ST_FREQUENCY */
+#if ((F_CPU / CFG_ST_FREQUENCY) <= AVR_TIMER_COUNTER_MAX)
   #define AVR_TIMER_PRESCALER 1
   #define AVR_TIMER_PRESCALER_BITS (0 << CS02)  | (0 << CS01)  | (1 << CS00); /* CLK      */
-#elif ((F_CPU / CH_CFG_ST_FREQUENCY / 8) <= AVR_TIMER_COUNTER_MAX)
+#elif ((F_CPU / CFG_ST_FREQUENCY / 8) <= AVR_TIMER_COUNTER_MAX)
   #define AVR_TIMER_PRESCALER 8
   #define AVR_TIMER_PRESCALER_BITS (0 << CS02)  | (1 << CS01)  | (0 << CS00); /* CLK/8    */
-#elif ((F_CPU / CH_CFG_ST_FREQUENCY / 64) <= AVR_TIMER_COUNTER_MAX)
+#elif ((F_CPU / CFG_ST_FREQUENCY / 64) <= AVR_TIMER_COUNTER_MAX)
   #define AVR_TIMER_PRESCALER 64
   #define AVR_TIMER_PRESCALER_BITS (0 << CS02)  | (1 << CS01)  | (1 << CS00); /* CLK/64   */
-#elif ((F_CPU / CH_CFG_ST_FREQUENCY / 256) <= AVR_TIMER_COUNTER_MAX)
+#elif ((F_CPU / CFG_ST_FREQUENCY / 256) <= AVR_TIMER_COUNTER_MAX)
   #define AVR_TIMER_PRESCALER 256
   #define AVR_TIMER_PRESCALER_BITS (1 << CS02)  | (0 << CS01)  | (0 << CS00); /* CLK/256  */
-#elif ((F_CPU / CH_CFG_ST_FREQUENCY / 1024) <= AVR_TIMER_COUNTER_MAX)
+#elif ((F_CPU / CFG_ST_FREQUENCY / 1024) <= AVR_TIMER_COUNTER_MAX)
   #define AVR_TIMER_PRESCALER 1024
   #define AVR_TIMER_PRESCALER_BITS (1 << CS02)  | (0 << CS01)  | (1 << CS00); /* CLK/1024 */
 #else
-  #error "Frequency too low for timer, please set CH_CFG_ST_FREQUENCY to a higher value"
+  #error "Frequency too low for timer, please set CFG_ST_FREQUENCY to a higher value"
 #endif
 
-#define AVR_TIMER_COUNTER (F_CPU / CH_CFG_ST_FREQUENCY / AVR_TIMER_PRESCALER)
+#define AVR_TIMER_COUNTER (F_CPU / CFG_ST_FREQUENCY / AVR_TIMER_PRESCALER)
 
-/* Test if CH_CFG_ST_FREQUENCY can be matched exactly using this timer */
-#define F_CPU_ (AVR_TIMER_COUNTER * AVR_TIMER_PRESCALER * CH_CFG_ST_FREQUENCY)
+/* Test if CFG_ST_FREQUENCY can be matched exactly using this timer */
+#define F_CPU_ (AVR_TIMER_COUNTER * AVR_TIMER_PRESCALER * CFG_ST_FREQUENCY)
 #if (F_CPU_ != F_CPU)
-  #warning "CH_CFG_ST_FREQUENCY cannot be generated exactly using timer"
+  #warning "CFG_ST_FREQUENCY cannot be generated exactly using timer"
 #endif
 #undef F_CPU_
 
