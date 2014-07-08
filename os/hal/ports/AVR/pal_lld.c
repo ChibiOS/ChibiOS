@@ -139,7 +139,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
   case PAL_MODE_INPUT_ANALOG:
     port->dir &= ~mask;
     port->out &= ~mask;
-	break;
+    break;
   case PAL_MODE_UNCONNECTED:
   case PAL_MODE_INPUT_PULLUP:
     port->dir &= ~mask;
