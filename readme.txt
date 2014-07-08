@@ -71,6 +71,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.6.6 ***
+- FIX: Fixed wrong DMA channels for STM32L1 I2C1 unit (bug #516).
+
 *** 2.6.5 ***
 - FIX: Fixed race condition in Cortex-M4 port with FPU and fast interrupts
   (bug #513).
