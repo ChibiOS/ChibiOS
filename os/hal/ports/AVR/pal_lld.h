@@ -130,7 +130,7 @@ typedef uint8_t iomode_t;
  *          any assumption about it, use the provided macros when populating
  *          variables of this type.
  */
-typedef avr_gpio_registers_t *ioportid_t;
+typedef volatile avr_gpio_registers_t * ioportid_t;
 
 /*===========================================================================*/
 /* I/O Ports Identifiers.                                                    */
