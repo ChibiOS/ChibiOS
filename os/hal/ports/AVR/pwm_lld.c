@@ -115,6 +115,7 @@ static void config_channel(volatile uint8_t *tccra,
 static uint8_t timer_index(PWMDriver *pwmp)
 {
   uint8_t index = 0;
+
 #if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
   if (pwmp == &PWMD1) return index;
   else index++;
@@ -135,6 +136,9 @@ static uint8_t timer_index(PWMDriver *pwmp)
   if (pwmp == &PWMD5) return index;
   else index++;
 #endif
+
+  /* This is an error! */
+  return index;
 }
 
 /*===========================================================================*/
