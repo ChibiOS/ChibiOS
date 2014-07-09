@@ -306,8 +306,8 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
   nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
   nvicEnableVector(OTG_FS_WKUP_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
-  nvicEnableVector(ETH_WKUP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
 #if !defined(STM32F401xx)
+  nvicEnableVector(ETH_WKUP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
   nvicEnableVector(OTG_HS_WKUP_IRQn, STM32_EXT_EXTI20_IRQ_PRIORITY);
   nvicEnableVector(TAMP_STAMP_IRQn, STM32_EXT_EXTI21_IRQ_PRIORITY);
 #endif /* !defined(STM32F401xx) */
@@ -331,8 +331,8 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(PVD_IRQn);
   nvicDisableVector(RTC_Alarm_IRQn);
   nvicDisableVector(OTG_FS_WKUP_IRQn);
-  nvicDisableVector(ETH_WKUP_IRQn);
 #if !defined(STM32F401xx)
+  nvicDisableVector(ETH_WKUP_IRQn);
   nvicDisableVector(OTG_HS_WKUP_IRQn);
   nvicDisableVector(TAMP_STAMP_IRQn);
 #endif /* !defined(STM32F401xx) */
