@@ -74,6 +74,7 @@
 *** 2.6.6 ***
 - FIX: Fixed failure to compile EXT driver on STM32F401 (bug #517).
 - FIX: Fixed wrong DMA channels for STM32L1 I2C1 unit (bug #516).
+- FIX: Fixed EXT driver compile error on STM32F030 (bug #514).
 
 *** 2.6.5 ***
 - FIX: Fixed race condition in Cortex-M4 port with FPU and fast interrupts
