@@ -178,8 +178,10 @@ void ext_lld_exti_irq_enable(void) {
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI2_3_IRQ_PRIORITY));
   nvicEnableVector(EXTI4_15_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI4_15_IRQ_PRIORITY));
+#if !defined(STM32F030)
   nvicEnableVector(PVD_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI16_IRQ_PRIORITY));
+#endif
   nvicEnableVector(RTC_IRQn,
                    CORTEX_PRIORITY_MASK(STM32_EXT_EXTI17_IRQ_PRIORITY));
 }
@@ -194,7 +196,9 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(EXTI0_1_IRQn);
   nvicDisableVector(EXTI2_3_IRQn);
   nvicDisableVector(EXTI4_15_IRQn);
+#if !defined(STM32F030)
   nvicDisableVector(PVD_IRQn);
+#endif
   nvicDisableVector(RTC_IRQn);
 }
 
