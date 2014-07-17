@@ -73,8 +73,8 @@ void port_dummy1(void) {
   asm ("stw         %r0, 0(%sp)");      /* CR.                              */
   asm ("stmw        %r14, 4(%sp)");     /* GPR14...GPR31.                   */
 
-  asm ("stw         %sp, 12(%r4)");     /* Store swapped-out stack.         */
-  asm ("lwz         %sp, 12(%r3)");     /* Load swapped-in stack.           */
+  asm ("stw         %sp, 0(%r4)");      /* Store swapped-out stack.         */
+  asm ("lwz         %sp, 0(%r3)");      /* Load swapped-in stack.           */
 
   asm ("lmw         %r14, 4(%sp)");     /* GPR14...GPR31.                   */
   asm ("lwz         %r0, 0(%sp)");      /* CR.                              */
