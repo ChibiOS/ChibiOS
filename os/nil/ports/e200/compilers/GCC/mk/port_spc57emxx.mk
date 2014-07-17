@@ -1,5 +1,5 @@
-# List of the ChibiOS/RT e200z4 SPC57EMxx port files.
-PORTSRC = ${CHIBIOS}/os/nil/ports/e200/chcore.c
+# List of the ChibiOS/NIL e200z4 SPC57EMxx port files.
+PORTSRC = ${CHIBIOS}/os/nil/ports/e200/nilcore.c
           
 PORTASM = $(CHIBIOS)/os/common/ports/e200/devices/SPC57EMxx/boot.s \
           $(CHIBIOS)/os/common/ports/e200/compilers/GCC/vectors.s \
