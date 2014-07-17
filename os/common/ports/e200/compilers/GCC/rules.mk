@@ -14,7 +14,7 @@ ifeq ($(USE_LINK_GC),yes)
   OPT += -ffunction-sections -fdata-sections -fno-common
   LDOPT := --gc-sections
 else
-  LDOPT :=
+  LDOPT := --no-gc-sections
 endif
 
 # Linker extra options

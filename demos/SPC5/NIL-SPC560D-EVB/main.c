@@ -14,11 +14,9 @@
     limitations under the License.
 */
 
-#include "ch.h"
-#include "hal.h"
-#include "test.h"
-#include "shell.h"
-#include "chprintf.h"
+#include "nil.h"
+//#include "hal.h"
+//#include "test.h"
 
 #if 0
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(1024)
@@ -92,7 +90,7 @@ static const ShellConfig shell_cfg1 = {
  * LEDs blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
 
@@ -179,7 +177,7 @@ int main(void) {
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
    */
-  halInit();
+//  halInit();
   chSysInit();
 
   /* This is now the idle thread loop, you may perform here a low priority

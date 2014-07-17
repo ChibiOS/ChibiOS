@@ -38,19 +38,19 @@
  * @{
  */
 /**
- * @brief   Macro defining the port architecture.
+ * @brief   Macro defining an PPC architecture.
  */
-#define PORT_ARCHITECTURE_XXX
+#define PORT_ARCHITECTURE_PPC
+
+/**
+ * @brief   Macro defining the specific PPC architecture.
+ */
+#define PORT_ARCHITECTURE_PPC_E200
 
 /**
  * @brief   Name of the implemented architecture.
  */
-#define PORT_ARCHITECTURE_NAME          "XXX"
-
-/**
- * @brief   Name of the architecture variant.
- */
-#define PORT_CORE_VARIANT_NAME          "XXXX-Y"
+#define PORT_ARCHITECTURE_NAME          "Power Architecture"
 
 /**
  * @brief   Compiler name and version.
@@ -63,29 +63,28 @@
 #endif
 
 /**
- * @brief   Port-specific information string.
- */
-#define PORT_INFO                       "port description"
-
-/**
  * @brief   This port supports a realtime counter.
  */
 #define PORT_SUPPORTS_RT                FALSE
 /** @} */
 
+/**
+ * @name    E200 core variants
+ * @{
+ */
+#define PPC_VARIANT_e200z0              200
+#define PPC_VARIANT_e200z2              202
+#define PPC_VARIANT_e200z3              203
+#define PPC_VARIANT_e200z4              204
+/** @} */
+
+/* Inclusion of the PPC implementation specific parameters.*/
+#include "ppcparams.h"
+#include "vectors.h"
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Stack size for the system idle thread.
- * @details This size depends on the idle thread implementation, usually
- *          the idle thread should take no more space than those reserved
- *          by @p PORT_INT_REQUIRED_STACK.
- */
-#if !defined(PORT_IDLE_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define PORT_IDLE_THREAD_STACK_SIZE     16
-#endif
 
 /**
  * @brief   Per-thread stack overhead for interrupts servicing.
@@ -110,6 +109,38 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if PPC_USE_VLE && !PPC_SUPPORTS_VLE
+#error "the selected MCU does not support VLE instructions set"
+#endif
+
+#if !PPC_USE_VLE && !PPC_SUPPORTS_BOOKE
+#error "the selected MCU does not support BookE instructions set"
+#endif
+
+/**
+ * @brief   Name of the architecture variant.
+ */
+#if (PPC_VARIANT == PPC_VARIANT_e200z0) || defined(__DOXYGEN__)
+#define PORT_CORE_VARIANT_NAME          "e200z0"
+#elif PPC_VARIANT == PPC_VARIANT_e200z2
+#define PORT_CORE_VARIANT_NAME          "e200z2"
+#elif PPC_VARIANT == PPC_VARIANT_e200z3
+#define PORT_CORE_VARIANT_NAME          "e200z3"
+#elif PPC_VARIANT == PPC_VARIANT_e200z4
+#define PORT_CORE_VARIANT_NAME          "e200z4"
+#else
+#error "unknown or unsupported PowerPC variant specified"
+#endif
+
+/**
+ * @brief   Port-specific information string.
+ */
+#if PPC_USE_VLE
+#define PORT_INFO                       "VLE mode"
+#else
+#define PORT_INFO                       "Book-E mode"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -133,21 +164,80 @@ typedef uint16_t systime_t;
 typedef uint64_t stkalign_t;
 
 /**
+ * @brief   Generic PPC register.
+ */
+typedef void *regppc_t;
+
+/**
+ * @brief   Mandatory part of a stack frame.
+ */
+struct port_eabi_frame {
+  uint32_t      slink;          /**< Stack back link.                       */
+  uint32_t      shole;          /**< Stack hole for LR storage.             */
+};
+
+/**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
+ * @note    R2 and R13 are not saved because those are assumed to be immutable
+ *          during the system life cycle.
  */
 struct port_extctx {
-
-};
+  struct port_eabi_frame frame;
+  /* Start of the e_stmvsrrw frame (offset 8).*/
+  regppc_t      pc;
+  regppc_t      msr;
+  /* Start of the e_stmvsprw frame (offset 16).*/
+  regppc_t      cr;
+  regppc_t      lr;
+  regppc_t      ctr;
+  regppc_t      xer;
+  /* Start of the e_stmvgprw frame (offset 32).*/
+  regppc_t      r0;
+  regppc_t      r3;
+  regppc_t      r4;
+  regppc_t      r5;
+  regppc_t      r6;
+  regppc_t      r7;
+  regppc_t      r8;
+  regppc_t      r9;
+  regppc_t      r10;
+  regppc_t      r11;
+  regppc_t      r12;
+  regppc_t      padding;
+ };
 
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
  *          switching.
+ * @note    R2 and R13 are not saved because those are assumed to be immutable
+ *          during the system life cycle.
+ * @note    LR is stored in the caller contex so it is not present in this
+ *          structure.
  */
 struct port_intctx {
-
+  regppc_t      cr;                 /* Part of it is not volatile...        */
+  regppc_t      r14;
+  regppc_t      r15;
+  regppc_t      r16;
+  regppc_t      r17;
+  regppc_t      r18;
+  regppc_t      r19;
+  regppc_t      r20;
+  regppc_t      r21;
+  regppc_t      r22;
+  regppc_t      r23;
+  regppc_t      r24;
+  regppc_t      r25;
+  regppc_t      r26;
+  regppc_t      r27;
+  regppc_t      r28;
+  regppc_t      r29;
+  regppc_t      r30;
+  regppc_t      r31;
+  regppc_t      padding;
 };
 
 #endif /* !defined(_FROM_ASM_) */
@@ -162,6 +252,13 @@ struct port_intctx {
  *          by an @p port_intctx structure.
  */
 #define PORT_SETUP_CONTEXT(tp, wend, pf, arg) {                             \
+  uint8_t *sp = (uint8_t *)(wend) -                                         \
+                           sizeof(struct port_eabi_frame);                  \
+  ((struct port_eabi_frame *)sp)->slink = 0;                                \
+  ((struct port_eabi_frame *)sp)->shole = (uint32_t)_port_thread_start;     \
+  (tp)->ctxp = (struct port_intctx *)(sp - sizeof(struct port_intctx));     \
+  (tp)->ctxp->r31 = (regppc_t)(arg);                                        \
+  (tp)->ctxp->r30 = (regppc_t)(pf);                                         \
 }
 
 /**
@@ -184,7 +281,7 @@ struct port_intctx {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() _port_irq_epilogue()
+#define PORT_IRQ_EPILOGUE()
 
 /**
  * @brief   IRQ handler function declaration.
@@ -210,7 +307,34 @@ struct port_intctx {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
+#if !NIL_CFG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
+#else
+#define port_switch(ntp, otp) {                                             \
+  register struct port_intctx *sp asm ("%r1");                              \
+  if ((stkalign_t *)(sp - 1) < otp->stklim)                                 \
+    chDbgPanic("stack overflow");                                           \
+  _port_switch(ntp, otp);                                                   \
+}
+#endif
+
+/**
+ * @brief   Writes to a special register.
+ *
+ * @param[in] spr       special register number
+ * @param[in] val       value to be written, must be an automatic variable
+ */
+#define port_write_spr(spr, val)                                            \
+  asm volatile ("mtspr   %[p0], %[p1]" : : [p0] "n" (spr), [p1] "r" (val))
+
+/**
+ * @brief   Writes to a special register.
+ *
+ * @param[in] spr       special register number
+ * @param[in] val       returned value, must be an automatic variable
+ */
+#define port_read_spr(spr, val)                                             \
+  asm volatile ("mfspr   %[p0], %[p1]" : [p0] "=r" (val) : [p1] "n" (spr))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -223,7 +347,6 @@ struct port_intctx {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _port_irq_epilogue(void);
   void _port_switch(thread_t *ntp, thread_t *otp);
   void _port_thread_start(void);
 #ifdef __cplusplus
@@ -244,7 +367,24 @@ extern "C" {
  * @brief   Port-related initialization code.
  */
 static inline void port_init(void) {
+  uint32_t n;
 
+  /* Initializing the SPRG0 register to zero, it is required for interrupts
+     handling.*/
+  n = 0;
+  port_write_spr(272, n);
+
+#if PPC_SUPPORTS_IVORS
+  /* The CPU supports IVOR registers, the kernel requires IVOR4 and IVOR10
+     and the initialization is performed here.*/
+  asm volatile ("li          %%r3, _IVOR4@l       \t\n"
+                "mtIVOR4     %%r3                 \t\n"
+                "li          %%r3, _IVOR10@l      \t\n"
+                "mtIVOR10    %%r3" : : : "r3", "memory");
+#endif
+
+  /* Interrupt controller initialization.*/
+  intc_init();
 }
 
 /**
@@ -253,8 +393,10 @@ static inline void port_init(void) {
  * @return              The interrupts status.
  */
 static inline syssts_t port_get_irq_status(void) {
+  uint32_t sts;
 
-  return 0;
+  asm volatile ("mfmsr   %[p0]" : [p0] "=r" (sts) :);
+  return sts;
 }
 
 /**
@@ -268,7 +410,7 @@ static inline syssts_t port_get_irq_status(void) {
  */
 static inline bool port_irq_enabled(syssts_t sts) {
 
-  return false;
+  return (bool)((sts & (1 << 15)) != 0);
 }
 
 /**
@@ -279,8 +421,12 @@ static inline bool port_irq_enabled(syssts_t sts) {
  * @retval true         running in ISR mode.
  */
 static inline bool port_is_isr_context(void) {
+  uint32_t sprg0;
 
-  return false;
+  /* The SPRG0 register is increased before entering interrupt handlers and
+     decreased at the end.*/
+  port_read_spr(272, sprg0);
+  return (bool)(sprg0 > 0);
 }
 
 /**
@@ -288,6 +434,7 @@ static inline bool port_is_isr_context(void) {
  */
 static inline void port_lock(void) {
 
+  asm volatile ("wrteei  0" : : : "memory");
 }
 
 /**
@@ -295,6 +442,7 @@ static inline void port_lock(void) {
  */
 static inline void port_unlock(void) {
 
+  asm volatile("wrteei  1" : : : "memory");
 }
 
 /**
@@ -316,6 +464,7 @@ static inline void port_unlock_from_isr(void) {
  */
 static inline void port_disable(void) {
 
+  asm volatile ("wrteei  0" : : : "memory");
 }
 
 /**
@@ -323,6 +472,7 @@ static inline void port_disable(void) {
  */
 static inline void port_suspend(void) {
 
+  asm volatile ("wrteei  0" : : : "memory");
 }
 
 /**
@@ -330,6 +480,7 @@ static inline void port_suspend(void) {
  */
 static inline void port_enable(void) {
 
+  asm volatile ("wrteei  1" : : : "memory");
 }
 
 /**
@@ -341,6 +492,9 @@ static inline void port_enable(void) {
  */
 static inline void port_wait_for_interrupt(void) {
 
+#if PPC_ENABLE_WFI_IDLE
+  asm volatile ("wait" : : : "memory");
+#endif
 }
 
 /**

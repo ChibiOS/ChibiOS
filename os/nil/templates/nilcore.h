@@ -78,16 +78,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Stack size for the system idle thread.
- * @details This size depends on the idle thread implementation, usually
- *          the idle thread should take no more space than those reserved
- *          by @p PORT_INT_REQUIRED_STACK.
- */
-#if !defined(PORT_IDLE_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
-#define PORT_IDLE_THREAD_STACK_SIZE     16
-#endif
-
-/**
  * @brief   Per-thread stack overhead for interrupts servicing.
  * @details This constant is used in the calculation of the correct working
  *          area size.

@@ -61,6 +61,11 @@
 #else
 #error "unsupported compiler"
 #endif
+
+/**
+ * @brief   This port supports a realtime counter.
+ */
+#define PORT_SUPPORTS_RT                FALSE
 /** @} */
 
 /**
@@ -103,6 +108,16 @@
  */
 #if !defined(PORT_INT_REQUIRED_STACK) || defined(__DOXYGEN__)
 #define PORT_INT_REQUIRED_STACK         256
+#endif
+
+/**
+ * @brief   Enables an alternative timer implementation.
+ * @details Usually the port uses a timer interface defined in the file
+ *          @p nilcore_timer.h, if this option is enabled then the file
+ *          @p nilcore_timer_alt.h is included instead.
+ */
+#if !defined(PORT_USE_ALT_TIMER)
+#define PORT_USE_ALT_TIMER              FALSE
 #endif
 
 /**
@@ -542,6 +557,22 @@ static inline rtcnt_t port_rt_get_counter_value(void) {
 
   return 0;
 }
+
+#endif /* !defined(_FROM_ASM_) */
+
+/*===========================================================================*/
+/* Module late inclusions.                                                   */
+/*===========================================================================*/
+
+#if !defined(_FROM_ASM_)
+
+#if CH_CFG_ST_TIMEDELTA > 0
+#if !PORT_USE_ALT_TIMER
+#include "chcore_timer.h"
+#else /* PORT_USE_ALT_TIMER */
+#include "chcore_timer_alt.h"
+#endif /* PORT_USE_ALT_TIMER */
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */
 
