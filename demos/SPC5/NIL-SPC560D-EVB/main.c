@@ -26,8 +26,15 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
 
+  /*
+   * Activates the serial driver 1 using the driver default configuration.
+   */
+  sdStart(&SD1, NULL);
+
   while (TRUE) {
     unsigned i;
+
+    chnWriteTimeout(&SD1, (uint8_t *)"Hello World!\r\n", 14, TIME_INFINITE);
 
     for (i = 0; i < 4; i++) {
       palClearPad(PORT_E, PE_LED1);
