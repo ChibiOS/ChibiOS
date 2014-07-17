@@ -420,6 +420,381 @@ _vectors:
 #if PPC_NUM_VECTORS > 508
         .long       vector508,  vector509,  vector510,  vector511
 #endif
+#if PPC_NUM_VECTORS > 512
+        .long       vector512,  vector513,  vector514,  vector515
+#endif
+#if PPC_NUM_VECTORS > 516
+        .long       vector516,  vector517,  vector518,  vector519
+#endif
+#if PPC_NUM_VECTORS > 520
+        .long       vector520,  vector521,  vector522,  vector523
+#endif
+#if PPC_NUM_VECTORS > 524
+        .long       vector524,  vector525,  vector526,  vector527
+#endif
+#if PPC_NUM_VECTORS > 528
+        .long       vector528,  vector529,  vector530,  vector531
+#endif
+#if PPC_NUM_VECTORS > 532
+        .long       vector532,  vector533,  vector534,  vector535
+#endif
+#if PPC_NUM_VECTORS > 536
+        .long       vector536,  vector537,  vector538,  vector539
+#endif
+#if PPC_NUM_VECTORS > 540
+        .long       vector540,  vector541,  vector542,  vector543
+#endif
+#if PPC_NUM_VECTORS > 544
+        .long       vector544,  vector545,  vector546,  vector547
+#endif
+#if PPC_NUM_VECTORS > 548
+        .long       vector548,  vector549,  vector550,  vector551
+#endif
+#if PPC_NUM_VECTORS > 552
+        .long       vector552,  vector553,  vector554,  vector555
+#endif
+#if PPC_NUM_VECTORS > 556
+        .long       vector556,  vector557,  vector558,  vector559
+#endif
+#if PPC_NUM_VECTORS > 560
+        .long       vector560,  vector561,  vector562,  vector563
+#endif
+#if PPC_NUM_VECTORS > 564
+        .long       vector564,  vector565,  vector566,  vector567
+#endif
+#if PPC_NUM_VECTORS > 568
+        .long       vector568,  vector569,  vector570,  vector571
+#endif
+#if PPC_NUM_VECTORS > 572
+        .long       vector572,  vector573,  vector574,  vector575
+#endif
+#if PPC_NUM_VECTORS > 576
+        .long       vector576,  vector577,  vector578,  vector579
+#endif
+#if PPC_NUM_VECTORS > 580
+        .long       vector580,  vector581,  vector582,  vector583
+#endif
+#if PPC_NUM_VECTORS > 584
+        .long       vector584,  vector585,  vector586,  vector587
+#endif
+#if PPC_NUM_VECTORS > 588
+        .long       vector588,  vector589,  vector590,  vector591
+#endif
+#if PPC_NUM_VECTORS > 592
+        .long       vector592,  vector593,  vector594,  vector595
+#endif
+#if PPC_NUM_VECTORS > 596
+        .long       vector596,  vector597,  vector598,  vector599
+#endif
+#if PPC_NUM_VECTORS > 600
+        .long       vector600,  vector601,  vector602,  vector603
+#endif
+#if PPC_NUM_VECTORS > 604
+        .long       vector604,  vector605,  vector606,  vector607
+#endif
+#if PPC_NUM_VECTORS > 608
+        .long       vector608,  vector609,  vector610,  vector611
+#endif
+#if PPC_NUM_VECTORS > 612
+        .long       vector612,  vector613,  vector614,  vector615
+#endif
+#if PPC_NUM_VECTORS > 616
+        .long       vector616,  vector617,  vector618,  vector619
+#endif
+#if PPC_NUM_VECTORS > 620
+        .long       vector620,  vector621,  vector622,  vector623
+#endif
+#if PPC_NUM_VECTORS > 624
+        .long       vector624,  vector625,  vector626,  vector627
+#endif
+#if PPC_NUM_VECTORS > 628
+        .long       vector628,  vector629,  vector630,  vector631
+#endif
+#if PPC_NUM_VECTORS > 632
+        .long       vector632,  vector633,  vector634,  vector635
+#endif
+#if PPC_NUM_VECTORS > 636
+        .long       vector636,  vector637,  vector638,  vector639
+#endif
+#if PPC_NUM_VECTORS > 640
+        .long       vector640,  vector641,  vector642,  vector643
+#endif
+#if PPC_NUM_VECTORS > 644
+        .long       vector644,  vector645,  vector646,  vector647
+#endif
+#if PPC_NUM_VECTORS > 648
+        .long       vector648,  vector649,  vector650,  vector651
+#endif
+#if PPC_NUM_VECTORS > 652
+        .long       vector652,  vector653,  vector654,  vector655
+#endif
+#if PPC_NUM_VECTORS > 656
+        .long       vector656,  vector657,  vector658,  vector659
+#endif
+#if PPC_NUM_VECTORS > 660
+        .long       vector660,  vector661,  vector662,  vector663
+#endif
+#if PPC_NUM_VECTORS > 664
+        .long       vector664,  vector665,  vector666,  vector667
+#endif
+#if PPC_NUM_VECTORS > 668
+        .long       vector668,  vector669,  vector670,  vector671
+#endif
+#if PPC_NUM_VECTORS > 672
+        .long       vector672,  vector673,  vector674,  vector675
+#endif
+#if PPC_NUM_VECTORS > 676
+        .long       vector676,  vector677,  vector678,  vector679
+#endif
+#if PPC_NUM_VECTORS > 680
+        .long       vector680,  vector681,  vector682,  vector683
+#endif
+#if PPC_NUM_VECTORS > 684
+        .long       vector684,  vector685,  vector686,  vector687
+#endif
+#if PPC_NUM_VECTORS > 688
+        .long       vector688,  vector689,  vector690,  vector691
+#endif
+#if PPC_NUM_VECTORS > 692
+        .long       vector692,  vector693,  vector694,  vector695
+#endif
+#if PPC_NUM_VECTORS > 696
+        .long       vector696,  vector697,  vector698,  vector699
+#endif
+#if PPC_NUM_VECTORS > 700
+        .long       vector700,  vector701,  vector702,  vector703
+#endif
+#if PPC_NUM_VECTORS > 704
+        .long       vector704,  vector705,  vector706,  vector707
+#endif
+#if PPC_NUM_VECTORS > 708
+        .long       vector708,  vector709,  vector710,  vector711
+#endif
+#if PPC_NUM_VECTORS > 712
+        .long       vector712,  vector713,  vector714,  vector715
+#endif
+#if PPC_NUM_VECTORS > 716
+        .long       vector716,  vector717,  vector718,  vector719
+#endif
+#if PPC_NUM_VECTORS > 720
+        .long       vector720,  vector721,  vector722,  vector723
+#endif
+#if PPC_NUM_VECTORS > 724
+        .long       vector724,  vector725,  vector726,  vector727
+#endif
+#if PPC_NUM_VECTORS > 728
+        .long       vector728,  vector729,  vector730,  vector731
+#endif
+#if PPC_NUM_VECTORS > 732
+        .long       vector732,  vector733,  vector734,  vector735
+#endif
+#if PPC_NUM_VECTORS > 736
+        .long       vector736,  vector737,  vector738,  vector739
+#endif
+#if PPC_NUM_VECTORS > 740
+        .long       vector740,  vector741,  vector742,  vector743
+#endif
+#if PPC_NUM_VECTORS > 744
+        .long       vector744,  vector745,  vector746,  vector747
+#endif
+#if PPC_NUM_VECTORS > 748
+        .long       vector748,  vector749,  vector750,  vector751
+#endif
+#if PPC_NUM_VECTORS > 752
+        .long       vector752,  vector753,  vector754,  vector755
+#endif
+#if PPC_NUM_VECTORS > 756
+        .long       vector756,  vector757,  vector758,  vector759
+#endif
+#if PPC_NUM_VECTORS > 760
+        .long       vector760,  vector761,  vector762,  vector763
+#endif
+#if PPC_NUM_VECTORS > 764
+        .long       vector764,  vector765,  vector766,  vector767
+#endif
+#if PPC_NUM_VECTORS > 768
+        .long       vector768,  vector769,  vector770,  vector771
+#endif
+#if PPC_NUM_VECTORS > 772
+        .long       vector772,  vector773,  vector774,  vector775
+#endif
+#if PPC_NUM_VECTORS > 776
+        .long       vector776,  vector777,  vector778,  vector779
+#endif
+#if PPC_NUM_VECTORS > 780
+        .long       vector780,  vector781,  vector782,  vector783
+#endif
+#if PPC_NUM_VECTORS > 784
+        .long       vector784,  vector785,  vector786,  vector787
+#endif
+#if PPC_NUM_VECTORS > 788
+        .long       vector788,  vector789,  vector790,  vector791
+#endif
+#if PPC_NUM_VECTORS > 792
+        .long       vector792,  vector793,  vector794,  vector795
+#endif
+#if PPC_NUM_VECTORS > 796
+        .long       vector796,  vector797,  vector798,  vector799
+#endif
+#if PPC_NUM_VECTORS > 800
+        .long       vector800,  vector801,  vector802,  vector803
+#endif
+#if PPC_NUM_VECTORS > 804
+        .long       vector804,  vector805,  vector806,  vector807
+#endif
+#if PPC_NUM_VECTORS > 808
+        .long       vector808,  vector809,  vector810,  vector811
+#endif
+#if PPC_NUM_VECTORS > 812
+        .long       vector812,  vector813,  vector814,  vector815
+#endif
+#if PPC_NUM_VECTORS > 816
+        .long       vector816,  vector817,  vector818,  vector819
+#endif
+#if PPC_NUM_VECTORS > 820
+        .long       vector820,  vector821,  vector822,  vector823
+#endif
+#if PPC_NUM_VECTORS > 824
+        .long       vector824,  vector825,  vector826,  vector827
+#endif
+#if PPC_NUM_VECTORS > 828
+        .long       vector828,  vector829,  vector830,  vector831
+#endif
+#if PPC_NUM_VECTORS > 832
+        .long       vector832,  vector833,  vector834,  vector835
+#endif
+#if PPC_NUM_VECTORS > 836
+        .long       vector836,  vector837,  vector838,  vector839
+#endif
+#if PPC_NUM_VECTORS > 840
+        .long       vector840,  vector841,  vector842,  vector843
+#endif
+#if PPC_NUM_VECTORS > 844
+        .long       vector844,  vector845,  vector846,  vector847
+#endif
+#if PPC_NUM_VECTORS > 848
+        .long       vector848,  vector849,  vector850,  vector851
+#endif
+#if PPC_NUM_VECTORS > 852
+        .long       vector852,  vector853,  vector854,  vector855
+#endif
+#if PPC_NUM_VECTORS > 856
+        .long       vector856,  vector857,  vector858,  vector859
+#endif
+#if PPC_NUM_VECTORS > 860
+        .long       vector860,  vector861,  vector862,  vector863
+#endif
+#if PPC_NUM_VECTORS > 864
+        .long       vector864,  vector865,  vector866,  vector867
+#endif
+#if PPC_NUM_VECTORS > 868
+        .long       vector868,  vector869,  vector870,  vector871
+#endif
+#if PPC_NUM_VECTORS > 872
+        .long       vector872,  vector873,  vector874,  vector875
+#endif
+#if PPC_NUM_VECTORS > 876
+        .long       vector876,  vector877,  vector878,  vector879
+#endif
+#if PPC_NUM_VECTORS > 880
+        .long       vector880,  vector881,  vector882,  vector883
+#endif
+#if PPC_NUM_VECTORS > 884
+        .long       vector884,  vector885,  vector886,  vector887
+#endif
+#if PPC_NUM_VECTORS > 888
+        .long       vector888,  vector889,  vector890,  vector891
+#endif
+#if PPC_NUM_VECTORS > 892
+        .long       vector892,  vector893,  vector894,  vector895
+#endif
+#if PPC_NUM_VECTORS > 896
+        .long       vector896,  vector897,  vector898,  vector899
+#endif
+#if PPC_NUM_VECTORS > 900
+        .long       vector900,  vector901,  vector902,  vector903
+#endif
+#if PPC_NUM_VECTORS > 904
+        .long       vector904,  vector905,  vector906,  vector907
+#endif
+#if PPC_NUM_VECTORS > 908
+        .long       vector908,  vector909,  vector910,  vector911
+#endif
+#if PPC_NUM_VECTORS > 912
+        .long       vector912,  vector913,  vector914,  vector915
+#endif
+#if PPC_NUM_VECTORS > 916
+        .long       vector916,  vector917,  vector918,  vector919
+#endif
+#if PPC_NUM_VECTORS > 920
+        .long       vector920,  vector921,  vector922,  vector923
+#endif
+#if PPC_NUM_VECTORS > 924
+        .long       vector924,  vector925,  vector926,  vector927
+#endif
+#if PPC_NUM_VECTORS > 928
+        .long       vector928,  vector929,  vector930,  vector931
+#endif
+#if PPC_NUM_VECTORS > 932
+        .long       vector932,  vector933,  vector934,  vector935
+#endif
+#if PPC_NUM_VECTORS > 936
+        .long       vector936,  vector937,  vector938,  vector939
+#endif
+#if PPC_NUM_VECTORS > 940
+        .long       vector940,  vector941,  vector942,  vector943
+#endif
+#if PPC_NUM_VECTORS > 944
+        .long       vector944,  vector945,  vector946,  vector947
+#endif
+#if PPC_NUM_VECTORS > 948
+        .long       vector948,  vector949,  vector950,  vector951
+#endif
+#if PPC_NUM_VECTORS > 952
+        .long       vector952,  vector953,  vector954,  vector955
+#endif
+#if PPC_NUM_VECTORS > 956
+        .long       vector956,  vector957,  vector958,  vector959
+#endif
+#if PPC_NUM_VECTORS > 960
+        .long       vector960,  vector961,  vector962,  vector963
+#endif
+#if PPC_NUM_VECTORS > 964
+        .long       vector964,  vector965,  vector966,  vector967
+#endif
+#if PPC_NUM_VECTORS > 968
+        .long       vector968,  vector969,  vector970,  vector971
+#endif
+#if PPC_NUM_VECTORS > 972
+        .long       vector972,  vector973,  vector974,  vector975
+#endif
+#if PPC_NUM_VECTORS > 976
+        .long       vector976,  vector977,  vector978,  vector979
+#endif
+#if PPC_NUM_VECTORS > 980
+        .long       vector980,  vector981,  vector982,  vector983
+#endif
+#if PPC_NUM_VECTORS > 984
+        .long       vector984,  vector985,  vector986,  vector987
+#endif
+#if PPC_NUM_VECTORS > 988
+        .long       vector988,  vector989,  vector990,  vector991
+#endif
+#if PPC_NUM_VECTORS > 992
+        .long       vector992,  vector993,  vector994,  vector995
+#endif
+#if PPC_NUM_VECTORS > 996
+        .long       vector996,  vector997,  vector998,  vector999
+#endif
+#if PPC_NUM_VECTORS > 1000
+        .long       vector1000, vector1001, vector1002, vector1003
+#endif
+#if PPC_NUM_VECTORS > 1004
+        .long       vector1004, vector1005, vector1006, vector1007
+#endif
+#if PPC_NUM_VECTORS > 1008
+        .long       vector1008, vector1009, vector1010, vector1011
+#endif
 
         .text
         .align      2
@@ -552,6 +927,134 @@ _vectors:
         .weak       vector500,  vector501,  vector502,  vector503
         .weak       vector504,  vector505,  vector506,  vector507
         .weak       vector508,  vector509,  vector510,  vector511
+        .weak       vector512,  vector513,  vector514,  vector515
+        .weak       vector516,  vector517,  vector518,  vector519
+        .weak       vector520,  vector521,  vector522,  vector523
+        .weak       vector524,  vector525,  vector526,  vector527
+        .weak       vector528,  vector529,  vector530,  vector531
+        .weak       vector532,  vector533,  vector534,  vector535
+        .weak       vector536,  vector537,  vector538,  vector539
+        .weak       vector540,  vector541,  vector542,  vector543
+        .weak       vector544,  vector545,  vector546,  vector547
+        .weak       vector548,  vector549,  vector550,  vector551
+        .weak       vector552,  vector553,  vector554,  vector555
+        .weak       vector556,  vector557,  vector558,  vector559
+        .weak       vector560,  vector561,  vector562,  vector563
+        .weak       vector564,  vector565,  vector566,  vector567
+        .weak       vector568,  vector569,  vector570,  vector571
+        .weak       vector572,  vector573,  vector574,  vector575
+        .weak       vector576,  vector577,  vector578,  vector579
+        .weak       vector580,  vector581,  vector582,  vector583
+        .weak       vector584,  vector585,  vector586,  vector587
+        .weak       vector588,  vector589,  vector590,  vector591
+        .weak       vector592,  vector593,  vector594,  vector595
+        .weak       vector596,  vector597,  vector598,  vector599
+        .weak       vector600,  vector601,  vector602,  vector603
+        .weak       vector604,  vector605,  vector606,  vector607
+        .weak       vector608,  vector609,  vector610,  vector611
+        .weak       vector612,  vector613,  vector614,  vector615
+        .weak       vector616,  vector617,  vector618,  vector619
+        .weak       vector620,  vector621,  vector622,  vector623
+        .weak       vector624,  vector625,  vector626,  vector627
+        .weak       vector628,  vector629,  vector630,  vector631
+        .weak       vector632,  vector633,  vector634,  vector635
+        .weak       vector636,  vector637,  vector638,  vector639
+        .weak       vector640,  vector641,  vector642,  vector643
+        .weak       vector644,  vector645,  vector646,  vector647
+        .weak       vector648,  vector649,  vector650,  vector651
+        .weak       vector652,  vector653,  vector654,  vector655
+        .weak       vector656,  vector657,  vector658,  vector659
+        .weak       vector660,  vector661,  vector662,  vector663
+        .weak       vector664,  vector665,  vector666,  vector667
+        .weak       vector668,  vector669,  vector670,  vector671
+        .weak       vector672,  vector673,  vector674,  vector675
+        .weak       vector676,  vector677,  vector678,  vector679
+        .weak       vector680,  vector681,  vector682,  vector683
+        .weak       vector684,  vector685,  vector686,  vector687
+        .weak       vector688,  vector689,  vector690,  vector691
+        .weak       vector692,  vector693,  vector694,  vector695
+        .weak       vector696,  vector697,  vector698,  vector699
+        .weak       vector700,  vector701,  vector702,  vector703
+        .weak       vector704,  vector705,  vector706,  vector707
+        .weak       vector708,  vector709,  vector710,  vector711
+        .weak       vector712,  vector713,  vector714,  vector715
+        .weak       vector716,  vector717,  vector718,  vector719
+        .weak       vector720,  vector721,  vector722,  vector723
+        .weak       vector724,  vector725,  vector726,  vector727
+        .weak       vector728,  vector729,  vector730,  vector731
+        .weak       vector732,  vector733,  vector734,  vector735
+        .weak       vector736,  vector737,  vector738,  vector739
+        .weak       vector740,  vector741,  vector742,  vector743
+        .weak       vector744,  vector745,  vector746,  vector747
+        .weak       vector748,  vector749,  vector750,  vector751
+        .weak       vector752,  vector753,  vector754,  vector755
+        .weak       vector756,  vector757,  vector758,  vector759
+        .weak       vector760,  vector761,  vector762,  vector763
+        .weak       vector764,  vector765,  vector766,  vector767
+        .weak       vector768,  vector769,  vector770,  vector771
+        .weak       vector772,  vector773,  vector774,  vector775
+        .weak       vector776,  vector777,  vector778,  vector779
+        .weak       vector780,  vector781,  vector782,  vector783
+        .weak       vector784,  vector785,  vector786,  vector787
+        .weak       vector788,  vector789,  vector790,  vector791
+        .weak       vector792,  vector793,  vector794,  vector795
+        .weak       vector796,  vector797,  vector798,  vector799
+        .weak       vector800,  vector801,  vector802,  vector803
+        .weak       vector804,  vector805,  vector806,  vector807
+        .weak       vector808,  vector809,  vector810,  vector811
+        .weak       vector812,  vector813,  vector814,  vector815
+        .weak       vector816,  vector817,  vector818,  vector819
+        .weak       vector820,  vector821,  vector822,  vector823
+        .weak       vector824,  vector825,  vector826,  vector827
+        .weak       vector828,  vector829,  vector830,  vector831
+        .weak       vector832,  vector833,  vector834,  vector835
+        .weak       vector836,  vector837,  vector838,  vector839
+        .weak       vector840,  vector841,  vector842,  vector843
+        .weak       vector844,  vector845,  vector846,  vector847
+        .weak       vector848,  vector849,  vector850,  vector851
+        .weak       vector852,  vector853,  vector854,  vector855
+        .weak       vector856,  vector857,  vector858,  vector859
+        .weak       vector860,  vector861,  vector862,  vector863
+        .weak       vector864,  vector865,  vector866,  vector867
+        .weak       vector868,  vector869,  vector870,  vector871
+        .weak       vector872,  vector873,  vector874,  vector875
+        .weak       vector876,  vector877,  vector878,  vector879
+        .weak       vector880,  vector881,  vector882,  vector883
+        .weak       vector884,  vector885,  vector886,  vector887
+        .weak       vector888,  vector889,  vector890,  vector891
+        .weak       vector892,  vector893,  vector894,  vector895
+        .weak       vector896,  vector897,  vector898,  vector899
+        .weak       vector900,  vector901,  vector902,  vector903
+        .weak       vector904,  vector905,  vector906,  vector907
+        .weak       vector908,  vector909,  vector910,  vector911
+        .weak       vector912,  vector913,  vector914,  vector915
+        .weak       vector916,  vector917,  vector918,  vector919
+        .weak       vector920,  vector921,  vector922,  vector923
+        .weak       vector924,  vector925,  vector926,  vector927
+        .weak       vector928,  vector929,  vector930,  vector931
+        .weak       vector932,  vector933,  vector934,  vector935
+        .weak       vector936,  vector937,  vector938,  vector939
+        .weak       vector940,  vector941,  vector942,  vector943
+        .weak       vector944,  vector945,  vector946,  vector947
+        .weak       vector948,  vector949,  vector950,  vector951
+        .weak       vector952,  vector953,  vector954,  vector955
+        .weak       vector956,  vector957,  vector958,  vector959
+        .weak       vector960,  vector961,  vector962,  vector963
+        .weak       vector964,  vector965,  vector966,  vector967
+        .weak       vector968,  vector969,  vector970,  vector971
+        .weak       vector972,  vector973,  vector974,  vector975
+        .weak       vector976,  vector977,  vector978,  vector979
+        .weak       vector980,  vector981,  vector982,  vector983
+        .weak       vector984,  vector985,  vector986,  vector987
+        .weak       vector988,  vector989,  vector990,  vector991
+        .weak       vector992,  vector993,  vector994,  vector995
+        .weak       vector996,  vector997,  vector996,  vector997
+        .weak       vector1000, vector1001, vector1002, vector1003
+        .weak       vector1004, vector1005, vector1006, vector1007
+        .weak       vector1008, vector1009, vector1010, vector1011
+        .weak       vector1012, vector1013, vector1014, vector1015
+        .weak       vector1016, vector1017, vector1018, vector1019
+        .weak       vector1020, vector1021, vector1022, vector1023
 
 vector0:
 vector1:
@@ -1065,6 +1568,518 @@ vector508:
 vector509:
 vector510:
 vector511:
+vector512:
+vector513:
+vector514:
+vector515:
+vector516:
+vector517:
+vector518:
+vector519:
+vector520:
+vector521:
+vector522:
+vector523:
+vector524:
+vector525:
+vector526:
+vector527:
+vector528:
+vector529:
+vector530:
+vector531:
+vector532:
+vector533:
+vector534:
+vector535:
+vector536:
+vector537:
+vector538:
+vector539:
+vector540:
+vector541:
+vector542:
+vector543:
+vector544:
+vector545:
+vector546:
+vector547:
+vector548:
+vector549:
+vector550:
+vector551:
+vector552:
+vector553:
+vector554:
+vector555:
+vector556:
+vector557:
+vector558:
+vector559:
+vector560:
+vector561:
+vector562:
+vector563:
+vector564:
+vector565:
+vector566:
+vector567:
+vector568:
+vector569:
+vector570:
+vector571:
+vector572:
+vector573:
+vector574:
+vector575:
+vector576:
+vector577:
+vector578:
+vector579:
+vector580:
+vector581:
+vector582:
+vector583:
+vector584:
+vector585:
+vector586:
+vector587:
+vector588:
+vector589:
+vector590:
+vector591:
+vector592:
+vector593:
+vector594:
+vector595:
+vector596:
+vector597:
+vector598:
+vector599:
+vector600:
+vector601:
+vector602:
+vector603:
+vector604:
+vector605:
+vector606:
+vector607:
+vector608:
+vector609:
+vector610:
+vector611:
+vector612:
+vector613:
+vector614:
+vector615:
+vector616:
+vector617:
+vector618:
+vector619:
+vector620:
+vector621:
+vector622:
+vector623:
+vector624:
+vector625:
+vector626:
+vector627:
+vector628:
+vector629:
+vector630:
+vector631:
+vector632:
+vector633:
+vector634:
+vector635:
+vector636:
+vector637:
+vector638:
+vector639:
+vector640:
+vector641:
+vector642:
+vector643:
+vector644:
+vector645:
+vector646:
+vector647:
+vector648:
+vector649:
+vector650:
+vector651:
+vector652:
+vector653:
+vector654:
+vector655:
+vector656:
+vector657:
+vector658:
+vector659:
+vector660:
+vector661:
+vector662:
+vector663:
+vector664:
+vector665:
+vector666:
+vector667:
+vector668:
+vector669:
+vector670:
+vector671:
+vector672:
+vector673:
+vector674:
+vector675:
+vector676:
+vector677:
+vector678:
+vector679:
+vector680:
+vector681:
+vector682:
+vector683:
+vector684:
+vector685:
+vector686:
+vector687:
+vector688:
+vector689:
+vector690:
+vector691:
+vector692:
+vector693:
+vector694:
+vector695:
+vector696:
+vector697:
+vector698:
+vector699:
+vector700:
+vector701:
+vector702:
+vector703:
+vector704:
+vector705:
+vector706:
+vector707:
+vector708:
+vector709:
+vector710:
+vector711:
+vector712:
+vector713:
+vector714:
+vector715:
+vector716:
+vector717:
+vector718:
+vector719:
+vector720:
+vector721:
+vector722:
+vector723:
+vector724:
+vector725:
+vector726:
+vector727:
+vector728:
+vector729:
+vector730:
+vector731:
+vector732:
+vector733:
+vector734:
+vector735:
+vector736:
+vector737:
+vector738:
+vector739:
+vector740:
+vector741:
+vector742:
+vector743:
+vector744:
+vector745:
+vector746:
+vector747:
+vector748:
+vector749:
+vector750:
+vector751:
+vector752:
+vector753:
+vector754:
+vector755:
+vector756:
+vector757:
+vector758:
+vector759:
+vector760:
+vector761:
+vector762:
+vector763:
+vector764:
+vector765:
+vector766:
+vector767:
+vector768:
+vector769:
+vector770:
+vector771:
+vector772:
+vector773:
+vector774:
+vector775:
+vector776:
+vector777:
+vector778:
+vector779:
+vector780:
+vector781:
+vector782:
+vector783:
+vector784:
+vector785:
+vector786:
+vector787:
+vector788:
+vector789:
+vector790:
+vector791:
+vector792:
+vector793:
+vector794:
+vector795:
+vector796:
+vector797:
+vector798:
+vector799:
+vector800:
+vector801:
+vector802:
+vector803:
+vector804:
+vector805:
+vector806:
+vector807:
+vector808:
+vector809:
+vector810:
+vector811:
+vector812:
+vector813:
+vector814:
+vector815:
+vector816:
+vector817:
+vector818:
+vector819:
+vector820:
+vector821:
+vector822:
+vector823:
+vector824:
+vector825:
+vector826:
+vector827:
+vector828:
+vector829:
+vector830:
+vector831:
+vector832:
+vector833:
+vector834:
+vector835:
+vector836:
+vector837:
+vector838:
+vector839:
+vector840:
+vector841:
+vector842:
+vector843:
+vector844:
+vector845:
+vector846:
+vector847:
+vector848:
+vector849:
+vector850:
+vector851:
+vector852:
+vector853:
+vector854:
+vector855:
+vector856:
+vector857:
+vector858:
+vector859:
+vector860:
+vector861:
+vector862:
+vector863:
+vector864:
+vector865:
+vector866:
+vector867:
+vector868:
+vector869:
+vector870:
+vector871:
+vector872:
+vector873:
+vector874:
+vector875:
+vector876:
+vector877:
+vector878:
+vector879:
+vector880:
+vector881:
+vector882:
+vector883:
+vector884:
+vector885:
+vector886:
+vector887:
+vector888:
+vector889:
+vector890:
+vector891:
+vector892:
+vector893:
+vector894:
+vector895:
+vector896:
+vector897:
+vector898:
+vector899:
+vector900:
+vector901:
+vector902:
+vector903:
+vector904:
+vector905:
+vector906:
+vector907:
+vector908:
+vector909:
+vector910:
+vector911:
+vector912:
+vector913:
+vector914:
+vector915:
+vector916:
+vector917:
+vector918:
+vector919:
+vector920:
+vector921:
+vector922:
+vector923:
+vector924:
+vector925:
+vector926:
+vector927:
+vector928:
+vector929:
+vector930:
+vector931:
+vector932:
+vector933:
+vector934:
+vector935:
+vector936:
+vector937:
+vector938:
+vector939:
+vector940:
+vector941:
+vector942:
+vector943:
+vector944:
+vector945:
+vector946:
+vector947:
+vector948:
+vector949:
+vector950:
+vector951:
+vector952:
+vector953:
+vector954:
+vector955:
+vector956:
+vector957:
+vector958:
+vector959:
+vector960:
+vector961:
+vector962:
+vector963:
+vector964:
+vector965:
+vector966:
+vector967:
+vector968:
+vector969:
+vector970:
+vector971:
+vector972:
+vector973:
+vector974:
+vector975:
+vector976:
+vector977:
+vector978:
+vector979:
+vector980:
+vector981:
+vector982:
+vector983:
+vector984:
+vector985:
+vector986:
+vector987:
+vector988:
+vector989:
+vector990:
+vector991:
+vector992:
+vector993:
+vector994:
+vector995:
+vector996:
+vector997:
+vector998:
+vector999:
+vector1000:
+vector1001:
+vector1002:
+vector1003:
+vector1004:
+vector1005:
+vector1006:
+vector1007:
+vector1008:
+vector1009:
+vector1010:
+vector1011:
+vector1012:
+vector1013:
+vector1014:
+vector1015:
+vector1016:
+vector1017:
+vector1018:
+vector1019:
+vector1020:
+vector1021:
+vector1022:
+vector1023:
 
         .weak       _unhandled_irq
         .type       _unhandled_irq, @function
