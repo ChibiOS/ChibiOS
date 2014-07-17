@@ -19,10 +19,10 @@
 */
 
 /**
- * @file    PPC/chtypes.h
- * @brief   PowerPC architecture port system types.
+ * @file    e200/compilers/GCC/chtypes.h
+ * @brief   Power e200 port system types.
  *
- * @addtogroup PPC_CORE
+ * @addtogroup PPC_GCC_CORE
  * @{
  */
 
