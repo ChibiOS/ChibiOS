@@ -76,10 +76,10 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
-#include $(CHIBIOS)/os/hal/hal.mk
-#include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC560D/board.mk
-#include $(CHIBIOS)/os/hal/ports/SPC5/SPC560Dxx/platform.mk
-#include $(CHIBIOS)/os/hal/osal/nil/osal.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC560D/board.mk
+include $(CHIBIOS)/os/hal/ports/SPC5/SPC560Dxx/platform.mk
+include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/nil/ports/e200/compilers/GCC/mk/port_spc560dxx.mk
 #include $(CHIBIOS)/test/nil/test.mk

@@ -15,7 +15,7 @@
 */
 
 #include "nil.h"
-//#include "hal.h"
+#include "hal.h"
 //#include "test.h"
 
 #if 0
@@ -95,7 +95,6 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
 
   while (TRUE) {
-#if 0
     unsigned i;
 
     for (i = 0; i < 4; i++) {
@@ -152,8 +151,6 @@ static THD_FUNCTION(Thread1, arg) {
 
     palSetPort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
                        PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
-#endif
-    chThdSleepMilliseconds(500);
   }
 }
 

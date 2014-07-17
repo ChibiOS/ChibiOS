@@ -47,7 +47,7 @@
 /**
  * @brief   Type of a generic I/O queue structure.
  */
-typedef struct io_queue_t io_queue_t;
+typedef struct io_queue io_queue_t;
 
 /** @brief Queue notification callback type.*/
 typedef void (*qnotify_t)(io_queue_t *qp);
@@ -61,7 +61,7 @@ typedef void (*qnotify_t)(io_queue_t *qp);
  *          lock zone (see <b>I-Locked</b> and <b>S-Locked</b> states in
  *          @ref system_states) and is non-blocking.
  */
-struct io_queue_t {
+struct io_queue {
   threads_queue_t       q_waiting;  /**< @brief Waiting thread.             */
   size_t                q_counter;  /**< @brief Resources counter.          */
   uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
@@ -365,6 +365,10 @@ extern "C" {
 }
 #endif
 
+/* Types provided for backward compatibility, deprecated use.*/
+typedef io_queue_t GenericQueue;
+typedef input_queue_t InputQueue;
+typedef output_queue_t OutputQueue;
 
 #else /* defined(_CHIBIOS_RT_) && CH_USE_QUEUES */
 
