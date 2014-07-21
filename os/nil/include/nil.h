@@ -189,6 +189,40 @@ typedef struct nil_thread thread_t;
 #define NIL_CFG_THREAD_EXT_FIELDS
 #endif
 
+/**
+ * @brief   Threads initialization hook.
+ */
+#if !defined(NIL_CFG_THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
+#define NIL_CFG_THREAD_EXT_INIT_HOOK(tr) {}
+#endif
+
+/**
+ * @brief   Idle thread enter hook.
+ * @note    This hook is invoked within a critical zone, no OS functions
+ *          should be invoked from here.
+ * @note    This macro can be used to activate a power saving mode.
+ */
+#if !defined(NIL_CFG_IDLE_ENTER_HOOK) || defined(__DOXYGEN__)
+#define NIL_CFG_IDLE_ENTER_HOOK() {}
+#endif
+
+/**
+ * @brief   Idle thread leave hook.
+ * @note    This hook is invoked within a critical zone, no OS functions
+ *          should be invoked from here.
+ * @note    This macro can be used to deactivate a power saving mode.
+ */
+#if !defined(NIL_CFG_IDLE_LEAVE_HOOK) || defined(__DOXYGEN__)
+#define NIL_CFG_IDLE_LEAVE_HOOK() {}
+#endif
+
+/**
+ * @brief   System halt hook.
+ */
+#if !defined(NIL_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
+#define NIL_CFG_SYSTEM_HALT_HOOK(reason) {}
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
