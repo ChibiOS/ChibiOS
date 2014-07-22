@@ -38,6 +38,11 @@
 #define PPC_VARIANT                 PPC_VARIANT_e200z0
 
 /**
+ * @brief   Number of cores.
+ */
+#define PPC_CORE_NUMBER             1
+
+/**
  * @brief   Number of writable bits in IVPR register.
  */
 #define PPC_IVPR_BITS               20
@@ -71,6 +76,17 @@
  * @brief   Number of interrupt sources.
  */
 #define PPC_NUM_VECTORS             217
+
+/**
+ * @brief   Memory address of the INTC controller.
+ */
+#define PPC_INTC_BASE               0xFFF48000
+
+/**
+ * @brief   Type of the INTC controller.
+ * @note    0=SPC56x, 1=SPC57x.
+ */
+#define PPC_INTC_TYPE               0
 
 #endif /* _PPCPARAMS_H_ */
 

@@ -42,11 +42,6 @@
 #include "nilcore.h"
 
 #if !defined(__DOXYGEN__)
-        /*
-         * INTC registers address.
-         */
-        .equ  INTC_IACKR, 0xfff48010
-        .equ  INTC_EOIR,  0xfff48018
 
         .section    .handlers, "ax"
 
@@ -161,8 +156,8 @@ _IVOR4:
         mtspr       272, %r0
 
         /* Software vector address from the INTC register.*/
-        lis         %r3, INTC_IACKR@h
-        ori         %r3, %r3, INTC_IACKR@l  /* IACKR register address.      */
+        lis         %r3, INTC_IACKR_ADDR@h
+        ori         %r3, %r3, INTC_IACKR_ADDR@l
         lwz         %r3, 0(%r3)             /* IACKR register value.        */
         lwz         %r3, 0(%r3)
         mtCTR       %r3                     /* Software handler address.    */
@@ -182,8 +177,8 @@ _IVOR4:
 
         /* Informs the INTC that the interrupt has been served.*/
         mbar        0
-        lis         %r3, INTC_EOIR@h
-        ori         %r3, %r3, INTC_EOIR@l
+        lis         %r3, INTC_EOIR_ADDR@h
+        ori         %r3, %r3, INTC_EOIR_ADDR@l
         stw         %r3, 0(%r3)             /* Writing any value should do. */
 
         /* Common IVOR epilogue code, context restore.*/

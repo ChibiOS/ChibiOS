@@ -35,15 +35,17 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-/* The following code is not processed when the file is included from an
-   asm module.*/
-#if !defined(_FROM_ASM_)
+#if PPC_INTC_TYPE == 0
+#define INTC_IACKR_ADDR     (PPC_INTC_BASE + 0x10)
+#define INTC_EOIR_ADDR      (PPC_INTC_BASE + 0x18)
 
-#define INTC_MCR        *((volatile uint32_t *)0xfff48000)
-#define INTC_CPR        *((volatile uint32_t *)0xfff48008)
-#define INTC_IACKR      *((volatile uint32_t *)0xfff48010)
+#elif PPC_INTC_TYPE == 1
+#define INTC_IACKR_ADDR     (PPC_INTC_BASE + 0x20)
+#define INTC_EOIR_ADDR      (PPC_INTC_BASE + 0x30)
 
-#endif /* !defined(_FROM_ASM_) */
+#else
+#error "unknown INTC type"
+#endif
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -60,6 +62,40 @@
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
+
+/**
+ * @name    INTC-related macros
+ * @{
+ */
+#if PPC_INTC_TYPE == 0
+#define INTC_BCR            (*((volatile uint32_t *)(PPC_INTC_BASE + 0)))
+#define INTC_CPR(n)         (*((volatile uint32_t *)(PPC_INTC_BASE + 8 + ((n) * sizeof (uint32_t)))))
+#define INTC_IACKR(n)       (*((volatile uint32_t *)(PPC_INTC_BASE + 0x10 + ((n) * sizeof (uint32_t)))))
+#define INTC_EOIR(n)        (*((volatile uint32_t *)(PPC_INTC_BASE + 0x18 + ((n) * sizeof (uint32_t)))))
+#define INTC_PSR(n)         (*((volatile uint8_t *)(PPC_INTC_BASE + 0x40 + ((n) * sizeof (uint8_t)))))
+
+#elif PPC_INTC_TYPE == 1
+#define INTC_BCR            (*((volatile uint32_t *)(PPC_INTC_BASE + 0)))
+#define INTC_MPROT          (*((volatile uint32_t *)(PPC_INTC_BASE + 4)))
+#define INTC_CPR(n)         (*((volatile uint32_t *)(PPC_INTC_BASE + 0x10 + ((n) * sizeof (uint32_t)))))
+#define INTC_IACKR(n)       (*((volatile uint32_t *)(PPC_INTC_BASE + 0x20 + ((n) * sizeof (uint32_t)))))
+#define INTC_EOIR(n)        (*((volatile uint32_t *)(PPC_INTC_BASE + 0x30 + ((n) * sizeof (uint32_t)))))
+#define INTC_PSR(n)         (*((volatile uint16_t *)(PPC_INTC_BASE + 0x60 + ((n) * sizeof (uint16_t)))))
+
+#else
+#error "unknown INTC type"
+#endif
+
+/**
+ * @brief   PSR register content helper
+ */
+#define INTC_PSR_ENABLE(cores, prio) ((uint32_t)(cores) | (uint32_t)(prio))
+
+#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -92,10 +128,15 @@ extern "C" {
 #if !defined(_FROM_ASM_)
 
 static inline void intc_init(void) {
+  unsigned i;
 
-  INTC_MCR   = 0;
-  INTC_CPR   = 0;
-  INTC_IACKR = (uint32_t)_vectors;
+  /* INTC initialization, software vector mode, 4 bytes vectors, starting
+     at priority 0.*/
+  INTC_BCR = 0;
+  for (i = 0; i < PPC_CORE_NUMBER; i++) {
+    INTC_CPR(i)   = 0;
+    INTC_IACKR(i) = (uint32_t)_vectors;
+  }
 }
 
 #endif /* !defined(_FROM_ASM_) */
