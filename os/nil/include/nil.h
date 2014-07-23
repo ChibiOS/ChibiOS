@@ -407,7 +407,8 @@ typedef struct {
  * @brief   Entry of user threads table
  */
 #define THD_TABLE_ENTRY(wap, name, funcp, arg)                              \
-  {wap, (wap) + sizeof (wap), name, funcp, arg},
+  {wap, ((stkalign_t *)(wap)) + (sizeof (wap) / sizeof(stkalign_t)),        \
+   name, funcp, arg},
 
 /**
  * @brief   End of user threads table.
@@ -441,7 +442,7 @@ typedef struct {
  * @api
  */
 #define THD_WORKING_AREA_SIZE(n)                                            \
-  THD_ALIGN_STACK_SIZE(sizeof(thread_t) + PORT_WA_SIZE(n))
+  THD_ALIGN_STACK_SIZE(PORT_WA_SIZE(n))
 
 /**
  * @brief   Static working area allocation.
