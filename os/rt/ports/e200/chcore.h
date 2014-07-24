@@ -29,6 +29,8 @@
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
+#include "intc.h"
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -410,6 +412,7 @@ extern "C" {
  */
 static inline void port_init(void) {
   uint32_t n;
+  unsigned i;
 
   /* Initializing the SPRG0 register to zero, it is required for interrupts
      handling.*/
@@ -425,8 +428,13 @@ static inline void port_init(void) {
                 "mtIVOR10    %%r3" : : : "r3", "memory");
 #endif
 
-  /* Interrupt controller initialization.*/
-  intc_init();
+  /* INTC initialization, software vector mode, 4 bytes vectors, starting
+     at priority 0.*/
+  INTC_BCR = 0;
+  for (i = 0; i < PPC_CORE_NUMBER; i++) {
+    INTC_CPR(i)   = 0;
+    INTC_IACKR(i) = (uint32_t)_vectors;
+  }
 }
 
 /**
