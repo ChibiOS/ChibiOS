@@ -19,21 +19,28 @@
 */
 
 /**
- * @file    vectors.h
- * @brief   ISR vector module header.
+ * @file    SPC560Pxx/intc.h
+ * @brief   SPC560Pxx INTC module header.
  *
- * @addtogroup VECTORS
+ * @addtogroup INTC
  * @{
  */
 
-#ifndef _VECTORS_H_
-#define _VECTORS_H_
-
-#include "ppcparams.h"
+#ifndef _INTC_H_
+#define _INTC_H_
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @name    INTC addresses
+ * @{
+ */
+#define INTC_BASE           0xFFF48000
+#define INTC_IACKR_ADDR     (INTC_BASE + 0x10)
+#define INTC_EOIR_ADDR      (INTC_BASE + 0x18)
+/** @} */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -51,32 +58,35 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    INTC-related macros
+ * @{
+ */
+#define INTC_BCR            (*((volatile uint32_t *)(INTC_BASE + 0)))
+#define INTC_CPR(n)         (*((volatile uint32_t *)(INTC_BASE + 8 + ((n) * sizeof (uint32_t)))))
+#define INTC_IACKR(n)       (*((volatile uint32_t *)(INTC_BASE + 0x10 + ((n) * sizeof (uint32_t)))))
+#define INTC_EOIR(n)        (*((volatile uint32_t *)(INTC_BASE + 0x18 + ((n) * sizeof (uint32_t)))))
+#define INTC_PSR(n)         (*((volatile uint8_t *)(INTC_BASE + 0x40 + ((n) * sizeof (uint8_t)))))
+/** @} */
+
+/**
+ * @brief   Core selection macros for PSR register.
+ */
+#define INTC_PSR_CORE0      0x00
+
+/**
+ * @brief   PSR register content helper
+ */
+#define INTC_PSR_ENABLE(cores, prio) ((uint32_t)(cores) | (uint32_t)(prio))
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
-
-/* The following code is not processed when the file is included from an
-   asm module.*/
-#if !defined(_FROM_ASM_)
-
-#if !defined(__DOXYGEN__)
-extern uint32_t _vectors[PPC_NUM_VECTORS];
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void _unhandled_irq(void);
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* _VECTORS_H_ */
+#endif /* _INTC_H_ */
 
 /** @} */
