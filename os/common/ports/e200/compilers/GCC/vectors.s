@@ -26,7 +26,12 @@
  * @{
  */
 
+#define _FROM_ASM_
 #include "ppcparams.h"
+
+#if defined(VECTORS_RENAMING)
+#include "isrs.h"
+#endif
 
 #if !defined(__DOXYGEN__)
 
