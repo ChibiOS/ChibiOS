@@ -237,6 +237,7 @@ typedef struct {
 #define osalQueueWakeupAllI osalThreadDequeueAllI
 #define osalQueueWakeupOneI osalThreadDequeueNextI
 #define osalQueueGoSleepTimeoutS osalThreadEnqueueTimeoutS
+#define osalEventInit osalEventObjectInit
 
 /**
  * @name    Debug related macros
