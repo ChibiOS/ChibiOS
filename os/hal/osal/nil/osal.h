@@ -249,8 +249,6 @@ typedef struct {
  *          message and halts.
  * @note    The condition is tested only if the @p OSAL_ENABLE_ASSERTIONS
  *          switch is enabled.
- * @note    The convention for the message is the following:<br>
- *          @<function_name@>(), #@<assert_number@>
  * @note    The remark string is not currently used except for putting a
  *          comment in the code about the assertion.
  *
