@@ -43,10 +43,11 @@ int main(void) {
   halInit();
   chSysInit();
 
+  palClearPad(IOPORT2, PORTB_LED1);
+
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-  palClearPad(IOPORT2, PORTB_LED1);
   sdStart(&SD1, NULL);
 
   /*
