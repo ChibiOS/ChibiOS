@@ -75,6 +75,9 @@ void chSysInit(void) {
   /* Port layer initialization.*/
   port_init();
 
+  /* System initialization hook.*/
+  NIL_CFG_SYSTEM_INIT_HOOK();
+
   /* Iterates through the list of defined threads.*/
   tp = &nil.threads[0];
   tcp = nil_thd_configs;
@@ -87,9 +90,7 @@ void chSysInit(void) {
     PORT_SETUP_CONTEXT(tp, tcp->wend, tcp->funcp, tcp->arg);
 
     /* Initialization hook.*/
-#if defined(NIL_CFG_THREAD_EXT_INIT_HOOK)
     NIL_CFG_THREAD_EXT_INIT_HOOK(tp);
-#endif
 
     tp++, tcp++;
   }
@@ -129,9 +130,7 @@ void chSysHalt(const char *reason) {
   (void)reason;
 #endif
 
-#if defined(NIL_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
   NIL_CFG_SYSTEM_HALT_HOOK(reason);
-#endif
 
   /* Harmless infinite loop.*/
   while (true)
@@ -300,11 +299,9 @@ void chSchRescheduleS(void) {
     thread_t *otp = nil.current;
 
     nil.current = nil.next;
-#if defined(NIL_CFG_IDLE_LEAVE_HOOK)
     if (otp == &nil.threads[NIL_CFG_NUM_THREADS]) {
       NIL_CFG_IDLE_LEAVE_HOOK();
     }
-#endif
     port_switch(nil.next, otp);
   }
 }
@@ -376,11 +373,9 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
     /* Is this thread ready to execute?*/
     if (NIL_THD_IS_READY(ntp)) {
       nil.current = nil.next = ntp;
-#if defined(NIL_CFG_IDLE_ENTER_HOOK)
       if (ntp == &nil.threads[NIL_CFG_NUM_THREADS]) {
         NIL_CFG_IDLE_ENTER_HOOK();
       }
-#endif
       port_switch(ntp, otp);
       return nil.current->u1.msg;
     }
