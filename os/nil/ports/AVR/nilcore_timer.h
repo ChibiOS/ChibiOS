@@ -29,7 +29,7 @@
 #define _NILCORE_TIMER_H_
 
 /* This is the only header in the HAL designed to be include-able alone.*/
-/*#include "st.h"*/
+#include "st.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -42,8 +42,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#error "tickless mode not yet implemented in AVR port"
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -61,7 +59,6 @@
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#if 0
 /**
  * @brief   Starts the alarm.
  * @note    Makes sure that no spurious alarms are triggered after
@@ -121,7 +118,6 @@ static inline systime_t port_timer_get_alarm(void) {
 
   return stGetAlarm();
 }
-#endif
 
 #endif /* _NILCORE_TIMER_H_ */
 
