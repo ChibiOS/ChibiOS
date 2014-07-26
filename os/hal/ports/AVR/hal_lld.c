@@ -40,21 +40,6 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   Timer0 interrupt handler.
- */
-OSAL_IRQ_HANDLER(AVR_TIMER_VECT) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  osalSysLockFromISR();
-  osalOsTimerHandlerI();
-  osalSysUnlockFromISR();
-
-  OSAL_IRQ_EPILOGUE();
-}
-
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -65,39 +50,6 @@ OSAL_IRQ_HANDLER(AVR_TIMER_VECT) {
  * @notapi
  */
 void hal_lld_init(void) {
-
-  /*
-   * Timer 0 setup.
-   */
-#if defined(TCCR0B) /* Timer has multiple output comparators                       */
-  TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM0A1) | (0 << COM0A0) |              /* OC0A disabled.   */
-            (0 << COM0B1) | (0 << COM0B0);               /* OC0B disabled.   */
-  TCCR0B  = (0 << WGM02) | AVR_TIMER_PRESCALER_BITS;     /* CTC mode.        */
-  OCR0A   = AVR_TIMER_COUNTER - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
-  TIFR0   = (1 << OCF0A);                                /* Reset pending.   */
-  TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare.  */
-
-#elif defined(TCCR0A) /* AT90CAN doesn't have TCCR0B and slightly different TCCR0A */
-  TCCR0A  = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM0A1) | (0 << COM0A0);               /* OC0A disabled.   */
-  OCR0A   = AVR_TIMER_COUNTER - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
-  TIFR0   = (1 << OCF0A);                                /* Reset pending.   */
-  TIMSK0  = (1 << OCIE0A);                               /* IRQ on compare.  */
-
-#elif defined(TCCR0) /* Timer has single output comparator                   */
-  TCCR0   = (1 << WGM01) | (0 << WGM00) |                /* CTC mode.        */
-            (0 << COM01) | (0 << COM00) |                /* OC0A disabled.   */
-            AVR_TIMER_PRESCALER_BITS;
-  OCR0    = AVR_TIMER_COUNTER - 1;
-  TCNT0   = 0;                                           /* Reset counter.   */
-  TIFR    = (1 << OCF0);                                 /* Reset pending.   */
-  TIMSK   = (1 << OCIE0);                                /* IRQ on compare.  */
-#else
-  #error "Neither TCCR0A nor TCCR0 registers are defined"
-#endif
 }
 
 /** @} */

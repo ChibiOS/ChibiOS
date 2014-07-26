@@ -27,6 +27,9 @@
 #ifndef _ST_LLD_H_
 #define _ST_LLD_H_
 
+#include "mcuconf.h"
+#include "avr_timers.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -35,9 +38,18 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/*
+ * TODO: for models that have many timers,
+ *       could add AVR_ST_USE_TIMER
+ */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/*
+ * TODO: error checks for valid timer selected
+ */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -72,7 +84,7 @@ extern "C" {
  */
 static inline systime_t st_lld_get_counter(void) {
 
-  return (systime_t)0;
+  return (systime_t) TCNT1;
 }
 
 /**
@@ -86,7 +98,13 @@ static inline systime_t st_lld_get_counter(void) {
  */
 static inline void st_lld_start_alarm(systime_t time) {
 
-  (void)time;
+  OCR1A = (uint16_t) time;
+
+  /* Reset pending. */
+  TIFR1 = _BV(OCF1A);
+
+  /* enable interrupt */
+  TIMSK1 = _BV(OCIE1A);
 }
 
 /**
@@ -96,6 +114,7 @@ static inline void st_lld_start_alarm(systime_t time) {
  */
 static inline void st_lld_stop_alarm(void) {
 
+  TIMSK1 = 0;
 }
 
 /**
@@ -107,7 +126,7 @@ static inline void st_lld_stop_alarm(void) {
  */
 static inline void st_lld_set_alarm(systime_t time) {
 
-  (void)time;
+  OCR1A = (uint16_t) time;
 }
 
 /**
@@ -119,7 +138,7 @@ static inline void st_lld_set_alarm(systime_t time) {
  */
 static inline systime_t st_lld_get_alarm(void) {
 
-  return (systime_t)0;
+  return (systime_t) OCR1A;
 }
 
 /**
@@ -133,7 +152,7 @@ static inline systime_t st_lld_get_alarm(void) {
  */
 static inline bool st_lld_is_alarm_active(void) {
 
-  return false;
+  return (bool) ((TIMSK1 & _BV(OCIE1A)) != 0);
 }
 
 #endif /* _ST_LLD_H_ */
