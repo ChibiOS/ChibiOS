@@ -1,5 +1,5 @@
 /*
-    ChibiOS/NIL - Copyright (C) 2013 Giovanni Di Sirio
+    ChibiOS/NIL - Copyright (C) 2013,2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -121,6 +121,14 @@
 /*===========================================================================*/
 
 /**
+ * @brief   System initialization hook.
+ */
+#if !defined(NIL_CFG_SYSTEM_INIT_HOOK) || defined(__DOXYGEN__)
+#define NIL_CFG_SYSTEM_INIT_HOOK() {                                        \
+}
+#endif
+
+/**
  * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p thread_t structure.
  */
@@ -151,6 +159,14 @@
  */
 #define NIL_CFG_IDLE_LEAVE_HOOK() {                                         \
 }
+
+/**
+ * @brief   System halt hook.
+ */
+#if !defined(NIL_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
+#define NIL_CFG_SYSTEM_HALT_HOOK(reason) {                                  \
+}
+#endif
 
 /** @} */
 
