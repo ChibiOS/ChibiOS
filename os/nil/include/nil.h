@@ -1,14 +1,14 @@
 /*
-    Nil RTOS - Copyright (C) 2012 Giovanni Di Sirio.
+    ChibiOS/NIL - Copyright (C) 2013,2014 Giovanni Di Sirio.
 
-    This file is part of Nil RTOS.
+    This file is part of ChibiOS/NIL.
 
-    Nil RTOS is free software; you can redistribute it and/or modify
+    ChibiOS/NIL is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
-    Nil RTOS is distributed in the hope that it will be useful,
+    ChibiOS/NIL is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.

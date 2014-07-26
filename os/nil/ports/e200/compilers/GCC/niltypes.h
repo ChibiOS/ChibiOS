@@ -1,5 +1,5 @@
 /*
-    ChibiOS/NIL - Copyright (C) 2012,2013 Giovanni Di Sirio.
+    ChibiOS/NIL - Copyright (C) 2013,2014 Giovanni Di Sirio.
 
     This file is part of ChibiOS/NIL.
 
