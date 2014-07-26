@@ -27,7 +27,7 @@ THD_FUNCTION(Thread1, arg) {
 
   while (true) {
     palTogglePad(IOPORT2, PORTB_LED1);
-    chThdSleepMilliseconds(1000);
+    chThdSleepMilliseconds(500);
   }
 }
 

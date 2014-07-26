@@ -62,8 +62,11 @@
  * @note    This value together with the @p NIL_CFG_ST_RESOLUTION
  *          option defines the maximum amount of time allowed for
  *          timeouts.
+ * @note    Currently the Timer is configured with a prescaler of
+ *          1024. Arduinos running at 16MHz will have a frequency
+ *          of 16MHz/1024. This will provide a resolution of ~64uS.
  */
-#define NIL_CFG_ST_FREQUENCY                1000
+#define NIL_CFG_ST_FREQUENCY                15624
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -73,7 +76,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define NIL_CFG_ST_TIMEDELTA                0
+#define NIL_CFG_ST_TIMEDELTA                2
 
 /** @} */
 
