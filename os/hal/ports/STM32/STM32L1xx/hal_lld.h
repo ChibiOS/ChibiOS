@@ -771,11 +771,6 @@
 #endif
 
 /**
- * @brief   ADC frequency.
- */
-#define STM32_ADCCLK                STM32_HSICLK
-
-/**
  * @brief   USB frequency.
  */
 #define STM32_USBCLK                (STM32_PLLVCO / 2)

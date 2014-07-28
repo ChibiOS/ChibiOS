@@ -175,6 +175,20 @@
 #define STM32_DMA_REQUIRED
 #endif
 
+/**
+ *  * @brief   ADC frequency.
+ *   */
+/* ADC clock related settings and checks.*/
+#if STM32_ADC_ADCPRE == ADC_CCR_ADCPRE_DIV1
+#define STM32_ADCCLK                        STM32_HSICLK
+#elif STM32_ADC_ADCPRE == ADC_CCR_ADCPRE_DIV2
+#define STM32_ADCCLK                        (STM32_HSICLK / 2)
+#elif STM32_ADC_ADCPRE == ADC_CCR_ADCPRE_DIV4
+#define STM32_ADCCLK                        (STM32_HSICLK / 4)
+#else
+#error "invalid STM32_ADC_ADCPRE value specified"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
