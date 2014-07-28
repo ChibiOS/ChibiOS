@@ -132,8 +132,7 @@ static void rtc_decode_time(uint32_t tr, RTCDateTime *timespec) {
  */
 static void rtc_decode_date(uint32_t dr, RTCDateTime *timespec) {
 
-  timespec->year  = RTC_BASE_YEAR +
-                    (((dr >> RTC_DR_YT_OFFSET) & 15) * 10) +
+  timespec->year  = (((dr >> RTC_DR_YT_OFFSET) & 15) * 10) +
                      ((dr >> RTC_DR_YU_OFFSET) & 15);
   timespec->month = (((dr >> RTC_TR_MNT_OFFSET) & 1) * 10) +
                      ((dr >> RTC_TR_MNU_OFFSET) & 15);
@@ -188,7 +187,7 @@ static uint32_t rtc_encode_date(const RTCDateTime *timespec) {
   uint32_t n, dr = 0;
 
   /* Year conversion. Note, only years last two digits are considered.*/
-  n = RTC_BASE_YEAR + timespec->year;
+  n = timespec->year;
   dr = dr | ((n % 10) << RTC_DR_YU_OFFSET);
   n /= 10;
   dr = dr | ((n % 10) << RTC_DR_YT_OFFSET);
@@ -293,7 +292,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
   /* If the RTC is capable of sub-second counting then the value is
      normalized in milliseconds and added to the time.*/
 #if STM32_RTC_HAS_SUBSECONDS
-  subs = (((rtcp->rtc->SSR << 16) / STM32_RTC_PRESS_VALUE) * 1000) >> 16);
+  subs = (((rtcp->rtc->SSR << 16) / STM32_RTC_PRESS_VALUE) * 1000) >> 16;
 #else
   subs = 0;
 #endif /* STM32_RTC_HAS_SUBSECONDS */
