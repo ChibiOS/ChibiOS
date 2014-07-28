@@ -34,6 +34,19 @@
  * @{
  */
 /*
+ * I2C units.
+ */
+#define STM32_I2C1_EVENT_HANDLER    VectorBC
+#define STM32_I2C1_ERROR_HANDLER    VectorC0
+#define STM32_I2C1_EVENT_NUMBER     31
+#define STM32_I2C1_ERROR_NUMBER     32
+
+#define STM32_I2C2_EVENT_HANDLER    VectorC4
+#define STM32_I2C2_ERROR_HANDLER    VectorC8
+#define STM32_I2C2_EVENT_NUMBER     33
+#define STM32_I2C2_ERROR_NUMBER     34
+
+/*
  * TIM units.
  */
 #define STM32_TIM2_HANDLER          VectorB0
