@@ -19,6 +19,7 @@
 TRGT = mingw32-
 CC   = $(TRGT)gcc
 AS   = $(TRGT)gcc -x assembler-with-cpp
+AR   = $(TRGT)ar
 COV  = gcov
 
 # List all default C defines here, like -D_DEBUG=1
