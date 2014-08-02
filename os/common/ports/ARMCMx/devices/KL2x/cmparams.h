@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    GCC/ARMCMx/KL2x/cmparams.h
- * @brief   ARM Cortex-M0+ parameters for the Kinetis KL2x.
+ * @file    KL2x/cmparams.h
+ * @brief   ARM Cortex-M0+ parameters for the Kinetis KL2x family.
  *
  * @defgroup ARMCMx_KL2x Kinetis KL2x Specific Parameters
  * @ingroup ARMCMx_SPECIFIC
