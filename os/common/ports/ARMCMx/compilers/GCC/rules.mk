@@ -64,8 +64,11 @@ endif
 OUTFILES = $(BUILDDIR)/$(PROJECT).elf \
            $(BUILDDIR)/$(PROJECT).hex \
            $(BUILDDIR)/$(PROJECT).bin \
-           $(BUILDDIR)/$(PROJECT).srec\
            $(BUILDDIR)/$(PROJECT).dmp
+
+ifdef SREC
+OUTFILES += $(BUILDDIR)/$(PROJECT).srec
+endif
 
 # Source files groups and paths
 ifeq ($(USE_THUMB),yes)
