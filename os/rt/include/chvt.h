@@ -146,7 +146,7 @@
  *
  * @api
  */
-#define ST2S(n) ((((n) - 1UL) / CH_CFG_ST_FREQUENCY) + 1UL)
+#define ST2S(n) (((((n) - 1UL) * 1UL) / CH_CFG_ST_FREQUENCY) + 1UL)
 
 /**
  * @brief   System ticks to milliseconds.
@@ -158,7 +158,7 @@
  *
  * @api
  */
-#define ST2MS(n) ((((n) - 1UL) / (CH_CFG_ST_FREQUENCY / 1000UL)) + 1UL)
+#define ST2MS(n) (((((n) - 1UL) * 1000UL) / CH_CFG_ST_FREQUENCY) + 1UL)
 
 /**
  * @brief   System ticks to microseconds.
@@ -170,7 +170,7 @@
  *
  * @api
  */
-#define ST2US(n) ((((n) - 1UL) / (CH_CFG_ST_FREQUENCY / 1000000UL)) + 1UL)
+#define ST2US(n) (((((n) - 1UL) * 1000000UL) / CH_CFG_ST_FREQUENCY) + 1UL)
 /** @} */
 
 /*===========================================================================*/
