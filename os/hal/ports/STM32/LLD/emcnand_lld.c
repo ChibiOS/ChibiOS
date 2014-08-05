@@ -74,16 +74,10 @@ EMCNANDDriver EMCNANDD2;
  *
  * @notapi
  */
-static void wakeup_isr(EMCNANDDriver *emcnandp, msg_t msg){
+static void wakeup_isr(EMCNANDDriver *emcnandp){
 
   osalDbgCheck(emcnandp->thread != NULL);
-
-  if (emcnandp->thread) {
-    thread_t *tp = emcnandp->thread;
-    emcnandp->thread = NULL;
-    tp->p_u.rdymsg = msg;
-    chSchReadyI(tp);
-  }
+  osalThreadResumeI(&emcnandp->thread, MSG_OK);
 }
 
 /**
@@ -93,8 +87,8 @@ static void wakeup_isr(EMCNANDDriver *emcnandp, msg_t msg){
  */
 static void emcnand_lld_suspend_thread(EMCNANDDriver *emcnandp) {
 
-  emcnandp->thread = chThdGetSelfX();
-  chSchGoSleepS(CH_STATE_SUSPENDED);
+  //emcnandp->thread = chThdGetSelfX();
+  osalThreadSuspendS(&emcnandp->thread);
 }
 
 /**
@@ -130,7 +124,7 @@ static uint32_t calc_eccps(EMCNANDDriver *emcnandp){
  */
 static void emcnand_ready_isr_enable(EMCNANDDriver *emcnandp) {
   emcnandp->nand->SR |= FSMC_SR_IREN;
-  chDbgPanic("Function untested");
+  osalSysHalt("Function untested");
 }
 
 /**
@@ -142,7 +136,7 @@ static void emcnand_ready_isr_enable(EMCNANDDriver *emcnandp) {
  */
 static void emcnand_ready_isr_disable(EMCNANDDriver *emcnandp) {
   emcnandp->nand->SR &= ~FSMC_SR_IREN;
-  chDbgPanic("Function untested");
+  osalSysHalt("Function untested");
 }
 
 /**
@@ -158,7 +152,7 @@ static void emcnand_isr_handler (EMCNANDDriver *emcnandp,
   (void)emcnandp;
   (void)flags;
 
-  chDbgPanic("Unrealized");
+  osalSysHalt("Unrealized");
 }
 #else /* STM32_EMC_USE_INT */
 /**
@@ -205,13 +199,13 @@ static void emcnand_isr_handler(EMCNANDDriver *emcnandp){
   case EMCNAND_ERASE:
     /* NAND reports about erase finish */
     emcnandp->state = EMCNAND_READY;
-    wakeup_isr(emcnandp, MSG_OK);
+    wakeup_isr(emcnandp);
     break;
 
   case EMCNAND_PROGRAM:
     /* NAND reports about page programming finish */
     emcnandp->state = EMCNAND_READY;
-    wakeup_isr(emcnandp, MSG_OK);
+    wakeup_isr(emcnandp);
     break;
 
   default:
@@ -257,7 +251,7 @@ static void emcnand_lld_serve_transfer_end_irq(EMCNANDDriver *emcnandp,
     emcnandp->state = EMCNAND_READY;
     emcnandp->rxdata = NULL;
     emcnandp->datalen = 0;
-    wakeup_isr(emcnandp, MSG_OK);
+    wakeup_isr(emcnandp);
     break;
 
   default:

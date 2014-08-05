@@ -106,8 +106,7 @@ void emc_lld_start(EMCDriver *emcp) {
       rccResetFSMC();
       rccEnableFSMC(FALSE);
   #if STM32_EMC_USE_INT
-      nvicEnableVector(FSMC_IRQn,
-          CORTEX_PRIORITY_MASK(STM32_EMC_FSMC1_IRQ_PRIORITY));
+      nvicEnableVector(FSMC_IRQn, STM32_EMC_FSMC1_IRQ_PRIORITY);
   #endif /* STM32_EMC_USE_INT */
     }
 #endif /* PLATFORM_STM32_USE_EMC1 */
@@ -150,9 +149,8 @@ void emc_lld_stop(EMCDriver *emcp) {
  * @notapi
  */
 void emc_lld_serve_interrupt(void) {
-#warning "This functionality untested"
 
-  chDbgPanic("Unrealized");
+  osalSysHalt("Unrealized");
 }
 
 /**
@@ -161,17 +159,19 @@ void emc_lld_serve_interrupt(void) {
  * @notapi
  */
 CH_IRQ_HANDLER(FSMC_IRQHandler) {
-#warning "This functionality untested"
+  osalSysHalt("This functionality untested");
 
   CH_IRQ_PROLOGUE();
-
+#if STM32_EMCNAND_USE_EMCNAND1
   if (EMCD1.nand1->SR & FSMC_SR_ISR_MASK){
     EMCNANDD1.isr_handler(&EMCNANDD1, EMCD1.nand1->SR);
   }
+#endif
+#if STM32_EMCNAND_USE_EMCNAND2
   if (EMCD1.nand2->SR & FSMC_SR_ISR_MASK){
     EMCNANDD2.isr_handler(&EMCNANDD2, EMCD1.nand2->SR);
   }
-
+#endif
   CH_IRQ_EPILOGUE();
 }
 #endif /* STM32_EMC_USE_INT */

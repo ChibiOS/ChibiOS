@@ -51,6 +51,8 @@
  ******************************************************************************
  */
 
+#define USE_KILL_BLOCK_TEST       FALSE
+
 #define EMCNAND_TIME_SET          ((uint32_t) 2) //(8nS)
 #define EMCNAND_TIME_WAIT         ((uint32_t) 6) //(30nS)
 #define EMCNAND_TIME_HOLD         ((uint32_t) 1) //(5nS)
@@ -69,8 +71,6 @@
 #define NAND_STATUS_READY         ((uint8_t)1 << 6)
 #define NAND_STATUS_NOT_RPOTECTED ((uint8_t)1 << 7)
 
-#define EMCNAND_USE_KILL_TEST     TRUE
-
 /*
  ******************************************************************************
  * EXTERNS
@@ -82,9 +82,11 @@
  * PROTOTYPES
  ******************************************************************************
  */
+#if !STM32_EMC_EMCNAND_USE_FSMC_INT
 static void ready_isr_enable(void);
 static void ready_isr_disable(void);
 static void nand_ready_cb(EXTDriver *extp, expchannel_t channel);
+#endif
 
 /*
  ******************************************************************************
@@ -141,6 +143,7 @@ static const EMCNANDConfig nandcfg = {
 /**
  *
  */
+#if !STM32_EMC_EMCNAND_USE_FSMC_INT
 static const EXTConfig extcfg = {
   {
     {EXT_CH_MODE_DISABLED, NULL},     //0
@@ -168,6 +171,7 @@ static const EXTConfig extcfg = {
     {EXT_CH_MODE_DISABLED, NULL},
   }
 };
+#endif /* !STM32_EMC_EMCNAND_USE_FSMC_INT */
 
 /*
  *
@@ -175,7 +179,7 @@ static const EXTConfig extcfg = {
 volatile uint32_t IdleCnt = 0;
 volatile systime_t T = 0;
 
-#if EMCNAND_USE_KILL_TEST
+#if USE_KILL_BLOCK_TEST
 volatile uint32_t KillCycle = 0;
 #endif
 
@@ -187,12 +191,12 @@ volatile uint32_t KillCycle = 0;
  ******************************************************************************
  */
 
+#if !STM32_EMC_EMCNAND_USE_FSMC_INT
 static void nand_ready_cb(EXTDriver *extp, expchannel_t channel){
   (void)extp;
   (void)channel;
-#if !STM32_EMC_EMCNAND_USE_FSMC_INT
+
   EMCNANDD1.isr_handler(&EMCNANDD1);
-#endif
 }
 
 static void ready_isr_enable(void) {
@@ -202,6 +206,7 @@ static void ready_isr_enable(void) {
 static void ready_isr_disable(void) {
   extChannelDisable(&EXTD1, GPIOD_NAND_RB);
 }
+#endif
 
 static void nand_wp_assert(void) {
   palClearPad(GPIOB, GPIOB_NAND_WP);
@@ -562,7 +567,9 @@ int main(void) {
   chSysInit();
 
   emcStart(&EMCD1, &emccfg);
+#if !STM32_EMC_EMCNAND_USE_FSMC_INT
   extStart(&EXTD1, &extcfg);
+#endif
   emcnandStart(&EMCNANDD1, &nandcfg);
 
   chThdSleepMilliseconds(4000);
@@ -616,12 +623,6 @@ int main(void) {
   while (TRUE) {
     chThdSleepMilliseconds(500);
   }
-
-  /*warning suppressor */
-#if STM32_EMC_EMCNAND_USE_FSMC_INT
-  (void)ready_isr_enable;
-  (void)ready_isr_disable;
-#endif
 }
 
 
