@@ -31,7 +31,7 @@
 
 /* The ChibiOS/RT kernel provides the following definitions by itself, this
    check is performed in order to avoid conflicts. */
-#if !defined(_CHIBIOS_RT_) || !CH_CFG_USE_QUEUES
+#if !defined(_CHIBIOS_RT_) || !CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
 
 /**
  * @name    Queue functions returned status value
@@ -365,12 +365,7 @@ extern "C" {
 }
 #endif
 
-/* Types provided for backward compatibility, deprecated use.*/
-typedef io_queue_t GenericQueue;
-typedef input_queue_t InputQueue;
-typedef output_queue_t OutputQueue;
-
-#else /* defined(_CHIBIOS_RT_) && CH_USE_QUEUES */
+#else /* defined(_CHIBIOS_RT_) && CH_CFG_USE_QUEUES */
 
 /* If ChibiOS is being used and its own queues subsystem is activated then
    this module will use the ChibiOS queues code.*/
@@ -400,7 +395,7 @@ typedef output_queue_t OutputQueue;
 #define oqGetI(oqp)                         chOQGetI(oqp)
 #define oqWriteTimeout(oqp, bp, n, time)    chOQWriteTimeout(oqp, bp, n, time)
 
-#endif /* defined(_CHIBIOS_RT_) && CH_USE_QUEUES */
+#endif /* defined(_CHIBIOS_RT_) && CH_CFG_USE_QUEUES */
 
 #endif /* _HAL_QUEUES_H_ */
 
