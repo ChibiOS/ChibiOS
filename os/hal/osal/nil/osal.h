@@ -232,13 +232,6 @@ typedef struct {
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-/* Temporary names provided for ChibiOS 2.x compatibility.*/
-#define osalQueueInit osalThreadQueueObjectInit
-#define osalQueueWakeupAllI osalThreadDequeueAllI
-#define osalQueueWakeupOneI osalThreadDequeueNextI
-#define osalQueueGoSleepTimeoutS osalThreadEnqueueTimeoutS
-#define osalEventInit osalEventObjectInit
-
 /**
  * @name    Debug related macros
  * @{
