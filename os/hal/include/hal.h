@@ -64,6 +64,8 @@
 #include "st.h"
 #include "uart.h"
 #include "usb.h"
+#include "emc.h"
+#include "emcnand.h"
 
 /* Complex drivers.*/
 #include "mmc_spi.h"
