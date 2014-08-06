@@ -23,16 +23,16 @@
  */
 
 /**
- * @file    emcnand.c
- * @brief   EMCNAND Driver code.
+ * @file    nand.c
+ * @brief   NAND Driver code.
  *
- * @addtogroup EMCNAND
+ * @addtogroup NAND
  * @{
  */
 
 #include "hal.h"
 
-#if HAL_USE_EMCNAND || defined(__DOXYGEN__)
+#if HAL_USE_NAND || defined(__DOXYGEN__)
 
 #include "string.h" /* for memset */
 
@@ -66,8 +66,8 @@
 static void pagesize_check(size_t page_data_size){
 
   /* Page size out of bounds.*/
-  osalDbgCheck((page_data_size >= EMCNAND_MIN_PAGE_SIZE) &&
-      (page_data_size <= EMCNAND_MAX_PAGE_SIZE));
+  osalDbgCheck((page_data_size >= NAND_MIN_PAGE_SIZE) &&
+      (page_data_size <= NAND_MAX_PAGE_SIZE));
 
   /* Page size must be power of 2.*/
   osalDbgCheck(((page_data_size - 1) & page_data_size) == 0);
@@ -76,7 +76,7 @@ static void pagesize_check(size_t page_data_size){
 /**
  * @brief   Translate block-page-offset scheme to NAND internal address.
  *
- * @param[in] cfg       pointer to the @p EMCNANDConfig from
+ * @param[in] cfg       pointer to the @p NANDConfig from
  *                      corresponding NAND driver
  * @param[in] block     block number
  * @param[in] page      page number related to begin of block
@@ -86,7 +86,7 @@ static void pagesize_check(size_t page_data_size){
  *
  * @notapi
  */
-static void calc_addr(const EMCNANDConfig *cfg,
+static void calc_addr(const NANDConfig *cfg,
                       uint32_t block, uint32_t page, uint32_t offset,
                       uint8_t *addr, size_t addr_len){
   size_t i = 0;
@@ -114,7 +114,7 @@ static void calc_addr(const EMCNANDConfig *cfg,
  * @brief   Translate block number to NAND internal address.
  * @note    This function designed for erasing purpose.
  *
- * @param[in] cfg       pointer to the @p EMCNANDConfig from
+ * @param[in] cfg       pointer to the @p NANDConfig from
  *                      corresponding NAND driver
  * @param[in] block     block number
  * @param[out] addr     buffer to store calculated address
@@ -122,7 +122,7 @@ static void calc_addr(const EMCNANDConfig *cfg,
  *
  * @notapi
  */
-static void calc_blk_addr(const EMCNANDConfig *cfg,
+static void calc_blk_addr(const NANDConfig *cfg,
                           uint32_t block, uint8_t *addr, size_t addr_len){
   size_t i = 0;
   uint32_t row = 0;
@@ -140,23 +140,23 @@ static void calc_blk_addr(const EMCNANDConfig *cfg,
   }
 }
 
-#if EMCNAND_USE_BAD_MAP
+#if NAND_USE_BAD_MAP
 /**
  * @brief   Add new bad block to map.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  * @param[in] map           pointer to bad block map
  */
-static void bad_map_update(EMCNANDDriver *emcnandp, size_t block) {
+static void bad_map_update(NANDDriver *nandp, size_t block) {
 
-  uint32_t *map = emcnandp->config->bb_map;
+  uint32_t *map = nandp->config->bb_map;
   const size_t BPMC = sizeof(uint32_t) * 8; /* bits per map claster */
   size_t i;
   size_t shift;
 
   /* Nand device overflow.*/
-  osalDbgCheck(emcnandp->config->blocks > block);
+  osalDbgCheck(nandp->config->blocks > block);
 
   i = block / BPMC;
   shift = block % BPMC;
@@ -168,11 +168,11 @@ static void bad_map_update(EMCNANDDriver *emcnandp, size_t block) {
 /**
  * @brief   Scan for bad blocks and fill map with their numbers.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  */
-static void scan_bad_blocks(EMCNANDDriver *emcnandp) {
+static void scan_bad_blocks(NANDDriver *nandp) {
 
-  const size_t blocks = emcnandp->config->blocks;
+  const size_t blocks = nandp->config->blocks;
   const size_t maplen = blocks / 32;
 
   size_t b;
@@ -181,104 +181,104 @@ static void scan_bad_blocks(EMCNANDDriver *emcnandp) {
 
   /* clear map just to be safe */
   for (b=0; b<maplen; b++)
-    emcnandp->config->bb_map[b] = 0;
+    nandp->config->bb_map[b] = 0;
 
   /* now write numbers of bad block to map */
   for (b=0; b<blocks; b++){
-    m0 = emcnandReadBadMark(emcnandp, b, 0);
-    m1 = emcnandReadBadMark(emcnandp, b, 1);
+    m0 = nandReadBadMark(nandp, b, 0);
+    m1 = nandReadBadMark(nandp, b, 1);
     if ((0xFF != m0) || (0xFF != m1)){
-      bad_map_update(emcnandp, b);
+      bad_map_update(nandp, b);
     }
   }
 }
-#endif /* EMCNAND_USE_BAD_MAP */
+#endif /* NAND_USE_BAD_MAP */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
 /**
- * @brief   EMCNAND Driver initialization.
+ * @brief   NAND Driver initialization.
  * @note    This function is implicitly invoked by @p halInit(), there is
  *          no need to explicitly initialize the driver.
  *
  * @init
  */
-void emcnandInit(void) {
+void nandInit(void) {
 
-  emcnand_lld_init();
+  nand_lld_init();
 }
 
 /**
- * @brief   Initializes the standard part of a @p EMCNANDDriver structure.
+ * @brief   Initializes the standard part of a @p NANDDriver structure.
  *
- * @param[out] emcnandp     pointer to the @p EMCNANDDriver object
+ * @param[out] nandp        pointer to the @p NANDDriver object
  *
  * @init
  */
-void emcnandObjectInit(EMCNANDDriver *emcnandp) {
+void nandObjectInit(NANDDriver *nandp) {
 
-#if EMCNAND_USE_MUTUAL_EXCLUSION
+#if NAND_USE_MUTUAL_EXCLUSION
 #if CH_CFG_USE_MUTEXES
-  chMtxObjectInit(&emcnandp->mutex);
+  chMtxObjectInit(&nandp->mutex);
 #else
-  chSemObjectInit(&emcnandp->semaphore, 1);
+  chSemObjectInit(&nandp->semaphore, 1);
 #endif /* CH_CFG_USE_MUTEXES */
-#endif /* EMCNAND_USE_MUTUAL_EXCLUSION */
+#endif /* NAND_USE_MUTUAL_EXCLUSION */
 
-  emcnandp->state  = EMCNAND_STOP;
-  emcnandp->config = NULL;
+  nandp->state  = NAND_STOP;
+  nandp->config = NULL;
 }
 
 /**
- * @brief   Configures and activates the EMCNAND peripheral.
+ * @brief   Configures and activates the NAND peripheral.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
- * @param[in] config        pointer to the @p EMCNANDConfig object
+ * @param[in] nandp         pointer to the @p NANDDriver object
+ * @param[in] config        pointer to the @p NANDConfig object
  *
  * @api
  */
-void emcnandStart(EMCNANDDriver *emcnandp, const EMCNANDConfig *config) {
+void nandStart(NANDDriver *nandp, const NANDConfig *config) {
 
-  osalDbgCheck((emcnandp != NULL) && (config != NULL));
-  osalDbgAssert(config->emcp->state == EMC_READY,
+  osalDbgCheck((nandp != NULL) && (config != NULL));
+  osalDbgAssert(config->fsmcp->state == FSMC_READY,
       "lower level driver not ready");
-  osalDbgAssert((emcnandp->state == EMCNAND_STOP) ||
-      (emcnandp->state == EMCNAND_READY),
+  osalDbgAssert((nandp->state == NAND_STOP) ||
+      (nandp->state == NAND_READY),
       "invalid state");
 
-  emcnandp->config = config;
-  pagesize_check(emcnandp->config->page_data_size);
-  emcnand_lld_start(emcnandp);
-  emcnandp->state = EMCNAND_READY;
+  nandp->config = config;
+  pagesize_check(nandp->config->page_data_size);
+  nand_lld_start(nandp);
+  nandp->state = NAND_READY;
 
-#if EMCNAND_USE_BAD_MAP
-  scan_bad_blocks(emcnandp);
-#endif /* EMCNAND_USE_BAD_MAP */
+#if NAND_USE_BAD_MAP
+  scan_bad_blocks(nandp);
+#endif /* NAND_USE_BAD_MAP */
 }
 
 /**
- * @brief   Deactivates the EMCNAND peripheral.
+ * @brief   Deactivates the NAND peripheral.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  *
  * @api
  */
-void emcnandStop(EMCNANDDriver *emcnandp) {
+void nandStop(NANDDriver *nandp) {
 
-  osalDbgCheck(emcnandp != NULL);
-  osalDbgAssert((emcnandp->state == EMCNAND_STOP) ||
-      (emcnandp->state == EMCNAND_READY),
+  osalDbgCheck(nandp != NULL);
+  osalDbgAssert((nandp->state == NAND_STOP) ||
+      (nandp->state == NAND_READY),
       "invalid state");
-  emcnand_lld_stop(emcnandp);
-  emcnandp->state = EMCNAND_STOP;
+  nand_lld_stop(nandp);
+  nandp->state = NAND_STOP;
 }
 
 /**
  * @brief   Read whole page.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  * @param[in] page          page number related to begin of block
  * @param[out] data         buffer to store data
@@ -286,25 +286,25 @@ void emcnandStop(EMCNANDDriver *emcnandp) {
  *
  * @api
  */
-void emcnandReadPageWhole(EMCNANDDriver *emcnandp, uint32_t block,
+void nandReadPageWhole(NANDDriver *nandp, uint32_t block,
                             uint32_t page, uint8_t *data, size_t datalen) {
 
-  const EMCNANDConfig *cfg = emcnandp->config;
+  const NANDConfig *cfg = nandp->config;
   uint8_t addrbuf[8];
   size_t addrlen = cfg->rowcycles + cfg->colcycles;
 
-  osalDbgCheck((emcnandp != NULL) && (data != NULL));
+  osalDbgCheck((nandp != NULL) && (data != NULL));
   osalDbgCheck((datalen <= (cfg->page_data_size + cfg->page_spare_size)));
-  osalDbgAssert(emcnandp->state == EMCNAND_READY, "invalid state");
+  osalDbgAssert(nandp->state == NAND_READY, "invalid state");
 
   calc_addr(cfg, block, page, 0, addrbuf, addrlen);
-  emcnand_lld_read_data(emcnandp, data, datalen, addrbuf, addrlen, NULL);
+  nand_lld_read_data(nandp, data, datalen, addrbuf, addrlen, NULL);
 }
 
 /**
  * @brief   Write whole page.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  * @param[in] page          page number related to begin of block
  * @param[in] data          buffer with data to be written
@@ -314,27 +314,27 @@ void emcnandReadPageWhole(EMCNANDDriver *emcnandp, uint32_t block,
  *
  * @api
  */
-uint8_t emcnandWritePageWhole(EMCNANDDriver *emcnandp, uint32_t block,
+uint8_t nandWritePageWhole(NANDDriver *nandp, uint32_t block,
                     uint32_t page, const uint8_t *data, size_t datalen) {
 
   uint8_t retval;
-  const EMCNANDConfig *cfg = emcnandp->config;
+  const NANDConfig *cfg = nandp->config;
   uint8_t addr[8];
   size_t addrlen = cfg->rowcycles + cfg->colcycles;
 
-  osalDbgCheck((emcnandp != NULL) && (data != NULL));
+  osalDbgCheck((nandp != NULL) && (data != NULL));
   osalDbgCheck((datalen <= (cfg->page_data_size + cfg->page_spare_size)));
-  osalDbgAssert(emcnandp->state == EMCNAND_READY, "invalid state");
+  osalDbgAssert(nandp->state == NAND_READY, "invalid state");
 
   calc_addr(cfg, block, page, 0, addr, addrlen);
-  retval = emcnand_lld_write_data(emcnandp, data, datalen, addr, addrlen, NULL);
+  retval = nand_lld_write_data(nandp, data, datalen, addr, addrlen, NULL);
   return retval;
 }
 
 /**
  * @brief   Read page data without spare area.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  * @param[in] page          page number related to begin of block
  * @param[out] data         buffer to store data
@@ -343,25 +343,25 @@ uint8_t emcnandWritePageWhole(EMCNANDDriver *emcnandp, uint32_t block,
  *
  * @api
  */
-void emcnandReadPageData(EMCNANDDriver *emcnandp, uint32_t block, uint32_t page,
+void nandReadPageData(NANDDriver *nandp, uint32_t block, uint32_t page,
                          uint8_t *data, size_t datalen, uint32_t *ecc) {
 
-  const EMCNANDConfig *cfg = emcnandp->config;
+  const NANDConfig *cfg = nandp->config;
   uint8_t addrbuf[8];
   size_t addrlen = cfg->rowcycles + cfg->colcycles;
 
-  osalDbgCheck((emcnandp != NULL) && (data != NULL));
+  osalDbgCheck((nandp != NULL) && (data != NULL));
   osalDbgCheck((datalen <= cfg->page_data_size));
-  osalDbgAssert(emcnandp->state == EMCNAND_READY, "invalid state");
+  osalDbgAssert(nandp->state == NAND_READY, "invalid state");
 
   calc_addr(cfg, block, page, 0, addrbuf, addrlen);
-  emcnand_lld_read_data(emcnandp, data, datalen, addrbuf, addrlen, ecc);
+  nand_lld_read_data(nandp, data, datalen, addrbuf, addrlen, ecc);
 }
 
 /**
  * @brief   Write page data without spare area.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  * @param[in] page          page number related to begin of block
  * @param[in] data          buffer with data to be written
@@ -372,27 +372,27 @@ void emcnandReadPageData(EMCNANDDriver *emcnandp, uint32_t block, uint32_t page,
  *
  * @api
  */
-uint8_t emcnandWritePageData(EMCNANDDriver *emcnandp, uint32_t block,
+uint8_t nandWritePageData(NANDDriver *nandp, uint32_t block,
         uint32_t page, const uint8_t *data, size_t datalen, uint32_t *ecc) {
 
   uint8_t retval;
-  const EMCNANDConfig *cfg = emcnandp->config;
+  const NANDConfig *cfg = nandp->config;
   uint8_t addr[8];
   size_t addrlen = cfg->rowcycles + cfg->colcycles;
 
-  osalDbgCheck((emcnandp != NULL) && (data != NULL));
+  osalDbgCheck((nandp != NULL) && (data != NULL));
   osalDbgCheck((datalen <= cfg->page_data_size));
-  osalDbgAssert(emcnandp->state == EMCNAND_READY, "invalid state");
+  osalDbgAssert(nandp->state == NAND_READY, "invalid state");
 
   calc_addr(cfg, block, page, 0, addr, addrlen);
-  retval = emcnand_lld_write_data(emcnandp, data, datalen, addr, addrlen, ecc);
+  retval = nand_lld_write_data(nandp, data, datalen, addr, addrlen, ecc);
   return retval;
 }
 
 /**
  * @brief   Read page spare area.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  * @param[in] page          page number related to begin of block
  * @param[out] spare        buffer to store data
@@ -400,25 +400,25 @@ uint8_t emcnandWritePageData(EMCNANDDriver *emcnandp, uint32_t block,
  *
  * @api
  */
-void emcnandReadPageSpare(EMCNANDDriver *emcnandp, uint32_t block,
+void nandReadPageSpare(NANDDriver *nandp, uint32_t block,
                           uint32_t page, uint8_t *spare, size_t sparelen) {
 
-  const EMCNANDConfig *cfg = emcnandp->config;
+  const NANDConfig *cfg = nandp->config;
   uint8_t addr[8];
   size_t addrlen = cfg->rowcycles + cfg->colcycles;
 
-  osalDbgCheck((NULL != spare) && (emcnandp != NULL));
+  osalDbgCheck((NULL != spare) && (nandp != NULL));
   osalDbgCheck(sparelen <= cfg->page_spare_size);
-  osalDbgAssert(emcnandp->state == EMCNAND_READY, "invalid state");
+  osalDbgAssert(nandp->state == NAND_READY, "invalid state");
 
   calc_addr(cfg, block, page, cfg->page_data_size, addr, addrlen);
-  emcnand_lld_read_data(emcnandp, spare, sparelen, addr, addrlen, NULL);
+  nand_lld_read_data(nandp, spare, sparelen, addr, addrlen, NULL);
 }
 
 /**
  * @brief   Write page spare area.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  * @param[in] page          page number related to begin of block
  * @param[in] spare         buffer with spare data to be written
@@ -428,49 +428,49 @@ void emcnandReadPageSpare(EMCNANDDriver *emcnandp, uint32_t block,
  *
  * @api
  */
-uint8_t emcnandWritePageSpare(EMCNANDDriver *emcnandp, uint32_t block,
+uint8_t nandWritePageSpare(NANDDriver *nandp, uint32_t block,
                       uint32_t page, const uint8_t *spare, size_t sparelen) {
 
   uint8_t retVal;
-  const EMCNANDConfig *cfg = emcnandp->config;
+  const NANDConfig *cfg = nandp->config;
   uint8_t addr[8];
   size_t addrlen = cfg->rowcycles + cfg->colcycles;
 
-  osalDbgCheck((NULL != spare) && (emcnandp != NULL));
+  osalDbgCheck((NULL != spare) && (nandp != NULL));
   osalDbgCheck(sparelen <= cfg->page_spare_size);
-  osalDbgAssert(emcnandp->state == EMCNAND_READY, "invalid state");
+  osalDbgAssert(nandp->state == NAND_READY, "invalid state");
 
   calc_addr(cfg, block, page, cfg->page_data_size, addr, addrlen);
-  retVal = emcnand_lld_write_data(emcnandp, spare, sparelen, addr, addrlen, NULL);
+  retVal = nand_lld_write_data(nandp, spare, sparelen, addr, addrlen, NULL);
   return retVal;
 }
 
 /**
  * @brief   Mark block as bad.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  *
  * @api
  */
-void emcnandMarkBad(EMCNANDDriver *emcnandp, uint32_t block) {
+void nandMarkBad(NANDDriver *nandp, uint32_t block) {
 
   uint8_t bb_mark[2] = {0, 0};
   uint8_t op_status;
-  op_status = emcnandWritePageSpare(emcnandp, block, 0, bb_mark, sizeof(bb_mark));
+  op_status = nandWritePageSpare(nandp, block, 0, bb_mark, sizeof(bb_mark));
   osalDbgCheck(0 == (op_status & 1)); /* operation failed*/
-  op_status = emcnandWritePageSpare(emcnandp, block, 1, bb_mark, sizeof(bb_mark));
+  op_status = nandWritePageSpare(nandp, block, 1, bb_mark, sizeof(bb_mark));
   osalDbgCheck(0 == (op_status & 1)); /* operation failed*/
 
-#if EMCNAND_USE_BAD_MAP
-  bad_map_update(emcnandp, block);
+#if NAND_USE_BAD_MAP
+  bad_map_update(nandp, block);
 #endif
 }
 
 /**
  * @brief   Read bad mark out.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  * @param[in] page          page number related to begin of block
  *
@@ -478,42 +478,42 @@ void emcnandMarkBad(EMCNANDDriver *emcnandp, uint32_t block) {
  *
  * @api
  */
-uint8_t emcnandReadBadMark(EMCNANDDriver *emcnandp,
+uint8_t nandReadBadMark(NANDDriver *nandp,
                                   uint32_t block, uint32_t page) {
   uint8_t bb_mark[1];
-  emcnandReadPageSpare(emcnandp, block, page, bb_mark, sizeof(bb_mark));
+  nandReadPageSpare(nandp, block, page, bb_mark, sizeof(bb_mark));
   return bb_mark[0];
 }
 
 /**
  * @brief   Erase block.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  *
  * @return    The operation status reported by NAND IC (0x70 command).
  *
  * @api
  */
-uint8_t emcnandErase(EMCNANDDriver *emcnandp, uint32_t block){
+uint8_t nandErase(NANDDriver *nandp, uint32_t block){
 
   uint8_t retVal;
-  const EMCNANDConfig *cfg = emcnandp->config;
+  const NANDConfig *cfg = nandp->config;
   uint8_t addr[4];
   size_t addrlen = cfg->rowcycles;
 
-  osalDbgCheck(emcnandp != NULL);
-  osalDbgAssert(emcnandp->state == EMCNAND_READY, "invalid state");
+  osalDbgCheck(nandp != NULL);
+  osalDbgAssert(nandp->state == NAND_READY, "invalid state");
 
   calc_blk_addr(cfg, block, addr, addrlen);
-  retVal = emcnand_lld_erase(emcnandp, addr, addrlen);
+  retVal = nand_lld_erase(nandp, addr, addrlen);
   return retVal;
 }
 
 /**
  * @brief   Report block badness.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  * @param[in] block         block number
  *
  * @return                  block condition
@@ -522,13 +522,13 @@ uint8_t emcnandErase(EMCNANDDriver *emcnandp, uint32_t block){
  *
  * @api
  */
-bool emcnandIsBad(EMCNANDDriver *emcnandp, uint32_t block){
+bool nandIsBad(NANDDriver *nandp, uint32_t block){
 
-  osalDbgCheck(emcnandp != NULL);
-  osalDbgAssert(emcnandp->state == EMCNAND_READY, "invalid state");
+  osalDbgCheck(nandp != NULL);
+  osalDbgAssert(nandp->state == NAND_READY, "invalid state");
 
-#if EMCNAND_USE_BAD_MAP
-  uint32_t *map = emcnandp->config->bb_map;
+#if NAND_USE_BAD_MAP
+  uint32_t *map = nandp->config->bb_map;
   const size_t BPMC = sizeof(uint32_t) * 8; /* bits per map claster */
   size_t i;
   size_t shift;
@@ -541,60 +541,60 @@ bool emcnandIsBad(EMCNANDDriver *emcnandp, uint32_t block){
     return false;
 #else
   uint8_t m0, m1;
-  m0 = emcnandReadBadMark(emcnandp, block, 0);
-  m1 = emcnandReadBadMark(emcnandp, block, 1);
+  m0 = nandReadBadMark(nandp, block, 0);
+  m1 = nandReadBadMark(nandp, block, 1);
   if ((0xFF != m0) || (0xFF != m1))
     return true;
   else
     return false;
-#endif /* EMCNAND_USE_BAD_MAP */
+#endif /* NAND_USE_BAD_MAP */
 }
 
-#if EMCNAND_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if NAND_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 /**
- * @brief   Gains exclusive access to the EMCNAND bus.
- * @details This function tries to gain ownership to the EMCNAND bus, if the bus
+ * @brief   Gains exclusive access to the NAND bus.
+ * @details This function tries to gain ownership to the NAND bus, if the bus
  *          is already being used then the invoking thread is queued.
  * @pre     In order to use this function the option
- *          @p EMCNAND_USE_MUTUAL_EXCLUSION must be enabled.
+ *          @p NAND_USE_MUTUAL_EXCLUSION must be enabled.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  *
  * @api
  */
-void emcnandAcquireBus(EMCNANDDriver *emcnandp) {
+void nandAcquireBus(NANDDriver *nandp) {
 
-  osalDbgCheck(emcnandp != NULL);
+  osalDbgCheck(nandp != NULL);
 
 #if CH_CFG_USE_MUTEXES
-  chMtxLock(&emcnandp->mutex);
+  chMtxLock(&nandp->mutex);
 #elif CH_CFG_USE_SEMAPHORES
-  chSemWait(&emcnandp->semaphore);
+  chSemWait(&nandp->semaphore);
 #endif
 }
 
 /**
- * @brief   Releases exclusive access to the EMCNAND bus.
+ * @brief   Releases exclusive access to the NAND bus.
  * @pre     In order to use this function the option
- *          @p EMCNAND_USE_MUTUAL_EXCLUSION must be enabled.
+ *          @p NAND_USE_MUTUAL_EXCLUSION must be enabled.
  *
- * @param[in] emcnandp      pointer to the @p EMCNANDDriver object
+ * @param[in] nandp         pointer to the @p NANDDriver object
  *
  * @api
  */
-void emcnandReleaseBus(EMCNANDDriver *emcnandp) {
+void nandReleaseBus(NANDDriver *nandp) {
 
-  osalDbgCheck(emcnandp != NULL);
+  osalDbgCheck(nandp != NULL);
 
 #if CH_CFG_USE_MUTEXES
-  chMtxUnlock(&emcnandp->mutex);
+  chMtxUnlock(&nandp->mutex);
 #elif CH_CFG_USE_SEMAPHORES
-  chSemSignal(&emcnandp->semaphore);
+  chSemSignal(&nandp->semaphore);
 #endif
 }
-#endif /* EMCNAND_USE_MUTUAL_EXCLUSION */
+#endif /* NAND_USE_MUTUAL_EXCLUSION */
 
-#endif /* HAL_USE_EMCNAND */
+#endif /* HAL_USE_NAND */
 
 /** @} */
 

@@ -157,17 +157,10 @@
 #endif
 
 /**
- * @brief   Enables the EMC subsystem.
+ * @brief   Enables the NAND subsystem.
  */
-#if !defined(HAL_USE_EMC) || defined(__DOXYGEN__)
-#define HAL_USE_EMC                 TRUE
-#endif
-
-/**
- * @brief   Enables the NAND over EMC subsystem.
- */
-#if !defined(HAL_USE_EMCNAND) || defined(__DOXYGEN__)
-#define HAL_USE_EMCNAND             TRUE
+#if !defined(HAL_USE_NAND) || defined(__DOXYGEN__)
+#define HAL_USE_NAND                TRUE
 #endif
 
 /*===========================================================================*/
@@ -326,19 +319,19 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables the @p emcnandAcquireBus() and @p emcnanReleaseBus() APIs.
+ * @brief   Enables the @p nandAcquireBus() and @p nanReleaseBus() APIs.
  * @note    Disabling this option saves both code and data space.
  */
-#if !defined(EMCNAND_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define EMCNAND_USE_MUTUAL_EXCLUSION    TRUE
+#if !defined(NAND_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define NAND_USE_MUTUAL_EXCLUSION    TRUE
 #endif
 
 /**
  * @brief   Enables internal driver map for bad blocks.
  * @note    Disabling this option saves both code and data space.
  */
-#if !defined(EMCNAND_USE_BAD_MAP) || defined(__DOXYGEN__)
-#define EMCNAND_USE_BAD_MAP             TRUE
+#if !defined(NAND_USE_BAD_MAP) || defined(__DOXYGEN__)
+#define NAND_USE_BAD_MAP             TRUE
 #endif
 
 #endif /* _HALCONF_H_ */

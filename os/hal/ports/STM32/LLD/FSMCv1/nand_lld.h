@@ -19,24 +19,26 @@
  */
 
 /**
- * @file    emcnand_lld.h
- * @brief   EMCNAND Driver subsystem low level driver header template.
+ * @file    nand_lld.h
+ * @brief   NAND Driver subsystem low level driver header template.
  *
- * @addtogroup EMCNAND
+ * @addtogroup NAND
  * @{
  */
 
-#ifndef _EMCNAND_LLD_H_
-#define _EMCNAND_LLD_H_
+#ifndef _NAND_LLD_H_
+#define _NAND_LLD_H_
 
-#if HAL_USE_EMCNAND || defined(__DOXYGEN__)
+#include "fsmc.h"
+
+#if HAL_USE_NAND || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-#define EMCNAND_MIN_PAGE_SIZE       256
-#define EMCNAND_MAX_PAGE_SIZE       8192
-#define EMCNAND_BAD_MAP_END_MARK    ((uint16_t)0xFFFF)
+#define NAND_MIN_PAGE_SIZE       256
+#define NAND_MAX_PAGE_SIZE       8192
+#define NAND_BAD_MAP_END_MARK    ((uint16_t)0xFFFF)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -54,66 +56,66 @@
 #endif
 
 /**
- * @brief   EMCNAND driver enable switch.
- * @details If set to @p TRUE the support for EMCNAND1 is included.
+ * @brief   NAND driver enable switch.
+ * @details If set to @p TRUE the support for NAND1 is included.
  */
-#if !defined(STM32_EMCNAND_USE_EMCNAND1) || defined(__DOXYGEN__)
-#define STM32_EMCNAND_USE_EMCNAND1                  FALSE
+#if !defined(STM32_NAND_USE_NAND1) || defined(__DOXYGEN__)
+#define STM32_NAND_USE_NAND1                  FALSE
 #endif
 
 /**
- * @brief   EMCNAND driver enable switch.
- * @details If set to @p TRUE the support for EMCNAND2 is included.
+ * @brief   NAND driver enable switch.
+ * @details If set to @p TRUE the support for NAND2 is included.
  */
-#if !defined(STM32_EMCNAND_USE_EMCNAND2) || defined(__DOXYGEN__)
-#define STM32_EMCNAND_USE_EMCNAND2                  FALSE
+#if !defined(STM32_NAND_USE_NAND2) || defined(__DOXYGEN__)
+#define STM32_NAND_USE_NAND2                  FALSE
 #endif
 
 /**
- * @brief   EMCNAND DMA error hook.
+ * @brief   NAND DMA error hook.
  * @note    The default action for DMA errors is a system halt because DMA
  *          error can only happen because programming errors.
  */
-#if !defined(STM32_EMCNAND_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_EMCNAND_DMA_ERROR_HOOK(emcnandp)      osalSysHalt("DMA failure")
+#if !defined(STM32_NAND_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_NAND_DMA_ERROR_HOOK(nandp)      osalSysHalt("DMA failure")
 #endif
 
 /**
- * @brief   EMCNAND interrupt enable switch.
+ * @brief   NAND interrupt enable switch.
  * @details If set to @p TRUE the support for internal FSMC interrupt included.
  */
-#if !defined(STM32_EMCNAND_USE_INT) || defined(__DOXYGEN__)
-#define STM32_EMCNAND_USE_INT                       FALSE
+#if !defined(STM32_NAND_USE_INT) || defined(__DOXYGEN__)
+#define STM32_NAND_USE_INT                       FALSE
 #endif
 
 /**
-* @brief   EMCNAND1 DMA priority (0..3|lowest..highest).
+* @brief   NAND1 DMA priority (0..3|lowest..highest).
 */
-#if !defined(STM32_EMCNAND_EMCNAND1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EMCNAND_EMCNAND1_DMA_PRIORITY         0
+#if !defined(STM32_NAND_NAND1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_NAND_NAND1_DMA_PRIORITY         0
 #endif
 
 /**
-* @brief   EMCNAND2 DMA priority (0..3|lowest..highest).
+* @brief   NAND2 DMA priority (0..3|lowest..highest).
 */
-#if !defined(STM32_EMCNAND_EMCNAND2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EMCNAND_EMCNAND2_DMA_PRIORITY         0
+#if !defined(STM32_NAND_NAND2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_NAND_NAND2_DMA_PRIORITY         0
 #endif
 
 /**
- * @brief   DMA stream used for EMCNAND1 operations.
+ * @brief   DMA stream used for NAND1 operations.
  * @note    This option is only available on platforms with enhanced DMA.
  */
-#if !defined(STM32_EMCNAND_EMCNAND1_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_EMCNAND_EMCNAND1_DMA_STREAM     STM32_DMA_STREAM_ID(2, 6)
+#if !defined(STM32_NAND_NAND1_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_NAND_NAND1_DMA_STREAM     STM32_DMA_STREAM_ID(2, 6)
 #endif
 
 /**
- * @brief   DMA stream used for EMCNAND2 operations.
+ * @brief   DMA stream used for NAND2 operations.
  * @note    This option is only available on platforms with enhanced DMA.
  */
-#if !defined(STM32_EMCNAND_EMCNAND2_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_EMCNAND_EMCNAND2_DMA_STREAM     STM32_DMA_STREAM_ID(2, 7)
+#if !defined(STM32_NAND_NAND2_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_NAND_NAND2_DMA_STREAM     STM32_DMA_STREAM_ID(2, 7)
 #endif
 
 /** @} */
@@ -122,28 +124,26 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !STM32_EMCNAND_USE_EMCNAND1 && !STM32_EMCNAND_USE_EMCNAND2
-#error "EMCNAND driver activated but no EMCNAND peripheral assigned"
+#if !STM32_NAND_USE_FSMC_NAND1 && !STM32_NAND_USE_FSMC_NAND2
+#error "NAND driver activated but no NAND peripheral assigned"
 #endif
 
-#if STM32_EMCNAND_USE_EMCNAND1 && !STM32_HAS_EMC
-#error "EMC not present in the selected device"
+#if STM32_NAND_USE_FSMC_NAND1 && !STM32_HAS_FSMC
+#error "FSMC not present in the selected device"
 #endif
 
-#if !STM32_EMCNAND_USE_INT && !HAL_USE_EXT
+#if STM32_NAND_USE_FSMC_NAND2 && !STM32_HAS_FSMC
+#error "FSMC not present in the selected device"
+#endif
+
+#if !STM32_NAND_USE_FSMC_INT && !HAL_USE_EXT
 #error "External interrupt controller must be enabled to use this feature"
 #endif
 
-#if STM32_EMCNAND_USE_EMCNAND1 &&                                           \
-    !STM32_DMA_IS_VALID_ID(STM32_EMCNAND_EMCNAND1_DMA_STREAM,               \
-                           STM32_EMC_DMA_MSK)
-#error "invalid DMA stream associated to EMCNAND"
-#endif
-
-#if STM32_EMCNAND_USE_EMCNAND2 &&                                           \
-    !STM32_DMA_IS_VALID_ID(STM32_EMCNAND_EMCNAND2_DMA_STREAM,               \
-                           STM32_EMC_DMA_MSK)
-#error "invalid DMA stream associated to EMCNAND"
+#if (STM32_NAND_USE_FSMC_NAND2 || STM32_NAND_USE_FSMC_NAND1) &&             \
+    !STM32_DMA_IS_VALID_ID(STM32_NAND_DMA_STREAM,                           \
+                           STM32_FSMC_DMA_MSK)
+#error "invalid DMA stream associated to NAND"
 #endif
 
 #if !defined(STM32_DMA_REQUIRED)
@@ -157,30 +157,30 @@
 /**
  * @brief   NAND driver condition flags type.
  */
-typedef uint32_t emcnandflags_t;
+typedef uint32_t nandflags_t;
 
 /**
- * @brief   Type of a structure representing an EMCNAND driver.
+ * @brief   Type of a structure representing an NAND driver.
  */
-typedef struct EMCNANDDriver EMCNANDDriver;
+typedef struct NANDDriver NANDDriver;
 
-#if STM32_EMC_USE_INT
+#if STM32_NAND_USE_FSMC_INT
 /**
  * @brief   Type of interrupt handler function
  */
-typedef void (*emcnandisrhandler_t)
-                      (EMCNANDDriver *emcnandp, emcnandflags_t flags);
+typedef void (*nandisrhandler_t)
+                      (NANDDriver *nandp, nandflags_t flags);
 #else
 /**
  * @brief   Type of interrupt handler function
  */
-typedef void (*emcnandisrhandler_t)(EMCNANDDriver *emcnandp);
+typedef void (*nandisrhandler_t)(NANDDriver *nandp);
 
 /**
  * @brief   Type of function switching external interrupts on and off.
  */
-typedef void (*emcnandisrswitch_t)(void);
-#endif /* STM32_EMC_USE_INT */
+typedef void (*nandisrswitch_t)(void);
+#endif /* STM32_NAND_USE_FSMC_INT */
 
 /**
  * @brief   Driver configuration structure.
@@ -190,7 +190,7 @@ typedef struct {
   /**
    * @brief   Pointer to lower level driver.
    */
-  EMCDriver                 *emcp;
+  FSMCDriver                *fsmcp;
   /**
    * @brief   Number of erase blocks in NAND device.
    */
@@ -207,13 +207,13 @@ typedef struct {
    * @brief   Number of pages in block.
    */
   uint32_t                  pages_per_block;
-#if EMCNAND_USE_BAD_MAP
+#if NAND_USE_BAD_MAP
   /**
    * @brief   Pointer to bad block map.
    * @details One bit per block. Memory for map must be allocated by user.
    */
   uint32_t                  *bb_map;
-#endif /* EMCNAND_USE_BAD_MAP */
+#endif /* NAND_USE_BAD_MAP */
   /**
    * @brief   Number of write cycles for row addressing.
    */
@@ -232,34 +232,34 @@ typedef struct {
    *          from STMicroelectronics.
    */
   uint32_t                  pmem;
-#if !STM32_EMC_USE_INT
+#if !STM32_NAND_USE_FSMC_INT
   /**
    * @brief   Function enabling interrupts from EXTI
    */
-  emcnandisrswitch_t        ext_isr_enable;
+  nandisrswitch_t        ext_isr_enable;
   /**
    * @brief   Function disabling interrupts from EXTI
    */
-  emcnandisrswitch_t        ext_isr_disable;
-#endif /* !STM32_EMC_USE_INT */
-} EMCNANDConfig;
+  nandisrswitch_t        ext_isr_disable;
+#endif /* !STM32_NAND_USE_FSMC_INT */
+} NANDConfig;
 
 /**
- * @brief   Structure representing an EMCNAND driver.
+ * @brief   Structure representing an NAND driver.
  */
-struct EMCNANDDriver {
+struct NANDDriver {
   /**
    * @brief   Driver state.
    */
-  emcnandstate_t            state;
+  nandstate_t               state;
   /**
    * @brief   Current configuration data.
    */
-  const EMCNANDConfig       *config;
+  const NANDConfig          *config;
   /**
    * @brief   Array to store bad block map.
    */
-#if EMCNAND_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if NAND_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the bus.
@@ -268,12 +268,12 @@ struct EMCNANDDriver {
 #elif CH_CFG_USE_SEMAPHORES
   semaphore_t               semaphore;
 #endif
-#endif /* EMCNAND_USE_MUTUAL_EXCLUSION */
+#endif /* NAND_USE_MUTUAL_EXCLUSION */
   /* End of the mandatory fields.*/
   /**
    * @brief   Function enabling interrupts from FSMC
    */
-  emcnandisrhandler_t       isr_handler;
+  nandisrhandler_t          isr_handler;
   /**
    * @brief   Pointer to current transaction buffer
    */
@@ -320,38 +320,38 @@ struct EMCNANDDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if STM32_EMCNAND_USE_EMCNAND1 && !defined(__DOXYGEN__)
-extern EMCNANDDriver EMCNANDD1;
+#if STM32_NAND_USE_FSMC_NAND1 && !defined(__DOXYGEN__)
+extern NANDDriver NANDD1;
 #endif
 
-#if STM32_EMCNAND_USE_EMCNAND2 && !defined(__DOXYGEN__)
-extern EMCNANDDriver EMCNANDD2;
+#if STM32_NAND_USE_FSMC_NAND2 && !defined(__DOXYGEN__)
+extern NANDDriver NANDD2;
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void emcnand_lld_init(void);
-  void emcnand_lld_start(EMCNANDDriver *emcnandp);
-  void emcnand_lld_stop(EMCNANDDriver *emcnandp);
-  uint8_t emcnand_lld_write_data(EMCNANDDriver *emcnandp, const uint8_t *data,
+  void nand_lld_init(void);
+  void nand_lld_start(NANDDriver *nandp);
+  void nand_lld_stop(NANDDriver *nandp);
+  uint8_t nand_lld_write_data(NANDDriver *nandp, const uint8_t *data,
           size_t datalen, uint8_t *addr, size_t addrlen, uint32_t *ecc);
-  void emcnand_lld_read_data(EMCNANDDriver *emcnandp, uint8_t *data,
+  void nand_lld_read_data(NANDDriver *nandp, uint8_t *data,
           size_t datalen, uint8_t *addr, size_t addrlen, uint32_t *ecc);
-  void emcnand_lld_polled_read_data(EMCNANDDriver *emcnandp, uint8_t *data,
+  void nand_lld_polled_read_data(NANDDriver *nandp, uint8_t *data,
           size_t len);
-  uint8_t emcnand_lld_erase(EMCNANDDriver *emcnandp, uint8_t *addr,
+  uint8_t nand_lld_erase(NANDDriver *nandp, uint8_t *addr,
           size_t addrlen);
-  void emcnand_lld_write_addr(EMCNANDDriver *emcnandp,
+  void nand_lld_write_addr(NANDDriver *nandp,
           const uint8_t *addr, size_t len);
-  void emcnand_lld_write_cmd(EMCNANDDriver *emcnandp, uint8_t cmd);
-  uint8_t emcnand_lld_read_status(EMCNANDDriver *emcnandp);
+  void nand_lld_write_cmd(NANDDriver *nandp, uint8_t cmd);
+  uint8_t nand_lld_read_status(NANDDriver *nandp);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_EMCNAND */
+#endif /* HAL_USE_NAND */
 
-#endif /* _EMCNAND_LLD_H_ */
+#endif /* _NAND_LLD_H_ */
 
 /** @} */

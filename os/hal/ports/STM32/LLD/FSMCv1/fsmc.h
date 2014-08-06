@@ -19,18 +19,18 @@
  */
 
 /**
- * @file    emc_lld.h
- * @brief   EMC Driver subsystem low level driver header template.
+ * @file    fsmc.h
+ * @brief   FSMC Driver subsystem low level driver header template.
  *
- * @addtogroup EMC
+ * @addtogroup FSMC
  * @{
  */
 
 
-#ifndef _EMC_LLD_H_
-#define _EMC_LLD_H_
+#ifndef _FSMC_H_
+#define _FSMC_H_
 
-#if HAL_USE_EMC || defined(__DOXYGEN__)
+#if HAL_USE_NAND || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -146,11 +146,11 @@ typedef struct {
  * @{
  */
 /**
- * @brief   EMC driver enable switch.
- * @details If set to @p TRUE the support for EMC is included.
+ * @brief   FSMC driver enable switch.
+ * @details If set to @p TRUE the support for FSMC is included.
  */
-#if !defined(STM32_EMC_USE_FSMC1) || defined(__DOXYGEN__)
-#define STM32_EMC_USE_FSMC1             FALSE
+#if !defined(STM32_FSMC_USE_FSMC1) || defined(__DOXYGEN__)
+#define STM32_FSMC_USE_FSMC1             FALSE
 #endif
 
 /**
@@ -158,10 +158,8 @@ typedef struct {
  * @details MCUs in 100-pin package has no dedicated interrupt pin for FSMC.
  *          You have to use EXTI module instead to workaround this issue.
  */
-#if STM32_EMC_EMCNAND_USE_FSMC_INT
-#define STM32_EMC_USE_INT               TRUE
-#else
-#define STM32_EMC_USE_INT               FALSE
+#if !defined(STM32_NAND_USE_FSMC_INT) || defined(__DOXYGEN__)
+#define STM32_NAND_USE_FSMC_INT          FALSE
 #endif
 
 /** @} */
@@ -169,8 +167,8 @@ typedef struct {
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-#if !STM32_EMC_USE_FSMC1
-#error "EMC driver activated but no EMC peripheral assigned"
+#if !STM32_FSMC_USE_FSMC1
+#error "FSMC driver activated but no FSMC peripheral assigned"
 #endif
 
 /*===========================================================================*/
@@ -178,9 +176,18 @@ typedef struct {
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure representing an EMC driver.
+ * @brief   Type of a structure representing an FSMC driver.
  */
-typedef struct EMCDriver EMCDriver;
+typedef struct FSMCDriver FSMCDriver;
+
+/**
+ * @brief   Driver state machine possible states.
+ */
+typedef enum {
+  FSMC_UNINIT = 0,                   /**< Not initialized.                   */
+  FSMC_STOP = 1,                     /**< Stopped.                           */
+  FSMC_READY = 2,                    /**< Ready.                             */
+} fsmcstate_t;
 
 /**
  * @brief   Driver configuration structure.
@@ -188,28 +195,24 @@ typedef struct EMCDriver EMCDriver;
  */
 typedef struct {
 
-} EMCConfig;
+} FSMCConfig;
 
 /**
- * @brief   Structure representing an EMC driver.
+ * @brief   Structure representing an FSMC driver.
  */
-struct EMCDriver {
+struct FSMCDriver {
   /**
    * @brief Driver state.
    */
-  emcstate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const EMCConfig           *config;
+  fsmcstate_t               state;
   /* End of the mandatory fields.*/
-#if STM32_EMCNAND_USE_EMCNAND1
+#if STM32_NAND_USE_FSMC_NAND1
   FSMC_NAND_TypeDef         *nand1;
 #endif
-#if STM32_EMCNAND_USE_EMCNAND2
+#if STM32_NAND_USE_FSMC_NAND2
   FSMC_NAND_TypeDef         *nand2;
 #endif
-#if STM32_USE_EMC_PCCARD
+#if STM32_USE_FSMC_PCCARD
   FSMC_PCCard_TypeDef       *pccard;
 #endif
 };
@@ -222,22 +225,22 @@ struct EMCDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if STM32_EMC_USE_FSMC1 && !defined(__DOXYGEN__)
-extern EMCDriver EMCD1;
+#if STM32_FSMC_USE_FSMC1 && !defined(__DOXYGEN__)
+extern FSMCDriver FSMCD1;
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void emc_lld_init(void);
-  void emc_lld_start(EMCDriver *emcp);
-  void emc_lld_stop(EMCDriver *emcp);
+  void fsmc_lld_init(void);
+  void fsmc_lld_start(FSMCDriver *fsmcp);
+  void fsmc_lld_stop(FSMCDriver *fsmcp);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_EMC */
+#endif /* HAL_USE_NAND */
 
-#endif /* _EMC_LLD_H_ */
+#endif /* _FSMC_H_ */
 
 /** @} */

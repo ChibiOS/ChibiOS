@@ -23,17 +23,17 @@
  */
 
 /**
- * @file    emcnand.h
- * @brief   EMCNAND Driver macros and structures.
+ * @file    nand.h
+ * @brief   NAND Driver macros and structures.
  *
- * @addtogroup EMCNAND
+ * @addtogroup NAND
  * @{
  */
 
-#ifndef _EMCNAND_H_
-#define _EMCNAND_H_
+#ifndef _NAND_H_
+#define _NAND_H_
 
-#if HAL_USE_EMCNAND || defined(__DOXYGEN__)
+#if HAL_USE_NAND || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -62,19 +62,15 @@
 /**
  * @brief   Enables the mutual exclusion APIs on the NAND.
  */
-#if !defined(EMCNAND_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define EMCNAND_USE_MUTUAL_EXCLUSION     FALSE
+#if !defined(NAND_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define NAND_USE_MUTUAL_EXCLUSION     FALSE
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-#if EMCNAND_USE_MUTUAL_EXCLUSION && !CH_CFG_USE_MUTEXES && !CH_CFG_USE_SEMAPHORES
-#error "EMCNAND_USE_MUTUAL_EXCLUSION requires CH_CFG_USE_MUTEXES and/or CH_CFG_USE_SEMAPHORES"
-#endif
-
-#if !HAL_USE_EMC
-#error "This driver requires EMC controller"
+#if NAND_USE_MUTUAL_EXCLUSION && !CH_CFG_USE_MUTEXES && !CH_CFG_USE_SEMAPHORES
+#error "NAND_USE_MUTUAL_EXCLUSION requires CH_CFG_USE_MUTEXES and/or CH_CFG_USE_SEMAPHORES"
 #endif
 
 /*===========================================================================*/
@@ -85,23 +81,23 @@
  * @brief   Driver state machine possible states.
  */
 typedef enum {
-  EMCNAND_UNINIT = 0,                   /**< Not initialized.                */
-  EMCNAND_STOP = 1,                     /**< Stopped.                        */
-  EMCNAND_READY = 2,                    /**< Ready.                          */
-  EMCNAND_PROGRAM = 3,                  /**< Programming in progress.        */
-  EMCNAND_ERASE = 4,                    /**< Erasing in progress.            */
-  EMCNAND_WRITE = 5,                    /**< Writing to NAND buffer.         */
-  EMCNAND_READ = 6,                     /**< Reading from NAND.              */
-  EMCNAND_DMA_TX = 7,                   /**< DMA transmitting.               */
-  EMCNAND_DMA_RX = 8,                   /**< DMA receiving.                  */
-} emcnandstate_t;
+  NAND_UNINIT = 0,                   /**< Not initialized.                */
+  NAND_STOP = 1,                     /**< Stopped.                        */
+  NAND_READY = 2,                    /**< Ready.                          */
+  NAND_PROGRAM = 3,                  /**< Programming in progress.        */
+  NAND_ERASE = 4,                    /**< Erasing in progress.            */
+  NAND_WRITE = 5,                    /**< Writing to NAND buffer.         */
+  NAND_READ = 6,                     /**< Reading from NAND.              */
+  NAND_DMA_TX = 7,                   /**< DMA transmitting.               */
+  NAND_DMA_RX = 8,                   /**< DMA receiving.                  */
+} nandstate_t;
 
 /**
- * @brief   Type of a structure representing a EMCNAND driver.
+ * @brief   Type of a structure representing a NAND driver.
  */
-typedef struct EMCNANDDriver EMCNANDDriver;
+typedef struct NANDDriver NANDDriver;
 
-#include "emcnand_lld.h"
+#include "nand_lld.h"
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -114,39 +110,39 @@ typedef struct EMCNANDDriver EMCNANDDriver;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void emcnandInit(void);
-  void emcnandObjectInit(EMCNANDDriver *emcnandp);
-  void emcnandStart(EMCNANDDriver *emcnandp, const EMCNANDConfig *config);
-  void emcnandStop(EMCNANDDriver *emcnandp);
-  void emcnandReadPageWhole(EMCNANDDriver *emcnandp, uint32_t block,
+  void nandInit(void);
+  void nandObjectInit(NANDDriver *nandp);
+  void nandStart(NANDDriver *nandp, const NANDConfig *config);
+  void nandStop(NANDDriver *nandp);
+  void nandReadPageWhole(NANDDriver *nandp, uint32_t block,
           uint32_t page, uint8_t *data, size_t datalen);
-  uint8_t emcnandWritePageWhole(EMCNANDDriver *emcnandp, uint32_t block,
+  uint8_t nandWritePageWhole(NANDDriver *nandp, uint32_t block,
           uint32_t page, const uint8_t *data, size_t datalen);
-  void emcnandReadPageData(EMCNANDDriver *emcnandp, uint32_t block,
+  void nandReadPageData(NANDDriver *nandp, uint32_t block,
           uint32_t page, uint8_t *data, size_t datalen, uint32_t *ecc);
-  uint8_t emcnandWritePageData(EMCNANDDriver *emcnandp, uint32_t block,
+  uint8_t nandWritePageData(NANDDriver *nandp, uint32_t block,
           uint32_t page, const uint8_t *data, size_t datalen, uint32_t *ecc);
-  void emcnandReadPageSpare(EMCNANDDriver *emcnandp, uint32_t block,
+  void nandReadPageSpare(NANDDriver *nandp, uint32_t block,
           uint32_t page, uint8_t *spare, size_t sparelen);
-  uint8_t emcnandWritePageSpare(EMCNANDDriver *emcnandp, uint32_t block,
+  uint8_t nandWritePageSpare(NANDDriver *nandp, uint32_t block,
           uint32_t page, const uint8_t *spare, size_t sparelen);
-  void emcnandMarkBad(EMCNANDDriver *emcnandp, uint32_t block);
-  uint8_t emcnandReadBadMark(EMCNANDDriver *emcnandp,
+  void nandMarkBad(NANDDriver *nandp, uint32_t block);
+  uint8_t nandReadBadMark(NANDDriver *nandp,
           uint32_t block, uint32_t page);
-  uint8_t emcnandErase(EMCNANDDriver *emcnandp, uint32_t block);
-  bool emcnandIsBad(EMCNANDDriver *emcnandp, uint32_t block);
+  uint8_t nandErase(NANDDriver *nandp, uint32_t block);
+  bool nandIsBad(NANDDriver *nandp, uint32_t block);
 
-#if EMCNAND_USE_MUTUAL_EXCLUSION
-  void emcnandAcquireBus(EMCNANDDriver *emcnandp);
-  void emcnandReleaseBus(EMCNANDDriver *emcnandp);
-#endif /* EMCNAND_USE_MUTUAL_EXCLUSION */
+#if NAND_USE_MUTUAL_EXCLUSION
+  void nandAcquireBus(NANDDriver *nandp);
+  void nandReleaseBus(NANDDriver *nandp);
+#endif /* NAND_USE_MUTUAL_EXCLUSION */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_EMCNAND */
+#endif /* HAL_USE_NAND */
 
-#endif /* _EMCNAND_H_ */
+#endif /* _NAND_H_ */
 
 /** @} */

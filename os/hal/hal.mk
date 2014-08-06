@@ -23,8 +23,7 @@ HALSRC = ${CHIBIOS}/os/hal/src/hal.c \
          ${CHIBIOS}/os/hal/src/st.c \
          ${CHIBIOS}/os/hal/src/uart.c \
          ${CHIBIOS}/os/hal/src/usb.c \
-         ${CHIBIOS}/os/hal/src/emc.c \
-         ${CHIBIOS}/os/hal/src/emcnand.c
+         ${CHIBIOS}/os/hal/src/nand.c
 
 # Required include directories
 HALINC = ${CHIBIOS}/os/hal/include

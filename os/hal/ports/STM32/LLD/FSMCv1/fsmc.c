@@ -19,16 +19,16 @@
  */
 
 /**
- * @file    emc_lld.c
- * @brief   EMC Driver subsystem low level driver source template.
+ * @file    fsmc.c
+ * @brief   FSMC Driver subsystem low level driver source template.
  *
- * @addtogroup EMC
+ * @addtogroup FSMC
  * @{
  */
 
 #include "hal.h"
 
-#if HAL_USE_EMC || defined(__DOXYGEN__)
+#if HAL_USE_NAND || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -39,10 +39,10 @@
 /*===========================================================================*/
 
 /**
- * @brief   EMC1 driver identifier.
+ * @brief   FSMC1 driver identifier.
  */
-#if STM32_EMC_USE_FSMC1 || defined(__DOXYGEN__)
-EMCDriver EMCD1;
+#if STM32_FSMC_USE_FSMC1 || defined(__DOXYGEN__)
+FSMCDriver FSMCD1;
 #endif
 
 /*===========================================================================*/
@@ -66,89 +66,90 @@ EMCDriver EMCD1;
 /*===========================================================================*/
 
 /**
- * @brief   Low level EMC driver initialization.
+ * @brief   Low level FSMC driver initialization.
  *
  * @notapi
  */
-void emc_lld_init(void) {
+void fsmc_lld_init(void) {
 
-#if STM32_EMC_USE_FSMC1
-  emcObjectInit(&EMCD1);
+  FSMCD1.state  = FSMC_STOP;
 
-#if STM32_EMCNAND_USE_EMCNAND1
-  EMCD1.nand1 = (FSMC_NAND_TypeDef *)FSMC_Bank2_R_BASE;
+#if STM32_NAND_USE_FSMC_NAND1
+  FSMCD1.nand1 = (FSMC_NAND_TypeDef *)FSMC_Bank2_R_BASE;
 #endif
 
-#if STM32_EMCNAND_USE_EMCNAND2
-  EMCD1.nand2 = (FSMC_NAND_TypeDef *)FSMC_Bank3_R_BASE;
+#if STM32_NAND_USE_FSMC_NAND2
+  FSMCD1.nand2 = (FSMC_NAND_TypeDef *)FSMC_Bank3_R_BASE;
 #endif
 
-#if STM32_USE_EMC_PCCARD
-  EMCD1.pccard = (FSMC_PCCARD_TypeDef *)FSMC_Bank4_R_BASE;
+#if STM32_USE_FSMC_PCCARD
+  FSMCD1.pccard = (FSMC_PCCARD_TypeDef *)FSMC_Bank4_R_BASE;
 #endif
-
-#endif /* STM32_EMC_USE_EMC1 */
 }
 
 /**
- * @brief   Configures and activates the EMC peripheral.
+ * @brief   Configures and activates the FSMC peripheral.
  *
- * @param[in] emcp      pointer to the @p EMCDriver object
+ * @param[in] fsmcp      pointer to the @p FSMCDriver object
  *
  * @notapi
  */
-void emc_lld_start(EMCDriver *emcp) {
+void fsmc_lld_start(FSMCDriver *fsmcp) {
 
-  if (emcp->state == EMC_STOP) {
+
+  osalDbgAssert((fsmcp->state == FSMC_STOP) || (fsmcp->state == FSMC_READY),
+              "invalid state");
+
+  if (fsmcp->state == FSMC_STOP) {
     /* Enables the peripheral.*/
-#if STM32_EMC_USE_FSMC1
-    if (&EMCD1 == emcp) {
+#if STM32_FSMC_USE_FSMC1
+    if (&FSMCD1 == fsmcp) {
       rccResetFSMC();
       rccEnableFSMC(FALSE);
-  #if STM32_EMC_USE_INT
-      nvicEnableVector(FSMC_IRQn, STM32_EMC_FSMC1_IRQ_PRIORITY);
-  #endif /* STM32_EMC_USE_INT */
+      #if STM32_NAND_USE_FSMC_INT
+      nvicEnableVector(FSMC_IRQn, STM32_FSMC_FSMC1_IRQ_PRIORITY);
+      #endif
     }
-#endif /* PLATFORM_STM32_USE_EMC1 */
+#endif /* STM32_FSMC_USE_FSMC1 */
 
-    emcp->state = EMC_READY;
+    fsmcp->state = FSMC_READY;
   }
 }
 
 /**
- * @brief   Deactivates the EMC peripheral.
+ * @brief   Deactivates the FSMC peripheral.
  *
- * @param[in] emcp      pointer to the @p EMCDriver object
+ * @param[in] emcp      pointer to the @p FSMCDriver object
  *
  * @notapi
  */
-void emc_lld_stop(EMCDriver *emcp) {
+void fsmc_lld_stop(FSMCDriver *fsmcp) {
 
-  if (emcp->state == EMC_READY) {
+  if (fsmcp->state == FSMC_READY) {
     /* Resets the peripheral.*/
     rccResetFSMC();
 
     /* Disables the peripheral.*/
-#if STM32_EMC_USE_FSMC1
-    if (&EMCD1 == emcp) {
-      #if STM32_EMC_USE_INT
+#if STM32_FSMC_USE_FSMC1
+    if (&FSMCD1 == fsmcp) {
+      #if STM32_NAND_USE_FSMC_INT
       nvicDisableVector(FSMC_IRQn);
       #endif
       rccDisableFSMC(FALSE);
     }
-#endif /* PLATFORM_STM32_USE_EMC1 */
+#endif /* PLATFORM_STM32_USE_FSMC1 */
 
-    emcp->state = EMC_STOP;
+    fsmcp->state = FSMC_STOP;
   }
 }
 
-#if STM32_EMC_USE_INT
+#if STM32_NAND_USE_FSMC_INT
 /**
  * @brief   Serve common interrupt.
  *
  * @notapi
  */
-void emc_lld_serve_interrupt(void) {
+void fsmc_lld_serve_interrupt(void) {
 
   osalSysHalt("Unrealized");
 }
@@ -162,20 +163,20 @@ CH_IRQ_HANDLER(FSMC_IRQHandler) {
   osalSysHalt("This functionality untested");
 
   CH_IRQ_PROLOGUE();
-#if STM32_EMCNAND_USE_EMCNAND1
-  if (EMCD1.nand1->SR & FSMC_SR_ISR_MASK){
-    EMCNANDD1.isr_handler(&EMCNANDD1, EMCD1.nand1->SR);
+#if STM32_NAND_USE_FSMC_NAND1
+  if (FSMCD1.nand1->SR & FSMC_SR_ISR_MASK){
+    NANDD1.isr_handler(&NANDD1, FSMCD1.nand1->SR);
   }
 #endif
-#if STM32_EMCNAND_USE_EMCNAND2
-  if (EMCD1.nand2->SR & FSMC_SR_ISR_MASK){
-    EMCNANDD2.isr_handler(&EMCNANDD2, EMCD1.nand2->SR);
+#if STM32_NAND_USE_FSMC_NAND2
+  if (FSMCD1.nand2->SR & FSMC_SR_ISR_MASK){
+    NANDD2.isr_handler(&NANDD2, FSMCD1.nand2->SR);
   }
 #endif
   CH_IRQ_EPILOGUE();
 }
-#endif /* STM32_EMC_USE_INT */
+#endif /* STM32_FSMC_USE_INT */
 
-#endif /* HAL_USE_EMC */
+#endif /* HAL_USE_FSMC */
 
 /** @} */

@@ -51,12 +51,12 @@
  ******************************************************************************
  */
 
-#define USE_KILL_BLOCK_TEST       FALSE
+#define USE_KILL_BLOCK_TEST       TRUE
 
-#define EMCNAND_TIME_SET          ((uint32_t) 2) //(8nS)
-#define EMCNAND_TIME_WAIT         ((uint32_t) 6) //(30nS)
-#define EMCNAND_TIME_HOLD         ((uint32_t) 1) //(5nS)
-#define EMCNAND_TIME_HIZ          ((uint32_t) 4) //(20nS)
+#define FSMCNAND_TIME_SET         ((uint32_t) 2) //(8nS)
+#define FSMCNAND_TIME_WAIT        ((uint32_t) 6) //(30nS)
+#define FSMCNAND_TIME_HOLD        ((uint32_t) 1) //(5nS)
+#define FSMCNAND_TIME_HIZ         ((uint32_t) 4) //(20nS)
 
 #define NAND_BLOCKS_COUNT         8192
 #define NAND_PAGE_DATA_SIZE       2048
@@ -82,7 +82,7 @@
  * PROTOTYPES
  ******************************************************************************
  */
-#if !STM32_EMC_EMCNAND_USE_FSMC_INT
+#if !STM32_NAND_USE_FSMC_INT
 static void ready_isr_enable(void);
 static void ready_isr_disable(void);
 static void nand_ready_cb(EXTDriver *extp, expchannel_t channel);
@@ -108,33 +108,28 @@ static uint8_t ref_buf[NAND_PAGE_SIZE];
 //static TimeMeasurement tmu_read_data;
 //static TimeMeasurement tmu_read_spare;
 
-/*
- *
- */
-static const EMCConfig emccfg = {};
-
-#if EMCNAND_USE_BAD_MAP
+#if NAND_USE_BAD_MAP
 static uint32_t badblock_map[NAND_BLOCKS_COUNT / 32];
 #endif
 
 /*
  *
  */
-static const EMCNANDConfig nandcfg = {
-    &EMCD1,
+static const NANDConfig nandcfg = {
+    &FSMCD1,
     NAND_BLOCKS_COUNT,
     NAND_PAGE_DATA_SIZE,
     NAND_PAGE_SPARE_SIZE,
     NAND_PAGES_PER_BLOCK,
-#if EMCNAND_USE_BAD_MAP
+#if NAND_USE_BAD_MAP
     badblock_map,
 #endif
     NAND_ROW_WRITE_CYCLES,
     NAND_COL_WRITE_CYCLES,
     /* stm32 specific fields */
-    ((EMCNAND_TIME_HIZ << 24) | (EMCNAND_TIME_HOLD << 16) | \
-                                  (EMCNAND_TIME_WAIT << 8) | EMCNAND_TIME_SET),
-#if !STM32_EMC_EMCNAND_USE_FSMC_INT
+    ((FSMCNAND_TIME_HIZ << 24) | (FSMCNAND_TIME_HOLD << 16) | \
+                                (FSMCNAND_TIME_WAIT << 8) | FSMCNAND_TIME_SET),
+#if !STM32_NAND_USE_FSMC_INT
     ready_isr_enable,
     ready_isr_disable
 #endif
@@ -143,7 +138,7 @@ static const EMCNANDConfig nandcfg = {
 /**
  *
  */
-#if !STM32_EMC_EMCNAND_USE_FSMC_INT
+#if !STM32_NAND_USE_FSMC_INT
 static const EXTConfig extcfg = {
   {
     {EXT_CH_MODE_DISABLED, NULL},     //0
@@ -171,7 +166,7 @@ static const EXTConfig extcfg = {
     {EXT_CH_MODE_DISABLED, NULL},
   }
 };
-#endif /* !STM32_EMC_EMCNAND_USE_FSMC_INT */
+#endif /* !STM32_NAND_USE_FSMC_INT */
 
 /*
  *
@@ -191,12 +186,12 @@ volatile uint32_t KillCycle = 0;
  ******************************************************************************
  */
 
-#if !STM32_EMC_EMCNAND_USE_FSMC_INT
+#if !STM32_NAND_USE_FSMC_INT
 static void nand_ready_cb(EXTDriver *extp, expchannel_t channel){
   (void)extp;
   (void)channel;
 
-  EMCNANDD1.isr_handler(&EMCNANDD1);
+  NANDD1.isr_handler(&NANDD1);
 }
 
 static void ready_isr_enable(void) {
@@ -206,7 +201,7 @@ static void ready_isr_enable(void) {
 static void ready_isr_disable(void) {
   extChannelDisable(&EXTD1, GPIOD_NAND_RB);
 }
-#endif
+#endif /* STM32_NAND_USE_FSMC_INT */
 
 static void nand_wp_assert(void) {
   palClearPad(GPIOB, GPIOB_NAND_WP);
@@ -237,13 +232,13 @@ static THD_FUNCTION(fsmcIdleThread, arg) {
 /*
  *
  */
-static bool isErased(EMCNANDDriver *dp, size_t block){
+static bool is_erased(NANDDriver *dp, size_t block){
   uint32_t page = 0;
   size_t i = 0;
 
-  for (page=0; page<EMCNANDD1.config->pages_per_block; page++){
-    emcnandReadPageData(dp, block, page, nand_buf, EMCNANDD1.config->page_data_size, NULL);
-    emcnandReadPageSpare(dp, block, page, &nand_buf[2048], EMCNANDD1.config->page_spare_size);
+  for (page=0; page<NANDD1.config->pages_per_block; page++){
+    nandReadPageData(dp, block, page, nand_buf, NANDD1.config->page_data_size, NULL);
+    nandReadPageSpare(dp, block, page, &nand_buf[2048], NANDD1.config->page_spare_size);
     for (i=0; i<sizeof(nand_buf); i++) {
       if (nand_buf[i] != 0xFF)
         return false;
@@ -278,37 +273,37 @@ static void pattern_fill(void) {
   osalDbgCheck(0 == memcmp(ref_buf, nand_buf, NAND_PAGE_SIZE));
 }
 
-#if EMCNAND_USE_KILL_TEST
-static void kill_block(EMCNANDDriver *emcnandp, uint32_t block){
+#if USE_KILL_BLOCK_TEST
+static void kill_block(NANDDriver *nandp, uint32_t block){
 
   size_t i = 0;
   size_t page = 0;
   uint8_t op_status;
 
   /* This test require good block.*/
-  osalDbgCheck(!emcnandIsBad(emcnandp, block));
+  osalDbgCheck(!nandIsBad(nandp, block));
 
   while(true){
-    op_status = emcnandErase(&EMCNANDD1, block);
+    op_status = nandErase(&NANDD1, block);
     if (0 != (op_status & 1)){
-      if(!isErased(emcnandp, block))
+      if(!is_erased(nandp, block))
         osalSysHalt("Block successfully killed");
     }
-    if(!isErased(emcnandp, block))
+    if(!is_erased(nandp, block))
       osalSysHalt("Block block not erased, but erase operation report success");
 
-    for (page=0; page<emcnandp->config->pages_per_block; page++){
+    for (page=0; page<nandp->config->pages_per_block; page++){
       memset(nand_buf, 0, NAND_PAGE_SIZE);
-      op_status = emcnandWritePageWhole(emcnandp, block, page, nand_buf, NAND_PAGE_SIZE);
+      op_status = nandWritePageWhole(nandp, block, page, nand_buf, NAND_PAGE_SIZE);
       if (0 != (op_status & 1)){
-        emcnandReadPageWhole(emcnandp, block, page, nand_buf, NAND_PAGE_SIZE);
+        nandReadPageWhole(nandp, block, page, nand_buf, NAND_PAGE_SIZE);
         for (i=0; i<NAND_PAGE_SIZE; i++){
           if (nand_buf[i] != 0)
             osalSysHalt("Block successfully killed");
         }
       }
 
-      emcnandReadPageWhole(emcnandp, block, page, nand_buf, NAND_PAGE_SIZE);
+      nandReadPageWhole(nandp, block, page, nand_buf, NAND_PAGE_SIZE);
       for (i=0; i<NAND_PAGE_SIZE; i++){
         if (nand_buf[i] != 0)
           osalSysHalt("Page write failed, but write operation report success");
@@ -317,7 +312,7 @@ static void kill_block(EMCNANDDriver *emcnandp, uint32_t block){
     KillCycle++;
   }
 }
-#endif /* EMCNAND_USE_KILL_TEST */
+#endif /* USE_KILL_BLOCK_TEST */
 
 typedef enum {
   ECC_NO_ERROR = 0,
@@ -370,7 +365,7 @@ static void invert_bit(uint8_t *buf, uint32_t byte, uint32_t bit){
 /*
  *
  */
-static void ecc_test(EMCNANDDriver *emcnandp, uint32_t block){
+static void ecc_test(NANDDriver *nandp, uint32_t block){
 
   uint32_t corrupted;
   uint32_t byte, bit;
@@ -380,18 +375,18 @@ static void ecc_test(EMCNANDDriver *emcnandp, uint32_t block){
   ecc_result_t ecc_result = ECC_NO_ERROR;
 
   /* This test requires good block.*/
-  osalDbgCheck(!emcnandIsBad(emcnandp, block));
-  if (!isErased(emcnandp, block))
-    emcnandErase(&EMCNANDD1, block);
+  osalDbgCheck(!nandIsBad(nandp, block));
+  if (!is_erased(nandp, block))
+    nandErase(&NANDD1, block);
 
   pattern_fill();
 
   /*** Correctable errors ***/
-  op_status = emcnandWritePageData(emcnandp, block, 0,
-                nand_buf, emcnandp->config->page_data_size, &ecc_ref);
+  op_status = nandWritePageData(nandp, block, 0,
+                nand_buf, nandp->config->page_data_size, &ecc_ref);
   osalDbgCheck(0 == (op_status & 1)); /* operation failed */
-  emcnandReadPageData(emcnandp, block, 0,
-                  nand_buf, emcnandp->config->page_data_size, &ecc_broken);
+  nandReadPageData(nandp, block, 0,
+                  nand_buf, nandp->config->page_data_size, &ecc_broken);
   ecc_result = parse_ecc(ecclen, ecc_ref, ecc_broken, &corrupted);
   osalDbgCheck(ECC_NO_ERROR == ecc_result); /* unexpected error */
 
@@ -399,8 +394,8 @@ static void ecc_test(EMCNANDDriver *emcnandp, uint32_t block){
   byte = 0;
   bit = 7;
   invert_bit(nand_buf, byte, bit);
-  op_status = emcnandWritePageData(emcnandp, block, 1,
-                nand_buf, emcnandp->config->page_data_size, &ecc_broken);
+  op_status = nandWritePageData(nandp, block, 1,
+                nand_buf, nandp->config->page_data_size, &ecc_broken);
   osalDbgCheck(0 == (op_status & 1)); /* operation failed */
   invert_bit(nand_buf, byte, bit);
   ecc_result = parse_ecc(ecclen, ecc_ref, ecc_broken, &corrupted);
@@ -411,8 +406,8 @@ static void ecc_test(EMCNANDDriver *emcnandp, uint32_t block){
   byte = 2047;
   bit = 0;
   invert_bit(nand_buf, byte, bit);
-  op_status = emcnandWritePageData(emcnandp, block, 2,
-                nand_buf, emcnandp->config->page_data_size, &ecc_broken);
+  op_status = nandWritePageData(nandp, block, 2,
+                nand_buf, nandp->config->page_data_size, &ecc_broken);
   osalDbgCheck(0 == (op_status & 1)); /* operation failed */
   invert_bit(nand_buf, byte, bit);
   ecc_result = parse_ecc(ecclen, ecc_ref, ecc_broken, &corrupted);
@@ -423,8 +418,8 @@ static void ecc_test(EMCNANDDriver *emcnandp, uint32_t block){
   byte = 1027;
   bit = 3;
   invert_bit(nand_buf, byte, bit);
-  op_status = emcnandWritePageData(emcnandp, block, 3,
-                nand_buf, emcnandp->config->page_data_size, &ecc_broken);
+  op_status = nandWritePageData(nandp, block, 3,
+                nand_buf, nandp->config->page_data_size, &ecc_broken);
   osalDbgCheck(0 == (op_status & 1)); /* operation failed */
   invert_bit(nand_buf, byte, bit);
   ecc_result = parse_ecc(ecclen, ecc_ref, ecc_broken, &corrupted);
@@ -435,8 +430,8 @@ static void ecc_test(EMCNANDDriver *emcnandp, uint32_t block){
   byte = 1027;
   invert_bit(nand_buf, byte, 3);
   invert_bit(nand_buf, byte, 4);
-  op_status = emcnandWritePageData(emcnandp, block, 4,
-                nand_buf, emcnandp->config->page_data_size, &ecc_broken);
+  op_status = nandWritePageData(nandp, block, 4,
+                nand_buf, nandp->config->page_data_size, &ecc_broken);
   osalDbgCheck(0 == (op_status & 1)); /* operation failed */
   invert_bit(nand_buf, byte, 3);
   invert_bit(nand_buf, byte, 4);
@@ -444,14 +439,14 @@ static void ecc_test(EMCNANDDriver *emcnandp, uint32_t block){
   osalDbgCheck(ECC_UNCORRECTABLE_ERROR == ecc_result); /* This error must be NOT correctable */
 
   /*** make clean ***/
-  emcnandErase(&EMCNANDD1, block);
+  nandErase(&NANDD1, block);
 }
 
 /*
  *
  */
-static void general_test (EMCNANDDriver *emcnandp, size_t first,
-                                        size_t last, size_t read_rounds){
+static void general_test (NANDDriver *nandp, size_t first,
+                                      size_t last, size_t read_rounds){
 
   size_t block, page, round;
   bool status;
@@ -470,9 +465,9 @@ static void general_test (EMCNANDDriver *emcnandp, size_t first,
 
   /* perform basic checks */
   for (block=first; block<last; block++){
-    if (!emcnandIsBad(emcnandp, block)){
-      if (!isErased(emcnandp, block)){
-        op_status = emcnandErase(emcnandp, block);
+    if (!nandIsBad(nandp, block)){
+      if (!is_erased(nandp, block)){
+        op_status = nandErase(nandp, block);
         osalDbgCheck(0 == (op_status & 1)); /* operation failed */
       }
     }
@@ -480,20 +475,20 @@ static void general_test (EMCNANDDriver *emcnandp, size_t first,
 
   /* write block with pattern, read it back and compare */
   for (block=first; block<last; block++){
-    if (!emcnandIsBad(emcnandp, block)){
-      for (page=0; page<emcnandp->config->pages_per_block; page++){
+    if (!nandIsBad(nandp, block)){
+      for (page=0; page<nandp->config->pages_per_block; page++){
         pattern_fill();
 
         //tmStartMeasurement(&tmu_write_data);
-        op_status = emcnandWritePageData(emcnandp, block, page,
-                      nand_buf, emcnandp->config->page_data_size, &wecc);
+        op_status = nandWritePageData(nandp, block, page,
+                      nand_buf, nandp->config->page_data_size, &wecc);
         //tmStopMeasurement(&tmu_write_data);
         osalDbgCheck(0 == (op_status & 1)); /* operation failed */
 
         //tmStartMeasurement(&tmu_write_spare);
-        op_status = emcnandWritePageSpare(emcnandp, block, page,
-                      nand_buf + emcnandp->config->page_data_size,
-                      emcnandp->config->page_spare_size);
+        op_status = nandWritePageSpare(nandp, block, page,
+                      nand_buf + nandp->config->page_data_size,
+                      nandp->config->page_spare_size);
         //tmStopMeasurement(&tmu_write_spare);
         osalDbgCheck(0 == (op_status & 1)); /* operation failed */
 
@@ -502,15 +497,15 @@ static void general_test (EMCNANDDriver *emcnandp, size_t first,
           memset(nand_buf, 0, NAND_PAGE_SIZE);
 
           //tmStartMeasurement(&tmu_read_data);
-          emcnandReadPageData(emcnandp, block, page,
-                      nand_buf, emcnandp->config->page_data_size, &recc);
+          nandReadPageData(nandp, block, page,
+                      nand_buf, nandp->config->page_data_size, &recc);
           //tmStopMeasurement(&tmu_read_data);
           osalDbgCheck(0 == (recc ^ wecc)); /* ECC error detected */
 
           //tmStartMeasurement(&tmu_read_spare);
-          emcnandReadPageSpare(emcnandp, block, page,
-                      nand_buf + emcnandp->config->page_data_size,
-                      emcnandp->config->page_spare_size);
+          nandReadPageSpare(nandp, block, page,
+                      nand_buf + nandp->config->page_data_size,
+                      nandp->config->page_spare_size);
           //tmStopMeasurement(&tmu_read_spare);
 
           osalDbgCheck(0 == memcmp(ref_buf, nand_buf, NAND_PAGE_SIZE)); /* Read back failed */
@@ -519,13 +514,13 @@ static void general_test (EMCNANDDriver *emcnandp, size_t first,
 
       /* make clean */
       //tmStartMeasurement(&tmu_erase);
-      op_status = emcnandErase(emcnandp, block);
+      op_status = nandErase(nandp, block);
       //tmStopMeasurement(&tmu_erase);
       osalDbgCheck(0 == (op_status & 1)); /* operation failed */
 
-      status = isErased(emcnandp, block);
+      status = is_erased(nandp, block);
       osalDbgCheck(true == status); /* blocks was not erased successfully */
-    }/* if (!emcnandIsBad(emcnandp, block)){ */
+    }/* if (!nandIsBad(nandp, block)){ */
   }
   red_led_off();
 }
@@ -552,7 +547,7 @@ int main(void) {
   volatile int32_t uart_its_idle = 0;
   volatile uint32_t idle_thread_cnt = 0;
 
-  #if EMCNAND_USE_KILL_TEST
+  #if USE_KILL_BLOCK_TEST
   size_t kill = 8000;
   #endif
 
@@ -566,11 +561,10 @@ int main(void) {
   halInit();
   chSysInit();
 
-  emcStart(&EMCD1, &emccfg);
-#if !STM32_EMC_EMCNAND_USE_FSMC_INT
+#if !STM32_NAND_USE_FSMC_INT
   extStart(&EXTD1, &extcfg);
 #endif
-  emcnandStart(&EMCNANDD1, &nandcfg);
+  nandStart(&NANDD1, &nandcfg);
 
   chThdSleepMilliseconds(4000);
 
@@ -586,7 +580,7 @@ int main(void) {
   dma_storm_uart_start();
   dma_storm_spi_start();
   T = chVTGetSystemTimeX();
-  general_test(&EMCNANDD1, start, end, 1);
+  general_test(&NANDD1, start, end, 1);
   T = chVTGetSystemTimeX() - T;
   adc_its = dma_storm_adc_stop();
   uart_its = dma_storm_uart_stop();
@@ -609,10 +603,10 @@ int main(void) {
   osalDbgCheck(abs(uart_its - uart_its_idle) < (uart_its_idle / 20));
   osalDbgCheck(abs(spi_its - spi_its_idle)   < (spi_its_idle  / 10));
 
-  ecc_test(&EMCNANDD1, end);
+  ecc_test(&NANDD1, end);
 
-#if EMCNAND_USE_KILL_TEST
-  kill_block(&EMCNANDD1, kill);
+#if USE_KILL_BLOCK_TEST
+  kill_block(&NANDD1, kill);
 #endif
 
   nand_wp_assert();

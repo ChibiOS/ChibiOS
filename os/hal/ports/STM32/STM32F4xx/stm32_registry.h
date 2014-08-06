@@ -327,16 +327,16 @@
 #endif /* defined(STM32F401xx) */
 
 /* EMC attributes.*/
-#define STM32_HAS_EMC           TRUE
-#define STM32_EMC_DMA_MSK       (STM32_DMA_STREAM_ID_MSK(2, 0) |            \
-                                 STM32_DMA_STREAM_ID_MSK(2, 1) |            \
-                                 STM32_DMA_STREAM_ID_MSK(2, 2) |            \
-                                 STM32_DMA_STREAM_ID_MSK(2, 3) |            \
-                                 STM32_DMA_STREAM_ID_MSK(2, 4) |            \
-                                 STM32_DMA_STREAM_ID_MSK(2, 5) |            \
-                                 STM32_DMA_STREAM_ID_MSK(2, 6) |            \
-                                 STM32_DMA_STREAM_ID_MSK(2, 7))
-#define STM32_EMC_DMA_CHN       0x03010201
+#define STM32_HAS_FSMC                      TRUE
+#define STM32_FSMC_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(2, 0) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 2) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 3) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 4) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 5) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 6) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 7))
+#define STM32_FSMC_DMA_CHN                  0x03010201
 /** @} */
 
 #endif /* _STM32_REGISTRY_H_ */

@@ -304,13 +304,13 @@
 #define STM32_USB_OTGFIFO_FILL_BASEPRI      0
 
 /*
- * EMC driver system settings.
+ * FSMC driver system settings.
  */
-#define STM32_EMC_USE_FSMC1                 TRUE
-#define STM32_EMC_FSMC1_IRQ_PRIORITY        10
-#define STM32_EMC_EMCNAND_USE_FSMC_INT      FALSE
+#define STM32_FSMC_USE_FSMC1                TRUE
+#define STM32_FSMC_FSMC1_IRQ_PRIORITY       10
 
-#define STM32_EMCNAND_USE_EMCNAND1          TRUE
-#define STM32_EMCNAND_EMCNAND1_DMA_STREAM   STM32_DMA_STREAM_ID(2, 7)
-#define STM32_EMCNAND_EMCNAND1_DMA_PRIORITY 0
-#define STM32_EMCNAND_DMA_ERROR_HOOK(emcnandp) osalSysHalt("DMA failure")
+#define STM32_NAND_USE_FSMC_NAND1           TRUE
+#define STM32_NAND_USE_FSMC_INT             FALSE
+#define STM32_NAND_DMA_STREAM               STM32_DMA_STREAM_ID(2, 7)
+#define STM32_NAND_DMA_PRIORITY             0
+#define STM32_NAND_DMA_ERROR_HOOK(nandp)    osalSysHalt("DMA failure")

@@ -21,8 +21,8 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/ports/common/ARMCMx/nvic.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/TIMv1/st_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/USARTv1/serial_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/USARTv1/uart_lld.c \
-              ${CHIBIOS}/os/hal/ports/STM32/LLD/emc_lld.c \
-              ${CHIBIOS}/os/hal/ports/STM32/LLD/emcnand_lld.c
+              ${CHIBIOS}/os/hal/ports/STM32/LLD/FSMCv1/fsmc.c \
+              ${CHIBIOS}/os/hal/ports/STM32/LLD/FSMCv1/nand_lld.c
 
 # Required include directories
 PLATFORMINC = ${CHIBIOS}/os/hal/ports/common/ARMCMx \
@@ -35,4 +35,5 @@ PLATFORMINC = ${CHIBIOS}/os/hal/ports/common/ARMCMx \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/RTCv2 \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/SPIv1 \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/TIMv1 \
-              ${CHIBIOS}/os/hal/ports/STM32/LLD/USARTv1
+              ${CHIBIOS}/os/hal/ports/STM32/LLD/USARTv1 \
+              ${CHIBIOS}/os/hal/ports/STM32/LLD/FSMCv1
