@@ -1,5 +1,5 @@
 /*
- * Copyright © 2013-2014 Fabio Utzig, http://fabioutzig.com
+ * Copyright © 2014 Fabio Utzig, http://fabioutzig.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the “Software”),
@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
-#ifndef _KL25Z_H_
-#define _KL25Z_H_
+#ifndef _MK20D5_H_
+#define _MK20D5_H_
 
 /*
  * ==============================================================
@@ -31,46 +31,65 @@
 typedef enum IRQn
 {
 /******  Cortex-M0 Processor Exceptions Numbers ****************/
-  Reset_IRQn                    = -15,
+  InitialSP_IRQn                = -15,
+  InitialPC_IRQn                = -15,
   NonMaskableInt_IRQn           = -14,
   HardFault_IRQn                = -13,
+  MemoryManagement_IRQn         = -12,
+  BusFault_IRQn                 = -11,
+  UsageFault_IRQn               = -10,
   SVCall_IRQn                   = -5,
+  DebugMonitor_IRQn             = -4,
   PendSV_IRQn                   = -2,
   SysTick_IRQn                  = -1,
 
-/******  KL2x Specific Interrupt Numbers ***********************/
+/******  K20x Specific Interrupt Numbers ***********************/
   DMA0_IRQn                     = 0,
   DMA1_IRQn                     = 1,
   DMA2_IRQn                     = 2,
   DMA3_IRQn                     = 3,
-  Reserved0_IRQn                = 4,
-  FTFA_IRQn                     = 5,
-  PMC_IRQn                      = 6,
-  LLWU_IRQn                     = 7,
-  I2C0_IRQn                     = 8,
-  I2C1_IRQn                     = 9,
-  SPI0_IRQn                     = 10,
-  SPI1_IRQn                     = 11,
-  UART0_IRQn                    = 12,
-  UART1_IRQn                    = 13,
-  UART2_IRQn                    = 14,
-  ADC0_IRQn                     = 15,
-  CMP0_IRQn                     = 16,
-  TMP0_IRQn                     = 17,
-  TMP1_IRQn                     = 18,
-  TMP2_IRQn                     = 19,
-  RTC0_IRQn                     = 20,
-  RTC1_IRQn                     = 21,
-  PIT_IRQn                      = 22,
-  Reserved1_IRQn                = 23,
-  USB_OTG_IRQn                  = 24,
-  DAC0_IRQn                     = 25,
-  TSI0_IRQn                     = 26,
-  MCG_IRQn                      = 27,
-  LPTMR0_IRQn                   = 28,
-  Reserved2_IRQn                = 29,
-  PINA_IRQn                     = 30,
-  PIND_IRQn                     = 31,
+  DMAError_IRQn                 = 4,
+  DMA_IRQn                      = 5,
+  FlashMemComplete_IRQn         = 6,
+  FlashMemReadCollision_IRQn    = 7,
+  LowVoltageWarning_IRQn        = 8,
+  LLWU_IRQn                     = 9,
+  WDOG_IRQn                     = 10,
+  I2C0_IRQn                     = 11,
+  SPI0_IRQn                     = 12,
+  I2S0_IRQn                     = 13,
+  I2S1_IRQn                     = 14,
+  UART0_IRQn                    = 15,
+  UART0Status_IRQn              = 16,
+  UART0Error_IRQn               = 17,
+  UART1Status_IRQn              = 18,
+  UART1Error_IRQn               = 19,
+  UART2Status_IRQn              = 20,
+  UART2Error_IRQn               = 21,
+  ADC0_IRQn                     = 22,
+  CMP0_IRQn                     = 23,
+  CMP1_IRQn                     = 24,
+  FTM0_IRQn                     = 25,
+  FTM1_IRQn                     = 26,
+  CMT_IRQn                      = 27,
+  RTCAlarm_IRQn                 = 28,
+  RTCSeconds_IRQn               = 29,
+  PITChannel0_IRQn              = 30,
+  PITChannel1_IRQn              = 31,
+  PITChannel2_IRQn              = 32,
+  PITChannel3_IRQn              = 33,
+  PDB_IRQn                      = 34,
+  USB_OTG_IRQn                  = 35,
+  USBChargerDetect_IRQn         = 36,
+  TSI_IRQn                      = 37,
+  MCG_IRQn                      = 38,
+  LowPowerTimer_IRQn            = 39,
+  PINA_IRQn                     = 40,
+  PINB_IRQn                     = 41,
+  PINC_IRQn                     = 42,
+  PIND_IRQn                     = 43,
+  PINE_IRQn                     = 44,
+  SoftInitInt_IRQn              = 45,
 } IRQn_Type;
 
 /*
@@ -80,14 +99,14 @@ typedef enum IRQn
  */
 
 /**
- * @brief KL2x Interrupt Number Definition, according to the selected device
+ * @brief K20x Interrupt Number Definition, according to the selected device
  *        in @ref Library_configuration_section
  */
 #define __MPU_PRESENT             0
-#define __NVIC_PRIO_BITS          2
+#define __NVIC_PRIO_BITS          4
 #define __Vendor_SysTickConfig    0
 
-#include "core_cm0plus.h"        /* Cortex-M0+ processor and core peripherals */
+#include "core_cm4.h"            /* Cortex-M4 processor and core peripherals */
 
 typedef struct
 {
@@ -95,29 +114,26 @@ typedef struct
   __IO uint32_t SOPT1CFG;
        uint32_t RESERVED0[1023];
   __IO uint32_t SOPT2;
-  __I  uint32_t RESERVED1[1];
+       uint32_t RESERVED1[1];
   __IO uint32_t SOPT4;
   __IO uint32_t SOPT5;
        uint32_t RESERVED2[1];
   __IO uint32_t SOPT7;
        uint32_t RESERVED3[2];
-  __IO uint32_t SDID;
+  __I  uint32_t SDID;
        uint32_t RESERVED4[3];
   __IO uint32_t SCGC4;
   __IO uint32_t SCGC5;
   __IO uint32_t SCGC6;
   __IO uint32_t SCGC7;
   __IO uint32_t CLKDIV1;
-       uint32_t RESERVED5[1];
-  __IO uint32_t FCFG1;
-  __IO uint32_t FCFG2;
-       uint32_t RESERVED6[1];
-  __IO uint32_t UIDMH;
-  __IO uint32_t UIDML;
-  __IO uint32_t UIDL;
-       uint32_t RESERVED7[39];
-  __IO uint32_t COPC;
-  __IO uint32_t SRVCOP;
+  __IO uint32_t CLKDIV2;
+  __I  uint32_t FCFG1;
+  __I  uint32_t FCFG2;
+  __I  uint32_t UIDH;
+  __I  uint32_t UIDMH;
+  __I  uint32_t UIDML;
+  __I  uint32_t UIDL;
 } SIM_TypeDef;
 
 typedef struct
@@ -137,8 +153,8 @@ typedef struct
 typedef struct
 {
   __IO uint32_t PCR[32];
-  __IO uint32_t GPCLR;
-  __IO uint32_t GPCHR;
+  __O  uint32_t GPCLR;
+  __O  uint32_t GPCHR;
        uint32_t RESERVED0[6];
   __IO uint32_t ISFR;
 } PORT_TypeDef;
@@ -151,7 +167,7 @@ typedef struct
   __IO uint8_t  C4;
   __IO uint8_t  C5;
   __IO uint8_t  C6;
-  __IO uint8_t  S;
+  __I  uint8_t  S;
        uint8_t  RESERVED0[1];
   __IO uint8_t  SC;
        uint8_t  RESERVED1[1];
@@ -159,8 +175,6 @@ typedef struct
   __IO uint8_t  ATCVL;
   __IO uint8_t  C7;
   __IO uint8_t  C8;
-  __IO uint8_t  C9;
-  __IO uint8_t  C10;
 } MCG_TypeDef;
 
 typedef struct
@@ -323,6 +337,22 @@ typedef struct
   __IO uint8_t  C5;
 } UARTLP_TypeDef;
 
+typedef struct
+{
+  __IO uint16_t STCTRLH;
+  __IO uint16_t STCTRLL;
+  __IO uint16_t TOVALH;
+  __IO uint16_t TOVALL;
+  __IO uint16_t WINH;
+  __IO uint16_t WINL;
+  __IO uint16_t REFRESH;
+  __IO uint16_t UNLOCK;
+  __IO uint16_t TMROUTH;
+  __IO uint16_t TMROUTL;
+  __IO uint16_t RSTCNT;
+  __IO uint16_t PRESC;
+} WDOG_TypeDef;
+
 /****************************************************************/
 /*                  Peripheral memory map                       */
 /****************************************************************/
@@ -340,6 +370,7 @@ typedef struct
 #define PORTC_BASE              ((uint32_t)0x4004B000)
 #define PORTD_BASE              ((uint32_t)0x4004C000)
 #define PORTE_BASE              ((uint32_t)0x4004D000)
+#define WDOG_BASE               ((uint32_t)0x40052000)
 #define MCG_BASE                ((uint32_t)0x40064000)
 #define OSC0_BASE               ((uint32_t)0x40065000)
 #define I2C0_BASE               ((uint32_t)0x40066000)
@@ -374,8 +405,9 @@ typedef struct
 #define PORTC                   ((PORT_TypeDef  *)   PORTC_BASE)
 #define PORTD                   ((PORT_TypeDef  *)   PORTD_BASE)
 #define PORTE                   ((PORT_TypeDef  *)   PORTE_BASE)
+#define WDOG                    ((WDOG_TypeDef  *)   WDOG_BASE)
 #define MCG                     ((MCG_TypeDef  *)    MCG_BASE)
-#define OSC0                    ((OSC_TypeDef  *)    OSC0_BASE)
+#define OSC                     ((OSC_TypeDef  *)    OSC0_BASE)
 #define SPI0                    ((SPI_TypeDef *)     SPI0_BASE)
 #define SPI1                    ((SPI_TypeDef *)     SPI1_BASE)
 #define I2C0                    ((I2C_TypeDef *)     I2C0_BASE)
@@ -402,9 +434,12 @@ typedef struct
 #define SIM_SOPT1_USBREGEN           ((uint32_t)0x80000000)    /*!< USB voltage regulator enable */
 #define SIM_SOPT1_USBSSTBY           ((uint32_t)0x40000000)    /*!< USB voltage regulator in standby mode during Stop, VLPS, LLS and VLLS modes */
 #define SIM_SOPT1_USBVSTBY           ((uint32_t)0x20000000)    /*!< USB voltage regulator in standby mode during VLPR and VLPW modes */
-#define SIM_SOPT1_OSC32KSEL_SHIFT    18                                                                            			 /*!< 32K oscillator clock select (shift) */
-#define SIM_SOPT1_OSC32KSEL_MASK     ((uint32_t)((uint32_t)0x03 << SIM_SOPT1_OSC32KSEL_SHIFT))                          	 /*!< 32K oscillator clock select (mask) */
+#define SIM_SOPT1_OSC32KSEL_SHIFT    18                        /*!< 32K oscillator clock select (shift) */
+#define SIM_SOPT1_OSC32KSEL_MASK     ((uint32_t)((uint32_t)0x3 << SIM_SOPT1_OSC32KSEL_SHIFT))                              /*!< 32K oscillator clock select (mask) */
 #define SIM_SOPT1_OSC32KSEL(x)       ((uint32_t)(((uint32_t)(x) << SIM_SOPT1_OSC32KSEL_SHIFT) & SIM_SOPT1_OSC32KSEL_MASK))  /*!< 32K oscillator clock select */
+#define SIM_SOPT1_RAMSIZE_SHIFT      12
+#define SIM_SOPT1_RAMSIZE_MASK       ((uint32_t)((uint32_t)0xf << SIM_SOPT1_RAMSIZE_SHIFT))
+#define SIM_SOPT1_RAMSIZE(x)         ((uint32_t)(((uint32_t)(x) << SIM_SOPT1_RAMSIZE_SHIFT) & SIM_SOPT1_RAMSIZE_MASK))
 
 /*******  Bits definition for SIM_SOPT1CFG register  ************/
 #define SIM_SOPT1CFG_USSWE           ((uint32_t)0x04000000)    /*!< USB voltage regulator stop standby write enable */
@@ -412,29 +447,14 @@ typedef struct
 #define SIM_SOPT1CFG_URWE            ((uint32_t)0x01000000)    /*!< USB voltage regulator voltage regulator write enable */
 
 /*******  Bits definition for SIM_SOPT2 register  ************/
-#define SIM_SOPT2_UART0SRC_SHIFT     26                                                                                   /*!< UART0 clock source select (shift) */
-#define SIM_SOPT2_UART0SRC_MASK      ((uint32_t)((uint32_t)0x03 << SIM_SOPT2_UART0SRC_SHIFT))                             /*!< UART0 clock source select (mask) */
-#define SIM_SOPT2_UART0SRC(x)        ((uint32_t)(((uint32_t)(x) << SIM_SOPT2_UART0SRC_SHIFT) & SIM_SOPT2_UART0SRC_MASK))  /*!< UART0 clock source select */
-#define SIM_SOPT2_TPMSRC_SHIFT       24                                                                               /*!< TPM clock source select (shift) */
-#define SIM_SOPT2_TPMSRC_MASK        ((uint32_t)((uint32_t)0x03 << SIM_SOPT2_TPMSRC_SHIFT))                           /*!< TPM clock source select (mask) */
-#define SIM_SOPT2_TPMSRC(x)          ((uint32_t)(((uint32_t)(x) << SIM_SOPT2_TPMSRC_SHIFT) & SIM_SOPT2_TPMSRC_MASK))  /*!< TPM clock source select */
 #define SIM_SOPT2_USBSRC             ((uint32_t)0x00040000)    /*!< USB clock source select */
 #define SIM_SOPT2_PLLFLLSEL          ((uint32_t)0x00010000)    /*!< PLL/FLL clock select */
-#define SIM_SOPT2_CLKOUTSEL_SHIFT    5                                                                                      /*!< CLKOUT select (shift) */
-#define SIM_SOPT2_CLKOUTSEL_MASK     ((uint32_t)((uint32_t)0x07 << SIM_SOPT2_CLKOUTSEL_SHIFT))                              /*!< CLKOUT select (mask) */
-#define SIM_SOPT2_CLKOUTSEL(x)       ((uint32_t)(((uint32_t)(x) << SIM_SOPT2_CLKOUTSEL_SHIFT) & SIM_SOPT2_CLKOUTSEL_MASK))  /*!< CLKOUT select */
+#define SIM_SOPT2_TRACECLKSEL        ((uint32_t)0x00001000)
+#define SIM_SOPT2_PTD7PAD            ((uint32_t)0x00000800)
+#define SIM_SOPT2_CLKOUTSEL_SHIFT    5
+#define SIM_SOPT2_CLKOUTSEL_MASK     ((uint32_t)((uint32_t)0x7 << SIM_SOPT2_CLKOUTSEL_SHIFT))
+#define SIM_SOPT2_CLKOUTSEL(x)       ((uint32_t)(((uint32_t)(x) << SIM_SOPT2_CLKOUTSEL_SHIFT) & SIM_SOPT2_CLKOUTSEL_MASK))
 #define SIM_SOPT2_RTCCLKOUTSEL       ((uint32_t)0x00000010)    /*!< RTC clock out select */
-
-/*******  Bits definition for SIM_SCGC4 register  ************/
-#define SIM_SCGC4_SPI1               ((uint32_t)0x00800000)    /*!< SPI1 Clock Gate Control */
-#define SIM_SCGC4_SPI0               ((uint32_t)0x00400000)    /*!< SPI0 Clock Gate Control */
-#define SIM_SCGC4_CMP                ((uint32_t)0x00080000)    /*!< Comparator Clock Gate Control */
-#define SIM_SCGC4_USBOTG             ((uint32_t)0x00040000)    /*!< USB Clock Gate Control */
-#define SIM_SCGC4_UART2              ((uint32_t)0x00001000)    /*!< UART2 Clock Gate Control */
-#define SIM_SCGC4_UART1              ((uint32_t)0x00000800)    /*!< UART1 Clock Gate Control */
-#define SIM_SCGC4_UART0              ((uint32_t)0x00000400)    /*!< UART0 Clock Gate Control */
-#define SIM_SCGC4_I2C1               ((uint32_t)0x00000080)    /*!< I2C1 Clock Gate Control */
-#define SIM_SCGC4_I2C0               ((uint32_t)0x00000040)    /*!< I2C0 Clock Gate Control */
 
 /*******  Bits definition for SIM_SCGC5 register  ************/
 #define SIM_SCGC5_PORTE              ((uint32_t)0x00002000)    /*!< Port E Clock Gate Control */
@@ -443,15 +463,24 @@ typedef struct
 #define SIM_SCGC5_PORTB              ((uint32_t)0x00000400)    /*!< Port B Clock Gate Control */
 #define SIM_SCGC5_PORTA              ((uint32_t)0x00000200)    /*!< Port A Clock Gate Control */
 #define SIM_SCGC5_TSI                ((uint32_t)0x00000020)    /*!< TSI Access Control */
-#define SIM_SCGC5_LPTMR              ((uint32_t)0x00000001)    /*!< Low Power Timer Access Control */
+#define SIM_SCGC5_LPTIMER            ((uint32_t)0x00000001)    /*!< Low Power Timer Access Control */
 
 /******  Bits definition for SIM_CLKDIV1 register  ***********/
-#define SIM_CLKDIV1_OUTDIV1_SHIFT    28                                                                            			 /*!< Clock 1 output divider value (shift) */
-#define SIM_CLKDIV1_OUTDIV1_MASK     ((uint32_t)((uint32_t)0x0F << SIM_CLKDIV1_OUTDIV1_SHIFT))                          	 /*!< Clock 1 output divider value (mask) */
-#define SIM_CLKDIV1_OUTDIV1(x)       ((uint32_t)(((uint32_t)(x) << SIM_CLKDIV1_OUTDIV1_SHIFT) & SIM_CLKDIV1_OUTDIV1_MASK))  /*!< Clock 1 output divider value */
-#define SIM_CLKDIV1_OUTDIV4_SHIFT    16                                                                            			 /*!< Clock 4 output divider value (shift) */
-#define SIM_CLKDIV1_OUTDIV4_MASK     ((uint32_t)((uint32_t)0x07 << SIM_CLKDIV1_OUTDIV4_SHIFT))                          	 /*!< Clock 4 output divider value (mask) */
-#define SIM_CLKDIV1_OUTDIV4(x)       ((uint32_t)(((uint32_t)(x) << SIM_CLKDIV1_OUTDIV4_SHIFT) & SIM_CLKDIV1_OUTDIV4_MASK))  /*!< Clock 4 output divider value */
+#define SIM_CLKDIV1_OUTDIV1_SHIFT    28
+#define SIM_CLKDIV1_OUTDIV1_MASK     ((uint32_t)((uint32_t)0xF << SIM_CLKDIV1_OUTDIV1_SHIFT))
+#define SIM_CLKDIV1_OUTDIV1(x)       ((uint32_t)(((uint32_t)(x) << SIM_CLKDIV1_OUTDIV1_SHIFT) & SIM_CLKDIV1_OUTDIV1_MASK))
+#define SIM_CLKDIV1_OUTDIV2_SHIFT    24
+#define SIM_CLKDIV1_OUTDIV2_MASK     ((uint32_t)((uint32_t)0xF << SIM_CLKDIV1_OUTDIV2_SHIFT))
+#define SIM_CLKDIV1_OUTDIV2(x)       ((uint32_t)(((uint32_t)(x) << SIM_CLKDIV1_OUTDIV2_SHIFT) & SIM_CLKDIV1_OUTDIV2_MASK))
+#define SIM_CLKDIV1_OUTDIV4_SHIFT    16
+#define SIM_CLKDIV1_OUTDIV4_MASK     ((uint32_t)((uint32_t)0x7 << SIM_CLKDIV1_OUTDIV4_SHIFT))
+#define SIM_CLKDIV1_OUTDIV4(x)       ((uint32_t)(((uint32_t)(x) << SIM_CLKDIV1_OUTDIV4_SHIFT) & SIM_CLKDIV1_OUTDIV4_MASK))
+
+/******  Bits definition for SIM_CLKDIV2 register  ***********/
+#define SIM_CLKDIV2_USBDIV_SHIFT     1
+#define SIM_CLKDIV2_USBDIV_MASK      ((uint32_t)((uint32_t)0x7 << SIM_CLKDIV2_USBDIV_SHIFT))
+#define SIM_CLKDIV2_USBDIV(x)        ((uint32_t)(((uint32_t)(x) << SIM_CLKDIV2_USBDIV_SHIFT) & SIM_CLKDIV2_USBDIV_MASK))
+#define SIM_CLKDIV2_USBFRAC          ((uint32_t)0x00000001)
 
 /****************************************************************/
 /*                                                              */
@@ -586,12 +615,16 @@ typedef struct
 /*                                                              */
 /****************************************************************/
 /********  Bits definition for PORTx_PCRn register  *************/
-#define PORTx_PCRn_ISR               ((uint32_t)0x01000000)    /*!< Interrupt Status Flag */
-#define PORTx_PCRn_IRQC              ((uint32_t)0x000F0000)    /*!< Interrupt Configuration */
+#define PORTx_PCRn_ISF               ((uint32_t)0x01000000)    /*!< Interrupt Status Flag */
+#define PORTx_PCRn_IRQC_SHIFT        16
+#define PORTx_PCRn_IRQC_MASK         ((uint32_t)((uint32_t)0xF << PORTx_PCRn_IRQC_SHIFT))
+#define PORTx_PCRn_IRQC(x)           ((uint32_t)(((uint32_t)(x) << PORTx_PCRn_IRQC_SHIFT) & PORTx_PCRn_IRQC_MASK))
+#define PORTx_PCRn_LK                ((uint32_t)0x00008000)    /*!< Lock Register */
 #define PORTx_PCRn_MUX_SHIFT         8                         /*!< Pin Mux Control (shift) */
-#define PORTx_PCRn_MUX_MASK          ((uint32_t)0x00000700)    /*!< Pin Mux Control (mask) */
+#define PORTx_PCRn_MUX_MASK          ((uint32_t)((uint32_t)0x7 << PORTx_PCRn_MUX_SHIFT))   /*!< Pin Mux Control (mask) */
 #define PORTx_PCRn_MUX(x)            ((uint32_t)(((uint32_t)(x) << PORTx_PCRn_MUX_SHIFT) & PORTx_PCRn_MUX_MASK))  /*!< Pin Mux Control */
 #define PORTx_PCRn_DSE               ((uint32_t)0x00000040)    /*!< Drive Strength Enable */
+#define PORTx_PCRn_ODE               ((uint32_t)0x00000020)    /*!< Open Drain Enable */
 #define PORTx_PCRn_PFE               ((uint32_t)0x00000010)    /*!< Passive Filter Enable */
 #define PORTx_PCRn_SRE               ((uint32_t)0x00000004)    /*!< Slew Rate Enable */
 #define PORTx_PCRn_PE                ((uint32_t)0x00000002)    /*!< Pull Enable */
@@ -818,80 +851,73 @@ typedef struct
 /****************************************************************/
 /***********  Bits definition for MCG_C1 register  **************/
 #define MCG_C1_CLKS_SHIFT           6                                                           /*!< Clock source select (shift) */
-#define MCG_C1_CLKS_MASK            ((uint8_t)((uint8_t)0x03 << MCG_C1_CLKS_SHIFT))             /*!< Clock source select (mask) */
+#define MCG_C1_CLKS_MASK            ((uint8_t)((uint8_t)0x3 << MCG_C1_CLKS_SHIFT))             /*!< Clock source select (mask) */
 #define MCG_C1_CLKS(x)              ((uint8_t)(((uint8_t)(x) << MCG_C1_CLKS_SHIFT) & MCG_C1_CLKS_MASK))  /*!< Clock source select */
 #define MCG_C1_CLKS_FLLPLL          MCG_C1_CLKS(0)  /*!< Select output of FLL or PLL, depending on PLLS control bit */
 #define MCG_C1_CLKS_IRCLK           MCG_C1_CLKS(1)  /*!< Select internal reference clock */
 #define MCG_C1_CLKS_ERCLK           MCG_C1_CLKS(2)  /*!< Select external reference clock */
 #define MCG_C1_FRDIV_SHIFT          3                                                           /*!< FLL External Reference Divider (shift) */
-#define MCG_C1_FRDIV_MASK           ((uint8_t)((uint8_t)0x07 << MCG_C1_FRDIV_SHIFT))            /*!< FLL External Reference Divider (mask) */
+#define MCG_C1_FRDIV_MASK           ((uint8_t)((uint8_t)0x7 << MCG_C1_FRDIV_SHIFT))            /*!< FLL External Reference Divider (mask) */
 #define MCG_C1_FRDIV(x)             ((uint8_t)(((uint8_t)(x) << MCG_C1_FRDIV_SHIFT) & MCG_C1_FRDIV_MASK))  /*!< FLL External Reference Divider */
-#define MCG_C1_IREFS                ((uint8_t)((uint8_t)1 << 2))                                /*!< Internal Reference Select (0=ERCLK; 1=slow IRCLK) */
-#define MCG_C1_IRCLKEN              ((uint8_t)((uint8_t)1 << 1))                                /*!< Internal Reference Clock Enable */
-#define MCG_C1_IREFSTEN             ((uint8_t)((uint8_t)1 << 0))                                /*!< Internal Reference Stop Enable */
+#define MCG_C1_IREFS                ((uint8_t)0x04) /*!< Internal Reference Select (0=ERCLK; 1=slow IRCLK) */
+#define MCG_C1_IRCLKEN              ((uint8_t)0x02) /*!< Internal Reference Clock Enable */
+#define MCG_C1_IREFSTEN             ((uint8_t)0x01) /*!< Internal Reference Stop Enable */
 
 /***********  Bits definition for MCG_C2 register  **************/
-#define MCG_C2_LOCRE0               ((uint8_t)((uint8_t)1 << 7))                                /*!< Loss of Clock Reset Enable */
-#define MCG_C2_RANGE0_SHIFT         4                                                           /*!< Frequency Range Select (shift) */
-#define MCG_C2_RANGE0_MASK          ((uint8_t)((uint8_t)0x03 << MCG_C2_RANGE0_SHIFT))           /*!< Frequency Range Select (mask) */
+#define MCG_C2_LOCRE0               ((uint8_t)0x80) /*!< Loss of Clock Reset Enable */
+#define MCG_C2_RANGE0_SHIFT         4               /*!< Frequency Range Select (shift) */
+#define MCG_C2_RANGE0_MASK          ((uint8_t)((uint8_t)0x3 << MCG_C2_RANGE0_SHIFT))  /*!< Frequency Range Select (mask) */
 #define MCG_C2_RANGE0(x)            ((uint8_t)(((uint8_t)(x) << MCG_C2_RANGE0_SHIFT) & MCG_C2_RANGE0_MASK))  /*!< Frequency Range Select */
-#define MCG_C2_HGO0                 ((uint8_t)((uint8_t)1 << 3))                                /*!< High Gain Oscillator Select (0=low power; 1=high gain) */
-#define MCG_C2_EREFS0               ((uint8_t)((uint8_t)1 << 2))                                /*!< External Reference Select (0=clock; 1=oscillator) */
-#define MCG_C2_LP                   ((uint8_t)((uint8_t)1 << 1))                                /*!< Low Power Select (1=FLL/PLL disabled in bypass modes) */
-#define MCG_C2_IRCS                 ((uint8_t)((uint8_t)1 << 0))                                /*!< Internal Reference Clock Select (0=slow; 1=fast) */
-
-/***********  Bits definition for MCG_C3 register  **************/
-#define MCG_C3_SCTRIM_SHIFT         0                                                           /*!< Slow Internal Reference Clock Trim Setting (shift) */
-#define MCG_C3_SCTRIM_MASK          ((uint8_t)((uint8_t)0xFF << MCG_C3_SCTRIM_SHIFT))           /*!< Slow Internal Reference Clock Trim Setting (mask) */
-#define MCG_C3_SCTRIM(x)            ((uint8_t)(((uint8_t)(x) << MCG_C3_SCTRIM_SHIFT) & MCG_C3_SCTRIM_MASK))  /*!< Slow Internal Reference Clock Trim Setting */
+#define MCG_C2_HGO0                 ((uint8_t)0x08) /*!< High Gain Oscillator Select (0=low power; 1=high gain) */
+#define MCG_C2_EREFS0               ((uint8_t)0x04) /*!< External Reference Select (0=clock; 1=oscillator) */
+#define MCG_C2_LP                   ((uint8_t)0x02) /*!< Low Power Select (1=FLL/PLL disabled in bypass modes) */
+#define MCG_C2_IRCS                 ((uint8_t)0x01) /*!< Internal Reference Clock Select (0=slow; 1=fast) */
 
 /***********  Bits definition for MCG_C4 register  **************/
-#define MCG_C4_DMX32                ((uint8_t)((uint8_t)1 << 7))                                /*!< DCO Maximum Frequency with 32.768 kHz Reference */
-#define MCG_C4_DRST_DRS_SHIFT       5                                                           /*!< DCO Range Select (shift) */
-#define MCG_C4_DRST_DRS_MASK        ((uint8_t)((uint8_t)0x03 << MCG_C4_DRST_DRS_SHIFT))         /*!< DCO Range Select (mask) */
+#define MCG_C4_DMX32                ((uint8_t)0x80) /*!< DCO Maximum Frequency with 32.768 kHz Reference */
+#define MCG_C4_DRST_DRS_SHIFT       5               /*!< DCO Range Select (shift) */
+#define MCG_C4_DRST_DRS_MASK        ((uint8_t)((uint8_t)0x3 << MCG_C4_DRST_DRS_SHIFT)) /*!< DCO Range Select (mask) */
 #define MCG_C4_DRST_DRS(x)          ((uint8_t)(((uint8_t)(x) << MCG_C4_DRST_DRS_SHIFT) & MCG_C4_DRST_DRS_MASK))  /*!< DCO Range Select */
-#define MCG_C4_FCTRIM_SHIFT         1                                                           /*!< Fast Internal Reference Clock Trim Setting (shift) */
-#define MCG_C4_FCTRIM_MASK          ((uint8_t)((uint8_t)0x0F << MCG_C4_FCTRIM_SHIFT))           /*!< Fast Internal Reference Clock Trim Setting (mask) */
+#define MCG_C4_FCTRIM_SHIFT         1               /*!< Fast Internal Reference Clock Trim Setting (shift) */
+#define MCG_C4_FCTRIM_MASK          ((uint8_t)((uint8_t)0xF << MCG_C4_FCTRIM_SHIFT))   /*!< Fast Internal Reference Clock Trim Setting (mask) */
 #define MCG_C4_FCTRIM(x)            ((uint8_t)(((uint8_t)(x) << MCG_C4_FCTRIM_SHIFT) & MCG_C4_FCTRIM_MASK))  /*!< Fast Internal Reference Clock Trim Setting */
-#define MCG_C4_SCFTRIM              ((uint8_t)((uint8_t)1 << 0))                                /*!< Slow Internal Reference Clock Fine Trim */
+#define MCG_C4_SCFTRIM              ((uint8_t)0x01) /*!< Slow Internal Reference Clock Fine Trim */
 
 /***********  Bits definition for MCG_C5 register  **************/
-#define MCG_C5_PLLCLKEN0            ((uint8_t)((uint8_t)1 << 6))                                /*!< PLL Clock Enable */
-#define MCG_C5_PLLSTEN0             ((uint8_t)((uint8_t)1 << 5))                                /*!< PLL Stop Enable */
-#define MCG_C5_PRDIV0_SHIFT         0                                                           /*!< PLL External Reference Divider (shift) */
-#define MCG_C5_PRDIV0_MASK          ((uint8_t)((uint8_t)0x1F << MCG_C5_PRDIV0_SHIFT))           /*!< PLL External Reference Divider (mask) */
-#define MCG_C5_PRDIV0(x)            ((uint8_t)(((uint8_t)(x) << MCG_C5_PRDIV0_SHIFT) & MCG_C5_PRDIV0_MASK))  /*!< PLL External Reference Divider */
+#define MCG_C5_PLLCLKEN0            ((uint8_t)0x40) /*!< PLL Clock Enable */
+#define MCG_C5_PLLSTEN0             ((uint8_t)0x20) /*!< PLL Stop Enable */
+#define MCG_C5_PRDIV0_MASK          ((uint8_t)0x1F) /*!< PLL External Reference Divider (mask) */
+#define MCG_C5_PRDIV0(x)            ((uint8_t)((uint8_t)(x) & MCG_C5_PRDIV0_MASK))  /*!< PLL External Reference Divider */
 
 /***********  Bits definition for MCG_C6 register  **************/
-#define MCG_C6_LOLIE0               ((uint8_t)((uint8_t)1 << 7))                                /*!< Loss of Lock Interrupt Enable */
-#define MCG_C6_PLLS                 ((uint8_t)((uint8_t)1 << 6))                                /*!< PLL Select */
-#define MCG_C6_CME0                 ((uint8_t)((uint8_t)1 << 5))                                /*!< Clock Monitor Enable */
-#define MCG_C6_VDIV0_SHIFT          0                                                           /*!< VCO 0 Divider (shift) */
-#define MCG_C6_VDIV0_MASK           ((uint8_t)((uint8_t)0x1F << MCG_C6_VDIV0_SHIFT))            /*!< VCO 0 Divider (mask) */
-#define MCG_C6_VDIV0(x)             ((uint8_t)(((uint8_t)(x) << MCG_C6_VDIV0_SHIFT) & MCG_C6_VDIV0_MASK))  /*!< VCO 0 Divider */
+#define MCG_C6_LOLIE0               ((uint8_t)0x80) /*!< Loss of Lock Interrupt Enable */
+#define MCG_C6_PLLS                 ((uint8_t)0x40) /*!< PLL Select */
+#define MCG_C6_CME0                 ((uint8_t)0x20) /*!< Clock Monitor Enable */
+#define MCG_C6_VDIV0_MASK           ((uint8_t)0x1F) /*!< VCO 0 Divider (mask) */
+#define MCG_C6_VDIV0(x)             ((uint8_t)((uint8_t)(x) & MCG_C6_VDIV0_MASK))  /*!< VCO 0 Divider */
 
 /************  Bits definition for MCG_S register  **************/
-#define MCG_S_LOLS                  ((uint8_t)((uint8_t)1 << 7))                                /*!< Loss of Lock Status */
-#define MCG_S_LOCK0                 ((uint8_t)((uint8_t)1 << 6))                                /*!< Lock Status */
-#define MCG_S_PLLST                 ((uint8_t)((uint8_t)1 << 5))                                /*!< PLL Select Status */
-#define MCG_S_IREFST                ((uint8_t)((uint8_t)1 << 4))                                /*!< Internal Reference Status */
-#define MCG_S_CLKST_SHIFT           2                                                           /*!< Clock Mode Status (shift) */
-#define MCG_S_CLKST_MASK            ((uint8_t)((uint8_t)0x03 << MCG_S_CLKST_SHIFT))             /*!< Clock Mode Status (mask) */
+#define MCG_S_LOLS                  ((uint8_t)0x80) /*!< Loss of Lock Status */
+#define MCG_S_LOCK0                 ((uint8_t)0x40) /*!< Lock Status */
+#define MCG_S_PLLST                 ((uint8_t)0x20) /*!< PLL Select Status */
+#define MCG_S_IREFST                ((uint8_t)0x10) /*!< Internal Reference Status */
+#define MCG_S_CLKST_SHIFT           2               /*!< Clock Mode Status (shift) */
+#define MCG_S_CLKST_MASK            ((uint8_t)((uint8_t)0x3 << MCG_S_CLKST_SHIFT))  /*!< Clock Mode Status (mask) */
 #define MCG_S_CLKST(x)              ((uint8_t)(((uint8_t)(x) << MCG_S_CLKST_SHIFT) & MCG_S_CLKST_MASK))  /*!< Clock Mode Status */
 #define MCG_S_CLKST_FLL             MCG_S_CLKST(0)   /*!< Output of the FLL is selected */
 #define MCG_S_CLKST_IRCLK           MCG_S_CLKST(1)   /*!< Internal reference clock is selected */
 #define MCG_S_CLKST_ERCLK           MCG_S_CLKST(2)   /*!< External reference clock is selected */
 #define MCG_S_CLKST_PLL             MCG_S_CLKST(3)   /*!< Output of the PLL is selected */
-#define MCG_S_OSCINIT0              ((uint8_t)((uint8_t)1 << 1))                                /*!< OSC Initialization */
-#define MCG_S_IRCST                 ((uint8_t)((uint8_t)1 << 0))                                /*!< Internal Reference Clock Status */
+#define MCG_S_OSCINIT0              ((uint8_t)0x02)  /*!< OSC Initialization */
+#define MCG_S_IRCST                 ((uint8_t)0x01)  /*!< Internal Reference Clock Status */
 
 /************  Bits definition for MCG_SC register  **************/
-#define MCG_SC_ATME                 ((uint8_t)((uint8_t)1 << 7))                                /*!< Automatic Trim Machine Enable */
-#define MCG_SC_ATMS                 ((uint8_t)((uint8_t)1 << 6))                                /*!< Automatic Trim Machine Select */
-#define MCG_SC_ATMF                 ((uint8_t)((uint8_t)1 << 5))                                /*!< Automatic Trim Machine Fail Flag */
-#define MCG_SC_FLTPRSRV             ((uint8_t)((uint8_t)1 << 4)                                 /*!< FLL Filter Preserve Enable */
-#define MCG_SC_FCRDIV_SHIFT         1                                                           /*!< Fast Clock Internal Reference Divider (shift) */
-#define MCG_SC_FCRDIV_MASK          ((uint8_t)((uint8_t)0x07 << MCG_SC_FCRDIV_SHIFT))           /*!< Fast Clock Internal Reference Divider (mask) */
+#define MCG_SC_ATME                 ((uint8_t)0x80)  /*!< Automatic Trim Machine Enable */
+#define MCG_SC_ATMS                 ((uint8_t)0x40)  /*!< Automatic Trim Machine Select */
+#define MCG_SC_ATMF                 ((uint8_t)0x20)  /*!< Automatic Trim Machine Fail Flag */
+#define MCG_SC_FLTPRSRV             ((uint8_t)0x10)  /*!< FLL Filter Preserve Enable */
+#define MCG_SC_FCRDIV_SHIFT         1                /*!< Fast Clock Internal Reference Divider (shift) */
+#define MCG_SC_FCRDIV_MASK          ((uint8_t)((uint8_t)0x7 << MCG_SC_FCRDIV_SHIFT))  /*!< Fast Clock Internal Reference Divider (mask) */
 #define MCG_SC_FCRDIV(x)            ((uint8_t)(((uint8_t)(x) << MCG_SC_FCRDIV_SHIFT) & MCG_SC_FCRDIV_MASK))  /*!< Fast Clock Internal Reference Divider */
 #define MCG_SC_FCRDIV_DIV1          MCG_SC_FCRDIV(0)  /*!< Divide Factor is 1 */
 #define MCG_SC_FCRDIV_DIV2          MCG_SC_FCRDIV(1)  /*!< Divide Factor is 2 */
@@ -901,30 +927,16 @@ typedef struct
 #define MCG_SC_FCRDIV_DIV32         MCG_SC_FCRDIV(5)  /*!< Divide Factor is 32 */
 #define MCG_SC_FCRDIV_DIV64         MCG_SC_FCRDIV(6)  /*!< Divide Factor is 64 */
 #define MCG_SC_FCRDIV_DIV128        MCG_SC_FCRDIV(7)  /*!< Divide Factor is 128 */
-#define MCG_SC_LOCS0                ((uint8_t)((uint8_t)1 << 0)                                 /*!< OSC0 Loss of Clock Status */
-
-/***********  Bits definition for MCG_ATCVH register  ************/
-#define MCG_ATCVH_ATCVH_SHIFT       0                                                           /*!< MCG Auto Trim Compare Value High Register (shift) */
-#define MCG_ATCVH_ATCVH_MASK        ((uint8_t)((uint8_t)0xFF << MCG_ATCVH_ATCVH_SHIFT))         /*!< MCG Auto Trim Compare Value High Register (mask) */
-#define MCG_ATCVH_ATCVH(x)          ((uint8_t)(((uint8_t)(x) << MCG_ATCVH_ATCVH_SHIFT) & MCG_ATCVH_ATCVH_MASK))  /*!< MCG Auto Trim Compare Value High Register */
-
-/***********  Bits definition for MCG_ATCVL register  ************/
-#define MCG_ATCVL_ATCVL_SHIFT       0                                                           /*!< MCG Auto Trim Compare Value Low Register (shift) */
-#define MCG_ATCVL_ATCVL_MASK        ((uint8_t)((uint8_t)0xFF << MCG_ATCVL_ATCVL_SHIFT))         /*!< MCG Auto Trim Compare Value Low Register (mask) */
-#define MCG_ATCVL_ATCVL(x)          ((uint8_t)(((uint8_t)(x) << MCG_ATCVL_ATCVL_SHIFT) & MCG_ATCVL_ATCVL_MASK))  /*!< MCG Auto Trim Compare Value Low Register */
+#define MCG_SC_LOCS0                ((uint8_t)0x01)   /*!< OSC0 Loss of Clock Status */
 
 /************  Bits definition for MCG_C7 register  **************/
-/* All MCG_C7 bits are reserved on the KL25Z. */
+#define MCG_C7_OSCSEL               ((uint8_t)0x01)   /*!< MCG OSC Clock Select */
 
 /************  Bits definition for MCG_C8 register  **************/
-#define MCG_C8_LOLRE                ((uint8_t)((uint8_t)1 << 6))                                /*!< PLL Loss of Lock Reset Enable */
-
-/************  Bits definition for MCG_C9 register  **************/
-/* All MCG_C9 bits are reserved on the KL25Z. */
-
-/************  Bits definition for MCG_C10 register  *************/
-/* All MCG_C10 bits are reserved on the KL25Z. */
-
+#define MCG_C8_LOCRE1               ((uint8_t)0x80)   /*!< PLL Loss of Clock Reset Enable */
+#define MCG_C8_LOLRE                ((uint8_t)0x40)   /*!< PLL Loss of Lock Reset Enable */
+#define MCG_C8_CME1                 ((uint8_t)0x20)   /*!< PLL Clock Monitor Enable */
+#define MCG_C8_LOCS1                ((uint8_t)0x01)   /*!< RTC Loss of Clock Status */
 
 /****************************************************************/
 /*                                                              */
@@ -1143,5 +1155,30 @@ typedef struct
 #define UARTx_C5_RDMAE               ((uint8_t)0x20)    /*!< Receiver Full DMA Enable */
 #define UARTx_C5_BOTHEDGE            ((uint8_t)0x02)    /*!< Both Edge Sampling */
 #define UARTx_C5_RESYNCDIS           ((uint8_t)0x01)    /*!< Resynchronization Disable */
+
+/****************************************************************/
+/*                                                              */
+/*                         Watchdog                             */
+/*                                                              */
+/****************************************************************/
+/********  Bits definition for WDOG_STCTRLH register  ***********/
+#define WDOG_STCTRLH_DISTESTWDOG     ((uint16_t)0x4000)
+#define WDOG_STCTRLH_BYTESEL_1_0     ((uint16_t)0x3000)
+#define WDOG_STCTRLH_TESTSEL         ((uint16_t)0x0800)
+#define WDOG_STCTRLH_TESTWDOG        ((uint16_t)0x0400)
+#define WDOG_STCTRLH_WAITEN          ((uint16_t)0x0080)
+#define WDOG_STCTRLH_STOPEN          ((uint16_t)0x0040)
+#define WDOG_STCTRLH_DBGEN           ((uint16_t)0x0020)
+#define WDOG_STCTRLH_ALLOWUPDATE     ((uint16_t)0x0010)
+#define WDOG_STCTRLH_WINEN           ((uint16_t)0x0008)
+#define WDOG_STCTRLH_IRQRSTEN        ((uint16_t)0x0004)
+#define WDOG_STCTRLH_CLKSRC          ((uint16_t)0x0002)
+#define WDOG_STCTRLH_WDOGEN          ((uint16_t)0x0001)
+
+/********  Bits definition for WDOG_STCTRLL register  ***********/
+#define WDOG_STCTRLL_INTFLG          ((uint16_t)0x8000)
+
+/*********  Bits definition for WDOG_PRESC register  ************/
+#define WDOG_PRESC_PRESCVAL          ((uint16_t)0x0700)
 
 #endif
