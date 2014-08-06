@@ -22,7 +22,7 @@
  * @{
  */
 
-#include "ch.h"
+#include "osal.h"
 #include "hal.h"
 
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
@@ -136,7 +136,7 @@ static void preload(SerialDriver *sdp) {
  * @brief   Driver output notification.
  */
 #if KINETIS_SERIAL_USE_UART0 || defined(__DOXYGEN__)
-static void notify1(GenericQueue *qp)
+static void notify1(io_queue_t *qp)
 {
   (void)qp;
   preload(&SD1);
@@ -144,7 +144,7 @@ static void notify1(GenericQueue *qp)
 #endif
 
 #if KINETIS_SERIAL_USE_UART1 || defined(__DOXYGEN__)
-static void notify2(GenericQueue *qp)
+static void notify2(io_queue_t *qp)
 {
   (void)qp;
   preload(&SD2);
@@ -152,7 +152,7 @@ static void notify2(GenericQueue *qp)
 #endif
 
 #if KINETIS_SERIAL_USE_UART2 || defined(__DOXYGEN__)
-static void notify3(GenericQueue *qp)
+static void notify3(io_queue_t *qp)
 {
   (void)qp;
   preload(&SD3);
