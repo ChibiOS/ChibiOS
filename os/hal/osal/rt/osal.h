@@ -131,13 +131,6 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-/* Temporary types provided for ChibiOS 2.x compatibility.*/
-typedef io_queue_t GenericQueue;
-typedef input_queue_t InputQueue;
-typedef output_queue_t OutputQueue;
-typedef bool bool_t;
-#define OSAL_FREQUENCY OSAL_ST_FREQUENCY
-
 #if 0
 /**
  * @brief   Type of a system status word.
