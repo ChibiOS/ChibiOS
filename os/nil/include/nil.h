@@ -256,7 +256,7 @@ typedef struct nil_thread thread_t;
        "be zero or greater than one"
 #endif
 
-#if NIL_CFG_ENABLE_ASSERTS
+#if NIL_CFG_ENABLE_ASSERTS || NIL_CFG_ENABLE_STACK_CHECK
 #define NIL_DBG_ENABLED                 TRUE
 #else
 #define NIL_DBG_ENABLED                 FALSE

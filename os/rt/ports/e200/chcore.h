@@ -356,7 +356,7 @@ struct context {
 #define port_switch(ntp, otp) {                                             \
   register struct port_intctx *sp asm ("%r1");                              \
   if ((stkalign_t *)(sp - 1) < otp->p_stklimit)                             \
-    chDbgPanic("stack overflow");                                           \
+    chSysHalt("stack overflow");                                            \
   _port_switch(ntp, otp);                                                   \
 }
 #endif
