@@ -264,7 +264,7 @@ typedef struct nil_thread thread_t;
 
 /** Boundaries of the idle thread boundaries, only required if stack checking
     is enabled.*/
-#if NIL_CFG_ENABLE_STACK_CHECK
+#if NIL_CFG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
 extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
 
 #define THD_IDLE_BASE                   (&__main_thread_stack_base__)
@@ -334,13 +334,13 @@ struct nil_thread {
     void                *p;     /**< @brief Generic pointer.                */
     thread_reference_t  *trp;   /**< @brief Pointer to thread reference.    */
     semaphore_t         *semp;  /**< @brief Pointer to semaphore.           */
-#if NIL_CFG_USE_EVENTS
+#if NIL_CFG_USE_EVENTS || defined(__DOXYGEN__)
     eventmask_t         ewmask; /**< @brief Enabled events mask.            */
 #endif
   } u1;
   volatile systime_t    timeout;/**< @brief Timeout counter, zero
                                             if disabled.                    */
-#if NIL_CFG_USE_EVENTS
+#if NIL_CFG_USE_EVENTS || defined(__DOXYGEN__)
   eventmask_t           epmask; /**< @brief Pending events mask.            */
 #endif
 #if NIL_CFG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
@@ -362,7 +362,7 @@ typedef struct {
   thread_t              *current;
   /**
    * @brief   Pointer to the next thread to be executed.
-   * @note    This pointer must point at the same thread pointed by @p currp
+   * @note    This pointer must point at the same thread pointed by @p current
    *          or to an higher priority thread if a switch is required.
    */
   thread_t              *next;
