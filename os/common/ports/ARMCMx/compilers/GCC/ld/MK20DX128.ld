@@ -15,20 +15,29 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+                                      ---
+
+    A special exception to the GPL can be applied should you wish to distribute
+    a combined work that includes ChibiOS/RT, without being obliged to provide
+    the source code for any proprietary components. See the file exception.txt
+    for full details of how and when the exception can be applied.
 */
 
 /*
- * KL25Z128 memory setup.
+ * MK20DX128 memory setup.
  */
 __main_stack_size__     = 0x0400;
 __process_stack_size__  = 0x0400;
 
+ENTRY(Reset_Handler)
+
 MEMORY
 {
-  flash0   :  org = 0x00000000,  len = 0xc0
-  flashcfg :  org = 0x00000400,  len = 0x10
-  flash    :  org = 0x00000410,  len = 128k - 0x410
-  ram      :  org = 0x1FFFF000,  len = 16k
+  flash0   : org = 0x00000000, len = 0xF8
+  flashcfg : org = 0x00000400, len = 0x10
+  flash    : org = 0x00000410, len = 128k - 0x410
+  ram      : org = 0x1FFFE000, len = 16k
 }
 
 __ram_start__           = ORIGIN(ram);
