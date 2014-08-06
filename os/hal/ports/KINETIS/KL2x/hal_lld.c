@@ -82,7 +82,7 @@ void kl2x_clock_init(void) {
   /* System oscillator drives 32 kHz clock (OSC32KSEL=0) */
   SIM->SOPT1 &= ~SIM_SOPT1_OSC32KSEL_MASK;
 
-  #if KINETIS_MCG_MODE == KINETIS_MCG_MODE_FEI
+#if KINETIS_MCG_MODE == KINETIS_MCG_MODE_FEI
   /* This is the default mode at reset. */
   /* The MCGOUTCLK is divided by OUTDIV1 and OUTDIV4:
    * OUTDIV1 (divider for core/system and bus/flash clock)
