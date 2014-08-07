@@ -731,6 +731,8 @@ static inline msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp,
  */
 static inline void osalEventObjectInit(event_source_t *esp) {
 
+  osalDbgCheck(esp != NULL);
+
   esp->flags = 0;
   esp->cb    = NULL;
   esp->param = NULL;
@@ -746,6 +748,8 @@ static inline void osalEventObjectInit(event_source_t *esp) {
  */
 static inline void osalEventBroadcastFlagsI(event_source_t *esp,
                                             eventflags_t flags) {
+
+  osalDbgCheck(esp != NULL);
 
   esp->flags |= flags;
   if (esp->cb != NULL)
@@ -763,10 +767,35 @@ static inline void osalEventBroadcastFlagsI(event_source_t *esp,
 static inline void osalEventBroadcastFlags(event_source_t *esp,
                                            eventflags_t flags) {
 
+  osalDbgCheck(esp != NULL);
+
   chSysLock();
   osalEventBroadcastFlagsI(esp, flags);
   chSchRescheduleS();
   chSysUnlock();
+}
+
+/**
+ * @brief   Event callback setup.
+ * @note    The callback is invoked from ISR context and can
+ *          only invoke I-Class functions. The callback is meant
+ *          to wakeup the task that will handle the event by
+ *          calling @p osalEventGetAndClearFlagsI().
+ *
+ * @param[in] esp       pointer to the event flags object
+ * @param[in] cb        pointer to the callback function
+ * @param[in] param     parameter to be passed to the callback function
+ *
+ * @api
+ */
+static inline void osalEventSetCallback(event_source_t *esp,
+                                        eventcallback_t cb,
+                                        void *param) {
+
+  osalDbgCheck(esp != NULL);
+
+  esp->cb    = cb;
+  esp->param = param;
 }
 
 /**

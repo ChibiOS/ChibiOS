@@ -391,8 +391,10 @@ typedef struct {
    * @brief   Panic message.
    * @note    This field is only present if some debug options have been
    *          activated.
+   * @note    Accesses to this pointer must never be optimized out so the
+   *          field itself is declared volatile.
    */
-  const char            *dbg_panic_msg;
+  const char            * volatile dbg_panic_msg;
 #endif
 } nil_system_t;
 
