@@ -16,6 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "test.h"
 
 static THD_WORKING_AREA(waThread1, 64);
 static THD_FUNCTION(Thread1, arg) {
@@ -72,12 +73,18 @@ int main(void) {
   chSysInit();
 
   /*
+   * Activates serial 1 (UART0) using the driver default configuration.
+   */
+  sdStart(&SD1, NULL);
+
+  /*
    * Creates the blinker threads.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
   chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
   chThdCreateStatic(waThread3, sizeof(waThread3), NORMALPRIO, Thread3, NULL);
 
+  TestThread(&SD1);
   while (1) {
     chThdSleepMilliseconds(500);
   }

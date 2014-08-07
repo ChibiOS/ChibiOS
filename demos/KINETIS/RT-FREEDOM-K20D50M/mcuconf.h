@@ -54,4 +54,4 @@
 /*
  * SERIAL driver system settings.
  */
-#define KINETIS_SERIAL_USE_UART0              FALSE
+#define KINETIS_SERIAL_USE_UART0              TRUE
