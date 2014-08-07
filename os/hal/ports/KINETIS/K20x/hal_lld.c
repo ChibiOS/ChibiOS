@@ -71,6 +71,11 @@ void hal_lld_init(void) {
  */
 void mk20d50_clock_init(void) {
 
+  uint32_t ratio, frdiv;
+  uint32_t ratios[] = { 32, 64, 128, 256, 512, 1024, 1280, 1536 };
+  int ratio_quantity = sizeof(ratios) / sizeof(ratios[0]);
+  int i;
+
   /* Disable the watchdog */
   WDOG->UNLOCK = 0xC520;
   WDOG->UNLOCK = 0xD928;
@@ -93,11 +98,29 @@ void mk20d50_clock_init(void) {
   /* Disable capacitors for crystal */
   OSC->CR = 0;
 
-  /* Enable OSC, 8-32 MHz range, low power mode */
-  MCG->C2 = MCG_C2_RANGE0(1) | MCG_C2_LOCRE0 | MCG_C2_EREFS0;
+  /* TODO: need to add more flexible calculation, specially regarding
+   *       divisors which may not be available depending on the XTAL
+   *       frequency, which would required other registers to be modified.
+   */
 
-  /* Switch to crystal as clock source, FLL input of 8 MHz / 256 = 31.25 KHz */
-  MCG->C1 = MCG_C1_CLKS(2) | MCG_C1_FRDIV(3);
+  /* Enable OSC, low power mode */
+  MCG->C2 = MCG_C2_LOCRE0 | MCG_C2_EREFS0;
+  if (KINETIS_XTAL_FREQUENCY > 8000000)
+    MCG->C2 |= MCG_C2_RANGE0(2);
+  else
+    MCG->C2 |= MCG_C2_RANGE0(1);
+
+  frdiv = 7;
+  ratio = KINETIS_XTAL_FREQUENCY / 31250;
+  for (i = 0; i < ratio_quantity; ++i) {
+    if (ratio == ratios[i]) {
+      frdiv = i;
+      break;
+    }
+  }
+
+  /* Switch to crystal as clock source, FLL input of 31.25 KHz */
+  MCG->C1 = MCG_C1_CLKS(2) | MCG_C1_FRDIV(frdiv);
 
   /* Wait for crystal oscillator to begin */
   while (!(MCG->S & MCG_S_OSCINIT0));
@@ -112,8 +135,8 @@ void mk20d50_clock_init(void) {
    * Now in FBE mode
    */
 
-  /* Config PLL input for 2 MHz (8 MHz crystal / 4) */
-  MCG->C5 = MCG_C5_PRDIV0(3);
+  /* Config PLL input for 2 MHz */
+  MCG->C5 = MCG_C5_PRDIV0((KINETIS_XTAL_FREQUENCY / 2000000) - 1);
 
   /* Config PLL for 96 MHz output */
   MCG->C6 = MCG_C6_PLLS | MCG_C6_VDIV0(0);
