@@ -105,9 +105,6 @@ static void serve_interrupt(SerialDriver *sdp) {
        u->D = b;
     }
   }
-
-  while (u->S1)
-    (void)u->D;
 }
 
 /**
@@ -160,41 +157,18 @@ static void notify3(io_queue_t *qp)
  */
 static void configure_uart(UART_TypeDef *uart, const SerialConfig *config)
 {
-  uint16_t sbr, brfa;
-  uint32_t clock;
+  uint32_t divisor = (KINETIS_SYSCLK_FREQUENCY * 2 + 1) / config->sc_speed;
 
   /* Disable UART while configuring */
   uart->C2 &= ~(UARTx_C2_RE | UARTx_C2_TE);
   uart->C1 = 0;
-  //while (uart->S1 & UARTx_S1_RDRF) {
-  //  (void)uart->D;
-  //}
 
-  clock = KINETIS_SYSCLK_FREQUENCY / 4;
+  uart->BDH = UARTx_BDH_SBR(divisor >> 13) | (uart->BDH & ~UARTx_BDH_SBR_MASK);
+  uart->BDL = divisor >> 5;
+  uart->C4  = UARTx_C4_BRFA(divisor) | (uart->C4 & ~UARTx_C4_BRFA_MASK);
 
-  sbr = (uint16_t) clock / (config->sc_speed * 16);
-  brfa = (uint16_t) (2 * clock * config->sc_speed) - (sbr * 32);
-
-  //uart->BDH = UARTx_BDH_SBR(sbr >> 8) | (uart->BDH & ~UARTx_BDH_SBR_MASK);
-  uart->BDH = 0;
-  uart->BDL = sbr;
-  uart->C4 = UARTx_C4_BRFA(brfa) | (uart->C4 & ~UARTx_C4_BRFA_MASK);
-
-  uart->TWFIFO = 1;
-  uart->RWFIFO = 1;
-
-  //uart->C2 |= UARTx_C2_RE | UARTx_C2_RIE | UARTx_C2_TE;
-  uart->C2 |= UARTx_C2_RE | UARTx_C2_TE;
-  uart->C3 = 0;
-
-  while (!(uart->S1 & UARTx_S1_TDRE));
-  uart->D = '1';
-  while (!(uart->S1 & UARTx_S1_TDRE));
-  uart->D = '2';
-  while (!(uart->S1 & UARTx_S1_TDRE));
-  uart->D = '3';
-
-  //uart->C3 = UARTx_C3_ORIE | UARTx_C3_NEIE | UARTx_C3_FEIE | UARTx_C3_PEIE;
+  uart->C2 |= UARTx_C2_RE | UARTx_C2_RIE | UARTx_C2_TE;
+  uart->C3 = UARTx_C3_ORIE | UARTx_C3_NEIE | UARTx_C3_FEIE | UARTx_C3_PEIE;
 }
 
 /*===========================================================================*/
@@ -286,7 +260,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
     if (sdp == &SD1) {
       SIM->SCGC4 |= SIM_SCGC4_UART0;
       configure_uart(sdp->uart, config);
-      //nvicEnableVector(UART0Status_IRQn, KINETIS_SERIAL_UART0_PRIORITY);
+      nvicEnableVector(UART0Status_IRQn, KINETIS_SERIAL_UART0_PRIORITY);
     }
 #endif /* KINETIS_SERIAL_USE_UART0 */
 
