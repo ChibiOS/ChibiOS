@@ -27,6 +27,8 @@ static THD_FUNCTION(Thread1, arg) {
     palTogglePad(IOPORT2, 18);
     chThdSleepMilliseconds(300);
   }
+
+  return 0;
 }
 
 static THD_WORKING_AREA(waThread2, 64);
@@ -38,6 +40,8 @@ static THD_FUNCTION(Thread2, arg) {
     palTogglePad(IOPORT2, 19);
     chThdSleepMilliseconds(600);
   }
+
+  return 0;
 }
 
 static THD_WORKING_AREA(waThread3, 64);
@@ -49,6 +53,8 @@ static THD_FUNCTION(Thread3, arg) {
     palTogglePad(IOPORT4, 1);
     chThdSleepMilliseconds(900);
   }
+
+  return 0;
 }
 
 /*
