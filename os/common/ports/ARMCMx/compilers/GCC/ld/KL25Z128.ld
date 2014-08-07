@@ -23,6 +23,8 @@
 __main_stack_size__     = 0x0400;
 __process_stack_size__  = 0x0400;
 
+ENTRY(Reset_Handler)
+
 MEMORY
 {
   flash0   :  org = 0x00000000,  len = 0xc0
