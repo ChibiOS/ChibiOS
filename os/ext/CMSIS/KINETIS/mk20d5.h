@@ -59,7 +59,7 @@ typedef enum IRQn
   SPI0_IRQn                     = 12,
   I2S0_IRQn                     = 13,
   I2S1_IRQn                     = 14,
-  UART0_IRQn                    = 15,
+  UART0LON_IRQn                 = 15,
   UART0Status_IRQn              = 16,
   UART0Error_IRQn               = 17,
   UART1Status_IRQn              = 18,
@@ -314,20 +314,7 @@ typedef struct
   __IO uint8_t  BDL;
   __IO uint8_t  C1;
   __IO uint8_t  C2;
-  __IO uint8_t  S1;
-  __IO uint8_t  S2;
-  __IO uint8_t  C3;
-  __IO uint8_t  D;
-  __IO uint8_t  C4;
-} UART_TypeDef;
-
-typedef struct
-{
-  __IO uint8_t  BDH;
-  __IO uint8_t  BDL;
-  __IO uint8_t  C1;
-  __IO uint8_t  C2;
-  __IO uint8_t  S1;
+  __I  uint8_t  S1;
   __IO uint8_t  S2;
   __IO uint8_t  C3;
   __IO uint8_t  D;
@@ -335,7 +322,48 @@ typedef struct
   __IO uint8_t  MA2;
   __IO uint8_t  C4;
   __IO uint8_t  C5;
-} UARTLP_TypeDef;
+  __I  uint8_t  ED;
+  __IO uint8_t  MODEM;
+  __IO uint8_t  IR;
+       uint8_t RESERVED0[1];
+  __IO uint8_t  PFIFO;
+  __IO uint8_t  CFIFO;
+  __IO uint8_t  SFIFO;
+  __IO uint8_t  TWFIFO;
+  __I  uint8_t  TCFIFO;
+  __IO uint8_t  RWFIFO;
+  __I  uint8_t  RCFIFO;
+       uint8_t RESERVED1[1];
+  __IO uint8_t  C7816;
+  __IO uint8_t  IE7816;
+  __IO uint8_t  IS7816;
+  union {
+    __IO uint8_t  WP7816T0;
+    __IO uint8_t  WP7816T1;
+  };
+  __IO uint8_t  WN7816;
+  __IO uint8_t  WF7816;
+  __IO uint8_t  ET7816;
+  __IO uint8_t  TL7816;
+       uint8_t RESERVED2[2];
+  __IO uint8_t  C6;
+  __IO uint8_t  PCTH;
+  __IO uint8_t  PCTL;
+  __IO uint8_t  B1T;
+  __IO uint8_t  SDTH;
+  __IO uint8_t  SDTL;
+  __IO uint8_t  PRE;
+  __IO uint8_t  TPL;
+  __IO uint8_t  IE;
+  __IO uint8_t  WB;
+  __IO uint8_t  S3;
+  __IO uint8_t  S4;
+  __I  uint8_t  RPL;
+  __I  uint8_t  RPREL;
+  __IO uint8_t  CPW;
+  __IO uint8_t  RIDT;
+  __IO uint8_t  TIDT;
+} UART_TypeDef;
 
 typedef struct
 {
@@ -412,7 +440,7 @@ typedef struct
 #define SPI1                    ((SPI_TypeDef *)     SPI1_BASE)
 #define I2C0                    ((I2C_TypeDef *)     I2C0_BASE)
 #define I2C1                    ((I2C_TypeDef *)     I2C1_BASE)
-#define UART0                   ((UARTLP_TypeDef *)  UART0_BASE)
+#define UART0                   ((UART_TypeDef *)    UART0_BASE)
 #define UART1                   ((UART_TypeDef *)    UART1_BASE)
 #define UART2                   ((UART_TypeDef *)    UART2_BASE)
 #define GPIOA                   ((GPIO_TypeDef  *)   GPIOA_BASE)
@@ -455,6 +483,17 @@ typedef struct
 #define SIM_SOPT2_CLKOUTSEL_MASK     ((uint32_t)((uint32_t)0x7 << SIM_SOPT2_CLKOUTSEL_SHIFT))
 #define SIM_SOPT2_CLKOUTSEL(x)       ((uint32_t)(((uint32_t)(x) << SIM_SOPT2_CLKOUTSEL_SHIFT) & SIM_SOPT2_CLKOUTSEL_MASK))
 #define SIM_SOPT2_RTCCLKOUTSEL       ((uint32_t)0x00000010)    /*!< RTC clock out select */
+
+/*******  Bits definition for SIM_SCGC4 register  ************/
+#define SIM_SCGC4_VREF               ((uint32_t)0x00100000)    /*!< VREF Clock Gate Control */
+#define SIM_SCGC4_CMP                ((uint32_t)0x00080000)    /*!< Comparator Clock Gate Control */
+#define SIM_SCGC4_USBOTG             ((uint32_t)0x00040000)    /*!< USB Clock Gate Control */
+#define SIM_SCGC4_UART2              ((uint32_t)0x00001000)    /*!< UART2 Clock Gate Control */
+#define SIM_SCGC4_UART1              ((uint32_t)0x00000800)    /*!< UART1 Clock Gate Control */
+#define SIM_SCGC4_UART0              ((uint32_t)0x00000400)    /*!< UART0 Clock Gate Control */
+#define SIM_SCGC4_I2C0               ((uint32_t)0x00000040)    /*!< I2C0 Clock Gate Control */
+#define SIM_SCGC4_CMT                ((uint32_t)0x00000004)    /*!< CMT Clock Gate Control */
+#define SIM_SCGC4_EMW                ((uint32_t)0x00000002)    /*!< EWM Clock Gate Control */
 
 /*******  Bits definition for SIM_SCGC5 register  ************/
 #define SIM_SCGC5_PORTE              ((uint32_t)0x00002000)    /*!< Port E Clock Gate Control */
@@ -1066,12 +1105,12 @@ typedef struct
 /****************************************************************/
 /*********  Bits definition for UARTx_BDH register  *************/
 #define UARTx_BDH_LBKDIE             ((uint8_t)0x80)    /*!< LIN Break Detect Interrupt Enable */
-#define UARTx_BDH_RXEDGIE            ((uint8_t)0x40)    /*!< RX Input Active Edge Interrupt Enable */
-#define UARTx_BDH_SBNS               ((uint8_t)0x20)    /*!< Stop Bit Number Select */
-#define UARTx_BDH_SBR                ((uint8_t)0x1F)    /*!< Baud Rate Modulo Divisor */
+#define UARTx_BDH_RXEDGIE            ((uint8_t)0x40)    /*!< RxD Input Active Edge Interrupt Enable */
+#define UARTx_BDH_SBR_MASK           ((uint8_t)0x1F)
+#define UARTx_BDH_SBR(x)             ((uint8_t)((uint8_t)(x) & UARTx_BDH_SBR_MASK))  /*!< Baud Rate Modulo Divisor */
 
 /*********  Bits definition for UARTx_BDL register  *************/
-#define UARTx_BDL_SBR                ((uint8_t)0xFF)    /*!< Baud Rate Modulo Divisor */
+#define UARTx_BDL_SBR_MASK           ((uint8_t)0xFF)    /*!< Baud Rate Modulo Divisor */
 
 /*********  Bits definition for UARTx_C1 register  **************/
 #define UARTx_C1_LOOPS               ((uint8_t)0x80)    /*!< Loop Mode Select */
@@ -1115,9 +1154,7 @@ typedef struct
 #define UARTx_S2_RAF                 ((uint8_t)0x01)    /*!< Receiver Active Flag */
 
 /*********  Bits definition for UARTx_C3 register  **************/
-#define UARTx_C3_R8T9                ((uint8_t)0x80)    /*!< Receive Bit 8 / Transmit Bit 9 */
 #define UARTx_C3_R8                  ((uint8_t)0x80)    /*!< Ninth Data Bit for Receiver */
-#define UARTx_C3_R9T8                ((uint8_t)0x40)    /*!< Receive Bit 9 / Transmit Bit 8 */
 #define UARTx_C3_T8                  ((uint8_t)0x40)    /*!< Ninth Data Bit for Transmitter */
 #define UARTx_C3_TXDIR               ((uint8_t)0x20)    /*!< UART_TX Pin Direction in Single-Wire Mode */
 #define UARTx_C3_TXINV               ((uint8_t)0x10)    /*!< Transmit Data Inversion */
@@ -1144,17 +1181,33 @@ typedef struct
 
 /*********  Bits definition for UARTx_C4 register  **************/
 #define UARTx_C4_MAEN1               ((uint8_t)0x80)    /*!< Match Address Mode Enable 1 */
-#define UARTx_C4_TDMAS               ((uint8_t)0x80)    /*!< Transmitter DMA Select */
 #define UARTx_C4_MAEN2               ((uint8_t)0x40)    /*!< Match Address Mode Enable 2 */
 #define UARTx_C4_M10                 ((uint8_t)0x20)    /*!< 10-bit Mode Select */
-#define UARTx_C4_RDMAS               ((uint8_t)0x80)    /*!< Receiver Full DMA Select */
-#define UARTx_C4_OSR                 ((uint8_t)0x1F)    /*!< Over Sampling Ratio */
+#define UARTx_C4_BRFA_MASK           ((uint8_t)0x1F)
+#define UARTx_C4_BRFA(x)             ((uint8_t)((uint8_t)(x) & UARTx_C4_BRFA_MASK))  /*!< Baud Rate Fine Adjust */
 
 /*********  Bits definition for UARTx_C5 register  **************/
 #define UARTx_C5_TDMAE               ((uint8_t)0x80)    /*!< Transmitter DMA Enable */
 #define UARTx_C5_RDMAE               ((uint8_t)0x20)    /*!< Receiver Full DMA Enable */
 #define UARTx_C5_BOTHEDGE            ((uint8_t)0x02)    /*!< Both Edge Sampling */
 #define UARTx_C5_RESYNCDIS           ((uint8_t)0x01)    /*!< Resynchronization Disable */
+
+/*******  Bits definition for UARTx_CFIFO register  ************/
+#define UARTx_CFIFO_TXFLUSH          ((uint8_t)0x80)    /*!< Transmit FIFO/Buffer Flush */
+#define UARTx_CFIFO_RXFLUSH          ((uint8_t)0x40)    /*!< Receive FIFO/Buffer Flush */
+#define UARTx_CFIFO_RXOFE            ((uint8_t)0x04)    /*!< Receive FIFO Overflow Interrupt Enable */
+#define UARTx_CFIFO_TXOFE            ((uint8_t)0x02)    /*!< Transmit FIFO Overflow Interrupt Enable */
+#define UARTx_CFIFO_RXUFE            ((uint8_t)0x01)    /*!< Receive FIFO Underflow Interrupt Enable */
+
+/*******  Bits definition for UARTx_PFIFO register  ************/
+#define UARTx_PFIFO_TXFE             ((uint8_t)0x80)    /*!< Transmit FIFO Enable */
+#define UARTx_PFIFO_TXFIFOSIZE_SHIFT 4
+#define UARTx_PFIFO_TXFIFOSIZE_MASK  ((uint8_t)((uint8_t)0x7 << UARTx_PFIFO_TXFIFOSIZE_SHIFT))
+#define UARTx_PFIFO_TXFIFOSIZE(x)    ((uint8_t)(((uint8_t)(x) << UARTx_PFIFO_TXFIFOSIZE_SHIFT) & UARTx_PFIFO_TXFIFOSIZE_MASK))  /*!< Transmit FIFO Buffer depth */
+#define UARTx_PFIFO_RXFE             ((uint8_t)0x08)    /*!< Receive FIFOh */
+#define UARTx_PFIFO_RXFIFOSIZE_SHIFT 0
+#define UARTx_PFIFO_RXFIFOSIZE_MASK  ((uint8_t)((uint8_t)0x7 << UARTx_PFIFO_RXFIFOSIZE_SHIFT))
+#define UARTx_PFIFO_RXFIFOSIZE(x)    ((uint8_t)(((uint8_t)(x) << UARTx_PFIFO_RXFIFOSIZE_SHIFT) & UARTx_PFIFO_RXFIFOSIZE_MASK))  /*!< Receive FIFO Buffer depth */
 
 /****************************************************************/
 /*                                                              */
