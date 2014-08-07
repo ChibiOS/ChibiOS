@@ -70,7 +70,7 @@ FSMCDriver FSMCD1;
  *
  * @notapi
  */
-void fsmc_lld_init(void) {
+void fsmc_init(void) {
 
   FSMCD1.state  = FSMC_STOP;
 
@@ -94,7 +94,7 @@ void fsmc_lld_init(void) {
  *
  * @notapi
  */
-void fsmc_lld_start(FSMCDriver *fsmcp) {
+void fsmc_start(FSMCDriver *fsmcp) {
 
 
   osalDbgAssert((fsmcp->state == FSMC_STOP) || (fsmcp->state == FSMC_READY),
@@ -123,7 +123,7 @@ void fsmc_lld_start(FSMCDriver *fsmcp) {
  *
  * @notapi
  */
-void fsmc_lld_stop(FSMCDriver *fsmcp) {
+void fsmc_stop(FSMCDriver *fsmcp) {
 
   if (fsmcp->state == FSMC_READY) {
     /* Resets the peripheral.*/
@@ -149,7 +149,7 @@ void fsmc_lld_stop(FSMCDriver *fsmcp) {
  *
  * @notapi
  */
-void fsmc_lld_serve_interrupt(void) {
+void fsmc_serve_interrupt(void) {
 
   osalSysHalt("Unrealized");
 }

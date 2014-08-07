@@ -273,13 +273,15 @@ static void nand_lld_serve_transfer_end_irq(NANDDriver *nandp,
  */
 void nand_lld_init(void) {
 
+  fsmc_init();
+
 #if STM32_NAND_USE_FSMC_NAND1
   /* Driver initialization.*/
   nandObjectInit(&NANDD1);
   NANDD1.rxdata   = NULL;
   NANDD1.datalen  = 0;
   NANDD1.thread   = NULL;
-  NANDD1.dma      = STM32_DMA_STREAM(STM32_NAND_NAND1_DMA_STREAM);
+  NANDD1.dma      = STM32_DMA_STREAM(STM32_NAND_DMA_STREAM);
   NANDD1.nand     = (FSMC_NAND_TypeDef *)FSMC_Bank2_R_BASE;
   NANDD1.map_data = (uint8_t*)FSMC_Bank2_MAP_COMMON_DATA;
   NANDD1.map_cmd  = (uint8_t*)FSMC_Bank2_MAP_COMMON_CMD;
@@ -292,7 +294,7 @@ void nand_lld_init(void) {
   NANDD2.rxdata   = NULL;
   NANDD2.datalen  = 0;
   NANDD2.thread   = NULL;
-  NANDD2.dma      = STM32_DMA_STREAM(STM32_NAND_NAND2_DMA_STREAM);
+  NANDD2.dma      = STM32_DMA_STREAM(STM32_NAND_DMA_STREAM);
   NANDD2.nand     = (FSMC_NAND_TypeDef *)FSMC_Bank3_R_BASE;
   NANDD2.map_data = (uint8_t*)FSMC_Bank3_MAP_COMMON_DATA;
   NANDD2.map_cmd  = (uint8_t*)FSMC_Bank3_MAP_COMMON_CMD;
@@ -312,7 +314,7 @@ void nand_lld_start(NANDDriver *nandp) {
   bool b;
 
   if (FSMCD1.state == FSMC_STOP)
-    fsmc_lld_start(&FSMCD1);
+    fsmc_start(&FSMCD1);
 
   if (nandp->state == NAND_STOP) {
     b = dmaStreamAllocate(nandp->dma,

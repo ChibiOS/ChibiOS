@@ -232,9 +232,9 @@ extern FSMCDriver FSMCD1;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void fsmc_lld_init(void);
-  void fsmc_lld_start(FSMCDriver *fsmcp);
-  void fsmc_lld_stop(FSMCDriver *fsmcp);
+  void fsmc_init(void);
+  void fsmc_start(FSMCDriver *fsmcp);
+  void fsmc_stop(FSMCDriver *fsmcp);
 #ifdef __cplusplus
 }
 #endif

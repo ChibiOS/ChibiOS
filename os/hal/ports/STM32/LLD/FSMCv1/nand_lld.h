@@ -106,16 +106,8 @@
  * @brief   DMA stream used for NAND1 operations.
  * @note    This option is only available on platforms with enhanced DMA.
  */
-#if !defined(STM32_NAND_NAND1_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_NAND_NAND1_DMA_STREAM     STM32_DMA_STREAM_ID(2, 6)
-#endif
-
-/**
- * @brief   DMA stream used for NAND2 operations.
- * @note    This option is only available on platforms with enhanced DMA.
- */
-#if !defined(STM32_NAND_NAND2_DMA_STREAM) || defined(__DOXYGEN__)
-#define STM32_NAND_NAND2_DMA_STREAM     STM32_DMA_STREAM_ID(2, 7)
+#if !defined(STM32_NAND_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_NAND_DMA_STREAM     STM32_DMA_STREAM_ID(2, 6)
 #endif
 
 /** @} */

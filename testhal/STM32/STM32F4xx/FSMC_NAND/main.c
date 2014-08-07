@@ -51,7 +51,7 @@
  ******************************************************************************
  */
 
-#define USE_KILL_BLOCK_TEST       TRUE
+#define USE_KILL_BLOCK_TEST       FALSE
 
 #define FSMCNAND_TIME_SET         ((uint32_t) 2) //(8nS)
 #define FSMCNAND_TIME_WAIT        ((uint32_t) 6) //(30nS)

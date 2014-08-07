@@ -242,8 +242,6 @@ void nandObjectInit(NANDDriver *nandp) {
 void nandStart(NANDDriver *nandp, const NANDConfig *config) {
 
   osalDbgCheck((nandp != NULL) && (config != NULL));
-  osalDbgAssert(config->fsmcp->state == FSMC_READY,
-      "lower level driver not ready");
   osalDbgAssert((nandp->state == NAND_STOP) ||
       (nandp->state == NAND_READY),
       "invalid state");
