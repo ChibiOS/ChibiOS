@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.6 ***
+- FIX: Fixed SDC initialization error with V1.1 cards (bug #523).
 - FIX: Fixed Race condition in STM32 SDC driver (bug #522).
 - FIX: Fixed failure to compile EXT driver on STM32F401 (bug #517).
 - FIX: Fixed wrong DMA channels for STM32L1 I2C1 unit (bug #516).

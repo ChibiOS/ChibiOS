@@ -231,6 +231,9 @@ bool_t sdcConnect(SDCDriver *sdcp) {
     else
 #endif /* SDC_MMC_SUPPORT */
       sdcp->cardmode = SDC_MODE_CARDTYPE_SDV11;
+    
+    /* Reset error flag illegal command.*/
+    sdc_lld_send_cmd_none(sdcp, MMCSD_CMD_GO_IDLE_STATE, 0);
   }
 
 #if SDC_MMC_SUPPORT
