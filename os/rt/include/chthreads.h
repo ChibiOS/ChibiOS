@@ -252,6 +252,7 @@ extern "C" {
   void chThdTerminate(thread_t *tp);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
+  systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next);
   void chThdYield(void);
   void chThdExit(msg_t msg);
   void chThdExitS(msg_t msg);
