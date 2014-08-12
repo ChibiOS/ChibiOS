@@ -219,6 +219,32 @@ void chSysTimerHandlerI(void) {
 }
 
 /**
+ * @brief   Conditionally enters the kernel lock state.
+ * @note    Can be called without previous knowledge of the current lock state.
+ *          The final state is "s-locked".
+ *
+ * @special
+ */
+void chSysConditionalLock(void) {
+
+  if (port_irq_enabled(port_get_irq_status()))
+    chSysLock();
+}
+
+/**
+ * @brief   Conditionally leaves the kernel lock state.
+ * @note    Can be called without previous knowledge of the current lock state.
+ *          The final state is "normal".
+ *
+ * @special
+ */
+void chSysConditionalUnlock(void) {
+
+  if (!port_irq_enabled(port_get_irq_status()))
+    chSysUnlock();
+}
+
+/**
  * @brief   Returns the execution status and enters a critical zone.
  * @details This functions enters into a critical zone and can be called
  *          from any context. Because its flexibility it is less efficient

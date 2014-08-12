@@ -27,16 +27,48 @@
  *          - Runtime system state and call protocol check. The following
  *            panic messages can be generated:
  *            - SV#1, misplaced @p chSysDisable().
+ *              - Called from an ISR.
+ *              - Called from a critical zone.
+ *              .
  *            - SV#2, misplaced @p chSysSuspend()
+ *              - Called from an ISR.
+ *              - Called from a critical zone.
+ *              .
  *            - SV#3, misplaced @p chSysEnable().
+ *              - Called from an ISR.
+ *              - Called from a critical zone.
+ *              .
  *            - SV#4, misplaced @p chSysLock().
+ *              - Called from an ISR.
+ *              - Called from a critical zone.
+ *              .
  *            - SV#5, misplaced @p chSysUnlock().
+ *              - Called from an ISR.
+ *              - Not called from a critical zone.
+ *              .
  *            - SV#6, misplaced @p chSysLockFromIsr().
+ *              - Not called from an ISR.
+ *              - Called from a critical zone.
+ *              .
  *            - SV#7, misplaced @p chSysUnlockFromIsr().
+ *              - Not called from an ISR.
+ *              - Not called from a critical zone.
+ *              .
  *            - SV#8, misplaced @p CH_IRQ_PROLOGUE().
+ *              - Not called at ISR begin.
+ *              - Called from a critical zone.
+ *              .
  *            - SV#9, misplaced @p CH_IRQ_EPILOGUE().
+ *              - @p CH_IRQ_PROLOGUE() missing.
+ *              - Not called at ISR end.
+ *              - Called from a critical zone.
+ *              .
  *            - SV#10, misplaced I-class function.
+ *              - I-class function not called from within a critical zone.
+ *              .
  *            - SV#11, misplaced S-class function.
+ *              - S-class function not called from within a critical zone.
+ *              - Called from an ISR.
  *            .
  *          - Trace buffer.
  *          - Parameters check.

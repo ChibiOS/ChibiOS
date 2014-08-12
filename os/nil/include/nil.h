@@ -587,21 +587,21 @@ typedef struct {
 #define chSysEnable() port_enable()
 
 /**
- * @brief   Enters the kernel lock mode.
+ * @brief   Enters the kernel lock state.
  *
  * @special
  */
 #define chSysLock() port_lock()
 
 /**
- * @brief   Leaves the kernel lock mode.
+ * @brief   Leaves the kernel lock state.
  *
  * @special
  */
 #define chSysUnlock() port_unlock()
 
 /**
- * @brief   Enters the kernel lock mode from within an interrupt handler.
+ * @brief   Enters the kernel lock state from within an interrupt handler.
  * @note    This API may do nothing on some architectures, it is required
  *          because on ports that support preemptable interrupt handlers
  *          it is required to raise the interrupt mask to the same level of
@@ -615,7 +615,7 @@ typedef struct {
 #define chSysLockFromISR() port_lock_from_isr()
 
 /**
- * @brief   Leaves the kernel lock mode from within an interrupt handler.
+ * @brief   Leaves the kernel lock state from within an interrupt handler.
  *
  * @note    This API may do nothing on some architectures, it is required
  *          because on ports that support preemptable interrupt handlers
@@ -835,6 +835,8 @@ extern "C" {
   void chSysInit(void);
   void chSysHalt(const char *reason);
   void chSysTimerHandlerI(void);
+  void chSysConditionalLock(void);
+  void chSysConditionalUnlock(void);
   syssts_t chSysGetStatusAndLockX(void);
   void chSysRestoreStatusX(syssts_t sts);
   thread_t *chSchReadyI(thread_t *tp, msg_t msg);
