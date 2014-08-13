@@ -1016,8 +1016,15 @@
  */
 #if STM32_TIM1SW == STM32_TIM1SW_PCLK2
 #define STM32_TIM1CLK               STM32_PCLK2
+
 #elif STM32_TIM1SW == STM32_TIM1SW_PLLX2
+#if (STM32_SW != STM32_SW_PLL) ||                                           \
+    (STM32_HPRE != STM32_HPRE_DIV1) ||                                      \
+    (STM32_PPRE2 != STM32_PPRE2_DIV2)
+#error "double clock mode cannot be activated for TIM1 under the current settings"
+#endif
 #define STM32_TIM1CLK               (STM32_PLLCLKOUT * 2)
+
 #else
 #error "invalid source selected for TIM1 clock"
 #endif
@@ -1027,8 +1034,15 @@
  */
 #if STM32_TIM8SW == STM32_TIM8SW_PCLK2
 #define STM32_TIM8CLK               STM32_PCLK2
+
 #elif STM32_TIM8SW == STM32_TIM8SW_PLLX2
+#if (STM32_SW != STM32_SW_PLL) ||                                           \
+    (STM32_HPRE != STM32_HPRE_DIV1) ||                                      \
+    (STM32_PPRE2 != STM32_PPRE2_DIV2)
+#error "double clock mode cannot be activated for TIM8 under the current settings"
+#endif
 #define STM32_TIM8CLK               (STM32_PLLCLKOUT * 2)
+
 #else
 #error "invalid source selected for TIM8 clock"
 #endif

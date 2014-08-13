@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.6 ***
+- FIX: Fixed double clock mode for TIM1/TIM8 on STM32F30x fails (bug #525).
 - FIX: Fixed SDC initialization error with V1.1 cards (bug #523).
 - FIX: Fixed Race condition in STM32 SDC driver (bug #522).
 - FIX: Fixed failure to compile EXT driver on STM32F401 (bug #517).
