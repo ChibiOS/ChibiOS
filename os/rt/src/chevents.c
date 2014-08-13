@@ -28,18 +28,18 @@
  * @addtogroup events
  * @details Event Flags, Event Sources and Event Listeners.
  *          <h2>Operation mode</h2>
- *          Each thread has a mask of pending event flags inside its
+ *          Each thread has a mask of pending events inside its
  *          @p thread_t structure.
- *          Operations defined for event flags:
+ *          Operations defined for events:
  *          - <b>Wait</b>, the invoking thread goes to sleep until a certain
- *            AND/OR combination of event flags becomes pending.
- *          - <b>Clear</b>, a mask of event flags is cleared from the pending
- *            events mask, the cleared event flags mask is returned (only the
- *            flags that were actually pending and then cleared).
- *          - <b>Signal</b>, an event mask is directly ORed to the mask of the
+ *            AND/OR combination of events become pending.
+ *          - <b>Clear</b>, a mask of events is cleared from the pending
+ *            events, the cleared events mask is returned (only the
+ *            events that were actually pending and then cleared).
+ *          - <b>Signal</b>, an events mask is directly ORed to the mask of the
  *            signaled thread.
  *          - <b>Broadcast</b>, each thread registered on an Event Source is
- *            signaled with the event flags specified in its Event Listener.
+ *            signaled with the events specified in its Event Listener.
  *          - <b>Dispatch</b>, an events mask is scanned and for each bit set
  *            to one an associated handler function is invoked. Bit masks are
  *            scanned from bit zero upward.
@@ -95,14 +95,16 @@
  *
  * @param[in] esp       pointer to the  @p event_source_t structure
  * @param[in] elp       pointer to the @p event_listener_t structure
- * @param[in] mask      the mask of event flags to be ORed to the thread when
+ * @param[in] events    events to be ORed to the thread when
  *                      the event source is broadcasted
+ * @param[in] wflags    mask of flags the listening thread is interested in
  *
  * @api
  */
-void chEvtRegisterMask(event_source_t *esp,
-                       event_listener_t *elp,
-                       eventmask_t mask) {
+void chEvtRegisterMaskWithFlags(event_source_t *esp,
+                                event_listener_t *elp,
+                                eventmask_t events,
+                                eventflags_t wflags) {
 
   chDbgCheck((esp != NULL) && (elp != NULL));
 
@@ -110,8 +112,9 @@ void chEvtRegisterMask(event_source_t *esp,
   elp->el_next     = esp->es_next;
   esp->es_next     = elp;
   elp->el_listener = currp;
-  elp->el_mask     = mask;
+  elp->el_events   = events;
   elp->el_flags    = 0;
+  elp->el_wflags   = wflags;
   chSysUnlock();
 }
 
@@ -146,42 +149,42 @@ void chEvtUnregister(event_source_t *esp, event_listener_t *elp) {
 }
 
 /**
- * @brief   Clears the pending events specified in the mask.
+ * @brief   Clears the pending events specified in the events mask.
  *
- * @param[in] mask      the events to be cleared
+ * @param[in] events    the events to be cleared
  * @return              The pending events that were cleared.
  *
  * @api
  */
-eventmask_t chEvtGetAndClearEvents(eventmask_t mask) {
+eventmask_t chEvtGetAndClearEvents(eventmask_t events) {
   eventmask_t m;
 
   chSysLock();
 
-  m = currp->p_epending & mask;
-  currp->p_epending &= ~mask;
+  m = currp->p_epending & events;
+  currp->p_epending &= ~events;
 
   chSysUnlock();
   return m;
 }
 
 /**
- * @brief   Adds (OR) a set of event flags on the current thread, this is
+ * @brief   Adds (OR) a set of events to the current thread, this is
  *          @b much faster than using @p chEvtBroadcast() or @p chEvtSignal().
  *
- * @param[in] mask      the event flags to be added
- * @return              The current pending events mask.
+ * @param[in] events    the events to be added
+ * @return              The current pending events.
  *
  * @api
  */
-eventmask_t chEvtAddEvents(eventmask_t mask) {
+eventmask_t chEvtAddEvents(eventmask_t events) {
 
   chSysLock();
 
-  mask = (currp->p_epending |= mask);
+  events = (currp->p_epending |= events);
 
   chSysUnlock();
-  return mask;
+  return events;
 }
 
 /**
@@ -210,7 +213,10 @@ void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
   elp = esp->es_next;
   while (elp != (event_listener_t *)esp) {
     elp->el_flags |= flags;
-    chEvtSignalI(elp->el_listener, elp->el_mask);
+    /* When flags == 0 the thread will always be signaled because the
+       source does not emit any flag.*/
+    if ((flags == 0) || ((elp->el_flags & elp->el_wflags) != 0))
+      chEvtSignalI(elp->el_listener, elp->el_events);
     elp = elp->el_next;
   }
 }
@@ -242,16 +248,16 @@ eventflags_t chEvtGetAndClearFlags(event_listener_t *elp) {
  * @brief   Adds a set of event flags directly to the specified @p thread_t.
  *
  * @param[in] tp        the thread to be signaled
- * @param[in] mask      the event flags set to be ORed
+ * @param[in] events    the events set to be ORed
  *
  * @api
  */
-void chEvtSignal(thread_t *tp, eventmask_t mask) {
+void chEvtSignal(thread_t *tp, eventmask_t events) {
 
   chDbgCheck(tp != NULL);
 
   chSysLock();
-  chEvtSignalI(tp, mask);
+  chEvtSignalI(tp, events);
   chSchRescheduleS();
   chSysUnlock();
 }
@@ -264,16 +270,16 @@ void chEvtSignal(thread_t *tp, eventmask_t mask) {
  *          reschedule must not be performed in ISRs.
  *
  * @param[in] tp        the thread to be signaled
- * @param[in] mask      the event flags set to be ORed
+ * @param[in] events    the events set to be ORed
  *
  * @iclass
  */
-void chEvtSignalI(thread_t *tp, eventmask_t mask) {
+void chEvtSignalI(thread_t *tp, eventmask_t events) {
 
   chDbgCheckClassI();
   chDbgCheck(tp != NULL);
 
-  tp->p_epending |= mask;
+  tp->p_epending |= events;
   /* Test on the AND/OR conditions wait states.*/
   if (((tp->p_state == CH_STATE_WTOREVT) &&
        ((tp->p_epending & tp->p_u.ewmask) != 0)) ||
@@ -328,22 +334,22 @@ eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp) {
 /**
  * @brief   Invokes the event handlers associated to an event flags mask.
  *
- * @param[in] mask      mask of the event flags to be dispatched
+ * @param[in] events    mask of events to be dispatched
  * @param[in] handlers  an array of @p evhandler_t. The array must have size
  *                      equal to the number of bits in eventmask_t.
  *
  * @api
  */
-void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask) {
+void chEvtDispatch(const evhandler_t *handlers, eventmask_t events) {
   eventid_t eid;
 
   chDbgCheck(handlers != NULL);
 
   eid = 0;
-  while (mask) {
-    if (mask & EVENT_MASK(eid)) {
+  while (events) {
+    if (events & EVENT_MASK(eid)) {
       chDbgAssert(handlers[eid] != NULL, "null handler");
-      mask &= ~EVENT_MASK(eid);
+      events &= ~EVENT_MASK(eid);
       handlers[eid](eid);
     }
     eid++;
@@ -354,29 +360,29 @@ void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask) {
 /**
  * @brief   Waits for exactly one of the specified events.
  * @details The function waits for one event among those specified in
- *          @p mask to become pending then the event is cleared and returned.
+ *          @p events to become pending then the event is cleared and returned.
  * @note    One and only one event is served in the function, the one with the
  *          lowest event id. The function is meant to be invoked into a loop in
  *          order to serve all the pending events.<br>
  *          This means that Event Listeners with a lower event identifier have
  *          an higher priority.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
- * @return              The mask of the lowest id served and cleared event.
+ * @return              The mask of the lowest event id served and cleared.
  *
  * @api
  */
-eventmask_t chEvtWaitOne(eventmask_t mask) {
+eventmask_t chEvtWaitOne(eventmask_t events) {
   thread_t *ctp = currp;
   eventmask_t m;
 
   chSysLock();
 
-  if ((m = (ctp->p_epending & mask)) == 0) {
-    ctp->p_u.ewmask = mask;
+  if ((m = (ctp->p_epending & events)) == 0) {
+    ctp->p_u.ewmask = events;
     chSchGoSleepS(CH_STATE_WTOREVT);
-    m = ctp->p_epending & mask;
+    m = ctp->p_epending & events;
   }
   m &= -m;
   ctp->p_epending &= ~m;
@@ -388,24 +394,25 @@ eventmask_t chEvtWaitOne(eventmask_t mask) {
 /**
  * @brief   Waits for any of the specified events.
  * @details The function waits for any event among those specified in
- *          @p mask to become pending then the events are cleared and returned.
+ *          @p events to become pending then the events are cleared and
+ *          returned.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
  * @return              The mask of the served and cleared events.
  *
  * @api
  */
-eventmask_t chEvtWaitAny(eventmask_t mask) {
+eventmask_t chEvtWaitAny(eventmask_t events) {
   thread_t *ctp = currp;
   eventmask_t m;
 
   chSysLock();
 
-  if ((m = (ctp->p_epending & mask)) == 0) {
-    ctp->p_u.ewmask = mask;
+  if ((m = (ctp->p_epending & events)) == 0) {
+    ctp->p_u.ewmask = events;
     chSchGoSleepS(CH_STATE_WTOREVT);
-    m = ctp->p_epending & mask;
+    m = ctp->p_epending & events;
   }
   ctp->p_epending &= ~m;
 
@@ -415,28 +422,28 @@ eventmask_t chEvtWaitAny(eventmask_t mask) {
 
 /**
  * @brief   Waits for all the specified events.
- * @details The function waits for all the events specified in @p mask to
+ * @details The function waits for all the events specified in @p events to
  *          become pending then the events are cleared and returned.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS requires all the events
  * @return              The mask of the served and cleared events.
  *
  * @api
  */
-eventmask_t chEvtWaitAll(eventmask_t mask) {
+eventmask_t chEvtWaitAll(eventmask_t events) {
   thread_t *ctp = currp;
 
   chSysLock();
 
-  if ((ctp->p_epending & mask) != mask) {
-    ctp->p_u.ewmask = mask;
+  if ((ctp->p_epending & events) != events) {
+    ctp->p_u.ewmask = events;
     chSchGoSleepS(CH_STATE_WTANDEVT);
   }
-  ctp->p_epending &= ~mask;
+  ctp->p_epending &= ~events;
 
   chSysUnlock();
-  return mask;
+  return events;
 }
 #endif /* CH_CFG_OPTIMIZE_SPEED || !CH_CFG_USE_EVENTS_TIMEOUT */
 
@@ -444,42 +451,42 @@ eventmask_t chEvtWaitAll(eventmask_t mask) {
 /**
  * @brief   Waits for exactly one of the specified events.
  * @details The function waits for one event among those specified in
- *          @p mask to become pending then the event is cleared and returned.
+ *          @p events to become pending then the event is cleared and returned.
  * @note    One and only one event is served in the function, the one with the
  *          lowest event id. The function is meant to be invoked into a loop
  *          in order to serve all the pending events.<br>
  *          This means that Event Listeners with a lower event identifier have
  *          an higher priority.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @return              The mask of the lowest id served and cleared event.
+ * @return              The mask of the lowest event id served and cleared.
  * @retval 0            if the operation has timed out.
  *
  * @api
  */
-eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time) {
+eventmask_t chEvtWaitOneTimeout(eventmask_t events, systime_t time) {
   thread_t *ctp = currp;
   eventmask_t m;
 
   chSysLock();
 
-  if ((m = (ctp->p_epending & mask)) == 0) {
+  if ((m = (ctp->p_epending & events)) == 0) {
     if (TIME_IMMEDIATE == time) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    ctp->p_u.ewmask = mask;
+    ctp->p_u.ewmask = events;
     if (chSchGoSleepTimeoutS(CH_STATE_WTOREVT, time) < MSG_OK) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    m = ctp->p_epending & mask;
+    m = ctp->p_epending & events;
   }
   m &= -m;
   ctp->p_epending &= ~m;
@@ -491,10 +498,10 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time) {
 /**
  * @brief   Waits for any of the specified events.
  * @details The function waits for any event among those specified in
- *          @p mask to become pending then the events are cleared and
+ *          @p events to become pending then the events are cleared and
  *          returned.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -506,23 +513,23 @@ eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time) {
  *
  * @api
  */
-eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time) {
+eventmask_t chEvtWaitAnyTimeout(eventmask_t events, systime_t time) {
   thread_t *ctp = currp;
   eventmask_t m;
 
   chSysLock();
 
-  if ((m = (ctp->p_epending & mask)) == 0) {
+  if ((m = (ctp->p_epending & events)) == 0) {
     if (TIME_IMMEDIATE == time) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    ctp->p_u.ewmask = mask;
+    ctp->p_u.ewmask = events;
     if (chSchGoSleepTimeoutS(CH_STATE_WTOREVT, time) < MSG_OK) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    m = ctp->p_epending & mask;
+    m = ctp->p_epending & events;
   }
   ctp->p_epending &= ~m;
 
@@ -532,10 +539,10 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time) {
 
 /**
  * @brief   Waits for all the specified events.
- * @details The function waits for all the events specified in @p mask to
+ * @details The function waits for all the events specified in @p events to
  *          become pending then the events are cleared and returned.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS requires all the events
  * @param[in] time      the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -547,26 +554,26 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time) {
  *
  * @api
  */
-eventmask_t chEvtWaitAllTimeout(eventmask_t mask, systime_t time) {
+eventmask_t chEvtWaitAllTimeout(eventmask_t events, systime_t time) {
   thread_t *ctp = currp;
 
   chSysLock();
 
-  if ((ctp->p_epending & mask) != mask) {
+  if ((ctp->p_epending & events) != events) {
     if (TIME_IMMEDIATE == time) {
       chSysUnlock();
       return (eventmask_t)0;
     }
-    ctp->p_u.ewmask = mask;
+    ctp->p_u.ewmask = events;
     if (chSchGoSleepTimeoutS(CH_STATE_WTANDEVT, time) < MSG_OK) {
       chSysUnlock();
       return (eventmask_t)0;
     }
   }
-  ctp->p_epending &= ~mask;
+  ctp->p_epending &= ~events;
 
   chSysUnlock();
-  return mask;
+  return events;
 }
 #endif /* CH_CFG_USE_EVENTS_TIMEOUT */
 

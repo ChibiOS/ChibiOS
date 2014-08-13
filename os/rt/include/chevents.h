@@ -61,9 +61,12 @@ struct event_listener {
                                                     source.                 */
   thread_t              *el_listener;   /**< @brief Thread interested in the
                                                     event source.           */
-  eventmask_t           el_mask;        /**< @brief Event identifiers mask. */
+  eventmask_t           el_events;      /**< @brief Events to be set in
+                                                    the listening thread.   */
   eventflags_t          el_flags;       /**< @brief Flags added to the listener
-                                                    by the event source.*/
+                                                    by the event source.    */
+  eventflags_t          el_wflags;      /**< @brief Flags that this listener
+                                                    interested in.          */
 };
 
 /**
@@ -118,28 +121,29 @@ typedef void (*evhandler_t)(eventid_t);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chEvtRegisterMask(event_source_t *esp,
-                         event_listener_t *elp,
-                         eventmask_t mask);
+  void chEvtRegisterMaskWithFlags(event_source_t *esp,
+                                  event_listener_t *elp,
+                                  eventmask_t events,
+                                  eventflags_t wflags);
   void chEvtUnregister(event_source_t *esp, event_listener_t *elp);
-  eventmask_t chEvtGetAndClearEvents(eventmask_t mask);
-  eventmask_t chEvtAddEvents(eventmask_t mask);
+  eventmask_t chEvtGetAndClearEvents(eventmask_t events);
+  eventmask_t chEvtAddEvents(eventmask_t events);
   eventflags_t chEvtGetAndClearFlags(event_listener_t *elp);
   eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp);
-  void chEvtSignal(thread_t *tp, eventmask_t mask);
-  void chEvtSignalI(thread_t *tp, eventmask_t mask);
+  void chEvtSignal(thread_t *tp, eventmask_t events);
+  void chEvtSignalI(thread_t *tp, eventmask_t events);
   void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags);
   void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags);
-  void chEvtDispatch(const evhandler_t *handlers, eventmask_t mask);
+  void chEvtDispatch(const evhandler_t *handlers, eventmask_t events);
 #if CH_CFG_OPTIMIZE_SPEED || !CH_CFG_USE_EVENTS_TIMEOUT
-  eventmask_t chEvtWaitOne(eventmask_t mask);
-  eventmask_t chEvtWaitAny(eventmask_t mask);
-  eventmask_t chEvtWaitAll(eventmask_t mask);
+  eventmask_t chEvtWaitOne(eventmask_t events);
+  eventmask_t chEvtWaitAny(eventmask_t events);
+  eventmask_t chEvtWaitAll(eventmask_t events);
 #endif
 #if CH_CFG_USE_EVENTS_TIMEOUT
-  eventmask_t chEvtWaitOneTimeout(eventmask_t mask, systime_t time);
-  eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t time);
-  eventmask_t chEvtWaitAllTimeout(eventmask_t mask, systime_t time);
+  eventmask_t chEvtWaitOneTimeout(eventmask_t events, systime_t time);
+  eventmask_t chEvtWaitAnyTimeout(eventmask_t events, systime_t time);
+  eventmask_t chEvtWaitAllTimeout(eventmask_t events, systime_t time);
 #endif
 #ifdef __cplusplus
 }
@@ -170,25 +174,44 @@ static inline void chEvtObjectInit(event_source_t *esp) {
 }
 
 /**
+ * @brief     Registers an Event Listener on an Event Source.
+ * @details Once a thread has registered as listener on an event source it
+ *             will be notified of all events broadcasted there.
+ * @note     Multiple Event Listeners can specify the same bits to be ORed to
+ *             different threads.
+ *
+ * @param[in] esp       pointer to the @p event_source_t structure
+ * @param[out] elp      pointer to the @p event_listener_t structure
+ * @param[in] events    the mask of events to be ORed to the thread when
+ *                      the event source is broadcasted
+ *
+ * @api
+ */
+static inline void chEvtRegisterMask(event_source_t *esp,
+                                     event_listener_t *elp,
+                                     eventflags_t events) {
+
+  chEvtRegisterMaskWithFlags(esp, elp, events, (eventflags_t)-1);
+}
+
+/**
  * @brief   Registers an Event Listener on an Event Source.
  * @note    Multiple Event Listeners can use the same event identifier, the
  *          listener will share the callback function.
  *
  * @param[in] esp       pointer to the  @p event_source_t structure
  * @param[out] elp      pointer to the @p event_listener_t structure
- * @param[in] eid       numeric identifier assigned to the Event Listener. The
- *                      identifier is used as index for the event callback
- *                      function.
+ * @param[in] event     numeric identifier assigned to the Event Listener.
  *                      The value must range between zero and the size, in bit,
- *                      of the @p eventid_t type minus one.
+ *                      of the @p eventmask_t type minus one.
  *
  * @api
  */
 static inline void chEvtRegister(event_source_t *esp,
                                  event_listener_t *elp,
-                                 eventid_t eid) {
+                                 eventid_t event) {
 
-  chEvtRegisterMask(esp, elp, EVENT_MASK(eid));
+  chEvtRegisterMask(esp, elp, EVENT_MASK(event));
 }
 
 /**
