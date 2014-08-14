@@ -87,7 +87,6 @@ static void wakeup_isr(NANDDriver *nandp){
  */
 static void nand_lld_suspend_thread(NANDDriver *nandp) {
 
-  //nandp->thread = chThdGetSelfX();
   osalThreadSuspendS(&nandp->thread);
 }
 
@@ -114,86 +113,60 @@ static uint32_t calc_eccps(NANDDriver *nandp){
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_NAND_USE_FSMC_INT
 /**
- * @brief   Enable interrupts from FSMC
+ * @brief   Enable interrupts from NAND
  *
  * @param[in] nandp    pointer to the @p NANDDriver object
  *
  * @notapi
  */
 static void nand_ready_isr_enable(NANDDriver *nandp) {
+#if STM32_NAND_USE_EXT_INT
+  nandp->config->ext_nand_isr_enable();
+#else
+  nandp->nand->SR &= ~(FSMC_SR_IRS | FSMC_SR_ILS | FSMC_SR_IFS |
+                                          FSMC_SR_ILEN | FSMC_SR_IFEN);
   nandp->nand->SR |= FSMC_SR_IREN;
-  osalSysHalt("Function untested");
+#endif
 }
 
 /**
- * @brief   Disable interrupts from FSMC
+ * @brief   Disable interrupts from NAND
  *
  * @param[in] nandp    pointer to the @p NANDDriver object
  *
  * @notapi
  */
 static void nand_ready_isr_disable(NANDDriver *nandp) {
+#if STM32_NAND_USE_EXT_INT
+  nandp->config->ext_nand_isr_disable();
+#else
   nandp->nand->SR &= ~FSMC_SR_IREN;
-  osalSysHalt("Function untested");
+#endif
 }
 
 /**
  * @brief   Ready interrupt handler
  *
  * @param[in] nandp    pointer to the @p NANDDriver object
- * @param[in] flags       flags passed from FSMC intrrupt handler
  *
  * @notapi
  */
-static void nand_isr_handler (NANDDriver *nandp,
-                                                nandflags_t flags){
-  (void)nandp;
-  (void)flags;
-
-  osalSysHalt("Unrealized");
-}
-#else /* STM32_NAND_USE_FSMC_INT */
-/**
- * @brief   Disable interrupts from EXTI
- *
- * @param[in] nandp    pointer to the @p NANDDriver object
- *
- * @notapi
- */
-static void nand_ready_isr_enable(NANDDriver *nandp) {
-  nandp->config->ext_isr_enable();
-}
-
-/**
- * @brief   Enable interrupts from EXTI
- *
- * @param[in] nandp    pointer to the @p NANDDriver object
- *
- * @notapi
- */
-static void nand_ready_isr_disable(NANDDriver *nandp) {
-  nandp->config->ext_isr_disable();
-}
-
-/**
- * @brief   Ready pin interrupt handler.
- *
- * @param[in] nandp    pointer to the @p NANDDriver object
- *
- * @notapi
- */
-static void nand_isr_handler(NANDDriver *nandp){
+static void nand_isr_handler (NANDDriver *nandp){
 
   osalSysLockFromISR();
+
+#if !STM32_NAND_USE_EXT_INT
+  osalDbgCheck(nandp->nand->SR & FSMC_SR_IRS); /* spurious interrupt happened */
+  nandp->nand->SR &= ~FSMC_SR_IRS;
+#endif
 
   switch (nandp->state){
   case NAND_READ:
     nandp->state = NAND_DMA_RX;
     dmaStartMemCopy(nandp->dma, nandp->dmamode,
                     nandp->map_data, nandp->rxdata, nandp->datalen);
-    /* thread will be woked up from DMA ISR */
+    /* thread will be waked up from DMA ISR */
     break;
 
   case NAND_ERASE:
@@ -212,21 +185,18 @@ static void nand_isr_handler(NANDDriver *nandp){
     osalSysHalt("Unhandled case");
     break;
   }
-
   osalSysUnlockFromISR();
 }
-#endif /* STM32_NAND_USE_FSMC_INT */
 
 /**
  * @brief   DMA RX end IRQ handler.
  *
  * @param[in] nandp    pointer to the @p NANDDriver object
- * @param[in] flags       pre-shifted content of the ISR register
+ * @param[in] flags    pre-shifted content of the ISR register
  *
  * @notapi
  */
-static void nand_lld_serve_transfer_end_irq(NANDDriver *nandp,
-                                               uint32_t flags) {
+static void nand_lld_serve_transfer_end_irq(NANDDriver *nandp, uint32_t flags) {
   /* DMA errors handling.*/
 #if defined(STM32_NAND_DMA_ERROR_HOOK)
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {

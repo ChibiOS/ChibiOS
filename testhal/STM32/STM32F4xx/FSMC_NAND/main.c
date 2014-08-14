@@ -73,11 +73,19 @@
 #define NAND_ROW_WRITE_CYCLES     3
 #define NAND_COL_WRITE_CYCLES     2
 
-#define NANF_TEST_START_BLOCK     1100
-#define NAND_TEST_END_BLOCK       1150
+#define NANF_TEST_START_BLOCK     1200
+#define NAND_TEST_END_BLOCK       1220
 
 #if USE_KILL_BLOCK_TEST
 #define NAND_TEST_KILL_BLOCK      8000
+#endif
+
+#if STM32_NAND_USE_FSMC_NAND1
+  #define NAND                    NANDD1
+#elif STM32_NAND_USE_FSMC_NAND2
+  #define NAND                    NANDD2
+#else
+#error "You should enable at least one NAND interface"
 #endif
 
 /*
@@ -91,7 +99,7 @@
  * PROTOTYPES
  ******************************************************************************
  */
-#if !STM32_NAND_USE_FSMC_INT
+#if STM32_NAND_USE_EXT_INT
 static void ready_isr_enable(void);
 static void ready_isr_disable(void);
 static void nand_ready_cb(EXTDriver *extp, expchannel_t channel);
@@ -138,7 +146,7 @@ static const NANDConfig nandcfg = {
     /* stm32 specific fields */
     ((FSMCNAND_TIME_HIZ << 24) | (FSMCNAND_TIME_HOLD << 16) | \
                                  (FSMCNAND_TIME_WAIT << 8) | FSMCNAND_TIME_SET),
-#if !STM32_NAND_USE_FSMC_INT
+#if STM32_NAND_USE_EXT_INT
     ready_isr_enable,
     ready_isr_disable
 #endif
@@ -147,7 +155,7 @@ static const NANDConfig nandcfg = {
 /**
  *
  */
-#if !STM32_NAND_USE_FSMC_INT
+#if STM32_NAND_USE_EXT_INT
 static const EXTConfig extcfg = {
   {
     {EXT_CH_MODE_DISABLED, NULL},     //0
@@ -175,7 +183,7 @@ static const EXTConfig extcfg = {
     {EXT_CH_MODE_DISABLED, NULL},
   }
 };
-#endif /* !STM32_NAND_USE_FSMC_INT */
+#endif /* STM32_NAND_USE_EXT_INT */
 
 static uint32_t BackgroundThdCnt = 0;
 
@@ -191,7 +199,7 @@ static uint32_t KillCycle = 0;
  ******************************************************************************
  */
 
-#if !STM32_NAND_USE_FSMC_INT
+#if STM32_NAND_USE_EXT_INT
 static void nand_ready_cb(EXTDriver *extp, expchannel_t channel){
   (void)extp;
   (void)channel;
@@ -200,13 +208,13 @@ static void nand_ready_cb(EXTDriver *extp, expchannel_t channel){
 }
 
 static void ready_isr_enable(void) {
-  extChannelEnable(&EXTD1, GPIOD_NAND_RB);
+  extChannelEnable(&EXTD1, GPIOD_NAND_RB_NWAIT);
 }
 
 static void ready_isr_disable(void) {
-  extChannelDisable(&EXTD1, GPIOD_NAND_RB);
+  extChannelDisable(&EXTD1, GPIOD_NAND_RB_NWAIT);
 }
-#endif /* STM32_NAND_USE_FSMC_INT */
+#endif /* STM32_NAND_USE_EXT_INT */
 
 /**
  *
@@ -228,9 +236,9 @@ static bool is_erased(NANDDriver *dp, size_t block){
   uint32_t page = 0;
   size_t i = 0;
 
-  for (page=0; page<NANDD1.config->pages_per_block; page++){
-    nandReadPageData(dp, block, page, nand_buf, NANDD1.config->page_data_size, NULL);
-    nandReadPageSpare(dp, block, page, &nand_buf[2048], NANDD1.config->page_spare_size);
+  for (page=0; page<NAND.config->pages_per_block; page++){
+    nandReadPageData(dp, block, page, nand_buf, NAND.config->page_data_size, NULL);
+    nandReadPageSpare(dp, block, page, &nand_buf[2048], NAND.config->page_spare_size);
     for (i=0; i<sizeof(nand_buf); i++) {
       if (nand_buf[i] != 0xFF)
         return false;
@@ -276,7 +284,7 @@ static void kill_block(NANDDriver *nandp, uint32_t block){
   osalDbgCheck(!nandIsBad(nandp, block));
 
   while(true){
-    op_status = nandErase(&NANDD1, block);
+    op_status = nandErase(&NAND, block);
     if (0 != (op_status & 1)){
       if(!is_erased(nandp, block))
         osalSysHalt("Block successfully killed");
@@ -378,7 +386,7 @@ static void ecc_test(NANDDriver *nandp, uint32_t block){
   /* This test requires good block.*/
   osalDbgCheck(!nandIsBad(nandp, block));
   if (!is_erased(nandp, block))
-    nandErase(&NANDD1, block);
+    nandErase(&NAND, block);
 
   pattern_fill();
 
@@ -440,7 +448,7 @@ static void ecc_test(NANDDriver *nandp, uint32_t block){
   osalDbgCheck(ECC_UNCORRECTABLE_ERROR == ecc_result); /* This error must be NOT correctable */
 
   /*** make clean ***/
-  nandErase(&NANDD1, block);
+  nandErase(&NAND, block);
 }
 
 /*
@@ -557,10 +565,10 @@ int main(void) {
   halInit();
   chSysInit();
 
-#if !STM32_NAND_USE_FSMC_INT
+#if STM32_NAND_USE_EXT_INT
   extStart(&EXTD1, &extcfg);
 #endif
-  nandStart(&NANDD1, &nandcfg);
+  nandStart(&NAND, &nandcfg);
 
   chThdSleepMilliseconds(4000);
 
@@ -579,7 +587,7 @@ int main(void) {
   dma_storm_uart_start();
   dma_storm_spi_start();
   T = chVTGetSystemTimeX();
-  general_test(&NANDD1, NANF_TEST_START_BLOCK, NAND_TEST_END_BLOCK, 1);
+  general_test(&NAND, NANF_TEST_START_BLOCK, NAND_TEST_END_BLOCK, 1);
   T = chVTGetSystemTimeX() - T;
   adc_ints = dma_storm_adc_stop();
   uart_ints = dma_storm_uart_stop();
@@ -611,10 +619,10 @@ int main(void) {
   /*
    * perform ECC calculation test
    */
-  ecc_test(&NANDD1, NAND_TEST_END_BLOCK);
+  ecc_test(&NAND, NAND_TEST_END_BLOCK);
 
 #if USE_KILL_BLOCK_TEST
-  kill_block(&NANDD1, NAND_TEST_KILL_BLOCK);
+  kill_block(&NAND, NAND_TEST_KILL_BLOCK);
 #endif
 
   nand_wp_assert();

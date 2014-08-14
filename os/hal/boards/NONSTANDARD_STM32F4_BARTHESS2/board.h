@@ -108,7 +108,7 @@
 #define GPIOD_PIN3                  3
 #define GPIOD_NAND_RE               4
 #define GPIOD_NAND_WE               5
-#define GPIOD_NAND_RB               6
+#define GPIOD_NAND_RB_NWAIT         6
 #define GPIOD_NAND_CE               7
 #define GPIOD_PIN8                  8
 #define GPIOD_PIN9                  9
@@ -536,7 +536,7 @@
                                      PIN_MODE_INPUT(GPIOD_PIN3) |           \
                                      PIN_MODE_ALTERNATE(GPIOD_NAND_RE) |         \
                                      PIN_MODE_ALTERNATE(GPIOD_NAND_WE) |   \
-                                     PIN_MODE_INPUT(GPIOD_NAND_RB) |           \
+                                     PIN_MODE_INPUT(GPIOD_NAND_RB_NWAIT) |           \
                                      PIN_MODE_ALTERNATE(GPIOD_NAND_CE) |           \
                                      PIN_MODE_INPUT(GPIOD_PIN8) |           \
                                      PIN_MODE_INPUT(GPIOD_PIN9) |           \
@@ -552,7 +552,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOD_PIN3) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_NAND_RE) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOD_NAND_WE) |\
-                                     PIN_OTYPE_PUSHPULL(GPIOD_NAND_RB) |       \
+                                     PIN_OTYPE_PUSHPULL(GPIOD_NAND_RB_NWAIT) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_NAND_CE) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_PIN8) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOD_PIN9) |       \
@@ -568,7 +568,7 @@
                                      PIN_OSPEED_100M(GPIOD_PIN3) |          \
                                      PIN_OSPEED_100M(GPIOD_NAND_RE) |         \
                                      PIN_OSPEED_100M(GPIOD_NAND_WE) |  \
-                                     PIN_OSPEED_100M(GPIOD_NAND_RB) |          \
+                                     PIN_OSPEED_100M(GPIOD_NAND_RB_NWAIT) |          \
                                      PIN_OSPEED_100M(GPIOD_NAND_CE) |          \
                                      PIN_OSPEED_100M(GPIOD_PIN8) |          \
                                      PIN_OSPEED_100M(GPIOD_PIN9) |          \
@@ -584,7 +584,7 @@
                                      PIN_PUPDR_PULLUP(GPIOD_PIN3) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_NAND_RE) |      \
                                      PIN_PUPDR_PULLUP(GPIOD_NAND_WE) |\
-                                     PIN_PUPDR_PULLUP(GPIOD_NAND_RB) |         \
+                                     PIN_PUPDR_PULLUP(GPIOD_NAND_RB_NWAIT) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_NAND_CE) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_PIN8) |         \
                                      PIN_PUPDR_PULLUP(GPIOD_PIN9) |         \
@@ -600,7 +600,7 @@
                                      PIN_ODR_HIGH(GPIOD_PIN3) |             \
                                      PIN_ODR_HIGH(GPIOD_NAND_RE) |            \
                                      PIN_ODR_HIGH(GPIOD_NAND_WE) |     \
-                                     PIN_ODR_HIGH(GPIOD_NAND_RB) |             \
+                                     PIN_ODR_HIGH(GPIOD_NAND_RB_NWAIT) |             \
                                      PIN_ODR_HIGH(GPIOD_NAND_CE) |             \
                                      PIN_ODR_HIGH(GPIOD_PIN8) |             \
                                      PIN_ODR_HIGH(GPIOD_PIN9) |             \
@@ -616,7 +616,7 @@
                                      PIN_AFIO_AF(GPIOD_PIN3, 0) |           \
                                      PIN_AFIO_AF(GPIOD_NAND_RE, 12) |          \
                                      PIN_AFIO_AF(GPIOD_NAND_WE, 12) |   \
-                                     PIN_AFIO_AF(GPIOD_NAND_RB, 0) |           \
+                                     PIN_AFIO_AF(GPIOD_NAND_RB_NWAIT, 0) |           \
                                      PIN_AFIO_AF(GPIOD_NAND_CE, 12))
 #define VAL_GPIOD_AFRH              (PIN_AFIO_AF(GPIOD_PIN8, 0) |           \
                                      PIN_AFIO_AF(GPIOD_PIN9, 0) |           \

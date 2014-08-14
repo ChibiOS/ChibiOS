@@ -147,6 +147,13 @@
  */
 #define ETH_IRQHandler              Vector134
 
+/*
+ * FSMC
+ */
+#define STM32_FSMC_HANDLER          Vector100
+
+#define STM32_FSMC_NUMBER           48
+
 /** @} */
 
 /*===========================================================================*/

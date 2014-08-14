@@ -106,9 +106,9 @@ void fsmc_start(FSMCDriver *fsmcp) {
     if (&FSMCD1 == fsmcp) {
       rccResetFSMC();
       rccEnableFSMC(FALSE);
-      #if STM32_NAND_USE_FSMC_INT
-      nvicEnableVector(FSMC_IRQn, STM32_FSMC_FSMC1_IRQ_PRIORITY);
-      #endif
+#if !STM32_NAND_USE_EXT_INT
+      nvicEnableVector(STM32_FSMC_NUMBER, STM32_FSMC_FSMC1_IRQ_PRIORITY);
+#endif
     }
 #endif /* STM32_FSMC_USE_FSMC1 */
 
@@ -132,50 +132,39 @@ void fsmc_stop(FSMCDriver *fsmcp) {
     /* Disables the peripheral.*/
 #if STM32_FSMC_USE_FSMC1
     if (&FSMCD1 == fsmcp) {
-      #if STM32_NAND_USE_FSMC_INT
-      nvicDisableVector(FSMC_IRQn);
-      #endif
+#if !STM32_NAND_USE_EXT_INT
+      nvicDisableVector(STM32_FSMC_NUMBER);
+#endif
       rccDisableFSMC(FALSE);
     }
-#endif /* PLATFORM_STM32_USE_FSMC1 */
+#endif /* STM32_FSMC_USE_FSMC1 */
 
     fsmcp->state = FSMC_STOP;
   }
 }
 
-#if STM32_NAND_USE_FSMC_INT
-/**
- * @brief   Serve common interrupt.
- *
- * @notapi
- */
-void fsmc_serve_interrupt(void) {
-
-  osalSysHalt("Unrealized");
-}
-
+#if !STM32_NAND_USE_EXT_INT
 /**
  * @brief   FSMC shared interrupt handler.
  *
  * @notapi
  */
-CH_IRQ_HANDLER(FSMC_IRQHandler) {
-  osalSysHalt("This functionality untested");
+CH_IRQ_HANDLER(STM32_FSMC_HANDLER) {
 
   CH_IRQ_PROLOGUE();
 #if STM32_NAND_USE_FSMC_NAND1
   if (FSMCD1.nand1->SR & FSMC_SR_ISR_MASK){
-    NANDD1.isr_handler(&NANDD1, FSMCD1.nand1->SR);
+    NANDD1.isr_handler(&NANDD1);
   }
 #endif
 #if STM32_NAND_USE_FSMC_NAND2
   if (FSMCD1.nand2->SR & FSMC_SR_ISR_MASK){
-    NANDD2.isr_handler(&NANDD2, FSMCD1.nand2->SR);
+    NANDD2.isr_handler(&NANDD2);
   }
 #endif
   CH_IRQ_EPILOGUE();
 }
-#endif /* STM32_FSMC_USE_INT */
+#endif /* !STM32_NAND_USE_EXT_INT */
 
 #endif /* HAL_USE_FSMC */
 

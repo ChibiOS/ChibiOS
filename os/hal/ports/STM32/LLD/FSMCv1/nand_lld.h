@@ -128,7 +128,7 @@
 #error "FSMC not present in the selected device"
 #endif
 
-#if !STM32_NAND_USE_FSMC_INT && !HAL_USE_EXT
+#if STM32_NAND_USE_EXT_INT && !HAL_USE_EXT
 #error "External interrupt controller must be enabled to use this feature"
 #endif
 
@@ -156,23 +156,17 @@ typedef uint32_t nandflags_t;
  */
 typedef struct NANDDriver NANDDriver;
 
-#if STM32_NAND_USE_FSMC_INT
-/**
- * @brief   Type of interrupt handler function
- */
-typedef void (*nandisrhandler_t)
-                      (NANDDriver *nandp, nandflags_t flags);
-#else
 /**
  * @brief   Type of interrupt handler function
  */
 typedef void (*nandisrhandler_t)(NANDDriver *nandp);
 
+#if STM32_NAND_USE_EXT_INT
 /**
  * @brief   Type of function switching external interrupts on and off.
  */
 typedef void (*nandisrswitch_t)(void);
-#endif /* STM32_NAND_USE_FSMC_INT */
+#endif /* STM32_NAND_USE_EXT_INT */
 
 /**
  * @brief   Driver configuration structure.
@@ -224,16 +218,16 @@ typedef struct {
    *          from STMicroelectronics.
    */
   uint32_t                  pmem;
-#if !STM32_NAND_USE_FSMC_INT
+#if STM32_NAND_USE_EXT_INT
   /**
    * @brief   Function enabling interrupts from EXTI
    */
-  nandisrswitch_t        ext_isr_enable;
+  nandisrswitch_t           ext_nand_isr_enable;
   /**
    * @brief   Function disabling interrupts from EXTI
    */
-  nandisrswitch_t        ext_isr_disable;
-#endif /* !STM32_NAND_USE_FSMC_INT */
+  nandisrswitch_t           ext_nand_isr_disable;
+#endif /* STM32_NAND_USE_EXT_INT */
 } NANDConfig;
 
 /**

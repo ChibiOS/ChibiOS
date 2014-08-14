@@ -158,8 +158,8 @@ typedef struct {
  * @details MCUs in 100-pin package has no dedicated interrupt pin for FSMC.
  *          You have to use EXTI module instead to workaround this issue.
  */
-#if !defined(STM32_NAND_USE_FSMC_INT) || defined(__DOXYGEN__)
-#define STM32_NAND_USE_FSMC_INT          FALSE
+#if !defined(STM32_NAND_USE_EXT_INT) || defined(__DOXYGEN__)
+#define STM32_NAND_USE_EXT_INT          FALSE
 #endif
 
 /** @} */
