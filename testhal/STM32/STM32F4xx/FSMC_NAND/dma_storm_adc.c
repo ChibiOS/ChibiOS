@@ -39,17 +39,13 @@
 #define ADC_AN33_1_OFFSET         (ADC_CHANNEL_IN14 - 10)
 #define ADC_AN33_2_OFFSET         (ADC_CHANNEL_IN15 - 10)
 
-
-
 static void adcerrorcallback(ADCDriver *adcp, adcerror_t err);
 static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n);
 
-
-
 static adcsample_t samples[ADC_NUM_CHANNELS * ADC_BUF_DEPTH];
 
-volatile uint32_t its = 0;
-volatile uint32_t errors = 0;
+static uint32_t ints = 0;
+static uint32_t errors = 0;
 
 static const ADCConversionGroup adccg = {
   TRUE,
@@ -80,23 +76,20 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
   (void)err;
 
   osalSysHalt("");
-//  chSysLockFromIsr();
-//  adcStartConversionI(&ADCD1, &adccg, samples, ADC_BUF_DEPTH);
-//  chSysUnlockFromIsr();
 }
 
 static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
   (void)adcp;
   (void)buffer;
   (void)n;
-  its++;
+  ints++;
 }
 
 /*
  *
  */
 void dma_storm_adc_start(void){
-  its = 0;
+  ints = 0;
   errors = 0;
 
   /* Activates the ADC1 driver and the temperature sensor.*/
@@ -114,6 +107,6 @@ uint32_t dma_storm_adc_stop(void){
   adcStopConversion(&ADCD1);
   adcSTM32DisableTSVREFE();
   adcStop(&ADCD1);
-  return its;
+  return ints;
 }
 

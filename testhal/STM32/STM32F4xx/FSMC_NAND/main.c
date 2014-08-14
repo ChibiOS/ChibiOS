@@ -21,7 +21,7 @@
 /*
  * Hardware notes.
  *
- * Use _external_ pullup on ready/busy pin of NAND IC.
+ * Use external pullup on ready/busy pin of NAND IC for a speed reason.
  *
  * Chose MCU with 140 (or more) pins package because 100 pins packages
  * has no dedicated interrupt pins for FSMC.
@@ -36,6 +36,13 @@
  * If you use MLC flash memory do NOT use ECC to detect/correct
  * errors because of its weakness. Use Rid-Solomon on BCH code instead.
  * Yes, you have to realize it in sowftware yourself.
+ */
+
+/*
+ * Software notes.
+ *
+ * For correct calculation of timing values you need AN2784 document
+ * from STMicro.
  */
 
 #include "ch.h"
@@ -66,10 +73,12 @@
 #define NAND_ROW_WRITE_CYCLES     3
 #define NAND_COL_WRITE_CYCLES     2
 
-/* statuses returning by NAND IC on 0x70 command */
-#define NAND_STATUS_OP_FAILED     ((uint8_t)1 << 0)
-#define NAND_STATUS_READY         ((uint8_t)1 << 6)
-#define NAND_STATUS_NOT_RPOTECTED ((uint8_t)1 << 7)
+#define NANF_TEST_START_BLOCK     1100
+#define NAND_TEST_END_BLOCK       1150
+
+#if USE_KILL_BLOCK_TEST
+#define NAND_TEST_KILL_BLOCK      8000
+#endif
 
 /*
  ******************************************************************************
@@ -102,11 +111,11 @@ static uint8_t ref_buf[NAND_PAGE_SIZE];
 /*
  *
  */
-//static TimeMeasurement tmu_erase;
-//static TimeMeasurement tmu_write_data;
-//static TimeMeasurement tmu_write_spare;
-//static TimeMeasurement tmu_read_data;
-//static TimeMeasurement tmu_read_spare;
+static time_measurement_t tmu_erase;
+static time_measurement_t tmu_write_data;
+static time_measurement_t tmu_write_spare;
+static time_measurement_t tmu_read_data;
+static time_measurement_t tmu_read_spare;
 
 #if NAND_USE_BAD_MAP
 static uint32_t badblock_map[NAND_BLOCKS_COUNT / 32];
@@ -128,7 +137,7 @@ static const NANDConfig nandcfg = {
     NAND_COL_WRITE_CYCLES,
     /* stm32 specific fields */
     ((FSMCNAND_TIME_HIZ << 24) | (FSMCNAND_TIME_HOLD << 16) | \
-                                (FSMCNAND_TIME_WAIT << 8) | FSMCNAND_TIME_SET),
+                                 (FSMCNAND_TIME_WAIT << 8) | FSMCNAND_TIME_SET),
 #if !STM32_NAND_USE_FSMC_INT
     ready_isr_enable,
     ready_isr_disable
@@ -168,14 +177,10 @@ static const EXTConfig extcfg = {
 };
 #endif /* !STM32_NAND_USE_FSMC_INT */
 
-/*
- *
- */
-volatile uint32_t IdleCnt = 0;
-volatile systime_t T = 0;
+static uint32_t BackgroundThdCnt = 0;
 
 #if USE_KILL_BLOCK_TEST
-volatile uint32_t KillCycle = 0;
+static uint32_t KillCycle = 0;
 #endif
 
 /*
@@ -203,28 +208,15 @@ static void ready_isr_disable(void) {
 }
 #endif /* STM32_NAND_USE_FSMC_INT */
 
-static void nand_wp_assert(void) {
-  palClearPad(GPIOB, GPIOB_NAND_WP);
-}
-
-static void nand_wp_release(void) {
-  palSetPad(GPIOB, GPIOB_NAND_WP);
-}
-
-static void red_led_on(void) {
-  palSetPad(GPIOE, GPIOE_LED_R);
-}
-
-static void red_led_off(void) {
-  palClearPad(GPIOE, GPIOE_LED_R);
-}
-
-static THD_WORKING_AREA(fsmcIdleThreadWA, 128);
-static THD_FUNCTION(fsmcIdleThread, arg) {
+/**
+ *
+ */
+static THD_WORKING_AREA(BackgroundThreadWA, 128);
+static THD_FUNCTION(BackgroundThread, arg) {
   (void)arg;
 
   while(true){
-    IdleCnt++;
+    BackgroundThdCnt++;
   }
   return 0;
 }
@@ -248,17 +240,14 @@ static bool is_erased(NANDDriver *dp, size_t block){
   return true;
 }
 
+/*
+ *
+ */
 static void pattern_fill(void) {
 
   size_t i;
 
-
-
-
-  ///////////////////////// FIXME //////////////////////////////////
-  //srand(hal_lld_get_counter_value());
-  srand(0);
-
+  srand(chSysGetRealtimeCounterX());
 
   for(i=0; i<NAND_PAGE_SIZE; i++){
     ref_buf[i] = rand() & 0xFF;
@@ -273,6 +262,9 @@ static void pattern_fill(void) {
   osalDbgCheck(0 == memcmp(ref_buf, nand_buf, NAND_PAGE_SIZE));
 }
 
+/*
+ *
+ */
 #if USE_KILL_BLOCK_TEST
 static void kill_block(NANDDriver *nandp, uint32_t block){
 
@@ -280,7 +272,7 @@ static void kill_block(NANDDriver *nandp, uint32_t block){
   size_t page = 0;
   uint8_t op_status;
 
-  /* This test require good block.*/
+  /* This test requires good block.*/
   osalDbgCheck(!nandIsBad(nandp, block));
 
   while(true){
@@ -314,6 +306,9 @@ static void kill_block(NANDDriver *nandp, uint32_t block){
 }
 #endif /* USE_KILL_BLOCK_TEST */
 
+/*
+ *
+ */
 typedef enum {
   ECC_NO_ERROR = 0,
   ECC_CORRECTABLE_ERROR = 1,
@@ -321,8 +316,11 @@ typedef enum {
   ECC_CORRUPTED = 3,
 } ecc_result_t;
 
-static ecc_result_t parse_ecc(uint32_t ecclen, uint32_t ecc1, uint32_t ecc2,
-                                                          uint32_t *corrupted){
+/*
+ *
+ */
+static ecc_result_t parse_ecc(uint32_t ecclen,
+                    uint32_t ecc1, uint32_t ecc2, uint32_t *corrupted){
 
   size_t i = 0;
   uint32_t corr = 0;
@@ -357,6 +355,9 @@ static ecc_result_t parse_ecc(uint32_t ecclen, uint32_t ecc1, uint32_t ecc2,
   }
 }
 
+/*
+ *
+ */
 static void invert_bit(uint8_t *buf, uint32_t byte, uint32_t bit){
   osalDbgCheck((byte < NAND_PAGE_DATA_SIZE) && (bit < 8));
   buf[byte] ^= ((uint8_t)1) << bit;
@@ -456,12 +457,11 @@ static void general_test (NANDDriver *nandp, size_t first,
   red_led_on();
 
   /* initialize time measurement units */
-  ////////////////////////////// FIXME //////////////////////////////
-//  tmObjectInit(&tmu_erase);
-//  tmObjectInit(&tmu_write_data);
-//  tmObjectInit(&tmu_write_spare);
-//  tmObjectInit(&tmu_read_data);
-//  tmObjectInit(&tmu_read_spare);
+  chTMObjectInit(&tmu_erase);
+  chTMObjectInit(&tmu_write_data);
+  chTMObjectInit(&tmu_write_spare);
+  chTMObjectInit(&tmu_read_data);
+  chTMObjectInit(&tmu_read_spare);
 
   /* perform basic checks */
   for (block=first; block<last; block++){
@@ -479,43 +479,43 @@ static void general_test (NANDDriver *nandp, size_t first,
       for (page=0; page<nandp->config->pages_per_block; page++){
         pattern_fill();
 
-        //tmStartMeasurement(&tmu_write_data);
+        chTMStartMeasurementX(&tmu_write_data);
         op_status = nandWritePageData(nandp, block, page,
                       nand_buf, nandp->config->page_data_size, &wecc);
-        //tmStopMeasurement(&tmu_write_data);
+        chTMStopMeasurementX(&tmu_write_data);
         osalDbgCheck(0 == (op_status & 1)); /* operation failed */
 
-        //tmStartMeasurement(&tmu_write_spare);
+        chTMStartMeasurementX(&tmu_write_spare);
         op_status = nandWritePageSpare(nandp, block, page,
                       nand_buf + nandp->config->page_data_size,
                       nandp->config->page_spare_size);
-        //tmStopMeasurement(&tmu_write_spare);
+        chTMStopMeasurementX(&tmu_write_spare);
         osalDbgCheck(0 == (op_status & 1)); /* operation failed */
 
         /* read back and compare */
         for (round=0; round<read_rounds; round++){
           memset(nand_buf, 0, NAND_PAGE_SIZE);
 
-          //tmStartMeasurement(&tmu_read_data);
+          chTMStartMeasurementX(&tmu_read_data);
           nandReadPageData(nandp, block, page,
                       nand_buf, nandp->config->page_data_size, &recc);
-          //tmStopMeasurement(&tmu_read_data);
+          chTMStopMeasurementX(&tmu_read_data);
           osalDbgCheck(0 == (recc ^ wecc)); /* ECC error detected */
 
-          //tmStartMeasurement(&tmu_read_spare);
+          chTMStartMeasurementX(&tmu_read_spare);
           nandReadPageSpare(nandp, block, page,
                       nand_buf + nandp->config->page_data_size,
                       nandp->config->page_spare_size);
-          //tmStopMeasurement(&tmu_read_spare);
+          chTMStopMeasurementX(&tmu_read_spare);
 
           osalDbgCheck(0 == memcmp(ref_buf, nand_buf, NAND_PAGE_SIZE)); /* Read back failed */
         }
       }
 
       /* make clean */
-      //tmStartMeasurement(&tmu_erase);
+      chTMStartMeasurementX(&tmu_erase);
       op_status = nandErase(nandp, block);
-      //tmStopMeasurement(&tmu_erase);
+      chTMStopMeasurementX(&tmu_erase);
       osalDbgCheck(0 == (op_status & 1)); /* operation failed */
 
       status = is_erased(nandp, block);
@@ -537,19 +537,15 @@ static void general_test (NANDDriver *nandp, size_t first,
  */
 int main(void) {
 
-  size_t start = 1100;
-  size_t end = 1150;
-  volatile int32_t adc_its = 0;
-  volatile int32_t spi_its = 0;
-  volatile int32_t uart_its = 0;
-  volatile int32_t adc_its_idle = 0;
-  volatile int32_t spi_its_idle = 0;
-  volatile int32_t uart_its_idle = 0;
-  volatile uint32_t idle_thread_cnt = 0;
-
-  #if USE_KILL_BLOCK_TEST
-  size_t kill = 8000;
-  #endif
+  /* performance counters */
+  int32_t adc_ints = 0;
+  int32_t spi_ints = 0;
+  int32_t uart_ints = 0;
+  int32_t adc_idle_ints = 0;
+  int32_t spi_idle_ints = 0;
+  int32_t uart_idle_ints = 0;
+  uint32_t background_cnt = 0;
+  systime_t T = 0;
 
   /*
    * System initializations.
@@ -568,45 +564,57 @@ int main(void) {
 
   chThdSleepMilliseconds(4000);
 
-  chThdCreateStatic(fsmcIdleThreadWA,
-        sizeof(fsmcIdleThreadWA),
+  chThdCreateStatic(BackgroundThreadWA,
+        sizeof(BackgroundThreadWA),
         NORMALPRIO - 20,
-        fsmcIdleThread,
+        BackgroundThread,
         NULL);
 
   nand_wp_release();
 
+  /*
+   * run NAND test in parallel with DMA load and background thread
+   */
   dma_storm_adc_start();
   dma_storm_uart_start();
   dma_storm_spi_start();
   T = chVTGetSystemTimeX();
-  general_test(&NANDD1, start, end, 1);
+  general_test(&NANDD1, NANF_TEST_START_BLOCK, NAND_TEST_END_BLOCK, 1);
   T = chVTGetSystemTimeX() - T;
-  adc_its = dma_storm_adc_stop();
-  uart_its = dma_storm_uart_stop();
-  spi_its = dma_storm_spi_stop();
+  adc_ints = dma_storm_adc_stop();
+  uart_ints = dma_storm_uart_stop();
+  spi_ints = dma_storm_spi_stop();
   chSysLock();
-  idle_thread_cnt = IdleCnt;
-  IdleCnt = 0;
+  background_cnt = BackgroundThdCnt;
+  BackgroundThdCnt = 0;
   chSysUnlock();
 
+  /*
+   * run DMA load and background thread _without_ NAND test
+   */
   dma_storm_adc_start();
   dma_storm_uart_start();
   dma_storm_spi_start();
   chThdSleep(T);
-  adc_its_idle = dma_storm_adc_stop();
-  uart_its_idle = dma_storm_uart_stop();
-  spi_its_idle = dma_storm_spi_stop();
+  adc_idle_ints = dma_storm_adc_stop();
+  uart_idle_ints = dma_storm_uart_stop();
+  spi_idle_ints = dma_storm_spi_stop();
 
-  osalDbgCheck(idle_thread_cnt > (IdleCnt / 4));
-  osalDbgCheck(abs(adc_its - adc_its_idle)   < (adc_its_idle  / 20));
-  osalDbgCheck(abs(uart_its - uart_its_idle) < (uart_its_idle / 20));
-  osalDbgCheck(abs(spi_its - spi_its_idle)   < (spi_its_idle  / 10));
+  /*
+   * ensure that NAND code have negligible impact on other subsystems
+   */
+  osalDbgCheck(background_cnt > (BackgroundThdCnt / 4));
+  osalDbgCheck(abs(adc_ints - adc_idle_ints)   < (adc_idle_ints  / 20));
+  osalDbgCheck(abs(uart_ints - uart_idle_ints) < (uart_idle_ints / 20));
+  osalDbgCheck(abs(spi_ints - spi_idle_ints)   < (spi_idle_ints  / 10));
 
-  ecc_test(&NANDD1, end);
+  /*
+   * perform ECC calculation test
+   */
+  ecc_test(&NANDD1, NAND_TEST_END_BLOCK);
 
 #if USE_KILL_BLOCK_TEST
-  kill_block(&NANDD1, kill);
+  kill_block(&NANDD1, NAND_TEST_KILL_BLOCK);
 #endif
 
   nand_wp_assert();

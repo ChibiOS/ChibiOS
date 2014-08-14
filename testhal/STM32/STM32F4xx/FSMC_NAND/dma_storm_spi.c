@@ -59,7 +59,7 @@ static const SPIConfig spicfg = {
     0, //SPI_CR1_BR_1 | SPI_CR1_BR_0
 };
 
-static uint32_t its;
+static uint32_t ints;
 static binary_semaphore_t sem;
 static bool stop = false;
 
@@ -72,7 +72,7 @@ static bool stop = false;
  */
 
 static void spi_end_cb(SPIDriver *spip){
-  its++;
+  ints++;
 
   if (stop){
     chSysLockFromISR();
@@ -94,7 +94,7 @@ static void spi_end_cb(SPIDriver *spip){
  */
 
 void dma_storm_spi_start(void){
-  its = 0;
+  ints = 0;
   stop = false;
   chBSemObjectInit(&sem, true);
   spiStart(&SPID1, &spicfg);
@@ -105,6 +105,6 @@ uint32_t dma_storm_spi_stop(void){
   stop = true;
   chBSemWait(&sem);
   spiStop(&SPID1);
-  return its;
+  return ints;
 }
 

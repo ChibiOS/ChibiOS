@@ -69,7 +69,7 @@ static const UARTConfig uart_cfg = {
   0
 };
 
-static uint32_t its;
+static uint32_t ints;
 
 /*
  ******************************************************************************
@@ -84,7 +84,7 @@ static uint32_t its;
  */
 static void txend1(UARTDriver *uartp) {
 
-  its++;
+  ints++;
   chSysLockFromISR();
   uartStartSendI(uartp, STORM_BUF_LEN, txbuf);
   chSysUnlockFromISR();
@@ -148,7 +148,7 @@ void dma_storm_uart_start(void){
     rxbuf[i] = 0;
   }
 
-  its = 0;
+  ints = 0;
   uartStart(&UARTD6, &uart_cfg);
   uartStartReceive(&UARTD6, STORM_BUF_LEN, rxbuf);
   uartStartSend(&UARTD6, STORM_BUF_LEN, txbuf);
@@ -160,5 +160,5 @@ uint32_t dma_storm_uart_stop(void){
   uartStopReceive(&UARTD6);
   uartStop(&UARTD6);
 
-  return its;
+  return ints;
 }

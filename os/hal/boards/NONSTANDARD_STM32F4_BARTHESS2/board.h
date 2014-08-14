@@ -1178,6 +1178,10 @@
                                      PIN_AFIO_AF(GPIOI_PIN14, 0) |          \
                                      PIN_AFIO_AF(GPIOI_PIN15, 0))
 
+#define nand_wp_assert()    palClearPad(GPIOB, GPIOB_NAND_WP)
+#define nand_wp_release()   palSetPad(GPIOB, GPIOB_NAND_WP)
+#define red_led_on()        palSetPad(GPIOE, GPIOE_LED_R)
+#define red_led_off()       palClearPad(GPIOE, GPIOE_LED_R)
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
