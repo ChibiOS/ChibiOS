@@ -204,7 +204,7 @@ static void nand_ready_cb(EXTDriver *extp, expchannel_t channel){
   (void)extp;
   (void)channel;
 
-  NANDD1.isr_handler(&NANDD1);
+  NAND.isr_handler(&NAND);
 }
 
 static void ready_isr_enable(void) {
