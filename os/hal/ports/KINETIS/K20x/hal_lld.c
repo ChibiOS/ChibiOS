@@ -70,11 +70,14 @@ void hal_lld_init(void) {
  * @special
  */
 void mk20d50_clock_init(void) {
+#if !KINETIS_NO_INIT
 
+#if KINETIS_MCG_MODE == KINETIS_MCG_MODE_PEE
   uint32_t ratio, frdiv;
   uint32_t ratios[] = { 32, 64, 128, 256, 512, 1024, 1280, 1536 };
   int ratio_quantity = sizeof(ratios) / sizeof(ratios[0]);
   int i;
+#endif /* KINETIS_MCG_MODE == KINETIS_MCG_MODE_PEE */
 
   /* Disable the watchdog */
   WDOG->UNLOCK = 0xC520;
@@ -86,6 +89,16 @@ void mk20d50_clock_init(void) {
                 SIM_SCGC5_PORTC |
                 SIM_SCGC5_PORTD |
                 SIM_SCGC5_PORTE;
+
+#if KINETIS_MCG_MODE == KINETIS_MCG_MODE_FEI
+
+  /* Configure FEI mode */
+  MCG->C4 = MCG_C4_DRST_DRS(KINETIS_MCG_FLL_DRS) |
+            (KINETIS_MCG_FLL_DMX32 ? MCG_C4_DMX32 : 0);
+
+#endif /* KINETIS_MCG_MODE == KINETIS_MCG_MODE_FEI */
+
+#if KINETIS_MCG_MODE == KINETIS_MCG_MODE_PEE
 
   /* EXTAL0 and XTAL0 */
   PORTA->PCR[18] = 0;
@@ -102,7 +115,6 @@ void mk20d50_clock_init(void) {
    *       divisors which may not be available depending on the XTAL
    *       frequency, which would required other registers to be modified.
    */
-
   /* Enable OSC, low power mode */
   MCG->C2 = MCG_C2_LOCRE0 | MCG_C2_EREFS0;
   if (KINETIS_XTAL_FREQUENCY > 8000000)
@@ -160,6 +172,9 @@ void mk20d50_clock_init(void) {
   /*
    * Now in PEE mode
    */
+#endif /* KINETIS_MCG_MODE == KINETIS_MCG_MODE_PEE */
+
+#endif /* !KINETIS_NO_INIT */
 }
 
 /** @} */
