@@ -22,7 +22,7 @@
 
 /* Select the MCU clocking mode below by enabling the appropriate block. */
 
-/* Disable all clock intialization */
+/* Enable clock initialization by HAL */
 #define KINETIS_NO_INIT             FALSE
 
 /* PEE mode - external 8 MHz crystal with PLL for 48 MHz core/system clock. */
@@ -32,7 +32,7 @@
 #define KINETIS_SYSCLK_FREQUENCY    48000000UL
 #endif
 
-/* FEI mode - 48 MHz with internal 32.768 kHz crystal */
+/* FEI mode - 48 MHz with internal 32.768 kHz oscillator */
 #if 0
 #define KINETIS_MCG_MODE            KINETIS_MCG_MODE_FEI
 #define KINETIS_MCG_FLL_DMX32       1           /* Fine-tune for 32.768 kHz */
