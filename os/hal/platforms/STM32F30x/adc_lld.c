@@ -470,7 +470,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmamode = adcp->dmamode;
   ccr     = grpp->ccr | (adcp->adcc->CCR & (ADC_CCR_CKMODE_MASK |
                                             ADC_CCR_MDMA_MASK));
-  cfgr    = grpp->cfgr | ADC_CFGR_CONT | ADC_CFGR_DMAEN;
+  cfgr    = grpp->cfgr | ADC_CFGR_DMAEN;
   if (grpp->circular) {
     dmamode |= STM32_DMA_CR_CIRC;
 #if STM32_ADC_DUAL_MODE

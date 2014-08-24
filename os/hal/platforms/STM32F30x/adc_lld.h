@@ -405,8 +405,11 @@ typedef struct {
   /* End of the mandatory fields.*/
   /**
    * @brief   ADC CFGR register initialization data.
-   * @note    The bits DMAEN, DMACFG, OVRMOD, CONT are enforced internally
+   * @note    The bits DMAEN and DMACFG are enforced internally
    *          to the driver, keep them to zero.
+   * @note    The bits @p ADC_CFGR_CONT or @p ADC_CFGR_DISCEN must be
+   *          specified in continuous more or if the buffer depth is
+   *          greater than one.
    */
   uint32_t                  cfgr;
   /**
