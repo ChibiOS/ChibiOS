@@ -72,6 +72,10 @@
 *****************************************************************************
 
 *** 2.6.6 ***
+- FIX: Fixed STM32F30x ADC driver enforces continuous mode (bug #527).
+       Note, this bug enforced a change, now the bit ADC_CFGR_CONT must be
+       manually specified in the cfgr field of the ADCConversionGroup
+       structure when applicable.
 - FIX: Fixed double clock mode for TIM1/TIM8 on STM32F30x fails (bug #525).
 - FIX: Fixed SDC initialization error with V1.1 cards (bug #523).
 - FIX: Fixed Race condition in STM32 SDC driver (bug #522).
