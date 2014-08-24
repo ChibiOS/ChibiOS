@@ -57,7 +57,7 @@ static const ADCConversionGroup adcgrpcfg1 = {
   ADC_GRP1_NUM_CHANNELS,
   NULL,
   adcerrorcallback,
-  0,                        /* CFGR    */
+  ADC_CFGR_CONT,            /* CFGR    */
   ADC_TR(0, 4095),          /* TR1     */
   0,                        /* CCR     */
   {                         /* SMPR[2] */
@@ -82,7 +82,7 @@ static const ADCConversionGroup adcgrpcfg2 = {
   ADC_GRP2_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
-  0,                                /* CFGR    */
+  ADC_CFGR_CONT,                    /* CFGR    */
   ADC_TR(0, 4095),                  /* TR1     */
   ADC_CCR_TSEN | ADC_CCR_VBATEN,    /* CCR     */
   {                                 /* SMPR[2] */
