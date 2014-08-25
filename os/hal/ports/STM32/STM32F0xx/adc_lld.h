@@ -46,20 +46,30 @@
 /** @} */
 
 /**
- * @name    Resolution
+ * @name    CFGR1 register configuration helpers
  * @{
  */
-#define ADC_CFGR1_RES_12BIT     (0 << 3)
-#define ADC_CFGR1_RES_10BIT     (1 << 3)
-#define ADC_CFGR1_RES_8BIT      (2 << 3)
-#define ADC_CFGR1_RES_6BIT      (3 << 3)
+#define ADC_CFGR1_RES_12BIT             (0 << 3)
+#define ADC_CFGR1_RES_10BIT             (1 << 3)
+#define ADC_CFGR1_RES_8BIT              (2 << 3)
+#define ADC_CFGR1_RES_6BIT              (3 << 3)
+
+#define ADC_CFGR1_EXTSEL_MASK           (15 << 6)
+#define ADC_CFGR1_EXTSEL_SRC(n)         ((n) << 6)
+
+#define ADC_CFGR1_EXTEN_MASK            (3 << 10)
+#define ADC_CFGR1_EXTEN_DISABLED        (0 << 10)
+#define ADC_CFGR1_EXTEN_RISING          (1 << 10)
+#define ADC_CFGR1_EXTEN_FALLING         (2 << 10)
+#define ADC_CFGR1_EXTEN_BOTH            (3 << 10)
 /** @} */
 
 /**
  * @name    Threashold register initializer
  * @{
  */
-#define ADC_TR(low, high)       (((uint32_t)(high) << 16) | (uint32_t)(low))
+#define ADC_TR(low, high)               (((uint32_t)(high) << 16) |         \
+                                         (uint32_t)(low))
 /** @} */
 
 /*===========================================================================*/
@@ -210,6 +220,11 @@ typedef struct {
   /* End of the mandatory fields.*/
   /**
    * @brief   ADC CFGR1 register initialization data.
+   * @note    The bits DMAEN and DMACFG are enforced internally
+   *          to the driver, keep them to zero.
+   * @note    The bits @p ADC_CFGR1_CONT or @p ADC_CFGR1_DISCEN must be
+   *          specified in continuous more or if the buffer depth is
+   *          greater than one.
    */
   uint32_t                  cfgr1;
   /**
