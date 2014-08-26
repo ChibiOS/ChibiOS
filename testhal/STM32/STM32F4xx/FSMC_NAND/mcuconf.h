@@ -41,7 +41,7 @@
 #define STM32_CLOCK48_REQUIRED              TRUE
 #define STM32_SW                            STM32_SW_PLL
 #define STM32_PLLSRC                        STM32_PLLSRC_HSE
-#define STM32_PLLM_VALUE                    8
+#define STM32_PLLM_VALUE                    12
 #define STM32_PLLN_VALUE                    336
 #define STM32_PLLP_VALUE                    2
 #define STM32_PLLQ_VALUE                    7
@@ -314,3 +314,9 @@
 #define STM32_NAND_DMA_STREAM               STM32_DMA_STREAM_ID(2, 7)
 #define STM32_NAND_DMA_PRIORITY             0
 #define STM32_NAND_DMA_ERROR_HOOK(nandp)    osalSysHalt("DMA failure")
+
+/*
+ * FSMC SRAM driver system settings.
+ */
+#define STM32_USE_FSMC_SRAM                 FALSE
+#define STM32_SRAM_USE_FSMC_SRAM4           FALSE
