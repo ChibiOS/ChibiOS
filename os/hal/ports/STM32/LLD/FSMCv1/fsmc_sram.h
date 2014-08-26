@@ -159,9 +159,9 @@ extern SRAMDriver SRAMD4;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void fsmc_sram_init(void);
-  void fsmc_sram_start(SRAMDriver *sramp, const SRAMConfig *cfgp);
-  void fsmc_sram_stop(SRAMDriver *sramp);
+  void fsmcSramInit(void);
+  void fsmcSramStart(SRAMDriver *sramp, const SRAMConfig *cfgp);
+  void fsmcSramStop(SRAMDriver *sramp);
 #ifdef __cplusplus
 }
 #endif

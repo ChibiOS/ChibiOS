@@ -90,7 +90,7 @@ SRAMDriver SRAMD4;
  *
  * @notapi
  */
-void fsmc_sram_init(void) {
+void fsmcSramInit(void) {
 
   fsmc_init();
 
@@ -123,7 +123,7 @@ void fsmc_sram_init(void) {
  *
  * @notapi
  */
-void fsmc_sram_start(SRAMDriver *sramp, const SRAMConfig *cfgp) {
+void fsmcSramStart(SRAMDriver *sramp, const SRAMConfig *cfgp) {
 
   if (FSMCD1.state == FSMC_STOP)
     fsmc_start(&FSMCD1);
@@ -145,7 +145,7 @@ void fsmc_sram_start(SRAMDriver *sramp, const SRAMConfig *cfgp) {
  *
  * @notapi
  */
-void fsmc_sram_stop(SRAMDriver *sramp) {
+void fsmcSramStop(SRAMDriver *sramp) {
 
   if (sramp->state == SRAM_READY) {
     sramp->sram->BCR &= ~FSMC_BCR_MBKEN;

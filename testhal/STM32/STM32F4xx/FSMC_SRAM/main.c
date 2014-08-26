@@ -152,8 +152,8 @@ int main(void) {
   halInit();
   chSysInit();
 
-  fsmc_sram_init();
-  fsmc_sram_start(&SRAMD4, &sram_cfg);
+  fsmcSramInit();
+  fsmcSramStart(&SRAMD4, &sram_cfg);
   sram_benchmark();
 
 #if USE_INFINITE_MEMTEST
