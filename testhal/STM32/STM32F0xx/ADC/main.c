@@ -57,7 +57,7 @@ static const ADCConversionGroup adcgrpcfg1 = {
   ADC_GRP1_NUM_CHANNELS,
   NULL,
   adcerrorcallback,
-  ADC_CFGR1_CONT | ADC_CFGR1_RES_12BIT,             /* CFGRR1 */
+  ADC_CFGR1_CONT | ADC_CFGR1_RES_12BIT,             /* CFGR1 */
   ADC_TR(0, 0),                                     /* TR */
   ADC_SMPR_SMP_1P5,                                 /* SMPR */
   ADC_CHSELR_CHSEL10                                /* CHSELR */
@@ -73,7 +73,7 @@ static const ADCConversionGroup adcgrpcfg2 = {
   ADC_GRP2_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
-  ADC_CFGR1_CONT | ADC_CFGR1_RES_12BIT,             /* CFGRR1 */
+  ADC_CFGR1_CONT | ADC_CFGR1_RES_12BIT,             /* CFGR1 */
   ADC_TR(0, 0),                                     /* TR */
   ADC_SMPR_SMP_28P5,                                /* SMPR */
   ADC_CHSELR_CHSEL10 | ADC_CHSELR_CHSEL11 |
