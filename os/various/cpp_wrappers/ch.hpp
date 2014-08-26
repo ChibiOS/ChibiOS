@@ -1215,6 +1215,28 @@ namespace chibios_rt {
      * @sclass
      */
     void lockS(void);
+
+    /**
+     * @brief   Unlocks the next owned mutex in reverse lock order.
+     * @pre     The invoking thread <b>must</b> have at least one owned mutex.
+     * @post    The mutex is unlocked and removed from the per-thread stack of
+     *          owned mutexes.
+     *
+     * @api
+     */
+    void unlock(void);
+
+    /**
+     * @brief   Unlocks the next owned mutex in reverse lock order.
+     * @pre     The invoking thread <b>must</b> have at least one owned mutex.
+     * @post    The mutex is unlocked and removed from the per-thread stack of
+     *          owned mutexes.
+     * @post    This function does not reschedule so a call to a rescheduling
+     *          function must be performed before unlocking the kernel.
+     *
+     * @sclass
+     */
+    void unlockS(void);
   };
 
 #if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)

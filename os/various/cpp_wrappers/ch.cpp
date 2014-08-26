@@ -529,6 +529,16 @@ namespace chibios_rt {
     chMtxLockS(&mutex);
   }
 
+  void Mutex::unlock(void) {
+
+    chMtxUnlock(&mutex);
+  }
+
+  void Mutex::unlockS(void) {
+
+    chMtxLockS(&mutex);
+  }
+
 #if CH_CFG_USE_CONDVARS
   /*------------------------------------------------------------------------*
    * chibios_rt::CondVar                                                    *
