@@ -584,22 +584,22 @@
 #else
 #define NAND_RB_NWAIT_PUPDR(pin) (PIN_PUPDR_FLOATING(pin))
 #endif
-#define VAL_GPIOD_PUPDR             (PIN_PUPDR_PULLUP(GPIOD_MEM_D2) |       \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_D3) |       \
-                                     PIN_PUPDR_PULLUP(GPIOD_PIN2) |         \
-                                     PIN_PUPDR_PULLUP(GPIOD_PIN3) |         \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_OE) |       \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_WE) |       \
+#define VAL_GPIOD_PUPDR             (PIN_PUPDR_FLOATING(GPIOD_MEM_D2) |     \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_D3) |     \
+                                     PIN_PUPDR_FLOATING(GPIOD_PIN2) |       \
+                                     PIN_PUPDR_FLOATING(GPIOD_PIN3) |       \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_OE) |     \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_WE) |     \
                                      NAND_RB_NWAIT_PUPDR(GPIOD_NAND_RB_NWAIT) |  \
-                                     PIN_PUPDR_PULLUP(GPIOD_NAND_CE1) |     \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_D13) |      \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_D14) |      \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_D15) |      \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_A16) |      \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_A17) |      \
-                                     PIN_PUPDR_PULLUP(GPIOD_PIN13) |        \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_D0) |       \
-                                     PIN_PUPDR_PULLUP(GPIOD_MEM_D1))
+                                     PIN_PUPDR_FLOATING(GPIOD_NAND_CE1) |   \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_D13) |    \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_D14) |    \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_D15) |    \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_A16) |    \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_A17) |    \
+                                     PIN_PUPDR_FLOATING(GPIOD_PIN13) |      \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_D0) |     \
+                                     PIN_PUPDR_FLOATING(GPIOD_MEM_D1))
 #define VAL_GPIOD_ODR               (PIN_ODR_HIGH(GPIOD_MEM_D2) |           \
                                      PIN_ODR_HIGH(GPIOD_MEM_D3) |           \
                                      PIN_ODR_HIGH(GPIOD_PIN2) |             \
@@ -684,22 +684,22 @@
                                      PIN_OSPEED_100M(GPIOE_MEM_D10) |       \
                                      PIN_OSPEED_100M(GPIOE_MEM_D11) |       \
                                      PIN_OSPEED_100M(GPIOE_MEM_D12))
-#define VAL_GPIOE_PUPDR             (PIN_PUPDR_PULLUP(GPIOE_SRAM_LB) |      \
-                                     PIN_PUPDR_PULLUP(GPIOE_SRAM_UB) |      \
-                                     PIN_PUPDR_PULLUP(GPIOE_PIN2) |         \
-                                     PIN_PUPDR_PULLUP(GPIOE_PIN3) |         \
-                                     PIN_PUPDR_PULLUP(GPIOE_PIN4) |         \
-                                     PIN_PUPDR_PULLUP(GPIOE_PIN5) |         \
-                                     PIN_PUPDR_PULLUP(GPIOE_PIN6) |         \
-                                     PIN_PUPDR_PULLUP(GPIOE_MEM_D4) |       \
-                                     PIN_PUPDR_PULLUP(GPIOE_MEM_D5) |       \
-                                     PIN_PUPDR_PULLUP(GPIOE_MEM_D6) |       \
-                                     PIN_PUPDR_PULLUP(GPIOE_MEM_D7) |       \
-                                     PIN_PUPDR_PULLUP(GPIOE_MEM_D8) |       \
-                                     PIN_PUPDR_PULLUP(GPIOE_MEM_D9) |       \
-                                     PIN_PUPDR_PULLUP(GPIOE_MEM_D10) |      \
-                                     PIN_PUPDR_PULLUP(GPIOE_MEM_D11) |      \
-                                     PIN_PUPDR_PULLUP(GPIOE_MEM_D12))
+#define VAL_GPIOE_PUPDR             (PIN_PUPDR_FLOATING(GPIOE_SRAM_LB) |    \
+                                     PIN_PUPDR_FLOATING(GPIOE_SRAM_UB) |    \
+                                     PIN_PUPDR_FLOATING(GPIOE_PIN2) |       \
+                                     PIN_PUPDR_FLOATING(GPIOE_PIN3) |       \
+                                     PIN_PUPDR_FLOATING(GPIOE_PIN4) |       \
+                                     PIN_PUPDR_FLOATING(GPIOE_PIN5) |       \
+                                     PIN_PUPDR_FLOATING(GPIOE_PIN6) |       \
+                                     PIN_PUPDR_FLOATING(GPIOE_MEM_D4) |     \
+                                     PIN_PUPDR_FLOATING(GPIOE_MEM_D5) |     \
+                                     PIN_PUPDR_FLOATING(GPIOE_MEM_D6) |     \
+                                     PIN_PUPDR_FLOATING(GPIOE_MEM_D7) |     \
+                                     PIN_PUPDR_FLOATING(GPIOE_MEM_D8) |     \
+                                     PIN_PUPDR_FLOATING(GPIOE_MEM_D9) |     \
+                                     PIN_PUPDR_FLOATING(GPIOE_MEM_D10) |    \
+                                     PIN_PUPDR_FLOATING(GPIOE_MEM_D11) |    \
+                                     PIN_PUPDR_FLOATING(GPIOE_MEM_D12))
 #define VAL_GPIOE_ODR               (PIN_ODR_HIGH(GPIOE_SRAM_LB) |          \
                                      PIN_ODR_HIGH(GPIOE_SRAM_UB) |          \
                                      PIN_ODR_HIGH(GPIOE_PIN2) |             \
@@ -784,22 +784,22 @@
                                      PIN_OSPEED_100M(GPIOF_MEM_A7) |        \
                                      PIN_OSPEED_100M(GPIOF_MEM_A8) |        \
                                      PIN_OSPEED_100M(GPIOF_MEM_A9))
-#define VAL_GPIOF_PUPDR             (PIN_PUPDR_PULLUP(GPIOF_MEM_A0) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_MEM_A1) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_MEM_A2) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_MEM_A3) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_MEM_A4) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_MEM_A5) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN6) |         \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN7) |         \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN8) |         \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN9) |         \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN10) |        \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN11) |        \
-                                     PIN_PUPDR_PULLUP(GPIOF_MEM_A6) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_MEM_A7) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_MEM_A8) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_MEM_A9))
+#define VAL_GPIOF_PUPDR             (PIN_PUPDR_FLOATING(GPIOF_MEM_A0) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_MEM_A1) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_MEM_A2) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_MEM_A3) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_MEM_A4) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_MEM_A5) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN6) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN7) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN8) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN9) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN10) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN11) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_MEM_A6) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_MEM_A7) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_MEM_A8) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_MEM_A9))
 #define VAL_GPIOF_ODR               (PIN_ODR_HIGH(GPIOF_MEM_A0) |           \
                                      PIN_ODR_HIGH(GPIOF_MEM_A1) |           \
                                      PIN_ODR_HIGH(GPIOF_MEM_A2) |           \
@@ -890,22 +890,22 @@
 #else
 #define NAND_RB1_PUPDR(pin) (PIN_PUPDR_PULLUP(pin))
 #endif
-#define VAL_GPIOG_PUPDR             (PIN_PUPDR_PULLUP(GPIOG_MEM_A10) |      \
-                                     PIN_PUPDR_PULLUP(GPIOG_MEM_A11) |      \
-                                     PIN_PUPDR_PULLUP(GPIOG_MEM_A12) |      \
-                                     PIN_PUPDR_PULLUP(GPIOG_MEM_A13) |      \
-                                     PIN_PUPDR_PULLUP(GPIOG_MEM_A14) |      \
-                                     PIN_PUPDR_PULLUP(GPIOG_MEM_A15) |      \
+#define VAL_GPIOG_PUPDR             (PIN_PUPDR_FLOATING(GPIOG_MEM_A10) |    \
+                                     PIN_PUPDR_FLOATING(GPIOG_MEM_A11) |    \
+                                     PIN_PUPDR_FLOATING(GPIOG_MEM_A12) |    \
+                                     PIN_PUPDR_FLOATING(GPIOG_MEM_A13) |    \
+                                     PIN_PUPDR_FLOATING(GPIOG_MEM_A14) |    \
+                                     PIN_PUPDR_FLOATING(GPIOG_MEM_A15) |    \
                                      NAND_RB1_PUPDR(GPIOG_NAND_RB1) |       \
-                                     PIN_PUPDR_PULLUP(GPIOG_NAND_RB2) |     \
-                                     PIN_PUPDR_PULLUP(GPIOG_PIN8) |         \
-                                     PIN_PUPDR_PULLUP(GPIOG_NAND_CE2) |     \
-                                     PIN_PUPDR_PULLUP(GPIOG_PIN10) |        \
-                                     PIN_PUPDR_PULLUP(GPIOG_PIN11) |        \
-                                     PIN_PUPDR_PULLUP(GPIOG_SRAM_CS1) |     \
-                                     PIN_PUPDR_PULLUP(GPIOG_PIN13) |        \
-                                     PIN_PUPDR_PULLUP(GPIOG_PIN14) |        \
-                                     PIN_PUPDR_PULLUP(GPIOG_PIN15))
+                                     PIN_PUPDR_FLOATING(GPIOG_NAND_RB2) |   \
+                                     PIN_PUPDR_FLOATING(GPIOG_PIN8) |       \
+                                     PIN_PUPDR_FLOATING(GPIOG_NAND_CE2) |   \
+                                     PIN_PUPDR_FLOATING(GPIOG_PIN10) |      \
+                                     PIN_PUPDR_FLOATING(GPIOG_PIN11) |      \
+                                     PIN_PUPDR_FLOATING(GPIOG_SRAM_CS1) |   \
+                                     PIN_PUPDR_FLOATING(GPIOG_PIN13) |      \
+                                     PIN_PUPDR_FLOATING(GPIOG_PIN14) |      \
+                                     PIN_PUPDR_FLOATING(GPIOG_PIN15))
 #define VAL_GPIOG_ODR               (PIN_ODR_HIGH(GPIOG_MEM_A10) |          \
                                      PIN_ODR_HIGH(GPIOG_MEM_A11) |          \
                                      PIN_ODR_HIGH(GPIOG_MEM_A12) |          \

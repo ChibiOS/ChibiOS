@@ -62,7 +62,7 @@ static const size_t sram_size = 524288;
  * SRAM driver configuration structure.
  */
 static const SRAMConfig sram_cfg = {
-    .btr = 2 << 8 | 1
+    .btr = 2 << 8
 };
 
 /* benchmarking results in MiB/S */
@@ -90,7 +90,7 @@ static void sram_benchmark(void){
   chTMObjectInit(&mem_tmu);
   chTMStartMeasurementX(&mem_tmu);
   memset(sram_start, 0x55, sram_size);
-  memset(sram_start, 0xAA, sram_size);
+  memset(sram_start, 0x00, sram_size);
   chTMStopMeasurementX(&mem_tmu);
   memset_speed_ext = 1 / (mem_tmu.cumulative / (double)STM32_SYSCLK);
 
@@ -106,15 +106,16 @@ static void sram_benchmark(void){
   chTMObjectInit(&mem_tmu);
   chTMStartMeasurementX(&mem_tmu);
   for (i=0; i<16; i++)
-    memcpy(sram_check_buf, sram_start, sizeof(sram_check_buf));
+    memcpy(sram_check_buf, sram_start+ i * sizeof(sram_check_buf), sizeof(sram_check_buf));
   chTMStopMeasurementX(&mem_tmu);
   memcpy_speed_ext2int = 1 / (mem_tmu.cumulative / (double)STM32_SYSCLK);
 
   /* memcpy int2ext */
   chTMObjectInit(&mem_tmu);
+  memset(sram_check_buf, 0xAA, sizeof(sram_check_buf));
   chTMStartMeasurementX(&mem_tmu);
   for (i=0; i<16; i++)
-    memcpy(sram_start, sram_check_buf, sizeof(sram_check_buf));
+    memcpy(sram_start + i * sizeof(sram_check_buf), sram_check_buf, sizeof(sram_check_buf));
   chTMStopMeasurementX(&mem_tmu);
   memcpy_speed_int2ext = 1 / (mem_tmu.cumulative / (double)STM32_SYSCLK);
 }
