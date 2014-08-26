@@ -72,6 +72,10 @@
 *****************************************************************************
 
 *** 2.6.6 ***
+- FIX: Fixed STM32F0xx ADC driver enforces continuous mode (bug #528).
+       Note, this bug enforced a change, now the bit ADC_CFGR1_CONT must be
+       manually specified in the cfgr1 field of the ADCConversionGroup
+       structure when applicable.
 - FIX: Fixed STM32F30x ADC driver enforces continuous mode (bug #527).
        Note, this bug enforced a change, now the bit ADC_CFGR_CONT must be
        manually specified in the cfgr field of the ADCConversionGroup
