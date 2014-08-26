@@ -19,16 +19,16 @@
  */
 
 /**
- * @file    fsmc.c
- * @brief   FSMC Driver subsystem low level driver source template.
+ * @file    fsmc_sram.c
+ * @brief   SRAM Driver subsystem low level driver source.
  *
- * @addtogroup FSMC
+ * @addtogroup SRAM
  * @{
  */
 #include "hal.h"
-#include "fsmc.h"
+#include "fsmc_sram.h"
 
-#if HAL_USE_NAND || STM32_USE_FSMC_SRAM || defined(__DOXYGEN__)
+#if STM32_USE_FSMC_SRAM || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -37,12 +37,32 @@
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
+/**
+ * @brief   SRAM1 driver identifier.
+ */
+#if STM32_SRAM_USE_FSMC_SRAM1 || defined(__DOXYGEN__)
+SRAMDriver SRAMD1;
+#endif
 
 /**
- * @brief   FSMC1 driver identifier.
+ * @brief   SRAM2 driver identifier.
  */
-#if STM32_FSMC_USE_FSMC1 || defined(__DOXYGEN__)
-FSMCDriver FSMCD1;
+#if STM32_SRAM_USE_FSMC_SRAM2 || defined(__DOXYGEN__)
+SRAMDriver SRAMD2;
+#endif
+
+/**
+ * @brief   SRAM3 driver identifier.
+ */
+#if STM32_SRAM_USE_FSMC_SRAM3 || defined(__DOXYGEN__)
+SRAMDriver SRAMD3;
+#endif
+
+/**
+ * @brief   SRAM4 driver identifier.
+ */
+#if STM32_SRAM_USE_FSMC_SRAM4 || defined(__DOXYGEN__)
+SRAMDriver SRAMD4;
 #endif
 
 /*===========================================================================*/
@@ -66,123 +86,74 @@ FSMCDriver FSMCD1;
 /*===========================================================================*/
 
 /**
- * @brief   Low level FSMC driver initialization.
+ * @brief   Low level SRAM driver initialization.
  *
  * @notapi
  */
-void fsmc_init(void) {
+void fsmc_sram_init(void) {
 
-  if (FSMCD1.state == FSMC_UNINIT) {
-    FSMCD1.state  = FSMC_STOP;
+  fsmc_init();
 
 #if STM32_SRAM_USE_FSMC_SRAM1
-    FSMCD1.sram1 = (FSMC_SRAM_NOR_TypeDef *)(FSMC_Bank1_R_BASE);
-#endif
+  SRAMD1.sram = FSMCD1.sram1;
+  SRAMD1.state = SRAM_STOP;
+#endif /* STM32_SRAM_USE_FSMC_SRAM1 */
 
 #if STM32_SRAM_USE_FSMC_SRAM2
-    FSMCD1.sram2 = (FSMC_SRAM_NOR_TypeDef *)(FSMC_Bank1_R_BASE + 8);
-#endif
+  SRAMD2.sram = FSMCD1.sram2;
+  SRAMD2.state = SRAM_STOP;
+#endif /* STM32_SRAM_USE_FSMC_SRAM2 */
 
 #if STM32_SRAM_USE_FSMC_SRAM3
-    FSMCD1.sram3 = (FSMC_SRAM_NOR_TypeDef *)(FSMC_Bank1_R_BASE + 8 * 2);
-#endif
+  SRAMD3.sram = FSMCD1.sram3;
+  SRAMD3.state = SRAM_STOP;
+#endif /* STM32_SRAM_USE_FSMC_SRAM3 */
 
 #if STM32_SRAM_USE_FSMC_SRAM4
-    FSMCD1.sram4 = (FSMC_SRAM_NOR_TypeDef *)(FSMC_Bank1_R_BASE + 8 * 3);
-#endif
-
-#if STM32_NAND_USE_FSMC_NAND1
-    FSMCD1.nand1 = (FSMC_NAND_TypeDef *)FSMC_Bank2_R_BASE;
-#endif
-
-#if STM32_NAND_USE_FSMC_NAND2
-    FSMCD1.nand2 = (FSMC_NAND_TypeDef *)FSMC_Bank3_R_BASE;
-#endif
-
-#if STM32_USE_FSMC_PCCARD
-    FSMCD1.pccard = (FSMC_PCCARD_TypeDef *)FSMC_Bank4_R_BASE;
-#endif
-  }
+  SRAMD4.sram = FSMCD1.sram4;
+  SRAMD4.state = SRAM_STOP;
+#endif /* STM32_SRAM_USE_FSMC_SRAM4 */
 }
 
 /**
- * @brief   Configures and activates the FSMC peripheral.
+ * @brief   Configures and activates the SRAM peripheral.
  *
- * @param[in] fsmcp      pointer to the @p FSMCDriver object
+ * @param[in] sramp         pointer to the @p SRAMDriver object
+ * @param[in] cfgp          pointer to the @p SRAMConfig object
  *
  * @notapi
  */
-void fsmc_start(FSMCDriver *fsmcp) {
+void fsmc_sram_start(SRAMDriver *sramp, const SRAMConfig *cfgp) {
 
-  osalDbgAssert((fsmcp->state == FSMC_STOP) || (fsmcp->state == FSMC_READY),
+  if (FSMCD1.state == FSMC_STOP)
+    fsmc_start(&FSMCD1);
+
+  osalDbgAssert((sramp->state == SRAM_STOP) || (sramp->state == SRAM_READY),
               "invalid state");
 
-  if (fsmcp->state == FSMC_STOP) {
-    /* Enables the peripheral.*/
-#if STM32_FSMC_USE_FSMC1
-    if (&FSMCD1 == fsmcp) {
-      rccResetFSMC();
-      rccEnableFSMC(FALSE);
-#if (!STM32_NAND_USE_EXT_INT && HAL_USE_NAND)
-      nvicEnableVector(STM32_FSMC_NUMBER, STM32_FSMC_FSMC1_IRQ_PRIORITY);
-#endif
-    }
-#endif /* STM32_FSMC_USE_FSMC1 */
-
-    fsmcp->state = FSMC_READY;
+  if (sramp->state == SRAM_STOP) {
+    sramp->sram->BCR = FSMC_BCR_WREN | FSMC_BCR_MBKEN | FSMC_BCR_MWID_0;
+    sramp->sram->BTR = cfgp->btr;
+    sramp->state = SRAM_READY;
   }
 }
 
 /**
- * @brief   Deactivates the FSMC peripheral.
+ * @brief   Deactivates the SRAM peripheral.
  *
- * @param[in] emcp      pointer to the @p FSMCDriver object
- *
- * @notapi
- */
-void fsmc_stop(FSMCDriver *fsmcp) {
-
-  if (fsmcp->state == FSMC_READY) {
-    /* Resets the peripheral.*/
-    rccResetFSMC();
-
-    /* Disables the peripheral.*/
-#if STM32_FSMC_USE_FSMC1
-    if (&FSMCD1 == fsmcp) {
-#if (!STM32_NAND_USE_EXT_INT && HAL_USE_NAND)
-      nvicDisableVector(STM32_FSMC_NUMBER);
-#endif
-      rccDisableFSMC(FALSE);
-    }
-#endif /* STM32_FSMC_USE_FSMC1 */
-
-    fsmcp->state = FSMC_STOP;
-  }
-}
-
-#if !STM32_NAND_USE_EXT_INT
-/**
- * @brief   FSMC shared interrupt handler.
+ * @param[in] sramp         pointer to the @p SRAMDriver object
  *
  * @notapi
  */
-CH_IRQ_HANDLER(STM32_FSMC_HANDLER) {
+void fsmc_sram_stop(SRAMDriver *sramp) {
 
-  CH_IRQ_PROLOGUE();
-#if STM32_NAND_USE_FSMC_NAND1
-  if (FSMCD1.nand1->SR & FSMC_SR_ISR_MASK){
-    NANDD1.isr_handler(&NANDD1);
+  if (sramp->state == SRAM_READY) {
+    sramp->sram->BCR &= ~FSMC_BCR_MBKEN;
+    sramp->state = SRAM_STOP;
   }
-#endif
-#if STM32_NAND_USE_FSMC_NAND2
-  if (FSMCD1.nand2->SR & FSMC_SR_ISR_MASK){
-    NANDD2.isr_handler(&NANDD2);
-  }
-#endif
-  CH_IRQ_EPILOGUE();
 }
-#endif /* !STM32_NAND_USE_EXT_INT */
 
-#endif /* HAL_USE_FSMC || STM32_USE_FSMC_SRAM */
+#endif /* STM32_USE_FSMC_SRAM */
 
 /** @} */
+

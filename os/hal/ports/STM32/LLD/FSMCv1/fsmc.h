@@ -20,17 +20,16 @@
 
 /**
  * @file    fsmc.h
- * @brief   FSMC Driver subsystem low level driver header template.
+ * @brief   FSMC Driver subsystem low level driver header.
  *
  * @addtogroup FSMC
  * @{
  */
 
-
 #ifndef _FSMC_H_
 #define _FSMC_H_
 
-#if HAL_USE_NAND || defined(__DOXYGEN__)
+#if HAL_USE_NAND || STM32_USE_FSMC_SRAM || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -43,6 +42,15 @@
 #define FSMC_Bank2_MAP_BASE               ((uint32_t) 0x70000000)
 #define FSMC_Bank3_MAP_BASE               ((uint32_t) 0x80000000)
 #define FSMC_Bank4_MAP_BASE               ((uint32_t) 0x90000000)
+
+/*
+ * Subbunks of bank1
+ */
+#define FSMC_SUBBUNK_OFFSET           (1024 * 1024 * 64)
+#define FSMC_Bank1_1_MAP              (FSMC_Bank1_MAP_BASE)
+#define FSMC_Bank1_2_MAP              (FSMC_Bank1_1_MAP + FSMC_SUBBUNK_OFFSET)
+#define FSMC_Bank1_3_MAP              (FSMC_Bank1_2_MAP + FSMC_SUBBUNK_OFFSET)
+#define FSMC_Bank1_4_MAP              (FSMC_Bank1_3_MAP + FSMC_SUBBUNK_OFFSET)
 
 /*
  * Bank 2 (NAND)
@@ -99,6 +107,13 @@ typedef struct {
   __IO uint32_t PIO;       /**< PC Card  I/O space timing */
 } FSMC_PCCard_TypeDef;
 
+typedef struct {
+  __IO uint32_t BCR;          /**< SRAM/NOR chip-select control registers */
+  __IO uint32_t BTR;          /**< SRAM/NOR chip-select timing registers */
+  uint32_t      RESERVED[63]; /**< Reserved */
+  __IO uint32_t BWTR;         /**< SRAM/NOR write timing registers */
+} FSMC_SRAM_NOR_TypeDef;
+
 /**
  * @brief   PCR register
  */
@@ -122,10 +137,11 @@ typedef struct {
 #define  FSMC_SR_ISR_MASK         (FSMC_SR_IRS | FSMC_SR_ILS | FSMC_SR_IFS)
 
 /**
- * @brief   RCR register
+ * @brief   BCR register
  */
 #define  FSMC_BCR_MBKEN           ((uint32_t)0x00000001)
 #define  FSMC_BCR_MUXEN           ((uint32_t)0x00000002)
+#define  FSMC_BCR_MWID_0          ((uint32_t)0x00000010)
 #define  FSMC_BCR_FACCEN          ((uint32_t)0x00000040)
 #define  FSMC_BCR_BURSTEN         ((uint32_t)0x00000100)
 #define  FSMC_BCR_WAITPOL         ((uint32_t)0x00000200)
@@ -190,14 +206,6 @@ typedef enum {
 } fsmcstate_t;
 
 /**
- * @brief   Driver configuration structure.
- * @note    Empty on this architecture.
- */
-typedef struct {
-
-} FSMCConfig;
-
-/**
  * @brief   Structure representing an FSMC driver.
  */
 struct FSMCDriver {
@@ -206,6 +214,19 @@ struct FSMCDriver {
    */
   fsmcstate_t               state;
   /* End of the mandatory fields.*/
+
+#if STM32_SRAM_USE_FSMC_SRAM1
+  FSMC_SRAM_NOR_TypeDef     *sram1;
+#endif
+#if STM32_SRAM_USE_FSMC_SRAM2
+  FSMC_SRAM_NOR_TypeDef     *sram2;
+#endif
+#if STM32_SRAM_USE_FSMC_SRAM3
+  FSMC_SRAM_NOR_TypeDef     *sram3;
+#endif
+#if STM32_SRAM_USE_FSMC_SRAM4
+  FSMC_SRAM_NOR_TypeDef     *sram4;
+#endif
 #if STM32_NAND_USE_FSMC_NAND1
   FSMC_NAND_TypeDef         *nand1;
 #endif
@@ -239,7 +260,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_NAND */
+#endif /* HAL_USE_NAND || STM32_USE_FSMC_SRAM */
 
 #endif /* _FSMC_H_ */
 
