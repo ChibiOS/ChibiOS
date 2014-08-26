@@ -20,7 +20,7 @@
 
 /**
  * @file    nand_lld.c
- * @brief   NAND Driver subsystem low level driver source template.
+ * @brief   NAND Driver subsystem low level driver source.
  *
  * @addtogroup NAND
  * @{
@@ -252,7 +252,7 @@ void nand_lld_init(void) {
   NANDD1.datalen  = 0;
   NANDD1.thread   = NULL;
   NANDD1.dma      = STM32_DMA_STREAM(STM32_NAND_DMA_STREAM);
-  NANDD1.nand     = (FSMC_NAND_TypeDef *)FSMC_Bank2_R_BASE;
+  NANDD1.nand     = FSMCD1.nand1;
   NANDD1.map_data = (uint8_t*)FSMC_Bank2_MAP_COMMON_DATA;
   NANDD1.map_cmd  = (uint8_t*)FSMC_Bank2_MAP_COMMON_CMD;
   NANDD1.map_addr = (uint8_t*)FSMC_Bank2_MAP_COMMON_ADDR;
@@ -265,7 +265,7 @@ void nand_lld_init(void) {
   NANDD2.datalen  = 0;
   NANDD2.thread   = NULL;
   NANDD2.dma      = STM32_DMA_STREAM(STM32_NAND_DMA_STREAM);
-  NANDD2.nand     = (FSMC_NAND_TypeDef *)FSMC_Bank3_R_BASE;
+  NANDD2.nand     = FSMCD1.nand2;
   NANDD2.map_data = (uint8_t*)FSMC_Bank3_MAP_COMMON_DATA;
   NANDD2.map_cmd  = (uint8_t*)FSMC_Bank3_MAP_COMMON_CMD;
   NANDD2.map_addr = (uint8_t*)FSMC_Bank3_MAP_COMMON_ADDR;
@@ -403,8 +403,7 @@ uint8_t nand_lld_write_data(NANDDriver *nandp, const uint8_t *data,
     nandp->nand->PCR |= FSMC_PCR_ECCEN;
   }
 
-  dmaStartMemCopy(nandp->dma, nandp->dmamode,
-                           data, nandp->map_data, datalen);
+  dmaStartMemCopy(nandp->dma, nandp->dmamode, data, nandp->map_data, datalen);
 
   nand_lld_suspend_thread(nandp);
   osalSysUnlock();
@@ -430,8 +429,7 @@ uint8_t nand_lld_write_data(NANDDriver *nandp, const uint8_t *data,
  *
  * @notapi
  */
-uint8_t nand_lld_erase(NANDDriver *nandp,
-                                        uint8_t *addr, size_t addrlen){
+uint8_t nand_lld_erase(NANDDriver *nandp, uint8_t *addr, size_t addrlen){
 
   nandp->state = NAND_ERASE;
 
@@ -457,8 +455,7 @@ uint8_t nand_lld_erase(NANDDriver *nandp,
  *
  * @notapi
  */
-void nand_lld_polled_read_data(NANDDriver *nandp,
-                                                  uint8_t *data, size_t len){
+void nand_lld_polled_read_data(NANDDriver *nandp, uint8_t *data, size_t len){
   size_t i = 0;
 
   for (i=0; i<len; i++)
@@ -474,8 +471,7 @@ void nand_lld_polled_read_data(NANDDriver *nandp,
  *
  * @notapi
  */
-void nand_lld_write_addr(NANDDriver *nandp,
-                                            const uint8_t *addr, size_t len){
+void nand_lld_write_addr(NANDDriver *nandp, const uint8_t *addr, size_t len){
   size_t i = 0;
 
   for (i=0; i<len; i++)
