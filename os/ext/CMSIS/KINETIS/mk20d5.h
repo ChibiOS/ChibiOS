@@ -413,7 +413,6 @@ typedef struct
 #define MCG_BASE                ((uint32_t)0x40064000)
 #define OSC0_BASE               ((uint32_t)0x40065000)
 #define I2C0_BASE               ((uint32_t)0x40066000)
-#define I2C1_BASE               ((uint32_t)0x40067000)
 #define UART0_BASE              ((uint32_t)0x4006A000)
 #define UART1_BASE              ((uint32_t)0x4006B000)
 #define UART2_BASE              ((uint32_t)0x4006C000)
@@ -447,7 +446,6 @@ typedef struct
 #define OSC                     ((OSC_TypeDef  *)    OSC0_BASE)
 #define SPI0                    ((SPI_TypeDef *)     SPI0_BASE)
 #define I2C0                    ((I2C_TypeDef *)     I2C0_BASE)
-#define I2C1                    ((I2C_TypeDef *)     I2C1_BASE)
 #define UART0                   ((UART_TypeDef *)    UART0_BASE)
 #define UART1                   ((UART_TypeDef *)    UART1_BASE)
 #define UART2                   ((UART_TypeDef *)    UART2_BASE)
@@ -1152,14 +1150,14 @@ typedef struct
 #define I2Cx_RA_RAD_SHIFT            1
 
 /***********  Bits definition for I2Cx_SMB register  ************/
-#define I2Cx_SMB_FACK                ((uint8_t)0x00)    /*!< Fast NACK/ACK Enable */
-#define I2Cx_SMB_ALERTEN             ((uint8_t)0x00)    /*!< SMBus Alert Response Address Enable */
-#define I2Cx_SMB_SIICAEN             ((uint8_t)0x00)    /*!< Second I2C Address Enable */
-#define I2Cx_SMB_TCKSEL              ((uint8_t)0x00)    /*!< Timeout Counter Clock Select */
-#define I2Cx_SMB_SLTF                ((uint8_t)0x00)    /*!< SCL Low Timeout Flag */
-#define I2Cx_SMB_SHTF1               ((uint8_t)0x00)    /*!< SCL High Timeout Flag 1 */
-#define I2Cx_SMB_SHTF2               ((uint8_t)0x00)    /*!< SCL High Timeout Flag 2 */
-#define I2Cx_SMB_SHTF2IE             ((uint8_t)0x00)    /*!< SHTF2 Interrupt Enable */
+#define I2Cx_SMB_FACK                ((uint8_t)0x80)    /*!< Fast NACK/ACK Enable */
+#define I2Cx_SMB_ALERTEN             ((uint8_t)0x40)    /*!< SMBus Alert Response Address Enable */
+#define I2Cx_SMB_SIICAEN             ((uint8_t)0x20)    /*!< Second I2C Address Enable */
+#define I2Cx_SMB_TCKSEL              ((uint8_t)0x10)    /*!< Timeout Counter Clock Select */
+#define I2Cx_SMB_SLTF                ((uint8_t)0x08)    /*!< SCL Low Timeout Flag */
+#define I2Cx_SMB_SHTF1               ((uint8_t)0x04)    /*!< SCL High Timeout Flag 1 */
+#define I2Cx_SMB_SHTF2               ((uint8_t)0x02)    /*!< SCL High Timeout Flag 2 */
+#define I2Cx_SMB_SHTF2IE             ((uint8_t)0x01)    /*!< SHTF2 Interrupt Enable */
 
 /***********  Bits definition for I2Cx_A2 register  *************/
 #define I2Cx_A2_SAD                  ((uint8_t)0xFE)    /*!< SMBus Address */
