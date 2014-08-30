@@ -40,7 +40,7 @@
 #define CH_STATE_READY          0   /**< @brief Waiting on the ready list.  */
 #define CH_STATE_CURRENT        1   /**< @brief Currently running.          */
 #define CH_STATE_WTSTART        2   /**< @brief Created but not started.    */
-#define CH_STATE_SUSPENDED      3   /**< @brief Created in suspended state. */
+#define CH_STATE_SUSPENDED      3   /**< @brief Suspended state.            */
 #define CH_STATE_QUEUED         4   /**< @brief Waiting on an I/O queue.    */
 #define CH_STATE_WTSEM          5   /**< @brief Waiting on a semaphore.     */
 #define CH_STATE_WTMTX          6   /**< @brief Waiting on a mutex.         */
@@ -63,7 +63,7 @@
  *          indexed using the numeric thread state values.
  */
 #define CH_STATE_NAMES                                                     \
-  "READY", "WTSTART", "CURRENT", "SUSPENDED", "QUEUED", "WTSEM", "WTMTX",  \
+  "READY", "CURRENT", "WTSTART", "SUSPENDED", "QUEUED", "WTSEM", "WTMTX",  \
   "WTCOND", "SLEEPING", "WTEXIT", "WTOREVT", "WTANDEVT", "SNDMSGQ",        \
   "SNDMSG", "WTMSG", "FINAL"
 /** @} */
