@@ -431,8 +431,7 @@ typedef struct {
   volatile uint32_t     DMAR;
   volatile uint32_t     OR;
   volatile uint32_t     CCMR3;
-  volatile uint32_t     CCR5;
-  volatile uint32_t     CCR6;
+  volatile uint32_t     CCXR[2];
 } stm32_tim_t;
 
 /*===========================================================================*/

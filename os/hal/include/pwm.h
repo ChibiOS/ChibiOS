@@ -87,7 +87,7 @@ typedef enum {
 typedef struct PWMDriver PWMDriver;
 
 /**
- * @brief   PWM notification callback type.
+ * @brief   Type of a PWM notification callback.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  */
@@ -187,13 +187,15 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  *          or immediately (fallback implementation).
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ * @param[in] channel   PWM channel identifier (0...channels-1)
  * @param[in] width     PWM pulse width as clock pulses number
  *
  * @iclass
  */
-#define pwmEnableChannelI(pwmp, channel, width)                             \
-  pwm_lld_enable_channel(pwmp, channel, width)
+#define pwmEnableChannelI(pwmp, channel, width) do {                        \
+  (pwmp)->enabled |= 1 << (channel);                                        \
+  pwm_lld_enable_channel(pwmp, channel, width);                             \
+} while (0)
 
 /**
  * @brief   Disables a PWM channel.
@@ -205,24 +207,26 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  *          or immediately (fallback implementation).
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ * @param[in] channel   PWM channel identifier (0...channels-1)
  *
  * @iclass
  */
-#define pwmDisableChannelI(pwmp, channel)                                   \
-  pwm_lld_disable_channel(pwmp, channel)
+#define pwmDisableChannelI(pwmp, channel) do {                              \
+  (pwmp)->enabled &= ~(1 << (channel));                                     \
+  pwm_lld_disable_channel(pwmp, channel);                                   \
+} while (0)
 
 /**
  * @brief   Returns a PWM channel status.
  * @pre     The PWM unit must have been activated using @p pwmStart().
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ * @param[in] channel   PWM channel identifier (0...channels-1)
  *
  * @iclass
  */
 #define pwmIsChannelEnabledI(pwmp, channel)                                 \
-  pwm_lld_is_channel_enabled(pwmp, channel)
+  ((bool)((pwmp)->enabled & (1 << (channel))))
 /** @} */
 
 /*===========================================================================*/
@@ -241,6 +245,10 @@ extern "C" {
                         pwmchannel_t channel,
                         pwmcnt_t width);
   void pwmDisableChannel(PWMDriver *pwmp, pwmchannel_t channel);
+  void pwmEnablePeriodicNotification(PWMDriver *pwmp);
+  void pwmDisablePeriodicNotification(PWMDriver *pwmp);
+  void pwmEnableChannelNotification(PWMDriver *pwmp, pwmchannel_t channel);
+  void pwmDisableChannelNotification(PWMDriver *pwmp, pwmchannel_t channel);
 #ifdef __cplusplus
 }
 #endif

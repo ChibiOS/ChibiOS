@@ -114,15 +114,19 @@ static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
   sr  = pwmp->tim->SR;
   sr &= pwmp->tim->DIER & STM32_TIM_DIER_IRQ_MASK;
   pwmp->tim->SR = ~sr;
-  if ((sr & STM32_TIM_SR_CC1IF) != 0)
+  if (((sr & STM32_TIM_SR_CC1IF) != 0) &&
+      (pwmp->config->channels[0].callback != NULL))
     pwmp->config->channels[0].callback(pwmp);
-  if ((sr & STM32_TIM_SR_CC2IF) != 0)
+  if (((sr & STM32_TIM_SR_CC2IF) != 0) &&
+      (pwmp->config->channels[1].callback != NULL))
     pwmp->config->channels[1].callback(pwmp);
-  if ((sr & STM32_TIM_SR_CC3IF) != 0)
+  if (((sr & STM32_TIM_SR_CC3IF) != 0) &&
+      (pwmp->config->channels[2].callback != NULL))
     pwmp->config->channels[2].callback(pwmp);
-  if ((sr & STM32_TIM_SR_CC4IF) != 0)
+  if (((sr & STM32_TIM_SR_CC4IF) != 0) &&
+      (pwmp->config->channels[3].callback != NULL))
     pwmp->config->channels[3].callback(pwmp);
-  if ((sr & STM32_TIM_SR_UIF) != 0)
+  if (((sr & STM32_TIM_SR_UIF) != 0) && (pwmp->config->callback != NULL))
     pwmp->config->callback(pwmp);
 }
 #endif /* STM32_PWM_USE_TIM2 || ... || STM32_PWM_USE_TIM5 */
@@ -148,7 +152,8 @@ OSAL_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   STM32_TIM1->SR = ~STM32_TIM_SR_UIF;
-  PWMD1.config->callback(&PWMD1);
+  if (PWMD1.config->callback != NULL)
+    PWMD1.config->callback(&PWMD1);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -169,15 +174,22 @@ OSAL_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  sr = STM32_TIM1->SR & STM32_TIM1->DIER & STM32_TIM_DIER_IRQ_MASK;
+  sr = STM32_TIM1->SR & STM32_TIM1->DIER & (STM32_TIM_DIER_CC1IE |
+                                            STM32_TIM_DIER_CC2IE |
+                                            STM32_TIM_DIER_CC3IE |
+                                            STM32_TIM_DIER_CC4IE);
   STM32_TIM1->SR = ~sr;
-  if ((sr & STM32_TIM_SR_CC1IF) != 0)
+  if (((sr & STM32_TIM_SR_CC1IF) != 0) &&
+      (PWMD1.config->channels[0].callback != NULL))
     PWMD1.config->channels[0].callback(&PWMD1);
-  if ((sr & STM32_TIM_SR_CC2IF) != 0)
+  if (((sr & STM32_TIM_SR_CC2IF) != 0) &&
+      (PWMD1.config->channels[1].callback != NULL))
     PWMD1.config->channels[1].callback(&PWMD1);
-  if ((sr & STM32_TIM_SR_CC3IF) != 0)
+  if (((sr & STM32_TIM_SR_CC3IF) != 0) &&
+      (PWMD1.config->channels[2].callback != NULL))
     PWMD1.config->channels[2].callback(&PWMD1);
-  if ((sr & STM32_TIM_SR_CC4IF) != 0)
+  if (((sr & STM32_TIM_SR_CC4IF) != 0) &&
+      (PWMD1.config->channels[3].callback != NULL))
     PWMD1.config->channels[3].callback(&PWMD1);
 
   OSAL_IRQ_EPILOGUE();
@@ -277,7 +289,8 @@ OSAL_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   STM32_TIM8->SR = ~TIM_SR_UIF;
-  PWMD8.config->callback(&PWMD8);
+  if (PWMD8.config->callback != NULL)
+    PWMD8.config->callback(&PWMD8);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -298,15 +311,22 @@ OSAL_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  sr = STM32_TIM8->SR & STM32_TIM8->DIER & STM32_TIM_DIER_IRQ_MASK;
+  sr = STM32_TIM8->SR & STM32_TIM8->DIER & (STM32_TIM_DIER_CC1IE |
+                                            STM32_TIM_DIER_CC2IE |
+                                            STM32_TIM_DIER_CC3IE |
+                                            STM32_TIM_DIER_CC4IE);
   STM32_TIM8->SR = ~sr;
-  if ((sr & STM32_TIM_SR_CC1IF) != 0)
+  if (((sr & STM32_TIM_SR_CC1IF) != 0) &&
+      (PWMD8.config->channels[0].callback != NULL))
     PWMD8.config->channels[0].callback(&PWMD8);
-  if ((sr & STM32_TIM_SR_CC2IF) != 0)
+  if (((sr & STM32_TIM_SR_CC2IF) != 0) &&
+      (PWMD8.config->channels[1].callback != NULL))
     PWMD8.config->channels[1].callback(&PWMD8);
-  if ((sr & STM32_TIM_SR_CC3IF) != 0)
+  if (((sr & STM32_TIM_SR_CC3IF) != 0) &&
+      (PWMD8.config->channels[2].callback != NULL))
     PWMD8.config->channels[2].callback(&PWMD8);
-  if ((sr & STM32_TIM_SR_CC4IF) != 0)
+  if (((sr & STM32_TIM_SR_CC4IF) != 0) &&
+      (PWMD8.config->channels[3].callback != NULL))
     PWMD8.config->channels[3].callback(&PWMD8);
 
   OSAL_IRQ_EPILOGUE();
@@ -346,42 +366,49 @@ void pwm_lld_init(void) {
 #if STM32_PWM_USE_TIM1
   /* Driver initialization.*/
   pwmObjectInit(&PWMD1);
+  PWMD1.channels = STM32_TIM1_CHANNELS;
   PWMD1.tim = STM32_TIM1;
 #endif
 
 #if STM32_PWM_USE_TIM2
   /* Driver initialization.*/
   pwmObjectInit(&PWMD2);
+  PWMD2.channels = STM32_TIM2_CHANNELS;
   PWMD2.tim = STM32_TIM2;
 #endif
 
 #if STM32_PWM_USE_TIM3
   /* Driver initialization.*/
   pwmObjectInit(&PWMD3);
+  PWMD3.channels = STM32_TIM3_CHANNELS;
   PWMD3.tim = STM32_TIM3;
 #endif
 
 #if STM32_PWM_USE_TIM4
   /* Driver initialization.*/
   pwmObjectInit(&PWMD4);
+  PWMD4.channels = STM32_TIM4_CHANNELS;
   PWMD4.tim = STM32_TIM4;
 #endif
 
 #if STM32_PWM_USE_TIM5
   /* Driver initialization.*/
   pwmObjectInit(&PWMD5);
+  PWMD5.channels = STM32_TIM5_CHANNELS;
   PWMD5.tim = STM32_TIM5;
 #endif
 
 #if STM32_PWM_USE_TIM8
   /* Driver initialization.*/
   pwmObjectInit(&PWMD8);
+  PWMD8.channels = STM32_TIM8_CHANNELS;
   PWMD8.tim = STM32_TIM8;
 #endif
 
 #if STM32_PWM_USE_TIM9
   /* Driver initialization.*/
   pwmObjectInit(&PWMD9);
+  PWMD9.channels = STM32_TIM9_CHANNELS;
   PWMD9.tim = STM32_TIM9;
 #endif
 }
@@ -475,6 +502,10 @@ void pwm_lld_start(PWMDriver *pwmp) {
                        STM32_TIM_CCMR1_OC2M(6) | STM32_TIM_CCMR1_OC2PE;
     pwmp->tim->CCMR2 = STM32_TIM_CCMR2_OC3M(6) | STM32_TIM_CCMR2_OC3PE |
                        STM32_TIM_CCMR2_OC4M(6) | STM32_TIM_CCMR2_OC4PE;
+#if STM32_TIM_MAX_CHANNELS > 4
+    pwmp->tim->CCMR3 = STM32_TIM_CCMR3_OC5M(6) | STM32_TIM_CCMR3_OC5PE |
+                       STM32_TIM_CCMR3_OC6M(6) | STM32_TIM_CCMR3_OC6PE;
+#endif
   }
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
@@ -486,6 +517,12 @@ void pwm_lld_start(PWMDriver *pwmp) {
     pwmp->tim->CCR[1] = 0;                  /* Comparator 2 disabled.       */
     pwmp->tim->CCR[2] = 0;                  /* Comparator 3 disabled.       */
     pwmp->tim->CCR[3] = 0;                  /* Comparator 4 disabled.       */
+#if STM32_TIM_MAX_CHANNELS > 4
+    if (pwmp->channels > 4) {
+      pwmp->tim->CCXR[0] = 0;               /* Comparator 5 disabled.       */
+      pwmp->tim->CCXR[1] = 0;               /* Comparator 6 disabled.       */
+    }
+#endif
     pwmp->tim->CNT  = 0;                    /* Counter reset to zero.       */
   }
 
@@ -571,7 +608,6 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
   pwmp->tim->CCER  = ccer;
   pwmp->tim->EGR   = STM32_TIM_EGR_UG;      /* Update event.                */
-  pwmp->tim->DIER |= pwmp->config->callback == NULL ? 0 : STM32_TIM_DIER_UIE;
   pwmp->tim->SR    = 0;                     /* Clear pending IRQs.          */
 #if STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM8
 #if STM32_PWM_USE_ADVANCED
@@ -655,9 +691,10 @@ void pwm_lld_stop(PWMDriver *pwmp) {
  * @pre     The PWM unit must have been activated using @p pwmStart().
  * @post    The channel is active using the specified configuration.
  * @note    The function has effect at the next cycle start.
+ * @note    Channel notification is not enabled.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ * @param[in] channel   PWM channel identifier (0...channels-1)
  * @param[in] width     PWM pulse width as clock pulses number
  *
  * @notapi
@@ -666,35 +703,120 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
                             pwmchannel_t channel,
                             pwmcnt_t width) {
 
-  pwmp->tim->CCR[channel] = width;                  /* New duty cycle.      */
-  /* If there is a callback defined for the channel then the associated
-     interrupt must be enabled.*/
-  if (pwmp->config->channels[channel].callback != NULL) {
-    uint32_t dier = pwmp->tim->DIER;
-    /* If the IRQ is not already enabled care must be taken to clear it,
-       it is probably already pending because the timer is running.*/
-    if ((dier & (2 << channel)) == 0) {
-      pwmp->tim->DIER = dier | (2 << channel);
-      pwmp->tim->SR   = ~(2 << channel);
-    }
-  }
+  /* Changing channel duty cycle on the fly.*/
+#if STM32_TIM_MAX_CHANNELS <= 4
+  pwmp->tim->CCR[channel] = width;
+#else
+  if (channel <= 4)
+    pwmp->tim->CCR[channel] = width;
+  else
+    pwmp->tim->CCXR[channel - 4] = width;
+#endif
 }
 
 /**
- * @brief   Disables a PWM channel.
+ * @brief   Disables a PWM channel and its notification.
  * @pre     The PWM unit must have been activated using @p pwmStart().
  * @post    The channel is disabled and its output line returned to the
  *          idle state.
  * @note    The function has effect at the next cycle start.
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
+ * @param[in] channel   PWM channel identifier (0...channels-1)
  *
  * @notapi
  */
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
+#if STM32_TIM_MAX_CHANNELS <= 4
   pwmp->tim->CCR[channel] = 0;
+  pwmp->tim->DIER &= ~(2 << channel);
+#else
+  if (channel <= 4) {
+    pwmp->tim->CCR[channel] = 0;
+    pwmp->tim->DIER &= ~(2 << channel);
+  }
+  else
+    pwmp->tim->CCXR[channel - 4] = 0;
+#endif
+}
+
+/**
+ * @brief   Enables the periodic activation edge notification.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @note    If the notification is already enabled then the call has no effect.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ *
+ * @notapi
+ */
+void pwm_lld_enable_periodic_notification(PWMDriver *pwmp) {
+  uint32_t dier = pwmp->tim->DIER;
+
+  /* If the IRQ is not already enabled care must be taken to clear it,
+     it is probably already pending because the timer is running.*/
+  if ((dier & STM32_TIM_DIER_UIE) == 0) {
+    pwmp->tim->DIER = dier | STM32_TIM_DIER_UIE;
+    pwmp->tim->SR &= STM32_TIM_SR_UIF;
+  }
+}
+
+/**
+ * @brief   Disables the periodic activation edge notification.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @note    If the notification is already disabled then the call has no effect.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ *
+ * @notapi
+ */
+void pwm_lld_disable_periodic_notification(PWMDriver *pwmp) {
+
+  pwmp->tim->DIER &= ~STM32_TIM_DIER_UIE;
+}
+
+/**
+ * @brief   Enables a channel de-activation edge notification.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @pre     The channel must have been activated using @p pwmEnableChannel().
+ * @note    If the notification is already enabled then the call has no effect.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...channels-1)
+ *
+ * @notapi
+ */
+void pwm_lld_enable_channel_notification(PWMDriver *pwmp,
+                                         pwmchannel_t channel) {
+  uint32_t dier = pwmp->tim->DIER;
+
+#if STM32_TIM_MAX_CHANNELS > 4
+  /* Channels 4 and 5 do not support callbacks.*/
+  osalDbgAssert(channel < 4, "callback not supported");
+#endif
+
+  /* If the IRQ is not already enabled care must be taken to clear it,
+     it is probably already pending because the timer is running.*/
+  if ((dier & (2 << channel)) == 0) {
+    pwmp->tim->DIER = dier | (2 << channel);
+    pwmp->tim->SR   = ~(2 << channel);
+  }
+}
+
+/**
+ * @brief   Disables a channel de-activation edge notification.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @pre     The channel must have been activated using @p pwmEnableChannel().
+ * @note    If the notification is already disabled then the call has no effect.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...channels-1)
+ *
+ * @notapi
+ */
+void pwm_lld_disable_channel_notification(PWMDriver *pwmp,
+                                          pwmchannel_t channel) {
+
   pwmp->tim->DIER &= ~(2 << channel);
 }
 

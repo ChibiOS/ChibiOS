@@ -92,6 +92,7 @@ int main(void) {
    * Initializes the PWM driver 1 and ICU driver 4.
    */
   pwmStart(&PWMD1, &pwmcfg);
+  pwmEnablePeriodicNotification(&PWMD1);
   palSetPadMode(IOPORT1, 8, PAL_MODE_STM32_ALTERNATE_PUSHPULL);
   icuStart(&ICUD4, &icucfg);
   icuEnable(&ICUD4);
@@ -101,6 +102,7 @@ int main(void) {
    * Starts the PWM channel 0 using 75% duty cycle.
    */
   pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 7500));
+  pwmEnableChannelNotification(&PWMD1, 0);
   chThdSleepMilliseconds(5000);
 
   /*

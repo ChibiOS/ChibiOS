@@ -193,6 +193,8 @@
 #endif /* !(defined(STM32F427_437xx) || defined(STM32F429_439xx)) */
 
 /* TIM attributes.*/
+#define STM32_TIM_MAX_CHANNELS              4
+
 #define STM32_HAS_TIM1                      TRUE
 #define STM32_TIM1_IS_32BITS                FALSE
 #define STM32_TIM1_CHANNELS                 4

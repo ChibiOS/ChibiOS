@@ -36,8 +36,12 @@
 /**
  * @brief   Number of PWM channels per PWM driver.
  */
-#define PWM_CHANNELS                            4
+#define PWM_CHANNELS                            STM32_TIM_MAX_CHANNELS
 
+/**
+ * @name    STM32-specific PWM complementary output mode macros
+ * @{
+ */
 /**
  * @brief   Complementary output modes mask.
  * @note    This is an STM32-specific setting.
@@ -67,6 +71,7 @@
  *          timers TIM1 and TIM8.
  */
 #define PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW     0x20
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -283,22 +288,27 @@
 /*===========================================================================*/
 
 /**
- * @brief PWM mode type.
+ * @brief   Type of a PWM mode.
  */
 typedef uint32_t pwmmode_t;
 
 /**
- * @brief   PWM channel type.
+ * @brief   Type of a PWM channel.
  */
 typedef uint8_t pwmchannel_t;
 
 /**
- * @brief   PWM counter type.
+ * @brief   Type of a channels mask.
+ */
+typedef uint32_t pwmchnmsk_t;
+
+/**
+ * @brief   Type of a PWM counter.
  */
 typedef uint16_t pwmcnt_t;
 
 /**
- * @brief   PWM driver channel configuration structure.
+ * @brief   Type of a PWM driver channel configuration structure.
  */
 typedef struct {
   /**
@@ -315,7 +325,7 @@ typedef struct {
 } PWMChannelConfig;
 
 /**
- * @brief   PWM driver configuration structure.
+ * @brief   Type of a PWM driver configuration structure.
  */
 typedef struct {
   /**
@@ -377,6 +387,14 @@ struct PWMDriver {
    * @brief   Current PWM period in ticks.
    */
   pwmcnt_t                  period;
+  /**
+   * @brief   Mask of the enabled channels.
+   */
+  pwmchnmsk_t               enabled;
+  /**
+   * @brief   Number of channels in this instance.
+   */
+  pwmchannel_t              channels;
 #if defined(PWM_DRIVER_EXT_FIELDS)
   PWM_DRIVER_EXT_FIELDS
 #endif
@@ -413,19 +431,6 @@ struct PWMDriver {
  */
 #define pwm_lld_change_period(pwmp, period)                                 \
   ((pwmp)->tim->ARR = (uint16_t)((period) - 1))
-
-/**
- * @brief   Returns a PWM channel status.
- * @pre     The PWM unit must have been activated using @p pwmStart().
- *
- * @param[in] pwmp      pointer to a @p PWMDriver object
- * @param[in] channel   PWM channel identifier (0...PWM_CHANNELS-1)
- *
- * @notapi
- */
-#define pwm_lld_is_channel_enabled(pwmp, channel)                           \
-  (((pwmp)->tim->CCR[channel] != 0) ||                                      \
-   (((pwmp)->tim->DIER & (2 << channel)) != 0))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -469,6 +474,12 @@ extern "C" {
                               pwmchannel_t channel,
                               pwmcnt_t width);
   void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel);
+  void pwm_lld_enable_periodic_notification(PWMDriver *pwmp);
+  void pwm_lld_disable_periodic_notification(PWMDriver *pwmp);
+  void pwm_lld_enable_channel_notification(PWMDriver *pwmp,
+                                           pwmchannel_t channel);
+  void pwm_lld_disable_channel_notification(PWMDriver *pwmp,
+                                            pwmchannel_t channel);
 #ifdef __cplusplus
 }
 #endif

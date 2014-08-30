@@ -94,6 +94,7 @@ int main(void) {
    * The two pins have to be externally connected together.
    */
   pwmStart(&PWMD1, &pwmcfg);
+  pwmEnablePeriodicNotification(&PWMD1);
   palSetPadMode(GPIOA, 8, PAL_MODE_ALTERNATE(2));
   icuStart(&ICUD3, &icucfg);
   palSetPadMode(GPIOA, 6, PAL_MODE_ALTERNATE(1));
@@ -104,6 +105,7 @@ int main(void) {
    * Starts the PWM channel 0 using 75% duty cycle.
    */
   pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 7500));
+  pwmEnableChannelNotification(&PWMD1, 0);
   chThdSleepMilliseconds(5000);
 
   /*
