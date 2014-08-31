@@ -183,7 +183,7 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  * @notapi
  */
 #define _icu_isr_invoke_width_cb(icup) do {                                 \
-  if (((icup)->state != ICU_WAITING) &&                                     \
+  if (((icup)->state == ICU_ACTIVE) &&                                      \
       ((icup)->config->period_cb != NULL))                                  \
     (icup)->config->width_cb(icup);                                         \
 } while (0)
@@ -196,11 +196,10 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  * @notapi
  */
 #define _icu_isr_invoke_period_cb(icup) do {                                \
-  icustate_t previous_state = (icup)->state;                                \
-  (icup)->state = ICU_ACTIVE;                                               \
-  if ((previous_state != ICU_WAITING) &&                                    \
+  if (((icup)->state == ICU_ACTIVE) &&                                      \
       ((icup)->config->period_cb != NULL))                                  \
     (icup)->config->period_cb(icup);                                        \
+  (icup)->state = ICU_ACTIVE;                                               \
 } while (0)
 
 /**

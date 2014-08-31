@@ -108,17 +108,18 @@ ICUDriver ICUD9;
  * @param[in] icup      pointer to the @p ICUDriver object
  */
 static void icu_lld_serve_interrupt(ICUDriver *icup) {
-  uint16_t sr;
+  uint32_t sr;
 
   sr  = icup->tim->SR;
   sr &= icup->tim->DIER & STM32_TIM_DIER_IRQ_MASK;
   icup->tim->SR = ~sr;
   if (icup->config->channel == ICU_CHANNEL_1) {
-    if ((sr & STM32_TIM_SR_CC1IF) != 0)
-      _icu_isr_invoke_period_cb(icup);
     if ((sr & STM32_TIM_SR_CC2IF) != 0)
       _icu_isr_invoke_width_cb(icup);
-  } else {
+    if ((sr & STM32_TIM_SR_CC1IF) != 0)
+      _icu_isr_invoke_period_cb(icup);
+  }
+  else {
     if ((sr & STM32_TIM_SR_CC1IF) != 0)
       _icu_isr_invoke_width_cb(icup);
     if ((sr & STM32_TIM_SR_CC2IF) != 0)
@@ -506,7 +507,8 @@ void icu_lld_start(ICUDriver *icup) {
        data faster from within callbacks.*/
     icup->wccrp = &icup->tim->CCR[1];
     icup->pccrp = &icup->tim->CCR[0];
-  } else {
+  }
+  else {
     /* Selected input 2.
        CCMR1_CC1S = 10 = CH1 Input on TI2.
        CCMR1_CC2S = 01 = CH2 Input on TI2.*/
@@ -618,6 +620,7 @@ void icu_lld_start_capture(ICUDriver *icup) {
  *          brings the driver in the @p ICU_ACTIVE state.
  * @note    If notifications are enabled then the transition to the
  *          @p ICU_ACTIVE state is done automatically on the first edge.
+ * @note    The wait is performed in polled mode.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
@@ -625,6 +628,14 @@ void icu_lld_start_capture(ICUDriver *icup) {
  */
 void icu_lld_wait_capture(ICUDriver *icup) {
 
+  if (icup->config->channel == ICU_CHANNEL_1) {
+    while ((icup->tim->SR & STM32_TIM_SR_CC1IF) == 0)
+      ;
+  }
+  else {
+    while ((icup->tim->SR & STM32_TIM_SR_CC2IF) == 0)
+      ;
+  }
 }
 
 /**
@@ -658,7 +669,7 @@ void icu_enable_notifications(ICUDriver *icup) {
   /* If interrupts were already enabled then the operation is skipped.
      This is done in order to avoid clearing the SR and risk losing
      pending interrupts.*/
-  if ((dier & STM32_TIM_DIER_IRQ_MASK) != 0) {
+  if ((dier & STM32_TIM_DIER_IRQ_MASK) == 0) {
     /* Previously triggered IRQs are ignored, status cleared.*/
     icup->tim->SR = 0;
 
@@ -669,7 +680,8 @@ void icu_enable_notifications(ICUDriver *icup) {
       /* Optionally enabling width callback on CC2.*/
       if (icup->config->width_cb != NULL)
         dier |= STM32_TIM_DIER_CC2IE;
-    } else {
+    }
+    else {
       /* Enabling periodic callback on CC2.*/
       dier |= STM32_TIM_DIER_CC2IE;
 

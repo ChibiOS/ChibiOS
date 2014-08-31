@@ -94,6 +94,7 @@ int main(void) {
   icuStart(&ICUD3, &icucfg);
   palSetPadMode(GPIOC, 6, PAL_MODE_ALTERNATE(2));
   icuStartCapture(&ICUD3);
+  icuEnableNotifications(&ICUD3);
   chThdSleepMilliseconds(2000);
 
   /*

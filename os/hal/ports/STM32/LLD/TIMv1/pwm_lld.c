@@ -109,7 +109,7 @@ PWMDriver PWMD9;
  * @param[in] pwmp      pointer to a @p PWMDriver object
  */
 static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
-  uint16_t sr;
+  uint32_t sr;
 
   sr  = pwmp->tim->SR;
   sr &= pwmp->tim->DIER & STM32_TIM_DIER_IRQ_MASK;

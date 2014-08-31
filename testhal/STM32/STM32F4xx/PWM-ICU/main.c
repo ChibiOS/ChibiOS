@@ -48,13 +48,13 @@ icucnt_t last_width, last_period;
 static void icuwidthcb(ICUDriver *icup) {
 
   palSetPad(GPIOD, GPIOD_LED4);
-  last_width = icuGetWidth(icup);
+  last_width = icuGetWidthX(icup);
 }
 
 static void icuperiodcb(ICUDriver *icup) {
 
   palClearPad(GPIOD, GPIOD_LED4);
-  last_period = icuGetPeriod(icup);
+  last_period = icuGetPeriodX(icup);
 }
 
 static ICUConfig icucfg = {
@@ -93,7 +93,8 @@ int main(void) {
   palSetPadMode(GPIOA, 8, PAL_MODE_ALTERNATE(1));
   icuStart(&ICUD3, &icucfg);
   palSetPadMode(GPIOC, 6, PAL_MODE_ALTERNATE(2));
-  icuEnable(&ICUD3);
+  icuStartCapture(&ICUD3);
+  icuEnableNotifications(&ICUD3);
   chThdSleepMilliseconds(2000);
 
   /*
@@ -127,7 +128,7 @@ int main(void) {
    */
   pwmDisableChannel(&PWMD1, 0);
   pwmStop(&PWMD1);
-  icuDisable(&ICUD3);
+  icuStopCapture(&ICUD3);
   icuStop(&ICUD3);
   palClearPad(GPIOD, GPIOD_LED4);
   palClearPad(GPIOD, GPIOD_LED5);
