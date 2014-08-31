@@ -54,9 +54,8 @@ typedef enum {
   ICU_UNINIT = 0,                   /**< Not initialized.                   */
   ICU_STOP = 1,                     /**< Stopped.                           */
   ICU_READY = 2,                    /**< Ready.                             */
-  ICU_WAITING = 3,                  /**< Waiting first edge.                */
-  ICU_ACTIVE = 4,                   /**< Active cycle phase.                */
-  ICU_IDLE = 5,                     /**< Idle cycle phase.                  */
+  ICU_WAITING = 3,                  /**< Waiting for first front.           */
+  ICU_ACTIVE = 4,                   /**< First front detected.              */
 } icustate_t;
 
 /**
@@ -82,50 +81,94 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  * @{
  */
 /**
- * @brief   Enables the input capture.
+ * @brief   Starts the input capture.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
  * @iclass
  */
-#define icuEnableI(icup) icu_lld_enable(icup)
+#define icuStartCaptureI(icup) do {                                         \
+  icu_lld_start_capture(icup);                                              \
+  icup->state = ICU_WAITING;                                                \
+} while (0)
 
 /**
- * @brief   Disables the input capture.
+ * @brief   Waits for the first cycle activation edge.
+ * @details The function waits for the next PWM input activation front then
+ *          brings the driver in the @p ICU_ACTIVE state.
+ * @note    If notifications are enabled then the transition to the
+ *          @p ICU_ACTIVE state is done automatically on the first edge.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
  * @iclass
  */
-#define icuDisableI(icup) icu_lld_disable(icup)
+#define icuWaitCaptureI(icup) do {                                          \
+  icu_lld_wait_capture(icup);                                               \
+  icup->state = ICU_ACTIVE;                                                 \
+} while (0)
+
+/**
+ * @brief   Stops the input capture.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @iclass
+ */
+#define icuStopCaptureI(icup) do {                                          \
+  icu_lld_stop_capture(icup);                                               \
+  icup->state = ICU_READY;                                                  \
+} while (0)
+
+/**
+ * @brief   Enables notifications.
+ * @pre     The ICU unit must have been activated using @p icuStart().
+ * @note    If the notification is already enabled then the call has no effect.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @iclass
+ */
+#define icuEnableNotificationsI(icup) icu_enable_notifications(icup)
+
+/**
+ * @brief   Disables notifications.
+ * @pre     The ICU unit must have been activated using @p icuStart().
+ * @note    If the notification is already disabled then the call has no effect.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @iclass
+ */
+#define icuDisableNotificationsI(icup) icu_disable_notifications(icup)
 
 /**
  * @brief   Returns the width of the latest pulse.
  * @details The pulse width is defined as number of ticks between the start
  *          edge and the stop edge.
  * @note    This function is meant to be invoked from the width capture
- *          callback only.
+ *          callback.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  * @return              The number of ticks.
  *
- * @special
+ * @xclass
  */
-#define icuGetWidth(icup) icu_lld_get_width(icup)
+#define icuGetWidthX(icup) icu_lld_get_width(icup)
 
 /**
  * @brief   Returns the width of the latest cycle.
  * @details The cycle width is defined as number of ticks between a start
  *          edge and the next start edge.
  * @note    This function is meant to be invoked from the width capture
- *          callback only.
+ *          callback.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  * @return              The number of ticks.
  *
- * @special
+ * @xclass
  */
-#define icuGetPeriod(icup) icu_lld_get_period(icup)
+#define icuGetPeriodX(icup) icu_lld_get_period(icup)
 /** @} */
 
 /**
@@ -139,12 +182,11 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  *
  * @notapi
  */
-#define _icu_isr_invoke_width_cb(icup) {                                    \
-  if ((icup)->state != ICU_WAITING) {                                       \
-    (icup)->state = ICU_IDLE;                                               \
+#define _icu_isr_invoke_width_cb(icup) do {                                 \
+  if (((icup)->state != ICU_WAITING) &&                                     \
+      ((icup)->config->period_cb != NULL))                                  \
     (icup)->config->width_cb(icup);                                         \
-  }                                                                         \
-}
+} while (0)
 
 /**
  * @brief   Common ISR code, ICU period event.
@@ -153,12 +195,13 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  *
  * @notapi
  */
-#define _icu_isr_invoke_period_cb(icup) {                                   \
+#define _icu_isr_invoke_period_cb(icup) do {                                \
   icustate_t previous_state = (icup)->state;                                \
   (icup)->state = ICU_ACTIVE;                                               \
-  if (previous_state != ICU_WAITING)                                        \
+  if ((previous_state != ICU_WAITING) &&                                    \
+      ((icup)->config->period_cb != NULL))                                  \
     (icup)->config->period_cb(icup);                                        \
-}
+} while (0)
 
 /**
  * @brief   Common ISR code, ICU timer overflow event.
@@ -167,9 +210,9 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  *
  * @notapi
  */
-#define _icu_isr_invoke_overflow_cb(icup) {                                 \
+#define _icu_isr_invoke_overflow_cb(icup) do {                              \
   (icup)->config->overflow_cb(icup);                                        \
-}
+} while (0)
 /** @} */
 
 /*===========================================================================*/
@@ -183,8 +226,11 @@ extern "C" {
   void icuObjectInit(ICUDriver *icup);
   void icuStart(ICUDriver *icup, const ICUConfig *config);
   void icuStop(ICUDriver *icup);
-  void icuEnable(ICUDriver *icup);
-  void icuDisable(ICUDriver *icup);
+  void icuStartCapture(ICUDriver *icup);
+  void icuWaitCapture(ICUDriver *icup);
+  void icuStopCapture(ICUDriver *icup);
+  void icuEnableNotifications(ICUDriver *icup);
+  void icuDisableNotifications(ICUDriver *icup);
 #ifdef __cplusplus
 }
 #endif

@@ -116,40 +116,99 @@ void icuStop(ICUDriver *icup) {
 }
 
 /**
- * @brief   Enables the input capture.
+ * @brief   Starts the input capture.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
  * @api
  */
-void icuEnable(ICUDriver *icup) {
+void icuStartCapture(ICUDriver *icup) {
 
   osalDbgCheck(icup != NULL);
 
   osalSysLock();
   osalDbgAssert(icup->state == ICU_READY, "invalid state");
-  icu_lld_enable(icup);
-  icup->state = ICU_WAITING;
+  icuStartCaptureI(icup);
   osalSysUnlock();
 }
 
 /**
- * @brief   Disables the input capture.
+ * @brief   Waits for the first cycle activation edge.
+ * @details The function waits for the next PWM input activation front then
+ *          brings the driver in the @p ICU_ACTIVE state.
+ * @note    If notifications are enabled then the transition to the
+ *          @p ICU_ACTIVE state is done automatically on the first edge.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
  * @api
  */
-void icuDisable(ICUDriver *icup) {
+void icuWaitCapture(ICUDriver *icup) {
+
+  osalDbgCheck(icup != NULL);
+
+  osalSysLock();
+  osalDbgAssert(icup->state == ICU_WAITING, "invalid state");
+  icuWaitCaptureI(icup);
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Stops the input capture.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @api
+ */
+void icuStopCapture(ICUDriver *icup) {
 
   osalDbgCheck(icup != NULL);
 
   osalSysLock();
   osalDbgAssert((icup->state == ICU_READY) || (icup->state == ICU_WAITING) ||
-                (icup->state == ICU_ACTIVE) || (icup->state == ICU_IDLE),
+                (icup->state == ICU_ACTIVE),
                 "invalid state");
-  icu_lld_disable(icup);
-  icup->state = ICU_READY;
+  icuStopCaptureI(icup);
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Enables notifications.
+ * @pre     The ICU unit must have been activated using @p icuStart().
+ * @note    If the notification is already enabled then the call has no effect.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @api
+ */
+void icuEnableNotifications(ICUDriver *icup) {
+
+  osalDbgCheck(icup != NULL);
+
+  osalSysLock();
+  osalDbgAssert((icup->state == ICU_WAITING) || (icup->state == ICU_ACTIVE),
+                "invalid state");
+  icuEnableNotificationsI(icup);
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Disables notifications.
+ * @pre     The ICU unit must have been activated using @p icuStart().
+ * @note    If the notification is already disabled then the call has no effect.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @api
+ */
+void icuDisableNotifications(ICUDriver *icup) {
+
+  osalDbgCheck(icup != NULL);
+
+  osalSysLock();
+  osalDbgAssert((icup->state == ICU_WAITING) || (icup->state == ICU_ACTIVE),
+                "invalid state");
+  icuDisableNotificationsI(icup);
   osalSysUnlock();
 }
 

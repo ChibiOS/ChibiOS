@@ -399,8 +399,11 @@ extern "C" {
   void icu_lld_init(void);
   void icu_lld_start(ICUDriver *icup);
   void icu_lld_stop(ICUDriver *icup);
-  void icu_lld_enable(ICUDriver *icup);
-  void icu_lld_disable(ICUDriver *icup);
+  void icu_lld_start_capture(ICUDriver *icup);
+  void icu_lld_wait_capture(ICUDriver *icup);
+  void icu_lld_stop_capture(ICUDriver *icup);
+  void icu_enable_notifications(ICUDriver *icup);
+  void icu_disable_notifications(ICUDriver *icup);
 #ifdef __cplusplus
 }
 #endif
