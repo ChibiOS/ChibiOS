@@ -133,7 +133,7 @@ void icuStartCapture(ICUDriver *icup) {
 }
 
 /**
- * @brief   Waits for the first cycle activation edge.
+ * @brief   Waits for the next cycle activation edge.
  * @details The function waits for the next PWM input activation front then
  *          brings the driver in the @p ICU_ACTIVE state.
  * @note    If notifications are enabled then the transition to the
@@ -148,7 +148,8 @@ void icuWaitCapture(ICUDriver *icup) {
   osalDbgCheck(icup != NULL);
 
   osalSysLock();
-  osalDbgAssert(icup->state == ICU_WAITING, "invalid state");
+  osalDbgAssert((icup->state == ICU_WAITING) || (icup->state == ICU_ACTIVE),
+                "invalid state");
   icuWaitCaptureI(icup);
   osalSysUnlock();
 }

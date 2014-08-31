@@ -615,7 +615,7 @@ void icu_lld_start_capture(ICUDriver *icup) {
 }
 
 /**
- * @brief   Waits for the first cycle activation edge.
+ * @brief   Waits for the next cycle activation edge.
  * @details The function waits for the next PWM input activation front then
  *          brings the driver in the @p ICU_ACTIVE state.
  * @note    If notifications are enabled then the transition to the
@@ -629,10 +629,18 @@ void icu_lld_start_capture(ICUDriver *icup) {
 void icu_lld_wait_capture(ICUDriver *icup) {
 
   if (icup->config->channel == ICU_CHANNEL_1) {
+    /* Resetting capture flag.*/
+    icup->tim->SR &= ~STM32_TIM_SR_CC1IF;
+
+    /* Waiting for an edge.*/
     while ((icup->tim->SR & STM32_TIM_SR_CC1IF) == 0)
       ;
   }
   else {
+    /* Resetting capture flag.*/
+    icup->tim->SR &= ~STM32_TIM_SR_CC2IF;
+
+    /* Waiting for an edge.*/
     while ((icup->tim->SR & STM32_TIM_SR_CC2IF) == 0)
       ;
   }
