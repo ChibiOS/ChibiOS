@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2014 Giovanni Di Sirio
+    ChibiOS/RT - Copyright (C) 2014 Fabio Utzig
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 #define _HAL_LLD_H_
 
 #include "kl25z.h"
+#include "kinetis_registry.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
