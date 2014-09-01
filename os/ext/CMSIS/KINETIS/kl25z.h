@@ -587,7 +587,9 @@ typedef struct
 /****************************************************************/
 /********  Bits definition for PORTx_PCRn register  *************/
 #define PORTx_PCRn_ISR               ((uint32_t)0x01000000)    /*!< Interrupt Status Flag */
-#define PORTx_PCRn_IRQC              ((uint32_t)0x000F0000)    /*!< Interrupt Configuration */
+#define PORTx_PCRn_IRQC_SHIFT        16
+#define PORTx_PCRn_IRQC_MASK         ((uint32_t)0x000F0000)    /*!< Interrupt Configuration */
+#define PORTx_PCRn_IRQC(x)           ((uint32_t)(((uint32_t)(x) << PORTx_PCRn_IRQC_SHIFT) & PORTx_PCRn_IRQC_MASK))
 #define PORTx_PCRn_MUX_SHIFT         8                         /*!< Pin Mux Control (shift) */
 #define PORTx_PCRn_MUX_MASK          ((uint32_t)0x00000700)    /*!< Pin Mux Control (mask) */
 #define PORTx_PCRn_MUX(x)            ((uint32_t)(((uint32_t)(x) << PORTx_PCRn_MUX_SHIFT) & PORTx_PCRn_MUX_MASK))  /*!< Pin Mux Control */
