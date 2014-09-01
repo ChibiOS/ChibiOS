@@ -763,6 +763,12 @@
 #define STM32_FLASHBITS             0x00000011
 #endif
 
+/*
+ * For compatibility with driver assuming a specific PPRE clock.
+ */
+#define STM32_PCLK1 STM32_PCLK
+#define STM32_PCLK2 STM32_PCLK
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

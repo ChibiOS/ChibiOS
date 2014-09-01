@@ -333,6 +333,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
       rtcp->rtc->CR &= ~RTC_CR_ALRAE;
     }
   }
+#if STM32_RTC_NUM_ALARMS > 1
   else {
     if (alarmspec != NULL) {
       rtcp->rtc->CR &= ~RTC_CR_ALRBE;
@@ -347,6 +348,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
       rtcp->rtc->CR &= ~RTC_CR_ALRBE;
     }
   }
+#endif /* STM32_RTC_NUM_ALARMS > 1 */
 }
 
 /**
@@ -363,8 +365,10 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
                        RTCAlarm *alarmspec) {
   if (alarm == 1)
     alarmspec->alrmr = rtcp->rtc->ALRMAR;
+#if STM32_RTC_NUM_ALARMS > 1
   else
     alarmspec->alrmr = rtcp->rtc->ALRMBR;
+#endif /* STM32_RTC_NUM_ALARMS > 1 */
 }
 #endif /* STM32_RTC_NUM_ALARMS > 0 */
 
