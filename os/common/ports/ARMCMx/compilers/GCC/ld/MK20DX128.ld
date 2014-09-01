@@ -27,7 +27,7 @@ ENTRY(Reset_Handler)
 
 MEMORY
 {
-  flash0   : org = 0x00000000, len = 0xF8
+  flash0   : org = 0x00000000, len = 0x100
   flashcfg : org = 0x00000400, len = 0x10
   flash    : org = 0x00000410, len = 128k - 0x410
   ram      : org = 0x1FFFE000, len = 16k
