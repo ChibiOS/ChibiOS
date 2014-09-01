@@ -93,11 +93,7 @@ typedef void (*icucallback_t)(ICUDriver *icup);
 } while (0)
 
 /**
- * @brief   Waits for the next cycle activation edge.
- * @details The function waits for the next PWM input activation front then
- *          brings the driver in the @p ICU_ACTIVE state.
- * @note    If notifications are enabled then the transition to the
- *          @p ICU_ACTIVE state is done automatically on the first edge.
+ * @brief   Waits for a completed capture.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *

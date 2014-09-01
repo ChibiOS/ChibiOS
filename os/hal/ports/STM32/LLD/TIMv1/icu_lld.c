@@ -102,6 +102,34 @@ ICUDriver ICUD9;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void icu_lld_wait_edge(ICUDriver *icup) {
+
+  /* Polled mode so re-enabling the interrupts while the operation is
+     performed.*/
+  chSysUnlock();
+
+  /* Polling the right bit depending on the input channel.*/
+  if (icup->config->channel == ICU_CHANNEL_1) {
+    /* Waiting for an edge.*/
+    while ((icup->tim->SR & STM32_TIM_SR_CC1IF) == 0)
+      ;
+
+    /* Resetting capture flag.*/
+    icup->tim->SR &= ~STM32_TIM_SR_CC1IF;
+  }
+  else {
+    /* Waiting for an edge.*/
+    while ((icup->tim->SR & STM32_TIM_SR_CC2IF) == 0)
+      ;
+
+    /* Resetting capture flag.*/
+    icup->tim->SR &= ~STM32_TIM_SR_CC2IF;
+  }
+
+  /* Done, disabling interrupts again.*/
+  chSysLock();
+}
+
 /**
  * @brief   Shared IRQ handler.
  *
@@ -615,12 +643,9 @@ void icu_lld_start_capture(ICUDriver *icup) {
 }
 
 /**
- * @brief   Waits for the next cycle activation edge.
- * @details The function waits for the next PWM input activation front then
- *          brings the driver in the @p ICU_ACTIVE state.
- * @note    If notifications are enabled then the transition to the
- *          @p ICU_ACTIVE state is done automatically on the first edge.
+ * @brief   Waits for a completed capture.
  * @note    The wait is performed in polled mode.
+ * @note    The function cannot work if notifications are enabled.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
@@ -628,22 +653,13 @@ void icu_lld_start_capture(ICUDriver *icup) {
  */
 void icu_lld_wait_capture(ICUDriver *icup) {
 
-  if (icup->config->channel == ICU_CHANNEL_1) {
-    /* Resetting capture flag.*/
-    icup->tim->SR &= ~STM32_TIM_SR_CC1IF;
+  /* If the driver is still in the ICU_WAITING state then we need to wait
+     for the first activation edge.*/
+  if (icup->state == ICU_WAITING)
+    icu_lld_wait_edge(icup);
 
-    /* Waiting for an edge.*/
-    while ((icup->tim->SR & STM32_TIM_SR_CC1IF) == 0)
-      ;
-  }
-  else {
-    /* Resetting capture flag.*/
-    icup->tim->SR &= ~STM32_TIM_SR_CC2IF;
-
-    /* Waiting for an edge.*/
-    while ((icup->tim->SR & STM32_TIM_SR_CC2IF) == 0)
-      ;
-  }
+  /* This edge marks the availability of a capture result.*/
+  icu_lld_wait_edge(icup);
 }
 
 /**
