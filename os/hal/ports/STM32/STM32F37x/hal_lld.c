@@ -99,6 +99,7 @@ static void hal_lld_backup_domain_init(void) {
 void hal_lld_init(void) {
 
   /* Reset of all peripherals.*/
+  rccResetAHB(0xFFFFFFFF);
   rccResetAPB1(0xFFFFFFFF);
   rccResetAPB2(0xFFFFFFFF);
 
