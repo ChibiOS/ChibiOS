@@ -391,6 +391,94 @@ typedef struct
   __IO uint16_t PRESC;
 } WDOG_TypeDef;
 
+typedef struct {
+  __I  uint8_t  USB0_PERID;          // 0x00
+       uint8_t  RESERVED0[3];
+  __I  uint8_t  USB0_IDCOMP;         // 0x04
+       uint8_t  RESERVED1[3];
+  __I  uint8_t  USB0_REV;            // 0x08
+       uint8_t  RESERVED2[3];
+  __I  uint8_t  USB0_ADDINFO;        // 0x0C
+       uint8_t  RESERVED3[3];
+  __IO uint8_t  USB0_OTGISTAT;       // 0x10
+       uint8_t  RESERVED4[3];
+  __IO uint8_t  USB0_OTGICR;         // 0x14
+       uint8_t  RESERVED5[3];
+  __IO uint8_t  USB0_OTGSTAT;        // 0x18
+       uint8_t  RESERVED6[3];
+  __IO uint8_t  USB0_OTGCTL;         // 0x1C
+       uint8_t  RESERVED7[99];
+  __IO uint8_t  USB0_ISTAT;          // 0x80
+       uint8_t  RESERVED8[3];
+  __IO uint8_t  USB0_INTEN;          // 0x84
+       uint8_t  RESERVED9[3];
+  __IO uint8_t  USB0_ERRSTAT;        // 0x88
+       uint8_t  RESERVED10[3];
+  __IO uint8_t  USB0_ERREN;          // 0x8C
+       uint8_t  RESERVED11[3];
+  __I  uint8_t  USB0_STAT;           // 0x90
+       uint8_t  RESERVED12[3];
+  __IO uint8_t  USB0_CTL;            // 0x94
+       uint8_t  RESERVED13[3];
+  __IO uint8_t  USB0_ADDR;           // 0x98
+       uint8_t  RESERVED14[3];
+  __IO uint8_t  USB0_BDTPAGE1;       // 0x9C
+       uint8_t  RESERVED15[3];
+  __IO uint8_t  USB0_FRMNUML;        // 0xA0
+       uint8_t  RESERVED16[3];
+  __IO uint8_t  USB0_FRMNUMH;        // 0xA4
+       uint8_t  RESERVED17[3];
+  __IO uint8_t  USB0_TOKEN;          // 0xA8
+       uint8_t  RESERVED18[3];
+  __IO uint8_t  USB0_SOFTHLD;        // 0xAC
+       uint8_t  RESERVED19[3];
+  __IO uint8_t  USB0_BDTPAGE2;       // 0xB0
+       uint8_t  RESERVED20[3];
+  __IO uint8_t  USB0_BDTPAGE3;       // 0xB4
+       uint8_t  RESERVED21[11];
+  __IO uint8_t  USB0_ENDPT0;         // 0xC0
+       uint8_t  RESERVED22[3];
+  __IO uint8_t  USB0_ENDPT1;         // 0xC4
+       uint8_t  RESERVED23[3];
+  __IO uint8_t  USB0_ENDPT2;         // 0xC8
+       uint8_t  RESERVED24[3];
+  __IO uint8_t  USB0_ENDPT3;         // 0xCC
+       uint8_t  RESERVED25[3];
+  __IO uint8_t  USB0_ENDPT4;         // 0xD0
+       uint8_t  RESERVED26[3];
+  __IO uint8_t  USB0_ENDPT5;         // 0xD4
+       uint8_t  RESERVED27[3];
+  __IO uint8_t  USB0_ENDPT6;         // 0xD8
+       uint8_t  RESERVED28[3];
+  __IO uint8_t  USB0_ENDPT7;         // 0xDC
+       uint8_t  RESERVED29[3];
+  __IO uint8_t  USB0_ENDPT8;         // 0xE0
+       uint8_t  RESERVED30[3];
+  __IO uint8_t  USB0_ENDPT9;         // 0xE4
+       uint8_t  RESERVED31[3];
+  __IO uint8_t  USB0_ENDPT10;        // 0xE8
+       uint8_t  RESERVED32[3];
+  __IO uint8_t  USB0_ENDPT11;        // 0xEC
+       uint8_t  RESERVED33[3];
+  __IO uint8_t  USB0_ENDPT12;        // 0xF0
+       uint8_t  RESERVED34[3];
+  __IO uint8_t  USB0_ENDPT13;        // 0xF4
+       uint8_t  RESERVED35[3];
+  __IO uint8_t  USB0_ENDPT14;        // 0xF8
+       uint8_t  RESERVED36[3];
+  __IO uint8_t  USB0_ENDPT15;        // 0xFC
+       uint8_t  RESERVED37[3];
+  __IO uint8_t  USB0_USBCTRL;        // 0x100
+       uint8_t  RESERVED38[3];
+  __I  uint8_t  USB0_OBSERVE;        // 0x104
+       uint8_t  RESERVED39[3];
+  __IO uint8_t  USB0_CONTROL;        // 0x108
+       uint8_t  RESERVED40[3];
+  __IO uint8_t  USB0_USBTRC0;        // 0x10C
+       uint8_t  RESERVED41[7];
+  __IO uint8_t  USB0_USBFRMADJUST;   // 0x114
+} USBOTG_TypeDef;
+
 /****************************************************************/
 /*                  Peripheral memory map                       */
 /****************************************************************/
@@ -416,6 +504,7 @@ typedef struct
 #define UART0_BASE              ((uint32_t)0x4006A000)
 #define UART1_BASE              ((uint32_t)0x4006B000)
 #define UART2_BASE              ((uint32_t)0x4006C000)
+#define USBOTG_BASE             ((uint32_t)0x40072000)
 #define LLWU_BASE               ((uint32_t)0x4007C000)
 #define GPIOA_BASE              ((uint32_t)0x400FF000)
 #define GPIOB_BASE              ((uint32_t)0x400FF040)
@@ -442,6 +531,7 @@ typedef struct
 #define PORTD                   ((PORT_TypeDef  *)   PORTD_BASE)
 #define PORTE                   ((PORT_TypeDef  *)   PORTE_BASE)
 #define WDOG                    ((WDOG_TypeDef  *)   WDOG_BASE)
+#define USBOTG                  ((USBOTG_TypeDef *)  USBOTG_BASE)
 #define MCG                     ((MCG_TypeDef  *)    MCG_BASE)
 #define OSC                     ((OSC_TypeDef  *)    OSC0_BASE)
 #define SPI0                    ((SPI_TypeDef *)     SPI0_BASE)
