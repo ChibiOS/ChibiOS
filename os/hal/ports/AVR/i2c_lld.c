@@ -47,25 +47,6 @@ I2CDriver I2CD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   Wakes up the waiting thread.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] msg       wakeup message
- *
- * @notapi
- */
-#define wakeup_isr(i2cp, msg) {                                             \
-  osalSysLockFromISR();                                                     \
-  if ((i2cp)->thread != NULL) {                                             \
-    thread_t *tp = (i2cp)->thread;                                          \
-    (i2cp)->thread = NULL;                                                  \
-    tp->p_u.rdymsg = (msg);                                                 \
-    chSchReadyI(tp);                                                        \
-  }                                                                         \
-  osalSysUnlockFromISR();                                                   \
-}
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -100,7 +81,7 @@ OSAL_IRQ_HANDLER(TWI_vect) {
         TWCR = ((1 << TWSTA) | (1 << TWINT) | (1 << TWEN) | (1 << TWIE));
       } else {
         TWCR = ((1 << TWSTO) | (1 << TWINT) | (1 << TWEN));
-        wakeup_isr(i2cp, MSG_OK);
+        _i2c_wakeup_isr(i2cp);
       }
     }
     break;
@@ -122,27 +103,27 @@ OSAL_IRQ_HANDLER(TWI_vect) {
   case TWI_MASTER_RX_DATA_NACK:
     i2cp->rxbuf[i2cp->rxidx] = TWDR;
     TWCR = ((1 << TWSTO) | (1 << TWINT) | (1 << TWEN));
-    wakeup_isr(i2cp, MSG_OK);
+    _i2c_wakeup_isr(i2cp);
   case TWI_MASTER_TX_ADDR_NACK:
   case TWI_MASTER_TX_DATA_NACK:
   case TWI_MASTER_RX_ADDR_NACK:
-    i2cp->errors |= I2CD_ACK_FAILURE;
+    i2cp->errors |= I2C_ACK_FAILURE;
     break;
   case TWI_ARBITRATION_LOST:
-    i2cp->errors |= I2CD_ARBITRATION_LOST;
+    i2cp->errors |= I2C_ARBITRATION_LOST;
     break;
   case TWI_BUS_ERROR:
-    i2cp->errors |= I2CD_BUS_ERROR;
+    i2cp->errors |= I2C_BUS_ERROR;
     break;
   default:
     /* FIXME: only gets here if there are other MASTERs in the bus */
     TWCR = ((1 << TWSTO) | (1 << TWINT) | (1 << TWEN));
-    wakeup_isr(i2cp, MSG_RESET);
+    _i2c_wakeup_error_isr(i2cp);
   }
 
-  if (i2cp->errors != I2CD_NO_ERROR) {
+  if (i2cp->errors != I2C_NO_ERROR) {
     TWCR = ((1 << TWSTO) | (1 << TWINT) | (1 << TWEN));
-    wakeup_isr(i2cp, MSG_RESET);
+    _i2c_wakeup_error_isr(i2cp);
   }
 
   OSAL_IRQ_EPILOGUE();
@@ -160,6 +141,7 @@ OSAL_IRQ_HANDLER(TWI_vect) {
  */
 void i2c_lld_init(void) {
   i2cObjectInit(&I2CD1);
+  I2CD1.thread = NULL;
 }
 
 /**
@@ -170,14 +152,18 @@ void i2c_lld_init(void) {
  * @notapi
  */
 void i2c_lld_start(I2CDriver *i2cp) {
+  uint32_t clock_speed = 100000;
 
   /* TODO: Test TWI without external pull-ups (use internal) */
 
   /* Configure prescaler to 1 */
   TWSR &= 0xF8;
 
+  if (i2cp->config != NULL)
+    clock_speed = i2cp->config->clock_speed;
+
   /* Configure baudrate */
-  TWBR = ((F_CPU / i2cp->config->clock_speed) - 16) / 2;
+  TWBR = ((F_CPU / clock_speed) - 16) / 2;
 }
 
 /**
@@ -219,6 +205,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      uint8_t *rxbuf, size_t rxbytes,
                                      systime_t timeout) {
+  i2cp->errors = I2C_NO_ERROR;
   i2cp->addr = addr;
   i2cp->txbuf = NULL;
   i2cp->txbytes = 0;
@@ -230,12 +217,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Send START */
   TWCR = ((1 << TWSTA) | (1 << TWINT) | (1 << TWEN) | (1 << TWIE));
 
-  osalSysLock();
-  i2cp->thread = chThdGetSelfX();
-  chSchGoSleepS(THD_STATE_SUSPENDED);
-  chSysUnlock();
-
-  return chThdGetSelfX()->p_u.rdymsg;
+  return osalThreadSuspendTimeoutS(&i2cp->thread, TIME_INFINITE);
 }
 
 /**
@@ -265,6 +247,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       const uint8_t *txbuf, size_t txbytes,
                                       uint8_t *rxbuf, size_t rxbytes,
                                       systime_t timeout) {
+  i2cp->errors = I2C_NO_ERROR;
   i2cp->addr = addr;
   i2cp->txbuf = txbuf;
   i2cp->txbytes = txbytes;
@@ -275,12 +258,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   TWCR = ((1 << TWSTA) | (1 << TWINT) | (1 << TWEN) | (1 << TWIE));
 
-  chSysLock();
-  i2cp->thread = chThdGetSelfX();
-  chSchGoSleepS(THD_STATE_SUSPENDED);
-  chSysUnlock();
-
-  return chThdGetSelfX()->p_u.rdymsg;
+  return osalThreadSuspendTimeoutS(&i2cp->thread, TIME_INFINITE);
 }
 
 #endif /* HAL_USE_I2C */

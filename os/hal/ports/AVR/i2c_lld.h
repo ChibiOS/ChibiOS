@@ -125,14 +125,10 @@ struct I2CDriver {
    */
   i2cflags_t                errors;
 #if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the bus.
    */
-  Mutex                     mutex;
-#elif CH_USE_SEMAPHORES
-  Semaphore                 semaphore;
-#endif
+  mutex_t                   mutex;
 #endif /* I2C_USE_MUTUAL_EXCLUSION */
 #if defined(I2C_DRIVER_EXT_FIELDS)
   I2C_DRIVER_EXT_FIELDS
@@ -141,7 +137,7 @@ struct I2CDriver {
   /**
    * @brief   Thread waiting for I/O completion.
    */
-  Thread                    *thread;
+  thread_reference_t        thread;
   /**
    * @brief   Address of slave device.
    */
