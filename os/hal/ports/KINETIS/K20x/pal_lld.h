@@ -361,6 +361,9 @@ extern "C" {
   void _pal_lld_setgroupmode(ioportid_t port,
                              ioportmask_t mask,
                              iomode_t mode);
+  void _pal_lld_setpadmode(ioportid_t port,
+                           uint8_t pad,
+                           iomode_t mode);
 #ifdef __cplusplus
 }
 #endif
