@@ -202,26 +202,34 @@ typedef struct
 
 typedef struct
 {
-  __IO uint32_t SC;
-  __IO uint32_t CNT;
-  __IO uint32_t MOD;
-  __IO uint32_t C0SC;
-  __IO uint32_t C0V;
-  __IO uint32_t C1SC;
-  __IO uint32_t C1V;
-  __IO uint32_t C2SC;
-  __IO uint32_t C2V;
-  __IO uint32_t C3SC;
-  __IO uint32_t C3V;
-  __IO uint32_t C4SC;
-  __IO uint32_t C4V;
-  __IO uint32_t C5SC;
-  __IO uint32_t C5V;
-       uint32_t RESERVED0[5];
-  __IO uint32_t STATUS;
-       uint32_t RESERVED1[12];
-  __IO uint32_t CONF;
-} TPM_TypeDef;
+  __IO uint32_t SC;         /* Status and Control */
+  __IO uint32_t CNT;        /* Counter */
+  __IO uint32_t MOD;        /* Modulo */
+   struct FTM_Channel {
+     __IO uint32_t CnSC;     /* Channel Status and Control */
+     __IO uint32_t CnV;      /* Channel Value */
+   } CHANNEL[8];
+  __IO uint32_t CNTIN;      /* Counter Initial Value */
+  __IO uint32_t STATUS;     /* Capture and Compare Status */
+  __IO uint32_t MODE;       /* Features Mode Selection */
+  __IO uint32_t SYNC;       /* Synchronization */
+  __IO uint32_t OUTINIT;    /* Initial State for Channels Output */
+  __IO uint32_t OUTMASK;    /* Output Mask */
+  __IO uint32_t COMBINE;    /* Function for Linked Channels */
+  __IO uint32_t DEADTIME;   /* Deadtime Insertion Control */
+  __IO uint32_t EXTTRIG;    /* FTM External Trigger */
+  __IO uint32_t POL;        /* Channels Polarity */
+  __IO uint32_t FMS;        /* Fault Mode Status */
+  __IO uint32_t FILTER;     /* Input Capture Filter Control */
+  __IO uint32_t FLTCTRL;    /* Fault Control */
+  __IO uint32_t QDCTRL;     /* Quadrature Decode Control and Status */
+  __IO uint32_t CONF;       /* Configuration */
+  __IO uint32_t FTLPOL;     /* FTM Fault Input Polarity */
+  __IO uint32_t SYNCONF;    /* Synchronization Configuration */
+  __IO uint32_t INVCTRL;    /* FTM Inverting Control */
+  __IO uint32_t SWOCTRL;    /* FTM Software Output Control */
+  __IO uint32_t PWMLOAD;    /* FTM PWM Load */
+} FTM_TypeDef;
 
 typedef struct
 {
@@ -485,9 +493,8 @@ typedef struct {
 #define DMA_BASE                ((uint32_t)0x40008100)
 #define DMAMUX_BASE             ((uint32_t)0x40021000)
 #define SPI0_BASE               ((uint32_t)0x4002C000)
-#define TPM0_BASE               ((uint32_t)0x40038000)
-#define TPM1_BASE               ((uint32_t)0x40039000)
-#define TPM2_BASE               ((uint32_t)0x4003A000)
+#define FTM0_BASE               ((uint32_t)0x40038000)
+#define FTM1_BASE               ((uint32_t)0x40039000)
 #define ADC0_BASE               ((uint32_t)0x4003B000)
 #define LPTMR0_BASE             ((uint32_t)0x40040000)
 #define TSI0_BASE               ((uint32_t)0x40045000)
@@ -517,9 +524,8 @@ typedef struct {
 /****************************************************************/
 #define DMA                     ((DMA_TypeDef *)     DMA_BASE)
 #define DMAMUX                  ((DMAMUX_TypeDef *)  DMAMUX_BASE)
-#define TPM0                    ((TPM_TypeDef *)     TPM0_BASE)
-#define TPM1                    ((TPM_TypeDef *)     TPM1_BASE)
-#define TPM2                    ((TPM_TypeDef *)     TPM2_BASE)
+#define FTM0                    ((FTM_TypeDef *)     FTM0_BASE)
+#define FTM1                    ((FTM_TypeDef *)     FTM1_BASE)
 #define ADC0                    ((ADC_TypeDef *)     ADC0_BASE)
 #define LPTMR0                  ((LPTMR_TypeDef *)   LPTMR0_BASE)
 #define TSI0                    ((TSI_TypeDef *)     TSI0_BASE)
@@ -854,6 +860,406 @@ typedef struct {
 #define DMAMUX_CHCFGn_SOURCE_SHIFT   0                                                                                      /*!< DMA Channel Source (Slot) (shift) */
 #define DMAMUX_CHCFGn_SOURCE_MASK    ((uint8_t)((uint8_t)0x3F << DMAMUX_CHCFGn_SOURCE_SHIFT))                               /*!< DMA Channel Source (Slot) (mask) */
 #define DMAMUX_CHCFGn_SOURCE(x)      ((uint8_t)(((uint8_t)(x) << DMAMUX_CHCFGn_SOURCE_SHIFT) & DMAMUX_CHCFGn_SOURCE_MASK))  /*!< DMA Channel Source (Slot) */
+
+/****************************************************************/
+/*                                                              */
+/*                   FlexTimer Module (FTM)                     */
+/*                                                              */
+/****************************************************************/
+
+/* SC Bit Fields */
+#define FTM_SC_PS_MASK                           0x7u
+#define FTM_SC_PS_SHIFT                          0
+#define FTM_SC_PS(x)                             (((uint32_t)(((uint32_t)(x))<<FTM_SC_PS_SHIFT))&FTM_SC_PS_MASK)
+#define FTM_SC_CLKS_MASK                         0x18u
+#define FTM_SC_CLKS_SHIFT                        3
+#define FTM_SC_CLKS(x)                           (((uint32_t)(((uint32_t)(x))<<FTM_SC_CLKS_SHIFT))&FTM_SC_CLKS_MASK)
+#define FTM_SC_CPWMS                             0x20u
+#define FTM_SC_TOIE                              0x40u
+#define FTM_SC_TOF                          0x80u
+/* CNT Bit Fields */
+#define FTM_CNT_COUNT_MASK                       0xFFFFu
+#define FTM_CNT_COUNT_SHIFT                      0
+#define FTM_CNT_COUNT(x)                         (((uint32_t)(((uint32_t)(x))<<FTM_CNT_COUNT_SHIFT))&FTM_CNT_COUNT_MASK)
+/* MOD Bit Fields */
+#define FTM_MOD_MOD_MASK                         0xFFFFu
+#define FTM_MOD_MOD_SHIFT                        0
+#define FTM_MOD_MOD(x)                           (((uint32_t)(((uint32_t)(x))<<FTM_MOD_MOD_SHIFT))&FTM_MOD_MOD_MASK)
+/* CnSC Bit Fields */
+#define FTM_CnSC_DMA                             0x1u
+#define FTM_CnSC_ELSA                            0x4u
+#define FTM_CnSC_ELSB                            0x8u
+#define FTM_CnSC_MSA                             0x10u
+#define FTM_CnSC_MSB                             0x20u
+#define FTM_CnSC_CHIE                            0x40u
+#define FTM_CnSC_CHF                             0x80u
+/* CnV Bit Fields */
+#define FTM_CnV_VAL_MASK                         0xFFFFu
+#define FTM_CnV_VAL_SHIFT                        0
+#define FTM_CnV_VAL(x)                           (((uint32_t)(((uint32_t)(x))<<FTM_CnV_VAL_SHIFT))&FTM_CnV_VAL_MASK)
+/* CNTIN Bit Fields */
+#define FTM_CNTIN_INIT_MASK                      0xFFFFu
+#define FTM_CNTIN_INIT_SHIFT                     0
+#define FTM_CNTIN_INIT(x)                        (((uint32_t)(((uint32_t)(x))<<FTM_CNTIN_INIT_SHIFT))&FTM_CNTIN_INIT_MASK)
+/* STATUS Bit Fields */
+#define FTM_STATUS_CH0F_MASK                     0x1u
+#define FTM_STATUS_CH0F_SHIFT                    0
+#define FTM_STATUS_CH1F_MASK                     0x2u
+#define FTM_STATUS_CH1F_SHIFT                    1
+#define FTM_STATUS_CH2F_MASK                     0x4u
+#define FTM_STATUS_CH2F_SHIFT                    2
+#define FTM_STATUS_CH3F_MASK                     0x8u
+#define FTM_STATUS_CH3F_SHIFT                    3
+#define FTM_STATUS_CH4F_MASK                     0x10u
+#define FTM_STATUS_CH4F_SHIFT                    4
+#define FTM_STATUS_CH5F_MASK                     0x20u
+#define FTM_STATUS_CH5F_SHIFT                    5
+#define FTM_STATUS_CH6F_MASK                     0x40u
+#define FTM_STATUS_CH6F_SHIFT                    6
+#define FTM_STATUS_CH7F_MASK                     0x80u
+#define FTM_STATUS_CH7F_SHIFT                    7
+/* MODE Bit Fields */
+#define FTM_MODE_FTMEN_MASK                      0x1u
+#define FTM_MODE_FTMEN_SHIFT                     0
+#define FTM_MODE_INIT_MASK                       0x2u
+#define FTM_MODE_INIT_SHIFT                      1
+#define FTM_MODE_WPDIS_MASK                      0x4u
+#define FTM_MODE_WPDIS_SHIFT                     2
+#define FTM_MODE_PWMSYNC_MASK                    0x8u
+#define FTM_MODE_PWMSYNC_SHIFT                   3
+#define FTM_MODE_CAPTEST_MASK                    0x10u
+#define FTM_MODE_CAPTEST_SHIFT                   4
+#define FTM_MODE_FAULTM_MASK                     0x60u
+#define FTM_MODE_FAULTM_SHIFT                    5
+#define FTM_MODE_FAULTM(x)                       (((uint32_t)(((uint32_t)(x))<<FTM_MODE_FAULTM_SHIFT))&FTM_MODE_FAULTM_MASK)
+#define FTM_MODE_FAULTIE_MASK                    0x80u
+#define FTM_MODE_FAULTIE_SHIFT                   7
+/* SYNC Bit Fields */
+#define FTM_SYNC_CNTMIN_MASK                     0x1u
+#define FTM_SYNC_CNTMIN_SHIFT                    0
+#define FTM_SYNC_CNTMAX_MASK                     0x2u
+#define FTM_SYNC_CNTMAX_SHIFT                    1
+#define FTM_SYNC_REINIT_MASK                     0x4u
+#define FTM_SYNC_REINIT_SHIFT                    2
+#define FTM_SYNC_SYNCHOM_MASK                    0x8u
+#define FTM_SYNC_SYNCHOM_SHIFT                   3
+#define FTM_SYNC_TRIG0_MASK                      0x10u
+#define FTM_SYNC_TRIG0_SHIFT                     4
+#define FTM_SYNC_TRIG1_MASK                      0x20u
+#define FTM_SYNC_TRIG1_SHIFT                     5
+#define FTM_SYNC_TRIG2_MASK                      0x40u
+#define FTM_SYNC_TRIG2_SHIFT                     6
+#define FTM_SYNC_SWSYNC_MASK                     0x80u
+#define FTM_SYNC_SWSYNC_SHIFT                    7
+/* OUTINIT Bit Fields */
+#define FTM_OUTINIT_CH0OI_MASK                   0x1u
+#define FTM_OUTINIT_CH0OI_SHIFT                  0
+#define FTM_OUTINIT_CH1OI_MASK                   0x2u
+#define FTM_OUTINIT_CH1OI_SHIFT                  1
+#define FTM_OUTINIT_CH2OI_MASK                   0x4u
+#define FTM_OUTINIT_CH2OI_SHIFT                  2
+#define FTM_OUTINIT_CH3OI_MASK                   0x8u
+#define FTM_OUTINIT_CH3OI_SHIFT                  3
+#define FTM_OUTINIT_CH4OI_MASK                   0x10u
+#define FTM_OUTINIT_CH4OI_SHIFT                  4
+#define FTM_OUTINIT_CH5OI_MASK                   0x20u
+#define FTM_OUTINIT_CH5OI_SHIFT                  5
+#define FTM_OUTINIT_CH6OI_MASK                   0x40u
+#define FTM_OUTINIT_CH6OI_SHIFT                  6
+#define FTM_OUTINIT_CH7OI_MASK                   0x80u
+#define FTM_OUTINIT_CH7OI_SHIFT                  7
+/* OUTMASK Bit Fields */
+#define FTM_OUTMASK_CH0OM_MASK                   0x1u
+#define FTM_OUTMASK_CH0OM_SHIFT                  0
+#define FTM_OUTMASK_CH1OM_MASK                   0x2u
+#define FTM_OUTMASK_CH1OM_SHIFT                  1
+#define FTM_OUTMASK_CH2OM_MASK                   0x4u
+#define FTM_OUTMASK_CH2OM_SHIFT                  2
+#define FTM_OUTMASK_CH3OM_MASK                   0x8u
+#define FTM_OUTMASK_CH3OM_SHIFT                  3
+#define FTM_OUTMASK_CH4OM_MASK                   0x10u
+#define FTM_OUTMASK_CH4OM_SHIFT                  4
+#define FTM_OUTMASK_CH5OM_MASK                   0x20u
+#define FTM_OUTMASK_CH5OM_SHIFT                  5
+#define FTM_OUTMASK_CH6OM_MASK                   0x40u
+#define FTM_OUTMASK_CH6OM_SHIFT                  6
+#define FTM_OUTMASK_CH7OM_MASK                   0x80u
+#define FTM_OUTMASK_CH7OM_SHIFT                  7
+/* COMBINE Bit Fields */
+#define FTM_COMBINE_COMBINE0_MASK                0x1u
+#define FTM_COMBINE_COMBINE0_SHIFT               0
+#define FTM_COMBINE_COMP0_MASK                   0x2u
+#define FTM_COMBINE_COMP0_SHIFT                  1
+#define FTM_COMBINE_DECAPEN0_MASK                0x4u
+#define FTM_COMBINE_DECAPEN0_SHIFT               2
+#define FTM_COMBINE_DECAP0_MASK                  0x8u
+#define FTM_COMBINE_DECAP0_SHIFT                 3
+#define FTM_COMBINE_DTEN0_MASK                   0x10u
+#define FTM_COMBINE_DTEN0_SHIFT                  4
+#define FTM_COMBINE_SYNCEN0_MASK                 0x20u
+#define FTM_COMBINE_SYNCEN0_SHIFT                5
+#define FTM_COMBINE_FAULTEN0_MASK                0x40u
+#define FTM_COMBINE_FAULTEN0_SHIFT               6
+#define FTM_COMBINE_COMBINE1_MASK                0x100u
+#define FTM_COMBINE_COMBINE1_SHIFT               8
+#define FTM_COMBINE_COMP1_MASK                   0x200u
+#define FTM_COMBINE_COMP1_SHIFT                  9
+#define FTM_COMBINE_DECAPEN1_MASK                0x400u
+#define FTM_COMBINE_DECAPEN1_SHIFT               10
+#define FTM_COMBINE_DECAP1_MASK                  0x800u
+#define FTM_COMBINE_DECAP1_SHIFT                 11
+#define FTM_COMBINE_DTEN1_MASK                   0x1000u
+#define FTM_COMBINE_DTEN1_SHIFT                  12
+#define FTM_COMBINE_SYNCEN1_MASK                 0x2000u
+#define FTM_COMBINE_SYNCEN1_SHIFT                13
+#define FTM_COMBINE_FAULTEN1_MASK                0x4000u
+#define FTM_COMBINE_FAULTEN1_SHIFT               14
+#define FTM_COMBINE_COMBINE2_MASK                0x10000u
+#define FTM_COMBINE_COMBINE2_SHIFT               16
+#define FTM_COMBINE_COMP2_MASK                   0x20000u
+#define FTM_COMBINE_COMP2_SHIFT                  17
+#define FTM_COMBINE_DECAPEN2_MASK                0x40000u
+#define FTM_COMBINE_DECAPEN2_SHIFT               18
+#define FTM_COMBINE_DECAP2_MASK                  0x80000u
+#define FTM_COMBINE_DECAP2_SHIFT                 19
+#define FTM_COMBINE_DTEN2_MASK                   0x100000u
+#define FTM_COMBINE_DTEN2_SHIFT                  20
+#define FTM_COMBINE_SYNCEN2_MASK                 0x200000u
+#define FTM_COMBINE_SYNCEN2_SHIFT                21
+#define FTM_COMBINE_FAULTEN2_MASK                0x400000u
+#define FTM_COMBINE_FAULTEN2_SHIFT               22
+#define FTM_COMBINE_COMBINE3_MASK                0x1000000u
+#define FTM_COMBINE_COMBINE3_SHIFT               24
+#define FTM_COMBINE_COMP3_MASK                   0x2000000u
+#define FTM_COMBINE_COMP3_SHIFT                  25
+#define FTM_COMBINE_DECAPEN3_MASK                0x4000000u
+#define FTM_COMBINE_DECAPEN3_SHIFT               26
+#define FTM_COMBINE_DECAP3_MASK                  0x8000000u
+#define FTM_COMBINE_DECAP3_SHIFT                 27
+#define FTM_COMBINE_DTEN3_MASK                   0x10000000u
+#define FTM_COMBINE_DTEN3_SHIFT                  28
+#define FTM_COMBINE_SYNCEN3_MASK                 0x20000000u
+#define FTM_COMBINE_SYNCEN3_SHIFT                29
+#define FTM_COMBINE_FAULTEN3_MASK                0x40000000u
+#define FTM_COMBINE_FAULTEN3_SHIFT               30
+/* DEADTIME Bit Fields */
+#define FTM_DEADTIME_DTVAL_MASK                  0x3Fu
+#define FTM_DEADTIME_DTVAL_SHIFT                 0
+#define FTM_DEADTIME_DTVAL(x)                    (((uint32_t)(((uint32_t)(x))<<FTM_DEADTIME_DTVAL_SHIFT))&FTM_DEADTIME_DTVAL_MASK)
+#define FTM_DEADTIME_DTPS_MASK                   0xC0u
+#define FTM_DEADTIME_DTPS_SHIFT                  6
+#define FTM_DEADTIME_DTPS(x)                     (((uint32_t)(((uint32_t)(x))<<FTM_DEADTIME_DTPS_SHIFT))&FTM_DEADTIME_DTPS_MASK)
+/* EXTTRIG Bit Fields */
+#define FTM_EXTTRIG_CH2TRIG_MASK                 0x1u
+#define FTM_EXTTRIG_CH2TRIG_SHIFT                0
+#define FTM_EXTTRIG_CH3TRIG_MASK                 0x2u
+#define FTM_EXTTRIG_CH3TRIG_SHIFT                1
+#define FTM_EXTTRIG_CH4TRIG_MASK                 0x4u
+#define FTM_EXTTRIG_CH4TRIG_SHIFT                2
+#define FTM_EXTTRIG_CH5TRIG_MASK                 0x8u
+#define FTM_EXTTRIG_CH5TRIG_SHIFT                3
+#define FTM_EXTTRIG_CH0TRIG_MASK                 0x10u
+#define FTM_EXTTRIG_CH0TRIG_SHIFT                4
+#define FTM_EXTTRIG_CH1TRIG_MASK                 0x20u
+#define FTM_EXTTRIG_CH1TRIG_SHIFT                5
+#define FTM_EXTTRIG_INITTRIGEN_MASK              0x40u
+#define FTM_EXTTRIG_INITTRIGEN_SHIFT             6
+#define FTM_EXTTRIG_TRIGF_MASK                   0x80u
+#define FTM_EXTTRIG_TRIGF_SHIFT                  7
+/* POL Bit Fields */
+#define FTM_POL_POL0_MASK                        0x1u
+#define FTM_POL_POL0_SHIFT                       0
+#define FTM_POL_POL1_MASK                        0x2u
+#define FTM_POL_POL1_SHIFT                       1
+#define FTM_POL_POL2_MASK                        0x4u
+#define FTM_POL_POL2_SHIFT                       2
+#define FTM_POL_POL3_MASK                        0x8u
+#define FTM_POL_POL3_SHIFT                       3
+#define FTM_POL_POL4_MASK                        0x10u
+#define FTM_POL_POL4_SHIFT                       4
+#define FTM_POL_POL5_MASK                        0x20u
+#define FTM_POL_POL5_SHIFT                       5
+#define FTM_POL_POL6_MASK                        0x40u
+#define FTM_POL_POL6_SHIFT                       6
+#define FTM_POL_POL7_MASK                        0x80u
+#define FTM_POL_POL7_SHIFT                       7
+/* FMS Bit Fields */
+#define FTM_FMS_FAULTF0_MASK                     0x1u
+#define FTM_FMS_FAULTF0_SHIFT                    0
+#define FTM_FMS_FAULTF1_MASK                     0x2u
+#define FTM_FMS_FAULTF1_SHIFT                    1
+#define FTM_FMS_FAULTF2_MASK                     0x4u
+#define FTM_FMS_FAULTF2_SHIFT                    2
+#define FTM_FMS_FAULTF3_MASK                     0x8u
+#define FTM_FMS_FAULTF3_SHIFT                    3
+#define FTM_FMS_FAULTIN_MASK                     0x20u
+#define FTM_FMS_FAULTIN_SHIFT                    5
+#define FTM_FMS_WPEN_MASK                        0x40u
+#define FTM_FMS_WPEN_SHIFT                       6
+#define FTM_FMS_FAULTF_MASK                      0x80u
+#define FTM_FMS_FAULTF_SHIFT                     7
+/* FILTER Bit Fields */
+#define FTM_FILTER_CH0FVAL_MASK                  0xFu
+#define FTM_FILTER_CH0FVAL_SHIFT                 0
+#define FTM_FILTER_CH0FVAL(x)                    (((uint32_t)(((uint32_t)(x))<<FTM_FILTER_CH0FVAL_SHIFT))&FTM_FILTER_CH0FVAL_MASK)
+#define FTM_FILTER_CH1FVAL_MASK                  0xF0u
+#define FTM_FILTER_CH1FVAL_SHIFT                 4
+#define FTM_FILTER_CH1FVAL(x)                    (((uint32_t)(((uint32_t)(x))<<FTM_FILTER_CH1FVAL_SHIFT))&FTM_FILTER_CH1FVAL_MASK)
+#define FTM_FILTER_CH2FVAL_MASK                  0xF00u
+#define FTM_FILTER_CH2FVAL_SHIFT                 8
+#define FTM_FILTER_CH2FVAL(x)                    (((uint32_t)(((uint32_t)(x))<<FTM_FILTER_CH2FVAL_SHIFT))&FTM_FILTER_CH2FVAL_MASK)
+#define FTM_FILTER_CH3FVAL_MASK                  0xF000u
+#define FTM_FILTER_CH3FVAL_SHIFT                 12
+#define FTM_FILTER_CH3FVAL(x)                    (((uint32_t)(((uint32_t)(x))<<FTM_FILTER_CH3FVAL_SHIFT))&FTM_FILTER_CH3FVAL_MASK)
+/* FLTCTRL Bit Fields */
+#define FTM_FLTCTRL_FAULT0EN_MASK                0x1u
+#define FTM_FLTCTRL_FAULT0EN_SHIFT               0
+#define FTM_FLTCTRL_FAULT1EN_MASK                0x2u
+#define FTM_FLTCTRL_FAULT1EN_SHIFT               1
+#define FTM_FLTCTRL_FAULT2EN_MASK                0x4u
+#define FTM_FLTCTRL_FAULT2EN_SHIFT               2
+#define FTM_FLTCTRL_FAULT3EN_MASK                0x8u
+#define FTM_FLTCTRL_FAULT3EN_SHIFT               3
+#define FTM_FLTCTRL_FFLTR0EN_MASK                0x10u
+#define FTM_FLTCTRL_FFLTR0EN_SHIFT               4
+#define FTM_FLTCTRL_FFLTR1EN_MASK                0x20u
+#define FTM_FLTCTRL_FFLTR1EN_SHIFT               5
+#define FTM_FLTCTRL_FFLTR2EN_MASK                0x40u
+#define FTM_FLTCTRL_FFLTR2EN_SHIFT               6
+#define FTM_FLTCTRL_FFLTR3EN_MASK                0x80u
+#define FTM_FLTCTRL_FFLTR3EN_SHIFT               7
+#define FTM_FLTCTRL_FFVAL_MASK                   0xF00u
+#define FTM_FLTCTRL_FFVAL_SHIFT                  8
+#define FTM_FLTCTRL_FFVAL(x)                     (((uint32_t)(((uint32_t)(x))<<FTM_FLTCTRL_FFVAL_SHIFT))&FTM_FLTCTRL_FFVAL_MASK)
+/* QDCTRL Bit Fields */
+#define FTM_QDCTRL_QUADEN_MASK                   0x1u
+#define FTM_QDCTRL_QUADEN_SHIFT                  0
+#define FTM_QDCTRL_TOFDIR_MASK                   0x2u
+#define FTM_QDCTRL_TOFDIR_SHIFT                  1
+#define FTM_QDCTRL_QUADIR_MASK                   0x4u
+#define FTM_QDCTRL_QUADIR_SHIFT                  2
+#define FTM_QDCTRL_QUADMODE_MASK                 0x8u
+#define FTM_QDCTRL_QUADMODE_SHIFT                3
+#define FTM_QDCTRL_PHBPOL_MASK                   0x10u
+#define FTM_QDCTRL_PHBPOL_SHIFT                  4
+#define FTM_QDCTRL_PHAPOL_MASK                   0x20u
+#define FTM_QDCTRL_PHAPOL_SHIFT                  5
+#define FTM_QDCTRL_PHBFLTREN_MASK                0x40u
+#define FTM_QDCTRL_PHBFLTREN_SHIFT               6
+#define FTM_QDCTRL_PHAFLTREN_MASK                0x80u
+#define FTM_QDCTRL_PHAFLTREN_SHIFT               7
+/* CONF Bit Fields */
+#define FTM_CONF_NUMTOF_MASK                     0x1Fu
+#define FTM_CONF_NUMTOF_SHIFT                    0
+#define FTM_CONF_NUMTOF(x)                       (((uint32_t)(((uint32_t)(x))<<FTM_CONF_NUMTOF_SHIFT))&FTM_CONF_NUMTOF_MASK)
+#define FTM_CONF_BDMMODE_MASK                    0xC0u
+#define FTM_CONF_BDMMODE_SHIFT                   6
+#define FTM_CONF_BDMMODE(x)                      (((uint32_t)(((uint32_t)(x))<<FTM_CONF_BDMMODE_SHIFT))&FTM_CONF_BDMMODE_MASK)
+#define FTM_CONF_GTBEEN_MASK                     0x200u
+#define FTM_CONF_GTBEEN_SHIFT                    9
+#define FTM_CONF_GTBEOUT_MASK                    0x400u
+#define FTM_CONF_GTBEOUT_SHIFT                   10
+/* FLTPOL Bit Fields */
+#define FTM_FLTPOL_FLT0POL_MASK                  0x1u
+#define FTM_FLTPOL_FLT0POL_SHIFT                 0
+#define FTM_FLTPOL_FLT1POL_MASK                  0x2u
+#define FTM_FLTPOL_FLT1POL_SHIFT                 1
+#define FTM_FLTPOL_FLT2POL_MASK                  0x4u
+#define FTM_FLTPOL_FLT2POL_SHIFT                 2
+#define FTM_FLTPOL_FLT3POL_MASK                  0x8u
+#define FTM_FLTPOL_FLT3POL_SHIFT                 3
+/* SYNCONF Bit Fields */
+#define FTM_SYNCONF_HWTRIGMODE_MASK              0x1u
+#define FTM_SYNCONF_HWTRIGMODE_SHIFT             0
+#define FTM_SYNCONF_CNTINC_MASK                  0x4u
+#define FTM_SYNCONF_CNTINC_SHIFT                 2
+#define FTM_SYNCONF_INVC_MASK                    0x10u
+#define FTM_SYNCONF_INVC_SHIFT                   4
+#define FTM_SYNCONF_SWOC_MASK                    0x20u
+#define FTM_SYNCONF_SWOC_SHIFT                   5
+#define FTM_SYNCONF_SYNCMODE_MASK                0x80u
+#define FTM_SYNCONF_SYNCMODE_SHIFT               7
+#define FTM_SYNCONF_SWRSTCNT_MASK                0x100u
+#define FTM_SYNCONF_SWRSTCNT_SHIFT               8
+#define FTM_SYNCONF_SWWRBUF_MASK                 0x200u
+#define FTM_SYNCONF_SWWRBUF_SHIFT                9
+#define FTM_SYNCONF_SWOM_MASK                    0x400u
+#define FTM_SYNCONF_SWOM_SHIFT                   10
+#define FTM_SYNCONF_SWINVC_MASK                  0x800u
+#define FTM_SYNCONF_SWINVC_SHIFT                 11
+#define FTM_SYNCONF_SWSOC_MASK                   0x1000u
+#define FTM_SYNCONF_SWSOC_SHIFT                  12
+#define FTM_SYNCONF_HWRSTCNT_MASK                0x10000u
+#define FTM_SYNCONF_HWRSTCNT_SHIFT               16
+#define FTM_SYNCONF_HWWRBUF_MASK                 0x20000u
+#define FTM_SYNCONF_HWWRBUF_SHIFT                17
+#define FTM_SYNCONF_HWOM_MASK                    0x40000u
+#define FTM_SYNCONF_HWOM_SHIFT                   18
+#define FTM_SYNCONF_HWINVC_MASK                  0x80000u
+#define FTM_SYNCONF_HWINVC_SHIFT                 19
+#define FTM_SYNCONF_HWSOC_MASK                   0x100000u
+#define FTM_SYNCONF_HWSOC_SHIFT                  20
+/* INVCTRL Bit Fields */
+#define FTM_INVCTRL_INV0EN_MASK                  0x1u
+#define FTM_INVCTRL_INV0EN_SHIFT                 0
+#define FTM_INVCTRL_INV1EN_MASK                  0x2u
+#define FTM_INVCTRL_INV1EN_SHIFT                 1
+#define FTM_INVCTRL_INV2EN_MASK                  0x4u
+#define FTM_INVCTRL_INV2EN_SHIFT                 2
+#define FTM_INVCTRL_INV3EN_MASK                  0x8u
+#define FTM_INVCTRL_INV3EN_SHIFT                 3
+/* SWOCTRL Bit Fields */
+#define FTM_SWOCTRL_CH0OC_MASK                   0x1u
+#define FTM_SWOCTRL_CH0OC_SHIFT                  0
+#define FTM_SWOCTRL_CH1OC_MASK                   0x2u
+#define FTM_SWOCTRL_CH1OC_SHIFT                  1
+#define FTM_SWOCTRL_CH2OC_MASK                   0x4u
+#define FTM_SWOCTRL_CH2OC_SHIFT                  2
+#define FTM_SWOCTRL_CH3OC_MASK                   0x8u
+#define FTM_SWOCTRL_CH3OC_SHIFT                  3
+#define FTM_SWOCTRL_CH4OC_MASK                   0x10u
+#define FTM_SWOCTRL_CH4OC_SHIFT                  4
+#define FTM_SWOCTRL_CH5OC_MASK                   0x20u
+#define FTM_SWOCTRL_CH5OC_SHIFT                  5
+#define FTM_SWOCTRL_CH6OC_MASK                   0x40u
+#define FTM_SWOCTRL_CH6OC_SHIFT                  6
+#define FTM_SWOCTRL_CH7OC_MASK                   0x80u
+#define FTM_SWOCTRL_CH7OC_SHIFT                  7
+#define FTM_SWOCTRL_CH0OCV_MASK                  0x100u
+#define FTM_SWOCTRL_CH0OCV_SHIFT                 8
+#define FTM_SWOCTRL_CH1OCV_MASK                  0x200u
+#define FTM_SWOCTRL_CH1OCV_SHIFT                 9
+#define FTM_SWOCTRL_CH2OCV_MASK                  0x400u
+#define FTM_SWOCTRL_CH2OCV_SHIFT                 10
+#define FTM_SWOCTRL_CH3OCV_MASK                  0x800u
+#define FTM_SWOCTRL_CH3OCV_SHIFT                 11
+#define FTM_SWOCTRL_CH4OCV_MASK                  0x1000u
+#define FTM_SWOCTRL_CH4OCV_SHIFT                 12
+#define FTM_SWOCTRL_CH5OCV_MASK                  0x2000u
+#define FTM_SWOCTRL_CH5OCV_SHIFT                 13
+#define FTM_SWOCTRL_CH6OCV_MASK                  0x4000u
+#define FTM_SWOCTRL_CH6OCV_SHIFT                 14
+#define FTM_SWOCTRL_CH7OCV_MASK                  0x8000u
+#define FTM_SWOCTRL_CH7OCV_SHIFT                 15
+/* PWMLOAD Bit Fields */
+#define FTM_PWMLOAD_CH0SEL_MASK                  0x1u
+#define FTM_PWMLOAD_CH0SEL_SHIFT                 0
+#define FTM_PWMLOAD_CH1SEL_MASK                  0x2u
+#define FTM_PWMLOAD_CH1SEL_SHIFT                 1
+#define FTM_PWMLOAD_CH2SEL_MASK                  0x4u
+#define FTM_PWMLOAD_CH2SEL_SHIFT                 2
+#define FTM_PWMLOAD_CH3SEL_MASK                  0x8u
+#define FTM_PWMLOAD_CH3SEL_SHIFT                 3
+#define FTM_PWMLOAD_CH4SEL_MASK                  0x10u
+#define FTM_PWMLOAD_CH4SEL_SHIFT                 4
+#define FTM_PWMLOAD_CH5SEL_MASK                  0x20u
+#define FTM_PWMLOAD_CH5SEL_SHIFT                 5
+#define FTM_PWMLOAD_CH6SEL_MASK                  0x40u
+#define FTM_PWMLOAD_CH6SEL_SHIFT                 6
+#define FTM_PWMLOAD_CH7SEL_MASK                  0x80u
+#define FTM_PWMLOAD_CH7SEL_SHIFT                 7
+#define FTM_PWMLOAD_LDOK_MASK                    0x200u
+#define FTM_PWMLOAD_LDOK_SHIFT                   9
 
 /****************************************************************/
 /*                                                              */
