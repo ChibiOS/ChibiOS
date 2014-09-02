@@ -876,7 +876,7 @@ typedef struct {
 #define FTM_SC_CLKS(x)                           (((uint32_t)(((uint32_t)(x))<<FTM_SC_CLKS_SHIFT))&FTM_SC_CLKS_MASK)
 #define FTM_SC_CPWMS                             0x20u
 #define FTM_SC_TOIE                              0x40u
-#define FTM_SC_TOF                          0x80u
+#define FTM_SC_TOF                               0x80u
 /* CNT Bit Fields */
 #define FTM_CNT_COUNT_MASK                       0xFFFFu
 #define FTM_CNT_COUNT_SHIFT                      0
