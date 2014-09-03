@@ -200,6 +200,18 @@ typedef struct
   __IO uint8_t  CHCFG[4];
 } DMAMUX_TypeDef;
 
+/** PIT - Peripheral register structure */
+typedef struct  {
+  __IO uint32_t MCR;             /* PIT Module Control Register */
+       uint8_t  RESERVED0[252];
+  struct PIT_CHANNEL {
+    __IO uint32_t LDVAL;         /* Timer Load Value Register */
+    __IO uint32_t CVAL;          /* Current Timer Value Register */
+    __IO uint32_t TCTRL;         /* Timer Control Register */
+    __IO uint32_t TFLG;          /* Timer Flag Register */
+  } CHANNEL[4];
+} PIT_TypeDef;
+
 typedef struct
 {
   __IO uint32_t SC;         /* Status and Control */
@@ -493,6 +505,7 @@ typedef struct {
 #define DMA_BASE                ((uint32_t)0x40008100)
 #define DMAMUX_BASE             ((uint32_t)0x40021000)
 #define SPI0_BASE               ((uint32_t)0x4002C000)
+#define PIT_BASE                ((uint32_t)0x40037000)
 #define FTM0_BASE               ((uint32_t)0x40038000)
 #define FTM1_BASE               ((uint32_t)0x40039000)
 #define ADC0_BASE               ((uint32_t)0x4003B000)
@@ -524,6 +537,7 @@ typedef struct {
 /****************************************************************/
 #define DMA                     ((DMA_TypeDef *)     DMA_BASE)
 #define DMAMUX                  ((DMAMUX_TypeDef *)  DMAMUX_BASE)
+#define PIT                     ((PIT_TypeDef *)     PIT_BASE)
 #define FTM0                    ((FTM_TypeDef *)     FTM0_BASE)
 #define FTM1                    ((FTM_TypeDef *)     FTM1_BASE)
 #define ADC0                    ((ADC_TypeDef *)     ADC0_BASE)
@@ -1260,6 +1274,28 @@ typedef struct {
 #define FTM_PWMLOAD_CH7SEL_SHIFT                 7
 #define FTM_PWMLOAD_LDOK_MASK                    0x200u
 #define FTM_PWMLOAD_LDOK_SHIFT                   9
+
+/****************************************************************/
+/*                                                              */
+/*                 Periodic Interrupt Timer (PIT)               */
+/*                                                              */
+/****************************************************************/
+/* MCR Bit Fields */
+#define PIT_MCR_FRZ                              0x1u
+#define PIT_MCR_MDIS                             0x2u
+/* LDVAL Bit Fields */
+#define PIT_LDVAL_TSV_MASK                       0xFFFFFFFFu
+#define PIT_LDVAL_TSV_SHIFT                      0
+#define PIT_LDVAL_TSV(x)                         (((uint32_t)(((uint32_t)(x))<<PIT_LDVAL_TSV_SHIFT))&PIT_LDVAL_TSV_MASK)
+/* CVAL Bit Fields */
+#define PIT_CVAL_TVL_MASK                        0xFFFFFFFFu
+#define PIT_CVAL_TVL_SHIFT                       0
+#define PIT_CVAL_TVL(x)                          (((uint32_t)(((uint32_t)(x))<<PIT_CVAL_TVL_SHIFT))&PIT_CVAL_TVL_MASK)
+/* TCTRL Bit Fields */
+#define PIT_TCTRL_TEN                            0x1u
+#define PIT_TCTRL_TIE                            0x2u
+/* TFLG Bit Fields */
+#define PIT_TFLG_TIF                             0x1u
 
 /****************************************************************/
 /*                                                              */
