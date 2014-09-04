@@ -32,10 +32,6 @@
 /*===========================================================================*/
 
 /** @brief SPI Mode (Polarity/Phase) */
-#define SPI_ROLE_MASTER    0
-#define SPI_ROLE_SLAVE     1
-
-/** @brief SPI Mode (Polarity/Phase) */
 #define SPI_CPOL0_CPHA0    0
 #define SPI_CPOL0_CPHA1    1
 #define SPI_CPOL1_CPHA0    2
@@ -104,10 +100,6 @@ typedef void (*spicallback_t)(SPIDriver *spip);
  */
 typedef struct {
   /**
-   * @brief Role: Master or Slave
-   */
-  uint8_t               role;
-  /**
    * @brief Port used of Slave Select
    */
   ioportid_t            ssport;
@@ -143,30 +135,27 @@ struct SPIDriver {
   /**
    * @brief Driver state.
    */
-  spistate_t            state;
+  spistate_t                state;
   /**
    * @brief Current configuration data.
    */
-  SPIConfig             *config;
+  SPIConfig                 *config;
 #if SPI_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
    */
-  Thread                *thread;
+  thread_reference_t        thread;
 #endif /* SPI_USE_WAIT */
 #if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-#if CH_USE_MUTEXES || defined(__DOXYGEN__)
   /**
    * @brief Mutex protecting the bus.
    */
-  Mutex                 mutex;
-#elif CH_USE_SEMAPHORES
-  Semaphore             semaphore;
-#endif
+  mutex_t                   mutex;
 #endif /* SPI_USE_MUTUAL_EXCLUSION */
 #if defined(SPI_DRIVER_EXT_FIELDS)
   SPI_DRIVER_EXT_FIELDS
 #endif
+  /* End of the mandatory fields.*/
   /**
    * @brief   Pointer to the buffer with data to send.
    */

@@ -71,7 +71,7 @@ OSAL_IRQ_HANDLER(SPI_STC_vect) {
 
   /* spi_lld_exchange, spi_lld_send or spi_lld_ignore */
   if (spip->txidx < spip->txbytes) {
-    if (spip->txbuf) { 
+    if (spip->txbuf) {
       SPDR = spip->txbuf[spip->txidx++]; // send
     } else {
       SPDR = 0; spip->txidx++; // dummy send
@@ -136,19 +136,10 @@ void spi_lld_start(SPIDriver *spip) {
       /* SPI enable, SPI interrupt enable */
       SPCR |= ((1 << SPE) | (1 << SPIE));
 
-      switch (spip->config->role) {
-      case SPI_ROLE_SLAVE:
-        SPCR &= ~(1 << MSTR);                                          /* master mode */
-        DDR_SPI1 |=  (1 << SPI1_MISO);                                 /*      output */
-        DDR_SPI1 &= ~((1 << SPI1_MOSI) | (1 << SPI1_SCK) | (1 << SPI1_SS)); /*  input */
-        break;
-      case SPI_ROLE_MASTER: /* fallthrough */
-      default:
-        SPCR |= (1 << MSTR);                                            /* slave mode */
-        DDR_SPI1 |=  ((1 << SPI1_MOSI) | (1 << SPI1_SCK));              /*     output */
-        DDR_SPI1 &= ~(1 << SPI1_MISO);                                  /*      input */
-        spip->config->ssport->dir |= (1 << spip->config->sspad);
-      }
+      SPCR |= (1 << MSTR);
+      DDR_SPI1 |=  ((1 << SPI1_MOSI) | (1 << SPI1_SCK));
+      DDR_SPI1 &= ~(1 << SPI1_MISO);
+      spip->config->ssport->dir |= (1 << spip->config->sspad);
 
       switch (spip->config->bitorder) {
       case SPI_LSB_FIRST:
@@ -248,10 +239,10 @@ void spi_lld_stop(SPIDriver *spip) {
  * @notapi
  */
 void spi_lld_select(SPIDriver *spip) {
-  
+
   /**
-   * NOTE: This should only be called in master mode 
-   */ 
+   * NOTE: This should only be called in master mode.
+   */
   spip->config->ssport->out &= ~(1 << spip->config->sspad);
 
 }
@@ -267,8 +258,8 @@ void spi_lld_select(SPIDriver *spip) {
 void spi_lld_unselect(SPIDriver *spip) {
 
   /**
-   * NOTE: This should only be called in master mode 
-   */ 
+   * NOTE: This should only be called in master mode.
+   */
   spip->config->ssport->out |= (1 << spip->config->sspad);
 
 }
