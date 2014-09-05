@@ -397,6 +397,13 @@ typedef struct
 
 typedef struct
 {
+  __IO uint8_t  LVDSC1;
+  __IO uint8_t  LVDSC2;
+  __IO uint8_t  REGSC;
+} PMC_TypeDef;
+
+typedef struct
+{
   __IO uint16_t STCTRLH;
   __IO uint16_t STCTRLL;
   __IO uint16_t TOVALH;
@@ -526,6 +533,7 @@ typedef struct {
 #define UART2_BASE              ((uint32_t)0x4006C000)
 #define USBOTG_BASE             ((uint32_t)0x40072000)
 #define LLWU_BASE               ((uint32_t)0x4007C000)
+#define PMC_BASE                ((uint32_t)0x4007D000)
 #define GPIOA_BASE              ((uint32_t)0x400FF000)
 #define GPIOB_BASE              ((uint32_t)0x400FF040)
 #define GPIOC_BASE              ((uint32_t)0x400FF080)
@@ -545,6 +553,7 @@ typedef struct {
 #define TSI0                    ((TSI_TypeDef *)     TSI0_BASE)
 #define SIM                     ((SIM_TypeDef  *)    SIM_BASE)
 #define LLWU                    ((LLWU_TypeDef  *)   LLWU_BASE)
+#define PMC                     ((PMC_TypeDef  *)    PMC_BASE)
 #define PORTA                   ((PORT_TypeDef  *)   PORTA_BASE)
 #define PORTB                   ((PORT_TypeDef  *)   PORTB_BASE)
 #define PORTC                   ((PORT_TypeDef  *)   PORTC_BASE)
@@ -1812,6 +1821,32 @@ typedef struct {
 #define UARTx_PFIFO_RXFIFOSIZE_SHIFT 0
 #define UARTx_PFIFO_RXFIFOSIZE_MASK  ((uint8_t)((uint8_t)0x7 << UARTx_PFIFO_RXFIFOSIZE_SHIFT))
 #define UARTx_PFIFO_RXFIFOSIZE(x)    ((uint8_t)(((uint8_t)(x) << UARTx_PFIFO_RXFIFOSIZE_SHIFT) & UARTx_PFIFO_RXFIFOSIZE_MASK))  /*!< Receive FIFO Buffer depth */
+
+/****************************************************************/
+/*                                                              */
+/*             Power Management Controller (PMC)                */
+/*                                                              */
+/****************************************************************/
+/*********  Bits definition for PMC_LVDSC1 register  *************/
+#define PMC_LVDSC1_LVDF               ((uint8_t)0x80)   /*!< Low-Voltage Detect Flag */
+#define PMC_LVDSC1_LVDACK             ((uint8_t)0x40)   /*!< Low-Voltage Detect Acknowledge */
+#define PMC_LVDSC1_LVDIE              ((uint8_t)0x20)   /*!< Low-Voltage Detect Interrupt Enable */
+#define PMC_LVDSC1_LVDRE              ((uint8_t)0x10)   /*!< Low-Voltage Detect Reset Enable */
+#define PMC_LVDSC1_LVDV_MASK          ((uint8_t)0x3)    /*!< Low-Voltage Detect Voltage Select */
+#define PMC_LVDSC1_LVDV_SHIFT         0
+#define PMC_LVDSC1_LVDV(x)            (((uint8_t)(((uint8_t)(x))<<PMC_LVDSC1_LVDV_SHIFT))&PMC_LVDSC1_LVDV_MASK)
+/*********  Bits definition for PMC_LVDSC1 register  *************/
+#define PMC_LVDSC2_LVWF               ((uint8_t)0x80)   /*!< Low-Voltage Warning Flag */
+#define PMC_LVDSC2_LVWACK             ((uint8_t)0x40)   /*!< Low-Voltage Warning Acknowledge */
+#define PMC_LVDSC2_LVWIE              ((uint8_t)0x20)   /*!< Low-Voltage Warning Interrupt Enable */
+#define PMC_LVDSC2_LVWV_MASK          0x3               /*!< Low-Voltage Warning Voltage Select */
+#define PMC_LVDSC2_LVWV_SHIFT         0
+#define PMC_LVDSC2_LVWV(x)            (((uint8_t)(((uint8_t)(x))<<PMC_LVDSC2_LVWV_SHIFT))&PMC_LVDSC2_LVWV_MASK)
+/*********  Bits definition for PMC_REGSC register  *************/
+#define PMC_REGSC_BGEN                ((uint8_t)0x10)   /*!< Bandgap Enable In VLPx Operation */
+#define PMC_REGSC_ACKISO              ((uint8_t)0x8)    /*!< Acknowledge Isolation */
+#define PMC_REGSC_REGONS              ((uint8_t)0x4)    /*!< Regulator In Run Regulation Status */
+#define PMC_REGSC_BGBE                ((uint8_t)0x1)    /*!< Bandgap Buffer Enable */
 
 /****************************************************************/
 /*                                                              */

@@ -211,34 +211,34 @@ typedef struct
 
 typedef struct
 {
-  __IO uint32_t SC1A;           // offset: 0x00
-  __IO uint32_t SC1B;           // offset: 0x04
-  __IO uint32_t CFG1;           // offset: 0x08
-  __IO uint32_t CFG2;           // offset: 0x0C
-  __I  uint32_t RA;             // offset: 0x10
-  __I  uint32_t RB;             // offset: 0x14
-  __IO uint32_t CV1;            // offset: 0x18
-  __IO uint32_t CV2;            // offset: 0x1C
-  __IO uint32_t SC2;            // offset: 0x20
-  __IO uint32_t SC3;            // offset: 0x24
-  __IO uint32_t OFS;            // offset: 0x28
-  __IO uint32_t PG;             // offset: 0x2C
-  __IO uint32_t MG;             // offset: 0x30
-  __IO uint32_t CLPD;           // offset: 0x34
-  __IO uint32_t CLPS;           // offset: 0x38
-  __IO uint32_t CLP4;           // offset: 0x3C
-  __IO uint32_t CLP3;           // offset: 0x40
-  __IO uint32_t CLP2;           // offset: 0x44
-  __IO uint32_t CLP1;           // offset: 0x48
-  __IO uint32_t CLP0;           // offset: 0x4C
-       uint32_t RESERVED0[1];   // offset: 0x50
-  __IO uint32_t CLMD;           // offset: 0x54
-  __IO uint32_t CLMS;           // offset: 0x58
-  __IO uint32_t CLM4;           // offset: 0x5C
-  __IO uint32_t CLM3;           // offset: 0x60
-  __IO uint32_t CLM2;           // offset: 0x64
-  __IO uint32_t CLM1;           // offset: 0x68
-  __IO uint32_t CLM0;           // offset: 0x6C
+  __IO uint32_t SC1A;           // ADC Status and Control Registers 1
+  __IO uint32_t SC1B;           // ADC Status and Control Registers 1
+  __IO uint32_t CFG1;           // ADC Configuration Register 1
+  __IO uint32_t CFG2;           // ADC Configuration Register 2
+  __I  uint32_t RA;             // ADC Data Result Register
+  __I  uint32_t RB;             // ADC Data Result Register
+  __IO uint32_t CV1;            // Compare Value Registers
+  __IO uint32_t CV2;            // Compare Value Registers
+  __IO uint32_t SC2;            // Status and Control Register 2
+  __IO uint32_t SC3;            // Status and Control Register 3
+  __IO uint32_t OFS;            // ADC Offset Correction Register
+  __IO uint32_t PG;             // ADC Plus-Side Gain Register
+  __IO uint32_t MG;             // ADC Minus-Side Gain Register
+  __IO uint32_t CLPD;           // ADC Plus-Side General Calibration Value Register
+  __IO uint32_t CLPS;           // ADC Plus-Side General Calibration Value Register
+  __IO uint32_t CLP4;           // ADC Plus-Side General Calibration Value Register
+  __IO uint32_t CLP3;           // ADC Plus-Side General Calibration Value Register
+  __IO uint32_t CLP2;           // ADC Plus-Side General Calibration Value Register
+  __IO uint32_t CLP1;           // ADC Plus-Side General Calibration Value Register
+  __IO uint32_t CLP0;           // ADC Plus-Side General Calibration Value Register
+       uint32_t RESERVED0[1];   // ADC Minus-Side General Calibration Value Register
+  __IO uint32_t CLMD;           // ADC Minus-Side General Calibration Value Register
+  __IO uint32_t CLMS;           // ADC Minus-Side General Calibration Value Register
+  __IO uint32_t CLM4;           // ADC Minus-Side General Calibration Value Register
+  __IO uint32_t CLM3;           // ADC Minus-Side General Calibration Value Register
+  __IO uint32_t CLM2;           // ADC Minus-Side General Calibration Value Register
+  __IO uint32_t CLM1;           // ADC Minus-Side General Calibration Value Register
+  __IO uint32_t CLM0;           // ADC Minus-Side General Calibration Value Register
 } ADC_TypeDef;
 
 typedef struct
@@ -323,6 +323,13 @@ typedef struct
   __IO uint8_t  C5;
 } UARTLP_TypeDef;
 
+typedef struct
+{
+  __IO uint8_t  LVDSC1;
+  __IO uint8_t  LVDSC2;
+  __IO uint8_t  REGSC;
+} PMC_TypeDef;
+
 /****************************************************************/
 /*                  Peripheral memory map                       */
 /****************************************************************/
@@ -350,6 +357,7 @@ typedef struct
 #define SPI0_BASE               ((uint32_t)0x40076000)
 #define SPI1_BASE               ((uint32_t)0x40077000)
 #define LLWU_BASE               ((uint32_t)0x4007C000)
+#define PMC_BASE                ((uint32_t)0x4007D000)
 #define GPIOA_BASE              ((uint32_t)0x400FF000)
 #define GPIOB_BASE              ((uint32_t)0x400FF040)
 #define GPIOC_BASE              ((uint32_t)0x400FF080)
@@ -369,6 +377,7 @@ typedef struct
 #define TSI0                    ((TSI_TypeDef *)     TSI0_BASE)
 #define SIM                     ((SIM_TypeDef  *)    SIM_BASE)
 #define LLWU                    ((LLWU_TypeDef  *)   LLWU_BASE)
+#define PMC                     ((PMC_TypeDef  *)    PMC_BASE)
 #define PORTA                   ((PORT_TypeDef  *)   PORTA_BASE)
 #define PORTB                   ((PORT_TypeDef  *)   PORTB_BASE)
 #define PORTC                   ((PORT_TypeDef  *)   PORTC_BASE)
@@ -444,6 +453,20 @@ typedef struct
 #define SIM_SCGC5_PORTA              ((uint32_t)0x00000200)    /*!< Port A Clock Gate Control */
 #define SIM_SCGC5_TSI                ((uint32_t)0x00000020)    /*!< TSI Access Control */
 #define SIM_SCGC5_LPTMR              ((uint32_t)0x00000001)    /*!< Low Power Timer Access Control */
+
+/*******  Bits definition for SIM_SCGC6 register  ************/
+#define SIM_SCGC6_DAC0               ((uint32_t)0x80000000)    /*!< DAC0 Clock Gate Control */
+#define SIM_SCGC6_RTC                ((uint32_t)0x20000000)    /*!< RTC Access Control */
+#define SIM_SCGC6_ADC0               ((uint32_t)0x08000000)    /*!< ADC0 Clock Gate Control */
+#define SIM_SCGC6_TMP2               ((uint32_t)0x04000000)    /*!< TPM2 Clock Gate Control */
+#define SIM_SCGC6_TMP1               ((uint32_t)0x02000000)    /*!< TPM1 Clock Gate Control */
+#define SIM_SCGC6_TPM0               ((uint32_t)0x01000000)    /*!< TPM0 Clock Gate Control */
+#define SIM_SCGC6_PIT                ((uint32_t)0x00800000)    /*!< PIT Clock Gate Control */
+#define SIM_SCGC6_DMAMUX             ((uint32_t)0x00000002)    /*!< DMA Mux Clock Gate Control */
+#define SIM_SCGC6_FTF               ((uint32_t)0x00000001)    /*!< Flash Memory Clock Gate Control */
+
+/*******  Bits definition for SIM_SCGC6 register  ************/
+#define SIM_SCGC7_DMA                ((uint32_t)0x00000100)    /*!< DMA Clock Gate Control */
 
 /******  Bits definition for SIM_CLKDIV1 register  ***********/
 #define SIM_CLKDIV1_OUTDIV1_SHIFT    28                                                                            			 /*!< Clock 1 output divider value (shift) */
@@ -1145,5 +1168,30 @@ typedef struct
 #define UARTx_C5_RDMAE               ((uint8_t)0x20)    /*!< Receiver Full DMA Enable */
 #define UARTx_C5_BOTHEDGE            ((uint8_t)0x02)    /*!< Both Edge Sampling */
 #define UARTx_C5_RESYNCDIS           ((uint8_t)0x01)    /*!< Resynchronization Disable */
+/****************************************************************/
+/*                                                              */
+/*             Power Management Controller (PMC)                */
+/*                                                              */
+/****************************************************************/
+/*********  Bits definition for PMC_LVDSC1 register  *************/
+#define PMC_LVDSC1_LVDF               ((uint8_t)0x80)   /*!< Low-Voltage Detect Flag */
+#define PMC_LVDSC1_LVDACK             ((uint8_t)0x40)   /*!< Low-Voltage Detect Acknowledge */
+#define PMC_LVDSC1_LVDIE              ((uint8_t)0x20)   /*!< Low-Voltage Detect Interrupt Enable */
+#define PMC_LVDSC1_LVDRE              ((uint8_t)0x10)   /*!< Low-Voltage Detect Reset Enable */
+#define PMC_LVDSC1_LVDV_MASK          ((uint8_t)0x3)    /*!< Low-Voltage Detect Voltage Select */
+#define PMC_LVDSC1_LVDV_SHIFT         0
+#define PMC_LVDSC1_LVDV(x)            (((uint8_t)(((uint8_t)(x))<<PMC_LVDSC1_LVDV_SHIFT))&PMC_LVDSC1_LVDV_MASK)
+/*********  Bits definition for PMC_LVDSC1 register  *************/
+#define PMC_LVDSC2_LVWF               ((uint8_t)0x80)   /*!< Low-Voltage Warning Flag */
+#define PMC_LVDSC2_LVWACK             ((uint8_t)0x40)   /*!< Low-Voltage Warning Acknowledge */
+#define PMC_LVDSC2_LVWIE              ((uint8_t)0x20)   /*!< Low-Voltage Warning Interrupt Enable */
+#define PMC_LVDSC2_LVWV_MASK          0x3               /*!< Low-Voltage Warning Voltage Select */
+#define PMC_LVDSC2_LVWV_SHIFT         0
+#define PMC_LVDSC2_LVWV(x)            (((uint8_t)(((uint8_t)(x))<<PMC_LVDSC2_LVWV_SHIFT))&PMC_LVDSC2_LVWV_MASK)
+/*********  Bits definition for PMC_REGSC register  *************/
+#define PMC_REGSC_BGEN                ((uint8_t)0x10)   /*!< Bandgap Enable In VLPx Operation */
+#define PMC_REGSC_ACKISO              ((uint8_t)0x8)    /*!< Acknowledge Isolation */
+#define PMC_REGSC_REGONS              ((uint8_t)0x4)    /*!< Regulator In Run Regulation Status */
+#define PMC_REGSC_BGBE                ((uint8_t)0x1)    /*!< Bandgap Buffer Enable */
 
 #endif
