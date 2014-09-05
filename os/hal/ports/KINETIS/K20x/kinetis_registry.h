@@ -41,6 +41,9 @@
 #define KINETIS_PORTD_IRQ_VECTOR    VectorEC
 #define KINETIS_PORTE_IRQ_VECTOR    VectorF0
 
+/* ADC attributes.*/
+#define KINETIS_HAS_ADC0            TRUE
+#define KINETIS_ADC0_IRC_VECTOR     Vector98
 
 /** @} */
 

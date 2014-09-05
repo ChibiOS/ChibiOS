@@ -38,6 +38,10 @@
 #define KINETIS_PORTA_IRQ_VECTOR    VectorB8
 #define KINETIS_PORTD_IRQ_VECTOR    VectorBC
 
+/* ADC attributes.*/
+#define KINETIS_HAS_ADC0            TRUE
+#define KINETIS_ADC0_IRC_VECTOR     Vector7C
+
 /** @} */
 
 #endif /* _KINETIS_REGISTRY_H_ */
