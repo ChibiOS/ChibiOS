@@ -284,6 +284,23 @@ typedef struct
  */
 #define pal_lld_togglepad(port, pad) (port)->PTOR |= ((uint32_t) 1 << (pad))
 
+/**
+ * @brief   Pad mode setup.
+ * @details This function programs a pad with the specified mode.
+ * @note    The @ref PAL provides a default software implementation of this
+ *          functionality, implement this function if can optimize it by using
+ *          special hardware functionalities or special coding.
+ * @note    Programming an unknown or unsupported mode is silently ignored.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @param[in] mode      pad mode
+ *
+ * @notapi
+ */
+#define pal_lld_setpadmode(port, pad, mode)                                 \
+    _pal_lld_setpadmode(port, pad, mode)
+
 #if !defined(__DOXYGEN__)
 extern const PALConfig pal_default_config;
 #endif

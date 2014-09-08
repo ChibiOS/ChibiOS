@@ -156,7 +156,7 @@ void pal_lld_writepad(ioportid_t port, uint8_t pad, uint8_t bit)
  *
  * @notapi
  */
-void pal_lld_setpadmode(ioportid_t port, uint8_t pad, iomode_t mode)
+void _pal_lld_setpadmode(ioportid_t port, uint8_t pad, iomode_t mode)
 {
   PORT_TypeDef *portcfg = NULL;
 
