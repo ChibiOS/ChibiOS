@@ -79,9 +79,9 @@ struct mutex {
  * @param[in] name      the name of the mutex variable
  */
 #if CH_CFG_USE_MUTEXES_RECURSIVE || defined(__DOXYGEN__)
-#define _MUTEX_DATA(name) {_threads_queue_t_DATA(name.m_queue), NULL, NULL, 0}
+#define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.m_queue), NULL, NULL, 0}
 #else
-#define _MUTEX_DATA(name) {_threads_queue_t_DATA(name.m_queue), NULL, NULL}
+#define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.m_queue), NULL, NULL}
 #endif
 
 /**

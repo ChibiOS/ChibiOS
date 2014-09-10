@@ -376,6 +376,23 @@ static inline void chThdQueueObjectInit(threads_queue_t *tqp) {
   queue_init(tqp);
 }
 
+/**
+ * @brief   Evaluates to @p true if the specified queue is empty.
+ *
+ * @param[out] tqp      pointer to the threads queue object
+ * @return              The queue status.
+ * @retval false        if the queue is not empty.
+ * @retval true         if the queue is empty.
+ *
+ * @iclass
+ */
+static inline bool chThdQueueIsEmptyI(threads_queue_t *tqp) {
+
+  chDbgCheckClassI();
+
+  return queue_isempty(tqp);
+}
+
 #endif /* _CHTHREADS_H_ */
 
 /** @} */

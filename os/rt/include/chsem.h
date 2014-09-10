@@ -69,7 +69,7 @@ typedef struct semaphore {
  * @param[in] n         the counter initial value, this value must be
  *                      non-negative
  */
-#define _SEMAPHORE_DATA(name, n) {_threads_queue_t_DATA(name.s_queue), n}
+#define _SEMAPHORE_DATA(name, n) {_THREADS_QUEUE_DATA(name.s_queue), n}
 
 /**
  * @brief   Static semaphore initializer.
