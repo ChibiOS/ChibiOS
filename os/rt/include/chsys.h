@@ -362,26 +362,26 @@ static inline void chSysUnlockFromISR(void) {
 }
 
 /**
- * @brief   Conditionally enters the kernel lock state.
+ * @brief   Unconditionally enters the kernel lock state.
  * @note    Can be called without previous knowledge of the current lock state.
  *          The final state is "s-locked".
  *
  * @special
  */
-static inline void chSysConditionalLock(void) {
+static inline void chSysUnconditionalLock(void) {
 
   if (port_irq_enabled(port_get_irq_status()))
     chSysLock();
 }
 
 /**
- * @brief   Conditionally leaves the kernel lock state.
+ * @brief   Unconditionally leaves the kernel lock state.
  * @note    Can be called without previous knowledge of the current lock state.
  *          The final state is "normal".
  *
  * @special
  */
-static inline void chSysConditionalUnlock(void) {
+static inline void chSysUnconditionalUnlock(void) {
 
   if (!port_irq_enabled(port_get_irq_status()))
     chSysUnlock();
