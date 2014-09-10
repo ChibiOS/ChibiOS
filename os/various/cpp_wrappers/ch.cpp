@@ -410,12 +410,12 @@ namespace chibios_rt {
     return chSemWaitS(&sem);
   }
 
-  msg_t CounterSemaphore::waitTimeout(systime_t time) {
+  msg_t CounterSemaphore::wait(systime_t time) {
 
     return chSemWaitTimeout(&sem, time);
   }
 
-  msg_t CounterSemaphore::waitTimeoutS(systime_t time) {
+  msg_t CounterSemaphore::waitS(systime_t time) {
 
     return chSemWaitTimeoutS(&sem, time);
   }
@@ -464,12 +464,12 @@ namespace chibios_rt {
     return chBSemWaitS(&bsem);
   }
 
-  msg_t BinarySemaphore::waitTimeout(systime_t time) {
+  msg_t BinarySemaphore::wait(systime_t time) {
 
     return chBSemWaitTimeout(&bsem, time);
   }
 
-  msg_t BinarySemaphore::waitTimeoutS(systime_t time) {
+  msg_t BinarySemaphore::waitS(systime_t time) {
 
     return chBSemWaitTimeoutS(&bsem, time);
   }
@@ -579,7 +579,7 @@ namespace chibios_rt {
   }
 
 #if CH_CFG_USE_CONDVARS_TIMEOUT
-  msg_t CondVar::waitTimeout(systime_t time) {
+  msg_t CondVar::wait(systime_t time) {
 
     return chCondWaitTimeout(&condvar, time);
   }
@@ -681,12 +681,12 @@ namespace chibios_rt {
     return chIQGet(&iq);
   }
 
-  msg_t InQueue::getTimeout(systime_t time) {
+  msg_t InQueue::get(systime_t time) {
 
     return chIQGetTimeout(&iq, time);
   }
 
-  size_t InQueue::readTimeout(uint8_t *bp, size_t n, systime_t time) {
+  size_t InQueue::read(uint8_t *bp, size_t n, systime_t time) {
 
     return chIQReadTimeout(&iq, bp, n, time);
   }
@@ -729,7 +729,7 @@ namespace chibios_rt {
     return chOQPut(&oq, b);
   }
 
-  msg_t OutQueue::putTimeout(uint8_t b, systime_t time) {
+  msg_t OutQueue::put(uint8_t b, systime_t time) {
 
     return chOQPutTimeout(&oq, b, time);
   }
@@ -739,8 +739,7 @@ namespace chibios_rt {
     return chOQGetI(&oq);
   }
 
-  size_t OutQueue::writeTimeout(const uint8_t *bp, size_t n,
-                                systime_t time) {
+  size_t OutQueue::write(const uint8_t *bp, size_t n, systime_t time) {
 
     return chOQWriteTimeout(&oq, bp, n, time);
   }

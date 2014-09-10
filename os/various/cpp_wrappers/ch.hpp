@@ -901,7 +901,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    msg_t waitTimeout(systime_t time);
+    msg_t wait(systime_t time);
 
     /**
      * @brief   Performs a wait operation on a semaphore with timeout
@@ -923,7 +923,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    msg_t waitTimeoutS(systime_t time);
+    msg_t waitS(systime_t time);
 
     /**
      * @brief   Performs a signal operation on a semaphore.
@@ -1056,7 +1056,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    msg_t waitTimeout(systime_t time);
+    msg_t wait(systime_t time);
 
     /**
      * @brief   Wait operation on the binary semaphore.
@@ -1077,7 +1077,7 @@ namespace chibios_rt {
      *
      * @sclass
      */
-    msg_t waitTimeoutS(systime_t time);
+    msg_t waitS(systime_t time);
 
     /**
      * @brief   Reset operation on the binary semaphore.
@@ -1348,7 +1348,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    msg_t waitTimeout(systime_t time);
+    msg_t wait(systime_t time);
 #endif /* CH_CFG_USE_CONDVARS_TIMEOUT */
   };
 #endif /* CH_CFG_USE_CONDVARS */
@@ -1599,7 +1599,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    msg_t getTimeout(systime_t time);
+    msg_t get(systime_t time);
 
     /**
      * @brief   Input queue read with timeout.
@@ -1624,7 +1624,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    size_t readTimeout(uint8_t *bp, size_t n, systime_t time);
+    size_t read(uint8_t *bp, size_t n, systime_t time);
   };
 
   /*------------------------------------------------------------------------*
@@ -1771,7 +1771,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    msg_t putTimeout(uint8_t b, systime_t time);
+    msg_t put(uint8_t b, systime_t time);
 
     /**
      * @brief   Output queue read.
@@ -1807,7 +1807,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    size_t writeTimeout(const uint8_t *bp, size_t n, systime_t time);
+    size_t write(const uint8_t *bp, size_t n, systime_t time);
 };
 
   /*------------------------------------------------------------------------*
