@@ -147,6 +147,12 @@ static const GPTConfig gpt3cfg = {
 /* Generic demo code.                                                        */
 /*===========================================================================*/
 
+CH_FAST_IRQ_HANDLER(Vector184) {
+
+   while (1)
+     ;
+}
+
 static void print(char *p) {
 
   while (*p) {
@@ -182,6 +188,9 @@ static void printn(uint32_t n) {
 int main(void) {
   unsigned i;
   gptcnt_t interval, threshold, worst;
+
+  /* Enables FPU exceptions.*/
+  nvicEnableVector(FPU_IRQn, 1);
 
   /*
    * System initializations.

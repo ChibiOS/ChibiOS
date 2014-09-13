@@ -136,6 +136,7 @@ void _port_irq_epilogue(void) {
 
     /* Setting up a fake XPSR register value.*/
     ctxp->xpsr = (regarm_t)0x01000000;
+    ctxp->fpscr = (regarm_t)FPU->FPDSCR;
 
     /* Writing back the modified PSP value.*/
     __set_PSP((uint32_t)ctxp);
