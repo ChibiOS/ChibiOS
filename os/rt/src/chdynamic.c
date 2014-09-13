@@ -57,8 +57,8 @@
 
 /**
  * @brief   Adds a reference to a thread object.
- * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in order
- *          to use this function.
+ * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in
+ *          order to use this function.
  *
  * @param[in] tp        pointer to the thread
  * @return              The same thread pointer passed as parameter
@@ -80,8 +80,8 @@ thread_t *chThdAddRef(thread_t *tp) {
  * @details If the references counter reaches zero <b>and</b> the thread
  *          is in the @p CH_STATE_FINAL state then the thread's memory is
  *          returned to the proper allocator.
- * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in order
- *          to use this function.
+ * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in
+ *          order to use this function.
  * @note    Static threads are not affected.
  *
  * @param[in] tp        pointer to the thread
@@ -124,8 +124,8 @@ void chThdRelease(thread_t *tp) {
 #if CH_CFG_USE_HEAP || defined(__DOXYGEN__)
 /**
  * @brief   Creates a new thread allocating the memory from the heap.
- * @pre     The configuration options @p CH_CFG_USE_DYNAMIC and @p CH_CFG_USE_HEAP
- *          must be enabled in order to use this function.
+ * @pre     The configuration options @p CH_CFG_USE_DYNAMIC and
+ *          @p CH_CFG_USE_HEAP must be enabled in order to use this function.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  * @note    The memory allocated for the thread is not released when the thread
@@ -175,8 +175,9 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
 /**
  * @brief   Creates a new thread allocating the memory from the specified
  *          memory pool.
- * @pre     The configuration options @p CH_CFG_USE_DYNAMIC and @p CH_CFG_USE_MEMPOOLS
- *          must be enabled in order to use this function.
+ * @pre     The configuration options @p CH_CFG_USE_DYNAMIC and
+ *          @p CH_CFG_USE_MEMPOOLS must be enabled in order to use this
+ *          function.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  * @note    The memory allocated for the thread is not released when the thread
