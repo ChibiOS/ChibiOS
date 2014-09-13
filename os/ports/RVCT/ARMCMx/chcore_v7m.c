@@ -177,6 +177,7 @@ void _port_irq_epilogue(void) {
        populate it fully.*/
     ctxp--;
     ctxp->xpsr = (regarm_t)0x01000000;
+    ctxp->fpscr = (regarm_t)SCB_FPDSCR;
     psp = (uint32_t)ctxp;
 
     /* The exit sequence is different depending on if a preemption is
