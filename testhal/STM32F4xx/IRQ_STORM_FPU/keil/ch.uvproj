@@ -30,6 +30,7 @@
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
           <SFDFile>SFD\ST\STM32F4xx\STM32F4xx.sfr</SFDFile>
+          <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -61,6 +62,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopU1X>0</nStopU1X>
+            <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
@@ -69,6 +72,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopB1X>0</nStopB1X>
+            <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
@@ -95,6 +100,7 @@
           <StopOnExitCode>3</StopOnExitCode>
           <CustomArgument></CustomArgument>
           <IncludeLibraryModules></IncludeLibraryModules>
+          <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
@@ -124,16 +130,20 @@
             <RestoreFunctions>1</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
             <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
+            <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
+            <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
+            <RestoreTracepoints>0</RestoreTracepoints>
+            <RestoreSysVw>1</RestoreSysVw>
+            <UsePdscDebugDescription>1</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>8</TargetSelection>
@@ -162,9 +172,14 @@
             <Capability>1</Capability>
             <DriverSelection>4100</DriverSelection>
           </Flash1>
+          <bUseTDR>1</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL.dll</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
+          <pFcarmOut></pFcarmOut>
+          <pFcarmGrp></pFcarmGrp>
+          <pFcArmRoot></pFcArmRoot>
+          <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
           <ArmAdsMisc>
@@ -342,11 +357,14 @@
             <Rwpi>0</Rwpi>
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
+            <uSurpInc>0</uSurpInc>
+            <uC99>0</uC99>
+            <useXO>0</useXO>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define>__heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_IRAM2$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\os\kernel\include;..\..\..\..\os\ports\common\ARMCMx;..\..\..\..\os\ports\common\ARMCMx\CMSIS\include;..\..\..\..\os\ports\RVCT\ARMCMx;..\..\..\..\os\ports\RVCT\ARMCMx\STM32F4xx;..\..\..\..\os\hal\include;..\..\..\..\os\hal\platforms\STM32;..\..\..\..\os\hal\platforms\STM32\GPIOv2;..\..\..\..\os\hal\platforms\STM32\USARTv1;..\..\..\..\os\hal\platforms\STM32F4xx;..\..\..\..\boards\ST_STM32F4_DISCOVERY;..\..\..\..\test</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\kernel\include;..\..\..\..\os\ports\common\ARMCMx;..\..\..\..\os\ports\common\ARMCMx\CMSIS\include;..\..\..\..\os\ports\RVCT\ARMCMx;..\..\..\..\os\ports\RVCT\ARMCMx\STM32F4xx;..\..\..\..\os\hal\include;..\..\..\..\os\hal\platforms\STM32;..\..\..\..\os\hal\platforms\STM32\GPIOv2;..\..\..\..\os\hal\platforms\STM32\TIMv1;..\..\..\..\os\hal\platforms\STM32\USARTv1;..\..\..\..\os\hal\platforms\STM32F4xx;..\..\..\..\boards\ST_STM32F4_DISCOVERY;..\..\..\..\test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -357,6 +375,8 @@
             <SplitLS>0</SplitLS>
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
+            <uSurpInc>0</uSurpInc>
+            <useXO>0</useXO>
             <VariousControls>
               <MiscControls>--cpreproc</MiscControls>
               <Define></Define>
@@ -373,6 +393,7 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
+            <pXoBase></pXoBase>
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
@@ -722,16 +743,6 @@
           <GroupName>platform</GroupName>
           <Files>
             <File>
-              <FileName>gpt_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\platforms\STM32\gpt_lld.h</FilePath>
-            </File>
-            <File>
-              <FileName>gpt_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\platforms\STM32\gpt_lld.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_lld.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\platforms\STM32F4xx\hal_lld.c</FilePath>
@@ -777,9 +788,19 @@
               <FilePath>..\..\..\..\os\hal\platforms\STM32F4xx\stm32_rcc.h</FilePath>
             </File>
             <File>
-              <FileName>stm32l1xx.h</FileName>
+              <FileName>gpt_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\platforms\STM32\TIMv1\gpt_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpt_lld.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\platforms\STM32F4xx\stm32l1xx.h</FilePath>
+              <FilePath>..\..\..\..\os\hal\platforms\STM32\TIMv1\gpt_lld.h</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\platforms\STM32F4xx\stm32f4xx.h</FilePath>
             </File>
           </Files>
         </Group>
