@@ -107,7 +107,7 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector88) {
   uint32_t sr;
 
   OSAL_IRQ_PROLOGUE();
