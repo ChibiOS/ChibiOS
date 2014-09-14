@@ -26,25 +26,25 @@
  * @details Binary semaphores related APIs and services.
  *
  *          <h2>Operation mode</h2>
- *          Binary semaphores are implemented as a set of macros that use the
- *          existing counting semaphores primitives. The difference between
- *          counting and binary semaphores is that the counter of binary
- *          semaphores is not allowed to grow above the value 1. Repeated
- *          signal operation are ignored. A binary semaphore can thus have
- *          only two defined states:
+ *          Binary semaphores are implemented as a set of inline functions
+ *          that use the existing counting semaphores primitives. The
+ *          difference between counting and binary semaphores is that the
+ *          counter of binary semaphores is not allowed to grow above the
+ *          value 1. Repeated signal operation are ignored. A binary
+ *          semaphore can thus have only two defined states:
  *          - <b>Taken</b>, when its counter has a value of zero or lower
  *            than zero. A negative number represent the number of threads
  *            queued on the binary semaphore.
  *          - <b>Not taken</b>, when its counter has a value of one.
  *          .
  *          Binary semaphores are different from mutexes because there is no
- *          the concept of ownership, a binary semaphore can be taken by a
+ *          concept of ownership, a binary semaphore can be taken by a
  *          thread and signaled by another thread or an interrupt handler,
  *          mutexes can only be taken and released by the same thread. Another
  *          difference is that binary semaphores, unlike mutexes, do not
  *          implement the priority inheritance protocol.<br>
- *          In order to use the binary semaphores APIs the @p CH_CFG_USE_SEMAPHORES
- *          option must be enabled in @p chconf.h.
+ *          In order to use the binary semaphores APIs the
+ *          @p CH_CFG_USE_SEMAPHORES option must be enabled in @p chconf.h.
  * @{
  */
 
