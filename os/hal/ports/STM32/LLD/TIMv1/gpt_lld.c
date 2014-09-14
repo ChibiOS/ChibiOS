@@ -604,9 +604,9 @@ void gpt_lld_start(GPTDriver *gptp) {
   gptp->tim->CR1  = 0;                          /* Initially stopped.       */
   gptp->tim->CR2  = gptp->config->cr2;
   gptp->tim->PSC  = psc;                        /* Prescaler value.         */
+  gptp->tim->SR   = 0;                          /* Clear pending IRQs.      */
   gptp->tim->DIER = gptp->config->dier &        /* DMA-related DIER bits.   */
                     ~STM32_TIM_DIER_IRQ_MASK;
-  gptp->tim->SR   = 0;                          /* Clear pending IRQs.      */
 }
 
 /**

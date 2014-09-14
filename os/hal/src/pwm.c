@@ -100,6 +100,7 @@ void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
   pwmp->config = config;
   pwmp->period = config->period;
   pwm_lld_start(pwmp);
+  pwmp->enabled = 0;
   pwmp->state = PWM_READY;
   osalSysUnlock();
 }
