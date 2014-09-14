@@ -74,6 +74,7 @@
 *** 2.6.6 ***
 - FIX: Fixed STM32 DIER register setting in PWM and ICU drivers (bug #534).
 - FIX: Fixed ARMCM4 FPU exception randomly triggered (bug #533).
+- FIX: Fixed control transfers larger than 127 bytes don't work (bug #531).
 - FIX: Fixed STM32F0xx ADC driver enforces continuous mode (bug #528).
        Note, this bug enforced a change, now the bit ADC_CFGR1_CONT must be
        manually specified in the cfgr1 field of the ADCConversionGroup
