@@ -1867,8 +1867,7 @@ namespace chibios_rt {
      * @init
      */
     MailboxBase(msg_t *buf, cnt_t n) {
-      /* static_assert(sizeof(msg_t) >= sizeof(T),
-                            "You can not pass objects bigger than msg_t"); */
+
       chMBObjectInit(&mb, buf, n);
     }
 
