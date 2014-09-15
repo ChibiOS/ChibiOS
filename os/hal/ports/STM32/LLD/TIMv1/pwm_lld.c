@@ -606,8 +606,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
   pwmp->tim->CCER  = ccer;
   pwmp->tim->EGR   = STM32_TIM_EGR_UG;      /* Update event.                */
   pwmp->tim->SR    = 0;                     /* Clear pending IRQs.          */
-  pwmp->tim->DIER   = pwmp->config->dier &  /* DMA-related DIER settings.   */
-                      ~STM32_TIM_DIER_IRQ_MASK;
+  pwmp->tim->DIER  = pwmp->config->dier &   /* DMA-related DIER settings.   */
+                     ~STM32_TIM_DIER_IRQ_MASK;
 #if STM32_PWM_USE_TIM1 || STM32_PWM_USE_TIM8
 #if STM32_PWM_USE_ADVANCED
   pwmp->tim->BDTR  = pwmp->config->bdtr | STM32_TIM_BDTR_MOE;
