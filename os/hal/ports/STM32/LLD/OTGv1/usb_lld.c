@@ -602,9 +602,9 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
       osp->rxsize = osp->totsize - osp->rxsize;
       osp->rxcnt  = 0;
       usb_lld_prepare_receive(usbp, ep);
-      chSysLockFromIsr();
+      chSysLockFromISR();
       usb_lld_start_out(usbp, ep);
-      chSysUnlockFromIsr();
+      chSysUnlockFromISR();
     }
     else {
       /* End on OUT transfer.*/
