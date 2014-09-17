@@ -640,15 +640,8 @@ msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout) {
  */
 void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
-  if (queue_notempty(tqp)) {
-    thread_t *tp = queue_fifo_remove(tqp);
-
-    chDbgAssert(tp->p_state == CH_STATE_QUEUED,
-                "not CH_STATE_QUEUED");
-
-    tp->p_u.rdymsg = msg;
-    chSchReadyI(tp);
-  }
+  if (queue_notempty(tqp))
+    chThdDoDequeueNextI(tqp, msg);
 }
 
 /**
@@ -661,15 +654,8 @@ void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
  */
 void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg) {
 
-  while (queue_notempty(tqp)) {
-    thread_t *tp = queue_fifo_remove(tqp);
-
-    chDbgAssert(tp->p_state == CH_STATE_QUEUED,
-                "not CH_STATE_QUEUED");
-
-    tp->p_u.rdymsg = msg;
-    chSchReadyI(tp);
-  }
+  while (queue_notempty(tqp))
+    chThdDoDequeueNextI(tqp, msg);
 }
 
 /** @} */

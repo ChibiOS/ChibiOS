@@ -393,6 +393,31 @@ static inline bool chThdQueueIsEmptyI(threads_queue_t *tqp) {
   return queue_isempty(tqp);
 }
 
+
+/**
+ * @brief   Dequeues and wakes up one thread from the threads queue object.
+ * @details Dequeues one thread from the queue without checking if the queue
+ *          is empty.
+ * @pre     The queue must contain at least an object.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+static inline void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
+  thread_t *tp;
+
+  chDbgAssert(queue_notempty(tqp), "empty queue");
+
+  tp = queue_fifo_remove(tqp);
+
+  chDbgAssert(tp->p_state == CH_STATE_QUEUED, "invalid state");
+
+  tp->p_u.rdymsg = msg;
+  chSchReadyI(tp);
+}
+
 #endif /* _CHTHREADS_H_ */
 
 /** @} */
