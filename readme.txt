@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.6 ***
+- FIX: Fixed error in STM32F30x adc_lld_stop() (bug #535).
 - FIX: Fixed STM32 DIER register setting in PWM and ICU drivers (bug #534).
 - FIX: Fixed ARMCM4 FPU exception randomly triggered (bug #533).
 - FIX: Fixed control transfers larger than 127 bytes don't work (bug #531).
