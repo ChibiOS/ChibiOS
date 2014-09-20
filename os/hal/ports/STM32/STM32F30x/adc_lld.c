@@ -439,7 +439,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 #endif
 
 #if STM32_ADC_USE_ADC3
-    if (&ADCD1 == adcp)
+    if (&ADCD3 == adcp)
       rccDisableADC34(FALSE);
 #endif
   }
