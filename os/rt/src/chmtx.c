@@ -308,7 +308,9 @@ bool chMtxTryLockS(mutex_t *mp) {
 }
 
 /**
- * @brief   Unlocks the next owned mutex in reverse lock order.
+ * @brief   Unlocks the specified mutex.
+ * @note    Mutexes must be unlocked in reverse lock order. Violating this
+ *          rules will result in a panic if assertions are enabled.
  * @pre     The invoking thread <b>must</b> have at least one owned mutex.
  * @post    The mutex is unlocked and removed from the per-thread stack of
  *          owned mutexes.
@@ -382,7 +384,9 @@ void chMtxUnlock(mutex_t *mp) {
 }
 
 /**
- * @brief   Unlocks the next owned mutex in reverse lock order.
+ * @brief   Unlocks the specified mutex.
+ * @note    Mutexes must be unlocked in reverse lock order. Violating this
+ *          rules will result in a panic if assertions are enabled.
  * @pre     The invoking thread <b>must</b> have at least one owned mutex.
  * @post    The mutex is unlocked and removed from the per-thread stack of
  *          owned mutexes.
@@ -455,7 +459,7 @@ void chMtxUnlockS(mutex_t *mp) {
 }
 
 /**
- * @brief   Unlocks all the mutexes owned by the invoking thread.
+ * @brief   Unlocks all mutexes owned by the invoking thread.
  * @post    The stack of owned mutexes is emptied and all the found
  *          mutexes are unlocked.
  * @note    This function is <b>MUCH MORE</b> efficient than releasing the
