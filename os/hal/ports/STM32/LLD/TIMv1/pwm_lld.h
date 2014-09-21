@@ -305,7 +305,7 @@ typedef uint32_t pwmchnmsk_t;
 /**
  * @brief   Type of a PWM counter.
  */
-typedef uint16_t pwmcnt_t;
+typedef uint32_t pwmcnt_t;
 
 /**
  * @brief   Type of a PWM driver channel configuration structure.
@@ -430,7 +430,7 @@ struct PWMDriver {
  * @notapi
  */
 #define pwm_lld_change_period(pwmp, period)                                 \
-  ((pwmp)->tim->ARR = (uint16_t)((period) - 1))
+  ((pwmp)->tim->ARR = ((period) - 1))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

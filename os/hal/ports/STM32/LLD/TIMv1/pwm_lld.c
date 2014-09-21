@@ -170,7 +170,7 @@ OSAL_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
  * @isr
  */
 OSAL_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
-  uint16_t sr;
+  uint32_t sr;
 
   OSAL_IRQ_PROLOGUE();
 
@@ -307,7 +307,7 @@ OSAL_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
  * @isr
  */
 OSAL_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
-  uint16_t sr;
+  uint32_t sr;
 
   OSAL_IRQ_PROLOGUE();
 
@@ -528,8 +528,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
   osalDbgAssert((psc <= 0xFFFF) &&
                 ((psc + 1) * pwmp->config->frequency) == pwmp->clock,
                 "invalid frequency");
-  pwmp->tim->PSC  = (uint16_t)psc;
-  pwmp->tim->ARR  = (uint16_t)(pwmp->period - 1);
+  pwmp->tim->PSC  = psc;
+  pwmp->tim->ARR  = pwmp->period - 1;
   pwmp->tim->CR2  = pwmp->config->cr2;
 
   /* Output enables and polarities setup.*/

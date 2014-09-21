@@ -508,7 +508,7 @@ void icu_lld_start(ICUDriver *icup) {
   osalDbgAssert((psc <= 0xFFFF) &&
                 ((psc + 1) * icup->config->frequency) == icup->clock,
                 "invalid frequency");
-  icup->tim->PSC  = (uint16_t)psc;
+  icup->tim->PSC  = psc;
   icup->tim->ARR  = 0xFFFF;
 
   if (icup->config->channel == ICU_CHANNEL_1) {
