@@ -14,4 +14,4 @@ The pin connections are
   C5 is connected to SCK
   C6 is connected to MOSI
   D3 is connected to MISO
-  D0 is connected to SS
+  C0 is connected to SS
