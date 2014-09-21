@@ -182,17 +182,59 @@ typedef struct
   __IO uint8_t  CR;
 } OSC_TypeDef;
 
-typedef struct
-{
-  __IO uint32_t  SAR;
-  __IO uint32_t  DAR;
-  __IO uint32_t  DSR_BCR;
-  __IO uint32_t  DCR;
-} DMAChannel_TypeDef;
+typedef struct  {
+  uint32_t SADDR;             /* TCD Source Address */
+  uint16_t SOFF;              /* TCD Signed Source Address Offset */
+  uint16_t ATTR;              /* TCD Transfer Attributes */
+  union {
+    uint32_t NBYTES_MLNO;     /* TCD Minor Byte Count (Minor Loop Disabled) */
+    uint32_t NBYTES_MLOFFNO;  /* TCD Signed Minor Loop Offset (Minor Loop Enabled and Offset Disabled) */
+    uint32_t NBYTES_MLOFFYES; /* TCD Signed Minor Loop Offset (Minor Loop and Offset Enabled) */
+  };
+  uint32_t SLAST;             /* TCD Last Source Address Adjustment */
+  uint32_t DADDR;             /* TCD Destination Address */
+  uint16_t DOFF;              /* TCD Signed Destination Address Offset */
+  union {
+    uint16_t CITER_ELINKNO;   /* TCD Current Minor Loop Link, Major Loop Count (Channel Linking Disabled)  */
+    uint16_t CITER_ELINKYES;  /* TCD Current Minor Loop Link, Major Loop Count (Channel Linking Enabled)  */
+  };
+  uint32_t DLASTSGA;          /* TCD Last Destination Address Adjustment/Scatter Gather Address */
+  uint16_t CSR;               /* TCD Control and Status */
+  union {
+    uint16_t BITER_ELINKNO;   /* TCD Beginning Minor Loop Link, Major Loop Count (Channel Linking Disabled) */
+    uint16_t BITER_ELINKYES;  /* TCD Beginning Minor Loop Link, Major Loop Count (Channel Linking Enabled) */
+  };
+} DMA_TCD_TypeDef;
 
-typedef struct
-{
-  DMAChannel_TypeDef ch[4];
+/** DMA - Peripheral register structure */
+typedef struct {
+  __IO uint32_t CR;             /* Control Register                         */
+  __IO uint32_t ES;             /* Error Status Register                    */
+  __IO uint8_t RESERVED_0[4];
+  __IO uint32_t ERQ;            /* Enable Request Register                  */
+  __IO uint8_t RESERVED_1[4];
+  __IO uint32_t EEI;            /* Enable Error Interrupt Register          */
+  __IO uint8_t CEEI;            /* Clear Enable Error Interrupt Register    */
+  __IO uint8_t SEEI;            /* Set Enable Error Interrupt Register      */
+  __IO uint8_t CERQ;            /* Clear Enable Request Register            */
+  __IO uint8_t SERQ;            /* Set Enable Request Register              */
+  __IO uint8_t CDNE;            /* Clear DONE Status Bit Register           */
+  __IO uint8_t SSRT;            /* Set START Bit Register                   */
+  __IO uint8_t CERR;            /* Clear Error Register                     */
+  __IO uint8_t CINT;            /* Clear Interrupt Request Register         */
+  __IO uint8_t RESERVED_2[4];
+  __IO uint32_t INT;            /* Interrupt Request Register               */
+  __IO uint8_t RESERVED_3[4];
+  __IO uint32_t ERR;            /* Error Register                           */
+  __IO uint8_t RESERVED_4[4];
+  __IO uint32_t HRS;            /* Hardware Request Status Register         */
+  __IO uint8_t RESERVED_5[200];
+  __IO uint8_t DCHPRI3;         /* Channel 3 Priority Register              */
+  __IO uint8_t DCHPRI2;         /* Channel 2 Priority Register              */
+  __IO uint8_t DCHPRI1;         /* Channel 1 Priority Register              */
+  __IO uint8_t DCHPRI0;         /* Channel 0 Priority Register              */
+  __IO uint8_t RESERVED_6[3836];
+  DMA_TCD_TypeDef TCD[4];
 } DMA_TypeDef;
 
 typedef struct
@@ -509,7 +551,7 @@ typedef struct {
 /****************************************************************/
 /*                  Peripheral memory map                       */
 /****************************************************************/
-#define DMA_BASE                ((uint32_t)0x40008100)
+#define DMA_BASE                ((uint32_t)0x40008000)
 #define DMAMUX_BASE             ((uint32_t)0x40021000)
 #define SPI0_BASE               ((uint32_t)0x4002C000)
 #define PIT_BASE                ((uint32_t)0x40037000)
@@ -640,7 +682,7 @@ typedef struct {
 #define SIM_SCGC6_CRC                ((uint32_t)0x00040000)    /*!< Low Power Timer Access Control */
 #define SIM_SCGC6_I2S                ((uint32_t)0x00008000)    /*!< CRC Clock Gate Control */
 #define SIM_SCGC6_SPI0               ((uint32_t)0x00001000)    /*!< SPI0 Clock Gate Control */
-#define SIM_SCGC6_DMAMUX             ((uint32_t)0x00000010)    /*!< DMA Mux Clock Gate Control */
+#define SIM_SCGC6_DMAMUX             ((uint32_t)0x00000002)    /*!< DMA Mux Clock Gate Control */
 #define SIM_SCGC6_FTFL               ((uint32_t)0x00000001)    /*!< Flash Memory Clock Gate Control */
 
 /*******  Bits definition for SIM_SCGC6 register  ************/
@@ -829,48 +871,483 @@ typedef struct {
 /*                 Direct Memory Access (DMA)                   */
 /*                                                              */
 /****************************************************************/
-/***********  Bits definition for DMA_BCRn register  ************/
-#define DMA_DSR_BCRn_CE          ((uint32_t)((uint32_t)1 << 30))    /*!< Configuration Error */
-#define DMA_DSR_BCRn_BES         ((uint32_t)((uint32_t)1 << 29))    /*!< Bus Error on Source */
-#define DMA_DSR_BCRn_BED         ((uint32_t)((uint32_t)1 << 28))    /*!< Bus Error on Destination */
-#define DMA_DSR_BCRn_REQ         ((uint32_t)((uint32_t)1 << 26))    /*!< Request */
-#define DMA_DSR_BCRn_BSY         ((uint32_t)((uint32_t)1 << 25))    /*!< Busy */
-#define DMA_DSR_BCRn_DONE        ((uint32_t)((uint32_t)1 << 24))    /*!< Transactions done */
-#define DMA_DSR_BCRn_BCR_SHIFT   0                                                                                /*!< Bytes yet to be transferred for block (shift) */
-#define DMA_DSR_BCRn_BCR_MASK    ((uint32_t)((uint32_t)0x00FFFFFF << DMA_DSR_BCRn_BCR_SHIFT))                     /*!< Bytes yet to be transferred for block (mask) */
-#define DMA_DSR_BCRn_BCR(x)      ((uint32_t)(((uint32_t)(x) << DMA_DSR_BCRn_BCR_SHIFT) & DMA_DSR_BCRn_BCR_MASK))  /*!< Bytes yet to be transferred for block */
+/* ----------------------------------------------------------------------------
+   -- DMA - Register accessor macros
+   ---------------------------------------------------------------------------- */
 
-/***********  Bits definition for DMA_DCRn register  ************/
-#define DMA_DCRn_EINT            ((uint32_t)((uint32_t)1 << 31))         /*!< Enable interrupt on completion of transfer */
-#define DMA_DCRn_ERQ             ((uint32_t)((uint32_t)1 << 30))         /*!< Enable peripheral request */
-#define DMA_DCRn_CS              ((uint32_t)((uint32_t)1 << 29))         /*!< Cycle steal */
-#define DMA_DCRn_AA              ((uint32_t)((uint32_t)1 << 28))         /*!< Auto-align */
-#define DMA_DCRn_EADREQ          ((uint32_t)((uint32_t)1 << 23))         /*!< Enable asynchronous DMA requests */
-#define DMA_DCRn_SINC            ((uint32_t)((uint32_t)1 << 22))        /*!< Source increment */
-#define DMA_DCRn_SSIZE_SHIFT     20                                                               /*!< Source size (shift) */
-#define DMA_DCRn_SSIZE_MASK      ((uint32_t)((uint32_t)0x03 << DMA_DCRn_SSIZE_SHIFT))                         /*!< Source size (mask) */
-#define DMA_DCRn_SSIZE(x)        ((uint32_t)(((uint32_t)(x) << DMA_DCRn_SSIZE_SHIFT) & DMA_DCRn_SSIZE_MASK))  /*!< Source size */
-#define DMA_DCRn_DINC            ((uint32_t)((uint32_t)1 << 19))                                              /*!< Destination increment */
-#define DMA_DCRn_DSIZE_SHIFT     17                                                                           /*!< Destination size (shift) */
-#define DMA_DCRn_DSIZE_MASK      ((uint32_t)((uint32_t)0x03 << DMA_DCRn_DSIZE_SHIFT))                         /*!< Destination size (mask) */
-#define DMA_DCRn_DSIZE(x)        ((uint32_t)(((uint32_t)(x) << DMA_DCRn_DSIZE_SHIFT) & DMA_DCRn_DSIZE_MASK))  /*!< Destination size */
-#define DMA_DCRn_START           ((uint32_t)((uint32_t)1 << 16))                                            /*!< Start transfer */
-#define DMA_DCRn_SMOD_SHIFT      12                                                                         /*!< Source address modulo (shift) */
-#define DMA_DCRn_SMOD_MASK       ((uint32_t)((uint32_t)0x0F << DMA_DCRn_SMOD_SHIFT))                        /*!< Source address modulo (mask) */
-#define DMA_DCRn_SMOD(x)         ((uint32_t)(((uint32_t)(x) << DMA_DCRn_SMOD_SHIFT) & DMA_DCRn_SMOD_MASK))  /*!< Source address modulo */
-#define DMA_DCRn_DMOD_SHIFT      8                                                                          /*!< Destination address modulo (shift) */
-#define DMA_DCRn_DMOD_MASK       ((uint32_t)0x0F << DMA_DCRn_DMOD_SHIFT)                                    /*!< Destination address modulo (mask) */
-#define DMA_DCRn_DMOD(x)         ((uint32_t)(((uint32_t)(x) << DMA_DCRn_DMOD_SHIFT) & DMA_DCRn_DMOD_MASK))  /*!< Destination address modulo */
-#define DMA_DCRn_D_REQ           ((uint32_t)((uint32_t)1 <<  7))                                            /*!< Disable request */
-#define DMA_DCRn_LINKCC_SHIFT    4                                                                              /*!< Link channel control (shift) */
-#define DMA_DCRn_LINKCC_MASK     ((uint32_t)((uint32_t)0x03 << DMA_DCRn_LINKCC_SHIFT))                          /*!< Link channel control (mask) */
-#define DMA_DCRn_LINKCC(x)       ((uint32_t)(((uint32_t)(x) << DMA_DCRn_LINKCC_SHIFT) & DMA_DCRn_LINKCC_MASK))  /*!< Link channel control */
-#define DMA_DCRn_LCH1_SHIFT      2                                                                          /*!< Link channel 1 (shift) */
-#define DMA_DCRn_LCH1_MASK       ((uint32_t)((uint32_t)0x03 << DMA_DCRn_LCH1_SHIFT))                        /*!< Link channel 1 (mask) */
-#define DMA_DCRn_LCH1(x)         ((uint32_t)(((uint32_t)(x) << DMA_DCRn_LCH1_SHIFT) & DMA_DCRn_LCH1_MASK))  /*!< Link channel 1 */
-#define DMA_DCRn_LCH2_SHIFT      0                                                                          /*!< Link channel 2 (shift) */
-#define DMA_DCRn_LCH2_MASK       ((uint32_t)((uint32_t)0x03 << DMA_DCRn_LCH2_SHIFT))                        /*!< Link channel 2 (mask) */
-#define DMA_DCRn_LCH2(x)         ((uint32_t)(((uint32_t)(x) << DMA_DCRn_LCH2_SHIFT) & DMA_DCRn_LCH2_MASK))  /*!< Link channel 2 */
+/*!
+ * @addtogroup DMA_Register_Accessor_Macros DMA - Register accessor macros
+ * @{
+ */
+
+
+/* DMA - Register accessors */
+#define DMA_CR_REG(base)                         ((base)->CR)
+#define DMA_ES_REG(base)                         ((base)->ES)
+#define DMA_ERQ_REG(base)                        ((base)->ERQ)
+#define DMA_EEI_REG(base)                        ((base)->EEI)
+#define DMA_CEEI_REG(base)                       ((base)->CEEI)
+#define DMA_SEEI_REG(base)                       ((base)->SEEI)
+#define DMA_CERQ_REG(base)                       ((base)->CERQ)
+#define DMA_SERQ_REG(base)                       ((base)->SERQ)
+#define DMA_CDNE_REG(base)                       ((base)->CDNE)
+#define DMA_SSRT_REG(base)                       ((base)->SSRT)
+#define DMA_CERR_REG(base)                       ((base)->CERR)
+#define DMA_CINT_REG(base)                       ((base)->CINT)
+#define DMA_INT_REG(base)                        ((base)->INT)
+#define DMA_ERR_REG(base)                        ((base)->ERR)
+#define DMA_HRS_REG(base)                        ((base)->HRS)
+#define DMA_DCHPRI3_REG(base)                    ((base)->DCHPRI3)
+#define DMA_DCHPRI2_REG(base)                    ((base)->DCHPRI2)
+#define DMA_DCHPRI1_REG(base)                    ((base)->DCHPRI1)
+#define DMA_DCHPRI0_REG(base)                    ((base)->DCHPRI0)
+#define DMA_SADDR_REG(base,index)                ((base)->TCD[index].SADDR)
+#define DMA_SOFF_REG(base,index)                 ((base)->TCD[index].SOFF)
+#define DMA_ATTR_REG(base,index)                 ((base)->TCD[index].ATTR)
+#define DMA_NBYTES_MLNO_REG(base,index)          ((base)->TCD[index].NBYTES_MLNO)
+#define DMA_NBYTES_MLOFFNO_REG(base,index)       ((base)->TCD[index].NBYTES_MLOFFNO)
+#define DMA_NBYTES_MLOFFYES_REG(base,index)      ((base)->TCD[index].NBYTES_MLOFFYES)
+#define DMA_SLAST_REG(base,index)                ((base)->TCD[index].SLAST)
+#define DMA_DADDR_REG(base,index)                ((base)->TCD[index].DADDR)
+#define DMA_DOFF_REG(base,index)                 ((base)->TCD[index].DOFF)
+#define DMA_CITER_ELINKNO_REG(base,index)        ((base)->TCD[index].CITER_ELINKNO)
+#define DMA_CITER_ELINKYES_REG(base,index)       ((base)->TCD[index].CITER_ELINKYES)
+#define DMA_DLAST_SGA_REG(base,index)            ((base)->TCD[index].DLAST_SGA)
+#define DMA_CSR_REG(base,index)                  ((base)->TCD[index].CSR)
+#define DMA_BITER_ELINKNO_REG(base,index)        ((base)->TCD[index].BITER_ELINKNO)
+#define DMA_BITER_ELINKYES_REG(base,index)       ((base)->TCD[index].BITER_ELINKYES)
+
+/*!
+ * @}
+ */ /* end of group DMA_Register_Accessor_Macros */
+
+
+/* ----------------------------------------------------------------------------
+   -- DMA Register Masks
+   ---------------------------------------------------------------------------- */
+
+/*!
+ * @addtogroup DMA_Register_Masks DMA Register Masks
+ * @{
+ */
+
+/* CR Bit Fields */
+#define DMA_CR_EDBG_MASK                         0x2u
+#define DMA_CR_EDBG_SHIFT                        1
+#define DMA_CR_ERCA_MASK                         0x4u
+#define DMA_CR_ERCA_SHIFT                        2
+#define DMA_CR_HOE_MASK                          0x10u
+#define DMA_CR_HOE_SHIFT                         4
+#define DMA_CR_HALT_MASK                         0x20u
+#define DMA_CR_HALT_SHIFT                        5
+#define DMA_CR_CLM_MASK                          0x40u
+#define DMA_CR_CLM_SHIFT                         6
+#define DMA_CR_EMLM_MASK                         0x80u
+#define DMA_CR_EMLM_SHIFT                        7
+#define DMA_CR_ECX_MASK                          0x10000u
+#define DMA_CR_ECX_SHIFT                         16
+#define DMA_CR_CX_MASK                           0x20000u
+#define DMA_CR_CX_SHIFT                          17
+/* ES Bit Fields */
+#define DMA_ES_DBE_MASK                          0x1u
+#define DMA_ES_DBE_SHIFT                         0
+#define DMA_ES_SBE_MASK                          0x2u
+#define DMA_ES_SBE_SHIFT                         1
+#define DMA_ES_SGE_MASK                          0x4u
+#define DMA_ES_SGE_SHIFT                         2
+#define DMA_ES_NCE_MASK                          0x8u
+#define DMA_ES_NCE_SHIFT                         3
+#define DMA_ES_DOE_MASK                          0x10u
+#define DMA_ES_DOE_SHIFT                         4
+#define DMA_ES_DAE_MASK                          0x20u
+#define DMA_ES_DAE_SHIFT                         5
+#define DMA_ES_SOE_MASK                          0x40u
+#define DMA_ES_SOE_SHIFT                         6
+#define DMA_ES_SAE_MASK                          0x80u
+#define DMA_ES_SAE_SHIFT                         7
+#define DMA_ES_ERRCHN_MASK                       0xF00u
+#define DMA_ES_ERRCHN_SHIFT                      8
+#define DMA_ES_ERRCHN(x)                         (((uint32_t)(((uint32_t)(x))<<DMA_ES_ERRCHN_SHIFT))&DMA_ES_ERRCHN_MASK)
+#define DMA_ES_CPE_MASK                          0x4000u
+#define DMA_ES_CPE_SHIFT                         14
+#define DMA_ES_ECX_MASK                          0x10000u
+#define DMA_ES_ECX_SHIFT                         16
+#define DMA_ES_VLD_MASK                          0x80000000u
+#define DMA_ES_VLD_SHIFT                         31
+/* ERQ Bit Fields */
+#define DMA_ERQ_ERQ0_MASK                        0x1u
+#define DMA_ERQ_ERQ0_SHIFT                       0
+#define DMA_ERQ_ERQ1_MASK                        0x2u
+#define DMA_ERQ_ERQ1_SHIFT                       1
+#define DMA_ERQ_ERQ2_MASK                        0x4u
+#define DMA_ERQ_ERQ2_SHIFT                       2
+#define DMA_ERQ_ERQ3_MASK                        0x8u
+#define DMA_ERQ_ERQ3_SHIFT                       3
+/* EEI Bit Fields */
+#define DMA_EEI_EEI0_MASK                        0x1u
+#define DMA_EEI_EEI0_SHIFT                       0
+#define DMA_EEI_EEI1_MASK                        0x2u
+#define DMA_EEI_EEI1_SHIFT                       1
+#define DMA_EEI_EEI2_MASK                        0x4u
+#define DMA_EEI_EEI2_SHIFT                       2
+#define DMA_EEI_EEI3_MASK                        0x8u
+#define DMA_EEI_EEI3_SHIFT                       3
+/* CEEI Bit Fields */
+#define DMA_CEEI_CEEI_MASK                       0xFu
+#define DMA_CEEI_CEEI_SHIFT                      0
+#define DMA_CEEI_CEEI(x)                         (((uint8_t)(((uint8_t)(x))<<DMA_CEEI_CEEI_SHIFT))&DMA_CEEI_CEEI_MASK)
+#define DMA_CEEI_CAEE_MASK                       0x40u
+#define DMA_CEEI_CAEE_SHIFT                      6
+#define DMA_CEEI_NOP_MASK                        0x80u
+#define DMA_CEEI_NOP_SHIFT                       7
+/* SEEI Bit Fields */
+#define DMA_SEEI_SEEI_MASK                       0xFu
+#define DMA_SEEI_SEEI_SHIFT                      0
+#define DMA_SEEI_SEEI(x)                         (((uint8_t)(((uint8_t)(x))<<DMA_SEEI_SEEI_SHIFT))&DMA_SEEI_SEEI_MASK)
+#define DMA_SEEI_SAEE_MASK                       0x40u
+#define DMA_SEEI_SAEE_SHIFT                      6
+#define DMA_SEEI_NOP_MASK                        0x80u
+#define DMA_SEEI_NOP_SHIFT                       7
+/* CERQ Bit Fields */
+#define DMA_CERQ_CERQ_MASK                       0xFu
+#define DMA_CERQ_CERQ_SHIFT                      0
+#define DMA_CERQ_CERQ(x)                         (((uint8_t)(((uint8_t)(x))<<DMA_CERQ_CERQ_SHIFT))&DMA_CERQ_CERQ_MASK)
+#define DMA_CERQ_CAER_MASK                       0x40u
+#define DMA_CERQ_CAER_SHIFT                      6
+#define DMA_CERQ_NOP_MASK                        0x80u
+#define DMA_CERQ_NOP_SHIFT                       7
+/* SERQ Bit Fields */
+#define DMA_SERQ_SERQ_MASK                       0xFu
+#define DMA_SERQ_SERQ_SHIFT                      0
+#define DMA_SERQ_SERQ(x)                         (((uint8_t)(((uint8_t)(x))<<DMA_SERQ_SERQ_SHIFT))&DMA_SERQ_SERQ_MASK)
+#define DMA_SERQ_SAER_MASK                       0x40u
+#define DMA_SERQ_SAER_SHIFT                      6
+#define DMA_SERQ_NOP_MASK                        0x80u
+#define DMA_SERQ_NOP_SHIFT                       7
+/* CDNE Bit Fields */
+#define DMA_CDNE_CDNE_MASK                       0xFu
+#define DMA_CDNE_CDNE_SHIFT                      0
+#define DMA_CDNE_CDNE(x)                         (((uint8_t)(((uint8_t)(x))<<DMA_CDNE_CDNE_SHIFT))&DMA_CDNE_CDNE_MASK)
+#define DMA_CDNE_CADN_MASK                       0x40u
+#define DMA_CDNE_CADN_SHIFT                      6
+#define DMA_CDNE_NOP_MASK                        0x80u
+#define DMA_CDNE_NOP_SHIFT                       7
+/* SSRT Bit Fields */
+#define DMA_SSRT_SSRT_MASK                       0xFu
+#define DMA_SSRT_SSRT_SHIFT                      0
+#define DMA_SSRT_SSRT(x)                         (((uint8_t)(((uint8_t)(x))<<DMA_SSRT_SSRT_SHIFT))&DMA_SSRT_SSRT_MASK)
+#define DMA_SSRT_SAST_MASK                       0x40u
+#define DMA_SSRT_SAST_SHIFT                      6
+#define DMA_SSRT_NOP_MASK                        0x80u
+#define DMA_SSRT_NOP_SHIFT                       7
+/* CERR Bit Fields */
+#define DMA_CERR_CERR_MASK                       0xFu
+#define DMA_CERR_CERR_SHIFT                      0
+#define DMA_CERR_CERR(x)                         (((uint8_t)(((uint8_t)(x))<<DMA_CERR_CERR_SHIFT))&DMA_CERR_CERR_MASK)
+#define DMA_CERR_CAEI_MASK                       0x40u
+#define DMA_CERR_CAEI_SHIFT                      6
+#define DMA_CERR_NOP_MASK                        0x80u
+#define DMA_CERR_NOP_SHIFT                       7
+/* CINT Bit Fields */
+#define DMA_CINT_CINT_MASK                       0xFu
+#define DMA_CINT_CINT_SHIFT                      0
+#define DMA_CINT_CINT(x)                         (((uint8_t)(((uint8_t)(x))<<DMA_CINT_CINT_SHIFT))&DMA_CINT_CINT_MASK)
+#define DMA_CINT_CAIR_MASK                       0x40u
+#define DMA_CINT_CAIR_SHIFT                      6
+#define DMA_CINT_NOP_MASK                        0x80u
+#define DMA_CINT_NOP_SHIFT                       7
+/* INT Bit Fields */
+#define DMA_INT_INT0_MASK                        0x1u
+#define DMA_INT_INT0_SHIFT                       0
+#define DMA_INT_INT1_MASK                        0x2u
+#define DMA_INT_INT1_SHIFT                       1
+#define DMA_INT_INT2_MASK                        0x4u
+#define DMA_INT_INT2_SHIFT                       2
+#define DMA_INT_INT3_MASK                        0x8u
+#define DMA_INT_INT3_SHIFT                       3
+/* ERR Bit Fields */
+#define DMA_ERR_ERR0_MASK                        0x1u
+#define DMA_ERR_ERR0_SHIFT                       0
+#define DMA_ERR_ERR1_MASK                        0x2u
+#define DMA_ERR_ERR1_SHIFT                       1
+#define DMA_ERR_ERR2_MASK                        0x4u
+#define DMA_ERR_ERR2_SHIFT                       2
+#define DMA_ERR_ERR3_MASK                        0x8u
+#define DMA_ERR_ERR3_SHIFT                       3
+/* HRS Bit Fields */
+#define DMA_HRS_HRS0_MASK                        0x1u
+#define DMA_HRS_HRS0_SHIFT                       0
+#define DMA_HRS_HRS1_MASK                        0x2u
+#define DMA_HRS_HRS1_SHIFT                       1
+#define DMA_HRS_HRS2_MASK                        0x4u
+#define DMA_HRS_HRS2_SHIFT                       2
+#define DMA_HRS_HRS3_MASK                        0x8u
+#define DMA_HRS_HRS3_SHIFT                       3
+/* DCHPRI3 Bit Fields */
+#define DMA_DCHPRI3_CHPRI_MASK                   0xFu
+#define DMA_DCHPRI3_CHPRI_SHIFT                  0
+#define DMA_DCHPRI3_CHPRI(x)                     (((uint8_t)(((uint8_t)(x))<<DMA_DCHPRI3_CHPRI_SHIFT))&DMA_DCHPRI3_CHPRI_MASK)
+#define DMA_DCHPRI3_DPA_MASK                     0x40u
+#define DMA_DCHPRI3_DPA_SHIFT                    6
+#define DMA_DCHPRI3_ECP_MASK                     0x80u
+#define DMA_DCHPRI3_ECP_SHIFT                    7
+/* DCHPRI2 Bit Fields */
+#define DMA_DCHPRI2_CHPRI_MASK                   0xFu
+#define DMA_DCHPRI2_CHPRI_SHIFT                  0
+#define DMA_DCHPRI2_CHPRI(x)                     (((uint8_t)(((uint8_t)(x))<<DMA_DCHPRI2_CHPRI_SHIFT))&DMA_DCHPRI2_CHPRI_MASK)
+#define DMA_DCHPRI2_DPA_MASK                     0x40u
+#define DMA_DCHPRI2_DPA_SHIFT                    6
+#define DMA_DCHPRI2_ECP_MASK                     0x80u
+#define DMA_DCHPRI2_ECP_SHIFT                    7
+/* DCHPRI1 Bit Fields */
+#define DMA_DCHPRI1_CHPRI_MASK                   0xFu
+#define DMA_DCHPRI1_CHPRI_SHIFT                  0
+#define DMA_DCHPRI1_CHPRI(x)                     (((uint8_t)(((uint8_t)(x))<<DMA_DCHPRI1_CHPRI_SHIFT))&DMA_DCHPRI1_CHPRI_MASK)
+#define DMA_DCHPRI1_DPA_MASK                     0x40u
+#define DMA_DCHPRI1_DPA_SHIFT                    6
+#define DMA_DCHPRI1_ECP_MASK                     0x80u
+#define DMA_DCHPRI1_ECP_SHIFT                    7
+/* DCHPRI0 Bit Fields */
+#define DMA_DCHPRI0_CHPRI_MASK                   0xFu
+#define DMA_DCHPRI0_CHPRI_SHIFT                  0
+#define DMA_DCHPRI0_CHPRI(x)                     (((uint8_t)(((uint8_t)(x))<<DMA_DCHPRI0_CHPRI_SHIFT))&DMA_DCHPRI0_CHPRI_MASK)
+#define DMA_DCHPRI0_DPA_MASK                     0x40u
+#define DMA_DCHPRI0_DPA_SHIFT                    6
+#define DMA_DCHPRI0_ECP_MASK                     0x80u
+#define DMA_DCHPRI0_ECP_SHIFT                    7
+/* SADDR Bit Fields */
+#define DMA_SADDR_SADDR_MASK                     0xFFFFFFFFu
+#define DMA_SADDR_SADDR_SHIFT                    0
+#define DMA_SADDR_SADDR(x)                       (((uint32_t)(((uint32_t)(x))<<DMA_SADDR_SADDR_SHIFT))&DMA_SADDR_SADDR_MASK)
+/* SOFF Bit Fields */
+#define DMA_SOFF_SOFF_MASK                       0xFFFFu
+#define DMA_SOFF_SOFF_SHIFT                      0
+#define DMA_SOFF_SOFF(x)                         (((uint16_t)(((uint16_t)(x))<<DMA_SOFF_SOFF_SHIFT))&DMA_SOFF_SOFF_MASK)
+/* ATTR Bit Fields */
+#define DMA_ATTR_DSIZE_MASK                      0x7u
+#define DMA_ATTR_DSIZE_SHIFT                     0
+#define DMA_ATTR_DSIZE(x)                        (((uint16_t)(((uint16_t)(x))<<DMA_ATTR_DSIZE_SHIFT))&DMA_ATTR_DSIZE_MASK)
+#define DMA_ATTR_DMOD_MASK                       0xF8u
+#define DMA_ATTR_DMOD_SHIFT                      3
+#define DMA_ATTR_DMOD(x)                         (((uint16_t)(((uint16_t)(x))<<DMA_ATTR_DMOD_SHIFT))&DMA_ATTR_DMOD_MASK)
+#define DMA_ATTR_SSIZE_MASK                      0x700u
+#define DMA_ATTR_SSIZE_SHIFT                     8
+#define DMA_ATTR_SSIZE(x)                        (((uint16_t)(((uint16_t)(x))<<DMA_ATTR_SSIZE_SHIFT))&DMA_ATTR_SSIZE_MASK)
+#define DMA_ATTR_SMOD_MASK                       0xF800u
+#define DMA_ATTR_SMOD_SHIFT                      11
+#define DMA_ATTR_SMOD(x)                         (((uint16_t)(((uint16_t)(x))<<DMA_ATTR_SMOD_SHIFT))&DMA_ATTR_SMOD_MASK)
+/* NBYTES_MLNO Bit Fields */
+#define DMA_NBYTES_MLNO_NBYTES_MASK              0xFFFFFFFFu
+#define DMA_NBYTES_MLNO_NBYTES_SHIFT             0
+#define DMA_NBYTES_MLNO_NBYTES(x)                (((uint32_t)(((uint32_t)(x))<<DMA_NBYTES_MLNO_NBYTES_SHIFT))&DMA_NBYTES_MLNO_NBYTES_MASK)
+/* NBYTES_MLOFFNO Bit Fields */
+#define DMA_NBYTES_MLOFFNO_NBYTES_MASK           0x3FFFFFFFu
+#define DMA_NBYTES_MLOFFNO_NBYTES_SHIFT          0
+#define DMA_NBYTES_MLOFFNO_NBYTES(x)             (((uint32_t)(((uint32_t)(x))<<DMA_NBYTES_MLOFFNO_NBYTES_SHIFT))&DMA_NBYTES_MLOFFNO_NBYTES_MASK)
+#define DMA_NBYTES_MLOFFNO_DMLOE_MASK            0x40000000u
+#define DMA_NBYTES_MLOFFNO_DMLOE_SHIFT           30
+#define DMA_NBYTES_MLOFFNO_SMLOE_MASK            0x80000000u
+#define DMA_NBYTES_MLOFFNO_SMLOE_SHIFT           31
+/* NBYTES_MLOFFYES Bit Fields */
+#define DMA_NBYTES_MLOFFYES_NBYTES_MASK          0x3FFu
+#define DMA_NBYTES_MLOFFYES_NBYTES_SHIFT         0
+#define DMA_NBYTES_MLOFFYES_NBYTES(x)            (((uint32_t)(((uint32_t)(x))<<DMA_NBYTES_MLOFFYES_NBYTES_SHIFT))&DMA_NBYTES_MLOFFYES_NBYTES_MASK)
+#define DMA_NBYTES_MLOFFYES_MLOFF_MASK           0x3FFFFC00u
+#define DMA_NBYTES_MLOFFYES_MLOFF_SHIFT          10
+#define DMA_NBYTES_MLOFFYES_MLOFF(x)             (((uint32_t)(((uint32_t)(x))<<DMA_NBYTES_MLOFFYES_MLOFF_SHIFT))&DMA_NBYTES_MLOFFYES_MLOFF_MASK)
+#define DMA_NBYTES_MLOFFYES_DMLOE_MASK           0x40000000u
+#define DMA_NBYTES_MLOFFYES_DMLOE_SHIFT          30
+#define DMA_NBYTES_MLOFFYES_SMLOE_MASK           0x80000000u
+#define DMA_NBYTES_MLOFFYES_SMLOE_SHIFT          31
+/* SLAST Bit Fields */
+#define DMA_SLAST_SLAST_MASK                     0xFFFFFFFFu
+#define DMA_SLAST_SLAST_SHIFT                    0
+#define DMA_SLAST_SLAST(x)                       (((uint32_t)(((uint32_t)(x))<<DMA_SLAST_SLAST_SHIFT))&DMA_SLAST_SLAST_MASK)
+/* DADDR Bit Fields */
+#define DMA_DADDR_DADDR_MASK                     0xFFFFFFFFu
+#define DMA_DADDR_DADDR_SHIFT                    0
+#define DMA_DADDR_DADDR(x)                       (((uint32_t)(((uint32_t)(x))<<DMA_DADDR_DADDR_SHIFT))&DMA_DADDR_DADDR_MASK)
+/* DOFF Bit Fields */
+#define DMA_DOFF_DOFF_MASK                       0xFFFFu
+#define DMA_DOFF_DOFF_SHIFT                      0
+#define DMA_DOFF_DOFF(x)                         (((uint16_t)(((uint16_t)(x))<<DMA_DOFF_DOFF_SHIFT))&DMA_DOFF_DOFF_MASK)
+/* CITER_ELINKNO Bit Fields */
+#define DMA_CITER_ELINKNO_CITER_MASK             0x7FFFu
+#define DMA_CITER_ELINKNO_CITER_SHIFT            0
+#define DMA_CITER_ELINKNO_CITER(x)               (((uint16_t)(((uint16_t)(x))<<DMA_CITER_ELINKNO_CITER_SHIFT))&DMA_CITER_ELINKNO_CITER_MASK)
+#define DMA_CITER_ELINKNO_ELINK_MASK             0x8000u
+#define DMA_CITER_ELINKNO_ELINK_SHIFT            15
+/* CITER_ELINKYES Bit Fields */
+#define DMA_CITER_ELINKYES_CITER_MASK            0x1FFu
+#define DMA_CITER_ELINKYES_CITER_SHIFT           0
+#define DMA_CITER_ELINKYES_CITER(x)              (((uint16_t)(((uint16_t)(x))<<DMA_CITER_ELINKYES_CITER_SHIFT))&DMA_CITER_ELINKYES_CITER_MASK)
+#define DMA_CITER_ELINKYES_LINKCH_MASK           0x1E00u
+#define DMA_CITER_ELINKYES_LINKCH_SHIFT          9
+#define DMA_CITER_ELINKYES_LINKCH(x)             (((uint16_t)(((uint16_t)(x))<<DMA_CITER_ELINKYES_LINKCH_SHIFT))&DMA_CITER_ELINKYES_LINKCH_MASK)
+#define DMA_CITER_ELINKYES_ELINK_MASK            0x8000u
+#define DMA_CITER_ELINKYES_ELINK_SHIFT           15
+/* DLAST_SGA Bit Fields */
+#define DMA_DLAST_SGA_DLASTSGA_MASK              0xFFFFFFFFu
+#define DMA_DLAST_SGA_DLASTSGA_SHIFT             0
+#define DMA_DLAST_SGA_DLASTSGA(x)                (((uint32_t)(((uint32_t)(x))<<DMA_DLAST_SGA_DLASTSGA_SHIFT))&DMA_DLAST_SGA_DLASTSGA_MASK)
+/* CSR Bit Fields */
+#define DMA_CSR_START_MASK                       0x1u
+#define DMA_CSR_START_SHIFT                      0
+#define DMA_CSR_INTMAJOR_MASK                    0x2u
+#define DMA_CSR_INTMAJOR_SHIFT                   1
+#define DMA_CSR_INTHALF_MASK                     0x4u
+#define DMA_CSR_INTHALF_SHIFT                    2
+#define DMA_CSR_DREQ_MASK                        0x8u
+#define DMA_CSR_DREQ_SHIFT                       3
+#define DMA_CSR_ESG_MASK                         0x10u
+#define DMA_CSR_ESG_SHIFT                        4
+#define DMA_CSR_MAJORELINK_MASK                  0x20u
+#define DMA_CSR_MAJORELINK_SHIFT                 5
+#define DMA_CSR_ACTIVE_MASK                      0x40u
+#define DMA_CSR_ACTIVE_SHIFT                     6
+#define DMA_CSR_DONE_MASK                        0x80u
+#define DMA_CSR_DONE_SHIFT                       7
+#define DMA_CSR_MAJORLINKCH_MASK                 0xF00u
+#define DMA_CSR_MAJORLINKCH_SHIFT                8
+#define DMA_CSR_MAJORLINKCH(x)                   (((uint16_t)(((uint16_t)(x))<<DMA_CSR_MAJORLINKCH_SHIFT))&DMA_CSR_MAJORLINKCH_MASK)
+#define DMA_CSR_BWC_MASK                         0xC000u
+#define DMA_CSR_BWC_SHIFT                        14
+#define DMA_CSR_BWC(x)                           (((uint16_t)(((uint16_t)(x))<<DMA_CSR_BWC_SHIFT))&DMA_CSR_BWC_MASK)
+/* BITER_ELINKNO Bit Fields */
+#define DMA_BITER_ELINKNO_BITER_MASK             0x7FFFu
+#define DMA_BITER_ELINKNO_BITER_SHIFT            0
+#define DMA_BITER_ELINKNO_BITER(x)               (((uint16_t)(((uint16_t)(x))<<DMA_BITER_ELINKNO_BITER_SHIFT))&DMA_BITER_ELINKNO_BITER_MASK)
+#define DMA_BITER_ELINKNO_ELINK_MASK             0x8000u
+#define DMA_BITER_ELINKNO_ELINK_SHIFT            15
+/* BITER_ELINKYES Bit Fields */
+#define DMA_BITER_ELINKYES_BITER_MASK            0x1FFu
+#define DMA_BITER_ELINKYES_BITER_SHIFT           0
+#define DMA_BITER_ELINKYES_BITER(x)              (((uint16_t)(((uint16_t)(x))<<DMA_BITER_ELINKYES_BITER_SHIFT))&DMA_BITER_ELINKYES_BITER_MASK)
+#define DMA_BITER_ELINKYES_LINKCH_MASK           0x1E00u
+#define DMA_BITER_ELINKYES_LINKCH_SHIFT          9
+#define DMA_BITER_ELINKYES_LINKCH(x)             (((uint16_t)(((uint16_t)(x))<<DMA_BITER_ELINKYES_LINKCH_SHIFT))&DMA_BITER_ELINKYES_LINKCH_MASK)
+#define DMA_BITER_ELINKYES_ELINK_MASK            0x8000u
+#define DMA_BITER_ELINKYES_ELINK_SHIFT           15
+
+/*!
+ * @}
+ */ /* end of group DMA_Register_Masks */
+
+
+/* DMA - Peripheral instance base addresses */
+/** Peripheral DMA base pointer */
+#define DMA_BASE_PTR                             ((DMA_MemMapPtr)0x40008000u)
+/** Array initializer of DMA peripheral base pointers */
+#define DMA_BASE_PTRS                            { DMA_BASE_PTR }
+
+/* ----------------------------------------------------------------------------
+   -- DMA - Register accessor macros
+   ---------------------------------------------------------------------------- */
+
+/*!
+ * @addtogroup DMA_Register_Accessor_Macros DMA - Register accessor macros
+ * @{
+ */
+
+
+/* DMA - Register instance definitions */
+/* DMA */
+#define DMA_CR                                   DMA_CR_REG(DMA_BASE_PTR)
+#define DMA_ES                                   DMA_ES_REG(DMA_BASE_PTR)
+#define DMA_ERQ                                  DMA_ERQ_REG(DMA_BASE_PTR)
+#define DMA_EEI                                  DMA_EEI_REG(DMA_BASE_PTR)
+#define DMA_CEEI                                 DMA_CEEI_REG(DMA_BASE_PTR)
+#define DMA_SEEI                                 DMA_SEEI_REG(DMA_BASE_PTR)
+#define DMA_CERQ                                 DMA_CERQ_REG(DMA_BASE_PTR)
+#define DMA_SERQ                                 DMA_SERQ_REG(DMA_BASE_PTR)
+#define DMA_CDNE                                 DMA_CDNE_REG(DMA_BASE_PTR)
+#define DMA_SSRT                                 DMA_SSRT_REG(DMA_BASE_PTR)
+#define DMA_CERR                                 DMA_CERR_REG(DMA_BASE_PTR)
+#define DMA_CINT                                 DMA_CINT_REG(DMA_BASE_PTR)
+#define DMA_INT                                  DMA_INT_REG(DMA_BASE_PTR)
+#define DMA_ERR                                  DMA_ERR_REG(DMA_BASE_PTR)
+#define DMA_HRS                                  DMA_HRS_REG(DMA_BASE_PTR)
+#define DMA_DCHPRI3                              DMA_DCHPRI3_REG(DMA_BASE_PTR)
+#define DMA_DCHPRI2                              DMA_DCHPRI2_REG(DMA_BASE_PTR)
+#define DMA_DCHPRI1                              DMA_DCHPRI1_REG(DMA_BASE_PTR)
+#define DMA_DCHPRI0                              DMA_DCHPRI0_REG(DMA_BASE_PTR)
+#define DMA_TCD0_SADDR                           DMA_SADDR_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_SOFF                            DMA_SOFF_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_ATTR                            DMA_ATTR_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_NBYTES_MLNO                     DMA_NBYTES_MLNO_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_NBYTES_MLOFFNO                  DMA_NBYTES_MLOFFNO_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_NBYTES_MLOFFYES                 DMA_NBYTES_MLOFFYES_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_SLAST                           DMA_SLAST_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_DADDR                           DMA_DADDR_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_DOFF                            DMA_DOFF_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_CITER_ELINKNO                   DMA_CITER_ELINKNO_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_CITER_ELINKYES                  DMA_CITER_ELINKYES_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_DLASTSGA                        DMA_DLAST_SGA_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_CSR                             DMA_CSR_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_BITER_ELINKNO                   DMA_BITER_ELINKNO_REG(DMA_BASE_PTR,0)
+#define DMA_TCD0_BITER_ELINKYES                  DMA_BITER_ELINKYES_REG(DMA_BASE_PTR,0)
+#define DMA_TCD1_SADDR                           DMA_SADDR_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_SOFF                            DMA_SOFF_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_ATTR                            DMA_ATTR_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_NBYTES_MLNO                     DMA_NBYTES_MLNO_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_NBYTES_MLOFFNO                  DMA_NBYTES_MLOFFNO_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_NBYTES_MLOFFYES                 DMA_NBYTES_MLOFFYES_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_SLAST                           DMA_SLAST_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_DADDR                           DMA_DADDR_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_DOFF                            DMA_DOFF_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_CITER_ELINKNO                   DMA_CITER_ELINKNO_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_CITER_ELINKYES                  DMA_CITER_ELINKYES_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_DLASTSGA                        DMA_DLAST_SGA_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_CSR                             DMA_CSR_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_BITER_ELINKNO                   DMA_BITER_ELINKNO_REG(DMA_BASE_PTR,1)
+#define DMA_TCD1_BITER_ELINKYES                  DMA_BITER_ELINKYES_REG(DMA_BASE_PTR,1)
+#define DMA_TCD2_SADDR                           DMA_SADDR_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_SOFF                            DMA_SOFF_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_ATTR                            DMA_ATTR_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_NBYTES_MLNO                     DMA_NBYTES_MLNO_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_NBYTES_MLOFFNO                  DMA_NBYTES_MLOFFNO_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_NBYTES_MLOFFYES                 DMA_NBYTES_MLOFFYES_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_SLAST                           DMA_SLAST_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_DADDR                           DMA_DADDR_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_DOFF                            DMA_DOFF_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_CITER_ELINKNO                   DMA_CITER_ELINKNO_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_CITER_ELINKYES                  DMA_CITER_ELINKYES_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_DLASTSGA                        DMA_DLAST_SGA_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_CSR                             DMA_CSR_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_BITER_ELINKNO                   DMA_BITER_ELINKNO_REG(DMA_BASE_PTR,2)
+#define DMA_TCD2_BITER_ELINKYES                  DMA_BITER_ELINKYES_REG(DMA_BASE_PTR,2)
+#define DMA_TCD3_SADDR                           DMA_SADDR_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_SOFF                            DMA_SOFF_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_ATTR                            DMA_ATTR_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_NBYTES_MLNO                     DMA_NBYTES_MLNO_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_NBYTES_MLOFFNO                  DMA_NBYTES_MLOFFNO_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_NBYTES_MLOFFYES                 DMA_NBYTES_MLOFFYES_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_SLAST                           DMA_SLAST_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_DADDR                           DMA_DADDR_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_DOFF                            DMA_DOFF_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_CITER_ELINKNO                   DMA_CITER_ELINKNO_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_CITER_ELINKYES                  DMA_CITER_ELINKYES_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_DLASTSGA                        DMA_DLAST_SGA_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_CSR                             DMA_CSR_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_BITER_ELINKNO                   DMA_BITER_ELINKNO_REG(DMA_BASE_PTR,3)
+#define DMA_TCD3_BITER_ELINKYES                  DMA_BITER_ELINKYES_REG(DMA_BASE_PTR,3)
+
+/* DMA - Register array accessors */
+#define DMA_SADDR(index)                         DMA_SADDR_REG(DMA_BASE_PTR,index)
+#define DMA_SOFF(index)                          DMA_SOFF_REG(DMA_BASE_PTR,index)
+#define DMA_ATTR(index)                          DMA_ATTR_REG(DMA_BASE_PTR,index)
+#define DMA_NBYTES_MLNO(index)                   DMA_NBYTES_MLNO_REG(DMA_BASE_PTR,index)
+#define DMA_NBYTES_MLOFFNO(index)                DMA_NBYTES_MLOFFNO_REG(DMA_BASE_PTR,index)
+#define DMA_NBYTES_MLOFFYES(index)               DMA_NBYTES_MLOFFYES_REG(DMA_BASE_PTR,index)
+#define DMA_SLAST(index)                         DMA_SLAST_REG(DMA_BASE_PTR,index)
+#define DMA_DADDR(index)                         DMA_DADDR_REG(DMA_BASE_PTR,index)
+#define DMA_DOFF(index)                          DMA_DOFF_REG(DMA_BASE_PTR,index)
+#define DMA_CITER_ELINKNO(index)                 DMA_CITER_ELINKNO_REG(DMA_BASE_PTR,index)
+#define DMA_CITER_ELINKYES(index)                DMA_CITER_ELINKYES_REG(DMA_BASE_PTR,index)
+#define DMA_DLAST_SGA(index)                     DMA_DLAST_SGA_REG(DMA_BASE_PTR,index)
+#define DMA_CSR(index)                           DMA_CSR_REG(DMA_BASE_PTR,index)
+#define DMA_BITER_ELINKNO(index)                 DMA_BITER_ELINKNO_REG(DMA_BASE_PTR,index)
+#define DMA_BITER_ELINKYES(index)                DMA_BITER_ELINKYES_REG(DMA_BASE_PTR,index)
 
 /****************************************************************/
 /*                                                              */
@@ -1569,6 +2046,8 @@ typedef struct {
 
 /***********  Bits definition for SPIx_CTARn register  *************/
 #define SPIx_CTARn_DBR            ((uint32_t)0x80000000)     // Double Baud Rate
+#define SPIx_CTARn_FMSZ_SHIFT     27                         // Frame Size Shift
+#define SPIx_CTARn_FMSZ_MASK      0xF                        // Frame Size Mask
 #define SPIx_CTARn_FMSZ(n)        (((n) & 15) << 27)         // Frame Size (+1)
 #define SPIx_CTARn_CPOL           ((uint32_t)0x04000000)     // Clock Polarity
 #define SPIx_CTARn_CPHA           ((uint32_t)0x02000000)     // Clock Phase
