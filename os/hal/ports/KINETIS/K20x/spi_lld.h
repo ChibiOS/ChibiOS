@@ -101,10 +101,6 @@ typedef struct {
   spicallback_t             end_cb;
   /* End of the mandatory fields.*/
   /**
-   * @brief The PCS chip select lines.
-   */
-  uint8_t                   pcs;
-  /**
    * @brief The chip select line port - when not using pcs.
    */
   ioportid_t                ssport;
@@ -151,25 +147,21 @@ struct SPIDriver {
    */
   SPI_TypeDef               *spi;
   /**
-   * @brief   Number of bytes of data to transfer.
+   * @brief   Number of bytes/words of data to transfer.
    */
-  size_t                    nbytes;
+  size_t                    count;
+  /**
+   * @brief   Word size in bytes.
+   */
+  size_t                    word_size;
   /**
    * @brief   Pointer to the buffer with data to send.
    */
   const uint8_t             *txbuf;
   /**
-   * @brief   Current index in buffer when sending data.
-   */
-  size_t                    txidx;
-  /**
    * @brief   Pointer to the buffer to put received data.
    */
   uint8_t                   *rxbuf;
-  /**
-   * @brief   Current index in buffer when receiving data.
-   */
-  size_t                    rxidx;
 };
 
 /*===========================================================================*/
@@ -204,26 +196,6 @@ struct SPIDriver {
 
 #define KINETIS_SPI_TAR0_DEFAULT    KINETIS_SPI_TAR_SYSCLK_DIV_2(8)
 #define KINETIS_SPI_TAR1_DEFAULT    KINETIS_SPI_TAR_SYSCLK_DIV_2(8)
-
-/*
- * A mask of the slave select lines to be managed by KINETIS DSPI.
- *
- * These values are mapped to real ports and pins by selecting
- * PAL_MODE_ALTERNATIVE_2 as the pin mode. Multiple values may
- * be ORed together to select multiple outputs. This can be used with an
- * external multiplexor to increase the number of slave selects.
- *
- * If KINETIS_SPI_PCS_NONE is selected for the configuration pcs field
- * then the configuration ssport and sspad values are used to control the
- * slave select directly and the KINETIS DSPI managed select is not used.
- */
-#define KINETIS_SPI_PCS_NONE        0x00
-#define KINETIS_SPI_PCS0            0x01
-#define KINETIS_SPI_PCS1            0x02
-#define KINETIS_SPI_PCS2            0x04
-#define KINETIS_SPI_PCS3            0x08
-#define KINETIS_SPI_PCS4            0x10
-#define KINETIS_SPI_PCS_ALL         0x1F
 
 /*===========================================================================*/
 /* External declarations.                                                    */
