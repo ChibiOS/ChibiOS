@@ -19,15 +19,22 @@
 
 #include "chrtclib.h"
 
-RTCTime timespec;
-RTCAlarm alarmspec;
+/*
+ * Set this flag to TRUE for testing waking up from deep sleep
+ */
+#define TEST_ALARM_WAKEUP     FALSE
 
-#define TEST_ALARM_WAKEUP FALSE
-
+/*
+ * Local working variables
+ */
+static RTCTime timespec;
+static RTCAlarm alarmspec;
 
 #if TEST_ALARM_WAKEUP
 
-/* sleep indicator thread */
+/*
+ * awake indication thread
+ */
 static WORKING_AREA(blinkWA, 128);
 static msg_t blink_thd(void *arg){
   (void)arg;
@@ -38,21 +45,26 @@ static msg_t blink_thd(void *arg){
   return 0;
 }
 
+/*
+ * Application entry point.
+ */
 int main(void) {
   halInit();
   chSysInit();
 
+  /* start awake indicator thread */
   chThdCreateStatic(blinkWA, sizeof(blinkWA), NORMALPRIO, blink_thd, NULL);
+
   /* set alarm in near future */
   rtcGetTime(&RTCD1, &timespec);
   alarmspec.tv_sec = timespec.tv_sec + 30;
   rtcSetAlarm(&RTCD1, 0, &alarmspec);
 
-  while (TRUE){
+  while (TRUE) {
     chThdSleepSeconds(10);
     chSysLock();
 
-    /* going to anabiosis*/
+    /* go sleep */
     PWR->CR |= (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
     __WFI();
@@ -62,12 +74,20 @@ int main(void) {
 
 #else /* TEST_ALARM_WAKEUP */
 
-/* Manually reloaded test alarm period.*/
-#define RTC_ALARMPERIOD   10
+/*
+ * Manually reloaded test alarm period.
+ */
+#define RTC_ALARMPERIOD   5
 
-BinarySemaphore alarm_sem;
+/*
+ * Semaphore for signaling from ISR to "main" thread
+ */
+static BinarySemaphore alarm_sem;
 
-static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
+/*
+ * Global RTC callback function
+ */
+static void rtc_cb(RTCDriver *rtcp, rtcevent_t event) {
 
   (void)rtcp;
 
@@ -87,6 +107,9 @@ static void my_cb(RTCDriver *rtcp, rtcevent_t event) {
   }
 }
 
+/*
+ * Application entry point.
+ */
 int main(void) {
   msg_t status = RDY_TIMEOUT;
 
@@ -98,16 +121,16 @@ int main(void) {
   alarmspec.tv_sec = timespec.tv_sec + RTC_ALARMPERIOD;
   rtcSetAlarm(&RTCD1, 0, &alarmspec);
 
-  rtcSetCallback(&RTCD1, my_cb);
-  while (TRUE){
+  rtcSetCallback(&RTCD1, rtc_cb);
+  while (TRUE) {
 
     /* Wait until alarm callback signaled semaphore.*/
-    status = chBSemWaitTimeout(&alarm_sem, S2ST(RTC_ALARMPERIOD + 5));
+    status = chBSemWaitTimeout(&alarm_sem, S2ST(RTC_ALARMPERIOD + 10));
 
-    if (status == RDY_TIMEOUT){
+    if (status == RDY_TIMEOUT) {
       chSysHalt();
     }
-    else{
+    else {
       rtcGetTime(&RTCD1, &timespec);
       alarmspec.tv_sec = timespec.tv_sec + RTC_ALARMPERIOD;
       rtcSetAlarm(&RTCD1, 0, &alarmspec);
