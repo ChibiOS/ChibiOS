@@ -70,11 +70,14 @@ SPIDriver SPID1;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+/* Use a dummy byte as the source/destination when a buffer is not provided */
+/* Note: The MMC driver relies on 0xFF being sent for dummy bytes. */
+static volatile uint16_t dmaRxDummy;
+static uint16_t dmaTxDummy = 0xFFFF;
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
-
-volatile uint8_t dmaDummy;
 
 static void spi_start_xfer(SPIDriver *spip, bool polling)
 {
@@ -91,15 +94,12 @@ static void spi_start_xfer(SPIDriver *spip, bool polling)
     spip->spi->RSER = SPIx_RSER_RFDF_DIRS | SPIx_RSER_RFDF_RE |
         SPIx_RSER_TFFF_RE | SPIx_RSER_TFFF_DIRS;
 
-    /* Use dmaDummy as the source/destination when a buffer is not provided */
-    dmaDummy = 0;
-
     /* Configure RX DMA */
     if (spip->rxbuf) {
       DMA->TCD[KINETIS_SPI0_RX_DMA_CHANNEL].DADDR = (uint32_t)spip->rxbuf;
       DMA->TCD[KINETIS_SPI0_RX_DMA_CHANNEL].DOFF = spip->word_size;
     } else {
-      DMA->TCD[KINETIS_SPI0_RX_DMA_CHANNEL].DADDR = (uint32_t)&dmaDummy;
+      DMA->TCD[KINETIS_SPI0_RX_DMA_CHANNEL].DADDR = (uint32_t)&dmaRxDummy;
       DMA->TCD[KINETIS_SPI0_RX_DMA_CHANNEL].DOFF = 0;
     }
     DMA->TCD[KINETIS_SPI0_RX_DMA_CHANNEL].BITER_ELINKNO = spip->count;
@@ -113,7 +113,7 @@ static void spi_start_xfer(SPIDriver *spip, bool polling)
       DMA->TCD[KINETIS_SPI0_TX_DMA_CHANNEL].SADDR =  (uint32_t)spip->txbuf;
       DMA->TCD[KINETIS_SPI0_TX_DMA_CHANNEL].SOFF = spip->word_size;
     } else {
-      DMA->TCD[KINETIS_SPI0_TX_DMA_CHANNEL].SADDR =  (uint32_t)&dmaDummy;
+      DMA->TCD[KINETIS_SPI0_TX_DMA_CHANNEL].SADDR =  (uint32_t)&dmaTxDummy;
       DMA->TCD[KINETIS_SPI0_TX_DMA_CHANNEL].SOFF = 0;
     }
     DMA->TCD[KINETIS_SPI0_TX_DMA_CHANNEL].BITER_ELINKNO = spip->count;
