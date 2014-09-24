@@ -105,14 +105,29 @@ void chMBObjectInit(mailbox_t *mbp, msg_t *buf, cnt_t n) {
  */
 void chMBReset(mailbox_t *mbp) {
 
+  chSysLock();
+  chMBResetI(mbp);
+  chSchRescheduleS();
+  chSysUnlock();
+}
+
+/**
+ * @brief   Resets a @p mailbox_t object.
+ * @details All the waiting threads are resumed with status @p MSG_RESET and
+ *          the queued messages are lost.
+ *
+ * @param[in] mbp       the pointer to an initialized @p mailbox_t object
+ *
+ * @api
+ */
+void chMBResetI(mailbox_t *mbp) {
+
+  chDbgCheckClassI();
   chDbgCheck(mbp != NULL);
 
-  chSysLock();
   mbp->mb_wrptr = mbp->mb_rdptr = mbp->mb_buffer;
   chSemResetI(&mbp->mb_emptysem, mbp->mb_top - mbp->mb_buffer);
   chSemResetI(&mbp->mb_fullsem, 0);
-  chSchRescheduleS();
-  chSysUnlock();
 }
 
 /**
