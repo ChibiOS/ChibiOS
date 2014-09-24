@@ -135,7 +135,7 @@ extern "C" {
  *
  * @iclass
  */
-static inline size_t chMBSizeI(mailbox_t *mbp) {
+static inline size_t chMBGetSizeI(mailbox_t *mbp) {
 
   return (size_t)(mbp->mb_top - mbp->mb_buffer);
 }
