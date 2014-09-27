@@ -71,6 +71,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.6.7 ***
+- FIX: Fixed wrong wait states for STM32F401 (bug #537).
+
 *** 2.6.6 ***
 - FIX: Fixed error in STM32F30x adc_lld_stop() (bug #535).
 - FIX: Fixed STM32 DIER register setting in PWM and ICU drivers (bug #534).
