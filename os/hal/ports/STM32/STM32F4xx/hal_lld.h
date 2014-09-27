@@ -26,11 +26,12 @@
  *          - STM32_VDD (as hundredths of Volt).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F2XX for High-performance STM32 F-2 devices.
- *          - STM32F401xx for High-performance STM32 F-4 devices.
- *          - STM32F40_41xxx for High-performance STM32 F-4 devices.
- *          - STM32F427_437xx for High-performance STM32 F-4 devices.
- *          - STM32F429_439xx for High-performance STM32 F-4 devices.
+ *          - STM32F405xx, STM32F415xx, STM32F407xx, STM32F417xx for
+ *            High-performance STM32 F-2 devices.
+ *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx for
+ *            High-performance STM32 F-4 devices.
+ *          - STM32F401xC, STM32F401xE for High-performance STM32 F-4 devices.
+ *          - STM32F411xE for High-performance STM32 F-4 devices.
  *          .
  *
  * @addtogroup HAL
@@ -39,8 +40,6 @@
 
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
-
-#include "stm32_registry.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -55,17 +54,49 @@
  * @name    Platform identification macros
  * @{
  */
-#if defined(STM32F429_439xx) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32F429/F439 High Performance with DSP and FPU"
+#if defined(STM32F439xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F439 High Performance with DSP and FPU"
+#define STM32F429_439xx
 
-#elif defined(STM32F427_437xx)
-#define PLATFORM_NAME           "STM32F427/F437 High Performance with DSP and FPU"
+#elif defined(STM32F429xx)
+#define PLATFORM_NAME           "STM32F429 High Performance with DSP and FPU"
+#define STM32F429_439xx
 
-#elif defined(STM32F40_41xxx)
-#define PLATFORM_NAME           "STM32F407/F417 High Performance with DSP and FPU"
+#elif defined(STM32F437xx)
+#define PLATFORM_NAME           "STM32F437 High Performance with DSP and FPU"
+#define STM32F427_437xx
 
-#elif defined(STM32F401xx)
-#define PLATFORM_NAME           "STM32F401 High Performance with DSP and FPU"
+#elif defined(STM32F427xx)
+#define PLATFORM_NAME           "STM32F427 High Performance with DSP and FPU"
+#define STM32F427_437xx
+
+#elif defined(STM32F405xx)
+#define PLATFORM_NAME           "STM32F405 High Performance with DSP and FPU"
+#define STM32F40_41xxx
+
+#elif defined(STM32F415xx)
+#define PLATFORM_NAME           "STM32F415 High Performance with DSP and FPU"
+#define STM32F40_41xxx
+
+#elif defined(STM32F407xx)
+#define PLATFORM_NAME           "STM32F407 High Performance with DSP and FPU"
+#define STM32F40_41xxx
+
+#elif defined(STM32F417xx)
+#define PLATFORM_NAME           "STM32F417 High Performance with DSP and FPU"
+#define STM32F40_41xxx
+
+#elif defined(STM32F401xC)
+#define PLATFORM_NAME           "STM32F401xC High Performance with DSP and FPU"
+#define STM32F401xx
+
+#elif defined(STM32F401xE)
+#define PLATFORM_NAME           "STM32F401xE High Performance with DSP and FPU"
+#define STM32F401xx
+
+#elif defined(STM32F411xE)
+#define PLATFORM_NAME           "STM32F411xE High Performance with DSP and FPU"
+#define STM32F411xx
 
 #elif defined(STM32F2XX)
 #define PLATFORM_NAME           "STM32F2xx High Performance"
@@ -90,7 +121,8 @@
  * @name    Absolute Maximum Ratings
  * @{
  */
-#if defined(STM32F427_437xx) || defined(STM32F429_439xx) ||                 \
+#if defined(STM32F427xx) || defined(STM32F437xx) ||                         \
+    defined(STM32F429xx) || defined(STM32F439xx) ||                         \
     defined(__DOXYGEN__)
 /**
  * @brief   Absolute maximum system clock.
@@ -176,7 +208,7 @@
  * @brief   Maximum SPI/I2S clock frequency.
  */
 #define STM32_SPII2S_MAX        45000000
-#endif /* STM32F40_41xxx */
+#endif
 
 #if defined(STM32F40_41xxx) || defined(__DOXYGEN__)
 #define STM32_SYSCLK_MAX        168000000
@@ -196,7 +228,7 @@
 #define STM32_PCLK1_MAX         42000000
 #define STM32_PCLK2_MAX         84000000
 #define STM32_SPII2S_MAX        42000000
-#endif /* STM32F40_41xxx */
+#endif
 
 #if defined(STM32F401xx) || defined(__DOXYGEN__)
 #define STM32_SYSCLK_MAX        84000000
@@ -216,7 +248,11 @@
 #define STM32_PCLK1_MAX         42000000
 #define STM32_PCLK2_MAX         84000000
 #define STM32_SPII2S_MAX        42000000
-#endif /* STM32F40_41xxx */
+#endif
+
+#if defined(STM32F411xx)
+#error "missing Absolute Maximum Ratings for STM32F411xx"
+#endif
 
 #if defined(STM32F2XX)
 #define STM32_SYSCLK_MAX        120000000
@@ -236,7 +272,7 @@
 #define STM32_PCLK1_MAX         30000000
 #define STM32_PCLK2_MAX         60000000
 #define STM32_SPII2S_MAX        30000000
-#endif /* defined(STM32F2XX) */
+#endif
 /** @} */
 
 /**
@@ -763,6 +799,9 @@
 #else
 #error "invalid VDD voltage specified"
 #endif
+
+#elif defined(STM32F411xx)
+#error "missing WS settings for STM32F411xx"
 
 #else /* STM32F2XX */
 #if (STM32_VDD >= 270) && (STM32_VDD <= 360)
@@ -1378,6 +1417,7 @@
 
 /* Various helpers.*/
 #include "nvic.h"
+#include "stm32_registry.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"

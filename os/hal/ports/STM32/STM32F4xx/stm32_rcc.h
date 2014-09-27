@@ -663,7 +663,7 @@
  *
  * @api
  */
-#define rccResetOTG_HS() rccResetAHB1(RCC_AHB1RSTR_OTGHSRST)
+#define rccResetOTG_HS() rccResetAHB1(RCC_AHB1RSTR_OTGHRST)
 
 /**
  * @brief   Enables the OTG_HS peripheral clock.

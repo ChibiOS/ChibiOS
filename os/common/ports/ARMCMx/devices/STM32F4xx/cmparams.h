@@ -66,8 +66,12 @@
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
-#if !defined(STM32F40_41xxx) && !defined(STM32F427_437xx) &&                \
-    !defined(STM32F429_439xx) && !defined(STM32F401xx)
+#if !defined(STM32F405xx) && !defined(STM32F415xx) &&                       \
+    !defined(STM32F407xx) && !defined(STM32F417xx) &&                       \
+    !defined(STM32F427xx) && !defined(STM32F437xx) &&                       \
+    !defined(STM32F429xx) && !defined(STM32F439xx) &&                       \
+    !defined(STM32F401xC) && !defined(STM32F401xE) &&                       \
+    !defined(STM32F411xE)
 #include "board.h"
 #endif
 
