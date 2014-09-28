@@ -38,11 +38,6 @@
 #define CORTEX_MODEL            CORTEX_M4
 
 /**
- * @brief   Memory Protection unit presence.
- */
-#define CORTEX_HAS_MPU          1
-
-/**
  * @brief   Floating Point unit presence.
  */
 #define CORTEX_HAS_FPU          1
@@ -66,18 +61,14 @@
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
-#if !defined (STM32F37X)
+#if !defined (STM32F373xC)
 #include "board.h"
 #endif
 
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
-#include "stm32f37x.h"
-
-#if !CORTEX_HAS_MPU != !__MPU_PRESENT
-#error "CMSIS __MPU_PRESENT mismatch"
-#endif
+#include "stm32f3xx.h"
 
 #if !CORTEX_HAS_FPU != !__FPU_PRESENT
 #error "CMSIS __FPU_PRESENT mismatch"

@@ -157,7 +157,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     set_error(sdp, isr);
 
   /* Special case, LIN break detection.*/
-  if (isr & USART_ISR_LBD) {
+  if (isr & USART_ISR_LBDF) {
     osalSysLockFromISR();
     chnAddFlagsI(sdp, SD_BREAK_DETECTED);
     osalSysUnlockFromISR();

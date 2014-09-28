@@ -53,10 +53,8 @@
                          RCC_AHB1ENR_GPIOIEN)
 #define AHB1_LPEN_MASK  AHB1_EN_MASK
 
-#elif defined(STM32F30X) || defined(STM32F37X)
-#define AHB_EN_MASK     (RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN |          \
-                         RCC_AHBENR_GPIOCEN | RCC_AHBENR_GPIODEN |          \
-                         RCC_AHBENR_GPIOEEN | RCC_AHBENR_GPIOFEN)
+#elif defined(STM32F3XX) || defined(STM32F37X)
+#define AHB_EN_MASK     STM32_GPIO_EN_MASK
 
 #elif defined(STM32F4XX)
 #if STM32_HAS_GPIOF && STM32_HAS_GPIOG && STM32_HAS_GPIOI

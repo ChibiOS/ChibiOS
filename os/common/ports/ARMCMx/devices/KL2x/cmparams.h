@@ -42,11 +42,6 @@
 #define CORTEX_HAS_ST           TRUE
 
 /**
- * @brief   Memory Protection unit presence.
- */
-#define CORTEX_HAS_MPU          FALSE
-
-/**
  * @brief   Floating Point unit presence.
  */
 #define CORTEX_HAS_FPU          FALSE
@@ -71,10 +66,6 @@
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
 #include "kl25z.h"
-
-#if !CORTEX_HAS_MPU != !__MPU_PRESENT
-#error "CMSIS __MPU_PRESENT mismatch"
-#endif
 
 #if CORTEX_PRIORITY_BITS != __NVIC_PRIO_BITS
 #error "CMSIS __NVIC_PRIO_BITS mismatch"

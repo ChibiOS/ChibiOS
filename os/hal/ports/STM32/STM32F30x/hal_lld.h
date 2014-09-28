@@ -26,7 +26,15 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F30X for Analog & DSP devices.
+ *          - STM32F301x8 for Analog & DSP devices.
+ *          - STM32F302x8 for Analog & DSP devices.
+ *          - STM32F302xC for Analog & DSP devices.
+ *          - STM32F303x8 for Analog & DSP devices.
+ *          - STM32F303xC for Analog & DSP devices.
+ *          - STM32F318xx for Analog & DSP devices.
+ *          - STM32F328xx for Analog & DSP devices.
+ *          - STM32F334x8 for Analog & DSP devices.
+ *          - STM32F358xx for Analog & DSP devices.
  *          .
  *
  * @addtogroup HAL
@@ -43,16 +51,45 @@
 /*===========================================================================*/
 
 /**
- * @name    Platform identification
+ * @name    Platform identification macros
  * @{
  */
-#define PLATFORM_NAME           "STM32F30x Analog & DSP"
+#if defined(STM32F301x8) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F301x8 Analog & DSP"
+
+#elif defined(STM32F302x8) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F302x8 Analog & DSP"
+
+#elif defined(STM32F302xC) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F302xC Analog & DSP"
+
+#elif defined(STM32F303x8) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F303x8 Analog & DSP"
+
+#elif defined(STM32F303xC) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F303xC Analog & DSP"
+
+#elif defined(STM32F318xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F318xx Analog & DSP"
+
+#elif defined(STM32F328xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F328xx Analog & DSP"
+
+#elif defined(STM32F334x8) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F334x8 Analog & DSP"
+
+#elif defined(STM32F358xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F358xx Analog & DSP"
+
+#else
+#error "STM32F3xx device not specified"
+#endif
 
 /**
  * @brief   Sub-family identifier.
  */
-#if !defined(STM32F30X) || defined(__DOXYGEN__)
-#define STM32F30X
+#if !defined(STM32F3XX) || defined(__DOXYGEN__)
+#define STM32F3XX
 #endif
 /** @} */
 
