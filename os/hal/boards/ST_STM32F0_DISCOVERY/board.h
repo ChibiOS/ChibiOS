@@ -47,7 +47,7 @@
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32F0XX_MD
+#define STM32F051x8
 
 /*
  * IO pins assignments.

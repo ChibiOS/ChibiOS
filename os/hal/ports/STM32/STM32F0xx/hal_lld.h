@@ -26,6 +26,12 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
+ *          - STM32F030x6, STM32F030x8 for Value Line devices.
+ *          - STM32F031x6, STM32F038xx, STM32F042x6, STM32F048xx for
+ *            Low Density devices.
+ *          - STM32F051x8, STM32F058xx, STM32F071xB, STM32F072xB,
+ *            STM32F078xx for Medium Density devices.
+ *
  *          - STM32F030 for Value Line devices.
  *          - STM32F0XX_LD for Low Density devices.
  *          - STM32F0XX_MD for Medium Density devices.
@@ -38,6 +44,9 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
+/*
+ * Registry definitions.
+ */
 #include "stm32_registry.h"
 
 /*===========================================================================*/
@@ -48,24 +57,41 @@
  * @name    Platform identification macros
  * @{
  */
-#if defined(STM32F0XX_MD) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32F051xx/F061xx Entry Level Medium Density devices"
+#if defined(STM32F051x8) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F051x8 Entry Level Medium Density devices"
 
-#elif defined(STM32F0XX_LD)
-#define PLATFORM_NAME           "STM32F050xx/F060xx Entry Level Low Density devices"
+#elif defined(STM32F058xx)
+#define PLATFORM_NAME           "STM32F058xx Entry Level Medium Density devices"
 
-#elif defined(STM32F030)
-#define PLATFORM_NAME           "STM32F030xx Entry Level Value Line devices"
+#elif defined(STM32F071xB)
+#define PLATFORM_NAME           "STM32F071xB Entry Level Medium Density devices"
+
+#elif defined(STM32F072xB)
+#define PLATFORM_NAME           "STM32F072xB Entry Level Medium Density devices"
+
+#elif defined(STM32F078xx)
+#define PLATFORM_NAME           "STM32F078xx Entry Level Medium Density devices"
+
+#elif defined(STM32F031x6)
+#define PLATFORM_NAME           "STM32F031x6 Entry Level Low Density devices"
+
+#elif defined(STM32F038xx)
+#define PLATFORM_NAME           "STM32F038xx Entry Level Low Density devices"
+
+#elif defined(STM32F042x6)
+#define PLATFORM_NAME           "STM32F042x6 Entry Level Low Density devices"
+
+#elif defined(STM32F048xx)
+#define PLATFORM_NAME           "STM32F048xx Entry Level Low Density devices"
+
+#elif defined(STM32F030x6)
+#define PLATFORM_NAME           "STM32F030x6 Entry Level Value Line devices"
+
+#elif defined(STM32F030x8)
+#define PLATFORM_NAME           "STM32F030x8 Entry Level Value Line devices"
 
 #else
 #error "STM32F0xx device not specified"
-#endif
-
-/**
- * @brief   Sub-family identifier.
- */
-#if !defined(STM32F0XX) || defined(__DOXYGEN__)
-#define STM32F0XX
 #endif
 /** @} */
 
