@@ -248,8 +248,16 @@
 #error "ADC1 not present in the selected device"
 #endif
 
+#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC1 && !STM32_HAS_ADC2
+#error "ADC2 not present in the selected device"
+#endif
+
 #if STM32_ADC_USE_ADC3 && !STM32_HAS_ADC3
 #error "ADC3 not present in the selected device"
+#endif
+
+#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC2 && !STM32_HAS_ADC4
+#error "ADC4 not present in the selected device"
 #endif
 
 #if !STM32_ADC_USE_ADC1 && !STM32_ADC_USE_ADC3

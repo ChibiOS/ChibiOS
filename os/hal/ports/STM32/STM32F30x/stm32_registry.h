@@ -65,7 +65,7 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             36
+#define STM32_EXTI_NUM_CHANNELS             34
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -687,7 +687,7 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             36
+#define STM32_EXTI_NUM_CHANNELS             34
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1149,7 +1149,7 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             36
+#define STM32_EXTI_NUM_CHANNELS             34
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
