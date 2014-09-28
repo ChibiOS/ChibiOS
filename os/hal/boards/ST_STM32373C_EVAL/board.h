@@ -43,7 +43,7 @@
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32F37X
+#define STM32F373xC
 
 /*
  * IO pins assignments.

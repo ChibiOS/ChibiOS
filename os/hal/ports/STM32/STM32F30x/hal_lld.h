@@ -57,28 +57,28 @@
 #if defined(STM32F301x8) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F301x8 Analog & DSP"
 
-#elif defined(STM32F302x8) || defined(__DOXYGEN__)
+#elif defined(STM32F302x8)
 #define PLATFORM_NAME           "STM32F302x8 Analog & DSP"
 
-#elif defined(STM32F302xC) || defined(__DOXYGEN__)
+#elif defined(STM32F302xC)
 #define PLATFORM_NAME           "STM32F302xC Analog & DSP"
 
-#elif defined(STM32F303x8) || defined(__DOXYGEN__)
+#elif defined(STM32F303x8)
 #define PLATFORM_NAME           "STM32F303x8 Analog & DSP"
 
-#elif defined(STM32F303xC) || defined(__DOXYGEN__)
+#elif defined(STM32F303xC)
 #define PLATFORM_NAME           "STM32F303xC Analog & DSP"
 
-#elif defined(STM32F318xx) || defined(__DOXYGEN__)
+#elif defined(STM32F318xx)
 #define PLATFORM_NAME           "STM32F318xx Analog & DSP"
 
-#elif defined(STM32F328xx) || defined(__DOXYGEN__)
+#elif defined(STM32F328xx)
 #define PLATFORM_NAME           "STM32F328xx Analog & DSP"
 
-#elif defined(STM32F334x8) || defined(__DOXYGEN__)
+#elif defined(STM32F334x8)
 #define PLATFORM_NAME           "STM32F334x8 Analog & DSP"
 
-#elif defined(STM32F358xx) || defined(__DOXYGEN__)
+#elif defined(STM32F358xx)
 #define PLATFORM_NAME           "STM32F358xx Analog & DSP"
 
 #else

@@ -26,7 +26,8 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F37X for Analog & DSP devices.
+ *          - STM32F373xC for Analog & DSP devices.
+ *          - STM32F378xx for Analog & DSP devices.
  *          .
  *
  * @addtogroup HAL
@@ -36,17 +37,23 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
-#include "stm32_registry.h"
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
 /**
- * @name    Platform identification
+ * @name    Platform identification macros
  * @{
  */
-#define PLATFORM_NAME           "STM32F37x Analog & DSP"
+#if defined(STM32F373xC) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32F373xC Analog & DSP"
+
+#elif defined(STM32F378xx)
+#define PLATFORM_NAME           "STM32F378xx Analog & DSP"
+
+#else
+#error "STM32F7x device not specified"
+#endif
 
 /**
  * @brief   Sub-family identifier.
@@ -976,6 +983,7 @@
 
 /* Various helpers.*/
 #include "nvic.h"
+#include "stm32_registry.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"
