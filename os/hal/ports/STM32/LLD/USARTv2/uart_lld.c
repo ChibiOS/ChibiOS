@@ -99,7 +99,7 @@ static uartflags_t translate_errors(uint32_t isr) {
     sts |= UART_FRAMING_ERROR;
   if (isr & USART_ISR_NE)
     sts |= UART_NOISE_ERROR;
-  if (isr & USART_ISR_LBD)
+  if (isr & USART_ISR_LBDF)
     sts |= UART_BREAK_DETECTED;
   return sts;
 }
@@ -270,8 +270,8 @@ static void serve_usart_irq(UARTDriver *uartp) {
   isr = u->ISR;
   u->ICR = isr;
 
-  if (isr & (USART_ISR_LBD | USART_ISR_ORE | USART_ISR_NE |
-             USART_ISR_FE  | USART_ISR_PE)) {
+  if (isr & (USART_ISR_LBDF | USART_ISR_ORE | USART_ISR_NE |
+             USART_ISR_FE   | USART_ISR_PE)) {
     if (uartp->config->rxerr_cb != NULL)
       uartp->config->rxerr_cb(uartp, translate_errors(isr));
   }

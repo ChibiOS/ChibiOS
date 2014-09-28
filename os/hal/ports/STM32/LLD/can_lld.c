@@ -30,6 +30,15 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/*
+ * Addressing differences in the headers, they seem unable to agree on names.
+ */
+#if STM32_CAN_USE_CAN1
+#if !defined(CAN1)
+#define CAN1 CAN
+#endif
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/

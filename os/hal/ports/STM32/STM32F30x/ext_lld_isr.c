@@ -358,7 +358,7 @@ void ext_lld_exti_irq_enable(void) {
 
   nvicEnableVector(EXTI0_IRQn, STM32_EXT_EXTI0_IRQ_PRIORITY);
   nvicEnableVector(EXTI1_IRQn, STM32_EXT_EXTI1_IRQ_PRIORITY);
-  nvicEnableVector(EXTI2_TS_IRQn, STM32_EXT_EXTI2_IRQ_PRIORITY);
+  nvicEnableVector(EXTI2_TSC_IRQn, STM32_EXT_EXTI2_IRQ_PRIORITY);
   nvicEnableVector(EXTI3_IRQn, STM32_EXT_EXTI3_IRQ_PRIORITY);
   nvicEnableVector(EXTI4_IRQn, STM32_EXT_EXTI4_IRQ_PRIORITY);
   nvicEnableVector(EXTI9_5_IRQn, STM32_EXT_EXTI5_9_IRQ_PRIORITY);
@@ -366,7 +366,7 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
   nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
   nvicEnableVector(USBWakeUp_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
-  nvicEnableVector(TAMPER_STAMP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
+  nvicEnableVector(TAMP_STAMP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
   nvicEnableVector(RTC_WKUP_IRQn, STM32_EXT_EXTI20_IRQ_PRIORITY);
   nvicEnableVector(COMP1_2_3_IRQn, STM32_EXT_EXTI21_22_29_IRQ_PRIORITY);
   nvicEnableVector(COMP4_5_6_IRQn, STM32_EXT_EXTI30_32_IRQ_PRIORITY);
@@ -382,7 +382,7 @@ void ext_lld_exti_irq_disable(void) {
 
   nvicDisableVector(EXTI0_IRQn);
   nvicDisableVector(EXTI1_IRQn);
-  nvicDisableVector(EXTI2_TS_IRQn);
+  nvicDisableVector(EXTI2_TSC_IRQn);
   nvicDisableVector(EXTI3_IRQn);
   nvicDisableVector(EXTI4_IRQn);
   nvicDisableVector(EXTI9_5_IRQn);
@@ -390,7 +390,7 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(PVD_IRQn);
   nvicDisableVector(RTC_Alarm_IRQn);
   nvicDisableVector(USBWakeUp_IRQn);
-  nvicDisableVector(TAMPER_STAMP_IRQn);
+  nvicDisableVector(TAMP_STAMP_IRQn);
   nvicDisableVector(RTC_WKUP_IRQn);
   nvicDisableVector(COMP1_2_3_IRQn);
   nvicDisableVector(COMP4_5_6_IRQn);
