@@ -1,10 +1,10 @@
-# List of the ChibiOS/NIL Cortex-M0 STM32F4xx port files.
+# List of the ChibiOS/NIL Cortex-M4 STM32F4xx port files.
 PORTSRC = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/crt0.c \
           $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/vectors.c \
           ${CHIBIOS}/os/nil/ports/ARMCMx/nilcore.c \
-          ${CHIBIOS}/os/nil/ports/ARMCMx/nilcore_v6m.c
+          ${CHIBIOS}/os/nil/ports/ARMCMx/nilcore_v7m.c
           
-PORTASM = $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/nilcoreasm_v6m.s
+PORTASM = $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/nilcoreasm_v7m.s
 
 PORTINC = ${CHIBIOS}/os/ext/CMSIS/include \
           ${CHIBIOS}/os/ext/CMSIS/ST \
