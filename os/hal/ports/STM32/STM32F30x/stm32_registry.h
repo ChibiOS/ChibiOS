@@ -25,6 +25,13 @@
 #ifndef _STM32_REGISTRY_H_
 #define _STM32_REGISTRY_H_
 
+/**
+ * @brief   Sub-family identifier.
+ */
+#if !defined(STM32F3XX) || defined(__DOXYGEN__)
+#define STM32F3XX
+#endif
+
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
 /*===========================================================================*/

@@ -84,13 +84,6 @@
 #else
 #error "STM32F3xx device not specified"
 #endif
-
-/**
- * @brief   Sub-family identifier.
- */
-#if !defined(STM32F3XX) || defined(__DOXYGEN__)
-#define STM32F3XX
-#endif
 /** @} */
 
 /**
