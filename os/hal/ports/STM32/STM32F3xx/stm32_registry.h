@@ -1287,11 +1287,10 @@
 #define STM32_HAS_OTG2                      FALSE
 #endif /* defined(STM32F358xC) */
 
-
 /*===========================================================================*/
 /* STM32F334xC.                                                              */
 /*===========================================================================*/
-#if defined(STM32F334xC) || defined(__DOXYGEN__)
+#if defined(STM32F334x8) || defined(__DOXYGEN__)
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_HAS_ADC2                      TRUE
@@ -1435,7 +1434,7 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
-#endif /* defined(STM32F334xC) */
+#endif /* defined(STM32F334x8) */
 
 /** @} */
 

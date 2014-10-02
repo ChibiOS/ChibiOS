@@ -122,8 +122,10 @@ void hal_lld_init(void) {
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE);
 
+#if STM32_HAS_USB
   /* USB IRQ relocated to not conflict with CAN.*/
   SYSCFG->CFGR1 |= SYSCFG_CFGR1_USB_IT_RMP;
+#endif
 }
 
 /**
