@@ -15,7 +15,7 @@
 */
 
 /*
- * STM32F30x drivers configuration.
+ * STM32F3xx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -28,7 +28,7 @@
  * 0...3        Lowest...Highest.
  */
 
-#define STM32F30x_MCUCONF
+#define STM32F3xx_MCUCONF
 
 /*
  * HAL driver system settings.

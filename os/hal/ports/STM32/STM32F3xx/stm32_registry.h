@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32F30x/stm32_registry.h
- * @brief   STM32F30x capabilities registry.
+ * @file    STM32F3xx/stm32_registry.h
+ * @brief   STM32F3xx capabilities registry.
  *
  * @addtogroup HAL
  * @{

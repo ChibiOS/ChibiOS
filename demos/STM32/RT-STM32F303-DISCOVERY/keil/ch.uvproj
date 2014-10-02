@@ -19,7 +19,7 @@
           <StartupFile></StartupFile>
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F3xx_256 -FS08000000 -FL040000 -FP0($$Device:STM32F303VC$Flash\STM32F3xx_256.FLM))</FlashDriverDll>
           <DeviceId>6331</DeviceId>
-          <RegisterFile>$$Device:STM32F303VC$Device\Include\STM32F30x.h</RegisterFile>
+          <RegisterFile>$$Device:STM32F303VC$Device\Include\STM32F3xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -29,7 +29,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32F303VC$SVD\STM32F30x.svd</SFDFile>
+          <SFDFile>$$Device:STM32F303VC$SVD\STM32F3xx.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -357,7 +357,7 @@
               <MiscControls>--c99</MiscControls>
               <Define>CORTEX_USE_FPU=1 __heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_IRAM2$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x;..\..\..\..\os\ext\CMSIS\include;..\..\..\..\os\ext\CMSIS\ST;..\..\..\..\os\rt\ports\ARMCMx;..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F30x;..\..\..\..\os\hal\ports\STM32\LLD;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\test</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx;..\..\..\..\os\ext\CMSIS\include;..\..\..\..\os\ext\CMSIS\ST;..\..\..\..\os\rt\ports\ARMCMx;..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -373,7 +373,7 @@
               <MiscControls>--cpreproc</MiscControls>
               <Define>CORTEX_USE_FPU=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x;..\..\..\..\os\rt\ports\ARMCMx</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx;..\..\..\..\os\rt\ports\ARMCMx</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -401,7 +401,7 @@
             <File>
               <FileName>cmparams.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x\cmparams.h</FilePath>
+              <FilePath>..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx\cmparams.h</FilePath>
             </File>
             <File>
               <FileName>cstartup.s</FileName>
@@ -439,9 +439,9 @@
               <FilePath>..\..\..\..\os\ext\CMSIS\include\core_cmFunc.h</FilePath>
             </File>
             <File>
-              <FileName>system_stm32f30x.h</FileName>
+              <FileName>system_stm32f3xx.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\ext\CMSIS\ST\system_stm32f30x.h</FilePath>
+              <FilePath>..\..\..\..\os\ext\CMSIS\ST\system_stm32f3xx.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -716,57 +716,57 @@
             <File>
               <FileName>adc_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\adc_lld.c</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\adc_lld.c</FilePath>
             </File>
             <File>
               <FileName>adc_lld.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\adc_lld.h</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\adc_lld.h</FilePath>
             </File>
             <File>
               <FileName>ext_lld_isr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\ext_lld_isr.c</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\ext_lld_isr.c</FilePath>
             </File>
             <File>
               <FileName>ext_lld_isr.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\ext_lld_isr.h</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\ext_lld_isr.h</FilePath>
             </File>
             <File>
               <FileName>hal_lld.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\hal_lld.c</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_lld.c</FilePath>
             </File>
             <File>
               <FileName>hal_lld.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\hal_lld.h</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_lld.h</FilePath>
             </File>
             <File>
               <FileName>stm32_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_dma.c</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_dma.c</FilePath>
             </File>
             <File>
               <FileName>stm32_dma.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_dma.h</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_dma.h</FilePath>
             </File>
             <File>
               <FileName>stm32_isr.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_isr.h</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_isr.h</FilePath>
             </File>
             <File>
               <FileName>stm32_rcc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_rcc.h</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_rcc.h</FilePath>
             </File>
             <File>
               <FileName>stm32_registry.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_registry.h</FilePath>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_registry.h</FilePath>
             </File>
             <File>
               <FileName>can_lld.c</FileName>

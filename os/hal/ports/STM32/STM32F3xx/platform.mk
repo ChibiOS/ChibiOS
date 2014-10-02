@@ -1,9 +1,9 @@
-# List of all the STM32F30x platform files.
+# List of all the STM32F3xx platform files.
 PLATFORMSRC = ${CHIBIOS}/os/hal/ports/common/ARMCMx/nvic.c \
-              ${CHIBIOS}/os/hal/ports/STM32/STM32F30x/stm32_dma.c \
-              ${CHIBIOS}/os/hal/ports/STM32/STM32F30x/hal_lld.c \
-              ${CHIBIOS}/os/hal/ports/STM32/STM32F30x/adc_lld.c \
-              ${CHIBIOS}/os/hal/ports/STM32/STM32F30x/ext_lld_isr.c \
+              ${CHIBIOS}/os/hal/ports/STM32/STM32F3xx/stm32_dma.c \
+              ${CHIBIOS}/os/hal/ports/STM32/STM32F3xx/hal_lld.c \
+              ${CHIBIOS}/os/hal/ports/STM32/STM32F3xx/adc_lld.c \
+              ${CHIBIOS}/os/hal/ports/STM32/STM32F3xx/ext_lld_isr.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/can_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/ext_lld.c \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/GPIOv2/pal_lld.c \
@@ -20,7 +20,7 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/ports/common/ARMCMx/nvic.c \
 
 # Required include directories
 PLATFORMINC = ${CHIBIOS}/os/hal/ports/common/ARMCMx \
-              ${CHIBIOS}/os/hal/ports/STM32/STM32F30x \
+              ${CHIBIOS}/os/hal/ports/STM32/STM32F3xx \
               ${CHIBIOS}/os/hal/ports/STM32/LLD \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/GPIOv2 \
               ${CHIBIOS}/os/hal/ports/STM32/LLD/I2Cv2 \

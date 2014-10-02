@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32F30x/hal_lld.h
- * @brief   STM32F30x HAL subsystem low level driver header.
+ * @file    STM32F3xx/hal_lld.h
+ * @brief   STM32F3xx HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
@@ -546,8 +546,8 @@
 /*
  * Configuration-related checks.
  */
-#if !defined(STM32F30x_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32F30x_MCUCONF not defined"
+#if !defined(STM32F3xx_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32F3xx_MCUCONF not defined"
 #endif
 
 /*

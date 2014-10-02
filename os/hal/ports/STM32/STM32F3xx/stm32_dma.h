@@ -15,13 +15,13 @@
 */
 
 /**
- * @file    STM32F30x/stm32_dma.h
+ * @file    STM32F3xx/stm32_dma.h
  * @brief   DMA helper driver header.
  * @note    This file requires definitions from the ST header file stm32f30x.h.
  * @note    This driver uses the new naming convention used for the STM32F2xx
  *          so the "DMA channels" are referred as "DMA streams".
  *
- * @addtogroup STM32F30x_DMA
+ * @addtogroup STM32F3xx_DMA
  * @{
  */
 

@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    STM32F30x/stm32_dma.c
+ * @file    STM32F3xx/stm32_dma.c
  * @brief   DMA helper driver code.
  *
- * @addtogroup STM32F30x_DMA
+ * @addtogroup STM32F3xx_DMA
  * @details DMA sharing helper driver. In the STM32 the DMA streams are a
  *          shared resource, this driver allows to allocate and free DMA
  *          streams at runtime in order to allow all the other device

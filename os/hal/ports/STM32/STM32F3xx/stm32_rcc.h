@@ -15,12 +15,12 @@
 */
 
 /**
- * @file    STM32F30x/stm32_rcc.h
+ * @file    STM32F3xx/stm32_rcc.h
  * @brief   RCC helper driver header.
  * @note    This file requires definitions from the ST header file
  *          @p stm32f30x.h.
  *
- * @addtogroup STM32F30x_RCC
+ * @addtogroup STM32F3xx_RCC
  * @{
  */
 

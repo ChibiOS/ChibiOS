@@ -302,7 +302,7 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\include</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx</state>
@@ -312,7 +312,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\include</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\common\ARMCMx</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2</state>
@@ -571,7 +571,7 @@
         <option>
           <name>AUserIncludes</name>
           <state>$PROJ_DIR$\..</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx</state>
         </option>
         <option>
@@ -1256,7 +1256,7 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\include</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx</state>
@@ -1266,7 +1266,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\include</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\common\ARMCMx</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2</state>
@@ -1525,7 +1525,7 @@
         <option>
           <name>AUserIncludes</name>
           <state>$PROJ_DIR$\..</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx</state>
         </option>
         <option>
@@ -1920,7 +1920,7 @@
       <group>
         <name>ports</name>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F30x\cmparams.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx\cmparams.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\compilers\IAR\cstartup.s</name>
@@ -1947,10 +1947,10 @@
           <name>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\include\core_cmInstr.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST\stm32f30x.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST\stm32f3xx.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST\system_stm32f30x.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST\system_stm32f3xx.h</name>
         </file>
       </group>
     </group>
@@ -2037,10 +2037,10 @@
       <group>
         <name>port</name>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\adc_lld.c</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\adc_lld.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\adc_lld.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\adc_lld.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\can_lld.c</name>
@@ -2055,10 +2055,10 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\ext_lld.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\ext_lld_isr.c</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\ext_lld_isr.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\ext_lld_isr.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\ext_lld_isr.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\gpt_lld.c</name>
@@ -2067,10 +2067,10 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\gpt_lld.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\hal_lld.c</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_lld.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\hal_lld.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_lld.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2\i2c_lld.c</name>
@@ -2127,19 +2127,19 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\st_lld.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_dma.c</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_dma.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_dma.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_dma.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_isr.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_isr.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_rcc.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_rcc.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F30x\stm32_registry.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_registry.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\stm32_tim.h</name>
