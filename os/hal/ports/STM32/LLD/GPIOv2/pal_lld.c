@@ -36,14 +36,8 @@
                          RCC_AHBENR_GPIOEEN | RCC_AHBENR_GPIOHEN)
 #define AHB_LPEN_MASK   AHB_EN_MASK
 
-#elif defined(STM32F030) || defined(STM32F0XX_MD)
-#define AHB_EN_MASK     (RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN |          \
-                         RCC_AHBENR_GPIOCEN | RCC_AHBENR_GPIODEN |          \
-                         RCC_AHBENR_GPIOFEN)
-
-#elif defined(STM32F0XX_LD)
-#define AHB_EN_MASK     (RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN |          \
-                         RCC_AHBENR_GPIOCEN | RCC_AHBENR_GPIOFEN)
+#elif defined(STM32F0XX)
+#define AHB_EN_MASK     STM32_GPIO_EN_MASK
 
 #elif defined(STM32F3XX) || defined(STM32F37X)
 #define AHB_EN_MASK     STM32_GPIO_EN_MASK
