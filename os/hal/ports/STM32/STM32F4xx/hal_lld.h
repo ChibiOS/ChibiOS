@@ -41,6 +41,8 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
+#include "stm32_registry.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -56,60 +58,42 @@
  */
 #if defined(STM32F439xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F439 High Performance with DSP and FPU"
-#define STM32F429_439xx
 
 #elif defined(STM32F429xx)
 #define PLATFORM_NAME           "STM32F429 High Performance with DSP and FPU"
-#define STM32F429_439xx
 
 #elif defined(STM32F437xx)
 #define PLATFORM_NAME           "STM32F437 High Performance with DSP and FPU"
-#define STM32F427_437xx
 
 #elif defined(STM32F427xx)
 #define PLATFORM_NAME           "STM32F427 High Performance with DSP and FPU"
-#define STM32F427_437xx
 
 #elif defined(STM32F405xx)
 #define PLATFORM_NAME           "STM32F405 High Performance with DSP and FPU"
-#define STM32F40_41xxx
 
 #elif defined(STM32F415xx)
 #define PLATFORM_NAME           "STM32F415 High Performance with DSP and FPU"
-#define STM32F40_41xxx
 
 #elif defined(STM32F407xx)
 #define PLATFORM_NAME           "STM32F407 High Performance with DSP and FPU"
-#define STM32F40_41xxx
 
 #elif defined(STM32F417xx)
 #define PLATFORM_NAME           "STM32F417 High Performance with DSP and FPU"
-#define STM32F40_41xxx
 
 #elif defined(STM32F401xC)
 #define PLATFORM_NAME           "STM32F401xC High Performance with DSP and FPU"
-#define STM32F401xx
 
 #elif defined(STM32F401xE)
 #define PLATFORM_NAME           "STM32F401xE High Performance with DSP and FPU"
-#define STM32F401xx
 
 #elif defined(STM32F411xE)
 #define PLATFORM_NAME           "STM32F411xE High Performance with DSP and FPU"
-#define STM32F411xx
 
 #elif defined(STM32F2XX)
 #define PLATFORM_NAME           "STM32F2xx High Performance"
 
 #else
 #error "STM32F2xx/F4xx device not specified"
-#endif
-
-/**
- * @brief   Sub-family identifier.
- */
-#if !defined(STM32F4XX) || defined(__DOXYGEN__)
-#define STM32F4XX
 #endif
 /** @} */
 
@@ -1417,7 +1401,6 @@
 
 /* Various helpers.*/
 #include "nvic.h"
-#include "stm32_registry.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_rcc.h"
