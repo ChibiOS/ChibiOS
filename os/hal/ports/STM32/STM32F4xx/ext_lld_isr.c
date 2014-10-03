@@ -223,7 +223,7 @@ OSAL_IRQ_HANDLER(VectorE8) {
   OSAL_IRQ_EPILOGUE();
 }
 
-#if !defined(STM32F401xx) && !defined(STM32F411xx)
+#if STM32_HAS_ETH
 /**
  * @brief   EXTI[19] interrupt handler (ETH_WKUP).
  *
@@ -238,7 +238,9 @@ OSAL_IRQ_HANDLER(Vector138) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* STM32_HAS_ETH */
 
+#if STM32_HAS_OTG2
 /**
  * @brief   EXTI[20] interrupt handler (OTG_HS_WKUP).
  *
@@ -253,7 +255,7 @@ OSAL_IRQ_HANDLER(Vector170) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* !defined(STM32F401xx) && !defined(STM32F411xx) */
+#endif /* STM32_HAS_OTG2 */
 
 #if !defined(STM32F401xx)
 /**
@@ -308,10 +310,12 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
   nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
   nvicEnableVector(OTG_FS_WKUP_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
-#if !defined(STM32F401xx) && !defined(STM32F411xx)
+#if STM32_HAS_ETH
   nvicEnableVector(ETH_WKUP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
+#endif
+#if STM32_HAS_OTG2
   nvicEnableVector(OTG_HS_WKUP_IRQn, STM32_EXT_EXTI20_IRQ_PRIORITY);
-#endif /* !defined(STM32F401xx) && !defined(STM32F411xx) */
+#endif
 #if !defined(STM32F401xx)
   nvicEnableVector(TAMP_STAMP_IRQn, STM32_EXT_EXTI21_IRQ_PRIORITY);
 #endif /* !defined(STM32F401xx) */
@@ -335,10 +339,12 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(PVD_IRQn);
   nvicDisableVector(RTC_Alarm_IRQn);
   nvicDisableVector(OTG_FS_WKUP_IRQn);
-#if !defined(STM32F401xx) && !defined(STM32F411xx)
+#if STM32_HAS_ETH
   nvicDisableVector(ETH_WKUP_IRQn);
+#endif
+#if STM32_HAS_OTG2
   nvicDisableVector(OTG_HS_WKUP_IRQn);
-#endif /* !defined(STM32F401xx) && !defined(STM32F411xx) */
+#endif
 #if !defined(STM32F401xx)
   nvicDisableVector(TAMP_STAMP_IRQn);
 #endif /* !defined(STM32F401xx) */
