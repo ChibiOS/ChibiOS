@@ -374,7 +374,11 @@
 #define STM32_HAS_DMA2                      TRUE
 
 /* ETH attributes.*/
+#if defined(STM32F405xx) || defined(STM32F415xx)
+#define STM32_HAS_ETH                       FALSE
+#else
 #define STM32_HAS_ETH                       TRUE
+#endif
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_CHANNELS             23
