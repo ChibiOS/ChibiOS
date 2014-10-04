@@ -202,7 +202,7 @@ extern "C" {
                                  MACReceiveDescriptor *rdp,
                                  systime_t time);
   void macReleaseReceiveDescriptor(MACReceiveDescriptor *rdp);
-  bool_t macPollLinkStatus(MACDriver *macp);
+  bool macPollLinkStatus(MACDriver *macp);
 #ifdef __cplusplus
 }
 #endif

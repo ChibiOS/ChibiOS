@@ -216,7 +216,7 @@ void mac_lld_init(void) {
   unsigned i;
 
   macObjectInit(&ETHD1);
-  ETHD1.link_up = FALSE;
+  ETHD1.link_up = false;
 
   /* Descriptor tables are initialized in chained mode, note that the first
      word is not initialized here but in mac_lld_start().*/
@@ -252,7 +252,7 @@ void mac_lld_init(void) {
   rccResetETH();
 
   /* MAC clocks temporary activation.*/
-  rccEnableETH(FALSE);
+  rccEnableETH(false);
 
   /* PHY address setup.*/
 #if defined(BOARD_PHY_ADDRESS)
@@ -280,7 +280,7 @@ void mac_lld_init(void) {
 #endif
 
   /* MAC clocks stopped again.*/
-  rccDisableETH(FALSE);
+  rccDisableETH(false);
 }
 
 /**
@@ -302,7 +302,7 @@ void mac_lld_start(MACDriver *macp) {
   macp->txptr = (stm32_eth_tx_descriptor_t *)td;
 
   /* MAC clocks activation and commanded reset procedure.*/
-  rccEnableETH(FALSE);
+  rccEnableETH(false);
 #if defined(STM32_MAC_DMABMR_SR)
   ETH->DMABMR |= ETH_DMABMR_SR;
   while(ETH->DMABMR & ETH_DMABMR_SR)
@@ -381,7 +381,7 @@ void mac_lld_stop(MACDriver *macp) {
     ETH->DMASR    = ETH->DMASR;
 
     /* MAC clocks stopped.*/
-    rccDisableETH(FALSE);
+    rccDisableETH(false);
 
     /* ISR vector disabled.*/
     nvicDisableVector(ETH_IRQn);
@@ -549,12 +549,12 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @return              The link status.
- * @retval TRUE         if the link is active.
- * @retval FALSE        if the link is down.
+ * @retval true         if the link is active.
+ * @retval false        if the link is down.
  *
  * @notapi
  */
-bool_t mac_lld_poll_link_status(MACDriver *macp) {
+bool mac_lld_poll_link_status(MACDriver *macp) {
   uint32_t maccr, bmsr, bmcr;
 
   maccr = ETH->MACCR;
@@ -571,7 +571,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
     /* Auto-negotiation must be finished without faults and link established.*/
     if ((bmsr & (BMSR_LSTATUS | BMSR_RFAULT | BMSR_ANEGCOMPLETE)) !=
         (BMSR_LSTATUS | BMSR_ANEGCOMPLETE))
-      return macp->link_up = FALSE;
+      return macp->link_up = false;
 
     /* Auto-negotiation enabled, checks the LPA register.*/
     lpa = mii_read(macp, MII_LPA);
@@ -591,7 +591,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   else {
     /* Link must be established.*/
     if (!(bmsr & BMSR_LSTATUS))
-      return macp->link_up = FALSE;
+      return macp->link_up = false;
 
     /* Check on link speed.*/
     if (bmcr & BMCR_SPEED100)
@@ -610,7 +610,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
   ETH->MACCR = maccr;
 
   /* Returns the link status.*/
-  return macp->link_up = TRUE;
+  return macp->link_up = true;
 }
 
 /**

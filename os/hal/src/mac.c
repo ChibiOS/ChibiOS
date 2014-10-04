@@ -250,12 +250,12 @@ void macReleaseReceiveDescriptor(MACReceiveDescriptor *rdp) {
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @return              The link status.
- * @retval TRUE         if the link is active.
- * @retval FALSE        if the link is down.
+ * @retval true         if the link is active.
+ * @retval false        if the link is down.
  *
  * @api
  */
-bool_t macPollLinkStatus(MACDriver *macp) {
+bool macPollLinkStatus(MACDriver *macp) {
 
   osalDbgCheck(macp != NULL);
   osalDbgAssert(macp->state == MAC_ACTIVE, "not active");

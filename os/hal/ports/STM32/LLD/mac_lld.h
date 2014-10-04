@@ -260,7 +260,7 @@ struct MACDriver {
   /**
    * @brief Link status flag.
    */
-  bool_t                link_up;
+  bool                  link_up;
   /**
    * @brief PHY address (pre shifted).
    */
@@ -339,7 +339,7 @@ extern "C" {
   msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
                                        MACReceiveDescriptor *rdp);
   void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp);
-  bool_t mac_lld_poll_link_status(MACDriver *macp);
+  bool mac_lld_poll_link_status(MACDriver *macp);
   size_t mac_lld_write_transmit_descriptor(MACTransmitDescriptor *tdp,
                                            uint8_t *buf,
                                            size_t size);
