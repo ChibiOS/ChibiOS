@@ -180,7 +180,7 @@ extern "C" {
   void rtcInit(void);
   void rtcSetTime(RTCDriver *rtcp, const RTCDateTime *timespec);
   void rtcGetTime(RTCDriver *rtcp, RTCDateTime *timespec);
-#if STM32_RTC_NUM_ALARMS > 0
+#if RTC_ALARMS > 0
   void rtcSetAlarm(RTCDriver *rtcp,
                    rtcalarm_t alarm,
                    const RTCAlarm *alarmspec);

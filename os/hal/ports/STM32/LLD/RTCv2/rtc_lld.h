@@ -41,6 +41,11 @@
 #define RTC_SUPPORTS_CALLBACKS      STM32_RTC_HAS_INTERRUPTS
 
 /**
+ * @brief   Number of alarms available.
+ */
+#define RTC_ALARMS                  STM32_RTC_NUM_ALARMS
+
+/**
  * @brief   RTC PRER register initializer.
  */
 #define RTC_PRER(a, s)              ((((a) - 1) << 16) | ((s) - 1))
@@ -173,7 +178,7 @@ extern "C" {
   void rtc_lld_init(void);
   void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec);
   void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec);
-#if STM32_RTC_NUM_ALARMS > 0
+#if RTC_ALARMS > 0
   void rtc_lld_set_alarm(RTCDriver *rtcp,
                          rtcalarm_t alarm,
                          const RTCAlarm *alarmspec);

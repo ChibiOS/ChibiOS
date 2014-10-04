@@ -302,7 +302,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
   rtc_decode_date(rtcp->rtc->DR, timespec);
 }
 
-#if (STM32_RTC_NUM_ALARMS > 0) || defined(__DOXYGEN__)
+#if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
 /**
  * @brief     Set alarm time.
  *
@@ -333,7 +333,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
       rtcp->rtc->CR &= ~RTC_CR_ALRAE;
     }
   }
-#if STM32_RTC_NUM_ALARMS > 1
+#if RTC_ALARMS > 1
   else {
     if (alarmspec != NULL) {
       rtcp->rtc->CR &= ~RTC_CR_ALRBE;
@@ -348,7 +348,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
       rtcp->rtc->CR &= ~RTC_CR_ALRBE;
     }
   }
-#endif /* STM32_RTC_NUM_ALARMS > 1 */
+#endif /* RTC_ALARMS > 1 */
 }
 
 /**
@@ -365,12 +365,12 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
                        RTCAlarm *alarmspec) {
   if (alarm == 1)
     alarmspec->alrmr = rtcp->rtc->ALRMAR;
-#if STM32_RTC_NUM_ALARMS > 1
+#if RTC_ALARMS > 1
   else
     alarmspec->alrmr = rtcp->rtc->ALRMBR;
-#endif /* STM32_RTC_NUM_ALARMS > 1 */
+#endif /* RTC_ALARMS > 1 */
 }
-#endif /* STM32_RTC_NUM_ALARMS > 0 */
+#endif /* RTC_ALARMS > 0 */
 
 
 #if STM32_RTC_HAS_PERIODIC_WAKEUPS || defined(__DOXYGEN__)
