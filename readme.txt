@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.7 ***
+- FIX: Fixed chsnprintf sometimes doesn't terminate str (bug #538).
 - FIX: Fixed wrong wait states for STM32F401 (bug #537).
 
 *** 2.6.6 ***
