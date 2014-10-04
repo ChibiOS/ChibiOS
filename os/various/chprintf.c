@@ -290,8 +290,9 @@ int chsnprintf(char *str, size_t size, const char *fmt, ...) {
   MemoryStream ms;
   BaseSequentialStream *chp;
 
-  /* Memory stream object to be used as a string writer.*/
-  msObjectInit(&ms, (uint8_t *)str, size, 0);
+  /* Memory stream object to be used as a string writer, reserving one
+     byte for the final zero.*/
+  msObjectInit(&ms, (uint8_t *)str, size - 1, 0);
 
   /* Performing the print operation using the common code.*/
   chp = (BaseSequentialStream *)&ms;
@@ -300,8 +301,8 @@ int chsnprintf(char *str, size_t size, const char *fmt, ...) {
   va_end(ap);
 
   /* Final zero and size return.*/
-  chSequentialStreamPut(chp, 0);
-  return ms.eos - 1;
+  str[ms.eos] = 0;
+  return ms.eos;
 }
 
 /** @} */
