@@ -32,7 +32,7 @@
 #include "memstreams.h"
 
 #define MAX_FILLER 11
-#define FLOAT_PRECISION 100000
+#define FLOAT_PRECISION 5
 
 static char *long_to_string_with_divisor(char *p,
                                          long num,
@@ -73,9 +73,16 @@ static char *ltoa(char *p, long num, unsigned radix) {
 }
 
 #if CHPRINTF_USE_FLOAT
-static char *ftoa(char *p, double num) {
+static long pow10[] = {10, 100, 1000, 10000, 100000, 1000000, 10000000,
+                       100000000, 1000000000, 10000000000, 100000000000,
+                       1000000000000, 10000000000000};
+
+static char *ftoa(char *p, double num, unsigned long precision) {
   long l;
-  unsigned long precision = FLOAT_PRECISION;
+
+  if (precision == 0)
+    precision = FLOAT_PRECISION;
+  precision = pow10[precision - 1];
 
   l = (long)num;
   p = long_to_string_with_divisor(p, l, 10, 0);
@@ -137,7 +144,7 @@ void chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
       left_align = TRUE;
     }
     filler = ' ';
-    if ((*fmt == '.') || (*fmt == '0')) {
+    if (*fmt == '0') {
       fmt++;
       filler = '0';
     }
@@ -211,7 +218,7 @@ void chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
         *p++ = '-';
         f = -f;
       }
-      p = ftoa(p, f);
+      p = ftoa(p, f, precision);
       break;
 #endif
     case 'X':
@@ -290,8 +297,9 @@ int chsnprintf(char *str, size_t size, const char *fmt, ...) {
   MemoryStream ms;
   BaseSequentialStream *chp;
 
-  /* Memory stream object to be used as a string writer.*/
-  msObjectInit(&ms, (uint8_t *)str, size, 0);
+  /* Memory stream object to be used as a string writer, reserving one
+     byte for the final zero.*/
+  msObjectInit(&ms, (uint8_t *)str, size - 1, 0);
 
   /* Performing the print operation using the common code.*/
   chp = (BaseSequentialStream *)&ms;
@@ -300,8 +308,8 @@ int chsnprintf(char *str, size_t size, const char *fmt, ...) {
   va_end(ap);
 
   /* Final zero and size return.*/
-  chSequentialStreamPut(chp, 0);
-  return ms.eos - 1;
+  str[ms.eos] = 0;
+  return ms.eos;
 }
 
 /** @} */
