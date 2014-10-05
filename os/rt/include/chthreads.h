@@ -277,25 +277,6 @@ static inline thread_t *chThdGetSelfX(void) {
   return ch.rlist.r_current;
 }
 
-#if !CH_CFG_NO_IDLE_THREAD || defined(__DOXYGEN__)
-/**
- * @brief   Returns a pointer to the idle thread.
- * @pre     In order to use this function the option @p CH_CFG_NO_IDLE_THREAD
- *          must be disabled.
- * @note    The reference counter of the idle thread is not incremented but
- *          it is not strictly required being the idle thread a static
- *          object.
- *
- * @return              Pointer to the idle thread.
- *
- * @xclass
- */
-static inline thread_t *chThdGetIdleX(void) {
-
-  return ch.rlist.r_queue.p_prev;
-}
-#endif /* !CH_CFG_NO_IDLE_THREAD */
-
 /**
  * @brief   Returns the current thread priority.
  * @note    Can be invoked in any context.
