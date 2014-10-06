@@ -109,6 +109,39 @@ osStatus osKernelStart(void) {
 }
 
 /**
+ * @brief   Creates a thread.
+ */
+osThreadId osThreadCreate (osThreadDef_t *thread_def, void *argument) {
+  size_t size;
+
+  size = thread_def->stacksize == 0 ? CMSIS_CFG_DEFAULT_STACK :
+                                      thread_def->stacksize;
+  return (osThreadId)chThdCreateFromHeap(0,
+                                         THD_WORKING_AREA_SIZE(size),
+                                         NORMALPRIO+thread_def->tpriority,
+                                         (tfunc_t)thread_def->pthread,
+                                         argument);
+}
+
+/**
+ * @brief   Thread termination.
+ * @note    The thread is not really terminated but asked to terminate which
+ *          is not compliant.
+ */
+osStatus osThreadTerminate(osThreadId thread_id) {
+
+  if (thread_id == osThreadGetId()) {
+    /* Note, no memory will be recovered unless a cleaner thread is
+       implemented using the registry.*/
+    chThdExit(0);
+  }
+  chThdTerminate(thread_id);
+  chThdWait((thread_t *)thread_id);
+
+  return osOK;
+}
+
+/**
  * @brief   Change thread priority.
  * @note    This can interfere with the priority inheritance mechanism.
  */

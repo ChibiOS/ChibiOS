@@ -86,6 +86,13 @@
 /**
  * @brief   Number of pre-allocated static semaphores/mutexes.
  */
+#if !defined(CMSIS_CFG_DEFAULT_STACK)
+#define CMSIS_CFG_DEFAULT_STACK     256
+#endif
+
+/**
+ * @brief   Number of pre-allocated static semaphores/mutexes.
+ */
 #if !defined(CMSIS_CFG_NUM_SEMAPHORES)
 #define CMSIS_CFG_NUM_SEMAPHORES    4
 #endif
@@ -340,6 +347,8 @@ extern "C" {
 #endif
   osStatus osKernelInitialize(void);
   osStatus osKernelStart(void);
+  osThreadId osThreadCreate (osThreadDef_t *thread_def, void *argument);
+  osStatus osThreadTerminate (osThreadId thread_id);
   osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio);
   /*osEvent osWait(uint32_t millisec);*/
   osTimerId osTimerCreate (const osTimerDef_t *timer_def,
@@ -385,36 +394,11 @@ static inline uint32_t osKernelSysTick(void) {
 }
 
 /**
- * @brief   Creates a thread.
- */
-static inline osThreadId osThreadCreate (osThreadDef_t *thread_def,
-                                         void *argument) {
-
-  return (osThreadId)chThdCreateFromHeap(0,
-                                         THD_WORKING_AREA_SIZE(thread_def->stacksize),
-                                         NORMALPRIO+thread_def->tpriority,
-                                         (tfunc_t)thread_def->pthread,
-                                         argument);
-}
-
-/**
  * @brief   Returns the current thread.
  */
 static inline osThreadId osThreadGetId(void) {
 
   return (osThreadId)chThdGetSelfX();
-}
-
-/**
- * @brief   Thread termination.
- * @note    The thread is not really terminated but asked to terminate which
- *          is not compliant.
- */
-static inline osStatus osThreadTerminate(osThreadId thread_id) {
-
-  chThdTerminate(thread_id);
-
-  return osOK;
 }
 
 /**
