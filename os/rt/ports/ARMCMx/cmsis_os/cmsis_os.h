@@ -83,9 +83,35 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of pre-allocated static semaphores/mutexes.
+ */
+#if !defined(CMSIS_CFG_NUM_SEMAPHORES)
+#define CMSIS_CFG_NUM_SEMAPHORES    4
+#endif
+
+/**
+ * @brief   Number of pre-allocated static timers.
+ */
+#if !defined(CMSIS_CFG_NUM_TIMERS)
+#define CMSIS_CFG_NUM_TIMERS        4
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !CH_CFG_USE_MEMPOOLS
+#error "CMSIS RTOS requires CH_CFG_USE_MEMPOOLS"
+#endif
+
+#if !CH_CFG_USE_SEMAPHORES
+#error "CMSIS RTOS requires CH_CFG_USE_SEMAPHORES"
+#endif
+
+#if !CH_CFG_USE_DYNAMIC
+#error "CMSIS RTOS requires CH_CFG_USE_DYNAMIC"
+#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -130,8 +156,8 @@ typedef enum {
  * @brief   Type of a timer mode.
  */
 typedef enum  {
-  osTimerOnce               =   0,
-  osTimerPeriodic           =   1
+  osTimerOnce               = 0,
+  osTimerPeriodic           = 1
 } os_timer_type;
 
 /**
@@ -147,22 +173,28 @@ typedef void (*os_ptimer) (void const *argument);
 /**
  * @brief   Type of pointer to thread control block.
  */
-typedef struct os_thread_cb *osThreadId;
+typedef thread_t *osThreadId;
 
 /**
  * @brief   Type of pointer to timer control block.
  */
-typedef struct os_timer_cb *osTimerId;
+typedef struct os_timer_cb {
+  virtual_timer_t           vt;
+  os_timer_type             type;
+  os_ptimer                 ptimer;
+  void                      *argument;
+  uint32_t                  millisec;
+} *osTimerId;
 
 /**
  * @brief   Type of pointer to mutex control block.
  */
-typedef struct os_mutex_cb *osMutexId;
+typedef binary_semaphore_t *osMutexId;
 
 /**
  * @brief   Type of pointer to semaphore control block.
  */
-typedef struct os_semaphore_cb *osSemaphoreId;
+typedef semaphore_t *osSemaphoreId;
 
 /**
  * @brief   Type of a thread definition block.
@@ -280,13 +312,25 @@ const osTimerDef_t os_timer_def_##name = {                                  \
 #ifdef __cplusplus
 extern "C" {
 #endif
-  osThreadId osThreadGetId(void);
-  osStatus osThreadTerminate(osThreadId thread_id);
-  osStatus osThreadYield(void);
-  osStatus osThreadSetPriority(osThreadId thread_id, osPriority priority);
-  osPriority osThreadGetPriority(osThreadId thread_id);
-  osStatus osDelay(uint32_t millisec);
+  osStatus osKernelInitialize(void);
+  osStatus osKernelStart(void);
+  osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio);
   /*osEvent osWait(uint32_t millisec);*/
+  osTimerId osTimerCreate (const osTimerDef_t *timer_def,
+                           os_timer_type type,
+                           void *argument);
+  osStatus osTimerStart (osTimerId timer_id, uint32_t millisec);
+  osStatus osTimerStop (osTimerId timer_id);
+  osStatus osTimerDelete (osTimerId timer_id);
+  osSemaphoreId osSemaphoreCreate (const osSemaphoreDef_t *semaphore_def,
+                                   int32_t count);
+  int32_t osSemaphoreWait (osSemaphoreId semaphore_id, uint32_t millisec);
+  osStatus osSemaphoreRelease (osSemaphoreId semaphore_id);
+  osStatus osSemaphoreDelete (osSemaphoreId semaphore_id);
+  osMutexId osMutexCreate (const osMutexDef_t *mutex_def);
+  osStatus osMutexWait (osMutexId mutex_id, uint32_t millisec);
+  osStatus osMutexRelease (osMutexId mutex_id);
+  osStatus osMutexDelete (osMutexId mutex_id);
 #ifdef __cplusplus
 }
 #endif
@@ -294,26 +338,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Kernel initialization.
- */
-static inline osStatus osKernelInitialize(void) {
-
-  chSysSuspend();
-
-  return osOK;
-}
-
-/**
- * @brief   Kernel start.
- * @note    Does nothing, under ChibiOS/RT there is no concept of starting the
- *          kernel.
- */
-static inline osStatus osKernelStart(void) {
-
-  return osOK;
-}
 
 /**
  * @brief   To be or not to be.
@@ -345,6 +369,54 @@ static inline osThreadId osThreadCreate (osThreadDef_t *thread_def,
                                          NORMALPRIO+thread_def->tpriority,
                                          (tfunc_t)thread_def->pthread,
                                          argument);
+}
+
+/**
+ * @brief   Returns the current thread.
+ */
+static inline osThreadId osThreadGetId(void) {
+
+  return (osThreadId)chThdGetSelfX();
+}
+
+/**
+ * @brief   Thread termination.
+ * @note    The thread is not really terminated but asked to terminate which
+ *          is not compliant.
+ */
+static inline osStatus osThreadTerminate(osThreadId thread_id) {
+
+  chThdTerminate(thread_id);
+
+  return osOK;
+}
+
+/**
+ * @brief   Thread time slice yield.
+ */
+static inline osStatus osThreadYield(void) {
+
+  chThdYield();
+
+  return osOK;
+}
+
+/**
+ * @brief   Returns priority of a thread.
+ */
+static inline osPriority osThreadGetPriority(osThreadId thread_id) {
+
+  return thread_id->p_prio;
+}
+
+/**
+ * @brief   Thread delay in milliseconds.
+ */
+static inline osStatus osDelay(uint32_t millisec) {
+
+  chThdSleepMilliseconds(millisec);
+
+  return osOK;
 }
 
 #endif /* _CMSIS_OS_H_ */

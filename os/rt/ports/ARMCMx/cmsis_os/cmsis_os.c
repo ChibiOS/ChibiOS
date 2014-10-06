@@ -35,6 +35,12 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+static memory_pool_t sempool;
+static semaphore_t semaphores[CMSIS_CFG_NUM_SEMAPHORES];
+
+static memory_pool_t timpool;
+static struct os_timer_cb timers[CMSIS_CFG_NUM_TIMERS];
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -51,8 +57,274 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Virtual timers common callback.
+ */
+static void timer_cb(void *arg) {
+
+  osTimerId timer_id = (osTimerId)arg;
+  timer_id->ptimer(timer_id->argument);
+  if (timer_id->type == osTimerPeriodic) {
+    chSysLockFromISR();
+    chVTDoSetI(&timer_id->vt, timer_id->millisec, timer_cb, timer_id);
+    chSysUnlockFromISR();
+  }
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Kernel initialization.
+ */
+osStatus osKernelInitialize(void) {
+
+  chSysInit();
+  chThdSetPriority(HIGHPRIO);
+
+  chPoolObjectInit(&sempool, sizeof(semaphore_t), chCoreAlloc);
+  chPoolLoadArray(&sempool, semaphores, CMSIS_CFG_NUM_SEMAPHORES);
+
+  chPoolObjectInit(&timpool, sizeof(virtual_timer_t), chCoreAlloc);
+  chPoolLoadArray(&timpool, timers, CMSIS_CFG_NUM_TIMERS);
+
+  return osOK;
+}
+
+/**
+ * @brief   Kernel start.
+ */
+osStatus osKernelStart(void) {
+
+  chThdSetPriority(NORMALPRIO);
+
+  return osOK;
+}
+
+/**
+ * @brief   Change thread priority.
+ * @note    This can interfere with the priority inheritance mechanism.
+ */
+osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
+  osPriority oldprio;
+  thread_t * tp = (thread_t *)thread_id;
+
+  chSysLock();
+
+  /* Changing priority.*/
+#if CH_CFG_USE_MUTEXES
+  oldprio = (osPriority)tp->p_realprio;
+  if ((tp->p_prio == tp->p_realprio) || ((tprio_t)newprio > tp->p_prio))
+    tp->p_prio = (tprio_t)newprio;
+  tp->p_realprio = (tprio_t)newprio;
+#else
+  oldprio = tp->p_prio;
+  tp->p_prio = (tprio_t)newprio;
+#endif
+
+  /* The following states need priority queues reordering.*/
+  switch (tp->p_state) {
+#if CH_CFG_USE_MUTEXES |                                                    \
+    CH_CFG_USE_CONDVARS |                                                   \
+    (CH_CFG_USE_SEMAPHORES && CH_CFG_USE_SEMAPHORES_PRIORITY) |             \
+    (CH_CFG_USE_MESSAGES && CH_CFG_USE_MESSAGES_PRIORITY)
+#if CH_CFG_USE_MUTEXES
+  case CH_STATE_WTMTX:
+#endif
+#if CH_CFG_USE_CONDVARS
+  case CH_STATE_WTCOND:
+#endif
+#if CH_CFG_USE_SEMAPHORES && CH_CFG_USE_SEMAPHORES_PRIORITY
+  case CH_STATE_WTSEM:
+#endif
+#if CH_CFG_USE_MESSAGES && CH_CFG_USE_MESSAGES_PRIORITY
+  case CH_STATE_SNDMSGQ:
+#endif
+    /* Re-enqueues tp with its new priority on the queue.*/
+    queue_prio_insert(queue_dequeue(tp),
+                      (threads_queue_t *)tp->p_u.wtobjp);
+    break;
+#endif
+  case CH_STATE_READY:
+#if CH_DBG_ENABLE_ASSERTS
+    /* Prevents an assertion in chSchReadyI().*/
+    tp->p_state = CH_STATE_CURRENT;
+#endif
+    /* Re-enqueues tp with its new priority on the ready list.*/
+    chSchReadyI(queue_dequeue(tp));
+    break;
+  }
+
+  /* Rescheduling.*/
+  chSchRescheduleS();
+
+  chSysUnlock();
+
+  return oldprio;
+}
+
+/**
+ * @brief   Create a timer.
+ */
+osTimerId osTimerCreate (const osTimerDef_t *timer_def,
+                         os_timer_type type,
+                         void *argument) {
+
+  osTimerId timer = chPoolAlloc(&timpool);
+  chVTObjectInit(&timer->vt);
+  timer->ptimer = timer_def->ptimer;
+  timer->type = type;
+  timer->argument = argument;
+  return timer;
+}
+
+/**
+ * @brief   Start a timer.
+ */
+osStatus osTimerStart (osTimerId timer_id, uint32_t millisec) {
+
+  if (millisec == 0)
+    return osErrorParameter;
+
+  timer_id->millisec = millisec;
+  chVTSet(&timer_id->vt, millisec, timer_cb, timer_id);
+
+  return osOK;
+}
+
+/**
+ * @brief   Stop a timer.
+ */
+osStatus osTimerStop (osTimerId timer_id) {
+
+  chVTReset(&timer_id->vt);
+
+  return osOK;
+}
+
+/**
+ * @brief   Delete a timer.
+ */
+osStatus osTimerDelete (osTimerId timer_id) {
+
+  chVTReset(&timer_id->vt);
+  chPoolFree(&timpool, (void *)timer_id);
+
+  return osOK;
+}
+
+/**
+ * @brief   Create a semaphore.
+ * @note    @p semaphore_def is not used.
+ * @note    Can involve memory allocation.
+ */
+osSemaphoreId osSemaphoreCreate (const osSemaphoreDef_t *semaphore_def,
+                                 int32_t count) {
+
+  (void)semaphore_def;
+
+  semaphore_t *sem = chPoolAlloc(&sempool);
+  chSemObjectInit(sem, (cnt_t)count);
+  return sem;
+}
+
+/**
+ * @brief   Wait on a semaphore.
+ */
+int32_t osSemaphoreWait (osSemaphoreId semaphore_id, uint32_t millisec) {
+
+  systime_t timeout = millisec == osWaitForever ? TIME_INFINITE :
+                                                  (systime_t)millisec;
+  msg_t msg = chSemWaitTimeout((semaphore_t *)semaphore_id, timeout);
+  switch (msg) {
+  case MSG_OK:
+    return osOK;
+  case MSG_TIMEOUT:
+    return osErrorTimeoutResource;
+  }
+  return osErrorResource;
+}
+
+/**
+ * @brief   Release a semaphore.
+ */
+osStatus osSemaphoreRelease (osSemaphoreId semaphore_id) {
+
+  syssts_t sts = chSysGetStatusAndLockX();
+    chSemSignalI((semaphore_t *)semaphore_id);
+  chSysRestoreStatusX(sts);
+
+  return osOK;
+}
+
+/**
+ * @brief   Deletes a semaphore.
+ * @note    After deletion there could be references in the system to a
+ *          non-existent semaphore.
+ */
+osStatus osSemaphoreDelete (osSemaphoreId semaphore_id) {
+
+  chSemReset((semaphore_t *)semaphore_id, 0);
+  chPoolFree(&sempool, (void *)semaphore_id);
+
+  return osOK;
+}
+
+/**
+ * @brief   Create a mutex.
+ * @note    @p mutex_def is not used.
+ * @note    Can involve memory allocation.
+ */
+osMutexId osMutexCreate (const osMutexDef_t *mutex_def) {
+
+  (void)mutex_def;
+
+  binary_semaphore_t *mtx = chPoolAlloc(&sempool);
+  chBSemObjectInit(mtx, false);
+  return mtx;
+}
+
+/**
+ * @brief   Wait on a mutex.
+ */
+osStatus osMutexWait (osMutexId mutex_id, uint32_t millisec) {
+
+  systime_t timeout = millisec == osWaitForever ? TIME_INFINITE :
+                                                  (systime_t)millisec;
+  msg_t msg = chBSemWaitTimeout((binary_semaphore_t *)mutex_id, timeout);
+  switch (msg) {
+  case MSG_OK:
+    return osOK;
+  case MSG_TIMEOUT:
+    return osErrorTimeoutResource;
+  }
+  return osErrorResource;
+}
+
+/**
+ * @brief   Release a mutex.
+ */
+osStatus osMutexRelease (osMutexId mutex_id) {
+
+  syssts_t sts = chSysGetStatusAndLockX();
+    chBSemSignalI((binary_semaphore_t *)mutex_id);
+  chSysRestoreStatusX(sts);
+
+  return osOK;
+}
+
+/**
+ * @brief   Deletes a mutex.
+ * @note    After deletion there could be references in the system to a
+ *          non-existent semaphore.
+ */
+osStatus osMutexDelete (osMutexId mutex_id) {
+
+  chSemReset((semaphore_t *)mutex_id, 0);
+  chPoolFree(&sempool, (void *)mutex_id);
+
+  return osOK;
+}
 
 /** @} */
