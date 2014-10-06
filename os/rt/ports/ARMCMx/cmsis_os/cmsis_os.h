@@ -95,13 +95,13 @@
  * @brief   Type of priority levels.
  */
 typedef enum {
-  osPriorityIdle            = NORMALPRIO-3,
-  osPriorityLow             = NORMALPRIO-2,
-  osPriorityBelowNormal     = NORMALPRIO-1,
-  osPriorityNormal          = NORMALPRIO,
-  osPriorityAboveNormal     = NORMALPRIO+1,
-  osPriorityHigh            = NORMALPRIO+2,
-  osPriorityRealtime        = NORMALPRIO+3,
+  osPriorityIdle            = -3,
+  osPriorityLow             = -2,
+  osPriorityBelowNormal     = -1,
+  osPriorityNormal          = 0,
+  osPriorityAboveNormal     = +1,
+  osPriorityHigh            = +2,
+  osPriorityRealtime        = +3,
   osPriorityError           = 0x84
 } osPriority;
 
@@ -202,7 +202,7 @@ typedef struct os_semaphore_def  {
  * @brief   Convert a microseconds value to a RTOS kernel system timer value.
  */
 #define osKernelSysTickMicroSec(microsec) (((uint64_t)microsec *            \
-                                            (osKernelSysTickFrequency)) /
+                                            (osKernelSysTickFrequency)) /   \
                                            1000000)
 
 /**
@@ -280,18 +280,13 @@ const osTimerDef_t os_timer_def_##name = {                                  \
 #ifdef __cplusplus
 extern "C" {
 #endif
-osStatus osKernelInitialize(void);
-  osStatus osKernelStart(void);
-  int32_t osKernelRunning(void);
-  uint32_t osKernelSysTick(void);
-  osThreadId osThreadCreate(const osThreadDef_t *thread_def, void *argument);
   osThreadId osThreadGetId(void);
   osStatus osThreadTerminate(osThreadId thread_id);
   osStatus osThreadYield(void);
   osStatus osThreadSetPriority(osThreadId thread_id, osPriority priority);
   osPriority osThreadGetPriority(osThreadId thread_id);
   osStatus osDelay(uint32_t millisec);
-  osEvent osWait(uint32_t millisec);
+  /*osEvent osWait(uint32_t millisec);*/
 #ifdef __cplusplus
 }
 #endif
@@ -299,6 +294,58 @@ osStatus osKernelInitialize(void);
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Kernel initialization.
+ */
+static inline osStatus osKernelInitialize(void) {
+
+  chSysSuspend();
+
+  return osOK;
+}
+
+/**
+ * @brief   Kernel start.
+ * @note    Does nothing, under ChibiOS/RT there is no concept of starting the
+ *          kernel.
+ */
+static inline osStatus osKernelStart(void) {
+
+  return osOK;
+}
+
+/**
+ * @brief   To be or not to be.
+ */
+static inline int32_t osKernelRunning(void) {
+
+  if (ch.rlist.r_queue.p_next != NULL)
+      return 1;
+
+  return 0;
+}
+
+/**
+ * @brief   System ticks since start.
+ */
+static inline uint32_t osKernelSysTick(void) {
+
+  return (uint32_t)chVTGetSystemTimeX();
+}
+
+/**
+ * @brief   Creates a thread.
+ */
+static inline osThreadId osThreadCreate (osThreadDef_t *thread_def,
+                                         void *argument) {
+
+  return (osThreadId)chThdCreateFromHeap(0,
+                                         THD_WORKING_AREA_SIZE(thread_def->stacksize),
+                                         NORMALPRIO+thread_def->tpriority,
+                                         (tfunc_t)thread_def->pthread,
+                                         argument);
+}
 
 #endif /* _CMSIS_OS_H_ */
 
