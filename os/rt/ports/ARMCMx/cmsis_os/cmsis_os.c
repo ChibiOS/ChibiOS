@@ -221,6 +221,61 @@ osStatus osTimerDelete (osTimerId timer_id) {
 }
 
 /**
+ * @brief   Send signals.
+ */
+int32_t osSignalSet(osThreadId thread_id, int32_t signals) {
+  int32_t oldsignals;
+
+  syssts_t sts = chSysGetStatusAndLockX();
+  oldsignals = (int32_t)thread_id->p_epending;
+  chEvtSignalI((thread_t *)thread_id, (eventmask_t)signals);
+  chSysRestoreStatusX(sts);
+
+  return oldsignals;
+}
+
+/**
+ * @brief   Clear signals.
+ */
+int32_t osSignalClear(osThreadId thread_id, int32_t signals) {
+  eventmask_t m;
+
+  chSysLock();
+
+  m = thread_id->p_epending & (eventmask_t)signals;
+  thread_id->p_epending &= ~(eventmask_t)signals;
+
+  chSysUnlock();
+
+  return (int32_t)m;
+}
+
+/**
+ * @brief   Wait for signals.
+ */
+osEvent osSignalWait(int32_t signals, uint32_t millisec) {
+  osEvent event;
+
+  systime_t timeout = millisec == osWaitForever ? TIME_INFINITE :
+                                                  (systime_t)millisec;
+
+  if (signals == 0)
+    event.value.signals = (uint32_t)chEvtWaitAnyTimeout((eventmask_t)signals,
+                                                        timeout);
+  else
+    event.value.signals = (uint32_t)chEvtWaitAllTimeout((eventmask_t)signals,
+                                                        timeout);
+
+  /* Type of event.*/
+  if (event.value.signals == 0)
+    event.status = osEventTimeout;
+  else
+    event.status = osEventSignal;
+
+  return event;
+}
+
+/**
  * @brief   Create a semaphore.
  * @note    @p semaphore_def is not used.
  * @note    Can involve memory allocation.

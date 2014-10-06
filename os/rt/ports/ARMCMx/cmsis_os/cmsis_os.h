@@ -105,6 +105,14 @@
 #error "CMSIS RTOS requires CH_CFG_USE_MEMPOOLS"
 #endif
 
+#if !CH_CFG_USE_EVENTS
+#error "CMSIS RTOS requires CH_CFG_USE_EVENTS"
+#endif
+
+#if !CH_CFG_USE_EVENTS_TIMEOUT
+#error "CMSIS RTOS requires CH_CFG_USE_EVENTS_TIMEOUT"
+#endif
+
 #if !CH_CFG_USE_SEMAPHORES
 #error "CMSIS RTOS requires CH_CFG_USE_SEMAPHORES"
 #endif
@@ -195,6 +203,22 @@ typedef binary_semaphore_t *osMutexId;
  * @brief   Type of pointer to semaphore control block.
  */
 typedef semaphore_t *osSemaphoreId;
+
+/**
+ * @brief   Type of an event.
+ */
+typedef struct  {
+  osStatus                  status;
+  union {
+    uint32_t                v;
+    void                    *p;
+    int32_t                 signals;
+  } value;
+/*  union {
+    osMailQId               mail_id;
+    osMessageQId            message_id;
+  } def;*/
+} osEvent;
 
 /**
  * @brief   Type of a thread definition block.
@@ -324,6 +348,9 @@ extern "C" {
   osStatus osTimerStart (osTimerId timer_id, uint32_t millisec);
   osStatus osTimerStop (osTimerId timer_id);
   osStatus osTimerDelete (osTimerId timer_id);
+  int32_t osSignalSet (osThreadId thread_id, int32_t signals);
+  int32_t osSignalClear (osThreadId thread_id, int32_t signals);
+  osEvent osSignalWait (int32_t signals, uint32_t millisec);
   osSemaphoreId osSemaphoreCreate (const osSemaphoreDef_t *semaphore_def,
                                    int32_t count);
   int32_t osSemaphoreWait (osSemaphoreId semaphore_id, uint32_t millisec);
