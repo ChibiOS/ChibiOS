@@ -35,15 +35,11 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
-static memory_pool_t sempool;
-static semaphore_t semaphores[CMSIS_CFG_NUM_SEMAPHORES];
-
-static memory_pool_t timpool;
-static struct os_timer_cb timers[CMSIS_CFG_NUM_TIMERS];
-
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
+
+int32_t cmsis_os_started;
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -52,6 +48,12 @@ static struct os_timer_cb timers[CMSIS_CFG_NUM_TIMERS];
 /*===========================================================================*/
 /* Module local variables.                                                   */
 /*===========================================================================*/
+
+static memory_pool_t sempool;
+static semaphore_t semaphores[CMSIS_CFG_NUM_SEMAPHORES];
+
+static memory_pool_t timpool;
+static struct os_timer_cb timers[CMSIS_CFG_NUM_TIMERS];
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -80,6 +82,8 @@ static void timer_cb(void *arg) {
  */
 osStatus osKernelInitialize(void) {
 
+  cmsis_os_started = 0;
+
   chSysInit();
   chThdSetPriority(HIGHPRIO);
 
@@ -96,6 +100,8 @@ osStatus osKernelInitialize(void) {
  * @brief   Kernel start.
  */
 osStatus osKernelStart(void) {
+
+  cmsis_os_started = 1;
 
   chThdSetPriority(NORMALPRIO);
 

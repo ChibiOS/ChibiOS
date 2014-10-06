@@ -309,6 +309,8 @@ const osTimerDef_t os_timer_def_##name = {                                  \
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern int32_t cmsis_os_started;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -344,10 +346,7 @@ extern "C" {
  */
 static inline int32_t osKernelRunning(void) {
 
-  if (ch.rlist.r_queue.p_next != NULL)
-      return 1;
-
-  return 0;
+  return cmsis_os_started;
 }
 
 /**
