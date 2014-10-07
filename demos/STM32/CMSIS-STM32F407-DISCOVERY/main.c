@@ -34,10 +34,14 @@ static void Thread1(void const *arg) {
 }
 
 /*
+ * Thread definition block.
+ */
+osThreadDef(Thread1, osPriorityAboveNormal, 1, 128);
+
+/*
  * Application entry point.
  */
 int main(void) {
-  osThreadDef(Thread1, osPriorityAboveNormal, 1, 128);
 
   /* HAL initialization, this also initializes the configured device drivers
      and performs the board-specific initializations.*/
