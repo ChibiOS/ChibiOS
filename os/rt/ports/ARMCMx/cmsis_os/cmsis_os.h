@@ -60,7 +60,7 @@
  * @{
  */
 #define osFeature_MainThread        1       
-#define osFeature_Pool              0
+#define osFeature_Pool              1
 #define osFeature_MailQ             0
 #define osFeature_MessageQ          0
 #define osFeature_Signals           31
@@ -170,7 +170,7 @@ typedef enum {
 /**
  * @brief   Type of a timer mode.
  */
-typedef enum  {
+typedef enum {
   osTimerOnce               = 0,
   osTimerPeriodic           = 1
 } os_timer_type;
@@ -212,25 +212,30 @@ typedef binary_semaphore_t *osMutexId;
 typedef semaphore_t *osSemaphoreId;
 
 /**
+ * @brief   Type of pointer to memory pool control block.
+ */
+typedef memory_pool_t *osPoolId;
+
+/**
  * @brief   Type of an event.
  */
-typedef struct  {
+typedef struct {
   osStatus                  status;
   union {
     uint32_t                v;
     void                    *p;
     int32_t                 signals;
   } value;
-/*  union {
-    osMailQId               mail_id;
+  union {
+/*    osMailQId               mail_id;*/
     osMessageQId            message_id;
-  } def;*/
+  } def;
 } osEvent;
 
 /**
  * @brief   Type of a thread definition block.
  */
-typedef struct os_thread_def  {
+typedef struct os_thread_def {
   os_pthread                pthread;
   osPriority                tpriority;
   uint32_t                  stacksize;
@@ -239,23 +244,33 @@ typedef struct os_thread_def  {
 /**
  * @brief   Type of a timer definition block.
  */
-typedef struct os_timer_def  {
+typedef struct os_timer_def {
   os_ptimer                 ptimer;
 } osTimerDef_t;
 
 /**
  * @brief   Type of a mutex definition block.
  */
-typedef struct os_mutex_def  {
+typedef struct os_mutex_def {
   uint32_t                  dummy;
 } osMutexDef_t;
 
 /**
  * @brief   Type of a semaphore definition block.
  */
-typedef struct os_semaphore_def  {
+typedef struct os_semaphore_def {
   uint32_t                  dummy;
 } osSemaphoreDef_t;
+
+/**
+ * @brief   Type of a memory pool definition block.
+ */
+typedef struct os_pool_def {
+  uint32_t                  pool_sz;
+  uint32_t                  item_sz;
+  memory_pool_t             *pool;
+  void                      *items;
+} osPoolDef_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -336,6 +351,29 @@ const osTimerDef_t os_timer_def_##name = {                                  \
  */
 #define osSemaphore(name) &os_semaphore_def_##name
 
+/**
+ * @brief   Define a Memory Pool.
+ */
+#if defined(osObjectsExternal)
+#define osPoolDef(name, no, type)                                           \
+  extern const osPoolDef_t os_pool_def_##name
+#else
+#define osPoolDef(name, no, type)                                           \
+static const type os_pool_buf_##name[no];                                   \
+static memory_pool_t os_pool_obj_##name;                                    \
+const osPoolDef_t os_pool_def_##name = {                                    \
+  (no),                                                                     \
+  sizeof (type),                                                            \
+  (void *)&os_pool_obj_##name,                                              \
+  (void *)&os_pool_buf_##name[0]                                            \
+}
+#endif
+
+/**
+ * @brief   Access a Memory Pool definition.
+ */
+#define osPool(name) &os_pool_def_##name
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -369,6 +407,10 @@ extern "C" {
   osStatus osMutexWait (osMutexId mutex_id, uint32_t millisec);
   osStatus osMutexRelease (osMutexId mutex_id);
   osStatus osMutexDelete (osMutexId mutex_id);
+  osPoolId osPoolCreate (const osPoolDef_t *pool_def);
+  void *osPoolAlloc (osPoolId pool_id);
+  void *osPoolCAlloc (osPoolId pool_id);
+  osStatus osPoolFree (osPoolId pool_id, void *block);
 #ifdef __cplusplus
 }
 #endif

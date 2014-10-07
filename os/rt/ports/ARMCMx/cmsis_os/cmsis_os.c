@@ -30,6 +30,7 @@
  */
 
 #include "cmsis_os.h"
+#include <string.h>
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -346,7 +347,7 @@ int32_t osSemaphoreWait (osSemaphoreId semaphore_id, uint32_t millisec) {
 osStatus osSemaphoreRelease (osSemaphoreId semaphore_id) {
 
   syssts_t sts = chSysGetStatusAndLockX();
-    chSemSignalI((semaphore_t *)semaphore_id);
+  chSemSignalI((semaphore_t *)semaphore_id);
   chSysRestoreStatusX(sts);
 
   return osOK;
@@ -402,7 +403,7 @@ osStatus osMutexWait (osMutexId mutex_id, uint32_t millisec) {
 osStatus osMutexRelease (osMutexId mutex_id) {
 
   syssts_t sts = chSysGetStatusAndLockX();
-    chBSemSignalI((binary_semaphore_t *)mutex_id);
+  chBSemSignalI((binary_semaphore_t *)mutex_id);
   chSysRestoreStatusX(sts);
 
   return osOK;
@@ -417,6 +418,55 @@ osStatus osMutexDelete (osMutexId mutex_id) {
 
   chSemReset((semaphore_t *)mutex_id, 0);
   chPoolFree(&sempool, (void *)mutex_id);
+
+  return osOK;
+}
+
+/**
+ * @brief   Create a memory pool.
+ * @note    The pool is not really created because it is allocated statically,
+ *          this function just re-initializes it.
+ */
+osPoolId osPoolCreate (const osPoolDef_t *pool_def) {
+
+  chPoolObjectInit(pool_def->pool, (size_t)pool_def->item_sz, NULL);
+  chPoolLoadArray(pool_def->pool, pool_def->items, (size_t)pool_def->pool_sz);
+
+  return (osPoolId)pool_def->pool;
+}
+
+/**
+ * @brief   Allocate an object.
+ */
+void *osPoolAlloc (osPoolId pool_id) {
+  void *object;
+
+  syssts_t sts = chSysGetStatusAndLockX();
+  object = chPoolAllocI((memory_pool_t *)pool_id);
+  chSysRestoreStatusX(sts);
+
+  return object;
+}
+
+/**
+ * @brief   Allocate an object clearing it.
+ */
+void *osPoolCAlloc (osPoolId pool_id) {
+  void *object;
+
+  object = chPoolAllocI((memory_pool_t *)pool_id);
+  memset(object, 0, pool_id->mp_object_size);
+  return object;
+}
+
+/**
+ * @brief   Free an object.
+ */
+osStatus osPoolFree (osPoolId pool_id, void *block) {
+
+  syssts_t sts = chSysGetStatusAndLockX();
+  chPoolFreeI((memory_pool_t *)pool_id, block);
+  chSysRestoreStatusX(sts);
 
   return osOK;
 }
