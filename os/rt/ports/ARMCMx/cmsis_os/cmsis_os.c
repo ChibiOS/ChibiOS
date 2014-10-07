@@ -112,7 +112,7 @@ osStatus osKernelStart(void) {
 /**
  * @brief   Creates a thread.
  */
-osThreadId osThreadCreate (osThreadDef_t *thread_def, void *argument) {
+osThreadId osThreadCreate(osThreadDef_t *thread_def, void *argument) {
   size_t size;
 
   size = thread_def->stacksize == 0 ? CMSIS_CFG_DEFAULT_STACK :
@@ -207,9 +207,9 @@ osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
 /**
  * @brief   Create a timer.
  */
-osTimerId osTimerCreate (const osTimerDef_t *timer_def,
-                         os_timer_type type,
-                         void *argument) {
+osTimerId osTimerCreate(const osTimerDef_t *timer_def,
+                        os_timer_type type,
+                        void *argument) {
 
   osTimerId timer = chPoolAlloc(&timpool);
   chVTObjectInit(&timer->vt);
@@ -222,10 +222,10 @@ osTimerId osTimerCreate (const osTimerDef_t *timer_def,
 /**
  * @brief   Start a timer.
  */
-osStatus osTimerStart (osTimerId timer_id, uint32_t millisec) {
+osStatus osTimerStart(osTimerId timer_id, uint32_t millisec) {
 
   if (millisec == 0)
-    return osErrorParameter;
+    return osErrorValue;
 
   timer_id->millisec = millisec;
   chVTSet(&timer_id->vt, millisec, timer_cb, timer_id);
@@ -236,7 +236,7 @@ osStatus osTimerStart (osTimerId timer_id, uint32_t millisec) {
 /**
  * @brief   Stop a timer.
  */
-osStatus osTimerStop (osTimerId timer_id) {
+osStatus osTimerStop(osTimerId timer_id) {
 
   chVTReset(&timer_id->vt);
 
@@ -246,7 +246,7 @@ osStatus osTimerStop (osTimerId timer_id) {
 /**
  * @brief   Delete a timer.
  */
-osStatus osTimerDelete (osTimerId timer_id) {
+osStatus osTimerDelete(osTimerId timer_id) {
 
   chVTReset(&timer_id->vt);
   chPoolFree(&timpool, (void *)timer_id);
@@ -290,15 +290,12 @@ int32_t osSignalClear(osThreadId thread_id, int32_t signals) {
 osEvent osSignalWait(int32_t signals, uint32_t millisec) {
   osEvent event;
 
-  systime_t timeout = millisec == osWaitForever ? TIME_INFINITE :
-                                                  (systime_t)millisec;
-
   if (signals == 0)
     event.value.signals = (uint32_t)chEvtWaitAnyTimeout((eventmask_t)signals,
-                                                        timeout);
+                                                        (systime_t)millisec);
   else
     event.value.signals = (uint32_t)chEvtWaitAllTimeout((eventmask_t)signals,
-                                                        timeout);
+                                                        (systime_t)millisec);
 
   /* Type of event.*/
   if (event.value.signals == 0)
@@ -314,8 +311,8 @@ osEvent osSignalWait(int32_t signals, uint32_t millisec) {
  * @note    @p semaphore_def is not used.
  * @note    Can involve memory allocation.
  */
-osSemaphoreId osSemaphoreCreate (const osSemaphoreDef_t *semaphore_def,
-                                 int32_t count) {
+osSemaphoreId osSemaphoreCreate(const osSemaphoreDef_t *semaphore_def,
+                                int32_t count) {
 
   (void)semaphore_def;
 
@@ -327,11 +324,10 @@ osSemaphoreId osSemaphoreCreate (const osSemaphoreDef_t *semaphore_def,
 /**
  * @brief   Wait on a semaphore.
  */
-int32_t osSemaphoreWait (osSemaphoreId semaphore_id, uint32_t millisec) {
+int32_t osSemaphoreWait(osSemaphoreId semaphore_id, uint32_t millisec) {
 
-  systime_t timeout = millisec == osWaitForever ? TIME_INFINITE :
-                                                  (systime_t)millisec;
-  msg_t msg = chSemWaitTimeout((semaphore_t *)semaphore_id, timeout);
+  msg_t msg = chSemWaitTimeout((semaphore_t *)semaphore_id,
+                               (systime_t)millisec);
   switch (msg) {
   case MSG_OK:
     return osOK;
@@ -344,7 +340,7 @@ int32_t osSemaphoreWait (osSemaphoreId semaphore_id, uint32_t millisec) {
 /**
  * @brief   Release a semaphore.
  */
-osStatus osSemaphoreRelease (osSemaphoreId semaphore_id) {
+osStatus osSemaphoreRelease(osSemaphoreId semaphore_id) {
 
   syssts_t sts = chSysGetStatusAndLockX();
   chSemSignalI((semaphore_t *)semaphore_id);
@@ -358,7 +354,7 @@ osStatus osSemaphoreRelease (osSemaphoreId semaphore_id) {
  * @note    After deletion there could be references in the system to a
  *          non-existent semaphore.
  */
-osStatus osSemaphoreDelete (osSemaphoreId semaphore_id) {
+osStatus osSemaphoreDelete(osSemaphoreId semaphore_id) {
 
   chSemReset((semaphore_t *)semaphore_id, 0);
   chPoolFree(&sempool, (void *)semaphore_id);
@@ -371,7 +367,7 @@ osStatus osSemaphoreDelete (osSemaphoreId semaphore_id) {
  * @note    @p mutex_def is not used.
  * @note    Can involve memory allocation.
  */
-osMutexId osMutexCreate (const osMutexDef_t *mutex_def) {
+osMutexId osMutexCreate(const osMutexDef_t *mutex_def) {
 
   (void)mutex_def;
 
@@ -383,11 +379,10 @@ osMutexId osMutexCreate (const osMutexDef_t *mutex_def) {
 /**
  * @brief   Wait on a mutex.
  */
-osStatus osMutexWait (osMutexId mutex_id, uint32_t millisec) {
+osStatus osMutexWait(osMutexId mutex_id, uint32_t millisec) {
 
-  systime_t timeout = millisec == osWaitForever ? TIME_INFINITE :
-                                                  (systime_t)millisec;
-  msg_t msg = chBSemWaitTimeout((binary_semaphore_t *)mutex_id, timeout);
+  msg_t msg = chBSemWaitTimeout((binary_semaphore_t *)mutex_id,
+                                (systime_t)millisec);
   switch (msg) {
   case MSG_OK:
     return osOK;
@@ -400,7 +395,7 @@ osStatus osMutexWait (osMutexId mutex_id, uint32_t millisec) {
 /**
  * @brief   Release a mutex.
  */
-osStatus osMutexRelease (osMutexId mutex_id) {
+osStatus osMutexRelease(osMutexId mutex_id) {
 
   syssts_t sts = chSysGetStatusAndLockX();
   chBSemSignalI((binary_semaphore_t *)mutex_id);
@@ -414,7 +409,7 @@ osStatus osMutexRelease (osMutexId mutex_id) {
  * @note    After deletion there could be references in the system to a
  *          non-existent semaphore.
  */
-osStatus osMutexDelete (osMutexId mutex_id) {
+osStatus osMutexDelete(osMutexId mutex_id) {
 
   chSemReset((semaphore_t *)mutex_id, 0);
   chPoolFree(&sempool, (void *)mutex_id);
@@ -427,7 +422,7 @@ osStatus osMutexDelete (osMutexId mutex_id) {
  * @note    The pool is not really created because it is allocated statically,
  *          this function just re-initializes it.
  */
-osPoolId osPoolCreate (const osPoolDef_t *pool_def) {
+osPoolId osPoolCreate(const osPoolDef_t *pool_def) {
 
   chPoolObjectInit(pool_def->pool, (size_t)pool_def->item_sz, NULL);
   chPoolLoadArray(pool_def->pool, pool_def->items, (size_t)pool_def->pool_sz);
@@ -438,7 +433,7 @@ osPoolId osPoolCreate (const osPoolDef_t *pool_def) {
 /**
  * @brief   Allocate an object.
  */
-void *osPoolAlloc (osPoolId pool_id) {
+void *osPoolAlloc(osPoolId pool_id) {
   void *object;
 
   syssts_t sts = chSysGetStatusAndLockX();
@@ -451,7 +446,7 @@ void *osPoolAlloc (osPoolId pool_id) {
 /**
  * @brief   Allocate an object clearing it.
  */
-void *osPoolCAlloc (osPoolId pool_id) {
+void *osPoolCAlloc(osPoolId pool_id) {
   void *object;
 
   object = chPoolAllocI((memory_pool_t *)pool_id);
@@ -462,13 +457,94 @@ void *osPoolCAlloc (osPoolId pool_id) {
 /**
  * @brief   Free an object.
  */
-osStatus osPoolFree (osPoolId pool_id, void *block) {
+osStatus osPoolFree(osPoolId pool_id, void *block) {
 
   syssts_t sts = chSysGetStatusAndLockX();
   chPoolFreeI((memory_pool_t *)pool_id, block);
   chSysRestoreStatusX(sts);
 
   return osOK;
+}
+
+/**
+ * @brief   Create a message queue.
+ * @note    The queue is not really created because it is allocated statically,
+ *          this function just re-initializes it.
+ */
+osMessageQId osMessageCreate(const osMessageQDef_t *queue_def,
+                             osThreadId thread_id) {
+
+  /* Ignoring this parameter for now.*/
+  (void)thread_id;
+
+  if (queue_def->item_sz > sizeof (msg_t))
+    return NULL;
+
+  chMBObjectInit(queue_def->mailbox,
+                 queue_def->items,
+                 (size_t)queue_def->queue_sz);
+
+  return osOK;
+}
+
+/**
+ * @brief   Put a message in the queue.
+ */
+osStatus osMessagePut(osMessageQId queue_id,
+                      uint32_t info,
+                      uint32_t millisec) {
+  msg_t msg;
+
+  if (port_is_isr_context()) {
+
+    /* Waiting makes no sense in ISRs so any value except "immediate"
+       makes no sense.*/
+    if (millisec != 0)
+      return osErrorValue;
+
+    chSysLockFromISR();
+    msg = chMBPostI((mailbox_t *)queue_id, (msg_t)info);
+    chSysUnlockFromISR();
+  }
+  else
+    msg = chMBPost((mailbox_t *)queue_id, (msg_t)info, (systime_t)millisec);
+
+  return msg == MSG_OK ? osOK : osEventTimeout;
+}
+
+/**
+ * @brief   Get a message from the queue.
+ */
+osEvent osMessageGet(osMessageQId queue_id,
+                     uint32_t millisec) {
+
+  msg_t msg;
+  osEvent event;
+
+  event.def.message_id = queue_id;
+
+  if (port_is_isr_context()) {
+
+    /* Waiting makes no sense in ISRs so any value except "immediate"
+       makes no sense.*/
+    if (millisec != 0) {
+      event.status = osErrorValue;
+      return event;
+    }
+
+    chSysLockFromISR();
+    msg = chMBFetchI((mailbox_t *)queue_id, (msg_t*)&event.value.v);
+    chSysUnlockFromISR();
+  }
+  else {
+    msg = chMBFetch((mailbox_t *)queue_id,
+                    (msg_t*)&event.value.v,
+                    (systime_t)millisec);
+  }
+
+  /* Returned event type.*/
+  event.status = msg == MSG_OK ? osEventMessage : osEventTimeout;
+  return event;
 }
 
 /** @} */

@@ -62,8 +62,8 @@
 #define osFeature_MainThread        1       
 #define osFeature_Pool              1
 #define osFeature_MailQ             0
-#define osFeature_MessageQ          0
-#define osFeature_Signals           31
+#define osFeature_MessageQ          1
+#define osFeature_Signals           24
 #define osFeature_Semaphore         ((1U << 31) - 1U)
 #define osFeature_Wait              0
 #define osFeature_SysTick           1
@@ -217,6 +217,11 @@ typedef semaphore_t *osSemaphoreId;
 typedef memory_pool_t *osPoolId;
 
 /**
+ * @brief   Type of pointer to message queue control block.
+ */
+typedef struct mailbox *osMessageQId;
+
+/**
  * @brief   Type of an event.
  */
 typedef struct {
@@ -271,6 +276,16 @@ typedef struct os_pool_def {
   memory_pool_t             *pool;
   void                      *items;
 } osPoolDef_t;
+
+/**
+ * @brief   Type of a message queue definition block.
+ */
+typedef struct os_messageQ_def {
+  uint32_t                  queue_sz;
+  uint32_t                  item_sz;
+  mailbox_t                 *mailbox;
+  void                      *items;
+} osMessageQDef_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -374,6 +389,29 @@ const osPoolDef_t os_pool_def_##name = {                                    \
  */
 #define osPool(name) &os_pool_def_##name
 
+/**
+ * @brief   Define a Message Queue.
+ */
+#if defined (osObjectsExternal)
+#define osMessageQDef(name, queue_sz, type)                                 \
+  extern const osMessageQDef_t os_messageQ_def_##name
+#else
+#define osMessageQDef(name, queue_sz, type)                                 \
+static const msg_t os_messageQ_buf_##name[queue_sz];                        \
+static mailbox_t os_messageQ_obj_##name;                                    \
+const osMessageQDef_t os_messageQ_def_##name = {                            \
+  (queue_sz),                                                               \
+  sizeof (type)                                                             \
+  (void *)&os_messageQ_obj_##name,                                          \
+  (void *)&os_messageQ_buf_##name[0]                                        \
+}
+#endif
+
+/**
+ * @brief   Access a Message Queue definition.
+ */
+#define osMessageQ(name) &os_messageQ_def_##name
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -385,32 +423,39 @@ extern "C" {
 #endif
   osStatus osKernelInitialize(void);
   osStatus osKernelStart(void);
-  osThreadId osThreadCreate (osThreadDef_t *thread_def, void *argument);
-  osStatus osThreadTerminate (osThreadId thread_id);
+  osThreadId osThreadCreate(osThreadDef_t *thread_def, void *argument);
+  osStatus osThreadTerminate(osThreadId thread_id);
   osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio);
   /*osEvent osWait(uint32_t millisec);*/
-  osTimerId osTimerCreate (const osTimerDef_t *timer_def,
-                           os_timer_type type,
-                           void *argument);
-  osStatus osTimerStart (osTimerId timer_id, uint32_t millisec);
-  osStatus osTimerStop (osTimerId timer_id);
-  osStatus osTimerDelete (osTimerId timer_id);
-  int32_t osSignalSet (osThreadId thread_id, int32_t signals);
-  int32_t osSignalClear (osThreadId thread_id, int32_t signals);
-  osEvent osSignalWait (int32_t signals, uint32_t millisec);
-  osSemaphoreId osSemaphoreCreate (const osSemaphoreDef_t *semaphore_def,
-                                   int32_t count);
-  int32_t osSemaphoreWait (osSemaphoreId semaphore_id, uint32_t millisec);
-  osStatus osSemaphoreRelease (osSemaphoreId semaphore_id);
-  osStatus osSemaphoreDelete (osSemaphoreId semaphore_id);
-  osMutexId osMutexCreate (const osMutexDef_t *mutex_def);
-  osStatus osMutexWait (osMutexId mutex_id, uint32_t millisec);
-  osStatus osMutexRelease (osMutexId mutex_id);
-  osStatus osMutexDelete (osMutexId mutex_id);
-  osPoolId osPoolCreate (const osPoolDef_t *pool_def);
-  void *osPoolAlloc (osPoolId pool_id);
-  void *osPoolCAlloc (osPoolId pool_id);
-  osStatus osPoolFree (osPoolId pool_id, void *block);
+  osTimerId osTimerCreate(const osTimerDef_t *timer_def,
+                          os_timer_type type,
+                          void *argument);
+  osStatus osTimerStart(osTimerId timer_id, uint32_t millisec);
+  osStatus osTimerStop(osTimerId timer_id);
+  osStatus osTimerDelete(osTimerId timer_id);
+  int32_t osSignalSet(osThreadId thread_id, int32_t signals);
+  int32_t osSignalClear(osThreadId thread_id, int32_t signals);
+  osEvent osSignalWait(int32_t signals, uint32_t millisec);
+  osSemaphoreId osSemaphoreCreate(const osSemaphoreDef_t *semaphore_def,
+                                  int32_t count);
+  int32_t osSemaphoreWait(osSemaphoreId semaphore_id, uint32_t millisec);
+  osStatus osSemaphoreRelease(osSemaphoreId semaphore_id);
+  osStatus osSemaphoreDelete(osSemaphoreId semaphore_id);
+  osMutexId osMutexCreate(const osMutexDef_t *mutex_def);
+  osStatus osMutexWait(osMutexId mutex_id, uint32_t millisec);
+  osStatus osMutexRelease(osMutexId mutex_id);
+  osStatus osMutexDelete(osMutexId mutex_id);
+  osPoolId osPoolCreate(const osPoolDef_t *pool_def);
+  void *osPoolAlloc(osPoolId pool_id);
+  void *osPoolCAlloc(osPoolId pool_id);
+  osStatus osPoolFree(osPoolId pool_id, void *block);
+  osMessageQId osMessageCreate(const osMessageQDef_t *queue_def,
+                               osThreadId thread_id);
+  osStatus osMessagePut(osMessageQId queue_id,
+                        uint32_t info,
+                        uint32_t millisec);
+  osEvent osMessageGet(osMessageQId queue_id,
+                       uint32_t millisec);
 #ifdef __cplusplus
 }
 #endif
