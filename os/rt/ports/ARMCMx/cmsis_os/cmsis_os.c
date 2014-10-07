@@ -63,13 +63,14 @@ static struct os_timer_cb timers[CMSIS_CFG_NUM_TIMERS];
 /**
  * @brief   Virtual timers common callback.
  */
-static void timer_cb(void *arg) {
+static void timer_cb(void const *arg) {
 
   osTimerId timer_id = (osTimerId)arg;
   timer_id->ptimer(timer_id->argument);
   if (timer_id->type == osTimerPeriodic) {
     chSysLockFromISR();
-    chVTDoSetI(&timer_id->vt, timer_id->millisec, timer_cb, timer_id);
+    chVTDoSetI(&timer_id->vt, timer_id->millisec,
+               (vtfunc_t)timer_cb, timer_id);
     chSysUnlockFromISR();
   }
 }
@@ -112,7 +113,7 @@ osStatus osKernelStart(void) {
 /**
  * @brief   Creates a thread.
  */
-osThreadId osThreadCreate(osThreadDef_t *thread_def, void *argument) {
+osThreadId osThreadCreate(const osThreadDef_t *thread_def, void *argument) {
   size_t size;
 
   size = thread_def->stacksize == 0 ? CMSIS_CFG_DEFAULT_STACK :
@@ -228,7 +229,7 @@ osStatus osTimerStart(osTimerId timer_id, uint32_t millisec) {
     return osErrorValue;
 
   timer_id->millisec = millisec;
-  chVTSet(&timer_id->vt, millisec, timer_cb, timer_id);
+  chVTSet(&timer_id->vt, millisec, (vtfunc_t)timer_cb, timer_id);
 
   return osOK;
 }

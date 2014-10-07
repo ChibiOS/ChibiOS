@@ -423,7 +423,7 @@ extern "C" {
 #endif
   osStatus osKernelInitialize(void);
   osStatus osKernelStart(void);
-  osThreadId osThreadCreate(osThreadDef_t *thread_def, void *argument);
+  osThreadId osThreadCreate(const osThreadDef_t *thread_def, void *argument);
   osStatus osThreadTerminate(osThreadId thread_id);
   osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio);
   /*osEvent osWait(uint32_t millisec);*/
