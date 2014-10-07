@@ -62,8 +62,9 @@ int main(void) {
   osKernelStart();
 
   /* In the ChibiOS/RT CMSIS RTOS implementation the main() is an
-     usable thread.*/
+     usable thread, here we just sleep in a loop printing a message.*/
   while (TRUE) {
+    sdWrite(&SD2, (uint8_t *)"Hello World!\r\n", 14);
     osDelay(500);
   }
 }
