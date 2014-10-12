@@ -15,17 +15,16 @@
 */
 
 #include "ch.h"
-//#include "hal.h"
-//#include "test.h"
+#include "hal.h"
+#include "test.h"
 
-#if 0
 #define BOTH_BUTTONS (PAL_PORT_BIT(PA_BUTTON1) | PAL_PORT_BIT(PA_BUTTON2))
 
 /*
  * Red LEDs blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_WORKING_AREA(waThread1, 128);
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker1");
@@ -45,8 +44,8 @@ static msg_t Thread1(void *arg) {
 /*
  * Yellow LED blinker thread, times are in milliseconds.
  */
-static WORKING_AREA(waThread2, 128);
-static msg_t Thread2(void *arg) {
+static THD_WORKING_AREA(waThread2, 128);
+static THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker2");
@@ -58,7 +57,6 @@ static msg_t Thread2(void *arg) {
   }
   return 0;
 }
-#endif
 
 /*
  * Application entry point.
@@ -72,33 +70,27 @@ int main(void) {
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
    */
-//  halInit();
+  halInit();
   chSysInit();
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-//  sdStart(&SD1, NULL);
+  sdStart(&SD1, NULL);
 
   /*
-   * If a button is pressed during the reset then the blinking leds threads
-   * are not started in order to make accurate benchmarks.
+   * Creating blinkers threads.
    */
-//  if ((palReadPort(IOPORT1) & BOTH_BUTTONS) == BOTH_BUTTONS) {
-//    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-//    chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
-//  }
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the buttons state and run test procedure
-   * or print "Hello World!" on serial driver 1.
+   * sleeping in a loop and check the buttons state and run test procedure.
    */
   while (TRUE) {
-//    if (!palReadPad(IOPORT1, PA_BUTTON1))
-//      sdWrite(&SD1, (uint8_t *)"Hello World!\r\n", 14);
-//    if (!palReadPad(IOPORT1, PA_BUTTON2))
-//      TestThread(&SD1);
+    if (!palReadPad(IOPORT1, PA_BUTTON2))
+      TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
   return 0;
