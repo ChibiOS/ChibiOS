@@ -42,9 +42,9 @@ static CH_IRQ_HANDLER(T0IrqHandler) {
   CH_IRQ_PROLOGUE();
   T0IR = 1;             /* Clear interrupt on match MR0. */
 
-  chSysLockFromIsr();
+  chSysLockFromISR();
   chSysTimerHandlerI();
-  chSysUnlockFromIsr();
+  chSysUnlockFromISR();
 
   VICVectAddr = 0;
   CH_IRQ_EPILOGUE();
@@ -87,7 +87,7 @@ void boardInit(void) {
   VICIntEnable = INTMASK(SOURCE_Timer0);
   TC *timer = T0Base;
   timer->TC_PR = VAL_TC0_PRESCALER;
-  timer->TC_MR0 = (PCLK / CH_FREQUENCY) / (VAL_TC0_PRESCALER + 1);
+  timer->TC_MR0 = (PCLK / CH_CFG_ST_FREQUENCY) / (VAL_TC0_PRESCALER + 1);
   timer->TC_MCR = 3;    /* Interrupt and clear TC on match MR0. */
   timer->TC_TCR = 2;    /* Reset counter and prescaler. */
   timer->TC_TCR = 1;    /* Timer enabled. */

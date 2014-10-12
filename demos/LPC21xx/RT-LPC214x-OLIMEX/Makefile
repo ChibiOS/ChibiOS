@@ -105,13 +105,13 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
-#include $(CHIBIOS)/os/hal/hal.mk
-#include $(CHIBIOS)/os/hal/boards/ST_STM32VL_DISCOVERY/board.mk
-#include $(CHIBIOS)/os/hal/ports/STM32/STM32F1xx/platform.mk
-#include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/boards/OLIMEX_LPC_P2148/board.mk
+include $(CHIBIOS)/os/hal/ports/LPC/LPC214x/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/ARM/compilers/GCC/mk/port_lpc214x.mk
-#include $(CHIBIOS)/test/rt/test.mk
+include $(CHIBIOS)/test/rt/test.mk
 
 # Define linker script file here
 LDSCRIPT = $(PORTLD)/LPC2148.ld

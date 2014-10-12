@@ -25,6 +25,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>OLIMEX_LPC_P2148</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/os/hal/boards/OLIMEX_LPC_P2148</locationURI>
+		</link>
+		<link>
 			<name>os</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os</locationURI>
