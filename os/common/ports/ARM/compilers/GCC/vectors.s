@@ -41,13 +41,14 @@ void _unhandled_exception(void) {}
 
 #if !defined(__DOXYGEN__)
 
-                .section vectors
+                .section vectors, "ax"
                 .code   32
                 .balign 4
 
 /*
  * System entry points.
  */
+                .global _start
 _start:
                 ldr     pc, _reset
                 ldr     pc, _undefined
@@ -59,39 +60,39 @@ _start:
                 ldr     pc, _fiq
 
 _reset:
-                .word   ResetHandler
+                .word   Reset_Handler
 _undefined:
-                .word   UndHandler
+                .word   Und_Handler
 _swi:
-                .word   SwiHandler
+                .word   Swi_Handler
 _prefetch:
-                .word   PrefetchHandler
+                .word   Prefetch_Handler
 _abort:
-                .word   AbortHandler
+                .word   Abort_Handler
 _fiq:
-                .word   FiqHandler
+                .word   Fiq_Handler
 _irq:
-                .word   IrqHandler
+                .word   Irq_Handler
 
 /*
  * Default exceptions handlers. The handlers are declared weak in order to be
  * replaced by the real handling code. Everything is defaulted to an infinite
  * loop.
  */
-                .weak   ResetHandler
-ResetHandler:
-                .weak   UndHandler
-UndHandler:
-                .weak   SwiHandler
-SwiHandler:
-                .weak   PrefetchHandler
-PrefetchHandler:
-                .weak   AbortHandler
-AbortHandler:
-                .weak   FiqHandler
-FiqHandler:
-                .weak   IrqHandler
-IrqHandler:
+                .weak   Reset_Handler
+Reset_Handler:
+                .weak   Und_Handler
+Und_Handler:
+                .weak   Swi_Handler
+Swi_Handler:
+                .weak   Prefetch_Handler
+Prefetch_Handler:
+                .weak   Abort_Handler
+Abort_Handler:
+                .weak   Fiq_Handler
+Fiq_Handler:
+                .weak   Irq_Handler
+Irq_Handler:
                 .weak   _unhandled_exception
 _unhandled_exception:
                 b       _unhandled_exception

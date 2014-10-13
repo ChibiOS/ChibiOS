@@ -31,7 +31,7 @@
 
 #if !defined(__DOXYGEN__)
 
-                .section irq
+                .section irq, "ax"
                 .code   32
                 .balign 4
 
@@ -39,8 +39,8 @@
  * IRQ entry point, note this code is always located at address 0x40, the
  * IRQ controller data register offset must be calculated accordingly.
  */
-                .global IrqHandler
-IrqHandler:
+                .global Irq_Handler
+Irq_Handler:
                 stmfd   sp!, {r0-r3, r12, lr}
                 ldr     r0, =ARM_IRQ_VECTOR_REG
                 ldr     r0, [r0]

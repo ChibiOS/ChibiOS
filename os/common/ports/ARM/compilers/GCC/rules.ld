@@ -37,7 +37,7 @@ SECTIONS
     . = 0;
     _text = .;
 
-    boot : ALIGN(16) SUBALIGN(16)
+    startup : ALIGN(16) SUBALIGN(16)
     {
         KEEP(*(vectors))
         KEEP(*(irq))
