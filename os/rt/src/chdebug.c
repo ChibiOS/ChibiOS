@@ -46,11 +46,11 @@
  *              - Called from an ISR.
  *              - Not called from a critical zone.
  *              .
- *            - SV#6, misplaced @p chSysLockFromIsr().
+ *            - SV#6, misplaced @p chSysLockFromISR().
  *              - Not called from an ISR.
  *              - Called from a critical zone.
  *              .
- *            - SV#7, misplaced @p chSysUnlockFromIsr().
+ *            - SV#7, misplaced @p chSysUnlockFromISR().
  *              - Not called from an ISR.
  *              - Not called from a critical zone.
  *              .

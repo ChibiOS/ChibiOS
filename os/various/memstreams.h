@@ -42,7 +42,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p RamStream specific data.
+ * @brief   @p MemStream specific data.
  */
 #define _memory_stream_data                                                 \
   _base_sequential_stream_data                                              \
