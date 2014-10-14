@@ -26,7 +26,9 @@
  * @{
  */
 
+#define __FROM_ASM__
 #include "chconf.h"
+#include "armparams.h"
 
 #define FALSE 0
 #define TRUE 1
@@ -135,6 +137,22 @@ _port_switch_arm:
 #else /* !defined(THUMB_PRESENT)T */
                 ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 #endif /* !defined(THUMB_PRESENT) */
+
+/*
+ * Common IRQ code. It expects a macro ARM_IRQ_VECTOR_REG with the address
+ * of a register holding the address of the ISR to be invoked, the IRS will
+ * then return in the common epilogue code where the context switch will
+ * be performed if required.
+ */
+                .code   32
+                .func
+                .global Irq_Handler
+Irq_Handler:
+                stmfd   sp!, {r0-r3, r12, lr}
+                ldr     r0, =ARM_IRQ_VECTOR_REG
+                ldr     r0, [r0]
+                ldr     lr, =_port_irq_common
+                bx      r0
 
 /*
  * Common exit point for all IRQ routines, it performs the rescheduling if
