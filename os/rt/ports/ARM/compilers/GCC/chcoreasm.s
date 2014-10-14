@@ -271,12 +271,12 @@ _port_thread_start:
 #endif
 #endif
                 msr     CPSR_c, #MODE_SYS
-#if defined(THUMB_NO_INTERWORKING)
+#if !defined(THUMB_NO_INTERWORKING)
                 mov     r0, r5
                 mov     lr, pc
                 bx      r4
                 bl      chThdExit
-#else /* !defined(THUMB_NO_INTERWORKING) */
+#else /* defined(THUMB_NO_INTERWORKING) */
                 add     r0, pc, #1
                 bx      r0
                 .code 16
@@ -285,7 +285,7 @@ _port_thread_start:
                 bl      chThdExit
 jmpr4:
                 bx      r4
-#endif /* !defined(THUMB_NO_INTERWORKING) */
+#endif /* defined(THUMB_NO_INTERWORKING) */
 
 #endif /* !defined(__DOXYGEN__) */
 
