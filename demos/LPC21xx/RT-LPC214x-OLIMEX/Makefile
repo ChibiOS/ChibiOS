@@ -35,7 +35,7 @@ endif
 
 # If enabled, this option allows to compile the application in THUMB mode.
 ifeq ($(USE_THUMB),)
-  USE_THUMB = yes
+  USE_THUMB = no
 endif
 
 # Enable this if you want to see the full log while compiling.
