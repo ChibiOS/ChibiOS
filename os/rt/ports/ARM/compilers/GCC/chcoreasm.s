@@ -140,9 +140,9 @@ _port_switch_arm:
 
 /*
  * Common IRQ code. It expects a macro ARM_IRQ_VECTOR_REG with the address
- * of a register holding the address of the ISR to be invoked, the IRS will
- * then return in the common epilogue code where the context switch will
- * be performed if required.
+ * of a register holding the address of the ISR to be invoked, the ISR
+ * then returns in the common epilogue code where the context switch will
+ * be performed, if required.
  */
                 .code   32
                 .func
