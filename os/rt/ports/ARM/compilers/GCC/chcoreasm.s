@@ -219,22 +219,22 @@ _port_irq_common:
                 bx      r0
                 .code   16
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_lock
+                bl      _dbg_check_lock
 #endif
                 bl      chSchDoReschedule
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_unlock
+                bl      _dbg_check_unlock
 #endif
                 mov     lr, pc
                 bx      lr
                 .code   32
 #else /* !defined(THUMB_NO_INTERWORKING) */
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_lock
+                bl      _dbg_check_lock
 #endif
                 bl      chSchDoReschedule
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      dbg_check_unlock
+                bl      _dbg_check_unlock
 #endif
 #endif /* !defined(THUMB_NO_INTERWORKING) */
 
@@ -258,9 +258,17 @@ _port_irq_common:
                 .globl  _port_thread_start
 _port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
-                mov     r0, #0
-                ldr     r1, =dbg_lock_cnt
-                str     r0, [r1]
+#if defined(THUMB_NO_INTERWORKING)
+                add     r0, pc, #1
+                bx      r0
+                .code   16
+#endif
+                bl      _dbg_check_unlock
+#if defined(THUMB_NO_INTERWORKING)
+                mov     lr, pc
+                bx      lr
+                .code   32
+#endif
 #endif
                 msr     CPSR_c, #MODE_SYS
 #if defined(THUMB_NO_INTERWORKING)
