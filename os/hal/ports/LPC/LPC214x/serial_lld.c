@@ -116,9 +116,6 @@ static void set_error(SerialDriver *sdp, IOREG32 err) {
   chSysUnlockFromISR();
 }
 
-#if defined(__GNUC__)
-__attribute__((noinline))
-#endif
 /**
  * @brief   Common IRQ handler.
  * @note    Tries hard to clear all the pending interrupt sources, we dont want

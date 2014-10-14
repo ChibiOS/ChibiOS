@@ -89,6 +89,8 @@ int main(void) {
    * sleeping in a loop and check the buttons state and run test procedure.
    */
   while (TRUE) {
+    if (!palReadPad(IOPORT1, PA_BUTTON1))
+      sdWrite(&SD1, (uint8_t *)"Hello World!\r\n", 14);
     if (!palReadPad(IOPORT1, PA_BUTTON2))
       TestThread(&SD1);
     chThdSleepMilliseconds(500);
