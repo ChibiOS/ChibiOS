@@ -36,6 +36,50 @@
 /*===========================================================================*/
 
 /*
+ * (Re)define if needed base address constants supplied in ST's CMSIS
+ */
+#if (defined(STM32F427xx) || defined(STM32F437xx) || \
+     defined(STM32F429xx) || defined(STM32F439xx))
+  #if !defined(FSMC_Bank1_R_BASE)
+  #define FSMC_Bank1_R_BASE               (FMC_R_BASE + 0x0000)
+  #endif
+  #if !defined(FSMC_Bank1E_R_BASE)
+  #define FSMC_Bank1E_R_BASE              (FMC_R_BASE + 0x0104)
+  #endif
+  #if !defined(FSMC_Bank2_R_BASE)
+  #define FSMC_Bank2_R_BASE               (FMC_R_BASE + 0x0060)
+  #endif
+  #if !defined(FSMC_Bank3_R_BASE)
+  #define FSMC_Bank3_R_BASE               (FMC_R_BASE + 0x0080)
+  #endif
+  #if !defined(FSMC_Bank4_R_BASE)
+  #define FSMC_Bank4_R_BASE               (FMC_R_BASE + 0x00A0)
+  #endif
+  #if !defined(FSMC_Bank5_R_BASE)
+  #define FSMC_Bank5_R_BASE               (FMC_R_BASE + 0x0140)
+  #endif
+  #if !defined(FSMC_Bank_R_BASE)
+  #define FSMC_Bank6_R_BASE               (FMC_R_BASE + 0x0144)
+  #endif
+#else
+  #if !defined(FSMC_Bank1_R_BASE)
+  #define FSMC_Bank1_R_BASE               (FSMC_R_BASE + 0x0000)
+  #endif
+  #if !defined(FSMC_Bank1E_R_BASE)
+  #define FSMC_Bank1E_R_BASE              (FSMC_R_BASE + 0x0104)
+  #endif
+  #if !defined(FSMC_Bank2_R_BASE)
+  #define FSMC_Bank2_R_BASE               (FSMC_R_BASE + 0x0060)
+  #endif
+  #if !defined(FSMC_Bank3_R_BASE)
+  #define FSMC_Bank3_R_BASE               (FSMC_R_BASE + 0x0080)
+  #endif
+  #if !defined(FSMC_Bank4_R_BASE)
+  #define FSMC_Bank4_R_BASE               (FSMC_R_BASE + 0x00A0)
+  #endif
+#endif
+
+/*
  * Base bank mappings
  */
 #define FSMC_Bank1_MAP_BASE               ((uint32_t) 0x60000000)
