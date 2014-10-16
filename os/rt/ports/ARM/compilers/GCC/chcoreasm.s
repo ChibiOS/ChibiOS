@@ -63,7 +63,6 @@ _port_get_cpsr:
 .code 32
                 mrs     r0, CPSR
                 bx      lr
-                .endfunc
 
                 .balign 16
                 .code   16
@@ -79,7 +78,6 @@ _port_disable_thumb:
                 orr     r3, #F_BIT
                 msr     CPSR_c, r3
                 bx      lr
-                .endfunc
 
                 .balign 16
                 .code   16
@@ -96,7 +94,6 @@ _port_lock_thumb:
                 .code   32
                 msr     CPSR_c, #MODE_SYS | I_BIT
                 bx      lr
-                .endfunc
 
                 .balign 16
                 .code   16
@@ -113,7 +110,6 @@ _port_unlock_thumb:
                 .code   32
                 msr     CPSR_c, #MODE_SYS
                 bx      lr
-                .endfunc
 #endif /* defined(THUMB_PRESENT) */
 
                 .balign 16
@@ -128,7 +124,6 @@ _port_switch_thumb:
 #endif /* defined(THUMB_PRESENT) */
 
                 .code   32
-                .func
                 .global _port_switch_arm
 _port_switch_arm:
                 stmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
@@ -140,7 +135,6 @@ _port_switch_arm:
 #else /* !defined(THUMB_PRESENT)T */
                 ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 #endif /* !defined(THUMB_PRESENT) */
-                .endfunc
 
 /*
  * Common IRQ code. It expects a macro ARM_IRQ_VECTOR_REG with the address
@@ -173,7 +167,6 @@ _port_switch_arm:
  */
                 .balign 16
                 .code   32
-                .func
                 .global Irq_Handler
 Irq_Handler:
                 stmfd   sp!, {r0-r3, r12, lr}
@@ -184,18 +177,20 @@ Irq_Handler:
                 bx      r0                      // Calling the ISR.
 _irq_ret_arm:
 #else /* defined(THUMB_NO_INTERWORKING) */
-                add     r0, pc, #1
-                bx      r0
+                add     r1, pc, #1
+                bx      r1
                 .code   16
-                ldr     lr, =_irq_ret_thumb     // ISR return point.
+                ldr     r1, =(_irq_ret_thumb+1) // ISR return point.
+                mov     lr,r1
                 bx      r0                      // Calling the ISR.
+                .balign 4
 _irq_ret_thumb:
                 mov     lr, pc
                 bx      lr
                 .code   32
 #endif /* defined(THUMB_NO_INTERWORKING) */
                 cmp     r0, #0
-                ldmeq   sp!, {r0-r3, r12, lr}
+                ldmfd   sp!, {r0-r3, r12, lr}
                 subeqs  pc, lr, #4              // No reschedule, returns.
 
                 // Now the frame is created in the system stack, the IRQ
@@ -242,7 +237,6 @@ _irq_ret_thumb:
                 ldmfd   sp!, {r0-r3, r12, lr}
                 msr     CPSR_c, #MODE_IRQ | I_BIT
                 subs    pc, lr, #4
-                .endfunc
 
 /*
  * Threads trampoline code.
@@ -251,7 +245,6 @@ _irq_ret_thumb:
  */
                 .balign 16
                 .code   32
-                .func
                 .globl  _port_thread_start
 _port_thread_start:
 #if defined(THUMB_NO_INTERWORKING)
@@ -272,7 +265,7 @@ _port_thread_start:
                 mov     lr, pc
                 bx      r4
                 bl      chThdExit
-                .endfunc
+_zombies:       b       _zombies
 
 #endif /* !defined(__DOXYGEN__) */
 
