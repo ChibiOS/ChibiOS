@@ -246,7 +246,7 @@ _port_irq_common:
 #endif /* !defined(THUMB_NO_INTERWORKING) */
 
                 // Re-establish the IRQ conditions again.
-                ldmfd    sp!, {r0, r1}          // Pop R0=SPSR, R1=LR_IRQ.
+                ldmfd   sp!, {r0, r1}           // Pop R0=SPSR, R1=LR_IRQ.
                 msr     CPSR_c, #MODE_IRQ | I_BIT
                 msr     SPSR_fsxc, r0
                 mov     lr, r1
@@ -255,46 +255,6 @@ _port_irq_common:
                 msr     CPSR_c, #MODE_IRQ | I_BIT
                 subs    pc, lr, #4
                 .endfunc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                msr     CPSR_c, #MODE_SYS | I_BIT
-                bl      chSchIsPreemptionRequired
-                cmp     r0, #0
-                beq     noschd
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_lock
-#endif
-                bl      chSchDoReschedule
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
-#endif
-noschd:
-                ldmfd    sp!, {r0, r1}          // Pop R0=SPSR, R1=LR_IRQ.
-                msr     CPSR_c, #MODE_IRQ | I_BIT
-                msr     SPSR_fsxc, r0
-                mov     lr, r1
-                msr     CPSR_c, #MODE_SYS | I_BIT
-                ldmfd   sp!, {r0-r3, r12, lr}
-                msr     CPSR_c, #MODE_IRQ | I_BIT
-                subs    pc, lr, #4
 
 /*
  * Threads trampoline code.
@@ -325,38 +285,6 @@ _port_thread_start:
                 bx      r4
                 bl      chThdExit
                 .endfunc
-
-#if 0
-#if CH_DBG_SYSTEM_STATE_CHECK
-#if defined(THUMB_NO_INTERWORKING)
-                add     r0, pc, #1
-                bx      r0
-                .code   16
-#endif
-                bl      _dbg_check_unlock
-#if defined(THUMB_NO_INTERWORKING)
-                mov     lr, pc
-                bx      lr
-                .code   32
-#endif
-#endif
-                msr     CPSR_c, #MODE_SYS
-#if !defined(THUMB_NO_INTERWORKING)
-                mov     r0, r5
-                mov     lr, pc
-                bx      r4
-                bl      chThdExit
-#else /* defined(THUMB_NO_INTERWORKING) */
-                add     r0, pc, #1
-                bx      r0
-                .code 16
-                mov     r0, r5
-                bl      jmpr4
-                bl      chThdExit
-jmpr4:
-                bx      r4
-#endif /* defined(THUMB_NO_INTERWORKING) */
-#endif
 
 #endif /* !defined(__DOXYGEN__) */
 
