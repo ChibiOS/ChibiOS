@@ -147,21 +147,12 @@ _port_switch_arm:
  * of a register holding the address of the ISR to be invoked, the ISR
  * then returns in the common epilogue code where the context switch will
  * be performed, if required.
- * Note that registers are saved in the system stack in order to have the
- * IRQ stack empty if a context switch has to be performed.
  */
                 .code   32
                 .func
                 .global Irq_Handler
 Irq_Handler:
-                msr     CPSR_c, #MODE_SYS | I_BIT
-                stmfd   sp!, {r0-r3, r12, lr}   // Registers on System Stack.
-                msr     CPSR_c, #MODE_IRQ | I_BIT
-                mrs     r0, SPSR
-                mov     r1, lr
-                msr     CPSR_c, #MODE_SYS | I_BIT
-                stmfd   sp!, {r0, r1}           // Push R0=SPSR, R1=LR_IRQ.
-                msr     CPSR_c, #MODE_IRQ | I_BIT
+                stmfd   sp!, {r0-r3, r12, lr}
 #if defined(THUMB_NO_INTERWORKING)
                 add     r0, pc, #1
                 bx      r0
@@ -201,10 +192,89 @@ Irq_Handler:
  * Low  +------------+
  */
                 .balign 16
+#if defined(THUMB_NO_INTERWORKING)
+                .code   16
+                .thumb_func
+                .globl _port_irq_common
+_port_irq_common:
+                bl      chSchIsPreemptionRequired
+                mov     lr, pc
+                bx      lr
+                .code   32
+#else /* !defined(THUMB_NO_INTERWORKING) */
                 .code   32
                 .func
                 .globl  _port_irq_common
 _port_irq_common:
+                bl      chSchIsPreemptionRequired
+#endif /* !defined(THUMB_NO_INTERWORKING) */
+                cmp     r0, #0
+                ldmeq   sp!, {r0-r3, r12, lr}
+                subeqs  pc, lr, #4              // No reschedule, returns.
+
+                // Saves the IRQ mode registers in the system stack.
+                stmfd   sp!, {r0-r3, r12, lr}
+                msr     CPSR_c, #MODE_IRQ | I_BIT
+                mrs     r0, SPSR
+                mov     r1, lr
+                msr     CPSR_c, #MODE_SYS | I_BIT
+                stmfd   sp!, {r0, r1}           // Push R0=SPSR, R1=LR_IRQ.
+
+                // Context switch.
+#if defined(THUMB_NO_INTERWORKING)
+                add     r0, pc, #1
+                bx      r0
+                .code   16
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      _dbg_check_lock
+#endif
+                bl      chSchDoReschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      _dbg_check_unlock
+#endif
+                mov     lr, pc
+                bx      lr
+                .code   32
+#else /* !defined(THUMB_NO_INTERWORKING) */
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      _dbg_check_lock
+#endif
+                bl      chSchDoReschedule
+#if CH_DBG_SYSTEM_STATE_CHECK
+                bl      _dbg_check_unlock
+#endif
+#endif /* !defined(THUMB_NO_INTERWORKING) */
+
+                // Re-establish the IRQ conditions again.
+                ldmfd    sp!, {r0, r1}          // Pop R0=SPSR, R1=LR_IRQ.
+                msr     CPSR_c, #MODE_IRQ | I_BIT
+                msr     SPSR_fsxc, r0
+                mov     lr, r1
+                msr     CPSR_c, #MODE_SYS | I_BIT
+                ldmfd   sp!, {r0-r3, r12, lr}
+                msr     CPSR_c, #MODE_IRQ | I_BIT
+                subs    pc, lr, #4
+                .endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 msr     CPSR_c, #MODE_SYS | I_BIT
                 bl      chSchIsPreemptionRequired
                 cmp     r0, #0
@@ -225,7 +295,6 @@ noschd:
                 ldmfd   sp!, {r0-r3, r12, lr}
                 msr     CPSR_c, #MODE_IRQ | I_BIT
                 subs    pc, lr, #4
-                .endfunc
 
 /*
  * Threads trampoline code.
