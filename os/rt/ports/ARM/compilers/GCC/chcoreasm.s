@@ -180,11 +180,7 @@ _irq_ret_arm:
                 add     r1, pc, #1
                 bx      r1
                 .code   16
-                ldr     r1, =(_irq_ret_thumb+1) // ISR return point.
-                mov     lr, r1
-                bx      r0                      // Calling the ISR.
-                .balign 4
-_irq_ret_thumb:
+                bl      _bxr0                   // Calling the ISR.
                 mov     lr, pc
                 bx      lr
                 .code   32
@@ -237,6 +233,10 @@ _irq_ret_thumb:
                 ldmfd   sp!, {r0-r3, r12, lr}
                 msr     CPSR_c, #MODE_IRQ | I_BIT
                 subs    pc, lr, #4
+#if defined(THUMB_NO_INTERWORKING)
+                .code   16
+_bxr0:          bx      r0
+#endif
 
 /*
  * Threads trampoline code.

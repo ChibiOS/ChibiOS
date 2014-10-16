@@ -6,7 +6,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 *** ChibiOS/RT test suite
 ***
 *** Kernel:       3.0.0dev
-*** Compiled:     Oct 16 2014 - 21:17:41
+*** Compiled:     Oct 16 2014 - 21:31:50
 *** Compiler:     GCC 4.7.4 20140401 (release) [ARM/embedded-4_7-branch revision 209195]
 *** Architecture: ARMv4T
 *** Core Variant: ARM7
@@ -104,7 +104,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 115237 msgs/S, 230474 ctxswc/S
+--- Score : 115236 msgs/S, 230472 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
