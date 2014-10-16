@@ -181,7 +181,7 @@ _irq_ret_arm:
                 bx      r1
                 .code   16
                 ldr     r1, =(_irq_ret_thumb+1) // ISR return point.
-                mov     lr,r1
+                mov     lr, r1
                 bx      r0                      // Calling the ISR.
                 .balign 4
 _irq_ret_thumb:
@@ -255,17 +255,23 @@ _port_thread_start:
                 bl      _dbg_check_unlock
 #endif
                 bl      _port_unlock_thumb
+                mov     r0, r5
+                bl      _bxr4
+                bl      chThdExit
+_zombies:       b       _zombies
+_bxr4:          bx      r4
+
 #else /* !defined(THUMB_NO_INTERWORKING) */
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      _dbg_check_unlock
 #endif
                 msr     CPSR_c, #MODE_SYS
-#endif /* !defined(THUMB_NO_INTERWORKING) */
                 mov     r0, r5
                 mov     lr, pc
                 bx      r4
                 bl      chThdExit
 _zombies:       b       _zombies
+#endif /* !defined(THUMB_NO_INTERWORKING) */
 
 #endif /* !defined(__DOXYGEN__) */
 

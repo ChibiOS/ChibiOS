@@ -6,7 +6,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 *** ChibiOS/RT test suite
 ***
 *** Kernel:       3.0.0dev
-*** Compiled:     Oct 16 2014 - 18:28:29
+*** Compiled:     Oct 16 2014 - 21:17:41
 *** Compiler:     GCC 4.7.4 20140401 (release) [ARM/embedded-4_7-branch revision 209195]
 *** Architecture: ARMv4T
 *** Core Variant: ARM7
@@ -128,7 +128,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.8 (Benchmark, round robin context switching)
---- Score : 269800 ctxswc/S
+--- Score : 269804 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
@@ -136,7 +136,7 @@ Settings: CCLK=48, MAMCR=2, MAMTIM=3 (3 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 313756 timers/S
+--- Score : 313690 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
