@@ -187,6 +187,7 @@ typedef void (*icucallback_t)(ICUDriver *icup);
 
 /**
  * @brief   Common ISR code, ICU period event.
+ * @note    A period event brings the driver into the @p ICU_ACTIVE state.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
@@ -201,6 +202,8 @@ typedef void (*icucallback_t)(ICUDriver *icup);
 
 /**
  * @brief   Common ISR code, ICU timer overflow event.
+ * @note    An overflow always brings the driver back to the @p ICU_WAITING
+ *          state.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
@@ -208,6 +211,7 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  */
 #define _icu_isr_invoke_overflow_cb(icup) do {                              \
   (icup)->config->overflow_cb(icup);                                        \
+  (icup)->state = ICU_WAITING;                                              \
 } while (0)
 /** @} */
 
@@ -223,7 +227,7 @@ extern "C" {
   void icuStart(ICUDriver *icup, const ICUConfig *config);
   void icuStop(ICUDriver *icup);
   void icuStartCapture(ICUDriver *icup);
-  void icuWaitCapture(ICUDriver *icup);
+  bool icuWaitCapture(ICUDriver *icup);
   void icuStopCapture(ICUDriver *icup);
   void icuEnableNotifications(ICUDriver *icup);
   void icuDisableNotifications(ICUDriver *icup);
