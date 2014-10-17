@@ -644,8 +644,8 @@ void icu_lld_start_capture(ICUDriver *icup) {
 
 /**
  * @brief   Waits for a completed capture.
- * @note    The wait is performed in polled mode.
- * @note    The function cannot work if notifications are enabled.
+ * @note    The operation is performed in polled mode.
+ * @note    In order to use this function notifications must be disabled.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
@@ -687,7 +687,7 @@ void icu_lld_stop_capture(ICUDriver *icup) {
  *
  * @api
  */
-void icu_enable_notifications(ICUDriver *icup) {
+void icu_lld_enable_notifications(ICUDriver *icup) {
   uint32_t dier = icup->tim->DIER;
 
   /* If interrupts were already enabled then the operation is skipped.
@@ -733,7 +733,7 @@ void icu_enable_notifications(ICUDriver *icup) {
  *
  * @api
  */
-void icu_disable_notifications(ICUDriver *icup) {
+void icu_lld_disable_notifications(ICUDriver *icup) {
 
   /* All interrupts disabled.*/
   icup->tim->DIER &= ~STM32_TIM_DIER_IRQ_MASK;

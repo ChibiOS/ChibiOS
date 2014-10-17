@@ -361,6 +361,19 @@ struct ICUDriver {
  */
 #define icu_lld_get_period(icup) (*((icup)->pccrp) + 1)
 
+/**
+ * @brief   Check on notifications status.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ * @return              The notifications status.
+ * @retval false        if notifications are not enabled.
+ * @retval true         if notifications are enabled.
+ *
+ * @notapi
+ */
+#define icu_lld_are_notifications_enabled(icup)                             \
+  (bool)(((icup)->tim->DIER & STM32_TIM_DIER_IRQ_MASK) != 0)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -402,8 +415,8 @@ extern "C" {
   void icu_lld_start_capture(ICUDriver *icup);
   void icu_lld_wait_capture(ICUDriver *icup);
   void icu_lld_stop_capture(ICUDriver *icup);
-  void icu_enable_notifications(ICUDriver *icup);
-  void icu_disable_notifications(ICUDriver *icup);
+  void icu_lld_enable_notifications(ICUDriver *icup);
+  void icu_lld_disable_notifications(ICUDriver *icup);
 #ifdef __cplusplus
 }
 #endif

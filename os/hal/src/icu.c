@@ -134,6 +134,11 @@ void icuStartCapture(ICUDriver *icup) {
 
 /**
  * @brief   Waits for a completed capture.
+ * @note    The operation could be performed in polled mode depending on.
+ * @note    In order to use this function notifications must be disabled.
+ * @pre     The driver must be in @p ICU_WAITING or  @p ICU_ACTIVE modes.
+ * @post    After the capture is available the driver is in @p ICU_ACTIVE
+ *          mode.
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
@@ -146,7 +151,10 @@ void icuWaitCapture(ICUDriver *icup) {
   osalSysLock();
   osalDbgAssert((icup->state == ICU_WAITING) || (icup->state == ICU_ACTIVE),
                 "invalid state");
-  icuWaitCaptureI(icup);
+  osalDbgAssert(icuAreNotificationsEnabledX(icup) == false,
+                "notifications enabled");
+  icu_lld_wait_capture(icup);
+  icup->state = ICU_ACTIVE;
   osalSysUnlock();
 }
 
