@@ -444,7 +444,7 @@ void adc_lld_start(ADCDriver *adcp) {
                                  (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
       dmaStreamSetPeripheral(adcp->dmastp, &SDADC3->JDATAR);
-      rccEnableSDADC2(FALSE);
+      rccEnableSDADC3(FALSE);
       PWR->CR |= PWR_CR_SDADC3EN;
       adcp->sdadc->CR2 = 0;
       adcp->sdadc->CR1 = (adcp->config->cr1 | SDADC_ENFORCED_CR1_FLAGS) &
