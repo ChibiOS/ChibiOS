@@ -119,9 +119,6 @@ void halInit(void) {
 #if HAL_USE_RTC || defined(__DOXYGEN__)
   rtcInit();
 #endif
-#if HAL_USE_NAND || defined(__DOXYGEN__)
-  nandInit();
-#endif
   /* Board specific initialization.*/
   boardInit();
 
