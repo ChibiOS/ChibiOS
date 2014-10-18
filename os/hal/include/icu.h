@@ -181,7 +181,7 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  */
 #define _icu_isr_invoke_width_cb(icup) do {                                 \
   if (((icup)->state == ICU_ACTIVE) &&                                      \
-      ((icup)->config->period_cb != NULL))                                  \
+      ((icup)->config->width_cb != NULL))                                   \
     (icup)->config->width_cb(icup);                                         \
 } while (0)
 
