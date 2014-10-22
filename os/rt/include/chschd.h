@@ -568,7 +568,7 @@ static inline bool chSchIsRescRequiredI(void) {
  */
 static inline bool chSchCanYieldS(void) {
 
-  chDbgCheckClassI();
+  chDbgCheckClassS();
 
   return firstprio(&ch.rlist.r_queue) >= currp->p_prio;
 }
