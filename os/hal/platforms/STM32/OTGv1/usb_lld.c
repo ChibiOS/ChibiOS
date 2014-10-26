@@ -642,7 +642,8 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
   stm32_otg_t *otgp = usbp->otg;
   uint32_t sts, src;
 
-  sts = otgp->GINTSTS & otgp->GINTMSK;
+  sts  = otgp->GINTSTS;
+  sts &= otgp->GINTMSK;
   otgp->GINTSTS = sts;
 
   /* Reset interrupt handling.*/
@@ -765,8 +766,6 @@ static msg_t usb_lld_pump(void *p) {
     }
     chSysLock();
   }
-  chSysUnlock();
-  return 0;
 }
 
 #if STM32_USB_USE_OTG1 || defined(__DOXYGEN__)
