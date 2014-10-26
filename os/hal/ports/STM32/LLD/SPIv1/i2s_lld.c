@@ -399,8 +399,15 @@ void i2s_lld_start_exchange(I2SDriver *i2sp) {
   size_t size = i2sp->config->size;
 
   /* In 32 bit modes the DMA has to perform double operations because fetches
-     are always performed using 16 bit accesses.*/
-  if ((i2sp->config->i2scfgr & (SPI_I2SCFGR_DATLEN | SPI_I2SCFGR_CHLEN)) != 0)
+     are always performed using 16 bit accesses.
+     DATLEN   CHLEN   SIZE
+     00 (16)  0 (16)  16
+     00 (16)  1 (32)  16
+     01 (24)  X       32
+     10 (32)  X       32
+     11 (NA)  X       NA
+     */
+  if ((i2sp->config->i2scfgr & SPI_I2SCFGR_DATLEN) != 0)
     size *= 2;
 
   /* RX DMA setup.*/
