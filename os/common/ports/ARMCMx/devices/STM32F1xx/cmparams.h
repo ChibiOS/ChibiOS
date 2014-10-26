@@ -47,13 +47,6 @@
  */
 #define CORTEX_PRIORITY_BITS    4
 
-/**
- * @brief   Number of interrupt vectors.
- * @note    This number does not include the 16 system vectors and must be
- *          rounded to a multiple of 8.
- */
-#define CORTEX_NUM_VECTORS      __NVECTORS
-
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)
@@ -96,6 +89,13 @@
 #else
 #error "STM32F1xx device not defined or not recognized"
 #endif
+
+/**
+ * @brief   Number of interrupt vectors.
+ * @note    This number does not include the 16 system vectors and must be
+ *          rounded to a multiple of 8.
+ */
+#define CORTEX_NUM_VECTORS      __NVECTORS
 
 #endif /* !defined(_FROM_ASM_) */
 
