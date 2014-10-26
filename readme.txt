@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.7 ***
+- FIX: Fixed minor warnings while building with IAR 7.3.0 (bug #542).
 - FIX: Fixed STM32 OTGv1 usb_lld_pump improper stack filling (bug #541).
 - FIX: Fixed chsnprintf sometimes doesn't terminate str (bug #538).
 - FIX: Fixed wrong wait states for STM32F401 (bug #537).
