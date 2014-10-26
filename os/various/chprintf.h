@@ -37,7 +37,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap);
+  int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap);
   int chsnprintf(char *str, size_t size, const char *fmt, ...);
 #ifdef __cplusplus
 }
@@ -66,12 +66,15 @@ extern "C" {
  *
  * @api
  */
-static inline void chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
+static inline int chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
   va_list ap;
+  int formatted_bytes;
 
   va_start(ap, fmt);
-  chvprintf(chp, fmt, ap);
+  formatted_bytes = chvprintf(chp, fmt, ap);
   va_end(ap);
+
+  return formatted_bytes;
 }
 
 #endif /* _CHPRINTF_H_ */

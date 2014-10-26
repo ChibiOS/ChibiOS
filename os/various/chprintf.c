@@ -113,12 +113,15 @@ static char *ftoa(char *p, double num, unsigned long precision) {
  * @param[in] chp       pointer to a @p BaseSequentialStream implementing object
  * @param[in] fmt       formatting string
  * @param[in] ap        list of parameters
+ * @return              The number of bytes that would have been
+ *                      written to @p chp if no stream error occurs
  *
  * @api
  */
-void chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
+int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
   char *p, *s, c, filler;
   int i, precision, width;
+  int n = 0;
   bool is_long, left_align;
   long l;
 #if CHPRINTF_USE_FLOAT
@@ -131,9 +134,10 @@ void chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
   while (TRUE) {
     c = *fmt++;
     if (c == 0)
-      return;
+      return n;
     if (c != '%') {
       chSequentialStreamPut(chp, (uint8_t)c);
+      n++;
       continue;
     }
     p = tmpbuf;
@@ -251,17 +255,22 @@ unsigned_common:
     if (width < 0) {
       if (*s == '-' && filler == '0') {
         chSequentialStreamPut(chp, (uint8_t)*s++);
+        n++;
         i--;
       }
       do {
         chSequentialStreamPut(chp, (uint8_t)filler);
+        n++;
       } while (++width != 0);
     }
-    while (--i >= 0)
+    while (--i >= 0) {
       chSequentialStreamPut(chp, (uint8_t)*s++);
+      n++;
+    }
 
     while (width) {
       chSequentialStreamPut(chp, (uint8_t)filler);
+      n++;
       width--;
     }
   }
@@ -284,11 +293,14 @@ unsigned_common:
  *          - <b>c</b> character.
  *          - <b>s</b> string.
  *          .
+ * @post    @p str is NUL-terminated, unless @p size is 0.
  *
  * @param[in] str       pointer to a buffer
  * @param[in] size      maximum size of the buffer
  * @param[in] fmt       formatting string
- * @return              The size of the generated string.
+ * @return              The number of characters (excluding the
+ *                      terminating NUL byte) that would have been
+ *                      stored in @p str if there was room.
  *
  * @api
  */
@@ -296,20 +308,30 @@ int chsnprintf(char *str, size_t size, const char *fmt, ...) {
   va_list ap;
   MemoryStream ms;
   BaseSequentialStream *chp;
+  size_t size_wo_nul;
+  int retval;
+
+  if (size > 0)
+    size_wo_nul = size - 1;
+  else
+    size_wo_nul = 0;
 
   /* Memory stream object to be used as a string writer, reserving one
      byte for the final zero.*/
-  msObjectInit(&ms, (uint8_t *)str, size - 1, 0);
+  msObjectInit(&ms, (uint8_t *)str, size_wo_nul, 0);
 
   /* Performing the print operation using the common code.*/
   chp = (BaseSequentialStream *)&ms;
   va_start(ap, fmt);
-  chvprintf(chp, fmt, ap);
+  retval = chvprintf(chp, fmt, ap);
   va_end(ap);
 
-  /* Final zero and size return.*/
-  str[ms.eos] = 0;
-  return ms.eos;
+  /* Terminate with a zero, unless size==0.*/
+  if (ms.eos < size)
+      str[ms.eos] = 0;
+
+  /* Return number of bytes that would have been written.*/
+  return retval;
 }
 
 /** @} */
