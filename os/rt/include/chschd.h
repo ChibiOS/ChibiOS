@@ -69,48 +69,19 @@
 /*===========================================================================*/
 
 /**
- * @extends threads_queue_t
- *
- * @brief   Type of a thread structure.
+ * @brief   Generic threads single link list, it works like a stack.
  */
-typedef struct thread thread_t;
+struct ch_threads_list {
+  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
+};
 
 /**
- * @extends threads_list_t
- *
- * @brief   Type of a generic threads bidirectional linked list header and element.
+ * @brief   Generic threads bidirectional linked list header and element.
  */
-typedef struct {
+struct ch_threads_queue{
   thread_t              *p_next;    /**< @brief Next in the list/queue.     */
   thread_t              *p_prev;    /**< @brief Previous in the queue.      */
-} threads_queue_t;
-
-/**
- * @brief   Type of a generic threads single link list, it works like a stack.
- */
-typedef struct {
-  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
-} threads_list_t;
-
-/**
- * @extends threads_queue_t
- *
- * @brief   Ready list header.
- */
-typedef struct {
-  threads_queue_t       r_queue;    /**< @brief Threads queue.              */
-  tprio_t               r_prio;     /**< @brief This field must be
-                                                initialized to zero.        */
-  struct context        r_ctx;      /**< @brief Not used, present because
-                                                offsets.                    */
-#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
-  thread_t              *r_newer;   /**< @brief Newer registry element.     */
-  thread_t              *r_older;   /**< @brief Older registry element.     */
-#endif
-  /* End of the fields shared with the thread_t structure.*/
-  thread_t              *r_current; /**< @brief The currently running
-                                                thread.                     */
-} ready_list_t;
+};
 
 /**
  * @brief   Structure representing a thread.
@@ -118,7 +89,7 @@ typedef struct {
  *          not needed ChibiOS/RT subsystems it is possible to save RAM space
  *          by shrinking this structure.
  */
-struct thread {
+struct ch_thread {
   thread_t              *p_next;    /**< @brief Next in the list/queue.     */
   /* End of the fields shared with the threads_list_t structure.*/
   thread_t              *p_prev;    /**< @brief Previous in the queue.      */
@@ -257,21 +228,11 @@ struct thread {
 };
 
 /**
- * @brief   Type of a Virtual Timer callback function.
- */
-typedef void (*vtfunc_t)(void *);
-
-/**
- * @brief   Type of a Virtual Timer structure.
- */
-typedef struct virtual_timer virtual_timer_t;
-
-/**
  * @extends virtual_timers_list_t
  *
  * @brief   Virtual Timer descriptor structure.
  */
-struct virtual_timer {
+struct ch_virtual_timer {
   virtual_timer_t       *vt_next;   /**< @brief Next timer in the list.     */
   virtual_timer_t       *vt_prev;   /**< @brief Previous timer in the list. */
   systime_t             vt_delta;   /**< @brief Time delta before timeout.  */
@@ -287,7 +248,7 @@ struct virtual_timer {
  *          in order to make the unlink time constant, the reset of a virtual
  *          timer is often used in the code.
  */
-typedef struct {
+struct ch_virtual_timers_list {
   virtual_timer_t       *vt_next;   /**< @brief Next timer in the delta
                                                 list.                       */
   virtual_timer_t       *vt_prev;   /**< @brief Last timer in the delta
@@ -303,14 +264,32 @@ typedef struct {
   systime_t             vt_lasttime;/**< @brief System time of the last
                                                 tick event.                 */
 #endif
-} virtual_timers_list_t;
+};
+
+/**
+ * @extends threads_queue_t
+ */
+struct ch_ready_list {
+  threads_queue_t       r_queue;    /**< @brief Threads queue.              */
+  tprio_t               r_prio;     /**< @brief This field must be
+                                                initialized to zero.        */
+  struct context        r_ctx;      /**< @brief Not used, present because
+                                                offsets.                    */
+#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
+  thread_t              *r_newer;   /**< @brief Newer registry element.     */
+  thread_t              *r_older;   /**< @brief Older registry element.     */
+#endif
+  /* End of the fields shared with the thread_t structure.*/
+  thread_t              *r_current; /**< @brief The currently running
+                                                thread.                     */
+};
 
 /**
  * @brief   System data structure.
  * @note    This structure contain all the data areas used by the OS except
  *          stacks.
  */
-typedef struct ch_system {
+struct ch_system {
   /**
    * @brief   Ready list header.
    */
@@ -357,7 +336,7 @@ typedef struct ch_system {
    */
   ch_trace_buffer_t     dbg_trace_buffer;
 #endif
-} ch_system_t;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */
