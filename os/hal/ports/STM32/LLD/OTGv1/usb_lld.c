@@ -624,7 +624,8 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
   stm32_otg_t *otgp = usbp->otg;
   uint32_t sts, src;
 
-  sts = otgp->GINTSTS & otgp->GINTMSK;
+  sts  = otgp->GINTSTS;
+  sts &= otgp->GINTMSK;
   otgp->GINTSTS = sts;
 
   /* Reset interrupt handling.*/
@@ -1346,8 +1347,6 @@ msg_t usb_lld_pump(void *p) {
     }
     osalSysLock();
   }
-  osalSysUnlock();
-  return 0;
 }
 
 #endif /* HAL_USE_USB */
