@@ -835,7 +835,7 @@ void usb_lld_init(void) {
                     (uint8_t *)wsp + sizeof(Thread),
                     CH_THREAD_FILL_VALUE);
     _thread_memfill((uint8_t *)wsp + sizeof(Thread),
-                    (uint8_t *)wsp + sizeof(USBD1.wa_pump) - sizeof(Thread),
+                    (uint8_t *)wsp + sizeof(USBD1.wa_pump),
                     CH_STACK_FILL_VALUE);
   }
 #endif
@@ -857,7 +857,7 @@ void usb_lld_init(void) {
                     (uint8_t *)wsp + sizeof(Thread),
                     CH_THREAD_FILL_VALUE);
     _thread_memfill((uint8_t *)wsp + sizeof(Thread),
-                    (uint8_t *)wsp + sizeof(USBD2.wa_pump) - sizeof(Thread),
+                    (uint8_t *)wsp + sizeof(USBD2.wa_pump),
                     CH_STACK_FILL_VALUE);
   }
 #endif
