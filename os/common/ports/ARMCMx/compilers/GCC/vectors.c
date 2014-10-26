@@ -528,7 +528,7 @@ vectors_t _vectors = {
     Vector170,          Vector174,          Vector178,          Vector17C,
 #endif
 #if CORTEX_NUM_VECTORS > 80
-    Vector180,          Vector184,          Vector188,          Vector17C,
+    Vector180,          Vector184,          Vector188,          Vector18C,
 #endif
 #if CORTEX_NUM_VECTORS > 84
     Vector190,          Vector194,          Vector198,          Vector19C,
