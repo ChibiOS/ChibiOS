@@ -124,7 +124,7 @@ extern "C" {
 #if RTC_SUPPORTS_CALLBACKS
   void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback);
 #endif
-  uint32_t rtcConvertDateTimeToFAT(RTCDateTime *timespec);
+  uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec);
 #ifdef __cplusplus
 }
 #endif
