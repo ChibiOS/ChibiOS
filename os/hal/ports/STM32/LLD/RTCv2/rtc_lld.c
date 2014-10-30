@@ -68,19 +68,6 @@ RTCDriver RTCD1;
 /*===========================================================================*/
 
 /**
- * @brief   Wait for synchronization of RTC registers with shadow registers.
- * @details This function must be invoked before trying to access RTC
- *          registers.
- *
- * @notapi
- */
-static void rtc_regs_sync(void) {
-
-  while ((RTCD1.rtc->ISR & RTC_ISR_RSF) == 0)
-    ;
-}
-
-/**
  * @brief   Beginning of configuration procedure.
  *
  * @notapi
@@ -221,7 +208,7 @@ static uint32_t rtc_encode_date(const RTCDateTime *timespec) {
 /**
  * @brief   Enable access to registers.
  *
- * @api
+ * @notapi
  */
 void rtc_lld_init(void) {
 
@@ -232,92 +219,120 @@ void rtc_lld_init(void) {
   RTCD1.rtc->WPR = 0xCA;
   RTCD1.rtc->WPR = 0x53;
 
+  rtc_enter_init();
+
   /* If calendar has not been initialized yet then proceed with the
      initial setup.*/
   if (!(RTCD1.rtc->ISR & RTC_ISR_INITS)) {
-    rtc_enter_init();
 
     RTCD1.rtc->CR   = 0;
     RTCD1.rtc->ISR  = 0;
     RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
     RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
-
-    rtc_exit_init();
   }
+  else
+    RTCD1.rtc->ISR &= ~RTC_ISR_RSF;
+
+  rtc_exit_init();
 }
 
 /**
  * @brief   Set current time.
  * @note    Fractional part will be silently ignored. There is no possibility
  *          to set it on STM32 platform.
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] timespec  pointer to a @p RTCDateTime structure
  *
- * @api
+ * @notapi
  */
 void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
   uint32_t dr, tr;
+  syssts_t sts;
 
   tr = rtc_encode_time(timespec);
   dr = rtc_encode_date(timespec);
 
-  rtc_regs_sync();
+  /* Entering a reentrant critical zone.*/
+  sts = chSysGetStatusAndLockX();
 
+  /* Writing the registers.*/
   rtc_enter_init();
-
   rtcp->rtc->TR = tr;
   rtcp->rtc->DR = dr;
-
   rtc_exit_init();
+
+  /* Leaving a reentrant critical zone.*/
+  chSysRestoreStatusX(sts);
 }
 
 /**
  * @brief   Get current time.
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[out] timespec pointer to a @p RTCDateTime structure
  *
- * @api
+ * @notapi
  */
 void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
+  uint32_t dr, tr, ssr;
   uint32_t subs;
+  syssts_t sts;
 
-  rtc_regs_sync();
+  /* Entering a reentrant critical zone.*/
+  sts = chSysGetStatusAndLockX();
+
+  /* Synchronization with the RTC and reading the registers, note
+     DR must be read last.*/
+  while ((rtcp->rtc->ISR & RTC_ISR_RSF) == 0)
+    ;
+  ssr = rtcp->rtc->SSR;
+  tr  = rtcp->rtc->TR;
+  dr  = rtcp->rtc->DR;
+  rtcp->rtc->ISR &= ~RTC_ISR_RSF;
+
+  /* Leaving a reentrant critical zone.*/
+  chSysRestoreStatusX(sts);
 
   /* Decoding day time, this starts the atomic read sequence, see "Reading
      the calendar" in the RTC documentation.*/
-  rtc_decode_time(rtcp->rtc->TR, timespec);
+  rtc_decode_time(tr, timespec);
 
   /* If the RTC is capable of sub-second counting then the value is
      normalized in milliseconds and added to the time.*/
 #if STM32_RTC_HAS_SUBSECONDS
-  subs = (((rtcp->rtc->SSR << 16) / STM32_RTC_PRESS_VALUE) * 1000) >> 16;
+  subs = (((ssr << 16) / STM32_RTC_PRESS_VALUE) * 1000) >> 16;
 #else
   subs = 0;
 #endif /* STM32_RTC_HAS_SUBSECONDS */
   timespec->millisecond += subs;
 
   /* Decoding date, this concludes the atomic read sequence.*/
-  rtc_decode_date(rtcp->rtc->DR, timespec);
+  rtc_decode_date(dr, timespec);
 }
 
 #if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
 /**
- * @brief     Set alarm time.
+ * @brief   Set alarm time.
+ * @note    Default value after BKP domain reset for both comparators is 0.
+ * @note    Function does not performs any checks of alarm time validity.
+ * @note    The function can be called from any context.
  *
- * @note      Default value after BKP domain reset for both comparators is 0.
- * @note      Function does not performs any checks of alarm time validity.
+ * @param[in] rtcp      pointer to RTC driver structure.
+ * @param[in] alarm     alarm identifier. Can be 1 or 2.
+ * @param[in] alarmspec pointer to a @p RTCAlarm structure.
  *
- * @param[in] rtcp      Pointer to RTC driver structure.
- * @param[in] alarm     Alarm identifier. Can be 1 or 2.
- * @param[in] alarmspec Pointer to a @p RTCAlarm structure.
- *
- * @api
+ * @notapi
  */
 void rtc_lld_set_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        const RTCAlarm *alarmspec) {
+  syssts_t sts;
+
+  /* Entering a reentrant critical zone.*/
+  sts = chSysGetStatusAndLockX();
 
   if (alarm == 1) {
     if (alarmspec != NULL) {
@@ -349,20 +364,25 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
     }
   }
 #endif /* RTC_ALARMS > 1 */
+
+  /* Leaving a reentrant critical zone.*/
+  chSysRestoreStatusX(sts);
 }
 
 /**
  * @brief   Get alarm time.
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp       pointer to RTC driver structure
  * @param[in] alarm      alarm identifier
  * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
- * @api
+ * @notapi
  */
 void rtc_lld_get_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        RTCAlarm *alarmspec) {
+
   if (alarm == 1)
     alarmspec->alrmr = rtcp->rtc->ALRMAR;
 #if RTC_ALARMS > 1
@@ -375,9 +395,9 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
 
 #if STM32_RTC_HAS_PERIODIC_WAKEUPS || defined(__DOXYGEN__)
 /**
- * @brief     Sets time of periodic wakeup.
- *
- * @note      Default value after BKP domain reset is 0x0000FFFF
+ * @brief   Sets time of periodic wakeup.
+ * @note    Default value after BKP domain reset is 0x0000FFFF
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp       pointer to RTC driver structure
  * @param[in] wakeupspec pointer to a @p RTCWakeup structure
@@ -385,6 +405,10 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  * @api
  */
 void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec) {
+  syssts_t sts;
+
+  /* Entering a reentrant critical zone.*/
+  sts = chSysGetStatusAndLockX();
 
   if (wakeupspec != NULL) {
     osalDbgCheck(wakeupspec->wutr != 0x30000);
@@ -401,12 +425,15 @@ void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec) {
     rtcp->rtc->CR &= ~RTC_CR_WUTIE;
     rtcp->rtc->CR &= ~RTC_CR_WUTE;
   }
+
+  /* Leaving a reentrant critical zone.*/
+  chSysRestoreStatusX(sts);
 }
 
 /**
- * @brief     Gets time of periodic wakeup.
- *
- * @note      Default value after BKP domain reset is 0x0000FFFF
+ * @brief   Gets time of periodic wakeup.
+ * @note    Default value after BKP domain reset is 0x0000FFFF
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp        pointer to RTC driver structure
  * @param[out] wakeupspec pointer to a @p RTCWakeup structure
@@ -414,10 +441,17 @@ void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec) {
  * @api
  */
 void rtcSTM32GetPeriodicWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec) {
+  syssts_t sts;
+
+  /* Entering a reentrant critical zone.*/
+  sts = chSysGetStatusAndLockX();
 
   wakeupspec->wutr  = 0;
   wakeupspec->wutr |= rtcp->rtc->WUTR;
   wakeupspec->wutr |= (((uint32_t)rtcp->rtc->CR) & 0x7) << 16;
+
+  /* Leaving a reentrant critical zone.*/
+  chSysRestoreStatusX(sts);
 }
 #endif /* STM32_RTC_HAS_PERIODIC_WAKEUPS */
 

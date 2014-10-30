@@ -68,47 +68,61 @@ void rtcInit(void) {
 
 /**
  * @brief   Set current time.
+ * @note    This function can be called from any context but limitations
+ *          could be imposed by the low level implementation. It is
+ *          guaranteed that the function can be called from thread
+ *          context.
+ * @note    The function can be reentrant or not reentrant depending on
+ *          the low level implementation.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] timespec  pointer to a @p RTCDateTime structure
  *
- * @api
+ * @special
  */
 void rtcSetTime(RTCDriver *rtcp, const RTCDateTime *timespec) {
 
   osalDbgCheck((rtcp != NULL) && (timespec != NULL));
 
-  osalSysLock();
-  rtcSetTimeI(rtcp, timespec);
-  osalSysUnlock();
+  rtc_lld_set_time(rtcp, timespec);
 }
 
 /**
  * @brief   Get current time.
+ * @note    This function can be called from any context but limitations
+ *          could be imposed by the low level implementation. It is
+ *          guaranteed that the function can be called from thread
+ *          context.
+ * @note    The function can be reentrant or not reentrant depending on
+ *          the low level implementation.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[out] timespec pointer to a @p RTCDateTime structure
  *
- * @api
+ * @special
  */
 void rtcGetTime(RTCDriver *rtcp, RTCDateTime *timespec) {
 
   osalDbgCheck((rtcp != NULL) && (timespec != NULL));
 
-  osalSysLock();
-  rtcGetTimeI(rtcp, timespec);
-  osalSysUnlock();
+  rtc_lld_get_time(rtcp, timespec);
 }
 
 #if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
 /**
  * @brief   Set alarm time.
+ * @note    This function can be called from any context but limitations
+ *          could be imposed by the low level implementation. It is
+ *          guaranteed that the function can be called from thread
+ *          context.
+ * @note    The function can be reentrant or not reentrant depending on
+ *          the low level implementation.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] alarm     alarm identifier
  * @param[in] alarmspec pointer to a @p RTCAlarm structure or @p NULL
  *
- * @api
+ * @special
  */
 void rtcSetAlarm(RTCDriver *rtcp,
                  rtcalarm_t alarm,
@@ -116,21 +130,25 @@ void rtcSetAlarm(RTCDriver *rtcp,
 
   osalDbgCheck((rtcp != NULL) && (alarm < RTC_ALARMS));
 
-  osalSysLock();
-  rtcSetAlarmI(rtcp, alarm, alarmspec);
-  osalSysUnlock();
+  rtc_lld_set_alarm(rtcp, alarm, alarmspec);
 }
 
 /**
  * @brief   Get current alarm.
  * @note    If an alarm has not been set then the returned alarm specification
  *          is not meaningful.
+ * @note    This function can be called from any context but limitations
+ *          could be imposed by the low level implementation. It is
+ *          guaranteed that the function can be called from thread
+ *          context.
+ * @note    The function can be reentrant or not reentrant depending on
+ *          the low level implementation.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] alarm     alarm identifier
  * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
- * @api
+ * @special
  */
 void rtcGetAlarm(RTCDriver *rtcp,
                  rtcalarm_t alarm,
@@ -138,9 +156,7 @@ void rtcGetAlarm(RTCDriver *rtcp,
 
   osalDbgCheck((rtcp != NULL) && (alarm < RTC_ALARMS) && (alarmspec != NULL));
 
-  osalSysLock();
-  rtcGetAlarmI(rtcp, alarm, alarmspec);
-  osalSysUnlock();
+  rtc_lld_get_alarm(rtcp, alarm, alarmspec);
 }
 #endif /* RTC_ALARMS > 0 */
 
@@ -149,19 +165,23 @@ void rtcGetAlarm(RTCDriver *rtcp,
  * @brief   Enables or disables RTC callbacks.
  * @details This function enables or disables the callback, use a @p NULL
  *          pointer in order to disable it.
+ * @note    This function can be called from any context but limitations
+ *          could be imposed by the low level implementation. It is
+ *          guaranteed that the function can be called from thread
+ *          context.
+ * @note    The function can be reentrant or not reentrant depending on
+ *          the low level implementation.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] callback  callback function pointer or @p NULL
  *
- * @api
+ * @special
  */
 void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
 
   osalDbgCheck(rtcp != NULL);
 
-  osalSysLock();
-  rtcSetCallbackI(rtcp, callback);
-  osalSysUnlock();
+  rtc_lld_set_callback(rtcp, callback);
 }
 #endif /* RTC_SUPPORTS_CALLBACKS */
 
