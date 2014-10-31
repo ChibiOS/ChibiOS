@@ -187,6 +187,8 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
 
 /**
  * @brief   Get current time in format suitable for usage in FAT file system.
+ * @note    The information about day of week and DST is lost in DOS
+ *          format, the second field loses its least significant bit.
  *
  * @param[out] timespec pointer to a @p RTCDateTime structure
  * @return              FAT date/time value.
@@ -194,7 +196,6 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
  * @api
  */
 uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec) {
-
   uint32_t fattime;
   uint32_t sec, min, hour, tmp;
 
