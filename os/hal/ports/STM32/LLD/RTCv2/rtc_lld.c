@@ -334,7 +334,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
-  if (alarm == 1) {
+  if (alarm == 0) {
     if (alarmspec != NULL) {
       rtcp->rtc->CR &= ~RTC_CR_ALRAE;
       while (!(rtcp->rtc->ISR & RTC_ISR_ALRAWF))
@@ -383,7 +383,7 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
                        rtcalarm_t alarm,
                        RTCAlarm *alarmspec) {
 
-  if (alarm == 1)
+  if (alarm == 0)
     alarmspec->alrmr = rtcp->rtc->ALRMAR;
 #if RTC_ALARMS > 1
   else
