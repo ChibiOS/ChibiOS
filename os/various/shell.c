@@ -282,7 +282,7 @@ bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
       chprintf(chp, "^D");
       return TRUE;
     }
-    if (c == 8) {
+    if ((c == 8) || (c == 127)) {
       if (p != line) {
         chSequentialStreamPut(chp, c);
         chSequentialStreamPut(chp, 0x20);
