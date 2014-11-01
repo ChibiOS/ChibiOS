@@ -28,6 +28,8 @@
  * 0...3        Lowest...Highest.
  */
 
+#define STM32_USE_REVISION_A_FIX
+
 #define STM32F4xx_MCUCONF
 
 /*
