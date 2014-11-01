@@ -229,6 +229,7 @@ void rtc_lld_init(void) {
  * @brief   Set current time.
  * @note    Fractional part will be silently ignored. There is no possibility
  *          to change it on STM32F1xx platform.
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] timespec  pointer to a @p RTCTime structure
@@ -243,6 +244,7 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
 
 /**
  * @brief   Get current time.
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] timespec  pointer to a @p RTCTime structure
@@ -259,7 +261,8 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
 /**
  * @brief   Set alarm time.
  *
- * @note      Default value after BKP domain reset is 0xFFFFFFFF
+ * @note    Default value after BKP domain reset is 0xFFFFFFFF
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] alarm     alarm identifier
@@ -295,7 +298,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
  * @brief   Get current alarm.
  * @note    If an alarm has not been set then the returned alarm specification
  *          is not meaningful.
- *
+ * @note    The function can be called from any context.
  * @note    Default value after BKP domain reset is 0xFFFFFFFF.
  *
  * @param[in] rtcp      pointer to RTC driver structure
@@ -326,6 +329,7 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
  * @brief   Enables or disables RTC callbacks.
  * @details This function enables or disables callbacks, use a @p NULL pointer
  *          in order to disable a callback.
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] callback  callback function pointer or @p NULL
@@ -361,6 +365,7 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
 
 /**
  * @brief   Get seconds and (optionally) milliseconds from RTC.
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[out] tv_sec   pointer to seconds value
@@ -396,6 +401,7 @@ void rtcSTM32GetSecMsec(RTCDriver *rtcp, uint32_t *tv_sec, uint32_t *tv_msec) {
 
 /**
  * @brief   Set seconds in RTC.
+ * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
  * @param[in] tv_sec    seconds value
