@@ -129,6 +129,13 @@
 
 #define STM32_USB1_HP_NUMBER        19
 #define STM32_USB1_LP_NUMBER        20
+
+/*
+ * RTC unit
+ */
+#define STM32_RTC1_HANDLER          Vector4C
+
+#define STM32_RTC1_NUMBER           3
 /** @} */
 
 /*===========================================================================*/

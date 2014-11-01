@@ -31,6 +31,8 @@
 
 #if HAL_USE_RTC || defined(__DOXYGEN__)
 
+#include "chrtclib.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -116,20 +118,6 @@ struct RTCCallbackConfig{
 };
 
 /**
- * @brief   Structure representing an RTC time stamp.
- */
-struct RTCTime {
-  /**
-   * @brief Seconds since UNIX epoch.
-   */
-  uint32_t tv_sec;
-  /**
-   * @brief Fractional part.
-   */
-  uint32_t tv_msec;
-};
-
-/**
  * @brief   Structure representing an RTC alarm time stamp.
  */
 struct RTCAlarm {
@@ -143,6 +131,11 @@ struct RTCAlarm {
  * @brief   Structure representing an RTC driver.
  */
 struct RTCDriver{
+  /**
+   * @brief   Pointer to the RTC registers block.
+   */
+  RTC_TypeDef       *rtc;
+
   /**
    * @brief Callback pointer.
    */
@@ -166,16 +159,18 @@ extern "C" {
 #endif
   void rtc_lld_set_prescaler(void);
   void rtc_lld_init(void);
-  void rtc_lld_set_time(RTCDriver *rtcp, const RTCTime *timespec);
-  void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec);
+  void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec);
+  void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec);
   void rtc_lld_set_alarm(RTCDriver *rtcp,
-                         rtcalarm_t alarm,
+                         rtcalarm_t alarm_number,
                          const RTCAlarm *alarmspec);
   void rtc_lld_get_alarm(RTCDriver *rtcp,
-                         rtcalarm_t alarm,
+                         rtcalarm_t alarm_number,
                          RTCAlarm *alarmspec);
   void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback);
   uint32_t rtc_lld_get_time_fat(RTCDriver *rtcp);
+  void rtcSTM32GetSecMsec(RTCDriver *rtcp, uint32_t *tv_sec, uint32_t *tv_msec);
+  void rtcSTM32SetSec(RTCDriver *rtcp, uint32_t tv_sec);
 #ifdef __cplusplus
 }
 #endif
