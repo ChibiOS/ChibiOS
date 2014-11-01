@@ -46,6 +46,13 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+/*
+ * Lookup table with months' length
+ */
+static const uint8_t month_len[12] = {
+  31, 30, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+};
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -194,7 +201,7 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
  * @api
  */
 void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
-                                              struct tm *timp) {
+                                  struct tm *timp) {
   uint32_t tmp;
 
   timp->tm_year  = timespec->year + (1980 - 1900);
@@ -220,7 +227,8 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
  * @api
  */
 void rtcConvertStructTmToDateTime(const struct tm *timp,
-                          uint32_t tv_msec, RTCDateTime *timespec) {
+                                  uint32_t tv_msec,
+                                  RTCDateTime *timespec) {
 
   timespec->year      = timp->tm_year - (1980 - 1900);
   timespec->month     = timp->tm_mon + 1;
@@ -233,13 +241,6 @@ void rtcConvertStructTmToDateTime(const struct tm *timp,
   timespec->millisecond = tv_msec +
       (timp->tm_hour * 3600 + timp->tm_min * 60 + timp->tm_sec) * 1000;
 }
-
-/*
- * Lookup table with months' length
- */
-static const uint8_t month_len[12] = {
-    31, 30, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-};
 
 /**
  * @brief   Get current time in format suitable for usage in FAT file system.

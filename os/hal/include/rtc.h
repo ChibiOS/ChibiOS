@@ -128,7 +128,8 @@ extern "C" {
   void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
                                     struct tm *timp);
   void rtcConvertStructTmToDateTime(const struct tm *timp,
-                                    uint32_t tv_msec, RTCDateTime *timespec);
+                                    uint32_t tv_msec,
+                                    RTCDateTime *timespec);
   uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec);
 #ifdef __cplusplus
 }
