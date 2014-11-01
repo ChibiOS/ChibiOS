@@ -212,7 +212,7 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
   tmp = timespec->millisecond / 1000;
   timp->tm_sec  = tmp % 60;
   tmp -= timp->tm_sec;
-  timp->tm_min  = tmp % 3600;
+  timp->tm_min  = (tmp % 3600) / 60;
   tmp -= timp->tm_min * 60;
   timp->tm_hour = tmp / 3600;
 }
