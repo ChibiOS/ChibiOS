@@ -87,8 +87,20 @@
  */
 typedef struct RTCDriver RTCDriver;
 
-#include "chrtclib.h"
+/**
+ * @brief   Type of a structure representing an RTC date/time stamp.
+ */
+typedef struct {
+  uint32_t      year: 8;            /**< @brief Years since 1980.           */
+  uint32_t      month: 4;           /**< @brief Months 1..12.               */
+  uint32_t      dstflag: 1;         /**< @brief DST correction flag.        */
+  uint32_t      dayofweek: 3;       /**< @brief Day of week 1..7.           */
+  uint32_t      day: 5;             /**< @brief Day of the month 1..31.     */
+  uint32_t      millisecond: 27;    /**< @brief Milliseconds since midnight.*/
+} RTCDateTime;
+
 #include "rtc_lld.h"
+#include <time.h>
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -113,6 +125,11 @@ extern "C" {
 #if RTC_SUPPORTS_CALLBACKS
   void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback);
 #endif
+  void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
+                                    struct tm *timp);
+  void rtcConvertStructTmToDateTime(const struct tm *timp,
+                                    uint32_t tv_msec, RTCDateTime *timespec);
+  uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec);
 #ifdef __cplusplus
 }
 #endif
