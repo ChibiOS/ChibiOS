@@ -96,7 +96,7 @@ typedef uint32_t systime_t;
 /**
  * @brief   Type of a thread reference.
  */
-typedef thread_t * thread_reference_t;
+typedef void * thread_reference_t;
 
 /**
  * @brief   Type of an event flags mask.
@@ -268,6 +268,7 @@ static inline void osalSysUnlockFromISR(void) {
  */
 static inline osal_sts_t osalSysGetStatusAndLock(void) {
 
+  return 0;
 }
 
 /**
@@ -281,6 +282,7 @@ static inline osal_sts_t osalSysGetStatusAndLock(void) {
  */
 static inline void osalSysSetStatus(osal_sts_t sts) {
 
+  (void)sts;
 }
 
 /**
@@ -310,6 +312,7 @@ static inline void osalOsRescheduleS(void) {
  */
 inline void osalThreadSleepS(systime_t time) {
 
+  (void)time;
 }
 
 /**
@@ -326,6 +329,7 @@ inline void osalThreadSleepS(systime_t time) {
  */
 void osalThreadSleep(systime_t time) {
 
+  (void)time;
 }
 
 /**
@@ -468,6 +472,7 @@ static inline void osalMutexUnlock(mutex_t *mp) {
  */
 static inline void osalQueueInit(threads_queue_t *tqp) {
 
+  (void)tqp;
 }
 
 /**
@@ -480,6 +485,8 @@ static inline void osalQueueInit(threads_queue_t *tqp) {
  */
 static inline void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg) {
 
+  (void)tqp;
+  (void)msg;
 }
 
 /**
@@ -492,6 +499,8 @@ static inline void osalQueueWakeupOneI(threads_queue_t *tqp, msg_t msg) {
  */
 static inline void osalQueueWakeupAllI(threads_queue_t *tqp, msg_t msg) {
 
+  (void)tqp;
+  (void)msg;
 }
 
 #endif /* _OSAL_H_ */
