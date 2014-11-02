@@ -83,6 +83,7 @@ PROJECT = ch
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/templates/platform.mk
+include $(CHIBIOS)/os/hal/templates/osal/osal.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/STM32F407xG.ld

@@ -114,7 +114,7 @@ typedef uint32_t eventflags_t;
 typedef struct {
   volatile eventflags_t flags;      /**< @brief Flags stored into the
                                                 object.                     */
-} eventsource_t;
+} event_source_t;
 
 /**
  * @brief   Type of a mutex.
@@ -339,7 +339,7 @@ void osalThreadSleep(systime_t time) {
  *
  * @init
  */
-static inline void osalEventInit(eventsource_t *esp) {
+static inline void osalEventInit(event_source_t *esp) {
 
   osalDbgCheck(esp != NULL);
 
@@ -354,7 +354,7 @@ static inline void osalEventInit(eventsource_t *esp) {
  *
  * @iclass
  */
-static inline void osalEventBroadcastFlagsI(eventsource_t *esp,
+static inline void osalEventBroadcastFlagsI(event_source_t *esp,
                                             eventflags_t flags) {
 
   osalDbgCheck(esp != NULL);
@@ -370,7 +370,7 @@ static inline void osalEventBroadcastFlagsI(eventsource_t *esp,
  *
  * @iclass
  */
-static inline void osalEventBroadcastFlags(eventsource_t *esp,
+static inline void osalEventBroadcastFlags(event_source_t *esp,
                                            eventflags_t flags) {
 
   osalDbgCheck(esp != NULL);
@@ -390,7 +390,7 @@ static inline void osalEventBroadcastFlags(eventsource_t *esp,
  *
  * @iclass
  */
-static inline eventflags_t osalEventGetAndClearFlagsI(eventsource_t *esp) {
+static inline eventflags_t osalEventGetAndClearFlagsI(event_source_t *esp) {
   eventflags_t flags;
 
   osalDbgCheck(esp != NULL);
@@ -410,7 +410,7 @@ static inline eventflags_t osalEventGetAndClearFlagsI(eventsource_t *esp) {
  *
  * @api
  */
-static inline eventflags_t osalEventGetAndClearFlags(eventsource_t *esp) {
+static inline eventflags_t osalEventGetAndClearFlags(event_source_t *esp) {
   eventflags_t flags;
 
   osalSysLock();
