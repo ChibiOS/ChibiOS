@@ -81,10 +81,10 @@ void macObjectInit(MACDriver *macp) {
 
   macp->state  = MAC_STOP;
   macp->config = NULL;
-  chSemObjectInit(&macp->tdsem, 0);
-  chSemObjectInit(&macp->rdsem, 0);
+  osalThreadQueueObjectInit(&macp->tdqueue);
+  osalThreadQueueObjectInit(&macp->rdqueue);
 #if MAC_USE_EVENTS
-  chEvtObjectInit(&macp->rdevent);
+  osalEventObjectInit(&macp->rdevent);
 #endif
 }
 
@@ -160,7 +160,8 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
          (time > 0)) {
     osalSysLock();
     now = osalOsGetSystemTimeX();
-    if ((msg = chSemWaitTimeoutS(&macp->tdsem, time)) == MSG_TIMEOUT) {
+    msg = osalThreadEnqueueTimeoutS(&macp->tdqueue, time);
+    if (msg == MSG_TIMEOUT) {
       osalSysUnlock();
       break;
     }
@@ -218,7 +219,8 @@ msg_t macWaitReceiveDescriptor(MACDriver *macp,
          (time > 0)) {
     osalSysLock();
     now = osalOsGetSystemTimeX();
-    if ((msg = chSemWaitTimeoutS(&macp->rdsem, time)) == MSG_TIMEOUT) {
+    msg = osalThreadEnqueueTimeoutS(&macp->rdqueue, time);
+    if (msg == MSG_TIMEOUT) {
       osalSysUnlock();
       break;
     }

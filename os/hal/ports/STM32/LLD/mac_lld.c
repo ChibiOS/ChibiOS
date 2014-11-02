@@ -175,10 +175,10 @@ static void mac_lld_set_address(const uint8_t *p) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-CH_IRQ_HANDLER(ETH_IRQHandler) {
+OSAL_IRQ_HANDLER(ETH_IRQHandler) {
   uint32_t dmasr;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   dmasr = ETH->DMASR;
   ETH->DMASR = dmasr; /* Clear status bits.*/
@@ -186,9 +186,9 @@ CH_IRQ_HANDLER(ETH_IRQHandler) {
   if (dmasr & ETH_DMASR_RS) {
     /* Data Received.*/
     osalSysLockFromISR();
-    chSemResetI(&ETHD1.rdsem, 0);
+    osalThreadDequeueAllI(&ETHD1.rdqueue, MSG_RESET);
 #if MAC_USE_EVENTS
-    chEvtBroadcastI(&ETHD1.rdevent);
+    osalEventBroadcastFlagsI(&ETHD1.rdevent, 0);
 #endif
     osalSysUnlockFromISR();
   }
@@ -196,11 +196,11 @@ CH_IRQ_HANDLER(ETH_IRQHandler) {
   if (dmasr & ETH_DMASR_TS) {
     /* Data Transmitted.*/
     osalSysLockFromISR();
-    chSemResetI(&ETHD1.tdsem, 0);
+    osalThreadDequeueAllI(&ETHD1.tdqueue, MSG_RESET);
     osalSysUnlockFromISR();
   }
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 /*===========================================================================*/
