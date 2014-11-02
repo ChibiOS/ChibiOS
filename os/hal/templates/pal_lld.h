@@ -186,7 +186,8 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readgroup(port, mask, offset) 0
+#define pal_lld_readgroup(port, mask, offset)                               \
+  (void)port,(void)mask,(void)offset,0
 
 /**
  * @brief   Writes a group of bits.
@@ -202,7 +203,8 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writegroup(port, mask, offset, bits) (void)bits
+#define pal_lld_writegroup(port, mask, offset, bits)                        \
+  (void)port,(void)mask,(void)offset,(void)bits
 
 /**
  * @brief   Pads group mode setup.

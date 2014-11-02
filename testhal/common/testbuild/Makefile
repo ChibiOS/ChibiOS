@@ -86,10 +86,13 @@ include $(CHIBIOS)/os/hal/templates/platform.mk
 include $(CHIBIOS)/os/hal/templates/osal/osal.mk
 
 # Define linker script file here
+PORTLD  = ${CHIBIOS}/os/common/ports/ARMCMx/compilers/GCC/ld
 LDSCRIPT= $(PORTLD)/STM32F407xG.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
+PORTSRC = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/crt0.c \
+          $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/vectors.c
 CSRC = $(PORTSRC) \
        $(KERNSRC) \
        $(TESTSRC) \
@@ -126,6 +129,9 @@ TCPPSRC =
 # List ASM source files here
 ASMSRC = $(PORTASM)
 
+PORTINC = ${CHIBIOS}/os/ext/CMSIS/include \
+          ${CHIBIOS}/os/ext/CMSIS/ST \
+          ${CHIBIOS}/os/common/ports/ARMCMx/devices/STM32F4xx
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various
@@ -178,7 +184,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DSTM32F407xx
 
 # Define ASM defines here
 UADEFS =
