@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS/HAL - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    templates/usb_lld.c
- * @brief   USB Driver subsystem low level driver source template.
+ * @file    PLATFORM/usb_lld.c
+ * @brief   PLATFORM USB subsystem low level driver source.
  *
  * @addtogroup USB
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_USB || defined(__DOXYGEN__)

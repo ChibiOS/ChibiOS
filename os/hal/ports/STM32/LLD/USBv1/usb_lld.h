@@ -388,20 +388,6 @@ struct USBDriver {
 #define usb_lld_get_transaction_size(usbp, ep)                              \
   ((usbp)->epc[ep]->out_state->rxcnt)
 
-/**
- * @brief   Returns the exact size of a received packet.
- * @pre     The OUT endpoint must have been configured in packet mode
- *          in order to use this function.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @return              Received data size.
- *
- * @notapi
- */
-#define  usb_lld_get_packet_size(usbp, ep)                                  \
-  ((size_t)USB_GET_DESCRIPTOR(ep)->RXCOUNT & RXCOUNT_COUNT_MASK)
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

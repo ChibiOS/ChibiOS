@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS/HAL - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    templates/sdc_lld.h
- * @brief   SDC Driver subsystem low level driver header template.
+ * @file    PLATFORM/sdc_lld.h
+ * @brief   PLATFORM SDC subsystem low level driver header.
  *
  * @addtogroup SDC
  * @{
@@ -39,13 +39,6 @@
  * @name    Configuration options
  * @{
  */
-/**
- * @brief   SDC driver enable switch.
- * @details If set to @p TRUE the support for SDC1 is included.
- */
-#if !defined(PLATFORM_SDC_USE_SDC1) || defined(__DOXYGEN__)
-#define PLATFORM_SDC_USE_SDC1               TRUE
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -85,7 +78,7 @@ typedef struct SDCDriver SDCDriver;
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-  uint32_t                  dummy;
+  uint32_t dummy;
 } SDCConfig;
 
 /**
@@ -135,37 +128,11 @@ struct SDCDriver {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-/**
- * @name    R1 response utilities
- * @{
- */
-/**
- * @brief   Evaluates to @p TRUE if the R1 response contains error flags.
- *
- * @param[in] r1        the r1 response
- */
-#define MMCSD_R1_ERROR(r1)              (((r1) & MMCSD_R1_ERROR_MASK) != 0)
-
-/**
- * @brief   Returns the status field of an R1 response.
- *
- * @param[in] r1        the r1 response
- */
-#define MMCSD_R1_STS(r1)                (((r1) >> 9) & 15)
-
-/**
- * @brief   Evaluates to @p TRUE if the R1 response indicates a locked card.
- *
- * @param[in] r1        the r1 response
- */
-#define MMCSD_R1_IS_CARD_LOCKED(r1)     (((r1) >> 21) & 1)
-/** @} */
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_SDC_USE_SDC1 && !defined(__DOXYGEN__)
+#if !defined(__DOXYGEN__)
 extern SDCDriver SDCD1;
 #endif
 
@@ -180,19 +147,19 @@ extern "C" {
   void sdc_lld_stop_clk(SDCDriver *sdcp);
   void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode);
   void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg);
-  bool_t sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
-                                uint32_t *resp);
-  bool_t sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
-                                    uint32_t *resp);
-  bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
-                                   uint32_t *resp);
-  bool_t sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
-                      uint8_t *buf, uint32_t n);
-  bool_t sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
-                       const uint8_t *buf, uint32_t n);
-  bool_t sdc_lld_sync(SDCDriver *sdcp);
-  bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp);
-  bool_t sdc_lld_is_write_protected(SDCDriver *sdcp);
+  bool sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                              uint32_t *resp);
+  bool sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                                  uint32_t *resp);
+  bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
+                                 uint32_t *resp);
+  bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
+                    uint8_t *buf, uint32_t n);
+  bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
+                     const uint8_t *buf, uint32_t n);
+  bool sdc_lld_sync(SDCDriver *sdcp);
+  bool sdc_lld_is_card_inserted(SDCDriver *sdcp);
+  bool sdc_lld_is_write_protected(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
 #endif

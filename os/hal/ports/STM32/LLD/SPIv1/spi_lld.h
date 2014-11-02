@@ -437,7 +437,7 @@ typedef struct {
 } SPIConfig;
 
 /**
- * @brief   Structure representing a SPI driver.
+ * @brief   Structure representing an SPI driver.
  */
 struct SPIDriver {
   /**
