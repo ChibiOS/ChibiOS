@@ -87,11 +87,11 @@ struct MACDriver {
   /**
    * @brief Transmit semaphore.
    */
-  semaphore_t           tdsem;
+  threads_queue_t       tdqueue;
   /**
    * @brief Receive semaphore.
    */
-  semaphore_t           rdsem;
+  threads_queue_t       rdqueue;
 #if MAC_USE_EVENTS || defined(__DOXYGEN__)
   /**
    * @brief Receive event.

@@ -392,7 +392,6 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
 }
 #endif /* RTC_ALARMS > 0 */
 
-
 #if STM32_RTC_HAS_PERIODIC_WAKEUPS || defined(__DOXYGEN__)
 /**
  * @brief   Sets time of periodic wakeup.
