@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS/HAL - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    templates/serial_lld.h
- * @brief   Serial Driver subsystem low level driver header template.
+ * @file    PLATFORM/serial_lld.h
+ * @brief   PLATFORM low level serial driver header.
  *
  * @addtogroup SERIAL
  * @{
@@ -40,11 +40,12 @@
  * @{
  */
 /**
- * @brief   SD1 driver enable switch.
- * @details If set to @p TRUE the support for SD1 is included.
+ * @brief   USART1 driver enable switch.
+ * @details If set to @p TRUE the support for USART1 is included.
+ * @note    The default is @p TRUE.
  */
-#if !defined(PLATFORM_SERIAL_USE_SD1) || defined(__DOXYGEN__)
-#define PLATFORM_SERIAL_USE_SD1             FALSE
+#if !defined(PLATFORM_SERIAL_USE_USART1) || defined(__DOXYGEN__)
+#define PLATFORM_SERIAL_USE_USART1             FALSE
 #endif
 /** @} */
 
@@ -57,31 +58,32 @@
 /*===========================================================================*/
 
 /**
- * @brief   Generic Serial Driver configuration structure.
+ * @brief   PLATFORM Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
  *          in order to configure and start a serial driver operations.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
+ * @note    This structure content is architecture dependent, each driver
+ *          implementation defines its own version and the custom static
+ *          initializers.
  */
 typedef struct {
   /**
    * @brief Bit rate.
    */
-  uint32_t                  sc_speed;
+  uint32_t                  speed;
   /* End of the mandatory fields.*/
 } SerialConfig;
 
 /**
- * @brief @p SerialDriver specific data.
+ * @brief   @p SerialDriver specific data.
  */
 #define _serial_driver_data                                                 \
   _base_asynchronous_channel_data                                           \
   /* Driver state.*/                                                        \
   sdstate_t                 state;                                          \
   /* Input queue.*/                                                         \
-  InputQueue                iqueue;                                         \
+  input_queue_t             iqueue;                                         \
   /* Output queue.*/                                                        \
-  OutputQueue               oqueue;                                         \
+  output_queue_t            oqueue;                                         \
   /* Input circular buffer.*/                                               \
   uint8_t                   ib[SERIAL_BUFFERS_SIZE];                        \
   /* Output circular buffer.*/                                              \
@@ -96,7 +98,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_SERIAL_USE_SD1 && !defined(__DOXYGEN__)
+#if PLATFORM_SERIAL_USE_USART1 && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
 #endif
 

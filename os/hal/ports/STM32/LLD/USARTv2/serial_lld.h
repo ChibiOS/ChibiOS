@@ -242,7 +242,7 @@ typedef struct {
   /* Input queue.*/                                                         \
   input_queue_t             iqueue;                                         \
   /* Output queue.*/                                                        \
-  output_queue_t               oqueue;                                      \
+  output_queue_t            oqueue;                                         \
   /* Input circular buffer.*/                                               \
   uint8_t                   ib[SERIAL_BUFFERS_SIZE];                        \
   /* Output circular buffer.*/                                              \

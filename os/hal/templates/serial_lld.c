@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS/HAL - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    templates/serial_lld.c
- * @brief   Serial Driver subsystem low level driver source template.
+ * @file    PLATFORM/USARTv2/serial_lld.c
+ * @brief   PLATFORM low level serial driver code.
  *
  * @addtogroup SERIAL
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
@@ -35,10 +34,8 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   SD1 driver identifier.
- */
-#if PLATFORM_SERIAL_USE_SD1 || defined(__DOXYGEN__)
+/** @brief USART1 serial driver identifier.*/
+#if PLATFORM_SERIAL_USE_USART1 || defined(__DOXYGEN__)
 SerialDriver SD1;
 #endif
 
@@ -72,10 +69,9 @@ static const SerialConfig default_config = {
  */
 void sd_lld_init(void) {
 
-#if PLATFORM_SERIAL_USE_SD1
-  /* Driver initialization.*/
-  sdObjectInit(&SD1);
-#endif /* PLATFORM_SERIAL_USE_SD1 */
+#if PLATFORM_SERIAL_USE_USART1
+  sdObjectInit(&SD1, NULL, notify1);
+#endif
 }
 
 /**
@@ -94,12 +90,11 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
     config = &default_config;
 
   if (sdp->state == SD_STOP) {
-    /* Enables the peripheral.*/
-#if PLATFORM_SERIAL_USE_SD1
+#if PLATFORM_SERIAL_USE_USART1
     if (&SD1 == sdp) {
 
     }
-#endif /* PLATFORM_SD_USE_SD1 */
+#endif
   }
   /* Configures the peripheral.*/
 
@@ -117,14 +112,12 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
   if (sdp->state == SD_READY) {
-    /* Resets the peripheral.*/
-
-    /* Disables the peripheral.*/
-#if PLATFORM_SERIAL_USE_SD1
+    usart_deinit(sdp->usart);
+#if PLATFORM_SERIAL_USE_USART1
     if (&SD1 == sdp) {
 
     }
-#endif /* PLATFORM_SERIAL_USE_SD1 */
+#endif
   }
 }
 
