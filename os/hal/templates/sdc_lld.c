@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    PLATFORM/sdc_lld.c
+ * @file    sdc_lld.c
  * @brief   PLATFORM SDC subsystem low level driver source.
  *
  * @addtogroup SDC
@@ -191,6 +191,9 @@ bool sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                             uint32_t *resp) {
 
   (void)sdcp;
+  (void)cmd;
+  (void)arg;
+  (void)resp;
 
   return HAL_SUCCESS;
 }
@@ -213,6 +216,9 @@ bool sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                 uint32_t *resp) {
 
   (void)sdcp;
+  (void)cmd;
+  (void)arg;
+  (void)resp;
 
   return HAL_SUCCESS;
 }
@@ -235,6 +241,9 @@ bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                uint32_t *resp) {
 
   (void)sdcp;
+  (void)cmd;
+  (void)arg;
+  (void)resp;
 
   return HAL_SUCCESS;
 }
@@ -306,6 +315,12 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
 bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
                   uint8_t *buf, uint32_t n) {
 
+  (void)sdcp;
+  (void)startblk;
+  (void)buf;
+  (void)n;
+
+  return HAL_SUCCESS;
 }
 
 /**
@@ -325,6 +340,12 @@ bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
 bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
                    const uint8_t *buf, uint32_t n) {
 
+  (void)sdcp;
+  (void)startblk;
+  (void)buf;
+  (void)n;
+
+  return HAL_SUCCESS;
 }
 
 /**
@@ -341,6 +362,7 @@ bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
 bool sdc_lld_sync(SDCDriver *sdcp) {
 
   (void)sdcp;
+
   return HAL_SUCCESS;
 }
 

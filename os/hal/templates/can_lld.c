@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    templates/can_lld.c
- * @brief   CAN Driver subsystem low level driver source template.
+ * @file    can_lld.c
+ * @brief   PLATFORM CAN subsystem low level driver source.
  *
  * @addtogroup CAN
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_CAN || defined(__DOXYGEN__)
@@ -125,7 +124,7 @@ void can_lld_stop(CANDriver *canp) {
  *
  * @notapi
  */
-bool_t can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
+bool can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox) {
 
   (void)canp;
 
@@ -174,7 +173,7 @@ void can_lld_transmit(CANDriver *canp,
  *
  * @notapi
  */
-bool_t can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
+bool can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox) {
 
   (void)canp;
   (void)mailbox;

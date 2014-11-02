@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    templates/pal_lld.c
- * @brief   PAL subsystem low level driver template.
+ * @file    pal_lld.c
+ * @brief   PLATFORM PAL subsystem low level driver source.
  *
  * @addtogroup PAL
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_PAL || defined(__DOXYGEN__)

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    PLATFORM/sdc_lld.h
+ * @file    sdc_lld.h
  * @brief   PLATFORM SDC subsystem low level driver header.
  *
  * @addtogroup SDC

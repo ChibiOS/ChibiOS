@@ -19,8 +19,8 @@
  */
 
 /**
- * @file    PLATFORM/rtc_lld.h
- * @brief   PLATFORML RTC low level driver header.
+ * @file    rtc_lld.h
+ * @brief   PLATFORM RTC subsystem low level driver header.
  *
  * @addtogroup RTC
  * @{

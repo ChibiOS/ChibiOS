@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    templates/gpt_lld.h
- * @brief   GPT Driver subsystem low level driver header template.
+ * @file    gpt_lld.h
+ * @brief   PLATFORM GPT subsystem low level driver header.
  *
  * @addtogroup GPT
  * @{

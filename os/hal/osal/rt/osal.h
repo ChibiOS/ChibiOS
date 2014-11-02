@@ -261,13 +261,13 @@ typedef struct {
  * @note    Not implemented in this simplified OSAL.
  */
 #define osalDbgCheckClassI() chDbgCheckClassI()
-/** @} */
 
 /**
  * @brief   S-Class state check.
  * @note    Not implemented in this simplified OSAL.
  */
 #define osalDbgCheckClassS() chDbgCheckClassS()
+/** @} */
 
 /**
  * @name    IRQ service routines wrappers
@@ -535,7 +535,7 @@ static inline void osalOsRescheduleS(void) {
 
 /**
  * @brief   Current system time.
- * @details Returns the number of system ticks since the @p chSysInit()
+ * @details Returns the number of system ticks since the @p osalInit()
  *          invocation.
  * @note    The counter can reach its maximum and then restart from zero.
  * @note    This function can be called from any context but its atomicity

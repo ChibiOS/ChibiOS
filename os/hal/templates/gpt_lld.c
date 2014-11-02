@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    templates/gpt_lld.c
- * @brief   GPT Driver subsystem low level driver source template.
+ * @file    gpt_lld.c
+ * @brief   PLATFORM GPT subsystem low level driver source.
  *
  * @addtogroup GPT
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_GPT || defined(__DOXYGEN__)

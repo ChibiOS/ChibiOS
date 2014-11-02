@@ -19,8 +19,8 @@
  */
 
 /**
- * @file    PLATFORM/RTCv2/rtc_lld.c
- * @brief   PLATFORML1xx/PLATFORMF2xx/PLATFORMF4xx RTC low level driver.
+ * @file    rtc_lld.c
+ * @brief   PLATFORM RTC subsystem low level driver source.
  *
  * @addtogroup RTC
  * @{

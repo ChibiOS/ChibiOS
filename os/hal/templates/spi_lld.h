@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    PLATFORM/spi_lld.h
+ * @file    spi_lld.h
  * @brief   PLATFORM SPI subsystem low level driver header.
  *
  * @addtogroup SPI

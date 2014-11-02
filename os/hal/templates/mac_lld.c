@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    PLATFORM/mac_lld.c
- * @brief   PLATFORM low level MAC driver code.
+ * @file    mac_lld.c
+ * @brief   PLATFORM MAC subsystem low level driver source.
  *
  * @addtogroup MAC
  * @{
@@ -169,7 +169,7 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
   (void)macp;
   (void)rdp;
 
-  return RDY_OK;
+  return MSG_OK;
 }
 
 /**
@@ -197,7 +197,7 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
  *
  * @notapi
  */
-bool_t mac_lld_poll_link_status(MACDriver *macp) {
+bool mac_lld_poll_link_status(MACDriver *macp) {
 
   (void)macp;
 

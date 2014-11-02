@@ -357,12 +357,12 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type representing I2C address.
+ * @brief   Type representing an I2C address.
  */
 typedef uint16_t i2caddr_t;
 
 /**
- * @brief   I2C Driver condition flags type.
+ * @brief   Type of I2C driver condition flags.
  */
 typedef uint32_t i2cflags_t;
 
@@ -385,9 +385,10 @@ typedef enum {
 } i2cdutycycle_t;
 
 /**
- * @brief Driver configuration structure.
+ * @brief   Type of I2C driver configuration structure.
  */
 typedef struct {
+  /* End of the mandatory fields.*/
   i2copmode_t     op_mode;       /**< @brief Specifies the I2C mode.        */
   uint32_t        clock_speed;   /**< @brief Specifies the clock frequency.
                                       @note Must be set to a value lower
@@ -402,7 +403,7 @@ typedef struct {
 typedef struct I2CDriver I2CDriver;
 
 /**
- * @brief Structure representing an I2C driver.
+ * @brief   Structure representing an I2C driver.
  */
 struct I2CDriver {
   /**

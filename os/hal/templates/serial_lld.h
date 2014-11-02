@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    PLATFORM/serial_lld.h
- * @brief   PLATFORM low level serial driver header.
+ * @file    serial_lld.h
+ * @brief   PLATFORM serial subsystem low level driver header.
  *
  * @addtogroup SERIAL
  * @{

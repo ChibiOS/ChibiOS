@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    PLATFORM/hal_lld.c
+ * @file    hal_lld.c
  * @brief   PLATFORM HAL subsystem low level driver source.
  *
  * @addtogroup HAL

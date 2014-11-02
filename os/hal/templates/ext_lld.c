@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    templates/ext_lld.c
- * @brief   EXT Driver subsystem low level driver source template.
+ * @file    ext_lld.c
+ * @brief   PLATFORM EXT subsystem low level driver source.
  *
  * @addtogroup EXT
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_EXT || defined(__DOXYGEN__)

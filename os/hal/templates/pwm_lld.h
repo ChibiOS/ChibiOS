@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    PLATFORM/pwm_lld.h
+ * @file    pwm_lld.h
  * @brief   PLATFORM PWM subsystem low level driver header.
  *
  * @addtogroup PWM

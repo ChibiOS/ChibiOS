@@ -86,7 +86,7 @@ bool _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
     case MMCSD_STS_RCV:
     case MMCSD_STS_PRG:
 #if SDC_NICE_WAITING
-      osalThreadSleep(MS2ST(1));
+      osalThreadSleep(OSAL_MS2ST(1));
 #endif
       continue;
     default:
@@ -262,7 +262,7 @@ bool sdcConnect(SDCDriver *sdcp) {
       }
       if (++i >= SDC_INIT_RETRY)
         goto failed;
-      osalThreadSleep(MS2ST(10));
+      osalThreadSleep(OSAL_MS2ST(10));
     }
   }
 

@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    templates/uart_lld.c
- * @brief   UART Driver subsystem low level driver source template.
+ * @file    uart_lld.c
+ * @brief   PLATFORM UART subsystem low level driver source.
  *
  * @addtogroup UART
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_UART || defined(__DOXYGEN__)

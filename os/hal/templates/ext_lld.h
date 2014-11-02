@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    templates/ext_lld.h
- * @brief   EXT Driver subsystem low level driver header template.
+ * @file    ext_lld.h
+ * @brief   PLATFORM EXT subsystem low level driver header.
  *
  * @addtogroup EXT
  * @{

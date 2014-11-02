@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    PLATFORMF/adc_lld.h
- * @brief   PLATFORMF ADC subsystem low level driver header.
+ * @file    adc_lld.h
+ * @brief   PLATFORM ADC subsystem low level driver header.
  *
  * @addtogroup ADC
  * @{

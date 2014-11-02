@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    PLATFORM/USARTv2/serial_lld.c
- * @brief   PLATFORM low level serial driver code.
+ * @file    serial_lld.c
+ * @brief   PLATFORM serial subsystem low level driver source.
  *
  * @addtogroup SERIAL
  * @{
@@ -112,7 +112,6 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
   if (sdp->state == SD_READY) {
-    usart_deinit(sdp->usart);
 #if PLATFORM_SERIAL_USE_USART1
     if (&SD1 == sdp) {
 

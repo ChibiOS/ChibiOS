@@ -15,14 +15,13 @@
 */
 
 /**
- * @file    templates/adc_lld.c
- * @brief   ADC Driver subsystem low level driver source template.
+ * @file    adc_lld.c
+ * @brief   PLATFORM ADC subsystem low level driver source.
  *
  * @addtogroup ADC
  * @{
  */
 
-#include "ch.h"
 #include "hal.h"
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    PLATFORM/i2s_lld.c
+ * @file    i2s_lld.c
  * @brief   PLATFORM I2S subsystem low level driver source.
  *
  * @addtogroup I2S

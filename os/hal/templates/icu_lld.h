@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    PLATFORM/icu_lld.h
+ * @file    icu_lld.h
  * @brief   PLATFORM ICU subsystem low level driver header.
  *
  * @addtogroup ICU

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    PLATFORM/can_lld.h
+ * @file    can_lld.h
  * @brief   PLATFORM CAN subsystem low level driver header.
  *
  * @addtogroup CAN

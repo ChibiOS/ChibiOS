@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    templates/uart_lld.h
- * @brief   UART Driver subsystem low level driver header template.
+ * @file    uart_lld.h
+ * @brief   PLATFORM UART subsystem low level driver header.
  *
  * @addtogroup UART
  * @{

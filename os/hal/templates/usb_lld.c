@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    PLATFORM/usb_lld.c
+ * @file    usb_lld.c
  * @brief   PLATFORM USB subsystem low level driver source.
  *
  * @addtogroup USB

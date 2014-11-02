@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    PLATFORM/st_lld.c
- * @brief   ST Driver subsystem low level driver code.
+ * @file    st_lld.c
+ * @brief   PLATFORM ST subsystem low level driver source.
  *
  * @addtogroup ST
  * @{

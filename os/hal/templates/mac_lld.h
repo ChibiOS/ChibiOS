@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    PLATFORM/mac_lld.h
- * @brief   PLATFORM low level MAC driver header.
+ * @file    mac_lld.h
+ * @brief   PLATFORM MAC subsystem low level driver header.
  *
  * @addtogroup MAC
  * @{

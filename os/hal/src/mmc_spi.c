@@ -169,7 +169,7 @@ static void wait(MMCDriver *mmcp) {
       break;
 #ifdef MMC_NICE_WAITING
     /* Trying to be nice with the other threads.*/
-    chThdSleep(1);
+    osalThreadSleep(1);
 #endif
   }
 }
@@ -348,7 +348,8 @@ static void sync(MMCDriver *mmcp) {
     if (buf[0] == 0xFF)
       break;
 #ifdef MMC_NICE_WAITING
-    chThdSleep(1);      /* Trying to be nice with the other threads.*/
+    /* Trying to be nice with the other threads.*/
+    osalThreadSleep(1);
 #endif
   }
   spiUnselect(mmcp->config->spip);
@@ -460,7 +461,7 @@ bool mmcConnect(MMCDriver *mmcp) {
       break;
     if (++i >= MMC_CMD0_RETRY)
       goto failed;
-    chThdSleepMilliseconds(10);
+    osalThreadSleepMilliseconds(10);
   }
 
   /* Try to detect if this is a high capacity card and switch to block
@@ -480,7 +481,7 @@ bool mmcConnect(MMCDriver *mmcp) {
 
       if (++i >= MMC_ACMD41_RETRY)
         goto failed;
-      chThdSleepMilliseconds(10);
+      osalThreadSleepMilliseconds(10);
     }
 
     /* Execute dedicated read on OCR register */
@@ -501,7 +502,7 @@ bool mmcConnect(MMCDriver *mmcp) {
       goto failed;
     if (++i >= MMC_CMD1_RETRY)
       goto failed;
-    chThdSleepMilliseconds(10);
+    osalThreadSleepMilliseconds(10);
   }
 
   /* Initialization complete, full speed.*/

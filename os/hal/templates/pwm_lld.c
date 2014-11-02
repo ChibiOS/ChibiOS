@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    PLATFORM/pwm_lld.c
- * @brief   PLATFORM PWM subsystem low level driver header.
+ * @file    pwm_lld.c
+ * @brief   PLATFORM PWM subsystem low level driver source.
  *
  * @addtogroup PWM
  * @{
@@ -108,6 +108,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 
     }
 #endif
+  }
 }
 
 /**
@@ -128,6 +129,8 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
                             pwmcnt_t width) {
 
   (void)pwmp;
+  (void)channel;
+  (void)width;
 }
 
 /**
@@ -145,6 +148,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
   (void)pwmp;
+  (void)channel;
 }
 
 /**

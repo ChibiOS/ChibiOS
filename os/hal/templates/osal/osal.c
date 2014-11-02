@@ -76,58 +76,38 @@ __attribute__((weak, noreturn))
 #endif
 void osalSysHalt(const char *reason) {
 
-  osalIsrDisable();
+  osalSysDisable();
   osal_halt_msg = reason;
   while (1)
     ;
 }
 
 /**
- * @brief   Enqueues the caller thread.
- * @details The caller thread is enqueued and put to sleep until it is
- *          dequeued or the specified timeouts expires.
+ * @brief   Dequeues and wakes up one thread from the queue, if any.
  *
  * @param[in] tqp       pointer to the threads queue object
- * @param[in] time      the timeout in system ticks, the special values are
- *                      handled as follow:
- *                      - @a TIME_INFINITE the thread enters an infinite sleep
- *                        state.
- *                      - @a TIME_IMMEDIATE the thread is not enqueued and
- *                        the function returns @p MSG_TIMEOUT as if a timeout
- *                        occurred.
- *                      .
- * @return              The message from @p osalQueueWakeupOneI() or
- *                      @p osalQueueWakeupAllI() functions.
- * @retval RDY_TIMEOUT  if the thread has not been dequeued within the
- *                      specified timeout or if the function has been
- *                      invoked with @p TIME_IMMEDIATE as timeout
- *                      specification.
+ * @param[in] msg       the message code
  *
- * @sclass
+ * @iclass
  */
-msg_t osalQueueGoSleepTimeoutS(threads_queue_t *tqp, systime_t time) {
-  msg_t msg;
-  virtual_timer_t vt;
+void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
-  void wakeup(void *p) {
-    osalSysLockFromISR();
-    osalThreadResumeI((thread_reference_t *)p, MSG_TIMEOUT);
-    osalSysUnlockFromISR();
-  }
+  (void)tqp;
+  (void)msg;
+}
 
-  if (TIME_IMMEDIATE == time)
-    return MSG_TIMEOUT;
+/**
+ * @brief   Dequeues and wakes up all threads from the queue.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @param[in] msg       the message code
+ *
+ * @iclass
+ */
+void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg) {
 
-  tqp->tr = NULL;
-
-  if (TIME_INFINITE == time)
-   return osalThreadSuspendS(&tqp->tr);
-
-  osalVTSetI(&vt, time, wakeup, (void *)&tqp->tr);
-  msg = osalThreadSuspendS(&tqp->tr);
-  if (osalVTIsArmedI(&vt))
-    osalVTResetI(&vt);
-  return msg;
+  (void)tqp;
+  (void)msg;
 }
 
 /** @} */

@@ -265,13 +265,13 @@ typedef struct {
  * @note    Not implemented in this simplified OSAL.
  */
 #define osalDbgCheckClassI() /*chDbgCheckClassI()*/
-/** @} */
 
 /**
  * @brief   S-Class state check.
  * @note    Not implemented in this simplified OSAL.
  */
 #define osalDbgCheckClassS() /*chDbgCheckClassS()*/
+/** @} */
 
 /**
  * @name    IRQ service routines wrappers
@@ -325,6 +325,7 @@ typedef struct {
  * @api
  */
 #define OSAL_MS2ST(msec) MS2ST(msec)
+
 /**
  * @brief   Microseconds to system ticks.
  * @details Converts from microseconds to system ticks number.
@@ -388,8 +389,8 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-   void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg);
-   void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg);
+  void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg);
+  void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg);
 #ifdef __cplusplus
 }
 #endif
@@ -539,7 +540,7 @@ static inline void osalOsRescheduleS(void) {
 
 /**
  * @brief   Current system time.
- * @details Returns the number of system ticks since the @p chSysInit()
+ * @details Returns the number of system ticks since the @p osalInit()
  *          invocation.
  * @note    The counter can reach its maximum and then restart from zero.
  * @note    This function can be called from any context but its atomicity

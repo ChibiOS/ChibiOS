@@ -13,14 +13,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-/*
-   Concepts and parts of this file have been contributed by Fabio Utzig and
-   Xo Wang.
- */
 
 /**
- * @file    PLATFORM/icu_lld.c
- * @brief   PLATFORM ICU subsystem low level driver header.
+ * @file    icu_lld.c
+ * @brief   PLATFORM ADC subsystem low level driver source.
  *
  * @addtogroup ICU
  * @{
@@ -91,6 +87,7 @@ void icu_lld_start(ICUDriver *icup) {
 
     }
 #endif
+  }
 }
 
 /**
@@ -109,6 +106,7 @@ void icu_lld_stop(ICUDriver *icup) {
 
     }
 #endif
+  }
 }
 
 /**
