@@ -61,14 +61,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_CFG_USE_SEMAPHORES || !CH_CFG_USE_EVENTS
-#error "the MAC driver requires CH_CFG_USE_SEMAPHORES"
-#endif
-
-#if MAC_USE_EVENTS && !CH_CFG_USE_EVENTS
-#error "the MAC driver requires CH_CFG_USE_EVENTS"
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

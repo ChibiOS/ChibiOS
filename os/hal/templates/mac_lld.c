@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS/HAL - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    templates/mac_lld.c
- * @brief   MAC Driver subsystem low level driver source template.
+ * @file    PLATFORM/mac_lld.c
+ * @brief   PLATFORM low level MAC driver code.
  *
  * @addtogroup MAC
  * @{
@@ -24,11 +24,11 @@
 
 #include <string.h>
 
-#include "ch.h"
 #include "hal.h"
-#include "mii.h"
 
 #if HAL_USE_MAC || defined(__DOXYGEN__)
+
+#include "mii.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -104,7 +104,7 @@ void mac_lld_start(MACDriver *macp) {
  */
 void mac_lld_stop(MACDriver *macp) {
 
-  if (macp->state == MAC_ACTIVE) {
+  if (macp->state != MAC_STOP) {
     /* Resets the peripheral.*/
 
     /* Disables the peripheral.*/
@@ -135,7 +135,7 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
   (void)macp;
   (void)tdp;
 
-  return RDY_OK;
+  return MSG_OK;
 }
 
 /**
@@ -192,8 +192,8 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @return              The link status.
- * @retval TRUE         if the link is active.
- * @retval FALSE        if the link is down.
+ * @retval true         if the link is active.
+ * @retval false        if the link is down.
  *
  * @notapi
  */
@@ -201,7 +201,7 @@ bool_t mac_lld_poll_link_status(MACDriver *macp) {
 
   (void)macp;
 
-  return FALSE;
+  return false;
 }
 
 /**
