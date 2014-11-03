@@ -1,6 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012,2013 Giovanni Di Sirio.
+                 2011,2012,2013,2014 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -16,77 +16,124 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-                                      ---
-
-    A special exception to the GPL can be applied should you wish to distribute
-    a combined work that includes ChibiOS/RT, without being obliged to provide
-    the source code for any proprietary components. See the file exception.txt
-    for full details of how and when the exception can be applied.
 */
 
 /**
- * @addtogroup SIMIA32_CORE
+ * @file    SIMIA32/chcore.h
+ * @brief   Simulator on IA32 port macros and structures.
+ *
+ * @addtogroup SIMIA32_GCC_CORE
  * @{
  */
 
 #ifndef _CHCORE_H_
 #define _CHCORE_H_
 
-#if CH_DBG_ENABLE_STACK_CHECK
-#error "option CH_DBG_ENABLE_STACK_CHECK not supported by this port"
-#endif
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
 
 /**
  * Macro defining the a simulated architecture into x86.
  */
-#define CH_ARCHITECTURE_SIMIA32
+#define PORT_ARCHITECTURE_SIMIA32
 
 /**
  * Name of the implemented architecture.
  */
-#define CH_ARCHITECTURE_NAME            "Simulator"
+#define PORT_ARCHITECTURE_NAME          "Simulator"
 
 /**
  * @brief   Name of the architecture variant (optional).
  */
-#define CH_CORE_VARIANT_NAME            "x86 (integer only)"
+#define PORT_CORE_VARIANT_NAME          "x86 (integer only)"
 
 /**
  * @brief   Name of the compiler supported by this port.
  */
-#define CH_COMPILER_NAME                "GCC " __VERSION__
+#define PORT_COMPILER_NAME              "GCC " __VERSION__
 
 /**
  * @brief   Port-specific information string.
  */
-#define CH_PORT_INFO                    "No preemption"
+#define PORT_INFO                       "No preemption"
 
 /**
- * 16 bytes stack alignment.
+ * @brief   This port supports a realtime counter.
+ */
+#define PORT_SUPPORTS_RT                FALSE
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief   Stack size for the system idle thread.
+ * @details This size depends on the idle thread implementation, usually
+ *          the idle thread should take no more space than those reserved
+ *          by @p PORT_INT_REQUIRED_STACK.
+ */
+#ifndef PORT_IDLE_THREAD_STACK_SIZE
+#define PORT_IDLE_THREAD_STACK_SIZE     256
+#endif
+
+/**
+ * @brief   Per-thread stack overhead for interrupts servicing.
+ * @details This constant is used in the calculation of the correct working
+ *          area size.
+ */
+#ifndef PORT_INT_REQUIRED_STACK
+#define PORT_INT_REQUIRED_STACK         16384
+#endif
+
+/**
+ * @brief   Enables an alternative timer implementation.
+ * @details Usually the port uses a timer interface defined in the file
+ *          @p chcore_timer.h, if this option is enabled then the file
+ *          @p chcore_timer_alt.h is included instead.
+ */
+#if !defined(PORT_USE_ALT_TIMER)
+#define PORT_USE_ALT_TIMER              FALSE
+#endif
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+#if CH_DBG_ENABLE_STACK_CHECK
+#error "option CH_DBG_ENABLE_STACK_CHECK not supported by this port"
+#endif
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief   16 bytes stack and memory alignment enforcement.
  */
 typedef struct {
   uint8_t a[16];
 } stkalign_t __attribute__((aligned(16)));
 
 /**
- * Generic x86 register.
+ * @brief   Type of a generic x86 register.
  */
 typedef void *regx86;
 
 /**
- * Interrupt saved context.
- * This structure represents the stack frame saved during a preemption-capable
- * interrupt handler.
+ * @brief   Interrupt saved context.
+ * @details This structure represents the stack frame saved during a
+ *          preemption-capable interrupt handler.
  */
-struct extctx {
+struct port_extctx {
 };
 
 /**
- * System saved context.
- * @note In this demo the floating point registers are not saved.
+ * @brief   System saved context.
+ * @details This structure represents the inner stack frame during a context
+ *          switch.
  */
-struct intctx {
+struct port_intctx {
   regx86  ebx;
   regx86  edi;
   regx86  esi;
@@ -95,13 +142,18 @@ struct intctx {
 };
 
 /**
- * Platform dependent part of the @p Thread structure.
- * This structure usually contains just the saved stack pointer defined as a
- * pointer to a @p intctx structure.
+ * @brief   Platform dependent part of the @p thread_t structure.
+ * @details In this port the structure just holds a pointer to the
+ *          @p port_intctx structure representing the stack pointer
+ *          at context switch time.
  */
-struct context {
+struct port_context {
   struct intctx volatile *esp;
 };
+
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
 #define APUSH(p, a) (p) -= sizeof(void *), *(void **)(p) = (void*)(a)
 
@@ -112,138 +164,201 @@ struct context {
 #define AALIGN(p, mask, mod) p = (void *)((((uintptr_t)(p) - mod) & ~mask) + mod)
 
 /**
- * Platform dependent part of the @p chThdCreateI() API.
- * This code usually setup the context switching frame represented by a
- * @p intctx structure.
+ * @brief   Platform dependent part of the @p chThdCreateI() API.
+ * @details This code usually setup the context switching frame represented
+ *          by an @p port_intctx structure.
  */
-#define SETUP_CONTEXT(workspace, wsize, pf, arg) {                      \
-  uint8_t *esp = (uint8_t *)workspace + wsize;                          \
-  APUSH(esp, 0);                                                        \
-  uint8_t *savebp = esp;                                                \
-  AALIGN(esp, 15, 8);                                                   \
-  APUSH(esp, arg);                                                      \
-  APUSH(esp, pf);                                                       \
-  APUSH(esp, 0);                                                        \
-  esp -= sizeof(struct intctx);                                         \
-  ((struct intctx *)esp)->eip = _port_thread_start;                     \
-  ((struct intctx *)esp)->ebx = 0;                                      \
-  ((struct intctx *)esp)->edi = 0;                                      \
-  ((struct intctx *)esp)->esi = 0;                                      \
-  ((struct intctx *)esp)->ebp = savebp;                                 \
-  tp->p_ctx.esp = (struct intctx *)esp;                                 \
+#define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
+  uint8_t *esp = (uint8_t *)workspace + wsize;                              \
+  APUSH(esp, 0);                                                            \
+  uint8_t *savebp = esp;                                                    \
+  AALIGN(esp, 15, 8);                                                       \
+  APUSH(esp, arg);                                                          \
+  APUSH(esp, pf);                                                           \
+  APUSH(esp, 0);                                                            \
+  esp -= sizeof(struct port_intctx);                                        \
+  ((struct port_intctx *)esp)->eip = _port_thread_start;                    \
+  ((struct port_intctx *)esp)->ebx = 0;                                     \
+  ((struct port_intctx *)esp)->edi = 0;                                     \
+  ((struct port_intctx *)esp)->esi = 0;                                     \
+  ((struct port_intctx *)esp)->ebp = savebp;                                \
+  (tp)->p_ctx.esp = (struct port_intctx *)esp;                              \
 }
 
-/**
- * Stack size for the system idle thread.
- */
-#ifndef PORT_IDLE_THREAD_STACK_SIZE
-#define PORT_IDLE_THREAD_STACK_SIZE     256
-#endif
-
-/**
- * Per-thread stack overhead for interrupts servicing, it is used in the
- * calculation of the correct working area size.
- * It requires stack space because the simulated "interrupt handlers" can
- * invoke host library functions inside so it better have a lot of space.
- */
-#ifndef PORT_INT_REQUIRED_STACK
-#define PORT_INT_REQUIRED_STACK         16384
-#endif
-
-/**
- * Enforces a correct alignment for a stack area size value.
- */
-#define STACK_ALIGN(n) ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
-
  /**
-  * Computes the thread working area global size.
+ * @brief   Computes the thread working area global size.
+ * @note    There is no need to perform alignments in this macro.
   */
-#define THD_WA_SIZE(n) STACK_ALIGN(sizeof(Thread) +                     \
-                                   sizeof(void *) * 4 +                 \
-                                   sizeof(struct intctx) +              \
-                                   sizeof(struct extctx) +              \
-                                   (n) + (PORT_INT_REQUIRED_STACK))
+#define PORT_WA_SIZE(n) (sizeof(void *) * 4 +                               \
+                         sizeof(struct port_intctx) +                       \
+                         sizeof(struct port_extctx) +                       \
+                         (n) +                                              \
+                         PORT_INT_REQUIRED_STACK)
 
 /**
- * Macro used to allocate a thread working area aligned as both position and
- * size.
- */
-#define WORKING_AREA(s, n) stkalign_t s[THD_WA_SIZE(n) / sizeof(stkalign_t)]
-
-/**
- * IRQ prologue code, inserted at the start of all IRQ handlers enabled to
- * invoke system APIs.
+ * @brief   IRQ prologue code.
+ * @details This macro must be inserted at the start of all IRQ handlers
+ *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_PROLOGUE()
 
 /**
- * IRQ epilogue code, inserted at the end of all IRQ handlers enabled to
- * invoke system APIs.
+ * @brief   IRQ epilogue code.
+ * @details This macro must be inserted at the end of all IRQ handlers
+ *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE()
 
 /**
- * IRQ handler function declaration.
+ * @brief   IRQ handler function declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
  */
 #define PORT_IRQ_HANDLER(id) void id(void)
 
 /**
- * Simulator initialization.
+ * @brief   Fast IRQ handler function declaration.
+ * @note    @p id can be a function name or a vector number depending on the
+ *          port implementation.
  */
-#define port_init()
+#define PORT_FAST_IRQ_HANDLER(id) void id(void)
 
-/**
- * Does nothing in this simulator.
- */
-#define port_lock() asm volatile("nop")
-
-/**
- * Does nothing in this simulator.
- */
-#define port_unlock() asm volatile("nop")
-
-/**
- * Does nothing in this simulator.
- */
-#define port_lock_from_isr()
-
-/**
- * Does nothing in this simulator.
- */
-#define port_unlock_from_isr()
-
-/**
- * Does nothing in this simulator.
- */
-#define port_disable()
-
-/**
- * Does nothing in this simulator.
- */
-#define port_suspend()
-
-/**
- * Does nothing in this simulator.
- */
-#define port_enable()
-
-/**
- * In the simulator this does a polling pass on the simulated interrupt
- * sources.
- */
-#define port_wait_for_interrupt() ChkIntSources()
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   __attribute__((fastcall)) void port_switch(Thread *ntp, Thread *otp);
-  __attribute__((fastcall)) void port_halt(void);
   __attribute__((cdecl, noreturn)) void _port_thread_start(msg_t (*pf)(void *),
                                                            void *p);
-  void ChkIntSources(void);
+  void _sim_check_for_interrupts(void);
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Port-related initialization code.
+ */
+static inline void port_init(void) {
+
+}
+
+/**
+ * @brief   Returns a word encoding the current interrupts status.
+ *
+ * @return              The interrupts status.
+ */
+static inline syssts_t port_get_irq_status(void) {
+
+  return (syssts_t)0;
+}
+
+/**
+ * @brief   Checks the interrupt status.
+ *
+ * @param[in] sts       the interrupt status word
+ *
+ * @return              The interrupt status.
+ * @retvel false        the word specified a disabled interrupts status.
+ * @retvel true         the word specified an enabled interrupts status.
+ */
+static inline bool port_irq_enabled(syssts_t sts) {
+
+  return (sts & 1) == 0;
+}
+
+/**
+ * @brief   Determines the current execution context.
+ *
+ * @return              The execution context.
+ * @retval false        not running in ISR mode.
+ * @retval true         running in ISR mode.
+ */
+static inline bool port_is_isr_context(void) {
+
+  return false;
+}
+
+/**
+ * @brief   Kernel-lock action.
+ * @details In this port this function disables interrupts globally.
+ */
+static inline void port_lock(void) {
+
+  asm volatile("nop");
+}
+
+/**
+ * @brief   Kernel-unlock action.
+ * @details In this port this function enables interrupts globally.
+ */
+static inline void port_unlock(void) {
+
+  asm volatile("nop");
+}
+
+/**
+ * @brief   Kernel-lock action from an interrupt handler.
+ * @details In this port this function disables interrupts globally.
+ * @note    Same as @p port_lock() in this port.
+ */
+static inline void port_lock_from_isr(void) {
+
+  asm volatile("nop");
+}
+
+/**
+ * @brief   Kernel-unlock action from an interrupt handler.
+ * @details In this port this function enables interrupts globally.
+ * @note    Same as @p port_lock() in this port.
+ */
+static inline void port_unlock_from_isr(void) {
+
+  asm volatile("nop");
+}
+
+/**
+ * @brief   Disables all the interrupt sources.
+ */
+static inline void port_disable(void) {
+
+  asm volatile("nop");
+}
+
+/**
+ * @brief   Disables the interrupt sources below kernel-level priority.
+ */
+static inline void port_suspend(void) {
+
+  asm volatile("nop");
+}
+
+/**
+ * @brief   Enables all the interrupt sources.
+ */
+static inline void port_enable(void) {
+
+  asm volatile("nop");
+}
+
+/**
+ * @brief   Enters an architecture-dependent IRQ-waiting mode.
+ * @details The function is meant to return when an interrupt becomes pending.
+ *          The simplest implementation is an empty function or macro but this
+ *          would not take advantage of architecture-specific power saving
+ *          modes.
+ * @note    Implemented as an inlined @p WFI instruction.
+ */
+static inline void port_wait_for_interrupt(void) {
+
+  _sim_check_for_interrupts();
+}
 
 #endif /* _CHCORE_H_ */
 
