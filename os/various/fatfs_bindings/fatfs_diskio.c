@@ -22,7 +22,6 @@ extern SDCDriver SDCD1;
 #endif
 
 #if HAL_USE_RTC
-#include "chrtclib.h"
 extern RTCDriver RTCD1;
 #endif
 
@@ -245,7 +244,10 @@ DRESULT disk_ioctl (
 
 DWORD get_fattime(void) {
 #if HAL_USE_RTC
-    return rtcGetTimeFat(&RTCD1);
+    RTCDateTime timespec;
+
+    rtcGetTime(&RTCD1, &timespec);
+    return rtcConvertDateTimeToFAT(&timespec);
 #else
     return ((uint32_t)0 | (1 << 16)) | (1 << 21); /* wrong but valid time */
 #endif
