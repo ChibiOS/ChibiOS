@@ -1,6 +1,6 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012,2013 Giovanni Di Sirio.
+                 2011,2012,2013,2014 Giovanni Di Sirio.
 
     This file is part of ChibiOS/RT.
 
@@ -16,14 +16,15 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-                                      ---
-
-    A special exception to the GPL can be applied should you wish to distribute
-    a combined work that includes ChibiOS/RT, without being obliged to provide
-    the source code for any proprietary components. See the file exception.txt
-    for full details of how and when the exception can be applied.
 */
+
+/**
+ * @file    SIMIA32/compilers/GCC/chtypes.h
+ * @brief   Simulator on IA32 port system types.
+ *
+ * @addtogroup SIMIA32_GCC_CORE
+ * @{
+ */
 
 #ifndef _CHTYPES_H_
 #define _CHTYPES_H_
@@ -32,23 +33,55 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef bool            bool_t;         /**< Fast boolean type.             */
-typedef uint8_t         tmode_t;        /**< Thread flags.                  */
-typedef uint8_t         tstate_t;       /**< Thread state.                  */
-typedef uint8_t         trefs_t;        /**< Thread references counter.     */
-typedef uint8_t         tslices_t;      /**< Thread time slices counter.    */
-typedef uint32_t        tprio_t;        /**< Thread priority.               */
-typedef int32_t         msg_t;          /**< Inter-thread message.          */
-typedef int32_t         eventid_t;      /**< Event Id.                      */
-typedef uint32_t        eventmask_t;    /**< Event mask.                    */
-typedef uint32_t        flagsmask_t;    /**< Event flags.                   */
-typedef uint32_t        systime_t;      /**< System time.                   */
-typedef int32_t         cnt_t;          /**< Resources counter.             */
+/**
+ * @name    Common constants
+ */
+/**
+ * @brief   Generic 'false' boolean constant.
+ */
+#if !defined(FALSE) || defined(__DOXYGEN__)
+#define FALSE               0
+#endif
 
 /**
- * @brief   Inline function modifier.
+ * @brief   Generic 'true' boolean constant.
  */
-#define INLINE inline
+#if !defined(TRUE) || defined(__DOXYGEN__)
+#define TRUE                (!FALSE)
+#endif
+/** @} */
+
+/**
+ * @name    Derived generic types
+ * @{
+ */
+typedef volatile int8_t     vint8_t;        /**< Volatile signed 8 bits.    */
+typedef volatile uint8_t    vuint8_t;       /**< Volatile unsigned 8 bits.  */
+typedef volatile int16_t    vint16_t;       /**< Volatile signed 16 bits.   */
+typedef volatile uint16_t   vuint16_t;      /**< Volatile unsigned 16 bits. */
+typedef volatile int32_t    vint32_t;       /**< Volatile signed 32 bits.   */
+typedef volatile uint32_t   vuint32_t;      /**< Volatile unsigned 32 bits. */
+/** @} */
+
+/**
+ * @name    Kernel types
+ * @{
+ */
+typedef uint32_t            rtcnt_t;        /**< Realtime counter.          */
+typedef uint64_t            rttime_t;       /**< Realtime accumulator.      */
+typedef uint32_t            syssts_t;       /**< System status word.        */
+typedef uint8_t             tmode_t;        /**< Thread flags.              */
+typedef uint8_t             tstate_t;       /**< Thread state.              */
+typedef uint8_t             trefs_t;        /**< Thread references counter. */
+typedef uint8_t             tslices_t;      /**< Thread time slices counter.*/
+typedef uint32_t            tprio_t;        /**< Thread priority.           */
+typedef int32_t             msg_t;          /**< Inter-thread message.      */
+typedef int32_t             eventid_t;      /**< Numeric event identifier.  */
+typedef uint32_t            eventmask_t;    /**< Mask of event identifiers. */
+typedef uint32_t            eventflags_t;   /**< Mask of event flags.       */
+typedef int32_t             cnt_t;          /**< Generic signed counter.    */
+typedef uint32_t            ucnt_t;         /**< Generic unsigned counter.  */
+/** @} */
 
 /**
  * @brief   ROM constant modifier.
@@ -57,21 +90,22 @@ typedef int32_t         cnt_t;          /**< Resources counter.             */
 #define ROMCONST const
 
 /**
- * @brief   Packed structure modifier (within).
- * @note    It uses the "packed" GCC attribute.
+ * @brief   Makes functions not inlineable.
+ * @note    If the compiler does not support such attribute then the
+ *          realtime counter precision could be degraded.
  */
-#define PACK_STRUCT_STRUCT __attribute__((packed))
+#define NOINLINE __attribute__((noinline))
 
 /**
- * @brief   Packed structure modifier (before).
- * @note    Empty in this port.
+ * @brief   Optimized thread function declaration macro.
  */
-#define PACK_STRUCT_BEGIN
+#define PORT_THD_FUNCTION(tname, arg) msg_t tname(void *arg)
 
 /**
- * @brief   Packed structure modifier (after).
- * @note    Empty in this port.
+ * @brief   Packed variable specifier.
  */
-#define PACK_STRUCT_END
+#define PACKED_VAR __attribute__((packed))
 
 #endif /* _CHTYPES_H_ */
+
+/** @} */
