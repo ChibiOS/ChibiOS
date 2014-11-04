@@ -36,9 +36,6 @@ DLIBDIR =
 
 # List all default libraries here
 DLIBS = -lws2_32
- 
-# Must be a directory in $(CHIBIOS)/os/hal/platforms
-HOST_TYPE = Win32
 
 #
 # End of default section
@@ -52,7 +49,7 @@ HOST_TYPE = Win32
 PROJECT = ch
 
 # Define linker script file here
-LDSCRIPT=
+LDSCRIPT =
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS =
@@ -61,22 +58,23 @@ UDEFS =
 UADEFS =
 
 # Imported source files
-CHIBIOS = ../..
-include $(CHIBIOS)/boards/simulator/board.mk
+CHIBIOS = ../../..
+include $(CHIBIOS)/os/hal/boards/simulator/board.mk
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/platforms/$(HOST_TYPE)/platform.mk
-include $(CHIBIOS)/os/ports/GCC/SIMIA32/port.mk
-include $(CHIBIOS)/os/kernel/kernel.mk
+include $(CHIBIOS)/os/hal/ports/simulator/win32/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/rt/ports/SIMIA32/compilers/GCC/port.mk
+include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/test/rt/test.mk
 
 # List C source files here
-SRC  = ${PORTSRC} \
-       ${KERNSRC} \
-       ${TESTSRC} \
-       ${HALSRC} \
-       ${PLATFORMSRC} \
+SRC =  $(PORTSRC) \
+       $(KERNSRC) \
+       $(TESTSRC) \
+       $(HALSRC) \
+       $(OSALSRC) \
+       $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(CHIBIOS)/os/hal/platforms/$(HOST_TYPE)/console.c \
        main.c
 
 # List ASM source files here
@@ -84,7 +82,7 @@ ASRC =
 
 # List all user directories here
 UINCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
           $(CHIBIOS)/os/various
 
 # List the user directory to look for the libraries here
@@ -121,10 +119,10 @@ CPFLAGS += -MD -MP -MF .dep/$(@F).d
 
 all: $(OBJS) $(PROJECT).exe
 
-%o : %c
+%.o : %.c
 	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
 
-%o : %s
+%.o : %.s
 	$(AS) -c $(ASFLAGS) $< -o $@
 
 %exe: $(OBJS)
@@ -133,7 +131,7 @@ all: $(OBJS) $(PROJECT).exe
 .PHONY: gcov
 gcov:
 	-mkdir gcov
-	$(COV) -u $(subst /,\,$(KERNSRC))
+	$(COV) -u -o $(CHIBIOS)/os/rt/src $(KERNSRC)
 	-mv -f *.gcov ./gcov
 
 .PHONY: clean
