@@ -42,6 +42,9 @@
 #define KINETIS_HAS_ADC0            TRUE
 #define KINETIS_ADC0_IRC_VECTOR     Vector7C
 
+/* I2C attributes.*/
+#define KINETIS_I2C0_IRQ_VECTOR     Vector60
+
 /** @} */
 
 #endif /* _KINETIS_REGISTRY_H_ */

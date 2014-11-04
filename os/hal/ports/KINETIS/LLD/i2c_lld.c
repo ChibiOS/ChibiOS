@@ -138,8 +138,7 @@ static void serve_interrupt(I2CDriver *i2cp) {
 
 #if KINETIS_I2C_USE_I2C0 || defined(__DOXYGEN__)
 
-/* FIXME: Vector6C on K2x; Vector60 on KL2x */
-PORT_IRQ_HANDLER(Vector6C) {
+PORT_IRQ_HANDLER(KINETIS_I2C0_IRQ_VECTOR) {
 
   PORT_IRQ_PROLOGUE();
   serve_interrupt(&I2CD1);
