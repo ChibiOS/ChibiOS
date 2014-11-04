@@ -61,9 +61,16 @@
 #include "serial.h"
 #include "sdc.h"
 #include "spi.h"
-#include "st.h"
 #include "uart.h"
 #include "usb.h"
+
+/*
+ *  The ST driver is a special case, it is only included if the OSAL is
+ *  configured to require it.
+ */
+#if OSAL_ST_MODE != OSAL_ST_MODE_NONE
+#include "st.h"
+#endif
 
 /* Complex drivers.*/
 #include "mmc_spi.h"

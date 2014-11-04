@@ -1,5 +1,5 @@
 /*
-    ChibiOS/HAL - Copyright (C) 2006-2014 Giovanni Di Sirio
+    ChibiOS/RT - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,25 +15,32 @@
 */
 
 /**
- * @file    hal_lld.c
- * @brief   WIN32 simulator HAL subsystem low level driver code.
+ * @file    st_lld.c
+ * @brief   PLATFORM ST subsystem low level driver source.
  *
- * @addtogroup WIN32_HAL
+ * @addtogroup ST
  * @{
  */
 
 #include "hal.h"
+
+#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
+
+/*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver local variables and types.                                         */
+/* Driver local types.                                                       */
 /*===========================================================================*/
 
-static LARGE_INTEGER nextcnt;
-static LARGE_INTEGER slice;
+/*===========================================================================*/
+/* Driver local variables and types.                                         */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -48,63 +55,13 @@ static LARGE_INTEGER slice;
 /*===========================================================================*/
 
 /**
- * @brief Low level HAL driver initialization.
+ * @brief   Low level ST driver initialization.
+ *
+ * @notapi
  */
-void hal_lld_init(void) {
-  WSADATA wsaData;
-
-  /* Initialization.*/
-  if (WSAStartup(2, &wsaData) != 0) {
-    printf("Unable to locate a winsock DLL\n");
-    exit(1);
-  }
-
-  printf("ChibiOS/RT simulator (Win32)\n");
-  if (!QueryPerformanceFrequency(&slice)) {
-    printf("QueryPerformanceFrequency() error");
-    exit(1);
-  }
-  slice.QuadPart /= CH_CFG_ST_FREQUENCY;
-  QueryPerformanceCounter(&nextcnt);
-  nextcnt.QuadPart += slice.QuadPart;
-
-  fflush(stdout);
+void st_lld_init(void) {
 }
 
-/**
- * @brief   Interrupt simulation.
- */
-void _sim_check_for_interrupts(void) {
-  LARGE_INTEGER n;
-
-#if HAL_USE_SERIAL
-  if (sd_lld_interrupt_pending()) {
-    _dbg_check_lock();
-    if (chSchIsPreemptionRequired())
-      chSchDoReschedule();
-    _dbg_check_unlock();
-    return;
-  }
-#endif
-
-  /* Interrupt Timer simulation (10ms interval).*/
-  QueryPerformanceCounter(&n);
-  if (n.QuadPart > nextcnt.QuadPart) {
-    nextcnt.QuadPart += slice.QuadPart;
-
-    CH_IRQ_PROLOGUE();
-
-    chSysLockFromISR();
-    chSysTimerHandlerI();
-    chSysUnlockFromISR();
-
-    CH_IRQ_EPILOGUE();
-
-    _dbg_check_lock();
-    if (chSchIsPreemptionRequired())
-      chSchDoReschedule();
-    _dbg_check_unlock();
-  }
-}
+#endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
 
 /** @} */

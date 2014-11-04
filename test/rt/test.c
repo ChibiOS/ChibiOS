@@ -229,7 +229,7 @@ void test_cpu_pulse(unsigned duration) {
   do {
     now = chThdGetTicksX(chThdGetSelfX());
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   }
   while (end > start ? (now >= start) && (now < end) :

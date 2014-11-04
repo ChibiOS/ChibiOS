@@ -56,7 +56,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define CH_CFG_ST_TIMEDELTA                 1
+#define CH_CFG_ST_TIMEDELTA                 0
 
 /** @} */
 
@@ -394,7 +394,7 @@
  * @note    This debug option is not currently compatible with the
  *          tickless mode.
  */
-#define CH_DBG_THREADS_PROFILING            FALSE
+#define CH_DBG_THREADS_PROFILING            TRUE
 
 /** @} */
 

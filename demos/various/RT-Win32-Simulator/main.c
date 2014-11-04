@@ -20,15 +20,15 @@
 #include "shell.h"
 #include "chprintf.h"
 
-#define SHELL_WA_SIZE       THD_WA_SIZE(4096)
-#define CONSOLE_WA_SIZE     THD_WA_SIZE(4096)
-#define TEST_WA_SIZE        THD_WA_SIZE(4096)
+#define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(4096)
+#define CONSOLE_WA_SIZE     THD_WORKING_AREA_SIZE(4096)
+#define TEST_WA_SIZE        THD_WORKING_AREA_SIZE(4096)
 
 #define cputs(msg) chMsgSend(cdtp, (msg_t)msg)
 
-static Thread *cdtp;
-static Thread *shelltp1;
-static Thread *shelltp2;
+static thread_t *cdtp;
+static thread_t *shelltp1;
+static thread_t *shelltp2;
 
 static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
   size_t n, size;
@@ -45,8 +45,8 @@ static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
-  static const char *states[] = {THD_STATE_NAMES};
-  Thread *tp;
+  static const char *states[] = {CH_STATE_NAMES};
+  thread_t *tp;
 
   (void)argv;
   if (argc > 0) {
@@ -65,14 +65,14 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
-  Thread *tp;
+  thread_t *tp;
 
   (void)argv;
   if (argc > 0) {
     chprintf(chp, "Usage: test\r\n");
     return;
   }
-  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriority(),
+  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriorityX(),
                            TestThread, chp);
   if (tp == NULL) {
     chprintf(chp, "out of memory\r\n");
@@ -106,11 +106,11 @@ static const ShellConfig shell_cfg2 = {
 static msg_t console_thread(void *arg) {
 
   (void)arg;
-  while (!chThdShouldTerminate()) {
-    Thread *tp = chMsgWait();
+  while (!chThdShouldTerminateX()) {
+    thread_t *tp = chMsgWait();
     puts((char *)chMsgGet(tp));
     fflush(stdout);
-    chMsgRelease(tp, RDY_OK);
+    chMsgRelease(tp, MSG_OK);
   }
   return 0;
 }
@@ -123,7 +123,7 @@ static msg_t console_thread(void *arg) {
 static void termination_handler(eventid_t id) {
 
   (void)id;
-  if (shelltp1 && chThdTerminated(shelltp1)) {
+  if (shelltp1 && chThdTerminatedX(shelltp1)) {
     chThdWait(shelltp1);
     shelltp1 = NULL;
     chThdSleepMilliseconds(10);
@@ -132,7 +132,7 @@ static void termination_handler(eventid_t id) {
     chOQResetI(&SD1.oqueue);
     chSysUnlock();
   }
-  if (shelltp2 && chThdTerminated(shelltp2)) {
+  if (shelltp2 && chThdTerminatedX(shelltp2)) {
     chThdWait(shelltp2);
     shelltp2 = NULL;
     chThdSleepMilliseconds(10);
@@ -143,7 +143,7 @@ static void termination_handler(eventid_t id) {
   }
 }
 
-static EventListener sd1fel, sd2fel;
+static event_listener_t sd1fel, sd2fel;
 
 /**
  * @brief SD1 status change handler.
@@ -151,7 +151,7 @@ static EventListener sd1fel, sd2fel;
  * @param[in] id event id.
  */
 static void sd1_handler(eventid_t id) {
-  flagsmask_t flags;
+  eventflags_t flags;
 
   (void)id;
   flags = chEvtGetAndClearFlags(&sd1fel);
@@ -173,7 +173,7 @@ static void sd1_handler(eventid_t id) {
  * @param[in] id event id.
  */
 static void sd2_handler(eventid_t id) {
-  flagsmask_t flags;
+  eventflags_t flags;
 
   (void)id;
   flags = chEvtGetAndClearFlags(&sd2fel);
@@ -199,7 +199,7 @@ static evhandler_t fhandlers[] = {
  * Simulator main.                                                        *
  *------------------------------------------------------------------------*/
 int main(void) {
-  EventListener tel;
+  event_listener_t tel;
 
   /*
    * System initializations.
@@ -241,7 +241,7 @@ int main(void) {
   /*
    * Events servicing loop.
    */
-  while (!chThdShouldTerminate())
+  while (!chThdShouldTerminateX())
     chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
 
   /*

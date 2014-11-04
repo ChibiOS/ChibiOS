@@ -133,7 +133,7 @@ static bool inint(SerialDriver *sdp) {
     /*
      * Input.
      */
-    int n = recv(sdp->com_data, data, sizeof(data), 0);
+    int n = recv(sdp->com_data, (char *)data, sizeof(data), 0);
     switch (n) {
     case 0:
       closesocket(sdp->com_data);
@@ -174,7 +174,7 @@ static bool outint(SerialDriver *sdp) {
     if (n < 0)
       return FALSE;
     data[0] = (uint8_t)n;
-    n = send(sdp->com_data, data, sizeof(data), 0);
+    n = send(sdp->com_data, (char *)data, sizeof(data), 0);
     switch (n) {
     case 0:
       closesocket(sdp->com_data);

@@ -86,7 +86,7 @@ static unsigned int msg_loop_test(thread_t *tp) {
     (void)chMsgSend(tp, 1);
     n++;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
   (void)chMsgSend(tp, 0);
@@ -232,7 +232,7 @@ static void bmk4_execute(void) {
     chSysUnlock();
     n += 4;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
   chSysLock();
@@ -274,7 +274,7 @@ static void bmk5_execute(void) {
     chThdWait(chThdCreateStatic(wap, WA_SIZE, prio, thread2, NULL));
     n++;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
   test_print("--- Score : ");
@@ -313,7 +313,7 @@ static void bmk6_execute(void) {
     chThdCreateStatic(wap, WA_SIZE, prio, thread2, NULL);
     n++;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
   test_print("--- Score : ");
@@ -368,7 +368,7 @@ static void bmk7_execute(void) {
     chSemReset(&sem1, 0);
     n++;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
   test_terminate_threads();
@@ -408,7 +408,7 @@ static msg_t thread8(void *p) {
     chThdYield();
     (*(uint32_t *)p) += 4;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while(!chThdShouldTerminateX());
   return 0;
@@ -475,7 +475,7 @@ static void bmk9_execute(void) {
     (void)chIQGet(&iq);
     n++;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
   test_print("--- Score : ");
@@ -517,7 +517,7 @@ static void bmk10_execute(void) {
     chSysUnlock();
     n++;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
   test_print("--- Score : ");
@@ -563,7 +563,7 @@ static void bmk11_execute(void) {
     chSemSignal(&sem1);
     n++;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
   test_print("--- Score : ");
@@ -610,7 +610,7 @@ static void bmk12_execute(void) {
     chMtxUnlock(&mtx1);
     n++;
 #if defined(SIMULATOR)
-    ChkIntSources();
+    _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
   test_print("--- Score : ");

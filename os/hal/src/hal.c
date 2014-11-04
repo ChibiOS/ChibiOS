@@ -122,8 +122,11 @@ void halInit(void) {
   /* Board specific initialization.*/
   boardInit();
 
-#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
-  /* System tick service if the underlying OS requires it.*/
+/*
+ *  The ST driver is a special case, it is only initialized if the OSAL is
+ *  configured to require it.
+ */
+#if OSAL_ST_MODE != OSAL_ST_MODE_NONE
   stInit();
 #endif
 }

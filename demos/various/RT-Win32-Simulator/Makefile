@@ -60,16 +60,18 @@ CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/boards/simulator/board.mk
 include ${CHIBIOS}/os/hal/hal.mk
 include ${CHIBIOS}/os/hal/ports/simulator/win32/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include ${CHIBIOS}/os/rt/ports/SIMIA32/compilers/GCC/port.mk
 include ${CHIBIOS}/os/rt/rt.mk
 include ${CHIBIOS}/test/rt/test.mk
 
 # List C source files here
-SRC  = ${PORTSRC} \
-       ${KERNSRC} \
-       ${TESTSRC} \
-       ${HALSRC} \
-       ${PLATFORMSRC} \
+SRC =  $(PORTSRC) \
+       $(KERNSRC) \
+       $(TESTSRC) \
+       $(HALSRC) \
+       $(OSALSRC) \
+       $(PLATFORMSRC) \
        $(BOARDSRC) \
        ${CHIBIOS}/os/various/shell.c \
        ${CHIBIOS}/os/various/memstreams.c \
@@ -81,7 +83,7 @@ ASRC =
 
 # List all user directories here
 UINCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
           ${CHIBIOS}/os/various
 
 # List the user directory to look for the libraries here

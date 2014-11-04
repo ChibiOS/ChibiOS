@@ -148,7 +148,7 @@ struct port_intctx {
  *          at context switch time.
  */
 struct context {
-  struct intctx volatile *esp;
+  struct port_intctx *esp;
 };
 
 /*===========================================================================*/
@@ -177,11 +177,11 @@ struct context {
   APUSH(esp, pf);                                                           \
   APUSH(esp, 0);                                                            \
   esp -= sizeof(struct port_intctx);                                        \
-  ((struct port_intctx *)esp)->eip = _port_thread_start;                    \
+  ((struct port_intctx *)esp)->eip = (void *)_port_thread_start;            \
   ((struct port_intctx *)esp)->ebx = 0;                                     \
   ((struct port_intctx *)esp)->edi = 0;                                     \
   ((struct port_intctx *)esp)->esi = 0;                                     \
-  ((struct port_intctx *)esp)->ebp = savebp;                                \
+  ((struct port_intctx *)esp)->ebp = (void *)savebp;                        \
   (tp)->p_ctx.esp = (struct port_intctx *)esp;                              \
 }
 

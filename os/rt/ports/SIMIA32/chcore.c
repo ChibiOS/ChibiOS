@@ -58,7 +58,7 @@
  * @param ntp the thread to be switched in
  */
 __attribute__((used))
-static void __dummy(Thread *ntp, Thread *otp) {
+static void __dummy(thread_t *ntp, thread_t *otp) {
   (void)ntp; (void)otp;
 
   asm volatile (
