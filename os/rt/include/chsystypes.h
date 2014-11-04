@@ -46,6 +46,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of system time.
+ */
+#if (CH_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
+typedef uint32_t systime_t;
+#else
+typedef uint16_t systime_t;
+#endif
+
+/**
  * @extends threads_queue_t
  *
  * @brief   Type of a thread structure.

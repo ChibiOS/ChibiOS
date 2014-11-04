@@ -59,6 +59,15 @@ typedef int32_t         cnt_t;          /**< Generic signed counter.        */
 typedef uint32_t        ucnt_t;         /**< Generic unsigned counter.      */
 
 /**
+ * @brief   Type of system time.
+ */
+#if (NIL_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
+typedef uint32_t systime_t;
+#else
+typedef uint16_t systime_t;
+#endif
+
+/**
  * @brief   ROM constant modifier.
  * @note    It is set to use the "const" keyword in this port.
  */

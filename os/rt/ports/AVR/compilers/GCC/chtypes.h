@@ -62,7 +62,6 @@ typedef int16_t         msg_t;          /**< Inter-thread message.          */
 typedef uint8_t         eventid_t;      /**< Event Id.                      */
 typedef uint8_t         eventmask_t;    /**< Event mask.                    */
 typedef uint8_t         eventflags_t;   /**< Event flags.                   */
-typedef uint16_t        systime_t;      /**< System time.                   */
 typedef int8_t          cnt_t;          /**< Resources counter.             */
 
 /**

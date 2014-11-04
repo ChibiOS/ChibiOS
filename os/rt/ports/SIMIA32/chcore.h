@@ -147,7 +147,7 @@ struct port_intctx {
  *          @p port_intctx structure representing the stack pointer
  *          at context switch time.
  */
-struct port_context {
+struct context {
   struct intctx volatile *esp;
 };
 
@@ -230,7 +230,7 @@ struct port_context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  __attribute__((fastcall)) void port_switch(Thread *ntp, Thread *otp);
+  __attribute__((fastcall)) void port_switch(thread_t *ntp, thread_t *otp);
   __attribute__((cdecl, noreturn)) void _port_thread_start(msg_t (*pf)(void *),
                                                            void *p);
   void _sim_check_for_interrupts(void);

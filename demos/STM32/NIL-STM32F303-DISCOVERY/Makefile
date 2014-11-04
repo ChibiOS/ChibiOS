@@ -83,10 +83,10 @@ PROJECT = ch
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ST_STM32F3_DISCOVERY/board.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F30x/platform.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 include $(CHIBIOS)/os/nil/nil.mk
-include $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/mk/port_stm32f30x.mk
+include $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/mk/port_stm32f3xx.mk
 include $(CHIBIOS)/test/nil/test.mk
 
 # Define linker script file here

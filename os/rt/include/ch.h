@@ -63,8 +63,8 @@
 /** @} */
 
 /* Core headers.*/
-#include "chsystypes.h"
 #include "chtypes.h"
+#include "chsystypes.h"
 #include "chconf.h"
 #include "chcore.h"
 #include "chdebug.h"

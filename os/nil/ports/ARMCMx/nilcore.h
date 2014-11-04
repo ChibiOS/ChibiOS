@@ -128,15 +128,6 @@
 #if !defined(_FROM_ASM_)
 
 /**
- * @brief   Type of system time.
- */
-#if (NIL_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
-typedef uint32_t systime_t;
-#else
-typedef uint16_t systime_t;
-#endif
-
-/**
  * @brief   Type of a generic ARM register.
  */
 typedef void *regarm_t;

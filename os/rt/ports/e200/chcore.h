@@ -182,15 +182,6 @@
 #if !defined(_FROM_ASM_)
 
 /**
- * @brief   Type of system time.
- */
-#if (CH_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
-typedef uint32_t systime_t;
-#else
-typedef uint16_t systime_t;
-#endif
-
-/**
  * @brief   Type of stack and memory alignment enforcement.
  * @note    In this architecture the stack alignment is enforced to 64 bits.
  */
