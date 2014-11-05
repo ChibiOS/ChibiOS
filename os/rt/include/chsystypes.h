@@ -50,8 +50,10 @@
  */
 #if (CH_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
 typedef uint32_t systime_t;
-#else
+#elif CH_CFG_ST_RESOLUTION == 16
 typedef uint16_t systime_t;
+#else
+#error "invalid CH_CFG_ST_RESOLUTION setting"
 #endif
 
 /**
