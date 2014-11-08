@@ -154,13 +154,15 @@ static void evt2_execute(void) {
   /*
    * Test on chEvtWaitOne() without wait.
    */
-  chEvtAddEvents(5);
+  chEvtAddEvents(7);
   m = chEvtWaitOne(ALL_EVENTS);
   test_assert(1, m == 1, "single event error");
   m = chEvtWaitOne(ALL_EVENTS);
-  test_assert(2, m == 4, "single event error");
+  test_assert(2, m == 2, "single event error");
+  m = chEvtWaitOne(ALL_EVENTS);
+  test_assert(3, m == 4, "single event error");
   m = chEvtGetAndClearEvents(ALL_EVENTS);
-  test_assert(3, m == 0, "stuck event");
+  test_assert(4, m == 0, "stuck event");
 
   /*
    * Test on chEvtWaitOne() with wait.
@@ -170,10 +172,10 @@ static void evt2_execute(void) {
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
                                  thread1, chThdSelf());
   m = chEvtWaitOne(ALL_EVENTS);
-  test_assert_time_window(4, target_time, target_time + ALLOWED_DELAY);
-  test_assert(5, m == 1, "single event error");
+  test_assert_time_window(5, target_time, target_time + ALLOWED_DELAY);
+  test_assert(6, m == 1, "single event error");
   m = chEvtGetAndClearEvents(ALL_EVENTS);
-  test_assert(6, m == 0, "stuck event");
+  test_assert(7, m == 0, "stuck event");
   test_wait_threads();
 
   /*
@@ -181,9 +183,9 @@ static void evt2_execute(void) {
    */
   chEvtAddEvents(5);
   m = chEvtWaitAny(ALL_EVENTS);
-  test_assert(7, m == 5, "unexpected pending bit");
+  test_assert(8, m == 5, "unexpected pending bit");
   m = chEvtGetAndClearEvents(ALL_EVENTS);
-  test_assert(8, m == 0, "stuck event");
+  test_assert(9, m == 0, "stuck event");
 
   /*
    * Test on chEvtWaitAny() with wait.
@@ -193,10 +195,10 @@ static void evt2_execute(void) {
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
                                  thread1, chThdSelf());
   m = chEvtWaitAny(ALL_EVENTS);
-  test_assert_time_window(9, target_time, target_time + ALLOWED_DELAY);
-  test_assert(10, m == 1, "single event error");
+  test_assert_time_window(10, target_time, target_time + ALLOWED_DELAY);
+  test_assert(11, m == 1, "single event error");
   m = chEvtGetAndClearEvents(ALL_EVENTS);
-  test_assert(11, m == 0, "stuck event");
+  test_assert(12, m == 0, "stuck event");
   test_wait_threads();
 
   /*
@@ -211,14 +213,14 @@ static void evt2_execute(void) {
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriority() - 1,
                                  thread2, "A");
   m = chEvtWaitAll(5);
-  test_assert_time_window(12, target_time, target_time + ALLOWED_DELAY);
+  test_assert_time_window(13, target_time, target_time + ALLOWED_DELAY);
   m = chEvtGetAndClearEvents(ALL_EVENTS);
-  test_assert(13, m == 0, "stuck event");
+  test_assert(14, m == 0, "stuck event");
   test_wait_threads();
   chEvtUnregister(&es1, &el1);
   chEvtUnregister(&es2, &el2);
-  test_assert(14, !chEvtIsListeningI(&es1), "stuck listener");
-  test_assert(15, !chEvtIsListeningI(&es2), "stuck listener");
+  test_assert(15, !chEvtIsListeningI(&es1), "stuck listener");
+  test_assert(16, !chEvtIsListeningI(&es2), "stuck listener");
 }
 
 ROMCONST struct testcase testevt2 = {
