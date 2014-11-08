@@ -5,13 +5,13 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       2.6.0
-*** Compiled:     May 11 2013 - 09:55:43
-*** Compiler:     GCC 4.7.3 20130312 (release) [ARM/embedded-4_7-branch revision 196615]
+*** Kernel:       2.6.7
+*** Compiled:     Nov  8 2014 - 18:41:30
+*** Compiler:     GCC 4.7.4 20140401 (release) [ARM/embedded-4_7-branch revision 209195]
 *** Architecture: ARMv7-ME
 *** Core Variant: Cortex-M4
 *** Port Info:    Advanced kernel mode
-*** Platform:     STM32F4xx High Performance
+*** Platform:     STM32F407/F417 High Performance with DSP and FPU
 *** Test Board:   STMicroelectronics STM32F4-Discovery
 
 ----------------------------------------------------------------------------
@@ -100,27 +100,27 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.1 (Benchmark, messages #1)
---- Score : 749363 msgs/S, 1498726 ctxswc/S
+--- Score : 749359 msgs/S, 1498718 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.2 (Benchmark, messages #2)
---- Score : 608179 msgs/S, 1216358 ctxswc/S
+--- Score : 608174 msgs/S, 1216348 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.3 (Benchmark, messages #3)
---- Score : 608175 msgs/S, 1216350 ctxswc/S
+--- Score : 608172 msgs/S, 1216344 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.4 (Benchmark, context switch)
---- Score : 2510064 ctxswc/S
+--- Score : 2510048 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.5 (Benchmark, threads, full cycle)
---- Score : 440577 threads/S
+--- Score : 440572 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.6 (Benchmark, threads, create only)
---- Score : 624014 threads/S
+--- Score : 624011 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.7 (Benchmark, mass reschedule, 5 threads)
@@ -132,23 +132,23 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.9 (Benchmark, I/O Queues throughput)
---- Score : 1842068 bytes/S
+--- Score : 1842056 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 2180000 timers/S
+--- Score : 2072332 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
---- Score : 2643424 wait+signal/S
+--- Score : 2643420 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.12 (Benchmark, mutexes lock/unlock)
---- Score : 1844600 lock+unlock/S
+--- Score : 1844584 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.13 (Benchmark, RAM footprint)
---- System: 404 bytes
+--- System: 468 bytes
 --- Thread: 72 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes
