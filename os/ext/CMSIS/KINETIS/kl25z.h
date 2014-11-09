@@ -56,9 +56,9 @@ typedef enum IRQn
   UART2_IRQn                    = 14,
   ADC0_IRQn                     = 15,
   CMP0_IRQn                     = 16,
-  TMP0_IRQn                     = 17,
-  TMP1_IRQn                     = 18,
-  TMP2_IRQn                     = 19,
+  TPM0_IRQn                     = 17,
+  TPM1_IRQn                     = 18,
+  TPM2_IRQn                     = 19,
   RTC0_IRQn                     = 20,
   RTC1_IRQn                     = 21,
   PIT_IRQn                      = 22,
@@ -458,8 +458,8 @@ typedef struct
 #define SIM_SCGC6_DAC0               ((uint32_t)0x80000000)    /*!< DAC0 Clock Gate Control */
 #define SIM_SCGC6_RTC                ((uint32_t)0x20000000)    /*!< RTC Access Control */
 #define SIM_SCGC6_ADC0               ((uint32_t)0x08000000)    /*!< ADC0 Clock Gate Control */
-#define SIM_SCGC6_TMP2               ((uint32_t)0x04000000)    /*!< TPM2 Clock Gate Control */
-#define SIM_SCGC6_TMP1               ((uint32_t)0x02000000)    /*!< TPM1 Clock Gate Control */
+#define SIM_SCGC6_TPM2               ((uint32_t)0x04000000)    /*!< TPM2 Clock Gate Control */
+#define SIM_SCGC6_TPM1               ((uint32_t)0x02000000)    /*!< TPM1 Clock Gate Control */
 #define SIM_SCGC6_TPM0               ((uint32_t)0x01000000)    /*!< TPM0 Clock Gate Control */
 #define SIM_SCGC6_PIT                ((uint32_t)0x00800000)    /*!< PIT Clock Gate Control */
 #define SIM_SCGC6_DMAMUX             ((uint32_t)0x00000002)    /*!< DMA Mux Clock Gate Control */
