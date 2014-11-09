@@ -47,22 +47,23 @@ UDEFS =
 UADEFS =
 
 # Imported source files
-CHIBIOS = ../..
-include $(CHIBIOS)/boards/simulator/board.mk
-include ${CHIBIOS}/os/hal/hal.mk
-include ${CHIBIOS}/os/hal/platforms/Win32/platform.mk
-include ${CHIBIOS}/os/ports/GCC/SIMIA32/port.mk
-include ${CHIBIOS}/os/kernel/kernel.mk
-include ${CHIBIOS}/test/test.mk
+CHIBIOS = ../../..
+include $(CHIBIOS)/os/hal/boards/simulator/board.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/ports/simulator/win32/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+include $(CHIBIOS)/os/rt/ports/SIMIA32/compilers/GCC/port.mk
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/test/rt/test.mk
 
 # List C source files here
-SRC  = ${PORTSRC} \
-       ${KERNSRC} \
-       ${TESTSRC} \
-       ${HALSRC} \
-       ${PLATFORMSRC} \
+SRC =  $(PORTSRC) \
+       $(KERNSRC) \
+       $(TESTSRC) \
+       $(HALSRC) \
+       $(OSALSRC) \
+       $(PLATFORMSRC) \
        $(BOARDSRC) \
-       ${CHIBIOS}/os/hal/platforms/Win32/console.c \
        main.c
 
 # List ASM source files here
@@ -70,7 +71,7 @@ ASRC =
 
 # List all user directories here
 UINCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
+          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
           $(CHIBIOS)/os/various
 
 # List the user directory to look for the libraries here
