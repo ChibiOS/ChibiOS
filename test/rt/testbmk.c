@@ -64,6 +64,12 @@ static mutex_t mtx1;
 #endif
 
 static msg_t thread1(void *p) {
+
+  return (msg_t)p;
+}
+
+#if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
+static msg_t thread2(void *p) {
   thread_t *tp;
   msg_t msg;
 
@@ -107,7 +113,7 @@ static unsigned int msg_loop_test(thread_t *tp) {
 static void bmk1_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, thread1, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, thread2, NULL);
   n = msg_loop_test(threads[0]);
   test_wait_threads();
   test_print("--- Score : ");
@@ -136,7 +142,7 @@ ROMCONST struct testcase testbmk1 = {
 static void bmk2_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread1, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread2, NULL);
   n = msg_loop_test(threads[0]);
   test_wait_threads();
   test_print("--- Score : ");
@@ -153,11 +159,6 @@ ROMCONST struct testcase testbmk2 = {
   bmk2_execute
 };
 
-static msg_t thread2(void *p) {
-
-  return (msg_t)p;
-}
-
 /**
  * @page test_benchmarks_003 Messages performance #3
  *
@@ -171,11 +172,11 @@ static msg_t thread2(void *p) {
 static void bmk3_execute(void) {
   uint32_t n;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread1, NULL);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-2, thread2, NULL);
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread2, NULL);
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-4, thread2, NULL);
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-5, thread2, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread2, NULL);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-2, thread1, NULL);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread1, NULL);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-4, thread1, NULL);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-5, thread1, NULL);
   n = msg_loop_test(threads[0]);
   test_wait_threads();
   test_print("--- Score : ");
@@ -191,6 +192,7 @@ ROMCONST struct testcase testbmk3 = {
   NULL,
   bmk3_execute
 };
+#endif /* if CH_CFG_USE_MESSAGES */
 
 /**
  * @page test_benchmarks_004 Context Switch performance
@@ -273,7 +275,7 @@ static void bmk5_execute(void) {
   test_wait_tick();
   test_start_timer(1000);
   do {
-    chThdWait(chThdCreateStatic(wap, WA_SIZE, prio, thread2, NULL));
+    chThdWait(chThdCreateStatic(wap, WA_SIZE, prio, thread1, NULL));
     n++;
 #if defined(SIMULATOR)
     _sim_check_for_interrupts();
@@ -312,7 +314,7 @@ static void bmk6_execute(void) {
   test_wait_tick();
   test_start_timer(1000);
   do {
-    chThdCreateStatic(wap, WA_SIZE, prio, thread2, NULL);
+    chThdCreateStatic(wap, WA_SIZE, prio, thread1, NULL);
     n++;
 #if defined(SIMULATOR)
     _sim_check_for_interrupts();
@@ -701,9 +703,11 @@ ROMCONST struct testcase testbmk13 = {
  */
 ROMCONST struct testcase * ROMCONST patternbmk[] = {
 #if !TEST_NO_BENCHMARKS
+#if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
   &testbmk1,
   &testbmk2,
   &testbmk3,
+#endif
   &testbmk4,
   &testbmk5,
   &testbmk6,

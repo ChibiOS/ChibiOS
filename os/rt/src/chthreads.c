@@ -498,7 +498,7 @@ msg_t chThdSuspendS(thread_reference_t *trp) {
   *trp = tp;
   tp->p_u.wtobjp = &trp;
   chSchGoSleepS(CH_STATE_SUSPENDED);
-  return chThdGetSelfX()->p_msg;
+  return chThdGetSelfX()->p_u.rdymsg;
 }
 
 /**
