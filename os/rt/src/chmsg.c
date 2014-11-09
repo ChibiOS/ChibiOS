@@ -65,7 +65,7 @@
 /*===========================================================================*/
 
 #if CH_CFG_USE_MESSAGES_PRIORITY
-#define msg_insert(tp, qp) prio_insert(tp, qp)
+#define msg_insert(tp, qp) queue_prio_insert(tp, qp)
 #else
 #define msg_insert(tp, qp) queue_insert(tp, qp)
 #endif
