@@ -56,7 +56,9 @@
  * @brief Kernel Benchmarks header file
  */
 
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 static semaphore_t sem1;
+#endif
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 static mutex_t mtx1;
 #endif
@@ -328,6 +330,7 @@ ROMCONST struct testcase testbmk6 = {
   bmk6_execute
 };
 
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 /**
  * @page test_benchmarks_007 Mass reschedule performance
  *
@@ -388,6 +391,7 @@ ROMCONST struct testcase testbmk7 = {
   NULL,
   bmk7_execute
 };
+#endif
 
 /**
  * @page test_benchmarks_008 I/O Round-Robin voluntary reschedule.
@@ -532,6 +536,7 @@ ROMCONST struct testcase testbmk10 = {
   bmk10_execute
 };
 
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 /**
  * @page test_benchmarks_011 Semaphores wait/signal performance
  *
@@ -577,6 +582,7 @@ ROMCONST struct testcase testbmk11 = {
   NULL,
   bmk11_execute
 };
+#endif
 
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
 /**
@@ -648,9 +654,11 @@ static void bmk13_execute(void) {
   test_print("--- Timer : ");
   test_printn(sizeof(virtual_timer_t));
   test_println(" bytes");
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
   test_print("--- Semaph: ");
   test_printn(sizeof(semaphore_t));
   test_println(" bytes");
+#endif
 #if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
   test_print("--- EventS: ");
   test_printn(sizeof(event_source_t));
@@ -699,13 +707,17 @@ ROMCONST struct testcase * ROMCONST patternbmk[] = {
   &testbmk4,
   &testbmk5,
   &testbmk6,
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
   &testbmk7,
+#endif
   &testbmk8,
 #if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
   &testbmk9,
 #endif
   &testbmk10,
+#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
   &testbmk11,
+#endif
 #if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
   &testbmk12,
 #endif

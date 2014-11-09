@@ -173,7 +173,7 @@ typedef thread_t * thread_reference_t;
 typedef uint32_t eventflags_t;
 #endif
 
-#if 0
+#if !CH_CFG_USE_EVENTS
 /**
  * @brief   Type of an event flags object.
  * @note    The content of this structure is not part of the API and should
@@ -743,6 +743,7 @@ static inline void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg) {
   chThdDequeueAllI(tqp, msg);
 }
 
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
 /**
  * @brief   Initializes an event flags object.
  *
@@ -754,7 +755,14 @@ static inline void osalEventObjectInit(event_source_t *esp) {
 
   chEvtObjectInit(esp);
 }
+#else
+static inline void osalEventObjectInit(event_source_t *esp) {
 
+  esp->flags = 0;
+}
+#endif
+
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
 /**
  * @brief   Add flags to an event source object.
  *
@@ -768,7 +776,15 @@ static inline void osalEventBroadcastFlagsI(event_source_t *esp,
 
   chEvtBroadcastFlagsI(esp, flags);
 }
+#else
+static inline void osalEventBroadcastFlagsI(event_source_t *esp,
+                                            eventflags_t flags) {
 
+  esp->flags |= flags;
+}
+#endif
+
+#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
 /**
  * @brief   Add flags to an event source object.
  *
@@ -782,6 +798,14 @@ static inline void osalEventBroadcastFlags(event_source_t *esp,
 
   chEvtBroadcastFlags(esp, flags);
 }
+#else
+static inline void osalEventBroadcastFlags(event_source_t *esp,
+                                            eventflags_t flags) {
+  osalSysLock();
+  esp->flags |= flags;
+  osalSysUnlock();
+}
+#endif
 
 /**
  * @brief   Initializes s @p mutex_t object.

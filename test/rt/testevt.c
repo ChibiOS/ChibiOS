@@ -277,7 +277,10 @@ ROMCONST struct testcase testevt3 = {
   NULL,
   evt3_execute
 };
+
 #endif /* CH_CFG_USE_EVENTS_TIMEOUT */
+
+#endif /* CH_CFG_USE_EVENTS */
 
 /**
  * @brief   Test sequence for events.
@@ -292,5 +295,3 @@ ROMCONST struct testcase * ROMCONST patternevt[] = {
 #endif
   NULL
 };
-
-#endif /* CH_CFG_USE_EVENTS */
