@@ -191,18 +191,10 @@ typedef struct
   __IO uint32_t SC;
   __IO uint32_t CNT;
   __IO uint32_t MOD;
-  __IO uint32_t C0SC;
-  __IO uint32_t C0V;
-  __IO uint32_t C1SC;
-  __IO uint32_t C1V;
-  __IO uint32_t C2SC;
-  __IO uint32_t C2V;
-  __IO uint32_t C3SC;
-  __IO uint32_t C3V;
-  __IO uint32_t C4SC;
-  __IO uint32_t C4V;
-  __IO uint32_t C5SC;
-  __IO uint32_t C5V;
+  struct {                      // Channels
+    __IO uint32_t SC;
+    __IO uint32_t V;
+  } C[6];
        uint32_t RESERVED0[5];
   __IO uint32_t STATUS;
        uint32_t RESERVED1[12];
