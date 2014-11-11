@@ -34,9 +34,9 @@
 #define KINETIS_TPM1_CHANNELS 2
 #define KINETIS_TPM2_CHANNELS 2
 
-#define KINETIS_TPM0_HANDLER
-#define KINETIS_TPM1_HANDLER
-#define KINETIS_TPM2_HANDLER
+#define KINETIS_TPM0_HANDLER  Vector84
+#define KINETIS_TPM1_HANDLER  Vector88
+#define KINETIS_TPM2_HANDLER  Vector8C
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -70,14 +70,84 @@ PWMDriver PWMD3;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void pwm_lld_serve_interrupt(PWMDriver *pwmp) {
+  uint32_t sr;
+
+  sr = pwmp->tpm->STATUS;
+  pwmp->tpm->STATUS = 0xFFFFFFFF;
+
+  if (((sr & TPM_SC_TOF) != 0) &&
+      (pwmp->config->callback != NULL))
+    pwmp->config->callback(pwmp);
+  if (((sr & TPM_STATUS_CH0F) != 0) &&
+      (pwmp->config->channels[0].callback != NULL))
+    pwmp->config->channels[0].callback(pwmp);
+  if (((sr & TPM_STATUS_CH1F) != 0) &&
+      (pwmp->config->channels[1].callback != NULL))
+    pwmp->config->channels[1].callback(pwmp);
+  if (((sr & TPM_STATUS_CH2F) != 0) &&
+      (pwmp->config->channels[2].callback != NULL))
+    pwmp->config->channels[2].callback(pwmp);
+  if (((sr & TPM_STATUS_CH3F) != 0) &&
+      (pwmp->config->channels[3].callback != NULL))
+    pwmp->config->channels[3].callback(pwmp);
+  if (((sr & TPM_STATUS_CH4F) != 0) &&
+      (pwmp->config->channels[4].callback != NULL))
+    pwmp->config->channels[4].callback(pwmp);
+  if (((sr & TPM_STATUS_CH5F) != 0) &&
+      (pwmp->config->channels[5].callback != NULL))
+    pwmp->config->channels[5].callback(pwmp);
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+#if KINETIS_PWM_USE_TPM0
+/**
+ * @brief   TPM0 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(KINETIS_TPM0_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+  pwm_lld_serve_interrupt(&PWMD1);
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* KINETIS_PWM_USE_TPM0 */
+
+#if KINETIS_PWM_USE_TPM1
+/**
+ * @brief   TPM1 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(KINETIS_TPM1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+  pwm_lld_serve_interrupt(&PWMD2);
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* KINETIS_PWM_USE_TPM1 */
+
+#if KINETIS_PWM_USE_TPM2
+/**
+ * @brief   TPM2 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(KINETIS_TPM2_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+  pwm_lld_serve_interrupt(&PWMD3);
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* KINETIS_PWM_USE_TPM2 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -127,18 +197,21 @@ void pwm_lld_start(PWMDriver *pwmp) {
 #if KINETIS_PWM_USE_TPM0
     if (&PWMD1 == pwmp) {
       SIM->SCGC6 |= SIM_SCGC6_TPM0;
+      nvicEnableVector(TPM0_IRQn, KINETIS_PWM_TPM0_IRQ_PRIORITY);
     }
 #endif
 
 #if KINETIS_PWM_USE_TPM1
     if (&PWMD2 == pwmp) {
       SIM->SCGC6 |= SIM_SCGC6_TPM1;
+      nvicEnableVector(TPM1_IRQn, KINETIS_PWM_TPM1_IRQ_PRIORITY);
     }
 #endif
 
 #if KINETIS_PWM_USE_TPM2
     if (&PWMD3 == pwmp) {
       SIM->SCGC6 |= SIM_SCGC6_TPM2;
+      nvicEnableVector(TPM2_IRQn, KINETIS_PWM_TPM2_IRQ_PRIORITY);
     }
 #endif
   }
@@ -184,18 +257,21 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 #if KINETIS_PWM_USE_TPM0
     if (&PWMD1 == pwmp) {
       SIM->SCGC6 &= ~SIM_SCGC6_TPM0;
+      nvicDisableVector(TPM0_IRQn);
     }
 #endif
 
 #if KINETIS_PWM_USE_TPM1
     if (&PWMD2 == pwmp) {
       SIM->SCGC6 &= ~SIM_SCGC6_TPM1;
+      nvicDisableVector(TPM1_IRQn);
     }
 #endif
 
 #if KINETIS_PWM_USE_TPM2
     if (&PWMD3 == pwmp) {
       SIM->SCGC6 &= ~SIM_SCGC6_TPM2;
+      nvicDisableVector(TPM2_IRQn);
     }
 #endif
     /* Disable LPTPM counter.*/
@@ -203,6 +279,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
     pwmp->tpm->MOD = 0;
   }
 }
+
 
 /**
  * @brief   Enables a PWM channel.
@@ -220,23 +297,21 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 void pwm_lld_enable_channel(PWMDriver *pwmp,
                             pwmchannel_t channel,
                             pwmcnt_t width) {
-
-  uint32_t mode = 0;
-
-  osalDbgAssert(channel <= 5, "pwm_lld_enable_channel() #1, invalid channel");
+  uint32_t mode = TPM_CnSC_MSB; /* Edge-aligned PWM mode.*/
 
   switch (pwmp->config->channels[channel].mode & PWM_OUTPUT_MASK) {
   case PWM_OUTPUT_ACTIVE_HIGH:
-    mode = TPM_CnSC_MSB | TPM_CnSC_ELSB;
+    mode |= TPM_CnSC_ELSB;
     break;
   case PWM_OUTPUT_ACTIVE_LOW:
-    mode = TPM_CnSC_MSB | TPM_CnSC_ELSA;
-    break;
-  default:
+    mode |= TPM_CnSC_ELSA;
     break;
   }
 
-  pwmp->tpm->C[channel].SC |= mode;
+  if (pwmp->tpm->C[channel].SC & TPM_CnSC_CHIE)
+    mode |= TPM_CnSC_CHIE;
+
+  pwmp->tpm->C[channel].SC = mode;
   pwmp->tpm->C[channel].V = width;
 }
 
@@ -254,8 +329,6 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
  */
 void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
 
-  osalDbgAssert(channel <= 5, "pwm_lld_disable_channel() #1, invalid channel");
-
   pwmp->tpm->C[channel].SC = 0;
   pwmp->tpm->C[channel].V = 0;
 }
@@ -271,7 +344,7 @@ void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
  */
 void pwm_lld_enable_periodic_notification(PWMDriver *pwmp) {
 
-  (void)pwmp;
+  pwmp->tpm->SC |= TPM_SC_TOIE;
 }
 
 /**
@@ -285,7 +358,7 @@ void pwm_lld_enable_periodic_notification(PWMDriver *pwmp) {
  */
 void pwm_lld_disable_periodic_notification(PWMDriver *pwmp) {
 
-  (void)pwmp;
+  pwmp->tpm->SC &= ~TPM_SC_TOIE;
 }
 
 /**
@@ -302,8 +375,10 @@ void pwm_lld_disable_periodic_notification(PWMDriver *pwmp) {
 void pwm_lld_enable_channel_notification(PWMDriver *pwmp,
                                          pwmchannel_t channel) {
 
-  (void)pwmp;
-  (void)channel;
+  osalDbgAssert(channel <= 5,
+                "pwm_lld_enable_channel_notification() #1, invalid channel");
+
+  pwmp->tpm->C[channel].SC |= TPM_CnSC_CHIE;
 }
 
 /**
@@ -320,8 +395,10 @@ void pwm_lld_enable_channel_notification(PWMDriver *pwmp,
 void pwm_lld_disable_channel_notification(PWMDriver *pwmp,
                                           pwmchannel_t channel) {
 
-  (void)pwmp;
-  (void)channel;
+  osalDbgAssert(channel <= 5,
+                "pwm_lld_disable_channel_notification() #1, invalid channel");
+
+  pwmp->tpm->C[channel].SC &= ~TPM_CnSC_CHIE;
 }
 
 #endif /* HAL_USE_PWM */
