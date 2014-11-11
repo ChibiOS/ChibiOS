@@ -375,9 +375,6 @@ void pwm_lld_disable_periodic_notification(PWMDriver *pwmp) {
 void pwm_lld_enable_channel_notification(PWMDriver *pwmp,
                                          pwmchannel_t channel) {
 
-  osalDbgAssert(channel <= 5,
-                "pwm_lld_enable_channel_notification() #1, invalid channel");
-
   pwmp->tpm->C[channel].SC |= TPM_CnSC_CHIE;
 }
 
@@ -394,9 +391,6 @@ void pwm_lld_enable_channel_notification(PWMDriver *pwmp,
  */
 void pwm_lld_disable_channel_notification(PWMDriver *pwmp,
                                           pwmchannel_t channel) {
-
-  osalDbgAssert(channel <= 5,
-                "pwm_lld_disable_channel_notification() #1, invalid channel");
 
   pwmp->tpm->C[channel].SC &= ~TPM_CnSC_CHIE;
 }
