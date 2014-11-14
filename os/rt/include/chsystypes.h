@@ -98,6 +98,11 @@ typedef struct ch_virtual_timer virtual_timer_t;
 typedef struct ch_virtual_timers_list  virtual_timers_list_t;
 
 /**
+ * @brief   Type of a system debug structure.
+ */
+typedef struct ch_system_debug system_debug_t;
+
+/**
  * @brief   Type of system data structure.
  */
 typedef struct ch_system ch_system_t;

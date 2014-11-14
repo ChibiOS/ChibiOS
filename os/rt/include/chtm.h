@@ -52,6 +52,16 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a time measurement calibration data.
+ */
+typedef struct {
+  /**
+   * @brief   Measurement calibration value.
+   */
+  rtcnt_t               offset;
+} tm_calibration_t;
+
+/**
  * @brief   Type of a Time Measurement object.
  * @note    The maximum measurable time period depends on the implementation
  *          of the realtime counter and its clock frequency.

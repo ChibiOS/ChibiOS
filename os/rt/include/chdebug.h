@@ -71,13 +71,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if CH_DBG_ENABLE_ASSERTS     || CH_DBG_ENABLE_CHECKS      ||               \
-    CH_DBG_ENABLE_STACK_CHECK || CH_DBG_SYSTEM_STATE_CHECK
-#define CH_DBG_ENABLED              TRUE
-#else
-#define CH_DBG_ENABLED              FALSE
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -129,8 +122,8 @@ typedef struct {
 /*===========================================================================*/
 
 #if CH_DBG_SYSTEM_STATE_CHECK
-#define _dbg_enter_lock() (ch.dbg_lock_cnt = 1)
-#define _dbg_leave_lock() (ch.dbg_lock_cnt = 0)
+#define _dbg_enter_lock() (ch.dbg.lock_cnt = 1)
+#define _dbg_leave_lock() (ch.dbg.lock_cnt = 0)
 #endif
 
 /* When the state checker feature is disabled then the following functions
@@ -221,7 +214,7 @@ extern "C" {
   void chDbgCheckClassS(void);
 #endif
 #if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
-  void _trace_init(void);
+  void _dbg_trace_init(void);
   void _dbg_trace(thread_t *otp);
 #endif
 #ifdef __cplusplus

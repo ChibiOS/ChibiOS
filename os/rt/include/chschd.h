@@ -285,6 +285,36 @@ struct ch_ready_list {
 };
 
 /**
+ * @brief   System debug data structure.
+ */
+struct ch_system_debug {
+  /**
+   * @brief   Pointer to the panic message.
+   * @details This pointer is meant to be accessed through the debugger, it is
+   *          written once and then the system is halted.
+   * @note    Accesses to this pointer must never be optimized out so the
+   *          field itself is declared volatile.
+   */
+  const char            * volatile panic_msg;
+#if CH_DBG_SYSTEM_STATE_CHECK || defined(__DOXYGEN__)
+  /**
+   * @brief   ISR nesting level.
+   */
+  cnt_t                 isr_cnt;
+  /**
+   * @brief   Lock nesting level.
+   */
+  cnt_t                 lock_cnt;
+#endif
+#if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
+  /**
+   * @brief   Public trace buffer.
+   */
+  ch_trace_buffer_t     trace_buffer;
+#endif
+};
+
+/**
  * @brief   System data structure.
  * @note    This structure contain all the data areas used by the OS except
  *          stacks.
@@ -298,43 +328,21 @@ struct ch_system {
    * @brief   Virtual timers delta list header.
    */
   virtual_timers_list_t vtlist;
+  /**
+   * @brief   System debug.
+   */
+  system_debug_t        dbg;
 #if CH_CFG_USE_TM || defined(__DOXYGEN__)
   /**
-   * @brief   Measurement calibration value.
+   * @brief   Time measurement calibration data.
    */
-  rtcnt_t               measurement_offset;
+  tm_calibration_t      tm;
 #endif
 #if CH_DBG_STATISTICS || defined(__DOXYGEN__)
   /**
    * @brief   Global kernel statistics.
    */
   kernel_stats_t        kernel_stats;
-#endif
-#if CH_DBG_ENABLED || defined(__DOXYGEN__)
-  /**
-   * @brief   Pointer to the panic message.
-   * @details This pointer is meant to be accessed through the debugger, it is
-   *          written once and then the system is halted.
-   * @note    Accesses to this pointer must never be optimized out so the
-   *          field itself is declared volatile.
-   */
-  const char            * volatile dbg_panic_msg;
-#endif
-#if CH_DBG_SYSTEM_STATE_CHECK || defined(__DOXYGEN__)
-  /**
-   * @brief   ISR nesting level.
-   */
-  cnt_t                 dbg_isr_cnt;
-  /**
-   * @brief   Lock nesting level.
-   */
-  cnt_t                 dbg_lock_cnt;
-#endif
-#if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
-  /**
-   * @brief   Public trace buffer.
-   */
-  ch_trace_buffer_t     dbg_trace_buffer;
 #endif
 };
 

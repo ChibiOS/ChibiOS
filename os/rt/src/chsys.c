@@ -119,7 +119,7 @@ void chSysInit(void) {
   _stats_init();
 #endif
 #if CH_DBG_ENABLE_TRACE
-  _trace_init();
+  _dbg_trace_init();
 #endif
 
 #if !CH_CFG_NO_IDLE_THREAD
@@ -165,15 +165,12 @@ void chSysHalt(const char *reason) {
 
   port_disable();
 
-#if CH_DBG_ENABLED
-  ch.dbg_panic_msg = reason;
-#else
-  (void)reason;
-#endif
-
 #if defined(CH_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
   CH_CFG_SYSTEM_HALT_HOOK(reason);
 #endif
+
+  /* Pointing to the passed message.*/
+  ch.dbg.panic_msg = reason;
 
   /* Harmless infinite loop.*/
   while (true)
