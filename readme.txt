@@ -77,6 +77,8 @@
 - FIX: Fixed STM32 OTGv1 usb_lld_pump improper stack filling (bug #541).
 - FIX: Fixed chsnprintf sometimes doesn't terminate str (bug #538).
 - FIX: Fixed wrong wait states for STM32F401 (bug #537).
+- FIX: Fixed failure to compile EXT driver on STM32F401, re-opened
+  ticket (bug #517).
 
 *** 2.6.6 ***
 - FIX: Fixed error in STM32F30x adc_lld_stop() (bug #535).
