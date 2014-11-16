@@ -152,7 +152,7 @@ void stm32_clock_init(void) {
     ;                                       /* Waits until HSE is stable.   */
 #endif
 
-#if STM32_HSE14_ENABLED
+#if STM32_HSI14_ENABLED
   /* HSI14 activation.*/
   RCC->CR2 |= RCC_CR2_HSI14ON;
   while (!(RCC->CR2 & RCC_CR2_HSI14RDY))
