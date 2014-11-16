@@ -31,10 +31,6 @@
  *            Low Density devices.
  *          - STM32F051x8, STM32F058xx, STM32F071xB, STM32F072xB,
  *            STM32F078xx for Medium Density devices.
- *
- *          - STM32F030 for Value Line devices.
- *          - STM32F0XX_LD for Low Density devices.
- *          - STM32F0XX_MD for Medium Density devices.
  *          .
  *
  * @addtogroup HAL
@@ -519,7 +515,6 @@
 
 #if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSI48)
 #error "HSI48 not enabled, required by STM32_SW and STM32_PLLSRC"
-#endif
 #endif
 
 #endif /* !STM32_HSI48_ENABLED */
