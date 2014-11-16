@@ -192,7 +192,7 @@
 #define STM32_HAS_USART6                    FALSE
 
 /* USB attributes.*/
-#define STM32_HAS_USB                       TRUE
+#define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 
