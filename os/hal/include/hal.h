@@ -76,6 +76,11 @@
 #include "mmc_spi.h"
 #include "serial_usb.h"
 
+/* Community drivers.*/
+#if HAL_USE_COMMUNITY
+#include "hal_community.h"
+#endif
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/

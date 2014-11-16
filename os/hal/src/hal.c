@@ -119,6 +119,12 @@ void halInit(void) {
 #if HAL_USE_RTC || defined(__DOXYGEN__)
   rtcInit();
 #endif
+
+  /* Community driver overlay initialization.*/
+#if HAL_USE_COMMUNITY || defined(__DOXYGEN__)
+  halCommunityInit();
+#endif
+
   /* Board specific initialization.*/
   boardInit();
 
