@@ -161,6 +161,7 @@
  */
 #define STM32_HSICLK            8000000     /**< High speed internal clock. */
 #define STM32_HSI14CLK          14000000    /**< 14MHz speed internal clock.*/
+#define STM32_HSI48CLK          48000000    /**< 48MHz speed internal clock.*/
 #define STM32_LSICLK            40000       /**< Low speed internal clock.  */
 /** @} */
 
@@ -186,6 +187,7 @@
 #define STM32_SW_HSI            (0 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (1 << 0)    /**< SYSCLK source is HSE.      */
 #define STM32_SW_PLL            (2 << 0)    /**< SYSCLK source is PLL.      */
+#define STM32_SW_HSI48          (3 << 0)    /**< SYSCLK source is HSI48.    */
 
 #define STM32_HPRE_DIV1         (0 << 4)    /**< SYSCLK divided by 1.       */
 #define STM32_HPRE_DIV2         (8 << 4)    /**< SYSCLK divided by 2.       */
@@ -206,15 +208,20 @@
 #define STM32_ADCPRE_DIV2       (0 << 14)   /**< PCLK divided by 2.         */
 #define STM32_ADCPRE_DIV4       (1 << 14)   /**< PCLK divided by 4.         */
 
-#define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI.   */
-#define STM32_PLLSRC_HSE        (1 << 16)   /**< PLL clock source is HSE.   */
+#define STM32_PLLSRC_HSI_DIV2   (0 << 15)   /**< PLL clock source is HSI/2. */
+#define STM32_PLLSRC_HSI        (1 << 15)   /**< PLL clock source is HSI    */
+#define STM32_PLLSRC_HSE        (2 << 15)   /**< PLL clock source is HSE.   */
+#define STM32_PLLSRC_HSI48      (3 << 15)   /**< PLL clock source is HSI48. */
 
 #define STM32_MCOSEL_NOCLOCK    (0 << 24)   /**< No clock on MCO pin.       */
-#define STM32_MCOSEL_HSI14      (3 << 24)   /**< HSI14 clock on MCO pin.    */
+#define STM32_MCOSEL_HSI14      (1 << 24)   /**< HSI14 clock on MCO pin.    */
+#define STM32_MCOSEL_LSI        (2 << 24)   /**< LSI clock on MCO pin.      */
+#define STM32_MCOSEL_LSE        (3 << 24)   /**< LSE clock on MCO pin.      */
 #define STM32_MCOSEL_SYSCLK     (4 << 24)   /**< SYSCLK on MCO pin.         */
 #define STM32_MCOSEL_HSI        (5 << 24)   /**< HSI clock on MCO pin.      */
 #define STM32_MCOSEL_HSE        (6 << 24)   /**< HSE clock on MCO pin.      */
 #define STM32_MCOSEL_PLLDIV2    (7 << 24)   /**< PLL/2 clock on MCO pin.    */
+#define STM32_MCOSEL_HSI48      (8 << 24)   /**< HSI48 clock on MCO pin.    */
 /** @} */
 
 /**
@@ -290,6 +297,13 @@
  */
 #if !defined(STM32_HSI14_ENABLED) || defined(__DOXYGEN__)
 #define STM32_HSI14_ENABLED         TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the HSI48 clock source.
+ */
+#if !defined(STM32_HSI48_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI48_ENABLED         FALSE
 #endif
 
 /**
@@ -455,13 +469,16 @@
 #error "HSI not enabled, required by STM32_USART1SW"
 #endif
 
-#if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSI)
+#if (STM32_SW == STM32_SW_PLL) &&                                           \
+    (STM32_PLLSRC == STM32_PLLSRC_HSI_DIV2) ||                              \
+    (STM32_PLLSRC == STM32_PLLSRC_HSI)
 #error "HSI not enabled, required by STM32_SW and STM32_PLLSRC"
 #endif
 
 #if (STM32_MCOSEL == STM32_MCOSEL_HSI) ||                                   \
     ((STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) &&                              \
-     (STM32_PLLSRC == STM32_PLLSRC_HSI))
+    ((STM32_PLLSRC == STM32_PLLSRC_HSI_DIV2) ||                             \
+    (STM32_PLLSRC == STM32_PLLSRC_HSI)))
 #error "HSI not enabled, required by STM32_MCOSEL"
 #endif
 
@@ -482,6 +499,30 @@
 #endif
 
 #endif /* !STM32_HSI14_ENABLED */
+
+/*
+ * HSI48 related checks.
+ */
+#if STM32_HSI48_ENABLED
+#else /* !STM32_HSI48_ENABLED */
+
+#if STM32_SW == STM32_SW_HSI48
+#error "HSI48 not enabled, required by STM32_SW"
+#endif
+
+#if (STM32_MCOSEL == STM32_MCOSEL_HSI48) ||                               \
+    ((STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) &&                            \
+    ((STM32_PLLSRC == STM32_PLLSRC_HSI_DIV2) ||                           \
+    (STM32_PLLSRC == STM32_PLLSRC_HSI48)))
+#error "HSI48 not enabled, required by STM32_MCOSEL"
+#endif
+
+#if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSI48)
+#error "HSI48 not enabled, required by STM32_SW and STM32_PLLSRC"
+#endif
+#endif
+
+#endif /* !STM32_HSI48_ENABLED */
 
 /*
  * HSE related checks.
@@ -599,8 +640,12 @@
  */
 #if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
 #define STM32_PLLCLKIN              (STM32_HSECLK / STM32_PREDIV_VALUE)
-#elif STM32_PLLSRC == STM32_PLLSRC_HSI
+#elif STM32_PLLSRC == STM32_PLLSRC_HSI_DIV2
 #define STM32_PLLCLKIN              (STM32_HSICLK / 2)
+#elif STM32_PLLSRC == STM32_PLLSRC_HSI
+#define STM32_PLLCLKIN              (STM32_HSICLK / STM32_PREDIV_VALUE)
+#elif STM32_PLLSRC == STM32_PLLSRC_HSI48
+#define STM32_PLLCLKIN              (STM32_HSI48CLK / STM32_PREDIV_VALUE)
 #else
 #error "invalid STM32_PLLSRC value specified"
 #endif
@@ -627,6 +672,8 @@
 #define STM32_SYSCLK                STM32_PLLCLKOUT
 #elif (STM32_SW == STM32_SW_HSI)
 #define STM32_SYSCLK                STM32_HSICLK
+#elif (STM32_SW == STM32_SW_HSI48)
+#define STM32_SYSCLK                STM32_HSI48CLK
 #elif (STM32_SW == STM32_SW_HSE)
 #define STM32_SYSCLK                STM32_HSECLK
 #else
