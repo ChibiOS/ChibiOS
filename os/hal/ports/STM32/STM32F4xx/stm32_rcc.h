@@ -1388,13 +1388,17 @@
  * @{
  */
 /**
- * @brief   Enables the FSMS peripheral clock.
+ * @brief   Enables the FSMC peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableFSMC(lp) rccEnableAHB3(RCC_AHB3ENR_FSMCEN, lp)
+#if defined(STM32_FSMC_IS_FMC)
+  #define rccEnableFSMC(lp) rccEnableAHB3(RCC_AHB3ENR_FMCEN, lp)
+#else
+  #define rccEnableFSMC(lp) rccEnableAHB3(RCC_AHB3ENR_FSMCEN, lp)
+#endif
 
 /**
  * @brief   Disables the FSMC peripheral clock.
@@ -1403,14 +1407,22 @@
  *
  * @api
  */
-#define rccDisableFSMC(lp) rccDisableAHB3(RCC_AHB3ENR_FSMCEN, lp)
+#if defined(STM32_FSMC_IS_FMC)
+  #define rccDisableFSMC(lp) rccDisableAHB3(RCC_AHB3ENR_FMCEN, lp)
+#else
+  #define rccDisableFSMC(lp) rccDisableAHB3(RCC_AHB3ENR_FSMCEN, lp)
+#endif
 
 /**
  * @brief   Resets the FSMC peripheral.
  *
  * @api
  */
-#define rccResetFSMC() rccResetAHB3(RCC_AHB3RSTR_FSMCRST)
+#if defined(STM32_FSMC_IS_FMC)
+  #define rccResetFSMC() rccResetAHB3(RCC_AHB3RSTR_FMCRST)
+#else
+  #define rccResetFSMC() rccResetAHB3(RCC_AHB3RSTR_FSMCRST)
+#endif
 /** @} */
 
 /*===========================================================================*/
