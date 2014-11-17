@@ -90,6 +90,11 @@ typedef uint8_t pwmmode_t;
 typedef uint8_t pwmchannel_t;
 
 /**
+ * @brief   Type of a channels mask.
+ */
+typedef uint8_t pwmchnmsk_t;
+
+/**
  * @brief   PWM counter type.
  */
 typedef uint16_t pwmcnt_t;
@@ -162,6 +167,14 @@ struct PWMDriver {
    * @brief   Current PWM period in ticks.
    */
   pwmcnt_t                  period;
+  /**
+   * @brief   Mask of the enabled channels.
+   */
+  pwmchnmsk_t               enabled;
+  /**
+   * @brief   Number of channels in this instance.
+   */
+  pwmchannel_t              channels;
 #if defined(PWM_DRIVER_EXT_FIELDS)
   PWM_DRIVER_EXT_FIELDS
 #endif
@@ -203,6 +216,12 @@ extern "C" {
                               pwmchannel_t channel,
                               pwmcnt_t width);
   void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel);
+  void pwm_lld_enable_periodic_notification(PWMDriver *pwmp);
+  void pwm_lld_disable_periodic_notification(PWMDriver *pwmp);
+  void pwm_lld_enable_channel_notification(PWMDriver *pwmp,
+                                           pwmchannel_t channel);
+  void pwm_lld_disable_channel_notification(PWMDriver *pwmp,
+                                            pwmchannel_t channel);
 #ifdef __cplusplus
 }
 #endif
