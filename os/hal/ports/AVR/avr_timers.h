@@ -19,7 +19,7 @@
 
 #include "mcuconf.h"
 
-#if ((NIL_CFG_ST_TIMEDELTA > 0 || CH_CFG_ST_TIMEDELTA > 0) && \
+#if ((OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) && \
      (AVR_GPT_USE_TIM1 || AVR_PWM_USE_TIM1 || AVR_ICU_USE_TIM1))
   #error "Timer 1 cannot be used by drivers when running in tickless mode."
 #endif
