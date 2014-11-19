@@ -39,13 +39,13 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-#if !CH_CFG_USE_MEMCORE
-#error "CH_CFG_USE_MEMPOOLS requires CH_CFG_USE_MEMCORE"
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !CH_CFG_USE_MEMCORE
+#error "CH_CFG_USE_MEMPOOLS requires CH_CFG_USE_MEMCORE"
+#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
