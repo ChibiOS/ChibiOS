@@ -71,7 +71,7 @@ static void heap1_execute(void) {
   size_t n, sz;
 
   /* Unrelated, for coverage only.*/
-  (void)chCoreStatus();
+  (void)chCoreGetStatusX();
 
   /*
    * Test on the default heap in order to cover the core allocator at

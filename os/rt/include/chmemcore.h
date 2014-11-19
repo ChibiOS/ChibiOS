@@ -98,7 +98,7 @@ extern "C" {
   void _core_init(void);
   void *chCoreAlloc(size_t size);
   void *chCoreAllocI(size_t size);
-  size_t chCoreStatus(void);
+  size_t chCoreGetStatusX(void);
 #ifdef __cplusplus
 }
 #endif

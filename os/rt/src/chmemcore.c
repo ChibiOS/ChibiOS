@@ -142,9 +142,9 @@ void *chCoreAllocI(size_t size) {
  *
  * @return              The size, in bytes, of the free core memory.
  *
- * @api
+ * @xclass
  */
-size_t chCoreStatus(void) {
+size_t chCoreGetStatusX(void) {
 
   return (size_t)(endmem - nextmem);
 }
