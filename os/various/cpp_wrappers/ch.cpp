@@ -78,7 +78,7 @@ namespace chibios_rt {
 
   size_t Core::getStatus(void) {
 
-    return chCoreStatus();
+    return chCoreGetStatusX();
   }
 
   /*------------------------------------------------------------------------*
