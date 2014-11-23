@@ -108,27 +108,23 @@ SECTIONS
         ___stacks_end__ = .;
     } > ram
 
-    .data :
+    .data ALIGN(4) : ALIGN(4)
     {
         . = ALIGN(4);
         PROVIDE(_data = .);
         *(.data)
-        . = ALIGN(4);
         *(.data.*)
-        . = ALIGN(4);
         *(.ramtext)
         . = ALIGN(4);
         PROVIDE(_edata = .);
     } > ram AT > flash
 
-    .bss :
+    .bss ALIGN(4) : ALIGN(4)
     {
         . = ALIGN(4);
         PROVIDE(_bss_start = .);
         *(.bss)
-        . = ALIGN(4);
         *(.bss.*)
-        . = ALIGN(4);
         *(COMMON)
         . = ALIGN(4);
         PROVIDE(_bss_end = .);
