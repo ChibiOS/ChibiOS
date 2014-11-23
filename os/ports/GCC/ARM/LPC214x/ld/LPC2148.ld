@@ -71,28 +71,26 @@ SECTIONS
     _etext = .;
     _textdata = _etext;
 
-    .data :
+    .data ALIGN(4) : ALIGN(4)
     {
-        _data = .;
+        . = ALIGN(4);
+        PROVIDE(_data = .);
         *(.data)
-        . = ALIGN(4);
         *(.data.*)
-        . = ALIGN(4);
         *(.ramtext)
         . = ALIGN(4);
-        _edata = .;
+        PROVIDE(_edata = .);
     } > ram AT > flash
 
-    .bss :
+    .bss ALIGN(4) : ALIGN(4)
     {
-        _bss_start = .;
+        . = ALIGN(4);
+        PROVIDE(_bss_start = .);
         *(.bss)
-        . = ALIGN(4);
         *(.bss.*)
-        . = ALIGN(4);
         *(COMMON)
         . = ALIGN(4);
-        _bss_end = .;
+        PROVIDE(_bss_end = .);
     } > ram    
 }
 

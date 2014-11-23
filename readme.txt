@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.7 ***
+- FIX: Fixed problem in GCC scatter files (bug #548).
 - FIX: Fixed kernel function chEvtWaitOne() malfunctioning (bug #547).
 - FIX: Fixed minor warnings while building with IAR 7.3.0 (bug #542).
 - FIX: Fixed STM32 OTGv1 usb_lld_pump improper stack filling (bug #541).
