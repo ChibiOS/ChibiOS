@@ -115,8 +115,8 @@
 /**
  * @brief   Enables an alternative timer implementation.
  * @details Usually the port uses a timer interface defined in the file
- *          @p nilcore_timer.h, if this option is enabled then the file
- *          @p nilcore_timer_alt.h is included instead.
+ *          @p chcore_timer.h, if this option is enabled then the file
+ *          @p chcore_timer_alt.h is included instead.
  */
 #if !defined(PORT_USE_ALT_TIMER)
 #define PORT_USE_ALT_TIMER              FALSE
@@ -238,7 +238,7 @@ struct port_extctx {
  *          switching.
  * @note    R2 and R13 are not saved because those are assumed to be immutable
  *          during the system life cycle.
- * @note    LR is stored in the caller contex so it is not present in this
+ * @note    LR is stored in the caller context so it is not present in this
  *          structure.
  */
 struct port_intctx {

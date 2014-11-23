@@ -35,9 +35,7 @@
  */
 
 /**
- * @defgroup types Types
- * @details The system types are defined into the port layer, please refer to
- * the core port implementation section.
+ * @defgroup types Kernel Types
  * @ingroup kernel
  */
 

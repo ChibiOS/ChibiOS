@@ -27,70 +27,88 @@
  *          doing so.
  *
  * @addtogroup types
- * @details System types and macros.
  * @{
  */
 
 #ifndef _CHTYPES_H_
 #define _CHTYPES_H_
 
-#define __need_NULL
-#define __need_size_t
 #include <stddef.h>
-
-#if !defined(_STDINT_H) && !defined(__STDINT_H_)
 #include <stdint.h>
+#include <stdbool.h>
+
+/**
+ * @name    Common constants
+ */
+/**
+ * @brief   Generic 'false' boolean constant.
+ */
+#if !defined(FALSE) || defined(__DOXYGEN__)
+#define FALSE               0
 #endif
 
 /**
- * @brief   Thread mode flags, uint8_t is ok.
+ * @brief   Generic 'true' boolean constant.
  */
-typedef uint8_t         tmode_t;
+#if !defined(TRUE) || defined(__DOXYGEN__)
+#define TRUE                (!FALSE)
+#endif
+/** @} */
 
 /**
- * @brief   Thread state, uint8_t is ok.
+ * @name    Derived generic types
+ * @{
  */
-typedef uint8_t         tstate_t;
+typedef volatile int8_t     vint8_t;        /**< Volatile signed 8 bits.    */
+typedef volatile uint8_t    vuint8_t;       /**< Volatile unsigned 8 bits.  */
+typedef volatile int16_t    vint16_t;       /**< Volatile signed 16 bits.   */
+typedef volatile uint16_t   vuint16_t;      /**< Volatile unsigned 16 bits. */
+typedef volatile int32_t    vint32_t;       /**< Volatile signed 32 bits.   */
+typedef volatile uint32_t   vuint32_t;      /**< Volatile unsigned 32 bits. */
+/** @} */
 
 /**
- * @brief   Thread references counter, uint8_t is ok.
+ * @name    Kernel types
+ * @{
  */
-typedef uint8_t         trefs_t;
+typedef uint32_t            rtcnt_t;        /**< Realtime counter.          */
+typedef uint64_t            rttime_t;       /**< Realtime accumulator.      */
+typedef uint32_t            syssts_t;       /**< System status word.        */
+typedef uint8_t             tmode_t;        /**< Thread flags.              */
+typedef uint8_t             tstate_t;       /**< Thread state.              */
+typedef uint8_t             trefs_t;        /**< Thread references counter. */
+typedef uint8_t             tslices_t;      /**< Thread time slices counter.*/
+typedef uint32_t            tprio_t;        /**< Thread priority.           */
+typedef int32_t             msg_t;          /**< Inter-thread message.      */
+typedef int32_t             eventid_t;      /**< Numeric event identifier.  */
+typedef uint32_t            eventmask_t;    /**< Mask of event identifiers. */
+typedef uint32_t            eventflags_t;   /**< Mask of event flags.       */
+typedef int32_t             cnt_t;          /**< Generic signed counter.    */
+typedef uint32_t            ucnt_t;         /**< Generic unsigned counter.  */
+/** @} */
 
 /**
- * @brief   Priority, use the fastest unsigned type.
+ * @brief   ROM constant modifier.
+ * @note    It is set to use the "const" keyword in this port.
  */
-typedef uint32_t        tprio_t;
+#define ROMCONST const
 
 /**
- * @brief   Message, use signed pointer equivalent.
+ * @brief   Makes functions not inlineable.
+ * @note    If the compiler does not support such attribute then the
+ *          realtime counter precision could be degraded.
  */
-typedef int32_t         msg_t;
+#define NOINLINE __attribute__((noinline))
 
 /**
- * @brief   Numeric event identifier, use fastest signed.
+ * @brief   Optimized thread function declaration macro.
  */
-typedef int32_t         eventid_t;
+#define PORT_THD_FUNCTION(tname, arg) msg_t tname(void *arg)
 
 /**
- * @brief   Mask of event identifiers, recommended fastest unsigned.
+ * @brief   Packed variable specifier.
  */
-typedef uint32_t        eventmask_t;
-
-/**
- * @brief   Mask of event flags, recommended fastest unsigned.
- */
-typedef uint32_t        eventflags_t;
-
-/**
- * @brief   System Time, recommended fastest unsigned.
- */
-typedef uint32_t        systime_t;
-
-/**
- * @brief   Counter, recommended fastest signed.
- */
-typedef int32_t         cnt_t;
+#define PACKED_VAR __attribute__((packed))
 
 #endif /* _CHTYPES_H_ */
 
