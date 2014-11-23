@@ -25,7 +25,7 @@
  * @file    chcond.c
  * @brief   Condition Variables code.
  *
- * @addtogroup condition variables Condition Variables
+ * @addtogroup condvars
  * @details This module implements the Condition Variables mechanism. Condition
  *          variables are an extensions to the mutex subsystem and cannot
  *          work alone.

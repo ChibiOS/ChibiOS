@@ -176,7 +176,7 @@ void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  * @iclass
  */
 thread_t *chThdCreateI(void *wsp, size_t size,
-                     tprio_t prio, tfunc_t pf, void *arg) {
+                       tprio_t prio, tfunc_t pf, void *arg) {
   /* The thread structure is laid out in the lower part of the thread
      workspace.*/
   thread_t *tp = wsp;
@@ -227,6 +227,8 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
  * @brief   Resumes a thread created with @p chThdCreateI().
  *
  * @param[in] tp        pointer to the thread
+ * @return              The pointer to the @p thread_t structure allocated for
+ *                      the thread into the working space area.
  *
  * @api
  */

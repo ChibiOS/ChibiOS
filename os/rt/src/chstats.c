@@ -78,6 +78,9 @@ void _stats_increase_irq(void) {
 
 /**
  * @brief   Updates context switch related statistics.
+ *
+ * @param[in] ntp       the thread to be switched in
+ * @param[in] otp       the thread to be switched out
  */
 void _stats_ctxswc(thread_t *ntp, thread_t *otp) {
 

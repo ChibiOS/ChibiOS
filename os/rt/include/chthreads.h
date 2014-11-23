@@ -335,6 +335,8 @@ static inline bool chThdShouldTerminateX(void) {
  * @brief   Resumes a thread created with @p chThdCreateI().
  *
  * @param[in] tp        pointer to the thread
+ * @return              The pointer to the @p thread_t structure allocated for
+ *                      the thread into the working space area.
  *
  * @iclass
  */

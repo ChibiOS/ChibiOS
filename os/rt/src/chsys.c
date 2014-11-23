@@ -159,6 +159,8 @@ void chSysInit(void) {
  *          in debug mode.
  * @note    Can be invoked from any system state.
  *
+ * @param[in] reason        pointer to an error string
+ *
  * @special
  */
 void chSysHalt(const char *reason) {
