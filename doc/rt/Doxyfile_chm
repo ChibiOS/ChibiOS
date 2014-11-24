@@ -31,7 +31,7 @@ PROJECT_NAME           = ChibiOS/RT
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
-PROJECT_NUMBER         = 2.6.7
+PROJECT_NUMBER         = 3.0.0dev
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer
@@ -581,7 +581,7 @@ FILE_VERSION_FILTER    =
 # You can optionally specify a file name after the option, if omitted
 # DoxygenLayout.xml will be used as the name of the layout file.
 
-LAYOUT_FILE            = ./rsc/layout.xml
+LAYOUT_FILE            = ../common/rsc/layout.xml
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -643,13 +643,12 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = ../docs/src \
-                         ../os/kernel \
-                         ../os/ports \
-                         ../os/hal \
-                         ../os/various \
-                         ../test \
-                         ../ext/ext.dox
+INPUT                  = ./src \
+                         ../../os/rt/dox \
+                         ../../os/rt/src \
+                         ../../os/rt/include \
+                         ../../os/rt/templates \
+                         ../../test/rt
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -701,20 +700,13 @@ FILE_PATTERNS          = *.c \
 # should be searched for input files as well. Possible values are YES and NO.
 # If left blank NO is used.
 
-RECURSIVE              = YES
+RECURSIVE              = NO
 
 # The EXCLUDE tag can be used to specify files and/or directories that should
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = ../os/ports/common/ARMCMx/CMSIS \
-                         ../os/ports/GCC/SIMIA32 \
-                         ../os/hal/platforms \
-                         ../os/hal/templates/meta \
-                         ../os/various\devices_lib \
-                         ../os/various\fatfs_bindings \
-                         ../os/various\lwip_bindings \
-                         ../test/coverage
+EXCLUDE                =
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -762,7 +754,8 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see
 # the \image command).
 
-IMAGE_PATH             = ./rsc
+IMAGE_PATH             = ../common/rsc \
+                         ./rsc
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -910,13 +903,13 @@ HTML_FILE_EXTENSION    = .html
 # that header. Note that the header is subject to change so you typically
 # have to redo this when upgrading to a newer version of doxygen or when changing the value of configuration settings such as GENERATE_TREEVIEW!
 
-HTML_HEADER            = ./rsc/header_chm.html
+HTML_HEADER            = ../common/rsc/header_chm.html
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard footer.
 
-HTML_FOOTER            = ./rsc/footer_chm.html
+HTML_FOOTER            = ../common/rsc/footer_chm.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading
 # style sheet that is used by each HTML page. It can be used to
@@ -1030,7 +1023,7 @@ GENERATE_HTMLHELP      = YES
 # can add a path in front of the file if the result should not be
 # written to the html output directory.
 
-CHM_FILE               = ../ChibiOS_RT.chm
+CHM_FILE               = ../../ChibiOS_RT.chm
 
 # If the GENERATE_HTMLHELP tag is set to YES, the HHC_LOCATION tag can
 # be used to specify the location (absolute path including file name) of
@@ -1760,7 +1753,7 @@ DOT_GRAPH_MAX_NODES    = 20
 # code bases. Also note that the size of a graph can be further restricted by
 # DOT_GRAPH_MAX_NODES. Using a depth of 0 means no depth restriction.
 
-MAX_DOT_GRAPH_DEPTH    = 3
+MAX_DOT_GRAPH_DEPTH    = 2
 
 # Set the DOT_TRANSPARENT tag to YES to generate images with a transparent
 # background. This is disabled by default, because dot on Windows does not

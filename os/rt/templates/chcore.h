@@ -233,6 +233,10 @@ struct context {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -242,9 +246,15 @@ extern "C" {
 }
 #endif
 
+#endif /* !defined(_FROM_ASM_) */
+
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
 
 /**
  * @brief   Returns a word encoding the current interrupts status.
@@ -374,6 +384,8 @@ static inline rtcnt_t port_rt_get_counter_value(void) {
 /* Module late inclusions.                                                   */
 /*===========================================================================*/
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
 #if !defined(_FROM_ASM_)
 
 #if CH_CFG_ST_TIMEDELTA > 0

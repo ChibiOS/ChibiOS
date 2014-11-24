@@ -581,7 +581,7 @@ FILE_VERSION_FILTER    =
 # You can optionally specify a file name after the option, if omitted
 # DoxygenLayout.xml will be used as the name of the layout file.
 
-LAYOUT_FILE            = ./rsc/layout.xml
+LAYOUT_FILE            = ../common/rsc/layout.xml
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -643,11 +643,12 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = ../doc/src \
-                         ../os/rt/dox \
-                         ../os/rt/src \
-                         ../os/rt/include \
-                         ../os/rt/templates \
+INPUT                  = ./src \
+                         ../../os/rt/dox \
+                         ../../os/rt/src \
+                         ../../os/rt/include \
+                         ../../os/rt/templates \
+                         ../../test/rt
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -705,14 +706,7 @@ RECURSIVE              = NO
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = ../os/ports/common/ARMCMx/CMSIS \
-                         ../os/ports/GCC/SIMIA32 \
-                         ../os/hal/platforms \
-                         ../os/hal/templates/meta \
-                         ../os/various\devices_lib \
-                         ../os/various\fatfs_bindings \
-                         ../os/various\lwip_bindings \
-                         ../test/coverage
+EXCLUDE                =
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -760,7 +754,8 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see
 # the \image command).
 
-IMAGE_PATH             = ./rsc
+IMAGE_PATH             = ../common/rsc \
+                         ./rsc
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -908,13 +903,13 @@ HTML_FILE_EXTENSION    = .html
 # that header. Note that the header is subject to change so you typically
 # have to redo this when upgrading to a newer version of doxygen or when changing the value of configuration settings such as GENERATE_TREEVIEW!
 
-HTML_HEADER            = ./rsc/header_html.html
+HTML_HEADER            = ../common/rsc/header_html.html
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard footer.
 
-HTML_FOOTER            = ./rsc/footer_html.html
+HTML_FOOTER            = ../common/rsc/footer_html.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading
 # style sheet that is used by each HTML page. It can be used to
