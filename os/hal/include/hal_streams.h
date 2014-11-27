@@ -43,9 +43,9 @@
  * @name    Streams return codes
  * @{
  */
-#define STM_OK               Q_OK
-#define STM_TIMEOUT          Q_TIMEOUT
-#define STM_RESET            Q_RESET
+#define STM_OK               MSG_OK
+#define STM_TIMEOUT          MSG_TIMEOUT
+#define STM_RESET            MSG_RESET
 /** @} */
 
 /* The ChibiOS/RT kernel provides the following definitions by itself, this

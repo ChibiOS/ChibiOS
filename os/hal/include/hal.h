@@ -38,6 +38,7 @@
 /* Abstract interfaces.*/
 #include "hal_streams.h"
 #include "hal_channels.h"
+#include "hal_files.h"
 #include "hal_ioblock.h"
 #include "hal_mmcsd.h"
 
