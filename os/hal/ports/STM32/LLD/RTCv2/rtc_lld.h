@@ -36,6 +36,9 @@
 /*===========================================================================*/
 
 /**
+ * @name    Implementation capabilities
+ */
+/**
  * @brief   Callback support int the driver.
  */
 #define RTC_SUPPORTS_CALLBACKS      STM32_RTC_HAS_INTERRUPTS
@@ -44,6 +47,12 @@
  * @brief   Number of alarms available.
  */
 #define RTC_ALARMS                  STM32_RTC_NUM_ALARMS
+
+/**
+ * @brief   Presence of a local persistent storage.
+ */
+#define RTC_HAS_STORAGE             TRUE
+/** @} */
 
 /**
  * @brief   RTC PRER register initializer.
@@ -123,6 +132,12 @@
 /*===========================================================================*/
 
 /**
+ * @brief   FileStream specific methods.
+ */
+#define _rtc_driver_methods                                                 \
+  _file_stream_methods
+
+/**
  * @brief   Type of an RTC alarm number.
  */
 typedef uint32_t rtcalarm_t;
@@ -150,10 +165,28 @@ typedef struct {
 } RTCWakeup;
 #endif
 
+#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+/**
+ * @extends FileStream
+ *
+ * @brief   @p RTCDriver virtual methods table.
+ */
+struct RTCDriverVMT {
+  _rtc_driver_methods
+};
+#endif
+
 /**
  * @brief   Structure representing an RTC driver.
  */
 struct RTCDriver {
+#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+  /**
+   * @brief Virtual Methods Table.
+   */
+  const struct RTCDriverVMT *vmt;
+#endif
+  /* End of the mandatory fields.*/
   /**
    * @brief   Pointer to the RTC registers block.
    */
@@ -170,6 +203,9 @@ struct RTCDriver {
 
 #if !defined(__DOXYGEN__)
 extern RTCDriver RTCD1;
+#if RTC_HAS_STORAGE
+extern struct RTCDriverVMT _rtc_lld_vmt;
+#endif
 #endif
 
 #ifdef __cplusplus

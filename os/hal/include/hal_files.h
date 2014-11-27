@@ -46,17 +46,17 @@
 /**
  * @brief   No error return code.
  */
-#define FILE_OK         (fileoffset_t)STM_OK
+#define FILE_OK         STM_OK
 
 /**
  * @brief   Error code from the file stream methods.
  */
-#define FILE_ERROR      (fileoffset_t)STM_TIMEOUT
+#define FILE_ERROR      STM_TIMEOUT
 
 /**
  * @brief   End-of-file condition for file get/put methods.
  */
-#define FILE_EOF        (fileoffset_t)STM_RESET
+#define FILE_EOF        STM_RESET
 /** @} */
 
 /**
@@ -70,15 +70,15 @@ typedef uint32_t fileoffset_t;
 #define _file_stream_methods                                                \
   _base_sequential_stream_methods                                           \
   /* File close method.*/                                                   \
-  uint32_t (*close)(void *instance);                                        \
+  msg_t (*close)(void *instance);                                           \
   /* Get last error code method.*/                                          \
-  int (*geterror)(void *instance);                                          \
+  msg_t (*geterror)(void *instance);                                        \
   /* File get size method.*/                                                \
-  fileoffset_t (*getsize)(void *instance);                                  \
+  msg_t (*getsize)(void *instance);                                         \
   /* File get current position method.*/                                    \
-  fileoffset_t (*getposition)(void *instance);                              \
+  msg_t (*getposition)(void *instance);                                     \
   /* File seek method.*/                                                    \
-  uint32_t (*lseek)(void *instance, fileoffset_t offset);
+  msg_t (*lseek)(void *instance, fileoffset_t offset);
 
 /**
  * @brief   @p FileStream specific data.

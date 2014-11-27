@@ -66,6 +66,8 @@ RTCDriver RTCD1;
  */
 void rtc_lld_init(void) {
 
+  /* RTC object initialization.*/
+  rtcObjectInit(&RTCD1);
 }
 
 /**

@@ -204,6 +204,9 @@ void rtc_lld_set_prescaler(void) {
  */
 void rtc_lld_init(void) {
 
+  /* RTC object initialization.*/
+  rtcObjectInit(&RTCD1);
+
   /* RTC pointer initialization.*/
   RTCD1.rtc = RTC;
 

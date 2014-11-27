@@ -74,6 +74,22 @@ void rtcInit(void) {
 }
 
 /**
+ * @brief   Initializes a generic RTC driver object.
+ * @details The HW dependent part of the initialization has to be performed
+ *          outside, usually in the hardware initialization code.
+ *
+ * @param[out] rtcp     pointer to RTC driver structure
+ *
+ * @init
+ */
+void rtcObjectInit(RTCDriver *rtcp) {
+
+#if RTC_HAS_STORAGE
+  rtcp->vmt = &_rtc_lld_vmt;
+#endif
+}
+
+/**
  * @brief   Set current time.
  * @note    This function can be called from any context but limitations
  *          could be imposed by the low level implementation. It is

@@ -36,6 +36,9 @@
 /*===========================================================================*/
 
 /**
+ * @name    Implementation capabilities
+ */
+/**
  * @brief   This RTC implementation supports callbacks.
  */
 #define RTC_SUPPORTS_CALLBACKS      TRUE
@@ -44,6 +47,12 @@
  * @brief   One alarm comparator available.
  */
 #define RTC_ALARMS                  1
+
+/**
+ * @brief   Presence of a local persistent storage.
+ */
+#define RTC_HAS_STORAGE             FALSE
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -76,14 +85,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   FileStream specific methods.
+ */
+#define _rtc_driver_methods                                                 \
+  _file_stream_methods
+
+/**
  * @brief   Type of a structure representing an RTC alarm time stamp.
  */
 typedef struct RTCAlarm RTCAlarm;
-
-/**
- * @brief   Type of a structure representing an RTC callbacks config.
- */
-typedef struct RTCCallbackConfig RTCCallbackConfig;
 
 /**
  * @brief   Type of an RTC alarm.
@@ -106,16 +116,6 @@ typedef enum {
 typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
 
 /**
- * @brief   Structure representing an RTC callbacks config.
- */
-struct RTCCallbackConfig{
-  /**
-   * @brief Generic RTC callback pointer.
-   */
-  rtccb_t           callback;
-};
-
-/**
  * @brief   Structure representing an RTC alarm time stamp.
  */
 struct RTCAlarm {
@@ -125,17 +125,33 @@ struct RTCAlarm {
   uint32_t          tv_sec;
 };
 
+#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+/**
+ * @extends FileStream
+ *
+ * @brief   @p RTCDriver virtual methods table.
+ */
+struct RTCDriverVMT {
+  _rtc_driver_methods
+};
+#endif
+
 /**
  * @brief   Structure representing an RTC driver.
  */
 struct RTCDriver{
+#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+  /**
+   * @brief Virtual Methods Table.
+   */
+  const struct RTCDriverVMT *vmt;
+#endif
   /**
    * @brief   Pointer to the RTC registers block.
    */
   RTC_TypeDef       *rtc;
-
   /**
-   * @brief Callback pointer.
+   * @brief   Callback pointer.
    */
   rtccb_t           callback;
 };
@@ -150,6 +166,9 @@ struct RTCDriver{
 
 #if !defined(__DOXYGEN__)
 extern RTCDriver RTCD1;
+#if RTC_HAS_STORAGE
+extern struct RTCDriverVMT _rtc_lld_vmt;
+#endif
 #endif
 
 #ifdef __cplusplus

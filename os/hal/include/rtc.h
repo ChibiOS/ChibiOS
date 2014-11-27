@@ -115,6 +115,7 @@ typedef struct {
 extern "C" {
 #endif
   void rtcInit(void);
+  void rtcObjectInit(RTCDriver *rtcp);
   void rtcSetTime(RTCDriver *rtcp, const RTCDateTime *timespec);
   void rtcGetTime(RTCDriver *rtcp, RTCDateTime *timespec);
 #if RTC_ALARMS > 0
