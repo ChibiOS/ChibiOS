@@ -358,8 +358,11 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
  * @notapi
  */
 void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
-  uint32_t dr, tr, ssr;
+  uint32_t dr, tr;
   uint32_t subs;
+#if STM32_RTC_HAS_SUBSECONDS
+  uint32_t ssr;
+#endif /* STM32_RTC_HAS_SUBSECONDS */
   syssts_t sts;
 
   /* Entering a reentrant critical zone.*/
@@ -369,7 +372,9 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
      DR must be read last.*/
   while ((rtcp->rtc->ISR & RTC_ISR_RSF) == 0)
     ;
+#if STM32_RTC_HAS_SUBSECONDS
   ssr = rtcp->rtc->SSR;
+#endif /* STM32_RTC_HAS_SUBSECONDS */
   tr  = rtcp->rtc->TR;
   dr  = rtcp->rtc->DR;
   rtcp->rtc->ISR &= ~RTC_ISR_RSF;
