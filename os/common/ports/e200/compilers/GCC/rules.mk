@@ -197,6 +197,7 @@ endif
 %.dmp: %.elf $(LDSCRIPT)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	$(OD) $(ODFLAGS) $< > $@
+	$(SZ) $<
 else
 	@echo Creating $@
 	@$(OD) $(ODFLAGS) $< > $@
