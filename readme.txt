@@ -72,6 +72,8 @@
 *****************************************************************************
 
 *** 2.6.7 ***
+- FIX: Fixed STM32F3xx clock init fails if PLL is enabled at startup
+  (bug #550).
 - FIX: Fixed problem in GCC scatter files (bug #548).
 - FIX: Fixed kernel function chEvtWaitOne() malfunctioning (bug #547).
 - FIX: Fixed minor warnings while building with IAR 7.3.0 (bug #542).
