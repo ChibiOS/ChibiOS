@@ -468,12 +468,19 @@ static inline void chVTDoTickI(void) {
   systime_t delta = now - ch.vtlist.vt_lasttime;
 
   while ((vtp = ch.vtlist.vt_next)->vt_delta <= delta) {
+    vtfunc_t fn;
+
+    /* The "last time" becomes this timer's expiration time.*/
     delta -= vtp->vt_delta;
     ch.vtlist.vt_lasttime += vtp->vt_delta;
-    vtfunc_t fn = vtp->vt_func;
-    vtp->vt_func = (vtfunc_t)NULL;
+
+    /* The timer is removed from the list and marked as non-armed.*/
     vtp->vt_next->vt_prev = (virtual_timer_t *)&ch.vtlist;
     ch.vtlist.vt_next = vtp->vt_next;
+    fn = vtp->vt_func;
+    vtp->vt_func = (vtfunc_t)NULL;
+
+    /* The callback is invoked outside the kernel critical zone.*/
     chSysUnlockFromISR();
     fn(vtp->vt_par);
     chSysLockFromISR();

@@ -94,8 +94,6 @@ void stStartAlarm(systime_t time) {
  */
 void stStopAlarm(void) {
 
-  osalDbgAssert(stIsAlarmActive() != false, "not active");
-
   st_lld_stop_alarm();
 }
 
