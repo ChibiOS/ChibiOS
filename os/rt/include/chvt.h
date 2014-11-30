@@ -67,7 +67,7 @@
 #endif
 
 #if CH_CFG_ST_FREQUENCY <= 0
-#error "invalid CH_CFG_ST_FREQUENCY specified, must be greated than zero"
+#error "invalid CH_CFG_ST_FREQUENCY specified, must be greater than zero"
 #endif
 
 #if (CH_CFG_ST_TIMEDELTA < 0) || (CH_CFG_ST_TIMEDELTA == 1)
