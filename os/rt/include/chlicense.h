@@ -109,20 +109,20 @@
  * @details This setting defines which features are available under the
  *          current licensing scheme. The possible settings are:
  *          - @p CH_FEATURES_FULL if all features are available.
- *          - @p CH_FEATURES_INTERMEDIATE means that the following modules
- *            are restricted:
- *            - Tickless mode.
- *            - Condition Variables.
+ *          - @p CH_FEATURES_INTERMEDIATE means that the following
+ *            functionalities are disabled:
+ *            - High Resolution mode.
  *            - Time Measurement.
  *            - Statistics.
  *            .
- *          - @p CH_FEATURES_BASIC means that the following modules
- *            are restricted:
- *            - Tickless mode.
- *            - Condition Variables.
+ *          - @p CH_FEATURES_BASIC means that the following functionalities
+ *            are disabled:
+ *            - High Resolution mode.
  *            - Time Measurement.
  *            - Statistics.
+ *            - Tickless mode.
  *            - Recursive Mutexes.
+ *            - Condition Variables.
  *            - Dynamic threading.
  *            .
  *          .
@@ -160,7 +160,7 @@
 #define CH_LICENSE_ID_CODE                  CH_CUSTOMER_ID_CODE
 #define CH_LICENSE_MODIFIABLE_CODE          TRUE
 #define CH_LICENSE_FEATURES                 CH_FEATURES_FULL
-#define CH_LICENSE_DEPLOY_LIMIT             200
+#define CH_LICENSE_DEPLOY_LIMIT             2000
 
 #elif CH_LICENSE == CH_LICENSE_COMMERCIAL_FULL
 #include "chcustomer.h"
@@ -191,12 +191,8 @@
 #elif (CH_LICENSE_FEATURES == CH_FEATURES_INTERMEDIATE) ||                  \
       (CH_LICENSE_FEATURES == CH_FEATURES_BASIC)
   /* Restrictions in basic and intermediate modes.*/
-  #if CH_CFG_ST_TIMEDELTA > 0
-    #error "CH_CFG_ST_TIMEDELTA > 0, tick-less functionality restricted"
-  #endif
-
-  #if CH_CFG_USE_CONDVARS
-    #error "CH_CFG_USE_CONDVARS == TRUE, Condition Variables functionality restricted"
+  #if CH_CFG_ST_TIMEDELTA > 2
+    #error "CH_CFG_ST_TIMEDELTA > 2, High Resolution Time functionality restricted"
   #endif
 
   #if CH_CFG_USE_TM
@@ -209,8 +205,16 @@
 
   #if CH_LICENSE_FEATURES == CH_FEATURES_BASIC
     /* Restrictions in basic mode.*/
+    #if CH_CFG_ST_TIMEDELTA > 0
+      #error "CH_CFG_ST_TIMEDELTA > 0, Tick-Less functionality restricted"
+    #endif
+
     #if CH_CFG_USE_MUTEXES_RECURSIVE
       #error "CH_CFG_USE_MUTEXES_RECURSIVE == TRUE, Recursive Mutexes functionality restricted"
+    #endif
+
+    #if CH_CFG_USE_CONDVARS
+      #error "CH_CFG_USE_CONDVARS == TRUE, Condition Variables functionality restricted"
     #endif
 
     #if CH_CFG_USE_DYNAMIC
