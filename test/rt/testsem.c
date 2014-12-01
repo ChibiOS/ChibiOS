@@ -49,7 +49,7 @@
 
 #if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
 
-#define ALLOWED_DELAY MS2ST(5)
+#define ALLOWED_DELAY MS2ST(2)
 
 /*
  * Note, the static initializers are not really required because the
@@ -170,10 +170,10 @@ static void sem2_execute(void) {
    * Testing timeout condition.
    */
   test_wait_tick();
-  target_time = chVTGetSystemTime() + MS2ST(5 * 500);
+  target_time = chVTGetSystemTime() + MS2ST(5 * 50);
   for (i = 0; i < 5; i++) {
     test_emit_token('A' + i);
-    msg = chSemWaitTimeout(&sem1, MS2ST(500));
+    msg = chSemWaitTimeout(&sem1, MS2ST(50));
     test_assert(7, msg == MSG_TIMEOUT, "wrong wake-up message");
     test_assert(8, queue_isempty(&sem1.s_queue), "queue not empty");
     test_assert(9, sem1.s_cnt == 0, "counter not zero");

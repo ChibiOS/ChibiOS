@@ -194,22 +194,30 @@ static void thd4_execute(void) {
   /* Timeouts in microseconds.*/
   time = chVTGetSystemTime();
   chThdSleepMicroseconds(100000);
-  test_assert_time_window(1, time + US2ST(100000), time + US2ST(100000) + 1);
+  test_assert_time_window(1,
+                          time + US2ST(100000),
+                          time + US2ST(100000) + CH_CFG_ST_TIMEDELTA);
 
   /* Timeouts in milliseconds.*/
   time = chVTGetSystemTime();
   chThdSleepMilliseconds(100);
-  test_assert_time_window(2, time + MS2ST(100), time + MS2ST(100) + 1);
+  test_assert_time_window(2,
+                          time + MS2ST(100),
+                          time + MS2ST(100) + CH_CFG_ST_TIMEDELTA);
 
   /* Timeouts in seconds.*/
   time = chVTGetSystemTime();
   chThdSleepSeconds(1);
-  test_assert_time_window(3, time + S2ST(1), time + S2ST(1) + 1);
+  test_assert_time_window(3,
+                          time + S2ST(1),
+                          time + S2ST(1) + CH_CFG_ST_TIMEDELTA);
 
   /* Absolute timelines.*/
   time = chVTGetSystemTime() + MS2ST(100);
   chThdSleepUntil(time);
-  test_assert_time_window(4, time, time + 1);
+  test_assert_time_window(4,
+                          time,
+                          time + CH_CFG_ST_TIMEDELTA);
 }
 
 ROMCONST struct testcase testthd4 = {

@@ -464,11 +464,21 @@ static inline void chVTDoTickI(void) {
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
-  systime_t now = chVTGetSystemTimeX();
-  systime_t delta = now - ch.vtlist.vt_lasttime;
+  systime_t now;
 
-  while ((vtp = ch.vtlist.vt_next)->vt_delta <= delta) {
+  while (true) {
     vtfunc_t fn;
+    systime_t delta;
+
+    /* Getting the current system time and calculating the time window since
+       the last time has expired.*/
+    now = chVTGetSystemTimeX();
+    delta = now - ch.vtlist.vt_lasttime;
+
+    /* The next element is outside the current time window, the loop
+       is stopped here.*/
+    if ((vtp = ch.vtlist.vt_next)->vt_delta > delta)
+      break;
 
     /* The "last time" becomes this timer's expiration time.*/
     delta -= vtp->vt_delta;
@@ -491,8 +501,12 @@ static inline void chVTDoTickI(void) {
     port_timer_stop_alarm();
   }
   else {
-    /* Updating the alarm to the next deadline.*/
-    port_timer_set_alarm(now + vtp->vt_delta);
+    /* Updating the alarm to the next deadline, deadline that must not be
+       closer in time than the minimum time delta.*/
+    if (vtp->vt_delta >= CH_CFG_ST_TIMEDELTA)
+      port_timer_set_alarm(now + vtp->vt_delta);
+    else
+      port_timer_set_alarm(now + CH_CFG_ST_TIMEDELTA);
   }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }

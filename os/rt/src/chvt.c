@@ -180,9 +180,14 @@ void chVTDoResetI(virtual_timer_t *vtp) {
       port_timer_stop_alarm();
     }
     else {
-      /* The alarm is set to the next element in the delta list.*/
-      port_timer_set_alarm(ch.vtlist.vt_lasttime +
-                           ch.vtlist.vt_next->vt_delta);
+      /* Updating the alarm to the next deadline, deadline that must not be
+         closer in time than the minimum time delta.*/
+      if (ch.vtlist.vt_next->vt_delta >= CH_CFG_ST_TIMEDELTA)
+        port_timer_set_alarm(ch.vtlist.vt_lasttime +
+                             ch.vtlist.vt_next->vt_delta);
+      else
+        port_timer_set_alarm(ch.vtlist.vt_lasttime +
+                             CH_CFG_ST_TIMEDELTA);
     }
   }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
