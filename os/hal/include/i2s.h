@@ -80,10 +80,6 @@ typedef enum {
  * @brief   Starts a I2S data exchange.
  *
  * @param[in] i2sp      pointer to the @p I2SDriver object
- * @param[in] n         size of the transmit buffer, must be even and greater
- *                      than zero
- * @param[out] txbuf    the pointer to the transmit buffer
- * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @iclass
  */

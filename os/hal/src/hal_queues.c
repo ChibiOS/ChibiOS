@@ -47,8 +47,7 @@
  * @brief   Initializes an input queue.
  * @details A Semaphore is internally initialized and works as a counter of
  *          the bytes contained in the queue.
- * @note    The callback is invoked from within the S-Locked system state,
- *          see @ref system_states.
+ * @note    The callback is invoked from within the S-Locked system state.
  *
  * @param[out] iqp      pointer to an @p input_queue_t structure
  * @param[in] bp        pointer to a memory area allocated as queue buffer
@@ -225,8 +224,7 @@ size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
  * @brief   Initializes an output queue.
  * @details A Semaphore is internally initialized and works as a counter of
  *          the free bytes in the queue.
- * @note    The callback is invoked from within the S-Locked system state,
- *          see @ref system_states.
+ * @note    The callback is invoked from within the S-Locked system state.
  *
  * @param[out] oqp      pointer to an @p output_queue_t structure
  * @param[in] bp        pointer to a memory area allocated as queue buffer

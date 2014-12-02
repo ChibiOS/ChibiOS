@@ -58,8 +58,7 @@ typedef void (*qnotify_t)(io_queue_t *qp);
  *          queue. The queue is asymmetrical because one end is meant to be
  *          accessed from a thread context, and thus can be blocking, the other
  *          end is accessible from interrupt handlers or from within a kernel
- *          lock zone (see <b>I-Locked</b> and <b>S-Locked</b> states in
- *          @ref system_states) and is non-blocking.
+ *          lock zone and is non-blocking.
  */
 struct io_queue {
   threads_queue_t       q_waiting;  /**< @brief Waiting thread.             */
@@ -117,8 +116,7 @@ struct io_queue {
  * @brief   Type of an input queue structure.
  * @details This structure represents a generic asymmetrical input queue.
  *          Writing to the queue is non-blocking and can be performed from
- *          interrupt handlers or from within a kernel lock zone (see
- *          <b>I-Locked</b> and <b>S-Locked</b> states in @ref system_states).
+ *          interrupt handlers or from within a kernel lock zone.
  *          Reading the queue can be a blocking operation and is supposed to
  *          be performed by a system thread.
  */
@@ -232,8 +230,7 @@ typedef io_queue_t input_queue_t;
  * @brief   Type of an output queue structure.
  * @details This structure represents a generic asymmetrical output queue.
  *          Reading from the queue is non-blocking and can be performed from
- *          interrupt handlers or from within a kernel lock zone (see
- *          <b>I-Locked</b> and <b>S-Locked</b> states in @ref system_states).
+ *          interrupt handlers or from within a kernel lock zone.
  *          Writing the queue can be a blocking operation and is supposed to
  *          be performed by a system thread.
  */
