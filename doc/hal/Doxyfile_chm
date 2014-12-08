@@ -25,7 +25,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = ChibiOS/RT
+PROJECT_NAME           = ChibiOS/HAL
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -644,11 +644,10 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = ./src \
-                         ../../os/rt/dox \
-                         ../../os/rt/src \
-                         ../../os/rt/include \
-                         ../../os/rt/templates \
-                         ../../test/rt
+                         ../../os/hal/dox \
+                         ../../os/hal/src \
+                         ../../os/hal/include \
+                         ../../os/hal/templates
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is

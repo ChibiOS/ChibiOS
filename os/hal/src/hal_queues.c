@@ -22,7 +22,7 @@
  * @file    hal_queues.c
  * @brief   I/O Queues code.
  *
- * @addtogroup io_queues
+ * @addtogroup HAL_QUEUES
  * @details Queues are mostly used in serial-like device drivers.
  *          Serial device drivers are usually designed to have a lower side
  *          (lower driver, it is usually an interrupt service routine) and an

@@ -22,7 +22,7 @@
  * @file    hal_queues.h
  * @brief   I/O Queues macros and structures.
  *
- * @addtogroup io_queues
+ * @addtogroup HAL_QUEUES
  * @{
  */
 
