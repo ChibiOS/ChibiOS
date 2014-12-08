@@ -20,5 +20,5 @@
 
 /**
  * @defgroup IO_CHANNEL Abstract I/O Channel
- * @ingroup IO
+ * @ingroup HAL_INTERFACES
  */

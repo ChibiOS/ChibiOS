@@ -70,5 +70,5 @@
  * @subsection pal_1_5 Reading or writing on pins associated to other functionalities
  * The behavior is not specified.
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

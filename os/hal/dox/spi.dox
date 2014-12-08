@@ -90,5 +90,5 @@
  * the SPI bus from multiple threads then use the @p spiAcquireBus() and
  * @p spiReleaseBus() APIs in order to gain exclusive access.
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

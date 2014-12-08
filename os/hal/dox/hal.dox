@@ -32,5 +32,5 @@
  *          setup function that can be invoked before the C runtime
  *          initialization in order to accelerate the startup time.
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

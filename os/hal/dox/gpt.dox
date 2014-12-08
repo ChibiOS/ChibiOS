@@ -74,5 +74,5 @@
  * - <b>Delay Mode</b>, the timer is used for inserting a brief delay into
  *   the execution flow, no callback is invoked in this mode.
  * .
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

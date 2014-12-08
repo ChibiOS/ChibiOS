@@ -24,7 +24,7 @@
  * @details This header defines abstract interfaces useful to access generic
  *          data streams in a standardized way.
  *
- * @addtogroup data_streams
+ * @addtogroup HAL_STREAMS
  * @details This module define an abstract interface for generic data streams.
  *          Note that no code is present, just abstract interfaces-like
  *          structures, you should look at the system as to a set of

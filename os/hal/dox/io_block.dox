@@ -20,7 +20,7 @@
 
 /**
  * @defgroup IO_BLOCK Abstract I/O Block Device
- * @ingroup IO
+ * @ingroup HAL_INTERFACES
  *
  * @section io_block_1 Driver State Machine
  * The drivers implementing this interface shall implement the following

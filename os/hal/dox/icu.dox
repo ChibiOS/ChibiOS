@@ -107,5 +107,5 @@
  *   available from this callback and can be retrieved using
  *   @p icuGetPeriodX() and @p icuGetWidthX().
  * .
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

@@ -19,13 +19,6 @@
 */
 
 /**
- * @defgroup I2S I2S Driver
- * @brief   Generic I2S Driver.
- * @details This module implements a generic I2S  driver.
- * @pre     In order to use the I2S driver the @p HAL_USE_I2S option
- *          must be enabled in @p halconf.h.
- *
- * @section i2s_1 Driver State Machine
- *
- * @ingroup HAL_NORMAL_DRIVERS
+ * @defgroup HAL_STREAMS Abstract Streams
+ * @ingroup HAL_INTERFACES
  */

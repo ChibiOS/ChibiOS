@@ -98,5 +98,5 @@
  * the I2C bus from multiple threads then use the @p i2cAcquireBus() and
  * @p i2cReleaseBus() APIs in order to gain exclusive access.
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

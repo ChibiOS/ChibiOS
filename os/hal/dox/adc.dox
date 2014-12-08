@@ -141,5 +141,5 @@
  * the ADC bus from multiple threads then use the @p adcAcquireBus() and
  * @p adcReleaseBus() APIs in order to gain exclusive access.
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

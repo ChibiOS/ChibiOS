@@ -24,7 +24,7 @@
  * @details This header defines abstract interfaces useful to access generic
  *          data files in a standardized way.
  *
- * @addtogroup FILE_STREAMS
+ * @addtogroup HAL_FILES
  * @details This module define an abstract interface for generic data files by
  *          extending the @p BaseSequentialStream interface. Note that no code
  *          is present, data files are just abstract interface-like structures,

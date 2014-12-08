@@ -65,5 +65,5 @@
  * Note that the two states can be associated to both logical zero or one in
  * the @p PWMChannelConfig structure.
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

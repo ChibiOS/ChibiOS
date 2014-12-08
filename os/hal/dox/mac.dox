@@ -26,5 +26,5 @@
  * @pre     In order to use the MAC driver the @p HAL_USE_MAC option
  *          must be enabled in @p halconf.h.
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

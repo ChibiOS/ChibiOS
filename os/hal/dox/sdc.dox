@@ -33,5 +33,5 @@
  * This driver allows to read or write single or multiple 512 bytes blocks
  * on a SD Card.
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

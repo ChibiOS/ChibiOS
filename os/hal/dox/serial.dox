@@ -57,5 +57,5 @@
   }
  * @enddot
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

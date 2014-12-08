@@ -180,5 +180,5 @@
  *   conditions using those callbacks.
  * .
  *
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */

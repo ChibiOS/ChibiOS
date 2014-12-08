@@ -52,5 +52,5 @@
   }
  * @enddot
  *
- * @ingroup IO
+ * @ingroup HAL_COMPLEX_DRIVERS
  */

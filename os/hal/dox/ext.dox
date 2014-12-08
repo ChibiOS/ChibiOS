@@ -80,5 +80,5 @@
  * - <b>EXT_CH_MODE_FALLING_EDGE</b>, callback on a falling edge.
  * - <b>EXT_CH_MODE_BOTH_EDGES</b>, callback on a both edges.
  * .
- * @ingroup IO
+ * @ingroup HAL_NORMAL_DRIVERS
  */
