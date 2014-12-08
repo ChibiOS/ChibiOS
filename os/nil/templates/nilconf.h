@@ -20,7 +20,7 @@
  * @details A copy of this file must be placed in each project directory, it
  *          contains the application specific kernel settings.
  *
- * @addtogroup config
+ * @addtogroup NIL_CONFIG
  * @details Kernel related settings and hooks.
  * @{
  */

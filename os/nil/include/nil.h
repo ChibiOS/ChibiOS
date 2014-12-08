@@ -23,7 +23,7 @@
  * @details This header includes all the required kernel headers so it is the
  *          only header you usually need to include in your application.
  *
- * @addtogroup NIL
+ * @addtogroup NIL_KERNEL
  * @{
  */
 

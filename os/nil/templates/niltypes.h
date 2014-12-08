@@ -21,7 +21,7 @@
  * @file    templates/niltypes.h
  * @brief   Port system types.
  *
- * @addtogroup NIL_CORE
+ * @addtogroup NIL_TYPES
  * @{
  */
 

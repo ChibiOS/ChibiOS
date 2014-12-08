@@ -21,8 +21,7 @@
  * @file    nil.c
  * @brief   Nil RTOS main source file.
  *
- * @defgroup NIL API
- * @details Nil RTOS services.
+ * @addtogroup NIL_KERNEL
  * @{
  */
 

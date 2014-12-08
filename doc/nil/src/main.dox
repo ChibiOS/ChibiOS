@@ -35,7 +35,7 @@
  * - Easily portable.
  * - Preemptive scheduling.
  * - Each thread has its own priority level.
- * - Offers tasks, task queues, semaphores, event flags, timeouts.
+ * - Offers tasks, time, semaphores, event flags, timeouts.
  * - Fully static.
  * - Minimal system requirements: about 700 bytes ROM with all options enabled.
  * - Almost totally written in C with little ASM code required for ports.
