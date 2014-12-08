@@ -21,7 +21,7 @@
  * @file    nil.c
  * @brief   Nil RTOS main source file.
  *
- * @defgroup nil
+ * @defgroup NIL API
  * @details Nil RTOS services.
  * @{
  */
@@ -117,6 +117,8 @@ void chSysInit(void) {
  *          error in the application code that triggers an assertion while
  *          in debug mode.
  * @note    Can be invoked from any system state.
+ *
+ * @param[in] reason        pointer to an error string
  *
  * @special
  */

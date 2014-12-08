@@ -23,6 +23,7 @@
  * @author Giovanni Di Sirio (gdisirio@users.sourceforge.net).
  *
  * <h2>Why Nil?</h2>
+ * Of course because it is so small that it is almost nil.
  * I wrote Nil because I wanted to experiment with an idea I had
  * regarding a minimal RTOS. Basically I wanted to verify how small
  * could be an RTOS while retaining useful features.
@@ -39,5 +40,7 @@
  * - Minimal system requirements: about 700 bytes ROM with all options enabled.
  * - Almost totally written in C with little ASM code required for ports.
  * - Compatible with ChibiOS/HAL.
+ * - API compatible with ChibiOS/RT of which, ChibiOS/NIL, is functionally
+ *   a subset.
  * .
  */

@@ -55,8 +55,7 @@
  *   speed optimizations on. The size can shrink under 2KiB by disabling the
  *   the unused subsystems and optimizing for size.
  * - Almost totally written in C with little ASM code required for ports.
- * - Optional Hardware Abstraction Layer (HAL) with support for many device
- *   driver models and device driver implementations.
+ * - Compatible with ChibiOS/HAL.
  * .
  * <h2>Related pages</h2>
  * - @subpage concepts

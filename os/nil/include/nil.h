@@ -23,7 +23,7 @@
  * @details This header includes all the required kernel headers so it is the
  *          only header you usually need to include in your application.
  *
- * @addtogroup nil
+ * @addtogroup NIL
  * @{
  */
 
@@ -758,7 +758,7 @@ typedef struct {
  * @note    The counter can reach its maximum and then restart from zero.
  * @note    This function can be called from any context but its atomicity
  *          is not guaranteed on architectures whose word size is less than
- *          @systime_t size.
+ *          @p systime_t size.
  *
  * @return              The system time in ticks.
  *
