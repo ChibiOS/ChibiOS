@@ -131,7 +131,7 @@
 
 /**
  * @brief   Code deploy restrictions.
- * @detail  This is the per-core deploy limit allowed under the current
+ * @details This is the per-core deploy limit allowed under the current
  *          license scheme.
  */
 #define CH_LICENSE_MAX_DEPLOY               CH_DEPLOY_UNLIMITED
