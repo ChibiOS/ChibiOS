@@ -835,8 +835,8 @@ extern "C" {
   void chSysInit(void);
   void chSysHalt(const char *reason);
   void chSysTimerHandlerI(void);
-  void chSysConditionalLock(void);
-  void chSysConditionalUnlock(void);
+  void chSysUnconditionalLock(void);
+  void chSysUnconditionalUnlock(void);
   syssts_t chSysGetStatusAndLockX(void);
   void chSysRestoreStatusX(syssts_t sts);
   thread_t *chSchReadyI(thread_t *tp, msg_t msg);
