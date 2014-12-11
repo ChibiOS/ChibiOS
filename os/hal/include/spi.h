@@ -209,7 +209,7 @@ typedef enum {
 /** @} */
 
 /**
- * @name    Low Level driver helper macros
+ * @name    Low level driver helper macros
  * @{
  */
 #if SPI_USE_WAIT || defined(__DOXYGEN__)

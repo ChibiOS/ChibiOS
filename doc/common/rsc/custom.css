@@ -32,6 +32,18 @@ h3.groupheader {
 	font-size: 100%;
 }
 
+h1 {
+	font-size: 150%;
+}
+
+h2 {
+	font-size: 120%;
+}
+
+h3 {
+	font-size: 120%;
+}
+
 h1, h2, h3, h4, h5, h6 {
 	-webkit-transition: text-shadow 0.5s linear;
 	-moz-transition: text-shadow 0.5s linear;

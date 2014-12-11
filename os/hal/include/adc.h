@@ -87,7 +87,7 @@ typedef enum {
 /*===========================================================================*/
 
 /**
- * @name    Low Level driver helper macros
+ * @name    Low level driver helper macros
  * @{
  */
 #if ADC_USE_WAIT || defined(__DOXYGEN__)

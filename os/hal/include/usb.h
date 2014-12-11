@@ -469,7 +469,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 /** @} */
 
 /**
- * @name    Low Level driver helper macros
+ * @name    Low level driver helper macros
  * @{
  */
 /**

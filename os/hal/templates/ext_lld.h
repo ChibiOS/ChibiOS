@@ -41,7 +41,7 @@
 /*===========================================================================*/
 
 /**
- * @name    Configuration options
+ * @name    PLATFORM configuration options
  * @{
  */
 /**

@@ -169,7 +169,7 @@ typedef void (*icucallback_t)(ICUDriver *icup);
 /** @} */
 
 /**
- * @name    Low Level driver helper macros
+ * @name    Low level driver helper macros
  * @{
  */
 /**
