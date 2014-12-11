@@ -284,11 +284,16 @@ extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
 typedef struct port_intctx intctx_t;
 
 /**
- * @brief   Type of a structure representing a counting semaphore.
+ * @brief   Type of a structure representing a semaphore.
  */
-typedef struct {
+typedef struct nil_semaphore semaphore_t;
+
+/**
+ * @brief   Structure representing a counting semaphore.
+ */
+struct nil_semaphore {
   volatile cnt_t    cnt;        /**< @brief Semaphore counter.              */
-} semaphore_t;
+};
 
 /**
  * @brief Thread function.
@@ -301,11 +306,6 @@ typedef void (*tfunc_t)(void *);
 typedef struct nil_thread_cfg thread_config_t;
 
 /**
- * @brief   Type of a structure representing a thread.
- */
-typedef struct nil_thread thread_t;
-
-/**
  * @brief   Structure representing a thread static configuration.
  */
 struct nil_thread_cfg {
@@ -315,6 +315,11 @@ struct nil_thread_cfg {
   tfunc_t           funcp;      /**< @brief Thread function.                */
   void              *arg;       /**< @brief Thread function argument.       */
 };
+
+/**
+ * @brief   Type of a structure representing a thread.
+ */
+typedef struct nil_thread thread_t;
 
 /**
  * @brief   Type of a thread reference.
@@ -351,11 +356,16 @@ struct nil_thread {
 };
 
 /**
+ * @brief   Type of a structure representing the system.
+ */
+typedef struct nil_system nil_system_t;
+
+/**
  * @brief   System data structure.
  * @note    This structure contain all the data areas used by the OS except
  *          stacks.
  */
-typedef struct {
+struct nil_system {
   /**
    * @brief   Pointer to the running thread.
    */
@@ -396,7 +406,7 @@ typedef struct {
    */
   const char            * volatile dbg_panic_msg;
 #endif
-} nil_system_t;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */

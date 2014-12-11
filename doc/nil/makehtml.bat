@@ -1,5 +1,5 @@
 del html\*.* /Q
-Doxygen Doxyfile_html
+doxygen Doxyfile_html
 del html\*.md5
 del html\*.map
 pause

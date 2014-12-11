@@ -107,6 +107,8 @@ static const struct SerialUSBDriverVMT vmt = {
 
 /**
  * @brief   Notification of data removed from the input queue.
+ *
+ * @param[in] qp        the queue pointer.
  */
 static void inotify(io_queue_t *qp) {
   size_t n, maxsize;
@@ -138,6 +140,8 @@ static void inotify(io_queue_t *qp) {
 
 /**
  * @brief   Notification of data inserted into the output queue.
+ *
+ * @param[in] qp        the queue pointer.
  */
 static void onotify(io_queue_t *qp) {
   size_t n;

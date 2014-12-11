@@ -49,7 +49,11 @@
  */
 typedef struct io_queue io_queue_t;
 
-/** @brief Queue notification callback type.*/
+/**
+ * @brief   Queue notification callback type.
+ *
+ * @param[in] qp        the queue pointer.
+ */
 typedef void (*qnotify_t)(io_queue_t *qp);
 
 /**

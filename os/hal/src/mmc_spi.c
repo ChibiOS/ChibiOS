@@ -289,11 +289,12 @@ static uint8_t send_command_R3(MMCDriver *mmcp, uint8_t cmd, uint32_t arg,
  * @brief   Reads the CSD.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
- * @param[out] csd       pointer to the CSD buffer
+ * @param[out] cmd      command
+ * @param[out] cxd      pointer to the CSD/CID buffer
  *
  * @return              The operation status.
- * @retval HAL_SUCCESS   the operation succeeded.
- * @retval HAL_FAILED    the operation failed.
+ * @retval HAL_SUCCESS  the operation succeeded.
+ * @retval HAL_FAILED   the operation failed.
  *
  * @notapi
  */
