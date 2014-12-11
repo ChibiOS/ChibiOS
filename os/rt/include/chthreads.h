@@ -270,6 +270,8 @@ extern "C" {
  /**
   * @brief   Returns a pointer to the current @p thread_t.
   *
+  * @return             A pointer to the current thread.
+  *
   * @xclass
   */
 static inline thread_t *chThdGetSelfX(void) {
@@ -280,6 +282,8 @@ static inline thread_t *chThdGetSelfX(void) {
 /**
  * @brief   Returns the current thread priority.
  * @note    Can be invoked in any context.
+ *
+ * @return              The current thread priority.
  *
  * @xclass
  */
@@ -294,6 +298,7 @@ static inline tprio_t chThdGetPriorityX(void) {
  *          @p CH_DBG_THREADS_PROFILING configuration option is enabled.
  *
  * @param[in] tp        pointer to the thread
+ * @return              The number of consumed system ticks.
  *
  * @xclass
  */

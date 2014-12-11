@@ -112,6 +112,8 @@ extern "C" {
  * @brief   Decreases the semaphore counter.
  * @details This macro can be used when the counter is known to be positive.
  *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ *
  * @iclass
  */
 static inline void chSemFastWaitI(semaphore_t *sp) {
@@ -126,6 +128,8 @@ static inline void chSemFastWaitI(semaphore_t *sp) {
  * @details This macro can be used when the counter is known to be not
  *          negative.
  *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ *
  * @iclass
  */
 static inline void chSemFastSignalI(semaphore_t *sp) {
@@ -137,6 +141,9 @@ static inline void chSemFastSignalI(semaphore_t *sp) {
 
 /**
  * @brief   Returns the semaphore counter current value.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ * @return              The semaphore counter value.
  *
  * @iclass
  */

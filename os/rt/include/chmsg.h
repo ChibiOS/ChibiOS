@@ -72,6 +72,9 @@ extern "C" {
 /**
  * @brief   Evaluates to @p true if the thread has pending messages.
  *
+ * @param[in] tp        pointer to the thread
+ * @return              The pending messages status.
+ *
  * @iclass
  */
 static inline bool chMsgIsPendingI(thread_t *tp) {

@@ -132,6 +132,7 @@ extern "C" {
  * @brief   Returns the mailbox buffer size.
  *
  * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @return              The size of the mailbox.
  *
  * @iclass
  */
@@ -185,9 +186,12 @@ static inline cnt_t chMBGetUsedCountI(mailbox_t *mbp) {
  *          to use @p chMBGetFullCountI() and then use this macro, all within
  *          a lock state.
  *
+ * @param[in] mbp       the pointer to an initialized mailbox_t object
+ * @return              The next message in queue.
+ *
  * @iclass
  */
-static inline cnt_t chMBPeekI(mailbox_t *mbp) {
+static inline msg_t chMBPeekI(mailbox_t *mbp) {
 
   chDbgCheckClassI();
 

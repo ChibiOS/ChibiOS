@@ -121,6 +121,9 @@ extern "C" {
  * @brief   Returns @p true if the mutex queue contains at least a waiting
  *          thread.
  *
+ * @param[out] mp       pointer to a @p mutex_t structure
+ * @return              The mutex queue status.
+ *
  * @deprecated
  * @sclass
  */

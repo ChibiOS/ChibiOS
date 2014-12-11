@@ -416,126 +416,146 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
- /**
-  * @brief   Threads list initialization.
-  *
-  * @notapi
-  */
- static inline void list_init(threads_list_t *tlp) {
+/**
+ * @brief   Threads list initialization.
+ *
+ * @param[in] tlp       pointer to the threads list object
+ *
+ * @notapi
+ */
+static inline void list_init(threads_list_t *tlp) {
 
-   tlp->p_next = (thread_t *)tlp;
- }
+  tlp->p_next = (thread_t *)tlp;
+}
 
- /**
-  * @brief   Evaluates to @p true if the specified threads list is empty.
-  *
-  * @notapi
-  */
- static inline bool list_isempty(threads_list_t *tlp) {
+/**
+ * @brief   Evaluates to @p true if the specified threads list is empty.
+ *
+ * @param[in] tlp       pointer to the threads list object
+ * @return              The status of the list.
+ *
+ * @notapi
+ */
+static inline bool list_isempty(threads_list_t *tlp) {
 
-   return (bool)(tlp->p_next == (thread_t *)tlp);
- }
+  return (bool)(tlp->p_next == (thread_t *)tlp);
+}
 
- /**
-  * @brief   Evaluates to @p true if the specified threads list is not empty.
-  *
-  * @notapi
-  */
- static inline bool list_notempty(threads_list_t *tlp) {
+/**
+ * @brief   Evaluates to @p true if the specified threads list is not empty.
+ *
+ * @param[in] tlp       pointer to the threads list object
+ * @return              The status of the list.
+ *
+ * @notapi
+ */
+static inline bool list_notempty(threads_list_t *tlp) {
 
-   return (bool)(tlp->p_next != (thread_t *)tlp);
- }
+  return (bool)(tlp->p_next != (thread_t *)tlp);
+}
 
- /**
-  * @brief   Threads queue initialization.
-  *
-  * @notapi
-  */
- static inline void queue_init(threads_queue_t *tqp) {
+/**
+ * @brief   Threads queue initialization.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ *
+ * @notapi
+ */
+static inline void queue_init(threads_queue_t *tqp) {
 
-   tqp->p_next = tqp->p_prev = (thread_t *)tqp;
- }
+  tqp->p_next = tqp->p_prev = (thread_t *)tqp;
+}
 
- /**
-  * @brief   Evaluates to @p true if the specified threads queue is empty.
-  *
-  * @notapi
-  */
- static inline bool queue_isempty(threads_queue_t *tqp) {
+/**
+ * @brief   Evaluates to @p true if the specified threads queue is empty.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @return              The status of the queue.
+ *
+ * @notapi
+ */
+static inline bool queue_isempty(threads_queue_t *tqp) {
 
-   return (bool)(tqp->p_next == (thread_t *)tqp);
- }
+  return (bool)(tqp->p_next == (thread_t *)tqp);
+}
 
- /**
-  * @brief   Evaluates to @p true if the specified threads queue is not empty.
-  *
-  * @notapi
-  */
- static inline bool queue_notempty(threads_queue_t *tqp) {
+/**
+ * @brief   Evaluates to @p true if the specified threads queue is not empty.
+ *
+ * @param[in] tqp       pointer to the threads queue object
+ * @return              The status of the queue.
+ *
+ * @notapi
+ */
+static inline bool queue_notempty(threads_queue_t *tqp) {
 
-   return (bool)(tqp->p_next != (thread_t *)tqp);
- }
+  return (bool)(tqp->p_next != (thread_t *)tqp);
+}
 
- /* If the performance code path has been chosen then all the following
-    functions are inlined into the various kernel modules.*/
- #if CH_CFG_OPTIMIZE_SPEED
- static inline void list_insert(thread_t *tp, threads_list_t *tlp) {
+/* If the performance code path has been chosen then all the following
+   functions are inlined into the various kernel modules.*/
+#if CH_CFG_OPTIMIZE_SPEED
+static inline void list_insert(thread_t *tp, threads_list_t *tlp) {
 
-   tp->p_next = tlp->p_next;
-   tlp->p_next = tp;
- }
+  tp->p_next = tlp->p_next;
+  tlp->p_next = tp;
+}
 
- static inline thread_t *list_remove(threads_list_t *tlp) {
+static inline thread_t *list_remove(threads_list_t *tlp) {
 
-   thread_t *tp = tlp->p_next;
-   tlp->p_next = tp->p_next;
-   return tp;
- }
+  thread_t *tp = tlp->p_next;
+  tlp->p_next = tp->p_next;
+  return tp;
+}
 
- static inline void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
+static inline void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
 
-   thread_t *cp = (thread_t *)tqp;
-   do {
-     cp = cp->p_next;
-   } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
-   tp->p_next = cp;
-   tp->p_prev = cp->p_prev;
-   tp->p_prev->p_next = cp->p_prev = tp;
- }
+  thread_t *cp = (thread_t *)tqp;
+  do {
+    cp = cp->p_next;
+  } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
+  tp->p_next = cp;
+  tp->p_prev = cp->p_prev;
+  tp->p_prev->p_next = cp->p_prev = tp;
+}
 
- static inline void queue_insert(thread_t *tp, threads_queue_t *tqp) {
+static inline void queue_insert(thread_t *tp, threads_queue_t *tqp) {
 
-   tp->p_next = (thread_t *)tqp;
-   tp->p_prev = tqp->p_prev;
-   tp->p_prev->p_next = tqp->p_prev = tp;
- }
+  tp->p_next = (thread_t *)tqp;
+  tp->p_prev = tqp->p_prev;
+  tp->p_prev->p_next = tqp->p_prev = tp;
+}
 
- static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
-   thread_t *tp = tqp->p_next;
+static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
+  thread_t *tp = tqp->p_next;
 
-   (tqp->p_next = tp->p_next)->p_prev = (thread_t *)tqp;
-   return tp;
- }
+  (tqp->p_next = tp->p_next)->p_prev = (thread_t *)tqp;
+  return tp;
+}
 
- static inline thread_t *queue_lifo_remove(threads_queue_t *tqp) {
-   thread_t *tp = tqp->p_prev;
+static inline thread_t *queue_lifo_remove(threads_queue_t *tqp) {
+  thread_t *tp = tqp->p_prev;
 
-   (tqp->p_prev = tp->p_prev)->p_next = (thread_t *)tqp;
-   return tp;
- }
+  (tqp->p_prev = tp->p_prev)->p_next = (thread_t *)tqp;
+  return tp;
+}
 
- static inline thread_t *queue_dequeue(thread_t *tp) {
+static inline thread_t *queue_dequeue(thread_t *tp) {
 
-   tp->p_prev->p_next = tp->p_next;
-   tp->p_next->p_prev = tp->p_prev;
-   return tp;
- }
+  tp->p_prev->p_next = tp->p_next;
+  tp->p_next->p_prev = tp->p_prev;
+  return tp;
+}
 #endif /* CH_CFG_OPTIMIZE_SPEED */
 
 /**
  * @brief   Determines if the current thread must reschedule.
  * @details This function returns @p true if there is a ready thread with
  *          higher priority.
+ *
+ * @return              The priorities situation.
+ * @retval false        if rescheduling is not necessary.
+ * @retval true         if there is a ready thread at higher priority.
  *
  * @iclass
  */
@@ -550,6 +570,10 @@ static inline bool chSchIsRescRequiredI(void) {
  * @brief   Determines if yielding is possible.
  * @details This function returns @p true if there is a ready thread with
  *          equal or higher priority.
+ *
+ * @return              The priorities situation.
+ * @retval false        if yielding is not possible.
+ * @retval true         if there is a ready thread at equal or higher priority.
  *
  * @sclass
  */

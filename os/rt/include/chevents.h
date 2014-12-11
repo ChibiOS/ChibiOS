@@ -218,6 +218,7 @@ static inline void chEvtRegister(event_source_t *esp,
  * @brief   Verifies if there is at least one @p event_listener_t registered.
  *
  * @param[in] esp       pointer to the @p event_source_t structure
+ * @return              The event source status.
  *
  * @iclass
  */

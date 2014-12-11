@@ -272,8 +272,8 @@ static inline syssts_t port_get_irq_status(void) {
  * @param[in] sts       the interrupt status word
  *
  * @return              The interrupt status.
- * @retvel false        the word specified a disabled interrupts status.
- * @retvel true         the word specified an enabled interrupts status.
+ * @retval false        the word specified a disabled interrupts status.
+ * @retval true         the word specified an enabled interrupts status.
  */
 static inline bool port_irq_enabled(syssts_t sts) {
 
