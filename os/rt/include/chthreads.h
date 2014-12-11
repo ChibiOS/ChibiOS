@@ -33,54 +33,6 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    Thread states
- * @{
- */
-#define CH_STATE_READY          0   /**< @brief Waiting on the ready list.  */
-#define CH_STATE_CURRENT        1   /**< @brief Currently running.          */
-#define CH_STATE_WTSTART        2   /**< @brief Created but not started.    */
-#define CH_STATE_SUSPENDED      3   /**< @brief Suspended state.            */
-#define CH_STATE_QUEUED         4   /**< @brief Waiting on an I/O queue.    */
-#define CH_STATE_WTSEM          5   /**< @brief Waiting on a semaphore.     */
-#define CH_STATE_WTMTX          6   /**< @brief Waiting on a mutex.         */
-#define CH_STATE_WTCOND         7   /**< @brief Waiting on a condition
-                                         variable.                          */
-#define CH_STATE_SLEEPING       8   /**< @brief Waiting in @p chThdSleep()
-                                         or @p chThdSleepUntil().           */
-#define CH_STATE_WTEXIT         9   /**< @brief Waiting in @p chThdWait().  */
-#define CH_STATE_WTOREVT        10  /**< @brief Waiting for an event.       */
-#define CH_STATE_WTANDEVT       11  /**< @brief Waiting for several events. */
-#define CH_STATE_SNDMSGQ        12  /**< @brief Sending a message, in queue.*/
-#define CH_STATE_SNDMSG         13  /**< @brief Sent a message, waiting
-                                         answer.                            */
-#define CH_STATE_WTMSG          14  /**< @brief Waiting for a message.      */
-#define CH_STATE_FINAL          15  /**< @brief Thread terminated.          */
-
-/**
- * @brief   Thread states as array of strings.
- * @details Each element in an array initialized with this macro can be
- *          indexed using the numeric thread state values.
- */
-#define CH_STATE_NAMES                                                     \
-  "READY", "CURRENT", "WTSTART", "SUSPENDED", "QUEUED", "WTSEM", "WTMTX",  \
-  "WTCOND", "SLEEPING", "WTEXIT", "WTOREVT", "WTANDEVT", "SNDMSGQ",        \
-  "SNDMSG", "WTMSG", "FINAL"
-/** @} */
-
-/**
- * @name    Thread flags and attributes
- * @{
- */
-#define CH_FLAG_MODE_MASK       3   /**< @brief Thread memory mode mask.    */
-#define CH_FLAG_MODE_STATIC     0   /**< @brief Static thread.              */
-#define CH_FLAG_MODE_HEAP       1   /**< @brief Thread allocated from a
-                                         Memory Heap.                       */
-#define CH_FLAG_MODE_MEMPOOL    2   /**< @brief Thread allocated from a
-                                         Memory Pool.                       */
-#define CH_FLAG_TERMINATE       4   /**< @brief Termination requested flag. */
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -106,57 +58,6 @@ typedef msg_t (*tfunc_t)(void *);
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @name    Working Areas and Alignment
- */
-/**
- * @brief   Enforces a correct alignment for a stack area size value.
- *
- * @param[in] n         the stack size to be aligned to the next stack
- *                      alignment boundary
- * @return              The aligned stack size.
- *
- * @api
- */
-#define THD_ALIGN_STACK_SIZE(n)                                             \
-  ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
-
-/**
- * @brief   Calculates the total Working Area size.
- *
- * @param[in] n         the stack size to be assigned to the thread
- * @return              The total used memory in bytes.
- *
- * @api
- */
-#define THD_WORKING_AREA_SIZE(n)                                            \
-  THD_ALIGN_STACK_SIZE(sizeof(thread_t) + PORT_WA_SIZE(n))
-
-/**
- * @brief   Static working area allocation.
- * @details This macro is used to allocate a static thread working area
- *          aligned as both position and size.
- *
- * @param[in] s         the name to be assigned to the stack array
- * @param[in] n         the stack size to be assigned to the thread
- *
- * @api
- */
-#define THD_WORKING_AREA(s, n)                                              \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof(stkalign_t)]
-/** @} */
-
-/**
- * @name    Threads abstraction macros
- */
-/**
- * @brief   Thread declaration macro.
- * @note    Thread declarations should be performed using this macro because
- *          the port layer could define optimizations for thread functions.
- */
-#define THD_FUNCTION(tname, arg) PORT_THD_FUNCTION(tname, arg)
-/** @} */
 
 /**
  * @name    Threads queues
