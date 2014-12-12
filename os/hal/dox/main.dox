@@ -21,9 +21,9 @@
 /**
  * @defgroup IO HAL
  * @brief   Hardware Abstraction Layer.
- * @details Under ChibiOS/RT the set of the various device driver interfaces
+ * @details Under ChibiOS the set of the various device driver interfaces
  * is called the HAL subsystem: Hardware Abstraction Layer. The HAL is the
- * abstract interface between ChibiOS/RT application and hardware.
+ * abstract interface between ChibiOS applications and hardware.
  *
  * @section hal_device_driver_arch HAL Device Drivers Architecture
  * The HAL contains several kind of modules:
@@ -127,6 +127,66 @@
 /**
  * @defgroup HAL_INNER_CODE Inner Code
  * @brief   HAL Inner Code.
+ *
+ * @ingroup IO
+ */
+
+/**
+ * @defgroup OSAL OSAL
+ * @brief   Operating System Abstraction Layer.
+ * @details <h2>The OSAL</h2>
+ *          The OSAL is the link between ChibiOS/HAL and services
+ *          provided by operating systems like:
+ *          - Critical Zones handling.
+ *          - Interrupts handling.
+ *          - Runtime Errors management.
+ *          - Inter-task synchronization.
+ *          - Task-ISR synchronization.
+ *          - Time management.
+ *          - Events.
+ *          .
+ *          ChibiOS/HAL is designed to tightly integrate with the underlying
+ *          RTOS in order to provide the best experience to developers and
+ *          minimize integration issues.<br>
+ *          This section describes the API that OSALs are expected to expose
+ *          to the HAL.
+ *
+ *          <h2>RTOS Requirements</h2>
+ *          The OSAL API closely resembles the ChibiOS/RT API, for obvious
+ *          reasons, however an OSAL module can be implemented for any
+ *          reasonably complete RTOS or even a RTOS-less bare metal
+ *          machine, if required.<br>
+ *          In order to be able to support an HAL an RTOS should support the
+ *          following minimal set of features:
+ *          - Task-level critical zones API.
+ *          - ISR-level critical zones API, only required on those CPU
+ *            architectures supporting preemptable ISRs like Cortex-Mx
+ *            cores.
+ *          - Ability to invoke API functions from inside a task critical
+ *            zone. Functions that are required to support this feature are
+ *            marked with an "I" or "S" letter at the end of the name.
+ *          - Ability to invoke API functions from inside an ISR critical
+ *            zone. Functions that are required to support this feature are
+ *            marked with an "I" letter at the end of the name.
+ *          - Tasks Queues or Counting Semaphores with Timeout capability.
+ *          - Ability to suspend a task and wakeup it from ISR with Timeout
+ *            capability.
+ *          - Event flags, the mechanism can be simulated using callbacks in
+ *            case the RTOS does not support it.
+ *          - Mutual Exclusion mechanism like Semaphores or Mutexes.
+ *          .
+ *          All the above requirements can be satisfied even on naked HW with
+ *          a very think SW layer. In case that the HAL is required to work
+ *          without an RTOS.
+ *
+ *          <h2>Supported RTOSes</h2>
+ *          The RTOSes supported out of the box are:
+ *          - ChibiOS/RT
+ *          - ChibiOS/NIL
+ *          .
+ *          Implementations have also been successfully created on RTOSes not
+ *          belonging to the ChibiOS products family but are not supported
+ *          as a core feature of ChibiOS/HAL.
  *
  * @ingroup IO
  */
