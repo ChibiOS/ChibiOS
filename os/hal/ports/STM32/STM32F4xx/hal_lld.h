@@ -26,8 +26,9 @@
  *          - STM32_VDD (as hundredths of Volt).
  *          .
  *          One of the following macros must also be defined:
+ *          - STM32F2XX for High-performance STM32 F-2 devices.
  *          - STM32F405xx, STM32F415xx, STM32F407xx, STM32F417xx for
- *            High-performance STM32 F-2 devices.
+ *            High-performance STM32 F-4 devices.
  *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx for
  *            High-performance STM32 F-4 devices.
  *          - STM32F401xC, STM32F401xE for High-performance STM32 F-4 devices.
