@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2014 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@
  * @details Digital I/O ports static configuration as defined in @p board.h.
  *          This variable is used by the HAL when initializing the PAL driver.
  */
-const PALConfig pal_default_config =
-{
+const PALConfig pal_default_config = {
 #if STM32_HAS_GPIOA
   {VAL_GPIOA_MODER, VAL_GPIOA_OTYPER, VAL_GPIOA_OSPEEDR, VAL_GPIOA_PUPDR,
    VAL_GPIOA_ODR,   VAL_GPIOA_AFRL,   VAL_GPIOA_AFRH},
@@ -81,7 +80,7 @@ bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
   /* TODO: Fill the implementation.*/
-  return TRUE;
+  return true;
 }
 
 /**
@@ -91,7 +90,7 @@ bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
   (void)sdcp;
   /* TODO: Fill the implementation.*/
-  return FALSE;
+  return false;
 }
 #endif /* HAL_USE_SDC */
 
@@ -103,7 +102,7 @@ bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 
   (void)mmcp;
   /* TODO: Fill the implementation.*/
-  return TRUE;
+  return true;
 }
 
 /**
@@ -113,7 +112,7 @@ bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
   (void)mmcp;
   /* TODO: Fill the implementation.*/
-  return FALSE;
+  return false;
 }
 #endif
 

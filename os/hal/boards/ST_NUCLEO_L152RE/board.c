@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2014 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ const PALConfig pal_default_config = {
 #endif
 #if STM32_HAS_GPIOH
   {VAL_GPIOH_MODER, VAL_GPIOH_OTYPER, VAL_GPIOH_OSPEEDR, VAL_GPIOH_PUPDR,
-   VAL_GPIOH_ODR,   VAL_GPIOH_AFRL,   VAL_GPIOH_AFRH}
+   VAL_GPIOH_ODR,   VAL_GPIOH_AFRL,   VAL_GPIOH_AFRH},
 #endif
 #if STM32_HAS_GPIOI
   {VAL_GPIOI_MODER, VAL_GPIOI_OTYPER, VAL_GPIOI_OSPEEDR, VAL_GPIOI_PUPDR,
@@ -80,7 +80,7 @@ bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
   /* TODO: Fill the implementation.*/
-  return TRUE;
+  return true;
 }
 
 /**
@@ -90,7 +90,7 @@ bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
   (void)sdcp;
   /* TODO: Fill the implementation.*/
-  return FALSE;
+  return false;
 }
 #endif /* HAL_USE_SDC */
 
@@ -102,7 +102,7 @@ bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 
   (void)mmcp;
   /* TODO: Fill the implementation.*/
-  return TRUE;
+  return true;
 }
 
 /**
@@ -112,7 +112,7 @@ bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
   (void)mmcp;
   /* TODO: Fill the implementation.*/
-  return FALSE;
+  return false;
 }
 #endif
 

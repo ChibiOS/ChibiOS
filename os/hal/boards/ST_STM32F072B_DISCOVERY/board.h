@@ -18,14 +18,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for ST STM32F072-Discovery board.
+ * Setup for ST STM32F072B-Discovery board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_STM32F072_DISCOVERY
-#define BOARD_NAME                  "ST STM32F072-Discovery"
+#define BOARD_ST_STM32F072B_DISCOVERY
+#define BOARD_NAME                  "ST STM32F072B-Discovery"
 
 /*
  * Board oscillators-related settings.
