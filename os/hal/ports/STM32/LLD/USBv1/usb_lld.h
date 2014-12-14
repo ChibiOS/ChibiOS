@@ -94,12 +94,12 @@
 #error "USB driver activated but no USB peripheral assigned"
 #endif
 
-#if STM32_USB_USE_USB1 &&                                                \
+#if STM32_USB_USE_USB1 &&                                                   \
     !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_USB_USB1_HP_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USB HP"
 #endif
 
-#if STM32_USB_USE_USB1 &&                                                \
+#if STM32_USB_USE_USB1 &&                                                   \
     !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_USB_USB1_LP_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USB LP"
 #endif
