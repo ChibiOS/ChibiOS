@@ -815,7 +815,7 @@ static inline void osalMutexObjectInit(mutex_t *mp) {
   chSemObjectInit((semaphore_t *)mp, 1);
 }
 
-/*
+/**
  * @brief   Locks the specified mutex.
  * @post    The mutex is locked and inserted in the per-thread stack of owned
  *          mutexes.
