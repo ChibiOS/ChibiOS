@@ -261,9 +261,7 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
 /*===========================================================================*/
 
 #if STM32_USB_USE_USB1 || defined(__DOXYGEN__)
-#if !defined(STM32_USB1_HP_HANDLER)
-#error "STM32_USB1_HP_HANDLER not defined"
-#endif
+#if STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER
 /**
  * @brief   USB high priority interrupt handler.
  *
@@ -275,10 +273,8 @@ CH_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
 
   CH_IRQ_EPILOGUE();
 }
+#endif /* STM32_USB1_LP_NUMBER != STM32_USB1_HP_NUMBER */
 
-#if !defined(STM32_USB1_LP_HANDLER)
-#error "STM32_USB1_LP_HANDLER not defined"
-#endif
 /**
  * @brief   USB low priority interrupt handler.
  *
@@ -416,7 +412,7 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif
+#endif /* STM32_USB_USE_USB1 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

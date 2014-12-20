@@ -95,6 +95,14 @@ typedef struct {
    * @brief   RX counter register 1.
    */
   volatile uint16_t     RXCOUNT1;
+  /*
+   * @brief   LPM Control and Status Register.
+   */
+  volatile uint32_t     LPMCSR;
+  /*
+   * @brief   Battery Charging Detector
+   */
+  volatile uint32_t     BCDR;
 } stm32_usb_descriptor_t;
 
 /**
@@ -108,12 +116,20 @@ typedef struct {
 /**
  * @brief USB registers block numeric address.
  */
+#if defined(USB_BASE) || defined(__DOXYGEN__)
+#define STM32_USB_BASE          USB_BASE
+#else
 #define STM32_USB_BASE          (APB1PERIPH_BASE + 0x5C00)
+#endif
 
 /**
  * @brief USB RAM numeric address.
  */
+#if defined(USB_PMAADDR) || defined(__DOXYGEN__)
+#define STM32_USBRAM_BASE       USB_PMAADDR
+#else
 #define STM32_USBRAM_BASE       (APB1PERIPH_BASE + 0x6000)
+#endif
 
 /**
  * @brief Pointer to the USB registers block.

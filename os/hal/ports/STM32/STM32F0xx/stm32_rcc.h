@@ -524,7 +524,42 @@
  * @api
  */
 #define rccResetUSART2() rccResetAPB1(RCC_APB1RSTR_USART2RST)
+/** @} */
 
+/**
+ * @name    USB peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the USB peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUSB(lp) rccEnableAPB1(RCC_APB1ENR_USBEN, lp)
+
+/**
+ * @brief   Disables the USB peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableUSB(lp) rccDisableAPB1(RCC_APB1ENR_USBEN, lp)
+
+/**
+ * @brief   Resets the USB peripheral.
+ *
+ * @api
+ */
+#define rccResetUSB() rccResetAPB1(RCC_APB1RSTR_USBRST)
+/** @} */
+
+/**
+ * @name    CRC peripherals specific RCC operations
+ * @{
+ */
 /**
  * @brief   Enables the CRC peripheral clock.
  * @note    The @p lp parameter is ignored in this family.
@@ -551,7 +586,12 @@
  * @api
  */
 #define rccResetCRC() rccResetAHB(RCC_AHBRSTR_CRCRST)
+/** @} */
 
+/**
+ * @name    WWDG peripherals specific RCC operations
+ * @{
+ */
 /**
  * @brief   Enables the WWDG peripheral clock.
  * @note    The @p lp parameter is ignored in this family.

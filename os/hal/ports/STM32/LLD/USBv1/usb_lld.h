@@ -108,6 +108,22 @@
 #error "the USB driver requires a 48MHz clock"
 #endif
 
+#if !defined(STM32_USB1_HP_HANDLER)
+#error "STM32_USB1_HP_HANDLER not defined"
+#endif
+
+#if !defined(STM32_USB1_HP_NUMBER)
+#error "STM32_USB1_HP_NUMBER not defined"
+#endif
+
+#if !defined(STM32_USB1_LP_HANDLER)
+#error "STM32_USB1_LP_HANDLER not defined"
+#endif
+
+#if !defined(STM32_USB1_LP_NUMBER)
+#error "STM32_USB1_LP_NUMBER not defined"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

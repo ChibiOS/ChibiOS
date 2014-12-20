@@ -451,9 +451,9 @@ static msg_t Thread1(void *arg) {
   chRegSetThreadName("blinker");
   while (TRUE) {
     systime_t time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
-    palClearPad(GPIOE, GPIOE_LED3_RED);
+    palClearPad(GPIOC, GPIOC_LED_RED);
     chThdSleepMilliseconds(time);
-    palSetPad(GPIOE, GPIOE_LED3_RED);
+    palSetPad(GPIOC, GPIOC_LED_RED);
     chThdSleepMilliseconds(time);
   }
 }

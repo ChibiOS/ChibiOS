@@ -247,6 +247,9 @@
 #define STM32_CECSW_MASK        (1 << 6)    /**< CEC clock source mask.     */
 #define STM32_CECSW_HSI         (0 << 6)    /**< CEC clock is HSI/244.      */
 #define STM32_CECSW_LSE         (1 << 6)    /**< CEC clock is LSE.          */
+#define STM32_USBSW_MASK        (1 << 7)    /**< USB clock source mask.     */
+#define STM32_USBSW_HSI48       (0 << 7)    /**< USB clock is HSI48.        */
+#define STM32_USBSW_PCLK        (1 << 7)    /**< USB clock is PCLK.         */
 #define STM32_ADCSW_MASK        (1 << 8)    /**< ADC clock source mask.     */
 #define STM32_ADCSW_HSI14       (0 << 8)    /**< ADC clock is HSI14.        */
 #define STM32_ADCSW_PCLK        (1 << 8)    /**< ADC clock is PCLK/2|4.     */
@@ -264,63 +267,63 @@
  * @brief   Disables the PWR/RCC initialization in the HAL.
  */
 #if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
-#define STM32_NO_INIT               FALSE
+#define STM32_NO_INIT                       FALSE
 #endif
 
 /**
  * @brief   Enables or disables the programmable voltage detector.
  */
 #if !defined(STM32_PVD_ENABLE) || defined(__DOXYGEN__)
-#define STM32_PVD_ENABLE            FALSE
+#define STM32_PVD_ENABLE                    FALSE
 #endif
 
 /**
  * @brief   Sets voltage level for programmable voltage detector.
  */
 #if !defined(STM32_PLS) || defined(__DOXYGEN__)
-#define STM32_PLS                   STM32_PLS_LEV0
+#define STM32_PLS                           STM32_PLS_LEV0
 #endif
 
 /**
  * @brief   Enables or disables the HSI clock source.
  */
 #if !defined(STM32_HSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI_ENABLED           TRUE
+#define STM32_HSI_ENABLED                   TRUE
 #endif
 
 /**
  * @brief   Enables or disables the HSI14 clock source.
  */
 #if !defined(STM32_HSI14_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI14_ENABLED         TRUE
+#define STM32_HSI14_ENABLED                 TRUE
 #endif
 
 /**
  * @brief   Enables or disables the HSI48 clock source.
  */
 #if !defined(STM32_HSI48_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI48_ENABLED         FALSE
+#define STM32_HSI48_ENABLED                 FALSE
 #endif
 
 /**
  * @brief   Enables or disables the LSI clock source.
  */
 #if !defined(STM32_LSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSI_ENABLED           FALSE
+#define STM32_LSI_ENABLED                   FALSE
 #endif
 
 /**
  * @brief   Enables or disables the HSE clock source.
  */
 #if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSE_ENABLED           TRUE
+#define STM32_HSE_ENABLED                   TRUE
 #endif
 
 /**
  * @brief   Enables or disables the LSE clock source.
  */
 #if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSE_ENABLED           FALSE
+#define STM32_LSE_ENABLED                   FALSE
 #endif
 
 /**
@@ -331,7 +334,7 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
-#define STM32_SW                    STM32_SW_PLL
+#define STM32_SW                            STM32_SW_PLL
 #endif
 
 /**
@@ -342,7 +345,7 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
-#define STM32_PLLSRC                STM32_PLLSRC_HSE
+#define STM32_PLLSRC                        STM32_PLLSRC_HSE
 #endif
 
 /**
@@ -363,7 +366,7 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_PLLMUL_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLMUL_VALUE          6
+#define STM32_PLLMUL_VALUE                  6
 #endif
 
 /**
@@ -372,63 +375,70 @@
  *          a 8MHz crystal using the PLL.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
-#define STM32_HPRE                  STM32_HPRE_DIV1
+#define STM32_HPRE                          STM32_HPRE_DIV1
 #endif
 
 /**
  * @brief   APB1 prescaler value.
  */
 #if !defined(STM32_PPRE) || defined(__DOXYGEN__)
-#define STM32_PPRE                  STM32_PPRE_DIV1
+#define STM32_PPRE                          STM32_PPRE_DIV1
 #endif
 
 /**
  * @brief   MCO pin setting.
  */
 #if !defined(STM32_MCOSEL) || defined(__DOXYGEN__)
-#define STM32_MCOSEL                STM32_MCOSEL_NOCLOCK
+#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #endif
 
 /**
  * @brief   ADC prescaler value.
  */
 #if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
-#define STM32_ADCPRE                STM32_ADCPRE_DIV4
+#define STM32_ADCPRE                        STM32_ADCPRE_DIV4
 #endif
 
 /**
  * @brief   ADC clock source.
  */
 #if !defined(STM32_ADCSW) || defined(__DOXYGEN__)
-#define STM32_ADCSW                 STM32_ADCSW_HSI14
+#define STM32_ADCSW                         STM32_ADCSW_HSI14
+#endif
+
+/**
+ * @brief USB Clock source.
+ */
+#if !defined(STM32_USBSW) || defined(__DOXYGEN__)
+#define STM32_USBSW                         STM32_USBSW_HSI48
 #endif
 
 /**
  * @brief   CEC clock source.
  */
 #if !defined(STM32_CECSW) || defined(__DOXYGEN__)
-#define STM32_CECSW                 STM32_CECSW_HSI
+#define STM32_CECSW                         STM32_CECSW_HSI
 #endif
 
 /**
  * @brief   I2C1 clock source.
  */
 #if !defined(STM32_I2C1SW) || defined(__DOXYGEN__)
-#define STM32_I2C1SW                STM32_I2C1SW_HSI
+#define STM32_I2C1SW                        STM32_I2C1SW_HSI
 #endif
 
 /**
  * @brief   USART1 clock source.
  */
 #if !defined(STM32_USART1SW) || defined(__DOXYGEN__)
-#define STM32_USART1SW              STM32_USART1SW_PCLK
+#define STM32_USART1SW                      STM32_USART1SW_PCLK
 #endif
 
 /**
  * @brief   RTC clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
-#define STM32_RTCSEL                STM32_RTCSEL_LSI
+#define STM32_RTCSEL                        STM32_RTCSEL_LSI
 #endif
 /** @} */
 
@@ -603,6 +613,7 @@
 
 /* PLL activation conditions.*/
 #if (STM32_SW == STM32_SW_PLL) ||                                           \
+    (STM32_USBSW == STM32_USBSW_PCLK) ||                                    \
     (STM32_MCOSEL == STM32_MCOSEL_PLLDIV2) ||                               \
     defined(__DOXYGEN__)
 /**
@@ -750,7 +761,7 @@
 /**
  * @brief   ADC frequency.
  */
-#if STM32_ADCSW == STM32_ADCSW_HSI14
+#if (STM32_ADCSW == STM32_ADCSW_HSI14) || defined(__DOXYGEN__)
 #define STM32_ADCCLK                STM32_HSI14CLK
 #elif STM32_ADCSW == STM32_ADCSW_PCLK
 #if (STM32_ADCPRE == STM32_ADCPRE_DIV2) || defined(__DOXYGEN__)
@@ -770,9 +781,20 @@
 #endif
 
 /**
+ * @brief   USB frequency.
+ */
+#if (STM32_USBSW == STM32_USBSW_HSI48) || defined(__DOXYGEN__)
+#define STM32_USBCLK                STM32_HSI48CLK
+#elif STM32_USBSW == STM32_USBSW_PCLK
+#define STM32_USBCLK                STM32_PLLCLKOUT
+#else
+#error "invalid source selected for USB clock"
+#endif
+
+/**
  * @brief   CEC frequency.
  */
-#if STM32_CECSW == STM32_CECSW_HSI
+#if (STM32_CECSW == STM32_CECSW_HSI) || defined(__DOXYGEN__)
 #define STM32_CECCLK                STM32_HSICLK
 #elif STM32_CECSW == STM32_CECSW_LSE
 #define STM32_CECCLK                STM32_LSECLK
@@ -783,7 +805,7 @@
 /**
  * @brief   I2C1 frequency.
  */
-#if STM32_I2CSW == STM32_I2C1SW_HSI
+#if (STM32_I2CSW == STM32_I2C1SW_HSI) || defined(__DOXYGEN__)
 #define STM32_I2C1CLK               STM32_HSICLK
 #elif STM32_I2CSW == STM32_I2C1SW_SYSCLK
 #define STM32_I2C1CLK               STM32_SYSCLK
@@ -794,7 +816,7 @@
 /**
  * @brief   USART1 frequency.
  */
-#if STM32_USART1SW == STM32_USART1SW_PCLK
+#if (STM32_USART1SW == STM32_USART1SW_PCLK) || defined(__DOXYGEN__)
 #define STM32_USART1CLK             STM32_PCLK
 #elif STM32_USART1SW == STM32_USART1SW_SYSCLK
 #define STM32_USART1CLK             STM32_SYSCLK
