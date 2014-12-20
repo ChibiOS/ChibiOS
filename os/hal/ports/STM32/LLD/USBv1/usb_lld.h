@@ -404,6 +404,26 @@ struct USBDriver {
 #define usb_lld_get_transaction_size(usbp, ep)                              \
   ((usbp)->epc[ep]->out_state->rxcnt)
 
+#if STM32_USB_HAS_BCDR || defined(__DOXYGEN__)
+/**
+ * @brief   Connects the USB device.
+ *
+ * @api
+ */
+#if !defined(usb_lld_connect_bus)
+#define usb_lld_connect_bus(usbp) (STM32_USB->BCDR |= USB_BCDR_DPPU)
+#endif
+
+/**
+ * @brief   Disconnect the USB device.
+ *
+ * @api
+ */
+#if !defined(usb_lld_disconnect_bus)
+#define usb_lld_disconnect_bus(usbp) (STM32_USB->BCDR &= ~USB_BCDR_DPPU)
+#endif
+#endif /* STM32_USB_HAS_BCDR */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

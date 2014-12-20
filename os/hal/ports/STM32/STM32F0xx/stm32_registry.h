@@ -195,6 +195,7 @@
 #if defined(STM32F042x6) || defined(STM32F048xx) || defined(STM32F072xB) || \
     defined(STM32F078xx)
 #define STM32_HAS_USB                       TRUE
+#define STM32_USB_HAS_BCDR                  TRUE
 #else
 #define STM32_HAS_USB                       FALSE
 #endif

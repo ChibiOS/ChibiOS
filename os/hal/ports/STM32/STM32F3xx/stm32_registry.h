@@ -204,6 +204,7 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
+#define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 #endif /* defined(STM32F303xC) */
@@ -658,6 +659,7 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
+#define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 #endif /* defined(STM32F302x8) */
@@ -821,6 +823,7 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
+#define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 #endif /* defined(STM32F302xC) */
@@ -971,6 +974,7 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
+#define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 #endif /* defined(STM32F318x8) */
@@ -1283,6 +1287,7 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
+#define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 #endif /* defined(STM32F358xC) */

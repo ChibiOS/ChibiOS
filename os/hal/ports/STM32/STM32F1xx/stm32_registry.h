@@ -582,6 +582,7 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
+#define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 /** @} */
@@ -756,6 +757,7 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
+#define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 /** @} */
@@ -930,6 +932,7 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
+#define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 /** @} */

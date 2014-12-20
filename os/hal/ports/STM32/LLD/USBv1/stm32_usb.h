@@ -65,6 +65,14 @@ typedef struct {
    * @brief   Buffer Table Address.
    */
   volatile uint32_t     BTABLE;
+  /*
+   * @brief   LPM Control and Status Register.
+   */
+  volatile uint32_t     LPMCSR;
+  /*
+   * @brief   Battery Charging Detector
+   */
+  volatile uint32_t     BCDR;
 } stm32_usb_t;
 
 /**
@@ -95,14 +103,6 @@ typedef struct {
    * @brief   RX counter register 1.
    */
   volatile uint16_t     RXCOUNT1;
-  /*
-   * @brief   LPM Control and Status Register.
-   */
-  volatile uint32_t     LPMCSR;
-  /*
-   * @brief   Battery Charging Detector
-   */
-  volatile uint32_t     BCDR;
 } stm32_usb_descriptor_t;
 
 /**

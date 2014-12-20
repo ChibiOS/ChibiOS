@@ -36,13 +36,6 @@
 #define USBD1_INTERRUPT_REQUEST_EP      2
 
 /*
- * DP resistor control is not possible on the STM32F3-Discovery, using stubs
- * for the connection macros.
- */
-#define usb_lld_connect_bus(usbp)
-#define usb_lld_disconnect_bus(usbp)
-
-/*
  * Serial over USB Driver structure.
  */
 static SerialUSBDriver SDU1;
