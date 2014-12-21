@@ -111,7 +111,7 @@ static uint32_t usb_pm_alloc(USBDriver *usbp, size_t size) {
 
   next = usbp->pmnext;
   usbp->pmnext += size;
-  osalDbgAssert(usbp->pmnext <= USB_PMA_SIZE, "PMA overflow");
+  osalDbgAssert(usbp->pmnext <= STM32_USB_PMA_SIZE, "PMA overflow");
   return next;
 }
 
@@ -127,7 +127,7 @@ static uint32_t usb_pm_alloc(USBDriver *usbp, size_t size) {
  */
 static void usb_packet_read_to_buffer(stm32_usb_descriptor_t *udp,
                                       uint8_t *buf, size_t n) {
-  uint32_t *pmap= USB_ADDR2PTR(udp->RXADDR0);
+  stm32_usb_pma_t *pmap= USB_ADDR2PTR(udp->RXADDR0);
 
   n = (n + 1) / 2;
   while (n > 0) {
@@ -152,11 +152,11 @@ static void usb_packet_read_to_buffer(stm32_usb_descriptor_t *udp,
 static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
                                      input_queue_t *iqp, size_t n) {
   size_t nhw;
-  uint32_t *pmap= USB_ADDR2PTR(udp->RXADDR0);
+  stm32_usb_pma_t *pmap= USB_ADDR2PTR(udp->RXADDR0);
 
   nhw = n / 2;
   while (nhw > 0) {
-    uint32_t w;
+    stm32_usb_pma_t w;
 
     w = *pmap++;
     *iqp->q_wrptr++ = (uint8_t)w;
@@ -196,14 +196,14 @@ static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
 static void usb_packet_write_from_buffer(stm32_usb_descriptor_t *udp,
                                          const uint8_t *buf,
                                          size_t n) {
-  uint32_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
+  stm32_usb_pma_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
 
-  udp->TXCOUNT0 = (uint16_t)n;
+  udp->TXCOUNT0 = (stm32_usb_pma_t)n;
   n = (n + 1) / 2;
   while (n > 0) {
     /* Note, this line relies on the Cortex-M3/M4 ability to perform
        unaligned word accesses.*/
-    *pmap++ = *(uint16_t *)buf;
+    *pmap++ = (stm32_usb_pma_t)*(const uint16_t *)buf;
     buf += 2;
     n--;
   }
@@ -223,17 +223,17 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
                                         output_queue_t *oqp, size_t n) {
   size_t nhw;
   syssts_t sts;
-  uint32_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
+  stm32_usb_pma_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
 
-  udp->TXCOUNT0 = (uint16_t)n;
+  udp->TXCOUNT0 = (stm32_usb_pma_t)n;
   nhw = n / 2;
   while (nhw > 0) {
-    uint32_t w;
+    stm32_usb_pma_t w;
 
-    w  = (uint32_t)*oqp->q_rdptr++;
+    w  = (stm32_usb_pma_t)*oqp->q_rdptr++;
     if (oqp->q_rdptr >= oqp->q_top)
       oqp->q_rdptr = oqp->q_buffer;
-    w |= (uint32_t)*oqp->q_rdptr++ << 8;
+    w |= (stm32_usb_pma_t)*oqp->q_rdptr++ << 8;
     if (oqp->q_rdptr >= oqp->q_top)
       oqp->q_rdptr = oqp->q_buffer;
     *pmap++ = w;
@@ -242,7 +242,7 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
 
   /* Last byte for odd numbers.*/
   if ((n & 1) != 0) {
-    *pmap = (uint32_t)*oqp->q_rdptr++;
+    *pmap = (stm32_usb_pma_t)*oqp->q_rdptr++;
     if (oqp->q_rdptr >= oqp->q_top)
       oqp->q_rdptr = oqp->q_buffer;
   }
@@ -662,7 +662,7 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
-  uint32_t *pmap;
+  stm32_usb_pma_t *pmap;
   stm32_usb_descriptor_t *udp;
   uint32_t n;
 

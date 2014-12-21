@@ -34,45 +34,56 @@
 #define USB_ENDOPOINTS_NUMBER           7
 
 /**
+ * @brief   Width of USB packet memory accesses.
+ */
+#if STM32_USB_ACCESS_SCHEME_2x16
+typedef uint16_t stm32_usb_pma_t;
+#else
+typedef uint32_t stm32_usb_pma_t;
+#endif
+
+/**
  * @brief   USB registers block.
  */
 typedef struct {
   /**
    * @brief   Endpoint registers.
    */
-  volatile uint32_t     EPR[USB_ENDOPOINTS_NUMBER + 1];
+  volatile uint32_t             EPR[USB_ENDOPOINTS_NUMBER + 1];
   /*
    * @brief   Reserved space.
    */
-  volatile uint32_t     _r20[8];
+  volatile uint32_t             _r20[8];
   /*
    * @brief   Control Register.
    */
-  volatile uint32_t     CNTR;
+  volatile uint32_t             CNTR;
   /*
    * @brief   Interrupt Status Register.
    */
-  volatile uint32_t     ISTR;
+  volatile uint32_t             ISTR;
   /*
    * @brief   Frame Number Register.
    */
-  volatile uint32_t     FNR;
+  volatile uint32_t             FNR;
   /*
    * @brief   Device Address Register.
    */
-  volatile uint32_t     DADDR;
+  volatile uint32_t             DADDR;
   /*
    * @brief   Buffer Table Address.
    */
-  volatile uint32_t     BTABLE;
+  volatile uint32_t             BTABLE;
   /*
    * @brief   LPM Control and Status Register.
    */
-  volatile uint32_t     LPMCSR;
+  volatile uint32_t             LPMCSR;
+#if STM32_USB_HAS_BCDR
   /*
    * @brief   Battery Charging Detector
    */
-  volatile uint32_t     BCDR;
+  volatile uint32_t             BCDR;
+#endif
 } stm32_usb_t;
 
 /**
@@ -82,35 +93,27 @@ typedef struct {
   /**
    * @brief   TX buffer offset register.
    */
-  volatile uint32_t     TXADDR0;
+  volatile stm32_usb_pma_t      TXADDR0;
   /**
    * @brief   TX counter register 0.
    */
-  volatile uint16_t     TXCOUNT0;
-  /**
-   * @brief   TX counter register 1.
-   */
-  volatile uint16_t     TXCOUNT1;
+  volatile stm32_usb_pma_t      TXCOUNT0;
   /**
    * @brief   RX buffer offset register.
    */
-  volatile uint32_t     RXADDR0;
+  volatile stm32_usb_pma_t      RXADDR0;
   /**
    * @brief   RX counter register 0.
    */
-  volatile uint16_t     RXCOUNT0;
-  /**
-   * @brief   RX counter register 1.
-   */
-  volatile uint16_t     RXCOUNT1;
+  volatile stm32_usb_pma_t      RXCOUNT0;
 } stm32_usb_descriptor_t;
 
 /**
  * @name    Register aliases
  * @{
  */
-#define RXADDR1         TXADDR0
-#define TXADDR1         RXADDR0
+#define RXADDR1                 TXADDR0
+#define TXADDR1                 RXADDR0
 /** @} */
 
 /**
@@ -139,12 +142,7 @@ typedef struct {
 /**
  * @brief   Pointer to the USB RAM.
  */
-#define STM32_USBRAM            ((uint32_t *)STM32_USBRAM_BASE)
-
-/**
- * @brief   Size of the dedicated packet memory.
- */
-#define USB_PMA_SIZE            512
+#define STM32_USBRAM            ((stm32_usb_pma_t *)STM32_USBRAM_BASE)
 
 /**
  * @brief   Mask of all the toggling bits in the EPR register.
@@ -252,7 +250,9 @@ typedef struct {
  * @brief   Converts from a PMA address to a physical address.
  */
 #define USB_ADDR2PTR(addr)                                                  \
-  ((uint32_t *)((addr) * 2 + STM32_USBRAM_BASE))
+  ((stm32_usb_pma_t *)((addr) *                                             \
+                       (sizeof(stm32_usb_pma_t) / 2) +                      \
+                       STM32_USBRAM_BASE))
 
 #endif /* _STM32_USB_H_ */
 
