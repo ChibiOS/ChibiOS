@@ -86,6 +86,8 @@ void rtcObjectInit(RTCDriver *rtcp) {
 
 #if RTC_HAS_STORAGE
   rtcp->vmt = &_rtc_lld_vmt;
+#else
+  (void)rtcp;
 #endif
 }
 
