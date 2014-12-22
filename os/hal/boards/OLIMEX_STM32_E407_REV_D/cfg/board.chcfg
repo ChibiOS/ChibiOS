@@ -5,24 +5,25 @@
   <configuration_settings>
     <templates_path>resources/gencfg/processors/boards/stm32f4xx/templates</templates_path>
     <output_path>..</output_path>
+    <hal_version>3.0.x</hal_version>
   </configuration_settings>
-    <board_name>Olimex STM32-E407</board_name>
-    <board_id>OLIMEX_STM32_E407</board_id>
+    <board_name>Olimex STM32-E407 (rev.D)</board_name>
+    <board_id>OLIMEX_STM32_E407_REV_D</board_id>
     <board_functions>
-        <sdc_lld_is_card_inserted><![CDATA[  static bool_t last_status = FALSE;
+        <sdc_lld_is_card_inserted><![CDATA[  static bool last_status = false;
 
   if (blkIsTransferring(sdcp))
     return last_status;
-  return last_status = (bool_t)palReadPad(GPIOC, GPIOC_SD_D3);]]></sdc_lld_is_card_inserted>
+  return last_status = (bool)palReadPad(GPIOC, GPIOC_SD_D3);]]></sdc_lld_is_card_inserted>
         <sdc_lld_is_write_protected>
 <![CDATA[  (void)sdcp;
-  return FALSE;]]></sdc_lld_is_write_protected>
+  return false;]]></sdc_lld_is_write_protected>
     </board_functions>
     <ethernet_phy>
         <identifier>MII_LAN8710A_ID</identifier>
         <bus_type>RMII</bus_type>
     </ethernet_phy>
-    <subtype>STM32F40_41xxx</subtype>
+    <subtype>STM32F407xx</subtype>
     <clocks
        HSEFrequency="12000000"
        HSEBypass="false"

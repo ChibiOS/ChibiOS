@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for Olimex STM32-E407 board.
+ * Setup for Olimex STM32-E407 (rev.D) board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_OLIMEX_STM32_E407
-#define BOARD_NAME                  "Olimex STM32-E407"
+#define BOARD_OLIMEX_STM32_E407_REV_D
+#define BOARD_NAME                  "Olimex STM32-E407 (rev.D)"
 
 /*
  * Ethernet PHY type.
@@ -53,7 +53,7 @@
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32F40_41xxx
+#define STM32F407xx
 
 /*
  * IO pins assignments.
