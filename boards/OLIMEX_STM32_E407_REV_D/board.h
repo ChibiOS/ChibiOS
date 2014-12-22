@@ -76,7 +76,7 @@
 #define GPIOA_JTAG_TDI              15
 
 #define GPIOB_USB_FS_BUSON          0
-#define GPIOB_USB_HS_FAULT          1
+#define GPIOB_USB_FS_FAULT          1
 #define GPIOB_BOOT1                 2
 #define GPIOB_JTAG_TDO              3
 #define GPIOB_JTAG_TRST             4
@@ -154,7 +154,7 @@
 #define GPIOF_PIN8                  8
 #define GPIOF_PIN9                  9
 #define GPIOF_PIN10                 10
-#define GPIOF_USB_FS_FAULT          11
+#define GPIOF_USB_HS_FAULT          11
 #define GPIOF_PIN12                 12
 #define GPIOF_PIN13                 13
 #define GPIOF_PIN14                 14
@@ -325,7 +325,7 @@
                                      PIN_ODR_HIGH(GPIOA_PIN5) |             \
                                      PIN_ODR_HIGH(GPIOA_PIN6) |             \
                                      PIN_ODR_HIGH(GPIOA_ETH_RMII_CRS_DV) |  \
-                                     PIN_ODR_HIGH(GPIOA_USB_HS_BUSON) |     \
+                                     PIN_ODR_LOW(GPIOA_USB_HS_BUSON) |      \
                                      PIN_ODR_HIGH(GPIOA_OTG_FS_VBUS) |      \
                                      PIN_ODR_HIGH(GPIOA_OTG_FS_ID) |        \
                                      PIN_ODR_HIGH(GPIOA_OTG_FS_DM) |        \
@@ -354,7 +354,7 @@
  * GPIOB setup:
  *
  * PB0  - USB_FS_BUSON              (output pushpull maximum).
- * PB1  - USB_HS_FAULT              (input floating).
+ * PB1  - USB_FS_FAULT              (input floating).
  * PB2  - BOOT1                     (input floating).
  * PB3  - JTAG_TDO                  (alternate 0).
  * PB4  - JTAG_TRST                 (alternate 0).
@@ -371,7 +371,7 @@
  * PB15 - OTG_HS_DP                 (alternate 12).
  */
 #define VAL_GPIOB_MODER             (PIN_MODE_OUTPUT(GPIOB_USB_FS_BUSON) |  \
-                                     PIN_MODE_INPUT(GPIOB_USB_HS_FAULT) |   \
+                                     PIN_MODE_INPUT(GPIOB_USB_FS_FAULT) |   \
                                      PIN_MODE_INPUT(GPIOB_BOOT1) |          \
                                      PIN_MODE_ALTERNATE(GPIOB_JTAG_TDO) |   \
                                      PIN_MODE_ALTERNATE(GPIOB_JTAG_TRST) |  \
@@ -387,7 +387,7 @@
                                      PIN_MODE_ALTERNATE(GPIOB_OTG_HS_DM) |  \
                                      PIN_MODE_ALTERNATE(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOB_USB_FS_BUSON) |\
-                                     PIN_OTYPE_PUSHPULL(GPIOB_USB_HS_FAULT) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOB_USB_FS_FAULT) |\
                                      PIN_OTYPE_PUSHPULL(GPIOB_BOOT1) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOB_JTAG_TDO) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOB_JTAG_TRST) |  \
@@ -403,7 +403,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOB_OTG_HS_DM) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_OSPEEDR           (PIN_OSPEED_100M(GPIOB_USB_FS_BUSON) |  \
-                                     PIN_OSPEED_100M(GPIOB_USB_HS_FAULT) |  \
+                                     PIN_OSPEED_100M(GPIOB_USB_FS_FAULT) |  \
                                      PIN_OSPEED_100M(GPIOB_BOOT1) |         \
                                      PIN_OSPEED_100M(GPIOB_JTAG_TDO) |      \
                                      PIN_OSPEED_100M(GPIOB_JTAG_TRST) |     \
@@ -419,7 +419,7 @@
                                      PIN_OSPEED_100M(GPIOB_OTG_HS_DM) |     \
                                      PIN_OSPEED_100M(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_PUPDR             (PIN_PUPDR_FLOATING(GPIOB_USB_FS_BUSON) |\
-                                     PIN_PUPDR_FLOATING(GPIOB_USB_HS_FAULT) |\
+                                     PIN_PUPDR_FLOATING(GPIOB_USB_FS_FAULT) |\
                                      PIN_PUPDR_FLOATING(GPIOB_BOOT1) |      \
                                      PIN_PUPDR_FLOATING(GPIOB_JTAG_TDO) |   \
                                      PIN_PUPDR_FLOATING(GPIOB_JTAG_TRST) |  \
@@ -434,8 +434,8 @@
                                      PIN_PUPDR_PULLDOWN(GPIOB_OTG_HS_VBUS) |\
                                      PIN_PUPDR_FLOATING(GPIOB_OTG_HS_DM) |  \
                                      PIN_PUPDR_FLOATING(GPIOB_OTG_HS_DP))
-#define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_USB_FS_BUSON) |     \
-                                     PIN_ODR_HIGH(GPIOB_USB_HS_FAULT) |     \
+#define VAL_GPIOB_ODR               (PIN_ODR_LOW(GPIOB_USB_FS_BUSON) |      \
+                                     PIN_ODR_HIGH(GPIOB_USB_FS_FAULT) |     \
                                      PIN_ODR_HIGH(GPIOB_BOOT1) |            \
                                      PIN_ODR_HIGH(GPIOB_JTAG_TDO) |         \
                                      PIN_ODR_HIGH(GPIOB_JTAG_TRST) |        \
@@ -451,7 +451,7 @@
                                      PIN_ODR_HIGH(GPIOB_OTG_HS_DM) |        \
                                      PIN_ODR_HIGH(GPIOB_OTG_HS_DP))
 #define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_USB_FS_BUSON, 0) |   \
-                                     PIN_AFIO_AF(GPIOB_USB_HS_FAULT, 0) |   \
+                                     PIN_AFIO_AF(GPIOB_USB_FS_FAULT, 0) |   \
                                      PIN_AFIO_AF(GPIOB_BOOT1, 0) |          \
                                      PIN_AFIO_AF(GPIOB_JTAG_TDO, 0) |       \
                                      PIN_AFIO_AF(GPIOB_JTAG_TRST, 0) |      \
@@ -832,7 +832,7 @@
  * PF8  - PIN8                      (input pullup).
  * PF9  - PIN9                      (input pullup).
  * PF10 - PIN10                     (input pullup).
- * PF11 - USB_FS_FAULT              (input floating).
+ * PF11 - USB_HS_FAULT              (input floating).
  * PF12 - PIN12                     (input pullup).
  * PF13 - PIN13                     (input pullup).
  * PF14 - PIN14                     (input pullup).
@@ -849,7 +849,7 @@
                                      PIN_MODE_INPUT(GPIOF_PIN8) |           \
                                      PIN_MODE_INPUT(GPIOF_PIN9) |           \
                                      PIN_MODE_INPUT(GPIOF_PIN10) |          \
-                                     PIN_MODE_INPUT(GPIOF_USB_FS_FAULT) |   \
+                                     PIN_MODE_INPUT(GPIOF_USB_HS_FAULT) |   \
                                      PIN_MODE_INPUT(GPIOF_PIN12) |          \
                                      PIN_MODE_INPUT(GPIOF_PIN13) |          \
                                      PIN_MODE_INPUT(GPIOF_PIN14) |          \
@@ -865,7 +865,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN8) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN9) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN10) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_USB_FS_FAULT) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOF_USB_HS_FAULT) |\
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN12) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN13) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN14) |      \
@@ -881,7 +881,7 @@
                                      PIN_OSPEED_100M(GPIOF_PIN8) |          \
                                      PIN_OSPEED_100M(GPIOF_PIN9) |          \
                                      PIN_OSPEED_100M(GPIOF_PIN10) |         \
-                                     PIN_OSPEED_100M(GPIOF_USB_FS_FAULT) |  \
+                                     PIN_OSPEED_100M(GPIOF_USB_HS_FAULT) |  \
                                      PIN_OSPEED_100M(GPIOF_PIN12) |         \
                                      PIN_OSPEED_100M(GPIOF_PIN13) |         \
                                      PIN_OSPEED_100M(GPIOF_PIN14) |         \
@@ -897,7 +897,7 @@
                                      PIN_PUPDR_PULLUP(GPIOF_PIN8) |         \
                                      PIN_PUPDR_PULLUP(GPIOF_PIN9) |         \
                                      PIN_PUPDR_PULLUP(GPIOF_PIN10) |        \
-                                     PIN_PUPDR_FLOATING(GPIOF_USB_FS_FAULT) |\
+                                     PIN_PUPDR_FLOATING(GPIOF_USB_HS_FAULT) |\
                                      PIN_PUPDR_PULLUP(GPIOF_PIN12) |        \
                                      PIN_PUPDR_PULLUP(GPIOF_PIN13) |        \
                                      PIN_PUPDR_PULLUP(GPIOF_PIN14) |        \
@@ -913,7 +913,7 @@
                                      PIN_ODR_HIGH(GPIOF_PIN8) |             \
                                      PIN_ODR_HIGH(GPIOF_PIN9) |             \
                                      PIN_ODR_HIGH(GPIOF_PIN10) |            \
-                                     PIN_ODR_HIGH(GPIOF_USB_FS_FAULT) |     \
+                                     PIN_ODR_HIGH(GPIOF_USB_HS_FAULT) |     \
                                      PIN_ODR_HIGH(GPIOF_PIN12) |            \
                                      PIN_ODR_HIGH(GPIOF_PIN13) |            \
                                      PIN_ODR_HIGH(GPIOF_PIN14) |            \
@@ -929,7 +929,7 @@
 #define VAL_GPIOF_AFRH              (PIN_AFIO_AF(GPIOF_PIN8, 0) |           \
                                      PIN_AFIO_AF(GPIOF_PIN9, 0) |           \
                                      PIN_AFIO_AF(GPIOF_PIN10, 0) |          \
-                                     PIN_AFIO_AF(GPIOF_USB_FS_FAULT, 0) |   \
+                                     PIN_AFIO_AF(GPIOF_USB_HS_FAULT, 0) |   \
                                      PIN_AFIO_AF(GPIOF_PIN12, 0) |          \
                                      PIN_AFIO_AF(GPIOF_PIN13, 0) |          \
                                      PIN_AFIO_AF(GPIOF_PIN14, 0) |          \
