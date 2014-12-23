@@ -51,7 +51,7 @@
 /**
  * @brief   Presence of a local persistent storage.
  */
-#define RTC_HAS_STORAGE             TRUE
+#define RTC_HAS_STORAGE             FALSE
 /** @} */
 
 /**

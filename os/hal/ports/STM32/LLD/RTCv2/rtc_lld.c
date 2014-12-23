@@ -197,6 +197,8 @@ static uint32_t rtc_encode_date(const RTCDateTime *timespec) {
   return dr;
 }
 
+#if RTC_HAS_STORAGE
+/* TODO: Map on the backup SRAM on devices that have it.*/
 static size_t _write(void *instance, const uint8_t *bp, size_t n) {
 
   (void)instance;
@@ -274,6 +276,7 @@ struct RTCDriverVMT _rtc_lld_vmt = {
   _write, _read, _put, _get,
   _close, _geterror, _getsize, _getposition, _lseek
 };
+#endif /* RTC_HAS_STORAGE */
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
