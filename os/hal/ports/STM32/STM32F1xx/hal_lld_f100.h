@@ -71,7 +71,7 @@
 #define STM32_PLLIN_MAX         24000000
 
 /**
- * @brief   Maximum PLLs input clock frequency.
+ * @brief   Minimum PLLs input clock frequency.
  */
 #define STM32_PLLIN_MIN         1000000
 
@@ -81,7 +81,7 @@
 #define STM32_PLLOUT_MAX        24000000
 
 /**
- * @brief   Maximum PLL output clock frequency.
+ * @brief   Minimum PLL output clock frequency.
  */
 #define STM32_PLLOUT_MIN        16000000
 

@@ -108,7 +108,7 @@
 #define STM32_PLLOUT_MAX        72000000
 
 /**
- * @brief   Maximum PLL output clock frequency.
+ * @brief   Minimum PLL output clock frequency.
  */
 #define STM32_PLLOUT_MIN        16000000
 

@@ -165,7 +165,7 @@
 #define STM32_PLLVCO_MAX        432000000
 
 /**
- * @brief   Maximum PLLs VCO clock frequency.
+ * @brief   Minimum PLLs VCO clock frequency.
  */
 #define STM32_PLLVCO_MIN        192000000
 

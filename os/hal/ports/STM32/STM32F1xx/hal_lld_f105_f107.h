@@ -71,7 +71,7 @@
 #define STM32_PLL1IN_MAX        12000000
 
 /**
- * @brief   Maximum PLL1 input clock frequency.
+ * @brief   Minimum PLL1 input clock frequency.
  */
 #define STM32_PLL1IN_MIN        3000000
 
@@ -81,7 +81,7 @@
 #define STM32_PLL23IN_MAX       5000000
 
 /**
- * @brief   Maximum PLL2 and PLL3 input clock frequency.
+ * @brief   Minimum PLL2 and PLL3 input clock frequency.
  */
 #define STM32_PLL23IN_MIN       3000000
 
@@ -91,7 +91,7 @@
 #define STM32_PLL1VCO_MAX       144000000
 
 /**
- * @brief   Maximum PLL1 VCO clock frequency.
+ * @brief   Minimum PLL1 VCO clock frequency.
  */
 #define STM32_PLL1VCO_MIN       36000000
 
@@ -101,7 +101,7 @@
 #define STM32_PLL23VCO_MAX      148000000
 
 /**
- * @brief   Maximum PLL2 and PLL3 VCO clock frequency.
+ * @brief   Minimum PLL2 and PLL3 VCO clock frequency.
  */
 #define STM32_PLL23VCO_MIN      80000000
 
