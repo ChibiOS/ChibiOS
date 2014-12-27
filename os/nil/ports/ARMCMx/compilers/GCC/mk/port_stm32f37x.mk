@@ -8,7 +8,7 @@ PORTASM = $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/nilcoreasm_v7m.s
 
 PORTINC = ${CHIBIOS}/os/ext/CMSIS/include \
           ${CHIBIOS}/os/ext/CMSIS/ST \
-          ${CHIBIOS}/os/common/ports/ARMCMx/devices/STM32F37x \
+          ${CHIBIOS}/os/common/ports/ARMCMx/devices/STM32F3xx \
           ${CHIBIOS}/os/nil/ports/ARMCMx \
           ${CHIBIOS}/os/nil/ports/ARMCMx/compilers/GCC
 
