@@ -21,47 +21,19 @@
 							<builder id="org.eclipse.cdt.build.core.settings.default.builder.60051613" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.1924496340" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.2010200543" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
-								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.322767025" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/Users/derek/Documents/Arm/gcc-arm-none-eabi-4_8-2014q2/arm-none-eabi/include"/>
-									<listOptionValue builtIn="false" value="/Users/derek/Documents/Arm/gcc-arm-none-eabi-4_8-2014q2/lib/gcc/arm-none-eabi/4.8.4/include"/>
-								</option>
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.322767025" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath"/>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.470445941" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1228244998" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder">
-								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1607513453" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/Users/derek/Documents/Arm/gcc-arm-none-eabi-4_8-2014q2/arm-none-eabi/include"/>
-									<listOptionValue builtIn="false" value="/Users/derek/Documents/Arm/gcc-arm-none-eabi-4_8-2014q2/lib/gcc/arm-none-eabi/4.8.4/include"/>
-								</option>
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1607513453" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath"/>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1227387683" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.815556380" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
-								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.471328015" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/Users/derek/Documents/Arm/gcc-arm-none-eabi-4_8-2014q2/arm-none-eabi/include"/>
-									<listOptionValue builtIn="false" value="/Users/derek/Documents/Arm/gcc-arm-none-eabi-4_8-2014q2/lib/gcc/arm-none-eabi/4.8.4/include"/>
-								</option>
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.471328015" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath"/>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.102526265" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<folderInfo id="0.1185372693.2044918748" name="/" resourcePath="os">
-						<toolChain id="org.eclipse.cdt.build.core.prefbase.toolchain.39349105" name="No ToolChain" superClass="org.eclipse.cdt.build.core.prefbase.toolchain" unusedChildren="">
-							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.1896099158" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs.1924496340"/>
-							<tool id="org.eclipse.cdt.build.core.settings.holder.7346007" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder.2010200543">
-								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1898781911" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
-							</tool>
-							<tool id="org.eclipse.cdt.build.core.settings.holder.1324990428" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder.1228244998">
-								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1371061167" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
-							</tool>
-							<tool id="org.eclipse.cdt.build.core.settings.holder.253593711" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder.815556380">
-								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1101287136" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
-							</tool>
-						</toolChain>
-					</folderInfo>
-					<fileInfo id="0.1185372693.521838749" name="main.c" rcbsApplicability="disable" resourcePath="main.c" toolsToInvoke="org.eclipse.cdt.build.core.settings.holder.815556380.937572704">
-						<tool id="org.eclipse.cdt.build.core.settings.holder.815556380.937572704" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder.2010200543">
-							<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1167940481" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
-						</tool>
-					</fileInfo>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
@@ -70,12 +42,12 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="RT-MCHCK-K20-GPT.null.1419560058" name="RT-MCHCK-K20-GPT"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="0.1185372693">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"/>
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
 </cproject>

@@ -28,7 +28,7 @@
 		<link>
 			<name>os</name>
 			<type>2</type>
-			<locationURI>PARENT-3-CHIBIOS</locationURI>
+			<locationURI>CHIBIOS/os</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
