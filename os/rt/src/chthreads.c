@@ -24,7 +24,6 @@
  *
  * @addtogroup threads
  * @details Threads related APIs and services.
- *
  *          <h2>Operation mode</h2>
  *          A thread is an abstraction of an independent instructions flow.
  *          In ChibiOS/RT a thread is represented by a "C" function owning

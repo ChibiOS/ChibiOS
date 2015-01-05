@@ -24,7 +24,6 @@
  *
  * @addtogroup binary_semaphores
  * @details Binary semaphores related APIs and services.
- *
  *          <h2>Operation mode</h2>
  *          Binary semaphores are implemented as a set of inline functions
  *          that use the existing counting semaphores primitives. The

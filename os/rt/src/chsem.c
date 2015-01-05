@@ -24,7 +24,6 @@
  *
  * @addtogroup semaphores
  * @details Semaphores related APIs and services.
- *
  *          <h2>Operation mode</h2>
  *          Semaphores are a flexible synchronization primitive, ChibiOS/RT
  *          implements semaphores in their "counting semaphores" variant as

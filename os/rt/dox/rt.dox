@@ -150,11 +150,6 @@
  */
 
 /**
- * @defgroup data_files Abstract File Streams
- * @ingroup streams
- */
-
-/**
  * @defgroup registry Registry
  * @ingroup kernel
  */

@@ -24,7 +24,6 @@
  *
  * @addtogroup registry
  * @details Threads Registry related APIs and services.
- *
  *          <h2>Operation mode</h2>
  *          The Threads Registry is a double linked list that holds all the
  *          active threads in the system.<br>

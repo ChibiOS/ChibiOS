@@ -24,7 +24,6 @@
  *
  * @addtogroup mutexes
  * @details Mutexes related APIs and services.
- *
  *          <h2>Operation mode</h2>
  *          A mutex is a threads synchronization object that can be in two
  *          distinct states:
