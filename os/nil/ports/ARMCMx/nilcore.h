@@ -72,9 +72,9 @@
  */
 #define CORTEX_M0                       0   /**< @brief Cortex-M0 variant.  */
 #define CORTEX_M0PLUS                   1   /**< @brief Cortex-M0+ variant. */
-#define CORTEX_M1                       2   /**< @brief Cortex-M1 variant.  */
-#define CORTEX_M3                       3   /**< @brief Cortex-M3 variant.  */
-#define CORTEX_M4                       4   /**< @brief Cortex-M4 variant.  */
+#define CORTEX_M1                       10  /**< @brief Cortex-M1 variant.  */
+#define CORTEX_M3                       30  /**< @brief Cortex-M3 variant.  */
+#define CORTEX_M4                       40  /**< @brief Cortex-M4 variant.  */
 /** @} */
 
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
