@@ -1,14 +1,14 @@
 *****************************************************************************
-** ChibiOS/RT HAL - USB-CDC driver demo for STM32F30x.                     **
+** ChibiOS/RT HAL - USB-CDC driver demo for STM32F072.                     **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an ST STM32F3-Discovery board.
+The demo runs on an ST STM32F072B-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F30x USB driver.
+The application demonstrates the use of the STM32F072 USB driver.
 
 ** Build Procedure **
 

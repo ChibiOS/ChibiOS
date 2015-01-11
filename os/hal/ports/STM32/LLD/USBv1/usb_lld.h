@@ -71,7 +71,8 @@
 /**
  * @brief   USB1 interrupt priority level setting.
  */
-#if !defined(STM32_USB_USB1_HP_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#if (!defined(STM32_USB_USB1_HP_IRQ_PRIORITY) &&                           \
+     (STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER)) || defined(__DOXYGEN__)
 #define STM32_USB_USB1_HP_IRQ_PRIORITY      13
 #endif
 
@@ -95,6 +96,7 @@
 #endif
 
 #if STM32_USB_USE_USB1 &&                                                   \
+    (STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER) &&                       \
     !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_USB_USB1_HP_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USB HP"
 #endif

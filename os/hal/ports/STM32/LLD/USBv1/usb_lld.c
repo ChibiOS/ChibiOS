@@ -448,7 +448,9 @@ void usb_lld_start(USBDriver *usbp) {
       STM32_USB->CNTR = CNTR_FRES;
       /* Enabling the USB IRQ vectors, this also gives enough time to allow
          the transceiver power up (1uS).*/
+#if STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER
       nvicEnableVector(STM32_USB1_HP_NUMBER, STM32_USB_USB1_HP_IRQ_PRIORITY);
+#endif
       nvicEnableVector(STM32_USB1_LP_NUMBER, STM32_USB_USB1_LP_IRQ_PRIORITY);
       /* Releases the USB reset.*/
       STM32_USB->CNTR = 0;
@@ -473,7 +475,9 @@ void usb_lld_stop(USBDriver *usbp) {
   if (usbp->state == USB_STOP) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
+#if STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER
       nvicDisableVector(STM32_USB1_HP_NUMBER);
+#endif
       nvicDisableVector(STM32_USB1_LP_NUMBER);
       STM32_USB->CNTR = CNTR_PDWN | CNTR_FRES;
       rccDisableUSB(FALSE);
