@@ -127,6 +127,7 @@ namespace chibios_rt {
     static bool isTimeWithin(systime_t start, systime_t end);
   };
 
+#if CH_CFG_USE_MEMCORE || defined(__DOXYGEN__)
   /*------------------------------------------------------------------------*
    * chibios_rt::System                                                     *
    *------------------------------------------------------------------------*/
@@ -173,6 +174,7 @@ namespace chibios_rt {
      */
     static size_t getStatus(void);
   };
+#endif /* CH_CFG_USE_MEMCORE */
 
   /*------------------------------------------------------------------------*
    * chibios_rt::Timer                                                      *

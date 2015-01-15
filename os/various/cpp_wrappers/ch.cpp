@@ -66,6 +66,7 @@ namespace chibios_rt {
   /*------------------------------------------------------------------------*
    * chibios_rt::Core                                                       *
    *------------------------------------------------------------------------*/
+#if CH_CFG_USE_MEMCORE
   void *Core::alloc(size_t size) {
 
     return chCoreAlloc(size);
@@ -80,6 +81,7 @@ namespace chibios_rt {
 
     return chCoreGetStatusX();
   }
+#endif /* CH_CFG_USE_MEMCORE */
 
   /*------------------------------------------------------------------------*
    * chibios_rt::Timer                                                      *
