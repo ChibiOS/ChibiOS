@@ -300,8 +300,6 @@ static inline bool chVTIsTimeWithinX(systime_t time,
  */
 static inline bool chVTIsSystemTimeWithinX(systime_t start, systime_t end) {
 
-  chDbgCheckClassI();
-
   return chVTIsTimeWithinX(chVTGetSystemTimeX(), start, end);
 }
 
