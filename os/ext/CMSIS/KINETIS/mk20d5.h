@@ -505,46 +505,18 @@ typedef struct {
        uint8_t  RESERVED20[3];
   __IO uint8_t  USB0_BDTPAGE3;       // 0xB4
        uint8_t  RESERVED21[11];
-  __IO uint8_t  USB0_ENDPT0;         // 0xC0
-       uint8_t  RESERVED22[3];
-  __IO uint8_t  USB0_ENDPT1;         // 0xC4
-       uint8_t  RESERVED23[3];
-  __IO uint8_t  USB0_ENDPT2;         // 0xC8
-       uint8_t  RESERVED24[3];
-  __IO uint8_t  USB0_ENDPT3;         // 0xCC
-       uint8_t  RESERVED25[3];
-  __IO uint8_t  USB0_ENDPT4;         // 0xD0
-       uint8_t  RESERVED26[3];
-  __IO uint8_t  USB0_ENDPT5;         // 0xD4
-       uint8_t  RESERVED27[3];
-  __IO uint8_t  USB0_ENDPT6;         // 0xD8
-       uint8_t  RESERVED28[3];
-  __IO uint8_t  USB0_ENDPT7;         // 0xDC
-       uint8_t  RESERVED29[3];
-  __IO uint8_t  USB0_ENDPT8;         // 0xE0
-       uint8_t  RESERVED30[3];
-  __IO uint8_t  USB0_ENDPT9;         // 0xE4
-       uint8_t  RESERVED31[3];
-  __IO uint8_t  USB0_ENDPT10;        // 0xE8
-       uint8_t  RESERVED32[3];
-  __IO uint8_t  USB0_ENDPT11;        // 0xEC
-       uint8_t  RESERVED33[3];
-  __IO uint8_t  USB0_ENDPT12;        // 0xF0
-       uint8_t  RESERVED34[3];
-  __IO uint8_t  USB0_ENDPT13;        // 0xF4
-       uint8_t  RESERVED35[3];
-  __IO uint8_t  USB0_ENDPT14;        // 0xF8
-       uint8_t  RESERVED36[3];
-  __IO uint8_t  USB0_ENDPT15;        // 0xFC
-       uint8_t  RESERVED37[3];
+  struct {
+    __IO uint8_t  V;                 // 0xC0
+         uint8_t  RESERVED[3];
+  } USB0_ENDPT[16];
   __IO uint8_t  USB0_USBCTRL;        // 0x100
-       uint8_t  RESERVED38[3];
+       uint8_t  RESERVED22[3];
   __I  uint8_t  USB0_OBSERVE;        // 0x104
-       uint8_t  RESERVED39[3];
+       uint8_t  RESERVED23[3];
   __IO uint8_t  USB0_CONTROL;        // 0x108
-       uint8_t  RESERVED40[3];
+       uint8_t  RESERVED24[3];
   __IO uint8_t  USB0_USBTRC0;        // 0x10C
-       uint8_t  RESERVED41[7];
+       uint8_t  RESERVED25[7];
   __IO uint8_t  USB0_USBFRMADJUST;   // 0x114
 } USBOTG_TypeDef;
 
