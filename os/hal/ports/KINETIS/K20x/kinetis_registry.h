@@ -48,6 +48,9 @@
 /* I2C attributes.*/
 #define KINETIS_I2C0_IRQ_VECTOR     Vector6C
 
+/* USB attributes */
+#define KINETIS_USB_IRQ_VECTOR      VectorCC
+
 /** @} */
 
 #endif /* _KINETIS_REGISTRY_H_ */
