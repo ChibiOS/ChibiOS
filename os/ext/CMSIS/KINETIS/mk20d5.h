@@ -461,63 +461,63 @@ typedef struct
 } WDOG_TypeDef;
 
 typedef struct {
-  __I  uint8_t  USB0_PERID;          // 0x00
+  __I  uint8_t  PERID;               // 0x00
        uint8_t  RESERVED0[3];
-  __I  uint8_t  USB0_IDCOMP;         // 0x04
+  __I  uint8_t  IDCOMP;              // 0x04
        uint8_t  RESERVED1[3];
-  __I  uint8_t  USB0_REV;            // 0x08
+  __I  uint8_t  REV;                 // 0x08
        uint8_t  RESERVED2[3];
-  __I  uint8_t  USB0_ADDINFO;        // 0x0C
+  __I  uint8_t  ADDINFO;             // 0x0C
        uint8_t  RESERVED3[3];
-  __IO uint8_t  USB0_OTGISTAT;       // 0x10
+  __IO uint8_t  OTGISTAT;            // 0x10
        uint8_t  RESERVED4[3];
-  __IO uint8_t  USB0_OTGICR;         // 0x14
+  __IO uint8_t  OTGICR;              // 0x14
        uint8_t  RESERVED5[3];
-  __IO uint8_t  USB0_OTGSTAT;        // 0x18
+  __IO uint8_t  OTGSTAT;             // 0x18
        uint8_t  RESERVED6[3];
-  __IO uint8_t  USB0_OTGCTL;         // 0x1C
+  __IO uint8_t  OTGCTL;              // 0x1C
        uint8_t  RESERVED7[99];
-  __IO uint8_t  USB0_ISTAT;          // 0x80
+  __IO uint8_t  ISTAT;               // 0x80
        uint8_t  RESERVED8[3];
-  __IO uint8_t  USB0_INTEN;          // 0x84
+  __IO uint8_t  INTEN;               // 0x84
        uint8_t  RESERVED9[3];
-  __IO uint8_t  USB0_ERRSTAT;        // 0x88
+  __IO uint8_t  ERRSTAT;             // 0x88
        uint8_t  RESERVED10[3];
-  __IO uint8_t  USB0_ERREN;          // 0x8C
+  __IO uint8_t  ERREN;               // 0x8C
        uint8_t  RESERVED11[3];
-  __I  uint8_t  USB0_STAT;           // 0x90
+  __I  uint8_t  STAT;                // 0x90
        uint8_t  RESERVED12[3];
-  __IO uint8_t  USB0_CTL;            // 0x94
+  __IO uint8_t  CTL;                 // 0x94
        uint8_t  RESERVED13[3];
-  __IO uint8_t  USB0_ADDR;           // 0x98
+  __IO uint8_t  ADDR;                // 0x98
        uint8_t  RESERVED14[3];
-  __IO uint8_t  USB0_BDTPAGE1;       // 0x9C
+  __IO uint8_t  BDTPAGE1;            // 0x9C
        uint8_t  RESERVED15[3];
-  __IO uint8_t  USB0_FRMNUML;        // 0xA0
+  __IO uint8_t  FRMNUML;             // 0xA0
        uint8_t  RESERVED16[3];
-  __IO uint8_t  USB0_FRMNUMH;        // 0xA4
+  __IO uint8_t  FRMNUMH;             // 0xA4
        uint8_t  RESERVED17[3];
-  __IO uint8_t  USB0_TOKEN;          // 0xA8
+  __IO uint8_t  TOKEN;               // 0xA8
        uint8_t  RESERVED18[3];
-  __IO uint8_t  USB0_SOFTHLD;        // 0xAC
+  __IO uint8_t  SOFTHLD;             // 0xAC
        uint8_t  RESERVED19[3];
-  __IO uint8_t  USB0_BDTPAGE2;       // 0xB0
+  __IO uint8_t  BDTPAGE2;            // 0xB0
        uint8_t  RESERVED20[3];
-  __IO uint8_t  USB0_BDTPAGE3;       // 0xB4
+  __IO uint8_t  BDTPAGE3;            // 0xB4
        uint8_t  RESERVED21[11];
   struct {
     __IO uint8_t  V;                 // 0xC0
          uint8_t  RESERVED[3];
-  } USB0_ENDPT[16];
-  __IO uint8_t  USB0_USBCTRL;        // 0x100
+  } ENDPT[16];
+  __IO uint8_t  USBCTRL;             // 0x100
        uint8_t  RESERVED22[3];
-  __I  uint8_t  USB0_OBSERVE;        // 0x104
+  __I  uint8_t  OBSERVE;             // 0x104
        uint8_t  RESERVED23[3];
-  __IO uint8_t  USB0_CONTROL;        // 0x108
+  __IO uint8_t  CONTROL;             // 0x108
        uint8_t  RESERVED24[3];
-  __IO uint8_t  USB0_USBTRC0;        // 0x10C
+  __IO uint8_t  USBTRC0;             // 0x10C
        uint8_t  RESERVED25[7];
-  __IO uint8_t  USB0_USBFRMADJUST;   // 0x114
+  __IO uint8_t  USBFRMADJUST;        // 0x114
 } USBOTG_TypeDef;
 
 /****************************************************************/
@@ -2323,5 +2323,71 @@ typedef struct {
 
 /*********  Bits definition for WDOG_PRESC register  ************/
 #define WDOG_PRESC_PRESCVAL          ((uint16_t)0x0700)
+
+/****************************************************************/
+/*                                                              */
+/*                         USB OTG                              */
+/*                                                              */
+/****************************************************************/
+/********  Bits definition for USBx_ISTAT register  *************/
+#define USBx_ISTAT_STALL             ((uint8_t)0x80) /*!< Stall interrupt */
+#define USBx_ISTAT_ATTACH            ((uint8_t)0x40) /*!< Attach interrupt */
+#define USBx_ISTAT_RESUME            ((uint8_t)0x20) /*!< Signal remote wakeup on the bus */
+#define USBx_ISTAT_SLEEP             ((uint8_t)0x10) /*!< Detected bus idle for 3ms */
+#define USBx_ISTAT_TOKDNE            ((uint8_t)0x08) /*!< Completed processing of current token */
+#define USBx_ISTAT_SOFTOK            ((uint8_t)0x04) /*!< Received start of frame */
+#define USBx_ISTAT_ERROR             ((uint8_t)0x02) /*!< Error (must check ERRSTAT!) */
+#define USBx_ISTAT_USBRST            ((uint8_t)0x01) /*!< USB reset detected */
+
+/********  Bits definition for USBx_ERRSTAT register  ***********/
+#define USBx_ERRSTAT_BTSERR          ((uint8_t)0x80) /*!< Bit stuff error detected */
+#define USBx_ERRSTAT_DMAERR          ((uint8_t)0x20) /*!< DMA request was not given */
+#define USBx_ERRSTAT_BTOERR          ((uint8_t)0x10) /*!< BUS turnaround timeout error */
+#define USBx_ERRSTAT_DFN8            ((uint8_t)0x08) /*!< Received data not 8-bit sized */
+#define USBx_ERRSTAT_CRC16           ((uint8_t)0x04) /*!< Packet with CRC16 error */
+#define USBx_ERRSTAT_CRC5EOF         ((uint8_t)0x02) /*!< CRC5 (device) or EOF (host) error */
+#define USBx_ERRSTAT_PIDERR          ((uint8_t)0x01) /*!< PID check field fail */
+
+/******** Bits definition for USBx_CTL register *****************/
+#define USBx_CTL_JSTATE              ((uint8_t)0x80) /*!< Live USB differential receiver JSTATE signal */
+#define USBx_CTL_SE0                 ((uint8_t)0x40) /*!< Live USB single ended zero signal */
+#define USBx_CTL_TXSUSPENDTOKENBUS   ((uint8_t)0x20) /*!<  */
+#define USBx_CTL_RESET               ((uint8_t)0x10) /*!< Generates an USB reset signal (host mode) */
+#define USBx_CTL_HOSTMODEEN          ((uint8_t)0x08) /*!< Operate in Host mode */
+#define USBx_CTL_RESUME              ((uint8_t)0x04) /*!< Executes resume signaling */
+#define USBx_CTL_ODDRST              ((uint8_t)0x02) /*!< Reset all BDT ODD ping/pong bits */
+#define USBx_CTL_USBENSOFEN          ((uint8_t)0x01) /*!< USB Enable! */
+
+/******** Bits definition for USBx_INTEN register ***************/
+#define USBx_INTEN_STALLEN           ((uint8_t)0x80) /*!< STALL interrupt enable */
+#define USBx_INTEN_ATTACHEN          ((uint8_t)0x40) /*!< ATTACH interrupt enable */
+#define USBx_INTEN_RESUMEEN          ((uint8_t)0x20) /*!< RESUME interrupt enable */
+#define USBx_INTEN_SLEEPEN           ((uint8_t)0x10) /*!< SLEEP interrupt enable */
+#define USBx_INTEN_TOKDNEEN          ((uint8_t)0x08) /*!< TOKDNE interrupt enable */
+#define USBx_INTEN_SOFTOKEN          ((uint8_t)0x04) /*!< SOFTOK interrupt enable */
+#define USBx_INTEN_ERROREN           ((uint8_t)0x02) /*!< ERROR interrupt enable */
+#define USBx_INTEN_USBRSTEN          ((uint8_t)0x01) /*!< USBRST interrupt enable */
+
+/******** Bits definition for USBx_ENDPTn register **************/
+#define USBx_ENDPTn_HOSTWOHUB        ((uint8_t)0x80)
+#define USBx_ENDPTn_RETRYDIS         ((uint8_t)0x40)
+#define USBx_ENDPTn_EPCTLDIS         ((uint8_t)0x10) /*!< Disables control transfers */
+#define USBx_ENDPTn_EPRXEN           ((uint8_t)0x08) /*!< Enable RX transfers */
+#define USBx_ENDPTn_EPTXEN           ((uint8_t)0x04) /*!< Enable TX transfers */
+#define USBx_ENDPTn_EPSTALL          ((uint8_t)0x02) /*!< Endpoint is called and in STALL */
+#define USBx_ENDPTn_EPHSHK           ((uint8_t)0x01) /*!< Enable handshaking during transaction */
+
+/******** Bits definition for USBx_CTRL register ****************/
+#define USBx_CTRL_SUSP               ((uint8_t)0x80) /*!< USB transceiver in suspend state */
+#define USBx_CTRL_PDE                ((uint8_t)0x40) /*!< Enable weak pull-downs */
+
+/******** Bits definition for USBx_USBTRC0 register *************/
+#define USBx_USBTRC0_USBRESET        ((uint8_t)0x80) /*!< USB reset */
+#define USBx_USBTRC0_USBRESMEN       ((uint8_t)0x20) /*!< Asynchronous resume interrupt enable */
+#define USBx_USBTRC0_SYNC_DET        ((uint8_t)0x02) /*!< Synchronous USB interrupt detect */
+#define USBx_USBTRC0_USB_RESUME_INT  ((uint8_t)0x01) /*!< USB asynchronous interrupt */
+
+/******** Bits definition for USBx_CONTROL register *************/
+#define USBx_CONTROL_DPPULLUPNONOTG  ((uint8_t)0x10) /*!< Control pull-ups in device mode */
 
 #endif
