@@ -139,8 +139,6 @@ void stm32_clock_init(void) {
 #if !STM32_NO_INIT
   /* HSI setup, it enforces the reset situation in order to handle possible
      problems with JTAG probes and re-initializations.*/
-  /* HSI setup, it enforces the reset situation in order to handle possible
-     problems with JTAG probes and re-initializations.*/
   RCC->CR |= RCC_CR_HSION;                  /* Make sure HSI is ON.         */
   while (!(RCC->CR & RCC_CR_HSIRDY))
     ;                                       /* Wait until HSI is stable.    */
