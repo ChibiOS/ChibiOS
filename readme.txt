@@ -72,6 +72,8 @@
 *****************************************************************************
 
 *** 2.6.7 ***
+- FIX: Fixed STM32 USB driver randomly unable to transition to VALID state
+  (bug #554).
 - FIX: Fixed OLIMEX STM32-E407 board.h errors (FAULT input swap and wrong
   BUSON initial output state) (bug #551).
 - FIX: Fixed STM32F3xx clock init fails if PLL is enabled at startup
