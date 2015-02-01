@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT HAL - IRQ_STORM stress test demo for STM32F4xx.              **
+** ChibiOS/HAL - IRQ_STORM stress test demo for STM32F4xx.                 **
 *****************************************************************************
 
 ** TARGET **

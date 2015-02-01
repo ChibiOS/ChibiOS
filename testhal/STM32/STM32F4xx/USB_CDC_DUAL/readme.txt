@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL - PWM-ICU drivers demo for STM32F4xx.                       **
+** ChibiOS/HAL - USB-CDC driver demo for STM32.                            **
 *****************************************************************************
 
 ** TARGET **
@@ -8,11 +8,7 @@ The demo runs on an STMicroelectronics STM32F4-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F4xx PWM-ICU drivers.
-
-** Board Setup **
-
-- Connect PA8 and PC6 together.
+The application demonstrates the use of the STM32 USB (OTG) driver.
 
 ** Build Procedure **
 
