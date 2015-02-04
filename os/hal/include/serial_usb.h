@@ -60,13 +60,31 @@
 /** @} */
 
 /**
- * @name    CDC related constants
+ * @name    CDC classes
  * @{
  */
 #define CDC_COMMUNICATION_INTERFACE_CLASS   0x02
 #define CDC_DATA_INTERFACE_CLASS            0x0A
+/** @} */
+
+/**
+ * @name    CDC subclasses
+ * @{
+ */
 #define CDC_ABSTRACT_CONTROL_MODEL          0x02
+/** @} */
+
+/**
+ * @name    CDC descriptors
+ * @{
+ */
 #define CDC_CS_INTERFACE                    0x24
+/** @} */
+
+/**
+ * @name    CDC subdescriptors
+ * @{
+ */
 #define CDC_HEADER                          0x00
 #define CDC_CALL_MANAGEMENT                 0x01
 #define CDC_ABSTRACT_CONTROL_MANAGEMENT     0x02
@@ -77,15 +95,15 @@
  * @name    Line Control bit definitions.
  * @{
  */
-#define LC_STOP_1                       0
-#define LC_STOP_1P5                     1
-#define LC_STOP_2                       2
+#define LC_STOP_1                           0
+#define LC_STOP_1P5                         1
+#define LC_STOP_2                           2
 
-#define LC_PARITY_NONE                  0
-#define LC_PARITY_ODD                   1
-#define LC_PARITY_EVEN                  2
-#define LC_PARITY_MARK                  3
-#define LC_PARITY_SPACE                 4
+#define LC_PARITY_NONE                      0
+#define LC_PARITY_ODD                       1
+#define LC_PARITY_EVEN                      2
+#define LC_PARITY_MARK                      3
+#define LC_PARITY_SPACE                     4
 /** @} */
 
 /*===========================================================================*/

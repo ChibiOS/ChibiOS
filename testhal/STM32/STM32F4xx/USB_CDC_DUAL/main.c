@@ -26,8 +26,11 @@
 
 #include "usbcfg.h"
 
-/* Virtual serial port over USB.*/
+/*
+ * Virtual serial ports over USB.
+ */
 SerialUSBDriver SDU1;
+SerialUSBDriver SDU2;
 
 /*===========================================================================*/
 /* Command line related.                                                     */
@@ -131,6 +134,11 @@ static const ShellConfig shell_cfg1 = {
   commands
 };
 
+static const ShellConfig shell_cfg2 = {
+  (BaseSequentialStream *)&SDU2,
+  commands
+};
+
 /*===========================================================================*/
 /* Generic code.                                                             */
 /*===========================================================================*/
@@ -146,7 +154,7 @@ static msg_t Thread1(void *arg) {
   while (true) {
     systime_t time;
 
-    time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
+    time = serusbcfg1.usbp->state == USB_ACTIVE ? 250 : 500;
     palClearPad(GPIOD, GPIOD_LED4);
     chThdSleepMilliseconds(time);
     palSetPad(GPIOD, GPIOD_LED4);
@@ -158,7 +166,8 @@ static msg_t Thread1(void *arg) {
  * Application entry point.
  */
 int main(void) {
-  thread_t *shelltp = NULL;
+  thread_t *shelltp1 = NULL;
+  thread_t *shelltp2 = NULL;
 
   /*
    * System initializations.
@@ -171,31 +180,22 @@ int main(void) {
   chSysInit();
 
   /*
-   * Initializes a serial-over-USB CDC driver.
+   * Initializes two serial-over-USB CDC drivers.
    */
   sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+  sduStart(&SDU1, &serusbcfg1);
+  sduObjectInit(&SDU2);
+  sduStart(&SDU2, &serusbcfg2);
 
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
    * Note, a delay is inserted in order to not have to disconnect the cable
    * after a reset.
    */
-  usbDisconnectBus(serusbcfg.usbp);
+  usbDisconnectBus(serusbcfg1.usbp);
   chThdSleepMilliseconds(1500);
-  usbStart(serusbcfg.usbp, &usbcfg);
-  usbConnectBus(serusbcfg.usbp);
-
-  /*
-   * Stopping and restarting the USB in order to test the stop procedure. The
-   * following lines are not usually required.
-   */
-  chThdSleepMilliseconds(3000);
-  usbDisconnectBus(serusbcfg.usbp);
-  usbStop(serusbcfg.usbp);
-  chThdSleepMilliseconds(1500);
-  usbStart(serusbcfg.usbp, &usbcfg);
-  usbConnectBus(serusbcfg.usbp);
+  usbStart(serusbcfg1.usbp, &usbcfg);
+  usbConnectBus(serusbcfg1.usbp);
 
   /*
    * Shell manager initialization.
@@ -203,7 +203,7 @@ int main(void) {
   shellInit();
 
   /*
-   * Creates the blinker thread.
+   * Creates the blinker threads.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
@@ -212,11 +212,17 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
-    if (!shelltp && (SDU1.config->usbp->state == USB_ACTIVE))
-      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
-    else if (chThdTerminatedX(shelltp)) {
-      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
-      shelltp = NULL;           /* Triggers spawning of a new shell.        */
+    if (!shelltp1 && (SDU1.config->usbp->state == USB_ACTIVE))
+      shelltp1 = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
+    else if (chThdTerminatedX(shelltp1)) {
+      chThdRelease(shelltp1);   /* Recovers memory of the previous shell.   */
+      shelltp1 = NULL;          /* Triggers spawning of a new shell.        */
+    }
+    if (!shelltp2 && (SDU2.config->usbp->state == USB_ACTIVE))
+      shelltp2 = shellCreate(&shell_cfg2, SHELL_WA_SIZE, NORMALPRIO);
+    else if (chThdTerminatedX(shelltp2)) {
+      chThdRelease(shelltp2);   /* Recovers memory of the previous shell.   */
+      shelltp2 = NULL;          /* Triggers spawning of a new shell.        */
     }
     chThdSleepMilliseconds(1000);
   }

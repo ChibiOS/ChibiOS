@@ -34,6 +34,9 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+#define USB_ENDPOINT_OUT(ep)                (ep)
+#define USB_ENDPOINT_IN(ep)                 ((ep) | 0x80)
+
 #define USB_RTYPE_DIR_MASK                  0x80
 #define USB_RTYPE_DIR_HOST2DEV              0x00
 #define USB_RTYPE_DIR_DEV2HOST              0x80
@@ -111,6 +114,11 @@
   (uint8_t)((bcd) & 255),                                                   \
   (uint8_t)(((bcd) >> 8) & 255)
 
+/*
+ * @define  Device Descriptor size.
+ */
+#define USB_DESC_DEVICE_SIZE                18
+
 /**
  * @brief   Device Descriptor helper macro.
  */
@@ -118,7 +126,7 @@
                         bDeviceProtocol, bMaxPacketSize, idVendor,          \
                         idProduct, bcdDevice, iManufacturer,                \
                         iProduct, iSerialNumber, bNumConfigurations)        \
-  USB_DESC_BYTE(18),                                                        \
+  USB_DESC_BYTE(USB_DESC_DEVICE_SIZE),                                      \
   USB_DESC_BYTE(USB_DESCRIPTOR_DEVICE),                                     \
   USB_DESC_BCD(bcdUSB),                                                     \
   USB_DESC_BYTE(bDeviceClass),                                              \
@@ -134,12 +142,17 @@
   USB_DESC_BYTE(bNumConfigurations)
 
 /**
+ * @brief   Configuration Descriptor size.
+ */
+#define USB_DESC_CONFIGURATION_SIZE         9
+
+/**
  * @brief   Configuration Descriptor helper macro.
  */
 #define USB_DESC_CONFIGURATION(wTotalLength, bNumInterfaces,                \
                                bConfigurationValue, iConfiguration,         \
                                bmAttributes, bMaxPower)                     \
-  USB_DESC_BYTE(9),                                                         \
+  USB_DESC_BYTE(USB_DESC_CONFIGURATION_SIZE),                               \
   USB_DESC_BYTE(USB_DESCRIPTOR_CONFIGURATION),                              \
   USB_DESC_WORD(wTotalLength),                                              \
   USB_DESC_BYTE(bNumInterfaces),                                            \
@@ -149,13 +162,18 @@
   USB_DESC_BYTE(bMaxPower)
 
 /**
+ * @brief   Interface Descriptor size.
+ */
+#define USB_DESC_INTERFACE_SIZE             9
+
+/**
  * @brief   Interface Descriptor helper macro.
  */
 #define USB_DESC_INTERFACE(bInterfaceNumber, bAlternateSetting,             \
                            bNumEndpoints, bInterfaceClass,                  \
                            bInterfaceSubClass, bInterfaceProtocol,          \
                            iInterface)                                      \
-  USB_DESC_BYTE(9),                                                         \
+  USB_DESC_BYTE(USB_DESC_INTERFACE_SIZE),                                   \
   USB_DESC_BYTE(USB_DESCRIPTOR_INTERFACE),                                  \
   USB_DESC_BYTE(bInterfaceNumber),                                          \
   USB_DESC_BYTE(bAlternateSetting),                                         \
@@ -166,13 +184,18 @@
   USB_DESC_INDEX(iInterface)
 
 /**
+ * @brief   Interface Association Descriptor size.
+ */
+#define USB_DESC_INTERFACE_ASSOCIATION_SIZE 8
+
+/**
  * @brief   Interface Association Descriptor helper macro.
  */
 #define USB_DESC_INTERFACE_ASSOCIATION(bFirstInterface,                     \
                            bInterfaceCount, bFunctionClass,                 \
                            bFunctionSubClass, bFunctionProcotol,            \
                            iInterface)                                      \
-  USB_DESC_BYTE(8),                                                         \
+  USB_DESC_BYTE(USB_DESC_INTERFACE_ASSOCIATION_SIZE),                       \
   USB_DESC_BYTE(USB_DESCRIPTOR_INTERFACE_ASSOCIATION),                      \
   USB_DESC_BYTE(bFirstInterface),                                           \
   USB_DESC_BYTE(bInterfaceCount),                                           \
@@ -182,11 +205,16 @@
   USB_DESC_INDEX(iInterface)
 
 /**
+ * @brief   Endpoint Descriptor size.
+ */
+#define USB_DESC_ENDPOINT_SIZE              7
+
+/**
  * @brief   Endpoint Descriptor helper macro.
  */
 #define USB_DESC_ENDPOINT(bEndpointAddress, bmAttributes, wMaxPacketSize,   \
                           bInterval)                                        \
-  USB_DESC_BYTE(7),                                                         \
+  USB_DESC_BYTE(USB_DESC_ENDPOINT_SIZE),                                    \
   USB_DESC_BYTE(USB_DESCRIPTOR_ENDPOINT),                                   \
   USB_DESC_BYTE(bEndpointAddress),                                          \
   USB_DESC_BYTE(bmAttributes),                                              \
