@@ -289,8 +289,8 @@ void sduConfigureHookI(SerialUSBDriver *sdup) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @return              The hook status.
- * @retval TRUE         Message handled internally.
- * @retval FALSE        Message not handled.
+ * @retval true         Message handled internally.
+ * @retval false        Message not handled.
  */
 bool sduRequestsHook(USBDriver *usbp) {
 
@@ -298,19 +298,19 @@ bool sduRequestsHook(USBDriver *usbp) {
     switch (usbp->setup[1]) {
     case CDC_GET_LINE_CODING:
       usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
-      return TRUE;
+      return true;
     case CDC_SET_LINE_CODING:
       usbSetupTransfer(usbp, (uint8_t *)&linecoding, sizeof(linecoding), NULL);
-      return TRUE;
+      return true;
     case CDC_SET_CONTROL_LINE_STATE:
       /* Nothing to do, there are no control lines.*/
       usbSetupTransfer(usbp, NULL, 0, NULL);
-      return TRUE;
+      return true;
     default:
-      return FALSE;
+      return false;
     }
   }
-  return FALSE;
+  return false;
 }
 
 /**

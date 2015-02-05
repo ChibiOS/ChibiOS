@@ -349,8 +349,8 @@ typedef void (*usbeventcb_t)(USBDriver *usbp, usbevent_t event);
  * @param[in] usbp      pointer to the @p USBDriver object triggering the
  *                      callback
  * @return              The request handling exit code.
- * @retval FALSE        Request not recognized by the handler.
- * @retval TRUE         Request handled.
+ * @retval false        Request not recognized by the handler.
+ * @retval true         Request handled.
  */
 typedef bool (*usbreqhandler_t)(USBDriver *usbp);
 
@@ -425,8 +425,8 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  * @return              The operation status.
- * @retval FALSE        Endpoint ready.
- * @retval TRUE         Endpoint transmitting.
+ * @retval false        Endpoint ready.
+ * @retval true         Endpoint transmitting.
  *
  * @iclass
  */
@@ -438,8 +438,8 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  * @return              The operation status.
- * @retval FALSE        Endpoint ready.
- * @retval TRUE         Endpoint receiving.
+ * @retval false        Endpoint ready.
+ * @retval true         Endpoint receiving.
  *
  * @iclass
  */

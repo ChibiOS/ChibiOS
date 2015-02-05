@@ -29,7 +29,7 @@
 /*
  * Interfaces
  */
-#define USB_NUM_INTERFACES              2
+#define USB_NUM_INTERFACES              4
 #define USB_CDC_CIF_NUM0                0
 #define USB_CDC_DIF_NUM0                1
 #define USB_CDC_CIF_NUM1                2
@@ -64,7 +64,7 @@ static const USBDescriptor vcom_device_descriptor = {
 
 #define CDC_IF_DESC_SET_SIZE                                                \
   (USB_DESC_INTERFACE_SIZE + 5 + 5 + 4 + 5 + USB_DESC_ENDPOINT_SIZE +       \
-   USB_DESC_INTERFACE_SIZE + (USB_DESC_ENDPOINT_SIZE *2))
+   USB_DESC_INTERFACE_SIZE + (USB_DESC_ENDPOINT_SIZE * 2))
 
 #define CDC_IF_DESC_SET(comIfNum, datIfNum, comInEp, datOutEp, datInEp)     \
   /* Interface Descriptor.*/                                                \
@@ -122,17 +122,17 @@ static const USBDescriptor vcom_device_descriptor = {
   USB_DESC_ENDPOINT(                                                        \
     datOutEp,                               /* bEndpointAddress.        */  \
     USB_EP_MODE_TYPE_BULK,                  /* bmAttributes.            */  \
-    0x0040,                    /*ZZZZZ*/    /* wMaxPacketSize.          */  \
+    0x0040,                                 /* wMaxPacketSize.          */  \
     0x00),                                  /* bInterval.               */  \
   /* Endpoint, Bulk IN.*/                                                   \
   USB_DESC_ENDPOINT(                                                        \
     datInEp,                                /* bEndpointAddress.        */  \
     USB_EP_MODE_TYPE_BULK,                  /* bmAttributes.            */  \
-    0x0040,                     /*ZZZZZ*/   /* wMaxPacketSize.          */  \
+    0x0040,                                 /* wMaxPacketSize.          */  \
     0x00)                                   /* bInterval.               */
 
-#define IAD_CDC_IF_DESC_SET_SIZE    (USB_DESC_INTERFACE_ASSOCIATION_SIZE +  \
-                                     CDC_IF_DESC_SET_SIZE)
+#define IAD_CDC_IF_DESC_SET_SIZE                                            \
+  (USB_DESC_INTERFACE_ASSOCIATION_SIZE + CDC_IF_DESC_SET_SIZE)
 
 #define IAD_CDC_IF_DESC_SET(comIfNum, datIfNum, comInEp, datOutEp, datInEp) \
   /* Interface Association Descriptor.*/                                    \
@@ -152,7 +152,7 @@ static const uint8_t vcom_configuration_descriptor_data[] = {
   /* Configuration Descriptor.*/
   USB_DESC_CONFIGURATION(
     USB_DESC_CONFIGURATION_SIZE +
-    (IAD_CDC_IF_DESC_SET_SIZE * 1),         /* wTotalLength.                */
+    (IAD_CDC_IF_DESC_SET_SIZE * 2),         /* wTotalLength.                */
     USB_NUM_INTERFACES,                     /* bNumInterfaces.              */
     0x01,                                   /* bConfigurationValue.         */
     0,                                      /* iConfiguration.              */
@@ -166,13 +166,13 @@ static const uint8_t vcom_configuration_descriptor_data[] = {
     USB_ENDPOINT_OUT(USB_DATA_AVAILABLE_EP_A),
     USB_ENDPOINT_IN(USB_DATA_REQUEST_EP_A)
   ),
-/*  IAD_CDC_IF_DESC_SET(
+  IAD_CDC_IF_DESC_SET(
     USB_CDC_CIF_NUM1,
     USB_CDC_DIF_NUM1,
     USB_ENDPOINT_IN(USB_INTERRUPT_REQUEST_EP_B),
     USB_ENDPOINT_OUT(USB_DATA_AVAILABLE_EP_B),
     USB_ENDPOINT_IN(USB_DATA_REQUEST_EP_B)
-  ),*/
+  ),
 };
 
 /*
@@ -374,12 +374,12 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
          must be used.*/
       usbInitEndpointI(usbp, USB_INTERRUPT_REQUEST_EP_A, &ep1config);
       usbInitEndpointI(usbp, USB_DATA_REQUEST_EP_A, &ep2config);
-//      usbInitEndpointI(usbp, USB_INTERRUPT_REQUEST_EP_B, &ep3config);
-//      usbInitEndpointI(usbp, USB_DATA_REQUEST_EP_B, &ep4config);
+      usbInitEndpointI(usbp, USB_INTERRUPT_REQUEST_EP_B, &ep3config);
+      usbInitEndpointI(usbp, USB_DATA_REQUEST_EP_B, &ep4config);
 
       /* Resetting the state of the CDC subsystem.*/
       sduConfigureHookI(&SDU1);
-//      sduConfigureHookI(&SDU2);
+      sduConfigureHookI(&SDU2);
     }
     else if (usbp->state == USB_SELECTED) {
 //      usbDisableEndpointsI(usbp);
@@ -398,12 +398,26 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
 }
 
 /*
+ * Handling messages not implemented in the default handler nor in the
+ * SerialUSB handler.
+ */
+static bool requests_hook(USBDriver *usbp) {
+
+  if (((usbp->setup[0] & USB_RTYPE_RECIPIENT_MASK) == USB_RTYPE_RECIPIENT_INTERFACE) &&
+      (usbp->setup[1] == USB_REQ_SET_INTERFACE)) {
+    usbSetupTransfer(usbp, NULL, 0, NULL);
+    return true;
+  }
+  return sduRequestsHook(usbp);
+}
+
+/*
  * USB driver configuration.
  */
 const USBConfig usbcfg = {
   usb_event,
   get_descriptor,
-  sduRequestsHook,
+  requests_hook,
   NULL
 };
 

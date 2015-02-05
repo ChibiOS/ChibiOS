@@ -73,8 +73,8 @@ static void set_address(USBDriver *usbp) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @return              The request handling exit code.
- * @retval FALSE        Request not recognized by the handler or error.
- * @retval TRUE         Request handled.
+ * @retval false        Request not recognized by the handler or error.
+ * @retval true         Request handled.
  */
 static bool default_handler(USBDriver *usbp) {
   const USBDescriptor *dp;
@@ -86,25 +86,25 @@ static bool default_handler(USBDriver *usbp) {
   case USB_RTYPE_RECIPIENT_DEVICE | (USB_REQ_GET_STATUS << 8):
     /* Just returns the current status word.*/
     usbSetupTransfer(usbp, (uint8_t *)&usbp->status, 2, NULL);
-    return TRUE;
+    return true;
   case USB_RTYPE_RECIPIENT_DEVICE | (USB_REQ_CLEAR_FEATURE << 8):
     /* Only the DEVICE_REMOTE_WAKEUP is handled here, any other feature
        number is handled as an error.*/
     if (usbp->setup[2] == USB_FEATURE_DEVICE_REMOTE_WAKEUP) {
       usbp->status &= ~2;
       usbSetupTransfer(usbp, NULL, 0, NULL);
-      return TRUE;
+      return true;
     }
-    return FALSE;
+    return false;
   case USB_RTYPE_RECIPIENT_DEVICE | (USB_REQ_SET_FEATURE << 8):
     /* Only the DEVICE_REMOTE_WAKEUP is handled here, any other feature
        number is handled as an error.*/
     if (usbp->setup[2] == USB_FEATURE_DEVICE_REMOTE_WAKEUP) {
       usbp->status |= 2;
       usbSetupTransfer(usbp, NULL, 0, NULL);
-      return TRUE;
+      return true;
     }
-    return FALSE;
+    return false;
   case USB_RTYPE_RECIPIENT_DEVICE | (USB_REQ_SET_ADDRESS << 8):
     /* The SET_ADDRESS handling can be performed here or postponed after
        the status packed depending on the USB_SET_ADDRESS_MODE low
@@ -117,20 +117,20 @@ static bool default_handler(USBDriver *usbp) {
 #else
     usbSetupTransfer(usbp, NULL, 0, set_address);
 #endif
-    return TRUE;
+    return true;
   case USB_RTYPE_RECIPIENT_DEVICE | (USB_REQ_GET_DESCRIPTOR << 8):
     /* Handling descriptor requests from the host.*/
     dp = usbp->config->get_descriptor_cb(
            usbp, usbp->setup[3], usbp->setup[2],
            usbFetchWord(&usbp->setup[4]));
     if (dp == NULL)
-      return FALSE;
+      return false;
     usbSetupTransfer(usbp, (uint8_t *)dp->ud_string, dp->ud_size, NULL);
-    return TRUE;
+    return true;
   case USB_RTYPE_RECIPIENT_DEVICE | (USB_REQ_GET_CONFIGURATION << 8):
     /* Returning the last selected configuration.*/
     usbSetupTransfer(usbp, &usbp->configuration, 1, NULL);
-    return TRUE;
+    return true;
   case USB_RTYPE_RECIPIENT_DEVICE | (USB_REQ_SET_CONFIGURATION << 8):
     /* Handling configuration selection from the host.*/
     usbp->configuration = usbp->setup[2];
@@ -140,43 +140,43 @@ static bool default_handler(USBDriver *usbp) {
       usbp->state = USB_ACTIVE;
     _usb_isr_invoke_event_cb(usbp, USB_EVENT_CONFIGURED);
     usbSetupTransfer(usbp, NULL, 0, NULL);
-    return TRUE;
+    return true;
   case USB_RTYPE_RECIPIENT_INTERFACE | (USB_REQ_GET_STATUS << 8):
   case USB_RTYPE_RECIPIENT_ENDPOINT | (USB_REQ_SYNCH_FRAME << 8):
     /* Just sending two zero bytes, the application can change the behavior
        using a hook..*/
     usbSetupTransfer(usbp, (uint8_t *)zero_status, 2, NULL);
-    return TRUE;
+    return true;
   case USB_RTYPE_RECIPIENT_ENDPOINT | (USB_REQ_GET_STATUS << 8):
     /* Sending the EP status.*/
     if (usbp->setup[4] & 0x80) {
       switch (usb_lld_get_status_in(usbp, usbp->setup[4] & 0x0F)) {
       case EP_STATUS_STALLED:
         usbSetupTransfer(usbp, (uint8_t *)halted_status, 2, NULL);
-        return TRUE;
+        return true;
       case EP_STATUS_ACTIVE:
         usbSetupTransfer(usbp, (uint8_t *)active_status, 2, NULL);
-        return TRUE;
+        return true;
       default:
-        return FALSE;
+        return false;
       }
     }
     else {
       switch (usb_lld_get_status_out(usbp, usbp->setup[4] & 0x0F)) {
       case EP_STATUS_STALLED:
         usbSetupTransfer(usbp, (uint8_t *)halted_status, 2, NULL);
-        return TRUE;
+        return true;
       case EP_STATUS_ACTIVE:
         usbSetupTransfer(usbp, (uint8_t *)active_status, 2, NULL);
-        return TRUE;
+        return true;
       default:
-        return FALSE;
+        return false;
       }
     }
   case USB_RTYPE_RECIPIENT_ENDPOINT | (USB_REQ_CLEAR_FEATURE << 8):
     /* Only ENDPOINT_HALT is handled as feature.*/
     if (usbp->setup[2] != USB_FEATURE_ENDPOINT_HALT)
-      return FALSE;
+      return false;
     /* Clearing the EP status, not valid for EP0, it is ignored in that case.*/
     if ((usbp->setup[4] & 0x0F) > 0) {
       if (usbp->setup[4] & 0x80)
@@ -185,11 +185,11 @@ static bool default_handler(USBDriver *usbp) {
         usb_lld_clear_out(usbp, usbp->setup[4] & 0x0F);
     }
     usbSetupTransfer(usbp, NULL, 0, NULL);
-    return TRUE;
+    return true;
   case USB_RTYPE_RECIPIENT_ENDPOINT | (USB_REQ_SET_FEATURE << 8):
     /* Only ENDPOINT_HALT is handled as feature.*/
     if (usbp->setup[2] != USB_FEATURE_ENDPOINT_HALT)
-      return FALSE;
+      return false;
     /* Stalling the EP, not valid for EP0, it is ignored in that case.*/
     if ((usbp->setup[4] & 0x0F) > 0) {
       if (usbp->setup[4] & 0x80)
@@ -198,7 +198,7 @@ static bool default_handler(USBDriver *usbp) {
         usb_lld_stall_out(usbp, usbp->setup[4] & 0x0F);
     }
     usbSetupTransfer(usbp, NULL, 0, NULL);
-    return TRUE;
+    return true;
   case USB_RTYPE_RECIPIENT_DEVICE | (USB_REQ_SET_DESCRIPTOR << 8):
   case USB_RTYPE_RECIPIENT_INTERFACE | (USB_REQ_CLEAR_FEATURE << 8):
   case USB_RTYPE_RECIPIENT_INTERFACE | (USB_REQ_SET_FEATURE << 8):
@@ -207,7 +207,7 @@ static bool default_handler(USBDriver *usbp) {
     /* All the above requests are not handled here, if you need them then
        use the hook mechanism and provide handling.*/
   default:
-    return FALSE;
+    return false;
   }
 }
 
@@ -367,7 +367,7 @@ void usbDisableEndpointsI(USBDriver *usbp) {
 void usbPrepareReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  osp->rxqueued           = FALSE;
+  osp->rxqueued           = false;
   osp->mode.linear.rxbuf  = buf;
   osp->rxsize             = n;
   osp->rxcnt              = 0;
@@ -393,7 +393,7 @@ void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
                         const uint8_t *buf, size_t n) {
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  isp->txqueued           = FALSE;
+  isp->txqueued           = false;
   isp->mode.linear.txbuf  = buf;
   isp->txsize             = n;
   isp->txcnt              = 0;
@@ -422,7 +422,7 @@ void usbPrepareQueuedReceive(USBDriver *usbp, usbep_t ep,
                              input_queue_t *iqp, size_t n) {
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  osp->rxqueued           = TRUE;
+  osp->rxqueued           = true;
   osp->mode.queue.rxqueue = iqp;
   osp->rxsize             = n;
   osp->rxcnt              = 0;
@@ -448,7 +448,7 @@ void usbPrepareQueuedTransmit(USBDriver *usbp, usbep_t ep,
                               output_queue_t *oqp, size_t n) {
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  isp->txqueued           = TRUE;
+  isp->txqueued           = true;
   isp->mode.queue.txqueue = oqp;
   isp->txsize             = n;
   isp->txcnt              = 0;
@@ -465,8 +465,8 @@ void usbPrepareQueuedTransmit(USBDriver *usbp, usbep_t ep,
  * @param[in] ep        endpoint number
  *
  * @return              The operation status.
- * @retval FALSE        Operation started successfully.
- * @retval TRUE         Endpoint busy, operation not started.
+ * @retval false        Operation started successfully.
+ * @retval true         Endpoint busy, operation not started.
  *
  * @iclass
  */
@@ -476,11 +476,11 @@ bool usbStartReceiveI(USBDriver *usbp, usbep_t ep) {
   osalDbgCheck(usbp != NULL);
 
   if (usbGetReceiveStatusI(usbp, ep))
-    return TRUE;
+    return true;
 
   usbp->receiving |= (1 << ep);
   usb_lld_start_out(usbp, ep);
-  return FALSE;
+  return false;
 }
 
 /**
@@ -492,8 +492,8 @@ bool usbStartReceiveI(USBDriver *usbp, usbep_t ep) {
  * @param[in] ep        endpoint number
  *
  * @return              The operation status.
- * @retval FALSE        Operation started successfully.
- * @retval TRUE         Endpoint busy, operation not started.
+ * @retval false        Operation started successfully.
+ * @retval true         Endpoint busy, operation not started.
  *
  * @iclass
  */
@@ -503,11 +503,11 @@ bool usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
   osalDbgCheck(usbp != NULL);
 
   if (usbGetTransmitStatusI(usbp, ep))
-    return TRUE;
+    return true;
 
   usbp->transmitting |= (1 << ep);
   usb_lld_start_in(usbp, ep);
-  return FALSE;
+  return false;
 }
 
 /**
@@ -517,8 +517,8 @@ bool usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
  * @param[in] ep        endpoint number
  *
  * @return              The operation status.
- * @retval FALSE        Endpoint stalled.
- * @retval TRUE         Endpoint busy, not stalled.
+ * @retval false        Endpoint stalled.
+ * @retval true         Endpoint busy, not stalled.
  *
  * @iclass
  */
@@ -528,10 +528,10 @@ bool usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
   osalDbgCheck(usbp != NULL);
 
   if (usbGetReceiveStatusI(usbp, ep))
-    return TRUE;
+    return true;
 
   usb_lld_stall_out(usbp, ep);
-  return FALSE;
+  return false;
 }
 
 /**
@@ -541,8 +541,8 @@ bool usbStallReceiveI(USBDriver *usbp, usbep_t ep) {
  * @param[in] ep        endpoint number
  *
  * @return              The operation status.
- * @retval FALSE        Endpoint stalled.
- * @retval TRUE         Endpoint busy, not stalled.
+ * @retval false        Endpoint stalled.
+ * @retval true         Endpoint busy, not stalled.
  *
  * @iclass
  */
@@ -552,10 +552,10 @@ bool usbStallTransmitI(USBDriver *usbp, usbep_t ep) {
   osalDbgCheck(usbp != NULL);
 
   if (usbGetTransmitStatusI(usbp, ep))
-    return TRUE;
+    return true;
 
   usb_lld_stall_in(usbp, ep);
-  return FALSE;
+  return false;
 }
 
 /**

@@ -189,8 +189,8 @@ int main(void) {
    */
   sduObjectInit(&SDU1);
   sduStart(&SDU1, &serusbcfg1);
-//  sduObjectInit(&SDU2);
-//  sduStart(&SDU2, &serusbcfg2);
+  sduObjectInit(&SDU2);
+  sduStart(&SDU2, &serusbcfg2);
 
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
@@ -223,14 +223,12 @@ int main(void) {
       chThdRelease(shelltp1);   /* Recovers memory of the previous shell.   */
       shelltp1 = NULL;          /* Triggers spawning of a new shell.        */
     }
-#if 0
     if (!shelltp2 && (SDU2.config->usbp->state == USB_ACTIVE))
       shelltp2 = shellCreate(&shell_cfg2, SHELL_WA_SIZE, NORMALPRIO);
     else if (chThdTerminatedX(shelltp2)) {
       chThdRelease(shelltp2);   /* Recovers memory of the previous shell.   */
       shelltp2 = NULL;          /* Triggers spawning of a new shell.        */
     }
-#endif
     chThdSleepMilliseconds(1000);
   }
 }
