@@ -382,7 +382,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
       sduConfigureHookI(&SDU2);
     }
     else if (usbp->state == USB_SELECTED) {
-//      usbDisableEndpointsI(usbp);
+      usbDisableEndpointsI(usbp);
     }
 
     chSysUnlockFromISR();
