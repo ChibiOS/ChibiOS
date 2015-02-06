@@ -37,7 +37,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="STM32F4xx-USB_CDC_DUAL.null.1373754647" name="STM32F4xx-USB_CDC_DUAL"/>
+		<project id="STM32F4xx-USB_CDC_IAD.null.1373754647" name="STM32F4xx-USB_CDC_IAD"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>

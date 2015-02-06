@@ -155,9 +155,9 @@ static msg_t Thread1(void *arg) {
     systime_t time;
 
     time = serusbcfg1.usbp->state == USB_ACTIVE ? 250 : 500;
-    palClearPad(GPIOD, GPIOD_LED4);
+    palClearPad(GPIOC, GPIOC_LED);
     chThdSleepMilliseconds(time);
-    palSetPad(GPIOD, GPIOD_LED4);
+    palSetPad(GPIOC, GPIOC_LED);
     chThdSleepMilliseconds(time);
   }
 }

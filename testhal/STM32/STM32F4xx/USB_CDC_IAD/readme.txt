@@ -1,14 +1,14 @@
 *****************************************************************************
-** ChibiOS/HAL - USB-CDC driver demo for STM32.                            **
+** ChibiOS/HAL - USB-CDC (IAD descriptors) driver demo for STM32F4xx.      **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32F4-Discovery board.
+The demo runs on an Olimex STM32-E407 board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32 USB (OTG) driver.
+The application demonstrates the use of the STM32F4xx USB driver.
 
 ** Build Procedure **
 
