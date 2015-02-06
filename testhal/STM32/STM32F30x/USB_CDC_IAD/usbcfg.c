@@ -16,6 +16,9 @@
 
 #include "hal.h"
 
+#define USB_DEVICE_VID                  0xF055  /* You MUST change this.*/
+#define USB_DEVICE_PID                  0xE063  /* You MUST change this.*/
+
 /*
  * Endpoints.
  */
@@ -25,6 +28,9 @@
 #define USB_INTERRUPT_REQUEST_EP_B      3
 #define USB_DATA_AVAILABLE_EP_B         4
 #define USB_DATA_REQUEST_EP_B           4
+
+#define USB_INTERRUPT_REQUEST_SIZE      0x10
+#define USB_DATA_SIZE                   0x40
 
 /*
  * Interfaces
@@ -40,13 +46,13 @@
  */
 static const uint8_t vcom_device_descriptor_data[] = {
   USB_DESC_DEVICE(
-    0x0110,                                 /* bcdUSB (1.1).                */
+    0x0200,                                 /* bcdUSB (1.1).                */
     0xEF,                                   /* bDeviceClass (misc).         */
     0x02,                                   /* bDeviceSubClass (common).    */
     0x01,                                   /* bDeviceProtocol (IAD).       */
-    0x40,                                   /* bMaxPacketSize.              */
-    0x0483,                                 /* idVendor (ST).               */
-    0x5740,                                 /* idProduct.                   */
+    USB_DATA_SIZE,                          /* bMaxPacketSize.              */
+    USB_DEVICE_VID,                         /* idVendor.                    */
+    USB_DEVICE_PID,                         /* idProduct.                   */
     0x0200,                                 /* bcdDevice.                   */
     1,                                      /* iManufacturer.               */
     2,                                      /* iProduct.                    */
@@ -69,7 +75,7 @@ static const USBDescriptor vcom_device_descriptor = {
 #define CDC_IF_DESC_SET(comIfNum, datIfNum, comInEp, datOutEp, datInEp)     \
   /* Interface Descriptor.*/                                                \
   USB_DESC_INTERFACE(                                                       \
-    0x00,                                   /* bInterfaceNumber.        */  \
+    comIfNum,                               /* bInterfaceNumber.        */  \
     0x00,                                   /* bAlternateSetting.       */  \
     0x01,                                   /* bNumEndpoints.           */  \
     CDC_COMMUNICATION_INTERFACE_CLASS,      /* bInterfaceClass.         */  \
@@ -104,8 +110,8 @@ static const USBDescriptor vcom_device_descriptor = {
   USB_DESC_ENDPOINT (                                                       \
     comInEp,                                                                \
     USB_EP_MODE_TYPE_INTR,                  /* bmAttributes.            */  \
-    0x0010,                                 /* wMaxPacketSize.          */  \
-    0x01),                        /*******/ /* bInterval.               */  \
+    USB_INTERRUPT_REQUEST_SIZE,             /* wMaxPacketSize.          */  \
+    0x01),                                  /* bInterval.               */  \
                                                                             \
   /* CDC Data Interface Descriptor.*/                                       \
   USB_DESC_INTERFACE(                                                       \
@@ -122,13 +128,13 @@ static const USBDescriptor vcom_device_descriptor = {
   USB_DESC_ENDPOINT(                                                        \
     datOutEp,                               /* bEndpointAddress.        */  \
     USB_EP_MODE_TYPE_BULK,                  /* bmAttributes.            */  \
-    0x0040,                                 /* wMaxPacketSize.          */  \
+    USB_DATA_SIZE,                          /* wMaxPacketSize.          */  \
     0x00),                                  /* bInterval.               */  \
   /* Endpoint, Bulk IN.*/                                                   \
   USB_DESC_ENDPOINT(                                                        \
     datInEp,                                /* bEndpointAddress.        */  \
     USB_EP_MODE_TYPE_BULK,                  /* bmAttributes.            */  \
-    0x0040,                                 /* wMaxPacketSize.          */  \
+    USB_DATA_SIZE,                          /* wMaxPacketSize.          */  \
     0x00)                                   /* bInterval.               */
 
 #define IAD_CDC_IF_DESC_SET_SIZE                                            \
@@ -272,7 +278,7 @@ static const USBEndpointConfig ep1config = {
   NULL,
   sduInterruptTransmitted,
   NULL,
-  0x0010,
+  USB_INTERRUPT_REQUEST_SIZE,
   0x0000,
   &ep1instate,
   NULL,
@@ -298,8 +304,8 @@ static const USBEndpointConfig ep2config = {
   NULL,
   sduDataTransmitted,
   sduDataReceived,
-  0x0040,
-  0x0040,
+  USB_DATA_SIZE,
+  USB_DATA_SIZE,
   &ep2instate,
   &ep2outstate,
   1,
@@ -319,7 +325,7 @@ static const USBEndpointConfig ep3config = {
   NULL,
   sduInterruptTransmitted,
   NULL,
-  0x0010,
+  USB_INTERRUPT_REQUEST_SIZE,
   0x0000,
   &ep3instate,
   NULL,
@@ -345,8 +351,8 @@ static const USBEndpointConfig ep4config = {
   NULL,
   sduDataTransmitted,
   sduDataReceived,
-  0x0040,
-  0x0040,
+  USB_DATA_SIZE,
+  USB_DATA_SIZE,
   &ep4instate,
   &ep4outstate,
   1,
