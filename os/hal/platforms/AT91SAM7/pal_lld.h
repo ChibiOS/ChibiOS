@@ -31,7 +31,43 @@
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
 
+// AT91: Port direction
+#define AT91_PAL_DIR_MASK		0x03
+#define AT91_PAL_DIR_INPUT		0x00
+#define AT91_PAL_DIR_OUTPUT		0x01
+#define AT91_PAL_DIR_PERIPH_A	0x02
+#define AT91_PAL_DIR_PERIPH_B	0x03
+
+// AT91: Additional flags
+#define AT91_PAL_OUT_SET		0x04
+#define AT91_PAL_OUT_CLEAR		0x08
+#define AT91_PAL_PULLUP			0x10
+#define AT91_PAL_OPENDRAIN		0x20
+
+// Unsupported
 #undef PAL_MODE_INPUT_PULLDOWN
+
+// Redefine the standard io modes
+#undef PAL_MODE_RESET
+#undef PAL_MODE_UNCONNECTED
+#undef PAL_MODE_INPUT
+#undef PAL_MODE_INPUT_PULLUP
+#undef PAL_MODE_INPUT_ANALOG
+#undef PAL_MODE_OUTPUT_PUSHPULL
+#undef PAL_MODE_OUTPUT_OPENDRAIN
+#define PAL_MODE_RESET                  (AT91_PAL_DIR_INPUT|AT91_PAL_PULLUP)
+#define PAL_MODE_UNCONNECTED            (AT91_PAL_DIR_OUTPUT|AT91_PAL_OUT_SET)
+#define PAL_MODE_INPUT                  (AT91_PAL_DIR_INPUT)
+#define PAL_MODE_INPUT_PULLUP           (AT91_PAL_DIR_INPUT|AT91_PAL_PULLUP)
+#define PAL_MODE_INPUT_ANALOG           (AT91_PAL_DIR_INPUT)
+#define PAL_MODE_OUTPUT_PUSHPULL        (AT91_PAL_DIR_OUTPUT)
+#define PAL_MODE_OUTPUT_OPENDRAIN       (AT91_PAL_DIR_OUTPUT|AT91_PAL_PULLUP|AT91_PAL_OPENDRAIN)
+
+// Add the AT91 specific ones
+#define PAL_MODE_PERIPH_A_PUSHPULL      (AT91_PAL_DIR_PERIPH_A)
+#define PAL_MODE_PERIPH_A_OPENDRAIN     (AT91_PAL_DIR_PERIPH_A|AT91_PAL_PULLUP|AT91_PAL_OPENDRAIN)
+#define PAL_MODE_PERIPH_B_PUSHPULL      (AT91_PAL_DIR_PERIPH_A)
+#define PAL_MODE_PERIPH_B_OPENDRAIN     (AT91_PAL_DIR_PERIPH_A|AT91_PAL_PULLUP|AT91_PAL_OPENDRAIN)
 
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */

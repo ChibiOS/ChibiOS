@@ -72,7 +72,9 @@
 *****************************************************************************
 
 *** 2.6.7 ***
-- FIX: AT91SAM7 i2c and spi driver using wrong pins for many cpu variants.
+
+- FIX: Fixed AT91SAM7 gpio modes
+- FIX: AT91SAM7 i2c and spi driver using wrong pins for many cpu variants
 - FIX: Fixed STM32 USB driver randomly unable to transition to VALID state
   (bug #554).
 - FIX: Fixed OLIMEX STM32-E407 board.h errors (FAULT input swap and wrong
@@ -825,7 +827,7 @@
 
 *** 2.0.5 ***
 - FIX: Incorrect AT91SAM7X initialization, thanks Leszek (bug 3075354).
-- FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Bal�zs
+- FIX: Fixed race condition in function chSchGoSleepTimeoutS, thanks Balzs
   (bug 3074984).
 - FIX: Fixed race condition in threads creation (bug 3069854).
 - FIX: Fixed broken CH_DBG_ENABLE_STACK_CHECK option in legacy CM3 port (bug

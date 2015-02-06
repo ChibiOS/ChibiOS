@@ -119,29 +119,38 @@ void _pal_lld_setgroupmode(ioportid_t port,
                            ioportmask_t mask,
                            iomode_t mode) {
 
-  switch (mode) {
-  case PAL_MODE_RESET:
-  case PAL_MODE_INPUT_PULLUP:
-    port->PIO_PPUER = mask;
-    port->PIO_ODR = mask;
-    break;
-  case PAL_MODE_INPUT:
-  case PAL_MODE_INPUT_ANALOG:
-    port->PIO_PPUDR = mask;
-    port->PIO_ODR = mask;
-    break;
-  case PAL_MODE_UNCONNECTED:
-    port->PIO_SODR = mask;
-    /* Falls in */
-  case PAL_MODE_OUTPUT_PUSHPULL:
-    port->PIO_PPUDR = mask;
-    port->PIO_OER = mask;
-    port->PIO_MDDR = mask;
-    break;
-  case PAL_MODE_OUTPUT_OPENDRAIN:
-    port->PIO_PPUER = mask;
-    port->PIO_OER = mask;
-    port->PIO_MDER = mask;
+  if (mode & AT91_PAL_OPENDRAIN)
+	port->PIO_MDER = mask;
+  else
+	port->PIO_MDDR = mask;
+  if (mode & AT91_PAL_PULLUP)
+	port->PIO_PPUER = mask;
+  else
+	port->PIO_PPUDR = mask;
+  if (mode & AT91_PAL_OUT_SET)
+	port->PIO_SODR = mask;
+  if (mode & AT91_PAL_OUT_CLEAR)
+	port->PIO_CODR = mask;
+
+  switch (mode & AT91_PAL_DIR_MASK) {
+  case AT91_PAL_DIR_INPUT:
+	port->PIO_ODR = mask;
+	port->PIO_PER = mask;
+	break;
+  case AT91_PAL_DIR_OUTPUT:
+	port->PIO_OER = mask;
+	port->PIO_PER = mask;
+	break;
+  case AT91_PAL_DIR_PERIPH_A:
+	port->PIO_OER = mask;
+	port->PIO_PDR = mask;
+	port->PIO_ASR = mask;
+	break;
+  case AT91_PAL_DIR_PERIPH_B:
+	port->PIO_OER = mask;
+	port->PIO_PDR = mask;
+	port->PIO_BSR = mask;
+	break;
   }
 }
 
