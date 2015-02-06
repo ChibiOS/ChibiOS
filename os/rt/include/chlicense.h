@@ -199,7 +199,7 @@
   #endif
 
   #if CH_DBG_STATISTICS
-    #error "CH_DBG_STATISTICS == TRUE, Condition Variables functionality restricted"
+    #error "CH_DBG_STATISTICS == TRUE, Statistics functionality restricted"
   #endif
 
   #if CH_LICENSE_FEATURES == CH_FEATURES_BASIC
