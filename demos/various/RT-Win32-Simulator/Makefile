@@ -58,12 +58,12 @@ UADEFS =
 # Imported source files
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/hal/boards/simulator/board.mk
-include ${CHIBIOS}/os/hal/hal.mk
-include ${CHIBIOS}/os/hal/ports/simulator/win32/platform.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/ports/simulator/win32/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
-include ${CHIBIOS}/os/rt/ports/SIMIA32/compilers/GCC/port.mk
-include ${CHIBIOS}/os/rt/rt.mk
-include ${CHIBIOS}/test/rt/test.mk
+include $(CHIBIOS)/os/rt/ports/SIMIA32/compilers/GCC/port.mk
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/test/rt/test.mk
 
 # List C source files here
 SRC =  $(PORTSRC) \
@@ -73,9 +73,9 @@ SRC =  $(PORTSRC) \
        $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       ${CHIBIOS}/os/various/shell.c \
-       ${CHIBIOS}/os/various/memstreams.c \
-       ${CHIBIOS}/os/various/chprintf.c \
+       $(CHIBIOS)/os/various/shell.c \
+       $(CHIBIOS)/os/hal/lib/streams/memstreams.c \
+       $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
        main.c
 
 # List ASM source files here
@@ -84,7 +84,7 @@ ASRC =
 # List all user directories here
 UINCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
           $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
-          ${CHIBIOS}/os/various
+          $(CHIBIOS)/os/various
 
 # List the user directory to look for the libraries here
 ULIBDIR =
@@ -98,7 +98,6 @@ OPT = -ggdb -O2 -fomit-frame-pointer
 #
 # End of user defines
 ##############################################################################################
-
 
 INCDIR  = $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))
 LIBDIR  = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))

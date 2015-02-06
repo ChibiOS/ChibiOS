@@ -71,14 +71,6 @@
  */
 
 /**
- * @defgroup chrtclib RTC time conversion utilities
- *
- * @brief   RTC time conversion utilities.
- *
- * @ingroup various
- */
-
-/**
  * @defgroup chprintf System formatted print
  *
  * @brief   System formatted print service.
