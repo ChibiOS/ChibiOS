@@ -4,7 +4,7 @@ Class=Ports
 ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
 Provider=%PRVDR%
 CatalogFile=stmcdc.cat
-DriverVer=02/06/2015,1.0.0
+DriverVer=02/06/2015,1.0.1
 
 [SourceDisksNames]
 
@@ -19,10 +19,12 @@ DefaultDestDir = 12
 [DeviceList.NT]
 %DESCRIPTION1%=DriverInstall,USB\VID_F055&PID_E063&MI_00
 %DESCRIPTION2%=DriverInstall,USB\VID_F055&PID_E063&MI_02
+%DESCRIPTION3%=DriverInstall,USB\VID_F055&PID_E063&MI_04
 
 [DeviceList.NTamd64]
 %DESCRIPTION1%=DriverInstall,USB\VID_F055&PID_E063&MI_00
 %DESCRIPTION2%=DriverInstall,USB\VID_F055&PID_E063&MI_02
+%DESCRIPTION3%=DriverInstall,USB\VID_F055&PID_E063&MI_04
 
 [DriverInstall.NT]
 Include=mdmcpq.inf
@@ -50,5 +52,6 @@ PRVDR = "www.chibios.org"
 MFGNAME = "ChibiOS."
 DESCRIPTION1 = "ChibiOS Virtual COM Port 1"
 DESCRIPTION2 = "ChibiOS Virtual COM Port 2"
+DESCRIPTION3 = "ChibiOS Virtual COM Port 3"
 SERVICE = "ChibiOS Virtual COM Port"
 DriversDisk = "ChibiOS Drivers Disk" 
