@@ -31,21 +31,31 @@
 /* Device compatibility..                                                    */
 /*===========================================================================*/
 
+#if SAM7_PLATFORM == SAM7S512 || SAM7_PLATFORM == SAM7S256 || SAM7_PLATFORM == SAM7S128 || SAM7_PLATFORM == SAM7S64
+	#define SPI0_MISO                       AT91C_PA12_MISO
+	#define SPI0_MOSI                       AT91C_PA13_MOSI
+	#define SPI0_SCK                        AT91C_PA14_SPCK
+#elif SAM7_PLATFORM == SAM7X512 || SAM7_PLATFORM == SAM7X256 || SAM7_PLATFORM == SAM7X128
+	#define SPI0_MISO                       AT91C_PA16_SPI0_MISO
+	#define SPI0_MOSI                       AT91C_PA17_SPI0_MOSI
+	#define SPI0_SCK                        AT91C_PA18_SPI0_SPCK
+	#define SPI1_MISO                       AT91C_PA24_SPI1_MISO
+	#define SPI1_MOSI                       AT91C_PA23_SPI1_MOSI
+	#define SPI1_SCK                        AT91C_PA22_SPI1_SPCK
+#elif SAM7_PLATFORM == SAM7A3
+	#define SPI0_MISO                       AT91C_PA15_SPI0_MISO
+	#define SPI0_MOSI                       AT91C_PA16_SPI0_MOSI
+	#define SPI0_SCK                        AT91C_PA17_SPI0_SPCK
+	#define SPI1_MISO                       AT91C_PA8_SPI1_MISO
+	#define SPI1_MOSI                       AT91C_PA9_SPI1_MOSI
+	#define SPI1_SCK                        AT91C_PA10_SPI1_SPCK
+#else
+#error "SAM7 platform not supported"
+#endif
+
 #if defined (AT91C_BASE_SPI)
 #define AT91C_BASE_SPI0                 AT91C_BASE_SPI
 #define AT91C_ID_SPI0                   AT91C_ID_SPI
-
-#define SPI0_MISO                       (1 << 12)
-#define SPI0_MOSI                       (1 << 13)
-#define SPI0_SCK                        (1 << 14)
-#else
-#define SPI0_MISO                       (1 << 16)
-#define SPI0_MOSI                       (1 << 17)
-#define SPI0_SCK                        (1 << 18)
-
-#define SPI1_MISO                       (1 << 24)
-#define SPI1_MOSI                       (1 << 23)
-#define SPI1_SCK                        (1 << 22)
 #endif
 
 /*===========================================================================*/
