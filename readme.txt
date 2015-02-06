@@ -1,4 +1,4 @@
-*****************************************************************************
+﻿*****************************************************************************
 *** Files Organization                                                    ***
 *****************************************************************************
 
@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.7 ***
+- FIX: AT91SAM7 i2c and spi driver using wrong pins for many cpu variants
 - FIX: Fixed STM32 USB driver randomly unable to transition to VALID state
   (bug #554).
 - FIX: Fixed OLIMEX STM32-E407 board.h errors (FAULT input swap and wrong
