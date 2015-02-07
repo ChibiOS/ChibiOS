@@ -223,7 +223,7 @@ void pwmEnablePeriodicNotification(PWMDriver *pwmp) {
   osalDbgAssert(pwmp->state == PWM_READY, "not ready");
   osalDbgAssert(pwmp->config->callback != NULL, "undefined periodic callback");
 
-  pwm_lld_enable_periodic_notification(pwmp);
+  pwmEnablePeriodicNotificationI(pwmp);
 
   osalSysUnlock();
 }
@@ -246,7 +246,7 @@ void pwmDisablePeriodicNotification(PWMDriver *pwmp) {
   osalDbgAssert(pwmp->state == PWM_READY, "not ready");
   osalDbgAssert(pwmp->config->callback != NULL, "undefined periodic callback");
 
-  pwm_lld_disable_periodic_notification(pwmp);
+  pwmDisablePeriodicNotificationI(pwmp);
 
   osalSysUnlock();
 }
@@ -274,7 +274,7 @@ void pwmEnableChannelNotification(PWMDriver *pwmp, pwmchannel_t channel) {
   osalDbgAssert(pwmp->config->channels[channel].callback != NULL,
                 "undefined channel callback");
 
-  pwm_lld_enable_channel_notification(pwmp, channel);
+  pwmEnableChannelNotificationI(pwmp, channel);
 
   osalSysUnlock();
 }
@@ -302,7 +302,7 @@ void pwmDisableChannelNotification(PWMDriver *pwmp, pwmchannel_t channel) {
   osalDbgAssert(pwmp->config->channels[channel].callback != NULL,
                 "undefined channel callback");
 
-  pwm_lld_disable_channel_notification(pwmp, channel);
+  pwmDisableChannelNotificationI(pwmp, channel);
 
   osalSysUnlock();
 }

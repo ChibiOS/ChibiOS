@@ -226,6 +226,58 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  */
 #define pwmIsChannelEnabledI(pwmp, channel)                                 \
   ((bool)((pwmp)->enabled & (1 << (channel))))
+
+/**
+ * @brief   Enables the periodic activation edge notification.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @note    If the notification is already enabled then the call has no effect.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ *
+ * @iclass
+ */
+#define pwmEnablePeriodicNotificationI(pwmp)                                \
+  pwm_lld_enable_periodic_notification(pwmp)
+
+/**
+ * @brief   Disables the periodic activation edge notification.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @note    If the notification is already disabled then the call has no effect.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ *
+ * @iclass
+ */
+#define pwmDisablePeriodicNotificationI(pwmp)                               \
+  pwm_lld_disable_periodic_notification(pwmp)
+
+/**
+ * @brief   Enables a channel de-activation edge notification.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @pre     The channel must have been activated using @p pwmEnableChannel().
+ * @note    If the notification is already enabled then the call has no effect.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...channels-1)
+ *
+ * @iclass
+ */
+#define pwmEnableChannelNotificationI(pwmp, channel)                        \
+  pwm_lld_enable_channel_notification(pwmp, channel)
+
+/**
+ * @brief   Disables a channel de-activation edge notification.
+ * @pre     The PWM unit must have been activated using @p pwmStart().
+ * @pre     The channel must have been activated using @p pwmEnableChannel().
+ * @note    If the notification is already disabled then the call has no effect.
+ *
+ * @param[in] pwmp      pointer to a @p PWMDriver object
+ * @param[in] channel   PWM channel identifier (0...channels-1)
+ *
+ * @iclass
+ */
+#define pwmDisableChannelNotificationI(pwmp, channel)                       \
+  pwm_lld_disable_channel_notification(pwmp, channel)
 /** @} */
 
 /*===========================================================================*/
