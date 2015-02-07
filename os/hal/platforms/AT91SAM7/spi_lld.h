@@ -35,20 +35,25 @@
 	#define SPI0_MISO                       AT91C_PA12_MISO
 	#define SPI0_MOSI                       AT91C_PA13_MOSI
 	#define SPI0_SCK                        AT91C_PA14_SPCK
+	#define SPI0_CS0						11					// PA11
 #elif SAM7_PLATFORM == SAM7X512 || SAM7_PLATFORM == SAM7X256 || SAM7_PLATFORM == SAM7X128
 	#define SPI0_MISO                       AT91C_PA16_SPI0_MISO
 	#define SPI0_MOSI                       AT91C_PA17_SPI0_MOSI
 	#define SPI0_SCK                        AT91C_PA18_SPI0_SPCK
+	#define SPI0_CS0						12					// PA12
 	#define SPI1_MISO                       AT91C_PA24_SPI1_MISO
 	#define SPI1_MOSI                       AT91C_PA23_SPI1_MOSI
 	#define SPI1_SCK                        AT91C_PA22_SPI1_SPCK
+	#define SPI1_CS0						21					// PA21
 #elif SAM7_PLATFORM == SAM7A3
 	#define SPI0_MISO                       AT91C_PA15_SPI0_MISO
 	#define SPI0_MOSI                       AT91C_PA16_SPI0_MOSI
 	#define SPI0_SCK                        AT91C_PA17_SPI0_SPCK
+	#define SPI0_CS0						11					// PA11
 	#define SPI1_MISO                       AT91C_PA8_SPI1_MISO
 	#define SPI1_MOSI                       AT91C_PA9_SPI1_MOSI
 	#define SPI1_SCK                        AT91C_PA10_SPI1_SPCK
+	#define SPI1_CS0						4					// PA4
 #else
 #error "SAM7 platform not supported"
 #endif
