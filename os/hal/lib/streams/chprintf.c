@@ -321,7 +321,7 @@ int chsnprintf(char *str, size_t size, const char *fmt, ...) {
   msObjectInit(&ms, (uint8_t *)str, size_wo_nul, 0);
 
   /* Performing the print operation using the common code.*/
-  chp = (BaseSequentialStream *)&ms;
+  chp = (BaseSequentialStream *)(void *)&ms;
   va_start(ap, fmt);
   retval = chvprintf(chp, fmt, ap);
   va_end(ap);
