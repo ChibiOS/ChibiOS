@@ -72,9 +72,10 @@
 *****************************************************************************
 
 *** 2.6.7 ***
-- FIX: AT91SAM7 SPI1 undocumented errata on manual CS manipulation
-- FIX: AT91SAM7 SPI set CS pin mode
-- FIX: Fixed AT91SAM7 gpio modes
+- FIX: Safer ADC start for STM32F4 and STM32L1.
+- FIX: AT91SAM7 SPI1 undocumented errata on manual CS manipulation.
+- FIX: AT91SAM7 SPI set CS pin mode.
+- FIX: Fixed AT91SAM7 gpio modes.
 - FIX: AT91SAM7 i2c and spi driver using wrong pins for many cpu variants
 - FIX: Fixed STM32 USB driver randomly unable to transition to VALID state
   (bug #554).
