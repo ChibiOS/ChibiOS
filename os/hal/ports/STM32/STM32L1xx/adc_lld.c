@@ -200,6 +200,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t mode;
+  uint32_t cr2;
   const ADCConversionGroup *grpp = adcp->grpp;
 
   /* DMA setup.*/
@@ -229,15 +230,23 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->adc->SQR4  = grpp->sqr4;
   adcp->adc->SQR5  = grpp->sqr5;
 
-  /* ADC configuration and start, the start is performed using the method
-     specified in the CR2 configuration, usually ADC_CR2_SWSTART.*/
+  /* ADC configuration and start.*/
   adcp->adc->CR1   = grpp->cr1 | ADC_CR1_OVRIE | ADC_CR1_SCAN;
-  if ((grpp->cr2 & ADC_CR2_SWSTART) != 0)
-    adcp->adc->CR2 = grpp->cr2 | ADC_CR2_CONT  | ADC_CR2_DMA |
-                                 ADC_CR2_DDS   | ADC_CR2_ADON;
+
+  /* Enforcing the mandatory bits in CR2.*/
+  cr2 = grpp->cr2 | ADC_CR2_DMA | ADC_CR2_DDS | ADC_CR2_ADON;
+
+  /* The start method is different dependign if HW or SW triggered, the
+     start is performed using the method specified in the CR2 configuration.*/
+  if ((cr2 & ADC_CR2_SWSTART) != 0) {
+    /* Initializing CR2 while keeping ADC_CR2_SWSTART at zero.*/
+    adcp->adc->CR2 = (cr2 | ADC_CR2_CONT) & ~ADC_CR2_SWSTART;
+
+    /* Finally enabling ADC_CR2_SWSTART.*/
+    adcp->adc->CR2 = (cr2 | ADC_CR2_CONT);
+  }
   else
-    adcp->adc->CR2 = grpp->cr2 |                 ADC_CR2_DMA |
-                                 ADC_CR2_DDS   | ADC_CR2_ADON;
+    adcp->adc->CR2 = cr2;
 }
 
 /**
