@@ -72,7 +72,9 @@
 *****************************************************************************
 
 *** 2.6.7 ***
-- FIX: wrong CORTEX_PRIORITY_PENDSV value in ARMCMx ports (bug #555).
+- FIX: Fixed random R0 register corruption in Keil ARMCMx port when FPU
+  is enabled (bug #556).
+- FIX: Fixed wrong CORTEX_PRIORITY_PENDSV value in ARMCMx ports (bug #555).
 - FIX: Safer ADC start for STM32F4 and STM32L1.
 - FIX: AT91SAM7 SPI1 undocumented errata on manual CS manipulation.
 - FIX: AT91SAM7 SPI set CS pin mode.

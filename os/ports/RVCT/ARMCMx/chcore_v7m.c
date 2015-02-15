@@ -169,8 +169,8 @@ void _port_irq_epilogue(void) {
 
 #if CORTEX_USE_FPU
       /* Triggering a lazy FPU state save.*/
-      register uint32_t fpscr __asm("fpscr");
-      ctxp->r0 = (regarm_t)fpscr;
+      volatile register uint32_t fpscr __asm("fpscr");
+      (void)fpscr;
 #endif
 
     /* Adding an artificial exception return context, there is no need to
