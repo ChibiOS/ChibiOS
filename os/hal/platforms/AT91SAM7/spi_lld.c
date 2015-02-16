@@ -287,9 +287,9 @@ void spi_lld_stop(SPIDriver *spip) {
     }
 #endif
 #if AT91SAM7_SPI_USE_SPI1
-    if (&SPID1 == spip) {
+    if (&SPID2 == spip) {
       AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_SPI1);
-      AIC_DisableIT(AT91C_ID_SPI0);
+      AIC_DisableIT(AT91C_ID_SPI1);
     }
 #endif
   }
