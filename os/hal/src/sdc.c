@@ -34,7 +34,9 @@
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
-
+/**
+ * @brief   MMC switch mode.
+ */
 typedef enum {
   MMC_SWITCH_COMMAND_SET = 0,
   MMC_SWITCH_SET_BITS    = 1,
@@ -42,11 +44,17 @@ typedef enum {
   MMC_SWITCH_WRITE_BYTE  = 3,
 } mmc_switch_t;
 
+/**
+ * @brief   SDC switch mode.
+ */
 typedef enum {
   SD_SWITCH_CHECK = 0,
   SD_SWITCH_SET   = 1,
 } sd_switch_t;
 
+/**
+ * @brief   SDC switch function.
+ */
 typedef enum {
   SD_SWITCH_FUNCTION_SPEED = 0,
   SD_SWITCH_FUNCTION_CMD_SYSTEM = 1,
@@ -854,7 +862,6 @@ bool sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
 
   return HAL_SUCCESS;
 }
-
 
 /**
  * @brief   Erases the supplied blocks.
