@@ -45,6 +45,10 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/*===========================================================================*/
+/* Driver exported functions.                                                */
+/*===========================================================================*/
+
 /**
  * @brief   Gets a bit field from a words array.
  * @note    The bit zero is the LSb of the first word.
@@ -57,7 +61,7 @@
  *
  * @notapi
  */
-static uint32_t mmcsd_get_slice(uint32_t *data, uint32_t end, uint32_t start) {
+uint32_t mmcsd_get_slice(const uint32_t *data, uint32_t end, uint32_t start) {
   unsigned startidx, endidx, startoff;
   uint32_t endmask;
 
@@ -75,10 +79,6 @@ static uint32_t mmcsd_get_slice(uint32_t *data, uint32_t end, uint32_t start) {
   return (data[startidx] & endmask) >> startoff;        /* One piece case.  */
 }
 
-/*===========================================================================*/
-/* Driver exported functions.                                                */
-/*===========================================================================*/
-
 /**
  * @brief   Extract card capacity from a CSD.
  * @details The capacity is returned as number of available blocks.
@@ -88,10 +88,12 @@ static uint32_t mmcsd_get_slice(uint32_t *data, uint32_t end, uint32_t start) {
  * @return              The card capacity.
  * @retval 0            CSD format error
  */
-uint32_t mmcsdGetCapacity(uint32_t csd[4]) {
-
-  switch (csd[3] >> 30) {
+uint32_t mmcsdGetCapacity(const uint32_t *csd) {
   uint32_t a, b, c;
+
+  osalDbgCheck(NULL != csd);
+
+  switch (mmcsd_get_slice(csd, MMCSD_CSD_10_CSD_STRUCTURE_SLICE)) {
   case 0:
     /* CSD version 1.0 */
     a = mmcsd_get_slice(csd, MMCSD_CSD_10_C_SIZE_SLICE);
@@ -105,6 +107,36 @@ uint32_t mmcsdGetCapacity(uint32_t csd[4]) {
     /* Reserved value detected.*/
     return 0;
   }
+}
+
+/**
+ * @brief   Extract MMC card capacity from a CSD or EXT_CSD.
+ * @details The capacity is returned as number of available blocks.
+ *
+ * @param[in] csd       the CSD record
+ * @param[in] ext_csd   the extended CSD record
+ *
+ * @return              The card capacity.
+ */
+uint32_t mmcsdGetCapacityMMC(const uint32_t *csd, const uint8_t *ext_csd) {
+  uint32_t a, b, c;
+
+  osalDbgCheck(NULL != csd);
+
+  a = mmcsd_get_slice(csd, MMCSD_CSD_MMC_C_SIZE_SLICE);
+  if (0xFFF != a) {
+    b = mmcsd_get_slice(csd, MMCSD_CSD_MMC_C_SIZE_MULT_SLICE);
+    c = mmcsd_get_slice(csd, MMCSD_CSD_MMC_READ_BL_LEN_SLICE);
+    return (a + 1) << (b + 2) << (c - 9);       /* 2^9 == MMCSD_BLOCK_SIZE. */
+  }
+  else if (NULL != ext_csd) {
+    return (ext_csd[215] << 24) +
+           (ext_csd[214] << 16) +
+           (ext_csd[213] << 8)  +
+            ext_csd[212];
+  }
+  else
+    return 0;
 }
 
 #endif /* HAL_USE_MMC_SPI || HAL_USE_SDC */

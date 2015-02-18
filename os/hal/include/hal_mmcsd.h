@@ -75,8 +75,10 @@
 #define MMCSD_CMD_ALL_SEND_CID          2
 #define MMCSD_CMD_SEND_RELATIVE_ADDR    3
 #define MMCSD_CMD_SET_BUS_WIDTH         6
+#define MMCSD_CMD_SWITCH                MMCSD_CMD_SET_BUS_WIDTH
 #define MMCSD_CMD_SEL_DESEL_CARD        7
 #define MMCSD_CMD_SEND_IF_COND          8
+#define MMCSD_CMD_SEND_EXT_CSD          MMCSD_CMD_SEND_IF_COND
 #define MMCSD_CMD_SEND_CSD              9
 #define MMCSD_CMD_SEND_CID              10
 #define MMCSD_CMD_STOP_TRANSMISSION     12
@@ -102,6 +104,41 @@
 /**
  * @brief  Slice position of values in CSD register.
  */
+/* CSD for MMC */
+#define MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE       127,126
+#define MMCSD_CSD_MMC_SPEC_VERS_SLICE           125,122
+#define MMCSD_CSD_MMC_TAAC_SLICE                119,112
+#define MMCSD_CSD_MMC_NSAC_SLICE                111,104
+#define MMCSD_CSD_MMC_TRAN_SPEED_SLICE          103,96
+#define MMCSD_CSD_MMC_CCC_SLICE                 95,84
+#define MMCSD_CSD_MMC_READ_BL_LEN_SLICE         83,80
+#define MMCSD_CSD_MMC_READ_BL_PARTIAL_SLICE     79,79
+#define MMCSD_CSD_MMC_WRITE_BLK_MISALIGN_SLICE  78,78
+#define MMCSD_CSD_MMC_READ_BLK_MISALIGN_SLICE   77,77
+#define MMCSD_CSD_MMC_DSR_IMP_SLICE             76,76
+#define MMCSD_CSD_MMC_C_SIZE_SLICE              73,62
+#define MMCSD_CSD_MMC_VDD_R_CURR_MIN_SLICE      61,59
+#define MMCSD_CSD_MMC_VDD_R_CURR_MAX_SLICE      58,56
+#define MMCSD_CSD_MMC_VDD_W_CURR_MIN_SLICE      55,53
+#define MMCSD_CSD_MMC_VDD_W_CURR_MAX_SLICE      52,50
+#define MMCSD_CSD_MMC_C_SIZE_MULT_SLICE         49,47
+#define MMCSD_CSD_MMC_ERASE_GRP_SIZE_SLICE      46,42
+#define MMCSD_CSD_MMC_ERASE_GRP_MULT_SLICE      41,37
+#define MMCSD_CSD_MMC_WP_GRP_SIZE_SLICE         36,32
+#define MMCSD_CSD_MMC_WP_GRP_ENABLE_SLICE       31,31
+#define MMCSD_CSD_MMC_DEFAULT_ECC_SLICE         30,29
+#define MMCSD_CSD_MMC_R2W_FACTOR_SLICE          28,26
+#define MMCSD_CSD_MMC_WRITE_BL_LEN_SLICE        25,22
+#define MMCSD_CSD_MMC_WRITE_BL_PARTIAL_SLICE    21,21
+#define MMCSD_CSD_MMC_CONTENT_PROT_APP_SLICE    16,16
+#define MMCSD_CSD_MMC_FILE_FORMAT_GRP_SLICE     15,15
+#define MMCSD_CSD_MMC_COPY_SLICE                14,14
+#define MMCSD_CSD_MMC_PERM_WRITE_PROTECT_SLICE  13,13
+#define MMCSD_CSD_MMC_TMP_WRITE_PROTECT_SLICE   12,12
+#define MMCSD_CSD_MMC_FILE_FORMAT_SLICE         11,10
+#define MMCSD_CSD_MMC_ECC_SLICE                 9,8
+#define MMCSD_CSD_MMC_CRC_SLICE                 7,1
+
 /* CSD version 2.0 */
 #define MMCSD_CSD_20_CRC_SLICE                  7,1
 #define MMCSD_CSD_20_FILE_FORMAT_SLICE          11,10
@@ -126,7 +163,7 @@
 #define MMCSD_CSD_20_TRANS_SPEED_SLICE          103,96
 #define MMCSD_CSD_20_NSAC_SLICE                 111,104
 #define MMCSD_CSD_20_TAAC_SLICE                 119,112
-#define MMCSD_CSD_20_STRUCTURE_SLICE            127,126
+#define MMCSD_CSD_20_CSD_STRUCTURE_SLICE        127,126
 
 /* CSD version 1.0 */
 #define MMCSD_CSD_10_CRC_SLICE                  MMCSD_CSD_20_CRC_SLICE
@@ -157,7 +194,45 @@
 #define MMCSD_CSD_10_TRANS_SPEED_SLICE          MMCSD_CSD_20_TRANS_SPEED_SLICE
 #define MMCSD_CSD_10_NSAC_SLICE                 MMCSD_CSD_20_NSAC_SLICE
 #define MMCSD_CSD_10_TAAC_SLICE                 MMCSD_CSD_20_TAAC_SLICE
-#define MMCSD_CSD_10_STRUCTURE_SLICE            MMCSD_CSD_20_STRUCTURE_SLICE
+#define MMCSD_CSD_10_CSD_STRUCTURE_SLICE        MMCSD_CSD_20_CSD_STRUCTURE_SLICE
+/** @} */
+
+/**
+ * @name   CID record offsets
+ */
+/**
+ * @brief  Slice position of values in CID register.
+ */
+/* CID for SDC */
+#define MMCSD_CID_SDC_CRC_SLICE                 7,1
+#define MMCSD_CID_SDC_MDT_M_SLICE               11,8
+#define MMCSD_CID_SDC_MDT_Y_SLICE               19,12
+#define MMCSD_CID_SDC_PSN_SLICE                 55,24
+#define MMCSD_CID_SDC_PRV_M_SLICE               59,56
+#define MMCSD_CID_SDC_PRV_N_SLICE               63,60
+#define MMCSD_CID_SDC_PNM0_SLICE                71,64
+#define MMCSD_CID_SDC_PNM1_SLICE                79,72
+#define MMCSD_CID_SDC_PNM2_SLICE                87,80
+#define MMCSD_CID_SDC_PNM3_SLICE                95,88
+#define MMCSD_CID_SDC_PNM4_SLICE                103,96
+#define MMCSD_CID_SDC_OID_SLICE                 119,104
+#define MMCSD_CID_SDC_MID_SLICE                 127,120
+
+/* CID for MMC */
+#define MMCSD_CID_MMC_CRC_SLICE                 7,1
+#define MMCSD_CID_MMC_MDT_Y_SLICE               11,8
+#define MMCSD_CID_MMC_MDT_M_SLICE               15,12
+#define MMCSD_CID_MMC_PSN_SLICE                 47,16
+#define MMCSD_CID_MMC_PRV_M_SLICE               51,48
+#define MMCSD_CID_MMC_PRV_N_SLICE               55,52
+#define MMCSD_CID_MMC_PNM0_SLICE                63,56
+#define MMCSD_CID_MMC_PNM1_SLICE                71,64
+#define MMCSD_CID_MMC_PNM2_SLICE                79,72
+#define MMCSD_CID_MMC_PNM3_SLICE                87,80
+#define MMCSD_CID_MMC_PNM4_SLICE                95,88
+#define MMCSD_CID_MMC_PNM5_SLICE                103,96
+#define MMCSD_CID_MMC_OID_SLICE                 119,104
+#define MMCSD_CID_MMC_MID_SLICE                 127,120
 /** @} */
 
 /*===========================================================================*/
@@ -266,7 +341,9 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  uint32_t mmcsdGetCapacity(uint32_t csd[4]);
+  uint32_t mmcsd_get_slice(const uint32_t *data, uint32_t end, uint32_t start);
+  uint32_t mmcsdGetCapacity(const uint32_t *csd);
+  uint32_t mmcsdGetCapacityMMC(const uint32_t *csd, const uint8_t *ext_csd);
 #ifdef __cplusplus
 }
 #endif

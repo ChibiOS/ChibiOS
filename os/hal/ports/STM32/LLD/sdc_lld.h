@@ -191,6 +191,14 @@ typedef enum {
 } sdcbusmode_t;
 
 /**
+ * @brief   Max supported clock.
+ */
+typedef enum {
+  SDC_CLK_25MHz = 0,
+  SDC_CLK_50MHz,
+} sdcbusclk_t;
+
+/**
  * @brief   Type of card flags.
  */
 typedef uint32_t sdcmode_t;
@@ -210,7 +218,10 @@ typedef struct SDCDriver SDCDriver;
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-  uint32_t dummy;
+  /**
+   * @brief   Bus width(board specific).
+   */
+  sdcbusmode_t      bus_width;
 } SDCConfig;
 
 /**
@@ -294,7 +305,7 @@ extern "C" {
   void sdc_lld_start(SDCDriver *sdcp);
   void sdc_lld_stop(SDCDriver *sdcp);
   void sdc_lld_start_clk(SDCDriver *sdcp);
-  void sdc_lld_set_data_clk(SDCDriver *sdcp);
+  void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk);
   void sdc_lld_stop_clk(SDCDriver *sdcp);
   void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode);
   void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg);
@@ -304,10 +315,12 @@ extern "C" {
                                   uint32_t *resp);
   bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
                                  uint32_t *resp);
+  bool sdc_lld_read_special(SDCDriver *sdcp, uint8_t *buf, size_t bytes,
+                            uint8_t cmd, uint32_t argument);
   bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
-                    uint8_t *buf, uint32_t n);
+                    uint8_t *buf, uint32_t blocks);
   bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
-                     const uint8_t *buf, uint32_t n);
+                     const uint8_t *buf, uint32_t blocks);
   bool sdc_lld_sync(SDCDriver *sdcp);
   bool sdc_lld_is_card_inserted(SDCDriver *sdcp);
   bool sdc_lld_is_write_protected(SDCDriver *sdcp);

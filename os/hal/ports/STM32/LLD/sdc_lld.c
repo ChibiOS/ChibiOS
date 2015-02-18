@@ -66,6 +66,104 @@ static union {
 /*===========================================================================*/
 
 /**
+ * @brief   Prepares MCU to handle read transaction.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[out] buf      pointer to the read buffer
+ * @param[in] n         number of blocks to read
+ *
+ * @return              The operation status.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
+ *
+ * @notapi
+ */
+static bool sdc_lld_prepare_read_mcu_blocks(SDCDriver *sdcp,
+                                            uint8_t *buf, uint32_t blocks) {
+
+  osalDbgCheck(blocks < 0x1000000 / MMCSD_BLOCK_SIZE);
+
+  SDIO->DTIMER = STM32_SDC_READ_TIMEOUT;
+
+  /* Checks for errors and waits for the card to be ready for reading.*/
+  if (_sdc_wait_for_transfer_state(sdcp))
+    return HAL_FAILED;
+
+  /* Prepares the DMA channel for writing.*/
+  dmaStreamSetMemory0(sdcp->dma, buf);
+  dmaStreamSetTransactionSize(sdcp->dma,
+                              (blocks * MMCSD_BLOCK_SIZE) / sizeof (uint32_t));
+  dmaStreamSetMode(sdcp->dma, sdcp->dmamode | STM32_DMA_CR_DIR_P2M);
+  dmaStreamEnable(sdcp->dma);
+
+  /* Setting up data transfer.*/
+  SDIO->ICR   = STM32_SDIO_ICR_ALL_FLAGS;
+  SDIO->MASK  = SDIO_MASK_DCRCFAILIE |
+                SDIO_MASK_DTIMEOUTIE |
+                SDIO_MASK_STBITERRIE |
+                SDIO_MASK_RXOVERRIE |
+                SDIO_MASK_DATAENDIE;
+  SDIO->DLEN  = blocks * MMCSD_BLOCK_SIZE;
+
+  /* Transaction starts just after DTEN bit setting.*/
+  SDIO->DCTRL = SDIO_DCTRL_DTDIR |
+                SDIO_DCTRL_DBLOCKSIZE_3 |
+                SDIO_DCTRL_DBLOCKSIZE_0 |
+                SDIO_DCTRL_DMAEN |
+                SDIO_DCTRL_DTEN;
+
+  return HAL_SUCCESS;
+}
+
+/**
+ * @brief   Prepares MCU to handle read transaction.
+ * @details Designed for read special registers from card.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[out] buf      pointer to the read buffer
+ * @param[in] bytes     number of bytes to read
+ *
+ * @return              The operation status.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
+ *
+ * @notapi
+ */
+static bool sdc_lld_prepare_read_mcu_bytes(SDCDriver *sdcp,
+                                           uint8_t *buf, uint32_t bytes) {
+  osalDbgCheck(bytes < 0x1000000);
+
+  SDIO->DTIMER = STM32_SDC_READ_TIMEOUT;
+
+  /* Checks for errors and waits for the card to be ready for reading.*/
+  if (_sdc_wait_for_transfer_state(sdcp))
+    return HAL_FAILED;
+
+  /* Prepares the DMA channel for writing.*/
+  dmaStreamSetMemory0(sdcp->dma, buf);
+  dmaStreamSetTransactionSize(sdcp->dma, bytes / sizeof (uint32_t));
+  dmaStreamSetMode(sdcp->dma, sdcp->dmamode | STM32_DMA_CR_DIR_P2M);
+  dmaStreamEnable(sdcp->dma);
+
+  /* Setting up data transfer.*/
+  SDIO->ICR   = STM32_SDIO_ICR_ALL_FLAGS;
+  SDIO->MASK  = SDIO_MASK_DCRCFAILIE |
+                SDIO_MASK_DTIMEOUTIE |
+                SDIO_MASK_STBITERRIE |
+                SDIO_MASK_RXOVERRIE |
+                SDIO_MASK_DATAENDIE;
+  SDIO->DLEN  = bytes;
+
+  /* Transaction starts just after DTEN bit setting.*/
+  SDIO->DCTRL = SDIO_DCTRL_DTDIR |
+                SDIO_DCTRL_DTMODE | /* multibyte data transfer */
+                SDIO_DCTRL_DMAEN |
+                SDIO_DCTRL_DTEN;
+
+  return HAL_SUCCESS;
+}
+
+/**
  * @brief   Prepares card to handle read transaction.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
@@ -79,8 +177,8 @@ static union {
  *
  * @notapi
  */
-static bool sdc_lld_prepare_read(SDCDriver *sdcp, uint32_t startblk,
-                                 uint32_t n, uint32_t *resp) {
+static bool sdc_lld_prepare_read_card(SDCDriver *sdcp, uint32_t startblk,
+                                      uint32_t n, uint32_t *resp) {
 
   /* Driver handles data in 512 bytes blocks (just like HC cards). But if we
      have not HC card than we must convert address from blocks to bytes.*/
@@ -392,11 +490,16 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
  *
  * @notapi
  */
-void sdc_lld_set_data_clk(SDCDriver *sdcp) {
+void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
 
   (void)sdcp;
 
-  SDIO->CLKCR = (SDIO->CLKCR & 0xFFFFFF00) | STM32_SDIO_DIV_HS;
+  if (SDC_CLK_50MHz == clk) {
+    SDIO->CLKCR = (SDIO->CLKCR & 0xFFFFFF00) | STM32_SDIO_DIV_HS
+                                             | SDIO_CLKCR_BYPASS;
+  }
+  else
+    SDIO->CLKCR = (SDIO->CLKCR & 0xFFFFFF00) | STM32_SDIO_DIV_HS;
 }
 
 /**
@@ -574,7 +677,7 @@ bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] startblk  first block to read
  * @param[out] buf      pointer to the read buffer
- * @param[in] n         number of blocks to read
+ * @param[in] blocks    number of blocks to read
  *
  * @return              The operation status.
  * @retval HAL_SUCCESS  operation succeeded.
@@ -583,50 +686,59 @@ bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  * @notapi
  */
 bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
-                          uint8_t *buf, uint32_t n) {
+                          uint8_t *buf, uint32_t blocks) {
   uint32_t resp[1];
 
-  osalDbgCheck(n < 0x1000000 / MMCSD_BLOCK_SIZE);
-
-  SDIO->DTIMER = STM32_SDC_READ_TIMEOUT;
-
-  /* Checks for errors and waits for the card to be ready for reading.*/
-  if (_sdc_wait_for_transfer_state(sdcp))
-    return HAL_FAILED;
-
-  /* Prepares the DMA channel for writing.*/
-  dmaStreamSetMemory0(sdcp->dma, buf);
-  dmaStreamSetTransactionSize(sdcp->dma,
-                              (n * MMCSD_BLOCK_SIZE) / sizeof (uint32_t));
-  dmaStreamSetMode(sdcp->dma, sdcp->dmamode | STM32_DMA_CR_DIR_P2M);
-  dmaStreamEnable(sdcp->dma);
-
-  /* Setting up data transfer.*/
-  SDIO->ICR   = STM32_SDIO_ICR_ALL_FLAGS;
-  SDIO->MASK  = SDIO_MASK_DCRCFAILIE |
-                SDIO_MASK_DTIMEOUTIE |
-                SDIO_MASK_STBITERRIE |
-                SDIO_MASK_RXOVERRIE |
-                SDIO_MASK_DATAENDIE;
-  SDIO->DLEN  = n * MMCSD_BLOCK_SIZE;
-
-  /* Transaction starts just after DTEN bit setting.*/
-  SDIO->DCTRL = SDIO_DCTRL_DTDIR |
-                SDIO_DCTRL_DBLOCKSIZE_3 |
-                SDIO_DCTRL_DBLOCKSIZE_0 |
-                SDIO_DCTRL_DMAEN |
-                SDIO_DCTRL_DTEN;
-
-  /* Talk to card what we want from it.*/
-  if (sdc_lld_prepare_read(sdcp, startblk, n, resp) == TRUE)
+  if(sdc_lld_prepare_read_mcu_blocks(sdcp, buf, blocks))
     goto error;
-  if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
+
+  if (sdc_lld_prepare_read_card(sdcp, startblk, blocks, resp) == TRUE)
+    goto error;
+
+  if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == TRUE)
     goto error;
 
   return HAL_SUCCESS;
 
 error:
-  sdc_lld_error_cleanup(sdcp, n, resp);
+  sdc_lld_error_cleanup(sdcp, blocks, resp);
+  return HAL_FAILED;
+}
+
+/**
+ * @brief   Reads special registers using data bus.
+ * @details Needs only during card detection procedure.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[out] buf      pointer to the read buffer
+ * @param[in] bytes     number of bytes to read
+ * @param[in] cmd       card command
+ * @param[in] arg       argument for command
+ *
+ * @return              The operation status.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
+ *
+ * @notapi
+ */
+bool sdc_lld_read_special(SDCDriver *sdcp, uint8_t *buf, size_t bytes,
+                          uint8_t cmd, uint32_t arg) {
+  uint32_t resp[1];
+
+  if(sdc_lld_prepare_read_mcu_bytes(sdcp, buf, bytes))
+    goto error;
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, cmd, arg, resp)
+                                 || MMCSD_R1_ERROR(resp[0]))
+    goto error;
+
+  if (sdc_lld_wait_transaction_end(sdcp, 1, resp))
+    goto error;
+
+  return HAL_SUCCESS;
+
+error:
+  sdc_lld_error_cleanup(sdcp, 1, resp);
   return HAL_FAILED;
 }
 
@@ -645,10 +757,10 @@ error:
  * @notapi
  */
 bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
-                           const uint8_t *buf, uint32_t n) {
+                           const uint8_t *buf, uint32_t blocks) {
   uint32_t resp[1];
 
-  osalDbgCheck(n < 0x1000000 / MMCSD_BLOCK_SIZE);
+  osalDbgCheck(blocks < 0x1000000 / MMCSD_BLOCK_SIZE);
 
   SDIO->DTIMER = STM32_SDC_WRITE_TIMEOUT;
 
@@ -659,7 +771,7 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   /* Prepares the DMA channel for writing.*/
   dmaStreamSetMemory0(sdcp->dma, buf);
   dmaStreamSetTransactionSize(sdcp->dma,
-                              (n * MMCSD_BLOCK_SIZE) / sizeof (uint32_t));
+                             (blocks * MMCSD_BLOCK_SIZE) / sizeof (uint32_t));
   dmaStreamSetMode(sdcp->dma, sdcp->dmamode | STM32_DMA_CR_DIR_M2P);
   dmaStreamEnable(sdcp->dma);
 
@@ -670,10 +782,10 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_MASK_STBITERRIE |
                 SDIO_MASK_TXUNDERRIE |
                 SDIO_MASK_DATAENDIE;
-  SDIO->DLEN  = n * MMCSD_BLOCK_SIZE;
+  SDIO->DLEN  = blocks * MMCSD_BLOCK_SIZE;
 
   /* Talk to card what we want from it.*/
-  if (sdc_lld_prepare_write(sdcp, startblk, n, resp) == TRUE)
+  if (sdc_lld_prepare_write(sdcp, startblk, blocks, resp) == TRUE)
     goto error;
 
   /* Transaction starts just after DTEN bit setting.*/
@@ -681,13 +793,13 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_DCTRL_DBLOCKSIZE_0 |
                 SDIO_DCTRL_DMAEN |
                 SDIO_DCTRL_DTEN;
-  if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
+  if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == TRUE)
     goto error;
 
   return HAL_SUCCESS;
 
 error:
-  sdc_lld_error_cleanup(sdcp, n, resp);
+  sdc_lld_error_cleanup(sdcp, blocks, resp);
   return HAL_FAILED;
 }
 
@@ -697,7 +809,7 @@ error:
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] startblk  first block to read
  * @param[out] buf      pointer to the read buffer
- * @param[in] n         number of blocks to read
+ * @param[in] blocks    number of blocks to read
  *
  * @return              The operation status.
  * @retval HAL_SUCCESS  operation succeeded.
@@ -706,12 +818,12 @@ error:
  * @notapi
  */
 bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
-                  uint8_t *buf, uint32_t n) {
+                  uint8_t *buf, uint32_t blocks) {
 
 #if STM32_SDC_SDIO_UNALIGNED_SUPPORT
   if (((unsigned)buf & 3) != 0) {
     uint32_t i;
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < blocks; i++) {
       if (sdc_lld_read_aligned(sdcp, startblk, u.buf, 1))
         return HAL_FAILED;
       memcpy(buf, u.buf, MMCSD_BLOCK_SIZE);
@@ -721,7 +833,7 @@ bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
     return HAL_SUCCESS;
   }
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
-  return sdc_lld_read_aligned(sdcp, startblk, buf, n);
+  return sdc_lld_read_aligned(sdcp, startblk, buf, blocks);
 }
 
 /**
@@ -730,7 +842,7 @@ bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] startblk  first block to write
  * @param[out] buf      pointer to the write buffer
- * @param[in] n         number of blocks to write
+ * @param[in] blocks    number of blocks to write
  *
  * @return              The operation status.
  * @retval HAL_SUCCESS operation succeeded.
@@ -739,12 +851,12 @@ bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
  * @notapi
  */
 bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
-                   const uint8_t *buf, uint32_t n) {
+                   const uint8_t *buf, uint32_t blocks) {
 
 #if STM32_SDC_SDIO_UNALIGNED_SUPPORT
   if (((unsigned)buf & 3) != 0) {
     uint32_t i;
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < blocks; i++) {
       memcpy(u.buf, buf, MMCSD_BLOCK_SIZE);
       buf += MMCSD_BLOCK_SIZE;
       if (sdc_lld_write_aligned(sdcp, startblk, u.buf, 1))
@@ -754,7 +866,7 @@ bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
     return HAL_SUCCESS;
   }
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
-  return sdc_lld_write_aligned(sdcp, startblk, buf, n);
+  return sdc_lld_write_aligned(sdcp, startblk, buf, blocks);
 }
 
 /**
