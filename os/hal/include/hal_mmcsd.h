@@ -288,6 +288,140 @@ typedef struct {
   _mmcsd_block_device_data
 } MMCSDBlockDevice;
 
+/**
+ * @brief   Unpacked CID register from SDC.
+ */
+typedef struct {
+  uint8_t   mid;
+  uint16_t  oid;
+  char      pnm[5];
+  uint8_t   prv_n;
+  uint8_t   prv_m;
+  uint32_t  psn;
+  uint8_t   mdt_m;
+  uint16_t  mdt_y;
+  uint8_t   crc;
+} unpacked_sdc_cid_t;
+
+/**
+ * @brief   Unpacked CID register from MMC.
+ */
+typedef struct {
+  uint8_t   mid;
+  uint16_t  oid;
+  char      pnm[6];
+  uint8_t   prv_n;
+  uint8_t   prv_m;
+  uint32_t  psn;
+  uint8_t   mdt_m;
+  uint16_t  mdt_y;
+  uint8_t   crc;
+} unpacked_mmc_cid_t;
+
+/**
+ * @brief   Unpacked CSD v1.0 register from SDC.
+ */
+typedef struct {
+  uint8_t   csd_structure;
+  uint8_t   taac;
+  uint8_t   nsac;
+  uint8_t   tran_speed;
+  uint16_t  ccc;
+  uint8_t   read_bl_len;
+  uint8_t   read_bl_partial;
+  uint8_t   write_blk_misalign;
+  uint8_t   read_blk_misalign;
+  uint8_t   dsr_imp;
+  uint16_t  c_size;
+  uint8_t   vdd_r_curr_min;
+  uint8_t   vdd_r_curr_max;
+  uint8_t   vdd_w_curr_min;
+  uint8_t   vdd_w_curr_max;
+  uint8_t   c_size_mult;
+  uint8_t   erase_blk_en;
+  uint8_t   erase_sector_size;
+  uint8_t   wp_grp_size;
+  uint8_t   wp_grp_enable;
+  uint8_t   r2w_factor;
+  uint8_t   write_bl_len;
+  uint8_t   write_bl_partial;
+  uint8_t   file_format_grp;
+  uint8_t   copy;
+  uint8_t   perm_write_protect;
+  uint8_t   tmp_write_protect;
+  uint8_t   file_format;
+  uint8_t   crc;
+} unpacked_sdc_csd_10_t;
+
+/**
+ * @brief   Unpacked CSD v2.0 register from SDC.
+ */
+typedef struct {
+  uint8_t   csd_structure;
+  uint8_t   taac;
+  uint8_t   nsac;
+  uint8_t   tran_speed;
+  uint16_t  ccc;
+  uint8_t   read_bl_len;
+  uint8_t   read_bl_partial;
+  uint8_t   write_blk_misalign;
+  uint8_t   read_blk_misalign;
+  uint8_t   dsr_imp;
+  uint32_t  c_size;
+  uint8_t   erase_blk_en;
+  uint8_t   erase_sector_size;
+  uint8_t   wp_grp_size;
+  uint8_t   wp_grp_enable;
+  uint8_t   r2w_factor;
+  uint8_t   write_bl_len;
+  uint8_t   write_bl_partial;
+  uint8_t   file_format_grp;
+  uint8_t   copy;
+  uint8_t   perm_write_protect;
+  uint8_t   tmp_write_protect;
+  uint8_t   file_format;
+  uint8_t   crc;
+} unmacked_sdc_csd_20_t;
+
+/**
+ * @brief   Unpacked CSD register from MMC.
+ */
+typedef struct {
+  uint8_t   csd_structure;
+  uint8_t   spec_vers;
+  uint8_t   taac;
+  uint8_t   nsac;
+  uint8_t   tran_speed;
+  uint16_t  ccc;
+  uint8_t   read_bl_len;
+  uint8_t   read_bl_partial;
+  uint8_t   write_blk_misalign;
+  uint8_t   read_blk_misalign;
+  uint8_t   dsr_imp;
+  uint16_t  c_size;
+  uint8_t   vdd_r_curr_min;
+  uint8_t   vdd_r_curr_max;
+  uint8_t   vdd_w_curr_min;
+  uint8_t   vdd_w_curr_max;
+  uint8_t   c_size_mult;
+  uint8_t   erase_grp_size;
+  uint8_t   erase_grp_mult;
+  uint8_t   wp_grp_size;
+  uint8_t   wp_grp_enable;
+  uint8_t   default_ecc;
+  uint8_t   r2w_factor;
+  uint8_t   write_bl_len;
+  uint8_t   write_bl_partial;
+  uint8_t   content_prot_app;
+  uint8_t   file_format_grp;
+  uint8_t   copy;
+  uint8_t   perm_write_protect;
+  uint8_t   tmp_write_protect;
+  uint8_t   file_format;
+  uint8_t   ecc;
+  uint8_t   crc;
+} unpacked_mmc_csd_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -341,9 +475,15 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  uint32_t mmcsd_get_slice(const uint32_t *data, uint32_t end, uint32_t start);
+  uint32_t mmcsdGetSlice(const uint32_t *data, uint32_t end, uint32_t start);
   uint32_t mmcsdGetCapacity(const uint32_t *csd);
   uint32_t mmcsdGetCapacityMMC(const uint32_t *csd, const uint8_t *ext_csd);
+  void sdcUnpackCID(const MMCSDBlockDevice *sdcp, unpacked_sdc_cid_t *cidsdc);
+  void mmcUnpackCID(const MMCSDBlockDevice *sdcp, unpacked_mmc_cid_t *cidmmc);
+  void sdcUnpackCSDv10(const MMCSDBlockDevice *sdcp,
+                       unpacked_sdc_csd_10_t *csd10);
+  void sdcUnpackCSDv20(const MMCSDBlockDevice *sdcp,
+                       unmacked_sdc_csd_20_t *csd20);
 #ifdef __cplusplus
 }
 #endif
