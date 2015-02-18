@@ -717,7 +717,7 @@ static bool sdc_set_bus_width(SDCDriver *sdcp) {
  */
 static bool mmc_set_bus_width(SDCDriver *sdcp) {
   uint32_t resp[1];
-  uint32_t cmdarg;
+  uint32_t cmdarg = mmc_cmd6_construct(MMC_SWITCH_WRITE_BYTE, 183, 0, 0);
 
   switch(sdcp->config->bus_width){
   case SDC_MODE_1BIT:
