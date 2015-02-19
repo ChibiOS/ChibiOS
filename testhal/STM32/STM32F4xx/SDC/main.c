@@ -23,11 +23,16 @@
 #include "shell.h"
 
 /*
+ * Working area for driver.
+ */
+static uint8_t sd_scratchpad[512];
+
+/*
  * SDIO configuration.
  */
 static const SDCConfig sdccfg = {
   SDC_MODE_4BIT,
-  NULL
+  sd_scratchpad
 };
 
 /*
@@ -50,7 +55,7 @@ static msg_t Thread1(void *arg) {
 /* Command line related.                                                     */
 /*===========================================================================*/
 
-#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+#define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(2048)
 
 #define SDC_BURST_SIZE      16
 
@@ -80,6 +85,7 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "failed\r\n");
     return;
   }
+
   chprintf(chp, "OK\r\n\r\nCard Info\r\n");
   chprintf(chp, "CSD      : %08X %8X %08X %08X \r\n",
            SDCD1.csd[3], SDCD1.csd[2], SDCD1.csd[1], SDCD1.csd[0]);
