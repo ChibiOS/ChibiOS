@@ -84,11 +84,6 @@ static const struct SDCDriverVMT sdc_vmt = {
   (bool (*)(void *, BlockDeviceInfo *))sdcGetInfo
 };
 
-/**
- * @brief     Temporal storage for different purposes (extended CSD, etc.).
- */
-static uint8_t scratchpad[512];
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -308,18 +303,16 @@ static bool sdc_cmd6_check_status(sd_switch_function_t function,
  * @notapi
  */
 static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
-  uint32_t cmdarg;
+  uint32_t cmdarg = 0;
+  uint8_t *scratchpad = sdcp->config->scratchpad;
 
   *clk = SDC_CLK_25MHz; /* safe default */
 
-  cmdarg = 0;
-  memset(scratchpad, 0x55, sizeof(scratchpad));
   if (sdc_lld_read_special(sdcp, scratchpad, 64, MMCSD_CMD_SWITCH, cmdarg))
     return HAL_FAILED;
 
   if ((sdc_cmd6_extract_info(SD_SWITCH_FUNCTION_SPEED, scratchpad) & 2) == 2) {
     cmdarg = sdc_cmd6_construct(SD_SWITCH_SET, SD_SWITCH_FUNCTION_SPEED, 1);
-    memset(scratchpad, 0x55, sizeof(scratchpad));
     if (sdc_lld_read_special(sdcp, scratchpad, 64, MMCSD_CMD_SWITCH, cmdarg))
       return HAL_FAILED;
     if (HAL_SUCCESS == sdc_cmd6_check_status(SD_SWITCH_FUNCTION_SPEED, scratchpad))
@@ -576,7 +569,8 @@ void sdcStop(SDCDriver *sdcp) {
  */
 bool sdcConnect(SDCDriver *sdcp) {
   uint32_t resp[1];
-  sdcbusclk_t clk;
+  sdcbusclk_t clk = SDC_CLK_25MHz;
+  uint8_t *scratchpad = sdcp->config->scratchpad;
 
   osalDbgCheck(sdcp != NULL);
   osalDbgAssert((sdcp->state == BLK_ACTIVE) || (sdcp->state == BLK_READY),
