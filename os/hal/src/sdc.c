@@ -308,6 +308,10 @@ static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
 
   *clk = SDC_CLK_25MHz; /* safe default */
 
+  /* Use safe default when there is no space for data.*/
+  if (NULL == scratchpad)
+    return HAL_SUCCESS;
+
   if (sdc_lld_read_special(sdcp, scratchpad, 64, MMCSD_CMD_SWITCH, cmdarg))
     return HAL_FAILED;
 
@@ -623,9 +627,10 @@ bool sdcConnect(SDCDriver *sdcp) {
     goto failed;
   sdc_lld_set_data_clk(sdcp, clk);
 
-  /* Reads extended CSD if needed.*/
-  if (SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) &&
-          mmcsdGetSlice(sdcp->csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE) > 1) {
+  /* Reads extended CSD if needed and possible.*/
+  if (NULL != scratchpad &&
+      SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) &&
+      mmcsdGetSlice(sdcp->csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE) > 1) {
     if(sdc_lld_read_special(sdcp, scratchpad, 512, MMCSD_CMD_SEND_EXT_CSD, 0))
       goto failed;
   }

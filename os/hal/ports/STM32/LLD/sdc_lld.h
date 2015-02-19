@@ -227,8 +227,8 @@ typedef struct {
    *          procedures (temporal storage for EXT_CSD, etc.).
    * @note    Buffer must be word aligned and big enough to store 512 bytes.
    * @note    It is mandatory for MMC bigger than 2GB.
-   * @note    Memory can be freed after @p sdcConnect function call. Do not
-   *          forge to set this pointer to @p NULL after freeing.
+   * @note    Memory can be freed after @p sdcConnect return. Do not
+   *          forget to set this pointer to @p NULL after freeing.
    */
   uint8_t       *scratchpad;
 } SDCConfig;
