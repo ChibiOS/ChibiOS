@@ -306,7 +306,8 @@ static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
   uint32_t cmdarg = 0;
   uint8_t *scratchpad = sdcp->config->scratchpad;
 
-  *clk = SDC_CLK_25MHz; /* safe default */
+  /* Safe default.*/
+  *clk = SDC_CLK_25MHz;
 
   /* Use safe default when there is no space for data.*/
   if (NULL == scratchpad)
@@ -341,12 +342,18 @@ static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
 static sdcbusclk_t mmc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
   uint32_t cmdarg;
   uint32_t resp[1];
+  uint8_t *scratchpad = sdcp->config->scratchpad;
+
+  /* Safe default.*/
+  *clk = SDC_CLK_25MHz;
+
+  /* Use safe default when there is no space for data.*/
+  if (NULL == scratchpad)
+    return HAL_SUCCESS;
 
   cmdarg = mmc_cmd6_construct(MMC_SWITCH_WRITE_BYTE, 185, 1, 0);
-  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SWITCH, cmdarg, resp) ||
-                                 MMCSD_R1_ERROR(resp[0]))
-    *clk = SDC_CLK_25MHz;
-  else
+  if (!(sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SWITCH, cmdarg, resp) ||
+                                   MMCSD_R1_ERROR(resp[0])))
     *clk = SDC_CLK_50MHz;
 
   return HAL_SUCCESS;
@@ -574,7 +581,6 @@ void sdcStop(SDCDriver *sdcp) {
 bool sdcConnect(SDCDriver *sdcp) {
   uint32_t resp[1];
   sdcbusclk_t clk = SDC_CLK_25MHz;
-  uint8_t *scratchpad = sdcp->config->scratchpad;
 
   osalDbgCheck(sdcp != NULL);
   osalDbgAssert((sdcp->state == BLK_ACTIVE) || (sdcp->state == BLK_READY),
@@ -628,26 +634,36 @@ bool sdcConnect(SDCDriver *sdcp) {
   sdc_lld_set_data_clk(sdcp, clk);
 
   /* Reads extended CSD if needed and possible.*/
-  if (NULL != scratchpad &&
-      SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) &&
-      mmcsdGetSlice(sdcp->csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE) > 1) {
-    if(sdc_lld_read_special(sdcp, scratchpad, 512, MMCSD_CMD_SEND_EXT_CSD, 0))
-      goto failed;
+  if (SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK)) {
+
+    /* The card is a MMC, checking if it is a large device.*/
+    if (_mmcsd_get_slice(sdcp->csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE) > 1) {
+      uint8_t *ext_csd = sdcp->config->scratchpad;
+
+      /* Size detection requires the buffer.*/
+      if (NULL == ext_csd)
+        goto failed;
+
+      if(sdc_lld_read_special(sdcp, ext_csd, 512, MMCSD_CMD_SEND_EXT_CSD, 0))
+        goto failed;
+
+      /* Capacity from the EXT_CSD.*/
+      sdcp->capacity = _mmcsd_get_capacity_ext(ext_csd);
+    }
+    else {
+      /* Capacity from the normal CSD.*/
+      sdcp->capacity = _mmcsd_get_capacity(sdcp->csd);
+    }
+  }
+  else {
+    /* The card is an SDC, capacity from the normal CSD.*/
+    sdcp->capacity = _mmcsd_get_capacity(sdcp->csd);
   }
 
   /* Block length fixed at 512 bytes.*/
   if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SET_BLOCKLEN,
                                  MMCSD_BLOCK_SIZE, resp) ||
       MMCSD_R1_ERROR(resp[0]))
-    goto failed;
-
-  /* Determine capacity.*/
-  if (SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK))
-    sdcp->capacity = mmcsdGetCapacityMMC(sdcp->csd, scratchpad);
-  else
-    sdcp->capacity = mmcsdGetCapacity(sdcp->csd);
-
-  if (sdcp->capacity == 0)
     goto failed;
 
   /* Switches to wide bus mode.*/

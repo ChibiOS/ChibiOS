@@ -31,8 +31,8 @@ static uint8_t sd_scratchpad[512];
  * SDIO configuration.
  */
 static const SDCConfig sdccfg = {
-  SDC_MODE_4BIT,
-  sd_scratchpad
+  sd_scratchpad,
+  SDC_MODE_4BIT
 };
 
 /*

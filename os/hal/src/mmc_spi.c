@@ -516,7 +516,7 @@ bool mmcConnect(MMCDriver *mmcp) {
   /* Determine capacity.*/
   if (read_CxD(mmcp, MMCSD_CMD_SEND_CSD, mmcp->csd))
     goto failed;
-  mmcp->capacity = mmcsdGetCapacity(mmcp->csd);
+  mmcp->capacity = _mmcsd_get_capacity(mmcp->csd);
   if (mmcp->capacity == 0)
     goto failed;
 

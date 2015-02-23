@@ -219,18 +219,19 @@ typedef struct SDCDriver SDCDriver;
  */
 typedef struct {
   /**
-   * @brief   Bus width (board specific).
-   */
-  sdcbusmode_t  bus_width;
-  /**
-   * @brief   Working area for memory consuming operations during init
-   *          procedures (temporal storage for EXT_CSD, etc.).
+   * @brief   Working area for memory consuming operations.
    * @note    Buffer must be word aligned and big enough to store 512 bytes.
-   * @note    It is mandatory for MMC bigger than 2GB.
-   * @note    Memory can be freed after @p sdcConnect return. Do not
-   *          forget to set this pointer to @p NULL after freeing.
+   * @note    It is mandatory for detecting MMC cards bigger than 2GB else it
+   *          can be @p NULL.
+   * @note    Memory pointed by this buffer is only used by @p sdcConnect(),
+   *          afterward it can be reused for other purposes.
    */
   uint8_t       *scratchpad;
+  /* End of the mandatory fields.*/
+  /**
+   * @brief   Bus width.
+   */
+  sdcbusmode_t  bus_width;
 } SDCConfig;
 
 /**
@@ -288,7 +289,7 @@ struct SDCDriver {
   const stm32_dma_stream_t  *dma;
   /**
    * @brief     Pointer to the SDIO registers block.
-   * @note      Needed for dubugging aid.
+   * @note      Needed for debugging aid.
    */
   SDIO_TypeDef              *sdio;
 };

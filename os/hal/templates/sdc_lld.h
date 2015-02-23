@@ -78,7 +78,14 @@ typedef struct SDCDriver SDCDriver;
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-  uint32_t dummy;
+  /**
+   * @brief   Working area for memory consuming operations.
+   * @note    It is mandatory for detecting MMC cards bigger than 2GB else it
+   *          can be @p NULL.
+   * @note    Memory pointed by this buffer is only used by @p sdcConnect(),
+   *          afterward it can be reused for other purposes.
+   */
+  uint8_t       *scratchpad;
 } SDCConfig;
 
 /**

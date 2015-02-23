@@ -475,15 +475,21 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  uint32_t mmcsdGetSlice(const uint32_t *data, uint32_t end, uint32_t start);
-  uint32_t mmcsdGetCapacity(const uint32_t *csd);
-  uint32_t mmcsdGetCapacityMMC(const uint32_t *csd, const uint8_t *ext_csd);
-  void sdcUnpackCID(const MMCSDBlockDevice *sdcp, unpacked_sdc_cid_t *cidsdc);
-  void mmcUnpackCID(const MMCSDBlockDevice *sdcp, unpacked_mmc_cid_t *cidmmc);
-  void sdcUnpackCSDv10(const MMCSDBlockDevice *sdcp,
-                       unpacked_sdc_csd_10_t *csd10);
-  void sdcUnpackCSDv20(const MMCSDBlockDevice *sdcp,
-                       unmacked_sdc_csd_20_t *csd20);
+  uint32_t _mmcsd_get_slice(const uint32_t *data,
+                            uint32_t end,
+                            uint32_t start);
+  uint32_t _mmcsd_get_capacity(const uint32_t *csd);
+  uint32_t _mmcsd_get_capacity_ext(const uint8_t *ext_csd);
+  void _mmcsd_unpack_sdc_cid(const MMCSDBlockDevice *sdcp,
+                             unpacked_sdc_cid_t *cidsdc);
+  void _mmcsd_unpack_mmc_cid(const MMCSDBlockDevice *sdcp,
+                             unpacked_mmc_cid_t *cidmmc);
+  void _mmcsd_unpack_csd_mmc(const MMCSDBlockDevice *sdcp,
+                             unpacked_mmc_csd_t *csdmmc);
+  void _mmcsd_unpack_csd_v10(const MMCSDBlockDevice *sdcp,
+                             unpacked_sdc_csd_10_t *csd10);
+  void _mmcsd_unpack_csd_v20(const MMCSDBlockDevice *sdcp,
+                             unmacked_sdc_csd_20_t *csd20);
 #ifdef __cplusplus
 }
 #endif

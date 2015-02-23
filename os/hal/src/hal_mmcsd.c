@@ -61,7 +61,9 @@
  *
  * @notapi
  */
-uint32_t mmcsdGetSlice(const uint32_t *data, uint32_t end, uint32_t start) {
+uint32_t _mmcsd_get_slice(const uint32_t *data,
+                          uint32_t end,
+                          uint32_t start) {
   unsigned startidx, endidx, startoff;
   uint32_t endmask;
 
@@ -87,22 +89,24 @@ uint32_t mmcsdGetSlice(const uint32_t *data, uint32_t end, uint32_t start) {
  *
  * @return              The card capacity.
  * @retval 0            CSD format error
+ *
+ * @notapi
  */
-uint32_t mmcsdGetCapacity(const uint32_t *csd) {
+uint32_t _mmcsd_get_capacity(const uint32_t *csd) {
   uint32_t a, b, c;
 
   osalDbgCheck(NULL != csd);
 
-  switch (mmcsdGetSlice(csd, MMCSD_CSD_10_CSD_STRUCTURE_SLICE)) {
+  switch (_mmcsd_get_slice(csd, MMCSD_CSD_10_CSD_STRUCTURE_SLICE)) {
   case 0:
     /* CSD version 1.0 */
-    a = mmcsdGetSlice(csd, MMCSD_CSD_10_C_SIZE_SLICE);
-    b = mmcsdGetSlice(csd, MMCSD_CSD_10_C_SIZE_MULT_SLICE);
-    c = mmcsdGetSlice(csd, MMCSD_CSD_10_READ_BL_LEN_SLICE);
+    a = _mmcsd_get_slice(csd, MMCSD_CSD_10_C_SIZE_SLICE);
+    b = _mmcsd_get_slice(csd, MMCSD_CSD_10_C_SIZE_MULT_SLICE);
+    c = _mmcsd_get_slice(csd, MMCSD_CSD_10_READ_BL_LEN_SLICE);
     return (a + 1) << (b + 2) << (c - 9);       /* 2^9 == MMCSD_BLOCK_SIZE. */
   case 1:
     /* CSD version 2.0.*/
-    return 1024 * (mmcsdGetSlice(csd, MMCSD_CSD_20_C_SIZE_SLICE) + 1);
+    return 1024 * (_mmcsd_get_slice(csd, MMCSD_CSD_20_C_SIZE_SLICE) + 1);
   default:
     /* Reserved value detected.*/
     return 0;
@@ -110,33 +114,23 @@ uint32_t mmcsdGetCapacity(const uint32_t *csd) {
 }
 
 /**
- * @brief   Extract MMC card capacity from a CSD or EXT_CSD.
+ * @brief   Extract MMC card capacity from EXT_CSD.
  * @details The capacity is returned as number of available blocks.
  *
- * @param[in] csd       the CSD record
  * @param[in] ext_csd   the extended CSD record
  *
  * @return              The card capacity.
+ *
+ * @notapi
  */
-uint32_t mmcsdGetCapacityMMC(const uint32_t *csd, const uint8_t *ext_csd) {
-  uint32_t a, b, c;
+uint32_t _mmcsd_get_capacity_ext(const uint8_t *ext_csd) {
 
-  osalDbgCheck(NULL != csd);
+  osalDbgCheck(NULL != ext_csd);
 
-  a = mmcsdGetSlice(csd, MMCSD_CSD_MMC_C_SIZE_SLICE);
-  if (0xFFF != a) {
-    b = mmcsdGetSlice(csd, MMCSD_CSD_MMC_C_SIZE_MULT_SLICE);
-    c = mmcsdGetSlice(csd, MMCSD_CSD_MMC_READ_BL_LEN_SLICE);
-    return (a + 1) << (b + 2) << (c - 9);       /* 2^9 == MMCSD_BLOCK_SIZE. */
-  }
-  else if (NULL != ext_csd) {
-    return (ext_csd[215] << 24) +
-           (ext_csd[214] << 16) +
-           (ext_csd[213] << 8)  +
-            ext_csd[212];
-  }
-  else
-    return 0;
+  return (ext_csd[215] << 24) +
+         (ext_csd[214] << 16) +
+         (ext_csd[213] << 8)  +
+          ext_csd[212];
 }
 
 /**
@@ -147,25 +141,26 @@ uint32_t mmcsdGetCapacityMMC(const uint32_t *csd, const uint8_t *ext_csd) {
  *
  * @api
  */
-void sdcUnpackCID(const MMCSDBlockDevice *sdcp, unpacked_sdc_cid_t *cidsdc) {
+void _mmcsd_unpack_sdc_cid(const MMCSDBlockDevice *sdcp,
+                           unpacked_sdc_cid_t *cidsdc) {
   const uint32_t *cid;
 
   osalDbgCheck((NULL != sdcp) && (NULL != cidsdc));
-  cid = sdcp->cid;
 
-  cidsdc->crc    = mmcsdGetSlice(cid, MMCSD_CID_SDC_CRC_SLICE);
-  cidsdc->mdt_y  = mmcsdGetSlice(cid, MMCSD_CID_SDC_MDT_Y_SLICE) + 2000;
-  cidsdc->mdt_m  = mmcsdGetSlice(cid, MMCSD_CID_SDC_MDT_M_SLICE);
-  cidsdc->mid    = mmcsdGetSlice(cid, MMCSD_CID_SDC_MID_SLICE);
-  cidsdc->oid    = mmcsdGetSlice(cid, MMCSD_CID_SDC_OID_SLICE);
-  cidsdc->pnm[4] = mmcsdGetSlice(cid, MMCSD_CID_SDC_PNM0_SLICE);
-  cidsdc->pnm[3] = mmcsdGetSlice(cid, MMCSD_CID_SDC_PNM1_SLICE);
-  cidsdc->pnm[2] = mmcsdGetSlice(cid, MMCSD_CID_SDC_PNM2_SLICE);
-  cidsdc->pnm[1] = mmcsdGetSlice(cid, MMCSD_CID_SDC_PNM3_SLICE);
-  cidsdc->pnm[0] = mmcsdGetSlice(cid, MMCSD_CID_SDC_PNM4_SLICE);
-  cidsdc->prv_n  = mmcsdGetSlice(cid, MMCSD_CID_SDC_PRV_N_SLICE);
-  cidsdc->prv_m  = mmcsdGetSlice(cid, MMCSD_CID_SDC_PRV_M_SLICE);
-  cidsdc->psn    = mmcsdGetSlice(cid, MMCSD_CID_SDC_PSN_SLICE);
+  cid = sdcp->cid;
+  cidsdc->crc    = _mmcsd_get_slice(cid, MMCSD_CID_SDC_CRC_SLICE);
+  cidsdc->mdt_y  = _mmcsd_get_slice(cid, MMCSD_CID_SDC_MDT_Y_SLICE) + 2000;
+  cidsdc->mdt_m  = _mmcsd_get_slice(cid, MMCSD_CID_SDC_MDT_M_SLICE);
+  cidsdc->mid    = _mmcsd_get_slice(cid, MMCSD_CID_SDC_MID_SLICE);
+  cidsdc->oid    = _mmcsd_get_slice(cid, MMCSD_CID_SDC_OID_SLICE);
+  cidsdc->pnm[4] = _mmcsd_get_slice(cid, MMCSD_CID_SDC_PNM0_SLICE);
+  cidsdc->pnm[3] = _mmcsd_get_slice(cid, MMCSD_CID_SDC_PNM1_SLICE);
+  cidsdc->pnm[2] = _mmcsd_get_slice(cid, MMCSD_CID_SDC_PNM2_SLICE);
+  cidsdc->pnm[1] = _mmcsd_get_slice(cid, MMCSD_CID_SDC_PNM3_SLICE);
+  cidsdc->pnm[0] = _mmcsd_get_slice(cid, MMCSD_CID_SDC_PNM4_SLICE);
+  cidsdc->prv_n  = _mmcsd_get_slice(cid, MMCSD_CID_SDC_PRV_N_SLICE);
+  cidsdc->prv_m  = _mmcsd_get_slice(cid, MMCSD_CID_SDC_PRV_M_SLICE);
+  cidsdc->psn    = _mmcsd_get_slice(cid, MMCSD_CID_SDC_PSN_SLICE);
 }
 
 /**
@@ -176,26 +171,27 @@ void sdcUnpackCID(const MMCSDBlockDevice *sdcp, unpacked_sdc_cid_t *cidsdc) {
  *
  * @api
  */
-void mmcUnpackCID(const MMCSDBlockDevice *sdcp, unpacked_mmc_cid_t *cidmmc) {
+void _mmcsd_unpack_mmc_cid(const MMCSDBlockDevice *sdcp,
+                           unpacked_mmc_cid_t *cidmmc) {
   const uint32_t *cid;
 
   osalDbgCheck((NULL != sdcp) && (NULL != cidmmc));
-  cid = sdcp->cid;
 
-  cidmmc->crc    = mmcsdGetSlice(cid, MMCSD_CID_MMC_CRC_SLICE);
-  cidmmc->mdt_y  = mmcsdGetSlice(cid, MMCSD_CID_MMC_MDT_Y_SLICE) + 1997;
-  cidmmc->mdt_m  = mmcsdGetSlice(cid, MMCSD_CID_MMC_MDT_M_SLICE);
-  cidmmc->mid    = mmcsdGetSlice(cid, MMCSD_CID_MMC_MID_SLICE);
-  cidmmc->oid    = mmcsdGetSlice(cid, MMCSD_CID_MMC_OID_SLICE);
-  cidmmc->pnm[5] = mmcsdGetSlice(cid, MMCSD_CID_MMC_PNM0_SLICE);
-  cidmmc->pnm[4] = mmcsdGetSlice(cid, MMCSD_CID_MMC_PNM1_SLICE);
-  cidmmc->pnm[3] = mmcsdGetSlice(cid, MMCSD_CID_MMC_PNM2_SLICE);
-  cidmmc->pnm[2] = mmcsdGetSlice(cid, MMCSD_CID_MMC_PNM3_SLICE);
-  cidmmc->pnm[1] = mmcsdGetSlice(cid, MMCSD_CID_MMC_PNM4_SLICE);
-  cidmmc->pnm[0] = mmcsdGetSlice(cid, MMCSD_CID_MMC_PNM5_SLICE);
-  cidmmc->prv_n  = mmcsdGetSlice(cid, MMCSD_CID_MMC_PRV_N_SLICE);
-  cidmmc->prv_m  = mmcsdGetSlice(cid, MMCSD_CID_MMC_PRV_M_SLICE);
-  cidmmc->psn    = mmcsdGetSlice(cid, MMCSD_CID_MMC_PSN_SLICE);
+  cid = sdcp->cid;
+  cidmmc->crc    = _mmcsd_get_slice(cid, MMCSD_CID_MMC_CRC_SLICE);
+  cidmmc->mdt_y  = _mmcsd_get_slice(cid, MMCSD_CID_MMC_MDT_Y_SLICE) + 1997;
+  cidmmc->mdt_m  = _mmcsd_get_slice(cid, MMCSD_CID_MMC_MDT_M_SLICE);
+  cidmmc->mid    = _mmcsd_get_slice(cid, MMCSD_CID_MMC_MID_SLICE);
+  cidmmc->oid    = _mmcsd_get_slice(cid, MMCSD_CID_MMC_OID_SLICE);
+  cidmmc->pnm[5] = _mmcsd_get_slice(cid, MMCSD_CID_MMC_PNM0_SLICE);
+  cidmmc->pnm[4] = _mmcsd_get_slice(cid, MMCSD_CID_MMC_PNM1_SLICE);
+  cidmmc->pnm[3] = _mmcsd_get_slice(cid, MMCSD_CID_MMC_PNM2_SLICE);
+  cidmmc->pnm[2] = _mmcsd_get_slice(cid, MMCSD_CID_MMC_PNM3_SLICE);
+  cidmmc->pnm[1] = _mmcsd_get_slice(cid, MMCSD_CID_MMC_PNM4_SLICE);
+  cidmmc->pnm[0] = _mmcsd_get_slice(cid, MMCSD_CID_MMC_PNM5_SLICE);
+  cidmmc->prv_n  = _mmcsd_get_slice(cid, MMCSD_CID_MMC_PRV_N_SLICE);
+  cidmmc->prv_m  = _mmcsd_get_slice(cid, MMCSD_CID_MMC_PRV_M_SLICE);
+  cidmmc->psn    = _mmcsd_get_slice(cid, MMCSD_CID_MMC_PSN_SLICE);
 }
 
 /**
@@ -206,43 +202,44 @@ void mmcUnpackCID(const MMCSDBlockDevice *sdcp, unpacked_mmc_cid_t *cidmmc) {
  *
  * @api
  */
-void mmcUnpackCSD(const MMCSDBlockDevice *sdcp, unpacked_mmc_csd_t *csdmmc) {
+void _mmcsd_unpack_csd_mmc(const MMCSDBlockDevice *sdcp,
+                           unpacked_mmc_csd_t *csdmmc) {
   const uint32_t *csd;
 
   osalDbgCheck((NULL != sdcp) && (NULL != csdmmc));
-  csd = sdcp->csd;
 
-  csdmmc->c_size             = mmcsdGetSlice(csd, MMCSD_CSD_MMC_C_SIZE_SLICE);
-  csdmmc->c_size_mult        = mmcsdGetSlice(csd, MMCSD_CSD_MMC_C_SIZE_MULT_SLICE);
-  csdmmc->ccc                = mmcsdGetSlice(csd, MMCSD_CSD_MMC_CCC_SLICE);
-  csdmmc->copy               = mmcsdGetSlice(csd, MMCSD_CSD_MMC_COPY_SLICE);
-  csdmmc->crc                = mmcsdGetSlice(csd, MMCSD_CSD_MMC_CRC_SLICE);
-  csdmmc->csd_structure      = mmcsdGetSlice(csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE);
-  csdmmc->dsr_imp            = mmcsdGetSlice(csd, MMCSD_CSD_MMC_DSR_IMP_SLICE);
-  csdmmc->ecc                = mmcsdGetSlice(csd, MMCSD_CSD_MMC_ECC_SLICE);
-  csdmmc->erase_grp_mult     = mmcsdGetSlice(csd, MMCSD_CSD_MMC_ERASE_GRP_MULT_SLICE);
-  csdmmc->erase_grp_size     = mmcsdGetSlice(csd, MMCSD_CSD_MMC_ERASE_GRP_SIZE_SLICE);
-  csdmmc->file_format        = mmcsdGetSlice(csd, MMCSD_CSD_MMC_FILE_FORMAT_SLICE);
-  csdmmc->file_format_grp    = mmcsdGetSlice(csd, MMCSD_CSD_MMC_FILE_FORMAT_GRP_SLICE);
-  csdmmc->nsac               = mmcsdGetSlice(csd, MMCSD_CSD_MMC_NSAC_SLICE);
-  csdmmc->perm_write_protect = mmcsdGetSlice(csd, MMCSD_CSD_MMC_PERM_WRITE_PROTECT_SLICE);
-  csdmmc->r2w_factor         = mmcsdGetSlice(csd, MMCSD_CSD_MMC_R2W_FACTOR_SLICE);
-  csdmmc->read_bl_len        = mmcsdGetSlice(csd, MMCSD_CSD_MMC_READ_BL_LEN_SLICE);
-  csdmmc->read_bl_partial    = mmcsdGetSlice(csd, MMCSD_CSD_MMC_READ_BL_PARTIAL_SLICE);
-  csdmmc->read_blk_misalign  = mmcsdGetSlice(csd, MMCSD_CSD_MMC_READ_BLK_MISALIGN_SLICE);
-  csdmmc->spec_vers          = mmcsdGetSlice(csd, MMCSD_CSD_MMC_SPEC_VERS_SLICE);
-  csdmmc->taac               = mmcsdGetSlice(csd, MMCSD_CSD_MMC_TAAC_SLICE);
-  csdmmc->tmp_write_protect  = mmcsdGetSlice(csd, MMCSD_CSD_MMC_TMP_WRITE_PROTECT_SLICE);
-  csdmmc->tran_speed         = mmcsdGetSlice(csd, MMCSD_CSD_MMC_TRAN_SPEED_SLICE);
-  csdmmc->vdd_r_curr_max     = mmcsdGetSlice(csd, MMCSD_CSD_MMC_VDD_R_CURR_MAX_SLICE);
-  csdmmc->vdd_r_curr_min     = mmcsdGetSlice(csd, MMCSD_CSD_MMC_VDD_R_CURR_MIN_SLICE);
-  csdmmc->vdd_w_curr_max     = mmcsdGetSlice(csd, MMCSD_CSD_MMC_VDD_W_CURR_MAX_SLICE);
-  csdmmc->vdd_w_curr_min     = mmcsdGetSlice(csd, MMCSD_CSD_MMC_VDD_W_CURR_MIN_SLICE);
-  csdmmc->wp_grp_enable      = mmcsdGetSlice(csd, MMCSD_CSD_MMC_WP_GRP_ENABLE_SLICE);
-  csdmmc->wp_grp_size        = mmcsdGetSlice(csd, MMCSD_CSD_MMC_WP_GRP_SIZE_SLICE);
-  csdmmc->write_bl_len       = mmcsdGetSlice(csd, MMCSD_CSD_MMC_WRITE_BL_LEN_SLICE);
-  csdmmc->write_bl_partial   = mmcsdGetSlice(csd, MMCSD_CSD_MMC_WRITE_BL_PARTIAL_SLICE);
-  csdmmc->write_blk_misalign = mmcsdGetSlice(csd, MMCSD_CSD_MMC_WRITE_BLK_MISALIGN_SLICE);
+  csd = sdcp->csd;
+  csdmmc->c_size             = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_C_SIZE_SLICE);
+  csdmmc->c_size_mult        = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_C_SIZE_MULT_SLICE);
+  csdmmc->ccc                = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_CCC_SLICE);
+  csdmmc->copy               = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_COPY_SLICE);
+  csdmmc->crc                = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_CRC_SLICE);
+  csdmmc->csd_structure      = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE);
+  csdmmc->dsr_imp            = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_DSR_IMP_SLICE);
+  csdmmc->ecc                = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_ECC_SLICE);
+  csdmmc->erase_grp_mult     = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_ERASE_GRP_MULT_SLICE);
+  csdmmc->erase_grp_size     = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_ERASE_GRP_SIZE_SLICE);
+  csdmmc->file_format        = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_FILE_FORMAT_SLICE);
+  csdmmc->file_format_grp    = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_FILE_FORMAT_GRP_SLICE);
+  csdmmc->nsac               = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_NSAC_SLICE);
+  csdmmc->perm_write_protect = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_PERM_WRITE_PROTECT_SLICE);
+  csdmmc->r2w_factor         = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_R2W_FACTOR_SLICE);
+  csdmmc->read_bl_len        = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_READ_BL_LEN_SLICE);
+  csdmmc->read_bl_partial    = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_READ_BL_PARTIAL_SLICE);
+  csdmmc->read_blk_misalign  = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_READ_BLK_MISALIGN_SLICE);
+  csdmmc->spec_vers          = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_SPEC_VERS_SLICE);
+  csdmmc->taac               = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_TAAC_SLICE);
+  csdmmc->tmp_write_protect  = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_TMP_WRITE_PROTECT_SLICE);
+  csdmmc->tran_speed         = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_TRAN_SPEED_SLICE);
+  csdmmc->vdd_r_curr_max     = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_VDD_R_CURR_MAX_SLICE);
+  csdmmc->vdd_r_curr_min     = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_VDD_R_CURR_MIN_SLICE);
+  csdmmc->vdd_w_curr_max     = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_VDD_W_CURR_MAX_SLICE);
+  csdmmc->vdd_w_curr_min     = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_VDD_W_CURR_MIN_SLICE);
+  csdmmc->wp_grp_enable      = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_WP_GRP_ENABLE_SLICE);
+  csdmmc->wp_grp_size        = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_WP_GRP_SIZE_SLICE);
+  csdmmc->write_bl_len       = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_WRITE_BL_LEN_SLICE);
+  csdmmc->write_bl_partial   = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_WRITE_BL_PARTIAL_SLICE);
+  csdmmc->write_blk_misalign = _mmcsd_get_slice(csd, MMCSD_CSD_MMC_WRITE_BLK_MISALIGN_SLICE);
 }
 
 /**
@@ -253,38 +250,38 @@ void mmcUnpackCSD(const MMCSDBlockDevice *sdcp, unpacked_mmc_csd_t *csdmmc) {
  *
  * @api
  */
-void sdcUnpackCSDv10(const MMCSDBlockDevice *sdcp,
-                     unpacked_sdc_csd_10_t *csd10) {
+void _mmcsd_unpack_csd_v10(const MMCSDBlockDevice *sdcp,
+                           unpacked_sdc_csd_10_t *csd10) {
   const uint32_t *csd;
 
   osalDbgCheck(NULL != sdcp);
-  csd = sdcp->csd;
 
-  csd10->c_size              = mmcsdGetSlice(csd, MMCSD_CSD_10_C_SIZE_SLICE);
-  csd10->c_size_mult         = mmcsdGetSlice(csd, MMCSD_CSD_10_C_SIZE_MULT_SLICE);
-  csd10->ccc                 = mmcsdGetSlice(csd, MMCSD_CSD_10_CCC_SLICE);
-  csd10->copy                = mmcsdGetSlice(csd, MMCSD_CSD_10_COPY_SLICE);
-  csd10->crc                 = mmcsdGetSlice(csd, MMCSD_CSD_10_CRC_SLICE);
-  csd10->csd_structure       = mmcsdGetSlice(csd, MMCSD_CSD_10_CSD_STRUCTURE_SLICE);
-  csd10->dsr_imp             = mmcsdGetSlice(csd, MMCSD_CSD_10_DSR_IMP_SLICE);
-  csd10->erase_blk_en        = mmcsdGetSlice(csd, MMCSD_CSD_10_ERASE_BLK_EN_SLICE);
-  csd10->erase_sector_size   = mmcsdGetSlice(csd, MMCSD_CSD_10_ERASE_SECTOR_SIZE_SLICE);
-  csd10->file_format         = mmcsdGetSlice(csd, MMCSD_CSD_10_FILE_FORMAT_SLICE);
-  csd10->file_format_grp     = mmcsdGetSlice(csd, MMCSD_CSD_10_FILE_FORMAT_GRP_SLICE);
-  csd10->nsac                = mmcsdGetSlice(csd, MMCSD_CSD_10_NSAC_SLICE);
-  csd10->perm_write_protect  = mmcsdGetSlice(csd, MMCSD_CSD_10_PERM_WRITE_PROTECT_SLICE);
-  csd10->r2w_factor          = mmcsdGetSlice(csd, MMCSD_CSD_10_R2W_FACTOR_SLICE);
-  csd10->read_bl_len         = mmcsdGetSlice(csd, MMCSD_CSD_10_READ_BL_LEN_SLICE);
-  csd10->read_bl_partial     = mmcsdGetSlice(csd, MMCSD_CSD_10_READ_BL_PARTIAL_SLICE);
-  csd10->read_blk_misalign   = mmcsdGetSlice(csd, MMCSD_CSD_10_READ_BLK_MISALIGN_SLICE);
-  csd10->taac                = mmcsdGetSlice(csd, MMCSD_CSD_10_TAAC_SLICE);
-  csd10->tmp_write_protect   = mmcsdGetSlice(csd, MMCSD_CSD_10_TMP_WRITE_PROTECT_SLICE);
-  csd10->tran_speed          = mmcsdGetSlice(csd, MMCSD_CSD_10_TRANS_SPEED_SLICE);
-  csd10->wp_grp_enable       = mmcsdGetSlice(csd, MMCSD_CSD_10_WP_GRP_ENABLE_SLICE);
-  csd10->wp_grp_size         = mmcsdGetSlice(csd, MMCSD_CSD_10_WP_GRP_SIZE_SLICE);
-  csd10->write_bl_len        = mmcsdGetSlice(csd, MMCSD_CSD_10_WRITE_BL_LEN_SLICE);
-  csd10->write_bl_partial    = mmcsdGetSlice(csd, MMCSD_CSD_10_WRITE_BL_PARTIAL_SLICE);
-  csd10->write_blk_misalign  = mmcsdGetSlice(csd, MMCSD_CSD_10_WRITE_BLK_MISALIGN_SLICE);
+  csd = sdcp->csd;
+  csd10->c_size              = _mmcsd_get_slice(csd, MMCSD_CSD_10_C_SIZE_SLICE);
+  csd10->c_size_mult         = _mmcsd_get_slice(csd, MMCSD_CSD_10_C_SIZE_MULT_SLICE);
+  csd10->ccc                 = _mmcsd_get_slice(csd, MMCSD_CSD_10_CCC_SLICE);
+  csd10->copy                = _mmcsd_get_slice(csd, MMCSD_CSD_10_COPY_SLICE);
+  csd10->crc                 = _mmcsd_get_slice(csd, MMCSD_CSD_10_CRC_SLICE);
+  csd10->csd_structure       = _mmcsd_get_slice(csd, MMCSD_CSD_10_CSD_STRUCTURE_SLICE);
+  csd10->dsr_imp             = _mmcsd_get_slice(csd, MMCSD_CSD_10_DSR_IMP_SLICE);
+  csd10->erase_blk_en        = _mmcsd_get_slice(csd, MMCSD_CSD_10_ERASE_BLK_EN_SLICE);
+  csd10->erase_sector_size   = _mmcsd_get_slice(csd, MMCSD_CSD_10_ERASE_SECTOR_SIZE_SLICE);
+  csd10->file_format         = _mmcsd_get_slice(csd, MMCSD_CSD_10_FILE_FORMAT_SLICE);
+  csd10->file_format_grp     = _mmcsd_get_slice(csd, MMCSD_CSD_10_FILE_FORMAT_GRP_SLICE);
+  csd10->nsac                = _mmcsd_get_slice(csd, MMCSD_CSD_10_NSAC_SLICE);
+  csd10->perm_write_protect  = _mmcsd_get_slice(csd, MMCSD_CSD_10_PERM_WRITE_PROTECT_SLICE);
+  csd10->r2w_factor          = _mmcsd_get_slice(csd, MMCSD_CSD_10_R2W_FACTOR_SLICE);
+  csd10->read_bl_len         = _mmcsd_get_slice(csd, MMCSD_CSD_10_READ_BL_LEN_SLICE);
+  csd10->read_bl_partial     = _mmcsd_get_slice(csd, MMCSD_CSD_10_READ_BL_PARTIAL_SLICE);
+  csd10->read_blk_misalign   = _mmcsd_get_slice(csd, MMCSD_CSD_10_READ_BLK_MISALIGN_SLICE);
+  csd10->taac                = _mmcsd_get_slice(csd, MMCSD_CSD_10_TAAC_SLICE);
+  csd10->tmp_write_protect   = _mmcsd_get_slice(csd, MMCSD_CSD_10_TMP_WRITE_PROTECT_SLICE);
+  csd10->tran_speed          = _mmcsd_get_slice(csd, MMCSD_CSD_10_TRANS_SPEED_SLICE);
+  csd10->wp_grp_enable       = _mmcsd_get_slice(csd, MMCSD_CSD_10_WP_GRP_ENABLE_SLICE);
+  csd10->wp_grp_size         = _mmcsd_get_slice(csd, MMCSD_CSD_10_WP_GRP_SIZE_SLICE);
+  csd10->write_bl_len        = _mmcsd_get_slice(csd, MMCSD_CSD_10_WRITE_BL_LEN_SLICE);
+  csd10->write_bl_partial    = _mmcsd_get_slice(csd, MMCSD_CSD_10_WRITE_BL_PARTIAL_SLICE);
+  csd10->write_blk_misalign  = _mmcsd_get_slice(csd, MMCSD_CSD_10_WRITE_BLK_MISALIGN_SLICE);
 }
 
 /**
@@ -295,37 +292,37 @@ void sdcUnpackCSDv10(const MMCSDBlockDevice *sdcp,
  *
  * @api
  */
-void sdcUnpackCSDv20(const MMCSDBlockDevice *sdcp,
-                     unmacked_sdc_csd_20_t *csd20) {
+void _mmcsd_unpack_csd_v20(const MMCSDBlockDevice *sdcp,
+                           unmacked_sdc_csd_20_t *csd20) {
   const uint32_t *csd;
 
   osalDbgCheck(NULL != sdcp);
-  csd = sdcp->csd;
 
-  csd20->c_size              = mmcsdGetSlice(csd, MMCSD_CSD_20_C_SIZE_SLICE);
-  csd20->crc                 = mmcsdGetSlice(csd, MMCSD_CSD_20_CRC_SLICE);
-  csd20->ccc                 = mmcsdGetSlice(csd, MMCSD_CSD_20_CCC_SLICE);
-  csd20->copy                = mmcsdGetSlice(csd, MMCSD_CSD_20_COPY_SLICE);
-  csd20->csd_structure       = mmcsdGetSlice(csd, MMCSD_CSD_20_CSD_STRUCTURE_SLICE);
-  csd20->dsr_imp             = mmcsdGetSlice(csd, MMCSD_CSD_20_DSR_IMP_SLICE);
-  csd20->erase_blk_en        = mmcsdGetSlice(csd, MMCSD_CSD_20_ERASE_BLK_EN_SLICE);
-  csd20->file_format         = mmcsdGetSlice(csd, MMCSD_CSD_20_FILE_FORMAT_SLICE);
-  csd20->file_format_grp     = mmcsdGetSlice(csd, MMCSD_CSD_20_FILE_FORMAT_GRP_SLICE);
-  csd20->nsac                = mmcsdGetSlice(csd, MMCSD_CSD_20_NSAC_SLICE);
-  csd20->perm_write_protect  = mmcsdGetSlice(csd, MMCSD_CSD_20_PERM_WRITE_PROTECT_SLICE);
-  csd20->r2w_factor          = mmcsdGetSlice(csd, MMCSD_CSD_20_R2W_FACTOR_SLICE);
-  csd20->read_bl_len         = mmcsdGetSlice(csd, MMCSD_CSD_20_READ_BL_LEN_SLICE);
-  csd20->read_bl_partial     = mmcsdGetSlice(csd, MMCSD_CSD_20_READ_BL_PARTIAL_SLICE);
-  csd20->read_blk_misalign   = mmcsdGetSlice(csd, MMCSD_CSD_20_READ_BLK_MISALIGN_SLICE);
-  csd20->erase_sector_size   = mmcsdGetSlice(csd, MMCSD_CSD_20_ERASE_SECTOR_SIZE_SLICE);
-  csd20->taac                = mmcsdGetSlice(csd, MMCSD_CSD_20_TAAC_SLICE);
-  csd20->tmp_write_protect   = mmcsdGetSlice(csd, MMCSD_CSD_20_TMP_WRITE_PROTECT_SLICE);
-  csd20->tran_speed          = mmcsdGetSlice(csd, MMCSD_CSD_20_TRANS_SPEED_SLICE);
-  csd20->wp_grp_enable       = mmcsdGetSlice(csd, MMCSD_CSD_20_WP_GRP_ENABLE_SLICE);
-  csd20->wp_grp_size         = mmcsdGetSlice(csd, MMCSD_CSD_20_WP_GRP_SIZE_SLICE);
-  csd20->write_bl_len        = mmcsdGetSlice(csd, MMCSD_CSD_20_WRITE_BL_LEN_SLICE);
-  csd20->write_bl_partial    = mmcsdGetSlice(csd, MMCSD_CSD_20_WRITE_BL_PARTIAL_SLICE);
-  csd20->write_blk_misalign  = mmcsdGetSlice(csd, MMCSD_CSD_20_WRITE_BLK_MISALIGN_SLICE);
+  csd = sdcp->csd;
+  csd20->c_size              = _mmcsd_get_slice(csd, MMCSD_CSD_20_C_SIZE_SLICE);
+  csd20->crc                 = _mmcsd_get_slice(csd, MMCSD_CSD_20_CRC_SLICE);
+  csd20->ccc                 = _mmcsd_get_slice(csd, MMCSD_CSD_20_CCC_SLICE);
+  csd20->copy                = _mmcsd_get_slice(csd, MMCSD_CSD_20_COPY_SLICE);
+  csd20->csd_structure       = _mmcsd_get_slice(csd, MMCSD_CSD_20_CSD_STRUCTURE_SLICE);
+  csd20->dsr_imp             = _mmcsd_get_slice(csd, MMCSD_CSD_20_DSR_IMP_SLICE);
+  csd20->erase_blk_en        = _mmcsd_get_slice(csd, MMCSD_CSD_20_ERASE_BLK_EN_SLICE);
+  csd20->file_format         = _mmcsd_get_slice(csd, MMCSD_CSD_20_FILE_FORMAT_SLICE);
+  csd20->file_format_grp     = _mmcsd_get_slice(csd, MMCSD_CSD_20_FILE_FORMAT_GRP_SLICE);
+  csd20->nsac                = _mmcsd_get_slice(csd, MMCSD_CSD_20_NSAC_SLICE);
+  csd20->perm_write_protect  = _mmcsd_get_slice(csd, MMCSD_CSD_20_PERM_WRITE_PROTECT_SLICE);
+  csd20->r2w_factor          = _mmcsd_get_slice(csd, MMCSD_CSD_20_R2W_FACTOR_SLICE);
+  csd20->read_bl_len         = _mmcsd_get_slice(csd, MMCSD_CSD_20_READ_BL_LEN_SLICE);
+  csd20->read_bl_partial     = _mmcsd_get_slice(csd, MMCSD_CSD_20_READ_BL_PARTIAL_SLICE);
+  csd20->read_blk_misalign   = _mmcsd_get_slice(csd, MMCSD_CSD_20_READ_BLK_MISALIGN_SLICE);
+  csd20->erase_sector_size   = _mmcsd_get_slice(csd, MMCSD_CSD_20_ERASE_SECTOR_SIZE_SLICE);
+  csd20->taac                = _mmcsd_get_slice(csd, MMCSD_CSD_20_TAAC_SLICE);
+  csd20->tmp_write_protect   = _mmcsd_get_slice(csd, MMCSD_CSD_20_TMP_WRITE_PROTECT_SLICE);
+  csd20->tran_speed          = _mmcsd_get_slice(csd, MMCSD_CSD_20_TRANS_SPEED_SLICE);
+  csd20->wp_grp_enable       = _mmcsd_get_slice(csd, MMCSD_CSD_20_WP_GRP_ENABLE_SLICE);
+  csd20->wp_grp_size         = _mmcsd_get_slice(csd, MMCSD_CSD_20_WP_GRP_SIZE_SLICE);
+  csd20->write_bl_len        = _mmcsd_get_slice(csd, MMCSD_CSD_20_WRITE_BL_LEN_SLICE);
+  csd20->write_bl_partial    = _mmcsd_get_slice(csd, MMCSD_CSD_20_WRITE_BL_PARTIAL_SLICE);
+  csd20->write_blk_misalign  = _mmcsd_get_slice(csd, MMCSD_CSD_20_WRITE_BLK_MISALIGN_SLICE);
 }
 
 #endif /* HAL_USE_MMC_SPI || HAL_USE_SDC */
