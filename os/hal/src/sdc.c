@@ -236,7 +236,7 @@ static uint32_t mmc_cmd6_construct(mmc_switch_t access, uint8_t index,
  * @notapi
  */
 uint32_t sdc_cmd6_construct(sd_switch_t mode, sd_switch_function_t function,
-                           uint8_t value) {
+                            uint8_t value) {
   uint32_t ret = 0xFFFFFF;
 
   osalDbgAssert((value < 16), "This field has only 4 bits");
