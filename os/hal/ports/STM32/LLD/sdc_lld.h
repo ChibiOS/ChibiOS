@@ -222,7 +222,7 @@ typedef struct {
    * @brief   Working area for memory consuming operations.
    * @note    Buffer must be word aligned and big enough to store 512 bytes.
    * @note    It is mandatory for detecting MMC cards bigger than 2GB else it
-   *          can be @p NULL.
+   *          can be @p NULL. SD cards do NOT need it.
    * @note    Memory pointed by this buffer is only used by @p sdcConnect(),
    *          afterward it can be reused for other purposes.
    */

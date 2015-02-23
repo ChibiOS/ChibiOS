@@ -303,24 +303,26 @@ static bool sdc_cmd6_check_status(sd_switch_function_t function,
  * @notapi
  */
 static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
-  uint32_t cmdarg = 0;
-  uint8_t *scratchpad = sdcp->config->scratchpad;
+  uint32_t cmdarg;
+  const size_t N = 64;
+  uint8_t tmp[N];
 
   /* Safe default.*/
   *clk = SDC_CLK_25MHz;
 
-  /* Use safe default when there is no space for data.*/
-  if (NULL == scratchpad)
-    return HAL_SUCCESS;
-
-  if (sdc_lld_read_special(sdcp, scratchpad, 64, MMCSD_CMD_SWITCH, cmdarg))
+  /* Read switch functions' register.*/
+  if (sdc_lld_read_special(sdcp, tmp, N, MMCSD_CMD_SWITCH, 0))
     return HAL_FAILED;
 
-  if ((sdc_cmd6_extract_info(SD_SWITCH_FUNCTION_SPEED, scratchpad) & 2) == 2) {
+  /* Check card capabilities parsing acquired data.*/
+  if ((sdc_cmd6_extract_info(SD_SWITCH_FUNCTION_SPEED, tmp) & 2) == 2) {
+    /* Construct command to set the bus speed.*/
     cmdarg = sdc_cmd6_construct(SD_SWITCH_SET, SD_SWITCH_FUNCTION_SPEED, 1);
-    if (sdc_lld_read_special(sdcp, scratchpad, 64, MMCSD_CMD_SWITCH, cmdarg))
+    /* Write constructed command and read operation status in single call.*/
+    if (sdc_lld_read_special(sdcp, tmp, N, MMCSD_CMD_SWITCH, cmdarg))
       return HAL_FAILED;
-    if (HAL_SUCCESS == sdc_cmd6_check_status(SD_SWITCH_FUNCTION_SPEED, scratchpad))
+    /* Check card answer for success status bits.*/
+    if (HAL_SUCCESS == sdc_cmd6_check_status(SD_SWITCH_FUNCTION_SPEED, tmp))
       *clk = SDC_CLK_50MHz;
   }
 
