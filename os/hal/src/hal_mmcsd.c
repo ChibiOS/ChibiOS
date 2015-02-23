@@ -139,7 +139,7 @@ uint32_t _mmcsd_get_capacity_ext(const uint8_t *ext_csd) {
  * @param[in] sdcp      pointer to the @p MMCSDBlockDevice object
  * @param[out] cidsdc   pointer to the @p unpacked_sdc_cid_t object
  *
- * @api
+ * @notapi
  */
 void _mmcsd_unpack_sdc_cid(const MMCSDBlockDevice *sdcp,
                            unpacked_sdc_cid_t *cidsdc) {
@@ -169,7 +169,7 @@ void _mmcsd_unpack_sdc_cid(const MMCSDBlockDevice *sdcp,
  * @param[in] sdcp      pointer to the @p MMCSDBlockDevice object
  * @param[out] cidmmc   pointer to the @p unpacked_mmc_cid_t object
  *
- * @api
+ * @notapi
  */
 void _mmcsd_unpack_mmc_cid(const MMCSDBlockDevice *sdcp,
                            unpacked_mmc_cid_t *cidmmc) {
@@ -200,7 +200,7 @@ void _mmcsd_unpack_mmc_cid(const MMCSDBlockDevice *sdcp,
  * @param[in] sdcp      pointer to the @p MMCSDBlockDevice object
  * @param[out] csdmmc   pointer to the @p unpacked_mmc_csd_t object
  *
- * @api
+ * @notapi
  */
 void _mmcsd_unpack_csd_mmc(const MMCSDBlockDevice *sdcp,
                            unpacked_mmc_csd_t *csdmmc) {
@@ -248,7 +248,7 @@ void _mmcsd_unpack_csd_mmc(const MMCSDBlockDevice *sdcp,
  * @param[in] sdcp      pointer to the @p MMCSDBlockDevice object
  * @param[out] csd10    pointer to the @p unpacked_sdc_csd_10_t object
  *
- * @api
+ * @notapi
  */
 void _mmcsd_unpack_csd_v10(const MMCSDBlockDevice *sdcp,
                            unpacked_sdc_csd_10_t *csd10) {
@@ -290,7 +290,7 @@ void _mmcsd_unpack_csd_v10(const MMCSDBlockDevice *sdcp,
  * @param[in] sdcp      pointer to the @p MMCSDBlockDevice object
  * @param[out] csd20    pointer to the @p unpacked_sdc_csd_20_t object
  *
- * @api
+ * @notapi
  */
 void _mmcsd_unpack_csd_v20(const MMCSDBlockDevice *sdcp,
                            unmacked_sdc_csd_20_t *csd20) {
