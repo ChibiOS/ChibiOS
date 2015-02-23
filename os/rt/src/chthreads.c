@@ -335,7 +335,7 @@ void chThdSleepUntil(systime_t time) {
  * @note    The system time is assumed to be between @p prev and @p time
  *          else the call is assumed to have been called outside the
  *          allowed time interval, in this case no sleep is performed.
- * @see     chThdSleepUntilWindowed()
+ * @see     chThdSleepUntil()
  *
  * @param[in] prev      absolute system time of the previous deadline
  * @param[in] next      absolute system time of the next deadline
