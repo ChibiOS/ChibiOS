@@ -381,7 +381,7 @@ typedef struct {
   uint8_t   tmp_write_protect;
   uint8_t   file_format;
   uint8_t   crc;
-} unmacked_sdc_csd_20_t;
+} unpacked_sdc_csd_20_t;
 
 /**
  * @brief   Unpacked CSD register from MMC.
@@ -489,7 +489,7 @@ extern "C" {
   void _mmcsd_unpack_csd_v10(const MMCSDBlockDevice *sdcp,
                              unpacked_sdc_csd_10_t *csd10);
   void _mmcsd_unpack_csd_v20(const MMCSDBlockDevice *sdcp,
-                             unmacked_sdc_csd_20_t *csd20);
+                             unpacked_sdc_csd_20_t *csd20);
 #ifdef __cplusplus
 }
 #endif

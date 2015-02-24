@@ -293,7 +293,7 @@ void _mmcsd_unpack_csd_v10(const MMCSDBlockDevice *sdcp,
  * @notapi
  */
 void _mmcsd_unpack_csd_v20(const MMCSDBlockDevice *sdcp,
-                           unmacked_sdc_csd_20_t *csd20) {
+                           unpacked_sdc_csd_20_t *csd20) {
   const uint32_t *csd;
 
   osalDbgCheck(NULL != sdcp);
