@@ -1046,7 +1046,11 @@
  * @brief   TIM1 frequency.
  */
 #if STM32_TIM1SW == STM32_TIM1SW_PCLK2
+#if STM32_PPRE2 == STM32_PPRE2_DIV1
 #define STM32_TIM1CLK               STM32_PCLK2
+#else
+#define STM32_TIM1CLK               (STM32_PCLK2 * 2)
+#endif
 
 #elif STM32_TIM1SW == STM32_TIM1SW_PLLX2
 #if (STM32_SW != STM32_SW_PLL) ||                                           \
@@ -1064,7 +1068,11 @@
  * @brief   TIM8 frequency.
  */
 #if STM32_TIM8SW == STM32_TIM8SW_PCLK2
+#if STM32_PPRE2 == STM32_PPRE2_DIV1
 #define STM32_TIM8CLK               STM32_PCLK2
+#else
+#define STM32_TIM8CLK               (STM32_PCLK2 * 2)
+#endif
 
 #elif STM32_TIM8SW == STM32_TIM8SW_PLLX2
 #if (STM32_SW != STM32_SW_PLL) ||                                           \
