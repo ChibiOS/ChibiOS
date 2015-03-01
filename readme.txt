@@ -74,6 +74,8 @@
 *** 2.6.8 ***
 - FIX: Fixed wrong TIM1/8_CLK on STM32F30x when using PCLK2 with prescaler
   (bug #557).
+- FIX: Fixed STM32 USARTv1: serial interrupt hang on overrun (and other) error
+  (bug #558).
 
 *** 2.6.7 ***
 - FIX: Fixed random R0 register corruption in Keil ARMCMx port when FPU
