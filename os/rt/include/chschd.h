@@ -116,7 +116,7 @@
  * @api
  */
 #define THD_ALIGN_STACK_SIZE(n)                                             \
-  ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
+  (((((size_t)(n)) - 1U) | (sizeof(stkalign_t) - 1U)) + 1U)
 
 /**
  * @brief   Calculates the total Working Area size.

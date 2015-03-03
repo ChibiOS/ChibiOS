@@ -44,33 +44,33 @@
  * @name    STM32-specific I/O mode flags
  * @{
  */
-#define PAL_STM32_MODE_MASK             (3 << 0)
-#define PAL_STM32_MODE_INPUT            (0 << 0)
-#define PAL_STM32_MODE_OUTPUT           (1 << 0)
-#define PAL_STM32_MODE_ALTERNATE        (2 << 0)
-#define PAL_STM32_MODE_ANALOG           (3 << 0)
+#define PAL_STM32_MODE_MASK             (3U << 0U)
+#define PAL_STM32_MODE_INPUT            (0U << 0U)
+#define PAL_STM32_MODE_OUTPUT           (1U << 0U)
+#define PAL_STM32_MODE_ALTERNATE        (2U << 0U)
+#define PAL_STM32_MODE_ANALOG           (3U << 0U)
 
-#define PAL_STM32_OTYPE_MASK            (1 << 2)
-#define PAL_STM32_OTYPE_PUSHPULL        (0 << 2)
-#define PAL_STM32_OTYPE_OPENDRAIN       (1 << 2)
+#define PAL_STM32_OTYPE_MASK            (1U << 2U)
+#define PAL_STM32_OTYPE_PUSHPULL        (0U << 2U)
+#define PAL_STM32_OTYPE_OPENDRAIN       (1U << 2U)
 
-#define PAL_STM32_OSPEED_MASK           (3 << 3)
-#define PAL_STM32_OSPEED_LOWEST         (0 << 3)
+#define PAL_STM32_OSPEED_MASK           (3U << 3U)
+#define PAL_STM32_OSPEED_LOWEST         (0U << 3U)
 #if defined(STM32F0XX) || defined(STM32F30X) || defined(STM32F37X)
-#define PAL_STM32_OSPEED_MID            (1 << 3)
+#define PAL_STM32_OSPEED_MID            (1U << 3U)
 #else
-#define PAL_STM32_OSPEED_MID1           (1 << 3)
-#define PAL_STM32_OSPEED_MID2           (2 << 3)
+#define PAL_STM32_OSPEED_MID1           (1U << 3U)
+#define PAL_STM32_OSPEED_MID2           (2U << 3U)
 #endif
-#define PAL_STM32_OSPEED_HIGHEST        (3 << 3)
+#define PAL_STM32_OSPEED_HIGHEST        (3U << 3U)
 
-#define PAL_STM32_PUDR_MASK             (3 << 5)
-#define PAL_STM32_PUDR_FLOATING         (0 << 5)
-#define PAL_STM32_PUDR_PULLUP           (1 << 5)
-#define PAL_STM32_PUDR_PULLDOWN         (2 << 5)
+#define PAL_STM32_PUDR_MASK             (3U << 5U)
+#define PAL_STM32_PUDR_FLOATING         (0U << 5U)
+#define PAL_STM32_PUDR_PULLUP           (1U << 5U)
+#define PAL_STM32_PUDR_PULLDOWN         (2U << 5U)
 
-#define PAL_STM32_ALTERNATE_MASK        (15 << 7)
-#define PAL_STM32_ALTERNATE(n)          ((n) << 7)
+#define PAL_STM32_ALTERNATE_MASK        (15U << 7U)
+#define PAL_STM32_ALTERNATE(n)          ((n) << 7U)
 
 /**
  * @brief   Alternate function.
@@ -441,7 +441,7 @@ typedef stm32_gpio_t * ioportid_t;
  * @notapi
  */
 #define pal_lld_writegroup(port, mask, offset, bits)                        \
-  ((port)->BSRR.W = ((~(bits) & (mask)) << (16 + (offset))) |               \
+  ((port)->BSRR.W = ((~(bits) & (mask)) << (16U + (offset))) |              \
                      (((bits) & (mask)) << (offset)))
 
 /**

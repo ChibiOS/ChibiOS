@@ -251,7 +251,7 @@ struct context {
  */
 #define PORT_WA_SIZE(n) (sizeof(struct port_intctx) +                       \
                          sizeof(struct port_extctx) +                       \
-                         (n) + (PORT_INT_REQUIRED_STACK))
+                         ((size_t)(n)) + ((size_t)(PORT_INT_REQUIRED_STACK)))
 
 /**
  * @brief   IRQ prologue code.
