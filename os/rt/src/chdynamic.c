@@ -149,8 +149,9 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
   thread_t *tp;
 
   wsp = chHeapAlloc(heapp, size);
-  if (wsp == NULL)
+  if (wsp == NULL) {
     return NULL;
+  }
   
 #if CH_DBG_FILL_THREADS
   _thread_memfill((uint8_t *)wsp,
@@ -166,6 +167,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
   tp->p_flags = CH_FLAG_MODE_HEAP;
   chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
+
   return tp;
 }
 #endif /* CH_CFG_USE_HEAP */
@@ -201,8 +203,9 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
   chDbgCheck(mp != NULL);
 
   wsp = chPoolAlloc(mp);
-  if (wsp == NULL)
+  if (wsp == NULL) {
     return NULL;
+  }
   
 #if CH_DBG_FILL_THREADS
   _thread_memfill((uint8_t *)wsp,
@@ -219,6 +222,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
   tp->p_mpool = mp;
   chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
+
   return tp;
 }
 #endif /* CH_CFG_USE_MEMPOOLS */

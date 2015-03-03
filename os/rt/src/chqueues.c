@@ -132,13 +132,15 @@ msg_t chIQPutI(input_queue_t *iqp, uint8_t b) {
 
   chDbgCheckClassI();
 
-  if (chIQIsFullI(iqp))
+  if (chIQIsFullI(iqp)) {
     return Q_FULL;
+  }
 
   iqp->q_counter++;
   *iqp->q_wrptr++ = b;
-  if (iqp->q_wrptr >= iqp->q_top)
+  if (iqp->q_wrptr >= iqp->q_top) {
     iqp->q_wrptr = iqp->q_buffer;
+  }
 
   chThdDequeueNextI(&iqp->q_waiting, Q_OK);
 
@@ -169,8 +171,9 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
   uint8_t b;
 
   chSysLock();
-  if (iqp->q_notify)
+  if (iqp->q_notify) {
     iqp->q_notify(iqp);
+  }
 
   while (chIQIsEmptyI(iqp)) {
     msg_t msg;
@@ -182,10 +185,11 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
 
   iqp->q_counter--;
   b = *iqp->q_rdptr++;
-  if (iqp->q_rdptr >= iqp->q_top)
+  if (iqp->q_rdptr >= iqp->q_top) {
     iqp->q_rdptr = iqp->q_buffer;
-
+  }
   chSysUnlock();
+
   return b;
 }
 
@@ -222,8 +226,9 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
 
   chSysLock();
   while (true) {
-    if (nfy)
+    if (nfy) {
       nfy(iqp);
+    }
 
     while (chIQIsEmptyI(iqp)) {
       if (chThdEnqueueTimeoutS(&iqp->q_waiting, time) != Q_OK) {
@@ -239,8 +244,9 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
 
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     r++;
-    if (--n == 0)
+    if (--n == 0) {
       return r;
+    }
 
     chSysLock();
   }
@@ -329,13 +335,15 @@ msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time) {
 
   oqp->q_counter--;
   *oqp->q_wrptr++ = b;
-  if (oqp->q_wrptr >= oqp->q_top)
+  if (oqp->q_wrptr >= oqp->q_top) {
     oqp->q_wrptr = oqp->q_buffer;
+  }
 
-  if (oqp->q_notify)
+  if (oqp->q_notify) {
     oqp->q_notify(oqp);
-
+  }
   chSysUnlock();
+
   return Q_OK;
 }
 
@@ -354,13 +362,15 @@ msg_t chOQGetI(output_queue_t *oqp) {
 
   chDbgCheckClassI();
 
-  if (chOQIsEmptyI(oqp))
+  if (chOQIsEmptyI(oqp)) {
     return Q_EMPTY;
+  }
 
   oqp->q_counter++;
   b = *oqp->q_rdptr++;
-  if (oqp->q_rdptr >= oqp->q_top)
+  if (oqp->q_rdptr >= oqp->q_top) {
     oqp->q_rdptr = oqp->q_buffer;
+  }
 
   chThdDequeueNextI(&oqp->q_waiting, Q_OK);
 
@@ -408,16 +418,19 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
     }
     oqp->q_counter--;
     *oqp->q_wrptr++ = *bp++;
-    if (oqp->q_wrptr >= oqp->q_top)
+    if (oqp->q_wrptr >= oqp->q_top) {
       oqp->q_wrptr = oqp->q_buffer;
+    }
 
-    if (nfy)
+    if (nfy) {
       nfy(oqp);
+    }
 
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     w++;
-    if (--n == 0)
+    if (--n == 0) {
       return w;
+    }
     chSysLock();
   }
 }

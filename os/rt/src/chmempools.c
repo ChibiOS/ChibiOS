@@ -121,10 +121,13 @@ void *chPoolAllocI(memory_pool_t *mp) {
   chDbgCheckClassI();
   chDbgCheck(mp != NULL);
 
-  if ((objp = mp->mp_next) != NULL)
+  if ((objp = mp->mp_next) != NULL) {
     mp->mp_next = mp->mp_next->ph_next;
-  else if (mp->mp_provider != NULL)
+  }
+  else if (mp->mp_provider != NULL) {
     objp = mp->mp_provider(mp->mp_object_size);
+  }
+
   return objp;
 }
 
@@ -144,6 +147,7 @@ void *chPoolAlloc(memory_pool_t *mp) {
   chSysLock();
   objp = chPoolAllocI(mp);
   chSysUnlock();
+
   return objp;
 }
 

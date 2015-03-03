@@ -154,6 +154,7 @@ msg_t chMBPost(mailbox_t *mbp, msg_t msg, systime_t time) {
   chSysLock();
   rdymsg = chMBPostS(mbp, msg, time);
   chSysUnlock();
+
   return rdymsg;
 }
 
@@ -185,11 +186,13 @@ msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t time) {
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
   if (rdymsg == MSG_OK) {
     *mbp->mb_wrptr++ = msg;
-    if (mbp->mb_wrptr >= mbp->mb_top)
+    if (mbp->mb_wrptr >= mbp->mb_top) {
       mbp->mb_wrptr = mbp->mb_buffer;
+    }
     chSemSignalI(&mbp->mb_fullsem);
     chSchRescheduleS();
   }
+
   return rdymsg;
 }
 
@@ -212,13 +215,17 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
   chDbgCheckClassI();
   chDbgCheck(mbp != NULL);
 
-  if (chSemGetCounterI(&mbp->mb_emptysem) <= 0)
+  if (chSemGetCounterI(&mbp->mb_emptysem) <= 0) {
     return MSG_TIMEOUT;
+  }
+
   chSemFastWaitI(&mbp->mb_emptysem);
   *mbp->mb_wrptr++ = msg;
-  if (mbp->mb_wrptr >= mbp->mb_top)
+  if (mbp->mb_wrptr >= mbp->mb_top) {
     mbp->mb_wrptr = mbp->mb_buffer;
+  }
   chSemSignalI(&mbp->mb_fullsem);
+
   return MSG_OK;
 }
 
@@ -247,6 +254,7 @@ msg_t chMBPostAhead(mailbox_t *mbp, msg_t msg, systime_t time) {
   chSysLock();
   rdymsg = chMBPostAheadS(mbp, msg, time);
   chSysUnlock();
+
   return rdymsg;
 }
 
@@ -277,12 +285,14 @@ msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t time) {
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
   if (rdymsg == MSG_OK) {
-    if (--mbp->mb_rdptr < mbp->mb_buffer)
+    if (--mbp->mb_rdptr < mbp->mb_buffer) {
       mbp->mb_rdptr = mbp->mb_top - 1;
+    }
     *mbp->mb_rdptr = msg;
     chSemSignalI(&mbp->mb_fullsem);
     chSchRescheduleS();
   }
+
   return rdymsg;
 }
 
@@ -305,13 +315,16 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
   chDbgCheckClassI();
   chDbgCheck(mbp != NULL);
 
-  if (chSemGetCounterI(&mbp->mb_emptysem) <= 0)
+  if (chSemGetCounterI(&mbp->mb_emptysem) <= 0) {
     return MSG_TIMEOUT;
+  }
   chSemFastWaitI(&mbp->mb_emptysem);
-  if (--mbp->mb_rdptr < mbp->mb_buffer)
+  if (--mbp->mb_rdptr < mbp->mb_buffer) {
     mbp->mb_rdptr = mbp->mb_top - 1;
+  }
   *mbp->mb_rdptr = msg;
   chSemSignalI(&mbp->mb_fullsem);
+
   return MSG_OK;
 }
 
@@ -340,6 +353,7 @@ msg_t chMBFetch(mailbox_t *mbp, msg_t *msgp, systime_t time) {
   chSysLock();
   rdymsg = chMBFetchS(mbp, msgp, time);
   chSysUnlock();
+
   return rdymsg;
 }
 
@@ -371,11 +385,13 @@ msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t time) {
   rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, time);
   if (rdymsg == MSG_OK) {
     *msgp = *mbp->mb_rdptr++;
-    if (mbp->mb_rdptr >= mbp->mb_top)
+    if (mbp->mb_rdptr >= mbp->mb_top) {
       mbp->mb_rdptr = mbp->mb_buffer;
+    }
     chSemSignalI(&mbp->mb_emptysem);
     chSchRescheduleS();
   }
+
   return rdymsg;
 }
 
@@ -398,13 +414,16 @@ msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp) {
   chDbgCheckClassI();
   chDbgCheck((mbp != NULL) && (msgp != NULL));
 
-  if (chSemGetCounterI(&mbp->mb_fullsem) <= 0)
+  if (chSemGetCounterI(&mbp->mb_fullsem) <= 0) {
     return MSG_TIMEOUT;
+  }
   chSemFastWaitI(&mbp->mb_fullsem);
   *msgp = *mbp->mb_rdptr++;
-  if (mbp->mb_rdptr >= mbp->mb_top)
+  if (mbp->mb_rdptr >= mbp->mb_top) {
     mbp->mb_rdptr = mbp->mb_buffer;
+  }
   chSemSignalI(&mbp->mb_emptysem);
+
   return MSG_OK;
 }
 #endif /* CH_CFG_USE_MAILBOXES */

@@ -155,8 +155,9 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
 
   cnt = sp->s_cnt;
   sp->s_cnt = n;
-  while (++cnt <= 0)
+  while (++cnt <= 0) {
     chSchReadyI(queue_lifo_remove(&sp->s_queue))->p_u.rdymsg = MSG_RESET;
+  }
 }
 
 /**
@@ -177,6 +178,7 @@ msg_t chSemWait(semaphore_t *sp) {
   chSysLock();
   msg = chSemWaitS(sp);
   chSysUnlock();
+
   return msg;
 }
 
@@ -204,8 +206,10 @@ msg_t chSemWaitS(semaphore_t *sp) {
     currp->p_u.wtobjp = sp;
     sem_insert(currp, &sp->s_queue);
     chSchGoSleepS(CH_STATE_WTSEM);
+
     return currp->p_u.rdymsg;
   }
+
   return MSG_OK;
 }
 
@@ -234,6 +238,7 @@ msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time) {
   chSysLock();
   msg = chSemWaitTimeoutS(sp, time);
   chSysUnlock();
+
   return msg;
 }
 
@@ -267,12 +272,15 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time) {
   if (--sp->s_cnt < 0) {
     if (TIME_IMMEDIATE == time) {
       sp->s_cnt++;
+
       return MSG_TIMEOUT;
     }
     currp->p_u.wtobjp = sp;
     sem_insert(currp, &sp->s_queue);
+
     return chSchGoSleepTimeoutS(CH_STATE_WTSEM, time);
   }
+
   return MSG_OK;
 }
 
@@ -291,8 +299,9 @@ void chSemSignal(semaphore_t *sp) {
               "inconsistent semaphore");
 
   chSysLock();
-  if (++sp->s_cnt <= 0)
+  if (++sp->s_cnt <= 0) {
     chSchWakeupS(queue_fifo_remove(&sp->s_queue), MSG_OK);
+  }
   chSysUnlock();
 }
 
@@ -346,8 +355,9 @@ void chSemAddCounterI(semaphore_t *sp, cnt_t n) {
               "inconsistent semaphore");
 
   while (n > 0) {
-    if (++sp->s_cnt <= 0)
+    if (++sp->s_cnt <= 0) {
       chSchReadyI(queue_fifo_remove(&sp->s_queue))->p_u.rdymsg = MSG_OK;
+    }
     n--;
   }
 }
@@ -377,8 +387,9 @@ msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
               "inconsistent semaphore");
 
   chSysLock();
-  if (++sps->s_cnt <= 0)
+  if (++sps->s_cnt <= 0) {
     chSchReadyI(queue_fifo_remove(&sps->s_queue))->p_u.rdymsg = MSG_OK;
+  }
   if (--spw->s_cnt < 0) {
     thread_t *ctp = currp;
     sem_insert(ctp, &spw->s_queue);
@@ -391,6 +402,7 @@ msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
     msg = MSG_OK;
   }
   chSysUnlock();
+
   return msg;
 }
 

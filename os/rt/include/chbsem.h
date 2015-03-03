@@ -267,8 +267,9 @@ static inline void chBSemSignalI(binary_semaphore_t *bsp) {
 
   chDbgCheckClassI();
 
-  if (bsp->bs_sem.s_cnt < 1)
+  if (bsp->bs_sem.s_cnt < 1) {
     chSemSignalI(&bsp->bs_sem);
+  }
 }
 
 /**

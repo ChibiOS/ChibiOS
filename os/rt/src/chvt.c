@@ -108,8 +108,9 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
 
     /* If the requested delay is lower than the minimum safe delta then it
        is raised to the minimum safe value.*/
-    if (delay < CH_CFG_ST_TIMEDELTA)
+    if (delay < CH_CFG_ST_TIMEDELTA) {
       delay = CH_CFG_ST_TIMEDELTA;
+    }
 
     if (&ch.vtlist == (virtual_timers_list_t *)p) {
       /* The delta list is empty, the current time becomes the new
@@ -124,8 +125,9 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
 
       /* If the specified delay is closer in time than the first element
          in the delta list then it becomes the next alarm event in time.*/
-      if (delay < p->vt_delta)
+      if (delay < p->vt_delta) {
         port_timer_set_alarm(ch.vtlist.vt_lasttime + delay);
+      }
     }
   }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
@@ -181,12 +183,14 @@ void chVTDoResetI(virtual_timer_t *vtp) {
     else {
       /* Updating the alarm to the next deadline, deadline that must not be
          closer in time than the minimum time delta.*/
-      if (ch.vtlist.vt_next->vt_delta >= CH_CFG_ST_TIMEDELTA)
+      if (ch.vtlist.vt_next->vt_delta >= CH_CFG_ST_TIMEDELTA) {
         port_timer_set_alarm(ch.vtlist.vt_lasttime +
                              ch.vtlist.vt_next->vt_delta);
-      else
+      }
+      else {
         port_timer_set_alarm(ch.vtlist.vt_lasttime +
                              CH_CFG_ST_TIMEDELTA);
+      }
     }
   }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */

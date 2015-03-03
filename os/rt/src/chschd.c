@@ -126,6 +126,7 @@ thread_t *queue_fifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_next;
 
   (tqp->p_next = tp->p_next)->p_prev = (thread_t *)tqp;
+
   return tp;
 }
 
@@ -143,6 +144,7 @@ thread_t *queue_lifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_prev;
 
   (tqp->p_prev = tp->p_prev)->p_next = (thread_t *)tqp;
+
   return tp;
 }
 
@@ -160,6 +162,7 @@ thread_t *queue_dequeue(thread_t *tp) {
 
   tp->p_prev->p_next = tp->p_next;
   tp->p_next->p_prev = tp->p_prev;
+
   return tp;
 }
 
@@ -190,6 +193,7 @@ thread_t *list_remove(threads_list_t *tlp) {
 
   thread_t *tp = tlp->p_next;
   tlp->p_next = tp->p_next;
+
   return tp;
 }
 #endif /* CH_CFG_OPTIMIZE_SPEED */
@@ -228,6 +232,7 @@ thread_t *chSchReadyI(thread_t *tp) {
   tp->p_next = cp;
   tp->p_prev = cp->p_prev;
   tp->p_prev->p_next = cp->p_prev = tp;
+
   return tp;
 }
 
@@ -327,8 +332,10 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
     if (chVTIsArmedI(&vt))
       chVTDoResetI(&vt);
   }
-  else
+  else {
     chSchGoSleepS(newstate);
+  }
+
   return currp->p_u.rdymsg;
 }
 
@@ -388,8 +395,9 @@ void chSchRescheduleS(void) {
 
   chDbgCheckClassS();
 
-  if (chSchIsRescRequiredI())
+  if (chSchIsRescRequiredI()) {
     chSchDoRescheduleAhead();
+  }
 }
 
 /**
@@ -408,6 +416,7 @@ void chSchRescheduleS(void) {
 bool chSchIsPreemptionRequired(void) {
   tprio_t p1 = firstprio(&ch.rlist.r_queue);
   tprio_t p2 = currp->p_prio;
+
 #if CH_CFG_TIME_QUANTUM > 0
   /* If the running thread has not reached its time quantum, reschedule only
      if the first thread on the ready queue has a higher priority.

@@ -134,6 +134,7 @@ thread_t *chRegFirstThread(void) {
   tp->p_refs++;
 #endif
   chSysUnlock();
+
   return tp;
 }
 
@@ -153,8 +154,9 @@ thread_t *chRegNextThread(thread_t *tp) {
 
   chSysLock();
   ntp = tp->p_newer;
-  if (ntp == (thread_t *)&ch.rlist)
+  if (ntp == (thread_t *)&ch.rlist) {
     ntp = NULL;
+  }
 #if CH_CFG_USE_DYNAMIC
   else {
     chDbgAssert(ntp->p_refs < 255, "too many references");
@@ -165,6 +167,7 @@ thread_t *chRegNextThread(thread_t *tp) {
 #if CH_CFG_USE_DYNAMIC
   chThdRelease(tp);
 #endif
+
   return ntp;
 }
 

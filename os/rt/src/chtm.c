@@ -57,10 +57,12 @@ static inline void tm_stop(time_measurement_t *tmp,
   tmp->n++;
   tmp->last = now - tmp->last - offset;
   tmp->cumulative += (rttime_t)tmp->last;
-  if (tmp->last > tmp->worst)
+  if (tmp->last > tmp->worst) {
     tmp->worst = tmp->last;
-  else if (tmp->last < tmp->best)
+  }
+  else if (tmp->last < tmp->best) {
     tmp->best = tmp->last;
+  }
 }
 
 /*===========================================================================*/

@@ -248,6 +248,7 @@ static inline systime_t chVTGetSystemTime(void) {
   chSysLock();
   systime = chVTGetSystemTimeX();
   chSysUnlock();
+
   return systime;
 }
 
@@ -350,8 +351,9 @@ static inline bool chVTIsArmedI(virtual_timer_t *vtp) {
  */
 static inline void chVTResetI(virtual_timer_t *vtp) {
 
-  if (chVTIsArmedI(vtp))
+  if (chVTIsArmedI(vtp)) {
     chVTDoResetI(vtp);
+  }
 }
 
 /**
@@ -474,8 +476,9 @@ static inline void chVTDoTickI(void) {
 
     /* The next element is outside the current time window, the loop
        is stopped here.*/
-    if ((vtp = ch.vtlist.vt_next)->vt_delta > delta)
+    if ((vtp = ch.vtlist.vt_next)->vt_delta > delta) {
       break;
+    }
 
     /* The "last time" becomes this timer's expiration time.*/
     delta -= vtp->vt_delta;
@@ -500,10 +503,12 @@ static inline void chVTDoTickI(void) {
   else {
     /* Updating the alarm to the next deadline, deadline that must not be
        closer in time than the minimum time delta.*/
-    if (vtp->vt_delta >= CH_CFG_ST_TIMEDELTA)
+    if (vtp->vt_delta >= CH_CFG_ST_TIMEDELTA) {
       port_timer_set_alarm(now + vtp->vt_delta);
-    else
+    }
+    else {
       port_timer_set_alarm(now + CH_CFG_ST_TIMEDELTA);
+    }
   }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }

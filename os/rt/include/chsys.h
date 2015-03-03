@@ -369,8 +369,9 @@ static inline void chSysUnlockFromISR(void) {
  */
 static inline void chSysUnconditionalLock(void) {
 
-  if (port_irq_enabled(port_get_irq_status()))
+  if (port_irq_enabled(port_get_irq_status())) {
     chSysLock();
+  }
 }
 
 /**
@@ -382,8 +383,9 @@ static inline void chSysUnconditionalLock(void) {
  */
 static inline void chSysUnconditionalUnlock(void) {
 
-  if (!port_irq_enabled(port_get_irq_status()))
+  if (!port_irq_enabled(port_get_irq_status())) {
     chSysUnlock();
+  }
 }
 
 #if !CH_CFG_NO_IDLE_THREAD || defined(__DOXYGEN__)

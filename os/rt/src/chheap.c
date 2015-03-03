@@ -83,6 +83,7 @@ static memory_heap_t default_heap;
  * @notapi
  */
 void _heap_init(void) {
+
   default_heap.h_provider = chCoreAlloc;
   default_heap.h_free.h.u.next = (union heap_header *)NULL;
   default_heap.h_free.h.size = 0;
@@ -145,8 +146,8 @@ void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
 
   size = MEM_ALIGN_NEXT(size);
   qp = &heapp->h_free;
-  H_LOCK(heapp);
 
+  H_LOCK(heapp);
   while (qp->h.u.next != NULL) {
     hp = qp->h.u.next;
     if (hp->h.size >= size) {
@@ -165,13 +166,12 @@ void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
         hp->h.size = size;
       }
       hp->h.u.heap = heapp;
-
       H_UNLOCK(heapp);
+
       return (void *)(hp + 1);
     }
     qp = hp;
   }
-
   H_UNLOCK(heapp);
 
   /* More memory is required, tries to get it from the associated provider
@@ -182,9 +182,11 @@ void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
       hp->h.u.heap = heapp;
       hp->h.size = size;
       hp++;
+
       return (void *)hp;
     }
   }
+
   return NULL;
 }
 
@@ -208,8 +210,8 @@ void chHeapFree(void *p) {
   hp = (union heap_header *)p - 1;
   heapp = hp->h.u.heap;
   qp = &heapp->h_free;
-  H_LOCK(heapp);
 
+  H_LOCK(heapp);
   while (true) {
     chDbgAssert((hp < qp) || (hp >= LIMIT(qp)), "within free block");
 
@@ -233,8 +235,8 @@ void chHeapFree(void *p) {
     }
     qp = qp->h.u.next;
   }
-
   H_UNLOCK(heapp);
+
   return;
 }
 
@@ -255,18 +257,20 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *sizep) {
   union heap_header *qp;
   size_t n, sz;
 
-  if (heapp == NULL)
+  if (heapp == NULL) {
     heapp = &default_heap;
+  }
 
   H_LOCK(heapp);
-
   sz = 0;
-  for (n = 0, qp = &heapp->h_free; qp->h.u.next; n++, qp = qp->h.u.next)
+  for (n = 0, qp = &heapp->h_free; qp->h.u.next; n++, qp = qp->h.u.next) {
     sz += qp->h.u.next->h.size;
-  if (sizep)
+  }
+  if (sizep) {
     *sizep = sz;
-
+  }
   H_UNLOCK(heapp);
+
   return n;
 }
 

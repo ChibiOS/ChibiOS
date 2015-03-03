@@ -123,9 +123,7 @@ void chMtxObjectInit(mutex_t *mp) {
 void chMtxLock(mutex_t *mp) {
 
   chSysLock();
-
   chMtxLockS(mp);
-
   chSysUnlock();
 }
 
@@ -152,8 +150,9 @@ void chMtxLockS(mutex_t *mp) {
 
     /* If the mutex is already owned by this thread, the counter is increased
        and there is no need of more actions.*/
-    if (mp->m_owner == ctp)
+    if (mp->m_owner == ctp) {
       mp->m_cnt++;
+    }
     else {
 #endif
       /* Priority inheritance protocol; explores the thread-mutex dependencies
@@ -252,10 +251,9 @@ bool chMtxTryLock(mutex_t *mp) {
   bool b;
 
   chSysLock();
-
   b = chMtxTryLockS(mp);
-
   chSysUnlock();
+
   return b;
 }
 
@@ -352,8 +350,10 @@ void chMtxUnlock(mutex_t *mp) {
         /* If the highest priority thread waiting in the mutexes list has a
            greater priority than the current thread base priority then the
            final priority will have at least that priority.*/
-        if (chMtxQueueNotEmptyS(lmp) && (lmp->m_queue.p_next->p_prio > newprio))
+        if (chMtxQueueNotEmptyS(lmp) &&
+            (lmp->m_queue.p_next->p_prio > newprio)) {
           newprio = lmp->m_queue.p_next->p_prio;
+        }
         lmp = lmp->m_next;
       }
 
@@ -372,8 +372,9 @@ void chMtxUnlock(mutex_t *mp) {
       tp->p_mtxlist = mp;
       chSchWakeupS(tp, MSG_OK);
     }
-    else
+    else {
       mp->m_owner = NULL;
+    }
 #if CH_CFG_USE_MUTEXES_RECURSIVE
   }
 #endif
@@ -429,8 +430,10 @@ void chMtxUnlockS(mutex_t *mp) {
         /* If the highest priority thread waiting in the mutexes list has a
            greater priority than the current thread base priority then the
            final priority will have at least that priority.*/
-        if (chMtxQueueNotEmptyS(lmp) && (lmp->m_queue.p_next->p_prio > newprio))
+        if (chMtxQueueNotEmptyS(lmp) &&
+            (lmp->m_queue.p_next->p_prio > newprio)) {
           newprio = lmp->m_queue.p_next->p_prio;
+        }
         lmp = lmp->m_next;
       }
 
@@ -449,8 +452,9 @@ void chMtxUnlockS(mutex_t *mp) {
       tp->p_mtxlist = mp;
       chSchReadyI(tp);
     }
-    else
+    else {
       mp->m_owner = NULL;
+    }
 #if CH_CFG_USE_MUTEXES_RECURSIVE
   }
 #endif

@@ -113,8 +113,9 @@
  */
 void _dbg_check_disable(void) {
 
-  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt != 0))
+  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt != 0)) {
     chSysHalt("SV#1");
+  }
 }
 
 /**
@@ -124,8 +125,9 @@ void _dbg_check_disable(void) {
  */
 void _dbg_check_suspend(void) {
 
-  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt != 0))
+  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt != 0)) {
     chSysHalt("SV#2");
+  }
 }
 
 /**
@@ -135,8 +137,9 @@ void _dbg_check_suspend(void) {
  */
 void _dbg_check_enable(void) {
 
-  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt != 0))
+  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt != 0)) {
     chSysHalt("SV#3");
+  }
 }
 
 /**
@@ -146,8 +149,9 @@ void _dbg_check_enable(void) {
  */
 void _dbg_check_lock(void) {
 
-  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt != 0))
+  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt != 0)) {
     chSysHalt("SV#4");
+  }
   _dbg_enter_lock();
 }
 
@@ -158,8 +162,9 @@ void _dbg_check_lock(void) {
  */
 void _dbg_check_unlock(void) {
 
-  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt <= 0))
+  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt <= 0)) {
     chSysHalt("SV#5");
+  }
   _dbg_leave_lock();
 }
 
@@ -170,8 +175,9 @@ void _dbg_check_unlock(void) {
  */
 void _dbg_check_lock_from_isr(void) {
 
-  if ((ch.dbg.isr_cnt <= 0) || (ch.dbg.lock_cnt != 0))
+  if ((ch.dbg.isr_cnt <= 0) || (ch.dbg.lock_cnt != 0)) {
     chSysHalt("SV#6");
+  }
   _dbg_enter_lock();
 }
 
@@ -182,8 +188,9 @@ void _dbg_check_lock_from_isr(void) {
  */
 void _dbg_check_unlock_from_isr(void) {
 
-  if ((ch.dbg.isr_cnt <= 0) || (ch.dbg.lock_cnt <= 0))
+  if ((ch.dbg.isr_cnt <= 0) || (ch.dbg.lock_cnt <= 0)) {
     chSysHalt("SV#7");
+  }
   _dbg_leave_lock();
 }
 
@@ -195,8 +202,9 @@ void _dbg_check_unlock_from_isr(void) {
 void _dbg_check_enter_isr(void) {
 
   port_lock_from_isr();
-  if ((ch.dbg.isr_cnt < 0) || (ch.dbg.lock_cnt != 0))
+  if ((ch.dbg.isr_cnt < 0) || (ch.dbg.lock_cnt != 0)) {
     chSysHalt("SV#8");
+  }
   ch.dbg.isr_cnt++;
   port_unlock_from_isr();
 }
@@ -209,8 +217,9 @@ void _dbg_check_enter_isr(void) {
 void _dbg_check_leave_isr(void) {
 
   port_lock_from_isr();
-  if ((ch.dbg.isr_cnt <= 0) || (ch.dbg.lock_cnt != 0))
+  if ((ch.dbg.isr_cnt <= 0) || (ch.dbg.lock_cnt != 0)) {
     chSysHalt("SV#9");
+  }
   ch.dbg.isr_cnt--;
   port_unlock_from_isr();
 }
@@ -225,8 +234,9 @@ void _dbg_check_leave_isr(void) {
  */
 void chDbgCheckClassI(void) {
 
-  if ((ch.dbg.isr_cnt < 0) || (ch.dbg.lock_cnt <= 0))
+  if ((ch.dbg.isr_cnt < 0) || (ch.dbg.lock_cnt <= 0)) {
     chSysHalt("SV#10");
+  }
 }
 
 /**
@@ -239,8 +249,9 @@ void chDbgCheckClassI(void) {
  */
 void chDbgCheckClassS(void) {
 
-  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt <= 0))
+  if ((ch.dbg.isr_cnt != 0) || (ch.dbg.lock_cnt <= 0)) {
     chSysHalt("SV#11");
+  }
 }
 
 #endif /* CH_DBG_SYSTEM_STATE_CHECK */
@@ -270,8 +281,9 @@ void _dbg_trace(thread_t *otp) {
   ch.dbg.trace_buffer.tb_ptr->se_wtobjp = otp->p_u.wtobjp;
   ch.dbg.trace_buffer.tb_ptr->se_state  = (uint8_t)otp->p_state;
   if (++ch.dbg.trace_buffer.tb_ptr >=
-      &ch.dbg.trace_buffer.tb_buffer[CH_DBG_TRACE_BUFFER_SIZE])
+      &ch.dbg.trace_buffer.tb_buffer[CH_DBG_TRACE_BUFFER_SIZE]) {
     ch.dbg.trace_buffer.tb_ptr = &ch.dbg.trace_buffer.tb_buffer[0];
+  }
 }
 #endif /* CH_DBG_ENABLE_TRACE */
 

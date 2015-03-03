@@ -613,6 +613,7 @@ static inline thread_t *list_remove(threads_list_t *tlp) {
 
   thread_t *tp = tlp->p_next;
   tlp->p_next = tp->p_next;
+
   return tp;
 }
 
@@ -638,6 +639,7 @@ static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_next;
 
   (tqp->p_next = tp->p_next)->p_prev = (thread_t *)tqp;
+
   return tp;
 }
 
@@ -645,6 +647,7 @@ static inline thread_t *queue_lifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_prev;
 
   (tqp->p_prev = tp->p_prev)->p_next = (thread_t *)tqp;
+
   return tp;
 }
 
@@ -652,6 +655,7 @@ static inline thread_t *queue_dequeue(thread_t *tp) {
 
   tp->p_prev->p_next = tp->p_next;
   tp->p_next->p_prev = tp->p_prev;
+
   return tp;
 }
 #endif /* CH_CFG_OPTIMIZE_SPEED */
@@ -703,8 +707,9 @@ static inline void chSchDoYieldS(void) {
 
   chDbgCheckClassS();
 
-  if (chSchCanYieldS())
+  if (chSchCanYieldS()) {
     chSchDoRescheduleBehind();
+  }
 }
 
 /**
@@ -720,16 +725,19 @@ static inline void chSchPreemption(void) {
 
 #if CH_CFG_TIME_QUANTUM > 0
   if (currp->p_preempt) {
-    if (p1 > p2)
+    if (p1 > p2) {
       chSchDoRescheduleAhead();
+    }
   }
   else {
-    if (p1 >= p2)
+    if (p1 >= p2) {
       chSchDoRescheduleBehind();
+    }
   }
 #else /* CH_CFG_TIME_QUANTUM == 0 */
-  if (p1 >= p2)
+  if (p1 >= p2) {
     chSchDoRescheduleAhead();
+  }
 #endif /* CH_CFG_TIME_QUANTUM == 0 */
 }
 

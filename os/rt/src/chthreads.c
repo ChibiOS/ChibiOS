@@ -144,8 +144,9 @@ thread_t *_thread_init(thread_t *tp, tprio_t prio) {
  */
 void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
 
-  while (startp < endp)
+  while (startp < endp) {
     *startp++ = v;
+  }
 }
 #endif /* CH_DBG_FILL_THREADS */
 
@@ -184,6 +185,7 @@ thread_t *chThdCreateI(void *wsp, size_t size,
              (prio <= HIGHPRIO) && (pf != NULL));
 
   PORT_SETUP_CONTEXT(tp, wsp, size, pf, arg);
+
   return _thread_init(tp, prio);
 }
 
@@ -215,9 +217,11 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
                   (uint8_t *)wsp + size,
                   CH_DBG_STACK_FILL_VALUE);
 #endif
+
   chSysLock();
   chSchWakeupS(tp = chThdCreateI(wsp, size, prio, pf, arg), MSG_OK);
   chSysUnlock();
+
   return tp;
 }
 
@@ -235,6 +239,7 @@ thread_t *chThdStart(thread_t *tp) {
   chSysLock();
   tp = chThdStartI(tp);
   chSysUnlock();
+
   return tp;
 }
 
@@ -258,8 +263,9 @@ tprio_t chThdSetPriority(tprio_t newprio) {
   chSysLock();
 #if CH_CFG_USE_MUTEXES
   oldprio = currp->p_realprio;
-  if ((currp->p_prio == currp->p_realprio) || (newprio > currp->p_prio))
+  if ((currp->p_prio == currp->p_realprio) || (newprio > currp->p_prio)) {
     currp->p_prio = newprio;
+  }
   currp->p_realprio = newprio;
 #else
   oldprio = currp->p_prio;
@@ -267,6 +273,7 @@ tprio_t chThdSetPriority(tprio_t newprio) {
 #endif
   chSchRescheduleS();
   chSysUnlock();
+
   return oldprio;
 }
 
@@ -324,8 +331,9 @@ void chThdSleep(systime_t time) {
 void chThdSleepUntil(systime_t time) {
 
   chSysLock();
-  if ((time -= chVTGetSystemTimeX()) > 0)
+  if ((time -= chVTGetSystemTimeX()) > 0) {
     chThdSleepS(time);
+  }
   chSysUnlock();
 }
 
@@ -348,9 +356,11 @@ systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next) {
 
   chSysLock();
   time = chVTGetSystemTimeX();
-  if (chVTIsTimeWithinX(time, prev, next))
+  if (chVTIsTimeWithinX(time, prev, next)) {
 	chThdSleepS(next - time);
+  }
   chSysUnlock();
+
   return next;
 }
 
@@ -411,16 +421,19 @@ void chThdExitS(msg_t msg) {
   CH_CFG_THREAD_EXIT_HOOK(tp);
 #endif
 #if CH_CFG_USE_WAITEXIT
-  while (list_notempty(&tp->p_waiting))
+  while (list_notempty(&tp->p_waiting)) {
     chSchReadyI(list_remove(&tp->p_waiting));
+  }
 #endif
 #if CH_CFG_USE_REGISTRY
   /* Static threads are immediately removed from the registry because
      there is no memory to recover.*/
-  if ((tp->p_flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC)
+  if ((tp->p_flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC) {
     REG_REMOVE(tp);
+  }
 #endif
   chSchGoSleepS(CH_STATE_FINAL);
+
   /* The thread never returns here.*/
   chDbgAssert(false, "zombies apocalypse");
 }
@@ -473,9 +486,11 @@ msg_t chThdWait(thread_t *tp) {
   }
   msg = tp->p_u.exitcode;
   chSysUnlock();
+
 #if CH_CFG_USE_DYNAMIC
   chThdRelease(tp);
 #endif
+
   return msg;
 }
 #endif /* CH_CFG_USE_WAITEXIT */
@@ -498,6 +513,7 @@ msg_t chThdSuspendS(thread_reference_t *trp) {
   *trp = tp;
   tp->p_u.wtobjp = &trp;
   chSchGoSleepS(CH_STATE_SUSPENDED);
+
   return chThdGetSelfX()->p_u.rdymsg;
 }
 
@@ -525,11 +541,13 @@ msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
 
   chDbgAssert(*trp == NULL, "not NULL");
 
-  if (TIME_IMMEDIATE == timeout)
+  if (TIME_IMMEDIATE == timeout) {
     return MSG_TIMEOUT;
+  }
 
   *trp = tp;
   tp->p_u.wtobjp = &trp;
+
   return chSchGoSleepTimeoutS(CH_STATE_SUSPENDED, timeout);
 }
 
@@ -622,10 +640,12 @@ void chThdResume(thread_reference_t *trp, msg_t msg) {
  */
 msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout) {
 
-  if (TIME_IMMEDIATE == timeout)
+  if (TIME_IMMEDIATE == timeout) {
     return MSG_TIMEOUT;
+  }
 
   queue_insert(currp, tqp);
+
   return chSchGoSleepTimeoutS(CH_STATE_QUEUED, timeout);
 }
 
@@ -640,8 +660,9 @@ msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout) {
  */
 void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
-  if (queue_notempty(tqp))
+  if (queue_notempty(tqp)) {
     chThdDoDequeueNextI(tqp, msg);
+  }
 }
 
 /**
@@ -654,8 +675,9 @@ void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
  */
 void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg) {
 
-  while (queue_notempty(tqp))
+  while (queue_notempty(tqp)) {
     chThdDoDequeueNextI(tqp, msg);
+  }
 }
 
 /** @} */

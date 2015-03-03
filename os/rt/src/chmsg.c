@@ -93,11 +93,13 @@ msg_t chMsgSend(thread_t *tp, msg_t msg) {
   ctp->p_msg = msg;
   ctp->p_u.wtobjp = &tp->p_msgqueue;
   msg_insert(ctp, &tp->p_msgqueue);
-  if (tp->p_state == CH_STATE_WTMSG)
+  if (tp->p_state == CH_STATE_WTMSG) {
     chSchReadyI(tp);
+  }
   chSchGoSleepS(CH_STATE_SNDMSGQ);
   msg = ctp->p_u.rdymsg;
   chSysUnlock();
+
   return msg;
 }
 
@@ -119,11 +121,13 @@ thread_t *chMsgWait(void) {
   thread_t *tp;
 
   chSysLock();
-  if (!chMsgIsPendingI(currp))
+  if (!chMsgIsPendingI(currp)) {
     chSchGoSleepS(CH_STATE_WTMSG);
+  }
   tp = queue_fifo_remove(&currp->p_msgqueue);
   tp->p_state = CH_STATE_SNDMSG;
   chSysUnlock();
+
   return tp;
 }
 

@@ -108,6 +108,7 @@ void *chCoreAlloc(size_t size) {
   chSysLock();
   p = chCoreAllocI(size);
   chSysUnlock();
+
   return p;
 }
 
@@ -129,10 +130,12 @@ void *chCoreAllocI(size_t size) {
   chDbgCheckClassI();
 
   size = MEM_ALIGN_NEXT(size);
-  if ((size_t)(endmem - nextmem) < size)
+  if ((size_t)(endmem - nextmem) < size) {
     return NULL;
+  }
   p = nextmem;
   nextmem += size;
+
   return p;
 }
 

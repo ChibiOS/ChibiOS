@@ -164,8 +164,8 @@ void chSysHalt(const char *reason) {
   ch.dbg.panic_msg = reason;
 
   /* Harmless infinite loop.*/
-  while (true)
-    ;
+  while (true) {
+  }
 }
 
 /**
@@ -215,10 +215,12 @@ syssts_t chSysGetStatusAndLockX(void) {
 
   syssts_t sts = port_get_irq_status();
   if (port_irq_enabled(sts)) {
-    if (port_is_isr_context())
+    if (port_is_isr_context()) {
       chSysLockFromISR();
-    else
+    }
+    else {
       chSysLock();
+    }
   }
   return sts;
 }
@@ -235,8 +237,9 @@ syssts_t chSysGetStatusAndLockX(void) {
 void chSysRestoreStatusX(syssts_t sts) {
 
   if (port_irq_enabled(sts)) {
-    if (port_is_isr_context())
+    if (port_is_isr_context()) {
       chSysUnlockFromISR();
+    }
     else {
       chSchRescheduleS();
       chSysUnlock();
@@ -283,8 +286,9 @@ bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
 void chSysPolledDelayX(rtcnt_t cycles) {
   rtcnt_t start = chSysGetRealtimeCounterX();
   rtcnt_t end  = start + cycles;
-  while (chSysIsCounterWithinX(chSysGetRealtimeCounterX(), start, end))
-    ;
+
+  while (chSysIsCounterWithinX(chSysGetRealtimeCounterX(), start, end)) {
+  }
 }
 #endif /* PORT_SUPPORTS_RT */
 
