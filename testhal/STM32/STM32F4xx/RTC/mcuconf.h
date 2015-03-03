@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 /*
  * STM32F4xx drivers configuration.
  * The following settings override the default settings present in
@@ -304,3 +307,5 @@
 #define STM32_USB_OTG_THREAD_PRIO           LOWPRIO
 #define STM32_USB_OTG_THREAD_STACK_SIZE     128
 #define STM32_USB_OTGFIFO_FILL_BASEPRI      0
+
+#endif /* _MCUCONF_H_ */

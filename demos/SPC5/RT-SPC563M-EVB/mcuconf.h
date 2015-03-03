@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 /*
  * SPC563Mxx drivers configuration.
  * The following settings override the default settings present in
@@ -151,3 +154,5 @@
 #define SPC5_CAN_USE_FLEXCAN1               FALSE
 #define SPC5_CAN_FLEXCAN1_USE_EXT_CLK       FALSE
 #define SPC5_CAN_FLEXCAN1_IRQ_PRIORITY      11
+
+#endif /* _MCUCONF_H_ */

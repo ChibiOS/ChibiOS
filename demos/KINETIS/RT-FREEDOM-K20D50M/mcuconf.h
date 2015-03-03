@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 #define K20x_MCUCONF
 
 /*
@@ -67,3 +70,5 @@
  * SERIAL driver system settings.
  */
 #define KINETIS_SERIAL_USE_UART0              TRUE
+
+#endif /* _MCUCONF_H_ */

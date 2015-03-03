@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 #define K20x_MCUCONF
 
 /*
@@ -69,3 +72,5 @@
 #define KINETIS_SERIAL_USE_UART0              FALSE
 #define KINETIS_I2C_USE_I2C0                  TRUE
 #define KINETIS_I2C_I2C0_PRIORITY             8
+
+#endif /* _MCUCONF_H_ */

@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 /*
  * STM32F0xx drivers configuration.
  * The following settings override the default settings present in
@@ -74,3 +77,5 @@
  * ADC driver system settings.
  */
 #define KINETIS_ADC_USE_ADC0                  TRUE
+
+#endif /* _MCUCONF_H_ */

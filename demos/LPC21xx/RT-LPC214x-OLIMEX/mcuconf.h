@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 /*
  * LPC214x drivers configuration.
  * The following settings override the default settings present in
@@ -51,3 +54,5 @@
  * SPI driver system settings.
  */
 #define USE_LPC214x_SPI1            TRUE
+
+#endif /* _MCUCONF_H_ */

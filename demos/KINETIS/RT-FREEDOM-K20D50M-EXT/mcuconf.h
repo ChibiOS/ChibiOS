@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 #define K20x_MCUCONF
 
 /*
@@ -109,3 +112,5 @@
 #define KINETIS_EXT_PORTD_WIDTH                 16
 #define KINETIS_EXT_PORTE_WIDTH                 13
 #endif
+
+#endif /* _MCUCONF_H_ */

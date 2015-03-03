@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 /*
  * AVR drivers configuration.
  * The following settings override the default settings present in
@@ -77,3 +80,5 @@
  */
 #define AVR_SPI_USE_SPI1                   FALSE
 #define AVR_SPI_USE_16BIT_POLLED_EXCHANGE  FALSE
+
+#endif /* _MCUCONF_H_ */

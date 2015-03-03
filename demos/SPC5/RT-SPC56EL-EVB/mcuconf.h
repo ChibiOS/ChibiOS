@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 /*
  * SPC56ELxx drivers configuration.
  * The following settings override the default settings present in
@@ -287,3 +290,5 @@
                                              SPC5_ME_PCTL_LP(2))
 #define SPC5_SPI_DSPI2_STOP_PCTL            (SPC5_ME_PCTL_RUN(0) |          \
                                              SPC5_ME_PCTL_LP(0))
+
+#endif /* _MCUCONF_H_ */

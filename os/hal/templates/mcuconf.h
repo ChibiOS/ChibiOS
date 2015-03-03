@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 /*
  * Platform drivers configuration.
  * The following settings override the default settings present in
@@ -23,3 +26,5 @@
  */
 
 #define PLATFORM_MCUCONF
+
+#endif /* _MCUCONF_H_ */

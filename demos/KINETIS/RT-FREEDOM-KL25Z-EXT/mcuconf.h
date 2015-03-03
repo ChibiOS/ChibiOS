@@ -14,6 +14,9 @@
     limitations under the License.
 */
 
+#ifndef _MCUCONF_H_
+#define _MCUCONF_H_
+
 #define KL2x_MCUCONF
 
 /*
@@ -142,3 +145,5 @@
 #ifndef KINETIS_EXT_PORTE_WIDTH
 #define KINETIS_EXT_PORTE_WIDTH                 0
 #endif
+
+#endif /* _MCUCONF_H_ */
