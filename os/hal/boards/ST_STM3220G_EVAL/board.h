@@ -80,7 +80,7 @@
 #define PIN_PUDR_FLOATING(n)        (0 << ((n) * 2))
 #define PIN_PUDR_PULLUP(n)          (1 << ((n) * 2))
 #define PIN_PUDR_PULLDOWN(n)        (2 << ((n) * 2))
-#define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
+#define PIN_AFIO_AF(n, v)           ((v##U) << (((n) % 8) * 4))
 
 /*
  * Port A setup.

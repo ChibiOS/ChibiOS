@@ -231,7 +231,7 @@
 #define PIN_PUPDR_FLOATING(n)       (0U << ((n) * 2))
 #define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2))
 #define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2))
-#define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
+#define PIN_AFIO_AF(n, v)           ((v##U) << (((n) % 8) * 4))
 
 /*
  * GPIOA setup:
