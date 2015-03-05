@@ -33,46 +33,6 @@
 /*===========================================================================*/
 
 /**
- * @name    Architecture and Compiler
- * @{
- */
-#if (CORTEX_MODEL == CORTEX_M3) || defined(__DOXYGEN__)
-/**
- * @brief   Macro defining the specific ARM architecture.
- */
-#define PORT_ARCHITECTURE_ARM_v7M
-
-/**
- * @brief   Name of the implemented architecture.
- */
-#define PORT_ARCHITECTURE_NAME          "ARMv7-M"
-
-/**
- * @brief   Name of the architecture variant.
- */
-#define PORT_CORE_VARIANT_NAME          "Cortex-M3"
-
-#elif (CORTEX_MODEL == CORTEX_M4)
-#define PORT_ARCHITECTURE_ARM_v7ME
-#define PORT_ARCHITECTURE_NAME          "ARMv7-ME"
-#if CORTEX_USE_FPU
-#define PORT_CORE_VARIANT_NAME          "Cortex-M4F"
-#else
-#define PORT_CORE_VARIANT_NAME          "Cortex-M4"
-#endif
-#endif
-
-/**
- * @brief   Port-specific information string.
- */
-#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
-#define PORT_INFO                       "Advanced kernel mode"
-#else
-#define PORT_INFO                       "Compact kernel mode"
-#endif
-/** @} */
-
-/**
  * @brief   This port supports a realtime counter.
  */
 #define PORT_SUPPORTS_RT                TRUE
@@ -80,7 +40,7 @@
 /**
  * @brief   Disabled value for BASEPRI register.
  */
-#define CORTEX_BASEPRI_DISABLED         0
+#define CORTEX_BASEPRI_DISABLED         0U
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -149,7 +109,7 @@
  *          priority level.
  */
 #if !defined(CORTEX_PRIORITY_SVCALL)
-#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY + 1)
+#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY + 1U)
 #elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
 /* If it is externally redefined then better perform a validity check on it.*/
 #error "invalid priority level specified for CORTEX_PRIORITY_SVCALL"
@@ -159,7 +119,7 @@
  * @brief   NVIC VTOR initialization expression.
  */
 #if !defined(CORTEX_VTOR_INIT) || defined(__DOXYGEN__)
-#define CORTEX_VTOR_INIT                0x00000000
+#define CORTEX_VTOR_INIT                0x00000000U
 #endif
 
 /**
@@ -175,11 +135,51 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
+/**
+ * @name    Architecture and Compiler
+ * @{
+ */
+#if (CORTEX_MODEL == CORTEX_M3) || defined(__DOXYGEN__)
+/**
+ * @brief   Macro defining the specific ARM architecture.
+ */
+#define PORT_ARCHITECTURE_ARM_v7M
+
+/**
+ * @brief   Name of the implemented architecture.
+ */
+#define PORT_ARCHITECTURE_NAME          "ARMv7-M"
+
+/**
+ * @brief   Name of the architecture variant.
+ */
+#define PORT_CORE_VARIANT_NAME          "Cortex-M3"
+
+#elif (CORTEX_MODEL == CORTEX_M4)
+#define PORT_ARCHITECTURE_ARM_v7ME
+#define PORT_ARCHITECTURE_NAME          "ARMv7-ME"
+#if CORTEX_USE_FPU
+#define PORT_CORE_VARIANT_NAME          "Cortex-M4F"
+#else
+#define PORT_CORE_VARIANT_NAME          "Cortex-M4"
+#endif
+#endif
+
+/**
+ * @brief   Port-specific information string.
+ */
+#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
+#define PORT_INFO                       "Advanced kernel mode"
+#else
+#define PORT_INFO                       "Compact kernel mode"
+#endif
+/** @} */
+
+#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Maximum usable priority for normal ISRs.
  */
-#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1U)
 
 /**
  * @brief   BASEPRI level within kernel lock.
@@ -188,7 +188,7 @@
   CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 #else
 
-#define CORTEX_MAX_KERNEL_PRIORITY      0
+#define CORTEX_MAX_KERNEL_PRIORITY      0U
 #endif
 
 /**
@@ -336,7 +336,7 @@ struct port_intctx {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-#if !CH_DBG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
+#if (CH_DBG_ENABLE_STACK_CHECK == FALSE) || defined(__DOXYGEN__)
 #define port_switch(ntp, otp) _port_switch(ntp, otp)
 #else
 #define port_switch(ntp, otp) {                                             \
@@ -383,7 +383,7 @@ static inline void port_init(void) {
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
   /* Initialization of the system vectors used by the port.*/
-#if !CORTEX_SIMPLIFIED_PRIORITY
+#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
   NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);
 #endif
   NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
@@ -397,7 +397,7 @@ static inline void port_init(void) {
 static inline syssts_t port_get_irq_status(void) {
   uint32_t sts;
 
-#if !CORTEX_SIMPLIFIED_PRIORITY
+#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
   sts = __get_BASEPRI();
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
   sts = __get_PRIMASK();
@@ -416,7 +416,7 @@ static inline syssts_t port_get_irq_status(void) {
  */
 static inline bool port_irq_enabled(syssts_t sts) {
 
-#if !CORTEX_SIMPLIFIED_PRIORITY
+#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
   return sts == CORTEX_BASEPRI_DISABLED;
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
   return (sts & 1) == 0;
@@ -432,7 +432,7 @@ static inline bool port_irq_enabled(syssts_t sts) {
  */
 static inline bool port_is_isr_context(void) {
 
-  return (bool)((__get_IPSR() & 0x1FF) != 0);
+  return (bool)((__get_IPSR() & 0x1FFU) != 0U);
 }
 
 /**
@@ -442,7 +442,7 @@ static inline bool port_is_isr_context(void) {
  */
 static inline void port_lock(void) {
 
-#if !CORTEX_SIMPLIFIED_PRIORITY
+#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
   __set_BASEPRI(CORTEX_BASEPRI_KERNEL);
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
   __disable_irq();
@@ -456,7 +456,7 @@ static inline void port_lock(void) {
  */
 static inline void port_unlock(void) {
 
-#if !CORTEX_SIMPLIFIED_PRIORITY
+#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
   __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
   __enable_irq();
@@ -502,7 +502,7 @@ static inline void port_disable(void) {
  */
 static inline void port_suspend(void) {
 
-#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
+#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
   __set_BASEPRI(CORTEX_BASEPRI_KERNEL);
   __enable_irq();
 #else
@@ -516,7 +516,7 @@ static inline void port_suspend(void) {
  */
 static inline void port_enable(void) {
 
-#if !CORTEX_SIMPLIFIED_PRIORITY || defined(__DOXYGEN__)
+#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
   __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
 #endif
   __enable_irq();
@@ -532,7 +532,7 @@ static inline void port_enable(void) {
  */
 static inline void port_wait_for_interrupt(void) {
 
-#if CORTEX_ENABLE_WFI_IDLE
+#if CORTEX_ENABLE_WFI_IDLE == TRUE
   __WFI();
 #endif
 }

@@ -31,7 +31,7 @@
 #ifndef _CHEVENTS_H_
 #define _CHEVENTS_H_
 
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -80,7 +80,7 @@ typedef struct event_source {
 /**
  * @brief   Event Handler callback function.
  */
-typedef void (*evhandler_t)(eventid_t);
+typedef void (*evhandler_t)(eventid_t id);
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -94,7 +94,7 @@ typedef void (*evhandler_t)(eventid_t);
 /**
  * @brief   Returns an event mask from an event identifier.
  */
-#define EVENT_MASK(eid) ((eventmask_t)(1 << (eid)))
+#define EVENT_MASK(eid) ((eventmask_t)1 << (eventmask_t)(eid))
 
 /**
  * @brief   Data part of a static event source initializer.
@@ -134,12 +134,12 @@ extern "C" {
   void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags);
   void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags);
   void chEvtDispatch(const evhandler_t *handlers, eventmask_t events);
-#if CH_CFG_OPTIMIZE_SPEED || !CH_CFG_USE_EVENTS_TIMEOUT
+#if (CH_CFG_OPTIMIZE_SPEED == TRUE) || (CH_CFG_USE_EVENTS_TIMEOUT == FALSE)
   eventmask_t chEvtWaitOne(eventmask_t events);
   eventmask_t chEvtWaitAny(eventmask_t events);
   eventmask_t chEvtWaitAll(eventmask_t events);
 #endif
-#if CH_CFG_USE_EVENTS_TIMEOUT
+#if CH_CFG_USE_EVENTS_TIMEOUT == TRUE
   eventmask_t chEvtWaitOneTimeout(eventmask_t events, systime_t time);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t events, systime_t time);
   eventmask_t chEvtWaitAllTimeout(eventmask_t events, systime_t time);
@@ -148,7 +148,7 @@ extern "C" {
 }
 #endif
 
-#if !CH_CFG_OPTIMIZE_SPEED && CH_CFG_USE_EVENTS_TIMEOUT
+#if (CH_CFG_OPTIMIZE_SPEED == FALSE) && (CH_CFG_USE_EVENTS_TIMEOUT == TRUE)
 #define chEvtWaitOne(mask) chEvtWaitOneTimeout(mask, TIME_INFINITE)
 #define chEvtWaitAny(mask) chEvtWaitAnyTimeout(mask, TIME_INFINITE)
 #define chEvtWaitAll(mask) chEvtWaitAllTimeout(mask, TIME_INFINITE)
@@ -169,7 +169,9 @@ extern "C" {
  */
 static inline void chEvtObjectInit(event_source_t *esp) {
 
-  esp->es_next = (event_listener_t *)(void *)esp;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  esp->es_next = (event_listener_t *)esp;
+  /*lint -restore*/
 }
 
 /**
@@ -223,7 +225,9 @@ static inline void chEvtRegister(event_source_t *esp,
  */
 static inline bool chEvtIsListeningI(event_source_t *esp) {
 
-  return (bool)((void *)esp != (void *)esp->es_next);
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  return (bool)(esp != (event_source_t *)esp->es_next);
+  /*lint -restore*/
 }
 
 /**
@@ -256,7 +260,7 @@ static inline void chEvtBroadcastI(event_source_t *esp) {
   chEvtBroadcastFlagsI(esp, 0);
 }
 
-#endif /* CH_CFG_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS == TRUE */
 
 #endif /* _CHEVENTS_H_ */
 

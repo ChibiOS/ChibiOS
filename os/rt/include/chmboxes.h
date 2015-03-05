@@ -28,7 +28,7 @@
 #ifndef _CHMBOXES_H_
 #define _CHMBOXES_H_
 
-#if CH_CFG_USE_MAILBOXES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MAILBOXES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -42,7 +42,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_CFG_USE_SEMAPHORES
+#if CH_CFG_USE_SEMAPHORES == FALSE
 #error "CH_CFG_USE_MAILBOXES requires CH_CFG_USE_SEMAPHORES"
 #endif
 
@@ -137,7 +137,10 @@ extern "C" {
  */
 static inline size_t chMBGetSizeI(mailbox_t *mbp) {
 
+  /*lint -save -e946 -e947 -e9033 [18.2, 18.3, 10.8] Perfectly safe pointers
+    arithmetic.*/
   return (size_t)(mbp->mb_top - mbp->mb_buffer);
+  /*lint -restore*/
 }
 
 /**
@@ -197,7 +200,7 @@ static inline msg_t chMBPeekI(mailbox_t *mbp) {
   return *mbp->mb_rdptr;
 }
 
-#endif /* CH_CFG_USE_MAILBOXES */
+#endif /* CH_CFG_USE_MAILBOXES == TRUE */
 
 #endif /* _CHMBOXES_H_ */
 

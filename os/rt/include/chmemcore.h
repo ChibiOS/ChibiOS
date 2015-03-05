@@ -28,7 +28,7 @@
 #ifndef _CHMEMCORE_H_
 #define _CHMEMCORE_H_
 
-#if CH_CFG_USE_MEMCORE || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMCORE == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -68,7 +68,7 @@ typedef void *(*memgetfunc_t)(size_t size);
 /**
  * @brief   Alignment mask constant.
  */
-#define MEM_ALIGN_MASK      (MEM_ALIGN_SIZE - 1)
+#define MEM_ALIGN_MASK      (MEM_ALIGN_SIZE - 1U)
 
 /**
  * @brief   Alignment helper macro.
@@ -84,7 +84,7 @@ typedef void *(*memgetfunc_t)(size_t size);
  * @brief   Returns whatever a pointer or memory size is aligned to
  *          the type @p align_t.
  */
-#define MEM_IS_ALIGNED(p)   (((size_t)(p) & MEM_ALIGN_MASK) == 0)
+#define MEM_IS_ALIGNED(p)   (((size_t)(p) & MEM_ALIGN_MASK) == 0U)
 /** @} */
 
 /*===========================================================================*/
@@ -106,7 +106,7 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_CFG_USE_MEMCORE */
+#endif /* CH_CFG_USE_MEMCORE == TRUE */
 
 #endif /* _CHMEMCORE_H_ */
 

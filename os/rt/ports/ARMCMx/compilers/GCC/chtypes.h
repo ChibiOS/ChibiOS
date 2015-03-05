@@ -40,13 +40,14 @@
  */
 #if !defined(FALSE) || defined(__DOXYGEN__)
 #define FALSE               0
+
 #endif
 
 /**
  * @brief   Generic 'true' boolean constant.
  */
 #if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                (!FALSE)
+#define TRUE                1
 #endif
 /** @} */
 

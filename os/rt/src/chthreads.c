@@ -571,7 +571,7 @@ void chThdResumeI(thread_reference_t *trp, msg_t msg) {
 
     *trp = NULL;
     tp->p_u.rdymsg = msg;
-    chSchReadyI(tp);
+    (void) chSchReadyI(tp);
   }
 }
 

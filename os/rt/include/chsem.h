@@ -28,7 +28,7 @@
 #ifndef _CHSEM_H_
 #define _CHSEM_H_
 
-#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -153,7 +153,7 @@ static inline cnt_t chSemGetCounterI(semaphore_t *sp) {
   return sp->s_cnt;
 }
 
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 #endif /* _CHSEM_H_ */
 

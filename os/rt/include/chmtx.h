@@ -28,7 +28,7 @@
 #ifndef _CHMTX_H_
 #define _CHMTX_H_
 
-#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -61,7 +61,7 @@ struct mutex {
                                                 @p NULL.                    */
   mutex_t               *m_next;    /**< @brief Next @p mutex_t into an
                                                 owner-list or @p NULL.      */
-#if CH_CFG_USE_MUTEXES_RECURSIVE || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES_RECURSIVE == TRUE) || defined(__DOXYGEN__)
   cnt_t                 m_cnt;      /**< @brief Mutex recursion counter.    */
 #endif
 };
@@ -77,7 +77,7 @@ struct mutex {
  *
  * @param[in] name      the name of the mutex variable
  */
-#if CH_CFG_USE_MUTEXES_RECURSIVE || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES_RECURSIVE == TRUE) || defined(__DOXYGEN__)
 #define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.m_queue), NULL, NULL, 0}
 #else
 #define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.m_queue), NULL, NULL}
@@ -146,7 +146,7 @@ static inline mutex_t *chMtxGetNextMutexS(void) {
   return chThdGetSelfX()->p_mtxlist;
 }
 
-#endif /* CH_CFG_USE_MUTEXES */
+#endif /* CH_CFG_USE_MUTEXES == TRUE */
 
 #endif /* _CHMTX_H_ */
 

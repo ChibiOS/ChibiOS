@@ -74,7 +74,7 @@
    assembler source files. We verify that the info matches instead.*/
 #include "stm32f3xx.h"
 
-#if !CORTEX_HAS_FPU != !__FPU_PRESENT
+#if CORTEX_HAS_FPU != __FPU_PRESENT
 #error "CMSIS __FPU_PRESENT mismatch"
 #endif
 

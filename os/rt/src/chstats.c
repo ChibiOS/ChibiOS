@@ -28,7 +28,7 @@
 
 #include "ch.h"
 
-#if CH_DBG_STATISTICS || defined(__DOXYGEN__)
+#if (CH_DBG_STATISTICS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -119,6 +119,6 @@ void _stats_stop_measure_crit_isr(void) {
   chTMStopMeasurementX(&ch.kernel_stats.m_crit_isr);
 }
 
-#endif /* CH_DBG_STATISTICS */
+#endif /* CH_DBG_STATISTICS == TRUE */
 
 /** @} */

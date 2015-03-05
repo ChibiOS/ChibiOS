@@ -295,7 +295,7 @@ void chOQResetI(output_queue_t *oqp) {
   chDbgCheckClassI();
 
   oqp->q_rdptr = oqp->q_wrptr = oqp->q_buffer;
-  oqp->q_counter = chQSizeI(oqp);
+  oqp->q_counter = QSIZE(oqp);
   chThdDequeueAllI(&oqp->q_waiting, Q_RESET);
 }
 

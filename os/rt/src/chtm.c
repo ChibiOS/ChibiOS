@@ -28,7 +28,7 @@
 
 #include "ch.h"
 
-#if CH_CFG_USE_TM || defined(__DOXYGEN__)
+#if (CH_CFG_USE_TM == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -55,14 +55,16 @@ static inline void tm_stop(time_measurement_t *tmp,
                            rtcnt_t offset) {
 
   tmp->n++;
-  tmp->last = now - tmp->last - offset;
+  tmp->last = (now - tmp->last) - offset;
   tmp->cumulative += (rttime_t)tmp->last;
+  /*lint -save -e9013 [15.7] There is no else because it is not needed.*/
   if (tmp->last > tmp->worst) {
     tmp->worst = tmp->last;
   }
   else if (tmp->last < tmp->best) {
     tmp->best = tmp->last;
   }
+  /*lint -restore*/
 }
 
 /*===========================================================================*/
@@ -151,6 +153,6 @@ NOINLINE void chTMChainMeasurementToX(time_measurement_t *tmp1,
   tm_stop(tmp1, tmp2->last, 0);
 }
 
-#endif /* CH_CFG_USE_TM */
+#endif /* CH_CFG_USE_TM == TRUE */
 
 /** @} */

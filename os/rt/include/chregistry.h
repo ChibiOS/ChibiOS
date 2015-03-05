@@ -28,7 +28,7 @@
 #ifndef _CHREGISTRY_H_
 #define _CHREGISTRY_H_
 
-#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -95,7 +95,7 @@ typedef struct {
 #define chRegSetThreadName(p)
 #endif /* !CH_CFG_USE_REGISTRY */
 
-#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Removes a thread from the registry list.
  * @note    This macro is not meant for use in application code.
@@ -153,7 +153,7 @@ static inline const char *chRegGetThreadNameI(thread_t *tp) {
 
   chDbgCheckClassI();
 
-#if CH_CFG_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY == TRUE
   return tp->p_name;
 #else
   (void)tp;
@@ -161,7 +161,7 @@ static inline const char *chRegGetThreadNameI(thread_t *tp) {
 #endif
 }
 
-#endif /* CH_CFG_USE_REGISTRY */
+#endif /* CH_CFG_USE_REGISTRY == TRUE */
 
 #endif /* _CHREGISTRY_H_ */
 

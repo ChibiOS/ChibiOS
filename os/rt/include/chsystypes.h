@@ -84,7 +84,7 @@ typedef struct ch_ready_list ready_list_t;
 /**
  * @brief   Type of a Virtual Timer callback function.
  */
-typedef void (*vtfunc_t)(void *);
+typedef void (*vtfunc_t)(void *p);
 
 /**
  * @brief   Type of a Virtual Timer structure.

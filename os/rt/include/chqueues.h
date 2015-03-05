@@ -28,7 +28,7 @@
 #ifndef _CHQUEUES_H_
 #define _CHQUEUES_H_
 
-#if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_QUEUES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -198,9 +198,9 @@ typedef io_queue_t output_queue_t;
  * @param[in] qp        pointer to a @p io_queue_t structure.
  * @return              The buffer size.
  *
- * @iclass
+ * @notapi
  */
-#define chQSizeI(qp) ((size_t)((qp)->q_top - (qp)->q_buffer))
+#define QSIZE(qp) ((size_t)((qp)->q_top - (qp)->q_buffer))
 
 /**
  * @brief   Queue space.
@@ -284,7 +284,10 @@ static inline size_t chIQGetEmptyI(input_queue_t *iqp) {
 
   chDbgCheckClassI();
 
-  return (size_t)(chQSizeI(iqp) - chQSpaceI(iqp));
+  /*lint -save -e946 -e947 -e9033 [18.2, 18.3, 10.8] Perfectly safe pointers
+    arithmetic in QSIZE().*/
+  return (size_t)(QSIZE(iqp) - chQSpaceI(iqp));
+  /*lint -restore*/
 }
 
 /**
@@ -301,7 +304,7 @@ static inline bool chIQIsEmptyI(input_queue_t *iqp) {
 
   chDbgCheckClassI();
 
-  return (bool)(chQSpaceI(iqp) <= 0);
+  return (bool)(chQSpaceI(iqp) <= 0U);
 }
 
 /**
@@ -318,7 +321,7 @@ static inline bool chIQIsFullI(input_queue_t *iqp) {
 
   chDbgCheckClassI();
 
-  return (bool)((iqp->q_wrptr == iqp->q_rdptr) && (iqp->q_counter != 0));
+  return (bool)((iqp->q_wrptr == iqp->q_rdptr) && (iqp->q_counter != 0U));
 }
 
 /**
@@ -351,7 +354,10 @@ static inline size_t chOQGetFullI(output_queue_t *oqp) {
 
   chDbgCheckClassI();
 
-  return (size_t)(chQSizeI(oqp) - chQSpaceI(oqp));
+  /*lint -save -e946 -e947 -e9033 [18.2, 18.3, 10.8] Perfectly safe pointers
+    arithmetic in QSIZE().*/
+  return (size_t)(QSIZE(oqp) - chQSpaceI(oqp));
+  /*lint -restore*/
 }
 
 /**
@@ -384,7 +390,7 @@ static inline bool chOQIsEmptyI(output_queue_t *oqp) {
 
   chDbgCheckClassI();
 
-  return (bool)((oqp->q_wrptr == oqp->q_rdptr) && (oqp->q_counter != 0));
+  return (bool)((oqp->q_wrptr == oqp->q_rdptr) && (oqp->q_counter != 0U));
 }
 
 /**
@@ -401,7 +407,7 @@ static inline bool chOQIsFullI(output_queue_t *oqp) {
 
   chDbgCheckClassI();
 
-  return (bool)(chQSpaceI(oqp) <= 0);
+  return (bool)(chQSpaceI(oqp) <= 0U);
 }
 
 /**
@@ -423,7 +429,7 @@ static inline msg_t chOQPut(output_queue_t *oqp, uint8_t b) {
   return chOQPutTimeout(oqp, b, TIME_INFINITE);
 }
 
-#endif /* CH_CFG_USE_QUEUES */
+#endif /* CH_CFG_USE_QUEUES == TRUE */
 
 #endif /* _CHQUEUES_H_ */
 

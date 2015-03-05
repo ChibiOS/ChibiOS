@@ -49,7 +49,7 @@
 #ifndef _CHBSEM_H_
 #define _CHBSEM_H_
 
-#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -123,7 +123,7 @@ typedef struct  {
  */
 static inline void chBSemObjectInit(binary_semaphore_t *bsp, bool taken) {
 
-  chSemObjectInit(&bsp->bs_sem, taken ? 0 : 1);
+  chSemObjectInit(&bsp->bs_sem, taken ? (cnt_t)0 : (cnt_t)1);
 }
 
 /**
@@ -233,7 +233,7 @@ static inline void chBSemResetI(binary_semaphore_t *bsp, bool taken) {
 
   chDbgCheckClassI();
 
-  chSemResetI(&bsp->bs_sem, taken ? 0 : 1);
+  chSemResetI(&bsp->bs_sem, taken ? (cnt_t)0 : (cnt_t)1);
 }
 
 /**
@@ -252,7 +252,7 @@ static inline void chBSemResetI(binary_semaphore_t *bsp, bool taken) {
  */
 static inline void chBSemReset(binary_semaphore_t *bsp, bool taken) {
 
-  chSemReset(&bsp->bs_sem, taken ? 0 : 1);
+  chSemReset(&bsp->bs_sem, taken ? (cnt_t)0 : (cnt_t)1);
 }
 
 /**
@@ -301,10 +301,10 @@ static inline bool chBSemGetStateI(binary_semaphore_t *bsp) {
 
   chDbgCheckClassI();
 
-  return bsp->bs_sem.s_cnt > 0 ? false : true;
+  return (bsp->bs_sem.s_cnt > 0) ? false : true;
 }
 
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 #endif /* _CHBSEM_H_ */
 

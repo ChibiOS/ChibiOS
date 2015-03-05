@@ -179,7 +179,7 @@ struct context {
 /**
  * @brief   Total priority levels.
  */
-#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIORITY_LEVELS          (1U << CORTEX_PRIORITY_BITS)
 
 /**
  * @brief   Minimum priority level.
@@ -192,7 +192,7 @@ struct context {
  * @brief   Maximum priority level.
  * @details The maximum allowed priority level is always zero.
  */
-#define CORTEX_MAXIMUM_PRIORITY         0
+#define CORTEX_MAXIMUM_PRIORITY         0U
 
 /**
  * @brief   Priority level verification macro.
@@ -210,7 +210,7 @@ struct context {
  * @brief   Priority level to priority mask conversion macro.
  */
 #define CORTEX_PRIO_MASK(n)                                                 \
-  ((n) << (8 - CORTEX_PRIORITY_BITS))
+  ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -231,11 +231,11 @@ struct context {
 #if !defined(_FROM_ASM_)
 
 #if CH_CFG_ST_TIMEDELTA > 0
-#if !PORT_USE_ALT_TIMER
+#if PORT_USE_ALT_TIMER == FALSE
 #include "chcore_timer.h"
-#else /* PORT_USE_ALT_TIMER */
+#else /* PORT_USE_ALT_TIMER != FALSE */
 #include "chcore_timer_alt.h"
-#endif /* PORT_USE_ALT_TIMER */
+#endif /* PORT_USE_ALT_TIMER != FALSE */
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */

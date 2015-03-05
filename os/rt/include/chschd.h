@@ -36,10 +36,10 @@
  * @name    Wakeup status codes
  * @{
  */
-#define MSG_OK          0           /**< @brief Normal wakeup message.      */
-#define MSG_TIMEOUT     -1          /**< @brief Wakeup caused by a timeout
+#define MSG_OK              0       /**< @brief Normal wakeup message.      */
+#define MSG_TIMEOUT         -1      /**< @brief Wakeup caused by a timeout
                                          condition.                         */
-#define MSG_RESET       -2          /**< @brief Wakeup caused by a reset
+#define MSG_RESET           -2      /**< @brief Wakeup caused by a reset
                                          condition.                         */
 /** @} */
 
@@ -47,37 +47,37 @@
  * @name    Priority constants
  * @{
  */
-#define NOPRIO          0           /**< @brief Ready list header priority. */
-#define IDLEPRIO        1           /**< @brief Idle thread priority.       */
-#define LOWPRIO         2           /**< @brief Lowest user priority.       */
-#define NORMALPRIO      64          /**< @brief Normal user priority.       */
-#define HIGHPRIO        127         /**< @brief Highest user priority.      */
-#define ABSPRIO         255         /**< @brief Greatest possible priority. */
+#define NOPRIO              0U      /**< @brief Ready list header priority. */
+#define IDLEPRIO            1U      /**< @brief Idle thread priority.       */
+#define LOWPRIO             2U      /**< @brief Lowest user priority.       */
+#define NORMALPRIO          64U     /**< @brief Normal user priority.       */
+#define HIGHPRIO            127U    /**< @brief Highest user priority.      */
+#define ABSPRIO             255U    /**< @brief Greatest possible priority. */
 /** @} */
 
 /**
  * @name    Thread states
  * @{
  */
-#define CH_STATE_READY          0   /**< @brief Waiting on the ready list.  */
-#define CH_STATE_CURRENT        1   /**< @brief Currently running.          */
-#define CH_STATE_WTSTART        2   /**< @brief Created but not started.    */
-#define CH_STATE_SUSPENDED      3   /**< @brief Suspended state.            */
-#define CH_STATE_QUEUED         4   /**< @brief Waiting on an I/O queue.    */
-#define CH_STATE_WTSEM          5   /**< @brief Waiting on a semaphore.     */
-#define CH_STATE_WTMTX          6   /**< @brief Waiting on a mutex.         */
-#define CH_STATE_WTCOND         7   /**< @brief Waiting on a condition
+#define CH_STATE_READY      0U      /**< @brief Waiting on the ready list.  */
+#define CH_STATE_CURRENT    1U      /**< @brief Currently running.          */
+#define CH_STATE_WTSTART    2U      /**< @brief Created but not started.    */
+#define CH_STATE_SUSPENDED  3U      /**< @brief Suspended state.            */
+#define CH_STATE_QUEUED     4U      /**< @brief Waiting on an I/O queue.    */
+#define CH_STATE_WTSEM      5U      /**< @brief Waiting on a semaphore.     */
+#define CH_STATE_WTMTX      6U      /**< @brief Waiting on a mutex.         */
+#define CH_STATE_WTCOND     7U      /**< @brief Waiting on a condition
                                          variable.                          */
-#define CH_STATE_SLEEPING       8   /**< @brief Waiting in @p chThdSleep()
+#define CH_STATE_SLEEPING   8U      /**< @brief Waiting in @p chThdSleep()
                                          or @p chThdSleepUntil().           */
-#define CH_STATE_WTEXIT         9   /**< @brief Waiting in @p chThdWait().  */
-#define CH_STATE_WTOREVT        10  /**< @brief Waiting for an event.       */
-#define CH_STATE_WTANDEVT       11  /**< @brief Waiting for several events. */
-#define CH_STATE_SNDMSGQ        12  /**< @brief Sending a message, in queue.*/
-#define CH_STATE_SNDMSG         13  /**< @brief Sent a message, waiting
+#define CH_STATE_WTEXIT     9U      /**< @brief Waiting in @p chThdWait().  */
+#define CH_STATE_WTOREVT    10U     /**< @brief Waiting for an event.       */
+#define CH_STATE_WTANDEVT   11U     /**< @brief Waiting for several events. */
+#define CH_STATE_SNDMSGQ    12U     /**< @brief Sending a message, in queue.*/
+#define CH_STATE_SNDMSG     13U     /**< @brief Sent a message, waiting
                                          answer.                            */
-#define CH_STATE_WTMSG          14  /**< @brief Waiting for a message.      */
-#define CH_STATE_FINAL          15  /**< @brief Thread terminated.          */
+#define CH_STATE_WTMSG      14U     /**< @brief Waiting for a message.      */
+#define CH_STATE_FINAL      15U     /**< @brief Thread terminated.          */
 
 /**
  * @brief   Thread states as array of strings.
@@ -94,13 +94,13 @@
  * @name    Thread flags and attributes
  * @{
  */
-#define CH_FLAG_MODE_MASK       3   /**< @brief Thread memory mode mask.    */
-#define CH_FLAG_MODE_STATIC     0   /**< @brief Static thread.              */
-#define CH_FLAG_MODE_HEAP       1   /**< @brief Thread allocated from a
+#define CH_FLAG_MODE_MASK       3U  /**< @brief Thread memory mode mask.    */
+#define CH_FLAG_MODE_STATIC     0U  /**< @brief Static thread.              */
+#define CH_FLAG_MODE_HEAP       1U  /**< @brief Thread allocated from a
                                          Memory Heap.                       */
-#define CH_FLAG_MODE_MEMPOOL    2   /**< @brief Thread allocated from a
+#define CH_FLAG_MODE_MEMPOOL    2U  /**< @brief Thread allocated from a
                                          Memory Pool.                       */
-#define CH_FLAG_TERMINATE       4   /**< @brief Termination requested flag. */
+#define CH_FLAG_TERMINATE       4U  /**< @brief Termination requested flag. */
 /** @} */
 
 /**
@@ -194,18 +194,18 @@ struct ch_thread {
   /* End of the fields shared with the threads_queue_t structure.*/
   tprio_t               p_prio;     /**< @brief Thread priority.            */
   struct context        p_ctx;      /**< @brief Processor context.          */
-#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   thread_t              *p_newer;   /**< @brief Newer registry element.     */
   thread_t              *p_older;   /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the ReadyList structure. */
-#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Thread name or @p NULL.
    */
   const char            *p_name;
 #endif
-#if CH_DBG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Thread stack boundary.
    */
@@ -219,7 +219,7 @@ struct ch_thread {
    * @brief Various thread flags.
    */
   tmode_t               p_flags;
-#if CH_CFG_USE_DYNAMIC || defined(__DOXYGEN__)
+#if (CH_CFG_USE_DYNAMIC == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief References to this thread.
    */
@@ -231,7 +231,7 @@ struct ch_thread {
 #if (CH_CFG_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
   tslices_t             p_preempt;
 #endif
-#if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
+#if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Thread consumed time in ticks.
    * @note  This field can overflow.
@@ -265,7 +265,7 @@ struct ch_thread {
      *        states.
      */
     void                *wtobjp;
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief Enabled events mask.
      * @note  This field is only valid while the thread is in the
@@ -274,13 +274,13 @@ struct ch_thread {
     eventmask_t         ewmask;
 #endif
   }                     p_u;
-#if CH_CFG_USE_WAITEXIT || defined(__DOXYGEN__)
+#if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Termination waiting list.
    */
   threads_list_t        p_waiting;
 #endif
-#if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Messages queue.
    */
@@ -290,13 +290,13 @@ struct ch_thread {
    */
   msg_t                 p_msg;
 #endif
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Pending events mask.
    */
   eventmask_t           p_epending;
 #endif
-#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief List of the mutexes owned by this thread.
    * @note  The list is terminated by a @p NULL in this field.
@@ -307,13 +307,14 @@ struct ch_thread {
    */
   tprio_t               p_realprio;
 #endif
-#if (CH_CFG_USE_DYNAMIC && CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
+#if ((CH_CFG_USE_DYNAMIC == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE)) ||      \
+    defined(__DOXYGEN__)
   /**
    * @brief Memory Pool where the thread workspace is returned.
    */
   void                  *p_mpool;
 #endif
-#if CH_DBG_STATISTICS || defined(__DOXYGEN__)
+#if (CH_DBG_STATISTICS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Thread statistics.
    */
@@ -352,10 +353,10 @@ struct ch_virtual_timers_list {
   virtual_timer_t       *vt_prev;   /**< @brief Last timer in the delta
                                                 list.                       */
   systime_t             vt_delta;   /**< @brief Must be initialized to -1.  */
-#if CH_CFG_ST_TIMEDELTA == 0 || defined(__DOXYGEN__)
+#if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
   volatile systime_t    vt_systime; /**< @brief System Time counter.        */
 #endif
-#if CH_CFG_ST_TIMEDELTA > 0 || defined(__DOXYGEN__)
+#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
   /**
    * @brief   System time of the last tick event.
    */
@@ -373,7 +374,7 @@ struct ch_ready_list {
                                                 initialized to zero.        */
   struct context        r_ctx;      /**< @brief Not used, present because
                                                 offsets.                    */
-#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   thread_t              *r_newer;   /**< @brief Newer registry element.     */
   thread_t              *r_older;   /**< @brief Older registry element.     */
 #endif
@@ -394,7 +395,7 @@ struct ch_system_debug {
    *          field itself is declared volatile.
    */
   const char            * volatile panic_msg;
-#if CH_DBG_SYSTEM_STATE_CHECK || defined(__DOXYGEN__)
+#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   ISR nesting level.
    */
@@ -404,7 +405,7 @@ struct ch_system_debug {
    */
   cnt_t                 lock_cnt;
 #endif
-#if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
+#if (CH_DBG_ENABLE_TRACE == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Public trace buffer.
    */
@@ -434,19 +435,19 @@ struct ch_system {
    * @brief   Main thread descriptor.
    */
   thread_t              mainthread;
-#if CH_CFG_USE_TM || defined(__DOXYGEN__)
+#if (CH_CFG_USE_TM == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Time measurement calibration data.
    */
   tm_calibration_t      tm;
 #endif
-#if CH_DBG_STATISTICS || defined(__DOXYGEN__)
+#if (CH_DBG_STATISTICS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Global kernel statistics.
    */
   kernel_stats_t        kernel_stats;
 #endif
-#if !CH_CFG_NO_IDLE_THREAD
+#if CH_CFG_NO_IDLE_THREAD == FALSE
   /**
    * @brief   Idle thread working area.
    */
@@ -501,13 +502,13 @@ extern "C" {
   thread_t *chSchReadyI(thread_t *tp);
   void chSchGoSleepS(tstate_t newstate);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);
-  void chSchWakeupS(thread_t *tp, msg_t msg);
+  void chSchWakeupS(thread_t *ntp, msg_t msg);
   void chSchRescheduleS(void);
   bool chSchIsPreemptionRequired(void);
   void chSchDoRescheduleBehind(void);
   void chSchDoRescheduleAhead(void);
   void chSchDoReschedule(void);
-#if !CH_CFG_OPTIMIZE_SPEED
+#if CH_CFG_OPTIMIZE_SPEED == FALSE
   void queue_prio_insert(thread_t *tp, threads_queue_t *tqp);
   void queue_insert(thread_t *tp, threads_queue_t *tqp);
   thread_t *queue_fifo_remove(threads_queue_t *tqp);
@@ -515,7 +516,7 @@ extern "C" {
   thread_t *queue_dequeue(thread_t *tp);
   void list_insert(thread_t *tp, threads_list_t *tlp);
   thread_t *list_remove(threads_list_t *tlp);
-#endif /* CH_CFG_OPTIMIZE_SPEED */
+#endif /* CH_CFG_OPTIMIZE_SPEED == FALSE */
 #ifdef __cplusplus
 }
 #endif
@@ -533,7 +534,9 @@ extern "C" {
  */
 static inline void list_init(threads_list_t *tlp) {
 
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tlp->p_next = (thread_t *)tlp;
+  /*lint -restore*/
 }
 
 /**
@@ -546,7 +549,9 @@ static inline void list_init(threads_list_t *tlp) {
  */
 static inline bool list_isempty(threads_list_t *tlp) {
 
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(tlp->p_next == (thread_t *)tlp);
+  /*lint -restore*/
 }
 
 /**
@@ -559,7 +564,9 @@ static inline bool list_isempty(threads_list_t *tlp) {
  */
 static inline bool list_notempty(threads_list_t *tlp) {
 
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(tlp->p_next != (thread_t *)tlp);
+  /*lint -restore*/
 }
 
 /**
@@ -571,7 +578,10 @@ static inline bool list_notempty(threads_list_t *tlp) {
  */
 static inline void queue_init(threads_queue_t *tqp) {
 
-  tqp->p_next = tqp->p_prev = (thread_t *)tqp;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  tqp->p_next = (thread_t *)tqp;
+  tqp->p_prev = (thread_t *)tqp;
+  /*lint -restore*/
 }
 
 /**
@@ -584,7 +594,9 @@ static inline void queue_init(threads_queue_t *tqp) {
  */
 static inline bool queue_isempty(threads_queue_t *tqp) {
 
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(tqp->p_next == (thread_t *)tqp);
+  /*lint -restore*/
 }
 
 /**
@@ -597,12 +609,14 @@ static inline bool queue_isempty(threads_queue_t *tqp) {
  */
 static inline bool queue_notempty(threads_queue_t *tqp) {
 
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(tqp->p_next != (thread_t *)tqp);
+  /*lint -restore*/
 }
 
 /* If the performance code path has been chosen then all the following
    functions are inlined into the various kernel modules.*/
-#if CH_CFG_OPTIMIZE_SPEED
+#if CH_CFG_OPTIMIZE_SPEED == TRUE
 static inline void list_insert(thread_t *tp, threads_list_t *tlp) {
 
   tp->p_next = tlp->p_next;
@@ -619,26 +633,35 @@ static inline thread_t *list_remove(threads_list_t *tlp) {
 
 static inline void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
 
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   thread_t *cp = (thread_t *)tqp;
   do {
     cp = cp->p_next;
   } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
+  /*lint -restore*/
   tp->p_next = cp;
   tp->p_prev = cp->p_prev;
-  tp->p_prev->p_next = cp->p_prev = tp;
+  tp->p_prev->p_next = tp;
+  cp->p_prev = tp;
 }
 
 static inline void queue_insert(thread_t *tp, threads_queue_t *tqp) {
 
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tp->p_next = (thread_t *)tqp;
+  /*lint -restore*/
   tp->p_prev = tqp->p_prev;
-  tp->p_prev->p_next = tqp->p_prev = tp;
+  tp->p_prev->p_next = tp;
+  tqp->p_prev = tp;
 }
 
 static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_next;
 
-  (tqp->p_next = tp->p_next)->p_prev = (thread_t *)tqp;
+  tqp->p_next = tp->p_next;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  tqp->p_next->p_prev = (thread_t *)tqp;
+  /*lint -restore*/
 
   return tp;
 }
@@ -646,7 +669,10 @@ static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
 static inline thread_t *queue_lifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_prev;
 
-  (tqp->p_prev = tp->p_prev)->p_next = (thread_t *)tqp;
+  tqp->p_prev = tp->p_prev;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  tqp->p_prev->p_next = (thread_t *)tqp;
+  /*lint -restore*/
 
   return tp;
 }
@@ -658,7 +684,7 @@ static inline thread_t *queue_dequeue(thread_t *tp) {
 
   return tp;
 }
-#endif /* CH_CFG_OPTIMIZE_SPEED */
+#endif /* CH_CFG_OPTIMIZE_SPEED == TRUE */
 
 /**
  * @brief   Determines if the current thread must reschedule.

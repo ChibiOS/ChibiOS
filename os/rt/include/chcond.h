@@ -31,7 +31,7 @@
 #ifndef _CHCOND_H_
 #define _CHCOND_H_
 
-#if CH_CFG_USE_CONDVARS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -45,7 +45,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !CH_CFG_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES == FALSE
 #error "CH_CFG_USE_CONDVARS requires CH_CFG_USE_MUTEXES"
 #endif
 
@@ -97,7 +97,7 @@ extern "C" {
   void chCondBroadcastI(condition_variable_t *cp);
   msg_t chCondWait(condition_variable_t *cp);
   msg_t chCondWaitS(condition_variable_t *cp);
-#if CH_CFG_USE_CONDVARS_TIMEOUT
+#if CH_CFG_USE_CONDVARS_TIMEOUT == TRUE
   msg_t chCondWaitTimeout(condition_variable_t *cp, systime_t time);
   msg_t chCondWaitTimeoutS(condition_variable_t *cp, systime_t time);
 #endif
@@ -109,7 +109,7 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_CFG_USE_CONDVARS */
+#endif /* CH_CFG_USE_CONDVARS == TRUE */
 
 #endif /* _CHCOND_H_ */
 

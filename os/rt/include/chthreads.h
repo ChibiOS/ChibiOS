@@ -52,7 +52,7 @@ typedef thread_t * thread_reference_t;
 /**
  * @brief   Thread function.
  */
-typedef msg_t (*tfunc_t)(void *);
+typedef msg_t (*tfunc_t)(void *p);
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -132,7 +132,7 @@ typedef msg_t (*tfunc_t)(void *);
 extern "C" {
 #endif
    thread_t *_thread_init(thread_t *tp, tprio_t prio);
-#if CH_DBG_FILL_THREADS
+#if CH_DBG_FILL_THREADS == TRUE
   void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v);
 #endif
   thread_t *chThdCreateI(void *wsp, size_t size,
@@ -156,7 +156,7 @@ extern "C" {
   void chThdYield(void);
   void chThdExit(msg_t msg);
   void chThdExitS(msg_t msg);
-#if CH_CFG_USE_WAITEXIT
+#if CH_CFG_USE_WAITEXIT == TRUE
   msg_t chThdWait(thread_t *tp);
 #endif
 #ifdef __cplusplus
@@ -202,7 +202,7 @@ static inline tprio_t chThdGetPriorityX(void) {
  *
  * @xclass
  */
-#if CH_DBG_THREADS_PROFILING || defined(__DOXYGEN__)
+#if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
 static inline systime_t chThdGetTicksX(thread_t *tp) {
 
   return tp->p_time;
@@ -233,7 +233,7 @@ static inline bool chThdTerminatedX(thread_t *tp) {
  */
 static inline bool chThdShouldTerminateX(void) {
 
-  return (bool)((chThdGetSelfX()->p_flags & CH_FLAG_TERMINATE) != 0);
+  return (bool)((chThdGetSelfX()->p_flags & CH_FLAG_TERMINATE) != 0U);
 }
 
 /**
@@ -268,7 +268,7 @@ static inline void chThdSleepS(systime_t time) {
 
   chDbgCheck(time != TIME_IMMEDIATE);
 
-  chSchGoSleepTimeoutS(CH_STATE_SLEEPING, time);
+  (void) chSchGoSleepTimeoutS(CH_STATE_SLEEPING, time);
 }
 
 /**
@@ -322,7 +322,7 @@ static inline void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
   chDbgAssert(tp->p_state == CH_STATE_QUEUED, "invalid state");
 
   tp->p_u.rdymsg = msg;
-  chSchReadyI(tp);
+  (void) chSchReadyI(tp);
 }
 
 #endif /* _CHTHREADS_H_ */

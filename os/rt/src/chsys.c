@@ -51,7 +51,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if !CH_CFG_NO_IDLE_THREAD || defined(__DOXYGEN__)
+#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   This function implements the idle thread infinite loop.
  * @details The function puts the processor in the lowest power mode capable
@@ -67,11 +67,14 @@ static void _idle_thread(void *p) {
   (void)p;
   chRegSetThreadName("idle");
   while (true) {
+    /*lint -save -e522 [2.2] Apparently no side effects because it contains
+      an asm instruction.*/
     port_wait_for_interrupt();
+    /*lint -restore*/
     CH_CFG_IDLE_LOOP_HOOK();
   }
 }
-#endif /* CH_CFG_NO_IDLE_THREAD */
+#endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -88,30 +91,30 @@ static void _idle_thread(void *p) {
  * @special
  */
 void chSysInit(void) {
-#if CH_DBG_ENABLE_STACK_CHECK
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
   extern stkalign_t __main_thread_stack_base__;
 #endif
 
   port_init();
   _scheduler_init();
   _vt_init();
-#if CH_CFG_USE_TM
+#if CH_CFG_USE_TM == TRUE
   _tm_init();
 #endif
-#if CH_CFG_USE_MEMCORE
+#if CH_CFG_USE_MEMCORE == TRUE
   _core_init();
 #endif
-#if CH_CFG_USE_HEAP
+#if CH_CFG_USE_HEAP == TRUE
   _heap_init();
 #endif
-#if CH_DBG_STATISTICS
+#if CH_DBG_STATISTICS == TRUE
   _stats_init();
 #endif
-#if CH_DBG_ENABLE_TRACE
+#if CH_DBG_ENABLE_TRACE == TRUE
   _dbg_trace_init();
 #endif
 
-#if !CH_CFG_NO_IDLE_THREAD
+#if CH_CFG_NO_IDLE_THREAD == FALSE
   /* Now this instructions flow becomes the main thread.*/
   setcurrp(_thread_init(&ch.mainthread, NORMALPRIO));
 #else
@@ -120,7 +123,7 @@ void chSysInit(void) {
 #endif
 
   currp->p_state = CH_STATE_CURRENT;
-#if CH_DBG_ENABLE_STACK_CHECK
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
   /* This is a special case because the main thread thread_t structure is not
      adjacent to its stack area.*/
   currp->p_stklimit = &__main_thread_stack_base__;
@@ -131,12 +134,15 @@ void chSysInit(void) {
      active, else the parameter is ignored.*/
   chRegSetThreadName((const char *)&ch_debug);
 
-#if !CH_CFG_NO_IDLE_THREAD
+#if CH_CFG_NO_IDLE_THREAD == FALSE
   /* This thread has the lowest priority in the system, its role is just to
      serve interrupts in its context while keeping the lowest energy saving
      mode compatible with the system status.*/
-  chThdCreateStatic(ch.idle_thread_wa, sizeof(ch.idle_thread_wa), IDLEPRIO,
-                    (tfunc_t)_idle_thread, NULL);
+  /*lint -save -e9074 -e9087 [11.3, 11.1] The idle thread returns void because
+    an optimization.*/
+  (void) chThdCreateStatic(ch.idle_thread_wa, sizeof(ch.idle_thread_wa),
+                           IDLEPRIO, (tfunc_t)_idle_thread, NULL);
+  /*lint -restore*/
 #endif
 }
 
@@ -189,7 +195,7 @@ void chSysTimerHandlerI(void) {
     /* Decrement remaining quantum.*/
     currp->p_preempt--;
 #endif
-#if CH_DBG_THREADS_PROFILING
+#if CH_DBG_THREADS_PROFILING == TRUE
   currp->p_time++;
 #endif
   chVTDoTickI();
@@ -247,7 +253,7 @@ void chSysRestoreStatusX(syssts_t sts) {
   }
 }
 
-#if PORT_SUPPORTS_RT || defined(__DOXYGEN__)
+#if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Realtime window test.
  * @details This function verifies if the current realtime counter value
@@ -268,8 +274,8 @@ void chSysRestoreStatusX(syssts_t sts) {
  */
 bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
 
-  return end > start ? (cnt >= start) && (cnt < end) :
-                       (cnt >= start) || (cnt < end);
+  return (end > start) ? ((cnt >= start) && (cnt < end)) :
+                         ((cnt >= start) || (cnt < end));
 }
 
 /**
@@ -290,6 +296,6 @@ void chSysPolledDelayX(rtcnt_t cycles) {
   while (chSysIsCounterWithinX(chSysGetRealtimeCounterX(), start, end)) {
   }
 }
-#endif /* PORT_SUPPORTS_RT */
+#endif /* PORT_SUPPORTS_RT == TRUE */
 
 /** @} */

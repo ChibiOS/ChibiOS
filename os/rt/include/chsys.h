@@ -197,7 +197,7 @@
  *
  * @xclass
  */
-#if PORT_SUPPORTS_RT || defined(__DOXYGEN__)
+#if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
 #define chSysGetRealtimeCounterX() (rtcnt_t)port_rt_get_counter_value()
 #endif
 
@@ -388,7 +388,7 @@ static inline void chSysUnconditionalUnlock(void) {
   }
 }
 
-#if !CH_CFG_NO_IDLE_THREAD || defined(__DOXYGEN__)
+#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Returns a pointer to the idle thread.
  * @pre     In order to use this function the option @p CH_CFG_NO_IDLE_THREAD
@@ -405,7 +405,7 @@ static inline thread_t *chSysGetIdleThreadX(void) {
 
   return ch.rlist.r_queue.p_prev;
 }
-#endif /* !CH_CFG_NO_IDLE_THREAD */
+#endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
 
 #endif /* _CHSYS_H_ */
 

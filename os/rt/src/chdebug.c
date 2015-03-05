@@ -105,7 +105,7 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-#if CH_DBG_SYSTEM_STATE_CHECK || defined(__DOXYGEN__)
+#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Guard code for @p chSysDisable().
  *
@@ -254,9 +254,9 @@ void chDbgCheckClassS(void) {
   }
 }
 
-#endif /* CH_DBG_SYSTEM_STATE_CHECK */
+#endif /* CH_DBG_SYSTEM_STATE_CHECK == TRUE */
 
-#if CH_DBG_ENABLE_TRACE || defined(__DOXYGEN__)
+#if (CH_DBG_ENABLE_TRACE == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Trace circular buffer subsystem initialization.
  * @note    Internal use only.

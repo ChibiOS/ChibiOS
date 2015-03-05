@@ -60,7 +60,10 @@
  */
 void _vt_init(void) {
 
-  ch.vtlist.vt_next = ch.vtlist.vt_prev = (void *)&ch.vtlist;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  ch.vtlist.vt_next = (virtual_timer_t *)&ch.vtlist;
+  ch.vtlist.vt_prev = (virtual_timer_t *)&ch.vtlist;
+  /*lint -restore*/
   ch.vtlist.vt_delta = (systime_t)-1;
 #if CH_CFG_ST_TIMEDELTA == 0
   ch.vtlist.vt_systime = 0;
@@ -102,17 +105,19 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
   vtp->vt_func = vtfunc;
   p = ch.vtlist.vt_next;
 
-#if CH_CFG_ST_TIMEDELTA > 0 || defined(__DOXYGEN__)
+#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
   {
     systime_t now = port_timer_get_time();
 
     /* If the requested delay is lower than the minimum safe delta then it
        is raised to the minimum safe value.*/
-    if (delay < CH_CFG_ST_TIMEDELTA) {
-      delay = CH_CFG_ST_TIMEDELTA;
+    if (delay < (systime_t)CH_CFG_ST_TIMEDELTA) {
+      delay = (systime_t)CH_CFG_ST_TIMEDELTA;
     }
 
+    /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
     if (&ch.vtlist == (virtual_timers_list_t *)p) {
+    /*lint -restore*/
       /* The delta list is empty, the current time becomes the new
          delta list base time.*/
       ch.vtlist.vt_lasttime = now;
@@ -140,8 +145,10 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
   }
 
   /* The timer is inserted in the delta list.*/
-  vtp->vt_prev = (vtp->vt_next = p)->vt_prev;
-  vtp->vt_prev->vt_next = p->vt_prev = vtp;
+  vtp->vt_next = p;
+  vtp->vt_prev = vtp->vt_next->vt_prev;
+  vtp->vt_prev->vt_next = vtp;
+  p->vt_prev = vtp;
   vtp->vt_delta = delay
 
   /* Special case when the timer is in last position in the list, the
@@ -168,28 +175,30 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   vtp->vt_next->vt_delta += vtp->vt_delta;
   vtp->vt_prev->vt_next = vtp->vt_next;
   vtp->vt_next->vt_prev = vtp->vt_prev;
-  vtp->vt_func = (vtfunc_t)NULL;
+  vtp->vt_func = NULL;
 
   /* The above code changes the value in the header when the removed element
      is the last of the list, restoring it.*/
   ch.vtlist.vt_delta = (systime_t)-1;
 
-#if CH_CFG_ST_TIMEDELTA > 0 || defined(__DOXYGEN__)
+#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
   {
+    /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
     if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
+    /*lint -restore*/
       /* Just removed the last element in the list, alarm timer stopped.*/
       port_timer_stop_alarm();
     }
     else {
       /* Updating the alarm to the next deadline, deadline that must not be
          closer in time than the minimum time delta.*/
-      if (ch.vtlist.vt_next->vt_delta >= CH_CFG_ST_TIMEDELTA) {
+      if (ch.vtlist.vt_next->vt_delta >= (systime_t)CH_CFG_ST_TIMEDELTA) {
         port_timer_set_alarm(ch.vtlist.vt_lasttime +
                              ch.vtlist.vt_next->vt_delta);
       }
       else {
         port_timer_set_alarm(ch.vtlist.vt_lasttime +
-                             CH_CFG_ST_TIMEDELTA);
+                             (systime_t)CH_CFG_ST_TIMEDELTA);
       }
     }
   }

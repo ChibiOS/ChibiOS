@@ -28,7 +28,7 @@
 #ifndef _CHTM_H_
 #define _CHTM_H_
 
-#if CH_CFG_USE_TM || defined(__DOXYGEN__)
+#if (CH_CFG_USE_TM == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -42,7 +42,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !PORT_SUPPORTS_RT
+#if PORT_SUPPORTS_RT == FALSE
 #error "CH_CFG_USE_TM requires PORT_SUPPORTS_RT"
 #endif
 
@@ -102,7 +102,7 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CH_CFG_USE_TM */
+#endif /* CH_CFG_USE_TM == TRUE */
 
 #endif /* _CHTM_H_ */
 

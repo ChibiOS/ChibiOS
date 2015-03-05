@@ -33,42 +33,6 @@
 /*===========================================================================*/
 
 /**
- * @name    Architecture and Compiler
- * @{
- */
-#if (CORTEX_MODEL == CORTEX_M0) || defined(__DOXYGEN__)
-/**
- * @brief   Macro defining the specific ARM architecture.
- */
-#define PORT_ARCHITECTURE_ARM_v6M
-
-/**
- * @brief   Name of the implemented architecture.
- */
-#define PORT_ARCHITECTURE_NAME          "ARMv6-M"
-
-/**
- * @brief   Name of the architecture variant.
- */
-#define PORT_CORE_VARIANT_NAME          "Cortex-M0"
-
-#elif (CORTEX_MODEL == CORTEX_M0PLUS)
-#define PORT_ARCHITECTURE_ARM_v6M
-#define PORT_ARCHITECTURE_NAME          "ARMv6-M"
-#define PORT_CORE_VARIANT_NAME          "Cortex-M0+"
-#endif
-
-/**
- * @brief   Port-specific information string.
- */
-#if !CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
-#define PORT_INFO                       "Preemption through NMI"
-#else
-#define PORT_INFO                       "Preemption through PendSV"
-#endif
-/** @} */
-
-/**
  * @brief   This port does not support a realtime counter.
  */
 #define PORT_SUPPORTS_RT                FALSE
@@ -130,6 +94,42 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/**
+ * @name    Architecture and Compiler
+ * @{
+ */
+#if (CORTEX_MODEL == CORTEX_M0) || defined(__DOXYGEN__)
+/**
+ * @brief   Macro defining the specific ARM architecture.
+ */
+#define PORT_ARCHITECTURE_ARM_v6M
+
+/**
+ * @brief   Name of the implemented architecture.
+ */
+#define PORT_ARCHITECTURE_NAME          "ARMv6-M"
+
+/**
+ * @brief   Name of the architecture variant.
+ */
+#define PORT_CORE_VARIANT_NAME          "Cortex-M0"
+
+#elif (CORTEX_MODEL == CORTEX_M0PLUS)
+#define PORT_ARCHITECTURE_ARM_v6M
+#define PORT_ARCHITECTURE_NAME          "ARMv6-M"
+#define PORT_CORE_VARIANT_NAME          "Cortex-M0+"
+#endif
+
+/**
+ * @brief   Port-specific information string.
+ */
+#if !CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+#define PORT_INFO                       "Preemption through NMI"
+#else
+#define PORT_INFO                       "Preemption through PendSV"
+#endif
+/** @} */
 
 /**
  * @brief   Maximum usable priority for normal ISRs.

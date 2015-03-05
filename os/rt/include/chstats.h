@@ -28,7 +28,7 @@
 #ifndef _CHSTATS_H_
 #define _CHSTATS_H_
 
-#if CH_DBG_STATISTICS || defined(__DOXYGEN__)
+#if (CH_DBG_STATISTICS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -38,7 +38,7 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-#if !CH_CFG_USE_TM
+#if CH_CFG_USE_TM == FALSE
 #error "CH_DBG_STATISTICS requires CH_CFG_USE_TM"
 #endif
 
@@ -88,7 +88,7 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#else /* !CH_DBG_STATISTICS */
+#else /* CH_DBG_STATISTICS == FALSE */
 
 /* Stub functions for when the statistics module is disabled. */
 #define _stats_increase_irq()
@@ -98,7 +98,7 @@ extern "C" {
 #define _stats_start_measure_crit_isr()
 #define _stats_stop_measure_crit_isr()
 
-#endif /* !CH_DBG_STATISTICS */
+#endif /* CH_DBG_STATISTICS == FALSE */
 
 #endif /* _CHSTATS_H_ */
 

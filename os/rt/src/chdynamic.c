@@ -68,9 +68,10 @@
 thread_t *chThdAddRef(thread_t *tp) {
 
   chSysLock();
-  chDbgAssert(tp->p_refs < 255, "too many references");
+  chDbgAssert(tp->p_refs < 255U, "too many references");
   tp->p_refs++;
   chSysUnlock();
+
   return tp;
 }
 
@@ -98,7 +99,7 @@ void chThdRelease(thread_t *tp) {
   /* If the references counter reaches zero and the thread is in its
      terminated state then the memory can be returned to the proper
      allocator. Of course static threads are not affected.*/
-  if ((refs == 0) && (tp->p_state == CH_STATE_FINAL)) {
+  if ((refs == 0U) && (tp->p_state == CH_STATE_FINAL)) {
     switch (tp->p_flags & CH_FLAG_MODE_MASK) {
 #if CH_CFG_USE_HEAP
     case CH_FLAG_MODE_HEAP:

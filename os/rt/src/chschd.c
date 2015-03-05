@@ -66,12 +66,15 @@ void _scheduler_init(void) {
 
   queue_init(&ch.rlist.r_queue);
   ch.rlist.r_prio = NOPRIO;
-#if CH_CFG_USE_REGISTRY
-  ch.rlist.r_newer = ch.rlist.r_older = (thread_t *)&ch.rlist;
+#if CH_CFG_USE_REGISTRY == TRUE
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  ch.rlist.r_newer = (thread_t *)&ch.rlist;
+  ch.rlist.r_older = (thread_t *)&ch.rlist;
+  /*lint -restore*/
 #endif
 }
 
-#if !CH_CFG_OPTIMIZE_SPEED || defined(__DOXYGEN__)
+#if (CH_CFG_OPTIMIZE_SPEED == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Inserts a thread into a priority ordered queue.
  * @note    The insertion is done by scanning the list from the highest
@@ -224,14 +227,17 @@ thread_t *chSchReadyI(thread_t *tp) {
               "invalid state");
 
   tp->p_state = CH_STATE_READY;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   cp = (thread_t *)&ch.rlist.r_queue;
+  /*lint -restore*/
   do {
     cp = cp->p_next;
   } while (cp->p_prio >= tp->p_prio);
   /* Insertion on p_prev.*/
   tp->p_next = cp;
   tp->p_prev = cp->p_prev;
-  tp->p_prev->p_next = cp->p_prev = tp;
+  tp->p_prev->p_next = tp;
+  cp->p_prev = tp;
 
   return tp;
 }
@@ -250,7 +256,8 @@ void chSchGoSleepS(tstate_t newstate) {
 
   chDbgCheckClassS();
 
-  (otp = currp)->p_state = newstate;
+  otp = currp;
+  otp->p_state = newstate;
 #if CH_CFG_TIME_QUANTUM > 0
   /* The thread is renouncing its remaining time slices so it will have a new
      time quantum when it will wakeup.*/
@@ -270,7 +277,9 @@ void chSchGoSleepS(tstate_t newstate) {
  * Timeout wakeup callback.
  */
 static void wakeup(void *p) {
+  /*lint -save -e9087 [11.3] The real type is hidden but correct.*/
   thread_t *tp = (thread_t *)p;
+  /*lint -restore*/
 
   chSysLockFromISR();
   switch (tp->p_state) {
@@ -282,20 +291,24 @@ static void wakeup(void *p) {
   case CH_STATE_SUSPENDED:
     *(thread_reference_t *)tp->p_u.wtobjp = NULL;
     break;
-#if CH_CFG_USE_SEMAPHORES
+#if CH_CFG_USE_SEMAPHORES == TRUE
   case CH_STATE_WTSEM:
     chSemFastSignalI((semaphore_t *)tp->p_u.wtobjp);
     /* Falls into, intentional. */
 #endif
-#if CH_CFG_USE_CONDVARS && CH_CFG_USE_CONDVARS_TIMEOUT
+#if (CH_CFG_USE_CONDVARS == TRUE) && (CH_CFG_USE_CONDVARS_TIMEOUT == TRUE)
   case CH_STATE_WTCOND:
 #endif
   case CH_STATE_QUEUED:
     /* States requiring dequeuing.*/
-    queue_dequeue(tp);
+    (void) queue_dequeue(tp);
+    break;
+  default:
+    chDbgAssert(false, "unexpected state");
+    break;
   }
   tp->p_u.rdymsg = MSG_TIMEOUT;
-  chSchReadyI(tp);
+  (void) chSchReadyI(tp);
   chSysUnlockFromISR();
 }
 
@@ -329,8 +342,9 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time) {
 
     chVTDoSetI(&vt, time, wakeup, currp);
     chSchGoSleepS(newstate);
-    if (chVTIsArmedI(&vt))
+    if (chVTIsArmedI(&vt)) {
       chVTDoResetI(&vt);
+    }
   }
   else {
     chSchGoSleepS(newstate);
@@ -369,7 +383,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
      running immediately and the invoking thread goes in the ready
      list instead.*/
   if (ntp->p_prio <= currp->p_prio) {
-    chSchReadyI(ntp);
+    (void) chSchReadyI(ntp);
   }
   else {
     thread_t *otp = chSchReadyI(currp);
@@ -455,7 +469,7 @@ void chSchDoRescheduleBehind(void) {
 #if CH_CFG_TIME_QUANTUM > 0
   otp->p_preempt = CH_CFG_TIME_QUANTUM;
 #endif
-  chSchReadyI(otp);
+  (void) chSchReadyI(otp);
   chSysSwitch(currp, otp);
 }
 
@@ -482,14 +496,17 @@ void chSchDoRescheduleAhead(void) {
   currp->p_state = CH_STATE_CURRENT;
 
   otp->p_state = CH_STATE_READY;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   cp = (thread_t *)&ch.rlist.r_queue;
+  /*lint -restore*/
   do {
     cp = cp->p_next;
   } while (cp->p_prio > otp->p_prio);
   /* Insertion on p_prev.*/
   otp->p_next = cp;
   otp->p_prev = cp->p_prev;
-  otp->p_prev->p_next = cp->p_prev = otp;
+  otp->p_prev->p_next = otp;
+  cp->p_prev = otp;
 
   chSysSwitch(currp, otp);
 }
