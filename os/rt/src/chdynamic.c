@@ -28,7 +28,7 @@
 
 #include "ch.h"
 
-#if CH_CFG_USE_DYNAMIC || defined(__DOXYGEN__)
+#if (CH_CFG_USE_DYNAMIC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -101,27 +101,30 @@ void chThdRelease(thread_t *tp) {
      allocator. Of course static threads are not affected.*/
   if ((refs == 0U) && (tp->p_state == CH_STATE_FINAL)) {
     switch (tp->p_flags & CH_FLAG_MODE_MASK) {
-#if CH_CFG_USE_HEAP
+#if CH_CFG_USE_HEAP == TRUE
     case CH_FLAG_MODE_HEAP:
-#if CH_CFG_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY == TRUE
       REG_REMOVE(tp);
 #endif
       chHeapFree(tp);
       break;
 #endif
-#if CH_CFG_USE_MEMPOOLS
+#if CH_CFG_USE_MEMPOOLS == TRUE
     case CH_FLAG_MODE_MEMPOOL:
-#if CH_CFG_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY == TRUE
       REG_REMOVE(tp);
 #endif
       chPoolFree(tp->p_mpool, tp);
       break;
 #endif
+    default:
+      chDbgAssert(false, "unexpected case");
+      break;
     }
   }
 }
 
-#if CH_CFG_USE_HEAP || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Creates a new thread allocating the memory from the heap.
  * @pre     The configuration options @p CH_CFG_USE_DYNAMIC and
@@ -154,7 +157,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
     return NULL;
   }
   
-#if CH_DBG_FILL_THREADS
+#if CH_DBG_FILL_THREADS == TRUE
   _thread_memfill((uint8_t *)wsp,
                   (uint8_t *)wsp + sizeof(thread_t),
                   CH_DBG_THREAD_FILL_VALUE);
@@ -171,9 +174,9 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
 
   return tp;
 }
-#endif /* CH_CFG_USE_HEAP */
+#endif /* CH_CFG_USE_HEAP == TRUE */
 
-#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Creates a new thread allocating the memory from the specified
  *          memory pool.
@@ -208,7 +211,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
     return NULL;
   }
   
-#if CH_DBG_FILL_THREADS
+#if CH_DBG_FILL_THREADS == TRUE
   _thread_memfill((uint8_t *)wsp,
                   (uint8_t *)wsp + sizeof(thread_t),
                   CH_DBG_THREAD_FILL_VALUE);
@@ -226,8 +229,8 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
 
   return tp;
 }
-#endif /* CH_CFG_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 
-#endif /* CH_CFG_USE_DYNAMIC */
+#endif /* CH_CFG_USE_DYNAMIC == TRUE */
 
 /** @} */

@@ -42,7 +42,7 @@
 
 #include "ch.h"
 
-#if CH_CFG_USE_QUEUES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_QUEUES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -138,7 +138,9 @@ msg_t chIQPutI(input_queue_t *iqp, uint8_t b) {
 
   iqp->q_counter++;
   *iqp->q_wrptr++ = b;
+  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
   if (iqp->q_wrptr >= iqp->q_top) {
+  /*lint -restore*/
     iqp->q_wrptr = iqp->q_buffer;
   }
 
@@ -185,7 +187,9 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
 
   iqp->q_counter--;
   b = *iqp->q_rdptr++;
+  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
   if (iqp->q_rdptr >= iqp->q_top) {
+  /*lint -restore*/
     iqp->q_rdptr = iqp->q_buffer;
   }
   chSysUnlock();
@@ -239,8 +243,11 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
 
     iqp->q_counter--;
     *bp++ = *iqp->q_rdptr++;
-    if (iqp->q_rdptr >= iqp->q_top)
+    /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+    if (iqp->q_rdptr >= iqp->q_top) {
+    /*lint -restore*/
       iqp->q_rdptr = iqp->q_buffer;
+    }
 
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
     r++;
@@ -295,7 +302,7 @@ void chOQResetI(output_queue_t *oqp) {
   chDbgCheckClassI();
 
   oqp->q_rdptr = oqp->q_wrptr = oqp->q_buffer;
-  oqp->q_counter = QSIZE(oqp);
+  oqp->q_counter = chQSizeX(oqp);
   chThdDequeueAllI(&oqp->q_waiting, Q_RESET);
 }
 
@@ -335,7 +342,9 @@ msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time) {
 
   oqp->q_counter--;
   *oqp->q_wrptr++ = b;
+  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
   if (oqp->q_wrptr >= oqp->q_top) {
+  /*lint -restore*/
     oqp->q_wrptr = oqp->q_buffer;
   }
 
@@ -368,7 +377,9 @@ msg_t chOQGetI(output_queue_t *oqp) {
 
   oqp->q_counter++;
   b = *oqp->q_rdptr++;
+  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
   if (oqp->q_rdptr >= oqp->q_top) {
+  /*lint -restore*/
     oqp->q_rdptr = oqp->q_buffer;
   }
 
@@ -418,7 +429,9 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
     }
     oqp->q_counter--;
     *oqp->q_wrptr++ = *bp++;
+    /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
     if (oqp->q_wrptr >= oqp->q_top) {
+    /*lint -restore*/
       oqp->q_wrptr = oqp->q_buffer;
     }
 
@@ -434,6 +447,6 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
     chSysLock();
   }
 }
-#endif  /* CH_CFG_USE_QUEUES */
+#endif  /* CH_CFG_USE_QUEUES == TRUE */
 
 /** @} */

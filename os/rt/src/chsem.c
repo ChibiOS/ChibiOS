@@ -57,7 +57,7 @@
 
 #include "ch.h"
 
-#if CH_CFG_USE_SEMAPHORES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -75,7 +75,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if CH_CFG_USE_SEMAPHORES_PRIORITY
+#if CH_CFG_USE_SEMAPHORES_PRIORITY == TRUE
 #define sem_insert(tp, qp) queue_prio_insert(tp, qp)
 #else
 #define sem_insert(tp, qp) queue_insert(tp, qp)
@@ -329,7 +329,7 @@ void chSemSignalI(semaphore_t *sp) {
              chSchReadyI().*/
     thread_t *tp = queue_fifo_remove(&sp->s_queue);
     tp->p_u.rdymsg = MSG_OK;
-    chSchReadyI(tp);
+    (void) chSchReadyI(tp);
   }
 }
 
@@ -406,6 +406,6 @@ msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
   return msg;
 }
 
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 /** @} */

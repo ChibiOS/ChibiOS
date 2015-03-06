@@ -8,14 +8,16 @@
 
 /* Removing *advisory* directives and rules that would negatively impact
    code clarity or are very common.*/
--e970   /* Dir-4.6 */
--e9026  /* Dir-4.9 */
--e818   /* Rule 8.13 */
--e9078  /* Rule-11.4 */ 
--e9079  /* Rule-11.5 */ 
--e904   /* Rule-15.5 */
--e9044  /* Rule-17.8 */
--e9024  /* Rule-20.10 */
+-e970                       /* Dir-4.6 */
+-e9026                      /* Dir-4.9 */
+-e756                       /* Rule-2.3 */
+-e755                       /* Rule-2.5 */
+-e818 -e844 -e954           /* Rule 8.13 */
+-e9078                      /* Rule-11.4 */ 
+-e9079                      /* Rule-11.5 */ 
+-e904                       /* Rule-15.5 */
+-e9044                      /* Rule-17.8 */
+-e9024                      /* Rule-20.10 */
 
 /* Waiver Directive 4.10, PCLint is confused by the guard used in the CMSIS
    header files, the guard is present, suppressing the noise.*/
@@ -25,6 +27,10 @@
    headers included on top of all source files. The sequence is part of the
    license URL and cannot be removed.*/
 -e9059
+
+/* Waiver Rule 8.7, the static analyzer has no visibility of functions called
+   from asm modules.*/
+-e765
 
 /* Waiver Rule 11.6, cast from integer to pointer is very commonly used
    when accessing peripherals where the numeric address of the registers

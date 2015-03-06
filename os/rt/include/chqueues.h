@@ -198,9 +198,12 @@ typedef io_queue_t output_queue_t;
  * @param[in] qp        pointer to a @p io_queue_t structure.
  * @return              The buffer size.
  *
- * @notapi
+ * @xclass
  */
-#define QSIZE(qp) ((size_t)((qp)->q_top - (qp)->q_buffer))
+#define chQSizeX(qp)                                                        \
+  /*lint -save -e946 -e947 -e9033 [18.2, 18.3, 10.8] Perfectly safe.*/      \
+  ((size_t)((qp)->q_top - (qp)->q_buffer))                                  \
+  /*lint -restore*/
 
 /**
  * @brief   Queue space.
@@ -284,10 +287,7 @@ static inline size_t chIQGetEmptyI(input_queue_t *iqp) {
 
   chDbgCheckClassI();
 
-  /*lint -save -e946 -e947 -e9033 [18.2, 18.3, 10.8] Perfectly safe pointers
-    arithmetic in QSIZE().*/
-  return (size_t)(QSIZE(iqp) - chQSpaceI(iqp));
-  /*lint -restore*/
+  return (size_t)(chQSizeX(iqp) - chQSpaceI(iqp));
 }
 
 /**
@@ -354,10 +354,7 @@ static inline size_t chOQGetFullI(output_queue_t *oqp) {
 
   chDbgCheckClassI();
 
-  /*lint -save -e946 -e947 -e9033 [18.2, 18.3, 10.8] Perfectly safe pointers
-    arithmetic in QSIZE().*/
-  return (size_t)(QSIZE(oqp) - chQSpaceI(oqp));
-  /*lint -restore*/
+  return (size_t)(chQSizeX(oqp) - chQSpaceI(oqp));
 }
 
 /**

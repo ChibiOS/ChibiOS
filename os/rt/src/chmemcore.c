@@ -45,7 +45,7 @@
 
 #include "ch.h"
 
-#if CH_CFG_USE_MEMCORE || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMCORE == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -83,10 +83,12 @@ void _core_init(void) {
   nextmem = (uint8_t *)MEM_ALIGN_NEXT(__heap_base__);
   endmem = (uint8_t *)MEM_ALIGN_PREV(__heap_end__);
 #else
-  static stkalign_t buffer[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
+  static stkalign_t buffer[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE) /
+                           MEM_ALIGN_SIZE];
 
   nextmem = (uint8_t *)&buffer[0];
-  endmem = (uint8_t *)&buffer[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE)/MEM_ALIGN_SIZE];
+  endmem = (uint8_t *)&buffer[MEM_ALIGN_NEXT(CH_CFG_MEMCORE_SIZE) /
+                              MEM_ALIGN_SIZE];
 #endif
 }
 
@@ -130,7 +132,10 @@ void *chCoreAllocI(size_t size) {
   chDbgCheckClassI();
 
   size = MEM_ALIGN_NEXT(size);
+  /*lint -save -e946 -e947 [18.2, 18.3] Normal pointers arithmetic, it
+    is safe.*/
   if ((size_t)(endmem - nextmem) < size) {
+  /*lint -restore*/
     return NULL;
   }
   p = nextmem;
@@ -148,8 +153,11 @@ void *chCoreAllocI(size_t size) {
  */
 size_t chCoreGetStatusX(void) {
 
+  /*lint -save -e946 -e947 [18.2, 18.3] Normal pointers arithmetic, it
+    is safe.*/
   return (size_t)(endmem - nextmem);
+  /*lint -restore*/
 }
-#endif /* CH_CFG_USE_MEMCORE */
+#endif /* CH_CFG_USE_MEMCORE == TRUE */
 
 /** @} */

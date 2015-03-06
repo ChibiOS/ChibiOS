@@ -35,7 +35,7 @@
 
 #include "ch.h"
 
-#if CH_CFG_USE_HEAP || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -44,7 +44,7 @@
 /*
  * Defaults on the best synchronization mechanism available.
  */
-#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
 #define H_LOCK(h)       chMtxLock(&(h)->h_mtx)
 #define H_UNLOCK(h)     chMtxUnlock(&(h)->h_mtx)
 #else
@@ -87,7 +87,7 @@ void _heap_init(void) {
   default_heap.h_provider = chCoreAlloc;
   default_heap.h_free.h.u.next = (union heap_header *)NULL;
   default_heap.h_free.h.size = 0;
-#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   chMtxObjectInit(&default_heap.h_mtx);
 #else
   chSemObjectInit(&default_heap.h_sem, 1);
@@ -115,7 +115,7 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
   heapp->h_free.h.size = 0;
   hp->h.u.next = NULL;
   hp->h.size = size - sizeof(union heap_header);
-#if CH_CFG_USE_MUTEXES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   chMtxObjectInit(&heapp->h_mtx);
 #else
   chSemObjectInit(&heapp->h_sem, 1);
@@ -215,8 +215,11 @@ void chHeapFree(void *p) {
   while (true) {
     chDbgAssert((hp < qp) || (hp >= LIMIT(qp)), "within free block");
 
+    /*lint -save -e946 -e947 [18.2, 18.3] Normal pointers arithmetic, it
+      is safe.*/
     if (((qp == &heapp->h_free) || (hp > qp)) &&
         ((qp->h.u.next == NULL) || (hp < qp->h.u.next))) {
+    /*lint -restore*/
       /* Insertion after qp.*/
       hp->h.u.next = qp->h.u.next;
       qp->h.u.next = hp;
@@ -274,6 +277,6 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *sizep) {
   return n;
 }
 
-#endif /* CH_CFG_USE_HEAP */
+#endif /* CH_CFG_USE_HEAP == TRUE */
 
 /** @} */

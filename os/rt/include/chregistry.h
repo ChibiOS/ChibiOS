@@ -114,9 +114,12 @@ typedef struct {
  * @param[in] tp        thread to add to the registry
  */
 #define REG_INSERT(tp) {                                                    \
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/   \
   (tp)->p_newer = (thread_t *)&ch.rlist;                                    \
+  /*lint -restore*/                                                         \
   (tp)->p_older = ch.rlist.r_older;                                         \
-  (tp)->p_older->p_newer = ch.rlist.r_older = (tp);                         \
+  (tp)->p_older->p_newer = (tp);                                            \
+  ch.rlist.r_older = (tp);                                                  \
 }
 
 /*===========================================================================*/

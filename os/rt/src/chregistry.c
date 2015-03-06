@@ -46,7 +46,7 @@
  */
 #include "ch.h"
 
-#if CH_CFG_USE_REGISTRY || defined(__DOXYGEN__)
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -65,7 +65,10 @@
 /*===========================================================================*/
 
 #define _offsetof(st, m)                                                    \
-  ((size_t)((char *)&((st *)0)->m - (char *)0))
+  /*lint -save -e946 -e947 -e9033 -e413 [18.2, 18.3, 10.8 1.3] Normal
+    pointers arithmetic, it is safe.*/                                      \
+  ((size_t)((char *)&((st *)0)->m - (char *)0))                             \
+  /*lint -restore*/
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -89,14 +92,14 @@ ROMCONST chdebug_t ch_debug = {
   (uint8_t)_offsetof(thread_t, p_newer),
   (uint8_t)_offsetof(thread_t, p_older),
   (uint8_t)_offsetof(thread_t, p_name),
-#if CH_DBG_ENABLE_STACK_CHECK
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
   (uint8_t)_offsetof(thread_t, p_stklimit),
 #else
   (uint8_t)0,
 #endif
   (uint8_t)_offsetof(thread_t, p_state),
   (uint8_t)_offsetof(thread_t, p_flags),
-#if CH_CFG_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC == TRUE
   (uint8_t)_offsetof(thread_t, p_refs),
 #else
   (uint8_t)0,
@@ -106,7 +109,7 @@ ROMCONST chdebug_t ch_debug = {
 #else
   (uint8_t)0,
 #endif
-#if CH_DBG_THREADS_PROFILING
+#if CH_DBG_THREADS_PROFILING == TRUE
   (uint8_t)_offsetof(thread_t, p_time)
 #else
   (uint8_t)0
@@ -130,7 +133,7 @@ thread_t *chRegFirstThread(void) {
 
   chSysLock();
   tp = ch.rlist.r_newer;
-#if CH_CFG_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC == TRUE
   tp->p_refs++;
 #endif
   chSysUnlock();
@@ -154,23 +157,25 @@ thread_t *chRegNextThread(thread_t *tp) {
 
   chSysLock();
   ntp = tp->p_newer;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   if (ntp == (thread_t *)&ch.rlist) {
+  /*lint -restore*/
     ntp = NULL;
   }
-#if CH_CFG_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC == TRUE
   else {
     chDbgAssert(ntp->p_refs < 255, "too many references");
     ntp->p_refs++;
   }
 #endif
   chSysUnlock();
-#if CH_CFG_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC == TRUE
   chThdRelease(tp);
 #endif
 
   return ntp;
 }
 
-#endif /* CH_CFG_USE_REGISTRY */
+#endif /* CH_CFG_USE_REGISTRY == TRUE */
 
 /** @} */

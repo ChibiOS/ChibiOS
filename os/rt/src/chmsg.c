@@ -45,7 +45,7 @@
 
 #include "ch.h"
 
-#if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -63,7 +63,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if CH_CFG_USE_MESSAGES_PRIORITY
+#if CH_CFG_USE_MESSAGES_PRIORITY == TRUE
 #define msg_insert(tp, qp) queue_prio_insert(tp, qp)
 #else
 #define msg_insert(tp, qp) queue_insert(tp, qp)
@@ -94,7 +94,7 @@ msg_t chMsgSend(thread_t *tp, msg_t msg) {
   ctp->p_u.wtobjp = &tp->p_msgqueue;
   msg_insert(ctp, &tp->p_msgqueue);
   if (tp->p_state == CH_STATE_WTMSG) {
-    chSchReadyI(tp);
+    (void) chSchReadyI(tp);
   }
   chSchGoSleepS(CH_STATE_SNDMSGQ);
   msg = ctp->p_u.rdymsg;
@@ -149,6 +149,6 @@ void chMsgRelease(thread_t *tp, msg_t msg) {
   chSysUnlock();
 }
 
-#endif /* CH_CFG_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
 
 /** @} */

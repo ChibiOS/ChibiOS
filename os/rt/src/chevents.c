@@ -59,7 +59,7 @@
 
 #include "ch.h"
 
-#if CH_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -135,9 +135,13 @@ void chEvtUnregister(event_source_t *esp, event_listener_t *elp) {
 
   chDbgCheck((esp != NULL) && (elp != NULL));
 
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   p = (event_listener_t *)esp;
+  /*lint -restore*/
   chSysLock();
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   while (p->el_next != (event_listener_t *)esp) {
+  /*lint -restore*/
     if (p->el_next == elp) {
       p->el_next = elp->el_next;
       break;
@@ -208,7 +212,9 @@ void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
   chDbgCheck(esp != NULL);
 
   elp = esp->es_next;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   while (elp != (event_listener_t *)esp) {
+  /*list -restore*/
     elp->el_flags |= flags;
     /* When flags == 0 the thread will always be signaled because the
        source does not emit any flag.*/
@@ -283,7 +289,7 @@ void chEvtSignalI(thread_t *tp, eventmask_t events) {
       ((tp->p_state == CH_STATE_WTANDEVT) &&
        ((tp->p_epending & tp->p_u.ewmask) == tp->p_u.ewmask))) {
     tp->p_u.rdymsg = MSG_OK;
-    chSchReadyI(tp);
+    (void) chSchReadyI(tp);
   }
 }
 
@@ -353,7 +359,9 @@ void chEvtDispatch(const evhandler_t *handlers, eventmask_t events) {
   }
 }
 
-#if CH_CFG_OPTIMIZE_SPEED || !CH_CFG_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
+#if (CH_CFG_OPTIMIZE_SPEED == TRUE) ||                                      \
+    (CH_CFG_USE_EVENTS_TIMEOUT == FALSE) ||                                 \
+    defined(__DOXYGEN__)
 /**
  * @brief   Waits for exactly one of the specified events.
  * @details The function waits for one event among those specified in
@@ -441,7 +449,7 @@ eventmask_t chEvtWaitAll(eventmask_t events) {
 }
 #endif /* CH_CFG_OPTIMIZE_SPEED || !CH_CFG_USE_EVENTS_TIMEOUT */
 
-#if CH_CFG_USE_EVENTS_TIMEOUT || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS_TIMEOUT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Waits for exactly one of the specified events.
  * @details The function waits for one event among those specified in
@@ -566,8 +574,8 @@ eventmask_t chEvtWaitAllTimeout(eventmask_t events, systime_t time) {
 
   return events;
 }
-#endif /* CH_CFG_USE_EVENTS_TIMEOUT */
+#endif /* CH_CFG_USE_EVENTS_TIMEOUT == TRUE */
 
-#endif /* CH_CFG_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS == TRUE */
 
 /** @} */

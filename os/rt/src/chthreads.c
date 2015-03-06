@@ -96,33 +96,33 @@ thread_t *_thread_init(thread_t *tp, tprio_t prio) {
 #if CH_CFG_TIME_QUANTUM > 0
   tp->p_preempt = CH_CFG_TIME_QUANTUM;
 #endif
-#if CH_CFG_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES == TRUE
   tp->p_realprio = prio;
   tp->p_mtxlist = NULL;
 #endif
-#if CH_CFG_USE_EVENTS
+#if CH_CFG_USE_EVENTS == TRUE
   tp->p_epending = 0;
 #endif
-#if CH_DBG_THREADS_PROFILING
+#if CH_DBG_THREADS_PROFILING == TRUE
   tp->p_time = 0;
 #endif
-#if CH_CFG_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC == TRUE
   tp->p_refs = 1;
 #endif
-#if CH_CFG_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY == TRUE
   tp->p_name = NULL;
   REG_INSERT(tp);
 #endif
-#if CH_CFG_USE_WAITEXIT
+#if CH_CFG_USE_WAITEXIT == TRUE
   list_init(&tp->p_waiting);
 #endif
-#if CH_CFG_USE_MESSAGES
+#if CH_CFG_USE_MESSAGES == TRUE
   queue_init(&tp->p_msgqueue);
 #endif
-#if CH_DBG_ENABLE_STACK_CHECK
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
   tp->p_stklimit = (stkalign_t *)(tp + 1);
 #endif
-#if CH_DBG_STATISTICS || defined(__DOXYGEN__)
+#if CH_DBG_STATISTICS == TRUE
   chTMObjectInit(&tp->p_stats);
   chTMStartMeasurementX(&tp->p_stats);
 #endif
@@ -132,7 +132,7 @@ thread_t *_thread_init(thread_t *tp, tprio_t prio) {
   return tp;
 }
 
-#if CH_DBG_FILL_THREADS || defined(__DOXYGEN__)
+#if (CH_DBG_FILL_THREADS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Memory fill utility.
  *
@@ -209,7 +209,7 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
                             tprio_t prio, tfunc_t pf, void *arg) {
   thread_t *tp;
   
-#if CH_DBG_FILL_THREADS
+#if CH_DBG_FILL_THREADS == TRUE
   _thread_memfill((uint8_t *)wsp,
                   (uint8_t *)wsp + sizeof(thread_t),
                   CH_DBG_THREAD_FILL_VALUE);
@@ -261,7 +261,7 @@ tprio_t chThdSetPriority(tprio_t newprio) {
   chDbgCheck(newprio <= HIGHPRIO);
 
   chSysLock();
-#if CH_CFG_USE_MUTEXES
+#if CH_CFG_USE_MUTEXES == TRUE
   oldprio = currp->p_realprio;
   if ((currp->p_prio == currp->p_realprio) || (newprio > currp->p_prio)) {
     currp->p_prio = newprio;
@@ -420,12 +420,12 @@ void chThdExitS(msg_t msg) {
 #if defined(CH_CFG_THREAD_EXIT_HOOK)
   CH_CFG_THREAD_EXIT_HOOK(tp);
 #endif
-#if CH_CFG_USE_WAITEXIT
+#if CH_CFG_USE_WAITEXIT == TRUE
   while (list_notempty(&tp->p_waiting)) {
-    chSchReadyI(list_remove(&tp->p_waiting));
+    (void) chSchReadyI(list_remove(&tp->p_waiting));
   }
 #endif
-#if CH_CFG_USE_REGISTRY
+#if CH_CFG_USE_REGISTRY == TRUE
   /* Static threads are immediately removed from the registry because
      there is no memory to recover.*/
   if ((tp->p_flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC) {
@@ -438,7 +438,7 @@ void chThdExitS(msg_t msg) {
   chDbgAssert(false, "zombies apocalypse");
 }
 
-#if CH_CFG_USE_WAITEXIT || defined(__DOXYGEN__)
+#if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Blocks the execution of the invoking thread until the specified
  *          thread terminates then the exit code is returned.
@@ -477,7 +477,7 @@ msg_t chThdWait(thread_t *tp) {
 
   chSysLock();
   chDbgAssert(tp != currp, "waiting self");
-#if CH_CFG_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC == TRUE
   chDbgAssert(tp->p_refs > 0, "not referenced");
 #endif
   if (tp->p_state != CH_STATE_FINAL) {
@@ -487,7 +487,7 @@ msg_t chThdWait(thread_t *tp) {
   msg = tp->p_u.exitcode;
   chSysUnlock();
 
-#if CH_CFG_USE_DYNAMIC
+#if CH_CFG_USE_DYNAMIC == TRUE
   chThdRelease(tp);
 #endif
 
