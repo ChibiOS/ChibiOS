@@ -31,9 +31,21 @@ function execute_test() {
   clean
 }
 
+function misra() {
+  echo -n "  * Analysing..."
+  if ! make misra > misralog.txt
+  then
+    echo "failed"
+    exit
+  fi
+  echo "OK"
+}
+
 echo "Default maximum settings"
-compile
-execute_test
+#compile
+#execute_test
+misra
+exit
 
 echo "CH_CFG_OPTIMIZE_SPEED=FALSE"
 XDEFS=-DCH_CFG_OPTIMIZE_SPEED=FALSE

@@ -202,9 +202,3 @@ ULIBS =
 
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
-
-misra:
-	@echo Running PCLint
-	lint-nt -w1 pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC) > misra.txt
-	@echo
-	@echo Done
