@@ -265,6 +265,31 @@ struct ch_thread {
      *        states.
      */
     void                *wtobjp;
+    /**
+     * @brief Pointer to a generic thread reference object.
+     * @note  This field is used to get a pointer to a synchronization
+     *        object and is valid when the thread is in @p CH_STATE_SUSPENDED
+     *        state.
+     */
+    thread_reference_t  *wttrp;
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
+    /**
+     * @brief Pointer to a generic semaphore object.
+     * @note  This field is used to get a pointer to a synchronization
+     *        object and is valid when the thread is in @p CH_STATE_WTSEM
+     *        state.
+     */
+    struct ch_semaphore *wtsemp;
+#endif
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
+    /**
+     * @brief Pointer to a generic mutex object.
+     * @note  This field is used to get a pointer to a synchronization
+     *        object and is valid when the thread is in @p CH_STATE_WTMTX
+     *        state.
+     */
+    struct ch_mutex     *wtmtxp;
+#endif
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief Enabled events mask.
@@ -301,7 +326,7 @@ struct ch_thread {
    * @brief List of the mutexes owned by this thread.
    * @note  The list is terminated by a @p NULL in this field.
    */
-  struct mutex          *p_mtxlist;
+  struct ch_mutex       *p_mtxlist;
   /**
    * @brief Thread's own, non-inherited, priority.
    */

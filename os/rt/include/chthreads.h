@@ -45,11 +45,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a thread reference.
- */
-typedef thread_t * thread_reference_t;
-
-/**
  * @brief   Thread function.
  */
 typedef msg_t (*tfunc_t)(void *p);

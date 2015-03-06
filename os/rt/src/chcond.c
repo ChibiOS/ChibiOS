@@ -154,7 +154,7 @@ void chCondBroadcastI(condition_variable_t *cp) {
   /* Empties the condition variable queue and inserts all the threads into the
      ready list in FIFO order. The wakeup message is set to @p MSG_RESET in
      order to make a chCondBroadcast() detectable from a chCondSignal().*/
-  while (cp->c_queue.p_next != (void *)&cp->c_queue) {
+  while (queue_notempty(&cp->c_queue)) {
     chSchReadyI(queue_fifo_remove(&cp->c_queue))->p_u.rdymsg = MSG_RESET;
   }
 }

@@ -87,7 +87,9 @@ void chMBObjectInit(mailbox_t *mbp, msg_t *buf, cnt_t n) {
 
   chDbgCheck((mbp != NULL) && (buf != NULL) && (n > 0));
 
-  mbp->mb_buffer = mbp->mb_wrptr = mbp->mb_rdptr = buf;
+  mbp->mb_buffer = buf;
+  mbp->mb_rdptr = buf;
+  mbp->mb_wrptr = buf;
   mbp->mb_top = &buf[n];
   chSemObjectInit(&mbp->mb_emptysem, n);
   chSemObjectInit(&mbp->mb_fullsem, 0);
@@ -140,7 +142,7 @@ void chMBResetI(mailbox_t *mbp) {
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -152,11 +154,11 @@ void chMBResetI(mailbox_t *mbp) {
  *
  * @api
  */
-msg_t chMBPost(mailbox_t *mbp, msg_t msg, systime_t time) {
+msg_t chMBPost(mailbox_t *mbp, msg_t msg, systime_t timeout) {
   msg_t rdymsg;
 
   chSysLock();
-  rdymsg = chMBPostS(mbp, msg, time);
+  rdymsg = chMBPostS(mbp, msg, timeout);
   chSysUnlock();
 
   return rdymsg;
@@ -169,7 +171,7 @@ msg_t chMBPost(mailbox_t *mbp, msg_t msg, systime_t time) {
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -181,16 +183,17 @@ msg_t chMBPost(mailbox_t *mbp, msg_t msg, systime_t time) {
  *
  * @sclass
  */
-msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t time) {
+msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
   chDbgCheck(mbp != NULL);
 
-  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
+  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
   if (rdymsg == MSG_OK) {
-    *mbp->mb_wrptr++ = msg;
-    /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+    *mbp->mb_wrptr = msg;
+    mbp->mb_wrptr++;
+    /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
     if (mbp->mb_wrptr >= mbp->mb_top) {
     /*lint -restore*/
       mbp->mb_wrptr = mbp->mb_buffer;
@@ -226,8 +229,9 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
   }
 
   chSemFastWaitI(&mbp->mb_emptysem);
-  *mbp->mb_wrptr++ = msg;
-  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+  *mbp->mb_wrptr = msg;
+  mbp->mb_wrptr++;
+  /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
   if (mbp->mb_wrptr >= mbp->mb_top) {
   /*lint -restore*/
     mbp->mb_wrptr = mbp->mb_buffer;
@@ -244,7 +248,7 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -256,11 +260,11 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
  *
  * @api
  */
-msg_t chMBPostAhead(mailbox_t *mbp, msg_t msg, systime_t time) {
+msg_t chMBPostAhead(mailbox_t *mbp, msg_t msg, systime_t timeout) {
   msg_t rdymsg;
 
   chSysLock();
-  rdymsg = chMBPostAheadS(mbp, msg, time);
+  rdymsg = chMBPostAheadS(mbp, msg, timeout);
   chSysUnlock();
 
   return rdymsg;
@@ -273,7 +277,7 @@ msg_t chMBPostAhead(mailbox_t *mbp, msg_t msg, systime_t time) {
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[in] msg       the message to be posted on the mailbox
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -285,15 +289,15 @@ msg_t chMBPostAhead(mailbox_t *mbp, msg_t msg, systime_t time) {
  *
  * @sclass
  */
-msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t time) {
+msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
   chDbgCheck(mbp != NULL);
 
-  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, time);
+  rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
   if (rdymsg == MSG_OK) {
-    /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+    /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
     if (--mbp->mb_rdptr < mbp->mb_buffer) {
     /*lint -restore*/
       mbp->mb_rdptr = mbp->mb_top - 1;
@@ -329,7 +333,7 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
     return MSG_TIMEOUT;
   }
   chSemFastWaitI(&mbp->mb_emptysem);
-  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+  /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
   if (--mbp->mb_rdptr < mbp->mb_buffer) {
   /*lint -restore*/
     mbp->mb_rdptr = mbp->mb_top - 1;
@@ -347,7 +351,7 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[out] msgp     pointer to a message variable for the received message
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -359,11 +363,11 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
  *
  * @api
  */
-msg_t chMBFetch(mailbox_t *mbp, msg_t *msgp, systime_t time) {
+msg_t chMBFetch(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
   msg_t rdymsg;
 
   chSysLock();
-  rdymsg = chMBFetchS(mbp, msgp, time);
+  rdymsg = chMBFetchS(mbp, msgp, timeout);
   chSysUnlock();
 
   return rdymsg;
@@ -376,7 +380,7 @@ msg_t chMBFetch(mailbox_t *mbp, msg_t *msgp, systime_t time) {
  *
  * @param[in] mbp       the pointer to an initialized @p mailbox_t object
  * @param[out] msgp     pointer to a message variable for the received message
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -388,16 +392,17 @@ msg_t chMBFetch(mailbox_t *mbp, msg_t *msgp, systime_t time) {
  *
  * @sclass
  */
-msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t time) {
+msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
   msg_t rdymsg;
 
   chDbgCheckClassS();
   chDbgCheck((mbp != NULL) && (msgp != NULL));
 
-  rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, time);
+  rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, timeout);
   if (rdymsg == MSG_OK) {
-    *msgp = *mbp->mb_rdptr++;
-    /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+    *msgp = *mbp->mb_rdptr;
+    mbp->mb_rdptr++;
+    /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
     if (mbp->mb_rdptr >= mbp->mb_top) {
     /*lint -restore*/
       mbp->mb_rdptr = mbp->mb_buffer;
@@ -432,8 +437,9 @@ msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp) {
     return MSG_TIMEOUT;
   }
   chSemFastWaitI(&mbp->mb_fullsem);
-  *msgp = *mbp->mb_rdptr++;
-  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+  *msgp = *mbp->mb_rdptr;
+  mbp->mb_rdptr++;
+  /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
   if (mbp->mb_rdptr >= mbp->mb_top) {
   /*lint -restore*/
     mbp->mb_rdptr = mbp->mb_buffer;

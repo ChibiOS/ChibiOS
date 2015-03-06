@@ -289,11 +289,11 @@ static void wakeup(void *p) {
     chSysUnlockFromISR();
     return;
   case CH_STATE_SUSPENDED:
-    *(thread_reference_t *)tp->p_u.wtobjp = NULL;
+    *tp->p_u.wttrp = NULL;
     break;
 #if CH_CFG_USE_SEMAPHORES == TRUE
   case CH_STATE_WTSEM:
-    chSemFastSignalI((semaphore_t *)tp->p_u.wtobjp);
+    chSemFastSignalI(tp->p_u.wtsemp);
     /* Falls into, intentional. */
 #endif
 #if (CH_CFG_USE_CONDVARS == TRUE) && (CH_CFG_USE_CONDVARS_TIMEOUT == TRUE)

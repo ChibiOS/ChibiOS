@@ -49,7 +49,7 @@
 /**
  * @brief   Semaphore structure.
  */
-typedef struct semaphore {
+typedef struct ch_semaphore {
   threads_queue_t       s_queue;    /**< @brief Queue of the threads sleeping
                                                 on this semaphore.          */
   cnt_t                 s_cnt;      /**< @brief The semaphore counter.      */

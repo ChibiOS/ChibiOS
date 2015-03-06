@@ -49,12 +49,12 @@
 /**
  * @brief   Type of a mutex structure.
  */
-typedef struct mutex mutex_t;
+typedef struct ch_mutex mutex_t;
 
 /**
  * @brief   Mutex structure.
  */
-struct mutex {
+struct ch_mutex {
   threads_queue_t       m_queue;    /**< @brief Queue of the threads sleeping
                                                 on this mutex.              */
   thread_t              *m_owner;   /**< @brief Owner @p thread_t pointer or

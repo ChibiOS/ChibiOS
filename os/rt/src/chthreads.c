@@ -511,7 +511,7 @@ msg_t chThdSuspendS(thread_reference_t *trp) {
   chDbgAssert(*trp == NULL, "not NULL");
 
   *trp = tp;
-  tp->p_u.wtobjp = &trp;
+  tp->p_u.wttrp = trp;
   chSchGoSleepS(CH_STATE_SUSPENDED);
 
   return chThdGetSelfX()->p_u.rdymsg;
@@ -546,7 +546,7 @@ msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
   }
 
   *trp = tp;
-  tp->p_u.wtobjp = &trp;
+  tp->p_u.wttrp = trp;
 
   return chSchGoSleepTimeoutS(CH_STATE_SUSPENDED, timeout);
 }

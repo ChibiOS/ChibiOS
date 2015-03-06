@@ -170,14 +170,15 @@ void chMtxLockS(mutex_t *mp) {
         switch (tp->p_state) {
         case CH_STATE_WTMTX:
           /* Re-enqueues the mutex owner with its new priority.*/
-          queue_prio_insert(queue_dequeue(tp),
-                            (threads_queue_t *)tp->p_u.wtobjp);
-          tp = ((mutex_t *)tp->p_u.wtobjp)->m_owner;
+          queue_prio_insert(queue_dequeue(tp), &tp->p_u.wtmtxp->m_queue);
+          tp = tp->p_u.wtmtxp->m_owner;
+          /*lint -e{9042} [16.1] Continues the while.*/
           continue;
-#if (CH_CFG_USE_CONDVARS == TRUE) |                                         \
+#if (CH_CFG_USE_CONDVARS == TRUE) ||                                        \
     ((CH_CFG_USE_SEMAPHORES == TRUE) &&                                     \
-     (CH_CFG_USE_SEMAPHORES_PRIORITY) == TRUE) |                            \
-    ((CH_CFG_USE_MESSAGES == TRUE) && (CH_CFG_USE_MESSAGES_PRIORITY == TRUE))
+     (CH_CFG_USE_SEMAPHORES_PRIORITY == TRUE)) ||                           \
+    ((CH_CFG_USE_MESSAGES == TRUE) &&                                       \
+     (CH_CFG_USE_MESSAGES_PRIORITY == TRUE))
 #if CH_CFG_USE_CONDVARS == TRUE
         case CH_STATE_WTCOND:
 #endif
@@ -189,8 +190,7 @@ void chMtxLockS(mutex_t *mp) {
         case CH_STATE_SNDMSGQ:
 #endif
           /* Re-enqueues tp with its new priority on the queue.*/
-          queue_prio_insert(queue_dequeue(tp),
-                            (threads_queue_t *)tp->p_u.wtobjp);
+          queue_prio_insert(queue_dequeue(tp), &tp->p_u.wtmtxp->m_queue);
           break;
 #endif
         case CH_STATE_READY:
@@ -210,7 +210,7 @@ void chMtxLockS(mutex_t *mp) {
 
       /* Sleep on the mutex.*/
       queue_prio_insert(ctp, &mp->m_queue);
-      ctp->p_u.wtobjp = mp;
+      ctp->p_u.wtmtxp = mp;
       chSchGoSleepS(CH_STATE_WTMTX);
 
       /* It is assumed that the thread performing the unlock operation assigns
