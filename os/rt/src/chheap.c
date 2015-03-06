@@ -106,12 +106,12 @@ void _heap_init(void) {
  * @init
  */
 void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
-  union heap_header *hp;
+  union heap_header *hp = buf;
 
   chDbgCheck(MEM_IS_ALIGNED(buf) && MEM_IS_ALIGNED(size));
 
   heapp->h_provider = (memgetfunc_t)NULL;
-  heapp->h_free.h.u.next = hp = buf;
+  heapp->h_free.h.u.next = hp;
   heapp->h_free.h.size = 0;
   hp->h.u.next = NULL;
   hp->h.size = size - sizeof(union heap_header);
@@ -141,8 +141,9 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
 void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
   union heap_header *qp, *hp, *fp;
 
-  if (heapp == NULL)
+  if (heapp == NULL) {
     heapp = &default_heap;
+  }
 
   size = MEM_ALIGN_NEXT(size);
   qp = &heapp->h_free;
@@ -151,7 +152,7 @@ void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
   while (qp->h.u.next != NULL) {
     hp = qp->h.u.next;
     if (hp->h.size >= size) {
-      if (hp->h.size < size + sizeof(union heap_header)) {
+      if (hp->h.size < (size + sizeof(union heap_header))) {
         /* Gets the whole block even if it is slightly bigger than the
            requested size because the fragment would be too small to be
            useful.*/
@@ -176,7 +177,7 @@ void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
 
   /* More memory is required, tries to get it from the associated provider
      else fails.*/
-  if (heapp->h_provider) {
+  if (heapp->h_provider != NULL) {
     hp = heapp->h_provider(size + sizeof(union heap_header));
     if (hp != NULL) {
       hp->h.u.heap = heapp;
@@ -266,10 +267,13 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *sizep) {
 
   H_LOCK(heapp);
   sz = 0;
-  for (n = 0, qp = &heapp->h_free; qp->h.u.next; n++, qp = qp->h.u.next) {
-    sz += qp->h.u.next->h.size;
+  n = 0;
+  qp = &heapp->h_free;
+  while (qp->h.u.next != NULL) {
+    n++;
+    qp = qp->h.u.next;
   }
-  if (sizep) {
+  if (sizep != NULL) {
     *sizep = sz;
   }
   H_UNLOCK(heapp);

@@ -92,9 +92,7 @@ void chIQObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
   iqp->q_buffer  = bp;
   iqp->q_rdptr   = bp;
   iqp->q_wrptr   = bp;
-  /*lint -save -e9016 [18.4] Normal pointers arithmetic.*/
   iqp->q_top     = bp + size;
-  /*lint -restore*/
   iqp->q_notify  = infy;
   iqp->q_link    = link;
 }
@@ -293,9 +291,7 @@ void chOQObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
   oqp->q_buffer  = bp;
   oqp->q_rdptr   = bp;
   oqp->q_wrptr   = bp;
-  /*lint -save -e9016 [18.4] Normal pointers arithmetic.*/
   oqp->q_top     = bp + size;
-  /*lint -restore*/
   oqp->q_notify  = onfy;
   oqp->q_link    = link;
 }

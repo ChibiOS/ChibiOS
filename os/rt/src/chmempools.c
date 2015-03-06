@@ -37,7 +37,7 @@
 
 #include "ch.h"
 
-#if CH_CFG_USE_MEMPOOLS || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -98,7 +98,7 @@ void chPoolLoadArray(memory_pool_t *mp, void *p, size_t n) {
 
   chDbgCheck((mp != NULL) && (n != 0));
 
-  while (n) {
+  while (n != 0U) {
     chPoolAdd(mp, p);
     p = (void *)(((uint8_t *)p) + mp->mp_object_size);
     n--;
@@ -121,12 +121,15 @@ void *chPoolAllocI(memory_pool_t *mp) {
   chDbgCheckClassI();
   chDbgCheck(mp != NULL);
 
-  if ((objp = mp->mp_next) != NULL) {
+  objp = mp->mp_next;
+  /*lint -save -e9013 [15.7] There is no else because it is not needed.*/
+  if (objp != NULL) {
     mp->mp_next = mp->mp_next->ph_next;
   }
   else if (mp->mp_provider != NULL) {
     objp = mp->mp_provider(mp->mp_object_size);
   }
+  /*lint -restore*/
 
   return objp;
 }
@@ -192,6 +195,6 @@ void chPoolFree(memory_pool_t *mp, void *objp) {
   chSysUnlock();
 }
 
-#endif /* CH_CFG_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 
 /** @} */

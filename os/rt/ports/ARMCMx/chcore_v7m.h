@@ -282,7 +282,7 @@ struct port_intctx {
  *          by an @p port_intctx structure.
  */
 #define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
-  /*lint -save -e9016 -e9087 [18.4, 11.3] Normal pointers arithmetic.*/     \
+  /*lint -save -e9087 [11.3] Normal pointers arithmetic.*/                  \
   (tp)->p_ctx.r13 = (struct port_intctx *)((uint8_t *)(workspace) +         \
                                            (size_t)(wsize) -                \
                                            sizeof(struct port_intctx));     \
