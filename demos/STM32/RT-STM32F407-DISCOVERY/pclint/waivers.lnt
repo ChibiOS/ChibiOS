@@ -7,7 +7,7 @@
 +libh(*LLD.h)
 
 /* Removing *advisory* directives and rules that would negatively impact
-   code clarity or are very common.*/
+   code readability or not avoidable.*/
 -e970                       /* Dir-4.6 */
 -e9026                      /* Dir-4.9 */
 -e756                       /* Rule-2.3 */
