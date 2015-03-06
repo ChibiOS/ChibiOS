@@ -11,12 +11,18 @@
 -e970                       /* Dir-4.6 */
 -e9026                      /* Dir-4.9 */
 -e756                       /* Rule-2.3 */
+-e9058                      /* Rule-2.4 */
 -e755                       /* Rule-2.5 */
--e818 -e844 -e954           /* Rule 8.13 */
+-e9003                      /* Rule-8.9 */
+-e9067                      /* Rule-8.11 */
+-e818                       /* Rule 8.13 */
 -e9078                      /* Rule-11.4 */ 
 -e9079                      /* Rule-11.5 */ 
 -e904                       /* Rule-15.5 */
 -e9044                      /* Rule-17.8 */
+-e9016                      /* Rule-18.4 */
+-e844 -e954                 /* Rule-18.13 */
+-e9018                      /* Rule-19.2 */
 -e9024                      /* Rule-20.10 */
 
 /* Waiver Directive 4.10, PCLint is confused by the guard used in the CMSIS
