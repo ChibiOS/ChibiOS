@@ -304,6 +304,7 @@ static void wakeup(void *p) {
     (void) queue_dequeue(tp);
     break;
   default:
+    /* Any other state, nothing to do.*/
     break;
   }
   tp->p_u.rdymsg = MSG_TIMEOUT;
