@@ -93,7 +93,8 @@ void chThdRelease(thread_t *tp) {
 
   chSysLock();
   chDbgAssert(tp->p_refs > 0, "not referenced");
-  refs = --tp->p_refs;
+  tp->p_refs--;
+  refs = tp->p_refs;
   chSysUnlock();
 
   /* If the references counter reaches zero and the thread is in its

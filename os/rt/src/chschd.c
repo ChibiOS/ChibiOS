@@ -304,7 +304,6 @@ static void wakeup(void *p) {
     (void) queue_dequeue(tp);
     break;
   default:
-    chDbgAssert(false, "unexpected state");
     break;
   }
   tp->p_u.rdymsg = MSG_TIMEOUT;

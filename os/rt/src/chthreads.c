@@ -219,7 +219,8 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
 #endif
 
   chSysLock();
-  chSchWakeupS(tp = chThdCreateI(wsp, size, prio, pf, arg), MSG_OK);
+  tp = chThdCreateI(wsp, size, prio, pf, arg);
+  chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
 
   return tp;
@@ -331,7 +332,8 @@ void chThdSleep(systime_t time) {
 void chThdSleepUntil(systime_t time) {
 
   chSysLock();
-  if ((time -= chVTGetSystemTimeX()) > 0) {
+  time -= chVTGetSystemTimeX();
+  if (time > 0U) {
     chThdSleepS(time);
   }
   chSysUnlock();
