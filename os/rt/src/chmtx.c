@@ -202,7 +202,7 @@ void chMtxLockS(mutex_t *mp) {
           (void) chSchReadyI(queue_dequeue(tp));
           break;
         default:
-          chDbgAssert(false, "unexpected state");
+          /* Nothing to do for other states.*/
           break;
         }
         break;
