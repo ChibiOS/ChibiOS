@@ -182,23 +182,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of SDIO bus mode.
- */
-typedef enum {
-  SDC_MODE_1BIT = 0,
-  SDC_MODE_4BIT,
-  SDC_MODE_8BIT
-} sdcbusmode_t;
-
-/**
- * @brief   Max supported clock.
- */
-typedef enum {
-  SDC_CLK_25MHz = 0,
-  SDC_CLK_50MHz,
-} sdcbusclk_t;
-
-/**
  * @brief   Type of card flags.
  */
 typedef uint32_t sdcmode_t;
@@ -227,11 +210,11 @@ typedef struct {
    *          afterward it can be reused for other purposes.
    */
   uint8_t       *scratchpad;
-  /* End of the mandatory fields.*/
   /**
    * @brief   Bus width.
    */
   sdcbusmode_t  bus_width;
+  /* End of the mandatory fields.*/
 } SDCConfig;
 
 /**

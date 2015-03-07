@@ -105,6 +105,23 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of SDIO bus mode.
+ */
+typedef enum {
+  SDC_MODE_1BIT = 0,
+  SDC_MODE_4BIT,
+  SDC_MODE_8BIT
+} sdcbusmode_t;
+
+/**
+ * @brief   Max supported clock.
+ */
+typedef enum {
+  SDC_CLK_25MHz = 0,
+  SDC_CLK_50MHz,
+} sdcbusclk_t;
+
 #include "sdc_lld.h"
 
 /*===========================================================================*/

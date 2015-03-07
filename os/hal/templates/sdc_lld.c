@@ -114,9 +114,10 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
  *
  * @notapi
  */
-void sdc_lld_set_data_clk(SDCDriver *sdcp) {
+void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
 
   (void)sdcp;
+  (void)clk;
 }
 
 /**
