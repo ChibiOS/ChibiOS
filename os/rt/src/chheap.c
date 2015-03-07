@@ -110,7 +110,7 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
 
   chDbgCheck(MEM_IS_ALIGNED(buf) && MEM_IS_ALIGNED(size));
 
-  heapp->h_provider = (memgetfunc_t)NULL;
+  heapp->h_provider = NULL;
   heapp->h_free.h.u.next = hp;
   heapp->h_free.h.size = 0;
   hp->h.u.next = NULL;
@@ -162,7 +162,7 @@ void *chHeapAlloc(memory_heap_t *heapp, size_t size) {
         /* Block bigger enough, must split it.*/
         fp = (void *)((uint8_t *)(hp) + sizeof(union heap_header) + size);
         fp->h.u.next = hp->h.u.next;
-        fp->h.size = hp->h.size - sizeof(union heap_header) - size;
+        fp->h.size = (hp->h.size - sizeof(union heap_header)) - size;
         qp->h.u.next = fp;
         hp->h.size = size;
       }

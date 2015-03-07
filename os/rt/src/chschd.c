@@ -389,9 +389,9 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
     thread_t *otp = chSchReadyI(currp);
     setcurrp(ntp);
 #if defined(CH_CFG_IDLE_LEAVE_HOOK)
-  if (otp->p_prio == IDLEPRIO) {
-    CH_CFG_IDLE_LEAVE_HOOK();
-  }
+    if (otp->p_prio == IDLEPRIO) {
+      CH_CFG_IDLE_LEAVE_HOOK();
+    }
 #endif
     ntp->p_state = CH_STATE_CURRENT;
     chSysSwitch(ntp, otp);

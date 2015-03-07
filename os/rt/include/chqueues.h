@@ -304,7 +304,7 @@ static inline bool chIQIsEmptyI(input_queue_t *iqp) {
 
   chDbgCheckClassI();
 
-  return (bool)(chQSpaceI(iqp) <= 0U);
+  return (bool)(chQSpaceI(iqp) == 0U);
 }
 
 /**
@@ -404,7 +404,7 @@ static inline bool chOQIsFullI(output_queue_t *oqp) {
 
   chDbgCheckClassI();
 
-  return (bool)(chQSpaceI(oqp) <= 0U);
+  return (bool)(chQSpaceI(oqp) == 0U);
 }
 
 /**
