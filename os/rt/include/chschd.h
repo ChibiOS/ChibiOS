@@ -617,10 +617,10 @@ static inline void queue_init(threads_queue_t *tqp) {
  *
  * @notapi
  */
-static inline bool queue_isempty(threads_queue_t *tqp) {
+static inline bool queue_isempty(const threads_queue_t *tqp) {
 
   /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
-  return (bool)(tqp->p_next == (thread_t *)tqp);
+  return (bool)(tqp->p_next == (const thread_t *)tqp);
   /*lint -restore*/
 }
 
@@ -632,10 +632,10 @@ static inline bool queue_isempty(threads_queue_t *tqp) {
  *
  * @notapi
  */
-static inline bool queue_notempty(threads_queue_t *tqp) {
+static inline bool queue_notempty(const threads_queue_t *tqp) {
 
   /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
-  return (bool)(tqp->p_next != (thread_t *)tqp);
+  return (bool)(tqp->p_next != (const thread_t *)tqp);
   /*lint -restore*/
 }
 

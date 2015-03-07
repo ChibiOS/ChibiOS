@@ -192,7 +192,9 @@ typedef struct {
 #if !defined(chDbgAssert)
 #if CH_DBG_ENABLE_ASSERTS == TRUE
 #define chDbgAssert(c, r) do {                                              \
+  /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant.*/                 \
   if (!(c)) {                                                               \
+  /*lint -restore*/                                                         \
     chSysHalt(__func__);                                                    \
   }                                                                         \
 } while (false)

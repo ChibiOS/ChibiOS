@@ -87,17 +87,16 @@ void _scheduler_init(void) {
  */
 void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
 
-  /* cp iterates over the queue.*/
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   thread_t *cp = (thread_t *)tqp;
   do {
-    /* Iterate to next thread in queue.*/
     cp = cp->p_next;
-    /* Not end of queue? and cp has equal or higher priority than tp?.*/
   } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
-  /* Insertion on p_prev.*/
+  /*lint -restore*/
   tp->p_next = cp;
   tp->p_prev = cp->p_prev;
-  tp->p_prev->p_next = cp->p_prev = tp;
+  tp->p_prev->p_next = tp;
+  cp->p_prev = tp;
 }
 
 /**
@@ -110,9 +109,12 @@ void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
  */
 void queue_insert(thread_t *tp, threads_queue_t *tqp) {
 
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tp->p_next = (thread_t *)tqp;
+  /*lint -restore*/
   tp->p_prev = tqp->p_prev;
-  tp->p_prev->p_next = tqp->p_prev = tp;
+  tp->p_prev->p_next = tp;
+  tqp->p_prev = tp;
 }
 
 /**
@@ -128,7 +130,10 @@ void queue_insert(thread_t *tp, threads_queue_t *tqp) {
 thread_t *queue_fifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_next;
 
-  (tqp->p_next = tp->p_next)->p_prev = (thread_t *)tqp;
+  tqp->p_next = tp->p_next;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  tqp->p_next->p_prev = (thread_t *)tqp;
+  /*lint -restore*/
 
   return tp;
 }
@@ -146,7 +151,10 @@ thread_t *queue_fifo_remove(threads_queue_t *tqp) {
 thread_t *queue_lifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_prev;
 
-  (tqp->p_prev = tp->p_prev)->p_next = (thread_t *)tqp;
+  tqp->p_prev = tp->p_prev;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  tqp->p_prev->p_next = (thread_t *)tqp;
+  /*lint -restore*/
 
   return tp;
 }

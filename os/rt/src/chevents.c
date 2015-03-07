@@ -215,7 +215,7 @@ void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
   elp = esp->es_next;
   /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   while (elp != (event_listener_t *)esp) {
-  /*list -restore*/
+  /*lint -restore*/
     elp->el_flags |= flags;
     /* When flags == 0 the thread will always be signaled because the
        source does not emit any flag.*/

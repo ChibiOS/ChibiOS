@@ -92,7 +92,7 @@ void chThdRelease(thread_t *tp) {
   trefs_t refs;
 
   chSysLock();
-  chDbgAssert(tp->p_refs > 0, "not referenced");
+  chDbgAssert(tp->p_refs > 0U, "not referenced");
   tp->p_refs--;
   refs = tp->p_refs;
   chSysUnlock();

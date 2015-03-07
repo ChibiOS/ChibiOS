@@ -96,11 +96,13 @@ void chPoolObjectInit(memory_pool_t *mp, size_t size, memgetfunc_t provider) {
  */
 void chPoolLoadArray(memory_pool_t *mp, void *p, size_t n) {
 
-  chDbgCheck((mp != NULL) && (n != 0));
+  chDbgCheck((mp != NULL) && (n != 0U));
 
   while (n != 0U) {
     chPoolAdd(mp, p);
+    /*lint -save -e9087 [11.3] Safe cast.*/
     p = (void *)(((uint8_t *)p) + mp->mp_object_size);
+    /*lint -restore*/
     n--;
   }
 }

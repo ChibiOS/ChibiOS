@@ -144,8 +144,12 @@ thread_t *_thread_init(thread_t *tp, tprio_t prio) {
  */
 void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
 
+  /*lint -save -e946 -e947 [18.2, 18.3] Normal pointers arithmetic, it
+    is safe.*/
   while (startp < endp) {
-    *startp++ = v;
+  /*lint -restore*/
+    *startp = v;
+    startp++;
   }
 }
 #endif /* CH_DBG_FILL_THREADS */
@@ -480,7 +484,7 @@ msg_t chThdWait(thread_t *tp) {
   chSysLock();
   chDbgAssert(tp != currp, "waiting self");
 #if CH_CFG_USE_DYNAMIC == TRUE
-  chDbgAssert(tp->p_refs > 0, "not referenced");
+  chDbgAssert(tp->p_refs > 0U, "not referenced");
 #endif
   if (tp->p_state != CH_STATE_FINAL) {
     list_insert(currp, &tp->p_waiting);

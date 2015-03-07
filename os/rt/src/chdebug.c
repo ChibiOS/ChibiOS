@@ -280,8 +280,11 @@ void _dbg_trace(thread_t *otp) {
   ch.dbg.trace_buffer.tb_ptr->se_tp     = currp;
   ch.dbg.trace_buffer.tb_ptr->se_wtobjp = otp->p_u.wtobjp;
   ch.dbg.trace_buffer.tb_ptr->se_state  = (uint8_t)otp->p_state;
+  /*lint -save -e946 -e947 [18.2, 18.3] Normal pointers arithmetic, it
+    is safe.*/
   if (++ch.dbg.trace_buffer.tb_ptr >=
       &ch.dbg.trace_buffer.tb_buffer[CH_DBG_TRACE_BUFFER_SIZE]) {
+  /*lint -restore*/
     ch.dbg.trace_buffer.tb_ptr = &ch.dbg.trace_buffer.tb_buffer[0];
   }
 }
