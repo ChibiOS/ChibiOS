@@ -453,9 +453,11 @@ static inline void chVTDoTickI(void) {
     virtual_timer_t *vtp;
 
     --ch.vtlist.vt_next->vt_delta;
-    vtp = ch.vtlist.vt_next;
-    while (vtp->vt_delta == 0U) {
-      vtfunc_t fn = vtp->vt_func;
+    while (ch.vtlist.vt_next->vt_delta == 0U) {
+      vtfunc_t fn;
+
+      vtp = ch.vtlist.vt_next;
+      fn = vtp->vt_func;
       vtp->vt_func = NULL;
       /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
       vtp->vt_next->vt_prev = (virtual_timer_t *)&ch.vtlist;
