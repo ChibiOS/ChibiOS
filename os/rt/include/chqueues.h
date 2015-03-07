@@ -129,7 +129,7 @@ typedef io_queue_t output_queue_t;
  */
 #define _INPUTQUEUE_DATA(name, buffer, size, inotify, link) {               \
   _THREADS_QUEUE_DATA(name),                                                \
-  0,                                                                        \
+  0U,                                                                       \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + (size),                                             \
   (uint8_t *)(buffer),                                                      \
@@ -239,17 +239,17 @@ extern "C" {
                       qnotify_t infy, void *link);
   void chIQResetI(input_queue_t *iqp);
   msg_t chIQPutI(input_queue_t *iqp, uint8_t b);
-  msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time);
+  msg_t chIQGetTimeout(input_queue_t *iqp, systime_t timeout);
   size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
-                         size_t n, systime_t time);
+                         size_t n, systime_t timeout);
 
   void chOQObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
                       qnotify_t onfy, void *link);
   void chOQResetI(output_queue_t *oqp);
-  msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time);
+  msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t timeout);
   msg_t chOQGetI(output_queue_t *oqp);
   size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
-                          size_t n, systime_t time);
+                          size_t n, systime_t timeout);
 #ifdef __cplusplus
 }
 #endif

@@ -162,7 +162,7 @@ msg_t chIQPutI(input_queue_t *iqp, uint8_t b) {
  *          buffer or before entering the state @p CH_STATE_WTQUEUE.
  *
  * @param[in] iqp       pointer to an @p input_queue_t structure
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -173,7 +173,7 @@ msg_t chIQPutI(input_queue_t *iqp, uint8_t b) {
  *
  * @api
  */
-msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
+msg_t chIQGetTimeout(input_queue_t *iqp, systime_t timeout) {
   uint8_t b;
 
   chSysLock();
@@ -182,7 +182,7 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
   }
 
   while (chIQIsEmptyI(iqp)) {
-    msg_t msg = chThdEnqueueTimeoutS(&iqp->q_waiting, time);
+    msg_t msg = chThdEnqueueTimeoutS(&iqp->q_waiting, timeout);
     if (msg < Q_OK) {
       chSysUnlock();
       return msg;
@@ -217,7 +217,7 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
  * @param[out] bp       pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -227,7 +227,7 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t time) {
  * @api
  */
 size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
-                       size_t n, systime_t time) {
+                       size_t n, systime_t timeout) {
   qnotify_t nfy = iqp->q_notify;
   size_t r = 0;
 
@@ -240,7 +240,7 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
     }
 
     while (chIQIsEmptyI(iqp)) {
-      if (chThdEnqueueTimeoutS(&iqp->q_waiting, time) != Q_OK) {
+      if (chThdEnqueueTimeoutS(&iqp->q_waiting, timeout) != Q_OK) {
         chSysUnlock();
         return r;
       }
@@ -255,8 +255,8 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
     /*lint -restore*/
       iqp->q_rdptr = iqp->q_buffer;
     }
-
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
+
     r++;
     n--;
     if (n == 0U) {
@@ -327,7 +327,7 @@ void chOQResetI(output_queue_t *oqp) {
  *
  * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[in] b         the byte value to be written in the queue
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -339,11 +339,11 @@ void chOQResetI(output_queue_t *oqp) {
  *
  * @api
  */
-msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t time) {
+msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t timeout) {
 
   chSysLock();
   while (chOQIsFullI(oqp)) {
-    msg_t msg = chThdEnqueueTimeoutS(&oqp->q_waiting, time);
+    msg_t msg = chThdEnqueueTimeoutS(&oqp->q_waiting, timeout);
     if (msg < Q_OK) {
       chSysUnlock();
       return msg;
@@ -415,7 +415,7 @@ msg_t chOQGetI(output_queue_t *oqp) {
  * @param[out] bp       pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -425,7 +425,7 @@ msg_t chOQGetI(output_queue_t *oqp) {
  * @api
  */
 size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
-                        size_t n, systime_t time) {
+                        size_t n, systime_t timeout) {
   qnotify_t nfy = oqp->q_notify;
   size_t w = 0;
 
@@ -434,7 +434,7 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
   chSysLock();
   while (true) {
     while (chOQIsFullI(oqp)) {
-      if (chThdEnqueueTimeoutS(&oqp->q_waiting, time) != Q_OK) {
+      if (chThdEnqueueTimeoutS(&oqp->q_waiting, timeout) != Q_OK) {
         chSysUnlock();
         return w;
       }
@@ -452,8 +452,8 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
     if (nfy != NULL) {
       nfy(oqp);
     }
-
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
+
     w++;
     n--;
     if (n == 0U) {
