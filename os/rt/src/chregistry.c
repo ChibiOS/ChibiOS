@@ -65,8 +65,8 @@
 /*===========================================================================*/
 
 #define _offsetof(st, m)                                                    \
-  /*lint -save -e946 -e947 -e9033 -e413 [18.2, 18.3, 10.8 1.3] Normal
-    pointers arithmetic, it is safe.*/                                      \
+  /*lint -save -e9005 -e946 -e947 -e9033 -e413 [11.8, 18.2, 18.3, 10.8 1.3]
+    Normal pointers arithmetic, it is safe.*/                               \
   ((size_t)((char *)&((st *)0)->m - (char *)0))                             \
   /*lint -restore*/
 

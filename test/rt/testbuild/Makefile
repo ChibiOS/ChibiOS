@@ -128,7 +128,7 @@ clean:
 	-rm -fR .dep
 
 misra:
-	lint-nt -w1 pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(INCDIR) $(KERNSRC) > misra.txt
+	lint-nt -w3 pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(INCDIR) $(KERNSRC) > misra.txt
 
 #
 # Include the dependency files, should be the last of the makefile

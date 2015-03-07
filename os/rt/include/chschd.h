@@ -775,7 +775,7 @@ static inline void chSchPreemption(void) {
   tprio_t p2 = currp->p_prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
-  if (currp->p_preempt) {
+  if (currp->p_preempt > 0U) {
     if (p1 > p2) {
       chSchDoRescheduleAhead();
     }

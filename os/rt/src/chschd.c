@@ -436,7 +436,7 @@ bool chSchIsPreemptionRequired(void) {
      if the first thread on the ready queue has a higher priority.
      Otherwise, if the running thread has used up its time quantum, reschedule
      if the first thread on the ready queue has equal or higher priority.*/
-  return currp->p_preempt ? p1 > p2 : p1 >= p2;
+  return (currp->p_preempt > 0U) ? (p1 > p2) : (p1 >= p2);
 #else
   /* If the round robin preemption feature is not enabled then performs a
      simpler comparison.*/
@@ -526,7 +526,7 @@ void chSchDoReschedule(void) {
 #if CH_CFG_TIME_QUANTUM > 0
   /* If CH_CFG_TIME_QUANTUM is enabled then there are two different scenarios
      to handle on preemption: time quantum elapsed or not.*/
-  if (currp->p_preempt == 0) {
+  if (currp->p_preempt == 0U) {
     /* The thread consumed its time quantum so it is enqueued behind threads
        with same priority level, however, it acquires a new time quantum.*/
     chSchDoRescheduleBehind();
