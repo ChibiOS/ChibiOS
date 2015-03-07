@@ -119,7 +119,8 @@ void chThdRelease(thread_t *tp) {
       break;
 #endif
     default:
-      chDbgAssert(false, "unexpected case");
+      /* Nothing to do for static threads, those are removed from the
+         registry on exit.*/
       break;
     }
   }

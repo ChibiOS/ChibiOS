@@ -494,6 +494,7 @@ msg_t chThdWait(thread_t *tp) {
   chSysUnlock();
 
 #if CH_CFG_USE_DYNAMIC == TRUE
+  /* Releasing a lock if it is a dynamic thread.*/
   chThdRelease(tp);
 #endif
 

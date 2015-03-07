@@ -21,7 +21,7 @@ CC   = $(TRGT)gcc
 AS   = $(TRGT)gcc -x assembler-with-cpp
 
 # List all default C defines here, like -D_DEBUG=1
-DDEFS = -DSIMULATOR -DSHELL_USE_IPRINTF=FALSE
+DDEFS = -DSIMULATOR
 
 # List all default ASM defines here, like -D_DEBUG=1
 DADEFS =
@@ -93,7 +93,7 @@ ULIBDIR =
 ULIBS =
 
 # Define optimisation level here
-OPT = -ggdb -O2 -fomit-frame-pointer
+OPT = -ggdb -O2
 
 #
 # End of user defines
@@ -108,7 +108,7 @@ LIBS    = $(DLIBS) $(ULIBS)
 
 LDFLAGS = -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
 ASFLAGS = -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
-CPFLAGS = $(OPT) -Wall -Wextra -Wstrict-prototypes -fverbose-asm -Wa,-alms=$(<:.c=.lst) $(DEFS)
+CPFLAGS = -Wall -Wextra -Wstrict-prototypes -fverbose-asm -Wa,-alms=$(<:.c=.lst) $(DEFS)
 
 # Generate dependency information
 CPFLAGS += -MD -MP -MF .dep/$(@F).d
@@ -120,13 +120,13 @@ CPFLAGS += -MD -MP -MF .dep/$(@F).d
 all: $(OBJS) $(PROJECT).exe
 
 %.o : %.c
-	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
+	$(CC) -c $(OPT) $(CPFLAGS) -I . $(INCDIR) $< -o $@
 
 %.o : %.s
-	$(AS) -c $(ASFLAGS) $< -o $@
+	$(AS) -c $(OPT) $(ASFLAGS) $< -o $@
 
 %exe: $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
+	$(CC) $(OPT) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
 
 gcov:
 	-mkdir gcov
