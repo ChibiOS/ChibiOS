@@ -42,7 +42,7 @@
 #endif
 
 #if !defined(TRUE) || defined(__DOXYGEN__)
-#define TRUE                                (!FALSE)
+#define TRUE                                1
 #endif
 
 #define OSAL_SUCCESS                        FALSE
@@ -100,6 +100,20 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Enables OSAL assertions.
+ */
+#if !defined(OSAL_DBG_ENABLE_ASSERTS) || defined(__DOXYGEN__)
+#define OSAL_DBG_ENABLE_ASSERTS             FALSE
+#endif
+
+/**
+ * @brief   Enables OSAL functions parameters checks.
+ */
+#if !defined(OSAL_DBG_ENABLE_CHECKS) || defined(__DOXYGEN__)
+#define OSAL_DBG_ENABLE_CHECKS              FALSE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -148,7 +162,7 @@ typedef struct event_source event_source_t;
  * @note    This type is not part of the OSAL API and is provided
  *          exclusively as an example and for convenience.
  */
-typedef void (*eventcallback_t)(event_source_t *);
+typedef void (*eventcallback_t)(event_source_t *esp);
 
 /**
  * @brief   Type of an event flags mask.
@@ -209,7 +223,16 @@ typedef struct {
  *
  * @api
  */
-#define osalDbgAssert(c, remark)
+#define osalDbgAssert(c, remark) do {                                       \
+  /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
+  if (OSAL_DBG_ENABLE_ASSERTS != FALSE) {                                   \
+    if (!(c)) {                                                             \
+  /*lint -restore*/                                                         \
+      osalSysHalt(__func__);                                                \
+    }                                                                       \
+  }                                                                         \
+} while (false)
+
 
 /**
  * @brief   Function parameters check.
@@ -221,7 +244,16 @@ typedef struct {
  *
  * @api
  */
-#define osalDbgCheck(c)
+#define osalDbgCheck(c) do {                                                \
+  /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
+  if (OSAL_DBG_ENABLE_CHECKS != FALSE) {                                    \
+    if (!(c)) {                                                             \
+  /*lint -restore*/                                                         \
+      osalSysHalt(__func__);                                                \
+    }                                                                       \
+  }                                                                         \
+} while (false)
+
 
 /**
  * @brief   I-Class state check.
@@ -289,7 +321,7 @@ typedef struct {
  * @api
  */
 #define OSAL_MS2ST(msec)                                                    \
-  ((systime_t)(((((uint32_t)(msec)) * ((uint32_t)OSAL_ST_FREQUENCY) - 1UL) /\
+  ((systime_t)((((((uint32_t)(msec)) * ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) /\
                 1000UL) + 1UL))
 
 /**
@@ -303,7 +335,7 @@ typedef struct {
  * @api
  */
 #define OSAL_US2ST(usec)                                                    \
-  ((systime_t)(((((uint32_t)(usec)) * ((uint32_t)OSAL_ST_FREQUENCY) - 1UL) /\
+  ((systime_t)((((((uint32_t)(usec)) * ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) /\
                 1000000UL) + 1UL))
 /** @} */
 
@@ -353,6 +385,8 @@ typedef struct {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+extern const char *osal_halt_msg;
 
 #ifdef __cplusplus
 extern "C" {
@@ -542,7 +576,7 @@ static inline bool osalOsIsTimeWithinX(systime_t time,
                                        systime_t start,
                                        systime_t end) {
 
-  return (bool)(time - start < end - start);
+  return (bool)((time - start) < (end - start));
 }
 
 /**
@@ -730,8 +764,9 @@ static inline void osalEventBroadcastFlagsI(event_source_t *esp,
   osalDbgCheck(esp != NULL);
 
   esp->flags |= flags;
-  if (esp->cb != NULL)
+  if (esp->cb != NULL) {
     esp->cb(esp);
+  }
 }
 
 /**

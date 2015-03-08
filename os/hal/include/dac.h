@@ -28,7 +28,7 @@
 #ifndef _DAC_H_
 #define _DAC_H_
 
-#if HAL_USE_DAC || defined(__DOXYGEN__)
+#if (HAL_USE_DAC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -89,7 +89,7 @@ typedef enum {
  * @name    Low level driver helper macros
  * @{
  */
-#if DAC_USE_WAIT || defined(__DOXYGEN__)
+#if (DAC_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Waits for operation completion.
  * @details This function waits for the driver to complete the current
@@ -277,19 +277,19 @@ extern "C" {
                            const dacsample_t *samples, size_t depth);
   void dacStopConversion(DACDriver *dacp);
   void dacStopConversionI(DACDriver *dacp);
-#if DAC_USE_WAIT || defined(__DOXYGEN__)
+#if DAC_USE_WAIT
   msg_t dacConvert(DACDriver *dacp, const DACConversionGroup *grpp,
                    const dacsample_t *samples, size_t depth);
-#endif /* DAC_USE_WAIT */
+#endif
 #if DAC_USE_MUTUAL_EXCLUSION
   void dacAcquireBus(DACDriver *dacp);
   void dacReleaseBus(DACDriver *dacp);
-#endif /* DAC_USE_MUTUAL_EXCLUSION */
+#endif
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_DAC */
+#endif /* HAL_USE_DAC == TRUE */
 
 #endif /* _DAC_H_ */
 

@@ -28,7 +28,7 @@
 #ifndef _ICU_H_
 #define _ICU_H_
 
-#if HAL_USE_ICU || defined(__DOXYGEN__)
+#if (HAL_USE_ICU == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -54,7 +54,7 @@ typedef enum {
   ICU_STOP = 1,                     /**< Stopped.                           */
   ICU_READY = 2,                    /**< Ready.                             */
   ICU_WAITING = 3,                  /**< Waiting for first front.           */
-  ICU_ACTIVE = 4,                   /**< First front detected.              */
+  ICU_ACTIVE = 4                    /**< First front detected.              */
 } icustate_t;
 
 /**
@@ -88,8 +88,8 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  */
 #define icuStartCaptureI(icup) do {                                         \
   icu_lld_start_capture(icup);                                              \
-  icup->state = ICU_WAITING;                                                \
-} while (0)
+  (icup)->state = ICU_WAITING;                                              \
+} while (false)
 
 /**
  * @brief   Stops the input capture.
@@ -100,8 +100,8 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  */
 #define icuStopCaptureI(icup) do {                                          \
   icu_lld_stop_capture(icup);                                               \
-  icup->state = ICU_READY;                                                  \
-} while (0)
+  (icup)->state = ICU_READY;                                                \
+} while (false)
 
 /**
  * @brief   Enables notifications.
@@ -234,7 +234,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_ICU */
+#endif /* HAL_USE_ICU == TRUE */
 
 #endif /* _ICU_H_ */
 

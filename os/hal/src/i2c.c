@@ -30,7 +30,7 @@
  */
 #include "hal.h"
 
-#if HAL_USE_I2C || defined(__DOXYGEN__)
+#if (HAL_USE_I2C == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -76,9 +76,9 @@ void i2cObjectInit(I2CDriver *i2cp) {
   i2cp->state  = I2C_STOP;
   i2cp->config = NULL;
 
-#if I2C_USE_MUTUAL_EXCLUSION
+#if I2C_USE_MUTUAL_EXCLUSION == TRUE
   osalMutexObjectInit(&i2cp->mutex);
-#endif /* I2C_USE_MUTUAL_EXCLUSION */
+#endif
 
 #if defined(I2C_DRIVER_EXT_INIT_HOOK)
   I2C_DRIVER_EXT_INIT_HOOK(i2cp);
@@ -175,9 +175,9 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
                                systime_t timeout) {
   msg_t rdymsg;
 
-  osalDbgCheck((i2cp != NULL) && (addr != 0) &&
-               (txbytes > 0) && (txbuf != NULL) &&
-               ((rxbytes == 0) || ((rxbytes > 0) && (rxbuf != NULL))) &&
+  osalDbgCheck((i2cp != NULL) && (addr != 0U) &&
+               (txbytes > 0U) && (txbuf != NULL) &&
+               ((rxbytes == 0U) || ((rxbytes > 0U) && (rxbuf != NULL))) &&
                (timeout != TIME_IMMEDIATE));
 
   osalDbgAssert(i2cp->state == I2C_READY, "not ready");
@@ -187,10 +187,12 @@ msg_t i2cMasterTransmitTimeout(I2CDriver *i2cp,
   i2cp->state = I2C_ACTIVE_TX;
   rdymsg = i2c_lld_master_transmit_timeout(i2cp, addr, txbuf, txbytes,
                                            rxbuf, rxbytes, timeout);
-  if (rdymsg == MSG_TIMEOUT)
+  if (rdymsg == MSG_TIMEOUT) {
     i2cp->state = I2C_LOCKED;
-  else
+  }
+  else {
     i2cp->state = I2C_READY;
+  }
   osalSysUnlock();
   return rdymsg;
 }
@@ -223,8 +225,8 @@ msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,
 
   msg_t rdymsg;
 
-  osalDbgCheck((i2cp != NULL) && (addr != 0) &&
-               (rxbytes > 0) && (rxbuf != NULL) &&
+  osalDbgCheck((i2cp != NULL) && (addr != 0U) &&
+               (rxbytes > 0U) && (rxbuf != NULL) &&
                (timeout != TIME_IMMEDIATE));
 
   osalDbgAssert(i2cp->state == I2C_READY, "not ready");
@@ -233,15 +235,17 @@ msg_t i2cMasterReceiveTimeout(I2CDriver *i2cp,
   i2cp->errors = I2C_NO_ERROR;
   i2cp->state = I2C_ACTIVE_RX;
   rdymsg = i2c_lld_master_receive_timeout(i2cp, addr, rxbuf, rxbytes, timeout);
-  if (rdymsg == MSG_TIMEOUT)
+  if (rdymsg == MSG_TIMEOUT) {
     i2cp->state = I2C_LOCKED;
-  else
+  }
+  else {
     i2cp->state = I2C_READY;
+  }
   osalSysUnlock();
   return rdymsg;
 }
 
-#if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if (I2C_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Gains exclusive access to the I2C bus.
  * @details This function tries to gain ownership to the I2C bus, if the bus
@@ -275,8 +279,8 @@ void i2cReleaseBus(I2CDriver *i2cp) {
 
   osalMutexUnlock(&i2cp->mutex);
 }
-#endif /* I2C_USE_MUTUAL_EXCLUSION */
+#endif /* I2C_USE_MUTUAL_EXCLUSION == TRUE */
 
-#endif /* HAL_USE_I2C */
+#endif /* HAL_USE_I2C == TRUE */
 
 /** @} */

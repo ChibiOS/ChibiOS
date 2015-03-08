@@ -31,6 +31,16 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of transmit mailboxes.
+ */
+#define CAN_TX_MAILBOXES            1
+
+/**
+ * @brief   Number of receive mailboxes.
+ */
+#define CAN_RX_MAILBOXES            1
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/

@@ -25,15 +25,16 @@
  * @{
  */
 
+#include <string.h>
+
 #include "hal.h"
 
-#include "string.h" /* for memset() */
-
-#if HAL_USE_SDC || defined(__DOXYGEN__)
+#if (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
+
 /**
  * @brief   MMC switch mode.
  */
@@ -41,7 +42,7 @@ typedef enum {
   MMC_SWITCH_COMMAND_SET = 0,
   MMC_SWITCH_SET_BITS    = 1,
   MMC_SWITCH_CLEAR_BITS  = 2,
-  MMC_SWITCH_WRITE_BYTE  = 3,
+  MMC_SWITCH_WRITE_BYTE  = 3
 } mmc_switch_t;
 
 /**
@@ -49,7 +50,7 @@ typedef enum {
  */
 typedef enum {
   SD_SWITCH_CHECK = 0,
-  SD_SWITCH_SET   = 1,
+  SD_SWITCH_SET   = 1
 } sd_switch_t;
 
 /**
@@ -59,7 +60,7 @@ typedef enum {
   SD_SWITCH_FUNCTION_SPEED = 0,
   SD_SWITCH_FUNCTION_CMD_SYSTEM = 1,
   SD_SWITCH_FUNCTION_DRIVER_STRENGTH = 2,
-  SD_SWITCH_FUNCTION_CURRENT_LIMIT = 3,
+  SD_SWITCH_FUNCTION_CURRENT_LIMIT = 3
 } sd_switch_function_t;
 
 /*===========================================================================*/
@@ -106,17 +107,20 @@ static bool mode_detect(SDCDriver *sdcp) {
                                   MMCSD_CMD8_PATTERN, resp)) {
     sdcp->cardmode = SDC_MODE_CARDTYPE_SDV20;
     /* Voltage verification.*/
-    if (((resp[0] >> 8) & 0xF) != 1)
+    if (((resp[0] >> 8U) & 0xFU) != 1U) {
       return HAL_FAILED;
+    }
     if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, 0, resp) ||
-        MMCSD_R1_ERROR(resp[0]))
+        MMCSD_R1_ERROR(resp[0])) {
       return HAL_FAILED;
+    }
   }
   else {
     /* MMC or SD V1.1 detection.*/
     if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, 0, resp) ||
-        MMCSD_R1_ERROR(resp[0]))
+        MMCSD_R1_ERROR(resp[0])) {
       sdcp->cardmode = SDC_MODE_CARDTYPE_MMC;
+    }
     else {
       sdcp->cardmode = SDC_MODE_CARDTYPE_SDV11;
     
@@ -144,19 +148,22 @@ static bool mmc_init(SDCDriver *sdcp) {
   unsigned i;
   uint32_t resp[1];
 
-  ocr = 0xC0FF8000;
+  ocr = 0xC0FF8000U;
   i = 0;
   while (true) {
-    if (sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_INIT, ocr, resp))
+    if (sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_INIT, ocr, resp)) {
       return HAL_FAILED;
-    if ((resp[0] & 0x80000000) != 0) {
-      if (resp[0] & 0x40000000)
+    }
+    if ((resp[0] & 0x80000000U) != 0U) {
+      if ((resp[0] & 0x40000000U) != 0U) {
         sdcp->cardmode |= SDC_MODE_HIGH_CAPACITY;
+      }
       break;
     }
-    if (++i >= SDC_INIT_RETRY)
+    if (++i >= (unsigned)SDC_INIT_RETRY) {
       return HAL_FAILED;
-    osalThreadSleep(OSAL_MS2ST(10));
+    }
+    osalThreadSleepMilliseconds(10);
   }
 
   return HAL_SUCCESS;
@@ -178,26 +185,32 @@ static bool sdc_init(SDCDriver *sdcp) {
   uint32_t ocr;
   uint32_t resp[1];
 
-  if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_SDV20)
-    ocr = 0xC0100000;
-  else
-    ocr = 0x80100000;
+  if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_SDV20) {
+    ocr = 0xC0100000U;
+  }
+  else {
+    ocr = 0x80100000U;
+  }
 
   i = 0;
   while (true) {
     if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, 0, resp) ||
-      MMCSD_R1_ERROR(resp[0]))
+        MMCSD_R1_ERROR(resp[0])) {
       return HAL_FAILED;
-    if (sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_APP_OP_COND, ocr, resp))
+    }
+    if (sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_APP_OP_COND, ocr, resp)) {
       return HAL_FAILED;
-    if ((resp[0] & 0x80000000) != 0) {
-      if (resp[0] & 0x40000000)
+    }
+    if ((resp[0] & 0x80000000U) != 0U) {
+      if ((resp[0] & 0x40000000U) != 0U) {
         sdcp->cardmode |= SDC_MODE_HIGH_CAPACITY;
+      }
       break;
     }
-    if (++i >= SDC_INIT_RETRY)
+    if (++i >= (unsigned)SDC_INIT_RETRY) {
       return HAL_FAILED;
-    osalThreadSleep(OSAL_MS2ST(10));
+    }
+    osalThreadSleepMilliseconds(10);
   }
 
   return HAL_SUCCESS;
@@ -207,7 +220,7 @@ static bool sdc_init(SDCDriver *sdcp) {
  * @brief   Constructs CMD6 argument for MMC.
  *
  * @param[in] access    EXT_CSD access mode
- * @param[in] index     EXT_CSD byte number
+ * @param[in] idx       EXT_CSD byte number
  * @param[in] value     value to be written in target field
  * @param[in] cmd_set   switch current command set
  *
@@ -215,13 +228,13 @@ static bool sdc_init(SDCDriver *sdcp) {
  *
  * @notapi
  */
-static uint32_t mmc_cmd6_construct(mmc_switch_t access, uint8_t index,
-                                   uint8_t value, uint8_t cmd_set) {
+static uint32_t mmc_cmd6_construct(mmc_switch_t access, uint32_t idx,
+                                   uint32_t value, uint32_t cmd_set) {
 
-  osalDbgAssert((index <= 191), "This field is not writable");
-  osalDbgAssert((cmd_set < 8), "This field has only 3 bits");
+  osalDbgAssert(idx <= 191U, "This field is not writable");
+  osalDbgAssert(cmd_set < 8U, "This field has only 3 bits");
 
-  return (access << 24) | (index << 16) | (value << 8) | cmd_set;
+  return ((uint32_t)access << 24U) | (idx << 16U) | (value << 8U) | cmd_set;
 }
 
 /**
@@ -235,15 +248,16 @@ static uint32_t mmc_cmd6_construct(mmc_switch_t access, uint8_t index,
  *
  * @notapi
  */
-uint32_t sdc_cmd6_construct(sd_switch_t mode, sd_switch_function_t function,
-                            uint8_t value) {
+static uint32_t sdc_cmd6_construct(sd_switch_t mode,
+                                   sd_switch_function_t function,
+                                   uint32_t value) {
   uint32_t ret = 0xFFFFFF;
 
-  osalDbgAssert((value < 16), "This field has only 4 bits");
+  osalDbgAssert((value < 16U), "This field has only 4 bits");
 
-  ret &= ~(0xF << (function * 4));
-  ret |= value << (function * 4);
-  return ret | (mode << 31);
+  ret &= ~((uint32_t)0xFU << ((uint32_t)function * 4U));
+  ret |= value << ((uint32_t)function * 4U);
+  return ret | ((uint32_t)mode << 31U);
 }
 
 /**
@@ -257,11 +271,11 @@ uint32_t sdc_cmd6_construct(sd_switch_t mode, sd_switch_function_t function,
  * @notapi
  */
 static uint16_t sdc_cmd6_extract_info(sd_switch_function_t function,
-                                     const uint8_t *buf) {
+                                      const uint8_t *buf) {
 
-  size_t start = 12 - function * 2;
+  unsigned start = 12U - ((unsigned)function * 2U);
 
-  return (buf[start] << 8) | buf[start+1];
+  return ((uint16_t)buf[start] << 8U) | (uint16_t)buf[start + 1U];
 }
 
 /**
@@ -280,14 +294,16 @@ static bool sdc_cmd6_check_status(sd_switch_function_t function,
                                  const uint8_t *buf) {
 
   uint32_t tmp;
-  uint8_t status;
+  uint32_t status;
 
-  tmp = (buf[14] << 16) | (buf[15] << 8) | buf[16];
-  status = (tmp >> (function * 4)) & 0xF;
-  if (0xF != status)
+  tmp = ((uint32_t)buf[14] << 16U) |
+        ((uint32_t)buf[15] << 8U) |
+        (uint32_t)buf[16];
+  status = (tmp >> ((uint32_t)function * 4U)) & 0xFU;
+  if (0xFU != status) {
     return HAL_SUCCESS;
-  else
-    return HAL_FAILED;
+  }
+  return HAL_FAILED;
 }
 
 /**
@@ -311,19 +327,24 @@ static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
   *clk = SDC_CLK_25MHz;
 
   /* Read switch functions' register.*/
-  if (sdc_lld_read_special(sdcp, tmp, N, MMCSD_CMD_SWITCH, 0))
+  if (sdc_lld_read_special(sdcp, tmp, N, MMCSD_CMD_SWITCH, 0)) {
     return HAL_FAILED;
+  }
 
   /* Check card capabilities parsing acquired data.*/
-  if ((sdc_cmd6_extract_info(SD_SWITCH_FUNCTION_SPEED, tmp) & 2) == 2) {
+  if ((sdc_cmd6_extract_info(SD_SWITCH_FUNCTION_SPEED, tmp) & 2U) == 2U) {
     /* Construct command to set the bus speed.*/
     cmdarg = sdc_cmd6_construct(SD_SWITCH_SET, SD_SWITCH_FUNCTION_SPEED, 1);
+
     /* Write constructed command and read operation status in single call.*/
-    if (sdc_lld_read_special(sdcp, tmp, N, MMCSD_CMD_SWITCH, cmdarg))
+    if (sdc_lld_read_special(sdcp, tmp, N, MMCSD_CMD_SWITCH, cmdarg)) {
       return HAL_FAILED;
+    }
+
     /* Check card answer for success status bits.*/
-    if (HAL_SUCCESS == sdc_cmd6_check_status(SD_SWITCH_FUNCTION_SPEED, tmp))
+    if (HAL_SUCCESS == sdc_cmd6_check_status(SD_SWITCH_FUNCTION_SPEED, tmp)) {
       *clk = SDC_CLK_50MHz;
+    }
   }
 
   return HAL_SUCCESS;
@@ -341,7 +362,7 @@ static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
  *
  * @notapi
  */
-static sdcbusclk_t mmc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
+static bool mmc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
   uint32_t cmdarg;
   uint32_t resp[1];
   uint8_t *scratchpad = sdcp->config->scratchpad;
@@ -350,13 +371,15 @@ static sdcbusclk_t mmc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
   *clk = SDC_CLK_25MHz;
 
   /* Use safe default when there is no space for data.*/
-  if (NULL == scratchpad)
+  if (NULL == scratchpad) {
     return HAL_SUCCESS;
+  }
 
   cmdarg = mmc_cmd6_construct(MMC_SWITCH_WRITE_BYTE, 185, 1, 0);
   if (!(sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SWITCH, cmdarg, resp) ||
-                                   MMCSD_R1_ERROR(resp[0])))
+                                   MMCSD_R1_ERROR(resp[0]))) {
     *clk = SDC_CLK_50MHz;
+  }
 
   return HAL_SUCCESS;
 }
@@ -375,10 +398,10 @@ static sdcbusclk_t mmc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
  */
 static bool detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
 
-  if (SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK))
+  if (SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK)) {
     return mmc_detect_bus_clk(sdcp, clk);
-  else
-    return sdc_detect_bus_clk(sdcp, clk);
+  }
+  return sdc_detect_bus_clk(sdcp, clk);
 }
 
 /**
@@ -402,11 +425,14 @@ static bool sdc_set_bus_width(SDCDriver *sdcp) {
   else if (SDC_MODE_4BIT == sdcp->config->bus_width) {
     sdc_lld_set_bus_mode(sdcp, SDC_MODE_4BIT);
     if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, sdcp->rca, resp) ||
-        MMCSD_R1_ERROR(resp[0]))
+        MMCSD_R1_ERROR(resp[0])) {
       return HAL_FAILED;
+    }
+
     if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SET_BUS_WIDTH, 2, resp) ||
-        MMCSD_R1_ERROR(resp[0]))
+        MMCSD_R1_ERROR(resp[0])) {
       return HAL_FAILED;
+    }
   }
   else {
     /* SD card does not support 8bit bus.*/
@@ -435,12 +461,14 @@ static bool mmc_set_bus_width(SDCDriver *sdcp) {
   case SDC_MODE_1BIT:
     /* Nothing to do. Bus is already in 1bit mode.*/
     return HAL_SUCCESS;
-    break;
   case SDC_MODE_4BIT:
     cmdarg = mmc_cmd6_construct(MMC_SWITCH_WRITE_BYTE, 183, 1, 0);
     break;
   case SDC_MODE_8BIT:
     cmdarg = mmc_cmd6_construct(MMC_SWITCH_WRITE_BYTE, 183, 2, 0);
+    break;
+  default:
+    osalDbgAssert(false, "unexpected case");
     break;
   }
 
@@ -467,19 +495,21 @@ static bool mmc_set_bus_width(SDCDriver *sdcp) {
 bool _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
   uint32_t resp[1];
 
-  while (TRUE) {
+  while (true) {
     if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_STATUS,
                                    sdcp->rca, resp) ||
-        MMCSD_R1_ERROR(resp[0]))
+        MMCSD_R1_ERROR(resp[0])) {
       return HAL_FAILED;
+    }
+
     switch (MMCSD_R1_STS(resp[0])) {
     case MMCSD_STS_TRAN:
       return HAL_SUCCESS;
     case MMCSD_STS_DATA:
     case MMCSD_STS_RCV:
     case MMCSD_STS_PRG:
-#if SDC_NICE_WAITING
-      osalThreadSleep(OSAL_MS2ST(1));
+#if SDC_NICE_WAITING == TRUE
+      osalThreadSleepMilliseconds(1);
 #endif
       continue;
     default:
@@ -488,8 +518,6 @@ bool _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
       return HAL_FAILED;
     }
   }
-  /* If something going too wrong.*/
-  return HAL_FAILED;
 }
 
 /*===========================================================================*/
@@ -598,56 +626,66 @@ bool sdcConnect(SDCDriver *sdcp) {
   sdc_lld_send_cmd_none(sdcp, MMCSD_CMD_GO_IDLE_STATE, 0);
 
   /* Detect card type.*/
-  if (HAL_FAILED == mode_detect(sdcp))
+  if (HAL_FAILED == mode_detect(sdcp)) {
     goto failed;
+  }
 
   /* Perform specific initialization procedure.*/
   if ((sdcp->cardmode &  SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
-    if (HAL_FAILED == mmc_init(sdcp))
+    if (HAL_FAILED == mmc_init(sdcp)) {
       goto failed;
+    }
   }
   else {
-    if (HAL_FAILED == sdc_init(sdcp))
+    if (HAL_FAILED == sdc_init(sdcp)) {
       goto failed;
+    }
   }
 
   /* Reads CID.*/
-  if (sdc_lld_send_cmd_long_crc(sdcp, MMCSD_CMD_ALL_SEND_CID, 0, sdcp->cid))
+  if (sdc_lld_send_cmd_long_crc(sdcp, MMCSD_CMD_ALL_SEND_CID, 0, sdcp->cid)) {
     goto failed;
+  }
 
   /* Asks for the RCA.*/
   if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_RELATIVE_ADDR,
-                                 0, &sdcp->rca))
+                                 0, &sdcp->rca)) {
     goto failed;
+  }
 
   /* Reads CSD.*/
   if (sdc_lld_send_cmd_long_crc(sdcp, MMCSD_CMD_SEND_CSD,
-                                sdcp->rca, sdcp->csd))
+                                sdcp->rca, sdcp->csd)) {
     goto failed;
+  }
 
   /* Selects the card for operations.*/
   if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEL_DESEL_CARD,
-                                 sdcp->rca, resp))
+                                 sdcp->rca, resp)) {
     goto failed;
+  }
 
   /* Switches to high speed.*/
-  if (HAL_SUCCESS != detect_bus_clk(sdcp, &clk))
+  if (HAL_SUCCESS != detect_bus_clk(sdcp, &clk)) {
     goto failed;
+  }
   sdc_lld_set_data_clk(sdcp, clk);
 
   /* Reads extended CSD if needed and possible.*/
   if (SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK)) {
 
     /* The card is a MMC, checking if it is a large device.*/
-    if (_mmcsd_get_slice(sdcp->csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE) > 1) {
+    if (_mmcsd_get_slice(sdcp->csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE) > 1U) {
       uint8_t *ext_csd = sdcp->config->scratchpad;
 
       /* Size detection requires the buffer.*/
-      if (NULL == ext_csd)
+      if (NULL == ext_csd) {
         goto failed;
+      }
 
-      if(sdc_lld_read_special(sdcp, ext_csd, 512, MMCSD_CMD_SEND_EXT_CSD, 0))
+      if(sdc_lld_read_special(sdcp, ext_csd, 512, MMCSD_CMD_SEND_EXT_CSD, 0)) {
         goto failed;
+      }
 
       /* Capacity from the EXT_CSD.*/
       sdcp->capacity = _mmcsd_get_capacity_ext(ext_csd);
@@ -665,20 +703,26 @@ bool sdcConnect(SDCDriver *sdcp) {
   /* Block length fixed at 512 bytes.*/
   if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SET_BLOCKLEN,
                                  MMCSD_BLOCK_SIZE, resp) ||
-      MMCSD_R1_ERROR(resp[0]))
+      MMCSD_R1_ERROR(resp[0])) {
     goto failed;
+  }
 
   /* Switches to wide bus mode.*/
   switch (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) {
   case SDC_MODE_CARDTYPE_SDV11:
   case SDC_MODE_CARDTYPE_SDV20:
-    if (HAL_FAILED == sdc_set_bus_width(sdcp))
+    if (HAL_FAILED == sdc_set_bus_width(sdcp)) {
       goto failed;
+    }
     break;
   case SDC_MODE_CARDTYPE_MMC:
-    if (HAL_FAILED == mmc_set_bus_width(sdcp))
+    if (HAL_FAILED == mmc_set_bus_width(sdcp)) {
       goto failed;
+    }
     break;
+  default:
+    /* Unknown type.*/
+    goto failed;
   }
 
   /* Initialization complete.*/
@@ -749,10 +793,10 @@ bool sdcDisconnect(SDCDriver *sdcp) {
 bool sdcRead(SDCDriver *sdcp, uint32_t startblk, uint8_t *buf, uint32_t n) {
   bool status;
 
-  osalDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0));
+  osalDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0U));
   osalDbgAssert(sdcp->state == BLK_READY, "invalid state");
 
-  if ((startblk + n - 1) > sdcp->capacity){
+  if ((startblk + n - 1U) > sdcp->capacity){
     sdcp->errors |= SDC_OVERFLOW_ERROR;
     return HAL_FAILED;
   }
@@ -787,10 +831,10 @@ bool sdcWrite(SDCDriver *sdcp, uint32_t startblk,
               const uint8_t *buf, uint32_t n) {
   bool status;
 
-  osalDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0));
+  osalDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0U));
   osalDbgAssert(sdcp->state == BLK_READY, "invalid state");
 
-  if ((startblk + n - 1) > sdcp->capacity){
+  if ((startblk + n - 1U) > sdcp->capacity){
     sdcp->errors |= SDC_OVERFLOW_ERROR;
     return HAL_FAILED;
   }
@@ -842,8 +886,9 @@ bool sdcSync(SDCDriver *sdcp) {
 
   osalDbgCheck(sdcp != NULL);
 
-  if (sdcp->state != BLK_READY)
+  if (sdcp->state != BLK_READY) {
     return HAL_FAILED;
+  }
 
   /* Synchronization operation in progress.*/
   sdcp->state = BLK_SYNCING;
@@ -871,8 +916,9 @@ bool sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
 
   osalDbgCheck((sdcp != NULL) && (bdip != NULL));
 
-  if (sdcp->state != BLK_READY)
+  if (sdcp->state != BLK_READY) {
     return HAL_FAILED;
+  }
 
   bdip->blk_num = sdcp->capacity;
   bdip->blk_size = MMCSD_BLOCK_SIZE;
@@ -880,7 +926,7 @@ bool sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
   return HAL_SUCCESS;
 }
 
-#endif /* HAL_USE_SDC */
+#endif /* HAL_USE_SDC == TRUE */
 
 /** @} */
 

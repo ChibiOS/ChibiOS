@@ -32,7 +32,7 @@
 #ifndef _I2C_H_
 #define _I2C_H_
 
-#if HAL_USE_I2C || defined(__DOXYGEN__)
+#if (HAL_USE_I2C == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -153,16 +153,16 @@ extern "C" {
                                 i2caddr_t addr,
                                 uint8_t *rxbuf, size_t rxbytes,
                                 systime_t timeout);
-#if I2C_USE_MUTUAL_EXCLUSION
+#if I2C_USE_MUTUAL_EXCLUSION == TRUE
   void i2cAcquireBus(I2CDriver *i2cp);
   void i2cReleaseBus(I2CDriver *i2cp);
-#endif /* I2C_USE_MUTUAL_EXCLUSION */
+#endif
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_I2C */
+#endif /* HAL_USE_I2C == TRUE */
 
 #endif /* _I2C_H_ */
 

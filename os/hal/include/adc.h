@@ -28,7 +28,7 @@
 #ifndef _ADC_H_
 #define _ADC_H_
 
-#if HAL_USE_ADC || defined(__DOXYGEN__)
+#if (HAL_USE_ADC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -89,7 +89,7 @@ typedef enum {
  * @name    Low level driver helper macros
  * @{
  */
-#if ADC_USE_WAIT || defined(__DOXYGEN__)
+#if (ADC_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Resumes a thread waiting for a conversion completion.
  *
@@ -260,21 +260,21 @@ extern "C" {
                            size_t depth);
   void adcStopConversion(ADCDriver *adcp);
   void adcStopConversionI(ADCDriver *adcp);
-#if ADC_USE_WAIT
+#if ADC_USE_WAIT == TRUE
   msg_t adcConvert(ADCDriver *adcp,
                    const ADCConversionGroup *grpp,
                    adcsample_t *samples,
                    size_t depth);
 #endif
-#if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if ADC_USE_MUTUAL_EXCLUSION == TRUE
   void adcAcquireBus(ADCDriver *adcp);
   void adcReleaseBus(ADCDriver *adcp);
-#endif /* ADC_USE_MUTUAL_EXCLUSION */
+#endif
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_ADC */
+#endif /* HAL_USE_ADC == TRUE */
 
 #endif /* _ADC_H_ */
 

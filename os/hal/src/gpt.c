@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_GPT || defined(__DOXYGEN__)
+#if (HAL_USE_GPT == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -260,6 +260,6 @@ void gptPolledDelay(GPTDriver *gptp, gptcnt_t interval) {
   gptp->state = GPT_READY;
 }
 
-#endif /* HAL_USE_GPT */
+#endif /* HAL_USE_GPT == TRUE */
 
 /** @} */

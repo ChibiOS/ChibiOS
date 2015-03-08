@@ -73,15 +73,15 @@ void stInit(void) {
  * @note    This functionality is only available in free running mode, the
  *          behavior in periodic mode is undefined.
  *
- * @param[in] time      the time to be set for the first alarm
+ * @param[in] abstime   the time to be set for the first alarm
  *
  * @api
  */
-void stStartAlarm(systime_t time) {
+void stStartAlarm(systime_t abstime) {
 
   osalDbgAssert(stIsAlarmActive() == false, "already active");
 
-  st_lld_start_alarm(time);
+  st_lld_start_alarm(abstime);
 }
 
 /**
@@ -101,15 +101,15 @@ void stStopAlarm(void) {
  * @note    This functionality is only available in free running mode, the
  *          behavior in periodic mode is undefined.
  *
- * @param[in] time      the time to be set for the next alarm
+ * @param[in] abstime   the time to be set for the next alarm
  *
  * @api
  */
-void stSetAlarm(systime_t time) {
+void stSetAlarm(systime_t abstime) {
 
   osalDbgAssert(stIsAlarmActive() != false, "not active");
 
-  st_lld_set_alarm(time);
+  st_lld_set_alarm(abstime);
 }
 
 /**

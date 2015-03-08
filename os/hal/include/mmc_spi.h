@@ -28,16 +28,16 @@
 #ifndef _MMC_SPI_H_
 #define _MMC_SPI_H_
 
-#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
+#if (HAL_USE_MMC_SPI == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define MMC_CMD0_RETRY              10
-#define MMC_CMD1_RETRY              100
-#define MMC_ACMD41_RETRY            100
-#define MMC_WAIT_DATA               10000
+#define MMC_CMD0_RETRY              10U
+#define MMC_CMD1_RETRY              100U
+#define MMC_ACMD41_RETRY            100U
+#define MMC_WAIT_DATA               10000U
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -64,7 +64,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !HAL_USE_SPI || !SPI_USE_WAIT
+#if (HAL_USE_SPI == FALSE) || (SPI_USE_WAIT == FALSE)
 #error "MMC_SPI driver requires HAL_USE_SPI and SPI_USE_WAIT"
 #endif
 
@@ -191,7 +191,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_MMC_SPI */
+#endif /* HAL_USE_MMC_SPI == TRUE */
 
 #endif /* _MMC_SPI_H_ */
 

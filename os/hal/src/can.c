@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_CAN || defined(__DOXYGEN__)
+#if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -77,10 +77,10 @@ void canObjectInit(CANDriver *canp) {
   osalEventObjectInit(&canp->rxfull_event);
   osalEventObjectInit(&canp->txempty_event);
   osalEventObjectInit(&canp->error_event);
-#if CAN_USE_SLEEP_MODE
+#if CAN_USE_SLEEP_MODE == TRUE
   osalEventObjectInit(&canp->sleep_event);
   osalEventObjectInit(&canp->wakeup_event);
-#endif /* CAN_USE_SLEEP_MODE */
+#endif
 }
 
 /**
@@ -104,8 +104,9 @@ void canStart(CANDriver *canp, const CANConfig *config) {
                 (canp->state == CAN_STARTING) ||
                 (canp->state == CAN_READY),
                 "invalid state");
-  while (canp->state == CAN_STARTING)
+  while (canp->state == CAN_STARTING) {
     osalThreadSleepS(1);
+  }
   if (canp->state == CAN_STOP) {
     canp->config = config;
     can_lld_start(canp);
@@ -163,13 +164,15 @@ msg_t canTransmit(CANDriver *canp,
                   systime_t timeout) {
 
   osalDbgCheck((canp != NULL) && (ctfp != NULL) &&
-               (mailbox <= CAN_TX_MAILBOXES));
+               (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
 
   osalSysLock();
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
                 "invalid state");
+  /*lint -save -e9007 [13.5] Right side is supposed to be pure.*/
   while ((canp->state == CAN_SLEEP) || !can_lld_is_tx_empty(canp, mailbox)) {
-    msg_t msg = osalThreadEnqueueTimeoutS(&canp->txqueue, timeout);
+  /*lint -restore*/
+   msg_t msg = osalThreadEnqueueTimeoutS(&canp->txqueue, timeout);
     if (msg != MSG_OK) {
       osalSysUnlock();
       return msg;
@@ -208,12 +211,14 @@ msg_t canReceive(CANDriver *canp,
                  systime_t timeout) {
 
   osalDbgCheck((canp != NULL) && (crfp != NULL) &&
-               (mailbox < CAN_RX_MAILBOXES));
+               (mailbox < (canmbx_t)CAN_RX_MAILBOXES));
 
   osalSysLock();
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
                 "invalid state");
+  /*lint -save -e9007 [13.5] Right side is supposed to be pure.*/
   while ((canp->state == CAN_SLEEP) || !can_lld_is_rx_nonempty(canp, mailbox)) {
+  /*lint -restore*/
     msg_t msg = osalThreadEnqueueTimeoutS(&canp->rxqueue, timeout);
     if (msg != MSG_OK) {
       osalSysUnlock();
@@ -225,7 +230,7 @@ msg_t canReceive(CANDriver *canp,
   return MSG_OK;
 }
 
-#if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)
+#if (CAN_USE_SLEEP_MODE == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Enters the sleep mode.
  * @details This function puts the CAN driver in sleep mode and broadcasts
@@ -276,8 +281,8 @@ void canWakeup(CANDriver *canp) {
   }
   osalSysUnlock();
 }
-#endif /* CAN_USE_SLEEP_MODE */
+#endif /* CAN_USE_SLEEP_MODE == TRUE */
 
-#endif /* HAL_USE_CAN */
+#endif /* HAL_USE_CAN == TRUE */
 
 /** @} */

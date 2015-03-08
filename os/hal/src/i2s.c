@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_I2S || defined(__DOXYGEN__)
+#if (HAL_USE_I2S == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -153,6 +153,6 @@ void i2sStopExchange(I2SDriver *i2sp) {
   osalSysUnlock();
 }
 
-#endif /* HAL_USE_I2S */
+#endif /* HAL_USE_I2S == TRUE */
 
 /** @} */

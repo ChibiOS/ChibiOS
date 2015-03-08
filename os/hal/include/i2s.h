@@ -28,7 +28,7 @@
 #ifndef _I2S_H_
 #define _I2S_H_
 
-#if HAL_USE_I2S || defined(__DOXYGEN__)
+#if (HAL_USE_I2S == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -163,7 +163,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_I2S */
+#endif /* HAL_USE_I2S == TRUE */
 
 #endif /* _I2S_H_ */
 

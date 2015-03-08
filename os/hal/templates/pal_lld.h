@@ -51,13 +51,13 @@ typedef struct {
 /**
  * @brief   Width, in bits, of an I/O port.
  */
-#define PAL_IOPORTS_WIDTH 32
+#define PAL_IOPORTS_WIDTH 32U
 
 /**
  * @brief   Whole port mask.
  * @brief   This macro specifies all the valid bits into a port.
  */
-#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFFFFFF)
+#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFFFFFFU)
 
 /**
  * @brief   Digital I/O port sized unsigned type.
@@ -110,7 +110,7 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readport(port) 0
+#define pal_lld_readport(port) 0U
 
 /**
  * @brief   Reads the output latch.
@@ -122,7 +122,7 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readlatch(port) 0
+#define pal_lld_readlatch(port) 0U
 
 /**
  * @brief   Writes a bits mask on a I/O port.
@@ -132,7 +132,12 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writeport(port, bits)
+#define pal_lld_writeport(port, bits)                                       \
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)bits;                                                             \
+  } while (false)
+
 
 /**
  * @brief   Sets a bits mask on a I/O port.
@@ -145,7 +150,12 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_setport(port, bits)
+#define pal_lld_setport(port, bits)                                         \
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)bits;                                                             \
+  } while (false)
+
 
 /**
  * @brief   Clears a bits mask on a I/O port.
@@ -158,7 +168,12 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_clearport(port, bits)
+#define pal_lld_clearport(port, bits)                                       \
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)bits;                                                             \
+  } while (false)
+
 
 /**
  * @brief   Toggles a bits mask on a I/O port.
@@ -171,7 +186,12 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_toggleport(port, bits)
+#define pal_lld_toggleport(port, bits)                                      \
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)bits;                                                             \
+  } while (false)
+
 
 /**
  * @brief   Reads a group of bits.
@@ -186,8 +206,7 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_readgroup(port, mask, offset)                               \
-  (void)port,(void)mask,(void)offset,0
+#define pal_lld_readgroup(port, mask, offset) 0U
 
 /**
  * @brief   Writes a group of bits.
@@ -204,7 +223,12 @@ typedef uint32_t ioportid_t;
  * @notapi
  */
 #define pal_lld_writegroup(port, mask, offset, bits)                        \
-  (void)port,(void)mask,(void)offset,(void)bits
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)mask;                                                             \
+    (void)offset;                                                           \
+    (void)bits;                                                             \
+  } while (false)
 
 /**
  * @brief   Pads group mode setup.
@@ -253,7 +277,12 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_writepad(port, pad, bit)
+#define pal_lld_writepad(port, pad, bit)                                    \
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)pad;                                                              \
+    (void)bit;                                                              \
+  } while (false)
 
 /**
  * @brief   Sets a pad logical state to @p PAL_HIGH.
@@ -266,7 +295,12 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_setpad(port, pad)
+#define pal_lld_setpad(port, pad)                                           \
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)pad;                                                              \
+  } while (false)
+
 
 /**
  * @brief   Clears a pad logical state to @p PAL_LOW.
@@ -279,7 +313,12 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_clearpad(port, pad)
+#define pal_lld_clearpad(port, pad)                                         \
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)pad;                                                              \
+  } while (false)
+
 
 /**
  * @brief   Toggles a pad logical state.
@@ -292,7 +331,12 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_togglepad(port, pad)
+#define pal_lld_togglepad(port, pad)                                        \
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)pad;                                                              \
+  } while (false)
+
 
 /**
  * @brief   Pad mode setup.
@@ -308,7 +352,13 @@ typedef uint32_t ioportid_t;
  *
  * @notapi
  */
-#define pal_lld_setpadmode(port, pad, mode)
+#define pal_lld_setpadmode(port, pad, mode)                                 \
+  do {                                                                      \
+    (void)port;                                                             \
+    (void)pad;                                                              \
+    (void)mode;                                                             \
+  } while (false)
+
 
 #if !defined(__DOXYGEN__)
 extern const PALConfig pal_default_config;

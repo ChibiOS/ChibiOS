@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_ICU || defined(__DOXYGEN__)
+#if (HAL_USE_ICU == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -223,6 +223,6 @@ void icuDisableNotifications(ICUDriver *icup) {
   osalSysUnlock();
 }
 
-#endif /* HAL_USE_ICU */
+#endif /* HAL_USE_ICU == TRUE */
 
 /** @} */

@@ -41,12 +41,12 @@
 /**
  * @brief   Callback support int the driver.
  */
-#define RTC_SUPPORTS_CALLBACKS      PLATFORM_RTC_HAS_INTERRUPTS
+#define RTC_SUPPORTS_CALLBACKS      TRUE
 
 /**
  * @brief   Number of alarms available.
  */
-#define RTC_ALARMS                  PLATFORM_RTC_NUM_ALARMS
+#define RTC_ALARMS                  2
 
 /**
  * @brief   Presence of a local persistent storage.
@@ -83,6 +83,20 @@
  */
 typedef uint32_t rtcalarm_t;
 
+#if (RTC_SUPPORTS_CALLBACKS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of an RTC event.
+ */
+typedef enum {
+  RTC_EVENT_SECOND = 0                  /** Triggered every second.         */
+} rtcevent_t;
+
+/**
+ * @brief   Type of a generic RTC callback.
+ */
+typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
+#endif
+
 /**
  * @brief   Type of a structure representing an RTC alarm time stamp.
  */
@@ -91,7 +105,7 @@ typedef struct {
   uint32_t                  dummy;
 } RTCAlarm;
 
-#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+#if (RTC_HAS_STORAGE == TRUE) || defined(__DOXYGEN__)
 /**
  * @extends FileStream
  *
@@ -144,6 +158,9 @@ extern "C" {
   void rtc_lld_get_alarm(RTCDriver *rtcp,
                          rtcalarm_t alarm,
                          RTCAlarm *alarmspec);
+#endif
+#if RTC_SUPPORTS_CALLBACKS == TRUE
+  void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback);
 #endif
 #ifdef __cplusplus
 }

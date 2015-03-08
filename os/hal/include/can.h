@@ -28,7 +28,7 @@
 #ifndef _CAN_H_
 #define _CAN_H_
 
-#if HAL_USE_CAN || defined(__DOXYGEN__)
+#if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -141,12 +141,12 @@ extern "C" {
 #if CAN_USE_SLEEP_MODE
   void canSleep(CANDriver *canp);
   void canWakeup(CANDriver *canp);
-#endif /* CAN_USE_SLEEP_MODE */
+#endif
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_CAN */
+#endif /* HAL_USE_CAN == TRUE */
 
 #endif /* _CAN_H_ */
 

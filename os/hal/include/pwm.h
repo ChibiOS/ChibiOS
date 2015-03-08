@@ -28,7 +28,7 @@
 #ifndef _PWM_H_
 #define _PWM_H_
 
-#if HAL_USE_PWM || defined(__DOXYGEN__)
+#if (HAL_USE_PWM == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -41,22 +41,22 @@
 /**
  * @brief   Standard output modes mask.
  */
-#define PWM_OUTPUT_MASK                         0x0F
+#define PWM_OUTPUT_MASK                         0x0FU
 
 /**
  * @brief   Output not driven, callback only.
  */
-#define PWM_OUTPUT_DISABLED                     0x00
+#define PWM_OUTPUT_DISABLED                     0x00U
 
 /**
  * @brief   Positive PWM logic, active is logic level one.
  */
-#define PWM_OUTPUT_ACTIVE_HIGH                  0x01
+#define PWM_OUTPUT_ACTIVE_HIGH                  0x01U
 
 /**
  * @brief   Inverse PWM logic, active is logic level zero.
  */
-#define PWM_OUTPUT_ACTIVE_LOW                   0x02
+#define PWM_OUTPUT_ACTIVE_LOW                   0x02U
 /** @} */
 
 /*===========================================================================*/
@@ -77,7 +77,7 @@
 typedef enum {
   PWM_UNINIT = 0,                   /**< Not initialized.                   */
   PWM_STOP = 1,                     /**< Stopped.                           */
-  PWM_READY = 2,                    /**< Ready.                             */
+  PWM_READY = 2                     /**< Ready.                             */
 } pwmstate_t;
 
 /**
@@ -192,9 +192,9 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  * @iclass
  */
 #define pwmEnableChannelI(pwmp, channel, width) do {                        \
-  (pwmp)->enabled |= 1 << (channel);                                        \
+  (pwmp)->enabled |= ((pwmchnmsk_t)1U << (pwmchnmsk_t)(channel));           \
   pwm_lld_enable_channel(pwmp, channel, width);                             \
-} while (0)
+} while (false)
 
 /**
  * @brief   Disables a PWM channel.
@@ -211,9 +211,9 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  * @iclass
  */
 #define pwmDisableChannelI(pwmp, channel) do {                              \
-  (pwmp)->enabled &= ~(1 << (channel));                                     \
+  (pwmp)->enabled &= ~((pwmchnmsk_t)1U << (pwmchnmsk_t)(channel));          \
   pwm_lld_disable_channel(pwmp, channel);                                   \
-} while (0)
+} while (false)
 
 /**
  * @brief   Returns a PWM channel status.
@@ -225,7 +225,7 @@ typedef void (*pwmcallback_t)(PWMDriver *pwmp);
  * @iclass
  */
 #define pwmIsChannelEnabledI(pwmp, channel)                                 \
-  ((bool)((pwmp)->enabled & (1 << (channel))))
+  (((pwmp)->enabled & ((pwmchnmsk_t)1U << (pwmchnmsk_t)(channel))) != 0U)
 
 /**
  * @brief   Enables the periodic activation edge notification.
@@ -304,7 +304,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_PWM */
+#endif /* HAL_USE_PWM == TRUE */
 
 #endif /* _PWM_H_ */
 

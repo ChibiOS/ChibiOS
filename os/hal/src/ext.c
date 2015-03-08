@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_EXT || defined(__DOXYGEN__)
+#if (HAL_USE_EXT == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -127,7 +127,7 @@ void extStop(EXTDriver *extp) {
  */
 void extChannelEnable(EXTDriver *extp, expchannel_t channel) {
 
-  osalDbgCheck((extp != NULL) && (channel < EXT_MAX_CHANNELS));
+  osalDbgCheck((extp != NULL) && (channel < (expchannel_t)EXT_MAX_CHANNELS));
 
   osalSysLock();
   osalDbgAssert((extp->state == EXT_ACTIVE) &&
@@ -149,7 +149,7 @@ void extChannelEnable(EXTDriver *extp, expchannel_t channel) {
  */
 void extChannelDisable(EXTDriver *extp, expchannel_t channel) {
 
-  osalDbgCheck((extp != NULL) && (channel < EXT_MAX_CHANNELS));
+  osalDbgCheck((extp != NULL) && (channel < (expchannel_t)EXT_MAX_CHANNELS));
 
   osalSysLock();
   osalDbgAssert((extp->state == EXT_ACTIVE) &&
@@ -183,7 +183,7 @@ void extSetChannelModeI(EXTDriver *extp,
   EXTChannelConfig *oldcp;
 
   osalDbgCheck((extp != NULL) &&
-               (channel < EXT_MAX_CHANNELS) &&
+               (channel < (expchannel_t)EXT_MAX_CHANNELS) &&
                (extcp != NULL));
 
   osalDbgAssert(extp->state == EXT_ACTIVE, "invalid state");
@@ -198,6 +198,6 @@ void extSetChannelModeI(EXTDriver *extp,
   ext_lld_channel_enable(extp, channel);
 }
 
-#endif /* HAL_USE_EXT */
+#endif /* HAL_USE_EXT == TRUE */
 
 /** @} */

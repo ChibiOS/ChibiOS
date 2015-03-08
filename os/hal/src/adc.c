@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_ADC || defined(__DOXYGEN__)
+#if (HAL_USE_ADC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -75,12 +75,12 @@ void adcObjectInit(ADCDriver *adcp) {
   adcp->samples  = NULL;
   adcp->depth    = 0;
   adcp->grpp     = NULL;
-#if ADC_USE_WAIT
+#if ADC_USE_WAIT == TRUE
   adcp->thread   = NULL;
-#endif /* ADC_USE_WAIT */
-#if ADC_USE_MUTUAL_EXCLUSION
+#endif
+#if ADC_USE_MUTUAL_EXCLUSION == TRUE
   osalMutexObjectInit(&adcp->mutex);
-#endif /* ADC_USE_MUTUAL_EXCLUSION */
+#endif
 #if defined(ADC_DRIVER_EXT_INIT_HOOK)
   ADC_DRIVER_EXT_INIT_HOOK(adcp);
 #endif
@@ -178,7 +178,7 @@ void adcStartConversionI(ADCDriver *adcp,
 
   osalDbgCheckClassI();
   osalDbgCheck((adcp != NULL) && (grpp != NULL) && (samples != NULL) &&
-               ((depth == 1) || ((depth & 1) == 0)));
+               ((depth == 1U) || ((depth & 1U) == 0U)));
   osalDbgAssert((adcp->state == ADC_READY) ||
                 (adcp->state == ADC_COMPLETE) ||
                 (adcp->state == ADC_ERROR),
@@ -244,7 +244,7 @@ void adcStopConversionI(ADCDriver *adcp) {
   }
 }
 
-#if ADC_USE_WAIT || defined(__DOXYGEN__)
+#if (ADC_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Performs an ADC conversion.
  * @details Performs a synchronous conversion operation.
@@ -281,9 +281,9 @@ msg_t adcConvert(ADCDriver *adcp,
   osalSysUnlock();
   return msg;
 }
-#endif /* ADC_USE_WAIT */
+#endif /* ADC_USE_WAIT == TRUE */
 
-#if ADC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if (ADC_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Gains exclusive access to the ADC peripheral.
  * @details This function tries to gain ownership to the ADC bus, if the bus
@@ -317,8 +317,8 @@ void adcReleaseBus(ADCDriver *adcp) {
 
   osalMutexUnlock(&adcp->mutex);
 }
-#endif /* ADC_USE_MUTUAL_EXCLUSION */
+#endif /* ADC_USE_MUTUAL_EXCLUSION == TRUE */
 
-#endif /* HAL_USE_ADC */
+#endif /* HAL_USE_ADC == TRUE */
 
 /** @} */

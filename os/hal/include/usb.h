@@ -28,54 +28,54 @@
 #ifndef _USB_H_
 #define _USB_H_
 
-#if HAL_USE_USB || defined(__DOXYGEN__)
+#if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
 #define USB_ENDPOINT_OUT(ep)                (ep)
-#define USB_ENDPOINT_IN(ep)                 ((ep) | 0x80)
+#define USB_ENDPOINT_IN(ep)                 ((ep) | 0x80U)
 
-#define USB_RTYPE_DIR_MASK                  0x80
-#define USB_RTYPE_DIR_HOST2DEV              0x00
-#define USB_RTYPE_DIR_DEV2HOST              0x80
-#define USB_RTYPE_TYPE_MASK                 0x60
-#define USB_RTYPE_TYPE_STD                  0x00
-#define USB_RTYPE_TYPE_CLASS                0x20
-#define USB_RTYPE_TYPE_VENDOR               0x40
-#define USB_RTYPE_TYPE_RESERVED             0x60
-#define USB_RTYPE_RECIPIENT_MASK            0x1F
-#define USB_RTYPE_RECIPIENT_DEVICE          0x00
-#define USB_RTYPE_RECIPIENT_INTERFACE       0x01
-#define USB_RTYPE_RECIPIENT_ENDPOINT        0x02
-#define USB_RTYPE_RECIPIENT_OTHER           0x03
+#define USB_RTYPE_DIR_MASK                  0x80U
+#define USB_RTYPE_DIR_HOST2DEV              0x00U
+#define USB_RTYPE_DIR_DEV2HOST              0x80U
+#define USB_RTYPE_TYPE_MASK                 0x60U
+#define USB_RTYPE_TYPE_STD                  0x00U
+#define USB_RTYPE_TYPE_CLASS                0x20U
+#define USB_RTYPE_TYPE_VENDOR               0x40U
+#define USB_RTYPE_TYPE_RESERVED             0x60U
+#define USB_RTYPE_RECIPIENT_MASK            0x1FU
+#define USB_RTYPE_RECIPIENT_DEVICE          0x00U
+#define USB_RTYPE_RECIPIENT_INTERFACE       0x01U
+#define USB_RTYPE_RECIPIENT_ENDPOINT        0x02U
+#define USB_RTYPE_RECIPIENT_OTHER           0x03U
 
-#define USB_REQ_GET_STATUS                  0
-#define USB_REQ_CLEAR_FEATURE               1
-#define USB_REQ_SET_FEATURE                 3
-#define USB_REQ_SET_ADDRESS                 5
-#define USB_REQ_GET_DESCRIPTOR              6
-#define USB_REQ_SET_DESCRIPTOR              7
-#define USB_REQ_GET_CONFIGURATION           8
-#define USB_REQ_SET_CONFIGURATION           9
-#define USB_REQ_GET_INTERFACE               10
-#define USB_REQ_SET_INTERFACE               11
-#define USB_REQ_SYNCH_FRAME                 12
+#define USB_REQ_GET_STATUS                  0U
+#define USB_REQ_CLEAR_FEATURE               1U
+#define USB_REQ_SET_FEATURE                 3U
+#define USB_REQ_SET_ADDRESS                 5U
+#define USB_REQ_GET_DESCRIPTOR              6U
+#define USB_REQ_SET_DESCRIPTOR              7U
+#define USB_REQ_GET_CONFIGURATION           8U
+#define USB_REQ_SET_CONFIGURATION           9U
+#define USB_REQ_GET_INTERFACE               10U
+#define USB_REQ_SET_INTERFACE               11U
+#define USB_REQ_SYNCH_FRAME                 12U
 
-#define USB_DESCRIPTOR_DEVICE               1
-#define USB_DESCRIPTOR_CONFIGURATION        2
-#define USB_DESCRIPTOR_STRING               3
-#define USB_DESCRIPTOR_INTERFACE            4
-#define USB_DESCRIPTOR_ENDPOINT             5
-#define USB_DESCRIPTOR_DEVICE_QUALIFIER     6
-#define USB_DESCRIPTOR_OTHER_SPEED_CFG      7
-#define USB_DESCRIPTOR_INTERFACE_POWER      8
-#define USB_DESCRIPTOR_INTERFACE_ASSOCIATION 11
+#define USB_DESCRIPTOR_DEVICE               1U
+#define USB_DESCRIPTOR_CONFIGURATION        2U
+#define USB_DESCRIPTOR_STRING               3U
+#define USB_DESCRIPTOR_INTERFACE            4U
+#define USB_DESCRIPTOR_ENDPOINT             5U
+#define USB_DESCRIPTOR_DEVICE_QUALIFIER     6U
+#define USB_DESCRIPTOR_OTHER_SPEED_CFG      7U
+#define USB_DESCRIPTOR_INTERFACE_POWER      8U
+#define USB_DESCRIPTOR_INTERFACE_ASSOCIATION 11U
 
-#define USB_FEATURE_ENDPOINT_HALT           0
-#define USB_FEATURE_DEVICE_REMOTE_WAKEUP    1
-#define USB_FEATURE_TEST_MODE               2
+#define USB_FEATURE_ENDPOINT_HALT           0U
+#define USB_FEATURE_DEVICE_REMOTE_WAKEUP    1U
+#define USB_FEATURE_TEST_MODE               2U
 
 #define USB_EARLY_SET_ADDRESS               0
 #define USB_LATE_SET_ADDRESS                1
@@ -104,20 +104,20 @@
  * @brief   Helper macro for word values into descriptor strings.
  */
 #define USB_DESC_WORD(w)                                                    \
-  (uint8_t)((w) & 255),                                                     \
-  (uint8_t)(((w) >> 8) & 255)
+  (uint8_t)((w) & 255U),                                                    \
+  (uint8_t)(((w) >> 8) & 255U)
 
 /**
  * @brief   Helper macro for BCD values into descriptor strings.
  */
 #define USB_DESC_BCD(bcd)                                                   \
-  (uint8_t)((bcd) & 255),                                                   \
+  (uint8_t)((bcd) & 255U),                                                  \
   (uint8_t)(((bcd) >> 8) & 255)
 
 /*
  * @define  Device Descriptor size.
  */
-#define USB_DESC_DEVICE_SIZE                18
+#define USB_DESC_DEVICE_SIZE                18U
 
 /**
  * @brief   Device Descriptor helper macro.
@@ -144,7 +144,7 @@
 /**
  * @brief   Configuration Descriptor size.
  */
-#define USB_DESC_CONFIGURATION_SIZE         9
+#define USB_DESC_CONFIGURATION_SIZE         9U
 
 /**
  * @brief   Configuration Descriptor helper macro.
@@ -164,7 +164,7 @@
 /**
  * @brief   Interface Descriptor size.
  */
-#define USB_DESC_INTERFACE_SIZE             9
+#define USB_DESC_INTERFACE_SIZE             9U
 
 /**
  * @brief   Interface Descriptor helper macro.
@@ -186,7 +186,7 @@
 /**
  * @brief   Interface Association Descriptor size.
  */
-#define USB_DESC_INTERFACE_ASSOCIATION_SIZE 8
+#define USB_DESC_INTERFACE_ASSOCIATION_SIZE 8U
 
 /**
  * @brief   Interface Association Descriptor helper macro.
@@ -207,7 +207,7 @@
 /**
  * @brief   Endpoint Descriptor size.
  */
-#define USB_DESC_ENDPOINT_SIZE              7
+#define USB_DESC_ENDPOINT_SIZE              7U
 
 /**
  * @brief   Endpoint Descriptor helper macro.
@@ -226,13 +226,13 @@
  * @name    Endpoint types and settings
  * @{
  */
-#define USB_EP_MODE_TYPE                0x0003  /**< Endpoint type mask.    */
-#define USB_EP_MODE_TYPE_CTRL           0x0000  /**< Control endpoint.      */
-#define USB_EP_MODE_TYPE_ISOC           0x0001  /**< Isochronous endpoint.  */
-#define USB_EP_MODE_TYPE_BULK           0x0002  /**< Bulk endpoint.         */
-#define USB_EP_MODE_TYPE_INTR           0x0003  /**< Interrupt endpoint.    */
-#define USB_EP_MODE_LINEAR_BUFFER       0x0000  /**< Linear buffer mode.    */
-#define USB_EP_MODE_QUEUE_BUFFER        0x0010  /**< Queue buffer mode.     */
+#define USB_EP_MODE_TYPE                0x0003U /**< Endpoint type mask.    */
+#define USB_EP_MODE_TYPE_CTRL           0x0000U /**< Control endpoint.      */
+#define USB_EP_MODE_TYPE_ISOC           0x0001U /**< Isochronous endpoint.  */
+#define USB_EP_MODE_TYPE_BULK           0x0002U /**< Bulk endpoint.         */
+#define USB_EP_MODE_TYPE_INTR           0x0003U /**< Interrupt endpoint.    */
+#define USB_EP_MODE_LINEAR_BUFFER       0x0000U /**< Linear buffer mode.    */
+#define USB_EP_MODE_QUEUE_BUFFER        0x0010U /**< Queue buffer mode.     */
 /** @} */
 
 /*===========================================================================*/
@@ -383,15 +383,6 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 #define usbGetDriverStateI(usbp) ((usbp)->state)
 
 /**
- * @brief   Fetches a 16 bits word value from an USB message.
- *
- * @param[in] p         pointer to the 16 bits word
- *
- * @notapi
- */
-#define usbFetchWord(p) ((uint16_t)*(p) | ((uint16_t)*((p) + 1) << 8))
-
-/**
  * @brief   Connects the USB device.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
@@ -430,7 +421,8 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *
  * @iclass
  */
-#define usbGetTransmitStatusI(usbp, ep) ((usbp)->transmitting & (1 << (ep)))
+#define usbGetTransmitStatusI(usbp, ep)                                     \
+  (((usbp)->transmitting & (uint16_t)((unsigned)1U << (unsigned)(ep))) != 0U)
 
 /**
  * @brief   Returns the status of an OUT endpoint.
@@ -443,7 +435,8 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *
  * @iclass
  */
-#define usbGetReceiveStatusI(usbp, ep) ((usbp)->receiving & (1 << (ep)))
+#define usbGetReceiveStatusI(usbp, ep)                                      \
+  (((usbp)->receiving & (uint16_t)((unsigned)1U << (unsigned)(ep))) != 0U)
 
 /**
  * @brief   Returns the exact size of a receive transaction.
@@ -508,8 +501,9 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @notapi
  */
 #define _usb_isr_invoke_event_cb(usbp, evt) {                               \
-  if (((usbp)->config->event_cb) != NULL)                                   \
+  if (((usbp)->config->event_cb) != NULL) {                                 \
     (usbp)->config->event_cb(usbp, evt);                                    \
+  }                                                                         \
 }
 
 /**
@@ -520,8 +514,9 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @notapi
  */
 #define _usb_isr_invoke_sof_cb(usbp) {                                      \
-  if (((usbp)->config->sof_cb) != NULL)                                     \
+  if (((usbp)->config->sof_cb) != NULL) {                                   \
     (usbp)->config->sof_cb(usbp);                                           \
+  }                                                                         \
 }
 
 /**
@@ -598,7 +593,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_USB */
+#endif /* HAL_USE_USB == TRUE */
 
 #endif /* _USB_H_ */
 

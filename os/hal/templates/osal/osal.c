@@ -78,8 +78,8 @@ void osalSysHalt(const char *reason) {
 
   osalSysDisable();
   osal_halt_msg = reason;
-  while (1)
-    ;
+  while (true) {
+  }
 }
 
 /**

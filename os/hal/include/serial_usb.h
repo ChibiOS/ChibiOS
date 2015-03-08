@@ -28,7 +28,7 @@
 #ifndef _SERIAL_USB_H_
 #define _SERIAL_USB_H_
 
-#if HAL_USE_SERIAL_USB || defined(__DOXYGEN__)
+#if (HAL_USE_SERIAL_USB == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -130,7 +130,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !HAL_USE_USB
+#if HAL_USE_USB == FALSE
 #error "Serial over USB Driver requires HAL_USE_USB"
 #endif
 
@@ -245,7 +245,7 @@ struct SerialUSBDriver {
 extern "C" {
 #endif
   void sduInit(void);
-  void sduObjectInit(SerialUSBDriver *sdp);
+  void sduObjectInit(SerialUSBDriver *sdup);
   void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config);
   void sduStop(SerialUSBDriver *sdup);
   void sduConfigureHookI(SerialUSBDriver *sdup);
@@ -257,7 +257,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_SERIAL_USB */
+#endif /* HAL_USE_SERIAL_USB == TRUE */
 
 #endif /* _SERIAL_USB_H_ */
 

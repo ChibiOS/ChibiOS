@@ -28,7 +28,7 @@
 #ifndef _GPT_H_
 #define _GPT_H_
 
-#if HAL_USE_GPT || defined(__DOXYGEN__)
+#if (HAL_USE_GPT == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -137,7 +137,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_GPT */
+#endif /* HAL_USE_GPT == TRUE */
 
 #endif /* _GPT_H_ */
 

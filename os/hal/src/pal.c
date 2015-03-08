@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_PAL || defined(__DOXYGEN__)
+#if (HAL_USE_PAL == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -120,6 +120,6 @@ void palSetBusMode(IOBus *bus, iomode_t mode) {
   palSetGroupMode(bus->portid, bus->mask, bus->offset, mode);
 }
 
-#endif /* HAL_USE_PAL */
+#endif /* HAL_USE_PAL == TRUE */
 
 /** @} */

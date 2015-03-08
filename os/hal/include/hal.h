@@ -77,8 +77,10 @@
 #include "serial_usb.h"
 
 /* Community drivers.*/
-#if HAL_USE_COMMUNITY
+#if defined(HAL_USE_COMMUNITY) || defined(__DOXYGEN__)
+#if (HAL_USE_COMMUNITY == TRUE) || defined(__DOXYGEN__)
 #include "hal_community.h"
+#endif
 #endif
 
 /*===========================================================================*/

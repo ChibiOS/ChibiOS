@@ -27,13 +27,13 @@
 
 #include "hal.h"
 
-#if HAL_USE_MAC || defined(__DOXYGEN__)
+#if (HAL_USE_MAC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#if MAC_USE_ZERO_COPY && !MAC_SUPPORTS_ZERO_COPY
+#if (MAC_USE_ZERO_COPY == TRUE) && (MAC_SUPPORTS_ZERO_COPY == FALSE)
 #error "MAC_USE_ZERO_COPY not supported by this implementation"
 #endif
 
@@ -82,7 +82,7 @@ void macObjectInit(MACDriver *macp) {
   macp->config = NULL;
   osalThreadQueueObjectInit(&macp->tdqueue);
   osalThreadQueueObjectInit(&macp->rdqueue);
-#if MAC_USE_EVENTS
+#if MAC_USE_EVENTS == TRUE
   osalEventObjectInit(&macp->rdevent);
 #endif
 }
@@ -135,7 +135,7 @@ void macStop(MACDriver *macp) {
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @param[out] tdp      pointer to a @p MACTransmitDescriptor structure
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -148,7 +148,7 @@ void macStop(MACDriver *macp) {
  */
 msg_t macWaitTransmitDescriptor(MACDriver *macp,
                                 MACTransmitDescriptor *tdp,
-                                systime_t time) {
+                                systime_t timeout) {
   msg_t msg;
   systime_t now;
 
@@ -156,16 +156,17 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
   osalDbgAssert(macp->state == MAC_ACTIVE, "not active");
 
   while (((msg = mac_lld_get_transmit_descriptor(macp, tdp)) != MSG_OK) &&
-         (time > 0)) {
+         (timeout > 0U)) {
     osalSysLock();
     now = osalOsGetSystemTimeX();
-    msg = osalThreadEnqueueTimeoutS(&macp->tdqueue, time);
+    msg = osalThreadEnqueueTimeoutS(&macp->tdqueue, timeout);
     if (msg == MSG_TIMEOUT) {
       osalSysUnlock();
       break;
     }
-    if (time != TIME_INFINITE)
-      time -= (osalOsGetSystemTimeX() - now);
+    if (timeout != TIME_INFINITE) {
+      timeout -= (osalOsGetSystemTimeX() - now);
+    }
     osalSysUnlock();
   }
   return msg;
@@ -194,7 +195,7 @@ void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp) {
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @param[out] rdp      pointer to a @p MACReceiveDescriptor structure
- * @param[in] time      the number of ticks before the operation timeouts,
+ * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
@@ -207,7 +208,7 @@ void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp) {
  */
 msg_t macWaitReceiveDescriptor(MACDriver *macp,
                                MACReceiveDescriptor *rdp,
-                               systime_t time) {
+                               systime_t timeout) {
   msg_t msg;
   systime_t now;
 
@@ -215,16 +216,17 @@ msg_t macWaitReceiveDescriptor(MACDriver *macp,
   osalDbgAssert(macp->state == MAC_ACTIVE, "not active");
 
   while (((msg = mac_lld_get_receive_descriptor(macp, rdp)) != MSG_OK) &&
-         (time > 0)) {
+         (timeout > 0U)) {
     osalSysLock();
     now = osalOsGetSystemTimeX();
-    msg = osalThreadEnqueueTimeoutS(&macp->rdqueue, time);
+    msg = osalThreadEnqueueTimeoutS(&macp->rdqueue, timeout);
     if (msg == MSG_TIMEOUT) {
       osalSysUnlock();
       break;
     }
-    if (time != TIME_INFINITE)
-      time -= (osalOsGetSystemTimeX() - now);
+    if (timeout != TIME_INFINITE) {
+      timeout -= (osalOsGetSystemTimeX() - now);
+    }
     osalSysUnlock();
   }
   return msg;
@@ -264,6 +266,6 @@ bool macPollLinkStatus(MACDriver *macp) {
   return mac_lld_poll_link_status(macp);
 }
 
-#endif /* HAL_USE_MAC */
+#endif /* HAL_USE_MAC == TRUE */
 
 /** @} */

@@ -27,7 +27,7 @@
 #ifndef _MAC_H_
 #define _MAC_H_
 
-#if HAL_USE_MAC || defined(__DOXYGEN__)
+#if (HAL_USE_MAC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -96,7 +96,7 @@ typedef struct MACDriver MACDriver;
  *
  * @api
  */
-#if MAC_USE_EVENTS || defined(__DOXYGEN__)
+#if (MAC_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 #define macGetReceiveEventSource(macp)  (&(macp)->rdevent)
 #endif
 
@@ -131,7 +131,7 @@ typedef struct MACDriver MACDriver;
 #define macReadReceiveDescriptor(rdp, buf, size)                            \
     mac_lld_read_receive_descriptor(rdp, buf, size)
 
-#if MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
+#if (MAC_USE_ZERO_COPY == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Returns a pointer to the next transmit buffer in the descriptor
  *          chain.
@@ -187,18 +187,18 @@ extern "C" {
   void macSetAddress(MACDriver *macp, const uint8_t *p);
   msg_t macWaitTransmitDescriptor(MACDriver *macp,
                                   MACTransmitDescriptor *tdp,
-                                  systime_t time);
+                                  systime_t timeout);
   void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp);
   msg_t macWaitReceiveDescriptor(MACDriver *macp,
                                  MACReceiveDescriptor *rdp,
-                                 systime_t time);
+                                 systime_t timeout);
   void macReleaseReceiveDescriptor(MACReceiveDescriptor *rdp);
   bool macPollLinkStatus(MACDriver *macp);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_MAC */
+#endif /* HAL_USE_MAC == TRUE */
 
 #endif /* _MAC_H_ */
 

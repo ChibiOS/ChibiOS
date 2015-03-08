@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_DAC || defined(__DOXYGEN__)
+#if (HAL_USE_DAC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -74,10 +74,10 @@ void dacObjectInit(DACDriver *dacp) {
   dacp->config = NULL;
 #if DAC_USE_WAIT
   dacp->thread = NULL;
-#endif /* DAC_USE_WAIT */
+#endif
 #if DAC_USE_MUTUAL_EXCLUSION
   osalMutexObjectInit(&dacp->mutex);
-#endif /* DAC_USE_MUTUAL_EXCLUSION */
+#endif
 #if defined(DAC_DRIVER_EXT_INIT_HOOK)
   DAC_DRIVER_EXT_INIT_HOOK(dacp);
 #endif
@@ -252,7 +252,7 @@ void dacStopConversionI(DACDriver *dacp) {
   }
 }
 
-#if DAC_USE_WAIT || defined(__DOXYGEN__)
+#if (DAC_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Performs a DAC conversion.
  * @details Performs a synchronous conversion operation.
@@ -290,9 +290,9 @@ msg_t dacConvert(DACDriver *dacp,
   osalSysUnlock();
   return msg;
 }
-#endif /* DAC_USE_WAIT */
+#endif /* DAC_USE_WAIT == TRUE */
 
-#if DAC_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if (DAC_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Gains exclusive access to the DAC bus.
  * @details This function tries to gain ownership to the DAC bus, if the bus
@@ -326,8 +326,8 @@ void dacReleaseBus(DACDriver *dacp) {
 	
   osalMutexUnlock(&dacp->mutex);
 }
-#endif /* DAC_USE_MUTUAL_EXCLUSION */
+#endif /* DAC_USE_MUTUAL_EXCLUSION == TRUE */
 
-#endif /* HAL_USE_DAC */
+#endif /* HAL_USE_DAC == TRUE */
 
 /** @} */

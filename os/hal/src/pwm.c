@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_PWM || defined(__DOXYGEN__)
+#if (HAL_USE_PWM == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -269,7 +269,7 @@ void pwmEnableChannelNotification(PWMDriver *pwmp, pwmchannel_t channel) {
   osalSysLock();
 
   osalDbgAssert(pwmp->state == PWM_READY, "not ready");
-  osalDbgAssert((pwmp->enabled & (1 << channel)) != 0,
+  osalDbgAssert((pwmp->enabled & ((pwmchnmsk_t)1U << (pwmchnmsk_t)channel)) != 0U,
                 "channel not enabled");
   osalDbgAssert(pwmp->config->channels[channel].callback != NULL,
                 "undefined channel callback");
@@ -297,7 +297,7 @@ void pwmDisableChannelNotification(PWMDriver *pwmp, pwmchannel_t channel) {
   osalSysLock();
 
   osalDbgAssert(pwmp->state == PWM_READY, "not ready");
-  osalDbgAssert((pwmp->enabled & (1 << channel)) != 0,
+  osalDbgAssert((pwmp->enabled & ((pwmchnmsk_t)1U << (pwmchnmsk_t)channel)) != 0U,
                 "channel not enabled");
   osalDbgAssert(pwmp->config->channels[channel].callback != NULL,
                 "undefined channel callback");
@@ -307,6 +307,6 @@ void pwmDisableChannelNotification(PWMDriver *pwmp, pwmchannel_t channel) {
   osalSysUnlock();
 }
 
-#endif /* HAL_USE_PWM */
+#endif /* HAL_USE_PWM == TRUE */
 
 /** @} */

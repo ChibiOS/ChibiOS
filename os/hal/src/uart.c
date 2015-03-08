@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_UART || defined(__DOXYGEN__)
+#if (HAL_USE_UART == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -137,7 +137,7 @@ void uartStop(UARTDriver *uartp) {
  */
 void uartStartSend(UARTDriver *uartp, size_t n, const void *txbuf) {
 
-  osalDbgCheck((uartp != NULL) && (n > 0) && (txbuf != NULL));
+  osalDbgCheck((uartp != NULL) && (n > 0U) && (txbuf != NULL));
              
   osalSysLock();
   osalDbgAssert(uartp->state == UART_READY, "is active");
@@ -163,7 +163,7 @@ void uartStartSend(UARTDriver *uartp, size_t n, const void *txbuf) {
 void uartStartSendI(UARTDriver *uartp, size_t n, const void *txbuf) {
 
   osalDbgCheckClassI();
-  osalDbgCheck((uartp != NULL) && (n > 0) && (txbuf != NULL));
+  osalDbgCheck((uartp != NULL) && (n > 0U) && (txbuf != NULL));
   osalDbgAssert(uartp->state == UART_READY, "is active");
   osalDbgAssert(uartp->txstate != UART_TX_ACTIVE, "tx active");
 
@@ -195,9 +195,11 @@ size_t uartStopSend(UARTDriver *uartp) {
     n = uart_lld_stop_send(uartp);
     uartp->txstate = UART_TX_IDLE;
   }
-  else
+  else {
     n = 0;
+  }
   osalSysUnlock();
+
   return n;
 }
 
@@ -241,7 +243,7 @@ size_t uartStopSendI(UARTDriver *uartp) {
  */
 void uartStartReceive(UARTDriver *uartp, size_t n, void *rxbuf) {
 
-  osalDbgCheck((uartp != NULL) && (n > 0) && (rxbuf != NULL));
+  osalDbgCheck((uartp != NULL) && (n > 0U) && (rxbuf != NULL));
 
   osalSysLock();
   osalDbgAssert(uartp->state == UART_READY, "is active");
@@ -267,7 +269,7 @@ void uartStartReceive(UARTDriver *uartp, size_t n, void *rxbuf) {
 void uartStartReceiveI(UARTDriver *uartp, size_t n, void *rxbuf) {
 
   osalDbgCheckClassI();
-  osalDbgCheck((uartp != NULL) && (n > 0) && (rxbuf != NULL));
+  osalDbgCheck((uartp != NULL) && (n > 0U) && (rxbuf != NULL));
   osalDbgAssert(uartp->state == UART_READY, "is active");
   osalDbgAssert(uartp->rxstate != UART_RX_ACTIVE, "rx active");
 
@@ -299,9 +301,11 @@ size_t uartStopReceive(UARTDriver *uartp) {
     n = uart_lld_stop_receive(uartp);
     uartp->rxstate = UART_RX_IDLE;
   }
-  else
+  else {
     n = 0;
+  }
   osalSysUnlock();
+
   return n;
 }
 
@@ -332,6 +336,6 @@ size_t uartStopReceiveI(UARTDriver *uartp) {
   return 0;
 }
 
-#endif /* HAL_USE_UART */
+#endif /* HAL_USE_UART == TRUE */
 
 /** @} */

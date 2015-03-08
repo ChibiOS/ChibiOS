@@ -28,7 +28,7 @@
 #ifndef _EXT_H_
 #define _EXT_H_
 
-#if HAL_USE_EXT || defined(__DOXYGEN__)
+#if (HAL_USE_EXT == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -38,13 +38,13 @@
  * @name    EXT channel modes
  * @{
  */
-#define EXT_CH_MODE_EDGES_MASK      3   /**< @brief Mask of edges field.    */
-#define EXT_CH_MODE_DISABLED        0   /**< @brief Channel disabled.       */
-#define EXT_CH_MODE_RISING_EDGE     1   /**< @brief Rising edge callback.   */
-#define EXT_CH_MODE_FALLING_EDGE    2   /**< @brief Falling edge callback.  */
-#define EXT_CH_MODE_BOTH_EDGES      3   /**< @brief Both edges callback.    */
+#define EXT_CH_MODE_EDGES_MASK      3U  /**< @brief Mask of edges field.    */
+#define EXT_CH_MODE_DISABLED        0U  /**< @brief Channel disabled.       */
+#define EXT_CH_MODE_RISING_EDGE     1U  /**< @brief Rising edge callback.   */
+#define EXT_CH_MODE_FALLING_EDGE    2U  /**< @brief Falling edge callback.  */
+#define EXT_CH_MODE_BOTH_EDGES      3U  /**< @brief Both edges callback.    */
 
-#define EXT_CH_MODE_AUTOSTART       4   /**< @brief Channel started
+#define EXT_CH_MODE_AUTOSTART       4U  /**< @brief Channel started
                                              automatically on driver start. */
 /** @} */
 
@@ -66,7 +66,7 @@
 typedef enum {
   EXT_UNINIT = 0,                   /**< Not initialized.                   */
   EXT_STOP = 1,                     /**< Stopped.                           */
-  EXT_ACTIVE = 2,                   /**< Active.                            */
+  EXT_ACTIVE = 2                    /**< Active.                            */
 } extstate_t;
 
 /**
@@ -146,7 +146,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_EXT */
+#endif /* HAL_USE_EXT == TRUE */
 
 #endif /* _EXT_H_ */
 

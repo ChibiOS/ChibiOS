@@ -27,7 +27,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_SERIAL || defined(__DOXYGEN__)
+#if (HAL_USE_SERIAL == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -82,14 +82,14 @@ static msg_t gett(void *ip, systime_t timeout) {
   return iqGetTimeout(&((SerialDriver *)ip)->iqueue, timeout);
 }
 
-static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t time) {
+static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
 
-  return oqWriteTimeout(&((SerialDriver *)ip)->oqueue, bp, n, time);
+  return oqWriteTimeout(&((SerialDriver *)ip)->oqueue, bp, n, timeout);
 }
 
-static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t time) {
+static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
 
-  return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, time);
+  return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, timeout);
 }
 
 static const struct SerialDriverVMT vmt = {
@@ -237,6 +237,6 @@ msg_t sdRequestDataI(SerialDriver *sdp) {
   return b;
 }
 
-#endif /* HAL_USE_SERIAL */
+#endif /* HAL_USE_SERIAL == TRUE */
 
 /** @} */
