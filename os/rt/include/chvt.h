@@ -447,9 +447,7 @@ static inline void chVTDoTickI(void) {
 
 #if CH_CFG_ST_TIMEDELTA == 0
   ch.vtlist.vt_systime++;
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   if (&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.vt_next) {
-  /*lint -restore*/
     virtual_timer_t *vtp;
 
     --ch.vtlist.vt_next->vt_delta;
@@ -459,9 +457,7 @@ static inline void chVTDoTickI(void) {
       vtp = ch.vtlist.vt_next;
       fn = vtp->vt_func;
       vtp->vt_func = NULL;
-      /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
       vtp->vt_next->vt_prev = (virtual_timer_t *)&ch.vtlist;
-      /*lint -restore*/
       ch.vtlist.vt_next = vtp->vt_next;
       chSysUnlockFromISR();
       fn(vtp->vt_par);
@@ -493,9 +489,7 @@ static inline void chVTDoTickI(void) {
     ch.vtlist.vt_lasttime += vtp->vt_delta;
 
     /* The timer is removed from the list and marked as non-armed.*/
-    /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
     vtp->vt_next->vt_prev = (virtual_timer_t *)&ch.vtlist;
-    /*lint -restore*/
     ch.vtlist.vt_next = vtp->vt_next;
     fn = vtp->vt_func;
     vtp->vt_func = NULL;
@@ -505,9 +499,7 @@ static inline void chVTDoTickI(void) {
     fn(vtp->vt_par);
     chSysLockFromISR();
   }
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
-  /*lint -restore*/
     /* The list is empty, no tick event needed so the alarm timer
        is stopped.*/
     port_timer_stop_alarm();

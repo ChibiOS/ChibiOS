@@ -201,7 +201,7 @@ typedef io_queue_t output_queue_t;
  * @xclass
  */
 #define chQSizeX(qp)                                                        \
-  /*lint -save -e946 -e947 -e9033 [18.2, 18.3, 10.8] Perfectly safe.*/      \
+  /*lint -save -e9033 [10.8] The cast is safe.*/                            \
   ((size_t)((qp)->q_top - (qp)->q_buffer))                                  \
   /*lint -restore*/
 

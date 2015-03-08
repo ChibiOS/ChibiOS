@@ -169,9 +169,7 @@ extern "C" {
  */
 static inline void chEvtObjectInit(event_source_t *esp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   esp->es_next = (event_listener_t *)esp;
-  /*lint -restore*/
 }
 
 /**
@@ -225,9 +223,7 @@ static inline void chEvtRegister(event_source_t *esp,
  */
 static inline bool chEvtIsListeningI(event_source_t *esp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(esp != (event_source_t *)esp->es_next);
-  /*lint -restore*/
 }
 
 /**

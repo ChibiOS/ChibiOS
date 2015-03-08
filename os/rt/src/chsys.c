@@ -138,11 +138,8 @@ void chSysInit(void) {
   /* This thread has the lowest priority in the system, its role is just to
      serve interrupts in its context while keeping the lowest energy saving
      mode compatible with the system status.*/
-  /*lint -save -e9074 -e9087 [11.3, 11.1] The idle thread returns void because
-    an optimization.*/
   (void) chThdCreateStatic(ch.idle_thread_wa, sizeof(ch.idle_thread_wa),
                            IDLEPRIO, (tfunc_t)_idle_thread, NULL);
-  /*lint -restore*/
 #endif
 }
 

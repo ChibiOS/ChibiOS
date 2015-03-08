@@ -134,8 +134,7 @@ void *chCoreAllocI(size_t size) {
   chDbgCheckClassI();
 
   size = MEM_ALIGN_NEXT(size);
-  /*lint -save -e9033 -e946 -e947 [10.8, 18.2, 18.3] Normal pointers
-    arithmetic, it is safe.*/
+  /*lint -save -e9033 [10.8] The cast is safe.*/
   if ((size_t)(endmem - nextmem) < size) {
   /*lint -restore*/
     return NULL;
@@ -155,8 +154,7 @@ void *chCoreAllocI(size_t size) {
  */
 size_t chCoreGetStatusX(void) {
 
-  /*lint -save -e9033 -e946 -e947 [10.8, 18.2, 18.3] Normal pointers
-    arithmetic, it is safe.*/
+  /*lint -save -e9033 [10.8] The cast is safe.*/
   return (size_t)(endmem - nextmem);
   /*lint -restore*/
 }

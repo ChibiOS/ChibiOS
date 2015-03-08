@@ -80,9 +80,7 @@ static inline bool chMsgIsPendingI(thread_t *tp) {
 
   chDbgCheckClassI();
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(tp->p_msgqueue.p_next != (thread_t *)&tp->p_msgqueue);
-  /*lint -restore*/
 }
 
 /**

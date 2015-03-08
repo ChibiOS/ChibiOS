@@ -164,15 +164,15 @@ typedef struct {
  * @api
  */
 #if !defined(chDbgCheck)
-#if CH_DBG_ENABLE_CHECKS
 #define chDbgCheck(c) do {                                                  \
-  if (!(c)) {                                                               \
-    chSysHalt(__func__);                                                    \
+  /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
+  if (CH_DBG_ENABLE_CHECKS != FALSE) {                                      \
+    if (!(c)) {                                                             \
+  /*lint -restore*/                                                         \
+      chSysHalt(__func__);                                                  \
+    }                                                                       \
   }                                                                         \
 } while (false)
-#else
-#define chDbgCheck(c)
-#endif
 #endif /* !defined(chDbgCheck) */
 
 /**
@@ -190,17 +190,15 @@ typedef struct {
  * @api
  */
 #if !defined(chDbgAssert)
-#if CH_DBG_ENABLE_ASSERTS == TRUE
 #define chDbgAssert(c, r) do {                                              \
-  /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant.*/                 \
-  if (!(c)) {                                                               \
+  /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
+  if (CH_DBG_ENABLE_ASSERTS != FALSE) {                                     \
+    if (!(c)) {                                                             \
   /*lint -restore*/                                                         \
-    chSysHalt(__func__);                                                    \
+      chSysHalt(__func__);                                                  \
+    }                                                                       \
   }                                                                         \
 } while (false)
-#else
-#define chDbgAssert(c, r)
-#endif
 #endif /* !defined(chDbgAssert) */
 /** @} */
 

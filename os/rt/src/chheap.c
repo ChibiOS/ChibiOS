@@ -224,13 +224,10 @@ void chHeapFree(void *p) {
 
   H_LOCK(heapp);
   while (true) {
-    /*lint -save -e946 -e947 [18.2, 18.3] Normal pointers arithmetic, it
-      is safe.*/
     chDbgAssert((hp < qp) || (hp >= LIMIT(qp)), "within free block");
 
     if (((qp == &heapp->h_free) || (hp > qp)) &&
         ((qp->h.u.next == NULL) || (hp < qp->h.u.next))) {
-    /*lint -restore*/
       /* Insertion after qp.*/
       hp->h.u.next = qp->h.u.next;
       qp->h.u.next = hp;

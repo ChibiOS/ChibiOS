@@ -60,10 +60,8 @@
  */
 void _vt_init(void) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   ch.vtlist.vt_next = (virtual_timer_t *)&ch.vtlist;
   ch.vtlist.vt_prev = (virtual_timer_t *)&ch.vtlist;
-  /*lint -restore*/
   ch.vtlist.vt_delta = (systime_t)-1;
 #if CH_CFG_ST_TIMEDELTA == 0
   ch.vtlist.vt_systime = 0;
@@ -115,9 +113,7 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
       delay = (systime_t)CH_CFG_ST_TIMEDELTA;
     }
 
-    /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
     if (&ch.vtlist == (virtual_timers_list_t *)p) {
-    /*lint -restore*/
       /* The delta list is empty, the current time becomes the new
          delta list base time.*/
       ch.vtlist.vt_lasttime = now;
@@ -183,9 +179,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
 #if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
   {
-    /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
     if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
-    /*lint -restore*/
       /* Just removed the last element in the list, alarm timer stopped.*/
       port_timer_stop_alarm();
     }

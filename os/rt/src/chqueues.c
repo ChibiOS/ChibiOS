@@ -139,12 +139,9 @@ msg_t chIQPutI(input_queue_t *iqp, uint8_t b) {
     return Q_FULL;
   }
 
-  *iqp->q_wrptr = b;
-  iqp->q_wrptr++;
   iqp->q_counter++;
-  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+  *iqp->q_wrptr++ = b;
   if (iqp->q_wrptr >= iqp->q_top) {
-  /*lint -restore*/
     iqp->q_wrptr = iqp->q_buffer;
   }
 
@@ -189,12 +186,9 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t timeout) {
     }
   }
 
-  b = *iqp->q_rdptr;
-  iqp->q_rdptr++;
   iqp->q_counter--;
-  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+  b = *iqp->q_rdptr++;
   if (iqp->q_rdptr >= iqp->q_top) {
-  /*lint -restore*/
     iqp->q_rdptr = iqp->q_buffer;
   }
   chSysUnlock();
@@ -246,20 +240,15 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
       }
     }
 
-    *bp = *iqp->q_rdptr;
-    bp++;
-    iqp->q_rdptr++;
     iqp->q_counter--;
-    /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+    *bp++ = *iqp->q_rdptr++;
     if (iqp->q_rdptr >= iqp->q_top) {
-    /*lint -restore*/
       iqp->q_rdptr = iqp->q_buffer;
     }
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
 
     r++;
-    n--;
-    if (n == 0U) {
+    if (--n == 0U) {
       return r;
     }
 
@@ -350,12 +339,9 @@ msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t timeout) {
     }
   }
 
-  *oqp->q_wrptr = b;
-  oqp->q_wrptr++;
   oqp->q_counter--;
-  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+  *oqp->q_wrptr++ = b;
   if (oqp->q_wrptr >= oqp->q_top) {
-  /*lint -restore*/
     oqp->q_wrptr = oqp->q_buffer;
   }
 
@@ -386,12 +372,9 @@ msg_t chOQGetI(output_queue_t *oqp) {
     return Q_EMPTY;
   }
 
-  b = *oqp->q_rdptr;
-  oqp->q_rdptr++;
   oqp->q_counter++;
-  /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+  b = *oqp->q_rdptr++;
   if (oqp->q_rdptr >= oqp->q_top) {
-  /*lint -restore*/
     oqp->q_rdptr = oqp->q_buffer;
   }
 
@@ -439,13 +422,10 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
         return w;
       }
     }
-    *oqp->q_wrptr = *bp;
-    bp++;
-    oqp->q_wrptr++;
+    
     oqp->q_counter--;
-    /*lint -save -e946 [18.2] Normal pointers arithmetic, it is safe.*/
+    *oqp->q_wrptr++ = *bp++;
     if (oqp->q_wrptr >= oqp->q_top) {
-    /*lint -restore*/
       oqp->q_wrptr = oqp->q_buffer;
     }
 
@@ -455,8 +435,7 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
 
     w++;
-    n--;
-    if (n == 0U) {
+    if (--n == 0U) {
       return w;
     }
     chSysLock();

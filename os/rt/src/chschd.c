@@ -67,10 +67,8 @@ void _scheduler_init(void) {
   queue_init(&ch.rlist.r_queue);
   ch.rlist.r_prio = NOPRIO;
 #if CH_CFG_USE_REGISTRY == TRUE
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   ch.rlist.r_newer = (thread_t *)&ch.rlist;
   ch.rlist.r_older = (thread_t *)&ch.rlist;
-  /*lint -restore*/
 #endif
 }
 
@@ -87,12 +85,10 @@ void _scheduler_init(void) {
  */
 void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   thread_t *cp = (thread_t *)tqp;
   do {
     cp = cp->p_next;
   } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
-  /*lint -restore*/
   tp->p_next = cp;
   tp->p_prev = cp->p_prev;
   tp->p_prev->p_next = tp;
@@ -109,9 +105,7 @@ void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
  */
 void queue_insert(thread_t *tp, threads_queue_t *tqp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tp->p_next = (thread_t *)tqp;
-  /*lint -restore*/
   tp->p_prev = tqp->p_prev;
   tp->p_prev->p_next = tp;
   tqp->p_prev = tp;
@@ -131,9 +125,7 @@ thread_t *queue_fifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_next;
 
   tqp->p_next = tp->p_next;
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tqp->p_next->p_prev = (thread_t *)tqp;
-  /*lint -restore*/
 
   return tp;
 }
@@ -152,9 +144,7 @@ thread_t *queue_lifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_prev;
 
   tqp->p_prev = tp->p_prev;
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tqp->p_prev->p_next = (thread_t *)tqp;
-  /*lint -restore*/
 
   return tp;
 }
@@ -235,9 +225,7 @@ thread_t *chSchReadyI(thread_t *tp) {
               "invalid state");
 
   tp->p_state = CH_STATE_READY;
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   cp = (thread_t *)&ch.rlist.r_queue;
-  /*lint -restore*/
   do {
     cp = cp->p_next;
   } while (cp->p_prio >= tp->p_prio);
@@ -285,9 +273,7 @@ void chSchGoSleepS(tstate_t newstate) {
  * Timeout wakeup callback.
  */
 static void wakeup(void *p) {
-  /*lint -save -e9087 [11.3] The real type is hidden but correct.*/
   thread_t *tp = (thread_t *)p;
-  /*lint -restore*/
 
   chSysLockFromISR();
   switch (tp->p_state) {
@@ -504,9 +490,7 @@ void chSchDoRescheduleAhead(void) {
   currp->p_state = CH_STATE_CURRENT;
 
   otp->p_state = CH_STATE_READY;
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   cp = (thread_t *)&ch.rlist.r_queue;
-  /*lint -restore*/
   do {
     cp = cp->p_next;
   } while (cp->p_prio > otp->p_prio);

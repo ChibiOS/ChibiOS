@@ -137,7 +137,7 @@ extern "C" {
  */
 static inline size_t chMBGetSizeI(mailbox_t *mbp) {
 
-  /*lint -save -e946 -e947 -e9033 [18.2, 18.3, 10.8] Perfectly safe pointers
+  /*lint -save -e9033 [10.8] Perfectly safe pointers
     arithmetic.*/
   return (size_t)(mbp->mb_top - mbp->mb_buffer);
   /*lint -restore*/

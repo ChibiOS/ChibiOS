@@ -128,10 +128,7 @@ void chMBResetI(mailbox_t *mbp) {
 
   mbp->mb_wrptr = mbp->mb_buffer;
   mbp->mb_rdptr = mbp->mb_buffer;
-  /*lint -save -e946 -e947 [18.2, 18.3] Normal pointers arithmetic, it
-    is safe.*/
   chSemResetI(&mbp->mb_emptysem, (cnt_t)(mbp->mb_top - mbp->mb_buffer));
-  /*lint -restore*/
   chSemResetI(&mbp->mb_fullsem, 0);
 }
 
@@ -191,11 +188,8 @@ msg_t chMBPostS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
   if (rdymsg == MSG_OK) {
-    *mbp->mb_wrptr = msg;
-    mbp->mb_wrptr++;
-    /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
+    *mbp->mb_wrptr++ = msg;
     if (mbp->mb_wrptr >= mbp->mb_top) {
-    /*lint -restore*/
       mbp->mb_wrptr = mbp->mb_buffer;
     }
     chSemSignalI(&mbp->mb_fullsem);
@@ -229,12 +223,9 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
   }
 
   chSemFastWaitI(&mbp->mb_emptysem);
-  *mbp->mb_wrptr = msg;
-  mbp->mb_wrptr++;
-  /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
+  *mbp->mb_wrptr++ = msg;
   if (mbp->mb_wrptr >= mbp->mb_top) {
-  /*lint -restore*/
-    mbp->mb_wrptr = mbp->mb_buffer;
+     mbp->mb_wrptr = mbp->mb_buffer;
   }
   chSemSignalI(&mbp->mb_fullsem);
 
@@ -297,9 +288,7 @@ msg_t chMBPostAheadS(mailbox_t *mbp, msg_t msg, systime_t timeout) {
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_emptysem, timeout);
   if (rdymsg == MSG_OK) {
-    /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
     if (--mbp->mb_rdptr < mbp->mb_buffer) {
-    /*lint -restore*/
       mbp->mb_rdptr = mbp->mb_top - 1;
     }
     *mbp->mb_rdptr = msg;
@@ -333,9 +322,7 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
     return MSG_TIMEOUT;
   }
   chSemFastWaitI(&mbp->mb_emptysem);
-  /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
   if (--mbp->mb_rdptr < mbp->mb_buffer) {
-  /*lint -restore*/
     mbp->mb_rdptr = mbp->mb_top - 1;
   }
   *mbp->mb_rdptr = msg;
@@ -400,11 +387,8 @@ msg_t chMBFetchS(mailbox_t *mbp, msg_t *msgp, systime_t timeout) {
 
   rdymsg = chSemWaitTimeoutS(&mbp->mb_fullsem, timeout);
   if (rdymsg == MSG_OK) {
-    *msgp = *mbp->mb_rdptr;
-    mbp->mb_rdptr++;
-    /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
+    *msgp = *mbp->mb_rdptr++;
     if (mbp->mb_rdptr >= mbp->mb_top) {
-    /*lint -restore*/
       mbp->mb_rdptr = mbp->mb_buffer;
     }
     chSemSignalI(&mbp->mb_emptysem);
@@ -437,11 +421,8 @@ msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp) {
     return MSG_TIMEOUT;
   }
   chSemFastWaitI(&mbp->mb_fullsem);
-  *msgp = *mbp->mb_rdptr;
-  mbp->mb_rdptr++;
-  /*lint -save -e946 [18.2, 18.3] Normal pointers arithmetic, it is safe.*/
+  *msgp = *mbp->mb_rdptr++;
   if (mbp->mb_rdptr >= mbp->mb_top) {
-  /*lint -restore*/
     mbp->mb_rdptr = mbp->mb_buffer;
   }
   chSemSignalI(&mbp->mb_emptysem);

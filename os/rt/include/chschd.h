@@ -559,9 +559,7 @@ extern "C" {
  */
 static inline void list_init(threads_list_t *tlp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tlp->p_next = (thread_t *)tlp;
-  /*lint -restore*/
 }
 
 /**
@@ -574,9 +572,7 @@ static inline void list_init(threads_list_t *tlp) {
  */
 static inline bool list_isempty(threads_list_t *tlp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(tlp->p_next == (thread_t *)tlp);
-  /*lint -restore*/
 }
 
 /**
@@ -589,9 +585,7 @@ static inline bool list_isempty(threads_list_t *tlp) {
  */
 static inline bool list_notempty(threads_list_t *tlp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(tlp->p_next != (thread_t *)tlp);
-  /*lint -restore*/
 }
 
 /**
@@ -603,10 +597,8 @@ static inline bool list_notempty(threads_list_t *tlp) {
  */
 static inline void queue_init(threads_queue_t *tqp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tqp->p_next = (thread_t *)tqp;
   tqp->p_prev = (thread_t *)tqp;
-  /*lint -restore*/
 }
 
 /**
@@ -619,9 +611,7 @@ static inline void queue_init(threads_queue_t *tqp) {
  */
 static inline bool queue_isempty(const threads_queue_t *tqp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(tqp->p_next == (const thread_t *)tqp);
-  /*lint -restore*/
 }
 
 /**
@@ -634,9 +624,7 @@ static inline bool queue_isempty(const threads_queue_t *tqp) {
  */
 static inline bool queue_notempty(const threads_queue_t *tqp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   return (bool)(tqp->p_next != (const thread_t *)tqp);
-  /*lint -restore*/
 }
 
 /* If the performance code path has been chosen then all the following
@@ -658,12 +646,10 @@ static inline thread_t *list_remove(threads_list_t *tlp) {
 
 static inline void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   thread_t *cp = (thread_t *)tqp;
   do {
     cp = cp->p_next;
   } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
-  /*lint -restore*/
   tp->p_next = cp;
   tp->p_prev = cp->p_prev;
   tp->p_prev->p_next = tp;
@@ -672,9 +658,7 @@ static inline void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
 
 static inline void queue_insert(thread_t *tp, threads_queue_t *tqp) {
 
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tp->p_next = (thread_t *)tqp;
-  /*lint -restore*/
   tp->p_prev = tqp->p_prev;
   tp->p_prev->p_next = tp;
   tqp->p_prev = tp;
@@ -684,9 +668,7 @@ static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_next;
 
   tqp->p_next = tp->p_next;
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tqp->p_next->p_prev = (thread_t *)tqp;
-  /*lint -restore*/
 
   return tp;
 }
@@ -695,9 +677,7 @@ static inline thread_t *queue_lifo_remove(threads_queue_t *tqp) {
   thread_t *tp = tqp->p_prev;
 
   tqp->p_prev = tp->p_prev;
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
   tqp->p_prev->p_next = (thread_t *)tqp;
-  /*lint -restore*/
 
   return tp;
 }
