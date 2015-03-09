@@ -495,7 +495,7 @@
  */
 #if !defined(THREAD_CONTEXT_SWITCH_HOOK) || defined(__DOXYGEN__)
 #define THREAD_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
-  /* System halt code here.*/                                               \
+  /* Context switch code here.*/                                            \
 }
 #endif
 
