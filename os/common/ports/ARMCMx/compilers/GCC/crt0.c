@@ -26,36 +26,40 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #if !defined(FALSE)
 #define FALSE       0
 #endif
 
 #if !defined(TRUE)
-#define TRUE        (!FALSE)
+#define TRUE        1
 #endif
 
 #define SCB_CPACR               *((uint32_t *)0xE000ED88U)
 #define SCB_FPCCR               *((uint32_t *)0xE000EF34U)
 #define SCB_FPDSCR              *((uint32_t *)0xE000EF3CU)
-#define FPCCR_ASPEN             (0x1U << 31)
-#define FPCCR_LSPEN             (0x1U << 30)
+#define FPCCR_ASPEN             (uint32_t)((uint32_t)0x1U << (uint32_t)31U)
+#define FPCCR_LSPEN             (uint32_t)((uint32_t)0x1U << (uint32_t)30U)
 
 typedef void (*funcp_t)(void);
 typedef funcp_t * funcpp_t;
 
-#define SYMVAL(sym) (uint32_t)(((uint8_t *)&(sym)) - ((uint8_t *)0))
+#define SYMVAL(sym) (uint32_t)&(sym)
 
 /*
  * Area fill code, it is a macro because here functions cannot be called
  * until stacks are initialized.
  */
-#define fill32(start, end, filler) {                                        \
+#define fill32(start, end, filler) do {                                     \
   uint32_t *p1 = (start);                                                   \
   uint32_t *p2 = (end);                                                     \
-  while (p1 < p2)                                                           \
+  /*lint -save -e681 [2.1] Lint cannot see the scatter file symbols.*/      \
+  while (p1 < p2) {                                                         \
+  /*lint -restore*/                                                         \
     *p1++ = (filler);                                                       \
-}
+  }                                                                         \
+} while (false)
 
 /*===========================================================================*/
 /**
@@ -223,7 +227,9 @@ extern void main(void);
 #if !defined(__DOXYGEN__)
 __attribute__((weak))
 #endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void __early_init(void) {}
+/*lint -restore*/
 
 /**
  * @brief   Late initialization.
@@ -235,7 +241,9 @@ void __early_init(void) {}
 #if !defined(__DOXYGEN__)
 __attribute__((weak))
 #endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void __late_init(void) {}
+/*lint -restore*/
 
 /**
  * @brief   Default @p main() function exit handler.
@@ -246,9 +254,12 @@ void __late_init(void) {}
 #if !defined(__DOXYGEN__)
 __attribute__((noreturn, weak))
 #endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void _default_exit(void) {
-  while (1)
-    ;
+/*lint -restore*/
+
+  while (true) {
+  }
 }
 
 /**
@@ -257,63 +268,68 @@ void _default_exit(void) {
 #if !defined(__DOXYGEN__)
 __attribute__((naked))
 #endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void Reset_Handler(void) {
+/*lint -restore*/
   uint32_t psp, reg;
 
   /* Process Stack initialization, it is allocated starting from the
      symbol __process_stack_end__ and its lower limit is the symbol
      __process_stack_base__.*/
-  asm volatile ("cpsid   i");
+  __asm volatile ("cpsid   i");
   psp = SYMVAL(__process_stack_end__);
-  asm volatile ("msr     PSP, %0" : : "r" (psp));
+  __asm volatile ("msr     PSP, %0" : : "r" (psp));
 
-#if CORTEX_USE_FPU
+#if CORTEX_USE_FPU == TRUE
   /* Initializing the FPU context save in lazy mode.*/
   SCB_FPCCR = FPCCR_ASPEN | FPCCR_LSPEN;
 
   /* CP10 and CP11 set to full access.*/
-  SCB_CPACR |= 0x00F00000;
+  SCB_CPACR |= 0x00F00000U;
 
   /* FPSCR and FPDSCR initially zero.*/
   reg = 0;
-  asm volatile ("vmsr    FPSCR, %0" : : "r" (reg) : "memory");
+  __asm volatile ("vmsr    FPSCR, %0" : : "r" (reg) : "memory");
   SCB_FPDSCR = reg;
 
   /* CPU mode initialization, enforced FPCA bit.*/
-  reg = CRT0_CONTROL_INIT | 4;
+  reg = (uint32_t)CRT0_CONTROL_INIT | 4U;
 #else
   /* CPU mode initialization.*/
   reg = CRT0_CONTROL_INIT;
 #endif
-  asm volatile ("msr     CONTROL, %0" : : "r" (reg));
-  asm volatile ("isb");
+  __asm volatile ("msr     CONTROL, %0" : : "r" (reg));
+  __asm volatile ("isb");
 
   /* Early initialization hook invocation.*/
   __early_init();
 
-#if CRT0_INIT_STACKS
+#if CRT0_INIT_STACKS == TRUE
   /* Main and Process stacks initialization.*/
   fill32(&__main_stack_base__,
          &__main_stack_end__,
-         CRT0_STACKS_FILL_PATTERN);
+         (uint32_t)CRT0_STACKS_FILL_PATTERN);
   fill32(&__process_stack_base__,
          &__process_stack_end__,
-         CRT0_STACKS_FILL_PATTERN);
+         (uint32_t)CRT0_STACKS_FILL_PATTERN);
 #endif
 
-#if CRT0_INIT_DATA
+#if CRT0_INIT_DATA == TRUE
   /* DATA segment initialization.*/
   {
     uint32_t *tp, *dp;
 
     tp = &_textdata;
     dp = &_data;
-    while (dp < &_edata)
+    /*lint -save -e681 [2.1] Lint cannot see the scatter file symbols.*/
+    while (dp < &_edata) {
+    /*lint -restore*/
       *dp++ = *tp++;
+    }
   }
 #endif
 
-#if CRT0_INIT_BSS
+#if CRT0_INIT_BSS == TRUE
   /* BSS segment initialization.*/
   fill32(&_bss_start, &_bss_end, 0);
 #endif
@@ -325,7 +341,9 @@ void Reset_Handler(void) {
   /* Constructors invocation.*/
   {
     funcpp_t fpp = &__init_array_start;
+    /*lint -save -e681 [2.1] Lint cannot see the scatter file symbols.*/
     while (fpp < &__init_array_end) {
+    /*lint -restore*/
       (*fpp)();
       fpp++;
     }
@@ -335,11 +353,13 @@ void Reset_Handler(void) {
   /* Invoking application main() function.*/
   main();
 
-#if CRT0_CALL_DESTRUCTORS
+#if CRT0_CALL_DESTRUCTORS == TRUE
   /* Destructors invocation.*/
   {
     funcpp_t fpp = &__fini_array_start;
+    /*lint -save -e681 [2.1] Lint cannot see the scatter file symbols.*/
     while (fpp < &__fini_array_end) {
+    /*lint -restore*/
       (*fpp)();
       fpp++;
     }

@@ -29,8 +29,6 @@ static THD_FUNCTION(Thread1, arg) {
   while (true) {
     chThdSleepMilliseconds(1000);
   }
-
-  return 0;
 }
 
 /*
@@ -48,7 +46,7 @@ int main(void) {
   /*
    * Creates the example thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  (void) chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it just sleeps.

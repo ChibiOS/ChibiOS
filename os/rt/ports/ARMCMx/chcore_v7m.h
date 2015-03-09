@@ -85,7 +85,7 @@
  */
 #if !defined(CORTEX_USE_FPU)
 #define CORTEX_USE_FPU                  CORTEX_HAS_FPU
-#elif CORTEX_USE_FPU && !CORTEX_HAS_FPU
+#elif (CORTEX_USE_FPU == TRUE) && (CORTEX_HAS_FPU == FALSE)
 /* This setting requires an FPU presence check in case it is externally
    redefined.*/
 #error "the selected core does not have an FPU"
