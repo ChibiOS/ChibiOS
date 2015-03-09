@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_SERIAL || defined(__DOXYGEN__)
+#if (HAL_USE_SERIAL == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /** @brief USART1 serial driver identifier.*/
-#if PLATFORM_SERIAL_USE_USART1 || defined(__DOXYGEN__)
+#if (PLATFORM_SERIAL_USE_USART1 == TRUE) || defined(__DOXYGEN__)
 SerialDriver SD1;
 #endif
 
@@ -69,7 +69,7 @@ static const SerialConfig default_config = {
  */
 void sd_lld_init(void) {
 
-#if PLATFORM_SERIAL_USE_USART1
+#if PLATFORM_SERIAL_USE_USART1 == TRUE
   sdObjectInit(&SD1, NULL, notify1);
 #endif
 }
@@ -86,18 +86,20 @@ void sd_lld_init(void) {
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
-  if (config == NULL)
+  if (config == NULL) {
     config = &default_config;
+  }
+
 
   if (sdp->state == SD_STOP) {
-#if PLATFORM_SERIAL_USE_USART1
+#if PLATFORM_SERIAL_USE_USART1 == TRUE
     if (&SD1 == sdp) {
 
     }
 #endif
   }
   /* Configures the peripheral.*/
-
+  (void)config; /* Warning suppression, remove this.*/
 }
 
 /**
@@ -112,7 +114,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
   if (sdp->state == SD_READY) {
-#if PLATFORM_SERIAL_USE_USART1
+#if PLATFORM_SERIAL_USE_USART1 == TRUE
     if (&SD1 == sdp) {
 
     }
@@ -120,6 +122,6 @@ void sd_lld_stop(SerialDriver *sdp) {
   }
 }
 
-#endif /* HAL_USE_SERIAL */
+#endif /* HAL_USE_SERIAL == TRUE */
 
 /** @} */

@@ -25,7 +25,7 @@
 #ifndef _I2S_LLD_H_
 #define _I2S_LLD_H_
 
-#if HAL_USE_I2S || defined(__DOXYGEN__)
+#if (HAL_USE_I2S == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -40,9 +40,9 @@
  * @{
  */
 /**
- * @brief   I2S2 driver enable switch.
- * @details If set to @p TRUE the support for I2S2 is included.
- * @note    The default is @p TRUE.
+ * @brief   I2SD1 driver enable switch.
+ * @details If set to @p TRUE the support for I2S1 is included.
+ * @note    The default is @p FALSE.
  */
 #if !defined(PLATFORM_I2S_USE_I2S1) || defined(__DOXYGEN__)
 #define PLATFORM_I2S_USE_I2S1                  FALSE
@@ -120,7 +120,7 @@ struct I2SDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_I2S_USE_I2S1 && !defined(__DOXYGEN__)
+#if (PLATFORM_I2S_USE_I2S1 == TRUE) && !defined(__DOXYGEN__)
 extern I2SDriver I2SD1;
 #endif
 
@@ -136,7 +136,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_I2S */
+#endif /* HAL_USE_I2S == TRUE */
 
 #endif /* _I2S_LLD_H_ */
 

@@ -25,7 +25,7 @@
 #ifndef _USB_LLD_H_
 #define _USB_LLD_H_
 
-#if HAL_USE_USB || defined(__DOXYGEN__)
+#if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -62,6 +62,7 @@
 /**
  * @brief   USB driver enable switch.
  * @details If set to @p TRUE the support for USB1 is included.
+ * @note    The default is @p FALSE.
  */
 #if !defined(PLATFORM_USB_USE_USB1) || defined(__DOXYGEN__)
 #define PLATFORM_USB_USE_USB1                  FALSE
@@ -351,7 +352,7 @@ struct USBDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_USB_USE_USB1 && !defined(__DOXYGEN__)
+#if (PLATFORM_USB_USE_USB1 == TRUE) && !defined(__DOXYGEN__)
 extern USBDriver USBD1;
 #endif
 
@@ -380,7 +381,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_USB */
+#endif /* HAL_USE_USB == TRUE */
 
 #endif /* _USB_LLD_H_ */
 

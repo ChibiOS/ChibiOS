@@ -26,7 +26,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_MAC || defined(__DOXYGEN__)
+#if (HAL_USE_MAC == TRUE) || defined(__DOXYGEN__)
 
 #include "mii.h"
 
@@ -41,7 +41,7 @@
 /**
  * @brief MAC1 driver identifier.
  */
-#if PLATFORM_MAC_USE_MAC1 || defined(__DOXYGEN__)
+#if (PLATFORM_MAC_USE_MAC1 == TRUE) || defined(__DOXYGEN__)
 MACDriver ETHD1;
 #endif
 
@@ -68,10 +68,10 @@ MACDriver ETHD1;
  */
 void mac_lld_init(void) {
 
-#if PLATFORM_MAC_USE_MAC1
+#if PLATFORM_MAC_USE_MAC1 == TRUE
   /* Driver initialization.*/
   macObjectInit(&MACD1);
-#endif /* PLATFORM_MAC_USE_MAC1 */
+#endif
 }
 
 /**
@@ -85,11 +85,11 @@ void mac_lld_start(MACDriver *macp) {
 
   if (macp->state == MAC_STOP) {
     /* Enables the peripheral.*/
-#if PLATFORM_MAC_USE_MAC1
+#if PLATFORM_MAC_USE_MAC1 == TRUE
     if (&MACD1 == macp) {
 
     }
-#endif /* PLATFORM_MAC_USE_MAC1 */
+#endif
   }
   /* Configures the peripheral.*/
 
@@ -108,11 +108,11 @@ void mac_lld_stop(MACDriver *macp) {
     /* Resets the peripheral.*/
 
     /* Disables the peripheral.*/
-#if PLATFORM_MAC_USE_MAC1
+#if PLATFORM_MAC_USE_MAC1 == TRUE
     if (&MACD1 == macp) {
 
     }
-#endif /* PLATFORM_MAC_USE_MAC1 */
+#endif
   }
 }
 
@@ -251,7 +251,7 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
   return size;
 }
 
-#if MAC_USE_ZERO_COPY || defined(__DOXYGEN__)
+#if (MAC_USE_ZERO_COPY == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Returns a pointer to the next transmit buffer in the descriptor
  *          chain.
@@ -306,8 +306,8 @@ const uint8_t *mac_lld_get_next_receive_buffer(MACReceiveDescriptor *rdp,
 
   return NULL;
 }
-#endif /* MAC_USE_ZERO_COPY */
+#endif /* MAC_USE_ZERO_COPY == TRUE */
 
-#endif /* HAL_USE_MAC */
+#endif /* HAL_USE_MAC == TRUE */
 
 /** @} */

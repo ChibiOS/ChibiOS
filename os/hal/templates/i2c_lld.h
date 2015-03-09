@@ -25,7 +25,7 @@
 #ifndef _I2C_LLD_H_
 #define _I2C_LLD_H_
 
-#if HAL_USE_I2C || defined(__DOXYGEN__)
+#if (HAL_USE_I2C == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -98,9 +98,9 @@ struct I2CDriver {
    * @brief   Error flags.
    */
   i2cflags_t                errors;
-#if I2C_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if (I2C_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
   mutex_t                   mutex;
-#endif /* I2C_USE_MUTUAL_EXCLUSION */
+#endif
 #if defined(I2C_DRIVER_EXT_FIELDS)
   I2C_DRIVER_EXT_FIELDS
 #endif
@@ -124,10 +124,8 @@ struct I2CDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if !defined(__DOXYGEN__)
-#if PLATFORM_I2C_USE_I2C1
+#if (PLATFORM_I2C_USE_I2C1 == TRUE) && !defined(__DOXYGEN__)
 extern I2CDriver I2CD1;
-#endif
 #endif
 
 #ifdef __cplusplus
@@ -147,7 +145,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_I2C */
+#endif /* HAL_USE_I2C == TRUE */
 
 #endif /* _I2C_LLD_H_ */
 

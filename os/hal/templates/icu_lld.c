@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_ICU || defined(__DOXYGEN__)
+#if (HAL_USE_ICU == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -38,7 +38,7 @@
  * @brief   ICUD1 driver identifier.
  * @note    The driver ICUD1 allocates the complex timer TIM1 when enabled.
  */
-#if PLATFORM_ICU_USE_ICU1 || defined(__DOXYGEN__)
+#if (PLATFORM_ICU_USE_ICU1 == TRUE) || defined(__DOXYGEN__)
 ICUDriver ICUD1;
 #endif
 
@@ -65,7 +65,7 @@ ICUDriver ICUD1;
  */
 void icu_lld_init(void) {
 
-#if PLATFORM_ICU_USE_ICU1
+#if PLATFORM_ICU_USE_ICU1 == TRUE
   /* Driver initialization.*/
   icuObjectInit(&ICUD1);
 #endif
@@ -82,7 +82,7 @@ void icu_lld_start(ICUDriver *icup) {
 
   if (icup->state == ICU_STOP) {
     /* Clock activation and timer reset.*/
-#if PLATFORM_ICU_USE_ICU1
+#if PLATFORM_ICU_USE_ICU1 == TRUE
     if (&ICUD1 == icup) {
 
     }
@@ -101,7 +101,7 @@ void icu_lld_stop(ICUDriver *icup) {
 
   if (icup->state == ICU_READY) {
     /* Clock deactivation.*/
-#if PLATFORM_ICU_USE_ICU1
+#if PLATFORM_ICU_USE_ICU1 == TRUE
     if (&ICUD1 == icup) {
 
     }
@@ -180,6 +180,6 @@ void icu_lld_disable_notifications(ICUDriver *icup) {
   (void)icup;
 }
 
-#endif /* HAL_USE_ICU */
+#endif /* HAL_USE_ICU == TRUE */
 
 /** @} */

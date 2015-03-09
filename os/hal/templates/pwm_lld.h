@@ -25,7 +25,7 @@
 #ifndef _PWM_LLD_H_
 #define _PWM_LLD_H_
 
-#if HAL_USE_PWM || defined(__DOXYGEN__)
+#if (HAL_USE_PWM == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -45,13 +45,12 @@
  * @{
  */
 /**
- * @brief   If advanced timer features switch.
- * @details If set to @p TRUE the advanced features for TIM1 and TIM8 are
- *          enabled.
- * @note    The default is @p TRUE.
+ * @brief   PWMD1 driver enable switch.
+ * @details If set to @p TRUE the support for PWM1 is included.
+ * @note    The default is @p FALSE.
  */
-#if !defined(PLATFORM_PWM_USE_ADVANCED) || defined(__DOXYGEN__)
-#define PLATFORM_PWM_USE_ADVANCED              FALSE
+#if !defined(PLATFORM_PWM_USE_PWM1) || defined(__DOXYGEN__)
+#define PLATFORM_PWM_USE_PWM1                  FALSE
 #endif
 /** @} */
 
@@ -185,7 +184,7 @@ struct PWMDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_PWM_USE_PWM1 && !defined(__DOXYGEN__)
+#if (PLATFORM_PWM_USE_PWM1 == TRUE) && !defined(__DOXYGEN__)
 extern PWMDriver PWMD1;
 #endif
 
@@ -209,7 +208,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_PWM */
+#endif /* HAL_USE_PWM == TRUE */
 
 #endif /* _PWM_LLD_H_ */
 

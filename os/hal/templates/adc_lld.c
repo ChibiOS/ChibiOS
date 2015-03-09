@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_ADC || defined(__DOXYGEN__)
+#if (HAL_USE_ADC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -37,7 +37,7 @@
 /**
  * @brief   ADC1 driver identifier.
  */
-#if PLATFORM_ADC_USE_ADC1 || defined(__DOXYGEN__)
+#if (PLATFORM_ADC_USE_ADC1 == TRUE) || defined(__DOXYGEN__)
 ADCDriver ADCD1;
 #endif
 
@@ -64,10 +64,10 @@ ADCDriver ADCD1;
  */
 void adc_lld_init(void) {
 
-#if PLATFORM_ADC_USE_ADC1
+#if PLATFORM_ADC_USE_ADC1 == TRUE
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
-#endif /* PLATFORM_ADC_USE_ADC1 */
+#endif
 }
 
 /**
@@ -81,11 +81,11 @@ void adc_lld_start(ADCDriver *adcp) {
 
   if (adcp->state == ADC_STOP) {
     /* Enables the peripheral.*/
-#if PLATFORM_ADC_USE_ADC1
+#if PLATFORM_ADC_USE_ADC1 == TRUE
     if (&ADCD1 == adcp) {
 
     }
-#endif /* PLATFORM_ADC_USE_ADC1 */
+#endif
   }
   /* Configures the peripheral.*/
 
@@ -104,11 +104,11 @@ void adc_lld_stop(ADCDriver *adcp) {
     /* Resets the peripheral.*/
 
     /* Disables the peripheral.*/
-#if PLATFORM_ADC_USE_ADC1
+#if PLATFORM_ADC_USE_ADC1 == TRUE
     if (&ADCD1 == adcp) {
 
     }
-#endif /* PLATFORM_ADC_USE_ADC1 */
+#endif
   }
 }
 
@@ -136,6 +136,6 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
   (void)adcp;
 }
 
-#endif /* HAL_USE_ADC */
+#endif /* HAL_USE_ADC == TRUE */
 
 /** @} */

@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_GPT || defined(__DOXYGEN__)
+#if (HAL_USE_GPT == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -37,7 +37,7 @@
 /**
  * @brief   GPTD1 driver identifier.
  */
-#if PLATFORM_GPT_USE_GPT1 || defined(__DOXYGEN__)
+#if (PLATFORM_GPT_USE_GPT1 == TRUE) || defined(__DOXYGEN__)
 GPTDriver GPTD1;
 #endif
 
@@ -64,7 +64,7 @@ GPTDriver GPTD1;
  */
 void gpt_lld_init(void) {
 
-#if PLATFORM2_GPT_USE_TIM1
+#if PLATFORM_GPT_USE_GPT1 == TRUE
   /* Driver initialization.*/
   gptObjectInit(&GPTD1);
 #endif
@@ -81,11 +81,11 @@ void gpt_lld_start(GPTDriver *gptp) {
 
   if (gptp->state == GPT_STOP) {
     /* Enables the peripheral.*/
-#if PLATFORM_GPT_USE_GPT1
+#if PLATFORM_GPT_USE_GPT1 == TRUE
     if (&GPTD1 == gptp) {
 
     }
-#endif /* PLATFORM_GPT_USE_GPT1 */
+#endif
   }
   /* Configures the peripheral.*/
 
@@ -104,11 +104,11 @@ void gpt_lld_stop(GPTDriver *gptp) {
     /* Resets the peripheral.*/
 
     /* Disables the peripheral.*/
-#if PLATFORM_GPT_USE_GPT1
+#if PLATFORM_GPT_USE_GPT1 == TRUE
     if (&GPTD1 == gptp) {
 
     }
-#endif /* PLATFORM_GPT_USE_GPT1 */
+#endif
   }
 }
 
@@ -158,6 +158,6 @@ void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
 
 }
 
-#endif /* HAL_USE_GPT */
+#endif /* HAL_USE_GPT == TRUE */
 
 /** @} */

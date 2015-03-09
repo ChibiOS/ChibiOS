@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_PWM || defined(__DOXYGEN__)
+#if (HAL_USE_PWM == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -38,7 +38,7 @@
  * @brief   PWMD1 driver identifier.
  * @note    The driver PWMD1 allocates the complex timer TIM1 when enabled.
  */
-#if PLATFORM_PWM_USE_PWM1 || defined(__DOXYGEN__)
+#if (PLATFORM_PWM_USE_PWM1 == TRUE) || defined(__DOXYGEN__)
 PWMDriver PWMD1;
 #endif
 
@@ -65,7 +65,7 @@ PWMDriver PWMD1;
  */
 void pwm_lld_init(void) {
 
-#if PLATFORM_PWM_USE_PWM1
+#if PLATFORM_PWM_USE_PWM1 == TRUE
   /* Driver initialization.*/
   pwmObjectInit(&PWMD1);
 #endif
@@ -84,7 +84,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
   if (pwmp->state == PWM_STOP) {
     /* Clock activation and timer reset.*/
-#if PLATFORM_PWM_USE_PWM1
+#if PLATFORM_PWM_USE_PWM1 == TRUE
     if (&PWMD1 == pwmp) {
 
     }
@@ -103,7 +103,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
 
   /* If in ready state then disables the PWM clock.*/
   if (pwmp->state == PWM_READY) {
-#if PLATFORM_PWM_USE_PWM1
+#if PLATFORM_PWM_USE_PWM1 == TRUE
     if (&PWMD1 == pwmp) {
 
     }
@@ -215,6 +215,6 @@ void pwm_lld_disable_channel_notification(PWMDriver *pwmp,
   (void)channel;
 }
 
-#endif /* HAL_USE_PWM */
+#endif /* HAL_USE_PWM == TRUE */
 
 /** @} */

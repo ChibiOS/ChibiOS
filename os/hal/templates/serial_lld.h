@@ -25,7 +25,7 @@
 #ifndef _SERIAL_LLD_H_
 #define _SERIAL_LLD_H_
 
-#if HAL_USE_SERIAL || defined(__DOXYGEN__)
+#if (HAL_USE_SERIAL == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -42,7 +42,7 @@
 /**
  * @brief   USART1 driver enable switch.
  * @details If set to @p TRUE the support for USART1 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(PLATFORM_SERIAL_USE_USART1) || defined(__DOXYGEN__)
 #define PLATFORM_SERIAL_USE_USART1             FALSE
@@ -98,7 +98,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_SERIAL_USE_USART1 && !defined(__DOXYGEN__)
+#if (PLATFORM_SERIAL_USE_USART1 == TRUE) && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
 #endif
 
@@ -112,7 +112,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_SERIAL */
+#endif /* HAL_USE_SERIAL == TRUE */
 
 #endif /* _SERIAL_LLD_H_ */
 

@@ -25,7 +25,7 @@
 #ifndef _MAC_LLD_H_
 #define _MAC_LLD_H_
 
-#if HAL_USE_MAC || defined(__DOXYGEN__)
+#if (HAL_USE_MAC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -47,6 +47,7 @@
 /**
  * @brief   MAC driver enable switch.
  * @details If set to @p TRUE the support for MAC1 is included.
+ * @note    The default is @p FALSE.
  */
 #if !defined(PLATFORM_MAC_USE_MAC1) || defined(__DOXYGEN__)
 #define PLATFORM_MAC_USE_MAC1               FALSE
@@ -92,7 +93,7 @@ struct MACDriver {
    * @brief Receive semaphore.
    */
   threads_queue_t       rdqueue;
-#if MAC_USE_EVENTS || defined(__DOXYGEN__)
+#if (MAC_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Receive event.
    */
@@ -139,7 +140,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_MAC_USE_MAC1 && !defined(__DOXYGEN__)
+#if (PLATFORM_MAC_USE_MAC1 == TRUE) && !defined(__DOXYGEN__)
 extern MACDriver ETHD1;
 #endif
 
@@ -162,18 +163,18 @@ extern "C" {
   size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
                                          uint8_t *buf,
                                          size_t size);
-#if MAC_USE_ZERO_COPY
+#if MAC_USE_ZERO_COPY == TRUE
   uint8_t *mac_lld_get_next_transmit_buffer(MACTransmitDescriptor *tdp,
                                             size_t size,
                                             size_t *sizep);
   const uint8_t *mac_lld_get_next_receive_buffer(MACReceiveDescriptor *rdp,
                                                  size_t *sizep);
-#endif /* MAC_USE_ZERO_COPY */
+#endif
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_MAC */
+#endif /* HAL_USE_MAC == TRUE */
 
 #endif /* _MAC_LLD_H_ */
 

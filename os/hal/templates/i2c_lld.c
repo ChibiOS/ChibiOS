@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_I2C || defined(__DOXYGEN__)
+#if (HAL_USE_I2C == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -37,7 +37,7 @@
 /**
  * @brief   I2C1 driver identifier.
  */
-#if PLATFORM_I2C_USE_I2C1 || defined(__DOXYGEN__)
+#if (PLATFORM_I2C_USE_I2C1 == TRUE) || defined(__DOXYGEN__)
 I2CDriver I2CD1;
 #endif
 
@@ -64,9 +64,9 @@ I2CDriver I2CD1;
  */
 void i2c_lld_init(void) {
 
-#if PLATFORM_I2C_USE_I2C1
+#if PLATFORM_I2C_USE_I2C1 == TRUE
   i2cObjectInit(&I2CD1);
-#endif /* PLATFORM_I2C_USE_I2C1 */
+#endif
 }
 
 /**
@@ -80,11 +80,11 @@ void i2c_lld_start(I2CDriver *i2cp) {
 
   if (i2cp->state == I2C_STOP) {
     /* Enables the peripheral.*/
-#if PLATFORM_I2C_USE_I2C1
+#if PLATFORM_I2C_USE_I2C1 == TRUE
     if (&I2CD1 == i2cp) {
 
     }
-#endif /* PLATFORM_I2C_USE_I2C1 */
+#endif
   }
 
 }
@@ -101,11 +101,11 @@ void i2c_lld_stop(I2CDriver *i2cp) {
   if (i2cp->state != I2C_STOP) {
 
     /* Disables the peripheral.*/
-#if PLATFORM_I2C_USE_I2C1
+#if PLATFORM_I2C_USE_I2C1 == TRUE
     if (&I2CD1 == i2cp) {
 
     }
-#endif /* PLATFORM_I2C_USE_I2C1 */
+#endif
   }
 }
 
@@ -182,6 +182,6 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   return MSG_OK;
 }
 
-#endif /* HAL_USE_I2C */
+#endif /* HAL_USE_I2C == TRUE */
 
 /** @} */

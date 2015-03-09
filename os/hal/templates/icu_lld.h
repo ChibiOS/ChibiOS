@@ -25,7 +25,7 @@
 #ifndef _ICU_LLD_H_
 #define _ICU_LLD_H_
 
-#if HAL_USE_ICU || defined(__DOXYGEN__)
+#if (HAL_USE_ICU == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -42,7 +42,7 @@
 /**
  * @brief   ICUD1 driver enable switch.
  * @details If set to @p TRUE the support for ICUD1 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(PLATFORM_ICU_USE_ICU1) || defined(__DOXYGEN__)
 #define PLATFORM_ICU_USE_ICU1                  FALSE
@@ -62,7 +62,7 @@
  */
 typedef enum {
   ICU_INPUT_ACTIVE_HIGH = 0,        /**< Trigger on rising edge.            */
-  ICU_INPUT_ACTIVE_LOW = 1,         /**< Trigger on falling edge.           */
+  ICU_INPUT_ACTIVE_LOW = 1          /**< Trigger on falling edge.           */
 } icumode_t;
 
 /**
@@ -167,7 +167,7 @@ struct ICUDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_ICU_USE_ICU1 && !defined(__DOXYGEN__)
+#if (PLATFORM_ICU_USE_ICU1 == TRUE) && !defined(__DOXYGEN__)
 extern ICUDriver ICUD1;
 #endif
 
@@ -186,7 +186,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_ICU */
+#endif /* HAL_USE_ICU == TRUE */
 
 #endif /* _ICU_LLD_H_ */
 

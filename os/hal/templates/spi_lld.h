@@ -25,7 +25,7 @@
 #ifndef _SPI_LLD_H_
 #define _SPI_LLD_H_
 
-#if HAL_USE_SPI || defined(__DOXYGEN__)
+#if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -41,6 +41,8 @@
  */
 /**
  * @brief   SPI1 driver enable switch.
+ * @details If set to @p TRUE the support for SPI1 is included.
+ * @note    The default is @p FALSE.
  */
 #if !defined(PLATFORM_SPI_USE_SPI1) || defined(__DOXYGEN__)
 #define PLATFORM_SPI_USE_SPI1                  FALSE
@@ -95,18 +97,18 @@ struct SPIDriver {
    * @brief Current configuration data.
    */
   const SPIConfig           *config;
-#if SPI_USE_WAIT || defined(__DOXYGEN__)
+#if (SPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Waiting thread.
    */
   thread_reference_t        thread;
-#endif /* SPI_USE_WAIT */
-#if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#endif
+#if (SPI_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the peripheral.
    */
   mutex_t                   mutex;
-#endif /* SPI_USE_MUTUAL_EXCLUSION */
+#endif
 #if defined(SPI_DRIVER_EXT_FIELDS)
   SPI_DRIVER_EXT_FIELDS
 #endif
@@ -121,7 +123,7 @@ struct SPIDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_SPI_USE_SPI1 && !defined(__DOXYGEN__)
+#if (PLATFORM_SPI_USE_SPI1 == TRUE) && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;
 #endif
 
@@ -143,7 +145,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_SPI */
+#endif /* HAL_USE_SPI == TRUE */
 
 #endif /* _SPI_LLD_H_ */
 

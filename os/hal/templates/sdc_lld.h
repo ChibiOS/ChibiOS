@@ -25,7 +25,7 @@
 #ifndef _SDC_LLD_H_
 #define _SDC_LLD_H_
 
-#if HAL_USE_SDC || defined(__DOXYGEN__)
+#if (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -39,6 +39,14 @@
  * @name    PLATFORM configuration options
  * @{
  */
+/**
+ * @brief   PWMD1 driver enable switch.
+ * @details If set to @p TRUE the support for PWM1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(PLATFORM_SDC_USE_SDC1) || defined(__DOXYGEN__)
+#define PLATFORM_SDC_USE_SDC1                  FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -135,7 +143,7 @@ struct SDCDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if !defined(__DOXYGEN__)
+#if (PLATFORM_SDC_USE_SDC1 == TRUE) && !defined(__DOXYGEN__)
 extern SDCDriver SDCD1;
 #endif
 
@@ -159,9 +167,9 @@ extern "C" {
   bool sdc_lld_read_special(SDCDriver *sdcp, uint8_t *buf, size_t bytes,
                             uint8_t cmd, uint32_t argument);
   bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
-                    uint8_t *buf, uint32_t blocks);
+                    uint8_t *buf, uint32_t n);
   bool sdc_lld_write(SDCDriver *sdcp, uint32_t startblk,
-                     const uint8_t *buf, uint32_t blocks);
+                     const uint8_t *buf, uint32_t n);
   bool sdc_lld_sync(SDCDriver *sdcp);
   bool sdc_lld_is_card_inserted(SDCDriver *sdcp);
   bool sdc_lld_is_write_protected(SDCDriver *sdcp);
@@ -169,7 +177,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_SDC */
+#endif /* HAL_USE_SDC == TRUE */
 
 #endif /* _SDC_LLD_H_ */
 

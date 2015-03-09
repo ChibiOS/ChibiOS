@@ -190,7 +190,9 @@ void extSetChannelModeI(EXTDriver *extp,
 
   /* Note that here the access is enforced as non-const, known access
      violation.*/
+  /*lint -save -e9005 [11.8] Known issue, the driver needs rework here.*/
   oldcp = (EXTChannelConfig *)&extp->config->channels[channel];
+  /*lint -restore*/
 
   /* Overwiting the old channels configuration then the channel is reconfigured
      by the low level driver.*/

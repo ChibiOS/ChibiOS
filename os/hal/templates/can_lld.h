@@ -25,7 +25,7 @@
 #ifndef _CAN_LLD_H_
 #define _CAN_LLD_H_
 
-#if HAL_USE_CAN || defined(__DOXYGEN__)
+#if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -52,6 +52,7 @@
 /**
  * @brief   CAN1 driver enable switch.
  * @details If set to @p TRUE the support for CAN1 is included.
+ * @note    The default is @p FALSE.
  */
 #if !defined(PLATFORM_CAN_USE_CAN1) || defined(__DOXYGEN__)
 #define PLATFORM_CAN_USE_CAN1                  FALSE
@@ -77,19 +78,16 @@ typedef uint32_t canmbx_t;
  *          machine data endianness, it can be still useful for a quick filling.
  */
 typedef struct {
-  struct {
-    uint8_t                 DLC:4;          /**< @brief Data length.        */
-    uint8_t                 RTR:1;          /**< @brief Frame type.         */
-    uint8_t                 IDE:1;          /**< @brief Identifier type.    */
-  };
+  /*lint -save -e46 [6.1] Standard types are fine too.*/
+  uint8_t                   DLC:4;          /**< @brief Data length.        */
+  uint8_t                   RTR:1;          /**< @brief Frame type.         */
+  uint8_t                   IDE:1;          /**< @brief Identifier type.    */
   union {
-    struct {
-      uint32_t              SID:11;         /**< @brief Standard identifier.*/
-    };
-    struct {
-      uint32_t              EID:29;         /**< @brief Extended identifier.*/
-    };
+    uint32_t                SID:11;         /**< @brief Standard identifier.*/
+    uint32_t                EID:29;         /**< @brief Extended identifier.*/
+    uint32_t                _align1;
   };
+  /*lint -restore*/
   union {
     uint8_t                 data8[8];       /**< @brief Frame data.         */
     uint16_t                data16[4];      /**< @brief Frame data.         */
@@ -103,23 +101,18 @@ typedef struct {
  *          machine data endianness, it can be still useful for a quick filling.
  */
 typedef struct {
-  struct {
-    uint8_t                 FMI;            /**< @brief Filter id.          */
-    uint16_t                TIME;           /**< @brief Time stamp.         */
-  };
-  struct {
-    uint8_t                 DLC:4;          /**< @brief Data length.        */
-    uint8_t                 RTR:1;          /**< @brief Frame type.         */
-    uint8_t                 IDE:1;          /**< @brief Identifier type.    */
-  };
+  /*lint -save -e46 [6.1] Standard types are fine too.*/
+  uint8_t                   FMI;            /**< @brief Filter id.          */
+  uint16_t                  TIME;           /**< @brief Time stamp.         */
+  uint8_t                   DLC:4;          /**< @brief Data length.        */
+  uint8_t                   RTR:1;          /**< @brief Frame type.         */
+  uint8_t                   IDE:1;          /**< @brief Identifier type.    */
   union {
-    struct {
-      uint32_t              SID:11;         /**< @brief Standard identifier.*/
-    };
-    struct {
-      uint32_t              EID:29;         /**< @brief Extended identifier.*/
-    };
+    uint32_t                SID:11;         /**< @brief Standard identifier.*/
+    uint32_t                EID:29;         /**< @brief Extended identifier.*/
+    uint32_t                _align1;
   };
+  /*lint -restore*/
   union {
     uint8_t                 data8[8];       /**< @brief Frame data.         */
     uint16_t                data16[4];      /**< @brief Frame data.         */
@@ -181,7 +174,7 @@ typedef struct {
    *          error(s) that have occurred.
    */
   event_source_t            error_event;
-#if CAN_USE_SLEEP_MODE || defined (__DOXYGEN__)
+#if (CAN_USE_SLEEP_MODE == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief   Entering sleep state event.
    */
@@ -190,7 +183,7 @@ typedef struct {
    * @brief   Exiting sleep state event.
    */
   event_source_t            wakeup_event;
-#endif /* CAN_USE_SLEEP_MODE */
+#endif
   /* End of the mandatory fields.*/
 } CANDriver;
 
@@ -202,7 +195,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_CAN_USE_CAN1 && !defined(__DOXYGEN__)
+#if (PLATFORM_CAN_USE_CAN1 == TRUE) && !defined(__DOXYGEN__)
 extern CANDriver CAND1;
 #endif
 
@@ -215,20 +208,20 @@ extern "C" {
   bool can_lld_is_tx_empty(CANDriver *canp, canmbx_t mailbox);
   void can_lld_transmit(CANDriver *canp,
                         canmbx_t mailbox,
-                        const CANTxFrame *crfp);
+                        const CANTxFrame *ctfp);
   bool can_lld_is_rx_nonempty(CANDriver *canp, canmbx_t mailbox);
   void can_lld_receive(CANDriver *canp,
                        canmbx_t mailbox,
-                       CANRxFrame *ctfp);
-#if CAN_USE_SLEEP_MODE
+                       CANRxFrame *crfp);
+#if CAN_USE_SLEEP_MODE == TRUE
   void can_lld_sleep(CANDriver *canp);
   void can_lld_wakeup(CANDriver *canp);
-#endif /* CAN_USE_SLEEP_MODE */
+#endif
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_USE_CAN */
+#endif /* HAL_USE_CAN == TRUE */
 
 #endif /* _CAN_LLD_H_ */
 

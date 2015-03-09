@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_PAL || defined(__DOXYGEN__)
+#if (HAL_USE_PAL == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -85,6 +85,6 @@ void _pal_lld_setgroupmode(ioportid_t port,
 
 }
 
-#endif /* HAL_USE_PAL */
+#endif /* HAL_USE_PAL == TRUE */
 
 /** @} */

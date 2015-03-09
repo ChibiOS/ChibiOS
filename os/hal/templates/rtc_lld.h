@@ -29,7 +29,7 @@
 #ifndef _RTC_LLD_H_
 #define _RTC_LLD_H_
 
-#if HAL_USE_RTC || defined(__DOXYGEN__)
+#if (HAL_USE_RTC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -62,6 +62,14 @@
  * @name    PLATFORM configuration options
  * @{
  */
+/**
+ * @brief   RTCD1 driver enable switch.
+ * @details If set to @p TRUE the support for RTC1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(PLATFORM_RTC_USE_RTC1) || defined(__DOXYGEN__)
+#define PLATFORM_RTC_USE_RTC1                  FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -120,7 +128,7 @@ struct RTCDriverVMT {
  * @brief   Structure representing an RTC driver.
  */
 struct RTCDriver {
-#if RTC_HAS_STORAGE || defined(__DOXYGEN__)
+#if (RTC_HAS_STORAGE == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Virtual Methods Table.
    */
@@ -138,11 +146,12 @@ struct RTCDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if !defined(__DOXYGEN__)
+#if (PLATFORM_RTC_USE_RTC1 == TRUE) && !defined(__DOXYGEN__)
 extern RTCDriver RTCD1;
-#if RTC_HAS_STORAGE
-extern struct RTCDriverVMT _rtc_lld_vmt;
 #endif
+
+#if (RTC_HAS_STORAGE == TRUE) && !defined(__DOXYGEN__)
+extern struct RTCDriverVMT _rtc_lld_vmt;
 #endif
 
 #ifdef __cplusplus
@@ -166,7 +175,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_RTC */
+#endif /* HAL_USE_RTC == TRUE */
 
 #endif /* _RTC_LLD_H_ */
 

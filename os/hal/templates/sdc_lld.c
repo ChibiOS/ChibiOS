@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_SDC || defined(__DOXYGEN__)
+#if (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -37,7 +37,7 @@
 /**
  * @brief   SDCD1 driver identifier.
  */
-#if PLATFORM_SDC_USE_SDC1 || defined(__DOXYGEN__)
+#if (PLATFORM_SDC_USE_SDC1 == TRUE) || defined(__DOXYGEN__)
 SDCDriver SDCD1;
 #endif
 
@@ -64,7 +64,9 @@ SDCDriver SDCD1;
  */
 void sdc_lld_init(void) {
 
+#if PLATFORM_SDC_USE_SDC1 == TRUE
   sdcObjectInit(&SDCD1);
+#endif
 }
 
 /**
@@ -153,6 +155,9 @@ void sdc_lld_set_bus_mode(SDCDriver *sdcp, sdcbusmode_t mode) {
     break;
   case SDC_MODE_8BIT:
 
+    break;
+  default:
+    osalDbgAssert(false, "invalid bus mode");
     break;
   }
 }
@@ -263,56 +268,6 @@ bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  *
  * @notapi
  */
-bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
-                          uint8_t *buf, uint32_t n) {
-
-  (void)sdcp;
-  (void)startblk;
-  (void)buf;
-  (void)n;
-
-  return HAL_SUCCESS;
-}
-
-/**
- * @brief   Writes one or more blocks.
- *
- * @param[in] sdcp      pointer to the @p SDCDriver object
- * @param[in] startblk  first block to write
- * @param[out] buf      pointer to the write buffer
- * @param[in] n         number of blocks to write
- *
- * @return              The operation status.
- * @retval HAL_SUCCESS  operation succeeded.
- * @retval HAL_FAILED   operation failed.
- *
- * @notapi
- */
-bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
-                           const uint8_t *buf, uint32_t n) {
-
-  (void)sdcp;
-  (void)startblk;
-  (void)buf;
-  (void)n;
-
-  return HAL_SUCCESS;
-}
-
-/**
- * @brief   Reads one or more blocks.
- *
- * @param[in] sdcp      pointer to the @p SDCDriver object
- * @param[in] startblk  first block to read
- * @param[out] buf      pointer to the read buffer
- * @param[in] n         number of blocks to read
- *
- * @return              The operation status.
- * @retval HAL_SUCCESS  operation succeeded.
- * @retval HAL_FAILED   operation failed.
- *
- * @notapi
- */
 bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
                   uint8_t *buf, uint32_t n) {
 
@@ -367,6 +322,6 @@ bool sdc_lld_sync(SDCDriver *sdcp) {
   return HAL_SUCCESS;
 }
 
-#endif /* HAL_USE_SDC */
+#endif /* HAL_USE_SDC == TRUE */
 
 /** @} */
