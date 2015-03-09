@@ -448,7 +448,7 @@
  */
 #if !defined(THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
 #define THREAD_EXT_FIELDS                                                   \
-
+  /* Add threads custom fields here.*/
 #endif
 
 /**
@@ -460,6 +460,7 @@
  */
 #if !defined(THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
 #define THREAD_EXT_INIT_HOOK(tp) {                                          \
+  /* Add threads initialization code here.*/                                \
 }
 #endif
 
@@ -473,6 +474,7 @@
  */
 #if !defined(THREAD_EXT_EXIT_HOOK) || defined(__DOXYGEN__)
 #define THREAD_EXT_EXIT_HOOK(tp) {                                          \
+  /* Add threads finalization code here.*/                                  \
 }
 #endif
 
@@ -482,6 +484,7 @@
  */
 #if !defined(THREAD_CONTEXT_SWITCH_HOOK) || defined(__DOXYGEN__)
 #define THREAD_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
+  /* Context switch code here.*/                                            \
 }
 #endif
 
@@ -491,6 +494,7 @@
  */
 #if !defined(IDLE_LOOP_HOOK) || defined(__DOXYGEN__)
 #define IDLE_LOOP_HOOK() {                                                  \
+  /* Idle loop code here.*/                                                 \
 }
 #endif
 
@@ -501,6 +505,7 @@
  */
 #if !defined(SYSTEM_TICK_EVENT_HOOK) || defined(__DOXYGEN__)
 #define SYSTEM_TICK_EVENT_HOOK() {                                          \
+  /* System tick event code here.*/                                         \
 }
 #endif
 
@@ -511,6 +516,7 @@
  */
 #if !defined(SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
 #define SYSTEM_HALT_HOOK() {                                                \
+  /* System halt code here.*/                                               \
 }
 #endif
 
