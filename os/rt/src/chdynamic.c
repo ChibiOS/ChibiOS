@@ -68,7 +68,7 @@
 thread_t *chThdAddRef(thread_t *tp) {
 
   chSysLock();
-  chDbgAssert(tp->p_refs < 255U, "too many references");
+  chDbgAssert(tp->p_refs < (trefs_t)255, "too many references");
   tp->p_refs++;
   chSysUnlock();
 
@@ -92,7 +92,7 @@ void chThdRelease(thread_t *tp) {
   trefs_t refs;
 
   chSysLock();
-  chDbgAssert(tp->p_refs > 0U, "not referenced");
+  chDbgAssert(tp->p_refs > (trefs_t)0, "not referenced");
   tp->p_refs--;
   refs = tp->p_refs;
   chSysUnlock();
@@ -100,7 +100,7 @@ void chThdRelease(thread_t *tp) {
   /* If the references counter reaches zero and the thread is in its
      terminated state then the memory can be returned to the proper
      allocator. Of course static threads are not affected.*/
-  if ((refs == 0U) && (tp->p_state == CH_STATE_FINAL)) {
+  if ((refs == (trefs_t)0) && (tp->p_state == CH_STATE_FINAL)) {
     switch (tp->p_flags & CH_FLAG_MODE_MASK) {
 #if CH_CFG_USE_HEAP == TRUE
     case CH_FLAG_MODE_HEAP:
@@ -111,7 +111,7 @@ void chThdRelease(thread_t *tp) {
       break;
 #endif
 #if CH_CFG_USE_MEMPOOLS == TRUE
-    case CH_FLAG_MODE_MEMPOOL:
+    case CH_FLAG_MODE_MPOOL:
 #if CH_CFG_USE_REGISTRY == TRUE
       REG_REMOVE(tp);
 #endif
@@ -224,7 +224,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
 
   chSysLock();
   tp = chThdCreateI(wsp, mp->mp_object_size, prio, pf, arg);
-  tp->p_flags = CH_FLAG_MODE_MEMPOOL;
+  tp->p_flags = CH_FLAG_MODE_MPOOL;
   tp->p_mpool = mp;
   chSchWakeupS(tp, MSG_OK);
   chSysUnlock();

@@ -188,7 +188,7 @@ static inline void chEvtObjectInit(event_source_t *esp) {
  */
 static inline void chEvtRegisterMask(event_source_t *esp,
                                      event_listener_t *elp,
-                                     eventflags_t events) {
+                                     eventmask_t events) {
 
   chEvtRegisterMaskWithFlags(esp, elp, events, (eventflags_t)-1);
 }
@@ -236,7 +236,7 @@ static inline bool chEvtIsListeningI(event_source_t *esp) {
  */
 static inline void chEvtBroadcast(event_source_t *esp) {
 
-  chEvtBroadcastFlags(esp, 0);
+  chEvtBroadcastFlags(esp, (eventflags_t)0);
 }
 
 /**
@@ -253,7 +253,7 @@ static inline void chEvtBroadcast(event_source_t *esp) {
  */
 static inline void chEvtBroadcastI(event_source_t *esp) {
 
-  chEvtBroadcastFlagsI(esp, 0);
+  chEvtBroadcastFlagsI(esp, (eventflags_t)0);
 }
 
 #endif /* CH_CFG_USE_EVENTS == TRUE */

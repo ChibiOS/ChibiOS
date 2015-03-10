@@ -7,6 +7,24 @@
 +libh(stm32f4xx.h)
 +libh(*_lld.h)
 
+/* Reinforcing type checking for some critical types even if not required by
+   MISRA.*/
+-strong(AJX, systime_t)
+-strong(AJX, rtcnt_t)
+-strong(AJX, rttime_t)
+-strong(AJX, syssts_t)
+-strong(AJX, msg_t)
+-strong(AJX, tmode_t)
+-strong(AJX, tstate_t)
+-strong(AJX, trefs_t)
+-strong(AJX, tslices_t)
+-strong(AJX, tprio_t)
+-strong(AJX, cnt_t)
+-strong(AJX, ucnt_t)
+-strong(AJX, eventid_t)
+-strong(AJX, eventmask_t)
+-strong(AJX, eventflags_t)
+
 /* Permitting anonymous unions.*/
 +fan
 

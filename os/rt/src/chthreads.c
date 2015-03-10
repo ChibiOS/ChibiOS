@@ -94,20 +94,20 @@ thread_t *_thread_init(thread_t *tp, tprio_t prio) {
   tp->p_state = CH_STATE_WTSTART;
   tp->p_flags = CH_FLAG_MODE_STATIC;
 #if CH_CFG_TIME_QUANTUM > 0
-  tp->p_preempt = CH_CFG_TIME_QUANTUM;
+  tp->p_preempt = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
 #if CH_CFG_USE_MUTEXES == TRUE
   tp->p_realprio = prio;
   tp->p_mtxlist = NULL;
 #endif
 #if CH_CFG_USE_EVENTS == TRUE
-  tp->p_epending = 0;
+  tp->p_epending = (eventmask_t)0;
 #endif
 #if CH_DBG_THREADS_PROFILING == TRUE
-  tp->p_time = 0;
+  tp->p_time = (systime_t)0;
 #endif
 #if CH_CFG_USE_DYNAMIC == TRUE
-  tp->p_refs = 1;
+  tp->p_refs = (trefs_t)1;
 #endif
 #if CH_CFG_USE_REGISTRY == TRUE
   tp->p_name = NULL;
@@ -333,7 +333,7 @@ void chThdSleepUntil(systime_t time) {
 
   chSysLock();
   time -= chVTGetSystemTimeX();
-  if (time > 0U) {
+  if (time > (systime_t)0) {
     chThdSleepS(time);
   }
   chSysUnlock();
@@ -480,7 +480,7 @@ msg_t chThdWait(thread_t *tp) {
   chSysLock();
   chDbgAssert(tp != currp, "waiting self");
 #if CH_CFG_USE_DYNAMIC == TRUE
-  chDbgAssert(tp->p_refs > 0U, "not referenced");
+  chDbgAssert(tp->p_refs > (trefs_t)0, "not referenced");
 #endif
   if (tp->p_state != CH_STATE_FINAL) {
     list_insert(currp, &tp->p_waiting);

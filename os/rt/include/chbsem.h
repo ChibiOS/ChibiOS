@@ -267,7 +267,7 @@ static inline void chBSemSignalI(binary_semaphore_t *bsp) {
 
   chDbgCheckClassI();
 
-  if (bsp->bs_sem.s_cnt < 1) {
+  if (bsp->bs_sem.s_cnt < (cnt_t)1) {
     chSemSignalI(&bsp->bs_sem);
   }
 }
@@ -301,7 +301,7 @@ static inline bool chBSemGetStateI(binary_semaphore_t *bsp) {
 
   chDbgCheckClassI();
 
-  return (bsp->bs_sem.s_cnt > 0) ? false : true;
+  return (bsp->bs_sem.s_cnt > (cnt_t)0) ? false : true;
 }
 
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */

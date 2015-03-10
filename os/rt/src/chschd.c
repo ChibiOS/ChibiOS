@@ -257,7 +257,7 @@ void chSchGoSleepS(tstate_t newstate) {
 #if CH_CFG_TIME_QUANTUM > 0
   /* The thread is renouncing its remaining time slices so it will have a new
      time quantum when it will wakeup.*/
-  otp->p_preempt = CH_CFG_TIME_QUANTUM;
+  otp->p_preempt = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
   setcurrp(queue_fifo_remove(&ch.rlist.r_queue));
 #if defined(CH_CFG_IDLE_ENTER_HOOK)
@@ -430,7 +430,7 @@ bool chSchIsPreemptionRequired(void) {
      if the first thread on the ready queue has a higher priority.
      Otherwise, if the running thread has used up its time quantum, reschedule
      if the first thread on the ready queue has equal or higher priority.*/
-  return (currp->p_preempt > 0U) ? (p1 > p2) : (p1 >= p2);
+  return (currp->p_preempt > (tslices_t)0) ? (p1 > p2) : (p1 >= p2);
 #else
   /* If the round robin preemption feature is not enabled then performs a
      simpler comparison.*/
@@ -461,7 +461,7 @@ void chSchDoRescheduleBehind(void) {
 #endif
   currp->p_state = CH_STATE_CURRENT;
 #if CH_CFG_TIME_QUANTUM > 0
-  otp->p_preempt = CH_CFG_TIME_QUANTUM;
+  otp->p_preempt = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
   (void) chSchReadyI(otp);
   chSysSwitch(currp, otp);
@@ -518,7 +518,7 @@ void chSchDoReschedule(void) {
 #if CH_CFG_TIME_QUANTUM > 0
   /* If CH_CFG_TIME_QUANTUM is enabled then there are two different scenarios
      to handle on preemption: time quantum elapsed or not.*/
-  if (currp->p_preempt == 0U) {
+  if (currp->p_preempt == (tslices_t)0) {
     /* The thread consumed its time quantum so it is enqueued behind threads
        with same priority level, however, it acquires a new time quantum.*/
     chSchDoRescheduleBehind();

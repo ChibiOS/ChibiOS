@@ -276,7 +276,7 @@ static inline syssts_t port_get_irq_status(void) {
  */
 static inline bool port_irq_enabled(syssts_t sts) {
 
-  return (sts & 1U) == 0U;
+  return (sts & (syssts_t)1) == (syssts_t)0;
 }
 
 /**

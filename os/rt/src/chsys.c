@@ -188,7 +188,7 @@ void chSysTimerHandlerI(void) {
 
 #if CH_CFG_TIME_QUANTUM > 0
   /* Running thread has not used up quantum yet? */
-  if (currp->p_preempt > 0U) {
+  if (currp->p_preempt > (tslices_t)0) {
     /* Decrement remaining quantum.*/
     currp->p_preempt--;
   }

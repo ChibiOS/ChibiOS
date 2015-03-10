@@ -85,14 +85,14 @@
  */
 void chMBObjectInit(mailbox_t *mbp, msg_t *buf, cnt_t n) {
 
-  chDbgCheck((mbp != NULL) && (buf != NULL) && (n > 0));
+  chDbgCheck((mbp != NULL) && (buf != NULL) && (n > (cnt_t)0));
 
   mbp->mb_buffer = buf;
   mbp->mb_rdptr = buf;
   mbp->mb_wrptr = buf;
   mbp->mb_top = &buf[n];
   chSemObjectInit(&mbp->mb_emptysem, n);
-  chSemObjectInit(&mbp->mb_fullsem, 0);
+  chSemObjectInit(&mbp->mb_fullsem, (cnt_t)0);
 }
 
 /**
@@ -129,7 +129,7 @@ void chMBResetI(mailbox_t *mbp) {
   mbp->mb_wrptr = mbp->mb_buffer;
   mbp->mb_rdptr = mbp->mb_buffer;
   chSemResetI(&mbp->mb_emptysem, (cnt_t)(mbp->mb_top - mbp->mb_buffer));
-  chSemResetI(&mbp->mb_fullsem, 0);
+  chSemResetI(&mbp->mb_fullsem, (cnt_t)0);
 }
 
 /**
@@ -218,7 +218,7 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
   chDbgCheckClassI();
   chDbgCheck(mbp != NULL);
 
-  if (chSemGetCounterI(&mbp->mb_emptysem) <= 0) {
+  if (chSemGetCounterI(&mbp->mb_emptysem) <= (cnt_t)0) {
     return MSG_TIMEOUT;
   }
 
@@ -318,7 +318,7 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
   chDbgCheckClassI();
   chDbgCheck(mbp != NULL);
 
-  if (chSemGetCounterI(&mbp->mb_emptysem) <= 0) {
+  if (chSemGetCounterI(&mbp->mb_emptysem) <= (cnt_t)0) {
     return MSG_TIMEOUT;
   }
   chSemFastWaitI(&mbp->mb_emptysem);
@@ -417,7 +417,7 @@ msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp) {
   chDbgCheckClassI();
   chDbgCheck((mbp != NULL) && (msgp != NULL));
 
-  if (chSemGetCounterI(&mbp->mb_fullsem) <= 0) {
+  if (chSemGetCounterI(&mbp->mb_fullsem) <= (cnt_t)0) {
     return MSG_TIMEOUT;
   }
   chSemFastWaitI(&mbp->mb_fullsem);

@@ -36,48 +36,50 @@
  * @name    Wakeup status codes
  * @{
  */
-#define MSG_OK              0       /**< @brief Normal wakeup message.      */
-#define MSG_TIMEOUT         -1      /**< @brief Wakeup caused by a timeout
-                                         condition.                         */
-#define MSG_RESET           -2      /**< @brief Wakeup caused by a reset
-                                         condition.                         */
+#define MSG_OK              (msg_t)0    /**< @brief Normal wakeup message.  */
+#define MSG_TIMEOUT         (msg_t)-1   /**< @brief Wakeup caused by a timeout
+                                             condition.                     */
+#define MSG_RESET           (msg_t)-2   /**< @brief Wakeup caused by a reset
+                                             condition.                     */
 /** @} */
 
 /**
  * @name    Priority constants
  * @{
  */
-#define NOPRIO              0U      /**< @brief Ready list header priority. */
-#define IDLEPRIO            1U      /**< @brief Idle thread priority.       */
-#define LOWPRIO             2U      /**< @brief Lowest user priority.       */
-#define NORMALPRIO          64U     /**< @brief Normal user priority.       */
-#define HIGHPRIO            127U    /**< @brief Highest user priority.      */
-#define ABSPRIO             255U    /**< @brief Greatest possible priority. */
+#define NOPRIO              (tprio_t)0      /**< @brief Ready list header
+                                                 priority.                  */
+#define IDLEPRIO            (tprio_t)1      /**< @brief Idle priority.      */
+#define LOWPRIO             (tprio_t)2      /**< @brief Lowest priority.    */
+#define NORMALPRIO          (tprio_t)64     /**< @brief Normal priority.    */
+#define HIGHPRIO            (tprio_t)127    /**< @brief Highest priority.   */
+#define ABSPRIO             (tprio_t)255    /**< @brief Greatest priority.  */
 /** @} */
 
 /**
  * @name    Thread states
  * @{
  */
-#define CH_STATE_READY      0U      /**< @brief Waiting on the ready list.  */
-#define CH_STATE_CURRENT    1U      /**< @brief Currently running.          */
-#define CH_STATE_WTSTART    2U      /**< @brief Created but not started.    */
-#define CH_STATE_SUSPENDED  3U      /**< @brief Suspended state.            */
-#define CH_STATE_QUEUED     4U      /**< @brief Waiting on an I/O queue.    */
-#define CH_STATE_WTSEM      5U      /**< @brief Waiting on a semaphore.     */
-#define CH_STATE_WTMTX      6U      /**< @brief Waiting on a mutex.         */
-#define CH_STATE_WTCOND     7U      /**< @brief Waiting on a condition
-                                         variable.                          */
-#define CH_STATE_SLEEPING   8U      /**< @brief Waiting in @p chThdSleep()
-                                         or @p chThdSleepUntil().           */
-#define CH_STATE_WTEXIT     9U      /**< @brief Waiting in @p chThdWait().  */
-#define CH_STATE_WTOREVT    10U     /**< @brief Waiting for an event.       */
-#define CH_STATE_WTANDEVT   11U     /**< @brief Waiting for several events. */
-#define CH_STATE_SNDMSGQ    12U     /**< @brief Sending a message, in queue.*/
-#define CH_STATE_SNDMSG     13U     /**< @brief Sent a message, waiting
-                                         answer.                            */
-#define CH_STATE_WTMSG      14U     /**< @brief Waiting for a message.      */
-#define CH_STATE_FINAL      15U     /**< @brief Thread terminated.          */
+#define CH_STATE_READY      (tstate_t)0      /**< @brief Waiting on the
+                                                  ready list.               */
+#define CH_STATE_CURRENT    (tstate_t)1      /**< @brief Currently running. */
+#define CH_STATE_WTSTART    (tstate_t)2      /**< @brief Just created.      */
+#define CH_STATE_SUSPENDED  (tstate_t)3      /**< @brief Suspended state.   */
+#define CH_STATE_QUEUED     (tstate_t)4      /**< @brief On an I/O queue.   */
+#define CH_STATE_WTSEM      (tstate_t)5      /**< @brief On a semaphore.    */
+#define CH_STATE_WTMTX      (tstate_t)6      /**< @brief On a mutex.        */
+#define CH_STATE_WTCOND     (tstate_t)7      /**< @brief On a cond.variable.*/
+#define CH_STATE_SLEEPING   (tstate_t)8      /**< @brief Sleeping.          */
+#define CH_STATE_WTEXIT     (tstate_t)9      /**< @brief Waiting a thread.  */
+#define CH_STATE_WTOREVT    (tstate_t)10     /**< @brief One event.         */
+#define CH_STATE_WTANDEVT   (tstate_t)11     /**< @brief Several events.    */
+#define CH_STATE_SNDMSGQ    (tstate_t)12     /**< @brief Sending a message,
+                                                  in queue.                 */
+#define CH_STATE_SNDMSG     (tstate_t)13     /**< @brief Sent a message,
+                                                  waiting answer.          */
+#define CH_STATE_WTMSG      (tstate_t)14     /**< @brief Waiting for a
+                                                  message.                  */
+#define CH_STATE_FINAL      (tstate_t)15     /**< @brief Thread terminated. */
 
 /**
  * @brief   Thread states as array of strings.
@@ -94,13 +96,15 @@
  * @name    Thread flags and attributes
  * @{
  */
-#define CH_FLAG_MODE_MASK       3U  /**< @brief Thread memory mode mask.    */
-#define CH_FLAG_MODE_STATIC     0U  /**< @brief Static thread.              */
-#define CH_FLAG_MODE_HEAP       1U  /**< @brief Thread allocated from a
-                                         Memory Heap.                       */
-#define CH_FLAG_MODE_MEMPOOL    2U  /**< @brief Thread allocated from a
-                                         Memory Pool.                       */
-#define CH_FLAG_TERMINATE       4U  /**< @brief Termination requested flag. */
+#define CH_FLAG_MODE_MASK   (tmode_t)3U     /**< @brief Thread memory mode
+                                                 mask.                      */
+#define CH_FLAG_MODE_STATIC (tmode_t)0U     /**< @brief Static thread.      */
+#define CH_FLAG_MODE_HEAP   (tmode_t)1U     /**< @brief Thread allocated
+                                                 from a Memory Heap.        */
+#define CH_FLAG_MODE_MPOOL  (tmode_t)2U     /**< @brief Thread allocated
+                                                 from a Memory Pool.        */
+#define CH_FLAG_TERMINATE   (tmode_t)4U     /**< @brief Termination requested
+                                                 flag.                      */
 /** @} */
 
 /**
@@ -755,7 +759,7 @@ static inline void chSchPreemption(void) {
   tprio_t p2 = currp->p_prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
-  if (currp->p_preempt > 0U) {
+  if (currp->p_preempt > (tslices_t)0) {
     if (p1 > p2) {
       chSchDoRescheduleAhead();
     }

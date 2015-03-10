@@ -164,7 +164,7 @@ thread_t *chRegNextThread(thread_t *tp) {
   }
 #if CH_CFG_USE_DYNAMIC == TRUE
   else {
-    chDbgAssert(ntp->p_refs < 255U, "too many references");
+    chDbgAssert(ntp->p_refs < (trefs_t)255, "too many references");
     ntp->p_refs++;
   }
 #endif

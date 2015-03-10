@@ -451,7 +451,7 @@ static inline void chVTDoTickI(void) {
     virtual_timer_t *vtp;
 
     --ch.vtlist.vt_next->vt_delta;
-    while (ch.vtlist.vt_next->vt_delta == 0U) {
+    while (ch.vtlist.vt_next->vt_delta == (systime_t)0) {
       vtfunc_t fn;
 
       vtp = ch.vtlist.vt_next;

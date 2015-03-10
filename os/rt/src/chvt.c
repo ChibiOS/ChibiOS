@@ -64,9 +64,9 @@ void _vt_init(void) {
   ch.vtlist.vt_prev = (virtual_timer_t *)&ch.vtlist;
   ch.vtlist.vt_delta = (systime_t)-1;
 #if CH_CFG_ST_TIMEDELTA == 0
-  ch.vtlist.vt_systime = 0;
+  ch.vtlist.vt_systime = (systime_t)0;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
-  ch.vtlist.vt_lasttime = 0;
+  ch.vtlist.vt_lasttime = (systime_t)0;
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
