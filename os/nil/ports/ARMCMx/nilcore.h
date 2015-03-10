@@ -155,7 +155,7 @@ struct port_extctx {};
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
- *          switching.
+ *          switch.
  */
 struct port_intctx {};
 #endif /* defined(__DOXYGEN__) */
@@ -169,7 +169,7 @@ struct port_intctx {};
 /**
  * @brief   Total priority levels.
  */
-#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIORITY_LEVELS          (1U << CORTEX_PRIORITY_BITS)
 
 /**
  * @brief   Minimum priority level.
@@ -182,7 +182,7 @@ struct port_intctx {};
  * @brief   Maximum priority level.
  * @details The maximum allowed priority level is always zero.
  */
-#define CORTEX_MAXIMUM_PRIORITY         0
+#define CORTEX_MAXIMUM_PRIORITY         0U
 
 /**
  * @brief   Priority level verification macro.
@@ -200,7 +200,7 @@ struct port_intctx {};
  * @brief   Priority level to priority mask conversion macro.
  */
 #define CORTEX_PRIO_MASK(n)                                                 \
-  ((n) << (8 - CORTEX_PRIORITY_BITS))
+  ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -221,11 +221,11 @@ struct port_intctx {};
 #if !defined(_FROM_ASM_)
 
 #if NIL_CFG_ST_TIMEDELTA > 0
-#if !PORT_USE_ALT_TIMER
+#if PORT_USE_ALT_TIMER == FALSE
 #include "nilcore_timer.h"
-#else /* PORT_USE_ALT_TIMER */
+#else /* PORT_USE_ALT_TIMER != FALSE */
 #include "nilcore_timer_alt.h"
-#endif /* PORT_USE_ALT_TIMER */
+#endif /* PORT_USE_ALT_TIMER != FALSE */
 #endif /* NIL_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */

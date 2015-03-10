@@ -91,7 +91,8 @@ void chSysInit(void) {
     /* Initialization hook.*/
     NIL_CFG_THREAD_EXT_INIT_HOOK(tp);
 
-    tp++, tcp++;
+    tp++;
+    tcp++;
   }
 
 #if NIL_CFG_ENABLE_STACK_CHECK
@@ -134,8 +135,8 @@ void chSysHalt(const char *reason) {
   NIL_CFG_SYSTEM_HALT_HOOK(reason);
 
   /* Harmless infinite loop.*/
-  while (true)
-    ;
+  while (true) {
+  }
 }
 
 /**
@@ -152,19 +153,23 @@ void chSysTimerHandlerI(void) {
   nil.systime++;
   do {
     /* Is the thread in a wait state with timeout?.*/
-    if (tp->timeout > 0) {
+    if (tp->timeout > (systime_t)0) {
 
       chDbgAssert(!NIL_THD_IS_READY(tp), "is ready");
 
      /* Did the timer reach zero?*/
-      if (--tp->timeout == 0) {
+      if (--tp->timeout == (systime_t)0) {
         /* Timeout on semaphores requires a special handling because the
            semaphore counter must be incremented.*/
-        if (NIL_THD_IS_WTSEM(tp))
+        /*lint -save -e9013 [15.7] There is no else because it is not needed.*/
+        if (NIL_THD_IS_WTSEM(tp)) {
           tp->u1.semp->cnt++;
-        else if (NIL_THD_IS_SUSP(tp))
+        }
+        else if (NIL_THD_IS_SUSP(tp)) {
           *tp->u1.trp = NULL;
-        chSchReadyI(tp, MSG_TIMEOUT);
+        }
+        /*lint -restore*/
+        (void) chSchReadyI(tp, MSG_TIMEOUT);
       }
     }
     /* Lock released in order to give a preemption chance on those
@@ -175,30 +180,35 @@ void chSysTimerHandlerI(void) {
   } while (tp < &nil.threads[NIL_CFG_NUM_THREADS]);
 #else
   thread_t *tp = &nil.threads[0];
-  systime_t next = 0;
+  systime_t next = (systime_t)0;
 
   chDbgAssert(nil.nexttime == port_timer_get_alarm(), "time mismatch");
 
   do {
     /* Is the thread in a wait state with timeout?.*/
-    if (tp->timeout > 0) {
+    if (tp->timeout > (systime_t)0) {
 
       chDbgAssert(!NIL_THD_IS_READY(tp), "is ready");
       chDbgAssert(tp->timeout >= nil.nexttime - nil.lasttime, "skipped one");
 
       tp->timeout -= nil.nexttime - nil.lasttime;
-      if (tp->timeout == 0) {
+      if (tp->timeout == (systime_t)0) {
         /* Timeout on semaphores requires a special handling because the
            semaphore counter must be incremented.*/
-        if (NIL_THD_IS_WTSEM(tp))
+        /*lint -save -e9013 [15.7] There is no else because it is not needed.*/
+       if (NIL_THD_IS_WTSEM(tp)) {
           tp->u1.semp->cnt++;
-        else if (NIL_THD_IS_SUSP(tp))
+        }
+        else if (NIL_THD_IS_SUSP(tp)) {
           *tp->u1.trp = NULL;
-        chSchReadyI(tp, MSG_TIMEOUT);
+        }
+        /*lint -restore*/
+        (void) chSchReadyI(tp, MSG_TIMEOUT);
       }
       else {
-        if (tp->timeout <= (systime_t)(next - 1))
+        if (tp->timeout <= (systime_t)(next - (systime_t)1)) {
           next = tp->timeout;
+        }
       }
     }
     /* Lock released in order to give a preemption chance on those
@@ -208,7 +218,7 @@ void chSysTimerHandlerI(void) {
     chSysLockFromISR();
   } while (tp < &nil.threads[NIL_CFG_NUM_THREADS]);
   nil.lasttime = nil.nexttime;
-  if (next > 0) {
+  if (next > (systime_t)0) {
     nil.nexttime += next;
     port_timer_set_alarm(nil.nexttime);
   }
@@ -228,8 +238,9 @@ void chSysTimerHandlerI(void) {
  */
 void chSysUnconditionalLock(void) {
 
-  if (port_irq_enabled(port_get_irq_status()))
+  if (port_irq_enabled(port_get_irq_status())) {
     chSysLock();
+  }
 }
 
 /**
@@ -241,8 +252,9 @@ void chSysUnconditionalLock(void) {
  */
 void chSysUnconditionalUnlock(void) {
 
-  if (!port_irq_enabled(port_get_irq_status()))
+  if (!port_irq_enabled(port_get_irq_status())) {
     chSysUnlock();
+  }
 }
 
 /**
@@ -262,10 +274,12 @@ syssts_t chSysGetStatusAndLockX(void)  {
 
   syssts_t sts = port_get_irq_status();
   if (port_irq_enabled(sts)) {
-    if (port_is_isr_context())
+    if (port_is_isr_context()) {
       chSysLockFromISR();
-    else
+    }
+    else {
       chSysLock();
+    }
   }
   return sts;
 }
@@ -282,8 +296,9 @@ syssts_t chSysGetStatusAndLockX(void)  {
 void chSysRestoreStatusX(syssts_t sts) {
 
   if (port_irq_enabled(sts)) {
-    if (port_is_isr_context())
+    if (port_is_isr_context()) {
       chSysUnlockFromISR();
+    }
     else {
       chSchRescheduleS();
       chSysUnlock();
@@ -309,9 +324,10 @@ thread_t *chSchReadyI(thread_t *tp, msg_t msg) {
 
   tp->u1.msg = msg;
   tp->state = NIL_STATE_READY;
-  tp->timeout = 0;
-  if (tp < nil.next)
+  tp->timeout = (systime_t)0;
+  if (tp < nil.next) {
     nil.next = tp;
+  }
   return tp;
 }
 
@@ -455,23 +471,21 @@ void chThdResumeI(thread_reference_t *trp, msg_t msg) {
     chDbgAssert(NIL_THD_IS_SUSP(tr), "not suspended");
 
     *trp = NULL;
-    chSchReadyI(tr, msg);
+    (void) chSchReadyI(tr, msg);
   }
 }
 
 /**
  * @brief   Suspends the invoking thread for the specified time.
  *
- * @param[in] time      the delay in system ticks
+ * @param[in] timeout   the delay in system ticks
  *
  * @api
  */
-void chThdSleep(systime_t time) {
+void chThdSleep(systime_t timeout) {
 
   chSysLock();
-
-  chThdSleepS(time);
-
+  (void) chThdSleepS(timeout);
   chSysUnlock();
 }
 
@@ -479,16 +493,14 @@ void chThdSleep(systime_t time) {
  * @brief   Suspends the invoking thread until the system time arrives to the
  *          specified value.
  *
- * @param[in] time      absolute system time
+ * @param[in] abstime   absolute system time
  *
  * @api
  */
-void chThdSleepUntil(systime_t time) {
+void chThdSleepUntil(systime_t abstime) {
 
   chSysLock();
-
-  chThdSleepUntilS(time);
-
+  chThdSleepUntilS(abstime);
   chSysUnlock();
 }
 
@@ -515,10 +527,9 @@ msg_t chSemWaitTimeout(semaphore_t *sp, systime_t timeout) {
   msg_t msg;
 
   chSysLock();
-
   msg = chSemWaitTimeoutS(sp, timeout);
-
   chSysUnlock();
+
   return msg;
 }
 
@@ -546,14 +557,15 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
   /* Note, the semaphore counter is a volatile variable so accesses are
      manually optimized.*/
   cnt_t cnt = sp->cnt;
-  if (cnt <= 0) {
-    if (TIME_IMMEDIATE == timeout)
+  if (cnt <= (cnt_t)0) {
+    if (TIME_IMMEDIATE == timeout) {
       return MSG_TIMEOUT;
-    sp->cnt = cnt - 1;
+    }
+    sp->cnt = cnt - (cnt_t)1;
     nil.current->u1.semp = sp;
     return chSchGoSleepTimeoutS(NIL_STATE_WTSEM, timeout);
   }
-  sp->cnt = cnt - 1;
+  sp->cnt = cnt - (cnt_t)1;
   return MSG_OK;
 }
 
@@ -571,10 +583,8 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t timeout) {
 void chSemSignal(semaphore_t *sp) {
 
   chSysLock();
-
   chSemSignalI(sp);
   chSchRescheduleS();
-
   chSysUnlock();
 }
 
@@ -591,7 +601,7 @@ void chSemSignal(semaphore_t *sp) {
  */
 void chSemSignalI(semaphore_t *sp) {
 
-  if (++sp->cnt <= 0) {
+  if (++sp->cnt <= (cnt_t)0) {
     thread_reference_t tr = nil.threads;
     while (true) {
       /* Is this thread waiting on this semaphore?*/
@@ -599,7 +609,7 @@ void chSemSignalI(semaphore_t *sp) {
 
         chDbgAssert(NIL_THD_IS_WTSEM(tr), "not waiting");
 
-        chSchReadyI(tr, MSG_OK);
+        (void) chSchReadyI(tr, MSG_OK);
         return;
       }
       tr++;
@@ -629,10 +639,8 @@ void chSemSignalI(semaphore_t *sp) {
 void chSemReset(semaphore_t *sp, cnt_t n) {
 
   chSysLock();
-
   chSemResetI(sp, n);
   chSchRescheduleS();
-
   chSysUnlock();
 }
 
@@ -659,14 +667,14 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
   cnt = sp->cnt;
   sp->cnt = n;
   tp = nil.threads;
-  while (cnt < 0) {
+  while (cnt < (cnt_t)0) {
     /* Is this thread waiting on this semaphore?*/
     if (tp->u1.semp == sp) {
 
       chDbgAssert(NIL_THD_IS_WTSEM(tp), "not waiting");
 
       cnt++;
-      chSchReadyI(tp, MSG_RESET);
+      (void) chSchReadyI(tp, MSG_RESET);
     }
     tp++;
 
@@ -686,10 +694,8 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
 void chEvtSignal(thread_t *tp, eventmask_t mask) {
 
   chSysLock();
-
   chEvtSignalI(tp, mask);
   chSchRescheduleS();
-
   chSysUnlock();
 }
 
@@ -708,8 +714,10 @@ void chEvtSignal(thread_t *tp, eventmask_t mask) {
 void chEvtSignalI(thread_t *tp, eventmask_t mask) {
 
   tp->epmask |= mask;
-  if (NIL_THD_IS_WTOREVT(tp) && ((tp->epmask & tp->u1.ewmask) != 0))
-    chSchReadyI(tp, MSG_OK);
+  if (NIL_THD_IS_WTOREVT(tp) &&
+      ((tp->epmask & tp->u1.ewmask) != (eventmask_t)0)) {
+    (void) chSchReadyI(tp, MSG_OK);
+  }
 }
 
 /**
@@ -734,10 +742,9 @@ eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t timeout) {
   eventmask_t m;
 
   chSysLock();
-
   m = chEvtWaitAnyTimeoutS(mask, timeout);
-
   chSysUnlock();
+
   return m;
 }
 
@@ -763,19 +770,22 @@ eventmask_t chEvtWaitAnyTimeoutS(eventmask_t mask, systime_t timeout) {
   thread_t *ctp = nil.current;
   eventmask_t m;
 
-  if ((m = (ctp->epmask & mask)) == 0) {
+  if ((m = (ctp->epmask & mask)) == (eventmask_t)0) {
     if (TIME_IMMEDIATE == timeout) {
       chSysUnlock();
+
       return (eventmask_t)0;
     }
     ctp->u1.ewmask = mask;
     if (chSchGoSleepTimeoutS(NIL_STATE_WTOREVT, timeout) < MSG_OK) {
       chSysUnlock();
+
       return (eventmask_t)0;
     }
     m = ctp->epmask & mask;
   }
   ctp->epmask &= ~m;
+
   return m;
 }
 

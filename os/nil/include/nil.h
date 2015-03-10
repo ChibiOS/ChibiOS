@@ -30,6 +30,10 @@
 #ifndef _NIL_H_
 #define _NIL_H_
 
+/**
+ * @brief   Type of a structure representing a thread.
+ * @note    It is required as an early definition.
+ */
 typedef struct nil_thread thread_t;
 
 #include "nilconf.h"
@@ -44,7 +48,7 @@ typedef struct nil_thread thread_t;
  * @name    Nil RTOS identification
  * @{
  */
-#define _NIL_                           /**< @brief Nil RTOS identification.*/
+#define _NIL_
 
 #define CH_KERNEL_VERSION      "1.0.0dev"
 
@@ -57,11 +61,11 @@ typedef struct nil_thread thread_t;
  * @name    Wakeup messages
  * @{
  */
-#define MSG_OK                  0   /**< @brief Normal wakeup message.      */
-#define MSG_TIMEOUT             -1  /**< @brief Wake-up caused by a timeout
-                                         condition.                         */
-#define MSG_RESET               -2  /**< @brief Wake-up caused by a reset
-                                         condition.                         */
+#define MSG_OK                  (msg_t)0    /**< @brief OK wakeup message.  */
+#define MSG_TIMEOUT             (msg_t)-1   /**< @brief Wake-up caused by
+                                                 a timeout condition.       */
+#define MSG_RESET               (msg_t)-2   /**< @brief Wake-up caused by
+                                                 a reset condition.         */
 /** @} */
 
 /**
@@ -87,11 +91,12 @@ typedef struct nil_thread thread_t;
  * @name    Thread state related macros
  * @{
  */
-#define NIL_STATE_READY         0   /**< @brief Thread ready or executing.  */
-#define NIL_STATE_SLEEPING      1   /**< @brief Thread sleeping.            */
-#define NIL_STATE_SUSP          2   /**< @brief Thread suspended.           */
-#define NIL_STATE_WTSEM         3   /**< @brief Thread waiting on semaphore.*/
-#define NIL_STATE_WTOREVT       4   /**< @brief Thread waiting for events.  */
+#define NIL_STATE_READY         (tstate_t)0 /**< @brief Thread ready or
+                                                 executing.                 */
+#define NIL_STATE_SLEEPING      (tstate_t)1 /**< @brief Thread sleeping.    */
+#define NIL_STATE_SUSP          (tstate_t)2 /**< @brief Thread suspended.   */
+#define NIL_STATE_WTSEM         (tstate_t)3 /**< @brief On semaphore.       */
+#define NIL_STATE_WTOREVT       (tstate_t)4 /**< @brief Waiting for events. */
 #define NIL_THD_IS_READY(tr)    ((tr)->state == NIL_STATE_READY)
 #define NIL_THD_IS_SLEEPING(tr) ((tr)->state == NIL_STATE_SLEEPING)
 #define NIL_THD_IS_SUSP(tr)     ((tr)->state == NIL_STATE_SUSP)
@@ -256,7 +261,7 @@ typedef struct nil_thread thread_t;
        "be zero or greater than one"
 #endif
 
-#if NIL_CFG_ENABLE_ASSERTS || NIL_CFG_ENABLE_STACK_CHECK
+#if (NIL_CFG_ENABLE_ASSERTS == TRUE) || (NIL_CFG_ENABLE_STACK_CHECK == TRUE)
 #define NIL_DBG_ENABLED                 TRUE
 #else
 #define NIL_DBG_ENABLED                 FALSE
@@ -264,7 +269,7 @@ typedef struct nil_thread thread_t;
 
 /** Boundaries of the idle thread boundaries, only required if stack checking
     is enabled.*/
-#if NIL_CFG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
+#if (NIL_CFG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
 extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
 
 #define THD_IDLE_BASE                   (&__main_thread_stack_base__)
@@ -298,7 +303,7 @@ struct nil_semaphore {
 /**
  * @brief Thread function.
  */
-typedef void (*tfunc_t)(void *);
+typedef void (*tfunc_t)(void *p);
 
 /**
  * @brief   Type of a structure representing a thread static configuration.
@@ -315,11 +320,6 @@ struct nil_thread_cfg {
   tfunc_t           funcp;      /**< @brief Thread function.                */
   void              *arg;       /**< @brief Thread function argument.       */
 };
-
-/**
- * @brief   Type of a structure representing a thread.
- */
-typedef struct nil_thread thread_t;
 
 /**
  * @brief   Type of a thread reference.
@@ -339,16 +339,16 @@ struct nil_thread {
     void                *p;     /**< @brief Generic pointer.                */
     thread_reference_t  *trp;   /**< @brief Pointer to thread reference.    */
     semaphore_t         *semp;  /**< @brief Pointer to semaphore.           */
-#if NIL_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (NIL_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
     eventmask_t         ewmask; /**< @brief Enabled events mask.            */
 #endif
   } u1;
   volatile systime_t    timeout;/**< @brief Timeout counter, zero
                                             if disabled.                    */
-#if NIL_CFG_USE_EVENTS || defined(__DOXYGEN__)
+#if (NIL_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   eventmask_t           epmask; /**< @brief Pending events mask.            */
 #endif
-#if NIL_CFG_ENABLE_STACK_CHECK || defined(__DOXYGEN__)
+#if (NIL_CFG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
   stkalign_t            *stklim;/**< @brief Thread stack boundary.          */
 #endif
   /* Optional extra fields.*/
@@ -376,13 +376,13 @@ struct nil_system {
    *          or to an higher priority thread if a switch is required.
    */
   thread_t              *next;
-#if NIL_CFG_ST_TIMEDELTA == 0 || defined(__DOXYGEN__)
+#if (NIL_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
   /**
    * @brief   System time.
    */
   systime_t             systime;
 #endif
-#if NIL_CFG_ST_TIMEDELTA > 0 || defined(__DOXYGEN__)
+#if (NIL_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
   /**
    * @brief   System time of the last tick event.
    */
@@ -396,7 +396,7 @@ struct nil_system {
    * @brief   Thread structures for all the defined threads.
    */
   thread_t              threads[NIL_CFG_NUM_THREADS + 1];
-#if NIL_DBG_ENABLED || defined(__DOXYGEN__)
+#if (NIL_DBG_ENABLED == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Panic message.
    * @note    This field is only present if some debug options have been
@@ -433,7 +433,7 @@ struct nil_system {
  * @brief   End of user threads table.
  */
 #define THD_TABLE_END                                                       \
-  {THD_IDLE_BASE, THD_IDLE_END, "idle", 0, NULL}                            \
+  {THD_IDLE_BASE, THD_IDLE_END, "idle", NULL, NULL}                         \
 };
 /** @} */
 
@@ -450,7 +450,7 @@ struct nil_system {
  * @api
  */
 #define THD_ALIGN_STACK_SIZE(n)                                             \
-  ((((n) - 1) | (sizeof(stkalign_t) - 1)) + 1)
+  ((((n) - 1U) | (sizeof(stkalign_t) - 1U)) + 1U)
 
 /**
  * @brief   Calculates the total Working Area size.
@@ -547,7 +547,7 @@ struct nil_system {
  * @api
  */
 #define S2ST(sec)                                                           \
-  ((systime_t)((sec) * NIL_CFG_ST_FREQUENCY))
+  ((systime_t)((uint32_t)(sec) * (uint32_t)NIL_CFG_ST_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
@@ -560,8 +560,8 @@ struct nil_system {
  * @api
  */
 #define MS2ST(msec)                                                         \
-  ((systime_t)(((((uint32_t)(msec)) *                                       \
-                 ((uint32_t)NIL_CFG_ST_FREQUENCY) - 1UL) / 1000UL) + 1UL))
+  ((systime_t)((((((uint32_t)(msec)) *                                      \
+                  ((uint32_t)NIL_CFG_ST_FREQUENCY)) - 1UL) / 1000UL) + 1UL))
 
 /**
  * @brief   Microseconds to system ticks.
@@ -574,8 +574,8 @@ struct nil_system {
  * @api
  */
 #define US2ST(usec)                                                         \
-  ((systime_t)(((((uint32_t)(usec)) *                                       \
-                 ((uint32_t)NIL_CFG_ST_FREQUENCY) - 1UL) / 1000000UL) + 1UL))
+  ((systime_t)((((((uint32_t)(usec)) *                                      \
+                  ((uint32_t)NIL_CFG_ST_FREQUENCY)) - 1UL) / 1000000UL) + 1UL))
 /** @} */
 
 /**
@@ -708,12 +708,13 @@ struct nil_system {
  * @brief   Suspends the invoking thread until the system time arrives to the
  *          specified value.
  *
- * @param[in] time      absolute system time
+ * @param[in] abstime   absolute system time
  *
  * @sclass
  */
-#define chThdSleepUntilS(time)                                             \
-  chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, (time) - chVTGetSystemTimeX())
+#define chThdSleepUntilS(abstime)                                           \
+    (void) chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, (abstime) -             \
+                                chVTGetSystemTimeX())
 
 /**
  * @brief   Initializes a semaphore with the specified counter value.
@@ -774,7 +775,7 @@ struct nil_system {
  *
  * @xclass
  */
-#if NIL_CFG_ST_TIMEDELTA == 0 || defined(__DOXYGEN__)
+#if (NIL_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
 #define chVTGetSystemTimeX() (nil.systime)
 #else
 #define chVTGetSystemTimeX() port_timer_get_time()
@@ -824,9 +825,14 @@ struct nil_system {
  */
 #if !defined(chDbgAssert)
 #define chDbgAssert(c, r) do {                                              \
-  if (NIL_CFG_ENABLE_ASSERTS && !(c))                                       \
-    chSysHalt(__func__);                                                    \
-} while (0)
+  /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
+  if (NIL_CFG_ENABLE_ASSERTS != FALSE) {                                    \
+    if (!(c)) {                                                             \
+  /*lint -restore*/                                                         \
+      chSysHalt(__func__);                                                  \
+    }                                                                       \
+  }                                                                         \
+} while (false)
 #endif /* !defined(chDbgAssert) */
 /** @} */
 
@@ -854,10 +860,10 @@ extern "C" {
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);
   msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
-  void chThdSleep(systime_t time);
-  void chThdSleepUntil(systime_t time);
-  msg_t chSemWaitTimeout(semaphore_t *sp, systime_t time);
-  msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t time);
+  void chThdSleep(systime_t timeout);
+  void chThdSleepUntil(systime_t abstime);
+  msg_t chSemWaitTimeout(semaphore_t *sp, systime_t timeout);
+  msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t timeout);
   void chSemSignal(semaphore_t *sp);
   void chSemSignalI(semaphore_t *sp);
   void chSemReset(semaphore_t *sp, cnt_t n);
