@@ -82,7 +82,7 @@ void _tm_init(void) {
   /* Time Measurement subsystem calibration, it does a null measurement
      and calculates the call overhead which is subtracted to real
      measurements.*/
-  ch.tm.offset = 0;
+  ch.tm.offset = (rtcnt_t)0;
   chTMObjectInit(&tm);
   chTMStartMeasurementX(&tm);
   chTMStopMeasurementX(&tm);
@@ -150,7 +150,7 @@ NOINLINE void chTMChainMeasurementToX(time_measurement_t *tmp1,
   tmp2->last = chSysGetRealtimeCounterX();
 
   /* Stops previous measurement using the same time stamp.*/
-  tm_stop(tmp1, tmp2->last, 0);
+  tm_stop(tmp1, tmp2->last, (rtcnt_t)0);
 }
 
 #endif /* CH_CFG_USE_TM == TRUE */

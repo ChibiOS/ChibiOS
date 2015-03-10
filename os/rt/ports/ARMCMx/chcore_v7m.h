@@ -397,12 +397,12 @@ static inline void port_init(void) {
  * @return              The interrupts status.
  */
 static inline syssts_t port_get_irq_status(void) {
-  uint32_t sts;
+  syssts_t sts;
 
 #if CORTEX_SIMPLIFIED_PRIORITY == FALSE
-  sts = __get_BASEPRI();
+  sts = (syssts_t)__get_BASEPRI();
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
-  sts = __get_PRIMASK();
+  sts = (syssts_t)__get_PRIMASK();
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
   return sts;
 }
@@ -419,9 +419,9 @@ static inline syssts_t port_get_irq_status(void) {
 static inline bool port_irq_enabled(syssts_t sts) {
 
 #if CORTEX_SIMPLIFIED_PRIORITY == FALSE
-  return sts == CORTEX_BASEPRI_DISABLED;
+  return sts == (syssts_t)CORTEX_BASEPRI_DISABLED;
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
-  return (sts & 1) == 0;
+  return (sts & (syssts_t)1) == (syssts_t)0;
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
 }
 

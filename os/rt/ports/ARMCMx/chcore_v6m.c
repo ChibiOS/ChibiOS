@@ -51,13 +51,15 @@
 /* Module interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if !CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+#if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   NMI vector.
  * @details The NMI vector is used for exception mode re-entering after a
  *          context switch.
  */
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void NMI_Handler(void) {
+/*lint -restore*/
 
   /* The port_extctx structure is pointed by the PSP register.*/
   struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
@@ -74,13 +76,15 @@ void NMI_Handler(void) {
 }
 #endif /* !CORTEX_ALTERNATE_SWITCH */
 
-#if CORTEX_ALTERNATE_SWITCH || defined(__DOXYGEN__)
+#if (CORTEX_ALTERNATE_SWITCH == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   PendSV vector.
  * @details The PendSV vector is used for exception mode re-entering after a
  *          context switch.
  */
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void PendSV_Handler(void) {
+/*lint -restore*/
 
   /* The port_extctx structure is pointed by the PSP register.*/
   struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
@@ -105,7 +109,7 @@ void PendSV_Handler(void) {
  */
 void _port_irq_epilogue(regarm_t lr) {
 
-  if (lr != (regarm_t)0xFFFFFFF1) {
+  if (lr != (regarm_t)0xFFFFFFF1U) {
     struct port_extctx *ctxp;
 
     port_lock_from_isr();
