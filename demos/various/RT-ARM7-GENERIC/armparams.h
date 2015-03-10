@@ -19,12 +19,12 @@
 
 /**
  * @file    armparams.h
- * @brief   ARM parameters for the LPC214x.
+ * @brief   Generic ARM parameters.
  *
- * @defgroup ARM_LPC214x LPC214x Specific Parameters
+ * @defgroup ARM_GENERIC Generic ARM Parameters
  * @ingroup ARM_SPECIFIC
  * @details This file contains the ARM specific parameters for the
- *          LPC214x platform.
+ *          a generic platform.
  * @{
  */
 
@@ -49,7 +49,7 @@
 /**
  * @brief   Implementation of the wait-for-interrupt state enter.
  */
-#define ARM_WFI_IMPL            (PCON = 1)
+#define ARM_WFI_IMPL
 
 #if !defined(__FROM_ASM__) || defined(__DOXYGEN__)
 /**

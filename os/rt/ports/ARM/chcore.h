@@ -120,6 +120,20 @@
 #define ARM_ENABLE_WFI_IDLE             FALSE
 #endif
 
+/**
+ * @brief   Enabled if in the system THUM code is used somewhere.
+ */
+#if !defined(THUMB_PRESENT)
+#define THUMB_PRESENT
+#endif
+
+/**
+ * @brief   Enabled if THUMB interworking is not required.
+ */
+#if !defined(THUMB_NO_INTERWORKING)
+#define THUMB_NO_INTERWORKING
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -153,15 +167,15 @@
 #error "unknown or unsupported ARM core"
 #endif
 
-#if THUMB_PRESENT
-#if THUMB_NO_INTERWORKING
+#if defined(THUMB_PRESENT)
+#if defined(THUMB_NO_INTERWORKING)
 #define PORT_INFO                       "Pure THUMB mode"
-#else /* !THUMB_NO_INTERWORKING */
+#else
 #define PORT_INFO                       "Interworking mode"
-#endif /* !THUMB_NO_INTERWORKING */
-#else /* !THUMB_PRESENT */
+#endif
+#else
 #define PORT_INFO                       "Pure ARM mode"
-#endif /* !THUMB_PRESENT */
+#endif
 
 #endif /* !defined(_FROM_ASM_) */
 
@@ -293,33 +307,33 @@ struct context {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-#ifdef THUMB
+#if defined(THUMB)
 
-#if CH_DBG_ENABLE_STACK_CHECK
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
 #define port_switch(ntp, otp) {                                             \
   register struct port_intctx *r13 asm ("r13");                             \
   if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
     chSysHalt("stack overflow");                                            \
   _port_switch_thumb(ntp, otp);                                             \
 }
-#else /* !CH_DBG_ENABLE_STACK_CHECK */
+#else
 #define port_switch(ntp, otp) _port_switch_thumb(ntp, otp)
-#endif /* !CH_DBG_ENABLE_STACK_CHECK */
+#endif
 
-#else /* !THUMB */
+#else /* !defined(THUMB) */
 
-#if CH_DBG_ENABLE_STACK_CHECK
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
 #define port_switch(ntp, otp) {                                             \
   register struct port_intctx *r13 asm ("r13");                             \
   if ((stkalign_t *)(r13 - 1) < otp->p_stklimit)                            \
   chSysHalt("stack overflow");                                              \
   _port_switch_arm(ntp, otp);                                               \
 }
-#else /* !CH_DBG_ENABLE_STACK_CHECK */
+#else
 #define port_switch(ntp, otp) _port_switch_arm(ntp, otp)
-#endif /* !CH_DBG_ENABLE_STACK_CHECK */
+#endif
 
-#endif /* !THUMB */
+#endif /* !defined(THUMB) */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -328,10 +342,10 @@ struct context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-#ifdef THUMB_PRESENT
+#if defined(THUMB_PRESENT)
   syssts_t _port_get_cpsr(void);
 #endif
-#ifdef THUMB
+#if defined(THUMB)
   void _port_switch_thumb(thread_t *ntp, thread_t *otp);
 #else
   void _port_switch_arm(thread_t *ntp, thread_t *otp);
@@ -360,12 +374,14 @@ static inline void port_init(void) {
 static inline syssts_t port_get_irq_status(void) {
   syssts_t sts;
 
-#ifdef THUMB
+#if defined(THUMB)
   sts = _port_get_cpsr();
 #else
-  asm volatile ("mrs     %[p0], CPSR" : [p0] "=r" (sts) :);
+  __asm volatile ("mrs     %[p0], CPSR" : [p0] "=r" (sts) :);
 #endif
+  /*lint -save -e530 [9.1] Asm instruction not seen by lint.*/
   return sts;
+  /*lint -restore*/
 }
 
 /**
@@ -379,7 +395,7 @@ static inline syssts_t port_get_irq_status(void) {
  */
 static inline bool port_irq_enabled(syssts_t sts) {
 
-  return (sts & 0x80) == 0;
+  return (sts & (syssts_t)0x80) == (syssts_t)0;
 }
 
 /**
@@ -392,13 +408,15 @@ static inline bool port_irq_enabled(syssts_t sts) {
 static inline bool port_is_isr_context(void) {
   syssts_t sts;
 
-#ifdef THUMB
+#if defined(THUMB)
   sts = _port_get_cpsr();
 #else
-  asm volatile ("mrs     %[p0], CPSR" : [p0] "=r" (sts) :);
+  __asm volatile ("mrs     %[p0], CPSR" : [p0] "=r" (sts) :);
 #endif
 
-  return (sts & 0x1F) == 0x12;
+  /*lint -save -e530 [9.1] Asm instruction not seen by lint.*/
+  return (sts & (syssts_t)0x1F) == (syssts_t)0x12;
+  /*lint -restore*/
 }
 
 /**
@@ -408,10 +426,10 @@ static inline bool port_is_isr_context(void) {
  */
 static inline void port_lock(void) {
 
-#ifdef THUMB
-  asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr", "memory");
+#if defined(THUMB)
+  __asm volatile ("bl     _port_lock_thumb" : : : "r3", "lr", "memory");
 #else
-  asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
 #endif
 }
 
@@ -421,10 +439,10 @@ static inline void port_lock(void) {
  */
 static inline void port_unlock(void) {
 
-#ifdef THUMB
-  asm volatile ("bl     _port_unlock_thumb" : : : "r3", "lr", "memory");
+#if defined(THUMB)
+  __asm volatile ("bl     _port_unlock_thumb" : : : "r3", "lr", "memory");
 #else
-  asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
 #endif
 }
 
@@ -452,10 +470,10 @@ static inline void port_unlock_from_isr(void) {
  */
 static inline void port_disable(void) {
 
-#ifdef THUMB
-  asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr", "memory");
+#if defined(THUMB)
+  __asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr", "memory");
 #else
-  asm volatile ("mrs     r3, CPSR                       \n\t"
+  __asm volatile ("mrs     r3, CPSR                       \n\t"
                 "orr     r3, #0x80                      \n\t"
                 "msr     CPSR_c, r3                     \n\t"
                 "orr     r3, #0x40                      \n\t"
@@ -471,10 +489,10 @@ static inline void port_disable(void) {
  */
 static inline void port_suspend(void) {
 
-#ifdef THUMB
-  asm volatile ("bl     _port_suspend_thumb" : : : "r3", "lr", "memory");
+#if defined(THUMB)
+  __asm volatile ("bl     _port_suspend_thumb" : : : "r3", "lr", "memory");
 #else
-  asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0x9F" : : : "memory");
 #endif
 }
 
@@ -484,10 +502,10 @@ static inline void port_suspend(void) {
  */
 static inline void port_enable(void) {
 
-#ifdef THUMB
-  asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr", "memory");
+#if defined(THUMB)
+  __asm volatile ("bl     _port_enable_thumb" : : : "r3", "lr", "memory");
 #else
-  asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
+  __asm volatile ("msr     CPSR_c, #0x1F" : : : "memory");
 #endif
 }
 
@@ -501,13 +519,13 @@ static inline void port_enable(void) {
  */
 static inline void port_wait_for_interrupt(void) {
 
-#if ARM_ENABLE_WFI_IDLE
+#if ARM_ENABLE_WFI_IDLE == TRUE
   ARM_WFI_IMPL;
 #endif
 }
 
 #if CH_CFG_ST_TIMEDELTA > 0
-#if !PORT_USE_ALT_TIMER
+#if PORT_USE_ALT_TIMER == FALSE
 #include "chcore_timer.h"
 #else /* PORT_USE_ALT_TIMER */
 #include "chcore_timer_alt.h"
