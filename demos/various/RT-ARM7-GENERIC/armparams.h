@@ -51,7 +51,7 @@
  */
 #define ARM_WFI_IMPL
 
-#if !defined(__FROM_ASM__) || defined(__DOXYGEN__)
+#if !defined(_FROM_ASM_) || defined(__DOXYGEN__)
 /**
  * @brief   Address of the IRQ vector register in the interrupt controller.
  */

@@ -51,12 +51,14 @@
 #define CORTEX_NUM_VECTORS      32
 
 #if !defined(_FROM_ASM_)
+
 /*
  * Replace the following inclusion with your vendor-provided CMSIS
  * device file.
  */
 #define STM32F051x8
 #include "stm32f0xx.h"
+
 #endif /* !defined(_FROM_ASM_) */
 
 #endif /* _CMPARAMS_H_ */

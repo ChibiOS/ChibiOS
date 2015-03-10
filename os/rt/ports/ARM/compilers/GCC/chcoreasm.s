@@ -25,7 +25,7 @@
  * @{
  */
 
-#define __FROM_ASM__
+#define _FROM_ASM_
 #include "chconf.h"
 #include "armparams.h"
 
