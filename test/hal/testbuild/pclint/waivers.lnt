@@ -77,6 +77,10 @@
    license URL and cannot be removed.*/
 -e9059
 
+/* Waiver Rule 8.4, this rule is disabled for the main() function only because
+   it, of course, does not have nor requires a prior declaration.*/
+-esym(9075, main)
+
 /* Waiver Rule 8.7, the static analyser has no visibility of functions called
    from asm modules.*/
 -e765
