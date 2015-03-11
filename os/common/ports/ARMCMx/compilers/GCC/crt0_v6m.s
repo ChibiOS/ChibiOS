@@ -1,15 +1,14 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
-                 2011,2012 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio.
 
-    This file is part of ChibiOS/RT.
+    This file is part of ChibiOS.
 
-    ChibiOS/RT is free software; you can redistribute it and/or modify
+    ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
-    ChibiOS/RT is distributed in the hope that it will be useful,
+    ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
@@ -22,7 +21,7 @@
  * @file    crt0_v6m.s
  * @brief   Generic ARMv6-M (Cortex-M0/M1) startup file for ChibiOS.
  *
- * @addtogroup ARMCMx_GCC_STARTUP
+ * @addtogroup ARMCMx_GCC_STARTUP_V6M
  * @{
  */
 
@@ -114,9 +113,9 @@
 /*
  * Reset handler.
  */
+                .align  2
                 .thumb_func
                 .global Reset_Handler
-                .weak   Reset_Handler
 Reset_Handler:
                 /* Interrupts are globally masked initially.*/
                 cpsid   i
@@ -228,40 +227,8 @@ endfiniloop:
 #endif
 
                 /* Branching to the defined exit handler.*/
-                b       __default_exit
-
-/*--------------------------------------------------------------------------*
- * Default main exit code, the system is halted.
- * It is a weak symbol, the application code can redefine the behavior.
- * R0 contains the value returned by the main function.
- *--------------------------------------------------------------------------*/
-                .thumb_func
-                .weak   __default_exit
-__default_exit:
-                cpsid   i
-.loop:          b       .loop
-
-/*--------------------------------------------------------------------------*
- * Default early initialization code. It is declared weak in order to be
- * replaced by the real initialization code.
- * The early initialization is performed just after stacks setup RAM areas
- * initialization.
- *--------------------------------------------------------------------------*/
-                .thumb_func
-                .weak   __early_init
-__early_init:
-                bx      lr
-
-/*--------------------------------------------------------------------------*
- * Default late initialization code. It is declared weak in order to be
- * replaced by the real initialization code.
- * The late initialization is performed just after RAM areas initialization
- * and before invoking the static constructors.
- *--------------------------------------------------------------------------*/
-                .thumb_func
-                .weak   __late_init
-__late_init:
-                bx      lr
+                ldr     r1, =__default_exit
+                bx      r1
 
 #endif
 

@@ -62,10 +62,12 @@ _port_switch:
                 mov     r6, r10
                 mov     r7, r11
                 push    {r4, r5, r6, r7}
-                mov r3, sp
-                str r3, [r1, #CONTEXT_OFFSET]
-                ldr r3, [r0, #CONTEXT_OFFSET]
-                mov sp, r3
+                
+                mov     r3, sp
+                str     r3, [r1, #CONTEXT_OFFSET]
+                ldr     r3, [r0, #CONTEXT_OFFSET]
+                mov     sp, r3
+                
                 pop     {r4, r5, r6, r7}
                 mov     r8, r4
                 mov     r9, r5

@@ -65,7 +65,7 @@ void SVC_Handler(void) {
 
 #if CORTEX_USE_FPU == TRUE
   /* Enforcing unstacking of the FP part of the context.*/
-  SCB_FPCCR &= ~FPCCR_LSPACT;
+  FPU->FPCCR &= ~FPU_FPCCR_LSPACT_Msk;
 #endif
 
   /* The port_extctx structure is pointed by the PSP register.*/
@@ -97,7 +97,7 @@ void PendSV_Handler(void) {
 
 #if CORTEX_USE_FPU == TRUE
   /* Enforcing unstacking of the FP part of the context.*/
-  SCB_FPCCR &= ~FPCCR_LSPACT;
+  FPU->FPCCR &= ~FPU_FPCCR_LSPACT_Msk;
 #endif
 
   /* The port_extctx structure is pointed by the PSP register.*/
