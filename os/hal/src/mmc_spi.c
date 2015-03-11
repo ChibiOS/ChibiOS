@@ -182,7 +182,7 @@ static void wait(MMCDriver *mmcp) {
     }
 #if MMC_NICE_WAITING == TRUE
     /* Trying to be nice with the other threads.*/
-    osalThreadSleep(1);
+    osalThreadSleepMilliseconds(1);
 #endif
   }
 }
@@ -365,7 +365,7 @@ static void sync(MMCDriver *mmcp) {
     }
 #if MMC_NICE_WAITING == TRUE
     /* Trying to be nice with the other threads.*/
-    osalThreadSleep(1);
+    osalThreadSleepMilliseconds(1);
 #endif
   }
   spiUnselect(mmcp->config->spip);

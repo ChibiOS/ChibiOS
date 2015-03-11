@@ -127,6 +127,7 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
+PORTASM = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/crt0_v7m.s
 ASMSRC = $(PORTASM)
 
 PORTINC = ${CHIBIOS}/os/ext/CMSIS/include \

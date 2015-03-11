@@ -45,17 +45,17 @@
 #define TRUE                                1
 #endif
 
-#define OSAL_SUCCESS                        FALSE
-#define OSAL_FAILED                         TRUE
+#define OSAL_SUCCESS                        false
+#define OSAL_FAILED                         true
 /** @} */
 
 /**
  * @name    Messages
  * @{
  */
-#define MSG_OK                              0
-#define MSG_RESET                           -1
-#define MSG_TIMEOUT                         -2
+#define MSG_OK                              (msg_t)0
+#define MSG_RESET                           (msg_t)-1
+#define MSG_TIMEOUT                         (msg_t)-2
 /** @} */
 
 
@@ -308,7 +308,7 @@ typedef struct {
  * @api
  */
 #define OSAL_S2ST(sec)                                                      \
-  ((systime_t)((sec) * OSAL_ST_FREQUENCY))
+  ((systime_t)((uint32_t)(sec) * (uint32_t)OSAL_ST_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
@@ -321,8 +321,8 @@ typedef struct {
  * @api
  */
 #define OSAL_MS2ST(msec)                                                    \
-  ((systime_t)((((((uint32_t)(msec)) * ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) /\
-                1000UL) + 1UL))
+  ((systime_t)((((((uint32_t)(msec)) *                                      \
+                  ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) / 1000UL) + 1UL))
 
 /**
  * @brief   Microseconds to system ticks.
@@ -335,8 +335,8 @@ typedef struct {
  * @api
  */
 #define OSAL_US2ST(usec)                                                    \
-  ((systime_t)((((((uint32_t)(usec)) * ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) /\
-                1000000UL) + 1UL))
+  ((systime_t)((((((uint32_t)(usec)) *                                      \
+                  ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) / 1000000UL) + 1UL))
 /** @} */
 
 /**
@@ -485,7 +485,7 @@ static inline void osalSysUnlockFromISR(void) {
  */
 static inline syssts_t osalSysGetStatusAndLockX(void)  {
 
-  return 0;
+  return (syssts_t)0;
 }
 
 /**
@@ -555,7 +555,7 @@ static inline void osalOsRescheduleS(void) {
  */
 static inline systime_t osalOsGetSystemTimeX(void) {
 
-  return 0;
+  return (systime_t)0;
 }
 
 /**
@@ -745,7 +745,7 @@ static inline void osalEventObjectInit(event_source_t *esp) {
 
   osalDbgCheck(esp != NULL);
 
-  esp->flags = 0;
+  esp->flags = (eventflags_t)0;
   esp->cb    = NULL;
   esp->param = NULL;
 }

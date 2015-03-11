@@ -105,7 +105,7 @@ void canStart(CANDriver *canp, const CANConfig *config) {
                 (canp->state == CAN_READY),
                 "invalid state");
   while (canp->state == CAN_STARTING) {
-    osalThreadSleepS(1);
+    osalThreadSleepS((systime_t)1);
   }
   if (canp->state == CAN_STOP) {
     canp->config = config;
@@ -253,7 +253,7 @@ void canSleep(CANDriver *canp) {
   if (canp->state == CAN_READY) {
     can_lld_sleep(canp);
     canp->state = CAN_SLEEP;
-    osalEventBroadcastFlagsI(&canp->sleep_event, 0);
+    osalEventBroadcastFlagsI(&canp->sleep_event, (eventflags_t)0);
     osalOsRescheduleS();
   }
   osalSysUnlock();
@@ -276,7 +276,7 @@ void canWakeup(CANDriver *canp) {
   if (canp->state == CAN_SLEEP) {
     can_lld_wakeup(canp);
     canp->state = CAN_READY;
-    osalEventBroadcastFlagsI(&canp->wakeup_event, 0);
+    osalEventBroadcastFlagsI(&canp->wakeup_event, (eventflags_t)0);
     osalOsRescheduleS();
   }
   osalSysUnlock();

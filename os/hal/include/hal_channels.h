@@ -203,17 +203,17 @@ typedef struct {
  * @{
  */
 /** @brief No pending conditions.*/
-#define CHN_NO_ERROR            0
+#define CHN_NO_ERROR            (eventflags_t)0
 /** @brief Connection happened.*/
-#define CHN_CONNECTED           1
+#define CHN_CONNECTED           (eventflags_t)1
 /** @brief Disconnection happened.*/
-#define CHN_DISCONNECTED        2
+#define CHN_DISCONNECTED        (eventflags_t)2
 /** @brief Data available in the input queue.*/
-#define CHN_INPUT_AVAILABLE     4
+#define CHN_INPUT_AVAILABLE     (eventflags_t)4
 /** @brief Output queue empty.*/
-#define CHN_OUTPUT_EMPTY        8
+#define CHN_OUTPUT_EMPTY        (eventflags_t)8
 /** @brief Transmission end.*/
-#define CHN_TRANSMISSION_END    16
+#define CHN_TRANSMISSION_END    (eventflags_t)16
 /** @} */
 
 /**
