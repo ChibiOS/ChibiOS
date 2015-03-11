@@ -63,11 +63,6 @@ ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
   USE_EXCEPTIONS_STACKSIZE = 0x400
 endif
 
-# Enables the use of FPU on Cortex-M4 (no, softfp, hard).
-ifeq ($(USE_FPU),)
-  USE_FPU = no
-endif
-
 #
 # Architecture or project specific options
 ##############################################################################
@@ -82,7 +77,7 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 include $(CHIBIOS)/os/nil/nil.mk
-include $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/mk/port_generic_cm4.mk
+include $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/mk/port_generic_cm0.mk
 
 # Define linker script file here
 LDSCRIPT = ch.ld
@@ -133,7 +128,7 @@ INCDIR += $(CHIBIOS)/os/ext/CMSIS/ST
 # Compiler settings
 #
 
-MCU  = cortex-m4
+MCU  = cortex-m0
 
 #TRGT = arm-elf-
 TRGT = arm-none-eabi-

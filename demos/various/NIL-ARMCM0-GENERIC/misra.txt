@@ -1,0 +1,28 @@
+PC-lint for C/C++ (NT) Vers. 9.00L, Copyright Gimpel Software 1985-2014
+_
+}
+..\..\..\os\common\ports\ARMCMx\compilers\GCC\crt0.c  371  Warning 438: Last
+    value assigned to variable 'psp' (defined at line 274) not used [MISRA 2012
+    Rule 2.2, required]
+..\..\..\os\common\ports\ARMCMx\compilers\GCC\crt0.c  371  Warning 438: Last
+    value assigned to variable 'reg' (defined at line 274) not used [MISRA 2012
+    Rule 2.2, required]
+..\..\..\os\common\ports\ARMCMx\compilers\GCC\crt0.c  371  Warning 550: Symbol
+    'psp' (line 274) not accessed
+..\..\..\os\common\ports\ARMCMx\compilers\GCC\crt0.c  371  Warning 550: Symbol
+    'reg' (line 274) not accessed
+                                  _
+extern uint32_t __main_stack_end__;
+..\..\..\os\common\ports\ARMCMx\compilers\GCC\vectors.c  85  Note 9004:
+    object/function '__main_stack_end__' previously declared [MISRA 2012 Rule
+    8.5, required]
+         _
+int main(void) {
+main.c  43  Error 18: Symbol 'main(void)' redeclared (void/nonvoid) conflicts
+    with line 218, file ..\..\..\os\common\ports\ARMCMx\compilers\GCC\crt0.c
+    [MISRA 2012 Rule 8.2, required], [MISRA 2012 Rule 8.3, required]
+main.c  43  Note 9075: external symbol 'main(void)' defined without a prior
+    declaration [MISRA 2012 Rule 8.4, required]
+main.c  43  Warning 532: Return mode of function 'main(void)' inconsistent with
+    line 218, file ..\..\..\os\common\ports\ARMCMx\compilers\GCC\crt0.c [MISRA
+    2012 Rule 8.3, required]
