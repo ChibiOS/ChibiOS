@@ -282,13 +282,11 @@ struct port_intctx {
  *          by an @p port_intctx structure.
  */
 #define PORT_SETUP_CONTEXT(tp, wend, pf, arg) {                             \
-  /*lint -save -e611 -e9074 -e9087 [11.1, 11.3] Casts are planned here.*/   \
   (tp)->ctxp = (struct port_intctx *)((uint8_t *)(wend) -                   \
                                       sizeof(struct port_intctx));          \
   (tp)->ctxp->r4 = (regarm_t)(pf);                                          \
   (tp)->ctxp->r5 = (regarm_t)(arg);                                         \
-  (tp)->ctxp->lr = (regarm_t)(_port_thread_start);                          \
-  /*lint -restore*/                                                         \
+  (tp)->ctxp->lr = (regarm_t)_port_thread_start;                            \
 }
 
 /**

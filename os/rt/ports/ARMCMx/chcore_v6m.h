@@ -188,7 +188,7 @@ struct port_intctx {
                                            sizeof(struct port_intctx));     \
   (tp)->p_ctx.r13->r4 = (regarm_t)(pf);                                     \
   (tp)->p_ctx.r13->r5 = (regarm_t)(arg);                                    \
-  (tp)->p_ctx.r13->lr = (regarm_t)(_port_thread_start);                     \
+  (tp)->p_ctx.r13->lr = (regarm_t)_port_thread_start;                       \
 }
 
 /**
