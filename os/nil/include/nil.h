@@ -702,7 +702,7 @@ struct nil_system {
  *
  * @sclass
  */
-#define chThdSleepS(timeout) chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, timeout)
+#define chThdSleepS(timeout) (void) chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, timeout)
 
 /**
  * @brief   Suspends the invoking thread until the system time arrives to the

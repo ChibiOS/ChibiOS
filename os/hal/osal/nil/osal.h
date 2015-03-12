@@ -120,7 +120,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !NIL_CFG_USE_EVENTS
+#if NIL_CFG_USE_EVENTS == FALSE
 #error "OSAL requires NIL_CFG_USE_EVENTS=TRUE"
 #endif
 
@@ -188,7 +188,7 @@ typedef struct event_source event_source_t;
  * @note    This type is not part of the OSAL API and is provided
  *          exclusively as an example and for convenience.
  */
-typedef void (*eventcallback_t)(event_source_t *);
+typedef void (*eventcallback_t)(event_source_t *p);
 
 /**
  * @brief   Type of an event flags mask.
@@ -508,7 +508,7 @@ static inline void osalSysRestoreStatusX(syssts_t sts) {
  *
  * @xclass
  */
-#if PORT_SUPPORTS_RT || defined(__DOXYGEN__)
+#if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
 static inline void osalSysPolledDelayX(rtcnt_t cycles) {
 
   chSysPolledDelayX(cycles);
@@ -694,7 +694,7 @@ static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
  */
 static inline void osalThreadQueueObjectInit(threads_queue_t *tqp) {
 
-  chSemObjectInit(&tqp->sem, 0);
+  chSemObjectInit(&tqp->sem, (cnt_t)0);
 }
 
 /**
@@ -756,8 +756,9 @@ static inline void osalEventBroadcastFlagsI(event_source_t *esp,
   osalDbgCheck(esp != NULL);
 
   esp->flags |= flags;
-  if (esp->cb != NULL)
+  if (esp->cb != NULL) {
     esp->cb(esp);
+  }
 }
 
 /**
@@ -811,7 +812,7 @@ static inline void osalEventSetCallback(event_source_t *esp,
  */
 static inline void osalMutexObjectInit(mutex_t *mp) {
 
-  chSemObjectInit((semaphore_t *)mp, 1);
+  chSemObjectInit((semaphore_t *)mp, (cnt_t)1);
 }
 
 /**
@@ -825,7 +826,7 @@ static inline void osalMutexObjectInit(mutex_t *mp) {
  */
 static inline void osalMutexLock(mutex_t *mp) {
 
-  chSemWait((semaphore_t *)mp);
+  (void) chSemWait((semaphore_t *)mp);
 }
 
 /**

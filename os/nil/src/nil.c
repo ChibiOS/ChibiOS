@@ -189,7 +189,7 @@ void chSysTimerHandlerI(void) {
     if (tp->timeout > (systime_t)0) {
 
       chDbgAssert(!NIL_THD_IS_READY(tp), "is ready");
-      chDbgAssert(tp->timeout >= nil.nexttime - nil.lasttime, "skipped one");
+      chDbgAssert(tp->timeout >= (nil.nexttime - nil.lasttime), "skipped one");
 
       tp->timeout -= nil.nexttime - nil.lasttime;
       if (tp->timeout == (systime_t)0) {
@@ -381,8 +381,9 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout) {
 
     /* TIMEDELTA makes sure to have enough time to reprogram the timer
        before the free-running timer counter reaches the selected timeout.*/
-    if (timeout < NIL_CFG_ST_TIMEDELTA)
-      timeout = NIL_CFG_ST_TIMEDELTA;
+    if (timeout < (systime_t)NIL_CFG_ST_TIMEDELTA) {
+      timeout = (systime_t)NIL_CFG_ST_TIMEDELTA;
+    }
 
     /* Absolute time of the timeout event.*/
     abstime = chVTGetSystemTimeX() + timeout;
@@ -485,7 +486,7 @@ void chThdResumeI(thread_reference_t *trp, msg_t msg) {
 void chThdSleep(systime_t timeout) {
 
   chSysLock();
-  (void) chThdSleepS(timeout);
+  chThdSleepS(timeout);
   chSysUnlock();
 }
 

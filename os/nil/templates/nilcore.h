@@ -118,16 +118,18 @@ typedef uint64_t stkalign_t;
  *          preemption-capable interrupt handler.
  */
 struct port_extctx {
-
+  uint32_t      reg1;
+  uint32_t      reg2;
 };
 
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
- *          switching.
+ *          switch.
  */
 struct port_intctx {
-
+  uint32_t      reg3;
+  uint32_t      reg4;
 };
 
 #endif /* !defined(_FROM_ASM_) */
@@ -141,8 +143,12 @@ struct port_intctx {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#define PORT_SETUP_CONTEXT(tp, wend, pf, arg) {                             \
-}
+#define PORT_SETUP_CONTEXT(tp, wend, pf, arg) do {                          \
+  (void)(tp);                                                               \
+  (void)(wend);                                                             \
+  (void)(pf);                                                               \
+  (void)(arg);                                                              \
+} while (false)
 
 /**
  * @brief   Computes the thread working area global size.
@@ -150,7 +156,8 @@ struct port_intctx {
  */
 #define PORT_WA_SIZE(n) (sizeof(struct port_intctx) +                       \
                          sizeof(struct port_extctx) +                       \
-                         (n) + (PORT_INT_REQUIRED_STACK))
+                         (size_t)(n) +                                      \
+                         (size_t)(PORT_INT_REQUIRED_STACK))
 
 /**
  * @brief   IRQ prologue code.
@@ -190,7 +197,11 @@ struct port_intctx {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
-#define port_switch(ntp, otp) _port_switch(ntp, otp)
+#define port_switch(ntp, otp) do {                                          \
+  (void)ntp;                                                                \
+  (void)otp;                                                                \
+  /*_port_switch(ntp, otp)*/                                                \
+} while (false)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -234,7 +245,7 @@ static inline void port_init(void) {
  */
 static inline syssts_t port_get_irq_status(void) {
 
-  return 0;
+  return (syssts_t)0;
 }
 
 /**
@@ -247,6 +258,8 @@ static inline syssts_t port_get_irq_status(void) {
  * @retval true         the word specified an enabled interrupts status.
  */
 static inline bool port_irq_enabled(syssts_t sts) {
+
+  (void)sts;
 
   return false;
 }
@@ -330,7 +343,7 @@ static inline void port_wait_for_interrupt(void) {
  */
 static inline rtcnt_t port_rt_get_counter_value(void) {
 
-  return 0;
+  return (rtcnt_t)0;
 }
 
 #endif /* !defined(_FROM_ASM_) */
@@ -342,11 +355,11 @@ static inline rtcnt_t port_rt_get_counter_value(void) {
 #if !defined(_FROM_ASM_)
 
 #if NIL_CFG_ST_TIMEDELTA > 0
-#if !PORT_USE_ALT_TIMER
+#if PORT_USE_ALT_TIMER == FALSE
 #include "nilcore_timer.h"
-#else /* PORT_USE_ALT_TIMER */
+#else
 #include "nilcore_timer_alt.h"
-#endif /* PORT_USE_ALT_TIMER */
+#endif
 #endif /* NIL_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */
