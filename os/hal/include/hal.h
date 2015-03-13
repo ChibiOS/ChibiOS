@@ -88,11 +88,24 @@
 /*===========================================================================*/
 
 /**
+ * @name    HAL identification
+ * @{
+ */
+#define _HAL_
+
+#define HAL_VERSION             "3.0.0dev"
+
+#define CH_HAL_MAJOR            3
+#define CH_HAL_MINOR            0
+#define CH_HAL_PATCH            0
+/** @} */
+
+/**
  * @name    Return codes
  * @{
  */
-#define HAL_SUCCESS                         false
-#define HAL_FAILED                          true
+#define HAL_SUCCESS             false
+#define HAL_FAILED              true
 /** @} */
 
 /*===========================================================================*/

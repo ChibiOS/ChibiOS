@@ -50,11 +50,11 @@ typedef struct nil_thread thread_t;
  */
 #define _NIL_
 
-#define CH_KERNEL_VERSION      "1.0.0dev"
+#define CH_KERNEL_VERSION       "1.0.0dev"
 
-#define CH_KERNEL_MAJOR        1
-#define CH_KERNEL_MINOR        0
-#define CH_KERNEL_PATCH        0
+#define CH_KERNEL_MAJOR         1
+#define CH_KERNEL_MINOR         0
+#define CH_KERNEL_PATCH         0
 /** @} */
 
 /**
