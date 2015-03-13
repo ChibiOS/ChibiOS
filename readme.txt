@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.8 ***
+- FIX: Fixed wrong paths for OLIMEX_STM32-E407_REV_D board (bug #561).
 - FIX: Fixed wrong TIM1/8_CLK on STM32F30x when using PCLK2 with prescaler
   (bug #557).
 - FIX: Fixed STM32 USARTv1: serial interrupt hang on overrun (and other) error
