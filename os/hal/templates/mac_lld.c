@@ -124,8 +124,8 @@ void mac_lld_stop(MACDriver *macp) {
  * @param[in] macp      pointer to the @p MACDriver object
  * @param[out] tdp      pointer to a @p MACTransmitDescriptor structure
  * @return              The operation status.
- * @retval RDY_OK       the descriptor has been obtained.
- * @retval RDY_TIMEOUT  descriptor not available.
+ * @retval MSG_OK       the descriptor has been obtained.
+ * @retval MSG_TIMEOUT  descriptor not available.
  *
  * @notapi
  */
@@ -158,8 +158,8 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
  * @param[in] macp      pointer to the @p MACDriver object
  * @param[out] rdp      pointer to a @p MACReceiveDescriptor structure
  * @return              The operation status.
- * @retval RDY_OK       the descriptor has been obtained.
- * @retval RDY_TIMEOUT  descriptor not available.
+ * @retval MSG_OK       the descriptor has been obtained.
+ * @retval MSG_TIMEOUT  descriptor not available.
  *
  * @notapi
  */

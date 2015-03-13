@@ -141,8 +141,8 @@ void macStop(MACDriver *macp) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The operation status.
- * @retval RDY_OK       the descriptor was obtained.
- * @retval RDY_TIMEOUT  the operation timed out, descriptor not initialized.
+ * @retval MSG_OK       the descriptor was obtained.
+ * @retval MSG_TIMEOUT  the operation timed out, descriptor not initialized.
  *
  * @api
  */
@@ -201,8 +201,8 @@ void macReleaseTransmitDescriptor(MACTransmitDescriptor *tdp) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The operation status.
- * @retval RDY_OK       the descriptor was obtained.
- * @retval RDY_TIMEOUT  the operation timed out, descriptor not initialized.
+ * @retval MSG_OK       the descriptor was obtained.
+ * @retval MSG_TIMEOUT  the operation timed out, descriptor not initialized.
  *
  * @api
  */

@@ -713,7 +713,7 @@ static inline void osalThreadQueueObjectInit(threads_queue_t *tqp) {
  *                      .
  * @return              The message from @p osalQueueWakeupOneI() or
  *                      @p osalQueueWakeupAllI() functions.
- * @retval RDY_TIMEOUT  if the thread has not been dequeued within the
+ * @retval MSG_TIMEOUT  if the thread has not been dequeued within the
  *                      specified timeout or if the function has been
  *                      invoked with @p TIME_IMMEDIATE as timeout
  *                      specification.
