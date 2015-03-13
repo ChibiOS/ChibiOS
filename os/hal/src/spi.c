@@ -285,7 +285,7 @@ void spiIgnore(SPIDriver *spip, size_t n) {
   osalDbgAssert(spip->state == SPI_READY, "not ready");
   osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartIgnoreI(spip, n);
-  _spi_wait_s(spip);
+  (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
 }
 
@@ -317,7 +317,7 @@ void spiExchange(SPIDriver *spip, size_t n,
   osalDbgAssert(spip->state == SPI_READY, "not ready");
   osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartExchangeI(spip, n, txbuf, rxbuf);
-  _spi_wait_s(spip);
+  (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
 }
 
@@ -345,7 +345,7 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
   osalDbgAssert(spip->state == SPI_READY, "not ready");
   osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartSendI(spip, n, txbuf);
-  _spi_wait_s(spip);
+  (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
 }
 
@@ -373,7 +373,7 @@ void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
   osalDbgAssert(spip->state == SPI_READY, "not ready");
   osalDbgAssert(spip->config->end_cb == NULL, "has callback");
   spiStartReceiveI(spip, n, rxbuf);
-  _spi_wait_s(spip);
+  (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
 }
 #endif /* SPI_USE_WAIT == TRUE */

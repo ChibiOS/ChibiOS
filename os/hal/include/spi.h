@@ -213,20 +213,6 @@ typedef enum {
  */
 #if (SPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Waits for operation completion.
- * @details This function waits for the driver to complete the current
- *          operation.
- * @pre     An operation must be running while the function is invoked.
- * @note    No more than one thread can wait on a SPI driver using
- *          this function.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-#define _spi_wait_s(spip) (void) osalThreadSuspendS(&(spip)->thread)
-
-/**
  * @brief   Wakes up the waiting thread.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
@@ -239,7 +225,6 @@ typedef enum {
   osalSysUnlockFromISR();                                                   \
 }
 #else /* !SPI_USE_WAIT */
-#define _spi_wait_s(spip)
 #define _spi_wakeup_isr(spip)
 #endif /* !SPI_USE_WAIT */
 
