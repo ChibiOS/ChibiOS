@@ -37,9 +37,19 @@
 #define USB_MAX_ENDPOINTS                   4
 
 /**
+ * @brief   Status stage handling method.
+ */
+#define USB_EP0_STATUS_STAGE                USB_EP0_STATUS_STAGE_SW
+
+/**
  * @brief   The address can be changed immediately upon packet reception.
  */
 #define USB_SET_ADDRESS_MODE                USB_EARLY_SET_ADDRESS
+
+/**
+ * @brief   Method for set address acknowledge.
+ */
+#define USB_SET_ADDRESS_ACK_HANDLING        USB_SET_ADDRESS_ACK_SW
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
