@@ -429,14 +429,11 @@ void can_lld_start(CANDriver *canp) {
   }
 #endif
 
-  /* Entering initialization mode. */
-  canp->state = CAN_STARTING;
+  /* Configuring CAN. */
   canp->can->MCR = CAN_MCR_INRQ;
   while ((canp->can->MSR & CAN_MSR_INAK) == 0)
     osalThreadSleepS(1);
-  /* BTR initialization.*/
   canp->can->BTR = canp->config->btr;
-  /* MCR initialization.*/
   canp->can->MCR = canp->config->mcr;
 
   /* Interrupt sources initialization.*/

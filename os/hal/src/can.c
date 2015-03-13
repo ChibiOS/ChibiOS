@@ -85,9 +85,9 @@ void canObjectInit(CANDriver *canp) {
 
 /**
  * @brief   Configures and activates the CAN peripheral.
- * @note    Activating the CAN bus can be a slow operation this this function
- *          is not atomic, it waits internally for the initialization to
- *          complete.
+ * @note    Activating the CAN bus can be a slow operation.
+ * @note    Unlike other drivers it is not possible to restart the CAN
+ *          driver without first stopping it using canStop().
  *
  * @param[in] canp      pointer to the @p CANDriver object
  * @param[in] config    pointer to the @p CANConfig object. Depending on
@@ -100,18 +100,18 @@ void canStart(CANDriver *canp, const CANConfig *config) {
   osalDbgCheck(canp != NULL);
 
   osalSysLock();
-  osalDbgAssert((canp->state == CAN_STOP) ||
-                (canp->state == CAN_STARTING) ||
-                (canp->state == CAN_READY),
-                "invalid state");
-  while (canp->state == CAN_STARTING) {
-    osalThreadSleepS((systime_t)1);
-  }
-  if (canp->state == CAN_STOP) {
-    canp->config = config;
-    can_lld_start(canp);
-    canp->state = CAN_READY;
-  }
+  osalDbgAssert(canp->state == CAN_STOP, "invalid state");
+
+  /* Entering initialization mode. */
+  canp->state = CAN_STARTING;
+  canp->config = config;
+
+  /* Low level initialization, could be a slow process and sleeps could
+     be performed inside.*/
+  can_lld_start(canp);
+
+  /* The driver finally goes into the ready state.*/
+  canp->state = CAN_READY;
   osalSysUnlock();
 }
 
@@ -129,8 +129,13 @@ void canStop(CANDriver *canp) {
   osalSysLock();
   osalDbgAssert((canp->state == CAN_STOP) || (canp->state == CAN_READY),
                 "invalid state");
+
+  /* The low level driver is stopped.*/
   can_lld_stop(canp);
   canp->state  = CAN_STOP;
+
+  /* Threads waiting on CAN APIs are notified that the driver has been
+     stopped in order to not have stuck threads.*/
   osalThreadDequeueAllI(&canp->rxqueue, MSG_RESET);
   osalThreadDequeueAllI(&canp->txqueue, MSG_RESET);
   osalOsRescheduleS();

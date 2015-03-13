@@ -48,10 +48,9 @@
     stop -> stop [label="\ncanStop()"];
     stop -> ready [label="\ncanStart()\n(fast implementation)"];
     stop -> starting [label="\ncanStart()\n(slow implementation)"];
-    starting -> starting [label="\ncanStart()\n(other thread)"];
     starting -> ready [label="\ninitialization complete\n(all threads)"];
     ready -> stop [label="\ncanStop()"];
-    ready -> ready [label="\ncanStart()\ncanReceive()\ncanTransmit()"];
+    ready -> ready [label="\ncanReceive()\ncanTransmit()"];
     ready -> sleep [label="\ncanSleep()"];
     sleep -> sleep [label="\ncanSleep()"];
     sleep -> ready [label="\ncanWakeup()"];
