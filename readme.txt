@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.8 ***
+- FIX: Fixed missing macro in STM32 USBv1 and OTGv1 drivers (bug #562).
 - FIX: Fixed wrong paths for OLIMEX_STM32-E407_REV_D board (bug #561).
 - FIX: Fixed wrong TIM1/8_CLK on STM32F30x when using PCLK2 with prescaler
   (bug #557).
