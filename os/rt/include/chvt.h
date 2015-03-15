@@ -448,10 +448,10 @@ static inline void chVTDoTickI(void) {
 #if CH_CFG_ST_TIMEDELTA == 0
   ch.vtlist.vt_systime++;
   if (&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.vt_next) {
-    virtual_timer_t *vtp;
-
+    /* The list is not empty, processing elements on top.*/
     --ch.vtlist.vt_next->vt_delta;
     while (ch.vtlist.vt_next->vt_delta == (systime_t)0) {
+      virtual_timer_t *vtp;
       vtfunc_t fn;
 
       vtp = ch.vtlist.vt_next;
@@ -466,11 +466,17 @@ static inline void chVTDoTickI(void) {
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
-  systime_t now;
+  systime_t now, delta;
 
+  /* The list is assumed to be non-empty because an tick interrupt just
+     occurred.*/
+  chDbgAssert(&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.vt_next,
+              "timers list empty");
+
+  /* Timers processing loop.*/
+  vtp = ch.vtlist.vt_next;
   while (true) {
     vtfunc_t fn;
-    systime_t delta;
 
     /* Getting the current system time and calculating the time window since
        the last time has expired.*/
@@ -479,13 +485,11 @@ static inline void chVTDoTickI(void) {
 
     /* The next element is outside the current time window, the loop
        is stopped here.*/
-    vtp = ch.vtlist.vt_next;
     if (vtp->vt_delta > delta) {
       break;
     }
 
     /* The "last time" becomes this timer's expiration time.*/
-    delta -= vtp->vt_delta;
     ch.vtlist.vt_lasttime += vtp->vt_delta;
 
     /* The timer is removed from the list and marked as non-armed.*/
@@ -493,27 +497,28 @@ static inline void chVTDoTickI(void) {
     ch.vtlist.vt_next = vtp->vt_next;
     fn = vtp->vt_func;
     vtp->vt_func = NULL;
+    chSysUnlockFromISR();
 
     /* The callback is invoked outside the kernel critical zone.*/
-    chSysUnlockFromISR();
     fn(vtp->vt_par);
+
+    /* Next element in the list, if the list is empty then the timer is
+       stopped.*/
     chSysLockFromISR();
-  }
-  if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
-    /* The list is empty, no tick event needed so the alarm timer
-       is stopped.*/
-    port_timer_stop_alarm();
-  }
-  else {
-    /* Updating the alarm to the next deadline, deadline that must not be
-       closer in time than the minimum time delta.*/
-    if (vtp->vt_delta >= (systime_t)CH_CFG_ST_TIMEDELTA) {
-      port_timer_set_alarm(now + vtp->vt_delta);
-    }
-    else {
-      port_timer_set_alarm(now + (systime_t)CH_CFG_ST_TIMEDELTA);
+    vtp = ch.vtlist.vt_next;
+    if (&ch.vtlist == (virtual_timers_list_t *)vtp) {
+      port_timer_stop_alarm();
+      return;
     }
   }
+  /* Updating the alarm to the next deadline, deadline that must not be
+     closer in time than the minimum time delta.*/
+  delta = (vtp->vt_delta >= (systime_t)CH_CFG_ST_TIMEDELTA) ?
+           vtp->vt_delta : (systime_t)CH_CFG_ST_TIMEDELTA;
+  port_timer_set_alarm(now + delta);
+
+  chDbgAssert((chVTGetSystemTimeX() - ch.vtlist.vt_lasttime) < delta,
+              "exceeding delta");
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 

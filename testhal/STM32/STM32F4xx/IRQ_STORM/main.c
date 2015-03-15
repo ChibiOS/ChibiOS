@@ -302,6 +302,7 @@ int main(void) {
         print("#");
         if (threshold == 0)
           threshold = interval;
+        break;
       }
     }
     /* Gives the worker threads a chance to empty the mailboxes before next
