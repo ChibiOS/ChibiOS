@@ -317,7 +317,8 @@ static inline void chSysUnlock(void) {
      in a critical section not followed by a chSchResceduleS(), this means
      that the current thread has a lower priority than the next thread in
      the ready list.*/
-  chDbgAssert(ch.rlist.r_current->p_prio >= ch.rlist.r_queue.p_next->p_prio,
+  chDbgAssert((ch.rlist.r_queue.p_next == (thread_t *)&ch.rlist.r_queue) ||
+              (ch.rlist.r_current->p_prio >= ch.rlist.r_queue.p_next->p_prio),
               "priority violation, missing reschedule");
 
   port_unlock();
