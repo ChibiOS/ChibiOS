@@ -1405,7 +1405,7 @@
 #endif
 
 /**
- * @brief   Clock of timers connected to AHB1
+ * @brief   Clock of timers connected to APB1
  *          (Timers 2, 3, 4, 5, 6, 7, 12, 13, 14).
  */
 #if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
@@ -1415,7 +1415,7 @@
 #endif
 
 /**
- * @brief   Clock of timers connected to AHB2 (Timers 1, 8, 9, 10, 11).
+ * @brief   Clock of timers connected to APB2 (Timers 1, 8, 9, 10, 11).
  */
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)
