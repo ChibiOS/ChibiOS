@@ -395,7 +395,7 @@ msg_t chOQGetI(output_queue_t *oqp) {
  *          buffer.
  *
  * @param[in] oqp       pointer to an @p output_queue_t structure
- * @param[out] bp       pointer to the data buffer
+ * @param[in] bp        pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
  * @param[in] timeout   the number of ticks before the operation timeouts,
