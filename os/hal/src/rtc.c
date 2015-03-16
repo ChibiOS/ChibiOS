@@ -262,9 +262,9 @@ void rtcConvertStructTmToDateTime(const struct tm *timp,
   }
   /*lint -restore*/
   /*lint -save -e9033 [10.8] Verified assignments to bit fields.*/
-  timespec->millisecond = tv_msec + (uint32_t)((timp->tm_hour * 3600) +
-                                               (timp->tm_min * 60) +
-                                               (timp->tm_sec * 1000));
+  timespec->millisecond = tv_msec + (uint32_t)(((timp->tm_hour * 3600) +
+                                                (timp->tm_min * 60) +
+                                                 timp->tm_sec) * 1000);
   /*lint -restore*/
 }
 
