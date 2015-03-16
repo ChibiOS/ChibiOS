@@ -272,8 +272,7 @@ void chSysRestoreStatusX(syssts_t sts) {
  */
 bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
 
-  return (end > start) ? ((cnt >= start) && (cnt < end)) :
-                         ((cnt >= start) || (cnt < end));
+  return (bool)((cnt - start) < (end - start));
 }
 
 /**
