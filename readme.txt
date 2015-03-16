@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.8 ***
+- FIX: Fixed misplaced __set_BASEPRI() in STM32 OTGv1 driver (bug #566).
 - FIX: Fixed typo in code doc of chOQWriteTimeout function (bug #565).
 - FIX: Fixed wrong condition check in MMC_SPI driver (bug #564).
 - FIX: Fixed wrong boolean operators in mutexes module (bug #563).
