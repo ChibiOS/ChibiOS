@@ -404,33 +404,6 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @brief   Globally enables interrupts.
- *
- * @special
- */
-static inline void osalSysEnable(void) {
-
-}
-
-/**
- * @brief   Globally disables interrupts.
- *
- * @special
- */
-static inline void osalSysDisable(void) {
-
-}
-
-/**
- * @brief   Waits for an interrupt to occur.
- *
- * @special
- */
-static inline void osalSysWait(void) {
-
-}
-
-/**
  * @brief   Enters a critical zone from thread context.
  * @note    This function cannot be used for reentrant critical zones.
  *
