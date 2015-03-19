@@ -326,6 +326,13 @@ static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
   /* Safe default.*/
   *clk = SDC_CLK_25MHz;
 
+  /* Looks like only "high capacity" cards produce meaningful results during
+     this clock detection procedure.*/
+  if (0 == _mmcsd_get_slice(sdcp->csd, MMCSD_CSD_10_CSD_STRUCTURE_SLICE)) {
+    *clk = SDC_CLK_25MHz;
+    return HAL_SUCCESS;
+  }
+
   /* Read switch functions' register.*/
   if (sdc_lld_read_special(sdcp, tmp, N, MMCSD_CMD_SWITCH, 0)) {
     return HAL_FAILED;
@@ -344,6 +351,9 @@ static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
     /* Check card answer for success status bits.*/
     if (HAL_SUCCESS == sdc_cmd6_check_status(SD_SWITCH_FUNCTION_SPEED, tmp)) {
       *clk = SDC_CLK_50MHz;
+    }
+    else {
+      *clk = SDC_CLK_25MHz;
     }
   }
 
