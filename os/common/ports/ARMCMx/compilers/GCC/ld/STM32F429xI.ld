@@ -19,12 +19,19 @@
 
 /*
  * ST32F429xI memory setup.
+ * Note: Use of ram1, ram2 and ram3 is mutually exclusive with use of ram0.
  */
 MEMORY
 {
     flash : org = 0x08000000, len = 2M
-    ram : org = 0x20000000, len = 192k
-    ccmram : org = 0x10000000, len = 64k
+    ram0  : org = 0x20000000, len = 192k    /* SRAM1 + SRAM2 + SRAM3 */
+    ram1  : org = 0x20000000, len = 112k    /* SRAM1 */
+    ram2  : org = 0x2001C000, len = 16k     /* SRAM2 */
+    ram3  : org = 0x20020000, len = 64k     /* SRAM3 */
+    ram4  : org = 0x10000000, len = 64k     /* CCM SRAM */
+    ram5  : org = 0x40024000, len = 4k      /* BCKP SRAM */
+    ram6  : org = 0x00000000, len = 0
+    ram7  : org = 0x00000000, len = 0
 }
 
 INCLUDE rules.ld
