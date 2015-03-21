@@ -75,8 +75,8 @@ SRC = $(PORTSRC) \
       $(PLATFORMSRC) \
       $(BOARDSRC) \
       $(CHIBIOS)/os/various/evtimer.c \
-      $(CHIBIOS)/os/various/memstreams.c \
-      $(CHIBIOS)/os/various/chprintf.c \
+      $(CHIBIOS)/os/hal/lib/streams/memstreams.c \
+      $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
       main.c
 
 # List C++ source files here. (C dependencies are automatically generated.)

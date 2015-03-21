@@ -141,6 +141,7 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(CHIBIOS)/os/various/devices_lib/accel \
          $(CHIBIOS)/os/various \
          $(CHIBIOS)/os/various/cpp_wrappers \
+         $(CHIBIOS)/os/hal/lib/streams
 
 #
 # Project, sources and paths
