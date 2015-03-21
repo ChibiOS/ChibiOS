@@ -63,11 +63,6 @@ ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
   USE_EXCEPTIONS_STACKSIZE = 0x400
 endif
 
-# Enables the use of FPU on Cortex-M4.
-ifeq ($(USE_FPU),)
-  USE_FPU = no
-endif
-
 #
 # Architecture or project specific options
 ##############################################################################
