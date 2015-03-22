@@ -499,7 +499,7 @@ static bool otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
       return FALSE;
 
 #if STM32_USB_OTGFIFO_FILL_BASEPRI
-    __set_BASEPRI(CORTEX_PRIORITY_MASK(STM32_USB_OTGFIFO_FILL_BASEPRI));
+    __set_BASEPRI(CORTEX_PRIO_MASK(STM32_USB_OTGFIFO_FILL_BASEPRI));
 #endif
     /* Handles the two cases: linear buffer or queue.*/
     if (usbp->epc[ep]->in_state->txqueued) {
