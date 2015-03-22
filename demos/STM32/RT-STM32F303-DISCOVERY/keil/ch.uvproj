@@ -72,6 +72,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopB1X>0</nStopB1X>
+            <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
@@ -128,6 +130,7 @@
             <RestoreFunctions>1</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
             <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
+            <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
@@ -139,6 +142,8 @@
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
             <RestoreTracepoints>1</RestoreTracepoints>
+            <RestoreSysVw>1</RestoreSysVw>
+            <UsePdscDebugDescription>1</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>13</TargetSelection>
@@ -353,11 +358,13 @@
             <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
+            <uC99>0</uC99>
+            <useXO>0</useXO>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
-              <Define>CORTEX_USE_FPU=1 __heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_IRAM2$$Base</Define>
+              <Define>CORTEX_USE_FPU=1 __heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx;..\..\..\..\os\ext\CMSIS\include;..\..\..\..\os\ext\CMSIS\ST;..\..\..\..\os\rt\ports\ARMCMx;..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\test</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx;..\..\..\..\os\ext\CMSIS\include;..\..\..\..\os\ext\CMSIS\ST;..\..\..\..\os\rt\ports\ARMCMx;..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\test\rt</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -369,6 +376,7 @@
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
+            <useXO>0</useXO>
             <VariousControls>
               <MiscControls>--cpreproc</MiscControls>
               <Define>CORTEX_USE_FPU=1</Define>
@@ -385,6 +393,7 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
+            <pXoBase></pXoBase>
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
@@ -1149,6 +1158,11 @@
           <GroupName>test</GroupName>
           <Files>
             <File>
+              <FileName>testthd.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\rt\testthd.h</FilePath>
+            </File>
+            <File>
               <FileName>test.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\test\rt\test.c</FilePath>
@@ -1262,11 +1276,6 @@
               <FileName>testthd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\test\rt\testthd.c</FilePath>
-            </File>
-            <File>
-              <FileName>testthd.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\test\rt\testthd.h</FilePath>
             </File>
           </Files>
         </Group>
