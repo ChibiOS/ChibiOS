@@ -87,7 +87,7 @@ _port_thread_start PROC
 #if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
 #else
-                movs    r3, #CORTEX_BASEPRI_DISABLED
+                movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
                 msr     BASEPRI, r3
 #endif
                 mov     r0, r5
