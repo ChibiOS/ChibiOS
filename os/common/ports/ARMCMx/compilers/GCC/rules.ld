@@ -154,7 +154,7 @@ SECTIONS
         PROVIDE(end = .);
     } > BSS_RAM    
 
-    .ram0 : ALIGN(4)
+    .ram0 (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         *(.ram0)
@@ -163,7 +163,7 @@ SECTIONS
         __ram0_free__ = .;
     } > ram0
 
-    .ram1 : ALIGN(4)
+    .ram1 (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         *(.ram1)
@@ -172,7 +172,7 @@ SECTIONS
         __ram1_free__ = .;
     } > ram1
 
-    .ram2 : ALIGN(4)
+    .ram2 (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         *(.ram2)
@@ -181,7 +181,7 @@ SECTIONS
         __ram2_free__ = .;
     } > ram2
 
-    .ram3 : ALIGN(4)
+    .ram3 (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         *(.ram3)
@@ -190,7 +190,7 @@ SECTIONS
         __ram3_free__ = .;
     } > ram3
 
-    .ram4 : ALIGN(4)
+    .ram4 (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         *(.ram4)
@@ -199,7 +199,7 @@ SECTIONS
         __ram4_free__ = .;
     } > ram4
 
-    .ram5 : ALIGN(4)
+    .ram5 (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         *(.ram5)
@@ -208,7 +208,7 @@ SECTIONS
         __ram5_free__ = .;
     } > ram5
 
-    .ram6 : ALIGN(4)
+    .ram6 (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         *(.ram6)
@@ -217,7 +217,7 @@ SECTIONS
         __ram6_free__ = .;
     } > ram6
 
-    .ram7 : ALIGN(4)
+    .ram7 (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
         *(.ram7)
