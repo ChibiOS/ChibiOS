@@ -88,12 +88,12 @@ _port_thread_start:
 #if CH_DBG_STATISTICS
                 bl      _stats_stop_measure_crit_thd
 #endif
-#if !CORTEX_SIMPLIFIED_PRIORITY
-                movs    r3, #0
-                msr     BASEPRI, r3
-#else /* CORTEX_SIMPLIFIED_PRIORITY */
+#if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
-#endif /* CORTEX_SIMPLIFIED_PRIORITY */
+#else
+                movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
+                msr     BASEPRI, r3
+#endif
                 mov     r0, r5
                 blx     r4
                 bl      chThdExit

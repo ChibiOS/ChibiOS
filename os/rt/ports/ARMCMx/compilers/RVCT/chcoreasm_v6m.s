@@ -89,6 +89,9 @@ _port_thread_start PROC
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      _dbg_check_unlock
 #endif
+#if CH_DBG_STATISTICS
+                bl      _stats_stop_measure_crit_thd
+#endif
                 cpsie   i
                 mov     r0, r5
                 blx     r4
