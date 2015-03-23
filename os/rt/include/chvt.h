@@ -494,6 +494,15 @@ static inline void chVTDoTickI(void) {
     ch.vtlist.vt_next = vtp->vt_next;
     fn = vtp->vt_func;
     vtp->vt_func = NULL;
+
+    /* If the list is empty then the timer is stopped.*/
+    if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
+      port_timer_stop_alarm();
+    }
+
+    /* Leaving the system critical zone in order to execute the callback
+       and in order to give a preemption chance to higher priority
+       interrupts.*/
     chSysUnlockFromISR();
 
     /* The callback is invoked outside the kernel critical zone.*/
@@ -503,10 +512,11 @@ static inline void chVTDoTickI(void) {
        of the list.*/
     chSysLockFromISR();
 
-    /* Next element in the list, if the list is empty then ending the loop.*/
+    /* If the list is empty then ending the loop, the list has to be
+       re-checked because new timers could have been added from within
+       the callback.*/
     vtp = ch.vtlist.vt_next;
     if (&ch.vtlist == (virtual_timers_list_t *)vtp) {
-      port_timer_stop_alarm();
       return;
     }
 

@@ -6,8 +6,8 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 *** ChibiOS/RT test suite
 ***
 *** Kernel:       3.0.0dev
-*** Compiled:     Dec 11 2014 - 16:38:49
-*** Compiler:     GCC 4.7.3 20130312 (release) [ARM/embedded-4_7-branch revision 196615]
+*** Compiled:     Mar 23 2015 - 11:26:02
+*** Compiler:     GCC 4.7.4 20140401 (release) [ARM/embedded-4_7-branch revision 209195]
 *** Architecture: ARMv7-ME
 *** Core Variant: Cortex-M4
 *** Port Info:    Advanced kernel mode
@@ -130,7 +130,7 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.10 (Benchmark, virtual timers set/reset)
---- Score : 1322832 timers/S
+--- Score : 1322828 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 11.11 (Benchmark, semaphores wait/signal)
@@ -156,4 +156,3 @@ Settings: SYSCLK=168, ACR=0x705 (5 wait states)
 ----------------------------------------------------------------------------
 
 Final result: SUCCESS
-
