@@ -172,6 +172,118 @@ void chSysHalt(const char *reason) {
 }
 
 /**
+ * @brief   System integrity check.
+ * @details Performs an integrity check of the important ChibiOS/RT data
+ *          structures.
+ * @note    The appropriate action in case of failure is to halt the system
+ *          before releasing the critical zone.
+ * @note    If the system is corrupted then one possible outcome of this
+ *          function is an exception caused by @p NULL or corrupted pointers
+ *          in list elements. Exception vectors must be monitored as well.
+ * @note    This function is not used internally, it is up to the
+ *          application to define if and where to perform system
+ *          checking.
+ * @note    Performing all tests at once can be a slow operation and can
+ *          degrade the system response time. It is suggested to execute
+ *          one test at time and release the critical zone in between tests.
+ *
+ * @param[in] testmask  Each bit in this mask is associated to a test to be
+ *                      performed.
+ * @return              The test result.
+ * @retval false        The test succeeded.
+ * @retval true         Test failed.
+ *
+ * @iclass
+ */
+bool chSysIntegrityCheckI(unsigned testmask) {
+  cnt_t n;
+
+  /* Ready List integrity check.*/
+  if ((testmask & CH_INTEGRITY_RLIST) != 0U) {
+    thread_t *tp;
+
+    /* Scanning the ready list forward.*/
+    n = 0;
+    tp = ch.rlist.r_queue.p_next;
+    while (tp != (thread_t *)&ch.rlist.r_queue) {
+      n++;
+      tp = tp->p_next;
+    }
+
+    /* Scanning the ready list backward.*/
+    tp = ch.rlist.r_queue.p_prev;
+    while (tp != (thread_t *)&ch.rlist.r_queue) {
+      n--;
+      tp = tp->p_prev;
+    }
+
+    /* The number of elements must match.*/
+    if (n != 0) {
+      return true;
+    }
+  }
+
+  /* Timers list integrity check.*/
+  if ((testmask & CH_INTEGRITY_VTLIST) != 0U) {
+    virtual_timer_t * vtp;
+
+    /* Scanning the timers list forward.*/
+    n = 0;
+    vtp = ch.vtlist.vt_next;
+    while (vtp != (virtual_timer_t *)&ch.vtlist) {
+      n++;
+      vtp = vtp->vt_next;
+    }
+
+    /* Scanning the timers list backward.*/
+    vtp = ch.vtlist.vt_prev;
+    while (vtp != (virtual_timer_t *)&ch.vtlist) {
+      n--;
+      vtp = vtp->vt_prev;
+    }
+
+    /* The number of elements must match.*/
+    if (n != 0) {
+      return true;
+    }
+  }
+
+#if CH_CFG_USE_REGISTRY == TRUE
+  if ((testmask & CH_INTEGRITY_REGISTRY) != 0U) {
+    thread_t *tp;
+
+    /* Scanning the ready list forward.*/
+    n = 0;
+    tp = ch.rlist.r_newer;
+    while (tp != (thread_t *)&ch.rlist) {
+      n++;
+      tp = tp->p_newer;
+    }
+
+    /* Scanning the ready list backward.*/
+    tp = ch.rlist.r_older;
+    while (tp != (thread_t *)&ch.rlist) {
+      n--;
+      tp = tp->p_older;
+    }
+
+    /* The number of elements must match.*/
+    if (n != 0) {
+      return true;
+    }
+  }
+#endif /* CH_CFG_USE_REGISTRY == TRUE */
+
+#if defined(PORT_INTEGRITY_CHECK)
+  if ((testmask & CH_INTEGRITY_PORT) != 0U) {
+    PORT_INTEGRITY_CHECK();
+  }
+#endif
+
+  return false;
+}
+
+/**
  * @brief   Handles time ticks for round robin preemption and timer increments.
  * @details Decrements the remaining time quantum of the running thread
  *          and preempts it when the quantum is used up. Increments system
