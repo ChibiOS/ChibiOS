@@ -473,21 +473,18 @@ static inline void chVTDoTickI(void) {
   chDbgAssert(&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.vt_next,
               "timers list empty");
 
-  /* Timers processing loop.*/
+  /* First timer to be processed, its time is assumed to be between
+     "vt_lasttime" and "now".*/
   vtp = ch.vtlist.vt_next;
+
+  chDbgAssert(chVTIsTimeWithinX(ch.vtlist.vt_lasttime + vtp->vt_delta,
+                                ch.vtlist.vt_lasttime,
+                                chVTGetSystemTimeX() + 1),
+              "out of time window");
+
+  /* Timers processing loop.*/
   while (true) {
     vtfunc_t fn;
-
-    /* Getting the current system time and calculating the time window since
-       the last time has expired.*/
-    now = chVTGetSystemTimeX();
-    delta = now - ch.vtlist.vt_lasttime;
-
-    /* The next element is outside the current time window, the loop
-       is stopped here.*/
-    if (vtp->vt_delta > delta) {
-      break;
-    }
 
     /* The "last time" becomes this timer's expiration time.*/
     ch.vtlist.vt_lasttime += vtp->vt_delta;
@@ -502,23 +499,37 @@ static inline void chVTDoTickI(void) {
     /* The callback is invoked outside the kernel critical zone.*/
     fn(vtp->vt_par);
 
-    /* Next element in the list, if the list is empty then the timer is
-       stopped.*/
+    /* Re-entering the critical zone in order to continue the exploration
+       of the list.*/
     chSysLockFromISR();
+
+    /* Next element in the list, if the list is empty then ending the loop.*/
     vtp = ch.vtlist.vt_next;
     if (&ch.vtlist == (virtual_timers_list_t *)vtp) {
       port_timer_stop_alarm();
       return;
     }
-  }
-  /* Updating the alarm to the next deadline, deadline that must not be
-     closer in time than the minimum time delta.*/
-  delta = (vtp->vt_delta >= (systime_t)CH_CFG_ST_TIMEDELTA) ?
-           vtp->vt_delta : (systime_t)CH_CFG_ST_TIMEDELTA;
-  port_timer_set_alarm(now + delta);
 
-  chDbgAssert((chVTGetSystemTimeX() - ch.vtlist.vt_lasttime) < delta,
-              "exceeding delta");
+    /* Getting the current system time and calculating the time window since
+       the last time has expired.*/
+    now = chVTGetSystemTimeX();
+    delta = now - ch.vtlist.vt_lasttime;
+
+    /* The next element is outside the current time window, the loop
+       is stopped here.*/
+    if (vtp->vt_delta > delta) {
+      /* Updating the alarm to the next deadline, deadline that must not be
+         closer in time than the minimum time delta.*/
+      delta = (vtp->vt_delta >= (systime_t)CH_CFG_ST_TIMEDELTA) ?
+               vtp->vt_delta : (systime_t)CH_CFG_ST_TIMEDELTA;
+      port_timer_set_alarm(now + delta);
+
+      chDbgAssert((chVTGetSystemTimeX() - ch.vtlist.vt_lasttime) < delta,
+                  "exceeding delta");
+
+      return;
+    }
+  }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
