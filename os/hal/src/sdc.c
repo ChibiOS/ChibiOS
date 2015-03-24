@@ -933,6 +933,65 @@ bool sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip) {
   return HAL_SUCCESS;
 }
 
+/**
+ * @brief   Erases the supplied blocks.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] startblk  starting block number
+ * @param[in] endblk    ending block number
+ *
+ * @return              The operation status.
+ * @retval HAL_SUCCESS  the operation succeeded.
+ * @retval HAL_FAILED   the operation failed.
+ *
+ * @api
+ */
+bool sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk) {
+  uint32_t resp[1];
+
+  osalDbgCheck((sdcp != NULL));
+  osalDbgAssert(sdcp->state == BLK_READY, "invalid state");
+
+  /* Erase operation in progress.*/
+  sdcp->state = BLK_WRITING;
+
+  /* Handling command differences between HC and normal cards.*/
+  if (!(sdcp->cardmode & SDC_MODE_HIGH_CAPACITY)) {
+    startblk *= MMCSD_BLOCK_SIZE;
+    endblk *= MMCSD_BLOCK_SIZE;
+  }
+
+  _sdc_wait_for_transfer_state(sdcp);
+
+  if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_START,
+                                  startblk, resp) != HAL_SUCCESS) ||
+      MMCSD_R1_ERROR(resp[0]))
+    goto failed;
+
+  if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_END,
+                                  endblk, resp) != HAL_SUCCESS) ||
+      MMCSD_R1_ERROR(resp[0]))
+    goto failed;
+
+  if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE,
+                                  0, resp) != HAL_SUCCESS) ||
+      MMCSD_R1_ERROR(resp[0]))
+    goto failed;
+
+  /* Quick sleep to allow it to transition to programming or receiving state */
+  /* TODO: ??????????????????????????? */
+
+  /* Wait for it to return to transfer state to indicate it has finished erasing */
+  _sdc_wait_for_transfer_state(sdcp);
+
+  sdcp->state = BLK_READY;
+  return HAL_SUCCESS;
+
+failed:
+  sdcp->state = BLK_READY;
+  return HAL_FAILED;
+}
+
 #endif /* HAL_USE_SDC == TRUE */
 
 /** @} */

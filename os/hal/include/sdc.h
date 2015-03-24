@@ -182,6 +182,7 @@ extern "C" {
   sdcflags_t sdcGetAndClearErrors(SDCDriver *sdcp);
   bool sdcSync(SDCDriver *sdcp);
   bool sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip);
+  bool sdcErase(SDCDriver *mmcp, uint32_t startblk, uint32_t endblk);
   bool _sdc_wait_for_transfer_state(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
