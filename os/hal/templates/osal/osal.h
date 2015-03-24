@@ -194,7 +194,7 @@ typedef uint32_t mutex_t;
  * @brief   Type of a thread queue.
  * @details A thread queue is a queue of sleeping threads, queued threads
  *          can be dequeued one at time or all together.
- * @note    If the OSAL is implemented on a bare metal machine withou RTOS
+ * @note    If the OSAL is implemented on a bare metal machine without RTOS
  *          then the queue can be implemented as a single thread reference.
  */
 typedef struct {
@@ -393,8 +393,26 @@ extern "C" {
 #endif
   void osalInit(void);
   void osalSysHalt(const char *reason);
+  void osalSysPolledDelayX(rtcnt_t cycles);
+  void osalOsTimerHandlerI(void);
+  void osalOsRescheduleS(void);
+  systime_t osalOsGetSystemTimeX(void);
+  void osalThreadSleepS(systime_t time);
+  void osalThreadSleep(systime_t time);
+  msg_t osalThreadSuspendS(thread_reference_t *trp);
+  msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
+  void osalThreadResumeI(thread_reference_t *trp, msg_t msg);
+  void osalThreadResumeS(thread_reference_t *trp, msg_t msg);
+  msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout);
   void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg);
   void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg);
+  void osalEventBroadcastFlagsI(event_source_t *esp, eventflags_t flags);
+  void osalEventBroadcastFlags(event_source_t *esp, eventflags_t flags);
+  void osalEventSetCallback(event_source_t *esp,
+                            eventcallback_t cb,
+                            void *param);
+  void osalMutexLock(mutex_t *mp);
+  void osalMutexUnlock(mutex_t *mp);
 #ifdef __cplusplus
 }
 #endif
@@ -402,6 +420,24 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Disables interrupts globally.
+ *
+ * @special
+ */
+static inline void osalSysDisable(void) {
+
+}
+
+/**
+ * @brief   Enables interrupts globally.
+ *
+ * @special
+ */
+static inline void osalSysEnable(void) {
+
+}
 
 /**
  * @brief   Enters a critical zone from thread context.
@@ -476,62 +512,6 @@ static inline void osalSysRestoreStatusX(syssts_t sts) {
 }
 
 /**
- * @brief   Polled delay.
- * @note    The real delay is always few cycles in excess of the specified
- *          value.
- *
- * @param[in] cycles    number of cycles
- *
- * @xclass
- */
-static inline void osalSysPolledDelayX(rtcnt_t cycles) {
-
-  (void)cycles;
-}
-
-/**
- * @brief   Systick callback for the underlying OS.
- * @note    This callback is only defined if the OSAL requires such a
- *          service from the HAL.
- */
-#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
-static inline void osalOsTimerHandlerI(void) {
-
-}
-#endif
-
-/**
- * @brief   Checks if a reschedule is required and performs it.
- * @note    I-Class functions invoked from thread context must not reschedule
- *          by themselves, an explicit reschedule using this function is
- *          required in this scenario.
- * @note    Not implemented in this simplified OSAL.
- *
- * @sclass
- */
-static inline void osalOsRescheduleS(void) {
-
-}
-
-/**
- * @brief   Current system time.
- * @details Returns the number of system ticks since the @p osalInit()
- *          invocation.
- * @note    The counter can reach its maximum and then restart from zero.
- * @note    This function can be called from any context but its atomicity
- *          is not guaranteed on architectures whose word size is less than
- *          @p systime_t size.
- *
- * @return              The system time in ticks.
- *
- * @xclass
- */
-static inline systime_t osalOsGetSystemTimeX(void) {
-
-  return (systime_t)0;
-}
-
-/**
  * @brief   Checks if the specified time is within the specified time window.
  * @note    When start==end then the function returns always true because the
  *          whole time range is specified.
@@ -553,117 +533,6 @@ static inline bool osalOsIsTimeWithinX(systime_t time,
 }
 
 /**
- * @brief   Suspends the invoking thread for the specified time.
- *
- * @param[in] time      the delay in system ticks, the special values are
- *                      handled as follow:
- *                      - @a TIME_INFINITE is allowed but interpreted as a
- *                        normal time specification.
- *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
- *
- * @sclass
- */
-static inline void osalThreadSleepS(systime_t time) {
-
-  (void)time;
-}
-
-/**
- * @brief   Suspends the invoking thread for the specified time.
- *
- * @param[in] time      the delay in system ticks, the special values are
- *                      handled as follow:
- *                      - @a TIME_INFINITE is allowed but interpreted as a
- *                        normal time specification.
- *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
- *
- * @api
- */
-static inline void osalThreadSleep(systime_t time) {
-
-  (void)time;
-}
-
-/**
- * @brief   Sends the current thread sleeping and sets a reference variable.
- * @note    This function must reschedule, it can only be called from thread
- *          context.
- *
- * @param[in] trp       a pointer to a thread reference object
- * @return              The wake up message.
- *
- * @sclass
- */
-static inline msg_t osalThreadSuspendS(thread_reference_t *trp) {
-
-  (void)trp;
-
-  return MSG_OK;
-}
-
-/**
- * @brief   Sends the current thread sleeping and sets a reference variable.
- * @note    This function must reschedule, it can only be called from thread
- *          context.
- *
- * @param[in] trp       a pointer to a thread reference object
- * @param[in] timeout   the timeout in system ticks, the special values are
- *                      handled as follow:
- *                      - @a TIME_INFINITE the thread enters an infinite sleep
- *                        state.
- *                      - @a TIME_IMMEDIATE the thread is not enqueued and
- *                        the function returns @p MSG_TIMEOUT as if a timeout
- *                        occurred.
- *                      .
- * @return              The wake up message.
- * @retval MSG_TIMEOUT  if the operation timed out.
- *
- * @sclass
- */
-static inline msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp,
-                                              systime_t timeout) {
-
-  (void)trp;
-  (void)timeout;
-
-  return MSG_OK;
-}
-
-/**
- * @brief   Wakes up a thread waiting on a thread reference object.
- * @note    This function must not reschedule because it can be called from
- *          ISR context.
- *
- * @param[in] trp       a pointer to a thread reference object
- * @param[in] msg       the message code
- *
- * @iclass
- */
-static inline void osalThreadResumeI(thread_reference_t *trp, msg_t msg) {
-
-  (void)trp;
-  (void)msg;
-}
-
-/**
- * @brief   Wakes up a thread waiting on a thread reference object.
- * @note    This function must reschedule, it can only be called from thread
- *          context.
- *
- * @param[in] trp       a pointer to a thread reference object
- * @param[in] msg       the message code
- *
- * @iclass
- */
-static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
-
-  (void)trp;
-  (void)msg;
-}
-
-/**
  * @brief   Initializes a threads queue object.
  *
  * @param[out] tqp      pointer to the threads queue object
@@ -672,39 +541,7 @@ static inline void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
  */
 static inline void osalThreadQueueObjectInit(threads_queue_t *tqp) {
 
-  (void)tqp;
-}
-
-/**
- * @brief   Enqueues the caller thread.
- * @details The caller thread is enqueued and put to sleep until it is
- *          dequeued or the specified timeouts expires.
- *
- * @param[in] tqp       pointer to the threads queue object
- * @param[in] time      the timeout in system ticks, the special values are
- *                      handled as follow:
- *                      - @a TIME_INFINITE the thread enters an infinite sleep
- *                        state.
- *                      - @a TIME_IMMEDIATE the thread is not enqueued and
- *                        the function returns @p MSG_TIMEOUT as if a timeout
- *                        occurred.
- *                      .
- * @return              The message from @p osalQueueWakeupOneI() or
- *                      @p osalQueueWakeupAllI() functions.
- * @retval MSG_TIMEOUT  if the thread has not been dequeued within the
- *                      specified timeout or if the function has been
- *                      invoked with @p TIME_IMMEDIATE as timeout
- *                      specification.
- *
- * @sclass
- */
-static inline msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp,
-                                              systime_t time) {
-
-  (void)tqp;
-  (void)time;
-
-  return MSG_OK;
+  osalDbgCheck(tqp != NULL);
 }
 
 /**
@@ -724,68 +561,6 @@ static inline void osalEventObjectInit(event_source_t *esp) {
 }
 
 /**
- * @brief   Add flags to an event source object.
- *
- * @param[in] esp       pointer to the event flags object
- * @param[in] flags     flags to be ORed to the flags mask
- *
- * @iclass
- */
-static inline void osalEventBroadcastFlagsI(event_source_t *esp,
-                                            eventflags_t flags) {
-
-  osalDbgCheck(esp != NULL);
-
-  esp->flags |= flags;
-  if (esp->cb != NULL) {
-    esp->cb(esp);
-  }
-}
-
-/**
- * @brief   Add flags to an event source object.
- *
- * @param[in] esp       pointer to the event flags object
- * @param[in] flags     flags to be ORed to the flags mask
- *
- * @iclass
- */
-static inline void osalEventBroadcastFlags(event_source_t *esp,
-                                           eventflags_t flags) {
-
-  osalDbgCheck(esp != NULL);
-
-  osalSysLock();
-  osalEventBroadcastFlagsI(esp, flags);
-  osalSysUnlock();
-}
-
-/**
- * @brief   Event callback setup.
- * @note    The callback is invoked from ISR context and can
- *          only invoke I-Class functions. The callback is meant
- *          to wakeup the task that will handle the event by
- *          calling @p osalEventGetAndClearFlagsI().
- * @note    This function is not part of the OSAL API and is provided
- *          exclusively as an example and for convenience.
- *
- * @param[in] esp       pointer to the event flags object
- * @param[in] cb        pointer to the callback function
- * @param[in] param     parameter to be passed to the callback function
- *
- * @api
- */
-static inline void osalEventSetCallback(event_source_t *esp,
-                                        eventcallback_t cb,
-                                        void *param) {
-
-  osalDbgCheck(esp != NULL);
-
-  esp->cb    = cb;
-  esp->param = param;
-}
-
-/**
  * @brief   Initializes s @p mutex_t object.
  *
  * @param[out] mp       pointer to the @p mutex_t object
@@ -794,37 +569,7 @@ static inline void osalEventSetCallback(event_source_t *esp,
  */
 static inline void osalMutexObjectInit(mutex_t *mp) {
 
-  *mp = 0;
-}
-
-/**
- * @brief   Locks the specified mutex.
- * @post    The mutex is locked and inserted in the per-thread stack of owned
- *          mutexes.
- *
- * @param[in,out] mp    pointer to the @p mutex_t object
- *
- * @api
- */
-static inline void osalMutexLock(mutex_t *mp) {
-
-  *mp = 1;
-}
-
-/**
- * @brief   Unlocks the specified mutex.
- * @note    The HAL guarantees to release mutex in reverse lock order. The
- *          mutex being unlocked is guaranteed to be the last locked mutex
- *          by the invoking thread.
- *          The implementation can rely on this behavior and eventually
- *          ignore the @p mp parameter which is supplied in order to support
- *          those OSes not supporting a stack of the owned mutexes.
- *
- * @param[in,out] mp    pointer to the @p mutex_t object
- *
- * @api
- */
-static inline void osalMutexUnlock(mutex_t *mp) {
+  osalDbgCheck(mp != NULL);
 
   *mp = 0;
 }

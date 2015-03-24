@@ -421,6 +421,26 @@ static inline void osalSysHalt(const char *reason) {
 }
 
 /**
+ * @brief   Disables interrupts globally.
+ *
+ * @special
+ */
+static inline void osalSysDisable(void) {
+
+  chSysDisable();
+}
+
+/**
+ * @brief   Enables interrupts globally.
+ *
+ * @special
+ */
+static inline void osalSysEnable(void) {
+
+  chSysEnable();
+}
+
+/**
  * @brief   Enters a critical zone from thread context.
  * @note    This function cannot be used for reentrant critical zones.
  *
