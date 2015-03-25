@@ -538,7 +538,7 @@ namespace chibios_rt {
 
   void Mutex::unlockS(void) {
 
-    chMtxLockS(&mutex);
+    chMtxUnlockS(&mutex);
   }
 
 #if CH_CFG_USE_CONDVARS
