@@ -29,6 +29,11 @@ int main(void) {
   halInit();
 
   /*
+   * Enabling interrupts, initialization done.
+   */
+  osalSysEnable();
+
+  /*
    * Activates the serial driver 2 using the driver default configuration.
    * PA2(TX) and PA3(RX) are routed to USART2.
    */
@@ -41,6 +46,8 @@ int main(void) {
    * a shell respawn upon its termination.
    */
   while (true) {
+    chnWriteTimeout(&SD2, (uint8_t *)"Hello World!\r\n", 14, TIME_INFINITE);
+
     palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
     osalThreadSleepMilliseconds(500);
     palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
