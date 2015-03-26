@@ -296,62 +296,62 @@
 #endif
 
 #if STM32_GPT_USE_TIM1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM1_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM1"
 #endif
 
 #if STM32_GPT_USE_TIM2 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM2_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM2"
 #endif
 
 #if STM32_GPT_USE_TIM3 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM3_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM3_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM3"
 #endif
 
 #if STM32_GPT_USE_TIM4 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM4_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM4_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM4"
 #endif
 
 #if STM32_GPT_USE_TIM5 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM5_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM5_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM5"
 #endif
 
 #if STM32_GPT_USE_TIM6 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM6_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM6_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM6"
 #endif
 
 #if STM32_GPT_USE_TIM7 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM7_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM7_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM7"
 #endif
 
 #if STM32_GPT_USE_TIM8 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM8_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM8_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM8"
 #endif
 
 #if STM32_GPT_USE_TIM9 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM9_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM9_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM9"
 #endif
 
 #if STM32_GPT_USE_TIM11 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM11_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM11_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM11"
 #endif
 
 #if STM32_GPT_USE_TIM12 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM12_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM12_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM12"
 #endif
 
 #if STM32_GPT_USE_TIM14 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM14_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM14_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM14"
 #endif
 

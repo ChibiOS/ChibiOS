@@ -102,12 +102,12 @@
 
 #if STM32_USB_USE_USB1 &&                                                   \
     (STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER) &&                       \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_USB_USB1_HP_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_USB_USB1_HP_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USB HP"
 #endif
 
 #if STM32_USB_USE_USB1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_USB_USB1_LP_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_USB_USB1_LP_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USB LP"
 #endif
 

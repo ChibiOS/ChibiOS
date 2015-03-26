@@ -109,7 +109,7 @@
 #error "SDIO not present in the selected device"
 #endif
 
-#if !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_SDC_SDIO_IRQ_PRIORITY)
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SDC_SDIO_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SDIO"
 #endif
 

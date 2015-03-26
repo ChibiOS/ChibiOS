@@ -273,12 +273,12 @@
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC1_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1"
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1 DMA"
 #endif
 
@@ -288,12 +288,12 @@
 #endif
 
 #if STM32_ADC_USE_SDADC1 &&                                                 \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC1_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_SDADC1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SDADC1"
 #endif
 
 #if STM32_ADC_USE_SDADC1 &&                                                 \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC1_DMA_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_SDADC1_DMA_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SDADC1 DMA"
 #endif
 
@@ -303,12 +303,12 @@
 #endif
 
 #if STM32_ADC_USE_SDADC2 &&                                                 \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC2_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_SDADC2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SDADC2"
 #endif
 
 #if STM32_ADC_USE_SDADC2 &&                                                 \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC2_DMA_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_SDADC2_DMA_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SDADC2 DMA"
 #endif
 
@@ -318,12 +318,12 @@
 #endif
 
 #if STM32_ADC_USE_SDADC3 &&                                                 \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC3_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_SDADC3_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SDADC3"
 #endif
 
 #if STM32_ADC_USE_SDADC3 &&                                                 \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_ADC_SDADC3_DMA_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_SDADC3_DMA_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SDADC3 DMA"
 #endif
 

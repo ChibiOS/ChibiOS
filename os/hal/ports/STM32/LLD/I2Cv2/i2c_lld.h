@@ -146,12 +146,12 @@
 #endif
 
 #if STM32_I2C_USE_I2C1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_I2C_I2C1_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_I2C_I2C1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to I2C1"
 #endif
 
 #if STM32_I2C_USE_I2C2 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_I2C_I2C2_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_I2C_I2C2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to I2C2"
 #endif
 

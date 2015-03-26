@@ -252,32 +252,32 @@
 #endif
 
 #if STM32_UART_USE_USART1 &&                                                \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART1_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_USART1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USART1"
 #endif
 
 #if STM32_UART_USE_USART2 &&                                                \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART2_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_USART2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USART2"
 #endif
 
 #if STM32_UART_USE_USART3 &&                                                \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART3_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_USART3_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USART3"
 #endif
 
 #if STM32_UART_USE_UART4 &&                                                 \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_UART4_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_UART4_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to UART4"
 #endif
 
 #if STM32_UART_USE_UART5 &&                                                 \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_UART5_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_UART5_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to UART5"
 #endif
 
 #if STM32_UART_USE_USART6 &&                                                \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART6_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_UART_USART6_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to USART6"
 #endif
 
