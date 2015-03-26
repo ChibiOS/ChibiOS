@@ -73,11 +73,13 @@ const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
   {DMA1_Channel5, &DMA1->IFCR, 16, 4, DMA1_Channel5_IRQn},
   {DMA1_Channel6, &DMA1->IFCR, 20, 5, DMA1_Channel6_IRQn},
   {DMA1_Channel7, &DMA1->IFCR, 24, 6, DMA1_Channel7_IRQn},
+#if STM32_HAS_DMA2 == TRUE
   {DMA2_Channel1, &DMA2->IFCR, 0, 7, DMA2_Channel1_IRQn},
   {DMA2_Channel2, &DMA2->IFCR, 4, 8, DMA2_Channel2_IRQn},
   {DMA2_Channel3, &DMA2->IFCR, 8, 9, DMA2_Channel3_IRQn},
   {DMA2_Channel4, &DMA2->IFCR, 12, 10, DMA2_Channel4_IRQn},
   {DMA2_Channel5, &DMA2->IFCR, 16, 11, DMA2_Channel5_IRQn},
+#endif
 };
 
 /*===========================================================================*/
@@ -236,6 +238,7 @@ OSAL_IRQ_HANDLER(Vector84) {
   OSAL_IRQ_EPILOGUE();
 }
 
+#if (STM32_HAS_DMA2 == TRUE) ||  defined(__DOXYGEN__)
 /**
  * @brief   DMA2 stream 1 shared interrupt handler.
  *
@@ -325,6 +328,7 @@ OSAL_IRQ_HANDLER(Vector130) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* STM32_HAS_DMA2 == TRUE */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
