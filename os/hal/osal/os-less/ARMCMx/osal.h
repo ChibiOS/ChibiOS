@@ -31,6 +31,8 @@
 
 #include "cmparams.h"
 
+#include "osalconf.h"
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -89,11 +91,6 @@
 #define OSAL_ST_RESOLUTION                  32
 
 /**
- * @brief   Required systick frequency or resolution.
- */
-#define OSAL_ST_FREQUENCY                   1000
-
-/**
  * @brief   Systick mode required by the underlying OS.
  */
 #define OSAL_ST_MODE                        OSAL_ST_MODE_PERIODIC
@@ -123,6 +120,13 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Frequency in Hertz of the system tick.
+ */
+#if !defined(OSAL_ST_FREQUENCY) || defined(__DOXYGEN__)
+#define OSAL_ST_FREQUENCY                   1000
+#endif
+
+/**
  * @brief   Enables OSAL assertions.
  */
 #if !defined(OSAL_DBG_ENABLE_ASSERTS) || defined(__DOXYGEN__)
@@ -134,6 +138,20 @@
  */
 #if !defined(OSAL_DBG_ENABLE_CHECKS) || defined(__DOXYGEN__)
 #define OSAL_DBG_ENABLE_CHECKS              FALSE
+#endif
+
+/**
+ * @brief   OSAL initialization hook.
+ */
+#if !defined(OSAL_INIT_HOOK) || defined(__DOXYGEN__)
+#define OSAL_INIT_HOOK()
+#endif
+
+/**
+ * @brief   Idle loop hook macro.
+ */
+#if !defined(OSAL_IDLE_HOOK) || defined(__DOXYGEN__)
+#define OSAL_IDLE_HOOK()
 #endif
 
 /*===========================================================================*/

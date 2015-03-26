@@ -57,6 +57,31 @@ virtual_timers_list_t vtlist;
 /*===========================================================================*/
 
 /**
+ * @brief   Timers initialization.
+ *
+ * @notapi
+ */
+static void vtInit(void) {
+
+  /* Virtual Timers initialization.*/
+  vtlist.vt_next = vtlist.vt_prev = (void *)&vtlist;
+  vtlist.vt_time = (systime_t)-1;
+  vtlist.vt_systime = 0;
+}
+
+/**
+ * @brief   Returns @p TRUE if the specified timer is armed.
+ *
+ * @param[out] vtp      the @p virtual_timer_t structure pointer
+ *
+ * @notapi
+ */
+static bool vtIsArmedI(virtual_timer_t *vtp) {
+
+  return vtp->vt_func != NULL;
+}
+
+/**
  * @brief   Virtual timers ticker.
  * @note    The system lock is released before entering the callback and
  *          re-acquired immediately after. It is callback's responsibility
@@ -139,6 +164,13 @@ static void vtResetI(virtual_timer_t *vtp) {
   vtp->vt_func = (vtfunc_t)NULL;
 }
 
+
+static void callback_timeout(void *p) {
+  osalSysLockFromISR();
+  osalThreadResumeI((thread_reference_t *)p, MSG_TIMEOUT);
+  osalSysUnlockFromISR();
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -150,6 +182,9 @@ static void vtResetI(virtual_timer_t *vtp) {
  */
 void osalInit(void) {
 
+  vtInit();
+
+  OSAL_INIT_HOOK();
 }
 
 /**
@@ -241,8 +276,12 @@ systime_t osalOsGetSystemTimeX(void) {
  * @sclass
  */
 void osalThreadSleepS(systime_t time) {
+  virtual_timer_t vt;
+  thread_reference_t tr;
 
-  (void)time;
+  tr = NULL;
+  vtSetI(&vt, time, callback_timeout, (void *)&tr);
+  osalThreadSuspendS(&tr);
 }
 
 /**
@@ -259,7 +298,9 @@ void osalThreadSleepS(systime_t time) {
  */
 void osalThreadSleep(systime_t time) {
 
-  (void)time;
+  osalSysLock();
+  osalThreadSleepS(time);
+  osalSysUnlock();
 }
 
 /**
@@ -273,10 +314,20 @@ void osalThreadSleep(systime_t time) {
  * @sclass
  */
 msg_t osalThreadSuspendS(thread_reference_t *trp) {
+  thread_t self = {MSG_WAIT};
 
   osalDbgCheck(trp != NULL);
 
-  return MSG_OK;
+  *trp = &self;
+  while (self.message == MSG_WAIT) {
+    osalSysUnlock();
+    /* A state-changing interrupt could occur here and cause the loop to
+       terminate, an hook macro is executed while waiting.*/
+    OSAL_IDLE_HOOK();
+    osalSysLock();
+  }
+
+  return self.message;
 }
 
 /**
@@ -299,12 +350,20 @@ msg_t osalThreadSuspendS(thread_reference_t *trp) {
  * @sclass
  */
 msg_t osalThreadSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
+  msg_t msg;
+  virtual_timer_t vt;
 
   osalDbgCheck(trp != NULL);
 
-  (void)timeout;
+  if (TIME_INFINITE == timeout)
+   return osalThreadSuspendS(trp);
 
-  return MSG_OK;
+  vtSetI(&vt, timeout, callback_timeout, (void *)trp);
+  msg = osalThreadSuspendS(trp);
+  if (vtIsArmedI(&vt))
+    vtResetI(&vt);
+
+  return msg;
 }
 
 /**
@@ -321,7 +380,10 @@ void osalThreadResumeI(thread_reference_t *trp, msg_t msg) {
 
   osalDbgCheck(trp != NULL);
 
-  (void)msg;
+  if (*trp != NULL) {
+    (*trp)->message = msg;
+    *trp = NULL;
+  }
 }
 
 /**
@@ -338,7 +400,10 @@ void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
 
   osalDbgCheck(trp != NULL);
 
-  (void)msg;
+  if (*trp != NULL) {
+    (*trp)->message = msg;
+    *trp = NULL;
+  }
 }
 
 /**
@@ -365,12 +430,25 @@ void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
  * @sclass
  */
 msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout) {
+  msg_t msg;
+  virtual_timer_t vt;
 
   osalDbgCheck(tqp != NULL);
 
-  (void)timeout;
+  if (TIME_IMMEDIATE == timeout)
+    return MSG_TIMEOUT;
 
-  return MSG_OK;
+  tqp->tr = NULL;
+
+  if (TIME_INFINITE == timeout)
+   return osalThreadSuspendS(&tqp->tr);
+
+  vtSetI(&vt, timeout, callback_timeout, (void *)&tqp->tr);
+  msg = osalThreadSuspendS(&tqp->tr);
+  if (vtIsArmedI(&vt))
+    vtResetI(&vt);
+
+  return msg;
 }
 
 /**
@@ -385,7 +463,7 @@ void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
   osalDbgCheck(tqp != NULL);
 
-  (void)msg;
+  osalThreadResumeI(&tqp->tr, msg);
 }
 
 /**
@@ -400,7 +478,7 @@ void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg) {
 
   osalDbgCheck(tqp != NULL);
 
-  (void)msg;
+  osalThreadResumeI(&tqp->tr, msg);
 }
 
 /**
