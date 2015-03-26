@@ -34,7 +34,7 @@
 /**
  * @brief   Cortex core model.
  */
-#define CORTEX_MODEL            CORTEX_M4
+#define CORTEX_MODEL            4
 
 /**
  * @brief   Floating Point unit presence.
@@ -73,6 +73,10 @@
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
 #include "stm32f4xx.h"
+
+#if CORTEX_MODEL != __CORTEX_M
+#error "CMSIS __CORTEX_M mismatch"
+#endif
 
 #if CORTEX_HAS_FPU != __FPU_PRESENT
 #error "CMSIS __FPU_PRESENT mismatch"

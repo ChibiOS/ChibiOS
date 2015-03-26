@@ -34,7 +34,7 @@
 /**
  * @brief   Cortex core model.
  */
-#define CORTEX_MODEL            CORTEX_M3
+#define CORTEX_MODEL            3
 
 /**
  * @brief   Floating Point unit presence.
@@ -65,8 +65,8 @@
    assembler source files. We verify that the info matches instead.*/
 #include "stm32f10x.h"
 
-#if !CORTEX_HAS_FPU != !__FPU_PRESENT
-#error "CMSIS __FPU_PRESENT mismatch"
+#if CORTEX_MODEL != __CORTEX_M
+#error "CMSIS __CORTEX_M mismatch"
 #endif
 
 #if CORTEX_PRIORITY_BITS != __NVIC_PRIO_BITS

@@ -66,17 +66,6 @@
 
 /** @} */
 
-/**
- * @name    Cortex-M variants
- * @{
- */
-#define CORTEX_M0                       0   /**< @brief Cortex-M0 variant.  */
-#define CORTEX_M0PLUS                   1   /**< @brief Cortex-M0+ variant. */
-#define CORTEX_M1                       10  /**< @brief Cortex-M1 variant.  */
-#define CORTEX_M3                       30  /**< @brief Cortex-M3 variant.  */
-#define CORTEX_M4                       40  /**< @brief Cortex-M4 variant.  */
-/** @} */
-
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
 
@@ -97,27 +86,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/* The following code is not processed when the file is included from an
-   asm module.*/
-#if !defined(_FROM_ASM_)
-
-/*
- * Inclusion of the appropriate CMSIS header for the selected device.
- */
-#if CORTEX_MODEL == CORTEX_M0
-#include "core_cm0.h"
-#elif CORTEX_MODEL == CORTEX_M0PLUS
-#include "core_cm0plus.h"
-#elif CORTEX_MODEL == CORTEX_M3
-#include "core_cm3.h"
-#elif CORTEX_MODEL == CORTEX_M4
-#include "core_cm4.h"
-#else
-#error "unknown or unsupported Cortex-M model"
-#endif
-
-#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -211,10 +179,9 @@ struct port_intctx {};
 /*===========================================================================*/
 
 /* Includes the sub-architecture-specific part.*/
-#if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M0PLUS) ||       \
-    (CORTEX_MODEL == CORTEX_M1)
+#if (CORTEX_MODEL == 0) || (CORTEX_MODEL == 1)
 #include "nilcore_v6m.h"
-#elif (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4)
+#elif (CORTEX_MODEL == 3) || (CORTEX_MODEL == 4)
 #include "nilcore_v7m.h"
 #endif
 

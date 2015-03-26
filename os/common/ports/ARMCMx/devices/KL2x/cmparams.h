@@ -34,7 +34,7 @@
 /**
  * @brief   Cortex core model.
  */
-#define CORTEX_MODEL            CORTEX_M0PLUS
+#define CORTEX_MODEL            0
 
 /**
  * @brief   Systick unit presence.
@@ -66,6 +66,10 @@
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
 #include "kl25z.h"
+
+#if CORTEX_MODEL != __CORTEX_M
+#error "CMSIS __CORTEX_M mismatch"
+#endif
 
 #if CORTEX_PRIORITY_BITS != __NVIC_PRIO_BITS
 #error "CMSIS __NVIC_PRIO_BITS mismatch"

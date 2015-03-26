@@ -139,7 +139,7 @@
  * @name    Architecture and Compiler
  * @{
  */
-#if (CORTEX_MODEL == CORTEX_M3) || defined(__DOXYGEN__)
+#if (CORTEX_MODEL == 3) || defined(__DOXYGEN__)
 /**
  * @brief   Macro defining the specific ARM architecture.
  */
@@ -155,7 +155,7 @@
  */
 #define PORT_CORE_VARIANT_NAME          "Cortex-M3"
 
-#elif (CORTEX_MODEL == CORTEX_M4)
+#elif (CORTEX_MODEL == 4)
 #define PORT_ARCHITECTURE_ARM_v7ME
 #define PORT_ARCHITECTURE_NAME          "ARMv7-ME"
 #if CORTEX_USE_FPU

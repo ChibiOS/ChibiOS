@@ -96,6 +96,21 @@
 #define OSAL_ST_MODE                        OSAL_ST_MODE_PERIODIC
 /** @} */
 
+/**
+ * @name    IRQ-related constants
+ * @{
+ */
+/**
+ * @brief   Total priority levels.
+ */
+#define OSAL_IRQ_PRIORITY_LEVELS            16U
+
+/**
+ * @brief   Highest IRQ priority for HAL drivers.
+ */
+#define OSAL_IRQ_MAXIMUM_PRIORITY           0U
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -272,6 +287,12 @@ typedef struct {
  * @name    IRQ service routines wrappers
  * @{
  */
+/**
+ * @brief   Priority level verification macro.
+ */
+#define OSAL_IRQ_IS_VALID_PRIORITY(n)                                       \
+  (((n) >= OSAL_IRQ_MAXIMUM_PRIORITY) && ((n) < OSAL_IRQ_PRIORITY_LEVELS))
+
 /**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers.

@@ -99,6 +99,25 @@
 #define OSAL_ST_MODE                        OSAL_ST_MODE_PERIODIC
 /** @} */
 
+/**
+ * @name    IRQ-related constants
+ * @{
+ */
+/**
+ * @brief   Total priority levels.
+ */
+#define OSAL_IRQ_PRIORITY_LEVELS            (1U << CORTEX_PRIORITY_BITS)
+
+/**
+ * @brief   Highest IRQ priority for HAL drivers.
+ */
+#if (CORTEX_MODEL == 0) || defined(__DOXYGEN__)
+#define OSAL_IRQ_MAXIMUM_PRIORITY           0
+#else
+#define OSAL_IRQ_MAXIMUM_PRIORITY           1
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -334,6 +353,12 @@ typedef struct {
  * @{
  */
 /**
+ * @brief   Priority level verification macro.
+ */
+#define OSAL_IRQ_IS_VALID_PRIORITY(n)                                       \
+  (((n) >= OSAL_IRQ_MAXIMUM_PRIORITY) && ((n) < OSAL_IRQ_PRIORITY_LEVELS))
+
+/**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers.
  */
@@ -510,10 +535,10 @@ static inline void osalSysEnable(void) {
  */
 static inline void osalSysLock(void) {
 
-#if CORTEX_MODEL == CORTEX_M0
+#if CORTEX_MODEL == 0
   __disable_irq();
 #else
-  __set_BASEPRI(CORTEX_BASEPRI_KERNEL);
+  __set_BASEPRI(OSAL_IRQ_MAXIMUM_PRIORITY);
 #endif
 }
 
@@ -525,7 +550,7 @@ static inline void osalSysLock(void) {
  */
 static inline void osalSysUnlock(void) {
 
-#if CORTEX_MODEL == CORTEX_M0
+#if CORTEX_MODEL == 0
   __enable_irq();
 #else
   __set_BASEPRI(0);
@@ -540,10 +565,10 @@ static inline void osalSysUnlock(void) {
  */
 static inline void osalSysLockFromISR(void) {
 
-#if CORTEX_MODEL == CORTEX_M0
+#if CORTEX_MODEL == 0
   __disable_irq();
 #else
-  __set_BASEPRI(CORTEX_BASEPRI_KERNEL);
+  __set_BASEPRI(OSAL_IRQ_MAXIMUM_PRIORITY);
 #endif
 }
 
@@ -555,7 +580,7 @@ static inline void osalSysLockFromISR(void) {
  */
 static inline void osalSysUnlockFromISR(void) {
 
-#if CORTEX_MODEL == CORTEX_M0
+#if CORTEX_MODEL == 0
   __enable_irq();
 #else
   __set_BASEPRI(0);
@@ -578,12 +603,12 @@ static inline void osalSysUnlockFromISR(void) {
 static inline syssts_t osalSysGetStatusAndLockX(void)  {
   syssts_t sts;
 
-#if CORTEX_MODEL == CORTEX_M0
+#if CORTEX_MODEL == 0
   sts = (syssts_t)__get_PRIMASK();
   __disable_irq();
 #else
   sts = (syssts_t)__get_BASEPRI();
-  __set_BASEPRI(CORTEX_BASEPRI_KERNEL);
+  __set_BASEPRI(OSAL_IRQ_MAXIMUM_PRIORITY);
 #endif
   return sts;
 }
@@ -599,7 +624,7 @@ static inline syssts_t osalSysGetStatusAndLockX(void)  {
  */
 static inline void osalSysRestoreStatusX(syssts_t sts) {
 
-#if CORTEX_MODEL == CORTEX_M0
+#if CORTEX_MODEL == 0
   if ((sts & (syssts_t)1) == (syssts_t)0) {
     __enable_irq();
   }

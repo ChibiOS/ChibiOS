@@ -99,7 +99,8 @@
  * @name    Architecture and Compiler
  * @{
  */
-#if (CORTEX_MODEL == CORTEX_M0) || defined(__DOXYGEN__)
+#if ((CORTEX_MODEL == 0) && !defined(__CORE_CM0PLUS_H_DEPENDANT)) ||        \
+    defined(__DOXYGEN__)
 /**
  * @brief   Macro defining the specific ARM architecture.
  */
@@ -115,7 +116,7 @@
  */
 #define PORT_CORE_VARIANT_NAME          "Cortex-M0"
 
-#elif (CORTEX_MODEL == CORTEX_M0PLUS)
+#elif (CORTEX_MODEL == 0) && defined(__CORE_CM0PLUS_H_DEPENDANT)
 #define PORT_ARCHITECTURE_ARM_v6M
 #define PORT_ARCHITECTURE_NAME          "ARMv6-M"
 #define PORT_CORE_VARIANT_NAME          "Cortex-M0+"

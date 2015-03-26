@@ -368,7 +368,7 @@ msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout) {
 
   osalDbgCheck(tqp != NULL);
 
-  (void)time;
+  (void)timeout;
 
   return MSG_OK;
 }
