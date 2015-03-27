@@ -268,6 +268,12 @@ struct context {
                          ((size_t)(n)) + ((size_t)(PORT_INT_REQUIRED_STACK)))
 
 /**
+ * @brief   Priority level verification macro.
+ * @todo    Add the required parameters to armparams.h.
+ */
+#define PORT_IRQ_IS_VALID_PRIORITY(n) false
+
+/**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
@@ -474,10 +480,10 @@ static inline void port_disable(void) {
   __asm volatile ("bl     _port_disable_thumb" : : : "r3", "lr", "memory");
 #else
   __asm volatile ("mrs     r3, CPSR                       \n\t"
-                "orr     r3, #0x80                      \n\t"
-                "msr     CPSR_c, r3                     \n\t"
-                "orr     r3, #0x40                      \n\t"
-                "msr     CPSR_c, r3" : : : "r3", "memory");
+                  "orr     r3, #0x80                      \n\t"
+                  "msr     CPSR_c, r3                     \n\t"
+                  "orr     r3, #0x40                      \n\t"
+                  "msr     CPSR_c, r3" : : : "r3", "memory");
 #endif
 }
 

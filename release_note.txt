@@ -14,7 +14,7 @@ What's new in RT 3.0
 - Entirely static for enhanced safety.
 - System data is now encapsulated in a single "ch" global structure for enhanced safety.
 - System integrity check runtime functionality for enhanced safety.
-- Tickless kernel mode helps implement ultra-low-power devices.
+- Tick-less kernel mode helps implement ultra-low-power devices.
 - High Resolution Virtual Timers module allows to specify very short intervals.
 - High Resolution system time.
 - Clock-cycle accurate Time Measurement module.
@@ -45,7 +45,7 @@ New addition NIL 1.0
 - Entirely static for enhanced safety.
 - No linked lists anywhere in the code for enhanced safety.
 - System data is encapsulated in a single "nil" global structure for enhanced safety.
-- Tickless kernel mode helps implement ultra-low-power devices.
+- Tick-less kernel mode helps implement ultra-low-power devices.
 - Ultra compact kernel, well below 1kB in its maximum configuration.
 - Upward compatible with RT, it implements a subset of the RT API.
 - Reduced RAM usage, 20-28 bytes for task and just 4 bytes for a semaphore on 32 bits architectures, half of that on 8/16 bits architectures.
