@@ -64,6 +64,42 @@
  * @name    ISRs abstraction macros
  */
 /**
+ * @brief   Priority level validation macro.
+ * @details This macro determines if the passed value is a valid priority
+ *          level for the underlying architecture.
+ *
+ * @param[in] prio      the priority level
+ * @return              Priority range result.
+ * @false               if the priority is invalid or if the architecture
+ *                      does not support priorities.
+ * @true                if the priority is valid.
+ */
+#if defined(PORT_IRQ_IS_VALID_PRIORITY) || defined(__DOXYGEN__)
+#define CH_IRQ_IS_VALID_PRIORITY(prio)                                      \
+  PORT_IRQ_IS_VALID_PRIORITY(prio)
+#else
+#define CH_IRQ_IS_VALID_PRIORITY(prio) false
+#endif
+
+/**
+ * @brief   Priority level validation macro.
+ * @details This macro determines if the passed value is a valid priority
+ *          level that cannot preempt the kernel critical zone.
+ *
+ * @param[in] prio      the priority level
+ * @return              Priority range result.
+ * @false               if the priority is invalid or if the architecture
+ *                      does not support priorities.
+ * @true                if the priority is valid.
+ */
+#if defined(PORT_IRQ_IS_VALID_KERNEL_PRIORITY) || defined(__DOXYGEN__)
+#define CH_IRQ_IS_VALID_KERNEL_PRIORITY(prio)                               \
+  PORT_IRQ_IS_VALID_KERNEL_PRIORITY(prio)
+#else
+#define CH_IRQ_IS_VALID_KERNEL_PRIORITY(prio) false
+#endif
+
+/**
  * @brief   IRQ handler enter code.
  * @note    Usually IRQ handlers functions are also declared naked.
  * @note    On some architectures this macro can be empty.

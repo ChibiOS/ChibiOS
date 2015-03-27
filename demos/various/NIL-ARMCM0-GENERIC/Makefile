@@ -117,8 +117,9 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC)
          
-# Make this point to your CMSIS device file.
-INCDIR += $(CHIBIOS)/os/ext/CMSIS/ST
+# Make this point to your CMSIS and chparams.h headers.
+INCDIR += $(CHIBIOS)/os/ext/CMSIS/ST \
+          $(CHIBIOS)/os/common/ports/ARMCMx/devices/STM32F0xx
 
 #
 # Project, sources and paths
@@ -168,7 +169,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DSTM32F051x8
 
 # Define ASM defines here
 UADEFS =

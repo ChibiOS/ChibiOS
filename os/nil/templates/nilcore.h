@@ -160,6 +160,16 @@ struct port_intctx {
                          (size_t)(PORT_INT_REQUIRED_STACK))
 
 /**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_PRIORITY(n) false
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n) false
+
+/**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.

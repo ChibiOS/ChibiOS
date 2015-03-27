@@ -163,22 +163,22 @@ struct context {
 #define CORTEX_MAXIMUM_PRIORITY         0U
 
 /**
- * @brief   Priority level verification macro.
- */
-#define CORTEX_IS_VALID_PRIORITY(n)                                         \
-  (((n) >= 0) && ((n) < CORTEX_PRIORITY_LEVELS))
-
-/**
- * @brief   Priority level verification macro.
- */
-#define CORTEX_IS_VALID_KERNEL_PRIORITY(n)                                  \
-  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
-
-/**
  * @brief   Priority level to priority mask conversion macro.
  */
 #define CORTEX_PRIO_MASK(n)                                                 \
   ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_PRIORITY(n)                                       \
+  (((n) >= 0U) && ((n) < CORTEX_PRIORITY_LEVELS))
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n)                                \
+  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

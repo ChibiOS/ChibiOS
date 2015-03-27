@@ -102,11 +102,13 @@
  */
 /**
  * @brief   Total priority levels.
+ * @brief   Implementation not mandatory.
  */
 #define OSAL_IRQ_PRIORITY_LEVELS            16U
 
 /**
  * @brief   Highest IRQ priority for HAL drivers.
+ * @brief   Implementation not mandatory.
  */
 #define OSAL_IRQ_MAXIMUM_PRIORITY           0U
 /** @} */

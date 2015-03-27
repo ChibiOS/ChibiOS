@@ -110,7 +110,7 @@
  */
 #if !defined(CORTEX_PRIORITY_SVCALL)
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY + 1U)
-#elif !CORTEX_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
+#elif !PORT_IRQ_IS_VALID_PRIORITY(CORTEX_PRIORITY_SVCALL)
 /* If it is externally redefined then better perform a validity check on it.*/
 #error "invalid priority level specified for CORTEX_PRIORITY_SVCALL"
 #endif

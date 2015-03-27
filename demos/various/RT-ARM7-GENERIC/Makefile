@@ -147,6 +147,9 @@ ASMSRC = $(PORTASM)
 # List of the standard inclusion directories.
 INCDIR = $(PORTINC) $(KERNINC)
 
+# Make this point to your armparams.h header.
+INCDIR += $(CHIBIOS)/os/common/ports/ARM/devices/LPC214x
+
 #
 # Project, sources and paths
 ##############################################################################

@@ -109,21 +109,6 @@
 #endif
 /** @} */
 
-/**
- * @name    IRQ-related constants
- * @{
- */
-/**
- * @brief   Total priority levels.
- */
-#define OSAL_IRQ_PRIORITY_LEVELS            CORTEX_PRIORITY_LEVELS
-
-/**
- * @brief   Highest IRQ priority for HAL drivers.
- */
-#define OSAL_IRQ_MAXIMUM_PRIORITY           CORTEX_MAX_KERNEL_PRIORITY
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -295,7 +280,7 @@ typedef struct {
 /**
  * @brief   Priority level verification macro.
  */
-#define OSAL_IRQ_IS_VALID_PRIORITY(n) CORTEX_IS_VALID_KERNEL_PRIORITY(n)
+#define OSAL_IRQ_IS_VALID_PRIORITY(n) CH_IRQ_IS_VALID_KERNEL_PRIORITY(n)
 
 /**
  * @brief   IRQ prologue code.
