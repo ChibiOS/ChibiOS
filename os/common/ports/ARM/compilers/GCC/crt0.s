@@ -38,7 +38,7 @@
                 .set    I_BIT, 0x80
                 .set    F_BIT, 0x40
 
-                .section .startup
+                .text
                 .code   32
                 .balign 4
 
