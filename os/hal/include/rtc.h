@@ -128,7 +128,8 @@ extern "C" {
   void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback);
 #endif
   void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
-                                    struct tm *timp);
+                                    struct tm *timp,
+                                    uint32_t *tv_msec);
   void rtcConvertStructTmToDateTime(const struct tm *timp,
                                     uint32_t tv_msec,
                                     RTCDateTime *timespec);

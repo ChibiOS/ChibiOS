@@ -213,11 +213,13 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
  *
  * @param[in]  timespec   pointer to a @p RTCDateTime structure
  * @param[out] timp       pointer to a broken-down time structure
+ * @param[out] tv_msec    pointer to milliseconds value or @p NULL
  *
  * @api
  */
 void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
-                                  struct tm *timp) {
+                                  struct tm *timp,
+                                  uint32_t *tv_msec) {
   int tmp;
 
   timp->tm_year  = (int)timespec->year + (1980 - 1900);
@@ -231,6 +233,10 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
   timp->tm_min  = (tmp % 3600) / 60;
   tmp -= timp->tm_min * 60;
   timp->tm_hour = tmp / 3600;
+
+  if (NULL != tv_msec) {
+    *tv_msec = (uint32_t)timespec->millisecond % 1000;
+  }
 }
 
 /**
