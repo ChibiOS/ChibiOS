@@ -108,7 +108,7 @@
                 .fpu    softvfp
 
                 .thumb
-                .section .startup
+                .text
 
 /*
  * Reset handler.

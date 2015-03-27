@@ -148,7 +148,7 @@
 #endif
 
                 .thumb
-                .section .startup
+                .text
 
 /*
  * Reset handler.

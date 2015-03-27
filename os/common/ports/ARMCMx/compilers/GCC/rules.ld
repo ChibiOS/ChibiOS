@@ -72,8 +72,6 @@ SECTIONS
 
     .text : ALIGN(16) SUBALIGN(16)
     {
-        *(.startup)
-        *(.startup.*)
         *(.text)
         *(.text.*)
         *(.rodata)
