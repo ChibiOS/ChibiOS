@@ -40,7 +40,7 @@ void _unhandled_exception(void) {}
 
 #if !defined(__DOXYGEN__)
 
-                .section vectors, "ax"
+                .section .vectors, "ax"
                 .code   32
                 .balign 4
 

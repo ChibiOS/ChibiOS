@@ -38,7 +38,7 @@
                 .set    I_BIT, 0x80
                 .set    F_BIT, 0x40
 
-                .text
+                .section .startup
                 .code   32
                 .balign 4
 
@@ -50,7 +50,7 @@ Reset_Handler:
                 /*
                  * Stack pointers initialization.
                  */
-                ldr     r0, =___stacks_end__
+                ldr     r0, =__stacks_end__
                 /* Undefined */
                 msr     CPSR_c, #MODE_UND | I_BIT | F_BIT
                 mov     sp, r0

@@ -15,15 +15,29 @@
 */
 
 /*
- * Generic device memory setup, customize it for your device.
+ * LPC2148 memory setup.
  */
 MEMORY
 {
     flash : org = 0x00000000, len = 512k - 12k
-    ram : org = 0x40000200, len = 32k - 0x200 - 288
-    ram1 : org = 0, len = 0
-    ram2 : org = 0, len = 0
-    ram3 : org = 0, len = 0
+    ram0  : org = 0x40000200, len = 32k - 0x200 - 288
+    ram1  : org = 0x00000000, len = 0
+    ram2  : org = 0x00000000, len = 0
+    ram3  : org = 0x00000000, len = 0
+    ram4  : org = 0x00000000, len = 0
+    ram5  : org = 0x00000000, len = 0
+    ram6  : org = 0x00000000, len = 0
+    ram7  : org = 0x00000000, len = 0
 }
+
+/* RAM region to be used for stacks. This stack accommodates the processing
+   of all exceptions and interrupts*/
+REGION_ALIAS("STACKS_RAM", ram0);
+
+/* RAM region to be used for data segment.*/
+REGION_ALIAS("DATA_RAM", ram0);
+
+/* RAM region to be used for BSS segment.*/
+REGION_ALIAS("BSS_RAM", ram0);
 
 INCLUDE rules.ld

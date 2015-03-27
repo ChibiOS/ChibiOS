@@ -462,7 +462,7 @@ void Vector3FC(void) __attribute__((weak, alias("_unhandled_exception")));
  * @brief   STM32 vectors table.
  */
 #if !defined(__DOXYGEN__)
-__attribute__ ((used, section("vectors")))
+__attribute__ ((used, section(".vectors")))
 #endif
 /*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 vectors_t _vectors = {

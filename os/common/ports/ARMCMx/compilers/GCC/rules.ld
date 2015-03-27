@@ -51,7 +51,7 @@ SECTIONS
 
     startup : ALIGN(16) SUBALIGN(16)
     {
-        KEEP(*(vectors))
+        KEEP(*(.vectors))
     } > flash
 
     constructors : ALIGN(4) SUBALIGN(4)
@@ -72,7 +72,8 @@ SECTIONS
 
     .text : ALIGN(16) SUBALIGN(16)
     {
-        *(.text.startup.*)
+        *(.startup)
+        *(.startup.*)
         *(.text)
         *(.text.*)
         *(.rodata)
