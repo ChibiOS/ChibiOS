@@ -65,7 +65,7 @@ endif
 
 # Enables the use of FPU on Cortex-M4 (no, softfp, hard).
 ifeq ($(USE_FPU),)
-  USE_FPU = hard
+  USE_FPU = no
 endif
 
 #
@@ -81,16 +81,32 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
+# Startup files.
+include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.mk
+# HAL-OSAL files (optional).
+#include $(CHIBIOS)/os/hal/hal.mk
+#include $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/platform.mk
+#include $(CHIBIOS)/os/hal/boards/ST_STM32F4_DISCOVERY/board.mk
+#include $(CHIBIOS)/os/hal/osal/nil/osal.mk
+# RTOS files (optional).
 include $(CHIBIOS)/os/nil/nil.mk
-include $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/mk/port_generic_cm4.mk
+include $(CHIBIOS)/os/nil/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
+# Other files (optional).
+#include $(CHIBIOS)/test/nil/test.mk
 
 # Define linker script file here
-LDSCRIPT = ch.ld
+LDSCRIPT= $(STARTUPLD)/STM32F407xG.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(PORTSRC) \
+CSRC = $(STARTUPSRC) \
        $(KERNSRC) \
+       $(PORTSRC) \
+       $(OSALSRC) \
+       $(HALSRC) \
+       $(PLATFORMSRC) \
+       $(BOARDSRC) \
+       $(TESTSRC) \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -118,13 +134,11 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = $(PORTASM)
+ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
-INCDIR = $(PORTINC) $(KERNINC)
-         
-# Make this point to your CMSIS and chparams.h headers.
-INCDIR += $(CHIBIOS)/os/ext/CMSIS/ST \
-          $(CHIBIOS)/os/common/ports/ARMCMx/devices/STM32F4xx
+INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
+         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
+         $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths
@@ -194,9 +208,3 @@ ULIBS =
 
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
-
-##############################################################################
-# MISRA check rule, requires PCLint and the setup files, not provided.
-#
-misra:
-	@lint-nt -v -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(CSRC) &> misra.txt

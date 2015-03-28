@@ -39,7 +39,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="ARMCM4-STM32F407-DISCOVERY-ALT.null.1703860681" name="ARMCM4-STM32F407-DISCOVERY-ALT"/>
+		<project id="RT-STM32F407-DISCOVERY-MEMS.null.1703860681" name="RT-STM32F407-DISCOVERY-MEMS"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>

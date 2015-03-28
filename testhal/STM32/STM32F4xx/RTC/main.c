@@ -144,7 +144,7 @@ static time_t GetTimeUnixSec(void) {
   struct tm tim;
 
   rtcGetTime(&RTCD1, &timespec);
-  rtcConvertDateTimeToStructTm(&timespec, &tim);
+  rtcConvertDateTimeToStructTm(&timespec, &tim, NULL);
   return mktime(&tim);
 }
 
@@ -153,7 +153,7 @@ static time_t GetTimeUnixSec(void) {
  */
 static void GetTimeTm(struct tm *timp) {
   rtcGetTime(&RTCD1, &timespec);
-  rtcConvertDateTimeToStructTm(&timespec, timp);
+  rtcConvertDateTimeToStructTm(&timespec, timp, NULL);
 }
 
 /*
