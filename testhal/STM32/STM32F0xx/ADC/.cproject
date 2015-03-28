@@ -51,4 +51,5 @@
 			<resource resourceType="PROJECT" workspacePath="/STM32F0xx-ADC"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>
