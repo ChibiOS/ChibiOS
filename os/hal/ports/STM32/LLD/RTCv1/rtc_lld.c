@@ -112,7 +112,7 @@ static void rtc_release_access(void) {
 static time_t rtc_encode(const RTCDateTime *timespec) {
   struct tm tim;
 
-  rtcConvertDateTimeToStructTm(timespec, &tim);
+  rtcConvertDateTimeToStructTm(timespec, &tim, NULL);
   return mktime(&tim);
 }
 
