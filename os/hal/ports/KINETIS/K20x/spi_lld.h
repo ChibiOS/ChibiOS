@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2013..2015 Fabio Utzig
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -69,8 +69,8 @@
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
 
-#if KINETIS_SPI_USE_SPI0 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(KINETIS_SPI_SPI0_IRQ_PRIORITY)
+#if KINETIS_SPI_USE_SPI0 &&                                                 \
+    !OSAL_IRQ_IS_VALID_PRIORITY(KINETIS_SPI_SPI0_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SPI0"
 #endif
 

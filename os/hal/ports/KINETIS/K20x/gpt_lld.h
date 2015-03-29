@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2013..2015 Fabio Utzig
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -129,22 +129,22 @@
 #endif
 
 #if KINETIS_GPT_USE_PIT0 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(KINETIS_GPT_PIT0_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(KINETIS_GPT_PIT0_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to PIT0"
 #endif
 
 #if KINETIS_GPT_USE_PIT1 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(KINETIS_GPT_PIT1_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(KINETIS_GPT_PIT1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to PIT1"
 #endif
 
 #if KINETIS_GPT_USE_PIT2 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(KINETIS_GPT_PIT2_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(KINETIS_GPT_PIT2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to PIT2"
 #endif
 
 #if KINETIS_GPT_USE_PIT3 &&                                                   \
-    !CORTEX_IS_VALID_KERNEL_PRIORITY(KINETIS_GPT_PIT3_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(KINETIS_GPT_PIT3_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to PIT3"
 #endif
 
