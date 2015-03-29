@@ -5,8 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -DCRT0_INIT_STACKS=0
-#  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -64,6 +63,11 @@ ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
   USE_EXCEPTIONS_STACKSIZE = 0x400
 endif
 
+# Enables the use of FPU on Cortex-M4 (no, softfp, hard).
+ifeq ($(USE_FPU),)
+  USE_FPU = no
+endif
+
 #
 # Architecture or project specific options
 ##############################################################################
@@ -77,26 +81,32 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
+# Startup files.
+include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_k20x.mk
+# HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/boards/FREESCALE_FREEDOM_K20D50M/board.mk
 include $(CHIBIOS)/os/hal/ports/KINETIS/K20x/platform.mk
+include $(CHIBIOS)/os/hal/boards/FREESCALE_FREEDOM_K20D50M/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+# RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_k20x.mk
+include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
+# Other files (optional).
 include $(CHIBIOS)/test/rt/test.mk
 
 # Define linker script file here
-LDSCRIPT= $(PORTLD)/MK20DX128.ld
+LDSCRIPT= $(STARTUPLD)/MK20DX128.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(PORTSRC) \
+CSRC = $(STARTUPSRC) \
        $(KERNSRC) \
-       $(TESTSRC) \
-       $(HALSRC) \
+       $(PORTSRC) \
        $(OSALSRC) \
+       $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       $(TESTSRC) \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -124,10 +134,10 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = $(PORTASM)
+ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
+INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
+         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
          $(CHIBIOS)/os/various
 
 #
@@ -151,6 +161,7 @@ LD   = $(TRGT)gcc
 #LD   = $(TRGT)g++
 CP   = $(TRGT)objcopy
 AS   = $(TRGT)gcc -x assembler-with-cpp
+AR   = $(TRGT)ar
 OD   = $(TRGT)objdump
 SZ   = $(TRGT)size
 HEX  = $(CP) -O ihex
