@@ -321,7 +321,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1</state>
-          <state>$PROJ_DIR$\..\..\..\..\test</state>
+          <state>$PROJ_DIR$\..\..\..\..\test\rt</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1275,7 +1275,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1</state>
-          <state>$PROJ_DIR$\..\..\..\..\test</state>
+          <state>$PROJ_DIR$\..\..\..\..\test\rt</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2035,6 +2035,24 @@
         </file>
       </group>
       <group>
+        <name>lib</name>
+        <group>
+          <name>streams</name>
+          <file>
+            <name>$PROJ_DIR$\..\..\..\..\os\hal\lib\streams\chprintf.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\..\..\os\hal\lib\streams\chprintf.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\..\..\os\hal\lib\streams\memstreams.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\..\..\os\hal\lib\streams\memstreams.h</name>
+          </file>
+        </group>
+      </group>
+      <group>
         <name>port</name>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\adc_lld.c</name>
@@ -2379,18 +2397,6 @@
     </group>
     <group>
       <name>various</name>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\os\various\chprintf.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\os\various\chprintf.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\os\various\memstreams.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\os\various\memstreams.h</name>
-      </file>
     </group>
   </group>
   <group>
