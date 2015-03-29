@@ -30,7 +30,7 @@ endif
 
 # Enable this if you want link time optimizations (LTO)
 ifeq ($(USE_LTO),)
-  USE_LTO = no
+  USE_LTO = yes
 endif
 
 # If enabled, this option allows to compile the application in THUMB mode.
@@ -105,26 +105,32 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../..
+# Startup files.
+include $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/mk/startup_lpc214x.mk
+# HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/boards/OLIMEX_LPC_P2148/board.mk
 include $(CHIBIOS)/os/hal/ports/LPC/LPC214x/platform.mk
+include $(CHIBIOS)/os/hal/boards/OLIMEX_LPC_P2148/board.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+# RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/ports/ARM/compilers/GCC/mk/port_lpc214x.mk
+include $(CHIBIOS)/os/rt/ports/ARM/compilers/GCC/mk/port_generic.mk
+# Other files (optional).
 include $(CHIBIOS)/test/rt/test.mk
 
 # Define linker script file here
-LDSCRIPT = $(PORTLD)/LPC2148.ld
+LDSCRIPT= $(STARTUPLD)/LPC2148.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(PORTSRC) \
+CSRC = $(STARTUPSRC) \
        $(KERNSRC) \
-       $(TESTSRC) \
-       $(HALSRC) \
+       $(PORTSRC) \
        $(OSALSRC) \
+       $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       $(TESTSRC) \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -152,10 +158,10 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = $(PORTASM)
+ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
-INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
-         $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
+INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
+         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
          $(CHIBIOS)/os/various
 
 #
