@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Adam J. Porter
+    ChibiOS - Copyright (C) 2014 Adam J. Porter
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
