@@ -481,10 +481,6 @@ static inline void chVTDoTickI(void) {
                                 chVTGetSystemTimeX() + 1),
               "out of time window");
 
-/*  if (now > 21) {
-     __BKPT(0);
-  }*/
-
   /* Timers processing loop.*/
   while (true) {
     systime_t now;
@@ -534,11 +530,6 @@ static inline void chVTDoTickI(void) {
       if (delta < (systime_t)CH_CFG_ST_TIMEDELTA) {
         delta = (systime_t)CH_CFG_ST_TIMEDELTA;
       }
-
-//      if (now + delta >= 23) {
-//         __BKPT(0);
-//      }
-
       port_timer_set_alarm(now + delta);
 
       chDbgAssert((chVTGetSystemTimeX() - ch.vtlist.vt_lasttime) < delta,

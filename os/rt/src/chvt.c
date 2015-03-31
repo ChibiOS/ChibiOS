@@ -99,11 +99,6 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
   chDbgCheckClassI();
   chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
 
-/*  systime_t tm = chVTGetSystemTimeX();
-  if (tm >= 23) {
-     __BKPT(0);
-  }*/
-
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
   p = ch.vtlist.vt_next;
@@ -156,11 +151,6 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
      value in the header must be restored.*/;
   p->vt_delta -= delay;
   ch.vtlist.vt_delta = (systime_t)-1;
-
-/*  systime_t tmx = chVTGetSystemTimeX();
-  if (tmx >= 23) {
-     __BKPT(0);
-  }*/
 }
 
 /**
@@ -179,11 +169,6 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   chDbgCheckClassI();
   chDbgCheck(vtp != NULL);
   chDbgAssert(vtp->vt_func != NULL, "timer not set or already triggered");
-
-/*  systime_t tm = chVTGetSystemTimeX();
-  if (tm >= 23) {
-     __BKPT(0);
-  }*/
 
   /* Checking if the element to be removed was the first in the list.*/
 #if CH_CFG_ST_TIMEDELTA > 0
@@ -242,11 +227,6 @@ void chVTDoResetI(virtual_timer_t *vtp) {
     }
 
     port_timer_set_alarm(ch.vtlist.vt_lasttime + nowdelta + delta);
-
-/*    systime_t tmx = chVTGetSystemTimeX();
-    if (tmx >= 23) {
-       __BKPT(0);
-    }*/
   }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
