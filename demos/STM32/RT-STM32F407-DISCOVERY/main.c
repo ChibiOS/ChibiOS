@@ -35,6 +35,31 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
+virtual_timer_t vt1, vt2, vt3;
+
+static void cb1(void *p) {
+
+  (void)p;
+  chSysLockFromISR();
+//  if (chVTIsArmedI(&vt1))
+//    chVTDoResetI(&vt1);
+  chSysUnlockFromISR();
+}
+
+static void cb2(void *p) {
+
+  (void)p;
+  chSysLockFromISR();
+//  if (!chVTIsArmedI(&vt3))
+//    chVTDoSetI(&vt3, 19, cb1, NULL);
+  chSysUnlockFromISR();
+}
+
+static void cb3(void *p) {
+
+  (void)p;
+}
+
 /*
  * Application entry point.
  */
@@ -70,6 +95,12 @@ int main(void) {
   while (TRUE) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
       TestThread(&SD2);
-    chThdSleepMilliseconds(500);
+    chVTSet(&vt1, 7, cb1, NULL);
+    chThdSleep(5);
+    chSysLock();
+    if (!chVTIsArmedI(&vt2))
+      chVTDoSetI(&vt2, 13, cb2, NULL);
+    chSysUnlock();
+//    chVTReset(&vt1);
   }
 }

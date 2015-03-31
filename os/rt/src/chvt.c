@@ -99,13 +99,18 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
   chDbgCheckClassI();
   chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
 
+/*  systime_t tm = chVTGetSystemTimeX();
+  if (tm >= 23) {
+     __BKPT(0);
+  }*/
+
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
   p = ch.vtlist.vt_next;
 
-#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
+#if CH_CFG_ST_TIMEDELTA > 0
   {
-    systime_t now = port_timer_get_time();
+    systime_t now = chVTGetSystemTimeX();
 
     /* If the requested delay is lower than the minimum safe delta then it
        is raised to the minimum safe value.*/
@@ -151,6 +156,11 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
      value in the header must be restored.*/;
   p->vt_delta -= delay;
   ch.vtlist.vt_delta = (systime_t)-1;
+
+/*  systime_t tmx = chVTGetSystemTimeX();
+  if (tmx >= 23) {
+     __BKPT(0);
+  }*/
 }
 
 /**
@@ -162,10 +172,23 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
  * @iclass
  */
 void chVTDoResetI(virtual_timer_t *vtp) {
+#if CH_CFG_ST_TIMEDELTA > 0
+  virtual_timer_t *first;
+#endif
 
   chDbgCheckClassI();
   chDbgCheck(vtp != NULL);
   chDbgAssert(vtp->vt_func != NULL, "timer not set or already triggered");
+
+/*  systime_t tm = chVTGetSystemTimeX();
+  if (tm >= 23) {
+     __BKPT(0);
+  }*/
+
+  /* Checking if the element to be removed was the first in the list.*/
+#if CH_CFG_ST_TIMEDELTA > 0
+  first = ch.vtlist.vt_next;
+#endif
 
   /* Removing the element from the delta list.*/
   vtp->vt_next->vt_delta += vtp->vt_delta;
@@ -177,24 +200,53 @@ void chVTDoResetI(virtual_timer_t *vtp) {
      is the last of the list, restoring it.*/
   ch.vtlist.vt_delta = (systime_t)-1;
 
-#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
+#if CH_CFG_ST_TIMEDELTA > 0
   {
+    systime_t nowdelta, delta;
+
+    /* Just removed the last element in the list, alarm timer stopped and
+       return.*/
     if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
-      /* Just removed the last element in the list, alarm timer stopped.*/
       port_timer_stop_alarm();
+      return;
     }
-    else {
-      /* Updating the alarm to the next deadline, deadline that must not be
-         closer in time than the minimum time delta.*/
-      if (ch.vtlist.vt_next->vt_delta >= (systime_t)CH_CFG_ST_TIMEDELTA) {
-        port_timer_set_alarm(ch.vtlist.vt_lasttime +
-                             ch.vtlist.vt_next->vt_delta);
-      }
-      else {
-        port_timer_set_alarm(ch.vtlist.vt_lasttime +
-                             (systime_t)CH_CFG_ST_TIMEDELTA);
-      }
+
+    /* If the removed element was not the first one then just return, the
+       alarm is already set to the first element.*/
+    if (vtp != first) {
+      return;
     }
+
+    /* If the new first element has a delta of zero then the alarm is not
+       modified, the already programmed alarm will serve it.*/
+    if (ch.vtlist.vt_next->vt_delta == 0) {
+      return;
+    }
+
+    /* Distance in ticks between the last alarm event and current time.*/
+    nowdelta = chVTGetSystemTimeX() - ch.vtlist.vt_lasttime;
+
+    /* If the current time surpassed the time of the next element in list
+       then the event interrupt is already pending, just return.*/
+    if (nowdelta >= ch.vtlist.vt_next->vt_delta) {
+      return;
+    }
+
+    /* Distance from the next scheduled event and now.*/
+    delta = ch.vtlist.vt_next->vt_delta - nowdelta;
+
+    /* Making sure to not schedule an event closer than CH_CFG_ST_TIMEDELTA
+       ticks from now.*/
+    if (delta < (systime_t)CH_CFG_ST_TIMEDELTA) {
+      delta = (systime_t)CH_CFG_ST_TIMEDELTA;
+    }
+
+    port_timer_set_alarm(ch.vtlist.vt_lasttime + nowdelta + delta);
+
+    systime_t tmx = chVTGetSystemTimeX();
+/*    if (tmx >= 23) {
+       __BKPT(0);
+    }*/
   }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
