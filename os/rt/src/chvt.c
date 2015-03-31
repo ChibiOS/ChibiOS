@@ -243,8 +243,8 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
     port_timer_set_alarm(ch.vtlist.vt_lasttime + nowdelta + delta);
 
-    systime_t tmx = chVTGetSystemTimeX();
-/*    if (tmx >= 23) {
+/*    systime_t tmx = chVTGetSystemTimeX();
+    if (tmx >= 23) {
        __BKPT(0);
     }*/
   }

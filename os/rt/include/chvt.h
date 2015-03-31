@@ -487,6 +487,7 @@ static inline void chVTDoTickI(void) {
 
   /* Timers processing loop.*/
   while (true) {
+    systime_t now;
     vtfunc_t fn;
 
     /* The "last time" becomes this timer's expiration time.*/
