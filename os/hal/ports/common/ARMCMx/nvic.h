@@ -78,6 +78,7 @@ extern "C" {
   void nvicEnableVector(uint32_t n, uint32_t prio);
   void nvicDisableVector(uint32_t n);
   void nvicSetSystemHandlerPriority(uint32_t handler, uint32_t prio);
+  void nvicClearPending(uint32_t n);
 #ifdef __cplusplus
 }
 #endif

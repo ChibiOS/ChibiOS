@@ -85,4 +85,14 @@ void nvicSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
   SCB->SHP[handler] = NVIC_PRIORITY_MASK(prio);
 }
 
+/**
+ * @brief   Clears a pending interrupt source.
+ *
+ * @param[in] n         the interrupt number
+ */
+void nvicClearPending(uint32_t n) {
+
+  NVIC->ICPR[n >> 5] = 1 << (n & 0x1F);
+}
+
 /** @} */
