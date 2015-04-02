@@ -101,40 +101,56 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
 
   vtp->vt_par = par;
   vtp->vt_func = vtfunc;
-  p = ch.vtlist.vt_next;
 
 #if CH_CFG_ST_TIMEDELTA > 0
   {
     systime_t now = chVTGetSystemTimeX();
 
-    /* If the requested delay is lower than the minimum safe delta then it
-       is raised to the minimum safe value.*/
-    if (delay < (systime_t)CH_CFG_ST_TIMEDELTA) {
-      delay = (systime_t)CH_CFG_ST_TIMEDELTA;
+    /* Special case where the timers list is empty.*/
+    if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
+      /* If the requested delay is lower than the minimum safe delta then it
+         is raised to the minimum safe value.*/
+      if (delay < (systime_t)CH_CFG_ST_TIMEDELTA) {
+        delay = (systime_t)CH_CFG_ST_TIMEDELTA;
+      }
+
+      /* The delta list is empty, the current time becomes the new
+         delta list base time, the timer is inserted.*/
+      ch.vtlist.vt_lasttime = now;
+      ch.vtlist.vt_next = vtp;
+      ch.vtlist.vt_prev = vtp;
+      vtp->vt_next = (virtual_timer_t *)&ch.vtlist;
+      vtp->vt_prev = (virtual_timer_t *)&ch.vtlist;
+      vtp->vt_delta = delay;
+
+      /* Being the first element in the list the alarm timer is started.*/
+      port_timer_start_alarm(ch.vtlist.vt_lasttime + delay);
+
+      return;
     }
 
-    if (&ch.vtlist == (virtual_timers_list_t *)p) {
-      /* The delta list is empty, the current time becomes the new
-         delta list base time.*/
-      ch.vtlist.vt_lasttime = now;
-      port_timer_start_alarm(ch.vtlist.vt_lasttime + delay);
-    }
-    else {
+    /* Special case where the timer will be placed as first element in a
+       non-empty list, the alarm needs to be recalculated.*/
+    if ((now + delay) < (ch.vtlist.vt_lasttime + ch.vtlist.vt_next->vt_delta)) {
+      /* If the requested delay is lower than the minimum safe delta then it
+         is raised to the minimum safe value.*/
+      if (delay < (systime_t)CH_CFG_ST_TIMEDELTA) {
+        delay = (systime_t)CH_CFG_ST_TIMEDELTA;
+      }
+
       /* Now the delay is calculated as delta from the last tick interrupt
          time.*/
       delay += now - ch.vtlist.vt_lasttime;
 
-      /* If the specified delay is closer in time than the first element
-         in the delta list then it becomes the next alarm event in time.*/
-      if (delay < p->vt_delta) {
-        port_timer_set_alarm(ch.vtlist.vt_lasttime + delay);
-      }
+      /* New alarm deadline.*/
+      port_timer_set_alarm(ch.vtlist.vt_lasttime + delay);
     }
   }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
   /* The delta list is scanned in order to find the correct position for
      this timer. */
+  p = ch.vtlist.vt_next;
   while (p->vt_delta < delay) {
     delay -= p->vt_delta;
     p = p->vt_next;
