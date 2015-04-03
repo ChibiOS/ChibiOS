@@ -109,7 +109,8 @@
  * @details When this option is activated the function @p chSysInit()
  *          does not spawn the idle thread. The application @p main()
  *          function becomes the idle thread and must implement an
- *          infinite loop. */
+ *          infinite loop.
+ */
 #if !defined(CH_CFG_NO_IDLE_THREAD) || defined(__DOXIGEN__)
 #define CH_CFG_NO_IDLE_THREAD               FALSE
 #endif
