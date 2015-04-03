@@ -96,7 +96,7 @@ void _heap_init(void) {
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   chMtxObjectInit(&default_heap.h_mtx);
 #else
-  chSemObjectInit(&default_heap.h_sem, 1);
+  chSemObjectInit(&default_heap.h_sem, (cnt_t)1);
 #endif
 }
 
@@ -124,7 +124,7 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   chMtxObjectInit(&heapp->h_mtx);
 #else
-  chSemObjectInit(&heapp->h_sem, 1);
+  chSemObjectInit(&heapp->h_sem, (cnt_t)1);
 #endif
 }
 

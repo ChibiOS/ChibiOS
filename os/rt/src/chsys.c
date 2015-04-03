@@ -203,7 +203,7 @@ bool chSysIntegrityCheckI(unsigned testmask) {
     thread_t *tp;
 
     /* Scanning the ready list forward.*/
-    n = 0;
+    n = (cnt_t)0;
     tp = ch.rlist.r_queue.p_next;
     while (tp != (thread_t *)&ch.rlist.r_queue) {
       n++;
@@ -218,7 +218,7 @@ bool chSysIntegrityCheckI(unsigned testmask) {
     }
 
     /* The number of elements must match.*/
-    if (n != 0) {
+    if (n != (cnt_t)0) {
       return true;
     }
   }
@@ -228,7 +228,7 @@ bool chSysIntegrityCheckI(unsigned testmask) {
     virtual_timer_t * vtp;
 
     /* Scanning the timers list forward.*/
-    n = 0;
+    n = (cnt_t)0;
     vtp = ch.vtlist.vt_next;
     while (vtp != (virtual_timer_t *)&ch.vtlist) {
       n++;
@@ -243,7 +243,7 @@ bool chSysIntegrityCheckI(unsigned testmask) {
     }
 
     /* The number of elements must match.*/
-    if (n != 0) {
+    if (n != (cnt_t)0) {
       return true;
     }
   }
@@ -253,7 +253,7 @@ bool chSysIntegrityCheckI(unsigned testmask) {
     thread_t *tp;
 
     /* Scanning the ready list forward.*/
-    n = 0;
+    n = (cnt_t)0;
     tp = ch.rlist.r_newer;
     while (tp != (thread_t *)&ch.rlist) {
       n++;
@@ -268,7 +268,7 @@ bool chSysIntegrityCheckI(unsigned testmask) {
     }
 
     /* The number of elements must match.*/
-    if (n != 0) {
+    if (n != (cnt_t)0) {
       return true;
     }
   }

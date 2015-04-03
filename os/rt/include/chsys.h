@@ -38,10 +38,10 @@
  * @name    Masks of executable integrity checks.
  * @{
  */
-#define CH_INTEGRITY_RLIST                  1
-#define CH_INTEGRITY_VTLIST                 2
-#define CH_INTEGRITY_REGISTRY               4
-#define CH_INTEGRITY_PORT                   8
+#define CH_INTEGRITY_RLIST                  1U
+#define CH_INTEGRITY_VTLIST                 2U
+#define CH_INTEGRITY_REGISTRY               4U
+#define CH_INTEGRITY_PORT                   8U
 /** @} */
 
 /*===========================================================================*/

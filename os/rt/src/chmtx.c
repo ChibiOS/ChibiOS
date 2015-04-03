@@ -107,7 +107,7 @@ void chMtxObjectInit(mutex_t *mp) {
   queue_init(&mp->m_queue);
   mp->m_owner = NULL;
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-  mp->m_cnt = 0;
+  mp->m_cnt = (cnt_t)0;
 #endif
 }
 
@@ -146,7 +146,7 @@ void chMtxLockS(mutex_t *mp) {
   if (mp->m_owner != NULL) {
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
 
-    chDbgAssert(mp->m_cnt >= 1, "counter is not positive");
+    chDbgAssert(mp->m_cnt >= (cnt_t)1, "counter is not positive");
 
     /* If the mutex is already owned by this thread, the counter is increased
        and there is no need of more actions.*/
@@ -218,13 +218,13 @@ void chMtxLockS(mutex_t *mp) {
       chDbgAssert(mp->m_owner == ctp, "not owner");
       chDbgAssert(ctp->p_mtxlist == mp, "not owned");
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-      chDbgAssert(mp->m_cnt == 1, "counter is not one");
+      chDbgAssert(mp->m_cnt == (cnt_t)1, "counter is not one");
     }
 #endif
   }
   else {
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-    chDbgAssert(mp->m_cnt == 0, "counter is not zero");
+    chDbgAssert(mp->m_cnt == (cnt_t)0, "counter is not zero");
 
     mp->m_cnt++;
 #endif
@@ -287,7 +287,7 @@ bool chMtxTryLockS(mutex_t *mp) {
   if (mp->m_owner != NULL) {
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
 
-    chDbgAssert(mp->m_cnt >= 1, "counter is not positive");
+    chDbgAssert(mp->m_cnt >= (cnt_t)1, "counter is not positive");
 
     if (mp->m_owner == currp) {
       mp->m_cnt++;
@@ -298,7 +298,7 @@ bool chMtxTryLockS(mutex_t *mp) {
   }
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
 
-  chDbgAssert(mp->m_cnt == 0, "counter is not zero");
+  chDbgAssert(mp->m_cnt == (cnt_t)0, "counter is not zero");
 
   mp->m_cnt++;
 #endif
@@ -331,9 +331,9 @@ void chMtxUnlock(mutex_t *mp) {
   chDbgAssert(ctp->p_mtxlist != NULL, "owned mutexes list empty");
   chDbgAssert(ctp->p_mtxlist->m_owner == ctp, "ownership failure");
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-  chDbgAssert(mp->m_cnt >= 1, "counter is not positive");
+  chDbgAssert(mp->m_cnt >= (cnt_t)1, "counter is not positive");
 
-  if (--mp->m_cnt == 0) {
+  if (--mp->m_cnt == (cnt_t)0) {
 #endif
 
     chDbgAssert(ctp->p_mtxlist == mp, "not next in list");
@@ -369,7 +369,7 @@ void chMtxUnlock(mutex_t *mp) {
       /* Awakens the highest priority thread waiting for the unlocked mutex and
          assigns the mutex to it.*/
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-      mp->m_cnt = 1;
+      mp->m_cnt = (cnt_t)1;
 #endif
       tp = queue_fifo_remove(&mp->m_queue);
       mp->m_owner = tp;
@@ -411,9 +411,9 @@ void chMtxUnlockS(mutex_t *mp) {
   chDbgAssert(ctp->p_mtxlist != NULL, "owned mutexes list empty");
   chDbgAssert(ctp->p_mtxlist->m_owner == ctp, "ownership failure");
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-  chDbgAssert(mp->m_cnt >= 1, "counter is not positive");
+  chDbgAssert(mp->m_cnt >= (cnt_t)1, "counter is not positive");
 
-  if (--mp->m_cnt == 0) {
+  if (--mp->m_cnt == (cnt_t)0) {
 #endif
 
     chDbgAssert(ctp->p_mtxlist == mp, "not next in list");
@@ -449,7 +449,7 @@ void chMtxUnlockS(mutex_t *mp) {
       /* Awakens the highest priority thread waiting for the unlocked mutex and
          assigns the mutex to it.*/
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-      mp->m_cnt = 1;
+      mp->m_cnt = (cnt_t)1;
 #endif
       tp = queue_fifo_remove(&mp->m_queue);
       mp->m_owner = tp;
@@ -486,7 +486,7 @@ void chMtxUnlockAll(void) {
       ctp->p_mtxlist = mp->m_next;
       if (chMtxQueueNotEmptyS(mp)) {
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-        mp->m_cnt = 1;
+        mp->m_cnt = (cnt_t)1;
 #endif
         thread_t *tp = queue_fifo_remove(&mp->m_queue);
         mp->m_owner = tp;
@@ -496,7 +496,7 @@ void chMtxUnlockAll(void) {
       }
       else {
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-        mp->m_cnt = 0;
+        mp->m_cnt = (cnt_t)0;
 #endif
         mp->m_owner = NULL;
       }
