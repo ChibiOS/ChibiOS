@@ -1,5 +1,5 @@
 # List of the ChibiOS generic LPC214x file.
-STARTUPSRC =
+STARTUPSRC = $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/crt1.c
 
 STARTUPASM = $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/vectors.s \
              $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/crt0.s
