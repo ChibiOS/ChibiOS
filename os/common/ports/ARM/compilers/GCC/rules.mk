@@ -267,8 +267,6 @@ else
 	@$(OD) $(ODFLAGS) $< > $@
 	@echo
 	@$(SZ) $<
-	@echo
-	@echo Done
 endif
 
 %.list: %.elf $(LDSCRIPT)
@@ -277,6 +275,7 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 else
 	@echo Creating $@
 	@$(OD) -S $< > $@
+	@echo
 	@echo Done
 endif
 
