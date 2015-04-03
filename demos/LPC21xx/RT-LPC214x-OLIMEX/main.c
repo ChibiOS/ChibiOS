@@ -38,7 +38,6 @@ static THD_FUNCTION(Thread1, arg) {
     palSetPort(IOPORT1, PAL_PORT_BIT(PA_LED1) | PAL_PORT_BIT(PA_LED2));
     chThdSleepMilliseconds(800);
   }
-  return 0;
 }
 
 /*
@@ -55,7 +54,6 @@ static THD_FUNCTION(Thread2, arg) {
     palSetPad(IOPORT1, PA_LEDUSB);
     chThdSleepMilliseconds(300);
   }
-  return 0;
 }
 
 /*
