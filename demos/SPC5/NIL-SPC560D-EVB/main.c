@@ -31,7 +31,7 @@ static THD_FUNCTION(Thread1, arg) {
    */
   sdStart(&SD1, NULL);
 
-  while (TRUE) {
+  while (true) {
     unsigned i;
 
     chnWriteTimeout(&SD1, (uint8_t *)"Hello World!\r\n", 14, TIME_INFINITE);

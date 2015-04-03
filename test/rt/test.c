@@ -56,7 +56,8 @@ static ROMCONST struct testcase * ROMCONST *patterns[] = {
   NULL
 };
 
-static bool local_fail, global_fail;
+bool test_global_fail;
+static bool local_fail;
 static unsigned failpoint;
 static char tokens_buffer[MAX_TOKENS];
 static char *tokp;
@@ -156,8 +157,8 @@ void test_emit_token(char token) {
  */
 bool _test_fail(unsigned point) {
 
+  test_global_fail = TRUE;
   local_fail = TRUE;
-  global_fail = TRUE;
   failpoint = point;
   return TRUE;
 }
@@ -309,9 +310,8 @@ static void print_line(void) {
  * @brief   Test execution thread function.
  *
  * @param[in] p         pointer to a @p BaseChannel object for test output
- * @return              A failure boolean value.
  */
-msg_t TestThread(void *p) {
+void TestThread(void *p) {
   int i, j;
 
   chp = p;
@@ -346,7 +346,7 @@ msg_t TestThread(void *p) {
 #endif
   test_println("");
 
-  global_fail = FALSE;
+  test_global_fail = FALSE;
   i = 0;
   while (patterns[i]) {
     j = 0;
@@ -379,12 +379,10 @@ msg_t TestThread(void *p) {
   print_line();
   test_println("");
   test_print("Final result: ");
-  if (global_fail)
+  if (test_global_fail)
     test_println("FAILURE");
   else
     test_println("SUCCESS");
-
-  return (msg_t)global_fail;
 }
 
 /** @} */

@@ -82,7 +82,7 @@ static void tmo(void *p) {
 static THD_WORKING_AREA(waSPI1, 1024);
 static THD_WORKING_AREA(waSPI2, 1024);
 static THD_WORKING_AREA(waSPI3, 1024);
-static msg_t spi_thread(void *p) {
+static THD_FUNCTION(spi_thread, p) {
   unsigned i;
   SPIDriver *spip = (SPIDriver *)p;
   virtual_timer_t vt;
@@ -96,7 +96,7 @@ static msg_t spi_thread(void *p) {
     txbuf[i] = (uint8_t)i;
 
   /* Continuous transmission.*/
-  while (TRUE) {
+  while (true) {
     /* Starts a VT working as watchdog to catch a malfunction in the SPI
        driver.*/
     chVTSet(&vt, MS2ST(10), tmo, NULL);
@@ -113,11 +113,11 @@ static msg_t spi_thread(void *p) {
  * a LED.
  */
 static THD_WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
     chThdSleepMilliseconds(500);
     palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
@@ -173,7 +173,7 @@ int main(void) {
 
   /* Normal main() thread activity, it does continues memory copy operations
      using 2 DMA streams at the lowest priority.*/
-  while (TRUE) {
+  while (true) {
     virtual_timer_t vt;
 
     chVTObjectInit(&vt);

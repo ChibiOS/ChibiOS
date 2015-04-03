@@ -84,11 +84,11 @@ static const ADCConversionGroup adcgrpcfg2 = {
  * Red LEDs blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOC, GPIOC_LED4);
     chThdSleepMilliseconds(500);
     palClearPad(GPIOC, GPIOC_LED4);
@@ -142,7 +142,7 @@ int main(void) {
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
-  while (TRUE) {
+  while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON)) {
       adcStopConversion(&ADCD1);
       adcSTM32SetCCR(0);

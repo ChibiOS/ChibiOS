@@ -121,22 +121,19 @@ static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
   while (scp->sc_name != NULL) {
     if (strcasecmp(scp->sc_name, name) == 0) {
       scp->sc_function(chp, argc, argv);
-      return FALSE;
+      return false;
     }
     scp++;
   }
-  return TRUE;
+  return true;
 }
 
 /**
  * @brief   Shell thread function.
  *
  * @param[in] p         pointer to a @p BaseSequentialStream object
- * @return              Termination reason.
- * @retval MSG_OK       terminated by command.
- * @retval MSG_RESET    terminated by reset condition on the I/O channel.
  */
-static msg_t shell_thread(void *p) {
+static THD_FUNCTION(shell_thread, p) {
   int n;
   BaseSequentialStream *chp = ((ShellConfig *)p)->sc_channel;
   const ShellCommand *scp = ((ShellConfig *)p)->sc_commands;
@@ -145,7 +142,7 @@ static msg_t shell_thread(void *p) {
 
   chRegSetThreadName("shell");
   chprintf(chp, "\r\nChibiOS/RT Shell\r\n");
-  while (TRUE) {
+  while (true) {
     chprintf(chp, "ch> ");
     if (shellGetLine(chp, line, sizeof(line))) {
       chprintf(chp, "\r\nlogout");
@@ -190,8 +187,6 @@ static msg_t shell_thread(void *p) {
     }
   }
   shellExit(MSG_OK);
-  /* Never executed, silencing a warning.*/
-  return 0;
 }
 
 /**
@@ -265,22 +260,22 @@ thread_t *shellCreateStatic(const ShellConfig *scp, void *wsp,
  * @param[in] line      pointer to the line buffer
  * @param[in] size      buffer maximum length
  * @return              The operation status.
- * @retval TRUE         the channel was reset or CTRL-D pressed.
- * @retval FALSE        operation successful.
+ * @retval true         the channel was reset or CTRL-D pressed.
+ * @retval false        operation successful.
  *
  * @api
  */
 bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
   char *p = line;
 
-  while (TRUE) {
+  while (true) {
     char c;
 
     if (chSequentialStreamRead(chp, (uint8_t *)&c, 1) == 0)
-      return TRUE;
+      return true;
     if (c == 4) {
       chprintf(chp, "^D");
-      return TRUE;
+      return true;
     }
     if ((c == 8) || (c == 127)) {
       if (p != line) {
@@ -294,7 +289,7 @@ bool shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
     if (c == '\r') {
       chprintf(chp, "\r\n");
       *p = 0;
-      return FALSE;
+      return false;
     }
     if (c < 0x20)
       continue;

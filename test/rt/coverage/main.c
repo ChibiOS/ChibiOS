@@ -27,7 +27,6 @@
  * Simulator main.
  */
 int main(int argc, char *argv[]) {
-  msg_t result;
 
   (void)argc;
   (void)argv;
@@ -43,8 +42,8 @@ int main(int argc, char *argv[]) {
   conInit();
   chSysInit();
 
-  result = TestThread(&CD1);
-  if (result)
+  TestThread(&CD1);
+  if (test_global_fail)
     exit(1);
   else
     exit(0);

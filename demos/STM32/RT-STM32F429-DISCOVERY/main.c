@@ -31,7 +31,7 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   chRegSetThreadName("blinker1");
-  while (TRUE) {
+  while (true) {
     palClearPad(GPIOG, GPIOG_LED4_RED);
     chThdSleepMilliseconds(500);
     palSetPad(GPIOG, GPIOG_LED4_RED);
@@ -47,7 +47,7 @@ static msg_t Thread2(void *arg) {
 
   (void)arg;
   chRegSetThreadName("blinker2");
-  while (TRUE) {
+  while (true) {
     palClearPad(GPIOG, GPIOG_LED3_GREEN);
     chThdSleepMilliseconds(250);
     palSetPad(GPIOG, GPIOG_LED3_GREEN);
@@ -181,7 +181,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it just performs
    * a shell respawn upon its termination.
    */
-  while (TRUE) {
+  while (true) {
     if (!shelltp) {
       if (SDU1.config->usbp->state == USB_ACTIVE) {
         /* Spawns a new shell.*/

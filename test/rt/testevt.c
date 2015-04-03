@@ -130,20 +130,18 @@ static void evt2_setup(void) {
   chEvtGetAndClearEvents(ALL_EVENTS);
 }
 
-static msg_t thread1(void *p) {
+static THD_FUNCTION(thread1, p) {
 
   chThdSleepMilliseconds(50);
   chEvtSignal((thread_t *)p, 1);
-  return 0;
 }
 
-static msg_t thread2(void *p) {
+static THD_FUNCTION(thread2, p) {
 
   (void)p;
   chEvtBroadcast(&es1);
   chThdSleepMilliseconds(50);
   chEvtBroadcast(&es2);
-  return 0;
 }
 
 static void evt2_execute(void) {

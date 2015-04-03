@@ -144,7 +144,7 @@ int main(void) {
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
-  while (TRUE) {
+  while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON)) {
       /*
        * Starts both a transmission and a receive operations, both will be

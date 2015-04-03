@@ -438,7 +438,7 @@ static const ShellConfig shell_cfg1 = {
  * Red LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
@@ -510,7 +510,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
-  while (TRUE) {
+  while (true) {
     if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE))
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     else if (chThdTerminatedX(shelltp)) {

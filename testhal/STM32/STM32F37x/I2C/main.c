@@ -50,13 +50,12 @@ static THD_FUNCTION(blinker, arg) {
   (void)arg;
 
   chRegSetThreadName("blinker");
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOC, GPIOC_LED1);
     chThdSleepMilliseconds(500);
     palClearPad(GPIOC, GPIOC_LED1);
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }
 
 /*
@@ -88,7 +87,7 @@ int main(void) {
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
-  while (TRUE) {
+  while (true) {
     unsigned i;
     msg_t msg;
     static const uint8_t cmd[] = {0, 0};

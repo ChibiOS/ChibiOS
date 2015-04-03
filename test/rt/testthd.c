@@ -57,10 +57,9 @@
  * priority order regardless of the initial order.
  */
 
-static msg_t thread(void *p) {
+static THD_FUNCTION(thread, p) {
 
   test_emit_token(*(char *)p);
-  return 0;
 }
 
 static void thd1_execute(void) {

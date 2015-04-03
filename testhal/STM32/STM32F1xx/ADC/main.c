@@ -95,13 +95,12 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
 
   chRegSetThreadName("blinker");
-  while (TRUE) {
+  while (true) {
     palClearPad(IOPORT3, GPIOC_LED);
     chThdSleepMilliseconds(500);
     palSetPad(IOPORT3, GPIOC_LED);
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }
 
 /*
@@ -149,7 +148,7 @@ int main(void) {
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
-  while (TRUE) {
+  while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
       adcStopConversion(&ADCD1);
     chThdSleepMilliseconds(500);

@@ -76,10 +76,12 @@ union test_buffers {
 };
 #endif
 
+extern bool test_global_fail;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t TestThread(void *p);
+  void TestThread(void *p);
   void test_printn(uint32_t n);
   void test_print(const char *msgp);
   void test_println(const char *msgp);

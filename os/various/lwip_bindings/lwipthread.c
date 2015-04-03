@@ -210,7 +210,7 @@ static err_t ethernetif_init(struct netif *netif) {
  * @param[in] p pointer to a @p lwipthread_opts structure or @p NULL
  * @return The function does not return.
  */
-msg_t lwip_thread(void *p) {
+THD_FUNCTION(lwip_thread, p) {
   event_timer_t evt;
   event_listener_t el0, el1;
   struct ip_addr ip, gateway, netmask;

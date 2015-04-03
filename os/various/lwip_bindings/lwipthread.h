@@ -121,7 +121,7 @@ extern THD_WORKING_AREA(wa_lwip_thread, LWIP_THREAD_STACK_SIZE);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t lwip_thread(void *p);
+  THD_FUNCTION(lwip_thread, p);
 #ifdef __cplusplus
 }
 #endif

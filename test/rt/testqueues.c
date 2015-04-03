@@ -70,7 +70,7 @@ static OUTPUTQUEUE_DECL(oq, test.wa.T1, TEST_QUEUES_SIZE, notify, NULL);
  * @page test_queues_001 Input Queues functionality and APIs
  *
  * <h2>Description</h2>
- * This test case tests sysnchronos and asynchronous operations on an
+ * This test case tests synchronous and asynchronous operations on an
  * @p InputQueue object including timeouts. The queue state must remain
  * consistent through the whole test.
  */
@@ -80,11 +80,10 @@ static void queues1_setup(void) {
   chIQObjectInit(&iq, wa[0], TEST_QUEUES_SIZE, notify, NULL);
 }
 
-static msg_t thread1(void *p) {
+static THD_FUNCTION(thread1, p) {
 
   (void)p;
   chIQGetTimeout(&iq, MS2ST(200));
-  return 0;
 }
 
 static void queues1_execute(void) {
@@ -157,7 +156,7 @@ ROMCONST struct testcase testqueues1 = {
  * @page test_queues_002 Output Queues functionality and APIs
  *
  * <h2>Description</h2>
- * This test case tests sysnchronos and asynchronous operations on an
+ * This test case tests synchronous and asynchronous operations on an
  * @p OutputQueue object including timeouts. The queue state must remain
  * consistent through the whole test.
  */
@@ -167,11 +166,10 @@ static void queues2_setup(void) {
   chOQObjectInit(&oq, wa[0], TEST_QUEUES_SIZE, notify, NULL);
 }
 
-static msg_t thread2(void *p) {
+static THD_FUNCTION(thread2, p) {
 
   (void)p;
   chOQPutTimeout(&oq, 0, MS2ST(200));
-  return 0;
 }
 
 static void queues2_execute(void) {

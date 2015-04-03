@@ -110,7 +110,7 @@ int main(void) {
    * sleeping in a loop and check the button state, when the button is
    * pressed the test procedure is launched.
    */
-  while (TRUE) {
+  while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
       TestThread(&SD1);
     chThdSleepMilliseconds(500);

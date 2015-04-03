@@ -138,7 +138,7 @@ int main(void) {
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(500);
   }
   return 0;

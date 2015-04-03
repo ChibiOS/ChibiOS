@@ -595,7 +595,7 @@ static msg_t Thread1(void *arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
-  while (TRUE) {
+  while (true) {
     palTogglePad(GPIOC, GPIOC_LED);
     chThdSleepMilliseconds(fs_ready ? 125 : 500);
   }
@@ -680,7 +680,7 @@ int main(void) {
    */
   chEvtRegister(&inserted_event, &el0, 0);
   chEvtRegister(&removed_event, &el1, 1);
-  while (TRUE) {
+  while (true) {
     if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE))
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     else if (chThdTerminatedX(shelltp)) {

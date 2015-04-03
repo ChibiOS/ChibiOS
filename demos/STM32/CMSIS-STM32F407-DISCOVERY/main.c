@@ -25,7 +25,7 @@ static void Thread1(void const *arg) {
 
   (void)arg;
 
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
     osDelay(500);
     palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
@@ -67,7 +67,7 @@ int main(void) {
 
   /* In the ChibiOS/RT CMSIS RTOS implementation the main() is an
      usable thread, here we just sleep in a loop printing a message.*/
-  while (TRUE) {
+  while (true) {
     sdWrite(&SD2, (uint8_t *)"Hello World!\r\n", 14);
     osDelay(500);
   }

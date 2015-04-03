@@ -91,7 +91,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it enables and disables the
    * button EXT channel using 5 seconds intervals.
    */
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(5000);
     extChannelDisable(&EXTD1, 0);
     chThdSleepMilliseconds(5000);

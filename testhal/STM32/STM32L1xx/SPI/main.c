@@ -52,7 +52,7 @@ static THD_FUNCTION(spi_thread_1, p) {
   (void)p;
 
   chRegSetThreadName("SPI thread 1");
-  while (TRUE) {
+  while (true) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
     palSetPad(GPIOB, GPIOB_LED4);       /* LED ON.                          */
     spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
@@ -62,7 +62,6 @@ static THD_FUNCTION(spi_thread_1, p) {
     spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
     spiReleaseBus(&SPID2);              /* Ownership release.               */
   }
-  return 0;
 }
 
 /*
@@ -74,7 +73,7 @@ static THD_FUNCTION(spi_thread_2, p) {
   (void)p;
 
   chRegSetThreadName("SPI thread 2");
-  while (TRUE) {
+  while (true) {
     spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
     palClearPad(GPIOB, GPIOB_LED4);     /* LED OFF.                         */
     spiStart(&SPID2, &ls_spicfg);       /* Setup transfer parameters.       */
@@ -84,7 +83,6 @@ static THD_FUNCTION(spi_thread_2, p) {
     spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
     spiReleaseBus(&SPID2);              /* Ownership release.               */
   }
-  return 0;
 }
 
 /*
@@ -132,7 +130,7 @@ int main(void) {
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(500);
   }
   return 0;

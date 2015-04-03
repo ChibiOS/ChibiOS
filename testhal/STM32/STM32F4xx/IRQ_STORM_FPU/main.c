@@ -45,7 +45,7 @@ static bool saturated;
  * Test worker thread.
  */
 static THD_WORKING_AREA(waWorkerThread, 128);
-static msg_t WorkerThread(void *arg) {
+static THD_FUNCTION(WorkerThread, arg) {
 
   (void)arg;
 
@@ -67,7 +67,7 @@ static msg_t WorkerThread(void *arg) {
  * Test periodic thread.
  */
 static THD_WORKING_AREA(waPeriodicThread, 128);
-static msg_t PeriodicThread(void *arg) {
+static THD_FUNCTION(PeriodicThread, arg) {
 
   (void)arg;
 
@@ -307,7 +307,7 @@ int main(void) {
   /*
    * Normal main() thread activity, nothing in this test.
    */
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(5000);
   }
 }

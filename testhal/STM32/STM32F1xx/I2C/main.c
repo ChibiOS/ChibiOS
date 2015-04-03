@@ -42,14 +42,14 @@ static float acc[3];
  */
 static THD_WORKING_AREA(PollAccelThreadWA, 256);
 static THD_FUNCTION(PollAccelThread, arg) {
-  chRegSetThreadName("PollAccel");
+
   (void)arg;
 
-  while (TRUE) {
+  chRegSetThreadName("PollAccel");
+  while (true) {
     osalThreadSleepMilliseconds(32);
     lis3GetAcc(acc);
   }
-  return 0;
 }
 
 /*
@@ -57,14 +57,14 @@ static THD_FUNCTION(PollAccelThread, arg) {
  */
 static THD_WORKING_AREA(PollFakeThreadWA, 256);
 static THD_FUNCTION(PollFakeThread, arg) {
-  chRegSetThreadName("PollFake");
+
   (void)arg;
 
-  while (TRUE) {
+  chRegSetThreadName("PollFake");
+  while (true) {
     osalThreadSleepMilliseconds(16);
     request_fake();
   }
-  return 0;
 }
 
 /*
@@ -103,7 +103,7 @@ int main(void) {
           NULL);
 
   /* main loop handles LED */
-  while (TRUE) {
+  while (true) {
     if (sqrtf(acc[0]*acc[0] + acc[1]*acc[1]) > 0.5)
       palClearPad(IOPORT3, GPIOC_LED); /* on */
     else

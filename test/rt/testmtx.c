@@ -86,12 +86,11 @@ static void mtx1_setup(void) {
   chMtxObjectInit(&m1);
 }
 
-static msg_t thread1(void *p) {
+static THD_FUNCTION(thread1, p) {
 
   chMtxLock(&m1);
   test_emit_token(*(char *)p);
   chMtxUnlock(&m1);
-  return 0;
 }
 
 static void mtx1_execute(void) {
@@ -154,7 +153,7 @@ static void mtx2_setup(void) {
 }
 
 /* Low priority thread */
-static msg_t thread2L(void *p) {
+static THD_FUNCTION(thread2L, p) {
 
   (void)p;
   chMtxLock(&m1);
@@ -162,21 +161,19 @@ static msg_t thread2L(void *p) {
   chMtxUnlock(&m1);
   test_cpu_pulse(10);
   test_emit_token('C');
-  return 0;
 }
 
 /* Medium priority thread */
-static msg_t thread2M(void *p) {
+static THD_FUNCTION(thread2M, p) {
 
   (void)p;
   chThdSleepMilliseconds(20);
   test_cpu_pulse(40);
   test_emit_token('B');
-  return 0;
 }
 
 /* High priority thread */
-static msg_t thread2H(void *p) {
+static THD_FUNCTION(thread2H, p) {
 
   (void)p;
   chThdSleepMilliseconds(40);
@@ -184,7 +181,6 @@ static msg_t thread2H(void *p) {
   test_cpu_pulse(10);
   chMtxUnlock(&m1);
   test_emit_token('A');
-  return 0;
 }
 
 static void mtx2_execute(void) {
@@ -245,18 +241,17 @@ static void mtx3_setup(void) {
 }
 
 /* Lowest priority thread */
-static msg_t thread3LL(void *p) {
+static THD_FUNCTION(thread3LL, p) {
 
   (void)p;
   chMtxLock(&m1);
   test_cpu_pulse(30);
   chMtxUnlock(&m1);
   test_emit_token('E');
-  return 0;
 }
 
 /* Low priority thread */
-static msg_t thread3L(void *p) {
+static THD_FUNCTION(thread3L, p) {
 
   (void)p;
   chThdSleepMilliseconds(10);
@@ -268,11 +263,10 @@ static msg_t thread3L(void *p) {
   test_cpu_pulse(10);
   chMtxUnlock(&m2);
   test_emit_token('D');
-  return 0;
 }
 
 /* Medium priority thread */
-static msg_t thread3M(void *p) {
+static THD_FUNCTION(thread3M, p) {
 
   (void)p;
   chThdSleepMilliseconds(20);
@@ -280,21 +274,19 @@ static msg_t thread3M(void *p) {
   test_cpu_pulse(10);
   chMtxUnlock(&m2);
   test_emit_token('C');
-  return 0;
 }
 
 /* High priority thread */
-static msg_t thread3H(void *p) {
+static THD_FUNCTION(thread3H, p) {
 
   (void)p;
   chThdSleepMilliseconds(40);
   test_cpu_pulse(20);
   test_emit_token('B');
-  return 0;
 }
 
 /* Highest priority thread */
-static msg_t thread3HH(void *p) {
+static THD_FUNCTION(thread3HH, p) {
 
   (void)p;
   chThdSleepMilliseconds(50);
@@ -302,7 +294,6 @@ static msg_t thread3HH(void *p) {
   test_cpu_pulse(10);
   chMtxUnlock(&m2);
   test_emit_token('A');
-  return 0;
 }
 
 static void mtx3_execute(void) {
@@ -344,22 +335,20 @@ static void mtx4_setup(void) {
   chMtxObjectInit(&m2);
 }
 
-static msg_t thread4a(void *p) {
+static THD_FUNCTION(thread4a, p) {
 
   (void)p;
   chThdSleepMilliseconds(50);
   chMtxLock(&m2);
   chMtxUnlock(&m2);
-  return 0;
 }
 
-static msg_t thread4b(void *p) {
+static THD_FUNCTION(thread4b, p) {
 
   (void)p;
   chThdSleepMilliseconds(150);
   chMtxLock(&m1);
   chMtxUnlock(&m1);
-  return 0;
 }
 
 static void mtx4_execute(void) {
@@ -483,13 +472,12 @@ static void mtx6_setup(void) {
   chMtxObjectInit(&m1);
 }
 
-static msg_t thread10(void *p) {
+static THD_FUNCTION(thread10, p) {
 
   chMtxLock(&m1);
   chCondWait(&c1);
   test_emit_token(*(char *)p);
   chMtxUnlock(&m1);
-  return 0;
 }
 
 static void mtx6_execute(void) {
@@ -571,7 +559,7 @@ static void mtx8_setup(void) {
   chMtxObjectInit(&m2);
 }
 
-static msg_t thread11(void *p) {
+static THD_FUNCTION(thread11, p) {
 
   chMtxLock(&m2);
   chMtxLock(&m1);
@@ -583,15 +571,13 @@ static msg_t thread11(void *p) {
   test_emit_token(*(char *)p);
   chMtxUnlock(&m1);
   chMtxUnlock(&m2);
-  return 0;
 }
 
-static msg_t thread12(void *p) {
+static THD_FUNCTION(thread12, p) {
 
   chMtxLock(&m2);
   test_emit_token(*(char *)p);
   chMtxUnlock(&m2);
-  return 0;
 }
 
 static void mtx8_execute(void) {

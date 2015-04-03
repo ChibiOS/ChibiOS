@@ -103,7 +103,7 @@ static const ShellConfig shell_cfg2 = {
  * to the C printf() thread safe and the print operation atomic among threads.
  * In this example the message is the zero terminated string itself.
  */
-static msg_t console_thread(void *arg) {
+static THD_FUNCTION(console_thread, arg) {
 
   (void)arg;
   while (!chThdShouldTerminateX()) {
@@ -112,7 +112,6 @@ static msg_t console_thread(void *arg) {
     fflush(stdout);
     chMsgRelease(tp, MSG_OK);
   }
-  return 0;
 }
 
 /**

@@ -30,7 +30,7 @@ RTCAlarm alarmspec;
 static THD_WORKING_AREA(blinkWA, 128);
 static THD_FUNCTION(blink_thd, arg) {
   (void)arg;
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(100);
     palTogglePad(GPIOC, GPIOC_LED);
   }
@@ -57,7 +57,7 @@ int main(void) {
   alarmspec.tv_sec = tv_sec + 20;
   rtcSetAlarm(&RTCD1, 0, &alarmspec);
 
-  while (TRUE){
+  while (true){
     chThdSleepSeconds(10);
 
     /* going to anabiosis*/
@@ -138,7 +138,7 @@ int main(void) {
 
   rtcSetCallback(&RTCD1, my_cb);
 
-  while (TRUE){
+  while (true){
 
     /* Wait until alarm callback signaled semaphore.*/
     status = chBSemWaitTimeout(&alarm_sem, S2ST(RTC_ALARMPERIOD + 5));

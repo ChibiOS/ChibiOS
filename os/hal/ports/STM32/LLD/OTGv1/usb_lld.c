@@ -1288,11 +1288,10 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
  *          in order to not perform heavy tasks withing interrupt handlers.
  *
  * @param[in] p         pointer to the @p USBDriver object
- * @return              The function never returns.
  *
  * @special
  */
-msg_t usb_lld_pump(void *p) {
+void usb_lld_pump(void *p) {
   USBDriver *usbp = (USBDriver *)p;
   stm32_otg_t *otgp = usbp->otg;
 

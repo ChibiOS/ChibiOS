@@ -166,7 +166,7 @@ static THD_FUNCTION(Thread1, arg) {
 
   /* Reader thread loop.*/
   time = chVTGetSystemTime();
-  while (TRUE) {
+  while (true) {
     int32_t x, y;
     unsigned i;
 
@@ -306,7 +306,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it just performs
    * a shell respawn upon its termination.
    */
-  while (TRUE) {
+  while (true) {
     if (!shelltp) {
       if (SDU1.config->usbp->state == USB_ACTIVE) {
         /* Spawns a new shell.*/

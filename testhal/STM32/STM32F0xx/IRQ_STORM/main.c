@@ -58,7 +58,7 @@ static msg_t b[NUM_THREADS][MAILBOX_SIZE];
  * Test worker threads.
  */
 static THD_WORKING_AREA(waWorkerThread[NUM_THREADS], 128);
-static msg_t WorkerThread(void *arg) {
+static THD_FUNCTION(WorkerThread, arg) {
   static volatile unsigned x = 0;
   static unsigned cnt = 0;
   unsigned me = (unsigned)arg;
@@ -69,7 +69,7 @@ static msg_t WorkerThread(void *arg) {
   chRegSetThreadName("worker");
 
   /* Work loop.*/
-  while (TRUE) {
+  while (true) {
     /* Waiting for a message.*/
    chMBFetch(&mb[me], &msg, TIME_INFINITE);
 
@@ -325,7 +325,7 @@ int main(void) {
   /*
    * Normal main() thread activity, nothing in this test.
    */
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(5000);
   }
   return 0;

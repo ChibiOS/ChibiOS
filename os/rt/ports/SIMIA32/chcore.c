@@ -93,7 +93,8 @@ __attribute__((cdecl, noreturn))
 void _port_thread_start(msg_t (*pf)(void *), void *p) {
 
   chSysUnlock();
-  chThdExit(pf(p));
+  pf(p);
+  chThdExit(0);
   while(1);
 }
 

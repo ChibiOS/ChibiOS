@@ -26,7 +26,7 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker1");
-  while (TRUE) {
+  while (true) {
     palClearPad(GPIOC, GPIOC_LED_BLUE);
     chThdSleepMilliseconds(500);
     palSetPad(GPIOC, GPIOC_LED_BLUE);
@@ -42,7 +42,7 @@ static THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker2");
-  while (TRUE) {
+  while (true) {
     palClearPad(GPIOC, GPIOC_LED_GREEN);
     chThdSleepMilliseconds(250);
     palSetPad(GPIOC, GPIOC_LED_GREEN);
@@ -85,7 +85,7 @@ int main(void) {
    * pressed the test procedure is launched with output on the serial
    * driver 1.
    */
-  while (TRUE) {
+  while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
       TestThread(&SD1);
     chThdSleepMilliseconds(500);

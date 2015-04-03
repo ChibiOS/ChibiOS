@@ -150,7 +150,7 @@ int main(void) {
   /*
    * Normal main() thread activity, nothing in this test.
    */
-  while (TRUE) {
+  while (true) {
     palTogglePad(GPIOB, GPIOB_LED_B);
     chThdSleepMilliseconds(100);
 

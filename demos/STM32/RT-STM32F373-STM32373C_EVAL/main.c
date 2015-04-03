@@ -27,7 +27,7 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
 
   chRegSetThreadName("blinker");
-  while (TRUE) {
+  while (true) {
     palClearPad(GPIOC, GPIOC_LED1);
     chThdSleepMilliseconds(250);
     palSetPad(GPIOC, GPIOC_LED1);
@@ -74,7 +74,7 @@ int main(void) {
    * sleeping in a loop and check the button state, when the button is
    * pressed the test procedure is launched.
    */
-  while (TRUE) {
+  while (true) {
     if (palReadPad(GPIOA, GPIOA_WKUP_BUTTON))
       TestThread(&SD2);
     chThdSleepMilliseconds(500);

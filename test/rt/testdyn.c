@@ -68,10 +68,9 @@ static memory_pool_t mp1;
  * one to fail.
  */
 
-static msg_t thread(void *p) {
+static THD_FUNCTION(thread, p) {
 
   test_emit_token(*(char *)p);
-  return 0;
 }
 
 #if (CH_CFG_USE_HEAP && !CH_CFG_USE_MALLOC_HEAP) || defined(__DOXYGEN__)

@@ -36,7 +36,7 @@ int main(void) {
    * Normal main() thread activity, if the button is pressed then the I2s
    * transfer is stopped.
    */
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(500);
   }
   return 0;

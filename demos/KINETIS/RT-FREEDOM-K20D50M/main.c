@@ -23,12 +23,10 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("RedBlinker");
-  while (TRUE) {
+  while (true) {
     palTogglePad(IOPORT3, 3);
     chThdSleepMilliseconds(300);
   }
-
-  return 0;
 }
 
 static THD_WORKING_AREA(waThread2, 64);
@@ -36,12 +34,10 @@ static THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
   chRegSetThreadName("GreenBlinker");
-  while (TRUE) {
+  while (true) {
     palTogglePad(IOPORT4, 4);
     chThdSleepMilliseconds(600);
   }
-
-  return 0;
 }
 
 static THD_WORKING_AREA(waThread3, 64);
@@ -49,12 +45,10 @@ static THD_FUNCTION(Thread3, arg) {
 
   (void)arg;
   chRegSetThreadName("BlueBlinker");
-  while (TRUE) {
+  while (true) {
     palTogglePad(IOPORT1, 2);
     chThdSleepMilliseconds(900);
   }
-
-  return 0;
 }
 
 /*

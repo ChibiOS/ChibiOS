@@ -100,6 +100,7 @@ void port_dummy2(void) {
   asm ("mr          %r3, %r31");        /* Thread parameter.                */
   asm ("mtctr       %r30");
   asm ("bctrl");                        /* Invoke thread function.          */
+  asm ("li          %r0, 0");           /* MSG_OK.                          */
   asm ("bl          chThdExit");        /* Thread termination on exit.      */
 }
 

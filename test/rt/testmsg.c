@@ -56,12 +56,11 @@
  * not find a fifth message waiting.
  */
 
-static msg_t thread(void *p) {
+static THD_FUNCTION(thread, p) {
 
   chMsgSend(p, 'A');
   chMsgSend(p, 'B');
   chMsgSend(p, 'C');
-  return 0;
 }
 
 static void msg1_execute(void) {

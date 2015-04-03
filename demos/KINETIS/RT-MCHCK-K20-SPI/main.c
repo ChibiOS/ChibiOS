@@ -42,7 +42,7 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("Blinker");
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOB, GPIOB_LED);
 
     /* Send the Manufacturer and Device ID Read command */
@@ -54,8 +54,6 @@ static THD_FUNCTION(Thread1, arg) {
 
     chThdSleepMilliseconds(1000);
   }
-
-  return 0;
 }
 
 /*

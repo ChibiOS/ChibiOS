@@ -70,7 +70,7 @@ int main(void) {
    * Normal main() thread activity, if the button is pressed then the I2s
    * transfer is stopped.
    */
-  while (TRUE) {
+  while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
       i2sStopExchange(&I2SD2);
     chThdSleepMilliseconds(500);

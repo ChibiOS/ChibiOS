@@ -96,6 +96,7 @@ _port_thread_start:
 #endif
                 mov     r0, r5
                 blx     r4
+                movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
 
 /*--------------------------------------------------------------------------*

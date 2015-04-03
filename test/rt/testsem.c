@@ -74,11 +74,10 @@ static void sem1_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
-static msg_t thread1(void *p) {
+static THD_FUNCTION(thread1, p) {
 
   chSemWait(&sem1);
   test_emit_token(*(char *)p);
-  return 0;
 }
 
 static void sem1_execute(void) {
@@ -131,7 +130,7 @@ static void sem2_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
-static msg_t thread2(void *p) {
+static THD_FUNCTION(thread2, p) {
 
   (void)p;
   chThdSleepMilliseconds(50);
@@ -139,7 +138,6 @@ static msg_t thread2(void *p) {
   chSemSignalI(&sem1); /* For coverage reasons */
   chSchRescheduleS();
   chSysUnlock();
-  return 0;
 }
 
 static void sem2_execute(void) {
@@ -206,12 +204,11 @@ static void sem3_setup(void) {
   chSemObjectInit(&sem1, 0);
 }
 
-static msg_t thread3(void *p) {
+static THD_FUNCTION(thread3, p) {
 
   (void)p;
   chSemWait(&sem1);
   chSemSignal(&sem1);
-  return 0;
 }
 
 static void sem3_execute(void) {
@@ -241,10 +238,9 @@ ROMCONST struct testcase testsem3 = {
  * checks the binary semaphore status and the expected status of the underlying
  * counting semaphore.
  */
-static msg_t thread4(void *p) {
+static THD_FUNCTION(thread4, p) {
 
   chBSemSignal((binary_semaphore_t *)p);
-  return 0;
 }
 
 static void sem4_execute(void) {

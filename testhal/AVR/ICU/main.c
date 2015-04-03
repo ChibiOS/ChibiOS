@@ -58,7 +58,7 @@ void output_single_cycle(const uint16_t low, const uint16_t high) {
 }
 
 static WORKING_AREA(waThread1, 64);
-static msg_t Thread1(void *arg) {
+static THD_FUNCTION(Thread1, arg) {
 
   BaseSequentialStream *serp = (BaseSequentialStream *) &SD1;
   thread1 = chThdGetSelfX();
@@ -71,11 +71,10 @@ static msg_t Thread1(void *arg) {
                    period);
     chEvtSignal(thread_main, (eventmask_t) 1);
   }
-  return 0;
 }
 
 static WORKING_AREA(waThread2, 64);
-static msg_t Thread2(void *arg) {
+static THD_FUNCTION(Thread2, arg) {
 
   BaseSequentialStream *serp = (BaseSequentialStream *) &SD1;
   thread2 = chThdGetSelfX();
@@ -84,7 +83,6 @@ static msg_t Thread2(void *arg) {
     chprintf(serp, "OVERFLOW\r\n");
     chEvtSignal(thread_main, (eventmask_t) 2);
   }
-  return 0;
 }
 
 int main(void) {

@@ -63,13 +63,13 @@ static semaphore_t sem1;
 static mutex_t mtx1;
 #endif
 
-static msg_t thread1(void *p) {
+static THD_FUNCTION(thread1, p) {
 
-  return (msg_t)p;
+  chThdExit((msg_t)p);
 }
 
 #if CH_CFG_USE_MESSAGES || defined(__DOXYGEN__)
-static msg_t thread2(void *p) {
+static THD_FUNCTION(thread2, p) {
   thread_t *tp;
   msg_t msg;
 
@@ -79,7 +79,6 @@ static msg_t thread2(void *p) {
     msg = chMsgGet(tp);
     chMsgRelease(tp, msg);
   } while (msg);
-  return 0;
 }
 
 #ifdef __GNUC__
@@ -204,7 +203,7 @@ ROMCONST struct testcase testbmk3 = {
  * iterations after a second of continuous operations.
  */
 
-msg_t thread4(void *p) {
+static THD_FUNCTION(thread4, p) {
   msg_t msg;
   thread_t *self = chThdGetSelfX();
 
@@ -215,7 +214,6 @@ msg_t thread4(void *p) {
     msg = self->p_u.rdymsg;
   } while (msg == MSG_OK);
   chSysUnlock();
-  return 0;
 }
 
 static void bmk4_execute(void) {
@@ -344,12 +342,11 @@ ROMCONST struct testcase testbmk6 = {
  * a second of continuous operations.
  */
 
-static msg_t thread3(void *p) {
+static THD_FUNCTION(thread3, p) {
 
   (void)p;
   while (!chThdShouldTerminateX())
     chSemWait(&sem1);
-  return 0;
 }
 
 static void bmk7_setup(void) {
@@ -405,7 +402,7 @@ ROMCONST struct testcase testbmk7 = {
  * a second of continuous operations.
  */
 
-static msg_t thread8(void *p) {
+static THD_FUNCTION(thread8, p) {
 
   do {
     chThdYield();
@@ -417,7 +414,6 @@ static msg_t thread8(void *p) {
     _sim_check_for_interrupts();
 #endif
   } while(!chThdShouldTerminateX());
-  return 0;
 }
 
 static void bmk8_execute(void) {

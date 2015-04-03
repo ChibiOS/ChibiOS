@@ -20,11 +20,10 @@
 static WORKING_AREA(waThread1, 32);
 static msg_t Thread1(void *arg) {
 
-  while (TRUE) {
+  while (true) {
     palTogglePad(IOPORT2, PORTB_LED1);
     chThdSleepMilliseconds(1000);
   }
-  return 0;
 }
 
 /*

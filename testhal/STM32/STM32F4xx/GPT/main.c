@@ -85,7 +85,7 @@ int main(void) {
    * Normal main() thread activity, it changes the GPT1 period every
    * five seconds.
    */
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOD, GPIOD_LED4);
     gptStartContinuous(&GPTD4, 5000);
     chThdSleepMilliseconds(5000);

@@ -27,7 +27,7 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
-  while (TRUE) {
+  while (true) {
     palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
     chThdSleepMilliseconds(500);
     palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
@@ -67,7 +67,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it just performs
    * a shell respawn upon its termination.
    */
-  while (TRUE) {
+  while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
       TestThread(&SD2);
     chThdSleepMilliseconds(500);

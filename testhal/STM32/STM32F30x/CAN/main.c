@@ -31,7 +31,7 @@ static const CANConfig cancfg = {
  * Receiver thread.
  */
 static THD_WORKING_AREA(can_rx_wa, 256);
-static msg_t can_rx(void *p) {
+static THD_FUNCTION(can_rx, p) {
   event_listener_t el;
   CANRxFrame rxmsg;
 
@@ -47,14 +47,13 @@ static msg_t can_rx(void *p) {
     }
   }
   chEvtUnregister(&CAND1.rxfull_event, &el);
-  return 0;
 }
 
 /*
  * Transmitter thread.
  */
 static THD_WORKING_AREA(can_tx_wa, 256);
-static msg_t can_tx(void * p) {
+static THD_FUNCTION(can_tx, p) {
   CANTxFrame txmsg;
 
   (void)p;
@@ -70,7 +69,6 @@ static msg_t can_tx(void * p) {
     canTransmit(&CAND1, CAN_ANY_MAILBOX, &txmsg, MS2ST(100));
     chThdSleepMilliseconds(500);
   }
-  return 0;
 }
 
 /*
@@ -102,7 +100,7 @@ int main(void) {
   /*
    * Normal main() thread activity, in this demo it does nothing.
    */
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(500);
   }
   return 0;

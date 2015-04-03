@@ -52,11 +52,10 @@ static time_t unix_time;
 static THD_WORKING_AREA(blinkWA, 128);
 static THD_FUNCTION(blink_thd, arg){
   (void)arg;
-  while (TRUE) {
+  while (true) {
     chThdSleepMilliseconds(100);
     palTogglePad(GPIOB, GPIOB_LED_R);
   }
-  return 0;
 }
 
 /*
@@ -282,7 +281,7 @@ int main(void){
   shellCreateStatic(&shell_cfg1, waShell, sizeof(waShell), NORMALPRIO);
 
   /* wait until user do not want to test wakeup */
-  while (TRUE){
+  while (true){
     osalThreadSleepMilliseconds(200);
   }
 #endif /* WAKEUP_TEST */

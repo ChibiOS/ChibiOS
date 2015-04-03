@@ -90,12 +90,12 @@ static const ShellConfig shell_cfg1 = {
  * LEDs blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
 
-  while (TRUE) {
+  while (true) {
     unsigned i;
 
     for (i = 0; i < 4; i++) {
@@ -153,7 +153,6 @@ static msg_t Thread1(void *arg) {
     palSetPort(PORT_E, PAL_PORT_BIT(PE_LED1) | PAL_PORT_BIT(PE_LED2) |
                        PAL_PORT_BIT(PE_LED3) | PAL_PORT_BIT(PE_LED4));
   }
-  return 0;
 }
 
 /*
@@ -190,7 +189,7 @@ int main(void) {
   /*
    * Normal main() thread activity.
    */
-  while (TRUE) {
+  while (true) {
     if (!shelltp)
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     else if (chThdTerminatedX(shelltp)) {
