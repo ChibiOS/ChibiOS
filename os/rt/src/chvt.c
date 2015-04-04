@@ -217,6 +217,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   /* Removing the first timer from the list.*/
   ch.vtlist.vt_next = vtp->vt_next;
   ch.vtlist.vt_next->vt_prev = (virtual_timer_t *)&ch.vtlist;
+  vtp->vt_func = NULL;
 
   /* If the list become empty then the alarm timer is stopped and done.*/
   if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
@@ -230,9 +231,9 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
   /* If the new first timer has a delta of zero then the alarm is not
      modified, the already programmed alarm will serve it.*/
-  if (ch.vtlist.vt_next->vt_delta == 0) {
+/*  if (ch.vtlist.vt_next->vt_delta == 0) {
     return;
-  }
+  }*/
 
   /* Distance in ticks between the last alarm event and current time.*/
   nowdelta = chVTGetSystemTimeX() - ch.vtlist.vt_lasttime;

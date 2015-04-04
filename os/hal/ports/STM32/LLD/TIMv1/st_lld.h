@@ -165,7 +165,6 @@ static inline void st_lld_stop_alarm(void) {
 static inline void st_lld_set_alarm(systime_t time) {
 
   STM32_ST_TIM->CCR[0] = (uint32_t)time;
-  STM32_ST_TIM->SR     = 0;
 }
 
 /**
