@@ -494,17 +494,6 @@ static inline void chVTDoTickI(void) {
   vtp = ch.vtlist.vt_next;
   now = chVTGetSystemTimeX();
 
-  /* The list is assumed to be non-empty because an tick interrupt just
-     occurred.*/
-  chDbgAssert(&ch.vtlist != (virtual_timers_list_t *)vtp,
-              "timers list empty");
-
-  /* The timer time is assumed to be between "vt_lasttime" and "now".*/
-  chDbgAssert(chVTIsTimeWithinX(ch.vtlist.vt_lasttime + vtp->vt_delta,
-                                ch.vtlist.vt_lasttime,
-                                now + 1),
-              "out of time window");
-
   /* All timers within the time window are triggered and removed,
      note that the loop is stopped by the timers header having
      "ch.vtlist.vt_delta == (systime_t)-1" which is greater than
