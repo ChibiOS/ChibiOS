@@ -198,6 +198,8 @@ void chSysHalt(const char *reason) {
 bool chSysIntegrityCheckI(unsigned testmask) {
   cnt_t n;
 
+  chDbgCheckClassI();
+
   /* Ready List integrity check.*/
   if ((testmask & CH_INTEGRITY_RLIST) != 0U) {
     thread_t *tp;
