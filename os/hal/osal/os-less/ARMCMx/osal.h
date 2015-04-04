@@ -425,8 +425,8 @@ typedef struct {
  * @api
  */
 #define OSAL_MS2ST(msec)                                                    \
-  ((systime_t)((((((uint32_t)(msec)) *                                      \
-                  ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) / 1000UL) + 1UL))
+  ((systime_t)((((uint32_t)(msec)) *                                        \
+                ((uint32_t)OSAL_ST_FREQUENCY) + 999UL) / 1000UL))
 
 /**
  * @brief   Microseconds to system ticks.
@@ -439,8 +439,8 @@ typedef struct {
  * @api
  */
 #define OSAL_US2ST(usec)                                                    \
-  ((systime_t)((((((uint32_t)(usec)) *                                      \
-                  ((uint32_t)OSAL_ST_FREQUENCY)) - 1UL) / 1000000UL) + 1UL))
+  ((systime_t)((((uint32_t)(usec)) *                                        \
+                ((uint32_t)OSAL_ST_FREQUENCY) + 999999UL) / 1000000UL))
 /** @} */
 
 /**
