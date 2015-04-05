@@ -591,7 +591,7 @@ static void RemoveHandler(eventid_t id) {
  * Green LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
+static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
@@ -599,8 +599,6 @@ static msg_t Thread1(void *arg) {
     palTogglePad(GPIOC, GPIOC_LED);
     chThdSleepMilliseconds(fs_ready ? 125 : 500);
   }
-
-  return MSG_OK; /* warning suppressor */
 }
 
 /*

@@ -260,17 +260,25 @@ THD_FUNCTION(lwip_thread, p) {
   /* Goes to the final priority after initialization.*/
   chThdSetPriority(LWIP_THREAD_PRIORITY);
 
-  while (TRUE) {
+  while (true) {
     eventmask_t mask = chEvtWaitAny(ALL_EVENTS);
     if (mask & PERIODIC_TIMER_ID) {
       bool current_link_status = macPollLinkStatus(&ETHD1);
       if (current_link_status != netif_is_link_up(&thisif)) {
-        if (current_link_status)
+        if (current_link_status) {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_up,
                                      &thisif, 0);
-        else
+#if LWIP_DHCP
+          dhcp_start(&thisif);
+#endif
+        }
+        else {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_down,
                                      &thisif, 0);
+#if LWIP_DHCP
+          dhcp_stop(&thisif);
+#endif
+        }
       }
     }
     if (mask & FRAME_RECEIVED_ID) {
@@ -296,7 +304,6 @@ THD_FUNCTION(lwip_thread, p) {
       }
     }
   }
-  return 0;
 }
 
 /** @} */

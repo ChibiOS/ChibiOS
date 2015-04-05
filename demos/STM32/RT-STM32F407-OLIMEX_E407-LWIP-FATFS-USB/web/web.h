@@ -41,7 +41,7 @@ extern THD_WORKING_AREA(wa_http_server, WEB_THREAD_STACK_SIZE);
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t http_server(void *p);
+  THD_FUNCTION(http_server, p);
 #ifdef __cplusplus
 }
 #endif
