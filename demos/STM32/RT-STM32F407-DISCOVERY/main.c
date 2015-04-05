@@ -64,8 +64,8 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Normal main() thread activity, in this demo it just performs
-   * a shell respawn upon its termination.
+   * Normal main() thread activity, in this demo it does nothing except
+   * sleeping in a loop and check the button state.
    */
   while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON))
