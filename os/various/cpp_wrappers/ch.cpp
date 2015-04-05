@@ -248,9 +248,8 @@ namespace chibios_rt {
 
   }
 
-  msg_t BaseThread::main(void) {
+  void BaseThread::main(void) {
 
-    return 0;
   }
 
   ThreadReference BaseThread::start(tprio_t prio) {
@@ -260,9 +259,9 @@ namespace chibios_rt {
     return *this;
   };
 
-  msg_t _thd_start(void *arg) {
+  void _thd_start(void *arg) {
 
-    return ((BaseThread *)arg)->main();
+    ((BaseThread *)arg)->main();
   }
 
   void BaseThread::setName(const char *tname) {

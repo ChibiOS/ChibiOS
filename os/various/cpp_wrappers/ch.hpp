@@ -440,7 +440,7 @@ namespace chibios_rt {
      *
      * @api
      */
-    virtual msg_t main(void);
+    virtual void main(void);
 
     /**
      * @brief   Creates and starts a system thread.
@@ -787,7 +787,7 @@ namespace chibios_rt {
      * @api
      */
     virtual ThreadReference start(tprio_t prio) {
-      msg_t _thd_start(void *arg);
+      void _thd_start(void *arg);
 
       thread_ref = chThdCreateStatic(wa, sizeof(wa), prio, _thd_start, this);
       return *this;

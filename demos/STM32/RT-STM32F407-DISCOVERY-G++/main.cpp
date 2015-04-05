@@ -87,20 +87,20 @@ private:
   const seqop_t *base, *curr;                   // Thread local variables.
 
 protected:
-  virtual msg_t main(void) {
+  virtual void main(void) {
 
     setName("sequencer");
 
     while (true) {
       switch(curr->action) {
       case SLEEP:
-        sleep(curr->value);
+        sleep(MS2ST(curr->value));
         break;
       case GOTO:
         curr = &base[curr->value];
         continue;
       case STOP:
-        return 0;
+        return;
       case BITCLEAR:
         palClearPort(GPIOD, curr->value);
         break;
@@ -125,11 +125,12 @@ public:
 class TesterThread : public BaseStaticThread<256> {
 
 protected:
-  virtual msg_t main(void) {
+  virtual void main(void) {
 
     setName("tester");
 
-    return TestThread(&SD2);
+    TestThread(&SD2);
+    exit(test_global_fail);
   }
 
 public:
