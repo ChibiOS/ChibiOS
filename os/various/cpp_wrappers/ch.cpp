@@ -26,66 +26,9 @@
 namespace chibios_rt {
 
   /*------------------------------------------------------------------------*
-   * chibios_rt::System                                                     *
-   *------------------------------------------------------------------------*/
-  void System::init(void) {
-
-    chSysInit();
-  }
-
-  void System::lock(void) {
-
-    chSysLock();
-  }
-
-  void System::unlock(void) {
-
-    chSysUnlock();
-  }
-
-  void System::lockFromIsr(void) {
-
-    chSysLockFromISR();
-  }
-
-  void System::unlockFromIsr(void) {
-
-    chSysUnlockFromISR();
-  }
-
-  systime_t System::getTime(void) {
-
-    return chVTGetSystemTimeX();
-  }
-
-  bool System::isTimeWithin(systime_t start, systime_t end) {
-
-    return chVTIsSystemTimeWithinX(start, end);
-  }
-
-  /*------------------------------------------------------------------------*
-   * chibios_rt::Core                                                       *
-   *------------------------------------------------------------------------*/
-#if CH_CFG_USE_MEMCORE
-  void *Core::alloc(size_t size) {
-
-    return chCoreAlloc(size);
-  }
-
-  void *Core::allocI(size_t size) {
-
-    return chCoreAllocI(size);
-  }
-
-  size_t Core::getStatus(void) {
-
-    return chCoreGetStatusX();
-  }
-#endif /* CH_CFG_USE_MEMCORE */
-
-  /*------------------------------------------------------------------------*
    * chibios_rt::Timer                                                      *
    *------------------------------------------------------------------------*/
+
   void Timer::setI(systime_t time, vtfunc_t vtfunc, void *par) {
 
     chVTSetI(&timer_ref, time, vtfunc, par);
@@ -103,67 +46,36 @@ namespace chibios_rt {
   }
 
   /*------------------------------------------------------------------------*
+   * chibios_rt::ThreadStayPoint                                            *
+   *------------------------------------------------------------------------*/
+
+  msg_t ThreadStayPoint::suspendS(void) {
+
+    return chThdSuspendS(&thread_ref);
+  }
+
+  msg_t ThreadStayPoint::suspendS(systime_t timeout) {
+
+    return chThdSuspendTimeoutS(&thread_ref, timeout);
+  }
+
+  void ThreadStayPoint::resumeI(msg_t msg) {
+
+    chThdResumeI(&thread_ref, msg);
+  }
+
+  void ThreadStayPoint::resumeS(msg_t msg) {
+
+    chThdResumeS(&thread_ref, msg);
+  }
+
+  /*------------------------------------------------------------------------*
    * chibios_rt::ThreadReference                                            *
    *------------------------------------------------------------------------*/
 
   void ThreadReference::stop(void) {
 
     chSysHalt("invoked unimplemented method stop()");
-  }
-
-  msg_t ThreadReference::suspend(void) {
-    msg_t msg;
-
-    chSysLock();
-
-    chDbgAssert(thread_ref != NULL,
-                "already referenced");
-
-    thread_ref = chThdGetSelfX();
-    chSchGoSleepS(CH_STATE_SUSPENDED);
-    msg = thread_ref->p_u.rdymsg;
-
-    chSysUnlock();
-    return msg;
-  }
-
-  msg_t ThreadReference::suspendS(void) {
-
-    chDbgAssert(thread_ref == NULL,
-                "already referenced");
-
-    thread_ref = chThdGetSelfX();
-    chSchGoSleepS(CH_STATE_SUSPENDED);
-    return thread_ref->p_u.rdymsg;
-  }
-
-  void ThreadReference::resume(msg_t msg) {
-
-    chSysLock();
-
-    chDbgAssert(thread_ref != NULL,
-                "not referenced");
-
-    if (thread_ref) {
-      thread_t *tp = thread_ref;
-      thread_ref = NULL;
-      chSchWakeupS(tp, msg);
-    }
-
-    chSysUnlock();
-  }
-
-  void ThreadReference::resumeI(msg_t msg) {
-
-    chDbgAssert(thread_ref != NULL,
-                "not referenced");
-
-    if (thread_ref) {
-      thread_t *tp = thread_ref;
-      thread_ref = NULL;
-      tp->p_msg = msg;
-      chSchReadyI(tp);
-    }
   }
 
   void ThreadReference::requestTerminate(void) {
