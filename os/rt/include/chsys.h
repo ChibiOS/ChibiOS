@@ -70,9 +70,9 @@
  *
  * @param[in] prio      the priority level
  * @return              Priority range result.
- * @false               if the priority is invalid or if the architecture
+ * @retval false        if the priority is invalid or if the architecture
  *                      does not support priorities.
- * @true                if the priority is valid.
+ * @retval true         if the priority is valid.
  */
 #if defined(PORT_IRQ_IS_VALID_PRIORITY) || defined(__DOXYGEN__)
 #define CH_IRQ_IS_VALID_PRIORITY(prio)                                      \
@@ -88,9 +88,9 @@
  *
  * @param[in] prio      the priority level
  * @return              Priority range result.
- * @false               if the priority is invalid or if the architecture
+ * @retval false        if the priority is invalid or if the architecture
  *                      does not support priorities.
- * @true                if the priority is valid.
+ * @retval true         if the priority is valid.
  */
 #if defined(PORT_IRQ_IS_VALID_KERNEL_PRIORITY) || defined(__DOXYGEN__)
 #define CH_IRQ_IS_VALID_KERNEL_PRIORITY(prio)                               \
