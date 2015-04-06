@@ -45,15 +45,37 @@ typedef struct nil_thread thread_t;
 /*===========================================================================*/
 
 /**
- * @name    Nil RTOS identification
+ * @brief   ChibiOS/NIL identification macro.
+ */
+#define _CHIBIOS_NIL_
+
+/**
+ * @brief   Stable release flag.
+ */
+#define CH_KERNEL_STABLE        0
+
+/**
+ * @name    ChibiOS/NIL version identification
  * @{
  */
-#define _NIL_
+/**
+ * @brief   Kernel version string.
+ */
+#define CH_KERNEL_VERSION       "1.0.0p1"
 
-#define CH_KERNEL_VERSION       "1.0.0dev"
-
+/**
+ * @brief   Kernel version major number.
+ */
 #define CH_KERNEL_MAJOR         1
+
+/**
+ * @brief   Kernel version minor number.
+ */
 #define CH_KERNEL_MINOR         0
+
+/**
+ * @brief   Kernel version patch number.
+ */
 #define CH_KERNEL_PATCH         0
 /** @} */
 

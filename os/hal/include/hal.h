@@ -85,15 +85,37 @@
 /*===========================================================================*/
 
 /**
- * @name    HAL identification
+ * @brief   ChibiOS/HAL identification macro.
+ */
+#define _CHIBIOS_HAL_
+
+/**
+ * @brief   Stable release flag.
+ */
+#define CH_HAL_STABLE           0
+
+/**
+ * @name    ChibiOS/HAL version identification
  * @{
  */
-#define _HAL_
+/**
+ * @brief   HAL version string.
+ */
+#define HAL_VERSION             "3.0.0p1"
 
-#define HAL_VERSION             "3.0.0dev"
-
+/**
+ * @brief   HAL version major number.
+ */
 #define CH_HAL_MAJOR            3
+
+/**
+ * @brief   HAL version minor number.
+ */
 #define CH_HAL_MINOR            0
+
+/**
+ * @brief   HAL version patch number.
+ */
 #define CH_HAL_PATCH            0
 /** @} */
 
