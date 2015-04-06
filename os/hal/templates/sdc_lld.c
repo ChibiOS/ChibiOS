@@ -113,6 +113,7 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
  * @brief   Sets the SDIO clock to data mode (25MHz or less).
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[in] clk       the clock mode
  *
  * @notapi
  */
