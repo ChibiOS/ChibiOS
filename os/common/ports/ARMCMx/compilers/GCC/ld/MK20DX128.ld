@@ -41,7 +41,7 @@ SECTIONS
 
   .isr : ALIGN(4) SUBALIGN(4)
   {
-    KEEP(*(vectors))
+    KEEP(*(.vectors))
   } > flash0
 
   .cfmprotect : ALIGN(4) SUBALIGN(4)
