@@ -10,6 +10,8 @@
 TRGT = mingw32-
 CC   = $(TRGT)gcc
 AS   = $(TRGT)gcc -x assembler-with-cpp
+AR   = $(TRGT)ar
+COV  = gcov
 
 # List all default C defines here, like -D_DEBUG=1
 DDEFS = -DSIMULATOR
@@ -95,7 +97,7 @@ ADEFS   = $(DADEFS) $(UADEFS)
 OBJS    = $(ASRC:.s=.o) $(SRC:.c=.o)
 LIBS    = $(DLIBS) $(ULIBS)
 
-LDFLAGS = -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch $(LIBDIR)
+LDFLAGS = -Wl,-Map=$(PROJECT).map,--cref,--no-warn-mismatch -lgcov $(LIBDIR)
 ASFLAGS = -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 CPFLAGS = $(OPT) -Wall -Wstrict-prototypes -fverbose-asm -Wa,-ahlms=$(<:.c=.lst) $(DEFS)
 
@@ -117,12 +119,18 @@ all: $(OBJS) $(PROJECT).exe
 %exe: $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
 
+.PHONY: gcov
+gcov:
+	$(COV) -u -o $(CHIBIOS)/os/rt/src $(KERNSRC)
+
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(PROJECT).exe
 	-rm -f $(PROJECT).map
 	-rm -f $(SRC:.c=.c.bak)
 	-rm -f $(SRC:.c=.lst)
+	-rm -f $(SRC:.c=.gcno)
+	-rm -f $(SRC:.c=.gcda)
 	-rm -f $(ASRC:.s=.s.bak)
 	-rm -f $(ASRC:.s=.lst)
 	-rm -fR .dep
