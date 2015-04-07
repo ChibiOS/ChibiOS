@@ -180,11 +180,11 @@ static void serve_interrupt(I2CDriver *i2cp) {
 
 #if KINETIS_I2C_USE_I2C0 || defined(__DOXYGEN__)
 
-PORT_IRQ_HANDLER(KINETIS_I2C0_IRQ_VECTOR) {
+OSAL_IRQ_HANDLER(KINETIS_I2C0_IRQ_VECTOR) {
 
-  PORT_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
   serve_interrupt(&I2CD1);
-  PORT_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #endif
@@ -192,11 +192,11 @@ PORT_IRQ_HANDLER(KINETIS_I2C0_IRQ_VECTOR) {
 #if KINETIS_I2C_USE_I2C1 || defined(__DOXYGEN__)
 
 /* FIXME: KL2x has I2C1 on Vector64; K2x don't have I2C1! */
-PORT_IRQ_HANDLER(Vector64) {
+OSAL_IRQ_HANDLER(Vector64) {
 
-  PORT_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
   serve_interrupt(&I2CD2);
-  PORT_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #endif

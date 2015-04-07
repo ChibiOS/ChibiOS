@@ -81,9 +81,9 @@ static void serve_interrupt(SerialDriver *sdp) {
 
   if (u->S1 & UARTx_S1_RDRF) {
     osalSysLockFromISR();
-    if (chIQIsEmptyI(&sdp->iqueue))
+    if (iqIsEmptyI(&sdp->iqueue))
       chnAddFlagsI(sdp, CHN_INPUT_AVAILABLE);
-    if (chIQPutI(&sdp->iqueue, u->D) < Q_OK)
+    if (iqPutI(&sdp->iqueue, u->D) < Q_OK)
       chnAddFlagsI(sdp, SD_OVERRUN_ERROR);
     osalSysUnlockFromISR();
   }
@@ -92,7 +92,7 @@ static void serve_interrupt(SerialDriver *sdp) {
     msg_t b;
 
     osalSysLockFromISR();
-    b = chOQGetI(&sdp->oqueue);
+    b = oqGetI(&sdp->oqueue);
     osalSysUnlockFromISR();
 
     if (b < Q_OK) {
@@ -122,7 +122,7 @@ static void preload(SerialDriver *sdp) {
   UARTLP_TypeDef *u = sdp->uart;
 
   if (u->S1 & UARTx_S1_TDRE) {
-    msg_t b = chOQGetI(&sdp->oqueue);
+    msg_t b = oqGetI(&sdp->oqueue);
     if (b < Q_OK) {
       chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
       return;
@@ -205,29 +205,29 @@ static void configure_uart(UARTLP_TypeDef *uart, const SerialConfig *config)
 /*===========================================================================*/
 
 #if KINETIS_SERIAL_USE_UART0 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(Vector70) {
+OSAL_IRQ_HANDLER(Vector70) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
   serve_interrupt(&SD1);
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
 #if KINETIS_SERIAL_USE_UART1 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(Vector74) {
+OSAL_IRQ_HANDLER(Vector74) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
   serve_interrupt(&SD2);
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
 #if KINETIS_SERIAL_USE_UART2 || defined(__DOXYGEN__)
-CH_IRQ_HANDLER(Vector78) {
+OSAL_IRQ_HANDLER(Vector78) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
   serve_interrupt(&SD3);
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 
