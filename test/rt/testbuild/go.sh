@@ -5,7 +5,7 @@ XOPT="-ggdb -O2 -fomit-frame-pointer -DDELAY_BETWEEN_TESTS=0 -fprofile-arcs -fte
 XDEFS=""
 
 function clean() {
-  mingw32-make clean > /dev/null
+  make clean > /dev/null
 }
 
 function compile() {
@@ -33,7 +33,7 @@ function execute_test() {
 function coverage() {
   echo -n "  * Coverage..."
   mkdir gcov 2> /dev/null
-  if ! mingw32-make gcov > gcovlog.txt 2> /dev/null
+  if ! make gcov > gcovlog.txt 2> /dev/null
   then
     echo "failed"
     clean
@@ -45,7 +45,7 @@ function coverage() {
 
 function misra() {
   echo -n "  * Analysing..."
-  if ! mingw32-make misra > misralog.txt
+  if ! make misra > misralog.txt
   then
     echo "failed"
     clean
