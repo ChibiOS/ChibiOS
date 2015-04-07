@@ -254,10 +254,10 @@ static void i2c_lld_serve_error_interrupt(I2CDriver *i2cp, uint32_t isr) {
  *
  * @notapi
  */
-CH_IRQ_HANDLER(STM32_I2C1_GLOBAL_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_I2C1_GLOBAL_HANDLER) {
   uint32_t isr = I2CD1.i2c->ISR;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   /* Clearing IRQ bits.*/
   I2CD1.i2c->ICR = isr;
@@ -267,34 +267,34 @@ CH_IRQ_HANDLER(STM32_I2C1_GLOBAL_HANDLER) {
   else if (isr & I2C_INT_MASK)
     i2c_lld_serve_interrupt(&I2CD1, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #elif defined(STM32_I2C1_EVENT_HANDLER) && defined(STM32_I2C1_ERROR_HANDLER)
-CH_IRQ_HANDLER(STM32_I2C1_EVENT_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_I2C1_EVENT_HANDLER) {
   uint32_t isr = I2CD1.i2c->ISR;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   /* Clearing IRQ bits.*/
   I2CD1.i2c->ICR = isr & I2C_INT_MASK;
 
   i2c_lld_serve_interrupt(&I2CD1, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
-CH_IRQ_HANDLER(STM32_I2C1_ERROR_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_I2C1_ERROR_HANDLER) {
   uint32_t isr = I2CD1.i2c->ISR;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   /* Clearing IRQ bits.*/
   I2CD1.i2c->ICR = isr & I2C_ERROR_MASK;
 
   i2c_lld_serve_error_interrupt(&I2CD1, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #else
@@ -309,10 +309,10 @@ CH_IRQ_HANDLER(STM32_I2C1_ERROR_HANDLER) {
  *
  * @notapi
  */
-CH_IRQ_HANDLER(STM32_I2C2_GLOBAL_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_I2C2_GLOBAL_HANDLER) {
   uint32_t isr = I2CD2.i2c->ISR;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   /* Clearing IRQ bits.*/
   I2CD2.i2c->ICR = isr;
@@ -322,34 +322,34 @@ CH_IRQ_HANDLER(STM32_I2C2_GLOBAL_HANDLER) {
   else if (isr & I2C_INT_MASK)
     i2c_lld_serve_interrupt(&I2CD2, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #elif defined(STM32_I2C2_EVENT_HANDLER) && defined(STM32_I2C2_ERROR_HANDLER)
-CH_IRQ_HANDLER(STM32_I2C2_EVENT_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_I2C2_EVENT_HANDLER) {
   uint32_t isr = I2CD2.i2c->ISR;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   /* Clearing IRQ bits.*/
   I2CD2.i2c->ICR = isr & I2C_INT_MASK;
 
   i2c_lld_serve_interrupt(&I2CD2, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
-CH_IRQ_HANDLER(STM32_I2C2_ERROR_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_I2C2_ERROR_HANDLER) {
   uint32_t isr = I2CD2.i2c->ISR;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   /* Clearing IRQ bits.*/
   I2CD2.i2c->ICR = isr & I2C_ERROR_MASK;
 
   i2c_lld_serve_error_interrupt(&I2CD2, isr);
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 
 #else

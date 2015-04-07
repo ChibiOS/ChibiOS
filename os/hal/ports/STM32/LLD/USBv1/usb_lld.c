@@ -267,11 +267,11 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_USB1_LP_NUMBER != STM32_USB1_HP_NUMBER */
 
@@ -280,11 +280,11 @@ CH_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
   uint32_t istr;
   USBDriver *usbp = &USBD1;
 
-  CH_IRQ_PROLOGUE();
+  OSAL_IRQ_PROLOGUE();
 
   istr = STM32_USB->ISTR;
 
@@ -410,7 +410,7 @@ CH_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
     istr = STM32_USB->ISTR;
   }
 
-  CH_IRQ_EPILOGUE();
+  OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_USB_USE_USB1 */
 
