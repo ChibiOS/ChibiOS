@@ -26,6 +26,7 @@
 #include "hal.h"
 
 #include "test.h"
+#include "testsys.h"
 #include "testthd.h"
 #include "testsem.h"
 #include "testmtx.h"
@@ -36,13 +37,13 @@
 #include "testpools.h"
 #include "testdyn.h"
 #include "testqueues.h"
-#include "testsys.h"
 #include "testbmk.h"
 
 /*
  * Array of all the test patterns.
  */
 static ROMCONST struct testcase * ROMCONST *patterns[] = {
+  patternsys,
   patternthd,
   patternsem,
   patternmtx,
@@ -53,7 +54,6 @@ static ROMCONST struct testcase * ROMCONST *patterns[] = {
   patternpools,
   patterndyn,
   patternqueues,
-  patternsys,
   patternbmk,
   NULL
 };

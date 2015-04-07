@@ -105,14 +105,36 @@ ROMCONST struct testcase testsys1 = {
 };
 
 /**
- * @page test_sys_002 System integrity check
+ * @page test_sys_002 Interrupts handling
+ *
+ * <h2>Description</h2>
+ * The interrupts handling API is invoked for coverage.
+ */
+
+static void sys2_execute(void) {
+
+  chSysSuspend();
+  chSysDisable();
+  chSysSuspend();
+  chSysEnable();
+}
+
+ROMCONST struct testcase testsys2 = {
+  "System, interrupts handling",
+  NULL,
+  NULL,
+  sys2_execute
+};
+
+/**
+ * @page test_sys_003 System integrity check
  *
  * <h2>Description</h2>
  * The chSysIntegrityCheckI() API is invoked in order to asses the state of the
  * system data structures.
  */
 
-static void sys2_execute(void) {
+static void sys3_execute(void) {
   bool result;
 
   chSysLock();
@@ -136,11 +158,11 @@ static void sys2_execute(void) {
   test_assert(4, result == false, "port layer check failed");
 }
 
-ROMCONST struct testcase testsys2 = {
+ROMCONST struct testcase testsys3 = {
   "System, integrity",
   NULL,
   NULL,
-  sys2_execute
+  sys3_execute
 };
 
 /**
@@ -149,5 +171,6 @@ ROMCONST struct testcase testsys2 = {
 ROMCONST struct testcase * ROMCONST patternsys[] = {
   &testsys1,
   &testsys2,
+  &testsys3,
   NULL
 };
