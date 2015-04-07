@@ -36,6 +36,7 @@
 #include "testpools.h"
 #include "testdyn.h"
 #include "testqueues.h"
+#include "testsys.h"
 #include "testbmk.h"
 
 /*
@@ -52,6 +53,7 @@ static ROMCONST struct testcase * ROMCONST *patterns[] = {
   patternpools,
   patterndyn,
   patternqueues,
+  patternsys,
   patternbmk,
   NULL
 };
