@@ -72,6 +72,10 @@
 #include "netif/etharp.h"
 #include "netif/ppp_oe.h"
 
+#if LWIP_DHCP
+#include <lwip/dhcp.h>
+#endif
+
 #define PERIODIC_TIMER_ID       1
 #define FRAME_RECEIVED_ID       2
 
