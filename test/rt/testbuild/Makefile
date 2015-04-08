@@ -110,18 +110,18 @@ CPFLAGS += -MD -MP -MF .dep/$(@F).d
 
 all: $(OBJS) $(PROJECT).exe
 
-%o : %c
+%.o : %.c
 	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
 
-%o : %s
+%.o : %.s
 	$(AS) -c $(ASFLAGS) $< -o $@
 
-%exe: $(OBJS)
+%.exe: $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
 
 .PHONY: gcov
 gcov:
-	$(COV) -u -o $(CHIBIOS)/os/rt/src $(KERNSRC)
+	$(COV) -u -f -b -o $(CHIBIOS)/os/rt/src $(KERNSRC)
 
 clean:
 	-rm -f $(OBJS)

@@ -1,7 +1,7 @@
 #!/bin/bash
 export XOPT XDEFS
 
-XOPT="-ggdb -O2 -fomit-frame-pointer -DDELAY_BETWEEN_TESTS=0 -fprofile-arcs -ftest-coverage"
+XOPT="-ggdb -O0 -fomit-frame-pointer -DDELAY_BETWEEN_TESTS=0 -fprofile-arcs -ftest-coverage"
 XDEFS=""
 
 function clean() {
@@ -71,8 +71,6 @@ function partial() {
 
 echo "Default maximum settings"
 all
-
-exit
 
 echo "CH_CFG_OPTIMIZE_SPEED=FALSE"
 XDEFS=-DCH_CFG_OPTIMIZE_SPEED=FALSE
