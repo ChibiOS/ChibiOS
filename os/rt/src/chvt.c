@@ -95,6 +95,7 @@ void _vt_init(void) {
 void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
                 vtfunc_t vtfunc, void *par) {
   virtual_timer_t *p;
+  systime_t delta;
 
   chDbgCheckClassI();
   chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
@@ -106,13 +107,14 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
   {
     systime_t now = chVTGetSystemTimeX();
 
+    /* If the requested delay is lower than the minimum safe delta then it
+       is raised to the minimum safe value.*/
+    if (delay < (systime_t)CH_CFG_ST_TIMEDELTA) {
+      delay = (systime_t)CH_CFG_ST_TIMEDELTA;
+    }
+
     /* Special case where the timers list is empty.*/
     if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
-      /* If the requested delay is lower than the minimum safe delta then it
-         is raised to the minimum safe value.*/
-      if (delay < (systime_t)CH_CFG_ST_TIMEDELTA) {
-        delay = (systime_t)CH_CFG_ST_TIMEDELTA;
-      }
 
       /* The delta list is empty, the current time becomes the new
          delta list base time, the timer is inserted.*/
@@ -131,28 +133,23 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
 
     /* Special case where the timer will be placed as first element in a
        non-empty list, the alarm needs to be recalculated.*/
-    if ((now + delay) < (ch.vtlist.vt_lasttime + ch.vtlist.vt_next->vt_delta)) {
-      /* If the requested delay is lower than the minimum safe delta then it
-         is raised to the minimum safe value.*/
-      if (delay < (systime_t)CH_CFG_ST_TIMEDELTA) {
-        delay = (systime_t)CH_CFG_ST_TIMEDELTA;
-      }
-
-      /* Now the delay is calculated as delta from the last tick interrupt
-         time.*/
-      delay += now - ch.vtlist.vt_lasttime;
+    delta = now + delay - ch.vtlist.vt_lasttime;
+    if (delta < ch.vtlist.vt_next->vt_delta) {
 
       /* New alarm deadline.*/
-      port_timer_set_alarm(ch.vtlist.vt_lasttime + delay);
+      port_timer_set_alarm(ch.vtlist.vt_lasttime + delta);
     }
   }
-#endif /* CH_CFG_ST_TIMEDELTA > 0 */
+#else /* CH_CFG_ST_TIMEDELTA == 0 */
+  /* Delta is initially equal to the specified delay.*/
+  delta = delay;
+#endif /* CH_CFG_ST_TIMEDELTA == 0 */
 
   /* The delta list is scanned in order to find the correct position for
      this timer. */
   p = ch.vtlist.vt_next;
-  while (p->vt_delta < delay) {
-    delay -= p->vt_delta;
+  while (p->vt_delta < delta) {
+    delta -= p->vt_delta;
     p = p->vt_next;
   }
 
@@ -161,11 +158,11 @@ void chVTDoSetI(virtual_timer_t *vtp, systime_t delay,
   vtp->vt_prev = vtp->vt_next->vt_prev;
   vtp->vt_prev->vt_next = vtp;
   p->vt_prev = vtp;
-  vtp->vt_delta = delay
+  vtp->vt_delta = delta
 
   /* Special case when the timer is in last position in the list, the
      value in the header must be restored.*/;
-  p->vt_delta -= delay;
+  p->vt_delta -= delta;
   ch.vtlist.vt_delta = (systime_t)-1;
 }
 

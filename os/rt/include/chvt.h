@@ -498,7 +498,7 @@ static inline void chVTDoTickI(void) {
      note that the loop is stopped by the timers header having
      "ch.vtlist.vt_delta == (systime_t)-1" which is greater than
      all deltas.*/
-  while (vtp->vt_delta <= now - ch.vtlist.vt_lasttime) {
+  while (vtp->vt_delta <= (systime_t)(now - ch.vtlist.vt_lasttime)) {
     vtfunc_t fn;
 
     /* The "last time" becomes this timer's expiration time.*/
