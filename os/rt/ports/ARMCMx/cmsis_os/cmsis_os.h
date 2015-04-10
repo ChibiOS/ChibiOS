@@ -304,7 +304,7 @@ typedef struct os_messageQ_def {
 #define osThreadDef(name, priority, instances, stacksz)                     \
   extern const osThreadDef_t os_thread_def_##name
 #else
-#define osThreadDef(name, priority, instances, stacksz)                     \
+#define osThreadDef(name, priority, stacksz)                                \
 const osThreadDef_t os_thread_def_##name = {                                \
   (name),                                                                   \
   (priority),                                                               \

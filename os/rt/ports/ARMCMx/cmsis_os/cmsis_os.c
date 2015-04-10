@@ -68,7 +68,7 @@ static void timer_cb(void const *arg) {
   timer_id->ptimer(timer_id->argument);
   if (timer_id->type == osTimerPeriodic) {
     chSysLockFromISR();
-    chVTDoSetI(&timer_id->vt, timer_id->millisec,
+    chVTDoSetI(&timer_id->vt, MS2ST(timer_id->millisec),
                (vtfunc_t)timer_cb, timer_id);
     chSysUnlockFromISR();
   }
@@ -228,7 +228,7 @@ osStatus osTimerStart(osTimerId timer_id, uint32_t millisec) {
     return osErrorValue;
 
   timer_id->millisec = millisec;
-  chVTSet(&timer_id->vt, millisec, (vtfunc_t)timer_cb, timer_id);
+  chVTSet(&timer_id->vt, MS2ST(millisec), (vtfunc_t)timer_cb, timer_id);
 
   return osOK;
 }
@@ -289,13 +289,13 @@ int32_t osSignalClear(osThreadId thread_id, int32_t signals) {
  */
 osEvent osSignalWait(int32_t signals, uint32_t millisec) {
   osEvent event;
+  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
 
   if (signals == 0)
-    event.value.signals = (uint32_t)chEvtWaitAnyTimeout((eventmask_t)signals,
-                                                        (systime_t)millisec);
+    event.value.signals = (uint32_t)chEvtWaitAnyTimeout(ALL_EVENTS, timeout);
   else
     event.value.signals = (uint32_t)chEvtWaitAllTimeout((eventmask_t)signals,
-                                                        (systime_t)millisec);
+                                                        timeout);
 
   /* Type of event.*/
   if (event.value.signals == 0)
@@ -325,9 +325,9 @@ osSemaphoreId osSemaphoreCreate(const osSemaphoreDef_t *semaphore_def,
  * @brief   Wait on a semaphore.
  */
 int32_t osSemaphoreWait(osSemaphoreId semaphore_id, uint32_t millisec) {
+  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
 
-  msg_t msg = chSemWaitTimeout((semaphore_t *)semaphore_id,
-                               (systime_t)millisec);
+  msg_t msg = chSemWaitTimeout((semaphore_t *)semaphore_id, timeout);
   switch (msg) {
   case MSG_OK:
     return osOK;
@@ -380,9 +380,9 @@ osMutexId osMutexCreate(const osMutexDef_t *mutex_def) {
  * @brief   Wait on a mutex.
  */
 osStatus osMutexWait(osMutexId mutex_id, uint32_t millisec) {
+  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
 
-  msg_t msg = chBSemWaitTimeout((binary_semaphore_t *)mutex_id,
-                                (systime_t)millisec);
+  msg_t msg = chBSemWaitTimeout((binary_semaphore_t *)mutex_id, timeout);
   switch (msg) {
   case MSG_OK:
     return osOK;
@@ -494,6 +494,7 @@ osStatus osMessagePut(osMessageQId queue_id,
                       uint32_t info,
                       uint32_t millisec) {
   msg_t msg;
+  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
 
   if (port_is_isr_context()) {
 
@@ -507,7 +508,7 @@ osStatus osMessagePut(osMessageQId queue_id,
     chSysUnlockFromISR();
   }
   else
-    msg = chMBPost((mailbox_t *)queue_id, (msg_t)info, (systime_t)millisec);
+    msg = chMBPost((mailbox_t *)queue_id, (msg_t)info, timeout);
 
   return msg == MSG_OK ? osOK : osEventTimeout;
 }
@@ -517,9 +518,9 @@ osStatus osMessagePut(osMessageQId queue_id,
  */
 osEvent osMessageGet(osMessageQId queue_id,
                      uint32_t millisec) {
-
   msg_t msg;
   osEvent event;
+  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
 
   event.def.message_id = queue_id;
 
@@ -537,9 +538,7 @@ osEvent osMessageGet(osMessageQId queue_id,
     chSysUnlockFromISR();
   }
   else {
-    msg = chMBFetch((mailbox_t *)queue_id,
-                    (msg_t*)&event.value.v,
-                    (systime_t)millisec);
+    msg = chMBFetch((mailbox_t *)queue_id, (msg_t*)&event.value.v, timeout);
   }
 
   /* Returned event type.*/
