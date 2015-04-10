@@ -60,7 +60,7 @@
 /**
  * @brief   This port supports a realtime counter.
  */
-#define PORT_SUPPORTS_RT                FALSE
+#define PORT_SUPPORTS_RT                TRUE
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -204,14 +204,19 @@ struct context {
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_PROLOGUE()
+#define PORT_IRQ_PROLOGUE() {                                               \
+  port_isr_context_flag = true;                                             \
+}
 
 /**
  * @brief   IRQ epilogue code.
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE()
+#define PORT_IRQ_EPILOGUE() {                                               \
+  port_isr_context_flag = false;                                            \
+}
+
 
 /**
  * @brief   IRQ handler function declaration.
@@ -231,6 +236,9 @@ struct context {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern bool port_isr_context_flag;
+extern syssts_t port_irq_sts;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -239,6 +247,7 @@ extern "C" {
   __attribute__((cdecl, noreturn)) void _port_thread_start(msg_t (*pf)(void *p),
                                                            void *p);
   /*lint -restore*/
+  rtcnt_t port_rt_get_counter_value(void);
   void _sim_check_for_interrupts(void);
 #ifdef __cplusplus
 }
@@ -253,6 +262,8 @@ extern "C" {
  */
 static inline void port_init(void) {
 
+  port_irq_sts = (syssts_t)0;
+  port_isr_context_flag = false;
 }
 
 /**
@@ -262,7 +273,7 @@ static inline void port_init(void) {
  */
 static inline syssts_t port_get_irq_status(void) {
 
-  return (syssts_t)0;
+  return port_irq_sts;
 }
 
 /**
@@ -276,7 +287,7 @@ static inline syssts_t port_get_irq_status(void) {
  */
 static inline bool port_irq_enabled(syssts_t sts) {
 
-  return (sts & (syssts_t)1) == (syssts_t)0;
+  return sts == (syssts_t)0;
 }
 
 /**
@@ -288,7 +299,7 @@ static inline bool port_irq_enabled(syssts_t sts) {
  */
 static inline bool port_is_isr_context(void) {
 
-  return false;
+  return port_isr_context_flag;
 }
 
 /**
@@ -297,7 +308,7 @@ static inline bool port_is_isr_context(void) {
  */
 static inline void port_lock(void) {
 
-  __asm volatile ("nop");
+  port_irq_sts = (syssts_t)1;
 }
 
 /**
@@ -306,7 +317,7 @@ static inline void port_lock(void) {
  */
 static inline void port_unlock(void) {
 
-  __asm volatile ("nop");
+  port_irq_sts = (syssts_t)0;
 }
 
 /**
@@ -316,7 +327,7 @@ static inline void port_unlock(void) {
  */
 static inline void port_lock_from_isr(void) {
 
-  __asm volatile ("nop");
+  port_irq_sts = (syssts_t)1;
 }
 
 /**
@@ -326,7 +337,7 @@ static inline void port_lock_from_isr(void) {
  */
 static inline void port_unlock_from_isr(void) {
 
-  __asm volatile ("nop");
+  port_irq_sts = (syssts_t)0;
 }
 
 /**
@@ -334,7 +345,7 @@ static inline void port_unlock_from_isr(void) {
  */
 static inline void port_disable(void) {
 
-  __asm volatile ("nop");
+  port_irq_sts = (syssts_t)1;
 }
 
 /**
@@ -342,7 +353,7 @@ static inline void port_disable(void) {
  */
 static inline void port_suspend(void) {
 
-  __asm volatile ("nop");
+  port_irq_sts = (syssts_t)1;
 }
 
 /**
@@ -350,7 +361,7 @@ static inline void port_suspend(void) {
  */
 static inline void port_enable(void) {
 
-  __asm volatile ("nop");
+  port_irq_sts = (syssts_t)0;
 }
 
 /**

@@ -25,6 +25,8 @@
  * @{
  */
 
+#include <windows.h>
+
 #include "ch.h"
 
 /*===========================================================================*/
@@ -34,6 +36,9 @@
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
+
+bool port_isr_context_flag;
+syssts_t port_irq_sts;
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -96,6 +101,20 @@ void _port_thread_start(msg_t (*pf)(void *), void *p) {
   pf(p);
   chThdExit(0);
   while(1);
+}
+
+
+/**
+ * @brief   Returns the current value of the realtime counter.
+ *
+ * @return              The realtime counter value.
+ */
+rtcnt_t port_rt_get_counter_value(void) {
+  LARGE_INTEGER n;
+
+  QueryPerformanceCounter(&n);
+
+  return (rtcnt_t)(n.QuadPart / 1000LL);
 }
 
 /** @} */

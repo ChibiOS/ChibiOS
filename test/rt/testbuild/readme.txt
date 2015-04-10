@@ -15,7 +15,7 @@ Coverage data is collected during the execution for use by step 3.
 Step 3: Coverage
 
 The utility gcov is ran on the generate data and the coverage information is
-stored in reports under ./coverage.
+stored in reports under ./reports.
 
 Step 4: Analysis
 
