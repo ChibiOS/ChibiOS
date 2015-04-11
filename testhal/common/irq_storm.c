@@ -263,8 +263,8 @@ void irq_storm_execute(const irq_storm_config_t *cfg) {
     if (threshold > worst)
       worst = threshold;
   }
-  gptStopTimer(&GPTD4);
-  gptStopTimer(&GPTD3);
+  gptStopTimer(cfg->gpt1p);
+  gptStopTimer(cfg->gpt2p);
 
   chprintf(cfg->out, "Worst case at %d uS\r\n", worst);
   chprintf(cfg->out, "\r\nTest Complete\r\n");

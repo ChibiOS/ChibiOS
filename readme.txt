@@ -76,6 +76,7 @@
 *** 3.0.0p2 ***
 - HAL: Fixed instances of RT API in HAL drivers (bug 574).
 - RT: Fixed system time overflow issue in tickless mode (bug 573).
+- RT: Improvements to the IRQ_STORM applications.
 
 *** 3.0.0p1 ***
 - First 3.0.0 release, see release note 3.0.0.
