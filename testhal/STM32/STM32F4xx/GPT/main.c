@@ -18,7 +18,7 @@
 #include "hal.h"
 
 /*
- * GPT2 callback.
+ * GPT4 callback.
  */
 static void gpt4cb(GPTDriver *gptp) {
 
@@ -74,7 +74,7 @@ int main(void) {
   chSysInit();
 
   /*
-   * Initializes the GPT drivers 2 and 3.
+   * Initializes the GPT drivers 4 and 3.
    */
   gptStart(&GPTD4, &gpt4cfg);
   gptPolledDelay(&GPTD4, 10); /* Small delay.*/
@@ -82,7 +82,7 @@ int main(void) {
   gptPolledDelay(&GPTD3, 10); /* Small delay.*/
 
   /*
-   * Normal main() thread activity, it changes the GPT1 period every
+   * Normal main() thread activity, it changes the GPT4 period every
    * five seconds.
    */
   while (true) {

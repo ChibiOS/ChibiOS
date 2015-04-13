@@ -123,7 +123,7 @@ static void gpt3cb(GPTDriver *gptp) {
 }
 
 /*
- * GPT2 configuration.
+ * GPT4 configuration.
  */
 static const GPTConfig gpt4cfg = {
   1000000,  /* 1MHz timer clock.*/
@@ -203,7 +203,7 @@ int main(void) {
   chSysInit();
 
   /*
-   * Prepares the Serial driver 2 and GPT drivers 2 and 3.
+   * Prepares the Serial driver 2 and GPT drivers 4 and 3.
    */
   sdStart(&SD2, NULL);          /* Default is 38400-8-N-1.*/
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
