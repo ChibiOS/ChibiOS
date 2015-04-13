@@ -204,9 +204,9 @@ void chVTDoResetI(virtual_timer_t *vtp) {
     vtp->vt_next->vt_prev = vtp->vt_prev;
     vtp->vt_func = NULL;
 
-    /* The above code can change the value in the header when the removed
-       element is the last of the list, restoring it.*/
-    ch.vtlist.vt_delta = (systime_t)-1;
+    /* Adding delta to the next element, if it is not the last one.*/
+    if (&ch.vtlist != (virtual_timers_list_t *)vtp->vt_next)
+      vtp->vt_next->vt_delta += vtp->vt_delta;
 
     return;
   }
