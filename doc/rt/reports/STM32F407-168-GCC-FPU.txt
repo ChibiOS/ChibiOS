@@ -1,8 +1,8 @@
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       3.0.0
-*** Compiled:     Apr 13 2015 - 10:56:19
+*** Kernel:       3.0.0p3
+*** Compiled:     Apr 13 2015 - 14:24:41
 *** Compiler:     GCC 4.7.4 20140401 (release) [ARM/embedded-4_7-branch revision 209195]
 *** Architecture: ARMv7-ME
 *** Core Variant: Cortex-M4F
@@ -99,7 +99,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Benchmark, messages #1)
---- Score : 604311 msgs/S, 1208622 ctxswc/S
+--- Score : 604310 msgs/S, 1208620 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Benchmark, messages #2)
@@ -135,7 +135,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Benchmark, virtual timers set/reset)
---- Score : 341352 timers/S
+--- Score : 1366046 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Benchmark, semaphores wait/signal)
@@ -161,3 +161,4 @@
 ----------------------------------------------------------------------------
 
 Final result: SUCCESS
+
