@@ -627,6 +627,11 @@
               <FileType>5</FileType>
               <FilePath>..\halconf.h</FilePath>
             </File>
+            <File>
+              <FileName>extfunc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\extfunc.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

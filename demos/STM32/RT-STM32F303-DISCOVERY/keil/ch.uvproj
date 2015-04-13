@@ -362,7 +362,7 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
-              <Define>CORTEX_USE_FPU=1 __heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
+              <Define>__heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
               <Undefine></Undefine>
               <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx;..\..\..\..\os\ext\CMSIS\include;..\..\..\..\os\ext\CMSIS\ST;..\..\..\..\os\rt\ports\ARMCMx;..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\test\rt</IncludePath>
             </VariousControls>
@@ -379,7 +379,7 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls>--cpreproc</MiscControls>
-              <Define>CORTEX_USE_FPU=1</Define>
+              <Define></Define>
               <Undefine></Undefine>
               <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx;..\..\..\..\os\rt\ports\ARMCMx</IncludePath>
             </VariousControls>
@@ -1276,6 +1276,16 @@
               <FileName>testthd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\test\rt\testthd.c</FilePath>
+            </File>
+            <File>
+              <FileName>testsys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\test\rt\testsys.c</FilePath>
+            </File>
+            <File>
+              <FileName>testsys.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\test\rt\testsys.h</FilePath>
             </File>
           </Files>
         </Group>
