@@ -141,16 +141,20 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
       /* Starts the read operation.*/
       dp->CR2 |= I2C_CR2_RD_WRN;
       dp->CR2 |= I2C_CR2_START;
+      return;
     }
-    else {
-      /* Nothing to receive - send STOP immediately.*/
-      dp->CR2 |= I2C_CR2_STOP;
-    }
+    /* Nothing to receive - send STOP immediately.*/
+    dp->CR2 |= I2C_CR2_STOP;
   }
   if (isr & I2C_ISR_NACKF) {
     /* Starts a STOP sequence immediately on error.*/
     dp->CR2 |= I2C_CR2_STOP;
 
+    /* Stops the associated DMA streams.*/
+    dmaStreamDisable(i2cp->dmatx);
+    dmaStreamDisable(i2cp->dmarx);
+
+    /* Error flag.*/
     i2cp->errors |= I2C_ACK_FAILURE;
   }
   if (isr & I2C_ISR_STOPF) {
@@ -158,12 +162,13 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
     dmaStreamDisable(i2cp->dmatx);
     dmaStreamDisable(i2cp->dmarx);
 
-    /* The wake up message depends on the presence of errors.*/
-    if (i2cp->errors)
+    /* Errors are propagated to the upper layer.*/
+    if (i2cp->errors) {
       _i2c_wakeup_error_isr(i2cp);
-    else
-      _i2c_wakeup_isr(i2cp);
+      return;
+    }
   }
+  _i2c_wakeup_isr(i2cp);
 }
 
 /**
@@ -188,7 +193,6 @@ static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp, uint32_t flags) {
 
   dmaStreamDisable(i2cp->dmarx);
   dp->CR2 |= I2C_CR2_STOP;
-  _i2c_wakeup_isr(i2cp);
 }
 
 /**
@@ -595,8 +599,9 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
     /* If the system time went outside the allowed window then a timeout
        condition is returned.*/
-    if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end))
+    if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end)) {
       return MSG_TIMEOUT;
+    }
 
     osalSysUnlock();
   }
@@ -685,8 +690,9 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
     /* If the system time went outside the allowed window then a timeout
        condition is returned.*/
-    if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end))
+    if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), start, end)) {
       return MSG_TIMEOUT;
+    }
 
     osalSysUnlock();
   }

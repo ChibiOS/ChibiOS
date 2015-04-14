@@ -73,8 +73,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+- HAL: Fixed STM32 I2Cv2 driver issue (bug 581).
+
 *** 3.0.0p3 ***
-- RT: Fixed tickless mode instability in RT (bug 577).
+- RT:  Fixed tickless mode instability in RT (bug 577).
 
 *** 3.0.0p2 ***
 - HAL: Fixed instances of RT API in HAL drivers (bug 574).
