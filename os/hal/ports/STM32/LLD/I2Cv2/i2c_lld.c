@@ -161,14 +161,15 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
     /* Stops the associated DMA streams.*/
     dmaStreamDisable(i2cp->dmatx);
     dmaStreamDisable(i2cp->dmarx);
-
-    /* Errors are propagated to the upper layer.*/
-    if (i2cp->errors) {
-      _i2c_wakeup_error_isr(i2cp);
-      return;
-    }
   }
-  _i2c_wakeup_isr(i2cp);
+  if (i2cp->errors) {
+    /* Errors are signaled to the upper layer.*/
+    _i2c_wakeup_error_isr(i2cp);
+  }
+  else {
+    /* Normal transaction end.*/
+    _i2c_wakeup_isr(i2cp);
+  }
 }
 
 /**
