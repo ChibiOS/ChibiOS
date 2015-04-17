@@ -73,6 +73,8 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 3.0.0p4 ***
+- HAL: Fixed RCC CAN2 macros missing in STM32F1xx platform (bug #582).
 - HAL: Fixed STM32 I2Cv2 driver issue (bug 581).
 
 *** 3.0.0p3 ***
