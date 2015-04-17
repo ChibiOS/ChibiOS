@@ -89,6 +89,41 @@ I2CDriver I2CD2;
 /*===========================================================================*/
 
 /**
+ * @brief   I2C transfer setup.
+ * @note    The RW bit is not handled internally.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] addr      slave device address
+ * @param[in] n         size of the transfer
+ *
+ * @notapi
+ */
+static void i2c_lld_setup_transfer(I2CDriver *i2cp, i2caddr_t addr, size_t n) {
+  I2C_TypeDef *dp = i2cp->i2c;
+  uint32_t cr2;
+
+  /* Adjust slave address (master mode) for 7-bit address mode */
+  if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0U)
+    cr2 = ((uint32_t)addr & 0x7FU) << 1U;
+  else
+    cr2 = (uint32_t)addr;
+
+  /* The unit can transfer 255 bytes maximum in a single operation.*/
+  if (n > 255U) {
+    cr2 |= I2C_CR2_RELOAD;
+    n = 255U;
+  }
+
+  /* Configures the CR2 registers with both the calculated and static
+     settings.*/
+  dp->CR2 = (i2cp->config->cr2 & ~(I2C_CR2_NBYTES | I2C_CR2_SADD)) |
+            (n << 16U) | cr2;
+
+  /* Transfer complete interrupt enabled.*/
+  dp->CR1 |= I2C_CR1_TCIE;
+}
+
+/**
  * @brief   Aborts an I2C transaction.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
@@ -570,7 +605,6 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      uint8_t *rxbuf, size_t rxbytes,
                                      systime_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
-  uint32_t addr_cr2 = addr & I2C_CR2_SADD;
   systime_t start, end;
 
   /* Resetting error flags for this transfer.*/
@@ -607,13 +641,8 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
     osalSysUnlock();
   }
 
-  /* Adjust slave address (master mode) for 7-bit address mode */
-  if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0)
-    addr_cr2 = (addr_cr2 & 0x7f) << 1;
-
-  /* Set slave address field (master mode) */
-  dp->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES);
-  dp->CR2 |= (rxbytes << 16) | addr_cr2;
+  /* Setting up the peripheral.*/
+  i2c_lld_setup_transfer(i2cp, addr, rxbytes);
 
   /* Enable RX DMA */
   dmaStreamEnable(i2cp->dmarx);
@@ -656,7 +685,6 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       uint8_t *rxbuf, size_t rxbytes,
                                       systime_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
-  uint32_t addr_cr2 = addr & I2C_CR2_SADD;
   systime_t start, end;
 
   /* Resetting error flags for this transfer.*/
@@ -670,7 +698,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   dmaStreamSetMemory0(i2cp->dmatx, txbuf);
   dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
 
-  /* RX DMA setup.*/
+  /* RX DMA setup, note, rxbytes can be zero but we write the value anyway.*/
   dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
   dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
   dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
@@ -698,22 +726,14 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
     osalSysUnlock();
   }
 
-  /* Adjust slave address (master mode) for 7-bit address mode */
-  if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0)
-    addr_cr2 = (addr_cr2 & 0x7f) << 1;
-
-  /* Set slave address field (master mode) */
-  dp->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES);
-  dp->CR2 |= (txbytes << 16) | addr_cr2;
+  /* Setting up the peripheral.*/
+  i2c_lld_setup_transfer(i2cp, addr, txbytes);
 
   /* Enable TX DMA */
   dmaStreamEnable(i2cp->dmatx);
 
-  /* Transmission complete interrupt enabled.*/
-  dp->CR1 |= I2C_CR1_TCIE;
-
-  /* Starts the operation as the very last thing.*/
-  dp->CR2 &= ~I2C_CR2_RD_WRN;
+  /* Starts the operation as the very last thing, I2C_CR2_RD_WRN is already
+     zero.*/
   dp->CR2 |= I2C_CR2_START;
 
   /* Waits for the operation completion or a timeout.*/
