@@ -478,9 +478,15 @@
 /* LSI related checks.*/
 #if STM32_LSI_ENABLED
 #else /* !STM32_LSI_ENABLED */
-#if STM32_RTCCLK == STM32_LSICLK
-#error "required LSI clock is not enabled"
+
+#if STM32_MCOSEL == STM32_MCOSEL_LSI
+#error "LSI not enabled, required by STM32_MCOSEL"
 #endif
+
+#if STM32_RTCSEL == STM32_RTCSEL_LSI
+#error "LSI not enabled, required by STM32_RTCSEL"
+#endif
+
 #endif /* !STM32_LSI_ENABLED */
 
 /* LSE related checks.*/
@@ -492,9 +498,15 @@
 #error "STM32_LSECLK outside acceptable range (1...1000kHz)"
 #endif
 #else /* !STM32_LSE_ENABLED */
-#if STM32_RTCCLK == STM32_LSECLK
-#error "required LSE clock is not enabled"
+
+#if STM32_MCOSEL == STM32_MCOSEL_LSE
+#error "LSE not enabled, required by STM32_MCOSEL"
 #endif
+
+#if STM32_RTCSEL == STM32_RTCSEL_LSE
+#error "LSE not enabled, required by STM32_RTCSEL"
+#endif
+
 #endif /* !STM32_LSE_ENABLED */
 
 /* PLL related checks.*/
