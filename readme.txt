@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.8 ***
+- FIX: Fixed RCC CAN2 macros missing in STM32F1xx platform (bug #582).
 - FIX: Fixed misplaced __set_BASEPRI() in STM32 OTGv1 driver (bug #566).
 - FIX: Fixed typo in code doc of chOQWriteTimeout function (bug #565).
 - FIX: Fixed wrong condition check in MMC_SPI driver (bug #564).
