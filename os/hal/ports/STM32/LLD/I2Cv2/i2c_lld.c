@@ -99,7 +99,7 @@ static void i2c_lld_set_address(I2CDriver *i2cp, i2caddr_t addr) {
 
   /* Address alignment depends on the addressing mode selected.*/
   if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0U)
-    dp->CR2 = ((uint32_t)addr & 0x7FU) << 1U;
+    dp->CR2 = (uint32_t)addr << 1U;
   else
     dp->CR2 = (uint32_t)addr;
 }
@@ -123,8 +123,8 @@ static void i2c_lld_setup_rx_transfer(I2CDriver *i2cp, size_t n) {
     reload = I2C_CR2_RELOAD;
   }
   else {
-    i2cp->tsize = 0;
-    reload = 0;
+    i2cp->tsize = 0U;
+    reload = 0U;
   }
 
   /* Configures the CR2 registers with both the calculated and static
@@ -152,8 +152,8 @@ static void i2c_lld_setup_tx_transfer(I2CDriver *i2cp, size_t n) {
     reload = I2C_CR2_RELOAD;
   }
   else {
-    i2cp->tsize = 0;
-    reload = 0;
+    i2cp->tsize = 0U;
+    reload = 0U;
   }
 
   /* Configures the CR2 registers with both the calculated and static
@@ -536,9 +536,6 @@ void i2c_lld_start(I2CDriver *i2cp) {
   /* Reset i2c peripheral, the TCIE bit will be handled separately.*/
   dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_NACKIE |
             I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
-
-  /* Set slave address field (master mode) */
-  dp->CR2 = (i2cp->config->cr2 & ~I2C_CR2_SADD);
 
   /* Setup I2C parameters.*/
   dp->TIMINGR = i2cp->config->timingr;
