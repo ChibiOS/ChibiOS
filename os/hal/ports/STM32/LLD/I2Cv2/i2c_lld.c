@@ -55,9 +55,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define I2C_MASTER_TC                                                       \
-  ((uint32_t)(I2C_ISR_BUSY | I2C_ISR_TC))
-
 #define I2C_ERROR_MASK                                                      \
   ((uint32_t)(I2C_ISR_BERR | I2C_ISR_ARLO | I2C_ISR_OVR | I2C_ISR_PECERR |  \
               I2C_ISR_TIMEOUT | I2C_ISR_ALERT))
@@ -89,38 +86,80 @@ I2CDriver I2CD2;
 /*===========================================================================*/
 
 /**
- * @brief   I2C transfer setup.
- * @note    The RW bit is not handled internally.
+ * @brief   Slave address setup.
+ * @note    The RW bit is set to zero internally.
  *
  * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] addr      slave device address
+ *
+ * @notapi
+ */
+static void i2c_lld_set_address(I2CDriver *i2cp, i2caddr_t addr) {
+  I2C_TypeDef *dp = i2cp->i2c;
+
+  /* Address alignment depends on the addressing mode selected.*/
+  if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0U)
+    dp->CR2 = ((uint32_t)addr & 0x7FU) << 1U;
+  else
+    dp->CR2 = (uint32_t)addr;
+}
+
+/**
+ * @brief   I2C RX transfer setup.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
  * @param[in] n         size of the transfer
  *
  * @notapi
  */
-static void i2c_lld_setup_transfer(I2CDriver *i2cp, i2caddr_t addr, size_t n) {
+static void i2c_lld_setup_rx_transfer(I2CDriver *i2cp, size_t n) {
   I2C_TypeDef *dp = i2cp->i2c;
-  uint32_t cr2;
-
-  /* Adjust slave address (master mode) for 7-bit address mode */
-  if ((i2cp->config->cr2 & I2C_CR2_ADD10) == 0U)
-    cr2 = ((uint32_t)addr & 0x7FU) << 1U;
-  else
-    cr2 = (uint32_t)addr;
+  uint32_t reload;
 
   /* The unit can transfer 255 bytes maximum in a single operation.*/
   if (n > 255U) {
-    cr2 |= I2C_CR2_RELOAD;
+    i2cp->tsize = n - 255U;
     n = 255U;
+    reload = I2C_CR2_RELOAD;
+  }
+  else {
+    i2cp->tsize = 0;
+    reload = 0;
   }
 
   /* Configures the CR2 registers with both the calculated and static
      settings.*/
-  dp->CR2 = (i2cp->config->cr2 & ~(I2C_CR2_NBYTES | I2C_CR2_SADD)) |
-            (n << 16U) | cr2;
+  dp->CR2 = (dp->CR2 & ~I2C_CR2_NBYTES) | i2cp->config->cr2 | I2C_CR2_RD_WRN |
+            (n << 16U) | reload;
+}
 
-  /* Transfer complete interrupt enabled.*/
-  dp->CR1 |= I2C_CR1_TCIE;
+/**
+ * @brief   I2C TX transfer setup.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] n         size of the transfer
+ *
+ * @notapi
+ */
+static void i2c_lld_setup_tx_transfer(I2CDriver *i2cp, size_t n) {
+  I2C_TypeDef *dp = i2cp->i2c;
+  uint32_t reload;
+
+  /* The unit can transfer 255 bytes maximum in a single operation.*/
+  if (n > 255U) {
+    i2cp->tsize = n - 255U;
+    n = 255U;
+    reload = I2C_CR2_RELOAD;
+  }
+  else {
+    i2cp->tsize = 0;
+    reload = 0;
+  }
+
+  /* Configures the CR2 registers with both the calculated and static
+     settings.*/
+  dp->CR2 = (dp->CR2 & ~I2C_CR2_NBYTES) | i2cp->config->cr2 |
+            (n << 16U) | reload;
 }
 
 /**
@@ -157,34 +196,8 @@ static void i2c_lld_abort_operation(I2CDriver *i2cp) {
 static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  if ((isr & I2C_ISR_TC) && (i2cp->state == I2C_ACTIVE_TX)) {
-    size_t rxbytes;
-
-    /* Make sure no more 'Transfer complete' interrupts.*/
-    dp->CR1 &= ~I2C_CR1_TCIE;
-
-    rxbytes = dmaStreamGetTransactionSize(i2cp->dmarx);
-    if (rxbytes > 0) {
-      i2cp->state = I2C_ACTIVE_RX;
-
-      /* Enable RX DMA */
-      dmaStreamEnable(i2cp->dmarx);
-
-      dp->CR2 &= ~I2C_CR2_NBYTES;
-      dp->CR2 |= rxbytes << 16;
-
-      /* Starts the read operation.*/
-      dp->CR2 |= I2C_CR2_RD_WRN;
-      dp->CR2 |= I2C_CR2_START;
-      return;
-    }
-    /* Nothing to receive - send STOP immediately.*/
-    dp->CR2 |= I2C_CR2_STOP;
-  }
-  if (isr & I2C_ISR_NACKF) {
-    /* Starts a STOP sequence immediately on error.*/
-    dp->CR2 |= I2C_CR2_STOP;
-
+  /* Special case of a received NACK, the transfer is aborted.*/
+  if ((isr & I2C_ISR_NACKF) != 0U) {
     /* Stops the associated DMA streams.*/
     dmaStreamDisable(i2cp->dmatx);
     dmaStreamDisable(i2cp->dmarx);
@@ -192,11 +205,61 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
     /* Error flag.*/
     i2cp->errors |= I2C_ACK_FAILURE;
   }
-  if (isr & I2C_ISR_STOPF) {
-    /* Stops the associated DMA streams.*/
-    dmaStreamDisable(i2cp->dmatx);
-    dmaStreamDisable(i2cp->dmarx);
+  else {
+    /* Partial transfer handling, restarting the transfer and returning.*/
+    if ((isr & I2C_ISR_TCR) != 0U) {
+      if (i2cp->state == I2C_ACTIVE_TX) {
+        i2c_lld_setup_tx_transfer(i2cp, i2cp->tsize);
+      }
+      else {
+        i2c_lld_setup_rx_transfer(i2cp, i2cp->tsize);
+      }
+      return;
+    }
+
+    /* The following condition is true if a transfer phase has been completed.*/
+    if ((isr & I2C_ISR_TC) != 0U) {
+      if (i2cp->state == I2C_ACTIVE_TX) {
+        /* End of the transmit phase.*/
+        size_t rxbytes = dmaStreamGetTransactionSize(i2cp->dmarx);
+
+        /* Disabling TX DMA channel.*/
+        dmaStreamDisable(i2cp->dmatx);
+
+        /* Starting receive phase if necessary.*/
+        if (rxbytes > 0U) {
+          /* Setting up the peripheral.*/
+          i2c_lld_setup_rx_transfer(i2cp, rxbytes);
+
+          /* Enabling RX DMA.*/
+          dmaStreamEnable(i2cp->dmarx);
+
+          /* Starts the read operation.*/
+          dp->CR2 |= I2C_CR2_START;
+
+          /* State change.*/
+          i2cp->state = I2C_ACTIVE_RX;
+
+          /* Note, returning because the transaction is not over yet.*/
+          return;
+        }
+      }
+      else {
+        /* End of the receive phase.*/
+
+        /* Disabling RX DMA channel.*/
+        dmaStreamDisable(i2cp->dmarx);
+      }
+    }
   }
+
+  /* Transaction finished sending the STOP.*/
+  dp->CR2 |= I2C_CR2_STOP;
+
+  /* Make sure no more 'Transfer Complete' interrupts.*/
+  dp->CR1 &= ~I2C_CR1_TCIE;
+
+  /* Thread wakeup at transaction end.*/
   if (i2cp->errors) {
     /* Errors are signaled to the upper layer.*/
     _i2c_wakeup_error_isr(i2cp);
@@ -205,51 +268,6 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
     /* Normal transaction end.*/
     _i2c_wakeup_isr(i2cp);
   }
-}
-
-/**
- * @brief   DMA RX end IRQ handler.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- * @param[in] flags     pre-shifted content of the ISR register
- *
- * @notapi
- */
-static void i2c_lld_serve_rx_end_irq(I2CDriver *i2cp, uint32_t flags) {
-  I2C_TypeDef *dp = i2cp->i2c;
-
-  /* DMA errors handling.*/
-#if defined(STM32_I2C_DMA_ERROR_HOOK)
-  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
-    STM32_I2C_DMA_ERROR_HOOK(i2cp);
-  }
-#else
-  (void)flags;
-#endif
-
-  dmaStreamDisable(i2cp->dmarx);
-  dp->CR2 |= I2C_CR2_STOP;
-}
-
-/**
- * @brief    DMA TX end IRQ handler.
- *
- * @param[in] i2cp      pointer to the @p I2CDriver object
- *
- * @notapi
- */
-static void i2c_lld_serve_tx_end_irq(I2CDriver *i2cp, uint32_t flags) {
-
-  /* DMA errors handling.*/
-#if defined(STM32_I2C_DMA_ERROR_HOOK)
-  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
-    STM32_I2C_DMA_ERROR_HOOK(i2cp);
-  }
-#else
-  (void)flags;
-#endif
-
-  dmaStreamDisable(i2cp->dmatx);
 }
 
 /**
@@ -451,12 +469,12 @@ void i2c_lld_start(I2CDriver *i2cp) {
       rccResetI2C1();
       b = dmaStreamAllocate(i2cp->dmarx,
                             STM32_I2C_I2C1_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)i2c_lld_serve_rx_end_irq,
+                            NULL,
                             (void *)i2cp);
       osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(i2cp->dmatx,
                             STM32_I2C_I2C1_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
+                            NULL,
                             (void *)i2cp);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableI2C1(FALSE);
@@ -484,12 +502,12 @@ void i2c_lld_start(I2CDriver *i2cp) {
       rccResetI2C2();
       b = dmaStreamAllocate(i2cp->dmarx,
                             STM32_I2C_I2C2_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)i2c_lld_serve_rx_end_irq,
+                            NULL,
                             (void *)i2cp);
       osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(i2cp->dmatx,
                             STM32_I2C_I2C2_IRQ_PRIORITY,
-                            (stm32_dmaisr_t)i2c_lld_serve_tx_end_irq,
+                            NULL,
                             (void *)i2cp);
       osalDbgAssert(!b, "stream already allocated");
       rccEnableI2C2(FALSE);
@@ -516,8 +534,8 @@ void i2c_lld_start(I2CDriver *i2cp) {
   dmaStreamSetPeripheral(i2cp->dmatx, &dp->TXDR);
 
   /* Reset i2c peripheral, the TCIE bit will be handled separately.*/
-  dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_STOPIE |
-            I2C_CR1_NACKIE | I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
+  dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_NACKIE |
+            I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
 
   /* Set slave address field (master mode) */
   dp->CR2 = (i2cp->config->cr2 & ~I2C_CR2_SADD);
@@ -604,6 +622,7 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      uint8_t *rxbuf, size_t rxbytes,
                                      systime_t timeout) {
+  msg_t msg;
   I2C_TypeDef *dp = i2cp->i2c;
   systime_t start, end;
 
@@ -641,18 +660,31 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
     osalSysUnlock();
   }
 
-  /* Setting up the peripheral.*/
-  i2c_lld_setup_transfer(i2cp, addr, rxbytes);
+  /* Setting up the slave address.*/
+  i2c_lld_set_address(i2cp, addr);
 
-  /* Enable RX DMA */
+  /* Setting up the peripheral.*/
+  i2c_lld_setup_rx_transfer(i2cp, rxbytes);
+
+  /* Enabling RX DMA.*/
   dmaStreamEnable(i2cp->dmarx);
 
+  /* Transfer complete interrupt enabled.*/
+  dp->CR1 |= I2C_CR1_TCIE;
+
   /* Starts the operation.*/
-  dp->CR2 |= I2C_CR2_RD_WRN;
   dp->CR2 |= I2C_CR2_START;
 
   /* Waits for the operation completion or a timeout.*/
-  return osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+  msg = osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+
+  /* In case of a software timeout a STOP is sent as an extreme attempt
+     to release the bus.*/
+  if (msg == MSG_TIMEOUT) {
+    dp->CR2 |= I2C_CR2_STOP;
+  }
+
+  return msg;
 }
 
 /**
@@ -684,6 +716,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       const uint8_t *txbuf, size_t txbytes,
                                       uint8_t *rxbuf, size_t rxbytes,
                                       systime_t timeout) {
+  msg_t msg;
   I2C_TypeDef *dp = i2cp->i2c;
   systime_t start, end;
 
@@ -726,18 +759,31 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
     osalSysUnlock();
   }
 
-  /* Setting up the peripheral.*/
-  i2c_lld_setup_transfer(i2cp, addr, txbytes);
+  /* Setting up the slave address.*/
+  i2c_lld_set_address(i2cp, addr);
 
-  /* Enable TX DMA */
+  /* Preparing the transfer.*/
+  i2c_lld_setup_tx_transfer(i2cp, txbytes);
+
+  /* Enabling TX DMA.*/
   dmaStreamEnable(i2cp->dmatx);
 
-  /* Starts the operation as the very last thing, I2C_CR2_RD_WRN is already
-     zero.*/
+  /* Transfer complete interrupt enabled.*/
+  dp->CR1 |= I2C_CR1_TCIE;
+
+  /* Starts the operation.*/
   dp->CR2 |= I2C_CR2_START;
 
   /* Waits for the operation completion or a timeout.*/
-  return osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+  msg = osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+
+  /* In case of a software timeout a STOP is sent as an extreme attempt
+     to release the bus.*/
+  if (msg == MSG_TIMEOUT) {
+    dp->CR2 |= I2C_CR2_STOP;
+  }
+
+  return msg;
 }
 
 #endif /* HAL_USE_I2C */

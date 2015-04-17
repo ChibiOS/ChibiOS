@@ -280,9 +280,9 @@ struct I2CDriver {
    */
   thread_reference_t        thread;
   /**
-   * @brief     Current slave address without R/W bit.
+   * @brief   Current transfer size.
    */
-  i2caddr_t                 addr;
+  i2caddr_t                 tsize;
   /**
    * @brief RX DMA mode bit mask.
    */
