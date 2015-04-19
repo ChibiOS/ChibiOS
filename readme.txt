@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.8 ***
+- FIX: Fixed spurious TC interrupt in STM32 UART (v1 and v2) driver (bug #584).
 - FIX: Fixed invalid checks on STM32L1xx LSI and LSE clocks (bug #583).
 - FIX: Fixed RCC CAN2 macros missing in STM32F1xx platform (bug #582).
 - FIX: Fixed misplaced __set_BASEPRI() in STM32 OTGv1 driver (bug #566).
