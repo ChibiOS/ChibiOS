@@ -22,10 +22,6 @@
  * @{
  */
 
-/*
- TODO: Try preerase blocks before writing (ACMD23).
- */
-
 #include <string.h>
 
 #include "hal.h"
@@ -60,6 +56,15 @@ static union {
   uint8_t   buf[MMCSD_BLOCK_SIZE];
 } u;
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
+
+
+/**
+ * @brief   SDIO default configuration.
+ */
+static const SDCConfig sdc_default_cfg = {
+  NULL,
+  SDC_MODE_4BIT
+};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -406,6 +411,11 @@ void sdc_lld_init(void) {
  * @notapi
  */
 void sdc_lld_start(SDCDriver *sdcp) {
+
+  /* Checking configuration, using a default if NULL has been passed.*/
+  if (sdcp->config == NULL) {
+    sdcp->config = &sdc_default_cfg;
+  }
 
   sdcp->dmamode = STM32_DMA_CR_CHSEL(DMA_CHANNEL) |
                   STM32_DMA_CR_PL(STM32_SDC_SDIO_DMA_PRIORITY) |
