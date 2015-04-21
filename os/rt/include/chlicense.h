@@ -194,11 +194,11 @@
     #error "CH_CFG_ST_TIMEDELTA > 2, High Resolution Time functionality restricted"
   #endif
 
-  #if CH_CFG_USE_TM
+  #if CH_CFG_USE_TM == TRUE
     #error "CH_CFG_USE_TM == TRUE, Time Measurement functionality restricted"
   #endif
 
-  #if CH_DBG_STATISTICS
+  #if CH_DBG_STATISTICS == TRUE
     #error "CH_DBG_STATISTICS == TRUE, Statistics functionality restricted"
   #endif
 
@@ -208,15 +208,15 @@
       #error "CH_CFG_ST_TIMEDELTA > 0, Tick-Less functionality restricted"
     #endif
 
-    #if CH_CFG_USE_MUTEXES_RECURSIVE
+    #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
       #error "CH_CFG_USE_MUTEXES_RECURSIVE == TRUE, Recursive Mutexes functionality restricted"
     #endif
 
-    #if CH_CFG_USE_CONDVARS
+    #if CH_CFG_USE_CONDVARS == TRUE
       #error "CH_CFG_USE_CONDVARS == TRUE, Condition Variables functionality restricted"
     #endif
 
-    #if CH_CFG_USE_DYNAMIC
+    #if CH_CFG_USE_DYNAMIC == TRUE
       #error "CH_CFG_USE_DYNAMIC == TRUE, Dynamic Threads functionality restricted"
     #endif
   #endif /* CH_LICENSE_FEATURES == CH_FEATURES_BASIC */
