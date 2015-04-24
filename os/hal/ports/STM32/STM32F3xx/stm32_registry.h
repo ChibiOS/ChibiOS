@@ -661,8 +661,8 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
-#define STM32_USB_ACCESS_SCHEME_2x16        FALSE
-#define STM32_USB_PMA_SIZE                  512
+#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
+#define STM32_USB_PMA_SIZE                  768
 #define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
@@ -979,10 +979,7 @@
 #define STM32_HAS_USART6                    FALSE
 
 /* USB attributes.*/
-#define STM32_HAS_USB                       TRUE
-#define STM32_USB_ACCESS_SCHEME_2x16        FALSE
-#define STM32_USB_PMA_SIZE                  512
-#define STM32_USB_HAS_BCDR                  FALSE
+#define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 #endif /* defined(STM32F318x8) */
@@ -1303,7 +1300,7 @@
 #endif /* defined(STM32F358xC) */
 
 /*===========================================================================*/
-/* STM32F334xC.                                                              */
+/* STM32F334x8.                                                              */
 /*===========================================================================*/
 #if defined(STM32F334x8) || defined(__DOXYGEN__)
 /* ADC attributes.*/
