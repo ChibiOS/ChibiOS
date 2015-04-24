@@ -720,15 +720,15 @@
                                              RCC_AHBENR_GPIOFEN)
 
 /* I2C attributes.*/
-#define STM32_HAS_I2C1                      FALSE
+#define STM32_HAS_I2C1                      TRUE
+#define STM32_I2C_I2C2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 7)
+#define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 6)
 
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_I2C_I2C2_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 5)
 #define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 
-#define STM32_HAS_I2C3                      TRUE
-#define STM32_I2C_I2C3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
-#define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 1)
+#define STM32_HAS_I2C3                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
