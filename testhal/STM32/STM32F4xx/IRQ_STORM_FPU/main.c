@@ -142,6 +142,21 @@ static const GPTConfig gpt3cfg = {
   0
 };
 
+CH_FAST_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
+  float f1, f2, f3, f4, f5;
+
+  TIM1->SR = 0;
+
+  f1 = ff1(3.0f);
+  f2 = ff1(4.0f);
+  f3 = ff1(5.0f);
+  f5 = f1 + f2 + f3;
+  f4 = ff1(4.0f);
+  f5 = ff2(f5, f4, f5, f4);
+  if (f5 != 256.0f) {
+    chSysHalt("float corrupion #5");
+  }
+}
 
 /*===========================================================================*/
 /* Generic demo code.                                                        */
@@ -210,6 +225,17 @@ int main(void) {
   palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
   gptStart(&GPTD4, &gpt4cfg);
   gptStart(&GPTD3, &gpt3cfg);
+
+  /*
+   * Enabling TIM1 as a fast interrupts source.
+   */
+  rccEnableTIM1(false);
+  nvicEnableVector(STM32_TIM1_UP_NUMBER, 0);
+  TIM1->ARR  = 10000;
+  TIM1->PSC  = 0;
+  TIM1->CNT  = 0;
+  TIM1->DIER = TIM_DIER_UIE;
+  TIM1->CR1  = TIM_CR1_CEN;
 
   /*
    * Initializes the worker threads.
