@@ -27,9 +27,9 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palClearPad(GPIOA, GPIOA_LED_GREEN);
+    palClearPad(GPIOB, GPIOB_LED_GREEN);
     chThdSleepMilliseconds(500);
-    palSetPad(GPIOA, GPIOA_LED_GREEN);
+    palSetPad(GPIOB, GPIOB_LED_GREEN);
     chThdSleepMilliseconds(500);
   }
 }

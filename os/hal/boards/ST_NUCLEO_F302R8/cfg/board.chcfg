@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- STM32F4xx board Template -->
+<!-- STM32F3xx board Template -->
 <board
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f3xx_board.xsd">
@@ -57,12 +57,12 @@
         Mode="Input"
         Alternate="0" />
       <pin5
-        ID="LED_GREEN"
+        ID=""
         Type="PushPull"
         Level="Low"
         Speed="High"
-        Resistor="Floating"
-        Mode="Output"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin6
         ID=""
@@ -251,12 +251,12 @@
         Mode="Input"
         Alternate="0" />
       <pin13
-        ID=""
+        ID="LED_GREEN"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
+        Resistor="Floating"
+        Mode="Output"
         Alternate="0" />
       <pin14
         ID=""
