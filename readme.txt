@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.0p4 ***
+- HAL: Fixed wrong vector number for STM32L1xx USB (bug #586).
 - HAL: Fixed spurious TC interrupt in STM32 UART (v1 and v2) driver (bug #584).
 - HAL: Fixed invalid checks on STM32L1xx LSI and LSE clocks (bug #583).
 - HAL: Fixed RCC CAN2 macros missing in STM32F1xx platform (bug #582).

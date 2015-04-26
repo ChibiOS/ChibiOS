@@ -74,7 +74,7 @@
  * USB units.
  */
 #define STM32_USB1_HP_HANDLER       Vector8C
-#define STM32_USB1_LP_HANDLER       Vector30
+#define STM32_USB1_LP_HANDLER       Vector90
 
 #define STM32_USB1_HP_NUMBER        19
 #define STM32_USB1_LP_NUMBER        20
