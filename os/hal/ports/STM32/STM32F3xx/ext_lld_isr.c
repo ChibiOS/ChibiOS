@@ -226,7 +226,7 @@ OSAL_IRQ_HANDLER(VectorE4) {
 }
 #endif
 
-#if !defined(STM32_DISABLE_EXTI18_HANDLER)
+#if !defined(STM32_DISABLE_EXTI18_HANDLER) && STM32_HAS_USB
 /**
  * @brief   EXTI[18] interrupt handler (USB Wakeup).
  *
@@ -365,7 +365,9 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(EXTI15_10_IRQn, STM32_EXT_EXTI10_15_IRQ_PRIORITY);
   nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
   nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
+#if STM32_HAS_USB
   nvicEnableVector(USBWakeUp_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
+#endif
   nvicEnableVector(TAMP_STAMP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
   nvicEnableVector(RTC_WKUP_IRQn, STM32_EXT_EXTI20_IRQ_PRIORITY);
   nvicEnableVector(COMP1_2_3_IRQn, STM32_EXT_EXTI21_22_29_IRQ_PRIORITY);
@@ -391,7 +393,9 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(EXTI15_10_IRQn);
   nvicDisableVector(PVD_IRQn);
   nvicDisableVector(RTC_Alarm_IRQn);
+#if STM32_HAS_USB
   nvicDisableVector(USBWakeUp_IRQn);
+#endif
   nvicDisableVector(TAMP_STAMP_IRQn);
   nvicDisableVector(RTC_WKUP_IRQn);
   nvicDisableVector(COMP1_2_3_IRQn);

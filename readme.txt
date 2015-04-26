@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.0p4 ***
+- HAL: Fixed STM32F334 does not have an EXT18 interrupt (bug #588).
 - HAL: Fixed wrong vector number for STM32L1xx USB (bug #586).
 - HAL: Fixed spurious TC interrupt in STM32 UART (v1 and v2) driver (bug #584).
 - HAL: Fixed invalid checks on STM32L1xx LSI and LSE clocks (bug #583).
