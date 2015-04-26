@@ -79,6 +79,7 @@
 - HAL: Fixed RCC CAN2 macros missing in STM32F1xx platform (bug #582).
 - HAL: Fixed STM32 I2Cv2 driver issue (bug 581).
 - BLD: Fixed ules.mk: adding "PRE_MAKE_ALL_RULE_HOOK" (bug #580).
+- BLD: Fixed rules.mk should not explicitly depend on $(BUILDDIR) (bug #579).
 
 *** 3.0.0p3 ***
 - RT:  Fixed tickless mode instability in RT (bug 577).

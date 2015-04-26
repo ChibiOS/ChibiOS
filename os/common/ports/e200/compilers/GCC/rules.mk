@@ -116,16 +116,21 @@ PRE_MAKE_ALL_RULE_HOOK:
 
 POST_MAKE_ALL_RULE_HOOK:
 
-$(OBJS): | $(BUILDDIR)
+$(OBJS): | $(BUILDDIR) $(OBJDIR) $(LSTDIR)
 
-$(BUILDDIR) $(OBJDIR) $(LSTDIR):
+$(BUILDDIR):
 ifneq ($(USE_VERBOSE_COMPILE),yes)
 	@echo Compiler Options
 	@echo $(CC) -c $(CFLAGS) -I. $(IINCDIR) main.c -o main.o
 	@echo
 endif
-	mkdir -p $(OBJDIR)
-	mkdir -p $(LSTDIR)
+	@mkdir -p $(BUILDDIR)
+
+$(OBJDIR):
+	@mkdir -p $(OBJDIR)
+
+$(LSTDIR):
+	@mkdir -p $(LSTDIR)
 
 $(CPPOBJS) : $(OBJDIR)/%.o : %.cpp Makefile
 ifeq ($(USE_VERBOSE_COMPILE),yes)
