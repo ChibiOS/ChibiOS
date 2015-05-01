@@ -186,46 +186,17 @@ typedef enum {
  * @notapi
  */
 #define _dac_isr_full_code(dacp) {                                          \
-  if ((dacp)->grpp->circular) {                                             \
-    /* Callback handling.*/                                                 \
-    if ((dacp)->grpp->end_cb != NULL) {                                     \
-      if ((dacp)->depth > 1) {                                              \
-        /* Invokes the callback passing the 2nd half of the buffer.*/       \
-        size_t half = (dacp)->depth / 2;                                    \
-        size_t half_index = half * (dacp)->grpp->num_channels;              \
-        (dacp)->grpp->end_cb(dacp, (dacp)->samples + half_index, half);     \
-      }                                                                     \
-      else {                                                                \
-        /* Invokes the callback passing the whole buffer.*/                 \
-        (dacp)->grpp->end_cb(dacp, (dacp)->samples, (dacp)->depth);         \
-      }                                                                     \
-    }                                                                       \
-  }                                                                         \
-  else {                                                                    \
-    /* End conversion.*/                                                    \
-    dac_lld_stop_conversion(dacp);                                          \
-    if ((dacp)->grpp->end_cb != NULL) {                                     \
-      (dacp)->state = DAC_COMPLETE;                                         \
-      if ((dacp)->depth > 1) {                                              \
-        /* Invokes the callback passing the 2nd half of the buffer.*/       \
-        size_t half = (dacp)->depth / 2;                                    \
-        size_t half_index = half * (dacp)->grpp->num_channels;              \
-        (dacp)->grpp->end_cb(dacp, (dacp)->samples + half_index, half);     \
-      }                                                                     \
-      else {                                                                \
-        /* Invokes the callback passing the whole buffer.*/                 \
-        (dacp)->grpp->end_cb(dacp, (dacp)->samples, (dacp)->depth);         \
-      }                                                                     \
-      if ((dacp)->state == DAC_COMPLETE) {                                  \
-        (dacp)->state = DAC_READY;                                          \
-        (dacp)->grpp = NULL;                                                \
-      }                                                                     \
+  if ((dacp)->grpp->end_cb != NULL) {                                       \
+    if ((dacp)->depth > 1) {                                                \
+      /* Invokes the callback passing the 2nd half of the buffer.*/         \
+      size_t half = (dacp)->depth / 2;                                      \
+      size_t half_index = half * (dacp)->grpp->num_channels;                \
+      (dacp)->grpp->end_cb(dacp, (dacp)->samples + half_index, half);       \
     }                                                                       \
     else {                                                                  \
-      (dacp)->state = DAC_READY;                                            \
-      (dacp)->grpp = NULL;                                                  \
+      /* Invokes the callback passing the whole buffer.*/                   \
+      (dacp)->grpp->end_cb(dacp, (dacp)->samples, (dacp)->depth);           \
     }                                                                       \
-    _dac_wakeup_isr(dacp);                                                  \
   }                                                                         \
 }
 
