@@ -84,13 +84,15 @@ void dacObjectInit(DACDriver *dacp) {
  * @brief   Configures and activates the DAC peripheral.
  *
  * @param[in] dacp      pointer to the @p DACDriver object
- * @param[in] config    pointer to the @p DACConfig object
+ * @param[in] config    pointer to the @p DACConfig object, it can be
+ *                      @p NULL if the low level driver implementation
+ *                      supports a default configuration
  *
  * @api
  */
 void dacStart(DACDriver *dacp, const DACConfig *config) {
 
-  osalDbgCheck((dacp != NULL) && (config != NULL));
+  osalDbgCheck(dacp != NULL);
 
   osalSysLock();
 

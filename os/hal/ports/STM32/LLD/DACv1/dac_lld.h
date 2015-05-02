@@ -221,6 +221,40 @@
 /*===========================================================================*/
 
 /**
+ * @brief   DAC channel parameters type.
+ */
+typedef struct {
+  /**
+   * @brief   Pointer to the DAC registers block.
+   */
+  DAC_TypeDef               *dac;
+  /**
+   * @brief   DAC data registers offset.
+   */
+  uint32_t                  dataoffset;
+  /**
+   * @brief   DAC CR register bit offset.
+   */
+  uint32_t                  regshift;
+  /**
+   * @brief   DAC CR register mask.
+   */
+  uint32_t                  regmask;
+  /**
+   * @brief   Associated DMA.
+   */
+  const stm32_dma_stream_t  *dma;
+  /**
+   * @brief   Mode bits for the DMA.
+   */
+  uint32_t                  dmamode;
+  /**
+   * @brief   DMA channel IRQ priority.
+   */
+  uint32_t                  dmairqprio;
+} dacparams_t;
+
+/**
  * @brief   Type of a structure representing an DAC driver.
  */
 typedef struct DACDriver DACDriver;
@@ -292,17 +326,6 @@ typedef struct {
    */
   dacerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
-} DACConversionGroup;
-
-/**
- * @brief   Driver configuration structure.
- */
-typedef struct {
-  /**
-   * @brief   Initial sample to be presented on outputs.
-   */
-  dacsample_t               sample;
-  /* End of the mandatory fields.*/
   /**
    * @brief   DAC data holding register mode.
    */
@@ -314,6 +337,14 @@ typedef struct {
    *          other fields are handled internally.
    */
   uint32_t                  cr_tsel;
+} DACConversionGroup;
+
+/**
+ * @brief   Driver configuration structure.
+ */
+typedef struct {
+  /* End of the mandatory fields.*/
+  uint32_t                  dummy;
 } DACConfig;
 
 /**
@@ -357,17 +388,9 @@ struct DACDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief   Pointer to the DAC registers block.
+   * @brief   DAC channel parameters.
    */
-  DAC_TypeDef               *dac;
-  /**
-   * @brief   Transmit DMA stream.
-   */
-  const stm32_dma_stream_t  *dma;
-  /**
-   * @brief   TX DMA mode bit mask.
-   */
-  uint32_t                  dmamode;
+  const dacparams_t         *params;
 };
 
 /*===========================================================================*/
