@@ -131,6 +131,40 @@ void dacStop(DACDriver *dacp) {
 }
 
 /**
+ * @brief   Outputs a value directly on a DAC channel.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object
+ * @param[in] channel   DAC channel number
+ * @param[in] sample    value to be output
+ *
+ * @api
+ */
+void dacPutChannel(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
+
+  osalSysLock();
+  dacPutChannelI(dacp, channel, sample);
+  osalSysUnlock();
+}
+
+/**
+ * @brief   Outputs a value directly on a DAC channel.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object
+ * @param[in] channel   DAC channel number
+ * @param[in] sample    value to be output
+ *
+ * @iclass
+ */
+void dacPutChannelI(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
+
+  osalDbgCheckClassI();
+  osalDbgCheck(channel < DAC_MAX_CHANNELS);
+  osalDbgAssert(dacp->state == DAC_READY, "invalid state");
+
+  dac_lld_put_channel(dacp, channel, sample);
+}
+
+/**
  * @brief   Starts a DAC conversion.
  * @details Starts an asynchronous conversion operation.
  * @note    The buffer is organized as a matrix of M*N elements where M is the

@@ -226,9 +226,23 @@
 #define STM32_DMA_REQUIRED
 #endif
 
+/**
+ * @brief   Max DAC channels.
+ */
+#if STM32_DAC_DUAL_MODE == FALSE
+#define DAC_MAX_CHANNELS                    1
+#else
+#define DAC_MAX_CHANNELS                    2
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Type of a DAC channel index.
+ */
+typedef uint32_t dacchannel_t;
 
 /**
  * @brief   DAC channel parameters type.
@@ -337,10 +351,6 @@ typedef struct {
   dacerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
   /**
-   * @brief   DAC data holding register mode.
-   */
-  dacdhrmode_t              datamode;
-  /**
    * @brief   DAC initialization data.
    * @note    This field contains the (not shifted) value to be put into the
    *          TSEL field of the DAC CR register during initialization. All
@@ -354,7 +364,10 @@ typedef struct {
  */
 typedef struct {
   /* End of the mandatory fields.*/
-  uint32_t                  dummy;
+  /**
+   * @brief   DAC data holding register mode.
+   */
+  dacdhrmode_t              datamode;
 } DACConfig;
 
 /**
@@ -433,6 +446,9 @@ extern "C" {
   void dac_lld_init(void);
   void dac_lld_start(DACDriver *dacp);
   void dac_lld_stop(DACDriver *dacp);
+  void dac_lld_put_channel(DACDriver *dacp,
+                           dacchannel_t channel,
+                           dacsample_t sample);
   void dac_lld_start_conversion(DACDriver *dacp);
   void dac_lld_stop_conversion(DACDriver *dacp);
 #ifdef __cplusplus

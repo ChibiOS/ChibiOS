@@ -239,6 +239,12 @@ extern "C" {
   void dacObjectInit(DACDriver *dacp);
   void dacStart(DACDriver *dacp, const DACConfig *config);
   void dacStop(DACDriver *dacp);
+  void dacPutChannel(DACDriver *dacp,
+                     dacchannel_t channel,
+                     dacsample_t sample);
+  void dacPutChannelI(DACDriver *dacp,
+                      dacchannel_t channel,
+                      dacsample_t sample);
   void dacStartConversion(DACDriver *dacp, const DACConversionGroup *grpp,
                           const dacsample_t *samples, size_t depth);
   void dacStartConversionI(DACDriver *dacp, const DACConversionGroup *grpp,

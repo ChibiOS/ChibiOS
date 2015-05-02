@@ -58,16 +58,21 @@ static const dacsample_t dac_buffer[DAC_BUFFER_SIZE] = {
 /*
  * DAC streaming callback.
  */
-size_t nx = 0, ny = 0;
+size_t nx = 0, ny = 0, nz = 0;
 static void end_cb1(DACDriver *dacp, const dacsample_t *buffer, size_t n) {
 
   (void)dacp;
 
+  nz++;
   if (dac_buffer == buffer) {
     nx += n;
   }
   else {
     ny += n;
+  }
+
+  if ((nz % 1000) == 0) {
+    palTogglePad(GPIOD, GPIOD_LED3);
   }
 }
 
@@ -82,14 +87,16 @@ static void error_cb1(DACDriver *dacp, dacerror_t err) {
   chSysHalt("DAC failure");
 }
 
-static const DACConversionGroup daccfg1 = {
-  num_channels: 1,
-  end_cb:       end_cb1,
-  error_cb:     error_cb1,
-  datamode:     DAC_DHRM_12BIT_RIGHT,
-  trigger:      DAC_TRG(0)
+static const DACConfig dac1cfg1 = {
+  datamode:     DAC_DHRM_12BIT_RIGHT
 };
 
+static const DACConversionGroup dacgrpcfg1 = {
+  num_channels: 1U,
+  end_cb:       end_cb1,
+  error_cb:     error_cb1,
+  trigger:      DAC_TRG(0)
+};
 
 /*
  * GPT2 configuration.
@@ -121,7 +128,7 @@ int main(void) {
    * by the Reference Manual.
    */
   palSetPadMode(GPIOA, 4, PAL_MODE_INPUT_ANALOG);
-  dacStart(&DACD1, NULL);
+  dacStart(&DACD1, &dac1cfg1);
 
   /*
    * Starting GPT6 driver, it is used for triggering the DAC.
@@ -131,7 +138,7 @@ int main(void) {
   /*
    * Starting a continuous conversion.
    */
-  dacStartConversion(&DACD1, &daccfg1, dac_buffer, DAC_BUFFER_SIZE);
+  dacStartConversion(&DACD1, &dacgrpcfg1, dac_buffer, DAC_BUFFER_SIZE);
   gptStartContinuous(&GPTD6, 2U);
 
   /*

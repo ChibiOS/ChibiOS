@@ -81,7 +81,9 @@ DACDriver DACD4;
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-static const DACConfig default_config = {0};
+static const DACConfig default_config = {
+  datamode:     DAC_DHRM_12BIT_RIGHT
+};
 
 #if STM32_DAC_USE_DAC1_CH1 == TRUE
 static const dacparams_t dma1_ch1_params = {
@@ -311,6 +313,24 @@ void dac_lld_stop(DACDriver *dacp) {
 }
 
 /**
+ * @brief   Outputs a value directly on a DAC channel.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object
+ * @param[in] channel   DAC channel number
+ * @param[in] sample    value to be output
+ *
+ * @api
+ */
+void dac_lld_put_channel(DACDriver *dacp,
+                         dacchannel_t channel,
+                         dacsample_t sample) {
+
+  (void)dacp;
+  (void)channel;
+  (void)sample;
+}
+
+/**
  * @brief   Starts a DAC conversion.
  * @details Starts an asynchronous conversion operation.
  *
@@ -322,7 +342,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
   uint32_t cr, dmamode;
 
 #if STM32_DAC_DUAL_MODE == FALSE
-  switch (dacp->grpp->datamode) {
+  switch (dacp->config->datamode) {
   /* Sets the DAC data register */
   case DAC_DHRM_12BIT_RIGHT:
     dmaStreamSetPeripheral(dacp->params->dma, &dacp->params->dac->DHR12R1 +
