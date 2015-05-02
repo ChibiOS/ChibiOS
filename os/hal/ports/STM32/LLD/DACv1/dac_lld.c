@@ -81,10 +81,6 @@ DACDriver DACD4;
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
-static const DACConfig default_config = {
-  datamode:     DAC_DHRM_12BIT_RIGHT
-};
-
 #if STM32_DAC_USE_DAC1_CH1 == TRUE
 static const dacparams_t dma1_ch1_params = {
   dac:          DAC1,
@@ -222,12 +218,6 @@ void dac_lld_init(void) {
  */
 void dac_lld_start(DACDriver *dacp) {
   bool b;
-
-  /* If the application does not provide a configuration structure then a
-     default is used.*/
-  if (dacp->config == NULL) {
-    dacp->config = &default_config;
-  }
 
   /* If the driver is in DAC_STOP state then a full initialization is
      required.*/
