@@ -33,6 +33,16 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    DAC trigger modes
+ * @{
+ */
+#define DAC_TRG_MASK                    7U
+#define DAC_TRG(n)                      (n)
+#define DAC_TRG_EXT                     6U
+#define DAC_TRG_SW                      7U
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -293,7 +303,7 @@ typedef void (*daccallback_t)(DACDriver *dacp,
  *                      callback
  * @param[in] err       ADC error code
  */
-typedef void (*dacerrorcallback_t)(DACDriver *adcp, dacerror_t err);
+typedef void (*dacerrorcallback_t)(DACDriver *dacp, dacerror_t err);
 
 /**
  * @brief   Samples alignment and size mode.
@@ -329,14 +339,14 @@ typedef struct {
   /**
    * @brief   DAC data holding register mode.
    */
-  dacdhrmode_t              dhrm;
+  dacdhrmode_t              datamode;
   /**
    * @brief   DAC initialization data.
    * @note    This field contains the (not shifted) value to be put into the
    *          TSEL field of the DAC CR register during initialization. All
    *          other fields are handled internally.
    */
-  uint32_t                  cr_tsel;
+  uint32_t                  trigger;
 } DACConversionGroup;
 
 /**

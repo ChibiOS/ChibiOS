@@ -260,14 +260,18 @@ void dac_lld_start(DACDriver *dacp) {
       rccEnableDAC2(false);
     }
 #endif
-  }
 
-  /* DAC initially disabled.*/
+    /* Enabling DAC in SW triggering mode initially, initializing data to
+       zero.*/
 #if STM32_DAC_DUAL_MODE == FALSE
-  dacp->params->dac->CR = dacp->params->regmask;
+    dacp->params->dac->CR &= dacp->params->regmask;
+    dacp->params->dac->CR |= DAC_CR_EN1 << dacp->params->regshift;
+    *(&dacp->params->dac->DHR12R1 + dacp->params->dataoffset) = 0U;
 #else
-  dacp->params->dac->CR = 0U;
+    dacp->params->dac->CR = DAC_CR_EN2 | DAC_CR_EN1;
+    dacp->params->dac->DAC_DHR12RD = 0U;
 #endif
+  }
 }
 
 /**
@@ -285,10 +289,11 @@ void dac_lld_stop(DACDriver *dacp) {
     /* DMA channel released.*/
     dmaStreamRelease(dacp->params->dma);
 
+    /* Disabling DAC.*/
+    dacp->params->dac->CR &= dacp->params->regmask;
+
 #if STM32_DAC_USE_DAC1_CH1
     if (&DACD1 == dacp) {
-      dacp->params->dac->CR &= ~DAC_CR_EN1;
-
       if ((dacp->params->dac->CR & DAC_CR_EN2) == 0U) {
         rccDisableDAC1(false);
       }
@@ -297,8 +302,6 @@ void dac_lld_stop(DACDriver *dacp) {
 
 #if STM32_DAC_USE_DAC1_CH2
     if (&DACD2 == dacp) {
-      dacp->params->dac->CR &= ~DAC_CR_EN2;
-
       if ((dacp->params->dac->CR & DAC_CR_EN1) == 0U) {
         rccDisableDAC1(false);
       }
@@ -319,7 +322,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
   uint32_t cr, dmamode;
 
 #if STM32_DAC_DUAL_MODE == FALSE
-  switch (dacp->grpp->dhrm) {
+  switch (dacp->grpp->datamode) {
   /* Sets the DAC data register */
   case DAC_DHRM_12BIT_RIGHT:
     dmaStreamSetPeripheral(dacp->params->dma, &dacp->params->dac->DHR12R1 +
@@ -372,10 +375,9 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 
   /* DAC configuration.*/
 #if STM32_DAC_DUAL_MODE == FALSE
-  cr = DAC_CR_DMAEN1 | (dacp->grpp->cr_tsel << 3) |
-       DAC_CR_TEN1 | DAC_CR_EN1;
-  dacp->params->dac->CR = (dacp->params->dac->CR & dacp->params->regmask) |
-                          (cr << dacp->params->regshift);
+  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << 3) | DAC_CR_TEN1 | DAC_CR_EN1;
+  dacp->params->dac->CR &= dacp->params->regmask;
+  dacp->params->dac->CR |= cr << dacp->params->regshift;
 #else
   /* TODO: Dual.*/
 #endif
@@ -396,9 +398,12 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
 
   dmaStreamDisable(dacp->params->dma);
 #if STM32_DAC_DUAL_MODE == FALSE
-  dacp->params->dac->CR = dacp->params->regmask;
+  dacp->params->dac->CR  = dacp->params->regmask;
+  dacp->params->dac->CR |= DAC_CR_EN1 << dacp->params->regshift;
+  *(&dacp->params->dac->DHR12R1 + dacp->params->dataoffset) = 0U;
 #else
-  dacp->params->dac->CR = 0U;
+  dacp->params->dac->CR = DAC_CR_EN2 | DAC_CR_EN1;
+  dacp->params->dac->DAC_DHR12RD = 0U;
 #endif
 }
 
