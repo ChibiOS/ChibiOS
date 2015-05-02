@@ -90,6 +90,17 @@ static const DACConversionGroup daccfg1 = {
   trigger:      DAC_TRG(0)
 };
 
+
+/*
+ * GPT2 configuration.
+ */
+static const GPTConfig gpt6cfg1 = {
+  frequency:    1000000U,
+  callback:     NULL,
+  cr2:          TIM_CR2_MMS_1,  /* MMS = 010 = TRGO on Update Event.        */
+  dier:         0U
+};
+
 /*
  * Application entry point.
  */
@@ -106,16 +117,22 @@ int main(void) {
   chSysInit();
 
   /*
-   * Starting DAC driver, setting up the output pin as analog as suggested
+   * Starting DAC1 driver, setting up the output pin as analog as suggested
    * by the Reference Manual.
    */
   palSetPadMode(GPIOA, 4, PAL_MODE_INPUT_ANALOG);
   dacStart(&DACD1, NULL);
 
   /*
-   * Starting a continous conversion.
+   * Starting GPT6 driver, it is used for triggering the DAC.
+   */
+  gptStart(&GPTD6, &gpt6cfg1);
+
+  /*
+   * Starting a continuous conversion.
    */
   dacStartConversion(&DACD1, &daccfg1, dac_buffer, DAC_BUFFER_SIZE);
+  gptStartContinuous(&GPTD6, 2U);
 
   /*
    * Normal main() thread activity, if the button is pressed then the I2s
@@ -123,6 +140,7 @@ int main(void) {
    */
   while (true) {
     if (palReadPad(GPIOA, GPIOA_BUTTON)) {
+      gptStopTimer(&GPTD6);
       dacStopConversion(&DACD1);
     }
     chThdSleepMilliseconds(500);
