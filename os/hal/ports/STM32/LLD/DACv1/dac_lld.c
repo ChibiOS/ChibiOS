@@ -251,10 +251,11 @@ void dac_lld_start(DACDriver *dacp) {
 #if STM32_DAC_DUAL_MODE == FALSE
     dacp->params->dac->CR &= dacp->params->regmask;
     dacp->params->dac->CR |= DAC_CR_EN1 << dacp->params->regshift;
-    *(&dacp->params->dac->DHR12R1 + dacp->params->dataoffset) = 0U;
+    dac_lld_put_channel(dacp, 0U, dacp->config->init);
 #else
     dacp->params->dac->CR = DAC_CR_EN2 | DAC_CR_EN1;
-    dacp->params->dac->DHR12RD = 0U;
+    dac_lld_put_channel(dacp, 0U, dacp->config->init);
+    dac_lld_put_channel(dacp, 1U, dacp->config->init);
 #endif
   }
 }

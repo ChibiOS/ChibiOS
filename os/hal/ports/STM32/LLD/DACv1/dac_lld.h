@@ -365,6 +365,10 @@ typedef struct {
 typedef struct {
   /* End of the mandatory fields.*/
   /**
+   * @brief   Initial output on DAC channels.
+   */
+  dacsample_t               init;
+  /**
    * @brief   DAC data holding register mode.
    */
   dacdhrmode_t              datamode;
