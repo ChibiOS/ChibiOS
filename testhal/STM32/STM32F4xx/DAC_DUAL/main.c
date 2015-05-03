@@ -89,11 +89,11 @@ static void error_cb1(DACDriver *dacp, dacerror_t err) {
 
 static const DACConfig dac1cfg1 = {
   init:         2047U,
-  datamode:     DAC_DHRM_12BIT_RIGHT
+  datamode:     DAC_DHRM_12BIT_RIGHT_DUAL
 };
 
 static const DACConversionGroup dacgrpcfg1 = {
-  num_channels: 1U,
+  num_channels: 2U,
   end_cb:       end_cb1,
   error_cb:     error_cb1,
   trigger:      DAC_TRG(0)
@@ -125,10 +125,11 @@ int main(void) {
   chSysInit();
 
   /*
-   * Starting DAC1 driver, setting up the output pin as analog as suggested
+   * Starting DAC1 driver, setting up the output pins as analog as suggested
    * by the Reference Manual.
    */
   palSetPadMode(GPIOA, 4, PAL_MODE_INPUT_ANALOG);
+  palSetPadMode(GPIOA, 5, PAL_MODE_INPUT_ANALOG);
   dacStart(&DACD1, &dac1cfg1);
 
   /*
@@ -138,8 +139,10 @@ int main(void) {
 
   /*
    * Starting a continuous conversion.
+   * Note, the buffer size is divided by two because two elements are fetched
+   * for each transfer.
    */
-  dacStartConversion(&DACD1, &dacgrpcfg1, dac_buffer, DAC_BUFFER_SIZE);
+  dacStartConversion(&DACD1, &dacgrpcfg1, dac_buffer, DAC_BUFFER_SIZE / 2U);
   gptStartContinuous(&GPTD6, 2U);
 
   /*
