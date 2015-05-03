@@ -217,17 +217,10 @@ void dac_lld_init(void) {
  * @notapi
  */
 void dac_lld_start(DACDriver *dacp) {
-  bool b;
 
   /* If the driver is in DAC_STOP state then a full initialization is
      required.*/
   if (dacp->state == DAC_STOP) {
-    /* Allocating the DMA channel.*/
-    b = dmaStreamAllocate(dacp->params->dma, dacp->params->dmairqprio,
-                          (stm32_dmaisr_t)dac_lld_serve_tx_interrupt,
-                          (void *)dacp);
-    osalDbgAssert(!b, "stream already allocated");
-
     /* Enabling the clock source.*/
 #if STM32_DAC_USE_DAC1_CH1
     if (&DACD1 == dacp) {
@@ -261,7 +254,7 @@ void dac_lld_start(DACDriver *dacp) {
     *(&dacp->params->dac->DHR12R1 + dacp->params->dataoffset) = 0U;
 #else
     dacp->params->dac->CR = DAC_CR_EN2 | DAC_CR_EN1;
-    dacp->params->dac->DAC_DHR12RD = 0U;
+    dacp->params->dac->DHR12RD = 0U;
 #endif
   }
 }
@@ -277,9 +270,6 @@ void dac_lld_stop(DACDriver *dacp) {
 
   /* If in ready state then disables the DAC clock.*/
   if (dacp->state == DAC_READY) {
-
-    /* DMA channel released.*/
-    dmaStreamRelease(dacp->params->dma);
 
     /* Disabling DAC.*/
     dacp->params->dac->CR &= dacp->params->regmask;
@@ -315,9 +305,35 @@ void dac_lld_put_channel(DACDriver *dacp,
                          dacchannel_t channel,
                          dacsample_t sample) {
 
-  (void)dacp;
-  (void)channel;
-  (void)sample;
+  switch (dacp->config->datamode) {
+  case DAC_DHRM_12BIT_RIGHT:
+    if (channel == 0U) {
+      dacp->params->dac->DHR12R1 = (uint32_t)sample;
+    }
+    else {
+      dacp->params->dac->DHR12R2 = (uint32_t)sample;
+    }
+    break;
+  case DAC_DHRM_12BIT_LEFT:
+    if (channel == 0U) {
+      dacp->params->dac->DHR12L1 = (uint32_t)sample;
+    }
+    else {
+      dacp->params->dac->DHR12L2 = (uint32_t)sample;
+    }
+    break;
+  case DAC_DHRM_8BIT_RIGHT:
+    if (channel == 0U) {
+      dacp->params->dac->DHR8R1  = (uint32_t)sample;
+    }
+    else {
+      dacp->params->dac->DHR8R2  = (uint32_t)sample;
+    }
+    break;
+  default:
+    chDbgAssert(false, "unexpected DAC mode");
+    break;
+  }
 }
 
 /**
@@ -330,6 +346,12 @@ void dac_lld_put_channel(DACDriver *dacp,
  */
 void dac_lld_start_conversion(DACDriver *dacp) {
   uint32_t cr, dmamode;
+
+  /* Allocating the DMA channel.*/
+  bool b = dmaStreamAllocate(dacp->params->dma, dacp->params->dmairqprio,
+                             (stm32_dmaisr_t)dac_lld_serve_tx_interrupt,
+                             (void *)dacp);
+  osalDbgAssert(!b, "stream already allocated");
 
 #if STM32_DAC_DUAL_MODE == FALSE
   switch (dacp->config->datamode) {
@@ -406,7 +428,10 @@ void dac_lld_start_conversion(DACDriver *dacp) {
  */
 void dac_lld_stop_conversion(DACDriver *dacp) {
 
+  /* DMA channel disabled and released.*/
   dmaStreamDisable(dacp->params->dma);
+  dmaStreamRelease(dacp->params->dma);
+
 #if STM32_DAC_DUAL_MODE == FALSE
   dacp->params->dac->CR &= dacp->params->regmask;
   dacp->params->dac->CR |= DAC_CR_EN1 << dacp->params->regshift;
