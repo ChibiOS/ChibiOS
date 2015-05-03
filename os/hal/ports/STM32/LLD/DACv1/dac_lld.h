@@ -98,57 +98,57 @@
 /**
  * @brief   DAC1 CH1 interrupt priority level setting.
  */
-#if !defined(STM32_DAC1_CH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC1_CH1_IRQ_PRIORITY         10
+#if !defined(STM32_DAC_DAC1_CH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     10
 #endif
 
 /**
  * @brief   DAC1 CH2 interrupt priority level setting.
  */
-#if !defined(STM32_DAC1_CH2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC1_CH2_IRQ_PRIORITY         10
+#if !defined(STM32_DAC_DAC1_CH2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     10
 #endif
 
 /**
  * @brief   DAC2 CH1 interrupt priority level setting.
  */
-#if !defined(STM32_DAC2_CH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC2_CH1_IRQ_PRIORITY         10
+#if !defined(STM32_DAC_DAC2_CH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_DAC_DAC2_CH1_IRQ_PRIORITY     10
 #endif
 
 /**
  * @brief   DAC2 CH2 interrupt priority level setting.
  */
-#if !defined(STM32_DAC2_CH2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC2_CH2_IRQ_PRIORITY         10
+#if !defined(STM32_DAC_DAC2_CH2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_DAC_DAC2_CH2_IRQ_PRIORITY     10
 #endif
 
 /**
  * @brief   DAC1 CH1 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_DAC1_CH1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC1_CH1_DMA_PRIORITY         2
+#if !defined(STM32_DAC_DAC1_CH1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_DAC_DAC1_CH1_DMA_PRIORITY     2
 #endif
 
 /**
  * @brief   DAC1 CH2 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_DAC1_CH2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC1_CH2_DMA_PRIORITY         2
+#if !defined(STM32_DAC_DAC1_CH2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_DAC_DAC1_CH2_DMA_PRIORITY     2
 #endif
 
 /**
  * @brief   DAC2 CH1 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_DAC2_CH1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC2_CH1_DMA_PRIORITY         2
+#if !defined(STM32_DAC_DAC2_CH1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_DAC_DAC2_CH1_DMA_PRIORITY     2
 #endif
 
 /**
  * @brief   DAC2 CH2 DMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_DAC2_CH2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC2_CH2_DMA_PRIORITY         2
+#if !defined(STM32_DAC_DAC2_CH2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_DAC_DAC2_CH2_DMA_PRIORITY     2
 #endif
 
 /*===========================================================================*/
@@ -184,40 +184,40 @@
    reassign streams to different channels.*/
 #if STM32_ADVANCED_DMA
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
-#if STM32_DAC_USE_DAC1_CH1 && !defined(STM32_DAC1_CH1_DMA_STREAM)
+#if STM32_DAC_USE_DAC1_CH1 && !defined(STM32_DAC_DAC1_CH1_DMA_STREAM)
 #error "DAC1 CH1 DMA stream not defined"
 #endif
 
-#if STM32_DAC_USE_DAC1_CH2 && !defined(STM32_DAC1_CH2_DMA_STREAM)
+#if STM32_DAC_USE_DAC1_CH2 && !defined(STM32_DAC_DAC1_CH2_DMA_STREAM)
 #error "DAC1 CH2 DMA stream not defined"
 #endif
 
-#if STM32_DAC_USE_DAC2_CH1 && !defined(STM32_DAC2_CH1_DMA_STREAM)
+#if STM32_DAC_USE_DAC2_CH1 && !defined(STM32_DAC_DAC2_CH1_DMA_STREAM)
 #error "DAC2 CH1 DMA stream not defined"
 #endif
 
-#if STM32_DAC_USE_DAC2_CH2 && !defined(STM32_DAC2_CH2_DMA_STREAM)
+#if STM32_DAC_USE_DAC2_CH2 && !defined(STM32_DAC_DAC2_CH2_DMA_STREAM)
 #error "DAC2 CH2 DMA stream not defined"
 #endif
 
 /* Check on the validity of the assigned DMA channels.*/
 #if STM32_DAC_USE_DAC1_CH1 &&                                               \
-    !STM32_DMA_IS_VALID_ID(STM32_DAC1_CH1_DMA_STREAM, STM32_DAC1_CH1_DMA_MSK)
+    !STM32_DMA_IS_VALID_ID(STM32_DAC_DAC1_CH1_DMA_STREAM, STM32_DAC1_CH1_DMA_MSK)
 #error "invalid DMA stream associated to DAC1 CH1"
 #endif
 
 #if STM32_DAC_USE_DAC1_CH2 &&                                               \
-    !STM32_DMA_IS_VALID_ID(STM32_DAC1_CH2_DMA_STREAM, STM32_DAC1_CH2_DMA_MSK)
+    !STM32_DMA_IS_VALID_ID(STM32_DAC_DAC1_CH2_DMA_STREAM, STM32_DAC1_CH2_DMA_MSK)
 #error "invalid DMA stream associated to DAC1 CH2"
 #endif
 
 #if STM32_DAC_USE_DAC2_CH1 &&                                               \
-    !STM32_DMA_IS_VALID_ID(STM32_DAC2_CH1_DMA_STREAM, STM32_DAC2_CH1_DMA_MSK)
+    !STM32_DMA_IS_VALID_ID(STM32_DAC_DAC2_CH1_DMA_STREAM, STM32_DAC2_CH1_DMA_MSK)
 #error "invalid DMA stream associated to DAC2 CH1"
 #endif
 
 #if STM32_DAC_USE_DAC2_CH2 &&                                               \
-    !STM32_DMA_IS_VALID_ID(STM32_DAC2_CH2_DMA_STREAM, STM32_DAC2_CH2_DMA_MSK)
+    !STM32_DMA_IS_VALID_ID(STM32_DAC_DAC2_CH2_DMA_STREAM, STM32_DAC2_CH2_DMA_MSK)
 #error "invalid DMA stream associated to DAC2 CH2"
 #endif
 #endif /* STM32_ADVANCED_DMA */
