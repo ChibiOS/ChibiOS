@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.0p4 ***
+- HAL: New DAC driver implementation for STM32F4xx.
 - HAL: Fixed STM32F334 does not have an EXT18 interrupt (bug #588).
 - HAL: Fixed STM32L1xx USB is missing disconnect/connect macros (bug #587).
 - HAL: Fixed wrong vector number for STM32L1xx USB (bug #586).
