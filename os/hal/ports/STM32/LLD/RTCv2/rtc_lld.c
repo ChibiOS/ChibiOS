@@ -392,7 +392,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
   /* If the RTC is capable of sub-second counting then the value is
      normalized in milliseconds and added to the time.*/
 #if STM32_RTC_HAS_SUBSECONDS
-  subs = (((ssr << 16) / STM32_RTC_PRESS_VALUE) * 1000) >> 16;
+  subs = (((STM32_RTC_PRESS_VALUE - 1U) - ssr) * 1000U) / STM32_RTC_PRESS_VALUE;
 #else
   subs = 0;
 #endif /* STM32_RTC_HAS_SUBSECONDS */

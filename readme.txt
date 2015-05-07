@@ -75,6 +75,7 @@
 
 *** 3.0.0p4 ***
 - HAL: New DAC driver implementation for STM32F4xx.
+- HAL: Fixed STM32 RTC SSR Register Counts Down (bug #591).
 - HAL: Fixed STM32 RTC PRER Register not being set in init (bug #590).
 - HAL: Fixed STM32F334 does not have an EXT18 interrupt (bug #588).
 - HAL: Fixed STM32L1xx USB is missing disconnect/connect macros (bug #587).
