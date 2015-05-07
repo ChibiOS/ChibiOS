@@ -310,7 +310,7 @@ void rtc_lld_init(void) {
     rtc_enter_init();
 
     RTCD1.rtc->CR   = 0;
-    RTCD1.rtc->ISR  = 0;
+    RTCD1.rtc->ISR  = RTC_ISR_INIT;     /* Clearing all but RTC_ISR_INIT.   */
     RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
     RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
 
