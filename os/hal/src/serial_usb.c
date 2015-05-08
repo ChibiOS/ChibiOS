@@ -218,7 +218,9 @@ void sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
                 "invalid state");
   usbp->in_params[config->bulk_in - 1U]   = sdup;
   usbp->out_params[config->bulk_out - 1U] = sdup;
-  usbp->in_params[config->int_in - 1U]    = sdup;
+  if (config->int_in > 0U) {
+    usbp->in_params[config->int_in - 1U]  = sdup;
+  }
   sdup->config = config;
   sdup->state = SDU_READY;
   osalSysUnlock();
@@ -245,7 +247,9 @@ void sduStop(SerialUSBDriver *sdup) {
   /* Driver in stopped state.*/
   usbp->in_params[sdup->config->bulk_in - 1U]   = NULL;
   usbp->out_params[sdup->config->bulk_out - 1U] = NULL;
-  usbp->in_params[sdup->config->int_in - 1U]    = NULL;
+  if (sdup->config->int_in > 0U) {
+    usbp->in_params[sdup->config->int_in - 1U]  = NULL;
+  }
   sdup->state = SDU_STOP;
 
   /* Queues reset in order to signal the driver stop to the application.*/

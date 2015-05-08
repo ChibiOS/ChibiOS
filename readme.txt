@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 3.0.0p4 ***
+- HAL: Change to the Serial_USB driver, now the INT endpoint is no more
+       mandatory.
 - HAL: New DAC driver implementation for STM32F4xx.
 - HAL: Fixed STM32 RTC SSR Register Counts Down (bug #591).
 - HAL: Fixed STM32 RTC PRER Register not being set in init (bug #590).

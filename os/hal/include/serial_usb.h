@@ -179,6 +179,8 @@ typedef struct {
   usbep_t                   bulk_out;
   /**
    * @brief   Interrupt IN endpoint used for notifications.
+   * @note    If set to zero then the INT endpoint is assumed to be not
+   *          present, USB descriptors must be changed accordingly.
    */
   usbep_t                   int_in;
 } SerialUSBConfig;
