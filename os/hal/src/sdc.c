@@ -965,18 +965,21 @@ bool sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk) {
 
   if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_START,
                                   startblk, resp) != HAL_SUCCESS) ||
-      MMCSD_R1_ERROR(resp[0]))
+      MMCSD_R1_ERROR(resp[0])) {
     goto failed;
+  }
 
   if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_END,
                                   endblk, resp) != HAL_SUCCESS) ||
-      MMCSD_R1_ERROR(resp[0]))
+      MMCSD_R1_ERROR(resp[0])) {
     goto failed;
+  }
 
   if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE,
                                   0, resp) != HAL_SUCCESS) ||
-      MMCSD_R1_ERROR(resp[0]))
+      MMCSD_R1_ERROR(resp[0])) {
     goto failed;
+  }
 
   /* Quick sleep to allow it to transition to programming or receiving state */
   /* TODO: ??????????????????????????? */
