@@ -59,9 +59,10 @@ static THD_FUNCTION(Thread1, arg) {
 
 #define SDC_BURST_SIZE      16
 
-/* Buffer for block read/write operations, note that an extra byte is
+/* Buffer for block read/write operations, note that extra bytes are
    allocated in order to support unaligned operations.*/
-static uint8_t buf[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE + 1];
+static uint8_t buf[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE + 4];
+
 /* Additional buffer for sdcErase() test */
 static uint8_t buf2[MMCSD_BLOCK_SIZE * SDC_BURST_SIZE ];
 
@@ -93,7 +94,7 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
            SDCD1.csd[3], SDCD1.csd[2], SDCD1.csd[1], SDCD1.csd[0]);
   chprintf(chp, "CID      : %08X %8X %08X %08X \r\n",
            SDCD1.cid[3], SDCD1.cid[2], SDCD1.cid[1], SDCD1.cid[0]);
-  chprintf(chp, "Mode     : %s\r\n", mode[SDCD1.cardmode]);
+  chprintf(chp, "Mode     : %s\r\n", mode[SDCD1.cardmode & 3U]);
   chprintf(chp, "Capacity : %DMB\r\n", SDCD1.capacity / 2048);
 
   /* The test is performed in the middle of the flash area.*/
@@ -161,6 +162,43 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
 #endif /* STM32_SDC_SDIO_UNALIGNED_SUPPORT */
   }
 
+  if ((strcmp(argv[0], "write") == 0) ||
+      (strcmp(argv[0], "all") == 0)) {
+    unsigned i;
+
+    memset(buf, 0xAA, MMCSD_BLOCK_SIZE * 2);
+    chprintf(chp, "Writing...");
+    if(sdcWrite(&SDCD1, startblk, buf, 2)) {
+      chprintf(chp, "failed\r\n");
+      goto exittest;
+    }
+    chprintf(chp, "OK\r\n");
+
+    memset(buf, 0x55, MMCSD_BLOCK_SIZE * 2);
+    chprintf(chp, "Reading...");
+    if (blkRead(&SDCD1, startblk, buf, 1)) {
+      chprintf(chp, "failed\r\n");
+      goto exittest;
+    }
+    chprintf(chp, "OK\r\n");
+
+    for (i = 0; i < MMCSD_BLOCK_SIZE; i++)
+      buf[i] = i + 8;
+    chprintf(chp, "Writing...");
+    if(sdcWrite(&SDCD1, startblk, buf, 2)) {
+      chprintf(chp, "failed\r\n");
+      goto exittest;
+    }
+    chprintf(chp, "OK\r\n");
+
+    memset(buf, 0, MMCSD_BLOCK_SIZE * 2);
+    chprintf(chp, "Reading...");
+    if (blkRead(&SDCD1, startblk, buf, 1)) {
+      chprintf(chp, "failed\r\n");
+      goto exittest;
+    }
+    chprintf(chp, "OK\r\n");
+  }
 
   if ((strcmp(argv[0], "erase") == 0) ||
       (strcmp(argv[0], "all") == 0)) {
@@ -235,12 +273,6 @@ void cmd_sdc(BaseSequentialStream *chp, int argc, char *argv[]) {
     /* END of sdcErase() test */
   }
   
-
-  if ((strcmp(argv[0], "write") == 0) ||
-      (strcmp(argv[0], "all") == 0)) {
-
-  }
-
   /* Card disconnect and command end.*/
 exittest:
   sdcDisconnect(&SDCD1);
