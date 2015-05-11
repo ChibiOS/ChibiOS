@@ -159,6 +159,10 @@
 #error "SDIO requires STM32_CLOCK48_REQUIRED to be enabled"
 #endif
 
+#if STM32_PLL48CLK != 48000000
+#error "invalid STM32_PLL48CLK clock value"
+#endif
+
 #define STM32_SDC_WRITE_TIMEOUT                                             \
   (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) *                    \
    STM32_SDC_WRITE_TIMEOUT_MS)
