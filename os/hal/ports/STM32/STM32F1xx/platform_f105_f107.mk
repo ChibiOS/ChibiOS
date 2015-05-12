@@ -25,7 +25,7 @@ endif
 ifneq ($(findstring HAL_USE_PAL TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/GPIOv1/pal_lld.c
 endif
-ifneq ($(findstring "HAL_USE_I2C TRUE",$(HALCONF)),)
+ifneq ($(findstring HAL_USE_I2C TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/I2Cv1/i2c_lld.c
 endif
 ifneq ($(findstring HAL_USE_USB TRUE,$(HALCONF)),)
