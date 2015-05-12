@@ -77,6 +77,7 @@
 - HAL: Change to the Serial_USB driver, now the INT endpoint is no more
        mandatory.
 - HAL: New DAC driver implementation for STM32F4xx.
+- HAL: Fixed SDC STM32 driver broken in 50MHz mode (bug #592).
 - HAL: Fixed STM32 RTC SSR Register Counts Down (bug #591).
 - HAL: Fixed STM32 RTC PRER Register not being set in init (bug #590).
 - HAL: Fixed STM32F334 does not have an EXT18 interrupt (bug #588).

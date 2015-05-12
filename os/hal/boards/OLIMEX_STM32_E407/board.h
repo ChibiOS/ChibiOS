@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -37,18 +37,18 @@
  * Board oscillators-related settings.
  */
 #if !defined(STM32_LSECLK)
-#define STM32_LSECLK                32768U
+#define STM32_LSECLK                32768
 #endif
 
 #if !defined(STM32_HSECLK)
-#define STM32_HSECLK                12000000U
+#define STM32_HSECLK                12000000
 #endif
 
 /*
  * Board voltages.
  * Required for performance limits calculation.
  */
-#define STM32_VDD                   330U
+#define STM32_VDD                   330
 
 /*
  * MCU type as defined in the ST header.
@@ -58,180 +58,180 @@
 /*
  * IO pins assignments.
  */
-#define GPIOA_BUTTON_WKUP           0U
-#define GPIOA_ETH_RMII_REF_CLK      1U
-#define GPIOA_ETH_RMII_MDIO         2U
-#define GPIOA_ETH_RMII_MDINT        3U
-#define GPIOA_PIN4                  4U
-#define GPIOA_PIN5                  5U
-#define GPIOA_PIN6                  6U
-#define GPIOA_ETH_RMII_CRS_DV       7U
-#define GPIOA_USB_HS_BUSON          8U
-#define GPIOA_OTG_FS_VBUS           9U
-#define GPIOA_OTG_FS_ID             10U
-#define GPIOA_OTG_FS_DM             11U
-#define GPIOA_OTG_FS_DP             12U
-#define GPIOA_JTAG_TMS              13U
-#define GPIOA_JTAG_TCK              14U
-#define GPIOA_JTAG_TDI              15U
+#define GPIOA_BUTTON_WKUP           0
+#define GPIOA_ETH_RMII_REF_CLK      1
+#define GPIOA_ETH_RMII_MDIO         2
+#define GPIOA_ETH_RMII_MDINT        3
+#define GPIOA_PIN4                  4
+#define GPIOA_PIN5                  5
+#define GPIOA_PIN6                  6
+#define GPIOA_ETH_RMII_CRS_DV       7
+#define GPIOA_USB_HS_BUSON          8
+#define GPIOA_OTG_FS_VBUS           9
+#define GPIOA_OTG_FS_ID             10
+#define GPIOA_OTG_FS_DM             11
+#define GPIOA_OTG_FS_DP             12
+#define GPIOA_JTAG_TMS              13
+#define GPIOA_JTAG_TCK              14
+#define GPIOA_JTAG_TDI              15
 
-#define GPIOB_USB_FS_BUSON          0U
-#define GPIOB_USB_HS_FAULT          1U
-#define GPIOB_BOOT1                 2U
-#define GPIOB_JTAG_TDO              3U
-#define GPIOB_JTAG_TRST             4U
-#define GPIOB_PIN5                  5U
-#define GPIOB_PIN6                  6U
-#define GPIOB_PIN7                  7U
-#define GPIOB_I2C1_SCL              8U
-#define GPIOB_I2C1_SDA              9U
-#define GPIOB_SPI2_SCK              10U
-#define GPIOB_PIN11                 11U
-#define GPIOB_OTG_HS_ID             12U
-#define GPIOB_OTG_HS_VBUS           13U
-#define GPIOB_OTG_HS_DM             14U
-#define GPIOB_OTG_HS_DP             15U
+#define GPIOB_USB_FS_BUSON          0
+#define GPIOB_USB_HS_FAULT          1
+#define GPIOB_BOOT1                 2
+#define GPIOB_JTAG_TDO              3
+#define GPIOB_JTAG_TRST             4
+#define GPIOB_PIN5                  5
+#define GPIOB_PIN6                  6
+#define GPIOB_PIN7                  7
+#define GPIOB_I2C1_SCL              8
+#define GPIOB_I2C1_SDA              9
+#define GPIOB_SPI2_SCK              10
+#define GPIOB_PIN11                 11
+#define GPIOB_OTG_HS_ID             12
+#define GPIOB_OTG_HS_VBUS           13
+#define GPIOB_OTG_HS_DM             14
+#define GPIOB_OTG_HS_DP             15
 
-#define GPIOC_PIN0                  0U
-#define GPIOC_ETH_RMII_MDC          1U
-#define GPIOC_SPI2_MISO             2U
-#define GPIOC_SPI2_MOSI             3U
-#define GPIOC_ETH_RMII_RXD0         4U
-#define GPIOC_ETH_RMII_RXD1         5U
-#define GPIOC_USART6_TX             6U
-#define GPIOC_USART6_RX             7U
-#define GPIOC_SD_D0                 8U
-#define GPIOC_SD_D1                 9U
-#define GPIOC_SD_D2                 10U
-#define GPIOC_SD_D3                 11U
-#define GPIOC_SD_CLK                12U
-#define GPIOC_LED                   13U
-#define GPIOC_OSC32_IN              14U
-#define GPIOC_OSC32_OUT             15U
+#define GPIOC_PIN0                  0
+#define GPIOC_ETH_RMII_MDC          1
+#define GPIOC_SPI2_MISO             2
+#define GPIOC_SPI2_MOSI             3
+#define GPIOC_ETH_RMII_RXD0         4
+#define GPIOC_ETH_RMII_RXD1         5
+#define GPIOC_USART6_TX             6
+#define GPIOC_USART6_RX             7
+#define GPIOC_SD_D0                 8
+#define GPIOC_SD_D1                 9
+#define GPIOC_SD_D2                 10
+#define GPIOC_SD_D3                 11
+#define GPIOC_SD_CLK                12
+#define GPIOC_LED                   13
+#define GPIOC_OSC32_IN              14
+#define GPIOC_OSC32_OUT             15
 
-#define GPIOD_PIN0                  0U
-#define GPIOD_PIN1                  1U
-#define GPIOD_SD_CMD                2U
-#define GPIOD_PIN3                  3U
-#define GPIOD_PIN4                  4U
-#define GPIOD_PIN5                  5U
-#define GPIOD_PIN6                  6U
-#define GPIOD_PIN7                  7U
-#define GPIOD_PIN8                  8U
-#define GPIOD_PIN9                  9U
-#define GPIOD_PIN10                 10U
-#define GPIOD_PIN11                 11U
-#define GPIOD_PIN12                 12U
-#define GPIOD_PIN13                 13U
-#define GPIOD_PIN14                 14U
-#define GPIOD_PIN15                 15U
+#define GPIOD_PIN0                  0
+#define GPIOD_PIN1                  1
+#define GPIOD_SD_CMD                2
+#define GPIOD_PIN3                  3
+#define GPIOD_PIN4                  4
+#define GPIOD_PIN5                  5
+#define GPIOD_PIN6                  6
+#define GPIOD_PIN7                  7
+#define GPIOD_PIN8                  8
+#define GPIOD_PIN9                  9
+#define GPIOD_PIN10                 10
+#define GPIOD_PIN11                 11
+#define GPIOD_PIN12                 12
+#define GPIOD_PIN13                 13
+#define GPIOD_PIN14                 14
+#define GPIOD_PIN15                 15
 
-#define GPIOE_PIN0                  0U
-#define GPIOE_PIN1                  1U
-#define GPIOE_PIN2                  2U
-#define GPIOE_PIN3                  3U
-#define GPIOE_PIN4                  4U
-#define GPIOE_PIN5                  5U
-#define GPIOE_PIN6                  6U
-#define GPIOE_PIN7                  7U
-#define GPIOE_PIN8                  8U
-#define GPIOE_PIN9                  9U
-#define GPIOE_PIN10                 10U
-#define GPIOE_PIN11                 11U
-#define GPIOE_PIN12                 12U
-#define GPIOE_PIN13                 13U
-#define GPIOE_PIN14                 14U
-#define GPIOE_PIN15                 15U
+#define GPIOE_PIN0                  0
+#define GPIOE_PIN1                  1
+#define GPIOE_PIN2                  2
+#define GPIOE_PIN3                  3
+#define GPIOE_PIN4                  4
+#define GPIOE_PIN5                  5
+#define GPIOE_PIN6                  6
+#define GPIOE_PIN7                  7
+#define GPIOE_PIN8                  8
+#define GPIOE_PIN9                  9
+#define GPIOE_PIN10                 10
+#define GPIOE_PIN11                 11
+#define GPIOE_PIN12                 12
+#define GPIOE_PIN13                 13
+#define GPIOE_PIN14                 14
+#define GPIOE_PIN15                 15
 
-#define GPIOF_PIN0                  0U
-#define GPIOF_PIN1                  1U
-#define GPIOF_PIN2                  2U
-#define GPIOF_PIN3                  3U
-#define GPIOF_PIN4                  4U
-#define GPIOF_PIN5                  5U
-#define GPIOF_PIN6                  6U
-#define GPIOF_PIN7                  7U
-#define GPIOF_PIN8                  8U
-#define GPIOF_PIN9                  9U
-#define GPIOF_PIN10                 10U
-#define GPIOF_USB_FS_FAULT          11U
-#define GPIOF_PIN12                 12U
-#define GPIOF_PIN13                 13U
-#define GPIOF_PIN14                 14U
-#define GPIOF_PIN15                 15U
+#define GPIOF_PIN0                  0
+#define GPIOF_PIN1                  1
+#define GPIOF_PIN2                  2
+#define GPIOF_PIN3                  3
+#define GPIOF_PIN4                  4
+#define GPIOF_PIN5                  5
+#define GPIOF_PIN6                  6
+#define GPIOF_PIN7                  7
+#define GPIOF_PIN8                  8
+#define GPIOF_PIN9                  9
+#define GPIOF_PIN10                 10
+#define GPIOF_USB_FS_FAULT          11
+#define GPIOF_PIN12                 12
+#define GPIOF_PIN13                 13
+#define GPIOF_PIN14                 14
+#define GPIOF_PIN15                 15
 
-#define GPIOG_PIN0                  0U
-#define GPIOG_PIN1                  1U
-#define GPIOG_PIN2                  2U
-#define GPIOG_PIN3                  3U
-#define GPIOG_PIN4                  4U
-#define GPIOG_PIN5                  5U
-#define GPIOG_PIN6                  6U
-#define GPIOG_PIN7                  7U
-#define GPIOG_PIN8                  8U
-#define GPIOG_PIN9                  9U
-#define GPIOG_SPI2_CS               10U
-#define GPIOG_ETH_RMII_TXEN         11U
-#define GPIOG_PIN12                 12U
-#define GPIOG_ETH_RMII_TXD0         13U
-#define GPIOG_ETH_RMII_TXD1         14U
-#define GPIOG_PIN15                 15U
+#define GPIOG_PIN0                  0
+#define GPIOG_PIN1                  1
+#define GPIOG_PIN2                  2
+#define GPIOG_PIN3                  3
+#define GPIOG_PIN4                  4
+#define GPIOG_PIN5                  5
+#define GPIOG_PIN6                  6
+#define GPIOG_PIN7                  7
+#define GPIOG_PIN8                  8
+#define GPIOG_PIN9                  9
+#define GPIOG_SPI2_CS               10
+#define GPIOG_ETH_RMII_TXEN         11
+#define GPIOG_PIN12                 12
+#define GPIOG_ETH_RMII_TXD0         13
+#define GPIOG_ETH_RMII_TXD1         14
+#define GPIOG_PIN15                 15
 
-#define GPIOH_OSC_IN                0U
-#define GPIOH_OSC_OUT               1U
-#define GPIOH_PIN2                  2U
-#define GPIOH_PIN3                  3U
-#define GPIOH_PIN4                  4U
-#define GPIOH_PIN5                  5U
-#define GPIOH_PIN6                  6U
-#define GPIOH_PIN7                  7U
-#define GPIOH_PIN8                  8U
-#define GPIOH_PIN9                  9U
-#define GPIOH_PIN10                 10U
-#define GPIOH_PIN11                 11U
-#define GPIOH_PIN12                 12U
-#define GPIOH_PIN13                 13U
-#define GPIOH_PIN14                 14U
-#define GPIOH_PIN15                 15U
+#define GPIOH_OSC_IN                0
+#define GPIOH_OSC_OUT               1
+#define GPIOH_PIN2                  2
+#define GPIOH_PIN3                  3
+#define GPIOH_PIN4                  4
+#define GPIOH_PIN5                  5
+#define GPIOH_PIN6                  6
+#define GPIOH_PIN7                  7
+#define GPIOH_PIN8                  8
+#define GPIOH_PIN9                  9
+#define GPIOH_PIN10                 10
+#define GPIOH_PIN11                 11
+#define GPIOH_PIN12                 12
+#define GPIOH_PIN13                 13
+#define GPIOH_PIN14                 14
+#define GPIOH_PIN15                 15
 
-#define GPIOI_PIN0                  0U
-#define GPIOI_PIN1                  1U
-#define GPIOI_PIN2                  2U
-#define GPIOI_PIN3                  3U
-#define GPIOI_PIN4                  4U
-#define GPIOI_PIN5                  5U
-#define GPIOI_PIN6                  6U
-#define GPIOI_PIN7                  7U
-#define GPIOI_PIN8                  8U
-#define GPIOI_PIN9                  9U
-#define GPIOI_PIN10                 10U
-#define GPIOI_PIN11                 11U
-#define GPIOI_PIN12                 12U
-#define GPIOI_PIN13                 13U
-#define GPIOI_PIN14                 14U
-#define GPIOI_PIN15                 15U
+#define GPIOI_PIN0                  0
+#define GPIOI_PIN1                  1
+#define GPIOI_PIN2                  2
+#define GPIOI_PIN3                  3
+#define GPIOI_PIN4                  4
+#define GPIOI_PIN5                  5
+#define GPIOI_PIN6                  6
+#define GPIOI_PIN7                  7
+#define GPIOI_PIN8                  8
+#define GPIOI_PIN9                  9
+#define GPIOI_PIN10                 10
+#define GPIOI_PIN11                 11
+#define GPIOI_PIN12                 12
+#define GPIOI_PIN13                 13
+#define GPIOI_PIN14                 14
+#define GPIOI_PIN15                 15
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
  * in the initialization code.
  * Please refer to the STM32 Reference Manual for details.
  */
-#define PIN_MODE_INPUT(n)           (0U << ((n) * 2U))
-#define PIN_MODE_OUTPUT(n)          (1U << ((n) * 2U))
-#define PIN_MODE_ALTERNATE(n)       (2U << ((n) * 2U))
-#define PIN_MODE_ANALOG(n)          (3U << ((n) * 2U))
+#define PIN_MODE_INPUT(n)           (0U << ((n) * 2))
+#define PIN_MODE_OUTPUT(n)          (1U << ((n) * 2))
+#define PIN_MODE_ALTERNATE(n)       (2U << ((n) * 2))
+#define PIN_MODE_ANALOG(n)          (3U << ((n) * 2))
 #define PIN_ODR_LOW(n)              (0U << (n))
 #define PIN_ODR_HIGH(n)             (1U << (n))
 #define PIN_OTYPE_PUSHPULL(n)       (0U << (n))
 #define PIN_OTYPE_OPENDRAIN(n)      (1U << (n))
-#define PIN_OSPEED_2M(n)            (0U << ((n) * 2U))
-#define PIN_OSPEED_25M(n)           (1U << ((n) * 2U))
-#define PIN_OSPEED_50M(n)           (2U << ((n) * 2U))
-#define PIN_OSPEED_100M(n)          (3U << ((n) * 2U))
-#define PIN_PUPDR_FLOATING(n)       (0U << ((n) * 2U))
-#define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2U))
-#define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2U))
-#define PIN_AFIO_AF(n, v)           ((v) << (((n) % 8U) * 4U))
+#define PIN_OSPEED_2M(n)            (0U << ((n) * 2))
+#define PIN_OSPEED_25M(n)           (1U << ((n) * 2))
+#define PIN_OSPEED_50M(n)           (2U << ((n) * 2))
+#define PIN_OSPEED_100M(n)          (3U << ((n) * 2))
+#define PIN_PUPDR_FLOATING(n)       (0U << ((n) * 2))
+#define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2))
+#define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2))
+#define PIN_AFIO_AF(n, v)           ((v##U) << ((n % 8) * 4))
 
 /*
  * GPIOA setup:
