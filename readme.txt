@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 3.0.0p4 ***
+- BLD: New "smart build" mode added to makefiles, now only used files are
+       compiled.
 - HAL: Change to the Serial_USB driver, now the INT endpoint is no more
        mandatory.
 - HAL: New DAC driver implementation for STM32F4xx.
