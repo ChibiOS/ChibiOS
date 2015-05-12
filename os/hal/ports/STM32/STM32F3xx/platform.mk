@@ -7,7 +7,7 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/hal_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/st_lld.c
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
-               $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/adc_lld.c
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/adc_lld.c
 endif
 ifneq ($(findstring HAL_USE_EXT TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/ext_lld_isr.c \
