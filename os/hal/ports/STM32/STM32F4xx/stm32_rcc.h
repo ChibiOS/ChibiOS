@@ -331,7 +331,6 @@
 #define rccResetADC3() rccResetAPB2(RCC_APB2RSTR_ADC3RST)
 /** @} */
 
-
 /**
  * @name    DAC peripheral specific RCC operations
  * @{
