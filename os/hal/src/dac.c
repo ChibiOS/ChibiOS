@@ -137,25 +137,9 @@ void dacStop(DACDriver *dacp) {
  * @param[in] channel   DAC channel number
  * @param[in] sample    value to be output
  *
- * @api
+ * @xclass
  */
-void dacPutChannel(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
-
-  osalSysLock();
-  dacPutChannelI(dacp, channel, sample);
-  osalSysUnlock();
-}
-
-/**
- * @brief   Outputs a value directly on a DAC channel.
- *
- * @param[in] dacp      pointer to the @p DACDriver object
- * @param[in] channel   DAC channel number
- * @param[in] sample    value to be output
- *
- * @iclass
- */
-void dacPutChannelI(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
+void dacPutChannelX(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
 
   osalDbgCheckClassI();
   osalDbgCheck(channel < DAC_MAX_CHANNELS);

@@ -437,14 +437,14 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 #endif
   default:
     chDbgAssert(false, "unexpected DAC mode");
-    break;
+    return;
   }
 
   dmaStreamSetMemory0(dacp->params->dma, dacp->samples);
   dmaStreamSetTransactionSize(dacp->params->dma, n);
-  dmaStreamSetMode(dacp->params->dma, dmamode |
-                              STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE |
-                              STM32_DMA_CR_HTIE  | STM32_DMA_CR_TCIE);
+  dmaStreamSetMode(dacp->params->dma, dmamode            |
+                                      STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE |
+                                      STM32_DMA_CR_HTIE  | STM32_DMA_CR_TCIE);
   dmaStreamEnable(dacp->params->dma);
 
   /* DAC configuration.*/
