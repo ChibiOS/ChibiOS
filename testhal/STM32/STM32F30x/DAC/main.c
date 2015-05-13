@@ -72,7 +72,7 @@ static void end_cb1(DACDriver *dacp, const dacsample_t *buffer, size_t n) {
   }
 
   if ((nz % 1000) == 0) {
-    palTogglePad(GPIOD, GPIOD_LED3);
+    palTogglePad(GPIOE, GPIOE_LED3_RED);
   }
 }
 
