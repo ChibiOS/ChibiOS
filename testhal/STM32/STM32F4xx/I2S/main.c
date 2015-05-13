@@ -67,7 +67,7 @@ int main(void) {
   i2sStartExchange(&I2SD2);
 
   /*
-   * Normal main() thread activity, if the button is pressed then the I2s
+   * Normal main() thread activity, if the button is pressed then the I2S
    * transfer is stopped.
    */
   while (true) {

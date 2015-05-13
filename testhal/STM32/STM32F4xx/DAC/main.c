@@ -143,7 +143,7 @@ int main(void) {
   gptStartContinuous(&GPTD6, 2U);
 
   /*
-   * Normal main() thread activity, if the button is pressed then the I2s
+   * Normal main() thread activity, if the button is pressed then the DAC
    * transfer is stopped.
    */
   while (true) {
