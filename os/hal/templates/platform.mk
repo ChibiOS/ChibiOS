@@ -2,6 +2,7 @@
 PLATFORMSRC = ${CHIBIOS}/os/hal/templates/hal_lld.c \
               ${CHIBIOS}/os/hal/templates/adc_lld.c \
               ${CHIBIOS}/os/hal/templates/can_lld.c \
+              ${CHIBIOS}/os/hal/templates/dac_lld.c \
               ${CHIBIOS}/os/hal/templates/ext_lld.c \
               ${CHIBIOS}/os/hal/templates/gpt_lld.c \
  			  ${CHIBIOS}/os/hal/templates/i2c_lld.c \

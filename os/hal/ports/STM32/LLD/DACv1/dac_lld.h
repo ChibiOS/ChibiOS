@@ -25,8 +25,6 @@
 #ifndef _DAC_LLD_H_
 #define _DAC_LLD_H_
 
-#include "stm32_tim.h"
-
 #if HAL_USE_DAC || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -150,7 +148,8 @@
 #if !defined(STM32_DAC_DAC2_CH2_DMA_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_DAC_DAC2_CH2_DMA_PRIORITY     2
 #endif
-
+/** @} */
+ 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
