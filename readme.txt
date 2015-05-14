@@ -76,6 +76,7 @@
 *** 3.0.0p5 ***
 - HAL: Added DAC support to all STM32 sub-platforms, added another demo for
        the STM32F3xx.
+- DEM: Fixed wrong comment in ARMCM4-STM32F401RE-NUCLEO demo (bug #595).
 - HAL: Fixed STM32 SDC LLD driver initialization with Asserts disabled
        (bug #594).
 
