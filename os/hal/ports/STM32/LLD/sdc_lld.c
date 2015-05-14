@@ -348,9 +348,7 @@ void sdc_lld_init(void) {
   sdcObjectInit(&SDCD1);
   SDCD1.thread = NULL;
   SDCD1.dma    = STM32_DMA_STREAM(STM32_SDC_SDIO_DMA_STREAM);
-#if CH_DBG_ENABLE_ASSERTS
   SDCD1.sdio   = SDIO;
-#endif
 }
 
 /**
