@@ -16,8 +16,29 @@
 
 #include "nil.h"
 
+#if !defined(SYSTEM_CLOCK)
+#define SYSTEM_CLOCK 8000000U
+#endif
+
 /*
- * Blinker thread #1.
+ * @brief   System Timer handler.
+ */
+CH_IRQ_HANDLER(SysTick_Handler) {
+
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromISR();
+  chSysTimerHandlerI();
+  chSysUnlockFromISR();
+
+  CH_IRQ_EPILOGUE();
+}
+
+static uint32_t seconds_counter;
+static uint32_t minutes_counter;
+
+/*
+ * Seconds counter thread.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
@@ -26,6 +47,21 @@ static THD_FUNCTION(Thread1, arg) {
 
   while (true) {
     chThdSleepMilliseconds(1000);
+    seconds_counter++;
+  }
+}
+
+/*
+ * Minutes counter thread.
+ */
+static THD_WORKING_AREA(waThread2, 128);
+static THD_FUNCTION(Thread2, arg) {
+
+  (void)arg;
+
+  while (true) {
+    chThdSleepSeconds(60);
+    minutes_counter++;
   }
 }
 
@@ -34,13 +70,23 @@ static THD_FUNCTION(Thread1, arg) {
  * match NIL_CFG_NUM_THREADS.
  */
 THD_TABLE_BEGIN
-  THD_TABLE_ENTRY(waThread1, "sleeper", Thread1, NULL)
+THD_TABLE_ENTRY(waThread1, "counter1", Thread1, NULL)
+THD_TABLE_ENTRY(waThread2, "counter2", Thread2, NULL)
 THD_TABLE_END
 
 /*
  * Application entry point.
  */
 int main(void) {
+
+  /*
+   * Hardware initialization, in this simple demo just the systick timer is
+   * initialized.
+   */
+  SysTick->LOAD = SYSTEM_CLOCK / NIL_CFG_ST_FREQUENCY - (systime_t)1;
+  SysTick->VAL = (uint32_t)0;
+  SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk |
+                  SysTick_CTRL_ENABLE_Msk;
 
   /*
    * System initializations.
