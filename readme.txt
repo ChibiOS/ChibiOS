@@ -81,6 +81,7 @@
        (bug #594).
 
 *** 3.0.0p4 ***
+- NEW: Added no-DMA mode to STM32 I2Cv2 driver.
 - BLD: New "smart build" mode added to makefiles, now only used files are
        compiled.
 - HAL: Change to the Serial_USB driver, now the INT endpoint is no more
