@@ -52,8 +52,8 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/hal_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/adc_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/ext_lld_isr.c \
-               $(CHIBIOS)/os/hal/ports/STM32/LLD/dac_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/ext_lld.c \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/DACv1/dac_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/GPIOv2/pal_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/I2Cv1/i2c_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv1/spi_lld.c \
