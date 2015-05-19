@@ -246,12 +246,6 @@ static void uart_lld_serve_tx_end_irq(UARTDriver *uartp, uint32_t flags) {
 
   dmaStreamDisable(uartp->dmatx);
 
-  /* Only enable TC interrupt if there's a callback attached to it.
-     We have to do it here, rather than earlier, because TC flag is set
-     until transmission starts.*/
-  if (uartp->config->txend2_cb != NULL)
-    uartp->usart->CR1 |= USART_CR1_TCIE;
-
   /* A callback is generated, if enabled, after a completed transfer.*/
   uartp->txstate = UART_TX_COMPLETE;
   if (uartp->config->txend1_cb != NULL)
@@ -283,7 +277,7 @@ static void serve_usart_irq(UARTDriver *uartp) {
       uartp->config->rxerr_cb(uartp, translate_errors(isr));
   }
 
-  if ((isr & USART_ISR_TC) && (cr1 & USART_CR1_TCIE))  {
+  if ((isr & USART_ISR_TC) && (cr1 & USART_CR1_TCIE)) {
     /* TC interrupt disabled.*/
     u->CR1 = cr1 & ~USART_CR1_TCIE;
 
@@ -530,11 +524,20 @@ void uart_lld_stop(UARTDriver *uartp) {
  */
 void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 
-  /* TX DMA channel preparation and start.*/
+  /* TX DMA channel preparation.*/
   dmaStreamSetMemory0(uartp->dmatx, txbuf);
   dmaStreamSetTransactionSize(uartp->dmatx, n);
   dmaStreamSetMode(uartp->dmatx, uartp->dmamode    | STM32_DMA_CR_DIR_M2P |
                                  STM32_DMA_CR_MINC | STM32_DMA_CR_TCIE);
+
+  /* Only enable TC interrupt if there's a callback attached to it.
+     Also we need to clear TC flag which could be set before. */
+  if (uartp->config->txend2_cb != NULL) {
+    uartp->usart->ICR = USART_ICR_TCCF;
+    uartp->usart->CR1 |= USART_CR1_TCIE;
+  }
+
+  /* Starting transfer.*/
   dmaStreamEnable(uartp->dmatx);
 }
 
@@ -552,6 +555,7 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const void *txbuf) {
 size_t uart_lld_stop_send(UARTDriver *uartp) {
 
   dmaStreamDisable(uartp->dmatx);
+
   return dmaStreamGetTransactionSize(uartp->dmatx);
 }
 
@@ -571,11 +575,13 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
   /* Stopping previous activity (idle state).*/
   dmaStreamDisable(uartp->dmarx);
 
-  /* RX DMA channel preparation and start.*/
+  /* RX DMA channel preparation.*/
   dmaStreamSetMemory0(uartp->dmarx, rxbuf);
   dmaStreamSetTransactionSize(uartp->dmarx, n);
   dmaStreamSetMode(uartp->dmarx, uartp->dmamode    | STM32_DMA_CR_DIR_P2M |
                                  STM32_DMA_CR_MINC | STM32_DMA_CR_TCIE);
+
+  /* Starting transfer.*/
   dmaStreamEnable(uartp->dmarx);
 }
 
@@ -596,6 +602,7 @@ size_t uart_lld_stop_receive(UARTDriver *uartp) {
   dmaStreamDisable(uartp->dmarx);
   n = dmaStreamGetTransactionSize(uartp->dmarx);
   set_rx_idle_loop(uartp);
+
   return n;
 }
 
