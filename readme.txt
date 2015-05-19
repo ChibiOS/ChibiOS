@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.0p5 ***
+- HAL: Added no-DMA mode to the STM32 I2Cv2 driver.
 - HAL: Added DAC support to all STM32 sub-platforms, added another demo for
        the STM32F3xx.
 - HAL: Fixed STM32 USARTv1: incorrect txend2_cb callback behavior (bug #596).
