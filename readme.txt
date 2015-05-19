@@ -71,6 +71,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.6.9 ***
+- FIX: Fixed STM32 USARTv1: incorrect txend2_cb callback behavior (bug #596).
+
 *** 2.6.8 ***
 - FIX: Fixed spurious TC interrupt in STM32 UART (v1 and v2) driver (bug #584).
 - FIX: Fixed invalid checks on STM32L1xx LSI and LSE clocks (bug #583).
