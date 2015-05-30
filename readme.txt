@@ -72,7 +72,8 @@
 *****************************************************************************
 
 *** 2.6.9 ***
-- FIX: Fixed STM32 USARTv1: incorrect txend2_cb callback behavior (bug #596).
+- FIX: Fixed issue in DMA drivers when channels share ISRs (bug #597).
+- FIX: Fixed STM32 USARTv1: incorrect txend2_cb callback behaviour (bug #596).
 
 *** 2.6.8 ***
 - FIX: Fixed spurious TC interrupt in STM32 UART (v1 and v2) driver (bug #584).
