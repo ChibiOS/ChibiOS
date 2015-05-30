@@ -65,6 +65,7 @@
 #define STM32_ADVANCED_DMA                  FALSE
 #define STM32_HAS_DMA1                      TRUE
 #define STM32_HAS_DMA2                      FALSE
+#define STM32_DMA_STREAMS                   5
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -219,6 +220,7 @@
 #define STM32_ADVANCED_DMA                  FALSE
 #define STM32_HAS_DMA1                      TRUE
 #define STM32_HAS_DMA2                      FALSE
+#define STM32_DMA_STREAMS                   7
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -380,6 +382,7 @@
 #define STM32_ADVANCED_DMA                  FALSE
 #define STM32_HAS_DMA1                      TRUE
 #define STM32_HAS_DMA2                      FALSE
+#define STM32_DMA_STREAMS                   5
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -522,6 +525,7 @@
 #define STM32_ADVANCED_DMA                  FALSE
 #define STM32_HAS_DMA1                      TRUE
 #define STM32_HAS_DMA2                      FALSE
+#define STM32_DMA_STREAMS                   5
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -662,6 +666,7 @@
 #define STM32_ADVANCED_DMA                  FALSE
 #define STM32_HAS_DMA1                      TRUE
 #define STM32_HAS_DMA2                      FALSE
+#define STM32_DMA_STREAMS                   5
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -799,6 +804,7 @@
 #define STM32_ADVANCED_DMA                  FALSE
 #define STM32_HAS_DMA1                      TRUE
 #define STM32_HAS_DMA2                      FALSE
+#define STM32_DMA_STREAMS                   5
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE

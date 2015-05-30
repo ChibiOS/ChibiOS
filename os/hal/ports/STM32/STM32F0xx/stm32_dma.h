@@ -33,12 +33,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Total number of DMA streams.
- * @note    This is the total number of streams among all the DMA units.
- */
-#define STM32_DMA_STREAMS           5
-
-/**
  * @brief   Mask of the ISR bits passed to the DMA callback functions.
  */
 #define STM32_DMA_ISR_MASK          0x0F
@@ -113,6 +107,10 @@
 #define STM32_DMA1_STREAM3          STM32_DMA_STREAM(2)
 #define STM32_DMA1_STREAM4          STM32_DMA_STREAM(3)
 #define STM32_DMA1_STREAM5          STM32_DMA_STREAM(4)
+#if (STM32_DMA_STREAMS > 5) || defined(__DOXYGEN__)
+#define STM32_DMA1_STREAM6          STM32_DMA_STREAM(5)
+#define STM32_DMA1_STREAM7          STM32_DMA_STREAM(6)
+#endif
 /** @} */
 
 /**
@@ -171,6 +169,18 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !defined(STM32_ADVANCED_DMA)
+#error "missing STM32_ADVANCED_DMA definition in registry"
+#endif
+
+#if !defined(STM32_DMA_STREAMS)
+#error "missing STM32_DMA_STREAMS definition in registry"
+#endif
+
+#if STM32_ADVANCED_DMA == TRUE
+#error "DMAv1 driver does not support STM32_ADVANCED_DMA"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

@@ -178,7 +178,7 @@
 
 #if !defined(STM32_DMA_STREAMS)
 #error "missing STM32_DMA_STREAMS definition in registry"
-#error
+#endif
 
 #if !defined(STM32_DMA_RELOCATION)
 #error "missing STM32_DMA_RELOCATION definition in registry"
