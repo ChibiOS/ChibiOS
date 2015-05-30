@@ -194,8 +194,8 @@ CH_IRQ_HANDLER(Vector6C) {
   flags = (DMA1->ISR >> 24) & STM32_DMA_ISR_MASK;
   if (flags & STM32_DMA_ISR_MASK) {
     DMA1->IFCR = flags << 24;
-    if (dma_isr_redir[7].dma_func)
-      dma_isr_redir[7].dma_func(dma_isr_redir[7].dma_param, flags);
+    if (dma_isr_redir[6].dma_func)
+      dma_isr_redir[6].dma_func(dma_isr_redir[6].dma_param, flags);
   }
 #endif
 
