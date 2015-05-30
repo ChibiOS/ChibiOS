@@ -66,14 +66,14 @@
  *          instead: @p STM32_DMA1_STREAM1, @p STM32_DMA1_STREAM2 etc.
  */
 const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
-  {DMA1_Channel1, &DMA1->IFCR, 0, 0, DMA1_Channel1_IRQn},
-  {DMA1_Channel2, &DMA1->IFCR, 4, 1, DMA1_Channel2_3_IRQn},
-  {DMA1_Channel3, &DMA1->IFCR, 8, 2, DMA1_Channel2_3_IRQn},
-  {DMA1_Channel4, &DMA1->IFCR, 12, 3, DMA1_Channel4_5_IRQn},
-  {DMA1_Channel5, &DMA1->IFCR, 16, 4, DMA1_Channel4_5_IRQn},
+  {DMA1_Channel1, &DMA1->IFCR, 0x0001, 0, 0, DMA1_Channel1_IRQn},
+  {DMA1_Channel2, &DMA1->IFCR, 0x0006, 4, 1, DMA1_Channel2_3_IRQn},
+  {DMA1_Channel3, &DMA1->IFCR, 0x0006, 8, 2, DMA1_Channel2_3_IRQn},
+  {DMA1_Channel4, &DMA1->IFCR, 0x0078, 12, 3, DMA1_Channel4_5_IRQn},
+  {DMA1_Channel5, &DMA1->IFCR, 0x0078, 16, 4, DMA1_Channel4_5_IRQn},
 #if STM32_DMA_STREAMS > 5
-  {DMA1_Channel6, &DMA1->IFCR, 20, 5, DMA1_Channel4_5_6_7_IRQn},
-  {DMA1_Channel7, &DMA1->IFCR, 24, 6, DMA1_Channel4_5_6_7_IRQn},
+  {DMA1_Channel6, &DMA1->IFCR, 0x0078, 20, 5, DMA1_Channel4_5_6_7_IRQn},
+  {DMA1_Channel7, &DMA1->IFCR, 0x0078, 24, 6, DMA1_Channel4_5_6_7_IRQn}
 #endif
 };
 
@@ -213,12 +213,12 @@ OSAL_IRQ_HANDLER(Vector6C) {
 void dmaInit(void) {
   int i;
 
-  dma_streams_mask = 0;
+  dma_streams_mask = 0U;
   for (i = 0; i < STM32_DMA_STREAMS; i++) {
-    _stm32_dma_streams[i].channel->CCR = 0;
+    _stm32_dma_streams[i].channel->CCR = 0U;
     dma_isr_redir[i].dma_func = NULL;
   }
-  DMA1->IFCR = 0xFFFFFFFF;
+  DMA1->IFCR = 0xFFFFFFFFU;
 }
 
 /**
@@ -240,8 +240,8 @@ void dmaInit(void) {
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
  * @return              The operation status.
- * @retval FALSE        no error, stream taken.
- * @retval TRUE         error, stream already taken.
+ * @retval false        no error, stream taken.
+ * @retval true         error, stream already taken.
  *
  * @special
  */
@@ -253,27 +253,28 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
   osalDbgCheck(dmastp != NULL);
 
   /* Checks if the stream is already taken.*/
-  if ((dma_streams_mask & (1 << dmastp->selfindex)) != 0)
-    return TRUE;
+  if ((dma_streams_mask & (1U << (uint32_t)dmastp->selfindex)) != 0U) {
+    return true;
+  }
 
   /* Marks the stream as allocated.*/
   dma_isr_redir[dmastp->selfindex].dma_func  = func;
   dma_isr_redir[dmastp->selfindex].dma_param = param;
-  dma_streams_mask |= (1 << dmastp->selfindex);
+  dma_streams_mask |= (1U << (uint32_t)dmastp->selfindex);
 
   /* Enabling DMA clocks required by the current streams set.*/
-  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) != 0)
-    rccEnableDMA1(FALSE);
+  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) != 0U) {
+    rccEnableDMA1(false);
+  }
 
   /* Putting the stream in a safe state.*/
   dmaStreamDisable(dmastp);
   dmastp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
 
-  /* Enables the associated IRQ vector if a callback is defined.*/
-  if (func != NULL)
-    nvicEnableVector(dmastp->vector, priority);
+  /* Enables the associated IRQ vector.*/
+  nvicEnableVector(dmastp->vector, priority);
 
-  return FALSE;
+  return false;
 }
 
 /**
@@ -294,18 +295,22 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   osalDbgCheck(dmastp != NULL);
 
   /* Check if the streams is not taken.*/
-  osalDbgAssert((dma_streams_mask & (1 << dmastp->selfindex)) != 0,
+  osalDbgAssert((dma_streams_mask & (1U << (uint32_t)dmastp->selfindex)) != 0U,
                 "not allocated");
 
-  /* Disables the associated IRQ vector.*/
-  nvicDisableVector(dmastp->vector);
-
   /* Marks the stream as not allocated.*/
-  dma_streams_mask &= ~(1 << dmastp->selfindex);
+  dma_streams_mask &= ~(1U << (uint32_t)dmastp->selfindex);
+
+  /* Disables the associated IRQ vector if also the sharing channels are
+     also disabled.*/
+  if ((dma_streams_mask & dmastp->sharedmask) == 0U) {
+    nvicDisableVector(dmastp->vector);
+  }
 
   /* Shutting down clocks that are no more required, if any.*/
-  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0)
-    rccDisableDMA1(FALSE);
+  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0U) {
+    rccDisableDMA1(false);
+  }
 }
 
 #endif /* STM32_DMA_REQUIRED */

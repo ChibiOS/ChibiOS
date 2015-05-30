@@ -75,6 +75,7 @@
 
 *** 3.0.0p6 ***
 - HAL: Added support for extra DMA channels in STM32F072 devices.
+- HAL: Fixed issue in DMA drivers when channels share ISRs (bug #597).
 
 *** 3.0.0p5 ***
 - HAL: Added no-DMA mode to the STM32 I2Cv2 driver.

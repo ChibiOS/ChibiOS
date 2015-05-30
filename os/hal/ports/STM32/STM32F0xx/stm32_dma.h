@@ -192,6 +192,8 @@
 typedef struct {
   DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
   volatile uint32_t     *ifcr;          /**< @brief Associated IFCR reg.    */
+  uint32_t              sharedmask;     /**< @brief Mask of channels sharing
+                                             the same ISR.                  */
   uint8_t               ishift;         /**< @brief Bits offset in xIFCR
                                              register.                      */
   uint8_t               selfindex;      /**< @brief Index to self in array. */
