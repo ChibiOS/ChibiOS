@@ -181,7 +181,7 @@ OSAL_IRQ_HANDLER(Vector6C) {
   }
 
 #if STM32_DMA_STREAMS > 5
-  /* Check on channel 5.*/
+  /* Check on channel 6.*/
   flags = (DMA1->ISR >> 20) & STM32_DMA_ISR_MASK;
   if (flags & STM32_DMA_ISR_MASK) {
     DMA1->IFCR = flags << 20;
@@ -189,12 +189,12 @@ OSAL_IRQ_HANDLER(Vector6C) {
       dma_isr_redir[5].dma_func(dma_isr_redir[5].dma_param, flags);
   }
 
-  /* Check on channel 6.*/
+  /* Check on channel 7.*/
   flags = (DMA1->ISR >> 24) & STM32_DMA_ISR_MASK;
   if (flags & STM32_DMA_ISR_MASK) {
     DMA1->IFCR = flags << 24;
-    if (dma_isr_redir[7].dma_func)
-      dma_isr_redir[7].dma_func(dma_isr_redir[7].dma_param, flags);
+    if (dma_isr_redir[6].dma_func)
+      dma_isr_redir[6].dma_func(dma_isr_redir[6].dma_param, flags);
   }
 #endif
 
