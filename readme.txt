@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 3.0.0p6 ***
+- HAL: Added support for extra DMA channels in STM32F072 devices.
+
 *** 3.0.0p5 ***
 - HAL: Added no-DMA mode to the STM32 I2Cv2 driver.
 - HAL: Added DAC support to all STM32 sub-platforms, added another demo for
