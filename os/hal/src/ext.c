@@ -191,8 +191,8 @@ void extSetChannelModeI(EXTDriver *extp,
   oldcp = (EXTChannelConfig *)&extp->config->channels[channel];
   /*lint -restore*/
 
-  /* Overwiting the old channels configuration then the channel is reconfigured
-     by the low level driver.*/
+  /* Overwriting the old channels configuration then the channel is
+     reconfigured by the low level driver.*/
   *oldcp = *extcp;
   ext_lld_channel_enable(extp, channel);
 }
