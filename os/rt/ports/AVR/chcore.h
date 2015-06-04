@@ -101,6 +101,9 @@ struct port_extctx {
   uint8_t       sr;
   uint8_t       r1;
   uint8_t       r0;
+#ifdef __AVR_3_BYTE_PC__
+  uint8_t       pcx;
+#endif
   uint16_t      pc;
 };
 
@@ -131,6 +134,9 @@ struct port_intctx {
   uint8_t       r4;
   uint8_t       r3;
   uint8_t       r2;
+#ifdef __AVR_3_BYTE_PC__
+  uint8_t       pcx;
+#endif
   uint8_t       pcl;
   uint8_t       pch;
 };
@@ -150,6 +156,19 @@ struct context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
+#ifdef __AVR_3_BYTE_PC__
+#define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
+  tp->p_ctx.sp = (struct port_intctx*)((uint8_t *)workspace + wsize  -      \
+                                  sizeof(struct port_intctx));              \
+  tp->p_ctx.sp->r2  = (int)pf;                                              \
+  tp->p_ctx.sp->r3  = (int)pf >> 8;                                         \
+  tp->p_ctx.sp->r4  = (int)arg;                                             \
+  tp->p_ctx.sp->r5  = (int)arg >> 8;                                        \
+  tp->p_ctx.sp->pcx = 0;                                               \
+  tp->p_ctx.sp->pcl = (int)_port_thread_start >> 8;                         \
+  tp->p_ctx.sp->pch = (int)_port_thread_start;                              \
+}
+#else /* __AVR_3_BYTE_PC__ */
 #define PORT_SETUP_CONTEXT(tp, workspace, wsize, pf, arg) {                 \
   tp->p_ctx.sp = (struct port_intctx*)((uint8_t *)workspace + wsize  -      \
                                   sizeof(struct port_intctx));              \
@@ -160,6 +179,7 @@ struct context {
   tp->p_ctx.sp->pcl = (int)_port_thread_start >> 8;                         \
   tp->p_ctx.sp->pch = (int)_port_thread_start;                              \
 }
+#endif /* __AVR_3_BYTE_PC__ */
 
 /**
  * @brief   Stack size for the system idle thread.
