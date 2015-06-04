@@ -64,33 +64,27 @@ typedef uint8_t         eventflags_t;   /**< Event flags.                   */
 typedef int8_t          cnt_t;          /**< Resources counter.             */
 
 /**
- * @brief   Inline function modifier.
- */
-#define INLINE inline
-
-/**
  * @brief   ROM constant modifier.
  * @note    It is set to use the "const" keyword in this port.
  */
 #define ROMCONST const
 
 /**
- * @brief   Packed structure modifier (within).
- * @note    It uses the "packed" GCC attribute.
+ * @brief   Makes functions not inlineable.
+ * @note    If the compiler does not support such attribute then the
+ *          realtime counter precision could be degraded.
  */
-#define PACK_STRUCT_STRUCT __attribute__((packed))
+#define NOINLINE __attribute__((noinline))
 
 /**
- * @brief   Packed structure modifier (before).
- * @note    Empty in this port.
+ * @brief   Optimized thread function declaration macro.
  */
-#define PACK_STRUCT_BEGIN
+#define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
- * @brief   Packed structure modifier (after).
- * @note    Empty in this port.
+ * @brief   Packed variable specifier.
  */
-#define PACK_STRUCT_END
+#define PACKED_VAR __attribute__((packed))
 
 #endif /* _CHTYPES_H_ */
 
