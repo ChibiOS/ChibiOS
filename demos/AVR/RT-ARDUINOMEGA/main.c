@@ -19,8 +19,10 @@
 #include "test.h"
 
 static WORKING_AREA(waThread1, 32);
-static msg_t Thread1(void *arg) {
+static THD_FUNCTION(Thread1, arg) {
 
+  (void)arg;
+  chRegSetThreadName("Blinker");
   while (true) {
     palTogglePad(IOPORT2, PORTB_LED1);
     chThdSleepMilliseconds(1000);
