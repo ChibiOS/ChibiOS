@@ -164,7 +164,7 @@ struct context {
   tp->p_ctx.sp->r3  = (int)pf >> 8;                                         \
   tp->p_ctx.sp->r4  = (int)arg;                                             \
   tp->p_ctx.sp->r5  = (int)arg >> 8;                                        \
-  tp->p_ctx.sp->pcx = 0;                                               \
+  tp->p_ctx.sp->pcx = (int)_port_thread_start >> 16;                        \
   tp->p_ctx.sp->pcl = (int)_port_thread_start >> 8;                         \
   tp->p_ctx.sp->pch = (int)_port_thread_start;                              \
 }
