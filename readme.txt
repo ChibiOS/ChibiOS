@@ -75,6 +75,7 @@
 
 *** 3.0.0p6 ***
 - HAL: Added support for extra DMA channels in STM32F072 devices.
+- HAL: Fixed error in platofm_f105_f107.mk file (bug #599).
 - HAL: Fixed issue in DMA drivers when channels share ISRs (bug #597).
 
 *** 3.0.0p5 ***
