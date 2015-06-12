@@ -331,6 +331,18 @@ struct context {
 #define PORT_FAST_IRQ_HANDLER(id) void id(void)
 
 /**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_PRIORITY(n)                                       \
+  (((n) >= 0U) && ((n) < INTC_PRIORITY_LEVELS))
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n)                                \
+    (((n) >= 0U) && ((n) < INTC_PRIORITY_LEVELS))
+
+/**
  * @brief   Performs a context switch between two threads.
  * @details This is the most critical code in any port, this function
  *          is responsible for the context switch between 2 threads.

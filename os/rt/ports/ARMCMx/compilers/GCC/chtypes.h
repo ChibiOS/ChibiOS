@@ -40,7 +40,6 @@
  */
 #if !defined(FALSE) || defined(__DOXYGEN__)
 #define FALSE               0
-
 #endif
 
 /**

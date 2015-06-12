@@ -210,8 +210,6 @@ else
 	@$(OD) $(ODFLAGS) $< > $@
 	@echo
 	@$(SZ) $<
-	@echo
-	@echo Done
 endif
 
 %.list: %.elf $(LDSCRIPT)

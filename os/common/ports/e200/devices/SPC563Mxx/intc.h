@@ -41,6 +41,11 @@
 #define INTC_EOIR_ADDR      (INTC_BASE + 0x18)
 /** @} */
 
+/**
+ * @brief   INTC priority levels.
+ */
+#define INTC_PRIORITY_LEVELS 16U
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
