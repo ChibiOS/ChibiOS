@@ -76,8 +76,9 @@
 *** 3.0.0p6 ***
 - NIL: Added INTC priorities check to the e200z port.
 - RT:  Added INTC priorities check to the e200z port.
-- DEM: Fixed missing paths in e200z demos (bug #600).
 - HAL: Added support for extra DMA channels in STM32F072 devices.
+- HAL: Fixed errors in STM32 OTGv1 driver (bug #601).
+- DEM: Fixed missing paths in e200z demos (bug #600).
 - HAL: Fixed error in platform_f105_f107.mk file (bug #599).
 - HAL: Fixed issue in DMA drivers when channels share ISRs (bug #597).
 
