@@ -152,6 +152,9 @@
 /**
  * @brief Configuration of the Cortex-M3 Processor and Core Peripherals 
  */
+/* CHIBIOS FIX */
+#define __CM3_REV                 0x0201  /*!< Core revision r2p1, not sure it is right */
+/* END CHIBIOS FIX */
 #ifdef STM32F10X_XL
  #define __MPU_PRESENT             1 /*!< STM32 XL-density devices provide an MPU */
 #else
