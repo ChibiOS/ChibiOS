@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.9 ***
+- FIX: Fixed errors in STM32 OTGv1 driver (bug #601).
 - FIX: Fixed issue in DMA drivers when channels share ISRs (bug #597).
 - FIX: Fixed STM32 USARTv1: incorrect txend2_cb callback behavior (bug #596).
 
