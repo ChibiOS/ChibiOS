@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.0p6 ***
+- DEM: Fixed the FatFS demo timeout, now it is expressed in milliseconds.
 - DEM: Added -Wundef to all the demos and test programs in order to find
        common error cases.
 - NIL: Added INTC priorities check to the e200z port.
