@@ -74,9 +74,12 @@
 *****************************************************************************
 
 *** 3.0.0p6 ***
+- DEM: Added -Wundef to all the demos and test programs in order to find
+       common error cases.
 - NIL: Added INTC priorities check to the e200z port.
 - RT:  Added INTC priorities check to the e200z port.
 - HAL: Added support for extra DMA channels in STM32F072 devices.
+- HAL: Fixed wrong macro names in STM32F0xx HAL driver (bug #605).
 - HAL: Fixed wrong check on ADC3 in STM32F3xx ADC driver (bug #604).
 - HAL: Fixed wrong macro names in STM32F3xx HAL driver (bug #603).
 - HAL: Fixed errors in STM32 OTGv1 driver (bug #601).
