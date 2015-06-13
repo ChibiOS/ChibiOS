@@ -34,15 +34,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Maximum endpoint address.
- */
-#if !STM32_USB_USE_OTG2 || defined(__DOXYGEN__)
-#define USB_MAX_ENDPOINTS                   3
-#else
-#define USB_MAX_ENDPOINTS                   5
-#endif
-
-/**
  * @brief   Status stage handling method.
  */
 #define USB_EP0_STATUS_STAGE                USB_EP0_STATUS_STAGE_SW
@@ -145,6 +136,15 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/**
+ * @brief   Maximum endpoint address.
+ */
+#if !STM32_USB_USE_OTG2 || defined(__DOXYGEN__)
+#define USB_MAX_ENDPOINTS                   3
+#else
+#define USB_MAX_ENDPOINTS                   5
+#endif
 
 #if STM32_USB_USE_OTG1 && !STM32_HAS_OTG1
 #error "OTG1 not present in the selected device"
