@@ -256,7 +256,7 @@
 #error "ADC3 not present in the selected device"
 #endif
 
-#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC2 && !STM32_HAS_ADC4
+#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC3 && !STM32_HAS_ADC4
 #error "ADC4 not present in the selected device"
 #endif
 
