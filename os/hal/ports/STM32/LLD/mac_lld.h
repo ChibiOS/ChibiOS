@@ -144,12 +144,11 @@
 
 /**
  * @brief   PHY detection timeout.
- * @details Timeout, in milliseconds, for PHY address detection, if a PHY
- *          is not detected within the timeout then the driver halts during
- *          initialization. This setting applies only if the PHY address is
- *          not explicitly set in the board header file using
- *          @p BOARD_PHY_ADDRESS. A zero value disables the timeout and a
- *          single search path is performed.
+ * @details Timeout for PHY address detection, the scan for a PHY is performed
+ *          the specified number of times before invoking the failure handler.
+ *          This setting applies only if the PHY address is not explicitly
+ *          set in the board header file using @p BOARD_PHY_ADDRESS. A zero
+ *          value disables the timeout and a single search is performed.
  */
 #if !defined(STM32_MAC_PHY_TIMEOUT) || defined(__DOXYGEN__)
 #define STM32_MAC_PHY_TIMEOUT               100

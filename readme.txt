@@ -80,6 +80,7 @@
 - NIL: Added INTC priorities check to the e200z port.
 - RT:  Added INTC priorities check to the e200z port.
 - HAL: Added support for extra DMA channels in STM32F072 devices.
+- HAL: Fixed dependency between STM32 MAC driver and RT (bug #606).
 - HAL: Fixed wrong macro names in STM32F0xx HAL driver (bug #605).
 - HAL: Fixed wrong check on ADC3 in STM32F3xx ADC driver (bug #604).
 - HAL: Fixed wrong macro names in STM32F3xx HAL driver (bug #603).
