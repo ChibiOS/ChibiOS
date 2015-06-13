@@ -36,6 +36,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   This RTC implementation does not support callbacks.
+ */
+#define RTC_SUPPORTS_CALLBACKS    FALSE
+
+/**
  * @brief   Two alarm comparators available on STM32F4x and STM32F2x.
  */
 #if !defined(STM32F0XX)
