@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.9 ***
+- FIX: Fixed wrong macro names in STM32F3xx HAL driver (bug #603).
 - FIX: Fixed STM32 RTCv2 driver missing RTC_SUPPORTS_CALLBACKS macro
   (bug #602).
 - FIX: Fixed errors in STM32 OTGv1 driver (bug #601).
