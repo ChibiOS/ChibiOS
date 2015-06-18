@@ -98,10 +98,13 @@ _IVOR10:
         lis         %r3, 0x0800             /* DIS bit mask.                */
         mtspr       336, %r3                /* TSR register.                */
 
-#if PPC_USE_IRQ_PREEMPTION
-        /* Allows preemption while executing the software handler.*/
-        wrteei      1
+        /* Restoring pre-IRQ MSR register value.*/
+        mfSRR1      %r0
+#if !PPC_USE_IRQ_PREEMPTION
+        /* No preemption, keeping EE disabled.*/
+        se_bclri    %r0, 16                 /* EE = bit 16.                 */
 #endif
+        mtMSR       %r0
 
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          _dbg_check_enter_isr
@@ -174,10 +177,13 @@ _IVOR4:
         lwz         %r3, 0(%r3)
         mtCTR       %r3                     /* Software handler address.    */
 
-#if PPC_USE_IRQ_PREEMPTION
-        /* Allows preemption while executing the software handler.*/
-        wrteei      1
+        /* Restoring pre-IRQ MSR register value.*/
+        mfSRR1      %r0
+#if !PPC_USE_IRQ_PREEMPTION
+        /* No preemption, keeping EE disabled.*/
+        se_bclri    %r0, 16                 /* EE = bit 16.                 */
 #endif
+        mtMSR       %r0
 
         /* Exectes the software handler.*/
         bctrl
