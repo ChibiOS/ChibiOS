@@ -33,6 +33,11 @@
  * @name    ISR names and numbers remapping
  * @{
  */
+/*
+ * CAN units.
+ */
+#define STM32_CAN1_UNIFIED_HANDLER  VectorB8
+#define STM32_CAN1_UNIFIED_NUMBER   30
 
 /*
  * I2C units.

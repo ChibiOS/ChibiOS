@@ -79,7 +79,9 @@
        common error cases.
 - NIL: Added INTC priorities check to the e200z port.
 - RT:  Added INTC priorities check to the e200z port.
+- HAL: Added support for CAN in STM32F042/72 devices.
 - HAL: Added support for extra DMA channels in STM32F072 devices.
+- HAL: Modified the STM32 CAN driver to support unified IRQs.
 - RT:  SPE-related issue in e200z ports (bug #607).
 - NIL: SPE-related issue in e200z ports (bug #607).
 - HAL: Fixed dependency between STM32 MAC driver and RT (bug #606).

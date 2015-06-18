@@ -203,7 +203,12 @@
 #define STM32_HAS_ADC4                      FALSE
 
 /* CAN attributes.*/
+#if defined(STM32F072xB)
+#define STM32_HAS_CAN1                      TRUE
+#define STM32_CAN_MAX_FILTERS               14
+#else
 #define STM32_HAS_CAN1                      FALSE
+#endif
 #define STM32_HAS_CAN2                      FALSE
 
 /* DAC attributes.*/
@@ -655,6 +660,7 @@
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      TRUE
 #define STM32_HAS_CAN2                      FALSE
+#define STM32_CAN_MAX_FILTERS               14
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  FALSE

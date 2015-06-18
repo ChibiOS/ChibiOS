@@ -252,6 +252,38 @@ static void can_lld_sce_handler(CANDriver *canp) {
 /*===========================================================================*/
 
 #if STM32_CAN_USE_CAN1 || defined(__DOXYGEN__)
+#if defined(STM32_CAN1_UNIFIED_HANDLER)
+/**
+ * @brief   CAN1 unified interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_CAN1_UNIFIED_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND1);
+  can_lld_rx0_handler(&CAND1);
+  can_lld_rx1_handler(&CAND1);
+  can_lld_sce_handler(&CAND1);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#else /* !defined(STM32_CAN1_UNIFIED_HANDLER) */
+
+#if !defined(STM32_CAN1_TX_HANDLER)
+#error "STM32_CAN1_TX_HANDLER not defined"
+#endif
+#if !defined(STM32_CAN1_RX0_HANDLER)
+#error "STM32_CAN1_RX0_HANDLER not defined"
+#endif
+#if !defined(STM32_CAN1_RX1_HANDLER)
+#error "STM32_CAN1_RX1_HANDLER not defined"
+#endif
+#if !defined(STM32_CAN1_SCE_HANDLER)
+#error "STM32_CAN1_SCE_HANDLER not defined"
+#endif
+
 /**
  * @brief   CAN1 TX interrupt handler.
  *
@@ -307,9 +339,42 @@ OSAL_IRQ_HANDLER(STM32_CAN1_SCE_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_CAN1_UNIFIED_HANDLER) */
 #endif /* STM32_CAN_USE_CAN1 */
 
 #if STM32_CAN_USE_CAN2 || defined(__DOXYGEN__)
+#if defined(STM32_CAN2_UNIFIED_HANDLER)
+/**
+ * @brief   CAN1 unified interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_CAN2_UNIFIED_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  can_lld_tx_handler(&CAND2);
+  can_lld_rx0_handler(&CAND2);
+  can_lld_rx1_handler(&CAND2);
+  can_lld_sce_handler(&CAND2);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#else /* !defined(STM32_CAN2_UNIFIED_HANDLER) */
+
+#if !defined(STM32_CAN1_TX_HANDLER)
+#error "STM32_CAN1_TX_HANDLER not defined"
+#endif
+#if !defined(STM32_CAN1_RX0_HANDLER)
+#error "STM32_CAN1_RX0_HANDLER not defined"
+#endif
+#if !defined(STM32_CAN1_RX1_HANDLER)
+#error "STM32_CAN1_RX1_HANDLER not defined"
+#endif
+#if !defined(STM32_CAN1_SCE_HANDLER)
+#error "STM32_CAN1_SCE_HANDLER not defined"
+#endif
+
 /**
  * @brief   CAN2 TX interrupt handler.
  *
@@ -365,6 +430,7 @@ OSAL_IRQ_HANDLER(STM32_CAN2_SCE_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_CAN2_UNIFIED_HANDLER) */
 #endif /* STM32_CAN_USE_CAN2 */
 
 /*===========================================================================*/
@@ -409,10 +475,14 @@ void can_lld_start(CANDriver *canp) {
   /* Clock activation.*/
 #if STM32_CAN_USE_CAN1
   if (&CAND1 == canp) {
+#if defined(STM32_CAN1_UNIFIED_NUMBER)
+    nvicEnableVector(STM32_CAN1_UNIFIED_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
+#else
     nvicEnableVector(STM32_CAN1_TX_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
     nvicEnableVector(STM32_CAN1_RX0_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
     nvicEnableVector(STM32_CAN1_RX1_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
     nvicEnableVector(STM32_CAN1_SCE_NUMBER, STM32_CAN_CAN1_IRQ_PRIORITY);
+#endif
     rccEnableCAN1(FALSE);
   }
 #endif
@@ -421,10 +491,14 @@ void can_lld_start(CANDriver *canp) {
 
     osalDbgAssert(CAND1.state != CAN_STOP, "CAN1 must be started");
 
+#if defined(STM32_CAN2_UNIFIED_NUMBER)
+    nvicEnableVector(STM32_CAN2_UNIFIED_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
+#else
     nvicEnableVector(STM32_CAN2_TX_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
     nvicEnableVector(STM32_CAN2_RX0_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
     nvicEnableVector(STM32_CAN2_RX1_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
     nvicEnableVector(STM32_CAN2_SCE_NUMBER, STM32_CAN_CAN2_IRQ_PRIORITY);
+#endif
     rccEnableCAN2(FALSE);
   }
 #endif
@@ -463,10 +537,14 @@ void can_lld_stop(CANDriver *canp) {
 
       CAN1->MCR = 0x00010002;                   /* Register reset value.    */
       CAN1->IER = 0x00000000;                   /* All sources disabled.    */
+#if defined(STM32_CAN1_UNIFIED_NUMBER)
+      nvicDisableVector(STM32_CAN1_UNIFIED_NUMBER);
+#else
       nvicDisableVector(STM32_CAN1_TX_NUMBER);
       nvicDisableVector(STM32_CAN1_RX0_NUMBER);
       nvicDisableVector(STM32_CAN1_RX1_NUMBER);
       nvicDisableVector(STM32_CAN1_SCE_NUMBER);
+#endif
       rccDisableCAN1(FALSE);
     }
 #endif
@@ -474,10 +552,14 @@ void can_lld_stop(CANDriver *canp) {
     if (&CAND2 == canp) {
       CAN2->MCR = 0x00010002;                   /* Register reset value.    */
       CAN2->IER = 0x00000000;                   /* All sources disabled.    */
+#if defined(STM32_CAN2_UNIFIED_NUMBER)
+      nvicDisableVector(STM32_CAN2_UNIFIED_NUMBER);
+#else
       nvicDisableVector(STM32_CAN2_TX_NUMBER);
       nvicDisableVector(STM32_CAN2_RX0_NUMBER);
       nvicDisableVector(STM32_CAN2_RX1_NUMBER);
       nvicDisableVector(STM32_CAN2_SCE_NUMBER);
+#endif
       rccDisableCAN2(FALSE);
     }
 #endif
