@@ -150,7 +150,7 @@
 #define CH_LICENSE_ID_CODE                  CH_CUSTOMER_ID_CODE
 #define CH_LICENSE_MODIFIABLE_CODE          FALSE
 #define CH_LICENSE_FEATURES                 CH_FEATURES_INTERMEDIATE
-#define CH_LICENSE_MAX_DEPLOY               200
+#define CH_LICENSE_MAX_DEPLOY               500
 
 #elif CH_LICENSE == CH_LICENSE_COMMERCIAL_DEVELOPER
 #include "chcustomer.h"
@@ -159,7 +159,7 @@
 #define CH_LICENSE_ID_CODE                  CH_CUSTOMER_ID_CODE
 #define CH_LICENSE_MODIFIABLE_CODE          TRUE
 #define CH_LICENSE_FEATURES                 CH_FEATURES_FULL
-#define CH_LICENSE_DEPLOY_LIMIT             2000
+#define CH_LICENSE_DEPLOY_LIMIT             5000
 
 #elif CH_LICENSE == CH_LICENSE_COMMERCIAL_FULL
 #include "chcustomer.h"
