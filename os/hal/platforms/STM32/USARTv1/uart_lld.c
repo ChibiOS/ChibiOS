@@ -292,12 +292,6 @@ static void uart_lld_serve_tx_end_irq(UARTDriver *uartp, uint32_t flags) {
 
   dmaStreamDisable(uartp->dmatx);
 
-  /* Only enable TC interrupt if there's a callback attached to it.
-     We have to do it here, rather than earlier, because TC flag is set
-     until transmission starts.*/
-  if (uartp->config->txend2_cb != NULL)
-    uartp->usart->CR1 |= USART_CR1_TCIE;
-
   /* A callback is generated, if enabled, after a completed transfer.*/
   uartp->txstate = UART_TX_COMPLETE;
   if (uartp->config->txend1_cb != NULL)
