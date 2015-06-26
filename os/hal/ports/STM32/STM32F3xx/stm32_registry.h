@@ -216,6 +216,15 @@
 #define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F303xC) */
 
 /*===========================================================================*/
@@ -376,6 +385,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F303x8) */
 
 /*===========================================================================*/
@@ -531,6 +549,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F301x8) */
 
 /*===========================================================================*/
@@ -689,6 +716,15 @@
 #define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F302x8) */
 
 /*===========================================================================*/
@@ -859,6 +895,15 @@
 #define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F302xC) */
 
 /*===========================================================================*/
@@ -1013,6 +1058,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F318x8) */
 
 /*===========================================================================*/
@@ -1170,6 +1224,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F328x8) */
 
 /*===========================================================================*/
@@ -1342,6 +1405,15 @@
 #define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F358xC) */
 
 /*===========================================================================*/
@@ -1499,6 +1571,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F334x8) */
 
 /** @} */

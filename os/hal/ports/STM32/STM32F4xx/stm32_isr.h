@@ -158,6 +158,22 @@
 
 #define STM32_FSMC_NUMBER           48
 
+/*
+ * LTDC
+ */
+#define STM32_LTDC_EV_HANDLER       Vector1A0
+#define STM32_LTDC_ER_HANDLER       Vector1A4
+
+#define STM32_LTDC_EV_NUMBER        88
+#define STM32_LTDC_ER_NUMBER        89
+
+/*
+ * DMA2D
+ */
+#define STM32_DMA2D_HANDLER         Vector1A8
+
+#define STM32_DMA2D_NUMBER          90
+
 /** @} */
 
 /*===========================================================================*/

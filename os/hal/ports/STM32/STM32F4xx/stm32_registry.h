@@ -322,6 +322,12 @@
 #define STM32_HAS_OTG1                      TRUE
 #define STM32_HAS_OTG2                      TRUE
 
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      TRUE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     TRUE
+
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      TRUE
 #define STM32_FSMC_IS_FMC                   TRUE
@@ -334,6 +340,7 @@
                                              STM32_DMA_STREAM_ID_MSK(2, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_FSMC_DMA_CHN                  0x03010201
+
 #endif /* defined(STM32F429_439xx) || defined(STM32F427_437xx) */
 
 /*===========================================================================*/
@@ -591,6 +598,12 @@
 #define STM32_HAS_OTG1                      TRUE
 #define STM32_HAS_OTG2                      TRUE
 
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      TRUE
 #define STM32_FSMC_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(2, 0) |\
@@ -602,6 +615,7 @@
                                              STM32_DMA_STREAM_ID_MSK(2, 6) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_FSMC_DMA_CHN                  0x03010201
+
 #endif /* defined(STM32F40_41xxx) || defined(STM32F2XX) */
 
 /*===========================================================================*/
@@ -815,8 +829,15 @@
 #define STM32_HAS_OTG1                      TRUE
 #define STM32_HAS_OTG2                      FALSE
 
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
+
 #endif /* defined(STM32F401xx) */
 
 /*===========================================================================*/
@@ -1029,8 +1050,15 @@
 #define STM32_HAS_OTG1                      TRUE
 #define STM32_HAS_OTG2                      FALSE
 
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
+
 #endif
 /** @} */
 

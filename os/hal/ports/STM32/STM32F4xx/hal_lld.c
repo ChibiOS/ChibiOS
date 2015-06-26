@@ -232,6 +232,17 @@ void stm32_clock_init(void) {
     ;
 #endif
 
+#if STM32_ACTIVATE_PLLSAI
+  /* PLLSAI activation.*/
+  RCC->PLLSAICFGR = STM32_PLLSAIN | STM32_PLLSAIR | STM32_PLLSAIQ;
+  RCC->DCKCFGR = (RCC->DCKCFGR & ~RCC_DCKCFGR_PLLSAIDIVR) | STM32_PLLSAIR_POST;
+  RCC->CR |= RCC_CR_PLLSAION;
+
+  /* Waiting for PLL lock.*/
+  while (!(RCC->CR & RCC_CR_PLLSAIRDY))
+    ;
+#endif
+
   /* Other clock-related settings (dividers, MCO etc).*/
   RCC->CFGR = STM32_MCO2PRE | STM32_MCO2SEL | STM32_MCO1PRE | STM32_MCO1SEL |
               STM32_RTCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;

@@ -173,6 +173,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 /** @} */
 #endif /* defined(STM32F10X_LD_VL) */
 
@@ -332,6 +341,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 /** @} */
 #endif /* defined(STM32F10X_MD_VL) */
 
@@ -460,6 +478,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 /** @} */
 #endif /* defined(STM32F10X_LD) */
 
@@ -603,6 +630,15 @@
 #define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 /** @} */
 #endif /* defined(STM32F10X_MD) */
 
@@ -786,6 +822,15 @@
 #define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 /** @} */
 #endif /* defined(STM32F10X_HD) */
 
@@ -969,6 +1014,15 @@
 #define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 /** @} */
 #endif /* defined(STM32F10X_XL) */
 
@@ -1129,6 +1183,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      TRUE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 /** @} */
 #endif /* defined(STM32F10X_CL) */
 

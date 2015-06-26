@@ -219,6 +219,15 @@
 #define STM32_USB_HAS_BCDR                  FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F373xC) */
 
 /*===========================================================================*/
@@ -406,6 +415,15 @@
 #define STM32_USB_PMA_SIZE                  512
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 #endif /* defined(STM32F378xx) */
 /** @} */
 

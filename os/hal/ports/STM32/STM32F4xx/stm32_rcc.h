@@ -1468,6 +1468,36 @@
 #define rccResetLTDC() rccResetAPB2(RCC_APB2RSTR_LTDCRST)
 
 /**
+ * @name    DMA2D peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the DMA2D peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableDMA2D(lp) rccEnableAHB1(RCC_AHB1ENR_DMA2DEN, lp)
+
+/**
+ * @brief   Disables the DMA2D peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableDMA2D(lp) rccDisableAHB1(RCC_AHB1ENR_DMA2DEN, lp)
+
+/**
+ * @brief   Resets the DMA2D peripheral.
+ *
+ * @api
+ */
+#define rccResetDMA2D() rccResetAHB1(RCC_AHB1RSTR_DMA2DRST)
+/** @} */
+
+/**
  * @name    FSMC peripherals specific RCC operations
  * @{
  */

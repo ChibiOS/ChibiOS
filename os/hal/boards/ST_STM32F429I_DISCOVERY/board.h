@@ -63,8 +63,8 @@
 #define GPIOA_LCD_G2                6U
 #define GPIOA_ACP_RST               7U
 #define GPIOA_I2C3_SCL              8U
-#define GPIOA_PIN9                  9U
-#define GPIOA_PIN10                 10U
+#define GPIOA_UART_TX               9U
+#define GPIOA_UART_RX               10U
 #define GPIOA_LCD_R4                11U
 #define GPIOA_LCD_R5                12U
 #define GPIOA_SWDIO                 13U
@@ -241,8 +241,8 @@
  * PA6  - LCD_G2                    (alternate 14).
  * PA7  - ACP_RST                   (input pullup).
  * PA8  - I2C3_SCL                  (alternate 4).
- * PA9  - PIN9                      (input pullup).
- * PA10 - PIN10                     (input pullup).
+ * PA9  - UART_TX                   (alternate 7).
+ * PA10 - UART_RX                   (alternate 7).
  * PA11 - LCD_R4                    (alternate 14).
  * PA12 - LCD_R5                    (alternate 14).
  * PA13 - SWDIO                     (alternate 0).
@@ -258,8 +258,8 @@
                                      PIN_MODE_ALTERNATE(GPIOA_LCD_G2) |     \
                                      PIN_MODE_INPUT(GPIOA_ACP_RST) |        \
                                      PIN_MODE_ALTERNATE(GPIOA_I2C3_SCL) |   \
-                                     PIN_MODE_INPUT(GPIOA_PIN9) |           \
-                                     PIN_MODE_INPUT(GPIOA_PIN10) |          \
+                                     PIN_MODE_ALTERNATE(GPIOA_UART_TX) |    \
+                                     PIN_MODE_ALTERNATE(GPIOA_UART_RX) |    \
                                      PIN_MODE_ALTERNATE(GPIOA_LCD_R4) |     \
                                      PIN_MODE_ALTERNATE(GPIOA_LCD_R5) |     \
                                      PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
@@ -274,8 +274,8 @@
                                      PIN_OTYPE_PUSHPULL(GPIOA_LCD_G2) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_ACP_RST) |    \
                                      PIN_OTYPE_OPENDRAIN(GPIOA_I2C3_SCL) |  \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_PIN9) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_PIN10) |      \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_UART_TX) |    \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_UART_RX) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOA_LCD_R4) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_LCD_R5) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_SWDIO) |      \
@@ -290,8 +290,8 @@
                                      PIN_OSPEED_100M(GPIOA_LCD_G2) |        \
                                      PIN_OSPEED_2M(GPIOA_ACP_RST) |         \
                                      PIN_OSPEED_100M(GPIOA_I2C3_SCL) |      \
-                                     PIN_OSPEED_2M(GPIOA_PIN9) |            \
-                                     PIN_OSPEED_2M(GPIOA_PIN10) |           \
+                                     PIN_OSPEED_2M(GPIOA_UART_TX) |         \
+                                     PIN_OSPEED_2M(GPIOA_UART_RX) |         \
                                      PIN_OSPEED_100M(GPIOA_LCD_R4) |        \
                                      PIN_OSPEED_100M(GPIOA_LCD_R5) |        \
                                      PIN_OSPEED_100M(GPIOA_SWDIO) |         \
@@ -306,8 +306,8 @@
                                      PIN_PUPDR_FLOATING(GPIOA_LCD_G2) |     \
                                      PIN_PUPDR_PULLUP(GPIOA_ACP_RST) |      \
                                      PIN_PUPDR_FLOATING(GPIOA_I2C3_SCL) |   \
-                                     PIN_PUPDR_PULLUP(GPIOA_PIN9) |         \
-                                     PIN_PUPDR_PULLUP(GPIOA_PIN10) |        \
+                                     PIN_PUPDR_PULLUP(GPIOA_UART_TX) |      \
+                                     PIN_PUPDR_PULLUP(GPIOA_UART_RX) |      \
                                      PIN_PUPDR_FLOATING(GPIOA_LCD_R4) |     \
                                      PIN_PUPDR_FLOATING(GPIOA_LCD_R5) |     \
                                      PIN_PUPDR_PULLUP(GPIOA_SWDIO) |        \
@@ -322,8 +322,8 @@
                                      PIN_ODR_HIGH(GPIOA_LCD_G2) |           \
                                      PIN_ODR_HIGH(GPIOA_ACP_RST) |          \
                                      PIN_ODR_HIGH(GPIOA_I2C3_SCL) |         \
-                                     PIN_ODR_HIGH(GPIOA_PIN9) |             \
-                                     PIN_ODR_HIGH(GPIOA_PIN10) |            \
+                                     PIN_ODR_HIGH(GPIOA_UART_TX) |          \
+                                     PIN_ODR_HIGH(GPIOA_UART_RX) |          \
                                      PIN_ODR_HIGH(GPIOA_LCD_R4) |           \
                                      PIN_ODR_HIGH(GPIOA_LCD_R5) |           \
                                      PIN_ODR_HIGH(GPIOA_SWDIO) |            \
@@ -338,8 +338,8 @@
                                      PIN_AFIO_AF(GPIOA_LCD_G2, 14) |        \
                                      PIN_AFIO_AF(GPIOA_ACP_RST, 0))
 #define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_I2C3_SCL, 4) |       \
-                                     PIN_AFIO_AF(GPIOA_PIN9, 0) |           \
-                                     PIN_AFIO_AF(GPIOA_PIN10, 0) |          \
+                                     PIN_AFIO_AF(GPIOA_UART_TX, 7) |        \
+                                     PIN_AFIO_AF(GPIOA_UART_RX, 7) |        \
                                      PIN_AFIO_AF(GPIOA_LCD_R4, 14) |        \
                                      PIN_AFIO_AF(GPIOA_LCD_R5, 14) |        \
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
@@ -824,10 +824,10 @@
  * PF4  - FMC_A4                    (alternate 12).
  * PF5  - FMC_A5                    (alternate 12).
  * PF6  - PIN6                      (input pullup).
- * PF7  - LCD_DCX                   (output pushpull maximum).
+ * PF7  - LCD_DCX                   (alternate 5).
  * PF8  - SPI5_MISO                 (alternate 5).
  * PF9  - SPI5_MOSI                 (alternate 5).
- * PF10 - LCD_DE                    (output pushpull maximum).
+ * PF10 - LCD_DE                    (alternate 14).
  * PF11 - FMC_SDNRAS                (alternate 12).
  * PF12 - FMC_A6                    (alternate 12).
  * PF13 - FMC_A7                    (alternate 12).
@@ -841,10 +841,10 @@
                                      PIN_MODE_ALTERNATE(GPIOF_FMC_A4) |     \
                                      PIN_MODE_ALTERNATE(GPIOF_FMC_A5) |     \
                                      PIN_MODE_INPUT(GPIOF_PIN6) |           \
-                                     PIN_MODE_OUTPUT(GPIOF_LCD_DCX) |       \
+                                     PIN_MODE_ALTERNATE(GPIOF_LCD_DCX) |    \
                                      PIN_MODE_ALTERNATE(GPIOF_SPI5_MISO) |  \
                                      PIN_MODE_ALTERNATE(GPIOF_SPI5_MOSI) |  \
-                                     PIN_MODE_OUTPUT(GPIOF_LCD_DE) |        \
+                                     PIN_MODE_ALTERNATE(GPIOF_LCD_DE) |     \
                                      PIN_MODE_ALTERNATE(GPIOF_FMC_SDNRAS) | \
                                      PIN_MODE_ALTERNATE(GPIOF_FMC_A6) |     \
                                      PIN_MODE_ALTERNATE(GPIOF_FMC_A7) |     \
@@ -921,10 +921,10 @@
                                      PIN_AFIO_AF(GPIOF_FMC_A4, 12) |        \
                                      PIN_AFIO_AF(GPIOF_FMC_A5, 12) |        \
                                      PIN_AFIO_AF(GPIOF_PIN6, 0) |           \
-                                     PIN_AFIO_AF(GPIOF_LCD_DCX, 0))
+                                     PIN_AFIO_AF(GPIOF_LCD_DCX, 5))
 #define VAL_GPIOF_AFRH              (PIN_AFIO_AF(GPIOF_SPI5_MISO, 5) |      \
                                      PIN_AFIO_AF(GPIOF_SPI5_MOSI, 5) |      \
-                                     PIN_AFIO_AF(GPIOF_LCD_DE, 0) |         \
+                                     PIN_AFIO_AF(GPIOF_LCD_DE, 14) |        \
                                      PIN_AFIO_AF(GPIOF_FMC_SDNRAS, 12) |    \
                                      PIN_AFIO_AF(GPIOF_FMC_A6, 12) |        \
                                      PIN_AFIO_AF(GPIOF_FMC_A7, 12) |        \

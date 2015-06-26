@@ -93,21 +93,21 @@
         Mode="Alternate"
         Alternate="4" />
       <pin9
-        ID=""
+        ID="UART_TX"
         Type="PushPull"
         Speed="Minimum"
         Resistor="PullUp"
         Level="High"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="7" />
       <pin10
-        ID=""
+        ID="UART_RX"
         Type="PushPull"
         Speed="Minimum"
         Resistor="PullUp"
         Level="High"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="7" />
       <pin11
         ID="LCD_R4"
         Type="PushPull"
@@ -732,8 +732,8 @@
         Speed="Maximum"
         Resistor="Floating"
         Level="High"
-        Mode="Output"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="5" />
       <pin8
         ID="SPI5_MISO"
         Type="PushPull"
@@ -756,8 +756,8 @@
         Speed="Maximum"
         Resistor="Floating"
         Level="High"
-        Mode="Output"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="14" />
       <pin11
         ID="FMC_SDNRAS"
         Type="PushPull"

@@ -362,6 +362,13 @@
 #define STM32_I2SSRC_PLLI2S     (0 << 23)   /**< I2SSRC is PLLI2S.          */
 #define STM32_I2SSRC_CKIN       (1 << 23)   /**< I2S_CKIN is PLLI2S.        */
 
+#define STM32_SAISRC_NOCLOCK    (0 << 23)   /**< No clock.                  */
+#define STM32_SAISRC_PLL        (1 << 23)   /**< SAI_CKIN is PLL.           */
+#define STM32_SAIR_DIV2         (0 << 16)   /**< R divided by 2.            */
+#define STM32_SAIR_DIV4         (1 << 16)   /**< R divided by 4.            */
+#define STM32_SAIR_DIV8         (2 << 16)   /**< R divided by 8.            */
+#define STM32_SAIR_DIV16        (3 << 16)   /**< R divided by 16.           */
+
 #define STM32_MCO1PRE_MASK      (7 << 24)   /**< MCO1PRE mask.              */
 #define STM32_MCO1PRE_DIV1      (0 << 24)   /**< MCO1 divided by 1.         */
 #define STM32_MCO1PRE_DIV2      (4 << 24)   /**< MCO1 divided by 2.         */
@@ -1276,6 +1283,52 @@
 #define STM32_PLLI2SR               (STM32_PLLI2SR_VALUE << 28)
 #else
 #error "invalid STM32_PLLI2SR_VALUE value specified"
+#endif
+
+/*
+ * PLLSAI enable check.
+ */
+#if !defined(STM32_SAISRC)
+#define STM32_SAISRC                STM32_SAISRC_NOCLOCK
+#endif
+
+/**
+ * @brief   PLL activation flag.
+ */
+#if (STM32_SAISRC == STM32_SAISRC_PLL) || defined(__DOXYGEN__)
+#define STM32_ACTIVATE_PLLSAI       TRUE
+#else
+#define STM32_ACTIVATE_PLLSAI       FALSE
+#endif
+
+/**
+ * @brief   STM32_PLLSAIN field.
+ */
+#if ((STM32_PLLSAIN_VALUE >= 49) && (STM32_PLLSAIN_VALUE <= 432)) ||        \
+    defined(__DOXYGEN__)
+#define STM32_PLLSAIN               (STM32_PLLSAIN_VALUE << 6)
+#else
+#error "invalid STM32_PLLSAIN_VALUE value specified"
+#endif
+
+/**
+ * @brief   STM32_PLLSAIQ field.
+ */
+#if ((STM32_PLLSAIQ_VALUE >= 2) && (STM32_PLLSAIQ_VALUE <= 15)) ||          \
+    defined(__DOXYGEN__)
+#define STM32_PLLSAIQ               (STM32_PLLSAIQ_VALUE << 24)
+#else
+#error "invalid STM32_PLLSAIR_VALUE value specified"
+#endif
+
+/**
+ * @brief   STM32_PLLSAIR field.
+ */
+#if ((STM32_PLLSAIR_VALUE >= 2) && (STM32_PLLSAIR_VALUE <= 7)) ||           \
+    defined(__DOXYGEN__)
+#define STM32_PLLSAIR               (STM32_PLLSAIR_VALUE << 28)
+#else
+#error "invalid STM32_PLLSAIR_VALUE value specified"
 #endif
 
 /**

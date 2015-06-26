@@ -190,6 +190,15 @@
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
+
 /*===========================================================================*/
 /* STM32F071xB, STM32F072xB, STM32F078xx.                                    */
 /*===========================================================================*/
@@ -362,6 +371,15 @@
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
+
 /*===========================================================================*/
 /* STM32F048xx.                                                              */
 /*===========================================================================*/
@@ -505,6 +523,15 @@
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
+
 /*===========================================================================*/
 /* STM32F031x6, STM32F038xx.                                                 */
 /*===========================================================================*/
@@ -646,6 +673,15 @@
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
+
 /*===========================================================================*/
 /* STM32F042x6.                                                              */
 /*===========================================================================*/
@@ -784,6 +820,15 @@
 
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 
 /*===========================================================================*/
 /* STM32F030x6, STM32F030x8.                                                 */
@@ -934,6 +979,15 @@
 #define STM32_HAS_USB                       FALSE
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      FALSE
 
 #else
 #error "STM32F0xx device not specified"
