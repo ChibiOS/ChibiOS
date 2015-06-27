@@ -73,6 +73,7 @@
 
 *** 2.6.9 ***
 - NEW: Added files for Core407V board.
+- FIX: Removed call to localtime_r() for non-GNU compilers in chrtclib.c.
 - FIX: SPE-related issue in e200z ports (bug #607).
 - FIX: Fixed wrong macro names in STM32F0xx HAL driver (bug #605).
 - FIX: Fixed wrong macro names in STM32F3xx HAL driver (bug #603).
