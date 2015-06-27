@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 3.0.0p6 ***
+- HAL: Removed call to localtime_r() function for non-GNU compilers in
+       STM32F1xx RTC driver.
 - DEM: Fixed the FatFS demo timeout, now it is expressed in milliseconds.
 - DEM: Added -Wundef to all the demos and test programs in order to find
        common error cases.

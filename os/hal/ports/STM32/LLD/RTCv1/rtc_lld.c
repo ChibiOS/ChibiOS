@@ -125,15 +125,21 @@ static time_t rtc_encode(const RTCDateTime *timespec) {
  *
  * @notapi
  */
-static void rtc_decode(uint32_t tv_sec, uint32_t tv_msec,
-                                    RTCDateTime *timespec) {
+static void rtc_decode(uint32_t tv_sec,
+                       uint32_t tv_msec,
+                       RTCDateTime *timespec) {
   struct tm tim;
-  struct tm *canary;
+  struct tm *t;
 
   /* If the conversion is successful the function returns a pointer
      to the object the result was written into.*/
-  canary = localtime_r((time_t *)&(tv_sec), &tim);
-  osalDbgCheck(&tim == canary);
+#if defined __GNUC__
+  t = localtime_r((time_t *)&(tv_sec), &tim);
+  osalDbgAssert(t != NULL, "conversion failed");
+#else
+  struct tm *t = localtime(&tv_sec);
+  memcpy(&timp, t, sizeof(struct tm));
+#endif
 
   rtcConvertStructTmToDateTime(&tim, tv_msec, timespec);
 }
