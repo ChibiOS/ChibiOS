@@ -65,7 +65,7 @@
 static void _idle_thread(void *p) {
 
   (void)p;
-  chRegSetThreadName("idle");
+
   while (true) {
     /*lint -save -e522 [2.2] Apparently no side effects because it contains
       an asm instruction.*/
@@ -135,11 +135,17 @@ void chSysInit(void) {
   chRegSetThreadName((const char *)&ch_debug);
 
 #if CH_CFG_NO_IDLE_THREAD == FALSE
+  {
   /* This thread has the lowest priority in the system, its role is just to
      serve interrupts in its context while keeping the lowest energy saving
      mode compatible with the system status.*/
-  (void) chThdCreateStatic(ch.idle_thread_wa, sizeof(ch.idle_thread_wa),
-                           IDLEPRIO, (tfunc_t)_idle_thread, NULL);
+    thread_t *tp =  chThdCreateStatic(ch.idle_thread_wa,
+                                      sizeof(ch.idle_thread_wa),
+                                      IDLEPRIO,
+                                      (tfunc_t)_idle_thread,
+                                      NULL);
+    chRegSetThreadNameX(tp, "idle");
+  }
 #endif
 }
 

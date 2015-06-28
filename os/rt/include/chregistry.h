@@ -148,11 +148,8 @@ extern "C" {
  * @return              Thread name as a zero terminated string.
  * @retval NULL         if the thread name has not been set.
  *
- * @iclass
  */
-static inline const char *chRegGetThreadNameI(thread_t *tp) {
-
-  chDbgCheckClassI();
+static inline const char *chRegGetThreadNameX(thread_t *tp) {
 
 #if CH_CFG_USE_REGISTRY == TRUE
   return tp->p_name;
@@ -162,6 +159,26 @@ static inline const char *chRegGetThreadNameI(thread_t *tp) {
 #endif
 }
 
+/**
+ * @brief   Changes the name of the specified thread.
+ * @pre     This function only sets the name if the option
+ *          @p CH_CFG_USE_REGISTRY is enabled else it does
+ *          nothing.
+ *
+ * @param[in] tp        pointer to the thread
+ * @param[in] name      name to be set
+ *
+ * @xclass
+ */
+static inline void chRegSetThreadNameX(thread_t *tp, const char *name) {
+
+#if CH_CFG_USE_REGISTRY == TRUE
+  tp->p_name = name;
+#else
+  (void)tp;
+  (void)name;
+#endif
+}
 #endif /* CH_CFG_USE_REGISTRY == TRUE */
 
 #endif /* _CHREGISTRY_H_ */

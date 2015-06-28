@@ -43,7 +43,7 @@
 
 /** @brief IP Address. */
 #if !defined(LWIP_IPADDR) || defined(__DOXYGEN__)
-#define LWIP_IPADDR(p)                      IP4_ADDR(p, 192, 168, 1, 20)
+#define LWIP_IPADDR(p)                      IP4_ADDR(p, 192, 168, 1, 10)
 #endif
 
 /** @brief IP Gateway. */
