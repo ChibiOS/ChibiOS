@@ -692,6 +692,30 @@
 #endif
 /** @} */
 
+/**
+ * @brief   PLLSAIQ value.
+ * @note    The allowed values are 2..15.
+ */
+#if !defined(STM32_PLLSAIQ_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLSAIQ_VALUE         8
+#endif
+
+/**
+ * @brief   PLLSAIQ value.
+ * @note    The allowed values are 49..432.
+ */
+#if !defined(STM32_PLLSAIN_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLSAIN_VALUE         120
+#endif
+
+/**
+ * @brief   PLLSAIQ value.
+ * @note    The allowed values are 2..7.
+ */
+#if !defined(STM32_PLLSAIR_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLLSAIR_VALUE         4
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
