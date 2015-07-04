@@ -199,6 +199,10 @@
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
 
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              TRUE
+
 /*===========================================================================*/
 /* STM32F071xB, STM32F072xB, STM32F078xx.                                    */
 /*===========================================================================*/
@@ -380,6 +384,10 @@
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
 
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              TRUE
+
 /*===========================================================================*/
 /* STM32F048xx.                                                              */
 /*===========================================================================*/
@@ -532,6 +540,10 @@
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
 
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              TRUE
+
 /*===========================================================================*/
 /* STM32F031x6, STM32F038xx.                                                 */
 /*===========================================================================*/
@@ -682,6 +694,10 @@
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
 
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              TRUE
+
 /*===========================================================================*/
 /* STM32F042x6.                                                              */
 /*===========================================================================*/
@@ -829,6 +845,10 @@
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
+
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              TRUE
 
 /*===========================================================================*/
 /* STM32F030x6, STM32F030x8.                                                 */
@@ -988,6 +1008,10 @@
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
+
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              FALSE
 
 #else
 #error "STM32F0xx device not specified"

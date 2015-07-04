@@ -199,6 +199,10 @@
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
 
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              FALSE
+
 #else /* STM32L1XX_HD */
 
 /* ADC attributes.*/
@@ -372,6 +376,10 @@
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
+
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              FALSE
 
 #endif /* STM32L1XX_HD */
 

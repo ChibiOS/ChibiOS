@@ -228,6 +228,10 @@
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
+
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              TRUE
 #endif /* defined(STM32F373xC) */
 
 /*===========================================================================*/
@@ -424,6 +428,10 @@
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
+
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              TRUE
 #endif /* defined(STM32F378xx) */
 /** @} */
 

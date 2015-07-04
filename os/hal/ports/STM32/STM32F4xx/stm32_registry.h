@@ -341,6 +341,10 @@
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_FSMC_DMA_CHN                  0x03010201
 
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              FALSE
+
 #endif /* defined(STM32F429_439xx) || defined(STM32F427_437xx) */
 
 /*===========================================================================*/
@@ -616,6 +620,10 @@
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_FSMC_DMA_CHN                  0x03010201
 
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              FALSE
+
 #endif /* defined(STM32F40_41xxx) || defined(STM32F2XX) */
 
 /*===========================================================================*/
@@ -838,6 +846,10 @@
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
 
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              FALSE
+
 #endif /* defined(STM32F401xx) */
 
 /*===========================================================================*/
@@ -1058,6 +1070,10 @@
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      FALSE
+
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              FALSE
 
 #endif
 /** @} */
