@@ -618,9 +618,11 @@ int main(void) {
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
+   * - lwIP subsystem initialization using the default configuration.
    */
   halInit();
   chSysInit();
+  lwipInit(NULL);
 
   /*
    * Initializes a serial-over-USB CDC driver.
@@ -659,12 +661,6 @@ int main(void) {
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-
-  /*
-   * Creates the LWIP threads (it changes priority internally).
-   */
-  chThdCreateStatic(wa_lwip_thread, LWIP_THREAD_STACK_SIZE, NORMALPRIO + 2,
-                    lwip_thread, NULL);
 
   /*
    * Creates the HTTP thread (it changes priority internally).

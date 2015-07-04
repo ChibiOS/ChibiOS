@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** 3.0.0 ***
+- NEW: Added an initialization function to the lwIP bindings, now it is
+       sufficient to call lwipInit(NULL); in order to start the subsystem.
+       Demo updated.
 - HAL: Fixed TIM2 wrongly classified as 32bits in STM32F1xx devices
        (bug #610).
 

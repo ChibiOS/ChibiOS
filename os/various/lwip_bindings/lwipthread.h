@@ -26,102 +26,132 @@
 
 #include <lwip/opt.h>
 
-/** @brief MAC thread priority.*/
+/**
+ * @brief   lwIP thread priority.
+ */
 #ifndef LWIP_THREAD_PRIORITY
 #define LWIP_THREAD_PRIORITY                LOWPRIO
 #endif
 
-/** @brief MAC thread stack size. */
+/**
+ * @brief  lwIP thread stack size.
+ */
 #if !defined(LWIP_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
 #define LWIP_THREAD_STACK_SIZE              576
 #endif
 
-/** @brief Link poll interval. */
+/**
+ * @brief   Link poll interval.
+ */
 #if !defined(LWIP_LINK_POLL_INTERVAL) || defined(__DOXYGEN__)
 #define LWIP_LINK_POLL_INTERVAL             S2ST(5)
 #endif
 
-/** @brief IP Address. */
+/**
+ *  @brief  IP Address.
+ */
 #if !defined(LWIP_IPADDR) || defined(__DOXYGEN__)
 #define LWIP_IPADDR(p)                      IP4_ADDR(p, 192, 168, 1, 10)
 #endif
 
-/** @brief IP Gateway. */
+/**
+ * @brief   IP Gateway.
+ */
 #if !defined(LWIP_GATEWAY) || defined(__DOXYGEN__)
 #define LWIP_GATEWAY(p)                     IP4_ADDR(p, 192, 168, 1, 1)
 #endif
 
-/** @brief IP netmask. */
+/**
+ * @brief   IP netmask.
+ */
 #if !defined(LWIP_NETMASK) || defined(__DOXYGEN__)
 #define LWIP_NETMASK(p)                     IP4_ADDR(p, 255, 255, 255, 0)
 #endif
 
-/** @brief Transmission timeout. */
+/**
+ * @brief   Transmission timeout.
+ */
 #if !defined(LWIP_SEND_TIMEOUT) || defined(__DOXYGEN__)
 #define LWIP_SEND_TIMEOUT                   50
 #endif
 
-/** @brief Link speed. */
+/**
+ * @brief   Link speed.
+ */
 #if !defined(LWIP_LINK_SPEED) || defined(__DOXYGEN__)
 #define LWIP_LINK_SPEED                     100000000
 #endif
 
-/** @brief MAC Address byte 0. */
+/**
+ * @brief   MAC Address byte 0.
+ */
 #if !defined(LWIP_ETHADDR_0) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_0                      0xC2
 #endif
 
-/** @brief MAC Address byte 1. */
+/**
+ * @brief   MAC Address byte 1.
+ */
 #if !defined(LWIP_ETHADDR_1) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_1                      0xAF
 #endif
 
-/** @brief MAC Address byte 2. */
+/**
+ * @brief   MAC Address byte 2.
+ */
 #if !defined(LWIP_ETHADDR_2) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_2                      0x51
 #endif
 
-/** @brief MAC Address byte 3. */
+/**
+ * @brief   MAC Address byte 3.
+ */
 #if !defined(LWIP_ETHADDR_3) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_3                      0x03
 #endif
 
-/** @brief MAC Address byte 4. */
+/**
+ * @brief   MAC Address byte 4.
+ */
 #if !defined(LWIP_ETHADDR_4) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_4                      0xCF
 #endif
 
-/** @brief MAC Address byte 5. */
+/**
+ * @brief   MAC Address byte 5.
+ */
 #if !defined(LWIP_ETHADDR_5) || defined(__DOXYGEN__)
 #define LWIP_ETHADDR_5                      0x46
 #endif
 
-/** @brief Interface name byte 0. */
+/**
+ * @brief   Interface name byte 0.
+ */
 #if !defined(LWIP_IFNAME0) || defined(__DOXYGEN__)
 #define LWIP_IFNAME0                        'm'
 #endif
 
-/** @brief Interface name byte 1. */
+/**
+ * @brief  Interface name byte 1.
+ */
 #if !defined(LWIP_IFNAME1) || defined(__DOXYGEN__)
 #define LWIP_IFNAME1                        's'
 #endif
 
 /**
- * @brief Runtime TCP/IP settings.
+ * @brief   Runtime TCP/IP settings.
  */
-struct lwipthread_opts {
+typedef struct lwipthread_opts {
   uint8_t       *macaddress;
   uint32_t      address;
   uint32_t      netmask;
   uint32_t      gateway;
-};
-
-extern THD_WORKING_AREA(wa_lwip_thread, LWIP_THREAD_STACK_SIZE);
+} lwipthread_opts_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  THD_FUNCTION(lwip_thread, p);
+  void lwipInit(const lwipthread_opts_t *opts);
 #ifdef __cplusplus
 }
 #endif

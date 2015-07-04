@@ -79,10 +79,15 @@
 #define PERIODIC_TIMER_ID       1
 #define FRAME_RECEIVED_ID       2
 
-/**
+/*
+ * Suspension point for initialization procedure.
+ */
+thread_reference_t lwip_trp = NULL;
+
+/*
  * Stack area for the LWIP-MAC thread.
  */
-THD_WORKING_AREA(wa_lwip_thread, LWIP_THREAD_STACK_SIZE);
+static THD_WORKING_AREA(wa_lwip_thread, LWIP_THREAD_STACK_SIZE);
 
 /*
  * Initialization.
@@ -214,7 +219,7 @@ static err_t ethernetif_init(struct netif *netif) {
  * @param[in] p pointer to a @p lwipthread_opts structure or @p NULL
  * @return The function does not return.
  */
-THD_FUNCTION(lwip_thread, p) {
+static THD_FUNCTION(lwip_thread, p) {
   event_timer_t evt;
   event_listener_t el0, el1;
   struct ip_addr ip, gateway, netmask;
@@ -261,7 +266,8 @@ THD_FUNCTION(lwip_thread, p) {
   chEvtRegisterMask(macGetReceiveEventSource(&ETHD1), &el1, FRAME_RECEIVED_ID);
   chEvtAddEvents(PERIODIC_TIMER_ID | FRAME_RECEIVED_ID);
 
-  /* Goes to the final priority after initialization.*/
+  /* Resumes the caller and goes to the final priority.*/
+  chThdResume(&lwip_trp, MSG_OK);
   chThdSetPriority(LWIP_THREAD_PRIORITY);
 
   while (true) {
@@ -308,6 +314,27 @@ THD_FUNCTION(lwip_thread, p) {
       }
     }
   }
+}
+
+/**
+ * @brief   Initializes the lwIP subsystem.
+ * @note    The function exits after the initialization is finished.
+ *
+ * @param[in] opts      pointer to the configuration structure, if @p NULL
+ *                      then the static configuration is used.
+ */
+void lwipInit(const lwipthread_opts_t *opts) {
+
+  /* Creating the lwIP thread (it changes priority internally).*/
+  chThdCreateStatic(wa_lwip_thread, LWIP_THREAD_STACK_SIZE,
+                    chThdGetPriorityX() - 1, lwip_thread, (void *)opts);
+
+  /* Waiting for the lwIP thread complete initialization. Note,
+     this thread reaches the thread reference object first because
+     the relative priorities.*/
+  chSysLock();
+  chThdSuspendS(&lwip_trp);
+  chSysUnlock();
 }
 
 /** @} */
