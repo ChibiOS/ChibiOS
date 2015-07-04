@@ -73,6 +73,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 3.0.0 ***
+- HAL: Fixed TIM2 wrongly classified as 32bits in STM32F1xx devices
+       (bug #610).
+
 *** 3.0.0p6 ***
 - HAL: Removed call to localtime_r() function for non-GNU compilers in
        STM32F1xx RTC driver.
