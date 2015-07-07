@@ -684,7 +684,7 @@ __vector_table:
 #endif
         PUBLIC  _unhandled_exception
 
-        SECTION .text:CODE:REORDER(1)
+        SECTION .text:CODE:NOROOT:REORDER(1)
         THUMB
 
 NMI_Handler

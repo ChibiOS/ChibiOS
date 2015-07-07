@@ -12,7 +12,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>22</version>
+        <version>24</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -26,11 +26,6 @@
         <option>
           <name>ListPath</name>
           <state>Debug\List</state>
-        </option>
-        <option>
-          <name>Variant</name>
-          <version>20</version>
-          <state>40</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -59,11 +54,6 @@
           <state>0</state>
         </option>
         <option>
-          <name>FPU</name>
-          <version>2</version>
-          <state>5</state>
-        </option>
-        <option>
           <name>OGCoreOrChip</name>
           <state>1</state>
         </option>
@@ -87,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.70.3.6347</state>
+          <state>7.40.3.8937</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -136,13 +126,8 @@
           <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
         <option>
-          <name>GFPUCoreSlave</name>
-          <version>20</version>
-          <state>40</state>
-        </option>
-        <option>
           <name>GBECoreSlave</name>
-          <version>20</version>
+          <version>22</version>
           <state>40</state>
         </option>
         <option>
@@ -157,13 +142,41 @@
           <name>GRuntimeLibThreads</name>
           <state>0</state>
         </option>
+        <option>
+          <name>CoreVariant</name>
+          <version>22</version>
+          <state>39</state>
+        </option>
+        <option>
+          <name>GFPUDeviceSlave</name>
+          <state>STM32F303xC	ST STM32F303xC</state>
+        </option>
+        <option>
+          <name>FPU2</name>
+          <version>0</version>
+          <state>4</state>
+        </option>
+        <option>
+          <name>NrRegs</name>
+          <version>0</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>NEON</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>GFPUCoreSlave2</name>
+          <version>22</version>
+          <state>39</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>29</version>
+        <version>31</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -172,7 +185,7 @@
         </option>
         <option>
           <name>CCDefines</name>
-          <state>CORTEX_USE_FPU=TRUE</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -233,7 +246,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>0000000</state>
+          <state>00000000</state>
         </option>
         <option>
           <name>CCDebugInfo</name>
@@ -418,6 +431,15 @@
           <name>CCNoLiteralPool</name>
           <state>0</state>
         </option>
+        <option>
+          <name>CCOptStrategySlave</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCGuardCalls</name>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -474,7 +496,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state>CORTEX_USE_FPU=TRUE</state>
+          <state></state>
         </option>
         <option>
           <name>AList</name>
@@ -597,7 +619,7 @@
         <debug>1</debug>
         <option>
           <name>OOCOutputFormat</name>
-          <version>2</version>
+          <version>3</version>
           <state>0</state>
         </option>
         <option>
@@ -624,6 +646,7 @@
       <data>
         <extensions></extensions>
         <cmdline></cmdline>
+        <hasPrio>0</hasPrio>
       </data>
     </settings>
     <settings>
@@ -966,7 +989,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>22</version>
+        <version>24</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -980,11 +1003,6 @@
         <option>
           <name>ListPath</name>
           <state>Release\List</state>
-        </option>
-        <option>
-          <name>Variant</name>
-          <version>20</version>
-          <state>40</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -1013,11 +1031,6 @@
           <state>0</state>
         </option>
         <option>
-          <name>FPU</name>
-          <version>2</version>
-          <state>5</state>
-        </option>
-        <option>
           <name>OGCoreOrChip</name>
           <state>1</state>
         </option>
@@ -1041,7 +1054,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.70.3.6347</state>
+          <state>7.40.3.8937</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1090,14 +1103,9 @@
           <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
         <option>
-          <name>GFPUCoreSlave</name>
-          <version>20</version>
-          <state>40</state>
-        </option>
-        <option>
           <name>GBECoreSlave</name>
-          <version>20</version>
-          <state>40</state>
+          <version>22</version>
+          <state>39</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -1111,13 +1119,41 @@
           <name>GRuntimeLibThreads</name>
           <state>0</state>
         </option>
+        <option>
+          <name>CoreVariant</name>
+          <version>22</version>
+          <state>39</state>
+        </option>
+        <option>
+          <name>GFPUDeviceSlave</name>
+          <state>STM32F303xC	ST STM32F303xC</state>
+        </option>
+        <option>
+          <name>FPU2</name>
+          <version>0</version>
+          <state>4</state>
+        </option>
+        <option>
+          <name>NrRegs</name>
+          <version>0</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>NEON</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>GFPUCoreSlave2</name>
+          <version>22</version>
+          <state>39</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>29</version>
+        <version>31</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1126,7 +1162,7 @@
         </option>
         <option>
           <name>CCDefines</name>
-          <state>CORTEX_USE_FPU=TRUE</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1187,7 +1223,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1111111</state>
+          <state>11111110</state>
         </option>
         <option>
           <name>CCDebugInfo</name>
@@ -1372,6 +1408,15 @@
           <name>CCNoLiteralPool</name>
           <state>0</state>
         </option>
+        <option>
+          <name>CCOptStrategySlave</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCGuardCalls</name>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -1428,7 +1473,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state>CORTEX_USE_FPU=TRUE</state>
+          <state></state>
         </option>
         <option>
           <name>AList</name>
@@ -1551,7 +1596,7 @@
         <debug>0</debug>
         <option>
           <name>OOCOutputFormat</name>
-          <version>2</version>
+          <version>3</version>
           <state>0</state>
         </option>
         <option>
@@ -1578,6 +1623,7 @@
       <data>
         <extensions></extensions>
         <cmdline></cmdline>
+        <hasPrio>0</hasPrio>
       </data>
     </settings>
     <settings>
@@ -2466,6 +2512,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\test\rt\testsem.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testsys.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\test\rt\testsys.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\test\rt\testthd.c</name>

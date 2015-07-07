@@ -70,6 +70,7 @@ __iar_program_start:
         bl      __iar_init_vfp
         b       __cmain
 
+        SECTION .text:CODE:NOROOT:REORDER(2)
         PUBWEAK __early_init
 __early_init:
         bx      lr
