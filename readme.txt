@@ -59,12 +59,12 @@
   |  |  +--templates/     - RT port template files.
   |  +--various/          - Various portable support files.
   +--test/                - Kernel test suite source code.
-  |  +--lib\              - Portable test engine.
-  |  +--hal\              - HAL test suites.
+  |  +--lib/              - Portable test engine.
+  |  +--hal/              - HAL test suites.
   |  |  +--testbuild/     - HAL uild test and MISRA check.
-  |  +--nil\              - NIL test suites.
+  |  +--nil/              - NIL test suites.
   |  |  +--testbuild/     - NIL nuild test and MISRA check.
-  |  +--rt\               - RT test suites.
+  |  +--rt/               - RT test suites.
   |  |  +--testbuild/     - RT build test and MISRA check.
   |  |  +--coverage/      - RT code coverage project.
   +--testhal/             - HAL integration test demos.
