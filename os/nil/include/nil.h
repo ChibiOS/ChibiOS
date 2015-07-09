@@ -402,7 +402,7 @@ struct nil_system {
   /**
    * @brief   System time.
    */
-  systime_t             systime;
+  volatile systime_t    systime;
 #endif
 #if (NIL_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
   /**

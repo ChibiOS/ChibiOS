@@ -16,7 +16,7 @@
 
 #include "nil.h"
 #include "hal.h"
-//#include "test.h"
+#include "ch_test.h"
 
 /*
  * LEDs blinker thread, times are in milliseconds.
@@ -33,8 +33,6 @@ static THD_FUNCTION(Thread1, arg) {
 
   while (true) {
     unsigned i;
-
-    chnWriteTimeout(&SD1, (uint8_t *)"Hello World!\r\n", 14, TIME_INFINITE);
 
     for (i = 0; i < 4; i++) {
       palClearPad(PORT_E, PE_LED1);
@@ -94,11 +92,37 @@ static THD_FUNCTION(Thread1, arg) {
 }
 
 /*
+ * Tester thread.
+ */
+THD_WORKING_AREA(waThread2, 128);
+THD_FUNCTION(Thread2, arg) {
+
+  (void)arg;
+
+  /*
+   * Activates the serial driver 1 using the driver default configuration.
+   */
+  sdStart(&SD1, NULL);
+
+  /* Welcome message.*/
+  chnWriteTimeout(&SD1, (uint8_t *)"Hello World!\r\n", 14, TIME_INFINITE);
+
+  /* Waiting for button push and activation of the test suite.*/
+  while (true) {
+    if (palReadPad(PORT_E, PE_BUTTON1))
+      test_execute((BaseSequentialStream *)&SD1);
+    chThdSleepMilliseconds(500);
+  }
+}
+
+/*
  * Threads static table, one entry per thread. The number of entries must
  * match NIL_CFG_NUM_THREADS.
  */
 THD_TABLE_BEGIN
-  THD_TABLE_ENTRY(waThread1, "blinker", Thread1, NULL)
+THD_TABLE_ENTRY(waThread1, "blinker", Thread1, NULL)
+THD_TABLE_ENTRY(wa_test_support, "test_support", test_support, (void *)&nil.threads[2])
+THD_TABLE_ENTRY(waThread2, "tester", Thread2, NULL)
 THD_TABLE_END
 
 /*

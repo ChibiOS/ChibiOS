@@ -88,7 +88,7 @@ include $(CHIBIOS)/os/hal/ports/SPC5/SPC560Dxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/nil/ports/e200/compilers/GCC/mk/port_spc560dxx.mk
-#include $(CHIBIOS)/test/nil/test.mk
+include $(CHIBIOS)/test/nil/test.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/SPC560D40.ld

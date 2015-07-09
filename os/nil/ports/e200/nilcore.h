@@ -502,9 +502,7 @@ static inline void port_enable(void) {
  */
 static inline void port_wait_for_interrupt(void) {
 
-#if PPC_ENABLE_WFI_IDLE
   asm volatile ("wait" : : : "memory");
-#endif
 }
 
 /**
