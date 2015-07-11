@@ -219,4 +219,4 @@ include $(RULESPATH)/rules.mk
 # MISRA check rule, requires PCLint and the setup files, not provided.
 #
 misra:
-	@lint-nt -v -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(CSRC) &> misra.txt
+	@lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(CSRC) > misra.txt
