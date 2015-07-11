@@ -67,13 +67,13 @@ include $(CHIBIOS)/os/rt/ports/AVR/compilers/GCC/mk/port.mk
 include $(CHIBIOS)/test/rt/test.mk
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(PORTSRC) \
-      $(KERNSRC) \
-      $(TESTSRC) \
-      $(HALSRC) \
+SRC = $(KERNSRC) \
+      $(PORTSRC) \
       $(OSALSRC) \
+      $(HALSRC) \
       $(PLATFORMSRC) \
       $(BOARDSRC) \
+      $(TESTSRC) \
       $(CHIBIOS)/os/various/evtimer.c \
       main.c
 
