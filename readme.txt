@@ -77,6 +77,7 @@
 - NEW: Added an initialization function to the lwIP bindings, now it is
        sufficient to call lwipInit(NULL); in order to start the subsystem.
        Demo updated.
+- RT:  Fixed compilation error in RT when registry is disabled (bug #614).
 - NIL: Fixed nilrtos redefinition of systime_t (bug #611).
 - HAL: Fixed TIM2 wrongly classified as 32bits in STM32F1xx devices
        (bug #610).

@@ -130,9 +130,11 @@ void chSysInit(void) {
 #endif
   chSysEnable();
 
+#if CH_CFG_USE_REGISTRY == TRUE
   /* Note, &ch_debug points to the string "main" if the registry is
-     active, else the parameter is ignored.*/
+     active.*/
   chRegSetThreadName((const char *)&ch_debug);
+#endif
 
 #if CH_CFG_NO_IDLE_THREAD == FALSE
   {
