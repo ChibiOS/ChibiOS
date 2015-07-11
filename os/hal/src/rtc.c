@@ -235,7 +235,7 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
   timp->tm_hour = tmp / 3600;
 
   if (NULL != tv_msec) {
-    *tv_msec = (uint32_t)timespec->millisecond % 1000;
+    *tv_msec = (uint32_t)timespec->millisecond % 1000U;
   }
 }
 

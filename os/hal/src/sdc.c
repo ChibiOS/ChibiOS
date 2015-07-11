@@ -325,7 +325,7 @@ static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
 
   /* Looks like only "high capacity" cards produce meaningful results during
      this clock detection procedure.*/
-  if (0 == _mmcsd_get_slice(sdcp->csd, MMCSD_CSD_10_CSD_STRUCTURE_SLICE)) {
+  if (0U == _mmcsd_get_slice(sdcp->csd, MMCSD_CSD_10_CSD_STRUCTURE_SLICE)) {
     *clk = SDC_CLK_25MHz;
     return HAL_SUCCESS;
   }
@@ -956,12 +956,14 @@ bool sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk) {
   sdcp->state = BLK_WRITING;
 
   /* Handling command differences between HC and normal cards.*/
-  if (!(sdcp->cardmode & SDC_MODE_HIGH_CAPACITY)) {
+  if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) != 0U) {
     startblk *= MMCSD_BLOCK_SIZE;
     endblk *= MMCSD_BLOCK_SIZE;
   }
 
-  _sdc_wait_for_transfer_state(sdcp);
+  if (_sdc_wait_for_transfer_state(sdcp)) {
+    goto failed;
+  }
 
   if ((sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_ERASE_RW_BLK_START,
                                   startblk, resp) != HAL_SUCCESS) ||
@@ -985,7 +987,9 @@ bool sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk) {
   /* TODO: ??????????????????????????? */
 
   /* Wait for it to return to transfer state to indicate it has finished erasing */
-  _sdc_wait_for_transfer_state(sdcp);
+  if (_sdc_wait_for_transfer_state(sdcp)) {
+    goto failed;
+  }
 
   sdcp->state = BLK_READY;
   return HAL_SUCCESS;
