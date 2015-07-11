@@ -118,8 +118,8 @@
  * @api
  */
 #define MS2ST(msec)                                                         \
-  ((systime_t)((((uint32_t)(msec)) *                                        \
-                ((uint32_t)CH_CFG_ST_FREQUENCY) + 999UL) / 1000UL))
+  ((systime_t)(((((uint32_t)(msec)) *                                       \
+                 ((uint32_t)CH_CFG_ST_FREQUENCY)) + 999UL) / 1000UL))
 
 /**
  * @brief   Microseconds to system ticks.
@@ -132,8 +132,8 @@
  * @api
  */
 #define US2ST(usec)                                                         \
-  ((systime_t)((((uint32_t)(usec)) *                                        \
-                ((uint32_t)CH_CFG_ST_FREQUENCY) + 999999UL) / 1000000UL))
+  ((systime_t)(((((uint32_t)(usec)) *                                       \
+                 ((uint32_t)CH_CFG_ST_FREQUENCY)) + 999999UL) / 1000000UL))
 
 /**
  * @brief   System ticks to seconds.
