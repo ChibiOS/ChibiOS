@@ -1312,7 +1312,7 @@ CHM_FILE               = ../../ChibiOS_RT.chm
 # The file has to be specified with full path.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
-HHC_LOCATION           = "\"C:/Program Files/HTML Help Workshop/hhc.exe\""
+HHC_LOCATION           = "\"C:/Programmi (x86)/HTML Help Workshop/hhc.exe\""
 
 # The GENERATE_CHI flag controls if a separate .chi index file is generated (
 # YES) or that it should be included in the master .chm file ( NO).
