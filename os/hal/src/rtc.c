@@ -220,19 +220,18 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
 void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
                                   struct tm *timp,
                                   uint32_t *tv_msec) {
-  int tmp;
+  int sec;
 
   timp->tm_year  = (int)timespec->year + (1980 - 1900);
   timp->tm_mon   = (int)timespec->month - 1;
   timp->tm_mday  = (int)timespec->day;
   timp->tm_isdst = (int)timespec->dstflag;
 
-  tmp = (int)timespec->millisecond / 1000;
-  timp->tm_sec  = tmp % 60;
-  tmp -= timp->tm_sec;
-  timp->tm_min  = (tmp % 3600) / 60;
-  tmp -= timp->tm_min * 60;
-  timp->tm_hour = tmp / 3600;
+  sec = (int)timespec->millisecond / 1000;
+  timp->tm_hour = sec / 3600;
+  sec %= 3600;
+  timp->tm_min = sec / 60;
+  timp->tm_sec = sec % 60;
 
   if (NULL != tv_msec) {
     *tv_msec = (uint32_t)timespec->millisecond % 1000U;
@@ -283,13 +282,14 @@ void rtcConvertStructTmToDateTime(const struct tm *timp,
  */
 uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec) {
   uint32_t fattime;
-  uint32_t sec, min, hour, day, month, tmp;
+  uint32_t sec, min, hour, day, month;
 
-  tmp = timespec->millisecond / 1000U;
-  sec = tmp % 60U;
-  min = (tmp - sec) % 3600U;
-  hour = ((tmp - sec) - (min * 60U)) / 3600U;
-  day = timespec->day;
+  sec   = timespec->millisecond / 1000U;
+  hour  = sec / 3600U;
+  sec  %= 3600U;
+  min   = sec / 60U;
+  sec  %= 60U;
+  day   = timespec->day;
   month = timespec->month;
 
   /* handle DST flag */
