@@ -54,7 +54,7 @@ static THD_FUNCTION(blink_thd, arg){
   (void)arg;
   while (true) {
     chThdSleepMilliseconds(100);
-    palTogglePad(GPIOB, GPIOB_LED_R);
+    palTogglePad(GPIOC, GPIOC_LED);
   }
 }
 
@@ -64,7 +64,7 @@ static THD_FUNCTION(blink_thd, arg){
 static void anabiosis(void) {
   chSysLock();
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-  PWR->CR |= (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
+  PWR->CR  |= (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
   RTC->ISR &= ~(RTC_ISR_ALRBF | RTC_ISR_ALRAF | RTC_ISR_WUTF | RTC_ISR_TAMP1F |
                 RTC_ISR_TSOVF | RTC_ISR_TSF);
   __WFI();
@@ -243,7 +243,7 @@ static const ShellCommand commands[] = {
  *
  */
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream  *)&SD2,
+  (BaseSequentialStream  *)&SD6,
   commands
 };
 
@@ -276,7 +276,7 @@ int main(void){
   rtcSTM32SetPeriodicWakeup(&RTCD1, NULL);
 
   /* Shell initialization.*/
-  sdStart(&SD2, &ser_cfg);
+  sdStart(&SD6, &ser_cfg);
   shellInit();
   shellCreateStatic(&shell_cfg1, waShell, sizeof(waShell), NORMALPRIO);
 
