@@ -381,6 +381,10 @@ extern "C" {
 }
 #endif
 
+#if CH_CFG_ST_TIMEDELTA > 0
+#include "chcore_timer.h"
+#endif
+
 #endif /* _CHCORE_H_ */
 
 /** @} */
