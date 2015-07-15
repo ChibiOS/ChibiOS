@@ -138,7 +138,7 @@
  *
  * @note    The default is @p TRUE.
  */
-#define CH_CFG_USE_TM                       TRUE
+#define CH_CFG_USE_TM                       FALSE
 
 /**
  * @brief   Threads registry APIs.
