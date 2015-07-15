@@ -97,9 +97,9 @@
 #define STM32_PLS_EXT           (7 << 5)    /**< PVD level 7.               */
 
 #define STM32_VOS_MASK          (3 << 11)   /**< VOS field mask.            */
-#define STM32_VOS_RANGE1        (1 << 11)   /**< VOS level 1.8 volts.       */
-#define STM32_VOS_RANGE2        (2 << 11)   /**< VOS level 1.5 volts.       */
-#define STM32_VOS_RANGE3        (3 << 11)   /**< VOS level 1.2 volts.       */
+#define STM32_VOS_1P8           (1 << 11)   /**< VOS level 1.8 volts.       */
+#define STM32_VOS_1P5           (2 << 11)   /**< VOS level 1.5 volts.       */
+#define STM32_VOS_1P2           (3 << 11)   /**< VOS level 1.2 volts.       */
 /** @} */
 
 /**
@@ -316,7 +316,7 @@
 /**
  * @brief   Enables or disables the LSE clock source.
  */
-#if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
+#if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
 #define STM32_LSE_ENABLED           FALSE
 #endif
 
