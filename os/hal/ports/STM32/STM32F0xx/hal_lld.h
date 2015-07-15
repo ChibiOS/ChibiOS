@@ -26,9 +26,10 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F030x6, STM32F030x8 for Value Line devices.
- *          - STM32F031x6, STM32F038xx, STM32F042x6, STM32F048xx for
- *            Low Density devices.
+ *          - STM32F030x6, STM32F030x8, STM32F030xC, STM32F070x6,
+ *            STM32F070xB for Value Line devices.
+ *          - STM32F031x6, STM32F038xx, STM32F042x6, STM32F048xx
+ *            for Low Density devices.
  *          - STM32F051x8, STM32F058xx, STM32F071xB, STM32F072xB,
  *            STM32F078xx for Medium Density devices.
  *          .
@@ -85,6 +86,15 @@
 
 #elif defined(STM32F030x8)
 #define PLATFORM_NAME           "STM32F030x8 Entry Level Value Line devices"
+
+#elif defined(STM32F030xC)
+#define PLATFORM_NAME           "STM32F030xC Entry Level Value Line devices"
+
+#elif defined(STM32F070x6)
+#define PLATFORM_NAME           "STM32F070x6 Entry Level Value Line devices"
+
+#elif defined(STM32F070xB)
+#define PLATFORM_NAME           "STM32F070xB Entry Level Value Line devices"
 
 #else
 #error "STM32F0xx device not specified"

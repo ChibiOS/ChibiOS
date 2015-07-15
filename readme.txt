@@ -73,6 +73,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 3.1.0 ***
+- HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
+  for STM32F030xC, STM32F070x6, STM32F070xB devices.
+
 *** 3.0.0 ***
 - NEW: Added an initialization function to the lwIP bindings, now it is
        sufficient to call lwipInit(NULL); in order to start the subsystem.
