@@ -3,10 +3,10 @@ ifeq ($(USE_SMART_BUILD),yes)
 HALCONF := $(strip $(shell cat halconf.h | egrep -e "define"))
 
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
-               $(CHIBIOS)/os/hal/ports/STM32/STM32L0xx/stm32_dma.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32L0xx/hal_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/st_lld.c
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
+               $(CHIBIOS)/os/hal/ports/STM32/STM32L0xx/stm32_dma.c \
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/STM32L0xx/adc_lld.c
 endif
 ifneq ($(findstring HAL_USE_EXT TRUE,$(HALCONF)),)

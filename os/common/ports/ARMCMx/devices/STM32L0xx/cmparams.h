@@ -44,7 +44,7 @@
 /**
  * @brief   Number of bits in priority masks.
  */
-#define CORTEX_PRIORITY_BITS    4
+#define CORTEX_PRIORITY_BITS    2
 
 /**
  * @brief   Number of interrupt vectors.
