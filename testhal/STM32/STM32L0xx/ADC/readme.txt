@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL - ADC driver demo for STM32F0xx.                            **
+** ChibiOS/HAL - ADC driver demo for STM32L0xx.                            **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,7 @@ The demo will on an STMicroelectronics STM32F0-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F0xx ADC driver.
+The application demonstrates the use of the STM32L0xx ADC driver.
 
 ** Board Setup **
 

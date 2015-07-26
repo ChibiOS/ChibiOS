@@ -116,6 +116,13 @@
 #endif
 
 /**
+ * @brief   ADC1 clock source selection.
+ */
+#if !defined(STM32_ADC_CKMODE) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC1_CKMODE               STM32_ADC_CKMODE_ADCCLK
+#endif
+
+/**
  * @brief   ADC1 DMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_ADC_ADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
@@ -126,7 +133,7 @@
  * @brief   ADC interrupt priority level setting.
  */
 #if !defined(STM32_ADC_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_IRQ_PRIORITY              2
+#define STM32_ADC_ADC1_IRQ_PRIORITY         2
 #endif
 
 /**
@@ -136,15 +143,8 @@
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     2
 #endif
 
-/**
- * @brief   ADC clock source selection.
- */
-#if !defined(STM32_ADC_CKMODE) || defined(__DOXYGEN__)
-#define STM32_ADC_CKMODE                    STM32_ADC_CKMODE_ADCCLK
-#endif
-
 #if (STM32_ADC_SUPPORTS_PRESCALER == TRUE) || defined(__DOXYGEN__)
-/**
+/*
  * @brief   ADC prescaler setting.
  * @note    This setting has effect only in asynchronous clock mode (the
  *          default, @p STM32_ADC_CKMODE_ADCCLK).
@@ -169,7 +169,7 @@
 #endif
 
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1"
 #endif
 

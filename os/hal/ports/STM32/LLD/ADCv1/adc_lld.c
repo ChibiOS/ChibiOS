@@ -136,11 +136,11 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
-#endif
 
   /* The shared vector is initialized on driver initialization and never
      disabled.*/
-  nvicEnableVector(12, STM32_ADC_IRQ_PRIORITY);
+  nvicEnableVector(12, STM32_ADC_ADC1_IRQ_PRIORITY);
+#endif
 
   /* Calibration procedure.*/
   rccEnableADC1(FALSE);
@@ -175,7 +175,7 @@ void adc_lld_start(ADCDriver *adcp) {
       rccEnableADC1(FALSE);
 
       /* Clock settings.*/
-      adcp->adc->CFGR2 = STM32_ADC_CKMODE;
+      adcp->adc->CFGR2 = STM32_ADC_ADC1_CKMODE;
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
