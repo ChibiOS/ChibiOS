@@ -261,7 +261,7 @@ void stm32_clock_init(void) {
                FLASH_ACR_DCEN | STM32_FLASHBITS;
 #endif
 
-  /* Switching to the configured clock source if it is different from MSI.*/
+  /* Switching to the configured clock source if it is different from HSI.*/
 #if (STM32_SW != STM32_SW_HSI)
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))

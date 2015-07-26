@@ -154,6 +154,9 @@
 #define STM32_HAS_TIM14                     FALSE
 #define STM32_HAS_TIM18                     FALSE
 #define STM32_HAS_TIM19                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
@@ -323,6 +326,9 @@
 #define STM32_HAS_TIM14                     FALSE
 #define STM32_HAS_TIM18                     FALSE
 #define STM32_HAS_TIM19                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
@@ -467,6 +473,9 @@
 #define STM32_HAS_TIM17                     FALSE
 #define STM32_HAS_TIM18                     FALSE
 #define STM32_HAS_TIM19                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
@@ -617,6 +626,9 @@
 #define STM32_HAS_TIM17                     FALSE
 #define STM32_HAS_TIM18                     FALSE
 #define STM32_HAS_TIM19                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
@@ -810,6 +822,9 @@
 #define STM32_HAS_TIM17                     FALSE
 #define STM32_HAS_TIM18                     FALSE
 #define STM32_HAS_TIM19                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
@@ -1006,6 +1021,9 @@
 #define STM32_HAS_TIM17                     FALSE
 #define STM32_HAS_TIM18                     FALSE
 #define STM32_HAS_TIM19                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
@@ -1181,6 +1199,9 @@
 #define STM32_HAS_TIM17                     FALSE
 #define STM32_HAS_TIM18                     FALSE
 #define STM32_HAS_TIM19                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE

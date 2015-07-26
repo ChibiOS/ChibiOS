@@ -91,7 +91,7 @@ void _pal_lld_init(const PALConfig *config) {
    * Enables the GPIO related clocks.
    */
 #if defined(STM32L0XX)
-  rccEnableAHB(AHB_EN_MASK, TRUE);
+  RCC->IOPENR |= AHB_EN_MASK;
   RCC->IOPSMENR |= AHB_LPEN_MASK;
 #elif defined(STM32L1XX)
   rccEnableAHB(AHB_EN_MASK, TRUE);

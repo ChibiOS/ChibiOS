@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Introduced preliminary support for STM32L0xx devices.
+- HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
 - HAL: Fixed wrong check on STM32_LSE_ENABLED definition in STM32L1xx HAL port

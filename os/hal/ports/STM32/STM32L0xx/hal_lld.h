@@ -233,8 +233,8 @@
 #define STM32_USART1SEL_SYSCLK  (1 << 0)    /**< USART1 clock is SYSCLK.    */
 #define STM32_USART1SEL_HSI16   (2 << 0)    /**< USART1 clock is HSI16.     */
 #define STM32_USART1SEL_LSE     (3 << 0)    /**< USART1 clock is LSE.       */
-#define STM32_USART2SEL_MASK    (3 << 2)    /**< USART2 clock source mask.  */
 
+#define STM32_USART2SEL_MASK    (3 << 2)    /**< USART2 clock source mask.  */
 #define STM32_USART2SEL_APB     (0 << 2)    /**< USART2 clock is APB.       */
 #define STM32_USART2SEL_SYSCLK  (1 << 2)    /**< USART2 clock is SYSCLK.    */
 #define STM32_USART2SEL_HSI16   (2 << 2)    /**< USART2 clock is HSI16.     */
@@ -251,10 +251,11 @@
 #define STM32_I2C1SEL_SYSCLK    (1 << 12)   /**< I2C1 clock is SYSCLK.      */
 #define STM32_I2C1SEL_HSI16     (2 << 12)   /**< I2C1 clock is HSI16.       */
 
-#define STM32_I2C3SEL_MASK      (3 << 16)   /**< I2C3 clock source mask.    */
-#define STM32_I2C3SEL_APB       (0 << 16)   /**< I2C3 clock is APB.         */
-#define STM32_I2C3SEL_SYSCLK    (1 << 16)   /**< I2C3 clock is SYSCLK.      */
-#define STM32_I2C3SEL_HSI16     (2 << 16)   /**< I2C3 clock is HSI16.       */
+#define STM32_LPTIM1SEL_MASK    (3 << 18)   /**< LPTIM1 clock source mask.  */
+#define STM32_LPTIM1SEL_APB     (0 << 18)   /**< LPTIM1 clock is APB.       */
+#define STM32_LPTIM1SEL_SYSCLK  (1 << 18)   /**< LPTIM1 clock is SYSCLK.    */
+#define STM32_LPTIM1SEL_HSI16   (2 << 18)   /**< LPTIM1 clock is HSI16.     */
+#define STM32_LPTIM1SEL_LSE     (3 << 18)   /**< LPTIM1 clock is LSE.       */
 
 #define STM32_HSI48SEL_MASK     (1 << 27)   /**< HSI48SEL clock source mask.*/
 #define STM32_HSI48SEL_USBPLL   (0 << 27)   /**< USB48 clock is PLL/2.      */
@@ -273,7 +274,7 @@
  * @brief   Disables the PWR/RCC initialization in the HAL.
  */
 #if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
-#define STM32_NO_INIT               FALSE
+#define STM32_NO_INIT                       FALSE
 #endif
 
 /**
@@ -283,70 +284,70 @@
  *          the maximum voltage.
  */
 #if !defined(STM32_VOS) || defined(__DOXYGEN__)
-#define STM32_VOS                   STM32_VOS_1P8
+#define STM32_VOS                           STM32_VOS_1P8
 #endif
 
 /**
  * @brief   Enables or disables the programmable voltage detector.
  */
 #if !defined(STM32_PVD_ENABLE) || defined(__DOXYGEN__)
-#define STM32_PVD_ENABLE            FALSE
+#define STM32_PVD_ENABLE                    FALSE
 #endif
 
 /**
  * @brief   Sets voltage level for programmable voltage detector.
  */
 #if !defined(STM32_PLS) || defined(__DOXYGEN__)
-#define STM32_PLS                   STM32_PLS_LEV0
+#define STM32_PLS                           STM32_PLS_LEV0
 #endif
 
 /**
  * @brief   Enables or disables the HSI16 clock source.
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI16_ENABLED         TRUE
+#define STM32_HSI16_ENABLED                 TRUE
 #endif
 
 /**
  * @brief   Enables or disables the LSI clock source.
  */
 #if !defined(STM32_LSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSI_ENABLED           TRUE
+#define STM32_LSI_ENABLED                   TRUE
 #endif
 
 /**
  * @brief   Enables or disables the HSE clock source.
  */
 #if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSE_ENABLED           FALSE
+#define STM32_HSE_ENABLED                   FALSE
 #endif
 
 /**
  * @brief   Enables or disables the LSE clock source.
  */
 #if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSE_ENABLED           FALSE
+#define STM32_LSE_ENABLED                   FALSE
 #endif
 
 /**
  * @brief   ADC clock setting.
  */
 #if !defined(STM32_ADC_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_ADC_CLOCK_ENABLED     TRUE
+#define STM32_ADC_CLOCK_ENABLED             TRUE
 #endif
 
 /**
  * @brief   USB clock setting.
  */
 #if !defined(STM32_USB_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_USB_CLOCK_ENABLED     TRUE
+#define STM32_USB_CLOCK_ENABLED             TRUE
 #endif
 
 /**
  * @brief   MSI frequency setting.
  */
 #if !defined(STM32_MSIRANGE) || defined(__DOXYGEN__)
-#define STM32_MSIRANGE              STM32_MSIRANGE_2M
+#define STM32_MSIRANGE                      STM32_MSIRANGE_2M
 #endif
 
 /**
@@ -357,7 +358,7 @@
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
-#define STM32_SW                    STM32_SW_PLL
+#define STM32_SW                            STM32_SW_PLL
 #endif
 
 /**
@@ -368,7 +369,7 @@
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
-#define STM32_PLLSRC                STM32_PLLSRC_HSI16
+#define STM32_PLLSRC                        STM32_PLLSRC_HSI16
 #endif
 
 /**
@@ -378,7 +379,7 @@
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLMUL_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLMUL_VALUE          4
+#define STM32_PLLMUL_VALUE                  4
 #endif
 
 /**
@@ -388,7 +389,7 @@
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLDIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLDIV_VALUE          2
+#define STM32_PLLDIV_VALUE                  2
 #endif
 
 /**
@@ -397,56 +398,91 @@
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
-#define STM32_HPRE                  STM32_HPRE_DIV1
+#define STM32_HPRE                          STM32_HPRE_DIV1
 #endif
 
 /**
  * @brief   APB1 prescaler value.
  */
 #if !defined(STM32_PPRE1) || defined(__DOXYGEN__)
-#define STM32_PPRE1                 STM32_PPRE1_DIV1
+#define STM32_PPRE1                         STM32_PPRE1_DIV1
 #endif
 
 /**
  * @brief   APB2 prescaler value.
  */
 #if !defined(STM32_PPRE2) || defined(__DOXYGEN__)
-#define STM32_PPRE2                 STM32_PPRE2_DIV1
+#define STM32_PPRE2                         STM32_PPRE2_DIV1
 #endif
 
 /**
  * @brief   MCO clock source.
  */
 #if !defined(STM32_MCOSEL) || defined(__DOXYGEN__)
-#define STM32_MCOSEL                STM32_MCOSEL_NOCLOCK
+#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #endif
 
 /**
  * @brief   MCO divider setting.
  */
 #if !defined(STM32_MCOPRE) || defined(__DOXYGEN__)
-#define STM32_MCOPRE                STM32_MCOPRE_DIV1
+#define STM32_MCOPRE                        STM32_MCOPRE_DIV1
 #endif
 
 /**
  * @brief   RTC/LCD clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
-#define STM32_RTCSEL                STM32_RTCSEL_LSI
+#define STM32_RTCSEL                        STM32_RTCSEL_LSI
 #endif
 
 /**
  * @brief   HSE divider toward RTC setting.
  */
 #if !defined(STM32_RTCPRE) || defined(__DOXYGEN__)
-#define STM32_RTCPRE                STM32_RTCPRE_DIV2
+#define STM32_RTCPRE                        STM32_RTCPRE_DIV2
+#endif
+
+/**
+ * @brief   USART1 clock source.
+ */
+#if !defined(STM32_USART1SEL) || defined(__DOXYGEN__)
+#define STM32_USART1SEL                     STM32_USART1SEL_APB
+#endif
+
+/**
+ * @brief   USART2 clock source.
+ */
+#if !defined(STM32_USART2SEL) || defined(__DOXYGEN__)
+#define STM32_USART2SEL                     STM32_USART2SEL_APB
+#endif
+
+/**
+ * @brief   LPUART1 clock source.
+ */
+#if !defined(STM32_LPUART1SEL) || defined(__DOXYGEN__)
+#define STM32_LPUART1SEL                    STM32_LPUART1SEL_APB
+#endif
+
+/**
+ * @brief   I2C clock source.
+ */
+#if !defined(STM32_I2C1SEL) || defined(__DOXYGEN__)
+#define STM32_I2C1SEL                       STM32_I2C1SEL_APB
+#endif
+
+/**
+ * @brief   LPTIM1 clock source.
+ */
+#if !defined(STM32_LPTIM1SEL) || defined(__DOXYGEN__)
+#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_APB
 #endif
 
 /**
  * @bief    USB/RNG clock source.
  */
 #if !defined(STM32_HSI48SEL) || defined(__DOXYGEN__)
-#define STM32_HSI48SEL              STM32_HSI48SEL_HSI48
+#define STM32_HSI48SEL                      STM32_HSI48SEL_HSI48
 #endif
 /** @} */
 
@@ -952,6 +988,79 @@
 #endif
 
 /**
+ * @brief   USART1 frequency.
+ */
+#if STM32_USART1SEL == STM32_USART1SEL_APB
+#define STM32_USART1CLK             STM32_PCLK2
+#elif STM32_USART1SEL == STM32_USART1SEL_SYSCLK
+#define STM32_USART1CLK             STM32_SYSCLK
+#elif STM32_USART1SEL == STM32_USART1SEL_HSI16
+#define STM32_USART1CLK             STM32_HSI16CLK
+#elif STM32_USART1SEL == STM32_USART1SEL_LSE
+#define STM32_USART1CLK             STM32_LSECLK
+#else
+#error "invalid source selected for USART1 clock"
+#endif
+
+/**
+ * @brief   USART2 frequency.
+ */
+#if STM32_USART2SEL == STM32_USART2SEL_APB
+#define STM32_USART2CLK             STM32_PCLK2
+#elif STM32_USART2SEL == STM32_USART2SEL_SYSCLK
+#define STM32_USART2CLK             STM32_SYSCLK
+#elif STM32_USART2SEL == STM32_USART2SEL_HSI16
+#define STM32_USART2CLK             STM32_HSI16CLK
+#elif STM32_USART2SEL == STM32_USART2SEL_LSE
+#define STM32_USART2CLK             STM32_LSECLK
+#else
+#error "invalid source selected for USART1 clock"
+#endif
+
+/**
+ * @brief   LPUART1 frequency.
+ */
+#if STM32_LPUART1SEL == STM32_LPUART1SEL_APB
+#define STM32_LPUART1CLK            STM32_PCLK2
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_SYSCLK
+#define STM32_LPUART1CLK            STM32_SYSCLK
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_HSI16
+#define STM32_LPUART1CLK            STM32_HSI16CLK
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_LSE
+#define STM32_LPUART1CLK            STM32_LSECLK
+#else
+#error "invalid source selected for LPUART1 clock"
+#endif
+
+/**
+ * @brief   I2C1 frequency.
+ */
+#if STM32_I2C1SEL == STM32_I2C1SEL_APB
+#define STM32_I2C1CLK               STM32_PCLK2
+#elif STM32_I2C1SEL == STM32_I2C1SEL_SYSCLK
+#define STM32_I2C1CLK               STM32_SYSCLK
+#elif STM32_I2C1SEL == STM32_I2C1SEL_HSI16
+#define STM32_I2C1CLK               STM32_HSI16CLK
+#else
+#error "invalid source selected for I2C1 clock"
+#endif
+
+/**
+ * @brief   LPTIM1 frequency.
+ */
+#if STM32_LPTIM1SEL == STM32_LPTIM1SEL_APB
+#define STM32_LPTIM1CLK             STM32_PCLK2
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_SYSCLK
+#define STM32_LPTIM1CLK             STM32_SYSCLK
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI16
+#define STM32_LPTIM1CLK             STM32_HSI16CLK
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE
+#define STM32_LPTIM1CLK             STM32_LSECLK
+#else
+#error "invalid source selected for LPTIM1 clock"
+#endif
+
+/**
  * @brief   USB/RNG frequency.
  */
 #if (STM32_HSI48SEL == STM32_HSI48SEL_HSI48) || defined(__DOXYGEN__)
@@ -1005,8 +1114,7 @@
 
 /* Various helpers.*/
 #include "nvic.h"
-//#include "stm32_isr.h"
-//#include "stm32_dma.h"
+#include "stm32_dma.h"
 #include "stm32_rcc.h"
 
 #ifdef __cplusplus

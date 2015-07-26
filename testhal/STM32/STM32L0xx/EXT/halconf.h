@@ -41,7 +41,7 @@
  * @brief   Enables the ADC subsystem.
  */
 #if !defined(HAL_USE_ADC) || defined(__DOXYGEN__)
-#define HAL_USE_ADC                 TRUE
+#define HAL_USE_ADC                 FALSE
 #endif
 
 /**
@@ -62,7 +62,7 @@
  * @brief   Enables the EXT subsystem.
  */
 #if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
-#define HAL_USE_EXT                 FALSE
+#define HAL_USE_EXT                 TRUE
 #endif
 
 /**
@@ -132,7 +132,7 @@
  * @brief   Enables the SERIAL subsystem.
  */
 #if !defined(HAL_USE_SERIAL) || defined(__DOXYGEN__)
-#define HAL_USE_SERIAL              TRUE
+#define HAL_USE_SERIAL              FALSE
 #endif
 
 /**

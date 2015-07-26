@@ -22,8 +22,6 @@
  * @{
  */
 
-/* TODO: LSEBYP like in F3. Disable HSI16 if not used.*/
-
 #include "hal.h"
 
 /*===========================================================================*/
@@ -180,6 +178,13 @@ void stm32_clock_init(void) {
   /* LSE activation, have to unlock the register.*/
   if ((RCC->CSR & RCC_CSR_LSEON) == 0) {
     PWR->CR |= PWR_CR_DBP;
+#if defined(STM32_LSE_BYPASS)
+    /* LSE Bypass.*/
+    RCC->CSR |= STM32_LSEDRV | RCC_CSR_LSEBYP;
+#else
+    /* No LSE Bypass.*/
+    RCC->CSR |= STM32_LSEDRV;
+#endif
     RCC->CSR |= RCC_CSR_LSEON;
     PWR->CR &= ~PWR_CR_DBP;
   }
@@ -212,14 +217,15 @@ void stm32_clock_init(void) {
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;
 #endif
-#endif /* STM32_NO_INIT */
 
   /* Peripherals clock sources setup.*/
-  RCC->CCIPR = STM32_HSI48SEL;
+  RCC->CCIPR = STM32_HSI48SEL   | STM32_LPTIM1CLK | STM32_I2C1CLK   |
+               STM32_LPUART1CLK | STM32_USART2CLK | STM32_USART1CLK;
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE);
+#endif /* STM32_NO_INIT */
 }
 
 /** @} */

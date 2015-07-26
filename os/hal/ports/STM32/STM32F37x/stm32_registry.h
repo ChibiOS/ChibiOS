@@ -194,6 +194,9 @@
 #define STM32_HAS_TIM9                      FALSE
 #define STM32_HAS_TIM10                     FALSE
 #define STM32_HAS_TIM11                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
@@ -395,6 +398,9 @@
 #define STM32_HAS_TIM9                      FALSE
 #define STM32_HAS_TIM10                     FALSE
 #define STM32_HAS_TIM11                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE

@@ -30,11 +30,13 @@
 
 /*
  * Board oscillators-related settings.
- * NOTE: HSE not fitted.
+ * NOTE: LSE and HSE not fitted.
  */
 #if !defined(STM32_LSECLK)
 #define STM32_LSECLK                0U
 #endif
+
+#define STM32_LSEDRV                (0U << 11U)
 
 #if !defined(STM32_HSECLK)
 #define STM32_HSECLK                0U
@@ -239,8 +241,8 @@
                                      PIN_MODE_INPUT(GPIOA_PIN8) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN9) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN10) |          \
-                                     PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DM) |  \
-                                     PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DP) |  \
+                                     PIN_MODE_INPUT(GPIOA_OTG_FS_DM) |      \
+                                     PIN_MODE_INPUT(GPIOA_OTG_FS_DP) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_SWCLK) |      \
                                      PIN_MODE_INPUT(GPIOA_PIN15))
@@ -310,8 +312,8 @@
                                      PIN_ODR_HIGH(GPIOA_PIN15))
 #define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_PIN0, 0) |           \
                                      PIN_AFIO_AF(GPIOA_PIN1, 0) |           \
-                                     PIN_AFIO_AF(GPIOA_USART_TX, 7) |       \
-                                     PIN_AFIO_AF(GPIOA_USART_RX, 7) |       \
+                                     PIN_AFIO_AF(GPIOA_USART_TX, 4) |       \
+                                     PIN_AFIO_AF(GPIOA_USART_RX, 4) |       \
                                      PIN_AFIO_AF(GPIOA_PIN4, 0) |           \
                                      PIN_AFIO_AF(GPIOA_LED_GREEN, 0) |      \
                                      PIN_AFIO_AF(GPIOA_PIN6, 0) |           \
@@ -319,8 +321,8 @@
 #define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_PIN8, 0) |           \
                                      PIN_AFIO_AF(GPIOA_PIN9, 0) |           \
                                      PIN_AFIO_AF(GPIOA_PIN10, 0) |          \
-                                     PIN_AFIO_AF(GPIOA_OTG_FS_DM, 10) |     \
-                                     PIN_AFIO_AF(GPIOA_OTG_FS_DP, 10) |     \
+                                     PIN_AFIO_AF(GPIOA_OTG_FS_DM, 0) |      \
+                                     PIN_AFIO_AF(GPIOA_OTG_FS_DP, 0) |      \
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
                                      PIN_AFIO_AF(GPIOA_SWCLK, 0) |          \
                                      PIN_AFIO_AF(GPIOA_PIN15, 0))
