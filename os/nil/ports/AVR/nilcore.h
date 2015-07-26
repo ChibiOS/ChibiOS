@@ -178,7 +178,7 @@ struct port_intctx {
     (tp)->ctxp->r3  = (int)pf >> 8;                                         \
     (tp)->ctxp->r4  = (int)arg;                                             \
     (tp)->ctxp->r5  = (int)arg >> 8;                                        \
-    (tp)->ctxp->pcx = (int)_port_thread_start >> 16;                        \
+    (tp)->ctxp->pcx = (int)0;                                               \
     (tp)->ctxp->pcl = (int)_port_thread_start >> 8;                         \
     (tp)->ctxp->pch = (int)_port_thread_start;                              \
 }
