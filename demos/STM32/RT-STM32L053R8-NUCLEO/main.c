@@ -52,7 +52,7 @@ int main(void) {
   /*
    * Activates the serial driver 2 using the driver default configuration.
    */
-  sdStart(&SD2, NULL);
+//  sdStart(&SD2, NULL);
 
   /*
    * Creates the blinker thread.
@@ -64,8 +64,8 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    if (!palReadPad(GPIOC, GPIOC_BUTTON))
-      TestThread(&SD2);
+//    if (!palReadPad(GPIOC, GPIOC_BUTTON))
+//      TestThread(&SD2);
     chThdSleepMilliseconds(500);
   }
 }

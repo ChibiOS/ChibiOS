@@ -74,6 +74,14 @@
 /** @} */
 
 /**
+ * @brief   Sub-family identifier.
+ */
+#if !defined(STM32L0XX) || defined(__DOXYGEN__)
+#define STM32L0XX
+#endif
+/** @} */
+
+/**
  * @name    Internal clock sources
  * @{
  */
@@ -249,8 +257,8 @@
 #define STM32_I2C3SEL_HSI16     (2 << 16)   /**< I2C3 clock is HSI16.       */
 
 #define STM32_HSI48SEL_MASK     (1 << 27)   /**< HSI48SEL clock source mask.*/
-#define STM32_HSI48SEL_USBPLL   (0 << 27)   /**< HSI48 clock is USB PLL.    */
-#define STM32_HSI48SEL_RC48     (1 << 27)   /**< HSI48 clock is RC28.       */
+#define STM32_HSI48SEL_USBPLL   (0 << 27)   /**< USB48 clock is PLL/2.      */
+#define STM32_HSI48SEL_HSI48    (1 << 27)   /**< USB48 clock is HSI48.      */
 /** @} */
 
 /*===========================================================================*/
@@ -424,7 +432,7 @@
  * @brief   RTC/LCD clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
-#define STM32_RTCSEL                STM32_RTCSEL_LSE
+#define STM32_RTCSEL                STM32_RTCSEL_LSI
 #endif
 
 /**
@@ -432,6 +440,13 @@
  */
 #if !defined(STM32_RTCPRE) || defined(__DOXYGEN__)
 #define STM32_RTCPRE                STM32_RTCPRE_DIV2
+#endif
+
+/**
+ * @bief    USB/RNG clock source.
+ */
+#if !defined(STM32_HSI48SEL) || defined(__DOXYGEN__)
+#define STM32_HSI48SEL              STM32_HSI48SEL_HSI48
 #endif
 /** @} */
 
@@ -768,24 +783,6 @@
 #error "invalid STM32_MSIRANGE value specified"
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * @brief   System clock source.
  */
@@ -883,10 +880,12 @@
 #endif
 
 /**
- * @brief   MCO divider clock.
+ * @brief   MCO selector clock.
  */
 #if (STM32_MCOSEL == STM32_MCOSEL_NOCLOCK) || defined(__DOXYGEN__)
 #define STM32_MCODIVCLK             0
+#elif STM32_MCOSEL == STM32_MCOSEL_SYSCLK
+#define STM32_MCODIVCLK             STM32_SYSCLK
 #elif STM32_MCOSEL == STM32_MCOSEL_HSI16
 #define STM32_MCODIVCLK             STM32_HSI16CLK
 #elif STM32_MCOSEL == STM32_MCOSEL_MSI
@@ -899,6 +898,8 @@
 #define STM32_MCODIVCLK             STM32_LSICLK
 #elif STM32_MCOSEL == STM32_MCOSEL_LSE
 #define STM32_MCODIVCLK             STM32_LSECLK
+#elif STM32_MCOSEL == STM32_MCOSEL_HSI48
+#define STM32_MCODIVCLK             STM32_HSI48CLK
 #else
 #error "invalid STM32_MCOSEL value specified"
 #endif
@@ -951,12 +952,18 @@
 #endif
 
 /**
- * @brief   USB frequency.
+ * @brief   USB/RNG frequency.
  */
+#if (STM32_HSI48SEL == STM32_HSI48SEL_HSI48) || defined(__DOXYGEN__)
+#define STM32_USBCLK                STM32_HSI48CLK
+#elif STM32_HSI48SEL == STM32_HSI48SEL_USBPLL
 #define STM32_USBCLK                (STM32_PLLVCO / 2)
+#else
+#error "invalid STM32_HSI48SEL value specified"
+#endif
 
 /**
- * @brief   Timers 2, 3, 4, 6, 7 clock.
+ * @brief   Timers LPTIM1, TIM2, TIM6 clock.
  */
 #if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK1               (STM32_PCLK1 * 1)
@@ -965,7 +972,7 @@
 #endif
 
 /**
- * @brief   Timers 9, 10, 11 clock.
+ * @brief   Timers TIM21, TIM22 clock.
  */
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)
@@ -977,10 +984,11 @@
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
-#define STM32_FLASHBITS1            0x00000000
+#define STM32_FLASHBITS             0
 #else
-#define STM32_FLASHBITS1            0x00000004
-#define STM32_FLASHBITS2            0x00000007
+#define STM32_FLASHBITS             (FLASH_ACR_PRE_READ |                   \
+                                     FLASH_ACR_PRFTEN   |                   \
+                                     FLASH_ACR_LATENCY)
 #endif
 
 /*===========================================================================*/
@@ -997,8 +1005,8 @@
 
 /* Various helpers.*/
 #include "nvic.h"
-#include "stm32_isr.h"
-#include "stm32_dma.h"
+//#include "stm32_isr.h"
+//#include "stm32_dma.h"
 #include "stm32_rcc.h"
 
 #ifdef __cplusplus
