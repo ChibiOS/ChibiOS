@@ -145,7 +145,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing.
    */
   while (true) {
-    if (palReadPad(GPIOC, GPIOC_BUTTON)) {
+    if (!palReadPad(GPIOC, GPIOC_BUTTON)) {
       adcStopConversion(&ADCD1);
       adcSTM32SetCCR(0);
     }

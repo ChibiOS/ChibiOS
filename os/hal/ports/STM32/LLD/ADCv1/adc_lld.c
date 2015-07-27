@@ -30,6 +30,9 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define ADC1_DMA_CHANNEL                                                    \
+  STM32_DMA_GETCHANNEL(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_CHN)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -130,8 +133,9 @@ void adc_lld_init(void) {
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
   ADCD1.adc = ADC1;
-  ADCD1.dmastp  = STM32_DMA1_STREAM1;
-  ADCD1.dmamode = STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
+  ADCD1.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC1_DMA_STREAM);
+  ADCD1.dmamode = STM32_DMA_CR_CHSEL(ADC1_DMA_CHANNEL) |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
@@ -258,7 +262,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #if STM32_ADC_SUPPORTS_OVERSAMPLING == TRUE
   {
     uint32_t cfgr2 = adcp->adc->CFGR2 & STM32_ADC_CKMODE_MASK;
-    adcp->adc->CFGR1 = cfgr2 | grpp->cfgr2;
+    adcp->adc->CFGR2 = cfgr2 | grpp->cfgr2;
   }
 #endif
 
