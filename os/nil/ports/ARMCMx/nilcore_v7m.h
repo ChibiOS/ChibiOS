@@ -157,11 +157,20 @@
 
 #elif (CORTEX_MODEL == 4)
 #define PORT_ARCHITECTURE_ARM_v7ME
-#define PORT_ARCHITECTURE_NAME          "ARMv7-ME"
+#define PORT_ARCHITECTURE_NAME          "ARMv7E-M"
 #if CORTEX_USE_FPU
 #define PORT_CORE_VARIANT_NAME          "Cortex-M4F"
 #else
 #define PORT_CORE_VARIANT_NAME          "Cortex-M4"
+#endif
+
+#elif (CORTEX_MODEL == 7)
+#define PORT_ARCHITECTURE_ARM_v7ME
+#define PORT_ARCHITECTURE_NAME          "ARMv7E-M"
+#if CORTEX_USE_FPU
+#define PORT_CORE_VARIANT_NAME          "Cortex-M7F"
+#else
+#define PORT_CORE_VARIANT_NAME          "Cortex-M7"
 #endif
 #endif
 
