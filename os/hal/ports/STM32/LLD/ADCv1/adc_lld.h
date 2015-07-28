@@ -118,7 +118,7 @@
 /**
  * @brief   ADC1 clock source selection.
  */
-#if !defined(STM32_ADC_CKMODE) || defined(__DOXYGEN__)
+#if !defined(STM32_ADC_ADC1_CKMODE) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC1_CKMODE               STM32_ADC_CKMODE_ADCCLK
 #endif
 
