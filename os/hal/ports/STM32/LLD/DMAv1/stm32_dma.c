@@ -42,12 +42,13 @@
 /**
  * @brief   Mask of the DMA1 streams in @p dma_streams_mask.
  */
-#define STM32_DMA1_STREAMS_MASK     0x0000007FU
+#define STM32_DMA1_STREAMS_MASK     ((1U << STM32_DMA1_NUM_CHANNELS) - 1U)
 
 /**
  * @brief   Mask of the DMA2 streams in @p dma_streams_mask.
  */
-#define STM32_DMA2_STREAMS_MASK     0x00000F80U
+#define STM32_DMA2_STREAMS_MASK     (((1U << STM32_DMA2_NUM_CHANNELS) -     \
+                                     1U) << STM32_DMA1_NUM_CHANNELS)
 
 /**
  * @brief   Post-reset value of the stream CCR register.
@@ -96,13 +97,9 @@ const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
   {DMA1_Channel5, &DMA1->IFCR, ADDR_DMA1_CSELR, 16,  4, STM32_DMA1_CH5_NUMBER},
 #if STM32_DMA1_NUM_CHANNELS > 5
   {DMA1_Channel6, &DMA1->IFCR, ADDR_DMA1_CSELR, 20,  5, STM32_DMA1_CH6_NUMBER},
-#else
-  {NULL, NULL, NULL, 0, 5, 0},
 #endif
 #if STM32_DMA1_NUM_CHANNELS > 6
   {DMA1_Channel7, &DMA1->IFCR, ADDR_DMA1_CSELR, 24,  6, STM32_DMA1_CH7_NUMBER},
-#else
-  {NULL, NULL, NULL, 0, 6, 0},
 #endif
 #if STM32_DMA2_NUM_CHANNELS > 0
   {DMA2_Channel1, &DMA2->IFCR, ADDR_DMA2_CSELR,  0,  8, STM32_DMA2_CH1_NUMBER},

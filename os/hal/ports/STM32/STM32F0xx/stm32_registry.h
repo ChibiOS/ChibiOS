@@ -45,6 +45,15 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        FALSE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
+#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
+#define STM32_ADC1_HANDLER                  Vector70
+#define STM32_ADC1_NUMBER                   12
+#define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_ADC1_DMA_CHN                  0x00000000
+
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
@@ -63,9 +72,15 @@
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  FALSE
-#define STM32_HAS_DMA1                      TRUE
-#define STM32_HAS_DMA2                      FALSE
-#define STM32_DMA_STREAMS                   5
+#define STM32_DMA1_NUM_CHANNELS             5
+#define STM32_DMA1_CH1_HANDLER              Vector64
+#define STM32_DMA1_CH23_HANDLER             Vector68
+#define STM32_DMA1_CH4567_HANDLER           Vector6C
+#define STM32_DMA1_CH1_NUMBER               9
+#define STM32_DMA1_CH23_NUMBER              10
+#define STM32_DMA1_CH4567_NUMBER            11
+
+#define STM32_DMA2_NUM_CHANNELS             0
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -215,6 +230,15 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        FALSE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
+#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
+#define STM32_ADC1_HANDLER                  Vector70
+#define STM32_ADC1_NUMBER                   12
+#define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_ADC1_DMA_CHN                  0x00000000
+
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
@@ -403,6 +427,15 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        FALSE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
+#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
+#define STM32_ADC1_HANDLER                  Vector70
+#define STM32_ADC1_NUMBER                   12
+#define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_ADC1_DMA_CHN                  0x00000000
+
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
@@ -563,6 +596,15 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        FALSE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
+#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
+#define STM32_ADC1_HANDLER                  Vector70
+#define STM32_ADC1_NUMBER                   12
+#define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_ADC1_DMA_CHN                  0x00000000
+
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
@@ -721,6 +763,15 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        FALSE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
+#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
+#define STM32_ADC1_HANDLER                  Vector70
+#define STM32_ADC1_NUMBER                   12
+#define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_ADC1_DMA_CHN                  0x00000000
+
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
@@ -877,6 +928,15 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        FALSE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
+#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     FALSE
+#define STM32_ADC1_HANDLER                  Vector70
+#define STM32_ADC1_NUMBER                   12
+#define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_ADC1_DMA_CHN                  0x00000000
+
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
@@ -1044,6 +1104,15 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        FALSE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     FALSE
+#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
+#define STM32_ADC1_HANDLER                  Vector70
+#define STM32_ADC1_NUMBER                   12
+#define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_ADC1_DMA_CHN                  0x00000000
+
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
