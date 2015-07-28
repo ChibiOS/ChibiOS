@@ -48,92 +48,96 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if !defined(STM32_DISABLE_EXTI0_HANDLER)
 /**
  * @brief   EXTI[0] interrupt handler.
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(Vector58) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 0);
-  EXTD1.config->channels[0].cb(&EXTD1, 0);
+  pr = EXTI->PR & EXTI->IMR & (1 << 0);
+  EXTI->PR = pr;
+  if (pr & (1 << 0))
+    EXTD1.config->channels[0].cb(&EXTD1, 0);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI1_HANDLER)
 /**
  * @brief   EXTI[1] interrupt handler.
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(Vector5C) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 1);
-  EXTD1.config->channels[1].cb(&EXTD1, 1);
+  pr = EXTI->PR & EXTI->IMR & (1 << 1);
+  EXTI->PR = pr;
+  if (pr & (1 << 1))
+    EXTD1.config->channels[1].cb(&EXTD1, 1);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI2_HANDLER)
 /**
  * @brief   EXTI[2] interrupt handler.
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(Vector60) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 2);
-  EXTD1.config->channels[2].cb(&EXTD1, 2);
+  pr = EXTI->PR & EXTI->IMR & (1 << 2);
+  EXTI->PR = pr;
+  if (pr & (1 << 2))
+    EXTD1.config->channels[2].cb(&EXTD1, 2);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI3_HANDLER)
 /**
  * @brief   EXTI[3] interrupt handler.
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(Vector64) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 3);
-  EXTD1.config->channels[3].cb(&EXTD1, 3);
+  pr = EXTI->PR & EXTI->IMR & (1 << 3);
+  EXTI->PR = pr;
+  if (pr & (1 << 3))
+    EXTD1.config->channels[3].cb(&EXTD1, 3);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI4_HANDLER)
 /**
  * @brief   EXTI[4] interrupt handler.
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(Vector68) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 4);
-  EXTD1.config->channels[4].cb(&EXTD1, 4);
+  pr = EXTI->PR & EXTI->IMR & (1 << 4);
+  EXTI->PR = pr;
+  if (pr & (1 << 4))
+    EXTD1.config->channels[4].cb(&EXTD1, 4);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI5_9_HANDLER)
 /**
  * @brief   EXTI[5]...EXTI[9] interrupt handler.
  *
@@ -144,7 +148,8 @@ OSAL_IRQ_HANDLER(Vector9C) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & ((1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9));
+  pr = EXTI->PR & EXTI->IMR & ((1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) |
+                               (1 << 9));
   EXTI->PR = pr;
   if (pr & (1 << 5))
     EXTD1.config->channels[5].cb(&EXTD1, 5);
@@ -159,9 +164,7 @@ OSAL_IRQ_HANDLER(Vector9C) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI10_15_HANDLER)
 /**
  * @brief   EXTI[10]...EXTI[15] interrupt handler.
  *
@@ -172,8 +175,8 @@ OSAL_IRQ_HANDLER(VectorE0) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & ((1 << 10) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) |
-                   (1 << 15));
+  pr = EXTI->PR & EXTI->IMR & ((1 << 10) | (1 << 11) | (1 << 12) | (1 << 13) |
+                               (1 << 14) | (1 << 15));
   EXTI->PR = pr;
   if (pr & (1 << 10))
     EXTD1.config->channels[10].cb(&EXTD1, 10);
@@ -190,94 +193,97 @@ OSAL_IRQ_HANDLER(VectorE0) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI16_HANDLER)
 /**
  * @brief   EXTI[16] interrupt handler (PVD).
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(Vector44) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 16);
-  EXTD1.config->channels[16].cb(&EXTD1, 16);
+  pr = EXTI->PR & EXTI->IMR & (1 << 16);
+  EXTI->PR = pr;
+  if (pr & (1 << 16))
+    EXTD1.config->channels[16].cb(&EXTD1, 16);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI17_HANDLER)
 /**
  * @brief   EXTI[17] interrupt handler (RTC Alarm).
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(VectorE4) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 17);
-  EXTD1.config->channels[17].cb(&EXTD1, 17);
+  pr = EXTI->PR & EXTI->IMR & (1 << 17);
+  EXTI->PR = pr;
+  if (pr & (1 << 17))
+    EXTD1.config->channels[17].cb(&EXTD1, 17);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if STM32_HAS_USB && !defined(STM32_DISABLE_EXTI18_HANDLER)
 /**
  * @brief   EXTI[18] interrupt handler (USB Wakeup).
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(VectorE8) {
+OSAL_IRQ_HANDLER(Vector170) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 18);
-  EXTD1.config->channels[18].cb(&EXTD1, 18);
+  pr = EXTI->PR & EXTI->IMR & (1 << 18);
+  EXTI->PR = pr;
+  if (pr & (1 << 18))
+    EXTD1.config->channels[18].cb(&EXTD1, 18);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI19_HANDLER)
 /**
  * @brief   EXTI[19] interrupt handler (Tamper TimeStamp).
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(Vector48) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 19);
-  EXTD1.config->channels[19].cb(&EXTD1, 19);
+  pr = EXTI->PR & EXTI->IMR & (1 << 19);
+  EXTI->PR = pr;
+  if (pr & (1 << 19))
+    EXTD1.config->channels[19].cb(&EXTD1, 19);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI20_HANDLER)
 /**
  * @brief   EXTI[20] interrupt handler (RTC Wakeup).
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(Vector4C) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 20);
-  EXTD1.config->channels[20].cb(&EXTD1, 20);
+  pr = EXTI->PR & EXTI->IMR & (1 << 20);
+  EXTI->PR = pr;
+  if (pr & (1 << 20))
+    EXTD1.config->channels[20].cb(&EXTD1, 20);
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
-#if !defined(STM32_DISABLE_EXTI21_22_HANDLER)
 /**
  * @brief   EXTI[21]..EXTI[22] interrupt handler (COMP1, COMP2).
  *
@@ -288,7 +294,7 @@ OSAL_IRQ_HANDLER(Vector140) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & ((1 << 21) | (1 << 22));
+  pr = EXTI->PR & EXTI->IMR & ((1 << 21) | (1 << 22));
   EXTI->PR = pr;
   if (pr & (1 << 21))
     EXTD1.config->channels[21].cb(&EXTD1, 21);
@@ -297,7 +303,6 @@ OSAL_IRQ_HANDLER(Vector140) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

@@ -78,10 +78,12 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- HAL: Fixed wWrong EXTI[18] vector number on STM32F373 (bug #618)(backported
+       to 3.0.1 and 2.6.9).
 - HAL: Fixed wrong check on STM32_LSE_ENABLED definition in STM32L1xx HAL port
-       (bug #617)(backported to 3.0.0 and 2.6.9).
+       (bug #617)(backported to 3.0.1 and 2.6.9).
 - HAL: Fixed rtcConvertDateTimeToFAT() incorrect conversion (bug #615)
-       (backported to 3.0.0).
+       (backported to 3.0.1).
 
 *** 3.0.0 ***
 - NEW: Added an initialization function to the lwIP bindings, now it is
