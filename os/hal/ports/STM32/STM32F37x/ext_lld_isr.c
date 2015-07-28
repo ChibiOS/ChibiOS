@@ -48,6 +48,7 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if !defined(STM32_DISABLE_EXTI0_HANDLER)
 /**
  * @brief   EXTI[0] interrupt handler.
  *
@@ -65,7 +66,9 @@ OSAL_IRQ_HANDLER(Vector58) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI1_HANDLER)
 /**
  * @brief   EXTI[1] interrupt handler.
  *
@@ -83,7 +86,9 @@ OSAL_IRQ_HANDLER(Vector5C) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI2_HANDLER)
 /**
  * @brief   EXTI[2] interrupt handler.
  *
@@ -101,7 +106,9 @@ OSAL_IRQ_HANDLER(Vector60) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI3_HANDLER)
 /**
  * @brief   EXTI[3] interrupt handler.
  *
@@ -119,7 +126,9 @@ OSAL_IRQ_HANDLER(Vector64) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI4_HANDLER)
 /**
  * @brief   EXTI[4] interrupt handler.
  *
@@ -137,7 +146,9 @@ OSAL_IRQ_HANDLER(Vector68) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI5_9_HANDLER)
 /**
  * @brief   EXTI[5]...EXTI[9] interrupt handler.
  *
@@ -164,7 +175,9 @@ OSAL_IRQ_HANDLER(Vector9C) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI10_15_HANDLER)
 /**
  * @brief   EXTI[10]...EXTI[15] interrupt handler.
  *
@@ -193,7 +206,9 @@ OSAL_IRQ_HANDLER(VectorE0) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI16_HANDLER)
 /**
  * @brief   EXTI[16] interrupt handler (PVD).
  *
@@ -211,7 +226,9 @@ OSAL_IRQ_HANDLER(Vector44) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI17_HANDLER)
 /**
  * @brief   EXTI[17] interrupt handler (RTC Alarm).
  *
@@ -229,7 +246,9 @@ OSAL_IRQ_HANDLER(VectorE4) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if STM32_HAS_USB && !defined(STM32_DISABLE_EXTI18_HANDLER)
 /**
  * @brief   EXTI[18] interrupt handler (USB Wakeup).
  *
@@ -247,7 +266,9 @@ OSAL_IRQ_HANDLER(Vector170) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI19_HANDLER)
 /**
  * @brief   EXTI[19] interrupt handler (Tamper TimeStamp).
  *
@@ -265,7 +286,9 @@ OSAL_IRQ_HANDLER(Vector48) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI20_HANDLER)
 /**
  * @brief   EXTI[20] interrupt handler (RTC Wakeup).
  *
@@ -283,7 +306,9 @@ OSAL_IRQ_HANDLER(Vector4C) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI21_22_HANDLER)
 /**
  * @brief   EXTI[21]..EXTI[22] interrupt handler (COMP1, COMP2).
  *
@@ -303,6 +328,7 @@ OSAL_IRQ_HANDLER(Vector140) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

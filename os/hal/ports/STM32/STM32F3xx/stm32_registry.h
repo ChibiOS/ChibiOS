@@ -79,7 +79,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             34
+#define STM32_EXTI_NUM_LINES                34
+#define STM32_EXTI_IMR_MASK                 0x1F800000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -274,7 +276,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             34
+#define STM32_EXTI_NUM_LINES                34
+#define STM32_EXTI_IMR_MASK                 0x1F800000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -446,7 +450,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             33
+#define STM32_EXTI_NUM_LINES                33
+#define STM32_EXTI_IMR_MASK                 0x1F800000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -617,7 +623,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             33
+#define STM32_EXTI_NUM_LINES                33
+#define STM32_EXTI_IMR_MASK                 0x1F800000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -791,7 +799,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             34
+#define STM32_EXTI_NUM_LINES                34
+#define STM32_EXTI_IMR_MASK                 0x1F800000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -977,7 +987,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             33
+#define STM32_EXTI_NUM_LINES                33
+#define STM32_EXTI_IMR_MASK                 0x1F800000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1151,7 +1163,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             33
+#define STM32_EXTI_NUM_LINES                33
+#define STM32_EXTI_IMR_MASK                 0x1F800000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1322,7 +1336,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             34
+#define STM32_EXTI_NUM_LINES                34
+#define STM32_EXTI_IMR_MASK                 0x1F800000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1512,7 +1528,9 @@
 #define STM32_HAS_ETH                       FALSE
 
 /* EXTI attributes.*/
-#define STM32_EXTI_NUM_CHANNELS             33
+#define STM32_EXTI_NUM_LINES                33
+#define STM32_EXTI_IMR_MASK                 0x1F800000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFCU
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
