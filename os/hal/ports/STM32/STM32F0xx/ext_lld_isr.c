@@ -130,6 +130,7 @@ OSAL_IRQ_HANDLER(Vector5C) {
   OSAL_IRQ_EPILOGUE();
 }
 
+#if !defined(STM32F030) || defined(__DOXYGEN__)
 /**
  * @brief   EXTI[16] interrupt handler (PVD).
  *
@@ -144,21 +145,70 @@ OSAL_IRQ_HANDLER(Vector44) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI171920_HANDLER)
 /**
- * @brief   EXTI[17] interrupt handler (RTC).
+ * @brief   EXTI[17],EXTI[19],EXTI[20] interrupt handler (RTC).
  *
  * @isr
  */
 OSAL_IRQ_HANDLER(Vector48) {
+  uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 17);
-  EXTD1.config->channels[17].cb(&EXTD1, 17);
+  pr = EXTI->PR & EXTI->IMR & ((1 << 17) | (1 << 19) | (1 << 20));
+  EXTI->PR = pr;
+  if (pr & (1 << 17))
+    EXTD1.config->channels[17].cb(&EXTD1, 17);
+  if (pr & (1 << 19))
+    EXTD1.config->channels[19].cb(&EXTD1, 19);
+  if (pr & (1 << 20))
+    EXTD1.config->channels[20].cb(&EXTD1, 20);
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
+#endif /* HAL_USE_EXT */
+
+#if (HAL_USE_EXT || HAL_USE_ADC) || defined(__DOXYGEN__)
+#if !defined(STM32F030) || defined(__DOXYGEN__)
+#if !defined(STM32_DISABLE_EXTI2122_HANDLER)
+/**
+ * @brief   EXTI[21],EXTI[22] interrupt handler (ADC, COMP).
+ * @note    This handler is shared with the ADC so it is handled
+ *          a bit differently.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(Vector70) {
+
+  OSAL_IRQ_PROLOGUE();
+
+#if HAL_USE_EXT
+  {
+    uint32_t pr;
+
+    pr = EXTI->PR & EXTI->IMR & ((1 << 21) | (1 << 22));
+    EXTI->PR = pr;
+    if (pr & (1 << 21))
+      EXTD1.config->channels[21].cb(&EXTD1, 21);
+    if (pr & (1 << 22))
+      EXTD1.config->channels[21].cb(&EXTD1, 22);
+  }
+#endif
+#if HAL_USE_ADC
+  adc_lld_serve_interrupt(&ADCD1);
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+#endif /* !defined(STM32F030) */
+#endif /* HAL_USE_EXT || HAL_USE_ADC */
+
+#if HAL_USE_EXT || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -176,8 +226,9 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(EXTI4_15_IRQn, STM32_EXT_EXTI4_15_IRQ_PRIORITY);
 #if !defined(STM32F030)
   nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
+  nvicEnableVector(ADC1_COMP_IRQn, STM32_EXT_EXTI21_22_IRQ_PRIORITY);
 #endif
-  nvicEnableVector(RTC_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
+  nvicEnableVector(RTC_IRQn, STM32_EXT_EXTI17_20_IRQ_PRIORITY);
 }
 
 /**
@@ -192,6 +243,7 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(EXTI4_15_IRQn);
 #if !defined(STM32F030)
   nvicDisableVector(PVD_IRQn);
+  nvicDisableVector(ADC1_COMP_IRQn);
 #endif
   nvicDisableVector(RTC_IRQn);
 }

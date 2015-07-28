@@ -902,7 +902,7 @@
 
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                20
-#define STM32_EXTI_IMR_MASK                 0xFFF40000U
+#define STM32_EXTI_IMR_MASK                 0xFFF50000U
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE

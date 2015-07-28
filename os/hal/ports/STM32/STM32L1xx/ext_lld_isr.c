@@ -305,7 +305,11 @@ OSAL_IRQ_HANDLER(Vector98) {
  *
  * @isr
  */
+#if defined(STM32L1XX_MDP) || defined(__DOXYGEN__)
+OSAL_IRQ_HANDLER(Vector114) {
+#else
 OSAL_IRQ_HANDLER(Vector120) {
+#endif
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
@@ -342,6 +346,9 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(TAMPER_STAMP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
   nvicEnableVector(RTC_WKUP_IRQn, STM32_EXT_EXTI20_IRQ_PRIORITY);
   nvicEnableVector(COMP_IRQn, STM32_EXT_EXTI21_22_IRQ_PRIORITY);
+#if STM32_EXTI_NUM_LINES > 23
+  nvicEnableVector(COMP_ACQ_IRQn, STM32_EXT_EXTI23_IRQ_PRIORITY);
+#endif
 }
 
 /**
@@ -364,6 +371,9 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(TAMPER_STAMP_IRQn);
   nvicDisableVector(RTC_WKUP_IRQn);
   nvicDisableVector(COMP_IRQn);
+#if STM32_EXTI_NUM_LINES > 23
+  nvicDisableVector(COMP_ACQ_IRQn);
+#endif
 }
 
 #endif /* HAL_USE_EXT */

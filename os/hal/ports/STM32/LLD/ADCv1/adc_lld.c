@@ -141,9 +141,11 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
 
+#if STM32_ADC1_IRQ_SHARED_WITH_EXTI == FALSE
   /* The shared vector is initialized on driver initialization and never
      disabled.*/
   nvicEnableVector(12, STM32_ADC_ADC1_IRQ_PRIORITY);
+#endif
 #endif
 
   /* Calibration procedure.*/

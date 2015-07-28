@@ -48,6 +48,7 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if !defined(STM32_DISABLE_EXTI01_HANDLER)
 /**
  * @brief   EXTI[0]...EXTI[1] interrupt handler.
  *
@@ -67,7 +68,9 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE01_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI23_HANDLER)
 /**
  * @brief   EXTI[2]...EXTI[3] interrupt handler.
  *
@@ -87,7 +90,9 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE23_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI4_15_HANDLER)
 /**
  * @brief   EXTI[4]...EXTI[15] interrupt handler.
  *
@@ -129,7 +134,9 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE4_15_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI16_HANDLER)
 /**
  * @brief   EXTI[16] interrupt handler (PVD).
  *
@@ -147,7 +154,9 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE16_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
+#if !defined(STM32_DISABLE_EXTI171920_HANDLER)
 /**
  * @brief   EXTI[17],EXTI[19],EXTI[20] interrupt handler (RTC, CSS).
  *
@@ -169,11 +178,13 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE171920_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* HAL_USE_EXT */
 
 #if (HAL_USE_EXT || HAL_USE_ADC) || defined(__DOXYGEN__)
+#if !defined(STM32_DISABLE_EXTI2122_HANDLER)
 /**
- * @brief   EXTI[20],EXTI[21] interrupt handler (ADC, COMP).
+ * @brief   EXTI[21],EXTI[22] interrupt handler (ADC, COMP).
  * @note    This handler is shared with the ADC so it is handled
  *          a bit differently.
  *
@@ -201,6 +212,7 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE2122_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 #endif /* HAL_USE_EXT || HAL_USE_ADC */
 
 #if HAL_USE_EXT || defined(__DOXYGEN__)

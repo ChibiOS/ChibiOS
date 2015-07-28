@@ -75,7 +75,7 @@
 #define STM32_EXT_EXTI2_3_IRQ_PRIORITY      3
 #define STM32_EXT_EXTI4_15_IRQ_PRIORITY     3
 #define STM32_EXT_EXTI16_IRQ_PRIORITY       3
-#define STM32_EXT_EXTI17_IRQ_PRIORITY       3
+#define STM32_EXT_EXTI17_20_IRQ_PRIORITY    3
 
 /*
  * GPT driver system settings.

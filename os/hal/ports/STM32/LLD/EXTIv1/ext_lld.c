@@ -74,17 +74,17 @@ void ext_lld_init(void) {
  * @notapi
  */
 void ext_lld_start(EXTDriver *extp) {
-  unsigned i;
+  expchannel_t line;
 
   if (extp->state == EXT_STOP)
     ext_lld_exti_irq_enable();
 
   /* Configuration of automatic channels.*/
-  for (i = 0; i < EXT_MAX_CHANNELS; i++)
-    if (extp->config->channels[i].mode & EXT_CH_MODE_AUTOSTART)
-      ext_lld_channel_enable(extp, i);
+  for (line = 0; line < EXT_MAX_CHANNELS; line++)
+    if (extp->config->channels[line].mode & EXT_CH_MODE_AUTOSTART)
+      ext_lld_channel_enable(extp, line);
     else
-      ext_lld_channel_disable(extp, i);
+      ext_lld_channel_disable(extp, line);
 }
 
 /**
@@ -99,11 +99,12 @@ void ext_lld_stop(EXTDriver *extp) {
   if (extp->state == EXT_ACTIVE)
     ext_lld_exti_irq_disable();
 
-  EXTI->EMR = 0;
-  EXTI->IMR = 0;
-  EXTI->PR  = 0xFFFFFFFF;
+  EXTI->EMR  = 0;
+  EXTI->IMR  = STM32_EXTI_IMR_MASK;
+  EXTI->PR   = ~STM32_EXTI_IMR_MASK;
 #if STM32_EXTI_NUM_LINES > 32
-  EXTI->PR2 = 0xFFFFFFFF;
+  EXTI->IMR2 = STM32_EXTI_IMR2_MASK;
+  EXTI->PR2  = ~STM32_EXTI_IMR2_MASK;
 #endif
 }
 
@@ -116,6 +117,7 @@ void ext_lld_stop(EXTDriver *extp) {
  * @notapi
  */
 void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
+  uint32_t cmask = (1 << (channel & 0x1F));
 
   /* Setting the associated GPIO for external channels.*/
   if (channel < 16) {
@@ -135,46 +137,56 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
 #if STM32_EXTI_NUM_LINES > 32
   if (channel < 32) {
 #endif
+    /* Masked out lines must not be touched by this driver.*/
+    if ((cmask & STM32_EXTI_IMR_MASK) != 0U) {
+      return;
+    }
+
     /* Programming edge registers.*/
     if (extp->config->channels[channel].mode & EXT_CH_MODE_RISING_EDGE)
-      EXTI->RTSR |= (1 << channel);
+      EXTI->RTSR |= cmask;
     else
-      EXTI->RTSR &= ~(1 << channel);
+      EXTI->RTSR &= ~cmask;
     if (extp->config->channels[channel].mode & EXT_CH_MODE_FALLING_EDGE)
-      EXTI->FTSR |= (1 << channel);
+      EXTI->FTSR |= cmask;
     else
-      EXTI->FTSR &= ~(1 << channel);
+      EXTI->FTSR &= ~cmask;
 
     /* Programming interrupt and event registers.*/
     if (extp->config->channels[channel].cb != NULL) {
-      EXTI->IMR |= (1 << channel);
-      EXTI->EMR &= ~(1 << channel);
+      EXTI->IMR |= cmask;
+      EXTI->EMR &= ~cmask;
     }
     else {
-      EXTI->EMR |= (1 << channel);
-      EXTI->IMR &= ~(1 << channel);
+      EXTI->EMR |= cmask;
+      EXTI->IMR &= ~cmask;
     }
 #if STM32_EXTI_NUM_LINES > 32
   }
   else {
+    /* Masked out lines must not be touched by this driver.*/
+    if ((cmask & STM32_EXTI_IMR2_MASK) != 0U) {
+      return;
+    }
+
     /* Programming edge registers.*/
     if (extp->config->channels[channel].mode & EXT_CH_MODE_RISING_EDGE)
-      EXTI->RTSR2 |= (1 << (32 - channel));
+      EXTI->RTSR2 |= cmask;
     else
-      EXTI->RTSR2 &= ~(1 << (32 - channel));
+      EXTI->RTSR2 &= ~cmask;
     if (extp->config->channels[channel].mode & EXT_CH_MODE_FALLING_EDGE)
-      EXTI->FTSR2 |= (1 << (32 - channel));
+      EXTI->FTSR2 |= cmask;
     else
-      EXTI->FTSR2 &= ~(1 << (32 - channel));
+      EXTI->FTSR2 &= ~cmask;
 
     /* Programming interrupt and event registers.*/
     if (extp->config->channels[channel].cb != NULL) {
-      EXTI->IMR2 |= (1 << (32 - channel));
-      EXTI->EMR2 &= ~(1 << (32 - channel));
+      EXTI->IMR2 |= cmask;
+      EXTI->EMR2 &= ~cmask;
     }
     else {
-      EXTI->EMR2 |= (1 << (32 - channel));
-      EXTI->IMR2 &= ~(1 << (32 - channel));
+      EXTI->EMR2 |= cmask;
+      EXTI->IMR2 &= ~cmask;
     }
   }
 #endif
@@ -189,25 +201,26 @@ void ext_lld_channel_enable(EXTDriver *extp, expchannel_t channel) {
  * @notapi
  */
 void ext_lld_channel_disable(EXTDriver *extp, expchannel_t channel) {
+  uint32_t cmask = (1 << (channel & 0x1F));
 
   (void)extp;
 
 #if STM32_EXTI_NUM_LINES > 32
   if (channel < 32) {
 #endif
-    EXTI->IMR   &= ~(1 << channel);
-    EXTI->EMR   &= ~(1 << channel);
-    EXTI->RTSR  &= ~(1 << channel);
-    EXTI->FTSR  &= ~(1 << channel);
-    EXTI->PR     =  (1 << channel);
+    EXTI->IMR   &= ~cmask;
+    EXTI->EMR   &= ~cmask;
+    EXTI->RTSR  &= ~cmask;
+    EXTI->FTSR  &= ~cmask;
+    EXTI->PR     =  cmask;
 #if STM32_EXTI_NUM_LINES > 32
   }
   else {
-    EXTI->IMR2  &= ~(1 << (32 - channel));
-    EXTI->EMR2  &= ~(1 << (32 - channel));
-    EXTI->RTSR2 &= ~(1 << (32 - channel));
-    EXTI->FTSR2 &= ~(1 << (32 - channel));
-    EXTI->PR2    =  (1 << (32 - channel));
+    EXTI->IMR2  &= ~cmask;
+    EXTI->EMR2  &= ~cmask;
+    EXTI->RTSR2 &= ~cmask;
+    EXTI->FTSR2 &= ~cmask;
+    EXTI->PR2    =  cmask;
   }
 #endif
 }
