@@ -732,14 +732,7 @@
 #define STM32_HAS_USART6                    FALSE
 
 /* USB attributes.*/
-#if defined(STM32F042x6)
-#define STM32_HAS_USB                       TRUE
-#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
-#define STM32_USB_PMA_SIZE                  768
-#define STM32_USB_HAS_BCDR                  TRUE
-#else
 #define STM32_HAS_USB                       FALSE
-#endif
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 
@@ -893,7 +886,10 @@
 #define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 3)
 #define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 2)
 
-#define STM32_HAS_USART2                    FALSE
+#define STM32_HAS_USART2                    TRUE
+#define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 5)
+#define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID(1, 4)
+
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE

@@ -213,7 +213,7 @@ msg_t canReceive(CANDriver *canp,
                  systime_t timeout) {
 
   osalDbgCheck((canp != NULL) && (crfp != NULL) &&
-               (mailbox < (canmbx_t)CAN_RX_MAILBOXES));
+               (mailbox <= (canmbx_t)CAN_RX_MAILBOXES));
 
   osalSysLock();
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
