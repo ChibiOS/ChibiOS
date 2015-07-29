@@ -157,7 +157,7 @@
  * @name    Request line selector macro
  * @{
  */
-#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
+#if STM32_DMA_SUPPORTS_CSELR || defined(__DOXYGEN__)
 #define STM32_DMA_CR_CHSEL_MASK     (15U << 16U)
 #define STM32_DMA_CR_CHSEL(n)       ((n) << 16U)
 #else
@@ -191,6 +191,18 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !defined(STM32_DMA_SUPPORTS_CSELR)
+#error "STM32_DMA_SUPPORTS_CSELR not defined in registry"
+#endif
+
+#if !defined(STM32_DMA1_NUM_CHANNELS)
+#error "STM32_DMA1_NUM_CHANNELS not defined in registry"
+#endif
+
+#if !defined(STM32_DMA2_NUM_CHANNELS)
+#error "STM32_DMA2_NUM_CHANNELS not defined in registry"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -297,7 +309,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  *
  * @special
  */
-#if STM32_ADVANCED_DMA || defined(__DOXYGEN__)
+#if STM32_DMA_SUPPORTS_CSELR || defined(__DOXYGEN__)
 #define dmaStreamSetMode(dmastp, mode) {                                    \
   uint32_t cselr = *(dmastp)->cselr;                                        \
   cselr &= ~(0x0000000FU << (dmastp)->shift);                               \

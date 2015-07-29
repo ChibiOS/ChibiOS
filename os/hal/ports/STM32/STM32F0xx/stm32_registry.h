@@ -72,7 +72,8 @@
 #define STM32_HAS_DAC2_CH2                  FALSE
 
 /* DMA attributes.*/
-#define STM32_ADVANCED_DMA                  FALSE
+#define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_CSELR            FALSE
 #define STM32_DMA1_NUM_CHANNELS             5
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
@@ -281,7 +282,8 @@
 
 
 /* DMA attributes.*/
-#define STM32_ADVANCED_DMA                  FALSE
+#define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_CSELR            FALSE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
@@ -501,7 +503,8 @@
 #define STM32_HAS_DAC2_CH2                  FALSE
 
 /* DMA attributes.*/
-#define STM32_ADVANCED_DMA                  FALSE
+#define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_CSELR            FALSE
 #define STM32_DMA1_NUM_CHANNELS             5
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
@@ -688,7 +691,8 @@
 #define STM32_HAS_DAC2_CH2                  FALSE
 
 /* DMA attributes.*/
-#define STM32_ADVANCED_DMA                  FALSE
+#define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_CSELR            FALSE
 #define STM32_DMA1_NUM_CHANNELS             5
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
@@ -863,7 +867,8 @@
 #define STM32_HAS_DAC2_CH2                  FALSE
 
 /* DMA attributes.*/
-#define STM32_ADVANCED_DMA                  FALSE
+#define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_CSELR            FALSE
 #define STM32_DMA1_NUM_CHANNELS             5
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
@@ -1046,7 +1051,8 @@
 #define STM32_HAS_DAC2_CH2                  FALSE
 
 /* DMA attributes.*/
-#define STM32_ADVANCED_DMA                  FALSE
+#define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_CSELR            FALSE
 #define STM32_DMA1_NUM_CHANNELS             5
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
@@ -1246,7 +1252,8 @@
 #define STM32_HAS_DAC2_CH2                  FALSE
 
 /* DMA attributes.*/
-#define STM32_ADVANCED_DMA                  FALSE
+#define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_CSELR            FALSE
 #define STM32_DMA1_NUM_CHANNELS             5
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
