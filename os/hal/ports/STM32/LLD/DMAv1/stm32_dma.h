@@ -201,6 +201,8 @@
  */
 typedef struct {
   DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
+  uint32_t              cmask;          /**< @brief Mask of streams sharing
+                                             the same ISR.                  */
   volatile uint32_t     *ifcr;          /**< @brief Associated IFCR reg.    */
   volatile uint32_t     *cselr;         /**< @brief Associated CSELR reg.   */
   uint8_t               shift;          /**< @brief Bit offset in IFCR and

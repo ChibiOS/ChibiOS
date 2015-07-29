@@ -78,6 +78,34 @@
 #define ADDR_DMA2_CSELR             NULL
 #endif
 
+/*
+ * ISR collision masks.
+ */
+#define DMA1_CH1_CMASK              0x00000001U
+#if !defined(STM32_DMA1_CH23_NUMBER)
+#define DMA1_CH2_CMASK              0x00000002U
+#define DMA1_CH3_CMASK              0x00000004U
+#else
+#define DMA1_CH2_CMASK              0x00000006U
+#define DMA1_CH3_CMASK              0x00000006U
+#endif
+#if !defined(STM32_DMA1_CH4567_NUMBER)
+#define DMA1_CH4_CMASK              0x00000008U
+#define DMA1_CH5_CMASK              0x00000010U
+#define DMA1_CH6_CMASK              0x00000020U
+#define DMA1_CH7_CMASK              0x00000040U
+#else
+#define DMA1_CH4_CMASK              0x00000078U
+#define DMA1_CH5_CMASK              0x00000078U
+#define DMA1_CH6_CMASK              0x00000078U
+#define DMA1_CH7_CMASK              0x00000078U
+#endif
+#define DMA2_CH1_CMASK              0x00000080U
+#define DMA3_CH2_CMASK              0x00000100U
+#define DMA3_CH3_CMASK              0x00000200U
+#define DMA4_CH4_CMASK              0x00000400U
+#define DMA5_CH5_CMASK              0x00000800U
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -90,23 +118,23 @@
  *          instead: @p STM32_DMA1_STREAM1, @p STM32_DMA1_STREAM2 etc.
  */
 const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
-  {DMA1_Channel1, &DMA1->IFCR, ADDR_DMA1_CSELR,  0,  0, STM32_DMA1_CH1_NUMBER},
-  {DMA1_Channel2, &DMA1->IFCR, ADDR_DMA1_CSELR,  4,  1, STM32_DMA1_CH2_NUMBER},
-  {DMA1_Channel3, &DMA1->IFCR, ADDR_DMA1_CSELR,  8,  2, STM32_DMA1_CH3_NUMBER},
-  {DMA1_Channel4, &DMA1->IFCR, ADDR_DMA1_CSELR, 12,  3, STM32_DMA1_CH4_NUMBER},
-  {DMA1_Channel5, &DMA1->IFCR, ADDR_DMA1_CSELR, 16,  4, STM32_DMA1_CH5_NUMBER},
+  {DMA1_Channel1, DMA1_CH1_CMASK, &DMA1->IFCR, ADDR_DMA1_CSELR,  0,  0, STM32_DMA1_CH1_NUMBER},
+  {DMA1_Channel2, DMA1_CH2_CMASK, &DMA1->IFCR, ADDR_DMA1_CSELR,  4,  1, STM32_DMA1_CH2_NUMBER},
+  {DMA1_Channel3, DMA1_CH3_CMASK, &DMA1->IFCR, ADDR_DMA1_CSELR,  8,  2, STM32_DMA1_CH3_NUMBER},
+  {DMA1_Channel4, DMA1_CH4_CMASK, &DMA1->IFCR, ADDR_DMA1_CSELR, 12,  3, STM32_DMA1_CH4_NUMBER},
+  {DMA1_Channel5, DMA1_CH5_CMASK, &DMA1->IFCR, ADDR_DMA1_CSELR, 16,  4, STM32_DMA1_CH5_NUMBER},
 #if STM32_DMA1_NUM_CHANNELS > 5
-  {DMA1_Channel6, &DMA1->IFCR, ADDR_DMA1_CSELR, 20,  5, STM32_DMA1_CH6_NUMBER},
+  {DMA1_Channel6, DMA1_CH6_CMASK, &DMA1->IFCR, ADDR_DMA1_CSELR, 20,  5, STM32_DMA1_CH6_NUMBER},
 #endif
 #if STM32_DMA1_NUM_CHANNELS > 6
-  {DMA1_Channel7, &DMA1->IFCR, ADDR_DMA1_CSELR, 24,  6, STM32_DMA1_CH7_NUMBER},
+  {DMA1_Channel7, DMA1_CH7_CMASK, &DMA1->IFCR, ADDR_DMA1_CSELR, 24,  6, STM32_DMA1_CH7_NUMBER},
 #endif
 #if STM32_DMA2_NUM_CHANNELS > 0
-  {DMA2_Channel1, &DMA2->IFCR, ADDR_DMA2_CSELR,  0,  8, STM32_DMA2_CH1_NUMBER},
-  {DMA2_Channel2, &DMA2->IFCR, ADDR_DMA2_CSELR,  4,  9, STM32_DMA2_CH2_NUMBER},
-  {DMA2_Channel3, &DMA2->IFCR, ADDR_DMA2_CSELR,  8, 10, STM32_DMA2_CH3_NUMBER},
-  {DMA2_Channel4, &DMA2->IFCR, ADDR_DMA2_CSELR, 12, 11, STM32_DMA2_CH4_NUMBER},
-  {DMA2_Channel5, &DMA2->IFCR, ADDR_DMA2_CSELR, 16, 13, STM32_DMA2_CH5_NUMBER},
+  {DMA2_Channel1, DMA2_CH1_CMASK, &DMA2->IFCR, ADDR_DMA2_CSELR,  0,  8, STM32_DMA2_CH1_NUMBER},
+  {DMA2_Channel2, DMA2_CH2_CMASK, &DMA2->IFCR, ADDR_DMA2_CSELR,  4,  9, STM32_DMA2_CH2_NUMBER},
+  {DMA2_Channel3, DMA2_CH3_CMASK, &DMA2->IFCR, ADDR_DMA2_CSELR,  8, 10, STM32_DMA2_CH3_NUMBER},
+  {DMA2_Channel4, DMA2_CH4_CMASK, &DMA2->IFCR, ADDR_DMA2_CSELR, 12, 11, STM32_DMA2_CH4_NUMBER},
+  {DMA2_Channel5, DMA2_CH5_CMASK, &DMA2->IFCR, ADDR_DMA2_CSELR, 16, 13, STM32_DMA2_CH5_NUMBER},
 #endif
 };
 
@@ -505,10 +533,9 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
   if ((dma_streams_mask & (1U << dmastp->selfindex)) != 0U)
     return true;
 
-  /* Marks the stream as allocated.*/
+  /* Installs the DMA handler.*/
   dma_isr_redir[dmastp->selfindex].dma_func  = func;
   dma_isr_redir[dmastp->selfindex].dma_param = param;
-  dma_streams_mask |= (1U << dmastp->selfindex);
 
   /* Enabling DMA clocks required by the current streams set.*/
   if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) != 0U)
@@ -522,9 +549,15 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
   dmaStreamDisable(dmastp);
   dmastp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
 
-  /* Enables the associated IRQ vector if a callback is defined.*/
-  if (func != NULL)
+  /* Enables the associated IRQ vector if not alread enabled and if a
+     callback is defined.*/
+  if (((dma_streams_mask & dmastp->cmask) != 0U) &&
+      (func != NULL)) {
     nvicEnableVector(dmastp->vector, priority);
+  }
+
+  /* Marks the stream as allocated.*/
+  dma_streams_mask |= (1U << dmastp->selfindex);
 
   return false;
 }
@@ -550,11 +583,17 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   osalDbgAssert((dma_streams_mask & (1 << dmastp->selfindex)) != 0U,
                 "not allocated");
 
-  /* Disables the associated IRQ vector.*/
-  nvicDisableVector(dmastp->vector);
-
   /* Marks the stream as not allocated.*/
   dma_streams_mask &= ~(1 << dmastp->selfindex);
+
+  /* Disables the associated IRQ vector if it is no more in use.*/
+  if ((dma_streams_mask & dmastp->cmask) == 0U) {
+    nvicDisableVector(dmastp->vector);
+  }
+
+  /* Removes the DMA handler.*/
+  dma_isr_redir[dmastp->selfindex].dma_func  = NULL;
+  dma_isr_redir[dmastp->selfindex].dma_param = NULL;
 
   /* Shutting down clocks that are no more required, if any.*/
   if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0U)
