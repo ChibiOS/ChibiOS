@@ -101,10 +101,10 @@
 #define DMA1_CH7_CMASK              0x00000078U
 #endif
 #define DMA2_CH1_CMASK              0x00000080U
-#define DMA3_CH2_CMASK              0x00000100U
-#define DMA3_CH3_CMASK              0x00000200U
-#define DMA4_CH4_CMASK              0x00000400U
-#define DMA5_CH5_CMASK              0x00000800U
+#define DMA2_CH2_CMASK              0x00000100U
+#define DMA2_CH3_CMASK              0x00000200U
+#define DMA2_CH4_CMASK              0x00000400U
+#define DMA2_CH5_CMASK              0x00000800U
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -538,11 +538,13 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
   dma_isr_redir[dmastp->selfindex].dma_param = param;
 
   /* Enabling DMA clocks required by the current streams set.*/
-  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) != 0U)
+  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0U) {
     rccEnableDMA1(false);
+  }
 #if STM32_DMA2_NUM_CHANNELS > 0
-  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) != 0U)
+  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) == 0U) {
     rccEnableDMA2(false);
+  }
 #endif
 
   /* Putting the stream in a safe state.*/
@@ -551,7 +553,7 @@ bool dmaStreamAllocate(const stm32_dma_stream_t *dmastp,
 
   /* Enables the associated IRQ vector if not alread enabled and if a
      callback is defined.*/
-  if (((dma_streams_mask & dmastp->cmask) != 0U) &&
+  if (((dma_streams_mask & dmastp->cmask) == 0U) &&
       (func != NULL)) {
     nvicEnableVector(dmastp->vector, priority);
   }
@@ -584,7 +586,7 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
                 "not allocated");
 
   /* Marks the stream as not allocated.*/
-  dma_streams_mask &= ~(1 << dmastp->selfindex);
+  dma_streams_mask &= ~(1U << dmastp->selfindex);
 
   /* Disables the associated IRQ vector if it is no more in use.*/
   if ((dma_streams_mask & dmastp->cmask) == 0U) {
@@ -596,11 +598,13 @@ void dmaStreamRelease(const stm32_dma_stream_t *dmastp) {
   dma_isr_redir[dmastp->selfindex].dma_param = NULL;
 
   /* Shutting down clocks that are no more required, if any.*/
-  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0U)
+  if ((dma_streams_mask & STM32_DMA1_STREAMS_MASK) == 0U) {
     rccDisableDMA1(false);
+  }
 #if STM32_DMA2_NUM_CHANNELS > 0
-  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) == 0U)
+  if ((dma_streams_mask & STM32_DMA2_STREAMS_MASK) == 0U) {
     rccDisableDMA2(false);
+  }
 #endif
 }
 
