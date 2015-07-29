@@ -215,6 +215,17 @@
 #endif
 #endif
 
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_STREAM)
+#error "ADC DMA stream not defined"
+#endif
+
+/* Check on the validity of the assigned DMA channels.*/
+#if STM32_ADC_USE_ADC1 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_MSK)
+#error "invalid DMA stream associated to ADC1"
+#endif
+
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
 #endif
