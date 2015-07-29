@@ -154,11 +154,6 @@
  * @brief   Maximum APB clock frequency.
  */
 #define STM32_PCLK_MAX          48000000
-
-/**
- * @brief   Maximum ADC clock frequency.
- */
-#define STM32_ADCCLK_MAX        14000000
 /** @} */
 
 /**
@@ -400,20 +395,6 @@
  */
 #if !defined(STM32_MCOSEL) || defined(__DOXYGEN__)
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
-#endif
-
-/**
- * @brief   ADC prescaler value.
- */
-#if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
-#define STM32_ADCPRE                        STM32_ADCPRE_DIV4
-#endif
-
-/**
- * @brief   ADC clock source.
- */
-#if !defined(STM32_ADCSW) || defined(__DOXYGEN__)
-#define STM32_ADCSW                         STM32_ADCSW_HSI14
 #endif
 
 /**
@@ -766,28 +747,6 @@
 #define STM32_RTCCLK                0
 #else
 #error "invalid source selected for RTC clock"
-#endif
-
-/**
- * @brief   ADC frequency.
- */
-#if (STM32_ADCSW == STM32_ADCSW_HSI14) || defined(__DOXYGEN__)
-#define STM32_ADCCLK                STM32_HSI14CLK
-#elif STM32_ADCSW == STM32_ADCSW_PCLK
-#if (STM32_ADCPRE == STM32_ADCPRE_DIV2) || defined(__DOXYGEN__)
-#define STM32_ADCCLK                (STM32_PCLK / 2)
-#elif STM32_ADCPRE == STM32_ADCPRE_DIV4
-#define STM32_ADCCLK                (STM32_PCLK / 4)
-#else
-#error "invalid STM32_ADCPRE value specified"
-#endif
-#else
-#error "invalid source selected for ADC clock"
-#endif
-
-/* ADC frequency check.*/
-#if STM32_ADCCLK > STM32_ADCCLK_MAX
-#error "STM32_ADCCLK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 
 /**
