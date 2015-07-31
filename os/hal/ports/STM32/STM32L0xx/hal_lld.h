@@ -74,7 +74,7 @@
 /** @} */
 
 /**
- * @brief   Sub-family identifier.
+ * @name    Sub-family identifier
  */
 #if !defined(STM32L0XX) || defined(__DOXYGEN__)
 #define STM32L0XX

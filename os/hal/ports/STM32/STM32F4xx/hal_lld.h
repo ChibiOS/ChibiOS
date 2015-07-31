@@ -686,7 +686,6 @@
 #if !defined(STM32_PLLI2SR_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLI2SR_VALUE         5
 #endif
-/** @} */
 
 /**
  * @brief   PLLSAIQ value.
@@ -711,6 +710,7 @@
 #if !defined(STM32_PLLSAIR_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLSAIR_VALUE         4
 #endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
