@@ -16,7 +16,7 @@
 
 /**
  * @file    STM32F7xx/hal_lld.h
- * @brief   STM32F7xx/STM32F2xx HAL subsystem low level driver header.
+ * @brief   STM32F7xx HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
@@ -26,13 +26,7 @@
  *          - STM32_VDD (as hundredths of Volt).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32F2XX for High-performance STM32 F-2 devices.
- *          - STM32F405xx, STM32F415xx, STM32F407xx, STM32F417xx for
- *            High-performance STM32 F-4 devices.
- *          - STM32F427xx, STM32F437xx, STM32F429xx, STM32F439xx for
- *            High-performance STM32 F-4 devices.
- *          - STM32F401xC, STM32F401xE for High-performance STM32 F-4 devices.
- *          - STM32F411xE for High-performance STM32 F-4 devices.
+ *          - STM32F745xx, STM32F746xx, STM32F756xx very high-performance MCUs.
  *          .
  *
  * @addtogroup HAL
@@ -51,57 +45,26 @@
 /**
  * @brief   Defines the support for realtime counters in the HAL.
  */
-#define HAL_IMPLEMENTS_COUNTERS TRUE
+#define HAL_IMPLEMENTS_COUNTERS             TRUE
 
 /**
  * @name    Platform identification macros
  * @{
  */
-#if defined(STM32F439xx) || defined(__DOXYGEN__)
+#if defined(STM32F745xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F439 High Performance with DSP and FPU"
 
-#elif defined(STM32F429xx)
+#elif defined(STM32F746xx)
 #define PLATFORM_NAME           "STM32F429 High Performance with DSP and FPU"
 
-#elif defined(STM32F437xx)
+#elif defined(STM32F756xx)
 #define PLATFORM_NAME           "STM32F437 High Performance with DSP and FPU"
 
-#elif defined(STM32F427xx)
-#define PLATFORM_NAME           "STM32F427 High Performance with DSP and FPU"
-
-#elif defined(STM32F405xx)
-#define PLATFORM_NAME           "STM32F405 High Performance with DSP and FPU"
-
-#elif defined(STM32F415xx)
-#define PLATFORM_NAME           "STM32F415 High Performance with DSP and FPU"
-
-#elif defined(STM32F407xx)
-#define PLATFORM_NAME           "STM32F407 High Performance with DSP and FPU"
-
-#elif defined(STM32F417xx)
-#define PLATFORM_NAME           "STM32F417 High Performance with DSP and FPU"
-
-#elif defined(STM32F401xC)
-#define PLATFORM_NAME           "STM32F401xC High Performance with DSP and FPU"
-
-#elif defined(STM32F401xE)
-#define PLATFORM_NAME           "STM32F401xE High Performance with DSP and FPU"
-
-#elif defined(STM32F411xE)
-#define PLATFORM_NAME           "STM32F411xE High Performance with DSP and FPU"
-
-#elif defined(STM32F2XX)
-#define PLATFORM_NAME           "STM32F2xx High Performance"
-
 #else
-#error "STM32F2xx/F4xx device not specified"
+#error "STM32F7xx device not specified"
 #endif
 /** @} */
 
-/**
- * @name    Absolute Maximum Ratings
- * @{
- */
 /**
  * @name    Absolute Maximum Ratings
  * @{
