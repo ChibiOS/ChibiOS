@@ -38,7 +38,7 @@
 #define AHB_EN_MASK     STM32_GPIO_EN_MASK
 #define AHB_LPEN_MASK   0
 
-#elif defined(STM32F2XX) || defined(STM32F4XX)
+#elif defined(STM32F2XX) || defined(STM32F4XX) || defined(STM32F7XX)
 #define AHB1_EN_MASK    STM32_GPIO_EN_MASK
 #define AHB1_LPEN_MASK  AHB1_EN_MASK
 
