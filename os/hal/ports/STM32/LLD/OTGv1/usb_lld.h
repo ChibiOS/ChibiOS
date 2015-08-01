@@ -176,7 +176,7 @@
 #error "OTG2 RX FIFO size must be a multiple of 4"
 #endif
 
-#if defined(STM32F4XX) || defined(STM32F2XX)
+#if defined(STM32F2XX) || defined(STM32F4XX) || defined(STM32F7XX)
 #define STM32_USBCLK                        STM32_PLL48CLK
 #elif defined(STM32F10X_CL)
 #define STM32_USBCLK                        STM32_OTGFSCLK
