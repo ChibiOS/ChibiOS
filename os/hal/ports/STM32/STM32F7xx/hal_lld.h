@@ -52,13 +52,13 @@
  * @{
  */
 #if defined(STM32F745xx) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32F439 High Performance with DSP and FPU"
+#define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
 
 #elif defined(STM32F746xx)
-#define PLATFORM_NAME           "STM32F429 High Performance with DSP and FPU"
+#define PLATFORM_NAME           "STM32F746 Very High Performance with DSP and FPU"
 
 #elif defined(STM32F756xx)
-#define PLATFORM_NAME           "STM32F437 High Performance with DSP and FPU"
+#define PLATFORM_NAME           "STM32F756 Very High Performance with DSP and FPU"
 
 #else
 #error "STM32F7xx device not specified"

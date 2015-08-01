@@ -45,6 +45,11 @@
   @{
 */
 
+/* CHIBIOS FIX */
+#if !defined(__CORTEX_SC)
+#define __CORTEX_SC 0
+#endif
+
 #if   defined ( __CC_ARM ) /*------------------RealView Compiler -----------------*/
 /* ARM armcc specific functions */
 
