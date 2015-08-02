@@ -83,6 +83,7 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- HAL: Fixed crash on STM32F030x4/6 devices (bug #623)(backported to 3.0.1).
 - HAL: Fixed duplicated doxygen tag in STM32F4xx hal_lld.h file (bug #621)
        (backported to 3.0.1 and 2.6.9).
 - HAL: Fixed STM32F042 registry error (bug #620)(backported to 3.0.1).
