@@ -45,7 +45,7 @@
 /*
  * MCU type as defined in the ST header file stm32l1xx.h.
  */
-#define STM32L1XX_MD
+#define STM32L152xE
 
 /*
  * IO pins assignments.

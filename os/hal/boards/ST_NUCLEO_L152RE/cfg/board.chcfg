@@ -11,7 +11,7 @@
   <board_name>STMicroelectronics NUCLEO-L152RE</board_name>
   <board_id>ST_NUCLEO_L152RE</board_id>
   <board_functions></board_functions>
-  <subtype>STM32L1XX_HD</subtype>
+  <subtype>STM32L152xE</subtype>
   <clocks
      HSEFrequency="0"
      HSEBypass="true"

@@ -11,7 +11,7 @@
   <board_name>ST STM32L-Discovery</board_name>
   <board_id>ST_STM32L_DISCOVERY</board_id>
   <board_functions></board_functions>
-  <subtype>STM32L1XX_MD</subtype>
+  <subtype>STM32L152xB</subtype>
   <clocks
      HSEFrequency="0"
      HSEBypass="true"
