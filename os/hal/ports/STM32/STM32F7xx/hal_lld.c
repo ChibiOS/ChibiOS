@@ -54,7 +54,7 @@ uint32_t SystemCoreClock = STM32_SYSCLK;
 static void hal_lld_backup_domain_init(void) {
 
   /* Backup domain access enabled and left open.*/
-  PWR->CR |= PWR_CR_DBP;
+  PWR->CR1 |= PWR_CR1_DBP;
 
   /* Reset BKP domain if different clock source selected.*/
   if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
@@ -90,11 +90,11 @@ static void hal_lld_backup_domain_init(void) {
 #if STM32_BKPRAM_ENABLE
   rccEnableBKPSRAM(false);
 
-  PWR->CSR |= PWR_CSR_BRE;
-  while ((PWR->CSR & PWR_CSR_BRR) == 0)
+  PWR->CSR1 |= PWR_CSR1_BRE;
+  while ((PWR->CSR1 & PWR_CSR1_BRR) == 0)
     ;                                /* Waits until the regulator is stable */
 #else
-  PWR->CSR &= ~PWR_CSR_BRE;
+  PWR->CSR1 &= ~PWR_CSR1_BRE;
 #endif /* STM32_BKPRAM_ENABLE */
 }
 
@@ -132,7 +132,7 @@ void hal_lld_init(void) {
 
   /* Programmable voltage detector enable.*/
 #if STM32_PVD_ENABLE
-  PWR->CR |= PWR_CR_PVDE | (STM32_PLS & STM32_PLS_MASK);
+  PWR->CR1 |= PWR_CR1_PVDE | (STM32_PLS & STM32_PLS_MASK);
 #endif /* STM32_PVD_ENABLE */
 }
 
@@ -151,9 +151,9 @@ void stm32_clock_init(void) {
 
   /* PWR initialization.*/
 #if defined(STM32F7xx) || defined(__DOXYGEN__)
-  PWR->CR = STM32_VOS;
+  PWR->CR1 = STM32_VOS;
 #else
-  PWR->CR = 0;
+  PWR->CR1 = 0;
 #endif
 
   /* HSI setup, it enforces the reset situation in order to handle possible
@@ -202,17 +202,17 @@ void stm32_clock_init(void) {
 
   /* Synchronization with voltage regulator stabilization.*/
 #if defined(STM32F7xx)
-  while ((PWR->CSR & PWR_CSR_VOSRDY) == 0)
+  while ((PWR->CSR1 & PWR_CSR1_VOSRDY) == 0)
     ;                           /* Waits until power regulator is stable.   */
 
 #if STM32_OVERDRIVE_REQUIRED
   /* Overdrive activation performed after activating the PLL in order to save
      time as recommended in RM in "Entering Over-drive mode" paragraph.*/
-  PWR->CR |= PWR_CR_ODEN;
-  while (!(PWR->CSR & PWR_CSR_ODRDY))
+  PWR->CR1 |= PWR_CR1_ODEN;
+  while (!(PWR->CSR1 & PWR_CSR1_ODRDY))
       ;
-  PWR->CR |= PWR_CR_ODSWEN;
-  while (!(PWR->CSR & PWR_CSR_ODSWRDY))
+  PWR->CR1 |= PWR_CR1_ODSWEN;
+  while (!(PWR->CSR1 & PWR_CSR1_ODSWRDY))
       ;
 #endif /* STM32_OVERDRIVE_REQUIRED */
 #endif /* defined(STM32F7xx) */
@@ -248,18 +248,7 @@ void stm32_clock_init(void) {
               STM32_RTCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
 
   /* Flash setup.*/
-#if defined(STM32_USE_REVISION_A_FIX)
-  /* Some old revisions of F4x MCUs randomly crashes with compiler
-     optimizations enabled AND flash caches enabled. */
-  if ((DBGMCU->IDCODE == 0x20006411) && (SCB->CPUID == 0x410FC241))
-    FLASH->ACR = FLASH_ACR_PRFTEN | STM32_FLASHBITS;
-  else
-    FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN |
-                 FLASH_ACR_DCEN | STM32_FLASHBITS;
-#else
-  FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN |
-               FLASH_ACR_DCEN | STM32_FLASHBITS;
-#endif
+  FLASH->ACR = FLASH_ACR_ARTEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS;
 
   /* Switching to the configured clock source if it is different from HSI.*/
 #if (STM32_SW != STM32_SW_HSI)

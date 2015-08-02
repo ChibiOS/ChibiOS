@@ -479,7 +479,7 @@
  * @brief   Enables or disables the LSE clock source.
  */
 #if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSE_ENABLED                   FALSE
+#define STM32_LSE_ENABLED                   TRUE
 #endif
 
 /**
@@ -493,8 +493,8 @@
  * @brief   Main clock source selection.
  * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
- * @note    The default value is calculated for a 168MHz system clock from
- *          an external 8MHz HSE clock.
+ * @note    The default value is calculated for a 216MHz system clock from
+ *          an external 25MHz HSE clock.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
 #define STM32_SW                            STM32_SW_PLL
@@ -504,8 +504,8 @@
  * @brief   Clock source for the PLLs.
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
- * @note    The default value is calculated for a 168MHz system clock from
- *          an external 8MHz HSE clock.
+ * @note    The default value is calculated for a 216MHz system clock from
+ *          an external 25MHz HSE clock.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
 #define STM32_PLLSRC                        STM32_PLLSRC_HSE
@@ -514,41 +514,41 @@
 /**
  * @brief   PLLM divider value.
  * @note    The allowed values are 2..63.
- * @note    The default value is calculated for a 168MHz system clock from
- *          an external 8MHz HSE clock.
+ * @note    The default value is calculated for a 216MHz system clock from
+ *          an external 25MHz HSE clock.
  */
 #if !defined(STM32_PLLM_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLM_VALUE                    8
+#define STM32_PLLM_VALUE                    25
 #endif
 
 /**
  * @brief   PLLN multiplier value.
  * @note    The allowed values are 192..432.
- * @note    The default value is calculated for a 168MHz system clock from
- *          an external 8MHz HSE clock.
+ * @note    The default value is calculated for a 216MHz system clock from
+ *          an external 25MHz HSE clock.
  */
 #if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLN_VALUE                    336
+#define STM32_PLLN_VALUE                    432
 #endif
 
 /**
  * @brief   PLLP divider value.
  * @note    The allowed values are 2, 4, 6, 8.
- * @note    The default value is calculated for a 168MHz system clock from
- *          an external 8MHz HSE clock.
+ * @note    The default value is calculated for a 216MHz system clock from
+ *          an external 25MHz HSE clock.
  */
 #if !defined(STM32_PLLP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLP_VALUE                    2
 #endif
 
 /**
- * @brief   PLLQ multiplier value.
+ * @brief   PLLQ divider value.
  * @note    The allowed values are 2..15.
- * @note    The default value is calculated for a 168MHz system clock from
- *          an external 8MHz HSE clock.
+ * @note    The default value is calculated for a 216MHz system clock from
+ *          an external 25MHz HSE clock.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLQ_VALUE                    7
+#define STM32_PLLQ_VALUE                    9
 #endif
 
 /**
@@ -581,9 +581,10 @@
 
 /**
  * @brief   RTC HSE prescaler value.
+ * @note    The allowed values are 2..31.
  */
 #if !defined(STM32_RTCPRE_VALUE) || defined(__DOXYGEN__)
-#define STM32_RTCPRE_VALUE                  8
+#define STM32_RTCPRE_VALUE                  25
 #endif
 
 /**
@@ -604,7 +605,7 @@
 
 /**
  * @brief   MC02 clock source value.
- * @note    The default value outputs SYSCLK / 5 on MC02 pin.
+ * @note    The default value outputs SYSCLK / 8 on MC02 pin.
  */
 #if !defined(STM32_MCO2SEL) || defined(__DOXYGEN__)
 #define STM32_MCO2SEL                       STM32_MCO2SEL_SYSCLK
@@ -612,17 +613,17 @@
 
 /**
  * @brief   MC02 prescaler value.
- * @note    The default value outputs SYSCLK / 5 on MC02 pin.
+ * @note    The default value outputs SYSCLK / 8 on MC02 pin.
  */
 #if !defined(STM32_MCO2PRE) || defined(__DOXYGEN__)
-#define STM32_MCO2PRE                       STM32_MCO2PRE_DIV5
+#define STM32_MCO2PRE                       STM32_MCO2PRE_DIV8
 #endif
 
 /**
  * @brief   I2S clock source.
  */
 #if !defined(STM32_I2SSRC) || defined(__DOXYGEN__)
-#define STM32_I2SSRC                        STM32_I2SSRC_CKIN
+#define STM32_I2SSRC                        STM32_I2SSRC_PLLI2S
 #endif
 
 /**
@@ -634,7 +635,7 @@
 #endif
 
 /**
- * @brief   PLLI2SP multiplier value.
+ * @brief   PLLI2SP divider value.
  * @note    The allowed values are 2, 4, 6 and 8.
  */
 #if !defined(STM32_PLLI2SP_VALUE) || defined(__DOXYGEN__)
@@ -642,31 +643,31 @@
 #endif
 
 /**
- * @brief   PLLI2SQ multiplier value.
+ * @brief   PLLI2SQ divider value.
  * @note    The allowed values are 2..15.
  */
 #if !defined(STM32_PLLI2SQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLI2SQ_VALUE                 5
+#define STM32_PLLI2SQ_VALUE                 4
 #endif
 
 /**
- * @brief   PLLI2SR multiplier value.
+ * @brief   PLLI2SR divider value.
  * @note    The allowed values are 2..7.
  */
 #if !defined(STM32_PLLI2SR_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLI2SR_VALUE                 5
+#define STM32_PLLI2SR_VALUE                 4
 #endif
 
 /**
- * @brief   PLLSAIN value.
+ * @brief   PLLSAIN multiplier value.
  * @note    The allowed values are 49..432.
  */
 #if !defined(STM32_PLLSAIN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAIN_VALUE                 120
+#define STM32_PLLSAIN_VALUE                 192
 #endif
 
 /**
- * @brief   PLLSAIP value.
+ * @brief   PLLSAIP divider value.
  * @note    The allowed values are 2, 4, 6 and 8.
  */
 #if !defined(STM32_PLLSAIP_VALUE) || defined(__DOXYGEN__)
@@ -674,15 +675,15 @@
 #endif
 
 /**
- * @brief   PLLSAIQ value.
+ * @brief   PLLSAIQ divider value.
  * @note    The allowed values are 2..15.
  */
 #if !defined(STM32_PLLSAIQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAIQ_VALUE                 8
+#define STM32_PLLSAIQ_VALUE                 4
 #endif
 
 /**
- * @brief   PLLSAIR value.
+ * @brief   PLLSAIR divider value.
  * @note    The allowed values are 2..7.
  */
 #if !defined(STM32_PLLSAIR_VALUE) || defined(__DOXYGEN__)
@@ -690,7 +691,7 @@
 #endif
 
 /**
- * @brief   PLLSAIDIVR value (LCD clock divider).
+ * @brief   PLLSAIDIVR divider value (LCD clock divider).
  */
 #if !defined(STM32_PLLSAIDIVR) || defined(__DOXYGEN__)
 #define STM32_PLLSAIDIVR                    STM32_PLLSAIDIVR_OFF
@@ -941,12 +942,18 @@
 #if STM32_HSE_ENABLED
 
 #if STM32_HSECLK == 0
-#error "HSE frequency not defined"
-
-#elif (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_MAX)
+  #error "HSE frequency not defined"
+#else /* STM32_HSECLK != 0 */
+#if defined(STM32_HSE_BYPASS)
+#if (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_BYP_MAX)
+#error "STM32_HSECLK outside acceptable range (STM32_HSECLK_MIN...STM32_HSECLK_BYP_MAX)"
+#endif
+#else /* !defined(STM32_HSE_BYPASS) */
+#if (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_MAX)
 #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_MIN...STM32_HSECLK_MAX)"
 #endif
-
+#endif /* !defined(STM32_HSE_BYPASS) */
+#endif /* STM32_HSECLK != 0 */
 #else /* !STM32_HSE_ENABLED */
 
 #if STM32_SW == STM32_SW_HSE
