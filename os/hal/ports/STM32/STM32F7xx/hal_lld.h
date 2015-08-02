@@ -175,9 +175,9 @@
  * @name    PWR_CR register bits definitions
  * @{
  */
-#define STM32_VOS_SCALE3        (PWR_CR_VOS_0)
-#define STM32_VOS_SCALE2        (PWR_CR_VOS_1)
-#define STM32_VOS_SCALE1        (PWR_CR_VOS_1 | PWR_CR_VOS_0)
+#define STM32_VOS_SCALE3        (PWR_CR1_VOS_0)
+#define STM32_VOS_SCALE2        (PWR_CR1_VOS_1)
+#define STM32_VOS_SCALE1        (PWR_CR1_VOS_1 | PWR_CR1_VOS_0)
 
 #define STM32_PLS_MASK          (7 << 5)    /**< PLS bits mask.             */
 #define STM32_PLS_LEV0          (0 << 5)    /**< PVD level 0.               */
@@ -605,7 +605,7 @@
 
 /**
  * @brief   MC02 clock source value.
- * @note    The default value outputs SYSCLK / 8 on MC02 pin.
+ * @note    The default value outputs SYSCLK / 4 on MC02 pin.
  */
 #if !defined(STM32_MCO2SEL) || defined(__DOXYGEN__)
 #define STM32_MCO2SEL                       STM32_MCO2SEL_SYSCLK
@@ -613,10 +613,10 @@
 
 /**
  * @brief   MC02 prescaler value.
- * @note    The default value outputs SYSCLK / 8 on MC02 pin.
+ * @note    The default value outputs SYSCLK / 4 on MC02 pin.
  */
 #if !defined(STM32_MCO2PRE) || defined(__DOXYGEN__)
-#define STM32_MCO2PRE                       STM32_MCO2PRE_DIV8
+#define STM32_MCO2PRE                       STM32_MCO2PRE_DIV4
 #endif
 
 /**

@@ -16,7 +16,7 @@
 
 /**
  * @file    STM32F7xx/hal_lld.c
- * @brief   STM32F7xx/STM32F2xx HAL subsystem low level driver source.
+ * @brief   STM32F7xx HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{
@@ -34,7 +34,7 @@
 
 /**
  * @brief   CMSIS system core clock variable.
- * @note    It is declared in system_STM32F7xx.h.
+ * @note    It is declared in system_stm32f7xx.h.
  */
 uint32_t SystemCoreClock = STM32_SYSCLK;
 
@@ -150,11 +150,7 @@ void stm32_clock_init(void) {
   RCC->APB1ENR = RCC_APB1ENR_PWREN;
 
   /* PWR initialization.*/
-#if defined(STM32F7xx) || defined(__DOXYGEN__)
   PWR->CR1 = STM32_VOS;
-#else
-  PWR->CR1 = 0;
-#endif
 
   /* HSI setup, it enforces the reset situation in order to handle possible
      problems with JTAG probes and re-initializations.*/
@@ -201,7 +197,6 @@ void stm32_clock_init(void) {
   RCC->CR |= RCC_CR_PLLON;
 
   /* Synchronization with voltage regulator stabilization.*/
-#if defined(STM32F7xx)
   while ((PWR->CSR1 & PWR_CSR1_VOSRDY) == 0)
     ;                           /* Waits until power regulator is stable.   */
 
@@ -215,7 +210,6 @@ void stm32_clock_init(void) {
   while (!(PWR->CSR1 & PWR_CSR1_ODSWRDY))
       ;
 #endif /* STM32_OVERDRIVE_REQUIRED */
-#endif /* defined(STM32F7xx) */
 
   /* Waiting for PLL lock.*/
   while (!(RCC->CR & RCC_CR_PLLRDY))
@@ -234,8 +228,10 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_PLLSAI
   /* PLLSAI activation.*/
-  RCC->PLLSAICFGR = STM32_PLLSAIN | STM32_PLLSAIR | STM32_PLLSAIQ;
-  RCC->DCKCFGR = (RCC->DCKCFGR & ~RCC_DCKCFGR_PLLSAIDIVR) | STM32_PLLSAIR_POST;
+  RCC->PLLSAICFGR = STM32_PLLSAIR | STM32_PLLSAIQ | STM32_PLLSAIP |
+                    STM32_PLLSAIN;
+  RCC->DCKCFGR1 = /*STM32_TIMPRE | */STM32_SAI2SEL | STM32_SAI1SEL |
+                  STM32_PLLSAIDIVR;
   RCC->CR |= RCC_CR_PLLSAION;
 
   /* Waiting for PLL lock.*/
@@ -244,8 +240,17 @@ void stm32_clock_init(void) {
 #endif
 
   /* Other clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR = STM32_MCO2PRE | STM32_MCO2SEL | STM32_MCO1PRE | STM32_MCO1SEL |
-              STM32_RTCPRE | STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
+  RCC->CFGR = STM32_MCO2SEL | STM32_MCO2PRE | STM32_MCO1PRE | STM32_I2SSRC |
+              STM32_MCO1SEL | STM32_RTCPRE  | STM32_PPRE2   | STM32_PPRE1  |
+              STM32_HPRE;
+
+  /* Peripheral clock sources.*/
+  RCC->DCKCFGR2 = STM32_SDMMCSEL  | STM32_CK48MSEL  | STM32_CECSEL    |
+                  STM32_LPTIM1SEL | STM32_I2C4SEL   | STM32_I2C4SEL   |
+                  STM32_I2C3SEL   | STM32_I2C2SEL   | STM32_I2C1SEL   |
+                  STM32_UART8SEL  | STM32_UART7SEL  | STM32_USART6SEL |
+                  STM32_UART5SEL  | STM32_UART4SEL  | STM32_USART3SEL |
+                  STM32_USART2SEL | STM32_USART1SEL;
 
   /* Flash setup.*/
   FLASH->ACR = FLASH_ACR_ARTEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS;
