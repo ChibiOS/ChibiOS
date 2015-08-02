@@ -93,6 +93,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -109,6 +111,7 @@
 #define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -290,6 +293,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -303,6 +308,7 @@
 
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -464,6 +470,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -482,6 +490,8 @@
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_I2C_I2C3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 1)
+
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -637,6 +647,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -655,6 +667,8 @@
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_I2C_I2C3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 1)
+
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -813,6 +827,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -830,6 +846,7 @@
 #define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -1001,6 +1018,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -1018,6 +1037,8 @@
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_I2C_I2C3_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
 #define STM32_I2C_I2C3_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 1)
+
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -1177,6 +1198,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -1190,6 +1213,7 @@
 
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -1350,6 +1374,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -1367,6 +1393,7 @@
 #define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 4)
 
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -1542,6 +1569,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -1555,6 +1584,7 @@
 
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE

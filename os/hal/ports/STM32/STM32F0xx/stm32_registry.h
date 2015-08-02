@@ -101,6 +101,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -121,6 +123,7 @@
 #define STM32_I2C2_TX_DMA_CHN               0x00000000
 
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -219,6 +222,8 @@
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       FALSE
@@ -311,6 +316,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -334,6 +341,7 @@
 #define STM32_I2C2_TX_DMA_CHN               0x00000000
 
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -446,6 +454,8 @@
 
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
 #if defined(STM32F072xB) || defined(STM32F078xx)
@@ -532,6 +542,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -546,6 +558,7 @@
 
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -638,6 +651,8 @@
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
@@ -720,6 +735,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -734,6 +751,7 @@
 
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -816,6 +834,8 @@
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       FALSE
@@ -896,6 +916,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -910,6 +932,7 @@
 
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -997,6 +1020,8 @@
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
@@ -1084,6 +1109,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #if defined(STM32F030x8)
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
@@ -1111,6 +1138,7 @@
 #define STM32_I2C2_TX_DMA_CHN               0x00000000
 
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -1207,11 +1235,15 @@
 #define STM32_HAS_UART4                     TRUE
 #define STM32_HAS_UART5                     TRUE
 #define STM32_HAS_USART6                    TRUE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
 #else
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
 #endif
 
 /* USB attributes.*/
@@ -1292,6 +1324,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     FALSE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHBENR_GPIOAEN |           \
                                              RCC_AHBENR_GPIOBEN |           \
                                              RCC_AHBENR_GPIOCEN |           \
@@ -1314,6 +1348,7 @@
 #define STM32_I2C2_TX_DMA_CHN               0x00000000
 
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -1426,6 +1461,8 @@
 
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       FALSE

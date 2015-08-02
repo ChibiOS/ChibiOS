@@ -108,6 +108,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     TRUE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_IOPENR_GPIOAEN |           \
                                              RCC_IOPENR_GPIOBEN |           \
                                              RCC_IOPENR_GPIOCEN |           \
@@ -134,6 +136,7 @@
 #define STM32_I2C2_TX_DMA_CHN               0x00007000
 
 #define STM32_HAS_I2C3                      FALSE
+#define STM32_HAS_I2C4                      FALSE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
@@ -234,6 +237,8 @@
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       FALSE
@@ -331,6 +336,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     TRUE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_IOPENR_GPIOAEN |           \
                                              RCC_IOPENR_GPIOBEN |           \
                                              RCC_IOPENR_GPIOCEN |           \
@@ -564,6 +571,8 @@
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     TRUE
 #define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_IOPENR_GPIOAEN |           \
                                              RCC_IOPENR_GPIOBEN |           \
                                              RCC_IOPENR_GPIOCEN |           \
