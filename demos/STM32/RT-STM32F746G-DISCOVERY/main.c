@@ -40,6 +40,11 @@ static THD_FUNCTION(Thread1, arg) {
  */
 int main(void) {
 
+  SCB_InvalidateICache();
+  SCB_EnableICache();
+  SCB_CleanInvalidateDCache();
+  SCB_EnableDCache();
+
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
