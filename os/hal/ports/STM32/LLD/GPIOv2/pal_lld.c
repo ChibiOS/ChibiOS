@@ -100,7 +100,7 @@ void _pal_lld_init(const PALConfig *config) {
   rccEnableAHB(AHB_EN_MASK, TRUE);
 #elif defined(STM32F3XX) || defined(STM32F37X)
   rccEnableAHB(AHB_EN_MASK, TRUE);
-#elif defined(STM32F2XX) || defined(STM32F4XX)
+#elif defined(STM32F2XX) || defined(STM32F4XX) || defined(STM32F7XX)
   RCC->AHB1ENR   |= AHB1_EN_MASK;
   RCC->AHB1LPENR |= AHB1_LPEN_MASK;
 #endif
@@ -134,6 +134,12 @@ void _pal_lld_init(const PALConfig *config) {
 #endif
 #if STM32_HAS_GPIOI
   initgpio(GPIOI, &config->PIData);
+#endif
+#if STM32_HAS_GPIOJ
+  initgpio(GPIOJ, &config->PJData);
+#endif
+#if STM32_HAS_GPIOK
+  initgpio(GPIOK, &config->PKData);
 #endif
 }
 

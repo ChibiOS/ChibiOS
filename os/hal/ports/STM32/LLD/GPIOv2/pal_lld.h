@@ -363,6 +363,20 @@ typedef stm32_gpio_t * ioportid_t;
 #define IOPORT9         GPIOI
 #endif
 
+/**
+ * @brief   GPIO port J identifier.
+ */
+#if STM32_HAS_GPIOJ || defined(__DOXYGEN__)
+#define IOPORT10        GPIOJ
+#endif
+
+/**
+ * @brief   GPIO port K identifier.
+ */
+#if STM32_HAS_GPIOK || defined(__DOXYGEN__)
+#define IOPORT11        GPIOK
+#endif
+
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
 /* functions, if so please put them in pal_lld.c.                            */
