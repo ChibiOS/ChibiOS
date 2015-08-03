@@ -9,97 +9,102 @@
     <hal_version>3.0.x</hal_version>
   </configuration_settings>
   <board_name>STMicroelectronics STM32F746G-Discovery</board_name>
-  <board_id>ST_STM32F476G_DISCOVERY</board_id>
+  <board_id>ST_STM32F746G_DISCOVERY</board_id>
   <board_functions></board_functions>
+  <headers></headers>
+  <ethernet_phy>
+  	<identifier>MII_LAN8742A_ID</identifier>
+  	<bus_type>RMII</bus_type>
+  </ethernet_phy>
   <subtype>STM32F746xx</subtype>
   <clocks
-    HSEFrequency="8000000"
-    HSEBypass="false"
-    LSEFrequency="0"
+    HSEFrequency="25000000"
+    HSEBypass="true"
+    LSEFrequency="32768"
     LSEBypass="false"
     VDD="300" />
   <ports>
     <GPIOA>
       <pin0
-        ID="BUTTON"
+        ID="ARD_A0"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID=""
+        ID="RMII_REF_CLK"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="11" />
       <pin2
-        ID=""
+        ID="RMII_MDIO"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="11" />
       <pin3
-        ID=""
+        ID="ULPI_D0"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="10" />
       <pin4
-        ID="LRCK"
-        Type="PushPull"
-        Level="High"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="6" />
-      <pin5
-        ID="SPC"
-        Type="PushPull"
-        Level="High"
-        Speed="High"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="5" />
-      <pin6
-        ID="SDO"
-        Type="PushPull"
-        Level="High"
-        Speed="High"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="5" />
-      <pin7
-        ID="SDI"
-        Type="PushPull"
-        Level="High"
-        Speed="High"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="5" />
-      <pin8
-        ID=""
+        ID="DCMI_HSYNC"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="PullUp"
         Mode="Input"
-        Alternate="0" ></pin8>
-      <pin9
-        ID="VBUS_FS"
+        Alternate="0" />
+      <pin5
+        ID="ULPI_CK"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
+        Mode="Alternate"
+        Alternate="10" />
+      <pin6
+        ID="DCMI_PIXCK"
+        Type="PushPull"
+        Level="High"
+        Speed="Maximum"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
+      <pin7
+        ID="RMII_CRS_DV"
+        Type="PushPull"
+        Level="High"
+        Speed="Minimum"
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="11" />
+      <pin8
+        ID="ARD_D10"
+        Type="PushPull"
+        Level="High"
+        Speed="Maximum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
+      <pin9
+        ID="VCP_TX"
+        Type="PushPull"
+        Level="High"
+        Speed="Maximum"
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="7" />
       <pin10
         ID="OTG_FS_ID"
         Type="PushPull"
@@ -141,7 +146,7 @@
         Mode="Alternate"
         Alternate="0" />
       <pin15
-        ID=""
+        ID="ARD_D9"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -151,23 +156,23 @@
     </GPIOA>
     <GPIOB>
       <pin0
-        ID=""
+        ID="ULPI_D1"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="10" />
       <pin1
-        ID=""
+        ID="ULPI_D2"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="10" />
       <pin2
-        ID=""
+        ID="QSPI_CLK"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -181,9 +186,9 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="0" ></pin3>
+        Alternate="0" />
       <pin4
-        ID=""
+        ID="ARD_D3"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -191,31 +196,31 @@
         Mode="Input"
         Alternate="0" />
       <pin5
-        ID=""
+        ID="ULPI_D7"
+        Type="PushPull"
+        Level="High"
+        Speed="Maximum"
+        Resistor="PullUp"
+        Mode="Alternate"
+        Alternate="10" />
+      <pin6
+        ID="QSPI_NCS"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
-      <pin6
-        ID="SCL"
-        Type="OpenDrain"
+      <pin7
+        ID="VCP_RX"
+        Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="4" />
-      <pin7
-        ID=""
-        Type="PushPull"
-        Level="High"
-        Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Alternate="7" />
       <pin8
-        ID=""
+        ID="ARD_D15"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -223,47 +228,47 @@
         Mode="Input"
         Alternate="0" />
       <pin9
-        ID="SDA"
-        Type="OpenDrain"
+        ID="ARD_D14"
+        Type="PushPull"
+        Level="High"
+        Speed="Maximum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
+      <pin10
+        ID="ULPI_D3"
+        Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="4" ></pin9>
-      <pin10
-        ID="CLK_IN"
-        Type="PushPull"
-        Level="High"
-        Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Alternate="10" />
       <pin11
-        ID=""
+        ID="ULPI_D4"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="10" />
       <pin12
-        ID=""
+        ID="ULPI_D5"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="10" />
       <pin13
-        ID=""
+        ID="ULPI_D6"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="10" />
       <pin14
-        ID=""
+        ID="ARD_D12"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -271,7 +276,7 @@
         Mode="Input"
         Alternate="0" />
       <pin15
-        ID=""
+        ID="ARD_D11"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
