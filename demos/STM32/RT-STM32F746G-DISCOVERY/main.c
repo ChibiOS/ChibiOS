@@ -20,7 +20,7 @@
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
- * a LED.
+ * a LED attached to TP1.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
@@ -28,9 +28,9 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
+    palSetPad(GPIOH, GPIOH_TP1);
     chThdSleepMilliseconds(500);
-    palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
+    palClearPad(GPIOH, GPIOH_TP1);
     chThdSleepMilliseconds(500);
   }
 }
@@ -51,12 +51,9 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 2 using the driver default configuration.
-   * PA2(TX) and PA3(RX) are routed to USART2.
+   * Activates the serial driver 1 using the driver default configuration.
    */
-  sdStart(&SD2, NULL);
-  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
+  sdStart(&SD1, NULL);
 
   /*
    * Creates the example thread.
@@ -68,8 +65,8 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    if (palReadPad(GPIOA, GPIOA_BUTTON))
-      TestThread(&SD2);
+    if (palReadPad(GPIOI, GPIOI_BUTTON_USER))
+      TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
 }

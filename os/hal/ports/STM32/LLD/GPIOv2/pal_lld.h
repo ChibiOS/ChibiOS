@@ -143,6 +143,8 @@
 #undef GPIOG
 #undef GPIOH
 #undef GPIOI
+#undef GPIOJ
+#undef GPIOK
 
 /**
  * @name    GPIO ports definitions
@@ -157,6 +159,8 @@
 #define GPIOG                           ((stm32_gpio_t *)GPIOG_BASE)
 #define GPIOH                           ((stm32_gpio_t *)GPIOH_BASE)
 #define GPIOI                           ((stm32_gpio_t *)GPIOI_BASE)
+#define GPIOJ                           ((stm32_gpio_t *)GPIOJ_BASE)
+#define GPIOK                           ((stm32_gpio_t *)GPIOK_BASE)
 /** @} */
 
 /*===========================================================================*/
@@ -250,6 +254,14 @@ typedef struct {
 #if STM32_HAS_GPIOI || defined(__DOXYGEN__)
   /** @brief Port I setup data.*/
   stm32_gpio_setup_t    PIData;
+#endif
+#if STM32_HAS_GPIOJ || defined(__DOXYGEN__)
+  /** @brief Port I setup data.*/
+  stm32_gpio_setup_t    PJData;
+#endif
+#if STM32_HAS_GPIOK || defined(__DOXYGEN__)
+  /** @brief Port I setup data.*/
+  stm32_gpio_setup_t    PKData;
 #endif
 } PALConfig;
 
