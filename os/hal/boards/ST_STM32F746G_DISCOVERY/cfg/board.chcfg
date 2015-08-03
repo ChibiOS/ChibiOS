@@ -13,8 +13,8 @@
   <board_functions></board_functions>
   <headers></headers>
   <ethernet_phy>
-  	<identifier>MII_LAN8742A_ID</identifier>
-  	<bus_type>RMII</bus_type>
+    <identifier>MII_LAN8742A_ID</identifier>
+    <bus_type>RMII</bus_type>
   </ethernet_phy>
   <subtype>STM32F746xx</subtype>
   <clocks
@@ -1194,5 +1194,265 @@
         Mode="Alternate"
         Alternate="14" />
     </GPIOI>
+    <GPIOJ>
+      <pin0
+        ID="LCD_R1"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin1
+        ID="LCD_R2"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin2
+        ID="LCD_R3"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin3
+        ID="LCD_R4"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin4
+        ID="LCD_R5"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin5
+        ID="LCD_R6"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin6
+        ID="LCD_R7"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin7
+        ID="LCD_G0"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin8
+        ID="LCD_G1"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin9
+        ID="LCD_G2"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin10
+        ID="LCD_G3"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin11
+        ID="LCD_G4"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin12
+        ID="LCD_B0"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin13
+        ID="LCD_B1"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin14
+        ID="LCD_B2"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin15
+        ID="LCD_B3"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+    </GPIOJ>
+    <GPIOK>
+      <pin0
+        ID="LCD_G5"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin1
+        ID="LCD_G6"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin2
+        ID="LCD_G7"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin3
+        ID="LCD_B4"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin4
+        ID="LCD_B5"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin5
+        ID="LCD_B6"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin6
+        ID="LCD_B7"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin7
+        ID="LCD_DE"
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Alternate"
+        Alternate="14" />
+      <pin8
+        ID=""
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Input"
+        Alternate="0" />
+      <pin9
+        ID=""
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Input"
+        Alternate="0" />
+      <pin10
+        ID=""
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Input"
+        Alternate="0" />
+      <pin11
+        ID=""
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Input"
+        Alternate="0" />
+      <pin12
+        ID=""
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Input"
+        Alternate="0" />
+      <pin13
+        ID=""
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Input"
+        Alternate="0" />
+      <pin14
+        ID=""
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Input"
+        Alternate="0" />
+      <pin15
+        ID=""
+        Type="PushPull"
+        Speed="Minimum"
+        Resistor="Floating"
+        Level="High"
+        Mode="Input"
+        Alternate="0" />
+    </GPIOK>
   </ports>
 </board>
