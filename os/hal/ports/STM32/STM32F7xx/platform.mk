@@ -4,9 +4,8 @@ HALCONF := $(strip $(shell cat halconf.h | egrep -e "define"))
 
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32F7xx/hal_lld.c \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/DMAv2/stm32_dma.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/st_lld.c
-#               $(CHIBIOS)/os/hal/ports/STM32/LLD/DMAv2/stm32_dma.c \
-
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/ADCv2/adc_lld.c
 endif

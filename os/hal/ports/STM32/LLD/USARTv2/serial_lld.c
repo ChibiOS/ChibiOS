@@ -30,7 +30,7 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/* STM32L0xx ST headers bug.*/
+/* STM32L0xx/STM32F7xx ST headers difference.*/
 #if !defined(USART_ISR_LBDF)
 #define USART_ISR_LBDF USART_ISR_LBD
 #endif

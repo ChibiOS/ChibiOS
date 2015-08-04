@@ -30,6 +30,11 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/* STM32L0xx/STM32F7xx ST headers difference.*/
+#if !defined(USART_ISR_LBDF)
+#define USART_ISR_LBDF USART_ISR_LBD
+#endif
+
 #define USART1_RX_DMA_CHANNEL                                               \
   STM32_DMA_GETCHANNEL(STM32_UART_USART1_RX_DMA_STREAM,                     \
                        STM32_USART1_RX_DMA_CHN)
@@ -69,6 +74,14 @@
 #define UART5_TX_DMA_CHANNEL                                                \
   STM32_DMA_GETCHANNEL(STM32_UART_UART5_TX_DMA_STREAM,                      \
                        STM32_UART5_TX_DMA_CHN)
+
+#define USART6_RX_DMA_CHANNEL                                               \
+  STM32_DMA_GETCHANNEL(STM32_UART_USART6_RX_DMA_STREAM,                     \
+                       STM32_USART6_RX_DMA_CHN)
+
+#define USART6_TX_DMA_CHANNEL                                               \
+  STM32_DMA_GETCHANNEL(STM32_UART_USART6_TX_DMA_STREAM,                     \
+                       STM32_USART6_TX_DMA_CHN)
 
 #define UART7_RX_DMA_CHANNEL                                                \
   STM32_DMA_GETCHANNEL(STM32_UART_UART7_RX_DMA_STREAM,                      \
