@@ -1359,24 +1359,6 @@
 #define rccResetUSART3() rccResetAPB1(RCC_APB1RSTR_USART3RST)
 
 /**
- * @brief   Enables the USART6 peripheral clock.
- *
- * @param[in] lp        low power enable flag
- *
- * @api
- */
-#define rccEnableUSART6(lp) rccEnableAPB2(RCC_APB2ENR_USART6EN, lp)
-
-/**
- * @brief   Disables the USART6 peripheral clock.
- *
- * @param[in] lp        low power enable flag
- *
- * @api
- */
-#define rccDisableUSART6(lp) rccDisableAPB2(RCC_APB2ENR_USART6EN, lp)
-
-/**
  * @brief   Enables the UART4 peripheral clock.
  * @note    The @p lp parameter is ignored in this family.
  *
@@ -1431,11 +1413,83 @@
 #define rccResetUART5() rccResetAPB1(RCC_APB1RSTR_UART5RST)
 
 /**
+ * @brief   Enables the USART6 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUSART6(lp) rccEnableAPB2(RCC_APB2ENR_USART6EN, lp)
+
+/**
+ * @brief   Disables the USART6 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableUSART6(lp) rccDisableAPB2(RCC_APB2ENR_USART6EN, lp)
+
+/**
  * @brief   Resets the USART6 peripheral.
  *
  * @api
  */
 #define rccResetUSART6() rccResetAPB2(RCC_APB2RSTR_USART6RST)
+
+/**
+ * @brief   Enables the UART7 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUART7(lp) rccEnableAPB1(RCC_APB1ENR_UART7EN, lp)
+
+/**
+ * @brief   Disables the UART7 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableUART7(lp) rccDisableAPB1(RCC_APB1ENR_UART7EN, lp)
+
+/**
+ * @brief   Resets the UART7 peripheral.
+ *
+ * @api
+ */
+#define rccResetUART7() rccResetAPB1(RCC_APB1RSTR_UART7RST)
+
+/**
+ * @brief   Enables the UART8 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUART8(lp) rccEnableAPB1(RCC_APB1ENR_UART8EN, lp)
+
+/**
+ * @brief   Disables the UART8 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableUART8(lp) rccDisableAPB1(RCC_APB1ENR_UART8EN, lp)
+
+/**
+ * @brief   Resets the UART8 peripheral.
+ *
+ * @api
+ */
+#define rccResetUART8() rccResetAPB1(RCC_APB1RSTR_UART8RST)
 /** @} */
 
 /**

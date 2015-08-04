@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Added support for UART4...UART8 to the STM32 UARTv2 UART driver.
+- HAL: Added support for UART7 and UART8 to the STM32 UARTv2 serial driver.
 - HAL: STM32F0xx and STM32L0xx devices now share the same ADCv1 and DMAv1
        drivers.
 - HAL: Introduced preliminary support for STM32L0xx devices.
