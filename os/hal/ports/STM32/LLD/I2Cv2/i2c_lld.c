@@ -51,6 +51,22 @@
 #define I2C2_TX_DMA_CHANNEL                                                 \
   STM32_DMA_GETCHANNEL(STM32_I2C_I2C2_TX_DMA_STREAM,                        \
                        STM32_I2C2_TX_DMA_CHN)
+
+#define I2C3_RX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_I2C_I2C3_RX_DMA_STREAM,                        \
+                       STM32_I2C3_RX_DMA_CHN)
+
+#define I2C3_TX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_I2C_I2C3_TX_DMA_STREAM,                        \
+                       STM32_I2C3_TX_DMA_CHN)
+
+#define I2C4_RX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_I2C_I2C4_RX_DMA_STREAM,                        \
+                       STM32_I2C4_RX_DMA_CHN)
+
+#define I2C4_TX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_I2C_I2C4_TX_DMA_STREAM,                        \
+                       STM32_I2C4_TX_DMA_CHN)
 #endif /* STM32_I2C_USE_DMA == TRUE */
 
 #if STM32_I2C_USE_DMA == TRUE
@@ -85,6 +101,16 @@ I2CDriver I2CD1;
 /** @brief I2C2 driver identifier.*/
 #if STM32_I2C_USE_I2C2 || defined(__DOXYGEN__)
 I2CDriver I2CD2;
+#endif
+
+/** @brief I2C3 driver identifier.*/
+#if STM32_I2C_USE_I2C3 || defined(__DOXYGEN__)
+I2CDriver I2CD3;
+#endif
+
+/** @brief I2C4 driver identifier.*/
+#if STM32_I2C_USE_I2C4 || defined(__DOXYGEN__)
+I2CDriver I2CD4;
 #endif
 
 /*===========================================================================*/
@@ -474,6 +500,116 @@ OSAL_IRQ_HANDLER(STM32_I2C2_ERROR_HANDLER) {
 #endif
 #endif /* STM32_I2C_USE_I2C2 */
 
+#if STM32_I2C_USE_I2C3 || defined(__DOXYGEN__)
+#if defined(STM32_I2C3_GLOBAL_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   I2C3 event interrupt handler.
+ *
+ * @notapi
+ */
+OSAL_IRQ_HANDLER(STM32_I2C3_GLOBAL_HANDLER) {
+  uint32_t isr = I2CD3.i2c->ISR;
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Clearing IRQ bits.*/
+  I2CD3.i2c->ICR = isr;
+
+  if (isr & I2C_ERROR_MASK)
+    i2c_lld_serve_error_interrupt(&I2CD3, isr);
+  else if (isr & I2C_INT_MASK)
+    i2c_lld_serve_interrupt(&I2CD3, isr);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+#elif defined(STM32_I2C3_EVENT_HANDLER) && defined(STM32_I2C3_ERROR_HANDLER)
+OSAL_IRQ_HANDLER(STM32_I2C3_EVENT_HANDLER) {
+  uint32_t isr = I2CD3.i2c->ISR;
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Clearing IRQ bits.*/
+  I2CD3.i2c->ICR = isr & I2C_INT_MASK;
+
+  i2c_lld_serve_interrupt(&I2CD3, isr);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+OSAL_IRQ_HANDLER(STM32_I2C3_ERROR_HANDLER) {
+  uint32_t isr = I2CD3.i2c->ISR;
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Clearing IRQ bits.*/
+  I2CD3.i2c->ICR = isr & I2C_ERROR_MASK;
+
+  i2c_lld_serve_error_interrupt(&I2CD3, isr);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+#else
+#error "I2C3 interrupt handlers not defined"
+#endif
+#endif /* STM32_I2C_USE_I2C3 */
+
+#if STM32_I2C_USE_I2C4 || defined(__DOXYGEN__)
+#if defined(STM32_I2C4_GLOBAL_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   I2C4 event interrupt handler.
+ *
+ * @notapi
+ */
+OSAL_IRQ_HANDLER(STM32_I2C4_GLOBAL_HANDLER) {
+  uint32_t isr = I2CD4.i2c->ISR;
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Clearing IRQ bits.*/
+  I2CD4.i2c->ICR = isr;
+
+  if (isr & I2C_ERROR_MASK)
+    i2c_lld_serve_error_interrupt(&I2CD4, isr);
+  else if (isr & I2C_INT_MASK)
+    i2c_lld_serve_interrupt(&I2CD4, isr);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+#elif defined(STM32_I2C4_EVENT_HANDLER) && defined(STM32_I2C4_ERROR_HANDLER)
+OSAL_IRQ_HANDLER(STM32_I2C4_EVENT_HANDLER) {
+  uint32_t isr = I2CD4.i2c->ISR;
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Clearing IRQ bits.*/
+  I2CD4.i2c->ICR = isr & I2C_INT_MASK;
+
+  i2c_lld_serve_interrupt(&I2CD4, isr);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+OSAL_IRQ_HANDLER(STM32_I2C4_ERROR_HANDLER) {
+  uint32_t isr = I2CD4.i2c->ISR;
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Clearing IRQ bits.*/
+  I2CD4.i2c->ICR = isr & I2C_ERROR_MASK;
+
+  i2c_lld_serve_error_interrupt(&I2CD4, isr);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+#else
+#error "I2C4 interrupt handlers not defined"
+#endif
+#endif /* STM32_I2C_USE_I2C4 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -504,6 +640,26 @@ void i2c_lld_init(void) {
   I2CD2.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C2_TX_DMA_STREAM);
 #endif
 #endif /* STM32_I2C_USE_I2C2 */
+
+#if STM32_I2C_USE_I2C3
+  i2cObjectInit(&I2CD3);
+  I2CD3.thread = NULL;
+  I2CD3.i2c    = I2C3;
+#if STM32_I2C_USE_DMA == TRUE
+  I2CD3.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C3_RX_DMA_STREAM);
+  I2CD3.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C3_TX_DMA_STREAM);
+#endif
+#endif /* STM32_I2C_USE_I2C3 */
+
+#if STM32_I2C_USE_I2C4
+  i2cObjectInit(&I2CD4);
+  I2CD4.thread = NULL;
+  I2CD4.i2c    = I2C4;
+#if STM32_I2C_USE_DMA == TRUE
+  I2CD4.dmarx  = STM32_DMA_STREAM(STM32_I2C_I2C4_RX_DMA_STREAM);
+  I2CD4.dmatx  = STM32_DMA_STREAM(STM32_I2C_I2C4_TX_DMA_STREAM);
+#endif
+#endif /* STM32_I2C_USE_I2C4 */
 }
 
 /**
@@ -603,6 +759,82 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #endif
     }
 #endif /* STM32_I2C_USE_I2C2 */
+
+#if STM32_I2C_USE_I2C3
+    if (&I2CD3 == i2cp) {
+
+      rccResetI2C3();
+      rccEnableI2C3(FALSE);
+#if STM32_I2C_USE_DMA == TRUE
+      {
+        bool b;
+
+        b = dmaStreamAllocate(i2cp->dmarx,
+                              STM32_I2C_I2C3_IRQ_PRIORITY,
+                              NULL,
+                              (void *)i2cp);
+        osalDbgAssert(!b, "stream already allocated");
+        b = dmaStreamAllocate(i2cp->dmatx,
+                              STM32_I2C_I2C3_IRQ_PRIORITY,
+                              NULL,
+                              (void *)i2cp);
+        osalDbgAssert(!b, "stream already allocated");
+
+        i2cp->rxdmamode |= STM32_DMA_CR_CHSEL(I2C3_RX_DMA_CHANNEL) |
+                           STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
+        i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C3_TX_DMA_CHANNEL) |
+                           STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
+      }
+#endif /*STM32_I2C_USE_DMA == TRUE */
+
+#if defined(STM32_I2C3_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicEnableVector(STM32_I2C3_GLOBAL_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
+#elif defined(STM32_I2C3_EVENT_NUMBER) && defined(STM32_I2C3_ERROR_NUMBER)
+      nvicEnableVector(STM32_I2C3_EVENT_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
+      nvicEnableVector(STM32_I2C3_ERROR_NUMBER, STM32_I2C_I2C3_IRQ_PRIORITY);
+#else
+#error "I2C3 interrupt numbers not defined"
+#endif
+    }
+#endif /* STM32_I2C_USE_I2C3 */
+
+#if STM32_I2C_USE_I2C4
+    if (&I2CD4 == i2cp) {
+
+      rccResetI2C4();
+      rccEnableI2C4(FALSE);
+#if STM32_I2C_USE_DMA == TRUE
+      {
+        bool b;
+
+        b = dmaStreamAllocate(i2cp->dmarx,
+                              STM32_I2C_I2C4_IRQ_PRIORITY,
+                              NULL,
+                              (void *)i2cp);
+        osalDbgAssert(!b, "stream already allocated");
+        b = dmaStreamAllocate(i2cp->dmatx,
+                              STM32_I2C_I2C4_IRQ_PRIORITY,
+                              NULL,
+                              (void *)i2cp);
+        osalDbgAssert(!b, "stream already allocated");
+
+        i2cp->rxdmamode |= STM32_DMA_CR_CHSEL(I2C4_RX_DMA_CHANNEL) |
+                           STM32_DMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
+        i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C4_TX_DMA_CHANNEL) |
+                           STM32_DMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
+      }
+#endif /*STM32_I2C_USE_DMA == TRUE */
+
+#if defined(STM32_I2C4_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicEnableVector(STM32_I2C4_GLOBAL_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
+#elif defined(STM32_I2C4_EVENT_NUMBER) && defined(STM32_I2C4_ERROR_NUMBER)
+      nvicEnableVector(STM32_I2C4_EVENT_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
+      nvicEnableVector(STM32_I2C4_ERROR_NUMBER, STM32_I2C_I2C4_IRQ_PRIORITY);
+#else
+#error "I2C4 interrupt numbers not defined"
+#endif
+    }
+#endif /* STM32_I2C_USE_I2C4 */
   }
 
 #if STM32_I2C_USE_DMA == TRUE
@@ -668,6 +900,36 @@ void i2c_lld_stop(I2CDriver *i2cp) {
 #endif
 
       rccDisableI2C2(FALSE);
+    }
+#endif
+
+#if STM32_I2C_USE_I2C3
+    if (&I2CD3 == i2cp) {
+#if defined(STM32_I2C3_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicDisableVector(STM32_I2C3_GLOBAL_NUMBER);
+#elif defined(STM32_I2C3_EVENT_NUMBER) && defined(STM32_I2C3_ERROR_NUMBER)
+      nvicDisableVector(STM32_I2C3_EVENT_NUMBER);
+      nvicDisableVector(STM32_I2C3_ERROR_NUMBER);
+#else
+#error "I2C3 interrupt numbers not defined"
+#endif
+
+      rccDisableI2C3(FALSE);
+    }
+#endif
+
+#if STM32_I2C_USE_I2C4
+    if (&I2CD4 == i2cp) {
+#if defined(STM32_I2C4_GLOBAL_NUMBER) || defined(__DOXYGEN__)
+      nvicDisableVector(STM32_I2C4_GLOBAL_NUMBER);
+#elif defined(STM32_I2C4_EVENT_NUMBER) && defined(STM32_I2C4_ERROR_NUMBER)
+      nvicDisableVector(STM32_I2C4_EVENT_NUMBER);
+      nvicDisableVector(STM32_I2C4_ERROR_NUMBER);
+#else
+#error "I2C4 interrupt numbers not defined"
+#endif
+
+      rccDisableI2C4(FALSE);
     }
 #endif
   }

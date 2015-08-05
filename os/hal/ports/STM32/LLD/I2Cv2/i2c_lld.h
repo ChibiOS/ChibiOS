@@ -78,6 +78,24 @@
 #endif
 
 /**
+ * @brief   I2C3 driver enable switch.
+ * @details If set to @p TRUE the support for I2C3 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_I2C_USE_I2C3) || defined(__DOXYGEN__)
+#define STM32_I2C_USE_I2C3                  FALSE
+#endif
+
+/**
+ * @brief   I2C4 driver enable switch.
+ * @details If set to @p TRUE the support for I2C4 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_I2C_USE_I2C4) || defined(__DOXYGEN__)
+#define STM32_I2C_USE_I2C4                  FALSE
+#endif
+
+/**
  * @brief   I2C timeout on busy condition in milliseconds.
  */
 #if !defined(STM32_I2C_BUSY_TIMEOUT) || defined(__DOXYGEN__)
@@ -96,6 +114,20 @@
  */
 #if !defined(STM32_I2C_I2C2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_I2C_I2C2_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   I2C3 interrupt priority level setting.
+ */
+#if !defined(STM32_I2C_I2C3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C3_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   I2C4 interrupt priority level setting.
+ */
+#if !defined(STM32_I2C_I2C4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C4_IRQ_PRIORITY         10
 #endif
 
 /**
@@ -126,6 +158,26 @@
 #endif
 
 /**
+ * @brief   I2C3 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
+ */
+#if !defined(STM32_I2C_I2C3_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C3_DMA_PRIORITY         1
+#endif
+
+/**
+ * @brief   I2C4 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
+ */
+#if !defined(STM32_I2C_I2C4_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C4_DMA_PRIORITY         1
+#endif
+
+/**
  * @brief   I2C DMA error hook.
  * @note    The default action for DMA errors is a system halt because DMA
  *          error can only happen because programming errors.
@@ -148,7 +200,16 @@
 #error "I2C2 not present in the selected device"
 #endif
 
-#if !STM32_I2C_USE_I2C1 && !STM32_I2C_USE_I2C2
+#if STM32_I2C_USE_I2C3 && !STM32_HAS_I2C3
+#error "I2C3 not present in the selected device"
+#endif
+
+#if STM32_I2C_USE_I2C4 && !STM32_HAS_I2C4
+#error "I2C4 not present in the selected device"
+#endif
+
+#if !STM32_I2C_USE_I2C1 && !STM32_I2C_USE_I2C2 && !STM32_I2C_USE_I2C3 &&    \
+    !STM32_I2C_USE_I2C4
 #error "I2C driver activated but no I2C peripheral assigned"
 #endif
 
@@ -162,6 +223,16 @@
 #error "Invalid IRQ priority assigned to I2C2"
 #endif
 
+#if STM32_I2C_USE_I2C3 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_I2C_I2C3_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C3"
+#endif
+
+#if STM32_I2C_USE_I2C4 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_I2C_I2C4_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C4"
+#endif
+
 #if STM32_I2C_USE_DMA == TRUE
 #if STM32_I2C_USE_I2C1 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C1_DMA_PRIORITY)
@@ -171,6 +242,16 @@
 #if STM32_I2C_USE_I2C2 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C2_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to I2C2"
+#endif
+
+#if STM32_I2C_USE_I2C3 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C3_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C3"
+#endif
+
+#if STM32_I2C_USE_I2C4 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C4_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C4"
 #endif
 
 /* The following checks are only required when there is a DMA able to
@@ -185,6 +266,16 @@
 #if STM32_I2C_USE_I2C2 && (!defined(STM32_I2C_I2C2_RX_DMA_STREAM) ||        \
                            !defined(STM32_I2C_I2C2_TX_DMA_STREAM))
 #error "I2C2 DMA streams not defined"
+#endif
+
+#if STM32_I2C_USE_I2C3 && (!defined(STM32_I2C_I2C3_RX_DMA_STREAM) ||        \
+                           !defined(STM32_I2C_I2C3_TX_DMA_STREAM))
+#error "I2C3 DMA streams not defined"
+#endif
+
+#if STM32_I2C_USE_I2C4 && (!defined(STM32_I2C_I2C4_RX_DMA_STREAM) ||        \
+                           !defined(STM32_I2C_I2C4_TX_DMA_STREAM))
+#error "I2C4 DMA streams not defined"
 #endif
 
 /* Check on the validity of the assigned DMA channels.*/
@@ -210,6 +301,30 @@
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C2_TX_DMA_STREAM,                    \
                            STM32_I2C2_TX_DMA_MSK)
 #error "invalid DMA stream associated to I2C2 TX"
+#endif
+
+#if STM32_I2C_USE_I2C3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C3_RX_DMA_STREAM,                    \
+                           STM32_I2C3_RX_DMA_MSK)
+#error "invalid DMA stream associated to I2C3 RX"
+#endif
+
+#if STM32_I2C_USE_I2C3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C3_TX_DMA_STREAM,                    \
+                           STM32_I2C3_TX_DMA_MSK)
+#error "invalid DMA stream associated to I2C3 TX"
+#endif
+
+#if STM32_I2C_USE_I2C4 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C4_RX_DMA_STREAM,                    \
+                           STM32_I2C4_RX_DMA_MSK)
+#error "invalid DMA stream associated to I2C4 RX"
+#endif
+
+#if STM32_I2C_USE_I2C4 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C4_TX_DMA_STREAM,                    \
+                           STM32_I2C4_TX_DMA_MSK)
+#error "invalid DMA stream associated to I2C4 TX"
 #endif
 #endif /* STM32_ADVANCED_DMA */
 
@@ -351,6 +466,14 @@ extern I2CDriver I2CD1;
 
 #if STM32_I2C_USE_I2C2
 extern I2CDriver I2CD2;
+#endif
+
+#if STM32_I2C_USE_I2C3
+extern I2CDriver I2CD3;
+#endif
+
+#if STM32_I2C_USE_I2C4
+extern I2CDriver I2CD4;
 #endif
 
 #endif /* !defined(__DOXYGEN__) */
