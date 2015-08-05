@@ -86,6 +86,10 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- NIL: Fixed missing configuration options from NIL and RT PPC ports
+       (bug #625).
+- RT:  Fixed missing configuration options from NIL and RT PPC ports
+       (bug #625).
 - HAL: Fixed wrong offset in STM32 DAC driver (bug #624)(backported to 3.0.1).
 - HAL: Fixed crash on STM32F030x4/6 devices (bug #623)(backported to 3.0.1).
 - HAL: Fixed duplicated doxygen tag in STM32F4xx hal_lld.h file (bug #621)
