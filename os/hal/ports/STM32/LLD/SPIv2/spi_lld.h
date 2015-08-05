@@ -67,6 +67,33 @@
 #endif
 
 /**
+ * @brief   SPI4 driver enable switch.
+ * @details If set to @p TRUE the support for SPI4 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SPI_USE_SPI4) || defined(__DOXYGEN__)
+#define STM32_SPI_USE_SPI4                  FALSE
+#endif
+
+/**
+ * @brief   SPI5 driver enable switch.
+ * @details If set to @p TRUE the support for SPI5 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SPI_USE_SPI5) || defined(__DOXYGEN__)
+#define STM32_SPI_USE_SPI5                  FALSE
+#endif
+
+/**
+ * @brief   SPI6 driver enable switch.
+ * @details If set to @p TRUE the support for SPI6 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SPI_USE_SPI6) || defined(__DOXYGEN__)
+#define STM32_SPI_USE_SPI6                  FALSE
+#endif
+
+/**
  * @brief   SPI1 interrupt priority level setting.
  */
 #if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -85,6 +112,27 @@
  */
 #if !defined(STM32_SPI_SPI3_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SPI_SPI3_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   SPI4 interrupt priority level setting.
+ */
+#if !defined(STM32_SPI_SPI4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI4_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   SPI5 interrupt priority level setting.
+ */
+#if !defined(STM32_SPI_SPI5_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI5_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   SPI6 interrupt priority level setting.
+ */
+#if !defined(STM32_SPI_SPI6_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI6_IRQ_PRIORITY         10
 #endif
 
 /**
@@ -118,6 +166,36 @@
 #endif
 
 /**
+ * @brief   SPI4 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
+ */
+#if !defined(STM32_SPI_SPI4_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI4_DMA_PRIORITY         1
+#endif
+
+/**
+ * @brief   SPI5 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
+ */
+#if !defined(STM32_SPI_SPI5_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI5_DMA_PRIORITY         1
+#endif
+
+/**
+ * @brief   SPI6 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
+ */
+#if !defined(STM32_SPI_SPI6_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPI6_DMA_PRIORITY         1
+#endif
+
+/**
  * @brief   SPI DMA error hook.
  */
 #if !defined(STM32_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
@@ -141,7 +219,20 @@
 #error "SPI3 not present in the selected device"
 #endif
 
-#if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3
+#if STM32_SPI_USE_SPI4 && !STM32_HAS_SPI4
+#error "SPI4 not present in the selected device"
+#endif
+
+#if STM32_SPI_USE_SPI5 && !STM32_HAS_SPI5
+#error "SPI5 not present in the selected device"
+#endif
+
+#if STM32_SPI_USE_SPI6 && !STM32_HAS_SPI6
+#error "SPI6 not present in the selected device"
+#endif
+
+#if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3 &&    \
+    !STM32_SPI_USE_SPI4 && !STM32_SPI_USE_SPI5 && !STM32_SPI_USE_SPI6
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
 
@@ -160,6 +251,21 @@
 #error "Invalid IRQ priority assigned to SPI3"
 #endif
 
+#if STM32_SPI_USE_SPI4 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI4_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SPI4"
+#endif
+
+#if STM32_SPI_USE_SPI5 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI5_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SPI5"
+#endif
+
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI6_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SPI6"
+#endif
+
 #if STM32_SPI_USE_SPI1 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI1_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SPI1"
@@ -173,6 +279,21 @@
 #if STM32_SPI_USE_SPI3 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI3_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SPI3"
+#endif
+
+#if STM32_SPI_USE_SPI4 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI4_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SPI4"
+#endif
+
+#if STM32_SPI_USE_SPI5 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI5_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SPI5"
+#endif
+
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI6_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SPI6"
 #endif
 
 /* The following checks are only required when there is a DMA able to
@@ -192,6 +313,21 @@
 #if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_DMA_STREAM) ||        \
                            !defined(STM32_SPI_SPI3_TX_DMA_STREAM))
 #error "SPI3 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI4 && (!defined(STM32_SPI_SPI4_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI4_TX_DMA_STREAM))
+#error "SPI4 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI5_TX_DMA_STREAM))
+#error "SPI5 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI6_TX_DMA_STREAM))
+#error "SPI6 DMA streams not defined"
 #endif
 
 /* Check on the validity of the assigned DMA channels.*/
@@ -223,6 +359,36 @@
 #if STM32_SPI_USE_SPI3 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_TX_DMA_STREAM, STM32_SPI3_TX_DMA_MSK)
 #error "invalid DMA stream associated to SPI3 TX"
+#endif
+
+#if STM32_SPI_USE_SPI4 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI4_RX_DMA_STREAM, STM32_SPI4_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI4 RX"
+#endif
+
+#if STM32_SPI_USE_SPI4 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI4_TX_DMA_STREAM, STM32_SPI4_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI4 TX"
+#endif
+
+#if STM32_SPI_USE_SPI5 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI5_RX_DMA_STREAM, STM32_SPI5_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI5 RX"
+#endif
+
+#if STM32_SPI_USE_SPI5 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI5_TX_DMA_STREAM, STM32_SPI5_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI5 TX"
+#endif
+
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_RX_DMA_STREAM, STM32_SPI6_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI6 RX"
+#endif
+
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_TX_DMA_STREAM, STM32_SPI6_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI6 TX"
 #endif
 #endif /* STM32_ADVANCED_DMA */
 
@@ -342,6 +508,18 @@ extern SPIDriver SPID2;
 
 #if STM32_SPI_USE_SPI3 && !defined(__DOXYGEN__)
 extern SPIDriver SPID3;
+#endif
+
+#if STM32_SPI_USE_SPI4 && !defined(__DOXYGEN__)
+extern SPIDriver SPID4;
+#endif
+
+#if STM32_SPI_USE_SPI5 && !defined(__DOXYGEN__)
+extern SPIDriver SPID5;
+#endif
+
+#if STM32_SPI_USE_SPI6 && !defined(__DOXYGEN__)
+extern SPIDriver SPID6;
 #endif
 
 #ifdef __cplusplus

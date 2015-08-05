@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Added support for SPI4...SPI6 to the STM32 SPIv2 SPI driver.
 - HAL: Added support for UART4...UART8 to the STM32 UARTv2 UART driver.
 - HAL: Added support for UART7 and UART8 to the STM32 UARTv2 serial driver.
 - HAL: STM32F2xx, STM32F4xx and STM32F7xx devices now share the same ADCv2
