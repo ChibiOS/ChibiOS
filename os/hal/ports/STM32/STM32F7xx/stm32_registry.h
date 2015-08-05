@@ -39,6 +39,9 @@
 #if defined(STM32F745xx) || defined(STM32F746xx) || defined(STM32F756xx) || \
     defined(__DOXYGEN__)
 /* ADC attributes.*/
+#define STM32_ADC_HANDLER                   Vector88
+#define STM32_ADC_NUMBER                    18
+
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(2, 0) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 4))

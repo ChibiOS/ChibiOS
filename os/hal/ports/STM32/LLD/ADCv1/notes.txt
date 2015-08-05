@@ -13,4 +13,4 @@ STM32_ADC1_IRQ_SHARED_WITH_EXTI - TRUE if the IRQ is shared with EXTI.
 STM32_ADC1_HANDLER              - IRQ vector name.
 STM32_ADC1_NUMBER               - IRQ vector number.
 STM32_ADC1_DMA_MSK              - Mask of the compatible DMA channels.
-STM32_ADC1_DMA_CHN              - Mask of the challens mapping.
+STM32_ADC1_DMA_CHN              - Mask of the channels mapping.
