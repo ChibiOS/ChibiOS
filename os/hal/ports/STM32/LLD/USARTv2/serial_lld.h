@@ -196,8 +196,8 @@
 #error "USART6 not present in the selected device"
 #endif
 
-#if STM32_SERIAL_USE_UART5 && !STM32_HAS_UART5
-#error "UART5 not present in the selected device"
+#if STM32_SERIAL_USE_UART7 && !STM32_HAS_UART7
+#error "UART7 not present in the selected device"
 #endif
 
 #if STM32_SERIAL_USE_UART8 && !STM32_HAS_UART8

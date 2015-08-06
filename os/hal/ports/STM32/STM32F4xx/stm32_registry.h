@@ -66,7 +66,8 @@
 /*===========================================================================*/
 /* STM32F439xx, STM32F429xx, STM32F437xx, STM32F427xx.                       */
 /*===========================================================================*/
-#if defined(STM32F429_439xx) || defined(STM32F427_437xx)
+#if defined(STM32F429_439xx) || defined(STM32F427_437xx) ||                 \
+    defined(__DOXYGEN__)
 /* ADC attributes.*/
 #define STM32_ADC_HANDLER                   Vector88
 #define STM32_ADC_NUMBER                    18
@@ -364,8 +365,17 @@
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_USART6_TX_DMA_CHN             0x55000000
 
-#define STM32_HAS_UART7                     FALSE
-#define STM32_HAS_UART8                     FALSE
+#define STM32_HAS_UART7                     TRUE
+#define STM32_UART7_RX_DMA_MSK              STM32_DMA_STREAM_ID_MSK(1, 3)
+#define STM32_UART7_RX_DMA_CHN              0x00005000
+#define STM32_UART7_TX_DMA_MSK              STM32_DMA_STREAM_ID_MSK(1, 1)
+#define STM32_UART7_TX_DMA_CHN              0x00000050
+
+#define STM32_HAS_UART8                     TRUE
+#define STM32_UART8_RX_DMA_MSK              STM32_DMA_STREAM_ID_MSK(1, 6)
+#define STM32_UART8_RX_DMA_CHN              0x05000000
+#define STM32_UART8_TX_DMA_MSK              STM32_DMA_STREAM_ID_MSK(1, 0)
+#define STM32_UART8_TX_DMA_CHN              0x00000005
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       FALSE
@@ -1271,7 +1281,7 @@
 #define STM32_HAS_CRC                       TRUE
 #define STM32_CRC_PROGRAMMABLE              FALSE
 
-#endif
+#endif /* defined(STM32F411xx) */
 /** @} */
 
 #endif /* _STM32_REGISTRY_H_ */

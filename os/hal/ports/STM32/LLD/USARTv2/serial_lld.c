@@ -377,7 +377,7 @@ OSAL_IRQ_HANDLER(STM32_UART5_HANDLER) {
 #error "STM32_USART6_HANDLER not defined"
 #endif
 /**
- * @brief   USART1 interrupt handler.
+ * @brief   USART6 interrupt handler.
  *
  * @isr
  */

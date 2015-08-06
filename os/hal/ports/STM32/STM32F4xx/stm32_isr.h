@@ -138,6 +138,8 @@
 #define STM32_UART4_HANDLER         Vector110
 #define STM32_UART5_HANDLER         Vector114
 #define STM32_USART6_HANDLER        Vector15C
+#define STM32_UART7_HANDLER         Vector188
+#define STM32_UART8_HANDLER         Vector18C
 
 #define STM32_USART1_NUMBER         37
 #define STM32_USART2_NUMBER         38
@@ -145,6 +147,8 @@
 #define STM32_UART4_NUMBER          52
 #define STM32_UART5_NUMBER          53
 #define STM32_USART6_NUMBER         71
+#define STM32_UART7_NUMBER          82
+#define STM32_UART8_NUMBER          83
 
 /*
  * Ethernet
