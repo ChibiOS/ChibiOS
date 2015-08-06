@@ -83,6 +83,28 @@
 #define STM32_HAS_DMA1                      TRUE
 #define STM32_HAS_DMA2                      FALSE
 
+/* DMA attributes.*/
+#define STM32_ADVANCED_DMA                  FALSE
+
+#define STM32_DMA_SUPPORTS_CSELR            FALSE
+#define STM32_DMA1_NUM_CHANNELS             7
+#define STM32_DMA1_CH1_HANDLER              Vector6C
+#define STM32_DMA1_CH2_HANDLER              Vector70
+#define STM32_DMA1_CH3_HANDLER              Vector74
+#define STM32_DMA1_CH4_HANDLER              Vector78
+#define STM32_DMA1_CH5_HANDLER              Vector7C
+#define STM32_DMA1_CH6_HANDLER              Vector80
+#define STM32_DMA1_CH7_HANDLER              Vector84
+#define STM32_DMA1_CH1_NUMBER               11
+#define STM32_DMA1_CH2_NUMBER               12
+#define STM32_DMA1_CH3_NUMBER               13
+#define STM32_DMA1_CH4_NUMBER               14
+#define STM32_DMA1_CH5_NUMBER               15
+#define STM32_DMA1_CH6_NUMBER               16
+#define STM32_DMA1_CH7_NUMBER               17
+
+#define STM32_DMA2_NUM_CHANNELS             0
+
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
 
@@ -266,8 +288,35 @@
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  FALSE
-#define STM32_HAS_DMA1                      TRUE
-#define STM32_HAS_DMA2                      TRUE
+
+#define STM32_DMA_SUPPORTS_CSELR            FALSE
+#define STM32_DMA1_NUM_CHANNELS             7
+#define STM32_DMA1_CH1_HANDLER              Vector6C
+#define STM32_DMA1_CH2_HANDLER              Vector70
+#define STM32_DMA1_CH3_HANDLER              Vector74
+#define STM32_DMA1_CH4_HANDLER              Vector78
+#define STM32_DMA1_CH5_HANDLER              Vector7C
+#define STM32_DMA1_CH6_HANDLER              Vector80
+#define STM32_DMA1_CH7_HANDLER              Vector84
+#define STM32_DMA1_CH1_NUMBER               11
+#define STM32_DMA1_CH2_NUMBER               12
+#define STM32_DMA1_CH1_NUMBER               13
+#define STM32_DMA1_CH1_NUMBER               14
+#define STM32_DMA1_CH5_NUMBER               15
+#define STM32_DMA1_CH6_NUMBER               16
+#define STM32_DMA1_CH7_NUMBER               17
+
+#define STM32_DMA2_NUM_CHANNELS             5
+#define STM32_DMA2_CH1_HANDLER              Vector108
+#define STM32_DMA2_CH2_HANDLER              Vector10C
+#define STM32_DMA2_CH3_HANDLER              Vector110
+#define STM32_DMA2_CH4_HANDLER              Vector114
+#define STM32_DMA2_CH5_HANDLER              Vector118
+#define STM32_DMA2_CH1_NUMBER               50
+#define STM32_DMA2_CH2_NUMBER               51
+#define STM32_DMA2_CH1_NUMBER               52
+#define STM32_DMA2_CH1_NUMBER               53
+#define STM32_DMA2_CH5_NUMBER               54
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE

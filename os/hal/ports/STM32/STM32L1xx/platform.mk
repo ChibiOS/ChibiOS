@@ -3,8 +3,8 @@ ifeq ($(USE_SMART_BUILD),yes)
 HALCONF := $(strip $(shell cat halconf.h | egrep -e "define"))
 
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
-               $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/stm32_dma.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/hal_lld.c \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/DMAv1/stm32_dma.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/st_lld.c
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/adc_lld.c
@@ -48,12 +48,12 @@ PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/USBv1/usb_lld.c
 endif
 else
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
-               $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/stm32_dma.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/hal_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/adc_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/ext_lld_isr.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/EXTIv1/ext_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/DACv1/dac_lld.c \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/DMAv1/stm32_dma.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/GPIOv2/pal_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/I2Cv1/i2c_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv1/spi_lld.c \
@@ -72,6 +72,7 @@ PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \
                $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/EXTIv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/DACv1 \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/DMAv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/GPIOv2 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/I2Cv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/RTCv2 \
