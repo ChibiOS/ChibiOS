@@ -97,6 +97,7 @@
        (bug #625).
 - RT:  Fixed missing configuration options from NIL and RT PPC ports
        (bug #625).
+- HAL: Fixed broken MAC driver for STM32F107 (bug #626)(backported to 3.0.1).
 - HAL: Fixed wrong offset in STM32 DAC driver (bug #624)(backported to 3.0.1).
 - HAL: Fixed crash on STM32F030x4/6 devices (bug #623)(backported to 3.0.1).
 - HAL: Fixed duplicated doxygen tag in STM32F4xx hal_lld.h file (bug #621)
