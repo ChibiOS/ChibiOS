@@ -25,6 +25,28 @@
 #ifndef _STM32_REGISTRY_H_
 #define _STM32_REGISTRY_H_
 
+#if defined(STM32L100xB) || defined(STM32L151xB) ||                         \
+    defined(STM32L152xB) || defined(__DOXYGEN__)
+#define STM32L1XX_MD
+
+#elif defined(STM32L100xBA) || defined(STM32L100xC)  ||                     \
+      defined(STM32L151xBA) || defined(STM32L151xC)  ||                     \
+      defined(STM32L151xCA) || defined(STM32L152xBA) ||                     \
+      defined(STM32L152xC)  || defined(STM32L152xCA) ||                     \
+      defined(STM32L162xC)  || defined(STM32L162xCA)
+#define STM32L1XX_MDP
+
+#elif defined(STM32L151xD)  || defined(STM32L151xDX) ||                     \
+      defined(STM32L151xE)  || defined(STM32L152xD)  ||                     \
+      defined(STM32L152xDX) || defined(STM32L152xE)  ||                     \
+      defined(STM32L162xD)  || defined(STM32L162xDX) ||                     \
+      defined(STM32L162xE)
+#define STM32L1XX_HD
+
+#else
+#error "STM32L1xx device not specified"
+#endif
+
 /*===========================================================================*/
 /* Platform capabilities.                                                    */
 /*===========================================================================*/

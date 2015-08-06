@@ -27,7 +27,6 @@
 #define BOARD_ST_STM32L_DISCOVERY
 #define BOARD_NAME                  "ST STM32L-Discovery"
 
-
 /*
  * Board oscillators-related settings.
  * NOTE: HSE not fitted.
@@ -45,7 +44,7 @@
 /*
  * MCU type as defined in the ST header file stm32l1xx.h.
  */
-#define STM32L1XX_MD
+#define STM32L152xB
 
 /*
  * IO pins assignments.

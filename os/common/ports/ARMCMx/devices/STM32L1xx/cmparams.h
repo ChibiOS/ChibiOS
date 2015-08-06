@@ -60,7 +60,17 @@
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
-#if !defined(STM32L1XX_MD) && !defined(STM32L1XX_MDP) && !defined(STM32L1XX_HD)
+#if !defined(STM32L100xB)  && !defined(STM32L100xBA) &&                     \
+    !defined(STM32L100xC)  && !defined(STM32L151xB)  &&                     \
+    !defined(STM32L151xBA) && !defined(STM32L151xC)  &&                     \
+    !defined(STM32L151xCA) && !defined(STM32L151xD)  &&                     \
+    !defined(STM32L151xDX) && !defined(STM32L151xE)  &&                     \
+    !defined(STM32L152xB)  && !defined(STM32L152xBA) &&                     \
+    !defined(STM32L152xC)  && !defined(STM32L152xCA) &&                     \
+    !defined(STM32L152xD)  && !defined(STM32L152xDX) &&                     \
+    !defined(STM32L152xE)  && !defined(STM32L162xC)  &&                     \
+    !defined(STM32L162xCA) && !defined(STM32L162xD)  &&                     \
+    !defined(STM32L162xDX) && !defined(STM32L162xE)
 #include "board.h"
 #endif
 
@@ -76,6 +86,9 @@
 #if CORTEX_PRIORITY_BITS != __NVIC_PRIO_BITS
 #error "CMSIS __NVIC_PRIO_BITS mismatch"
 #endif
+
+/* Fix for yet another consistency error in ST headers.*/
+#define SVCall_IRQn SVC_IRQn
 
 #endif /* !defined(_FROM_ASM_) */
 
