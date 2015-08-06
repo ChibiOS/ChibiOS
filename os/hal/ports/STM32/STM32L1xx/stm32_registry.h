@@ -300,8 +300,8 @@
 #define STM32_DMA1_CH7_HANDLER              Vector84
 #define STM32_DMA1_CH1_NUMBER               11
 #define STM32_DMA1_CH2_NUMBER               12
-#define STM32_DMA1_CH1_NUMBER               13
-#define STM32_DMA1_CH1_NUMBER               14
+#define STM32_DMA1_CH3_NUMBER               13
+#define STM32_DMA1_CH4_NUMBER               14
 #define STM32_DMA1_CH5_NUMBER               15
 #define STM32_DMA1_CH6_NUMBER               16
 #define STM32_DMA1_CH7_NUMBER               17
@@ -314,8 +314,8 @@
 #define STM32_DMA2_CH5_HANDLER              Vector118
 #define STM32_DMA2_CH1_NUMBER               50
 #define STM32_DMA2_CH2_NUMBER               51
-#define STM32_DMA2_CH1_NUMBER               52
-#define STM32_DMA2_CH1_NUMBER               53
+#define STM32_DMA2_CH3_NUMBER               52
+#define STM32_DMA2_CH4_NUMBER               53
 #define STM32_DMA2_CH5_NUMBER               54
 
 /* ETH attributes.*/
