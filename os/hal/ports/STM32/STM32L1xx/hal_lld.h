@@ -31,9 +31,6 @@
  *            STM32L152xD, STM32L152xDX, STM32L152xE.
  *          - STM32L162xC, STM32L162xCA, STM32L162xD, STM32L162xDX,
  *            STM32L162xE.
- *          - STM32L1XX_MD for Ultra Low Power Medium-density devices.
- *          - STM32L1XX_MDP for Ultra Low Power Medium-density Plus devices.
- *          - STM32L1XX_HD for Ultra Low Power High-density devices.
  *          .
  *
  * @addtogroup HAL

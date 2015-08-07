@@ -305,11 +305,7 @@ OSAL_IRQ_HANDLER(Vector98) {
  *
  * @isr
  */
-#if defined(STM32L1XX_MDP) || defined(__DOXYGEN__)
-OSAL_IRQ_HANDLER(Vector114) {
-#else
 OSAL_IRQ_HANDLER(Vector120) {
-#endif
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
