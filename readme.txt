@@ -93,6 +93,8 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- HAL: Fixed CEC clock cannot be disabled on STM32F0xx (bug #628)
+       (backported to 3.0.1).
 - VAR: Fixed lwIP arch code breaks with a 16-bit systick timer (bug #627)
        (backported to 3.0.1).
 - HAL: Fixed broken MAC driver for STM32F107 (bug #626)(backported to 3.0.1).
