@@ -77,6 +77,7 @@
 - NEW: Added an initialization function to the lwIP bindings, now it is
        sufficient to call lwipInit(NULL); in order to start the subsystem.
        Demo updated.
+- HAL: Fixed CEC clock cannot be disabled on STM32F0xx (bug #628).
 - VAR: Fixed lwIP arch code breaks with a 16-bit systick timer (bug #627).
 - HAL: Fixed broken MAC driver for STM32F107 (bug #626).
 - NIL: Fixed missing configuration options from NIL PPC port (bug #625).

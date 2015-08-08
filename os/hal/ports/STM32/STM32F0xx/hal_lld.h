@@ -247,6 +247,7 @@
 #define STM32_CECSW_MASK        (1 << 6)    /**< CEC clock source mask.     */
 #define STM32_CECSW_HSI         (0 << 6)    /**< CEC clock is HSI/244.      */
 #define STM32_CECSW_LSE         (1 << 6)    /**< CEC clock is LSE.          */
+#define STM32_CECSW_OFF         0xFFFFFFFF  /**< CEC clock is not required. */
 #define STM32_USBSW_MASK        (1 << 7)    /**< USB clock source mask.     */
 #define STM32_USBSW_HSI48       (0 << 7)    /**< USB clock is HSI48.        */
 #define STM32_USBSW_PCLK        (1 << 7)    /**< USB clock is PCLK.         */
@@ -798,6 +799,8 @@
 #define STM32_CECCLK                STM32_HSICLK
 #elif STM32_CECSW == STM32_CECSW_LSE
 #define STM32_CECCLK                STM32_LSECLK
+#elif STM32_CECSW == STM32_CECSW_OFF
+#define STM32_CECCLK                0
 #else
 #error "invalid source selected for CEC clock"
 #endif
