@@ -95,6 +95,7 @@
 - HAL: Added support for CAN in STM32F042/72 devices.
 - HAL: Added support for extra DMA channels in STM32F072 devices.
 - HAL: Modified the STM32 CAN driver to support unified IRQs.
+- HAL: Fixed wrong EXTI[18] vector number on STM32F373 (bug #618).
 - HAL: Fixed wrong check on STM32_LSE_ENABLED definition in STM32L1xx HAL port
        (bug #617).
 - RT:  SPE-related issue in e200z ports (bug #607).
