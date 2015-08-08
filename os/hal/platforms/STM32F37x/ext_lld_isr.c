@@ -233,7 +233,7 @@ CH_IRQ_HANDLER(VectorE4) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(VectorE8) {
+CH_IRQ_HANDLER(Vector170) {
 
   CH_IRQ_PROLOGUE();
 
