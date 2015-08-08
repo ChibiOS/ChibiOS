@@ -77,10 +77,8 @@
 - NEW: Added an initialization function to the lwIP bindings, now it is
        sufficient to call lwipInit(NULL); in order to start the subsystem.
        Demo updated.
-- NIL: Fixed missing configuration options from NIL and RT PPC ports
-       (bug #625).
-- RT:  Fixed missing configuration options from NIL and RT PPC ports
-       (bug #625).
+- HAL: Fixed broken MAC driver for STM32F107 (bug #626).
+- NIL: Fixed missing configuration options from NIL PPC port (bug #625).
 - HAL: Fixed wrong offset in STM32 DAC driver (bug #624).
 - HAL: Fixed crash on STM32F030x4/6 devices (bug #623).
 - HAL: Fixed duplicated doxygen tag in STM32F4xx hal_lld.h file (bug #621).

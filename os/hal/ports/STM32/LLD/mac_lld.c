@@ -173,7 +173,7 @@ static void mac_lld_set_address(const uint8_t *p) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-OSAL_IRQ_HANDLER(ETH_IRQHandler) {
+OSAL_IRQ_HANDLER(STM32_ETH_HANDLER) {
   uint32_t dmasr;
 
   OSAL_IRQ_PROLOGUE();
@@ -308,7 +308,7 @@ void mac_lld_start(MACDriver *macp) {
 #endif
 
   /* ISR vector enabled.*/
-  nvicEnableVector(ETH_IRQn, STM32_MAC_ETH1_IRQ_PRIORITY);
+  nvicEnableVector(STM32_ETH_NUMBER, STM32_MAC_ETH1_IRQ_PRIORITY);
 
 #if STM32_MAC_ETH1_CHANGE_PHY_STATE
   /* PHY in power up mode.*/
@@ -382,7 +382,7 @@ void mac_lld_stop(MACDriver *macp) {
     rccDisableETH(false);
 
     /* ISR vector disabled.*/
-    nvicDisableVector(ETH_IRQn);
+    nvicDisableVector(STM32_ETH_NUMBER);
   }
 }
 

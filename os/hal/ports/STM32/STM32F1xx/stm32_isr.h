@@ -55,6 +55,13 @@
 #define STM32_CAN2_SCE_NUMBER       66
 
 /*
+ * Ethernet
+ */
+#define STM32_ETH_HANDLER                   Vector134
+
+#define STM32_ETH_NUMBER                    61
+
+/*
  * I2C units.
  */
 #define STM32_I2C1_EVENT_HANDLER    VectorBC
