@@ -74,6 +74,7 @@
 *** 2.6.9 ***
 - NEW: Added files for Core407V board.
 - FIX: Removed call to localtime_r() for non-GNU compilers in chrtclib.c.
+- HAL: Fixed wrong check in canReceive() (bug #619).
 - HAL: Fixed wrong EXTI[18] vector number on STM32F373 (bug #618).
 - HAL: Fixed wrong check on STM32_LSE_ENABLED definition in STM32L1xx HAL port
        (bug #617).
