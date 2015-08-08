@@ -83,10 +83,6 @@
  * @name    Absolute Maximum Ratings
  * @{
  */
-/**
- * @name    Absolute Maximum Ratings
- * @{
- */
 #if defined(STM32F427_437xx) || defined(STM32F429_439xx) ||                 \
     defined(__DOXYGEN__)
 /**
