@@ -78,6 +78,10 @@
        sufficient to call lwipInit(NULL); in order to start the subsystem.
        Demo updated.
 - HAL: Fixed crash on STM32F030x4/6 devices (bug #623).
+- HAL: Fixed wrong check in canReceive() (bug #619).
+- HAL: Fixed wrong EXTI[18] vector number on STM32F373 (bug #618).
+- HAL: Fixed wrong check on STM32_LSE_ENABLED definition in STM32L1xx HAL port
+       (bug #617).
 - RT:  Fixed compilation error in RT when registry is disabled (bug #614).
 - NIL: Fixed OSAL_ST_MODE not defined in AVR port (bug #613).
 - NIL: Fixed nilrtos redefinition of systime_t (bug #611).
@@ -95,9 +99,6 @@
 - HAL: Added support for CAN in STM32F042/72 devices.
 - HAL: Added support for extra DMA channels in STM32F072 devices.
 - HAL: Modified the STM32 CAN driver to support unified IRQs.
-- HAL: Fixed wrong EXTI[18] vector number on STM32F373 (bug #618).
-- HAL: Fixed wrong check on STM32_LSE_ENABLED definition in STM32L1xx HAL port
-       (bug #617).
 - RT:  SPE-related issue in e200z ports (bug #607).
 - NIL: SPE-related issue in e200z ports (bug #607).
 - HAL: Fixed dependency between STM32 MAC driver and RT (bug #606).
