@@ -51,7 +51,7 @@
   STM32_DMA_GETCHANNEL(STM32_DAC_DAC2_CH2_DMA_STREAM,                        \
                        STM32_DAC2_CH2_DMA_CHN)
 
-#define CHANNEL_DATA_OFFSET 12U
+#define CHANNEL_DATA_OFFSET 3U
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */

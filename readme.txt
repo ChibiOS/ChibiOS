@@ -77,6 +77,7 @@
 - NEW: Added an initialization function to the lwIP bindings, now it is
        sufficient to call lwipInit(NULL); in order to start the subsystem.
        Demo updated.
+- HAL: Fixed wrong offset in STM32 DAC driver (bug #624).
 - HAL: Fixed crash on STM32F030x4/6 devices (bug #623).
 - HAL: Fixed duplicated doxygen tag in STM32F4xx hal_lld.h file (bug #621).
 - HAL: Fixed STM32F042 registry error (bug #620).
