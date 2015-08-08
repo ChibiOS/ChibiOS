@@ -304,7 +304,7 @@
 /**
  * @brief   Enables or disables the LSE clock source.
  */
-#if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
+#if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
 #define STM32_LSE_ENABLED           FALSE
 #endif
 
