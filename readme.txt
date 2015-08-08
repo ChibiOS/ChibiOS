@@ -78,6 +78,7 @@
        sufficient to call lwipInit(NULL); in order to start the subsystem.
        Demo updated.
 - HAL: Fixed crash on STM32F030x4/6 devices (bug #623).
+- HAL: Fixed duplicated doxygen tag in STM32F4xx hal_lld.h file (bug #621).
 - HAL: Fixed STM32F042 registry error (bug #620).
 - HAL: Fixed wrong check in canReceive() (bug #619).
 - HAL: Fixed wrong EXTI[18] vector number on STM32F373 (bug #618).
