@@ -73,10 +73,7 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
-*** 3.0.0 ***
-- NEW: Added an initialization function to the lwIP bindings, now it is
-       sufficient to call lwipInit(NULL); in order to start the subsystem.
-       Demo updated.
+*** 3.0.1 ***
 - HAL: Fixed CEC clock cannot be disabled on STM32F0xx (bug #628).
 - VAR: Fixed lwIP arch code breaks with a 16-bit systick timer (bug #627).
 - HAL: Fixed broken MAC driver for STM32F107 (bug #626).
@@ -89,6 +86,11 @@
 - HAL: Fixed wrong EXTI[18] vector number on STM32F373 (bug #618).
 - HAL: Fixed wrong check on STM32_LSE_ENABLED definition in STM32L1xx HAL port
        (bug #617).
+
+*** 3.0.0 ***
+- NEW: Added an initialization function to the lwIP bindings, now it is
+       sufficient to call lwipInit(NULL); in order to start the subsystem.
+       Demo updated.
 - RT:  Fixed compilation error in RT when registry is disabled (bug #614).
 - NIL: Fixed OSAL_ST_MODE not defined in AVR port (bug #613).
 - NIL: Fixed nilrtos redefinition of systime_t (bug #611).
