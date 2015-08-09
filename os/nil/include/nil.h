@@ -52,7 +52,7 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Stable release flag.
  */
-#define CH_KERNEL_STABLE        0
+#define CH_KERNEL_STABLE        1
 
 /**
  * @name    ChibiOS/NIL version identification
@@ -61,7 +61,7 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.0.0"
+#define CH_KERNEL_VERSION       "1.0.1"
 
 /**
  * @brief   Kernel version major number.
@@ -76,7 +76,7 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         0
+#define CH_KERNEL_PATCH         1
 /** @} */
 
 /**
