@@ -54,7 +54,14 @@
  * @name    Triggers selection
  * @{
  */
-#define ADC_CR2_EXTSEL_SRC(n)   ((n) << 24) /**< @brief Trigger source.     */
+#define ADC_CR2_EXTEN_MASK      (3U << 28U)
+#define ADC_CR2_EXTEN_DISABLED  (0U << 28U)
+#define ADC_CR2_EXTEN_RISING    (1U << 28U)
+#define ADC_CR2_EXTEN_FALLING   (2U << 28U)
+#define ADC_CR2_EXTEN_BOTH      (3U << 28U)
+
+#define ADC_CR2_EXTSEL_MASK     (15U << 24U)
+#define ADC_CR2_EXTSEL_SRC(n)   ((n) << 24U)
 /** @} */
 
 /**
