@@ -1,10 +1,10 @@
 *****************************************************************************
-** ChibiOS/RT port for ARM-Cortex-M4 STM32F407.                            **
+** ChibiOS/RT port for ARM-Cortex-M7 STM32F746G.                           **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an ST STM32F4-Discovery board.
+The demo runs on an ST STM32F746G-Discovery board.
 
 ** The Demo **
 
