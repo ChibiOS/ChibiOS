@@ -84,6 +84,12 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
     /* It is possible that the conversion group has already be reset by the
        ADC error handler, in this case this interrupt is spurious.*/
     if (adcp->grpp != NULL) {
+
+      /* DMA buffer invalidation because data cache.*/
+      dmaBufferInvalidate(adcp->samples,
+                          adcp->samples +
+                         (adcp->depth * adcp->grpp->num_channels));
+
       if ((flags & STM32_DMA_ISR_TCIF) != 0) {
         /* Transfer complete processing.*/
         _adc_isr_full_code(adcp);

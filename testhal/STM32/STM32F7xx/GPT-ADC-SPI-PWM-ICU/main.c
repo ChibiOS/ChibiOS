@@ -48,9 +48,6 @@ static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
   (void)adcp;
 
-  /* DMA buffer invalidation because data cache.*/
-  dmaBufferInvalidate(buffer, buffer + n * ADC_GRP1_NUM_CHANNELS);
-
   /* Updating counters.*/
   if (samples1 == buffer) {
     nx += n;
@@ -76,12 +73,12 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
  * Channels:    Sensor, VRef.
  */
 static const ADCConversionGroup adcgrpcfg1 = {
-  TRUE,
+  true,
   ADC_GRP1_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
   0,                                                    /* CR1 */
-  ADC_CR2_SWSTART,        /* CR2 */
+  ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(12),        /* CR2 */
   ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_144),
   0,                                                    /* SMPR2 */
   ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),               /* SQR1 */
@@ -140,6 +137,12 @@ int main(void) {
    * Starting GPT4 driver, it is used for triggering the ADC.
    */
   gptStart(&GPTD4, &gpt4cfg1);
+
+  /*
+   * Fixed an errata on the STM32F7xx, the DAC clock is required for ADC
+   * triggering.
+   */
+  rccEnableDAC1(false);
 
   /*
    * Activates the ADC1 driver and the temperature sensor.
