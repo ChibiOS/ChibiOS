@@ -85,7 +85,8 @@
        driver.
 - HAL: Introduced preliminary support for STM32F7xx devices.
 - HAL: Introduced preliminary support for STM32L0xx devices.
-- HAL: New STM32 shared DMAv2 driver supporting channel selection (F2, F4, F7).
+- HAL: New STM32 shared DMAv2 driver supporting channel selection and
+       data cache invalidation (F2, F4, F7).
 - HAL: New STM32 shared DMAv1 driver supporting channel selection and fixing
        the behavior with shared IRQs (F0, L0).
 - HAL: New STM32 ADCv2 driver supporting large STM32 devices (F2, F4, F7).

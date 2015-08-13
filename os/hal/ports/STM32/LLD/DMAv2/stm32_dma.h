@@ -235,6 +235,29 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+#if defined(STM32F7XX) || defined(__DOXYGEN__)
+/**
+ * @brief   Invalidates the data cache lines overlapping a DMA buffer.
+ * @note    On devices without data cache this function does nothing.
+ * @note    The function takes care of cache lines alignment.
+ *
+ * @param[in] addr      address of the DMA buffer
+ * @param[in] size      size of the DMA buffer
+ *
+ * @api
+ */
+#define dmaBufferInvalidate(addr, size) {                                   \
+  uint32_t *aaddr = (uint32_t *)(((uint32_t)(addr)) & ~0x1FU);              \
+  uint32_t asize  = (uint32_t)((((size) - 1) | 0x1FU) + 1U);                \
+  SCB_CleanInvalidateDCache_by_Addr(aaddr, asize);                          \
+}
+#else
+#define dmaBufferInvalidate(addr, size) {                                   \
+  (void)(addr);                                                             \
+  (void)(size);                                                             \
+}
+#endif
+
 /**
  * @name    Macro Functions
  * @{

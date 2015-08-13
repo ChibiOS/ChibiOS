@@ -47,6 +47,11 @@ size_t nx = 0, ny = 0;
 static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
   (void)adcp;
+
+  /* DMA buffer invalidation because data cache.*/
+  dmaBufferInvalidate(buffer, n * ADC_GRP1_NUM_CHANNELS);
+
+  /* Updating counters.*/
   if (samples1 == buffer) {
     nx += n;
   }
@@ -111,11 +116,6 @@ static THD_FUNCTION(Thread1, arg) {
  */
 int main(void) {
 
-  SCB_InvalidateICache();
-  SCB_EnableICache();
-  SCB_InvalidateDCache();
-  SCB_EnableDCache();
-
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -125,6 +125,11 @@ int main(void) {
    */
   halInit();
   chSysInit();
+
+  SCB_InvalidateICache();
+  SCB_EnableICache();
+  SCB_InvalidateDCache();
+  SCB_EnableDCache();
 
   /*
    * Activates the serial driver 1 using the driver default configuration.

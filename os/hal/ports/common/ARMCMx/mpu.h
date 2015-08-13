@@ -33,6 +33,10 @@
  * @name    MPU registers definitions
  * @{
  */
+#define MPU_TYPE_SEPARATED                  (1U << 0U)
+#define MPU_TYPE_DREGION(n)                 (((n) >> 8U) & 255U)
+#define MPU_TYPE_IREGION(n)                 (((n) >> 16U) & 255U)
+
 #define MPU_CTRL_ENABLE                     (1U << 0U)
 #define MPU_CTRL_HFNMIENA                   (1U << 1U)
 #define MPU_CTRL_PRIVDEFENA                 (1U << 2U)
@@ -80,14 +84,14 @@
 #define MPU_RASR_SRD_MASK                   (255U << 8U)
 #define MPU_RASR_SRD(n)                     ((n) << 8U)
 #define MPU_RASR_SRD_ALL                    (0U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB1           (1U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB2           (2U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB3           (4U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB4           (8U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB5           (16U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB6           (32U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB7           (64U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB8           (128U << 8U)
+#define MPU_RASR_SRD_DISABLE_SUB0           (1U << 8U)
+#define MPU_RASR_SRD_DISABLE_SUB1           (2U << 8U)
+#define MPU_RASR_SRD_DISABLE_SUB2           (4U << 8U)
+#define MPU_RASR_SRD_DISABLE_SUB3           (8U << 8U)
+#define MPU_RASR_SRD_DISABLE_SUB4           (16U << 8U)
+#define MPU_RASR_SRD_DISABLE_SUB5           (32U << 8U)
+#define MPU_RASR_SRD_DISABLE_SUB6           (64U << 8U)
+#define MPU_RASR_SRD_DISABLE_SUB7           (128U << 8U)
 #define MPU_RASR_ATTR_B                     (1U << 16U)
 #define MPU_RASR_ATTR_C                     (1U << 17U)
 #define MPU_RASR_ATTR_S                     (1U << 18U)
@@ -117,6 +121,20 @@
 #define MPU_RASR_ATTR_NON_SHARED_DEVICE     (MPU_RASR_ATTR_TEX(2))
 /** @} */
 
+/**
+ * @name    Region identifiers
+ * @{
+ */
+#define MPU_REGION_0                        0U
+#define MPU_REGION_1                        1U
+#define MPU_REGION_2                        2U
+#define MPU_REGION_3                        3U
+#define MPU_REGION_4                        4U
+#define MPU_REGION_5                        5U
+#define MPU_REGION_6                        6U
+#define MPU_REGION_7                        7U
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -132,6 +150,47 @@
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Enables the MPU.
+ * @note    MEMFAULENA is enabled in SCB_SHCSR.
+ *
+ * @param[in] ctrl      MPU control modes as defined in @p MPU_CTRL register,
+ *                      the enable bit is enforced
+ *
+ * @api
+ */
+#define mpuEnable(ctrl) {                                                   \
+  MPU->CTRL = ((uint32_t)ctrl) | MPU_CTRL_ENABLE;                           \
+  SCB->SHCSR |= SCB_SHCSR_MEMFAULTENA_Msk;                                  \
+}
+
+/**
+ * @brief   Disables the MPU.
+ * @note    MEMFAULENA is disabled in SCB_SHCSR.
+ *
+ * @api
+ */
+#define mpuDisable() {                                                      \
+  SCB->SHCSR &= ~SCB_SHCSR_MEMFAULTENA_Msk;                                 \
+  MPU->CTRL = 0;                                                            \
+}
+
+/**
+ * @brief   Configures an MPU region.
+ *
+ * @param[in] region    the region number
+ * @param[in] address   start address of the region, note, there are alignment
+ *                      constraints
+ * @param[in] attribs   attributes mask as defined in @p MPU_RASR register
+ *
+ * @api
+ */
+#define mpuConfigureRegion(region, addr, attribs) {                         \
+  MPU->RNR  = ((uint32_t)region);                                           \
+  MPU->RBAR = ((uint32_t)addr);                                             \
+  MPU->RASR = ((uint32_t)attribs);                                          \
+}
 
 /*===========================================================================*/
 /* External declarations.                                                    */
