@@ -133,13 +133,15 @@ void hal_lld_init(void) {
   /* If the DMA is in use then the DMA-accessible RAM must be programmed as
      Write Through using the MPU, region zero is used with a size of 512kB,
      the sub-regions are programmed as follow:
-     - 0..4, enabled, it is the normal, DMA-accessible, RAM.
+     - 0,,   disabled, it is the normal the DTCM RAM.
+     - 1..4, enabled, it is the normal, DMA-accessible, RAM.
      - 5..7, disabled, beyond RAM area.
      The system memory layout is used as "background" for the MPU regions.*/
   mpuConfigureRegion(MPU_REGION_0,
                      0x20000000U,
                      MPU_RASR_ATTR_AP_RW_RW |
                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
+                     MPU_RNR_REGION(1) |
                      MPU_RNR_REGION(5) |
                      MPU_RNR_REGION(6) |
                      MPU_RNR_REGION(7) |
