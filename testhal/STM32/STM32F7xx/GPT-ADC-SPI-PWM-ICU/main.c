@@ -49,7 +49,7 @@ static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
   (void)adcp;
 
   /* DMA buffer invalidation because data cache.*/
-  dmaBufferInvalidate(buffer, n * ADC_GRP1_NUM_CHANNELS);
+  dmaBufferInvalidate(buffer, buffer + n * ADC_GRP1_NUM_CHANNELS);
 
   /* Updating counters.*/
   if (samples1 == buffer) {

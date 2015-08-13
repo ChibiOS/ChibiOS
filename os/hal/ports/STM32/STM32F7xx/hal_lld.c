@@ -141,10 +141,8 @@ void hal_lld_init(void) {
                      0x20000000U,
                      MPU_RASR_ATTR_AP_RW_RW |
                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
-                     MPU_RNR_REGION(1) |
-                     MPU_RNR_REGION(5) |
-                     MPU_RNR_REGION(6) |
-                     MPU_RNR_REGION(7) |
+                     MPU_RASR_SRD_DISABLE_SUB0 | MPU_RASR_SRD_DISABLE_SUB5 |
+                     MPU_RASR_SRD_DISABLE_SUB6 | MPU_RASR_SRD_DISABLE_SUB7 |
                      MPU_RASR_SIZE_512K |
                      MPU_RASR_ENABLE);
   mpuEnable(MPU_CTRL_PRIVDEFENA);

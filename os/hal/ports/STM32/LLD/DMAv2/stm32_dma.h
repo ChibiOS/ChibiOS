@@ -241,15 +241,21 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @note    On devices without data cache this function does nothing.
  * @note    The function takes care of cache lines alignment.
  *
- * @param[in] addr      address of the DMA buffer
- * @param[in] size      size of the DMA buffer
+ * @param[in] saddr     start address of the DMA buffer, inclusive
+ * @param[in] eaddr     end address of the DMA buffer, not inclusive
  *
  * @api
  */
-#define dmaBufferInvalidate(addr, size) {                                   \
-  uint32_t *aaddr = (uint32_t *)(((uint32_t)(addr)) & ~0x1FU);              \
-  uint32_t asize  = (uint32_t)((((size) - 1) | 0x1FU) + 1U);                \
-  SCB_CleanInvalidateDCache_by_Addr(aaddr, asize);                          \
+#define dmaBufferInvalidate(saddr, eaddr) {                                 \
+  uint8_t *start = (uint8_t *)(((uint32_t)(saddr)) & ~0x1FU);               \
+  uint8_t *end = (uint8_t *)(((((uint32_t)(eaddr)) - 1U) | 0x1FU) + 1U);    \
+  __DSB();                                                                  \
+  while (start < end) {                                                     \
+    SCB->DCCIMVAC = (uint32_t)start;                                        \
+    start += 32U;                                                           \
+  }                                                                         \
+  __DSB();                                                                  \
+  __ISB();                                                                  \
 }
 #else
 #define dmaBufferInvalidate(addr, size) {                                   \
