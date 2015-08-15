@@ -73,6 +73,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 3.0.2 ***
+- NIL: Added polled delays required to fix bug #629.
+- HAL: Fixed STM32F3xx ADC driver uses US2RTC directly (bug #629).
+
 *** 3.0.1 ***
 - HAL: Fixed CEC clock cannot be disabled on STM32F0xx (bug #628).
 - VAR: Fixed lwIP arch code breaks with a 16-bit systick timer (bug #627).

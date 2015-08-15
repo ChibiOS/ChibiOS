@@ -61,7 +61,7 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.0.1"
+#define CH_KERNEL_VERSION       "1.1.0"
 
 /**
  * @brief   Kernel version major number.
@@ -71,12 +71,12 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Kernel version minor number.
  */
-#define CH_KERNEL_MINOR         0
+#define CH_KERNEL_MINOR         1
 
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         1
+#define CH_KERNEL_PATCH         0
 /** @} */
 
 /**
@@ -637,9 +637,69 @@ struct nil_system {
 /** @} */
 
 /**
+ * @name    Time conversion utilities for the realtime counter
+ * @{
+ */
+/**
+ * @brief   Seconds to realtime counter.
+ * @details Converts from seconds to realtime counter cycles.
+ * @note    The macro assumes that @p freq >= @p 1.
+ *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
+ * @param[in] sec       number of seconds
+ * @return              The number of cycles.
+ *
+ * @api
+ */
+#define S2RTC(freq, sec) ((freq) * (sec))
+
+/**
+ * @brief   Milliseconds to realtime counter.
+ * @details Converts from milliseconds to realtime counter cycles.
+ * @note    The result is rounded upward to the next millisecond boundary.
+ * @note    The macro assumes that @p freq >= @p 1000.
+ *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
+ * @param[in] msec      number of milliseconds
+ * @return              The number of cycles.
+ *
+ * @api
+ */
+#define MS2RTC(freq, msec) (rtcnt_t)((((freq) + 999UL) / 1000UL) * (msec))
+
+/**
+ * @brief   Microseconds to realtime counter.
+ * @details Converts from microseconds to realtime counter cycles.
+ * @note    The result is rounded upward to the next microsecond boundary.
+ * @note    The macro assumes that @p freq >= @p 1000000.
+ *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
+ * @param[in] usec      number of microseconds
+ * @return              The number of cycles.
+ *
+ * @api
+ */
+#define US2RTC(freq, usec) (rtcnt_t)((((freq) + 999999UL) / 1000000UL) * (usec))
+/** @} */
+
+/**
  * @name    Macro Functions
  * @{
  */
+/**
+ * @brief   Returns the current value of the system real time counter.
+ * @note    This function is only available if the port layer supports the
+ *          option @p PORT_SUPPORTS_RT.
+ *
+ * @return              The value of the system realtime counter of
+ *                      type rtcnt_t.
+ *
+ * @xclass
+ */
+#if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
+#define chSysGetRealtimeCounterX() (rtcnt_t)port_rt_get_counter_value()
+#endif
+
 /**
  * @brief   Enters the kernel lock mode.
  *
@@ -912,6 +972,8 @@ extern "C" {
   void chSysUnconditionalLock(void);
   void chSysUnconditionalUnlock(void);
   syssts_t chSysGetStatusAndLockX(void);
+  bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end);
+  void chSysPolledDelayX(rtcnt_t cycles);
   void chSysRestoreStatusX(syssts_t sts);
   thread_t *chSchReadyI(thread_t *tp, msg_t msg);
   void chSchRescheduleS(void);

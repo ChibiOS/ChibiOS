@@ -35,7 +35,7 @@
 /**
  * @brief   This port supports a realtime counter.
  */
-#define PORT_SUPPORTS_RT                FALSE //TRUE
+#define PORT_SUPPORTS_RT                TRUE
 
 /**
  * @brief   Disabled value for BASEPRI register.
