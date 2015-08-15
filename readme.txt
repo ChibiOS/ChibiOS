@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- NIL: Added polled delays required to fix bug #629.
 - HAL: Added support for I2C3 and I2C4 to the STM32 I2Cv2 I2C driver.
 - HAL: Added support for SPI4...SPI6 to the STM32 SPIv2 SPI driver.
 - HAL: Added support for UART4...UART8 to the STM32 UARTv2 UART driver.
@@ -94,6 +95,8 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- HAL: Fixed STM32F3xx ADC driver uses US2RTC directly (bug #629)(backported
+       to 3.0.2).
 - HAL: Fixed CEC clock cannot be disabled on STM32F0xx (bug #628)
        (backported to 3.0.1).
 - VAR: Fixed lwIP arch code breaks with a 16-bit systick timer (bug #627)

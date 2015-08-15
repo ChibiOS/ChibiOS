@@ -345,6 +345,52 @@ typedef struct {
 /** @} */
 
 /**
+ * @name    Time conversion utilities for the realtime counter
+ * @{
+ */
+/**
+ * @brief   Seconds to realtime counter.
+ * @details Converts from seconds to realtime counter cycles.
+ * @note    The macro assumes that @p freq >= @p 1.
+ *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
+ * @param[in] sec       number of seconds
+ * @return              The number of cycles.
+ *
+ * @api
+ */
+#define OSAL_S2RTC(freq, sec) S2RTC(freq, sec)
+
+/**
+ * @brief   Milliseconds to realtime counter.
+ * @details Converts from milliseconds to realtime counter cycles.
+ * @note    The result is rounded upward to the next millisecond boundary.
+ * @note    The macro assumes that @p freq >= @p 1000.
+ *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
+ * @param[in] msec      number of milliseconds
+ * @return              The number of cycles.
+ *
+ * @api
+ */
+#define OSAL_MS2RTC(freq, msec) MS2RTC(freq, msec)
+
+/**
+ * @brief   Microseconds to realtime counter.
+ * @details Converts from microseconds to realtime counter cycles.
+ * @note    The result is rounded upward to the next microsecond boundary.
+ * @note    The macro assumes that @p freq >= @p 1000000.
+ *
+ * @param[in] freq      clock frequency, in Hz, of the realtime counter
+ * @param[in] usec      number of microseconds
+ * @return              The number of cycles.
+ *
+ * @api
+ */
+#define OSAL_US2RTC(freq, usec) US2RTC(freq, usec)
+/** @} */
+
+/**
  * @name    Sleep macros using absolute time
  * @{
  */
