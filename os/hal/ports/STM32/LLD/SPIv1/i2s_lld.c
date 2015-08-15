@@ -342,15 +342,6 @@ void i2s_lld_start(I2SDriver *i2sp) {
 #endif
     }
 #endif
-
-    if (NULL != i2sp->dmarx) {
-      dmaStreamSetMode(i2sp->dmarx, i2sp->rxdmamode);
-      dmaStreamSetPeripheral(i2sp->dmarx, &i2sp->spi->DR);
-    }
-    if (NULL != i2sp->dmatx) {
-      dmaStreamSetMode(i2sp->dmatx, i2sp->txdmamode);
-      dmaStreamSetPeripheral(i2sp->dmatx, &i2sp->spi->DR);
-    }
   }
 
   /* I2S (re)configuration.*/
@@ -412,6 +403,8 @@ void i2s_lld_start_exchange(I2SDriver *i2sp) {
 
   /* RX DMA setup.*/
   if (NULL != i2sp->dmarx) {
+    dmaStreamSetMode(i2sp->dmarx, i2sp->rxdmamode);
+    dmaStreamSetPeripheral(i2sp->dmarx, &i2sp->spi->DR);
     dmaStreamSetMemory0(i2sp->dmarx, i2sp->config->rx_buffer);
     dmaStreamSetTransactionSize(i2sp->dmarx, size);
     dmaStreamEnable(i2sp->dmarx);
@@ -419,6 +412,8 @@ void i2s_lld_start_exchange(I2SDriver *i2sp) {
 
   /* TX DMA setup.*/
   if (NULL != i2sp->dmatx) {
+    dmaStreamSetMode(i2sp->dmatx, i2sp->txdmamode);
+    dmaStreamSetPeripheral(i2sp->dmatx, &i2sp->spi->DR);
     dmaStreamSetMemory0(i2sp->dmatx, i2sp->config->tx_buffer);
     dmaStreamSetTransactionSize(i2sp->dmatx, size);
     dmaStreamEnable(i2sp->dmatx);
