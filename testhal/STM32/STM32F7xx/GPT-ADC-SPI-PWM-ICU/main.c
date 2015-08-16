@@ -123,11 +123,6 @@ int main(void) {
   halInit();
   chSysInit();
 
-  SCB_InvalidateICache();
-  SCB_EnableICache();
-  SCB_InvalidateDCache();
-  SCB_EnableDCache();
-
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */

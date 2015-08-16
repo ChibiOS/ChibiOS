@@ -27,11 +27,31 @@
 
 #include <stdbool.h>
 
+#include "cmparams.h"
+
+/**
+ * @brief   Architecture-dependent core initialization.
+ * @details This hook is invoked immediately after the stack initialization
+ *          and before the DATA and BSS segments initialization.
+ * @note    This function is a weak symbol.
+ */
+#if !defined(__DOXYGEN__)
+__attribute__((weak))
+#endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
+void __core_init(void) {
+
+#if __CORTEX_M == 7
+  SCB_EnableICache();
+  SCB_EnableDCache();
+#endif
+}
+
 /**
  * @brief   Early initialization.
- * @details This hook is invoked immediately after the stack initialization
- *          and before the DATA and BSS segments initialization. The
- *          default behavior is to do nothing.
+ * @details This hook is invoked immediately after the stack and core
+ *          initialization and before the DATA and BSS segments
+ *          initialization.
  * @note    This function is a weak symbol.
  */
 #if !defined(__DOXYGEN__)

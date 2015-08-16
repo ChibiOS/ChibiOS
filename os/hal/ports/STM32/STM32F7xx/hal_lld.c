@@ -146,6 +146,10 @@ void hal_lld_init(void) {
                      MPU_RASR_SIZE_512K |
                      MPU_RASR_ENABLE);
   mpuEnable(MPU_CTRL_PRIVDEFENA);
+
+  /* Invalidating data cache to make sure that the MPU settings are taken
+     immediately.*/
+  SCB_InvalidateDCache();
 #endif
 #endif
 

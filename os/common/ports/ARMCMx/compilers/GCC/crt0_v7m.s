@@ -55,6 +55,17 @@
 /*===========================================================================*/
 
 /**
+ * @brief   FPU initialization switch.
+ */
+#if !defined(CRT0_INIT_FPU) || defined(__DOXYGEN__)
+#if defined(CORTEX_USE_FPU) || defined(__DOXYGEN__)
+#define CRT0_INIT_FPU                       CORTEX_USE_FPU
+#else
+#define CRT0_INIT_FPU                       FALSE
+#endif
+#endif
+
+/**
  * @brief   Control special register initialization value.
  * @details The system is setup to run in privileged mode using the PSP
  *          stack (dual stack mode).
@@ -62,6 +73,13 @@
 #if !defined(CRT0_CONTROL_INIT) || defined(__DOXYGEN__)
 #define CRT0_CONTROL_INIT                   (CONTROL_USE_PSP |              \
                                              CONTROL_MODE_PRIVILEGED)
+#endif
+
+/**
+ * @brief   Core initialization switch.
+ */
+#if !defined(CRT0_INIT_CORE) || defined(__DOXYGEN__)
+#define CRT0_INIT_CORE                      TRUE
 #endif
 
 /**
@@ -104,17 +122,6 @@
  */
 #if !defined(CRT0_CALL_DESTRUCTORS) || defined(__DOXYGEN__)
 #define CRT0_CALL_DESTRUCTORS               TRUE
-#endif
-
-/**
- * @brief   FPU initialization switch.
- */
-#if !defined(CRT0_INIT_FPU) || defined(__DOXYGEN__)
-#if defined(CORTEX_USE_FPU) || defined(__DOXYGEN__)
-#define CRT0_INIT_FPU                       CORTEX_USE_FPU
-#else
-#define CRT0_INIT_FPU                       FALSE
-#endif
 #endif
 
 /**
@@ -199,7 +206,12 @@ Reset_Handler:
                 msr     CONTROL, r0
                 isb
 
-                /* Early initialization..*/
+#if CRT0_INIT_CORE == TRUE
+                /* Core initialization.*/
+                bl      __core_init
+#endif
+
+                /* Early initialization.*/
                 bl      __early_init
 
 #if CRT0_INIT_STACKS == TRUE

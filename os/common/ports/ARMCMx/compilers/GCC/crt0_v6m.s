@@ -57,6 +57,13 @@
 #endif
 
 /**
+ * @brief   Core initialization switch.
+ */
+#if !defined(CRT0_INIT_CORE) || defined(__DOXYGEN__)
+#define CRT0_INIT_CORE                      TRUE
+#endif
+
+/**
  * @brief   Stack segments initialization switch.
  */
 #if !defined(CRT0_STACKS_FILL_PATTERN) || defined(__DOXYGEN__)
@@ -128,6 +135,11 @@ Reset_Handler:
                 movs    r0, #CRT0_CONTROL_INIT
                 msr     CONTROL, r0
                 isb
+
+#if CRT0_INIT_CORE == TRUE
+                /* Core initialization.*/
+                bl      __core_init
+#endif
 
                 /* Early initialization..*/
                 bl      __early_init
