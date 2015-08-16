@@ -149,7 +149,7 @@ void hal_lld_init(void) {
 
   /* Invalidating data cache to make sure that the MPU settings are taken
      immediately.*/
-  SCB_InvalidateDCache();
+  SCB_CleanInvalidateDCache();
 #endif
 #endif
 

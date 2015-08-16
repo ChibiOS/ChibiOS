@@ -91,7 +91,7 @@
         Speed="Maximum"
         Resistor="PullUp"
         Mode="Input"
-        Alternate="0" ></pin8>
+        Alternate="0" />
       <pin9
         ID="VBUS_FS"
         Type="PushPull"
@@ -181,7 +181,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="0" ></pin3>
+        Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
@@ -229,7 +229,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="4" ></pin9>
+        Alternate="4" />
       <pin10
         ID="CLK_IN"
         Type="PushPull"
@@ -311,7 +311,7 @@
         Speed="Maximum"
         Resistor="PullUp"
         Mode="Input"
-        Alternate="0" ></pin3>
+        Alternate="0" />
       <pin4
         ID=""
         Type="PushPull"
@@ -457,7 +457,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
-        Alternate="0" ></pin5>
+        Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
@@ -529,7 +529,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Output"
-        Alternate="0" ></pin14>
+        Alternate="0" />
       <pin15
         ID="LED6"
         Type="PushPull"
@@ -953,7 +953,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Input"
-        Alternate="0" ></pin2>
+        Alternate="0" />
       <pin3
         ID=""
         Type="PushPull"
