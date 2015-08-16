@@ -37,7 +37,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="STM32F7xx-GPT-ADC-SPI-PWM-ICU.null.1703860681" name="STM32F7xx-GPT-ADC-SPI-PWM-ICU"/>
+		<project id="STM32F7xx-GPT-ADC.null.1703860681" name="STM32F7xx-GPT-ADC"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
