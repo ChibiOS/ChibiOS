@@ -95,6 +95,8 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- HAL: Fixed HAL to RT dependency in STM32 DAC driver (bug #631)(backported
+       to 3.0.2).
 - HAL: Fixed problem with STM32 I2S driver restart (bug #630)(backported
        to 3.0.2).
 - HAL: Fixed STM32F3xx ADC driver uses US2RTC directly (bug #629)(backported

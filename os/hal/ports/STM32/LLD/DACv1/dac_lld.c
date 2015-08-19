@@ -348,7 +348,7 @@ void dac_lld_put_channel(DACDriver *dacp,
     }
     break;
   default:
-    chDbgAssert(false, "unexpected DAC mode");
+    osalDbgAssert(false, "unexpected DAC mode");
     break;
   }
 }
@@ -436,7 +436,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
     break;
 #endif
   default:
-    chDbgAssert(false, "unexpected DAC mode");
+    osalDbgAssert(false, "unexpected DAC mode");
     return;
   }
 
