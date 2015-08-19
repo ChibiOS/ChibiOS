@@ -74,8 +74,9 @@
 *****************************************************************************
 
 *** 3.0.2 ***
-- NIL: Added polled delays required to fix bug #629.
+- HAL: Fixed HAL to RT dependency in STM32 DAC driver (bug #631).
 - HAL: Fixed problem with STM32 I2S driver restart (bug #630).
+- NIL: Added polled delays required to fix bug #629.
 - HAL: Fixed STM32F3xx ADC driver uses US2RTC directly (bug #629).
 
 *** 3.0.1 ***
