@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.2 ***
+- RT:  Fixed problem with RT mutexes involving priority inheritance (bug #632).
 - HAL: Fixed HAL to RT dependency in STM32 DAC driver (bug #631).
 - HAL: Fixed problem with STM32 I2S driver restart (bug #630).
 - NIL: Added polled delays required to fix bug #629.
