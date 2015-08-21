@@ -294,7 +294,13 @@ Mutex *chMtxUnlock(void) {
     ump->m_owner = tp;
     ump->m_next = tp->p_mtxlist;
     tp->p_mtxlist = ump;
-    chSchWakeupS(tp, RDY_OK);
+      
+    /* Note, not using chSchWakeupS() becuase that function expects the
+       current thread to have the higher or equal priority than the ones
+       in the ready list. This is not necessarily true here because we
+       just changed priority.*/
+    chSchReadyI(tp);
+    chSchRescheduleS();
   }
   else
     ump->m_owner = NULL;

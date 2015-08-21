@@ -71,6 +71,9 @@
 *** Releases                                                              ***
 *****************************************************************************
 
+*** 2.6.10 ***
+- HAL: Fixed problem with RT mutexes involving priority inheritance (bug #632).
+
 *** 2.6.9 ***
 - NEW: Added files for Core407V board.
 - FIX: Removed call to localtime_r() for non-GNU compilers in chrtclib.c.
