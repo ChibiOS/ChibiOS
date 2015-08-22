@@ -74,7 +74,8 @@
 *****************************************************************************
 
 *** 3.0.2 ***
-- NIL: Fixed Wrong assertion in NIL chSemResetI() and NIL OSAL
+- HAL: Fixed wrong ld file in STM32F072xB USB CDC demo (bug #634).
+- NIL: Fixed wrong assertion in NIL chSemResetI() and NIL OSAL
        osalThreadDequeueAllI() (bug #633).
 - RT:  Fixed problem with RT mutexes involving priority inheritance (bug #632).
 - HAL: Fixed HAL to RT dependency in STM32 DAC driver (bug #631).
