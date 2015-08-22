@@ -713,6 +713,10 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
   sp->cnt = n;
   tp = nil.threads;
   while (cnt < (cnt_t)0) {
+
+    chDbgAssert(tp < &nil.threads[NIL_CFG_NUM_THREADS],
+                "pointer out of range");
+
     /* Is this thread waiting on this semaphore?*/
     if (tp->u1.semp == sp) {
 
@@ -722,9 +726,6 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
       (void) chSchReadyI(tp, MSG_RESET);
     }
     tp++;
-
-    chDbgAssert(tp < &nil.threads[NIL_CFG_NUM_THREADS],
-                "pointer out of range");
   }
 }
 
