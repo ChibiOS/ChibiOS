@@ -473,21 +473,25 @@ struct SPIDriver {
    */
   SPI_TypeDef               *spi;
   /**
-   * @brief Receive DMA stream.
+   * @brief   Receive DMA stream.
    */
   const stm32_dma_stream_t  *dmarx;
   /**
-   * @brief Transmit DMA stream.
+   * @brief   Transmit DMA stream.
    */
   const stm32_dma_stream_t  *dmatx;
   /**
-   * @brief RX DMA mode bit mask.
+   * @brief   RX DMA mode bit mask.
    */
   uint32_t                  rxdmamode;
   /**
-   * @brief TX DMA mode bit mask.
+   * @brief   TX DMA mode bit mask.
    */
   uint32_t                  txdmamode;
+  /**
+   * @brief   Frame size in bytes.
+   */
+  size_t                    fsize;
 };
 
 /*===========================================================================*/

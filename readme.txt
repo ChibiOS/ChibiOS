@@ -95,6 +95,8 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- HAL: Fixed wrong ld file in STM32F072xB USB CDC demo (bug #634)(backported
+       to 3.0.2).
 - NIL: Fixed Wrong assertion in NIL chSemResetI() and NIL OSAL
        osalThreadDequeueAllI() (bug #633)(backported to 3.0.2).
 - RT:  Fixed problem with RT mutexes involving priority inheritance (bug #632)
