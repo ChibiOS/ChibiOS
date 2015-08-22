@@ -366,7 +366,8 @@ void pwm_lld_start(PWMDriver *pwmp)
 
     *regs_table[i].tccrb &= ~(1 << CS11);
     *regs_table[i].tccrb |= (1 << CS12) | (1 << CS10);
-    *regs_table[i].timsk = (1 << TOIE1);
+    if (pwmp->config->callback != NULL)
+      *regs_table[i].timsk = (1 << TOIE1);
   }
 }
 
@@ -468,7 +469,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
   *ocrh = val >> 8;
   *ocrl = val & 0xFF;
   *regs_table[i].tifr |= (1 << (channel + 1));
-  if (pwmp->config->channels[channel].callback)
+  if (pwmp->config->channels[channel].callback != NULL)
     *regs_table[i].timsk |= (1 << (channel + 1));
 }
 
