@@ -178,6 +178,8 @@ Reset_Handler:
                 movw    r1, #SCB_FPCCR & 0xFFFF
                 movt    r1, #SCB_FPCCR >> 16
                 str     r0, [r1]
+                dsb
+                isb
 
                 /* CPACR initialization.*/
                 movw    r0, #CRT0_CPACR_INIT & 0xFFFF
@@ -185,6 +187,8 @@ Reset_Handler:
                 movw    r1, #SCB_CPACR & 0xFFFF
                 movt    r1, #SCB_CPACR >> 16
                 str     r0, [r1]
+                dsb
+                isb
 
                 /* FPU FPSCR initially cleared.*/
                 mov     r0, #0
@@ -285,7 +289,7 @@ endinitloop:
                 /* Main program invocation, r0 contains the returned value.*/
                 bl      main
 
-#if CRT0_CALL_CONSTRUCTORS == TRUE
+#if CRT0_CALL_DESTRUCTORS == TRUE
                 /* Destructors invocation.*/
                 ldr     r4, =__fini_array_start
                 ldr     r5, =__fini_array_end

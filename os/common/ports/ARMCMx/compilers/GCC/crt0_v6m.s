@@ -224,7 +224,7 @@ endinitloop:
                 /* Main program invocation, r0 contains the returned value.*/
                 bl      main
 
-#if CRT0_CALL_CONSTRUCTORS == TRUE
+#if CRT0_CALL_DESTRUCTORS == TRUE
                 /* Destructors invocation.*/
                 ldr     r4, =__fini_array_start
                 ldr     r5, =__fini_array_end

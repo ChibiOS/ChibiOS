@@ -6,7 +6,6 @@
   +--readme.txt           - This file.
   +--documentation.html   - Shortcut to the web documentation page.
   +--license.txt          - GPL license text.
-  +--exception.txt        - GPL exception text (stable releases only).
   +--demos/               - Demo projects, one directory per platform.
   +--docs/                - Documentation.
   |  +--common/           - Documentation common build resources.
@@ -95,6 +94,8 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- VAR: Fixed CRT0_CALL_DESTRUCTORS not utilised in crt0_v7m.s (bug #635)
+       (backported to 3.0.2).
 - HAL: Fixed wrong ld file in STM32F072xB USB CDC demo (bug #634)(backported
        to 3.0.2).
 - NIL: Fixed Wrong assertion in NIL chSemResetI() and NIL OSAL
