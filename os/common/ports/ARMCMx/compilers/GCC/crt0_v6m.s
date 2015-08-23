@@ -57,6 +57,13 @@
 #endif
 
 /**
+ * @brief   Core initialization switch.
+ */
+#if !defined(CRT0_INIT_CORE) || defined(__DOXYGEN__)
+#define CRT0_INIT_CORE                      TRUE
+#endif
+
+/**
  * @brief   Stack segments initialization switch.
  */
 #if !defined(CRT0_STACKS_FILL_PATTERN) || defined(__DOXYGEN__)
@@ -128,6 +135,11 @@ Reset_Handler:
                 movs    r0, #CRT0_CONTROL_INIT
                 msr     CONTROL, r0
                 isb
+
+#if CRT0_INIT_CORE == TRUE
+                /* Core initialization.*/
+                bl      __core_init
+#endif
 
                 /* Early initialization..*/
                 bl      __early_init
@@ -212,7 +224,7 @@ endinitloop:
                 /* Main program invocation, r0 contains the returned value.*/
                 bl      main
 
-#if CRT0_CALL_CONSTRUCTORS == TRUE
+#if CRT0_CALL_DESTRUCTORS == TRUE
                 /* Destructors invocation.*/
                 ldr     r4, =__fini_array_start
                 ldr     r5, =__fini_array_end

@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.2 ***
+- VAR: Fixed CRT0_CALL_DESTRUCTORS not utilised in crt0_v7m.s (bug #635).
 - HAL: Fixed wrong ld file in STM32F072xB USB CDC demo (bug #634).
 - NIL: Fixed wrong assertion in NIL chSemResetI() and NIL OSAL
        osalThreadDequeueAllI() (bug #633).

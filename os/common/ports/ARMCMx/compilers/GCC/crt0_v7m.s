@@ -55,6 +55,17 @@
 /*===========================================================================*/
 
 /**
+ * @brief   FPU initialization switch.
+ */
+#if !defined(CRT0_INIT_FPU) || defined(__DOXYGEN__)
+#if defined(CORTEX_USE_FPU) || defined(__DOXYGEN__)
+#define CRT0_INIT_FPU                       CORTEX_USE_FPU
+#else
+#define CRT0_INIT_FPU                       FALSE
+#endif
+#endif
+
+/**
  * @brief   Control special register initialization value.
  * @details The system is setup to run in privileged mode using the PSP
  *          stack (dual stack mode).
@@ -62,6 +73,13 @@
 #if !defined(CRT0_CONTROL_INIT) || defined(__DOXYGEN__)
 #define CRT0_CONTROL_INIT                   (CONTROL_USE_PSP |              \
                                              CONTROL_MODE_PRIVILEGED)
+#endif
+
+/**
+ * @brief   Core initialization switch.
+ */
+#if !defined(CRT0_INIT_CORE) || defined(__DOXYGEN__)
+#define CRT0_INIT_CORE                      TRUE
 #endif
 
 /**
@@ -104,17 +122,6 @@
  */
 #if !defined(CRT0_CALL_DESTRUCTORS) || defined(__DOXYGEN__)
 #define CRT0_CALL_DESTRUCTORS               TRUE
-#endif
-
-/**
- * @brief   FPU initialization switch.
- */
-#if !defined(CRT0_INIT_FPU) || defined(__DOXYGEN__)
-#if defined(CORTEX_USE_FPU) || defined(__DOXYGEN__)
-#define CRT0_INIT_FPU                       CORTEX_USE_FPU
-#else
-#define CRT0_INIT_FPU                       FALSE
-#endif
 #endif
 
 /**
@@ -171,6 +178,8 @@ Reset_Handler:
                 movw    r1, #SCB_FPCCR & 0xFFFF
                 movt    r1, #SCB_FPCCR >> 16
                 str     r0, [r1]
+                dsb
+                isb
 
                 /* CPACR initialization.*/
                 movw    r0, #CRT0_CPACR_INIT & 0xFFFF
@@ -178,6 +187,8 @@ Reset_Handler:
                 movw    r1, #SCB_CPACR & 0xFFFF
                 movt    r1, #SCB_CPACR >> 16
                 str     r0, [r1]
+                dsb
+                isb
 
                 /* FPU FPSCR initially cleared.*/
                 mov     r0, #0
@@ -199,7 +210,12 @@ Reset_Handler:
                 msr     CONTROL, r0
                 isb
 
-                /* Early initialization..*/
+#if CRT0_INIT_CORE == TRUE
+                /* Core initialization.*/
+                bl      __core_init
+#endif
+
+                /* Early initialization.*/
                 bl      __early_init
 
 #if CRT0_INIT_STACKS == TRUE
@@ -273,7 +289,7 @@ endinitloop:
                 /* Main program invocation, r0 contains the returned value.*/
                 bl      main
 
-#if CRT0_CALL_CONSTRUCTORS == TRUE
+#if CRT0_CALL_DESTRUCTORS == TRUE
                 /* Destructors invocation.*/
                 ldr     r4, =__fini_array_start
                 ldr     r5, =__fini_array_end
