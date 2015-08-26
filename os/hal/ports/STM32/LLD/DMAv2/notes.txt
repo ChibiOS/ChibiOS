@@ -5,6 +5,7 @@ Driver capability:
 - The driver supports the STM32 enhanced DMA controller found on F2, F4 and
   F7 sub-families.
 - Support for automatic the channel selection.
+- Support for cache flushing and invalidation.
 
 The file registry must export:
 

@@ -549,9 +549,6 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 void spi_lld_exchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
 
-  /* DMA buffer invalidation because data cache.*/
-  dmaBufferInvalidate(rxbuf, (uint8_t *)rxbuf + (n * spip->fsize));
-
   dmaStreamSetMemory0(spip->dmarx, rxbuf);
   dmaStreamSetTransactionSize(spip->dmarx, n);
   dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_MINC);
@@ -605,9 +602,6 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  * @notapi
  */
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
-
-  /* DMA buffer invalidation because data cache.*/
-  dmaBufferInvalidate(rxbuf, (uint8_t *)rxbuf + (n * spip->fsize));
 
   dmaStreamSetMemory0(spip->dmarx, rxbuf);
   dmaStreamSetTransactionSize(spip->dmarx, n);

@@ -129,7 +129,7 @@ void hal_lld_init(void) {
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
 
-#if defined(STM32F7XX)
+#if 0 /*defined(STM32F7XX)*/
   /* If the DMA is in use then the DMA-accessible RAM must be programmed as
      Write Through using the MPU, region zero is used with a size of 512kB,
      the sub-regions are programmed as follow:

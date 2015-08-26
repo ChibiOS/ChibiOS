@@ -240,6 +240,9 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 #if defined(STM32F7XX) || defined(__DOXYGEN__)
 /**
  * @brief   Invalidates the data cache lines overlapping a DMA buffer.
+ * @details This function is meant to make sure that data written in
+ *          data cache is invalidated. It is used for DMA buffers that
+ *          must have been written by a DMA stream.
  * @note    On devices without data cache this function does nothing.
  * @note    The function takes care of cache lines alignment.
  *
@@ -253,6 +256,31 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
   uint8_t *end = (uint8_t *)(((((uint32_t)(eaddr)) - 1U) | 0x1FU) + 1U);    \
   __DSB();                                                                  \
   while (start < end) {                                                     \
+    SCB->DCIMVAC = (uint32_t)start;                                         \
+    start += 32U;                                                           \
+  }                                                                         \
+  __DSB();                                                                  \
+  __ISB();                                                                  \
+}
+
+/**
+ * @brief   Flushes the data cache lines overlapping a DMA buffer.
+ * @details This function is meant to make sure that data written in
+ *          data cache is flushed to RAM. It is used for DMA buffers that
+ *          must be read by a DMA stream.
+ * @note    On devices without data cache this function does nothing.
+ * @note    The function takes care of cache lines alignment.
+ *
+ * @param[in] saddr     start address of the DMA buffer, inclusive
+ * @param[in] eaddr     end address of the DMA buffer, not inclusive
+ *
+ * @api
+ */
+#define dmaBufferFlush(saddr, eaddr) {                                      \
+  uint8_t *start = (uint8_t *)(((uint32_t)(saddr)) & ~0x1FU);               \
+  uint8_t *end = (uint8_t *)(((((uint32_t)(eaddr)) - 1U) | 0x1FU) + 1U);    \
+  __DSB();                                                                  \
+  while (start < end) {                                                     \
     SCB->DCCIMVAC = (uint32_t)start;                                        \
     start += 32U;                                                           \
   }                                                                         \
@@ -261,6 +289,10 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 }
 #else
 #define dmaBufferInvalidate(addr, size) {                                   \
+  (void)(addr);                                                             \
+  (void)(size);                                                             \
+}
+#define dmaBufferFlush(addr, size) {                                        \
   (void)(addr);                                                             \
   (void)(size);                                                             \
 }
