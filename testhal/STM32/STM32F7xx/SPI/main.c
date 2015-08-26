@@ -14,12 +14,16 @@
     limitations under the License.
 */
 
+#include <string.h>
+
 #include "ch.h"
 #include "hal.h"
 
 /*===========================================================================*/
 /* SPI driver related.                                                       */
 /*===========================================================================*/
+
+#define SPI_LOOPBACK
 
 /*
  * Maximum speed SPI configuration (27MHz, CPHA=0, CPOL=0, MSb first).
@@ -45,9 +49,21 @@ static const SPIConfig ls_spicfg = {
 
 /*
  * SPI TX and RX buffers.
+ * Note, the buffer are aligned to a 32 bytes boundary because limitations
+ * imposed by the data cache. Note, this is GNU specific, it must be
+ * handled differently for other compilers.
  */
-static uint8_t txbuf[512];
-static uint8_t rxbuf[512];
+#define SPI_BUFFERS_SIZE    128U
+
+#if defined(__GNUC__)
+__attribute__((aligned (32)))
+#endif
+static uint8_t txbuf[SPI_BUFFERS_SIZE];
+
+#if defined(__GNUC__)
+__attribute__((aligned (32)))
+#endif
+static uint8_t rxbuf[SPI_BUFFERS_SIZE];
 
 /*===========================================================================*/
 /* Application code.                                                         */
@@ -62,14 +78,32 @@ static THD_FUNCTION(spi_thread_1, p) {
   (void)p;
   chRegSetThreadName("SPI thread 1");
   while (true) {
-    spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
-    palSetPad(GPIOI, GPIOI_ARD_D13);    /* LED ON.                          */
-    spiStart(&SPID2, &hs_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&SPID2);                  /* Slave Select assertion.          */
-    spiExchange(&SPID2, 512,
-                txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
-    spiReleaseBus(&SPID2);              /* Ownership release.               */
+    unsigned i;
+
+    /* Bush acquisition and SPI reprogramming.*/
+    spiAcquireBus(&SPID2);
+    spiStart(&SPID2, &hs_spicfg);
+
+    /* Preparing data buffer and flushing cache.*/
+    for (i = 0; i < SPI_BUFFERS_SIZE; i++)
+      txbuf[i] = (uint8_t)i;
+    dmaBufferFlush(txbuf, txbuf + SPI_BUFFERS_SIZE);
+
+    /* Slave selection and data exchange.*/
+    spiSelect(&SPID2);
+    spiExchange(&SPID2, SPI_BUFFERS_SIZE, txbuf, rxbuf);
+    spiUnselect(&SPID2);
+
+#if defined(SPI_LOOPBACK)
+    /* Invalidating cache over the buffer then checking the
+       loopback result.*/
+    dmaBufferInvalidate(rxbuf, rxbuf + SPI_BUFFERS_SIZE);
+    if (memcmp(txbuf, rxbuf, SPI_BUFFERS_SIZE) != 0)
+      chSysHalt("loopback failure");
+#endif
+
+    /* Releasing the bus.*/
+    spiReleaseBus(&SPID2);
   }
 }
 
@@ -82,14 +116,32 @@ static THD_FUNCTION(spi_thread_2, p) {
   (void)p;
   chRegSetThreadName("SPI thread 2");
   while (true) {
-    spiAcquireBus(&SPID2);              /* Acquire ownership of the bus.    */
-    palClearPad(GPIOI, GPIOI_ARD_D13);  /* LED OFF.                         */
-    spiStart(&SPID2, &ls_spicfg);       /* Setup transfer parameters.       */
-    spiSelect(&SPID2);                  /* Slave Select assertion.          */
-    spiExchange(&SPID2, 512,
-                txbuf, rxbuf);          /* Atomic transfer operations.      */
-    spiUnselect(&SPID2);                /* Slave Select de-assertion.       */
-    spiReleaseBus(&SPID2);              /* Ownership release.               */
+    unsigned i;
+
+    /* Bush acquisition and SPI reprogramming.*/
+    spiAcquireBus(&SPID2);
+    spiStart(&SPID2, &ls_spicfg);
+
+    /* Preparing data buffer and flushing cache.*/
+    for (i = 0; i < SPI_BUFFERS_SIZE; i++)
+      txbuf[i] = (uint8_t)(128U + i);
+    dmaBufferFlush(txbuf, txbuf + SPI_BUFFERS_SIZE);
+
+    /* Slave selection and data exchange.*/
+    spiSelect(&SPID2);
+    spiExchange(&SPID2, SPI_BUFFERS_SIZE, txbuf, rxbuf);
+    spiUnselect(&SPID2);
+
+#if defined(SPI_LOOPBACK)
+    /* Invalidating cache over the buffer then checking the
+       loopback result.*/
+    dmaBufferInvalidate(rxbuf, rxbuf + SPI_BUFFERS_SIZE);
+    if (memcmp(txbuf, rxbuf, SPI_BUFFERS_SIZE) != 0)
+      chSysHalt("loopback failure");
+#endif
+
+    /* Releasing the bus.*/
+    spiReleaseBus(&SPID2);
   }
 }
 
@@ -97,7 +149,6 @@ static THD_FUNCTION(spi_thread_2, p) {
  * Application entry point.
  */
 int main(void) {
-  unsigned i;
 
   /*
    * System initializations.
@@ -136,8 +187,6 @@ int main(void) {
   /*
    * Prepare transmit pattern.
    */
-  for (i = 0; i < sizeof(txbuf); i++)
-    txbuf[i] = (uint8_t)i;
 
   /*
    * Starting the transmitter and receiver threads.
