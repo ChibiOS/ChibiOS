@@ -26,9 +26,9 @@
  */
 static const SPIConfig hs_spicfg = {
   NULL,
-  GPIOI,
-  GPIOI_ARD_D13,
-  0,
+  GPIOB,
+  GPIOB_ARD_D15,
+  SPI_CR1_BR_0,
   SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
@@ -37,8 +37,8 @@ static const SPIConfig hs_spicfg = {
  */
 static const SPIConfig ls_spicfg = {
   NULL,
-  GPIOI,
-  GPIOI_ARD_D13,
+  GPIOB,
+  GPIOB_ARD_D14,
   SPI_CR1_BR_2 | SPI_CR1_BR_1,
   SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
@@ -114,8 +114,8 @@ int main(void) {
    */
   palSetPadMode(GPIOI,
                 GPIOI_ARD_D13,
-                PAL_MODE_OUTPUT_PUSHPULL |
-                PAL_STM32_OSPEED_HIGHEST);          /* LED over SPI SCK.    */
+                PAL_MODE_ALTERNATE(5) |
+                PAL_STM32_OSPEED_HIGHEST);          /* SPI SCK.             */
   palSetPadMode(GPIOB,
                 GPIOB_ARD_D12,
                 PAL_MODE_ALTERNATE(5) |
@@ -124,11 +124,14 @@ int main(void) {
                 GPIOB_ARD_D11,
                 PAL_MODE_ALTERNATE(5) |
                 PAL_STM32_OSPEED_HIGHEST);          /* MOSI.                */
-  palSetPadMode(GPIOI,
-                GPIOI_ARD_D10,
-                PAL_MODE_OUTPUT_PUSHPULL |
-                PAL_STM32_OSPEED_HIGHEST);          /* CS.                  */
-  palSetPad(GPIOI, GPIOI_ARD_D10);
+  palSetPad(GPIOB, GPIOB_ARD_D15);
+  palSetPadMode(GPIOB,
+                GPIOB_ARD_D15,
+                PAL_MODE_OUTPUT_PUSHPULL);          /* CS0.                 */
+  palSetPad(GPIOB, GPIOB_ARD_D14);
+  palSetPadMode(GPIOB,
+                GPIOB_ARD_D14,
+                PAL_MODE_OUTPUT_PUSHPULL);          /* CS1.                 */
 
   /*
    * Prepare transmit pattern.

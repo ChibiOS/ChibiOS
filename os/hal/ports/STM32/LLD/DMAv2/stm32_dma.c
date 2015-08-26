@@ -49,16 +49,6 @@
  */
 #define STM32_DMA2_STREAMS_MASK     0x0000FF00U
 
-/**
- * @brief   Post-reset value of the stream CR register.
- */
-#define STM32_DMA_CR_RESET_VALUE    0x00000000U
-
-/**
- * @brief   Post-reset value of the stream FCR register.
- */
-#define STM32_DMA_FCR_RESET_VALUE   0x00000021U
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/

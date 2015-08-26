@@ -126,6 +126,7 @@
  * @name    CR register constants common to all DMA types
  * @{
  */
+#define STM32_DMA_CR_RESET_VALUE    0x00000000U
 #define STM32_DMA_CR_EN             DMA_SxCR_EN
 #define STM32_DMA_CR_TEIE           DMA_SxCR_TEIE
 #define STM32_DMA_CR_HTIE           DMA_SxCR_HTIE
@@ -178,6 +179,7 @@
  * @name    FCR register constants only found in STM32F2xx/STM32F4xx
  * @{
  */
+#define STM32_DMA_FCR_RESET_VALUE   0x00000021U
 #define STM32_DMA_FCR_FEIE          DMA_SxFCR_FEIE
 #define STM32_DMA_FCR_FS_MASK       DMA_SxFCR_FS
 #define STM32_DMA_FCR_DMDIS         DMA_SxFCR_DMDIS
@@ -398,11 +400,10 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define dmaStreamDisable(dmastp) {                                          \
-  (dmastp)->stream->CR &= ~(STM32_DMA_CR_TCIE | STM32_DMA_CR_HTIE  |        \
-                            STM32_DMA_CR_TEIE | STM32_DMA_CR_DMEIE |        \
-                            STM32_DMA_CR_EN);                               \
+  (dmastp)->stream->CR &= ~STM32_DMA_CR_EN;                                 \
   while (((dmastp)->stream->CR & STM32_DMA_CR_EN) != 0U)                    \
     ;                                                                       \
+  (dmastp)->stream->CR = STM32_DMA_CR_RESET_VALUE;                          \
   dmaStreamClearInterrupt(dmastp);                                          \
 }
 
@@ -445,7 +446,8 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
   dmaStreamSetTransactionSize(dmastp, n);                                   \
   dmaStreamSetMode(dmastp, (mode) |                                         \
                            STM32_DMA_CR_MINC | STM32_DMA_CR_PINC |          \
-                           STM32_DMA_CR_DIR_M2M | STM32_DMA_CR_EN);         \
+                           STM32_DMA_CR_DIR_M2M);                           \
+  dmaStreamEnable(dmastp);                                                  \
 }
 
 /**

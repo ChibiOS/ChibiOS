@@ -259,7 +259,7 @@ void spi_lld_init(void) {
 #endif
 
 #if STM32_SPI_USE_SPI5
-  spiObjectInit(&SPID3);
+  spiObjectInit(&SPID5);
   SPID5.spi       = SPI5;
   SPID5.dmarx     = STM32_DMA_STREAM(STM32_SPI_SPI5_RX_DMA_STREAM);
   SPID5.dmatx     = STM32_DMA_STREAM(STM32_SPI_SPI5_TX_DMA_STREAM);
@@ -427,10 +427,10 @@ void spi_lld_start(SPIDriver *spip) {
                       STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
     spip->fsize     = sizeof (uint16_t);
   }
+
   /* SPI setup and enable.*/
   spip->spi->CR1  = 0;
-  spip->spi->CR1  = spip->config->cr1 | SPI_CR1_MSTR | SPI_CR1_SSM |
-                    SPI_CR1_SSI;
+  spip->spi->CR1  = spip->config->cr1 | SPI_CR1_MSTR;
   spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
                     SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
   spip->spi->CR1 |= SPI_CR1_SPE;
@@ -554,7 +554,7 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
 
   dmaStreamSetMemory0(spip->dmarx, rxbuf);
   dmaStreamSetTransactionSize(spip->dmarx, n);
-  dmaStreamSetMode(spip->dmarx, spip->rxdmamode| STM32_DMA_CR_MINC);
+  dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_MINC);
 
   dmaStreamSetMemory0(spip->dmatx, txbuf);
   dmaStreamSetTransactionSize(spip->dmatx, n);
