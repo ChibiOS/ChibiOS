@@ -96,7 +96,9 @@
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
 - HAL: Fixed wrong DMA assignment for I2C1 in STM32F302xC registry (bug #637)
        (backported to 3.0.2).
-- VAR: Fixed CRT0_CALL_DESTRUCTORS not utilised in crt0_v7m.s (bug #635)
+- HAL: Fixed missing timers 5, 6, 7, 10 & 11 from STM32L1 HAL port (bug #636)
+       (backported to 3.0.2).
+- VAR: Fixed CRT0_CALL_DESTRUCTORS not utilized in crt0_v7m.s (bug #635)
        (backported to 3.0.2).
 - HAL: Fixed wrong ld file in STM32F072xB USB CDC demo (bug #634)(backported
        to 3.0.2).
