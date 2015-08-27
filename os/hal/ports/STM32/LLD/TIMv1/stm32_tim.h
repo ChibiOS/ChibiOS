@@ -16,7 +16,7 @@
 
 /**
  * @file    stm32_tim.h
- * @brief   STM32 TIM registers layout header.
+ * @brief   STM32 TIM units common header.
  * @note    This file requires definitions from the ST STM32 header file.
  *
  * @addtogroup STM32_TIMv1
