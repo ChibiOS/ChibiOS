@@ -208,6 +208,146 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !defined(STM32_DMA_CACHE_HANDLING)
+#error "STM32_DMA_CACHE_HANDLING missing in registry"
+#endif
+
+#if !defined(STM32_HAS_DMA1)
+#error "STM32_HAS_DMA1 missing in registry"
+#endif
+
+#if !defined(STM32_HAS_DMA2)
+#error "STM32_HAS_DMA2 missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH0_HANDLER)
+#error "STM32_DMA1_CH0_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH1_HANDLER)
+#error "STM32_DMA1_CH1_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH2_HANDLER)
+#error "STM32_DMA1_CH2_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH3_HANDLER)
+#error "STM32_DMA1_CH3_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH4_HANDLER)
+#error "STM32_DMA1_CH4_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH5_HANDLER)
+#error "STM32_DMA1_CH5_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH6_HANDLER)
+#error "STM32_DMA1_CH6_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH7_HANDLER)
+#error "STM32_DMA1_CH7_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH0_HANDLER)
+#error "STM32_DMA2_CH0_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH1_HANDLER)
+#error "STM32_DMA2_CH1_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH2_HANDLER)
+#error "STM32_DMA2_CH2_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH3_HANDLER)
+#error "STM32_DMA2_CH3_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH4_HANDLER)
+#error "STM32_DMA2_CH4_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH5_HANDLER)
+#error "STM32_DMA2_CH5_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH6_HANDLER)
+#error "STM32_DMA2_CH6_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH7_HANDLER)
+#error "STM32_DMA2_CH7_HANDLER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH0_NUMBER)
+#error "STM32_DMA1_CH0_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH1_NUMBER)
+#error "STM32_DMA1_CH1_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH2_NUMBER)
+#error "STM32_DMA1_CH2_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH3_NUMBER)
+#error "STM32_DMA1_CH3_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH4_NUMBER)
+#error "STM32_DMA1_CH4_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH5_NUMBER)
+#error "STM32_DMA1_CH5_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH6_NUMBER)
+#error "STM32_DMA1_CH6_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA1_CH7_NUMBER)
+#error "STM32_DMA1_CH7_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH0_NUMBER)
+#error "STM32_DMA2_CH0_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH1_NUMBER)
+#error "STM32_DMA2_CH1_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH2_NUMBER)
+#error "STM32_DMA2_CH2_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH3_NUMBER)
+#error "STM32_DMA2_CH3_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH4_NUMBER)
+#error "STM32_DMA2_CH4_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH5_NUMBER)
+#error "STM32_DMA2_CH5_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH6_NUMBER)
+#error "STM32_DMA2_CH6_NUMBER missing in registry"
+#endif
+
+#if !defined(STM32_DMA2_CH7_NUMBER)
+#error "STM32_DMA2_CH7_NUMBER missing in registry"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -237,23 +377,25 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-#if defined(STM32F7XX) || defined(__DOXYGEN__)
+#if STM32_DMA_CACHE_HANDLING || defined(__DOXYGEN__)
 /**
  * @brief   Invalidates the data cache lines overlapping a DMA buffer.
  * @details This function is meant to make sure that data written in
  *          data cache is invalidated. It is used for DMA buffers that
  *          must have been written by a DMA stream.
  * @note    On devices without data cache this function does nothing.
- * @note    The function takes care of cache lines alignment.
+ * @note    The function does not consider the lower 5 bits of addresses,
+ *          the buffers are meant to be aligned to a 32 bytes boundary or
+ *          adjacent data can be invalidated as side effect.
  *
- * @param[in] saddr     start address of the DMA buffer, inclusive
- * @param[in] eaddr     end address of the DMA buffer, not inclusive
+ * @param[in] saddr     start address of the DMA buffer
+ * @param[in] n         size of the DMA buffer in bytes
  *
  * @api
  */
-#define dmaBufferInvalidate(saddr, eaddr) {                                 \
-  uint8_t *start = (uint8_t *)(((uint32_t)(saddr)) & ~0x1FU);               \
-  uint8_t *end = (uint8_t *)(((((uint32_t)(eaddr)) - 1U) | 0x1FU) + 1U);    \
+#define dmaBufferInvalidate(saddr, n) {                                     \
+  uint8_t *start = (uint8_t *)(saddr);                                      \
+  uint8_t *end = start + (size_t)(n);                                       \
   __DSB();                                                                  \
   while (start < end) {                                                     \
     SCB->DCIMVAC = (uint32_t)start;                                         \
@@ -269,16 +411,18 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  *          data cache is flushed to RAM. It is used for DMA buffers that
  *          must be read by a DMA stream.
  * @note    On devices without data cache this function does nothing.
- * @note    The function takes care of cache lines alignment.
+ * @note    The function does not consider the lower 5 bits of addresses,
+ *          the buffers are meant to be aligned to a 32 bytes boundary or
+ *          adjacent data can be flushed as side effect.
  *
- * @param[in] saddr     start address of the DMA buffer, inclusive
- * @param[in] eaddr     end address of the DMA buffer, not inclusive
+ * @param[in] saddr     start address of the DMA buffer
+ * @param[in] n         size of the DMA buffer in bytes
  *
  * @api
  */
-#define dmaBufferFlush(saddr, eaddr) {                                      \
-  uint8_t *start = (uint8_t *)(((uint32_t)(saddr)) & ~0x1FU);               \
-  uint8_t *end = (uint8_t *)(((((uint32_t)(eaddr)) - 1U) | 0x1FU) + 1U);    \
+#define dmaBufferFlush(saddr, n) {                                          \
+  uint8_t *start = (uint8_t *)(saddr);                                      \
+  uint8_t *end = start + (size_t)(n);                                       \
   __DSB();                                                                  \
   while (start < end) {                                                     \
     SCB->DCCIMVAC = (uint32_t)start;                                        \
