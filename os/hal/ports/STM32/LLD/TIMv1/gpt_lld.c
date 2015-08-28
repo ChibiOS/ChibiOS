@@ -138,26 +138,12 @@ GPTDriver GPTD14;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   Shared IRQ handler.
- *
- * @param[in] gptp      pointer to a @p GPTDriver object
- */
-static void gpt_lld_serve_interrupt(GPTDriver *gptp) {
-
-  gptp->tim->SR = 0;
-  if (gptp->state == GPT_ONESHOT) {
-    gptp->state = GPT_READY;                /* Back in GPT_READY state.     */
-    gpt_lld_stop_timer(gptp);               /* Timer automatically stopped. */
-  }
-  gptp->config->callback(gptp);
-}
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_GPT_USE_TIM1
+#if STM32_GPT_USE_TIM1 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM1_SUPPRESS_ISR)
 #if !defined(STM32_TIM1_UP_HANDLER)
 #error "STM32_TIM1_UP_HANDLER not defined"
 #endif
@@ -174,9 +160,11 @@ OSAL_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM1_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM1 */
 
-#if STM32_GPT_USE_TIM2
+#if STM32_GPT_USE_TIM2 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM2_SUPPRESS_ISR)
 #if !defined(STM32_TIM2_HANDLER)
 #error "STM32_TIM2_HANDLER not defined"
 #endif
@@ -193,9 +181,11 @@ OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM2_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM2 */
 
-#if STM32_GPT_USE_TIM3
+#if STM32_GPT_USE_TIM3 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM3_SUPPRESS_ISR)
 #if !defined(STM32_TIM3_HANDLER)
 #error "STM32_TIM3_HANDLER not defined"
 #endif
@@ -212,9 +202,11 @@ OSAL_IRQ_HANDLER(STM32_TIM3_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM3_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM3 */
 
-#if STM32_GPT_USE_TIM4
+#if STM32_GPT_USE_TIM4 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM4_SUPPRESS_ISR)
 #if !defined(STM32_TIM4_HANDLER)
 #error "STM32_TIM4_HANDLER not defined"
 #endif
@@ -231,9 +223,11 @@ OSAL_IRQ_HANDLER(STM32_TIM4_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM4_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM4 */
 
-#if STM32_GPT_USE_TIM5
+#if STM32_GPT_USE_TIM5 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM5_SUPPRESS_ISR)
 #if !defined(STM32_TIM5_HANDLER)
 #error "STM32_TIM5_HANDLER not defined"
 #endif
@@ -250,9 +244,11 @@ OSAL_IRQ_HANDLER(STM32_TIM5_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM5_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM5 */
 
-#if STM32_GPT_USE_TIM6
+#if STM32_GPT_USE_TIM6 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM6_SUPPRESS_ISR)
 #if !defined(STM32_TIM6_HANDLER)
 #error "STM32_TIM6_HANDLER not defined"
 #endif
@@ -269,9 +265,11 @@ OSAL_IRQ_HANDLER(STM32_TIM6_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM6_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM6 */
 
-#if STM32_GPT_USE_TIM7
+#if STM32_GPT_USE_TIM7 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM7_SUPPRESS_ISR)
 #if !defined(STM32_TIM7_HANDLER)
 #error "STM32_TIM7_HANDLER not defined"
 #endif
@@ -288,9 +286,11 @@ OSAL_IRQ_HANDLER(STM32_TIM7_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM7_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM7 */
 
-#if STM32_GPT_USE_TIM8
+#if STM32_GPT_USE_TIM8 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM8_SUPPRESS_ISR)
 #if !defined(STM32_TIM8_UP_HANDLER)
 #error "STM32_TIM8_UP_HANDLER not defined"
 #endif
@@ -307,9 +307,11 @@ OSAL_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM8_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM8 */
 
-#if STM32_GPT_USE_TIM9
+#if STM32_GPT_USE_TIM9 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM9_SUPPRESS_ISR)
 #if !defined(STM32_TIM9_HANDLER)
 #error "STM32_TIM9_HANDLER not defined"
 #endif
@@ -326,9 +328,11 @@ OSAL_IRQ_HANDLER(STM32_TIM9_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM9_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM9 */
 
-#if STM32_GPT_USE_TIM11
+#if STM32_GPT_USE_TIM11 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM11_SUPPRESS_ISR)
 #if !defined(STM32_TIM11_HANDLER)
 #error "STM32_TIM11_HANDLER not defined"
 #endif
@@ -345,9 +349,11 @@ OSAL_IRQ_HANDLER(STM32_TIM11_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM11_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM11 */
 
-#if STM32_GPT_USE_TIM12
+#if STM32_GPT_USE_TIM12 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM12_SUPPRESS_ISR)
 #if !defined(STM32_TIM12_HANDLER)
 #error "STM32_TIM12_HANDLER not defined"
 #endif
@@ -364,9 +370,11 @@ OSAL_IRQ_HANDLER(STM32_TIM12_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM12_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM12 */
 
-#if STM32_GPT_USE_TIM14
+#if STM32_GPT_USE_TIM14 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM14_SUPPRESS_ISR)
 #if !defined(STM32_TIM14_HANDLER)
 #error "STM32_TIM14_HANDLER not defined"
 #endif
@@ -383,6 +391,7 @@ OSAL_IRQ_HANDLER(STM32_TIM14_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM14_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM14 */
 
 /*===========================================================================*/
@@ -485,7 +494,9 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD1 == gptp) {
       rccEnableTIM1(FALSE);
       rccResetTIM1();
+#if !defined(STM32_TIM1_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_GPT_TIM1_IRQ_PRIORITY);
+#endif
 #if defined(STM32_TIM1CLK)
       gptp->clock = STM32_TIM1CLK;
 #else
@@ -493,28 +504,49 @@ void gpt_lld_start(GPTDriver *gptp) {
 #endif
     }
 #endif
+
 #if STM32_GPT_USE_TIM2
     if (&GPTD2 == gptp) {
       rccEnableTIM2(FALSE);
       rccResetTIM2();
+#if !defined(STM32_TIM2_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM2_NUMBER, STM32_GPT_TIM2_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM2CLK)
+      gptp->clock = STM32_TIM2CLK;
+#else
       gptp->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
+
 #if STM32_GPT_USE_TIM3
     if (&GPTD3 == gptp) {
       rccEnableTIM3(FALSE);
       rccResetTIM3();
+#if !defined(STM32_TIM3_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM3_NUMBER, STM32_GPT_TIM3_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM3CLK)
+      gptp->clock = STM32_TIM3CLK;
+#else
       gptp->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
+
 #if STM32_GPT_USE_TIM4
     if (&GPTD4 == gptp) {
       rccEnableTIM4(FALSE);
       rccResetTIM4();
+#if !defined(STM32_TIM4_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM4_NUMBER, STM32_GPT_TIM4_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM4CLK)
+      gptp->clock = STM32_TIM4CLK;
+#else
       gptp->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
 
@@ -522,8 +554,14 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD5 == gptp) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
+#if !defined(STM32_TIM5_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM5_NUMBER, STM32_GPT_TIM5_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM5CLK)
+      gptp->clock = STM32_TIM5CLK;
+#else
       gptp->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
 
@@ -531,8 +569,14 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD6 == gptp) {
       rccEnableTIM6(FALSE);
       rccResetTIM6();
+#if !defined(STM32_TIM6_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM6_NUMBER, STM32_GPT_TIM6_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM6CLK)
+      gptp->clock = STM32_TIM6CLK;
+#else
       gptp->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
 
@@ -540,8 +584,14 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD7 == gptp) {
       rccEnableTIM7(FALSE);
       rccResetTIM7();
+#if !defined(STM32_TIM7_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM7_NUMBER, STM32_GPT_TIM7_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM7CLK)
+      gptp->clock = STM32_TIM7CLK;
+#else
       gptp->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
 
@@ -549,7 +599,9 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD8 == gptp) {
       rccEnableTIM8(FALSE);
       rccResetTIM8();
+#if !defined(STM32_TIM8_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_GPT_TIM8_IRQ_PRIORITY);
+#endif
 #if defined(STM32_TIM8CLK)
       gptp->clock = STM32_TIM8CLK;
 #else
@@ -562,8 +614,14 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD9 == gptp) {
       rccEnableTIM9(FALSE);
       rccResetTIM9();
+#if !defined(STM32_TIM9_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM9_NUMBER, STM32_GPT_TIM9_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM9CLK)
+      gptp->clock = STM32_TIM9CLK;
+#else
       gptp->clock = STM32_TIMCLK2;
+#endif
     }
 #endif
 
@@ -571,8 +629,14 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD11 == gptp) {
       rccEnableTIM11(FALSE);
       rccResetTIM11();
+#if !defined(STM32_TIM11_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM11_NUMBER, STM32_GPT_TIM11_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM11CLK)
+      gptp->clock = STM32_TIM11CLK;
+#else
       gptp->clock = STM32_TIMCLK2;
+#endif
     }
 #endif
 
@@ -580,8 +644,14 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD12 == gptp) {
       rccEnableTIM12(FALSE);
       rccResetTIM12();
+#if !defined(STM32_TIM12_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM12_NUMBER, STM32_GPT_TIM12_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM12CLK)
+      gptp->clock = STM32_TIM12CLK;
+#else
       gptp->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
 
@@ -589,8 +659,14 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD14 == gptp) {
       rccEnableTIM14(FALSE);
       rccResetTIM14();
+#if !defined(STM32_TIM14_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM14_NUMBER, STM32_GPT_TIM14_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM14CLK)
+      gptp->clock = STM32_TIM14CLK;
+#else
       gptp->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
   }
@@ -625,73 +701,108 @@ void gpt_lld_stop(GPTDriver *gptp) {
 
 #if STM32_GPT_USE_TIM1
     if (&GPTD1 == gptp) {
+#if !defined(STM32_TIM1_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM1_UP_NUMBER);
+#endif
       rccDisableTIM1(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM2
     if (&GPTD2 == gptp) {
+#if !defined(STM32_TIM2_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM2_NUMBER);
+#endif
       rccDisableTIM2(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM3
     if (&GPTD3 == gptp) {
+#if !defined(STM32_TIM3_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM3_NUMBER);
+#endif
       rccDisableTIM3(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM4
     if (&GPTD4 == gptp) {
+#if !defined(STM32_TIM4_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM4_NUMBER);
+#endif
       rccDisableTIM4(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM5
     if (&GPTD5 == gptp) {
+#if !defined(STM32_TIM5_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM5_NUMBER);
+#endif
       rccDisableTIM5(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM6
     if (&GPTD6 == gptp) {
+#if !defined(STM32_TIM6_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM6_NUMBER);
+#endif
       rccDisableTIM6(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM7
     if (&GPTD7 == gptp) {
+#if !defined(STM32_TIM7_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM7_NUMBER);
+#endif
       rccDisableTIM7(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM8
     if (&GPTD8 == gptp) {
+#if !defined(STM32_TIM8_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM8_UP_NUMBER);
+#endif
       rccDisableTIM8(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM9
     if (&GPTD9 == gptp) {
+#if !defined(STM32_TIM9_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM9_NUMBER);
+#endif
       rccDisableTIM9(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM11
     if (&GPTD11 == gptp) {
+#if !defined(STM32_TIM11_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM11_NUMBER);
+#endif
       rccDisableTIM11(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM12
     if (&GPTD12 == gptp) {
+#if !defined(STM32_TIM12_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM12_NUMBER);
+#endif
       rccDisableTIM12(FALSE);
     }
 #endif
+
 #if STM32_GPT_USE_TIM14
     if (&GPTD14 == gptp) {
+#if !defined(STM32_TIM14_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM14_NUMBER);
+#endif
       rccDisableTIM14(FALSE);
     }
 #endif
@@ -756,6 +867,23 @@ void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
   while (!(gptp->tim->SR & STM32_TIM_SR_UIF))
     ;
   gptp->tim->SR   = 0;                          /* Clear pending IRQs.      */
+}
+
+/**
+ * @brief   Shared IRQ handler.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ *
+ * @notapi
+ */
+void gpt_lld_serve_interrupt(GPTDriver *gptp) {
+
+  gptp->tim->SR = 0;
+  if (gptp->state == GPT_ONESHOT) {
+    gptp->state = GPT_READY;                /* Back in GPT_READY state.     */
+    gpt_lld_stop_timer(gptp);               /* Timer automatically stopped. */
+  }
+  gptp->config->callback(gptp);
 }
 
 #endif /* HAL_USE_GPT */

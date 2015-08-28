@@ -306,37 +306,37 @@
 #endif
 
 /* IRQ priority checks.*/
-#if STM32_PWM_USE_TIM1 &&                                                   \
+#if STM32_PWM_USE_TIM1 && !defined(STM32_TIM1_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM1"
 #endif
 
-#if STM32_PWM_USE_TIM2 &&                                                   \
+#if STM32_PWM_USE_TIM2 && !defined(STM32_TIM2_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM2"
 #endif
 
-#if STM32_PWM_USE_TIM3 &&                                                   \
+#if STM32_PWM_USE_TIM3 && !defined(STM32_TIM3_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM3_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM3"
 #endif
 
-#if STM32_PWM_USE_TIM4 &&                                                   \
+#if STM32_PWM_USE_TIM4 && !defined(STM32_TIM4_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM4_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM4"
 #endif
 
-#if STM32_PWM_USE_TIM5 &&                                                   \
+#if STM32_PWM_USE_TIM5 && !defined(STM32_TIM5_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM5_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM5"
 #endif
 
-#if STM32_PWM_USE_TIM8 &&                                                   \
+#if STM32_PWM_USE_TIM8 && !defined(STM32_TIM8_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM8_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM8"
 #endif
 
-#if STM32_PWM_USE_TIM9 &&                                                   \
+#if STM32_PWM_USE_TIM9 && !defined(STM32_TIM9_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM9_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM9"
 #endif
@@ -538,6 +538,7 @@ extern "C" {
                                            pwmchannel_t channel);
   void pwm_lld_disable_channel_notification(PWMDriver *pwmp,
                                             pwmchannel_t channel);
+  void pwm_lld_serve_interrupt(PWMDriver *pwmp);
 #ifdef __cplusplus
 }
 #endif

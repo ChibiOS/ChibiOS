@@ -393,62 +393,62 @@
 #endif
 
 /* IRQ priority checks.*/
-#if STM32_GPT_USE_TIM1 &&                                                   \
+#if STM32_GPT_USE_TIM1 && !defined(STM32_TIM1_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM1"
 #endif
 
-#if STM32_GPT_USE_TIM2 &&                                                   \
+#if STM32_GPT_USE_TIM2 && !defined(STM32_TIM2_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM2"
 #endif
 
-#if STM32_GPT_USE_TIM3 &&                                                   \
+#if STM32_GPT_USE_TIM3 && !defined(STM32_TIM3_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM3_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM3"
 #endif
 
-#if STM32_GPT_USE_TIM4 &&                                                   \
+#if STM32_GPT_USE_TIM4 && !defined(STM32_TIM_SUPPRESS_ISR) &&               \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM4_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM4"
 #endif
 
-#if STM32_GPT_USE_TIM5 &&                                                   \
+#if STM32_GPT_USE_TIM5 && !defined(STM32_TIM5_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM5_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM5"
 #endif
 
-#if STM32_GPT_USE_TIM6 &&                                                   \
+#if STM32_GPT_USE_TIM6 && !defined(STM32_TIM6_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM6_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM6"
 #endif
 
-#if STM32_GPT_USE_TIM7 &&                                                   \
+#if STM32_GPT_USE_TIM7 && !defined(STM32_TIM7_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM7_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM7"
 #endif
 
-#if STM32_GPT_USE_TIM8 &&                                                   \
+#if STM32_GPT_USE_TIM8 && !defined(STM32_TIM8_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM8_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM8"
 #endif
 
-#if STM32_GPT_USE_TIM9 &&                                                   \
+#if STM32_GPT_USE_TIM9 && !defined(STM32_TIM9_SUPPRESS_ISR) &&              \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM9_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM9"
 #endif
 
-#if STM32_GPT_USE_TIM11 &&                                                   \
+#if STM32_GPT_USE_TIM11 && !defined(STM32_TIM11_SUPPRESS_ISR) &&            \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM11_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM11"
 #endif
 
-#if STM32_GPT_USE_TIM12 &&                                                   \
+#if STM32_GPT_USE_TIM12 && !defined(STM32_TIM12_SUPPRESS_ISR) &&            \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM12_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM12"
 #endif
 
-#if STM32_GPT_USE_TIM14 &&                                                   \
+#if STM32_GPT_USE_TIM14 && !defined(STM32_TIM14_SUPPRESS_ISR) &&            \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM14_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM14"
 #endif
@@ -629,6 +629,7 @@ extern "C" {
   void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t period);
   void gpt_lld_stop_timer(GPTDriver *gptp);
   void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval);
+  void gpt_lld_serve_interrupt(GPTDriver *gptp);
 #ifdef __cplusplus
 }
 #endif

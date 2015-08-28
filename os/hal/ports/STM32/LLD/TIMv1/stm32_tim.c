@@ -47,6 +47,46 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if defined(STM32_TIM2_IS_USED) || defined(__DOXYGEN__)
+#if !defined(STM32_TIM2_SUPPRESS_ISR)
+#if !defined(STM32_TIM2_HANDLER)
+#error "STM32_TIM2_HANDLER not defined"
+#endif
+/**
+ * @brief   TIM2 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
+  uint32_t sr;
+
+  OSAL_IRQ_PROLOGUE();
+
+  sr  = TIM2->SR;
+  sr &= TIM2->DIER & STM32_TIM_DIER_IRQ_MASK;
+  TIM2->SR = ~sr;
+
+#if STM32_GPT_USE_TIM2
+  gpt_lld_serve_interrupt(&GPTD2);
+#endif
+
+#if STM32_ICU_USE_TIM2
+  icu_lld_serve_interrupt(&ICUD2, sr);
+#endif
+
+#if STM32_PWM_USE_TIM2
+  gpt_lld_serve_interrupt(&PWMD2, sr);
+#endif
+
+#if STM32_GPT_USE_TIM2
+  st_lld_serve_interrupt();
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* !defined(STM32_TIM2_SUPPRESS_ISR) */
+#endif /* defined(STM32_TIM2_IS_USED) */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/

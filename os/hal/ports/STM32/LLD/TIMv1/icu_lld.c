@@ -138,46 +138,17 @@ static bool icu_lld_wait_edge(ICUDriver *icup) {
   return result;
 }
 
-/**
- * @brief   Shared IRQ handler.
- *
- * @param[in] icup      pointer to the @p ICUDriver object
- */
-static void icu_lld_serve_interrupt(ICUDriver *icup) {
-  uint32_t sr;
-
-  sr  = icup->tim->SR;
-  sr &= icup->tim->DIER & STM32_TIM_DIER_IRQ_MASK;
-  icup->tim->SR = ~sr;
-  if (icup->config->channel == ICU_CHANNEL_1) {
-    if ((sr & STM32_TIM_SR_CC2IF) != 0)
-      _icu_isr_invoke_width_cb(icup);
-    if ((sr & STM32_TIM_SR_CC1IF) != 0)
-      _icu_isr_invoke_period_cb(icup);
-  }
-  else {
-    if ((sr & STM32_TIM_SR_CC1IF) != 0)
-      _icu_isr_invoke_width_cb(icup);
-    if ((sr & STM32_TIM_SR_CC2IF) != 0)
-      _icu_isr_invoke_period_cb(icup);
-  }
-  if ((sr & STM32_TIM_SR_UIF) != 0)
-    _icu_isr_invoke_overflow_cb(icup);
-}
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_ICU_USE_TIM1
+#if STM32_ICU_USE_TIM1 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM1_SUPPRESS_ISR)
 #if !defined(STM32_TIM1_UP_HANDLER)
 #error "STM32_TIM1_UP_HANDLER not defined"
 #endif
 /**
  * @brief   TIM1 compare interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
  */
@@ -195,9 +166,6 @@ OSAL_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
 #endif
 /**
  * @brief   TIM1 compare interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
  */
@@ -209,17 +177,16 @@ OSAL_IRQ_HANDLER(STM32_TIM1_CC_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM1_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM1 */
 
-#if STM32_ICU_USE_TIM2
+#if STM32_ICU_USE_TIM2 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM2_SUPPRESS_ISR)
 #if !defined(STM32_TIM2_HANDLER)
 #error "STM32_TIM2_HANDLER not defined"
 #endif
 /**
  * @brief   TIM2 interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
  */
@@ -231,17 +198,16 @@ OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM2_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM2 */
 
-#if STM32_ICU_USE_TIM3
+#if STM32_ICU_USE_TIM3 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM3_SUPPRESS_ISR)
 #if !defined(STM32_TIM3_HANDLER)
 #error "STM32_TIM3_HANDLER not defined"
 #endif
 /**
  * @brief   TIM3 interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
  */
@@ -253,17 +219,16 @@ OSAL_IRQ_HANDLER(STM32_TIM3_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM3_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM3 */
 
-#if STM32_ICU_USE_TIM4
+#if STM32_ICU_USE_TIM4 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM4_SUPPRESS_ISR)
 #if !defined(STM32_TIM4_HANDLER)
 #error "STM32_TIM4_HANDLER not defined"
 #endif
 /**
  * @brief   TIM4 interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
  */
@@ -275,17 +240,16 @@ OSAL_IRQ_HANDLER(STM32_TIM4_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM4_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM4 */
 
-#if STM32_ICU_USE_TIM5
+#if STM32_ICU_USE_TIM5 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM5_SUPPRESS_ISR)
 #if !defined(STM32_TIM5_HANDLER)
 #error "STM32_TIM5_HANDLER not defined"
 #endif
 /**
  * @brief   TIM5 interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
  */
@@ -297,17 +261,16 @@ OSAL_IRQ_HANDLER(STM32_TIM5_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM5_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM5 */
 
-#if STM32_ICU_USE_TIM8
+#if STM32_ICU_USE_TIM8 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM8_SUPPRESS_ISR)
 #if !defined(STM32_TIM8_UP_HANDLER)
 #error "STM32_TIM8_UP_HANDLER not defined"
 #endif
 /**
  * @brief   TIM8 compare interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
  */
@@ -325,9 +288,6 @@ OSAL_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
 #endif
 /**
  * @brief   TIM8 compare interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
  */
@@ -339,17 +299,16 @@ OSAL_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM8_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM8 */
 
-#if STM32_ICU_USE_TIM9
+#if STM32_ICU_USE_TIM9 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM9_SUPPRESS_ISR)
 #if !defined(STM32_TIM9_HANDLER)
 #error "STM32_TIM9_HANDLER not defined"
 #endif
 /**
  * @brief   TIM9 interrupt handler.
- * @note    It is assumed that the various sources are only activated if the
- *          associated callback pointer is not equal to @p NULL in order to not
- *          perform an extra check in a potentially critical interrupt handler.
  *
  * @isr
  */
@@ -361,6 +320,7 @@ OSAL_IRQ_HANDLER(STM32_TIM9_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* !defined(STM32_TIM9_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM9 */
 
 /*===========================================================================*/
@@ -437,8 +397,10 @@ void icu_lld_start(ICUDriver *icup) {
     if (&ICUD1 == icup) {
       rccEnableTIM1(FALSE);
       rccResetTIM1();
+#if !defined(STM32_TIM1_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM1_UP_NUMBER, STM32_ICU_TIM1_IRQ_PRIORITY);
       nvicEnableVector(STM32_TIM1_CC_NUMBER, STM32_ICU_TIM1_IRQ_PRIORITY);
+#endif
 #if defined(STM32_TIM1CLK)
       icup->clock = STM32_TIM1CLK;
 #else
@@ -446,44 +408,75 @@ void icu_lld_start(ICUDriver *icup) {
 #endif
     }
 #endif
+
 #if STM32_ICU_USE_TIM2
     if (&ICUD2 == icup) {
       rccEnableTIM2(FALSE);
       rccResetTIM2();
+#if !defined(STM32_TIM2_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM2_NUMBER, STM32_ICU_TIM2_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM2CLK)
+      icup->clock = STM32_TIM2CLK;
+#else
       icup->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
+
 #if STM32_ICU_USE_TIM3
     if (&ICUD3 == icup) {
       rccEnableTIM3(FALSE);
       rccResetTIM3();
+#if !defined(STM32_TIM3_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM3_NUMBER, STM32_ICU_TIM3_IRQ_PRIORITY);
-      icup->clock = STM32_TIMCLK1;
+#endif
+#if defined(STM32_TIM3CLK)
+      icup->clock = STM32_TIM3CLK;
+#else
+     icup->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
+
 #if STM32_ICU_USE_TIM4
     if (&ICUD4 == icup) {
       rccEnableTIM4(FALSE);
       rccResetTIM4();
+#if !defined(STM32_TIM4_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM4_NUMBER, STM32_ICU_TIM4_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM4CLK)
+      icup->clock = STM32_TIM4CLK;
+#else
       icup->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
+
 #if STM32_ICU_USE_TIM5
     if (&ICUD5 == icup) {
       rccEnableTIM5(FALSE);
       rccResetTIM5();
+#if !defined(STM32_TIM5_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM5_NUMBER, STM32_ICU_TIM5_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM5CLK)
+      icup->clock = STM32_TIM5CLK;
+#else
       icup->clock = STM32_TIMCLK1;
+#endif
     }
 #endif
+
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
       rccEnableTIM8(FALSE);
       rccResetTIM8();
+#if !defined(STM32_TIM8_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM8_UP_NUMBER, STM32_ICU_TIM8_IRQ_PRIORITY);
       nvicEnableVector(STM32_TIM8_CC_NUMBER, STM32_ICU_TIM8_IRQ_PRIORITY);
+#endif
 #if defined(STM32_TIM8CLK)
       icup->clock = STM32_TIM8CLK;
 #else
@@ -491,12 +484,19 @@ void icu_lld_start(ICUDriver *icup) {
 #endif
     }
 #endif
+
 #if STM32_ICU_USE_TIM9
     if (&ICUD9 == icup) {
       rccEnableTIM9(FALSE);
       rccResetTIM9();
+#if !defined(STM32_TIM9_SUPPRESS_ISR)
       nvicEnableVector(STM32_TIM9_NUMBER, STM32_ICU_TIM9_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM9CLK)
+      icup->clock = STM32_TIM9CLK;
+#else
       icup->clock = STM32_TIMCLK2;
+#endif
     }
 #endif
   }
@@ -588,45 +588,65 @@ void icu_lld_stop(ICUDriver *icup) {
 
 #if STM32_ICU_USE_TIM1
     if (&ICUD1 == icup) {
+#if !defined(STM32_TIM1_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM1_UP_NUMBER);
       nvicDisableVector(STM32_TIM1_CC_NUMBER);
+#endif
       rccDisableTIM1(FALSE);
     }
 #endif
+
 #if STM32_ICU_USE_TIM2
     if (&ICUD2 == icup) {
+#if !defined(STM32_TIM2_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM2_NUMBER);
+#endif
       rccDisableTIM2(FALSE);
     }
 #endif
+
 #if STM32_ICU_USE_TIM3
     if (&ICUD3 == icup) {
+#if !defined(STM32_TIM3_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM3_NUMBER);
+#endif
       rccDisableTIM3(FALSE);
     }
 #endif
+
 #if STM32_ICU_USE_TIM4
     if (&ICUD4 == icup) {
+#if !defined(STM32_TIM4_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM4_NUMBER);
+#endif
       rccDisableTIM4(FALSE);
     }
 #endif
+
 #if STM32_ICU_USE_TIM5
     if (&ICUD5 == icup) {
+#if !defined(STM32_TIM5_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM5_NUMBER);
+#endif
       rccDisableTIM5(FALSE);
     }
 #endif
+
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
+#if !defined(STM32_TIM8_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM8_UP_NUMBER);
       nvicDisableVector(STM32_TIM8_CC_NUMBER);
+#endif
       rccDisableTIM8(FALSE);
     }
 #endif
+
 #if STM32_ICU_USE_TIM9
     if (&ICUD9 == icup) {
+#if !defined(STM32_TIM9_SUPPRESS_ISR)
       nvicDisableVector(STM32_TIM9_NUMBER);
+#endif
       rccDisableTIM9(FALSE);
     }
 #endif
@@ -697,7 +717,7 @@ void icu_lld_stop_capture(ICUDriver *icup) {
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
- * @api
+ * @notapi
  */
 void icu_lld_enable_notifications(ICUDriver *icup) {
   uint32_t dier = icup->tim->DIER;
@@ -743,12 +763,41 @@ void icu_lld_enable_notifications(ICUDriver *icup) {
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  *
- * @api
+ * @notapi
  */
 void icu_lld_disable_notifications(ICUDriver *icup) {
 
   /* All interrupts disabled.*/
   icup->tim->DIER &= ~STM32_TIM_DIER_IRQ_MASK;
+}
+
+/**
+ * @brief   Shared IRQ handler.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @notapi
+ */
+void icu_lld_serve_interrupt(ICUDriver *icup) {
+  uint32_t sr;
+
+  sr  = icup->tim->SR;
+  sr &= icup->tim->DIER & STM32_TIM_DIER_IRQ_MASK;
+  icup->tim->SR = ~sr;
+  if (icup->config->channel == ICU_CHANNEL_1) {
+    if ((sr & STM32_TIM_SR_CC2IF) != 0)
+      _icu_isr_invoke_width_cb(icup);
+    if ((sr & STM32_TIM_SR_CC1IF) != 0)
+      _icu_isr_invoke_period_cb(icup);
+  }
+  else {
+    if ((sr & STM32_TIM_SR_CC1IF) != 0)
+      _icu_isr_invoke_width_cb(icup);
+    if ((sr & STM32_TIM_SR_CC2IF) != 0)
+      _icu_isr_invoke_period_cb(icup);
+  }
+  if ((sr & STM32_TIM_SR_UIF) != 0)
+    _icu_isr_invoke_overflow_cb(icup);
 }
 
 #endif /* HAL_USE_ICU */

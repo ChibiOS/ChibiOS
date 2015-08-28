@@ -73,6 +73,12 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: STM32 GPT, ICU and PWM driver enhancements. Now it is possible to
+       suppress default ISRs by defining STM32_TIMx_SUPPRESS_ISR.
+       The application is now able to define custom handlers if required
+       or simply save space if the driver callbacks are not used.
+       Now the functions xxx_lld_serve_interrupts() have global scope, this
+       way custom ISRs can call them from outside the driver module.
 - HAL: Added TIM units use cross-check in STM32 GPT, ICU, PWM and ST drivers,
        now use collisions are explicitly reported.
 - NIL: Added polled delays required to fix bug #629.
