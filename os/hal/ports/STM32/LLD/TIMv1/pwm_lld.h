@@ -248,6 +248,64 @@
 #error "advanced mode selected but no advanced timer assigned"
 #endif
 
+/* Checks on allocation of TIMx units.*/
+#if STM32_PWM_USE_TIM1
+#if defined(STM32_TIM1_IS_USED)
+#error "PWMD1 requires TIM1 but the timer is already used"
+#else
+#define STM32_TIM1_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM2
+#if defined(STM32_TIM2_IS_USED)
+#error "PWMD2 requires TIM2 but the timer is already used"
+#else
+#define STM32_TIM2_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM3
+#if defined(STM32_TIM3_IS_USED)
+#error "PWMD3 requires TIM3 but the timer is already used"
+#else
+#define STM32_TIM3_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM4
+#if defined(STM32_TIM4_IS_USED)
+#error "PWMD4 requires TIM4 but the timer is already used"
+#else
+#define STM32_TIM4_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM5
+#if defined(STM32_TIM5_IS_USED)
+#error "PWMD5 requires TIM5 but the timer is already used"
+#else
+#define STM32_TIM5_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM8
+#if defined(STM32_TIM8_IS_USED)
+#error "PWMD8 requires TIM8 but the timer is already used"
+#else
+#define STM32_TIM8_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM9
+#if defined(STM32_TIM9_IS_USED)
+#error "PWMD9 requires TIM9 but the timer is already used"
+#else
+#define STM32_TIM9_IS_USED
+#endif
+#endif
+
+/* IRQ priority checks.*/
 #if STM32_PWM_USE_TIM1 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM1"

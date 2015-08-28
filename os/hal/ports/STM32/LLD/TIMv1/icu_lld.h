@@ -193,6 +193,64 @@
 #error "ICU driver activated but no TIM peripheral assigned"
 #endif
 
+/* Checks on allocation of TIMx units.*/
+#if STM32_ICU_USE_TIM1
+#if defined(STM32_TIM1_IS_USED)
+#error "ICUD1 requires TIM1 but the timer is already used"
+#else
+#define STM32_TIM1_IS_USED
+#endif
+#endif
+
+#if STM32_ICU_USE_TIM2
+#if defined(STM32_TIM2_IS_USED)
+#error "ICUD2 requires TIM2 but the timer is already used"
+#else
+#define STM32_TIM2_IS_USED
+#endif
+#endif
+
+#if STM32_ICU_USE_TIM3
+#if defined(STM32_TIM3_IS_USED)
+#error "ICUD3 requires TIM3 but the timer is already used"
+#else
+#define STM32_TIM3_IS_USED
+#endif
+#endif
+
+#if STM32_ICU_USE_TIM4
+#if defined(STM32_TIM4_IS_USED)
+#error "ICUD4 requires TIM4 but the timer is already used"
+#else
+#define STM32_TIM4_IS_USED
+#endif
+#endif
+
+#if STM32_ICU_USE_TIM5
+#if defined(STM32_TIM5_IS_USED)
+#error "ICUD5 requires TIM5 but the timer is already used"
+#else
+#define STM32_TIM5_IS_USED
+#endif
+#endif
+
+#if STM32_ICU_USE_TIM8
+#if defined(STM32_TIM8_IS_USED)
+#error "ICUD8 requires TIM8 but the timer is already used"
+#else
+#define STM32_TIM8_IS_USED
+#endif
+#endif
+
+#if STM32_ICU_USE_TIM9
+#if defined(STM32_TIM9_IS_USED)
+#error "ICUD9 requires TIM9 but the timer is already used"
+#else
+#define STM32_TIM9_IS_USED
+#endif
+#endif
+
+/* IRQ priority checks.*/
 #if STM32_ICU_USE_TIM1 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM1"

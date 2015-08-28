@@ -295,6 +295,104 @@
 #error "GPT driver activated but no TIM peripheral assigned"
 #endif
 
+/* Checks on allocation of TIMx units.*/
+#if STM32_GPT_USE_TIM1
+#if defined(STM32_TIM1_IS_USED)
+#error "GPTD1 requires TIM1 but the timer is already used"
+#else
+#define STM32_TIM1_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM2
+#if defined(STM32_TIM2_IS_USED)
+#error "GPTD2 requires TIM2 but the timer is already used"
+#else
+#define STM32_TIM2_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM3
+#if defined(STM32_TIM3_IS_USED)
+#error "GPTD3 requires TIM3 but the timer is already used"
+#else
+#define STM32_TIM3_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM4
+#if defined(STM32_TIM4_IS_USED)
+#error "GPTD4 requires TIM4 but the timer is already used"
+#else
+#define STM32_TIM4_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM5
+#if defined(STM32_TIM5_IS_USED)
+#error "GPTD5 requires TIM5 but the timer is already used"
+#else
+#define STM32_TIM5_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM6
+#if defined(STM32_TIM6_IS_USED)
+#error "GPTD6 requires TIM6 but the timer is already used"
+#else
+#define STM32_TIM6_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM7
+#if defined(STM32_TIM7_IS_USED)
+#error "GPTD7 requires TIM7 but the timer is already used"
+#else
+#define STM32_TIM7_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM8
+#if defined(STM32_TIM8_IS_USED)
+#error "GPTD8 requires TIM8 but the timer is already used"
+#else
+#define STM32_TIM8_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM9
+#if defined(STM32_TIM9_IS_USED)
+#error "GPTD9 requires TIM9 but the timer is already used"
+#else
+#define STM32_TIM9_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM11
+#if defined(STM32_TIM11_IS_USED)
+#error "GPTD11 requires TIM11 but the timer is already used"
+#else
+#define STM32_TIM11_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM12
+#if defined(STM32_TIM12_IS_USED)
+#error "GPTD12 requires TIM12 but the timer is already used"
+#else
+#define STM32_TIM12_IS_USED
+#endif
+#endif
+
+#if STM32_GPT_USE_TIM14
+#if defined(STM32_TIM14_IS_USED)
+#error "GPTD14 requires TIM14 but the timer is already used"
+#else
+#define STM32_TIM14_IS_USED
+#endif
+#endif
+
+/* IRQ priority checks.*/
 #if STM32_GPT_USE_TIM1 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM1"

@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Added TIM units use cross-check in STM32 GPT, ICU, PWM and ST drivers,
+       now use collisions are explicitly reported.
 - NIL: Added polled delays required to fix bug #629.
 - HAL: Added support for I2C3 and I2C4 to the STM32 I2Cv2 I2C driver.
 - HAL: Added support for SPI4...SPI6 to the STM32 SPIv2 SPI driver.
