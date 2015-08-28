@@ -116,7 +116,7 @@ SPIDriver SPID6;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static uint16_t dummytx;
+static const uint16_t dummytx = 0xFFFFU;
 static uint16_t dummyrx;
 
 /*===========================================================================*/
@@ -183,8 +183,6 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
  * @notapi
  */
 void spi_lld_init(void) {
-
-  dummytx = 0xFFFF;
 
 #if STM32_SPI_USE_SPI1
   spiObjectInit(&SPID1);
