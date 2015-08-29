@@ -63,12 +63,17 @@ static void icuperiodcb(ICUDriver *icup) {
   last_period = icuGetPeriodX(icup);
 }
 
+static void icuovfcb(ICUDriver *icup) {
+
+  (void)icup;
+}
+
 static ICUConfig icucfg = {
   ICU_INPUT_ACTIVE_HIGH,
   10000,                                    /* 10kHz ICU clock frequency.   */
   icuwidthcb,
   icuperiodcb,
-  NULL,
+  icuovfcb,
   ICU_CHANNEL_1,
   0
 };
@@ -101,18 +106,24 @@ int main(void) {
   palSetPadMode(GPIOA, GPIOA_ARD_D5, PAL_MODE_ALTERNATE(1));
 
   /*
-   * Starting ICU driver 2 and enabling the notifications.
+   * Starting ICU driver 2.
    * GPIOA15 is programmed as ICU input (channel 1 of TIM2).
    */
   icuStart(&ICUD2, &icucfg);
   palSetPadMode(GPIOA, GPIOA_ARD_D9, PAL_MODE_ALTERNATE(1));
-  icuEnableNotifications(&ICUD2);
+
+  /*
+   * GPIOI1 is programmed as output (board LED).
+   */
+  palClearPad(GPIOI, GPIOI_ARD_D13);
+  palSetPadMode(GPIOI, GPIOI_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
   chThdSleepMilliseconds(1000);
 
   /*
-   * Starting ICU capture.
+   * Starting ICU capture and enabling the notifications.
    */
   icuStartCapture(&ICUD2);
+  icuEnableNotifications(&ICUD2);
 
   /*
    * Normal main() thread activity, various PWM patterns are generated
@@ -120,6 +131,35 @@ int main(void) {
    * board LED mirrors the PWM output.
    */
   while (true) {
-    chThdSleepMilliseconds(500);
+    /*
+     * Starts the PWM channel 0 using 75% duty cycle.
+     */
+    pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 7500));
+    pwmEnableChannelNotification(&PWMD1, 0);
+    chThdSleepMilliseconds(5000);
+
+    /*
+     * Changes the PWM channel 0 to 50% duty cycle.
+     */
+    pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 5000));
+    chThdSleepMilliseconds(5000);
+
+    /*
+     * Changes the PWM channel 0 to 25% duty cycle.
+     */
+    pwmEnableChannel(&PWMD1, 0, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 2500));
+    chThdSleepMilliseconds(5000);
+
+    /*
+     * Changes PWM period to half second the duty cycle becomes 50%
+     * implicitly.
+     */
+    pwmChangePeriod(&PWMD1, 5000);
+    chThdSleepMilliseconds(5000);
+
+    /*
+     * Disables channel 0.
+     */
+    pwmDisableChannel(&PWMD1, 0);
   }
 }
