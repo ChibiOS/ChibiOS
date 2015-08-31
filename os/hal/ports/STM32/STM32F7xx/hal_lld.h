@@ -402,9 +402,9 @@
 #define STM32_CK48MSEL_PLL      (0 << 27)   /**< PLL48CLK source is PLL.    */
 #define STM32_CK48MSEL_PLLSAI   (1 << 27)   /**< PLL48CLK source is PLLSAI. */
 
-#define STM32_SDMMCSEL_MASK     (1 << 27)   /**< SDMMCSEL mask.             */
-#define STM32_SDMMCSEL_PLL48CLK (0 << 27)   /**< SDMMC source is PLL48CLK.  */
-#define STM32_SDMMCSEL_SYSCLK   (1 << 27)   /**< SDMMC source is SYSCLK.    */
+#define STM32_SDMMCSEL_MASK     (1 << 28)   /**< SDMMCSEL mask.             */
+#define STM32_SDMMCSEL_PLL48CLK (0 << 28)   /**< SDMMC source is PLL48CLK.  */
+#define STM32_SDMMCSEL_SYSCLK   (1 << 28)   /**< SDMMC source is SYSCLK.    */
 /** @} */
 
 /**
