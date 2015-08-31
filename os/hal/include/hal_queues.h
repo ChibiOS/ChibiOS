@@ -63,7 +63,7 @@ typedef void (*qnotify_t)(io_queue_t *qp);
  */
 struct io_queue {
   threads_queue_t       q_waiting;  /**< @brief Waiting thread.             */
-  size_t                q_counter;  /**< @brief Resources counter.          */
+  volatile size_t       q_counter;  /**< @brief Resources counter.          */
   uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
   uint8_t               *q_top;     /**< @brief Pointer to the first
                                          location after the buffer.         */
