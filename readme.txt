@@ -102,6 +102,8 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- HAL: Fixed volatile variable issue in I/O queues, both RT and HAL (bug #640)
+       (backported to 3.0.2).
 - HAL: Fixed wrong DMA assignment for I2C1 in STM32F302xC registry (bug #637)
        (backported to 3.0.2).
 - HAL: Fixed missing timers 5, 6, 7, 10 & 11 from STM32L1 HAL port (bug #636)
