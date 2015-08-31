@@ -72,12 +72,14 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Fixed volatile variable issue in I/O queues, both RT and HAL (bug #640).
+- HAL: Fixed STM32 RTC init direct register access (bug #639).
+- HAL: Fixed STM32 RTC driver does not set h12 (bug #638).
 - HAL: Fixed problem with RT mutexes involving priority inheritance (bug #632).
 
 *** 2.6.9 ***
 - NEW: Added files for Core407V board.
 - FIX: Removed call to localtime_r() for non-GNU compilers in chrtclib.c.
-- FIX: Fixed volatile variable issue in I/O queues, both RT and HAL (bug #640).
 - FIX: Fixed duplicated doxygen tag in STM32F4xx hal_lld.h file (bug #621).
 - FIX: Fixed wrong check in canReceive() (bug #619).
 - FIX: Fixed wrong EXTI[18] vector number on STM32F373 (bug #618).

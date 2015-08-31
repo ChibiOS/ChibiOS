@@ -102,7 +102,7 @@ void rtc_lld_init(void){
   RTCD1.id_rtc->WPR = 0x53;
 
   /* If calendar not init yet. */
-  if (!(RTC->ISR & RTC_ISR_INITS)){
+  if (!(RTCD1.id_rtc->ISR & RTC_ISR_INITS)){
     rtc_lld_enter_init();
 
     /* Prescaler register must be written in two SEPARATE writes. */
@@ -159,6 +159,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCTime *timespec) {
 #endif /* STM32_RTC_HAS_SUBSECONDS */
   timespec->tv_time = RTCD1.id_rtc->TR;
   timespec->tv_date = RTCD1.id_rtc->DR;
+  timespec->h12 = ((RTCD1.id_rtc->CR & RTC_CR_FMT) != 0);
 }
 
 /**
