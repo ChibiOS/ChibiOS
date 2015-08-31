@@ -68,7 +68,7 @@ typedef void (*qnotify_t)(GenericQueue *qp);
  */
 struct GenericQueue {
   ThreadsQueue          q_waiting;  /**< @brief Queue of waiting threads.   */
-  size_t                q_counter;  /**< @brief Resources counter.          */
+  volatile size_t       q_counter;  /**< @brief Resources counter.          */
   uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
   uint8_t               *q_top;     /**< @brief Pointer to the first location
                                                 after the buffer.           */

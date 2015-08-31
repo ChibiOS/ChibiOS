@@ -77,10 +77,11 @@
 *** 2.6.9 ***
 - NEW: Added files for Core407V board.
 - FIX: Removed call to localtime_r() for non-GNU compilers in chrtclib.c.
-- HAL: Fixed duplicated doxygen tag in STM32F4xx hal_lld.h file (bug #621).
-- HAL: Fixed wrong check in canReceive() (bug #619).
-- HAL: Fixed wrong EXTI[18] vector number on STM32F373 (bug #618).
-- HAL: Fixed wrong check on STM32_LSE_ENABLED definition in STM32L1xx HAL port
+- FIX: Fixed volatile variable issue in I/O queues, both RT and HAL (bug #640).
+- FIX: Fixed duplicated doxygen tag in STM32F4xx hal_lld.h file (bug #621).
+- FIX: Fixed wrong check in canReceive() (bug #619).
+- FIX: Fixed wrong EXTI[18] vector number on STM32F373 (bug #618).
+- FIX: Fixed wrong check on STM32_LSE_ENABLED definition in STM32L1xx HAL port
        (bug #617).
 - FIX: SPE-related issue in e200z ports (bug #607).
 - FIX: Fixed wrong macro names in STM32F0xx HAL driver (bug #605).
