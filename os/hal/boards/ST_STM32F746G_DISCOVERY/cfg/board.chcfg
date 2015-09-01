@@ -1292,13 +1292,13 @@
         Mode="Alternate"
         Alternate="14" />
       <pin12
-        ID="LCD_B0"
+        ID="OTG_FS_VBUS"
         Type="PushPull"
         Speed="Minimum"
         Resistor="Floating"
         Level="High"
-        Mode="Alternate"
-        Alternate="14" />
+        Mode="Input"
+        Alternate="0" />
       <pin13
         ID="LCD_B1"
         Type="PushPull"

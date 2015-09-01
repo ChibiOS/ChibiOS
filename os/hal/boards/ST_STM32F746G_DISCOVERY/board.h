@@ -225,7 +225,7 @@
 #define GPIOJ_LCD_G2                9U
 #define GPIOJ_LCD_G3                10U
 #define GPIOJ_LCD_G4                11U
-#define GPIOJ_LCD_B0                12U
+#define GPIOJ_OTG_FS_VBUS           12U
 #define GPIOJ_LCD_B1                13U
 #define GPIOJ_LCD_B2                14U
 #define GPIOJ_LCD_B3                15U
@@ -1337,7 +1337,7 @@
  * PJ9  - LCD_G2                    (alternate 14).
  * PJ10 - LCD_G3                    (alternate 14).
  * PJ11 - LCD_G4                    (alternate 14).
- * PJ12 - LCD_B0                    (alternate 14).
+ * PJ12 - OTG_FS_VBUS               (input floating).
  * PJ13 - LCD_B1                    (alternate 14).
  * PJ14 - LCD_B2                    (alternate 14).
  * PJ15 - LCD_B3                    (alternate 14).
@@ -1354,7 +1354,7 @@
                                      PIN_MODE_ALTERNATE(GPIOJ_LCD_G2) |     \
                                      PIN_MODE_ALTERNATE(GPIOJ_LCD_G3) |     \
                                      PIN_MODE_ALTERNATE(GPIOJ_LCD_G4) |     \
-                                     PIN_MODE_ALTERNATE(GPIOJ_LCD_B0) |     \
+                                     PIN_MODE_INPUT(GPIOJ_OTG_FS_VBUS) |    \
                                      PIN_MODE_ALTERNATE(GPIOJ_LCD_B1) |     \
                                      PIN_MODE_ALTERNATE(GPIOJ_LCD_B2) |     \
                                      PIN_MODE_ALTERNATE(GPIOJ_LCD_B3))
@@ -1370,7 +1370,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOJ_LCD_G2) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOJ_LCD_G3) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOJ_LCD_G4) |     \
-                                     PIN_OTYPE_PUSHPULL(GPIOJ_LCD_B0) |     \
+                                     PIN_OTYPE_PUSHPULL(GPIOJ_OTG_FS_VBUS) |\
                                      PIN_OTYPE_PUSHPULL(GPIOJ_LCD_B1) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOJ_LCD_B2) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOJ_LCD_B3))
@@ -1386,7 +1386,7 @@
                                      PIN_OSPEED_VERYLOW(GPIOJ_LCD_G2) |     \
                                      PIN_OSPEED_VERYLOW(GPIOJ_LCD_G3) |     \
                                      PIN_OSPEED_VERYLOW(GPIOJ_LCD_G4) |     \
-                                     PIN_OSPEED_VERYLOW(GPIOJ_LCD_B0) |     \
+                                     PIN_OSPEED_VERYLOW(GPIOJ_OTG_FS_VBUS) |\
                                      PIN_OSPEED_VERYLOW(GPIOJ_LCD_B1) |     \
                                      PIN_OSPEED_VERYLOW(GPIOJ_LCD_B2) |     \
                                      PIN_OSPEED_VERYLOW(GPIOJ_LCD_B3))
@@ -1402,7 +1402,7 @@
                                      PIN_PUPDR_FLOATING(GPIOJ_LCD_G2) |     \
                                      PIN_PUPDR_FLOATING(GPIOJ_LCD_G3) |     \
                                      PIN_PUPDR_FLOATING(GPIOJ_LCD_G4) |     \
-                                     PIN_PUPDR_FLOATING(GPIOJ_LCD_B0) |     \
+                                     PIN_PUPDR_FLOATING(GPIOJ_OTG_FS_VBUS) |\
                                      PIN_PUPDR_FLOATING(GPIOJ_LCD_B1) |     \
                                      PIN_PUPDR_FLOATING(GPIOJ_LCD_B2) |     \
                                      PIN_PUPDR_FLOATING(GPIOJ_LCD_B3))
@@ -1418,7 +1418,7 @@
                                      PIN_ODR_HIGH(GPIOJ_LCD_G2) |           \
                                      PIN_ODR_HIGH(GPIOJ_LCD_G3) |           \
                                      PIN_ODR_HIGH(GPIOJ_LCD_G4) |           \
-                                     PIN_ODR_HIGH(GPIOJ_LCD_B0) |           \
+                                     PIN_ODR_HIGH(GPIOJ_OTG_FS_VBUS) |      \
                                      PIN_ODR_HIGH(GPIOJ_LCD_B1) |           \
                                      PIN_ODR_HIGH(GPIOJ_LCD_B2) |           \
                                      PIN_ODR_HIGH(GPIOJ_LCD_B3))
@@ -1434,7 +1434,7 @@
                                      PIN_AFIO_AF(GPIOJ_LCD_G2, 14) |        \
                                      PIN_AFIO_AF(GPIOJ_LCD_G3, 14) |        \
                                      PIN_AFIO_AF(GPIOJ_LCD_G4, 14) |        \
-                                     PIN_AFIO_AF(GPIOJ_LCD_B0, 14) |        \
+                                     PIN_AFIO_AF(GPIOJ_OTG_FS_VBUS, 0) |    \
                                      PIN_AFIO_AF(GPIOJ_LCD_B1, 14) |        \
                                      PIN_AFIO_AF(GPIOJ_LCD_B2, 14) |        \
                                      PIN_AFIO_AF(GPIOJ_LCD_B3, 14))
