@@ -388,8 +388,11 @@ static inline void port_init(void) {
   /* Initializing priority grouping.*/
   NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
 
-  /* DWT cycle counter enable.*/
+  /* DWT cycle counter enable, note, the M7 requires DWT unlocking.*/
   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+#if CORTEX_MODEL == 7
+  DWT->LAR = 0xC5ACCE55;
+#endif
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
   /* Initialization of the system vectors used by the port.*/

@@ -389,6 +389,9 @@ static inline void port_init(void) {
 
   /* DWT cycle counter enable.*/
   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+#if CORTEX_MODEL == 7
+  DWT->LAR = 0xC5ACCE55;
+#endif
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
   /* Initialization of the system vectors used by the port.*/
