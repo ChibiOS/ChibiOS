@@ -846,12 +846,16 @@ void usb_lld_start(USBDriver *usbp) {
     /* PHY enabled.*/
     otgp->PCGCCTL = 0;
 
-    /* Internal FS PHY activation.*/
-#if defined(BOARD_OTG_NOVBUSSENS)
-    otgp->GCCFG = GCCFG_NOVBUSSENS | GCCFG_VBUSASEN | GCCFG_VBUSBSEN |
-                  GCCFG_PWRDWN;
+    /* VBUS sensing and transceiver enabled.*/
+    otgp->GOTGCTL = GOTGCTL_BVALOEN | GOTGCTL_BVALOVAL;
+#if defined(STM32F7XX)
+    otgp->GCCFG = GCCFG_PWRDWN;
 #else
-    otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
+#if defined(BOARD_OTG_NOVBUSSENS)
+    otgp->GCCFG = GCCFG_NOVBUSSENS | GCCFG_PWRDWN;
+#else
+    otgp->GCCFG = GCCFG_PWRDWN;
+#endif
 #endif
 
     /* Soft core reset.*/

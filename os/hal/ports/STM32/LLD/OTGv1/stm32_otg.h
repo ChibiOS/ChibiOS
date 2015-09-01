@@ -189,10 +189,17 @@ typedef struct {
 #define GOTGCTL_ASVLD           (1U<<18)    /**< A-Session Valid.           */
 #define GOTGCTL_DBCT            (1U<<17)    /**< Long/Short debounce time.  */
 #define GOTGCTL_CIDSTS          (1U<<16)    /**< Connector ID status.       */
+#define GOTGCTL_EHEN            (1U<<12)
 #define GOTGCTL_DHNPEN          (1U<<11)    /**< Device HNP enabled.        */
 #define GOTGCTL_HSHNPEN         (1U<<10)    /**< Host Set HNP enable.       */
 #define GOTGCTL_HNPRQ           (1U<<9)     /**< HNP request.               */
 #define GOTGCTL_HNGSCS          (1U<<8)     /**< Host negotiation success.  */
+#define GOTGCTL_BVALOVAL        (1U<<7)
+#define GOTGCTL_BVALOEN         (1U<<6)
+#define GOTGCTL_AVALOVAL        (1U<<5)
+#define GOTGCTL_AVALOEN         (1U<<4)
+#define GOTGCTL_VBVALOVAL       (1U<<3)
+#define GOTGCTL_VBVALOEN        (1U<<2)
 #define GOTGCTL_SRQ             (1U<<1)     /**< Session request.           */
 #define GOTGCTL_SRQSCS          (1U<<0)     /**< Session request success.   */
 /** @} */

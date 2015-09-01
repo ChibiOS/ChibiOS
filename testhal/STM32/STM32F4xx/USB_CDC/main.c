@@ -486,17 +486,6 @@ int main(void) {
   usbConnectBus(serusbcfg.usbp);
 
   /*
-   * Stopping and restarting the USB in order to test the stop procedure. The
-   * following lines are not usually required.
-   */
-  chThdSleepMilliseconds(3000);
-  usbDisconnectBus(serusbcfg.usbp);
-  usbStop(serusbcfg.usbp);
-  chThdSleepMilliseconds(1500);
-  usbStart(serusbcfg.usbp, &usbcfg);
-  usbConnectBus(serusbcfg.usbp);
-
-  /*
    * Shell manager initialization.
    */
   shellInit();
