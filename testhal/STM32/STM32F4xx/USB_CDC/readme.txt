@@ -4,7 +4,8 @@
 
 ** TARGET **
 
-The demo runs on an Olimex STM32-E407 board.
+The demo runs on both Olimex STM32-E407 or STM32F4-Discovery boards, just
+change the board reference in the Makefile.
 
 ** The Demo **
 

@@ -501,14 +501,22 @@ struct USBDriver {
  *
  * @api
  */
+#if defined(STM32F7XX) || defined(__DOXYGEN__)
 #define usb_lld_connect_bus(usbp) ((usbp)->otg->DCTL &= ~DCTL_SDIS)
+#else
+#define usb_lld_connect_bus(usbp) ((usbp)->otg->GCCFG |= GCCFG_VBUSBSEN)
+#endif
 
 /**
  * @brief   Disconnect the USB device.
  *
  * @api
  */
+#if defined(STM32F7XX) || defined(__DOXYGEN__)
 #define usb_lld_disconnect_bus(usbp) ((usbp)->otg->DCTL |= DCTL_SDIS)
+#else
+#define usb_lld_disconnect_bus(usbp) ((usbp)->otg->GCCFG &= ~GCCFG_VBUSBSEN)
+#endif
 
 /*===========================================================================*/
 /* External declarations.                                                    */

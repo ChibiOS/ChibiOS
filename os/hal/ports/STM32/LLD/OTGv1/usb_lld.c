@@ -852,9 +852,10 @@ void usb_lld_start(USBDriver *usbp) {
     otgp->GCCFG = GCCFG_PWRDWN;
 #else
 #if defined(BOARD_OTG_NOVBUSSENS)
-    otgp->GCCFG = GCCFG_NOVBUSSENS | GCCFG_PWRDWN;
+    otgp->GCCFG = GCCFG_NOVBUSSENS | GCCFG_VBUSASEN | GCCFG_VBUSBSEN |
+                  GCCFG_PWRDWN;
 #else
-    otgp->GCCFG = GCCFG_PWRDWN;
+    otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
 #endif
 #endif
 
