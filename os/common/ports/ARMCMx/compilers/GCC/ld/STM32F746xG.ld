@@ -23,15 +23,16 @@
  */
 MEMORY
 {
-    flash : org = 0x08000000, len = 1M
-    ram0  : org = 0x20010000, len = 256k    /* SRAM1 + SRAM2 */
-    ram1  : org = 0x20010000, len = 240k    /* SRAM1 */
-    ram2  : org = 0x2004C000, len = 16k     /* SRAM2 */
-    ram3  : org = 0x20000000, len = 64k     /* DTCM-RAM */
-    ram4  : org = 0x00000000, len = 16k     /* ITCM-RAM */
-    ram5  : org = 0x40024000, len = 4k      /* BCKP SRAM */
-    ram6  : org = 0x00000000, len = 0
-    ram7  : org = 0x00000000, len = 0
+    flash       : org = 0x08000000, len = 1M
+    flash_itcm  : org = 0x00200000, len = 1M
+    ram0        : org = 0x20010000, len = 256k    /* SRAM1 + SRAM2 */
+    ram1        : org = 0x20010000, len = 240k    /* SRAM1 */
+    ram2        : org = 0x2004C000, len = 16k     /* SRAM2 */
+    ram3        : org = 0x20000000, len = 64k     /* DTCM-RAM */
+    ram4        : org = 0x00000000, len = 16k     /* ITCM-RAM */
+    ram5        : org = 0x40024000, len = 4k      /* BCKP SRAM */
+    ram6        : org = 0x00000000, len = 0
+    ram7        : org = 0x00000000, len = 0
 }
 
 /* RAM region to be used for Main stack. This stack accommodates the processing
@@ -48,4 +49,7 @@ REGION_ALIAS("DATA_RAM", ram0);
 /* RAM region to be used for BSS segment.*/
 REGION_ALIAS("BSS_RAM", ram0);
 
-INCLUDE rules.ld
+/* RAM region to be used for DMA segment.*/
+REGION_ALIAS("DMA_RAM", ram0);
+
+INCLUDE ld/rules_STM32F7xx.ld

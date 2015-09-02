@@ -185,10 +185,6 @@ int main(void) {
                 PAL_MODE_OUTPUT_PUSHPULL);          /* CS1.                 */
 
   /*
-   * Prepare transmit pattern.
-   */
-
-  /*
    * Starting the transmitter and receiver threads.
    */
   chThdCreateStatic(spi_thread_1_wa, sizeof(spi_thread_1_wa),

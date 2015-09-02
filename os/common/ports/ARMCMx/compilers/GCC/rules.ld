@@ -52,7 +52,7 @@ SECTIONS
     startup : ALIGN(16) SUBALIGN(16)
     {
         KEEP(*(.vectors))
-    } > flash
+    } > flash_itcm AT > flash
 
     constructors : ALIGN(4) SUBALIGN(4)
     {
@@ -60,7 +60,7 @@ SECTIONS
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
         PROVIDE(__init_array_end = .);
-    } > flash
+    } > flash_itcm AT > flash
 
     destructors : ALIGN(4) SUBALIGN(4)
     {
@@ -68,7 +68,7 @@ SECTIONS
         KEEP(*(.fini_array))
         KEEP(*(SORT(.fini_array.*)))
         PROVIDE(__fini_array_end = .);
-    } > flash
+    } > flash_itcm AT > flash
 
     .text : ALIGN(16) SUBALIGN(16)
     {
@@ -79,33 +79,33 @@ SECTIONS
         *(.glue_7t)
         *(.glue_7)
         *(.gcc*)
-    } > flash
+    } > flash_itcm AT > flash
 
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > flash
+    } > flash_itcm AT > flash
 
     .ARM.exidx : {
         PROVIDE(__exidx_start = .);
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         PROVIDE(__exidx_end = .);
-     } > flash
+     } > flash_itcm AT > flash
 
     .eh_frame_hdr :
     {
         *(.eh_frame_hdr)
-    } > flash
+    } > flash_itcm AT > flash
 
     .eh_frame : ONLY_IF_RO
     {
         *(.eh_frame)
-    } > flash
-    
+    } > flash_itcm AT > flash
+
     .textalign : ONLY_IF_RO
     {
         . = ALIGN(8);
-    } > flash
+    } > flash_itcm AT > flash
 
     . = ALIGN(4);
     _etext = .;

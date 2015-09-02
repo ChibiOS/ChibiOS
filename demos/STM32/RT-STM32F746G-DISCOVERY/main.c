@@ -20,7 +20,7 @@
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
- * a LED attached to TP1.
+ * a LED.
  */
 static THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
@@ -28,9 +28,9 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palSetPad(GPIOH, GPIOH_TP1);
+    palSetPad(GPIOI, GPIOI_ARD_D13);
     chThdSleepMilliseconds(500);
-    palClearPad(GPIOH, GPIOH_TP1);
+    palClearPad(GPIOI, GPIOI_ARD_D13);
     chThdSleepMilliseconds(500);
   }
 }
@@ -49,6 +49,12 @@ int main(void) {
    */
   halInit();
   chSysInit();
+
+  /*
+   * GPIOI1 is programmed as output (board LED).
+   */
+  palClearPad(GPIOI, GPIOI_ARD_D13);
+  palSetPadMode(GPIOI, GPIOI_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
