@@ -576,10 +576,11 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @special
  */
 #define dmaStreamDisable(dmastp) {                                          \
-  (dmastp)->stream->CR &= ~STM32_DMA_CR_EN;                                 \
-  while (((dmastp)->stream->CR & STM32_DMA_CR_EN) != 0U)                    \
+  (dmastp)->stream->CR &= ~(STM32_DMA_CR_TCIE | STM32_DMA_CR_HTIE  |        \
+                            STM32_DMA_CR_TEIE | STM32_DMA_CR_DMEIE |        \
+                            STM32_DMA_CR_EN);                               \
+  while (((dmastp)->stream->CR & STM32_DMA_CR_EN) != 0)                     \
     ;                                                                       \
-  (dmastp)->stream->CR = STM32_DMA_CR_RESET_VALUE;                          \
   dmaStreamClearInterrupt(dmastp);                                          \
 }
 
