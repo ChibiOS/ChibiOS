@@ -682,6 +682,7 @@ typedef struct {
 #define DSTS_ENUMSPD_MASK       (3U<<1)     /**< Enumerated speed mask.     */
 #define DSTS_ENUMSPD_FS_48      (3U<<1)     /**< Full speed (PHY clock is
                                                  running at 48 MHz).        */
+#define DSTS_ENUMSPD_HS_480     (0U<<1)     /**< High speed.                */
 #define DSTS_SUSPSTS            (1U<<0)     /**< Suspend status.            */
 /** @} */
 

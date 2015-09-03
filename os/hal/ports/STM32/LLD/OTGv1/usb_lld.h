@@ -101,6 +101,15 @@
 #endif
 
 /**
+ * @brief   Enables HS mode on OTG2 else FS mode.
+ * @note    The default is @p TRUE.
+ * @note    Has effect only if @p BOARD_OTG2_USES_ULPI is defined.
+ */
+#if !defined(STM32_USE_USB_OTG2_HS) || defined(__DOXYGEN__)
+#define STM32_USE_USB_OTG2_HS               TRUE
+#endif
+
+/**
  * @brief   Dedicated data pump threads priority.
  */
 #if !defined(STM32_USB_OTG_THREAD_PRIO) || defined(__DOXYGEN__)

@@ -32,10 +32,23 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define TRDT_VALUE              5
+#define TRDT_VALUE_FS           5
+#define TRDT_VALUE_HS           9
 
 #define EP0_MAX_INSIZE          64
 #define EP0_MAX_OUTSIZE         64
+
+#if defined(STM32F7XX)
+#define GCCFG_INIT_VALUE        GCCFG_PWRDWN
+#else
+#if defined(BOARD_OTG_NOVBUSSENS)
+#define GCCFG_INIT_VALUE        (GCCFG_NOVBUSSENS | GCCFG_VBUSASEN |        \
+                                 GCCFG_VBUSBSEN | GCCFG_PWRDWN)
+#else
+#define GCCFG_INIT_VALUE        (GCCFG_VBUSASEN | GCCFG_VBUSBSEN |          \
+                                 GCCFG_PWRDWN)
+#endif
+#endif
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -481,7 +494,7 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
 static bool otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
 
   /* The TXFIFO is filled until there is space and data to be transmitted.*/
-  while (TRUE) {
+  while (true) {
     uint32_t n;
 
     /* Transaction end condition.*/
@@ -628,6 +641,24 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
   sts &= otgp->GINTMSK;
   otgp->GINTSTS = sts;
 
+  /* Wake-up handling.*/
+  if (sts & GINTSTS_WKUPINT) {
+    /* If clocks are gated off, turn them back on (may be the case if
+       coming out of suspend mode).*/
+    if (otgp->PCGCCTL & (PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK)) {
+      /* Set to zero to un-gate the USB core clocks.*/
+      otgp->PCGCCTL &= ~(PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK);
+    }
+
+    /* Clear the Remote Wake-up Signaling.*/
+    otgp->DCTL |= DCTL_RWUSIG;
+  }
+
+  /* Suspend handling.*/
+  if (sts & GINTSTS_USBSUSP) {
+    /* TODO: Implement suspend mode.*/
+  }
+
   /* Reset interrupt handling.*/
   if (sts & GINTSTS_USBRST) {
     _usb_reset(usbp);
@@ -636,7 +667,15 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   /* Enumeration done.*/
   if (sts & GINTSTS_ENUMDNE) {
-    (void)otgp->DSTS;
+    /* Full or High speed timing selection.*/
+    if ((otgp->DSTS & DSTS_ENUMSPD_MASK) == DSTS_ENUMSPD_HS_480) {
+      otgp->GUSBCFG = (otgp->GUSBCFG & ~(GUSBCFG_TRDT_MASK)) |
+                      GUSBCFG_TRDT(TRDT_VALUE_HS);
+    }
+    else {
+      otgp->GUSBCFG = (otgp->GUSBCFG & ~(GUSBCFG_TRDT_MASK)) |
+                      GUSBCFG_TRDT(TRDT_VALUE_FS);
+    }
   }
 
   /* SOF interrupt handling.*/
@@ -808,55 +847,95 @@ void usb_lld_start(USBDriver *usbp) {
 
   if (usbp->state == USB_STOP) {
     /* Clock activation.*/
+
 #if STM32_USB_USE_OTG1
     if (&USBD1 == usbp) {
       /* OTG FS clock enable and reset.*/
-      rccEnableOTG_FS(FALSE);
+      rccEnableOTG_FS(false);
       rccResetOTG_FS();
 
       /* Enables IRQ vector.*/
       nvicEnableVector(STM32_OTG1_NUMBER, STM32_USB_OTG1_IRQ_PRIORITY);
+
+      /* - Forced device mode.
+         - USB turn-around time = TRDT_VALUE_FS.
+         - Full Speed 1.1 PHY.*/
+      otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE_FS) |
+                      GUSBCFG_PHYSEL;
+
+      /* 48MHz 1.1 PHY.*/
+      otgp->DCFG = 0x02200000 | DCFG_DSPD_FS11;
     }
 #endif
+
 #if STM32_USB_USE_OTG2
     if (&USBD2 == usbp) {
       /* OTG HS clock enable and reset.*/
-      rccEnableOTG_HS(FALSE);
+      rccEnableOTG_HS(false);
       rccResetOTG_HS();
 
+      /* ULPI clock is managed depending on the presence of an external
+         PHY.*/
+#if defined(BOARD_OTG2_USES_ULPI)
+      rccEnableOTG_HSULPI(true);
+#else
       /* Workaround for the problem described here:
-         http://forum.chibios.org/phpbb/viewtopic.php?f=16&t=1798 */
-      rccDisableOTG_HSULPI(TRUE);
+         http://forum.chibios.org/phpbb/viewtopic.php?f=16&t=1798.*/
+      rccDisableOTG_HSULPI(true);
+#endif
 
       /* Enables IRQ vector.*/
       nvicEnableVector(STM32_OTG2_NUMBER, STM32_USB_OTG2_IRQ_PRIORITY);
+
+      /* - Forced device mode.
+         - USB turn-around time = TRDT_VALUE_HS or TRDT_VALUE_FS.*/
+#if defined(BOARD_OTG2_USES_ULPI)
+      /* High speed ULPI PHY.*/
+      otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE_HS) | /*XXXXXXXXXXX*/
+                      GUSBCFG_SRPCAP | GUSBCFG_HNPCAP;
+#else
+      otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE_FS) |
+                      GUSBCFG_PHYSEL;
+#endif
+
+#if defined(BOARD_OTG2_USES_ULPI)
+#if STM32_USE_USB_OTG2_HS
+      /* USB 2.0 High Speed PHY in HS mode.*/
+      otgp->DCFG = 0x02200000 | DCFG_DSPD_HS;
+#else
+      /* USB 2.0 High Speed PHY in FS mode.*/
+      otgp->DCFG = 0x02200000 | DCFG_DSPD_HS_FS;
+#endif
+#else
+      /* 48MHz 1.1 PHY.*/
+      otgp->DCFG = 0x02200000 | DCFG_DSPD_FS11;
+#endif
     }
 #endif
 
+    /* Clearing mask of TXFIFOs to be filled.*/
     usbp->txpending = 0;
-
-    /* - Forced device mode.
-       - USB turn-around time = TRDT_VALUE.
-       - Full Speed 1.1 PHY.*/
-    otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE) | GUSBCFG_PHYSEL;
-
-    /* 48MHz 1.1 PHY.*/
-    otgp->DCFG = 0x02200000 | DCFG_DSPD_FS11;
 
     /* PHY enabled.*/
     otgp->PCGCCTL = 0;
 
     /* VBUS sensing and transceiver enabled.*/
     otgp->GOTGCTL = GOTGCTL_BVALOEN | GOTGCTL_BVALOVAL;
-#if defined(STM32F7XX)
-    otgp->GCCFG = GCCFG_PWRDWN;
-#else
-#if defined(BOARD_OTG_NOVBUSSENS)
-    otgp->GCCFG = GCCFG_NOVBUSSENS | GCCFG_VBUSASEN | GCCFG_VBUSBSEN |
-                  GCCFG_PWRDWN;
-#else
-    otgp->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN;
+
+#if defined(BOARD_OTG2_USES_ULPI)
+#if STM32_USB_USE_OTG1
+    if (&USBD1 == usbp) {
+      otgp->GCCFG = GCCFG_INIT_VALUE;
+    }
 #endif
+
+#if STM32_USB_USE_OTG2
+    if (&USBD2 == usbp) {
+      otgp->GCCFG = 0;
+    }
+#endif
+#else
+    otgp->GCCFG = GCCFG_INIT_VALUE;
 #endif
 
     /* Soft core reset.*/
@@ -874,12 +953,15 @@ void usb_lld_start(USBDriver *usbp) {
     otgp->DOEPMSK  = 0;
     otgp->DAINTMSK = 0;
     if (usbp->config->sof_cb == NULL)
-      otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM /*| GINTMSK_USBSUSPM |
-                       GINTMSK_ESUSPM  |*/;
+      otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM | GINTMSK_USBSUSPM |
+                       GINTMSK_ESUSPM | GINTMSK_SRQM | GINTMSK_WKUM;
     else
-      otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM /*| GINTMSK_USBSUSPM |
-                       GINTMSK_ESUSPM */ | GINTMSK_SOFM;
-    otgp->GINTSTS  = 0xFFFFFFFF;         /* Clears all pending IRQs, if any. */
+      otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM | GINTMSK_USBSUSPM |
+                       GINTMSK_ESUSPM | GINTMSK_SRQM | GINTMSK_WKUM |
+                       GINTMSK_SOFM;
+
+    /* Clears all pending IRQs, if any. */
+    otgp->GINTSTS  = 0xFFFFFFFF;
 
 #if defined(_CHIBIOS_RT_)
     /* Creates the data pump thread. Note, it is created only once.*/
@@ -923,14 +1005,17 @@ void usb_lld_stop(USBDriver *usbp) {
 #if STM32_USB_USE_OTG1
     if (&USBD1 == usbp) {
       nvicDisableVector(STM32_OTG1_NUMBER);
-      rccDisableOTG_FS(FALSE);
+      rccDisableOTG_FS(false);
     }
 #endif
 
 #if STM32_USB_USE_OTG2
     if (&USBD2 == usbp) {
       nvicDisableVector(STM32_OTG2_NUMBER);
-      rccDisableOTG_HS(FALSE);
+      rccDisableOTG_HS(false);
+#if defined(BOARD_OTG2_USES_ULPI)
+      rccDisableOTG_HSULPI(true)
+#endif
     }
 #endif
   }
