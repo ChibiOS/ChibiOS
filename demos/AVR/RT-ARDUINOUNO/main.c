@@ -17,9 +17,14 @@
 #include "ch.h"
 #include "hal.h"
 
+#define PC_DEMO
+
+#if defined(LED_DEMO)
+ /*
+  * Timed Blinking Thread.
+  */
 static WORKING_AREA(waThread1, 32);
 static THD_FUNCTION(Thread1, arg) {
-
   (void)arg;
   chRegSetThreadName("Blinker");
   while (true) {
@@ -27,12 +32,89 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(1000);
   }
 }
+#else
 
+BSEMAPHORE_DECL(sem, 0);
+
+ /*
+  * Semaphore Driven Thread.
+  */
+static WORKING_AREA(waThread2, 32);
+static THD_FUNCTION(Thread2, arg) {
+  (void)arg;
+  while (true) {
+    chBSemWait(&sem);
+    palTogglePad(IOPORT2, PORTB_LED1);
+  }
+}
+
+
+#if defined(EXT_DEMO)
+ /*
+  * External Interrupt Callback.
+  */
+void ext_isr_cb(EXTDriver *extp, expchannel_t channel) {
+  chSysLockFromISR();
+  if (channel == EXT_INT0_CHANNEL) {
+    chBSemSignalI(&sem);
+  }
+  else if (channel == EXT_INT1_CHANNEL) {
+  }
+  chSysUnlockFromISR();
+}
+
+
+ /*
+  * Configuration for EXT mode
+  */
+const EXTConfig ext_cfg = {
+  .channels = {
+    [EXT_INT0_CHANNEL] = {
+      .mode = EXT_CH_MODE_BOTH_EDGES | EXT_CH_MODE_INTERNAL_PULLUP |
+              EXT_CH_MODE_AUTOSTART,
+      .cb = ext_isr_cb,
+    },
+    [EXT_INT1_CHANNEL] = {
+      .mode = EXT_CH_MODE_BOTH_EDGES | EXT_CH_MODE_INTERNAL_PULLUP |
+              EXT_CH_MODE_AUTOSTART,
+      .cb = ext_isr_cb,
+    },
+  },
+};
+
+#elif defined(PC_DEMO)
+ /*
+  * Pin Change Interrupt Callback.
+  */
+void pc_isr_cb(PCDriver *pcp, pcchannel_t channel) {
+  chSysLockFromISR();
+  uint8_t changes =  pcp->current_values[channel] ^ pcp->old_values[channel];
+  for (uint8_t i = 0; i < 8; i++)
+    if (changes & _BV(i))
+      chBSemSignalI(&sem);
+  chSysUnlockFromISR();
+}
+
+
+
+
+ /*
+  * Configuration for PC mode
+  */
+PCConfig pc_cfg = {
+  .enabled = {},
+  .cb = {[0] = pc_isr_cb,
+         [1] = pc_isr_cb,
+         [2] = pc_isr_cb},
+};
+
+#endif
+#endif
 /*
  * Application entry point.
  */
-int main(void) {
 
+int main(void) {
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -49,14 +131,22 @@ int main(void) {
    * Activates the serial driver 1 using the driver default configuration.
    */
   sdStart(&SD1, NULL);
-
-  /*
-   * Starts the LED blinker thread.
-   */
+#if defined(LED_DEMO)
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-
-  chnWrite(&SD1, (const uint8_t *)"Hello World!\r\n", 14);
+#else
+  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
+  #if defined(EXT_DEMO)
+    extStart(&EXTD1, &ext_cfg);
+  #elif defined(PC_DEMO)
+    pcStart(&PCD1, &pc_cfg);
+    pcChannelEnable(&PCD1, 8);
+    pcChannelEnable(&PCD1, 9);
+    pcChannelEnable(&PCD1, 10);
+    pcChannelEnable(&PCD1, 11);
+  #endif
+#endif
   while(TRUE) {
+    chnWrite(&SD1, (const uint8_t *)"Hello World!\r\n", 14);
     chThdSleepMilliseconds(1000);
   }
 }
