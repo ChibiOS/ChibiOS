@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- VAR: Improved GCC rules.ld, now it is possible to assign the heap to any
+       of the available RAM regions.
 - HAL: STM32 GPT, ICU and PWM driver enhancements. Now it is possible to
        suppress default ISRs by defining STM32_TIMx_SUPPRESS_ISR.
        The application is now able to define custom handlers if required

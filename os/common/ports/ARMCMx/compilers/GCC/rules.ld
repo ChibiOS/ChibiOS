@@ -224,9 +224,13 @@ SECTIONS
         . = ALIGN(4);
         __ram7_free__ = .;
     } > ram7
-}
 
-/* Heap default boundaries, it is defaulted to be the non-used part
-   of ram0 region.*/
-__heap_base__   = __ram0_free__;
-__heap_end__    = __ram0_end__;
+    /* The default heap uses the (statically) unused part of a RAM section.*/
+    .heap (NOLOAD) :
+    {
+        . = ALIGN(8);
+        __heap_base__ = .;
+        . = ORIGIN(HEAP_RAM) + LENGTH(HEAP_RAM);
+        __heap_end__ = .;
+    } > HEAP_RAM
+}
