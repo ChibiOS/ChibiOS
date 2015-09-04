@@ -27,7 +27,7 @@
 #include "usbcfg.h"
 
 /* Virtual serial port over USB.*/
-SerialUSBDriver SDU1;
+SerialUSBDriver SDU2;
 
 /*===========================================================================*/
 /* Command line related.                                                     */
@@ -113,7 +113,7 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chSequentialStreamWrite(&SDU1, buf, sizeof buf - 1);
+    chSequentialStreamWrite(&SDU2, buf, sizeof buf - 1);
   }
   chprintf(chp, "\r\n\nstopped\r\n");
 }
@@ -127,7 +127,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SDU1,
+  (BaseSequentialStream *)&SDU2,
   commands
 };
 
@@ -173,8 +173,8 @@ int main(void) {
   /*
    * Initializes a serial-over-USB CDC driver.
    */
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
+  sduObjectInit(&SDU2);
+  sduStart(&SDU2, &serusbcfg);
 
   /*
    * GPIOI1 is programmed as output (board LED).
@@ -207,7 +207,7 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    if (!shelltp && (SDU1.config->usbp->state == USB_ACTIVE))
+    if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE))
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     else if (chThdTerminatedX(shelltp)) {
       chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
