@@ -128,29 +128,22 @@ void hal_lld_init(void) {
 
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
+#endif
 
-#if 0 /*defined(STM32F7XX)*/
-  /* If the DMA is in use then the DMA-accessible RAM must be programmed as
-     Write Through using the MPU, region zero is used with a size of 512kB,
-     the sub-regions are programmed as follow:
-     - 0,,   disabled, it is the normal the DTCM RAM.
-     - 1..4, enabled, it is the normal, DMA-accessible, RAM.
-     - 5..7, disabled, beyond RAM area.
-     The system memory layout is used as "background" for the MPU regions.*/
-  mpuConfigureRegion(MPU_REGION_0,
-                     0x20000000U,
+#if STM32_SRAM2_NOCACHE
+  /* The SRAM2 bank can optionally made a non cache-able area for use by
+     DMA engines.*/
+  mpuConfigureRegion(MPU_REGION_7,
+                     0x2004C000U,
                      MPU_RASR_ATTR_AP_RW_RW |
-                     MPU_RASR_ATTR_CACHEABLE_WT_NWA |
-                     MPU_RASR_SRD_DISABLE_SUB0 | MPU_RASR_SRD_DISABLE_SUB5 |
-                     MPU_RASR_SRD_DISABLE_SUB6 | MPU_RASR_SRD_DISABLE_SUB7 |
-                     MPU_RASR_SIZE_512K |
+                     MPU_RASR_ATTR_NON_CACHEABLE |
+                     MPU_RASR_SIZE_16K |
                      MPU_RASR_ENABLE);
   mpuEnable(MPU_CTRL_PRIVDEFENA);
 
   /* Invalidating data cache to make sure that the MPU settings are taken
      immediately.*/
   SCB_CleanInvalidateDCache();
-#endif
 #endif
 
   /* Programmable voltage detector enable.*/

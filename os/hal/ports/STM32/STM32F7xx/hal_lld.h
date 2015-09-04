@@ -822,6 +822,14 @@
 #if !defined(STM32_SDMMCSEL) || defined(__DOXYGEN__)
 #define STM32_SDMMCSEL                      STM32_SDMMCSEL_PLL48CLK
 #endif
+
+/**
+ * @brief   SRAM2 cache-ability.
+ * @note    This setting uses the MPU region 7 if at @p TRUE.
+ */
+#if !defined(STM32_SRAM2_NOCACHE) || defined(__DOXYGEN__)
+#define STM32_SRAM2_NOCACHE                 FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/

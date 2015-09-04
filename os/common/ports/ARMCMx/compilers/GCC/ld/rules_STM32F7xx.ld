@@ -109,20 +109,27 @@ SECTIONS
     _etext = .;
     _textdata = _etext;
 
-    /* Special section for DMA-accessible areas, it is desirable to have a
-       separate section of DMA-accessible areas for several reasons:
-       - On devices with cache, the whole region can be declared not cacheable
-         removing issues with cache consistency.
-       - DMA-accessible areas can be placed on a dedicated SRAM bank for
-         improved concurrent accesses.*/
-    .dma (NOLOAD) : ALIGN(4)
+    /* Special section for non cache-able areas.*/
+    .nocache (NOLOAD) : ALIGN(4)
     {
-        *(.dma)
-        *(.dma.*)
-        *(.bss.__dma_*)
+        __nocache_start__ = .;
+        *(.nocache)
+        *(.nocache.*)
+        *(.bss.__nocache_*)
         . = ALIGN(4);
-        __dma_free__ = .;
-    } > DMA_RAM
+        __nocache_end__ = .;
+    } > NOCACHE_RAM
+
+    /* Special section for Ethernet DMA non cache-able areas.*/
+    .ethram (NOLOAD) : ALIGN(4)
+    {
+        __ethram_start__ = .;
+        *(.ethram)
+        *(.ethram.*)
+        *(.bss.__ethram_*)
+        . = ALIGN(4);
+        __ethram_end__ = .;
+    } > ETH_RAM
 
     .mstack :
     {

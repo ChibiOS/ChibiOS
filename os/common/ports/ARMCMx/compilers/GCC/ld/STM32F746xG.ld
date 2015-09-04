@@ -49,7 +49,10 @@ REGION_ALIAS("DATA_RAM", ram0);
 /* RAM region to be used for BSS segment.*/
 REGION_ALIAS("BSS_RAM", ram0);
 
-/* RAM region to be used for DMA segment.*/
-REGION_ALIAS("DMA_RAM", ram0);
+/* RAM region to be used for NOCACHE segment.*/
+REGION_ALIAS("NOCACHE_RAM", ram3);
+
+/* RAM region to be used for ETH segment.*/
+REGION_ALIAS("ETH_RAM", ram3);
 
 INCLUDE ld/rules_STM32F7xx.ld
