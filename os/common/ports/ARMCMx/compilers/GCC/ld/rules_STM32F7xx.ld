@@ -112,7 +112,7 @@ SECTIONS
     /* Special section for non cache-able areas.*/
     .nocache (NOLOAD) : ALIGN(4)
     {
-        __nocache_start__ = .;
+        __nocache_base__ = .;
         *(.nocache)
         *(.nocache.*)
         *(.bss.__nocache_*)
@@ -121,14 +121,14 @@ SECTIONS
     } > NOCACHE_RAM
 
     /* Special section for Ethernet DMA non cache-able areas.*/
-    .ethram (NOLOAD) : ALIGN(4)
+    .eth (NOLOAD) : ALIGN(4)
     {
-        __ethram_start__ = .;
-        *(.ethram)
-        *(.ethram.*)
-        *(.bss.__ethram_*)
+        __eth_base__ = .;
+        *(.eth)
+        *(.eth.*)
+        *(.bss.__eth_*)
         . = ALIGN(4);
-        __ethram_end__ = .;
+        __eth_end__ = .;
     } > ETH_RAM
 
     .mstack :
@@ -256,9 +256,13 @@ SECTIONS
         . = ALIGN(4);
         __ram7_free__ = .;
     } > ram7
-}
 
-/* Heap default boundaries, it is defaulted to be the non-used part
-   of ram0 region.*/
-__heap_base__   = __ram0_free__;
-__heap_end__    = __ram0_end__;
+    /* The default heap uses the (statically) unused part of a RAM section.*/
+    .heap (NOLOAD) :
+    {
+        . = ALIGN(8);
+        __heap_base__ = .;
+        . = ORIGIN(HEAP_RAM) + LENGTH(HEAP_RAM);
+        __heap_end__ = .;
+    } > HEAP_RAM
+}

@@ -48,10 +48,13 @@ REGION_ALIAS("DATA_RAM", ram1);
 /* RAM region to be used for BSS segment.*/
 REGION_ALIAS("BSS_RAM", ram1);
 
-/* RAM region to be used for NOCACHE segment.*/
+/* RAM region to be used for the default heap.*/
+REGION_ALIAS("HEAP_RAM", ram1);
+
+/* RAM region to be used for nocache segment.*/
 REGION_ALIAS("NOCACHE_RAM", ram3);
 
-/* RAM region to be used for ETH segment.*/
+/* RAM region to be used for eth segment.*/
 REGION_ALIAS("ETH_RAM", ram2);
 
 INCLUDE rules_dma.ld
