@@ -18,8 +18,14 @@
 */
 
 /*
- * ST32F746xG memory setup.
- * Note: Use of ram1 and ram2 is mutually exclusive with use of ram0.
+ * ST32F746xG Ethernet setup.
+ * 
+ * RAM1 - Data, Heap.
+ * RAM2 - ETH.
+ * RAM3 - Main Stack, Process Stack, BSS, NOCACHE.
+ *
+ * Notes:
+ * BSS is placed in DTCM RAM in order to simplify DMA buffers management.
  */
 MEMORY
 {
@@ -46,7 +52,7 @@ REGION_ALIAS("PROCESS_STACK_RAM", ram3);
 REGION_ALIAS("DATA_RAM", ram1);
 
 /* RAM region to be used for BSS segment.*/
-REGION_ALIAS("BSS_RAM", ram1);
+REGION_ALIAS("BSS_RAM", ram3);
 
 /* RAM region to be used for the default heap.*/
 REGION_ALIAS("HEAP_RAM", ram1);

@@ -52,10 +52,15 @@ static adcsample_t samples1[ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH];
 size_t nx = 0, ny = 0;
 static void adccallback(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
+#if 0
   /* DMA buffer invalidation because data cache, only invalidating the
-     half buffer just filled.*/
+     half buffer just filled.
+     Only required if the ADC buffer is placed in a cache-able area.*/
   dmaBufferInvalidate(buffer,
                       n * adcp->grpp->num_channels * sizeof (adcsample_t));
+#else
+  (void)adcp;
+#endif
 
   /* Updating counters.*/
   if (samples1 == buffer) {

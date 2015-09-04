@@ -55,14 +55,7 @@ static const SPIConfig ls_spicfg = {
  */
 #define SPI_BUFFERS_SIZE    128U
 
-#if defined(__GNUC__)
-__attribute__((aligned (32)))
-#endif
 static uint8_t txbuf[SPI_BUFFERS_SIZE];
-
-#if defined(__GNUC__)
-__attribute__((aligned (32)))
-#endif
 static uint8_t rxbuf[SPI_BUFFERS_SIZE];
 
 /*===========================================================================*/
@@ -87,7 +80,6 @@ static THD_FUNCTION(spi_thread_1, p) {
     /* Preparing data buffer and flushing cache.*/
     for (i = 0; i < SPI_BUFFERS_SIZE; i++)
       txbuf[i] = (uint8_t)i;
-    dmaBufferFlush(txbuf, SPI_BUFFERS_SIZE);
 
     /* Slave selection and data exchange.*/
     spiSelect(&SPID2);
@@ -95,9 +87,6 @@ static THD_FUNCTION(spi_thread_1, p) {
     spiUnselect(&SPID2);
 
 #if defined(SPI_LOOPBACK)
-    /* Invalidating cache over the buffer then checking the
-       loopback result.*/
-    dmaBufferInvalidate(rxbuf, SPI_BUFFERS_SIZE);
     if (memcmp(txbuf, rxbuf, SPI_BUFFERS_SIZE) != 0)
       chSysHalt("loopback failure");
 #endif
@@ -125,7 +114,6 @@ static THD_FUNCTION(spi_thread_2, p) {
     /* Preparing data buffer and flushing cache.*/
     for (i = 0; i < SPI_BUFFERS_SIZE; i++)
       txbuf[i] = (uint8_t)(128U + i);
-    dmaBufferFlush(txbuf, SPI_BUFFERS_SIZE);
 
     /* Slave selection and data exchange.*/
     spiSelect(&SPID2);
@@ -133,9 +121,6 @@ static THD_FUNCTION(spi_thread_2, p) {
     spiUnselect(&SPID2);
 
 #if defined(SPI_LOOPBACK)
-    /* Invalidating cache over the buffer then checking the
-       loopback result.*/
-    dmaBufferInvalidate(rxbuf, SPI_BUFFERS_SIZE);
     if (memcmp(txbuf, rxbuf, SPI_BUFFERS_SIZE) != 0)
       chSysHalt("loopback failure");
 #endif
