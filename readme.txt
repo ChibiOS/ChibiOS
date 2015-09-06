@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: STM32 OTG buffers and queues do not more require to be aligned in
+       position and size.
 - VAR: Improved GCC rules.ld, now it is possible to assign the heap to any
        of the available RAM regions.
 - HAL: STM32 GPT, ICU and PWM driver enhancements. Now it is possible to

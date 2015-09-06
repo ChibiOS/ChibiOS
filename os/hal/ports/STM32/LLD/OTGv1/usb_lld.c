@@ -230,30 +230,6 @@ static uint32_t otg_ram_alloc(USBDriver *usbp, size_t size) {
 }
 
 /**
- * @brief   Pushes a series of words into a FIFO.
- *
- * @param[in] fifop     pointer to the FIFO register
- * @param[in] buf       pointer to the words buffer, not necessarily word
- *                      aligned
- * @param[in] n         number of words to push
- *
- * @return              A pointer after the last word pushed.
- *
- * @notapi
- */
-static uint8_t *otg_do_push(volatile uint32_t *fifop, uint8_t *buf, size_t n) {
-
-  while (n > 0) {
-    /* Note, this line relies on the Cortex-M3/M4 ability to perform
-       unaligned word accesses and on the LSB-first memory organization.*/
-    *fifop = *((PACKED_VAR uint32_t *)buf);
-    buf += 4;
-    n--;
-  }
-  return buf;
-}
-
-/**
  * @brief   Writes to a TX FIFO.
  *
  * @param[in] fifop     pointer to the FIFO register
@@ -265,8 +241,25 @@ static uint8_t *otg_do_push(volatile uint32_t *fifop, uint8_t *buf, size_t n) {
 static void otg_fifo_write_from_buffer(volatile uint32_t *fifop,
                                        const uint8_t *buf,
                                        size_t n) {
+  uint32_t w;
+  size_t i;
 
-  otg_do_push(fifop, (uint8_t *)buf, (n + 3) / 4);
+  /* Pushing all complete words.*/
+  i = 0;
+  w = 0;
+  while (i < n) {
+    w |= (uint32_t)*buf++ << ((i & 3) * 8);
+    i++;
+    if ((i & 3) == 0) {
+      *fifop = w;
+      w = 0;
+    }
+  }
+
+  /* Remaining bytes.*/
+  if ((i & 3) != 0) {
+    *fifop = w;
+  }
 }
 
 /**
@@ -281,40 +274,27 @@ static void otg_fifo_write_from_buffer(volatile uint32_t *fifop,
 static void otg_fifo_write_from_queue(volatile uint32_t *fifop,
                                       output_queue_t *oqp,
                                       size_t n) {
-  size_t ntogo;
+  uint32_t w;
+  size_t i;
 
-  ntogo = n;
-  while (ntogo > 0) {
-    uint32_t w, i;
-    size_t nw = ntogo / 4;
-
-    if (nw > 0) {
-      size_t streak;
-      uint32_t nw2end = (oqp->q_top - oqp->q_rdptr) / 4;
-
-      ntogo -= (streak = nw <= nw2end ? nw : nw2end) * 4;
-      oqp->q_rdptr = otg_do_push(fifop, oqp->q_rdptr, streak);
-      if (oqp->q_rdptr >= oqp->q_top) {
-        oqp->q_rdptr = oqp->q_buffer;
-        continue;
-      }
+  /* Pushing all complete words.*/
+  i = 0;
+  w = 0;
+  while (i < n) {
+    w |= (uint32_t)*oqp->q_rdptr << ((i & 3) * 8);
+    oqp->q_rdptr++;
+    if (oqp->q_rdptr >= oqp->q_top) {
+      oqp->q_rdptr = oqp->q_buffer;
     }
-
-    /* If this condition is not satisfied then there is a word lying across
-       queue circular buffer boundary or there are some remaining bytes.*/
-    if (ntogo <= 0)
-      break;
-
-    /* One byte at time.*/
-    w = 0;
-    i = 0;
-    while ((ntogo > 0) && (i < 4)) {
-      w |= (uint32_t)*oqp->q_rdptr++ << (i * 8);
-      if (oqp->q_rdptr >= oqp->q_top)
-        oqp->q_rdptr = oqp->q_buffer;
-      ntogo--;
-      i++;
+    i++;
+    if ((i & 3) == 0) {
+      *fifop = w;
+      w = 0;
     }
+  }
+
+  /* Remaining bytes.*/
+  if ((i & 3) != 0) {
     *fifop = w;
   }
 
@@ -324,31 +304,6 @@ static void otg_fifo_write_from_queue(volatile uint32_t *fifop,
   osalThreadDequeueAllI(&oqp->q_waiting, Q_OK);
   osalOsRescheduleS();
   osalSysUnlock();
-}
-
-/**
- * @brief   Pops a series of words from a FIFO.
- *
- * @param[in] fifop     pointer to the FIFO register
- * @param[in] buf       pointer to the words buffer, not necessarily word
- *                      aligned
- * @param[in] n         number of words to push
- *
- * @return              A pointer after the last word pushed.
- *
- * @notapi
- */
-static uint8_t *otg_do_pop(volatile uint32_t *fifop, uint8_t *buf, size_t n) {
-
-  while (n > 0) {
-    uint32_t w = *fifop;
-    /* Note, this line relies on the Cortex-M3/M4 ability to perform
-       unaligned word accesses and on the LSB-first memory organization.*/
-    *((PACKED_VAR uint32_t *)buf) = w;
-    buf += 4;
-    n--;
-  }
-  return buf;
 }
 
 /**
@@ -365,19 +320,19 @@ static void otg_fifo_read_to_buffer(volatile uint32_t *fifop,
                                     uint8_t *buf,
                                     size_t n,
                                     size_t max) {
+  uint32_t w;
+  size_t i;
 
-  n = (n + 3) / 4;
-  max = (max + 3) / 4;
-  while (n) {
-    uint32_t w = *fifop;
-    if (max) {
-      /* Note, this line relies on the Cortex-M3/M4 ability to perform
-         unaligned word accesses and on the LSB-first memory organization.*/
-      *((PACKED_VAR uint32_t *)buf) = w;
-      buf += 4;
-      max--;
+  i = 0;
+  while (i < n) {
+    if ((i & 3) == 0){
+      w = *fifop;
     }
-    n--;
+    if (i < max) {
+      *buf++ = (uint8_t)w;
+      w >>= 8;
+    }
+    i++;
   }
 }
 
@@ -393,40 +348,21 @@ static void otg_fifo_read_to_buffer(volatile uint32_t *fifop,
 static void otg_fifo_read_to_queue(volatile uint32_t *fifop,
                                    input_queue_t *iqp,
                                    size_t n) {
-  size_t ntogo;
+  uint32_t w;
+  size_t i;
 
-  ntogo = n;
-  while (ntogo > 0) {
-    uint32_t w, i;
-    size_t nw = ntogo / 4;
-
-    if (nw > 0) {
-      size_t streak;
-      uint32_t nw2end = (iqp->q_wrptr - iqp->q_wrptr) / 4;
-
-      ntogo -= (streak = nw <= nw2end ? nw : nw2end) * 4;
-      iqp->q_wrptr = otg_do_pop(fifop, iqp->q_wrptr, streak);
-      if (iqp->q_wrptr >= iqp->q_top) {
-        iqp->q_wrptr = iqp->q_buffer;
-        continue;
-      }
+  i = 0;
+  while (i < n) {
+    if ((i & 3) == 0){
+      w = *fifop;
     }
-
-    /* If this condition is not satisfied then there is a word lying across
-       queue circular buffer boundary or there are some remaining bytes.*/
-    if (ntogo <= 0)
-      break;
-
-    /* One byte at time.*/
-    w = *fifop;
-    i = 0;
-    while ((ntogo > 0) && (i < 4)) {
-      *iqp->q_wrptr++ = (uint8_t)(w >> (i * 8));
-      if (iqp->q_wrptr >= iqp->q_top)
-        iqp->q_wrptr = iqp->q_buffer;
-      ntogo--;
-      i++;
+    *iqp->q_wrptr = (uint8_t)w;
+    iqp->q_wrptr++;
+    if (iqp->q_wrptr >= iqp->q_top) {
+      iqp->q_wrptr = iqp->q_buffer;
     }
+    w >>= 8;
+    i++;
   }
 
   /* Updating queue.*/
