@@ -316,19 +316,20 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
 
   /* USB bus reset condition handling.*/
   if (istr & ISTR_RESET) {
-    _usb_reset(usbp);
-    _usb_isr_invoke_event_cb(usbp, USB_EVENT_RESET);
     STM32_USB->ISTR = ~ISTR_RESET;
+
+    _usb_reset(usbp);
   }
 
   /* USB bus SUSPEND condition handling.*/
   if (istr & ISTR_SUSP) {
     STM32_USB->CNTR |= CNTR_FSUSP;
-    _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
 #if STM32_USB_LOW_POWER_ON_SUSPEND
     STM32_USB->CNTR |= CNTR_LP_MODE;
 #endif
     STM32_USB->ISTR = ~ISTR_SUSP;
+
+    _usb_suspend(usbp);
   }
 
   /* USB bus WAKEUP condition handling.*/
@@ -336,7 +337,8 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
     uint32_t fnr = STM32_USB->FNR;
     if (!(fnr & FNR_RXDP)) {
       STM32_USB->CNTR &= ~CNTR_FSUSP;
-      _usb_isr_invoke_event_cb(usbp, USB_EVENT_WAKEUP);
+
+      _usb_wakeup(usbp);
     }
 #if STM32_USB_LOW_POWER_ON_SUSPEND
     else {

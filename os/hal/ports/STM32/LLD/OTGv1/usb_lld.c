@@ -320,7 +320,7 @@ static void otg_fifo_read_to_buffer(volatile uint32_t *fifop,
                                     uint8_t *buf,
                                     size_t n,
                                     size_t max) {
-  uint32_t w;
+  uint32_t w = 0;
   size_t i;
 
   i = 0;
@@ -348,7 +348,7 @@ static void otg_fifo_read_to_buffer(volatile uint32_t *fifop,
 static void otg_fifo_read_to_queue(volatile uint32_t *fifop,
                                    input_queue_t *iqp,
                                    size_t n) {
-  uint32_t w;
+  uint32_t w = 0;
   size_t i;
 
   i = 0;
