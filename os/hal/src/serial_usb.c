@@ -56,11 +56,17 @@ static cdc_linecoding_t linecoding = {
 
 static size_t write(void *ip, const uint8_t *bp, size_t n) {
 
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+    return 0;
+
   return oqWriteTimeout(&((SerialUSBDriver *)ip)->oqueue, bp,
                         n, TIME_INFINITE);
 }
 
 static size_t read(void *ip, uint8_t *bp, size_t n) {
+
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+    return 0;
 
   return iqReadTimeout(&((SerialUSBDriver *)ip)->iqueue, bp,
                        n, TIME_INFINITE);
@@ -68,30 +74,48 @@ static size_t read(void *ip, uint8_t *bp, size_t n) {
 
 static msg_t put(void *ip, uint8_t b) {
 
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+    return MSG_RESET;
+
   return oqPutTimeout(&((SerialUSBDriver *)ip)->oqueue, b, TIME_INFINITE);
 }
 
 static msg_t get(void *ip) {
+
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+    return MSG_RESET;
 
   return iqGetTimeout(&((SerialUSBDriver *)ip)->iqueue, TIME_INFINITE);
 }
 
 static msg_t putt(void *ip, uint8_t b, systime_t timeout) {
 
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+    return MSG_RESET;
+
   return oqPutTimeout(&((SerialUSBDriver *)ip)->oqueue, b, timeout);
 }
 
 static msg_t gett(void *ip, systime_t timeout) {
+
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+    return MSG_RESET;
 
   return iqGetTimeout(&((SerialUSBDriver *)ip)->iqueue, timeout);
 }
 
 static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
 
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+    return 0;
+
   return oqWriteTimeout(&((SerialUSBDriver *)ip)->oqueue, bp, n, timeout);
 }
 
 static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
+
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+    return 0;
 
   return iqReadTimeout(&((SerialUSBDriver *)ip)->iqueue, bp, n, timeout);
 }
@@ -252,12 +276,27 @@ void sduStop(SerialUSBDriver *sdup) {
   }
   sdup->state = SDU_STOP;
 
+  /* Enforces a disconnection.*/
+  sduDisconnectI(sdup);
+  osalOsRescheduleS();
+  osalSysUnlock();
+}
+
+/**
+ * @brief   USB device disconnection handler.
+ * @note    If this function is not called from an ISR then an explicit call
+ *          to @p osalOsRescheduleS() in necessary afterward.
+ *
+ * @param[in] sdup      pointer to a @p SerialUSBDriver object
+ *
+ * @iclass
+ */
+void sduDisconnectI(SerialUSBDriver *sdup) {
+
   /* Queues reset in order to signal the driver stop to the application.*/
   chnAddFlagsI(sdup, CHN_DISCONNECTED);
   iqResetI(&sdup->iqueue);
   iqResetI(&sdup->oqueue);
-  osalOsRescheduleS();
-  osalSysUnlock();
 }
 
 /**

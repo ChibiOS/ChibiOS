@@ -73,6 +73,9 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Modified the serial-USB driver to reject write/read attempts if the
+       underlying USB is not in active state. In case of disconnection the
+       SDU driver broadcasts a CHN_DISCONNECTED event.
 - HAL: Modified the USB driver to have a separate USB_SUSPENDED state, this
        allows the application to detect if the USB is communicating or if
        it is disconnected or powered down.
