@@ -589,21 +589,19 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
     /* Clear the Remote Wake-up Signaling.*/
     otgp->DCTL |= DCTL_RWUSIG;
 
-    /* Signaling the wakeup event.*/
-    _usb_isr_invoke_event_cb(usbp, USB_EVENT_WAKEUP);
+    _usb_wakeup(usbp);
   }
 
   /* Suspend handling.*/
   if (sts & GINTSTS_USBSUSP) {
 
-    /* Signaling the suspend event.*/
-    _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
+    _usb_suspend(usbp);
   }
 
   /* Reset interrupt handling.*/
   if (sts & GINTSTS_USBRST) {
+
     _usb_reset(usbp);
-    _usb_isr_invoke_event_cb(usbp, USB_EVENT_RESET);
   }
 
   /* Enumeration done.*/

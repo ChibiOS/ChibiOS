@@ -73,6 +73,9 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Modified the USB driver to have a separate USB_SUSPENDED state, this
+       allows the application to detect if the USB is communicating or if
+       it is disconnected or powered down.
 - HAL: Added wake-up and suspend events to the STM32 OTGv1 driver.
 - HAL: STM32 USB/OTG buffers and queues do not more require to be aligned in
        position and size.
