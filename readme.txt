@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Added wake-up and suspend events to the STM32 OTGv1 driver.
 - HAL: STM32 USB/OTG buffers and queues do not more require to be aligned in
        position and size.
 - VAR: Improved GCC rules.ld, now it is possible to assign the heap to any
