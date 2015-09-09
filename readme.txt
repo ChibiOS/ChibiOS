@@ -72,10 +72,11 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Fixed error in hal_lld_f100.h checks (bug #641).
 - FIX: Fixed volatile variable issue in I/O queues, both RT and HAL (bug #640).
-- HAL: Fixed STM32 RTC init direct register access (bug #639).
-- HAL: Fixed STM32 RTC driver does not set h12 (bug #638).
-- HAL: Fixed problem with RT mutexes involving priority inheritance (bug #632).
+- FIX: Fixed STM32 RTC init direct register access (bug #639).
+- FIX: Fixed STM32 RTC driver does not set h12 (bug #638).
+- FIX: Fixed problem with RT mutexes involving priority inheritance (bug #632).
 
 *** 2.6.9 ***
 - NEW: Added files for Core407V board.
