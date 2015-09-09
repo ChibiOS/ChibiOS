@@ -563,6 +563,69 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
 }
 
 /**
+ * @brief   Isochronous IN transfer failed handler.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @notapi
+ */
+static void otg_isoc_in_failed_handler(USBDriver *usbp) {
+  usbep_t ep;
+  stm32_otg_t *otgp = usbp->otg;
+
+  for (ep = 0; ep <= usbp->otgparams->num_endpoints; ep++) {
+    if (((otgp->ie[ep].DIEPCTL & DIEPCTL_EPTYP_MASK) == DIEPCTL_EPTYP_ISO) &&
+        ((otgp->ie[ep].DIEPCTL & DIEPCTL_EPENA) != 0)) {
+      /* Endpoint enabled -> ISOC IN transfer failed */
+      /* Disable endpoint */
+      otgp->ie[ep].DIEPCTL |= (DIEPCTL_EPDIS | DIEPCTL_SNAK);
+      while (otgp->ie[ep].DIEPCTL & DIEPCTL_EPENA)
+        ;
+
+      /* Flush FIFO */
+      otg_txfifo_flush(usbp, ep);
+
+      /* Prepare data for next frame */
+      _usb_isr_invoke_in_cb(usbp, ep);
+
+      /* Pump out data for next frame */
+      osalSysLockFromISR();
+      otgp->DIEPEMPMSK &= ~(1 << ep);
+      usbp->txpending |= (1 << ep);
+      osalThreadResumeI(&usbp->wait, MSG_OK);
+      osalSysUnlockFromISR();
+    }
+  }
+}
+
+/**
+ * @brief   Isochronous OUT transfer failed handler.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @notapi
+ */
+
+static void otg_isoc_out_failed_handler(USBDriver *usbp) {
+  usbep_t ep;
+  stm32_otg_t *otgp = usbp->otg;
+
+  for (ep = 0; ep <= usbp->otgparams->num_endpoints; ep++) {
+    if (((otgp->oe[ep].DOEPCTL & DOEPCTL_EPTYP_MASK) == DOEPCTL_EPTYP_ISO) &&
+        ((otgp->oe[ep].DOEPCTL & DOEPCTL_EPENA) != 0)) {
+      /* Endpoint enabled -> ISOC OUT transfer failed */
+      /* Disable endpoint */
+      /* FIXME: Core stucks here */
+      /*otgp->oe[ep].DOEPCTL |= (DOEPCTL_EPDIS | DOEPCTL_SNAK);
+      while (otgp->oe[ep].DOEPCTL & DOEPCTL_EPENA)
+        ;*/
+      /* Prepare transfer for next frame */
+      _usb_isr_invoke_out_cb(usbp, ep);
+    }
+  }
+}
+
+/**
  * @brief   OTG shared ISR.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
@@ -620,6 +683,16 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
   /* SOF interrupt handling.*/
   if (sts & GINTSTS_SOF) {
     _usb_isr_invoke_sof_cb(usbp);
+  }
+
+  /* Isochronous IN failed handling */
+  if (sts & GINTSTS_IISOIXFR) {
+    otg_isoc_in_failed_handler(usbp);
+  }
+
+  /* Isochronous OUT failed handling */
+  if (sts & GINTSTS_IISOOXFR) {
+    otg_isoc_out_failed_handler(usbp);
   }
 
   /* RX FIFO not empty handling.*/
@@ -830,7 +903,7 @@ void usb_lld_start(USBDriver *usbp) {
          - USB turn-around time = TRDT_VALUE_HS or TRDT_VALUE_FS.*/
 #if defined(BOARD_OTG2_USES_ULPI)
       /* High speed ULPI PHY.*/
-      otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE_HS) | /*XXXXXXXXXXX*/
+      otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE_HS) |
                       GUSBCFG_SRPCAP | GUSBCFG_HNPCAP;
 #else
       otgp->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT_VALUE_FS) |
@@ -893,10 +966,12 @@ void usb_lld_start(USBDriver *usbp) {
     otgp->DAINTMSK = 0;
     if (usbp->config->sof_cb == NULL)
       otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM | GINTMSK_USBSUSPM |
-                       GINTMSK_ESUSPM | GINTMSK_SRQM | GINTMSK_WKUM;
+                       GINTMSK_ESUSPM | GINTMSK_SRQM | GINTMSK_WKUM |
+                       GINTMSK_IISOIXFRM | GINTMSK_IISOOXFRM;
     else
       otgp->GINTMSK  = GINTMSK_ENUMDNEM | GINTMSK_USBRSTM | GINTMSK_USBSUSPM |
                        GINTMSK_ESUSPM | GINTMSK_SRQM | GINTMSK_WKUM |
+                       GINTMSK_IISOIXFRM | GINTMSK_IISOOXFRM |
                        GINTMSK_SOFM;
 
     /* Clears all pending IRQs, if any. */
@@ -1225,7 +1300,8 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
     /* Normal case.*/
     uint32_t pcnt = (isp->txsize + usbp->epc[ep]->in_maxsize - 1) /
                     usbp->epc[ep]->in_maxsize;
-    usbp->otg->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(pcnt) |
+    /* TODO: Support more than one packet per frame for isochronous transfers.*/
+    usbp->otg->ie[ep].DIEPTSIZ = DIEPTSIZ_MCNT(1) | DIEPTSIZ_PKTCNT(pcnt) |
                                  DIEPTSIZ_XFRSIZ(isp->txsize);
   }
 }
@@ -1240,7 +1316,15 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
 
-  usbp->otg->oe[ep].DOEPCTL |= DOEPCTL_CNAK;
+  if ((usbp->epc[ep]->ep_mode & USB_EP_MODE_TYPE) == USB_EP_MODE_TYPE_ISOC) {
+    /* Odd/even bit toggling for isochronous endpoint.*/
+    if (usbp->otg->DSTS & DSTS_FNSOF_ODD)
+      usbp->otg->oe[ep].DOEPCTL |= DOEPCTL_SEVNFRM;
+    else
+      usbp->otg->oe[ep].DOEPCTL |= DOEPCTL_SODDFRM;
+  }
+
+  usbp->otg->oe[ep].DOEPCTL |= DOEPCTL_EPENA | DOEPCTL_CNAK;
 }
 
 /**
@@ -1252,6 +1336,14 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
+
+  if ((usbp->epc[ep]->ep_mode & USB_EP_MODE_TYPE) == USB_EP_MODE_TYPE_ISOC) {
+    /* Odd/even bit toggling.*/
+    if (usbp->otg->DSTS & DSTS_FNSOF_ODD)
+      usbp->otg->ie[ep].DIEPCTL |= DIEPCTL_SEVNFRM;
+    else
+      usbp->otg->ie[ep].DIEPCTL |= DIEPCTL_SODDFRM;
+  }
 
   usbp->otg->ie[ep].DIEPCTL |= DIEPCTL_EPENA | DIEPCTL_CNAK;
   usbp->otg->DIEPEMPMSK |= DIEPEMPMSK_INEPTXFEM(ep);

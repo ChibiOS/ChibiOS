@@ -678,6 +678,8 @@ typedef struct {
                                                  SOF mask.                  */
 #define DSTS_FNSOF(n)           ((n)<<8)    /**< Frame number of the received
                                                  SOF value.                 */
+#define DSTS_FNSOF_ODD          (1U<<8)     /**< Frame parity of the received
+                                                 SOF value.                 */
 #define DSTS_EERR               (1U<<3)     /**< Erratic error.             */
 #define DSTS_ENUMSPD_MASK       (3U<<1)     /**< Enumerated speed mask.     */
 #define DSTS_ENUMSPD_FS_48      (3U<<1)     /**< Full speed (PHY clock is

@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Experimental isochronous capability added to STM32 OTGv1 driver.
 - HAL: Modified the serial-USB driver to reject write/read attempts if the
        underlying USB is not in active state. In case of disconnection the
        SDU driver broadcasts a CHN_DISCONNECTED event.
