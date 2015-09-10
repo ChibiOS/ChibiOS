@@ -63,7 +63,7 @@ int main(void) {
   /*
    * Creates the LWIP threads (it changes priority internally).
    */
-  chThdCreateStatic(wa_lwip_thread, LWIP_THREAD_STACK_SIZE, NORMALPRIO + 1,
+  chThdCreateStatic(wa_lwip_thread, sizeof(wa_lwip_thread), NORMALPRIO + 2,
                     lwip_thread, NULL);
 
   /*

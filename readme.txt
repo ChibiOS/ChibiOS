@@ -72,6 +72,7 @@
 *****************************************************************************
 
 *** 2.6.10 ***
+- FIX: Fixed incorrect working area size in LwIP creation in demos (bug #642).
 - FIX: Fixed error in hal_lld_f100.h checks (bug #641).
 - FIX: Fixed volatile variable issue in I/O queues, both RT and HAL (bug #640).
 - FIX: Fixed STM32 RTC init direct register access (bug #639).
