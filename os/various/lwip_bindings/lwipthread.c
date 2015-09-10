@@ -326,7 +326,7 @@ static THD_FUNCTION(lwip_thread, p) {
 void lwipInit(const lwipthread_opts_t *opts) {
 
   /* Creating the lwIP thread (it changes priority internally).*/
-  chThdCreateStatic(wa_lwip_thread, LWIP_THREAD_STACK_SIZE,
+  chThdCreateStatic(wa_lwip_thread, sizeof (wa_lwip_thread),
                     chThdGetPriorityX() - 1, lwip_thread, (void *)opts);
 
   /* Waiting for the lwIP thread complete initialization. Note,
