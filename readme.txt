@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.2 ***
+- VAR: Fixed incorrect working area size in LwIP creation in demos (bug #642).
 - HAL: Fixed error in hal_lld_f100.h checks (bug #641).
 - HAL: Fixed volatile variable issue in I/O queues, both RT and HAL (bug #640).
 - HAL: Fixed wrong DMA assignment for I2C1 in STM32F302xC registry (bug #637).
