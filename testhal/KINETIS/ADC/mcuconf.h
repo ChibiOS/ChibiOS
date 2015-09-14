@@ -71,7 +71,7 @@
 /*
  * SERIAL driver system settings.
  */
-#define KINETIS_SERIAL_USE_UART0              TRUE
+#define KINETIS_SERIAL_USE_UART0              FALSE
 
 /*
  * ADC driver system settings.
