@@ -103,6 +103,7 @@ typedef enum IRQn
  *        in @ref Library_configuration_section
  */
 #define __MPU_PRESENT             0
+#define __FPU_PRESENT             0
 #define __NVIC_PRIO_BITS          4
 #define __Vendor_SysTickConfig    0
 
