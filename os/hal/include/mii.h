@@ -146,13 +146,14 @@
 /*
  * PHY identifiers.
  */
-#define MII_DM9161_ID     0x0181b8a0
-#define MII_AM79C875_ID   0x00225540
-#define MII_KS8721_ID     0x00221610
-#define MII_STE101P_ID    0x00061C50
-#define MII_DP83848I_ID   0x20005C90
-#define MII_LAN8710A_ID   0x0007C0F1
-#define MII_LAN8720_ID    0x0007C0F0
+#define MII_DM9161_ID           0x0181b8a0
+#define MII_AM79C875_ID         0x00225540
+#define MII_KS8721_ID           0x00221610
+#define MII_STE101P_ID          0x00061C50
+#define MII_DP83848I_ID         0x20005C90
+#define MII_LAN8710A_ID         0x0007C0F1
+#define MII_LAN8720_ID          0x0007C0F0
+#define MII_LAN8742A_ID         0x0007C130
 
 #endif /* _MII_H_ */
 

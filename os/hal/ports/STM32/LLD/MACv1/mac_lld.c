@@ -67,11 +67,11 @@ MACDriver ETHD1;
 static const uint8_t default_mac_address[] = {0xAA, 0x55, 0x13,
                                               0x37, 0x01, 0x10};
 
-static stm32_eth_rx_descriptor_t rd[STM32_MAC_RECEIVE_BUFFERS];
-static stm32_eth_tx_descriptor_t td[STM32_MAC_TRANSMIT_BUFFERS];
+static stm32_eth_rx_descriptor_t __eth_rd[STM32_MAC_RECEIVE_BUFFERS];
+static stm32_eth_tx_descriptor_t __eth_td[STM32_MAC_TRANSMIT_BUFFERS];
 
-static uint32_t rb[STM32_MAC_RECEIVE_BUFFERS][BUFFER_SIZE];
-static uint32_t tb[STM32_MAC_TRANSMIT_BUFFERS][BUFFER_SIZE];
+static uint32_t __eth_rb[STM32_MAC_RECEIVE_BUFFERS][BUFFER_SIZE];
+static uint32_t __eth_tb[STM32_MAC_TRANSMIT_BUFFERS][BUFFER_SIZE];
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -219,14 +219,14 @@ void mac_lld_init(void) {
   /* Descriptor tables are initialized in chained mode, note that the first
      word is not initialized here but in mac_lld_start().*/
   for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++) {
-    rd[i].rdes1 = STM32_RDES1_RCH | STM32_MAC_BUFFERS_SIZE;
-    rd[i].rdes2 = (uint32_t)rb[i];
-    rd[i].rdes3 = (uint32_t)&rd[(i + 1) % STM32_MAC_RECEIVE_BUFFERS];
+    __eth_rd[i].rdes1 = STM32_RDES1_RCH | STM32_MAC_BUFFERS_SIZE;
+    __eth_rd[i].rdes2 = (uint32_t)__eth_rb[i];
+    __eth_rd[i].rdes3 = (uint32_t)&__eth_rd[(i + 1) % STM32_MAC_RECEIVE_BUFFERS];
   }
   for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++) {
-    td[i].tdes1 = 0;
-    td[i].tdes2 = (uint32_t)tb[i];
-    td[i].tdes3 = (uint32_t)&td[(i + 1) % STM32_MAC_TRANSMIT_BUFFERS];
+    __eth_td[i].tdes1 = 0;
+    __eth_td[i].tdes2 = (uint32_t)__eth_tb[i];
+    __eth_td[i].tdes3 = (uint32_t)&__eth_td[(i + 1) % STM32_MAC_TRANSMIT_BUFFERS];
   }
 
   /* Selection of the RMII or MII mode based on info exported by board.h.*/
@@ -236,7 +236,7 @@ void mac_lld_init(void) {
 #else
   AFIO->MAPR &= ~AFIO_MAPR_MII_RMII_SEL;
 #endif
-#elif defined(STM32F2XX) || defined(STM32F4XX)
+#elif defined(STM32F2XX) || defined(STM32F4XX) || defined(STM32F7XX)
 #if defined(BOARD_PHY_RMII)
   SYSCFG->PMC |= SYSCFG_PMC_MII_RMII_SEL;
 #else
@@ -293,11 +293,11 @@ void mac_lld_start(MACDriver *macp) {
 
   /* Resets the state of all descriptors.*/
   for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++)
-    rd[i].rdes0 = STM32_RDES0_OWN;
-  macp->rxptr = (stm32_eth_rx_descriptor_t *)rd;
+    __eth_rd[i].rdes0 = STM32_RDES0_OWN;
+  macp->rxptr = (stm32_eth_rx_descriptor_t *)__eth_rd;
   for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++)
-    td[i].tdes0 = STM32_TDES0_TCH;
-  macp->txptr = (stm32_eth_tx_descriptor_t *)td;
+    __eth_td[i].tdes0 = STM32_TDES0_TCH;
+  macp->txptr = (stm32_eth_tx_descriptor_t *)__eth_td;
 
   /* MAC clocks activation and commanded reset procedure.*/
   rccEnableETH(false);
@@ -337,8 +337,8 @@ void mac_lld_start(MACDriver *macp) {
 
   /* DMA configuration:
      Descriptor chains pointers.*/
-  ETH->DMARDLAR = (uint32_t)rd;
-  ETH->DMATDLAR = (uint32_t)td;
+  ETH->DMARDLAR = (uint32_t)__eth_rd;
+  ETH->DMATDLAR = (uint32_t)__eth_td;
 
   /* Enabling required interrupt sources.*/
   ETH->DMASR    = ETH->DMASR;
