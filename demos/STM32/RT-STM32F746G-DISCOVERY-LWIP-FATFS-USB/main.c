@@ -663,7 +663,7 @@ int main(void) {
    * configuration.
    */
   sdStart(&SD1, NULL);
-//  sdcStart(&SDCD1, NULL);
+  sdcStart(&SDCD1, NULL);
 
   /*
    * Activates the card insertion monitor.

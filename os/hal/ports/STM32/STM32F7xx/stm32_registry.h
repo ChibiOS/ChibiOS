@@ -222,13 +222,13 @@
 #define STM32_RTC_NUM_ALARMS                2
 #define STM32_RTC_HAS_INTERRUPTS            FALSE
 
-/* SDIO attributes.*/
-#define STM32_HAS_SDIO                      TRUE
-#define STM32_SDIO_HANDLER                  Vector104
-#define STM32_SDIO_NUMBER                   49
-#define STM32_SDC_SDIO_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(2, 3) |\
+/* SDMMC attributes.*/
+#define STM32_HAS_SDMMC1                    TRUE
+#define STM32_SDMMC1_HANDLER                Vector104
+#define STM32_SDMMC1_NUMBER                 49
+#define STM32_SDC_SDMMC1_DMA_MSK            (STM32_DMA_STREAM_ID_MSK(2, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 6))
-#define STM32_SDC_SDIO_DMA_CHN              0x04004000
+#define STM32_SDC_SDMMC1_DMA_CHN            0x04004000
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE

@@ -38,7 +38,7 @@ ifneq ($(findstring HAL_USE_I2S TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv2/i2s_lld.c
 endif
 ifneq ($(findstring HAL_USE_SDC TRUE,$(HALCONF)),)
-PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/SDIOv1/sdc_lld.c
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/SDMMCv1/sdc_lld.c
 endif
 ifneq ($(findstring HAL_USE_SPI TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv2/spi_lld.c
@@ -72,7 +72,7 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/MACv1/mac_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/OTGv1/usb_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/RTCv2/rtc_lld.c \
-               $(CHIBIOS)/os/hal/ports/STM32/LLD/SDIOv1/sdc_lld.c \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/SDMMCv1/sdc_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv2/i2s_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv2/spi_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/gpt_lld.c \
@@ -96,7 +96,7 @@ PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/MACv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/OTGv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/RTCv2 \
-               $(CHIBIOS)/os/hal/ports/STM32/LLD/SDIOv1 \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/SDMMCv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv2 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/USARTv2

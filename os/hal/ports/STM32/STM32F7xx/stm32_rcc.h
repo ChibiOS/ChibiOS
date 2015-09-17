@@ -531,7 +531,6 @@
  */
 /**
  * @brief   Enables the ETH peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -543,7 +542,6 @@
 
 /**
  * @brief   Disables the ETH peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -740,36 +738,33 @@
 /** @} */
 
 /**
- * @name    SDIO peripheral specific RCC operations
+ * @name    SDMMC peripheral specific RCC operations
  * @{
  */
 /**
- * @brief   Enables the SDIO peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
+ * @brief   Enables the SDMMC1 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableSDIO(lp) rccEnableAPB2(RCC_APB2ENR_SDIOEN, lp)
+#define rccEnableSDMMC1(lp) rccEnableAPB2(RCC_APB2ENR_SDMMC1EN, lp)
 
 /**
- * @brief   Disables the SDIO peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
+ * @brief   Disables the SDMMC1 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccDisableSDIO(lp) rccDisableAPB2(RCC_APB2ENR_SDIOEN, lp)
+#define rccDisableSDMMC1(lp) rccDisableAPB2(RCC_APB2ENR_SDMMC1EN, lp)
 
 /**
- * @brief   Resets the SDIO peripheral.
- * @note    Not supported in this family, does nothing.
+ * @brief   Resets the SDMMC1 peripheral.
  *
  * @api
  */
-#define rccResetSDIO() rccResetAPB2(RCC_APB2RSTR_SDIORST)
+#define rccResetSDMMC1() rccResetAPB2(RCC_APB2RSTR_SDMMC1RST)
 /** @} */
 
 /**
@@ -933,7 +928,6 @@
  */
 /**
  * @brief   Enables the TIM1 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -943,7 +937,6 @@
 
 /**
  * @brief   Disables the TIM1 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1035,7 +1028,6 @@
 
 /**
  * @brief   Enables the TIM5 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1045,7 +1037,6 @@
 
 /**
  * @brief   Disables the TIM5 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1062,7 +1053,6 @@
 
 /**
  * @brief   Enables the TIM6 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1072,7 +1062,6 @@
 
 /**
  * @brief   Disables the TIM6 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1089,7 +1078,6 @@
 
 /**
  * @brief   Enables the TIM7 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1099,7 +1087,6 @@
 
 /**
  * @brief   Disables the TIM7 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1116,7 +1103,6 @@
 
 /**
  * @brief   Enables the TIM8 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1126,7 +1112,6 @@
 
 /**
  * @brief   Disables the TIM8 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1143,7 +1128,6 @@
 
 /**
  * @brief   Enables the TIM9peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1153,7 +1137,6 @@
 
 /**
  * @brief   Disables the TIM9 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1170,7 +1153,6 @@
 
 /**
  * @brief   Enables the TIM10 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1180,7 +1162,6 @@
 
 /**
  * @brief   Disables the TIM10 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1197,7 +1178,6 @@
 
 /**
  * @brief   Enables the TIM11 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1207,7 +1187,6 @@
 
 /**
  * @brief   Disables the TIM11 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1224,7 +1203,6 @@
 
 /**
  * @brief   Enables the TIM12 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1234,7 +1212,6 @@
 
 /**
  * @brief   Disables the TIM12 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1251,7 +1228,6 @@
 
 /**
  * @brief   Enables the TIM13 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1261,7 +1237,6 @@
 
 /**
  * @brief   Disables the TIM13 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1278,7 +1253,6 @@
 
 /**
  * @brief   Enables the TIM14 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1288,7 +1262,6 @@
 
 /**
  * @brief   Disables the TIM14 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1385,7 +1358,6 @@
 
 /**
  * @brief   Enables the UART4 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1395,7 +1367,6 @@
 
 /**
  * @brief   Disables the UART4 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1412,7 +1383,6 @@
 
 /**
  * @brief   Enables the UART5 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1422,7 +1392,6 @@
 
 /**
  * @brief   Disables the UART5 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1464,7 +1433,6 @@
 
 /**
  * @brief   Enables the UART7 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1474,7 +1442,6 @@
 
 /**
  * @brief   Disables the UART7 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1491,7 +1458,6 @@
 
 /**
  * @brief   Enables the UART8 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
@@ -1501,7 +1467,6 @@
 
 /**
  * @brief   Disables the UART8 peripheral clock.
- * @note    The @p lp parameter is ignored in this family.
  *
  * @param[in] lp        low power enable flag
  *
