@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.2 ***
+- HAL: Fixed RT dependency in STM32 SDCv1 driver (bug #643).
 - VAR: Fixed incorrect working area size in LwIP creation in demos (bug #642).
 - HAL: Fixed error in hal_lld_f100.h checks (bug #641).
 - HAL: Fixed volatile variable issue in I/O queues, both RT and HAL (bug #640).
