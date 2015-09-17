@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/sdc_lld.h
+ * @file    STM32/SDIOv1/sdc_lld.h
  * @brief   STM32 SDC subsystem low level driver header.
  *
  * @addtogroup SDC

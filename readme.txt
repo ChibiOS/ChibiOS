@@ -114,6 +114,8 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- HAL: Fixed RT dependency in STM32 SDCv1 driver (bug #643)(backported
+       to 3.0.2).
 - VAR: Fixed incorrect working area size in LwIP creation in demos (bug #642)
        (backported to 3.0.2 and 2.6.10).
 - HAL: Fixed error in hal_lld_f100.h checks (bug #641)(backported to 3.0.2

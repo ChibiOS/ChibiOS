@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32/sdc_lld.c
+ * @file    STM32/SDIOv1/sdc_lld.c
  * @brief   STM32 SDC subsystem low level driver source.
  *
  * @addtogroup SDC
@@ -436,7 +436,7 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
   sdcp->sdio->CLKCR |= SDIO_CLKCR_CLKEN;
 
   /* Clock activation delay.*/
-  osalThreadSleep(MS2ST(STM32_SDC_CLOCK_ACTIVATION_DELAY));
+  osalThreadSleep(OSAL_MS2ST(STM32_SDC_CLOCK_ACTIVATION_DELAY));
 }
 
 /**
