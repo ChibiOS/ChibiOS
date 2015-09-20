@@ -48,7 +48,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "3.0.0"
+#define CH_KERNEL_VERSION       "3.0.1"
 
 /**
  * @brief   Kernel version major number.
