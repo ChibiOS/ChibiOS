@@ -81,4 +81,15 @@
 #define AVR_SPI_USE_SPI1                   FALSE
 #define AVR_SPI_USE_16BIT_POLLED_EXCHANGE  FALSE
 
+/*
+ * EXT driver system settings.
+ */
+#define AVR_EXT_USE_EXT1                    TRUE
+
+/*
+ * PC driver system settings.
+ */
+#define AVR_PC_USE_PC1                      TRUE
+
+
 #endif /* _MCUCONF_H_ */
