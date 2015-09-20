@@ -159,7 +159,7 @@ INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
 # Compiler settings
 #
 
-MCU  = cortex-m4
+MCU  = cortex-m3
 
 #TRGT = arm-elf-
 TRGT = arm-none-eabi-
