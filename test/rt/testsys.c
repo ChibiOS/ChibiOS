@@ -35,6 +35,7 @@
  * <h2>Test Cases</h2>
  * - @subpage test_sys_001
  * - @subpage test_sys_002
+ * - @subpage test_sys_003
  * .
  * @file testsys.c
  * @brief System test source file
