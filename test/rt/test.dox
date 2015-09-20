@@ -49,6 +49,7 @@
  * - @subpage test_queues
  * - @subpage test_heap
  * - @subpage test_pools
+ * - @subpage test_sys
  * - @subpage test_benchmarks
  * .
  */
