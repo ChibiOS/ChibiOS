@@ -73,6 +73,10 @@ ADCDriver ADCD3;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static const ADCConfig default_config = {
+  difsel: 0
+};
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -366,6 +370,11 @@ void adc_lld_init(void) {
  */
 void adc_lld_start(ADCDriver *adcp) {
 
+  /* Handling the default configuration.*/
+  if (adcp->config == NULL) {
+    adcp->config = &default_config;
+  }
+
   /* If in stopped state then enables the ADC and DMA clocks.*/
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
@@ -401,6 +410,15 @@ void adc_lld_start(ADCDriver *adcp) {
 
     /* Clock source setting.*/
     adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
+
+
+    /* Differential channels setting.*/
+#if STM32_ADC_DUAL_MODE
+    adcp->adcm->DIFSEL = adcp->config->difsel;
+    adcp->adcs->DIFSEL = adcp->config->difsel;
+#else
+    adcp->adcm->DIFSEL = adcp->config->difsel;
+#endif
 
     /* Master ADC calibration.*/
     adc_lld_vreg_on(adcp);
@@ -484,8 +502,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmaStreamSetTransactionSize(adcp->dmastp, ((uint32_t)grpp->num_channels/2) *
                                             (uint32_t)adcp->depth);
 #else
-    dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
-                                              (uint32_t)adcp->depth);
+  dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
+                                            (uint32_t)adcp->depth);
 #endif
   dmaStreamSetMode(adcp->dmastp, dmamode);
   dmaStreamEnable(adcp->dmastp);

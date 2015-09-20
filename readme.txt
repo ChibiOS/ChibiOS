@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Added support for differential mode to the STM32F3xx ADC driver.
 - HAL: Experimental isochronous capability added to STM32 OTGv1 driver.
 - HAL: Modified the serial-USB driver to reject write/read attempts if the
        underlying USB is not in active state. In case of disconnection the

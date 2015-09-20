@@ -452,10 +452,12 @@ typedef struct {
 
 /**
  * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
  */
 typedef struct {
-  uint32_t                  dummy;
+  /**
+   * @brief   ADC DIFSEL register initialization data.
+   */
+  uint32_t                  difsel;
 } ADCConfig;
 
 /**
