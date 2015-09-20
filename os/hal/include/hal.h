@@ -53,6 +53,7 @@
 #include "icu.h"
 #include "mac.h"
 #include "mii.h"
+#include "pc.h"
 #include "pwm.h"
 #include "rtc.h"
 #include "serial.h"
