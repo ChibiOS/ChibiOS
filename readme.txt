@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Merged the newest ST header files for STM32F1xx.
 - HAL: Added support for differential mode to the STM32F3xx ADC driver.
 - HAL: Experimental isochronous capability added to STM32 OTGv1 driver.
 - HAL: Modified the serial-USB driver to reject write/read attempts if the
@@ -102,8 +103,8 @@
 - HAL: STM32F2xx, STM32F4xx and STM32F7xx devices now share the same ADCv2
        and DMAv2 drivers.
 - HAL: STM32F0xx and STM32L0xx devices now share the same ADCv1 driver.
-- HAL: STM32F0xx, STM32L0xx and STM32L1xx devices now share the same DMAv1
-       driver.
+- HAL: STM32F0xx, STM32F1xx, STM32F3xx, STM32F37x, STM32L0xx and STM32L1xx
+       devices now share the same DMAv1 driver.
 - HAL: Introduced preliminary support for STM32F7xx devices.
 - HAL: Introduced preliminary support for STM32L0xx devices.
 - HAL: New STM32 shared DMAv2 driver supporting channel selection and
@@ -162,6 +163,7 @@
 - HAL: Fixed rtcConvertDateTimeToFAT() incorrect conversion (bug #615)
        (backported to 3.0.1).
 - HAL: Fixed missing UART7 and UART8 support on STM32F4xx family (bug #612).
+- HAL: Fixed outdated CMSIS headers for STM32F1xx devices (bug #609).
 - HAL: Fixed USB HS ULPI Support (except board files because patch originally
        targeted version 2.6.x)(bug #377).
 

@@ -46,24 +46,34 @@
  */
 #define CORTEX_PRIORITY_BITS    4
 
-/* If the device type is not externally defined, for example from the Makefile,
-   then a file named board.h is included. This file must contain a device
-   definition compatible with the vendor include file.*/
-#if !defined(STM32F10X_LD) && !defined(STM32F10X_LD_VL) &&                  \
-    !defined(STM32F10X_MD) && !defined(STM32F10X_MD_VL) &&                  \
-    !defined(STM32F10X_HD) && !defined(STM32F10X_HD_VL) &&                  \
-    !defined(STM32F10X_XL) && !defined(STM32F10X_CL)
-#include "board.h"
-#endif
+/**
+ * @brief   Number of interrupt vectors.
+ * @note    This number does not include the 16 system vectors and must be
+ *          rounded to a multiple of 8.
+ */
+#define CORTEX_NUM_VECTORS      72
 
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)
 
+/* If the device type is not externally defined, for example from the Makefile,
+   then a file named board.h is included. This file must contain a device
+   definition compatible with the vendor include file.*/
+#if !defined(STM32F100xB) && !defined(STM32F100xE) &&                       \
+    !defined(STM32F101x6) && !defined(STM32F101xB) &&                       \
+    !defined(STM32F101xE) && !defined(STM32F101xG) &&                       \
+    !defined(STM32F102x6) && !defined(STM32F102xB) &&                       \
+    !defined(STM32F103x6) && !defined(STM32F103xB) &&                       \
+    !defined(STM32F103xE) && !defined(STM32F103xG) &&                       \
+    !defined(STM32F105xC) && !defined(STM32F107xC)
+#include "board.h"
+#endif
+
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
-#include "stm32f10x.h"
+#include "stm32f1xx.h"
 
 #if CORTEX_MODEL != __CORTEX_M
 #error "CMSIS __CORTEX_M mismatch"
@@ -74,29 +84,6 @@
 #endif
 
 #endif /* !defined(_FROM_ASM_) */
-
-#if defined(STM32F10X_CL)
-#define __NVECTORS              72
-#elif defined(STM32F10X_XL)
-#define __NVECTORS              64
-#elif defined(STM32F10X_LD_VL) ||                                           \
-      defined(STM32F10X_MD_VL) ||                                           \
-      defined(STM32F10X_HD_VL)
-#define __NVECTORS              64
-#elif defined(STM32F10X_LD) ||                                              \
-      defined(STM32F10X_MD) ||                                              \
-      defined(STM32F10X_HD)
-#define __NVECTORS              64
-#else
-#error "STM32F1xx device not defined or not recognized"
-#endif
-
-/**
- * @brief   Number of interrupt vectors.
- * @note    This number does not include the 16 system vectors and must be
- *          rounded to a multiple of 8.
- */
-#define CORTEX_NUM_VECTORS      __NVECTORS
 
 #endif /* _CMPARAMS_H_ */
 

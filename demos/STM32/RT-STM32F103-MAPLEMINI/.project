@@ -79,7 +79,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/ST_STM32VL_DISCOVERY</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/MAPLEMINI_STM32_F103</locationURI>
 		</link>
 		<link>
 			<name>os</name>

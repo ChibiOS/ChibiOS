@@ -265,8 +265,7 @@ OSAL_IRQ_HANDLER(Vector138) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
-      defined(STM32F10X_HD_VL)
+#elif defined(STM32F10X_MD_VL) || defined(STM32F10X_HD_VL)
 
 #else /* Other STM32F1xx devices.*/
 /**
@@ -307,13 +306,12 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(EXTI9_5_IRQn, STM32_EXT_EXTI5_9_IRQ_PRIORITY);
   nvicEnableVector(EXTI15_10_IRQn, STM32_EXT_EXTI10_15_IRQ_PRIORITY);
   nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
-  nvicEnableVector(RTCAlarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
+  nvicEnableVector(RTC_Alarm_IRQn, STM32_EXT_EXTI17_IRQ_PRIORITY);
 #if defined(STM32F10X_CL)
   /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
   nvicEnableVector(OTG_FS_WKUP_IRQn, STM32_EXT_EXTI18_IRQ_PRIORITY);
   nvicEnableVector(ETH_WKUP_IRQn, STM32_EXT_EXTI19_IRQ_PRIORITY);
-#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
-      defined(STM32F10X_HD_VL)
+#elif  defined(STM32F10X_MD_VL) || defined(STM32F10X_HD_VL)
   /* EXTI vectors specific to STM32F1xx Value Line.*/
 #else
   /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
@@ -336,13 +334,12 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(EXTI9_5_IRQn);
   nvicDisableVector(EXTI15_10_IRQn);
   nvicDisableVector(PVD_IRQn);
-  nvicDisableVector(RTCAlarm_IRQn);
+  nvicDisableVector(RTC_Alarm_IRQn);
 #if defined(STM32F10X_CL)
   /* EXTI vectors specific to STM32F1xx Connectivity Line.*/
   nvicDisableVector(OTG_FS_WKUP_IRQn);
   nvicDisableVector(ETH_WKUP_IRQn);
-#elif defined(STM32F10X_LD_VL) || defined(STM32F10X_MD_VL) ||               \
-    defined(STM32F10X_HD_VL)
+#elif defined(STM32F10X_MD_VL) || defined(STM32F10X_HD_VL)
   /* EXTI vectors specific to STM32F1xx Value Line.*/
 #else
   /* EXTI vectors specific to STM32F1xx except Connectivity Line.*/
