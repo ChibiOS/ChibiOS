@@ -230,7 +230,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
 #define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 4) |\
-                                             STM32_DMA_STREAM_ID_MSK(1, 7)
+                                             STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_USART2_TX_DMA_CHN             0x04004000
 
 #define STM32_HAS_USART3                    FALSE
@@ -459,7 +459,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
 #define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 4) |\
-                                             STM32_DMA_STREAM_ID_MSK(1, 7)
+                                             STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_USART2_TX_DMA_CHN             0x04004000
 
 #define STM32_HAS_USART3                    FALSE
@@ -694,7 +694,7 @@
                                              STM32_DMA_STREAM_ID_MSK(1, 6))
 #define STM32_USART2_RX_DMA_CHN             0x00440000
 #define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 4) |\
-                                             STM32_DMA_STREAM_ID_MSK(1, 7)
+                                             STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_USART2_TX_DMA_CHN             0x04004000
 
 #define STM32_HAS_USART3                    FALSE
