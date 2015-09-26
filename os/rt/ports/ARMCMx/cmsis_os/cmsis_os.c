@@ -487,7 +487,7 @@ osMessageQId osMessageCreate(const osMessageQDef_t *queue_def,
                  queue_def->items,
                  (size_t)queue_def->queue_sz);
 
-  return osOK;
+  return (osMessageQId) queue_def->mailbox;
 }
 
 /**
