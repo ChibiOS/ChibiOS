@@ -48,7 +48,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "3.0.1"
+#define CH_KERNEL_VERSION       "3.0.3"
 
 /**
  * @brief   Kernel version major number.
@@ -63,7 +63,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         1
+#define CH_KERNEL_PATCH         3
 /** @} */
 
 /* Core headers.*/

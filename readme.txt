@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 3.0.3 ***
+- RT:  Fixed issues in CMSIS RTOS interface (bug #644).
+
 *** 3.0.2 ***
 - HAL: Fixed RT dependency in STM32 SDCv1 driver (bug #643).
 - VAR: Fixed incorrect working area size in LwIP creation in demos (bug #642).

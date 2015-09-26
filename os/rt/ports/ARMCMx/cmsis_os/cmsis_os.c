@@ -224,7 +224,7 @@ osTimerId osTimerCreate(const osTimerDef_t *timer_def,
  */
 osStatus osTimerStart(osTimerId timer_id, uint32_t millisec) {
 
-  if (millisec == 0)
+  if ((millisec == 0) || (millisec == osWaitForever))
     return osErrorValue;
 
   timer_id->millisec = millisec;
@@ -289,7 +289,8 @@ int32_t osSignalClear(osThreadId thread_id, int32_t signals) {
  */
 osEvent osSignalWait(int32_t signals, uint32_t millisec) {
   osEvent event;
-  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
+  systime_t timeout = ((millisec == 0) || (millisec == osWaitForever)) ?
+                      TIME_INFINITE : MS2ST(millisec);
 
   if (signals == 0)
     event.value.signals = (uint32_t)chEvtWaitAnyTimeout(ALL_EVENTS, timeout);
@@ -325,7 +326,8 @@ osSemaphoreId osSemaphoreCreate(const osSemaphoreDef_t *semaphore_def,
  * @brief   Wait on a semaphore.
  */
 int32_t osSemaphoreWait(osSemaphoreId semaphore_id, uint32_t millisec) {
-  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
+  systime_t timeout = ((millisec == 0) || (millisec == osWaitForever)) ?
+                      TIME_INFINITE : MS2ST(millisec);
 
   msg_t msg = chSemWaitTimeout((semaphore_t *)semaphore_id, timeout);
   switch (msg) {
@@ -380,7 +382,8 @@ osMutexId osMutexCreate(const osMutexDef_t *mutex_def) {
  * @brief   Wait on a mutex.
  */
 osStatus osMutexWait(osMutexId mutex_id, uint32_t millisec) {
-  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
+  systime_t timeout = ((millisec == 0) || (millisec == osWaitForever)) ?
+                      TIME_INFINITE : MS2ST(millisec);
 
   msg_t msg = chBSemWaitTimeout((binary_semaphore_t *)mutex_id, timeout);
   switch (msg) {
@@ -494,7 +497,8 @@ osStatus osMessagePut(osMessageQId queue_id,
                       uint32_t info,
                       uint32_t millisec) {
   msg_t msg;
-  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
+  systime_t timeout = ((millisec == 0) || (millisec == osWaitForever)) ?
+                      TIME_INFINITE : MS2ST(millisec);
 
   if (port_is_isr_context()) {
 
@@ -520,7 +524,8 @@ osEvent osMessageGet(osMessageQId queue_id,
                      uint32_t millisec) {
   msg_t msg;
   osEvent event;
-  systime_t timeout = millisec == 0 ? TIME_INFINITE : MS2ST(millisec);
+  systime_t timeout = ((millisec == 0) || (millisec == osWaitForever)) ?
+                      TIME_INFINITE : MS2ST(millisec);
 
   event.def.message_id = queue_id;
 
