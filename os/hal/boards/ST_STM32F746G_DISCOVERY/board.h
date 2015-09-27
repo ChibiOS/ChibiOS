@@ -992,7 +992,7 @@
  * PG10 - SAI2_SDB                  (input pullup).
  * PG11 - RMII_TX_EN                (alternate 11).
  * PG12 - LCD_B4                    (alternate 14).
- * PG13 - RMII_TXD0                 (alternate 1).
+ * PG13 - RMII_TXD0                 (alternate 11).
  * PG14 - RMII_TXD1                 (alternate 11).
  * PG15 - FMC_SDNCAS                (alternate 12).
  */
@@ -1089,7 +1089,7 @@
                                      PIN_AFIO_AF(GPIOG_SAI2_SDB, 0) |       \
                                      PIN_AFIO_AF(GPIOG_RMII_TX_EN, 11) |    \
                                      PIN_AFIO_AF(GPIOG_LCD_B4, 14) |        \
-                                     PIN_AFIO_AF(GPIOG_RMII_TXD0, 1) |      \
+                                     PIN_AFIO_AF(GPIOG_RMII_TXD0, 11) |     \
                                      PIN_AFIO_AF(GPIOG_RMII_TXD1, 11) |     \
                                      PIN_AFIO_AF(GPIOG_FMC_SDNCAS, 12))
 

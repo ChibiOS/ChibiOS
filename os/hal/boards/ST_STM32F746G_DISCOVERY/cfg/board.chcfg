@@ -919,7 +919,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="1" />
+        Alternate="11" />
       <pin14
         ID="RMII_TXD1"
         Type="PushPull"
