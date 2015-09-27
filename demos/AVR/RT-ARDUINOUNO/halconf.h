@@ -38,6 +38,13 @@
 #endif
 
 /**
+ * @brief   Enables the PC subsystem.
+ */
+#if !defined(HAL_USE_PC) || defined(__DOXYGEN__)
+#define HAL_USE_PC                  TRUE
+#endif
+
+/**
  * @brief   Enables the PAL subsystem.
  */
 #if !defined(HAL_USE_PAL) || defined(__DOXYGEN__)
@@ -69,7 +76,7 @@
  * @brief   Enables the EXT subsystem.
  */
 #if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
-#define HAL_USE_EXT                 FALSE
+#define HAL_USE_EXT                 TRUE
 #endif
 
 /**
