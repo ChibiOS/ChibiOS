@@ -35,20 +35,20 @@
 #define DAC1 DAC
 #endif
 
-#define DAC1_CH1_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_DAC_DAC1_CH1_DMA_STREAM,                        \
+#define DAC1_CH1_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_DAC_DAC1_CH1_DMA_STREAM,                       \
                        STM32_DAC1_CH1_DMA_CHN)
 
-#define DAC1_CH2_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_DAC_DAC1_CH2_DMA_STREAM,                        \
+#define DAC1_CH2_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_DAC_DAC1_CH2_DMA_STREAM,                       \
                        STM32_DAC1_CH2_DMA_CHN)
 
-#define DAC2_CH1_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_DAC_DAC2_CH1_DMA_STREAM,                        \
+#define DAC2_CH1_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_DAC_DAC2_CH1_DMA_STREAM,                       \
                        STM32_DAC2_CH1_DMA_CHN)
 
-#define DAC2_CH2_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_DAC_DAC2_CH2_DMA_STREAM,                        \
+#define DAC2_CH2_DMA_CHANNEL                                                \
+  STM32_DMA_GETCHANNEL(STM32_DAC_DAC2_CH2_DMA_STREAM,                       \
                        STM32_DAC2_CH2_DMA_CHN)
 
 #define CHANNEL_DATA_OFFSET 3U
