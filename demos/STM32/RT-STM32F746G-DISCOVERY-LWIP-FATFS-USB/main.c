@@ -27,9 +27,8 @@
 #include "lwipthread.h"
 #include "web/web.h"
 
-//#include "ff.h"
+#include "ff.h"
 
-#if 0
 /*===========================================================================*/
 /* Card insertion monitor.                                                   */
 /*===========================================================================*/
@@ -150,7 +149,6 @@ static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
   }
   return res;
 }
-#endif
 
 /*===========================================================================*/
 /* USB related stuff.                                                        */
@@ -520,7 +518,6 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
   chThdWait(tp);
 }
 
-#if 0
 static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   FRESULT err;
   uint32_t clusters;
@@ -547,13 +544,12 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   fbuff[0] = 0;
   scan_files(chp, (char *)fbuff);
 }
-#endif
 
 static const ShellCommand commands[] = {
   {"mem", cmd_mem},
   {"threads", cmd_threads},
   {"test", cmd_test},
-//  {"tree", cmd_tree},
+  {"tree", cmd_tree},
   {NULL, NULL}
 };
 
@@ -566,7 +562,6 @@ static const ShellConfig shell_cfg1 = {
 /* Main and generic code.                                                    */
 /*===========================================================================*/
 
-#if 0
 /*
  * Card insertion event.
  */
@@ -597,7 +592,6 @@ static void RemoveHandler(eventid_t id) {
   sdcDisconnect(&SDCD1);
   fs_ready = FALSE;
 }
-#endif
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -608,9 +602,8 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-//    palTogglePad(GPIOC, GPIOC_LED);
-//    chThdSleepMilliseconds(fs_ready ? 125 : 500);
-    chThdSleepMilliseconds(500);
+    palTogglePad(GPIOI, GPIOI_ARD_D13);
+    chThdSleepMilliseconds(fs_ready ? 250 : 500);
   }
 }
 
@@ -619,11 +612,11 @@ static THD_FUNCTION(Thread1, arg) {
  */
 int main(void) {
   static thread_t *shelltp = NULL;
-//  static const evhandler_t evhndl[] = {
-//    InsertHandler,
-//    RemoveHandler
-//  };
-//  event_listener_t el0, el1;
+  static const evhandler_t evhndl[] = {
+    InsertHandler,
+    RemoveHandler
+  };
+  event_listener_t el0, el1;
 
   /*
    * System initializations.
@@ -636,6 +629,11 @@ int main(void) {
   halInit();
   chSysInit();
   lwipInit(NULL);
+
+  /*
+   * Initialize board LED.
+   */
+  palSetPadMode(GPIOI, GPIOI_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*
    * Initializes a serial-over-USB CDC driver.
@@ -668,7 +666,7 @@ int main(void) {
   /*
    * Activates the card insertion monitor.
    */
-//  tmr_init(&SDCD1);
+  tmr_init(&SDCD1);
 
   /*
    * Creates the blinker thread.
@@ -685,8 +683,8 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and listen for events.
    */
-//  chEvtRegister(&inserted_event, &el0, 0);
-//  chEvtRegister(&removed_event, &el1, 1);
+  chEvtRegister(&inserted_event, &el0, 0);
+  chEvtRegister(&removed_event, &el1, 1);
   while (true) {
     if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE))
       shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
@@ -696,7 +694,6 @@ int main(void) {
     }
     if (palReadPad(GPIOI, GPIOI_BUTTON_USER) != 0) {
     }
-//    chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, MS2ST(500)));
-    chThdSleepMilliseconds(500);
+    chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, MS2ST(500)));
   }
 }
