@@ -144,10 +144,9 @@
 #define CH_LICENSE_MAX_DEPLOY               CH_DEPLOY_UNLIMITED
 
 #elif CH_LICENSE == CH_LICENSE_COMMERCIAL_FREE
-#include "chcustomer.h"
 #define CH_LICENSE_TYPE_STRING              "Zero Cost Registered License"
-#define CH_LICENSE_ID_STRING                CH_CUSTOMER_ID_STRING
-#define CH_LICENSE_ID_CODE                  CH_CUSTOMER_ID_CODE
+#define CH_LICENSE_ID_STRING                "N/A"
+#define CH_LICENSE_ID_CODE                  "2015-0000"
 #define CH_LICENSE_MODIFIABLE_CODE          FALSE
 #define CH_LICENSE_FEATURES                 CH_FEATURES_INTERMEDIATE
 #define CH_LICENSE_MAX_DEPLOY               500
@@ -194,10 +193,6 @@
     #error "CH_CFG_ST_TIMEDELTA > 2, High Resolution Time functionality restricted"
   #endif
 
-  #if CH_CFG_USE_TM == TRUE
-    #error "CH_CFG_USE_TM == TRUE, Time Measurement functionality restricted"
-  #endif
-
   #if CH_DBG_STATISTICS == TRUE
     #error "CH_DBG_STATISTICS == TRUE, Statistics functionality restricted"
   #endif
@@ -206,6 +201,10 @@
     /* Restrictions in basic mode.*/
     #if CH_CFG_ST_TIMEDELTA > 0
       #error "CH_CFG_ST_TIMEDELTA > 0, Tick-Less functionality restricted"
+    #endif
+
+    #if CH_CFG_USE_TM == TRUE
+      #error "CH_CFG_USE_TM == TRUE, Time Measurement functionality restricted"
     #endif
 
     #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
