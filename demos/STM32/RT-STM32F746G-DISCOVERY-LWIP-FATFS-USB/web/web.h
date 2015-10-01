@@ -24,16 +24,20 @@
 #ifndef _WEB_H_
 #define _WEB_H_
 
-#ifndef WEB_THREAD_STACK_SIZE
-#define WEB_THREAD_STACK_SIZE   1024
+#if !defined(WEB_THREAD_STACK_SIZE)
+#define WEB_THREAD_STACK_SIZE           1024
 #endif
 
-#ifndef WEB_THREAD_PORT
-#define WEB_THREAD_PORT         80
+#if !defined(WEB_THREAD_PORT)
+#define WEB_THREAD_PORT                 80
 #endif
 
-#ifndef WEB_THREAD_PRIORITY
-#define WEB_THREAD_PRIORITY     (LOWPRIO + 2)
+#if !defined(WEB_THREAD_PRIORITY)
+#define WEB_THREAD_PRIORITY             (LOWPRIO + 2)
+#endif
+
+#if !defined(WEB_MAX_PATH_SIZE)
+#define WEB_MAX_PATH_SIZE               128
 #endif
 
 extern THD_WORKING_AREA(wa_http_server, WEB_THREAD_STACK_SIZE);
