@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.3 ***
+- VAR: Fixed _sbrk_r with incr == 0 should be valid (bug #645).
 - RT:  Fixed issues in CMSIS RTOS interface (bug #644).
 
 *** 3.0.2 ***
