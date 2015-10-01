@@ -345,6 +345,7 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(OTG_HS_WKUP_IRQn, STM32_EXT_EXTI20_IRQ_PRIORITY);
   nvicEnableVector(TAMP_STAMP_IRQn, STM32_EXT_EXTI21_IRQ_PRIORITY);
   nvicEnableVector(RTC_WKUP_IRQn, STM32_EXT_EXTI22_IRQ_PRIORITY);
+  nvicEnableVector(LPTIM1_IRQn, STM32_EXT_EXTI23_IRQ_PRIORITY);
 }
 
 /**
@@ -368,6 +369,7 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(OTG_HS_WKUP_IRQn);
   nvicDisableVector(TAMP_STAMP_IRQn);
   nvicDisableVector(RTC_WKUP_IRQn);
+  nvicDisableVector(LPTIM1_IRQn);
 }
 
 #endif /* HAL_USE_EXT */
