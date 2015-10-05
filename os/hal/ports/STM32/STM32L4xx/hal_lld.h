@@ -20,17 +20,14 @@
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
+ *          - STM32_LSEDRV.
+ *          - STM32_LSE_BYPASS (optionally).
  *          - STM32_HSECLK.
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32L100xB, STM32L100xBA, STM32L100xC.
- *          - STM32L151xB, STM32L151xBA, STM32L151xC, STM32L151xCA,
- *            STM32L151xD, STM32L151xDX, STM32L151xE.
- *          - STM32L152xB, STM32L152xBA, STM32L152xC, STM32L152xCA,
- *            STM32L152xD, STM32L152xDX, STM32L152xE.
- *          - STM32L162xC, STM32L162xCA, STM32L162xD, STM32L162xDX,
- *            STM32L162xE.
+ *          - STM32L471xx, STM32L475xx, STM32L476xx.
+ *          - STM32L485xx, STM32L486xx.
  *          .
  *
  * @addtogroup HAL
@@ -50,33 +47,22 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32L100xB) || defined(STM32L151xB) ||                         \
-    defined(STM32L152xB) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32L1xx Ultra Low Power Medium Density"
+#if defined(STM32L471xx) || defined(STM32L475xx) ||                         \
+    defined(STM32L476xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32L4xx Ultra Low Power"
 
-#elif defined(STM32L100xBA) || defined(STM32L100xC)  ||                     \
-      defined(STM32L151xBA) || defined(STM32L151xC)  ||                     \
-      defined(STM32L151xCA) || defined(STM32L152xBA) ||                     \
-      defined(STM32L152xC)  || defined(STM32L152xCA) ||                     \
-      defined(STM32L162xC)  || defined(STM32L162xCA)
-#define PLATFORM_NAME           "STM32L1xx Ultra Low Power Medium Density Plus"
-
-#elif defined(STM32L151xD)  || defined(STM32L151xDX) ||                     \
-      defined(STM32L151xE)  || defined(STM32L152xD)  ||                     \
-      defined(STM32L152xDX) || defined(STM32L152xE)  ||                     \
-      defined(STM32L162xD)  || defined(STM32L162xDX) ||                     \
-      defined(STM32L162xE)
-#define PLATFORM_NAME           "STM32L1xx Ultra Low Power High Density"
+#elif defined(STM32L485xx) || defined(STM32L486xx)
+#define PLATFORM_NAME           "STM32L4xx Ultra Low Power with Crypto"
 
 #else
-#error "STM32L1xx device not specified"
+#error "STM32L4xx device not specified"
 #endif
 
 /**
  * @brief   Sub-family identifier.
  */
-#if !defined(STM32L1XX) || defined(__DOXYGEN__)
-#define STM32L1XX
+#if !defined(STM32L4XX) || defined(__DOXYGEN__)
+#define STM32L4XX
 #endif
 /** @} */
 
@@ -89,34 +75,46 @@
 /** @} */
 
 /**
- * @name    PWR_CR register bits definitions
+ * @name    PWR_CR1 register bits definitions
  * @{
  */
-#define STM32_VOS_MASK          (3 << 11)   /**< Core voltage mask.         */
-#define STM32_VOS_1P8           (1 << 11)   /**< Core voltage 1.8 Volts.    */
-#define STM32_VOS_1P5           (2 << 11)   /**< Core voltage 1.5 Volts.    */
-#define STM32_VOS_1P2           (3 << 11)   /**< Core voltage 1.2 Volts.    */
+#define STM32_VOS_MASK          (3 << 9)    /**< Core voltage mask.         */
+#define STM32_VOS_RANGE1        (1 << 9)    /**< Core voltage 1.8 Volts.    */
+#define STM32_VOS_RANGE2        (2 << 9)    /**< Core voltage 1.5 Volts.    */
+/** @} */
 
-#define STM32_PLS_MASK          (7 << 5)    /**< PLS bits mask.             */
-#define STM32_PLS_LEV0          (0 << 5)    /**< PVD level 0.               */
-#define STM32_PLS_LEV1          (1 << 5)    /**< PVD level 1.               */
-#define STM32_PLS_LEV2          (2 << 5)    /**< PVD level 2.               */
-#define STM32_PLS_LEV3          (3 << 5)    /**< PVD level 3.               */
-#define STM32_PLS_LEV4          (4 << 5)    /**< PVD level 4.               */
-#define STM32_PLS_LEV5          (5 << 5)    /**< PVD level 5.               */
-#define STM32_PLS_LEV6          (6 << 5)    /**< PVD level 6.               */
-#define STM32_PLS_LEV7          (7 << 5)    /**< PVD level 7.               */
+/**
+ * @name    PWR_CR2 register bits definitions
+ * @{
+ */
+#define STM32_PLS_MASK          (7 << 1)    /**< PLS bits mask.             */
+#define STM32_PLS_LEV0          (0 << 1)    /**< PVD level 0.               */
+#define STM32_PLS_LEV1          (1 << 1)    /**< PVD level 1.               */
+#define STM32_PLS_LEV2          (2 << 1)    /**< PVD level 2.               */
+#define STM32_PLS_LEV3          (3 << 1)    /**< PVD level 3.               */
+#define STM32_PLS_LEV4          (4 << 1)    /**< PVD level 4.               */
+#define STM32_PLS_LEV5          (5 << 1)    /**< PVD level 5.               */
+#define STM32_PLS_LEV6          (6 << 1)    /**< PVD level 6.               */
+#define STM32_PLS_EXT           (7 << 1)    /**< PVD level 7.               */
 /** @} */
 
 /**
  * @name    RCC_CR register bits definitions
  * @{
  */
-#define STM32_RTCPRE_MASK       (3 << 29)   /**< RTCPRE mask.               */
-#define STM32_RTCPRE_DIV2       (0 << 29)   /**< HSE divided by 2.          */
-#define STM32_RTCPRE_DIV4       (1 << 29)   /**< HSE divided by 4.          */
-#define STM32_RTCPRE_DIV8       (2 << 29)   /**< HSE divided by 2.          */
-#define STM32_RTCPRE_DIV16      (3 << 29)   /**< HSE divided by 16.         */
+#define STM32_MSIRANGE_MASK     (15 << 4)   /**< MSIRANGE field mask.       */
+#define STM32_MSIRANGE_100K     (0 << 4)    /**< 100kHz nominal.            */
+#define STM32_MSIRANGE_200K     (1 << 4)    /**< 200kHz nominal.            */
+#define STM32_MSIRANGE_400K     (2 << 4)    /**< 400kHz nominal.            */
+#define STM32_MSIRANGE_800K     (3 << 4)    /**< 800kHz nominal.            */
+#define STM32_MSIRANGE_1M       (4 << 4)    /**< 1MHz nominal.              */
+#define STM32_MSIRANGE_2M       (5 << 4)    /**< 2MHz nominal.              */
+#define STM32_MSIRANGE_4M       (6 << 4)    /**< 4MHz nominal.              */
+#define STM32_MSIRANGE_8M       (7 << 4)    /**< 8MHz nominal.              */
+#define STM32_MSIRANGE_16M      (8 << 4)    /**< 16MHz nominal.             */
+#define STM32_MSIRANGE_24M      (9 << 4)    /**< 24MHz nominal.             */
+#define STM32_MSIRANGE_32M      (10 << 4)   /**< 32MHz nominal.             */
+#define STM32_MSIRANGE_48M      (11 << 4)   /**< 48MHz nominal.             */
 /** @} */
 
 /**
@@ -124,7 +122,7 @@
  * @{
  */
 #define STM32_SW_MSI            (0 << 0)    /**< SYSCLK source is MSI.      */
-#define STM32_SW_HSI            (1 << 0)    /**< SYSCLK source is HSI.      */
+#define STM32_SW_HSI16          (1 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (2 << 0)    /**< SYSCLK source is HSE.      */
 #define STM32_SW_PLL            (3 << 0)    /**< SYSCLK source is PLL.      */
 
@@ -150,13 +148,10 @@
 #define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
 #define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
 
-#define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI.   */
-#define STM32_PLLSRC_HSE        (1 << 16)   /**< PLL clock source is HSE.   */
-
 #define STM32_MCOSEL_NOCLOCK    (0 << 24)   /**< No clock on MCO pin.       */
 #define STM32_MCOSEL_SYSCLK     (1 << 24)   /**< SYSCLK on MCO pin.         */
-#define STM32_MCOSEL_HSI        (2 << 24)   /**< HSI clock on MCO pin.      */
-#define STM32_MCOSEL_MSI        (3 << 24)   /**< MSI clock on MCO pin.      */
+#define STM32_MCOSEL_MSI        (2 << 24)   /**< MSI clock on MCO pin.      */
+#define STM32_MCOSEL_HSI16      (3 << 24)   /**< HSI16 clock on MCO pin.    */
 #define STM32_MCOSEL_HSE        (4 << 24)   /**< HSE clock on MCO pin.      */
 #define STM32_MCOSEL_PLL        (5 << 24)   /**< PLL clock on MCO pin.      */
 #define STM32_MCOSEL_LSI        (6 << 24)   /**< LSI clock on MCO pin.      */
@@ -170,28 +165,36 @@
 /** @} */
 
 /**
- * @name    RCC_ICSCR register bits definitions
+ * @name    RCC_PLLCFGR register bits definitions
  * @{
  */
-#define STM32_MSIRANGE_MASK     (7 << 13)   /**< MSIRANGE field mask.       */
-#define STM32_MSIRANGE_64K      (0 << 13)   /**< 64kHz nominal.             */
-#define STM32_MSIRANGE_128K     (1 << 13)   /**< 128kHz nominal.            */
-#define STM32_MSIRANGE_256K     (2 << 13)   /**< 256kHz nominal.            */
-#define STM32_MSIRANGE_512K     (3 << 13)   /**< 512kHz nominal.            */
-#define STM32_MSIRANGE_1M       (4 << 13)   /**< 1MHz nominal.              */
-#define STM32_MSIRANGE_2M       (5 << 13)   /**< 2MHz nominal.              */
-#define STM32_MSIRANGE_4M       (6 << 13)   /**< 4MHz nominal               */
+#define STM32_PLLSRC_MASK       (3 << 16)   /**< PLL clock source mask.     */
+#define STM32_PLLSRC_NOCLOCK    (0 << 16)   /**< PLL clock source disabled. */
+#define STM32_PLLSRC_MSI        (1 << 16)   /**< PLL clock source is MSI.   */
+#define STM32_PLLSRC_HSI16      (2 << 16)   /**< PLL clock source is HSI16. */
+#define STM32_PLLSRC_HSE        (3 << 16)   /**< PLL clock source is HSE.   */
+/** @} */
+
+/**
+ * @name    RCC_BDCR register bits definitions
+ * @{
+ */
+#define STM32_RTCSEL_MASK       (3 << 8)    /**< RTC source mask.           */
+#define STM32_RTCSEL_NOCLOCK    (0 << 8)    /**< No RTC source.             */
+#define STM32_RTCSEL_LSE        (1 << 8)    /**< RTC source is LSE.         */
+#define STM32_RTCSEL_LSI        (2 << 8)    /**< RTC source is LSI.         */
+#define STM32_RTCSEL_HSEDIV     (3 << 8)    /**< RTC source is HSE divided. */
 /** @} */
 
 /**
  * @name    RCC_CSR register bits definitions
  * @{
  */
-#define STM32_RTCSEL_MASK       (3 << 16)   /**< RTC source mask.           */
-#define STM32_RTCSEL_NOCLOCK    (0 << 16)   /**< No RTC source.             */
-#define STM32_RTCSEL_LSE        (1 << 16)   /**< RTC source is LSE.         */
-#define STM32_RTCSEL_LSI        (2 << 16)   /**< RTC source is LSI.         */
-#define STM32_RTCSEL_HSEDIV     (3 << 16)   /**< RTC source is HSE divided. */
+#define STM32_MSISRANGE_MASK    (15 << 8)   /**< MSISRANGE field mask.      */
+#define STM32_MSISRANGE_1M      (4 << 8)    /**< 1MHz nominal.              */
+#define STM32_MSISRANGE_2M      (5 << 8)    /**< 2MHz nominal.              */
+#define STM32_MSISRANGE_4M      (6 << 8)    /**< 4MHz nominal.              */
+#define STM32_MSISRANGE_8M      (7 << 8)    /**< 8MHz nominal.              */
 /** @} */
 
 /*===========================================================================*/
@@ -301,7 +304,7 @@
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
-#define STM32_PLLSRC                STM32_PLLSRC_HSI
+#define STM32_PLLSRC                STM32_PLLSRC_HSI16
 #endif
 
 /**
@@ -366,13 +369,6 @@
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
 #define STM32_RTCSEL                STM32_RTCSEL_LSE
-#endif
-
-/**
- * @brief   HSE divider toward RTC setting.
- */
-#if !defined(STM32_RTCPRE) || defined(__DOXYGEN__)
-#define STM32_RTCPRE                STM32_RTCPRE_DIV2
 #endif
 /** @} */
 
@@ -458,12 +454,12 @@
 #endif
 #else /* !STM32_HSI_ENABLED */
 #if STM32_ADC_CLOCK_ENABLED ||                                              \
-    (STM32_SW == STM32_SW_HSI) ||                                           \
+    (STM32_SW == STM32_SW_HSI16) ||                                         \
     ((STM32_SW == STM32_SW_PLL) &&                                          \
-     (STM32_PLLSRC == STM32_PLLSRC_HSI)) ||                                 \
-    (STM32_MCOSEL == STM32_MCOSEL_HSI) ||                                   \
+     (STM32_PLLSRC == STM32_PLLSRC_HSI16)) ||                               \
+    (STM32_MCOSEL == STM32_MCOSEL_HSI16) ||                                 \
     ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                                  \
-     (STM32_PLLSRC == STM32_PLLSRC_HSI))
+     (STM32_PLLSRC == STM32_PLLSRC_HSI16))
 #error "required HSI clock is not enabled"
 #endif
 #endif /* !STM32_HSI_ENABLED */
@@ -578,7 +574,7 @@
  */
 #if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
 #define STM32_PLLCLKIN              STM32_HSECLK
-#elif STM32_PLLSRC == STM32_PLLSRC_HSI
+#elif STM32_PLLSRC == STM32_PLLSRC_HSI16
 #define STM32_PLLCLKIN              STM32_HSICLK
 #else
 #error "invalid STM32_PLLSRC value specified"
@@ -638,7 +634,7 @@
 #define STM32_SYSCLK                2100000
 #elif (STM32_SW == STM32_SW_MSI)
 #define STM32_SYSCLK                STM32_MSICLK
-#elif (STM32_SW == STM32_SW_HSI)
+#elif (STM32_SW == STM32_SW_HSI16)
 #define STM32_SYSCLK                STM32_HSICLK
 #elif (STM32_SW == STM32_SW_HSE)
 #define STM32_SYSCLK                STM32_HSECLK
@@ -732,7 +728,7 @@
  */
 #if (STM32_MCOSEL == STM32_MCOSEL_NOCLOCK) || defined(__DOXYGEN__)
 #define STM32_MCODIVCLK             0
-#elif STM32_MCOSEL == STM32_MCOSEL_HSI
+#elif STM32_MCOSEL == STM32_MCOSEL_HSI16
 #define STM32_MCODIVCLK             STM32_HSICLK
 #elif STM32_MCOSEL == STM32_MCOSEL_MSI
 #define STM32_MCODIVCLK             STM32_MSICLK
@@ -766,21 +762,6 @@
 #endif
 
 /**
- * @brief   HSE divider toward RTC clock.
- */
-#if (STM32_RTCPRE == STM32_RTCPRE_DIV2) || defined(__DOXYGEN__)
-#define STM32_HSEDIVCLK             (STM32_HSECLK / 2)
-#elif (STM32_RTCPRE == STM32_RTCPRE_DIV4) || defined(__DOXYGEN__)
-#define STM32_HSEDIVCLK             (STM32_HSECLK / 4)
-#elif (STM32_RTCPRE == STM32_RTCPRE_DIV8) || defined(__DOXYGEN__)
-#define STM32_HSEDIVCLK             (STM32_HSECLK / 8)
-#elif (STM32_RTCPRE == STM32_RTCPRE_DIV16) || defined(__DOXYGEN__)
-#define STM32_HSEDIVCLK             (STM32_HSECLK / 16)
-#else
-#error "invalid STM32_RTCPRE value specified"
-#endif
-
-/**
  * @brief   RTC/LCD clock.
  */
 #if (STM32_RTCSEL == STM32_RTCSEL_NOCLOCK) || defined(__DOXYGEN__)
@@ -790,7 +771,7 @@
 #elif STM32_RTCSEL == STM32_RTCSEL_LSI
 #define STM32_RTCCLK                  STM32_LSICLK
 #elif STM32_RTCSEL == STM32_RTCSEL_HSEDIV
-#define STM32_RTCCLK                  STM32_HSEDIVCLK
+#define STM32_RTCCLK                  (STM32_HSECLK / 32)
 #else
 #error "invalid STM32_RTCSEL value specified"
 #endif
