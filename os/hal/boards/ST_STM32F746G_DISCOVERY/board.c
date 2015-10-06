@@ -87,8 +87,8 @@ void __early_init(void) {
 bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
-  /* TODO: Fill the implementation.*/
-  return true;
+
+  return !palReadPad(GPIOC, GPIOC_SD_DETECT);
 }
 
 /**
@@ -97,8 +97,8 @@ bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
   (void)sdcp;
-
-  return !palReadPad(GPIOC, GPIOC_SD_DETECT);
+  /* TODO: Fill the implementation.*/
+  return false;
 }
 #endif /* HAL_USE_SDC */
 

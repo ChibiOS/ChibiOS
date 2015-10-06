@@ -11,10 +11,10 @@
   <board_name>STMicroelectronics STM32F746G-Discovery</board_name>
   <board_id>ST_STM32F746G_DISCOVERY</board_id>
   <board_functions>
-  	<sdc_lld_is_write_protected><![CDATA[
+  	<sdc_lld_is_card_inserted><![CDATA[
   (void)sdcp;
 
-  return !palReadPad(GPIOC, GPIOC_SD_DETECT);]]></sdc_lld_is_write_protected>
+  return !palReadPad(GPIOC, GPIOC_SD_DETECT);]]></sdc_lld_is_card_inserted>
  </board_functions>
   <headers></headers>
   <ethernet_phy>
