@@ -89,7 +89,7 @@ static void calibrate(ADCDriver *adcp) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(KINETIS_ADC0_IRC_VECTOR) {
+OSAL_IRQ_HANDLER(KINETIS_ADC0_IRQ_VECTOR) {
   OSAL_IRQ_PROLOGUE();
 
   ADCDriver *adcp = &ADCD1;
