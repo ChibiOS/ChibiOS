@@ -132,8 +132,8 @@ static inline void chBSemObjectInit(binary_semaphore_t *bsp, bool taken) {
  * @param[in] bsp       pointer to a @p binary_semaphore_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval RDY_OK       if the binary semaphore has been successfully taken.
- * @retval RDY_RESET    if the binary semaphore has been reset using
+ * @retval MSG_OK       if the binary semaphore has been successfully taken.
+ * @retval MSG_RESET    if the binary semaphore has been reset using
  *                      @p bsemReset().
  *
  * @api
@@ -149,8 +149,8 @@ static inline msg_t chBSemWait(binary_semaphore_t *bsp) {
  * @param[in] bsp       pointer to a @p binary_semaphore_t structure
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval RDY_OK       if the binary semaphore has been successfully taken.
- * @retval RDY_RESET    if the binary semaphore has been reset using
+ * @retval MSG_OK       if the binary semaphore has been successfully taken.
+ * @retval MSG_RESET    if the binary semaphore has been reset using
  *                      @p bsemReset().
  *
  * @sclass
@@ -173,10 +173,10 @@ static inline msg_t chBSemWaitS(binary_semaphore_t *bsp) {
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval RDY_OK       if the binary semaphore has been successfully taken.
- * @retval RDY_RESET    if the binary semaphore has been reset using
+ * @retval MSG_OK       if the binary semaphore has been successfully taken.
+ * @retval MSG_RESET    if the binary semaphore has been reset using
  *                      @p bsemReset().
- * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled or reset
+ * @retval MSG_TIMEOUT  if the binary semaphore has not been signaled or reset
  *                      within the specified timeout.
  *
  * @sclass
@@ -200,10 +200,10 @@ static inline msg_t chBSemWaitTimeoutS(binary_semaphore_t *bsp,
  *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
- * @retval RDY_OK       if the binary semaphore has been successfully taken.
- * @retval RDY_RESET    if the binary semaphore has been reset using
+ * @retval MSG_OK       if the binary semaphore has been successfully taken.
+ * @retval MSG_RESET    if the binary semaphore has been reset using
  *                      @p bsemReset().
- * @retval RDY_TIMEOUT  if the binary semaphore has not been signaled or reset
+ * @retval MSG_TIMEOUT  if the binary semaphore has not been signaled or reset
  *                      within the specified timeout.
  *
  * @api
@@ -218,7 +218,7 @@ static inline msg_t chBSemWaitTimeout(binary_semaphore_t *bsp,
  * @brief   Reset operation on the binary semaphore.
  * @note    The released threads can recognize they were waked up by a reset
  *          rather than a signal because the @p bsemWait() will return
- *          @p RDY_RESET instead of @p RDY_OK.
+ *          @p MSG_RESET instead of @p MSG_OK.
  * @note    This function does not reschedule.
  *
  * @param[in] bsp       pointer to a @p binary_semaphore_t structure
@@ -240,7 +240,7 @@ static inline void chBSemResetI(binary_semaphore_t *bsp, bool taken) {
  * @brief   Reset operation on the binary semaphore.
  * @note    The released threads can recognize they were waked up by a reset
  *          rather than a signal because the @p bsemWait() will return
- *          @p RDY_RESET instead of @p RDY_OK.
+ *          @p MSG_RESET instead of @p MSG_OK.
  *
  * @param[in] bsp       pointer to a @p binary_semaphore_t structure
  * @param[in] taken     new state of the binary semaphore
