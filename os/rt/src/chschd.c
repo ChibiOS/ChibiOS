@@ -368,6 +368,10 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
 
   chDbgCheckClassS();
 
+  chDbgAssert((ch.rlist.r_queue.p_next == (thread_t *)&ch.rlist.r_queue) ||
+              (ch.rlist.r_current->p_prio >= ch.rlist.r_queue.p_next->p_prio),
+              "priority order violation");
+
   /* Storing the message to be retrieved by the target thread when it will
      restart execution.*/
   ntp->p_u.rdymsg = msg;
