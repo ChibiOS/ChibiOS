@@ -105,6 +105,18 @@ SECTIONS
         . = ALIGN(8);
     } > flash_itcm AT > flash
 
+    /* Constants are placed in the normal flash (non-ITCM) region because it
+       is desirable to make them DMA-accessible.*/
+    .rodata : ALIGN(4)
+    {
+        . = ALIGN(4);
+        PROVIDE(__rodata_base__ = .);
+        *(.rodata)
+        *(.rodata.*)
+        . = ALIGN(4);
+        PROVIDE(__rodata_end__ = .);
+    } > flash
+
     . = ALIGN(4);
     _etext = .;
     _textdata = _etext;
@@ -162,18 +174,6 @@ SECTIONS
         . = ALIGN(4);
         PROVIDE(_edata = .);
     } > DATA_RAM AT > flash
-
-    /* Constants are placed in the normal flash (non-ITCM) region because it
-       is desirable to make them DMA-accessible.*/
-    .rodata : ALIGN(4)
-    {
-        . = ALIGN(4);
-        PROVIDE(__rodata_base__ = .);
-        *(.rodata)
-        *(.rodata.*)
-        . = ALIGN(4);
-        PROVIDE(__rodata_end__ = .);
-    } > flash
 
     .bss : ALIGN(4)
     {
