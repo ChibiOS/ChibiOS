@@ -116,6 +116,8 @@
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB devices.
+- HAL: Fixed STM32F3xx HAL checking for non-existing macros (bug #648)
+       (backported to 3.0.3 and 2.6.10).
 - HAL: Fixed error in STM32F030 EXT driver (bug #647)(backported to 3.0.3).
 - VAR: Fixed _sbrk_r with incr == 0 should be valid (bug #645)(backported to
        3.0.3 and 2.6.10).
