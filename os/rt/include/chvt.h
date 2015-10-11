@@ -285,7 +285,7 @@ static inline bool chVTIsTimeWithinX(systime_t time,
                                      systime_t start,
                                      systime_t end) {
 
-  return (bool)((time - start) < (end - start));
+  return (bool)((systime_t)(time - start) < (systime_t)(end - start));
 }
 
 /**

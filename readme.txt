@@ -119,6 +119,8 @@
 - HAL: Fixed STM32F3xx HAL checking for non-existing macros (bug #648)
        (backported to 3.0.3 and 2.6.10).
 - HAL: Fixed error in STM32F030 EXT driver (bug #647)(backported to 3.0.3).
+- RT:  Fixed problem with chVTIsTimeWithinX() (bug #646)(backported to
+       3.0.3 and 2.6.10).
 - VAR: Fixed _sbrk_r with incr == 0 should be valid (bug #645)(backported to
        3.0.3 and 2.6.10).
 - RT:  Fixed issues in CMSIS RTOS interface (bug #644)(backported to 3.0.3).
