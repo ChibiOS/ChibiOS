@@ -588,14 +588,6 @@
 #error "HSI not enabled, required by STM32_I2C2SW"
 #endif
 
-#if STM32_TIM1SW == STM32_TIM1SW_HSI
-#error "HSI not enabled, required by STM32_TIM1SW"
-#endif
-
-#if STM32_TIM8SW == STM32_TIM8SW_HSI
-#error "HSI not enabled, required by STM32_TIM8SW"
-#endif
-
 #if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSI)
 #error "HSI not enabled, required by STM32_SW and STM32_PLLSRC"
 #endif
