@@ -73,6 +73,7 @@
 
 *** 2.6.10 ***
 - FIX: Fixed STM32F3xx HAL checking for non-existing macros (bug #648).
+- RT:  Fixed problem with chVTIsTimeWithinX() (bug #646).
 - FIX: Fixed _sbrk_r with incr == 0 should be valid (bug #645).
 - FIX: Fixed incorrect working area size in LwIP creation in demos (bug #642).
 - FIX: Fixed error in hal_lld_f100.h checks (bug #641).
