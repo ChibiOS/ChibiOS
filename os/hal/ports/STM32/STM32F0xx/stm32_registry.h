@@ -851,6 +851,9 @@
 /*===========================================================================*/
 #elif defined(STM32F030x6) || defined(STM32F030x8)
 
+/* Common identifier of all STM32F030 devices.*/
+#define STM32F030
+
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_HAS_ADC2                      FALSE
