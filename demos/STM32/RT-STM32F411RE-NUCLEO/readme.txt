@@ -1,10 +1,10 @@
 *****************************************************************************
-** ChibiOS/RT port for ARM-Cortex-M4 STM32F401.                            **
+** ChibiOS/RT port for ARM-Cortex-M4 STM32F411.                            **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an ST_NUCLEO_F401RE board.
+The demo runs on an ST_NUCLEO_F411RE board.
 
 ** The Demo **
 
