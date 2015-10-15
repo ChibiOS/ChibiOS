@@ -76,6 +76,7 @@
 - HAL: Now STM32 USARTv2 driver initializes the ISR vectors statically on
        initialization. Disabling them was not necessary and added to
        the code size.
+- HAL: Added DMA channel selection on STM32F030xC devices.
 - HAL: Added serial driver support for USART 3..6 on STM32F030xC devices.
 - HAL: Merged the newest ST header files for STM32F1xx.
 - HAL: Added support for differential mode to the STM32F3xx ADC driver.
