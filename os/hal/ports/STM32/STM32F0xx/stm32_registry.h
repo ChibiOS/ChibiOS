@@ -1270,13 +1270,13 @@
 #define STM32_UART5_TX_DMA_CHN              0x0000C0C0
 
 #define STM32_HAS_USART6                    TRUE
-#define STM32_USART3_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 1) |\
+#define STM32_USART6_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
-#define STM32_USART3_RX_DMA_CHN             0x000D0D0D
-#define STM32_USART3_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 2) |\
+#define STM32_USART6_RX_DMA_CHN             0x000D0D0D
+#define STM32_USART6_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 4))
-#define STM32_USART3_TX_DMA_CHN             0x0000D0D0
+#define STM32_USART6_TX_DMA_CHN             0x0000D0D0
 
 #define STM32_HAS_UART7                     FALSE
 #define STM32_HAS_UART8                     FALSE
