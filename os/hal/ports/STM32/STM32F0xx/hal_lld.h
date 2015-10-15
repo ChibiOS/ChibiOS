@@ -806,6 +806,26 @@
 #define STM32_USART2CLK             STM32_PCLK
 
 /**
+ * @brief   USART3 frequency.
+ */
+#define STM32_USART3CLK             STM32_PCLK
+
+/**
+ * @brief   USART4 frequency.
+ */
+#define STM32_UART4CLK              STM32_PCLK
+
+/**
+ * @brief   USART5 frequency.
+ */
+#define STM32_UART5CLK              STM32_PCLK
+
+/**
+ * @brief   USART6 frequency.
+ */
+#define STM32_USART6CLK             STM32_PCLK
+
+/**
  * @brief   Timers clock.
  */
 #if (STM32_PPRE == STM32_PPRE_DIV1) || defined(__DOXYGEN__)

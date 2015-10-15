@@ -30,6 +30,15 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/* For compatibility for those devices without LIN support in the USARTS.*/
+#if !defined(USART_ISR_LBDF)
+#define USART_ISR_LBDF                      0
+#endif
+
+#if !defined(USART_CR2_LBDIE)
+#define USART_CR2_LBDIE                     0
+#endif
+
 /* STM32L0xx/STM32F7xx ST headers difference.*/
 #if !defined(USART_ISR_LBDF)
 #define USART_ISR_LBDF USART_ISR_LBD
@@ -315,6 +324,37 @@ OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
 }
 #endif
 
+#if defined(STM32_USART3456_HANDLER)
+#if STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4 ||                    \
+    STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+/**
+ * @brief   USART2 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_USART3456_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+#if STM32_SERIAL_USE_USART3
+  serve_interrupt(&SD3);
+#endif
+#if STM32_SERIAL_USE_UART4
+  serve_interrupt(&SD4);
+#endif
+#if STM32_SERIAL_USE_UART5
+  serve_interrupt(&SD5);
+#endif
+#if STM32_SERIAL_USE_USART6
+  serve_interrupt(&SD6);
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#else /* !defined(STM32_USART3456_HANDLER) */
+
 #if STM32_SERIAL_USE_USART3 || defined(__DOXYGEN__)
 #if !defined(STM32_USART3_HANDLER)
 #error "STM32_USART3_HANDLER not defined"
@@ -391,6 +431,8 @@ OSAL_IRQ_HANDLER(STM32_USART6_HANDLER) {
 }
 #endif
 
+#endif /* !defined(STM32_USART3456_HANDLER) */
+
 #if STM32_SERIAL_USE_UART7 || defined(__DOXYGEN__)
 #if !defined(STM32_UART7_HANDLER)
 #error "STM32_UART7_HANDLER not defined"
@@ -444,48 +486,79 @@ void sd_lld_init(void) {
   sdObjectInit(&SD1, NULL, notify1);
   SD1.usart = USART1;
   SD1.clock = STM32_USART1CLK;
+#if defined(STM32_USART1_NUMBER)
+  nvicEnableVector(STM32_USART1_NUMBER, STM32_SERIAL_USART1_PRIORITY);
+#endif
 #endif
 
 #if STM32_SERIAL_USE_USART2
   sdObjectInit(&SD2, NULL, notify2);
   SD2.usart = USART2;
   SD2.clock = STM32_USART2CLK;
+#if defined(STM32_USART2_NUMBER)
+  nvicEnableVector(STM32_USART2_NUMBER, STM32_SERIAL_USART2_PRIORITY);
+#endif
 #endif
 
 #if STM32_SERIAL_USE_USART3
   sdObjectInit(&SD3, NULL, notify3);
   SD3.usart = USART3;
   SD3.clock = STM32_USART3CLK;
+#if defined(STM32_USART3_NUMBER)
+  nvicEnableVector(STM32_USART3_NUMBER, STM32_SERIAL_USART3_PRIORITY);
+#endif
 #endif
 
 #if STM32_SERIAL_USE_UART4
   sdObjectInit(&SD4, NULL, notify4);
   SD4.usart = UART4;
   SD4.clock = STM32_UART4CLK;
+#if defined(STM32_UART4_NUMBER)
+  nvicEnableVector(STM32_UART4_NUMBER, STM32_SERIAL_UART4_PRIORITY);
+#endif
 #endif
 
 #if STM32_SERIAL_USE_UART5
   sdObjectInit(&SD5, NULL, notify5);
   SD5.usart = UART5;
   SD5.clock = STM32_UART5CLK;
+#if defined(STM32_UART5_NUMBER)
+  nvicEnableVector(STM32_UART5_NUMBER, STM32_SERIAL_UART5_PRIORITY);
+#endif
 #endif
 
 #if STM32_SERIAL_USE_USART6
   sdObjectInit(&SD6, NULL, notify6);
   SD6.usart = USART6;
   SD6.clock = STM32_USART6CLK;
+#if defined(STM32_USART6_NUMBER)
+  nvicEnableVector(STM32_USART6_NUMBER, STM32_SERIAL_USART6_PRIORITY);
+#endif
 #endif
 
 #if STM32_SERIAL_USE_UART7
   sdObjectInit(&SD7, NULL, notify7);
   SD7.usart = UART7;
   SD7.clock = STM32_UART7CLK;
+#if defined(STM32_UART7_NUMBER)
+  nvicEnableVector(STM32_UART7_NUMBER, STM32_SERIAL_UART7_PRIORITY);
+#endif
 #endif
 
 #if STM32_SERIAL_USE_UART8
   sdObjectInit(&SD8, NULL, notify8);
   SD8.usart = UART8;
   SD8.clock = STM32_UART8CLK;
+#if defined(STM32_UART8_NUMBER)
+  nvicEnableVector(STM32_UART8_NUMBER, STM32_SERIAL_UART8_PRIORITY);
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4 ||                    \
+    STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6 || defined(__DOXYGEN__)
+#if defined(STM32_USART3456_HANDLER)
+  nvicEnableVector(STM32_USART3456_NUMBER, STM32_SERIAL_USART3456_PRIORITY);
+#endif
 #endif
 }
 
@@ -508,49 +581,41 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
       rccEnableUSART1(FALSE);
-      nvicEnableVector(STM32_USART1_NUMBER, STM32_SERIAL_USART1_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
       rccEnableUSART2(FALSE);
-      nvicEnableVector(STM32_USART2_NUMBER, STM32_SERIAL_USART2_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
       rccEnableUSART3(FALSE);
-      nvicEnableVector(STM32_USART3_NUMBER, STM32_SERIAL_USART3_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
       rccEnableUART4(FALSE);
-      nvicEnableVector(STM32_UART4_NUMBER, STM32_SERIAL_UART4_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
       rccEnableUART5(FALSE);
-      nvicEnableVector(STM32_UART5_NUMBER, STM32_SERIAL_UART5_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_USART6
     if (&SD6 == sdp) {
       rccEnableUSART6(FALSE);
-      nvicEnableVector(STM32_USART6_NUMBER, STM32_SERIAL_USART6_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_UART7
     if (&SD7 == sdp) {
       rccEnableUART7(FALSE);
-      nvicEnableVector(STM32_UART7_NUMBER, STM32_SERIAL_UART7_PRIORITY);
     }
 #endif
 #if STM32_SERIAL_USE_UART8
     if (&SD8 == sdp) {
       rccEnableUART8(FALSE);
-      nvicEnableVector(STM32_UART8_NUMBER, STM32_SERIAL_UART8_PRIORITY);
     }
 #endif
   }
@@ -569,60 +634,54 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
   if (sdp->state == SD_READY) {
+    /* UART is de-initialized then clocks are disabled.*/
     usart_deinit(sdp->usart);
+
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
       rccDisableUSART1(FALSE);
-      nvicDisableVector(STM32_USART1_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
       rccDisableUSART2(FALSE);
-      nvicDisableVector(STM32_USART2_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
       rccDisableUSART3(FALSE);
-      nvicDisableVector(STM32_USART3_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
       rccDisableUART4(FALSE);
-      nvicDisableVector(STM32_UART4_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
       rccDisableUART5(FALSE);
-      nvicDisableVector(STM32_UART5_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_USART6
     if (&SD6 == sdp) {
       rccDisableUSART6(FALSE);
-      nvicDisableVector(STM32_USART6_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART7
     if (&SD7 == sdp) {
       rccDisableUART7(FALSE);
-      nvicDisableVector(STM32_UART7_NUMBER);
       return;
     }
 #endif
 #if STM32_SERIAL_USE_UART8
     if (&SD8 == sdp) {
       rccDisableUART8(FALSE);
-      nvicDisableVector(STM32_UART8_NUMBER);
       return;
     }
 #endif
