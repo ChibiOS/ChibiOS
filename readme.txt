@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- RT:  Added new function chVTGetTimersStateI() returning the state of the
+       timers list.
 - HAL: Now STM32 USARTv2 driver initializes the ISR vectors statically on
        initialization. Disabling them was not necessary and added to
        the code size.
