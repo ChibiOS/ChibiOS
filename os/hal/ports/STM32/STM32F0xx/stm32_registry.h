@@ -1312,6 +1312,9 @@
 /*===========================================================================*/
 #elif defined(STM32F070x6) || defined(STM32F070xB)
 
+/* Common identifier of all STM32F070 devices.*/
+#define STM32F070
+
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        FALSE
@@ -1508,7 +1511,11 @@
 #define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
-#define STM32_HAS_USB                       FALSE
+#define STM32_HAS_USB                       TRUE
+#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
+#define STM32_USB_PMA_SIZE                  768
+#define STM32_USB_HAS_BCDR                  TRUE
+
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
 
