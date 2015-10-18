@@ -51,7 +51,7 @@
  * @note    This number does not include the 16 system vectors and must be
  *          rounded to a multiple of 8.
  */
-#define CORTEX_NUM_VECTORS      104
+#define CORTEX_NUM_VECTORS      105
 
 /* The following code is not processed when the file is included from an
    asm module.*/
