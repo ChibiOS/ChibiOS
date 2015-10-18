@@ -52,13 +52,14 @@
 #define CORTEX_M1                       1   /**< @brief Cortex-M1 variant.  */
 #define CORTEX_M3                       3   /**< @brief Cortex-M3 variant.  */
 #define CORTEX_M4                       4   /**< @brief Cortex-M4 variant.  */
+#define CORTEX_M7                       7   /**< @brief Cortex-M4 variant.  */
 
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
 
 /* Cortex model check, only M0 and M3 supported right now.*/
 #if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M3) ||           \
-    (CORTEX_MODEL == CORTEX_M4)
+    (CORTEX_MODEL == CORTEX_M4) || (CORTEX_MODEL == CORTEX_M7)
 #elif (CORTEX_MODEL == CORTEX_M1)
 #warning "untested Cortex-M model"
 #else
@@ -134,7 +135,8 @@
 /* Includes the sub-architecture-specific part.*/
 #if (CORTEX_MODEL == CORTEX_M0) || (CORTEX_MODEL == CORTEX_M1)
 #include "chcore_v6m.h"
-#elif (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4)
+#elif (CORTEX_MODEL == CORTEX_M3) || (CORTEX_MODEL == CORTEX_M4) ||         \
+      (CORTEX_MODEL == CORTEX_M7)
 #include "chcore_v7m.h"
 #endif
 
