@@ -15,7 +15,7 @@
 */
 
 /*
- * ST32F407xG memory setup.
+ * ST32F746xG memory setup.
  */
 __main_stack_size__     = 0x0400;
 __process_stack_size__  = 0x0400;
@@ -23,9 +23,10 @@ __process_stack_size__  = 0x0400;
 MEMORY
 {
     flash : org = 0x08000000, len = 1M
-    ram : org = 0x20000000, len = 112k
-    ethram : org = 0x2001C000, len = 16k
-    ccmram : org = 0x10000000, len = 64k
+    ram : org = 0x20010000, len = 256k
+    itcm : org = 0x00000000, len = 16k
+    dtcm : org = 0x20000000, len = 64k
+    bckp : org = 0x40024000, len = 4k
 }
 
 __ram_start__           = ORIGIN(ram);
