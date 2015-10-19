@@ -1,11 +1,11 @@
 *****************************************************************************
-** ChibiOS/RT demo for generict ARM Cortex-M3 processor, kernel only.      **
+** ChibiOS/RT demo for generict ARM Cortex-M7 processor, kernel only.      **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on any ARM Cortex-M3 processor after changing few constants
-in main.c, the defaults are setup for an STM32F1xx.
+The demo runs on any ARM Cortex-M7 processor after changing few constants
+in main.c, the defaults are setup for an STM32F7xx.
 
 ** Build Procedure **
 
