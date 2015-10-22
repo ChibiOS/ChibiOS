@@ -105,7 +105,7 @@
         Mode="Input"
         Alternate="0" />
       <pin11
-        ID="OTG_FS_DM"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -113,7 +113,7 @@
         Mode="Input"
         Alternate="0" />
       <pin12
-        ID="OTG_FS_DP"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Maximum"

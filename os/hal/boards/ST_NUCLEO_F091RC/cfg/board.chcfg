@@ -39,7 +39,7 @@
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="7" />
+        Alternate="1" />
       <pin3
         ID="USART_RX"
         Type="PushPull"
@@ -47,7 +47,7 @@
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="7" ></pin3>
+        Alternate="1" />
       <pin4
         ID=""
         Type="PushPull"
@@ -105,21 +105,21 @@
         Mode="Input"
         Alternate="0" />
       <pin11
-        ID="OTG_FS_DM"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Alternate"
-        Alternate="10" />
+        Mode="Input"
+        Alternate="0" />
       <pin12
-        ID="OTG_FS_DP"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Alternate"
-        Alternate="10" />
+        Mode="Input"
+        Alternate="0" />
       <pin13
         ID="SWDIO"
         Type="PushPull"
