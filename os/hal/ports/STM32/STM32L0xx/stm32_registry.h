@@ -68,6 +68,7 @@
 #define STM32_ADVANCED_DMA                  TRUE
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
+#define STM32_DMA2_NUM_CHANNELS             0
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
 #define STM32_DMA1_CH4567_HANDLER           Vector6C
@@ -75,7 +76,19 @@
 #define STM32_DMA1_CH23_NUMBER              10
 #define STM32_DMA1_CH4567_NUMBER            11
 
-#define STM32_DMA2_NUM_CHANNELS             0
+#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
+#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
+#define DMA1_CH2_CMASK                      0x00000006U
+#define DMA1_CH3_CMASK                      0x00000006U
+
+#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define DMA1_CH4_CMASK                      0x00000078U
+#define DMA1_CH5_CMASK                      0x00000078U
+#define DMA1_CH6_CMASK                      0x00000078U
+#define DMA1_CH7_CMASK                      0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -296,6 +309,7 @@
 #define STM32_ADVANCED_DMA                  TRUE
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
+#define STM32_DMA2_NUM_CHANNELS             0
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
 #define STM32_DMA1_CH4567_HANDLER           Vector6C
@@ -303,7 +317,19 @@
 #define STM32_DMA1_CH23_NUMBER              10
 #define STM32_DMA1_CH4567_NUMBER            11
 
-#define STM32_DMA2_NUM_CHANNELS             0
+#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
+#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
+#define DMA1_CH2_CMASK                      0x00000006U
+#define DMA1_CH3_CMASK                      0x00000006U
+
+#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define DMA1_CH4_CMASK                      0x00000078U
+#define DMA1_CH5_CMASK                      0x00000078U
+#define DMA1_CH6_CMASK                      0x00000078U
+#define DMA1_CH7_CMASK                      0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -531,6 +557,7 @@
 #define STM32_ADVANCED_DMA                  TRUE
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
+#define STM32_DMA2_NUM_CHANNELS             0
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
 #define STM32_DMA1_CH4567_HANDLER           Vector6C
@@ -538,7 +565,19 @@
 #define STM32_DMA1_CH23_NUMBER              10
 #define STM32_DMA1_CH4567_NUMBER            11
 
-#define STM32_DMA2_NUM_CHANNELS             0
+#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
+#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
+#define DMA1_CH2_CMASK                      0x00000006U
+#define DMA1_CH3_CMASK                      0x00000006U
+
+#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define DMA1_CH4_CMASK                      0x00000078U
+#define DMA1_CH5_CMASK                      0x00000078U
+#define DMA1_CH6_CMASK                      0x00000078U
+#define DMA1_CH7_CMASK                      0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE

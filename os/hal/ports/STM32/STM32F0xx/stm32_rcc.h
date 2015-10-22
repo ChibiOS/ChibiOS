@@ -323,6 +323,34 @@
  * @api
  */
 #define rccResetDMA1()
+
+/**
+ * @brief   Enables the DMA2 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableDMA2(lp) rccEnableAHB(RCC_AHBENR_DMA2EN, lp)
+
+/**
+ * @brief   Disables the DMA2 peripheral clock.
+ * @note    The @p lp parameter is ignored in this family.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableDMA2(lp) rccDisableAHB(RCC_AHBENR_DMA2EN, lp)
+
+/**
+ * @brief   Resets the DMA2 peripheral.
+ * @note    Not supported in this family, does nothing.
+ *
+ * @api
+ */
+#define rccResetDMA2()
 /** @} */
 
 /**

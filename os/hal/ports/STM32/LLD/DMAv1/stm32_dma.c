@@ -56,12 +56,25 @@
 #define STM32_DMA_CCR_RESET_VALUE   0x00000000U
 
 #if STM32_DMA_SUPPORTS_CSELR == TRUE
+
+#if defined(DMA1_CSELR)
 #define ADDR_DMA1_CSELR             &DMA1_CSELR->CSELR
+#else
+#define ADDR_DMA1_CSELR             &DMA1->CSELR
+#endif
+
+#if defined(DMA2_CSELR)
 #define ADDR_DMA2_CSELR             &DMA2_CSELR->CSELR
 #else
+#define ADDR_DMA2_CSELR             &DMA2->CSELR
+#endif
+
+#else /* !defined(DMA1_CSELR) */
+
 #define ADDR_DMA1_CSELR             NULL
 #define ADDR_DMA2_CSELR             NULL
-#endif
+
+#endif /* !defined(DMA1_CSELR) */
 
 /*
  * Default ISR collision masks.

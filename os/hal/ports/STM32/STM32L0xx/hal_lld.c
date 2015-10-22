@@ -85,6 +85,61 @@ static void hal_lld_backup_domain_init(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if defined(STM32_DMA_REQUIRED) || defined(__DOXYGEN__)
+#if defined(STM32_DMA1_CH23_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   DMA1 streams 2 and 3 shared ISR.
+ * @note    It is declared here because this device has a non-standard
+ *          DMA shared IRQ handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_DMA1_CH23_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Check on channel 2.*/
+  dmaServeInterrupt(DMA1, 2);
+
+  /* Check on channel 3.*/
+  dmaServeInterrupt(DMA1, 3);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* defined(STM32_DMA1_CH23_HANDLER) */
+
+#if defined(STM32_DMA1_CH4567_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   DMA1 streams 4, 5, 6 and 7 shared ISR.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_DMA1_CH4567_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Check on channel 4.*/
+  dmaServeInterrupt(DMA1, 4);
+
+  /* Check on channel 5.*/
+  dmaServeInterrupt(DMA1, 5);
+
+#if STM32_DMA1_NUM_CHANNELS > 5
+  /* Check on channel 6.*/
+  dmaServeInterrupt(DMA1, 6);
+#endif
+
+#if STM32_DMA1_NUM_CHANNELS > 6
+  /* Check on channel 7.*/
+  dmaServeInterrupt(DMA1, 7);
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* defined(STM32_DMA1_CH4567_HANDLER) */
+#endif /* defined(STM32_DMA_REQUIRED) */
+
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
