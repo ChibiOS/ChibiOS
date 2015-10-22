@@ -66,11 +66,11 @@
  */
 #define STM32_USART1_HANDLER        VectorAC
 #define STM32_USART2_HANDLER        VectorB0
-#define STM32_USART3456_HANDLER     VectorB4
+#define STM32_USART3_8_HANDLER      VectorB4
 
 #define STM32_USART1_NUMBER         27
 #define STM32_USART2_NUMBER         28
-#define STM32_USART3456_NUMBER      29
+#define STM32_USART3_8_NUMBER       29
 
 /*
  * USB units.

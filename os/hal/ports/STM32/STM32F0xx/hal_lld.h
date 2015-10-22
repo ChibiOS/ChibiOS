@@ -96,6 +96,12 @@
 #elif defined(STM32F070xB)
 #define PLATFORM_NAME           "STM32F070xB Entry Level Value Line devices"
 
+#elif defined(STM32F091x8)
+#define PLATFORM_NAME           "STM32F091x8 Entry Level Medium Density devices"
+
+#elif defined(STM32F098xx)
+#define PLATFORM_NAME           "STM32F098xx Entry Level Medium Density devices"
+
 #else
 #error "STM32F0xx device not specified"
 #endif

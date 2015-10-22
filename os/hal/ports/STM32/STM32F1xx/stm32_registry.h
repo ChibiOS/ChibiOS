@@ -661,6 +661,11 @@
 #define STM32_DMA2_CH3_NUMBER               58
 #define STM32_DMA2_CH45_NUMBER              59
 
+#define STM32_DMA2_CH4_NUMBER               STM32_DMA2_CH45_NUMBER
+#define STM32_DMA2_CH5_NUMBER               STM32_DMA2_CH45_NUMBER
+#define DMA2_CH4_CMASK                      0x00000C00U
+#define DMA2_CH5_CMASK                      0x00000C00U
+
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
 

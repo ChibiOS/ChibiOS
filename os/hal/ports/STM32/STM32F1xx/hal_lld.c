@@ -92,6 +92,28 @@ static void hal_lld_backup_domain_init(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if defined(STM32_DMA_REQUIRED) || defined(__DOXYGEN__)
+#if defined(STM32_DMA2_CH45_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   DMA2 streams 4 and 5 shared ISR.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_DMA2_CH45_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Check on channel 4 of DMA2.*/
+  dmaServeInterrupt(DMA2, 4);
+
+  /* Check on channel 5 of DMA2.*/
+  dmaServeInterrupt(DMA2, 5);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* defined(STM32_DMA2_CH45_HANDLER) */
+#endif /* defined(STM32_DMA_REQUIRED) */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/

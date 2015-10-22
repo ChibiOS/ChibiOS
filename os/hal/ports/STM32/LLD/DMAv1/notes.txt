@@ -3,7 +3,7 @@ STM32 DMAv1 driver.
 Driver capability:
 
 - The driver supports the STM32 traditional DMA controller in the following
-  configurations: 5ch, 7ch, 7ch+5ch.
+  configurations: 5ch, 7ch, 7ch+5ch, 7ch+7ch.
 - Support for automatic the channel selection through the CSELR register.
 - For devices without CSELR register it is possible to select channels but
   the SYSCFG CFGR register is not configured, the user has to configure it
@@ -19,15 +19,7 @@ STM32_ADVANCED_DMA          - TRUE not used by the DMA drivers but other
                               channels. Probably will be removed in the
                               future.
 STM32_DMA_SUPPORTS_CSELR    - TRUE if the DMA have a CSELR register.
-STM32_DMAn_NUM_CHANNELS     - Number of channels in DMA "n".
-STM32_DMAn_CHx_HANDLER      - Vector name for IRQ "x".
-STM32_DMAn_CHxyz_HANDLER    - Vector name for shared IRQs "x", "y" and "z".
-STM32_DMAn_CHx_NUMBER       - Vector number for IRQ "x".
-STM32_DMAn_CHxyz_NUMBER     - Vector number for shared IRQs "x", "y" and "z".
-
-Currently supported shared combinations are:
-
-STM32_DMA1_CH23_HANDLER
-STM32_DMA1_CH23_NUMBER
-STM32_DMA1_CH4567_HANDLER
-STM32_DMA1_CH4567_NUMBER
+STM32_DMAn_NUM_CHANNELS     - Number of channels in DMAs "n" (1..2).
+STM32_DMAn_CHx_HANDLER      - Vector name for IRQ "x" (1..7). If the macro
+                              is not exported then the ISR is not declared.
+STM32_DMAn_CHx_NUMBER       - Vector number for IRQ "x" (1..7).

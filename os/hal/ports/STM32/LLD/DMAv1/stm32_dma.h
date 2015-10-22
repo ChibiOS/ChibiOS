@@ -44,6 +44,11 @@
 #define STM32_DMA_ISR_MASK          0x0F
 
 /**
+ * @brief   From stream number to shift factor in @p ISR and @p IFCR registers.
+ */
+#define STM32_DMA_ISR_SHIFT(stream) (((stream) - 1U) * 4U)
+
+/**
  * @brief   Returns the request line associated to the specified stream.
  * @note    In some STM32 manuals the request line is named confusingly
  *          channel.
@@ -232,6 +237,14 @@ typedef struct {
  */
 typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 
+/**
+ * @brief   DMA ISR redirector type.
+ */
+typedef struct {
+  stm32_dmaisr_t        dma_func;       /**< @brief DMA callback function.  */
+  void                  *dma_param;     /**< @brief DMA callback parameter. */
+} dma_isr_redir_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -412,6 +425,24 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
   dmaStreamDisable(dmastp);                                                 \
 }
 
+/**
+ * @brief   Serves a DMA IRQ.
+ *
+ * @param[in] dma       pointer to the DMA block
+ * @param[in] s         stream to serve
+ */
+#define dmaServeInterrupt(dma, s) {                                         \
+  uint32_t flags;                                                           \
+                                                                            \
+  flags = ((dma)->ISR >> STM32_DMA_ISR_SHIFT(s)) & STM32_DMA_ISR_MASK;      \
+  if (flags & STM32_DMA_ISR_MASK) {                                         \
+    (dma)->IFCR = flags << STM32_DMA_ISR_SHIFT(s);                          \
+    if (_stm32_dma_isr_redir[s].dma_func) {                                 \
+      _stm32_dma_isr_redir[s].dma_func(_stm32_dma_isr_redir[s].dma_param,   \
+                                       flags);                              \
+    }                                                                       \
+  }                                                                         \
+}
 /** @} */
 
 /*===========================================================================*/
@@ -420,6 +451,7 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
 
 #if !defined(__DOXYGEN__)
 extern const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS];
+extern dma_isr_redir_t _stm32_dma_isr_redir[STM32_DMA_STREAMS];
 #endif
 
 #ifdef __cplusplus

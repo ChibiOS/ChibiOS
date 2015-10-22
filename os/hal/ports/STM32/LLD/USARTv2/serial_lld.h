@@ -133,11 +133,11 @@
 #endif
 
 /**
- * @brief   USART3, 4, 5 and 6 interrupt priority level setting.
+ * @brief   USART3..8 interrupt priority level setting.
  * @note    Only valid on those devices with a shared IRQ.
  */
-#if !defined(STM32_SERIAL_USART3456_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SERIAL_USART3456_PRIORITY     12
+#if !defined(STM32_SERIAL_USART3_8_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SERIAL_USART3_8_PRIORITY      12
 #endif
 
 /**
