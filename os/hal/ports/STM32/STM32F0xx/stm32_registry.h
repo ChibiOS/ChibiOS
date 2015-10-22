@@ -1625,9 +1625,9 @@
 #define STM32_CRC_PROGRAMMABLE              FALSE
 
 /*===========================================================================*/
-/* STM32F091x8, STM32F098xx.                                                 */
+/* STM32F091xC, STM32F098xx.                                                 */
 /*===========================================================================*/
-#elif defined(STM32F091x8) || defined(STM32F098xx)
+#elif defined(STM32F091xC) || defined(STM32F098xx)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
