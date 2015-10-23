@@ -133,12 +133,12 @@ static void rtc_decode(uint32_t tv_sec,
 
   /* If the conversion is successful the function returns a pointer
      to the object the result was written into.*/
-#if defined __GNUC__
+#if defined(__GNUC__) || defined(__CC_ARM)
   t = localtime_r((time_t *)&(tv_sec), &tim);
   osalDbgAssert(t != NULL, "conversion failed");
 #else
   struct tm *t = localtime(&tv_sec);
-  memcpy(&timp, t, sizeof(struct tm));
+  memcpy(&tim, t, sizeof(struct tm));
 #endif
 
   rtcConvertStructTmToDateTime(&tim, tv_msec, timespec);
