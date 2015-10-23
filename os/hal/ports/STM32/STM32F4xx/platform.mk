@@ -10,7 +10,7 @@ ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/ADCv2/adc_lld.c
 endif
 ifneq ($(findstring HAL_USE_CAN TRUE,$(HALCONF)),)
-PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/CANV1/can_lld.c
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/CANv1/can_lld.c
 endif
 ifneq ($(findstring HAL_USE_DAC TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/DACv1/dac_lld.c
