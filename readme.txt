@@ -124,6 +124,8 @@
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB, STM32F091xC,
        STM32F098xx devices.
+- HAL: Fixed incorrect compiler check in STM32 RTCv1 driver (bug #650)
+       (backported to 3.0.3).
 - HAL: Fixed incorrect case in path (bug #649).
 - HAL: Fixed STM32F3xx HAL checking for non-existing macros (bug #648)
        (backported to 3.0.3 and 2.6.10).
