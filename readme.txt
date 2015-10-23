@@ -74,7 +74,7 @@
 *****************************************************************************
 
 *** 3.0.3 ***
-- HAL: Fixed missing RCC and ISR definitions for STM32F0xx timers.
+- HAL: Fixed missing RCC and ISR definitions for STM32F0xx timers (bug #651).
 - HAL: Fixed incorrect compiler check in STM32 RTCv1 driver (bug #650).
 - HAL: Fixed STM32F3xx HAL checking for non-existing macros (bug #648).
 - HAL: Fixed error in STM32F030 EXT driver (bug #647).
