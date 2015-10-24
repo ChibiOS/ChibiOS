@@ -73,6 +73,8 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Merged the latest STM32F2xx CMSIS headers and fixed the support
+       broken in 3.0.x.
 - RT:  Added new function chVTGetTimersStateI() returning the state of the
        timers list.
 - HAL: Now STM32 USARTv2 driver initializes the ISR vectors statically on

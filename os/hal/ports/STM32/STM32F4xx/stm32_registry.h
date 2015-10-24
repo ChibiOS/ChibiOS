@@ -28,31 +28,31 @@
 
 #if defined(STM32F439xx) || defined(STM32F429xx)
 #define STM32F429_439xx
+#define STM32F4XX
 
 #elif defined(STM32F437xx) || defined(STM32F427xx)
 #define STM32F427_437xx
+#define STM32F4XX
 
 #elif defined(STM32F405xx) || defined(STM32F415xx) ||                       \
       defined(STM32F407xx) || defined(STM32F417xx)
 #define STM32F40_41xxx
+#define STM32F4XX
 
 #elif defined(STM32F401xC) || defined(STM32F401xE)
 #define STM32F401xx
+#define STM32F4XX
 
 #elif defined(STM32F411xE)
 #define STM32F411xx
+#define STM32F4XX
 
-#elif defined(STM32F2XX)
+#elif defined(STM32F205xx) || defined(STM32F215xx) ||                       \
+      defined(STM32F207xx) || defined(STM32F217xx)
+#define STM32F2XX
 
 #else
 #error "STM32F2xx/F4xx device not specified"
-#endif
-
-/**
- * @brief   Sub-family identifier.
- */
-#if !defined(STM32F4XX) || defined(__DOXYGEN__)
-#define STM32F4XX
 #endif
 
 /*===========================================================================*/

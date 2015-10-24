@@ -90,8 +90,17 @@
 #elif defined(STM32F411xE)
 #define PLATFORM_NAME           "STM32F411xE High Performance with DSP and FPU"
 
-#elif defined(STM32F2XX)
-#define PLATFORM_NAME           "STM32F2xx High Performance"
+#elif defined(STM32F205xx)
+#define PLATFORM_NAME           "STM32F405 High Performance"
+
+#elif defined(STM32F215xx)
+#define PLATFORM_NAME           "STM32F415 High Performance"
+
+#elif defined(STM32F207xx)
+#define PLATFORM_NAME           "STM32F407 High Performance"
+
+#elif defined(STM32F217xx)
+#define PLATFORM_NAME           "STM32F417 High Performance"
 
 #else
 #error "STM32F2xx/F4xx device not specified"
