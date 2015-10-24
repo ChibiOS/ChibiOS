@@ -437,9 +437,9 @@ typedef struct {
   flags = ((dma)->ISR >> STM32_DMA_ISR_SHIFT(s)) & STM32_DMA_ISR_MASK;      \
   if (flags & STM32_DMA_ISR_MASK) {                                         \
     (dma)->IFCR = flags << STM32_DMA_ISR_SHIFT(s);                          \
-    if (_stm32_dma_isr_redir[s].dma_func) {                                 \
-      _stm32_dma_isr_redir[s].dma_func(_stm32_dma_isr_redir[s].dma_param,   \
-                                       flags);                              \
+    if (_stm32_dma_isr_redir[(s) - 1U].dma_func) {                          \
+      _stm32_dma_isr_redir[(s) - 1U].dma_func(_stm32_dma_isr_redir[(s) -    \
+                                              1U].dma_param, flags);        \
     }                                                                       \
   }                                                                         \
 }
