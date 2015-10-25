@@ -206,6 +206,15 @@
 #else
 #define CH_CORE_VARIANT_NAME            "Cortex-M4"
 #endif
+
+#elif (CORTEX_MODEL == CORTEX_M7)
+#define CH_ARCHITECTURE_ARM_v7ME
+#define CH_ARCHITECTURE_NAME            "ARMv7-ME"
+#if CORTEX_USE_FPU
+#define CH_CORE_VARIANT_NAME            "Cortex-M7F"
+#else
+#define CH_CORE_VARIANT_NAME            "Cortex-M7"
+#endif
 #endif
 
 /**
