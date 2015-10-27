@@ -99,10 +99,10 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH23_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Check on channel 2.*/
-  dmaServeInterrupt(DMA1, 2);
+  dmaServeInterrupt(STM32_DMA1_STREAM2);
 
   /* Check on channel 3.*/
-  dmaServeInterrupt(DMA1, 3);
+  dmaServeInterrupt(STM32_DMA1_STREAM3);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -119,26 +119,25 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH4567_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Check on channel 4.*/
-  dmaServeInterrupt(DMA1, 4);
+  dmaServeInterrupt(STM32_DMA1_STREAM4);
 
   /* Check on channel 5.*/
-  dmaServeInterrupt(DMA1, 5);
+  dmaServeInterrupt(STM32_DMA1_STREAM5);
 
 #if STM32_DMA1_NUM_CHANNELS > 5
   /* Check on channel 6.*/
-  dmaServeInterrupt(DMA1, 6);
+  dmaServeInterrupt(STM32_DMA1_STREAM6);
 #endif
 
 #if STM32_DMA1_NUM_CHANNELS > 6
   /* Check on channel 7.*/
-  dmaServeInterrupt(DMA1, 7);
+  dmaServeInterrupt(STM32_DMA1_STREAM7);
 #endif
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif /* defined(STM32_DMA1_CH4567_HANDLER) */
 #endif /* defined(STM32_DMA_REQUIRED) */
-
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

@@ -107,10 +107,10 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH23_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Check on channel 2.*/
-  dmaServeInterrupt(DMA1, 2);
+  dmaServeInterrupt(STM32_DMA1_STREAM2);
 
   /* Check on channel 3.*/
-  dmaServeInterrupt(DMA1, 3);
+  dmaServeInterrupt(STM32_DMA1_STREAM3);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -127,19 +127,19 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH4567_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Check on channel 4.*/
-  dmaServeInterrupt(DMA1, 4);
+  dmaServeInterrupt(STM32_DMA1_STREAM4);
 
   /* Check on channel 5.*/
-  dmaServeInterrupt(DMA1, 5);
+  dmaServeInterrupt(STM32_DMA1_STREAM5);
 
 #if STM32_DMA1_NUM_CHANNELS > 5
   /* Check on channel 6.*/
-  dmaServeInterrupt(DMA1, 6);
+  dmaServeInterrupt(STM32_DMA1_STREAM6);
 #endif
 
 #if STM32_DMA1_NUM_CHANNELS > 6
   /* Check on channel 7.*/
-  dmaServeInterrupt(DMA1, 7);
+  dmaServeInterrupt(STM32_DMA1_STREAM7);
 #endif
 
   OSAL_IRQ_EPILOGUE();
@@ -159,16 +159,16 @@ OSAL_IRQ_HANDLER(STM32_DMA12_CH23_CH12_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Check on channel 2 of DMA1.*/
-  dmaServeInterrupt(DMA1, 2);
+  dmaServeInterrupt(STM32_DMA1_STREAM2);
 
   /* Check on channel 3 of DMA1.*/
-  dmaServeInterrupt(DMA1, 3);
+  dmaServeInterrupt(STM32_DMA1_STREAM3);
 
   /* Check on channel 1 of DMA2.*/
-  dmaServeInterrupt(DMA2, 1);
+  dmaServeInterrupt(STM32_DMA2_STREAM1);
 
   /* Check on channel 2 of DMA2.*/
-  dmaServeInterrupt(DMA2, 2);
+  dmaServeInterrupt(STM32_DMA2_STREAM2);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -187,25 +187,25 @@ OSAL_IRQ_HANDLER(STM32_DMA12_CH4567_CH345_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Check on channel 4 of DMA1.*/
-  dmaServeInterrupt(DMA1, 4);
+  dmaServeInterrupt(STM32_DMA1_STREAM4);
 
   /* Check on channel 5 of DMA1.*/
-  dmaServeInterrupt(DMA1, 5);
+  dmaServeInterrupt(STM32_DMA1_STREAM5);
 
   /* Check on channel 6 of DMA1.*/
-  dmaServeInterrupt(DMA1, 6);
+  dmaServeInterrupt(STM32_DMA1_STREAM6);
 
   /* Check on channel 7 of DMA1.*/
-  dmaServeInterrupt(DMA1, 7);
+  dmaServeInterrupt(STM32_DMA1_STREAM7);
 
   /* Check on channel 3 of DMA2.*/
-  dmaServeInterrupt(DMA2, 3);
+  dmaServeInterrupt(STM32_DMA1_STREAM3);
 
   /* Check on channel 4 of DMA2.*/
-  dmaServeInterrupt(DMA2, 4);
+  dmaServeInterrupt(STM32_DMA1_STREAM4);
 
   /* Check on channel 5 of DMA2.*/
-  dmaServeInterrupt(DMA2, 5);
+  dmaServeInterrupt(STM32_DMA1_STREAM5);
 
   OSAL_IRQ_EPILOGUE();
 }

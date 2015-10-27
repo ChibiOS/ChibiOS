@@ -217,13 +217,13 @@
  * @brief   STM32 DMA stream descriptor structure.
  */
 typedef struct {
+  DMA_TypeDef           *dma ;          /**< @brief Associated DMA.         */
   DMA_Channel_TypeDef   *channel;       /**< @brief Associated DMA channel. */
   uint32_t              cmask;          /**< @brief Mask of streams sharing
                                              the same ISR.                  */
-  volatile uint32_t     *ifcr;          /**< @brief Associated IFCR reg.    */
   volatile uint32_t     *cselr;         /**< @brief Associated CSELR reg.   */
-  uint8_t               shift;          /**< @brief Bit offset in IFCR and
-                                             CSELR registers.               */
+  uint8_t               shift;          /**< @brief Bit offset in ISR, IFCR
+                                             and CSELR registers.           */
   uint8_t               selfindex;      /**< @brief Index to self in array. */
   uint8_t               vector;         /**< @brief Associated IRQ vector.  */
 } stm32_dma_stream_t;
@@ -381,7 +381,7 @@ typedef struct {
  * @special
  */
 #define dmaStreamClearInterrupt(dmastp) {                                   \
-  *(dmastp)->ifcr = STM32_DMA_ISR_MASK << (dmastp)->shift;                  \
+  (dmastp)->dma->IFCR = STM32_DMA_ISR_MASK << (dmastp)->shift;              \
 }
 
 /**
@@ -428,18 +428,17 @@ typedef struct {
 /**
  * @brief   Serves a DMA IRQ.
  *
- * @param[in] dma       pointer to the DMA block
- * @param[in] s         stream to serve
+ * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  */
-#define dmaServeInterrupt(dma, s) {                                         \
+#define dmaServeInterrupt(dmastp) {                                         \
   uint32_t flags;                                                           \
+  uint32_t idx = (dmastp)->selfindex;                                       \
                                                                             \
-  flags = ((dma)->ISR >> STM32_DMA_ISR_SHIFT(s)) & STM32_DMA_ISR_MASK;      \
+  flags = ((dmastp)->dma->ISR >> (dmastp)->shift) & STM32_DMA_ISR_MASK;     \
   if (flags & STM32_DMA_ISR_MASK) {                                         \
-    (dma)->IFCR = flags << STM32_DMA_ISR_SHIFT(s);                          \
-    if (_stm32_dma_isr_redir[(s) - 1U].dma_func) {                          \
-      _stm32_dma_isr_redir[(s) - 1U].dma_func(_stm32_dma_isr_redir[(s) -    \
-                                              1U].dma_param, flags);        \
+    (dmastp)->dma->IFCR = flags << (dmastp)->shift;                         \
+    if (_stm32_dma_isr_redir[idx].dma_func) {                               \
+      _stm32_dma_isr_redir[idx].dma_func(_stm32_dma_isr_redir[idx].dma_param, flags); \
     }                                                                       \
   }                                                                         \
 }

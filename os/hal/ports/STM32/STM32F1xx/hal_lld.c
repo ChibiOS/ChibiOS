@@ -104,10 +104,10 @@ OSAL_IRQ_HANDLER(STM32_DMA2_CH45_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Check on channel 4 of DMA2.*/
-  dmaServeInterrupt(DMA2, 4);
+  dmaServeInterrupt(STM32_DMA2_STREAM4);
 
   /* Check on channel 5 of DMA2.*/
-  dmaServeInterrupt(DMA2, 5);
+  dmaServeInterrupt(STM32_DMA2_STREAM5);
 
   OSAL_IRQ_EPILOGUE();
 }
