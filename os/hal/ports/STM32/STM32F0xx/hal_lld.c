@@ -199,13 +199,13 @@ OSAL_IRQ_HANDLER(STM32_DMA12_CH4567_CH345_HANDLER) {
   dmaServeInterrupt(STM32_DMA1_STREAM7);
 
   /* Check on channel 3 of DMA2.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM3);
+  dmaServeInterrupt(STM32_DMA2_STREAM3);
 
   /* Check on channel 4 of DMA2.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM4);
+  dmaServeInterrupt(STM32_DMA2_STREAM4);
 
   /* Check on channel 5 of DMA2.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM5);
+  dmaServeInterrupt(STM32_DMA2_STREAM5);
 
   OSAL_IRQ_EPILOGUE();
 }
