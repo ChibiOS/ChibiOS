@@ -126,6 +126,8 @@
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB, STM32F091xC,
        STM32F098xx devices.
+- HAL: Fixed Wrong vector name for STM32F3xx EXTI33 (bug #655)(backported
+       to 3.0.3 and 2.6.10).
 - HAL: Fixed missing RCC and ISR definitions for STM32F0xx timers (bug #651)
        (backported to 3.0.3 and 2.6.10).
 - HAL: Fixed incorrect compiler check in STM32 RTCv1 driver (bug #650)
