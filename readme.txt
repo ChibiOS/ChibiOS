@@ -128,6 +128,7 @@
        STM32F098xx devices.
 - HAL: Fixed Wrong vector name for STM32F3xx EXTI33 (bug #655)(backported
        to 3.0.3 and 2.6.10).
+- HAL: Fixed no demo for nucleo STM32F072RB board (bug #652).
 - HAL: Fixed missing RCC and ISR definitions for STM32F0xx timers (bug #651)
        (backported to 3.0.3 and 2.6.10).
 - HAL: Fixed incorrect compiler check in STM32 RTCv1 driver (bug #650)
