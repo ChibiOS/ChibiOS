@@ -334,7 +334,7 @@ OSAL_IRQ_HANDLER(Vector144) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(RTC_WKUP_IRQHandler) {
+OSAL_IRQ_HANDLER(Vector140) {
 
   OSAL_IRQ_PROLOGUE();
 
