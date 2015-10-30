@@ -150,10 +150,10 @@
 #define STM32_MCOSEL_LSE        (7 << 24)   /**< LSE clock on MCO pin.      */
 
 #define STM32_MCOPRE_DIV1       (0 << 28)   /**< MCO divided by 1.          */
-#define STM32_MCOPRE_DIV2       (1 << 28)   /**< MCO divided by 1.          */
-#define STM32_MCOPRE_DIV4       (2 << 28)   /**< MCO divided by 1.          */
-#define STM32_MCOPRE_DIV8       (3 << 28)   /**< MCO divided by 1.          */
-#define STM32_MCOPRE_DIV16      (4 << 28)   /**< MCO divided by 1.          */
+#define STM32_MCOPRE_DIV2       (1 << 28)   /**< MCO divided by 2.          */
+#define STM32_MCOPRE_DIV4       (2 << 28)   /**< MCO divided by 4.          */
+#define STM32_MCOPRE_DIV8       (3 << 28)   /**< MCO divided by 8.          */
+#define STM32_MCOPRE_DIV16      (4 << 28)   /**< MCO divided by 16.         */
 /** @} */
 
 /**
@@ -715,7 +715,7 @@
 #endif
 
 /**
- * @brief   MCO divider clock.
+ * @brief   MCO clock before divider.
  */
 #if (STM32_MCOSEL == STM32_MCOSEL_NOCLOCK) || defined(__DOXYGEN__)
 #define STM32_MCODIVCLK             0
