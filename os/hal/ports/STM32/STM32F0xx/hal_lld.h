@@ -229,6 +229,19 @@
 #define STM32_MCOSEL_HSE        (6 << 24)   /**< HSE clock on MCO pin.      */
 #define STM32_MCOSEL_PLLDIV2    (7 << 24)   /**< PLL/2 clock on MCO pin.    */
 #define STM32_MCOSEL_HSI48      (8 << 24)   /**< HSI48 clock on MCO pin.    */
+
+#define STM32_MCOPRE_DIV1       (0 << 28)   /**< MCO divided by 1.          */
+#define STM32_MCOPRE_DIV2       (1 << 28)   /**< MCO divided by 2.          */
+#define STM32_MCOPRE_DIV4       (2 << 28)   /**< MCO divided by 4.          */
+#define STM32_MCOPRE_DIV8       (3 << 28)   /**< MCO divided by 8.          */
+#define STM32_MCOPRE_DIV16      (4 << 28)   /**< MCO divided by 16.         */
+#define STM32_MCOPRE_DIV32      (5 << 28)   /**< MCO divided by 32.         */
+#define STM32_MCOPRE_DIV64      (6 << 28)   /**< MCO divided by 64.         */
+#define STM32_MCOPRE_DIV128     (7 << 28)   /**< MCO divided by 128.        */
+
+#define STM32_PLLNODIV_MASK     (1 << 31)   /**< MCO PLL divider mask.      */
+#define STM32_PLLNODIV_DIV2     (0 << 31)   /**< MCO PLL is divided by two. */
+#define STM32_PLLNODIV_DIV1     (1 << 31)   /**< MCO PLL is divided by one. */
 /** @} */
 
 /**
@@ -402,6 +415,20 @@
  */
 #if !defined(STM32_MCOSEL) || defined(__DOXYGEN__)
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
+#endif
+
+/**
+ * @brief   MCO divider setting.
+ */
+#if !defined(STM32_MCOPRE) || defined(__DOXYGEN__)
+#define STM32_MCOPRE                        STM32_MCOPRE_DIV1
+#endif
+
+/**
+ * @brief   MCO PLL divider setting.
+ */
+#if !defined(STM32_PLLNODIV) || defined(__DOXYGEN__)
+#define STM32_PLLNODIV                      STM32_PLLNODIV_DIV2
 #endif
 
 /**
@@ -739,6 +766,58 @@
 /* APB frequency check.*/
 #if STM32_PCLK > STM32_PCLK_MAX
 #error "STM32_PCLK exceeding maximum frequency (STM32_PCLK_MAX)"
+#endif
+
+/* STM32_PLLNODIV check.*/
+#if (STM32_PLLNODIV != STM32_PLLNODIV_DIV2) &&                              \
+    (STM32_PLLNODIV != STM32_PLLNODIV_DIV1)
+#error "invalid STM32_PLLNODIV value specified"
+#endif
+
+/**
+ * @brief   MCO clock before divider.
+ */
+#if (STM32_MCOSEL == STM32_MCOSEL_NOCLOCK) || defined(__DOXYGEN__)
+#define STM32_MCODIVCLK             0
+#elif STM32_MCOSEL == STM32_MCOSEL_HSI14
+#define STM32_MCODIVCLK             STM32_HSI14CLK
+#elif STM32_MCOSEL == STM32_MCOSEL_LSI
+#define STM32_MCODIVCLK             STM32_LSICLK
+#elif STM32_MCOSEL == STM32_MCOSEL_LSE
+#define STM32_MCODIVCLK             STM32_LSECLK
+#elif STM32_MCOSEL == STM32_MCOSEL_SYSCLK
+#define STM32_MCODIVCLK             STM32_SYSCLK
+#elif STM32_MCOSEL == STM32_MCOSEL_HSI
+#define STM32_MCODIVCLK             STM32_HSICLK
+#elif STM32_MCOSEL == STM32_MCOSEL_HSE
+#define STM32_MCODIVCLK             STM32_HSECLK
+#elif STM32_MCOSEL == STM32_MCOSEL_PLLDIV2
+#if STM32_PLLNODIV == STM32_PLLNODIV_DIV2
+#define STM32_MCODIVCLK             (STM32_PLLCLKOUT / 2)
+#else
+#define STM32_MCODIVCLK             (STM32_PLLCLKOUT / 1)
+#endif
+#elif STM32_MCOSEL == STM32_MCOSEL_HSI48
+#define STM32_MCODIVCLK             STM32_HSI48CLK
+#else
+#error "invalid STM32_MCOSEL value specified"
+#endif
+
+/**
+ * @brief   MCO output pin clock.
+ */
+#if (STM32_MCOPRE == STM32_MCOPRE_DIV1) || defined(__DOXYGEN__)
+#define STM32_MCOCLK                STM32_MCODIVCLK
+#elif STM32_MCOPRE == STM32_MCOPRE_DIV2
+#define STM32_MCOCLK                (STM32_MCODIVCLK / 2)
+#elif STM32_MCOPRE == STM32_MCOPRE_DIV4
+#define STM32_MCOCLK                (STM32_MCODIVCLK / 4)
+#elif STM32_MCOPRE == STM32_MCOPRE_DIV8
+#define STM32_MCOCLK                (STM32_MCODIVCLK / 8)
+#elif STM32_MCOPRE == STM32_MCOPRE_DIV16
+#define STM32_MCOCLK                (STM32_MCODIVCLK / 16)
+#else
+#error "invalid STM32_MCOPRE value specified"
 #endif
 
 /**
