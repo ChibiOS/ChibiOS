@@ -73,6 +73,7 @@
 
 *** 2.6.10 ***
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
+- FIX: Fixed STM32L1xx HAL errors in comments (bug #657).
 - FIX: Fixed STM32 USBv1 wrong buffer alignment (bug #656).
 - FIX: Fixed Wrong vector name for STM32F3xx EXTI33 (bug #655).
 - FIX: Fixed missing RCC and ISR definitions for STM32F0xx timers (bug #651).
