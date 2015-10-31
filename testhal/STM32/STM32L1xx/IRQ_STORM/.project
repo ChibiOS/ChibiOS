@@ -25,6 +25,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>board</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/os/hal/boards/ST_STM32L_DISCOVERY</locationURI>
+		</link>
+		<link>
 			<name>common</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/testhal/common</locationURI>
