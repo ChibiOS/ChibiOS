@@ -147,30 +147,6 @@ struct SerialDriver {
  * @{
  */
 /**
- * @brief   Direct output check on a @p SerialDriver.
- * @note    This function bypasses the indirect access to the channel and
- *          checks directly the output queue. This is faster but cannot
- *          be used to check different channels implementations.
- *
- * @deprecated
- *
- * @api
- */
-#define sdPutWouldBlock(sdp) chOQIsFullI(&(sdp)->oqueue)
-
-/**
- * @brief   Direct input check on a @p SerialDriver.
- * @note    This function bypasses the indirect access to the channel and
- *          checks directly the input queue. This is faster but cannot
- *          be used to check different channels implementations.
- *
- * @deprecated
- *
- * @api
- */
-#define sdGetWouldBlock(sdp) chIQIsEmptyI(&(sdp)->iqueue)
-
-/**
  * @brief   Direct write to a @p SerialDriver.
  * @note    This function bypasses the indirect access to the channel and
  *          writes directly on the output queue. This is faster but cannot
@@ -312,6 +288,8 @@ extern "C" {
   void sdStop(SerialDriver *sdp);
   void sdIncomingDataI(SerialDriver *sdp, uint8_t b);
   msg_t sdRequestDataI(SerialDriver *sdp);
+  bool_t sdPutWouldBlock(SerialDriver *sdp);
+  bool_t sdGetWouldBlock(SerialDriver *sdp);
 #ifdef __cplusplus
 }
 #endif
