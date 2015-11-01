@@ -234,6 +234,55 @@ msg_t sdRequestDataI(SerialDriver *sdp) {
   return b;
 }
 
+/**
+ * @brief   Direct output check on a @p SerialDriver.
+ * @note    This function bypasses the indirect access to the channel and
+ *          checks directly the output queue. This is faster but cannot
+ *          be used to check different channels implementations.
+ *
+ * @param[in] sdp       pointer to a @p SerialDriver structure
+ * @return              The queue status.
+ * @retval false        if the next write operation would not block.
+ * @retval true         if the next write operation would block.
+ *
+ * @deprecated
+ *
+ * @api
+ */
+bool sdPutWouldBlock(SerialDriver *sdp) {
+  bool b;
+
+  osalSysLock();
+  b = oqIsFullI(&sdp->oqueue);
+  osalSysUnlock();
+
+  return b;
+}
+
+/**
+ * @brief   Direct input check on a @p SerialDriver.
+ * @note    This function bypasses the indirect access to the channel and
+ *          checks directly the input queue. This is faster but cannot
+ *          be used to check different channels implementations.
+ *
+ * @return              The queue status.
+ * @retval false        if the next write operation would not block.
+ * @retval true         if the next write operation would block.
+ *
+ * @deprecated
+ *
+ * @api
+ */
+bool sdGetWouldBlock(SerialDriver *sdp) {
+  bool b;
+
+  osalSysLock();
+  b = iqIsEmptyI(&sdp->iqueue);
+  osalSysUnlock();
+
+  return b;
+}
+
 #endif /* HAL_USE_SERIAL == TRUE */
 
 /** @} */
