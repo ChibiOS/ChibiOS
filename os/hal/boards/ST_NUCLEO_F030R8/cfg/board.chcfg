@@ -47,7 +47,7 @@
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="1" ></pin3>
+        Alternate="1" />
       <pin4
         ID=""
         Type="PushPull"

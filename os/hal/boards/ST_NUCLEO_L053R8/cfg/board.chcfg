@@ -543,7 +543,7 @@
         Resistor="Floating"
         Level="High"
         Mode="Input"
-        Alternate="0"></pin0>
+        Alternate="0" />
       <pin1
         ID="OSC_OUT"
         Type="PushPull"

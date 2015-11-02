@@ -51,7 +51,7 @@
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="7" ></pin3>
+        Alternate="7" />
       <pin4
         ID=""
         Type="PushPull"
@@ -937,7 +937,7 @@
         Resistor="Floating"
         Level="High"
         Mode="Input"
-        Alternate="0"></pin0>
+        Alternate="0"/>
       <pin1
         ID="OSC_OUT"
         Type="PushPull"
