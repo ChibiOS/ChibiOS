@@ -9,7 +9,7 @@
     <hal_version>3.0.x</hal_version>
   </configuration_settings>
   <board_name>STMicroelectronics NUCLEO32-F303K8</board_name>
-  <board_id>ST_NUCLEO_F303K8</board_id>
+  <board_id>ST_NUCLEO32_F303K8</board_id>
   <board_functions></board_functions>
   <subtype>STM32F303x8</subtype>
   <clocks HSEFrequency="0" HSEBypass="false" LSEFrequency="0"
