@@ -27,7 +27,6 @@
 #define BOARD_ST_NUCLEO_F411RE
 #define BOARD_NAME                  "STMicroelectronics NUCLEO-F411RE"
 
-
 /*
  * Board oscillators-related settings.
  * NOTE: LSE not fitted.
@@ -309,7 +308,7 @@
                                      PIN_PUPDR_PULLUP(GPIOA_PIN8) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN9) |         \
                                      PIN_PUPDR_PULLUP(GPIOA_PIN10) |        \
-                                     PIN_PUPDR_FLOATING(GPIOA_OTG_FS_DM) |  \
+                                     PIN_PUPDR_PULLUP(GPIOA_OTG_FS_DM) |    \
                                      PIN_PUPDR_FLOATING(GPIOA_OTG_FS_DP) |  \
                                      PIN_PUPDR_PULLUP(GPIOA_SWDIO) |        \
                                      PIN_PUPDR_PULLDOWN(GPIOA_SWCLK) |      \
