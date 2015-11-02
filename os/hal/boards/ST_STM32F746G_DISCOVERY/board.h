@@ -433,14 +433,6 @@
 #define LINE_LCD_B6                 PAL_LINE(GPIOK, 5U)
 #define LINE_LCD_B7                 PAL_LINE(GPIOK, 6U)
 #define LINE_LCD_DE                 PAL_LINE(GPIOK, 7U)
-#define LINE_PIN8                   PAL_LINE(GPIOK, 8U)
-#define LINE_PIN9                   PAL_LINE(GPIOK, 9U)
-#define LINE_PIN10                  PAL_LINE(GPIOK, 10U)
-#define LINE_PIN11                  PAL_LINE(GPIOK, 11U)
-#define LINE_PIN12                  PAL_LINE(GPIOK, 12U)
-#define LINE_PIN13                  PAL_LINE(GPIOK, 13U)
-#define LINE_PIN14                  PAL_LINE(GPIOK, 14U)
-#define LINE_PIN15                  PAL_LINE(GPIOK, 15U)
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
