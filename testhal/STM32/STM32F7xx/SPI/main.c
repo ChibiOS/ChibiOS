@@ -148,26 +148,21 @@ int main(void) {
   /*
    * SPI2 I/O pins setup.
    */
-  palSetPadMode(GPIOI,
-                GPIOI_ARD_D13,
-                PAL_MODE_ALTERNATE(5) |
-                PAL_STM32_OSPEED_HIGHEST);          /* SPI SCK.             */
-  palSetPadMode(GPIOB,
-                GPIOB_ARD_D12,
-                PAL_MODE_ALTERNATE(5) |
-                PAL_STM32_OSPEED_HIGHEST);          /* MISO.                */
-  palSetPadMode(GPIOB,
-                GPIOB_ARD_D11,
-                PAL_MODE_ALTERNATE(5) |
-                PAL_STM32_OSPEED_HIGHEST);          /* MOSI.                */
-  palSetPad(GPIOB, GPIOB_ARD_D15);
-  palSetPadMode(GPIOB,
-                GPIOB_ARD_D15,
-                PAL_MODE_OUTPUT_PUSHPULL);          /* CS0.                 */
-  palSetPad(GPIOB, GPIOB_ARD_D14);
-  palSetPadMode(GPIOB,
-                GPIOB_ARD_D14,
-                PAL_MODE_OUTPUT_PUSHPULL);          /* CS1.                 */
+  palSetLineMode(LINE_ARD_D13,
+                 PAL_MODE_ALTERNATE(5) |
+                 PAL_STM32_OSPEED_HIGHEST);         /* SPI SCK.             */
+  palSetLineMode(LINE_ARD_D12,
+                 PAL_MODE_ALTERNATE(5) |
+                 PAL_STM32_OSPEED_HIGHEST);         /* MISO.                */
+  palSetLineMode(LINE_ARD_D11,
+                 PAL_MODE_ALTERNATE(5) |
+                 PAL_STM32_OSPEED_HIGHEST);         /* MOSI.                */
+  palSetLine(LINE_ARD_D15);
+  palSetLineMode(LINE_ARD_D15,
+                 PAL_MODE_OUTPUT_PUSHPULL);         /* CS0.                 */
+  palSetLine(LINE_ARD_D14);
+  palSetLineMode(LINE_ARD_D14,
+                 PAL_MODE_OUTPUT_PUSHPULL);         /* CS1.                 */
 
   /*
    * Starting the transmitter and receiver threads.

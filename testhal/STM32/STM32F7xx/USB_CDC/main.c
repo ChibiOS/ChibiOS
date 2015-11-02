@@ -147,9 +147,9 @@ static THD_FUNCTION(Thread1, arg) {
     systime_t time;
 
     time = serusbcfg.usbp->state == USB_ACTIVE ? 250 : 500;
-    palClearPad(GPIOI, GPIOI_ARD_D13);
+    palClearLine(LINE_ARD_D13);
     chThdSleepMilliseconds(time);
-    palSetPad(GPIOI, GPIOI_ARD_D13);
+    palSetLine(LINE_ARD_D13);
     chThdSleepMilliseconds(time);
   }
 }
@@ -179,8 +179,8 @@ int main(void) {
   /*
    * GPIOI1 is programmed as output (board LED).
    */
-  palClearPad(GPIOI, GPIOI_ARD_D13);
-  palSetPadMode(GPIOI, GPIOI_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
+  palClearLine(LINE_ARD_D13);
+  palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.

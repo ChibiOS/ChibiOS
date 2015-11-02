@@ -120,11 +120,11 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
-  palSetPadMode(GPIOI, GPIOI_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
   while (true) {
-    palSetPad(GPIOI, GPIOI_ARD_D13);
+    palSetLine(LINE_ARD_D13);
     chThdSleepMilliseconds(500);
-    palClearPad(GPIOI, GPIOI_ARD_D13);
+    palClearLine(LINE_ARD_D13);
     chThdSleepMilliseconds(500);
   }
 }

@@ -238,7 +238,7 @@
 #define GPIOK_LCD_G5                0U
 #define GPIOK_LCD_G6                1U
 #define GPIOK_LCD_G7                2U
-#define GPIOK_LCD_B4                3U
+#define GPIOK_LCD_BL_CTRL           3U
 #define GPIOK_LCD_B5                4U
 #define GPIOK_LCD_B6                5U
 #define GPIOK_LCD_B7                6U
@@ -251,6 +251,196 @@
 #define GPIOK_PIN13                 13U
 #define GPIOK_PIN14                 14U
 #define GPIOK_PIN15                 15U
+
+/*
+ * IO lines assignments.
+ */
+#define LINE_ARD_A0                 PAL_LINE(GPIOA, 0U)
+#define LINE_RMII_REF_CLK           PAL_LINE(GPIOA, 1U)
+#define LINE_RMII_MDIO              PAL_LINE(GPIOA, 2U)
+#define LINE_ULPI_D0                PAL_LINE(GPIOA, 3U)
+#define LINE_DCMI_HSYNC             PAL_LINE(GPIOA, 4U)
+#define LINE_ULPI_CK                PAL_LINE(GPIOA, 5U)
+#define LINE_DCMI_PIXCK             PAL_LINE(GPIOA, 6U)
+#define LINE_RMII_CRS_DV            PAL_LINE(GPIOA, 7U)
+#define LINE_ARD_D5                 PAL_LINE(GPIOA, 8U)
+#define LINE_VCP_TX                 PAL_LINE(GPIOA, 9U)
+#define LINE_OTG_FS_ID              PAL_LINE(GPIOA, 10U)
+#define LINE_OTG_FS_DM              PAL_LINE(GPIOA, 11U)
+#define LINE_OTG_FS_DP              PAL_LINE(GPIOA, 12U)
+#define LINE_SWDIO                  PAL_LINE(GPIOA, 13U)
+#define LINE_SWCLK                  PAL_LINE(GPIOA, 14U)
+#define LINE_ARD_D9                 PAL_LINE(GPIOA, 15U)
+
+#define LINE_ULPI_D1                PAL_LINE(GPIOB, 0U)
+#define LINE_ULPI_D2                PAL_LINE(GPIOB, 1U)
+#define LINE_QSPI_CLK               PAL_LINE(GPIOB, 2U)
+#define LINE_SWO                    PAL_LINE(GPIOB, 3U)
+#define LINE_ARD_D3                 PAL_LINE(GPIOB, 4U)
+#define LINE_ULPI_D7                PAL_LINE(GPIOB, 5U)
+#define LINE_QSPI_NCS               PAL_LINE(GPIOB, 6U)
+#define LINE_VCP_RX                 PAL_LINE(GPIOB, 7U)
+#define LINE_ARD_D15                PAL_LINE(GPIOB, 8U)
+#define LINE_ARD_D14                PAL_LINE(GPIOB, 9U)
+#define LINE_ULPI_D3                PAL_LINE(GPIOB, 10U)
+#define LINE_ULPI_D4                PAL_LINE(GPIOB, 11U)
+#define LINE_ULPI_D5                PAL_LINE(GPIOB, 12U)
+#define LINE_ULPI_D6                PAL_LINE(GPIOB, 13U)
+#define LINE_ARD_D12                PAL_LINE(GPIOB, 14U)
+#define LINE_ARD_D11                PAL_LINE(GPIOB, 15U)
+
+#define LINE_ULPI_STP               PAL_LINE(GPIOC, 0U)
+#define LINE_RMII_MDC               PAL_LINE(GPIOC, 1U)
+#define LINE_ULPI_DIR               PAL_LINE(GPIOC, 2U)
+#define LINE_FMC_SDCKE0             PAL_LINE(GPIOC, 3U)
+#define LINE_RMII_RXD0              PAL_LINE(GPIOC, 4U)
+#define LINE_RMII_RXD1              PAL_LINE(GPIOC, 5U)
+#define LINE_ARD_D1                 PAL_LINE(GPIOC, 6U)
+#define LINE_ARD_D0                 PAL_LINE(GPIOC, 7U)
+#define LINE_SD_D0                  PAL_LINE(GPIOC, 8U)
+#define LINE_SD_D1                  PAL_LINE(GPIOC, 9U)
+#define LINE_SD_D2                  PAL_LINE(GPIOC, 10U)
+#define LINE_SD_D3                  PAL_LINE(GPIOC, 11U)
+#define LINE_SD_CLK                 PAL_LINE(GPIOC, 12U)
+#define LINE_SD_DETECT              PAL_LINE(GPIOC, 13U)
+#define LINE_OSC32_IN               PAL_LINE(GPIOC, 14U)
+#define LINE_OSC32_OUT              PAL_LINE(GPIOC, 15U)
+
+#define LINE_FMC_D2                 PAL_LINE(GPIOD, 0U)
+#define LINE_FMC_D3                 PAL_LINE(GPIOD, 1U)
+#define LINE_SD_CMD                 PAL_LINE(GPIOD, 2U)
+#define LINE_DCMI_D5                PAL_LINE(GPIOD, 3U)
+#define LINE_OTG_FS_OVER_CURRENT    PAL_LINE(GPIOD, 4U)
+#define LINE_OTG_FS_PWR_SW_ON       PAL_LINE(GPIOD, 5U)
+#define LINE_AUDIO_INT              PAL_LINE(GPIOD, 6U)
+#define LINE_SPDIF_RX0              PAL_LINE(GPIOD, 7U)
+#define LINE_FMC_D13                PAL_LINE(GPIOD, 8U)
+#define LINE_FMC_D14                PAL_LINE(GPIOD, 9U)
+#define LINE_FMC_D15                PAL_LINE(GPIOD, 10U)
+#define LINE_QSPI_D0                PAL_LINE(GPIOD, 11U)
+#define LINE_QSPI_D1                PAL_LINE(GPIOD, 12U)
+#define LINE_QSPI_D3                PAL_LINE(GPIOD, 13U)
+#define LINE_FMC_D0                 PAL_LINE(GPIOD, 14U)
+#define LINE_FMC_D1                 PAL_LINE(GPIOD, 15U)
+
+#define LINE_FMC_NBL0               PAL_LINE(GPIOE, 0U)
+#define LINE_FMC_NBL1               PAL_LINE(GPIOE, 1U)
+#define LINE_QSPI_D2                PAL_LINE(GPIOE, 2U)
+#define LINE_OTG_HS_OVER_CURRENT    PAL_LINE(GPIOE, 3U)
+#define LINE_LCD_B0                 PAL_LINE(GPIOE, 4U)
+#define LINE_DCMI_D6                PAL_LINE(GPIOE, 5U)
+#define LINE_DCMI_D7                PAL_LINE(GPIOE, 6U)
+#define LINE_FMC_D4                 PAL_LINE(GPIOE, 7U)
+#define LINE_FMC_D5                 PAL_LINE(GPIOE, 8U)
+#define LINE_FMC_D6                 PAL_LINE(GPIOE, 9U)
+#define LINE_FMC_D7                 PAL_LINE(GPIOE, 10U)
+#define LINE_FMC_D8                 PAL_LINE(GPIOE, 11U)
+#define LINE_FMC_D9                 PAL_LINE(GPIOE, 12U)
+#define LINE_FMC_D10                PAL_LINE(GPIOE, 13U)
+#define LINE_FMC_11                 PAL_LINE(GPIOE, 14U)
+#define LINE_FMC_D12                PAL_LINE(GPIOE, 15U)
+
+#define LINE_FMC_A0                 PAL_LINE(GPIOF, 0U)
+#define LINE_FMC_A1                 PAL_LINE(GPIOF, 1U)
+#define LINE_FMC_A2                 PAL_LINE(GPIOF, 2U)
+#define LINE_FMC_A3                 PAL_LINE(GPIOF, 3U)
+#define LINE_FMC_A4                 PAL_LINE(GPIOF, 4U)
+#define LINE_FMC_A5                 PAL_LINE(GPIOF, 5U)
+#define LINE_ARD_A5                 PAL_LINE(GPIOF, 6U)
+#define LINE_ARD_A4                 PAL_LINE(GPIOF, 7U)
+#define LINE_ARD_A3                 PAL_LINE(GPIOF, 8U)
+#define LINE_ARD_A2                 PAL_LINE(GPIOF, 9U)
+#define LINE_ARD_A1                 PAL_LINE(GPIOF, 10U)
+#define LINE_FMC_SDNRAS             PAL_LINE(GPIOF, 11U)
+#define LINE_FMC_A6                 PAL_LINE(GPIOF, 12U)
+#define LINE_FMC_A7                 PAL_LINE(GPIOF, 13U)
+#define LINE_FMC_A8                 PAL_LINE(GPIOF, 14U)
+#define LINE_FMC_A9                 PAL_LINE(GPIOF, 15U)
+
+#define LINE_FMC_A10                PAL_LINE(GPIOG, 0U)
+#define LINE_FMC_A11                PAL_LINE(GPIOG, 1U)
+#define LINE_RMII_RXER              PAL_LINE(GPIOG, 2U)
+#define LINE_EXT_RST                PAL_LINE(GPIOG, 3U)
+#define LINE_FMC_BA0                PAL_LINE(GPIOG, 4U)
+#define LINE_FMC_BA1                PAL_LINE(GPIOG, 5U)
+#define LINE_ARD_D2                 PAL_LINE(GPIOG, 6U)
+#define LINE_ARD_D4                 PAL_LINE(GPIOG, 7U)
+#define LINE_FMC_SDCLK              PAL_LINE(GPIOG, 8U)
+#define LINE_DCMI_VSYNC             PAL_LINE(GPIOG, 9U)
+#define LINE_SAI2_SDB               PAL_LINE(GPIOG, 10U)
+#define LINE_RMII_TX_EN             PAL_LINE(GPIOG, 11U)
+#define LINE_LCD_B4                 PAL_LINE(GPIOG, 12U)
+#define LINE_RMII_TXD0              PAL_LINE(GPIOG, 13U)
+#define LINE_RMII_TXD1              PAL_LINE(GPIOG, 14U)
+#define LINE_FMC_SDNCAS             PAL_LINE(GPIOG, 15U)
+
+#define LINE_OSC_IN                 PAL_LINE(GPIOH, 0U)
+#define LINE_OSC_OUT                PAL_LINE(GPIOH, 1U)
+#define LINE_TP1                    PAL_LINE(GPIOH, 2U)
+#define LINE_FMC_SDNE0              PAL_LINE(GPIOH, 3U)
+#define LINE_ULPI_NXT               PAL_LINE(GPIOH, 4U)
+#define LINE_FMC_SDNWE              PAL_LINE(GPIOH, 5U)
+#define LINE_ARD_D6                 PAL_LINE(GPIOH, 6U)
+#define LINE_LCD_SCL                PAL_LINE(GPIOH, 7U)
+#define LINE_LCD_SDA                PAL_LINE(GPIOH, 8U)
+#define LINE_DCMI_D0                PAL_LINE(GPIOH, 9U)
+#define LINE_DCMI_D1                PAL_LINE(GPIOH, 10U)
+#define LINE_DCMI_D2                PAL_LINE(GPIOH, 11U)
+#define LINE_DCMI_D3                PAL_LINE(GPIOH, 12U)
+#define LINE_DCMI_PWR_EN            PAL_LINE(GPIOH, 13U)
+#define LINE_DCMI_D4                PAL_LINE(GPIOH, 14U)
+#define LINE_TP_PH15                PAL_LINE(GPIOH, 15U)
+
+#define LINE_ARD_D10                PAL_LINE(GPIOI, 0U)
+#define LINE_ARD_D13                PAL_LINE(GPIOI, 1U)
+#define LINE_ARD_D8                 PAL_LINE(GPIOI, 2U)
+#define LINE_ARD_D7                 PAL_LINE(GPIOI, 3U)
+#define LINE_SAI2_MCLKA             PAL_LINE(GPIOI, 4U)
+#define LINE_SAI2_SCKA              PAL_LINE(GPIOI, 5U)
+#define LINE_SAI2_SDA               PAL_LINE(GPIOI, 6U)
+#define LINE_SAI2_FSA               PAL_LINE(GPIOI, 7U)
+#define LINE_TP2                    PAL_LINE(GPIOI, 8U)
+#define LINE_LCD_VSYNC              PAL_LINE(GPIOI, 9U)
+#define LINE_LCD_HSYNC              PAL_LINE(GPIOI, 10U)
+#define LINE_BUTTON_USER            PAL_LINE(GPIOI, 11U)
+#define LINE_LCD_DISP               PAL_LINE(GPIOI, 12U)
+#define LINE_LCD_INT                PAL_LINE(GPIOI, 13U)
+#define LINE_LCD_CLK                PAL_LINE(GPIOI, 14U)
+#define LINE_LCD_R0                 PAL_LINE(GPIOI, 15U)
+
+#define LINE_LCD_R1                 PAL_LINE(GPIOJ, 0U)
+#define LINE_LCD_R2                 PAL_LINE(GPIOJ, 1U)
+#define LINE_LCD_R3                 PAL_LINE(GPIOJ, 2U)
+#define LINE_LCD_R4                 PAL_LINE(GPIOJ, 3U)
+#define LINE_LCD_R5                 PAL_LINE(GPIOJ, 4U)
+#define LINE_LCD_R6                 PAL_LINE(GPIOJ, 5U)
+#define LINE_LCD_R7                 PAL_LINE(GPIOJ, 6U)
+#define LINE_LCD_G0                 PAL_LINE(GPIOJ, 7U)
+#define LINE_LCD_G1                 PAL_LINE(GPIOJ, 8U)
+#define LINE_LCD_G2                 PAL_LINE(GPIOJ, 9U)
+#define LINE_LCD_G3                 PAL_LINE(GPIOJ, 10U)
+#define LINE_LCD_G4                 PAL_LINE(GPIOJ, 11U)
+#define LINE_OTG_FS_VBUS            PAL_LINE(GPIOJ, 12U)
+#define LINE_LCD_B1                 PAL_LINE(GPIOJ, 13U)
+#define LINE_LCD_B2                 PAL_LINE(GPIOJ, 14U)
+#define LINE_LCD_B3                 PAL_LINE(GPIOJ, 15U)
+
+#define LINE_LCD_G5                 PAL_LINE(GPIOK, 0U)
+#define LINE_LCD_G6                 PAL_LINE(GPIOK, 1U)
+#define LINE_LCD_G7                 PAL_LINE(GPIOK, 2U)
+#define LINE_LCD_BL_CTRL            PAL_LINE(GPIOK, 3U)
+#define LINE_LCD_B5                 PAL_LINE(GPIOK, 4U)
+#define LINE_LCD_B6                 PAL_LINE(GPIOK, 5U)
+#define LINE_LCD_B7                 PAL_LINE(GPIOK, 6U)
+#define LINE_LCD_DE                 PAL_LINE(GPIOK, 7U)
+#define LINE_PIN8                   PAL_LINE(GPIOK, 8U)
+#define LINE_PIN9                   PAL_LINE(GPIOK, 9U)
+#define LINE_PIN10                  PAL_LINE(GPIOK, 10U)
+#define LINE_PIN11                  PAL_LINE(GPIOK, 11U)
+#define LINE_PIN12                  PAL_LINE(GPIOK, 12U)
+#define LINE_PIN13                  PAL_LINE(GPIOK, 13U)
+#define LINE_PIN14                  PAL_LINE(GPIOK, 14U)
+#define LINE_PIN15                  PAL_LINE(GPIOK, 15U)
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
@@ -991,7 +1181,7 @@
  * PG9  - DCMI_VSYNC                (input pullup).
  * PG10 - SAI2_SDB                  (input pullup).
  * PG11 - RMII_TX_EN                (alternate 11).
- * PG12 - LCD_B4                    (alternate 14).
+ * PG12 - LCD_B4                    (alternate 9).
  * PG13 - RMII_TXD0                 (alternate 11).
  * PG14 - RMII_TXD1                 (alternate 11).
  * PG15 - FMC_SDNCAS                (alternate 12).
@@ -1088,7 +1278,7 @@
                                      PIN_AFIO_AF(GPIOG_DCMI_VSYNC, 0) |     \
                                      PIN_AFIO_AF(GPIOG_SAI2_SDB, 0) |       \
                                      PIN_AFIO_AF(GPIOG_RMII_TX_EN, 11) |    \
-                                     PIN_AFIO_AF(GPIOG_LCD_B4, 14) |        \
+                                     PIN_AFIO_AF(GPIOG_LCD_B4, 9) |         \
                                      PIN_AFIO_AF(GPIOG_RMII_TXD0, 11) |     \
                                      PIN_AFIO_AF(GPIOG_RMII_TXD1, 11) |     \
                                      PIN_AFIO_AF(GPIOG_FMC_SDNCAS, 12))
@@ -1450,7 +1640,7 @@
  * PK0  - LCD_G5                    (alternate 14).
  * PK1  - LCD_G6                    (alternate 14).
  * PK2  - LCD_G7                    (alternate 14).
- * PK3  - LCD_B4                    (alternate 14).
+ * PK3  - LCD_BL_CTRL               (output pushpull minimum).
  * PK4  - LCD_B5                    (alternate 14).
  * PK5  - LCD_B6                    (alternate 14).
  * PK6  - LCD_B7                    (alternate 14).
@@ -1467,7 +1657,7 @@
 #define VAL_GPIOK_MODER             (PIN_MODE_ALTERNATE(GPIOK_LCD_G5) |     \
                                      PIN_MODE_ALTERNATE(GPIOK_LCD_G6) |     \
                                      PIN_MODE_ALTERNATE(GPIOK_LCD_G7) |     \
-                                     PIN_MODE_ALTERNATE(GPIOK_LCD_B4) |     \
+                                     PIN_MODE_OUTPUT(GPIOK_LCD_BL_CTRL) |   \
                                      PIN_MODE_ALTERNATE(GPIOK_LCD_B5) |     \
                                      PIN_MODE_ALTERNATE(GPIOK_LCD_B6) |     \
                                      PIN_MODE_ALTERNATE(GPIOK_LCD_B7) |     \
@@ -1483,7 +1673,7 @@
 #define VAL_GPIOK_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOK_LCD_G5) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOK_LCD_G6) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOK_LCD_G7) |     \
-                                     PIN_OTYPE_PUSHPULL(GPIOK_LCD_B4) |     \
+                                     PIN_OTYPE_PUSHPULL(GPIOK_LCD_BL_CTRL) |\
                                      PIN_OTYPE_PUSHPULL(GPIOK_LCD_B5) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOK_LCD_B6) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOK_LCD_B7) |     \
@@ -1499,7 +1689,7 @@
 #define VAL_GPIOK_OSPEEDR           (PIN_OSPEED_VERYLOW(GPIOK_LCD_G5) |     \
                                      PIN_OSPEED_VERYLOW(GPIOK_LCD_G6) |     \
                                      PIN_OSPEED_VERYLOW(GPIOK_LCD_G7) |     \
-                                     PIN_OSPEED_VERYLOW(GPIOK_LCD_B4) |     \
+                                     PIN_OSPEED_VERYLOW(GPIOK_LCD_BL_CTRL) |\
                                      PIN_OSPEED_VERYLOW(GPIOK_LCD_B5) |     \
                                      PIN_OSPEED_VERYLOW(GPIOK_LCD_B6) |     \
                                      PIN_OSPEED_VERYLOW(GPIOK_LCD_B7) |     \
@@ -1515,7 +1705,7 @@
 #define VAL_GPIOK_PUPDR             (PIN_PUPDR_FLOATING(GPIOK_LCD_G5) |     \
                                      PIN_PUPDR_FLOATING(GPIOK_LCD_G6) |     \
                                      PIN_PUPDR_FLOATING(GPIOK_LCD_G7) |     \
-                                     PIN_PUPDR_FLOATING(GPIOK_LCD_B4) |     \
+                                     PIN_PUPDR_FLOATING(GPIOK_LCD_BL_CTRL) |\
                                      PIN_PUPDR_FLOATING(GPIOK_LCD_B5) |     \
                                      PIN_PUPDR_FLOATING(GPIOK_LCD_B6) |     \
                                      PIN_PUPDR_FLOATING(GPIOK_LCD_B7) |     \
@@ -1531,7 +1721,7 @@
 #define VAL_GPIOK_ODR               (PIN_ODR_HIGH(GPIOK_LCD_G5) |           \
                                      PIN_ODR_HIGH(GPIOK_LCD_G6) |           \
                                      PIN_ODR_HIGH(GPIOK_LCD_G7) |           \
-                                     PIN_ODR_HIGH(GPIOK_LCD_B4) |           \
+                                     PIN_ODR_LOW(GPIOK_LCD_BL_CTRL) |       \
                                      PIN_ODR_HIGH(GPIOK_LCD_B5) |           \
                                      PIN_ODR_HIGH(GPIOK_LCD_B6) |           \
                                      PIN_ODR_HIGH(GPIOK_LCD_B7) |           \
@@ -1547,7 +1737,7 @@
 #define VAL_GPIOK_AFRL              (PIN_AFIO_AF(GPIOK_LCD_G5, 14) |        \
                                      PIN_AFIO_AF(GPIOK_LCD_G6, 14) |        \
                                      PIN_AFIO_AF(GPIOK_LCD_G7, 14) |        \
-                                     PIN_AFIO_AF(GPIOK_LCD_B4, 14) |        \
+                                     PIN_AFIO_AF(GPIOK_LCD_BL_CTRL, 0) |    \
                                      PIN_AFIO_AF(GPIOK_LCD_B5, 14) |        \
                                      PIN_AFIO_AF(GPIOK_LCD_B6, 14) |        \
                                      PIN_AFIO_AF(GPIOK_LCD_B7, 14) |        \

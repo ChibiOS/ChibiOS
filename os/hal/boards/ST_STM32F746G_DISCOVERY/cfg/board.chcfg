@@ -916,7 +916,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="14" />
+        Alternate="9" />
       <pin13
         ID="RMII_TXD0"
         Type="PushPull"
@@ -1358,13 +1358,13 @@
         Mode="Alternate"
         Alternate="14" />
       <pin3
-        ID="LCD_B4"
+        ID="LCD_BL_CTRL"
         Type="PushPull"
         Speed="Minimum"
         Resistor="Floating"
-        Level="High"
-        Mode="Alternate"
-        Alternate="14" />
+        Level="Low"
+        Mode="Output"
+        Alternate="0" />
       <pin4
         ID="LCD_B5"
         Type="PushPull"
@@ -1372,7 +1372,7 @@
         Resistor="Floating"
         Level="High"
         Mode="Alternate"
-        Alternate="14" />
+        Alternate="14" ></pin4>
       <pin5
         ID="LCD_B6"
         Type="PushPull"

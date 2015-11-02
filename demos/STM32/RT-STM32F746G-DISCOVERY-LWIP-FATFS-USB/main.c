@@ -297,7 +297,7 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palTogglePad(GPIOI, GPIOI_ARD_D13);
+    palToggleLine(LINE_ARD_D13);
     chThdSleepMilliseconds(fs_ready ? 250 : 500);
   }
 }
@@ -328,7 +328,7 @@ int main(void) {
   /*
    * Initialize board LED.
    */
-  palSetPadMode(GPIOI, GPIOI_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*
    * Initializes a serial-over-USB CDC driver.

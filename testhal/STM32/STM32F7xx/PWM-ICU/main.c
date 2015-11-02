@@ -53,13 +53,13 @@ icucnt_t last_width, last_period;
 
 static void icuwidthcb(ICUDriver *icup) {
 
-  palSetPad(GPIOI, GPIOI_ARD_D13);
+  palSetLine(LINE_ARD_D13);
   last_width = icuGetWidthX(icup);
 }
 
 static void icuperiodcb(ICUDriver *icup) {
 
-  palClearPad(GPIOI, GPIOI_ARD_D13);
+  palClearLine(LINE_ARD_D13);
   last_period = icuGetPeriodX(icup);
 }
 
@@ -103,20 +103,20 @@ int main(void) {
    */
   pwmStart(&PWMD1, &pwmcfg);
   pwmEnablePeriodicNotification(&PWMD1);
-  palSetPadMode(GPIOA, GPIOA_ARD_D5, PAL_MODE_ALTERNATE(1));
+  palSetLineMode(LINE_ARD_D5, PAL_MODE_ALTERNATE(1));
 
   /*
    * Starting ICU driver 2.
    * GPIOA15 is programmed as ICU input (channel 1 of TIM2).
    */
   icuStart(&ICUD2, &icucfg);
-  palSetPadMode(GPIOA, GPIOA_ARD_D9, PAL_MODE_ALTERNATE(1));
+  palSetLineMode(LINE_ARD_D9, PAL_MODE_ALTERNATE(1));
 
   /*
    * GPIOI1 is programmed as output (board LED).
    */
-  palClearPad(GPIOI, GPIOI_ARD_D13);
-  palSetPadMode(GPIOI, GPIOI_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
+  palClearLine(LINE_ARD_D13);
+  palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
   chThdSleepMilliseconds(1000);
 
   /*

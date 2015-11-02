@@ -23,7 +23,7 @@
  *          PAL Low Level Driver if the target hardware supports special
  *          features like, for example, atomic bit set/reset/masking. Please
  *          refer to the ports specific documentation for details.<br>
- *          The @ref PAL has the advantage to make the access to the I/O
+ *          The @ref PAL driver has the advantage to make the access to the I/O
  *          ports platform independent and still be optimized for the specific
  *          architectures.<br>
  *          Note that the PAL Low Level Driver may also offer non standard

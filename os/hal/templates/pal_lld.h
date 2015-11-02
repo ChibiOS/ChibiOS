@@ -36,6 +36,52 @@
 /*===========================================================================*/
 
 /**
+ * @name    Port related definitions
+ * @{
+ */
+/**
+ * @brief   Width, in bits, of an I/O port.
+ */
+#define PAL_IOPORTS_WIDTH 16
+
+/**
+ * @brief   Whole port mask.
+ * @details This macro specifies all the valid bits into a port.
+ */
+#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFF)
+/** @} */
+
+/**
+ * @name    Line handling macros
+ * @{
+ */
+/**
+ * @brief   Forms a line identifier.
+ * @details A port/pad pair are encoded into an @p ioline_t type. The encoding
+ *          of this type is platform-dependent.
+ */
+#define PAL_LINE(port, pad)                                                 \
+  ((ioline_t)((uint32_t)(port)) | ((uint32_t)(pad)))
+
+/**
+ * @brief   Decodes a port identifier from a line identifier.
+ */
+#define PAL_PORT(line)                                                      \
+  ((stm32_gpio_t *)(((uint32_t)(line)) & 0xFFFFFFF0U))
+
+/**
+ * @brief   Decodes a pad identifier from a line identifier.
+ */
+#define PAL_PAD(line)                                                       \
+  ((uint32_t)((uint32_t)(line) & 0x0000000FU))
+
+/**
+ * @brief   Value identifying an invalid line.
+ */
+#define PAL_NOLINE                      0U
+/** @} */
+
+/**
  * @brief   Generic I/O ports static initializer.
  * @details An instance of this structure must be passed to @p palInit() at
  *          system startup time in order to initialized the digital I/O
@@ -68,6 +114,11 @@ typedef uint32_t ioportmask_t;
  * @brief   Digital I/O modes.
  */
 typedef uint32_t iomode_t;
+
+/**
+ * @brief   Type of an I/O line.
+ */
+typedef uint32_t ioline_t;
 
 /**
  * @brief   Port Identifier.

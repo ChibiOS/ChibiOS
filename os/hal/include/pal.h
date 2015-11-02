@@ -126,7 +126,7 @@ typedef struct {
   ioportid_t            portid;
   /**
    * @brief Bus mask aligned to port bit 0.
-   * @note  The bus mask implicitly define the bus width. A logical AND is
+   * @note  The bus mask implicitly define the bus width. A logic AND is
    *        performed on the bus data.
    */
   ioportmask_t          mask;
@@ -210,7 +210,7 @@ typedef struct {
  * @note    The function can be called from any context.
  *
  * @param[in] port      port identifier
- * @return              The port logical states.
+ * @return              The port logic states.
  *
  * @special
  */
@@ -229,7 +229,7 @@ typedef struct {
  * @note    The function can be called from any context.
  *
  * @param[in] port      port identifier
- * @return              The latched logical states.
+ * @return              The latched logic states.
  *
  * @special
  */
@@ -330,10 +330,10 @@ typedef struct {
  * @note    The function can be called from any context.
  *
  * @param[in] port      port identifier
- * @param[in] mask      group mask, a logical AND is performed on the input
+ * @param[in] mask      group mask, a logic AND is performed on the input
  *                      data
  * @param[in] offset    group bit offset within the port
- * @return              The group logical states.
+ * @return              The group logic states.
  *
  * @special
  */
@@ -349,7 +349,7 @@ typedef struct {
  * @note    The function can be called from any context.
  *
  * @param[in] port      port identifier
- * @param[in] mask      group mask, a logical AND is performed on the
+ * @param[in] mask      group mask, a logic AND is performed on the
  *                      output  data
  * @param[in] offset    group bit offset within the port
  * @param[in] bits      bits to be written. Values exceeding the group
@@ -389,7 +389,7 @@ typedef struct {
 #endif
 
 /**
- * @brief   Reads an input pad logical state.
+ * @brief   Reads an input pad logic state.
  * @note    The default implementation not necessarily optimal. Low level
  *          drivers may  optimize the function by using specific hardware
  *          or coding.
@@ -398,9 +398,9 @@ typedef struct {
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
- * @return              The logical state.
- * @retval PAL_LOW      low logical state.
- * @retval PAL_HIGH     high logical state.
+ * @return              The logic state.
+ * @retval PAL_LOW      low logic state.
+ * @retval PAL_HIGH     high logic state.
  *
  * @special
  */
@@ -411,7 +411,7 @@ typedef struct {
 #endif
 
 /**
- * @brief   Writes a logical state on an output pad.
+ * @brief   Writes a logic state on an output pad.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
  *          need to enclose port I/O operations between @p chSysLock() and
@@ -425,7 +425,7 @@ typedef struct {
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
- * @param[in] bit       logical value, the value must be @p PAL_LOW or
+ * @param[in] bit       logic value, the value must be @p PAL_LOW or
  *                      @p PAL_HIGH
  *
  * @special
@@ -439,7 +439,7 @@ typedef struct {
 #endif
 
 /**
- * @brief   Sets a pad logical state to @p PAL_HIGH.
+ * @brief   Sets a pad logic state to @p PAL_HIGH.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
  *          need to enclose port I/O operations between @p chSysLock() and
@@ -462,7 +462,7 @@ typedef struct {
 #endif
 
 /**
- * @brief   Clears a pad logical state to @p PAL_LOW.
+ * @brief   Clears a pad logic state to @p PAL_LOW.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
  *          need to enclose port I/O operations between @p chSysLock() and
@@ -485,7 +485,7 @@ typedef struct {
 #endif
 
 /**
- * @brief   Toggles a pad logical state.
+ * @brief   Toggles a pad logic state.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
  *          need to enclose port I/O operations between @p chSysLock() and
@@ -528,6 +528,78 @@ typedef struct {
 #else
 #define palSetPadMode(port, pad, mode) pal_lld_setpadmode(port, pad, mode)
 #endif
+
+/**
+ * @brief   Reads an input line logic state.
+ * @note    The function can be called from any context.
+ *
+ * @param[in] line      line identifier
+ * @return              The logic state.
+ * @retval PAL_LOW      low logic state.
+ * @retval PAL_HIGH     high logic state.
+ *
+ * @special
+ */
+#define palReadLine(line)                                                   \
+  palReadPad(PAL_PORT(line), PAL_PAD(line))
+
+/**
+ * @brief   Writes a logic state on an output line.
+ * @note    The function can be called from any context.
+ *
+ * @param[in] line      line identifier
+ * @param[in] bit       logic value, the value must be @p PAL_LOW or
+ *                      @p PAL_HIGH
+ *
+ * @special
+ */
+#define palWriteLine(pin, bit)                                              \
+  palWrite(PAL_PORT(line), PAL_PAD(line), bit)
+
+/**
+ * @brief   Sets a line logic state to @p PAL_HIGH.
+ * @note    The function can be called from any context.
+ *
+ * @param[in] line      line identifier
+ *
+ * @special
+ */
+#define palSetLine(line)                                                    \
+  palSetPad(PAL_PORT(line), PAL_PAD(line))
+
+/**
+ * @brief   Clears a line logic state to @p PAL_LOW.
+ * @note    The function can be called from any context.
+ *
+ * @param[in] line      line identifier
+ *
+ * @special
+ */
+#define palClearLine(line)                                                  \
+  palClearPad(PAL_PORT(line), PAL_PAD(line))
+
+/**
+ * @brief   Toggles a line logic state.
+ * @note    The function can be called from any context.
+ *
+ * @param[in] line      line identifier
+ *
+ * @special
+ */
+#define palToggleLine(line)                                                 \
+  palTogglePad(PAL_PORT(line), PAL_PAD(line))
+
+/**
+ * @brief   Line mode setup.
+ * @note    The function can be called from any context.
+ *
+ * @param[in] line      line identifier
+ * @param[in] mode      pad mode
+ *
+ * @special
+ */
+#define palSetLineMode(line, mode)                                          \
+  palSetPadMode(PAL_PORT(line), PAL_PAD(line), mode)
 /** @} */
 
 /*===========================================================================*/
