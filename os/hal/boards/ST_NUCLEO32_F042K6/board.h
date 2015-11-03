@@ -18,14 +18,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for STMicroelectronics NUCLEO32-F303K8 board.
+ * Setup for STMicroelectronics NUCLEO32-F042K6 board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_NUCLEO32_F303K8
-#define BOARD_NAME                  "STMicroelectronics NUCLEO32-F303K8"
+#define BOARD_ST_NUCLEO32_F042K6
+#define BOARD_NAME                  "STMicroelectronics NUCLEO32-F042K6"
 
 /*
  * Board oscillators-related settings.
@@ -45,7 +45,7 @@
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32F303x8
+#define STM32F042x6
 
 /*
  * IO pins assignments.

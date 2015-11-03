@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- STM32F3xx board Template -->
+<!-- STM32F0xx board Template -->
 <board
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f3xx_board.xsd">
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f0xx_board.xsd">
   <configuration_settings>
-    <templates_path>resources/gencfg/processors/boards/stm32f3xx/templates</templates_path>
+    <templates_path>resources/gencfg/processors/boards/stm32f0xx/templates</templates_path>
     <output_path>..</output_path>
     <hal_version>3.0.x</hal_version>
   </configuration_settings>
-  <board_name>STMicroelectronics NUCLEO32-F303K8</board_name>
-  <board_id>ST_NUCLEO32_F303K8</board_id>
+  <board_name>STMicroelectronics NUCLEO32-F042K6</board_name>
+  <board_id>ST_NUCLEO32_F042K6</board_id>
   <board_functions></board_functions>
-  <subtype>STM32F303x8</subtype>
+  <subtype>STM32F042x6</subtype>
   <clocks HSEFrequency="0" HSEBypass="false" LSEFrequency="0"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>

@@ -60,9 +60,9 @@
   +--test/                - Kernel test suite source code.
   |  +--lib/              - Portable test engine.
   |  +--hal/              - HAL test suites.
-  |  |  +--testbuild/     - HAL uild test and MISRA check.
+  |  |  +--testbuild/     - HAL build test and MISRA check.
   |  +--nil/              - NIL test suites.
-  |  |  +--testbuild/     - NIL nuild test and MISRA check.
+  |  |  +--testbuild/     - NIL build test and MISRA check.
   |  +--rt/               - RT test suites.
   |  |  +--testbuild/     - RT build test and MISRA check.
   |  |  +--coverage/      - RT code coverage project.
