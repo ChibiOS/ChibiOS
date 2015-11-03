@@ -73,7 +73,7 @@
 *****************************************************************************
 
 *** 3.1.0 ***
-- HAL: Added "lines" handling to PAL driver, hal are identifiers of both
+- HAL: Added "lines" handling to PAL driver, lines are identifiers of both
        ports and pins encoded in a single value. Added a set of macros
        operating on lines.
 - HAL: Merged the latest STM32F2xx CMSIS headers and fixed the support

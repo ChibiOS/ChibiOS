@@ -138,6 +138,23 @@
 #define GPIOH_PIN15                 15U
 
 /*
+ * IO lines assignments.
+ */
+#define LINE_USART_TX               PAL_LINE(GPIOA, 2U)
+#define LINE_USART_RX               PAL_LINE(GPIOA, 3U)
+#define LINE_LED_GREEN              PAL_LINE(GPIOA, 5U)
+#define LINE_SWDIO                  PAL_LINE(GPIOA, 13U)
+#define LINE_SWCLK                  PAL_LINE(GPIOA, 14U)
+
+#define LINE_SWO                    PAL_LINE(GPIOB, 3U)
+
+#define LINE_BUTTON                 PAL_LINE(GPIOC, 13U)
+
+
+#define LINE_OSC_IN                 PAL_LINE(GPIOH, 0U)
+#define LINE_OSC_OUT                PAL_LINE(GPIOH, 1U)
+
+/*
  * I/O ports initial setup, this configuration is established soon after reset
  * in the initialization code.
  * Please refer to the STM32 Reference Manual for details.
@@ -150,10 +167,10 @@
 #define PIN_ODR_HIGH(n)             (1U << (n))
 #define PIN_OTYPE_PUSHPULL(n)       (0U << (n))
 #define PIN_OTYPE_OPENDRAIN(n)      (1U << (n))
-#define PIN_OSPEED_VERYLOW(n)           (0U << ((n) * 2U))
+#define PIN_OSPEED_VERYLOW(n)       (0U << ((n) * 2U))
 #define PIN_OSPEED_LOW(n)           (1U << ((n) * 2U))
-#define PIN_OSPEED_MEDIUM(n)          (2U << ((n) * 2U))
-#define PIN_OSPEED_HIGH(n)           (3U << ((n) * 2U))
+#define PIN_OSPEED_MEDIUM(n)        (2U << ((n) * 2U))
+#define PIN_OSPEED_HIGH(n)          (3U << ((n) * 2U))
 #define PIN_PUPDR_FLOATING(n)       (0U << ((n) * 2U))
 #define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2U))
 #define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2U))
