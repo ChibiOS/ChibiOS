@@ -26,11 +26,11 @@ static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
   chRegSetThreadName("blinker");
-  palSetPadMode(GPIOB, GPIOB_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetLineMode(LINE_LED_GREEN, PAL_MODE_OUTPUT_PUSHPULL);
   while (true) {
-    palClearPad(GPIOB, GPIOB_ARD_D13);
+    palClearLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
-    palSetPad(GPIOB, GPIOB_ARD_D13);
+    palSetLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
   }
 }
@@ -65,7 +65,7 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    if (!palReadPad(GPIOB, GPIOB_ARD_D3))
+    if (!palReadLine(LINE_ARD_D3))
       TestThread(&SD2);
     chThdSleepMilliseconds(500);
   }

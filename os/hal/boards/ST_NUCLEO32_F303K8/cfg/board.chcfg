@@ -171,7 +171,7 @@
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="ARD_D13"
+        ID="ARD_D13 LED_GREEN"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
