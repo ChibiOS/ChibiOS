@@ -294,7 +294,7 @@ void gpt_lld_stop(GPTDriver *gptp) {
 #endif
 #if KINETIS_GPT_USE_PIT3
     if (&GPTD4 == gptp) {
-      nvicDisableVector(PITChannel4_IRQn);
+      nvicDisableVector(PITChannel3_IRQn);
     }
 #endif
   }
