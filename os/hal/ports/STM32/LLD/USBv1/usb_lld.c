@@ -557,6 +557,17 @@ void usb_lld_set_address(USBDriver *usbp) {
 }
 
 /**
+ * @brief   Enables the USB address match for subsequent packets.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @notapi
+ */
+void usb_lld_enable_address(USBDriver *usbp) {
+  (void)usbp;
+}
+
+/**
  * @brief   Enables an endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object

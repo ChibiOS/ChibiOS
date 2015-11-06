@@ -119,7 +119,7 @@ static bool default_handler(USBDriver *usbp) {
         (usbp->setup[1] == USB_REQ_SET_ADDRESS)) {
       set_address(usbp);
     }
-    usbSetupTransfer(usbp, NULL, 0, NULL);
+    usbSetupTransfer(usbp, NULL, 0, usb_lld_enable_address);
 #else
     usbSetupTransfer(usbp, NULL, 0, set_address);
 #endif
