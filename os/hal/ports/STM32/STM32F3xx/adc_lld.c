@@ -322,7 +322,11 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC1
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
+#if defined(ADC1_2_COMMON)
   ADCD1.adcc = ADC1_2_COMMON;
+#else
+  ADCD1.adcc = ADC1_COMMON;
+#endif
   ADCD1.adcm = ADC1;
 #if STM32_ADC_DUAL_MODE
   ADCD1.adcs = ADC2;
@@ -339,7 +343,11 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC3
   /* Driver initialization.*/
   adcObjectInit(&ADCD3);
+#if defined(ADC3_4_COMMON)
   ADCD3.adcc = ADC3_4_COMMON;
+#else
+  ADCD3.adcc = ADC3_COMMON;
+#endif
   ADCD3.adcm = ADC3;
 #if STM32_ADC_DUAL_MODE
   ADCD3.adcs = ADC4;
@@ -484,8 +492,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmaStreamSetTransactionSize(adcp->dmastp, ((uint32_t)grpp->num_channels/2) *
                                             (uint32_t)adcp->depth);
 #else
-    dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
-                                              (uint32_t)adcp->depth);
+  dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
+                                            (uint32_t)adcp->depth);
 #endif
   dmaStreamSetMode(adcp->dmastp, dmamode);
   dmaStreamEnable(adcp->dmastp);

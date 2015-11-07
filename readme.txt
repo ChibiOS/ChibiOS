@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.3 ***
+- HAL: Fixed differences in STM32F3 ADC macro definitions (bug #665).
 - HAL: Fixed invalid class type for sdPutWouldBlock() and sdGetWouldBlock()
        functions (bug #659).
 - HAL: Fixed STM32L1xx HAL errors in comments (bug #657).
