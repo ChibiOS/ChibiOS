@@ -141,6 +141,8 @@
        to 3.0.3 and 2.6.10).
 - HAL: Fixed wrong vector name for STM32F3xx EXTI33 (bug #655)(backported
        to 3.0.3 and 2.6.10).
+- HAL: Fixed nvicEnableVector broken for Cortex-M0 (bug #654)(backported
+       to 3.0.3).
 - HAL: Fixed no demo for nucleo STM32F072RB board (bug #652).
 - HAL: Fixed missing RCC and ISR definitions for STM32F0xx timers (bug #651)
        (backported to 3.0.3 and 2.6.10).

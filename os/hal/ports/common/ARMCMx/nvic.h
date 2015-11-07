@@ -66,7 +66,7 @@
 /**
  * @brief   Priority level to priority mask conversion macro.
  */
-#define NVIC_PRIORITY_MASK(prio) ((prio) << (8 - __NVIC_PRIO_BITS))
+#define NVIC_PRIORITY_MASK(prio) ((prio) << (8U - (unsigned)__NVIC_PRIO_BITS))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

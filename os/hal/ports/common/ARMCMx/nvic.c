@@ -56,9 +56,14 @@
  */
 void nvicEnableVector(uint32_t n, uint32_t prio) {
 
-  NVIC->IP[n]        = NVIC_PRIORITY_MASK(prio);
-  NVIC->ICPR[n >> 5] = 1 << (n & 0x1F);
-  NVIC->ISER[n >> 5] = 1 << (n & 0x1F);
+#if defined(__CORE_CM0_H_GENERIC)
+  NVIC->IP[_IP_IDX(n)] = (NVIC->IP[_IP_IDX(n)] & ~(0xFFU << _BIT_SHIFT(n))) |
+                         (NVIC_PRIORITY_MASK(prio) << _BIT_SHIFT(n));
+#else
+  NVIC->IP[n] = NVIC_PRIORITY_MASK(prio);
+#endif
+  NVIC->ICPR[n >> 5U] = 1U << (n & 0x1FU);
+  NVIC->ISER[n >> 5U] = 1U << (n & 0x1FU);
 }
 
 /**
@@ -68,8 +73,12 @@ void nvicEnableVector(uint32_t n, uint32_t prio) {
  */
 void nvicDisableVector(uint32_t n) {
 
-  NVIC->ICER[n >> 5] = 1 << (n & 0x1F);
-  NVIC->IP[n]        = 0;
+  NVIC->ICER[n >> 5U] = 1U << (n & 0x1FU);
+#if defined(__CORE_CM0_H_GENERIC)
+  NVIC->IP[_IP_IDX(n)] = NVIC->IP[_IP_IDX(n)] & ~(0xFFU << _BIT_SHIFT(n));
+#else
+  NVIC->IP[n] = 0U;
+#endif
 }
 
 /**
@@ -80,9 +89,12 @@ void nvicDisableVector(uint32_t n) {
  */
 void nvicSetSystemHandlerPriority(uint32_t handler, uint32_t prio) {
 
-  osalDbgCheck(handler <= 12);
+  osalDbgCheck(handler <= 12U);
 
-#if defined(__CORE_CM7_H_GENERIC)
+#if defined(__CORE_CM0_H_GENERIC)
+  SCB->SHP[_SHP_IDX(handler)] = (SCB->SHP[_SHP_IDX(handler)] & ~(0xFFU << _BIT_SHIFT(handler))) |
+                                (NVIC_PRIORITY_MASK(prio) << _BIT_SHIFT(handler));
+#elif defined(__CORE_CM7_H_GENERIC)
   SCB->SHPR[handler] = NVIC_PRIORITY_MASK(prio);
 #else
   SCB->SHP[handler] = NVIC_PRIORITY_MASK(prio);
