@@ -617,7 +617,7 @@ typedef struct {
 #define palSetLineMode(line, mode)                                          \
   palSetPadMode(PAL_PORT(line), PAL_PAD(line), mode)
 #else
-#define palSetLineMode(line) pal_lld_setlinemode(line, mode)
+#define palSetLineMode(line, mode) pal_lld_setlinemode(line, mode)
 #endif
 /** @} */
 
