@@ -171,7 +171,11 @@
  *
  * @api
  */
+#if defined(RCC_AHBENR_ADC12EN) || defined(__DOXYGEN__)
 #define rccEnableADC12(lp) rccEnableAHB(RCC_AHBENR_ADC12EN, lp)
+#else
+#define rccEnableADC12(lp) rccEnableAHB(RCC_AHBENR_ADC1EN, lp)
+#endif
 
 /**
  * @brief   Disables the ADC1/ADC2 peripheral clock.
@@ -180,14 +184,22 @@
  *
  * @api
  */
+#if defined(RCC_AHBENR_ADC12EN) || defined(__DOXYGEN__)
 #define rccDisableADC12(lp) rccDisableAHB(RCC_AHBENR_ADC12EN, lp)
+#else
+#define rccDisableADC12(lp) rccDisableAHB(RCC_AHBENR_ADC1EN, lp)
+#endif
 
 /**
  * @brief   Resets the ADC1/ADC2 peripheral.
  *
  * @api
  */
+#if defined(RCC_AHBRSTR_ADC12RST) || defined(__DOXYGEN__)
 #define rccResetADC12() rccResetAHB(RCC_AHBRSTR_ADC12RST)
+#else
+#define rccResetADC12() rccResetAHB(RCC_AHBRSTR_ADC1RST)
+#endif
 
 /**
  * @brief   Enables the ADC3/ADC4 peripheral clock.
@@ -196,7 +208,11 @@
  *
  * @api
  */
+#if defined(RCC_AHBENR_ADC34EN) || defined(__DOXYGEN__)
 #define rccEnableADC34(lp) rccEnableAHB(RCC_AHBENR_ADC34EN, lp)
+#else
+#define rccEnableADC34(lp) rccEnableAHB(RCC_AHBENR_ADC3EN, lp)
+#endif
 
 /**
  * @brief   Disables the ADC3/ADC4 peripheral clock.
@@ -205,14 +221,22 @@
  *
  * @api
  */
+#if defined(RCC_AHBENR_ADC34EN) || defined(__DOXYGEN__)
 #define rccDisableADC34(lp) rccDisableAHB(RCC_AHBENR_ADC34EN, lp)
+#else
+#define rccDisableADC34(lp) rccDisableAHB(RCC_AHBENR_ADC3EN, lp)
+#endif
 
 /**
  * @brief   Resets the ADC3/ADC4 peripheral.
  *
  * @api
  */
+#if defined(RCC_AHBRSTR_ADC34RST) || defined(__DOXYGEN__)
 #define rccResetADC34() rccResetAHB(RCC_AHBRSTR_ADC34RST)
+#else
+#define rccResetADC34() rccResetAHB(RCC_AHBRSTR_ADC3RST)
+#endif
 /** @} */
 
 /**

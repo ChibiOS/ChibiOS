@@ -93,7 +93,7 @@ static void adc_lld_vreg_on(ADCDriver *adcp) {
 #if STM32_ADC_DUAL_MODE
   adcp->adcs->CR = ADC_CR_ADVREGEN_0;
 #endif
-  osalSysPolledDelayX(US2RTC(STM32_HCLK, 10));
+  osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 10));
 }
 
 /**
@@ -326,7 +326,11 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC1
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
+#if defined(ADC1_2_COMMON)
   ADCD1.adcc = ADC1_2_COMMON;
+#else
+  ADCD1.adcc = ADC1_COMMON;
+#endif
   ADCD1.adcm = ADC1;
 #if STM32_ADC_DUAL_MODE
   ADCD1.adcs = ADC2;
@@ -343,7 +347,11 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC3
   /* Driver initialization.*/
   adcObjectInit(&ADCD3);
+#if defined(ADC3_4_COMMON)
   ADCD3.adcc = ADC3_4_COMMON;
+#else
+  ADCD3.adcc = ADC3_COMMON;
+#endif
   ADCD3.adcm = ADC3;
 #if STM32_ADC_DUAL_MODE
   ADCD3.adcs = ADC4;

@@ -130,6 +130,8 @@
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB, STM32F091xC,
        STM32F098xx devices.
+- HAL: Fixed differences in STM32F3 ADC macro definitions (bug #665)
+       (backported to 3.0.3).
 - HAL: Fixed invalid class type for sdPutWouldBlock() and sdGetWouldBlock()
        functions (bug #659)(backported to 3.0.3 and 2.6.10).
 - HAL: Fixed STM32F0xx HAL missing MCOPRE support (bug #658).
