@@ -540,8 +540,11 @@ typedef struct {
  *
  * @special
  */
-#define palReadLine(line)                                                   \
-  palReadPad(PAL_PORT(line), PAL_PAD(line))
+#if !defined(pal_lld_readline) || defined(__DOXYGEN__)
+#define palReadLine(line) palReadPad(PAL_PORT(line), PAL_PAD(line))
+#else
+#define palReadLine(line) pal_lld_readline(line)
+#endif
 
 /**
  * @brief   Writes a logic state on an output line.
@@ -553,8 +556,11 @@ typedef struct {
  *
  * @special
  */
-#define palWriteLine(pin, bit)                                              \
-  palWrite(PAL_PORT(line), PAL_PAD(line), bit)
+#if !defined(pal_lld_writeline) || defined(__DOXYGEN__)
+#define palWriteLine(line, bit) palWrite(PAL_PORT(line), PAL_PAD(line), bit)
+#else
+#define palWriteLine(line, bit) pal_lld_writeline(line, bit)
+#endif
 
 /**
  * @brief   Sets a line logic state to @p PAL_HIGH.
@@ -564,8 +570,11 @@ typedef struct {
  *
  * @special
  */
-#define palSetLine(line)                                                    \
-  palSetPad(PAL_PORT(line), PAL_PAD(line))
+#if !defined(pal_lld_setline) || defined(__DOXYGEN__)
+#define palSetLine(line) palSetPad(PAL_PORT(line), PAL_PAD(line))
+#else
+#define palSetLine(line) pal_lld_setline(line)
+#endif
 
 /**
  * @brief   Clears a line logic state to @p PAL_LOW.
@@ -575,8 +584,11 @@ typedef struct {
  *
  * @special
  */
-#define palClearLine(line)                                                  \
-  palClearPad(PAL_PORT(line), PAL_PAD(line))
+#if !defined(pal_lld_clearline) || defined(__DOXYGEN__)
+#define palClearLine(line) palClearPad(PAL_PORT(line), PAL_PAD(line))
+#else
+#define palClearLine(line) pal_lld_clearline(line)
+#endif
 
 /**
  * @brief   Toggles a line logic state.
@@ -586,8 +598,11 @@ typedef struct {
  *
  * @special
  */
-#define palToggleLine(line)                                                 \
-  palTogglePad(PAL_PORT(line), PAL_PAD(line))
+#if !defined(pal_lld_toggleline) || defined(__DOXYGEN__)
+#define palToggleLine(line) palTogglePad(PAL_PORT(line), PAL_PAD(line))
+#else
+#define palToggleLine(line) pal_lld_toggleline(line)
+#endif
 
 /**
  * @brief   Line mode setup.
@@ -598,8 +613,12 @@ typedef struct {
  *
  * @special
  */
+#if !defined(pal_lld_setlinemode) || defined(__DOXYGEN__)
 #define palSetLineMode(line, mode)                                          \
   palSetPadMode(PAL_PORT(line), PAL_PAD(line), mode)
+#else
+#define palSetLineMode(line) pal_lld_setlinemode(line, mode)
+#endif
 /** @} */
 
 /*===========================================================================*/
