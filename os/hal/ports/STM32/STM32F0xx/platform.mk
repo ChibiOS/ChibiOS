@@ -28,6 +28,9 @@ endif
 ifneq ($(findstring HAL_USE_RTC TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/RTCv2/rtc_lld.c
 endif
+ifneq ($(findstring HAL_USE_I2S TRUE,$(HALCONF)),)
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv2/i2s_lld.c
+endif
 ifneq ($(findstring HAL_USE_SPI TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv2/spi_lld.c
 endif
@@ -61,6 +64,7 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/GPIOv2/pal_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/I2Cv2/i2c_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/RTCv2/rtc_lld.c \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv2/i2s_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv2/spi_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/gpt_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/icu_lld.c \

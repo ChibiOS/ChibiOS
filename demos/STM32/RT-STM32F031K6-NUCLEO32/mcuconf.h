@@ -104,6 +104,18 @@
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
 
 /*
+ * I2S driver system settings.
+ */
+#define STM32_I2S_USE_SPI1                  FALSE
+#define STM32_I2S_SPI1_MODE                 (STM32_I2S_MODE_MASTER |        \
+                                             STM32_I2S_MODE_RX)
+#define STM32_I2S_SPI1_IRQ_PRIORITY         2
+#define STM32_I2S_SPI1_DMA_PRIORITY         1
+#define STM32_I2S_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 2)
+#define STM32_I2S_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID(1, 3)
+#define STM32_I2S_DMA_ERROR_HOOK(i2sp)      osalSysHalt("DMA failure")
+
+/*
  * ICU driver system settings.
  */
 #define STM32_ICU_USE_TIM1                  FALSE

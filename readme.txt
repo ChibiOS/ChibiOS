@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 3.1.0 ***
+- HAL: Added I2S driver for STM32 SPIv2 peripheral.
 - HAL: Added demos and board files for ST's Nucleo32 boards (F031, F042, F303).
 - HAL: Added "lines" handling to PAL driver, lines are identifiers of both
        ports and pins encoded in a single value. Added a set of macros
