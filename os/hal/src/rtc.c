@@ -226,6 +226,7 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
   timp->tm_mon   = (int)timespec->month - 1;
   timp->tm_mday  = (int)timespec->day;
   timp->tm_isdst = (int)timespec->dstflag;
+  timp->tm_wday  = (int)timespec->dayofweek - 1;
 
   sec = (int)timespec->millisecond / 1000;
   timp->tm_hour = sec / 3600;

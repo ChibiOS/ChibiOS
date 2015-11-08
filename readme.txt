@@ -133,6 +133,8 @@
        STM32F098xx devices.
 - HAL: Fixed differences in STM32F3 ADC macro definitions (bug #665)
        (backported to 3.0.3).
+- HAL: Fixed RTC module loses day of week when converting (bug #664)
+       (backported to 3.0.3).
 - HAL: Fixed invalid class type for sdPutWouldBlock() and sdGetWouldBlock()
        functions (bug #659)(backported to 3.0.3 and 2.6.10).
 - HAL: Fixed STM32F0xx HAL missing MCOPRE support (bug #658).
