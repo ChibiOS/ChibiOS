@@ -49,8 +49,7 @@
   #define SPI1_MISO           3
 #elif defined(__AVR_AT90CAN128__) || \
       defined(__AVR_AT90CAN64__)  || \
-      defined(__AVR_AT90CAN32__) || \
-      defined(__AVR_AT90USB1286__)
+      defined(__AVR_AT90CAN32__)
   #define PIN_SPI1            PINB
   #define PORT_SPI1           PORTB
   #define DDR_SPI1            DDRB
@@ -82,8 +81,7 @@
   #define DDRADC              DDRF
 #elif defined(__AVR_AT90CAN128__) || \
       defined(__AVR_AT90CAN64__)  || \
-      defined(__AVR_AT90CAN32__) || \
-      defined(__AVR_AT90USB1286__)
+      defined(__AVR_AT90CAN32__)
   #define PINADC              PINF
   #define PORTADC             PORTF
   #define DDRADC              DDRF
