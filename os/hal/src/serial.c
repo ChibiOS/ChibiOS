@@ -265,6 +265,7 @@ bool sdPutWouldBlock(SerialDriver *sdp) {
  *          checks directly the input queue. This is faster but cannot
  *          be used to check different channels implementations.
  *
+ * @param[in] sdp       pointer to a @p SerialDriver structure
  * @return              The queue status.
  * @retval false        if the next write operation would not block.
  * @retval true         if the next write operation would block.
