@@ -57,7 +57,7 @@ TARGET = nil
 OBJDIR = .
 
 # Imported source files
-CHIBIOS = ../../..
+CHIBIOS = ../../../..
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ARDUINO_MEGA/board.mk
 include $(CHIBIOS)/os/hal/ports/AVR/platform.mk
