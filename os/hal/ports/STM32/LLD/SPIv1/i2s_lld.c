@@ -112,7 +112,7 @@
 #define STM32_I2S3_CFGR_CFG                 (SPI_I2SCFGR_I2SCFG_1 |         \
                                              SPI_I2SCFGR_I2SCFG_0)
 #endif
-#endif /* !STM32_I2S_IS_MASTER(STM32_I2S_SP3_MODE) */
+#endif /* !STM32_I2S_IS_MASTER(STM32_I2S_SPI3_MODE) */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -123,10 +123,10 @@
 I2SDriver I2SD1;
 #endif
 
- /** @brief I2S2 driver identifier.*/
- #if STM32_I2S_USE_SPI2 || defined(__DOXYGEN__)
- I2SDriver I2SD2;
- #endif
+/** @brief I2S2 driver identifier.*/
+#if STM32_I2S_USE_SPI2 || defined(__DOXYGEN__)
+I2SDriver I2SD2;
+#endif
 
 /** @brief I2S3 driver identifier.*/
 #if STM32_I2S_USE_SPI3 || defined(__DOXYGEN__)
