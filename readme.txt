@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 3.0.4 ***
+- HAL: Fixed I2S clock selection not working in STM32F4xx HAL (bug #667).
+
 *** 3.0.3 ***
 - HAL: Fixed differences in STM32F3 ADC macro definitions (bug #665).
 - HAL: Fixed RTC module loses day of week when converting (bug #664).
