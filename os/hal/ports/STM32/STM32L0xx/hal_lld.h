@@ -125,7 +125,7 @@
  * @name    RCC_CFGR register bits definitions
  * @{
  */
-#define STM32_SW_MASK           (3 << 0)   /**< SW field mask.             */
+#define STM32_SW_MASK           (3 << 0)    /**< SW field mask.             */
 #define STM32_SW_MSI            (0 << 0)    /**< SYSCLK source is MSI.      */
 #define STM32_SW_HSI16          (1 << 0)    /**< SYSCLK source is HSI16     */
 #define STM32_SW_HSE            (2 << 0)    /**< SYSCLK source is HSE.      */

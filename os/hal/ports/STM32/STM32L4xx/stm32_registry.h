@@ -205,7 +205,7 @@
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
 #define STM32_RTC_HAS_PERIODIC_WAKEUPS      FALSE
-#define STM32_RTC_NUM_ALARMS                1
+#define STM32_RTC_NUM_ALARMS                2
 #define STM32_RTC_HAS_INTERRUPTS            FALSE
 
 /* SDMMC attributes.*/
@@ -218,6 +218,7 @@
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
+#define STM32_SPI1_SUPPORTS_I2S             FALSE
 #define STM32_SPI1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 3))
 #define STM32_SPI1_RX_DMA_CHN               0x00000410
@@ -226,12 +227,14 @@
 #define STM32_SPI1_TX_DMA_CHN               0x00004100
 
 #define STM32_HAS_SPI2                      TRUE
+#define STM32_SPI2_SUPPORTS_I2S             FALSE
 #define STM32_SPI2_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 4))
 #define STM32_SPI2_RX_DMA_CHN               0x00001000
 #define STM32_SPI2_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_SPI2_TX_DMA_CHN               0x00010000
 
 #define STM32_HAS_SPI3                      FALSE
+#define STM32_SPI3_SUPPORTS_I2S             FALSE
 #define STM32_SPI3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 1))
 #define STM32_SPI3_RX_DMA_CHN               0x00000003
 #define STM32_SPI3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 2))

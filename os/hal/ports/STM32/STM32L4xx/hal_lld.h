@@ -121,11 +121,13 @@
  * @name    RCC_CFGR register bits definitions
  * @{
  */
+#define STM32_SW_MASK           (3 << 0)    /**< SW field mask.             */
 #define STM32_SW_MSI            (0 << 0)    /**< SYSCLK source is MSI.      */
 #define STM32_SW_HSI16          (1 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (2 << 0)    /**< SYSCLK source is HSE.      */
 #define STM32_SW_PLL            (3 << 0)    /**< SYSCLK source is PLL.      */
 
+#define STM32_HPRE_MASK         (15 << 4)   /**< HPRE field mask.           */
 #define STM32_HPRE_DIV1         (0 << 4)    /**< SYSCLK divided by 1.       */
 #define STM32_HPRE_DIV2         (8 << 4)    /**< SYSCLK divided by 2.       */
 #define STM32_HPRE_DIV4         (9 << 4)    /**< SYSCLK divided by 4.       */
@@ -136,18 +138,25 @@
 #define STM32_HPRE_DIV256       (14 << 4)   /**< SYSCLK divided by 256.     */
 #define STM32_HPRE_DIV512       (15 << 4)   /**< SYSCLK divided by 512.     */
 
+#define STM32_PPRE1_MASK        (7 << 8)    /**< PPRE1 field mask.          */
 #define STM32_PPRE1_DIV1        (0 << 8)    /**< HCLK divided by 1.         */
 #define STM32_PPRE1_DIV2        (4 << 8)    /**< HCLK divided by 2.         */
 #define STM32_PPRE1_DIV4        (5 << 8)    /**< HCLK divided by 4.         */
 #define STM32_PPRE1_DIV8        (6 << 8)    /**< HCLK divided by 8.         */
 #define STM32_PPRE1_DIV16       (7 << 8)    /**< HCLK divided by 16.        */
 
+#define STM32_PPRE2_MASK        (7 << 11)   /**< PPRE2 field mask.          */
 #define STM32_PPRE2_DIV1        (0 << 11)   /**< HCLK divided by 1.         */
 #define STM32_PPRE2_DIV2        (4 << 11)   /**< HCLK divided by 2.         */
 #define STM32_PPRE2_DIV4        (5 << 11)   /**< HCLK divided by 4.         */
 #define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
 #define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
 
+#define STM32_STOPWUCK_MASK     (1 << 15)   /**< STOPWUCK field mask.       */
+#define STM32_STOPWUCK_MSI      (0 << 15)   /**< Wakeup clock is MSI.       */
+#define STM32_STOPWUCK_HSI16    (1 << 15)   /**< Wakeup clock is HSI16.     */
+
+#define STM32_MCOSEL_MASK       (7 << 24)   /**< MCOSEL field mask.         */
 #define STM32_MCOSEL_NOCLOCK    (0 << 24)   /**< No clock on MCO pin.       */
 #define STM32_MCOSEL_SYSCLK     (1 << 24)   /**< SYSCLK on MCO pin.         */
 #define STM32_MCOSEL_MSI        (2 << 24)   /**< MSI clock on MCO pin.      */
@@ -157,11 +166,12 @@
 #define STM32_MCOSEL_LSI        (6 << 24)   /**< LSI clock on MCO pin.      */
 #define STM32_MCOSEL_LSE        (7 << 24)   /**< LSE clock on MCO pin.      */
 
+#define STM32_MCOPRE_MASK       (7 << 28)   /**< MCOPRE field mask.         */
 #define STM32_MCOPRE_DIV1       (0 << 28)   /**< MCO divided by 1.          */
-#define STM32_MCOPRE_DIV2       (1 << 28)   /**< MCO divided by 1.          */
-#define STM32_MCOPRE_DIV4       (2 << 28)   /**< MCO divided by 1.          */
-#define STM32_MCOPRE_DIV8       (3 << 28)   /**< MCO divided by 1.          */
-#define STM32_MCOPRE_DIV16      (4 << 28)   /**< MCO divided by 1.          */
+#define STM32_MCOPRE_DIV2       (1 << 28)   /**< MCO divided by 2.          */
+#define STM32_MCOPRE_DIV4       (2 << 28)   /**< MCO divided by 4.          */
+#define STM32_MCOPRE_DIV8       (3 << 28)   /**< MCO divided by 8.          */
+#define STM32_MCOPRE_DIV16      (4 << 28)   /**< MCO divided by 16.         */
 /** @} */
 
 /**
@@ -279,10 +289,31 @@
 #endif
 
 /**
+ * @brief   SAI1 clock setting.
+ */
+#if !defined(STM32_SAI1_CLOCK_ENABLED) || defined(__DOXYGEN__)
+#define STM32_SAI1_CLOCK_ENABLED            TRUE
+#endif
+
+/**
+ * @brief   SAI2 clock setting.
+ */
+#if !defined(STM32_SAI2_CLOCK_ENABLED) || defined(__DOXYGEN__)
+#define STM32_SAI2_CLOCK_ENABLED            TRUE
+#endif
+
+/**
  * @brief   MSI frequency setting.
  */
 #if !defined(STM32_MSIRANGE) || defined(__DOXYGEN__)
-#define STM32_MSIRANGE              STM32_MSIRANGE_2M
+#define STM32_MSIRANGE              STM32_MSIRANGE_4M
+#endif
+
+/**
+ * @brief   MSI frequency setting after standby.
+ */
+#if !defined(STM32_MSISRANGE) || defined(__DOXYGEN__)
+#define STM32_MSISRANGE             STM32_MSISRANGE_4M
 #endif
 
 /**
@@ -348,6 +379,13 @@
  */
 #if !defined(STM32_PPRE2) || defined(__DOXYGEN__)
 #define STM32_PPRE2                 STM32_PPRE2_DIV1
+#endif
+
+/**
+ * @brief   STOPWUCK clock setting.
+ */
+#if !defined(STM32_STOPWUCK) || defined(__DOXYGEN__)
+#define STM32_STOPWUCK              STM32_STOPWUCK_MSI
 #endif
 
 /**
