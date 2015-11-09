@@ -38,44 +38,11 @@
 extern "C" {
 #endif
   int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap);
+  int chprintf(BaseSequentialStream *chp, const char *fmt, ...);
   int chsnprintf(char *str, size_t size, const char *fmt, ...);
 #ifdef __cplusplus
 }
 #endif
-
-/**
- * @brief   System formatted output function.
- * @details This function implements a minimal @p printf() like functionality
- *          with output on a @p BaseSequentialStream.
- *          The general parameters format is: %[-][width|*][.precision|*][l|L]p.
- *          The following parameter types (p) are supported:
- *          - <b>x</b> hexadecimal integer.
- *          - <b>X</b> hexadecimal long.
- *          - <b>o</b> octal integer.
- *          - <b>O</b> octal long.
- *          - <b>d</b> decimal signed integer.
- *          - <b>D</b> decimal signed long.
- *          - <b>u</b> decimal unsigned integer.
- *          - <b>U</b> decimal unsigned long.
- *          - <b>c</b> character.
- *          - <b>s</b> string.
- *          .
- *
- * @param[in] chp       pointer to a @p BaseSequentialStream implementing object
- * @param[in] fmt       formatting string
- *
- * @api
- */
-static inline int chprintf(BaseSequentialStream *chp, const char *fmt, ...) {
-  va_list ap;
-  int formatted_bytes;
-
-  va_start(ap, fmt);
-  formatted_bytes = chvprintf(chp, fmt, ap);
-  va_end(ap);
-
-  return formatted_bytes;
-}
 
 #endif /* _CHPRINTF_H_ */
 
