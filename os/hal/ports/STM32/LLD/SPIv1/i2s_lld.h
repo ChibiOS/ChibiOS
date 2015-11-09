@@ -165,6 +165,18 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if STM32_I2S_USE_SPI1 && !STM32_SPI1_SUPPORTS_I2S
+#error "SPI1 does not support I2S mode"
+#endif
+
+#if STM32_I2S_USE_SPI2 && !STM32_SPI2_SUPPORTS_I2S
+#error "SPI2 does not support I2S mode"
+#endif
+
+#if STM32_I2S_USE_SPI3 && !STM32_SPI3_SUPPORTS_I2S
+#error "SPI3 does not support I2S mode"
+#endif
+
 #if STM32_I2S_RX_ENABLED(STM32_I2S_SPI1_MODE) &&                            \
     STM32_I2S_TX_ENABLED(STM32_I2S_SPI1_MODE)
 #error "I2S1 RX and TX mode not supported in this driver implementation"
