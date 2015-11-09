@@ -232,6 +232,8 @@
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
+#define STM32_SPI1_SUPPORTS_I2S             TRUE
+#define STM32_SPI1_I2S_FULLDUPLEX           TRUE
 #define STM32_SPI1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 0) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2))
 #define STM32_SPI1_RX_DMA_CHN               0x00000303
@@ -240,12 +242,16 @@
 #define STM32_SPI1_TX_DMA_CHN               0x00303000
 
 #define STM32_HAS_SPI2                      TRUE
+#define STM32_SPI2_SUPPORTS_I2S             TRUE
+#define STM32_SPI2_I2S_FULLDUPLEX           TRUE
 #define STM32_SPI2_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 3)
 #define STM32_SPI2_RX_DMA_CHN               0x00000000
 #define STM32_SPI2_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 4)
 #define STM32_SPI2_TX_DMA_CHN               0x00000000
 
 #define STM32_HAS_SPI3                      TRUE
+#define STM32_SPI3_SUPPORTS_I2S             TRUE
+#define STM32_SPI3_I2S_FULLDUPLEX           TRUE
 #define STM32_SPI3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 0) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_SPI3_RX_DMA_CHN               0x00000000

@@ -79,6 +79,15 @@
 #endif
 
 /**
+ * @brief   I2S3 driver enable switch.
+ * @details If set to @p TRUE the support for I2S3 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_I2S_USE_SPI3) || defined(__DOXYGEN__)
+#define STM32_I2S_USE_SPI3                  FALSE
+#endif
+
+/**
  * @brief   I2S1 mode.
  */
 #if !defined(STM32_I2S_SPI1_MODE) || defined(__DOXYGEN__)
@@ -95,17 +104,32 @@
 #endif
 
 /**
+ * @brief   I2S3 mode.
+ */
+#if !defined(STM32_I2S_SPI3_MODE) || defined(__DOXYGEN__)
+#define STM32_I2S_SPI3_MODE                 (STM32_I2S_MODE_MASTER |        \
+                                             STM32_I2S_MODE_RX)
+#endif
+
+/**
  * @brief   I2S1 interrupt priority level setting.
  */
 #if !defined(STM32_I2S_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_I2S_SPI1_IRQ_PRIORITY         2
+#define STM32_I2S_SPI1_IRQ_PRIORITY         10
 #endif
 
 /**
  * @brief   I2S2 interrupt priority level setting.
  */
 #if !defined(STM32_I2S_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_I2S_SPI2_IRQ_PRIORITY         2
+#define STM32_I2S_SPI2_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   I2S3 interrupt priority level setting.
+ */
+#if !defined(STM32_I2S_SPI3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2S_SPI3_IRQ_PRIORITY         10
 #endif
 
 /**
@@ -123,6 +147,13 @@
 #endif
 
 /**
+ * @brief   I2S3 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_I2S_SPI3_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2S_SPI3_DMA_PRIORITY         1
+#endif
+
+/**
  * @brief   I2S DMA error hook.
  */
 #if !defined(STM32_I2S_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
@@ -134,6 +165,18 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if STM32_I2S_USE_SPI1 && !STM32_SPI1_SUPPORTS_I2S
+#error "SPI1 does not support I2S mode"
+#endif
+
+#if STM32_I2S_USE_SPI2 && !STM32_SPI2_SUPPORTS_I2S
+#error "SPI2 does not support I2S mode"
+#endif
+
+#if STM32_I2S_USE_SPI3 && !STM32_SPI3_SUPPORTS_I2S
+#error "SPI3 does not support I2S mode"
+#endif
+
 #if STM32_I2S_RX_ENABLED(STM32_I2S_SPI1_MODE) &&                            \
     STM32_I2S_TX_ENABLED(STM32_I2S_SPI1_MODE)
 #error "I2S1 RX and TX mode not supported in this driver implementation"
@@ -144,6 +187,11 @@
 #error "I2S2 RX and TX mode not supported in this driver implementation"
 #endif
 
+#if STM32_I2S_RX_ENABLED(STM32_I2S_SPI3_MODE) &&                            \
+    STM32_I2S_TX_ENABLED(STM32_I2S_SPI3_MODE)
+#error "I2S3 RX and TX mode not supported in this driver implementation"
+#endif
+
 #if STM32_I2S_USE_SPI1 && !STM32_HAS_SPI1
 #error "SPI1 not present in the selected device"
 #endif
@@ -152,7 +200,11 @@
 #error "SPI2 not present in the selected device"
 #endif
 
-#if !STM32_I2S_USE_SPI1 && !STM32_I2S_USE_SPI2
+#if STM32_I2S_USE_SPI3 && !STM32_HAS_SPI3
+#error "SPI3 not present in the selected device"
+#endif
+
+#if !STM32_I2S_USE_SPI1 && !STM32_I2S_USE_SPI2 && !STM32_I2S_USE_SPI3
 #error "I2S driver activated but no SPI peripheral assigned"
 #endif
 
@@ -166,6 +218,11 @@
 #error "Invalid IRQ priority assigned to SPI2"
 #endif
 
+#if STM32_I2S_USE_SPI3 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_I2S_SPI3_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SPI3"
+#endif
+
 #if STM32_I2S_USE_SPI1 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_I2S_SPI1_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SPI1"
@@ -174,6 +231,11 @@
 #if STM32_I2S_USE_SPI2 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_I2S_SPI2_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SPI2"
+#endif
+
+#if STM32_I2S_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_I2S_SPI3_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SPI3"
 #endif
 
 /* The following checks are only required when there is a DMA able to
@@ -188,6 +250,11 @@
 #if STM32_I2S_USE_SPI2 && (!defined(STM32_I2S_SPI2_RX_DMA_STREAM) ||        \
                            !defined(STM32_I2S_SPI2_TX_DMA_STREAM))
 #error "SPI2 DMA streams not defined"
+#endif
+
+#if STM32_I2S_USE_SPI3 && (!defined(STM32_I2S_SPI3_RX_DMA_STREAM) ||        \
+                           !defined(STM32_I2S_SPI3_TX_DMA_STREAM))
+#error "SPI3 DMA streams not defined"
 #endif
 
 /* Check on the validity of the assigned DMA channels.*/
@@ -209,6 +276,16 @@
 #if STM32_I2S_USE_SPI2 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_I2S_SPI2_TX_DMA_STREAM, STM32_SPI2_TX_DMA_MSK)
 #error "invalid DMA stream associated to SPI2 TX"
+#endif
+
+#if STM32_I2S_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_SPI3_RX_DMA_STREAM, STM32_SPI3_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI3 RX"
+#endif
+
+#if STM32_I2S_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_SPI3_TX_DMA_STREAM, STM32_SPI3_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI3 TX"
 #endif
 #endif /* STM32_ADVANCED_DMA */
 
@@ -330,6 +407,10 @@ extern I2SDriver I2SD1;
 
 #if STM32_I2S_USE_SPI2 && !defined(__DOXYGEN__)
 extern I2SDriver I2SD2;
+#endif
+
+#if STM32_I2S_USE_SPI3 && !defined(__DOXYGEN__)
+extern I2SDriver I2SD3;
 #endif
 
 #ifdef __cplusplus

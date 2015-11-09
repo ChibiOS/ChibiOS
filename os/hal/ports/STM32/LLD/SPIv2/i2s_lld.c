@@ -46,6 +46,14 @@
   STM32_DMA_GETCHANNEL(STM32_I2S_SPI2_TX_DMA_STREAM,                        \
                        STM32_SPI2_TX_DMA_CHN)
 
+#define I2S3_RX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_I2S_SPI3_RX_DMA_STREAM,                        \
+                       STM32_SPI3_RX_DMA_CHN)
+
+#define I2S3_TX_DMA_CHANNEL                                                 \
+  STM32_DMA_GETCHANNEL(STM32_I2S_SPI3_TX_DMA_STREAM,                        \
+                       STM32_SPI3_TX_DMA_CHN)
+
 /*
  * Static I2S settings for I2S1.
  */
@@ -84,7 +92,27 @@
 #define STM32_I2S2_CFGR_CFG                 (SPI_I2SCFGR_I2SCFG_1 |         \
                                              SPI_I2SCFGR_I2SCFG_0)
 #endif
-#endif /* !STM32_I2S_IS_MASTER(STM32_I2S_SP3_MODE) */
+#endif /* !STM32_I2S_IS_MASTER(STM32_I2S_SPI2_MODE) */
+
+/*
+ * Static I2S settings for I2S3.
+ */
+#if !STM32_I2S_IS_MASTER(STM32_I2S_SPI3_MODE)
+#if STM32_I2S_TX_ENABLED(STM32_I2S_SPI3_MODE)
+#define STM32_I2S3_CFGR_CFG                 0
+#endif
+#if STM32_I2S_RX_ENABLED(STM32_I2S_SPI3_MODE)
+#define STM32_I2S3_CFGR_CFG                 SPI_I2SCFGR_I2SCFG_0
+#endif
+#else /* !STM32_I2S_IS_MASTER(STM32_I2S_SPI3_MODE) */
+#if STM32_I2S_TX_ENABLED(STM32_I2S_SPI3_MODE)
+#define STM32_I2S3_CFGR_CFG                 SPI_I2SCFGR_I2SCFG_1
+#endif
+#if STM32_I2S_RX_ENABLED(STM32_I2S_SPI3_MODE)
+#define STM32_I2S3_CFGR_CFG                 (SPI_I2SCFGR_I2SCFG_1 |         \
+                                             SPI_I2SCFGR_I2SCFG_0)
+#endif
+#endif /* !STM32_I2S_IS_MASTER(STM32_I2S_SPI3_MODE) */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -100,6 +128,11 @@ I2SDriver I2SD1;
 I2SDriver I2SD2;
 #endif
 
+/** @brief I2S3 driver identifier.*/
+#if STM32_I2S_USE_SPI3 || defined(__DOXYGEN__)
+I2SDriver I2SD3;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -109,7 +142,8 @@ I2SDriver I2SD2;
 /*===========================================================================*/
 
 #if STM32_I2S_RX_ENABLED(STM32_I2S_SPI1_MODE) ||                            \
-    STM32_I2S_RX_ENABLED(STM32_I2S_SPI2_MODE) || defined(__DOXYGEN__)
+    STM32_I2S_RX_ENABLED(STM32_I2S_SPI2_MODE) ||                            \
+    STM32_I2S_RX_ENABLED(STM32_I2S_SPI3_MODE) || defined(__DOXYGEN__)
 /**
  * @brief   Shared end-of-rx service routine.
  *
@@ -141,7 +175,8 @@ static void i2s_lld_serve_rx_interrupt(I2SDriver *i2sp, uint32_t flags) {
 #endif
 
 #if STM32_I2S_TX_ENABLED(STM32_I2S_SPI1_MODE) ||                            \
-    STM32_I2S_TX_ENABLED(STM32_I2S_SPI2_MODE) || defined(__DOXYGEN__)
+    STM32_I2S_TX_ENABLED(STM32_I2S_SPI2_MODE) ||                            \
+    STM32_I2S_TX_ENABLED(STM32_I2S_SPI3_MODE) || defined(__DOXYGEN__)
 /**
  * @brief   Shared end-of-tx service routine.
  *
@@ -266,6 +301,46 @@ void i2s_lld_init(void) {
   I2SD2.txdmamode = 0;
 #endif
 #endif
+
+#if STM32_I2S_USE_SPI3
+  i2sObjectInit(&I2SD3);
+  I2SD3.spi       = SPI3;
+  I2SD3.cfg       = STM32_I2S3_CFGR_CFG;
+#if STM32_I2S_RX_ENABLED(STM32_I2S_SPI3_MODE)
+  I2SD3.dmarx     = STM32_DMA_STREAM(STM32_I2S_SPI3_RX_DMA_STREAM);
+  I2SD3.rxdmamode = STM32_DMA_CR_CHSEL(I2S3_RX_DMA_CHANNEL) |
+                    STM32_DMA_CR_PL(STM32_I2S_SPI3_DMA_PRIORITY) |
+                    STM32_DMA_CR_PSIZE_HWORD |
+                    STM32_DMA_CR_MSIZE_HWORD |
+                    STM32_DMA_CR_DIR_P2M |
+                    STM32_DMA_CR_MINC |
+                    STM32_DMA_CR_CIRC |
+                    STM32_DMA_CR_HTIE |
+                    STM32_DMA_CR_TCIE |
+                    STM32_DMA_CR_DMEIE |
+                    STM32_DMA_CR_TEIE;
+#else
+  I2SD3.dmarx     = NULL;
+  I2SD3.rxdmamode = 0;
+#endif
+#if STM32_I2S_TX_ENABLED(STM32_I2S_SPI3_MODE)
+  I2SD3.dmatx     = STM32_DMA_STREAM(STM32_I2S_SPI3_TX_DMA_STREAM);
+  I2SD3.txdmamode = STM32_DMA_CR_CHSEL(I2S3_TX_DMA_CHANNEL) |
+                    STM32_DMA_CR_PL(STM32_I2S_SPI3_DMA_PRIORITY) |
+                    STM32_DMA_CR_PSIZE_HWORD |
+                    STM32_DMA_CR_MSIZE_HWORD |
+                    STM32_DMA_CR_DIR_M2P |
+                    STM32_DMA_CR_MINC |
+                    STM32_DMA_CR_CIRC |
+                    STM32_DMA_CR_HTIE |
+                    STM32_DMA_CR_TCIE |
+                    STM32_DMA_CR_DMEIE |
+                    STM32_DMA_CR_TEIE;
+#else
+  I2SD3.dmatx     = NULL;
+  I2SD3.txdmamode = 0;
+#endif
+#endif
 }
 
 /**
@@ -295,7 +370,7 @@ void i2s_lld_start(I2SDriver *i2sp) {
       osalDbgAssert(!b, "stream already allocated");
 
       /* CRs settings are done here because those never changes until
-          the driver is stopped.*/
+         the driver is stopped.*/
       i2sp->spi->CR1 = 0;
       i2sp->spi->CR2 = SPI_CR2_RXDMAEN;
 #endif
@@ -307,12 +382,13 @@ void i2s_lld_start(I2SDriver *i2sp) {
       osalDbgAssert(!b, "stream already allocated");
 
       /* CRs settings are done here because those never changes until
-          the driver is stopped.*/
+         the driver is stopped.*/
       i2sp->spi->CR1 = 0;
       i2sp->spi->CR2 = SPI_CR2_TXDMAEN;
 #endif
     }
 #endif
+
 #if STM32_I2S_USE_SPI2
     if (&I2SD2 == i2sp) {
       bool b;
@@ -327,6 +403,8 @@ void i2s_lld_start(I2SDriver *i2sp) {
                             (void *)i2sp);
       osalDbgAssert(!b, "stream already allocated");
 
+      /* CRs settings are done here because those never changes until
+         the driver is stopped.*/
       i2sp->spi->CR1 = 0;
       i2sp->spi->CR2 = SPI_CR2_RXDMAEN;
 #endif
@@ -337,6 +415,42 @@ void i2s_lld_start(I2SDriver *i2sp) {
                             (void *)i2sp);
       osalDbgAssert(!b, "stream already allocated");
 
+      /* CRs settings are done here because those never changes until
+         the driver is stopped.*/
+      i2sp->spi->CR1 = 0;
+      i2sp->spi->CR2 = SPI_CR2_TXDMAEN;
+#endif
+    }
+#endif
+
+#if STM32_I2S_USE_SPI3
+    if (&I2SD3 == i2sp) {
+      bool b;
+
+      /* Enabling I2S unit clock.*/
+      rccEnableSPI3(FALSE);
+
+#if STM32_I2S_RX_ENABLED(STM32_I2S_SPI3_MODE)
+      b = dmaStreamAllocate(i2sp->dmarx,
+                            STM32_I2S_SPI3_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
+                            (void *)i2sp);
+      osalDbgAssert(!b, "stream already allocated");
+
+      /* CRs settings are done here because those never changes until
+         the driver is stopped.*/
+      i2sp->spi->CR1 = 0;
+      i2sp->spi->CR2 = SPI_CR2_RXDMAEN;
+#endif
+#if STM32_I2S_TX_ENABLED(STM32_I2S_SPI3_MODE)
+      b = dmaStreamAllocate(i2sp->dmatx,
+                            STM32_I2S_SPI3_IRQ_PRIORITY,
+                            (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
+                            (void *)i2sp);
+      osalDbgAssert(!b, "stream already allocated");
+
+      /* CRs settings are done here because those never changes until
+         the driver is stopped.*/
       i2sp->spi->CR1 = 0;
       i2sp->spi->CR2 = SPI_CR2_TXDMAEN;
 #endif
@@ -372,9 +486,15 @@ void i2s_lld_stop(I2SDriver *i2sp) {
     if (&I2SD1 == i2sp)
       rccDisableSPI1(FALSE);
 #endif
+
 #if STM32_I2S_USE_SPI2
     if (&I2SD2 == i2sp)
       rccDisableSPI2(FALSE);
+#endif
+
+#if STM32_I2S_USE_SPI3
+    if (&I2SD3 == i2sp)
+      rccDisableSPI3(FALSE);
 #endif
   }
 }
