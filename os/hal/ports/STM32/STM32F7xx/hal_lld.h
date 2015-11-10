@@ -293,19 +293,19 @@
 #define STM32_PLLSAIDIVR_DIV4   (1 << 16)   /**< LCD_CLK is R divided by 4. */
 #define STM32_PLLSAIDIVR_DIV8   (2 << 16)   /**< LCD_CLK is R divided by 8. */
 #define STM32_PLLSAIDIVR_DIV16  (3 << 16)   /**< LCD_CLK is R divided by 16.*/
-#define STM32_PLLSAIDIVR_OFF    0xFFFFFFFF  /**< LCD CLK is not required.   */
+#define STM32_PLLSAIDIVR_OFF    0xFFFFFFFFU /**< LCD CLK is not required.   */
 
 #define STM32_SAI1SEL_MASK      (3 << 20)   /**< SAI1SEL mask.              */
 #define STM32_SAI1SEL_SAIPLL    (0 << 20)   /**< SAI1 source is SAIPLL.     */
 #define STM32_SAI1SEL_I2SPLL    (1 << 20)   /**< SAI1 source is I2SPLL.     */
 #define STM32_SAI1SEL_CKIN      (2 << 20)   /**< SAI1 source is I2S_CKIN.   */
-#define STM32_SAI1SEL_OFF       0xFFFFFFFF  /**< SAI1 clock is not required.*/
+#define STM32_SAI1SEL_OFF       0xFFFFFFFFU /**< SAI1 clock is not required.*/
 
 #define STM32_SAI2SEL_MASK      (3 << 22)   /**< SAI2SEL mask.              */
 #define STM32_SAI2SEL_SAIPLL    (0 << 22)   /**< SAI2 source is SAIPLL.     */
 #define STM32_SAI2SEL_I2SPLL    (1 << 22)   /**< SAI2 source is I2SPLL.     */
 #define STM32_SAI2SEL_CKIN      (2 << 22)   /**< SAI2 source is I2S_CKIN.   */
-#define STM32_SAI2SEL_OFF       0xFFFFFFFF  /**< SAI2 clock is not required.*/
+#define STM32_SAI2SEL_OFF       0xFFFFFFFFU /**< SAI2 clock is not required.*/
 
 #define STM32_TIMPRE_MASK       (1 << 24)   /**< TIMPRE mask.               */
 #define STM32_TIMPRE_PCLK       (0 << 24)   /**< TIM clocks from PCLKx.     */
