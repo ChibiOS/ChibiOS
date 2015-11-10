@@ -69,9 +69,9 @@
 #define STM32_DAC1_CH1_DMA_CHN              0x00005600
 
 #define STM32_HAS_DAC1_CH2                  TRUE
-#define STM32_DAC1_CH1_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 4)|\
+#define STM32_DAC1_CH2_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 4)|\
                                              STM32_DMA_STREAM_ID_MSK(2, 5))
-#define STM32_DAC1_CH1_DMA_CHN              0x00033000
+#define STM32_DAC1_CH2_DMA_CHN              0x00033000
 
 #define STM32_HAS_DAC2_CH1                  FALSE
 #define STM32_HAS_DAC2_CH2                  FALSE
@@ -180,20 +180,20 @@
 #define STM32_I2C1_TX_DMA_CHN               0x05300000
 
 #define STM32_HAS_I2C2                      TRUE
-#define STM32_I2C1_EVENT_HANDLER            VectorC4
-#define STM32_I2C1_EVENT_NUMBER             33
-#define STM32_I2C1_ERROR_HANDLER            VectorC8
-#define STM32_I2C1_ERROR_NUMBER             34
+#define STM32_I2C2_EVENT_HANDLER            VectorC4
+#define STM32_I2C2_EVENT_NUMBER             33
+#define STM32_I2C2_ERROR_HANDLER            VectorC8
+#define STM32_I2C2_ERROR_NUMBER             34
 #define STM32_I2C2_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_I2C2_RX_DMA_CHN               0x00030000
 #define STM32_I2C2_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 4))
 #define STM32_I2C2_TX_DMA_CHN               0x00003000
 
 #define STM32_HAS_I2C3                      TRUE
-#define STM32_I2C1_EVENT_HANDLER            Vector160
-#define STM32_I2C1_EVENT_NUMBER             72
-#define STM32_I2C1_ERROR_HANDLER            Vector164
-#define STM32_I2C1_ERROR_NUMBER             73
+#define STM32_I2C3_EVENT_HANDLER            Vector160
+#define STM32_I2C3_EVENT_NUMBER             72
+#define STM32_I2C3_ERROR_HANDLER            Vector164
+#define STM32_I2C3_ERROR_NUMBER             73
 #define STM32_I2C3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3))
 #define STM32_I2C3_RX_DMA_CHN               0x00000300
 #define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2))
@@ -315,7 +315,6 @@
 #define STM32_TIM17_HANDLER                 VectorA8
 #define STM32_TIM17_NUMBER                  26
 
-#define STM32_HAS_TIM8                      FALSE
 #define STM32_HAS_TIM9                      FALSE
 #define STM32_HAS_TIM10                     FALSE
 #define STM32_HAS_TIM11                     FALSE
