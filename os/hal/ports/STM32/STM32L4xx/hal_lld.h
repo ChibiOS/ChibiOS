@@ -347,10 +347,10 @@
 #endif
 
 /**
- * @brief   Enables or disables the HSI clock source.
+ * @brief   Enables or disables the HSI16 clock source.
  */
-#if !defined(STM32_HSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI_ENABLED                   TRUE
+#if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI16_ENABLED                 TRUE
 #endif
 
 /**
@@ -852,6 +852,93 @@
 #else
 #error "invalid STM32_VOS value specified"
 #endif
+
+/*
+ * HSI related checks.
+ */
+#if STM32_HSI16_ENABLED
+#else /* !STM32_HSI16_ENABLED */
+
+#if STM32_SW == STM32_SW_HSI16
+#error "HSI16 not enabled, required by STM32_SW"
+#endif
+
+#if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSI16)
+#error "HSI16 not enabled, required by STM32_SW and STM32_PLLSRC"
+#endif
+
+#if (STM32_MCOSEL == STM32_MCOSEL_HSI) ||                                   \
+    ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                                  \
+     (STM32_PLLSRC == STM32_PLLSRC_HSI16))
+#error "HSI16 not enabled, required by STM32_MCOSEL"
+#endif
+
+#if ((STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI1) ||                            \
+     (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI2)) &&                           \
+    (STM32_PLLSRC == STM32_PLLSRC_HSI16)
+#error "HSI16 not enabled, required by STM32_SAI1SEL"
+#endif
+
+#if ((STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI1) ||                            \
+     (STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI2)) &&                           \
+    (STM32_PLLSRC == STM32_PLLSRC_HSI16)
+#error "HSI not enabled, required by STM32_SAI2SEL"
+#endif
+
+#endif /* !STM32_HSI16_ENABLED */
+
+/*
+ * HSE related checks.
+ */
+#if STM32_HSE_ENABLED
+
+  #if STM32_HSECLK == 0
+    #error "HSE frequency not defined"
+  #else /* STM32_HSECLK != 0 */
+    #if defined(STM32_HSE_BYPASS)
+      #if (STM32_HSECLK < STM32_HSECLK_BYP_MIN) || (STM32_HSECLK > STM32_HSECLK_BYP_MAX)
+        #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_BYP_MIN...STM32_HSECLK_BYP_MAX)"
+      #endif
+    #else /* !defined(STM32_HSE_BYPASS) */
+      #if (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_MAX)
+        #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_MIN...STM32_HSECLK_MAX)"
+      #endif
+    #endif /* !defined(STM32_HSE_BYPASS) */
+  #endif /* STM32_HSECLK != 0 */
+
+  #else /* !STM32_HSE_ENABLED */
+
+    #if STM32_SW == STM32_SW_HSE
+      #error "HSE not enabled, required by STM32_SW"
+    #endif
+
+    #if (STM32_SW == STM32_SW_PLL) && (STM32_PLLSRC == STM32_PLLSRC_HSE)
+      #error "HSE not enabled, required by STM32_SW and STM32_PLLSRC"
+    #endif
+
+    #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                               \
+        ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                              \
+         (STM32_PLLSRC == STM32_PLLSRC_HSE))
+      #error "HSE not enabled, required by STM32_MCO1SEL"
+    #endif
+
+    #if ((STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI1) |                         \
+         (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI2)) &&                       \
+        (STM32_PLLSRC == STM32_PLLSRC_HSE)
+      #error "HSE not enabled, required by STM32_SAI1SEL"
+    #endif
+
+    #if ((STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI1) |                         \
+         (STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI2)) &&                       \
+        (STM32_PLLSRC == STM32_PLLSRC_HSE)
+      #error "HSE not enabled, required by STM32_SAI2SEL"
+    #endif
+
+    #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
+      #error "HSE not enabled, required by STM32_RTCSEL"
+    #endif
+
+#endif /* !STM32_HSE_ENABLED */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
