@@ -254,7 +254,7 @@
 #define STM32_TIM1_CC_NUMBER                27
 
 #define STM32_HAS_TIM2                      TRUE
-#define STM32_TIM2_IS_32BITS                FALSE
+#define STM32_TIM2_IS_32BITS                TRUE
 #define STM32_TIM2_CHANNELS                 4
 #define STM32_TIM2_HANDLER                  VectorB0
 #define STM32_TIM2_NUMBER                   28

@@ -15,14 +15,12 @@
 */
 
 /**
- * @file    STM32L1xx/hal_lld.c
- * @brief   STM32L1xx HAL subsystem low level driver source.
+ * @file    STM32L4xx/hal_lld.c
+ * @brief   STM32L4xx HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{
  */
-
-/* TODO: LSEBYP like in F3.*/
 
 #include "hal.h"
 
@@ -36,9 +34,9 @@
 
 /**
  * @brief   CMSIS system core clock variable.
- * @note    It is declared in system_stm32l1xx.h.
+ * @note    It is declared in system_stm32f7xx.h.
  */
-uint32_t SystemCoreClock = STM32_SYSCLK;
+uint32_t SystemCoreClock = STM32_HCLK;
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -50,37 +48,45 @@ uint32_t SystemCoreClock = STM32_SYSCLK;
 
 /**
  * @brief   Initializes the backup domain.
+ * @note    WARNING! Changing clock source impossible without resetting
+ *          of the whole BKP domain.
  */
 static void hal_lld_backup_domain_init(void) {
 
   /* Backup domain access enabled and left open.*/
-  PWR->CR |= PWR_CR_DBP;
+  PWR->CR1 |= PWR_CR1_DBP;
 
   /* Reset BKP domain if different clock source selected.*/
-  if ((RCC->CSR & STM32_RTCSEL_MASK) != STM32_RTCSEL){
+  if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
     /* Backup domain reset.*/
-    RCC->CSR |= RCC_CSR_RTCRST;
-    RCC->CSR &= ~RCC_CSR_RTCRST;
+    RCC->BDCR = RCC_BDCR_BDRST;
+    RCC->BDCR = 0;
   }
 
   /* If enabled then the LSE is started.*/
 #if STM32_LSE_ENABLED
-  RCC->CSR |= RCC_CSR_LSEON;
-  while ((RCC->CSR & RCC_CSR_LSERDY) == 0)
-    ;                                     /* Waits until LSE is stable.   */
+#if defined(STM32_LSE_BYPASS)
+  /* LSE Bypass.*/
+  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSEBYP;
+#else
+  /* No LSE Bypass.*/
+  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON;
+#endif
+  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
+    ;                                       /* Wait until LSE is stable.    */
 #endif
 
-#if STM32_RTCSEL != STM32_RTCSEL_NOCLOCK
+#if HAL_USE_RTC
   /* If the backup domain hasn't been initialized yet then proceed with
      initialization.*/
-  if ((RCC->CSR & RCC_CSR_RTCEN) == 0) {
+  if ((RCC->BDCR & RCC_BDCR_RTCEN) == 0) {
     /* Selects clock source.*/
-    RCC->CSR |= STM32_RTCSEL;
+    RCC->BDCR |= STM32_RTCSEL;
 
     /* RTC clock enabled.*/
-    RCC->CSR |= RCC_CSR_RTCEN;
+    RCC->BDCR |= RCC_BDCR_RTCEN;
   }
-#endif /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
+#endif /* HAL_USE_RTC */
 }
 
 /*===========================================================================*/
@@ -98,9 +104,13 @@ static void hal_lld_backup_domain_init(void) {
  */
 void hal_lld_init(void) {
 
-  /* Reset of all peripherals.*/
-  rccResetAHB(~RCC_AHBRSTR_FLITFRST);
-  rccResetAPB1(~RCC_APB1RSTR_PWRRST);
+  /* Reset of all peripherals. AHB3 is not reseted because it could have
+     been initialized in the board initialization file (board.c).*/
+  rccResetAHB1(~0);
+  rccResetAHB2(~0);
+  rccResetAHB3(~0);
+  rccResetAPB1R1(~RCC_APB1RSTR1_PWRRST);
+  rccResetAPB1R2(~0);
   rccResetAPB2(~0);
 
   /* PWR clock enabled.*/
@@ -115,47 +125,45 @@ void hal_lld_init(void) {
 
   /* Programmable voltage detector enable.*/
 #if STM32_PVD_ENABLE
-  PWR->CR |= PWR_CR_PVDE | (STM32_PLS & STM32_PLS_MASK);
+  PWR->CR1 |= PWR_CR1_PVDE | (STM32_PLS & STM32_PLS_MASK);
 #endif /* STM32_PVD_ENABLE */
 }
 
 /**
- * @brief   STM32L1xx voltage, clocks and PLL initialization.
+ * @brief   STM32F2xx clocks and PLL initialization.
  * @note    All the involved constants come from the file @p board.h.
  * @note    This function should be invoked just after the system reset.
  *
  * @special
  */
-/**
- * @brief   Clocks and internal voltage initialization.
- */
 void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
   /* PWR clock enable.*/
-  RCC->APB1ENR = RCC_APB1ENR_PWREN;
-
-  /* Core voltage setup.*/
-  while ((PWR->CSR & PWR_CSR_VOSF) != 0)
-    ;                           /* Waits until regulator is stable.         */
-  PWR->CR = STM32_VOS;
-  while ((PWR->CSR & PWR_CSR_VOSF) != 0)
-    ;                           /* Waits until regulator is stable.         */
+  RCC->APB1ENR1 = RCC_APB1ENR1_PWREN;
 
   /* Initial clocks setup and wait for MSI stabilization, the MSI clock is
      always enabled because it is the fallback clock when PLL the fails.
      Trim fields are not altered from reset values.*/
-  RCC->CFGR  = 0;
-  RCC->ICSCR = (RCC->ICSCR & ~STM32_MSIRANGE_MASK) | STM32_MSIRANGE;
-  RCC->CR    = RCC_CR_MSION;
+  RCC->CR    = RCC_CR_MSION | STM32_MSIRANGE_4M;
   while ((RCC->CR & RCC_CR_MSIRDY) == 0)
-    ;                           /* Waits until MSI is stable.               */
+    ;                                       /* Wait until MSI is stable.    */
 
-#if STM32_HSI_ENABLED
+  /* Clocking from MSI, in case MSI was not the default source.*/
+  RCC->CFGR  = 0;
+  while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_MSI)
+    ;                                       /* Wait until MSI is selected.  */
+
+  /* Core voltage setup.*/
+  PWR->CR1 = STM32_VOS;
+  while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until regulator is      */
+    ;                                       /* stable.                      */
+
+#if STM32_HSI16_ENABLED
   /* HSI activation.*/
   RCC->CR |= RCC_CR_HSION;
   while ((RCC->CR & RCC_CR_HSIRDY) == 0)
-    ;                           /* Waits until HSI is stable.               */
+    ;                                       /* Wait until HSI is stable.    */
 #endif
 
 #if STM32_HSE_ENABLED
@@ -166,51 +174,72 @@ void stm32_clock_init(void) {
   /* HSE activation.*/
   RCC->CR |= RCC_CR_HSEON;
   while ((RCC->CR & RCC_CR_HSERDY) == 0)
-    ;                           /* Waits until HSE is stable.               */
+    ;                                       /* Wait until HSE is stable.    */
 #endif
 
 #if STM32_LSI_ENABLED
   /* LSI activation.*/
   RCC->CSR |= RCC_CSR_LSION;
   while ((RCC->CSR & RCC_CSR_LSIRDY) == 0)
-    ;                           /* Waits until LSI is stable.               */
-#endif
-
-#if STM32_LSE_ENABLED
-  /* LSE activation, have to unlock the register.*/
-  if ((RCC->CSR & RCC_CSR_LSEON) == 0) {
-    PWR->CR |= PWR_CR_DBP;
-    RCC->CSR |= RCC_CSR_LSEON;
-    PWR->CR &= ~PWR_CR_DBP;
-  }
-  while ((RCC->CSR & RCC_CSR_LSERDY) == 0)
-    ;                           /* Waits until LSE is stable.               */
+    ;                                       /* Wait until LSI is stable.    */
 #endif
 
 #if STM32_ACTIVATE_PLL
   /* PLL activation.*/
-  RCC->CFGR |= STM32_PLLDIV | STM32_PLLMUL | STM32_PLLSRC;
-  RCC->CR   |= RCC_CR_PLLON;
-  while (!(RCC->CR & RCC_CR_PLLRDY))
-    ;                           /* Waits until PLL is stable.               */
+  RCC->PLLCFGR = STM32_PLLQ | STM32_PLLSRC | STM32_PLLP | STM32_PLLN |
+                 STM32_PLLM;
+  RCC->CR |= RCC_CR_PLLON;
+
+  /* Waiting for PLL lock.*/
+  while ((RCC->CR & RCC_CR_PLLRDY) == 0)
+    ;
+#endif /* STM32_OVERDRIVE_REQUIRED */
+
+#if STM32_ACTIVATE_PLLSAI1
+  /* PLLSAI activation.*/
+  RCC->PLLSAI1CFGR = STM32_PLLSAI1R | STM32_PLLSAI1Q | STM32_PLLSAI1P |
+                     STM32_PLLSAI1N;
+  RCC->CR |= RCC_CR_PLLSAI1ON;
+
+  /* Waiting for PLL lock.*/
+  while ((RCC->CR & RCC_CR_PLLSAI1RDY) == 0)
+    ;
 #endif
 
   /* Other clock-related settings (dividers, MCO etc).*/
-  RCC->CR   |= STM32_RTCPRE;
-  RCC->CFGR |= STM32_MCOPRE | STM32_MCOSEL |
-               STM32_PPRE2 | STM32_PPRE1 | STM32_HPRE;
-  RCC->CSR  |= STM32_RTCSEL;
+  RCC->CFGR = STM32_MCO2SEL | STM32_MCO2PRE | STM32_MCO1PRE | STM32_I2SSRC |
+              STM32_MCO1SEL | STM32_RTCPRE  | STM32_PPRE2   | STM32_PPRE1  |
+              STM32_HPRE;
 
-  /* Flash setup and final clock selection.*/
-#if defined(STM32_FLASHBITS1)
-  FLASH->ACR = STM32_FLASHBITS1;
+  /* DCKCFGR1 register initialization, note, must take care of the _OFF
+     pseudo settings.*/
+  {
+    uint32_t dckcfgr1 = 0;
+#if STM32_SAI2SEL != STM32_SAI2SEL_OFF
+    dckcfgr1 |= STM32_SAI2SEL;
 #endif
-#if defined(STM32_FLASHBITS2)
-  FLASH->ACR = STM32_FLASHBITS2;
+#if STM32_SAI1SEL != STM32_SAI1SEL_OFF
+    dckcfgr1 |= STM32_SAI1SEL;
 #endif
+#if STM32_PLLSAIDIVR != STM32_PLLSAIDIVR_OFF
+    dckcfgr1 |= STM32_PLLSAIDIVR;
+#endif
+    RCC->DCKCFGR1 = dckcfgr1;
+  }
 
-  /* Switching to the configured clock source if it is different from MSI.*/
-#if (STM32_SW != STM32_SW_MSI)
+  /* Peripheral clock sources.*/
+  RCC->DCKCFGR2 = STM32_SDMMCSEL  | STM32_CK48MSEL  | STM32_CECSEL    |
+                  STM32_LPTIM1SEL | STM32_I2C4SEL   | STM32_I2C4SEL   |
+                  STM32_I2C3SEL   | STM32_I2C2SEL   | STM32_I2C1SEL   |
+                  STM32_UART8SEL  | STM32_UART7SEL  | STM32_USART6SEL |
+                  STM32_UART5SEL  | STM32_UART4SEL  | STM32_USART3SEL |
+                  STM32_USART2SEL | STM32_USART1SEL;
+
+  /* Flash setup.*/
+  FLASH->ACR = FLASH_ACR_ARTEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS;
+
+  /* Switching to the configured clock source if it is different from HSI.*/
+#if (STM32_SW != STM32_SW_HSI)
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;
