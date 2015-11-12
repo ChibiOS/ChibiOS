@@ -143,14 +143,14 @@ void stm32_clock_init(void) {
   RCC->APB1ENR1 = RCC_APB1ENR1_PWREN;
 
   /* Initial clocks setup and wait for MSI stabilization, the MSI clock is
-     always enabled because it is the fallback clock when PLL the fails.
+     always enabled because it is the fall back clock when PLL the fails.
      Trim fields are not altered from reset values.*/
-  RCC->CR    = RCC_CR_MSION | STM32_MSIRANGE_4M;
+  RCC->CR = RCC_CR_MSION | STM32_MSIRANGE_4M;
   while ((RCC->CR & RCC_CR_MSIRDY) == 0)
     ;                                       /* Wait until MSI is stable.    */
 
   /* Clocking from MSI, in case MSI was not the default source.*/
-  RCC->CFGR  = 0;
+  RCC->CFGR = 0;
   while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_MSI)
     ;                                       /* Wait until MSI is selected.  */
 
@@ -186,8 +186,11 @@ void stm32_clock_init(void) {
 
 #if STM32_ACTIVATE_PLL
   /* PLL activation.*/
-  RCC->PLLCFGR = STM32_PLLQ | STM32_PLLSRC | STM32_PLLP | STM32_PLLN |
-                 STM32_PLLM;
+  RCC->PLLCFGR = STM32_PLLR | STM32_PLLREN |
+                 STM32_PLLQ | STM32_PLLQEN |
+                 STM32_PLLP | STM32_PLLPEN |
+                 STM32_PLLN | STM32_PLLM   |
+                 STM32_PLLSRC;
   RCC->CR |= RCC_CR_PLLON;
 
   /* Waiting for PLL lock.*/
@@ -196,8 +199,10 @@ void stm32_clock_init(void) {
 #endif /* STM32_OVERDRIVE_REQUIRED */
 
 #if STM32_ACTIVATE_PLLSAI1
-  /* PLLSAI activation.*/
-  RCC->PLLSAI1CFGR = STM32_PLLSAI1R | STM32_PLLSAI1Q | STM32_PLLSAI1P |
+  /* PLLSAI1 activation.*/
+  RCC->PLLSAI1CFGR = STM32_PLLSAI1R | STM32_PLLSAI1REN |
+                     STM32_PLLSAI1Q | STM32_PLLSAI1QEN |
+                     STM32_PLLSAI1P | STM32_PLLSAI1PEN |
                      STM32_PLLSAI1N;
   RCC->CR |= RCC_CR_PLLSAI1ON;
 
@@ -206,40 +211,47 @@ void stm32_clock_init(void) {
     ;
 #endif
 
+#if STM32_ACTIVATE_PLLSAI2
+  /* PLLSAI2 activation.*/
+  RCC->PLLSAI2CFGR = STM32_PLLSAI2R | STM32_PLLSAI2REN |
+                     STM32_PLLSAI2P | STM32_PLLSAI2PEN |
+                     STM32_PLLSAI2N;
+  RCC->CR |= RCC_CR_PLLSAI2ON;
+
+  /* Waiting for PLL lock.*/
+  while ((RCC->CR & RCC_CR_PLLSAI2RDY) == 0)
+    ;
+#endif
+
   /* Other clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR = STM32_MCO2SEL | STM32_MCO2PRE | STM32_MCO1PRE | STM32_I2SSRC |
-              STM32_MCO1SEL | STM32_RTCPRE  | STM32_PPRE2   | STM32_PPRE1  |
-              STM32_HPRE;
+  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
+              STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
 
   /* DCKCFGR1 register initialization, note, must take care of the _OFF
      pseudo settings.*/
   {
-    uint32_t dckcfgr1 = 0;
+    uint32_t ccipr = 0;
 #if STM32_SAI2SEL != STM32_SAI2SEL_OFF
-    dckcfgr1 |= STM32_SAI2SEL;
+    ccipr |= STM32_SAI2SEL;
 #endif
 #if STM32_SAI1SEL != STM32_SAI1SEL_OFF
-    dckcfgr1 |= STM32_SAI1SEL;
+    ccipr |= STM32_SAI1SEL;
 #endif
-#if STM32_PLLSAIDIVR != STM32_PLLSAIDIVR_OFF
-    dckcfgr1 |= STM32_PLLSAIDIVR;
-#endif
-    RCC->DCKCFGR1 = dckcfgr1;
+    ccipr |= STM32_DFSDMSEL  | STM32_SWPMI1SEL | STM32_ADCSEL    |
+             STM32_CLK48SEL  | STM32_SAI2SEL   | STM32_SAI1SEL   |
+             STM32_LPTIM2SEL | STM32_LPTIM1SEL | STM32_I2C3SEL   |
+             STM32_I2C2SEL   | STM32_I2C1SEL   | STM32_UART5SEL  |
+             STM32_UART4SEL  | STM32_USART3SEL | STM32_USART2SEL |
+             STM32_USART1SEL;
+    RCC->CCIPR = ccipr;
   }
 
-  /* Peripheral clock sources.*/
-  RCC->DCKCFGR2 = STM32_SDMMCSEL  | STM32_CK48MSEL  | STM32_CECSEL    |
-                  STM32_LPTIM1SEL | STM32_I2C4SEL   | STM32_I2C4SEL   |
-                  STM32_I2C3SEL   | STM32_I2C2SEL   | STM32_I2C1SEL   |
-                  STM32_UART8SEL  | STM32_UART7SEL  | STM32_USART6SEL |
-                  STM32_UART5SEL  | STM32_UART4SEL  | STM32_USART3SEL |
-                  STM32_USART2SEL | STM32_USART1SEL;
-
   /* Flash setup.*/
-  FLASH->ACR = FLASH_ACR_ARTEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS;
+  FLASH->ACR = FLASH_ACR_DCEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
+               STM32_FLASHBITS;
 
   /* Switching to the configured clock source if it is different from HSI.*/
-#if (STM32_SW != STM32_SW_HSI)
+#if (STM32_SW != STM32_SW_MSI)
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;

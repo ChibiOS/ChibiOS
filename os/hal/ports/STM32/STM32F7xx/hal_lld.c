@@ -276,11 +276,11 @@ void stm32_clock_init(void) {
 
   /* Peripheral clock sources.*/
   RCC->DCKCFGR2 = STM32_SDMMCSEL  | STM32_CK48MSEL  | STM32_CECSEL    |
-                  STM32_LPTIM1SEL | STM32_I2C4SEL   | STM32_I2C4SEL   |
-                  STM32_I2C3SEL   | STM32_I2C2SEL   | STM32_I2C1SEL   |
-                  STM32_UART8SEL  | STM32_UART7SEL  | STM32_USART6SEL |
-                  STM32_UART5SEL  | STM32_UART4SEL  | STM32_USART3SEL |
-                  STM32_USART2SEL | STM32_USART1SEL;
+                  STM32_LPTIM1SEL | STM32_I2C4SEL   | STM32_I2C3SEL   |
+                  STM32_I2C2SEL   | STM32_I2C1SEL   | STM32_UART8SEL  |
+                  STM32_UART7SEL  | STM32_USART6SEL | STM32_UART5SEL  |
+                  STM32_UART4SEL  | STM32_USART3SEL | STM32_USART2SEL |
+                  STM32_USART1SEL;
 
   /* Flash setup.*/
   FLASH->ACR = FLASH_ACR_ARTEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS;

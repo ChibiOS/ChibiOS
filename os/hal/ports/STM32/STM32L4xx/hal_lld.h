@@ -1275,7 +1275,7 @@
 #define STM32_SYSCLK                STM32_HSECLK
 
 #elif (STM32_SW == STM32_SW_PLL)
-#define STM32_SYSCLK                STM32_PLL_P_CLKOUT
+#define STM32_SYSCLK                STM32_PLL_R_CLKOUT
 
 #else
 #error "invalid STM32_SW value specified"
@@ -1917,19 +1917,19 @@
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
-#define STM32_FLASHBITS             0x00000000
+#define STM32_FLASHBITS             FLASH_ACR_LATENCY_0WS
 
 #elif STM32_HCLK <= STM32_1WS_THRESHOLD
-#define STM32_FLASHBITS             0x00000001
+#define STM32_FLASHBITS             FLASH_ACR_LATENCY_1WS
 
 #elif STM32_HCLK <= STM32_2WS_THRESHOLD
-#define STM32_FLASHBITS             0x00000002
+#define STM32_FLASHBITS             FLASH_ACR_LATENCY_2WS
 
 #elif STM32_HCLK <= STM32_3WS_THRESHOLD
-#define STM32_FLASHBITS             0x00000003
+#define STM32_FLASHBITS             FLASH_ACR_LATENCY_3WS
 
 #else
-#define STM32_FLASHBITS             0x00000004
+#define STM32_FLASHBITS             FLASH_ACR_LATENCY_4WS
 #endif
 
 /*===========================================================================*/
