@@ -157,14 +157,14 @@
 #define STM32_HAS_GPIOI                     FALSE
 #define STM32_HAS_GPIOJ                     FALSE
 #define STM32_HAS_GPIOK                     FALSE
-#define STM32_GPIO_EN_MASK                  (RCC_IOPENR_GPIOAEN |           \
-                                             RCC_IOPENR_GPIOBEN |           \
-                                             RCC_IOPENR_GPIOCEN |           \
-                                             RCC_IOPENR_GPIODEN |           \
-                                             RCC_IOPENR_GPIOEEN |           \
-                                             RCC_IOPENR_GPIOFEN |           \
-                                             RCC_IOPENR_GPIOGEN |           \
-                                             RCC_IOPENR_GPIOHEN)
+#define STM32_GPIO_EN_MASK                  (RCC_AHB2ENR_GPIOAEN |          \
+                                             RCC_AHB2ENR_GPIOBEN |          \
+                                             RCC_AHB2ENR_GPIOCEN |          \
+                                             RCC_AHB2ENR_GPIODEN |          \
+                                             RCC_AHB2ENR_GPIOEEN |          \
+                                             RCC_AHB2ENR_GPIOFEN |          \
+                                             RCC_AHB2ENR_GPIOGEN |          \
+                                             RCC_AHB2ENR_GPIOHEN)
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
