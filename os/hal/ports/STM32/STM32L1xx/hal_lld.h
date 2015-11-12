@@ -611,7 +611,6 @@
 
 /**
  * @brief   MSI frequency.
- * @note    Values are taken from the STM8Lxx datasheet.
  */
 #if STM32_MSIRANGE == STM32_MSIRANGE_64K
 #define STM32_MSICLK                65500

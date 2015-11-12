@@ -1043,6 +1043,10 @@
 #error "LSE not enabled, required by STM32_RTCSEL"
 #endif
 
+#if STM32_MCO1SEL == STM32_MCO1SEL_LSE
+#error "LSE not enabled, required by STM32_MCO1SEL"
+#endif
+
 #endif /* !STM32_LSE_ENABLED */
 
 /**
