@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.4 ***
+- HAL: Fixed invalid macro in STM32F0xx registry (bug #668).
 - HAL: Fixed I2S clock selection not working in STM32F4xx HAL (bug #667).
 
 *** 3.0.3 ***
