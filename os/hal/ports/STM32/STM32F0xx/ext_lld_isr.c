@@ -224,7 +224,7 @@ void ext_lld_exti_irq_enable(void) {
   nvicEnableVector(EXTI0_1_IRQn, STM32_EXT_EXTI0_1_IRQ_PRIORITY);
   nvicEnableVector(EXTI2_3_IRQn, STM32_EXT_EXTI2_3_IRQ_PRIORITY);
   nvicEnableVector(EXTI4_15_IRQn, STM32_EXT_EXTI4_15_IRQ_PRIORITY);
-#if !defined(STM32F030) || !defined(STM32F070)
+#if !defined(STM32F030) && !defined(STM32F070)
   nvicEnableVector(PVD_IRQn, STM32_EXT_EXTI16_IRQ_PRIORITY);
   nvicEnableVector(ADC1_COMP_IRQn, STM32_EXT_EXTI21_22_IRQ_PRIORITY);
 #endif
@@ -241,7 +241,7 @@ void ext_lld_exti_irq_disable(void) {
   nvicDisableVector(EXTI0_1_IRQn);
   nvicDisableVector(EXTI2_3_IRQn);
   nvicDisableVector(EXTI4_15_IRQn);
-#if !defined(STM32F030) || !defined(STM32F070)
+#if !defined(STM32F030) && !defined(STM32F070)
   nvicDisableVector(PVD_IRQn);
   nvicDisableVector(ADC1_COMP_IRQn);
 #endif
