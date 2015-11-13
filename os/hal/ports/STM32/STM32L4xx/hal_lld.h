@@ -357,7 +357,7 @@
  * @brief   Enables or disables the HSI16 clock source.
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI16_ENABLED                 TRUE
+#define STM32_HSI16_ENABLED                 FALSE
 #endif
 
 /**
@@ -435,7 +435,7 @@
  * @note    If the selected clock source is not the PLL then the PLL is not
  *          initialized and started.
  * @note    The default value is calculated for a 80MHz system clock from
- *          the internal 16MHz HSI clock.
+ *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
 #define STM32_SW                            STM32_SW_PLL
@@ -446,37 +446,37 @@
  * @note    This setting has only effect if the PLL is selected as the
  *          system clock source.
  * @note    The default value is calculated for a 80MHz system clock from
- *          the internal 16MHz HSI clock.
+ *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLSRC) || defined(__DOXYGEN__)
-#define STM32_PLLSRC                        STM32_PLLSRC_HSI16
+#define STM32_PLLSRC                        STM32_PLLSRC_MSI
 #endif
 
 /**
  * @brief   PLLM divider value.
  * @note    The allowed values are 1..8.
  * @note    The default value is calculated for a 80MHz system clock from
- *          an external 8MHz HSE clock.
+ *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLM_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLM_VALUE                    4
+#define STM32_PLLM_VALUE                    1
 #endif
 
 /**
  * @brief   PLLN multiplier value.
  * @note    The allowed values are 8..86.
  * @note    The default value is calculated for a 80MHz system clock from
- *          the internal 16MHz HSI clock.
+ *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLN_VALUE                    40
+#define STM32_PLLN_VALUE                    80
 #endif
 
 /**
  * @brief   PLLP divider value.
  * @note    The allowed values are 7, 17.
  * @note    The default value is calculated for a 80MHz system clock from
- *          the internal 16MHz HSI clock.
+ *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLLP_VALUE                    7
@@ -485,27 +485,27 @@
 /**
  * @brief   PLLQ divider value.
  * @note    The allowed values are 2, 4, 6, 8.
- * @note    The default value is calculated for a 216MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 80MHz system clock from
+ *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLQ_VALUE                    2
+#define STM32_PLLQ_VALUE                    6
 #endif
 
 /**
  * @brief   PLLR divider value.
  * @note    The allowed values are 2, 4, 6, 8.
- * @note    The default value is calculated for a 216MHz system clock from
- *          an external 25MHz HSE clock.
+ * @note    The default value is calculated for a 80MHz system clock from
+ *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_PLLR_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLR_VALUE                    2
+#define STM32_PLLR_VALUE                    4
 #endif
 
 /**
  * @brief   AHB prescaler value.
- * @note    The default value is calculated for a 32MHz system clock from
- *          the internal 16MHz HSI clock.
+ * @note    The default value is calculated for a 80MHz system clock from
+ *          the internal 4MHz MSI clock.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
 #define STM32_HPRE                          STM32_HPRE_DIV1
@@ -558,7 +558,7 @@
  * @note    The allowed values are 8..86.
  */
 #if !defined(STM32_PLLSAI1N_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1N_VALUE                40
+#define STM32_PLLSAI1N_VALUE                80
 #endif
 
 /**
@@ -574,7 +574,7 @@
  * @note    The allowed values are 2, 4, 6, 8.
  */
 #if !defined(STM32_PLLSAI1Q_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1Q_VALUE                4
+#define STM32_PLLSAI1Q_VALUE                6
 #endif
 
 /**
@@ -590,7 +590,7 @@
  * @note    The allowed values are 8..86.
  */
 #if !defined(STM32_PLLSAI2N_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2N_VALUE                40
+#define STM32_PLLSAI2N_VALUE                80
 #endif
 
 /**
@@ -956,7 +956,7 @@
 #endif
 
 /*
- * HSI related checks.
+ * HSI16 related checks.
  */
 #if STM32_HSI16_ENABLED
 #else /* !STM32_HSI16_ENABLED */
@@ -969,7 +969,7 @@
 #error "HSI16 not enabled, required by STM32_SW and STM32_PLLSRC"
 #endif
 
-#if (STM32_MCOSEL == STM32_MCOSEL_HSI) ||                                   \
+#if (STM32_MCOSEL == STM32_MCOSEL_HSI16) ||                                 \
     ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                                  \
      (STM32_PLLSRC == STM32_PLLSRC_HSI16))
 #error "HSI16 not enabled, required by STM32_MCOSEL"
@@ -984,7 +984,7 @@
 #if ((STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI1) ||                            \
      (STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI2)) &&                           \
     (STM32_PLLSRC == STM32_PLLSRC_HSI16)
-#error "HSI not enabled, required by STM32_SAI2SEL"
+#error "HSI16 not enabled, required by STM32_SAI2SEL"
 #endif
 
 #endif /* !STM32_HSI16_ENABLED */
@@ -1416,7 +1416,7 @@
  */
 #if (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI1) ||                             \
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) ||                             \
-    (STM32_CLK48SEL == STM32_CLK48SEL_PLL) ||                               \
+    (STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1) ||                           \
     (STM32_ADCSEL == STM32_ADCSEL_PLLSAI1) ||                               \
     defined(__DOXYGEN__)
 /**
