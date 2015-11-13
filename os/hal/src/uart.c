@@ -67,10 +67,19 @@ void uartInit(void) {
  */
 void uartObjectInit(UARTDriver *uartp) {
 
-  uartp->state   = UART_STOP;
-  uartp->txstate = UART_TX_IDLE;
-  uartp->rxstate = UART_RX_IDLE;
-  uartp->config  = NULL;
+  uartp->state      = UART_STOP;
+  uartp->txstate    = UART_TX_IDLE;
+  uartp->rxstate    = UART_RX_IDLE;
+  uartp->config     = NULL;
+#if UART_USE_WAIT || defined(__DOXYGEN__)
+  uartp->early      = false;
+  uartp->threadrx   = NULL;
+  uartp->threadtx   = NULL;
+#endif /* UART_USE_WAIT */
+#if UART_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+  osalMutexObjectInit(&uartp->mutex);
+#endif /* UART_USE_MUTUAL_EXCLUSION */
+
   /* Optional, user-defined initializer.*/
 #if defined(UART_DRIVER_EXT_INIT_HOOK)
   UART_DRIVER_EXT_INIT_HOOK(uartp);
@@ -233,7 +242,7 @@ size_t uartStopSendI(UARTDriver *uartp) {
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
- * @param[in] n         number of data frames to send
+ * @param[in] n         number of data frames to receive
  * @param[in] rxbuf     the pointer to the receive buffer
  *
  * @api
@@ -258,7 +267,7 @@ void uartStartReceive(UARTDriver *uartp, size_t n, void *rxbuf) {
  * @note    This function has to be invoked from a lock zone.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
- * @param[in] n         number of data frames to send
+ * @param[in] n         number of data frames to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @iclass
@@ -332,6 +341,172 @@ size_t uartStopReceiveI(UARTDriver *uartp) {
   }
   return 0;
 }
+
+#if (UART_USE_WAIT == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Performs a transmission on the UART peripheral.
+ * @note    The function returns when the specified number of frames have been
+ *          sent to the UART or on timeout.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below
+ *          or equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in,out] np    number of data frames to transmit, on exit the number
+ *                      of frames actually transmitted
+ * @param[in] txbuf     the pointer to the transmit buffer
+ * @return              The operation status.
+ * @retval MSG_OK       if the operation completed successfully.
+ * @retval MSG_TIMEOUT  if the operation timed out.
+ *
+ * @api
+ */
+msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
+                      const void *txbuf, systime_t time) {
+  msg_t msg;
+
+  osalDbgCheck((uartp != NULL) && (*np > 0U) && (txbuf != NULL));
+
+  osalSysLock();
+  osalDbgAssert(uartp->state == UART_READY, "is active");
+  osalDbgAssert(uartp->txstate != UART_TX_ACTIVE, "tx active");
+
+  /* Transmission start.*/
+  uartp->early = true;
+  uart_lld_start_send(uartp, *np, txbuf);
+  uartp->txstate = UART_TX_ACTIVE;
+
+  /* Waiting for result.*/
+  msg = osalThreadSuspendTimeoutS(&uartp->threadtx, time);
+  if (msg != MSG_OK) {
+    *np = uartStopSendI(uartp);
+  }
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @brief   Performs a transmission on the UART peripheral.
+ * @note    The function returns when the specified number of frames have been
+ *          physically transmitted or on timeout.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below
+ *          or equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in,out] np    number of data frames to transmit, on exit the number
+ *                      of frames actually transmitted
+ * @param[in] txbuf     the pointer to the transmit buffer
+ * @return              The operation status.
+ * @retval MSG_OK       if the operation completed successfully.
+ * @retval MSG_TIMEOUT  if the operation timed out.
+ *
+ * @api
+ */
+msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
+                          const void *txbuf, systime_t time) {
+  msg_t msg;
+
+  osalDbgCheck((uartp != NULL) && (*np > 0U) && (txbuf != NULL));
+
+  osalSysLock();
+  osalDbgAssert(uartp->state == UART_READY, "is active");
+  osalDbgAssert(uartp->txstate != UART_TX_ACTIVE, "tx active");
+
+  /* Transmission start.*/
+  uartp->early = false;
+  uart_lld_start_send(uartp, *np, txbuf);
+  uartp->txstate = UART_TX_ACTIVE;
+
+  /* Waiting for result.*/
+  msg = osalThreadSuspendTimeoutS(&uartp->threadtx, time);
+  if (msg != MSG_OK) {
+    *np = uartStopSendI(uartp);
+  }
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @brief   Performs a receive operation on the UART peripheral.
+ * @note    The function returns when the specified number of frames have been
+ *          received or on error/timeout.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below
+ *          or equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in,out] np    number of data frames to receive, on exit the number
+ *                      of frames actually received
+ * @param[in] rxbuf     the pointer to the receive buffer
+ * @param[in] time      operation timeout
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       if the operation completed successfully.
+ * @retval MSG_TIMEOUT  if the operation timed out.
+ * @retval MSG_RESET    in case of a receive error.
+ *
+ * @api
+ */
+msg_t uartReceiveTimeout(UARTDriver *uartp, size_t *np,
+                         void *rxbuf, systime_t time) {
+  msg_t msg;
+
+  osalDbgCheck((uartp != NULL) && (*np > 0U) && (rxbuf != NULL));
+
+  osalSysLock();
+  osalDbgAssert(uartp->state == UART_READY, "is active");
+  osalDbgAssert(uartp->rxstate != UART_RX_ACTIVE, "rx active");
+
+  /* Receive start.*/
+  uart_lld_start_receive(uartp, *np, rxbuf);
+  uartp->rxstate = UART_RX_ACTIVE;
+
+  /* Waiting for result.*/
+  msg = osalThreadSuspendTimeoutS(&uartp->threadrx, time);
+  if (msg != MSG_OK) {
+    *np = uartStopReceiveI(uartp);
+  }
+  osalSysUnlock();
+
+  return msg;
+}
+#endif
+
+#if (UART_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Gains exclusive access to the UART bus.
+ * @details This function tries to gain ownership to the UART bus, if the bus
+ *          is already being used then the invoking thread is queued.
+ * @pre     In order to use this function the option @p UART_USE_MUTUAL_EXCLUSION
+ *          must be enabled.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @api
+ */
+void uartAcquireBus(UARTDriver *uartp) {
+
+  osalDbgCheck(uartp != NULL);
+
+  osalMutexLock(&uartp->mutex);
+}
+
+/**
+ * @brief   Releases exclusive access to the UART bus.
+ * @pre     In order to use this function the option @p UART_USE_MUTUAL_EXCLUSION
+ *          must be enabled.
+ *
+ * @param[in] uartp     pointer to the @p UARTDriver object
+ *
+ * @api
+ */
+void uartReleaseBus(UARTDriver *uartp) {
+
+  osalDbgCheck(uartp != NULL);
+
+  osalMutexUnlock(&uartp->mutex);
+}
+#endif
 
 #endif /* HAL_USE_UART == TRUE */
 

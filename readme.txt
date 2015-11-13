@@ -76,6 +76,7 @@
 - HAL: Introduced preliminary support for STM32F7xx devices.
 - HAL: Introduced preliminary support for STM32L4xx devices.
 - HAL: Introduced preliminary support for STM32L0xx devices.
+- HAL: Added synchronous API and mutual exclusion to the UART driver.
 - HAL: Added PAL driver for STM32L4xx GPIOv3 peripheral.
 - HAL: Added I2S driver for STM32 SPIv2 peripheral.
 - HAL: Added demos and board files for ST's Nucleo32 boards (F031, F042, F303).

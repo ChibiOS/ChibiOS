@@ -143,6 +143,26 @@ struct UARTDriver {
    * @brief Current configuration data.
    */
   const UARTConfig          *config;
+#if UART_USE_WAIT || defined(__DOXYGEN__)
+  /**
+   * @brief   Synchronization flag for transmit operations.
+   */
+  bool                      early;
+  /**
+   * @brief   Waiting thread on RX.
+   */
+  thread_reference_t        threadrx;
+  /**
+   * @brief   Waiting thread on TX.
+   */
+  thread_reference_t        threadtx;
+#endif /* UART_USE_WAIT */
+#if UART_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+  /**
+   * @brief   Mutex protecting the peripheral.
+   */
+  mutex_t                   mutex;
+#endif /* UART_USE_MUTUAL_EXCLUSION */
 #if defined(UART_DRIVER_EXT_FIELDS)
   UART_DRIVER_EXT_FIELDS
 #endif

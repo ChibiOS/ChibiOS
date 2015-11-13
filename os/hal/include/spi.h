@@ -270,13 +270,13 @@ extern "C" {
                         const void *txbuf, void *rxbuf);
   void spiStartSend(SPIDriver *spip, size_t n, const void *txbuf);
   void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf);
-#if SPI_USE_WAIT
+#if SPI_USE_WAIT == TRUE
   void spiIgnore(SPIDriver *spip, size_t n);
   void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);
   void spiSend(SPIDriver *spip, size_t n, const void *txbuf);
   void spiReceive(SPIDriver *spip, size_t n, void *rxbuf);
 #endif
-#if SPI_USE_MUTUAL_EXCLUSION
+#if SPI_USE_MUTUAL_EXCLUSION == TRUE
   void spiAcquireBus(SPIDriver *spip);
   void spiReleaseBus(SPIDriver *spip);
 #endif
