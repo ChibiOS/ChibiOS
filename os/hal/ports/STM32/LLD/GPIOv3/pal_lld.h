@@ -72,6 +72,10 @@
 #define PAL_STM32_ASCR_OFF              (0U << 11U)
 #define PAL_STM32_ASCR_ON               (1U << 11U)
 
+#define PAL_STM32_LOCKR_MASK            (1U << 12U)
+#define PAL_STM32_LOCKR_OFF             (0U << 12U)
+#define PAL_STM32_LOCKR_ON              (1U << 12U)
+
 /**
  * @brief   Alternate function.
  *
@@ -86,15 +90,16 @@
  * @{
  */
 /**
- * @brief   This mode is implemented as input.
+ * @brief   Implemented as input.
  */
 #define PAL_MODE_RESET                  PAL_STM32_MODE_INPUT
 
 /**
- * @brief   This mode is implemented as analog with analog switch disabled.
+ * @brief   Implemented as analog with analog switch disabled and lock.
  */
 #define PAL_MODE_UNCONNECTED            (PAL_STM32_MODE_ANALOG |            \
-                                         PAL_STM32_ASCR_OFF)
+                                         PAL_STM32_ASCR_OFF |               \
+                                         PAL_STM32_LOCKR_ON)
 
 /**
  * @brief   Regular input high-Z pad.
@@ -235,7 +240,7 @@ typedef struct {
       uint16_t          clear;
     } H;
   } BSRR;
-  volatile uint32_t     LCKR;
+  volatile uint32_t     LOCKR;
   volatile uint32_t     AFRL;
   volatile uint32_t     AFRH;
   volatile uint32_t     BRR;
@@ -262,6 +267,8 @@ typedef struct {
   uint32_t              afrh;
   /** Initial value for ASCR register.*/
   uint32_t              ascr;
+  /** Initial value for LOCKR register.*/
+  uint32_t              lockr;
 } stm32_gpio_setup_t;
 
 /**

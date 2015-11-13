@@ -53,12 +53,14 @@
 static void initgpio(stm32_gpio_t *gpiop, const stm32_gpio_setup_t *config) {
 
   gpiop->OTYPER  = config->otyper;
+  gpiop->ASCR    = config->ascr;
   gpiop->OSPEEDR = config->ospeedr;
   gpiop->PUPDR   = config->pupdr;
   gpiop->ODR     = config->odr;
   gpiop->AFRL    = config->afrl;
   gpiop->AFRH    = config->afrh;
   gpiop->MODER   = config->moder;
+  gpiop->LOCKR   = config->lockr;
 }
 
 /*===========================================================================*/
@@ -147,8 +149,9 @@ void _pal_lld_setgroupmode(ioportid_t port,
   uint32_t pupdr   = (mode & PAL_STM32_PUDR_MASK) >> 5;
   uint32_t altr    = (mode & PAL_STM32_ALTERNATE_MASK) >> 7;
   uint32_t ascr    = (mode & PAL_STM32_ASCR_MASK) >> 11;
+  uint32_t lockr   = (mode & PAL_STM32_LOCKR_MASK) >> 12;
   uint32_t bit     = 0;
-  while (TRUE) {
+  while (true) {
     if ((mask & 1) != 0) {
       uint32_t altrmask, m1, m2, m4;
 
@@ -165,6 +168,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
       port->OSPEEDR = (port->OSPEEDR & ~m2) | ospeedr;
       port->PUPDR   = (port->PUPDR & ~m2) | pupdr;
       port->MODER   = (port->MODER & ~m2) | moder;
+      port->LOCKR   = (port->LOCKR & ~m1) | lockr;
     }
     mask >>= 1;
     if (!mask)
