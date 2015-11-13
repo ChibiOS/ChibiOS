@@ -15,7 +15,7 @@
   <clocks
     HSEFrequency="0"
     HSEBypass="false"
-    LSEFrequency="0"
+    LSEFrequency="32768"
     LSEBypass="false"
     LSEDrive="3 High Drive (default)"
     VDD="300" />

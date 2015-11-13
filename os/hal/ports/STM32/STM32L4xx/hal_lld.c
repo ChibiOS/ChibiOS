@@ -53,28 +53,12 @@ uint32_t SystemCoreClock = STM32_HCLK;
  */
 static void hal_lld_backup_domain_init(void) {
 
-  /* Backup domain access enabled and left open.*/
-  PWR->CR1 |= PWR_CR1_DBP;
-
   /* Reset BKP domain if different clock source selected.*/
   if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
     /* Backup domain reset.*/
     RCC->BDCR = RCC_BDCR_BDRST;
     RCC->BDCR = 0;
   }
-
-  /* If enabled then the LSE is started.*/
-#if STM32_LSE_ENABLED
-#if defined(STM32_LSE_BYPASS)
-  /* LSE Bypass.*/
-  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSEBYP;
-#else
-  /* No LSE Bypass.*/
-  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON;
-#endif
-  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
-    ;                                       /* Wait until LSE is stable.    */
-#endif
 
 #if HAL_USE_RTC
   /* If the backup domain hasn't been initialized yet then proceed with
@@ -184,12 +168,33 @@ void stm32_clock_init(void) {
     ;                                       /* Wait until LSI is stable.    */
 #endif
 
+  /* Backup domain access enabled and left open.*/
+  PWR->CR1 |= PWR_CR1_DBP;
+
+#if STM32_LSE_ENABLED
+  /* LSE activation.*/
+#if defined(STM32_LSE_BYPASS)
+  /* LSE Bypass.*/
+  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSEBYP;
+#else
+  /* No LSE Bypass.*/
+  RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON;
+#endif
+  while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
+    ;                                       /* Wait until LSE is stable.    */
+#endif
+
+#if STM32_MSIPLL_ENABLED
+  /* MSI PLL activation.*/
+  RCC->CR |= RCC_CR_MSIPLLEN;
+#endif
+
 #if STM32_ACTIVATE_PLL || STM32_ACTIVATE_PLLSAI1 || STM32_ACTIVATE_PLLSAI2
   /* PLLM and PLLSRC are common to all PLLs.*/
-  RCC->PLLCFGR = STM32_PLLR | STM32_PLLREN |
-                 STM32_PLLQ | STM32_PLLQEN |
-                 STM32_PLLP | STM32_PLLPEN |
-                 STM32_PLLN | STM32_PLLM   |
+  RCC->PLLCFGR = STM32_PLLR   | STM32_PLLREN |
+                 STM32_PLLQ   | STM32_PLLQEN |
+                 STM32_PLLP   | STM32_PLLPEN |
+                 STM32_PLLN   | STM32_PLLM   |
                  STM32_PLLSRC;
 #endif
 

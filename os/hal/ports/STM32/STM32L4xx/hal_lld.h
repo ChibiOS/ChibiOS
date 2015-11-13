@@ -382,6 +382,13 @@
 #endif
 
 /**
+ * @brief   Enables or disables the MSI PLL on LSE clock source.
+ */
+#if !defined(STM32_MSIPLL_ENABLED) || defined(__DOXYGEN__)
+#define STM32_MSIPLL_ENABLED                FALSE
+#endif
+
+/**
  * @brief   ADC clock setting.
  */
 #if !defined(STM32_ADC_CLOCK_ENABLED) || defined(__DOXYGEN__)
@@ -733,6 +740,21 @@
 #error "Using a wrong mcuconf.h file, STM32L4xx_MCUCONF not defined"
 #endif
 
+/*
+ * Board files sanity checks.
+ */
+#if !defined(STM32_LSECLK)
+#error "STM32_LSECLK not defined in board.h"
+#endif
+
+#if !defined(STM32_LSEDRV)
+#error "STM32_LSEDRV not defined in board.h"
+#endif
+
+#if !defined(STM32_HSECLK)
+#error "STM32_HSECLK not defined in board.h"
+#endif
+
 /* Voltage related limits.*/
 #if (STM32_VOS == STM32_VOS_RANGE1) || defined(__DOXYGEN__)
 /**
@@ -1065,6 +1087,10 @@
 
   #if STM32_LSCOSEL == STM32_LSCOSEL_LSE
     #error "LSE not enabled, required by STM32_LSCOSEL"
+  #endif
+
+  #if STM32_MSIPLL_ENABLED == TRUE
+    #error "LSE not enabled, required by STM32_MSIPLL_ENABLED"
   #endif
 
 #endif /* !STM32_LSE_ENABLED */
