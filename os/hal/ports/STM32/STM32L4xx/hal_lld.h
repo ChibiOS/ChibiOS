@@ -178,11 +178,11 @@
  * @name    RCC_PLLCFGR register bits definitions
  * @{
  */
-#define STM32_PLLSRC_MASK       (3 << 16)   /**< PLL clock source mask.     */
-#define STM32_PLLSRC_NOCLOCK    (0 << 16)   /**< PLL clock source disabled. */
-#define STM32_PLLSRC_MSI        (1 << 16)   /**< PLL clock source is MSI.   */
-#define STM32_PLLSRC_HSI16      (2 << 16)   /**< PLL clock source is HSI16. */
-#define STM32_PLLSRC_HSE        (3 << 16)   /**< PLL clock source is HSE.   */
+#define STM32_PLLSRC_MASK       (3 << 0)    /**< PLL clock source mask.     */
+#define STM32_PLLSRC_NOCLOCK    (0 << 0)    /**< PLL clock source disabled. */
+#define STM32_PLLSRC_MSI        (1 << 0)    /**< PLL clock source is MSI.   */
+#define STM32_PLLSRC_HSI16      (2 << 0)    /**< PLL clock source is HSI16. */
+#define STM32_PLLSRC_HSE        (3 << 0)    /**< PLL clock source is HSE.   */
 /** @} */
 
 /**
@@ -533,17 +533,17 @@
 #endif
 
 /**
- * @brief   LSCO clock source.
- */
-#if !defined(STM32_LSCOSEL) || defined(__DOXYGEN__)
-#define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
-#endif
-
-/**
  * @brief   MCO divider setting.
  */
 #if !defined(STM32_MCOPRE) || defined(__DOXYGEN__)
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
+#endif
+
+/**
+ * @brief   LSCO clock source.
+ */
+#if !defined(STM32_LSCOSEL) || defined(__DOXYGEN__)
+#define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
 #endif
 
 /**

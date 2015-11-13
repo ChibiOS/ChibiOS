@@ -184,13 +184,17 @@ void stm32_clock_init(void) {
     ;                                       /* Wait until LSI is stable.    */
 #endif
 
-#if STM32_ACTIVATE_PLL
-  /* PLL activation.*/
+#if STM32_ACTIVATE_PLL || STM32_ACTIVATE_PLLSAI1 || STM32_ACTIVATE_PLLSAI2
+  /* PLLM and PLLSRC are common to all PLLs.*/
   RCC->PLLCFGR = STM32_PLLR | STM32_PLLREN |
                  STM32_PLLQ | STM32_PLLQEN |
                  STM32_PLLP | STM32_PLLPEN |
                  STM32_PLLN | STM32_PLLM   |
                  STM32_PLLSRC;
+#endif
+
+#if STM32_ACTIVATE_PLL
+  /* PLL activation.*/
   RCC->CR |= RCC_CR_PLLON;
 
   /* Waiting for PLL lock.*/
@@ -227,22 +231,20 @@ void stm32_clock_init(void) {
   RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
               STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
 
-  /* DCKCFGR1 register initialization, note, must take care of the _OFF
+  /* CCIPR register initialization, note, must take care of the _OFF
      pseudo settings.*/
   {
-    uint32_t ccipr = 0;
+    uint32_t ccipr = STM32_DFSDMSEL  | STM32_SWPMI1SEL | STM32_ADCSEL    |
+                     STM32_CLK48SEL  | STM32_LPTIM2SEL | STM32_LPTIM1SEL |
+                     STM32_I2C3SEL   | STM32_I2C2SEL   | STM32_I2C1SEL   |
+                     STM32_UART5SEL  | STM32_UART4SEL  | STM32_USART3SEL |
+                     STM32_USART2SEL | STM32_USART1SEL;
 #if STM32_SAI2SEL != STM32_SAI2SEL_OFF
     ccipr |= STM32_SAI2SEL;
 #endif
 #if STM32_SAI1SEL != STM32_SAI1SEL_OFF
     ccipr |= STM32_SAI1SEL;
 #endif
-    ccipr |= STM32_DFSDMSEL  | STM32_SWPMI1SEL | STM32_ADCSEL    |
-             STM32_CLK48SEL  | STM32_SAI2SEL   | STM32_SAI1SEL   |
-             STM32_LPTIM2SEL | STM32_LPTIM1SEL | STM32_I2C3SEL   |
-             STM32_I2C2SEL   | STM32_I2C1SEL   | STM32_UART5SEL  |
-             STM32_UART4SEL  | STM32_USART3SEL | STM32_USART2SEL |
-             STM32_USART1SEL;
     RCC->CCIPR = ccipr;
   }
 
@@ -250,7 +252,7 @@ void stm32_clock_init(void) {
   FLASH->ACR = FLASH_ACR_DCEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
                STM32_FLASHBITS;
 
-  /* Switching to the configured clock source if it is different from HSI.*/
+  /* Switching to the configured clock source if it is different from MSI.*/
 #if (STM32_SW != STM32_SW_MSI)
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
