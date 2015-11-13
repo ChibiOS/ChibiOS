@@ -1946,9 +1946,9 @@
  * @brief   DFSDM clock frequency.
  */
 #if (STM32_DFSDMSEL == STM32_DFSDMSEL_PCLK1) || defined(__DOXYGEN)
-#define STM32_SWPMI1CLK             STM32_PCLK1
+#define STM32_DFSDMCLK              STM32_PCLK1
 #elif STM32_DFSDMSEL == STM32_DFSDMSEL_SYSCLK
-#define STM32_SWPMI1CLK             STM32_SYSCLK
+#define STM32_DFSDMCLK              STM32_SYSCLK
 #else
 #error "invalid source selected for DFSDM clock"
 #endif
