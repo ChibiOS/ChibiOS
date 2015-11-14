@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.4 ***
+- HAL: Fixed STM32 I2Cv2 DMA conflict (bug #671).
 - HAL: Fixed invalid macro in STM32F0xx registry (bug #668).
 - HAL: Fixed I2S clock selection not working in STM32F4xx HAL (bug #667).
 
