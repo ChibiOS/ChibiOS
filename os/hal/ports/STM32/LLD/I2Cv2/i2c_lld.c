@@ -844,8 +844,11 @@ void i2c_lld_start(I2CDriver *i2cp) {
 #endif
 
   /* Reset i2c peripheral, the TCIE bit will be handled separately.*/
-  dp->CR1 = i2cp->config->cr1 | I2C_CR1_ERRIE | I2C_CR1_NACKIE |
-            I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN;
+  dp->CR1 = i2cp->config->cr1 |
+#if STM32_I2C_USE_DMA == TRUE
+            I2C_CR1_TXDMAEN | I2C_CR1_RXDMAEN | /* Enable only if using DMA */
+#endif
+            I2C_CR1_ERRIE | I2C_CR1_NACKIE;
 
   /* Setup I2C parameters.*/
   dp->TIMINGR = i2cp->config->timingr;
