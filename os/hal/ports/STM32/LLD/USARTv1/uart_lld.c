@@ -282,7 +282,7 @@ static void uart_lld_serve_tx_end_irq(UARTDriver *uartp, uint32_t flags) {
   dmaStreamDisable(uartp->dmatx);
 
   /* A callback is generated, if enabled, after a completed transfer.*/
-  _uart_wakeup_tx1_isr(uartp);
+  _uart_tx1_isr_code(uartp);
 }
 
 /**
@@ -310,7 +310,7 @@ static void serve_usart_irq(UARTDriver *uartp) {
     u->CR1 = cr1 & ~USART_CR1_TCIE;
 
     /* End of transmission, a callback is generated.*/
-    _uart_wakeup_tx2_isr(uartp);
+    _uart_tx2_isr_code(uartp);
   }
 }
 
