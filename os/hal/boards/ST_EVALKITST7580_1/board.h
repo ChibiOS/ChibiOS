@@ -28,7 +28,7 @@
 /*
  * Board identifier.
  */
-#define BOARD_ST_EVALKIT_ST7580
+#define BOARD_ST_EVALKIT_ST7580_1
 #define BOARD_NAME              "STMicroelectronics EVALKITST7580_1"
 
 /*
@@ -40,7 +40,7 @@
 /*
  * MCU type, supported types are defined in ./os/hal/platforms/hal_lld.h.
  */
-#define STM32F10X_MD
+#define STM32F103xB
 
 /*
  * IO pins assignments.
