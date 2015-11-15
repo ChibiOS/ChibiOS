@@ -30,6 +30,15 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/* Handling a difference in ST headers.*/
+#if defined(STM32L4XX)
+#define EMR     EMR1
+#define IMR     IMR1
+#define PR      PR1
+#define RTSR    RTSR1
+#define FTSR    FTSR1
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -99,9 +108,9 @@ void ext_lld_stop(EXTDriver *extp) {
   if (extp->state == EXT_ACTIVE)
     ext_lld_exti_irq_disable();
 
-  EXTI->EMR  = 0;
-  EXTI->IMR  = STM32_EXTI_IMR_MASK;
-  EXTI->PR   = ~STM32_EXTI_IMR_MASK;
+  EXTI->EMR = 0;
+  EXTI->IMR = STM32_EXTI_IMR_MASK;
+  EXTI->PR  = ~STM32_EXTI_IMR_MASK;
 #if STM32_EXTI_NUM_LINES > 32
   EXTI->IMR2 = STM32_EXTI_IMR2_MASK;
   EXTI->PR2  = ~STM32_EXTI_IMR2_MASK;
@@ -208,11 +217,11 @@ void ext_lld_channel_disable(EXTDriver *extp, expchannel_t channel) {
 #if STM32_EXTI_NUM_LINES > 32
   if (channel < 32) {
 #endif
-    EXTI->IMR   &= ~cmask;
-    EXTI->EMR   &= ~cmask;
-    EXTI->RTSR  &= ~cmask;
-    EXTI->FTSR  &= ~cmask;
-    EXTI->PR     =  cmask;
+    EXTI->IMR  &= ~cmask;
+    EXTI->EMR  &= ~cmask;
+    EXTI->RTSR &= ~cmask;
+    EXTI->FTSR &= ~cmask;
+    EXTI->PR    =  cmask;
 #if STM32_EXTI_NUM_LINES > 32
   }
   else {
