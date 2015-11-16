@@ -247,7 +247,7 @@ typedef struct {
  */
 #define USB_GET_DESCRIPTOR(ep)                                              \
   ((stm32_usb_descriptor_t *)((uint32_t)STM32_USBRAM_BASE +                 \
-                              (uint32_t)STM32_USB->BTABLE * 2 +             \
+                              (uint32_t)STM32_USB->BTABLE +                 \
                               (uint32_t)(ep) *                              \
                               sizeof(stm32_usb_descriptor_t)))
 
