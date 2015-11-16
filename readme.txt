@@ -74,6 +74,7 @@
 *** 2.6.10 ***
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
 - FIX: Fixed I2S clock selection not working in STM32F4xx HAL (bug #667).
+- FIX: Fixed STM32 USBv1 does not make use of BTABLE_ADDR define (bug #660).
 - FIX: Fixed invalid class type for sdPutWouldBlock() and sdGetWouldBlock()
        functions (bug #659).
 - FIX: Fixed STM32L1xx HAL errors in comments (bug #657).
