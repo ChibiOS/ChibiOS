@@ -525,7 +525,7 @@ void usb_lld_reset(USBDriver *usbp) {
   uint32_t cntr;
 
   /* Post reset initialization.*/
-  STM32_USB->BTABLE = 0;
+  STM32_USB->BTABLE = BTABLE_ADDR;
   STM32_USB->ISTR   = 0;
   STM32_USB->DADDR  = DADDR_EF;
   cntr              = /*CNTR_ESOFM | */ CNTR_RESETM  | CNTR_SUSPM |
