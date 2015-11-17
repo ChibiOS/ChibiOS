@@ -21,7 +21,7 @@
  * @file    vectors.s
  * @brief   SPC56x vectors table.
  *
- * @addtogroup PPC_GCC_CORE
+ * @addtogroup PPC_CW_CORE
  * @{
  */
 
@@ -2589,7 +2589,7 @@ vector1023:
         .weak       _unhandled_irq
         .type       _unhandled_irq, @function
 _unhandled_irq:
-         b          _unhandled_irq
+         se_b       _unhandled_irq
 
 #endif /* !defined(__DOXYGEN__) */
 

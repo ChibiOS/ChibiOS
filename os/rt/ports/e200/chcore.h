@@ -59,6 +59,9 @@
 #if defined(__GNUC__) || defined(__DOXYGEN__)
 #define PORT_COMPILER_NAME              "GCC " __VERSION__
 
+#elif defined(__CWCC__)
+#define PORT_COMPILER_NAME              "CW " __VERSION__
+
 #else
 #error "unsupported compiler"
 #endif

@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    PPC/crt0.s
- * @brief   Generic PowerPC startup file for ChibiOS.
+ * @file    GCC/crt0.s
+ * @brief   Generic PowerPC startup file for GCC.
  *
- * @addtogroup PPC_CORE
+ * @addtogroup PPC_GCC_CORE
  * @{
  */
 

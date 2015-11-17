@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    PPC/crt0.s
- * @brief   Generic PowerPC startup file for ChibiOS.
+ * @file    CW/crt0.s
+ * @brief   Generic PowerPC startup file for CodeWarrior.
  *
- * @addtogroup PPC_CORE
+ * @addtogroup PPC_CW_CORE
  * @{
  */
 
