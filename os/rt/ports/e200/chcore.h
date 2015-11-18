@@ -19,7 +19,7 @@
 
 /**
  * @file    PPC/chcore.h
- * @brief   PowerPC architecture port macros and structures.
+ * @brief   Power e200 port macros and structures.
  *
  * @addtogroup PPC_CORE
  * @{
