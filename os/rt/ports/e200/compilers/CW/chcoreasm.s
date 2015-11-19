@@ -50,8 +50,10 @@
 
 #if !defined(__DOXYGEN__)
 
+        .extern     chThdExit
+
 #if PPC_USE_VLE == TRUE
-        .section    .text_vle, "ax"
+        .section    .text_vle, 16
 
         .align      2
         .globl      _port_switch

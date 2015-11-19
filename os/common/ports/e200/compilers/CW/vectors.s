@@ -38,8 +38,8 @@
            handler only. In order to declare an interrupt handler just create
            a function withe the same name of a vector, the symbol will
            override the weak symbol declared here.*/
-        .section    .vectors, "ax"
-        .align		4
+        .section    .vectors, 16
+        .align		16
         .globl      _vectors
 _vectors:
         .long       vector0,    vector1,    vector2,    vector3
@@ -800,8 +800,8 @@ _vectors:
         .long       vector1008, vector1009, vector1010, vector1011
 #endif
 
-        .text
-        .align      2
+/*        .section    .text, 16*/
+        .align      16
 
         .weak       vector0,    vector1,    vector2,    vector3
 #if PPC_NUM_VECTORS > 4

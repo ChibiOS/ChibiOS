@@ -50,7 +50,15 @@
 
 #if !defined(__DOXYGEN__)
 
-        .section    .handlers, "ax"
+        .extern      _stats_start_measure_crit_thd
+        .extern      _stats_stop_measure_crit_thd
+        .extern      _dbg_check_lock
+        .extern      _dbg_check_unlock
+        .extern      chSchIsPreemptionRequired
+        .extern      chSchDoReschedule
+        .extern      chSysTimerHandlerI
+
+        .section    .handlers, 16
 
 #if PPC_USE_VLE == TRUE
 
@@ -58,7 +66,7 @@
         /*
          * _IVOR10 handler (Book-E decrementer).
          */
-        .align      4
+        .align      16
         .globl      _IVOR10
         .type       _IVOR10, @function
 _IVOR10:
@@ -108,7 +116,7 @@ _IVOR10:
         /*
          * _IVOR4 handler (Book-E external interrupt).
          */
-        .align      4
+        .align      16
         .globl      _IVOR4
         .type       _IVOR4, @function
 _IVOR4:

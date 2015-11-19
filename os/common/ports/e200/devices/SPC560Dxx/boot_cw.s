@@ -29,13 +29,18 @@
 
 #if !defined(__DOXYGEN__)
 
+        .extern     _boot_address
+        .extern     __ram_start__
+        .extern     __ram_end__
+        .extern     __ivpr_base__
+
         /* BAM record.*/
-        .section    .boot, "ax"
+        .section    .boot, 16
 
         .long       0x015A0000
         .long       _reset_address
 
-        .align      2
+        .align      4
         .globl      _reset_address
         .type       _reset_address, @function
 _reset_address:
@@ -72,7 +77,7 @@ _reset_address:
 #endif
 
 #if BOOT_PERFORM_CORE_INIT
-        .align      2
+        .align      4
 _coreinit:
         /*
          * RAM clearing, this device requires a write to all RAM location in
@@ -135,7 +140,7 @@ _coreinit:
         /*
          * Exception vectors initialization.
          */
-        .align      2
+        .align      4
 _ivinit:
         /* MSR initialization.*/
         e_lis       r3, BOOT_MSR_DEFAULT@h
@@ -149,48 +154,42 @@ _ivinit:
 
         se_blr
 
-        .section    .ivors, "ax"
-
+        .section    .ivors, 16
         .globl      IVORS
 IVORS:
         e_b         _IVOR0
-        .align      4
+        .align      16
         e_b         _IVOR1
-        .align      4
+        .align      16
         e_b         _IVOR2
-        .align      4
+        .align      16
         e_b         _IVOR3
-        .align      4
+        .align      16
         e_b         _IVOR4
-        .align      4
+        .align      16
         e_b         _IVOR5
-        .align      4
+        .align      16
         e_b         _IVOR6
-        .align      4
+        .align      16
         e_b         _IVOR7
-        .align      4
+        .align      16
         e_b         _IVOR8
-        .align      4
+        .align      16
         e_b         _IVOR9
-        .align      4
+        .align      16
         e_b         _IVOR10
-        .align      4
+        .align      16
         e_b         _IVOR11
-        .align      4
+        .align      16
         e_b         _IVOR12
-        .align      4
+        .align      16
         e_b         _IVOR13
-        .align      4
+        .align      16
         e_b         _IVOR14
-        .align      4
+        .align      16
         e_b         _IVOR15
 
-        .section    .handlers, "ax"
-
-        /*
-         * Default IVOR handlers.
-         */
-        .align      2
+        .section    .handlers, 16
         .weak       _IVOR0,  _IVOR1,  _IVOR2,  _IVOR3,  _IVOR4,  _IVOR5
         .weak       _IVOR6,  _IVOR7,  _IVOR8,  _IVOR9,  _IVOR10, _IVOR11
         .weak       _IVOR12, _IVOR13, _IVOR14, _IVOR15
@@ -199,11 +198,13 @@ _IVOR0:
 _IVOR1:
 _IVOR2:
 _IVOR3:
+_IVOR4:
 _IVOR5:
 _IVOR6:
 _IVOR7:
 _IVOR8:
 _IVOR9:
+_IVOR10:
 _IVOR11:
 _IVOR12:
 _IVOR13:

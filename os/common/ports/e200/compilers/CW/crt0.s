@@ -59,7 +59,7 @@
  * @brief   DATA segment initialization switch.
  */
 #if !defined(CRT0_INIT_DATA) || defined(__DOXYGEN__)
-#define CRT0_INIT_DATA                      TRUE
+#define CRT0_INIT_DATA                      FALSE
 #endif
 
 /**
@@ -73,14 +73,14 @@
  * @brief   Constructors invocation switch.
  */
 #if !defined(CRT0_CALL_CONSTRUCTORS) || defined(__DOXYGEN__)
-#define CRT0_CALL_CONSTRUCTORS              TRUE
+#define CRT0_CALL_CONSTRUCTORS              FALSE
 #endif
 
 /**
  * @brief   Destructors invocation switch.
  */
 #if !defined(CRT0_CALL_DESTRUCTORS) || defined(__DOXYGEN__)
-#define CRT0_CALL_DESTRUCTORS               TRUE
+#define CRT0_CALL_DESTRUCTORS               FALSE
 #endif
 
 /*===========================================================================*/
@@ -88,9 +88,25 @@
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
+        .extern     __sdata2_start__
+        .extern     __sdata_start__
+        .extern     __bss_start__
+        .extern     __bss_end__
+        .extern     __irq_stack_base__
+        .extern     __irq_stack_end__
+        .extern     __process_stack_end__
+        .extern     __process_stack_base__
+        .extern     __romdata_start__
+        .extern     __data_start__
+        .extern     __data_end__
+        .extern     __init_array_start
+        .extern     __init_array_end
+        .extern     __fini_array_start
+        .extern     __fini_array_end
+        .extern     main
 
-        .section    .crt0, "ax"
-        .align		2
+        .section    .crt0, 16
+        .align		4
         .globl      _boot_address
         .type       _boot_address, @function
 _boot_address:
@@ -116,7 +132,7 @@ _boot_address:
 
        /* IRQ Stack initialization. Note, the architecture does not use this
           stack, the size is usually zero. An OS can have special SW handling
-          and require this. A 4 bytes alignment is assmend and required.*/
+          and require this. A 4 bytes alignment is assumed and required.*/
         e_lis       r4, __irq_stack_base__@h
         e_or2i      r4, __irq_stack_base__@l
         e_lis       r5, __irq_stack_end__@h
@@ -130,7 +146,7 @@ _boot_address:
 .irqsend:
 
         /* Process Stack initialization. Note, does not overwrite the already
-           written EABI frame. A 4 bytes alignment is assmend and required.*/
+           written EABI frame. A 4 bytes alignment is assumed and required.*/
         e_lis       r4, __process_stack_base__@h
         e_or2i      r4, __process_stack_base__@l
         e_lis       r5, (__process_stack_end__ - 8)@h
