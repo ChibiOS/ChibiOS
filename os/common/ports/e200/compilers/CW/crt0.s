@@ -59,7 +59,7 @@
  * @brief   DATA segment initialization switch.
  */
 #if !defined(CRT0_INIT_DATA) || defined(__DOXYGEN__)
-#define CRT0_INIT_DATA                      FALSE
+#define CRT0_INIT_DATA                      TRUE
 #endif
 
 /**
