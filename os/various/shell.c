@@ -119,7 +119,7 @@ static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
                       char *name, int argc, char *argv[]) {
 
   while (scp->sc_name != NULL) {
-    if (strcasecmp(scp->sc_name, name) == 0) {
+    if (strcmp(scp->sc_name, name) == 0) {
       scp->sc_function(chp, argc, argv);
       return false;
     }
@@ -161,14 +161,14 @@ static THD_FUNCTION(shell_thread, p) {
     }
     args[n] = NULL;
     if (cmd != NULL) {
-      if (strcasecmp(cmd, "exit") == 0) {
+      if (strcmp(cmd, "exit") == 0) {
         if (n > 0) {
           usage(chp, "exit");
           continue;
         }
         break;
       }
-      else if (strcasecmp(cmd, "help") == 0) {
+      else if (strcmp(cmd, "help") == 0) {
         if (n > 0) {
           usage(chp, "help");
           continue;

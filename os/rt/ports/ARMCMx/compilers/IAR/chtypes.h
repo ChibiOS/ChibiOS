@@ -51,18 +51,6 @@
 /** @} */
 
 /**
- * @name    Derived generic types
- * @{
- */
-typedef volatile int8_t     vint8_t;        /**< Volatile signed 8 bits.    */
-typedef volatile uint8_t    vuint8_t;       /**< Volatile unsigned 8 bits.  */
-typedef volatile int16_t    vint16_t;       /**< Volatile signed 16 bits.   */
-typedef volatile uint16_t   vuint16_t;      /**< Volatile unsigned 16 bits. */
-typedef volatile int32_t    vint32_t;       /**< Volatile signed 32 bits.   */
-typedef volatile uint32_t   vuint32_t;      /**< Volatile unsigned 32 bits. */
-/** @} */
-
-/**
  * @name    Kernel types
  * @{
  */

@@ -60,7 +60,7 @@
 #define PORT_COMPILER_NAME              "GCC " __VERSION__
 
 #elif defined(__MWERKS__)
-#define PORT_COMPILER_NAME              "CW " __VERSION__
+#define PORT_COMPILER_NAME              "CW"
 
 #else
 #error "unsupported compiler"
