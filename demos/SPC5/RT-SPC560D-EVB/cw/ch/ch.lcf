@@ -45,16 +45,15 @@ SECTIONS
       KEEP(*(.boot))
     }
     
-    .handlers ALIGN(4): {
+    .handlers (VLECODE) ALIGN(4): {
       KEEP(*(.handlers))
     }
 
-    .crt0 ALIGN(4): {
+    .crt0 (VLECODE) ALIGN(4): {
       *(.crt0)
     }
 
     .init: {}
-
     .init_vle (VLECODE) ALIGN(4):
     {
        *(.init)
@@ -66,7 +65,7 @@ SECTIONS
       KEEP(*(.vectors))
     }
     
-    .ivors ALIGN(0x1000):
+    .ivors (VLECODE) ALIGN(0x1000):
     {
       __ivpr_base__ = .;
       KEEP(*(.ivors))

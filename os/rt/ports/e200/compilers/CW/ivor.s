@@ -58,7 +58,7 @@
         .extern      chSchDoReschedule
         .extern      chSysTimerHandlerI
 
-        .section    .handlers, 16
+        .section    .handlers, text_vle
 
 #if PPC_USE_VLE == TRUE
 

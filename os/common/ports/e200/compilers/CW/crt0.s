@@ -105,8 +105,8 @@
         .extern     __fini_array_end
         .extern     main
 
-        .section    .crt0, 16
-        .align		4
+        .section    .crt0, text_vle
+        .align		16
         .globl      _boot_address
         .type       _boot_address, @function
 _boot_address:
