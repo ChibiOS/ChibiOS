@@ -73,20 +73,21 @@ SECTIONS
 
     .code (VLECODE) ALIGN(16):
     {
-        *(.text)
-        *(.text_vle)
+      *(.text)
+      *(.text_vle)
     }
 
     .const (CONST) ALIGN(16):
     {
-        *(.rodata)
+      *(.rdata)
+      *(.rodata)
     }
 
     .sdata2 (CONST) ALIGN(16):
     {
-        __sdata2_start__ = . + 0x8000;
-        *(.sdata2)
-        *(.sbss2)
+      __sdata2_start__ = . + 0x8000;
+      *(.sdata2)
+      *(.sbss2)
     }
 
    .ctors: {}
@@ -98,7 +99,7 @@ SECTIONS
 
   GROUP:
   {
-    .stacks (BSS) ALIGN(16):
+    .stacks:
     {
         . = ALIGN(8);
         __irq_stack_base__ = .;
@@ -113,27 +114,27 @@ SECTIONS
         __main_thread_stack_end__ = .;
     }
 
-    .data:
+    .data (DATA):
     {
         . = ALIGN(4);
         __data_start__ = .;
         *(.data)
     }
 
-    .sdata:
+    .sdata (DATA):
     {
         __sdata_start__ = . + 0x8000;
         *(.sdata)
         __data_end__ = .;
     }
 
-    .sbss:
+    .sbss (BSS):
     {
         __bss_start__ = .;
         *(.sbss)
     }
 
-    .bss:
+    .bss (BSS):
     {
         *(.bss)
         __bss_end__ = .;
