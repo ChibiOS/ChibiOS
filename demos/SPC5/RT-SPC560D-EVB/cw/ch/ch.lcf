@@ -45,11 +45,21 @@ SECTIONS
       KEEP(*(.boot))
     }
     
-    .handlers ALIGN(4): {}
+    .handlers ALIGN(4): {
+      KEEP(*(.handlers))
+    }
 
-    .crt0 ALIGN(4): {}
+    .crt0 ALIGN(4): {
+      *(.crt0)
+    }
 
-    .init ALIGN(4): {}
+    .init: {}
+
+    .init_vle (VLECODE) ALIGN(4):
+    {
+       *(.init)
+       *(.init_vle)
+    }
 
     .vectors ALIGN(0x800):
     {
@@ -80,8 +90,8 @@ SECTIONS
         *(.sbss2)
     }
 
-   .ctors : {}
-   .dtors : {}
+   .ctors: {}
+   .dtors: {}
     extab: {}
     extabindex: {}
 
@@ -128,6 +138,15 @@ SECTIONS
     {
         *(.bss)
         __bss_end__ = .;
+    }
+
+    /* The default heap uses the (statically) unused part of a RAM section.*/
+    .heap:
+    {
+      . = ALIGN(8);
+      __heap_base__ = .;
+      . = ADDR(ram) + SIZEOF(ram);
+      __heap_end__ = .;
     }
   } > ram
 }
