@@ -176,7 +176,7 @@ void stm32_clock_init(void) {
 #if STM32_HSE_ENABLED
 #if defined(STM32_HSE_BYPASS)
   /* HSE Bypass.*/
-  RCC->CR |= RCC_CR_HSEBYP;
+  RCC->CR |= RCC_CR_HSEON | RCC_CR_HSEBYP;
 #endif
   /* HSE activation.*/
   RCC->CR |= RCC_CR_HSEON;
