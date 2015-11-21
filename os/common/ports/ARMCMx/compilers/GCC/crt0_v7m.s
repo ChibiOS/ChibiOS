@@ -111,6 +111,13 @@
 #endif
 
 /**
+ * @brief   RAM areas initialization switch.
+ */
+#if !defined(CRT0_INIT_RAM_AREAS) || defined(__DOXYGEN__)
+#define CRT0_INIT_RAM_AREAS                 TRUE
+#endif
+
+/**
  * @brief   Constructors invocation switch.
  */
 #if !defined(CRT0_CALL_CONSTRUCTORS) || defined(__DOXYGEN__)
@@ -246,9 +253,9 @@ psloop:
 #if CRT0_INIT_DATA == TRUE
                 /* Data initialization. Note, it assumes that the DATA size
                   is a multiple of 4 so the linker file must ensure this.*/
-                ldr     r1, =_textdata
-                ldr     r2, =_data
-                ldr     r3, =_edata
+                ldr     r1, =_textdata_start
+                ldr     r2, =_data_start
+                ldr     r3, =_data_end
 dloop:
                 cmp     r2, r3
                 ittt    lo
@@ -268,6 +275,11 @@ bloop:
                 itt     lo
                 strlo   r0, [r1], #4
                 blo     bloop
+#endif
+
+#if CRT0_INIT_RAM_AREAS == TRUE
+                /* RAM areas initialization.*/
+                bl      __init_ram_areas
 #endif
 
                 /* Late initialization..*/

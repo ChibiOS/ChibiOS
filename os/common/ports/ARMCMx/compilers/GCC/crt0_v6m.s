@@ -92,6 +92,13 @@
 #endif
 
 /**
+ * @brief   RAM areas initialization switch.
+ */
+#if !defined(CRT0_INIT_RAM_AREAS) || defined(__DOXYGEN__)
+#define CRT0_INIT_RAM_AREAS                 TRUE
+#endif
+
+/**
  * @brief   Constructors invocation switch.
  */
 #if !defined(CRT0_CALL_CONSTRUCTORS) || defined(__DOXYGEN__)
@@ -202,6 +209,11 @@ bloop:
                 add     r1, r1, #4
                 b       bloop
 endbloop:
+#endif
+
+#if CRT0_INIT_RAM_AREAS == TRUE
+                /* RAM areas initialization.*/
+                bl      __init_ram_areas
 #endif
 
                 /* Late initialization..*/
