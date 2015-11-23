@@ -34,6 +34,10 @@
         .extern     __ram_end__
         .extern     __ivpr_base__
 
+        .extern     _IVOR0,  _IVOR1,  _IVOR2,  _IVOR3,  _IVOR4,  _IVOR5
+        .extern     _IVOR6,  _IVOR7,  _IVOR8,  _IVOR9,  _IVOR10, _IVOR11
+        .extern     _IVOR12, _IVOR13, _IVOR14, _IVOR15
+
         /* BAM record.*/
         .section    .boot, 16
 
@@ -193,28 +197,6 @@ IVORS:
         .section    .handlers, text_vle
         .align 		16
 
-        .weak       _IVOR0,  _IVOR1,  _IVOR2,  _IVOR3,  _IVOR4,  _IVOR5
-        .weak       _IVOR6,  _IVOR7,  _IVOR8,  _IVOR9,  _IVOR10, _IVOR11
-        .weak       _IVOR12, _IVOR13, _IVOR14, _IVOR15
-        .weak       _unhandled_exception
-_IVOR0:
-_IVOR1:
-_IVOR2:
-_IVOR3:
-_IVOR4:
-_IVOR5:
-_IVOR6:
-_IVOR7:
-_IVOR8:
-_IVOR9:
-_IVOR10:
-_IVOR11:
-_IVOR12:
-_IVOR13:
-_IVOR14:
-_IVOR15:
-_unhandled_exception:
-        se_b        _unhandled_exception
 
 #endif /* !defined(__DOXYGEN__) */
 
