@@ -103,6 +103,7 @@
         .extern     __init_array_end
         .extern     __fini_array_start
         .extern     __fini_array_end
+        
         .extern     main
 
         .section    .crt0, text_vle
@@ -238,27 +239,23 @@ _boot_address:
         /* Branching to the defined exit handler.*/
         e_b         __default_exit
 
+#endif /* !defined(__DOXYGEN__) */
+
+        .section    .text_vle
+        .align      4
+
         /* Default main exit code, infinite loop.*/
         .weak       __default_exit
-        .globl      __default_exit
-        .type       __default_exit, @function
 __default_exit:
-        se_b        __default_exit
+        e_b         __default_exit
 
         /* Default early initialization code, none.*/
         .weak       __early_init
-        .globl      __early_init
-        .type       __early_init, @function
-__early_init:
         se_blr
 
         /* Default late initialization code, none.*/
         .weak       __late_init
-        .globl      __late_init
-        .type       __late_init, @function
 __late_init:
         se_blr
-
-#endif /* !defined(__DOXYGEN__) */
 
 /** @} */
