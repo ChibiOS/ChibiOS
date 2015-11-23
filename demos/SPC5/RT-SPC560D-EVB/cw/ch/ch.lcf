@@ -22,7 +22,7 @@
  */
 MEMORY
 {
-    flash     : org = 0x00000000, len = 0x00040000
+    rom       : org = 0x00000000, len = 0x00040000
     dataflash : org = 0x00800000, len = 0x00010000
     ram       : org = 0x40000000, len = 0x00004000
 }
@@ -36,8 +36,6 @@ __ram_end__   = ADDR(ram) + SIZEOF(ram);
 
 SECTIONS
 {
-    . = ADDR(flash);
-
   GROUP:
   {
     .boot ALIGN(16):
@@ -95,7 +93,9 @@ SECTIONS
     extab: {}
     extabindex: {}
 
-  } > flash
+    . = ALIGN(4);
+    __romdata_start__ = .;
+  } > rom
 
   GROUP:
   {
@@ -114,14 +114,15 @@ SECTIONS
         __main_thread_stack_end__ = .;
     }
 
-    .data (DATA):
+    .data (DATA) LOAD(__romdata_start__):
     {
         . = ALIGN(4);
         __data_start__ = .;
         *(.data)
+        . = ALIGN(4);
     }
 
-    .sdata (DATA):
+    .sdata (DATA) LOAD(ROMADDR(.data) + SIZEOF(.data)):
     {
         __sdata_start__ = . + 0x8000;
         *(.sdata)
@@ -148,7 +149,8 @@ SECTIONS
       . = ADDR(ram) + SIZEOF(ram);
       __heap_end__ = .;
     }
+
+    .PPC.EMB.sdata0: {}
+    .PPC.EMB.sbss0: {}
   } > ram
 }
-
-__romdata_start__ = _f_data_rom;
