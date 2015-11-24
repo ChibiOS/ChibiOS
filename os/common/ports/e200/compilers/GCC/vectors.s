@@ -799,6 +799,15 @@ _vectors:
 #if PPC_NUM_VECTORS > 1008
         .long       vector1008, vector1009, vector1010, vector1011
 #endif
+#if PPC_NUM_VECTORS > 1012
+        .long       vector1012, vector1013, vector1014, vector1015
+#endif
+#if PPC_NUM_VECTORS > 1016
+        .long       vector1016, vector1017, vector1018, vector1019
+#endif
+#if PPC_NUM_VECTORS > 1020
+        .long       vector1020, vector1021, vector1022, vector1023
+#endif
 
         .text
         .align      2
@@ -1559,6 +1568,15 @@ _vectors:
 #endif
 #if PPC_NUM_VECTORS > 1008
         .weak       vector1008, vector1009, vector1010, vector1011
+#endif
+#if PPC_NUM_VECTORS > 1012
+        .weak       vector1012, vector1013, vector1014, vector1015
+#endif
+#if PPC_NUM_VECTORS > 1016
+        .weak       vector1016, vector1017, vector1018, vector1019
+#endif
+#if PPC_NUM_VECTORS > 1020
+        .weak       vector1020, vector1021, vector1022, vector1023
 #endif
 
 vector0:
@@ -2585,6 +2603,7 @@ vector1020:
 vector1021:
 vector1022:
 vector1023:
+         b          _unhandled_irq
 
         .weak       _unhandled_irq
         .type       _unhandled_irq, @function

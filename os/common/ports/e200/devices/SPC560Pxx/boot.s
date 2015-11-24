@@ -194,7 +194,6 @@ IVORS:
         .weak       _IVOR0,  _IVOR1,  _IVOR2,  _IVOR3,  _IVOR4,  _IVOR5
         .weak       _IVOR6,  _IVOR7,  _IVOR8,  _IVOR9,  _IVOR10, _IVOR11
         .weak       _IVOR12, _IVOR13, _IVOR14, _IVOR15
-        .weak       _unhandled_exception
 _IVOR0:
 _IVOR1:
 _IVOR2:
@@ -209,6 +208,7 @@ _IVOR12:
 _IVOR13:
 _IVOR14:
 _IVOR15:
+        .global     _unhandled_exception
 _unhandled_exception:
         b           _unhandled_exception
 

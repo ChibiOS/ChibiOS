@@ -56,7 +56,7 @@ _IVOR12:
 _IVOR13:
 _IVOR14:
 _IVOR15:
-        .global     _unhandled_irq
+        .global     _unhandled_exception
 _unhandled_exception:
         se_b        _unhandled_exception
 

@@ -224,21 +224,18 @@ _boot_address:
 
         /* Default main exit code, infinite loop.*/
         .weak       __default_exit
-        .globl      __default_exit
         .type       __default_exit, @function
 __default_exit:
         b           __default_exit
 
         /* Default early initialization code, none.*/
         .weak       __early_init
-        .globl      __early_init
         .type       __early_init, @function
 __early_init:
         blr
 
         /* Default late initialization code, none.*/
         .weak       __late_init
-        .globl      __late_init
         .type       __late_init, @function
 __late_init:
         blr
