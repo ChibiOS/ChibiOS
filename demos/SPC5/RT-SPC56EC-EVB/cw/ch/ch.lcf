@@ -18,13 +18,13 @@
 */
 
 /*
- * SPC560D40 memory setup.
+ * SPC56EC74 memory setup.
  */
 MEMORY
 {
-    rom       : org = 0x00000000, len = 0x00040000
+    rom       : org = 0x00000000, len = 0x00300000
     dataflash : org = 0x00800000, len = 0x00010000
-    ram       : org = 0x40000000, len = 0x00004000
+    ram       : org = 0x40000000, len = 0x00030000
 }
 
 __irq_stack_size__     = 0;
@@ -40,15 +40,18 @@ SECTIONS
   {
     .boot ALIGN(16):
     {
+      __ivpr_base__ = .;
       KEEP(*(.boot))
     }
-    
-    .handlers (VLECODE) ALIGN(4): {
+
+    .handlers (VLECODE) ALIGN(16):
+    {
       KEEP(*(.handlers))
     }
 
-    .crt0 (VLECODE) ALIGN(4): {
-      *(.crt0)
+    .crt0 (VLECODE) ALIGN(16):
+    {
+      KEEP(*(.crt0))
     }
 
     .init: {}
@@ -61,12 +64,6 @@ SECTIONS
     .vectors ALIGN(0x800):
     {
       KEEP(*(.vectors))
-    }
-    
-    .ivors (VLECODE) ALIGN(0x1000):
-    {
-      __ivpr_base__ = .;
-      KEEP(*(.ivors))
     }
 
     .code (VLECODE) ALIGN(16):
