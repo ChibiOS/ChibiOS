@@ -322,7 +322,7 @@ _coreinit:
         e_lis       r3, TLB0_MAS3@h
         e_or2i      r3, TLB0_MAS3@l
         mtspr       627, r3        /* MAS3 */
-        mflr        r4
+        se_mflr     r4
         e_lis       r6, _ramcode@h
         e_or2i      r6, _ramcode@l
         e_lis       r7, 0x40010000@h
