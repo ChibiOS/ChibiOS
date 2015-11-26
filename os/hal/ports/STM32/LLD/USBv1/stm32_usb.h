@@ -112,6 +112,8 @@ typedef struct {
  * @name    Register aliases
  * @{
  */
+#define RXCOUNT1                TXCOUNT0
+#define TXCOUNT1                RXCOUNT0
 #define RXADDR1                 TXADDR0
 #define TXADDR1                 RXADDR0
 /** @} */
