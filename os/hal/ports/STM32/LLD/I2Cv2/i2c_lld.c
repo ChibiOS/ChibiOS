@@ -138,8 +138,8 @@ static void i2c_lld_setup_rx_transfer(I2CDriver *i2cp) {
 
   /* Configures the CR2 registers with both the calculated and static
      settings.*/
-  dp->CR2 = (dp->CR2 & ~I2C_CR2_NBYTES) | i2cp->config->cr2 | I2C_CR2_RD_WRN |
-            (n << 16U) | reload;
+  dp->CR2 = (dp->CR2 & ~(I2C_CR2_NBYTES | I2C_CR2_RELOAD)) | i2cp->config->cr2 |
+            I2C_CR2_RD_WRN | (n << 16U) | reload;
 }
 
 /**
@@ -166,7 +166,7 @@ static void i2c_lld_setup_tx_transfer(I2CDriver *i2cp) {
 
   /* Configures the CR2 registers with both the calculated and static
      settings.*/
-  dp->CR2 = (dp->CR2 & ~I2C_CR2_NBYTES) | i2cp->config->cr2 |
+  dp->CR2 = (dp->CR2 & ~(I2C_CR2_NBYTES | I2C_CR2_RELOAD)) | i2cp->config->cr2 |
             (n << 16U) | reload;
 }
 
