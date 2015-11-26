@@ -144,6 +144,8 @@
        (backported to 3.0.3).
 - HAL: Fixed RTC module loses day of week when converting (bug #664)
        (backported to 3.0.3).
+- HAL: Fixed STM32 USBv1 broken isochronous endpoints (bug #662)
+       (backported to 3.0.4).
 - HAL: Fixed STM32 USBv1 wrong multiplier when calculating descriptor address
        in BTABLE (bug #661)(backported to 3.0.4 and 2.6.10).
 - HAL: Fixed STM32 USBv1 does not make use of BTABLE_ADDR define (bug #660)
