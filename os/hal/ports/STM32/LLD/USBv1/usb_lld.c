@@ -282,6 +282,124 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
   osalSysRestoreStatusX(sts);
 }
 
+/**
+ * @brief   Common ISR code, serves the EP-related interrupts.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @notapi
+ */
+static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
+  size_t n;
+  uint32_t epr = STM32_USB->EPR[ep];
+  const USBEndpointConfig *epcp = usbp->epc[ep];
+
+  if (epr & EPR_CTR_TX) {
+    size_t transmitted;
+    /* IN endpoint, transmission.*/
+    EPR_CLEAR_CTR_TX(ep);
+
+    /* Double buffering is always enabled for isochronous endpoints, and
+       although we overlap the two buffers for simplicity, we still need
+       to read from the right counter. The DTOG_TX bit indicates the buffer
+       that is currently in use by the USB peripheral, that is, the buffer
+       from which the next packet will be sent, so we need to read the
+       transmitted bytes from the counter of the OTHER buffer, which is
+       where we stored the last transmitted packet.*/
+    transmitted = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
+    if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & EPR_DTOG_TX))
+      transmitted = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT1;
+
+    epcp->in_state->txcnt  += transmitted;
+    n = epcp->in_state->txsize - epcp->in_state->txcnt;
+    if (n > 0) {
+      /* Transfer not completed, there are more packets to send.*/
+      if (n > epcp->in_maxsize)
+        n = epcp->in_maxsize;
+
+      /* Double buffering is always enabled for isochronous endpoints, and
+         although we overlap the two buffers for simplicity, we still need
+         to write to the right counter. The DTOG_TX bit indicates the buffer
+         that is currently in use by the USB peripheral, that is, the buffer
+         from which the next packet will be sent, so we need to write the
+         counter of that buffer.*/
+      USB_GET_DESCRIPTOR(ep)->TXCOUNT0 = (stm32_usb_pma_t)n;
+      if (EPR_EP_TYPE_IS_ISO(epr) && (epr & EPR_DTOG_TX))
+          USB_GET_DESCRIPTOR(ep)->TXCOUNT1 = (stm32_usb_pma_t)n;
+
+      if (epcp->in_state->txqueued)
+        usb_packet_write_from_queue(USB_GET_DESCRIPTOR(ep),
+                                    epcp->in_state->mode.queue.txqueue,
+                                    n);
+      else {
+        epcp->in_state->mode.linear.txbuf += transmitted;
+        usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
+                                     epcp->in_state->mode.linear.txbuf,
+                                     n);
+      }
+      osalSysLockFromISR();
+      usb_lld_start_in(usbp, ep);
+      osalSysUnlockFromISR();
+    }
+    else {
+      /* Transfer completed, invokes the callback.*/
+      _usb_isr_invoke_in_cb(usbp, ep);
+    }
+  }
+  if (epr & EPR_CTR_RX) {
+    EPR_CLEAR_CTR_RX(ep);
+    /* OUT endpoint, receive.*/
+    if (epr & EPR_SETUP) {
+      /* Setup packets handling, setup packets are handled using a
+         specific callback.*/
+      _usb_isr_invoke_setup_cb(usbp, ep);
+    }
+    else {
+      stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
+
+      /* Double buffering is always enabled for isochronous endpoints, and
+         although we overlap the two buffers for simplicity, we still need
+         to read from the right counter. The DTOG_RX bit indicates the buffer
+         that is currently in use by the USB peripheral, that is, the buffer
+         in which the next received packet will be stored, so we need to
+         read the counter of the OTHER buffer, which is where the last
+         received packet was stored.*/
+      n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
+      if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & EPR_DTOG_RX))
+        n = (size_t)udp->RXCOUNT1 & RXCOUNT_COUNT_MASK;
+
+      /* Reads the packet into the defined buffer.*/
+      if (epcp->out_state->rxqueued)
+        usb_packet_read_to_queue(udp,
+                                 epcp->out_state->mode.queue.rxqueue,
+                                 n);
+      else {
+        usb_packet_read_to_buffer(udp,
+                                  epcp->out_state->mode.linear.rxbuf,
+                                  n);
+        epcp->out_state->mode.linear.rxbuf += n;
+      }
+
+      /* Transaction data updated.*/
+      epcp->out_state->rxcnt              += n;
+      epcp->out_state->rxsize             -= n;
+      epcp->out_state->rxpkts             -= 1;
+
+      /* The transaction is completed if the specified number of packets
+         has been received or the current packet is a short packet.*/
+      if ((n < epcp->out_maxsize) || (epcp->out_state->rxpkts == 0)) {
+        /* Transfer complete, invokes the callback.*/
+        _usb_isr_invoke_out_cb(usbp, ep);
+      }
+      else {
+        /* Transfer not complete, there are more packets to receive.*/
+        EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
+      }
+    }
+  }
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -294,8 +412,17 @@ static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
  * @isr
  */
 OSAL_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
+  uint32_t istr;
+  USBDriver *usbp = &USBD1;
 
   OSAL_IRQ_PROLOGUE();
+
+  /* Endpoint events handling.*/
+  istr = STM32_USB->ISTR;
+  while (istr & ISTR_CTR) {
+    usb_serve_endpoints(usbp, istr & ISTR_EP_ID_MASK);
+    istr = STM32_USB->ISTR;
+  }
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -358,114 +485,7 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
 
   /* Endpoint events handling.*/
   while (istr & ISTR_CTR) {
-    size_t n;
-    uint32_t ep;
-    uint32_t epr = STM32_USB->EPR[ep = istr & ISTR_EP_ID_MASK];
-    const USBEndpointConfig *epcp = usbp->epc[ep];
-
-    if (epr & EPR_CTR_TX) {
-      size_t transmitted;
-      /* IN endpoint, transmission.*/
-      EPR_CLEAR_CTR_TX(ep);
-
-      /* Double buffering is always enabled for isochronous endpoints, and
-         although we overlap the two buffers for simplicity, we still need
-         to read from the right counter. The DTOG_TX bit indicates the buffer
-         that is currently in use by the USB peripheral, that is, the buffer
-         from which the next packet will be sent, so we need to read the
-         transmitted bytes from the counter of the OTHER buffer, which is
-         where we stored the last transmitted packet.*/
-      transmitted = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
-      if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & EPR_DTOG_TX))
-        transmitted = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT1;
-
-      epcp->in_state->txcnt  += transmitted;
-      n = epcp->in_state->txsize - epcp->in_state->txcnt;
-      if (n > 0) {
-        /* Transfer not completed, there are more packets to send.*/
-        if (n > epcp->in_maxsize)
-          n = epcp->in_maxsize;
-
-        /* Double buffering is always enabled for isochronous endpoints, and
-           although we overlap the two buffers for simplicity, we still need
-           to write to the right counter. The DTOG_TX bit indicates the buffer
-           that is currently in use by the USB peripheral, that is, the buffer
-           from which the next packet will be sent, so we need to write the
-           counter of that buffer.*/
-        USB_GET_DESCRIPTOR(ep)->TXCOUNT0 = (stm32_usb_pma_t)n;
-        if (EPR_EP_TYPE_IS_ISO(epr) && (epr & EPR_DTOG_TX))
-            USB_GET_DESCRIPTOR(ep)->TXCOUNT1 = (stm32_usb_pma_t)n;
-
-        if (epcp->in_state->txqueued)
-          usb_packet_write_from_queue(USB_GET_DESCRIPTOR(ep),
-                                      epcp->in_state->mode.queue.txqueue,
-                                      n);
-        else {
-          epcp->in_state->mode.linear.txbuf += transmitted;
-          usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
-                                       epcp->in_state->mode.linear.txbuf,
-                                       n);
-        }
-        osalSysLockFromISR();
-        usb_lld_start_in(usbp, ep);
-        osalSysUnlockFromISR();
-      }
-      else {
-        /* Transfer completed, invokes the callback.*/
-        _usb_isr_invoke_in_cb(usbp, ep);
-      }
-    }
-    if (epr & EPR_CTR_RX) {
-      EPR_CLEAR_CTR_RX(ep);
-      /* OUT endpoint, receive.*/
-      if (epr & EPR_SETUP) {
-        /* Setup packets handling, setup packets are handled using a
-           specific callback.*/
-        _usb_isr_invoke_setup_cb(usbp, ep);
-      }
-      else {
-        stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
-
-        /* Double buffering is always enabled for isochronous endpoints, and
-           although we overlap the two buffers for simplicity, we still need
-           to read from the right counter. The DTOG_RX bit indicates the buffer
-           that is currently in use by the USB peripheral, that is, the buffer
-           in which the next received packet will be stored, so we need to
-           read the counter of the OTHER buffer, which is where the last
-           received packet was stored.*/
-        n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
-        if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & EPR_DTOG_RX))
-          n = (size_t)udp->RXCOUNT1 & RXCOUNT_COUNT_MASK;
-
-        /* Reads the packet into the defined buffer.*/
-        if (epcp->out_state->rxqueued)
-          usb_packet_read_to_queue(udp,
-                                   epcp->out_state->mode.queue.rxqueue,
-                                   n);
-        else {
-          usb_packet_read_to_buffer(udp,
-                                    epcp->out_state->mode.linear.rxbuf,
-                                    n);
-          epcp->out_state->mode.linear.rxbuf += n;
-        }
-
-        /* Transaction data updated.*/
-        epcp->out_state->rxcnt              += n;
-        epcp->out_state->rxsize             -= n;
-        epcp->out_state->rxpkts             -= 1;
-
-        /* The transaction is completed if the specified number of packets
-           has been received or the current packet is a short packet.*/
-        if ((n < epcp->out_maxsize) || (epcp->out_state->rxpkts == 0)) {
-          /* Transfer complete, invokes the callback.*/
-          _usb_isr_invoke_out_cb(usbp, ep);
-        }
-        else {
-          /* Transfer not complete, there are more packets to receive.*/
-          EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
-        }
-      }
-    }
+    usb_serve_endpoints(usbp, istr & ISTR_EP_ID_MASK);
     istr = STM32_USB->ISTR;
   }
 
