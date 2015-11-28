@@ -155,7 +155,7 @@ static void otg_disable_ep(USBDriver *usbp) {
     if ((otgp->oe[i].DOEPCTL & DOEPCTL_EPENA) != 0) {
       otgp->oe[i].DOEPCTL = DOEPCTL_EPDIS;
       /* Wait for endpoint disable.*/
-      while (!(otgp->oe[i].DOEPINT & DOEPINT_OTEPDIS))
+      while (!(otgp->oe[i].DOEPCTL & DOEPCTL_EPDIS))
         ;
     }
     else
