@@ -135,6 +135,8 @@
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB, STM32F091xC,
        STM32F098xx devices.
+- HAL: Fixed usbStop() hangs in STM32 OTGv1 driver (bug #674)(backported
+       to 3.0.4 and 2.6.10).
 - HAL: Fixed STM32 I2Cv2 driver fails on transfers greater than 255 bytes
        (bug #673)(backported to 3.0.4).
 - HAL: Fixed STM32 I2Cv2 DMA conflict (bug #671)(backported to 3.0.4).
