@@ -135,7 +135,7 @@ static void otg_core_reset(USBDriver *usbp) {
   while ((otgp->GRSTCTL & GRSTCTL_CSRST) != 0)
     ;
 
-  osalSysPolledDelayX(12);
+  osalSysPolledDelayX(18);
 
   /* Wait AHB idle condition.*/
   while ((otgp->GRSTCTL & GRSTCTL_AHBIDL) == 0)
@@ -186,7 +186,7 @@ static void otg_rxfifo_flush(USBDriver *usbp) {
   while ((otgp->GRSTCTL & GRSTCTL_RXFFLSH) != 0)
     ;
   /* Wait for 3 PHY Clocks.*/
-  osalSysPolledDelayX(12);
+  osalSysPolledDelayX(18);
 }
 
 static void otg_txfifo_flush(USBDriver *usbp, uint32_t fifo) {
@@ -196,7 +196,7 @@ static void otg_txfifo_flush(USBDriver *usbp, uint32_t fifo) {
   while ((otgp->GRSTCTL & GRSTCTL_TXFFLSH) != 0)
     ;
   /* Wait for 3 PHY Clocks.*/
-  osalSysPolledDelayX(12);
+  osalSysPolledDelayX(18);
 }
 
 /**
