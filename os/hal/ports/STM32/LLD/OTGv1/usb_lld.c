@@ -134,32 +134,11 @@ static void otg_disable_ep(USBDriver *usbp) {
   unsigned i;
 
   for (i = 0; i <= usbp->otgparams->num_endpoints; i++) {
-    /* Disable only if enabled because this sentence in the manual:
-       "The application must set this bit only if Endpoint Enable is
-        already set for this endpoint".*/
-    if ((otgp->ie[i].DIEPCTL & DIEPCTL_EPENA) != 0) {
-      otgp->ie[i].DIEPCTL = DIEPCTL_EPDIS;
-      /* Wait for endpoint disable.*/
-      while (!(otgp->ie[i].DIEPINT & DIEPINT_EPDISD))
-        ;
-    }
-    else
-      otgp->ie[i].DIEPCTL = 0;
+    otgp->ie[i].DIEPCTL &= ~DIEPCTL_EPENA;
     otgp->ie[i].DIEPTSIZ = 0;
     otgp->ie[i].DIEPINT = 0xFFFFFFFF;
-    /* Disable only if enabled because this sentence in the manual:
-       "The application must set this bit only if Endpoint Enable is
-        already set for this endpoint".
-       Note that the attempt to disable the OUT EP0 is ignored by the
-       hardware but the code is simpler this way.*/
-    if ((otgp->oe[i].DOEPCTL & DOEPCTL_EPENA) != 0) {
-      otgp->oe[i].DOEPCTL = DOEPCTL_EPDIS;
-      /* Wait for endpoint disable.*/
-      while (!(otgp->oe[i].DOEPCTL & DOEPCTL_EPDIS))
-        ;
-    }
-    else
-      otgp->oe[i].DOEPCTL = 0;
+
+    otgp->oe[i].DOEPCTL &= ~DOEPCTL_EPENA;
     otgp->oe[i].DOEPTSIZ = 0;
     otgp->oe[i].DOEPINT = 0xFFFFFFFF;
   }
