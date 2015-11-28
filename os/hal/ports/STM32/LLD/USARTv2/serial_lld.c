@@ -98,6 +98,11 @@ SerialDriver SD7;
 SerialDriver SD8;
 #endif
 
+/** @brief LPUART1 serial driver identifier.*/
+#if STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
+SerialDriver LPSD1;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -126,6 +131,13 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   USART_TypeDef *u = sdp->usart;
 
   /* Baud rate setting.*/
+#if STM32_SERIAL_USE_LPUART1
+  if ( sdp == &LPSD1 )
+  {
+      u->BRR = (uint32_t)( ( (uint64_t)sdp->clock * 256 ) / config->speed);
+  }
+  else
+#endif
   u->BRR = (uint32_t)(sdp->clock / config->speed);
 
   /* Note that some bits are enforced.*/
@@ -289,6 +301,14 @@ static void notify8(io_queue_t *qp) {
 
   (void)qp;
   UART8->CR1 |= USART_CR1_TXEIE;
+}
+#endif
+
+#if STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
+static void notifylp1(io_queue_t *qp) {
+
+  (void)qp;
+  LPUART1->CR1 |= USART_CR1_TXEIE;
 }
 #endif
 
@@ -482,6 +502,25 @@ OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
 }
 #endif
 
+#if STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
+#if !defined(STM32_LPUART1_HANDLER)
+#error "STM32_LPUART1_HANDLER not defined"
+#endif
+/**
+ * @brief   LPUART1 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_LPUART1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  serve_interrupt(&LPSD1);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -565,6 +604,15 @@ void sd_lld_init(void) {
 #endif
 #endif
 
+#if STM32_SERIAL_USE_LPUART1
+  sdObjectInit(&LPSD1, NULL, notifylp1);
+  LPSD1.usart = LPUART1;
+  LPSD1.clock = STM32_LPUART1CLK;
+#if defined(STM32_LPUART1_NUMBER)
+  nvicEnableVector(STM32_LPUART1_NUMBER, STM32_SERIAL_LPUART1_PRIORITY);
+#endif
+#endif
+
 #if STM32_SERIAL_USE_USART3 || STM32_SERIAL_USE_UART4  ||                   \
     STM32_SERIAL_USE_UART5  || STM32_SERIAL_USE_USART6 ||                   \
     STM32_SERIAL_USE_UART7  ||  STM32_SERIAL_USE_UART8 || defined(__DOXYGEN__)
@@ -628,6 +676,11 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 #if STM32_SERIAL_USE_UART8
     if (&SD8 == sdp) {
       rccEnableUART8(FALSE);
+    }
+#endif
+#if STM32_SERIAL_USE_LPUART1
+    if (&LPSD1 == sdp) {
+      rccEnableLPUART1(FALSE);
     }
 #endif
   }
@@ -694,6 +747,12 @@ void sd_lld_stop(SerialDriver *sdp) {
 #if STM32_SERIAL_USE_UART8
     if (&SD8 == sdp) {
       rccDisableUART8(FALSE);
+      return;
+    }
+#endif
+#if STM32_SERIAL_USE_LPUART1
+    if (&LPSD1 == sdp) {
+      rccDisableLPUART1(FALSE);
       return;
     }
 #endif

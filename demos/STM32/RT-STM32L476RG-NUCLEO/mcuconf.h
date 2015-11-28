@@ -77,6 +77,7 @@
 #define STM32_USART3SEL                     STM32_USART3SEL_SYSCLK
 #define STM32_UART4SEL                      STM32_UART4SEL_SYSCLK
 #define STM32_UART5SEL                      STM32_UART5SEL_SYSCLK
+#define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
 #define STM32_I2C1SEL                       STM32_I2C1SEL_SYSCLK
 #define STM32_I2C2SEL                       STM32_I2C2SEL_SYSCLK
 #define STM32_I2C3SEL                       STM32_I2C3SEL_SYSCLK
@@ -96,9 +97,11 @@
 #define STM32_SERIAL_USE_USART1             FALSE
 #define STM32_SERIAL_USE_USART2             TRUE
 #define STM32_SERIAL_USE_USART3             FALSE
+#define STM32_SERIAL_USE_LPUART1            FALSE
 #define STM32_SERIAL_USART1_PRIORITY        12
 #define STM32_SERIAL_USART2_PRIORITY        12
 #define STM32_SERIAL_USART3_PRIORITY        12
+#define STM32_SERIAL_LPUART1_PRIORITY       12
 
 /*
  * ST driver system settings.

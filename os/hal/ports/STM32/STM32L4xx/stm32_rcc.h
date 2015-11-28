@@ -1064,6 +1064,38 @@
  * @api
  */
 #define rccDisableUART5(lp) rccDisableAPB1R1(RCC_APB1ENR1_UART5EN, lp)
+
+/**
+ * @brief   Resets the UART5 peripheral.
+ *
+ * @api
+ */
+#define rccResetUART5() rccResetAPB1R1(RCC_APB1RSTR1_UART5RST)
+
+/**
+ * @brief   Enables the LPUART1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableLPUART1(lp) rccEnableAPB1R2(RCC_APB1ENR2_LPUART1EN, lp)
+
+/**
+ * @brief   Disables the LPUART1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableLPUART1(lp) rccDisableAPB1R2(RCC_APB1ENR2_LPUART1EN, lp)
+
+/**
+ * @brief   Resets the USART1 peripheral.
+ *
+ * @api
+ */
+#define rccResetLPUART1() rccResetAPB1R2(RCC_APB1RSTR2_LPUART1RST)
 /** @} */
 
 /*===========================================================================*/

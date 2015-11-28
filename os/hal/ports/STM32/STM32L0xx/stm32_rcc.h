@@ -584,6 +584,31 @@
  * @api
  */
 #define rccResetUSART3() rccResetAPB1(RCC_APB1RSTR_USART3RST)
+
+/**
+ * @brief   Enables the LPUART1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableLPUART1(lp) rccEnableAPB1(RCC_APB1ENR_LPUART1EN, lp)
+
+/**
+ * @brief   Disables the LPUART1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableLPUART1(lp) rccDisableAPB1(RCC_APB1ENR_LPUART1EN, lp)
+
+/**
+ * @brief   Resets the USART1 peripheral.
+ *
+ * @api
+ */
+#define rccResetLPUART1() rccResetAPB1(RCC_APB1RSTR_LPUART1RST)
 /** @} */
 
 /**

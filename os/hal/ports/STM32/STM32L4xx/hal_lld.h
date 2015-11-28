@@ -645,6 +645,13 @@
 #endif
 
 /**
+ * @brief   LPUART1 clock source.
+ */
+#if !defined(STM32_LPUART1SEL) || defined(__DOXYGEN__)
+#define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
+#endif
+
+/**
  * @brief   I2C1 clock source.
  */
 #if !defined(STM32_I2C1SEL) || defined(__DOXYGEN__)
@@ -1830,6 +1837,21 @@
 #define STM32_UART5CLK              STM32_LSECLK
 #else
 #error "invalid source selected for UART5 clock"
+#endif
+
+/**
+ * @brief   LPUART1 clock frequency.
+ */
+#if (STM32_LPUART1SEL == STM32_LPUART1SEL_PCLK1) || defined(__DOXYGEN)
+#define STM32_LPUART1CLK            STM32_PCLK1
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_SYSCLK
+#define STM32_LPUART1CLK            STM32_SYSCLK
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_HSI16
+#define STM32_LPUART1CLK            STM32_HSI16CLK
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_LSE
+#define STM32_LPUART1CLK            STM32_LSECLK
+#else
+#error "invalid source selected for LPUART1 clock"
 #endif
 
 /**

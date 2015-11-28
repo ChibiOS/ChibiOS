@@ -370,13 +370,16 @@
 #define STM32_UART5_TX_DMA_MSK              STM32_DMA_STREAM_ID_MSK(2, 1)
 #define STM32_UART5_TX_DMA_CHN              0x00000002
 
+#define STM32_HAS_LPUART1                   TRUE
+#define STM32_LPUART1_HANDLER               Vector158
+#define STM32_LPUART1_NUMBER                70
+
 #define STM32_HAS_USART6                    FALSE
 #define STM32_HAS_UART7                     FALSE
 #define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       FALSE
-
 #define STM32_HAS_OTG1                      TRUE
 #define STM32_OTG1_HANDLER                  Vector14C
 #define STM32_OTG1_NUMBER                   67

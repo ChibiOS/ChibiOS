@@ -119,7 +119,8 @@
 - HAL: Added support for I2C3 and I2C4 to the STM32 I2Cv2 I2C driver.
 - HAL: Added support for SPI4...SPI6 to the STM32 SPIv2 SPI driver.
 - HAL: Added support for UART4...UART8 to the STM32 UARTv2 UART driver.
-- HAL: Added support for UART7 and UART8 to the STM32 UARTv2 serial driver.
+- HAL: Added support for UART7 and UART8,LPUART1 to the STM32 UARTv2 serial
+       driver.
 - HAL: STM32F2xx, STM32F4xx and STM32F7xx devices now share the same ADCv2
        and DMAv2 drivers.
 - HAL: STM32F0xx and STM32L0xx devices now share the same ADCv1 driver.

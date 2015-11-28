@@ -42,7 +42,7 @@
 /**
  * @brief   USART1 driver enable switch.
  * @details If set to @p TRUE the support for USART1 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SERIAL_USE_USART1) || defined(__DOXYGEN__)
 #define STM32_SERIAL_USE_USART1             FALSE
@@ -51,7 +51,7 @@
 /**
  * @brief   USART2 driver enable switch.
  * @details If set to @p TRUE the support for USART2 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SERIAL_USE_USART2) || defined(__DOXYGEN__)
 #define STM32_SERIAL_USE_USART2             FALSE
@@ -60,7 +60,7 @@
 /**
  * @brief   USART3 driver enable switch.
  * @details If set to @p TRUE the support for USART3 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SERIAL_USE_USART3) || defined(__DOXYGEN__)
 #define STM32_SERIAL_USE_USART3             FALSE
@@ -69,7 +69,7 @@
 /**
  * @brief   UART4 driver enable switch.
  * @details If set to @p TRUE the support for UART4 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SERIAL_USE_UART4) || defined(__DOXYGEN__)
 #define STM32_SERIAL_USE_UART4              FALSE
@@ -78,7 +78,7 @@
 /**
  * @brief   UART5 driver enable switch.
  * @details If set to @p TRUE the support for UART5 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SERIAL_USE_UART5) || defined(__DOXYGEN__)
 #define STM32_SERIAL_USE_UART5              FALSE
@@ -87,7 +87,7 @@
 /**
  * @brief   USART6 driver enable switch.
  * @details If set to @p TRUE the support for USART6 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SERIAL_USE_USART6) || defined(__DOXYGEN__)
 #define STM32_SERIAL_USE_USART6             FALSE
@@ -96,7 +96,7 @@
 /**
  * @brief   UART7 driver enable switch.
  * @details If set to @p TRUE the support for UART7 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SERIAL_USE_UART7) || defined(__DOXYGEN__)
 #define STM32_SERIAL_USE_UART7              FALSE
@@ -105,7 +105,7 @@
 /**
  * @brief   UART8 driver enable switch.
  * @details If set to @p TRUE the support for UART8 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SERIAL_USE_UART8) || defined(__DOXYGEN__)
 #define STM32_SERIAL_USE_UART8              FALSE
