@@ -147,11 +147,11 @@ static void otg_disable_ep(USBDriver *usbp) {
   unsigned i;
 
   for (i = 0; i <= usbp->otgparams->num_endpoints; i++) {
-    otgp->ie[i].DIEPCTL &= ~DIEPCTL_EPENA;
+    otgp->ie[i].DIEPCTL = 0;
     otgp->ie[i].DIEPTSIZ = 0;
     otgp->ie[i].DIEPINT = 0xFFFFFFFF;
 
-    otgp->oe[i].DOEPCTL &= ~DOEPCTL_EPENA;
+    otgp->oe[i].DOEPCTL = 0;
     otgp->oe[i].DOEPTSIZ = 0;
     otgp->oe[i].DOEPINT = 0xFFFFFFFF;
   }
