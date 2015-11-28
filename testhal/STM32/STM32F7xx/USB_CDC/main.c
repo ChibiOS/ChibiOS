@@ -213,10 +213,15 @@ int main(void) {
       chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
       shelltp = NULL;           /* Triggers spawning of a new shell.        */
     }
+#if 0
     if (palReadPad(GPIOI, GPIOI_BUTTON_USER)) {
       usbDisconnectBus(serusbcfg.usbp);
       usbStop(serusbcfg.usbp);
+      chThdSleepMilliseconds(1500);
+      usbStart(serusbcfg.usbp, &usbcfg);
+      usbConnectBus(serusbcfg.usbp);
     }
+#endif
     chThdSleepMilliseconds(1000);
   }
 }
