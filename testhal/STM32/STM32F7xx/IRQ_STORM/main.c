@@ -43,9 +43,9 @@ static const GPTConfig gpt3cfg = {
  * IRQ Storm configuration.
  */
 static const irq_storm_config_t irq_storm_config = {
-  (BaseSequentialStream  *)&SD2,
-  GPIOD,
-  GPIOD_LED5,
+  (BaseSequentialStream  *)&SD1,
+  GPIOI,
+  GPIOI_ARD_D13,
   &GPTD4,
   &GPTD3,
   &gpt4cfg,
@@ -69,9 +69,10 @@ int main(void) {
   chSysInit();
 
   /* Prepares the Serial driver 2.*/
-  sdStart(&SD2, NULL);          /* Default is 38400-8-N-1.*/
+  sdStart(&SD1, NULL);          /* Default is 38400-8-N-1.*/
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
   palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
+  palSetLineMode(LINE_ARD_D13, PAL_MODE_OUTPUT_PUSHPULL);
 
   /* Running the test.*/
   irq_storm_execute(&irq_storm_config);
