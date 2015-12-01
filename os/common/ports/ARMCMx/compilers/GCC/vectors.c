@@ -28,7 +28,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "cmparams.h"
+#include "vectors.h"
 
 #if (CORTEX_NUM_VECTORS % 8) != 0
 #error "the constant CORTEX_NUM_VECTORS must be a multiple of 8"
@@ -37,34 +37,6 @@
 #if (CORTEX_NUM_VECTORS < 8) || (CORTEX_NUM_VECTORS > 240)
 #error "the constant CORTEX_NUM_VECTORS must be between 8 and 240 inclusive"
 #endif
-
-/**
- * @brief   Type of an IRQ vector.
- */
-typedef void  (*irq_vector_t)(void);
-
-/**
- * @brief   Type of a structure representing the whole vectors table.
- */
-typedef struct {
-  uint32_t      *init_stack;
-  irq_vector_t  reset_handler;
-  irq_vector_t  nmi_handler;
-  irq_vector_t  hardfault_handler;
-  irq_vector_t  memmanage_handler;
-  irq_vector_t  busfault_handler;
-  irq_vector_t  usagefault_handler;
-  irq_vector_t  vector1c;
-  irq_vector_t  vector20;
-  irq_vector_t  vector24;
-  irq_vector_t  vector28;
-  irq_vector_t  svc_handler;
-  irq_vector_t  debugmonitor_handler;
-  irq_vector_t  vector34;
-  irq_vector_t  pendsv_handler;
-  irq_vector_t  systick_handler;
-  irq_vector_t  vectors[CORTEX_NUM_VECTORS];
-} vectors_t;
 
 /**
  * @brief   Unhandled exceptions handler.
@@ -462,7 +434,11 @@ void Vector3FC(void) __attribute__((weak, alias("_unhandled_exception")));
  * @brief   STM32 vectors table.
  */
 #if !defined(__DOXYGEN__)
-__attribute__ ((used, section(".vectors")))
+#if !defined(VECTORS_SECTION)
+__attribute__ ((used, aligned(128), section(".vectors")))
+#else
+__attribute__ ((used, aligned(128), section(VECTORS_SECTION)))
+#endif
 #endif
 /*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 vectors_t _vectors = {
