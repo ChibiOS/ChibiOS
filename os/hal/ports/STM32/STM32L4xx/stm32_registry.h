@@ -386,6 +386,10 @@
 
 #define STM32_HAS_OTG2                      FALSE
 
+/* IWDG attributes.*/
+#define STM32_HAS_IWDG                      TRUE
+#define STM32_IWDG_IS_WINDOWED              TRUE
+
 /* LTDC attributes.*/
 #define STM32_HAS_LTDC                      FALSE
 

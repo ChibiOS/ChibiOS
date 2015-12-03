@@ -84,6 +84,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if STM32_WDG_USE_IWDG && !STM32_HAS_IWDG
+#error "IWDG not present in the selected device"
+#endif
+
 #if !STM32_WDG_USE_IWDG
 #error "WDG driver activated but no xWDG peripheral assigned"
 #endif
@@ -92,7 +96,7 @@
 #error "STM32_LSI_ENABLED not defined"
 #endif
 
-#if STM32_LSI_ENABLED == FALSE
+#if (STM32_WDG_USE_IWDG == TRUE) && (STM32_LSI_ENABLED == FALSE)
 #error "IWDG requires LSI clock"
 #endif
 

@@ -81,7 +81,7 @@ void wdg_lld_init(void) {
  */
 void wdg_lld_start(WDGDriver *wdgp) {
 
-#if 1
+#if STM32_IWDG_IS_WINDOWED
   /* Enable IWDG and unlock for write.*/
   wdgp->wdg->KR   = KR_KEY_ENABLE;
   wdgp->wdg->KR   = KR_KEY_WRITE;

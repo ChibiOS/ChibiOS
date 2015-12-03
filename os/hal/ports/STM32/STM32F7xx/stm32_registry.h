@@ -467,6 +467,10 @@
 #define STM32_OTG2_EP1OUT_NUMBER            74
 #define STM32_OTG2_EP1IN_NUMBER             75
 
+/* IWDG attributes.*/
+#define STM32_HAS_IWDG                      TRUE
+#define STM32_IWDG_IS_WINDOWED              TRUE
+
 /* LTDC attributes.*/
 #define STM32_HAS_LTDC                      TRUE
 
