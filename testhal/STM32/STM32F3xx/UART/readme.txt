@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL - UART driver demo for STM32F30x.                           **
+** ChibiOS/HAL - UART driver demo for STM32F3xx.                           **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,7 @@ The demo runs on an STMicroelectronics STM32F3-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F30x UART driver.
+The application demonstrates the use of the STM32F3xx UART driver.
 
 ** Board Setup **
 

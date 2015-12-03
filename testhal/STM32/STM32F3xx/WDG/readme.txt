@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL - USB-CDC (IAD descriptors) driver demo for STM32F3xx.      **
+** ChibiOS/HAL - WDG driver demo for STM32F3xx.                            **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,11 @@ The demo runs on an ST STM32F3-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F3xx USB driver.
+The application demonstrates the use of the STM32F3xx WDG driver.
+
+** Board Setup **
+
+None.
 
 ** Build Procedure **
 

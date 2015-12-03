@@ -102,9 +102,9 @@ void spiStart(SPIDriver *spip, const SPIConfig *config) {
 }
 
 /**
- * @brief Deactivates the SPI peripheral.
- * @note  Deactivating the peripheral also enforces a release of the slave
- *        select line.
+ * @brief   Deactivates the SPI peripheral.
+ * @note    Deactivating the peripheral also enforces a release of the slave
+ *          select line.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  *

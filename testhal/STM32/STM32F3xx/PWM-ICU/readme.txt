@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL - PWM-ICU drivers demo for STM32F30x.                       **
+** ChibiOS/HAL - PWM-ICU drivers demo for STM32F3xx.                       **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,7 @@ The demo runs on an STMicroelectronics STM32F3-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F30x PWM-ICU drivers.
+The application demonstrates the use of the STM32F3xx PWM-ICU drivers.
 
 ** Board Setup **
 

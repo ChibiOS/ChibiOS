@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL - SPI driver demo for STM32F30x.                            **
+** ChibiOS/HAL - SPI driver demo for STM32F3xx.                            **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,7 @@ The demo runs on an ST STM32F3-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F30x SPI driver.
+The application demonstrates the use of the STM32F3xx SPI driver.
 
 ** Board Setup **
 

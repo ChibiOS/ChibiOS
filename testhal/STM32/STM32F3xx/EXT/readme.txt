@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/HAL - EXT driver demo for STM32F30x.                            **
+** ChibiOS/HAL - EXT driver demo for STM32F3xx.                            **
 *****************************************************************************
 
 ** TARGET **
@@ -8,7 +8,7 @@ The demo runs on an STMicroelectronics STM32F3-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32F30x EXT driver.
+The application demonstrates the use of the STM32F3xx EXT driver.
 
 ** Board Setup **
 
