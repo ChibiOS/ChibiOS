@@ -39,7 +39,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="STM32F30x-SPI.null.1537816093" name="STM32F30x-SPI"/>
+		<project id="STM32F3xx-SPI.null.1537816093" name="STM32F3xx-SPI"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>

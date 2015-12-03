@@ -37,7 +37,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="STM32F30x-IRQ_STORM.null.1149829447" name="STM32F30x-IRQ_STORM"/>
+		<project id="STM32F3xx-IRQ_STORM.null.1149829447" name="STM32F3xx-IRQ_STORM"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
