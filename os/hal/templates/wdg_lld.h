@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    wdg_lld.h
- * @brief   WDG Driver subsystem low level driver header.
+ * @file    templates/wdg_lld.h
+ * @brief   WDG Driver subsystem low level driver header template.
  *
  * @addtogroup WDG
  * @{
@@ -31,37 +31,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    RLR register definitions
- * @{
- */
-#define STM32_IWDG_RL_MASK                  (0x00000FFF << 0)
-#define STM32_IWDG_RL(n)                    ((n) << 0)
-/** @} */
-
-/**
- * @name    PR register definitions
- * @{
- */
-#define STM32_IWDG_PR_MASK                  (7 << 0)
-#define STM32_IWDG_PR_4                     0U
-#define STM32_IWDG_PR_8                     1U
-#define STM32_IWDG_PR_16                    2U
-#define STM32_IWDG_PR_32                    3U
-#define STM32_IWDG_PR_64                    4U
-#define STM32_IWDG_PR_128                   5U
-#define STM32_IWDG_PR_256                   6U
-/** @} */
-
-/**
- * @name    WINR register definitions
- * @{
- */
-#define STM32_IWDG_WIN_MASK                 (0x00000FFF << 0)
-#define STM32_IWDG_WIN(n)                   ((n) << 0)
-#define STM32_IWDG_WIN_DISABLED             STM32_IWDG_WIN(0x00000FFF)
-/** @} */
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -71,34 +40,18 @@
  * @{
  */
 /**
- * @brief   IWDG driver enable switch.
+ * @brief   WDG1 driver enable switch.
  * @details If set to @p TRUE the support for IWDG is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(STM32_WDG_USE_IWDG) || defined(__DOXYGEN__)
-#define STM32_WDG_USE_IWDG                  FALSE
+#if !defined(STM32_WDG_USE_WDG1) || defined(__DOXYGEN__)
+#define STM32_WDG_USE_WDG1                  FALSE
 #endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if STM32_WDG_USE_IWDG && !STM32_HAS_IWDG
-#error "IWDG not present in the selected device"
-#endif
-
-#if !STM32_WDG_USE_IWDG
-#error "WDG driver activated but no xWDG peripheral assigned"
-#endif
-
-#if !defined(STM32_LSI_ENABLED)
-#error "STM32_LSI_ENABLED not defined"
-#endif
-
-#if (STM32_WDG_USE_IWDG == TRUE) && (STM32_LSI_ENABLED == FALSE)
-#error "IWDG requires LSI clock"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -114,21 +67,6 @@ typedef struct WDGDriver WDGDriver;
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-  /**
-   * @brief   Configuration of the IWDG_PR register.
-   * @details See the STM32 reference manual for details.
-   */
-  uint32_t    pr;
-  /**
-   * @brief   Configuration of the IWDG_RLR register.
-   * @details See the STM32 reference manual for details.
-   */
-  uint32_t    rlr;
-  /**
-   * @brief   Configuration of the IWDG_WINR register.
-   * @details See the STM32 reference manual for details.
-   */
-  uint32_t    winr;
 } WDGConfig;
 
 /**
@@ -144,10 +82,6 @@ struct WDGDriver {
    */
   const WDGConfig           *config;
   /* End of the mandatory fields.*/
-  /**
-   * @brief   Pointer to the IWDG registers block.
-   */
-  IWDG_TypeDef              *wdg;
 };
 
 /*===========================================================================*/

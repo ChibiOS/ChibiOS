@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    wdg_lld.c
- * @brief   WDG Driver subsystem low level driver source.
+ * @file    templates/wdg_lld.c
+ * @brief   WDG Driver subsystem low level driver source template.
  *
  * @addtogroup WDG
  * @{
@@ -30,16 +30,11 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define KR_KEY_RELOAD                       0xAAAAU
-#define KR_KEY_ENABLE                       0xCCCCU
-#define KR_KEY_WRITE                        0x5555U
-#define KR_KEY_PROTECT                      0x0000U
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-#if STM32_WDG_USE_IWDG || defined(__DOXYGEN__)
+#if STM32_WDG_USE_WDG1 || defined(__DOXYGEN__)
 WDGDriver WDGD1;
 #endif
 
@@ -66,10 +61,6 @@ WDGDriver WDGD1;
  */
 void wdg_lld_init(void) {
 
-#if STM32_WDG_USE_IWDG
-  WDGD1.state = WDG_STOP;
-  WDGD1.wdg   = IWDG;
-#endif
 }
 
 /**
@@ -81,33 +72,6 @@ void wdg_lld_init(void) {
  */
 void wdg_lld_start(WDGDriver *wdgp) {
 
-#if STM32_IWDG_IS_WINDOWED
-  /* Enable IWDG and unlock for write.*/
-  wdgp->wdg->KR   = KR_KEY_ENABLE;
-  wdgp->wdg->KR   = KR_KEY_WRITE;
-
-  /* Write configuration.*/
-  wdgp->wdg->PR   = wdgp->config->pr;
-  wdgp->wdg->RLR  = wdgp->config->rlr;
-  while (wdgp->wdg->SR != 0)
-    ;
-
-  /* This also triggers a refresh.*/
-  wdgp->wdg->WINR = wdgp->config->winr;
-#else
-  /* Unlock IWDG.*/
-  wdgp->wdg->KR   = KR_KEY_WRITE;
-
-  /* Write configuration.*/
-  wdgp->wdg->PR   = wdgp->config->pr;
-  wdgp->wdg->RLR  = wdgp->config->rlr;
-  while (wdgp->wdg->SR != 0)
-    ;
-
-  /* Start operations.*/
-  wdgp->wdg->KR   = KR_KEY_RELOAD;
-  wdgp->wdg->KR   = KR_KEY_ENABLE;
-#endif
 }
 
 /**
@@ -119,8 +83,6 @@ void wdg_lld_start(WDGDriver *wdgp) {
  */
 void wdg_lld_stop(WDGDriver *wdgp) {
 
-  osalDbgAssert(wdgp->state == WDG_STOP,
-                "IWDG cannot be stopped once activated");
 }
 
 /**
@@ -132,7 +94,6 @@ void wdg_lld_stop(WDGDriver *wdgp) {
  */
 void wdg_lld_reset(WDGDriver * wdgp) {
 
-  wdgp->wdg->KR = KR_KEY_RELOAD;
 }
 
 #endif /* HAL_USE_WDG */
