@@ -58,6 +58,9 @@ endif
 ifneq ($(findstring HAL_USE_UART TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/USARTv1/uart_lld.c
 endif
+ifneq ($(findstring HAL_USE_WDG TRUE,$(HALCONF)),)
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/xWDGv1/wdg_lld.c
+endif
 else
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32F4xx/hal_lld.c \
@@ -80,7 +83,8 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/pwm_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/st_lld.c \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/USARTv1/serial_lld.c \
-               $(CHIBIOS)/os/hal/ports/STM32/LLD/USARTv1/uart_lld.c
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/USARTv1/uart_lld.c \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/xWDGv1/wdg_lld.c
 endif
 
 # Required include directories
@@ -99,4 +103,5 @@ PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/SDIOv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/SPIv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1 \
-               $(CHIBIOS)/os/hal/ports/STM32/LLD/USARTv1
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/USARTv1 \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/xWDGv1
