@@ -18,10 +18,10 @@
 #include "hal.h"
 
 /*
- * Watchdog deadline set to one second (LSI=40000 / 4 / 1000).
+ * Watchdog deadline set to more than one second (LSI=40000 / (64 * 1000)).
  */
 static const WDGConfig wdgcfg = {
-  STM32_IWDG_PR_4,
+  STM32_IWDG_PR_64,
   STM32_IWDG_RL(1000),
   STM32_IWDG_WIN_DISABLED
 };

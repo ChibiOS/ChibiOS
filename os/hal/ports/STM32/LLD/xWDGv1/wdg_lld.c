@@ -81,19 +81,33 @@ void wdg_lld_init(void) {
  */
 void wdg_lld_start(WDGDriver *wdgp) {
 
+#if 1
+  /* Enable IWDG and unlock for write.*/
+  wdgp->wdg->KR   = KR_KEY_ENABLE;
+  wdgp->wdg->KR   = KR_KEY_WRITE;
+
+  /* Write configuration.*/
+  wdgp->wdg->PR   = wdgp->config->pr;
+  wdgp->wdg->RLR  = wdgp->config->rlr;
+  while (wdgp->wdg->SR != 0)
+    ;
+
+  /* This also triggers a refresh.*/
+  wdgp->wdg->WINR = wdgp->config->winr;
+#else
   /* Unlock IWDG.*/
   wdgp->wdg->KR   = KR_KEY_WRITE;
 
   /* Write configuration.*/
   wdgp->wdg->PR   = wdgp->config->pr;
   wdgp->wdg->RLR  = wdgp->config->rlr;
-  wdgp->wdg->WINR = wdgp->config->winr;
   while (wdgp->wdg->SR != 0)
     ;
 
   /* Start operations.*/
   wdgp->wdg->KR   = KR_KEY_RELOAD;
   wdgp->wdg->KR   = KR_KEY_ENABLE;
+#endif
 }
 
 /**
