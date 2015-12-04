@@ -124,11 +124,14 @@ typedef struct {
    * @details See the STM32 reference manual for details.
    */
   uint32_t    rlr;
+#if STM32_IWDG_IS_WINDOWED || defined(__DOXYGEN__)
   /**
    * @brief   Configuration of the IWDG_WINR register.
    * @details See the STM32 reference manual for details.
+   * @note    This field is not present in F1, F2, F4, L1 sub-families.
    */
   uint32_t    winr;
+#endif
 } WDGConfig;
 
 /**
