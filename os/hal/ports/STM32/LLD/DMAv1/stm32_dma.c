@@ -127,6 +127,14 @@
 #define DMA2_CH5_CMASK              0x00000800U
 #endif
 
+#if !defined(DMA2_CH6_CMASK)
+#define DMA2_CH6_CMASK              0x00001000U
+#endif
+
+#if !defined(DMA2_CH7_CMASK)
+#define DMA2_CH7_CMASK              0x00002000U
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -157,7 +165,7 @@ const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS] = {
 #if STM32_DMA2_NUM_CHANNELS > 5
   {DMA2, DMA2_Channel6, DMA2_CH6_CMASK, ADDR_DMA2_CSELR, 20, 12, STM32_DMA2_CH6_NUMBER},
 #if STM32_DMA2_NUM_CHANNELS > 6
-  {DMA2, DMA2_Channel6, DMA2_CH7_CMASK, ADDR_DMA2_CSELR, 24, 13, STM32_DMA2_CH7_NUMBER},
+  {DMA2, DMA2_Channel7, DMA2_CH7_CMASK, ADDR_DMA2_CSELR, 24, 13, STM32_DMA2_CH7_NUMBER},
 #endif
 #endif
 #endif

@@ -58,7 +58,7 @@
  *                      nibble
  * @return              Returns the request associated to the stream.
  */
-#define STM32_DMA_GETCHANNEL(id, c) (((c) >> (((id) & 7U) * 4U)) & 15U)
+#define STM32_DMA_GETCHANNEL(id, c) (((c) >> (((id) % 7U) * 4U)) & 15U)
 
 /**
  * @brief   Checks if a DMA priority is within the valid range.
@@ -127,6 +127,8 @@
 #define STM32_DMA2_STREAM3          STM32_DMA_STREAM(9)
 #define STM32_DMA2_STREAM4          STM32_DMA_STREAM(10)
 #define STM32_DMA2_STREAM5          STM32_DMA_STREAM(11)
+#define STM32_DMA2_STREAM6          STM32_DMA_STREAM(12)
+#define STM32_DMA2_STREAM7          STM32_DMA_STREAM(13)
 /** @} */
 
 /**
