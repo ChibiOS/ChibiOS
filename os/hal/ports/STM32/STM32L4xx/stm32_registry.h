@@ -233,7 +233,7 @@
 #define STM32_SPI2_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_SPI2_TX_DMA_CHN               0x00010000
 
-#define STM32_HAS_SPI3                      FALSE
+#define STM32_HAS_SPI3                      TRUE
 #define STM32_SPI3_SUPPORTS_I2S             FALSE
 #define STM32_SPI3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 1))
 #define STM32_SPI3_RX_DMA_CHN               0x00000003
