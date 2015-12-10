@@ -267,34 +267,35 @@
 }
 /** @} */
 
+
 /**
  * @name    ADC peripherals specific RCC operations
  * @{
  */
 /**
- * @brief   Enables ADC peripherals clock.
+ * @brief   Enables the ADC1/ADC2/ADC3 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableADC(lp) rccEnableAHB2(RCC_AHB2ENR_ADCEN, lp)
+#define rccEnableADC123(lp) rccEnableAHB2(RCC_AHB2ENR_ADCEN, lp)
 
 /**
- * @brief   Disables ADC peripherals clock.
+ * @brief   Disables the ADC1/ADC2/ADC3 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccDisableADC(lp) rccDisableAHB2(RCC_AHB2ENR_ADCEN, lp)
+#define rccDisableADC123(lp) rccDisableAHB2(RCC_AHB2ENR_ADCEN, lp)
 
 /**
- * @brief   Resets ADC peripherals.
+ * @brief   Resets the ADC1/ADC2/ADC3 peripheral.
  *
  * @api
  */
-#define rccResetADC() rccResetAHB2(RCC_AHB2RSTR_ADCRST)
+#define rccResetADC123() rccResetAHB2(RCC_AHB2RSTR_ADCRST)
 /** @} */
 
 /**

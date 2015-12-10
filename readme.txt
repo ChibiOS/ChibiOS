@@ -137,6 +137,8 @@
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB, STM32F091xC,
        STM32F098xx devices.
+- HAL: Fixed wrong DMA priority assigned to STM32F3 ADC3&4 (bug #680)
+       (backported to 3.0.4 and 2.6.10).
 - HAL: Fixed invalid DMA settings in STM32 DACv1 driver in dual mode
        (bug #677)(backported to 3.0.4).
 - HAL: Fixed usbStop() hangs in STM32 OTGv1 driver (bug #674)(backported

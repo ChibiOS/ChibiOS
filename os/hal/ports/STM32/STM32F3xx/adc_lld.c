@@ -358,7 +358,7 @@ void adc_lld_init(void) {
 #endif
   ADCD3.dmastp  = STM32_DMA2_STREAM5;
   ADCD3.dmamode = ADC_DMA_SIZE |
-                  STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC34_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
@@ -418,7 +418,6 @@ void adc_lld_start(ADCDriver *adcp) {
 
     /* Clock source setting.*/
     adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
-
 
     /* Differential channels setting.*/
 #if STM32_ADC_DUAL_MODE
