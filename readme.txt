@@ -74,7 +74,9 @@
 *****************************************************************************
 
 *** 3.0.4 ***
-- HAL: Fixed invalid DMA settings in STM32 DACv1 driver in dual mode.
+- HAL: Fixed wrong DMA priority assigned to STM32F3 ADC3&4 (bug #680).
+- HAL: Fixed invalid DMA settings in STM32 DACv1 driver in dual mode
+      (bug #677).
 - HAL: Fixed usbStop() hangs in STM32 OTGv1 driver (bug #674).
 - HAL: Fixed STM32 I2Cv2 driver fails on transfers greater than 255 bytes
        (bug #673).
