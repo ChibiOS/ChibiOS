@@ -73,6 +73,7 @@
 
 *** 2.6.10 ***
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
+- FIX: Fixed wrong DMA priority assigned to STM32F3 ADC3&4 (bug #680).
 - FIX: Fixed usbStop() hangs in STM32 OTGv1 driver (bug #674).
 - FIX: Fixed I2S clock selection not working in STM32F4xx HAL (bug #667).
 - FIX: Fixed STM32 USBv1 wrong multiplier when calculating descriptor address

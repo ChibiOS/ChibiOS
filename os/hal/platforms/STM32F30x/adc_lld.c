@@ -350,7 +350,7 @@ void adc_lld_init(void) {
 #endif
   ADCD3.dmastp  = STM32_DMA2_STREAM5;
   ADCD3.dmamode = ADC_DMA_SIZE |
-                  STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC34_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
@@ -491,8 +491,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmaStreamSetTransactionSize(adcp->dmastp, ((uint32_t)grpp->num_channels/2) *
                                             (uint32_t)adcp->depth);
 #else
-    dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
-                                              (uint32_t)adcp->depth);
+  dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
+                                            (uint32_t)adcp->depth);
 #endif
   dmaStreamSetMode(adcp->dmastp, dmamode);
   dmaStreamEnable(adcp->dmastp);
