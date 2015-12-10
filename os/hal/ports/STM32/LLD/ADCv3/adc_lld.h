@@ -338,11 +338,19 @@
 
 /* Units checks related to dual mode.*/
 #if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC1 && !STM32_HAS_ADC2
-#error "ADC2 not present in the selected device"
+#error "ADC2 not present in the selected device, required for dual mode"
 #endif
 
 #if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC3 && !STM32_HAS_ADC4
-#error "ADC4 not present in the selected device"
+#error "ADC4 not present in the selected device, required for dual mode"
+#endif
+
+#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC2
+#error "ADC2 cannot be used in dual mode"
+#endif
+
+#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC4
+#error "ADC4 cannot be used in dual mode"
 #endif
 
 /* At least one ADC must be assigned.*/
@@ -556,12 +564,6 @@ typedef struct {
    */
   uint32_t                  tr1;
   /**
-   * @brief   ADC CCR register initialization data.
-   * @note    The bits CKMODE, MDMA, DMACFG are enforced internally to the
-   *          driver, keep them to zero.
-   */
-  uint32_t                  ccr;
-  /**
    * @brief   ADC SMPRx registers initialization data.
    */
   uint32_t                  smpr[2];
@@ -571,11 +573,20 @@ typedef struct {
   uint32_t                  sqr[4];
 #if STM32_ADC_DUAL_MODE || defined(__DOXYGEN__)
   /**
+   * @brief   ADC CCR register initialization data.
+   * @note    The bits CKMODE, MDMA, DMACFG are enforced internally to the
+   *          driver, keep them to zero.
+   * @note    This field is only present in dual mode.
+   */
+  uint32_t                  ccr;
+  /**
    * @brief   Slave ADC SMPRx registers initialization data.
+   * @note    This field is only present in dual mode.
    */
   uint32_t                  ssmpr[2];
   /**
    * @brief   Slave ADC SQRx register initialization data.
+   * @note    This field is only present in dual mode.
    */
   uint32_t                  ssqr[4];
 #endif /* STM32_ADC_DUAL_MODE */
@@ -632,10 +643,6 @@ struct ADCDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
-   * @brief   Pointer to the common ADCx_y registers block.
-   */
-  ADC_Common_TypeDef        *adcc;
-  /**
    * @brief   Pointer to the master ADCx registers block.
    */
   ADC_TypeDef               *adcm;
@@ -644,6 +651,10 @@ struct ADCDriver {
    * @brief   Pointer to the slave ADCx registers block.
    */
   ADC_TypeDef               *adcs;
+  /**
+   * @brief   Pointer to the common ADCx_y registers block.
+   */
+  ADC_Common_TypeDef        *adcc;
 #endif /* STM32_ADC_DUAL_MODE */
   /**
    * @brief   Pointer to associated DMA channel.
@@ -749,6 +760,12 @@ extern "C" {
   void adc_lld_stop(ADCDriver *adcp);
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
+  void adcSTM32EnableVREF(void);
+  void adcSTM32DisableVREF(void);
+  void adcSTM32EnableTS(void);
+  void adcSTM32DisableTS(void);
+  void adcSTM32EnableVBAT(void);
+  void adcSTM32DisableVBAT(void);
 #ifdef __cplusplus
 }
 #endif

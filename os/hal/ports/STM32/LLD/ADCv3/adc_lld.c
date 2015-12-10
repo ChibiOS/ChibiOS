@@ -81,6 +81,27 @@ static const ADCConfig default_config = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void adc_lld_disable_clocks(void) {
+  bool disable;
+
+#if defined(STM32F3XX)
+#endif
+
+#if defined(STM32L4XX)
+#endif
+
+#if STM32_ADC_USE_ADC1
+    if (&ADCD1 == adcp) {
+      rccDisableADC12(FALSE);
+    }
+#endif
+
+#if STM32_ADC_USE_ADC3
+    if (&ADCD3 == adcp)
+      rccDisableADC34(FALSE);
+#endif
+}
+
 /**
  * @brief   Enables the ADC voltage regulator.
  *
@@ -88,12 +109,23 @@ static const ADCConfig default_config = {
  */
 static void adc_lld_vreg_on(ADCDriver *adcp) {
 
+#if defined(STM32F3XX)
   adcp->adcm->CR = 0;   /* RM 12.4.3.*/
   adcp->adcm->CR = ADC_CR_ADVREGEN_0;
 #if STM32_ADC_DUAL_MODE
   adcp->adcs->CR = ADC_CR_ADVREGEN_0;
 #endif
   osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 10));
+#endif
+
+#if defined(STM32L4XX)
+  adcp->adcm->CR = 0;   /* RM 16.3.6.*/
+  adcp->adcm->CR = ADC_CR_ADVREGEN;
+#if STM32_ADC_DUAL_MODE
+  adcp->adcs->CR = ADC_CR_ADVREGEN;
+#endif
+  osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 20));
+#endif
 }
 
 /**
@@ -103,10 +135,22 @@ static void adc_lld_vreg_on(ADCDriver *adcp) {
  */
 static void adc_lld_vreg_off(ADCDriver *adcp) {
 
+#if defined(STM32F3XX)
   adcp->adcm->CR = 0;   /* RM 12.4.3.*/
   adcp->adcm->CR = ADC_CR_ADVREGEN_1;
 #if STM32_ADC_DUAL_MODE
+  adcp->adcs->CR = 0;
   adcp->adcs->CR = ADC_CR_ADVREGEN_1;
+#endif
+#endif
+
+#if defined(STM32L4XX)
+  adcp->adcm->CR = 0;   /* RM 12.4.3.*/
+  adcp->adcm->CR = ADC_CR_DEEPPWD;
+#if STM32_ADC_DUAL_MODE
+  adcp->adcs->CR = 0;
+  adcp->adcs->CR = ADC_CR_DEEPPWD;
+#endif
 #endif
 }
 
@@ -117,6 +161,7 @@ static void adc_lld_vreg_off(ADCDriver *adcp) {
  */
 static void adc_lld_analog_on(ADCDriver *adcp) {
 
+#if defined(STM32F3XX)
   adcp->adcm->CR |= ADC_CR_ADEN;
   while ((adcp->adcm->ISR & ADC_ISR_ADRD) == 0)
     ;
@@ -124,6 +169,18 @@ static void adc_lld_analog_on(ADCDriver *adcp) {
   adcp->adcs->CR |= ADC_CR_ADEN;
   while ((adcp->adcs->ISR & ADC_ISR_ADRD) == 0)
     ;
+#endif
+#endif
+
+#if defined(STM32L4XX)
+  adcp->adcm->CR |= ADC_CR_ADEN;
+  while ((adcp->adcm->ISR & ADC_ISR_ADRDY) == 0)
+    ;
+#if STM32_ADC_DUAL_MODE
+  adcp->adcs->CR |= ADC_CR_ADEN;
+  while ((adcp->adcs->ISR & ADC_ISR_ADRDY) == 0)
+    ;
+#endif
 #endif
 }
 
@@ -151,6 +208,7 @@ static void adc_lld_analog_off(ADCDriver *adcp) {
  */
 static void adc_lld_calibrate(ADCDriver *adcp) {
 
+#if defined(STM32F3XX)
   osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN_0, "invalid register state");
   adcp->adcm->CR |= ADC_CR_ADCAL;
   while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
@@ -160,6 +218,20 @@ static void adc_lld_calibrate(ADCDriver *adcp) {
   adcp->adcs->CR |= ADC_CR_ADCAL;
   while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
     ;
+#endif
+#endif
+
+#if defined(STM32L4XX)
+  osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN, "invalid register state");
+  adcp->adcm->CR |= ADC_CR_ADCAL;
+  while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0)
+    ;
+#if STM32_ADC_DUAL_MODE
+  osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN, "invalid register state");
+  adcp->adcs->CR |= ADC_CR_ADCAL;
+  while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0)
+    ;
+#endif
 #endif
 }
 
@@ -326,18 +398,14 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC1
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
-#if defined(ADC1_2_COMMON)
-  ADCD1.adcc = ADC1_2_COMMON;
-#else
-  ADCD1.adcc = ADC1_COMMON;
-#endif
   ADCD1.adcm = ADC1;
 #if STM32_ADC_DUAL_MODE
   ADCD1.adcs = ADC2;
+  ADCD1.adcc = ADC1_2_COMMON;
 #endif
   ADCD1.dmastp  = STM32_DMA1_STREAM1;
   ADCD1.dmamode = ADC_DMA_SIZE |
-                  STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
@@ -347,18 +415,14 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC3
   /* Driver initialization.*/
   adcObjectInit(&ADCD3);
-#if defined(ADC3_4_COMMON)
-  ADCD3.adcc = ADC3_4_COMMON;
-#else
-  ADCD3.adcc = ADC3_COMMON;
-#endif
   ADCD3.adcm = ADC3;
 #if STM32_ADC_DUAL_MODE
   ADCD3.adcs = ADC4;
+  ADCD3.adcc = ADC3_4_COMMON;
 #endif
   ADCD3.dmastp  = STM32_DMA2_STREAM5;
   ADCD3.dmamode = ADC_DMA_SIZE |
-                  STM32_DMA_CR_PL(STM32_ADC_ADC12_DMA_PRIORITY) |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC3_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
@@ -367,6 +431,28 @@ void adc_lld_init(void) {
   nvicEnableVector(ADC4_IRQn, STM32_ADC_ADC34_IRQ_PRIORITY);
 #endif
 #endif /* STM32_ADC_USE_ADC3 */
+
+#if defined(STM32F3XX)
+#if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
+  rccEnableADC12(FALSE);
+  osalSysPolledDelayX(12);
+  ADC1_2_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+  rccDisableADC12(FALSE);
+#endif
+#if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
+  rccEnableADC34(FALSE);
+  osalSysPolledDelayX(12);
+  ADC3_4_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+  rccDisableADC34(FALSE);
+#endif
+#endif
+
+#if defined(STM32L4XX)
+  rccEnableADC123(FALSE);
+  osalSysPolledDelayX(12);
+  ADC123_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+  rccDisableADC123(FALSE);
+#endif
 }
 
 /**
@@ -389,11 +475,16 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD1 == adcp) {
       bool b;
       b = dmaStreamAllocate(adcp->dmastp,
-                            STM32_ADC_ADC12_DMA_IRQ_PRIORITY,
+                            STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
+#if defined(STM32F3XX)
       rccEnableADC12(FALSE);
+#endif
+#if defined(STM32L4XX)
+      rccEnableADC123(FALSE);
+#endif
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -401,11 +492,16 @@ void adc_lld_start(ADCDriver *adcp) {
     if (&ADCD3 == adcp) {
       bool b;
       b = dmaStreamAllocate(adcp->dmastp,
-                            STM32_ADC_ADC34_DMA_IRQ_PRIORITY,
+                            STM32_ADC_ADC3_DMA_IRQ_PRIORITY,
                             (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                             (void *)adcp);
       osalDbgAssert(!b, "stream already allocated");
+#if defined(STM32F3XX)
       rccEnableADC34(FALSE);
+#endif
+#if defined(STM32L4XX)
+      rccEnableADC123(FALSE);
+#endif
     }
 #endif /* STM32_ADC_USE_ADC2 */
 
@@ -415,10 +511,6 @@ void adc_lld_start(ADCDriver *adcp) {
 #else
       dmaStreamSetPeripheral(adcp->dmastp, &adcp->adcm->DR);
 #endif
-
-    /* Clock source setting.*/
-    adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
-
 
     /* Differential channels setting.*/
 #if STM32_ADC_DUAL_MODE
@@ -459,15 +551,7 @@ void adc_lld_stop(ADCDriver *adcp) {
     adc_lld_analog_off(adcp);
     adc_lld_vreg_off(adcp);
 
-#if STM32_ADC_USE_ADC1
-    if (&ADCD1 == adcp)
-      rccDisableADC12(FALSE);
-#endif
-
-#if STM32_ADC_USE_ADC3
-    if (&ADCD3 == adcp)
-      rccDisableADC34(FALSE);
-#endif
+    adc_lld_disable_clocks();
   }
 }
 
@@ -479,16 +563,17 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-  uint32_t dmamode, ccr, cfgr;
+  uint32_t dmamode, cfgr;
   const ADCConversionGroup *grpp = adcp->grpp;
+#if STM32_ADC_DUAL_MODE
+  uint32_t ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_MDMA_MASK);
+#endif
 
   osalDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
                 "odd number of channels in dual mode");
 
   /* Calculating control registers values.*/
   dmamode = adcp->dmamode;
-  ccr     = grpp->ccr | (adcp->adcc->CCR & (ADC_CCR_CKMODE_MASK |
-                                            ADC_CCR_MDMA_MASK));
   cfgr    = grpp->cfgr | ADC_CFGR_DMAEN;
   if (grpp->circular) {
     dmamode |= STM32_DMA_CR_CIRC;
@@ -516,17 +601,19 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmaStreamSetMode(adcp->dmastp, dmamode);
   dmaStreamEnable(adcp->dmastp);
 
-  /* Configuring the CCR register with the static settings ORed with
-     the user-specified settings in the conversion group configuration
-     structure.*/
-  adcp->adcc->CCR   = ccr;
-
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
   adcp->adcm->ISR   = adcp->adcm->ISR;
   adcp->adcm->IER   = ADC_IER_OVR | ADC_IER_AWD1;
   adcp->adcm->TR1   = grpp->tr1;
 #if STM32_ADC_DUAL_MODE
+
+  /* Configuring the CCR register with the user-specified settings
+     in the conversion group configuration structure, static settings are
+     preserved.*/
+  adcp->adcc->CCR   = (adcp->adcc->CCR &
+                       (ADC_CCR_CKMODE_MASK | ADC_CCR_MDMA_MASK)) | ccr;
+
   adcp->adcm->SMPR1 = grpp->smpr[0];
   adcp->adcm->SMPR2 = grpp->smpr[1];
   adcp->adcm->SQR1  = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
@@ -567,6 +654,72 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
 
   dmaStreamDisable(adcp->dmastp);
   adc_lld_stop_adc(adcp);
+}
+
+/**
+ * @brief   Enables the VREFEN bit.
+ * @details The VREFEN bit is required in order to sample the VREF channel.
+ * @note    This is an STM32-only functionality.
+ * @note    This function is meant to be called after @p adcStart().
+ */
+void adcSTM32EnableVREF(void) {
+
+  ADC123_COMMON->CCR |= ADC_CCR_VBATEN;
+}
+
+/**
+ * @brief   Disables the VREFEN bit.
+ * @details The VREFEN bit is required in order to sample the VREF channel.
+ * @note    This is an STM32-only functionality.
+ * @note    This function is meant to be called after @p adcStart().
+ */
+void adcSTM32DisableVREF(void) {
+
+  ADC123_COMMON->CCR &= ~ADC_CCR_VBATEN;
+}
+
+/**
+ * @brief   Enables the TSEN bit.
+ * @details The TSEN bit is required in order to sample the internal
+ *          temperature sensor and internal reference voltage.
+ * @note    This is an STM32-only functionality.
+ */
+void adcSTM32EnableTS(void) {
+
+  ADC123_COMMON->CCR |= ADC_CCR_TSEN;
+}
+
+/**
+ * @brief   Disables the TSEN bit.
+ * @details The TSEN bit is required in order to sample the internal
+ *          temperature sensor and internal reference voltage.
+ * @note    This is an STM32-only functionality.
+ */
+void adcSTM32DisableTS(void) {
+
+  ADC123_COMMON->CCR &= ~ADC_CCR_TSEN;
+}
+
+/**
+ * @brief   Enables the VBATEN bit.
+ * @details The VBATEN bit is required in order to sample the VBAT channel.
+ * @note    This is an STM32-only functionality.
+ * @note    This function is meant to be called after @p adcStart().
+ */
+void adcSTM32EnableVBAT(void) {
+
+  ADC123_COMMON->CCR |= ADC_CCR_VBATEN;
+}
+
+/**
+ * @brief   Disables the VBATEN bit.
+ * @details The VBATEN bit is required in order to sample the VBAT channel.
+ * @note    This is an STM32-only functionality.
+ * @note    This function is meant to be called after @p adcStart().
+ */
+void adcSTM32DisableVBAT(void) {
+
+  ADC123_COMMON->CCR &= ~ADC_CCR_VBATEN;
 }
 
 #endif /* HAL_USE_ADC */

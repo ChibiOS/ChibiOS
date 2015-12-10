@@ -145,9 +145,9 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 1 using the driver default configuration.
+   * Activates the serial driver 2 using the driver default configuration.
    */
-  sdStart(&SD1, NULL);
+  sdStart(&SD2, NULL);
 
   /*
    * Starting GPT4 driver, it is used for triggering the ADC.
@@ -164,7 +164,8 @@ int main(void) {
    * Activates the ADC1 driver and the temperature sensor.
    */
   adcStart(&ADCD1, NULL);
-  adcSTM32EnableTSVREFE();
+  adcSTM32EnableVREF();
+  adcSTM32EnableTS();
 
   /*
    * Starts an ADC continuous conversion triggered with a period of
