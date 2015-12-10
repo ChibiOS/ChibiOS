@@ -872,6 +872,11 @@
  * @brief   Maximum APB2 clock frequency.
  */
 #define STM32_PCLK2_MAX             80000000
+
+/**
+ * @brief   Maximum ADC clock frequency.
+ */
+#define STM32_ADCCLK_MAX            80000000
 /** @} */
 
 /**
@@ -906,6 +911,7 @@
 #define STM32_PLLR_MIN              8000000
 #define STM32_PCLK1_MAX             26000000
 #define STM32_PCLK2_MAX             26000000
+#define STM32_ADCCLK_MAX            26000000
 
 #define STM32_0WS_THRESHOLD         6000000
 #define STM32_1WS_THRESHOLD         12000000

@@ -2,7 +2,7 @@ STM32 ADCv2 driver.
 
 Driver capability:
 
-- Supports the STM32 "advanced" ADC found on F2, F4 and F7 sub-families.
+- Supports the STM32 "fast" ADC found on F3 and L4 sub-families.
 
 The file registry must export:
 
