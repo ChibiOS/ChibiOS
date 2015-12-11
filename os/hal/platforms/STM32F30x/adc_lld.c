@@ -65,7 +65,7 @@
 ADCDriver ADCD1;
 #endif
 
-/** @brief ADC1 driver identifier.*/
+/** @brief ADC3 driver identifier.*/
 #if STM32_ADC_USE_ADC3 || defined(__DOXYGEN__)
 ADCDriver ADCD3;
 #endif
