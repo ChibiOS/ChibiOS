@@ -61,7 +61,7 @@
         Type="PushPull"
         Level="Low"
         Speed="High"
-        Resistor="Floating"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin6
@@ -69,7 +69,7 @@
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin7
@@ -215,7 +215,7 @@
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="Floating"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin9

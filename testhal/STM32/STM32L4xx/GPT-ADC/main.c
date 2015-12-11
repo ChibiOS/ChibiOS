@@ -91,20 +91,25 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
  * ADC conversion group.
  * Mode:        Continuous, 16 samples of 2 channels, HS triggered by
  *              GPT4-TRGO.
- * Channels:    Sensor, VRef.
+ * Channels:    VRef, PC1.
  */
 static const ADCConversionGroup adcgrpcfg1 = {
   true,
   ADC_GRP1_NUM_CHANNELS,
   adccallback,
   adcerrorcallback,
-  0,                                                    /* CR1 */
-  ADC_CR2_EXTEN_RISING | ADC_CR2_EXTSEL_SRC(12),        /* CR2 */
-  ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_144) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_144),
-  0,                                                    /* SMPR2 */
-  ADC_SQR1_NUM_CH(ADC_GRP1_NUM_CHANNELS),               /* SQR1 */
-  0,                                                    /* SQR1 */
-  ADC_SQR3_SQ2_N(ADC_CHANNEL_SENSOR) | ADC_SQR3_SQ1_N(ADC_CHANNEL_VREFINT)
+  ADC_CFGR_CONT | ADC_CFGR_EXTEN_RISING | ADC_CFGR_EXTSEL_SRC(12), /* CFGR */
+  ADC_TR(0, 4095),                                          /* TR1      */
+  {                                                         /* SMPR[2]  */
+    ADC_SMPR1_SMP_AN0(ADC_SMPR_SMP_247P5),
+    ADC_SMPR2_SMP_AN11(ADC_SMPR_SMP_247P5)
+  },
+  {                                                         /* SQR[4]   */
+    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN0) | ADC_SQR1_SQ2_N(ADC_CHANNEL_IN11),
+    0,
+    0,
+    0
+  }
 };
 
 /*===========================================================================*/

@@ -35,6 +35,7 @@
  * @name    Available analog channels
  * @{
  */
+#define ADC_CHANNEL_IN0         0   /**< @brief External analog input 0.    */
 #define ADC_CHANNEL_IN1         1   /**< @brief External analog input 1.    */
 #define ADC_CHANNEL_IN2         2   /**< @brief External analog input 2.    */
 #define ADC_CHANNEL_IN3         3   /**< @brief External analog input 3.    */
@@ -59,6 +60,7 @@
  * @name    Sampling rates
  * @{
  */
+#if defined(STM32F3XX)
 #define ADC_SMPR_SMP_1P5        0   /**< @brief 14 cycles conversion time   */
 #define ADC_SMPR_SMP_2P5        1   /**< @brief 15 cycles conversion time.  */
 #define ADC_SMPR_SMP_4P5        2   /**< @brief 17 cycles conversion time.  */
@@ -67,6 +69,17 @@
 #define ADC_SMPR_SMP_61P5       5   /**< @brief 74 cycles conversion time.  */
 #define ADC_SMPR_SMP_181P5      6   /**< @brief 194 cycles conversion time. */
 #define ADC_SMPR_SMP_601P5      7   /**< @brief 614 cycles conversion time. */
+#endif
+#if defined(STM32L4XX)
+#define ADC_SMPR_SMP_2P5        0   /**< @brief 15 cycles conversion time   */
+#define ADC_SMPR_SMP_6P5        1   /**< @brief 19 cycles conversion time.  */
+#define ADC_SMPR_SMP_12P5       2   /**< @brief 25 cycles conversion time.  */
+#define ADC_SMPR_SMP_24P5       3   /**< @brief 37 cycles conversion time.  */
+#define ADC_SMPR_SMP_47P5       4   /**< @brief 60 cycles conversion time.  */
+#define ADC_SMPR_SMP_92P5       5   /**< @brief 105 cycles conversion time. */
+#define ADC_SMPR_SMP_247P5      6   /**< @brief 260 cycles conversion time. */
+#define ADC_SMPR_SMP_640P5      7   /**< @brief 653 cycles conversion time. */
+#endif
 /** @} */
 
 /**
@@ -612,7 +625,7 @@ typedef struct {
    * @note    The bits DMAEN and DMACFG are enforced internally
    *          to the driver, keep them to zero.
    * @note    The bits @p ADC_CFGR_CONT or @p ADC_CFGR_DISCEN must be
-   *          specified in continuous more or if the buffer depth is
+   *          specified in continuous mode or if the buffer depth is
    *          greater than one.
    */
   uint32_t                  cfgr;
@@ -768,6 +781,7 @@ struct ADCDriver {
  * @name    Sampling rate settings helper macros
  * @{
  */
+#define ADC_SMPR1_SMP_AN0(n)    ((n) << 0)  /**< @brief AN0 sampling time.  */
 #define ADC_SMPR1_SMP_AN1(n)    ((n) << 3)  /**< @brief AN1 sampling time.  */
 #define ADC_SMPR1_SMP_AN2(n)    ((n) << 6)  /**< @brief AN2 sampling time.  */
 #define ADC_SMPR1_SMP_AN3(n)    ((n) << 9)  /**< @brief AN3 sampling time.  */

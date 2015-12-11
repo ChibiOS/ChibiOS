@@ -222,8 +222,8 @@
  * PA2  - VCP_TX                    (alternate 7).
  * PA3  - ARD_A2                    (input pullup).
  * PA4  - ARD_A3                    (input pullup).
- * PA5  - ARD_A4                    (input floating).
- * PA6  - ARD_A5                    (input floating).
+ * PA5  - ARD_A4                    (input pullup).
+ * PA6  - ARD_A5                    (input pullup).
  * PA7  - ARD_A6                    (input pullup).
  * PA8  - ARD_D9                    (input pullup).
  * PA9  - ARD_D1                    (input pullup).
@@ -287,8 +287,8 @@
                                      PIN_PUPDR_FLOATING(GPIOA_VCP_TX) |     \
                                      PIN_PUPDR_PULLUP(GPIOA_ARD_A2) |       \
                                      PIN_PUPDR_PULLUP(GPIOA_ARD_A3) |       \
-                                     PIN_PUPDR_FLOATING(GPIOA_ARD_A4) |     \
-                                     PIN_PUPDR_FLOATING(GPIOA_ARD_A5) |     \
+                                     PIN_PUPDR_PULLUP(GPIOA_ARD_A4) |       \
+                                     PIN_PUPDR_PULLUP(GPIOA_ARD_A5) |       \
                                      PIN_PUPDR_PULLUP(GPIOA_ARD_A6) |       \
                                      PIN_PUPDR_PULLUP(GPIOA_ARD_D9) |       \
                                      PIN_PUPDR_PULLUP(GPIOA_ARD_D1) |       \
@@ -342,7 +342,7 @@
  * PB5  - ARD_D11                   (input pullup).
  * PB6  - ARD_D5 ARD_A5_ALT         (input pullup).
  * PB7  - ARD_D4 ARD_A4_ALT         (input pullup).
- * PB8  - PIN8                      (input floating).
+ * PB8  - PIN8                      (input pullup).
  * PB9  - PIN9                      (input pullup).
  * PB10 - PIN10                     (input pullup).
  * PB11 - PIN11                     (input pullup).
@@ -407,7 +407,7 @@
                                      PIN_PUPDR_PULLUP(GPIOB_ARD_D11) |      \
                                      PIN_PUPDR_PULLUP(GPIOB_ARD_D5) |       \
                                      PIN_PUPDR_PULLUP(GPIOB_ARD_D4) |       \
-                                     PIN_PUPDR_FLOATING(GPIOB_PIN8) |       \
+                                     PIN_PUPDR_PULLUP(GPIOB_PIN8) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN9) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN10) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN11) |        \
