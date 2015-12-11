@@ -398,7 +398,7 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(!b, "stream already allocated");
       rccEnableADC34(FALSE);
     }
-#endif /* STM32_ADC_USE_ADC2 */
+#endif /* STM32_ADC_USE_ADC3 */
 
     /* Setting DMA peripheral-side pointer.*/
 #if STM32_ADC_DUAL_MODE
