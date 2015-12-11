@@ -22,7 +22,7 @@
   <ports>
     <GPIOA>
       <pin0
-        ID=""
+        ID="ARD_A0"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -32,7 +32,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
-        ID=""
+        ID="ARD_A1"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -42,7 +42,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
-        ID="USART_TX"
+        ID="ARD_D1 USART_TX"
         Type="PushPull"
         Level="High"
         Speed="High"
@@ -52,7 +52,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
-        ID="USART_RX"
+        ID="ARD_D0 USART_RX"
         Type="PushPull"
         Level="High"
         Speed="High"
@@ -62,7 +62,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
-        ID=""
+        ID="ARD_A2"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -72,7 +72,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
-        ID="LED_GREEN"
+        ID="ARD_D13 LED_GREEN"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -82,7 +82,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
-        ID=""
+        ID="ARD_D12"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -92,7 +92,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
-        ID=""
+        ID="ARD_D11"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -102,7 +102,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
-        ID=""
+        ID="ARD_D7"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -112,7 +112,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
-        ID=""
+        ID="ARD_D8"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -122,7 +122,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
-        ID=""
+        ID="ARD_D2"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -184,7 +184,7 @@
     </GPIOA>
     <GPIOB>
       <pin0
-        ID=""
+        ID="ARD_A3"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -214,17 +214,17 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
-        ID="SWO"
+        ID="ARD_D3 SWO"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Alternate"
+        Resistor="Floating"
+        Mode="Analog"
         Alternate="0"
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
-        ID=""
+        ID="ARD_D5"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -234,7 +234,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
-        ID=""
+        ID="ARD_D4"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -244,7 +244,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
-        ID=""
+        ID="ARD_D10"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -264,7 +264,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
-        ID=""
+        ID="ARD_D15 ARD_A5_ALT"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -274,7 +274,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
-        ID=""
+        ID="ARD_D14 ARD_A4_ALT"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -284,7 +284,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
-        ID=""
+        ID="ARD_D6"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -346,7 +346,7 @@
     </GPIOB>
     <GPIOC>
       <pin0
-        ID=""
+        ID="ARD_A5"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -356,7 +356,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
-        ID=""
+        ID="ARD_A4"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -416,7 +416,7 @@
         AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
-        ID=""
+        ID="ARD_D9"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
