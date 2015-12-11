@@ -249,10 +249,17 @@
 #endif
 
 /**
- * @brief   ADC3/ADC4 interrupt priority level setting.
+ * @brief   ADC3 interrupt priority level setting.
  */
-#if !defined(STM32_ADC34_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC34_IRQ_PRIORITY        5
+#if !defined(STM32_ADC3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC3_IRQ_PRIORITY         5
+#endif
+
+/**
+ * @brief   ADC4 interrupt priority level setting.
+ */
+#if !defined(STM32_ADC4_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC4_IRQ_PRIORITY         5
 #endif
 
 /**
@@ -319,6 +326,40 @@
 #error "ADCv3 only supports F3 and L4 STM32 devices"
 #endif
 
+/* Registry checks.*/
+#if !defined(STM32_HAS_ADC1) || !defined(STM32_HAS_ADC2) ||                 \
+    !defined(STM32_HAS_ADC3) || !defined(STM32_HAS_ADC4)
+#error "STM32_ADC_USE_ADCx not defined in registry"
+#endif
+
+#if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_HANDLER)) ||                 \
+    (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_HANDLER)) ||                 \
+    (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_HANDLER)) ||                 \
+    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_HANDLER))
+#error "STM32_ADCx_HANDLER not defined in registry"
+#endif
+
+#if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_NUMBER)) ||                  \
+    (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_NUMBER)) ||                  \
+    (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_NUMBER)) ||                  \
+    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_NUMBER))
+#error "STM32_ADCx_NUMBER not defined in registry"
+#endif
+
+#if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_DMA_MSK)) ||                 \
+    (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_DMA_MSK)) ||                 \
+    (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_DMA_MSK)) ||                 \
+    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_DMA_MSK))
+#error "STM32_ADCx_DMA_MSK not defined in registry"
+#endif
+
+#if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_DMA_CHN)) ||                 \
+    (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_DMA_CHN)) ||                 \
+    (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_DMA_CHN)) ||                 \
+    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_DMA_CHN))
+#error "STM32_ADCx_DMA_CHN not defined in registry"
+#endif
+
 /* Units checks.*/
 #if STM32_ADC_USE_ADC1 && !STM32_HAS_ADC1
 #error "ADC1 not present in the selected device"
@@ -359,15 +400,31 @@
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
+/* ISR arrangments checks.*/
+#if STM32_ADC1_NUMBER != STM32_ADC2_NUMBER
+#error "ADCv3 driver expects STM32_ADC1_NUMBER == STM32_ADC2_NUMBER from registry"
+#endif
+
 /* ADC IRQ priority tests.*/
 #if STM32_ADC_USE_ADC1 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1"
 #endif
 
+/* ADC IRQ priority tests.*/
+#if STM32_ADC_USE_ADC2 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC2"
+#endif
+
 #if STM32_ADC_USE_ADC3 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC34_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC3_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC3"
+#endif
+
+#if STM32_ADC_USE_ADC4 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC4_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC4"
 #endif
 
 /* DMA IRQ priority tests.*/
