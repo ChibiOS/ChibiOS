@@ -85,6 +85,7 @@
 - HAL: Added "lines" handling to PAL driver, lines are identifiers of both
        ports and pins encoded in a single value. Added a set of macros
        operating on lines.
+- HAL: Merged the latest STM32F3xx CMSIS headers.
 - HAL: Merged the latest STM32F2xx CMSIS headers and fixed the support
        broken in 3.0.x.
 - RT:  Added new function chVTGetTimersStateI() returning the state of the

@@ -59,6 +59,11 @@
 #define STM32_I2C2_EVENT_NUMBER     33
 #define STM32_I2C2_ERROR_NUMBER     34
 
+#define STM32_I2C3_EVENT_HANDLER    Vector160
+#define STM32_I2C3_ERROR_HANDLER    Vector164
+#define STM32_I2C3_EVENT_NUMBER     72
+#define STM32_I2C3_ERROR_NUMBER     73
+
 /*
  * TIM units.
  */

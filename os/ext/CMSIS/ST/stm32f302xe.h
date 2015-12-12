@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    stm32f302x8.h
+  * @file    stm32f302xe.h
   * @author  MCD Application Team
   * @version V2.2.0
   * @date    13-November-2015
-  * @brief   CMSIS STM32F302x8 Devices Peripheral Access Layer Header File.
+  * @brief   CMSIS STM32F302xE Devices Peripheral Access Layer Header File.
   *
   *          This file contains:
   *           - Data structures and the address mapping for all peripherals
@@ -45,12 +45,12 @@
   * @{
   */
 
-/** @addtogroup stm32f302x8
+/** @addtogroup stm32f302xe
   * @{
   */
 
-#ifndef __STM32F302x8_H
-#define __STM32F302x8_H
+#ifndef __STM32F302xE_H
+#define __STM32F302xE_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -64,10 +64,10 @@
  * @brief Configuration of the Cortex-M4 Processor and Core Peripherals
  */
 #define __CM4_REV                 0x0001  /*!< Core revision r0p1                            */
-#define __MPU_PRESENT             0       /*!< STM32F302x8 devices do not provide an MPU */
-#define __NVIC_PRIO_BITS          4       /*!< STM32F302x8 devices use 4 Bits for the Priority Levels */
+#define __MPU_PRESENT             1       /*!< STM32F302xE devices provide an MPU */
+#define __NVIC_PRIO_BITS          4       /*!< STM32F302xE devices use 4 Bits for the Priority Levels */
 #define __Vendor_SysTickConfig    0       /*!< Set to 1 if different SysTick Config is used */
-#define __FPU_PRESENT             1       /*!< STM32F302x8 devices provide an FPU */
+#define __FPU_PRESENT             1       /*!< STM32F302xE devices provide an FPU */
 
 /**
   * @}
@@ -78,7 +78,7 @@
   */
 
 /**
- * @brief STM32F302x8 devices Interrupt Number Definition, according to the selected device
+ * @brief STM32F302xE devices Interrupt Number Definition, according to the selected device
  *        in @ref Library_configuration_section
  */
 typedef enum
@@ -111,7 +111,7 @@ typedef enum
   DMA1_Channel5_IRQn          = 15,     /*!< DMA1 Channel 5 Interrupt                                          */
   DMA1_Channel6_IRQn          = 16,     /*!< DMA1 Channel 6 Interrupt                                          */
   DMA1_Channel7_IRQn          = 17,     /*!< DMA1 Channel 7 Interrupt                                          */
-  ADC1_IRQn                   = 18,     /*!< ADC1 Interrupts                                                   */
+  ADC1_2_IRQn                 = 18,     /*!< ADC1 & ADC2 Interrupts                                            */
   USB_HP_CAN_TX_IRQn          = 19,     /*!< USB Device High Priority or CAN TX Interrupts                     */
   USB_LP_CAN_RX0_IRQn         = 20,     /*!< USB Device Low Priority or CAN RX0 Interrupts                     */
   CAN_RX1_IRQn                = 21,     /*!< CAN RX1 Interrupt                                                 */
@@ -122,10 +122,13 @@ typedef enum
   TIM1_TRG_COM_TIM17_IRQn     = 26,     /*!< TIM1 Trigger and Commutation and TIM17 Interrupt                  */
   TIM1_CC_IRQn                = 27,     /*!< TIM1 Capture Compare Interrupt                                    */
   TIM2_IRQn                   = 28,     /*!< TIM2 global Interrupt                                             */
+  TIM3_IRQn                   = 29,     /*!< TIM3 global Interrupt                                             */
+  TIM4_IRQn                   = 30,     /*!< TIM4 global Interrupt                                             */
   I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt & EXTI Line23 Interrupt (I2C1 wakeup)        */
   I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                              */
   I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt & EXTI Line24 Interrupt (I2C2 wakeup)        */
   I2C2_ER_IRQn                = 34,     /*!< I2C2 Error Interrupt                                              */
+  SPI1_IRQn                   = 35,     /*!< SPI1 global Interrupt                                             */
   SPI2_IRQn                   = 36,     /*!< SPI2 global Interrupt                                             */
   USART1_IRQn                 = 37,     /*!< USART1 global Interrupt & EXTI Line25 Interrupt (USART1 wakeup)   */
   USART2_IRQn                 = 38,     /*!< USART2 global Interrupt & EXTI Line26 Interrupt (USART2 wakeup)   */
@@ -133,16 +136,25 @@ typedef enum
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                                   */
   RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm (A and B) through EXTI Line 17 Interrupt                 */
   USBWakeUp_IRQn              = 42,     /*!< USB Wakeup Interrupt                                              */
+  FMC_IRQn                    = 48,     /*!< FMC global Interrupt                                              */
   SPI3_IRQn                   = 51,     /*!< SPI3 global Interrupt                                             */
+  UART4_IRQn                  = 52,     /*!< UART4 global Interrupt & EXTI Line34 Interrupt (UART4 wakeup)     */
+  UART5_IRQn                  = 53,     /*!< UART5 global Interrupt & EXTI Line35 Interrupt (UART5 wakeup)     */
   TIM6_DAC_IRQn               = 54,     /*!< TIM6 global and DAC underrun error Interrupt             */
-  COMP2_IRQn                  = 64,     /*!< COMP2 global Interrupt via EXTI Line22                            */
+  DMA2_Channel1_IRQn          = 56,     /*!< DMA2 Channel 1 global Interrupt                                   */
+  DMA2_Channel2_IRQn          = 57,     /*!< DMA2 Channel 2 global Interrupt                                   */
+  DMA2_Channel3_IRQn          = 58,     /*!< DMA2 Channel 3 global Interrupt                                   */
+  DMA2_Channel4_IRQn          = 59,     /*!< DMA2 Channel 4 global Interrupt                                   */
+  DMA2_Channel5_IRQn          = 60,     /*!< DMA2 Channel 5 global Interrupt                                   */
+  COMP1_2_IRQn                = 64,     /*!< COMP1 and COMP2 global Interrupt via EXTI Line21 and 22           */
   COMP4_6_IRQn                = 65,     /*!< COMP4 and COMP6 global Interrupt via EXTI Line30 and 32           */
-  I2C3_EV_IRQn                = 72,     /*!< I2C3 Event Interrupt & EXTI Line27 Interrupt (I2C3 wakeup)        */
+  I2C3_EV_IRQn                = 72,     /*!< I2C3 event interrupt                                              */
   I2C3_ER_IRQn                = 73,     /*!< I2C3 Error Interrupt                                              */
   USB_HP_IRQn                 = 74,     /*!< USB High Priority global Interrupt                                */
   USB_LP_IRQn                 = 75,     /*!< USB Low Priority global Interrupt                                 */
   USBWakeUp_RMP_IRQn          = 76,     /*!< USB Wakeup Interrupt remap                                        */
   FPU_IRQn                    = 81,      /*!< Floating point Interrupt                                          */
+  SPI4_IRQn                   = 84,     /*!< SPI4 global Interrupt                                             */   
 } IRQn_Type;
 
 /**
@@ -390,6 +402,59 @@ typedef struct
 } FLASH_TypeDef;
 
 /**
+  * @brief Flexible Memory Controller
+  */
+
+typedef struct
+{
+  __IO uint32_t BTCR[8];    /*!< NOR/PSRAM chip-select control register(BCR) and chip-select timing register(BTR), Address offset: 0x00-1C */   
+} FMC_Bank1_TypeDef; 
+
+/** 
+  * @brief Flexible Memory Controller Bank1E
+  */
+  
+typedef struct
+{
+  __IO uint32_t BWTR[7];    /*!< NOR/PSRAM write timing registers, Address offset: 0x104-0x11C */
+} FMC_Bank1E_TypeDef;
+
+/** 
+  * @brief Flexible Memory Controller Bank2
+  */
+  
+typedef struct
+{
+  __IO uint32_t PCR2;       /*!< NAND Flash control register 2,                       Address offset: 0x60 */
+  __IO uint32_t SR2;        /*!< NAND Flash FIFO status and interrupt register 2,     Address offset: 0x64 */
+  __IO uint32_t PMEM2;      /*!< NAND Flash Common memory space timing register 2,    Address offset: 0x68 */
+  __IO uint32_t PATT2;      /*!< NAND Flash Attribute memory space timing register 2, Address offset: 0x6C */
+  uint32_t      RESERVED0;  /*!< Reserved, 0x70                                                            */
+  __IO uint32_t ECCR2;      /*!< NAND Flash ECC result registers 2,                   Address offset: 0x74 */
+  uint32_t      RESERVED1;  /*!< Reserved, 0x78                                                            */
+  uint32_t      RESERVED2;  /*!< Reserved, 0x7C                                                            */
+  __IO uint32_t PCR3;       /*!< NAND Flash control register 3,                       Address offset: 0x80 */
+  __IO uint32_t SR3;        /*!< NAND Flash FIFO status and interrupt register 3,     Address offset: 0x84 */
+  __IO uint32_t PMEM3;      /*!< NAND Flash Common memory space timing register 3,    Address offset: 0x88 */
+  __IO uint32_t PATT3;      /*!< NAND Flash Attribute memory space timing register 3, Address offset: 0x8C */
+  uint32_t      RESERVED3;  /*!< Reserved, 0x90                                                            */
+  __IO uint32_t ECCR3;      /*!< NAND Flash ECC result registers 3,                   Address offset: 0x94 */
+} FMC_Bank2_3_TypeDef;
+
+/** 
+  * @brief Flexible Memory Controller Bank4
+  */
+  
+typedef struct
+{
+  __IO uint32_t PCR4;       /*!< PC Card  control register 4,                       Address offset: 0xA0 */
+  __IO uint32_t SR4;        /*!< PC Card  FIFO status and interrupt register 4,     Address offset: 0xA4 */
+  __IO uint32_t PMEM4;      /*!< PC Card  Common memory space timing register 4,    Address offset: 0xA8 */
+  __IO uint32_t PATT4;      /*!< PC Card  Attribute memory space timing register 4, Address offset: 0xAC */
+  __IO uint32_t PIO4;       /*!< PC Card  I/O space timing register 4,              Address offset: 0xB0 */
+} FMC_Bank4_TypeDef; 
+
+/**
   * @brief Option Bytes Registers
   */
 typedef struct
@@ -547,10 +612,6 @@ typedef struct
   __IO uint32_t BKP13R;     /*!< RTC backup register 13,                                   Address offset: 0x84 */
   __IO uint32_t BKP14R;     /*!< RTC backup register 14,                                   Address offset: 0x88 */
   __IO uint32_t BKP15R;     /*!< RTC backup register 15,                                   Address offset: 0x8C */
-  __IO uint32_t BKP16R;     /*!< RTC backup register 16,                                   Address offset: 0x90 */
-  __IO uint32_t BKP17R;     /*!< RTC backup register 17,                                   Address offset: 0x94 */
-  __IO uint32_t BKP18R;     /*!< RTC backup register 18,                                   Address offset: 0x98 */
-  __IO uint32_t BKP19R;     /*!< RTC backup register 19,                                   Address offset: 0x9C */
 } RTC_TypeDef;
 
 
@@ -697,6 +758,9 @@ typedef struct
 #define FLASH_BASE            ((uint32_t)0x08000000) /*!< FLASH base address in the alias region */
 #define SRAM_BASE             ((uint32_t)0x20000000) /*!< SRAM base address in the alias region */
 #define PERIPH_BASE           ((uint32_t)0x40000000) /*!< Peripheral base address in the alias region */
+#define FMC_BASE              ((uint32_t)0x60000000) /*!< FMC base address                                                             */
+#define FMC_R_BASE            ((uint32_t)0xA0000000) /*!< FMC registers base address                                                   */
+
 #define SRAM_BB_BASE          ((uint32_t)0x22000000) /*!< SRAM base address in the bit-band region */
 #define PERIPH_BB_BASE        ((uint32_t)0x42000000) /*!< Peripheral base address in the bit-band region */
 
@@ -710,6 +774,8 @@ typedef struct
 
 /*!< APB1 peripherals */
 #define TIM2_BASE             (APB1PERIPH_BASE + 0x00000000)
+#define TIM3_BASE             (APB1PERIPH_BASE + 0x00000400)
+#define TIM4_BASE             (APB1PERIPH_BASE + 0x00000800)
 #define TIM6_BASE             (APB1PERIPH_BASE + 0x00001000)
 #define RTC_BASE              (APB1PERIPH_BASE + 0x00002800)
 #define WWDG_BASE             (APB1PERIPH_BASE + 0x00002C00)
@@ -720,6 +786,8 @@ typedef struct
 #define I2S3ext_BASE          (APB1PERIPH_BASE + 0x00004000)
 #define USART2_BASE           (APB1PERIPH_BASE + 0x00004400)
 #define USART3_BASE           (APB1PERIPH_BASE + 0x00004800)
+#define UART4_BASE            (APB1PERIPH_BASE + 0x00004C00)
+#define UART5_BASE            (APB1PERIPH_BASE + 0x00005000)
 #define I2C1_BASE             (APB1PERIPH_BASE + 0x00005400)
 #define I2C2_BASE             (APB1PERIPH_BASE + 0x00005800)
 #define USB_BASE              (APB1PERIPH_BASE + 0x00005C00) /*!< USB_IP Peripheral Registers base address */
@@ -732,15 +800,19 @@ typedef struct
 
 /*!< APB2 peripherals */
 #define SYSCFG_BASE           (APB2PERIPH_BASE + 0x00000000)
+#define COMP1_BASE            (APB2PERIPH_BASE + 0x0000001C)
 #define COMP2_BASE            (APB2PERIPH_BASE + 0x00000020)
 #define COMP4_BASE            (APB2PERIPH_BASE + 0x00000028)
 #define COMP6_BASE            (APB2PERIPH_BASE + 0x00000030)
-#define COMP_BASE             COMP2_BASE
+#define COMP_BASE             COMP1_BASE
+#define OPAMP1_BASE           (APB2PERIPH_BASE + 0x00000038)
 #define OPAMP2_BASE           (APB2PERIPH_BASE + 0x0000003C)
-#define OPAMP_BASE            OPAMP2_BASE
+#define OPAMP_BASE            OPAMP1_BASE
 #define EXTI_BASE             (APB2PERIPH_BASE + 0x00000400)
 #define TIM1_BASE             (APB2PERIPH_BASE + 0x00002C00)
+#define SPI1_BASE             (APB2PERIPH_BASE + 0x00003000)
 #define USART1_BASE           (APB2PERIPH_BASE + 0x00003800)
+#define SPI4_BASE             (APB2PERIPH_BASE + 0x00003C00)
 #define TIM15_BASE            (APB2PERIPH_BASE + 0x00004000)
 #define TIM16_BASE            (APB2PERIPH_BASE + 0x00004400)
 #define TIM17_BASE            (APB2PERIPH_BASE + 0x00004800)
@@ -754,6 +826,12 @@ typedef struct
 #define DMA1_Channel5_BASE    (AHB1PERIPH_BASE + 0x00000058)
 #define DMA1_Channel6_BASE    (AHB1PERIPH_BASE + 0x0000006C)
 #define DMA1_Channel7_BASE    (AHB1PERIPH_BASE + 0x00000080)
+#define DMA2_BASE             (AHB1PERIPH_BASE + 0x00000400)
+#define DMA2_Channel1_BASE    (AHB1PERIPH_BASE + 0x00000408)
+#define DMA2_Channel2_BASE    (AHB1PERIPH_BASE + 0x0000041C)
+#define DMA2_Channel3_BASE    (AHB1PERIPH_BASE + 0x00000430)
+#define DMA2_Channel4_BASE    (AHB1PERIPH_BASE + 0x00000444)
+#define DMA2_Channel5_BASE    (AHB1PERIPH_BASE + 0x00000458)
 #define RCC_BASE              (AHB1PERIPH_BASE + 0x00001000)
 #define FLASH_R_BASE          (AHB1PERIPH_BASE + 0x00002000) /*!< Flash registers base address */
 #define OB_BASE               ((uint32_t)0x1FFFF800)     /*!< Flash Option Bytes base address */
@@ -765,11 +843,32 @@ typedef struct
 #define GPIOB_BASE            (AHB2PERIPH_BASE + 0x00000400)
 #define GPIOC_BASE            (AHB2PERIPH_BASE + 0x00000800)
 #define GPIOD_BASE            (AHB2PERIPH_BASE + 0x00000C00)
+#define GPIOE_BASE            (AHB2PERIPH_BASE + 0x00001000)
 #define GPIOF_BASE            (AHB2PERIPH_BASE + 0x00001400)
+#define GPIOG_BASE            (AHB2PERIPH_BASE + 0x00001800)
+#define GPIOH_BASE            (AHB2PERIPH_BASE + 0x00001C00)
 
 /*!< AHB3 peripherals */
 #define ADC1_BASE             (AHB3PERIPH_BASE + 0x00000000)
-#define ADC1_COMMON_BASE      (AHB3PERIPH_BASE + 0x00000300)
+#define ADC2_BASE             (AHB3PERIPH_BASE + 0x00000100)
+#define ADC1_2_COMMON_BASE    (AHB3PERIPH_BASE + 0x00000300)
+
+/*!< FMC Bankx base address */
+#define FMC_BANK1             (FMC_BASE)               /*!< FMC Bank1 base address   */
+#define FMC_BANK1_1           (FMC_BANK1)              /*!< FMC Bank1_1 base address */
+#define FMC_BANK1_2           (FMC_BANK1 + 0x04000000) /*!< FMC Bank1_2 base address */
+#define FMC_BANK1_3           (FMC_BANK1 + 0x08000000) /*!< FMC Bank1_3 base address */
+#define FMC_BANK1_4           (FMC_BANK1 + 0x0C000000) /*!< FMC Bank1_4 base address */
+
+#define FMC_BANK2             (FMC_BASE + 0x10000000)  /*!< FMC Bank2 base address   */
+#define FMC_BANK3             (FMC_BASE + 0x20000000)  /*!< FMC Bank3 base address   */
+#define FMC_BANK4             (FMC_BASE + 0x30000000)  /*!< FMC Bank4 base address   */
+
+/*!< FMC Bankx registers base address */
+#define FMC_Bank1_R_BASE      (FMC_R_BASE + 0x0000)
+#define FMC_Bank1E_R_BASE     (FMC_R_BASE + 0x0104)
+#define FMC_Bank2_3_R_BASE    (FMC_R_BASE + 0x0060)
+#define FMC_Bank4_R_BASE      (FMC_R_BASE + 0x00A0)
 
 #define DBGMCU_BASE          ((uint32_t)0xE0042000) /*!< Debug MCU registers base address */
 /**
@@ -780,6 +879,8 @@ typedef struct
   * @{
   */
 #define TIM2                ((TIM_TypeDef *) TIM2_BASE)
+#define TIM3                ((TIM_TypeDef *) TIM3_BASE)
+#define TIM4                ((TIM_TypeDef *) TIM4_BASE)
 #define TIM6                ((TIM_TypeDef *) TIM6_BASE)
 #define RTC                 ((RTC_TypeDef *) RTC_BASE)
 #define WWDG                ((WWDG_TypeDef *) WWDG_BASE)
@@ -790,6 +891,8 @@ typedef struct
 #define I2S3ext             ((SPI_TypeDef *) I2S3ext_BASE)
 #define USART2              ((USART_TypeDef *) USART2_BASE)
 #define USART3              ((USART_TypeDef *) USART3_BASE)
+#define UART4               ((USART_TypeDef *) UART4_BASE)
+#define UART5               ((USART_TypeDef *) UART5_BASE)
 #define I2C1                ((I2C_TypeDef *) I2C1_BASE)
 #define I2C2                ((I2C_TypeDef *) I2C2_BASE)
 #define I2C3                ((I2C_TypeDef *) I2C3_BASE)
@@ -798,15 +901,19 @@ typedef struct
 #define DAC                 ((DAC_TypeDef *) DAC_BASE)
 #define DAC1                ((DAC_TypeDef *) DAC1_BASE)
 #define COMP                ((COMP_TypeDef *) COMP_BASE)
+#define COMP1               ((COMP_TypeDef *) COMP1_BASE)
 #define COMP2               ((COMP_TypeDef *) COMP2_BASE)
 #define COMP4               ((COMP_TypeDef *) COMP4_BASE)
 #define COMP6               ((COMP_TypeDef *) COMP6_BASE)
+#define OPAMP1              ((OPAMP_TypeDef *) OPAMP1_BASE)
 #define OPAMP               ((OPAMP_TypeDef *) OPAMP_BASE)
 #define OPAMP2              ((OPAMP_TypeDef *) OPAMP2_BASE)
 #define SYSCFG              ((SYSCFG_TypeDef *) SYSCFG_BASE)
 #define EXTI                ((EXTI_TypeDef *) EXTI_BASE)
 #define TIM1                ((TIM_TypeDef *) TIM1_BASE)
+#define SPI1                ((SPI_TypeDef *) SPI1_BASE)
 #define USART1              ((USART_TypeDef *) USART1_BASE)
+#define SPI4                ((SPI_TypeDef *) SPI4_BASE)
 #define TIM15               ((TIM_TypeDef *) TIM15_BASE)
 #define TIM16               ((TIM_TypeDef *) TIM16_BASE)
 #define TIM17               ((TIM_TypeDef *) TIM17_BASE)
@@ -819,6 +926,12 @@ typedef struct
 #define DMA1_Channel5       ((DMA_Channel_TypeDef *) DMA1_Channel5_BASE)
 #define DMA1_Channel6       ((DMA_Channel_TypeDef *) DMA1_Channel6_BASE)
 #define DMA1_Channel7       ((DMA_Channel_TypeDef *) DMA1_Channel7_BASE)
+#define DMA2                ((DMA_TypeDef *) DMA2_BASE)
+#define DMA2_Channel1       ((DMA_Channel_TypeDef *) DMA2_Channel1_BASE)
+#define DMA2_Channel2       ((DMA_Channel_TypeDef *) DMA2_Channel2_BASE)
+#define DMA2_Channel3       ((DMA_Channel_TypeDef *) DMA2_Channel3_BASE)
+#define DMA2_Channel4       ((DMA_Channel_TypeDef *) DMA2_Channel4_BASE)
+#define DMA2_Channel5       ((DMA_Channel_TypeDef *) DMA2_Channel5_BASE)
 #define RCC                 ((RCC_TypeDef *) RCC_BASE)
 #define FLASH               ((FLASH_TypeDef *) FLASH_R_BASE)
 #define OB                  ((OB_TypeDef *) OB_BASE)
@@ -828,10 +941,18 @@ typedef struct
 #define GPIOB               ((GPIO_TypeDef *) GPIOB_BASE)
 #define GPIOC               ((GPIO_TypeDef *) GPIOC_BASE)
 #define GPIOD               ((GPIO_TypeDef *) GPIOD_BASE)
+#define GPIOE               ((GPIO_TypeDef *) GPIOE_BASE)
 #define GPIOF               ((GPIO_TypeDef *) GPIOF_BASE)
+#define GPIOG               ((GPIO_TypeDef *) GPIOG_BASE)
+#define GPIOH               ((GPIO_TypeDef *) GPIOH_BASE)
 #define ADC1                ((ADC_TypeDef *) ADC1_BASE)
-#define ADC1_COMMON         ((ADC_Common_TypeDef *) ADC1_COMMON_BASE)
+#define ADC2                ((ADC_TypeDef *) ADC2_BASE)
+#define ADC1_2_COMMON       ((ADC_Common_TypeDef *) ADC1_2_COMMON_BASE)
 #define USB                 ((USB_TypeDef *) USB_BASE)
+#define FMC_Bank1           ((FMC_Bank1_TypeDef *) FMC_Bank1_R_BASE)
+#define FMC_Bank1E          ((FMC_Bank1E_TypeDef *) FMC_Bank1E_R_BASE)
+#define FMC_Bank2_3         ((FMC_Bank2_3_TypeDef *) FMC_Bank2_3_R_BASE)
+#define FMC_Bank4           ((FMC_Bank4_TypeDef *) FMC_Bank4_R_BASE)
 
 /**
   * @}
@@ -1544,89 +1665,89 @@ typedef struct
 #define ADC_CALFACT_CALFACT_D_6 ((uint32_t)0x00400000) /*!< ADC CALFACT_D bit 6 */
 
 /*************************  ADC Common registers  *****************************/
-/********************  Bit definition for ADC1_CSR register  ********************/
-#define ADC1_CSR_ADRDY_MST         ((uint32_t)0x00000001) /*!< Master ADC ready */
-#define ADC1_CSR_ADRDY_EOSMP_MST   ((uint32_t)0x00000002) /*!< End of sampling phase flag of the master ADC */
-#define ADC1_CSR_ADRDY_EOC_MST     ((uint32_t)0x00000004) /*!< End of regular conversion of the master ADC */
-#define ADC1_CSR_ADRDY_EOS_MST     ((uint32_t)0x00000008) /*!< End of regular sequence flag of the master ADC */
-#define ADC1_CSR_ADRDY_OVR_MST     ((uint32_t)0x00000010) /*!< Overrun flag of the master ADC */
-#define ADC1_CSR_ADRDY_JEOC_MST    ((uint32_t)0x00000020) /*!< End of injected conversion of the master ADC */
-#define ADC1_CSR_ADRDY_JEOS_MST    ((uint32_t)0x00000040) /*!< End of injected sequence flag of the master ADC */
-#define ADC1_CSR_AWD1_MST          ((uint32_t)0x00000080) /*!< Analog watchdog 1 flag of the master ADC */
-#define ADC1_CSR_AWD2_MST          ((uint32_t)0x00000100) /*!< Analog watchdog 2 flag of the master ADC */
-#define ADC1_CSR_AWD3_MST          ((uint32_t)0x00000200) /*!< Analog watchdog 3 flag of the master ADC */
-#define ADC1_CSR_JQOVF_MST         ((uint32_t)0x00000400) /*!< Injected context queue overflow flag of the master ADC */
-#define ADC1_CSR_ADRDY_SLV         ((uint32_t)0x00010000) /*!< Slave ADC ready */
-#define ADC1_CSR_ADRDY_EOSMP_SLV   ((uint32_t)0x00020000) /*!< End of sampling phase flag of the slave ADC */
-#define ADC1_CSR_ADRDY_EOC_SLV     ((uint32_t)0x00040000) /*!< End of regular conversion of the slave ADC */
-#define ADC1_CSR_ADRDY_EOS_SLV     ((uint32_t)0x00080000) /*!< End of regular sequence flag of the slave ADC */
-#define ADC1_CSR_ADRDY_OVR_SLV     ((uint32_t)0x00100000) /*!< Overrun flag of the slave ADC */
-#define ADC1_CSR_ADRDY_JEOC_SLV    ((uint32_t)0x00200000) /*!< End of injected conversion of the slave ADC */
-#define ADC1_CSR_ADRDY_JEOS_SLV    ((uint32_t)0x00400000) /*!< End of injected sequence flag of the slave ADC */
-#define ADC1_CSR_AWD1_SLV          ((uint32_t)0x00800000) /*!< Analog watchdog 1 flag of the slave ADC */
-#define ADC1_CSR_AWD2_SLV          ((uint32_t)0x01000000) /*!< Analog watchdog 2 flag of the slave ADC */
-#define ADC1_CSR_AWD3_SLV          ((uint32_t)0x02000000) /*!< Analog watchdog 3 flag of the slave ADC */
-#define ADC1_CSR_JQOVF_SLV         ((uint32_t)0x04000000) /*!< Injected context queue overflow flag of the slave ADC */
+/********************  Bit definition for ADC12_CSR register  ********************/
+#define ADC12_CSR_ADRDY_MST         ((uint32_t)0x00000001) /*!< Master ADC ready */
+#define ADC12_CSR_ADRDY_EOSMP_MST   ((uint32_t)0x00000002) /*!< End of sampling phase flag of the master ADC */
+#define ADC12_CSR_ADRDY_EOC_MST     ((uint32_t)0x00000004) /*!< End of regular conversion of the master ADC */
+#define ADC12_CSR_ADRDY_EOS_MST     ((uint32_t)0x00000008) /*!< End of regular sequence flag of the master ADC */
+#define ADC12_CSR_ADRDY_OVR_MST     ((uint32_t)0x00000010) /*!< Overrun flag of the master ADC */
+#define ADC12_CSR_ADRDY_JEOC_MST    ((uint32_t)0x00000020) /*!< End of injected conversion of the master ADC */
+#define ADC12_CSR_ADRDY_JEOS_MST    ((uint32_t)0x00000040) /*!< End of injected sequence flag of the master ADC */
+#define ADC12_CSR_AWD1_MST          ((uint32_t)0x00000080) /*!< Analog watchdog 1 flag of the master ADC */
+#define ADC12_CSR_AWD2_MST          ((uint32_t)0x00000100) /*!< Analog watchdog 2 flag of the master ADC */
+#define ADC12_CSR_AWD3_MST          ((uint32_t)0x00000200) /*!< Analog watchdog 3 flag of the master ADC */
+#define ADC12_CSR_JQOVF_MST         ((uint32_t)0x00000400) /*!< Injected context queue overflow flag of the master ADC */
+#define ADC12_CSR_ADRDY_SLV         ((uint32_t)0x00010000) /*!< Slave ADC ready */
+#define ADC12_CSR_ADRDY_EOSMP_SLV   ((uint32_t)0x00020000) /*!< End of sampling phase flag of the slave ADC */
+#define ADC12_CSR_ADRDY_EOC_SLV     ((uint32_t)0x00040000) /*!< End of regular conversion of the slave ADC */
+#define ADC12_CSR_ADRDY_EOS_SLV     ((uint32_t)0x00080000) /*!< End of regular sequence flag of the slave ADC */
+#define ADC12_CSR_ADRDY_OVR_SLV     ((uint32_t)0x00100000) /*!< Overrun flag of the slave ADC */
+#define ADC12_CSR_ADRDY_JEOC_SLV    ((uint32_t)0x00200000) /*!< End of injected conversion of the slave ADC */
+#define ADC12_CSR_ADRDY_JEOS_SLV    ((uint32_t)0x00400000) /*!< End of injected sequence flag of the slave ADC */
+#define ADC12_CSR_AWD1_SLV          ((uint32_t)0x00800000) /*!< Analog watchdog 1 flag of the slave ADC */
+#define ADC12_CSR_AWD2_SLV          ((uint32_t)0x01000000) /*!< Analog watchdog 2 flag of the slave ADC */
+#define ADC12_CSR_AWD3_SLV          ((uint32_t)0x02000000) /*!< Analog watchdog 3 flag of the slave ADC */
+#define ADC12_CSR_JQOVF_SLV         ((uint32_t)0x04000000) /*!< Injected context queue overflow flag of the slave ADC */
 
 /********************  Bit definition for ADC_CCR register  ********************/
-#define ADC1_CCR_MULTI             ((uint32_t)0x0000001F) /*!< Multi ADC mode selection */
-#define ADC1_CCR_MULTI_0           ((uint32_t)0x00000001) /*!< MULTI bit 0 */
-#define ADC1_CCR_MULTI_1           ((uint32_t)0x00000002) /*!< MULTI bit 1 */
-#define ADC1_CCR_MULTI_2           ((uint32_t)0x00000004) /*!< MULTI bit 2 */
-#define ADC1_CCR_MULTI_3           ((uint32_t)0x00000008) /*!< MULTI bit 3 */
-#define ADC1_CCR_MULTI_4           ((uint32_t)0x00000010) /*!< MULTI bit 4 */
-#define ADC1_CCR_DELAY             ((uint32_t)0x00000F00) /*!< Delay between 2 sampling phases */
-#define ADC1_CCR_DELAY_0           ((uint32_t)0x00000100) /*!< DELAY bit 0 */
-#define ADC1_CCR_DELAY_1           ((uint32_t)0x00000200) /*!< DELAY bit 1 */
-#define ADC1_CCR_DELAY_2           ((uint32_t)0x00000400) /*!< DELAY bit 2 */
-#define ADC1_CCR_DELAY_3           ((uint32_t)0x00000800) /*!< DELAY bit 3 */
-#define ADC1_CCR_DMACFG            ((uint32_t)0x00002000) /*!< DMA configuration for multi-ADC mode */
-#define ADC1_CCR_MDMA              ((uint32_t)0x0000C000) /*!< DMA mode for multi-ADC mode */
-#define ADC1_CCR_MDMA_0            ((uint32_t)0x00004000) /*!< MDMA bit 0 */
-#define ADC1_CCR_MDMA_1            ((uint32_t)0x00008000) /*!< MDMA bit 1 */
-#define ADC1_CCR_CKMODE            ((uint32_t)0x00030000) /*!< ADC clock mode */
-#define ADC1_CCR_CKMODE_0          ((uint32_t)0x00010000) /*!< CKMODE bit 0 */
-#define ADC1_CCR_CKMODE_1          ((uint32_t)0x00020000) /*!< CKMODE bit 1 */
-#define ADC1_CCR_VREFEN            ((uint32_t)0x00400000) /*!< VREFINT enable */
-#define ADC1_CCR_TSEN              ((uint32_t)0x00800000) /*!< Temperature sensor enable */
-#define ADC1_CCR_VBATEN            ((uint32_t)0x01000000) /*!< VBAT enable */
+#define ADC12_CCR_MULTI             ((uint32_t)0x0000001F) /*!< Multi ADC mode selection */
+#define ADC12_CCR_MULTI_0           ((uint32_t)0x00000001) /*!< MULTI bit 0 */
+#define ADC12_CCR_MULTI_1           ((uint32_t)0x00000002) /*!< MULTI bit 1 */
+#define ADC12_CCR_MULTI_2           ((uint32_t)0x00000004) /*!< MULTI bit 2 */
+#define ADC12_CCR_MULTI_3           ((uint32_t)0x00000008) /*!< MULTI bit 3 */
+#define ADC12_CCR_MULTI_4           ((uint32_t)0x00000010) /*!< MULTI bit 4 */
+#define ADC12_CCR_DELAY             ((uint32_t)0x00000F00) /*!< Delay between 2 sampling phases */
+#define ADC12_CCR_DELAY_0           ((uint32_t)0x00000100) /*!< DELAY bit 0 */
+#define ADC12_CCR_DELAY_1           ((uint32_t)0x00000200) /*!< DELAY bit 1 */
+#define ADC12_CCR_DELAY_2           ((uint32_t)0x00000400) /*!< DELAY bit 2 */
+#define ADC12_CCR_DELAY_3           ((uint32_t)0x00000800) /*!< DELAY bit 3 */
+#define ADC12_CCR_DMACFG            ((uint32_t)0x00002000) /*!< DMA configuration for multi-ADC mode */
+#define ADC12_CCR_MDMA              ((uint32_t)0x0000C000) /*!< DMA mode for multi-ADC mode */
+#define ADC12_CCR_MDMA_0            ((uint32_t)0x00004000) /*!< MDMA bit 0 */
+#define ADC12_CCR_MDMA_1            ((uint32_t)0x00008000) /*!< MDMA bit 1 */
+#define ADC12_CCR_CKMODE            ((uint32_t)0x00030000) /*!< ADC clock mode */
+#define ADC12_CCR_CKMODE_0          ((uint32_t)0x00010000) /*!< CKMODE bit 0 */
+#define ADC12_CCR_CKMODE_1          ((uint32_t)0x00020000) /*!< CKMODE bit 1 */
+#define ADC12_CCR_VREFEN            ((uint32_t)0x00400000) /*!< VREFINT enable */
+#define ADC12_CCR_TSEN              ((uint32_t)0x00800000) /*!< Temperature sensor enable */
+#define ADC12_CCR_VBATEN            ((uint32_t)0x01000000) /*!< VBAT enable */
 
 /********************  Bit definition for ADC_CDR register  ********************/
-#define ADC1_CDR_RDATA_MST         ((uint32_t)0x0000FFFF) /*!< Regular Data of the master ADC */
-#define ADC1_CDR_RDATA_MST_0       ((uint32_t)0x00000001) /*!< RDATA_MST bit 0 */
-#define ADC1_CDR_RDATA_MST_1       ((uint32_t)0x00000002) /*!< RDATA_MST bit 1 */
-#define ADC1_CDR_RDATA_MST_2       ((uint32_t)0x00000004) /*!< RDATA_MST bit 2 */
-#define ADC1_CDR_RDATA_MST_3       ((uint32_t)0x00000008) /*!< RDATA_MST bit 3 */
-#define ADC1_CDR_RDATA_MST_4       ((uint32_t)0x00000010) /*!< RDATA_MST bit 4 */
-#define ADC1_CDR_RDATA_MST_5       ((uint32_t)0x00000020) /*!< RDATA_MST bit 5 */
-#define ADC1_CDR_RDATA_MST_6       ((uint32_t)0x00000040) /*!< RDATA_MST bit 6 */
-#define ADC1_CDR_RDATA_MST_7       ((uint32_t)0x00000080) /*!< RDATA_MST bit 7 */
-#define ADC1_CDR_RDATA_MST_8       ((uint32_t)0x00000100) /*!< RDATA_MST bit 8 */
-#define ADC1_CDR_RDATA_MST_9       ((uint32_t)0x00000200) /*!< RDATA_MST bit 9 */
-#define ADC1_CDR_RDATA_MST_10      ((uint32_t)0x00000400) /*!< RDATA_MST bit 10 */
-#define ADC1_CDR_RDATA_MST_11      ((uint32_t)0x00000800) /*!< RDATA_MST bit 11 */
-#define ADC1_CDR_RDATA_MST_12      ((uint32_t)0x00001000) /*!< RDATA_MST bit 12 */
-#define ADC1_CDR_RDATA_MST_13      ((uint32_t)0x00002000) /*!< RDATA_MST bit 13 */
-#define ADC1_CDR_RDATA_MST_14      ((uint32_t)0x00004000) /*!< RDATA_MST bit 14 */
-#define ADC1_CDR_RDATA_MST_15      ((uint32_t)0x00008000) /*!< RDATA_MST bit 15 */
+#define ADC12_CDR_RDATA_MST         ((uint32_t)0x0000FFFF) /*!< Regular Data of the master ADC */
+#define ADC12_CDR_RDATA_MST_0       ((uint32_t)0x00000001) /*!< RDATA_MST bit 0 */
+#define ADC12_CDR_RDATA_MST_1       ((uint32_t)0x00000002) /*!< RDATA_MST bit 1 */
+#define ADC12_CDR_RDATA_MST_2       ((uint32_t)0x00000004) /*!< RDATA_MST bit 2 */
+#define ADC12_CDR_RDATA_MST_3       ((uint32_t)0x00000008) /*!< RDATA_MST bit 3 */
+#define ADC12_CDR_RDATA_MST_4       ((uint32_t)0x00000010) /*!< RDATA_MST bit 4 */
+#define ADC12_CDR_RDATA_MST_5       ((uint32_t)0x00000020) /*!< RDATA_MST bit 5 */
+#define ADC12_CDR_RDATA_MST_6       ((uint32_t)0x00000040) /*!< RDATA_MST bit 6 */
+#define ADC12_CDR_RDATA_MST_7       ((uint32_t)0x00000080) /*!< RDATA_MST bit 7 */
+#define ADC12_CDR_RDATA_MST_8       ((uint32_t)0x00000100) /*!< RDATA_MST bit 8 */
+#define ADC12_CDR_RDATA_MST_9       ((uint32_t)0x00000200) /*!< RDATA_MST bit 9 */
+#define ADC12_CDR_RDATA_MST_10      ((uint32_t)0x00000400) /*!< RDATA_MST bit 10 */
+#define ADC12_CDR_RDATA_MST_11      ((uint32_t)0x00000800) /*!< RDATA_MST bit 11 */
+#define ADC12_CDR_RDATA_MST_12      ((uint32_t)0x00001000) /*!< RDATA_MST bit 12 */
+#define ADC12_CDR_RDATA_MST_13      ((uint32_t)0x00002000) /*!< RDATA_MST bit 13 */
+#define ADC12_CDR_RDATA_MST_14      ((uint32_t)0x00004000) /*!< RDATA_MST bit 14 */
+#define ADC12_CDR_RDATA_MST_15      ((uint32_t)0x00008000) /*!< RDATA_MST bit 15 */
 
-#define ADC1_CDR_RDATA_SLV         ((uint32_t)0xFFFF0000) /*!< Regular Data of the master ADC */
-#define ADC1_CDR_RDATA_SLV_0       ((uint32_t)0x00010000) /*!< RDATA_SLV bit 0 */
-#define ADC1_CDR_RDATA_SLV_1       ((uint32_t)0x00020000) /*!< RDATA_SLV bit 1 */
-#define ADC1_CDR_RDATA_SLV_2       ((uint32_t)0x00040000) /*!< RDATA_SLV bit 2 */
-#define ADC1_CDR_RDATA_SLV_3       ((uint32_t)0x00080000) /*!< RDATA_SLV bit 3 */
-#define ADC1_CDR_RDATA_SLV_4       ((uint32_t)0x00100000) /*!< RDATA_SLV bit 4 */
-#define ADC1_CDR_RDATA_SLV_5       ((uint32_t)0x00200000) /*!< RDATA_SLV bit 5 */
-#define ADC1_CDR_RDATA_SLV_6       ((uint32_t)0x00400000) /*!< RDATA_SLV bit 6 */
-#define ADC1_CDR_RDATA_SLV_7       ((uint32_t)0x00800000) /*!< RDATA_SLV bit 7 */
-#define ADC1_CDR_RDATA_SLV_8       ((uint32_t)0x01000000) /*!< RDATA_SLV bit 8 */
-#define ADC1_CDR_RDATA_SLV_9       ((uint32_t)0x02000000) /*!< RDATA_SLV bit 9 */
-#define ADC1_CDR_RDATA_SLV_10      ((uint32_t)0x04000000) /*!< RDATA_SLV bit 10 */
-#define ADC1_CDR_RDATA_SLV_11      ((uint32_t)0x08000000) /*!< RDATA_SLV bit 11 */
-#define ADC1_CDR_RDATA_SLV_12      ((uint32_t)0x10000000) /*!< RDATA_SLV bit 12 */
-#define ADC1_CDR_RDATA_SLV_13      ((uint32_t)0x20000000) /*!< RDATA_SLV bit 13 */
-#define ADC1_CDR_RDATA_SLV_14      ((uint32_t)0x40000000) /*!< RDATA_SLV bit 14 */
-#define ADC1_CDR_RDATA_SLV_15      ((uint32_t)0x80000000) /*!< RDATA_SLV bit 15 */
+#define ADC12_CDR_RDATA_SLV         ((uint32_t)0xFFFF0000) /*!< Regular Data of the master ADC */
+#define ADC12_CDR_RDATA_SLV_0       ((uint32_t)0x00010000) /*!< RDATA_SLV bit 0 */
+#define ADC12_CDR_RDATA_SLV_1       ((uint32_t)0x00020000) /*!< RDATA_SLV bit 1 */
+#define ADC12_CDR_RDATA_SLV_2       ((uint32_t)0x00040000) /*!< RDATA_SLV bit 2 */
+#define ADC12_CDR_RDATA_SLV_3       ((uint32_t)0x00080000) /*!< RDATA_SLV bit 3 */
+#define ADC12_CDR_RDATA_SLV_4       ((uint32_t)0x00100000) /*!< RDATA_SLV bit 4 */
+#define ADC12_CDR_RDATA_SLV_5       ((uint32_t)0x00200000) /*!< RDATA_SLV bit 5 */
+#define ADC12_CDR_RDATA_SLV_6       ((uint32_t)0x00400000) /*!< RDATA_SLV bit 6 */
+#define ADC12_CDR_RDATA_SLV_7       ((uint32_t)0x00800000) /*!< RDATA_SLV bit 7 */
+#define ADC12_CDR_RDATA_SLV_8       ((uint32_t)0x01000000) /*!< RDATA_SLV bit 8 */
+#define ADC12_CDR_RDATA_SLV_9       ((uint32_t)0x02000000) /*!< RDATA_SLV bit 9 */
+#define ADC12_CDR_RDATA_SLV_10      ((uint32_t)0x04000000) /*!< RDATA_SLV bit 10 */
+#define ADC12_CDR_RDATA_SLV_11      ((uint32_t)0x08000000) /*!< RDATA_SLV bit 11 */
+#define ADC12_CDR_RDATA_SLV_12      ((uint32_t)0x10000000) /*!< RDATA_SLV bit 12 */
+#define ADC12_CDR_RDATA_SLV_13      ((uint32_t)0x20000000) /*!< RDATA_SLV bit 13 */
+#define ADC12_CDR_RDATA_SLV_14      ((uint32_t)0x40000000) /*!< RDATA_SLV bit 14 */
+#define ADC12_CDR_RDATA_SLV_15      ((uint32_t)0x80000000) /*!< RDATA_SLV bit 15 */
 
 /******************************************************************************/
 /*                                                                            */
@@ -1634,13 +1755,33 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 
+/**********************  Bit definition for COMP1_CSR register  ***************/
+#define COMP1_CSR_COMP1EN               ((uint32_t)0x00000001) /*!< COMP1 enable */
+#define COMP1_CSR_COMP1SW1              ((uint32_t)0x00000002) /*!< COMP1 SW1 switch control */
+#define COMP1_CSR_COMP1INSEL            ((uint32_t)0x00000070) /*!< COMP1 inverting input select */
+#define COMP1_CSR_COMP1INSEL_0          ((uint32_t)0x00000010) /*!< COMP1 inverting input select bit 0 */
+#define COMP1_CSR_COMP1INSEL_1          ((uint32_t)0x00000020) /*!< COMP1 inverting input select bit 1 */
+#define COMP1_CSR_COMP1INSEL_2          ((uint32_t)0x00000040) /*!< COMP1 inverting input select bit 2 */
+#define COMP1_CSR_COMP1OUTSEL           ((uint32_t)0x00003C00) /*!< COMP1 output select */
+#define COMP1_CSR_COMP1OUTSEL_0         ((uint32_t)0x00000400) /*!< COMP1 output select bit 0 */
+#define COMP1_CSR_COMP1OUTSEL_1         ((uint32_t)0x00000800) /*!< COMP1 output select bit 1 */
+#define COMP1_CSR_COMP1OUTSEL_2         ((uint32_t)0x00001000) /*!< COMP1 output select bit 2 */
+#define COMP1_CSR_COMP1OUTSEL_3         ((uint32_t)0x00002000) /*!< COMP1 output select bit 3 */
+#define COMP1_CSR_COMP1POL              ((uint32_t)0x00008000) /*!< COMP1 output polarity */
+#define COMP1_CSR_COMP1BLANKING         ((uint32_t)0x000C0000) /*!< COMP1 blanking */
+#define COMP1_CSR_COMP1BLANKING_0       ((uint32_t)0x00040000) /*!< COMP1 blanking bit 0 */
+#define COMP1_CSR_COMP1BLANKING_1       ((uint32_t)0x00080000) /*!< COMP1 blanking bit 1 */
+#define COMP1_CSR_COMP1BLANKING_2       ((uint32_t)0x00100000) /*!< COMP1 blanking bit 2 */
+#define COMP1_CSR_COMP1OUT              ((uint32_t)0x40000000) /*!< COMP1 output level */
+#define COMP1_CSR_COMP1LOCK             ((uint32_t)0x80000000) /*!< COMP1 lock */
+
 /**********************  Bit definition for COMP2_CSR register  ***************/
 #define COMP2_CSR_COMP2EN               ((uint32_t)0x00000001) /*!< COMP2 enable */
-#define COMP2_CSR_COMP2INPDAC           ((uint32_t)0x00000002) /*!< COMP2 non inverting input to DAC output */
-#define COMP2_CSR_COMP2INSEL            ((uint32_t)0x00000070) /*!< COMP2 inverting input select */
+#define COMP2_CSR_COMP2INSEL            ((uint32_t)0x00400070) /*!< COMP2 inverting input select */
 #define COMP2_CSR_COMP2INSEL_0          ((uint32_t)0x00000010) /*!< COMP2 inverting input select bit 0 */
 #define COMP2_CSR_COMP2INSEL_1          ((uint32_t)0x00000020) /*!< COMP2 inverting input select bit 1 */
 #define COMP2_CSR_COMP2INSEL_2          ((uint32_t)0x00000040) /*!< COMP2 inverting input select bit 2 */
+#define COMP2_CSR_COMP2INSEL_3          ((uint32_t)0x00400000) /*!< COMP2 inverting input select bit 3 */
 #define COMP2_CSR_COMP2OUTSEL           ((uint32_t)0x00003C00) /*!< COMP2 output select */
 #define COMP2_CSR_COMP2OUTSEL_0         ((uint32_t)0x00000400) /*!< COMP2 output select bit 0 */
 #define COMP2_CSR_COMP2OUTSEL_1         ((uint32_t)0x00000800) /*!< COMP2 output select bit 1 */
@@ -1656,10 +1797,11 @@ typedef struct
 
 /**********************  Bit definition for COMP4_CSR register  ***************/
 #define COMP4_CSR_COMP4EN               ((uint32_t)0x00000001) /*!< COMP4 enable */
-#define COMP4_CSR_COMP4INSEL            ((uint32_t)0x00000070) /*!< COMP4 inverting input select */
+#define COMP4_CSR_COMP4INSEL            ((uint32_t)0x00400070) /*!< COMP4 inverting input select */
 #define COMP4_CSR_COMP4INSEL_0          ((uint32_t)0x00000010) /*!< COMP4 inverting input select bit 0 */
 #define COMP4_CSR_COMP4INSEL_1          ((uint32_t)0x00000020) /*!< COMP4 inverting input select bit 1 */
 #define COMP4_CSR_COMP4INSEL_2          ((uint32_t)0x00000040) /*!< COMP4 inverting input select bit 2 */
+#define COMP4_CSR_COMP4INSEL_3          ((uint32_t)0x00400000) /*!< COMP4 inverting input select bit 3 */
 #define COMP4_CSR_COMP4OUTSEL           ((uint32_t)0x00003C00) /*!< COMP4 output select */
 #define COMP4_CSR_COMP4OUTSEL_0         ((uint32_t)0x00000400) /*!< COMP4 output select bit 0 */
 #define COMP4_CSR_COMP4OUTSEL_1         ((uint32_t)0x00000800) /*!< COMP4 output select bit 1 */
@@ -1675,10 +1817,11 @@ typedef struct
 
 /**********************  Bit definition for COMP6_CSR register  ***************/
 #define COMP6_CSR_COMP6EN               ((uint32_t)0x00000001) /*!< COMP6 enable */
-#define COMP6_CSR_COMP6INSEL            ((uint32_t)0x00000070) /*!< COMP6 inverting input select */
+#define COMP6_CSR_COMP6INSEL            ((uint32_t)0x00400070) /*!< COMP6 inverting input select */
 #define COMP6_CSR_COMP6INSEL_0          ((uint32_t)0x00000010) /*!< COMP6 inverting input select bit 0 */
 #define COMP6_CSR_COMP6INSEL_1          ((uint32_t)0x00000020) /*!< COMP6 inverting input select bit 1 */
 #define COMP6_CSR_COMP6INSEL_2          ((uint32_t)0x00000040) /*!< COMP6 inverting input select bit 2 */
+#define COMP6_CSR_COMP6INSEL_3          ((uint32_t)0x00400000) /*!< COMP6 inverting input select bit 3 */
 #define COMP6_CSR_COMP6OUTSEL           ((uint32_t)0x00003C00) /*!< COMP6 output select */
 #define COMP6_CSR_COMP6OUTSEL_0         ((uint32_t)0x00000400) /*!< COMP6 output select bit 0 */
 #define COMP6_CSR_COMP6OUTSEL_1         ((uint32_t)0x00000800) /*!< COMP6 output select bit 1 */
@@ -1694,11 +1837,12 @@ typedef struct
 
 /**********************  Bit definition for COMP_CSR register  ****************/
 #define COMP_CSR_COMPxEN               ((uint32_t)0x00000001) /*!< COMPx enable */
-#define COMP_CSR_COMP2SW1              ((uint32_t)0x00000002) /*!< COMP2 SW1 switch control */
-#define COMP_CSR_COMPxINSEL            ((uint32_t)0x00000070) /*!< COMPx inverting input select */
+#define COMP_CSR_COMPxINSEL            ((uint32_t)0x00400070) /*!< COMPx inverting input select */
 #define COMP_CSR_COMPxINSEL_0          ((uint32_t)0x00000010) /*!< COMPx inverting input select bit 0 */
 #define COMP_CSR_COMPxINSEL_1          ((uint32_t)0x00000020) /*!< COMPx inverting input select bit 1 */
 #define COMP_CSR_COMPxINSEL_2          ((uint32_t)0x00000040) /*!< COMPx inverting input select bit 2 */
+#define COMP_CSR_COMPxINSEL_3          ((uint32_t)0x00400000) /*!< COMPx inverting input select bit 3 */
+#define COMP_CSR_COMPxWNDWEN           ((uint32_t)0x00000200) /*!< COMPx window mode enable */
 #define COMP_CSR_COMPxOUTSEL           ((uint32_t)0x00003C00) /*!< COMPx output select */
 #define COMP_CSR_COMPxOUTSEL_0         ((uint32_t)0x00000400) /*!< COMPx output select bit 0 */
 #define COMP_CSR_COMPxOUTSEL_1         ((uint32_t)0x00000800) /*!< COMPx output select bit 1 */
@@ -1717,6 +1861,36 @@ typedef struct
 /*                     Operational Amplifier (OPAMP)                          */
 /*                                                                            */
 /******************************************************************************/
+/*********************  Bit definition for OPAMP1_CSR register  ***************/
+#define OPAMP1_CSR_OPAMP1EN               ((uint32_t)0x00000001) /*!< OPAMP1 enable */
+#define OPAMP1_CSR_FORCEVP                ((uint32_t)0x00000002) /*!< Connect the internal references to the plus input of the OPAMPX */
+#define OPAMP1_CSR_VPSEL                  ((uint32_t)0x0000000C) /*!< Non inverting input selection */
+#define OPAMP1_CSR_VPSEL_0                ((uint32_t)0x00000004) /*!< Bit 0 */
+#define OPAMP1_CSR_VPSEL_1                ((uint32_t)0x00000008) /*!< Bit 1 */
+#define OPAMP1_CSR_VMSEL                  ((uint32_t)0x00000060) /*!< Inverting input selection */
+#define OPAMP1_CSR_VMSEL_0                ((uint32_t)0x00000020) /*!< Bit 0 */
+#define OPAMP1_CSR_VMSEL_1                ((uint32_t)0x00000040) /*!< Bit 1 */
+#define OPAMP1_CSR_TCMEN                  ((uint32_t)0x00000080) /*!< Timer-Controlled Mux mode enable */
+#define OPAMP1_CSR_VMSSEL                 ((uint32_t)0x00000100) /*!< Inverting input secondary selection */
+#define OPAMP1_CSR_VPSSEL                 ((uint32_t)0x00000600) /*!< Non inverting input secondary selection */
+#define OPAMP1_CSR_VPSSEL_0               ((uint32_t)0x00000200) /*!< Bit 0 */
+#define OPAMP1_CSR_VPSSEL_1               ((uint32_t)0x00000400) /*!< Bit 1 */
+#define OPAMP1_CSR_CALON                  ((uint32_t)0x00000800) /*!< Calibration mode enable */
+#define OPAMP1_CSR_CALSEL                 ((uint32_t)0x00003000) /*!< Calibration selection */
+#define OPAMP1_CSR_CALSEL_0               ((uint32_t)0x00001000) /*!< Bit 0 */
+#define OPAMP1_CSR_CALSEL_1               ((uint32_t)0x00002000) /*!< Bit 1 */
+#define OPAMP1_CSR_PGGAIN                 ((uint32_t)0x0003C000) /*!< Gain in PGA mode */
+#define OPAMP1_CSR_PGGAIN_0               ((uint32_t)0x00004000) /*!< Bit 0 */
+#define OPAMP1_CSR_PGGAIN_1               ((uint32_t)0x00008000) /*!< Bit 1 */
+#define OPAMP1_CSR_PGGAIN_2               ((uint32_t)0x00010000) /*!< Bit 2 */
+#define OPAMP1_CSR_PGGAIN_3               ((uint32_t)0x00020000) /*!< Bit 3 */
+#define OPAMP1_CSR_USERTRIM               ((uint32_t)0x00040000) /*!< User trimming enable */
+#define OPAMP1_CSR_TRIMOFFSETP            ((uint32_t)0x00F80000) /*!< Offset trimming value (PMOS) */
+#define OPAMP1_CSR_TRIMOFFSETN            ((uint32_t)0x1F000000) /*!< Offset trimming value (NMOS) */
+#define OPAMP1_CSR_TSTREF                 ((uint32_t)0x20000000) /*!< It enables the switch to put out the internal reference */
+#define OPAMP1_CSR_OUTCAL                 ((uint32_t)0x40000000) /*!< OPAMP ouput status flag */
+#define OPAMP1_CSR_LOCK                   ((uint32_t)0x80000000) /*!< OPAMP lock */
+
 /*********************  Bit definition for OPAMP2_CSR register  ***************/
 #define OPAMP2_CSR_OPAMP2EN               ((uint32_t)0x00000001) /*!< OPAMP2 enable */
 #define OPAMP2_CSR_FORCEVP                ((uint32_t)0x00000002) /*!< Connect the internal references to the plus input of the OPAMPX */
@@ -3135,6 +3309,8 @@ typedef struct
 
 /********************  Bit definition for DBGMCU_APB1_FZ register  ************/
 #define  DBGMCU_APB1_FZ_DBG_TIM2_STOP        ((uint32_t)0x00000001)
+#define  DBGMCU_APB1_FZ_DBG_TIM3_STOP        ((uint32_t)0x00000002)
+#define  DBGMCU_APB1_FZ_DBG_TIM4_STOP        ((uint32_t)0x00000004)
 #define  DBGMCU_APB1_FZ_DBG_TIM6_STOP        ((uint32_t)0x00000010)
 #define  DBGMCU_APB1_FZ_DBG_RTC_STOP         ((uint32_t)0x00000400)
 #define  DBGMCU_APB1_FZ_DBG_WWDG_STOP        ((uint32_t)0x00000800)
@@ -3558,6 +3734,1058 @@ typedef struct
 /******************  Bit definition for FLASH_WRP3 register  ******************/
 #define  OB_WRP3_WRP3                        ((uint32_t)0x00FF0000)        /*!< Flash memory write protection option bytes */
 #define  OB_WRP3_nWRP3                       ((uint32_t)0xFF000000)        /*!< Flash memory write protection complemented option bytes */
+
+/******************************************************************************/
+/*                                                                            */
+/*                          Flexible Memory Controller                        */
+/*                                                                            */
+/******************************************************************************/
+/******************  Bit definition for FMC_BCRx register  *******************/
+#define  FMC_BCRx_MBKEN                     ((uint32_t)0x00000001)        /*!<Memory bank enable bit                 */
+#define  FMC_BCRx_MUXEN                     ((uint32_t)0x00000002)        /*!<Address/data multiplexing enable bit   */
+
+#define  FMC_BCRx_MTYP                      ((uint32_t)0x0000000C)        /*!<MTYP[1:0] bits (Memory type)           */
+#define  FMC_BCRx_MTYP_0                    ((uint32_t)0x00000004)        /*!<Bit 0 */
+#define  FMC_BCRx_MTYP_1                    ((uint32_t)0x00000008)        /*!<Bit 1 */
+
+#define  FMC_BCRx_MWID                      ((uint32_t)0x00000030)        /*!<MWID[1:0] bits (Memory data bus width) */
+#define  FMC_BCRx_MWID_0                    ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BCRx_MWID_1                    ((uint32_t)0x00000020)        /*!<Bit 1 */
+
+#define  FMC_BCRx_FACCEN                    ((uint32_t)0x00000040)        /*!<Flash access enable        */
+#define  FMC_BCRx_BURSTEN                   ((uint32_t)0x00000100)        /*!<Burst enable bit           */
+#define  FMC_BCRx_WAITPOL                   ((uint32_t)0x00000200)        /*!<Wait signal polarity bit   */
+#define  FMC_BCRx_WRAPMOD                   ((uint32_t)0x00000400)        /*!<Wrapped burst mode support */
+#define  FMC_BCRx_WAITCFG                   ((uint32_t)0x00000800)        /*!<Wait timing configuration  */
+#define  FMC_BCRx_WREN                      ((uint32_t)0x00001000)        /*!<Write enable bit           */
+#define  FMC_BCRx_WAITEN                    ((uint32_t)0x00002000)        /*!<Wait enable bit            */
+#define  FMC_BCRx_EXTMOD                    ((uint32_t)0x00004000)        /*!<Extended mode enable       */
+#define  FMC_BCRx_ASYNCWAIT                 ((uint32_t)0x00008000)        /*!<Asynchronous wait          */
+#define  FMC_BCRx_CBURSTRW                  ((uint32_t)0x00080000)        /*!<Write burst enable         */
+
+/******************  Bit definition for FMC_BCR1 register  *******************/
+#define  FMC_BCR1_MBKEN                     ((uint32_t)0x00000001)        /*!<Memory bank enable bit                 */
+#define  FMC_BCR1_MUXEN                     ((uint32_t)0x00000002)        /*!<Address/data multiplexing enable bit   */
+
+#define  FMC_BCR1_MTYP                      ((uint32_t)0x0000000C)        /*!<MTYP[1:0] bits (Memory type)           */
+#define  FMC_BCR1_MTYP_0                    ((uint32_t)0x00000004)        /*!<Bit 0 */
+#define  FMC_BCR1_MTYP_1                    ((uint32_t)0x00000008)        /*!<Bit 1 */
+
+#define  FMC_BCR1_MWID                      ((uint32_t)0x00000030)        /*!<MWID[1:0] bits (Memory data bus width) */
+#define  FMC_BCR1_MWID_0                    ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BCR1_MWID_1                    ((uint32_t)0x00000020)        /*!<Bit 1 */
+
+#define  FMC_BCR1_FACCEN                    ((uint32_t)0x00000040)        /*!<Flash access enable        */
+#define  FMC_BCR1_BURSTEN                   ((uint32_t)0x00000100)        /*!<Burst enable bit           */
+#define  FMC_BCR1_WAITPOL                   ((uint32_t)0x00000200)        /*!<Wait signal polarity bit   */
+#define  FMC_BCR1_WRAPMOD                   ((uint32_t)0x00000400)        /*!<Wrapped burst mode support */
+#define  FMC_BCR1_WAITCFG                   ((uint32_t)0x00000800)        /*!<Wait timing configuration  */
+#define  FMC_BCR1_WREN                      ((uint32_t)0x00001000)        /*!<Write enable bit           */
+#define  FMC_BCR1_WAITEN                    ((uint32_t)0x00002000)        /*!<Wait enable bit            */
+#define  FMC_BCR1_EXTMOD                    ((uint32_t)0x00004000)        /*!<Extended mode enable       */
+#define  FMC_BCR1_ASYNCWAIT                 ((uint32_t)0x00008000)        /*!<Asynchronous wait          */
+#define  FMC_BCR1_CBURSTRW                  ((uint32_t)0x00080000)        /*!<Write burst enable         */
+#define  FMC_BCR1_CCLKEN                    ((uint32_t)0x00100000)        /*!<Continous clock enable     */
+
+/******************  Bit definition for FMC_BCR2 register  *******************/
+#define  FMC_BCR2_MBKEN                     ((uint32_t)0x00000001)        /*!<Memory bank enable bit                 */
+#define  FMC_BCR2_MUXEN                     ((uint32_t)0x00000002)        /*!<Address/data multiplexing enable bit   */
+
+#define  FMC_BCR2_MTYP                      ((uint32_t)0x0000000C)        /*!<MTYP[1:0] bits (Memory type)           */
+#define  FMC_BCR2_MTYP_0                    ((uint32_t)0x00000004)        /*!<Bit 0 */
+#define  FMC_BCR2_MTYP_1                    ((uint32_t)0x00000008)        /*!<Bit 1 */
+
+#define  FMC_BCR2_MWID                      ((uint32_t)0x00000030)        /*!<MWID[1:0] bits (Memory data bus width) */
+#define  FMC_BCR2_MWID_0                    ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BCR2_MWID_1                    ((uint32_t)0x00000020)        /*!<Bit 1 */
+
+#define  FMC_BCR2_FACCEN                    ((uint32_t)0x00000040)        /*!<Flash access enable        */
+#define  FMC_BCR2_BURSTEN                   ((uint32_t)0x00000100)        /*!<Burst enable bit           */
+#define  FMC_BCR2_WAITPOL                   ((uint32_t)0x00000200)        /*!<Wait signal polarity bit   */
+#define  FMC_BCR2_WRAPMOD                   ((uint32_t)0x00000400)        /*!<Wrapped burst mode support */
+#define  FMC_BCR2_WAITCFG                   ((uint32_t)0x00000800)        /*!<Wait timing configuration  */
+#define  FMC_BCR2_WREN                      ((uint32_t)0x00001000)        /*!<Write enable bit           */
+#define  FMC_BCR2_WAITEN                    ((uint32_t)0x00002000)        /*!<Wait enable bit            */
+#define  FMC_BCR2_EXTMOD                    ((uint32_t)0x00004000)        /*!<Extended mode enable       */
+#define  FMC_BCR2_ASYNCWAIT                 ((uint32_t)0x00008000)        /*!<Asynchronous wait          */
+#define  FMC_BCR2_CBURSTRW                  ((uint32_t)0x00080000)        /*!<Write burst enable         */
+
+/******************  Bit definition for FMC_BCR3 register  *******************/
+#define  FMC_BCR3_MBKEN                     ((uint32_t)0x00000001)        /*!<Memory bank enable bit                 */
+#define  FMC_BCR3_MUXEN                     ((uint32_t)0x00000002)        /*!<Address/data multiplexing enable bit   */
+
+#define  FMC_BCR3_MTYP                      ((uint32_t)0x0000000C)        /*!<MTYP[1:0] bits (Memory type)           */
+#define  FMC_BCR3_MTYP_0                    ((uint32_t)0x00000004)        /*!<Bit 0 */
+#define  FMC_BCR3_MTYP_1                    ((uint32_t)0x00000008)        /*!<Bit 1 */
+
+#define  FMC_BCR3_MWID                      ((uint32_t)0x00000030)        /*!<MWID[1:0] bits (Memory data bus width) */
+#define  FMC_BCR3_MWID_0                    ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BCR3_MWID_1                    ((uint32_t)0x00000020)        /*!<Bit 1 */
+
+#define  FMC_BCR3_FACCEN                    ((uint32_t)0x00000040)        /*!<Flash access enable        */
+#define  FMC_BCR3_BURSTEN                   ((uint32_t)0x00000100)        /*!<Burst enable bit           */
+#define  FMC_BCR3_WAITPOL                   ((uint32_t)0x00000200)        /*!<Wait signal polarity bit   */
+#define  FMC_BCR3_WRAPMOD                   ((uint32_t)0x00000400)        /*!<Wrapped burst mode support */
+#define  FMC_BCR3_WAITCFG                   ((uint32_t)0x00000800)        /*!<Wait timing configuration  */
+#define  FMC_BCR3_WREN                      ((uint32_t)0x00001000)        /*!<Write enable bit           */
+#define  FMC_BCR3_WAITEN                    ((uint32_t)0x00002000)        /*!<Wait enable bit            */
+#define  FMC_BCR3_EXTMOD                    ((uint32_t)0x00004000)        /*!<Extended mode enable       */
+#define  FMC_BCR3_ASYNCWAIT                 ((uint32_t)0x00008000)        /*!<Asynchronous wait          */
+#define  FMC_BCR3_CBURSTRW                  ((uint32_t)0x00080000)        /*!<Write burst enable         */
+
+/******************  Bit definition for FMC_BCR4 register  *******************/
+#define  FMC_BCR4_MBKEN                     ((uint32_t)0x00000001)        /*!<Memory bank enable bit                 */
+#define  FMC_BCR4_MUXEN                     ((uint32_t)0x00000002)        /*!<Address/data multiplexing enable bit   */
+
+#define  FMC_BCR4_MTYP                      ((uint32_t)0x0000000C)        /*!<MTYP[1:0] bits (Memory type)           */
+#define  FMC_BCR4_MTYP_0                    ((uint32_t)0x00000004)        /*!<Bit 0 */
+#define  FMC_BCR4_MTYP_1                    ((uint32_t)0x00000008)        /*!<Bit 1 */
+
+#define  FMC_BCR4_MWID                      ((uint32_t)0x00000030)        /*!<MWID[1:0] bits (Memory data bus width) */
+#define  FMC_BCR4_MWID_0                    ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BCR4_MWID_1                    ((uint32_t)0x00000020)        /*!<Bit 1 */
+
+#define  FMC_BCR4_FACCEN                    ((uint32_t)0x00000040)        /*!<Flash access enable        */
+#define  FMC_BCR4_BURSTEN                   ((uint32_t)0x00000100)        /*!<Burst enable bit           */
+#define  FMC_BCR4_WAITPOL                   ((uint32_t)0x00000200)        /*!<Wait signal polarity bit   */
+#define  FMC_BCR4_WRAPMOD                   ((uint32_t)0x00000400)        /*!<Wrapped burst mode support */
+#define  FMC_BCR4_WAITCFG                   ((uint32_t)0x00000800)        /*!<Wait timing configuration  */
+#define  FMC_BCR4_WREN                      ((uint32_t)0x00001000)        /*!<Write enable bit           */
+#define  FMC_BCR4_WAITEN                    ((uint32_t)0x00002000)        /*!<Wait enable bit            */
+#define  FMC_BCR4_EXTMOD                    ((uint32_t)0x00004000)        /*!<Extended mode enable       */
+#define  FMC_BCR4_ASYNCWAIT                 ((uint32_t)0x00008000)        /*!<Asynchronous wait          */
+#define  FMC_BCR4_CBURSTRW                  ((uint32_t)0x00080000)        /*!<Write burst enable         */
+
+/******************  Bit definition for FMC_BTRx register  ******************/
+#define  FMC_BTRx_ADDSET                    ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BTRx_ADDSET_0                  ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BTRx_ADDSET_1                  ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BTRx_ADDSET_2                  ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BTR_ADDSET_3                  ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BTRx_ADDHLD                    ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration)  */
+#define  FMC_BTRx_ADDHLD_0                  ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BTRx_ADDHLD_1                  ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BTRx_ADDHLD_2                  ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BTRx_ADDHLD_3                  ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BTRx_DATAST                    ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BTR_DATAST_0                  ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BTRx_DATAST_1                  ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BTRx_DATAST_2                  ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BTRx_DATAST_3                  ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BTRx_DATAST_4                  ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BTRx_DATAST_5                  ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BTRx_DATAST_6                  ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BTRx_DATAST_7                  ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BTRx_BUSTURN                   ((uint32_t)0x000F0000)        /*!<BUSTURN[3:0] bits (Bus turnaround phase duration) */
+#define  FMC_BTRx_BUSTURN_0                 ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_BTRx_BUSTURN_1                 ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_BTRx_BUSTURN_2                 ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_BTRx_BUSTURN_3                 ((uint32_t)0x00080000)        /*!<Bit 3 */
+
+#define  FMC_BTRx_CLKDIV                    ((uint32_t)0x00F00000)        /*!<CLKDIV[3:0] bits (Clock divide ratio) */
+#define  FMC_BTRx_CLKDIV_0                  ((uint32_t)0x00100000)        /*!<Bit 0 */
+#define  FMC_BTRx_CLKDIV_1                  ((uint32_t)0x00200000)        /*!<Bit 1 */
+#define  FMC_BTRx_CLKDIV_2                  ((uint32_t)0x00400000)        /*!<Bit 2 */
+#define  FMC_BTRx_CLKDIV_3                  ((uint32_t)0x00800000)        /*!<Bit 3 */
+
+#define  FMC_BTRx_DATLAT                    ((uint32_t)0x0F000000)        /*!<DATLA[3:0] bits (Data latency) */
+#define  FMC_BTRx_DATLAT_0                  ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_BTRx_DATLAT_1                  ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_BTRx_DATLAT_2                  ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_BTRx_DATLAT_3                  ((uint32_t)0x08000000)        /*!<Bit 3 */
+
+#define  FMC_BTRx_ACCMOD                    ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BTRx_ACCMOD_0                  ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BTRx_ACCMOD_1                  ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/******************  Bit definition for FMC_BTR1 register  ******************/
+#define  FMC_BTR1_ADDSET                    ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BTR1_ADDSET_0                  ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BTR1_ADDSET_1                  ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BTR1_ADDSET_2                  ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BTR1_ADDSET_3                  ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BTR1_ADDHLD                    ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration)  */
+#define  FMC_BTR1_ADDHLD_0                  ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BTR1_ADDHLD_1                  ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BTR1_ADDHLD_2                  ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BTR1_ADDHLD_3                  ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BTR1_DATAST                    ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BTR1_DATAST_0                  ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BTR1_DATAST_1                  ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BTR1_DATAST_2                  ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BTR1_DATAST_3                  ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BTR1_DATAST_4                  ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BTR1_DATAST_5                  ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BTR1_DATAST_6                  ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BTR1_DATAST_7                  ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BTR1_BUSTURN                   ((uint32_t)0x000F0000)        /*!<BUSTURN[3:0] bits (Bus turnaround phase duration) */
+#define  FMC_BTR1_BUSTURN_0                 ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_BTR1_BUSTURN_1                 ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_BTR1_BUSTURN_2                 ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_BTR1_BUSTURN_3                 ((uint32_t)0x00080000)        /*!<Bit 3 */
+
+#define  FMC_BTR1_CLKDIV                    ((uint32_t)0x00F00000)        /*!<CLKDIV[3:0] bits (Clock divide ratio) */
+#define  FMC_BTR1_CLKDIV_0                  ((uint32_t)0x00100000)        /*!<Bit 0 */
+#define  FMC_BTR1_CLKDIV_1                  ((uint32_t)0x00200000)        /*!<Bit 1 */
+#define  FMC_BTR1_CLKDIV_2                  ((uint32_t)0x00400000)        /*!<Bit 2 */
+#define  FMC_BTR1_CLKDIV_3                  ((uint32_t)0x00800000)        /*!<Bit 3 */
+
+#define  FMC_BTR1_DATLAT                    ((uint32_t)0x0F000000)        /*!<DATLA[3:0] bits (Data latency) */
+#define  FMC_BTR1_DATLAT_0                  ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_BTR1_DATLAT_1                  ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_BTR1_DATLAT_2                  ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_BTR1_DATLAT_3                  ((uint32_t)0x08000000)        /*!<Bit 3 */
+
+#define  FMC_BTR1_ACCMOD                    ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BTR1_ACCMOD_0                  ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BTR1_ACCMOD_1                  ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/******************  Bit definition for FMC_BTR2 register  *******************/
+#define  FMC_BTR2_ADDSET                    ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BTR2_ADDSET_0                  ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BTR2_ADDSET_1                  ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BTR2_ADDSET_2                  ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BTR2_ADDSET_3                  ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BTR2_ADDHLD                    ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration) */
+#define  FMC_BTR2_ADDHLD_0                  ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BTR2_ADDHLD_1                  ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BTR2_ADDHLD_2                  ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BTR2_ADDHLD_3                  ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BTR2_DATAST                    ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BTR2_DATAST_0                  ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BTR2_DATAST_1                  ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BTR2_DATAST_2                  ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BTR2_DATAST_3                  ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BTR2_DATAST_4                  ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BTR2_DATAST_5                  ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BTR2_DATAST_6                  ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BTR2_DATAST_7                  ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BTR2_BUSTURN                   ((uint32_t)0x000F0000)        /*!<BUSTURN[3:0] bits (Bus turnaround phase duration) */
+#define  FMC_BTR2_BUSTURN_0                 ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_BTR2_BUSTURN_1                 ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_BTR2_BUSTURN_2                 ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_BTR2_BUSTURN_3                 ((uint32_t)0x00080000)        /*!<Bit 3 */
+
+#define  FMC_BTR2_CLKDIV                    ((uint32_t)0x00F00000)        /*!<CLKDIV[3:0] bits (Clock divide ratio) */
+#define  FMC_BTR2_CLKDIV_0                  ((uint32_t)0x00100000)        /*!<Bit 0 */
+#define  FMC_BTR2_CLKDIV_1                  ((uint32_t)0x00200000)        /*!<Bit 1 */
+#define  FMC_BTR2_CLKDIV_2                  ((uint32_t)0x00400000)        /*!<Bit 2 */
+#define  FMC_BTR2_CLKDIV_3                  ((uint32_t)0x00800000)        /*!<Bit 3 */
+
+#define  FMC_BTR2_DATLAT                    ((uint32_t)0x0F000000)        /*!<DATLA[3:0] bits (Data latency) */
+#define  FMC_BTR2_DATLAT_0                  ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_BTR2_DATLAT_1                  ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_BTR2_DATLAT_2                  ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_BTR2_DATLAT_3                  ((uint32_t)0x08000000)        /*!<Bit 3 */
+
+#define  FMC_BTR2_ACCMOD                    ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BTR2_ACCMOD_0                  ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BTR2_ACCMOD_1                  ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/*******************  Bit definition for FMC_BTR3 register  *******************/
+#define  FMC_BTR3_ADDSET                    ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BTR3_ADDSET_0                  ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BTR3_ADDSET_1                  ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BTR3_ADDSET_2                  ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BTR3_ADDSET_3                  ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BTR3_ADDHLD                    ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration) */
+#define  FMC_BTR3_ADDHLD_0                  ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BTR3_ADDHLD_1                  ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BTR3_ADDHLD_2                  ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BTR3_ADDHLD_3                  ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BTR3_DATAST                    ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BTR3_DATAST_0                  ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BTR3_DATAST_1                  ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BTR3_DATAST_2                  ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BTR3_DATAST_3                  ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BTR3_DATAST_4                  ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BTR3_DATAST_5                  ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BTR3_DATAST_6                  ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BTR3_DATAST_7                  ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BTR3_BUSTURN                   ((uint32_t)0x000F0000)        /*!<BUSTURN[3:0] bits (Bus turnaround phase duration) */
+#define  FMC_BTR3_BUSTURN_0                 ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_BTR3_BUSTURN_1                 ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_BTR3_BUSTURN_2                 ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_BTR3_BUSTURN_3                 ((uint32_t)0x00080000)        /*!<Bit 3 */
+
+#define  FMC_BTR3_CLKDIV                    ((uint32_t)0x00F00000)        /*!<CLKDIV[3:0] bits (Clock divide ratio) */
+#define  FMC_BTR3_CLKDIV_0                  ((uint32_t)0x00100000)        /*!<Bit 0 */
+#define  FMC_BTR3_CLKDIV_1                  ((uint32_t)0x00200000)        /*!<Bit 1 */
+#define  FMC_BTR3_CLKDIV_2                  ((uint32_t)0x00400000)        /*!<Bit 2 */
+#define  FMC_BTR3_CLKDIV_3                  ((uint32_t)0x00800000)        /*!<Bit 3 */
+
+#define  FMC_BTR3_DATLAT                    ((uint32_t)0x0F000000)        /*!<DATLA[3:0] bits (Data latency) */
+#define  FMC_BTR3_DATLAT_0                  ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_BTR3_DATLAT_1                  ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_BTR3_DATLAT_2                  ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_BTR3_DATLAT_3                  ((uint32_t)0x08000000)        /*!<Bit 3 */
+
+#define  FMC_BTR3_ACCMOD                    ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BTR3_ACCMOD_0                  ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BTR3_ACCMOD_1                  ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/******************  Bit definition for FMC_BTR4 register  *******************/
+#define  FMC_BTR4_ADDSET                    ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BTR4_ADDSET_0                  ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BTR4_ADDSET_1                  ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BTR4_ADDSET_2                  ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BTR4_ADDSET_3                  ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BTR4_ADDHLD                    ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration) */
+#define  FMC_BTR4_ADDHLD_0                  ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BTR4_ADDHLD_1                  ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BTR4_ADDHLD_2                  ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BTR4_ADDHLD_3                  ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BTR4_DATAST                    ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BTR4_DATAST_0                  ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BTR4_DATAST_1                  ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BTR4_DATAST_2                  ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BTR4_DATAST_3                  ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BTR4_DATAST_4                  ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BTR4_DATAST_5                  ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BTR4_DATAST_6                  ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BTR4_DATAST_7                  ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BTR4_BUSTURN                   ((uint32_t)0x000F0000)        /*!<BUSTURN[3:0] bits (Bus turnaround phase duration) */
+#define  FMC_BTR4_BUSTURN_0                 ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_BTR4_BUSTURN_1                 ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_BTR4_BUSTURN_2                 ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_BTR4_BUSTURN_3                 ((uint32_t)0x00080000)        /*!<Bit 3 */
+
+#define  FMC_BTR4_CLKDIV                    ((uint32_t)0x00F00000)        /*!<CLKDIV[3:0] bits (Clock divide ratio) */
+#define  FMC_BTR4_CLKDIV_0                  ((uint32_t)0x00100000)        /*!<Bit 0 */
+#define  FMC_BTR4_CLKDIV_1                  ((uint32_t)0x00200000)        /*!<Bit 1 */
+#define  FMC_BTR4_CLKDIV_2                  ((uint32_t)0x00400000)        /*!<Bit 2 */
+#define  FMC_BTR4_CLKDIV_3                  ((uint32_t)0x00800000)        /*!<Bit 3 */
+
+#define  FMC_BTR4_DATLAT                    ((uint32_t)0x0F000000)        /*!<DATLA[3:0] bits (Data latency) */
+#define  FMC_BTR4_DATLAT_0                  ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_BTR4_DATLAT_1                  ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_BTR4_DATLAT_2                  ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_BTR4_DATLAT_3                  ((uint32_t)0x08000000)        /*!<Bit 3 */
+
+#define  FMC_BTR4_ACCMOD                    ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BTR4_ACCMOD_0                  ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BTR4_ACCMOD_1                  ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/******************  Bit definition for FMC_BWTRx register  ******************/
+#define  FMC_BWTRx_ADDSETx                  ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BWTRx_ADDSETx_0                ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BWTRx_ADDSETx_1                ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BWTRx_ADDSETx_2                ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BWTRx_ADDSETx_3                ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BWTRx_ADDHLDx                  ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration) */
+#define  FMC_BWTRx_ADDHLDx_0                ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BWTRx_ADDHLDx_1                ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BWTRx_ADDHLDx_2                ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BWTRx_ADDHLDx_3                ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BWTRx_DATASTx                  ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BWTRx_DATASTx_0                ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BWTRx_DATASTx_1                ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BWTRx_DATASTx_2                ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BWTRx_DATASTx_3                ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BWTRx_DATASTx_4                ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BWTRx_DATASTx_5                ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BWTRx_DATASTx_6                ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BWTRx_DATASTx_7                ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BWTRx_ACCMODx                  ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BWTRx_ACCMODx_0                ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BWTRx_ACCMODx_1                ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/******************  Bit definition for FMC_BWTR1 register  ******************/
+#define  FMC_BWTR1_ADDSET                   ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BWTR1_ADDSET_0                 ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BWTR1_ADDSET_1                 ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BWTR1_ADDSET_2                 ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BWTR1_ADDSET_3                 ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BWTR1_ADDHLD                   ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration) */
+#define  FMC_BWTR1_ADDHLD_0                 ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BWTR1_ADDHLD_1                 ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BWTR1_ADDHLD_2                 ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BWTR1_ADDHLD_3                 ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BWTR1_DATAST                   ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BWTR1_DATAST_0                 ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BWTR1_DATAST_1                 ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BWTR1_DATAST_2                 ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BWTR1_DATAST_3                 ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BWTR1_DATAST_4                 ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BWTR1_DATAST_5                 ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BWTR1_DATAST_6                 ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BWTR1_DATAST_7                 ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BWTR1_CLKDIV                   ((uint32_t)0x00F00000)        /*!<CLKDIV[3:0] bits (Clock divide ratio) */
+#define  FMC_BWTR1_CLKDIV_0                 ((uint32_t)0x00100000)        /*!<Bit 0 */
+#define  FMC_BWTR1_CLKDIV_1                 ((uint32_t)0x00200000)        /*!<Bit 1 */
+#define  FMC_BWTR1_CLKDIV_2                 ((uint32_t)0x00400000)        /*!<Bit 2 */
+#define  FMC_BWTR1_CLKDIV_3                 ((uint32_t)0x00800000)        /*!<Bit 3 */
+
+#define  FMC_BWTR1_DATLAT                   ((uint32_t)0x0F000000)        /*!<DATLA[3:0] bits (Data latency) */
+#define  FMC_BWTR1_DATLAT_0                 ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_BWTR1_DATLAT_1                 ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_BWTR1_DATLAT_2                 ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_BWTR1_DATLAT_3                 ((uint32_t)0x08000000)        /*!<Bit 3 */
+
+#define  FMC_BWTR1_ACCMOD                   ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BWTR1_ACCMOD_0                 ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BWTR1_ACCMOD_1                 ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/******************  Bit definition for FMC_BWTR2 register  ******************/
+#define  FMC_BWTR2_ADDSET                   ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BWTR2_ADDSET_0                 ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BWTR2_ADDSET_1                 ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BWTR2_ADDSET_2                 ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BWTR2_ADDSET_3                 ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BWTR2_ADDHLD                   ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration) */
+#define  FMC_BWTR2_ADDHLD_0                 ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BWTR2_ADDHLD_1                 ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BWTR2_ADDHLD_2                 ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BWTR2_ADDHLD_3                 ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BWTR2_DATAST                   ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BWTR2_DATAST_0                 ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BWTR2_DATAST_1                 ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BWTR2_DATAST_2                 ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BWTR2_DATAST_3                 ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BWTR2_DATAST_4                 ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BWTR2_DATAST_5                 ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BWTR2_DATAST_6                 ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BWTR2_DATAST_7                 ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BWTR2_CLKDIV                   ((uint32_t)0x00F00000)        /*!<CLKDIV[3:0] bits (Clock divide ratio) */
+#define  FMC_BWTR2_CLKDIV_0                 ((uint32_t)0x00100000)        /*!<Bit 0 */
+#define  FMC_BWTR2_CLKDIV_1                 ((uint32_t)0x00200000)        /*!<Bit 1*/
+#define  FMC_BWTR2_CLKDIV_2                 ((uint32_t)0x00400000)        /*!<Bit 2 */
+#define  FMC_BWTR2_CLKDIV_3                 ((uint32_t)0x00800000)        /*!<Bit 3 */
+
+#define  FMC_BWTR2_DATLAT                   ((uint32_t)0x0F000000)        /*!<DATLA[3:0] bits (Data latency) */
+#define  FMC_BWTR2_DATLAT_0                 ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_BWTR2_DATLAT_1                 ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_BWTR2_DATLAT_2                 ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_BWTR2_DATLAT_3                 ((uint32_t)0x08000000)        /*!<Bit 3 */
+
+#define  FMC_BWTR2_ACCMOD                   ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BWTR2_ACCMOD_0                 ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BWTR2_ACCMOD_1                 ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/******************  Bit definition for FMC_BWTR3 register  ******************/
+#define  FMC_BWTR3_ADDSET                   ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BWTR3_ADDSET_0                 ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BWTR3_ADDSET_1                 ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BWTR3_ADDSET_2                 ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BWTR3_ADDSET_3                 ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BWTR3_ADDHLD                   ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration) */
+#define  FMC_BWTR3_ADDHLD_0                 ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BWTR3_ADDHLD_1                 ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BWTR3_ADDHLD_2                 ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BWTR3_ADDHLD_3                 ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BWTR3_DATAST                   ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BWTR3_DATAST_0                 ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BWTR3_DATAST_1                 ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BWTR3_DATAST_2                 ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BWTR3_DATAST_3                 ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BWTR3_DATAST_4                 ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BWTR3_DATAST_5                 ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BWTR3_DATAST_6                 ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BWTR3_DATAST_7                 ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BWTR3_CLKDIV                   ((uint32_t)0x00F00000)        /*!<CLKDIV[3:0] bits (Clock divide ratio) */
+#define  FMC_BWTR3_CLKDIV_0                 ((uint32_t)0x00100000)        /*!<Bit 0 */
+#define  FMC_BWTR3_CLKDIV_1                 ((uint32_t)0x00200000)        /*!<Bit 1 */
+#define  FMC_BWTR3_CLKDIV_2                 ((uint32_t)0x00400000)        /*!<Bit 2 */
+#define  FMC_BWTR3_CLKDIV_3                 ((uint32_t)0x00800000)        /*!<Bit 3 */
+
+#define  FMC_BWTR3_DATLAT                   ((uint32_t)0x0F000000)        /*!<DATLA[3:0] bits (Data latency) */
+#define  FMC_BWTR3_DATLAT_0                 ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_BWTR3_DATLAT_1                 ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_BWTR3_DATLAT_2                 ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_BWTR3_DATLAT_3                 ((uint32_t)0x08000000)        /*!<Bit 3 */
+
+#define  FMC_BWTR3_ACCMOD                   ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BWTR3_ACCMOD_0                 ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BWTR3_ACCMOD_1                 ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/******************  Bit definition for FMC_BWTR4 register  ******************/
+#define  FMC_BWTR4_ADDSET                   ((uint32_t)0x0000000F)        /*!<ADDSET[3:0] bits (Address setup phase duration) */
+#define  FMC_BWTR4_ADDSET_0                 ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_BWTR4_ADDSET_1                 ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_BWTR4_ADDSET_2                 ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_BWTR4_ADDSET_3                 ((uint32_t)0x00000008)        /*!<Bit 3 */
+
+#define  FMC_BWTR4_ADDHLD                   ((uint32_t)0x000000F0)        /*!<ADDHLD[3:0] bits (Address-hold phase duration) */
+#define  FMC_BWTR4_ADDHLD_0                 ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_BWTR4_ADDHLD_1                 ((uint32_t)0x00000020)        /*!<Bit 1 */
+#define  FMC_BWTR4_ADDHLD_2                 ((uint32_t)0x00000040)        /*!<Bit 2 */
+#define  FMC_BWTR4_ADDHLD_3                 ((uint32_t)0x00000080)        /*!<Bit 3 */
+
+#define  FMC_BWTR4_DATAST                   ((uint32_t)0x0000FF00)        /*!<DATAST [3:0] bits (Data-phase duration) */
+#define  FMC_BWTR4_DATAST_0                 ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_BWTR4_DATAST_1                 ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_BWTR4_DATAST_2                 ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_BWTR4_DATAST_3                 ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_BWTR4_DATAST_4                 ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_BWTR4_DATAST_5                 ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_BWTR4_DATAST_6                 ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_BWTR4_DATAST_7                 ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_BWTR4_CLKDIV                   ((uint32_t)0x00F00000)        /*!<CLKDIV[3:0] bits (Clock divide ratio) */
+#define  FMC_BWTR4_CLKDIV_0                 ((uint32_t)0x00100000)        /*!<Bit 0 */
+#define  FMC_BWTR4_CLKDIV_1                 ((uint32_t)0x00200000)        /*!<Bit 1 */
+#define  FMC_BWTR4_CLKDIV_2                 ((uint32_t)0x00400000)        /*!<Bit 2 */
+#define  FMC_BWTR4_CLKDIV_3                 ((uint32_t)0x00800000)        /*!<Bit 3 */
+
+#define  FMC_BWTR4_DATLAT                   ((uint32_t)0x0F000000)        /*!<DATLA[3:0] bits (Data latency) */
+#define  FMC_BWTR4_DATLAT_0                 ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_BWTR4_DATLAT_1                 ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_BWTR4_DATLAT_2                 ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_BWTR4_DATLAT_3                 ((uint32_t)0x08000000)        /*!<Bit 3 */
+
+#define  FMC_BWTR4_ACCMOD                   ((uint32_t)0x30000000)        /*!<ACCMOD[1:0] bits (Access mode) */
+#define  FMC_BWTR4_ACCMOD_0                 ((uint32_t)0x10000000)        /*!<Bit 0 */
+#define  FMC_BWTR4_ACCMOD_1                 ((uint32_t)0x20000000)        /*!<Bit 1 */
+
+/******************  Bit definition for FMC_PCRx register  *******************/
+#define  FMC_PCRx_PWAITEN                   ((uint32_t)0x00000002)        /*!<Wait feature enable bit                   */
+#define  FMC_PCRx_PBKEN                     ((uint32_t)0x00000004)        /*!<PC Card/NAND Flash memory bank enable bit */
+#define  FMC_PCRx_PTYP                      ((uint32_t)0x00000008)        /*!<Memory type                               */
+
+#define  FMC_PCRx_PWID                      ((uint32_t)0x00000030)        /*!<PWID[1:0] bits (NAND Flash databus width) */
+#define  FMC_PCRx_PWID_0                    ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_PCRx_PWID_1                    ((uint32_t)0x00000020)        /*!<Bit 1 */
+
+#define  FMC_PCRx_ECCEN                     ((uint32_t)0x00000040)        /*!<ECC computation logic enable bit          */
+
+#define  FMC_PCRx_TCLR                      ((uint32_t)0x00001E00)        /*!<TCLR[3:0] bits (CLE to RE delay)          */
+#define  FMC_PCRx_TCLR_0                    ((uint32_t)0x00000200)        /*!<Bit 0 */
+#define  FMC_PCRx_TCLR_1                    ((uint32_t)0x00000400)        /*!<Bit 1 */
+#define  FMC_PCRx_TCLR_2                    ((uint32_t)0x00000800)        /*!<Bit 2 */
+#define  FMC_PCRx_TCLR_3                    ((uint32_t)0x00001000)        /*!<Bit 3 */
+
+#define  FMC_PCRx_TAR                       ((uint32_t)0x0001E000)        /*!<TAR[3:0] bits (ALE to RE delay)           */
+#define  FMC_PCRx_TAR_0                     ((uint32_t)0x00002000)        /*!<Bit 0 */
+#define  FMC_PCRx_TAR_1                     ((uint32_t)0x00004000)        /*!<Bit 1 */
+#define  FMC_PCRx_TAR_2                     ((uint32_t)0x00008000)        /*!<Bit 2 */
+#define  FMC_PCRx_TAR_3                     ((uint32_t)0x00010000)        /*!<Bit 3 */
+
+#define  FMC_PCRx_ECCPS                     ((uint32_t)0x000E0000)        /*!<ECCPS[1:0] bits (ECC page size)           */
+#define  FMC_PCRx_ECCPS_0                   ((uint32_t)0x00020000)        /*!<Bit 0 */
+#define  FMC_PCRx_ECCPS_1                   ((uint32_t)0x00040000)        /*!<Bit 1 */
+#define  FMC_PCRx_ECCPS_2                   ((uint32_t)0x00080000)        /*!<Bit 2 */
+
+/******************  Bit definition for FMC_PCR2 register  *******************/
+#define  FMC_PCR2_PWAITEN                   ((uint32_t)0x00000002)        /*!<Wait feature enable bit                   */
+#define  FMC_PCR2_PBKEN                     ((uint32_t)0x00000004)        /*!<PC Card/NAND Flash memory bank enable bit */
+#define  FMC_PCR2_PTYP                      ((uint32_t)0x00000008)        /*!<Memory type                               */
+
+#define  FMC_PCR2_PWID                      ((uint32_t)0x00000030)        /*!<PWID[1:0] bits (NAND Flash databus width) */
+#define  FMC_PCR2_PWID_0                    ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_PCR2_PWID_1                    ((uint32_t)0x00000020)        /*!<Bit 1 */
+
+#define  FMC_PCR2_ECCEN                     ((uint32_t)0x00000040)        /*!<ECC computation logic enable bit          */
+
+#define  FMC_PCR2_TCLR                      ((uint32_t)0x00001E00)        /*!<TCLR[3:0] bits (CLE to RE delay)          */
+#define  FMC_PCR2_TCLR_0                    ((uint32_t)0x00000200)        /*!<Bit 0 */
+#define  FMC_PCR2_TCLR_1                    ((uint32_t)0x00000400)        /*!<Bit 1 */
+#define  FMC_PCR2_TCLR_2                    ((uint32_t)0x00000800)        /*!<Bit 2 */
+#define  FMC_PCR2_TCLR_3                    ((uint32_t)0x00001000)        /*!<Bit 3 */
+
+#define  FMC_PCR2_TAR                       ((uint32_t)0x0001E000)        /*!<TAR[3:0] bits (ALE to RE delay)           */
+#define  FMC_PCR2_TAR_0                     ((uint32_t)0x00002000)        /*!<Bit 0 */
+#define  FMC_PCR2_TAR_1                     ((uint32_t)0x00004000)        /*!<Bit 1 */
+#define  FMC_PCR2_TAR_2                     ((uint32_t)0x00008000)        /*!<Bit 2 */
+#define  FMC_PCR2_TAR_3                     ((uint32_t)0x00010000)        /*!<Bit 3 */
+
+#define  FMC_PCR2_ECCPS                     ((uint32_t)0x000E0000)        /*!<ECCPS[1:0] bits (ECC page size)           */
+#define  FMC_PCR2_ECCPS_0                   ((uint32_t)0x00020000)        /*!<Bit 0 */
+#define  FMC_PCR2_ECCPS_1                   ((uint32_t)0x00040000)        /*!<Bit 1 */
+#define  FMC_PCR2_ECCPS_2                   ((uint32_t)0x00080000)        /*!<Bit 2 */
+
+/******************  Bit definition for FMC_PCR3 register  *******************/
+#define  FMC_PCR3_PWAITEN                   ((uint32_t)0x00000002)        /*!<Wait feature enable bit                   */
+#define  FMC_PCR3_PBKEN                     ((uint32_t)0x00000004)        /*!<PC Card/NAND Flash memory bank enable bit */
+#define  FMC_PCR3_PTYP                      ((uint32_t)0x00000008)        /*!<Memory type                               */
+
+#define  FMC_PCR3_PWID                      ((uint32_t)0x00000030)        /*!<PWID[1:0] bits (NAND Flash databus width) */
+#define  FMC_PCR3_PWID_0                    ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_PCR3_PWID_1                    ((uint32_t)0x00000020)        /*!<Bit 1 */
+
+#define  FMC_PCR3_ECCEN                     ((uint32_t)0x00000040)        /*!<ECC computation logic enable bit          */
+
+#define  FMC_PCR3_TCLR                      ((uint32_t)0x00001E00)        /*!<TCLR[3:0] bits (CLE to RE delay)          */
+#define  FMC_PCR3_TCLR_0                    ((uint32_t)0x00000200)        /*!<Bit 0 */
+#define  FMC_PCR3_TCLR_1                    ((uint32_t)0x00000400)        /*!<Bit 1 */
+#define  FMC_PCR3_TCLR_2                    ((uint32_t)0x00000800)        /*!<Bit 2 */
+#define  FMC_PCR3_TCLR_3                    ((uint32_t)0x00001000)        /*!<Bit 3 */
+
+#define  FMC_PCR3_TAR                       ((uint32_t)0x0001E000)        /*!<TAR[3:0] bits (ALE to RE delay)           */
+#define  FMC_PCR3_TAR_0                     ((uint32_t)0x00002000)        /*!<Bit 0 */
+#define  FMC_PCR3_TAR_1                     ((uint32_t)0x00004000)        /*!<Bit 1 */
+#define  FMC_PCR3_TAR_2                     ((uint32_t)0x00008000)        /*!<Bit 2 */
+#define  FMC_PCR3_TAR_3                     ((uint32_t)0x00010000)        /*!<Bit 3 */
+
+#define  FMC_PCR3_ECCPS                     ((uint32_t)0x000E0000)        /*!<ECCPS[2:0] bits (ECC page size)           */
+#define  FMC_PCR3_ECCPS_0                   ((uint32_t)0x00020000)        /*!<Bit 0 */
+#define  FMC_PCR3_ECCPS_1                   ((uint32_t)0x00040000)        /*!<Bit 1 */
+#define  FMC_PCR3_ECCPS_2                   ((uint32_t)0x00080000)        /*!<Bit 2 */
+
+/******************  Bit definition for FMC_PCR4 register  *******************/
+#define  FMC_PCR4_PWAITEN                   ((uint32_t)0x00000002)        /*!<Wait feature enable bit                   */
+#define  FMC_PCR4_PBKEN                     ((uint32_t)0x00000004)        /*!<PC Card/NAND Flash memory bank enable bit */
+#define  FMC_PCR4_PTYP                      ((uint32_t)0x00000008)        /*!<Memory type                               */
+
+#define  FMC_PCR4_PWID                      ((uint32_t)0x00000030)        /*!<PWID[1:0] bits (NAND Flash databus width) */
+#define  FMC_PCR4_PWID_0                    ((uint32_t)0x00000010)        /*!<Bit 0 */
+#define  FMC_PCR4_PWID_1                    ((uint32_t)0x00000020)        /*!<Bit 1 */
+
+#define  FMC_PCR4_ECCEN                     ((uint32_t)0x00000040)        /*!<ECC computation logic enable bit          */
+
+#define  FMC_PCR4_TCLR                      ((uint32_t)0x00001E00)        /*!<TCLR[3:0] bits (CLE to RE delay)          */
+#define  FMC_PCR4_TCLR_0                    ((uint32_t)0x00000200)        /*!<Bit 0 */
+#define  FMC_PCR4_TCLR_1                    ((uint32_t)0x00000400)        /*!<Bit 1 */
+#define  FMC_PCR4_TCLR_2                    ((uint32_t)0x00000800)        /*!<Bit 2 */
+#define  FMC_PCR4_TCLR_3                    ((uint32_t)0x00001000)        /*!<Bit 3 */
+
+#define  FMC_PCR4_TAR                       ((uint32_t)0x0001E000)        /*!<TAR[3:0] bits (ALE to RE delay)           */
+#define  FMC_PCR4_TAR_0                     ((uint32_t)0x00002000)        /*!<Bit 0 */
+#define  FMC_PCR4_TAR_1                     ((uint32_t)0x00004000)        /*!<Bit 1 */
+#define  FMC_PCR4_TAR_2                     ((uint32_t)0x00008000)        /*!<Bit 2 */
+#define  FMC_PCR4_TAR_3                     ((uint32_t)0x00010000)        /*!<Bit 3 */
+
+#define  FMC_PCR4_ECCPS                     ((uint32_t)0x000E0000)        /*!<ECCPS[2:0] bits (ECC page size)           */
+#define  FMC_PCR4_ECCPS_0                   ((uint32_t)0x00020000)        /*!<Bit 0 */
+#define  FMC_PCR4_ECCPS_1                   ((uint32_t)0x00040000)        /*!<Bit 1 */
+#define  FMC_PCR4_ECCPS_2                   ((uint32_t)0x00080000)        /*!<Bit 2 */
+
+/*******************  Bit definition for FMC_SRx register  *******************/
+#define  FMC_SRx_IRS                        ((uint32_t)0x01)               /*!<Interrupt Rising Edge status                */
+#define  FMC_SRx_ILS                        ((uint32_t)0x02)               /*!<Interrupt Level status                      */
+#define  FMC_SRx_IFS                        ((uint32_t)0x04)               /*!<Interrupt Falling Edge status               */
+#define  FMC_SRx_IREN                       ((uint32_t)0x08)               /*!<Interrupt Rising Edge detection Enable bit  */
+#define  FMC_SRx_ILEN                       ((uint32_t)0x10)               /*!<Interrupt Level detection Enable bit        */
+#define  FMC_SRx_IFEN                       ((uint32_t)0x20)               /*!<Interrupt Falling Edge detection Enable bit */
+#define  FMC_SRx_FEMPT                      ((uint32_t)0x40)               /*!<FIFO empty                                  */
+
+/*******************  Bit definition for FMC_SR2 register  *******************/
+#define  FMC_SR2_IRS                        ((uint32_t)0x01)               /*!<Interrupt Rising Edge status                */
+#define  FMC_SR2_ILS                        ((uint32_t)0x02)               /*!<Interrupt Level status                      */
+#define  FMC_SR2_IFS                        ((uint32_t)0x04)               /*!<Interrupt Falling Edge status               */
+#define  FMC_SR2_IREN                       ((uint32_t)0x08)               /*!<Interrupt Rising Edge detection Enable bit  */
+#define  FMC_SR2_ILEN                       ((uint32_t)0x10)               /*!<Interrupt Level detection Enable bit        */
+#define  FMC_SR2_IFEN                       ((uint32_t)0x20)               /*!<Interrupt Falling Edge detection Enable bit */
+#define  FMC_SR2_FEMPT                      ((uint32_t)0x40)               /*!<FIFO empty                                  */
+
+/*******************  Bit definition for FMC_SR3 register  *******************/
+#define  FMC_SR3_IRS                        ((uint32_t)0x01)               /*!<Interrupt Rising Edge status                */
+#define  FMC_SR3_ILS                        ((uint32_t)0x02)               /*!<Interrupt Level status                      */
+#define  FMC_SR3_IFS                        ((uint32_t)0x04)               /*!<Interrupt Falling Edge status               */
+#define  FMC_SR3_IREN                       ((uint32_t)0x08)               /*!<Interrupt Rising Edge detection Enable bit  */
+#define  FMC_SR3_ILEN                       ((uint32_t)0x10)               /*!<Interrupt Level detection Enable bit        */
+#define  FMC_SR3_IFEN                       ((uint32_t)0x20)               /*!<Interrupt Falling Edge detection Enable bit */
+#define  FMC_SR3_FEMPT                      ((uint32_t)0x40)               /*!<FIFO empty                                  */
+
+/*******************  Bit definition for FMC_SR4 register  *******************/
+#define  FMC_SR4_IRS                        ((uint32_t)0x01)               /*!<Interrupt Rising Edge status                */
+#define  FMC_SR4_ILS                        ((uint32_t)0x02)               /*!<Interrupt Level status                      */
+#define  FMC_SR4_IFS                        ((uint32_t)0x04)               /*!<Interrupt Falling Edge status               */
+#define  FMC_SR4_IREN                       ((uint32_t)0x08)               /*!<Interrupt Rising Edge detection Enable bit  */
+#define  FMC_SR4_ILEN                       ((uint32_t)0x10)               /*!<Interrupt Level detection Enable bit        */
+#define  FMC_SR4_IFEN                       ((uint32_t)0x20)               /*!<Interrupt Falling Edge detection Enable bit */
+#define  FMC_SR4_FEMPT                      ((uint32_t)0x40)               /*!<FIFO empty                                  */
+
+/******************  Bit definition for FMC_PMEMx register  ******************/
+#define  FMC_PMEMx_MEMSETx                  ((uint32_t)0x000000FF)        /*!<MEMSETx[7:0] bits (Common memory x setup time) */
+#define  FMC_PMEMx_MEMSETx_0                ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_PMEMx_MEMSETx_1                ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_PMEMx_MEMSETx_2                ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_PMEMx_MEMSETx_3                ((uint32_t)0x00000008)        /*!<Bit 3 */
+#define  FMC_PMEMx_MEMSETx_4                ((uint32_t)0x00000010)        /*!<Bit 4 */
+#define  FMC_PMEMx_MEMSETx_5                ((uint32_t)0x00000020)        /*!<Bit 5 */
+#define  FMC_PMEMx_MEMSETx_6                ((uint32_t)0x00000040)        /*!<Bit 6 */
+#define  FMC_PMEMx_MEMSETx_7                ((uint32_t)0x00000080)        /*!<Bit 7 */
+
+#define  FMC_PMEMx_MEMWAITx                 ((uint32_t)0x0000FF00)        /*!<MEMWAITx[7:0] bits (Common memory x wait time) */
+#define  FMC_PMEMx_MEMWAITx_0               ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_PMEMx_MEMWAITx_1               ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_PMEMx_MEMWAITx_2               ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_PMEMx_MEMWAITx_3               ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_PMEMx_MEMWAITx_4               ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_PMEMx_MEMWAITx_5               ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_PMEMx_MEMWAITx_6               ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_PMEMx_MEMWAITx_7               ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_PMEMx_MEMHOLDx                 ((uint32_t)0x00FF0000)        /*!<MEMHOLDx[7:0] bits (Common memory x hold time) */
+#define  FMC_PMEMx_MEMHOLDx_0               ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_PMEMx_MEMHOLDx_1               ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_PMEMx_MEMHOLDx_2               ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_PMEMx_MEMHOLDx_3               ((uint32_t)0x00080000)        /*!<Bit 3 */
+#define  FMC_PMEMx_MEMHOLDx_4               ((uint32_t)0x00100000)        /*!<Bit 4 */
+#define  FMC_PMEMx_MEMHOLDx_5               ((uint32_t)0x00200000)        /*!<Bit 5 */
+#define  FMC_PMEMx_MEMHOLDx_6               ((uint32_t)0x00400000)        /*!<Bit 6 */
+#define  FMC_PMEMx_MEMHOLDx_7               ((uint32_t)0x00800000)        /*!<Bit 7 */
+
+#define  FMC_PMEMx_MEMHIZx                  ((uint32_t)0xFF000000)        /*!<MEMHIZx[7:0] bits (Common memory x databus HiZ time) */
+#define  FMC_PMEMx_MEMHIZx_0                ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_PMEMx_MEMHIZx_1                ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_PMEMx_MEMHIZx_2                ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_PMEMx_MEMHIZx_3                ((uint32_t)0x08000000)        /*!<Bit 3 */
+#define  FMC_PMEMx_MEMHIZx_4                ((uint32_t)0x10000000)        /*!<Bit 4 */
+#define  FMC_PMEMx_MEMHIZx_5                ((uint32_t)0x20000000)        /*!<Bit 5 */
+#define  FMC_PMEMx_MEMHIZx_6                ((uint32_t)0x40000000)        /*!<Bit 6 */
+#define  FMC_PMEMx_MEMHIZx_7                ((uint32_t)0x80000000)        /*!<Bit 7 */
+
+/******************  Bit definition for FMC_PMEM2 register  ******************/
+#define  FMC_PMEM2_MEMSET2                  ((uint32_t)0x000000FF)        /*!<MEMSET2[7:0] bits (Common memory 2 setup time) */
+#define  FMC_PMEM2_MEMSET2_0                ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_PMEM2_MEMSET2_1                ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_PMEM2_MEMSET2_2                ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_PMEM2_MEMSET2_3                ((uint32_t)0x00000008)        /*!<Bit 3 */
+#define  FMC_PMEM2_MEMSET2_4                ((uint32_t)0x00000010)        /*!<Bit 4 */
+#define  FMC_PMEM2_MEMSET2_5                ((uint32_t)0x00000020)        /*!<Bit 5 */
+#define  FMC_PMEM2_MEMSET2_6                ((uint32_t)0x00000040)        /*!<Bit 6 */
+#define  FMC_PMEM2_MEMSET2_7                ((uint32_t)0x00000080)        /*!<Bit 7 */
+
+#define  FMC_PMEM2_MEMWAIT2                 ((uint32_t)0x0000FF00)        /*!<MEMWAIT2[7:0] bits (Common memory 2 wait time) */
+#define  FMC_PMEM2_MEMWAIT2_0               ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_PMEM2_MEMWAIT2_1               ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_PMEM2_MEMWAIT2_2               ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_PMEM2_MEMWAIT2_3               ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_PMEM2_MEMWAIT2_4               ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_PMEM2_MEMWAIT2_5               ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_PMEM2_MEMWAIT2_6               ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_PMEM2_MEMWAIT2_7               ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_PMEM2_MEMHOLD2                 ((uint32_t)0x00FF0000)        /*!<MEMHOLD2[7:0] bits (Common memory 2 hold time) */
+#define  FMC_PMEM2_MEMHOLD2_0               ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_PMEM2_MEMHOLD2_1               ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_PMEM2_MEMHOLD2_2               ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_PMEM2_MEMHOLD2_3               ((uint32_t)0x00080000)        /*!<Bit 3 */
+#define  FMC_PMEM2_MEMHOLD2_4               ((uint32_t)0x00100000)        /*!<Bit 4 */
+#define  FMC_PMEM2_MEMHOLD2_5               ((uint32_t)0x00200000)        /*!<Bit 5 */
+#define  FMC_PMEM2_MEMHOLD2_6               ((uint32_t)0x00400000)        /*!<Bit 6 */
+#define  FMC_PMEM2_MEMHOLD2_7               ((uint32_t)0x00800000)        /*!<Bit 7 */
+
+#define  FMC_PMEM2_MEMHIZ2                  ((uint32_t)0xFF000000)        /*!<MEMHIZ2[7:0] bits (Common memory 2 databus HiZ time) */
+#define  FMC_PMEM2_MEMHIZ2_0                ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_PMEM2_MEMHIZ2_1                ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_PMEM2_MEMHIZ2_2                ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_PMEM2_MEMHIZ2_3                ((uint32_t)0x08000000)        /*!<Bit 3 */
+#define  FMC_PMEM2_MEMHIZ2_4                ((uint32_t)0x10000000)        /*!<Bit 4 */
+#define  FMC_PMEM2_MEMHIZ2_5                ((uint32_t)0x20000000)        /*!<Bit 5 */
+#define  FMC_PMEM2_MEMHIZ2_6                ((uint32_t)0x40000000)        /*!<Bit 6 */
+#define  FMC_PMEM2_MEMHIZ2_7                ((uint32_t)0x80000000)        /*!<Bit 7 */
+
+/******************  Bit definition for FMC_PMEM3 register  ******************/
+#define  FMC_PMEM3_MEMSET3                  ((uint32_t)0x000000FF)        /*!<MEMSET3[7:0] bits (Common memory 3 setup time) */
+#define  FMC_PMEM3_MEMSET3_0                ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_PMEM3_MEMSET3_1                ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_PMEM3_MEMSET3_2                ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_PMEM3_MEMSET3_3                ((uint32_t)0x00000008)        /*!<Bit 3 */
+#define  FMC_PMEM3_MEMSET3_4                ((uint32_t)0x00000010)        /*!<Bit 4 */
+#define  FMC_PMEM3_MEMSET3_5                ((uint32_t)0x00000020)        /*!<Bit 5 */
+#define  FMC_PMEM3_MEMSET3_6                ((uint32_t)0x00000040)        /*!<Bit 6 */
+#define  FMC_PMEM3_MEMSET3_7                ((uint32_t)0x00000080)        /*!<Bit 7 */
+
+#define  FMC_PMEM3_MEMWAIT3                 ((uint32_t)0x0000FF00)        /*!<MEMWAIT3[7:0] bits (Common memory 3 wait time) */
+#define  FMC_PMEM3_MEMWAIT3_0               ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_PMEM3_MEMWAIT3_1               ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_PMEM3_MEMWAIT3_2               ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_PMEM3_MEMWAIT3_3               ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_PMEM3_MEMWAIT3_4               ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_PMEM3_MEMWAIT3_5               ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_PMEM3_MEMWAIT3_6               ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_PMEM3_MEMWAIT3_7               ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_PMEM3_MEMHOLD3                 ((uint32_t)0x00FF0000)        /*!<MEMHOLD3[7:0] bits (Common memory 3 hold time) */
+#define  FMC_PMEM3_MEMHOLD3_0               ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_PMEM3_MEMHOLD3_1               ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_PMEM3_MEMHOLD3_2               ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_PMEM3_MEMHOLD3_3               ((uint32_t)0x00080000)        /*!<Bit 3 */
+#define  FMC_PMEM3_MEMHOLD3_4               ((uint32_t)0x00100000)        /*!<Bit 4 */
+#define  FMC_PMEM3_MEMHOLD3_5               ((uint32_t)0x00200000)        /*!<Bit 5 */
+#define  FMC_PMEM3_MEMHOLD3_6               ((uint32_t)0x00400000)        /*!<Bit 6 */
+#define  FMC_PMEM3_MEMHOLD3_7               ((uint32_t)0x00800000)        /*!<Bit 7 */
+
+#define  FMC_PMEM3_MEMHIZ3                  ((uint32_t)0xFF000000)        /*!<MEMHIZ3[7:0] bits (Common memory 3 databus HiZ time) */
+#define  FMC_PMEM3_MEMHIZ3_0                ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_PMEM3_MEMHIZ3_1                ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_PMEM3_MEMHIZ3_2                ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_PMEM3_MEMHIZ3_3                ((uint32_t)0x08000000)        /*!<Bit 3 */
+#define  FMC_PMEM3_MEMHIZ3_4                ((uint32_t)0x10000000)        /*!<Bit 4 */
+#define  FMC_PMEM3_MEMHIZ3_5                ((uint32_t)0x20000000)        /*!<Bit 5 */
+#define  FMC_PMEM3_MEMHIZ3_6                ((uint32_t)0x40000000)        /*!<Bit 6 */
+#define  FMC_PMEM3_MEMHIZ3_7                ((uint32_t)0x80000000)        /*!<Bit 7 */
+
+/******************  Bit definition for FMC_PMEM4 register  ******************/
+#define  FMC_PMEM4_MEMSET4                  ((uint32_t)0x000000FF)        /*!<MEMSET4[7:0] bits (Common memory 4 setup time) */
+#define  FMC_PMEM4_MEMSET4_0                ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_PMEM4_MEMSET4_1                ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_PMEM4_MEMSET4_2                ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_PMEM4_MEMSET4_3                ((uint32_t)0x00000008)        /*!<Bit 3 */
+#define  FMC_PMEM4_MEMSET4_4                ((uint32_t)0x00000010)        /*!<Bit 4 */
+#define  FMC_PMEM4_MEMSET4_5                ((uint32_t)0x00000020)        /*!<Bit 5 */
+#define  FMC_PMEM4_MEMSET4_6                ((uint32_t)0x00000040)        /*!<Bit 6 */
+#define  FMC_PMEM4_MEMSET4_7                ((uint32_t)0x00000080)        /*!<Bit 7 */
+
+#define  FMC_PMEM4_MEMWAIT4                 ((uint32_t)0x0000FF00)        /*!<MEMWAIT4[7:0] bits (Common memory 4 wait time) */
+#define  FMC_PMEM4_MEMWAIT4_0               ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_PMEM4_MEMWAIT4_1               ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_PMEM4_MEMWAIT4_2               ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_PMEM4_MEMWAIT4_3               ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_PMEM4_MEMWAIT4_4               ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_PMEM4_MEMWAIT4_5               ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_PMEM4_MEMWAIT4_6               ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_PMEM4_MEMWAIT4_7               ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_PMEM4_MEMHOLD4                 ((uint32_t)0x00FF0000)        /*!<MEMHOLD4[7:0] bits (Common memory 4 hold time) */
+#define  FMC_PMEM4_MEMHOLD4_0               ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_PMEM4_MEMHOLD4_1               ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_PMEM4_MEMHOLD4_2               ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_PMEM4_MEMHOLD4_3               ((uint32_t)0x00080000)        /*!<Bit 3 */
+#define  FMC_PMEM4_MEMHOLD4_4               ((uint32_t)0x00100000)        /*!<Bit 4 */
+#define  FMC_PMEM4_MEMHOLD4_5               ((uint32_t)0x00200000)        /*!<Bit 5 */
+#define  FMC_PMEM4_MEMHOLD4_6               ((uint32_t)0x00400000)        /*!<Bit 6 */
+#define  FMC_PMEM4_MEMHOLD4_7               ((uint32_t)0x00800000)        /*!<Bit 7 */
+
+#define  FMC_PMEM4_MEMHIZ4                  ((uint32_t)0xFF000000)        /*!<MEMHIZ4[7:0] bits (Common memory 4 databus HiZ time) */
+#define  FMC_PMEM4_MEMHIZ4_0                ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_PMEM4_MEMHIZ4_1                ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_PMEM4_MEMHIZ4_2                ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_PMEM4_MEMHIZ4_3                ((uint32_t)0x08000000)        /*!<Bit 3 */
+#define  FMC_PMEM4_MEMHIZ4_4                ((uint32_t)0x10000000)        /*!<Bit 4 */
+#define  FMC_PMEM4_MEMHIZ4_5                ((uint32_t)0x20000000)        /*!<Bit 5 */
+#define  FMC_PMEM4_MEMHIZ4_6                ((uint32_t)0x40000000)        /*!<Bit 6 */
+#define  FMC_PMEM4_MEMHIZ4_7                ((uint32_t)0x80000000)        /*!<Bit 7 */
+
+/******************  Bit definition for FMC_PATTx register  ******************/
+#define  FMC_PATTx_ATTSETx                  ((uint32_t)0x000000FF)        /*!<ATTSETx[7:0] bits (Attribute memory x setup time) */
+#define  FMC_PATTx_ATTSETx_0                ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_PATTx_ATTSETx_1                ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_PATTx_ATTSETx_2                ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_PATTx_ATTSETx_3                ((uint32_t)0x00000008)        /*!<Bit 3 */
+#define  FMC_PATTx_ATTSETx_4                ((uint32_t)0x00000010)        /*!<Bit 4 */
+#define  FMC_PATTx_ATTSETx_5                ((uint32_t)0x00000020)        /*!<Bit 5 */
+#define  FMC_PATTx_ATTSETx_6                ((uint32_t)0x00000040)        /*!<Bit 6 */
+#define  FMC_PATTx_ATTSETx_7                ((uint32_t)0x00000080)        /*!<Bit 7 */
+
+#define  FMC_PATTx_ATTWAITx                 ((uint32_t)0x0000FF00)        /*!<ATTWAITx[7:0] bits (Attribute memory x wait time) */
+#define  FMC_PATTx_ATTWAITx_0               ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_PATTx_ATTWAITx_1               ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_PATTx_ATTWAITx_2               ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_PATTx_ATTWAITx_3               ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_PATTx_ATTWAITx_4               ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_PATTx_ATTWAITx_5               ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_PATTx_ATTWAITx_6               ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_PATTx_ATTWAITx_7               ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_PATTx_ATTHOLDx                 ((uint32_t)0x00FF0000)        /*!<ATTHOLDx[7:0] bits (Attribute memory x hold time) */
+#define  FMC_PATTx_ATTHOLDx_0               ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_PATTx_ATTHOLDx_1               ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_PATTx_ATTHOLDx_2               ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_PATTx_ATTHOLDx_3               ((uint32_t)0x00080000)        /*!<Bit 3 */
+#define  FMC_PATTx_ATTHOLDx_4               ((uint32_t)0x00100000)        /*!<Bit 4 */
+#define  FMC_PATTx_ATTHOLDx_5               ((uint32_t)0x00200000)        /*!<Bit 5 */
+#define  FMC_PATTx_ATTHOLDx_6               ((uint32_t)0x00400000)        /*!<Bit 6 */
+#define  FMC_PATTx_ATTHOLDx_7               ((uint32_t)0x00800000)        /*!<Bit 7 */
+
+#define  FMC_PATTx_ATTHIZx                  ((uint32_t)0xFF000000)        /*!<ATTHIZx[7:0] bits (Attribute memory x databus HiZ time) */
+#define  FMC_PATTx_ATTHIZx_0                ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_PATTx_ATTHIZx_1                ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_PATTx_ATTHIZx_2                ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_PATTx_ATTHIZx_3                ((uint32_t)0x08000000)        /*!<Bit 3 */
+#define  FMC_PATTx_ATTHIZx_4                ((uint32_t)0x10000000)        /*!<Bit 4 */
+#define  FMC_PATTx_ATTHIZx_5                ((uint32_t)0x20000000)        /*!<Bit 5 */
+#define  FMC_PATTx_ATTHIZx_6                ((uint32_t)0x40000000)        /*!<Bit 6 */
+#define  FMC_PATTx_ATTHIZx_7                ((uint32_t)0x80000000)        /*!<Bit 7 */
+
+/******************  Bit definition for FMC_PATT2 register  ******************/
+#define  FMC_PATT2_ATTSET2                  ((uint32_t)0x000000FF)        /*!<ATTSET2[7:0] bits (Attribute memory 2 setup time) */
+#define  FMC_PATT2_ATTSET2_0                ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_PATT2_ATTSET2_1                ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_PATT2_ATTSET2_2                ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_PATT2_ATTSET2_3                ((uint32_t)0x00000008)        /*!<Bit 3 */
+#define  FMC_PATT2_ATTSET2_4                ((uint32_t)0x00000010)        /*!<Bit 4 */
+#define  FMC_PATT2_ATTSET2_5                ((uint32_t)0x00000020)        /*!<Bit 5 */
+#define  FMC_PATT2_ATTSET2_6                ((uint32_t)0x00000040)        /*!<Bit 6 */
+#define  FMC_PATT2_ATTSET2_7                ((uint32_t)0x00000080)        /*!<Bit 7 */
+
+#define  FMC_PATT2_ATTWAIT2                 ((uint32_t)0x0000FF00)        /*!<ATTWAIT2[7:0] bits (Attribute memory 2 wait time) */
+#define  FMC_PATT2_ATTWAIT2_0               ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_PATT2_ATTWAIT2_1               ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_PATT2_ATTWAIT2_2               ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_PATT2_ATTWAIT2_3               ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_PATT2_ATTWAIT2_4               ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_PATT2_ATTWAIT2_5               ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_PATT2_ATTWAIT2_6               ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_PATT2_ATTWAIT2_7               ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_PATT2_ATTHOLD2                 ((uint32_t)0x00FF0000)        /*!<ATTHOLD2[7:0] bits (Attribute memory 2 hold time) */
+#define  FMC_PATT2_ATTHOLD2_0               ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_PATT2_ATTHOLD2_1               ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_PATT2_ATTHOLD2_2               ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_PATT2_ATTHOLD2_3               ((uint32_t)0x00080000)        /*!<Bit 3 */
+#define  FMC_PATT2_ATTHOLD2_4               ((uint32_t)0x00100000)        /*!<Bit 4 */
+#define  FMC_PATT2_ATTHOLD2_5               ((uint32_t)0x00200000)        /*!<Bit 5 */
+#define  FMC_PATT2_ATTHOLD2_6               ((uint32_t)0x00400000)        /*!<Bit 6 */
+#define  FMC_PATT2_ATTHOLD2_7               ((uint32_t)0x00800000)        /*!<Bit 7 */
+
+#define  FMC_PATT2_ATTHIZ2                  ((uint32_t)0xFF000000)        /*!<ATTHIZ2[7:0] bits (Attribute memory 2 databus HiZ time) */
+#define  FMC_PATT2_ATTHIZ2_0                ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_PATT2_ATTHIZ2_1                ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_PATT2_ATTHIZ2_2                ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_PATT2_ATTHIZ2_3                ((uint32_t)0x08000000)        /*!<Bit 3 */
+#define  FMC_PATT2_ATTHIZ2_4                ((uint32_t)0x10000000)        /*!<Bit 4 */
+#define  FMC_PATT2_ATTHIZ2_5                ((uint32_t)0x20000000)        /*!<Bit 5 */
+#define  FMC_PATT2_ATTHIZ2_6                ((uint32_t)0x40000000)        /*!<Bit 6 */
+#define  FMC_PATT2_ATTHIZ2_7                ((uint32_t)0x80000000)        /*!<Bit 7 */
+
+/******************  Bit definition for FMC_PATT3 register  ******************/
+#define  FMC_PATT3_ATTSET3                  ((uint32_t)0x000000FF)        /*!<ATTSET3[7:0] bits (Attribute memory 3 setup time) */
+#define  FMC_PATT3_ATTSET3_0                ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_PATT3_ATTSET3_1                ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_PATT3_ATTSET3_2                ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_PATT3_ATTSET3_3                ((uint32_t)0x00000008)        /*!<Bit 3 */
+#define  FMC_PATT3_ATTSET3_4                ((uint32_t)0x00000010)        /*!<Bit 4 */
+#define  FMC_PATT3_ATTSET3_5                ((uint32_t)0x00000020)        /*!<Bit 5 */
+#define  FMC_PATT3_ATTSET3_6                ((uint32_t)0x00000040)        /*!<Bit 6 */
+#define  FMC_PATT3_ATTSET3_7                ((uint32_t)0x00000080)        /*!<Bit 7 */
+
+#define  FMC_PATT3_ATTWAIT3                 ((uint32_t)0x0000FF00)        /*!<ATTWAIT3[7:0] bits (Attribute memory 3 wait time) */
+#define  FMC_PATT3_ATTWAIT3_0               ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_PATT3_ATTWAIT3_1               ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_PATT3_ATTWAIT3_2               ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_PATT3_ATTWAIT3_3               ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_PATT3_ATTWAIT3_4               ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_PATT3_ATTWAIT3_5               ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_PATT3_ATTWAIT3_6               ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_PATT3_ATTWAIT3_7               ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_PATT3_ATTHOLD3                 ((uint32_t)0x00FF0000)        /*!<ATTHOLD3[7:0] bits (Attribute memory 3 hold time) */
+#define  FMC_PATT3_ATTHOLD3_0               ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_PATT3_ATTHOLD3_1               ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_PATT3_ATTHOLD3_2               ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_PATT3_ATTHOLD3_3               ((uint32_t)0x00080000)        /*!<Bit 3 */
+#define  FMC_PATT3_ATTHOLD3_4               ((uint32_t)0x00100000)        /*!<Bit 4 */
+#define  FMC_PATT3_ATTHOLD3_5               ((uint32_t)0x00200000)        /*!<Bit 5 */
+#define  FMC_PATT3_ATTHOLD3_6               ((uint32_t)0x00400000)        /*!<Bit 6 */
+#define  FMC_PATT3_ATTHOLD3_7               ((uint32_t)0x00800000)        /*!<Bit 7 */
+
+#define  FMC_PATT3_ATTHIZ3                  ((uint32_t)0xFF000000)        /*!<ATTHIZ3[7:0] bits (Attribute memory 3 databus HiZ time) */
+#define  FMC_PATT3_ATTHIZ3_0                ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_PATT3_ATTHIZ3_1                ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_PATT3_ATTHIZ3_2                ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_PATT3_ATTHIZ3_3                ((uint32_t)0x08000000)        /*!<Bit 3 */
+#define  FMC_PATT3_ATTHIZ3_4                ((uint32_t)0x10000000)        /*!<Bit 4 */
+#define  FMC_PATT3_ATTHIZ3_5                ((uint32_t)0x20000000)        /*!<Bit 5 */
+#define  FMC_PATT3_ATTHIZ3_6                ((uint32_t)0x40000000)        /*!<Bit 6 */
+#define  FMC_PATT3_ATTHIZ3_7                ((uint32_t)0x80000000)        /*!<Bit 7 */
+
+/******************  Bit definition for FMC_PATT4 register  ******************/
+#define  FMC_PATT4_ATTSET4                  ((uint32_t)0x000000FF)        /*!<ATTSET4[7:0] bits (Attribute memory 4 setup time) */
+#define  FMC_PATT4_ATTSET4_0                ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_PATT4_ATTSET4_1                ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_PATT4_ATTSET4_2                ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_PATT4_ATTSET4_3                ((uint32_t)0x00000008)        /*!<Bit 3 */
+#define  FMC_PATT4_ATTSET4_4                ((uint32_t)0x00000010)        /*!<Bit 4 */
+#define  FMC_PATT4_ATTSET4_5                ((uint32_t)0x00000020)        /*!<Bit 5 */
+#define  FMC_PATT4_ATTSET4_6                ((uint32_t)0x00000040)        /*!<Bit 6 */
+#define  FMC_PATT4_ATTSET4_7                ((uint32_t)0x00000080)        /*!<Bit 7 */
+
+#define  FMC_PATT4_ATTWAIT4                 ((uint32_t)0x0000FF00)        /*!<ATTWAIT4[7:0] bits (Attribute memory 4 wait time) */
+#define  FMC_PATT4_ATTWAIT4_0               ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_PATT4_ATTWAIT4_1               ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_PATT4_ATTWAIT4_2               ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_PATT4_ATTWAIT4_3               ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_PATT4_ATTWAIT4_4               ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_PATT4_ATTWAIT4_5               ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_PATT4_ATTWAIT4_6               ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_PATT4_ATTWAIT4_7               ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_PATT4_ATTHOLD4                 ((uint32_t)0x00FF0000)        /*!<ATTHOLD4[7:0] bits (Attribute memory 4 hold time) */
+#define  FMC_PATT4_ATTHOLD4_0               ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_PATT4_ATTHOLD4_1               ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_PATT4_ATTHOLD4_2               ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_PATT4_ATTHOLD4_3               ((uint32_t)0x00080000)        /*!<Bit 3 */
+#define  FMC_PATT4_ATTHOLD4_4               ((uint32_t)0x00100000)        /*!<Bit 4 */
+#define  FMC_PATT4_ATTHOLD4_5               ((uint32_t)0x00200000)        /*!<Bit 5 */
+#define  FMC_PATT4_ATTHOLD4_6               ((uint32_t)0x00400000)        /*!<Bit 6 */
+#define  FMC_PATT4_ATTHOLD4_7               ((uint32_t)0x00800000)        /*!<Bit 7 */
+
+#define  FMC_PATT4_ATTHIZ4                  ((uint32_t)0xFF000000)        /*!<ATTHIZ4[7:0] bits (Attribute memory 4 databus HiZ time) */
+#define  FMC_PATT4_ATTHIZ4_0                ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_PATT4_ATTHIZ4_1                ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_PATT4_ATTHIZ4_2                ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_PATT4_ATTHIZ4_3                ((uint32_t)0x08000000)        /*!<Bit 3 */
+#define  FMC_PATT4_ATTHIZ4_4                ((uint32_t)0x10000000)        /*!<Bit 4 */
+#define  FMC_PATT4_ATTHIZ4_5                ((uint32_t)0x20000000)        /*!<Bit 5 */
+#define  FMC_PATT4_ATTHIZ4_6                ((uint32_t)0x40000000)        /*!<Bit 6 */
+#define  FMC_PATT4_ATTHIZ4_7                ((uint32_t)0x80000000)        /*!<Bit 7 */
+
+/******************  Bit definition for FMC_PIO4 register  *******************/
+#define  FMC_PIO4_IOSET4                    ((uint32_t)0x000000FF)        /*!<IOSET4[7:0] bits (I/O 4 setup time) */
+#define  FMC_PIO4_IOSET4_0                  ((uint32_t)0x00000001)        /*!<Bit 0 */
+#define  FMC_PIO4_IOSET4_1                  ((uint32_t)0x00000002)        /*!<Bit 1 */
+#define  FMC_PIO4_IOSET4_2                  ((uint32_t)0x00000004)        /*!<Bit 2 */
+#define  FMC_PIO4_IOSET4_3                  ((uint32_t)0x00000008)        /*!<Bit 3 */
+#define  FMC_PIO4_IOSET4_4                  ((uint32_t)0x00000010)        /*!<Bit 4 */
+#define  FMC_PIO4_IOSET4_5                  ((uint32_t)0x00000020)        /*!<Bit 5 */
+#define  FMC_PIO4_IOSET4_6                  ((uint32_t)0x00000040)        /*!<Bit 6 */
+#define  FMC_PIO4_IOSET4_7                  ((uint32_t)0x00000080)        /*!<Bit 7 */
+
+#define  FMC_PIO4_IOWAIT4                   ((uint32_t)0x0000FF00)        /*!<IOWAIT4[7:0] bits (I/O 4 wait time) */
+#define  FMC_PIO4_IOWAIT4_0                 ((uint32_t)0x00000100)        /*!<Bit 0 */
+#define  FMC_PIO4_IOWAIT4_1                 ((uint32_t)0x00000200)        /*!<Bit 1 */
+#define  FMC_PIO4_IOWAIT4_2                 ((uint32_t)0x00000400)        /*!<Bit 2 */
+#define  FMC_PIO4_IOWAIT4_3                 ((uint32_t)0x00000800)        /*!<Bit 3 */
+#define  FMC_PIO4_IOWAIT4_4                 ((uint32_t)0x00001000)        /*!<Bit 4 */
+#define  FMC_PIO4_IOWAIT4_5                 ((uint32_t)0x00002000)        /*!<Bit 5 */
+#define  FMC_PIO4_IOWAIT4_6                 ((uint32_t)0x00004000)        /*!<Bit 6 */
+#define  FMC_PIO4_IOWAIT4_7                 ((uint32_t)0x00008000)        /*!<Bit 7 */
+
+#define  FMC_PIO4_IOHOLD4                   ((uint32_t)0x00FF0000)        /*!<IOHOLD4[7:0] bits (I/O 4 hold time) */
+#define  FMC_PIO4_IOHOLD4_0                 ((uint32_t)0x00010000)        /*!<Bit 0 */
+#define  FMC_PIO4_IOHOLD4_1                 ((uint32_t)0x00020000)        /*!<Bit 1 */
+#define  FMC_PIO4_IOHOLD4_2                 ((uint32_t)0x00040000)        /*!<Bit 2 */
+#define  FMC_PIO4_IOHOLD4_3                 ((uint32_t)0x00080000)        /*!<Bit 3 */
+#define  FMC_PIO4_IOHOLD4_4                 ((uint32_t)0x00100000)        /*!<Bit 4 */
+#define  FMC_PIO4_IOHOLD4_5                 ((uint32_t)0x00200000)        /*!<Bit 5 */
+#define  FMC_PIO4_IOHOLD4_6                 ((uint32_t)0x00400000)        /*!<Bit 6 */
+#define  FMC_PIO4_IOHOLD4_7                 ((uint32_t)0x00800000)        /*!<Bit 7 */
+
+#define  FMC_PIO4_IOHIZ4                    ((uint32_t)0xFF000000)        /*!<IOHIZ4[7:0] bits (I/O 4 databus HiZ time) */
+#define  FMC_PIO4_IOHIZ4_0                  ((uint32_t)0x01000000)        /*!<Bit 0 */
+#define  FMC_PIO4_IOHIZ4_1                  ((uint32_t)0x02000000)        /*!<Bit 1 */
+#define  FMC_PIO4_IOHIZ4_2                  ((uint32_t)0x04000000)        /*!<Bit 2 */
+#define  FMC_PIO4_IOHIZ4_3                  ((uint32_t)0x08000000)        /*!<Bit 3 */
+#define  FMC_PIO4_IOHIZ4_4                  ((uint32_t)0x10000000)        /*!<Bit 4 */
+#define  FMC_PIO4_IOHIZ4_5                  ((uint32_t)0x20000000)        /*!<Bit 5 */
+#define  FMC_PIO4_IOHIZ4_6                  ((uint32_t)0x40000000)        /*!<Bit 6 */
+#define  FMC_PIO4_IOHIZ4_7                  ((uint32_t)0x80000000)        /*!<Bit 7 */
+
+/******************  Bit definition for FMC_ECCR2 register  ******************/
+#define  FMC_ECCR2_ECC2                     ((uint32_t)0xFFFFFFFF)        /*!<ECC result */
+
+/******************  Bit definition for FMC_ECCR3 register  ******************/
+#define  FMC_ECCR3_ECC3                     ((uint32_t)0xFFFFFFFF)        /*!<ECC result */
 
 /******************************************************************************/
 /*                                                                            */
@@ -4132,8 +5360,8 @@ typedef struct
 #define  RCC_CFGR_PPRE2_DIV8                 ((uint32_t)0x00003000)        /*!< HCLK divided by 8 */
 #define  RCC_CFGR_PPRE2_DIV16                ((uint32_t)0x00003800)        /*!< HCLK divided by 16 */
 
-#define  RCC_CFGR_PLLSRC                     ((uint32_t)0x00010000)        /*!< PLL entry clock source */
-#define  RCC_CFGR_PLLSRC_HSI_DIV2            ((uint32_t)0x00000000)        /*!< HSI clock divided by 2 selected as PLL entry clock source */
+#define  RCC_CFGR_PLLSRC                     ((uint32_t)0x00018000)        /*!< PLL entry clock source */
+#define  RCC_CFGR_PLLSRC_HSI_PREDIV          ((uint32_t)0x00008000)        /*!< HSI/PREDIV clock as PLL entry clock source */
 #define  RCC_CFGR_PLLSRC_HSE_PREDIV          ((uint32_t)0x00010000)        /*!< HSE/PREDIV clock selected as PLL entry clock source */
 
 #define  RCC_CFGR_PLLXTPRE                   ((uint32_t)0x00020000)        /*!< HSE divider for PLL entry */
@@ -4218,19 +5446,25 @@ typedef struct
 /******************  Bit definition for RCC_APB2RSTR register  *****************/
 #define  RCC_APB2RSTR_SYSCFGRST              ((uint32_t)0x00000001)        /*!< SYSCFG reset */
 #define  RCC_APB2RSTR_TIM1RST                ((uint32_t)0x00000800)        /*!< TIM1 reset */
+#define  RCC_APB2RSTR_SPI1RST                ((uint32_t)0x00001000)        /*!< SPI1 reset */
 #define  RCC_APB2RSTR_USART1RST              ((uint32_t)0x00004000)        /*!< USART1 reset */
+#define  RCC_APB2RSTR_SPI4RST                ((uint32_t)0x00008000)        /*!< SPI4 reset */
 #define  RCC_APB2RSTR_TIM15RST               ((uint32_t)0x00010000)        /*!< TIM15 reset */
 #define  RCC_APB2RSTR_TIM16RST               ((uint32_t)0x00020000)        /*!< TIM16 reset */
 #define  RCC_APB2RSTR_TIM17RST               ((uint32_t)0x00040000)        /*!< TIM17 reset */
 
 /******************  Bit definition for RCC_APB1RSTR register  ******************/
 #define  RCC_APB1RSTR_TIM2RST                ((uint32_t)0x00000001)        /*!< Timer 2 reset */
+#define  RCC_APB1RSTR_TIM3RST                ((uint32_t)0x00000002)        /*!< Timer 3 reset */
+#define  RCC_APB1RSTR_TIM4RST                ((uint32_t)0x00000004)        /*!< Timer 4 reset */
 #define  RCC_APB1RSTR_TIM6RST                ((uint32_t)0x00000010)        /*!< Timer 6 reset */
 #define  RCC_APB1RSTR_WWDGRST                ((uint32_t)0x00000800)        /*!< Window Watchdog reset */
 #define  RCC_APB1RSTR_SPI2RST                ((uint32_t)0x00004000)        /*!< SPI2 reset */
 #define  RCC_APB1RSTR_SPI3RST                ((uint32_t)0x00008000)        /*!< SPI3 reset */
 #define  RCC_APB1RSTR_USART2RST              ((uint32_t)0x00020000)        /*!< USART 2 reset */
 #define  RCC_APB1RSTR_USART3RST              ((uint32_t)0x00040000)        /*!< USART 3 reset */
+#define  RCC_APB1RSTR_UART4RST               ((uint32_t)0x00080000)        /*!< UART 4 reset */
+#define  RCC_APB1RSTR_UART5RST               ((uint32_t)0x00100000)        /*!< UART 5 reset */
 #define  RCC_APB1RSTR_I2C1RST                ((uint32_t)0x00200000)        /*!< I2C 1 reset */
 #define  RCC_APB1RSTR_I2C2RST                ((uint32_t)0x00400000)        /*!< I2C 2 reset */
 #define  RCC_APB1RSTR_USBRST                 ((uint32_t)0x00800000)        /*!< USB reset */
@@ -4241,33 +5475,45 @@ typedef struct
 
 /******************  Bit definition for RCC_AHBENR register  ******************/
 #define  RCC_AHBENR_DMA1EN                   ((uint32_t)0x00000001)        /*!< DMA1 clock enable */
+#define  RCC_AHBENR_DMA2EN                   ((uint32_t)0x00000002)        /*!< DMA2 clock enable */
 #define  RCC_AHBENR_SRAMEN                   ((uint32_t)0x00000004)        /*!< SRAM interface clock enable */
 #define  RCC_AHBENR_FLITFEN                  ((uint32_t)0x00000010)        /*!< FLITF clock enable */
+#define  RCC_AHBENR_FMCEN                    ((uint32_t)0x00000020)        /*!< FMC clock enable */
 #define  RCC_AHBENR_CRCEN                    ((uint32_t)0x00000040)        /*!< CRC clock enable */
+#define  RCC_AHBENR_GPIOHEN                  ((uint32_t)0x00010000)        /*!< GPIOH clock enable */
 #define  RCC_AHBENR_GPIOAEN                  ((uint32_t)0x00020000)        /*!< GPIOA clock enable */
 #define  RCC_AHBENR_GPIOBEN                  ((uint32_t)0x00040000)        /*!< GPIOB clock enable */
 #define  RCC_AHBENR_GPIOCEN                  ((uint32_t)0x00080000)        /*!< GPIOC clock enable */
 #define  RCC_AHBENR_GPIODEN                  ((uint32_t)0x00100000)        /*!< GPIOD clock enable */
+#define  RCC_AHBENR_GPIOEEN                  ((uint32_t)0x00200000)        /*!< GPIOE clock enable */
 #define  RCC_AHBENR_GPIOFEN                  ((uint32_t)0x00400000)        /*!< GPIOF clock enable */
+#define  RCC_AHBENR_GPIOGEN                  ((uint32_t)0x00800000)        /*!< GPIOG clock enable */
 #define  RCC_AHBENR_TSCEN                     ((uint32_t)0x01000000)       /*!< TS clock enable */
-#define  RCC_AHBENR_ADC1EN                  ((uint32_t)0x10000000)        /*!< ADC1 clock enable */
+#define  RCC_AHBENR_ADC12EN                  ((uint32_t)0x10000000)        /*!< ADC1/ ADC2 clock enable */
+#define  RCC_AHBENR_ADC34EN                  ((uint32_t)0x20000000)        /*!< ADC3/ ADC4 clock enable */
 
 /*****************  Bit definition for RCC_APB2ENR register  ******************/
 #define  RCC_APB2ENR_SYSCFGEN                ((uint32_t)0x00000001)        /*!< SYSCFG clock enable */
 #define  RCC_APB2ENR_TIM1EN                  ((uint32_t)0x00000800)        /*!< TIM1 clock enable */
+#define  RCC_APB2ENR_SPI1EN                  ((uint32_t)0x00001000)        /*!< SPI1 clock enable */
 #define  RCC_APB2ENR_USART1EN                ((uint32_t)0x00004000)        /*!< USART1 clock enable */
+#define  RCC_APB2ENR_SPI4EN                  ((uint32_t)0x00008000)        /*!< SPI4 clock enable */
 #define  RCC_APB2ENR_TIM15EN                 ((uint32_t)0x00010000)        /*!< TIM15 clock enable */
 #define  RCC_APB2ENR_TIM16EN                 ((uint32_t)0x00020000)        /*!< TIM16 clock enable */
 #define  RCC_APB2ENR_TIM17EN                 ((uint32_t)0x00040000)        /*!< TIM17 clock enable */
 
 /******************  Bit definition for RCC_APB1ENR register  ******************/
 #define  RCC_APB1ENR_TIM2EN                  ((uint32_t)0x00000001)        /*!< Timer 2 clock enable */
+#define  RCC_APB1ENR_TIM3EN                  ((uint32_t)0x00000002)        /*!< Timer 3 clock enable */
+#define  RCC_APB1ENR_TIM4EN                  ((uint32_t)0x00000004)        /*!< Timer 4 clock enable */
 #define  RCC_APB1ENR_TIM6EN                  ((uint32_t)0x00000010)        /*!< Timer 6 clock enable */
 #define  RCC_APB1ENR_WWDGEN                  ((uint32_t)0x00000800)        /*!< Window Watchdog clock enable */
 #define  RCC_APB1ENR_SPI2EN                  ((uint32_t)0x00004000)        /*!< SPI2 clock enable */
 #define  RCC_APB1ENR_SPI3EN                  ((uint32_t)0x00008000)        /*!< SPI3 clock enable */
 #define  RCC_APB1ENR_USART2EN                ((uint32_t)0x00020000)        /*!< USART 2 clock enable */
 #define  RCC_APB1ENR_USART3EN                ((uint32_t)0x00040000)        /*!< USART 3 clock enable */
+#define  RCC_APB1ENR_UART4EN                 ((uint32_t)0x00080000)        /*!< UART 4 clock enable */
+#define  RCC_APB1ENR_UART5EN                 ((uint32_t)0x00100000)        /*!< UART 5 clock enable */
 #define  RCC_APB1ENR_I2C1EN                  ((uint32_t)0x00200000)        /*!< I2C 1 clock enable */
 #define  RCC_APB1ENR_I2C2EN                  ((uint32_t)0x00400000)        /*!< I2C 2 clock enable */
 #define  RCC_APB1ENR_USBEN                   ((uint32_t)0x00800000)        /*!< USB clock enable */
@@ -4302,6 +5548,7 @@ typedef struct
 /********************  Bit definition for RCC_CSR register  *******************/
 #define  RCC_CSR_LSION                       ((uint32_t)0x00000001)        /*!< Internal Low Speed oscillator enable */
 #define  RCC_CSR_LSIRDY                      ((uint32_t)0x00000002)        /*!< Internal Low Speed oscillator Ready */
+#define  RCC_CSR_V18PWRRSTF                  ((uint32_t)0x00800000)        /*!< V1.8 power domain reset flag */
 #define  RCC_CSR_RMVF                        ((uint32_t)0x01000000)        /*!< Remove reset flag */
 #define  RCC_CSR_OBLRSTF                     ((uint32_t)0x02000000)        /*!< OBL reset flag */
 #define  RCC_CSR_PINRSTF                     ((uint32_t)0x04000000)        /*!< PIN reset flag */
@@ -4312,13 +5559,18 @@ typedef struct
 #define  RCC_CSR_LPWRRSTF                    ((uint32_t)0x80000000)        /*!< Low-Power reset flag */
 
 /*******************  Bit definition for RCC_AHBRSTR register  ****************/
+#define  RCC_AHBRSTR_FMCRST                  ((uint32_t)0x00000020)         /*!< FMC reset */
+#define  RCC_AHBRSTR_GPIOHRST                ((uint32_t)0x00010000)         /*!< GPIOH reset */
 #define  RCC_AHBRSTR_GPIOARST                ((uint32_t)0x00020000)         /*!< GPIOA reset */
 #define  RCC_AHBRSTR_GPIOBRST                ((uint32_t)0x00040000)         /*!< GPIOB reset */
 #define  RCC_AHBRSTR_GPIOCRST                ((uint32_t)0x00080000)         /*!< GPIOC reset */
 #define  RCC_AHBRSTR_GPIODRST                ((uint32_t)0x00100000)         /*!< GPIOD reset */
+#define  RCC_AHBRSTR_GPIOERST                ((uint32_t)0x00200000)         /*!< GPIOE reset */
 #define  RCC_AHBRSTR_GPIOFRST                ((uint32_t)0x00400000)         /*!< GPIOF reset */
+#define  RCC_AHBRSTR_GPIOGRST                ((uint32_t)0x00800000)         /*!< GPIOG reset */
 #define  RCC_AHBRSTR_TSCRST                  ((uint32_t)0x01000000)         /*!< TSC reset */
-#define  RCC_AHBRSTR_ADC1RST                 ((uint32_t)0x10000000)         /*!< ADC1 reset */
+#define  RCC_AHBRSTR_ADC12RST                ((uint32_t)0x10000000)         /*!< ADC1 & ADC2 reset */
+#define  RCC_AHBRSTR_ADC34RST                ((uint32_t)0x20000000)         /*!< ADC3 & ADC4 reset */
 
 /*******************  Bit definition for RCC_CFGR2 register  ******************/
 /*!< PREDIV configuration */
@@ -4345,39 +5597,39 @@ typedef struct
 #define  RCC_CFGR2_PREDIV_DIV15              ((uint32_t)0x0000000E)        /*!< PREDIV input clock divided by 15 */
 #define  RCC_CFGR2_PREDIV_DIV16              ((uint32_t)0x0000000F)        /*!< PREDIV input clock divided by 16 */
 
-/*!< ADC1PRES configuration */
-#define  RCC_CFGR2_ADC1PRES                  ((uint32_t)0x000001F0)        /*!< ADC1PRES[8:4] bits */
-#define  RCC_CFGR2_ADC1PRES_0                ((uint32_t)0x00000010)        /*!< Bit 0 */
-#define  RCC_CFGR2_ADC1PRES_1                ((uint32_t)0x00000020)        /*!< Bit 1 */
-#define  RCC_CFGR2_ADC1PRES_2                ((uint32_t)0x00000040)        /*!< Bit 2 */
-#define  RCC_CFGR2_ADC1PRES_3                ((uint32_t)0x00000080)        /*!< Bit 3 */
-#define  RCC_CFGR2_ADC1PRES_4                ((uint32_t)0x00000100)        /*!< Bit 4 */
+/*!< ADCPRE12 configuration */
+#define  RCC_CFGR2_ADCPRE12                  ((uint32_t)0x000001F0)        /*!< ADCPRE12[8:4] bits */
+#define  RCC_CFGR2_ADCPRE12_0                ((uint32_t)0x00000010)        /*!< Bit 0 */
+#define  RCC_CFGR2_ADCPRE12_1                ((uint32_t)0x00000020)        /*!< Bit 1 */
+#define  RCC_CFGR2_ADCPRE12_2                ((uint32_t)0x00000040)        /*!< Bit 2 */
+#define  RCC_CFGR2_ADCPRE12_3                ((uint32_t)0x00000080)        /*!< Bit 3 */
+#define  RCC_CFGR2_ADCPRE12_4                ((uint32_t)0x00000100)        /*!< Bit 4 */
 
-#define  RCC_CFGR2_ADC1PRES_NO               ((uint32_t)0x00000000)        /*!< ADC1 clock disabled, ADC1 can use AHB clock */
-#define  RCC_CFGR2_ADC1PRES_DIV1             ((uint32_t)0x00000100)        /*!< ADC1 PLL clock divided by 1 */
-#define  RCC_CFGR2_ADC1PRES_DIV2             ((uint32_t)0x00000110)        /*!< ADC1 PLL clock divided by 2 */
-#define  RCC_CFGR2_ADC1PRES_DIV4             ((uint32_t)0x00000120)        /*!< ADC1 PLL clock divided by 4 */
-#define  RCC_CFGR2_ADC1PRES_DIV6             ((uint32_t)0x00000130)        /*!< ADC1 PLL clock divided by 6 */
-#define  RCC_CFGR2_ADC1PRES_DIV8             ((uint32_t)0x00000140)        /*!< ADC1 PLL clock divided by 8 */
-#define  RCC_CFGR2_ADC1PRES_DIV10            ((uint32_t)0x00000150)        /*!< ADC1 PLL clock divided by 10 */
-#define  RCC_CFGR2_ADC1PRES_DIV12            ((uint32_t)0x00000160)        /*!< ADC1 PLL clock divided by 12 */
-#define  RCC_CFGR2_ADC1PRES_DIV16            ((uint32_t)0x00000170)        /*!< ADC1 PLL clock divided by 16 */
-#define  RCC_CFGR2_ADC1PRES_DIV32            ((uint32_t)0x00000180)        /*!< ADC1 PLL clock divided by 32 */
-#define  RCC_CFGR2_ADC1PRES_DIV64            ((uint32_t)0x00000190)        /*!< ADC1 PLL clock divided by 64 */
-#define  RCC_CFGR2_ADC1PRES_DIV128           ((uint32_t)0x000001A0)        /*!< ADC1 PLL clock divided by 128 */
-#define  RCC_CFGR2_ADC1PRES_DIV256           ((uint32_t)0x000001B0)        /*!< ADC1 PLL clock divided by 256 */
+#define  RCC_CFGR2_ADCPRE12_NO               ((uint32_t)0x00000000)        /*!< ADC12 clock disabled, ADC12 can use AHB clock */
+#define  RCC_CFGR2_ADCPRE12_DIV1             ((uint32_t)0x00000100)        /*!< ADC12 PLL clock divided by 1 */
+#define  RCC_CFGR2_ADCPRE12_DIV2             ((uint32_t)0x00000110)        /*!< ADC12 PLL clock divided by 2 */
+#define  RCC_CFGR2_ADCPRE12_DIV4             ((uint32_t)0x00000120)        /*!< ADC12 PLL clock divided by 4 */
+#define  RCC_CFGR2_ADCPRE12_DIV6             ((uint32_t)0x00000130)        /*!< ADC12 PLL clock divided by 6 */
+#define  RCC_CFGR2_ADCPRE12_DIV8             ((uint32_t)0x00000140)        /*!< ADC12 PLL clock divided by 8 */
+#define  RCC_CFGR2_ADCPRE12_DIV10            ((uint32_t)0x00000150)        /*!< ADC12 PLL clock divided by 10 */
+#define  RCC_CFGR2_ADCPRE12_DIV12            ((uint32_t)0x00000160)        /*!< ADC12 PLL clock divided by 12 */
+#define  RCC_CFGR2_ADCPRE12_DIV16            ((uint32_t)0x00000170)        /*!< ADC12 PLL clock divided by 16 */
+#define  RCC_CFGR2_ADCPRE12_DIV32            ((uint32_t)0x00000180)        /*!< ADC12 PLL clock divided by 32 */
+#define  RCC_CFGR2_ADCPRE12_DIV64            ((uint32_t)0x00000190)        /*!< ADC12 PLL clock divided by 64 */
+#define  RCC_CFGR2_ADCPRE12_DIV128           ((uint32_t)0x000001A0)        /*!< ADC12 PLL clock divided by 128 */
+#define  RCC_CFGR2_ADCPRE12_DIV256           ((uint32_t)0x000001B0)        /*!< ADC12 PLL clock divided by 256 */
 
 /*******************  Bit definition for RCC_CFGR3 register  ******************/
 #define  RCC_CFGR3_USART1SW                  ((uint32_t)0x00000003)        /*!< USART1SW[1:0] bits */
 #define  RCC_CFGR3_USART1SW_0                ((uint32_t)0x00000001)        /*!< Bit 0 */
 #define  RCC_CFGR3_USART1SW_1                ((uint32_t)0x00000002)        /*!< Bit 1 */
 
-#define  RCC_CFGR3_USART1SW_PCLK1            ((uint32_t)0x00000000)        /*!< PCLK1 clock used as USART1 clock source */
+#define  RCC_CFGR3_USART1SW_PCLK2            ((uint32_t)0x00000000)        /*!< PCLK2 clock used as USART1 clock source */
 #define  RCC_CFGR3_USART1SW_SYSCLK           ((uint32_t)0x00000001)        /*!< System clock selected as USART1 clock source */
 #define  RCC_CFGR3_USART1SW_LSE              ((uint32_t)0x00000002)        /*!< LSE oscillator clock used as USART1 clock source */
 #define  RCC_CFGR3_USART1SW_HSI              ((uint32_t)0x00000003)        /*!< HSI oscillator clock used as USART1 clock source */
 /* Legacy defines */
-#define  RCC_CFGR3_USART1SW_PCLK             RCC_CFGR3_USART1SW_PCLK1
+#define  RCC_CFGR3_USART1SW_PCLK             RCC_CFGR3_USART1SW_PCLK2
 
 #define  RCC_CFGR3_I2CSW                     ((uint32_t)0x00000070)        /*!< I2CSW bits */
 #define  RCC_CFGR3_I2C1SW                    ((uint32_t)0x00000010)        /*!< I2C1SW bits */
@@ -4391,11 +5643,13 @@ typedef struct
 #define  RCC_CFGR3_I2C3SW_HSI                ((uint32_t)0x00000000)        /*!< HSI oscillator clock used as I2C3 clock source */
 #define  RCC_CFGR3_I2C3SW_SYSCLK             ((uint32_t)0x00000040)        /*!< System clock selected as I2C3 clock source */
 
-#define  RCC_CFGR3_TIMSW                     ((uint32_t)0x00002D00)        /*!< TIMSW bits */
+#define  RCC_CFGR3_TIMSW                     ((uint32_t)0x0000AF00)        /*!< TIMSW bits */
 #define  RCC_CFGR3_TIM1SW                    ((uint32_t)0x00000100)        /*!< TIM1SW bits */
 #define  RCC_CFGR3_TIM15SW                   ((uint32_t)0x00000400)        /*!< TIM15SW bits */
 #define  RCC_CFGR3_TIM16SW                   ((uint32_t)0x00000800)        /*!< TIM16SW bits */
 #define  RCC_CFGR3_TIM17SW                   ((uint32_t)0x00002000)        /*!< TIM17SW bits */
+#define  RCC_CFGR3_TIM2SW                    ((uint32_t)0x01000000)        /*!< TIM2SW bits */
+#define  RCC_CFGR3_TIM34SW                    ((uint32_t)0x02000000)        /*!< TIM34SW bits */
 #define  RCC_CFGR3_TIM1SW_HCLK               ((uint32_t)0x00000000)        /*!< HCLK used as TIM1 clock source */
 #define  RCC_CFGR3_TIM1SW_PLL                ((uint32_t)0x00000100)        /*!< PLL clock used as TIM1 clock source */
 #define  RCC_CFGR3_TIM15SW_HCLK              ((uint32_t)0x00000000)        /*!< HCLK used as TIM15 clock source */
@@ -4422,6 +5676,30 @@ typedef struct
 #define  RCC_CFGR3_USART3SW_SYSCLK           ((uint32_t)0x00040000)        /*!< System clock selected as USART3 clock source */
 #define  RCC_CFGR3_USART3SW_LSE              ((uint32_t)0x00080000)        /*!< LSE oscillator clock used as USART3 clock source */
 #define  RCC_CFGR3_USART3SW_HSI              ((uint32_t)0x000C0000)        /*!< HSI oscillator clock used as USART3 clock source */
+
+#define  RCC_CFGR3_UART4SW                   ((uint32_t)0x00300000)        /*!< UART4SW[1:0] bits */
+#define  RCC_CFGR3_UART4SW_0                 ((uint32_t)0x00100000)        /*!< Bit 0 */
+#define  RCC_CFGR3_UART4SW_1                 ((uint32_t)0x00200000)        /*!< Bit 1 */
+
+#define  RCC_CFGR3_UART4SW_PCLK              ((uint32_t)0x00000000)        /*!< PCLK1 clock used as UART4 clock source */
+#define  RCC_CFGR3_UART4SW_SYSCLK            ((uint32_t)0x00100000)        /*!< System clock selected as UART4 clock source */
+#define  RCC_CFGR3_UART4SW_LSE               ((uint32_t)0x00200000)        /*!< LSE oscillator clock used as UART4 clock source */
+#define  RCC_CFGR3_UART4SW_HSI               ((uint32_t)0x00300000)        /*!< HSI oscillator clock used as UART4 clock source */
+
+#define  RCC_CFGR3_UART5SW                   ((uint32_t)0x00C00000)        /*!< UART5SW[1:0] bits */
+#define  RCC_CFGR3_UART5SW_0                 ((uint32_t)0x00400000)        /*!< Bit 0 */
+#define  RCC_CFGR3_UART5SW_1                 ((uint32_t)0x00800000)        /*!< Bit 1 */
+
+#define  RCC_CFGR3_UART5SW_PCLK              ((uint32_t)0x00000000)        /*!< PCLK1 clock used as UART5 clock source */
+#define  RCC_CFGR3_UART5SW_SYSCLK            ((uint32_t)0x00400000)        /*!< System clock selected as UART5 clock source */
+#define  RCC_CFGR3_UART5SW_LSE               ((uint32_t)0x00800000)        /*!< LSE oscillator clock used as UART5 clock source */
+#define  RCC_CFGR3_UART5SW_HSI               ((uint32_t)0x00C00000)        /*!< HSI oscillator clock used as UART5 clock source */
+
+#define  RCC_CFGR3_TIM2SW_HCLK               ((uint32_t)0x00000000)        /*!< HCLK used as TIM2 clock source */
+#define  RCC_CFGR3_TIM2SW_PLL                ((uint32_t)0x01000000)        /*!< PLL clock used as TIM2 clock source */
+
+#define  RCC_CFGR3_TIM34SW_HCLK               ((uint32_t)0x00000000)        /*!< HCLK used as TIM3/TIM4 clock source */
+#define  RCC_CFGR3_TIM34SW_PLL                ((uint32_t)0x02000000)        /*!< PLL clock used as TIM3/TIM4 clock source */
 
 /******************************************************************************/
 /*                                                                            */
@@ -4787,20 +6065,8 @@ typedef struct
 /********************  Bits definition for RTC_BKP15R register  ***************/
 #define RTC_BKP15R                           ((uint32_t)0xFFFFFFFF)
 
-/********************  Bits definition for RTC_BKP16R register  ***************/
-#define RTC_BKP16R                           ((uint32_t)0xFFFFFFFF)
-
-/********************  Bits definition for RTC_BKP17R register  ***************/
-#define RTC_BKP17R                           ((uint32_t)0xFFFFFFFF)
-
-/********************  Bits definition for RTC_BKP18R register  ***************/
-#define RTC_BKP18R                           ((uint32_t)0xFFFFFFFF)
-
-/********************  Bits definition for RTC_BKP19R register  ***************/
-#define RTC_BKP19R                           ((uint32_t)0xFFFFFFFF)
-
 /******************** Number of backup registers ******************************/
-#define RTC_BKP_NUMBER                       20
+#define RTC_BKP_NUMBER                       16
 
 /******************************************************************************/
 /*                                                                            */
@@ -4900,13 +6166,15 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 /*****************  Bit definition for SYSCFG_CFGR1 register  ****************/
-#define SYSCFG_CFGR1_MEM_MODE               ((uint32_t)0x00000003) /*!< SYSCFG_Memory Remap Config */
+#define SYSCFG_CFGR1_MEM_MODE               ((uint32_t)0x00000007) /*!< SYSCFG_Memory Remap Config */
 #define SYSCFG_CFGR1_MEM_MODE_0             ((uint32_t)0x00000001) /*!< Bit 0 */
 #define SYSCFG_CFGR1_MEM_MODE_1             ((uint32_t)0x00000002) /*!< Bit 1 */
+#define SYSCFG_CFGR1_MEM_MODE_2             ((uint32_t)0x00000004) /*!< Bit 2 */
 #define SYSCFG_CFGR1_USB_IT_RMP             ((uint32_t)0x00000020) /*!< USB interrupt remap */
 #define SYSCFG_CFGR1_TIM1_ITR3_RMP          ((uint32_t)0x00000040) /*!< Timer 1 ITR3 selection */
 #define SYSCFG_CFGR1_DAC1_TRIG1_RMP         ((uint32_t)0x00000080) /*!< DAC1 Trigger1 remap */
-#define SYSCFG_CFGR1_DMA_RMP                ((uint32_t)0x00003800) /*!< DMA remap mask */
+#define SYSCFG_CFGR1_DMA_RMP                ((uint32_t)0x00003900) /*!< DMA remap mask */
+#define SYSCFG_CFGR1_ADC24_DMA_RMP          ((uint32_t)0x00000100) /*!< ADC2 and ADC4 DMA remap */
 #define SYSCFG_CFGR1_TIM16_DMA_RMP          ((uint32_t)0x00000800) /*!< Timer 16 DMA remap */
 #define SYSCFG_CFGR1_TIM17_DMA_RMP          ((uint32_t)0x00001000) /*!< Timer 17 DMA remap */
 #define SYSCFG_CFGR1_TIM6DAC1Ch1_DMA_RMP    ((uint32_t)0x00002000) /*!< Timer 6 / DAC1 Ch1 DMA remap */
@@ -4943,6 +6211,8 @@ typedef struct
 #define SYSCFG_EXTICR1_EXTI0_PD         ((uint32_t)0x00000003) /*!< PD[0] pin */
 #define SYSCFG_EXTICR1_EXTI0_PE         ((uint32_t)0x00000004) /*!< PE[0] pin */
 #define SYSCFG_EXTICR1_EXTI0_PF         ((uint32_t)0x00000005) /*!< PF[0] pin */
+#define SYSCFG_EXTICR1_EXTI0_PG         ((uint32_t)0x00000006) /*!< PG[0] pin */
+#define SYSCFG_EXTICR1_EXTI0_PH         ((uint32_t)0x00000007) /*!< PH[0] pin */
 
 /*!<*
   * @brief  EXTI1 configuration
@@ -4953,6 +6223,8 @@ typedef struct
 #define SYSCFG_EXTICR1_EXTI1_PD         ((uint32_t)0x00000030) /*!< PD[1] pin */
 #define SYSCFG_EXTICR1_EXTI1_PE         ((uint32_t)0x00000040) /*!< PE[1] pin */
 #define SYSCFG_EXTICR1_EXTI1_PF         ((uint32_t)0x00000050) /*!< PF[1] pin */
+#define SYSCFG_EXTICR1_EXTI1_PG         ((uint32_t)0x00000060) /*!< PG[1] pin */
+#define SYSCFG_EXTICR1_EXTI1_PH         ((uint32_t)0x00000070) /*!< PH[1] pin */
 
 /*!<*
   * @brief  EXTI2 configuration
@@ -4963,6 +6235,7 @@ typedef struct
 #define SYSCFG_EXTICR1_EXTI2_PD         ((uint32_t)0x00000300) /*!< PD[2] pin */
 #define SYSCFG_EXTICR1_EXTI2_PE         ((uint32_t)0x00000400) /*!< PE[2] pin */
 #define SYSCFG_EXTICR1_EXTI2_PF         ((uint32_t)0x00000500) /*!< PF[2] pin */
+#define SYSCFG_EXTICR1_EXTI2_PG         ((uint32_t)0x00000600) /*!< PG[2] pin */
 
 /*!<*
   * @brief  EXTI3 configuration
@@ -4972,6 +6245,8 @@ typedef struct
 #define SYSCFG_EXTICR1_EXTI3_PC         ((uint32_t)0x00002000) /*!< PC[3] pin */
 #define SYSCFG_EXTICR1_EXTI3_PD         ((uint32_t)0x00003000) /*!< PD[3] pin */
 #define SYSCFG_EXTICR1_EXTI3_PE         ((uint32_t)0x00004000) /*!< PE[3] pin */
+#define SYSCFG_EXTICR1_EXTI3_PF         ((uint32_t)0x00005000) /*!< PE[3] pin */
+#define SYSCFG_EXTICR1_EXTI3_PG         ((uint32_t)0x00006000) /*!< PG[3] pin */
 
 /*****************  Bit definition for SYSCFG_EXTICR2 register  ***************/
 #define SYSCFG_EXTICR2_EXTI4            ((uint32_t)0x0000000F) /*!< EXTI 4 configuration */
@@ -4988,6 +6263,8 @@ typedef struct
 #define SYSCFG_EXTICR2_EXTI4_PD         ((uint32_t)0x00000003) /*!< PD[4] pin */
 #define SYSCFG_EXTICR2_EXTI4_PE         ((uint32_t)0x00000004) /*!< PE[4] pin */
 #define SYSCFG_EXTICR2_EXTI4_PF         ((uint32_t)0x00000005) /*!< PF[4] pin */
+#define SYSCFG_EXTICR2_EXTI4_PG         ((uint32_t)0x00000006) /*!< PG[4] pin */
+#define SYSCFG_EXTICR2_EXTI4_PH         ((uint32_t)0x00000007) /*!< PH[4] pin */
 
 /*!<*
   * @brief  EXTI5 configuration
@@ -4998,6 +6275,7 @@ typedef struct
 #define SYSCFG_EXTICR2_EXTI5_PD         ((uint32_t)0x00000030) /*!< PD[5] pin */
 #define SYSCFG_EXTICR2_EXTI5_PE         ((uint32_t)0x00000040) /*!< PE[5] pin */
 #define SYSCFG_EXTICR2_EXTI5_PF         ((uint32_t)0x00000050) /*!< PF[5] pin */
+#define SYSCFG_EXTICR2_EXTI5_PG         ((uint32_t)0x00000060) /*!< PG[5] pin */
 
 /*!<*
   * @brief  EXTI6 configuration
@@ -5008,6 +6286,7 @@ typedef struct
 #define SYSCFG_EXTICR2_EXTI6_PD         ((uint32_t)0x00000300) /*!< PD[6] pin */
 #define SYSCFG_EXTICR2_EXTI6_PE         ((uint32_t)0x00000400) /*!< PE[6] pin */
 #define SYSCFG_EXTICR2_EXTI6_PF         ((uint32_t)0x00000500) /*!< PF[6] pin */
+#define SYSCFG_EXTICR2_EXTI6_PG         ((uint32_t)0x00000600) /*!< PG[6] pin */
 
 /*!<*
   * @brief  EXTI7 configuration
@@ -5017,6 +6296,8 @@ typedef struct
 #define SYSCFG_EXTICR2_EXTI7_PC         ((uint32_t)0x00002000) /*!< PC[7] pin */
 #define SYSCFG_EXTICR2_EXTI7_PD         ((uint32_t)0x00003000) /*!< PD[7] pin */
 #define SYSCFG_EXTICR2_EXTI7_PE         ((uint32_t)0x00004000) /*!< PE[7] pin */
+#define SYSCFG_EXTICR2_EXTI7_PF         ((uint32_t)0x00005000) /*!< PF[7] pin */
+#define SYSCFG_EXTICR2_EXTI7_PG         ((uint32_t)0x00006000) /*!< PG[7] pin */
 
 /*****************  Bit definition for SYSCFG_EXTICR3 register  ***************/
 #define SYSCFG_EXTICR3_EXTI8            ((uint32_t)0x0000000F) /*!< EXTI 8 configuration */
@@ -5032,6 +6313,8 @@ typedef struct
 #define SYSCFG_EXTICR3_EXTI8_PC         ((uint32_t)0x00000002) /*!< PC[8] pin */
 #define SYSCFG_EXTICR3_EXTI8_PD         ((uint32_t)0x00000003) /*!< PD[8] pin */
 #define SYSCFG_EXTICR3_EXTI8_PE         ((uint32_t)0x00000004) /*!< PE[8] pin */
+#define SYSCFG_EXTICR3_EXTI8_PF         ((uint32_t)0x00000005) /*!< PF[8] pin */
+#define SYSCFG_EXTICR3_EXTI8_PG         ((uint32_t)0x00000006) /*!< PG[8] pin */
 
 /*!<*
   * @brief  EXTI9 configuration
@@ -5042,6 +6325,7 @@ typedef struct
 #define SYSCFG_EXTICR3_EXTI9_PD         ((uint32_t)0x00000030) /*!< PD[9] pin */
 #define SYSCFG_EXTICR3_EXTI9_PE         ((uint32_t)0x00000040) /*!< PE[9] pin */
 #define SYSCFG_EXTICR3_EXTI9_PF         ((uint32_t)0x00000050) /*!< PF[9] pin */
+#define SYSCFG_EXTICR3_EXTI9_PG         ((uint32_t)0x00000060) /*!< PG[9] pin */
 
 /*!<*
   * @brief  EXTI10 configuration
@@ -5052,6 +6336,7 @@ typedef struct
 #define SYSCFG_EXTICR3_EXTI10_PD        ((uint32_t)0x00000300) /*!< PD[10] pin */
 #define SYSCFG_EXTICR3_EXTI10_PE        ((uint32_t)0x00000400) /*!< PE[10] pin */
 #define SYSCFG_EXTICR3_EXTI10_PF        ((uint32_t)0x00000500) /*!< PF[10] pin */
+#define SYSCFG_EXTICR3_EXTI10_PG        ((uint32_t)0x00000600) /*!< PG[10] pin */
 
 /*!<*
   * @brief  EXTI11 configuration
@@ -5061,6 +6346,8 @@ typedef struct
 #define SYSCFG_EXTICR3_EXTI11_PC        ((uint32_t)0x00002000) /*!< PC[11] pin */
 #define SYSCFG_EXTICR3_EXTI11_PD        ((uint32_t)0x00003000) /*!< PD[11] pin */
 #define SYSCFG_EXTICR3_EXTI11_PE        ((uint32_t)0x00004000) /*!< PE[11] pin */
+#define SYSCFG_EXTICR3_EXTI11_PF        ((uint32_t)0x00005000) /*!< PF[11] pin */
+#define SYSCFG_EXTICR3_EXTI11_PG        ((uint32_t)0x00006000) /*!< PG[11] pin */
 
 /*****************  Bit definition for SYSCFG_EXTICR4 register  *****************/
 #define SYSCFG_EXTICR4_EXTI12           ((uint32_t)0x0000000F) /*!< EXTI 12 configuration */
@@ -5076,6 +6363,8 @@ typedef struct
 #define SYSCFG_EXTICR4_EXTI12_PC        ((uint32_t)0x00000002) /*!< PC[12] pin */
 #define SYSCFG_EXTICR4_EXTI12_PD        ((uint32_t)0x00000003) /*!< PD[12] pin */
 #define SYSCFG_EXTICR4_EXTI12_PE        ((uint32_t)0x00000004) /*!< PE[12] pin */
+#define SYSCFG_EXTICR4_EXTI12_PF        ((uint32_t)0x00000005) /*!< PF[12] pin */
+#define SYSCFG_EXTICR4_EXTI12_PG        ((uint32_t)0x00000006) /*!< PG[12] pin */
 
 /*!<*
   * @brief  EXTI13 configuration
@@ -5085,6 +6374,8 @@ typedef struct
 #define SYSCFG_EXTICR4_EXTI13_PC        ((uint32_t)0x00000020) /*!< PC[13] pin */
 #define SYSCFG_EXTICR4_EXTI13_PD        ((uint32_t)0x00000030) /*!< PD[13] pin */
 #define SYSCFG_EXTICR4_EXTI13_PE        ((uint32_t)0x00000040) /*!< PE[13] pin */
+#define SYSCFG_EXTICR4_EXTI13_PF        ((uint32_t)0x00000050) /*!< PF[13] pin */
+#define SYSCFG_EXTICR4_EXTI13_PG        ((uint32_t)0x00000060) /*!< PG[13] pin */
 
 /*!<*
   * @brief  EXTI14 configuration
@@ -5094,6 +6385,8 @@ typedef struct
 #define SYSCFG_EXTICR4_EXTI14_PC        ((uint32_t)0x00000200) /*!< PC[14] pin */
 #define SYSCFG_EXTICR4_EXTI14_PD        ((uint32_t)0x00000300) /*!< PD[14] pin */
 #define SYSCFG_EXTICR4_EXTI14_PE        ((uint32_t)0x00000400) /*!< PE[14] pin */
+#define SYSCFG_EXTICR4_EXTI14_PF        ((uint32_t)0x00000500) /*!< PF[14] pin */
+#define SYSCFG_EXTICR4_EXTI14_PG        ((uint32_t)0x00000600) /*!< PG[14] pin */
 
 /*!<*
   * @brief  EXTI15 configuration
@@ -5103,10 +6396,15 @@ typedef struct
 #define SYSCFG_EXTICR4_EXTI15_PC        ((uint32_t)0x00002000) /*!< PC[15] pin */
 #define SYSCFG_EXTICR4_EXTI15_PD        ((uint32_t)0x00003000) /*!< PD[15] pin */
 #define SYSCFG_EXTICR4_EXTI15_PE        ((uint32_t)0x00004000) /*!< PE[15] pin */
+#define SYSCFG_EXTICR4_EXTI15_PF        ((uint32_t)0x00005000) /*!< PF[15] pin */
+#define SYSCFG_EXTICR4_EXTI15_PG        ((uint32_t)0x00006000) /*!< PG[15] pin */
 
 /*****************  Bit definition for SYSCFG_CFGR2 register  ****************/
 #define SYSCFG_CFGR2_LOCKUP_LOCK               ((uint32_t)0x00000001) /*!< Enables and locks the LOCKUP (Hardfault) output of CortexM4 with Break Input of TIMx */
+#define SYSCFG_CFGR2_SRAM_PARITY_LOCK          ((uint32_t)0x00000002) /*!< Enables and locks the SRAM_PARITY error signal with Break Input of TIMx */
 #define SYSCFG_CFGR2_PVD_LOCK                  ((uint32_t)0x00000004) /*!< Enables and locks the PVD connection with TIMx Break Input, as well as the PVDE and PLS[2:0] in the PWR_CR register */
+#define SYSCFG_CFGR2_BYP_ADDR_PAR              ((uint32_t)0x00000010) /*!< Disables the adddress parity check on RAM */
+#define SYSCFG_CFGR2_SRAM_PE                   ((uint32_t)0x00000100) /*!< SRAM Parity error flag */
 
 /******************************************************************************/
 /*                                                                            */
@@ -5441,9 +6739,9 @@ typedef struct
 #define  TIM_DMAR_DMAB                       ((uint32_t)0x0000FFFF)            /*!<DMA register for burst accesses */
 
 /*******************  Bit definition for TIM16_OR register  *********************/
-#define TIM16_OR_TI1_RMP                     ((uint32_t)0x000000C0)            /*!<TI1_RMP[1:0] bits (TIM16 Input 1 remap) */
-#define TIM16_OR_TI1_RMP_0                   ((uint32_t)0x00000040)            /*!<Bit 0 */
-#define TIM16_OR_TI1_RMP_1                   ((uint32_t)0x00000080)            /*!<Bit 1 */
+#define TIM16_OR_TI1_RMP                     ((uint32_t)0x00000003)            /*!<TI1_RMP[1:0] bits (TIM16 Input 1 remap) */
+#define TIM16_OR_TI1_RMP_0                   ((uint32_t)0x00000001)            /*!<Bit 0 */
+#define TIM16_OR_TI1_RMP_1                   ((uint32_t)0x00000002)            /*!<Bit 1 */
 
 /*******************  Bit definition for TIM1_OR register  *********************/
 #define TIM1_OR_ETR_RMP                      ((uint32_t)0x0000000F)            /*!<ETR_RMP[3:0] bits (TIM1 ETR remap) */
@@ -6020,23 +7318,26 @@ typedef struct
   */
 
 /****************************** ADC Instances *********************************/
-#define IS_ADC_ALL_INSTANCE(INSTANCE) ((INSTANCE) == ADC1)
+#define IS_ADC_ALL_INSTANCE(INSTANCE) (((INSTANCE) == ADC1) || \
+                                       ((INSTANCE) == ADC2))
+                                       
+#define IS_ADC_MULTIMODE_MASTER_INSTANCE(INSTANCE) (((INSTANCE) == ADC1))
 
-#define IS_ADC_COMMON_INSTANCE(INSTANCE) ((INSTANCE) == ADC1_COMMON)
-
+#define IS_ADC_COMMON_INSTANCE(INSTANCE) ((INSTANCE) == ADC1_2_COMMON)
 /****************************** CAN Instances *********************************/
 #define IS_CAN_ALL_INSTANCE(INSTANCE) ((INSTANCE) == CAN)
 
 /****************************** COMP Instances ********************************/
-#define IS_COMP_ALL_INSTANCE(INSTANCE) (((INSTANCE) == COMP2) || \
+#define IS_COMP_ALL_INSTANCE(INSTANCE) (((INSTANCE) == COMP1) || \
+                                        ((INSTANCE) == COMP2) || \
                                         ((INSTANCE) == COMP4) || \
                                         ((INSTANCE) == COMP6))
 
-/******************** COMP Instances with switch on DAC1 Channel1 output ******/
-#define IS_COMP_DAC1SWITCH_INSTANCE(INSTANCE) ((INSTANCE) == COMP2)
 
 /******************** COMP Instances with window mode capability **************/
-#define IS_COMP_WINDOWMODE_INSTANCE(INSTANCE) (0)
+#define IS_COMP_WINDOWMODE_INSTANCE(INSTANCE) (((INSTANCE) == COMP2) || \
+                                               ((INSTANCE) == COMP4) || \
+                                               ((INSTANCE) == COMP6))
 
 /****************************** CRC Instances *********************************/
 #define IS_CRC_ALL_INSTANCE(INSTANCE) ((INSTANCE) == CRC)
@@ -6055,26 +7356,40 @@ typedef struct
                                        ((INSTANCE) == DMA1_Channel4) || \
                                        ((INSTANCE) == DMA1_Channel5) || \
                                        ((INSTANCE) == DMA1_Channel6) || \
-                                       ((INSTANCE) == DMA1_Channel7))
+                                       ((INSTANCE) == DMA1_Channel7) || \
+                                       ((INSTANCE) == DMA2_Channel1) || \
+                                       ((INSTANCE) == DMA2_Channel2) || \
+                                       ((INSTANCE) == DMA2_Channel3) || \
+                                       ((INSTANCE) == DMA2_Channel4) || \
+                                       ((INSTANCE) == DMA2_Channel5))
 
 /****************************** GPIO Instances ********************************/
 #define IS_GPIO_ALL_INSTANCE(INSTANCE)  (((INSTANCE) == GPIOA) || \
                                          ((INSTANCE) == GPIOB) || \
                                          ((INSTANCE) == GPIOC) || \
                                          ((INSTANCE) == GPIOD) || \
-                                         ((INSTANCE) == GPIOF))
+                                         ((INSTANCE) == GPIOE) || \
+                                         ((INSTANCE) == GPIOF) || \
+                                         ((INSTANCE) == GPIOG) || \
+                                         ((INSTANCE) == GPIOH))
 
 #define IS_GPIO_AF_INSTANCE(INSTANCE)   (((INSTANCE) == GPIOA) || \
                                          ((INSTANCE) == GPIOB) || \
                                          ((INSTANCE) == GPIOC) || \
                                          ((INSTANCE) == GPIOD) || \
-                                         ((INSTANCE) == GPIOF))
+                                         ((INSTANCE) == GPIOE) || \
+                                         ((INSTANCE) == GPIOF) || \
+                                         ((INSTANCE) == GPIOG) || \
+                                         ((INSTANCE) == GPIOH))
 
 #define IS_GPIO_LOCK_INSTANCE(INSTANCE) (((INSTANCE) == GPIOA) || \
                                          ((INSTANCE) == GPIOB) || \
                                          ((INSTANCE) == GPIOC) || \
                                          ((INSTANCE) == GPIOD) || \
-                                         ((INSTANCE) == GPIOF))
+                                         ((INSTANCE) == GPIOE) || \
+                                         ((INSTANCE) == GPIOF) || \
+                                         ((INSTANCE) == GPIOG) || \
+                                         ((INSTANCE) == GPIOH))
 
 /****************************** I2C Instances *********************************/
 #define IS_I2C_ALL_INSTANCE(INSTANCE) (((INSTANCE) == I2C1) || \
@@ -6086,7 +7401,8 @@ typedef struct
                                        ((INSTANCE) == SPI3))
 
 /****************************** OPAMP Instances *******************************/
-#define IS_OPAMP_ALL_INSTANCE(INSTANCE) ((INSTANCE) == OPAMP2)
+#define IS_OPAMP_ALL_INSTANCE(INSTANCE) (((INSTANCE) == OPAMP1) || \
+                                         ((INSTANCE) == OPAMP2))
 
 /****************************** IWDG Instances ********************************/
 #define IS_IWDG_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == IWDG)
@@ -6100,13 +7416,17 @@ typedef struct
                                          ((INSTANCE) == I2C3))
 
 /****************************** SPI Instances *********************************/
-#define IS_SPI_ALL_INSTANCE(INSTANCE) (((INSTANCE) == SPI2) || \
-                                       ((INSTANCE) == SPI3))
+#define IS_SPI_ALL_INSTANCE(INSTANCE) (((INSTANCE) == SPI1) || \
+                                       ((INSTANCE) == SPI2) || \
+                                       ((INSTANCE) == SPI3) || \
+                                       ((INSTANCE) == SPI4))
 
 /******************* TIM Instances : All supported instances ******************/
 #define IS_TIM_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM6)    || \
    ((INSTANCE) == TIM15)   || \
    ((INSTANCE) == TIM16)   || \
@@ -6116,6 +7436,8 @@ typedef struct
 #define IS_TIM_CC1_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15)   || \
    ((INSTANCE) == TIM16)   || \
    ((INSTANCE) == TIM17))
@@ -6124,17 +7446,23 @@ typedef struct
 #define IS_TIM_CC2_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15))
 
 /****************** TIM Instances : at least 3 capture/compare channels *******/
 #define IS_TIM_CC3_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
-   ((INSTANCE) == TIM2))
+   ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4))
 
 /****************** TIM Instances : at least 4 capture/compare channels *******/
 #define IS_TIM_CC4_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
-   ((INSTANCE) == TIM2))
+   ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4))
 
 /****************** TIM Instances : at least 5 capture/compare channels *******/
 #define IS_TIM_CC5_INSTANCE(INSTANCE)\
@@ -6150,39 +7478,53 @@ typedef struct
 #define IS_TIM_CLOCK_SELECT_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15))
 
 /****************** TIM Instances : supporting external clock mode 1 for ETRF input */
 #define IS_TIM_CLOCKSOURCE_ETRMODE1_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
-   ((INSTANCE) == TIM2))
+   ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4))
 
 /****************** TIM Instances : supporting external clock mode 2 **********/
 #define IS_TIM_CLOCKSOURCE_ETRMODE2_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
-   ((INSTANCE) == TIM2))
+   ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4))
 
 /****************** TIM Instances : supporting external clock mode 1 for TIX inputs*/
 #define IS_TIM_CLOCKSOURCE_TIX_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15))
 
 /****************** TIM Instances : supporting internal trigger inputs(ITRX) *******/
 #define IS_TIM_CLOCKSOURCE_ITRX_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15))
 
 /****************** TIM Instances : supporting OCxREF clear *******************/
 #define IS_TIM_OCXREF_CLEAR_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
-   ((INSTANCE) == TIM2))
+   ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4))
 
 /****************** TIM Instances : supporting encoder interface **************/
 #define IS_TIM_ENCODER_INTERFACE_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
-   ((INSTANCE) == TIM2))
+   ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4))
 
 /****************** TIM Instances : supporting Hall interface *****************/
 #define IS_TIM_HALL_INTERFACE_INSTANCE(INSTANCE)\
@@ -6192,12 +7534,16 @@ typedef struct
 #define IS_TIM_XOR_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15))
 
 /****************** TIM Instances : supporting master mode ********************/
 #define IS_TIM_MASTER_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM6)    || \
    ((INSTANCE) == TIM15))
 
@@ -6205,12 +7551,16 @@ typedef struct
 #define IS_TIM_SLAVE_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15))
 
 /****************** TIM Instances : supporting synchronization ****************/
 #define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)\
     (((INSTANCE) == TIM1)    || \
      ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
      ((INSTANCE) == TIM6)    || \
      ((INSTANCE) == TIM15))
 
@@ -6222,6 +7572,8 @@ typedef struct
 #define IS_TIM_DMABURST_INSTANCE(INSTANCE)\
     (((INSTANCE) == TIM1)    || \
      ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15)   || \
    ((INSTANCE) == TIM16)   || \
      ((INSTANCE) == TIM17))
@@ -6244,6 +7596,18 @@ typedef struct
       ((CHANNEL) == TIM_CHANNEL_6)))           \
     ||                                         \
     (((INSTANCE) == TIM2) &&                   \
+     (((CHANNEL) == TIM_CHANNEL_1) ||          \
+      ((CHANNEL) == TIM_CHANNEL_2) ||          \
+      ((CHANNEL) == TIM_CHANNEL_3) ||          \
+      ((CHANNEL) == TIM_CHANNEL_4)))           \
+    ||                                         \
+    (((INSTANCE) == TIM3) &&                   \
+     (((CHANNEL) == TIM_CHANNEL_1) ||          \
+      ((CHANNEL) == TIM_CHANNEL_2) ||          \
+      ((CHANNEL) == TIM_CHANNEL_3) ||          \
+      ((CHANNEL) == TIM_CHANNEL_4)))           \
+    ||                                         \
+    (((INSTANCE) == TIM4) &&                   \
      (((CHANNEL) == TIM_CHANNEL_1) ||          \
       ((CHANNEL) == TIM_CHANNEL_2) ||          \
       ((CHANNEL) == TIM_CHANNEL_3) ||          \
@@ -6278,7 +7642,9 @@ typedef struct
 /****************** TIM Instances : supporting counting mode selection ********/
 #define IS_TIM_COUNTER_MODE_SELECT_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
-   ((INSTANCE) == TIM2))
+   ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4))
 
 /****************** TIM Instances : supporting repetition counter *************/
 #define IS_TIM_REPETITION_COUNTER_INSTANCE(INSTANCE)\
@@ -6291,6 +7657,8 @@ typedef struct
 #define IS_TIM_CLOCK_DIVISION_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15)   || \
    ((INSTANCE) == TIM16)   || \
    ((INSTANCE) == TIM17))
@@ -6301,12 +7669,14 @@ typedef struct
 
 /****************** TIM Instances : supporting ADC triggering through TRGO2 ***/
 #define IS_TIM_TRGO2_INSTANCE(INSTANCE)\
-  ((INSTANCE) == TIM1)
+  (((INSTANCE) == TIM1))
 
 /****************** TIM Instances : supporting DMA generation on Update events*/
 #define IS_TIM_DMA_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM6)    || \
    ((INSTANCE) == TIM15)   || \
    ((INSTANCE) == TIM16)   || \
@@ -6316,6 +7686,8 @@ typedef struct
 #define IS_TIM_DMA_CC_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
+   ((INSTANCE) == TIM3)    || \
+   ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM15)   || \
    ((INSTANCE) == TIM16)   || \
    ((INSTANCE) == TIM17))
@@ -6345,28 +7717,47 @@ typedef struct
                                      ((INSTANCE) == USART3))
 
 /****************** USART Instances : Auto Baud Rate detection ****************/
-#define IS_USART_AUTOBAUDRATE_DETECTION_INSTANCE(INSTANCE) ((INSTANCE) == USART1)
+#define IS_USART_AUTOBAUDRATE_DETECTION_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
+                                                            ((INSTANCE) == USART2) || \
+                                                            ((INSTANCE) == USART3))
 
 /******************** UART Instances : Asynchronous mode **********************/
 #define IS_UART_INSTANCE(INSTANCE)   (((INSTANCE) == USART1) || \
                                       ((INSTANCE) == USART2) || \
-                                      ((INSTANCE) == USART3))
+                                      ((INSTANCE) == USART3) || \
+                                      ((INSTANCE) == UART4)  || \
+                                      ((INSTANCE) == UART5))
                                       
 /******************** UART Instances : Half-Duplex mode **********************/
 #define IS_UART_HALFDUPLEX_INSTANCE(INSTANCE)   (((INSTANCE) == USART1) || \
                                                  ((INSTANCE) == USART2) || \
-                                                 ((INSTANCE) == USART3))
+                                                 ((INSTANCE) == USART3) || \
+                                                 ((INSTANCE) == UART4)  || \
+                                                 ((INSTANCE) == UART5))                                       
                                       
 /******************** UART Instances : LIN mode **********************/
-#define IS_UART_LIN_INSTANCE(INSTANCE)   ((INSTANCE) == USART1)
+#define IS_UART_LIN_INSTANCE(INSTANCE)   (((INSTANCE) == USART1) || \
+                                          ((INSTANCE) == USART2) || \
+                                          ((INSTANCE) == USART3) || \
+                                          ((INSTANCE) == UART4)  || \
+                                          ((INSTANCE) == UART5))
                                           
 /******************** UART Instances : Wake-up from Stop mode **********************/
-#define IS_UART_WAKEUP_FROMSTOP_INSTANCE(INSTANCE)   ((INSTANCE) == USART1)
+#define IS_UART_WAKEUP_FROMSTOP_INSTANCE(INSTANCE)   (((INSTANCE) == USART1) || \
+                                                      ((INSTANCE) == USART2) || \
+                                                      ((INSTANCE) == USART3) || \
+                                                      ((INSTANCE) == UART4)  || \
+                                                      ((INSTANCE) == UART5))
 
 /****************** UART Instances : Hardware Flow control ********************/
 #define IS_UART_HWFLOW_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
                                            ((INSTANCE) == USART2) || \
                                            ((INSTANCE) == USART3))
+
+/****************** UART Instances : Auto Baud Rate detection *****************/
+#define IS_UART_AUTOBAUDRATE_DETECTION_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
+                                                           ((INSTANCE) == USART2) || \
+                                                           ((INSTANCE) == USART3))
 
 /****************** UART Instances : Driver Enable ****************************/
 #define IS_UART_DRIVER_ENABLE_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
@@ -6374,13 +7765,23 @@ typedef struct
                                                   ((INSTANCE) == USART3))
 
 /********************* UART Instances : Smard card mode ***********************/
-#define IS_SMARTCARD_INSTANCE(INSTANCE) ((INSTANCE) == USART1)
+#define IS_SMARTCARD_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
+                                         ((INSTANCE) == USART2) || \
+                                         ((INSTANCE) == USART3))
 
 /*********************** UART Instances : IRDA mode ***************************/
-#define IS_IRDA_INSTANCE(INSTANCE) ((INSTANCE) == USART1)
+#define IS_IRDA_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
+                                    ((INSTANCE) == USART2) || \
+                                    ((INSTANCE) == USART3) || \
+                                    ((INSTANCE) == UART4)  || \
+                                    ((INSTANCE) == UART5))
 
 /******************** UART Instances : Support of continuous communication using DMA ****/
-#define IS_UART_DMA_INSTANCE(INSTANCE) (1)
+#define IS_UART_DMA_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
+                                        ((INSTANCE) == USART2) || \
+                                        ((INSTANCE) == USART3) || \
+                                        ((INSTANCE) == UART4))
+
 /****************************** USB Instances *********************************/
 #define IS_USB_ALL_INSTANCE(INSTANCE) ((INSTANCE) == USB)
 
@@ -6401,10 +7802,10 @@ typedef struct
 /******************************************************************************/
 
 /* Aliases for __IRQn */
-#define ADC1_2_IRQn      ADC1_IRQn
-#define COMP1_2_IRQn     COMP2_IRQn
-#define COMP1_2_3_IRQn   COMP2_IRQn
-#define COMP_IRQn        COMP2_IRQn
+#define ADC1_IRQn        ADC1_2_IRQn
+#define COMP1_2_3_IRQn   COMP1_2_IRQn
+#define COMP2_IRQn       COMP1_2_IRQn
+#define COMP_IRQn        COMP1_2_IRQn
 #define COMP4_5_6_IRQn   COMP4_6_IRQn
 #define HRTIM1_FLT_IRQn  I2C3_ER_IRQn
 #define HRTIM1_TIME_IRQn I2C3_EV_IRQn
@@ -6420,10 +7821,10 @@ typedef struct
 
 
 /* Aliases for __IRQHandler */
-#define ADC1_2_IRQHandler      ADC1_IRQHandler
-#define COMP1_2_IRQHandler     COMP2_IRQHandler
-#define COMP1_2_3_IRQHandler   COMP2_IRQHandler
-#define COMP_IRQHandler        COMP2_IRQHandler
+#define ADC1_IRQHandler        ADC1_2_IRQHandler
+#define COMP1_2_3_IRQHandler   COMP1_2_IRQHandler
+#define COMP2_IRQHandler       COMP1_2_IRQHandler
+#define COMP_IRQHandler        COMP1_2_IRQHandler
 #define COMP4_5_6_IRQHandler   COMP4_6_IRQHandler
 #define HRTIM1_FLT_IRQHandler  I2C3_ER_IRQHandler
 #define HRTIM1_TIME_IRQHandler I2C3_EV_IRQHandler
@@ -6442,7 +7843,7 @@ typedef struct
 }
 #endif /* __cplusplus */
 
-#endif /* __STM32F302x8_H */
+#endif /* __STM32F302xE_H */
 
 /**
   * @}

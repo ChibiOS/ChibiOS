@@ -29,12 +29,15 @@
  *          - STM32F301x8 for Analog & DSP devices.
  *          - STM32F302x8 for Analog & DSP devices.
  *          - STM32F302xC for Analog & DSP devices.
+ *          - STM32F302xE for Analog & DSP devices.
  *          - STM32F303x8 for Analog & DSP devices.
  *          - STM32F303xC for Analog & DSP devices.
+ *          - STM32F303xE for Analog & DSP devices.
  *          - STM32F318xx for Analog & DSP devices.
  *          - STM32F328xx for Analog & DSP devices.
  *          - STM32F334x8 for Analog & DSP devices.
  *          - STM32F358xx for Analog & DSP devices.
+ *          - STM32F398xx for Analog & DSP devices.
  *          .
  *
  * @addtogroup HAL

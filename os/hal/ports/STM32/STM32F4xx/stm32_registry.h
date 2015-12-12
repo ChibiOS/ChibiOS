@@ -746,6 +746,7 @@
 
 /* FSMC attributes.*/
 #define STM32_HAS_FSMC                      TRUE
+#define STM32_FSMC_IS_FMC                   FALSE
 #define STM32_FSMC_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(2, 0) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 2) |\
