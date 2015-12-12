@@ -99,10 +99,10 @@ void wdg_lld_start(WDGDriver *wdgp) {
   wdgp->wdg->KR   = KR_KEY_WRITE;
 
   /* Write configuration.*/
-  wdgp->wdg->PR   = wdgp->config->pr;
-  wdgp->wdg->RLR  = wdgp->config->rlr;
   while (wdgp->wdg->SR != 0)
     ;
+  wdgp->wdg->PR   = wdgp->config->pr;
+  wdgp->wdg->RLR  = wdgp->config->rlr;
 
   /* Start operations.*/
   wdgp->wdg->KR   = KR_KEY_RELOAD;
