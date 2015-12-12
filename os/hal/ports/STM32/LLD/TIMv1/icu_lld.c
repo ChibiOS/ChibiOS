@@ -108,7 +108,7 @@ static bool icu_lld_wait_edge(ICUDriver *icup) {
 
   /* Polled mode so re-enabling the interrupts while the operation is
      performed.*/
-  chSysUnlock();
+  osalSysUnlock();
 
   /* Polling the right bit depending on the input channel.*/
   if (icup->config->channel == ICU_CHANNEL_1) {
@@ -128,7 +128,7 @@ static bool icu_lld_wait_edge(ICUDriver *icup) {
   result = (sr & STM32_TIM_SR_UIF) != 0 ? true : false;
 
   /* Done, disabling interrupts again.*/
-  chSysLock();
+  osalSysLock();
 
   /* Resetting all flags.*/
   icup->tim->SR &= ~(STM32_TIM_SR_CC1IF |
