@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.4 ***
+- HAL: Fixed STM32 ICU driver uses chSysLock and chSysUnlock (bug #681).
 - HAL: Fixed wrong DMA priority assigned to STM32F3 ADC3&4 (bug #680).
 - HAL: Fixed invalid DMA settings in STM32 DACv1 driver in dual mode
       (bug #677).
