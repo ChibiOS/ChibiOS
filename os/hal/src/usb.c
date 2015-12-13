@@ -314,7 +314,8 @@ void usbStop(USBDriver *usbp) {
 
   osalSysLock();
   osalDbgAssert((usbp->state == USB_STOP) || (usbp->state == USB_READY) ||
-                (usbp->state == USB_SELECTED) || (usbp->state == USB_ACTIVE),
+                (usbp->state == USB_SELECTED) || (usbp->state == USB_ACTIVE) ||
+                (usbp->state == USB_SUSPENDED),
                 "invalid state");
   usb_lld_stop(usbp);
   usbp->state = USB_STOP;
@@ -607,7 +608,10 @@ bool usbStallTransmitI(USBDriver *usbp, usbep_t ep) {
 void _usb_reset(USBDriver *usbp) {
   unsigned i;
 
+  /* State transition.*/
   usbp->state         = USB_READY;
+
+  /* Resetting internal state.*/
   usbp->status        = 0;
   usbp->address       = 0;
   usbp->configuration = 0;
@@ -624,6 +628,45 @@ void _usb_reset(USBDriver *usbp) {
 
   /* Low level reset.*/
   usb_lld_reset(usbp);
+
+  /* Notification of reset event.*/
+  _usb_isr_invoke_event_cb(usbp, USB_EVENT_RESET);
+}
+
+/**
+ * @brief   USB suspend routine.
+ * @details This function must be invoked when an USB bus suspend condition is
+ *          detected.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @notapi
+ */
+void _usb_suspend(USBDriver *usbp) {
+
+  /* State transition.*/
+  usbp->state         = USB_SUSPENDED;
+
+  /* Notification of suspend event.*/
+  _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
+}
+
+/**
+ * @brief   USB wake-up routine.
+ * @details This function must be invoked when an USB bus wake-up condition is
+ *          detected.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @notapi
+ */
+void _usb_wakeup(USBDriver *usbp) {
+
+  /* State transition.*/
+  usbp->state         = USB_ACTIVE;
+
+  /* Notification of suspend event.*/
+  _usb_isr_invoke_event_cb(usbp, USB_EVENT_WAKEUP);
 }
 
 /**

@@ -258,11 +258,12 @@ typedef uint8_t usbep_t;
  * @brief   Type of a driver state machine possible states.
  */
 typedef enum {
-  USB_UNINIT   = 0,                     /**< Not initialized.               */
-  USB_STOP     = 1,                     /**< Stopped.                       */
-  USB_READY    = 2,                     /**< Ready, after bus reset.        */
-  USB_SELECTED = 3,                     /**< Address assigned.              */
-  USB_ACTIVE   = 4                      /**< Active, configuration selected.*/
+  USB_UNINIT    = 0,                    /**< Not initialized.               */
+  USB_STOP      = 1,                    /**< Stopped.                       */
+  USB_READY     = 2,                    /**< Ready, after bus reset.        */
+  USB_SELECTED  = 3,                    /**< Address assigned.              */
+  USB_ACTIVE    = 4,                    /**< Active, configuration selected.*/
+  USB_SUSPENDED = 5                     /**< Suspended, low power mode.     */
 } usbstate_t;
 
 /**
@@ -583,6 +584,8 @@ extern "C" {
   bool usbStallReceiveI(USBDriver *usbp, usbep_t ep);
   bool usbStallTransmitI(USBDriver *usbp, usbep_t ep);
   void _usb_reset(USBDriver *usbp);
+  void _usb_suspend(USBDriver *usbp);
+  void _usb_wakeup(USBDriver *usbp);
   void _usb_ep0setup(USBDriver *usbp, usbep_t ep);
   void _usb_ep0in(USBDriver *usbp, usbep_t ep);
   void _usb_ep0out(USBDriver *usbp, usbep_t ep);
