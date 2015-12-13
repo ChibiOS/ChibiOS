@@ -468,13 +468,13 @@ void adc_lld_init(void) {
 #if defined(STM32F3XX)
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
   rccEnableADC12(FALSE);
-  osalSysPolledDelayX(12);
+//  osalSysPolledDelayX(12);
   ADC1_2_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12(FALSE);
 #endif
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
   rccEnableADC34(FALSE);
-  osalSysPolledDelayX(12);
+//  osalSysPolledDelayX(12);
   ADC3_4_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC34(FALSE);
 #endif
@@ -482,7 +482,7 @@ void adc_lld_init(void) {
 
 #if defined(STM32L4XX)
   rccEnableADC123(FALSE);
-  osalSysPolledDelayX(12);
+//  osalSysPolledDelayX(12);
   ADC123_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC123(FALSE);
 #endif

@@ -160,12 +160,6 @@ int main(void) {
   gptStart(&GPTD4, &gpt4cfg1);
 
   /*
-   * Fixed an errata on the STM32F7xx, the DAC clock is required for ADC
-   * triggering.
-   */
-  rccEnableDAC1(false);
-
-  /*
    * Activates the ADC1 driver and the temperature sensor.
    */
   adcStart(&ADCD1, NULL);
