@@ -482,6 +482,44 @@
 #error "Invalid DMA priority assigned to ADC4"
 #endif
 
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_STREAM)
+#error "ADC1 DMA stream not defined"
+#endif
+
+#if STM32_ADC_USE_ADC2 && !defined(STM32_ADC_ADC2_DMA_STREAM)
+#error "ADC2 DMA stream not defined"
+#endif
+
+#if STM32_ADC_USE_ADC3 && !defined(STM32_ADC_ADC3_DMA_STREAM)
+#error "ADC3 DMA stream not defined"
+#endif
+
+#if STM32_ADC_USE_ADC4 && !defined(STM32_ADC_ADC4_DMA_STREAM)
+#error "ADC4 DMA stream not defined"
+#endif
+
+/* Check on the validity of the assigned DMA channels.*/
+#if STM32_ADC_USE_ADC1 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_MSK)
+#error "invalid DMA stream associated to ADC1"
+#endif
+
+#if STM32_ADC_USE_ADC2 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC2_DMA_STREAM, STM32_ADC2_DMA_MSK)
+#error "invalid DMA stream associated to ADC2"
+#endif
+
+#if STM32_ADC_USE_ADC3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC3_DMA_STREAM, STM32_ADC3_DMA_MSK)
+#error "invalid DMA stream associated to ADC3"
+#endif
+
+#if STM32_ADC_USE_ADC4 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC4_DMA_STREAM, STM32_ADC4_DMA_MSK)
+#error "invalid DMA stream associated to ADC4"
+#endif
+
 /* ADC clock source checks.*/
 #if defined(STM32F3XX)
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
@@ -721,11 +759,11 @@ struct ADCDriver {
    * @brief   Pointer to the slave ADCx registers block.
    */
   ADC_TypeDef               *adcs;
+#endif /* STM32_ADC_DUAL_MODE */
   /**
    * @brief   Pointer to the common ADCx_y registers block.
    */
   ADC_Common_TypeDef        *adcc;
-#endif /* STM32_ADC_DUAL_MODE */
   /**
    * @brief   Pointer to associated DMA channel.
    */

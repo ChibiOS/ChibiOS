@@ -30,6 +30,18 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define ADC1_DMA_CHANNEL                                                    \
+  STM32_DMA_GETCHANNEL(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_CHN)
+
+#define ADC2_DMA_CHANNEL                                                    \
+  STM32_DMA_GETCHANNEL(STM32_ADC_ADC2_DMA_STREAM, STM32_ADC2_DMA_CHN)
+
+#define ADC3_DMA_CHANNEL                                                    \
+  STM32_DMA_GETCHANNEL(STM32_ADC_ADC3_DMA_STREAM, STM32_ADC3_DMA_CHN)
+
+#define ADC4_DMA_CHANNEL                                                    \
+  STM32_DMA_GETCHANNEL(STM32_ADC_ADC4_DMA_STREAM, STM32_ADC4_DMA_CHN)
+
 #if STM32_ADC_DUAL_MODE
 #if STM32_ADC_COMPACT_SAMPLES
 /* Compact type dual mode.*/
@@ -421,12 +433,18 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC1
   /* Driver initialization.*/
   adcObjectInit(&ADCD1);
-  ADCD1.adcm = ADC1;
-#if STM32_ADC_DUAL_MODE
-  ADCD1.adcs = ADC2;
+#if defined(ADC1_2_COMMON)
   ADCD1.adcc = ADC1_2_COMMON;
+#elif defined(ADC123_COMMON)
+  ADCD1.adcc = ADC123_COMMON;
+#else
+  ADCD1.adcc = ADC1_COMMON;
 #endif
-  ADCD1.dmastp  = STM32_DMA1_STREAM1;
+  ADCD1.adcm    = ADC1;
+#if STM32_ADC_DUAL_MODE
+  ADCD1.adcs    = ADC2;
+#endif
+  ADCD1.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC1_DMA_STREAM);
   ADCD1.dmamode = ADC_DMA_SIZE |
                   STM32_DMA_CR_PL(STM32_ADC_ADC1_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
@@ -437,12 +455,18 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC3
   /* Driver initialization.*/
   adcObjectInit(&ADCD3);
-  ADCD3.adcm = ADC3;
-#if STM32_ADC_DUAL_MODE
-  ADCD3.adcs = ADC4;
+#if defined(ADC3_4_COMMON)
   ADCD3.adcc = ADC3_4_COMMON;
+#elif defined(ADC123_COMMON)
+  ADCD1.adcc = ADC123_COMMON;
+#else
+  ADCD3.adcc = ADC3_COMMON;
 #endif
-  ADCD3.dmastp  = STM32_DMA2_STREAM5;
+  ADCD3.adcm    = ADC3;
+#if STM32_ADC_DUAL_MODE
+  ADCD3.adcs    = ADC4;
+#endif
+  ADCD3.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC3_DMA_STREAM);
   ADCD3.dmamode = ADC_DMA_SIZE |
                   STM32_DMA_CR_PL(STM32_ADC_ADC3_DMA_PRIORITY) |
                   STM32_DMA_CR_DIR_P2M |
@@ -468,13 +492,13 @@ void adc_lld_init(void) {
 #if defined(STM32F3XX)
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
   rccEnableADC12(FALSE);
-//  osalSysPolledDelayX(12);
+  rccResetADC12();
   ADC1_2_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12(FALSE);
 #endif
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
   rccEnableADC34(FALSE);
-//  osalSysPolledDelayX(12);
+  rccResetADC34();
   ADC3_4_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC34(FALSE);
 #endif
@@ -482,7 +506,7 @@ void adc_lld_init(void) {
 
 #if defined(STM32L4XX)
   rccEnableADC123(FALSE);
-//  osalSysPolledDelayX(12);
+  rccResetADC123();
   ADC123_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC123(FALSE);
 #endif
@@ -517,6 +541,9 @@ void adc_lld_start(ADCDriver *adcp) {
 #if defined(STM32F3XX)
       rccEnableADC12(FALSE);
 #endif
+#if defined(STM32L4XX)
+      rccEnableADC123(FALSE);
+#endif
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -532,6 +559,9 @@ void adc_lld_start(ADCDriver *adcp) {
       clkmask |= (1 << 1);
 #if defined(STM32F3XX)
       rccEnableADC12(FALSE);
+#endif
+#if defined(STM32L4XX)
+      rccEnableADC123(FALSE);
 #endif
     }
 #endif /* STM32_ADC_USE_ADC2 */
@@ -549,6 +579,9 @@ void adc_lld_start(ADCDriver *adcp) {
 #if defined(STM32F3XX)
       rccEnableADC34(FALSE);
 #endif
+#if defined(STM32L4XX)
+      rccEnableADC123(FALSE);
+#endif
     }
 #endif /* STM32_ADC_USE_ADC3 */
 
@@ -565,12 +598,11 @@ void adc_lld_start(ADCDriver *adcp) {
 #if defined(STM32F3XX)
       rccEnableADC34(FALSE);
 #endif
+#if defined(STM32L4XX)
+      rccEnableADC123(FALSE);
+#endif
     }
 #endif /* STM32_ADC_USE_ADC4 */
-
-#if defined(STM32L4XX)
-    rccEnableADC123(FALSE);
-#endif
 
     /* Setting DMA peripheral-side pointer.*/
 #if STM32_ADC_DUAL_MODE
