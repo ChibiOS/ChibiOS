@@ -452,6 +452,23 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
 #endif /* STM32_ADC_USE_ADC1 */
 
+#if STM32_ADC_USE_ADC2
+  /* Driver initialization.*/
+  adcObjectInit(&ADCD2);
+#if defined(ADC1_2_COMMON)
+  ADCD2.adcc = ADC1_2_COMMON;
+#elif defined(ADC123_COMMON)
+  ADCD2.adcc = ADC123_COMMON;
+#endif
+  ADCD2.adcm    = ADC2;
+  ADCD2.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC2_DMA_STREAM);
+  ADCD2.dmamode = ADC_DMA_SIZE |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC2_DMA_PRIORITY) |
+                  STM32_DMA_CR_DIR_P2M |
+                  STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
+#endif /* STM32_ADC_USE_ADC2 */
+
 #if STM32_ADC_USE_ADC3
   /* Driver initialization.*/
   adcObjectInit(&ADCD3);
@@ -473,6 +490,19 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
 #endif /* STM32_ADC_USE_ADC3 */
+
+#if STM32_ADC_USE_ADC4
+  /* Driver initialization.*/
+  adcObjectInit(&ADCD4);
+  ADCD4.adcc = ADC3_4_COMMON;
+  ADCD4.adcm    = ADC4;
+  ADCD4.dmastp  = STM32_DMA_STREAM(STM32_ADC_ADC4_DMA_STREAM);
+  ADCD4.dmamode = ADC_DMA_SIZE |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC4_DMA_PRIORITY) |
+                  STM32_DMA_CR_DIR_P2M |
+                  STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
+#endif /* STM32_ADC_USE_ADC4 */
 
   /* IRQs setup.*/
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
@@ -650,29 +680,47 @@ void adc_lld_stop(ADCDriver *adcp) {
     adc_lld_analog_off(adcp);
     adc_lld_vreg_off(adcp);
 
+#if defined(STM32L4XX)
     /* Resetting CCR options except default ones.*/
-    adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
+    adcp->adcc->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+#endif
 
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
+#if defined(STM32F3XX)
+      /* Resetting CCR options except default ones.*/
+      adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
+#endif
       clkmask &= ~(1 << 0);
     }
 #endif
 
 #if STM32_ADC_USE_ADC2
     if (&ADCD1 == adcp) {
+#if defined(STM32F3XX)
+      /* Resetting CCR options except default ones.*/
+      adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
+#endif
       clkmask &= ~(1 << 1);
     }
 #endif
 
 #if STM32_ADC_USE_ADC3
     if (&ADCD1 == adcp) {
+#if defined(STM32F3XX)
+      /* Resetting CCR options except default ones.*/
+      adcp->adcc->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
+#endif
       clkmask &= ~(1 << 2);
     }
 #endif
 
 #if STM32_ADC_USE_ADC4
     if (&ADCD1 == adcp) {
+#if defined(STM32F3XX)
+      /* Resetting CCR options except default ones.*/
+      adcp->adcc->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
+#endif
       clkmask &= ~(1 << 3);
     }
 #endif

@@ -142,8 +142,8 @@ int main(void) {
    * Activates the ADC1 driver and the temperature sensor.
    */
   adcStart(&ADCD1, NULL);
-  adcSTM32EnableVREF();
-  adcSTM32EnableTS();
+  adcSTM32EnableVREF(&ADCD1);
+  adcSTM32EnableTS(&ADCD1);
 
   /*
    * Starts an ADC continuous conversion triggered with a period of
