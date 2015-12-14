@@ -671,6 +671,15 @@ typedef struct {
    * @brief   ADC TR1 register initialization data.
    */
   uint32_t                  tr1;
+#if STM32_ADC_DUAL_MODE || defined(__DOXYGEN__)
+  /**
+   * @brief   ADC CCR register initialization data.
+   * @note    The bits CKMODE, MDMA, DMACFG are enforced internally to the
+   *          driver, keep them to zero.
+   * @note    This field is only present in dual mode.
+   */
+  uint32_t                  ccr;
+#endif
   /**
    * @brief   ADC SMPRx registers initialization data.
    */
@@ -680,13 +689,6 @@ typedef struct {
    */
   uint32_t                  sqr[4];
 #if STM32_ADC_DUAL_MODE || defined(__DOXYGEN__)
-  /**
-   * @brief   ADC CCR register initialization data.
-   * @note    The bits CKMODE, MDMA, DMACFG are enforced internally to the
-   *          driver, keep them to zero.
-   * @note    This field is only present in dual mode.
-   */
-  uint32_t                  ccr;
   /**
    * @brief   Slave ADC SMPRx registers initialization data.
    * @note    This field is only present in dual mode.
@@ -869,12 +871,12 @@ extern "C" {
   void adc_lld_stop(ADCDriver *adcp);
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
-  void adcSTM32EnableVREF(void);
-  void adcSTM32DisableVREF(void);
-  void adcSTM32EnableTS(void);
-  void adcSTM32DisableTS(void);
-  void adcSTM32EnableVBAT(void);
-  void adcSTM32DisableVBAT(void);
+  void adcSTM32EnableVREF(ADCDriver *adcp);
+  void adcSTM32DisableVREF(ADCDriver *adcp);
+  void adcSTM32EnableTS(ADCDriver *adcp);
+  void adcSTM32DisableTS(ADCDriver *adcp);
+  void adcSTM32EnableVBAT(ADCDriver *adcp);
+  void adcSTM32DisableVBAT(ADCDriver *adcp);
 #ifdef __cplusplus
 }
 #endif

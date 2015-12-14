@@ -123,6 +123,7 @@
 - HAL: Added support for UART4...UART8 to the STM32 UARTv2 UART driver.
 - HAL: Added support for UART7 and UART8,LPUART1 to the STM32 UARTv2 serial
        driver.
+- HAL: STM32F3xx and STM32L4xx devices now share the same ADCv3 driver.
 - HAL: STM32F2xx, STM32F4xx and STM32F7xx devices now share the same ADCv2
        and DMAv2 drivers.
 - HAL: STM32F0xx and STM32L0xx devices now share the same ADCv1 driver.
@@ -132,6 +133,7 @@
        data cache invalidation (F2, F4, F7).
 - HAL: New STM32 shared DMAv1 driver supporting channel selection and fixing
        the behavior with shared IRQs (F0, L0).
+- HAL: New STM32 ADCv3 driver supporting middle STM32 devices (F3, L4).
 - HAL: New STM32 ADCv2 driver supporting large STM32 devices (F2, F4, F7).
 - HAL: New STM32 ADCv1 driver supporting small STM32 devices (F0, L0).
 - HAL: Introduced support for TIM21 and TIM22 in STM32 ST driver.

@@ -493,13 +493,13 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
   rccEnableADC12(FALSE);
   rccResetADC12();
-  ADC1_2_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+  ADC1_2_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12(FALSE);
 #endif
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
   rccEnableADC34(FALSE);
   rccResetADC34();
-  ADC3_4_COMMON->CCR = STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
+  ADC3_4_COMMON->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC34(FALSE);
 #endif
 #endif
@@ -650,6 +650,9 @@ void adc_lld_stop(ADCDriver *adcp) {
     adc_lld_analog_off(adcp);
     adc_lld_vreg_off(adcp);
 
+    /* Resetting CCR options except default ones.*/
+    adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
+
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
       clkmask &= ~(1 << 0);
@@ -797,10 +800,14 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
  * @details The VREFEN bit is required in order to sample the VREF channel.
  * @note    This is an STM32-only functionality.
  * @note    This function is meant to be called after @p adcStart().
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
-void adcSTM32EnableVREF(void) {
+void adcSTM32EnableVREF(ADCDriver *adcp) {
 
-  ADC123_COMMON->CCR |= ADC_CCR_VBATEN;
+  adcp->adcc->CCR |= ADC_CCR_VBATEN;
 }
 
 /**
@@ -808,10 +815,14 @@ void adcSTM32EnableVREF(void) {
  * @details The VREFEN bit is required in order to sample the VREF channel.
  * @note    This is an STM32-only functionality.
  * @note    This function is meant to be called after @p adcStart().
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
-void adcSTM32DisableVREF(void) {
+void adcSTM32DisableVREF(ADCDriver *adcp) {
 
-  ADC123_COMMON->CCR &= ~ADC_CCR_VBATEN;
+  adcp->adcc->CCR &= ~ADC_CCR_VBATEN;
 }
 
 /**
@@ -819,10 +830,14 @@ void adcSTM32DisableVREF(void) {
  * @details The TSEN bit is required in order to sample the internal
  *          temperature sensor and internal reference voltage.
  * @note    This is an STM32-only functionality.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
-void adcSTM32EnableTS(void) {
+void adcSTM32EnableTS(ADCDriver *adcp) {
 
-  ADC123_COMMON->CCR |= ADC_CCR_TSEN;
+  adcp->adcc->CCR |= ADC_CCR_TSEN;
 }
 
 /**
@@ -830,10 +845,14 @@ void adcSTM32EnableTS(void) {
  * @details The TSEN bit is required in order to sample the internal
  *          temperature sensor and internal reference voltage.
  * @note    This is an STM32-only functionality.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
-void adcSTM32DisableTS(void) {
+void adcSTM32DisableTS(ADCDriver *adcp) {
 
-  ADC123_COMMON->CCR &= ~ADC_CCR_TSEN;
+  adcp->adcc->CCR &= ~ADC_CCR_TSEN;
 }
 
 /**
@@ -841,10 +860,14 @@ void adcSTM32DisableTS(void) {
  * @details The VBATEN bit is required in order to sample the VBAT channel.
  * @note    This is an STM32-only functionality.
  * @note    This function is meant to be called after @p adcStart().
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
-void adcSTM32EnableVBAT(void) {
+void adcSTM32EnableVBAT(ADCDriver *adcp) {
 
-  ADC123_COMMON->CCR |= ADC_CCR_VBATEN;
+  adcp->adcc->CCR |= ADC_CCR_VBATEN;
 }
 
 /**
@@ -852,10 +875,14 @@ void adcSTM32EnableVBAT(void) {
  * @details The VBATEN bit is required in order to sample the VBAT channel.
  * @note    This is an STM32-only functionality.
  * @note    This function is meant to be called after @p adcStart().
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
  */
-void adcSTM32DisableVBAT(void) {
+void adcSTM32DisableVBAT(ADCDriver *adcp) {
 
-  ADC123_COMMON->CCR &= ~ADC_CCR_VBATEN;
+  adcp->adcc->CCR &= ~ADC_CCR_VBATEN;
 }
 
 #endif /* HAL_USE_ADC */

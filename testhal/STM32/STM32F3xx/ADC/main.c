@@ -59,7 +59,6 @@ static const ADCConversionGroup adcgrpcfg1 = {
   adcerrorcallback,
   ADC_CFGR_CONT,            /* CFGR    */
   ADC_TR(0, 4095),          /* TR1     */
-  0,                        /* CCR     */
   {                         /* SMPR[2] */
     0,
     0
@@ -84,7 +83,6 @@ static const ADCConversionGroup adcgrpcfg2 = {
   adcerrorcallback,
   ADC_CFGR_CONT,                    /* CFGR    */
   ADC_TR(0, 4095),                  /* TR1     */
-  ADC_CCR_TSEN | ADC_CCR_VBATEN,    /* CCR     */
   {                                 /* SMPR[2] */
     ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_19P5)
     | ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_19P5),
@@ -147,6 +145,8 @@ int main(void) {
    * Activates the ADC1 driver and the temperature sensor.
    */
   adcStart(&ADCD1, NULL);
+  adcSTM32EnableTS(&ADCD1);
+  adcSTM32EnableVBAT(&ADCD1);
 
   /*
    * Linear conversion.

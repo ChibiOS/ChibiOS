@@ -59,7 +59,7 @@ static const ADCConversionGroup adcgrpcfg1 = {
   adcerrorcallback,
   ADC_CFGR_CONT,                                                /* CFGR     */
   ADC_TR(0, 4095),                                              /* TR1      */
-  ADC_CCR_DUAL(1),                                              /* CCR      */
+  ADC_CCR_DUAL_FIELD(1),                                        /* CCR      */
   {                                                             /* SMPR[2]  */
     0,
     0
@@ -94,7 +94,7 @@ static const ADCConversionGroup adcgrpcfg2 = {
   adcerrorcallback,
   ADC_CFGR_CONT,                                                /* CFGR     */
   ADC_TR(0, 4095),                                              /* TR1      */
-  ADC_CCR_DUAL(1) | ADC_CCR_TSEN | ADC_CCR_VBATEN,              /* CCR      */
+  ADC_CCR_DUAL_FIELD(1) | ADC_CCR_TSEN | ADC_CCR_VBATEN,        /* CCR      */
   {                                                             /* SMPR[2]  */
     ADC_SMPR1_SMP_AN7(ADC_SMPR_SMP_19P5)
     | ADC_SMPR1_SMP_AN8(ADC_SMPR_SMP_19P5),
