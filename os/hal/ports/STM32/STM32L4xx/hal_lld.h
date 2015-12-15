@@ -1515,7 +1515,7 @@
 /**
  * @brief   STM32_PLLSAI1QEN field.
  */
-#if (STM32_CLK48SEL == STM32_CLK48SEL_PLL) || defined(__DOXYGEN__)
+#if (STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1) || defined(__DOXYGEN__)
 #define STM32_PLLSAI1QEN            (1 << 20)
 #else
 #define STM32_PLLSAI1QEN            (0 << 20)
