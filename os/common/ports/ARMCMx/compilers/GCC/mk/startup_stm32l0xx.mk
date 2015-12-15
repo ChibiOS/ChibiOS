@@ -7,6 +7,6 @@ STARTUPASM = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/crt0_v6m.s
 STARTUPINC = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC \
              $(CHIBIOS)/os/common/ports/ARMCMx/devices/STM32L0xx \
              $(CHIBIOS)/os/ext/CMSIS/include \
-             $(CHIBIOS)/os/ext/CMSIS/ST
+             $(CHIBIOS)/os/ext/CMSIS/ST/STM32L0xx
 
 STARTUPLD  = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/ld
