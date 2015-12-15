@@ -293,9 +293,9 @@
  * @name    PWR_CR register bits definitions
  * @{
  */
-#define STM32_VOS_SCALE3        (PWR_CR_VOS_0)
-#define STM32_VOS_SCALE2        (PWR_CR_VOS_1)
-#define STM32_VOS_SCALE1        (PWR_CR_VOS_1 | PWR_CR_VOS_0)
+#define STM32_VOS_SCALE3        0x00004000
+#define STM32_VOS_SCALE2        0x00008000
+#define STM32_VOS_SCALE1        0x0000C000
 #define STM32_PLS_MASK          (7 << 5)    /**< PLS bits mask.             */
 #define STM32_PLS_LEV0          (0 << 5)    /**< PVD level 0.               */
 #define STM32_PLS_LEV1          (1 << 5)    /**< PVD level 1.               */
