@@ -30,8 +30,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   DMA capability.
+ * @details if @p TRUE then the DMA is able of burst transfers, FIFOs,
+ *          scatter gather and other advanced features.
+ */
+#define STM32_DMA_ADVANCED          TRUE
+
+/**
  * @brief   Total number of DMA streams.
- * @note    This is the total number of streams among all the DMA units.
+ * @details This is the total number of streams among all the DMA units.
  */
 #define STM32_DMA_STREAMS           16U
 
@@ -635,9 +642,11 @@ typedef void (*stm32_dmaisr_t)(void *p, uint32_t flags);
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  */
 #define dmaWaitCompletion(dmastp) {                                         \
-  while ((dmastp)->stream->NDTR > 0U)                                        \
+  (dmastp)->stream->CR &= ~(STM32_DMA_CR_TCIE | STM32_DMA_CR_HTIE  |        \
+                            STM32_DMA_CR_TEIE | STM32_DMA_CR_DMEIE);        \
+  while ((dmastp)->stream->CR & STM32_DMA_CR_EN)                            \
     ;                                                                       \
-  dmaStreamDisable(dmastp);                                                 \
+  dmaStreamClearInterrupt(dmastp);                                          \
 }
 /** @} */
 

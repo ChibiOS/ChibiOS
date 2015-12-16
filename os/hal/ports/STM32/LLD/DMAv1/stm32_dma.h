@@ -32,8 +32,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   DMA capability.
+ * @details if @p TRUE then the DMA is able of burst transfers, FIFOs,
+ *          scatter gather and other advanced features.
+ */
+#define STM32_DMA_ADVANCED          FALSE
+
+/**
  * @brief   Total number of DMA streams.
- * @note    This is the total number of streams among all the DMA units.
+ * @details This is the total number of streams among all the DMA units.
  */
 #define STM32_DMA_STREAMS           (STM32_DMA1_NUM_CHANNELS +              \
                                      STM32_DMA2_NUM_CHANNELS)

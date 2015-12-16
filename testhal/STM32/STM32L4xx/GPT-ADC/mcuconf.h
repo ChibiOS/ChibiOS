@@ -65,13 +65,13 @@
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
 #define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
-#define STM32_PLLSAI1N_VALUE                80
+#define STM32_PLLSAI1N_VALUE                72
 #define STM32_PLLSAI1P_VALUE                7
 #define STM32_PLLSAI1Q_VALUE                6
-#define STM32_PLLSAI1R_VALUE                4
-#define STM32_PLLSAI2N_VALUE                80
+#define STM32_PLLSAI1R_VALUE                6
+#define STM32_PLLSAI2N_VALUE                72
 #define STM32_PLLSAI2P_VALUE                7
-#define STM32_PLLSAI2R_VALUE                4
+#define STM32_PLLSAI2R_VALUE                6
 #define STM32_USART1SEL                     STM32_USART1SEL_SYSCLK
 #define STM32_USART2SEL                     STM32_USART2SEL_SYSCLK
 #define STM32_USART3SEL                     STM32_USART3SEL_SYSCLK
@@ -85,7 +85,7 @@
 #define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK1
 #define STM32_SAI1SEL                       STM32_SAI1SEL_OFF
 #define STM32_SAI2SEL                       STM32_SAI2SEL_OFF
-#define STM32_CLK48SEL                      STM32_CLK48SEL_PLL
+#define STM32_CLK48SEL                      STM32_CLK48SEL_PLLSAI1
 #define STM32_ADCSEL                        STM32_ADCSEL_SYSCLK
 #define STM32_SWPMI1SEL                     STM32_SWPMI1SEL_PCLK1
 #define STM32_DFSDMSEL                      STM32_DFSDMSEL_PCLK1
@@ -131,6 +131,18 @@
 #define STM32_GPT_TIM6_IRQ_PRIORITY         7
 #define STM32_GPT_TIM7_IRQ_PRIORITY         7
 #define STM32_GPT_TIM8_IRQ_PRIORITY         7
+
+/*
+ * SDC driver system settings.
+ */
+#define STM32_SDC_USE_SDMMC1                FALSE
+#define STM32_SDC_SDMMC_UNALIGNED_SUPPORT   TRUE
+#define STM32_SDC_SDMMC_WRITE_TIMEOUT       250
+#define STM32_SDC_SDMMC_READ_TIMEOUT        25
+#define STM32_SDC_SDMMC_CLOCK_DELAY         10
+#define STM32_SDC_SDMMC1_DMA_PRIORITY       3
+#define STM32_SDC_SDMMC1_IRQ_PRIORITY       9
+#define STM32_SDC_SDMMC1_DMA_STREAM         STM32_DMA_STREAM_ID(2, 4)
 
 /*
  * SERIAL driver system settings.

@@ -248,12 +248,9 @@ static bool sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
     return HAL_FAILED;
   }
 
-  /* Wait until DMA channel enabled to be sure that all data transferred.*/
-  while (sdcp->dma->stream->CR & STM32_DMA_CR_EN)
-    ;
-
-  /* DMA event flags must be manually cleared.*/
-  dmaStreamClearInterrupt(sdcp->dma);
+  /* Waits for transfer completion at DMA level, then the stream is
+     disabled and cleared.*/
+  dmaWaitCompletion(sdcp->dma);
 
   sdcp->sdmmc->ICR = SDMMC_ICR_ALL_FLAGS;
   sdcp->sdmmc->DCTRL = 0;
@@ -309,7 +306,6 @@ static void sdc_lld_error_cleanup(SDCDriver *sdcp,
                                   uint32_t *resp) {
   uint32_t sta = sdcp->sdmmc->STA;
 
-  dmaStreamClearInterrupt(sdcp->dma);
   dmaStreamDisable(sdcp->dma);
   sdcp->sdmmc->ICR   = SDMMC_ICR_ALL_FLAGS;
   sdcp->sdmmc->MASK  = 0;
@@ -389,7 +385,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
                   STM32_DMA_CR_MSIZE_WORD |
                   STM32_DMA_CR_MINC;
 
-#if 1
+#if STM32_DMA_ADVANCED
   sdcp->dmamode |= STM32_DMA_CR_PFCTRL |
                    STM32_DMA_CR_PBURST_INCR4 |
                    STM32_DMA_CR_MBURST_INCR4;
@@ -401,7 +397,7 @@ void sdc_lld_start(SDCDriver *sdcp) {
     b = dmaStreamAllocate(sdcp->dma, STM32_SDC_SDMMC1_IRQ_PRIORITY, NULL, NULL);
     osalDbgAssert(!b, "stream already allocated");
     dmaStreamSetPeripheral(sdcp->dma, &sdcp->sdmmc->FIFO);
-#if 1
+#if STM32_DMA_ADVANCED
     dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS | STM32_DMA_FCR_FTH_FULL);
 #endif
     nvicEnableVector(STM32_SDMMC1_NUMBER, STM32_SDC_SDMMC1_IRQ_PRIORITY);

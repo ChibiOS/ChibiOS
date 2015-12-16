@@ -234,7 +234,7 @@ static bool sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
   /*while (((DMA2->LISR) >> (sdcp->dma->ishift)) & STM32_DMA_ISR_TCIF)
     dmaStreamClearInterrupt(sdcp->dma);*/
 #else
-  /* Waits for transfer completion at DMA level, the the stream is
+  /* Waits for transfer completion at DMA level, then the stream is
      disabled and cleared.*/
   dmaWaitCompletion(sdcp->dma);
 
