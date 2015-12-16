@@ -1935,7 +1935,7 @@
 #if (STM32_CLK48SEL == STM32_CLK48SEL_NOCLK) || defined(__DOXYGEN__)
 #define STM32_48CLK                 0
 #elif STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1
-#define STM32_48CLK                 (STM32_PLLVCO / STM32_PLLSAI1Q_VALUE)
+#define STM32_48CLK                 (STM32_PLLSAI1VCO / STM32_PLLSAI1Q_VALUE)
 #elif STM32_CLK48SEL == STM32_CLK48SEL_PLL
 #define STM32_48CLK                 (STM32_PLLVCO / STM32_PLLQ_VALUE)
 #elif STM32_CLK48SEL == STM32_CLK48SEL_MSI
@@ -1984,7 +1984,7 @@
 /**
  * @brief   SDMMC frequency.
  */
-#define STM32_SDMMCCLK               STM32_48CLK
+#define STM32_SDMMCCLK              STM32_48CLK
 
 /**
  * @brief   Clock of timers connected to APB1

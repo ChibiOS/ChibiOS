@@ -40,6 +40,15 @@
  * @{
  */
 /**
+ * @brief   SDMMC driver enable switch.
+ * @details If set to @p TRUE the support for SDMMC1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SDC_USE_SDMMC1) || defined(__DOXYGEN__)
+#define STM32_SDC_USE_SDMMC1                FALSE
+#endif
+
+/**
  * @brief   Support for unaligned transfers.
  * @note    Unaligned transfers are much slower.
  */
