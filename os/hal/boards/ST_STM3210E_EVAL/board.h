@@ -238,6 +238,16 @@
                          PIN_INPUT(15))           /* Joy Up.            */
 #define VAL_GPIOGODR    0xFFFFF7FF
 
+/*
+ * USB bus activation macro, required by the USB driver.
+ */
+#define usb_lld_connect_bus(usbp) palClearPad(GPIOB, GPIOB_USB_DISC)
+
+/*
+ * USB bus de-activation macro, required by the USB driver.
+ */
+#define usb_lld_disconnect_bus(usbp) palSetPad(GPIOB, GPIOB_USB_DISC)
+
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {

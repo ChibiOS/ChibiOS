@@ -24,9 +24,6 @@
 #include "chprintf.h"
 #include "shell.h"
 
-#include "lwipthread.h"
-#include "web/web.h"
-
 #include "ff.h"
 
 /*===========================================================================*/
@@ -155,11 +152,11 @@ static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
 /*===========================================================================*/
 
 /*
- * Endpoints to be used for USBD2.
+ * Endpoints to be used for USBD1.
  */
-#define USBD2_DATA_REQUEST_EP           1
-#define USBD2_DATA_AVAILABLE_EP         1
-#define USBD2_INTERRUPT_REQUEST_EP      2
+#define USBD1_DATA_REQUEST_EP           1
+#define USBD1_DATA_AVAILABLE_EP         1
+#define USBD1_INTERRUPT_REQUEST_EP      2
 
 /*
  * Serial over USB Driver structure.
@@ -242,7 +239,7 @@ static const uint8_t vcom_configuration_descriptor_data[67] = {
   USB_DESC_BYTE         (0x01),         /* bSlaveInterface0 (Data Class
                                            Interface).                      */
   /* Endpoint 2 Descriptor.*/
-  USB_DESC_ENDPOINT     (USBD2_INTERRUPT_REQUEST_EP|0x80,
+  USB_DESC_ENDPOINT     (USBD1_INTERRUPT_REQUEST_EP|0x80,
                          0x03,          /* bmAttributes (Interrupt).        */
                          0x0008,        /* wMaxPacketSize.                  */
                          0xFF),         /* bInterval.                       */
@@ -258,12 +255,12 @@ static const uint8_t vcom_configuration_descriptor_data[67] = {
                                            4.7).                            */
                          0x00),         /* iInterface.                      */
   /* Endpoint 3 Descriptor.*/
-  USB_DESC_ENDPOINT     (USBD2_DATA_AVAILABLE_EP,       /* bEndpointAddress.*/
+  USB_DESC_ENDPOINT     (USBD1_DATA_AVAILABLE_EP,       /* bEndpointAddress.*/
                          0x02,          /* bmAttributes (Bulk).             */
                          0x0040,        /* wMaxPacketSize.                  */
                          0x00),         /* bInterval.                       */
   /* Endpoint 1 Descriptor.*/
-  USB_DESC_ENDPOINT     (USBD2_DATA_REQUEST_EP|0x80,    /* bEndpointAddress.*/
+  USB_DESC_ENDPOINT     (USBD1_DATA_REQUEST_EP|0x80,    /* bEndpointAddress.*/
                          0x02,          /* bmAttributes (Bulk).             */
                          0x0040,        /* wMaxPacketSize.                  */
                          0x00)          /* bInterval.                       */
@@ -416,8 +413,8 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     /* Enables the endpoints specified into the configuration.
        Note, this callback is invoked from an ISR so I-Class functions
        must be used.*/
-    usbInitEndpointI(usbp, USBD2_DATA_REQUEST_EP, &ep1config);
-    usbInitEndpointI(usbp, USBD2_INTERRUPT_REQUEST_EP, &ep2config);
+    usbInitEndpointI(usbp, USBD1_DATA_REQUEST_EP, &ep1config);
+    usbInitEndpointI(usbp, USBD1_INTERRUPT_REQUEST_EP, &ep2config);
 
     /* Resetting the state of the CDC subsystem.*/
     sduConfigureHookI(&SDU2);
@@ -454,10 +451,10 @@ static const USBConfig usbcfg = {
  * Serial over USB driver configuration.
  */
 static const SerialUSBConfig serusbcfg = {
-  &USBD2,
-  USBD2_DATA_REQUEST_EP,
-  USBD2_DATA_AVAILABLE_EP,
-  USBD2_INTERRUPT_REQUEST_EP
+  &USBD1,
+  USBD1_DATA_REQUEST_EP,
+  USBD1_DATA_AVAILABLE_EP,
+  USBD1_INTERRUPT_REQUEST_EP
 };
 
 /*===========================================================================*/
@@ -602,7 +599,7 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palTogglePad(GPIOC, GPIOC_LED);
+    palTogglePad(GPIOF, GPIOF_LED1);
     chThdSleepMilliseconds(fs_ready ? 125 : 500);
   }
 }
@@ -624,11 +621,9 @@ int main(void) {
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
-   * - lwIP subsystem initialization using the default configuration.
    */
   halInit();
   chSysInit();
-  lwipInit(NULL);
 
   /*
    * Initializes a serial-over-USB CDC driver.
@@ -652,13 +647,6 @@ int main(void) {
   shellInit();
 
   /*
-   * Activates the serial driver 6 and SDC driver 1 using default
-   * configuration.
-   */
-  sdStart(&SD6, NULL);
-  sdcStart(&SDCD1, NULL);
-
-  /*
    * Activates the card insertion monitor.
    */
   tmr_init(&SDCD1);
@@ -667,12 +655,6 @@ int main(void) {
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-
-  /*
-   * Creates the HTTP thread (it changes priority internally).
-   */
-  chThdCreateStatic(wa_http_server, sizeof(wa_http_server), NORMALPRIO + 1,
-                    http_server, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
@@ -686,8 +668,6 @@ int main(void) {
     else if (chThdTerminatedX(shelltp)) {
       chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
       shelltp = NULL;           /* Triggers spawning of a new shell.        */
-    }
-    if (palReadPad(GPIOA, GPIOA_BUTTON_WKUP) != 0) {
     }
     chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, MS2ST(500)));
   }

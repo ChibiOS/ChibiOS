@@ -725,6 +725,7 @@
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
+#define STM32_SDC_SDIO_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
@@ -967,6 +968,7 @@
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      TRUE
+#define STM32_SDC_SDIO_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
