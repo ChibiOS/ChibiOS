@@ -282,7 +282,7 @@ typedef struct {
    *          until the received frames queue has been completely emptied. It
    *          is <b>not</b> broadcasted for each received frame. It is
    *          responsibility of the application to empty the queue by
-   *          repeatedly invoking @p chReceive() when listening to this event.
+   *          repeatedly invoking @p canReceive() when listening to this event.
    *          This behavior minimizes the interrupt served by the system
    *          because CAN traffic.
    * @note    The flags associated to the listeners will indicate which
@@ -293,13 +293,17 @@ typedef struct {
    * @brief   One or more transmission mailbox become available.
    * @note    The flags associated to the listeners will indicate which
    *          transmit mailboxes become empty.
+   * @note    The upper 16 bits are transmission error flags associated
+   *          to the transmit mailboxes.
    *
    */
   event_source_t            txempty_event;
   /**
    * @brief   A CAN bus error happened.
-   * @note    The flags associated to the listeners will indicate the
-   *          error(s) that have occurred.
+   * @note    The flags associated to the listeners will indicate that
+   *          receive error(s) have occurred.
+   * @note    In this implementation the upper 16 bits are filled with the
+   *          unprocessed content of the ESR register.
    */
   event_source_t            error_event;
 #if CAN_USE_SLEEP_MODE || defined (__DOXYGEN__)

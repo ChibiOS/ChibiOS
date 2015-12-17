@@ -142,12 +142,50 @@ static void can_lld_set_filters(uint32_t can2sb,
  * @notapi
  */
 static void can_lld_tx_handler(CANDriver *canp) {
+  uint32_t tsr;
+  eventflags_t flags;
 
-  /* No more events until a message is transmitted.*/
-  canp->can->TSR = CAN_TSR_RQCP0 | CAN_TSR_RQCP1 | CAN_TSR_RQCP2;
+  /* Clearing IRQ sources.*/
+  tsr = canp->can->TSR;
+  canp->can->TSR = tsr;
+
+  /* Flags to be signaled through the TX event source.*/
+  flags = 0U;
+
+  /* Checking mailbox 0.*/
+  if ((tsr & CAN_TSR_RQCP0) != 0U) {
+    if ((tsr & (CAN_TSR_ALST0 | CAN_TSR_TERR0)) != 0U) {
+      flags |= CAN_MAILBOX_TO_MASK(1U) << 16U;
+    }
+    else {
+      flags |= CAN_MAILBOX_TO_MASK(1U);
+    }
+  }
+
+  /* Checking mailbox 1.*/
+  if ((tsr & CAN_TSR_RQCP1) != 0U) {
+    if ((tsr & (CAN_TSR_ALST1 | CAN_TSR_TERR1)) != 0U) {
+      flags |= CAN_MAILBOX_TO_MASK(2U) << 16U;
+    }
+    else {
+      flags |= CAN_MAILBOX_TO_MASK(2U);
+    }
+  }
+
+  /* Checking mailbox 2.*/
+  if ((tsr & CAN_TSR_RQCP2) != 0U) {
+    if ((tsr & (CAN_TSR_ALST2 | CAN_TSR_TERR2)) != 0U) {
+      flags |= CAN_MAILBOX_TO_MASK(3U) << 16U;
+    }
+    else {
+      flags |= CAN_MAILBOX_TO_MASK(3U);
+    }
+  }
+
+  /* Signaling flags and waking up threads waiting for a transmission slot.*/
   osalSysLockFromISR();
   osalThreadDequeueAllI(&canp->txqueue, MSG_OK);
-  osalEventBroadcastFlagsI(&canp->txempty_event, CAN_MAILBOX_TO_MASK(1));
+  osalEventBroadcastFlagsI(&canp->txempty_event, flags);
   osalSysUnlockFromISR();
 }
 
@@ -167,7 +205,7 @@ static void can_lld_rx0_handler(CANDriver *canp) {
     canp->can->IER &= ~CAN_IER_FMPIE0;
     osalSysLockFromISR();
     osalThreadDequeueAllI(&canp->rxqueue, MSG_OK);
-    osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(1));
+    osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(1U));
     osalSysUnlockFromISR();
   }
   if ((rf0r & CAN_RF0R_FOVR0) > 0) {
@@ -195,7 +233,7 @@ static void can_lld_rx1_handler(CANDriver *canp) {
     canp->can->IER &= ~CAN_IER_FMPIE1;
     osalSysLockFromISR();
     osalThreadDequeueAllI(&canp->rxqueue, MSG_OK);
-    osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(2));
+    osalEventBroadcastFlagsI(&canp->rxfull_event, CAN_MAILBOX_TO_MASK(2U));
     osalSysUnlockFromISR();
   }
   if ((rf1r & CAN_RF1R_FOVR1) > 0) {

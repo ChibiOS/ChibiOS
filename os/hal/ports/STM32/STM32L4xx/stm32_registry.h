@@ -61,6 +61,14 @@
 #define STM32_HAS_CAN1                      TRUE
 #define STM32_HAS_CAN2                      FALSE
 #define STM32_CAN_MAX_FILTERS               14
+#define STM32_CAN1_TX_HANDLER               Vector8C
+#define STM32_CAN1_RX0_HANDLER              Vector90
+#define STM32_CAN1_RX1_HANDLER              Vector94
+#define STM32_CAN1_SCE_HANDLER              Vector98
+#define STM32_CAN1_TX_NUMBER                19
+#define STM32_CAN1_RX0_NUMBER               20
+#define STM32_CAN1_RX1_NUMBER               21
+#define STM32_CAN1_SCE_NUMBER               22
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
