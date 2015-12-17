@@ -49,7 +49,7 @@ typedef struct io_queue io_queue_t;
 /**
  * @brief   Queue notification callback type.
  *
- * @param[in] qp        the queue pointer.
+ * @param[in] qp        the queue pointer
  */
 typedef void (*qnotify_t)(io_queue_t *qp);
 
@@ -62,7 +62,7 @@ typedef void (*qnotify_t)(io_queue_t *qp);
  *          lock zone and is non-blocking.
  */
 struct io_queue {
-  threads_queue_t       q_waiting;  /**< @brief Waiting thread.             */
+  threads_queue_t       q_waiting;  /**< @brief Queue of waiting threads.   */
   volatile size_t       q_counter;  /**< @brief Resources counter.          */
   uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
   uint8_t               *q_top;     /**< @brief Pointer to the first

@@ -5,6 +5,7 @@ HALCONF := $(strip $(shell cat halconf.h | egrep -e "define"))
 
 HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/st.c \
+          $(CHIBIOS)/os/hal/src/hal_buffers.c \
           $(CHIBIOS)/os/hal/src/hal_queues.c \
           $(CHIBIOS)/os/hal/src/hal_mmcsd.c
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
@@ -69,6 +70,7 @@ HALSRC += $(CHIBIOS)/os/hal/src/wdg.c
 endif
 else
 HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
+         $(CHIBIOS)/os/hal/src/hal_buffers.c \
          $(CHIBIOS)/os/hal/src/hal_queues.c \
          $(CHIBIOS)/os/hal/src/hal_mmcsd.c \
          $(CHIBIOS)/os/hal/src/adc.c \

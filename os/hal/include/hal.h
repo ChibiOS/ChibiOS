@@ -39,6 +39,7 @@
 #include "hal_mmcsd.h"
 
 /* Shared headers.*/
+#include "hal_buffers.h"
 #include "hal_queues.h"
 
 /* Normal drivers.*/
