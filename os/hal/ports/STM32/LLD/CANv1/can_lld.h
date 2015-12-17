@@ -81,6 +81,14 @@
  * @{
  */
 /**
+ * @brief   CAN pedantic errors report.
+ * @details Use of this option is IRQ-intensive.
+ */
+#if !defined(STM32_CAN_REPORT_ALL_ERRORS) || defined(__DOXYGEN__)
+#define STM32_CAN_REPORT_ALL_ERRORS         FALSE
+#endif
+
+/**
  * @brief   CAN1 driver enable switch.
  * @details If set to @p TRUE the support for CAN1 is included.
  */

@@ -255,8 +255,10 @@ static void can_lld_rx1_handler(CANDriver *canp) {
 static void can_lld_sce_handler(CANDriver *canp) {
   uint32_t msr;
 
+  /* Clearing IRQ sources.*/
   msr = canp->can->MSR;
-  canp->can->MSR = CAN_MSR_ERRI | CAN_MSR_WKUI | CAN_MSR_SLAKI;
+  canp->can->MSR = msr;
+
   /* Wakeup event.*/
 #if CAN_USE_SLEEP_MODE
   if (msr & CAN_MSR_WKUI) {
@@ -272,15 +274,17 @@ static void can_lld_sce_handler(CANDriver *canp) {
     eventflags_t flags;
     uint32_t esr = canp->can->ESR;
 
-    canp->can->ESR &= ~CAN_ESR_LEC;
+#if STM32_CAN_REPORT_ALL_ERRORS
     flags = (eventflags_t)(esr & 7);
     if ((esr & CAN_ESR_LEC) > 0)
       flags |= CAN_FRAMING_ERROR;
+#endif
 
     osalSysLockFromISR();
     /* The content of the ESR register is copied unchanged in the upper
        half word of the listener flags mask.*/
-    osalEventBroadcastFlagsI(&canp->error_event, flags | (eventflags_t)(esr << 16));
+    osalEventBroadcastFlagsI(&canp->error_event,
+                             flags | (eventflags_t)(esr << 16U));
     osalSysUnlockFromISR();
   }
 }
@@ -549,10 +553,17 @@ void can_lld_start(CANDriver *canp) {
   canp->can->MCR = canp->config->mcr;
 
   /* Interrupt sources initialization.*/
+#if STM32_CAN_REPORT_ALL_ERRORS
   canp->can->IER = CAN_IER_TMEIE  | CAN_IER_FMPIE0 | CAN_IER_FMPIE1 |
                    CAN_IER_WKUIE  | CAN_IER_ERRIE  | CAN_IER_LECIE  |
                    CAN_IER_BOFIE  | CAN_IER_EPVIE  | CAN_IER_EWGIE  |
                    CAN_IER_FOVIE0 | CAN_IER_FOVIE1;
+#else
+  canp->can->IER = CAN_IER_TMEIE  | CAN_IER_FMPIE0 | CAN_IER_FMPIE1 |
+                   CAN_IER_WKUIE  | CAN_IER_ERRIE  |
+                   CAN_IER_BOFIE  | CAN_IER_EPVIE  | CAN_IER_EWGIE  |
+                   CAN_IER_FOVIE0 | CAN_IER_FOVIE1;
+#endif
 }
 
 /**

@@ -236,6 +236,7 @@
        (backported to 3.0.1).
 - HAL: Fixed missing UART7 and UART8 support on STM32F4xx family (bug #612).
 - HAL: Fixed outdated CMSIS headers for STM32F1xx devices (bug #609).
+- HAL: Fixed CAN errors (bug #387).
 - HAL: Fixed USB HS ULPI Support (except board files because patch originally
        targeted version 2.6.x)(bug #377).
 
