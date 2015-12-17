@@ -127,6 +127,12 @@ extern "C" {
   void canObjectInit(CANDriver *canp);
   void canStart(CANDriver *canp, const CANConfig *config);
   void canStop(CANDriver *canp);
+  bool canTryTransmitI(CANDriver *canp,
+                       canmbx_t mailbox,
+                       const CANTxFrame *ctfp);
+  bool canTryReceiveI(CANDriver *canp,
+                       canmbx_t mailbox,
+                       CANRxFrame *crfp);
   msg_t canTransmit(CANDriver *canp,
                     canmbx_t mailbox,
                     const CANTxFrame *ctfp,

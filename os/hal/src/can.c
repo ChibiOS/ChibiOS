@@ -140,6 +140,75 @@ void canStop(CANDriver *canp) {
 }
 
 /**
+ * @brief   Can frame transmission attempt.
+ * @details The specified frame is queued for transmission, if the hardware
+ *          queue is full then the function fails.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
+ * @param[in] ctfp      pointer to the CAN frame to be transmitted
+ * @return              The operation result.
+ * @retval false        Frame transmitted.
+ * @retval true         Mailbox full.
+ *
+ * @iclass
+ */
+bool canTryTransmitI(CANDriver *canp,
+                     canmbx_t mailbox,
+                     const CANTxFrame *ctfp) {
+
+  osalDbgCheckClassI();
+  osalDbgCheck((canp != NULL) && (ctfp != NULL) &&
+               (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
+  osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
+                "invalid state");
+
+  /* If the RX mailbox is full then the function fails.*/
+  if (!can_lld_is_tx_empty(canp, mailbox)) {
+    return true;
+  }
+
+  /* Transmitting frame.*/
+  can_lld_transmit(canp, mailbox, ctfp);
+
+  return false;
+}
+
+/**
+ * @brief   Can frame receive attempt.
+ * @details The function tries to fetch a frame from a mailbox.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
+ * @param[out] crfp     pointer to the buffer where the CAN frame is copied
+ * @return              The operation result.
+ * @retval false        Frame fetched.
+ * @retval true         Mailbox empty.
+ *
+ * @iclass
+ */
+bool canTryReceiveI(CANDriver *canp,
+                     canmbx_t mailbox,
+                     CANRxFrame *crfp) {
+
+  osalDbgCheckClassI();
+  osalDbgCheck((canp != NULL) && (crfp != NULL) &&
+               (mailbox <= (canmbx_t)CAN_RX_MAILBOXES));
+  osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
+                "invalid state");
+
+  /* If the RX mailbox is empty then the function fails.*/
+  if (!can_lld_is_rx_nonempty(canp, mailbox)) {
+    return true;
+  }
+
+  /* Fetching the frame.*/
+  can_lld_receive(canp, mailbox, crfp);
+
+  return false;
+}
+
+/**
  * @brief   Can frame transmission.
  * @details The specified frame is queued for transmission, if the hardware
  *          queue is full then the invoking thread is queued.
@@ -171,6 +240,7 @@ msg_t canTransmit(CANDriver *canp,
   osalSysLock();
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
                 "invalid state");
+
   /*lint -save -e9007 [13.5] Right side is supposed to be pure.*/
   while ((canp->state == CAN_SLEEP) || !can_lld_is_tx_empty(canp, mailbox)) {
   /*lint -restore*/
@@ -218,6 +288,7 @@ msg_t canReceive(CANDriver *canp,
   osalSysLock();
   osalDbgAssert((canp->state == CAN_READY) || (canp->state == CAN_SLEEP),
                 "invalid state");
+
   /*lint -save -e9007 [13.5] Right side is supposed to be pure.*/
   while ((canp->state == CAN_SLEEP) || !can_lld_is_rx_nonempty(canp, mailbox)) {
   /*lint -restore*/
