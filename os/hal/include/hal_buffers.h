@@ -94,8 +94,13 @@ struct io_buffers_queue {
   uint8_t               *buffers;
   /**
    * @brief   Pointer for R/W sequential access.
+   * @note    It is @p NULL if a new buffer must be fetched from the queue.
    */
   uint8_t               *ptr;
+  /**
+   * @brief   Boundary for R/W sequential access.
+   */
+  uint8_t               *top;
   /**
    * @brief   Data notification callback.
    */
@@ -156,7 +161,7 @@ typedef io_buffers_queue_t output_buffers_queue_t;
  *
  * @iclass
  */
-#define iqbIsEmptyI(ibqp) ((bool)(bqSpaceI(ibqp) == 0U))
+#define ibqIsEmptyI(ibqp) ((bool)(bqSpaceI(ibqp) == 0U))
 
 /**
  * @brief   Evaluates to @p TRUE if the specified input buffered queue is full.

@@ -66,17 +66,18 @@ void ibqObjectInit(input_buffers_queue_t *ibqp, uint8_t *bp,
   ibqp->bcounter = 0;
   ibqp->brdptr   = bp;
   ibqp->bwrptr   = bp;
-  ibqp->btop     = bp + (size * n);     /* Pre-calculated for speed.*/
+  ibqp->btop     = bp + (size * n);     /* Pre-calculated for speed.        */
   ibqp->bsize    = size;
   ibqp->bn       = n;
   ibqp->buffers  = bp;
   ibqp->ptr      = NULL;
+  ibqp->top      = NULL;
   ibqp->notify   = infy;
   ibqp->link     = link;
 }
 
 /**
- * @brief   Gets a buffer for posting in the queue.
+ * @brief   Gets the next empty buffer from the queue.
  * @note    The function always returns the same buffer if called repeatedly.
  *
  * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
@@ -85,7 +86,7 @@ void ibqObjectInit(input_buffers_queue_t *ibqp, uint8_t *bp,
  *
  * @iclass
  */
-uint8_t *ibqGetNextBufferI(input_buffers_queue_t *ibqp) {
+uint8_t *ibqGetEmptyBufferI(input_buffers_queue_t *ibqp) {
 
   osalDbgCheckClassI();
 
@@ -97,7 +98,7 @@ uint8_t *ibqGetNextBufferI(input_buffers_queue_t *ibqp) {
 }
 
 /**
- * @brief   Posts a buffer in the queue.
+ * @brief   Posts a new filled buffer in the queue.
  *
  * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
  * @param[in] size      used size of the buffer
@@ -107,7 +108,7 @@ uint8_t *ibqGetNextBufferI(input_buffers_queue_t *ibqp) {
 void ibqPostBufferI(io_buffers_queue_t *ibqp, size_t size) {
 
   osalDbgCheckClassI();
-  osalDbgAssert(!ibqIsFullI(ibqp), "buffered queue full");
+  osalDbgAssert(!ibqIsFullI(ibqp), "buffers queue full");
 
   /* Writing size field in the buffer.*/
   *((size_t *)ibqp->bwrptr) = size;
@@ -121,6 +122,52 @@ void ibqPostBufferI(io_buffers_queue_t *ibqp, size_t size) {
 
   /* Waking up one waiting thread, if any.*/
   osalThreadDequeueNextI(&ibqp->waiting, MSG_OK);
+}
+
+/**
+ * @brief   Gets the next filled buffer from the queue.
+ * @note    The function always returns the same buffer if called repeatedly.
+ *
+ * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
+ * @return              A pointer to the next buffer to be filled.
+ * @retval NULL         if the queue is empty.
+ *
+ * @iclass
+ */
+uint8_t *ibqGetFullBufferI(input_buffers_queue_t *ibqp) {
+
+  osalDbgCheckClassI();
+
+  if (ibqIsEmptyI(ibqp)) {
+    return NULL;
+  }
+
+  return ibqp->brdptr + sizeof (size_t);
+}
+
+/**
+ * @brief   Releases the next filled buffer back in the queue.
+ *
+ * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
+ *
+ * @iclass
+ */
+void ibqReleaseBufferI(io_buffers_queue_t *ibqp) {
+
+  osalDbgCheckClassI();
+  osalDbgAssert(!ibqIsEmptyI(ibqp), "buffers queue empty");
+
+  /* Freeing a buffer slot in the queue.*/
+  ibqp->bcounter--;
+  ibqp->brdptr += ibqp->bsize;
+  if (ibqp->brdptr >= ibqp->btop) {
+    ibqp->brdptr = ibqp->buffers;
+  }
+
+  /* Notifying the buffer release.*/
+  if (ibqp->notify != NULL) {
+    ibqp->notify(ibqp);
+  }
 }
 
 /**
@@ -144,7 +191,29 @@ void ibqPostBufferI(io_buffers_queue_t *ibqp, size_t size) {
  * @api
  */
 msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
+  msg_t msg;
 
+  /* This condition indicates that a new buffer must be acquired.*/
+  while (ibqp->ptr == NULL) {
+    msg = osalThreadEnqueueTimeoutS(&ibqp->waiting, timeout);
+    if (msg < MSG_OK) {
+      return msg;
+    }
+    ibqp->ptr = ibqGetFullBufferI(ibqp);
+  }
+
+  /* Next byte from the buffer.*/
+  msg = *ibqp->ptr;
+  ibqp->ptr++;
+
+  /* If the current buffer has been fully read then it is returned as
+     empty in the queue.*/
+  if (ibqp->ptr == ibqp->top) {
+    ibqReleaseBufferI(ibqp);
+    ibqp->ptr = NULL;
+  }
+
+  return msg;
 }
 
 /**
