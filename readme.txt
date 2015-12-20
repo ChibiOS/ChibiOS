@@ -142,6 +142,8 @@
 - HAL: Updated STM32F0xx headers to STM32CubeF0 version 1.3.0. Added support
        for STM32F030xC, STM32F070x6, STM32F070xB, STM32F091xC,
        STM32F098xx devices.
+- HAL: Fixed chprintf() still calling RT functions (bug #684)(backported
+       to 3.0.5).
 - HAL: Fixed STM32 ICU driver uses chSysLock and chSysUnlock (bug #681)
        (backported to 3.0.4).
 - HAL: Fixed wrong DMA priority assigned to STM32F3 ADC3&4 (bug #680)
