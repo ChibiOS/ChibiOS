@@ -277,8 +277,9 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
       /* Handling the case where the system time went past the deadline,
          in this case next becomes a very high number because the system
          time is an unsigned type.*/
-      if (next_timeout > timeout)
+      if (next_timeout > timeout) {
         return MSG_TIMEOUT;
+      }
 
       msg_t msg = ibqGetDataTimeoutI(ibqp, next_timeout);
       if (msg != MSG_OK) {
