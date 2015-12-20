@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 3.0.5 ***
+- HAL: Fixed chprintf() still calling RT functions (bug #684).
+
 *** 3.0.4 ***
 - HAL: Fixed STM32 ICU driver uses chSysLock and chSysUnlock (bug #681).
 - HAL: Fixed wrong DMA priority assigned to STM32F3 ADC3&4 (bug #680).

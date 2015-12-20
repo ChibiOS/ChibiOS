@@ -136,7 +136,7 @@ int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
     if (c == 0)
       return n;
     if (c != '%') {
-      chSequentialStreamPut(chp, (uint8_t)c);
+      streamPut(chp, (uint8_t)c);
       n++;
       continue;
     }
@@ -254,22 +254,22 @@ unsigned_common:
       width = -width;
     if (width < 0) {
       if (*s == '-' && filler == '0') {
-        chSequentialStreamPut(chp, (uint8_t)*s++);
+        streamPut(chp, (uint8_t)*s++);
         n++;
         i--;
       }
       do {
-        chSequentialStreamPut(chp, (uint8_t)filler);
+        streamPut(chp, (uint8_t)filler);
         n++;
       } while (++width != 0);
     }
     while (--i >= 0) {
-      chSequentialStreamPut(chp, (uint8_t)*s++);
+      streamPut(chp, (uint8_t)*s++);
       n++;
     }
 
     while (width) {
-      chSequentialStreamPut(chp, (uint8_t)filler);
+      streamPut(chp, (uint8_t)filler);
       n++;
       width--;
     }
