@@ -143,7 +143,6 @@ uint8_t *ibqGetFullBufferI(input_buffers_queue_t *ibqp) {
 
   if (ibqIsEmptyI(ibqp)) {
     ibqp->ptr = NULL;
-    ibqp->top = NULL;
     return NULL;
   }
 
@@ -170,6 +169,9 @@ void ibqReleaseBufferI(io_buffers_queue_t *ibqp) {
   if (ibqp->brdptr >= ibqp->btop) {
     ibqp->brdptr = ibqp->buffers;
   }
+
+  /* Marked as no more sequentially accessible.*/
+  ibqp->ptr = NULL;
 
   /* Notifying the buffer release.*/
   if (ibqp->notify != NULL) {
@@ -206,6 +208,7 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
     if (msg < MSG_OK) {
       return msg;
     }
+    /* Tries to get the buffer, the fields ptr and top are setup inside.*/
     (void) ibqGetFullBufferI(ibqp);
   }
 
@@ -217,7 +220,6 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
      empty in the queue.*/
   if (ibqp->ptr == ibqp->top) {
     ibqReleaseBufferI(ibqp);
-    ibqp->ptr = NULL;
   }
 
   return msg;
