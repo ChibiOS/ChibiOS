@@ -80,7 +80,7 @@ void ibqObjectInit(input_buffers_queue_t *ibqp, uint8_t *bp,
  * @brief   Gets the next empty buffer from the queue.
  * @note    The function always returns the same buffer if called repeatedly.
  *
- * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
+ * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
  * @return              A pointer to the next buffer to be filled.
  * @retval NULL         if the queue is full.
  *
@@ -100,7 +100,7 @@ uint8_t *ibqGetEmptyBufferI(input_buffers_queue_t *ibqp) {
 /**
  * @brief   Posts a new filled buffer in the queue.
  *
- * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
+ * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
  * @param[in] size      used size of the buffer
  *
  * @iclass
@@ -131,24 +131,37 @@ void ibqPostBufferI(io_buffers_queue_t *ibqp, size_t size) {
  *          at beginning and end of the buffer data or @NULL if the queue
  *          is empty.
  *
- * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
+ * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
  * @return              A pointer to filled buffer area.
- * @retval NULL         if the queue is empty.
+ * @retval MSG_OK       if a buffer has been acquired.
+ * @retval MSG_TIMEOUT  if the specified time expired.
+ * @retval MSG_RESET    if the queue has been reset.
  *
  * @iclass
  */
-uint8_t *ibqGetFullBufferI(input_buffers_queue_t *ibqp) {
+msg_t ibqGetFullBufferTimeoutI(input_buffers_queue_t *ibqp,
+                               systime_t timeout) {
 
   osalDbgCheckClassI();
 
-  if (ibqIsEmptyI(ibqp)) {
-    ibqp->ptr = NULL;
-    return NULL;
+  while (ibqIsEmptyI(ibqp)) {
+    msg_t msg = osalThreadEnqueueTimeoutS(&ibqp->waiting, timeout);
+    if (msg < Q_OK) {
+      ibqp->ptr = NULL;
+      return msg;
+    }
   }
 
+  /* Buffer boundaries.*/
   ibqp->ptr = ibqp->brdptr + sizeof (size_t);
   ibqp->top = ibqp->ptr + *((size_t *)ibqp->brdptr);
-  return ibqp->brdptr;
+
+  return MSG_OK;
 }
 
 /**
@@ -203,13 +216,11 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
   msg_t msg;
 
   /* This condition indicates that a new buffer must be acquired.*/
-  while (ibqp->ptr == NULL) {
-    msg = osalThreadEnqueueTimeoutS(&ibqp->waiting, timeout);
-    if (msg < MSG_OK) {
+  if (ibqp->ptr == NULL) {
+    msg = ibqGetFullBufferTimeoutI(ibqp, timeout);
+    if (msg != MSG_OK) {
       return msg;
     }
-    /* Tries to get the buffer, the fields ptr and top are setup inside.*/
-    (void) ibqGetFullBufferI(ibqp);
   }
 
   /* Next byte from the buffer.*/
