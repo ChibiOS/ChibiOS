@@ -45,42 +45,135 @@
 /*===========================================================================*/
 
 /**
- * @brief   Initializes an I/O buffer object.
+ * @brief   Initializes an input double buffer object.
  *
- * @param[out] iobp     pointer to the @p input_double_buffer_t object
- * @param[in] bp        pointer to a memory area allocated as buffer
- * @param[in] size      size of the buffers
+ * @param[out] ibqp     pointer to the @p io_buffers_queue_t object
+ * @param[in] bp        pointer to a memory area allocated for buffers
+ * @param[in] size      buffer size, including the size field which is the
+ *                      size of a @p size_t
+ * @param[in] n         number of buffers
+ * @param[in] infy      callback called when a buffer is returned to the queue
+ * @param[in] link      application defined pointer
  *
  * @init
  */
-void iobInit(io_buffer_t *iobp, uint8_t *bp, size_t size) {
+void ibqObjectInit(input_buffers_queue_t *ibqp, uint8_t *bp,
+                   size_t size, size_t n,
+                   dbnotify_t infy, void *link) {
 
-  iobp->buffer = bp;
-  iobp->limit  = bp;
-  iobp->top    = bp + size;
+  osalDbgCheck((ibqp != NULL) && (bp != NULL) && (size >= sizeof(size_t) + 2));
+
+  ibqp->bcounter = 0;
+  ibqp->brdptr   = bp;
+  ibqp->bwrptr   = bp;
+  ibqp->btop     = bp + (size * n);     /* Pre-calculated for speed.*/
+  ibqp->bsize    = size;
+  ibqp->bn       = n;
+  ibqp->buffers  = bp;
+  ibqp->ptr      = NULL;
+  ibqp->notify   = infy;
+  ibqp->link     = link;
 }
 
 /**
- * @brief   Initializes an input double buffer object.
+ * @brief   Gets a buffer for posting in the queue.
+ * @note    The function always returns the same buffer if called repeatedly.
  *
- * @param[out] idbp     pointer to the @p input_double_buffer_t object
- * @param[in] b1p       pointer to a memory area allocated as buffer 1
- * @param[in] b2p       pointer to a memory area allocated as buffer 2
- * @param[in] size      size of the buffers
+ * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
+ * @return              A pointer to the next buffer to be filled.
+ * @retval NULL         if the queue is full.
  *
- * @init
+ * @iclass
  */
-void idbObjectInit(input_double_buffer_t *idbp,
-                   uint8_t *b1p, uint8_t *b2p, size_t size,
-                   dbnotify_t infy, void *link) {
+uint8_t *ibqGetNextBufferI(input_buffers_queue_t *ibqp) {
 
-  iobInit(&idbp->buffers[0], b1p, size);
-  iobInit(&idbp->buffers[1], b2p, size);
-  idbp->counter = 0;
-  idbp->brdptr  = &idbp->buffers[0];
-  idbp->bwrptr  = &idbp->buffers[0];
-  idbp->notify  = infy;
-  idbp->link    = link;
+  osalDbgCheckClassI();
+
+  if (ibqIsFullI(ibqp)) {
+    return NULL;
+  }
+
+  return ibqp->bwrptr + sizeof (size_t);
+}
+
+/**
+ * @brief   Posts a buffer in the queue.
+ *
+ * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
+ * @param[in] size      used size of the buffer
+ *
+ * @iclass
+ */
+void ibqPostBufferI(io_buffers_queue_t *ibqp, size_t size) {
+
+  osalDbgCheckClassI();
+  osalDbgAssert(!ibqIsFullI(ibqp), "buffered queue full");
+
+  /* Writing size field in the buffer.*/
+  *((size_t *)ibqp->bwrptr) = size;
+
+  /* Posting the buffer in the queue.*/
+  ibqp->bcounter++;
+  ibqp->bwrptr += ibqp->bsize;
+  if (ibqp->bwrptr >= ibqp->btop) {
+    ibqp->bwrptr = ibqp->buffers;
+  }
+
+  /* Waking up one waiting thread, if any.*/
+  osalThreadDequeueNextI(&ibqp->waiting, MSG_OK);
+}
+
+/**
+ * @brief   Input queue read with timeout.
+ * @details This function reads a byte value from an input queue. If
+ *          the queue is empty then the calling thread is suspended until a
+ *          new buffer arrives in the queue or a timeout occurs.
+ * @note    The callback is invoked before reading the character from the
+ *          buffer or before entering the suspended state.
+ *
+ * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              A byte value from the queue.
+ * @retval MSG_TIMEOUT  if the specified time expired.
+ * @retval MSG_RESET    if the queue has been reset.
+ *
+ * @api
+ */
+msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
+
+}
+
+/**
+ * @brief   Input queue read with timeout.
+ * @details The function reads data from an input queue into a buffer.
+ *          The operation completes when the specified amount of data has been
+ *          transferred or after the specified timeout or if the queue has
+ *          been reset.
+ * @note    The function is not atomic, if you need atomicity it is suggested
+ *          to use a semaphore or a mutex for mutual exclusion.
+ * @note    The callback is invoked before reading each character from the
+ *          buffer or before entering the state @p THD_STATE_WTQUEUE.
+ *
+ * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
+ * @param[out] bp       pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The number of bytes effectively transferred.
+ *
+ * @api
+ */
+size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
+                      size_t n, systime_t timeout) {
+
 }
 
 /** @} */

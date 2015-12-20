@@ -29,8 +29,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define HAL_BUFFERS_QUEUE_SIZE              2
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -44,44 +42,21 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of an I/O buffer.
+ * @brief   Type of a generic queue of buffers.
  */
-typedef struct hal_buffer io_buffer_t;
-
-/**
- * @brief   Structure of a generic buffer.
- */
-struct hal_buffer {
-  /**
-   * @brief   Pointer to the buffer in memory.
-   */
-  uint8_t               *buffer;
-  /**
-   * @brief   Pointer to the first non-used location in the buffer.
-   */
-  uint8_t               *limit;
-  /**
-   * @brief   Pointer to the buffer boundary.
-   */
-  uint8_t               *top;
-};
-
-/**
- * @brief   Type of a generic double buffer.
- */
-typedef struct io_double_buffer io_double_buffer_t;
+typedef struct io_buffers_queue io_buffers_queue_t;
 
 /**
  * @brief   Double buffer notification callback type.
  *
- * @param[in] iodbp     the double buffer pointer
+ * @param[in] iodbp     the buffers queue pointer
  */
-typedef void (*dbnotify_t)(io_double_buffer_t *iodbp);
+typedef void (*dbnotify_t)(io_buffers_queue_t *bqp);
 
 /**
- * @brief   Structure of a generic double buffer.
+ * @brief   Structure of a generic buffers queue.
  */
-struct io_double_buffer {
+struct io_buffers_queue {
   /**
    * @brief   Queue of waiting threads.
    */
@@ -89,23 +64,38 @@ struct io_double_buffer {
   /**
    * @brief   Active buffers counter.
    */
-  volatile size_t       counter;
+  volatile size_t       bcounter;
   /**
    * @brief   Buffer write pointer.
    */
-  io_buffer_t           *bwrptr;
+  uint8_t               *bwrptr;
   /**
    * @brief   Buffer read pointer.
    */
-  io_buffer_t           *brdptr;
+  uint8_t               *brdptr;
+  /**
+   * @brief   Pointer to the buffers boundary.
+   */
+  uint8_t               *btop;
+  /**
+   * @brief   Size of buffers.
+   * @note    The buffer size must be not lower than <tt>sizeof(size_t) + 2</tt>
+   *          because the first bytes are used to store the used size of the
+   *          buffer.
+   */
+  size_t                bsize;
+  /**
+   * @brief   Number of buffers.
+   */
+  size_t                bn;
+  /**
+   * @brief   Queue of buffer objects.
+   */
+  uint8_t               *buffers;
   /**
    * @brief   Pointer for R/W sequential access.
    */
   uint8_t               *ptr;
-  /**
-   * @brief   Queue of buffer objects.
-   */
-  io_buffer_t           buffers[HAL_BUFFERS_QUEUE_SIZE];
   /**
    * @brief   Data notification callback.
    */
@@ -117,18 +107,70 @@ struct io_double_buffer {
 };
 
 /**
- * @brief   Type of an input double buffer.
+ * @brief   Type of an input buffers queue.
  */
-typedef io_double_buffer_t input_double_buffer_t;
+typedef io_buffers_queue_t input_buffers_queue_t;
 
 /**
- * @brief   Type of an output double buffer.
+ * @brief   Type of an output buffers queue.
  */
-typedef io_double_buffer_t output_double_buffer_t;
+typedef io_buffers_queue_t output_buffers_queue_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @name    Macro Functions
+ * @{
+ */
+/**
+ * @brief   Returns the queue's number of buffers.
+ *
+ * @param[in] bqp       pointer to an @p io_buffers_queue_t structure
+ * @return              The number of buffers.
+ *
+ * @xclass
+ */
+#define bqSizeX(bqp) ((bqp)->bn)
+
+/**
+ * @brief   Return the ready buffers number.
+ * @details Returns the number of filled buffers if used on an input queue
+ *          or the number of empty buffers if used on an output queue.
+ *
+ * @param[in] bqp       pointer to an @p io_buffers_queue_t structure
+ * @return              The number of ready buffers.
+ *
+ * @iclass
+ */
+#define bqSpaceI(bqp) ((bqp)->bcounter)
+
+/**
+ * @brief   Evaluates to @p TRUE if the specified input buffered queue is empty.
+ *
+ * @param[in] ibqp      pointer to an @p input_buffers_queue_t structure
+ * @return              The queue status.
+ * @retval false        if the queue is not empty.
+ * @retval true         if the queue is empty.
+ *
+ * @iclass
+ */
+#define iqbIsEmptyI(ibqp) ((bool)(bqSpaceI(ibqp) == 0U))
+
+/**
+ * @brief   Evaluates to @p TRUE if the specified input buffered queue is full.
+ *
+ * @param[in] ibqp      pointer to an @p input_buffers_queue_t structure
+ * @return              The queue status.
+ * @retval false        if the queue is not full.
+ * @retval true         if the queue is full.
+ *
+ * @iclass
+ */
+#define ibqIsFullI(ibqp) ((bool)(((ibqp)->bwrptr == (ibqp)->brdptr) &&      \
+                                 ((ibqp)->bcounter != 0U)))
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -137,9 +179,8 @@ typedef io_double_buffer_t output_double_buffer_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void iobInit(io_buffer_t *iobp, uint8_t *bp, size_t size);
-  void idbObjectInit(input_double_buffer_t *idbp,
-                     uint8_t *b1p, uint8_t *b2p, size_t size,
+  void ibqObjectInit(io_buffers_queue_t *ibqp, uint8_t *bp,
+                     size_t size, size_t n,
                      dbnotify_t infy, void *link);
 #ifdef __cplusplus
 }

@@ -80,7 +80,7 @@ struct io_queue {
 /**
  * @brief   Returns the queue's buffer size.
  *
- * @param[in] qp        pointer to a @p io_queue_t structure.
+ * @param[in] qp        pointer to a @p io_queue_t structure
  * @return              The buffer size.
  *
  * @xclass
@@ -95,7 +95,7 @@ struct io_queue {
  * @details Returns the used space if used on an input queue or the empty
  *          space if used on an output queue.
  *
- * @param[in] qp        pointer to a @p io_queue_t structure.
+ * @param[in] qp        pointer to a @p io_queue_t structure
  * @return              The buffer space.
  *
  * @iclass
@@ -106,7 +106,7 @@ struct io_queue {
  * @brief   Returns the queue application-defined link.
  * @note    This function can be called in any context.
  *
- * @param[in] qp        pointer to a @p io_queue_t structure.
+ * @param[in] qp        pointer to a @p io_queue_t structure
  * @return              The application-defined link.
  *
  * @special
@@ -153,24 +153,24 @@ typedef io_queue_t input_queue_t;
 #define iqGetEmptyI(iqp) (qSizeX(iqp) - qSpaceI(iqp))
 
 /**
- * @brief   Evaluates to @p TRUE if the specified input queue is empty.
+ * @brief   Evaluates to @p true if the specified input queue is empty.
  *
- * @param[in] iqp       pointer to an @p input_queue_t structure.
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @return              The queue status.
- * @retval FALSE        if the queue is not empty.
- * @retval TRUE         if the queue is empty.
+ * @retval false        if the queue is not empty.
+ * @retval true         if the queue is empty.
  *
  * @iclass
  */
 #define iqIsEmptyI(iqp) ((bool)(qSpaceI(iqp) == 0U))
 
 /**
- * @brief   Evaluates to @p TRUE if the specified input queue is full.
+ * @brief   Evaluates to @p true if the specified input queue is full.
  *
- * @param[in] iqp       pointer to an @p input_queue_t structure.
+ * @param[in] iqp       pointer to an @p input_queue_t structure
  * @return              The queue status.
- * @retval FALSE        if the queue is not full.
- * @retval TRUE         if the queue is full.
+ * @retval false        if the queue is not full.
+ * @retval true         if the queue is full.
  *
  * @iclass
  */
@@ -267,12 +267,12 @@ typedef io_queue_t output_queue_t;
 #define oqGetEmptyI(oqp) qSpaceI(oqp)
 
 /**
- * @brief   Evaluates to @p TRUE if the specified output queue is empty.
+ * @brief   Evaluates to @p true if the specified output queue is empty.
  *
- * @param[in] oqp       pointer to an @p output_queue_t structure.
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @return              The queue status.
- * @retval FALSE        if the queue is not empty.
- * @retval TRUE         if the queue is empty.
+ * @retval false        if the queue is not empty.
+ * @retval true         if the queue is empty.
  *
  * @iclass
  */
@@ -280,12 +280,12 @@ typedef io_queue_t output_queue_t;
                                 ((oqp)->q_counter != 0U)))
 
 /**
- * @brief   Evaluates to @p TRUE if the specified output queue is full.
+ * @brief   Evaluates to @p true if the specified output queue is full.
  *
- * @param[in] oqp       pointer to an @p output_queue_t structure.
+ * @param[in] oqp       pointer to an @p output_queue_t structure
  * @return              The queue status.
- * @retval FALSE        if the queue is not full.
- * @retval TRUE         if the queue is full.
+ * @retval false        if the queue is not full.
+ * @retval true         if the queue is full.
  *
  * @iclass
  */
