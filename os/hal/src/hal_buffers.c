@@ -127,9 +127,12 @@ void ibqPostBufferI(io_buffers_queue_t *ibqp, size_t size) {
 /**
  * @brief   Gets the next filled buffer from the queue.
  * @note    The function always returns the same buffer if called repeatedly.
+ * @post    After calling the function the fields @p ptr and @p top are set
+ *          at beginning and end of the buffer data or @NULL if the queue
+ *          is empty.
  *
  * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
- * @return              A pointer to the next buffer to be filled.
+ * @return              A pointer to filled buffer area.
  * @retval NULL         if the queue is empty.
  *
  * @iclass
@@ -139,10 +142,14 @@ uint8_t *ibqGetFullBufferI(input_buffers_queue_t *ibqp) {
   osalDbgCheckClassI();
 
   if (ibqIsEmptyI(ibqp)) {
+    ibqp->ptr = NULL;
+    ibqp->top = NULL;
     return NULL;
   }
 
-  return ibqp->brdptr + sizeof (size_t);
+  ibqp->ptr = ibqp->brdptr + sizeof (size_t);
+  ibqp->top = ibqp->ptr + *((size_t *)ibqp->brdptr);
+  return ibqp->brdptr;
 }
 
 /**
@@ -199,7 +206,7 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
     if (msg < MSG_OK) {
       return msg;
     }
-    ibqp->ptr = ibqGetFullBufferI(ibqp);
+    (void) ibqGetFullBufferI(ibqp);
   }
 
   /* Next byte from the buffer.*/
