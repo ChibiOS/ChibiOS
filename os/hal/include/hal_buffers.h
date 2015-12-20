@@ -187,6 +187,13 @@ extern "C" {
   void ibqObjectInit(io_buffers_queue_t *ibqp, uint8_t *bp,
                      size_t size, size_t n,
                      dbnotify_t infy, void *link);
+  uint8_t *ibqGetEmptyBufferI(input_buffers_queue_t *ibqp);
+  void ibqPostBufferI(input_buffers_queue_t *ibqp, size_t size);
+  msg_t ibqGetDataTimeoutI(input_buffers_queue_t *ibqp, systime_t timeout);
+  void ibqReleaseDataI(input_buffers_queue_t *ibqp);
+  msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout);
+  size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
+                        size_t n, systime_t timeout);
 #ifdef __cplusplus
 }
 #endif

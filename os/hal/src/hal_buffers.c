@@ -22,6 +22,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "hal.h"
 
 /*===========================================================================*/
@@ -105,7 +107,7 @@ uint8_t *ibqGetEmptyBufferI(input_buffers_queue_t *ibqp) {
  *
  * @iclass
  */
-void ibqPostBufferI(io_buffers_queue_t *ibqp, size_t size) {
+void ibqPostBufferI(input_buffers_queue_t *ibqp, size_t size) {
 
   osalDbgCheckClassI();
   osalDbgAssert(!ibqIsFullI(ibqp), "buffers queue full");
@@ -125,8 +127,8 @@ void ibqPostBufferI(io_buffers_queue_t *ibqp, size_t size) {
 }
 
 /**
- * @brief   Gets the next filled buffer from the queue.
- * @note    The function always returns the same buffer if called repeatedly.
+ * @brief   Gets the next data-filled buffer from the queue.
+ * @note    The function always acquires the same buffer if called repeatedly.
  * @post    After calling the function the fields @p ptr and @p top are set
  *          at beginning and end of the buffer data or @NULL if the queue
  *          is empty.
@@ -137,27 +139,25 @@ void ibqPostBufferI(io_buffers_queue_t *ibqp, size_t size) {
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
- * @return              A pointer to filled buffer area.
+ * @return              The operation status.
  * @retval MSG_OK       if a buffer has been acquired.
  * @retval MSG_TIMEOUT  if the specified time expired.
  * @retval MSG_RESET    if the queue has been reset.
  *
  * @iclass
  */
-msg_t ibqGetFullBufferTimeoutI(input_buffers_queue_t *ibqp,
-                               systime_t timeout) {
+msg_t ibqGetDataTimeoutI(input_buffers_queue_t *ibqp, systime_t timeout) {
 
   osalDbgCheckClassI();
 
   while (ibqIsEmptyI(ibqp)) {
     msg_t msg = osalThreadEnqueueTimeoutS(&ibqp->waiting, timeout);
     if (msg < Q_OK) {
-      ibqp->ptr = NULL;
       return msg;
     }
   }
 
-  /* Buffer boundaries.*/
+  /* Setting up the "current" buffer and its boundary.*/
   ibqp->ptr = ibqp->brdptr + sizeof (size_t);
   ibqp->top = ibqp->ptr + *((size_t *)ibqp->brdptr);
 
@@ -165,13 +165,14 @@ msg_t ibqGetFullBufferTimeoutI(input_buffers_queue_t *ibqp,
 }
 
 /**
- * @brief   Releases the next filled buffer back in the queue.
+ * @brief   Releases the data buffer back in the queue.
+ * @note    The object callback is called after releasing the buffer.
  *
  * @param[out] ibqp     pointer to the @p input_buffers_queue_t object
  *
  * @iclass
  */
-void ibqReleaseBufferI(io_buffers_queue_t *ibqp) {
+void ibqReleaseDataI(input_buffers_queue_t *ibqp) {
 
   osalDbgCheckClassI();
   osalDbgAssert(!ibqIsEmptyI(ibqp), "buffers queue empty");
@@ -183,7 +184,7 @@ void ibqReleaseBufferI(io_buffers_queue_t *ibqp) {
     ibqp->brdptr = ibqp->buffers;
   }
 
-  /* Marked as no more sequentially accessible.*/
+  /* No "current" buffer.*/
   ibqp->ptr = NULL;
 
   /* Notifying the buffer release.*/
@@ -197,8 +198,6 @@ void ibqReleaseBufferI(io_buffers_queue_t *ibqp) {
  * @details This function reads a byte value from an input queue. If
  *          the queue is empty then the calling thread is suspended until a
  *          new buffer arrives in the queue or a timeout occurs.
- * @note    The callback is invoked before reading the character from the
- *          buffer or before entering the suspended state.
  *
  * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
  * @param[in] timeout   the number of ticks before the operation timeouts,
@@ -217,7 +216,7 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
 
   /* This condition indicates that a new buffer must be acquired.*/
   if (ibqp->ptr == NULL) {
-    msg = ibqGetFullBufferTimeoutI(ibqp, timeout);
+    msg = ibqGetDataTimeoutI(ibqp, timeout);
     if (msg != MSG_OK) {
       return msg;
     }
@@ -229,8 +228,8 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
 
   /* If the current buffer has been fully read then it is returned as
      empty in the queue.*/
-  if (ibqp->ptr == ibqp->top) {
-    ibqReleaseBufferI(ibqp);
+  if (ibqp->ptr >= ibqp->top) {
+    ibqReleaseDataI(ibqp);
   }
 
   return msg;
@@ -244,8 +243,6 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
  *          been reset.
  * @note    The function is not atomic, if you need atomicity it is suggested
  *          to use a semaphore or a mutex for mutual exclusion.
- * @note    The callback is invoked before reading each character from the
- *          buffer or before entering the state @p THD_STATE_WTQUEUE.
  *
  * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
  * @param[out] bp       pointer to the data buffer
@@ -262,7 +259,57 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
  */
 size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
                       size_t n, systime_t timeout) {
+  size_t r = 0;
+  systime_t deadline;
 
+  osalSysLock();
+
+  /* Time window for the whole operation.*/
+  deadline = osalOsGetSystemTimeX() + timeout;
+
+  while (r < n) {
+    size_t size;
+
+    /* This condition indicates that a new buffer must be acquired.*/
+    if (ibqp->ptr == NULL) {
+      systime_t next_timeout = deadline - osalOsGetSystemTimeX();
+
+      /* Handling the case where the system time went past the deadline,
+         in this case next becomes a very high number because the system
+         time is an unsigned type.*/
+      if (next_timeout > timeout)
+        return MSG_TIMEOUT;
+
+      msg_t msg = ibqGetDataTimeoutI(ibqp, next_timeout);
+      if (msg != MSG_OK) {
+        return msg;
+      }
+    }
+
+    /* Size of the data chunk present in the current buffer.*/
+    size = ibqp->top - ibqp->ptr;
+    if (size > n - r) {
+      size = n - r;
+    }
+
+    /* Copying the chunk into the read buffer, the operation is performed
+       outside the critical zone.*/
+    osalSysUnlock();
+    memcpy(bp, ibqp->ptr, size);
+    osalSysLock();
+
+    /* Updating the pointers.*/
+    bp += size;
+    ibqp->ptr += size;
+
+    /* Has the current data buffer been finished? if so then release it.*/
+    if (ibqp->ptr >= ibqp->top) {
+      ibqReleaseDataI(ibqp);
+    }
+  }
+  osalSysUnlock();
+
+  return r;
 }
 
 /** @} */
