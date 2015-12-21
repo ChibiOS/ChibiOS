@@ -255,7 +255,7 @@ void sduStop(SerialUSBDriver *sdup) {
   /* Queues reset in order to signal the driver stop to the application.*/
   chnAddFlagsI(sdup, CHN_DISCONNECTED);
   iqResetI(&sdup->iqueue);
-  iqResetI(&sdup->oqueue);
+  oqResetI(&sdup->oqueue);
   osalOsRescheduleS();
   osalSysUnlock();
 }

@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.5 ***
+- HAL: Fixed Serial_USB improperly resets queues on stop (bug #685).
 - HAL: Fixed chprintf() still calling RT functions (bug #684).
 
 *** 3.0.4 ***
