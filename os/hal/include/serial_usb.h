@@ -121,6 +121,14 @@
 #if !defined(SERIAL_USB_BUFFERS_SIZE) || defined(__DOXYGEN__)
 #define SERIAL_USB_BUFFERS_SIZE     256
 #endif
+
+/**
+ * @brief   Serial over USB number of buffers.
+ * @note    The default is 2 buffers.
+ */
+#if !defined(SERIAL_USB_BUFFERS_NUMBER) || defined(__DOXYGEN__)
+#define SERIAL_USB_BUFFERS_NUMBER   2
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -192,14 +200,16 @@ typedef struct {
   _base_asynchronous_channel_data                                           \
   /* Driver state.*/                                                        \
   sdustate_t                state;                                          \
-  /* Input queue.*/                                                         \
-  input_queue_t             iqueue;                                         \
+  /* Input buffers queue.*/                                                 \
+  input_buffers_queue_t     ibqueue;                                        \
   /* Output queue.*/                                                        \
-  output_queue_t            oqueue;                                         \
+  output_buffers_queue_t    obqueue;                                        \
   /* Input buffer.*/                                                        \
-  uint8_t                   ib[SERIAL_USB_BUFFERS_SIZE];                    \
+  uint8_t                   ib[BQ_BUFFER_SIZE(SERIAL_USB_BUFFERS_NUMBER,    \
+                                              SERIAL_USB_BUFFERS_SIZE)];    \
   /* Output buffer.*/                                                       \
-  uint8_t                   ob[SERIAL_USB_BUFFERS_SIZE];                    \
+  uint8_t                   ob[BQ_BUFFER_SIZE(SERIAL_USB_BUFFERS_NUMBER,    \
+                                              SERIAL_USB_BUFFERS_SIZE)];    \
   /* End of the mandatory fields.*/                                         \
   /* Current configuration data.*/                                          \
   const SerialUSBConfig     *config;

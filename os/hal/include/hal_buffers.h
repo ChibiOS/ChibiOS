@@ -51,7 +51,7 @@ typedef struct io_buffers_queue io_buffers_queue_t;
  *
  * @param[in] iodbp     the buffers queue pointer
  */
-typedef void (*dbnotify_t)(io_buffers_queue_t *bqp);
+typedef void (*bqnotify_t)(io_buffers_queue_t *bqp);
 
 /**
  * @brief   Structure of a generic buffers queue.
@@ -104,7 +104,7 @@ struct io_buffers_queue {
   /**
    * @brief   Data notification callback.
    */
-  dbnotify_t            notify;
+  bqnotify_t            notify;
   /**
    * @brief   Application defined field.
    */
@@ -171,7 +171,7 @@ typedef io_buffers_queue_t output_buffers_queue_t;
 #define bqGetLinkX(bqp) ((bqp)->link)
 
 /**
- * @brief   Evaluates to @p TRUE if the specified input buffered queue is empty.
+ * @brief   Evaluates to @p TRUE if the specified input buffers queue is empty.
  *
  * @param[in] ibqp      pointer to an @p input_buffers_queue_t structure
  * @return              The queue status.
@@ -183,7 +183,7 @@ typedef io_buffers_queue_t output_buffers_queue_t;
 #define ibqIsEmptyI(ibqp) ((bool)(bqSpaceI(ibqp) == 0U))
 
 /**
- * @brief   Evaluates to @p TRUE if the specified input buffered queue is full.
+ * @brief   Evaluates to @p TRUE if the specified input buffers queue is full.
  *
  * @param[in] ibqp      pointer to an @p input_buffers_queue_t structure
  * @return              The queue status.
@@ -194,6 +194,31 @@ typedef io_buffers_queue_t output_buffers_queue_t;
  */
 #define ibqIsFullI(ibqp) ((bool)(((ibqp)->bwrptr == (ibqp)->brdptr) &&      \
                                  ((ibqp)->bcounter != 0U)))
+
+/**
+ * @brief   Evaluates to @p true if the specified output buffers queue is empty.
+ *
+ * @param[in] obqp      pointer to an @p output_buffers_queue_t structure
+ * @return              The queue status.
+ * @retval false        if the queue is not empty.
+ * @retval true         if the queue is empty.
+ *
+ * @iclass
+ */
+#define obqIsEmptyI(oqp) ((bool)(((obqp)->bwrptr == (obqp)->brdptr) &&       \
+                                 ((obqp)->bcounter != 0U)))
+
+/**
+ * @brief   Evaluates to @p true if the specified output buffers queue is full.
+ *
+ * @param[in] obqp      pointer to an @p output_buffers_queue_t structure
+ * @return              The queue status.
+ * @retval false        if the queue is not full.
+ * @retval true         if the queue is full.
+ *
+ * @iclass
+ */
+#define obqIsFullI(obqp) ((bool)(bqSpaceI(obqp) == 0U))
 /** @} */
 
 /*===========================================================================*/
@@ -205,15 +230,30 @@ extern "C" {
 #endif
   void ibqObjectInit(io_buffers_queue_t *ibqp, uint8_t *bp,
                      size_t size, size_t n,
-                     dbnotify_t infy, void *link);
+                     bqnotify_t infy, void *link);
   void ibqResetI(input_buffers_queue_t *ibqp);
   uint8_t *ibqGetEmptyBufferI(input_buffers_queue_t *ibqp);
-  void ibqPostBufferI(input_buffers_queue_t *ibqp, size_t size);
-  msg_t ibqGetDataTimeoutI(input_buffers_queue_t *ibqp, systime_t timeout);
-  void ibqReleaseDataI(input_buffers_queue_t *ibqp);
+  void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size);
+  msg_t ibqGetFullBufferTimeoutS(input_buffers_queue_t *ibqp,
+                                 systime_t timeout);
+  void ibqReleaseEmptyBufferI(input_buffers_queue_t *ibqp);
   msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout);
   size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
                         size_t n, systime_t timeout);
+  void obqObjectInit(output_buffers_queue_t *obqp, uint8_t *bp,
+                     size_t size, size_t n,
+                     bqnotify_t onfy, void *link);
+  void obqResetI(output_buffers_queue_t *obqp);
+  uint8_t *obqGetFullBufferI(output_buffers_queue_t *obqp,
+                             size_t *sizep);
+  void obqReleaseEmptyBufferI(output_buffers_queue_t *obqp);
+  msg_t obqGetEmptyBufferTimeoutS(output_buffers_queue_t *obqp,
+                                  systime_t timeout);
+  void obqPostFullBufferI(output_buffers_queue_t *obqp, size_t size);
+  msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
+                      systime_t timeout);
+  size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
+                         size_t n, systime_t timeout);
 #ifdef __cplusplus
 }
 #endif
