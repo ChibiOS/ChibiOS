@@ -126,6 +126,15 @@ typedef io_buffers_queue_t output_buffers_queue_t;
 /*===========================================================================*/
 
 /**
+ * @brief   Computes the size of a buffers queue buffer size.
+ *
+ * @param[in] n         sumber of buffers in the queue
+ * @param[in] size      size of the buffers
+ */
+#define BQ_BUFFER_SIZE(n, size)                                             \
+  (((size_t)(size) + sizeof (size_t)) * (size_t)(n))
+
+/**
  * @name    Macro Functions
  * @{
  */
@@ -150,6 +159,16 @@ typedef io_buffers_queue_t output_buffers_queue_t;
  * @iclass
  */
 #define bqSpaceI(bqp) ((bqp)->bcounter)
+
+/**
+ * @brief   Returns the queue application-defined link.
+ *
+ * @param[in] bqp       pointer to an @p io_buffers_queue_t structure
+ * @return              The application-defined link.
+ *
+ * @special
+ */
+#define bqGetLinkX(bqp) ((bqp)->link)
 
 /**
  * @brief   Evaluates to @p TRUE if the specified input buffered queue is empty.
@@ -187,6 +206,7 @@ extern "C" {
   void ibqObjectInit(io_buffers_queue_t *ibqp, uint8_t *bp,
                      size_t size, size_t n,
                      dbnotify_t infy, void *link);
+  void ibqResetI(input_buffers_queue_t *ibqp);
   uint8_t *ibqGetEmptyBufferI(input_buffers_queue_t *ibqp);
   void ibqPostBufferI(input_buffers_queue_t *ibqp, size_t size);
   msg_t ibqGetDataTimeoutI(input_buffers_queue_t *ibqp, systime_t timeout);

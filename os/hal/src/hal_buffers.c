@@ -47,7 +47,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Initializes an input double buffer object.
+ * @brief   Initializes an input buffers queue object.
  *
  * @param[out] ibqp     pointer to the @p io_buffers_queue_t object
  * @param[in] bp        pointer to a memory area allocated for buffers
@@ -65,6 +65,7 @@ void ibqObjectInit(input_buffers_queue_t *ibqp, uint8_t *bp,
 
   osalDbgCheck((ibqp != NULL) && (bp != NULL) && (size >= sizeof(size_t) + 2));
 
+  osalThreadQueueObjectInit(&ibqp->waiting);
   ibqp->bcounter = 0;
   ibqp->brdptr   = bp;
   ibqp->bwrptr   = bp;
@@ -76,6 +77,29 @@ void ibqObjectInit(input_buffers_queue_t *ibqp, uint8_t *bp,
   ibqp->top      = NULL;
   ibqp->notify   = infy;
   ibqp->link     = link;
+}
+
+/**
+ * @brief   Resets an input buffers queue.
+ * @details All the data in the input buffers queue is erased and lost, any
+ *          waiting thread is resumed with status @p MSG_RESET.
+ * @note    A reset operation can be used by a low level driver in order to
+ *          obtain immediate attention from the high level layers.
+ *
+ * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
+ *
+ * @iclass
+ */
+void ibqResetI(input_buffers_queue_t *ibqp) {
+
+  osalDbgCheckClassI();
+
+  ibqp->bcounter = 0;
+  ibqp->brdptr   = ibqp->buffers;
+  ibqp->bwrptr   = ibqp->buffers;
+  ibqp->ptr      = NULL;
+  ibqp->top      = NULL;
+  osalThreadDequeueAllI(&ibqp->waiting, MSG_RESET);
 }
 
 /**
@@ -152,7 +176,7 @@ msg_t ibqGetDataTimeoutI(input_buffers_queue_t *ibqp, systime_t timeout) {
 
   while (ibqIsEmptyI(ibqp)) {
     msg_t msg = osalThreadEnqueueTimeoutS(&ibqp->waiting, timeout);
-    if (msg < Q_OK) {
+    if (msg < MSG_OK) {
       return msg;
     }
   }
@@ -299,8 +323,9 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
     memcpy(bp, ibqp->ptr, size);
     osalSysLock();
 
-    /* Updating the pointers.*/
-    bp += size;
+    /* Updating the pointers and the counter.*/
+    r         += size;
+    bp        += size;
     ibqp->ptr += size;
 
     /* Has the current data buffer been finished? if so then release it.*/
