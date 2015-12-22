@@ -131,7 +131,7 @@ int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
   char tmpbuf[MAX_FILLER + 1];
 #endif
 
-  while (TRUE) {
+  while (true) {
     c = *fmt++;
     if (c == 0)
       return n;

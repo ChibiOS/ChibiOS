@@ -321,8 +321,6 @@ void sduConfigureHookI(SerialUSBDriver *sdup) {
 
   usbPrepareReceive(sdup->config->usbp, sdup->config->bulk_out,
                     buf, SERIAL_USB_BUFFERS_SIZE);
-//  usbPrepareQueuedReceive(usbp, sdup->config->bulk_out, &sdup->iqueue,
-//                          usbp->epc[sdup->config->bulk_out]->out_maxsize);
   (void) usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out);
 }
 
@@ -363,12 +361,53 @@ bool sduRequestsHook(USBDriver *usbp) {
 }
 
 /**
+ * @brief   SOF handler.
+ * @details The SOF interrupt is used for automatic flushing of incomplete
+ *          buffers pending in the output queue.
+ *
+ * @param[in] sdup      pointer to a @p SerialUSBDriver object
+ *
+ * @iclass
+ */
+void sduSOFHookI(SerialUSBDriver *sdup) {
+
+  /* If the USB driver is not in the appropriate state then transactions
+     must not be started.*/
+  if ((usbGetDriverStateI(sdup->config->usbp) != USB_ACTIVE) ||
+      (sdup->state != SDU_READY)) {
+    return;
+  }
+
+  /* If there is already a transaction ongoing then another one cannot be
+     started.*/
+  if (usbGetTransmitStatusI(sdup->config->usbp, sdup->config->bulk_in)) {
+    return;
+  }
+
+  /* Checking if there only a buffer partially filled, if so then it is
+     enforced in the queue and transmitted.*/
+  if (obqTryFlushI(&sdup->obqueue)) {
+    size_t n;
+    uint8_t *buf = obqGetFullBufferI(&sdup->obqueue, &n);
+
+    osalDbgAssert(buf != NULL, "queue is empty");
+
+    osalSysUnlockFromISR();
+
+    usbPrepareTransmit(sdup->config->usbp, sdup->config->bulk_in, buf, n);
+
+    osalSysLockFromISR();
+    (void) usbStartTransmitI(sdup->config->usbp, sdup->config->bulk_in);
+  }
+}
+
+/**
  * @brief   Default data transmitted callback.
  * @details The application must use this function as callback for the IN
  *          data endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
+ * @param[in] ep        IN endpoint number
  */
 void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   uint8_t *buf;
@@ -384,27 +423,41 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   /* Signaling that space is available in the output queue.*/
   chnAddFlagsI(sdup, CHN_OUTPUT_EMPTY);
 
-  /* Freeing the buffer just transmitted.*/
-  obqReleaseEmptyBufferI(&sdup->obqueue);
+  /* Freeing the buffer just transmitted, if it was not a zero size packet.*/
+  if (usbp->epc[ep]->in_state->txsize > 0U) {
+    obqReleaseEmptyBufferI(&sdup->obqueue);
+  }
 
   /* Checking if there is a buffer ready for transmission.*/
   buf = obqGetFullBufferI(&sdup->obqueue, &n);
+
+  /* Unlocking the critical zone.*/
+  osalSysUnlockFromISR();
+
   if (buf != NULL) {
     /* The endpoint cannot be busy, we are in the context of the callback,
        so it is safe to transmit without a check.*/
-    osalSysUnlockFromISR();
-
     usbPrepareTransmit(usbp, ep, buf, n);
+  }
+  else if ((usbp->epc[ep]->in_state->txsize > 0U) &&
+           ((usbp->epc[ep]->in_state->txsize &
+            ((size_t)usbp->epc[ep]->in_maxsize - 1U)) == 0U)) {
+    /* Transmit zero sized packet in case the last one has maximum allowed
+       size. Otherwise the recipient may expect more data coming soon and
+       not return buffered data to app. See section 5.8.3 Bulk Transfer
+       Packet Size Constraints of the USB Specification document.*/
+    usbPrepareTransmit(usbp, ep, usbp->setup, 0);
 
-    osalSysLockFromISR();
-    (void) usbStartTransmitI(usbp, ep);
-    osalSysUnlockFromISR();
+  }
+  else {
+    /* Nothing to transmit.*/
     return;
   }
 
-  /* There could be a partial buffer being filled, special case.*/
-  /* TODO */
-#error "SERIAL USB UNDERGOING CHANGES, NOT FINISHED YET"
+  /* Locking again and starting transmission.*/
+  osalSysLockFromISR();
+  (void) usbStartTransmitI(usbp, ep);
+  osalSysUnlockFromISR();
 
 #if 0
   /*lint -save -e9013 [15.7] There is no else because it is not needed.*/
@@ -444,7 +497,7 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
  *          data endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
+ * @param[in] ep        OUT endpoint number
  */
 void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   uint8_t *buf;
@@ -471,10 +524,8 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   if (buf != NULL) {
     /* Buffer found, starting a new transaction.*/
     osalSysUnlockFromISR();
-
     usbPrepareReceive(sdup->config->usbp, sdup->config->bulk_out,
                       buf, SERIAL_USB_BUFFERS_SIZE);
-
     osalSysLockFromISR();
     (void) usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out);
   }

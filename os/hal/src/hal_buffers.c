@@ -74,6 +74,7 @@ void ibqObjectInit(input_buffers_queue_t *ibqp, uint8_t *bp,
   ibqp->buffers  = bp;
   ibqp->ptr      = NULL;
   ibqp->top      = NULL;
+  ibqp->accessed = false;
   ibqp->notify   = infy;
   ibqp->link     = link;
 }
@@ -181,6 +182,8 @@ msg_t ibqGetFullBufferTimeoutS(input_buffers_queue_t *ibqp,
     }
   }
 
+  osalDbgAssert(!ibqIsEmptyI(ibqp), "still empty");
+
   /* Setting up the "current" buffer and its boundary.*/
   ibqp->ptr = ibqp->brdptr + sizeof (size_t);
   ibqp->top = ibqp->ptr + *((size_t *)ibqp->brdptr);
@@ -238,13 +241,13 @@ void ibqReleaseEmptyBufferI(input_buffers_queue_t *ibqp) {
 msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
   msg_t msg;
 
-  chSysLock();
+  osalSysLock();
 
   /* This condition indicates that a new buffer must be acquired.*/
   if (ibqp->ptr == NULL) {
     msg = ibqGetFullBufferTimeoutS(ibqp, timeout);
     if (msg != MSG_OK) {
-      chSysUnlock();
+      osalSysUnlock();
       return msg;
     }
   }
@@ -259,7 +262,7 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
     ibqReleaseEmptyBufferI(ibqp);
   }
 
-  chSysUnlock();
+  osalSysUnlock();
 
   return msg;
 }
@@ -293,6 +296,11 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
 
   osalSysLock();
 
+  osalDbgAssert(!ibqp->accessed, "queue is being accessed");
+
+  /* Marking the queue as being written by a long operation.*/
+  ibqp->accessed = true;
+
   /* Time window for the whole operation.*/
   deadline = osalOsGetSystemTimeX() + timeout;
 
@@ -307,12 +315,14 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
          in this case next becomes a very high number because the system
          time is an unsigned type.*/
       if (next_timeout > timeout) {
+        ibqp->accessed = false;
         osalSysUnlock();
         return MSG_TIMEOUT;
       }
 
       msg_t msg = ibqGetFullBufferTimeoutS(ibqp, next_timeout);
       if (msg != MSG_OK) {
+        ibqp->accessed = false;
         osalSysUnlock();
         return msg;
       }
@@ -340,6 +350,7 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
       ibqReleaseEmptyBufferI(ibqp);
     }
   }
+  ibqp->accessed = false;
   osalSysUnlock();
 
   return r;
@@ -373,6 +384,7 @@ void obqObjectInit(output_buffers_queue_t *obqp, uint8_t *bp,
   obqp->buffers  = bp;
   obqp->ptr      = NULL;
   obqp->top      = NULL;
+  obqp->accessed = false;
   obqp->notify   = onfy;
   obqp->link     = link;
 }
@@ -444,6 +456,9 @@ void obqReleaseEmptyBufferI(output_buffers_queue_t *obqp) {
   if (obqp->brdptr >= obqp->btop) {
     obqp->brdptr = obqp->buffers;
   }
+
+  /* Waking up one waiting thread, if any.*/
+  osalThreadDequeueNextI(&obqp->waiting, MSG_OK);
 }
 
 /**
@@ -471,16 +486,18 @@ msg_t obqGetEmptyBufferTimeoutS(output_buffers_queue_t *obqp,
 
   osalDbgCheckClassS();
 
-  while (obqIsEmptyI(obqp)) {
+  while (obqIsFullI(obqp)) {
     msg_t msg = osalThreadEnqueueTimeoutS(&obqp->waiting, timeout);
     if (msg < MSG_OK) {
       return msg;
     }
   }
 
+  osalDbgAssert(!obqIsFullI(obqp), "still full");
+
   /* Setting up the "current" buffer and its boundary.*/
-  obqp->ptr = obqp->brdptr + sizeof (size_t);
-  obqp->top = obqp->ptr + *((size_t *)obqp->brdptr);
+  obqp->ptr = obqp->bwrptr + sizeof (size_t);
+  obqp->top = obqp->bwrptr + obqp->bsize;
 
   return MSG_OK;
 }
@@ -546,19 +563,18 @@ msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
   if (obqp->ptr == NULL) {
     msg = obqGetEmptyBufferTimeoutS(obqp, timeout);
     if (msg != MSG_OK) {
-      chSysUnlock();
+      osalSysUnlock();
       return msg;
     }
   }
 
   /* Writing the byte to the buffer.*/
-  obqp->bcounter--;
-  *obqp->bwrptr++ = b;
+  *obqp->ptr++ = b;
 
   /* If the current buffer has been fully written then it is posted as
      full in the queue.*/
   if (obqp->ptr >= obqp->top) {
-    obqPostFullBufferI(obqp, obqp->bsize);
+    obqPostFullBufferI(obqp, obqp->bsize - sizeof (size_t));
   }
 
   osalSysUnlock();
@@ -595,6 +611,11 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
 
   osalSysLock();
 
+  osalDbgAssert(!obqp->accessed, "queue is being accessed");
+
+  /* Marking the queue as being written by a long operation.*/
+  obqp->accessed = true;
+
   /* Time window for the whole operation.*/
   deadline = osalOsGetSystemTimeX() + timeout;
 
@@ -609,12 +630,14 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
          in this case next becomes a very high number because the system
          time is an unsigned type.*/
       if (next_timeout > timeout) {
+        obqp->accessed = false;
         osalSysUnlock();
         return MSG_TIMEOUT;
       }
 
       msg_t msg = obqGetEmptyBufferTimeoutS(obqp, next_timeout);
       if (msg != MSG_OK) {
+        obqp->accessed = false;
         osalSysUnlock();
         return msg;
       }
@@ -639,12 +662,80 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
 
     /* Has the current data buffer been finished? if so then release it.*/
     if (obqp->ptr >= obqp->top) {
-      obqPostFullBufferI(obqp, obqp->bsize);
+      obqPostFullBufferI(obqp, obqp->bsize - sizeof (size_t));
     }
   }
+  obqp->accessed = false;
   osalSysUnlock();
 
   return r;
 }
 
+/**
+ * @brief   Flushes the current, partially filled, buffer to the queue.
+ * @note    The notification callback is not invoked because the function
+ *          is meant to be called from ISR context. An operation status is
+ *          returned instead.
+ *
+ * @param[in] obqp      pointer to the @p output_buffers_queue_t object
+ * @return              The operation status.
+ * @retval false        if no new filled buffer has been posted to the queue.
+ * @retval true         if a new filled buffer has been posted to the queue.
+ *
+ * @iclass
+ */
+bool obqTryFlushI(output_buffers_queue_t *obqp) {
+
+  osalDbgCheckClassI();
+
+  /* If queue is empty and there is a buffer partially filled and
+     it is not being written.*/
+  if (obqIsEmptyI(obqp) && (obqp->ptr != NULL) && !obqp->accessed) {
+    size_t size = (size_t)(obqp->ptr - (obqp->bwrptr + sizeof (size_t)));
+
+    if (size > 0U) {
+
+      /* Writing size field in the buffer.*/
+      *((size_t *)obqp->bwrptr) = size;
+
+      /* Posting the buffer in the queue.*/
+      obqp->bcounter--;
+      obqp->bwrptr += obqp->bsize;
+      if (obqp->bwrptr >= obqp->btop) {
+        obqp->bwrptr = obqp->buffers;
+      }
+
+      /* No "current" buffer.*/
+      obqp->ptr = NULL;
+
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * @brief   Flushes the current, partially filled, buffer to the queue.
+ *
+ * @param[in] obqp      pointer to the @p output_buffers_queue_t object
+ *
+ * @api
+ */
+void obqFlush(output_buffers_queue_t *obqp) {
+
+  osalSysLock();
+
+  osalDbgAssert(!obqp->accessed, "queue is being accessed");
+
+  /* If there is a buffer partially filled and not being written.*/
+  if (obqp->ptr != NULL) {
+    size_t size = (size_t)(obqp->ptr - obqp->bwrptr);
+
+    if (size > 0U) {
+      obqPostFullBufferI(obqp, size);
+    }
+  }
+
+  osalSysUnlock();
+}
 /** @} */

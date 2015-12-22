@@ -102,6 +102,12 @@ struct io_buffers_queue {
    */
   uint8_t               *top;
   /**
+   * @brief   Buffer is being accessed.
+   * @details This flag indicates that the current buffer is being read or
+   *          written by a long, preemptable operation.
+   */
+  bool                  accessed;
+  /**
    * @brief   Data notification callback.
    */
   bqnotify_t            notify;
@@ -205,7 +211,7 @@ typedef io_buffers_queue_t output_buffers_queue_t;
  *
  * @iclass
  */
-#define obqIsEmptyI(oqp) ((bool)(((obqp)->bwrptr == (obqp)->brdptr) &&       \
+#define obqIsEmptyI(oqp) ((bool)(((obqp)->bwrptr == (obqp)->brdptr) &&      \
                                  ((obqp)->bcounter != 0U)))
 
 /**
@@ -254,6 +260,8 @@ extern "C" {
                       systime_t timeout);
   size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
                          size_t n, systime_t timeout);
+  bool obqTryFlushI(output_buffers_queue_t *obqp);
+  void obqFlush(output_buffers_queue_t *obqp);
 #ifdef __cplusplus
 }
 #endif
