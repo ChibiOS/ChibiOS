@@ -458,37 +458,6 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   osalSysLockFromISR();
   (void) usbStartTransmitI(usbp, ep);
   osalSysUnlockFromISR();
-
-#if 0
-  /*lint -save -e9013 [15.7] There is no else because it is not needed.*/
-  if ((n = oqGetFullI(&sdup->oqueue)) > 0U) {
-    /* The endpoint cannot be busy, we are in the context of the callback,
-       so it is safe to transmit without a check.*/
-    osalSysUnlockFromISR();
-
-    usbPrepareQueuedTransmit(usbp, ep, &sdup->oqueue, n);
-
-    osalSysLockFromISR();
-    (void) usbStartTransmitI(usbp, ep);
-  }
-  else if ((usbp->epc[ep]->in_state->txsize > 0U) &&
-           ((usbp->epc[ep]->in_state->txsize &
-            ((size_t)usbp->epc[ep]->in_maxsize - 1U)) == 0U)) {
-    /* Transmit zero sized packet in case the last one has maximum allowed
-       size. Otherwise the recipient may expect more data coming soon and
-       not return buffered data to app. See section 5.8.3 Bulk Transfer
-       Packet Size Constraints of the USB Specification document.*/
-    osalSysUnlockFromISR();
-
-    usbPrepareQueuedTransmit(usbp, ep, &sdup->oqueue, 0);
-
-    osalSysLockFromISR();
-    (void) usbStartTransmitI(usbp, ep);
-  }
-  /*lint -restore*/
-
-  osalSysUnlockFromISR();
-#endif
 }
 
 /**
@@ -530,24 +499,6 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
     (void) usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out);
   }
   osalSysUnlockFromISR();
-
-#if 0
-  /* Writes to the input queue can only happen when there is enough space
-     to hold at least one packet.*/
-  maxsize = usbp->epc[ep]->out_maxsize;
-  if ((n = iqGetEmptyI(&sdup->iqueue)) >= maxsize) {
-    /* The endpoint cannot be busy, we are in the context of the callback,
-       so a packet is in the buffer for sure.*/
-    osalSysUnlockFromISR();
-
-    n = (n / maxsize) * maxsize;
-    usbPrepareQueuedReceive(usbp, ep, &sdup->iqueue, n);
-
-    osalSysLockFromISR();
-    (void) usbStartReceiveI(usbp, ep);
-  }
-  osalSysUnlockFromISR();
-#endif
 }
 
 /**

@@ -240,9 +240,9 @@ extern "C" {
   void ibqResetI(input_buffers_queue_t *ibqp);
   uint8_t *ibqGetEmptyBufferI(input_buffers_queue_t *ibqp);
   void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size);
-  msg_t ibqGetFullBufferTimeoutS(input_buffers_queue_t *ibqp,
-                                 systime_t timeout);
-  void ibqReleaseEmptyBufferI(input_buffers_queue_t *ibqp);
+  msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
+                                systime_t timeout);
+  void ibqReleaseEmptyBuffer(input_buffers_queue_t *ibqp);
   msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout);
   size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
                         size_t n, systime_t timeout);
@@ -253,9 +253,9 @@ extern "C" {
   uint8_t *obqGetFullBufferI(output_buffers_queue_t *obqp,
                              size_t *sizep);
   void obqReleaseEmptyBufferI(output_buffers_queue_t *obqp);
-  msg_t obqGetEmptyBufferTimeoutS(output_buffers_queue_t *obqp,
-                                  systime_t timeout);
-  void obqPostFullBufferI(output_buffers_queue_t *obqp, size_t size);
+  msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
+                                 systime_t timeout);
+  void obqPostFullBuffer(output_buffers_queue_t *obqp, size_t size);
   msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
                       systime_t timeout);
   size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
