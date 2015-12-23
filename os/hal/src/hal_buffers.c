@@ -135,7 +135,7 @@ void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size) {
 
   osalDbgCheckClassI();
 
-  osalDbgCheck(size > 0);
+  osalDbgCheck((size > 0) && (size <= ibqp->bsize - sizeof (size_t)));
   osalDbgAssert(!ibqIsFullI(ibqp), "buffers queue full");
 
   /* Writing size field in the buffer.*/
@@ -510,11 +510,13 @@ msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
  * @note    The object callback is called after releasing the buffer.
  *
  * @param[in] obqp      pointer to the @p output_buffers_queue_t object
- * @param[in] size      used size of the buffer
+ * @param[in] size      used size of the buffer, cannot be zero
  *
  * @api
  */
 void obqPostFullBuffer(output_buffers_queue_t *obqp, size_t size) {
+
+  osalDbgCheck((size > 0) && (size <= obqp->bsize - sizeof (size_t)));
 
   osalSysLock();
 
