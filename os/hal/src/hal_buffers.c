@@ -127,13 +127,15 @@ uint8_t *ibqGetEmptyBufferI(input_buffers_queue_t *ibqp) {
  * @brief   Posts a new filled buffer to the queue.
  *
  * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
- * @param[in] size      used size of the buffer
+ * @param[in] size      used size of the buffer, cannot be zero
  *
  * @iclass
  */
 void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size) {
 
   osalDbgCheckClassI();
+
+  osalDbgCheck(size > 0);
   osalDbgAssert(!ibqIsFullI(ibqp), "buffers queue full");
 
   /* Writing size field in the buffer.*/
@@ -256,6 +258,7 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
   if (ibqp->ptr == NULL) {
     msg = ibqGetFullBufferTimeout(ibqp, timeout);
     if (msg != MSG_OK) {
+      ibqp->accessed = false;
       return msg;
     }
   }
@@ -340,15 +343,13 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
     memcpy(bp, ibqp->ptr, size);
 
     /* Updating the pointers and the counter.*/
-    r  += size;
-    bp += size;
+    r         += size;
+    bp        += size;
+    ibqp->ptr += size;
 
     /* Has the current data buffer been finished? if so then release it.*/
     if (ibqp->ptr >= ibqp->top) {
       ibqReleaseEmptyBuffer(ibqp);
-    }
-    else {
-      ibqp->ptr += size;
     }
   }
 
@@ -656,15 +657,13 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
     memcpy(obqp->ptr, bp, size);
 
     /* Updating the pointers and the counter.*/
-    r  += size;
-    bp += size;
+    r         += size;
+    bp        += size;
+    obqp->ptr += size;
 
     /* Has the current data buffer been finished? if so then release it.*/
     if (obqp->ptr >= obqp->top) {
       obqPostFullBuffer(obqp, obqp->bsize - sizeof (size_t));
-    }
-    else {
-      obqp->ptr += size;
     }
   }
 
