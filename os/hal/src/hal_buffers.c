@@ -295,6 +295,7 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout) {
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The number of bytes effectively transferred.
+ * @retval 0            if a timeout occurred.
  *
  * @api
  */
@@ -316,20 +317,30 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
 
     /* This condition indicates that a new buffer must be acquired.*/
     if (ibqp->ptr == NULL) {
-      systime_t next_timeout = deadline - osalOsGetSystemTimeX();
+      msg_t msg;
 
-      /* Handling the case where the system time went past the deadline,
-         in this case next becomes a very high number because the system
-         time is an unsigned type.*/
-      if (next_timeout > timeout) {
-        ibqp->accessed = false;
-        return MSG_TIMEOUT;
+      if (timeout == TIME_IMMEDIATE) {
+        msg = MSG_TIMEOUT;
       }
+      else if (timeout == TIME_INFINITE) {
+        msg = ibqGetFullBufferTimeout(ibqp, timeout);
+      }
+      else {
+        systime_t next_timeout = deadline - osalOsGetSystemTimeX();
 
-      msg_t msg = ibqGetFullBufferTimeout(ibqp, next_timeout);
+        /* Handling the case where the system time went past the deadline,
+           in this case next becomes a very high number because the system
+           time is an unsigned type.*/
+        if (next_timeout > timeout) {
+          msg = MSG_TIMEOUT;
+        }
+        else {
+          msg = ibqGetFullBufferTimeout(ibqp, next_timeout);
+        }
+      }
       if (msg != MSG_OK) {
         ibqp->accessed = false;
-        return msg;
+        return 0;
       }
     }
 
@@ -611,6 +622,7 @@ msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The number of bytes effectively transferred.
+ * @retval 0            if a timeout occurred.
  *
  * @api
  */
@@ -632,20 +644,30 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
 
     /* This condition indicates that a new buffer must be acquired.*/
     if (obqp->ptr == NULL) {
-      systime_t next_timeout = deadline - osalOsGetSystemTimeX();
+      msg_t msg;
 
-      /* Handling the case where the system time went past the deadline,
-         in this case next becomes a very high number because the system
-         time is an unsigned type.*/
-      if (next_timeout > timeout) {
-        obqp->accessed = false;
-        return MSG_TIMEOUT;
+      if (timeout == TIME_IMMEDIATE) {
+        msg = MSG_TIMEOUT;
       }
+      else if (timeout == TIME_INFINITE) {
+        msg = obqGetEmptyBufferTimeout(obqp, timeout);
+      }
+      else {
+        systime_t next_timeout = deadline - osalOsGetSystemTimeX();
 
-      msg_t msg = obqGetEmptyBufferTimeout(obqp, next_timeout);
+        /* Handling the case where the system time went past the deadline,
+           in this case next becomes a very high number because the system
+           time is an unsigned type.*/
+        if (next_timeout > timeout) {
+          msg = MSG_TIMEOUT;
+        }
+        else {
+          msg = obqGetEmptyBufferTimeout(obqp, next_timeout);
+        }
+      }
       if (msg != MSG_OK) {
         obqp->accessed = false;
-        return msg;
+        return 0;
       }
     }
 
