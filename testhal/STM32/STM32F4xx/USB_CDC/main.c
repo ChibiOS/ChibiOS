@@ -110,7 +110,15 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
+#if 1
+    /* Writing in stream mode.*/
     chSequentialStreamWrite(&SDU1, buf, sizeof buf - 1);
+#else
+    /* Writing in buffer mode.*/
+    (void) obqGetEmptyBufferTimeout(&SDU1.obqueue, TIME_INFINITE);
+    memcpy(SDU1.obqueue.ptr, buf, 256);
+    obqPostFullBuffer(&SDU1.obqueue, 256);
+#endif
   }
   chprintf(chp, "\r\n\nstopped\r\n");
 }
