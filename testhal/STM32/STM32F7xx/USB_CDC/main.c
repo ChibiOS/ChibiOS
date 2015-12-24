@@ -111,7 +111,7 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
-#if 1
+#if 0
     /* Writing in stream mode.*/
     streamWrite(&SDU2, buf, sizeof buf - 1);
 #else

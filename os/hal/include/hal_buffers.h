@@ -102,12 +102,6 @@ struct io_buffers_queue {
    */
   uint8_t               *top;
   /**
-   * @brief   Buffer is being accessed.
-   * @details This flag indicates that the current buffer is being read or
-   *          written by a long, preemptable operation.
-   */
-  bool                  accessed;
-  /**
    * @brief   Data notification callback.
    */
   bqnotify_t            notify;
@@ -242,7 +236,10 @@ extern "C" {
   void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size);
   msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
                                 systime_t timeout);
+  msg_t ibqGetFullBufferTimeoutS(input_buffers_queue_t *ibqp,
+                                 systime_t timeout);
   void ibqReleaseEmptyBuffer(input_buffers_queue_t *ibqp);
+  void ibqReleaseEmptyBufferS(input_buffers_queue_t *ibqp);
   msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, systime_t timeout);
   size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
                         size_t n, systime_t timeout);
@@ -255,7 +252,10 @@ extern "C" {
   void obqReleaseEmptyBufferI(output_buffers_queue_t *obqp);
   msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
                                  systime_t timeout);
+  msg_t obqGetEmptyBufferTimeoutS(output_buffers_queue_t *obqp,
+                                  systime_t timeout);
   void obqPostFullBuffer(output_buffers_queue_t *obqp, size_t size);
+  void obqPostFullBufferS(output_buffers_queue_t *obqp, size_t size);
   msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
                       systime_t timeout);
   size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
