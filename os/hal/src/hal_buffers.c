@@ -340,7 +340,7 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
       }
       if (msg != MSG_OK) {
         ibqp->accessed = false;
-        return 0;
+        return r;
       }
     }
 
@@ -667,7 +667,7 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
       }
       if (msg != MSG_OK) {
         obqp->accessed = false;
-        return 0;
+        return r;
       }
     }
 
