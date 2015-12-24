@@ -220,24 +220,16 @@ static uint32_t otg_ram_alloc(USBDriver *usbp, size_t size) {
 static void otg_fifo_write_from_buffer(volatile uint32_t *fifop,
                                        const uint8_t *buf,
                                        size_t n) {
-  uint32_t w;
-  size_t i;
 
-  /* Pushing all complete words.*/
-  i = 0;
-  w = 0;
-  while (i < n) {
-    w |= (uint32_t)*buf++ << ((i & 3) * 8);
-    i++;
-    if ((i & 3) == 0) {
-      *fifop = w;
-      w = 0;
+  osalDbgAssert(n > 0, "is zero");
+
+  while (true) {
+    *fifop = *((uint32_t *)buf);
+    if (n <= 4) {
+      break;
     }
-  }
-
-  /* Remaining bytes.*/
-  if ((i & 3) != 0) {
-    *fifop = w;
+    n -= 4;
+    buf += 4;
   }
 }
 
@@ -300,9 +292,8 @@ static void otg_fifo_read_to_buffer(volatile uint32_t *fifop,
                                     size_t n,
                                     size_t max) {
   uint32_t w = 0;
-  size_t i;
+  size_t i = 0;
 
-  i = 0;
   while (i < n) {
     if ((i & 3) == 0){
       w = *fifop;
@@ -414,7 +405,7 @@ static bool otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
 
     /* Transaction end condition.*/
     if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize)
-      return TRUE;
+      return true;
 
     /* Number of bytes remaining in current transaction.*/
     n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
@@ -424,7 +415,7 @@ static bool otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     /* Checks if in the TXFIFO there is enough space to accommodate the
        next packet.*/
     if (((usbp->otg->ie[ep].DTXFSTS & DTXFSTS_INEPTFSAV_MASK) * 4) < n)
-      return FALSE;
+      return false;
 
 #if STM32_USB_OTGFIFO_FILL_BASEPRI
     __set_BASEPRI(CORTEX_PRIO_MASK(STM32_USB_OTGFIFO_FILL_BASEPRI));

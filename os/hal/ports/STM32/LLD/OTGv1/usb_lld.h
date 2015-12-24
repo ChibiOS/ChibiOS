@@ -273,7 +273,7 @@ typedef struct {
       /**
        * @brief   Pointer to the input queue.
        */
-      input_queue_t            *rxqueue;
+      input_queue_t             *rxqueue;
     } queue;
   } mode;
   /**
