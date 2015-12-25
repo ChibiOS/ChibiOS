@@ -59,9 +59,6 @@ static THD_FUNCTION(Thread2, arg) {
 /* Command line related.                                                     */
 /*===========================================================================*/
 
-/* Virtual serial port over USB.*/
-SerialUSBDriver SDU1;
-
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 #define TEST_WA_SIZE    THD_WORKING_AREA_SIZE(256)
 
