@@ -77,6 +77,8 @@
 - HAL: Introduced preliminary support for STM32F7xx devices.
 - HAL: Introduced preliminary support for STM32L4xx devices.
 - HAL: Introduced preliminary support for STM32L0xx devices.
+- HAL: Increased performance of USBv1 and OTGv1 driver thanks to better
+       data copying code.
 - HAL: Enhanced Serial-USB driver using the new buffers queues object.
 - HAL: Simplified USB driver, queued API has been removed.
 - HAL: Enhanced the CAN driver with I-class functions. Now it is possible
