@@ -401,10 +401,9 @@ void usbDisableEndpointsI(USBDriver *usbp) {
 void usbPrepareReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-  osp->rxqueued           = false;
-  osp->mode.linear.rxbuf  = buf;
-  osp->rxsize             = n;
-  osp->rxcnt              = 0;
+  osp->rxbuf  = buf;
+  osp->rxsize = n;
+  osp->rxcnt  = 0;
 
   usb_lld_prepare_receive(usbp, ep);
 }
@@ -427,65 +426,9 @@ void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
                         const uint8_t *buf, size_t n) {
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
-  isp->txqueued           = false;
-  isp->mode.linear.txbuf  = buf;
-  isp->txsize             = n;
-  isp->txcnt              = 0;
-
-  usb_lld_prepare_transmit(usbp, ep);
-}
-
-/**
- * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @post    The endpoint is ready for @p usbStartReceiveI().
- * @note    This function can be called both in ISR and thread context.
- * @note    The queue must have enough free space to accommodate the
- *          specified transaction size rounded to the next packet size
- *          boundary. For example if the transaction size is 1 and the
- *          packet size is 64 then the queue must have space for at least
- *          64 bytes.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] iqp       input queue to be filled with incoming data
- * @param[in] n         transaction size
- *
- * @special
- */
-void usbPrepareQueuedReceive(USBDriver *usbp, usbep_t ep,
-                             input_queue_t *iqp, size_t n) {
-  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
-
-  osp->rxqueued           = true;
-  osp->mode.queue.rxqueue = iqp;
-  osp->rxsize             = n;
-  osp->rxcnt              = 0;
-
-  usb_lld_prepare_receive(usbp, ep);
-}
-
-/**
- * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @post    The endpoint is ready for @p usbStartTransmitI().
- * @note    This function can be called both in ISR and thread context.
- * @note    The transmit transaction size is equal to the data contained
- *          in the queue.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- * @param[in] oqp       output queue to be fetched for outgoing data
- * @param[in] n         transaction size
- *
- * @special
- */
-void usbPrepareQueuedTransmit(USBDriver *usbp, usbep_t ep,
-                              output_queue_t *oqp, size_t n) {
-  USBInEndpointState *isp = usbp->epc[ep]->in_state;
-
-  isp->txqueued           = true;
-  isp->mode.queue.txqueue = oqp;
-  isp->txsize             = n;
-  isp->txcnt              = 0;
+  isp->txbuf  = buf;
+  isp->txsize = n;
+  isp->txcnt  = 0;
 
   usb_lld_prepare_transmit(usbp, ep);
 }

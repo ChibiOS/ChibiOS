@@ -234,50 +234,6 @@ static void otg_fifo_write_from_buffer(volatile uint32_t *fifop,
 }
 
 /**
- * @brief   Writes to a TX FIFO fetching data from a queue.
- *
- * @param[in] fifop     pointer to the FIFO register
- * @param[in] oqp       pointer to an @p output_queue_t object
- * @param[in] n         maximum number of bytes to copy
- *
- * @notapi
- */
-static void otg_fifo_write_from_queue(volatile uint32_t *fifop,
-                                      output_queue_t *oqp,
-                                      size_t n) {
-  uint32_t w;
-  size_t i;
-
-  /* Pushing all complete words.*/
-  i = 0;
-  w = 0;
-  while (i < n) {
-    w |= (uint32_t)*oqp->q_rdptr << ((i & 3) * 8);
-    oqp->q_rdptr++;
-    if (oqp->q_rdptr >= oqp->q_top) {
-      oqp->q_rdptr = oqp->q_buffer;
-    }
-    i++;
-    if ((i & 3) == 0) {
-      *fifop = w;
-      w = 0;
-    }
-  }
-
-  /* Remaining bytes.*/
-  if ((i & 3) != 0) {
-    *fifop = w;
-  }
-
-  /* Updating queue.*/
-  osalSysLock();
-  oqp->q_counter += n;
-  osalThreadDequeueAllI(&oqp->q_waiting, Q_OK);
-  osalOsRescheduleS();
-  osalSysUnlock();
-}
-
-/**
  * @brief   Reads a packet from the RXFIFO.
  *
  * @param[in] fifop     pointer to the FIFO register
@@ -307,43 +263,6 @@ static void otg_fifo_read_to_buffer(volatile uint32_t *fifop,
 }
 
 /**
- * @brief   Reads a packet from the RXFIFO.
- *
- * @param[in] fifop     pointer to the FIFO register
- * @param[in] iqp       pointer to an @p input_queue_t object
- * @param[in] n         number of bytes to pull from the FIFO
- *
- * @notapi
- */
-static void otg_fifo_read_to_queue(volatile uint32_t *fifop,
-                                   input_queue_t *iqp,
-                                   size_t n) {
-  uint32_t w = 0;
-  size_t i;
-
-  i = 0;
-  while (i < n) {
-    if ((i & 3) == 0){
-      w = *fifop;
-    }
-    *iqp->q_wrptr = (uint8_t)w;
-    iqp->q_wrptr++;
-    if (iqp->q_wrptr >= iqp->q_top) {
-      iqp->q_wrptr = iqp->q_buffer;
-    }
-    w >>= 8;
-    i++;
-  }
-
-  /* Updating queue.*/
-  osalSysLock();
-  iqp->q_counter += n;
-  osalThreadDequeueAllI(&iqp->q_waiting, Q_OK);
-  osalOsRescheduleS();
-  osalSysUnlock();
-}
-
-/**
  * @brief   Incoming packets handler.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
@@ -366,20 +285,12 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
   case GRXSTSP_OUT_DATA:
     cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
     ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
-    if (usbp->epc[ep]->out_state->rxqueued) {
-      /* Queue associated.*/
-      otg_fifo_read_to_queue(usbp->otg->FIFO[0],
-                             usbp->epc[ep]->out_state->mode.queue.rxqueue,
-                             cnt);
-    }
-    else {
-      otg_fifo_read_to_buffer(usbp->otg->FIFO[0],
-                              usbp->epc[ep]->out_state->mode.linear.rxbuf,
-                              cnt,
-                              usbp->epc[ep]->out_state->rxsize -
-                              usbp->epc[ep]->out_state->rxcnt);
-      usbp->epc[ep]->out_state->mode.linear.rxbuf += cnt;
-    }
+    otg_fifo_read_to_buffer(usbp->otg->FIFO[0],
+                            usbp->epc[ep]->out_state->rxbuf,
+                            cnt,
+                            usbp->epc[ep]->out_state->rxsize -
+                            usbp->epc[ep]->out_state->rxcnt);
+    usbp->epc[ep]->out_state->rxbuf += cnt;
     usbp->epc[ep]->out_state->rxcnt += cnt;
     break;
   case GRXSTSP_OUT_GLOBAL_NAK:
@@ -420,20 +331,10 @@ static bool otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
 #if STM32_USB_OTGFIFO_FILL_BASEPRI
     __set_BASEPRI(CORTEX_PRIO_MASK(STM32_USB_OTGFIFO_FILL_BASEPRI));
 #endif
-    /* Handles the two cases: linear buffer or queue.*/
-    if (usbp->epc[ep]->in_state->txqueued) {
-      /* Queue associated.*/
-      otg_fifo_write_from_queue(usbp->otg->FIFO[ep],
-                                usbp->epc[ep]->in_state->mode.queue.txqueue,
-                                n);
-    }
-    else {
-      /* Linear buffer associated.*/
-      otg_fifo_write_from_buffer(usbp->otg->FIFO[ep],
-                                 usbp->epc[ep]->in_state->mode.linear.txbuf,
-                                 n);
-      usbp->epc[ep]->in_state->mode.linear.txbuf += n;
-    }
+    otg_fifo_write_from_buffer(usbp->otg->FIFO[ep],
+                               usbp->epc[ep]->in_state->txbuf,
+                               n);
+    usbp->epc[ep]->in_state->txbuf += n;
 #if STM32_USB_OTGFIFO_FILL_BASEPRI
   __set_BASEPRI(0);
 #endif

@@ -152,50 +152,6 @@ static void usb_packet_read_to_buffer(stm32_usb_descriptor_t *udp,
 }
 
 /**
- * @brief   Reads from a dedicated packet buffer.
- *
- * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
- * @param[in] iqp       pointer to an @p input_queue_t object
- * @param[in] n         maximum number of bytes to copy. This value must
- *                      not exceed the maximum packet size for this endpoint.
- *
- * @notapi
- */
-static void usb_packet_read_to_queue(stm32_usb_descriptor_t *udp,
-                                     input_queue_t *iqp, size_t n) {
-  size_t nhw;
-  stm32_usb_pma_t *pmap= USB_ADDR2PTR(udp->RXADDR0);
-
-  nhw = n / 2;
-  while (nhw > 0) {
-    stm32_usb_pma_t w;
-
-    w = *pmap++;
-    *iqp->q_wrptr++ = (uint8_t)w;
-    if (iqp->q_wrptr >= iqp->q_top)
-      iqp->q_wrptr = iqp->q_buffer;
-    *iqp->q_wrptr++ = (uint8_t)(w >> 8);
-    if (iqp->q_wrptr >= iqp->q_top)
-      iqp->q_wrptr = iqp->q_buffer;
-    nhw--;
-  }
-  /* Last byte for odd numbers.*/
-  if ((n & 1) != 0) {
-    *iqp->q_wrptr++ = (uint8_t)*pmap;
-    if (iqp->q_wrptr >= iqp->q_top)
-      iqp->q_wrptr = iqp->q_buffer;
-  }
-
-  /* Updating queue.*/
-  osalSysLockFromISR();
-
-  iqp->q_counter += n;
-  osalThreadDequeueAllI(&iqp->q_waiting, Q_OK);
-
-  osalSysUnlockFromISR();
-}
-
-/**
  * @brief   Writes to a dedicated packet buffer.
  *
  * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
@@ -234,52 +190,6 @@ static void usb_packet_write_from_buffer(stm32_usb_descriptor_t *udp,
   if ((i & 1) != 0) {
     *pmap = (stm32_usb_pma_t)w;
   }
-}
-
-/**
- * @brief   Writes to a dedicated packet buffer.
- *
- * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
- * @param[in] buf       buffer where to fetch the packet data
- * @param[in] n         maximum number of bytes to copy. This value must
- *                      not exceed the maximum packet size for this endpoint.
- *
- * @notapi
- */
-static void usb_packet_write_from_queue(stm32_usb_descriptor_t *udp,
-                                        output_queue_t *oqp, size_t n) {
-  size_t nhw;
-  syssts_t sts;
-  stm32_usb_pma_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
-
-  nhw = n / 2;
-  while (nhw > 0) {
-    stm32_usb_pma_t w;
-
-    w  = (stm32_usb_pma_t)*oqp->q_rdptr++;
-    if (oqp->q_rdptr >= oqp->q_top)
-      oqp->q_rdptr = oqp->q_buffer;
-    w |= (stm32_usb_pma_t)*oqp->q_rdptr++ << 8;
-    if (oqp->q_rdptr >= oqp->q_top)
-      oqp->q_rdptr = oqp->q_buffer;
-    *pmap++ = w;
-    nhw--;
-  }
-
-  /* Last byte for odd numbers.*/
-  if ((n & 1) != 0) {
-    *pmap = (stm32_usb_pma_t)*oqp->q_rdptr++;
-    if (oqp->q_rdptr >= oqp->q_top)
-      oqp->q_rdptr = oqp->q_buffer;
-  }
-
-  /* Updating queue.*/
-  sts = osalSysGetStatusAndLockX();
-
-  oqp->q_counter += n;
-  osalThreadDequeueAllI(&oqp->q_waiting, Q_OK);
-
-  osalSysRestoreStatusX(sts);
 }
 
 /**
@@ -328,16 +238,11 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
       if (EPR_EP_TYPE_IS_ISO(epr) && (epr & EPR_DTOG_TX))
           USB_GET_DESCRIPTOR(ep)->TXCOUNT1 = (stm32_usb_pma_t)n;
 
-      if (epcp->in_state->txqueued)
-        usb_packet_write_from_queue(USB_GET_DESCRIPTOR(ep),
-                                    epcp->in_state->mode.queue.txqueue,
-                                    n);
-      else {
-        epcp->in_state->mode.linear.txbuf += transmitted;
-        usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
-                                     epcp->in_state->mode.linear.txbuf,
-                                     n);
-      }
+      /* Writes the packet from the defined buffer.*/
+      epcp->in_state->txbuf += transmitted;
+      usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
+                                   epcp->in_state->txbuf,
+                                   n);
       osalSysLockFromISR();
       usb_lld_start_in(usbp, ep);
       osalSysUnlockFromISR();
@@ -370,21 +275,15 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
         n = (size_t)udp->RXCOUNT1 & RXCOUNT_COUNT_MASK;
 
       /* Reads the packet into the defined buffer.*/
-      if (epcp->out_state->rxqueued)
-        usb_packet_read_to_queue(udp,
-                                 epcp->out_state->mode.queue.rxqueue,
-                                 n);
-      else {
-        usb_packet_read_to_buffer(udp,
-                                  epcp->out_state->mode.linear.rxbuf,
-                                  n);
-        epcp->out_state->mode.linear.rxbuf += n;
-      }
+      usb_packet_read_to_buffer(udp,
+                                epcp->out_state->rxbuf,
+                                n);
+      epcp->out_state->rxbuf += n;
 
       /* Transaction data updated.*/
-      epcp->out_state->rxcnt              += n;
-      epcp->out_state->rxsize             -= n;
-      epcp->out_state->rxpkts             -= 1;
+      epcp->out_state->rxcnt  += n;
+      epcp->out_state->rxsize -= n;
+      epcp->out_state->rxpkts -= 1;
 
       /* The transaction is completed if the specified number of packets
          has been received or the current packet is a short packet.*/
@@ -828,12 +727,8 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
   if (EPR_EP_TYPE_IS_ISO(epr) && (epr & EPR_DTOG_TX))
     USB_GET_DESCRIPTOR(ep)->TXCOUNT1 = (stm32_usb_pma_t)n;
 
-  if (isp->txqueued)
-    usb_packet_write_from_queue(USB_GET_DESCRIPTOR(ep),
-                                isp->mode.queue.txqueue, n);
-  else
-    usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
-                                 isp->mode.linear.txbuf, n);
+  usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
+                               isp->txbuf, n);
 }
 
 /**

@@ -111,14 +111,14 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
-#if 0
-    /* Writing in stream mode.*/
-    streamWrite(&SDU2, buf, sizeof buf - 1);
+#if 1
+    /* Writing in channel mode.*/
+    chnWrite(&SDU1, buf, sizeof buf - 1);
 #else
     /* Writing in buffer mode.*/
-    (void) obqGetEmptyBufferTimeout(&SDU2.obqueue, TIME_INFINITE);
-    memcpy(SDU2.obqueue.ptr, buf, SERIAL_USB_BUFFERS_SIZE);
-    obqPostFullBuffer(&SDU2.obqueue, SERIAL_USB_BUFFERS_SIZE);
+    (void) obqGetEmptyBufferTimeout(&SDU1.obqueue, TIME_INFINITE);
+    memcpy(SDU1.obqueue.ptr, buf, SERIAL_USB_BUFFERS_SIZE);
+    obqPostFullBuffer(&SDU1.obqueue, SERIAL_USB_BUFFERS_SIZE);
 #endif
   }
   chprintf(chp, "\r\n\nstopped\r\n");

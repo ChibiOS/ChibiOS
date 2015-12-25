@@ -140,10 +140,6 @@
  */
 typedef struct {
   /**
-   * @brief   Buffer mode, queue or linear.
-   */
-  bool                          txqueued;
-  /**
    * @brief   Requested transmit transfer size.
    */
   size_t                        txsize;
@@ -151,31 +147,16 @@ typedef struct {
    * @brief   Transmitted bytes so far.
    */
   size_t                        txcnt;
-  union {
-    struct {
-      /**
-       * @brief   Pointer to the transmission linear buffer.
-       */
-      const uint8_t             *txbuf;
-    } linear;
-    struct {
-      /**
-       * @brief   Pointer to the output queue.
-       */
-      output_queue_t            *txqueue;
-    } queue;
-    /* End of the mandatory fields.*/
-  } mode;
+  /**
+   * @brief   Pointer to the transmission linear buffer.
+   */
+  const uint8_t                 *txbuf;
 } USBInEndpointState;
 
 /**
  * @brief   Type of an OUT endpoint state structure.
  */
 typedef struct {
-  /**
-   * @brief   Buffer mode, queue or linear.
-   */
-  bool                          rxqueued;
   /**
    * @brief   Requested receive transfer size.
    */
@@ -184,20 +165,10 @@ typedef struct {
    * @brief   Received bytes so far.
    */
   size_t                        rxcnt;
-  union {
-    struct {
-      /**
-       * @brief   Pointer to the receive linear buffer.
-       */
-      uint8_t                   *rxbuf;
-    } linear;
-    struct {
-      /**
-       * @brief   Pointer to the input queue.
-       */
-      input_queue_t            *rxqueue;
-    } queue;
-  } mode;
+  /**
+   * @brief   Pointer to the receive linear buffer.
+   */
+  uint8_t                       *rxbuf;
   /* End of the mandatory fields.*/
   /**
    * @brief   Number of packets to receive.

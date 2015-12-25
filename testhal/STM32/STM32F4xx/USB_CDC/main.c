@@ -112,8 +112,8 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
 #if 1
-    /* Writing in stream mode.*/
-    streamWrite(&SDU1, buf, sizeof buf - 1);
+    /* Writing in channel mode.*/
+    chnWrite(&SDU1, buf, sizeof buf - 1);
 #else
     /* Writing in buffer mode.*/
     (void) obqGetEmptyBufferTimeout(&SDU1.obqueue, TIME_INFINITE);

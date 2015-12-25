@@ -575,10 +575,6 @@ extern "C" {
                          uint8_t *buf, size_t n);
   void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
                           const uint8_t *buf, size_t n);
-  void usbPrepareQueuedReceive(USBDriver *usbp, usbep_t ep,
-                               input_queue_t *iqp, size_t n);
-  void usbPrepareQueuedTransmit(USBDriver *usbp, usbep_t ep,
-                                output_queue_t *oqp, size_t n);
   bool usbStartReceiveI(USBDriver *usbp, usbep_t ep);
   bool usbStartTransmitI(USBDriver *usbp, usbep_t ep);
   bool usbStallReceiveI(USBDriver *usbp, usbep_t ep);
