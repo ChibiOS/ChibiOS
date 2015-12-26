@@ -175,9 +175,9 @@ msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
                               systime_t timeout) {
   msg_t msg;
 
-  chSysLock();
+  osalSysLock();
   msg = ibqGetFullBufferTimeoutS(ibqp, timeout);
-  chSysUnlock();
+  osalSysUnlock();
 
   return msg;
 }
@@ -233,9 +233,9 @@ msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
  */
 void ibqReleaseEmptyBuffer(input_buffers_queue_t *ibqp) {
 
-  chSysLock();
+  osalSysLock();
   ibqReleaseEmptyBufferS(ibqp);
-  chSysUnlock();
+  osalSysUnlock();
 }
 
   /**
@@ -545,9 +545,9 @@ msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
                                 systime_t timeout) {
   msg_t msg;
 
-  chSysLock();
+  osalSysLock();
   msg = obqGetEmptyBufferTimeoutS(obqp, timeout);
-  chSysUnlock();
+  osalSysUnlock();
 
   return msg;
 }

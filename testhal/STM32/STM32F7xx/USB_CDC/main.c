@@ -113,11 +113,11 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
 #if 1
     /* Writing in channel mode.*/
-    chnWrite(&SDU1, buf, sizeof buf - 1);
+    chnWrite(&SDU2, buf, sizeof buf - 1);
 #else
     /* Writing in buffer mode.*/
     (void) obqGetEmptyBufferTimeout(&SDU1.obqueue, TIME_INFINITE);
-    memcpy(SDU1.obqueue.ptr, buf, SERIAL_USB_BUFFERS_SIZE);
+    memcpy(SDU2.obqueue.ptr, buf, SERIAL_USB_BUFFERS_SIZE);
     obqPostFullBuffer(&SDU1.obqueue, SERIAL_USB_BUFFERS_SIZE);
 #endif
   }

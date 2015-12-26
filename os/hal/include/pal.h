@@ -260,8 +260,8 @@ typedef struct {
  * @brief   Sets a bits mask on a I/O port.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
@@ -283,8 +283,8 @@ typedef struct {
  * @brief   Clears a bits mask on a I/O port.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures,  for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
@@ -306,8 +306,8 @@ typedef struct {
  * @brief   Toggles a bits mask on a I/O port.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
@@ -414,8 +414,8 @@ typedef struct {
  * @brief   Writes a logic state on an output pad.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
@@ -442,8 +442,8 @@ typedef struct {
  * @brief   Sets a pad logic state to @p PAL_HIGH.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
@@ -465,8 +465,8 @@ typedef struct {
  * @brief   Clears a pad logic state to @p PAL_LOW.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
@@ -488,8 +488,8 @@ typedef struct {
  * @brief   Toggles a pad logic state.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
