@@ -347,6 +347,14 @@ void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
   /* Logically enabling the endpoint in the USBDriver structure.*/
   usbp->epc[ep] = epcp;
 
+  /* Clearing the state structures, custom fields as well.*/
+  if (epcp->in_state != NULL) {
+    memset(epcp->in_state, 0, sizeof(USBInEndpointState));
+  }
+  if (epcp->out_state != NULL) {
+    memset(epcp->out_state, 0, sizeof(USBOutEndpointState));
+  }
+
   /* Low level endpoint activation.*/
   usb_lld_init_endpoint(usbp, ep);
 }
@@ -504,9 +512,10 @@ bool usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
  * @param[in] n         transaction size. It is recommended a multiple of
  *                      the packet size because the excess is discarded.
  *
- * @return              The received data effective size, it can be less than
+ * @return              The received effective data size, it can be less than
  *                      the amount specified.
  * @retval MSG_RESET    operation aborted by a reset.
+ * @retval MSG_TIMEOUT  operation aborted by a suspend.
  *
  * @api
  */
@@ -534,6 +543,7 @@ msg_t usbReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
  * @return              The operation status.
  * @retval MSG_OK       operation performed successfully.
  * @retval MSG_RESET    operation aborted by a reset.
+ * @retval MSG_TIMEOUT  operation aborted by a suspend.
  *
  * @api
  */
@@ -625,6 +635,17 @@ void _usb_reset(USBDriver *usbp) {
 
   /* Invalidates all endpoints into the USBDriver structure.*/
   for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
+#if USB_USE_WAIT == TRUE
+    /* Signaling the event to threads waiting on endpoints.*/
+    if (usbp->epc[i] != NULL) {
+      if (usbp->epc[i]->in_state != NULL) {
+        osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_RESET);
+      }
+      if (usbp->epc[i]->out_state != NULL) {
+        osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_RESET);
+      }
+    }
+#endif
     usbp->epc[i] = NULL;
   }
 
@@ -654,6 +675,24 @@ void _usb_suspend(USBDriver *usbp) {
 
   /* Notification of suspend event.*/
   _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
+
+  /* Signaling the event to threads waiting on endpoints.*/
+#if USB_USE_WAIT == TRUE
+  {
+    unsigned i;
+
+    for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
+      if (usbp->epc[i] != NULL) {
+        if (usbp->epc[i]->in_state != NULL) {
+          osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_TIMEOUT);
+        }
+        if (usbp->epc[i]->out_state != NULL) {
+          osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_TIMEOUT);
+        }
+      }
+    }
+  }
+#endif
 }
 
 /**
@@ -668,7 +707,7 @@ void _usb_suspend(USBDriver *usbp) {
 void _usb_wakeup(USBDriver *usbp) {
 
   /* State transition.*/
-  usbp->state         = USB_ACTIVE;
+  usbp->state = USB_ACTIVE;
 
   /* Notification of suspend event.*/
   _usb_isr_invoke_event_cb(usbp, USB_EVENT_WAKEUP);

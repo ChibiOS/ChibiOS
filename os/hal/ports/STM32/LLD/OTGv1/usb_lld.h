@@ -314,12 +314,14 @@ typedef struct {
   uint16_t                      out_maxsize;
   /**
    * @brief   @p USBEndpointState associated to the IN endpoint.
-   * @details This structure maintains the state of the IN endpoint.
+   * @details This structure maintains the state of the IN endpoint,
+   *          set to @p NULL if the IN endpoint is not used.
    */
   USBInEndpointState            *in_state;
   /**
    * @brief   @p USBEndpointState associated to the OUT endpoint.
-   * @details This structure maintains the state of the OUT endpoint.
+   * @details This structure maintains the state of the OUT endpoint,
+   *          set to @p NULL if the OUT endpoint is not used.
    */
   USBOutEndpointState           *out_state;
   /* End of the mandatory fields.*/
