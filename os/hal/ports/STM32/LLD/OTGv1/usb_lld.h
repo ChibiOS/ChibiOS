@@ -226,6 +226,7 @@ typedef struct {
    * @brief   Pointer to the transmission linear buffer.
    */
   const uint8_t                 *txbuf;
+  /* End of the mandatory fields.*/
   /**
    * @brief   Total transmit transfer size.
    */
@@ -248,6 +249,7 @@ typedef struct {
    * @brief   Pointer to the receive linear buffer.
    */
   uint8_t                       *rxbuf;
+  /* End of the mandatory fields.*/
   /**
    * @brief   Total transmit transfer size.
    */
