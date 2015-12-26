@@ -553,7 +553,7 @@ msg_t usbTransmit(USBDriver *usbp, usbep_t ep, const uint8_t *buf, size_t n) {
   usbPrepareTransmit(usbp, ep, buf, n);
 
   osalSysLock();
-  usbStartReceiveI(usbp, ep);
+  usbStartTransmitI(usbp, ep);
   msg = osalThreadSuspendS(&usbp->epc[ep]->in_state->thread);
   osalSysUnlock();
 
