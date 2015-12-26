@@ -111,9 +111,9 @@ static void set_error(SerialDriver *sdp, IOREG32 err) {
     sts |= SD_FRAMING_ERROR;
   if (err & LSR_BREAK)
     sts |= SD_BREAK_DETECTED;
-  chSysLockFromISR();
+  osalSysLockFromISR();
   chnAddFlagsI(sdp, sts);
-  chSysUnlockFromISR();
+  osalSysUnlockFromISR();
 }
 
 /**
@@ -135,15 +135,15 @@ static void serve_interrupt(SerialDriver *sdp) {
       break;
     case IIR_SRC_TIMEOUT:
     case IIR_SRC_RX:
-      chSysLockFromISR();
+      osalSysLockFromISR();
       if (chIQIsEmptyI(&sdp->iqueue))
         chnAddFlagsI(sdp, CHN_INPUT_AVAILABLE);
-      chSysUnlockFromISR();
+      osalSysUnlockFromISR();
       while (u->UART_LSR & LSR_RBR_FULL) {
-        chSysLockFromISR();
+        osalSysLockFromISR();
         if (chIQPutI(&sdp->iqueue, u->UART_RBR) < Q_OK)
           chnAddFlagsI(sdp, SD_OVERRUN_ERROR);
-        chSysUnlockFromISR();
+        osalSysUnlockFromISR();
       }
       break;
     case IIR_SRC_TX:
@@ -152,14 +152,14 @@ static void serve_interrupt(SerialDriver *sdp) {
         do {
           msg_t b;
 
-          chSysLockFromISR();
+          osalSysLockFromISR();
           b = chOQGetI(&sdp->oqueue);
-          chSysUnlockFromISR();
+          osalSysUnlockFromISR();
           if (b < Q_OK) {
             u->UART_IER &= ~IER_THRE;
-            chSysLockFromISR();
+            osalSysLockFromISR();
             chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
-            chSysUnlockFromISR();
+            osalSysUnlockFromISR();
             break;
           }
           u->UART_THR = b;

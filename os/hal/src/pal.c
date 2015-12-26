@@ -50,8 +50,8 @@
  * @brief   Read from an I/O bus.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The function internally uses the @p palReadGroup() macro. The use
  *          of this function is preferred when you value code size, readability
  *          and error checking over speed.
@@ -73,8 +73,8 @@ ioportmask_t palReadBus(IOBus *bus) {
  * @brief   Write to an I/O bus.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.
@@ -98,8 +98,8 @@ void palWriteBus(IOBus *bus, ioportmask_t bits) {
  * @brief   Programs a bus with the specified mode.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p chSysLock() and
- *          @p chSysUnlock().
+ *          need to enclose port I/O operations between @p osalSysLock() and
+ *          @p osalSysUnlock().
  * @note    The default implementation is non atomic and not necessarily
  *          optimal. Low level drivers may  optimize the function by using
  *          specific hardware or coding.

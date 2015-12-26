@@ -339,7 +339,7 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
   dr = rtc_encode_date(timespec);
 
   /* Entering a reentrant critical zone.*/
-  sts = chSysGetStatusAndLockX();
+  sts = osalSysGetStatusAndLockX();
 
   /* Writing the registers.*/
   rtc_enter_init();
@@ -348,7 +348,7 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
   rtc_exit_init();
 
   /* Leaving a reentrant critical zone.*/
-  chSysRestoreStatusX(sts);
+  osalSysRestoreStatusX(sts);
 }
 
 /**
@@ -369,7 +369,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
   syssts_t sts;
 
   /* Entering a reentrant critical zone.*/
-  sts = chSysGetStatusAndLockX();
+  sts = osalSysGetStatusAndLockX();
 
   /* Synchronization with the RTC and reading the registers, note
      DR must be read last.*/
@@ -383,7 +383,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
   rtcp->rtc->ISR &= ~RTC_ISR_RSF;
 
   /* Leaving a reentrant critical zone.*/
-  chSysRestoreStatusX(sts);
+  osalSysRestoreStatusX(sts);
 
   /* Decoding day time, this starts the atomic read sequence, see "Reading
      the calendar" in the RTC documentation.*/
@@ -421,7 +421,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   syssts_t sts;
 
   /* Entering a reentrant critical zone.*/
-  sts = chSysGetStatusAndLockX();
+  sts = osalSysGetStatusAndLockX();
 
   if (alarm == 0) {
     if (alarmspec != NULL) {
@@ -455,7 +455,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
 #endif /* RTC_ALARMS > 1 */
 
   /* Leaving a reentrant critical zone.*/
-  chSysRestoreStatusX(sts);
+  osalSysRestoreStatusX(sts);
 }
 
 /**
@@ -496,7 +496,7 @@ void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec) {
   syssts_t sts;
 
   /* Entering a reentrant critical zone.*/
-  sts = chSysGetStatusAndLockX();
+  sts = osalSysGetStatusAndLockX();
 
   if (wakeupspec != NULL) {
     osalDbgCheck(wakeupspec->wutr != 0x30000);
@@ -515,7 +515,7 @@ void rtcSTM32SetPeriodicWakeup(RTCDriver *rtcp, const RTCWakeup *wakeupspec) {
   }
 
   /* Leaving a reentrant critical zone.*/
-  chSysRestoreStatusX(sts);
+  osalSysRestoreStatusX(sts);
 }
 
 /**
@@ -532,14 +532,14 @@ void rtcSTM32GetPeriodicWakeup(RTCDriver *rtcp, RTCWakeup *wakeupspec) {
   syssts_t sts;
 
   /* Entering a reentrant critical zone.*/
-  sts = chSysGetStatusAndLockX();
+  sts = osalSysGetStatusAndLockX();
 
   wakeupspec->wutr  = 0;
   wakeupspec->wutr |= rtcp->rtc->WUTR;
   wakeupspec->wutr |= (((uint32_t)rtcp->rtc->CR) & 0x7) << 16;
 
   /* Leaving a reentrant critical zone.*/
-  chSysRestoreStatusX(sts);
+  osalSysRestoreStatusX(sts);
 }
 #endif /* STM32_RTC_HAS_PERIODIC_WAKEUPS */
 

@@ -61,7 +61,7 @@
  * @details The default action is to stop the system.
  */
 #if !defined(LPC214x_SPI_SSP_ERROR_HOOK) || defined(__DOXYGEN__)
-#define LPC214x_SPI_SSP_ERROR_HOOK()    chSysHalt()
+#define LPC214x_SPI_SSP_ERROR_HOOK()    osalSysHalt()
 #endif
 
 /*===========================================================================*/
