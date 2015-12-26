@@ -236,6 +236,14 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Enables synchronous APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(USB_USE_WAIT) || defined(__DOXYGEN__)
+#define USB_USE_WAIT                        TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -537,10 +545,24 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *
  * @notapi
  */
+#if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 #define _usb_isr_invoke_in_cb(usbp, ep) {                                   \
   (usbp)->transmitting &= ~(1 << (ep));                                     \
-  (usbp)->epc[ep]->in_cb(usbp, ep);                                         \
+  if ((usbp)->epc[ep]->in_cb != NULL) {                                     \
+    (usbp)->epc[ep]->in_cb(usbp, ep);                                       \
+  }                                                                         \
+  osalSysLockFromISR();                                                     \
+  osalThreadResumeI(&(usbp)->epc[ep]->in_state->thread, MSG_OK);            \
+  osalSysUnlockFromISR();                                                   \
 }
+#else
+#define _usb_isr_invoke_in_cb(usbp, ep) {                                   \
+  (usbp)->transmitting &= ~(1 << (ep));                                     \
+  if ((usbp)->epc[ep]->in_cb != NULL) {                                     \
+    (usbp)->epc[ep]->in_cb(usbp, ep);                                       \
+  }                                                                         \
+}
+#endif
 
 /**
  * @brief   Common ISR code, OUT endpoint event.
@@ -550,10 +572,25 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  *
  * @notapi
  */
+#if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 #define _usb_isr_invoke_out_cb(usbp, ep) {                                  \
   (usbp)->receiving &= ~(1 << (ep));                                        \
-  (usbp)->epc[ep]->out_cb(usbp, ep);                                        \
+  if ((usbp)->epc[ep]->out_cb != NULL) {                                    \
+    (usbp)->epc[ep]->out_cb(usbp, ep);                                      \
+  }                                                                         \
+  osalSysLockFromISR();                                                     \
+  osalThreadResumeI(&(usbp)->epc[ep]->out_state->thread,                    \
+                    usbGetReceiveTransactionSizeI(usbp, ep));               \
+  osalSysUnlockFromISR();                                                   \
 }
+#else
+#define _usb_isr_invoke_out_cb(usbp, ep) {                                  \
+  (usbp)->receiving &= ~(1 << (ep));                                        \
+  if ((usbp)->epc[ep]->out_cb != NULL) {                                    \
+    (usbp)->epc[ep]->out_cb(usbp, ep);                                      \
+  }                                                                         \
+}
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -577,6 +614,10 @@ extern "C" {
                           const uint8_t *buf, size_t n);
   bool usbStartReceiveI(USBDriver *usbp, usbep_t ep);
   bool usbStartTransmitI(USBDriver *usbp, usbep_t ep);
+#if USB_USE_WAIT == TRUE
+  msg_t usbReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n);
+  msg_t usbTransmit(USBDriver *usbp, usbep_t ep, const uint8_t *buf, size_t n);
+#endif
   bool usbStallReceiveI(USBDriver *usbp, usbep_t ep);
   bool usbStallTransmitI(USBDriver *usbp, usbep_t ep);
   void _usb_reset(USBDriver *usbp);

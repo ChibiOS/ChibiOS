@@ -345,13 +345,6 @@ void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
   osalDbgAssert(usbp->epc[ep] == NULL, "already initialized");
 
   /* Logically enabling the endpoint in the USBDriver structure.*/
-  if (epcp->in_state != NULL) {
-    memset(epcp->in_state, 0, sizeof(USBInEndpointState));
-  }
-  if (epcp->out_state != NULL) {
-    memset(epcp->out_state, 0, sizeof(USBOutEndpointState));
-  }
-
   usbp->epc[ep] = epcp;
 
   /* Low level endpoint activation.*/
@@ -399,11 +392,17 @@ void usbDisableEndpointsI(USBDriver *usbp) {
  * @special
  */
 void usbPrepareReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
-  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
+  USBOutEndpointState *osp;
 
+  osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
+
+  osp = usbp->epc[ep]->out_state;
   osp->rxbuf  = buf;
   osp->rxsize = n;
   osp->rxcnt  = 0;
+#if USB_USE_WAIT == TRUE
+  osp->thread = NULL;
+#endif
 
   usb_lld_prepare_receive(usbp, ep);
 }
@@ -424,11 +423,17 @@ void usbPrepareReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
  */
 void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
                         const uint8_t *buf, size_t n) {
-  USBInEndpointState *isp = usbp->epc[ep]->in_state;
+  USBInEndpointState *isp;
 
+  osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
+
+  isp = usbp->epc[ep]->in_state;
   isp->txbuf  = buf;
   isp->txsize = n;
   isp->txcnt  = 0;
+#if USB_USE_WAIT == TRUE
+  isp->thread = NULL;
+#endif
 
   usb_lld_prepare_transmit(usbp, ep);
 }
@@ -450,7 +455,7 @@ void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
 bool usbStartReceiveI(USBDriver *usbp, usbep_t ep) {
 
   osalDbgCheckClassI();
-  osalDbgCheck(usbp != NULL);
+  osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
 
   if (usbGetReceiveStatusI(usbp, ep)) {
     return true;
@@ -478,7 +483,7 @@ bool usbStartReceiveI(USBDriver *usbp, usbep_t ep) {
 bool usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
 
   osalDbgCheckClassI();
-  osalDbgCheck(usbp != NULL);
+  osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
 
   if (usbGetTransmitStatusI(usbp, ep)) {
     return true;
@@ -488,6 +493,63 @@ bool usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
   usb_lld_start_in(usbp, ep);
   return false;
 }
+
+#if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Performs a receive transaction on an OUT endpoint.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the received data
+ * @param[in] n         transaction size. It is recommended a multiple of
+ *                      the packet size because the excess is discarded.
+ *
+ * @return              The received data effective size, it can be less than
+ *                      the amount specified.
+ * @retval MSG_RESET    operation aborted by a reset.
+ *
+ * @api
+ */
+msg_t usbReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
+  msg_t msg;
+
+  usbPrepareReceive(usbp, ep, buf, n);
+
+  osalSysLock();
+  usbStartReceiveI(usbp, ep);
+  msg = osalThreadSuspendS(&usbp->epc[ep]->out_state->thread);
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @brief   Performs a transmit transaction on an IN endpoint.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[in] buf       buffer where to fetch the data to be transmitted
+ * @param[in] n         transaction size
+ *
+ * @return              The operation status.
+ * @retval MSG_OK       operation performed successfully.
+ * @retval MSG_RESET    operation aborted by a reset.
+ *
+ * @api
+ */
+msg_t usbTransmit(USBDriver *usbp, usbep_t ep, const uint8_t *buf, size_t n) {
+  msg_t msg;
+
+  usbPrepareTransmit(usbp, ep, buf, n);
+
+  osalSysLock();
+  usbStartReceiveI(usbp, ep);
+  msg = osalThreadSuspendS(&usbp->epc[ep]->in_state->thread);
+  osalSysUnlock();
+
+  return msg;
+}
+#endif /* USB_USE_WAIT == TRUE */
 
 /**
  * @brief   Stalls an OUT endpoint.

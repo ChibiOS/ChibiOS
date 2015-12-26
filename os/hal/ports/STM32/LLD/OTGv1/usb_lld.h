@@ -226,6 +226,12 @@ typedef struct {
    * @brief   Pointer to the transmission linear buffer.
    */
   const uint8_t                 *txbuf;
+#if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Waiting thread.
+   */
+  thread_reference_t            thread;
+#endif
   /* End of the mandatory fields.*/
   /**
    * @brief   Total transmit transfer size.
@@ -249,6 +255,12 @@ typedef struct {
    * @brief   Pointer to the receive linear buffer.
    */
   uint8_t                       *rxbuf;
+#if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Waiting thread.
+   */
+  thread_reference_t            thread;
+#endif
   /* End of the mandatory fields.*/
   /**
    * @brief   Total transmit transfer size.
@@ -278,14 +290,14 @@ typedef struct {
   usbepcallback_t               setup_cb;
   /**
    * @brief   IN endpoint notification callback.
-   * @details This field must be set to @p NULL if the IN endpoint is not
-   *          used.
+   * @details This field must can be set to @p NULL if callback is not
+   *          required.
    */
   usbepcallback_t               in_cb;
   /**
    * @brief   OUT endpoint notification callback.
-   * @details This field must be set to @p NULL if the OUT endpoint is not
-   *          used.
+   * @details This field must can be set to @p NULL if callback is not
+   *          required.
    */
   usbepcallback_t               out_cb;
   /**

@@ -422,9 +422,9 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
       osp->rxsize = osp->totsize - osp->rxsize;
       osp->rxcnt  = 0;
       usb_lld_prepare_receive(usbp, ep);
-      chSysLockFromISR();
+      osalSysLockFromISR();
       usb_lld_start_out(usbp, ep);
-      chSysUnlockFromISR();
+      osalSysUnlockFromISR();
     }
     else {
       /* End on OUT transfer.*/
@@ -1005,7 +1005,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 
   /* OUT endpoint activation or deactivation.*/
   otgp->oe[ep].DOEPTSIZ = 0;
-  if (usbp->epc[ep]->out_cb != NULL) {
+  if (usbp->epc[ep]->out_maxsize != 0) {
     otgp->oe[ep].DOEPCTL = ctl | DOEPCTL_MPSIZ(usbp->epc[ep]->out_maxsize);
     otgp->DAINTMSK |= DAINTMSK_OEPM(ep);
   }
@@ -1016,7 +1016,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 
   /* IN endpoint activation or deactivation.*/
   otgp->ie[ep].DIEPTSIZ = 0;
-  if (usbp->epc[ep]->in_cb != NULL) {
+  if (usbp->epc[ep]->in_maxsize != 0) {
     /* FIFO allocation for the IN endpoint.*/
     fsize = usbp->epc[ep]->in_maxsize / 4;
     if (usbp->epc[ep]->in_multiplier > 1)
