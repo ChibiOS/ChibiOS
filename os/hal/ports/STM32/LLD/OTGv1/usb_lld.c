@@ -460,12 +460,12 @@ static void otg_rxfifo_handler(USBDriver *usbp) {
 static bool otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
 
   /* The TXFIFO is filled until there is space and data to be transmitted.*/
-  while (TRUE) {
+  while (true) {
     uint32_t n;
 
     /* Transaction end condition.*/
     if (usbp->epc[ep]->in_state->txcnt >= usbp->epc[ep]->in_state->txsize)
-      return TRUE;
+      return true;
 
     /* Number of bytes remaining in current transaction.*/
     n = usbp->epc[ep]->in_state->txsize - usbp->epc[ep]->in_state->txcnt;
@@ -475,7 +475,7 @@ static bool otg_txfifo_handler(USBDriver *usbp, usbep_t ep) {
     /* Checks if in the TXFIFO there is enough space to accommodate the
        next packet.*/
     if (((usbp->otg->ie[ep].DTXFSTS & DTXFSTS_INEPTFSAV_MASK) * 4) < n)
-      return FALSE;
+      return false;
 
 #if STM32_USB_OTGFIFO_FILL_BASEPRI
     __set_BASEPRI(CORTEX_PRIO_MASK(STM32_USB_OTGFIFO_FILL_BASEPRI));
@@ -609,8 +609,14 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   /* Reset interrupt handling.*/
   if (sts & GINTSTS_USBRST) {
+
+    /* Resetting pending operations.*/
+    usbp->txpending = 0;
+
+    /* Default reset action.*/
     _usb_reset(usbp);
     _usb_isr_invoke_event_cb(usbp, USB_EVENT_RESET);
+    return;
   }
 
   /* Enumeration done.*/
@@ -787,31 +793,34 @@ void usb_lld_start(USBDriver *usbp) {
 
   if (usbp->state == USB_STOP) {
     /* Clock activation.*/
+
 #if STM32_USB_USE_OTG1
     if (&USBD1 == usbp) {
       /* OTG FS clock enable and reset.*/
-      rccEnableOTG_FS(FALSE);
+      rccEnableOTG_FS(false);
       rccResetOTG_FS();
 
       /* Enables IRQ vector.*/
       nvicEnableVector(STM32_OTG1_NUMBER, STM32_USB_OTG1_IRQ_PRIORITY);
     }
 #endif
+
 #if STM32_USB_USE_OTG2
     if (&USBD2 == usbp) {
       /* OTG HS clock enable and reset.*/
-      rccEnableOTG_HS(FALSE);
+      rccEnableOTG_HS(false);
       rccResetOTG_HS();
 
       /* Workaround for the problem described here:
-         http://forum.chibios.org/phpbb/viewtopic.php?f=16&t=1798 */
-      rccDisableOTG_HSULPI(TRUE);
+         http://forum.chibios.org/phpbb/viewtopic.php?f=16&t=1798.*/
+      rccDisableOTG_HSULPI(true);
 
       /* Enables IRQ vector.*/
       nvicEnableVector(STM32_OTG2_NUMBER, STM32_USB_OTG2_IRQ_PRIORITY);
     }
 #endif
 
+    /* Clearing mask of TXFIFOs to be filled.*/
     usbp->txpending = 0;
 
     /* - Forced device mode.
@@ -897,14 +906,14 @@ void usb_lld_stop(USBDriver *usbp) {
 #if STM32_USB_USE_OTG1
     if (&USBD1 == usbp) {
       nvicDisableVector(STM32_OTG1_NUMBER);
-      rccDisableOTG_FS(FALSE);
+      rccDisableOTG_FS(false);
     }
 #endif
 
 #if STM32_USB_USE_OTG2
     if (&USBD2 == usbp) {
       nvicDisableVector(STM32_OTG2_NUMBER);
-      rccDisableOTG_HS(FALSE);
+      rccDisableOTG_HS(false);
     }
 #endif
   }
@@ -924,17 +933,17 @@ void usb_lld_reset(USBDriver *usbp) {
   /* Flush the Tx FIFO.*/
   otg_txfifo_flush(usbp, 0);
 
+  /* Endpoint interrupts all disabled and cleared.*/
+  otgp->DIEPEMPMSK = 0;
+  otgp->DAINTMSK   = DAINTMSK_OEPM(0) | DAINTMSK_IEPM(0);
+
   /* All endpoints in NAK mode, interrupts cleared.*/
   for (i = 0; i <= usbp->otgparams->num_endpoints; i++) {
     otgp->ie[i].DIEPCTL = DIEPCTL_SNAK;
     otgp->oe[i].DOEPCTL = DOEPCTL_SNAK;
-    otgp->ie[i].DIEPINT = 0xFF;
-    otgp->oe[i].DOEPINT = 0xFF;
+    otgp->ie[i].DIEPINT = 0xFFFFFFFF;
+    otgp->oe[i].DOEPINT = 0xFFFFFFFF;
   }
-
-  /* Endpoint interrupts all disabled and cleared.*/
-  otgp->DAINT = 0xFFFFFFFF;
-  otgp->DAINTMSK = DAINTMSK_OEPM(0) | DAINTMSK_IEPM(0);
 
   /* Resets the FIFO memory allocator.*/
   otg_ram_reset(usbp);
