@@ -511,6 +511,19 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
   sts &= otgp->GINTMSK;
   otgp->GINTSTS = sts;
 
+  /* Reset interrupt handling.*/
+  if (sts & GINTSTS_USBRST) {
+
+    /* Resetting pending operations.*/
+    usbp->txpending = 0;
+
+    /* Default reset action.*/
+    _usb_reset(usbp);
+
+    /* Preventing execution of more handlers, the core has been reset.*/
+    return;
+  }
+
   /* Wake-up handling.*/
   if (sts & GINTSTS_WKUPINT) {
     /* If clocks are gated off, turn them back on (may be the case if
@@ -529,13 +542,11 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
   /* Suspend handling.*/
   if (sts & GINTSTS_USBSUSP) {
 
+    /* Resetting pending operations.*/
+    usbp->txpending = 0;
+
+    /* Default suspend action.*/
     _usb_suspend(usbp);
-  }
-
-  /* Reset interrupt handling.*/
-  if (sts & GINTSTS_USBRST) {
-
-    _usb_reset(usbp);
   }
 
   /* Enumeration done.*/
@@ -920,17 +931,17 @@ void usb_lld_reset(USBDriver *usbp) {
   /* Flush the Tx FIFO.*/
   otg_txfifo_flush(usbp, 0);
 
+  /* Endpoint interrupts all disabled and cleared.*/
+  otgp->DIEPEMPMSK = 0;
+  otgp->DAINTMSK   = DAINTMSK_OEPM(0) | DAINTMSK_IEPM(0);
+
   /* All endpoints in NAK mode, interrupts cleared.*/
   for (i = 0; i <= usbp->otgparams->num_endpoints; i++) {
     otgp->ie[i].DIEPCTL = DIEPCTL_SNAK;
     otgp->oe[i].DOEPCTL = DOEPCTL_SNAK;
-    otgp->ie[i].DIEPINT = 0xFF;
-    otgp->oe[i].DOEPINT = 0xFF;
+    otgp->ie[i].DIEPINT = 0xFFFFFFFF;
+    otgp->oe[i].DOEPINT = 0xFFFFFFFF;
   }
-
-  /* Endpoint interrupts all disabled and cleared.*/
-  otgp->DAINT = 0xFFFFFFFF;
-  otgp->DAINTMSK = DAINTMSK_OEPM(0) | DAINTMSK_IEPM(0);
 
   /* Resets the FIFO memory allocator.*/
   otg_ram_reset(usbp);

@@ -380,6 +380,19 @@ void usbDisableEndpointsI(USBDriver *usbp) {
   usbp->transmitting &= ~1U;
   usbp->receiving    &= ~1U;
   for (i = 1; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
+#if USB_USE_WAIT == TRUE
+    /* Signaling the event to threads waiting on endpoints.*/
+    if (usbp->epc[i] != NULL) {
+      osalSysLockFromISR();
+      if (usbp->epc[i]->in_state != NULL) {
+        osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_RESET);
+      }
+      if (usbp->epc[i]->out_state != NULL) {
+        osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_RESET);
+      }
+      osalSysUnlockFromISR();
+    }
+#endif
     usbp->epc[i] = NULL;
   }
 
@@ -638,12 +651,14 @@ void _usb_reset(USBDriver *usbp) {
 #if USB_USE_WAIT == TRUE
     /* Signaling the event to threads waiting on endpoints.*/
     if (usbp->epc[i] != NULL) {
+      osalSysLockFromISR();
       if (usbp->epc[i]->in_state != NULL) {
         osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_RESET);
       }
       if (usbp->epc[i]->out_state != NULL) {
         osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_RESET);
       }
+      osalSysUnlockFromISR();
     }
 #endif
     usbp->epc[i] = NULL;
@@ -671,7 +686,7 @@ void _usb_reset(USBDriver *usbp) {
 void _usb_suspend(USBDriver *usbp) {
 
   /* State transition.*/
-  usbp->state         = USB_SUSPENDED;
+  usbp->state = USB_SUSPENDED;
 
   /* Notification of suspend event.*/
   _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
@@ -683,12 +698,14 @@ void _usb_suspend(USBDriver *usbp) {
 
     for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
       if (usbp->epc[i] != NULL) {
+        osalSysLockFromISR();
         if (usbp->epc[i]->in_state != NULL) {
           osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_TIMEOUT);
         }
         if (usbp->epc[i]->out_state != NULL) {
           osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_TIMEOUT);
         }
+        osalSysUnlockFromISR();
       }
     }
   }
