@@ -146,13 +146,8 @@ static void ibnotify(io_buffers_queue_t *bqp) {
     uint8_t *buf = ibqGetEmptyBufferI(&sdup->ibqueue);
     if (buf != NULL) {
       /* Buffer found, starting a new transaction.*/
-      osalSysUnlock();
-
-      usbPrepareReceive(sdup->config->usbp, sdup->config->bulk_out,
-                        buf, SERIAL_USB_BUFFERS_SIZE);
-
-      osalSysLock();
-      (void) usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out);
+      usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out,
+                       buf, SERIAL_USB_BUFFERS_SIZE);
     }
   }
 }
@@ -179,12 +174,7 @@ static void obnotify(io_buffers_queue_t *bqp) {
     uint8_t *buf = obqGetFullBufferI(&sdup->obqueue, &n);
     if (buf != NULL) {
       /* Buffer found, starting a new transaction.*/
-      osalSysUnlock();
-
-      usbPrepareTransmit(sdup->config->usbp, sdup->config->bulk_in, buf, n);
-
-      osalSysLock();
-      (void) usbStartTransmitI(sdup->config->usbp, sdup->config->bulk_in);
+      usbStartTransmitI(sdup->config->usbp, sdup->config->bulk_in, buf, n);
     }
   }
 }
@@ -319,9 +309,8 @@ void sduConfigureHookI(SerialUSBDriver *sdup) {
 
   osalDbgAssert(buf != NULL, "no free buffer");
 
-  usbPrepareReceive(sdup->config->usbp, sdup->config->bulk_out,
-                    buf, SERIAL_USB_BUFFERS_SIZE);
-  (void) usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out);
+  usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out,
+                   buf, SERIAL_USB_BUFFERS_SIZE);
 }
 
 /**
@@ -392,12 +381,7 @@ void sduSOFHookI(SerialUSBDriver *sdup) {
 
     osalDbgAssert(buf != NULL, "queue is empty");
 
-    osalSysUnlockFromISR();
-
-    usbPrepareTransmit(sdup->config->usbp, sdup->config->bulk_in, buf, n);
-
-    osalSysLockFromISR();
-    (void) usbStartTransmitI(sdup->config->usbp, sdup->config->bulk_in);
+    usbStartTransmitI(sdup->config->usbp, sdup->config->bulk_in, buf, n);
   }
 }
 
@@ -431,13 +415,10 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   /* Checking if there is a buffer ready for transmission.*/
   buf = obqGetFullBufferI(&sdup->obqueue, &n);
 
-  /* Unlocking the critical zone.*/
-  osalSysUnlockFromISR();
-
   if (buf != NULL) {
     /* The endpoint cannot be busy, we are in the context of the callback,
        so it is safe to transmit without a check.*/
-    usbPrepareTransmit(usbp, ep, buf, n);
+    usbStartTransmitI(usbp, ep, buf, n);
   }
   else if ((usbp->epc[ep]->in_state->txsize > 0U) &&
            ((usbp->epc[ep]->in_state->txsize &
@@ -446,17 +427,13 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
        size. Otherwise the recipient may expect more data coming soon and
        not return buffered data to app. See section 5.8.3 Bulk Transfer
        Packet Size Constraints of the USB Specification document.*/
-    usbPrepareTransmit(usbp, ep, usbp->setup, 0);
+    usbStartTransmitI(usbp, ep, usbp->setup, 0);
 
   }
   else {
     /* Nothing to transmit.*/
-    return;
   }
 
-  /* Locking again and starting transmission.*/
-  osalSysLockFromISR();
-  (void) usbStartTransmitI(usbp, ep);
   osalSysUnlockFromISR();
 }
 
@@ -483,7 +460,7 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
 
   /* Posting the filled buffer in the queue.*/
   ibqPostFullBufferI(&sdup->ibqueue,
-                     usbGetReceiveTransactionSizeI(sdup->config->usbp,
+                     usbGetReceiveTransactionSizeX(sdup->config->usbp,
                                                    sdup->config->bulk_out));
 
   /* The endpoint cannot be busy, we are in the context of the callback,
@@ -492,11 +469,8 @@ void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   buf = ibqGetEmptyBufferI(&sdup->ibqueue);
   if (buf != NULL) {
     /* Buffer found, starting a new transaction.*/
-    osalSysUnlockFromISR();
-    usbPrepareReceive(sdup->config->usbp, sdup->config->bulk_out,
-                      buf, SERIAL_USB_BUFFERS_SIZE);
-    osalSysLockFromISR();
-    (void) usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out);
+    usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out,
+                     buf, SERIAL_USB_BUFFERS_SIZE);
   }
   osalSysUnlockFromISR();
 }

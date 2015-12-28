@@ -23,8 +23,7 @@
 
 #include "usbcfg.h"
 
-/* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
-static uint8_t buf[] =
+static const uint8_t txbuf[] =
     "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
     "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
     "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -42,8 +41,12 @@ static uint8_t buf[] =
     "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
     "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
+static uint8_t rxbuf[1024];
+
 /*
- * Red LED blinker thread, times are in milliseconds.
+ * USB writer. This thread writes data to the USB at maximum rate.
+ * Can be measured using:
+ *   dd if=/dev/xxxx of=/dev/null bs=512 count=10000
  */
 static THD_WORKING_AREA(waWriter, 128);
 static THD_FUNCTION(Writer, arg) {
@@ -51,13 +54,28 @@ static THD_FUNCTION(Writer, arg) {
   (void)arg;
   chRegSetThreadName("writer");
   while (true) {
-    if (USBD2.state == USB_ACTIVE) {
-      msg_t msg = usbTransmit(&USBD2, USBD2_DATA_REQUEST_EP,
-                              buf, sizeof (buf) - 1);
-      if (msg == MSG_OK)
-        continue;
-    }
-    chThdSleepMilliseconds(500);
+    msg_t msg = usbTransmit(&USBD2, USBD2_DATA_REQUEST_EP,
+                            txbuf, sizeof (txbuf) - 1);
+    if (msg == MSG_RESET)
+      chThdSleepMilliseconds(500);
+  }
+}
+
+/*
+ * USB reader. This thread reads data from the USB at maximum rate.
+ * Can be measured using:
+ *   dd if=bigfile of=/dev/xxx bs=512 count=10000
+ */
+static THD_WORKING_AREA(waReader, 128);
+static THD_FUNCTION(Reader, arg) {
+
+  (void)arg;
+  chRegSetThreadName("reader");
+  while (true) {
+    msg_t msg = usbReceive(&USBD2, USBD2_DATA_AVAILABLE_EP,
+                           rxbuf, sizeof (rxbuf) - 1);
+    if (msg == MSG_RESET)
+      chThdSleepMilliseconds(500);
   }
 }
 
@@ -116,6 +134,7 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
   chThdCreateStatic(waWriter, sizeof(waWriter), NORMALPRIO, Writer, NULL);
+  chThdCreateStatic(waReader, sizeof(waReader), NORMALPRIO, Reader, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

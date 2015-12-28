@@ -401,22 +401,31 @@ void usbDisableEndpointsI(USBDriver *usbp) {
 }
 
 /**
- * @brief   Prepares for a receive transaction on an OUT endpoint.
- * @post    The endpoint is ready for @p usbStartReceiveI().
- * @note    This function can be called both in ISR and thread context.
+ * @brief   Starts a receive transaction on an OUT endpoint.
+ * @note    This function is meant to be called from ISR context outside
+ *          critical zones because there is a potentially slow operation
+ *          inside.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  * @param[out] buf      buffer where to copy the received data
- * @param[in] n         transaction size
+ * @param[in] n         transaction size. It is recommended a multiple of
+ *                      the packet size because the excess is discarded.
  *
- * @special
+ * @iclass
  */
-void usbPrepareReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
+void usbStartReceiveI(USBDriver *usbp, usbep_t ep,
+                      uint8_t *buf, size_t n) {
   USBOutEndpointState *osp;
 
+  osalDbgCheckClassI();
   osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
+  osalDbgAssert(!usbGetReceiveStatusI(usbp, ep), "already receiving");
 
+  /* Marking the endpoint as active.*/
+  usbp->receiving |= (uint16_t)((unsigned)1U << (unsigned)ep);
+
+  /* Setting up the transfer.*/
   osp = usbp->epc[ep]->out_state;
   osp->rxbuf  = buf;
   osp->rxsize = n;
@@ -425,29 +434,35 @@ void usbPrepareReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
   osp->thread = NULL;
 #endif
 
-  usb_lld_prepare_receive(usbp, ep);
+  /* Starting transfer.*/
+  usb_lld_start_out(usbp, ep);
 }
 
 /**
- * @brief   Prepares for a transmit transaction on an IN endpoint.
- * @post    The endpoint is ready for @p usbStartTransmitI().
- * @note    This function can be called both in ISR and thread context.
- * @note    The queue must contain at least the amount of data specified
- *          as transaction size.
+ * @brief   Starts a transmit transaction on an IN endpoint.
+ * @note    This function is meant to be called from ISR context outside
+ *          critical zones because there is a potentially slow operation
+ *          inside.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  * @param[in] buf       buffer where to fetch the data to be transmitted
  * @param[in] n         transaction size
  *
- * @special
+ * @iclass
  */
-void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
-                        const uint8_t *buf, size_t n) {
+void usbStartTransmitI(USBDriver *usbp, usbep_t ep,
+                       const uint8_t *buf, size_t n) {
   USBInEndpointState *isp;
 
+  osalDbgCheckClassI();
   osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
+  osalDbgAssert(!usbGetTransmitStatusI(usbp, ep), "already transmitting");
 
+  /* Marking the endpoint as active.*/
+  usbp->transmitting |= (uint16_t)((unsigned)1U << (unsigned)ep);
+
+  /* Setting up the transfer.*/
   isp = usbp->epc[ep]->in_state;
   isp->txbuf  = buf;
   isp->txsize = n;
@@ -456,63 +471,8 @@ void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
   isp->thread = NULL;
 #endif
 
-  usb_lld_prepare_transmit(usbp, ep);
-}
-
-/**
- * @brief   Starts a receive transaction on an OUT endpoint.
- * @post    The endpoint callback is invoked when the transfer has been
- *          completed.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- *
- * @return              The operation status.
- * @retval false        Operation started successfully.
- * @retval true         Endpoint busy, operation not started.
- *
- * @iclass
- */
-bool usbStartReceiveI(USBDriver *usbp, usbep_t ep) {
-
-  osalDbgCheckClassI();
-  osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
-
-  if (usbGetReceiveStatusI(usbp, ep)) {
-    return true;
-  }
-
-  usbp->receiving |= (uint16_t)((unsigned)1U << (unsigned)ep);
-  usb_lld_start_out(usbp, ep);
-  return false;
-}
-
-/**
- * @brief   Starts a transmit transaction on an IN endpoint.
- * @post    The endpoint callback is invoked when the transfer has been
- *          completed.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- *
- * @return              The operation status.
- * @retval false        Operation started successfully.
- * @retval true         Endpoint busy, operation not started.
- *
- * @iclass
- */
-bool usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
-
-  osalDbgCheckClassI();
-  osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
-
-  if (usbGetTransmitStatusI(usbp, ep)) {
-    return true;
-  }
-
-  usbp->transmitting |= (uint16_t)((unsigned)1U << (unsigned)ep);
+  /* Starting transfer.*/
   usb_lld_start_in(usbp, ep);
-  return false;
 }
 
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
@@ -527,18 +487,23 @@ bool usbStartTransmitI(USBDriver *usbp, usbep_t ep) {
  *
  * @return              The received effective data size, it can be less than
  *                      the amount specified.
- * @retval MSG_RESET    operation aborted by a reset.
- * @retval MSG_TIMEOUT  operation aborted by a suspend.
+ * @retval MSG_RESET    driver not in @p USB_ACTIVE state or the operation
+ *                      has been aborted by an USB reset or a transition to
+ *                      the @p USB_SUSPENDED state.
  *
  * @api
  */
 msg_t usbReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
   msg_t msg;
 
-  usbPrepareReceive(usbp, ep, buf, n);
-
   osalSysLock();
-  usbStartReceiveI(usbp, ep);
+
+  if (usbGetDriverStateI(usbp) != USB_ACTIVE) {
+    osalSysUnlock();
+    return MSG_RESET;
+  }
+
+  usbStartReceiveI(usbp, ep, buf, n);
   msg = osalThreadSuspendS(&usbp->epc[ep]->out_state->thread);
   osalSysUnlock();
 
@@ -555,18 +520,23 @@ msg_t usbReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n) {
  *
  * @return              The operation status.
  * @retval MSG_OK       operation performed successfully.
- * @retval MSG_RESET    operation aborted by a reset.
- * @retval MSG_TIMEOUT  operation aborted by a suspend.
+ * @retval MSG_RESET    driver not in @p USB_ACTIVE state or the operation
+ *                      has been aborted by an USB reset or a transition to
+ *                      the @p USB_SUSPENDED state.
  *
  * @api
  */
 msg_t usbTransmit(USBDriver *usbp, usbep_t ep, const uint8_t *buf, size_t n) {
   msg_t msg;
 
-  usbPrepareTransmit(usbp, ep, buf, n);
-
   osalSysLock();
-  usbStartTransmitI(usbp, ep);
+
+  if (usbGetDriverStateI(usbp) != USB_ACTIVE) {
+    osalSysUnlock();
+    return MSG_RESET;
+  }
+
+  usbStartTransmitI(usbp, ep, buf, n);
   msg = osalThreadSuspendS(&usbp->epc[ep]->in_state->thread);
   osalSysUnlock();
 
@@ -700,10 +670,10 @@ void _usb_suspend(USBDriver *usbp) {
       if (usbp->epc[i] != NULL) {
         osalSysLockFromISR();
         if (usbp->epc[i]->in_state != NULL) {
-          osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_TIMEOUT);
+          osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_RESET);
         }
         if (usbp->epc[i]->out_state != NULL) {
-          osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_TIMEOUT);
+          osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_RESET);
         }
         osalSysUnlockFromISR();
       }
@@ -787,9 +757,8 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
     if (usbp->ep0n != 0U) {
       /* Starts the transmit phase.*/
       usbp->ep0state = USB_EP0_TX;
-      usbPrepareTransmit(usbp, 0, usbp->ep0next, usbp->ep0n);
       osalSysLockFromISR();
-      (void) usbStartTransmitI(usbp, 0);
+      usbStartTransmitI(usbp, 0, usbp->ep0next, usbp->ep0n);
       osalSysUnlockFromISR();
     }
     else {
@@ -797,9 +766,8 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
          packet.*/
       usbp->ep0state = USB_EP0_WAITING_STS;
 #if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
-      usbPrepareReceive(usbp, 0, NULL, 0);
       osalSysLockFromISR();
-      (void) usbStartReceiveI(usbp, 0);
+      usbStartReceiveI(usbp, 0, NULL, 0);
       osalSysUnlockFromISR();
 #else
       usb_lld_end_setup(usbp, ep);
@@ -811,9 +779,8 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
     if (usbp->ep0n != 0U) {
       /* Starts the receive phase.*/
       usbp->ep0state = USB_EP0_RX;
-      usbPrepareReceive(usbp, 0, usbp->ep0next, usbp->ep0n);
       osalSysLockFromISR();
-      (void) usbStartReceiveI(usbp, 0);
+      usbStartReceiveI(usbp, 0, usbp->ep0next, usbp->ep0n);
       osalSysUnlockFromISR();
     }
     else {
@@ -821,9 +788,8 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
          packet.*/
       usbp->ep0state = USB_EP0_SENDING_STS;
 #if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
-      usbPrepareTransmit(usbp, 0, NULL, 0);
       osalSysLockFromISR();
-      (void) usbStartTransmitI(usbp, 0);
+      usbStartTransmitI(usbp, 0, NULL, 0);
       osalSysUnlockFromISR();
 #else
       usb_lld_end_setup(usbp, ep);
@@ -854,9 +820,8 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
        transmitted.*/
     if ((usbp->ep0n < max) &&
         ((usbp->ep0n % usbp->epc[0]->in_maxsize) == 0U)) {
-      usbPrepareTransmit(usbp, 0, NULL, 0);
       osalSysLockFromISR();
-      (void) usbStartTransmitI(usbp, 0);
+      usbStartTransmitI(usbp, 0, NULL, 0);
       osalSysUnlockFromISR();
       usbp->ep0state = USB_EP0_WAITING_TX0;
       return;
@@ -866,9 +831,8 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
     /* Transmit phase over, receiving the zero sized status packet.*/
     usbp->ep0state = USB_EP0_WAITING_STS;
 #if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
-    usbPrepareReceive(usbp, 0, NULL, 0);
     osalSysLockFromISR();
-    (void) usbStartReceiveI(usbp, 0);
+    usbStartReceiveI(usbp, 0, NULL, 0);
     osalSysUnlockFromISR();
 #else
     usb_lld_end_setup(usbp, ep);
@@ -919,9 +883,8 @@ void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
     /* Receive phase over, sending the zero sized status packet.*/
     usbp->ep0state = USB_EP0_SENDING_STS;
 #if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
-    usbPrepareTransmit(usbp, 0, NULL, 0);
     osalSysLockFromISR();
-    (void) usbStartTransmitI(usbp, 0);
+    usbStartTransmitI(usbp, 0, NULL, 0);
     osalSysUnlockFromISR();
 #else
     usb_lld_end_setup(usbp, ep);
@@ -931,7 +894,7 @@ void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
     /* Status packet received, it must be zero sized, invoking the callback
        if defined.*/
 #if (USB_EP0_STATUS_STAGE == USB_EP0_STATUS_STAGE_SW)
-    if (usbGetReceiveTransactionSizeI(usbp, 0) != 0U) {
+    if (usbGetReceiveTransactionSizeX(usbp, 0) != 0U) {
       break;
     }
 #endif

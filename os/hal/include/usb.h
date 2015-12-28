@@ -412,9 +412,9 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] usbp      pointer to the @p USBDriver object
  * @return              The current frame number.
  *
- * @api
+ * @xclass
  */
-#define usbGetFrameNumber(usbp) usb_lld_get_frame_number(usbp)
+#define usbGetFrameNumberX(usbp) usb_lld_get_frame_number(usbp)
 
 /**
  * @brief   Returns the status of an IN endpoint.
@@ -454,9 +454,9 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] ep        endpoint number
  * @return              Received data size.
  *
- * @iclass
+ * @xclass
  */
-#define usbGetReceiveTransactionSizeI(usbp, ep)                             \
+#define usbGetReceiveTransactionSizeX(usbp, ep)                             \
   usb_lld_get_transaction_size(usbp, ep)
 
 /**
@@ -469,7 +469,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @param[in] n         number of bytes to be transferred
  * @param[in] endcb     callback to be invoked after the transfer or @p NULL
  *
- * @api
+ * @special
  */
 #define usbSetupTransfer(usbp, buf, n, endcb) {                             \
   (usbp)->ep0next  = (buf);                                                 \
@@ -580,7 +580,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
   }                                                                         \
   osalSysLockFromISR();                                                     \
   osalThreadResumeI(&(usbp)->epc[ep]->out_state->thread,                    \
-                    usbGetReceiveTransactionSizeI(usbp, ep));               \
+                    usbGetReceiveTransactionSizeX(usbp, ep));               \
   osalSysUnlockFromISR();                                                   \
 }
 #else
@@ -608,12 +608,10 @@ extern "C" {
                         const USBEndpointConfig *epcp);
   void usbDisableEndpointsI(USBDriver *usbp);
   void usbReadSetupI(USBDriver *usbp, usbep_t ep, uint8_t *buf);
-  void usbPrepareReceive(USBDriver *usbp, usbep_t ep,
-                         uint8_t *buf, size_t n);
-  void usbPrepareTransmit(USBDriver *usbp, usbep_t ep,
-                          const uint8_t *buf, size_t n);
-  bool usbStartReceiveI(USBDriver *usbp, usbep_t ep);
-  bool usbStartTransmitI(USBDriver *usbp, usbep_t ep);
+  void usbStartReceiveI(USBDriver *usbp, usbep_t ep,
+                        uint8_t *buf, size_t n);
+  void usbStartTransmitI(USBDriver *usbp, usbep_t ep,
+                         const uint8_t *buf, size_t n);
 #if USB_USE_WAIT == TRUE
   msg_t usbReceive(USBDriver *usbp, usbep_t ep, uint8_t *buf, size_t n);
   msg_t usbTransmit(USBDriver *usbp, usbep_t ep, const uint8_t *buf, size_t n);

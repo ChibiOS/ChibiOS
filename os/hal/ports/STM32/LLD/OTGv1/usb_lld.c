@@ -369,7 +369,6 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
          cover the remaining.*/
       isp->txsize = isp->totsize - isp->txsize;
       isp->txcnt  = 0;
-      usb_lld_prepare_transmit(usbp, ep);
       osalSysLockFromISR();
       usb_lld_start_in(usbp, ep);
       osalSysUnlockFromISR();
@@ -415,13 +414,14 @@ static void otg_epout_handler(USBDriver *usbp, usbep_t ep) {
     /* Receive transfer complete.*/
     USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
-    if (osp->rxsize < osp->totsize) {
+    /* A short packet always terminates a transaction.*/
+    if (((osp->rxcnt % usbp->epc[ep]->out_maxsize) == 0) &&
+        (osp->rxsize < osp->totsize)) {
       /* In case the transaction covered only part of the total transfer
          then another transaction is immediately started in order to
          cover the remaining.*/
       osp->rxsize = osp->totsize - osp->rxsize;
       osp->rxcnt  = 0;
-      usb_lld_prepare_receive(usbp, ep);
       osalSysLockFromISR();
       usb_lld_start_out(usbp, ep);
       osalSysUnlockFromISR();
@@ -476,7 +476,6 @@ static void otg_isoc_in_failed_handler(USBDriver *usbp) {
  *
  * @notapi
  */
-
 static void otg_isoc_out_failed_handler(USBDriver *usbp) {
   usbep_t ep;
   stm32_otg_t *otgp = usbp->otg;
@@ -1135,60 +1134,6 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
 }
 
 /**
- * @brief   Prepares for a receive operation.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- *
- * @notapi
- */
-void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep) {
-  uint32_t pcnt;
-  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
-
-  /* Transfer initialization.*/
-  osp->totsize = osp->rxsize;
-  if ((ep == 0) && (osp->rxsize  > EP0_MAX_OUTSIZE))
-      osp->rxsize = EP0_MAX_OUTSIZE;
-
-  pcnt = (osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
-         usbp->epc[ep]->out_maxsize;
-  usbp->otg->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
-                               DOEPTSIZ_XFRSIZ(osp->rxsize);
-
-}
-
-/**
- * @brief   Prepares for a transmit operation.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- *
- * @notapi
- */
-void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
-  USBInEndpointState *isp = usbp->epc[ep]->in_state;
-
-  /* Transfer initialization.*/
-  isp->totsize = isp->txsize;
-  if (isp->txsize == 0) {
-    /* Special case, sending zero size packet.*/
-    usbp->otg->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(1) | DIEPTSIZ_XFRSIZ(0);
-  }
-  else {
-    if ((ep == 0) && (isp->txsize  > EP0_MAX_INSIZE))
-      isp->txsize = EP0_MAX_INSIZE;
-
-    /* Normal case.*/
-    uint32_t pcnt = (isp->txsize + usbp->epc[ep]->in_maxsize - 1) /
-                    usbp->epc[ep]->in_maxsize;
-    /* TODO: Support more than one packet per frame for isochronous transfers.*/
-    usbp->otg->ie[ep].DIEPTSIZ = DIEPTSIZ_MCNT(1) | DIEPTSIZ_PKTCNT(pcnt) |
-                                 DIEPTSIZ_XFRSIZ(isp->txsize);
-  }
-}
-
-/**
  * @brief   Starts a receive operation on an OUT endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
@@ -1197,7 +1142,28 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
+  uint32_t pcnt, rxsize;
+  USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
+  /* Transfer initialization.*/
+  osp->totsize = osp->rxsize;
+  if ((ep == 0) && (osp->rxsize > EP0_MAX_OUTSIZE))
+      osp->rxsize = EP0_MAX_OUTSIZE;
+
+  /* Transaction size is rounded to a multiple of packet size because the
+     following requirement in the RM:
+     "For OUT transfers, the transfer size field in the endpoint's transfer
+     size register must be a multiple of the maximum packet size of the
+     endpoint, adjusted to the Word boundary".*/
+  pcnt   = (osp->rxsize + usbp->epc[ep]->out_maxsize - 1U) /
+           usbp->epc[ep]->out_maxsize;
+  rxsize = (pcnt * usbp->epc[ep]->out_maxsize + 3U) & 0xFFFFFFFCU;
+
+  /*Setting up transaction parameters in DOEPTSIZ.*/
+  usbp->otg->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
+                               DOEPTSIZ_XFRSIZ(rxsize);
+
+  /* Special case of isochronous endpoint.*/
   if ((usbp->epc[ep]->ep_mode & USB_EP_MODE_TYPE) == USB_EP_MODE_TYPE_ISOC) {
     /* Odd/even bit toggling for isochronous endpoint.*/
     if (usbp->otg->DSTS & DSTS_FNSOF_ODD)
@@ -1206,6 +1172,7 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
       usbp->otg->oe[ep].DOEPCTL |= DOEPCTL_SODDFRM;
   }
 
+  /* Starting operation.*/
   usbp->otg->oe[ep].DOEPCTL |= DOEPCTL_EPENA | DOEPCTL_CNAK;
 }
 
@@ -1218,7 +1185,27 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
  * @notapi
  */
 void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
+  USBInEndpointState *isp = usbp->epc[ep]->in_state;
 
+  /* Transfer initialization.*/
+  isp->totsize = isp->txsize;
+  if (isp->txsize == 0) {
+    /* Special case, sending zero size packet.*/
+    usbp->otg->ie[ep].DIEPTSIZ = DIEPTSIZ_PKTCNT(1) | DIEPTSIZ_XFRSIZ(0);
+  }
+  else {
+    if ((ep == 0) && (isp->txsize > EP0_MAX_INSIZE))
+      isp->txsize = EP0_MAX_INSIZE;
+
+    /* Normal case.*/
+    uint32_t pcnt = (isp->txsize + usbp->epc[ep]->in_maxsize - 1) /
+                    usbp->epc[ep]->in_maxsize;
+    /* TODO: Support more than one packet per frame for isochronous transfers.*/
+    usbp->otg->ie[ep].DIEPTSIZ = DIEPTSIZ_MCNT(1) | DIEPTSIZ_PKTCNT(pcnt) |
+                                 DIEPTSIZ_XFRSIZ(isp->txsize);
+  }
+
+  /* Special case of isochronous endpoint.*/
   if ((usbp->epc[ep]->ep_mode & USB_EP_MODE_TYPE) == USB_EP_MODE_TYPE_ISOC) {
     /* Odd/even bit toggling.*/
     if (usbp->otg->DSTS & DSTS_FNSOF_ODD)
@@ -1227,6 +1214,7 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
       usbp->otg->ie[ep].DIEPCTL |= DIEPCTL_SODDFRM;
   }
 
+  /* Starting operation.*/
   usbp->otg->ie[ep].DIEPCTL |= DIEPCTL_EPENA | DIEPCTL_CNAK;
   usbp->otg->DIEPEMPMSK |= DIEPEMPMSK_INEPTXFEM(ep);
 }

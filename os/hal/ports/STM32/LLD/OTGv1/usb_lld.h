@@ -540,8 +540,6 @@ extern "C" {
   usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep);
   usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep);
   void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf);
-  void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep);
-  void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep);
   void usb_lld_start_out(USBDriver *usbp, usbep_t ep);
   void usb_lld_start_in(USBDriver *usbp, usbep_t ep);
   void usb_lld_stall_out(USBDriver *usbp, usbep_t ep);
