@@ -290,38 +290,34 @@ typedef struct {
   usbepcallback_t               setup_cb;
   /**
    * @brief   IN endpoint notification callback.
-   * @details This field must can be set to @p NULL if callback is not
-   *          required.
+   * @details This field must be set to @p NULL if callback is not required.
    */
   usbepcallback_t               in_cb;
   /**
    * @brief   OUT endpoint notification callback.
-   * @details This field must can be set to @p NULL if callback is not
-   *          required.
+   * @details This field must be set to @p NULL if callback is not required.
    */
   usbepcallback_t               out_cb;
   /**
    * @brief   IN endpoint maximum packet size.
-   * @details This field must be set to zero if the IN endpoint is not
-   *          used.
+   * @details This field must be set to zero if the IN endpoint is not used.
    */
   uint16_t                      in_maxsize;
   /**
    * @brief   OUT endpoint maximum packet size.
-   * @details This field must be set to zero if the OUT endpoint is not
-   *          used.
+   * @details This field must be set to zero if the OUT endpoint is not used.
    */
   uint16_t                      out_maxsize;
   /**
    * @brief   @p USBEndpointState associated to the IN endpoint.
-   * @details This structure maintains the state of the IN endpoint,
-   *          set to @p NULL if the IN endpoint is not used.
+   * @details This field must be set to @p NULL if the IN endpoint is not
+   *          used.
    */
   USBInEndpointState            *in_state;
   /**
    * @brief   @p USBEndpointState associated to the OUT endpoint.
-   * @details This structure maintains the state of the OUT endpoint,
-   *          set to @p NULL if the OUT endpoint is not used.
+   * @details This field must be set to @p NULL if the OUT endpoint is not
+   *          used.
    */
   USBOutEndpointState           *out_state;
   /* End of the mandatory fields.*/
