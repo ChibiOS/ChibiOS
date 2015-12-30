@@ -34,7 +34,7 @@
 
 #define BTABLE_ADDR     0x0000
 
-#define EPR_EP_TYPE_IS_ISO(epr) ((epr & EPR_EP_TYPE_MASK) == EPR_EP_TYPE_ISO)
+#define EPR_EP_TYPE_IS_ISO(bits) ((bits & EPR_EP_TYPE_MASK) == EPR_EP_TYPE_ISO)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -219,9 +219,9 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
       usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
                                    epcp->in_state->txbuf,
                                    n);
-      osalSysLockFromISR();
-      usb_lld_start_in(usbp, ep);
-      osalSysUnlockFromISR();
+
+      /* Starting IN operation.*/
+      EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
     }
     else {
       /* Transfer completed, invokes the callback.*/
@@ -500,7 +500,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
      receive descriptor fields are used for either direction.*/
   switch (epcp->ep_mode & USB_EP_MODE_TYPE) {
   case USB_EP_MODE_TYPE_ISOC:
-    osalDbgAssert((epcp->in_cb == NULL) || (epcp->out_cb == NULL),
+    osalDbgAssert((epcp->in_state == NULL) || (epcp->out_state == NULL),
                   "isochronous EP cannot be IN and OUT");
     epr = EPR_EP_TYPE_ISO;
     break;
@@ -533,12 +533,12 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
      but since we are not taking advantage of the double buffering, we set both
      addresses to point to the same PMA.*/
   if ((epcp->ep_mode & USB_EP_MODE_TYPE) == USB_EP_MODE_TYPE_ISOC) {
-    if (epcp->in_cb != NULL) {
+    if (epcp->in_state != NULL) {
       epr |= EPR_STAT_TX_VALID;
       dp->TXCOUNT1 = dp->TXCOUNT0;
       dp->TXADDR1  = dp->TXADDR0;   /* Both buffers overlapped.*/
     }
-    if (epcp->out_cb != NULL) {
+    if (epcp->out_state != NULL) {
       epr |= EPR_STAT_RX_VALID;
       dp->RXCOUNT1 = dp->RXCOUNT0;
       dp->RXADDR1  = dp->RXADDR0;   /* Both buffers overlapped.*/
@@ -546,10 +546,10 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   }
   else {
     /* Initial status for other endpoint types is NAK.*/
-    if (epcp->in_cb != NULL)
+    if (epcp->in_state != NULL)
       epr |= EPR_STAT_TX_NAK;
 
-    if (epcp->out_cb != NULL)
+    if (epcp->out_state != NULL)
       epr |= EPR_STAT_RX_NAK;
   }
 
@@ -657,14 +657,14 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
 }
 
 /**
- * @brief   Prepares for a receive operation.
+ * @brief   Starts a receive operation on an OUT endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  *
  * @notapi
  */
-void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep) {
+void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
   /* Transfer initialization.*/
@@ -673,17 +673,19 @@ void usb_lld_prepare_receive(USBDriver *usbp, usbep_t ep) {
   else
     osp->rxpkts = (uint16_t)((osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
                              usbp->epc[ep]->out_maxsize);
+
+  EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
 }
 
 /**
- * @brief   Prepares for a transmit operation.
+ * @brief   Starts a transmit operation on an IN endpoint.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
  *
  * @notapi
  */
-void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
+void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
   size_t n;
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
   uint32_t epr = STM32_USB->EPR[ep];
@@ -705,34 +707,6 @@ void usb_lld_prepare_transmit(USBDriver *usbp, usbep_t ep) {
 
   usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
                                isp->txbuf, n);
-}
-
-/**
- * @brief   Starts a receive operation on an OUT endpoint.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- *
- * @notapi
- */
-void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
-
-  (void)usbp;
-
-  EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
-}
-
-/**
- * @brief   Starts a transmit operation on an IN endpoint.
- *
- * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
- *
- * @notapi
- */
-void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
-
-  (void)usbp;
 
   EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
 }
