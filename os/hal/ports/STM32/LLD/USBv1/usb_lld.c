@@ -122,43 +122,70 @@ static uint32_t usb_pm_alloc(USBDriver *usbp, size_t size) {
  *
  * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
  * @param[out] buf      buffer where to copy the packet data
- * @param[in] n         maximum number of bytes to copy. This value must
- *                      not exceed the maximum packet size for this endpoint.
+ * @return              The size of the receivee packet.
  *
  * @notapi
  */
-static void usb_packet_read_to_buffer(stm32_usb_descriptor_t *udp,
-                                      uint8_t *buf, size_t n) {
+static size_t usb_packet_read_to_buffer(usbep_t ep, uint8_t *buf) {
+  size_t i, n;
+  stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
   stm32_usb_pma_t *pmap = USB_ADDR2PTR(udp->RXADDR0);
+  uint32_t epr = STM32_USB->EPR[ep];
 
-  while (n > 1) {
+  /* Double buffering is always enabled for isochronous endpoints, and
+     although we overlap the two buffers for simplicity, we still need
+     to read from the right counter. The DTOG_RX bit indicates the buffer
+     that is currently in use by the USB peripheral, that is, the buffer
+     in which the next received packet will be stored, so we need to
+     read the counter of the OTHER buffer, which is where the last
+     received packet was stored.*/
+  n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
+  if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & EPR_DTOG_RX))
+    n = (size_t)udp->RXCOUNT1 & RXCOUNT_COUNT_MASK;
+
+  i = n;
+  while (i > 1) {
     uint32_t w = *pmap++;
     *buf++ = (uint8_t)w;
     *buf++ = (uint8_t)(w >> 8);
-    n -= 2;
+    i -= 2;
   }
 
-  if (n > 0) {
+  if (i > 0) {
     *buf = (uint8_t)*pmap;
   }
+
+  return n;
 }
 
 /**
  * @brief   Writes to a dedicated packet buffer.
  *
- * @param[in] udp       pointer to a @p stm32_usb_descriptor_t
+ * @param[in] ep        endpoint number
  * @param[in] buf       buffer where to fetch the packet data
  * @param[in] n         maximum number of bytes to copy. This value must
  *                      not exceed the maximum packet size for this endpoint.
  *
  * @notapi
  */
-static void usb_packet_write_from_buffer(stm32_usb_descriptor_t *udp,
+static void usb_packet_write_from_buffer(usbep_t ep,
                                          const uint8_t *buf,
                                          size_t n) {
+  stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
   stm32_usb_pma_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
+  uint32_t epr = STM32_USB->EPR[ep];
   uint32_t w;
   int i = (int)n;
+
+  /* Double buffering is always enabled for isochronous endpoints, and
+     although we overlap the two buffers for simplicity, we still need
+     to write to the right counter. The DTOG_TX bit indicates the buffer
+     that is currently in use by the USB peripheral, that is, the buffer
+     from which the next packet will be sent, so we need to write the
+     counter of that buffer.*/
+  udp->TXCOUNT0 = (stm32_usb_pma_t)n;
+  if (EPR_EP_TYPE_IS_ISO(epr) && (epr & EPR_DTOG_TX))
+    udp->TXCOUNT1 = (stm32_usb_pma_t)n;
 
   while (i > 0) {
     w  = *buf++;
@@ -204,21 +231,9 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
       if (n > epcp->in_maxsize)
         n = epcp->in_maxsize;
 
-      /* Double buffering is always enabled for isochronous endpoints, and
-         although we overlap the two buffers for simplicity, we still need
-         to write to the right counter. The DTOG_TX bit indicates the buffer
-         that is currently in use by the USB peripheral, that is, the buffer
-         from which the next packet will be sent, so we need to write the
-         counter of that buffer.*/
-      USB_GET_DESCRIPTOR(ep)->TXCOUNT0 = (stm32_usb_pma_t)n;
-      if (EPR_EP_TYPE_IS_ISO(epr) && (epr & EPR_DTOG_TX))
-          USB_GET_DESCRIPTOR(ep)->TXCOUNT1 = (stm32_usb_pma_t)n;
-
       /* Writes the packet from the defined buffer.*/
       epcp->in_state->txbuf += transmitted;
-      usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
-                                   epcp->in_state->txbuf,
-                                   n);
+      usb_packet_write_from_buffer(ep, epcp->in_state->txbuf, n);
 
       /* Starting IN operation.*/
       EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
@@ -237,23 +252,8 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
       _usb_isr_invoke_setup_cb(usbp, ep);
     }
     else {
-      stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
-
-      /* Double buffering is always enabled for isochronous endpoints, and
-         although we overlap the two buffers for simplicity, we still need
-         to read from the right counter. The DTOG_RX bit indicates the buffer
-         that is currently in use by the USB peripheral, that is, the buffer
-         in which the next received packet will be stored, so we need to
-         read the counter of the OTHER buffer, which is where the last
-         received packet was stored.*/
-      n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
-      if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & EPR_DTOG_RX))
-        n = (size_t)udp->RXCOUNT1 & RXCOUNT_COUNT_MASK;
-
       /* Reads the packet into the defined buffer.*/
-      usb_packet_read_to_buffer(udp,
-                                epcp->out_state->rxbuf,
-                                n);
+      n = usb_packet_read_to_buffer(ep, epcp->out_state->rxbuf);
       epcp->out_state->rxbuf += n;
 
       /* Transaction data updated.*/
@@ -688,25 +688,13 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
 void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
   size_t n;
   USBInEndpointState *isp = usbp->epc[ep]->in_state;
-  uint32_t epr = STM32_USB->EPR[ep];
 
   /* Transfer initialization.*/
   n = isp->txsize;
   if (n > (size_t)usbp->epc[ep]->in_maxsize)
     n = (size_t)usbp->epc[ep]->in_maxsize;
 
-  /* Double buffering is always enabled for isochronous endpoints, and
-     although we overlap the two buffers for simplicity, we still need
-     to write to the right counter. The DTOG_TX bit indicates the buffer
-     that is currently in use by the USB peripheral, that is, the buffer
-     from which the next packet will be sent, so we need to write the
-     counter of that buffer.*/
-  USB_GET_DESCRIPTOR(ep)->TXCOUNT0 = (stm32_usb_pma_t)n;
-  if (EPR_EP_TYPE_IS_ISO(epr) && (epr & EPR_DTOG_TX))
-    USB_GET_DESCRIPTOR(ep)->TXCOUNT1 = (stm32_usb_pma_t)n;
-
-  usb_packet_write_from_buffer(USB_GET_DESCRIPTOR(ep),
-                               isp->txbuf, n);
+  usb_packet_write_from_buffer(ep, isp->txbuf, n);
 
   EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
 }
