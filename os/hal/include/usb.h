@@ -228,8 +228,6 @@
 #define USB_EP_MODE_TYPE_ISOC           0x0001U /**< Isochronous endpoint.  */
 #define USB_EP_MODE_TYPE_BULK           0x0002U /**< Bulk endpoint.         */
 #define USB_EP_MODE_TYPE_INTR           0x0003U /**< Interrupt endpoint.    */
-#define USB_EP_MODE_LINEAR_BUFFER       0x0000U /**< Linear buffer mode.    */
-#define USB_EP_MODE_QUEUE_BUFFER        0x0010U /**< Queue buffer mode.     */
 /** @} */
 
 /*===========================================================================*/
