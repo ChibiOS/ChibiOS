@@ -1273,7 +1273,7 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
  * @details This function must be executed by a system thread in order to
  *          make the USB driver work.
  * @note    The data copy part of the driver is implemented in this thread
- *          in order to not perform heavy tasks withing interrupt handlers.
+ *          in order to not perform heavy tasks within interrupt handlers.
  *
  * @param[in] p         pointer to the @p USBDriver object
  *
