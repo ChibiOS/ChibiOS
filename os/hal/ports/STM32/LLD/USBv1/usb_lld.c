@@ -212,31 +212,22 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
   const USBEndpointConfig *epcp = usbp->epc[ep];
 
   if (epr & EPR_CTR_TX) {
-    size_t transmitted;
     /* IN endpoint, transmission.*/
+    USBInEndpointState *isp = epcp->in_state;
+
     EPR_CLEAR_CTR_TX(ep);
 
-    /* Double buffering is always enabled for isochronous endpoints, and
-       although we overlap the two buffers for simplicity, we still need
-       to read from the right counter. The DTOG_TX bit indicates the buffer
-       that is currently in use by the USB peripheral, that is, the buffer
-       from which the next packet will be sent, so we need to read the
-       transmitted bytes from the counter of the OTHER buffer, which is
-       where we stored the last transmitted packet.*/
-    transmitted = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT0;
-    if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & EPR_DTOG_TX))
-      transmitted = (size_t)USB_GET_DESCRIPTOR(ep)->TXCOUNT1;
-
-    epcp->in_state->txcnt  += transmitted;
-    n = epcp->in_state->txsize - epcp->in_state->txcnt;
+    isp->txcnt += isp->txlast;
+    n = isp->txsize - isp->txcnt;
     if (n > 0) {
       /* Transfer not completed, there are more packets to send.*/
       if (n > epcp->in_maxsize)
         n = epcp->in_maxsize;
 
       /* Writes the packet from the defined buffer.*/
-      epcp->in_state->txbuf += transmitted;
-      usb_packet_write_from_buffer(ep, epcp->in_state->txbuf, n);
+      isp->txbuf += isp->txlast;
+      isp->txlast = n;
+      usb_packet_write_from_buffer(ep, isp->txbuf, n);
 
       /* Starting IN operation.*/
       EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
@@ -247,26 +238,30 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
     }
   }
   if (epr & EPR_CTR_RX) {
-    EPR_CLEAR_CTR_RX(ep);
     /* OUT endpoint, receive.*/
+
+    EPR_CLEAR_CTR_RX(ep);
+
     if (epr & EPR_SETUP) {
       /* Setup packets handling, setup packets are handled using a
          specific callback.*/
       _usb_isr_invoke_setup_cb(usbp, ep);
     }
     else {
+      USBOutEndpointState *osp = epcp->out_state;
+
       /* Reads the packet into the defined buffer.*/
-      n = usb_packet_read_to_buffer(ep, epcp->out_state->rxbuf);
-      epcp->out_state->rxbuf += n;
+      n = usb_packet_read_to_buffer(ep, osp->rxbuf);
+      osp->rxbuf += n;
 
       /* Transaction data updated.*/
-      epcp->out_state->rxcnt  += n;
-      epcp->out_state->rxsize -= n;
-      epcp->out_state->rxpkts -= 1;
+      osp->rxcnt  += n;
+      osp->rxsize -= n;
+      osp->rxpkts -= 1;
 
       /* The transaction is completed if the specified number of packets
          has been received or the current packet is a short packet.*/
-      if ((n < epcp->out_maxsize) || (epcp->out_state->rxpkts == 0)) {
+      if ((n < epcp->out_maxsize) || (osp->rxpkts == 0)) {
         /* Transfer complete, invokes the callback.*/
         _usb_isr_invoke_out_cb(usbp, ep);
       }
@@ -707,6 +702,7 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
   if (n > (size_t)usbp->epc[ep]->in_maxsize)
     n = (size_t)usbp->epc[ep]->in_maxsize;
 
+  isp->txlast = n;
   usb_packet_write_from_buffer(ep, isp->txbuf, n);
 
   EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);

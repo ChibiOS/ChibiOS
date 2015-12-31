@@ -182,6 +182,10 @@ typedef struct {
   thread_reference_t            thread;
 #endif
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Size of the last transmitted packet.
+   */
+  size_t                        txlast;
 } USBInEndpointState;
 
 /**
