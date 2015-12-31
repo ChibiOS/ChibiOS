@@ -89,6 +89,14 @@
 #endif
 
 /**
+ * @brief   Use faster copy for packets.
+ * @note    Makes the driver larger.
+ */
+#if !defined(STM32_USB_USE_FAST_COPY) || defined(__DOXYGEN__)
+#define STM32_USB_USE_FAST_COPY             FALSE
+#endif
+
+/**
  * @brief   Enables the use of a thread for data moving.
  * @details This option improves IRQ handling by performing data moving
  *          from a dedicated internal thread at the cost of increased

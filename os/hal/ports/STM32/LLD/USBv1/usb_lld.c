@@ -126,7 +126,6 @@ static uint32_t usb_pm_alloc(USBDriver *usbp, size_t size) {
  *
  * @notapi
  */
-__attribute__((noinline))
 static size_t usb_packet_read_to_buffer(usbep_t ep, uint8_t *buf) {
   size_t i, n;
   stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
@@ -146,14 +145,50 @@ static size_t usb_packet_read_to_buffer(usbep_t ep, uint8_t *buf) {
     n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
 
   i = n;
-  while (i > 1) {
+
+#if STM32_USB_USE_FAST_COPY
+  while (i >= 16) {
+    uint32_t w;
+
+    w = *(pmap + 0);
+    *(buf + 0) = (uint8_t)w;
+    *(buf + 1) = (uint8_t)(w >> 8);
+    w = *(pmap + 1);
+    *(buf + 2) = (uint8_t)w;
+    *(buf + 3) = (uint8_t)(w >> 8);
+    w = *(pmap + 2);
+    *(buf + 4) = (uint8_t)w;
+    *(buf + 5) = (uint8_t)(w >> 8);
+    w = *(pmap + 3);
+    *(buf + 6) = (uint8_t)w;
+    *(buf + 7) = (uint8_t)(w >> 8);
+    w = *(pmap + 4);
+    *(buf + 8) = (uint8_t)w;
+    *(buf + 9) = (uint8_t)(w >> 8);
+    w = *(pmap + 5);
+    *(buf + 10) = (uint8_t)w;
+    *(buf + 11) = (uint8_t)(w >> 8);
+    w = *(pmap + 6);
+    *(buf + 12) = (uint8_t)w;
+    *(buf + 13) = (uint8_t)(w >> 8);
+    w = *(pmap + 7);
+    *(buf + 14) = (uint8_t)w;
+    *(buf + 15) = (uint8_t)(w >> 8);
+
+    i -= 16;
+    buf += 16;
+    pmap += 8;
+  }
+#endif /* STM32_USB_USE_FAST_COPY */
+
+  while (i >= 2) {
     uint32_t w = *pmap++;
     *buf++ = (uint8_t)w;
     *buf++ = (uint8_t)(w >> 8);
     i -= 2;
   }
 
-  if (i > 0) {
+  if (i >= 1) {
     *buf = (uint8_t)*pmap;
   }
 
@@ -176,7 +211,6 @@ static void usb_packet_write_from_buffer(usbep_t ep,
   stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
   stm32_usb_pma_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
   uint32_t epr = STM32_USB->EPR[ep];
-  uint32_t w;
   int i = (int)n;
 
   /* Double buffering is always enabled for isochronous endpoints, and
@@ -190,7 +224,44 @@ static void usb_packet_write_from_buffer(usbep_t ep,
   else
     udp->TXCOUNT0 = (stm32_usb_pma_t)n;
 
+#if STM32_USB_USE_FAST_COPY
+  while (i >= 16) {
+    uint32_t w;
+
+    w  = *(buf + 0);
+    w |= *(buf + 1) << 8;
+    *(pmap + 0) = (stm32_usb_pma_t)w;
+    w  = *(buf + 2);
+    w |= *(buf + 3) << 8;
+    *(pmap + 1) = (stm32_usb_pma_t)w;
+    w  = *(buf + 4);
+    w |= *(buf + 5) << 8;
+    *(pmap + 2) = (stm32_usb_pma_t)w;
+    w  = *(buf + 6);
+    w |= *(buf + 7) << 8;
+    *(pmap + 3) = (stm32_usb_pma_t)w;
+    w  = *(buf + 8);
+    w |= *(buf + 9) << 8;
+    *(pmap + 4) = (stm32_usb_pma_t)w;
+    w  = *(buf + 10);
+    w |= *(buf + 11) << 8;
+    *(pmap + 5) = (stm32_usb_pma_t)w;
+    w  = *(buf + 12);
+    w |= *(buf + 13) << 8;
+    *(pmap + 6) = (stm32_usb_pma_t)w;
+    w  = *(buf + 14);
+    w |= *(buf + 15) << 8;
+    *(pmap + 7) = (stm32_usb_pma_t)w;
+
+    i -= 16;
+    buf += 16;
+    pmap += 8;
+  }
+#endif /* STM32_USB_USE_FAST_COPY */
+
   while (i > 0) {
+    uint32_t w;
+
     w  = *buf++;
     w |= *buf++ << 8;
     *pmap++ = (stm32_usb_pma_t)w;
