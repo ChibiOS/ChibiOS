@@ -89,6 +89,15 @@
 #endif
 
 /**
+ * @brief   Enables isochronous support.
+ * @note    Isochronous support requires special handling and this makes the
+ *          code size increase significantly.
+ */
+#if !defined(STM32_USB_USE_ISOCHRONOUS) || defined(__DOXYGEN__)
+#define STM32_USB_USE_ISOCHRONOUS           FALSE
+#endif
+
+/**
  * @brief   Use faster copy for packets.
  * @note    Makes the driver larger.
  */

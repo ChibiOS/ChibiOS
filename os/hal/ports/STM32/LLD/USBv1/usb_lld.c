@@ -130,6 +130,7 @@ static size_t usb_packet_read_to_buffer(usbep_t ep, uint8_t *buf) {
   size_t i, n;
   stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
   stm32_usb_pma_t *pmap = USB_ADDR2PTR(udp->RXADDR0);
+#if STM32_USB_USE_ISOCHRONOUS
   uint32_t epr = STM32_USB->EPR[ep];
 
   /* Double buffering is always enabled for isochronous endpoints, and
@@ -143,6 +144,9 @@ static size_t usb_packet_read_to_buffer(usbep_t ep, uint8_t *buf) {
     n = (size_t)udp->RXCOUNT1 & RXCOUNT_COUNT_MASK;
   else
     n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
+#else
+  n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
+#endif
 
   i = n;
 
@@ -210,8 +214,10 @@ static void usb_packet_write_from_buffer(usbep_t ep,
                                          size_t n) {
   stm32_usb_descriptor_t *udp = USB_GET_DESCRIPTOR(ep);
   stm32_usb_pma_t *pmap = USB_ADDR2PTR(udp->TXADDR0);
-  uint32_t epr = STM32_USB->EPR[ep];
   int i = (int)n;
+
+#if STM32_USB_USE_ISOCHRONOUS
+  uint32_t epr = STM32_USB->EPR[ep];
 
   /* Double buffering is always enabled for isochronous endpoints, and
      although we overlap the two buffers for simplicity, we still need
@@ -223,6 +229,9 @@ static void usb_packet_write_from_buffer(usbep_t ep,
     udp->TXCOUNT1 = (stm32_usb_pma_t)n;
   else
     udp->TXCOUNT0 = (stm32_usb_pma_t)n;
+#else
+  udp->TXCOUNT0 = (stm32_usb_pma_t)n;
+#endif
 
 #if STM32_USB_USE_FAST_COPY
   while (i >= 16) {
@@ -350,6 +359,7 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
 
 #if STM32_USB_USE_USB1 || defined(__DOXYGEN__)
 #if STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER
+#if STM32_USB_USE_ISOCHRONOUS
 /**
  * @brief   USB high priority interrupt handler.
  *
@@ -370,6 +380,7 @@ OSAL_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif /* STM32_USB_USE_ISOCHRONOUS */
 #endif /* STM32_USB1_LP_NUMBER != STM32_USB1_HP_NUMBER */
 
 /**
@@ -570,7 +581,7 @@ void usb_lld_set_address(USBDriver *usbp) {
  * @notapi
  */
 void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
-  uint16_t nblocks, epr;
+  uint16_t epr;
   stm32_usb_descriptor_t *dp;
   const USBEndpointConfig *epcp = usbp->epc[ep];
 
@@ -579,10 +590,14 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
      receive descriptor fields are used for either direction.*/
   switch (epcp->ep_mode & USB_EP_MODE_TYPE) {
   case USB_EP_MODE_TYPE_ISOC:
+#if STM32_USB_USE_ISOCHRONOUS
     osalDbgAssert((epcp->in_state == NULL) || (epcp->out_state == NULL),
                   "isochronous EP cannot be IN and OUT");
     epr = EPR_EP_TYPE_ISO;
     break;
+#else
+    osalDbgAssert(false, "isochronous support disabled");
+#endif
   case USB_EP_MODE_TYPE_BULK:
     epr = EPR_EP_TYPE_BULK;
     break;
@@ -593,43 +608,52 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
     epr = EPR_EP_TYPE_CONTROL;
   }
 
-  /* Endpoint size and address initialization.*/
-  if (epcp->out_maxsize > 62)
-    nblocks = (((((epcp->out_maxsize - 1) | 0x1f) + 1) / 32) << 10) |
-              0x8000;
-  else
-    nblocks = ((((epcp->out_maxsize - 1) | 1) + 1) / 2) << 10;
-
   dp = USB_GET_DESCRIPTOR(ep);
-  dp->TXCOUNT0 = 0;
-  dp->RXCOUNT0 = nblocks;
-  dp->TXADDR0  = usb_pm_alloc(usbp, epcp->in_maxsize);
-  dp->RXADDR0  = usb_pm_alloc(usbp, epcp->out_maxsize);
 
-  /* Initial status for isochronous enpoints is valid because disabled and
-     valid are the only legal values. Also since double buffering is used
-     we need to initialize both count/address sets depending on the direction,
-     but since we are not taking advantage of the double buffering, we set both
-     addresses to point to the same PMA.*/
-  if ((epcp->ep_mode & USB_EP_MODE_TYPE) == USB_EP_MODE_TYPE_ISOC) {
-    if (epcp->in_state != NULL) {
+  /* IN endpoint handling.*/
+  if (epcp->in_state != NULL) {
+    dp->TXCOUNT0 = 0;
+    dp->TXADDR0  = usb_pm_alloc(usbp, epcp->in_maxsize);
+
+#if STM32_USB_USE_ISOCHRONOUS
+    if (epr == EPR_EP_TYPE_ISO) {
       epr |= EPR_STAT_TX_VALID;
       dp->TXCOUNT1 = dp->TXCOUNT0;
       dp->TXADDR1  = dp->TXADDR0;   /* Both buffers overlapped.*/
     }
-    if (epcp->out_state != NULL) {
+    else {
+      epr |= EPR_STAT_TX_NAK;
+    }
+#else
+    epr |= EPR_STAT_TX_NAK;
+#endif
+  }
+
+  /* OUT endpoint handling.*/
+  if (epcp->out_state != NULL) {
+    uint16_t nblocks;
+
+    /* Endpoint size and address initialization.*/
+    if (epcp->out_maxsize > 62)
+      nblocks = (((((epcp->out_maxsize - 1) | 0x1f) + 1) / 32) << 10) |
+                0x8000;
+    else
+      nblocks = ((((epcp->out_maxsize - 1) | 1) + 1) / 2) << 10;
+    dp->RXCOUNT0 = nblocks;
+    dp->RXADDR0  = usb_pm_alloc(usbp, epcp->out_maxsize);
+
+#if STM32_USB_USE_ISOCHRONOUS
+    if (epr == EPR_EP_TYPE_ISO) {
       epr |= EPR_STAT_RX_VALID;
       dp->RXCOUNT1 = dp->RXCOUNT0;
       dp->RXADDR1  = dp->RXADDR0;   /* Both buffers overlapped.*/
     }
-  }
-  else {
-    /* Initial status for other endpoint types is NAK.*/
-    if (epcp->in_state != NULL)
-      epr |= EPR_STAT_TX_NAK;
-
-    if (epcp->out_state != NULL)
+    else {
       epr |= EPR_STAT_RX_NAK;
+    }
+#else
+    epr |= EPR_STAT_RX_NAK;
+#endif
   }
 
   /* EPxR register setup.*/
