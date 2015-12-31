@@ -88,6 +88,30 @@
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      14
 #endif
 
+/**
+ * @brief   Enables the use of a thread for data moving.
+ * @details This option improves IRQ handling by performing data moving
+ *          from a dedicated internal thread at the cost of increased
+ *          footprint.
+ */
+#if !defined(STM32_USB_USE_PUMP_THREAD) || defined(__DOXYGEN__)
+#define STM32_USB_USE_PUMP_THREAD           FALSE
+#endif
+
+/**
+ * @brief   Dedicated data pump threads priority.
+ */
+#if !defined(STM32_USB_PUMP_THREAD_PRIO) || defined(__DOXYGEN__)
+#define STM32_USB_PUMP_THREAD_PRIO          LOWPRIO
+#endif
+
+/**
+ * @brief   Dedicated data pump threads stack size.
+ */
+#if !defined(STM32_USB_PUMP_THREAD_STACK_SIZE) || defined(__DOXYGEN__)
+#define STM32_USB_PUMP_THREAD_STACK_SIZE    128
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -360,6 +384,27 @@ struct USBDriver {
    * @brief   Pointer to the next address in the packet memory.
    */
   uint32_t                      pmnext;
+#if STM32_USB_USE_PUMP_THREAD || defined(__DOXYGEN__)
+  /**
+   * @brief   Mask of endpoints to be served by the pump thread.
+   * @note    0..15 for OUT endpoints, 16..31 for IN endpoints.
+   */
+  uint32_t                      pending;
+  /**
+   * @brief   Pointer to the thread when it is sleeping or @p NULL.
+   */
+  thread_reference_t            wait;
+#if defined(_CHIBIOS_RT_) || defined(__DOXYGEN__)
+  /**
+   * @brief   Pointer to the thread once created.
+   */
+  thread_reference_t            tr;
+  /**
+   * @brief   Working area for the dedicated data pump thread;
+   */
+  THD_WORKING_AREA(wa_pump, STM32_USB_PUMP_THREAD_STACK_SIZE);
+#endif /* _CHIBIOS_RT_ */
+#endif /* STM32_USB_USE_PUMP_THREAD */
 };
 
 /*===========================================================================*/
@@ -450,6 +495,9 @@ extern "C" {
   void usb_lld_stall_in(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_out(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_in(USBDriver *usbp, usbep_t ep);
+#if STM32_USB_USE_PUMP_THREAD
+  void usb_lld_pump(void *p);
+#endif
 #ifdef __cplusplus
 }
 #endif
