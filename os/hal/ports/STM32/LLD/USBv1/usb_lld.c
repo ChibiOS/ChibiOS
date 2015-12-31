@@ -493,17 +493,6 @@ void usb_lld_start(USBDriver *usbp) {
     /* Reset procedure enforced on driver start.*/
     _usb_reset(usbp);
   }
-
-#if STM32_USB_USE_PUMP_THREAD && defined(_CHIBIOS_RT_)
-    /* Creates the data pump thread. Note, it is created only once.*/
-    if (usbp->tr == NULL) {
-      usbp->tr = chThdCreateI(usbp->wa_pump, sizeof usbp->wa_pump,
-                              STM32_USB_PUMP_THREAD_PRIO,
-                              usb_lld_pump, usbp);
-      chThdStartI(usbp->tr);
-      chSchRescheduleS();
-  }
-#endif
 }
 
 /**
@@ -868,65 +857,6 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
   if ((STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) != EPR_STAT_TX_VALID)
     EPR_SET_STAT_TX(ep, EPR_STAT_TX_NAK);
 }
-
-#if STM32_USB_USE_PUMP_THREAD || defined(__DOXYGEN__)
-/**
- * @brief   USB data transfer loop.
- * @details This function must be executed by a system thread in order to
- *          make the USB driver work.
- * @note    The data copy part of the driver is implemented in this thread
- *          in order to not perform heavy tasks within interrupt handlers.
- *
- * @param[in] p         pointer to the @p USBDriver object
- *
- * @special
- */
-void usb_lld_pump(void *p) {
-  USBDriver *usbp = (USBDriver *)p;
-
-#if defined(_CHIBIOS_RT_)
-  chRegSetThreadName("usb_lld_pump");
-#endif
-  while (true) {
-    usbep_t ep;
-
-    /* Checking if to go to sleep.*/
-    osalSysLock();
-    if ((usbp->state == USB_STOP) && (usbp->pending == 0U)) {
-      osalThreadSuspendS(&usbp->wait);
-    }
-    osalSysUnlock();
-
-    /* Scanning endpoints.*/
-    for (ep = 0; ep <= USB_ENDOPOINTS_NUMBER; ep++) {
-      uint32_t epmask;
-
-      /* Checking of active endpoints.*/
-      const USBEndpointConfig *epcp = usbp->epc[ep];
-      if (epcp != NULL) {
-        if (epcp->in_state != NULL) {
-          epmask = (1U << 16U) << ep;
-          if ((usbp->pending & epmask) != 0U) {
-            /* Handling transfer of this IN endpoint.*/
-
-            osalSysLock();
-            usbp->pending &= ~epmask;
-            osalSysUnlock();
-          }
-          epmask = 1U << ep;
-          if ((usbp->pending & epmask) != 0U) {
-            /* Handling transfer of this OUT endpoint.*/
-
-            osalSysLock();
-            usbp->pending &= ~epmask;
-            osalSysUnlock();
-          }
-        }
-      }
-    }
-  }
-}
-#endif /* STM32_USB_USE_PUMP_THREAD */
 
 #endif /* HAL_USE_USB */
 
