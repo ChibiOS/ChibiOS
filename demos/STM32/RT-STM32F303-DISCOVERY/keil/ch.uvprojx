@@ -369,7 +369,7 @@
               <MiscControls>--c99 -USTM32F303xC</MiscControls>
               <Define>__heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx;..\..\..\..\os\ext\CMSIS\include;..\..\..\..\os\ext\CMSIS\ST;..\..\..\..\os\rt\ports\ARMCMx;..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\test\rt</IncludePath>
+              <IncludePath>..\;..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx;..\..\..\..\os\ext\CMSIS\include;..\..\..\..\os\ext\CMSIS\ST;..\..\..\..\os\rt\ports\ARMCMx;..\..\..\..\os\rt\ports\ARMCMx\compilers\RVCT;..\..\..\..\os\rt\include;..\..\..\..\os\hal\osal\rt;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD;..\..\..\..\os\hal\ports\STM32\LLD\ADCv3;..\..\..\..\os\hal\ports\STM32\LLD\CANv1;..\..\..\..\os\hal\ports\STM32\LLD\DACv1;..\..\..\..\os\hal\ports\STM32\LLD\DMAv1;..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1;..\..\..\..\test\rt</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -728,16 +728,6 @@
           <GroupName>hal port</GroupName>
           <Files>
             <File>
-              <FileName>adc_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\adc_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>adc_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\adc_lld.h</FilePath>
-            </File>
-            <File>
               <FileName>ext_lld_isr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\ext_lld_isr.c</FilePath>
@@ -758,16 +748,6 @@
               <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\hal_lld.h</FilePath>
             </File>
             <File>
-              <FileName>stm32_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32_dma.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_dma.h</FilePath>
-            </File>
-            <File>
               <FileName>stm32_isr.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_isr.h</FilePath>
@@ -781,26 +761,6 @@
               <FileName>stm32_registry.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_registry.h</FilePath>
-            </File>
-            <File>
-              <FileName>can_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\can_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>can_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\can_lld.h</FilePath>
-            </File>
-            <File>
-              <FileName>ext_lld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\ext_lld.c</FilePath>
-            </File>
-            <File>
-              <FileName>ext_lld.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\ext_lld.h</FilePath>
             </File>
             <File>
               <FileName>pal_lld.c</FileName>
@@ -932,6 +892,46 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\ports\common\ARMCMx\nvic.h</FilePath>
             </File>
+            <File>
+              <FileName>can_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\CANv1\can_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>can_lld.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\CANv1\can_lld.h</FilePath>
+            </File>
+            <File>
+              <FileName>ext_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1\ext_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>ext_lld.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1\ext_lld.h</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\DMAv1\stm32_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_dma.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\DMAv1\stm32_dma.h</FilePath>
+            </File>
+            <File>
+              <FileName>adc_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\ADCv3\adc_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc_lld.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\ports\STM32\LLD\ADCv3\adc_lld.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -946,6 +946,11 @@
               <FileName>can.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\include\can.h</FilePath>
+            </File>
+            <File>
+              <FileName>dac.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\include\dac.h</FilePath>
             </File>
             <File>
               <FileName>ext.h</FileName>
@@ -963,9 +968,19 @@
               <FilePath>..\..\..\..\os\hal\include\hal.h</FilePath>
             </File>
             <File>
+              <FileName>hal_buffers.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\include\hal_buffers.h</FilePath>
+            </File>
+            <File>
               <FileName>hal_channels.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\include\hal_channels.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_files.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\include\hal_files.h</FilePath>
             </File>
             <File>
               <FileName>hal_ioblock.h</FileName>
@@ -993,9 +1008,24 @@
               <FilePath>..\..\..\..\os\hal\include\i2c.h</FilePath>
             </File>
             <File>
+              <FileName>i2s.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\include\i2s.h</FilePath>
+            </File>
+            <File>
               <FileName>icu.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\include\icu.h</FilePath>
+            </File>
+            <File>
+              <FileName>mac.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\include\mac.h</FilePath>
+            </File>
+            <File>
+              <FileName>mii.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\include\mii.h</FilePath>
             </File>
             <File>
               <FileName>mmc_spi.h</FileName>
@@ -1011,6 +1041,11 @@
               <FileName>pwm.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\include\pwm.h</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\include\rtc.h</FilePath>
             </File>
             <File>
               <FileName>sdc.h</FileName>
@@ -1048,6 +1083,11 @@
               <FilePath>..\..\..\..\os\hal\include\usb.h</FilePath>
             </File>
             <File>
+              <FileName>wdg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\include\wdg.h</FilePath>
+            </File>
+            <File>
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\src\adc.c</FilePath>
@@ -1056,6 +1096,11 @@
               <FileName>can.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\src\can.c</FilePath>
+            </File>
+            <File>
+              <FileName>dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\src\dac.c</FilePath>
             </File>
             <File>
               <FileName>ext.c</FileName>
@@ -1073,6 +1118,11 @@
               <FilePath>..\..\..\..\os\hal\src\hal.c</FilePath>
             </File>
             <File>
+              <FileName>hal_buffers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\src\hal_buffers.c</FilePath>
+            </File>
+            <File>
               <FileName>hal_mmcsd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\src\hal_mmcsd.c</FilePath>
@@ -1088,9 +1138,19 @@
               <FilePath>..\..\..\..\os\hal\src\i2c.c</FilePath>
             </File>
             <File>
+              <FileName>i2s.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\src\i2s.c</FilePath>
+            </File>
+            <File>
               <FileName>icu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\src\icu.c</FilePath>
+            </File>
+            <File>
+              <FileName>mac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\src\mac.c</FilePath>
             </File>
             <File>
               <FileName>mmc_spi.c</FileName>
@@ -1106,6 +1166,11 @@
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\src\pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\src\rtc.c</FilePath>
             </File>
             <File>
               <FileName>sdc.c</FileName>
@@ -1141,6 +1206,11 @@
               <FileName>usb.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\hal\src\usb.c</FilePath>
+            </File>
+            <File>
+              <FileName>wdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\src\wdg.c</FilePath>
             </File>
           </Files>
         </Group>
