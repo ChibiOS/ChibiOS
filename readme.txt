@@ -74,6 +74,7 @@
 
 *** 3.1.0 ***
 - RT:  Added CodeWarrior compiler support to the e200 port.
+- HAL: Added support for STM32F446.
 - HAL: Introduced preliminary support for STM32F7xx devices.
 - HAL: Introduced preliminary support for STM32L4xx devices.
 - HAL: Introduced preliminary support for STM32L0xx devices.
