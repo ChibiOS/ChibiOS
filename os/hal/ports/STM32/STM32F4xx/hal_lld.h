@@ -33,6 +33,7 @@
  *            High-performance STM32 F-4 devices.
  *          - STM32F401xC, STM32F401xE for High-performance STM32 F-4 devices.
  *          - STM32F411xE for High-performance STM32 F-4 devices.
+ *          - STM32F446xx for High-performance STM32 F-4 devices.
  *          .
  *
  * @addtogroup HAL
@@ -59,6 +60,9 @@
  */
 #if defined(STM32F439xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32F439 High Performance with DSP and FPU"
+
+#elif defined(STM32F446xx)
+#define PLATFORM_NAME           "STM32F446 High Performance with DSP and FPU"
 
 #elif defined(STM32F429xx)
 #define PLATFORM_NAME           "STM32F429 High Performance with DSP and FPU"
@@ -113,7 +117,7 @@
  */
 #if defined(STM32F427xx) || defined(STM32F437xx) ||                         \
     defined(STM32F429xx) || defined(STM32F439xx) ||                         \
-    defined(__DOXYGEN__)
+    defined(STM32F446xx) || defined(__DOXYGEN__)
 /**
  * @brief   Absolute maximum system clock.
  */
@@ -747,7 +751,8 @@
  * @note    The values are valid for 2.7V to 3.6V supply range.
  */
 #if defined(STM32F429_439xx) || defined(STM32F427_437xx) ||                 \
-    defined(STM32F40_41xxx) || defined(__DOXYGEN__)
+    defined(STM32F40_41xxx)  || defined(STM32F446xx)     ||                 \
+    defined(__DOXYGEN__)
 #if ((STM32_VDD >= 270) && (STM32_VDD <= 360)) || defined(__DOXYGEN__)
 #define STM32_0WS_THRESHOLD         30000000
 #define STM32_1WS_THRESHOLD         60000000
@@ -1157,7 +1162,7 @@
 
 /* Calculating VOS settings, it is different for each sub-platform.*/
 #if defined(STM32F429_439xx) || defined(STM32F427_437xx) ||                 \
-    defined(__DOXYGEN__)
+    defined(STM32F446xx)     || defined(__DOXYGEN__)
 #if STM32_SYSCLK <= 120000000
 #define STM32_VOS                   STM32_VOS_SCALE3
 #define STM32_OVERDRIVE_REQUIRED    FALSE
