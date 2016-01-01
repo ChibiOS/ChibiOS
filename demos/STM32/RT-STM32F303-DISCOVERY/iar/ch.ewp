@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state>7.50.2.10499</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -317,7 +317,7 @@
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx\compilers\IAR</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\include</state>
@@ -327,6 +327,10 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\common\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\ADCv3</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\CANv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\DMAv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\RTCv2</state>
@@ -334,6 +338,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1</state>
           <state>$PROJ_DIR$\..\..\..\..\test\rt</state>
         </option>
         <option>
@@ -1054,7 +1059,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state>7.50.2.10499</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1294,7 +1299,7 @@
           <state>$PROJ_DIR$\..\</state>
           <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\devices\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\ext\CMSIS\ST\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\ports\ARMCMx\compilers\IAR</state>
           <state>$PROJ_DIR$\..\..\..\..\os\rt\include</state>
@@ -1304,6 +1309,10 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\common\ARMCMx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\ADCv3</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\CANv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\DMAv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\RTCv2</state>
@@ -1311,6 +1320,7 @@
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2</state>
           <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1</state>
+          <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1</state>
           <state>$PROJ_DIR$\..\..\..\..\test\rt</state>
         </option>
         <option>
@@ -2020,6 +2030,9 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\can.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\dac.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\ext.h</name>
         </file>
         <file>
@@ -2029,7 +2042,13 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\hal.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\hal_buffers.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\hal_channels.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\hal_files.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\hal_ioblock.h</name>
@@ -2047,7 +2066,16 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\i2c.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\i2s.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\icu.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\mac.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\mii.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\mmc_spi.h</name>
@@ -2057,6 +2085,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\pwm.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\rtc.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\sdc.h</name>
@@ -2078,6 +2109,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\include\usb.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\include\wdg.h</name>
         </file>
       </group>
       <group>
@@ -2101,22 +2135,28 @@
       <group>
         <name>port</name>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\adc_lld.c</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\ADCv1\adc_lld.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\adc_lld.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\ADCv1\adc_lld.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\can_lld.c</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\CANv1\can_lld.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\can_lld.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\CANv1\can_lld.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\ext_lld.c</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\DACv1\dac_lld.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\ext_lld.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\DACv1\dac_lld.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1\ext_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1\ext_lld.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\ext_lld_isr.c</name>
@@ -2191,10 +2231,10 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\TIMv1\st_lld.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_dma.c</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\DMAv1\stm32_dma.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_dma.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\DMAv1\stm32_dma.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\STM32F3xx\stm32_isr.h</name>
@@ -2223,6 +2263,12 @@
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1\usb_lld.h</name>
         </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1\wdg_lld.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1\wdg_lld.h</name>
+        </file>
       </group>
       <group>
         <name>src</name>
@@ -2231,6 +2277,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\can.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\src\dac.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\ext.c</name>
@@ -2242,6 +2291,9 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\hal.c</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\src\hal_buffers.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\hal_mmcsd.c</name>
         </file>
         <file>
@@ -2251,7 +2303,13 @@
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\i2c.c</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\src\i2s.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\icu.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\src\mac.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\mmc_spi.c</name>
@@ -2261,6 +2319,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\pwm.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\src\rtc.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\sdc.c</name>
@@ -2282,6 +2343,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\os\hal\src\usb.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\os\hal\src\wdg.c</name>
         </file>
       </group>
     </group>
