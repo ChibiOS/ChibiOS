@@ -45,7 +45,7 @@ been back-ported to previous stable branches.
     position and size.
 - Improved Serial-USB driver.
   - New buffers queue object.
-  - Modified thedriver to reject write/read attempts if the
+  - Modified the driver to reject write/read attempts if the
     underlying USB is not in active state. In case of disconnection the
     SDU driver broadcasts a CHN_DISCONNECTED event.
 - Improved CAN driver.
