@@ -72,7 +72,7 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
-*** 3.1.0 ***
+*** 16.1.0 ***
 - RT:  Added CodeWarrior compiler support to the e200 port.
 - HAL: Added support for STM32F446.
 - HAL: Introduced preliminary support for STM32F7xx devices.
@@ -88,7 +88,7 @@
 - HAL: Added synchronous API and mutual exclusion to the UART driver.
 - HAL: Added PAL driver for STM32L4xx GPIOv3 peripheral.
 - HAL: Added I2S driver for STM32 SPIv2 peripheral.
-- HAL: Added demos and board files for ST's Nucleo32 boards (F031, F042, F303).
+- HAL: Added demos an- d board files for ST's Nucleo32 boards (F031, F042, F303).
 - HAL: Added "lines" handling to PAL driver, lines are identifiers of both
        ports and pins encoded in a single value. Added a set of macros
        operating on lines.
