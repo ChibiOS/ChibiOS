@@ -13,7 +13,7 @@ been back-ported to previous stable branches.
 
 *** ChibiOS 16.1.0 general improvements ***
 
-- ChibiOS release version number redefined as <year>.<month>.<release> in order
+- ChibiOS release version number redefined as <year>.<month>.<patch> in order
   to not confuse release version numbers with products version numbers.
 - Improved ARMCMx GCC rules.ld supporting multiple RAM regions. It is now
   possible to assign stacks, data, bss, etc ot any of the defined RAM regions.
