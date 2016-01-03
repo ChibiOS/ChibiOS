@@ -321,6 +321,7 @@
  */
 #if !defined(SERIAL_USB_BUFFERS_NUMBER) || defined(__DOXYGEN__)
 #define SERIAL_USB_BUFFERS_NUMBER   2
+#endif
 
 /*===========================================================================*/
 /* SPI driver related settings.                                              */

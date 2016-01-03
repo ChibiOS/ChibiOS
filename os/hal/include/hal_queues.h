@@ -193,42 +193,6 @@ typedef io_queue_t input_queue_t;
 /** @} */
 
 /**
- * @brief   Data part of a static input queue initializer.
- * @details This macro should be used when statically initializing an
- *          input queue that is part of a bigger structure.
- *
- * @param[in] name      the name of the input queue variable
- * @param[in] buffer    pointer to the queue buffer area
- * @param[in] size      size of the queue buffer area
- * @param[in] inotify   input notification callback pointer
- * @param[in] link      application defined pointer
- */
-#define _INPUTQUEUE_DATA(name, buffer, size, inotify, link) {               \
-  NULL,                                                                     \
-  0U,                                                                       \
-  (uint8_t *)(buffer),                                                      \
-  (uint8_t *)(buffer) + (size),                                             \
-  (uint8_t *)(buffer),                                                      \
-  (uint8_t *)(buffer),                                                      \
-  (inotify),                                                                \
-  (link)                                                                    \
-}
-
-/**
- * @brief   Static input queue initializer.
- * @details Statically initialized input queues require no explicit
- *          initialization using @p iqInit().
- *
- * @param[in] name      the name of the input queue variable
- * @param[in] buffer    pointer to the queue buffer area
- * @param[in] size      size of the queue buffer area
- * @param[in] inotify   input notification callback pointer
- * @param[in] link      application defined pointer
- */
-#define INPUTQUEUE_DECL(name, buffer, size, inotify, link)                  \
-  input_queue_t name = _INPUTQUEUE_DATA(name, buffer, size, inotify, link)
-
-/**
  * @extends io_queue_t
  *
  * @brief   Type of an output queue structure.
@@ -307,42 +271,6 @@ typedef io_queue_t output_queue_t;
  */
 #define oqPut(oqp, b) oqPutTimeout(oqp, b, TIME_INFINITE)
  /** @} */
-
-/**
- * @brief   Data part of a static output queue initializer.
- * @details This macro should be used when statically initializing an
- *          output queue that is part of a bigger structure.
- *
- * @param[in] name      the name of the output queue variable
- * @param[in] buffer    pointer to the queue buffer area
- * @param[in] size      size of the queue buffer area
- * @param[in] onotify   output notification callback pointer
- * @param[in] link      application defined pointer
- */
-#define _OUTPUTQUEUE_DATA(name, buffer, size, onotify, link) {              \
-  NULL,                                                                     \
-  (size),                                                                   \
-  (uint8_t *)(buffer),                                                      \
-  (uint8_t *)(buffer) + (size),                                             \
-  (uint8_t *)(buffer),                                                      \
-  (uint8_t *)(buffer),                                                      \
-  (onotify),                                                                \
-  (link)                                                                    \
-}
-
-/**
- * @brief   Static output queue initializer.
- * @details Statically initialized output queues require no explicit
- *          initialization using @p oqInit().
- *
- * @param[in] name      the name of the output queue variable
- * @param[in] buffer    pointer to the queue buffer area
- * @param[in] size      size of the queue buffer area
- * @param[in] onotify   output notification callback pointer
- * @param[in] link      application defined pointer
- */
-#define OUTPUTQUEUE_DECL(name, buffer, size, onotify, link)                 \
-  output_queue_t name = _OUTPUTQUEUE_DATA(name, buffer, size, onotify, link)
 
 #ifdef __cplusplus
 extern "C" {

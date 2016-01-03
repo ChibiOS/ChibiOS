@@ -128,11 +128,11 @@ typedef io_buffers_queue_t output_buffers_queue_t;
 /**
  * @brief   Computes the size of a buffers queue buffer size.
  *
- * @param[in] n         sumber of buffers in the queue
+ * @param[in] n         number of buffers in the queue
  * @param[in] size      size of the buffers
  */
 #define BQ_BUFFER_SIZE(n, size)                                             \
-  (((size_t)(size) + sizeof (size_t)) * (size_t)(n))
+  (((size_t)(size) + (sizeof (size_t)) * (size_t)(n)))
 
 /**
  * @name    Macro Functions

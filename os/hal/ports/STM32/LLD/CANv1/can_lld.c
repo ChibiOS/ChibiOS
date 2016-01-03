@@ -278,6 +278,8 @@ static void can_lld_sce_handler(CANDriver *canp) {
     flags = (eventflags_t)(esr & 7);
     if ((esr & CAN_ESR_LEC) > 0)
       flags |= CAN_FRAMING_ERROR;
+#else
+    flags = 0;
 #endif
 
     osalSysLockFromISR();
