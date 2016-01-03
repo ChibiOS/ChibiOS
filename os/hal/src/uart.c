@@ -320,7 +320,7 @@ size_t uartStopReceive(UARTDriver *uartp) {
  * @note    Stopping a receive operation also suppresses the receive callbacks.
  * @note    This function has to be invoked from a lock zone.
  *
- * @param[in] uartp      pointer to the @p UARTDriver object
+ * @param[in] uartp     pointer to the @p UARTDriver object
  *
  * @return              The number of data frames not received by the
  *                      stopped receive operation.
@@ -354,6 +354,7 @@ size_t uartStopReceiveI(UARTDriver *uartp) {
  * @param[in,out] np    number of data frames to transmit, on exit the number
  *                      of frames actually transmitted
  * @param[in] txbuf     the pointer to the transmit buffer
+ * @param[in] time      operation timeout
  * @return              The operation status.
  * @retval MSG_OK       if the operation completed successfully.
  * @retval MSG_TIMEOUT  if the operation timed out.
@@ -396,6 +397,7 @@ msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
  * @param[in,out] np    number of data frames to transmit, on exit the number
  *                      of frames actually transmitted
  * @param[in] txbuf     the pointer to the transmit buffer
+ * @param[in] time      operation timeout
  * @return              The operation status.
  * @retval MSG_OK       if the operation completed successfully.
  * @retval MSG_TIMEOUT  if the operation timed out.

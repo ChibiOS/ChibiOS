@@ -268,6 +268,7 @@ typedef enum {
  *          implementation only.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
+ * @param[in] errors    mask of errors to be reported
  *
  * @notapi
  */

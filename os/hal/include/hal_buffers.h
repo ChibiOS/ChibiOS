@@ -205,8 +205,8 @@ typedef io_buffers_queue_t output_buffers_queue_t;
  *
  * @iclass
  */
-#define obqIsEmptyI(oqp) ((bool)(((obqp)->bwrptr == (obqp)->brdptr) &&      \
-                                 ((obqp)->bcounter != 0U)))
+#define obqIsEmptyI(obqp) ((bool)(((obqp)->bwrptr == (obqp)->brdptr) &&     \
+                                  ((obqp)->bcounter != 0U)))
 
 /**
  * @brief   Evaluates to @p true if the specified output buffers queue is full.

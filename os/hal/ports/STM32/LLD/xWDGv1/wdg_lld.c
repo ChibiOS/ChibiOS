@@ -126,7 +126,7 @@ void wdg_lld_stop(WDGDriver *wdgp) {
 /**
  * @brief   Reloads WDG's counter.
  *
- * @param[in] idwgp pointer to the @p WDGDriver object
+ * @param[in] wdgp      pointer to the @p WDGDriver object
  *
  * @notapi
  */

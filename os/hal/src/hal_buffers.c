@@ -19,6 +19,20 @@
  * @brief   I/O Buffers code.
  *
  * @addtogroup HAL_BUFFERS
+ * @details Buffers Queues are used when there is the need to exchange
+ *          fixed-length data buffers between ISRs and threads.
+ *          On the ISR side data can be exchanged only using buffers,
+ *          on the thread side data can be exchanged both using buffers and/or
+ *          using an emulation of regular byte queues.
+ *          There are several kind of buffers queues:<br>
+ *          - <b>Input queue</b>, unidirectional queue where the writer is the
+ *            ISR side and the reader is the thread side.
+ *          - <b>Output queue</b>, unidirectional queue where the writer is the
+ *            ISR side and the reader is the thread side.
+ *          - <b>Full duplex queue</b>, bidirectional queue. Full duplex queues
+ *            are implemented by pairing an input queue and an output queue
+ *            together.
+ *          .
  * @{
  */
 
@@ -155,7 +169,7 @@ void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size) {
  * @brief   Gets the next filled buffer from the queue.
  * @note    The function always acquires the same buffer if called repeatedly.
  * @post    After calling the function the fields @p ptr and @p top are set
- *          at beginning and end of the buffer data or @NULL if the queue
+ *          at beginning and end of the buffer data or @p NULL if the queue
  *          is empty.
  *
  * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
@@ -186,7 +200,7 @@ msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
    * @brief   Gets the next filled buffer from the queue.
    * @note    The function always acquires the same buffer if called repeatedly.
    * @post    After calling the function the fields @p ptr and @p top are set
-   *          at beginning and end of the buffer data or @NULL if the queue
+   *          at beginning and end of the buffer data or @p NULL if the queue
    *          is empty.
    *
    * @param[in] ibqp      pointer to the @p input_buffers_queue_t object
@@ -525,7 +539,7 @@ void obqReleaseEmptyBufferI(output_buffers_queue_t *obqp) {
  * @brief   Gets the next empty buffer from the queue.
  * @note    The function always acquires the same buffer if called repeatedly.
  * @post    After calling the function the fields @p ptr and @p top are set
- *          at beginning and end of the buffer data or @NULL if the queue
+ *          at beginning and end of the buffer data or @p NULL if the queue
  *          is empty.
  *
  * @param[in] obqp      pointer to the @p output_buffers_queue_t object
@@ -556,7 +570,7 @@ msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
    * @brief   Gets the next empty buffer from the queue.
    * @note    The function always acquires the same buffer if called repeatedly.
    * @post    After calling the function the fields @p ptr and @p top are set
-   *          at beginning and end of the buffer data or @NULL if the queue
+   *          at beginning and end of the buffer data or @p NULL if the queue
    *          is empty.
    *
    * @param[in] obqp      pointer to the @p output_buffers_queue_t object
@@ -650,6 +664,7 @@ void obqPostFullBufferS(output_buffers_queue_t *obqp, size_t size) {
  *          new buffer is freed in the queue or a timeout occurs.
  *
  * @param[in] obqp      pointer to the @p output_buffers_queue_t object
+ * @param[in] b         byte value to be transferred
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.

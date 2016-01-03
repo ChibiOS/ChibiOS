@@ -15,6 +15,6 @@
 */
 
 /**
- * @defgroup HAL_QUEUES I/O Bytes Queues
+ * @defgroup HAL_BUFFERS I/O Buffers Queues
  * @ingroup HAL_INNER_CODE
  */
