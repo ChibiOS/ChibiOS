@@ -301,7 +301,7 @@
  * @brief   Serial buffers size.
  * @details Configuration parameter, you can change the depth of the queue
  *          buffers depending on the requirements of your application.
- * @note    The default is 64 bytes for both the transmission and receive
+ * @note    The default is 16 bytes for both the transmission and receive
  *          buffers.
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
