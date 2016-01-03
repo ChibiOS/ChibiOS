@@ -336,7 +336,7 @@ static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
  *                      can be @p NULL if the information is not required.
  * @return              The time, in ticks, until next time event.
  * @retval false        if the timers list is empty.
- * @retbal true         if the timers list contains at least one timer.
+ * @retval true         if the timers list contains at least one timer.
  *
  * @iclass
  */
