@@ -157,7 +157,7 @@ SECTIONS
         . = ALIGN(4);
         _bss_end = .;
         PROVIDE(end = .);
-    } > BSS_RAM    
+    } > BSS_RAM
 
     .ram0_init : ALIGN(4)
     {
