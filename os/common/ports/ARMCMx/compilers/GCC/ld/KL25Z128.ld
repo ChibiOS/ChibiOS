@@ -25,15 +25,15 @@ ENTRY(Reset_Handler)
 
 MEMORY
 {
-  flash0   :  org = 0x00000000,  len = 0xc0
+  flash0   :  org = 0x00000000,  len = 0x100
   flashcfg :  org = 0x00000400,  len = 0x10
   flash    :  org = 0x00000410,  len = 128k - 0x410
-  ram      :  org = 0x1FFFF000,  len = 16k
+  ram0     :  org = 0x1FFFF000,  len = 16k
 }
 
-__ram_start__           = ORIGIN(ram);
-__ram_size__            = LENGTH(ram);
-__ram_end__             = __ram_start__ + __ram_size__;
+__ram0_start__           = ORIGIN(ram0);
+__ram0_size__            = LENGTH(ram0);
+__ram0_end__             = __ram0_start__ + __ram0_size__;
 
 SECTIONS
 {
@@ -120,7 +120,7 @@ SECTIONS
     . = ALIGN(8);
     __process_stack_end__ = .;
     __main_thread_stack_end__ = .;
-  } > ram
+  } > ram0
 
   .data :
   {
@@ -133,7 +133,7 @@ SECTIONS
     *(.ramtext)
     . = ALIGN(4);
     PROVIDE(_edata = .);
-  } > ram AT > flash
+  } > ram0 AT > flash
 
   .bss :
   {
@@ -146,11 +146,35 @@ SECTIONS
     *(COMMON)
     . = ALIGN(4);
     PROVIDE(_bss_end = .);
-  } > ram
+  } > ram0
+
+  .ram0_init : ALIGN(4)
+  {
+      . = ALIGN(4);
+      __ram0_init_text__ = LOADADDR(.ram0_init);
+      __ram0_init__ = .;
+      *(.ram0_init)
+      *(.ram0_init.*)
+      . = ALIGN(4);
+  } > ram0 AT > flash
+
+  .ram0 (NOLOAD) : ALIGN(4)
+  {
+      . = ALIGN(4);
+      __ram0_clear__ = .;
+      *(.ram0_clear)
+      *(.ram0_clear.*)
+      . = ALIGN(4);
+      __ram0_noinit__ = .;
+      *(.ram0)
+      *(.ram0.*)
+      . = ALIGN(4);
+      __ram0_free__ = .;
+  } > ram0
 }
 
 PROVIDE(end = .);
 _end            = .;
 
 __heap_base__   = _end;
-__heap_end__    = __ram_end__;
+__heap_end__    = __ram0_end__;
