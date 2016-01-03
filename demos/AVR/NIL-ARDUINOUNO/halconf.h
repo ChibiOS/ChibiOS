@@ -323,6 +323,13 @@
 #define SERIAL_USB_BUFFERS_SIZE     256
 #endif
 
+/**
+ * @brief   Serial over USB number of buffers.
+ * @note    The default is 2 buffers.
+ */
+#if !defined(SERIAL_USB_BUFFERS_NUMBER) || defined(__DOXYGEN__)
+#define SERIAL_USB_BUFFERS_NUMBER   2
+
 /*===========================================================================*/
 /* SPI driver related settings.                                              */
 /*===========================================================================*/
@@ -352,7 +359,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(UART_USE_WAIT) || defined(__DOXYGEN__)
-#define UART_USE_WAIT                       FALSE
+#define UART_USE_WAIT               FALSE
 #endif
 
 /**
@@ -360,7 +367,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(UART_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define UART_USE_MUTUAL_EXCLUSION           FALSE
+#define UART_USE_MUTUAL_EXCLUSION   FALSE
 #endif
 
 /*===========================================================================*/
@@ -372,7 +379,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(USB_USE_WAIT) || defined(__DOXYGEN__)
-#define USB_USE_WAIT                        FALSE
+#define USB_USE_WAIT                FALSE
 #endif
 
 #endif /* _HALCONF_H_ */
