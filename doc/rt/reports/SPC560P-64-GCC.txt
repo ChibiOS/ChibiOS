@@ -1,8 +1,8 @@
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       3.0.0
-*** Compiled:     Jul  8 2015 - 13:56:32
+*** Kernel:       3.1.0
+*** Compiled:     Jan  4 2016 - 12:19:15
 *** Compiler:     GCC 4.6.3 build on 2013-01-07
 *** Architecture: Power Architecture
 *** Core Variant: e200z0
@@ -99,27 +99,27 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Benchmark, messages #1)
---- Score : 203906 msgs/S, 407812 ctxswc/S
+--- Score : 203904 msgs/S, 407808 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Benchmark, messages #2)
---- Score : 172029 msgs/S, 344058 ctxswc/S
+--- Score : 172027 msgs/S, 344054 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Benchmark, messages #3)
---- Score : 172029 msgs/S, 344058 ctxswc/S
+--- Score : 172028 msgs/S, 344056 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Benchmark, context switch)
---- Score : 604240 ctxswc/S
+--- Score : 604248 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Benchmark, threads, full cycle)
---- Score : 136663 threads/S
+--- Score : 136665 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Benchmark, threads, create only)
---- Score : 194574 threads/S
+--- Score : 194575 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Benchmark, mass reschedule, 5 threads)
@@ -127,15 +127,15 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Benchmark, round robin context switching)
---- Score : 420580 ctxswc/S
+--- Score : 420560 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Benchmark, I/O Queues throughput)
---- Score : 534648 bytes/S
+--- Score : 519944 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Benchmark, virtual timers set/reset)
---- Score : 851328 timers/S
+--- Score : 857878 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Benchmark, semaphores wait/signal)
