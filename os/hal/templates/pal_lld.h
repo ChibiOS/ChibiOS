@@ -95,17 +95,6 @@ typedef struct {
 } PALConfig;
 
 /**
- * @brief   Width, in bits, of an I/O port.
- */
-#define PAL_IOPORTS_WIDTH 32U
-
-/**
- * @brief   Whole port mask.
- * @brief   This macro specifies all the valid bits into a port.
- */
-#define PAL_WHOLE_PORT ((ioportmask_t)0xFFFFFFFFU)
-
-/**
  * @brief   Digital I/O port sized unsigned type.
  */
 typedef uint32_t ioportmask_t;

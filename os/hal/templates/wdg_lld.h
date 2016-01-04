@@ -41,11 +41,10 @@
  */
 /**
  * @brief   WDG1 driver enable switch.
- * @details If set to @p TRUE the support for IWDG is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(STM32_WDG_USE_WDG1) || defined(__DOXYGEN__)
-#define STM32_WDG_USE_WDG1                  FALSE
+#if !defined(PLATFORM_WDG_USE_WDG1) || defined(__DOXYGEN__)
+#define PLATFORM_WDG_USE_WDG1                  FALSE
 #endif
 /** @} */
 
@@ -92,7 +91,7 @@ struct WDGDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if STM32_WDG_USE_IWDG && !defined(__DOXYGEN__)
+#if PLATFORM_WDG_USE_WDG1 && !defined(__DOXYGEN__)
 extern WDGDriver WDGD1;
 #endif
 
