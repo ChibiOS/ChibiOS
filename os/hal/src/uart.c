@@ -71,12 +71,12 @@ void uartObjectInit(UARTDriver *uartp) {
   uartp->txstate    = UART_TX_IDLE;
   uartp->rxstate    = UART_RX_IDLE;
   uartp->config     = NULL;
-#if UART_USE_WAIT || defined(__DOXYGEN__)
+#if UART_USE_WAIT == TRUE
   uartp->early      = false;
   uartp->threadrx   = NULL;
   uartp->threadtx   = NULL;
 #endif /* UART_USE_WAIT */
-#if UART_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if UART_USE_MUTUAL_EXCLUSION == TRUE
   osalMutexObjectInit(&uartp->mutex);
 #endif /* UART_USE_MUTUAL_EXCLUSION */
 
@@ -354,7 +354,7 @@ size_t uartStopReceiveI(UARTDriver *uartp) {
  * @param[in,out] np    number of data frames to transmit, on exit the number
  *                      of frames actually transmitted
  * @param[in] txbuf     the pointer to the transmit buffer
- * @param[in] time      operation timeout
+ * @param[in] timeout   operation timeout
  * @return              The operation status.
  * @retval MSG_OK       if the operation completed successfully.
  * @retval MSG_TIMEOUT  if the operation timed out.
@@ -362,7 +362,7 @@ size_t uartStopReceiveI(UARTDriver *uartp) {
  * @api
  */
 msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
-                      const void *txbuf, systime_t time) {
+                      const void *txbuf, systime_t timeout) {
   msg_t msg;
 
   osalDbgCheck((uartp != NULL) && (*np > 0U) && (txbuf != NULL));
@@ -377,7 +377,7 @@ msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
   uartp->txstate = UART_TX_ACTIVE;
 
   /* Waiting for result.*/
-  msg = osalThreadSuspendTimeoutS(&uartp->threadtx, time);
+  msg = osalThreadSuspendTimeoutS(&uartp->threadtx, timeout);
   if (msg != MSG_OK) {
     *np = uartStopSendI(uartp);
   }
@@ -397,7 +397,7 @@ msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
  * @param[in,out] np    number of data frames to transmit, on exit the number
  *                      of frames actually transmitted
  * @param[in] txbuf     the pointer to the transmit buffer
- * @param[in] time      operation timeout
+ * @param[in] timeout   operation timeout
  * @return              The operation status.
  * @retval MSG_OK       if the operation completed successfully.
  * @retval MSG_TIMEOUT  if the operation timed out.
@@ -405,7 +405,7 @@ msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
  * @api
  */
 msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
-                          const void *txbuf, systime_t time) {
+                          const void *txbuf, systime_t timeout) {
   msg_t msg;
 
   osalDbgCheck((uartp != NULL) && (*np > 0U) && (txbuf != NULL));
@@ -420,7 +420,7 @@ msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
   uartp->txstate = UART_TX_ACTIVE;
 
   /* Waiting for result.*/
-  msg = osalThreadSuspendTimeoutS(&uartp->threadtx, time);
+  msg = osalThreadSuspendTimeoutS(&uartp->threadtx, timeout);
   if (msg != MSG_OK) {
     *np = uartStopSendI(uartp);
   }
@@ -440,7 +440,7 @@ msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
  * @param[in,out] np    number of data frames to receive, on exit the number
  *                      of frames actually received
  * @param[in] rxbuf     the pointer to the receive buffer
- * @param[in] time      operation timeout
+ * @param[in] timeout   operation timeout
  *
  * @return              The operation status.
  * @retval MSG_OK       if the operation completed successfully.
@@ -450,7 +450,7 @@ msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
  * @api
  */
 msg_t uartReceiveTimeout(UARTDriver *uartp, size_t *np,
-                         void *rxbuf, systime_t time) {
+                         void *rxbuf, systime_t timeout) {
   msg_t msg;
 
   osalDbgCheck((uartp != NULL) && (*np > 0U) && (rxbuf != NULL));
@@ -464,7 +464,7 @@ msg_t uartReceiveTimeout(UARTDriver *uartp, size_t *np,
   uartp->rxstate = UART_RX_ACTIVE;
 
   /* Waiting for result.*/
-  msg = osalThreadSuspendTimeoutS(&uartp->threadrx, time);
+  msg = osalThreadSuspendTimeoutS(&uartp->threadrx, timeout);
   if (msg != MSG_OK) {
     *np = uartStopReceiveI(uartp);
   }

@@ -25,7 +25,7 @@
 #ifndef _WDG_LLD_H_
 #define _WDG_LLD_H_
 
-#if HAL_USE_WDG || defined(__DOXYGEN__)
+#if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -176,7 +176,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_WDG */
+#endif /* HAL_USE_WDG == TRUE */
 
 #endif /* _WDG_LLD_H_ */
 

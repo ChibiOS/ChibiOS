@@ -174,8 +174,10 @@ typedef io_queue_t input_queue_t;
  *
  * @iclass
  */
-#define iqIsFullI(iqp) ((bool)(((iqp)->q_wrptr == (iqp)->q_rdptr) &&        \
-                               ((iqp)->q_counter != 0U)))
+#define iqIsFullI(iqp)                                                      \
+  /*lint -save -e9007 [13.5] No side effects, a pointer is passed.*/        \
+  ((bool)(((iqp)->q_wrptr == (iqp)->q_rdptr) && ((iqp)->q_counter != 0U)))  \
+  /*lint -restore*/
 
 /**
  * @brief   Input queue read.
@@ -240,8 +242,10 @@ typedef io_queue_t output_queue_t;
  *
  * @iclass
  */
-#define oqIsEmptyI(oqp) ((bool)(((oqp)->q_wrptr == (oqp)->q_rdptr) &&       \
-                                ((oqp)->q_counter != 0U)))
+#define oqIsEmptyI(oqp)                                                     \
+  /*lint -save -e9007 [13.5] No side effects, a pointer is passed.*/        \
+  ((bool)(((oqp)->q_wrptr == (oqp)->q_rdptr) && ((oqp)->q_counter != 0U)))  \
+  /*lint -restore*/
 
 /**
  * @brief   Evaluates to @p true if the specified output queue is full.

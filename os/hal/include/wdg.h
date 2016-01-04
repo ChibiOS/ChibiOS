@@ -49,7 +49,7 @@
 typedef enum {
   WDG_UNINIT = 0,                   /**< Not initialized.                   */
   WDG_STOP = 1,                     /**< Stopped.                           */
-  WDG_READY = 2,                    /**< Ready.                             */
+  WDG_READY = 2                     /**< Ready.                             */
 } wdgstate_t;
 
 #include "wdg_lld.h"

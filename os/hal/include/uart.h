@@ -321,11 +321,11 @@ extern "C" {
   size_t uartStopReceiveI(UARTDriver *uartp);
 #if UART_USE_WAIT == TRUE
   msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
-                        const void *txbuf, systime_t time);
+                        const void *txbuf, systime_t timeout);
   msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
-                            const void *txbuf, systime_t time);
+                            const void *txbuf, systime_t timeout);
   msg_t uartReceiveTimeout(UARTDriver *uartp, size_t *np,
-                           void *rxbuf, systime_t time);
+                           void *rxbuf, systime_t timeout);
 #endif
 #if UART_USE_MUTUAL_EXCLUSION == TRUE
   void uartAcquireBus(UARTDriver *uartp);

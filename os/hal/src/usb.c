@@ -419,14 +419,16 @@ void usbStartReceiveI(USBDriver *usbp, usbep_t ep,
   USBOutEndpointState *osp;
 
   osalDbgCheckClassI();
-  osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
+  osalDbgCheck((usbp != NULL) && (ep <= (usbep_t)USB_MAX_ENDPOINTS));
   osalDbgAssert(!usbGetReceiveStatusI(usbp, ep), "already receiving");
 
   /* Marking the endpoint as active.*/
   usbp->receiving |= (uint16_t)((unsigned)1U << (unsigned)ep);
 
   /* Setting up the transfer.*/
+  /*lint -save -e661 [18.1] pclint is confused by the check on ep.*/
   osp = usbp->epc[ep]->out_state;
+  /*lint -restore*/
   osp->rxbuf  = buf;
   osp->rxsize = n;
   osp->rxcnt  = 0;
@@ -456,14 +458,16 @@ void usbStartTransmitI(USBDriver *usbp, usbep_t ep,
   USBInEndpointState *isp;
 
   osalDbgCheckClassI();
-  osalDbgCheck((usbp != NULL) && (ep <= USB_MAX_ENDPOINTS));
+  osalDbgCheck((usbp != NULL) && (ep <= (usbep_t)USB_MAX_ENDPOINTS));
   osalDbgAssert(!usbGetTransmitStatusI(usbp, ep), "already transmitting");
 
   /* Marking the endpoint as active.*/
   usbp->transmitting |= (uint16_t)((unsigned)1U << (unsigned)ep);
 
   /* Setting up the transfer.*/
+  /*lint -save -e661 [18.1] pclint is confused by the check on ep.*/
   isp = usbp->epc[ep]->in_state;
+  /*lint -restore*/
   isp->txbuf  = buf;
   isp->txsize = n;
   isp->txcnt  = 0;

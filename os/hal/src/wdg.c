@@ -24,7 +24,7 @@
 
 #include "hal.h"
 
-#if HAL_USE_WDG || defined(__DOXYGEN__)
+#if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -115,6 +115,6 @@ void wdgReset(WDGDriver *wdgp) {
   osalSysUnlock();
 }
 
-#endif /* HAL_USE_WDG */
+#endif /* HAL_USE_WDG == TRUE */
 
 /** @} */

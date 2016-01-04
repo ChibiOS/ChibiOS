@@ -56,8 +56,9 @@ static cdc_linecoding_t linecoding = {
 
 static size_t write(void *ip, const uint8_t *bp, size_t n) {
 
-  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE) {
     return 0;
+  }
 
   return obqWriteTimeout(&((SerialUSBDriver *)ip)->obqueue, bp,
                          n, TIME_INFINITE);
@@ -65,8 +66,9 @@ static size_t write(void *ip, const uint8_t *bp, size_t n) {
 
 static size_t read(void *ip, uint8_t *bp, size_t n) {
 
-  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE) {
     return 0;
+  }
 
   return ibqReadTimeout(&((SerialUSBDriver *)ip)->ibqueue, bp,
                         n, TIME_INFINITE);
@@ -74,48 +76,54 @@ static size_t read(void *ip, uint8_t *bp, size_t n) {
 
 static msg_t put(void *ip, uint8_t b) {
 
-  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE) {
     return MSG_RESET;
+  }
 
   return obqPutTimeout(&((SerialUSBDriver *)ip)->obqueue, b, TIME_INFINITE);
 }
 
 static msg_t get(void *ip) {
 
-  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE) {
     return MSG_RESET;
+  }
 
   return ibqGetTimeout(&((SerialUSBDriver *)ip)->ibqueue, TIME_INFINITE);
 }
 
 static msg_t putt(void *ip, uint8_t b, systime_t timeout) {
 
-  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE) {
     return MSG_RESET;
+  }
 
   return obqPutTimeout(&((SerialUSBDriver *)ip)->obqueue, b, timeout);
 }
 
 static msg_t gett(void *ip, systime_t timeout) {
 
-  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE) {
     return MSG_RESET;
+  }
 
   return ibqGetTimeout(&((SerialUSBDriver *)ip)->ibqueue, timeout);
 }
 
 static size_t writet(void *ip, const uint8_t *bp, size_t n, systime_t timeout) {
 
-  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE) {
     return 0;
+  }
 
   return obqWriteTimeout(&((SerialUSBDriver *)ip)->obqueue, bp, n, timeout);
 }
 
 static size_t readt(void *ip, uint8_t *bp, size_t n, systime_t timeout) {
 
-  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE)
+  if (usbGetDriverStateI(((SerialUSBDriver *)ip)->config->usbp) != USB_ACTIVE) {
     return 0;
+  }
 
   return ibqReadTimeout(&((SerialUSBDriver *)ip)->ibqueue, bp, n, timeout);
 }

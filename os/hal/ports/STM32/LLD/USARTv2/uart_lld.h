@@ -623,7 +623,7 @@ struct UARTDriver {
    * @brief   Current configuration data.
    */
   const UARTConfig          *config;
-#if UART_USE_WAIT || defined(__DOXYGEN__)
+#if (UART_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Synchronization flag for transmit operations.
    */
@@ -637,7 +637,7 @@ struct UARTDriver {
    */
   thread_reference_t        threadtx;
 #endif /* UART_USE_WAIT */
-#if UART_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
+#if (UART_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the peripheral.
    */

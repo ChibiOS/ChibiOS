@@ -25,7 +25,7 @@
 #ifndef _WDG_LLD_H_
 #define _WDG_LLD_H_
 
-#if HAL_USE_WDG || defined(__DOXYGEN__)
+#if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -91,7 +91,7 @@ struct WDGDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if PLATFORM_WDG_USE_WDG1 && !defined(__DOXYGEN__)
+#if (PLATFORM_WDG_USE_WDG1 == TRUE) && !defined(__DOXYGEN__)
 extern WDGDriver WDGD1;
 #endif
 
@@ -106,7 +106,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_WDG */
+#endif /* HAL_USE_WDG == TRUE */
 
 #endif /* _WDG_LLD_H_ */
 
