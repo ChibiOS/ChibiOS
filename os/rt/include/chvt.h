@@ -344,8 +344,9 @@ static inline bool chVTGetTimersStateI(systime_t *timep) {
 
   chDbgCheckClassI();
 
-  if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next)
+  if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
     return false;
+  }
 
   if (timep != NULL) {
 #if CH_CFG_ST_TIMEDELTA == 0
