@@ -16,7 +16,7 @@
 
 /**
  * @defgroup ST ST Driver
- * @brief Generic System Tick driver.
+ * @brief Generic System Tick Driver.
  * @details This module implements a system tick timer in order to support
  *          the underlying operating system.
  *
