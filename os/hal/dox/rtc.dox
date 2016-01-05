@@ -16,7 +16,7 @@
 
 /**
  * @defgroup RTC RTC Driver
- * @brief   Real Time Clock Abstraction Layer
+ * @brief   Generic RTC Driver.
  * @details This module defines an abstract interface for a Real Time Clock
  *          Peripheral.
  * @pre     In order to use the RTC driver the @p HAL_USE_RTC option

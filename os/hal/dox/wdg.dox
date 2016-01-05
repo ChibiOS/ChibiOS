@@ -16,7 +16,7 @@
 
 /**
  * @defgroup WDG WDG Driver
- * @brief   Watchdog Timer Abstraction Layer
+ * @brief   Generic WDG Driver
  * @details This module defines an abstract interface for a watchdog
  *          timer.
  * @pre     In order to use the WDG driver the @p HAL_USE_WDG option
