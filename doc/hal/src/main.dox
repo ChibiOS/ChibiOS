@@ -25,10 +25,14 @@
  * - Hardware Abstraction Layer (HAL) supporting numerous high level device
  *   drivers abstracting common features in modern MCUs.
  * - Driver models for: ADC, CAN, DAC, EXT, GPT, I2C, I2S, ICU, MAC, MMC, PAL,
- *   PWM, RTC, SDC, Serial, USB, USB-CDC, SPI, ST.
+ *   PWM, RTC, SDC, Serial, UART, USB, USB-CDC, SPI, ST, WDG.
  * - Abstraction of streams.
  * - Abstraction of block devices.
  * - The drivers can be ported to virtually any MCU architecture thanks to
  *   an high level API.
+ * - The HAL can be used with or without an RTOS.
+ * - The HAL can be adapted to any reasonable RTOS thanks to an Operating
+ *   System Abstraction Layer (OSAL). ChibiOS/RT and ChibiOS/NIL are supported
+ *   out of the box.
  * .
  */
