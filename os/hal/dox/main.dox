@@ -128,6 +128,13 @@
  */
 
 /**
+ * @defgroup HAL_SUPPORT Support Code
+ * @brief   HAL Support Code.
+ *
+ * @ingroup IO
+ */
+
+/**
  * @defgroup OSAL OSAL
  * @brief   Operating System Abstraction Layer.
  * @details <h2>The OSAL</h2>

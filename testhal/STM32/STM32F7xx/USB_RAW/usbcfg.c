@@ -15,7 +15,7 @@
 */
 
 #include "hal.h"
-
+#include "usb_cdc.h"
 #include "usbcfg.h"
 
 /*
@@ -282,20 +282,6 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
   }
   return;
 }
-
-#define CDC_SET_LINE_CODING                 0x20
-#define CDC_GET_LINE_CODING                 0x21
-#define CDC_SET_CONTROL_LINE_STATE          0x22
-
-#define LC_STOP_1                           0
-#define LC_PARITY_NONE                      0
-
-typedef struct {
-  uint8_t                       dwDTERate[4];
-  uint8_t                       bCharFormat;
-  uint8_t                       bParityType;
-  uint8_t                       bDataBits;
-} cdc_linecoding_t;
 
 static cdc_linecoding_t linecoding = {
   {0x00, 0x96, 0x00, 0x00},             /* 38400.                           */

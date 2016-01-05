@@ -27,81 +27,11 @@
 
 #if (HAL_USE_SERIAL_USB == TRUE) || defined(__DOXYGEN__)
 
+#include "usb_cdc.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-
-/**
- * @name    CDC specific messages.
- * @{
- */
-#define CDC_SEND_ENCAPSULATED_COMMAND       0x00
-#define CDC_GET_ENCAPSULATED_RESPONSE       0x01
-#define CDC_SET_COMM_FEATURE                0x02
-#define CDC_GET_COMM_FEATURE                0x03
-#define CDC_CLEAR_COMM_FEATURE              0x04
-#define CDC_SET_AUX_LINE_STATE              0x10
-#define CDC_SET_HOOK_STATE                  0x11
-#define CDC_PULSE_SETUP                     0x12
-#define CDC_SEND_PULSE                      0x13
-#define CDC_SET_PULSE_TIME                  0x14
-#define CDC_RING_AUX_JACK                   0x15
-#define CDC_SET_LINE_CODING                 0x20
-#define CDC_GET_LINE_CODING                 0x21
-#define CDC_SET_CONTROL_LINE_STATE          0x22
-#define CDC_SEND_BREAK                      0x23
-#define CDC_SET_RINGER_PARMS                0x30
-#define CDC_GET_RINGER_PARMS                0x31
-#define CDC_SET_OPERATION_PARMS             0x32
-#define CDC_GET_OPERATION_PARMS             0x33
-/** @} */
-
-/**
- * @name    CDC classes
- * @{
- */
-#define CDC_COMMUNICATION_INTERFACE_CLASS   0x02
-#define CDC_DATA_INTERFACE_CLASS            0x0A
-/** @} */
-
-/**
- * @name    CDC subclasses
- * @{
- */
-#define CDC_ABSTRACT_CONTROL_MODEL          0x02
-/** @} */
-
-/**
- * @name    CDC descriptors
- * @{
- */
-#define CDC_CS_INTERFACE                    0x24
-/** @} */
-
-/**
- * @name    CDC subdescriptors
- * @{
- */
-#define CDC_HEADER                          0x00
-#define CDC_CALL_MANAGEMENT                 0x01
-#define CDC_ABSTRACT_CONTROL_MANAGEMENT     0x02
-#define CDC_UNION                           0x06
-/** @} */
-
-/**
- * @name    Line Control bit definitions.
- * @{
- */
-#define LC_STOP_1                           0
-#define LC_STOP_1P5                         1
-#define LC_STOP_2                           2
-
-#define LC_PARITY_NONE                      0
-#define LC_PARITY_ODD                       1
-#define LC_PARITY_EVEN                      2
-#define LC_PARITY_MARK                      3
-#define LC_PARITY_SPACE                     4
-/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -142,16 +72,6 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Type of Line Coding structure.
- */
-typedef struct {
-  uint8_t                       dwDTERate[4];
-  uint8_t                       bCharFormat;
-  uint8_t                       bParityType;
-  uint8_t                       bDataBits;
-} cdc_linecoding_t;
 
 /**
  * @brief Driver state machine possible states.
