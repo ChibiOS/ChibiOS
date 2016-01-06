@@ -120,20 +120,6 @@
 #define ARM_ENABLE_WFI_IDLE             FALSE
 #endif
 
-/**
- * @brief   Enabled if in the system THUM code is used somewhere.
- */
-#if !defined(THUMB_PRESENT)
-#define THUMB_PRESENT
-#endif
-
-/**
- * @brief   Enabled if THUMB interworking is not required.
- */
-#if !defined(THUMB_NO_INTERWORKING)
-#define THUMB_NO_INTERWORKING
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

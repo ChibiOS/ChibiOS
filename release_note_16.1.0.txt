@@ -22,6 +22,7 @@ been back-ported to previous stable branches.
 
 *** What's new in RT 3.1.0 ***
 
+- Support for Cortex-M7.
 - Added new function chVTGetTimersStateI() returning the state of the
   timers list. This is useful to assess if it is convenient to transition
   to lower power modes.
@@ -85,4 +86,5 @@ been back-ported to previous stable branches.
 
 *** What's new in NIL 1.1.0 ***
 
+- Support for Cortex-M7.
 - Minor bugs fixed.
