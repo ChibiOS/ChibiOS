@@ -1,14 +1,14 @@
 
 *** ChibiOS/RT test suite
 ***
-*** Kernel:       3.0.0
-*** Compiled:     Jul  7 2015 - 11:32:32
-*** Compiler:     GCC 4.7.4 20140401 (release) [ARM/embedded-4_7-branch revision 209195]
-*** Architecture: ARMv7-M
-*** Core Variant: Cortex-M3
+*** Kernel:       3.1.0
+*** Compiled:     Jan  6 2016 - 12:13:33
+*** Compiler:     GCC 4.9.3 20150529 (release) [ARM/embedded-4_9-branch revision 227977]
+*** Architecture: ARMv7E-M
+*** Core Variant: Cortex-M4F
 *** Port Info:    Advanced kernel mode
-*** Platform:     STM32L1xx Ultra Low Power Medium Density
-*** Test Board:   ST STM32L-Discovery
+*** Platform:     STM32L4xx Ultra Low Power
+*** Test Board:   STMicroelectronics NUCLEO-L476RG
 
 ----------------------------------------------------------------------------
 --- Test Case 1.1 (System, critical zones)
@@ -99,55 +99,55 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Benchmark, messages #1)
---- Score : 139117 msgs/S, 278234 ctxswc/S
+--- Score : 293033 msgs/S, 586066 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Benchmark, messages #2)
---- Score : 112271 msgs/S, 224542 ctxswc/S
+--- Score : 246148 msgs/S, 492296 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Benchmark, messages #3)
---- Score : 112271 msgs/S, 224542 ctxswc/S
+--- Score : 246148 msgs/S, 492296 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Benchmark, context switch)
---- Score : 451464 ctxswc/S
+--- Score : 817360 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Benchmark, threads, full cycle)
---- Score : 85098 threads/S
+--- Score : 186911 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Benchmark, threads, create only)
---- Score : 124502 threads/S
+--- Score : 257228 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Benchmark, mass reschedule, 5 threads)
---- Score : 36115 reschedules/S, 216690 ctxswc/S
+--- Score : 79286 reschedules/S, 475716 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Benchmark, round robin context switching)
---- Score : 265540 ctxswc/S
+--- Score : 586060 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Benchmark, I/O Queues throughput)
---- Score : 333520 bytes/S
+--- Score : 868376 bytes/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Benchmark, virtual timers set/reset)
---- Score : 228940 timers/S
+--- Score : 730616 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Benchmark, semaphores wait/signal)
---- Score : 571372 wait+signal/S
+--- Score : 1839060 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (Benchmark, mutexes lock/unlock)
---- Score : 307664 lock+unlock/S
+--- Score : 981584 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.13 (Benchmark, RAM footprint)
---- System: 336 bytes
+--- System: 472 bytes
 --- Thread: 68 bytes
 --- Timer : 20 bytes
 --- Semaph: 12 bytes
