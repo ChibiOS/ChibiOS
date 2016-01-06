@@ -21,7 +21,7 @@
  * @file    templates/nilcore_timer.h
  * @brief   System timer header file.
  *
- * @addtogroup ARMCMx_TIMER
+ * @addtogroup NIL_TIMER
  * @{
  */
 
