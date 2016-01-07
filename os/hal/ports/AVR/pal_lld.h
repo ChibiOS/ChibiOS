@@ -54,7 +54,7 @@
 /**
  * @brief   AVR setup registers.
  */
-typedef struct  {
+typedef struct {
   uint8_t  out;
   uint8_t  dir;
 } avr_gpio_setup_t;
@@ -65,7 +65,7 @@ typedef struct  {
  *          ports, the ports with abnormal layout cannot be used through
  *          PAL driver. Example: PORT F on Mega128.
  */
-typedef struct  {
+typedef struct {
   volatile uint8_t  in;
   volatile uint8_t  dir;
   volatile uint8_t  out;
