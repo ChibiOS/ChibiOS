@@ -276,6 +276,12 @@ struct ch_thread {
      *        state.
      */
     thread_reference_t  *wttrp;
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
+    /**
+     * @brief Thread sent message.
+     */
+    msg_t               sentmsg;
+#endif
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief Pointer to a generic semaphore object.
@@ -314,10 +320,6 @@ struct ch_thread {
    * @brief Messages queue.
    */
   threads_queue_t       p_msgqueue;
-  /**
-   * @brief Thread message.
-   */
-  msg_t                 p_msg;
 #endif
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   /**

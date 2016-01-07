@@ -72,6 +72,11 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** RT 3.2.0 ***
+- OPT: Removed the p_msg field from the thread_t structure saving a
+       msg_t-sized field from the structure. Messages now use a new field
+       into the p_u union. Now synchnorous messages are even faster.
+
 *** 16.1.0 ***
 - RT:  Added CodeWarrior compiler support to the e200 port.
 - HAL: Added support for STM32F446.
