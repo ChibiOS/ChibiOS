@@ -270,7 +270,7 @@ void chSysUnconditionalUnlock(void) {
  *
  * @xclass
  */
-syssts_t chSysGetStatusAndLockX(void)  {
+syssts_t chSysGetStatusAndLockX(void) {
 
   syssts_t sts = port_get_irq_status();
   if (port_irq_enabled(sts)) {
