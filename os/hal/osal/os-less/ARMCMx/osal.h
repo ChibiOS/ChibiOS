@@ -664,7 +664,7 @@ static inline void osalSysUnlockFromISR(void) {
  *
  * @xclass
  */
-static inline syssts_t osalSysGetStatusAndLockX(void)  {
+static inline syssts_t osalSysGetStatusAndLockX(void) {
   syssts_t sts;
 
 #if CORTEX_MODEL == 0
