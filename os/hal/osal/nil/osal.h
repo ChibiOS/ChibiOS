@@ -548,7 +548,7 @@ static inline void osalSysUnlockFromISR(void) {
  *
  * @xclass
  */
-static inline syssts_t osalSysGetStatusAndLockX(void)  {
+static inline syssts_t osalSysGetStatusAndLockX(void) {
 
   return chSysGetStatusAndLockX();
 }
