@@ -343,7 +343,7 @@ static inline void chSysEnable(void) {
  *
  * @special
  */
-static inline void chSysLock(void)  {
+static inline void chSysLock(void) {
 
   port_lock();
   _stats_start_measure_crit_thd();
