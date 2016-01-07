@@ -65,7 +65,7 @@
  *
  * @brief   Binary semaphore type.
  */
-typedef struct  {
+typedef struct {
   Semaphore             bs_sem;
 } BinarySemaphore;
 

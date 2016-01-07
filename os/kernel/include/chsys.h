@@ -139,7 +139,7 @@
  *
  * @special
  */
-#define chSysLock()  {                                                      \
+#define chSysLock() {                                                       \
   port_lock();                                                              \
   dbg_check_lock();                                                         \
 }
