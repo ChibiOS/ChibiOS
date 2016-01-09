@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.5 ***
+- RT:  Fixed tm_stop - best case bug (bug #688).
 - RT:  Fixed ARM port enforcing THUMB mode (bug #687).
 - HAL: Fixed HAL drivers still calling RT functions (bug #686).
 - HAL: Fixed Serial_USB improperly resets queues on stop (bug #685).
