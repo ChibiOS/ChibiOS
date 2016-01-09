@@ -76,6 +76,8 @@
 - OPT: Removed the p_msg field from the thread_t structure saving a
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchnorous messages are even faster.
+- FIX: Fixed tm_stop - best case bug (bug #688)(backported to 16.1.0
+       and 3.0.5).
 
 *** 16.1.0 ***
 - RT:  Added CodeWarrior compiler support to the e200 port.
