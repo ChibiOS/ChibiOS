@@ -73,7 +73,7 @@
 *****************************************************************************
 
 *** 16.1.1 ***
-- RT: Fixed tm_stop - best case bug (bug #688).
+- RT:  Fixed tm_stop - best case bug (bug #688).
 
 *** 16.1.0 ***
 - RT:  Added CodeWarrior compiler support to the e200 port.
