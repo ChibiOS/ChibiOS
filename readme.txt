@@ -79,6 +79,7 @@
 - HAL: Fixed HAL drivers still calling RT functions (bug #686).
 - HAL: Fixed Serial_USB improperly resets queues on stop (bug #685).
 - HAL: Fixed chprintf() still calling RT functions (bug #684).
+- ALL: Several minor documentation/formatting-related fixes.
 
 *** 3.0.4 ***
 - HAL: Fixed STM32 ICU driver uses chSysLock and chSysUnlock (bug #681).
