@@ -94,6 +94,7 @@
 - FIX: Fixed STM32 RTC init direct register access (bug #639).
 - FIX: Fixed STM32 RTC driver does not set h12 (bug #638).
 - FIX: Fixed problem with RT mutexes involving priority inheritance (bug #632).
+- FIX: Several minor documentation/formatting-related fixes.
 
 *** 2.6.9 ***
 - NEW: Added files for Core407V board.
