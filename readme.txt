@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.1 ***
+- HAL: Fixed error in HAL buffer queues (bug #689).
 - RT:  Fixed tm_stop - best case bug (bug #688).
 - RT:  Several minor documentation/formatting-related fixes.
 
