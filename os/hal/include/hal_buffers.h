@@ -132,7 +132,7 @@ typedef io_buffers_queue_t output_buffers_queue_t;
  * @param[in] size      size of the buffers
  */
 #define BQ_BUFFER_SIZE(n, size)                                             \
-  ((size_t)(size) + ((sizeof (size_t)) * (size_t)(n)))
+  (((size_t)(size) + sizeof (size_t)) * (size_t)(n))
 
 /**
  * @name    Macro Functions
