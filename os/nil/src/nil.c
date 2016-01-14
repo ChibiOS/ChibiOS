@@ -101,7 +101,7 @@ void chSysInit(void) {
   tp->stklim  = THD_IDLE_BASE;
 #endif
 
-  /* Runs the highest priority thread, the current one becomes the null
+  /* Runs the highest priority thread, the current one becomes the idle
      thread.*/
   nil.current = nil.next = nil.threads;
   port_switch(nil.current, tp);
