@@ -101,7 +101,7 @@ void chSysInit(void) {
   tp->stklim  = THD_IDLE_BASE;
 #endif
 
-  /* Runs the highest priority thread, the current one becomes the null
+  /* Runs the highest priority thread, the current one becomes the idle
      thread.*/
   nil.current = nil.next = nil.threads;
   port_switch(nil.current, tp);
@@ -729,6 +729,7 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
   }
 }
 
+#if (NIL_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Adds a set of event flags directly to the specified @p thread_t.
  *
@@ -834,5 +835,6 @@ eventmask_t chEvtWaitAnyTimeoutS(eventmask_t mask, systime_t timeout) {
 
   return m;
 }
+#endif /* NIL_CFG_USE_EVENTS == TRUE */
 
 /** @} */
