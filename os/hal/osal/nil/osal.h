@@ -791,7 +791,7 @@ static inline void osalThreadQueueObjectInit(threads_queue_t *tqp) {
 static inline msg_t osalThreadEnqueueTimeoutS(threads_queue_t *tqp,
                                               systime_t time) {
 
-  return chSemWaitTimeout(&tqp->sem, time);
+  return chSemWaitTimeoutS(&tqp->sem, time);
 }
 
 /**
