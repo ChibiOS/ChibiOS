@@ -98,6 +98,10 @@ void chSysInit(void) {
   port_init();
   _scheduler_init();
   _vt_init();
+#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
+  ch.dbg.isr_cnt  = (cnt_t)0;
+  ch.dbg.lock_cnt = (cnt_t)0;
+#endif
 #if CH_CFG_USE_TM == TRUE
   _tm_init();
 #endif
