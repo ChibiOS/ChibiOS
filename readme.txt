@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 3.0.5 ***
+- RT:  Fixed ISR statistics are not updated from a critical zone in RT
+       (bug #693).
 - NIL: Fixed NIL test suite calls I and S functions outside critical zone
        (bug #692).
 - NIL: Fixed protocol violation in NIL OSAL (bug #691).
