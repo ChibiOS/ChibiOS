@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 3.0.5 ***
+- HAL: Fixed STM32 CAN driver always broadcasts tx complete for mailbox 1
+       (bug #690).
 - RT:  Fixed tm_stop - best case bug (bug #688).
 - RT:  Fixed ARM port enforcing THUMB mode (bug #687).
 - HAL: Fixed HAL drivers still calling RT functions (bug #686).
