@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 3.0.5 ***
+- NIL: Fixed NIL test suite calls I and S functions outside critical zone
+       (bug #692).
 - NIL: Fixed protocol violation in NIL OSAL (bug #691).
 - HAL: Fixed STM32 CAN driver always broadcasts tx complete for mailbox 1
        (bug #690).
