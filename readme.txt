@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.5 ***
+- NIL: Fixed protocol violation in NIL OSAL (bug #691).
 - HAL: Fixed STM32 CAN driver always broadcasts tx complete for mailbox 1
        (bug #690).
 - RT:  Fixed tm_stop - best case bug (bug #688).
