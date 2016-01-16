@@ -51,7 +51,11 @@ thread_reference_t gtr1;
  */
 THD_WORKING_AREA(wa_test_support, 128);
 THD_FUNCTION(test_support, arg) {
+#if NIL_CFG_USE_EVENTS == TRUE
   thread_t *tp = (thread_t *)arg;
+#else
+  (void)arg;
+#endif
 
   /* Initializing global resources.*/
   chSemObjectInit(&gsem1, 0);
@@ -64,7 +68,9 @@ THD_FUNCTION(test_support, arg) {
       chSemSignalI(&gsem1);
     chSemResetI(&gsem2, 0);
     chThdResumeI(&gtr1, MSG_OK);
+#if NIL_CFG_USE_EVENTS == TRUE
     chEvtSignalI(tp, 0x55);
+#endif
     chSchRescheduleS();
     chSysUnlock();
 
