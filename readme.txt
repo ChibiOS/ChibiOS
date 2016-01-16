@@ -76,6 +76,8 @@
 - RT:  Removed the p_msg field from the thread_t structure saving a
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchronous messages are even faster.
+- RT:  Fixed ISR statistics are not updated from a critical zone in RT
+       (bug #693)(backported to 3.0.5 and 16.1.1).
 - NIL: Fixed NIL test suite calls I and S functions outside critical zone
        (bug #692)(backported to 3.0.5 and 16.1.1).
 - NIL: Fixed protocol violation in NIL OSAL (bug #691)(backported to
