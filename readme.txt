@@ -76,6 +76,8 @@
 - RT:  Removed the p_msg field from the thread_t structure saving a
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchronous messages are even faster.
+- NIL: Fixed NIL test suite calls I and S functions outside critical zone
+       (bug #692)(backported to 3.0.5 and 16.1.1).
 - NIL: Fixed protocol violation in NIL OSAL (bug #691)(backported to
        3.0.5 and 16.1.1).
 - HAL: Fixed error in HAL buffer queues (bug #689)(backported to 16.1.1).

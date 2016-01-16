@@ -291,7 +291,9 @@ static void test_002_004_execute(void) {
      and the state of the reference are tested.*/
   test_set_step(1);
   {
+    chSysLock();
     msg = chThdSuspendTimeoutS(&gtr1, TIME_INFINITE);
+    chSysUnlock();
     test_assert(NULL == gtr1,
                 "not NULL");
     test_assert(MSG_OK == msg,
@@ -303,8 +305,10 @@ static void test_002_004_execute(void) {
      and the state of the reference are tested.*/
   test_set_step(2);
   {
+    chSysLock();
     time = chVTGetSystemTimeX();
     msg = chThdSuspendTimeoutS(&tr1, MS2ST(1000));
+    chSysUnlock();
     test_assert_time_window(time + MS2ST(1000),
                             time + MS2ST(1000) + 1,
                             "out of time window");
@@ -323,7 +327,7 @@ static const testcase_t test_002_004 = {
 };
 #endif /* TRUE */
 
-#if TRUE || defined(__DOXYGEN__)
+#if (NIL_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 /**
  * @page test_002_005 Events functionality
  *
@@ -362,7 +366,7 @@ static void test_002_005_execute(void) {
   test_set_step(1);
   {
     time = chVTGetSystemTimeX();
-    chEvtSignalI(chThdGetSelfX(), 0x55);
+    chEvtSignal(chThdGetSelfX(), 0x55);
     events = chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(1000));
     test_assert((eventmask_t)0 != events,
                 "timed out");
@@ -388,10 +392,8 @@ static void test_002_005_execute(void) {
      wakeup the thread, the function must return because timeout.*/
   test_set_step(3);
   {
-    chSysLock();
     time = chVTGetSystemTimeX();
-    events = chEvtWaitAnyTimeoutS(0, MS2ST(1000));
-    chSysUnlock();
+    events = chEvtWaitAnyTimeout(0, MS2ST(1000));
     test_assert_time_window(time + MS2ST(1000),
                             time + MS2ST(1000) + 1,
                             "out of time window");
@@ -406,7 +408,7 @@ static const testcase_t test_002_005 = {
   NULL,
   test_002_005_execute
 };
-#endif /* TRUE */
+#endif /* NIL_CFG_USE_EVENTS == TRUE */
 
  /****************************************************************************
  * Exported data.
@@ -428,7 +430,7 @@ const testcase_t * const test_sequence_002[] = {
 #if TRUE || defined(__DOXYGEN__)
   &test_002_004,
 #endif
-#if TRUE || defined(__DOXYGEN__)
+#if (NIL_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   &test_002_005,
 #endif
   NULL
