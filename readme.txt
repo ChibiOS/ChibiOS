@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 3.0.5 ***
+- NIL: NIL_CFG_USE_EVENTS not properly checked in NIL (bug #694).
 - RT:  Fixed ISR statistics are not updated from a critical zone in RT
        (bug #693).
 - NIL: Fixed NIL test suite calls I and S functions outside critical zone

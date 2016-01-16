@@ -61,7 +61,7 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.1.0"
+#define CH_KERNEL_VERSION       "1.1.1"
 
 /**
  * @brief   Kernel version major number.
@@ -76,7 +76,7 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         0
+#define CH_KERNEL_PATCH         1
 /** @} */
 
 /**
@@ -988,10 +988,12 @@ extern "C" {
   void chSemSignalI(semaphore_t *sp);
   void chSemReset(semaphore_t *sp, cnt_t n);
   void chSemResetI(semaphore_t *sp, cnt_t n);
+#if NIL_CFG_USE_EVENTS == TRUE
   void chEvtSignal(thread_t *tp, eventmask_t mask);
   void chEvtSignalI(thread_t *tp, eventmask_t mask);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t timeout);
   eventmask_t chEvtWaitAnyTimeoutS(eventmask_t mask, systime_t timeout);
+#endif
 #ifdef __cplusplus
 }
 #endif
