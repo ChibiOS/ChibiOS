@@ -134,13 +134,51 @@ static void can_lld_set_filters(uint32_t can2sb,
  * @notapi
  */
 static void can_lld_tx_handler(CANDriver *canp) {
+  uint32_t tsr;
+  flagsmask_t flags;
 
-  /* No more events until a message is transmitted.*/
-  canp->can->TSR = CAN_TSR_RQCP0 | CAN_TSR_RQCP1 | CAN_TSR_RQCP2;
+  /* Clearing IRQ sources.*/
+  tsr = canp->can->TSR;
+  canp->can->TSR = tsr;
+
+  /* Flags to be signaled through the TX event source.*/
+  flags = 0U;
+
+  /* Checking mailbox 0.*/
+  if ((tsr & CAN_TSR_RQCP0) != 0U) {
+    if ((tsr & (CAN_TSR_ALST0 | CAN_TSR_TERR0)) != 0U) {
+      flags |= CAN_MAILBOX_TO_MASK(1U) << 16U;
+    }
+    else {
+      flags |= CAN_MAILBOX_TO_MASK(1U);
+    }
+  }
+
+  /* Checking mailbox 1.*/
+  if ((tsr & CAN_TSR_RQCP1) != 0U) {
+    if ((tsr & (CAN_TSR_ALST1 | CAN_TSR_TERR1)) != 0U) {
+      flags |= CAN_MAILBOX_TO_MASK(2U) << 16U;
+    }
+    else {
+      flags |= CAN_MAILBOX_TO_MASK(2U);
+    }
+  }
+
+  /* Checking mailbox 2.*/
+  if ((tsr & CAN_TSR_RQCP2) != 0U) {
+    if ((tsr & (CAN_TSR_ALST2 | CAN_TSR_TERR2)) != 0U) {
+      flags |= CAN_MAILBOX_TO_MASK(3U) << 16U;
+    }
+    else {
+      flags |= CAN_MAILBOX_TO_MASK(3U);
+    }
+  }
+
+  /* Signaling flags and waking up threads waiting for a transmission slot.*/
   chSysLockFromIsr();
   while (chSemGetCounterI(&canp->txsem) < 0)
     chSemSignalI(&canp->txsem);
-  chEvtBroadcastFlagsI(&canp->txempty_event, CAN_MAILBOX_TO_MASK(1));
+  chEvtBroadcastFlagsI(&canp->txempty_event, CAN_MAILBOX_TO_MASK(flags));
   chSysUnlockFromIsr();
 }
 
