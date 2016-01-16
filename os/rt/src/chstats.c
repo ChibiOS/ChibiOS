@@ -72,7 +72,9 @@ void _stats_init(void) {
  */
 void _stats_increase_irq(void) {
 
+  port_lock_from_isr();
   ch.kernel_stats.n_irq++;
+  port_unlock_from_isr();
 }
 
 /**
