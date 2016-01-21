@@ -365,14 +365,9 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
     if (ibqp->ptr == NULL) {
       msg_t msg;
 
-      /* TIME_IMMEDIATE is a special case, never wait.*/
-      if (timeout == TIME_IMMEDIATE) {
-        osalSysUnlock();
-        return r;
-      }
-
-      /* TIME_INFINITE is handled differently, no deadline.*/
-      if (timeout == TIME_INFINITE) {
+      /* TIME_INFINITE and TIME_IMMEDIATE are handled differently, no
+         deadline.*/
+      if ((timeout == TIME_INFINITE) || (timeout == TIME_IMMEDIATE)) {
         msg = ibqGetFullBufferTimeoutS(ibqp, timeout);
       }
       else {
@@ -743,14 +738,9 @@ size_t obqWriteTimeout(output_buffers_queue_t *obqp, const uint8_t *bp,
     if (obqp->ptr == NULL) {
       msg_t msg;
 
-      /* TIME_IMMEDIATE is a special case, never wait.*/
-      if (timeout == TIME_IMMEDIATE) {
-        osalSysUnlock();
-        return w;
-      }
-
-      /* TIME_INFINITE is handled differently, no deadline.*/
-      if (timeout == TIME_INFINITE) {
+      /* TIME_INFINITE and TIME_IMMEDIATE are handled differently, no
+         deadline.*/
+      if ((timeout == TIME_INFINITE) || (timeout == TIME_IMMEDIATE)) {
         msg = obqGetEmptyBufferTimeoutS(obqp, timeout);
       }
       else {
