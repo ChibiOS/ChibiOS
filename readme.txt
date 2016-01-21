@@ -76,7 +76,9 @@
 - RT:  Removed the p_msg field from the thread_t structure saving a
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchronous messages are even faster.
-- NIL: NIL_CFG_USE_EVENTS not properly checked in NIL (bug #694)
+- HAL: Fixed incorrect handling of TIME_IMMEDIATE in the HAL buffer queues
+       (bug #695)(backported to 16.1.2).
+- NIL: Fixed NIL_CFG_USE_EVENTS not properly checked in NIL (bug #694)
        (backported to 3.0.5 and 16.1.1).
 - RT:  Fixed ISR statistics are not updated from a critical zone in RT
        (bug #693)(backported to 3.0.5 and 16.1.1).
