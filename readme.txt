@@ -77,7 +77,7 @@
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchronous messages are even faster.
 - VAR: Fixed missing time convesion in lwIP arch module (bug #696)
-       (backported to 3.0.5 and 16.1.2).
+       (backported to 2.6.10, 3.0.5 and 16.1.2).
 - HAL: Fixed incorrect handling of TIME_IMMEDIATE in the HAL buffer queues
        (bug #695)(backported to 16.1.2).
 - NIL: Fixed NIL_CFG_USE_EVENTS not properly checked in NIL (bug #694)
