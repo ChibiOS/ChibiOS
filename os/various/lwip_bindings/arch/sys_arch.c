@@ -103,12 +103,12 @@ u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout) {
   u32_t time;
 
   osalSysLock();
-  tmo = timeout > 0 ? (systime_t)timeout : TIME_INFINITE;
+  tmo = timeout > 0 ? MS2ST((systime_t)timeout) : TIME_INFINITE;
   time = (u32_t)osalOsGetSystemTimeX();
   if (chSemWaitTimeoutS(*sem, tmo) != MSG_OK)
     time = SYS_ARCH_TIMEOUT;
   else
-    time = osalOsGetSystemTimeX() - time;
+    time = (u32_t)ST2MS(osalOsGetSystemTimeX()) - time;
   osalSysUnlock();
   return time;
 }
@@ -175,12 +175,12 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout) {
   systime_t tmo;
 
   osalSysLock();
-  tmo = timeout > 0 ? (systime_t)timeout : TIME_INFINITE;
+  tmo = timeout > 0 ? MS2ST((systime_t)timeout) : TIME_INFINITE;
   time = (u32_t)osalOsGetSystemTimeX();
   if (chMBFetchS(*mbox, (msg_t *)msg, tmo) != MSG_OK)
     time = SYS_ARCH_TIMEOUT;
   else
-    time = osalOsGetSystemTimeX() - time;
+    time = (u32_t)ST2MS(osalOsGetSystemTimeX()) - time;
   osalSysUnlock();
   return time;
 }
