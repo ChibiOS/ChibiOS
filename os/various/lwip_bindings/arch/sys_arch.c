@@ -104,7 +104,7 @@ u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout) {
 
   osalSysLock();
   tmo = timeout > 0 ? MS2ST((systime_t)timeout) : TIME_INFINITE;
-  time = (u32_t)osalOsGetSystemTimeX();
+  time = (u32_t)ST2MS(osalOsGetSystemTimeX());
   if (chSemWaitTimeoutS(*sem, tmo) != MSG_OK)
     time = SYS_ARCH_TIMEOUT;
   else
