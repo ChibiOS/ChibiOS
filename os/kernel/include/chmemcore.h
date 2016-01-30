@@ -38,8 +38,6 @@
 
 /**
  * @brief   Memory get function.
- * @note    This type must be assignment compatible with the @p chMemAlloc()
- *          function.
  */
 typedef void *(*memgetfunc_t)(size_t size);
 
