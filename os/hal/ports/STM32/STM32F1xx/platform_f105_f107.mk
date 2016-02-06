@@ -86,6 +86,7 @@ endif
 # Required include directories
 PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \
                $(CHIBIOS)/os/hal/ports/STM32/STM32F1xx \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/CANv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/DACv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/DMAv1 \
                $(CHIBIOS)/os/hal/ports/STM32/LLD/EXTIv1 \

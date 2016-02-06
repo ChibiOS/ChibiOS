@@ -76,6 +76,7 @@
 - RT:  Removed the p_msg field from the thread_t structure saving a
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchronous messages are even faster.
+- HAL: Fixed F105_F107 CANv1 build failure (bug #699).
 - HAL: Fixed typos in STM32F0 RCC enable/disable macros (bug #698)(backported
        to 16.1.2).
 - RT:  Fixed useless call to chTMStartMeasurementX() in _thread_init()
