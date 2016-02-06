@@ -64,10 +64,10 @@
 #endif
 #define PAL_STM32_OSPEED_HIGHEST        (3U << 3U)
 
-#define PAL_STM32_PUDR_MASK             (3U << 5U)
-#define PAL_STM32_PUDR_FLOATING         (0U << 5U)
-#define PAL_STM32_PUDR_PULLUP           (1U << 5U)
-#define PAL_STM32_PUDR_PULLDOWN         (2U << 5U)
+#define PAL_STM32_PUPDR_MASK            (3U << 5U)
+#define PAL_STM32_PUPDR_FLOATING        (0U << 5U)
+#define PAL_STM32_PUPDR_PULLUP          (1U << 5U)
+#define PAL_STM32_PUPDR_PULLDOWN        (2U << 5U)
 
 #define PAL_STM32_ALTERNATE_MASK        (15U << 7U)
 #define PAL_STM32_ALTERNATE(n)          ((n) << 7U)
@@ -104,13 +104,13 @@
  * @brief   Input pad with weak pull up resistor.
  */
 #define PAL_MODE_INPUT_PULLUP           (PAL_STM32_MODE_INPUT |             \
-                                         PAL_STM32_PUDR_PULLUP)
+                                         PAL_STM32_PUPDR_PULLUP)
 
 /**
  * @brief   Input pad with weak pull down resistor.
  */
 #define PAL_MODE_INPUT_PULLDOWN         (PAL_STM32_MODE_INPUT |             \
-                                         PAL_STM32_PUDR_PULLDOWN)
+                                         PAL_STM32_PUPDR_PULLDOWN)
 
 /**
  * @brief   Analog input mode.
