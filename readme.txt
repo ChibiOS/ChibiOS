@@ -73,11 +73,13 @@
 *****************************************************************************
 
 *** 16.1.3 ***
-- VAR: Fixed missing time convesion in lwIP arch module (bug #697).
-- VAR: Fixed missing time convesion in lwIP arch module (bug #696, again).
+- HAL: Fixed typos in STM32F0 RCC enable/disable macros (bug #698).
+- RT:  Fixed useless call to chTMStartMeasurementX() in _thread_init()
+       (bug #697).
+- VAR: Fixed missing time conversion in lwIP arch module (bug #696, again).
 
 *** 16.1.2 ***
-- VAR: Fixed missing time convesion in lwIP arch module (bug #696).
+- VAR: Fixed missing time conversion in lwIP arch module (bug #696).
 - HAL: Fixed incorrect handling of TIME_IMMEDIATE in the HAL buffer queues
        (bug #695).
 
