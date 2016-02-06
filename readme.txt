@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.3 ***
+- HAL: Fixed broken demo for STM32F429 (bug #703).
 - HAL: Fixed wrong macro definition for palWriteLine (bug #702).
 - HAL: Fixed error is buffer queues (bug #701).
 - HAL: Fixed typos in STM32F0 RCC enable/disable macros (bug #698).
