@@ -163,7 +163,7 @@ void _pal_lld_setgroupmode(ioportid_t port,
   uint32_t moder   = (mode & PAL_STM32_MODE_MASK) >> 0;
   uint32_t otyper  = (mode & PAL_STM32_OTYPE_MASK) >> 2;
   uint32_t ospeedr = (mode & PAL_STM32_OSPEED_MASK) >> 3;
-  uint32_t pupdr   = (mode & PAL_STM32_PUDR_MASK) >> 5;
+  uint32_t pupdr   = (mode & PAL_STM32_PUPDR_MASK) >> 5;
   uint32_t altr    = (mode & PAL_STM32_ALTERNATE_MASK) >> 7;
   uint32_t bit     = 0;
   while (true) {
