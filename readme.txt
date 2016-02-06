@@ -76,6 +76,8 @@
 - RT:  Removed the p_msg field from the thread_t structure saving a
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchronous messages are even faster.
+- HAL: Fixed wrong macro definition for palWriteLine (bug #702)(backported
+       to 16.1.3).
 - HAL: Fixed error is buffer queues (bug #701)(backported to 16.1.3).
 - HAL: Fixed F105_F107 CANv1 build failure (bug #699).
 - HAL: Fixed typos in STM32F0 RCC enable/disable macros (bug #698)(backported
