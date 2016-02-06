@@ -557,7 +557,7 @@ typedef struct {
  * @special
  */
 #if !defined(pal_lld_writeline) || defined(__DOXYGEN__)
-#define palWriteLine(line, bit) palWrite(PAL_PORT(line), PAL_PAD(line), bit)
+#define palWriteLine(line, bit) palWritePad(PAL_PORT(line), PAL_PAD(line), bit)
 #else
 #define palWriteLine(line, bit) pal_lld_writeline(line, bit)
 #endif
