@@ -488,10 +488,6 @@ struct SPIDriver {
    * @brief   TX DMA mode bit mask.
    */
   uint32_t                  txdmamode;
-  /**
-   * @brief   Frame size in bytes.
-   */
-  size_t                    fsize;
 };
 
 /*===========================================================================*/
