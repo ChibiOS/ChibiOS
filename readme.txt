@@ -72,6 +72,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 16.1.3 ***
+- VAR: Fixed missing time convesion in lwIP arch module (bug #696, again).
+
 *** 16.1.2 ***
 - VAR: Fixed missing time convesion in lwIP arch module (bug #696).
 - HAL: Fixed incorrect handling of TIME_IMMEDIATE in the HAL buffer queues
