@@ -132,6 +132,12 @@ void chSysInit(void) {
      adjacent to its stack area.*/
   currp->p_stklimit = &__main_thread_stack_base__;
 #endif
+
+#if CH_DBG_STATISTICS == TRUE
+  /* Starting measurement for this thread.*/
+  chTMStartMeasurementX(&currp->p_stats);
+#endif
+
   chSysEnable();
 
 #if CH_CFG_USE_REGISTRY == TRUE
