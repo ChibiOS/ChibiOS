@@ -415,7 +415,6 @@ void spi_lld_start(SPIDriver *spip) {
                       STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
-    spip->fsize     = sizeof (uint8_t);
   }
   else {
     /* Frame width is larger than 8 bits.*/
@@ -423,7 +422,6 @@ void spi_lld_start(SPIDriver *spip) {
                       STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
     spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
                       STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
-    spip->fsize     = sizeof (uint16_t);
   }
 
   /* SPI setup and enable.*/
