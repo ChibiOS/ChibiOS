@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.3 ***
+- HAL: Fixed chDbgAssert() still called from STM32 SPIv1 driver (bug #704).
 - HAL: Fixed broken demo for STM32F429 (bug #703).
 - HAL: Fixed wrong macro definition for palWriteLine (bug #702).
 - HAL: Fixed error is buffer queues (bug #701).
