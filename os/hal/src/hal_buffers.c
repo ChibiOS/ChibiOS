@@ -855,7 +855,7 @@ void obqFlush(output_buffers_queue_t *obqp) {
 
   /* If there is a buffer partially filled and not being written.*/
   if (obqp->ptr != NULL) {
-    size_t size = (size_t)obqp->ptr - (size_t)obqp->bwrptr;
+    size_t size = (size_t)obqp->ptr - (size_t)obqp->bwrptr - sizeof (size_t);
 
     if (size > 0U) {
       obqPostFullBufferS(obqp, size);
