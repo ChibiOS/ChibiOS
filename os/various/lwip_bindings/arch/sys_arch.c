@@ -1,5 +1,5 @@
 /*
-    ChibiOS/RT - Copyright (C) 2006-2013 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -99,17 +99,18 @@ void sys_sem_signal_S(sys_sem_t *sem) {
 }
 
 u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout) {
-  systime_t time, tmo;
+  systime_t tmo, start, remaining;
 
-  chSysLock();
+  osalSysLock();
   tmo = timeout > 0 ? MS2ST((systime_t)timeout) : TIME_INFINITE;
-  time = (u32_t)ST2MS(chTimeNow());
-  if (chSemWaitTimeoutS(*sem, tmo) != RDY_OK)
-    time = SYS_ARCH_TIMEOUT;
-  else
-    time = (u32_t)ST2MS(chTimeNow()) - time;
-  chSysUnlock();
-  return time;
+  start = chTimeNow();
+  if (chSemWaitTimeoutS(*sem, tmo) != RDY_OK) {
+    osalSysUnlock();
+    return SYS_ARCH_TIMEOUT;
+  }
+  remaining = chTimeNow() - start;
+  osalSysUnlock();
+  return (u32_t)ST2MS(remaining);
 }
 
 int sys_sem_valid(sys_sem_t *sem) {
@@ -165,17 +166,18 @@ err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg) {
 }
 
 u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout) {
-  systime_t time, tmo;
+  systime_t tmo, start, remaining;
 
-  chSysLock();
+  osalSysLock();
   tmo = timeout > 0 ? MS2ST((systime_t)timeout) : TIME_INFINITE;
-  time = (u32_t)ST2MS(chTimeNow());
-  if (chMBFetchS(*mbox, (msg_t *)msg, tmo) != RDY_OK)
-    time = SYS_ARCH_TIMEOUT;
-  else
-    time = (u32_t)ST2MS(chTimeNow()) - time;
-  chSysUnlock();
-  return time;
+  start = chTimeNow();
+  if (chMBFetchS(*mbox, (msg_t *)msg, tmo) != RDY_OK) {
+    osalSysUnlock();
+    return SYS_ARCH_TIMEOUT;
+  }
+  remaining = chTimeNow() - start;
+  osalSysUnlock();
+  return (u32_t)ST2MS(remaining);
 }
 
 u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg) {
