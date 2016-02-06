@@ -645,7 +645,7 @@
  *
  * @api
  */
-#define rccEnableTIM15(lp) rccEnableAPB1(RCC_APB2ENR_TIM15EN, lp)
+#define rccEnableTIM15(lp) rccEnableAPB2(RCC_APB2ENR_TIM15EN, lp)
 
 /**
  * @brief   Disables the TIM15 peripheral clock.
@@ -655,14 +655,14 @@
  *
  * @api
  */
-#define rccDisableTIM15(lp) rccDisableAPB1(RCC_APB2ENR_TIM15EN, lp)
+#define rccDisableTIM15(lp) rccDisableAPB2(RCC_APB2ENR_TIM15EN, lp)
 
 /**
  * @brief   Resets the TIM15 peripheral.
  *
  * @api
  */
-#define rccResetTIM15() rccResetAPB1(RCC_APB2RSTR_TIM15RST)
+#define rccResetTIM15() rccResetAPB2(RCC_APB2RSTR_TIM15RST)
 
 /**
  * @brief   Enables the TIM16 peripheral clock.
@@ -672,7 +672,7 @@
  *
  * @api
  */
-#define rccEnableTIM16(lp) rccEnableAPB1(RCC_APB2ENR_TIM16EN, lp)
+#define rccEnableTIM16(lp) rccEnableAPB2(RCC_APB2ENR_TIM16EN, lp)
 
 /**
  * @brief   Disables the TIM16 peripheral clock.
@@ -682,14 +682,14 @@
  *
  * @api
  */
-#define rccDisableTIM16(lp) rccDisableAPB1(RCC_APB2ENR_TIM16EN, lp)
+#define rccDisableTIM16(lp) rccDisableAPB2(RCC_APB2ENR_TIM16EN, lp)
 
 /**
  * @brief   Resets the TIM16 peripheral.
  *
  * @api
  */
-#define rccResetTIM16() rccResetAPB1(RCC_APB2RSTR_TIM16RST)
+#define rccResetTIM16() rccResetAPB2(RCC_APB2RSTR_TIM16RST)
 
 /**
  * @brief   Enables the TIM17 peripheral clock.
@@ -699,7 +699,7 @@
  *
  * @api
  */
-#define rccEnableTIM17(lp) rccEnableAPB1(RCC_APB2ENR_TIM17EN, lp)
+#define rccEnableTIM17(lp) rccEnableAPB2(RCC_APB2ENR_TIM17EN, lp)
 
 /**
  * @brief   Disables the TIM17 peripheral clock.
@@ -709,14 +709,14 @@
  *
  * @api
  */
-#define rccDisableTIM17(lp) rccDisableAPB1(RCC_APB2ENR_TIM17EN, lp)
+#define rccDisableTIM17(lp) rccDisableAPB2(RCC_APB2ENR_TIM17EN, lp)
 
 /**
  * @brief   Resets the TIM17 peripheral.
  *
  * @api
  */
-#define rccResetTIM17() rccResetAPB1(RCC_APB2RSTR_TIM17RST)
+#define rccResetTIM17() rccResetAPB2(RCC_APB2RSTR_TIM17RST)
 /** @} */
 
 /**
