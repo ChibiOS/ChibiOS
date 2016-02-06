@@ -73,6 +73,7 @@
 
 *** 2.6.10 ***
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
+- FIX: Fixed missing time conversion in lwIP arch module (bug #696).
 - FIX: Fixed STM32 CAN driver always broadcasts tx complete for mailbox 1
        (bug #690).
 - FIX: Fixed wrong DMA priority assigned to STM32F3 ADC3&4 (bug #680).
