@@ -58,7 +58,8 @@ OSAL_IRQ_HANDLER(Vector58) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 0);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 0);
   EXTI->PR = pr;
   if (pr & (1 << 0))
     EXTD1.config->channels[0].cb(&EXTD1, 0);
@@ -76,7 +77,8 @@ OSAL_IRQ_HANDLER(Vector5C) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 1);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 1);
   EXTI->PR = pr;
   if (pr & (1 << 1))
     EXTD1.config->channels[1].cb(&EXTD1, 1);
@@ -94,7 +96,8 @@ OSAL_IRQ_HANDLER(Vector60) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 2);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 2);
   EXTI->PR = pr;
   if (pr & (1 << 2))
     EXTD1.config->channels[2].cb(&EXTD1, 2);
@@ -112,7 +115,8 @@ OSAL_IRQ_HANDLER(Vector64) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 3);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 3);
   EXTI->PR = pr;
   if (pr & (1 << 3))
     EXTD1.config->channels[3].cb(&EXTD1, 3);
@@ -130,7 +134,8 @@ OSAL_IRQ_HANDLER(Vector68) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 4);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 4);
   EXTI->PR = pr;
   if (pr & (1 << 4))
     EXTD1.config->channels[4].cb(&EXTD1, 4);
@@ -148,8 +153,8 @@ OSAL_IRQ_HANDLER(Vector9C) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & ((1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) |
-                               (1 << 9));
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & ((1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9));
   EXTI->PR = pr;
   if (pr & (1 << 5))
     EXTD1.config->channels[5].cb(&EXTD1, 5);
@@ -175,7 +180,8 @@ OSAL_IRQ_HANDLER(VectorE0) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & ((1 << 10) | (1 << 11) | (1 << 12) | (1 << 13) |
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & ((1 << 10) | (1 << 11) | (1 << 12) | (1 << 13) |
                                (1 << 14) | (1 << 15));
   EXTI->PR = pr;
   if (pr & (1 << 10))
@@ -204,7 +210,8 @@ OSAL_IRQ_HANDLER(Vector44) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 16);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 16);
   EXTI->PR = pr;
   if (pr & (1 << 16))
     EXTD1.config->channels[16].cb(&EXTD1, 16);
@@ -222,7 +229,8 @@ OSAL_IRQ_HANDLER(VectorE4) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 17);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 17);
   EXTI->PR = pr;
   if (pr & (1 << 17))
     EXTD1.config->channels[17].cb(&EXTD1, 17);
@@ -240,7 +248,8 @@ OSAL_IRQ_HANDLER(VectorE8) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 18);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 18);
   EXTI->PR = pr;
   if (pr & (1 << 18))
     EXTD1.config->channels[18].cb(&EXTD1, 18);
@@ -259,7 +268,8 @@ OSAL_IRQ_HANDLER(Vector138) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 19);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 19);
   EXTI->PR = pr;
   if (pr & (1 << 19))
     EXTD1.config->channels[19].cb(&EXTD1, 19);
@@ -279,7 +289,8 @@ OSAL_IRQ_HANDLER(Vector170) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 20);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 20);
   EXTI->PR = pr;
   if (pr & (1 << 20))
     EXTD1.config->channels[20].cb(&EXTD1, 20);
@@ -299,7 +310,8 @@ OSAL_IRQ_HANDLER(Vector48) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 21);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 21);
   EXTI->PR = pr;
   if (pr & (1 << 21))
     EXTD1.config->channels[21].cb(&EXTD1, 21);
@@ -318,7 +330,8 @@ OSAL_IRQ_HANDLER(Vector4C) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1 << 22);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1 << 22);
   EXTI->PR = pr;
   if (pr & (1 << 22))
     EXTD1.config->channels[22].cb(&EXTD1, 22);
