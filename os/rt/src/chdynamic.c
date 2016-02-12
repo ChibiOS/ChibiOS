@@ -158,7 +158,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
   if (wsp == NULL) {
     return NULL;
   }
-  
+
 #if CH_DBG_FILL_THREADS == TRUE
   _thread_memfill((uint8_t *)wsp,
                   (uint8_t *)wsp + sizeof(thread_t),
@@ -167,7 +167,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
                   (uint8_t *)wsp + size,
                   CH_DBG_STACK_FILL_VALUE);
 #endif
-  
+
   chSysLock();
   tp = chThdCreateI(wsp, size, prio, pf, arg);
   tp->p_flags = CH_FLAG_MODE_HEAP;
@@ -212,7 +212,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
   if (wsp == NULL) {
     return NULL;
   }
-  
+
 #if CH_DBG_FILL_THREADS == TRUE
   _thread_memfill((uint8_t *)wsp,
                   (uint8_t *)wsp + sizeof(thread_t),
