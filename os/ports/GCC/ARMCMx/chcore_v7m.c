@@ -234,8 +234,15 @@ void _port_switch(Thread *ntp, Thread *otp) {
   asm volatile ("vpush   {s16-s31}" : : : "memory");
 #endif
 
+#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) &&                                \
+    ((CORTEX_MODEL == 3) || (CORTEX_MODEL == 4))
+  asm volatile ("str     sp, [%1, #12]                          \n\t"
+                "ldr     sp, [%0, #12]                          \n\t"
+                "mov     sp, r3" : : "r" (ntp), "r" (otp));
+#else
   asm volatile ("str     sp, [%1, #12]                          \n\t"
                 "ldr     sp, [%0, #12]" : : "r" (ntp), "r" (otp));
+#endif
 
 #if CORTEX_USE_FPU
   asm volatile ("vpop    {s16-s31}" : : : "memory");
