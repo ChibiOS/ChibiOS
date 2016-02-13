@@ -72,8 +72,18 @@ _port_switch:
 #if CORTEX_USE_FPU
                 vpush   {s16-s31}
 #endif
+
                 str     sp, [r1, #CONTEXT_OFFSET]
+#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) &&                                \
+    ((CORTEX_MODEL == 3) || (CORTEX_MODEL == 4))
+                /* Workaround for ARM errata 752419, only applied if
+                   condition exists for it to be triggered.*/
+                ldr     r3, [r0, #CONTEXT_OFFSET]
+                mov     sp, r3
+#else
                 ldr     sp, [r0, #CONTEXT_OFFSET]
+#endif
+
 #if CORTEX_USE_FPU
                 vpop    {s16-s31}
 #endif

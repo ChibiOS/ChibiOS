@@ -76,6 +76,10 @@
 - RT:  Removed the p_msg field from the thread_t structure saving a
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchronous messages are even faster.
+- NIL: Fixed ARM errata 752419 (bug #706)(backported to 2.6.10,
+       3.0.6 and 16.1.4).
+- RT:  Fixed ARM errata 752419 (bug #706)(backported to 2.6.10,
+       3.0.6 and 16.1.4).
 - HAL: Fixed unused variable in STM32 SPIv2 driver (bug #705)(backported
        to 16.1.3).
 - HAL: Fixed chDbgAssert() still called from STM32 SPIv1 driver (bug #704)
