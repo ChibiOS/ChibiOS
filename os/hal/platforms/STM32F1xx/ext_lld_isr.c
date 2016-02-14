@@ -58,7 +58,7 @@ CH_IRQ_HANDLER(EXTI0_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 0);
+  EXTI->PR = (1U << 0);
   EXTD1.config->channels[0].cb(&EXTD1, 0);
 
   CH_IRQ_EPILOGUE();
@@ -73,7 +73,7 @@ CH_IRQ_HANDLER(EXTI1_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 1);
+  EXTI->PR = (1U << 1);
   EXTD1.config->channels[1].cb(&EXTD1, 1);
 
   CH_IRQ_EPILOGUE();
@@ -88,7 +88,7 @@ CH_IRQ_HANDLER(EXTI2_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 2);
+  EXTI->PR = (1U << 2);
   EXTD1.config->channels[2].cb(&EXTD1, 2);
 
   CH_IRQ_EPILOGUE();
@@ -103,7 +103,7 @@ CH_IRQ_HANDLER(EXTI3_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 3);
+  EXTI->PR = (1U << 3);
   EXTD1.config->channels[3].cb(&EXTD1, 3);
 
   CH_IRQ_EPILOGUE();
@@ -118,7 +118,7 @@ CH_IRQ_HANDLER(EXTI4_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 4);
+  EXTI->PR = (1U << 4);
   EXTD1.config->channels[4].cb(&EXTD1, 4);
 
   CH_IRQ_EPILOGUE();
@@ -134,17 +134,17 @@ CH_IRQ_HANDLER(EXTI9_5_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & ((1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9));
+  pr = EXTI->PR & ((1U << 5) | (1U << 6) | (1U << 7) | (1U << 8) | (1U << 9));
   EXTI->PR = pr;
-  if (pr & (1 << 5))
+  if (pr & (1U << 5))
     EXTD1.config->channels[5].cb(&EXTD1, 5);
-  if (pr & (1 << 6))
+  if (pr & (1U << 6))
     EXTD1.config->channels[6].cb(&EXTD1, 6);
-  if (pr & (1 << 7))
+  if (pr & (1U << 7))
     EXTD1.config->channels[7].cb(&EXTD1, 7);
-  if (pr & (1 << 8))
+  if (pr & (1U << 8))
     EXTD1.config->channels[8].cb(&EXTD1, 8);
-  if (pr & (1 << 9))
+  if (pr & (1U << 9))
     EXTD1.config->channels[9].cb(&EXTD1, 9);
 
   CH_IRQ_EPILOGUE();
@@ -160,20 +160,20 @@ CH_IRQ_HANDLER(EXTI15_10_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & ((1 << 10) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) |
-                   (1 << 15));
+  pr = EXTI->PR & ((1U << 10) | (1U << 11) | (1U << 12) | (1U << 13) | (1U << 14) |
+                   (1U << 15));
   EXTI->PR = pr;
-  if (pr & (1 << 10))
+  if (pr & (1U << 10))
     EXTD1.config->channels[10].cb(&EXTD1, 10);
-  if (pr & (1 << 11))
+  if (pr & (1U << 11))
     EXTD1.config->channels[11].cb(&EXTD1, 11);
-  if (pr & (1 << 12))
+  if (pr & (1U << 12))
     EXTD1.config->channels[12].cb(&EXTD1, 12);
-  if (pr & (1 << 13))
+  if (pr & (1U << 13))
     EXTD1.config->channels[13].cb(&EXTD1, 13);
-  if (pr & (1 << 14))
+  if (pr & (1U << 14))
     EXTD1.config->channels[14].cb(&EXTD1, 14);
-  if (pr & (1 << 15))
+  if (pr & (1U << 15))
     EXTD1.config->channels[15].cb(&EXTD1, 15);
 
   CH_IRQ_EPILOGUE();
@@ -188,7 +188,7 @@ CH_IRQ_HANDLER(PVD_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 16);
+  EXTI->PR = (1U << 16);
   EXTD1.config->channels[16].cb(&EXTD1, 16);
 
   CH_IRQ_EPILOGUE();
@@ -203,7 +203,7 @@ CH_IRQ_HANDLER(RTC_Alarm_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 17);
+  EXTI->PR = (1U << 17);
   EXTD1.config->channels[17].cb(&EXTD1, 17);
 
   CH_IRQ_EPILOGUE();
@@ -219,7 +219,7 @@ CH_IRQ_HANDLER(OTG_FS_WKUP_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 18);
+  EXTI->PR = (1U << 18);
   EXTD1.config->channels[18].cb(&EXTD1, 18);
 
   CH_IRQ_EPILOGUE();
@@ -234,7 +234,7 @@ CH_IRQ_HANDLER(ETH_WKUP_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 19);
+  EXTI->PR = (1U << 19);
   EXTD1.config->channels[19].cb(&EXTD1, 19);
 
   CH_IRQ_EPILOGUE();
@@ -252,7 +252,7 @@ CH_IRQ_HANDLER(USB_FS_WKUP_IRQHandler) {
 
   CH_IRQ_PROLOGUE();
 
-  EXTI->PR = (1 << 18);
+  EXTI->PR = (1U << 18);
   EXTD1.config->channels[18].cb(&EXTD1, 18);
 
   CH_IRQ_EPILOGUE();

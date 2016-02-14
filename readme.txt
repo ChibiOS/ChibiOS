@@ -73,8 +73,10 @@
 
 *** 2.6.10 ***
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
-- NIL: Fixed ARM errata 752419 (bug #706).
-- RT:  Fixed ARM errata 752419 (bug #706).
+- FIX: Fixed shift of signed constant causes warnings with IAR compiler
+       (bug #709).
+- FIX: Fixed ARM errata 752419 (bug #706).
+- FIX: Fixed ARM errata 752419 (bug #706).
 - FIX: Fixed missing time conversion in lwIP arch module (bug #696).
 - FIX: Fixed STM32 CAN driver always broadcasts tx complete for mailbox 1
        (bug #690).
