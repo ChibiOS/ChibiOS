@@ -253,6 +253,8 @@
 #define STM32_HAS_SPI6                      FALSE
 
 /* TIM attributes.*/
+#define STM32_TIM_MAX_CHANNELS              6
+
 #define STM32_HAS_TIM1                      TRUE
 #define STM32_TIM1_IS_32BITS                FALSE
 #define STM32_TIM1_CHANNELS                 4
