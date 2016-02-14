@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.4 ***
+- HAL: Fixed wrong RTCv2 settings for STM32L4 (bug #708).
 - HAL: Fixed missing OTGv1 support for STM32L4 (bug #707).
 - NIL: Fixed ARM errata 752419 (bug #706).
 - RT:  Fixed ARM errata 752419 (bug #706).
