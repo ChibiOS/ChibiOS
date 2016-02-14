@@ -1562,10 +1562,12 @@
  *
  * @api
  */
-#if defined(STM32_FSMC_IS_FMC)
+#if STM32_HAS_FSMC || defined(__DOXYGEN__)
+#if STM32_FSMC_IS_FMC || defined(__DOXYGEN__)
   #define rccEnableFSMC(lp) rccEnableAHB3(RCC_AHB3ENR_FMCEN, lp)
 #else
   #define rccEnableFSMC(lp) rccEnableAHB3(RCC_AHB3ENR_FSMCEN, lp)
+#endif
 #endif
 
 /**
@@ -1575,10 +1577,12 @@
  *
  * @api
  */
-#if defined(STM32_FSMC_IS_FMC)
+#if STM32_HAS_FSMC || defined(__DOXYGEN__)
+#if STM32_FSMC_IS_FMC || defined(__DOXYGEN__)
   #define rccDisableFSMC(lp) rccDisableAHB3(RCC_AHB3ENR_FMCEN, lp)
 #else
   #define rccDisableFSMC(lp) rccDisableAHB3(RCC_AHB3ENR_FSMCEN, lp)
+#endif
 #endif
 
 /**
@@ -1586,10 +1590,12 @@
  *
  * @api
  */
-#if defined(STM32_FSMC_IS_FMC)
+#if STM32_HAS_FSMC || defined(__DOXYGEN__)
+#if STM32_FSMC_IS_FMC || defined(__DOXYGEN__)
   #define rccResetFSMC() rccResetAHB3(RCC_AHB3RSTR_FMCRST)
 #else
   #define rccResetFSMC() rccResetAHB3(RCC_AHB3RSTR_FSMCRST)
+#endif
 #endif
 /** @} */
 
