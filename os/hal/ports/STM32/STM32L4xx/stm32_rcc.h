@@ -1099,6 +1099,36 @@
 #define rccResetLPUART1() rccResetAPB1R2(RCC_APB1RSTR2_LPUART1RST)
 /** @} */
 
+/**
+ * @name    FSMC peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the FSMC peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableFSMC(lp) rccEnableAHB3(RCC_AHB3ENR_FMCEN, lp)
+
+/**
+ * @brief   Disables the FSMC peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableFSMC(lp) rccDisableAHB3(RCC_AHB3ENR_FMCEN, lp)
+
+/**
+ * @brief   Resets the FSMC peripheral.
+ *
+ * @api
+ */
+#define rccResetFSMC() rccResetAHB3(RCC_AHB3RSTR_FMCRST)
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
