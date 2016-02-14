@@ -405,7 +405,7 @@
 #define STM32_HAS_DMA2D                     FALSE
 
 /* FSMC attributes.*/
-#define STM32_HAS_FSMC                      FALSE
+#define STM32_HAS_FSMC                      TRUE
 
 /* CRC attributes.*/
 #define STM32_HAS_CRC                       TRUE
