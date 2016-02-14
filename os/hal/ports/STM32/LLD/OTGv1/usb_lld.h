@@ -189,6 +189,8 @@
 #define STM32_USBCLK                        STM32_PLL48CLK
 #elif defined(STM32F10X_CL)
 #define STM32_USBCLK                        STM32_OTGFSCLK
+#elif defined(STM32L4XX)
+#define STM32_USBCLK                        STM32_48CLK
 #else
 #error "unsupported STM32 platform for OTG functionality"
 #endif
