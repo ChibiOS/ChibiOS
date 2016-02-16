@@ -155,7 +155,7 @@ void chEvtUnregister(event_source_t *esp, event_listener_t *elp) {
  * @brief   Clears the pending events specified in the events mask.
  *
  * @param[in] events    the events to be cleared
- * @return              The pending events that were cleared.
+ * @return              The mask of pending events that were cleared.
  *
  * @api
  */
@@ -175,7 +175,7 @@ eventmask_t chEvtGetAndClearEvents(eventmask_t events) {
  *          @b much faster than using @p chEvtBroadcast() or @p chEvtSignal().
  *
  * @param[in] events    the events to be added
- * @return              The current pending events.
+ * @return              The mask of currently pending events.
  *
  * @api
  */

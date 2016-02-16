@@ -37,6 +37,14 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Event bit reserved for thread termination request.
+ * @note    The most significant bit of the events mask is conventionally
+ *          used for thread termination but it can eventually be used for
+ *          other events.
+ */
+#define CH_EVENT_TERMINATE  ~(((eventmask_t)-1) >> 1U)
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -254,6 +262,19 @@ static inline void chEvtBroadcast(event_source_t *esp) {
 static inline void chEvtBroadcastI(event_source_t *esp) {
 
   chEvtBroadcastFlagsI(esp, (eventflags_t)0);
+}
+
+/**
+ * @brief   Returns the events mask.
+ * @details The pending events mask is returned but not altered in any way.
+ *
+ * @return              The pending events mask.
+ *
+ * @api
+ */
+static inline eventmask_t chEvtGetEventsX(void) {
+
+  return currp->epending;
 }
 
 #endif /* CH_CFG_USE_EVENTS == TRUE */
