@@ -96,7 +96,7 @@ include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f4xx.m
 #include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/nil/nil.mk
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/port_v7m.mk
+include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
 #include $(CHIBIOS)/test/nil/test.mk
 
