@@ -42,7 +42,7 @@
  * @note    This number is not inclusive of the idle thread which is
  *          Implicitly handled.
  */
-#define CH_CFG_NUM_THREADS                  3
+#define CH_CFG_NUM_THREADS                  4
 
 /** @} */
 
@@ -65,7 +65,7 @@
  *          option defines the maximum amount of time allowed for
  *          timeouts.
  */
-#define CH_CFG_ST_FREQUENCY                 5000
+#define CH_CFG_ST_FREQUENCY                 2000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -183,28 +183,28 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_SYSTEM_STATE_CHECK           TRUE
+#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
 
 /**
  * @brief   Debug option, parameters checks.
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_CHECKS                TRUE
+#define CH_DBG_ENABLE_CHECKS                FALSE
 
 /**
  * @brief   System assertions.
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_ASSERTS               TRUE
+#define CH_DBG_ENABLE_ASSERTS               FALSE
 
 /**
  * @brief   Stack check.
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_STACK_CHECK           TRUE
+#define CH_DBG_ENABLE_STACK_CHECK           FALSE
 
 /** @} */
 
@@ -268,8 +268,6 @@
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in nilcore.h).   */
 /*===========================================================================*/
-
-#define CORTEX_VTOR_INIT                    0x00200000U
 
 #endif  /* _CHCONF_H_ */
 

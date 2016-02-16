@@ -63,7 +63,7 @@ include $(CHIBIOS)/os/hal/boards/ARDUINO_MEGA/board.mk
 include $(CHIBIOS)/os/hal/ports/AVR/platform.mk
 include $(CHIBIOS)/os/hal/osal/nil/osal.mk
 include $(CHIBIOS)/os/nil/nil.mk
-include $(CHIBIOS)/os/nil/ports/AVR/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/AVR/compilers/GCC/mk/port.mk
 include $(CHIBIOS)/test/nil/test.mk
 
 # List C source files here. (C dependencies are automatically generated.)

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    nilconf.h
+ * @file    chconf.h
  * @brief   Configuration file template.
  * @details A copy of this file must be placed in each project directory, it
  *          contains the application specific kernel settings.
@@ -25,8 +25,10 @@
  * @{
  */
 
-#ifndef _NILCONF_H_
-#define _NILCONF_H_
+#ifndef _CHCONF_H_
+#define _CHCONF_H_
+
+#define _CHIBIOS_NIL_CONF_
 
 /*===========================================================================*/
 /**
@@ -40,7 +42,7 @@
  * @note    This number is not inclusive of the idle thread which is
  *          Implicitly handled.
  */
-#define NIL_CFG_NUM_THREADS                 3
+#define CH_CFG_NUM_THREADS                  2
 
 /** @} */
 
@@ -55,15 +57,15 @@
  * @brief   System time counter resolution.
  * @note    Allowed values are 16 or 32 bits.
  */
-#define NIL_CFG_ST_RESOLUTION               16
+#define CH_CFG_ST_RESOLUTION                32
 
 /**
  * @brief   System tick frequency.
- * @note    This value together with the @p NIL_CFG_ST_RESOLUTION
+ * @note    This value together with the @p CH_CFG_ST_RESOLUTION
  *          option defines the maximum amount of time allowed for
  *          timeouts.
  */
-#define NIL_CFG_ST_FREQUENCY                1000
+#define CH_CFG_ST_FREQUENCY                 1000
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -73,7 +75,7 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#define NIL_CFG_ST_TIMEDELTA                2
+#define CH_CFG_ST_TIMEDELTA                 0
 
 /** @} */
 
@@ -85,12 +87,79 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Semaphores APIs.
+ * @details If enabled then the Semaphores APIs are included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_SEMAPHORES               TRUE
+
+/**
+ * @brief   Mutexes APIs.
+ * @details If enabled then the mutexes APIs are included in the kernel.
+ *
+ * @note    Feature not currently implemented.
+ * @note    The default is @p FALSE.
+ */
+#define CH_CFG_USE_MUTEXES                  FALSE
+
+/**
  * @brief   Events Flags APIs.
  * @details If enabled then the event flags APIs are included in the kernel.
  *
  * @note    The default is @p TRUE.
  */
-#define NIL_CFG_USE_EVENTS                  TRUE
+#define CH_CFG_USE_EVENTS                   TRUE
+
+/**
+ * @brief   Mailboxes APIs.
+ * @details If enabled then the asynchronous messages (mailboxes) APIs are
+ *          included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ * @note    Requires @p CH_CFG_USE_SEMAPHORES.
+ */
+#define CH_CFG_USE_MAILBOXES                TRUE
+
+/**
+ * @brief   Core Memory Manager APIs.
+ * @details If enabled then the core memory manager APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_MEMCORE                  TRUE
+
+/**
+ * @brief   Heap Allocator APIs.
+ * @details If enabled then the memory heap allocator APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_HEAP                     TRUE
+
+/**
+ * @brief   Memory Pools Allocator APIs.
+ * @details If enabled then the memory pools allocator APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#define CH_CFG_USE_MEMPOOLS                 TRUE
+
+/**
+ * @brief   Managed RAM size.
+ * @details Size of the RAM area to be managed by the OS. If set to zero
+ *          then the whole available RAM is used. The core memory is made
+ *          available to the heap allocator and/or can be used directly through
+ *          the simplified core memory allocator.
+ *
+ * @note    In order to let the OS manage the whole RAM the linker script must
+ *          provide the @p __heap_base__ and @p __heap_end__ symbols.
+ * @note    Requires @p CH_CFG_USE_MEMCORE.
+ */
+#define CH_CFG_MEMCORE_SIZE                 0
 
 /** @} */
 
@@ -102,14 +171,40 @@
 /*===========================================================================*/
 
 /**
- * @brief   System assertions.
+ * @brief   Debug option, kernel statistics.
+ *
+ * @note    Feature not currently implemented.
+ * @note    The default is @p FALSE.
  */
-#define NIL_CFG_ENABLE_ASSERTS              FALSE
+#define CH_DBG_STATISTICS                   FALSE
+
+/**
+ * @brief   Debug option, system state check.
+ *
+ * @note    The default is @p FALSE.
+ */
+#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
+
+/**
+ * @brief   Debug option, parameters checks.
+ *
+ * @note    The default is @p FALSE.
+ */
+#define CH_DBG_ENABLE_CHECKS                FALSE
+
+/**
+ * @brief   System assertions.
+ *
+ * @note    The default is @p FALSE.
+ */
+#define CH_DBG_ENABLE_ASSERTS               FALSE
 
 /**
  * @brief   Stack check.
+ *
+ * @note    The default is @p FALSE.
  */
-#define NIL_CFG_ENABLE_STACK_CHECK          FALSE
+#define CH_DBG_ENABLE_STACK_CHECK           FALSE
 
 /** @} */
 
@@ -123,8 +218,8 @@
 /**
  * @brief   System initialization hook.
  */
-#if !defined(NIL_CFG_SYSTEM_INIT_HOOK) || defined(__DOXYGEN__)
-#define NIL_CFG_SYSTEM_INIT_HOOK() {                                        \
+#if !defined(CH_CFG_SYSTEM_INIT_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_SYSTEM_INIT_HOOK() {                                         \
 }
 #endif
 
@@ -132,13 +227,13 @@
  * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p thread_t structure.
  */
-#define NIL_CFG_THREAD_EXT_FIELDS                                           \
+#define CH_CFG_THREAD_EXT_FIELDS                                            \
   /* Add threads custom fields here.*/
 
 /**
  * @brief   Threads initialization hook.
  */
-#define NIL_CFG_THREAD_EXT_INIT_HOOK(tr) {                                  \
+#define CH_CFG_THREAD_EXT_INIT_HOOK(tr) {                                   \
   /* Add custom threads initialization code here.*/                         \
 }
 
@@ -148,7 +243,7 @@
  *          should be invoked from here.
  * @note    This macro can be used to activate a power saving mode.
  */
-#define NIL_CFG_IDLE_ENTER_HOOK() {                                         \
+#define CH_CFG_IDLE_ENTER_HOOK() {                                          \
 }
 
 /**
@@ -157,14 +252,14 @@
  *          should be invoked from here.
  * @note    This macro can be used to deactivate a power saving mode.
  */
-#define NIL_CFG_IDLE_LEAVE_HOOK() {                                         \
+#define CH_CFG_IDLE_LEAVE_HOOK() {                                          \
 }
 
 /**
  * @brief   System halt hook.
  */
-#if !defined(NIL_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
-#define NIL_CFG_SYSTEM_HALT_HOOK(reason) {                                  \
+#if !defined(CH_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_SYSTEM_HALT_HOOK(reason) {                                   \
 }
 #endif
 
@@ -174,6 +269,6 @@
 /* Port-specific settings (override port settings defaulted in nilcore.h).   */
 /*===========================================================================*/
 
-#endif  /* _NILCONF_H_ */
+#endif  /* _CHCONF_H_ */
 
 /** @} */

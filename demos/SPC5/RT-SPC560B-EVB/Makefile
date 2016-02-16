@@ -83,7 +83,7 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 # Startup files.
-include $(CHIBIOS)/os/common/ports/e200/compilers/GCC/mk/startup_spc560bxx.mk
+include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/startup_spc560bxx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC560B/board.mk
@@ -91,7 +91,7 @@ include $(CHIBIOS)/os/hal/ports/SPC5/SPC560Bxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/rt/ports/e200/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/port.mk
 # Other files (optional).
 include $(CHIBIOS)/test/rt/test.mk
 
@@ -184,5 +184,5 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
-RULESPATH = $(CHIBIOS)/os/common/ports/e200/compilers/GCC
+RULESPATH = $(CHIBIOS)/os/common/startup/e200/compilers/GCC
 include $(RULESPATH)/rules.mk

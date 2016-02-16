@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-#include "nil.h"
+#include "ch.h"
 
 /*
  * Blinker thread #1.
