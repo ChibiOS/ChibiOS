@@ -98,6 +98,7 @@
 #include "chmemcore.h"
 #include "chheap.h"
 #include "chmempools.h"
+#include "chdynamic.h"
 #include "chqueues.h"
 #include "chstreams.h"
 

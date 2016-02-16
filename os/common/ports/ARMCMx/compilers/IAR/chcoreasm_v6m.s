@@ -39,12 +39,22 @@
 
 #if !defined(__DOXYGEN__)
 
+/*
+ * RTOS-specific context offset.
+ */
+#if defined(_CHIBIOS_RT_CONF_)
+#define CONTEXT_OFFSET  12
+#elif defined(_CHIBIOS_NIL_CONF_)
+#define CONTEXT_OFFSET  0
+#else
+#error "invalid chconf.h"
+#endif
+
                 MODULE  ?chcoreasm_v6m
 
                 AAPCS INTERWORK, VFP_COMPATIBLE
                 PRESERVE8
 
-CONTEXT_OFFSET  SET     12
 SCB_ICSR        SET     0xE000ED04
 
                 SECTION .text:CODE:NOROOT(2)
@@ -99,7 +109,14 @@ _port_thread_start:
                 cpsie   i
                 mov     r0, r5
                 blx     r4
+#if defined(_CHIBIOS_RT_CONF_)
+                movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
+#endif
+#if defined(_CHIBIOS_NIL_CONF_)
+                mov     r3, #0
+                bl      chSysHalt
+#endif
 
 /*
  * Post-IRQ switch code.
