@@ -34,6 +34,11 @@
   |  |  +--index.html     - Local documentation access (after rebuild).
   +--ext/                 - External libraries, not part of ChibiOS/RT.
   +--os/                  - ChibiOS components.
+  |  +--common/           - Shared OS modules.
+  |  +--common/ext/       - Vendor files used by the OS.
+  |  +--common/oslib/     - RTOS modules usable by both RT and NIL.
+  |  +--common/ports/     - RTOS ports usable by both RT and NIL.
+  |  +--common/startup/   - Startup support for all compilers and platforms.
   |  +--hal/              - HAL component.
   |  |  +--boards/        - HAL board support files.
   |  |  +--dox/           - HAL documentation resources.
@@ -48,14 +53,12 @@
   |  |  +--dox/           - NIL documentation resources.
   |  |  +--include/       - NIL high level headers.
   |  |  +--src/           - NIL high level source.
-  |  |  +--ports/         - NIL ports.
-  |  |  +--templates/     - NIL port template files.
+  |  |  +--templates/     - NIL configuration template files.
   |  +--rt/               - RT RTOS component.
   |  |  +--dox/           - RT documentation resources.
   |  |  +--include/       - RT high level headers.
   |  |  +--src/           - RT high level source.
-  |  |  +--ports/         - RT ports.
-  |  |  +--templates/     - RT port template files.
+  |  |  +--templates/     - RT configuration template files.
   |  +--various/          - Various portable support files.
   +--test/                - Kernel test suite source code.
   |  +--lib/              - Portable test engine.
@@ -73,6 +76,10 @@
 *****************************************************************************
 
 *** Next ***
+- ALL: Reorganized source tree, now ports are shared between RT and NIL.
+- RT:  Merged RT4.
+- NIL: Merged NIL2.
+- NIL: Added STM32F7 demo.
 - RT:  Removed the p_msg field from the thread_t structure saving a
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchronous messages are even faster.

@@ -73,7 +73,7 @@ void osalThreadDequeueNextI(threads_queue_t *tqp, msg_t msg) {
       }
       tp++;
 
-      chDbgAssert(tp < &nil.threads[NIL_CFG_NUM_THREADS],
+      chDbgAssert(tp < &nil.threads[CH_CFG_NUM_THREADS],
                   "pointer out of range");
     }
   }
@@ -97,7 +97,7 @@ void osalThreadDequeueAllI(threads_queue_t *tqp, msg_t msg) {
   tp = nil.threads;
   while (cnt < (cnt_t)0) {
 
-    chDbgAssert(tp < &nil.threads[NIL_CFG_NUM_THREADS],
+    chDbgAssert(tp < &nil.threads[CH_CFG_NUM_THREADS],
                 "pointer out of range");
 
     /* Is this thread waiting on this semaphore?*/

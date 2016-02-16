@@ -71,7 +71,7 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    if (palReadPad(GPIOI, GPIOI_BUTTON_USER))
+    if (palReadLine(LINE_BUTTON_USER))
       TestThread(&SD1);
     chThdSleepMilliseconds(500);
   }
