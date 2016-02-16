@@ -150,8 +150,8 @@ static void sem2_execute(void) {
    */
   msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
   test_assert(1, msg == MSG_TIMEOUT, "wrong wake-up message");
-  test_assert(2, queue_isempty(&sem1.s_queue), "queue not empty");
-  test_assert(3, sem1.s_cnt == 0, "counter not zero");
+  test_assert(2, queue_isempty(&sem1.queue), "queue not empty");
+  test_assert(3, sem1.cnt == 0, "counter not zero");
 
   /*
    * Testing not timeout condition.
@@ -161,8 +161,8 @@ static void sem2_execute(void) {
   msg = chSemWaitTimeout(&sem1, MS2ST(500));
   test_wait_threads();
   test_assert(4, msg == MSG_OK, "wrong wake-up message");
-  test_assert(5, queue_isempty(&sem1.s_queue), "queue not empty");
-  test_assert(6, sem1.s_cnt == 0, "counter not zero");
+  test_assert(5, queue_isempty(&sem1.queue), "queue not empty");
+  test_assert(6, sem1.cnt == 0, "counter not zero");
 
   /*
    * Testing timeout condition.
@@ -173,8 +173,8 @@ static void sem2_execute(void) {
     test_emit_token('A' + i);
     msg = chSemWaitTimeout(&sem1, MS2ST(50));
     test_assert(7, msg == MSG_TIMEOUT, "wrong wake-up message");
-    test_assert(8, queue_isempty(&sem1.s_queue), "queue not empty");
-    test_assert(9, sem1.s_cnt == 0, "counter not zero");
+    test_assert(8, queue_isempty(&sem1.queue), "queue not empty");
+    test_assert(9, sem1.cnt == 0, "counter not zero");
   }
   test_assert_sequence(10, "ABCDE");
   test_assert_time_window(11, target_time, target_time + ALLOWED_DELAY);
@@ -215,12 +215,12 @@ static void sem3_execute(void) {
 
   threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread3, 0);
   chSemSignalWait(&sem1, &sem1);
-  test_assert(1, queue_isempty(&sem1.s_queue), "queue not empty");
-  test_assert(2, sem1.s_cnt == 0, "counter not zero");
+  test_assert(1, queue_isempty(&sem1.queue), "queue not empty");
+  test_assert(2, sem1.cnt == 0, "counter not zero");
 
   chSemSignalWait(&sem1, &sem1);
-  test_assert(3, queue_isempty(&sem1.s_queue), "queue not empty");
-  test_assert(4, sem1.s_cnt == 0, "counter not zero");
+  test_assert(3, queue_isempty(&sem1.queue), "queue not empty");
+  test_assert(4, sem1.cnt == 0, "counter not zero");
 }
 
 ROMCONST struct testcase testsem3 = {
@@ -265,12 +265,12 @@ static void sem4_execute(void) {
      counter semaphore state..*/
   chBSemSignal(&bsem);
   test_assert_lock(3, chBSemGetStateI(&bsem) == FALSE, "still taken");
-  test_assert_lock(4, chSemGetCounterI(&bsem.bs_sem) == 1, "unexpected counter");
+  test_assert_lock(4, chSemGetCounterI(&bsem.sem) == 1, "unexpected counter");
 
   /* Checking signaling overflow, the counter must not go beyond 1.*/
   chBSemSignal(&bsem);
   test_assert_lock(3, chBSemGetStateI(&bsem) == FALSE, "taken");
-  test_assert_lock(5, chSemGetCounterI(&bsem.bs_sem) == 1, "unexpected counter");
+  test_assert_lock(5, chSemGetCounterI(&bsem.sem) == 1, "unexpected counter");
 }
 
 ROMCONST struct testcase testsem4 = {

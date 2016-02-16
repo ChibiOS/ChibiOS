@@ -211,7 +211,7 @@ static THD_FUNCTION(thread4, p) {
   chSysLock();
   do {
     chSchGoSleepS(CH_STATE_SUSPENDED);
-    msg = self->p_u.rdymsg;
+    msg = self->u.rdymsg;
   } while (msg == MSG_OK);
   chSysUnlock();
 }
@@ -344,8 +344,7 @@ ROMCONST struct testcase testbmk6 = {
 
 static THD_FUNCTION(thread3, p) {
 
-  (void)p;
-  while (!chThdShouldTerminateX())
+  while (!*(bool *)p)
     chSemWait(&sem1);
 }
 
@@ -356,12 +355,13 @@ static void bmk7_setup(void) {
 
 static void bmk7_execute(void) {
   uint32_t n;
+  bool terminate = false;
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+5, thread3, NULL);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()+4, thread3, NULL);
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()+3, thread3, NULL);
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()+2, thread3, NULL);
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+1, thread3, NULL);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+5, thread3, &terminate);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()+4, thread3, &terminate);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()+3, thread3, &terminate);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()+2, thread3, &terminate);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+1, thread3, &terminate);
 
   n = 0;
   test_wait_tick();
@@ -373,7 +373,7 @@ static void bmk7_execute(void) {
     _sim_check_for_interrupts();
 #endif
   } while (!test_timer_done);
-  test_terminate_threads();
+  terminate = true;
   chSemReset(&sem1, 0);
   test_wait_threads();
 
@@ -401,39 +401,44 @@ ROMCONST struct testcase testbmk7 = {
  * The performance is calculated by measuring the number of iterations after
  * a second of continuous operations.
  */
+typedef struct {
+  bool terminate;
+  uint32_t n;
+} params_t;
 
 static THD_FUNCTION(thread8, p) {
+  params_t *pp = (params_t *)p;
 
   do {
     chThdYield();
     chThdYield();
     chThdYield();
     chThdYield();
-    (*(uint32_t *)p) += 4;
+    pp->n += 4;
 #if defined(SIMULATOR)
     _sim_check_for_interrupts();
 #endif
-  } while(!chThdShouldTerminateX());
+  } while (!pp->terminate);
 }
 
 static void bmk8_execute(void) {
-  uint32_t n;
+  params_t params = {false, 0};
 
-  n = 0;
+  params.n = 0;
   test_wait_tick();
 
-  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
-  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
-  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
-  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
-  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&n);
+  threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&params);
+  threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&params);
+  threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&params);
+  threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&params);
+  threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread8, (void *)&params);
 
   chThdSleepSeconds(1);
-  test_terminate_threads();
+  params.terminate = true;
   test_wait_threads();
 
   test_print("--- Score : ");
-  test_printn(n);
+  test_printn(params.n);
   test_println(" ctxswc/S");
 }
 

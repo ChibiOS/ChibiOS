@@ -48,17 +48,17 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "3.2.0"
+#define CH_KERNEL_VERSION       "4.0.0"
 
 /**
  * @brief   Kernel version major number.
  */
-#define CH_KERNEL_MAJOR         3
+#define CH_KERNEL_MAJOR         4
 
 /**
  * @brief   Kernel version minor number.
  */
-#define CH_KERNEL_MINOR         2
+#define CH_KERNEL_MINOR         0
 
 /**
  * @brief   Kernel version patch number.
@@ -69,8 +69,14 @@
 /* Core headers.*/
 #include "chtypes.h"
 #include "chconf.h"
+
+#if !defined(_CHIBIOS_RT_CONF_)
+#error "invalid configuration file"
+#endif
+
 #include "chlicense.h"
 #include "chsystypes.h"
+#include "chalign.h"
 #include "chcore.h"
 #include "chdebug.h"
 #include "chtm.h"
@@ -92,9 +98,12 @@
 #include "chmemcore.h"
 #include "chheap.h"
 #include "chmempools.h"
-#include "chdynamic.h"
 #include "chqueues.h"
 #include "chstreams.h"
+
+#if !defined(_CHIBIOS_RT_CONF_)
+#error "missing or wrong configuration file"
+#endif
 
 #endif /* _CH_H_ */
 

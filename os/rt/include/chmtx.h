@@ -55,14 +55,14 @@ typedef struct ch_mutex mutex_t;
  * @brief   Mutex structure.
  */
 struct ch_mutex {
-  threads_queue_t       m_queue;    /**< @brief Queue of the threads sleeping
+  threads_queue_t       queue;      /**< @brief Queue of the threads sleeping
                                                 on this mutex.              */
-  thread_t              *m_owner;   /**< @brief Owner @p thread_t pointer or
+  thread_t              *owner;     /**< @brief Owner @p thread_t pointer or
                                                 @p NULL.                    */
-  mutex_t               *m_next;    /**< @brief Next @p mutex_t into an
+  mutex_t               *next;      /**< @brief Next @p mutex_t into an
                                                 owner-list or @p NULL.      */
 #if (CH_CFG_USE_MUTEXES_RECURSIVE == TRUE) || defined(__DOXYGEN__)
-  cnt_t                 m_cnt;      /**< @brief Mutex recursion counter.    */
+  cnt_t                 cnt;        /**< @brief Mutex recursion counter.    */
 #endif
 };
 
@@ -78,9 +78,9 @@ struct ch_mutex {
  * @param[in] name      the name of the mutex variable
  */
 #if (CH_CFG_USE_MUTEXES_RECURSIVE == TRUE) || defined(__DOXYGEN__)
-#define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.m_queue), NULL, NULL, 0}
+#define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.queue), NULL, NULL, 0}
 #else
-#define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.m_queue), NULL, NULL}
+#define _MUTEX_DATA(name) {_THREADS_QUEUE_DATA(name.queue), NULL, NULL}
 #endif
 
 /**
@@ -130,7 +130,7 @@ static inline bool chMtxQueueNotEmptyS(mutex_t *mp) {
 
   chDbgCheckClassS();
 
-  return queue_notempty(&mp->m_queue);
+  return queue_notempty(&mp->queue);
 }
 
 /**
@@ -143,7 +143,7 @@ static inline bool chMtxQueueNotEmptyS(mutex_t *mp) {
  */
 static inline mutex_t *chMtxGetNextMutexS(void) {
 
-  return chThdGetSelfX()->p_mtxlist;
+  return chThdGetSelfX()->mtxlist;
 }
 
 #endif /* CH_CFG_USE_MUTEXES == TRUE */

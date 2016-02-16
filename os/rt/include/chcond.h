@@ -57,7 +57,7 @@
  * @brief   condition_variable_t structure.
  */
 typedef struct condition_variable {
-  threads_queue_t       c_queue;            /**< @brief Condition variable
+  threads_queue_t       queue;              /**< @brief Condition variable
                                                  threads queue.             */
 } condition_variable_t;
 
@@ -72,7 +72,7 @@ typedef struct condition_variable {
  *
  * @param[in] name      the name of the condition variable
  */
-#define _CONDVAR_DATA(name) {_THREADS_QUEUE_DATA(name.c_queue)}
+#define _CONDVAR_DATA(name) {_THREADS_QUEUE_DATA(name.queue)}
 
 /**
  * @brief Static condition variable initializer.

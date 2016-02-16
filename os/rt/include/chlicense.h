@@ -207,17 +207,14 @@
       #error "CH_CFG_USE_TM == TRUE, Time Measurement functionality restricted"
     #endif
 
-    #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
-      #error "CH_CFG_USE_MUTEXES_RECURSIVE == TRUE, Recursive Mutexes functionality restricted"
+    #if CH_CFG_USE_MUTEXES == TRUE
+      #error "CH_CFG_USE_MUTEXES == TRUE, Recursive Mutexes functionality restricted"
     #endif
 
     #if CH_CFG_USE_CONDVARS == TRUE
       #error "CH_CFG_USE_CONDVARS == TRUE, Condition Variables functionality restricted"
     #endif
 
-    #if CH_CFG_USE_DYNAMIC == TRUE
-      #error "CH_CFG_USE_DYNAMIC == TRUE, Dynamic Threads functionality restricted"
-    #endif
   #endif /* CH_LICENSE_FEATURES == CH_FEATURES_BASIC */
 
 #else

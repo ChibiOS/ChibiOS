@@ -75,15 +75,15 @@ typedef void (*qnotify_t)(io_queue_t *qp);
  *          @ref system_states) and is non-blocking.
  */
 struct io_queue {
-  threads_queue_t       q_waiting;  /**< @brief Queue of waiting threads.   */
-  volatile size_t       q_counter;  /**< @brief Resources counter.          */
-  uint8_t               *q_buffer;  /**< @brief Pointer to the queue buffer.*/
-  uint8_t               *q_top;     /**< @brief Pointer to the first location
+  threads_queue_t       waiting;    /**< @brief Queue of waiting threads.   */
+  volatile size_t       counter;    /**< @brief Resources counter.          */
+  uint8_t               *buffer;    /**< @brief Pointer to the queue buffer.*/
+  uint8_t               *top;       /**< @brief Pointer to the first location
                                                 after the buffer.           */
-  uint8_t               *q_wrptr;   /**< @brief Write pointer.              */
-  uint8_t               *q_rdptr;   /**< @brief Read pointer.               */
-  qnotify_t             q_notify;   /**< @brief Data notification callback. */
-  void                  *q_link;    /**< @brief Application defined field.  */
+  uint8_t               *wrptr;     /**< @brief Write pointer.              */
+  uint8_t               *rdptr;     /**< @brief Read pointer.               */
+  qnotify_t             notify;     /**< @brief Data notification callback. */
+  void                  *link;      /**< @brief Application defined field.  */
 };
 
 /**
@@ -202,7 +202,7 @@ typedef io_queue_t output_queue_t;
  */
 #define chQSizeX(qp)                                                        \
   /*lint -save -e9033 [10.8] The cast is safe.*/                            \
-  ((size_t)((qp)->q_top - (qp)->q_buffer))                                  \
+  ((size_t)((qp)->top - (qp)->buffer))                                      \
   /*lint -restore*/
 
 /**
@@ -215,7 +215,7 @@ typedef io_queue_t output_queue_t;
  *
  * @iclass
  */
-#define chQSpaceI(qp) ((qp)->q_counter)
+#define chQSpaceI(qp) ((qp)->counter)
 
 /**
  * @brief   Returns the queue application-defined link.
@@ -225,7 +225,7 @@ typedef io_queue_t output_queue_t;
  *
  * @xclass
  */
-#define chQGetLinkX(qp) ((qp)->q_link)
+#define chQGetLinkX(qp) ((qp)->link)
 /** @} */
 
 /*===========================================================================*/
@@ -322,7 +322,7 @@ static inline bool chIQIsFullI(input_queue_t *iqp) {
   chDbgCheckClassI();
 
   /*lint -save -e9007 [13.5] No side effects.*/
-  return (bool)((iqp->q_wrptr == iqp->q_rdptr) && (iqp->q_counter != 0U));
+  return (bool)((iqp->wrptr == iqp->rdptr) && (iqp->counter != 0U));
   /*lint -restore*/
 }
 
@@ -390,7 +390,7 @@ static inline bool chOQIsEmptyI(output_queue_t *oqp) {
   chDbgCheckClassI();
 
   /*lint -save -e9007 [13.5] No side effects.*/
-  return (bool)((oqp->q_wrptr == oqp->q_rdptr) && (oqp->q_counter != 0U));
+  return (bool)((oqp->wrptr == oqp->rdptr) && (oqp->counter != 0U));
   /*lint -restore*/
 }
 

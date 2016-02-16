@@ -90,7 +90,6 @@ extern "C" {
   bool _test_assert(unsigned point, bool condition);
   bool _test_assert_sequence(unsigned point, char *expected);
   bool _test_assert_time_window(unsigned point, systime_t start, systime_t end);
-  void test_terminate_threads(void);
   void test_wait_threads(void);
   systime_t test_wait_tick(void);
   void test_start_timer(unsigned ms);

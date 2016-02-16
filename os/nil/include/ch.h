@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    nil.h
+ * @file    ch.h
  * @brief   Nil RTOS main header file.
  * @details This header includes all the required kernel headers so it is the
  *          only header you usually need to include in your application.
@@ -27,18 +27,11 @@
  * @{
  */
 
-#ifndef _NIL_H_
-#define _NIL_H_
+#ifndef _CH_H_
+#define _CH_H_
 
-/**
- * @brief   Type of a structure representing a thread.
- * @note    It is required as an early definition.
- */
-typedef struct nil_thread thread_t;
-
-#include "nilconf.h"
-#include "niltypes.h"
-#include "nilcore.h"
+#include "chconf.h"
+#include "chtypes.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -61,22 +54,22 @@ typedef struct nil_thread thread_t;
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "1.1.1"
+#define CH_KERNEL_VERSION       "2.0.0"
 
 /**
  * @brief   Kernel version major number.
  */
-#define CH_KERNEL_MAJOR         1
+#define CH_KERNEL_MAJOR         2
 
 /**
  * @brief   Kernel version minor number.
  */
-#define CH_KERNEL_MINOR         1
+#define CH_KERNEL_MINOR         0
 
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         1
+#define CH_KERNEL_PATCH         0
 /** @} */
 
 /**
@@ -150,26 +143,26 @@ typedef struct nil_thread thread_t;
  * @note    This number is not inclusive of the idle thread which is
  *          implicitly handled.
  */
-#if !defined(NIL_CFG_NUM_THREADS) || defined(__DOXYGEN__)
-#define NIL_CFG_NUM_THREADS                 2
+#if !defined(CH_CFG_NUM_THREADS) || defined(__DOXYGEN__)
+#define CH_CFG_NUM_THREADS                  2
 #endif
 
 /**
  * @brief   System time counter resolution.
  * @note    Allowed values are 16 or 32 bits.
  */
-#if !defined(NIL_CFG_ST_RESOLUTION) || defined(__DOXYGEN__)
-#define NIL_CFG_ST_RESOLUTION               32
+#if !defined(CH_CFG_ST_RESOLUTION) || defined(__DOXYGEN__)
+#define CH_CFG_ST_RESOLUTION                32
 #endif
 
 /**
  * @brief   System tick frequency.
- * @note    This value together with the @p NIL_CFG_ST_RESOLUTION
+ * @note    This value together with the @p CH_CFG_ST_RESOLUTION
  *          option defines the maximum amount of time allowed for
  *          timeouts.
  */
-#if !defined(NIL_CFG_ST_FREQUENCY) || defined(__DOXYGEN__)
-#define NIL_CFG_ST_FREQUENCY                100
+#if !defined(CH_CFG_ST_FREQUENCY) || defined(__DOXYGEN__)
+#define CH_CFG_ST_FREQUENCY                 100
 #endif
 
 /**
@@ -180,8 +173,29 @@ typedef struct nil_thread thread_t;
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
-#if !defined(NIL_CFG_ST_TIMEDELTA) || defined(__DOXYGEN__)
-#define NIL_CFG_ST_TIMEDELTA                0
+#if !defined(CH_CFG_ST_TIMEDELTA) || defined(__DOXYGEN__)
+#define CH_CFG_ST_TIMEDELTA                 0
+#endif
+
+/**
+ * @brief   Semaphores APIs.
+ * @details If enabled then the Semaphores APIs are included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#define CH_CFG_USE_SEMAPHORES               TRUE
+#endif
+
+/**
+ * @brief   Mutexes APIs.
+ * @details If enabled then the mutexes APIs are included in the kernel.
+ *
+ * @note    Feature not currently implemented.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MUTEXES                  FALSE
 #endif
 
 /**
@@ -190,44 +204,122 @@ typedef struct nil_thread thread_t;
  *
  * @note    The default is @p TRUE.
  */
-#if !defined(NIL_CFG_USE_EVENTS) || defined(__DOXYGEN__)
-#define NIL_CFG_USE_EVENTS                  TRUE
+#if !defined(CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
+#define CH_CFG_USE_EVENTS                   TRUE
+#endif
+
+/**
+ * @brief   Mailboxes APIs.
+ * @details If enabled then the asynchronous messages (mailboxes) APIs are
+ *          included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ * @note    Requires @p CH_CFG_USE_SEMAPHORES.
+ */
+#if !defined(CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MAILBOXES                TRUE
+#endif
+
+/**
+ * @brief   Core Memory Manager APIs.
+ * @details If enabled then the core memory manager APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_MEMCORE) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MEMCORE                  TRUE
+#endif
+
+/**
+ * @brief   Heap Allocator APIs.
+ * @details If enabled then the memory heap allocator APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
+#define CH_CFG_USE_HEAP                     TRUE
+#endif
+
+/**
+ * @brief   Memory Pools Allocator APIs.
+ * @details If enabled then the memory pools allocator APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
+#define CH_CFG_USE_MEMPOOLS                 TRUE
+#endif
+
+/**
+ * @brief   Debug option, kernel statistics.
+ *
+ * @note    Feature not currently implemented.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(CH_DBG_STATISTICS) || defined(__DOXYGEN__)
+#define CH_DBG_STATISTICS                   FALSE
+#endif
+
+/**
+ * @brief   Debug option, system state check.
+ * @note    This is a planned feature, not yet implemented.
+ *
+ * @note    The default is @p FALSE.
+ */
+#if !defined(CH_DBG_SYSTEM_STATE_CHECK) || defined(__DOXYGEN__)
+#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
+#endif
+
+/**
+ * @brief   Debug option, parameters checks.
+ *
+ * @note    The default is @p FALSE.
+ */
+#if !defined(CH_DBG_ENABLE_CHECKS) || defined(__DOXYGEN__)
+#define CH_DBG_ENABLE_CHECKS                FALSE
 #endif
 
 /**
  * @brief   System assertions.
+ *
+ * @note    The default is @p FALSE.
  */
-#if !defined(NIL_CFG_ENABLE_ASSERTS) || defined(__DOXYGEN__)
-#define NIL_CFG_ENABLE_ASSERTS              FALSE
+#if !defined(CH_DBG_ENABLE_ASSERTS) || defined(__DOXYGEN__)
+#define CH_DBG_ENABLE_ASSERTS               FALSE
 #endif
 
 /**
  * @brief   Stack check.
+ *
+ * @note    The default is @p FALSE.
  */
-#if !defined(NIL_CFG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
-#define NIL_CFG_ENABLE_STACK_CHECK          FALSE
+#if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
+#define CH_DBG_ENABLE_STACK_CHECK           FALSE
 #endif
 
 /**
  * @brief   System initialization hook.
  */
-#if !defined(NIL_CFG_SYSTEM_INIT_HOOK) || defined(__DOXYGEN__)
-#define NIL_CFG_SYSTEM_INIT_HOOK() {}
+#if !defined(CH_CFG_SYSTEM_INIT_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_SYSTEM_INIT_HOOK() {}
 #endif
 
 /**
  * @brief   Threads descriptor structure extension.
  * @details User fields added to the end of the @p thread_t structure.
  */
-#if !defined(NIL_CFG_THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
-#define NIL_CFG_THREAD_EXT_FIELDS
+#if !defined(CH_CFG_THREAD_EXT_FIELDS) || defined(__DOXYGEN__)
+#define CH_CFG_THREAD_EXT_FIELDS
 #endif
 
 /**
  * @brief   Threads initialization hook.
  */
-#if !defined(NIL_CFG_THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
-#define NIL_CFG_THREAD_EXT_INIT_HOOK(tr) {}
+#if !defined(CH_CFG_THREAD_EXT_INIT_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_THREAD_EXT_INIT_HOOK(tr) {}
 #endif
 
 /**
@@ -236,8 +328,8 @@ typedef struct nil_thread thread_t;
  *          should be invoked from here.
  * @note    This macro can be used to activate a power saving mode.
  */
-#if !defined(NIL_CFG_IDLE_ENTER_HOOK) || defined(__DOXYGEN__)
-#define NIL_CFG_IDLE_ENTER_HOOK() {}
+#if !defined(CH_CFG_IDLE_ENTER_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_IDLE_ENTER_HOOK() {}
 #endif
 
 /**
@@ -246,44 +338,59 @@ typedef struct nil_thread thread_t;
  *          should be invoked from here.
  * @note    This macro can be used to deactivate a power saving mode.
  */
-#if !defined(NIL_CFG_IDLE_LEAVE_HOOK) || defined(__DOXYGEN__)
-#define NIL_CFG_IDLE_LEAVE_HOOK() {}
+#if !defined(CH_CFG_IDLE_LEAVE_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_IDLE_LEAVE_HOOK() {}
 #endif
 
 /**
  * @brief   System halt hook.
  */
-#if !defined(NIL_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
-#define NIL_CFG_SYSTEM_HALT_HOOK(reason) {}
+#if !defined(CH_CFG_SYSTEM_HALT_HOOK) || defined(__DOXYGEN__)
+#define CH_CFG_SYSTEM_HALT_HOOK(reason) {}
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if NIL_CFG_NUM_THREADS < 1
+#if !defined(_CHIBIOS_NIL_CONF_)
+#error "missing or wrong configuration file"
+#endif
+
+#if CH_CFG_NUM_THREADS < 1
 #error "at least one thread must be defined"
 #endif
 
-#if NIL_CFG_NUM_THREADS > 12
-#error "Nil is not recommended for thread-intensive applications, consider" \
-       "ChibiOS/RT instead"
+#if CH_CFG_NUM_THREADS > 16
+#error "ChibiOS/NIL is not recommended for thread-intensive applications,"  \
+       "consider ChibiOS/RT instead"
 #endif
 
-#if (NIL_CFG_ST_RESOLUTION != 16) && (NIL_CFG_ST_RESOLUTION != 32)
-#error "invalid NIL_CFG_ST_RESOLUTION specified, must be 16 or 32"
+#if (CH_CFG_ST_RESOLUTION != 16) && (CH_CFG_ST_RESOLUTION != 32)
+#error "invalid CH_CFG_ST_RESOLUTION specified, must be 16 or 32"
 #endif
 
-#if NIL_CFG_ST_FREQUENCY <= 0
-#error "invalid NIL_CFG_ST_FREQUENCY specified, must be greated than zero"
+#if CH_CFG_ST_FREQUENCY <= 0
+#error "invalid CH_CFG_ST_FREQUENCY specified, must be greated than zero"
 #endif
 
-#if (NIL_CFG_ST_TIMEDELTA < 0) || (NIL_CFG_ST_TIMEDELTA == 1)
-#error "invalid NIL_CFG_ST_TIMEDELTA specified, must "                      \
+#if (CH_CFG_ST_TIMEDELTA < 0) || (CH_CFG_ST_TIMEDELTA == 1)
+#error "invalid CH_CFG_ST_TIMEDELTA specified, must "                       \
        "be zero or greater than one"
 #endif
 
-#if (NIL_CFG_ENABLE_ASSERTS == TRUE) || (NIL_CFG_ENABLE_STACK_CHECK == TRUE)
+#if CH_CFG_USE_MUTEXES == TRUE
+#error "mutexes not yet supported"
+#endif
+
+#if CH_DBG_STATISTICS == TRUE
+#error "statistics not yet supported"
+#endif
+
+#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE) ||                                  \
+    (CH_DBG_ENABLE_CHECKS == TRUE)      ||                                  \
+    (CH_DBG_ENABLE_ASSERTS == TRUE)     ||                                  \
+    (CH_DBG_ENABLE_STACK_CHECK == TRUE)
 #define NIL_DBG_ENABLED                 TRUE
 #else
 #define NIL_DBG_ENABLED                 FALSE
@@ -291,9 +398,7 @@ typedef struct nil_thread thread_t;
 
 /** Boundaries of the idle thread boundaries, only required if stack checking
     is enabled.*/
-#if (NIL_CFG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
-extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
-
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
 #define THD_IDLE_BASE                   (&__main_thread_stack_base__)
 #define THD_IDLE_END                    (&__main_thread_stack_end__)
 #else
@@ -306,10 +411,23 @@ extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
 /*===========================================================================*/
 
 /**
- * @brief   Type of internal context structure.
+ * @brief   Type of system time.
  */
-typedef struct port_intctx intctx_t;
+#if (CH_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
+typedef uint32_t systime_t;
+#else
+typedef uint16_t systime_t;
+#endif
 
+/**
+ * @brief   Type of a structure representing a thread.
+ * @note    It is required as an early definition.
+ */
+typedef struct nil_thread thread_t;
+
+#include "chcore.h"
+
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a structure representing a semaphore.
  */
@@ -321,6 +439,7 @@ typedef struct nil_semaphore semaphore_t;
 struct nil_semaphore {
   volatile cnt_t    cnt;        /**< @brief Semaphore counter.              */
 };
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 /**
  * @brief Thread function.
@@ -352,29 +471,31 @@ typedef thread_t * thread_reference_t;
  * @brief   Structure representing a thread.
  */
 struct nil_thread {
-  intctx_t              *ctxp;  /**< @brief Pointer to internal context.    */
-  tstate_t              state;  /**< @brief Thread state.                   */
+  struct port_context   ctx;        /**< @brief Processor context.          */
+  tstate_t              state;      /**< @brief Thread state.               */
   /* Note, the following union contains a pointer while the thread is in a
      sleeping state (!NIL_THD_IS_READY()) else contains the wake-up message.*/
   union {
-    msg_t               msg;    /**< @brief Wake-up message.                */
-    void                *p;     /**< @brief Generic pointer.                */
-    thread_reference_t  *trp;   /**< @brief Pointer to thread reference.    */
-    semaphore_t         *semp;  /**< @brief Pointer to semaphore.           */
-#if (NIL_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
-    eventmask_t         ewmask; /**< @brief Enabled events mask.            */
+    msg_t               msg;        /**< @brief Wake-up message.            */
+    void                *p;         /**< @brief Generic pointer.            */
+    thread_reference_t  *trp;       /**< @brief Pointer to thread reference.*/
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
+    semaphore_t         *semp;      /**< @brief Pointer to semaphore.       */
+#endif
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+    eventmask_t         ewmask;     /**< @brief Enabled events mask.        */
 #endif
   } u1;
-  volatile systime_t    timeout;/**< @brief Timeout counter, zero
+  volatile systime_t    timeout;    /**< @brief Timeout counter, zero
                                             if disabled.                    */
-#if (NIL_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
-  eventmask_t           epmask; /**< @brief Pending events mask.            */
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+  eventmask_t           epmask;     /**< @brief Pending events mask.        */
 #endif
-#if (NIL_CFG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
-  stkalign_t            *stklim;/**< @brief Thread stack boundary.          */
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+  stkalign_t            *stklimit;  /**< @brief Thread stack boundary.      */
 #endif
   /* Optional extra fields.*/
-  NIL_CFG_THREAD_EXT_FIELDS
+  CH_CFG_THREAD_EXT_FIELDS
 };
 
 /**
@@ -398,13 +519,13 @@ struct nil_system {
    *          or to an higher priority thread if a switch is required.
    */
   thread_t              *next;
-#if (NIL_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
+#if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
   /**
    * @brief   System time.
    */
   volatile systime_t    systime;
 #endif
-#if (NIL_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
+#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
   /**
    * @brief   System time of the last tick event.
    */
@@ -414,10 +535,16 @@ struct nil_system {
    */
   systime_t             nexttime;
 #endif
+#if (CH_DBG_SYSTEM_STATE_CHECK == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   Thread structures for all the defined threads.
+   * @brief   ISR nesting level.
    */
-  thread_t              threads[NIL_CFG_NUM_THREADS + 1];
+  cnt_t                 isr_cnt;
+  /**
+   * @brief   Lock nesting level.
+   */
+  cnt_t                 lock_cnt;
+#endif
 #if (NIL_DBG_ENABLED == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Panic message.
@@ -428,11 +555,20 @@ struct nil_system {
    */
   const char            * volatile dbg_panic_msg;
 #endif
+  /**
+   * @brief   Thread structures for all the defined threads.
+   */
+  thread_t              threads[CH_CFG_NUM_THREADS + 1];
 };
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
+#define _dbg_enter_lock() (nil.lock_cnt = (cnt_t)1)
+#define _dbg_leave_lock() (nil.lock_cnt = (cnt_t)0)
+#endif
 
 /**
  * @name    Threads tables definition macros
@@ -442,7 +578,7 @@ struct nil_system {
  * @brief   Start of user threads table.
  */
 #define THD_TABLE_BEGIN                                                     \
-  const thread_config_t nil_thd_configs[NIL_CFG_NUM_THREADS + 1] = {
+  const thread_config_t nil_thd_configs[CH_CFG_NUM_THREADS + 1] = {
 
 /**
  * @brief   Entry of user threads table
@@ -460,20 +596,53 @@ struct nil_system {
 /** @} */
 
 /**
- * @name    Working Areas and Alignment
+ * @name    Memory alignment support macros
  */
 /**
- * @brief   Enforces a correct alignment for a stack area size value.
+ * @brief   Alignment mask constant.
  *
- * @param[in] n         the stack size to be aligned to the next stack
- *                      alignment boundary
- * @return              The aligned stack size.
- *
- * @api
+ * @param[in] a         alignment, must be a power of two
  */
-#define THD_ALIGN_STACK_SIZE(n)                                             \
-  ((((n) - 1U) | (sizeof(stkalign_t) - 1U)) + 1U)
+#define MEM_ALIGN_MASK(a)       ((size_t)(a) - 1U)
 
+/**
+ * @brief   Aligns to the previous aligned memory address.
+ *
+ * @param[in] p         variable to be aligned
+ * @param[in] a         alignment, must be a power of two
+ */
+#define MEM_ALIGN_PREV(p, a)    ((size_t)(p) & ~MEM_ALIGN_MASK(a))
+
+/**
+ * @brief   Aligns to the new aligned memory address.
+ *
+ * @param[in] p         variable to be aligned
+ * @param[in] a         alignment, must be a power of two
+ */
+#define MEM_ALIGN_NEXT(p, a)    MEM_ALIGN_PREV((size_t)(p) +                \
+                                               MEM_ALIGN_MASK(a), (a))
+
+/**
+ * @brief   Returns whatever a pointer or memory size is aligned.
+ *
+ * @param[in] p         variable to be aligned
+ * @param[in] a         alignment, must be a power of two
+ */
+#define MEM_IS_ALIGNED(p, a)    (((size_t)(p) & MEM_ALIGN_MASK(a)) == 0U)
+
+/**
+ * @brief   Returns whatever a constant is a valid alignment.
+ * @details Valid alignments are powers of two.
+ *
+ * @param[in] a         alignment to be checked, must be a constant
+ */
+#define MEM_IS_VALID_ALIGNMENT(a)                                           \
+  (((size_t)(a) != 0U) && (((size_t)(a) & ((size_t)(a) - 1U)) == 0U))
+/** @} */
+
+/**
+ * @name    Working Areas
+ */
 /**
  * @brief   Calculates the total Working Area size.
  *
@@ -482,8 +651,8 @@ struct nil_system {
  *
  * @api
  */
-#define THD_WORKING_AREA_SIZE(n)                                            \
-  THD_ALIGN_STACK_SIZE(PORT_WA_SIZE(n))
+#define THD_WORKING_AREA_SIZE(n) MEM_ALIGN_NEXT(PORT_WA_SIZE(n),            \
+                                                PORT_STACK_ALIGN)
 
 /**
  * @brief   Static working area allocation.
@@ -495,8 +664,7 @@ struct nil_system {
  *
  * @api
  */
-#define THD_WORKING_AREA(s, n)                                              \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof(stkalign_t)]
+#define THD_WORKING_AREA(s, n) PORT_WORKING_AREA(s, n)
 /** @} */
 
 /**
@@ -556,7 +724,9 @@ struct nil_system {
  *
  * @special
  */
-#define CH_IRQ_PROLOGUE() PORT_IRQ_PROLOGUE()
+#define CH_IRQ_PROLOGUE()                                                   \
+  PORT_IRQ_PROLOGUE();                                                      \
+  _dbg_check_enter_isr()
 
 /**
  * @brief   IRQ handler exit code.
@@ -564,7 +734,9 @@ struct nil_system {
  *
  * @special
  */
-#define CH_IRQ_EPILOGUE() PORT_IRQ_EPILOGUE()
+#define CH_IRQ_EPILOGUE()                                                   \
+  _dbg_check_leave_isr();                                                   \
+  PORT_IRQ_EPILOGUE()
 
 /**
  * @brief   Standard normal IRQ handler declaration.
@@ -605,7 +777,7 @@ struct nil_system {
  * @api
  */
 #define S2ST(sec)                                                           \
-  ((systime_t)((uint32_t)(sec) * (uint32_t)NIL_CFG_ST_FREQUENCY))
+  ((systime_t)((uint32_t)(sec) * (uint32_t)CH_CFG_ST_FREQUENCY))
 
 /**
  * @brief   Milliseconds to system ticks.
@@ -619,7 +791,7 @@ struct nil_system {
  */
 #define MS2ST(msec)                                                         \
   ((systime_t)(((((uint32_t)(msec)) *                                       \
-                 ((uint32_t)NIL_CFG_ST_FREQUENCY)) + 999UL) / 1000UL))
+                 ((uint32_t)CH_CFG_ST_FREQUENCY)) + 999UL) / 1000UL))
 
 /**
  * @brief   Microseconds to system ticks.
@@ -633,7 +805,7 @@ struct nil_system {
  */
 #define US2ST(usec)                                                         \
   ((systime_t)(((((uint32_t)(usec)) *                                       \
-                 ((uint32_t)NIL_CFG_ST_FREQUENCY)) + 999999UL) / 1000000UL))
+                 ((uint32_t)CH_CFG_ST_FREQUENCY)) + 999999UL) / 1000000UL))
 /** @} */
 
 /**
@@ -701,32 +873,67 @@ struct nil_system {
 #endif
 
 /**
- * @brief   Enters the kernel lock mode.
+ * @brief   Raises the system interrupt priority mask to the maximum level.
+ * @details All the maskable interrupt sources are disabled regardless their
+ *          hardware priority.
+ * @note    Do not invoke this API from within a kernel lock.
  *
  * @special
  */
-#define chSysDisable() port_disable()
+#define chSysDisable() {                                                    \
+  port_disable();                                                           \
+  _dbg_check_disable();                                                     \
+}
 
 /**
- * @brief   Enters the kernel lock mode.
+ * @brief   Raises the system interrupt priority mask to system level.
+ * @details The interrupt sources that should not be able to preempt the kernel
+ *          are disabled, interrupt sources with higher priority are still
+ *          enabled.
+ * @note    Do not invoke this API from within a kernel lock.
+ * @note    This API is no replacement for @p chSysLock(), the @p chSysLock()
+ *          could do more than just disable the interrupts.
  *
  * @special
  */
-#define chSysEnable() port_enable()
+#define chSysSuspend() {                                                    \
+  port_suspend();                                                           \
+  _dbg_check_suspend();                                                     \
+}
+
+/**
+ * @brief   Lowers the system interrupt priority mask to user level.
+ * @details All the interrupt sources are enabled.
+ * @note    Do not invoke this API from within a kernel lock.
+ * @note    This API is no replacement for @p chSysUnlock(), the
+ *          @p chSysUnlock() could do more than just enable the interrupts.
+ *
+ * @special
+ */
+#define chSysEnable() {                                                     \
+  _dbg_check_enable();                                                      \
+  port_enable();                                                            \
+}
 
 /**
  * @brief   Enters the kernel lock state.
  *
  * @special
  */
-#define chSysLock() port_lock()
+#define chSysLock() {                                                       \
+  port_lock();                                                              \
+  _dbg_check_lock();                                                        \
+}
 
 /**
  * @brief   Leaves the kernel lock state.
  *
  * @special
  */
-#define chSysUnlock() port_unlock()
+#define chSysUnlock() {                                                     \
+  _dbg_check_unlock();                                                      \
+  port_unlock();                                                            \
+}
 
 /**
  * @brief   Enters the kernel lock state from within an interrupt handler.
@@ -740,7 +947,10 @@ struct nil_system {
  *
  * @special
  */
-#define chSysLockFromISR() port_lock_from_isr()
+#define chSysLockFromISR() {                                                \
+  port_lock_from_isr();                                                     \
+  _dbg_check_lock_from_isr();                                               \
+}
 
 /**
  * @brief   Leaves the kernel lock state from within an interrupt handler.
@@ -755,7 +965,10 @@ struct nil_system {
  *
  * @special
  */
-#define chSysUnlockFromISR() port_unlock_from_isr()
+#define chSysUnlockFromISR() {                                              \
+  _dbg_check_unlock_from_isr();                                             \
+  port_unlock_from_isr();                                                   \
+}
 
 /**
  * @brief   Evaluates if a reschedule is required.
@@ -834,6 +1047,7 @@ struct nil_system {
     (void) chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, (abstime) -             \
                                 chVTGetSystemTimeX())
 
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Initializes a semaphore with the specified counter value.
  *
@@ -874,11 +1088,33 @@ struct nil_system {
 #define chSemWaitS(sp) chSemWaitTimeoutS(sp, TIME_INFINITE)
 
 /**
+ * @brief   Decreases the semaphore counter.
+ * @details This macro can be used when the counter is known to be positive.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ *
+ * @iclass
+ */
+#define chSemFastWaitI(sp) ((sp)->cnt--)
+
+/**
+ * @brief   Increases the semaphore counter.
+ * @details This macro can be used when the counter is known to be not
+ *          negative.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ *
+ * @iclass
+ */
+#define chSemFastSignalI(sp) ((sp)->cnt++)
+
+/**
  * @brief   Returns the semaphore counter current value.
  *
  * @iclass
  */
 #define chSemGetCounterI(sp) ((sp)->cnt)
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 /**
  * @brief   Current system time.
@@ -893,7 +1129,7 @@ struct nil_system {
  *
  * @xclass
  */
-#if (NIL_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
+#if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
 #define chVTGetSystemTimeX() (nil.systime)
 #else
 #define chVTGetSystemTimeX() port_timer_get_time()
@@ -928,11 +1164,33 @@ struct nil_system {
   ((bool)((systime_t)((time) - (start)) < (systime_t)((end) - (start))))
 
 /**
+ * @brief   Function parameters check.
+ * @details If the condition check fails then the kernel panics and halts.
+ * @note    The condition is tested only if the @p CH_DBG_ENABLE_CHECKS switch
+ *          is specified in @p chconf.h else the macro does nothing.
+ *
+ * @param[in] c         the condition to be verified to be true
+ *
+ * @api
+ */
+#if !defined(chDbgCheck)
+#define chDbgCheck(c) do {                                                  \
+  /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
+  if (CH_DBG_ENABLE_CHECKS != FALSE) {                                      \
+    if (!(c)) {                                                             \
+  /*lint -restore*/                                                         \
+      chSysHalt(__func__);                                                  \
+    }                                                                       \
+  }                                                                         \
+} while (false)
+#endif /* !defined(chDbgCheck) */
+
+/**
  * @brief   Condition assertion.
  * @details If the condition check fails then the kernel panics with a
  *          message and halts.
- * @note    The condition is tested only if the @p NIL_CFG_ENABLE_ASSERTS
- *          switch is specified in @p nilconf.h else the macro does nothing.
+ * @note    The condition is tested only if the @p CH_DBG_ENABLE_ASSERTS
+ *          switch is specified in @p chconf.h else the macro does nothing.
  * @note    The remark string is not currently used except for putting a
  *          comment in the code about the assertion.
  *
@@ -944,7 +1202,7 @@ struct nil_system {
 #if !defined(chDbgAssert)
 #define chDbgAssert(c, r) do {                                              \
   /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
-  if (NIL_CFG_ENABLE_ASSERTS != FALSE) {                                    \
+  if (CH_DBG_ENABLE_ASSERTS != FALSE) {                                     \
     if (!(c)) {                                                             \
   /*lint -restore*/                                                         \
       chSysHalt(__func__);                                                  \
@@ -954,13 +1212,33 @@ struct nil_system {
 #endif /* !defined(chDbgAssert) */
 /** @} */
 
+/* Empty macros if the state checker is not enabled.*/
+#if CH_DBG_SYSTEM_STATE_CHECK == FALSE
+#define _dbg_enter_lock()
+#define _dbg_leave_lock()
+#define _dbg_check_disable()
+#define _dbg_check_suspend()
+#define _dbg_check_enable()
+#define _dbg_check_lock()
+#define _dbg_check_unlock()
+#define _dbg_check_lock_from_isr()
+#define _dbg_check_unlock_from_isr()
+#define _dbg_check_enter_isr()
+#define _dbg_check_leave_isr()
+#define chDbgCheckClassI()
+#define chDbgCheckClassS()
+#endif
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
+#endif
 extern nil_system_t nil;
-extern const thread_config_t nil_thd_configs[NIL_CFG_NUM_THREADS + 1];
+extern const thread_config_t nil_thd_configs[CH_CFG_NUM_THREADS + 1];
 #endif
 
 #ifdef __cplusplus
@@ -976,28 +1254,50 @@ extern "C" {
   void chSysPolledDelayX(rtcnt_t cycles);
   void chSysRestoreStatusX(syssts_t sts);
   thread_t *chSchReadyI(thread_t *tp, msg_t msg);
+  bool chSchIsPreemptionRequired(void);
+  void chSchDoReschedule(void);
   void chSchRescheduleS(void);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t timeout);
   msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
   void chThdSleep(systime_t timeout);
   void chThdSleepUntil(systime_t abstime);
+#if CH_CFG_USE_SEMAPHORES == TRUE
   msg_t chSemWaitTimeout(semaphore_t *sp, systime_t timeout);
   msg_t chSemWaitTimeoutS(semaphore_t *sp, systime_t timeout);
   void chSemSignal(semaphore_t *sp);
   void chSemSignalI(semaphore_t *sp);
   void chSemReset(semaphore_t *sp, cnt_t n);
   void chSemResetI(semaphore_t *sp, cnt_t n);
-#if NIL_CFG_USE_EVENTS == TRUE
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
+#if CH_CFG_USE_EVENTS == TRUE
   void chEvtSignal(thread_t *tp, eventmask_t mask);
   void chEvtSignalI(thread_t *tp, eventmask_t mask);
   eventmask_t chEvtWaitAnyTimeout(eventmask_t mask, systime_t timeout);
-  eventmask_t chEvtWaitAnyTimeoutS(eventmask_t mask, systime_t timeout);
+#endif
+#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
+  void _dbg_check_disable(void);
+  void _dbg_check_suspend(void);
+  void _dbg_check_enable(void);
+  void _dbg_check_lock(void);
+  void _dbg_check_unlock(void);
+  void _dbg_check_lock_from_isr(void);
+  void _dbg_check_unlock_from_isr(void);
+  void _dbg_check_enter_isr(void);
+  void _dbg_check_leave_isr(void);
+  void chDbgCheckClassI(void);
+  void chDbgCheckClassS(void);
 #endif
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _NIL_H_ */
+/* Optional subsystems.*/
+#include "chmboxes.h"
+#include "chmemcore.h"
+#include "chmempools.h"
+#include "chheap.h"
+
+#endif /* _CH_H_ */
 
 /** @} */

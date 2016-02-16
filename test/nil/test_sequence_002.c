@@ -327,7 +327,7 @@ static const testcase_t test_002_004 = {
 };
 #endif /* TRUE */
 
-#if (NIL_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 /**
  * @page test_002_005 Events functionality
  *
@@ -408,7 +408,7 @@ static const testcase_t test_002_005 = {
   NULL,
   test_002_005_execute
 };
-#endif /* NIL_CFG_USE_EVENTS == TRUE */
+#endif /* CH_CFG_USE_EVENTS == TRUE */
 
  /****************************************************************************
  * Exported data.
@@ -430,7 +430,7 @@ const testcase_t * const test_sequence_002[] = {
 #if TRUE || defined(__DOXYGEN__)
   &test_002_004,
 #endif
-#if (NIL_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   &test_002_005,
 #endif
   NULL

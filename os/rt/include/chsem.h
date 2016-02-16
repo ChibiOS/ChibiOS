@@ -50,9 +50,9 @@
  * @brief   Semaphore structure.
  */
 typedef struct ch_semaphore {
-  threads_queue_t       s_queue;    /**< @brief Queue of the threads sleeping
+  threads_queue_t       queue;      /**< @brief Queue of the threads sleeping
                                                 on this semaphore.          */
-  cnt_t                 s_cnt;      /**< @brief The semaphore counter.      */
+  cnt_t                 cnt;        /**< @brief The semaphore counter.      */
 } semaphore_t;
 
 /*===========================================================================*/
@@ -68,7 +68,7 @@ typedef struct ch_semaphore {
  * @param[in] n         the counter initial value, this value must be
  *                      non-negative
  */
-#define _SEMAPHORE_DATA(name, n) {_THREADS_QUEUE_DATA(name.s_queue), n}
+#define _SEMAPHORE_DATA(name, n) {_THREADS_QUEUE_DATA(name.queue), n}
 
 /**
  * @brief   Static semaphore initializer.
@@ -119,7 +119,7 @@ static inline void chSemFastWaitI(semaphore_t *sp) {
 
   chDbgCheckClassI();
 
-  sp->s_cnt--;
+  sp->cnt--;
 }
 
 /**
@@ -135,7 +135,7 @@ static inline void chSemFastSignalI(semaphore_t *sp) {
 
   chDbgCheckClassI();
 
-  sp->s_cnt++;
+  sp->cnt++;
 }
 
 /**
@@ -150,7 +150,7 @@ static inline cnt_t chSemGetCounterI(semaphore_t *sp) {
 
   chDbgCheckClassI();
 
-  return sp->s_cnt;
+  return sp->cnt;
 }
 
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */

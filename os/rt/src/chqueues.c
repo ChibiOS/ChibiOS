@@ -87,14 +87,14 @@
 void chIQObjectInit(input_queue_t *iqp, uint8_t *bp, size_t size,
                     qnotify_t infy, void *link) {
 
-  chThdQueueObjectInit(&iqp->q_waiting);
-  iqp->q_counter = 0;
-  iqp->q_buffer  = bp;
-  iqp->q_rdptr   = bp;
-  iqp->q_wrptr   = bp;
-  iqp->q_top     = bp + size;
-  iqp->q_notify  = infy;
-  iqp->q_link    = link;
+  chThdQueueObjectInit(&iqp->waiting);
+  iqp->counter = 0;
+  iqp->buffer  = bp;
+  iqp->rdptr   = bp;
+  iqp->wrptr   = bp;
+  iqp->top     = bp + size;
+  iqp->notify  = infy;
+  iqp->link    = link;
 }
 
 /**
@@ -112,10 +112,10 @@ void chIQResetI(input_queue_t *iqp) {
 
   chDbgCheckClassI();
 
-  iqp->q_rdptr = iqp->q_buffer;
-  iqp->q_wrptr = iqp->q_buffer;
-  iqp->q_counter = 0;
-  chThdDequeueAllI(&iqp->q_waiting, Q_RESET);
+  iqp->rdptr = iqp->buffer;
+  iqp->wrptr = iqp->buffer;
+  iqp->counter = 0;
+  chThdDequeueAllI(&iqp->waiting, Q_RESET);
 }
 
 /**
@@ -139,13 +139,13 @@ msg_t chIQPutI(input_queue_t *iqp, uint8_t b) {
     return Q_FULL;
   }
 
-  iqp->q_counter++;
-  *iqp->q_wrptr++ = b;
-  if (iqp->q_wrptr >= iqp->q_top) {
-    iqp->q_wrptr = iqp->q_buffer;
+  iqp->counter++;
+  *iqp->wrptr++ = b;
+  if (iqp->wrptr >= iqp->top) {
+    iqp->wrptr = iqp->buffer;
   }
 
-  chThdDequeueNextI(&iqp->q_waiting, Q_OK);
+  chThdDequeueNextI(&iqp->waiting, Q_OK);
 
   return Q_OK;
 }
@@ -174,22 +174,22 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t timeout) {
   uint8_t b;
 
   chSysLock();
-  if (iqp->q_notify != NULL) {
-    iqp->q_notify(iqp);
+  if (iqp->notify != NULL) {
+    iqp->notify(iqp);
   }
 
   while (chIQIsEmptyI(iqp)) {
-    msg_t msg = chThdEnqueueTimeoutS(&iqp->q_waiting, timeout);
+    msg_t msg = chThdEnqueueTimeoutS(&iqp->waiting, timeout);
     if (msg < Q_OK) {
       chSysUnlock();
       return msg;
     }
   }
 
-  iqp->q_counter--;
-  b = *iqp->q_rdptr++;
-  if (iqp->q_rdptr >= iqp->q_top) {
-    iqp->q_rdptr = iqp->q_buffer;
+  iqp->counter--;
+  b = *iqp->rdptr++;
+  if (iqp->rdptr >= iqp->top) {
+    iqp->rdptr = iqp->buffer;
   }
   chSysUnlock();
 
@@ -222,7 +222,7 @@ msg_t chIQGetTimeout(input_queue_t *iqp, systime_t timeout) {
  */
 size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
                        size_t n, systime_t timeout) {
-  qnotify_t nfy = iqp->q_notify;
+  qnotify_t nfy = iqp->notify;
   size_t r = 0;
 
   chDbgCheck(n > 0U);
@@ -234,16 +234,16 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
     }
 
     while (chIQIsEmptyI(iqp)) {
-      if (chThdEnqueueTimeoutS(&iqp->q_waiting, timeout) != Q_OK) {
+      if (chThdEnqueueTimeoutS(&iqp->waiting, timeout) != Q_OK) {
         chSysUnlock();
         return r;
       }
     }
 
-    iqp->q_counter--;
-    *bp++ = *iqp->q_rdptr++;
-    if (iqp->q_rdptr >= iqp->q_top) {
-      iqp->q_rdptr = iqp->q_buffer;
+    iqp->counter--;
+    *bp++ = *iqp->rdptr++;
+    if (iqp->rdptr >= iqp->top) {
+      iqp->rdptr = iqp->buffer;
     }
     chSysUnlock(); /* Gives a preemption chance in a controlled point.*/
 
@@ -275,14 +275,14 @@ size_t chIQReadTimeout(input_queue_t *iqp, uint8_t *bp,
 void chOQObjectInit(output_queue_t *oqp, uint8_t *bp, size_t size,
                     qnotify_t onfy, void *link) {
 
-  chThdQueueObjectInit(&oqp->q_waiting);
-  oqp->q_counter = size;
-  oqp->q_buffer  = bp;
-  oqp->q_rdptr   = bp;
-  oqp->q_wrptr   = bp;
-  oqp->q_top     = bp + size;
-  oqp->q_notify  = onfy;
-  oqp->q_link    = link;
+  chThdQueueObjectInit(&oqp->waiting);
+  oqp->counter = size;
+  oqp->buffer  = bp;
+  oqp->rdptr   = bp;
+  oqp->wrptr   = bp;
+  oqp->top     = bp + size;
+  oqp->notify  = onfy;
+  oqp->link    = link;
 }
 
 /**
@@ -300,10 +300,10 @@ void chOQResetI(output_queue_t *oqp) {
 
   chDbgCheckClassI();
 
-  oqp->q_rdptr = oqp->q_buffer;
-  oqp->q_wrptr = oqp->q_buffer;
-  oqp->q_counter = chQSizeX(oqp);
-  chThdDequeueAllI(&oqp->q_waiting, Q_RESET);
+  oqp->rdptr = oqp->buffer;
+  oqp->wrptr = oqp->buffer;
+  oqp->counter = chQSizeX(oqp);
+  chThdDequeueAllI(&oqp->waiting, Q_RESET);
 }
 
 /**
@@ -332,21 +332,21 @@ msg_t chOQPutTimeout(output_queue_t *oqp, uint8_t b, systime_t timeout) {
 
   chSysLock();
   while (chOQIsFullI(oqp)) {
-    msg_t msg = chThdEnqueueTimeoutS(&oqp->q_waiting, timeout);
+    msg_t msg = chThdEnqueueTimeoutS(&oqp->waiting, timeout);
     if (msg < Q_OK) {
       chSysUnlock();
       return msg;
     }
   }
 
-  oqp->q_counter--;
-  *oqp->q_wrptr++ = b;
-  if (oqp->q_wrptr >= oqp->q_top) {
-    oqp->q_wrptr = oqp->q_buffer;
+  oqp->counter--;
+  *oqp->wrptr++ = b;
+  if (oqp->wrptr >= oqp->top) {
+    oqp->wrptr = oqp->buffer;
   }
 
-  if (oqp->q_notify != NULL) {
-    oqp->q_notify(oqp);
+  if (oqp->notify != NULL) {
+    oqp->notify(oqp);
   }
   chSysUnlock();
 
@@ -372,13 +372,13 @@ msg_t chOQGetI(output_queue_t *oqp) {
     return Q_EMPTY;
   }
 
-  oqp->q_counter++;
-  b = *oqp->q_rdptr++;
-  if (oqp->q_rdptr >= oqp->q_top) {
-    oqp->q_rdptr = oqp->q_buffer;
+  oqp->counter++;
+  b = *oqp->rdptr++;
+  if (oqp->rdptr >= oqp->top) {
+    oqp->rdptr = oqp->buffer;
   }
 
-  chThdDequeueNextI(&oqp->q_waiting, Q_OK);
+  chThdDequeueNextI(&oqp->waiting, Q_OK);
 
   return (msg_t)b;
 }
@@ -409,7 +409,7 @@ msg_t chOQGetI(output_queue_t *oqp) {
  */
 size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
                         size_t n, systime_t timeout) {
-  qnotify_t nfy = oqp->q_notify;
+  qnotify_t nfy = oqp->notify;
   size_t w = 0;
 
   chDbgCheck(n > 0U);
@@ -417,16 +417,16 @@ size_t chOQWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
   chSysLock();
   while (true) {
     while (chOQIsFullI(oqp)) {
-      if (chThdEnqueueTimeoutS(&oqp->q_waiting, timeout) != Q_OK) {
+      if (chThdEnqueueTimeoutS(&oqp->waiting, timeout) != Q_OK) {
         chSysUnlock();
         return w;
       }
     }
     
-    oqp->q_counter--;
-    *oqp->q_wrptr++ = *bp++;
-    if (oqp->q_wrptr >= oqp->q_top) {
-      oqp->q_wrptr = oqp->q_buffer;
+    oqp->counter--;
+    *oqp->wrptr++ = *bp++;
+    if (oqp->wrptr >= oqp->top) {
+      oqp->wrptr = oqp->buffer;
     }
 
     if (nfy != NULL) {

@@ -209,7 +209,7 @@ extern "C" {
  */
 static inline void chVTObjectInit(virtual_timer_t *vtp) {
 
-  vtp->vt_func = NULL;
+  vtp->func = NULL;
 }
 
 /**
@@ -228,7 +228,7 @@ static inline void chVTObjectInit(virtual_timer_t *vtp) {
 static inline systime_t chVTGetSystemTimeX(void) {
 
 #if CH_CFG_ST_TIMEDELTA == 0
-  return ch.vtlist.vt_systime;
+  return ch.vtlist.systime;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   return port_timer_get_time();
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
@@ -344,15 +344,15 @@ static inline bool chVTGetTimersStateI(systime_t *timep) {
 
   chDbgCheckClassI();
 
-  if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.vt_next) {
+  if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.next) {
     return false;
   }
 
   if (timep != NULL) {
 #if CH_CFG_ST_TIMEDELTA == 0
-    *timep = ch.vtlist.vt_next->vt_delta;
+    *timep = ch.vtlist.next->delta;
 #else
-    *timep = ch.vtlist.vt_lasttime + ch.vtlist.vt_next->vt_delta +
+    *timep = ch.vtlist.lasttime + ch.vtlist.next->delta +
              CH_CFG_ST_TIMEDELTA - chVTGetSystemTimeX();
 #endif
   }
@@ -374,7 +374,7 @@ static inline bool chVTIsArmedI(virtual_timer_t *vtp) {
 
   chDbgCheckClassI();
 
-  return (bool)(vtp->vt_func != NULL);
+  return (bool)(vtp->func != NULL);
 }
 
 /**
@@ -504,21 +504,21 @@ static inline void chVTDoTickI(void) {
   chDbgCheckClassI();
 
 #if CH_CFG_ST_TIMEDELTA == 0
-  ch.vtlist.vt_systime++;
-  if (&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.vt_next) {
+  ch.vtlist.systime++;
+  if (&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.next) {
     /* The list is not empty, processing elements on top.*/
-    --ch.vtlist.vt_next->vt_delta;
-    while (ch.vtlist.vt_next->vt_delta == (systime_t)0) {
+    --ch.vtlist.next->delta;
+    while (ch.vtlist.next->delta == (systime_t)0) {
       virtual_timer_t *vtp;
       vtfunc_t fn;
 
-      vtp = ch.vtlist.vt_next;
-      fn = vtp->vt_func;
-      vtp->vt_func = NULL;
-      vtp->vt_next->vt_prev = (virtual_timer_t *)&ch.vtlist;
-      ch.vtlist.vt_next = vtp->vt_next;
+      vtp = ch.vtlist.next;
+      fn = vtp->func;
+      vtp->func = NULL;
+      vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
+      ch.vtlist.next = vtp->next;
       chSysUnlockFromISR();
-      fn(vtp->vt_par);
+      fn(vtp->par);
       chSysLockFromISR();
     }
   }
@@ -527,26 +527,26 @@ static inline void chVTDoTickI(void) {
   systime_t now, delta;
 
   /* First timer to be processed.*/
-  vtp = ch.vtlist.vt_next;
+  vtp = ch.vtlist.next;
   now = chVTGetSystemTimeX();
 
   /* All timers within the time window are triggered and removed,
      note that the loop is stopped by the timers header having
      "ch.vtlist.vt_delta == (systime_t)-1" which is greater than
      all deltas.*/
-  while (vtp->vt_delta <= (systime_t)(now - ch.vtlist.vt_lasttime)) {
+  while (vtp->delta <= (systime_t)(now - ch.vtlist.lasttime)) {
     vtfunc_t fn;
 
     /* The "last time" becomes this timer's expiration time.*/
-    ch.vtlist.vt_lasttime += vtp->vt_delta;
+    ch.vtlist.lasttime += vtp->delta;
 
-    vtp->vt_next->vt_prev = (virtual_timer_t *)&ch.vtlist;
-    ch.vtlist.vt_next = vtp->vt_next;
-    fn = vtp->vt_func;
-    vtp->vt_func = NULL;
+    vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
+    ch.vtlist.next = vtp->next;
+    fn = vtp->func;
+    vtp->func = NULL;
 
     /* if the list becomes empty then the timer is stopped.*/
-    if (ch.vtlist.vt_next == (virtual_timer_t *)&ch.vtlist) {
+    if (ch.vtlist.next == (virtual_timer_t *)&ch.vtlist) {
       port_timer_stop_alarm();
     }
 
@@ -556,7 +556,7 @@ static inline void chVTDoTickI(void) {
     chSysUnlockFromISR();
 
     /* The callback is invoked outside the kernel critical zone.*/
-    fn(vtp->vt_par);
+    fn(vtp->par);
 
     /* Re-entering the critical zone in order to continue the exploration
        of the list.*/
@@ -564,24 +564,24 @@ static inline void chVTDoTickI(void) {
 
     /* Next element in the list, the current time could have advanced so
        recalculating the time window.*/
-    vtp = ch.vtlist.vt_next;
+    vtp = ch.vtlist.next;
     now = chVTGetSystemTimeX();
   }
 
   /* if the list is empty, nothing else to do.*/
-  if (ch.vtlist.vt_next == (virtual_timer_t *)&ch.vtlist) {
+  if (ch.vtlist.next == (virtual_timer_t *)&ch.vtlist) {
     return;
   }
 
   /* Recalculating the next alarm time.*/
-  delta = ch.vtlist.vt_lasttime + vtp->vt_delta - now;
+  delta = ch.vtlist.lasttime + vtp->delta - now;
   if (delta < (systime_t)CH_CFG_ST_TIMEDELTA) {
     delta = (systime_t)CH_CFG_ST_TIMEDELTA;
   }
   port_timer_set_alarm(now + delta);
 
-  chDbgAssert((chVTGetSystemTimeX() - ch.vtlist.vt_lasttime) <=
-              (now + delta - ch.vtlist.vt_lasttime),
+  chDbgAssert((chVTGetSystemTimeX() - ch.vtlist.lasttime) <=
+              (now + delta - ch.vtlist.lasttime),
               "exceeding delta");
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }

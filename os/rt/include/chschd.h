@@ -108,20 +108,8 @@
 /** @} */
 
 /**
- * @name    Working Areas and Alignment
+ * @name    Working Areas
  */
-/**
- * @brief   Enforces a correct alignment for a stack area size value.
- *
- * @param[in] n         the stack size to be aligned to the next stack
- *                      alignment boundary
- * @return              The aligned stack size.
- *
- * @api
- */
-#define THD_ALIGN_STACK_SIZE(n)                                             \
-  (((((size_t)(n)) - 1U) | (sizeof(stkalign_t) - 1U)) + 1U)
-
 /**
  * @brief   Calculates the total Working Area size.
  *
@@ -131,7 +119,7 @@
  * @api
  */
 #define THD_WORKING_AREA_SIZE(n)                                            \
-  THD_ALIGN_STACK_SIZE(sizeof(thread_t) + PORT_WA_SIZE(n))
+  MEM_ALIGN_NEXT(sizeof(thread_t) + PORT_WA_SIZE(n), PORT_STACK_ALIGN)
 
 /**
  * @brief   Static working area allocation.
@@ -143,8 +131,22 @@
  *
  * @api
  */
-#define THD_WORKING_AREA(s, n)                                              \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof(stkalign_t)]
+#define THD_WORKING_AREA(s, n) PORT_WORKING_AREA(s, n)
+
+/**
+ * @brief   Base of a working area casted to the correct type.
+ *
+ * @param[in] s         name of the working area
+ */
+#define THD_WORKING_AREA_BASE(s) ((stkalign_t *)(s))
+
+/**
+ * @brief   End of a working area casted to the correct type.
+ *
+ * @param[in] s         name of the working area
+ */
+#define THD_WORKING_AREA_END(s) (THD_WORKING_AREA_BASE(s) +                 \
+                                 (sizeof (s) / sizeof (stkalign_t)))
 /** @} */
 
 /**
@@ -166,6 +168,18 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !defined(CH_CFG_IDLE_ENTER_HOOK)
+#error "CH_CFG_IDLE_ENTER_HOOK not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_IDLE_LEAVE_HOOK)
+#error "CH_CFG_IDLE_LEAVE_HOOK not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_IDLE_LOOP_HOOK)
+#error "CH_CFG_IDLE_LOOP_HOOK not defined in chconf.h"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -174,15 +188,15 @@
  * @brief   Generic threads single link list, it works like a stack.
  */
 struct ch_threads_list {
-  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
+  thread_t              *next;      /**< @brief Next in the list/queue.     */
 };
 
 /**
  * @brief   Generic threads bidirectional linked list header and element.
  */
 struct ch_threads_queue {
-  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
-  thread_t              *p_prev;    /**< @brief Previous in the queue.      */
+  thread_t              *next;      /**< @brief Next in the list/queue.     */
+  thread_t              *prev;      /**< @brief Previous in the queue.      */
 };
 
 /**
@@ -192,55 +206,44 @@ struct ch_threads_queue {
  *          by shrinking this structure.
  */
 struct ch_thread {
-  thread_t              *p_next;    /**< @brief Next in the list/queue.     */
+  thread_t              *next;      /**< @brief Next in the list/queue.     */
   /* End of the fields shared with the threads_list_t structure.*/
-  thread_t              *p_prev;    /**< @brief Previous in the queue.      */
+  thread_t              *prev;      /**< @brief Previous in the queue.      */
   /* End of the fields shared with the threads_queue_t structure.*/
-  tprio_t               p_prio;     /**< @brief Thread priority.            */
-  struct context        p_ctx;      /**< @brief Processor context.          */
+  tprio_t               prio;       /**< @brief Thread priority.            */
+  struct port_context   ctx;        /**< @brief Processor context.          */
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
-  thread_t              *p_newer;   /**< @brief Newer registry element.     */
-  thread_t              *p_older;   /**< @brief Older registry element.     */
+  thread_t              *newer;     /**< @brief Newer registry element.     */
+  thread_t              *older;     /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the ReadyList structure. */
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Thread name or @p NULL.
    */
-  const char            *p_name;
+  const char            *name;
 #endif
-#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Thread stack boundary.
+   * @note  This pointer matches with the working area base address.
    */
-  stkalign_t            *p_stklimit;
-#endif
+  stkalign_t            *stklimit;
   /**
    * @brief Current thread state.
    */
-  tstate_t              p_state;
-  /**
-   * @brief Various thread flags.
-   */
-  tmode_t               p_flags;
-#if (CH_CFG_USE_DYNAMIC == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief References to this thread.
-   */
-  trefs_t               p_refs;
-#endif
+  tstate_t              state;
   /**
    * @brief Number of ticks remaining to this thread.
    */
 #if (CH_CFG_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
-  tslices_t             p_preempt;
+  tslices_t             preempt;
 #endif
 #if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Thread consumed time in ticks.
    * @note  This field can overflow.
    */
-  volatile systime_t    p_time;
+  volatile systime_t    time;
 #endif
   /**
    * @brief State-specific fields.
@@ -308,48 +311,41 @@ struct ch_thread {
      */
     eventmask_t         ewmask;
 #endif
-  }                     p_u;
+  }                     u;
 #if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Termination waiting list.
    */
-  threads_list_t        p_waiting;
+  threads_list_t        waiting;
 #endif
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Messages queue.
    */
-  threads_queue_t       p_msgqueue;
+  threads_queue_t       msgqueue;
 #endif
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Pending events mask.
    */
-  eventmask_t           p_epending;
+  eventmask_t           epending;
 #endif
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief List of the mutexes owned by this thread.
    * @note  The list is terminated by a @p NULL in this field.
    */
-  struct ch_mutex       *p_mtxlist;
+  struct ch_mutex       *mtxlist;
   /**
    * @brief Thread's own, non-inherited, priority.
    */
-  tprio_t               p_realprio;
-#endif
-#if ((CH_CFG_USE_DYNAMIC == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE)) ||      \
-    defined(__DOXYGEN__)
-  /**
-   * @brief Memory Pool where the thread workspace is returned.
-   */
-  void                  *p_mpool;
+  tprio_t               realprio;
 #endif
 #if (CH_DBG_STATISTICS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief Thread statistics.
    */
-  time_measurement_t    p_stats;
+  time_measurement_t    stats;
 #endif
 #if defined(CH_CFG_THREAD_EXTRA_FIELDS)
   /* Extra fields defined in chconf.h.*/
@@ -363,12 +359,12 @@ struct ch_thread {
  * @brief   Virtual Timer descriptor structure.
  */
 struct ch_virtual_timer {
-  virtual_timer_t       *vt_next;   /**< @brief Next timer in the list.     */
-  virtual_timer_t       *vt_prev;   /**< @brief Previous timer in the list. */
-  systime_t             vt_delta;   /**< @brief Time delta before timeout.  */
-  vtfunc_t              vt_func;    /**< @brief Timer callback function
+  virtual_timer_t       *next;      /**< @brief Next timer in the list.     */
+  virtual_timer_t       *prev;      /**< @brief Previous timer in the list. */
+  systime_t             delta;      /**< @brief Time delta before timeout.  */
+  vtfunc_t              func;       /**< @brief Timer callback function
                                                 pointer.                    */
-  void                  *vt_par;    /**< @brief Timer callback function
+  void                  *par;       /**< @brief Timer callback function
                                                 parameter.                  */
 };
 
@@ -379,19 +375,19 @@ struct ch_virtual_timer {
  *          timer is often used in the code.
  */
 struct ch_virtual_timers_list {
-  virtual_timer_t       *vt_next;   /**< @brief Next timer in the delta
+  virtual_timer_t       *next;      /**< @brief Next timer in the delta
                                                 list.                       */
-  virtual_timer_t       *vt_prev;   /**< @brief Last timer in the delta
+  virtual_timer_t       *prev;      /**< @brief Last timer in the delta
                                                 list.                       */
-  systime_t             vt_delta;   /**< @brief Must be initialized to -1.  */
+  systime_t             delta;      /**< @brief Must be initialized to -1.  */
 #if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
-  volatile systime_t    vt_systime; /**< @brief System Time counter.        */
+  volatile systime_t    systime;    /**< @brief System Time counter.        */
 #endif
 #if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
   /**
    * @brief   System time of the last tick event.
    */
-  systime_t             vt_lasttime;/**< @brief System time of the last
+  systime_t             lasttime;   /**< @brief System time of the last
                                                 tick event.                 */
 #endif
 };
@@ -400,17 +396,17 @@ struct ch_virtual_timers_list {
  * @extends threads_queue_t
  */
 struct ch_ready_list {
-  threads_queue_t       r_queue;    /**< @brief Threads queue.              */
-  tprio_t               r_prio;     /**< @brief This field must be
+  threads_queue_t       queue;      /**< @brief Threads queue.              */
+  tprio_t               prio;       /**< @brief This field must be
                                                 initialized to zero.        */
-  struct context        r_ctx;      /**< @brief Not used, present because
+  struct port_context   ctx;        /**< @brief Not used, present because
                                                 offsets.                    */
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
-  thread_t              *r_newer;   /**< @brief Newer registry element.     */
-  thread_t              *r_older;   /**< @brief Older registry element.     */
+  thread_t              *newer;     /**< @brief Newer registry element.     */
+  thread_t              *older;     /**< @brief Older registry element.     */
 #endif
   /* End of the fields shared with the thread_t structure.*/
-  thread_t              *r_current; /**< @brief The currently running
+  thread_t              *current;   /**< @brief The currently running
                                                 thread.                     */
 };
 
@@ -436,7 +432,7 @@ struct ch_system_debug {
    */
   cnt_t                 lock_cnt;
 #endif
-#if (CH_DBG_ENABLE_TRACE == TRUE) || defined(__DOXYGEN__)
+#if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE) || defined(__DOXYGEN__)
   /**
    * @brief   Public trace buffer.
    */
@@ -478,7 +474,7 @@ struct ch_system {
    */
   kernel_stats_t        kernel_stats;
 #endif
-#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
+#if CH_CFG_NO_IDLE_THREAD == FALSE
   /**
    * @brief   Idle thread working area.
    */
@@ -495,25 +491,14 @@ struct ch_system {
  *
  * @notapi
  */
-#define firstprio(rlp)  ((rlp)->p_next->p_prio)
+#define firstprio(rlp)  ((rlp)->next->prio)
 
 /**
  * @brief   Current thread pointer access macro.
  * @note    This macro is not meant to be used in the application code but
- *          only from within the kernel, use the @p chThdSelf() API instead.
- * @note    It is forbidden to use this macro in order to change the pointer
- *          (currp = something), use @p setcurrp() instead.
+ *          only from within the kernel, use @p chThdGetSelfX() instead.
  */
-#define currp ch.rlist.r_current
-
-/**
- * @brief   Current thread pointer change macro.
- * @note    This macro is not meant to be used in the application code but
- *          only from within the kernel.
- *
- * @notapi
- */
-#define setcurrp(tp) (currp = (tp))
+#define currp ch.rlist.current
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -531,6 +516,7 @@ extern "C" {
 #endif
   void _scheduler_init(void);
   thread_t *chSchReadyI(thread_t *tp);
+  thread_t *chSchReadyAheadI(thread_t *tp);
   void chSchGoSleepS(tstate_t newstate);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, systime_t time);
   void chSchWakeupS(thread_t *ntp, msg_t msg);
@@ -565,7 +551,7 @@ extern "C" {
  */
 static inline void list_init(threads_list_t *tlp) {
 
-  tlp->p_next = (thread_t *)tlp;
+  tlp->next = (thread_t *)tlp;
 }
 
 /**
@@ -578,7 +564,7 @@ static inline void list_init(threads_list_t *tlp) {
  */
 static inline bool list_isempty(threads_list_t *tlp) {
 
-  return (bool)(tlp->p_next == (thread_t *)tlp);
+  return (bool)(tlp->next == (thread_t *)tlp);
 }
 
 /**
@@ -591,7 +577,7 @@ static inline bool list_isempty(threads_list_t *tlp) {
  */
 static inline bool list_notempty(threads_list_t *tlp) {
 
-  return (bool)(tlp->p_next != (thread_t *)tlp);
+  return (bool)(tlp->next != (thread_t *)tlp);
 }
 
 /**
@@ -603,8 +589,8 @@ static inline bool list_notempty(threads_list_t *tlp) {
  */
 static inline void queue_init(threads_queue_t *tqp) {
 
-  tqp->p_next = (thread_t *)tqp;
-  tqp->p_prev = (thread_t *)tqp;
+  tqp->next = (thread_t *)tqp;
+  tqp->prev = (thread_t *)tqp;
 }
 
 /**
@@ -617,7 +603,7 @@ static inline void queue_init(threads_queue_t *tqp) {
  */
 static inline bool queue_isempty(const threads_queue_t *tqp) {
 
-  return (bool)(tqp->p_next == (const thread_t *)tqp);
+  return (bool)(tqp->next == (const thread_t *)tqp);
 }
 
 /**
@@ -630,7 +616,7 @@ static inline bool queue_isempty(const threads_queue_t *tqp) {
  */
 static inline bool queue_notempty(const threads_queue_t *tqp) {
 
-  return (bool)(tqp->p_next != (const thread_t *)tqp);
+  return (bool)(tqp->next != (const thread_t *)tqp);
 }
 
 /* If the performance code path has been chosen then all the following
@@ -638,14 +624,14 @@ static inline bool queue_notempty(const threads_queue_t *tqp) {
 #if CH_CFG_OPTIMIZE_SPEED == TRUE
 static inline void list_insert(thread_t *tp, threads_list_t *tlp) {
 
-  tp->p_next = tlp->p_next;
-  tlp->p_next = tp;
+  tp->next = tlp->next;
+  tlp->next = tp;
 }
 
 static inline thread_t *list_remove(threads_list_t *tlp) {
 
-  thread_t *tp = tlp->p_next;
-  tlp->p_next = tp->p_next;
+  thread_t *tp = tlp->next;
+  tlp->next = tp->next;
 
   return tp;
 }
@@ -654,44 +640,44 @@ static inline void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
 
   thread_t *cp = (thread_t *)tqp;
   do {
-    cp = cp->p_next;
-  } while ((cp != (thread_t *)tqp) && (cp->p_prio >= tp->p_prio));
-  tp->p_next = cp;
-  tp->p_prev = cp->p_prev;
-  tp->p_prev->p_next = tp;
-  cp->p_prev = tp;
+    cp = cp->next;
+  } while ((cp != (thread_t *)tqp) && (cp->prio >= tp->prio));
+  tp->next = cp;
+  tp->prev = cp->prev;
+  tp->prev->next = tp;
+  cp->prev = tp;
 }
 
 static inline void queue_insert(thread_t *tp, threads_queue_t *tqp) {
 
-  tp->p_next = (thread_t *)tqp;
-  tp->p_prev = tqp->p_prev;
-  tp->p_prev->p_next = tp;
-  tqp->p_prev = tp;
+  tp->next = (thread_t *)tqp;
+  tp->prev = tqp->prev;
+  tp->prev->next = tp;
+  tqp->prev = tp;
 }
 
 static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->p_next;
+  thread_t *tp = tqp->next;
 
-  tqp->p_next = tp->p_next;
-  tqp->p_next->p_prev = (thread_t *)tqp;
+  tqp->next = tp->next;
+  tqp->next->prev = (thread_t *)tqp;
 
   return tp;
 }
 
 static inline thread_t *queue_lifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->p_prev;
+  thread_t *tp = tqp->prev;
 
-  tqp->p_prev = tp->p_prev;
-  tqp->p_prev->p_next = (thread_t *)tqp;
+  tqp->prev = tp->prev;
+  tqp->prev->next = (thread_t *)tqp;
 
   return tp;
 }
 
 static inline thread_t *queue_dequeue(thread_t *tp) {
 
-  tp->p_prev->p_next = tp->p_next;
-  tp->p_next->p_prev = tp->p_prev;
+  tp->prev->next = tp->next;
+  tp->next->prev = tp->prev;
 
   return tp;
 }
@@ -712,7 +698,7 @@ static inline bool chSchIsRescRequiredI(void) {
 
   chDbgCheckClassI();
 
-  return firstprio(&ch.rlist.r_queue) > currp->p_prio;
+  return firstprio(&ch.rlist.queue) > currp->prio;
 }
 
 /**
@@ -730,7 +716,7 @@ static inline bool chSchCanYieldS(void) {
 
   chDbgCheckClassS();
 
-  return firstprio(&ch.rlist.r_queue) >= currp->p_prio;
+  return firstprio(&ch.rlist.queue) >= currp->prio;
 }
 
 /**
@@ -757,11 +743,11 @@ static inline void chSchDoYieldS(void) {
  * @special
  */
 static inline void chSchPreemption(void) {
-  tprio_t p1 = firstprio(&ch.rlist.r_queue);
-  tprio_t p2 = currp->p_prio;
+  tprio_t p1 = firstprio(&ch.rlist.queue);
+  tprio_t p2 = currp->prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
-  if (currp->p_preempt > (tslices_t)0) {
+  if (currp->preempt > (tslices_t)0) {
     if (p1 > p2) {
       chSchDoRescheduleAhead();
     }

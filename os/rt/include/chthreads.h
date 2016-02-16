@@ -38,6 +38,18 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+#if !defined(CH_CFG_THREAD_EXTRA_FIELDS)
+#error "CH_CFG_THREAD_EXTRA_FIELDS not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_THREAD_INIT_HOOK)
+#error "CH_CFG_THREAD_INIT_HOOK not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_THREAD_EXIT_HOOK)
+#error "CH_CFG_THREAD_EXIT_HOOK not defined in chconf.h"
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -50,6 +62,36 @@
  * @brief   Thread function.
  */
 typedef void (*tfunc_t)(void *p);
+
+/**
+ * @brief   Type of a thread descriptor.
+ */
+typedef struct {
+  /**
+   * @brief   Thread name.
+   */
+  const char        *name;
+  /**
+   * @brief   Pointer to the working area base.
+   */
+  stkalign_t        *wbase;
+  /**
+   * @brief   End of the working area.
+   */
+  stkalign_t        *wend;
+  /**
+   * @brief   Thread priority.
+   */
+  tprio_t           prio;
+  /**
+   * @brief   Thread function pointer.
+   */
+  tfunc_t           funcp;
+  /**
+   * @brief   Thread argument.
+   */
+  void              *arg;
+} thread_descriptor_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -128,12 +170,14 @@ typedef void (*tfunc_t)(void *p);
 #ifdef __cplusplus
 extern "C" {
 #endif
-   thread_t *_thread_init(thread_t *tp, tprio_t prio);
+   thread_t *_thread_init(thread_t *tp, const char *name, tprio_t prio);
 #if CH_DBG_FILL_THREADS == TRUE
   void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v);
 #endif
-  thread_t *chThdCreateI(void *wsp, size_t size,
-                         tprio_t prio, tfunc_t pf, void *arg);
+  thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp);
+  thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp);
+  thread_t *chThdCreateI(const thread_descriptor_t *tdp);
+  thread_t *chThdCreate(const thread_descriptor_t *tdp);
   thread_t *chThdCreateStatic(void *wsp, size_t size,
                               tprio_t prio, tfunc_t pf, void *arg);
   thread_t *chThdStart(thread_t *tp);
@@ -146,7 +190,6 @@ extern "C" {
   msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, systime_t timeout);
   void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg);
   void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg);
-  void chThdTerminate(thread_t *tp);
   void chThdSleep(systime_t time);
   void chThdSleepUntil(systime_t time);
   systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next);
@@ -173,7 +216,7 @@ extern "C" {
   */
 static inline thread_t *chThdGetSelfX(void) {
 
-  return ch.rlist.r_current;
+  return ch.rlist.current;
 }
 
 /**
@@ -186,7 +229,7 @@ static inline thread_t *chThdGetSelfX(void) {
  */
 static inline tprio_t chThdGetPriorityX(void) {
 
-  return chThdGetSelfX()->p_prio;
+  return chThdGetSelfX()->prio;
 }
 
 /**
@@ -202,9 +245,22 @@ static inline tprio_t chThdGetPriorityX(void) {
 #if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
 static inline systime_t chThdGetTicksX(thread_t *tp) {
 
-  return tp->p_time;
+  return tp->time;
 }
 #endif
+
+/**
+ * @brief   Returns the stack limit of the specified thread.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The stack limit pointer.
+ *
+ * @xclass
+ */
+static inline stkalign_t *chthdGetStackLimitX(thread_t *tp) {
+
+  return tp->stklimit;
+}
 
 /**
  * @brief   Verifies if the specified thread is in the @p CH_STATE_FINAL state.
@@ -217,20 +273,7 @@ static inline systime_t chThdGetTicksX(thread_t *tp) {
  */
 static inline bool chThdTerminatedX(thread_t *tp) {
 
-  return (bool)(tp->p_state == CH_STATE_FINAL);
-}
-
-/**
- * @brief   Verifies if the current thread has a termination request pending.
- *
- * @retval true         termination request pending.
- * @retval false        termination request not pending.
- *
- * @xclass
- */
-static inline bool chThdShouldTerminateX(void) {
-
-  return (bool)((chThdGetSelfX()->p_flags & CH_FLAG_TERMINATE) != (tmode_t)0);
+  return (bool)(tp->state == CH_STATE_FINAL);
 }
 
 /**
@@ -244,7 +287,7 @@ static inline bool chThdShouldTerminateX(void) {
  */
 static inline thread_t *chThdStartI(thread_t *tp) {
 
-  chDbgAssert(tp->p_state == CH_STATE_WTSTART, "wrong state");
+  chDbgAssert(tp->state == CH_STATE_WTSTART, "wrong state");
 
   return chSchReadyI(tp);
 }
@@ -316,9 +359,9 @@ static inline void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
   tp = queue_fifo_remove(tqp);
 
-  chDbgAssert(tp->p_state == CH_STATE_QUEUED, "invalid state");
+  chDbgAssert(tp->state == CH_STATE_QUEUED, "invalid state");
 
-  tp->p_u.rdymsg = msg;
+  tp->u.rdymsg = msg;
   (void) chSchReadyI(tp);
 }
 

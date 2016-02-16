@@ -90,13 +90,13 @@ msg_t chMsgSend(thread_t *tp, msg_t msg) {
   chDbgCheck(tp != NULL);
 
   chSysLock();
-  ctp->p_u.sentmsg = msg;
-  msg_insert(ctp, &tp->p_msgqueue);
-  if (tp->p_state == CH_STATE_WTMSG) {
+  ctp->u.sentmsg = msg;
+  msg_insert(ctp, &tp->msgqueue);
+  if (tp->state == CH_STATE_WTMSG) {
     (void) chSchReadyI(tp);
   }
   chSchGoSleepS(CH_STATE_SNDMSGQ);
-  msg = ctp->p_u.rdymsg;
+  msg = ctp->u.rdymsg;
   chSysUnlock();
 
   return msg;
@@ -123,8 +123,8 @@ thread_t *chMsgWait(void) {
   if (!chMsgIsPendingI(currp)) {
     chSchGoSleepS(CH_STATE_WTMSG);
   }
-  tp = queue_fifo_remove(&currp->p_msgqueue);
-  tp->p_state = CH_STATE_SNDMSG;
+  tp = queue_fifo_remove(&currp->msgqueue);
+  tp->state = CH_STATE_SNDMSG;
   chSysUnlock();
 
   return tp;
@@ -143,7 +143,7 @@ thread_t *chMsgWait(void) {
 void chMsgRelease(thread_t *tp, msg_t msg) {
 
   chSysLock();
-  chDbgAssert(tp->p_state == CH_STATE_SNDMSG, "invalid state");
+  chDbgAssert(tp->state == CH_STATE_SNDMSG, "invalid state");
   chMsgReleaseS(tp, msg);
   chSysUnlock();
 }

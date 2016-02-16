@@ -32,6 +32,51 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Trace record types
+ * @{
+ */
+#define CH_TRACE_TYPE_UNUSED                0U
+#define CH_TRACE_TYPE_SWITCH                1U
+#define CH_TRACE_TYPE_ISR_ENTER             2U
+#define CH_TRACE_TYPE_ISR_LEAVE             3U
+#define CH_TRACE_TYPE_HALT                  4U
+#define CH_TRACE_TYPE_USER                  5U
+/** @} */
+
+/**
+ * @name    Trace suspend masks
+ * @{
+ */
+#define CH_TRACE_SUSPEND_NONE               0U
+#define CH_TRACE_SUSPEND_SWITCH             (1U << CH_TRACE_TYPE_SWITCH)
+#define CH_TRACE_SUSPEND_ISR_ENTER          (1U << CH_TRACE_TYPE_ISR_ENTER)
+#define CH_TRACE_SUSPEND_ISR_LEAVE          (1U << CH_TRACE_TYPE_ISR_LEAVE)
+#define CH_TRACE_SUSPEND_HALT               (1U << CH_TRACE_TYPE_HALT)
+#define CH_TRACE_SUSPEND_USER               (1U << CH_TRACE_TYPE_USER)
+#define CH_TRACE_SUSPEND_ALL                (CH_TRACE_SUSPEND_SWITCH |      \
+                                             CH_TRACE_SUSPEND_ISR_ENTER |   \
+                                             CH_TRACE_SUSPEND_ISR_LEAVE |   \
+                                             CH_TRACE_SUSPEND_HALT |        \
+                                             CH_TRACE_SUSPEND_USER)
+
+/** @} */
+
+/**
+ * @name    Events to trace
+ * @{
+ */
+#define CH_DBG_TRACE_MASK_NONE              0U
+#define CH_DBG_TRACE_MASK_SWITCH            1U
+#define CH_DBG_TRACE_MASK_ISR               2U
+#define CH_DBG_TRACE_MASK_HALT              4U
+#define CH_DBG_TRACE_MASK_USER              8U
+#define CH_DBG_TRACE_MASK_ALL               (CH_DBG_TRACE_MASK_SWITCH |     \
+                                             CH_DBG_TRACE_MASK_ISR |        \
+                                             CH_DBG_TRACE_MASK_HALT |       \
+                                             CH_DBG_TRACE_MASK_USER)
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -43,8 +88,17 @@
 /**
  * @brief   Trace buffer entries.
  */
+#if !defined(CH_DBG_TRACE_MASK) || defined(__DOXYGEN__)
+#define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_ALL
+#endif
+
+/**
+ * @brief   Trace buffer entries.
+ * @note    The trace buffer is only allocated if @p CH_DBG_TRACE_MASK is
+ *          different from @p CH_DBG_TRACE_MASK_NONE.
+ */
 #if !defined(CH_DBG_TRACE_BUFFER_SIZE) || defined(__DOXYGEN__)
-#define CH_DBG_TRACE_BUFFER_SIZE            64
+#define CH_DBG_TRACE_BUFFER_SIZE            128
 #endif
 
 /**
@@ -53,68 +107,113 @@
 #if !defined(CH_DBG_STACK_FILL_VALUE) || defined(__DOXYGEN__)
 #define CH_DBG_STACK_FILL_VALUE             0x55
 #endif
-
-/**
- * @brief   Fill value for thread area in debug mode.
- * @note    The chosen default value is 0xFF in order to make evident which
- *          thread fields were not initialized when inspecting the memory with
- *          a debugger. A uninitialized field is not an error in itself but it
- *          better to know it.
- */
-#if !defined(CH_DBG_THREAD_FILL_VALUE) || defined(__DOXYGEN__)
-#define CH_DBG_THREAD_FILL_VALUE            0xFF
-#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if !defined(CH_CFG_TRACE_HOOK)
+#error "CH_CFG_TRACE_HOOK not defined in chconf.h"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-#if (CH_DBG_ENABLE_TRACE == TRUE) || defined(__DOXYGEN__)
+#if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE) || defined(__DOXYGEN__)
 /**
  * @brief   Trace buffer record.
  */
 typedef struct {
   /**
-   * @brief   Time of the switch event.
+   * @brief   Record type.
    */
-  systime_t             se_time;
-  /**
-   * @brief   Switched in thread.
-   */
-  thread_t              *se_tp;
-  /**
-   * @brief   Object where going to sleep.
-   */
-  void                  *se_wtobjp;
+  uint32_t              type:3;
   /**
    * @brief   Switched out thread state.
    */
-  uint8_t               se_state;
-} ch_swc_event_t;
+  uint32_t              state:5;
+  /**
+   * @brief   Accurate time stamp.
+   * @note    This field only available if the post supports
+   *          @p PORT_SUPPORTS_RT else it is set to zero.
+   */
+  uint32_t              rtstamp:24;
+  /**
+   * @brief   System time stamp of the switch event.
+   */
+  systime_t             time;
+  union {
+    /**
+     * @brief   Structure representing a  context switch.
+     */
+    struct {
+      /**
+       * @brief   Switched in thread.
+       */
+      thread_t              *ntp;
+      /**
+       * @brief   Object where going to sleep.
+       */
+      void                  *wtobjp;
+    } sw;
+    /**
+     * @brief   Structure representing an ISR enter.
+     */
+    struct {
+      /**
+       * @brief   ISR function name taken using @p __func__.
+       */
+      const char            *name;
+    } isr;
+    /**
+     * @brief   Structure representing an halt.
+     */
+    struct {
+      /**
+       * @brief   Halt error string.
+       */
+      const char            *reason;
+    } halt;
+    /**
+     * @brief   User trace structure.
+     */
+    struct {
+      /**
+       * @brief   Trace user parameter 1.
+       */
+      void                  *up1;
+      /**
+       * @brief   Trace user parameter 2.
+       */
+      void                  *up2;
+    } user;
+  } u;
+} ch_trace_event_t;
 
 /**
  * @brief   Trace buffer header.
  */
 typedef struct {
   /**
+   * @brief   Suspended trace sources mask.
+   */
+  uint16_t              suspended;
+  /**
    * @brief   Trace buffer size (entries).
    */
-  unsigned              tb_size;
+  uint16_t              size;
   /**
    * @brief   Pointer to the buffer front.
    */
-  ch_swc_event_t        *tb_ptr;
+  ch_trace_event_t      *ptr;
   /**
    * @brief   Ring buffer.
    */
-  ch_swc_event_t        tb_buffer[CH_DBG_TRACE_BUFFER_SIZE];
+  ch_trace_event_t      buffer[CH_DBG_TRACE_BUFFER_SIZE];
 } ch_trace_buffer_t;
-#endif /* CH_DBG_ENABLE_TRACE */
+#endif /* CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE */
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -143,10 +242,21 @@ typedef struct {
 #define chDbgCheckClassS()
 #endif
 
-/* When the trace feature is disabled this function is replaced by an empty
-   macro.*/
-#if CH_DBG_ENABLE_TRACE == FALSE
-#define _dbg_trace(otp)
+/* When a trace feature is disabled the associated functions are replaced by
+   an empty macro.*/
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) == 0
+#define _dbg_trace_switch(otp)
+#endif
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) == 0
+#define _dbg_trace_isr_enter(isr)
+#define _dbg_trace_isr_leave(isr)
+#endif
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) == 0
+#define _dbg_trace_halt(reason)
+#endif
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) == 0
+#define chDbgWriteTraceI(up1, up2)
+#define chDbgWriteTrace(up1, up2)
 #endif
 
 /**
@@ -222,10 +332,27 @@ extern "C" {
   void chDbgCheckClassI(void);
   void chDbgCheckClassS(void);
 #endif
-#if (CH_DBG_ENABLE_TRACE == TRUE) || defined(__DOXYGEN__)
+#if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE) || defined(__DOXYGEN__)
   void _dbg_trace_init(void);
-  void _dbg_trace(thread_t *otp);
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) != 0
+  void _dbg_trace_switch(thread_t *otp);
 #endif
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) != 0
+  void _dbg_trace_isr_enter(const char *isr);
+  void _dbg_trace_isr_leave(const char *isr);
+#endif
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) != 0
+  void _dbg_trace_halt(const char *reason);
+#endif
+#if (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) != 0
+  void chDbgWriteTraceI(void *up1, void *up2);
+  void chDbgWriteTrace(void *up1, void *up2);
+  void chDbgSuspendTraceI(uint16_t mask);
+  void chDbgSuspendTrace(uint16_t mask);
+  void chDbgResumeTraceI(uint16_t mask);
+  void chDbgResumeTrace(uint16_t mask);
+#endif
+#endif /* CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE */
 #ifdef __cplusplus
 }
 #endif

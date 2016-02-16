@@ -436,15 +436,15 @@ static void mtx5_execute(void) {
   chMtxUnlockS(&m1);
   chSysUnlock();
 
-  test_assert(3, queue_isempty(&m1.m_queue), "queue not empty");
-  test_assert(4, m1.m_owner == NULL, "still owned");
+  test_assert(3, queue_isempty(&m1.queue), "queue not empty");
+  test_assert(4, m1.owner == NULL, "still owned");
   test_assert(5, chThdGetPriorityX() == prio, "wrong priority level");
 #endif /* !CH_CFG_USE_MUTEXES_RECURSIVE */
   
   chMtxLock(&m1);
   chMtxUnlockAll();
-  test_assert(6, queue_isempty(&m1.m_queue), "queue not empty");
-  test_assert(7, m1.m_owner == NULL, "still owned");
+  test_assert(6, queue_isempty(&m1.queue), "queue not empty");
+  test_assert(7, m1.owner == NULL, "still owned");
 }
 
 ROMCONST struct testcase testmtx5 = {

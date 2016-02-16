@@ -80,7 +80,7 @@ static inline bool chMsgIsPendingI(thread_t *tp) {
 
   chDbgCheckClassI();
 
-  return (bool)(tp->p_msgqueue.p_next != (thread_t *)&tp->p_msgqueue);
+  return (bool)(tp->msgqueue.next != (thread_t *)&tp->msgqueue);
 }
 
 /**
@@ -95,9 +95,9 @@ static inline bool chMsgIsPendingI(thread_t *tp) {
  */
 static inline msg_t chMsgGet(thread_t *tp) {
 
-  chDbgAssert(tp->p_state == CH_STATE_SNDMSG, "invalid state");
+  chDbgAssert(tp->state == CH_STATE_SNDMSG, "invalid state");
 
-  return tp->p_u.sentmsg;
+  return tp->u.sentmsg;
 }
 
 /**

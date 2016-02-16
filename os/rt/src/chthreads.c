@@ -45,10 +45,6 @@
  *          - <b>SetPriority</b>, a thread changes its own priority level.
  *          - <b>Yield</b>, a thread voluntarily renounces to its time slot.
  *          .
- *          The threads subsystem is implicitly included in kernel however
- *          some of its part may be excluded by disabling them in @p chconf.h,
- *          see the @p CH_CFG_USE_WAITEXIT and @p CH_CFG_USE_DYNAMIC configuration
- *          options.
  * @{
  */
 
@@ -83,51 +79,42 @@
  * @note    This is an internal functions, do not use it in application code.
  *
  * @param[in] tp        pointer to the thread
+ * @param[in] name      thread name
  * @param[in] prio      the priority level for the new thread
  * @return              The same thread pointer passed as parameter.
  *
  * @notapi
  */
-thread_t *_thread_init(thread_t *tp, tprio_t prio) {
+thread_t *_thread_init(thread_t *tp, const char *name, tprio_t prio) {
 
-  tp->p_prio = prio;
-  tp->p_state = CH_STATE_WTSTART;
-  tp->p_flags = CH_FLAG_MODE_STATIC;
+  tp->prio = prio;
 #if CH_CFG_TIME_QUANTUM > 0
-  tp->p_preempt = (tslices_t)CH_CFG_TIME_QUANTUM;
+  tp->preempt = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
 #if CH_CFG_USE_MUTEXES == TRUE
-  tp->p_realprio = prio;
-  tp->p_mtxlist = NULL;
+  tp->realprio = prio;
+  tp->mtxlist = NULL;
 #endif
 #if CH_CFG_USE_EVENTS == TRUE
-  tp->p_epending = (eventmask_t)0;
+  tp->epending = (eventmask_t)0;
 #endif
 #if CH_DBG_THREADS_PROFILING == TRUE
-  tp->p_time = (systime_t)0;
-#endif
-#if CH_CFG_USE_DYNAMIC == TRUE
-  tp->p_refs = (trefs_t)1;
+  tp->time = (systime_t)0;
 #endif
 #if CH_CFG_USE_REGISTRY == TRUE
-  tp->p_name = NULL;
+  tp->name = name;
   REG_INSERT(tp);
 #endif
 #if CH_CFG_USE_WAITEXIT == TRUE
-  list_init(&tp->p_waiting);
+  list_init(&tp->waiting);
 #endif
 #if CH_CFG_USE_MESSAGES == TRUE
-  queue_init(&tp->p_msgqueue);
-#endif
-#if CH_DBG_ENABLE_STACK_CHECK == TRUE
-  tp->p_stklimit = (stkalign_t *)(tp + 1);
+  queue_init(&tp->msgqueue);
 #endif
 #if CH_DBG_STATISTICS == TRUE
-  chTMObjectInit(&tp->p_stats);
+  chTMObjectInit(&tp->stats);
 #endif
-#if defined(CH_CFG_THREAD_INIT_HOOK)
   CH_CFG_THREAD_INIT_HOOK(tp);
-#endif
   return tp;
 }
 
@@ -162,30 +149,126 @@ void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  *          @p CH_DBG_FILL_THREADS debug option because it would keep
  *          the kernel locked for too much time.
  *
- * @param[out] wsp      pointer to a working area dedicated to the thread stack
- * @param[in] size      size of the working area
- * @param[in] prio      the priority level for the new thread
- * @param[in] pf        the thread function
- * @param[in] arg       an argument passed to the thread function. It can be
- *                      @p NULL.
+ * @param[out] tdp      pointer to the thread descriptor
  * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread into the working space area.
  *
  * @iclass
  */
-thread_t *chThdCreateI(void *wsp, size_t size,
-                       tprio_t prio, tfunc_t pf, void *arg) {
-  /* The thread structure is laid out in the lower part of the thread
-     workspace.*/
-  thread_t *tp = wsp;
+thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
+  thread_t *tp;
 
   chDbgCheckClassI();
-  chDbgCheck((wsp != NULL) && (size >= THD_WORKING_AREA_SIZE(0)) &&
-             (prio <= HIGHPRIO) && (pf != NULL));
+  chDbgCheck(tdp != NULL);
+  chDbgCheck(MEM_IS_ALIGNED(tdp->wbase, PORT_WORKING_AREA_ALIGN) &&
+             MEM_IS_ALIGNED(tdp->wend, PORT_STACK_ALIGN) &&
+             (tdp->wend > tdp->wbase) &&
+             ((size_t)((tdp->wend - tdp->wbase) *
+                       sizeof (stkalign_t)) >= THD_WORKING_AREA_SIZE(0)));
+  chDbgCheck((tdp->prio <= HIGHPRIO) && (tdp->funcp != NULL));
 
-  PORT_SETUP_CONTEXT(tp, wsp, size, pf, arg);
+  /* The thread structure is laid out in the upper part of the thread
+     workspace. The thread position structure is aligned to the required
+     stack alignment because it represents the stack top.*/
+  tp = (thread_t *)((uint8_t *)tdp->wend -
+                    MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN));
 
-  return _thread_init(tp, prio);
+  /* Initial state.*/
+  tp->state = CH_STATE_WTSTART;
+
+  /* Stack boundary.*/
+  tp->stklimit = tdp->wbase;
+
+  /* Setting up the port-dependent part of the working area.*/
+  PORT_SETUP_CONTEXT(tp, tdp->wbase, tp, tdp->funcp, tdp->arg);
+
+  /* The driver object is initialized but not started.*/
+  return _thread_init(tp, tdp->name, tdp->prio);
+}
+
+
+/**
+ * @brief   Creates a new thread into a static memory area.
+ * @details The new thread is initialized but not inserted in the ready list,
+ *          the initial state is @p CH_STATE_WTSTART.
+ * @post    The initialized thread can be subsequently started by invoking
+ *          @p chThdStart(), @p chThdStartI() or @p chSchWakeupS()
+ *          depending on the execution context.
+ * @note    A thread can terminate by calling @p chThdExit() or by simply
+ *          returning from its main function.
+ *
+ * @param[out] tdp      pointer to the thread descriptor
+ * @return              The pointer to the @p thread_t structure allocated for
+ *                      the thread into the working space area.
+ *
+ * @api
+ */
+thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp) {
+  thread_t *tp;
+
+#if CH_DBG_FILL_THREADS == TRUE
+  _thread_memfill((uint8_t *)tdp->wbase,
+                  (uint8_t *)tdp->wend,
+                  CH_DBG_STACK_FILL_VALUE);
+#endif
+
+  chSysLock();
+  tp = chThdCreateSuspendedI(tdp);
+  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Creates a new thread into a static memory area.
+ * @details The new thread is initialized and make ready to execute.
+ * @post    The initialized thread can be subsequently started by invoking
+ *          @p chThdStart(), @p chThdStartI() or @p chSchWakeupS()
+ *          depending on the execution context.
+ * @note    A thread can terminate by calling @p chThdExit() or by simply
+ *          returning from its main function.
+ * @note    Threads created using this function do not obey to the
+ *          @p CH_DBG_FILL_THREADS debug option because it would keep
+ *          the kernel locked for too much time.
+ *
+ * @param[out] tdp      pointer to the thread descriptor
+ * @return              The pointer to the @p thread_t structure allocated for
+ *                      the thread into the working space area.
+ *
+ * @iclass
+ */
+thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
+
+  return chSchReadyI(chThdCreateSuspendedI(tdp));
+}
+
+/**
+ * @brief   Creates a new thread into a static memory area.
+ * @details The new thread is initialized and make ready to execute.
+ * @note    A thread can terminate by calling @p chThdExit() or by simply
+ *          returning from its main function.
+ *
+ * @param[out] tdp      pointer to the thread descriptor
+ * @return              The pointer to the @p thread_t structure allocated for
+ *                      the thread into the working space area.
+ *
+ * @iclass
+ */
+thread_t *chThdCreate(const thread_descriptor_t *tdp) {
+  thread_t *tp;
+
+#if CH_DBG_FILL_THREADS == TRUE
+  _thread_memfill((uint8_t *)tdp->wbase,
+                  (uint8_t *)tdp->wend,
+                  CH_DBG_STACK_FILL_VALUE);
+#endif
+
+  chSysLock();
+  tp = chThdCreateSuspendedI(tdp);
+  chSchWakeupS(tp, MSG_OK);
+  chSysUnlock();
+
+  return tp;
 }
 
 /**
@@ -207,18 +290,36 @@ thread_t *chThdCreateI(void *wsp, size_t size,
 thread_t *chThdCreateStatic(void *wsp, size_t size,
                             tprio_t prio, tfunc_t pf, void *arg) {
   thread_t *tp;
-  
+
+  chDbgCheck((wsp != NULL) &&
+             MEM_IS_ALIGNED(wsp, PORT_WORKING_AREA_ALIGN) &&
+             (size >= THD_WORKING_AREA_SIZE(0)) &&
+             MEM_IS_ALIGNED(size, PORT_STACK_ALIGN) &&
+             (prio <= HIGHPRIO) && (pf != NULL));
+
 #if CH_DBG_FILL_THREADS == TRUE
   _thread_memfill((uint8_t *)wsp,
-                  (uint8_t *)wsp + sizeof(thread_t),
-                  CH_DBG_THREAD_FILL_VALUE);
-  _thread_memfill((uint8_t *)wsp + sizeof(thread_t),
                   (uint8_t *)wsp + size,
                   CH_DBG_STACK_FILL_VALUE);
 #endif
 
   chSysLock();
-  tp = chThdCreateI(wsp, size, prio, pf, arg);
+
+  /* The thread structure is laid out in the upper part of the thread
+     workspace. The thread position structure is aligned to the required
+     stack alignment because it represents the stack top.*/
+  tp = (thread_t *)((uint8_t *)wsp + size -
+                    MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN));
+
+  /* Stack boundary.*/
+  tp->stklimit = (stkalign_t *)wsp;
+
+  /* Setting up the port-dependent part of the working area.*/
+  PORT_SETUP_CONTEXT(tp, wsp, tp, pf, arg);
+
+  tp = _thread_init(tp, "noname", prio);
+
+  /* Starting the thread immediately.*/
   chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
 
@@ -262,38 +363,19 @@ tprio_t chThdSetPriority(tprio_t newprio) {
 
   chSysLock();
 #if CH_CFG_USE_MUTEXES == TRUE
-  oldprio = currp->p_realprio;
-  if ((currp->p_prio == currp->p_realprio) || (newprio > currp->p_prio)) {
-    currp->p_prio = newprio;
+  oldprio = currp->realprio;
+  if ((currp->prio == currp->realprio) || (newprio > currp->prio)) {
+    currp->prio = newprio;
   }
-  currp->p_realprio = newprio;
+  currp->realprio = newprio;
 #else
-  oldprio = currp->p_prio;
-  currp->p_prio = newprio;
+  oldprio = currp->prio;
+  currp->prio = newprio;
 #endif
   chSchRescheduleS();
   chSysUnlock();
 
   return oldprio;
-}
-
-/**
- * @brief   Requests a thread termination.
- * @pre     The target thread must be written to invoke periodically
- *          @p chThdShouldTerminate() and terminate cleanly if it returns
- *          @p true.
- * @post    The specified thread will terminate after detecting the termination
- *          condition.
- *
- * @param[in] tp        pointer to the thread
- *
- * @api
- */
-void chThdTerminate(thread_t *tp) {
-
-  chSysLock();
-  tp->p_flags |= CH_FLAG_TERMINATE;
-  chSysUnlock();
 }
 
 /**
@@ -417,21 +499,15 @@ void chThdExit(msg_t msg) {
 void chThdExitS(msg_t msg) {
   thread_t *tp = currp;
 
-  tp->p_u.exitcode = msg;
-#if defined(CH_CFG_THREAD_EXIT_HOOK)
+  tp->u.exitcode = msg;
   CH_CFG_THREAD_EXIT_HOOK(tp);
-#endif
 #if CH_CFG_USE_WAITEXIT == TRUE
-  while (list_notempty(&tp->p_waiting)) {
-    (void) chSchReadyI(list_remove(&tp->p_waiting));
+  while (list_notempty(&tp->waiting)) {
+    (void) chSchReadyI(list_remove(&tp->waiting));
   }
 #endif
 #if CH_CFG_USE_REGISTRY == TRUE
-  /* Static threads are immediately removed from the registry because
-     there is no memory to recover.*/
-  if ((tp->p_flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC) {
-    REG_REMOVE(tp);
-  }
+  REG_REMOVE(tp);
 #endif
   chSchGoSleepS(CH_STATE_FINAL);
 
@@ -443,28 +519,12 @@ void chThdExitS(msg_t msg) {
 /**
  * @brief   Blocks the execution of the invoking thread until the specified
  *          thread terminates then the exit code is returned.
- * @details This function waits for the specified thread to terminate then
- *          decrements its reference counter, if the counter reaches zero then
- *          the thread working area is returned to the proper allocator.<br>
- *          The memory used by the exited thread is handled in different ways
- *          depending on the API that spawned the thread:
- *          - If the thread was spawned by @p chThdCreateStatic() or by
- *            @p chThdCreateI() then nothing happens and the thread working
- *            area is not released or modified in any way. This is the
- *            default, totally static, behavior.
- *          - If the thread was spawned by @p chThdCreateFromHeap() then
- *            the working area is returned to the system heap.
- *          - If the thread was spawned by @p chThdCreateFromMemoryPool()
- *            then the working area is returned to the owning memory pool.
- *          .
  * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
  *          order to use this function.
  * @post    Enabling @p chThdWait() requires 2-4 (depending on the
  *          architecture) extra bytes in the @p thread_t structure.
  * @post    After invoking @p chThdWait() the thread pointer becomes invalid
  *          and must not be used as parameter for further system calls.
- * @note    If @p CH_CFG_USE_DYNAMIC is not specified this function just waits for
- *          the thread termination, no memory allocators are involved.
  *
  * @param[in] tp        pointer to the thread
  * @return              The exit code from the terminated thread.
@@ -478,20 +538,12 @@ msg_t chThdWait(thread_t *tp) {
 
   chSysLock();
   chDbgAssert(tp != currp, "waiting self");
-#if CH_CFG_USE_DYNAMIC == TRUE
-  chDbgAssert(tp->p_refs > (trefs_t)0, "not referenced");
-#endif
-  if (tp->p_state != CH_STATE_FINAL) {
-    list_insert(currp, &tp->p_waiting);
+  if (tp->state != CH_STATE_FINAL) {
+    list_insert(currp, &tp->waiting);
     chSchGoSleepS(CH_STATE_WTEXIT);
   }
-  msg = tp->p_u.exitcode;
+  msg = tp->u.exitcode;
   chSysUnlock();
-
-#if CH_CFG_USE_DYNAMIC == TRUE
-  /* Releasing a lock if it is a dynamic thread.*/
-  chThdRelease(tp);
-#endif
 
   return msg;
 }
@@ -513,10 +565,10 @@ msg_t chThdSuspendS(thread_reference_t *trp) {
   chDbgAssert(*trp == NULL, "not NULL");
 
   *trp = tp;
-  tp->p_u.wttrp = trp;
+  tp->u.wttrp = trp;
   chSchGoSleepS(CH_STATE_SUSPENDED);
 
-  return chThdGetSelfX()->p_u.rdymsg;
+  return chThdGetSelfX()->u.rdymsg;
 }
 
 /**
@@ -548,7 +600,7 @@ msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout) {
   }
 
   *trp = tp;
-  tp->p_u.wttrp = trp;
+  tp->u.wttrp = trp;
 
   return chSchGoSleepTimeoutS(CH_STATE_SUSPENDED, timeout);
 }
@@ -568,11 +620,10 @@ void chThdResumeI(thread_reference_t *trp, msg_t msg) {
   if (*trp != NULL) {
     thread_t *tp = *trp;
 
-    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
-                "not THD_STATE_SUSPENDED");
+    chDbgAssert(tp->state == CH_STATE_SUSPENDED, "not CH_STATE_SUSPENDED");
 
     *trp = NULL;
-    tp->p_u.rdymsg = msg;
+    tp->u.rdymsg = msg;
     (void) chSchReadyI(tp);
   }
 }
@@ -592,8 +643,7 @@ void chThdResumeS(thread_reference_t *trp, msg_t msg) {
   if (*trp != NULL) {
     thread_t *tp = *trp;
 
-    chDbgAssert(tp->p_state == CH_STATE_SUSPENDED,
-                "not THD_STATE_SUSPENDED");
+    chDbgAssert(tp->state == CH_STATE_SUSPENDED, "not CH_STATE_SUSPENDED");
 
     *trp = NULL;
     chSchWakeupS(tp, msg);

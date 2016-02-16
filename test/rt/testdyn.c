@@ -81,10 +81,9 @@ static void dyn1_setup(void) {
 
 static void dyn1_execute(void) {
   size_t n, sz;
-  void *p1;
   tprio_t prio = chThdGetPriorityX();
 
-  (void)chHeapStatus(&heap1, &sz);
+  (void)chHeapStatus(&heap1, &sz, NULL);
   /* Starting threads from the heap. */
   threads[0] = chThdCreateFromHeap(&heap1,
                                    THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
@@ -92,13 +91,10 @@ static void dyn1_execute(void) {
   threads[1] = chThdCreateFromHeap(&heap1,
                                    THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
                                    prio-2, thread, "B");
-  /* Allocating the whole heap in order to make the thread creation fail.*/
-  (void)chHeapStatus(&heap1, &n);
-  p1 = chHeapAlloc(&heap1, n);
+  /* Large working area in order to make the thread creation fail.*/
   threads[2] = chThdCreateFromHeap(&heap1,
-                                   THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
+                                   THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE * 16),
                                    prio-3, thread, "C");
-  chHeapFree(p1);
 
   test_assert(1, (threads[0] != NULL) &&
                  (threads[1] != NULL) &&
@@ -112,7 +108,7 @@ static void dyn1_execute(void) {
   test_assert_sequence(2, "AB");
 
   /* Heap status checked again.*/
-  test_assert(3, chHeapStatus(&heap1, &n) == 1, "heap fragmented");
+  test_assert(3, chHeapStatus(&heap1, &n, NULL) == 1, "heap fragmented");
   test_assert(4, n == sz, "heap size changed");
 }
 
@@ -212,11 +208,11 @@ static void dyn3_execute(void) {
 
   /* Testing references increase/decrease and final detach.*/
   tp = chThdCreateFromHeap(&heap1, WA_SIZE, prio-1, thread, "A");
-  test_assert(1, tp->p_refs == 1, "wrong initial reference counter");
+  test_assert(1, tp->refs == 1, "wrong initial reference counter");
   chThdAddRef(tp);
-  test_assert(2, tp->p_refs == 2, "references increase failure");
+  test_assert(2, tp->refs == 2, "references increase failure");
   chThdRelease(tp);
-  test_assert(3, tp->p_refs == 1, "references decrease failure");
+  test_assert(3, tp->refs == 1, "references decrease failure");
 
   /* Verify the new threads count.*/
   test_assert(4, regfind(tp), "thread missing from registry");
@@ -224,12 +220,12 @@ static void dyn3_execute(void) {
 
   /* Detach and let the thread execute and terminate.*/
   chThdRelease(tp);
-  test_assert(6, tp->p_refs == 0, "detach failure");
-  test_assert(7, tp->p_state == CH_STATE_READY, "invalid state");
+  test_assert(6, tp->refs == 0, "detach failure");
+  test_assert(7, tp->state == CH_STATE_READY, "invalid state");
   test_assert(8, regfind(tp), "thread disappeared");
   test_assert(9, regfind(tp), "thread disappeared");
   chThdSleepMilliseconds(50);           /* The thread just terminates.      */
-  test_assert(10, tp->p_state == CH_STATE_FINAL, "invalid state");
+  test_assert(10, tp->state == CH_STATE_FINAL, "invalid state");
 
   /* Clearing the zombie by scanning the registry.*/
   test_assert(11, regfind(tp), "thread disappeared");

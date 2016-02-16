@@ -86,7 +86,7 @@ void _stats_increase_irq(void) {
 void _stats_ctxswc(thread_t *ntp, thread_t *otp) {
 
   ch.kernel_stats.n_ctxswc++;
-  chTMChainMeasurementToX(&otp->p_stats, &ntp->p_stats);
+  chTMChainMeasurementToX(&otp->stats, &ntp->stats);
 }
 
 /**

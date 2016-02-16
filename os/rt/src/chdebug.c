@@ -101,6 +101,31 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+#if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE) || defined(__DOXYGEN__)
+/**
+ * @brief   Writes a time stamp and increases the trace buffer pointer.
+ *
+ * @notapi
+ */
+NOINLINE static void trace_next(void) {
+
+  ch.dbg.trace_buffer.ptr->time    = chVTGetSystemTimeX();
+#if PORT_SUPPORTS_RT == TRUE
+  ch.dbg.trace_buffer.ptr->rtstamp = chSysGetRealtimeCounterX();
+#else
+  ch.dbg.trace_buffer.ptr->rtstamp = (rtcnt_t)0;
+#endif
+
+  /* Trace hook, useful in order to interface debug tools.*/
+  CH_CFG_TRACE_HOOK(ch.dbg.trace_buffer.ptr);
+
+  if (++ch.dbg.trace_buffer.ptr >=
+      &ch.dbg.trace_buffer.buffer[CH_DBG_TRACE_BUFFER_SIZE]) {
+    ch.dbg.trace_buffer.ptr = &ch.dbg.trace_buffer.buffer[0];
+  }
+}
+#endif
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -256,17 +281,24 @@ void chDbgCheckClassS(void) {
 
 #endif /* CH_DBG_SYSTEM_STATE_CHECK == TRUE */
 
-#if (CH_DBG_ENABLE_TRACE == TRUE) || defined(__DOXYGEN__)
+#if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE) || defined(__DOXYGEN__)
 /**
  * @brief   Trace circular buffer subsystem initialization.
  * @note    Internal use only.
  */
 void _dbg_trace_init(void) {
+  unsigned i;
 
-  ch.dbg.trace_buffer.tb_size = CH_DBG_TRACE_BUFFER_SIZE;
-  ch.dbg.trace_buffer.tb_ptr = &ch.dbg.trace_buffer.tb_buffer[0];
+  ch.dbg.trace_buffer.suspended = 0U;
+  ch.dbg.trace_buffer.size      = CH_DBG_TRACE_BUFFER_SIZE;
+  ch.dbg.trace_buffer.ptr       = &ch.dbg.trace_buffer.buffer[0];
+  for (i = 0U; i < CH_DBG_TRACE_BUFFER_SIZE; i++) {
+    ch.dbg.trace_buffer.buffer[i].type = CH_TRACE_TYPE_UNUSED;
+  }
 }
 
+#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) != 0) ||                \
+    defined(__DOXYGEN__)
 /**
  * @brief   Inserts in the circular debug trace buffer a context switch record.
  *
@@ -274,17 +306,173 @@ void _dbg_trace_init(void) {
  *
  * @notapi
  */
-void _dbg_trace(thread_t *otp) {
+void _dbg_trace_switch(thread_t *otp) {
 
-  ch.dbg.trace_buffer.tb_ptr->se_time   = chVTGetSystemTimeX();
-  ch.dbg.trace_buffer.tb_ptr->se_tp     = currp;
-  ch.dbg.trace_buffer.tb_ptr->se_wtobjp = otp->p_u.wtobjp;
-  ch.dbg.trace_buffer.tb_ptr->se_state  = (uint8_t)otp->p_state;
-  if (++ch.dbg.trace_buffer.tb_ptr >=
-      &ch.dbg.trace_buffer.tb_buffer[CH_DBG_TRACE_BUFFER_SIZE]) {
-    ch.dbg.trace_buffer.tb_ptr = &ch.dbg.trace_buffer.tb_buffer[0];
+  if ((ch.dbg.trace_buffer.suspended & CH_TRACE_SUSPEND_SWITCH) == 0U) {
+    ch.dbg.trace_buffer.ptr->type        = CH_TRACE_TYPE_SWITCH;
+    ch.dbg.trace_buffer.ptr->state       = (uint8_t)otp->state;
+    ch.dbg.trace_buffer.ptr->u.sw.ntp    = currp;
+    ch.dbg.trace_buffer.ptr->u.sw.wtobjp = otp->u.wtobjp;
+    trace_next();
   }
 }
-#endif /* CH_DBG_ENABLE_TRACE */
+#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_SWITCH) != 0 */
+
+#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) != 0) ||                   \
+    defined(__DOXYGEN__)
+/**
+ * @brief   Inserts in the circular debug trace buffer an ISR-enter record.
+ *
+ * @param[in] isr       name of the isr
+ *
+ * @notapi
+ */
+void _dbg_trace_isr_enter(const char *isr) {
+
+  if ((ch.dbg.trace_buffer.suspended & CH_TRACE_SUSPEND_ISR_ENTER) == 0U) {
+    port_lock_from_isr();
+    ch.dbg.trace_buffer.ptr->type        = CH_TRACE_TYPE_ISR_ENTER;
+    ch.dbg.trace_buffer.ptr->state       = 0U;
+    ch.dbg.trace_buffer.ptr->u.isr.name  = isr;
+    trace_next();
+    port_unlock_from_isr();
+  }
+}
+
+/**
+ * @brief   Inserts in the circular debug trace buffer an ISR-leave record.
+ *
+ * @param[in] isr       name of the isr
+ *
+ * @notapi
+ */
+void _dbg_trace_isr_leave(const char *isr) {
+
+  if ((ch.dbg.trace_buffer.suspended & CH_TRACE_SUSPEND_ISR_LEAVE) == 0U) {
+    port_lock_from_isr();
+    ch.dbg.trace_buffer.ptr->type        = CH_TRACE_TYPE_ISR_LEAVE;
+    ch.dbg.trace_buffer.ptr->state       = 0U;
+    ch.dbg.trace_buffer.ptr->u.isr.name  = isr;
+    trace_next();
+    port_unlock_from_isr();
+  }
+}
+#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_ISR) != 0 */
+
+#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) != 0) ||                  \
+    defined(__DOXYGEN__)
+/**
+ * @brief   Inserts in the circular debug trace buffer an halt record.
+ *
+ * @param[in] reason    the halt error string
+ *
+ * @notapi
+ */
+void _dbg_trace_halt(const char *reason) {
+
+  if ((ch.dbg.trace_buffer.suspended & CH_TRACE_SUSPEND_HALT) == 0U) {
+    ch.dbg.trace_buffer.ptr->type          = CH_TRACE_TYPE_HALT;
+    ch.dbg.trace_buffer.ptr->state         = 0;
+    ch.dbg.trace_buffer.ptr->u.halt.reason = reason;
+    trace_next();
+  }
+}
+#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_HALT) != 0 */
+
+#if ((CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) != 0) ||                  \
+    defined(__DOXYGEN__)
+/**
+ * @brief   Adds an user trace record to the trace buffer.
+ *
+ * @param[in] up1       user parameter 1
+ * @param[in] up2       user parameter 2
+ *
+ * @iclass
+ */
+void chDbgWriteTraceI(void *up1, void *up2) {
+
+  chDbgCheckClassI();
+
+  if ((ch.dbg.trace_buffer.suspended & CH_TRACE_SUSPEND_SWITCH) == 0U) {
+    ch.dbg.trace_buffer.ptr->type       = CH_TRACE_TYPE_USER;
+    ch.dbg.trace_buffer.ptr->state      = 0;
+    ch.dbg.trace_buffer.ptr->u.user.up1 = up1;
+    ch.dbg.trace_buffer.ptr->u.user.up2 = up2;
+    trace_next();
+  }
+}
+
+/**
+ * @brief   Adds an user trace record to the trace buffer.
+ *
+ * @param[in] up1       user parameter 1
+ * @param[in] up2       user parameter 2
+ *
+ * @api
+ */
+void chDbgWriteTrace(void *up1, void *up2) {
+
+  chSysLock();
+  chDbgWriteTraceI(up1, up2);
+  chSysUnlock();
+}
+#endif /* (CH_DBG_TRACE_MASK & CH_DBG_TRACE_MASK_USER) != 0 */
+
+/**
+ * @brief   Suspends one or more trace events.
+ *
+ * @paramin mask        mask of the trace events to be suspended
+ *
+ * @iclass
+ */
+void chDbgSuspendTraceI(uint16_t mask) {
+
+  chDbgCheckClassI();
+
+  ch.dbg.trace_buffer.suspended |= mask;
+}
+
+/**
+ * @brief   Suspends one or more trace events.
+ *
+ * @paramin mask        mask of the trace events to be suspended
+ *
+ * @api
+ */
+void chDbgSuspendTrace(uint16_t mask) {
+
+  chSysLock();
+  chDbgSuspendTraceI(mask);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Resumes one or more trace events.
+ *
+ * @paramin mask        mask of the trace events to be resumed
+ *
+ * @iclass
+ */
+void chDbgResumeTraceI(uint16_t mask) {
+
+  chDbgCheckClassI();
+
+  ch.dbg.trace_buffer.suspended &= ~mask;
+}
+
+/**
+ * @brief   Resumes one or more trace events.
+ *
+ * @paramin mask        mask of the trace events to be resumed
+ *
+ * @api
+ */
+void chDbgResumeTrace(uint16_t mask) {
+
+  chSysLock();
+  chDbgResumeTraceI(mask);
+  chSysUnlock();
+}
+#endif /* CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_NONE */
 
 /** @} */

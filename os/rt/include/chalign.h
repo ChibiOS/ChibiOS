@@ -18,18 +18,15 @@
 */
 
 /**
- * @file    chcore_timer.h
- * @brief   System timer header file.
+ * @file    chmem.h
+ * @brief   Memory alignment macros and structures.
  *
- * @addtogroup ARM_TIMER
+ * @addtogroup mem
  * @{
  */
 
-#ifndef _CHCORE_TIMER_H_
-#define _CHCORE_TIMER_H_
-
-/* This is the only header in the HAL designed to be include-able alone.*/
-#include "st.h"
+#ifndef _CHALIGN_H_
+#define _CHALIGN_H_
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -51,74 +48,67 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    Memory alignment support macros
+ */
+/**
+ * @brief   Alignment mask constant.
+ *
+ * @param[in] a         alignment, must be a power of two
+ */
+#define MEM_ALIGN_MASK(a)       ((size_t)(a) - 1U)
+
+/**
+ * @brief   Aligns to the previous aligned memory address.
+ *
+ * @param[in] p         variable to be aligned
+ * @param[in] a         alignment, must be a power of two
+ */
+#define MEM_ALIGN_PREV(p, a)    ((size_t)(p) & ~MEM_ALIGN_MASK(a))
+
+/**
+ * @brief   Aligns to the new aligned memory address.
+ *
+ * @param[in] p         variable to be aligned
+ * @param[in] a         alignment, must be a power of two
+ */
+#define MEM_ALIGN_NEXT(p, a)    MEM_ALIGN_PREV((size_t)(p) +                \
+                                               MEM_ALIGN_MASK(a), (a))
+
+/**
+ * @brief   Returns whatever a pointer or memory size is aligned.
+ *
+ * @param[in] p         variable to be aligned
+ * @param[in] a         alignment, must be a power of two
+ */
+#define MEM_IS_ALIGNED(p, a)    (((size_t)(p) & MEM_ALIGN_MASK(a)) == 0U)
+
+/**
+ * @brief   Returns whatever a constant is a valid alignment.
+ * @details Valid alignments are powers of two.
+ *
+ * @param[in] a         alignment to be checked, must be a constant
+ */
+#define MEM_IS_VALID_ALIGNMENT(a)                                           \
+  (((size_t)(a) != 0U) && (((size_t)(a) & ((size_t)(a) - 1U)) == 0U))
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-/**
- * @brief   Starts the alarm.
- * @note    Makes sure that no spurious alarms are triggered after
- *          this call.
- *
- * @param[in] time      the time to be set for the first alarm
- *
- * @notapi
- */
-static inline void port_timer_start_alarm(systime_t time) {
-
-  stStartAlarm(time);
-}
-
-/**
- * @brief   Stops the alarm interrupt.
- *
- * @notapi
- */
-static inline void port_timer_stop_alarm(void) {
-
-  stStopAlarm();
-}
-
-/**
- * @brief   Sets the alarm time.
- *
- * @param[in] time      the time to be set for the next alarm
- *
- * @notapi
- */
-static inline void port_timer_set_alarm(systime_t time) {
-
-  stSetAlarm(time);
-}
-
-/**
- * @brief   Returns the system time.
- *
- * @return              The system time.
- *
- * @notapi
- */
-static inline systime_t port_timer_get_time(void) {
-
-  return stGetCounter();
-}
-
-/**
- * @brief   Returns the current alarm time.
- *
- * @return              The currently set alarm time.
- *
- * @notapi
- */
-static inline systime_t port_timer_get_alarm(void) {
-
-  return stGetAlarm();
-}
-
-#endif /* _CHCORE_TIMER_H_ */
+#endif /* _CHALIGN_H_ */
 
 /** @} */
