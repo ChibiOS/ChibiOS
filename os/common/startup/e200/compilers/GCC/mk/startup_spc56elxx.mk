@@ -1,11 +1,11 @@
 # List of the ChibiOS e200z4 SPC56ELxx startup files.
 STARTUPSRC =
           
-STARTUPASM = $(CHIBIOS)/os/common/ports/e200/devices/SPC56ELxx/boot.s \
-             $(CHIBIOS)/os/common/ports/e200/compilers/GCC/vectors.s \
-             $(CHIBIOS)/os/common/ports/e200/compilers/GCC/crt0.s
+STARTUPASM = $(CHIBIOS)/os/common/startup/e200/devices/SPC56ELxx/boot.s \
+             $(CHIBIOS)/os/common/startup/e200/compilers/GCC/vectors.s \
+             $(CHIBIOS)/os/common/startup/e200/compilers/GCC/crt0.s
 
-STARTUPINC = ${CHIBIOS}/os/common/ports/e200/compilers/GCC \
-             ${CHIBIOS}/os/common/ports/e200/devices/SPC56ELxx
+STARTUPINC = ${CHIBIOS}/os/common/startup/e200/compilers/GCC \
+             ${CHIBIOS}/os/common/startup/e200/devices/SPC56ELxx
 
-STARTUPLD  = ${CHIBIOS}/os/common/ports/e200/compilers/GCC/ld
+STARTUPLD  = ${CHIBIOS}/os/common/startup/e200/compilers/GCC/ld

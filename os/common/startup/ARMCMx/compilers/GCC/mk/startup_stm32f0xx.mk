@@ -1,12 +1,12 @@
 # List of the ChibiOS generic STM32F0xx startup and CMSIS files.
-STARTUPSRC = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/crt1.c \
-             $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/vectors.c
+STARTUPSRC = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/crt1.c \
+             $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/vectors.c
           
-STARTUPASM = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/crt0_v6m.s
+STARTUPASM = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/crt0_v6m.s
 
-STARTUPINC = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC \
-             $(CHIBIOS)/os/common/ports/ARMCMx/devices/STM32F0xx \
-             $(CHIBIOS)/os/ext/CMSIS/include \
-             $(CHIBIOS)/os/ext/CMSIS/ST/STM32F0xx
+STARTUPINC = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC \
+             $(CHIBIOS)/os/common/startup/ARMCMx/devices/STM32F0xx \
+             $(CHIBIOS)/os/common/ext/CMSIS/include \
+             $(CHIBIOS)/os/common/ext/CMSIS/ST/STM32F0xx
 
-STARTUPLD  = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/ld
+STARTUPLD  = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/ld

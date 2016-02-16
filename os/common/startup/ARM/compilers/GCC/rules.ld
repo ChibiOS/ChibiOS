@@ -117,6 +117,7 @@ SECTIONS
     {
         . = ALIGN(8);
         __stacks_base__ = .;
+        __main_thread_stack_base__ = .;
         . += __stacks_total_size__;
         . = ALIGN(8);
         __stacks_end__ = .;
