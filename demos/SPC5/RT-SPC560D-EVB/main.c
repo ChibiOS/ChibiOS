@@ -24,17 +24,18 @@
 #define TEST_WA_SIZE    THD_WORKING_AREA_SIZE(256)
 
 static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
-  size_t n, size;
+  size_t n, size, largest;
 
   (void)argv;
   if (argc > 0) {
     chprintf(chp, "Usage: mem\r\n");
     return;
   }
-  n = chHeapStatus(NULL, &size);
+  n = chHeapStatus(NULL, &size, &largest);
   chprintf(chp, "core free memory : %u bytes\r\n", chCoreGetStatusX());
   chprintf(chp, "heap fragments   : %u\r\n", n);
   chprintf(chp, "heap free total  : %u bytes\r\n", size);
+  chprintf(chp, "heap free largest: %u bytes\r\n", largest);
 }
 
 static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
@@ -49,10 +50,9 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "    addr    stack prio refs     state time\r\n");
   tp = chRegFirstThread();
   do {
-    chprintf(chp, "%08lx %08lx %4lu %4lu %9s\r\n",
-            (uint32_t)tp, (uint32_t)tp->p_ctx.sp,
-            (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
-            states[tp->p_state]);
+    chprintf(chp, "%08lx %08lx %4lu %9s\r\n",
+            (uint32_t)tp, (uint32_t)tp->ctx.sp,
+            (uint32_t)tp->prio, states[tp->state]);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
 }

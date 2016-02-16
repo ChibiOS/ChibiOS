@@ -113,32 +113,6 @@
 #define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
 
 /*
- * CAN driver system settings.
- */
-#define STM32_CAN_USE_CAN1                  FALSE
-#define STM32_CAN_CAN1_IRQ_PRIORITY         11
-
-/*
- * GPT driver system settings.
- */
-#define STM32_GPT_USE_TIM1                  FALSE
-#define STM32_GPT_USE_TIM2                  FALSE
-#define STM32_GPT_USE_TIM3                  FALSE
-#define STM32_GPT_USE_TIM4                  FALSE
-#define STM32_GPT_USE_TIM5                  FALSE
-#define STM32_GPT_USE_TIM6                  FALSE
-#define STM32_GPT_USE_TIM7                  FALSE
-#define STM32_GPT_USE_TIM8                  FALSE
-#define STM32_GPT_TIM1_IRQ_PRIORITY         7
-#define STM32_GPT_TIM2_IRQ_PRIORITY         7
-#define STM32_GPT_TIM3_IRQ_PRIORITY         7
-#define STM32_GPT_TIM4_IRQ_PRIORITY         7
-#define STM32_GPT_TIM5_IRQ_PRIORITY         7
-#define STM32_GPT_TIM6_IRQ_PRIORITY         7
-#define STM32_GPT_TIM7_IRQ_PRIORITY         7
-#define STM32_GPT_TIM8_IRQ_PRIORITY         7
-
-/*
  * SDC driver system settings.
  */
 #define STM32_SDC_USE_SDMMC1                FALSE
@@ -167,16 +141,6 @@
  */
 #define STM32_ST_IRQ_PRIORITY               8
 #define STM32_ST_USE_TIMER                  2
-
-/*
- * USB driver system settings.
- */
-#define STM32_USB_USE_OTG1                  FALSE
-#define STM32_USB_OTG1_IRQ_PRIORITY         14
-#define STM32_USB_OTG1_RX_FIFO_SIZE         512
-#define STM32_USB_OTG_THREAD_PRIO           LOWPRIO
-#define STM32_USB_OTG_THREAD_STACK_SIZE     128
-#define STM32_USB_OTGFIFO_FILL_BASEPRI      0
 
 /*
  * WDG driver system settings.
