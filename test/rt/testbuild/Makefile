@@ -54,7 +54,7 @@ include $(CHIBIOS)/os/hal/boards/simulator/board.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/simulator/win32/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
-include $(CHIBIOS)/os/rt/ports/SIMIA32/compilers/GCC/port.mk
+include $(CHIBIOS)/os/common/ports/SIMIA32/compilers/GCC/port.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/test/rt/test.mk
 

@@ -49,7 +49,7 @@ static THD_FUNCTION(can_rx, p) {
   (void)p;
   chRegSetThreadName("receiver");
   chEvtRegister(&cip->canp->rxfull_event, &el, 0);
-  while(!chThdShouldTerminateX()) {
+  while (true) {
     if (chEvtWaitAnyTimeout(ALL_EVENTS, MS2ST(100)) == 0)
       continue;
     while (canReceive(cip->canp, CAN_ANY_MAILBOX,
@@ -77,7 +77,7 @@ static THD_FUNCTION(can_tx, p) {
   txmsg.data32[0] = 0x55AA55AA;
   txmsg.data32[1] = 0x00FF00FF;
 
-  while (!chThdShouldTerminateX()) {
+  while (true) {
     canTransmit(&CAND1, CAN_ANY_MAILBOX, &txmsg, MS2ST(100));
     canTransmit(&CAND2, CAN_ANY_MAILBOX, &txmsg, MS2ST(100));
     chThdSleepMilliseconds(500);

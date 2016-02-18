@@ -96,7 +96,7 @@ include $(CHIBIOS)/os/hal/templates/platform.mk
 include $(CHIBIOS)/os/hal/templates/osal/osal.mk
 # RTOS files (optional).
 #include $(CHIBIOS)/os/rt/rt.mk
-#include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
+#include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
 #include $(CHIBIOS)/test/rt/test.mk
 
