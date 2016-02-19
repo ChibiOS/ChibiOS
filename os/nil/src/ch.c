@@ -942,7 +942,9 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
     tp++;
   }
 }
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Adds a set of event flags directly to the specified @p thread_t.
  *
@@ -958,9 +960,7 @@ void chEvtSignal(thread_t *tp, eventmask_t mask) {
   chSchRescheduleS();
   chSysUnlock();
 }
-#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
-#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Adds a set of event flags directly to the specified @p thread_t.
  * @post    This function does not reschedule so a call to a rescheduling
