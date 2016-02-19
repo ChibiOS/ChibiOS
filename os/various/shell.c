@@ -133,7 +133,7 @@ static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
  *
  * @param[in] p         pointer to a @p BaseSequentialStream object
  */
-static THD_FUNCTION(shell_thread, p) {
+THD_FUNCTION(shellThread, p) {
   int n;
   BaseSequentialStream *chp = ((ShellConfig *)p)->sc_channel;
   const ShellCommand *scp = ((ShellConfig *)p)->sc_commands;
@@ -218,43 +218,14 @@ void shellExit(msg_t msg) {
 }
 
 /**
- * @brief   Spawns a new shell.
- * @pre     @p CH_CFG_USE_HEAP and @p CH_CFG_USE_DYNAMIC must be enabled.
- *
- * @param[in] scp       pointer to a @p ShellConfig object
- * @param[in] size      size of the shell working area to be allocated
- * @param[in] prio      priority level for the new shell
- * @return              A pointer to the shell thread.
- * @retval NULL         thread creation failed because memory allocation.
- *
- * @api
- */
-#if CH_CFG_USE_HEAP && CH_CFG_USE_DYNAMIC
-thread_t *shellCreate(const ShellConfig *scp, size_t size, tprio_t prio) {
-
-  return chThdCreateFromHeap(NULL, size, prio, shell_thread, (void *)scp);
-}
-#endif
-
-/**
- * @brief   Create statically allocated shell thread.
- *
- * @param[in] scp       pointer to a @p ShellConfig object
- * @param[in] wsp       pointer to a working area dedicated to the shell thread stack
- * @param[in] size      size of the shell working area
- * @param[in] prio      priority level for the new shell
- * @return              A pointer to the shell thread.
- *
- * @api
- */
-thread_t *shellCreateStatic(const ShellConfig *scp, void *wsp,
-                            size_t size, tprio_t prio) {
-
-  return chThdCreateStatic(wsp, size, prio, shell_thread, (void *)scp);
-}
-
-/**
  * @brief   Reads a whole line from the input channel.
+ * @note    Input chars are echoed on the same stream object with the
+ *          following exceptions:
+ *          - DEL and BS are echoed as BS-SPACE-BS.
+ *          - CR is echoed as CR-LF.
+ *          - 0x4 is echoed as "^D".
+ *          - Other values below 0x20 are not echoed.
+ *          .
  *
  * @param[in] chp       pointer to a @p BaseSequentialStream object
  * @param[in] line      pointer to the line buffer

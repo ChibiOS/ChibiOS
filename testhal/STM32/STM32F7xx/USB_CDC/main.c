@@ -34,17 +34,18 @@
 #define TEST_WA_SIZE    THD_WORKING_AREA_SIZE(256)
 
 static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
-  size_t n, size;
+  size_t n, total, largest;
 
   (void)argv;
   if (argc > 0) {
     chprintf(chp, "Usage: mem\r\n");
     return;
   }
-  n = chHeapStatus(NULL, &size);
+  n = chHeapStatus(NULL, &total, &largest);
   chprintf(chp, "core free memory : %u bytes\r\n", chCoreGetStatusX());
   chprintf(chp, "heap fragments   : %u\r\n", n);
-  chprintf(chp, "heap free total  : %u bytes\r\n", size);
+  chprintf(chp, "heap free total  : %u bytes\r\n", total);
+  chprintf(chp, "heap free largest: %u bytes\r\n", largest);
 }
 
 static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
@@ -56,13 +57,13 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "Usage: threads\r\n");
     return;
   }
-  chprintf(chp, "    addr    stack prio refs     state time\r\n");
+  chprintf(chp, "stklimit    stack     addr prio     state         name\r\n");
   tp = chRegFirstThread();
   do {
-    chprintf(chp, "%08lx %08lx %4lu %4lu %9s\r\n",
-            (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-            (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
-            states[tp->p_state]);
+    chprintf(chp, "%08lx %08lx %08lx %4lu %9s %12s\r\n",
+             (uint32_t)tp->stklimit, (uint32_t)tp->ctx.r13, (uint32_t)tp,
+             (uint32_t)tp->prio, states[tp->state],
+             tp->name == NULL ? "" : tp->name);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
 }
@@ -209,14 +210,16 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * Normal main() thread activity, spawning shells.
    */
   while (true) {
-    if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE))
-      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
+    if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE)) {
+      shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE, NORMALPRIO + 1,
+                                    shellThread, (void *)&shell_cfg1);
+    }
     else if (chThdTerminatedX(shelltp)) {
-      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
+      chThdWait(shelltp);
+      chHeapFree(chthdGetStackLimitX(shelltp));
       shelltp = NULL;           /* Triggers spawning of a new shell.        */
     }
 #if 0
