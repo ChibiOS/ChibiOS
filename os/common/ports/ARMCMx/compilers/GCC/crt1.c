@@ -193,9 +193,9 @@ void __default_exit(void) {
  * @brief   Performs the initialization of the various RAM areas.
  */
 void __init_ram_areas(void) {
+#if CRT1_AREAS_NUMBER > 0
   const ram_init_area_t *rap = ram_areas;
 
-#if CRT1_AREAS_NUMBER > 0
   do {
     uint32_t *tp = rap->init_text_area;
     uint32_t *p = rap->init_area;
