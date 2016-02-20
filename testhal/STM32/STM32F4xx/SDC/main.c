@@ -292,7 +292,6 @@ static const ShellConfig shell_cfg1 = {
  * Application entry point.
  */
 int main(void) {
-  thread_t *shelltp = NULL;
 
   /*
    * System initializations.
@@ -325,15 +324,14 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
-   * Normal main() thread activity, in this demo it does nothing.
+   * Normal main() thread activity, spawning shells.
    */
   while (true) {
-    if (!shelltp)
-      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
-    else if (chThdTerminatedX(shelltp)) {
-      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
-      shelltp = NULL;           /* Triggers spawning of a new shell.        */
-    }
+    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                  NORMALPRIO + 1, shellThread,
+                                  (void *)&shell_cfg1);
+    chThdWait(shelltp);               /* Waiting termination.             */
+    chThdFreeToHeap(shelltp);         /* Returning memory to heap.        */
     chThdSleepMilliseconds(1000);
   }
 }
