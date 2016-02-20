@@ -109,7 +109,6 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
-  thread_t *shelltp = NULL;
 
   /*
    * System initializations.
@@ -157,13 +156,12 @@ int main(void) {
    * Normal main() thread activity, spawning shells.
    */
   while (true) {
-    if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE)) {
-      shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE, NORMALPRIO + 1,
-                                    shellThread, (void *)&shell_cfg1);
-    }
-    else if (chThdTerminatedX(shelltp)) {
-      chThdFreeToHeap(shelltp);
-      shelltp = NULL;           /* Triggers spawning of a new shell.        */
+    if (SDU2.config->usbp->state == USB_ACTIVE) {
+      thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                    NORMALPRIO + 1, shellThread,
+                                    (void *)&shell_cfg1);
+      chThdWait(shelltp);               /* Waiting termination.             */
+      chThdFreeToHeap(shelltp);         /* Returning memory to heap.        */
     }
 #if 0
     if (palReadPad(GPIOI, GPIOI_BUTTON_USER)) {
