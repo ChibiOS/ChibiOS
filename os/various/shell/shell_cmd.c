@@ -93,6 +93,18 @@ static void cmd_info(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 #endif
 
+#if (SHELL_CMD_ECHO_ENABLED == TRUE) || defined(__DOXYGEN__)
+static void cmd_echo(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+  (void)argv;
+  if (argc != 1) {
+    usage(chp, "echo \"message\"");
+    return;
+  }
+  chprintf(chp, "%s\r\n", argv[0]);
+}
+#endif
+
 #if (SHELL_CMD_SYSTIME_ENABLED == TRUE) || defined(__DOXYGEN__)
 static void cmd_systime(BaseSequentialStream *chp, int argc, char *argv[]) {
 
@@ -174,6 +186,9 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
 ShellCommand shell_local_commands[] = {
 #if SHELL_CMD_INFO_ENABLED == TRUE
   {"info", cmd_info},
+#endif
+#if SHELL_CMD_ECHO_ENABLED == TRUE
+  {"echo", cmd_echo},
 #endif
 #if SHELL_CMD_SYSTIME_ENABLED == TRUE
   {"systime", cmd_systime},

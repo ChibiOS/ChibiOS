@@ -37,6 +37,10 @@
 #define SHELL_CMD_INFO_ENABLED              TRUE
 #endif
 
+#if !defined(SHELL_CMD_ECHO_ENABLED) || defined(__DOXYGEN__)
+#define SHELL_CMD_ECHO_ENABLED              TRUE
+#endif
+
 #if !defined(SHELL_CMD_SYSTIME_ENABLED) || defined(__DOXYGEN__)
 #define SHELL_CMD_SYSTIME_ENABLED           TRUE
 #endif

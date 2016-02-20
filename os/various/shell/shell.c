@@ -55,21 +55,37 @@ event_source_t shell_terminated;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static char *_strtok(char *str, const char *delim, char **saveptr) {
-  char *token;
-  if (str)
+static char *parse_arguments(char *str, char **saveptr) {
+  char *p;
+
+  if (str != NULL)
     *saveptr = str;
-  token = *saveptr;
 
-  if (!token)
+  p = *saveptr;
+  if (!p) {
     return NULL;
+  }
 
-  token += strspn(token, delim);
-  *saveptr = strpbrk(token, delim);
-  if (*saveptr)
+  /* Skipping white space.*/
+  p += strspn(p, " \t");
+
+  if (*p == '"') {
+    /* If an argument starts with a double quote then its delimiter is another
+       quote.*/
+    p++;
+    *saveptr = strpbrk(p, "\"");
+  }
+  else {
+    /* The delimiter is white space.*/
+    *saveptr = strpbrk(p, " \t");
+  }
+
+  /* Replacing the delimiter with a zero.*/
+  if (*saveptr != NULL) {
     *(*saveptr)++ = '\0';
+  }
 
-  return *token ? token : NULL;
+  return *p != '\0' ? p : NULL;
 }
 
 static void usage(BaseSequentialStream *chp, char *p) {
@@ -122,10 +138,10 @@ THD_FUNCTION(shellThread, p) {
       chprintf(chp, "\r\nlogout");
       break;
     }
-    lp = _strtok(line, " \t", &tokp);
+    lp = parse_arguments(line, &tokp);
     cmd = lp;
     n = 0;
-    while ((lp = _strtok(NULL, " \t", &tokp)) != NULL) {
+    while ((lp = parse_arguments(NULL, &tokp)) != NULL) {
       if (n >= SHELL_MAX_ARGUMENTS) {
         chprintf(chp, "too many arguments\r\n");
         cmd = NULL;

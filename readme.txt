@@ -76,6 +76,8 @@
 *****************************************************************************
 
 *** Next ***
+- VAR: Centralized all usual shell commands into a single shell_cmd.c file.
+- VAR: The shell now accepts quoted arguments.
 - ALL: Reorganized source tree, now ports are shared between RT and NIL.
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
