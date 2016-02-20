@@ -76,8 +76,12 @@
 *****************************************************************************
 
 *** Next ***
-- VAR: Centralized all usual shell commands into a single shell_cmd.c file.
 - VAR: The shell now accepts quoted arguments.
+- VAR: Centralized all usual shell commands into a single shell_cmd.c
+       file. This will allow to update all demos with a single change.
+       Each single command can be disabled using preprocessor switches.
+       Shell files are now located under ./os/various/shell and have a
+       dedicated shell.mk file.
 - ALL: Reorganized source tree, now ports are shared between RT and NIL.
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
