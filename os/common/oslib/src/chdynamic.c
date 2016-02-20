@@ -96,6 +96,23 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
 
   return chThdCreateStatic(wsp, size, prio, pf, arg);
 }
+
+/**
+ * @brief   Releases a thread working area into the owner heap.
+ * @pre     The thread must have been created using @p chThdCreateFromHeap().
+ * @pre     The thread must be in the state @p CH_STATE_FINAL (terminated).
+ *
+ * @param[in] tp        the pointer to the thread
+ *
+ * @api
+ */
+void chThdFreeToHeap(thread_t *tp) {
+
+  chDbgCheck(tp != NULL);
+  chDbgAssert(tp->state == CH_STATE_FINAL, "not terminated");
+
+  chHeapFree(chthdGetStackLimitX(tp));
+}
 #endif /* CH_CFG_USE_HEAP == TRUE */
 
 #if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
@@ -142,6 +159,24 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
 #endif
 
   return chThdCreateStatic(wsp, mp->object_size, prio, pf, arg);
+}
+
+/**
+ * @brief   Releases a thread working area into a memory pool.
+ * @pre     The thread must have been created using @p chThdCreateFromMemoryPool().
+ * @pre     The thread must be in the state @p CH_STATE_FINAL (terminated).
+ *
+ * @param[in] tp        the pointer to the thread
+ * @param[in] mp        pointer to a @p memory_pool_t structure
+ *
+ * @api
+ */
+void chThdFreeToMemoryPool(thread_t *tp, memory_pool_t *mp) {
+
+  chDbgCheck((tp != NULL) && (mp != NULL));
+  chDbgAssert(tp->state == CH_STATE_FINAL, "not terminated");
+
+  chPoolFree(mp, (void *)chthdGetStackLimitX(tp));
 }
 #endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 

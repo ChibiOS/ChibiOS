@@ -27,12 +27,33 @@
 #include "ch.h"
 #include "hal.h"
 #include "shell.h"
+#include "shell_cmd.h"
 #include "chprintf.h"
+
+/*===========================================================================*/
+/* Module local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module exported variables.                                                */
+/*===========================================================================*/
 
 /**
  * @brief   Shell termination event source.
  */
 event_source_t shell_terminated;
+
+/*===========================================================================*/
+/* Module local types.                                                       */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local variables.                                                   */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
 
 static char *_strtok(char *str, const char *delim, char **saveptr) {
   char *token;
@@ -64,57 +85,6 @@ static void list_commands(BaseSequentialStream *chp, const ShellCommand *scp) {
   }
 }
 
-static void cmd_info(BaseSequentialStream *chp, int argc, char *argv[]) {
-
-  (void)argv;
-  if (argc > 0) {
-    usage(chp, "info");
-    return;
-  }
-
-  chprintf(chp, "Kernel:       %s\r\n", CH_KERNEL_VERSION);
-#ifdef PORT_COMPILER_NAME
-  chprintf(chp, "Compiler:     %s\r\n", PORT_COMPILER_NAME);
-#endif
-  chprintf(chp, "Architecture: %s\r\n", PORT_ARCHITECTURE_NAME);
-#ifdef PORT_CORE_VARIANT_NAME
-  chprintf(chp, "Core Variant: %s\r\n", PORT_CORE_VARIANT_NAME);
-#endif
-#ifdef PORT_INFO
-  chprintf(chp, "Port Info:    %s\r\n", PORT_INFO);
-#endif
-#ifdef PLATFORM_NAME
-  chprintf(chp, "Platform:     %s\r\n", PLATFORM_NAME);
-#endif
-#ifdef BOARD_NAME
-  chprintf(chp, "Board:        %s\r\n", BOARD_NAME);
-#endif
-#ifdef __DATE__
-#ifdef __TIME__
-  chprintf(chp, "Build time:   %s%s%s\r\n", __DATE__, " - ", __TIME__);
-#endif
-#endif
-}
-
-static void cmd_systime(BaseSequentialStream *chp, int argc, char *argv[]) {
-
-  (void)argv;
-  if (argc > 0) {
-    usage(chp, "systime");
-    return;
-  }
-  chprintf(chp, "%lu\r\n", (unsigned long)chVTGetSystemTime());
-}
-
-/**
- * @brief   Array of the default commands.
- */
-static ShellCommand local_commands[] = {
-  {"info", cmd_info},
-  {"systime", cmd_systime},
-  {NULL, NULL}
-};
-
 static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
                       char *name, int argc, char *argv[]) {
 
@@ -127,6 +97,10 @@ static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
   }
   return true;
 }
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
 /**
  * @brief   Shell thread function.
@@ -174,12 +148,12 @@ THD_FUNCTION(shellThread, p) {
           continue;
         }
         chprintf(chp, "Commands: help exit ");
-        list_commands(chp, local_commands);
+        list_commands(chp, shell_local_commands);
         if (scp != NULL)
           list_commands(chp, scp);
         chprintf(chp, "\r\n");
       }
-      else if (cmdexec(local_commands, chp, cmd, n, args) &&
+      else if (cmdexec(shell_local_commands, chp, cmd, n, args) &&
           ((scp == NULL) || cmdexec(scp, chp, cmd, n, args))) {
         chprintf(chp, "%s", cmd);
         chprintf(chp, " ?\r\n");
