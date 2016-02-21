@@ -204,32 +204,10 @@ void sys_mbox_set_invalid(sys_mbox_t *mbox) {
 
 sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread,
                             void *arg, int stacksize, int prio) {
-  size_t wsz;
-  void *wsp;
-  syssts_t sts;
   thread_t *tp;
 
-  (void)name;
-  wsz = THD_WORKING_AREA_SIZE(stacksize);
-  wsp = chCoreAlloc(wsz);
-  if (wsp == NULL)
-    return NULL;
-
-#if CH_DBG_FILL_THREADS == TRUE
-  _thread_memfill((uint8_t *)wsp,
-                  (uint8_t *)wsp + sizeof(thread_t),
-                  CH_DBG_THREAD_FILL_VALUE);
-  _thread_memfill((uint8_t *)wsp + sizeof(thread_t),
-                  (uint8_t *)wsp + wsz,
-                  CH_DBG_STACK_FILL_VALUE);
-#endif
-
-  sts = chSysGetStatusAndLockX();
-  tp = chThdCreateI(wsp, wsz, prio, (tfunc_t)thread, arg);
-  chRegSetThreadNameX(tp, name);
-  chThdStartI(tp);
-  chSysRestoreStatusX(sts);
-
+  tp = chThdCreateFromHeap(NULL, THD_WORKING_AREA_SIZE(stacksize),
+                           name, prio, (tfunc_t)thread, arg);
   return (sys_thread_t)tp;
 }
 

@@ -130,7 +130,6 @@ THD_FUNCTION(shellThread, p) {
   char *lp, *cmd, *tokp, line[SHELL_MAX_LINE_LENGTH];
   char *args[SHELL_MAX_ARGUMENTS + 1];
 
-  chRegSetThreadName("shell");
   chprintf(chp, "\r\nChibiOS/RT Shell\r\n");
   while (true) {
     chprintf(chp, "ch> ");

@@ -158,8 +158,8 @@ int main(void) {
   while (true) {
     if (SDU2.config->usbp->state == USB_ACTIVE) {
       thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                    NORMALPRIO + 1, shellThread,
-                                    (void *)&shell_cfg1);
+                                              "shell", NORMALPRIO + 1,
+                                              shellThread, (void *)&shell_cfg1);
       chThdWait(shelltp);               /* Waiting termination.             */
       chThdFreeToHeap(shelltp);         /* Returning memory to heap.        */
     }

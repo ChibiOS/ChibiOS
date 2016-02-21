@@ -119,6 +119,7 @@ osThreadId osThreadCreate(const osThreadDef_t *thread_def, void *argument) {
                                       thread_def->stacksize;
   return (osThreadId)chThdCreateFromHeap(0,
                                          THD_WORKING_AREA_SIZE(size),
+                                         thread_def->name,
                                          NORMALPRIO+thread_def->tpriority,
                                          (tfunc_t)thread_def->pthread,
                                          argument);

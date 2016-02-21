@@ -91,7 +91,7 @@ include $(CHIBIOS)/os/hal/ports/SPC5/SPC560Bxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/e200/compilers/GCC/mk/port.mk
 # Other files (optional).
 include $(CHIBIOS)/test/rt/test.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk

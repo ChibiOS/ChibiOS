@@ -69,6 +69,7 @@
  * @param[in] heapp     heap from which allocate the memory or @p NULL for the
  *                      default heap
  * @param[in] size      size of the working area to be allocated
+ * @param[in] name      thread name
  * @param[in] prio      the priority level for the new thread
  * @param[in] pf        the thread function
  * @param[in] arg       an argument passed to the thread function. It can be
@@ -80,7 +81,8 @@
  * @api
  */
 thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
-                              tprio_t prio, tfunc_t pf, void *arg) {
+                              const char *name, tprio_t prio,
+                              tfunc_t pf, void *arg) {
   void *wsp;
 
   wsp = chHeapAllocAligned(heapp, size, PORT_WORKING_AREA_ALIGN);
@@ -88,13 +90,16 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
     return NULL;
   }
 
-#if CH_DBG_FILL_THREADS == TRUE
-  _thread_memfill((uint8_t *)wsp,
-                  (uint8_t *)wsp + size,
-                  CH_DBG_STACK_FILL_VALUE);
-#endif
+  thread_descriptor_t td = {
+    name,
+    wsp,
+    (stkalign_t *)((uint8_t *)wsp + size),
+    prio,
+    pf,
+    arg
+  };
 
-  return chThdCreateStatic(wsp, size, prio, pf, arg);
+  return chThdCreate(&td);
 }
 
 /**
@@ -131,6 +136,7 @@ void chThdFreeToHeap(thread_t *tp) {
  *          and then release the allocated memory.
  *
  * @param[in] mp        pointer to the memory pool object
+ * @param[in] name      thread name
  * @param[in] prio      the priority level for the new thread
  * @param[in] pf        the thread function
  * @param[in] arg       an argument passed to the thread function. It can be
@@ -141,8 +147,8 @@ void chThdFreeToHeap(thread_t *tp) {
  *
  * @api
  */
-thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
-                                    tfunc_t pf, void *arg) {
+thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
+                                    tprio_t prio, tfunc_t pf, void *arg) {
   void *wsp;
 
   chDbgCheck(mp != NULL);
@@ -152,13 +158,16 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, tprio_t prio,
     return NULL;
   }
 
-#if CH_DBG_FILL_THREADS == TRUE
-  _thread_memfill((uint8_t *)wsp,
-                  (uint8_t *)wsp + mp->object_size,
-                  CH_DBG_STACK_FILL_VALUE);
-#endif
+  thread_descriptor_t td = {
+    name,
+    wsp,
+    (stkalign_t *)((uint8_t *)wsp + mp->object_size),
+    prio,
+    pf,
+    arg
+  };
 
-  return chThdCreateStatic(wsp, mp->object_size, prio, pf, arg);
+  return chThdCreate(&td);
 }
 
 /**

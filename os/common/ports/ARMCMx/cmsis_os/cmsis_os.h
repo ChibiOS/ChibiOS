@@ -243,6 +243,7 @@ typedef struct os_thread_def {
   os_pthread                pthread;
   osPriority                tpriority;
   uint32_t                  stacksize;
+  const char                *name;
 } osThreadDef_t;
 
 /**
@@ -301,14 +302,15 @@ typedef struct os_messageQ_def {
  * @brief   Create a Thread definition.
  */
 #if defined(osObjectsExternal)
-#define osThreadDef(name, priority, instances, stacksz)                     \
-  extern const osThreadDef_t os_thread_def_##name
+#define osThreadDef(thd, priority, stacksz, name)                           \
+  extern const osThreadDef_t os_thread_def_##thd
 #else
-#define osThreadDef(name, priority, stacksz)                                \
-const osThreadDef_t os_thread_def_##name = {                                \
-  (name),                                                                   \
+#define osThreadDef(thd, priority, stacksz, name)                           \
+const osThreadDef_t os_thread_def_##thd = {                                 \
+  (thd),                                                                    \
   (priority),                                                               \
-  (stacksz)                                                                 \
+  (stacksz),                                                                \
+  (name)                                                                    \
 }
 #endif
 

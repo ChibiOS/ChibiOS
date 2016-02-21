@@ -164,13 +164,13 @@ int main(void) {
       /* Starting shells.*/
       if (shelltp1 == NULL) {
         shelltp1 = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                       NORMALPRIO + 1, shellThread,
-                                       (void *)&shell_cfg1);
+                                       "shell1", NORMALPRIO + 1,
+                                       shellThread, (void *)&shell_cfg1);
       }
       if (shelltp2 == NULL) {
         shelltp2 = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                       NORMALPRIO + 1, shellThread,
-                                       (void *)&shell_cfg2);
+                                       "shell2", NORMALPRIO + 1,
+                                       shellThread, (void *)&shell_cfg2);
       }
 
       /* Waiting for an exit event then freeing terminated shells.*/

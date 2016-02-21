@@ -36,7 +36,7 @@ static void Thread1(void const *arg) {
 /*
  * Thread definition block.
  */
-osThreadDef(Thread1, osPriorityAboveNormal, 128);
+osThreadDef(Thread1, osPriorityAboveNormal, 128, "blinker");
 
 /*
  * Application entry point.

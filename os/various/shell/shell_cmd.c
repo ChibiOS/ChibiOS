@@ -165,7 +165,8 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "Usage: test\r\n");
     return;
   }
-  tp = chThdCreateFromHeap(NULL, SHELL_CMD_TEST_WA_SIZE, chThdGetPriorityX(),
+  tp = chThdCreateFromHeap(NULL, SHELL_CMD_TEST_WA_SIZE,
+                           "test", chThdGetPriorityX(),
                            TestThread, chp);
   if (tp == NULL) {
     chprintf(chp, "out of memory\r\n");

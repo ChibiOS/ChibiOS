@@ -157,58 +157,6 @@ static FRESULT scan_files(BaseSequentialStream *chp, char *path) {
 /*===========================================================================*/
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
-#define TEST_WA_SIZE    THD_WORKING_AREA_SIZE(256)
-
-static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
-  size_t n, size;
-
-  (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: mem\r\n");
-    return;
-  }
-  n = chHeapStatus(NULL, &size);
-  chprintf(chp, "core free memory : %u bytes\r\n", chCoreGetStatusX());
-  chprintf(chp, "heap fragments   : %u\r\n", n);
-  chprintf(chp, "heap free total  : %u bytes\r\n", size);
-}
-
-static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
-  static const char *states[] = {CH_STATE_NAMES};
-  thread_t *tp;
-
-  (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: threads\r\n");
-    return;
-  }
-  chprintf(chp, "    addr    stack prio refs     state time\r\n");
-  tp = chRegFirstThread();
-  do {
-    chprintf(chp, "%08lx %08lx %4lu %4lu %9s\r\n",
-            (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-            (uint32_t)tp->p_prio, (uint32_t)(tp->p_refs - 1),
-            states[tp->p_state]);
-    tp = chRegNextThread(tp);
-  } while (tp != NULL);
-}
-
-static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
-  thread_t *tp;
-
-  (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: test\r\n");
-    return;
-  }
-  tp = chThdCreateFromHeap(NULL, TEST_WA_SIZE, chThdGetPriorityX(),
-                           TestThread, chp);
-  if (tp == NULL) {
-    chprintf(chp, "out of memory\r\n");
-    return;
-  }
-  chThdWait(tp);
-}
 
 static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   FRESULT err;
@@ -238,9 +186,6 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static const ShellCommand commands[] = {
-  {"mem", cmd_mem},
-  {"threads", cmd_threads},
-  {"test", cmd_test},
   {"tree", cmd_tree},
   {NULL, NULL}
 };
@@ -253,6 +198,8 @@ static const ShellConfig shell_cfg1 = {
 /*===========================================================================*/
 /* Main and generic code.                                                    */
 /*===========================================================================*/
+
+static thread_t *shelltp = NULL;
 
 /*
  * Card insertion event.
@@ -286,6 +233,18 @@ static void RemoveHandler(eventid_t id) {
 }
 
 /*
+ * Shell exit event.
+ */
+static void ShellHandler(eventid_t id) {
+
+  (void)id;
+  if (chThdTerminatedX(shelltp)) {
+    chThdFreeToHeap(shelltp);         /* Returning memory to heap.        */
+    shelltp = NULL;
+  }
+}
+
+/*
  * Green LED blinker thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 128);
@@ -303,12 +262,12 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
-  static thread_t *shelltp = NULL;
   static const evhandler_t evhndl[] = {
     InsertHandler,
-    RemoveHandler
+    RemoveHandler,
+    ShellHandler
   };
-  event_listener_t el0, el1;
+  event_listener_t el0, el1, el2;
 
   /*
    * System initializations.
@@ -372,19 +331,17 @@ int main(void) {
                     http_server, NULL);
 
   /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and listen for events.
+   * Normal main() thread activity, handling SD card events and shell
+   * start/exit.
    */
   chEvtRegister(&inserted_event, &el0, 0);
   chEvtRegister(&removed_event, &el1, 1);
+  chEvtRegister(&shell_terminated, &el2, 2);
   while (true) {
-    if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE))
-      shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
-    else if (chThdTerminatedX(shelltp)) {
-      chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
-      shelltp = NULL;           /* Triggers spawning of a new shell.        */
-    }
-    if (palReadPad(GPIOI, GPIOI_BUTTON_USER) != 0) {
+    if (!shelltp && (SDU2.config->usbp->state == USB_ACTIVE)) {
+      shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                    "shell", NORMALPRIO + 1,
+                                    shellThread, (void *)&shell_cfg1);
     }
     chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, MS2ST(500)));
   }

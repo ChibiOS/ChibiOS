@@ -317,8 +317,8 @@ int main(void) {
   while (true) {
     if (!shelltp && (SDU1.config->usbp->state == USB_ACTIVE)) {
       shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                    NORMALPRIO + 1, shellThread,
-                                    (void *)&shell_cfg1);
+                                    "shell", NORMALPRIO + 1,
+                                    shellThread, (void *)&shell_cfg1);
     }
     chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, MS2ST(500)));
   }
