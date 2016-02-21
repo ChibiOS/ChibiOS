@@ -94,6 +94,8 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/port.mk
 # Other files (optional).
 include $(CHIBIOS)/test/rt/test.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/SPC560D40.ld
@@ -107,9 +109,8 @@ CSRC = $(STARTUPSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
-       $(CHIBIOS)/os/hal/lib/streams/memstreams.c \
-       $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
-       $(CHIBIOS)/os/various/shell.c \
+       $(STREAMSSRC) \
+       $(SHELLSRC) \
        main.c
 
 # C++ sources here.
@@ -120,7 +121,7 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(CHIBIOS)/os/hal/lib/streams $(CHIBIOS)/os/various
+         $(STREAMSINC) $(SHELLINC)
 
 #
 # Project, sources and paths

@@ -99,6 +99,8 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
 include $(CHIBIOS)/test/rt/test.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
 include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
@@ -116,10 +118,8 @@ CSRC = $(STARTUPSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
        $(FATFSSRC) \
-       $(CHIBIOS)/os/various/evtimer.c \
-       $(CHIBIOS)/os/hal/lib/streams/memstreams.c \
-       $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
-       $(CHIBIOS)/os/various/shell.c \
+       $(STREAMSSRC) \
+       $(SHELLSRC) \
        usbcfg.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -151,8 +151,7 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(FATFSINC) \
-         $(CHIBIOS)/os/hal/lib/streams $(CHIBIOS)/os/various
+         $(STREAMSINC) $(SHELLINC) $(FATFSINC)
 
 #
 # Project, sources and paths

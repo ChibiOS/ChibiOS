@@ -88,10 +88,10 @@ osStatus osKernelInitialize(void) {
   chSysInit();
   chThdSetPriority(HIGHPRIO);
 
-  chPoolObjectInit(&sempool, sizeof(semaphore_t), chCoreAlloc);
+  chPoolObjectInit(&sempool, sizeof(semaphore_t), chCoreAllocAligned);
   chPoolLoadArray(&sempool, semaphores, CMSIS_CFG_NUM_SEMAPHORES);
 
-  chPoolObjectInit(&timpool, sizeof(virtual_timer_t), chCoreAlloc);
+  chPoolObjectInit(&timpool, sizeof(virtual_timer_t), chCoreAllocAligned);
   chPoolLoadArray(&timpool, timers, CMSIS_CFG_NUM_TIMERS);
 
   return osOK;
@@ -136,7 +136,7 @@ osStatus osThreadTerminate(osThreadId thread_id) {
        implemented using the registry.*/
     chThdExit(0);
   }
-  chThdTerminate(thread_id);
+  chEvtSignal((thread_t *)thread_id, CH_EVENT_TERMINATE);
   chThdWait((thread_t *)thread_id);
 
   return osOK;
@@ -154,17 +154,17 @@ osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
 
   /* Changing priority.*/
 #if CH_CFG_USE_MUTEXES
-  oldprio = (osPriority)tp->p_realprio;
-  if ((tp->p_prio == tp->p_realprio) || ((tprio_t)newprio > tp->p_prio))
-    tp->p_prio = (tprio_t)newprio;
-  tp->p_realprio = (tprio_t)newprio;
+  oldprio = (osPriority)tp->realprio;
+  if ((tp->prio == tp->realprio) || ((tprio_t)newprio > tp->prio))
+    tp->prio = (tprio_t)newprio;
+  tp->realprio = (tprio_t)newprio;
 #else
-  oldprio = tp->p_prio;
-  tp->p_prio = (tprio_t)newprio;
+  oldprio = tp->prio;
+  tp->prio = (tprio_t)newprio;
 #endif
 
   /* The following states need priority queues reordering.*/
-  switch (tp->p_state) {
+  switch (tp->state) {
 #if CH_CFG_USE_MUTEXES |                                                    \
     CH_CFG_USE_CONDVARS |                                                   \
     (CH_CFG_USE_SEMAPHORES && CH_CFG_USE_SEMAPHORES_PRIORITY) |             \
@@ -183,13 +183,13 @@ osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
 #endif
     /* Re-enqueues tp with its new priority on the queue.*/
     queue_prio_insert(queue_dequeue(tp),
-                      (threads_queue_t *)tp->p_u.wtobjp);
+                      (threads_queue_t *)tp->u.wtobjp);
     break;
 #endif
   case CH_STATE_READY:
 #if CH_DBG_ENABLE_ASSERTS
     /* Prevents an assertion in chSchReadyI().*/
-    tp->p_state = CH_STATE_CURRENT;
+    tp->state = CH_STATE_CURRENT;
 #endif
     /* Re-enqueues tp with its new priority on the ready list.*/
     chSchReadyI(queue_dequeue(tp));
@@ -261,7 +261,7 @@ int32_t osSignalSet(osThreadId thread_id, int32_t signals) {
   int32_t oldsignals;
 
   syssts_t sts = chSysGetStatusAndLockX();
-  oldsignals = (int32_t)thread_id->p_epending;
+  oldsignals = (int32_t)thread_id->epending;
   chEvtSignalI((thread_t *)thread_id, (eventmask_t)signals);
   chSysRestoreStatusX(sts);
 
@@ -276,8 +276,8 @@ int32_t osSignalClear(osThreadId thread_id, int32_t signals) {
 
   chSysLock();
 
-  m = thread_id->p_epending & (eventmask_t)signals;
-  thread_id->p_epending &= ~(eventmask_t)signals;
+  m = thread_id->epending & (eventmask_t)signals;
+  thread_id->epending &= ~(eventmask_t)signals;
 
   chSysUnlock();
 
@@ -453,7 +453,7 @@ void *osPoolCAlloc(osPoolId pool_id) {
   void *object;
 
   object = chPoolAllocI((memory_pool_t *)pool_id);
-  memset(object, 0, pool_id->mp_object_size);
+  memset(object, 0, pool_id->object_size);
   return object;
 }
 

@@ -78,13 +78,15 @@ namespace chibios_rt {
     chSysHalt("invoked unimplemented method stop()");
   }
 
+#if CH_CFG_USE_EVENTS
   void ThreadReference::requestTerminate(void) {
 
     chDbgAssert(thread_ref != NULL,
                 "not referenced");
 
-    chThdTerminate(thread_ref);
+    chEvtSignal(thread_ref, CH_EVENT_TERMINATE);
   }
+#endif
 
 #if CH_CFG_USE_WAITEXIT
     msg_t ThreadReference::wait(void) {
@@ -196,10 +198,12 @@ namespace chibios_rt {
     chThdExitS(msg);
   }
 
+#if CH_CFG_USE_EVENTS
   bool BaseThread::shouldTerminate(void) {
 
-    return chThdShouldTerminateX();
+    return (chEvtGetEventsX() & CH_EVENT_TERMINATE) != 0;
   }
+#endif
 
   void BaseThread::sleep(systime_t interval){
 
