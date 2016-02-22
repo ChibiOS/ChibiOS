@@ -135,7 +135,7 @@ struct port_intctx {};
  *          at context switch time.
  */
 struct port_context {
-  struct port_intctx *r13;
+  struct port_intctx *sp;
 };
 
 #endif /* !defined(_FROM_ASM_) */

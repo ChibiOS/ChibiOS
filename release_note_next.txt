@@ -1,0 +1,44 @@
+******************************************************************************
+*** ChibiOS next Release Notes.                                            ***
+******************************************************************************
+
+ChibiOS next is composed of several independent but inter-operable
+sub-projects: RT, NIL, HAL.
+
+*** ChibiOS next highlights ****
+
+This release is focused on RTOS general improvements, both RT and NIL received
+a series of important new features.
+
+*** ChibiOS next general improvements ***
+
+- Rationalized source tree to reduce code duplication.
+- Shared RTOS components, now allocators, mailboxes and binary semaphores
+  are usable by both RT and NIL.
+- Shared ports architecture. Now RTOS ports work for both RT and NIL, no
+  more duplication.
+- Enhanced shell.
+
+*** What's new in RT 4.0.0 ***
+
+- Common ports architecture.
+- Ability to use the new shared RTOS components.
+- Enhanced trace buffer, it is able to store events regarding not just threads
+  but also IRQs, halts and user events.
+- Simplified the dynamic threading model, now it is the thread creator
+  responsible for memory release, the references counter has been removed
+  and the code is much simpler.
+- New threading API, now creating static threads is even faster.
+- Saved space in thread_t structure.
+- Extended priority range to 1..255.
+- Experimental NASA OSAL implementation.
+
+*** What's new in HAL 4.1.0 ***
+
+
+*** What's new in NIL 2.0.0 ***
+
+- Common ports architecture.
+- Ability to use the new shared RTOS components.
+- State checker.
+- Parameter checks.

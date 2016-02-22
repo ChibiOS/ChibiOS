@@ -51,9 +51,8 @@
                                                  priority.                  */
 #define IDLEPRIO            (tprio_t)1      /**< @brief Idle priority.      */
 #define LOWPRIO             (tprio_t)2      /**< @brief Lowest priority.    */
-#define NORMALPRIO          (tprio_t)64     /**< @brief Normal priority.    */
-#define HIGHPRIO            (tprio_t)127    /**< @brief Highest priority.   */
-#define ABSPRIO             (tprio_t)255    /**< @brief Greatest priority.  */
+#define NORMALPRIO          (tprio_t)128    /**< @brief Normal priority.    */
+#define HIGHPRIO            (tprio_t)255    /**< @brief Highest priority.   */
 /** @} */
 
 /**

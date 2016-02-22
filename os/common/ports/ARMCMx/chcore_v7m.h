@@ -363,11 +363,11 @@ struct port_intctx {
  *          by an @p port_intctx structure.
  */
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) {                      \
-  (tp)->ctx.r13 = (struct port_intctx *)((uint8_t *)(wtop) -                \
-                                         sizeof (struct port_intctx));      \
-  (tp)->ctx.r13->r4 = (regarm_t)(pf);                                       \
-  (tp)->ctx.r13->r5 = (regarm_t)(arg);                                      \
-  (tp)->ctx.r13->lr = (regarm_t)_port_thread_start;                         \
+  (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
+                                        sizeof (struct port_intctx));       \
+  (tp)->ctx.sp->r4 = (regarm_t)(pf);                                        \
+  (tp)->ctx.sp->r5 = (regarm_t)(arg);                                       \
+  (tp)->ctx.sp->lr = (regarm_t)_port_thread_start;                          \
 }
 
 /**
