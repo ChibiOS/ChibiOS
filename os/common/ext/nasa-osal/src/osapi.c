@@ -29,6 +29,18 @@
 #include "common_types.h"
 #include "osapi.h"
 
+#if CH_CFG_USE_MUTEXES == FALSE
+#error "NASA OSAL requires CH_CFG_USE_MUTEXES"
+#endif
+
+#if CH_CFG_USE_SEMAPHORES == FALSE
+#error "NASA OSAL requires CH_CFG_USE_SEMAPHORES"
+#endif
+
+#if CH_CFG_USE_REGISTRY == FALSE
+#error "NASA OSAL requires CH_CFG_USE_REGISTRY"
+#endif
+
 /*===========================================================================*/
 /* Module local definitions.                                                 */
 /*===========================================================================*/
@@ -266,6 +278,21 @@ int32 OS_TaskCreate(uint32 *task_id,
 }
 
 /**
+ * @brief   Installs a deletion handler.
+ *
+ * @param[in] function_pointer  the handler function
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_TaskInstallDeleteHandler(void *function_pointer) {
+
+  (void)function_pointer;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+/**
  * @brief   Task delete.
  * @note    It is not currently implemented.
  *
@@ -306,6 +333,72 @@ int32 OS_TaskDelay(uint32 milli_second) {
 }
 
 /**
+ * @brief   Change task priority.
+ *
+ * @param[in] task_id           the task id
+ * @param[in] new_priority      the task new priority
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_TaskSetPriority (uint32 task_id, uint32 new_priority) {
+  tprio_t rt_newprio;
+  thread_t *tp = (thread_t *)task_id;
+
+  /* Checking priority range.*/
+  if ((new_priority < MIN_PRIORITY) || (new_priority > MAX_PRIORITY)) {
+    return OS_ERR_INVALID_PRIORITY;
+  }
+
+  /* Converting priority to RT type.*/
+  rt_newprio = (tprio_t)256 - (tprio_t)new_priority;
+
+  if (chThdGetPriorityX() == rt_newprio) {
+    return OS_SUCCESS;
+  }
+
+  chSysLock();
+
+  /* Changing priority.*/
+  if ((tp->prio == tp->realprio) || (rt_newprio > tp->prio)) {
+    tp->prio = rt_newprio;
+  }
+  tp->realprio = rt_newprio;
+
+  /* The following states need priority queues reordering.*/
+  switch (tp->state) {
+  case CH_STATE_WTMTX:
+#if CH_CFG_USE_CONDVARS
+  case CH_STATE_WTCOND:
+#endif
+#if CH_CFG_USE_SEMAPHORES_PRIORITY
+  case CH_STATE_WTSEM:
+#endif
+#if CH_CFG_USE_MESSAGES && CH_CFG_USE_MESSAGES_PRIORITY
+  case CH_STATE_SNDMSGQ:
+#endif
+    /* Re-enqueues tp with its new priority on the queue.*/
+    queue_prio_insert(queue_dequeue(tp),
+                      (threads_queue_t *)tp->u.wtobjp);
+    break;
+  case CH_STATE_READY:
+#if CH_DBG_ENABLE_ASSERTS
+    /* Prevents an assertion in chSchReadyI().*/
+    tp->state = CH_STATE_CURRENT;
+#endif
+    /* Re-enqueues tp with its new priority on the ready list.*/
+    chSchReadyI(queue_dequeue(tp));
+    break;
+  }
+
+  /* Rescheduling.*/
+  chSchRescheduleS();
+  chSysUnlock();
+
+  return OS_SUCCESS;
+}
+
+/**
  * @brief   Task registration.
  * @note    In ChibiOS/RT it does nothing.
  *
@@ -316,5 +409,54 @@ int32 OS_TaskDelay(uint32 milli_second) {
 int32 OS_TaskRegister(void) {
 
   return OS_SUCCESS;
+}
+
+/**
+ * @brief   Current task id.
+ *
+ * @return                      The current task id.
+ *
+ * @api
+ */
+uint32 OS_TaskGetId(void) {
+
+  return (uint32)chThdGetSelfX();
+}
+
+/**
+ * @brief   Retrieves a task id by name.
+ */
+int32 OS_TaskGetIdByName (uint32 *task_id, const char *task_name) {
+  thread_t *tp;
+
+  /* NULL pointer checks.*/
+  if ((task_id == NULL) || (task_name == NULL)) {
+    return OS_INVALID_POINTER;
+  }
+
+  /* Checking task name length.*/
+  if (strlen(task_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
+  /* Scanning registry.*/
+  tp = chRegFirstThread();
+  do {
+    if (strcmp(chRegGetThreadNameX(tp), task_name) == 0) {
+      *task_id = (uint32)tp;
+      return OS_SUCCESS;
+    }
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
+
+  return OS_ERR_NAME_NOT_FOUND;
+}
+
+int32 OS_TaskGetInfo (uint32 task_id, OS_task_prop_t *task_prop) {
+
+  (void)task_id;
+  (void)task_prop;
+
+  return OS_ERR_NOT_IMPLEMENTED;
 }
 /** @} */
