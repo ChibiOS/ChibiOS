@@ -52,7 +52,7 @@
 ** Platform Configuration Parameters for the OS API
 */
 
-#define OS_MAX_TASKS                64
+#define OS_MAX_TASKS                64 /* Not used.*/
 #define OS_MAX_QUEUES               64
 #define OS_MAX_COUNT_SEMAPHORES     20
 #define OS_MAX_BIN_SEMAPHORES       20
