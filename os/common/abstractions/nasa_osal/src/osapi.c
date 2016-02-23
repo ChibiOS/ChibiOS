@@ -68,8 +68,9 @@
  * @brief   Type of OSAL timer.
  */
 typedef struct {
-  void                  *free;
+  uint32                is_free;
   char                  name[OS_MAX_API_NAME];
+  OS_TimerCallback_t    callback_ptr;
   uint32                start_time;
   uint32                interval_time;
   virtual_timer_t       vt;
@@ -262,6 +263,80 @@ int32 OS_Milli2Ticks(uint32 milli_seconds) {
 
 /*-- timers API -------------------------------------------------------------*/
 
+int32 OS_TimerCreate(uint32 *timer_id, const char *timer_name,
+                     uint32 *clock_accuracy, OS_TimerCallback_t callback_ptr) {
+  osal_timer_t *otp;
+
+  /* NULL pointer checks.*/
+  if ((timer_id == NULL) || (timer_name == NULL) || (clock_accuracy == NULL)) {
+    return OS_INVALID_POINTER;
+  }
+
+  /* NULL callback check.*/
+  if (callback_ptr == NULL) {
+    return OS_TIMER_ERR_INVALID_ARGS;
+  }
+
+  /* Checking semaphore name length.*/
+  if (strlen(timer_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
+  otp = chPoolAlloc(&osal.binary_semaphores_pool);
+  if (otp == NULL) {
+    return OS_ERR_NO_FREE_IDS;
+  }
+
+  chSysLock();
+
+  strncpy(otp->name, timer_name, OS_MAX_API_NAME);
+  chVTObjectInit(&otp->vt);
+  otp->is_free       = 0;
+  otp->start_time    = 0;
+  otp->interval_time = 0;
+  otp->callback_ptr  = callback_ptr;
+
+  chSysUnlock();
+
+  return OS_SUCCESS;
+}
+
+int32 OS_TimerDelete(uint32 timer_id) {
+  osal_timer_t *otp = (osal_timer_t *)timer_id;
+
+  /* Range check.*/
+  if ((otp < &osal.timers[0]) ||
+      (otp >= &osal.timers[OS_MAX_TIMERS])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  chSysLock();
+
+  /* Resetting the timer.*/
+  chVTResetI(&otp->vt);
+  otp->start_time    = 0;
+  otp->interval_time = 0;
+
+  /* Flagging it as unused and returning it to the pool.*/
+  chPoolFreeI(&osal.timers_pool, (void *)otp);
+
+  chSysUnlock();
+
+  return OS_SUCCESS;
+}
+
+int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
+
+}
+
+int32 OS_TimerGetIdByName (uint32 *timer_id, const char *timer_name) {
+
+}
+
+int32 OS_TimerGetInfo (uint32 timer_id, OS_timer_prop_t *timer_prop) {
+
+}
+
 /*-- Queues API -------------------------------------------------------------*/
 
 /*-- Binary Semaphore API ---------------------------------------------------*/
@@ -299,9 +374,8 @@ int32 OS_BinSemCreate (uint32 *sem_id, const char *sem_name,
   }
 
   bsp = chPoolAlloc(&osal.binary_semaphores_pool);
-
-  if (bsp == 0) {
-    return OS_SEM_FAILURE;
+  if (bsp == NULL) {
+    return OS_ERR_NO_FREE_IDS;
   }
 
   /* Semaphore is initialized.*/
@@ -323,6 +397,7 @@ int32 OS_BinSemCreate (uint32 *sem_id, const char *sem_name,
 int32 OS_BinSemDelete(uint32 sem_id) {
   binary_semaphore_t *bsp = (binary_semaphore_t *)sem_id;
 
+  /* Range check.*/
   if ((bsp < &osal.binary_semaphores[0]) ||
       (bsp >= &osal.binary_semaphores[OS_MAX_BIN_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -359,6 +434,7 @@ int32 OS_BinSemFlush(uint32 sem_id) {
   syssts_t sts;
   binary_semaphore_t *bsp = (binary_semaphore_t *)sem_id;
 
+  /* Range check.*/
   if ((bsp < &osal.binary_semaphores[0]) ||
       (bsp >= &osal.binary_semaphores[OS_MAX_BIN_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -392,6 +468,7 @@ int32 OS_BinSemGive(uint32 sem_id) {
   syssts_t sts;
   binary_semaphore_t *bsp = (binary_semaphore_t *)sem_id;
 
+  /* Range check.*/
   if ((bsp < &osal.binary_semaphores[0]) ||
       (bsp >= &osal.binary_semaphores[OS_MAX_BIN_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -423,6 +500,7 @@ int32 OS_BinSemGive(uint32 sem_id) {
 int32 OS_BinSemTake(uint32 sem_id) {
   binary_semaphore_t *bsp = (binary_semaphore_t *)sem_id;
 
+  /* Range check.*/
   if ((bsp < &osal.binary_semaphores[0]) ||
       (bsp >= &osal.binary_semaphores[OS_MAX_BIN_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -456,6 +534,7 @@ int32 OS_BinSemTimedWait(uint32 sem_id, uint32 msecs) {
   binary_semaphore_t *bsp = (binary_semaphore_t *)sem_id;
   msg_t msg;
 
+  /* Range check.*/
   if ((bsp < &osal.binary_semaphores[0]) ||
       (bsp >= &osal.binary_semaphores[OS_MAX_BIN_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -521,6 +600,7 @@ int32 OS_BinSemGetInfo(uint32 sem_id, OS_bin_sem_prop_t *bin_prop) {
     return OS_INVALID_POINTER;
   }
 
+  /* Range check.*/
   if ((bsp < &osal.binary_semaphores[0]) ||
       (bsp >= &osal.binary_semaphores[OS_MAX_BIN_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -574,9 +654,8 @@ int32 OS_CountSemCreate (uint32 *sem_id, const char *sem_name,
   }
 
   sp = chPoolAlloc(&osal.count_semaphores_pool);
-
-  if (sp == 0) {
-    return OS_SEM_FAILURE;
+  if (sp == NULL) {
+    return OS_ERR_NO_FREE_IDS;
   }
 
   /* Semaphore is initialized.*/
@@ -598,6 +677,7 @@ int32 OS_CountSemCreate (uint32 *sem_id, const char *sem_name,
 int32 OS_CountSemDelete(uint32 sem_id) {
   semaphore_t *sp = (semaphore_t *)sem_id;
 
+  /* Range check.*/
   if ((sp < &osal.count_semaphores[0]) ||
       (sp >= &osal.count_semaphores[OS_MAX_COUNT_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -633,6 +713,7 @@ int32 OS_CountSemGive(uint32 sem_id) {
   syssts_t sts;
   semaphore_t *sp = (semaphore_t *)sem_id;
 
+  /* Range check.*/
   if ((sp < &osal.count_semaphores[0]) ||
       (sp >= &osal.count_semaphores[OS_MAX_COUNT_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -664,6 +745,7 @@ int32 OS_CountSemGive(uint32 sem_id) {
 int32 OS_CountSemTake(uint32 sem_id) {
   semaphore_t *sp = (semaphore_t *)sem_id;
 
+  /* Range check.*/
   if ((sp < &osal.count_semaphores[0]) ||
       (sp >= &osal.count_semaphores[OS_MAX_COUNT_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -697,6 +779,7 @@ int32 OS_CountSemTimedWait(uint32 sem_id, uint32 msecs) {
   semaphore_t *sp = (semaphore_t *)sem_id;
   msg_t msg;
 
+  /* Range check.*/
   if ((sp < &osal.count_semaphores[0]) ||
       (sp >= &osal.count_semaphores[OS_MAX_COUNT_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -762,6 +845,7 @@ int32 OS_CountSemGetInfo(uint32 sem_id, OS_count_sem_prop_t *sem_prop) {
     return OS_INVALID_POINTER;
   }
 
+  /* Range check.*/
   if ((sp < &osal.count_semaphores[0]) ||
       (sp >= &osal.count_semaphores[OS_MAX_BIN_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -808,9 +892,8 @@ int32 OS_MutSemCreate (uint32 *sem_id, const char *sem_name, uint32 options) {
   }
 
   mp = chPoolAlloc(&osal.mutexes_pool);
-
-  if (mp == 0) {
-    return OS_SEM_FAILURE;
+  if (mp == NULL) {
+    return OS_ERR_NO_FREE_IDS;
   }
 
   /* Semaphore is initialized.*/
@@ -832,6 +915,7 @@ int32 OS_MutSemCreate (uint32 *sem_id, const char *sem_name, uint32 options) {
 int32 OS_MutSemDelete(uint32 sem_id) {
   mutex_t *mp = (mutex_t *)sem_id;
 
+  /* Range check.*/
   if ((mp < &osal.mutexes[0]) ||
       (mp >= &osal.mutexes[OS_MAX_MUTEXES])) {
     return OS_ERR_INVALID_ID;
@@ -865,6 +949,7 @@ int32 OS_MutSemDelete(uint32 sem_id) {
 int32 OS_MutSemGive(uint32 sem_id) {
   mutex_t *mp = (mutex_t *)sem_id;
 
+  /* Range check.*/
   if ((mp < &osal.mutexes[0]) ||
       (mp >= &osal.mutexes[OS_MAX_COUNT_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -897,6 +982,7 @@ int32 OS_MutSemGive(uint32 sem_id) {
 int32 OS_MutSemTake(uint32 sem_id) {
   mutex_t *mp = (mutex_t *)sem_id;
 
+  /* Range check.*/
   if ((mp < &osal.mutexes[0]) ||
       (mp >= &osal.mutexes[OS_MAX_COUNT_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -957,6 +1043,7 @@ int32 OS_MutSemGetInfo(uint32 sem_id, OS_mut_sem_prop_t *sem_prop) {
     return OS_INVALID_POINTER;
   }
 
+  /* Range check.*/
   if ((mp < &osal.mutexes[0]) ||
       (mp >= &osal.mutexes[OS_MAX_BIN_SEMAPHORES])) {
     return OS_ERR_INVALID_ID;
@@ -1036,10 +1123,8 @@ int32 OS_TaskCreate(uint32 *task_id,
 
   tp = chThdCreateFromHeap(NULL, (size_t)stack_size, task_name,
                            rt_prio, (tfunc_t)function_pointer, NULL);
-
-  /* Out-of-memory condition.*/
   if (tp == NULL) {
-    return OS_ERROR;
+    return OS_ERR_NO_FREE_IDS;
   }
 
   /* Storing the task id.*/
