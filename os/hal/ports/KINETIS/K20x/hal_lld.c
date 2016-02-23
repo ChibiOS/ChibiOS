@@ -39,7 +39,7 @@
 #ifdef __CC_ARM
 __attribute__ ((section(".ARM.__at_0x400")))
 #else
-__attribute__ ((section(".cfmconfig")))
+__attribute__ ((used, section(".cfmconfig")))
 #endif
 const uint8_t _cfm[0x10] = {
   0xFF,  /* NV_BACKKEY3: KEY=0xFF */
