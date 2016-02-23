@@ -897,7 +897,7 @@ int32 OS_MutSemTake(uint32 sem_id) {
  *
  * @api
  */
-int32 OSMutSemGetIdByName(uint32 *sem_id, const char *sem_name) {
+int32 OS_MutSemGetIdByName(uint32 *sem_id, const char *sem_name) {
 
   /* NULL pointer checks.*/
   if ((sem_id == NULL) || (sem_name == NULL)) {
