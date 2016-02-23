@@ -65,13 +65,26 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of OSAL timer.
+ */
+typedef struct {
+  void                  *free;
+  char                  name[OS_MAX_API_NAME];
+  uint32                start_time;
+  uint32                interval_time;
+  virtual_timer_t       vt;
+} osal_timer_t;
+
+/**
  * @brief   Type of OSAL main structure.
  */
 typedef struct {
   bool                  printf_enabled;
+  memory_pool_t         timers_pool;
   memory_pool_t         binary_semaphores_pool;
   memory_pool_t         count_semaphores_pool;
   memory_pool_t         mutexes_pool;
+  osal_timer_t          timers[OS_MAX_TIMERS];
   binary_semaphore_t    binary_semaphores[OS_MAX_BIN_SEMAPHORES];
   semaphore_t           count_semaphores[OS_MAX_COUNT_SEMAPHORES];
   mutex_t               mutexes[OS_MAX_MUTEXES];
@@ -109,6 +122,14 @@ int32 OS_API_Init(void) {
 
   /* OS_printf() initially disabled.*/
   osal.printf_enabled = false;
+
+  /* Timers pool initialization.*/
+  chPoolObjectInit(&osal.timers_pool,
+                   sizeof (osal_timer_t),
+                   NULL);
+  chPoolLoadArray(&osal.timers_pool,
+                  &osal.timers,
+                  sizeof (osal_timer_t));
 
   /* Binary Semaphores pool initialization.*/
   chPoolObjectInit(&osal.binary_semaphores_pool,
@@ -239,6 +260,8 @@ int32 OS_Milli2Ticks(uint32 milli_seconds) {
   return (int32)MS2ST(milli_seconds);
 }
 
+/*-- timers API -------------------------------------------------------------*/
+
 /*-- Queues API -------------------------------------------------------------*/
 
 /*-- Binary Semaphore API ---------------------------------------------------*/
@@ -325,6 +348,7 @@ int32 OS_BinSemDelete(uint32 sem_id) {
 /**
  * @brief   Binary semaphore flush.
  * @note    The state of the binary semaphore is not changed.
+ * @note    This function can be safely called from timer handlers.
  *
  * @param[in] sem_id            binary semaphore id variable
  * @return                      An error code.
@@ -332,6 +356,7 @@ int32 OS_BinSemDelete(uint32 sem_id) {
  * @api
  */
 int32 OS_BinSemFlush(uint32 sem_id) {
+  syssts_t sts;
   binary_semaphore_t *bsp = (binary_semaphore_t *)sem_id;
 
   if ((bsp < &osal.binary_semaphores[0]) ||
@@ -339,26 +364,24 @@ int32 OS_BinSemFlush(uint32 sem_id) {
     return OS_ERR_INVALID_ID;
   }
 
-  chSysLock();
+  sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (bsp->sem.queue.prev == NULL) {
-    chSysUnlock();
+    chSysRestoreStatusX(sts);
     return OS_SEM_FAILURE;
   }
 
-  if (bsp->sem.cnt < 0) {
-    chBSemResetI(bsp, true);
-    chSchRescheduleS();
-  }
+  chBSemResetI(bsp, true);
 
-  chSysUnlock();
+  chSysRestoreStatusX(sts);
 
   return OS_SUCCESS;
 }
 
 /**
  * @brief   Binary semaphore give.
+ * @note    This function can be safely called from timer handlers.
  *
  * @param[in] sem_id            binary semaphore id variable
  * @return                      An error code.
@@ -366,6 +389,7 @@ int32 OS_BinSemFlush(uint32 sem_id) {
  * @api
  */
 int32 OS_BinSemGive(uint32 sem_id) {
+  syssts_t sts;
   binary_semaphore_t *bsp = (binary_semaphore_t *)sem_id;
 
   if ((bsp < &osal.binary_semaphores[0]) ||
@@ -373,18 +397,17 @@ int32 OS_BinSemGive(uint32 sem_id) {
     return OS_ERR_INVALID_ID;
   }
 
-  chSysLock();
+  sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (bsp->sem.queue.prev == NULL) {
-    chSysUnlock();
+    chSysRestoreStatusX(sts);
     return OS_SEM_FAILURE;
   }
 
   chBSemSignalI(bsp);
-  chSchRescheduleS();
 
-  chSysUnlock();
+  chSysRestoreStatusX(sts);
 
   return OS_SUCCESS;
 }
@@ -480,6 +503,8 @@ int32 OS_BinSemGetIdByName(uint32 *sem_id, const char *sem_name) {
 
 /**
  * @brief   Returns binary semaphore information.
+ * @note    This function can be safely called from timer handlers.
+ * @note    It is not currently implemented.
  *
  * @param[in] sem_id            binary semaphore id variable
  * @param[in] bin_prop          binary semaphore properties
@@ -488,6 +513,7 @@ int32 OS_BinSemGetIdByName(uint32 *sem_id, const char *sem_name) {
  * @api
  */
 int32 OS_BinSemGetInfo(uint32 sem_id, OS_bin_sem_prop_t *bin_prop) {
+  syssts_t sts;
   binary_semaphore_t *bsp = (binary_semaphore_t *)sem_id;
 
   /* NULL pointer checks.*/
@@ -500,15 +526,15 @@ int32 OS_BinSemGetInfo(uint32 sem_id, OS_bin_sem_prop_t *bin_prop) {
     return OS_ERR_INVALID_ID;
   }
 
-  chSysLock();
+  sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (bsp->sem.queue.prev == NULL) {
-    chSysUnlock();
+    chSysRestoreStatusX(sts);
     return OS_SEM_FAILURE;
   }
 
-  chSysUnlock();
+  chSysRestoreStatusX(sts);
 
   return OS_ERR_NOT_IMPLEMENTED;
 }
@@ -596,6 +622,7 @@ int32 OS_CountSemDelete(uint32 sem_id) {
 
 /**
  * @brief   Counter semaphore give.
+ * @note    This function can be safely called from timer handlers.
  *
  * @param[in] sem_id            counter semaphore id variable
  * @return                      An error code.
@@ -603,6 +630,7 @@ int32 OS_CountSemDelete(uint32 sem_id) {
  * @api
  */
 int32 OS_CountSemGive(uint32 sem_id) {
+  syssts_t sts;
   semaphore_t *sp = (semaphore_t *)sem_id;
 
   if ((sp < &osal.count_semaphores[0]) ||
@@ -610,18 +638,17 @@ int32 OS_CountSemGive(uint32 sem_id) {
     return OS_ERR_INVALID_ID;
   }
 
-  chSysLock();
+  sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (sp->queue.prev == NULL) {
-    chSysUnlock();
+    chSysRestoreStatusX(sts);
     return OS_SEM_FAILURE;
   }
 
   chSemSignalI(sp);
-  chSchRescheduleS();
 
-  chSysUnlock();
+  chSysRestoreStatusX(sts);
 
   return OS_SUCCESS;
 }
@@ -717,6 +744,8 @@ int32 OS_CountSemGetIdByName(uint32 *sem_id, const char *sem_name) {
 
 /**
  * @brief   Returns counter semaphore information.
+ * @note    This function can be safely called from timer handlers.
+ * @note    It is not currently implemented.
  *
  * @param[in] sem_id            counter semaphore id variable
  * @param[in] sem_prop          counter semaphore properties
@@ -725,6 +754,7 @@ int32 OS_CountSemGetIdByName(uint32 *sem_id, const char *sem_name) {
  * @api
  */
 int32 OS_CountSemGetInfo(uint32 sem_id, OS_count_sem_prop_t *sem_prop) {
+  syssts_t sts;
   semaphore_t *sp = (semaphore_t *)sem_id;
 
   /* NULL pointer checks.*/
@@ -737,15 +767,15 @@ int32 OS_CountSemGetInfo(uint32 sem_id, OS_count_sem_prop_t *sem_prop) {
     return OS_ERR_INVALID_ID;
   }
 
-  chSysLock();
+  sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (sp->queue.prev == NULL) {
-    chSysUnlock();
+    chSysRestoreStatusX(sts);
     return OS_SEM_FAILURE;
   }
 
-  chSysUnlock();
+  chSysRestoreStatusX(sts);
 
   return OS_ERR_NOT_IMPLEMENTED;
 }
@@ -909,6 +939,8 @@ int32 OS_MutSemGetIdByName(uint32 *sem_id, const char *sem_name) {
 
 /**
  * @brief   Returns mutex information.
+ * @note    This function can be safely called from timer handlers.
+ * @note    It is not currently implemented.
  *
  * @param[in] sem_id            mutex id variable
  * @param[in] sem_prop          mutex properties
@@ -917,6 +949,7 @@ int32 OS_MutSemGetIdByName(uint32 *sem_id, const char *sem_name) {
  * @api
  */
 int32 OS_MutSemGetInfo(uint32 sem_id, OS_mut_sem_prop_t *sem_prop) {
+  syssts_t sts;
   mutex_t *mp = (mutex_t *)sem_id;
 
   /* NULL pointer checks.*/
@@ -929,15 +962,15 @@ int32 OS_MutSemGetInfo(uint32 sem_id, OS_mut_sem_prop_t *sem_prop) {
     return OS_ERR_INVALID_ID;
   }
 
-  chSysLock();
+  sts = chSysGetStatusAndLockX();
 
   /* If the mutex is not in use then error.*/
   if (mp->queue.prev == NULL) {
-    chSysUnlock();
+    chSysRestoreStatusX(sts);
     return OS_SEM_FAILURE;
   }
 
-  chSysUnlock();
+  chSysRestoreStatusX(sts);
 
   return OS_ERR_NOT_IMPLEMENTED;
 }
@@ -1096,6 +1129,8 @@ int32 OS_TaskSetPriority (uint32 task_id, uint32 new_priority) {
     return OS_SUCCESS;
   }
 
+  /* TODO: Check presence in registry.*/
+
   chSysLock();
 
   /* Changing priority.*/
@@ -1152,6 +1187,7 @@ int32 OS_TaskRegister(void) {
 
 /**
  * @brief   Current task id.
+ * @note    This function can be safely called from timer handlers.
  *
  * @return                      The current task id.
  *
@@ -1184,6 +1220,8 @@ int32 OS_TaskGetIdByName (uint32 *task_id, const char *task_name) {
     return OS_ERR_NAME_TOO_LONG;
   }
 
+  /* TODO: Check presence in registry.*/
+
   /* Scanning registry.*/
   tp = chRegFirstThread();
   do {
@@ -1199,6 +1237,8 @@ int32 OS_TaskGetIdByName (uint32 *task_id, const char *task_name) {
 
 /**
  * @brief   Returns task information.
+ * @note    This function can be safely called from timer handlers.
+ * @note    It is not currently implemented.
  *
  * @param[in] task_id           the task id
  * @param[in] task_prop         task properties
@@ -1215,13 +1255,15 @@ int32 OS_TaskGetInfo(uint32 task_id, OS_task_prop_t *task_prop) {
     return OS_INVALID_POINTER;
   }
 
+  /* TODO: Check presence in registry.*/
+
   strncpy(task_prop->name, tp->name, OS_MAX_API_NAME - 1);
   task_prop->creator    = (uint32)chSysGetIdleThreadX();
   task_prop->stack_size = (uint32)MEM_ALIGN_NEXT(wasize, PORT_STACK_ALIGN);
   task_prop->priority   = (uint32)256U - (uint32)tp->realprio;
   task_prop->OStask_id  = task_id;
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  return OS_SUCCESS;
 }
 
 /** @} */
