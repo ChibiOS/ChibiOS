@@ -241,7 +241,7 @@ int32 OS_Milli2Ticks(uint32 milli_seconds) {
 
 /*-- Queues API -------------------------------------------------------------*/
 
-/*-- Semaphore and Mutex API ------------------------------------------------*/
+/*-- Binary Semaphore API ---------------------------------------------------*/
 
 /**
  * @brief   Binary semaphore creation.
@@ -314,7 +314,7 @@ int32 OS_BinSemDelete(uint32 sem_id) {
   bsp->sem.queue.prev = NULL;
   chPoolFreeI(&osal.binary_semaphores_pool, (void *)bsp);
 
-  /* Required because some thready could have been made ready.*/
+  /* Required because some thread could have been made ready.*/
   chSchRescheduleS();
 
   chSysUnlock();
@@ -504,6 +504,435 @@ int32 OS_BinSemGetInfo(uint32 sem_id, OS_bin_sem_prop_t *bin_prop) {
 
   /* If the semaphore is not in use then error.*/
   if (bsp->sem.queue.prev == NULL) {
+    chSysUnlock();
+    return OS_SEM_FAILURE;
+  }
+
+  chSysUnlock();
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+/*-- Counter Semaphore API --------------------------------------------------*/
+
+/**
+ * @brief   Counter semaphore creation.
+ *
+ * @param[out] sem_id           pointer to a counter semaphore id variable
+ * @param[in] sem_name          the counter semaphore name
+ * @param[in] sem_initial_value semaphore intial value
+ * @param[in] options           semaphore options
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_CountSemCreate (uint32 *sem_id, const char *sem_name,
+                         uint32 sem_initial_value, uint32 options) {
+  semaphore_t *sp;
+
+  (void)options;
+
+  /* NULL pointer checks.*/
+  if ((sem_id == NULL) || (sem_name == NULL)) {
+    return OS_INVALID_POINTER;
+  }
+
+  /* Checking semaphore name length.*/
+  if (strlen(sem_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
+  /* Semaphore counter check, it must be non-negative.*/
+  if ((int32)sem_initial_value < 0) {
+    return OS_INVALID_INT_NUM;
+  }
+
+  sp = chPoolAlloc(&osal.count_semaphores_pool);
+
+  if (sp == 0) {
+    return OS_SEM_FAILURE;
+  }
+
+  /* Semaphore is initialized.*/
+  chSemObjectInit(sp, (cnt_t)sem_initial_value);
+
+  *sem_id = (uint32)sp;
+
+  return OS_SUCCESS;
+}
+
+/**
+ * @brief   Counter semaphore deletion.
+ *
+ * @param[in] sem_id            counter semaphore id variable
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_CountSemDelete(uint32 sem_id) {
+  semaphore_t *sp = (semaphore_t *)sem_id;
+
+  if ((sp < &osal.count_semaphores[0]) ||
+      (sp >= &osal.count_semaphores[OS_MAX_COUNT_SEMAPHORES])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  chSysLock();
+
+  /* Resetting the semaphore, no threads in queue.*/
+  chSemResetI(sp, 0);
+
+  /* Flagging it as unused and returning it to the pool.*/
+  sp->queue.prev = NULL;
+  chPoolFreeI(&osal.count_semaphores_pool, (void *)sp);
+
+  /* Required because some thread could have been made ready.*/
+  chSchRescheduleS();
+
+  chSysUnlock();
+
+  return OS_SUCCESS;
+}
+
+/**
+ * @brief   Counter semaphore give.
+ *
+ * @param[in] sem_id            counter semaphore id variable
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_CountSemGive(uint32 sem_id) {
+  semaphore_t *sp = (semaphore_t *)sem_id;
+
+  if ((sp < &osal.count_semaphores[0]) ||
+      (sp >= &osal.count_semaphores[OS_MAX_COUNT_SEMAPHORES])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  chSysLock();
+
+  /* If the semaphore is not in use then error.*/
+  if (sp->queue.prev == NULL) {
+    chSysUnlock();
+    return OS_SEM_FAILURE;
+  }
+
+  chSemSignalI(sp);
+  chSchRescheduleS();
+
+  chSysUnlock();
+
+  return OS_SUCCESS;
+}
+
+/**
+ * @brief   Counter semaphore take.
+ *
+ * @param[in] sem_id            counter semaphore id variable
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_CountSemTake(uint32 sem_id) {
+  semaphore_t *sp = (semaphore_t *)sem_id;
+
+  if ((sp < &osal.count_semaphores[0]) ||
+      (sp >= &osal.count_semaphores[OS_MAX_COUNT_SEMAPHORES])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  chSysLock();
+
+  /* If the semaphore is not in use then error.*/
+  if (sp->queue.prev == NULL) {
+    chSysUnlock();
+    return OS_SEM_FAILURE;
+  }
+
+  (void) chSemWaitS(sp);
+
+  chSysUnlock();
+
+  return OS_SUCCESS;
+}
+
+/**
+ * @brief   Counter semaphore take with timeout.
+ *
+ * @param[in] sem_id            counter semaphore id variable
+ * @param[in] msecs             timeout in milliseconds
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_CountSemTimedWait(uint32 sem_id, uint32 msecs) {
+  semaphore_t *sp = (semaphore_t *)sem_id;
+  msg_t msg;
+
+  if ((sp < &osal.count_semaphores[0]) ||
+      (sp >= &osal.count_semaphores[OS_MAX_COUNT_SEMAPHORES])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  /* Timeouts of zero not allowed.*/
+  if (msecs == 0) {
+    return OS_INVALID_INT_NUM;
+  }
+
+  chSysLock();
+
+  /* If the semaphore is not in use then error.*/
+  if (sp->queue.prev == NULL) {
+    chSysUnlock();
+    return OS_SEM_FAILURE;
+  }
+
+  msg = chSemWaitTimeoutS(sp, MS2ST(msecs));
+
+  chSysUnlock();
+
+  return msg == MSG_TIMEOUT ? OS_SEM_TIMEOUT : OS_SUCCESS;
+}
+
+/**
+ * @brief   Retrieves a counter semaphore id by name.
+ * @note    It is not currently implemented.
+ *
+ * @param[out] sem_id           pointer to a counter semaphore id variable
+ * @param[in] sem_name          the counter semaphore name
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_CountSemGetIdByName(uint32 *sem_id, const char *sem_name) {
+
+  /* NULL pointer checks.*/
+  if ((sem_id == NULL) || (sem_name == NULL)) {
+    return OS_INVALID_POINTER;
+  }
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+/**
+ * @brief   Returns counter semaphore information.
+ *
+ * @param[in] sem_id            counter semaphore id variable
+ * @param[in] sem_prop          counter semaphore properties
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_CountSemGetInfo(uint32 sem_id, OS_count_sem_prop_t *sem_prop) {
+  semaphore_t *sp = (semaphore_t *)sem_id;
+
+  /* NULL pointer checks.*/
+  if (sem_prop == NULL) {
+    return OS_INVALID_POINTER;
+  }
+
+  if ((sp < &osal.count_semaphores[0]) ||
+      (sp >= &osal.count_semaphores[OS_MAX_BIN_SEMAPHORES])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  chSysLock();
+
+  /* If the semaphore is not in use then error.*/
+  if (sp->queue.prev == NULL) {
+    chSysUnlock();
+    return OS_SEM_FAILURE;
+  }
+
+  chSysUnlock();
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+/*-- Mutex API --------------------------------------------------------------*/
+
+/**
+ * @brief   Mutex creation.
+ *
+ * @param[out] sem_id           pointer to a mutex id variable
+ * @param[in] sem_name          the mutex name
+ * @param[in] options           mutex options
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_MutSemCreate (uint32 *sem_id, const char *sem_name, uint32 options) {
+  mutex_t *mp;
+
+  (void)options;
+
+  /* NULL pointer checks.*/
+  if ((sem_id == NULL) || (sem_name == NULL)) {
+    return OS_INVALID_POINTER;
+  }
+
+  /* Checking semaphore name length.*/
+  if (strlen(sem_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
+  mp = chPoolAlloc(&osal.mutexes_pool);
+
+  if (mp == 0) {
+    return OS_SEM_FAILURE;
+  }
+
+  /* Semaphore is initialized.*/
+  chMtxObjectInit(mp);
+
+  *sem_id = (uint32)mp;
+
+  return OS_SUCCESS;
+}
+
+/**
+ * @brief   Mutex deletion.
+ *
+ * @param[in] sem_id            mutex id variable
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_MutSemDelete(uint32 sem_id) {
+  mutex_t *mp = (mutex_t *)sem_id;
+
+  if ((mp < &osal.mutexes[0]) ||
+      (mp >= &osal.mutexes[OS_MAX_MUTEXES])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  chSysLock();
+
+  /* Resetting the mutex, no threads in queue.*/
+  chMtxUnlockAllS();
+
+  /* Flagging it as unused and returning it to the pool.*/
+  mp->queue.prev = NULL;
+  chPoolFreeI(&osal.mutexes_pool, (void *)mp);
+
+  /* Required because some thread could have been made ready.*/
+  chSchRescheduleS();
+
+  chSysUnlock();
+
+  return OS_SUCCESS;
+}
+
+/**
+ * @brief   Mutex give.
+ *
+ * @param[in] sem_id            mutex id variable
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_MutSemGive(uint32 sem_id) {
+  mutex_t *mp = (mutex_t *)sem_id;
+
+  if ((mp < &osal.mutexes[0]) ||
+      (mp >= &osal.mutexes[OS_MAX_COUNT_SEMAPHORES])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  chSysLock();
+
+  /* If the mutex is not in use then error.*/
+  if (mp->queue.prev == NULL) {
+    chSysUnlock();
+    return OS_SEM_FAILURE;
+  }
+
+  chMtxUnlockS(mp);
+  chSchRescheduleS();
+
+  chSysUnlock();
+
+  return OS_SUCCESS;
+}
+
+/**
+ * @brief   Mutex take.
+ *
+ * @param[in] sem_id            mutex id variable
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_MutSemTake(uint32 sem_id) {
+  mutex_t *mp = (mutex_t *)sem_id;
+
+  if ((mp < &osal.mutexes[0]) ||
+      (mp >= &osal.mutexes[OS_MAX_COUNT_SEMAPHORES])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  chSysLock();
+
+  /* If the mutex is not in use then error.*/
+  if (mp->queue.prev == NULL) {
+    chSysUnlock();
+    return OS_SEM_FAILURE;
+  }
+
+  chMtxLockS(mp);
+
+  chSysUnlock();
+
+  return OS_SUCCESS;
+}
+
+/**
+ * @brief   Retrieves a mutex id by name.
+ * @note    It is not currently implemented.
+ *
+ * @param[out] sem_id           pointer to a mutex id variable
+ * @param[in] sem_name          the mutex name
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OSMutSemGetIdByName(uint32 *sem_id, const char *sem_name) {
+
+  /* NULL pointer checks.*/
+  if ((sem_id == NULL) || (sem_name == NULL)) {
+    return OS_INVALID_POINTER;
+  }
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+/**
+ * @brief   Returns mutex information.
+ *
+ * @param[in] sem_id            mutex id variable
+ * @param[in] sem_prop          mutex properties
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_MutSemGetInfo(uint32 sem_id, OS_mut_sem_prop_t *sem_prop) {
+  mutex_t *mp = (mutex_t *)sem_id;
+
+  /* NULL pointer checks.*/
+  if (sem_prop == NULL) {
+    return OS_INVALID_POINTER;
+  }
+
+  if ((mp < &osal.mutexes[0]) ||
+      (mp >= &osal.mutexes[OS_MAX_BIN_SEMAPHORES])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  chSysLock();
+
+  /* If the mutex is not in use then error.*/
+  if (mp->queue.prev == NULL) {
     chSysUnlock();
     return OS_SEM_FAILURE;
   }
@@ -771,7 +1200,7 @@ int32 OS_TaskGetIdByName (uint32 *task_id, const char *task_name) {
 /**
  * @brief   Returns task information.
  *
- * @param[in] sem_id            binary semaphore id variable
+ * @param[in] task_id           the task id
  * @param[in] task_prop         task properties
  * @return                      An error code.
  *
