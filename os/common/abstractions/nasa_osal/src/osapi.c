@@ -29,6 +29,18 @@
 #include "common_types.h"
 #include "osapi.h"
 
+#if CH_CFG_ST_FREQUENCY > 1000000
+#error "CH_CFG_ST_FREQUENCY limit is 1000000"
+#endif
+
+#if (CH_CFG_ST_FREQUENCY % 1000) != 0
+#error "CH_CFG_ST_FREQUENCY is not a multiple of 1000"
+#endif
+
+#if CH_CFG_USE_EVENTS == FALSE
+#error "NASA OSAL requires CH_CFG_USE_EVENTS"
+#endif
+
 #if CH_CFG_USE_MUTEXES == FALSE
 #error "NASA OSAL requires CH_CFG_USE_MUTEXES"
 #endif
@@ -100,6 +112,23 @@ static osal_t osal;
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief   Virtual timers callback.
+ */
+static void timer_handler(void *p) {
+  osal_timer_t *otp = (osal_timer_t *)p;
+
+  /* Real callback.*/
+  otp->callback_ptr((uint32)p);
+
+  /* Timer restart if an interval is defined.*/
+  if (otp->interval_time != 0) {
+    chSysLockFromISR();
+    chVTSetI(&otp->vt, US2ST(otp->interval_time), timer_handler, p);
+    chSysUnlockFromISR();
+  }
+}
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -263,6 +292,17 @@ int32 OS_Milli2Ticks(uint32 milli_seconds) {
 
 /*-- timers API -------------------------------------------------------------*/
 
+/**
+ * @brief   Binary semaphore creation.
+ *
+ * @param[out] timer_id         pointer to a timer id variable
+ * @param[in] timer_name        the timer name
+ * @param[out] clock_accuracy   timer accuracy in microseconds
+ * @param[in] callback_ptr      timer callback
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_TimerCreate(uint32 *timer_id, const char *timer_name,
                      uint32 *clock_accuracy, OS_TimerCallback_t callback_ptr) {
   osal_timer_t *otp;
@@ -296,11 +336,21 @@ int32 OS_TimerCreate(uint32 *timer_id, const char *timer_name,
   otp->interval_time = 0;
   otp->callback_ptr  = callback_ptr;
 
+  *clock_accuracy = (uint32)(1000000 / CH_CFG_ST_FREQUENCY);
+
   chSysUnlock();
 
   return OS_SUCCESS;
 }
 
+/**
+ * @brief   Timer deletion.
+ *
+ * @param[in] timer_id          timer id variable
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_TimerDelete(uint32 timer_id) {
   osal_timer_t *otp = (osal_timer_t *)timer_id;
 
@@ -325,16 +375,110 @@ int32 OS_TimerDelete(uint32 timer_id) {
   return OS_SUCCESS;
 }
 
+/**
+ * @brief   Timer deletion.
+ * @note    This function can be safely called from timer callbacks or ISRs.
+ *
+ * @param[in] timer_id          timer id variable
+ * @param[in] start_time        start time in microseconds or zero
+ * @param[in] interval_time     interval time in microseconds or zero
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
+  syssts_t sts;
+  osal_timer_t *otp = (osal_timer_t *)timer_id;
 
+  /* Range check.*/
+  if ((otp < &osal.timers[0]) ||
+      (otp >= &osal.timers[OS_MAX_TIMERS])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  sts = chSysGetStatusAndLockX();
+
+  if (start_time == 0) {
+    chVTResetI(&otp->vt);
+  }
+  else {
+    otp->start_time    = start_time;
+    otp->interval_time = interval_time;
+    chVTSetI(&otp->vt, US2ST(start_time), timer_handler, (void *)timer_id);
+  }
+
+  chSysRestoreStatusX(sts);
+
+  return OS_SUCCESS;
 }
 
+/**
+ * @brief   Retrieves a timer id by name.
+ * @note    It is not currently implemented.
+ *
+ * @param[out] timer_id         pointer to a timer id variable
+ * @param[in] sem_name          the timer name
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_TimerGetIdByName (uint32 *timer_id, const char *timer_name) {
 
+  /* NULL pointer checks.*/
+  if ((timer_id == NULL) || (timer_id == NULL)) {
+    return OS_INVALID_POINTER;
+  }
+
+  /* Checking name length.*/
+  if (strlen(timer_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
+  return OS_ERR_NOT_IMPLEMENTED;
 }
 
+/**
+ * @brief   Returns timer information.
+ * @note    This function can be safely called from timer callbacks or ISRs.
+ *
+ * @param[in] timer_id          timer id variable
+ * @param[in] timer_prop        timer properties
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_TimerGetInfo (uint32 timer_id, OS_timer_prop_t *timer_prop) {
+  syssts_t sts;
+  osal_timer_t *otp = (osal_timer_t *)timer_id;
 
+  /* NULL pointer checks.*/
+  if (timer_prop == NULL) {
+    return OS_INVALID_POINTER;
+  }
+
+  /* Range check.*/
+  if ((otp < &osal.timers[0]) ||
+      (otp >= &osal.timers[OS_MAX_TIMERS])) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  sts = chSysGetStatusAndLockX();
+
+  /* If the semaphore is not in use then error.*/
+  if (otp->is_free) {
+    chSysRestoreStatusX(sts);
+    return OS_ERR_INVALID_ID;
+  }
+
+  strncpy(timer_prop->name, otp->name, OS_MAX_API_NAME - 1);
+  timer_prop->creator       = (uint32)0;
+  timer_prop->start_time    = otp->start_time;
+  timer_prop->interval_time = otp->interval_time;
+  timer_prop->accuracy      = (uint32)(1000000 / CH_CFG_ST_FREQUENCY);
+
+  chSysRestoreStatusX(sts);
+
+  return OS_SUCCESS;
 }
 
 /*-- Queues API -------------------------------------------------------------*/
@@ -423,7 +567,7 @@ int32 OS_BinSemDelete(uint32 sem_id) {
 /**
  * @brief   Binary semaphore flush.
  * @note    The state of the binary semaphore is not changed.
- * @note    This function can be safely called from timer handlers.
+ * @note    This function can be safely called from timer callbacks or ISRs.
  *
  * @param[in] sem_id            binary semaphore id variable
  * @return                      An error code.
@@ -457,7 +601,7 @@ int32 OS_BinSemFlush(uint32 sem_id) {
 
 /**
  * @brief   Binary semaphore give.
- * @note    This function can be safely called from timer handlers.
+ * @note    This function can be safely called from timer callbacks or ISRs.
  *
  * @param[in] sem_id            binary semaphore id variable
  * @return                      An error code.
@@ -577,12 +721,17 @@ int32 OS_BinSemGetIdByName(uint32 *sem_id, const char *sem_name) {
     return OS_INVALID_POINTER;
   }
 
+  /* Checking name length.*/
+  if (strlen(sem_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
   return OS_ERR_NOT_IMPLEMENTED;
 }
 
 /**
  * @brief   Returns binary semaphore information.
- * @note    This function can be safely called from timer handlers.
+ * @note    This function can be safely called from timer callbacks or ISRs.
  * @note    It is not currently implemented.
  *
  * @param[in] sem_id            binary semaphore id variable
@@ -611,7 +760,7 @@ int32 OS_BinSemGetInfo(uint32 sem_id, OS_bin_sem_prop_t *bin_prop) {
   /* If the semaphore is not in use then error.*/
   if (bsp->sem.queue.prev == NULL) {
     chSysRestoreStatusX(sts);
-    return OS_SEM_FAILURE;
+    return OS_ERR_INVALID_ID;
   }
 
   chSysRestoreStatusX(sts);
@@ -702,7 +851,7 @@ int32 OS_CountSemDelete(uint32 sem_id) {
 
 /**
  * @brief   Counter semaphore give.
- * @note    This function can be safely called from timer handlers.
+ * @note    This function can be safely called from timer callbacks or ISRs.
  *
  * @param[in] sem_id            counter semaphore id variable
  * @return                      An error code.
@@ -822,12 +971,17 @@ int32 OS_CountSemGetIdByName(uint32 *sem_id, const char *sem_name) {
     return OS_INVALID_POINTER;
   }
 
+  /* Checking name length.*/
+  if (strlen(sem_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
   return OS_ERR_NOT_IMPLEMENTED;
 }
 
 /**
  * @brief   Returns counter semaphore information.
- * @note    This function can be safely called from timer handlers.
+ * @note    This function can be safely called from timer callbacks or ISRs.
  * @note    It is not currently implemented.
  *
  * @param[in] sem_id            counter semaphore id variable
@@ -856,7 +1010,7 @@ int32 OS_CountSemGetInfo(uint32 sem_id, OS_count_sem_prop_t *sem_prop) {
   /* If the semaphore is not in use then error.*/
   if (sp->queue.prev == NULL) {
     chSysRestoreStatusX(sts);
-    return OS_SEM_FAILURE;
+    return OS_ERR_INVALID_ID;
   }
 
   chSysRestoreStatusX(sts);
@@ -1020,12 +1174,17 @@ int32 OS_MutSemGetIdByName(uint32 *sem_id, const char *sem_name) {
     return OS_INVALID_POINTER;
   }
 
+  /* Checking name length.*/
+  if (strlen(sem_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
   return OS_ERR_NOT_IMPLEMENTED;
 }
 
 /**
  * @brief   Returns mutex information.
- * @note    This function can be safely called from timer handlers.
+ * @note    This function can be safely called from timer callbacks or ISRs.
  * @note    It is not currently implemented.
  *
  * @param[in] sem_id            mutex id variable
@@ -1054,7 +1213,7 @@ int32 OS_MutSemGetInfo(uint32 sem_id, OS_mut_sem_prop_t *sem_prop) {
   /* If the mutex is not in use then error.*/
   if (mp->queue.prev == NULL) {
     chSysRestoreStatusX(sts);
-    return OS_SEM_FAILURE;
+    return OS_ERR_INVALID_ID;
   }
 
   chSysRestoreStatusX(sts);
@@ -1272,7 +1431,7 @@ int32 OS_TaskRegister(void) {
 
 /**
  * @brief   Current task id.
- * @note    This function can be safely called from timer handlers.
+ * @note    This function can be safely called from timer callbacks or ISRs.
  *
  * @return                      The current task id.
  *
@@ -1322,7 +1481,7 @@ int32 OS_TaskGetIdByName (uint32 *task_id, const char *task_name) {
 
 /**
  * @brief   Returns task information.
- * @note    This function can be safely called from timer handlers.
+ * @note    This function can be safely called from timer callbacks or ISRs.
  * @note    It is not currently implemented.
  *
  * @param[in] task_id           the task id
