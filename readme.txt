@@ -34,6 +34,9 @@
   |  |  +--index.html     - Local documentation access (after rebuild).
   +--ext/                 - External libraries, not part of ChibiOS/RT.
   +--os/                  - ChibiOS components.
+  |  +--abstractions/     - API emulator wrappers.
+  |  |  +--cmsis-os       - CMSIS OS emulation layer for RT (ARMCMx port only).
+  |  |  +--nasa-osal      - NASA Operating System Abstraction Layer for RT.
   |  +--common/           - Shared OS modules.
   |  +--common/ext/       - Vendor files used by the OS.
   |  +--common/oslib/     - RTOS modules usable by both RT and NIL.
