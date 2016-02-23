@@ -34,14 +34,14 @@
   |  |  +--index.html     - Local documentation access (after rebuild).
   +--ext/                 - External libraries, not part of ChibiOS/RT.
   +--os/                  - ChibiOS components.
-  |  +--abstractions/     - API emulator wrappers.
-  |  |  +--cmsis-os       - CMSIS OS emulation layer for RT (ARMCMx port only).
-  |  |  +--nasa-osal      - NASA Operating System Abstraction Layer for RT.
   |  +--common/           - Shared OS modules.
-  |  +--common/ext/       - Vendor files used by the OS.
-  |  +--common/oslib/     - RTOS modules usable by both RT and NIL.
-  |  +--common/ports/     - RTOS ports usable by both RT and NIL.
-  |  +--common/startup/   - Startup support for all compilers and platforms.
+  |  |  +--abstractions/  - API emulator wrappers.
+  |  |  |  +--cmsis_os/   - CMSIS OS emulation layer for RT (ARMCMx port only).
+  |  |  |  +--nasa_osal/  - NASA Operating System Abstraction Layer for RT.
+  |  |  +--ext/           - Vendor files used by the OS.
+  |  |  +--oslib/         - RTOS modules usable by both RT and NIL.
+  |  |  +--ports/         - RTOS ports usable by both RT and NIL.
+  |  |  +--startup/       - Startup support for all compilers and platforms.
   |  +--hal/              - HAL component.
   |  |  +--boards/        - HAL board support files.
   |  |  +--dox/           - HAL documentation resources.
