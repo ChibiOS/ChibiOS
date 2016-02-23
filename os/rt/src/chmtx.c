@@ -475,6 +475,45 @@ void chMtxUnlockS(mutex_t *mp) {
  * @brief   Unlocks all mutexes owned by the invoking thread.
  * @post    The stack of owned mutexes is emptied and all the found
  *          mutexes are unlocked.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel.
+ * @note    This function is <b>MUCH MORE</b> efficient than releasing the
+ *          mutexes one by one and not just because the call overhead,
+ *          this function does not have any overhead related to the priority
+ *          inheritance mechanism.
+ *
+ * @sclass
+ */
+void chMtxUnlockAllS(void) {
+  thread_t *ctp = currp;
+
+  while (ctp->mtxlist != NULL) {
+    mutex_t *mp = ctp->mtxlist;
+    ctp->mtxlist = mp->next;
+    if (chMtxQueueNotEmptyS(mp)) {
+#if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
+      mp->cnt = (cnt_t)1;
+#endif
+      thread_t *tp = queue_fifo_remove(&mp->queue);
+      mp->owner = tp;
+      mp->next = tp->mtxlist;
+      tp->mtxlist = mp;
+      (void) chSchReadyI(tp);
+    }
+    else {
+#if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
+      mp->cnt = (cnt_t)0;
+#endif
+      mp->owner = NULL;
+    }
+  }
+  ctp->prio = ctp->realprio;
+}
+
+/**
+ * @brief   Unlocks all mutexes owned by the invoking thread.
+ * @post    The stack of owned mutexes is emptied and all the found
+ *          mutexes are unlocked.
  * @note    This function is <b>MUCH MORE</b> efficient than releasing the
  *          mutexes one by one and not just because the call overhead,
  *          this function does not have any overhead related to the priority

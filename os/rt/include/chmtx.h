@@ -108,6 +108,7 @@ extern "C" {
   void chMtxUnlock(mutex_t *mp);
   void chMtxUnlockS(mutex_t *mp);
   void chMtxUnlockAll(void);
+  void chMtxUnlockAllS(void);
 #ifdef __cplusplus
 }
 #endif
