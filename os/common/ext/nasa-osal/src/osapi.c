@@ -248,7 +248,7 @@ int32 OS_Milli2Ticks(uint32 milli_seconds) {
  *
  * @param[out] sem_id           pointer to a binary semaphore id variable
  * @param[in] sem_name          the binary semaphore name
- * @param[in] sem_initial_value semaphore intial value
+ * @param[in] sem_initial_value semaphore initial value
  * @param[in] options           semaphore options
  * @return                      An error code.
  *
@@ -520,7 +520,7 @@ int32 OS_BinSemGetInfo(uint32 sem_id, OS_bin_sem_prop_t *bin_prop) {
  *
  * @param[out] sem_id           pointer to a counter semaphore id variable
  * @param[in] sem_name          the counter semaphore name
- * @param[in] sem_initial_value semaphore intial value
+ * @param[in] sem_initial_value semaphore initial value
  * @param[in] options           semaphore options
  * @return                      An error code.
  *
