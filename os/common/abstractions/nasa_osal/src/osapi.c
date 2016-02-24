@@ -433,7 +433,7 @@ int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
  *
  * @api
  */
-int32 OS_TimerGetIdByName (uint32 *timer_id, const char *timer_name) {
+int32 OS_TimerGetIdByName(uint32 *timer_id, const char *timer_name) {
 
   /* NULL pointer checks.*/
   if ((timer_id == NULL) || (timer_id == NULL)) {
@@ -458,7 +458,7 @@ int32 OS_TimerGetIdByName (uint32 *timer_id, const char *timer_name) {
  *
  * @api
  */
-int32 OS_TimerGetInfo (uint32 timer_id, OS_timer_prop_t *timer_prop) {
+int32 OS_TimerGetInfo(uint32 timer_id, OS_timer_prop_t *timer_prop) {
   syssts_t sts;
   osal_timer_t *otp = (osal_timer_t *)timer_id;
 
@@ -510,8 +510,8 @@ int32 OS_TimerGetInfo (uint32 timer_id, OS_timer_prop_t *timer_prop) {
  *
  * @api
  */
-int32 OS_BinSemCreate (uint32 *sem_id, const char *sem_name,
-                       uint32 sem_initial_value, uint32 options) {
+int32 OS_BinSemCreate(uint32 *sem_id, const char *sem_name,
+                      uint32 sem_initial_value, uint32 options) {
   binary_semaphore_t *bsp;
 
   (void)options;
@@ -804,8 +804,8 @@ int32 OS_BinSemGetInfo(uint32 sem_id, OS_bin_sem_prop_t *bin_prop) {
  *
  * @api
  */
-int32 OS_CountSemCreate (uint32 *sem_id, const char *sem_name,
-                         uint32 sem_initial_value, uint32 options) {
+int32 OS_CountSemCreate(uint32 *sem_id, const char *sem_name,
+                        uint32 sem_initial_value, uint32 options) {
   semaphore_t *sp;
 
   (void)options;
@@ -1059,7 +1059,7 @@ int32 OS_CountSemGetInfo(uint32 sem_id, OS_count_sem_prop_t *sem_prop) {
  *
  * @api
  */
-int32 OS_MutSemCreate (uint32 *sem_id, const char *sem_name, uint32 options) {
+int32 OS_MutSemCreate(uint32 *sem_id, const char *sem_name, uint32 options) {
   mutex_t *mp;
 
   (void)options;
@@ -1417,7 +1417,7 @@ int32 OS_TaskDelay(uint32 milli_second) {
  *
  * @api
  */
-int32 OS_TaskSetPriority (uint32 task_id, uint32 new_priority) {
+int32 OS_TaskSetPriority(uint32 task_id, uint32 new_priority) {
   tprio_t rt_newprio;
   thread_t *tp = (thread_t *)task_id;
 
@@ -1520,7 +1520,7 @@ uint32 OS_TaskGetId(void) {
  *
  * @api
  */
-int32 OS_TaskGetIdByName (uint32 *task_id, const char *task_name) {
+int32 OS_TaskGetIdByName(uint32 *task_id, const char *task_name) {
   thread_t *tp;
 
   /* NULL pointer checks.*/
