@@ -37,6 +37,10 @@
 #error "CH_CFG_ST_FREQUENCY is not a multiple of 1000"
 #endif
 
+#if CH_CFG_USE_REGISTRY == FALSE
+#error "NASA OSAL requires CH_CFG_USE_REGISTRY"
+#endif
+
 #if CH_CFG_USE_EVENTS == FALSE
 #error "NASA OSAL requires CH_CFG_USE_EVENTS"
 #endif
@@ -49,16 +53,16 @@
 #error "NASA OSAL requires CH_CFG_USE_SEMAPHORES"
 #endif
 
-#if CH_CFG_USE_REGISTRY == FALSE
-#error "NASA OSAL requires CH_CFG_USE_REGISTRY"
-#endif
-
 #if CH_CFG_USE_MEMCORE == FALSE
 #error "NASA OSAL requires CH_CFG_USE_MEMCORE"
 #endif
 
 #if CH_CFG_USE_MEMPOOLS == FALSE
 #error "NASA OSAL requires CH_CFG_USE_MEMPOOLS"
+#endif
+
+#if CH_CFG_USE_DYNAMIC == FALSE
+#error "NASA OSAL requires CH_CFG_USE_DYNAMIC"
 #endif
 
 /*===========================================================================*/
@@ -1279,6 +1283,9 @@ int32 OS_TaskCreate(uint32 *task_id,
 
   /* Converting priority to RT type.*/
   rt_prio = (tprio_t)256 - (tprio_t)priority;
+  if (rt_prio == 1) {
+    rt_prio = 2;
+  }
 
   tp = chThdCreateFromHeap(NULL, (size_t)stack_size, task_name,
                            rt_prio, (tfunc_t)function_pointer, NULL);
@@ -1325,6 +1332,15 @@ int32 OS_TaskDelete(uint32 task_id) {
     return OS_ERR_INVALID_ID;
   }
 
+  /* Asking for thread termination.*/
+  chThdTerminate(tp);
+
+  /* Releasing the thread reference.*/
+  chThdRelease(tp);
+
+  /* Waiting for termination.*/
+  chThdWait(tp);
+
   return OS_ERR_NOT_IMPLEMENTED;
 }
 
@@ -1354,6 +1370,8 @@ int32 OS_TaskDelay(uint32 milli_second) {
 
 /**
  * @brief   Change task priority.
+ * @note    Priority 255 is not available and it is transformed internally in
+ *          254.
  *
  * @param[in] task_id           the task id
  * @param[in] new_priority      the task new priority
@@ -1365,11 +1383,6 @@ int32 OS_TaskSetPriority (uint32 task_id, uint32 new_priority) {
   tprio_t rt_newprio;
   thread_t *tp = (thread_t *)task_id;
 
-  /* Check for thread validity.*/
-  if (chRegFindThreadByPointer(tp) == NULL) {
-    return OS_ERR_INVALID_ID;
-  }
-
   /* Checking priority range.*/
   if ((new_priority < MIN_PRIORITY) || (new_priority > MAX_PRIORITY)) {
     return OS_ERR_INVALID_PRIORITY;
@@ -1377,9 +1390,17 @@ int32 OS_TaskSetPriority (uint32 task_id, uint32 new_priority) {
 
   /* Converting priority to RT type.*/
   rt_newprio = (tprio_t)256 - (tprio_t)new_priority;
+  if (rt_newprio == 1) {
+    rt_newprio = 2;
+  }
 
   if (chThdGetPriorityX() == rt_newprio) {
     return OS_SUCCESS;
+  }
+
+  /* Check for thread validity.*/
+  if (chRegFindThreadByPointer(tp) == NULL) {
+    return OS_ERR_INVALID_ID;
   }
 
   chSysLock();
@@ -1419,6 +1440,9 @@ int32 OS_TaskSetPriority (uint32 task_id, uint32 new_priority) {
   /* Rescheduling.*/
   chSchRescheduleS();
   chSysUnlock();
+
+  /* Releasing the thread reference.*/
+  chThdRelease(tp);
 
   return OS_SUCCESS;
 }
@@ -1479,6 +1503,9 @@ int32 OS_TaskGetIdByName (uint32 *task_id, const char *task_name) {
 
   *task_id = (uint32)tp;
 
+  /* Releasing the thread reference.*/
+  chThdRelease(tp);
+
   return OS_SUCCESS;
 }
 
@@ -1486,6 +1513,8 @@ int32 OS_TaskGetIdByName (uint32 *task_id, const char *task_name) {
  * @brief   Returns task information.
  * @note    This function can be safely called from timer callbacks or ISRs.
  * @note    It is not currently implemented.
+ * @note    Priority 255 is not available and it is transformed internally in
+ *          254.
  *
  * @param[in] task_id           the task id
  * @param[in] task_prop         task properties
@@ -1497,14 +1526,14 @@ int32 OS_TaskGetInfo(uint32 task_id, OS_task_prop_t *task_prop) {
   thread_t *tp = (thread_t *)task_id;
   size_t wasize = (size_t)tp - (size_t)tp->stklimit + sizeof (thread_t);
 
-  /* Check for thread validity.*/
-  if (chRegFindThreadByPointer(tp) == NULL) {
-    return OS_ERR_INVALID_ID;
-  }
-
   /* NULL pointer checks.*/
   if (task_prop == NULL) {
     return OS_INVALID_POINTER;
+  }
+
+  /* Check for thread validity.*/
+  if (chRegFindThreadByPointer(tp) == NULL) {
+    return OS_ERR_INVALID_ID;
   }
 
   strncpy(task_prop->name, tp->name, OS_MAX_API_NAME - 1);
@@ -1512,6 +1541,9 @@ int32 OS_TaskGetInfo(uint32 task_id, OS_task_prop_t *task_prop) {
   task_prop->stack_size = (uint32)MEM_ALIGN_NEXT(wasize, PORT_STACK_ALIGN);
   task_prop->priority   = (uint32)256U - (uint32)tp->realprio;
   task_prop->OStask_id  = task_id;
+
+  /* Releasing the thread reference.*/
+  chThdRelease(tp);
 
   return OS_SUCCESS;
 }

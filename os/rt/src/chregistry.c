@@ -181,6 +181,9 @@ thread_t *chRegNextThread(thread_t *tp) {
 
 /**
  * @brief   Retrieves a thread pointer by name.
+ * @note    The reference counter of the found thread is increased by one so
+ *          it cannot be disposed incidentally after the pointer has been
+ *          returned.
  *
  * @param[in] name      the thread name
  * @return              A pointer to the found thread.
@@ -205,6 +208,9 @@ thread_t *chRegFindThreadByName(const char *name) {
 
 /**
  * @brief   Confirms that a pointer is a valid thread pointer.
+ * @note    The reference counter of the found thread is increased by one so
+ *          it cannot be disposed incidentally after the pointer has been
+ *          returned.
  *
  * @param[in] tp        pointer to the thread
  * @return              A pointer to the found thread.
