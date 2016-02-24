@@ -361,12 +361,12 @@ void spi_lld_start(SPIDriver *spip) {
                             STM32_SPI_SPI4_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
-      osalDgbAssert(!b, "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI4_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
-      osalDgbAssert(!b, "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI4(FALSE);
     }
 #endif
@@ -377,12 +377,12 @@ void spi_lld_start(SPIDriver *spip) {
                             STM32_SPI_SPI5_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
-      osalDgbAssert(!b, "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI5_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
-      osalDgbAssert(!b, "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI5(FALSE);
     }
 #endif
@@ -393,12 +393,12 @@ void spi_lld_start(SPIDriver *spip) {
                             STM32_SPI_SPI6_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
                             (void *)spip);
-      osalDgbAssert(!b, "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       b = dmaStreamAllocate(spip->dmatx,
                             STM32_SPI_SPI6_IRQ_PRIORITY,
                             (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
                             (void *)spip);
-      osalDgbAssert(!b, "stream already allocated");
+      osalDbgAssert(!b, "stream already allocated");
       rccEnableSPI6(FALSE);
     }
 #endif

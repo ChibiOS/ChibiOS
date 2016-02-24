@@ -92,6 +92,8 @@
 - RT:  Removed the p_msg field from the thread_t structure saving a
        msg_t-sized field from the structure. Messages now use a new field
        into the p_u union. Now synchronous messages are even faster.
+- HAL: Fixed build error caused by STM32 SPIv1 driver (bug #710)(backported
+       to 2.6.10, 3.0.6 and 16.1.4).
 - HAL: Fixed shift of signed constant causes warnings with IAR compiler
        (bug #709)(backported to 2.6.10, 3.0.6 and 16.1.4).
 - HAL: Fixed wrong RTCv2 settings for STM32L4 (bug #708)(backported
