@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.4 ***
+- HAL: Fixed build error caused by STM32 SPIv1 driver (bug #710).
 - HAL: Fixed shift of signed constant causes warnings with IAR compiler
        (bug #709).
 - HAL: Fixed wrong RTCv2 settings for STM32L4 (bug #708).
