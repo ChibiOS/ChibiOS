@@ -405,6 +405,7 @@ int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
     return OS_ERR_INVALID_ID;
   }
 
+  /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
   if (start_time == 0) {
@@ -416,6 +417,7 @@ int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
     chVTSetI(&otp->vt, US2ST(start_time), timer_handler, (void *)timer_id);
   }
 
+  /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);
 
   return OS_SUCCESS;
@@ -471,10 +473,12 @@ int32 OS_TimerGetInfo (uint32 timer_id, OS_timer_prop_t *timer_prop) {
     return OS_ERR_INVALID_ID;
   }
 
+  /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (otp->is_free) {
+    /* Leaving the critical zone.*/
     chSysRestoreStatusX(sts);
     return OS_ERR_INVALID_ID;
   }
@@ -485,6 +489,7 @@ int32 OS_TimerGetInfo (uint32 timer_id, OS_timer_prop_t *timer_prop) {
   timer_prop->interval_time = otp->interval_time;
   timer_prop->accuracy      = (uint32)(1000000 / CH_CFG_ST_FREQUENCY);
 
+  /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);
 
   return OS_SUCCESS;
@@ -593,16 +598,19 @@ int32 OS_BinSemFlush(uint32 sem_id) {
     return OS_ERR_INVALID_ID;
   }
 
+  /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (bsp->sem.queue.prev == NULL) {
+    /* Leaving the critical zone.*/
     chSysRestoreStatusX(sts);
     return OS_SEM_FAILURE;
   }
 
   chBSemResetI(bsp, true);
 
+  /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);
 
   return OS_SUCCESS;
@@ -627,16 +635,19 @@ int32 OS_BinSemGive(uint32 sem_id) {
     return OS_ERR_INVALID_ID;
   }
 
+  /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (bsp->sem.queue.prev == NULL) {
+    /* Leaving the critical zone.*/
     chSysRestoreStatusX(sts);
     return OS_SEM_FAILURE;
   }
 
   chBSemSignalI(bsp);
 
+  /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);
 
   return OS_SUCCESS;
@@ -764,14 +775,17 @@ int32 OS_BinSemGetInfo(uint32 sem_id, OS_bin_sem_prop_t *bin_prop) {
     return OS_ERR_INVALID_ID;
   }
 
+  /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (bsp->sem.queue.prev == NULL) {
+    /* Leaving the critical zone.*/
     chSysRestoreStatusX(sts);
     return OS_ERR_INVALID_ID;
   }
 
+  /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);
 
   return OS_ERR_NOT_IMPLEMENTED;
@@ -877,16 +891,19 @@ int32 OS_CountSemGive(uint32 sem_id) {
     return OS_ERR_INVALID_ID;
   }
 
+  /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (sp->queue.prev == NULL) {
+    /* Leaving the critical zone.*/
     chSysRestoreStatusX(sts);
     return OS_SEM_FAILURE;
   }
 
   chSemSignalI(sp);
 
+  /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);
 
   return OS_SUCCESS;
@@ -1014,14 +1031,17 @@ int32 OS_CountSemGetInfo(uint32 sem_id, OS_count_sem_prop_t *sem_prop) {
     return OS_ERR_INVALID_ID;
   }
 
+  /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
   /* If the semaphore is not in use then error.*/
   if (sp->queue.prev == NULL) {
+    /* Leaving the critical zone.*/
     chSysRestoreStatusX(sts);
     return OS_ERR_INVALID_ID;
   }
 
+  /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);
 
   return OS_ERR_NOT_IMPLEMENTED;
@@ -1217,14 +1237,17 @@ int32 OS_MutSemGetInfo(uint32 sem_id, OS_mut_sem_prop_t *sem_prop) {
     return OS_ERR_INVALID_ID;
   }
 
+  /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
   /* If the mutex is not in use then error.*/
   if (mp->queue.prev == NULL) {
+    /* Leaving the critical zone.*/
     chSysRestoreStatusX(sts);
     return OS_ERR_INVALID_ID;
   }
 
+  /* Leaving the critical zone.*/
   chSysRestoreStatusX(sts);
 
   return OS_ERR_NOT_IMPLEMENTED;
@@ -1234,6 +1257,9 @@ int32 OS_MutSemGetInfo(uint32 sem_id, OS_mut_sem_prop_t *sem_prop) {
 
 /**
  * @brief   Task creation.
+ * @note    The task name is not copied inside the task but kept by reference,
+ *          the name is supposed to be persistent, better if defined as a
+ *          sting constant.
  *
  * @param[out] task_id          pointer to a task id variable
  * @param[in] task_name         the task name
