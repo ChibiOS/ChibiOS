@@ -87,13 +87,16 @@ static void dyn1_execute(void) {
   /* Starting threads from the heap. */
   threads[0] = chThdCreateFromHeap(&heap1,
                                    THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
+                                   "dyn1",
                                    prio-1, thread, "A");
   threads[1] = chThdCreateFromHeap(&heap1,
                                    THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),
+                                   "dyn2",
                                    prio-2, thread, "B");
   /* Large working area in order to make the thread creation fail.*/
   threads[2] = chThdCreateFromHeap(&heap1,
                                    THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE * 16),
+                                   "dyn3",
                                    prio-3, thread, "C");
 
   test_assert(1, (threads[0] != NULL) &&
@@ -145,11 +148,11 @@ static void dyn2_execute(void) {
     chPoolFree(&mp1, wa[i]);
 
   /* Starting threads from the memory pool. */
-  threads[0] = chThdCreateFromMemoryPool(&mp1, prio-1, thread, "A");
-  threads[1] = chThdCreateFromMemoryPool(&mp1, prio-2, thread, "B");
-  threads[2] = chThdCreateFromMemoryPool(&mp1, prio-3, thread, "C");
-  threads[3] = chThdCreateFromMemoryPool(&mp1, prio-4, thread, "D");
-  threads[4] = chThdCreateFromMemoryPool(&mp1, prio-5, thread, "E");
+  threads[0] = chThdCreateFromMemoryPool(&mp1, "dyn1", prio-1, thread, "A");
+  threads[1] = chThdCreateFromMemoryPool(&mp1, "dyn2", prio-2, thread, "B");
+  threads[2] = chThdCreateFromMemoryPool(&mp1, "dyn3", prio-3, thread, "C");
+  threads[3] = chThdCreateFromMemoryPool(&mp1, "dyn4", prio-4, thread, "D");
+  threads[4] = chThdCreateFromMemoryPool(&mp1, "dyn5", prio-5, thread, "E");
 
   test_assert(1, (threads[0] != NULL) &&
                  (threads[1] != NULL) &&
@@ -207,7 +210,7 @@ static void dyn3_execute(void) {
   tprio_t prio = chThdGetPriorityX();
 
   /* Testing references increase/decrease and final detach.*/
-  tp = chThdCreateFromHeap(&heap1, WA_SIZE, prio-1, thread, "A");
+  tp = chThdCreateFromHeap(&heap1, WA_SIZE, "dyn1", prio-1, thread, "A");
   test_assert(1, tp->refs == 1, "wrong initial reference counter");
   chThdAddRef(tp);
   test_assert(2, tp->refs == 2, "references increase failure");

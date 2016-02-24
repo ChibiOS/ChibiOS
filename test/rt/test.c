@@ -35,6 +35,7 @@
 #include "testevt.h"
 #include "testheap.h"
 #include "testpools.h"
+#include "testdyn.h"
 #include "testqueues.h"
 #include "testbmk.h"
 
@@ -51,6 +52,7 @@ static ROMCONST struct testcase * ROMCONST *patterns[] = {
   patternevt,
   patternheap,
   patternpools,
+  patterndyn,
   patternqueues,
   patternbmk,
   NULL
@@ -190,6 +192,17 @@ bool _test_assert_time_window(unsigned point, systime_t start, systime_t end) {
 /*
  * Threads utils.
  */
+
+/**
+ * @brief   Sets a termination request in all the test-spawned threads.
+ */
+void test_terminate_threads(void) {
+  int i;
+
+  for (i = 0; i < MAX_THREADS; i++)
+    if (threads[i])
+      chThdTerminate(threads[i]);
+}
 
 /**
  * @brief   Waits for the completion of all the test-spawned threads.

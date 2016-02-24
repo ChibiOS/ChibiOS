@@ -160,8 +160,7 @@ int main(void) {
       thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
                                               "shell", NORMALPRIO + 1,
                                               shellThread, (void *)&shell_cfg1);
-      chThdWait(shelltp);               /* Waiting termination.             */
-      chThdFreeToHeap(shelltp);         /* Returning memory to heap.        */
+      chThdWait(shelltp);
     }
 #if 0
     if (palReadPad(GPIOI, GPIOI_BUTTON_USER)) {

@@ -37,14 +37,6 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Event bit reserved for thread termination request.
- * @note    The most significant bit of the events mask is conventionally
- *          used for thread termination but it can eventually be used for
- *          other events.
- */
-#define CH_EVENT_TERMINATE  ~(((eventmask_t)-1) >> 1U)
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/

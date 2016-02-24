@@ -129,7 +129,6 @@ void chSysInit(void) {
 
   /* Setting up the caller as current thread.*/
   currp->state = CH_STATE_CURRENT;
-  currp->flags = CH_FLAG_MODE_STATIC;
 
   /* Port layer initialization last because it depend on some of the
      initializations performed before.*/

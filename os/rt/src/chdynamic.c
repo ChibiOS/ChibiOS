@@ -54,6 +54,78 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   Adds a reference to a thread object.
+ * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in
+ *          order to use this function.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The same thread pointer passed as parameter
+ *                      representing the new reference.
+ *
+ * @api
+ */
+thread_t *chThdAddRef(thread_t *tp) {
+
+  chSysLock();
+  chDbgAssert(tp->refs < (trefs_t)255, "too many references");
+  tp->refs++;
+  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Releases a reference to a thread object.
+ * @details If the references counter reaches zero <b>and</b> the thread
+ *          is in the @p CH_STATE_FINAL state then the thread's memory is
+ *          returned to the proper allocator.
+ * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in
+ *          order to use this function.
+ * @note    Static threads are not affected.
+ *
+ * @param[in] tp        pointer to the thread
+ *
+ * @api
+ */
+void chThdRelease(thread_t *tp) {
+  trefs_t refs;
+
+  chSysLock();
+  chDbgAssert(tp->refs > (trefs_t)0, "not referenced");
+  tp->refs--;
+  refs = tp->refs;
+  chSysUnlock();
+
+  /* If the references counter reaches zero and the thread is in its
+     terminated state then the memory can be returned to the proper
+     allocator. Of course static threads are not affected.*/
+  if ((refs == (trefs_t)0) && (tp->state == CH_STATE_FINAL)) {
+    switch (tp->flags & CH_FLAG_MODE_MASK) {
+#if CH_CFG_USE_HEAP == TRUE
+    case CH_FLAG_MODE_HEAP:
+#if CH_CFG_USE_REGISTRY == TRUE
+      REG_REMOVE(tp);
+#endif
+      chHeapFree(chthdGetStackLimitX(tp));
+      break;
+#endif
+#if CH_CFG_USE_MEMPOOLS == TRUE
+    case CH_FLAG_MODE_MPOOL:
+#if CH_CFG_USE_REGISTRY == TRUE
+      REG_REMOVE(tp);
+#endif
+      chPoolFree(tp->mpool, chthdGetStackLimitX(tp));
+      break;
+#endif
+    default:
+      /* Nothing to do for static threads, those are removed from the
+         registry on exit.*/
+      break;
+    }
+  }
+}
+
 #if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Creates a new thread allocating the memory from the heap.
@@ -82,6 +154,7 @@
 thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
                               const char *name, tprio_t prio,
                               tfunc_t pf, void *arg) {
+  thread_t *tp;
   void *wsp;
 
   wsp = chHeapAllocAligned(heapp, size, PORT_WORKING_AREA_ALIGN);
@@ -98,24 +171,19 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
     arg
   };
 
-  return chThdCreate(&td);
-}
+#if CH_DBG_FILL_THREADS == TRUE
+  _thread_memfill((uint8_t *)wsp,
+                  (uint8_t *)wsp + size,
+                  CH_DBG_STACK_FILL_VALUE);
+#endif
 
-/**
- * @brief   Releases a thread working area into the owner heap.
- * @pre     The thread must have been created using @p chThdCreateFromHeap().
- * @pre     The thread must be in the state @p CH_STATE_FINAL (terminated).
- *
- * @param[in] tp        the pointer to the thread
- *
- * @api
- */
-void chThdFreeToHeap(thread_t *tp) {
+  chSysLock();
+  tp = chThdCreateSuspendedI(&td);
+  tp->flags = CH_FLAG_MODE_HEAP;
+  chSchWakeupS(tp, MSG_OK);
+  chSysUnlock();
 
-  chDbgCheck(tp != NULL);
-  chDbgAssert(tp->state == CH_STATE_FINAL, "not terminated");
-
-  chHeapFree(chthdGetStackLimitX(tp));
+  return tp;
 }
 #endif /* CH_CFG_USE_HEAP == TRUE */
 
@@ -148,6 +216,7 @@ void chThdFreeToHeap(thread_t *tp) {
  */
 thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
                                     tprio_t prio, tfunc_t pf, void *arg) {
+  thread_t *tp;
   void *wsp;
 
   chDbgCheck(mp != NULL);
@@ -166,25 +235,21 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
     arg
   };
 
-  return chThdCreate(&td);
-}
+#if CH_DBG_FILL_THREADS == TRUE
+  _thread_memfill((uint8_t *)wsp,
+                  (uint8_t *)wsp + mp->object_size,
+                  CH_DBG_STACK_FILL_VALUE);
+#endif
 
-/**
- * @brief   Releases a thread working area into a memory pool.
- * @pre     The thread must have been created using @p chThdCreateFromMemoryPool().
- * @pre     The thread must be in the state @p CH_STATE_FINAL (terminated).
- *
- * @param[in] tp        the pointer to the thread
- * @param[in] mp        pointer to a @p memory_pool_t structure
- *
- * @api
- */
-void chThdFreeToMemoryPool(thread_t *tp, memory_pool_t *mp) {
 
-  chDbgCheck((tp != NULL) && (mp != NULL));
-  chDbgAssert(tp->state == CH_STATE_FINAL, "not terminated");
+  chSysLock();
+  tp = chThdCreateSuspendedI(&td);
+  tp->flags = CH_FLAG_MODE_MPOOL;
+  tp->mpool = mp;
+  chSchWakeupS(tp, MSG_OK);
+  chSysUnlock();
 
-  chPoolFree(mp, (void *)chthdGetStackLimitX(tp));
+  return tp;
 }
 #endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 

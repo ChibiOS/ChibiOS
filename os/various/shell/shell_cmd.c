@@ -144,12 +144,12 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "Usage: threads\r\n");
     return;
   }
-  chprintf(chp, "stklimit    stack     addr prio     state         name\r\n");
+  chprintf(chp, "stklimit    stack     addr refs prio     state         name\r\n");
   tp = chRegFirstThread();
   do {
-    chprintf(chp, "%08lx %08lx %08lx %4lu %9s %12s\r\n",
+    chprintf(chp, "%08lx %08lx %08lx %4lu %4lu %9s %12s\r\n",
              (uint32_t)tp->stklimit, (uint32_t)tp->ctx.sp, (uint32_t)tp,
-             (uint32_t)tp->prio, states[tp->state],
+             (uint32_t)tp->refs - 1, (uint32_t)tp->prio, states[tp->state],
              tp->name == NULL ? "" : tp->name);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
@@ -173,7 +173,6 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
     return;
   }
   chThdWait(tp);
-  chThdFreeToHeap(tp);
 }
 #endif
 

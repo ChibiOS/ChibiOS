@@ -182,6 +182,7 @@ extern "C" {
                               tprio_t prio, tfunc_t pf, void *arg);
   thread_t *chThdStart(thread_t *tp);
   tprio_t chThdSetPriority(tprio_t newprio);
+  void chThdTerminate(thread_t *tp);
   msg_t chThdSuspendS(thread_reference_t *trp);
   msg_t chThdSuspendTimeoutS(thread_reference_t *trp, systime_t timeout);
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
@@ -274,6 +275,19 @@ static inline stkalign_t *chthdGetStackLimitX(thread_t *tp) {
 static inline bool chThdTerminatedX(thread_t *tp) {
 
   return (bool)(tp->state == CH_STATE_FINAL);
+}
+
+/**
+ * @brief   Verifies if the current thread has a termination request pending.
+ *
+ * @retval true         termination request pending.
+ * @retval false        termination request not pending.
+ *
+ * @xclass
+ */
+static inline bool chThdShouldTerminateX(void) {
+
+  return (bool)((chThdGetSelfX()->flags & CH_FLAG_TERMINATE) != (tmode_t)0);
 }
 
 /**
