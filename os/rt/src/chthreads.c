@@ -175,6 +175,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
 
   /* Initial state.*/
   tp->state = CH_STATE_WTSTART;
+  tp->flags = CH_FLAG_MODE_STATIC;
 
   /* Stack boundary.*/
   tp->stklimit = tdp->wbase;

@@ -101,8 +101,12 @@ ROMCONST chdebug_t ch_debug = {
   (uint8_t)0,
 #endif
   (uint8_t)_offsetof(thread_t, state),
-  (uint8_t)0,                       /* Flags no more part of the structure. */
-  (uint8_t)0,                       /* Refs no more part of the structure.  */
+  (uint8_t)_offsetof(thread_t, flags),
+#if CH_CFG_USE_DYNAMIC == TRUE
+  (uint8_t)_offsetof(thread_t, refs),
+#else
+  (uint8_t)0,
+#endif
 #if CH_CFG_TIME_QUANTUM > 0
   (uint8_t)_offsetof(thread_t, preempt),
 #else
@@ -132,6 +136,9 @@ thread_t *chRegFirstThread(void) {
 
   chSysLock();
   tp = ch.rlist.newer;
+#if CH_CFG_USE_DYNAMIC == TRUE
+  tp->refs++;
+#endif
   chSysUnlock();
 
   return tp;
@@ -158,7 +165,16 @@ thread_t *chRegNextThread(thread_t *tp) {
   /*lint -restore*/
     ntp = NULL;
   }
+#if CH_CFG_USE_DYNAMIC == TRUE
+  else {
+    chDbgAssert(ntp->refs < (trefs_t)255, "too many references");
+    ntp->refs++;
+  }
+#endif
   chSysUnlock();
+#if CH_CFG_USE_DYNAMIC == TRUE
+  chThdRelease(tp);
+#endif
 
   return ntp;
 }
@@ -186,7 +202,6 @@ thread_t *chRegFindThreadByName(const char *name) {
 
   return NULL;
 }
-#endif /* CH_CFG_USE_REGISTRY == TRUE */
 
 /**
  * @brief   Confirms that a pointer is a valid thread pointer.
@@ -211,5 +226,7 @@ thread_t *chRegFindThreadByPointer(thread_t *tp) {
 
   return NULL;
 }
+
+#endif /* CH_CFG_USE_REGISTRY == TRUE */
 
 /** @} */

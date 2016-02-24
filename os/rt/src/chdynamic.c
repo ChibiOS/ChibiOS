@@ -23,7 +23,6 @@
  *
  * @addtogroup dynamic_threads
  * @details Dynamic threads related APIs and services.
- * @note    Compatible with RT only.
  * @{
  */
 
