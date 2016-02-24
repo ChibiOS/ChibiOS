@@ -25,6 +25,7 @@ a series of important new features.
 - Ability to use the new shared RTOS components.
 - Enhanced trace buffer, it is able to store events regarding not just threads
   but also IRQs, halts and user events.
+- Enhanced Registry, it is now possible to find threads by name or by pointer.
 - Simplified the dynamic threading model, now it is the thread creator
   responsible for memory release, the references counter has been removed
   and the code is much simpler.

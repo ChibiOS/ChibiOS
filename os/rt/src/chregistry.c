@@ -44,6 +44,9 @@
  *          option must be enabled in @p chconf.h.
  * @{
  */
+
+#include <string.h>
+
 #include "ch.h"
 
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
@@ -160,6 +163,53 @@ thread_t *chRegNextThread(thread_t *tp) {
   return ntp;
 }
 
+/**
+ * @brief   Retrieves a thread pointer by name.
+ *
+ * @param[in] name      the thread name
+ * @return              A pointer to the found thread.
+ * @retval NULL         if a matching thread has not been found.
+ *
+ * @api
+ */
+thread_t *chRegFindThreadByName(const char *name) {
+  thread_t *ctp;
+
+  /* Scanning registry.*/
+  ctp = chRegFirstThread();
+  do {
+    if (strcmp(chRegGetThreadNameX(ctp), name) == 0) {
+      return ctp;
+    }
+    ctp = chRegNextThread(ctp);
+  } while (ctp != NULL);
+
+  return NULL;
+}
 #endif /* CH_CFG_USE_REGISTRY == TRUE */
+
+/**
+ * @brief   Confirms that a pointer is a valid thread pointer.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              A pointer to the found thread.
+ * @retval NULL         if a matching thread has not been found.
+ *
+ * @api
+ */
+thread_t *chRegFindThreadByPointer(thread_t *tp) {
+  thread_t *ctp;
+
+  /* Scanning registry.*/
+  ctp = chRegFirstThread();
+  do {
+    if (ctp == tp) {
+      return ctp;
+    }
+    ctp = chRegNextThread(ctp);
+  } while (ctp != NULL);
+
+  return NULL;
+}
 
 /** @} */

@@ -1318,8 +1318,12 @@ int32 OS_TaskInstallDeleteHandler(void *function_pointer) {
  * @api
  */
 int32 OS_TaskDelete(uint32 task_id) {
+  thread_t *tp = (thread_t *)task_id;
 
-  (void)task_id;
+  /* Check for thread validity.*/
+  if (chRegFindThreadByPointer(tp) == NULL) {
+    return OS_ERR_INVALID_ID;
+  }
 
   return OS_ERR_NOT_IMPLEMENTED;
 }
@@ -1361,6 +1365,11 @@ int32 OS_TaskSetPriority (uint32 task_id, uint32 new_priority) {
   tprio_t rt_newprio;
   thread_t *tp = (thread_t *)task_id;
 
+  /* Check for thread validity.*/
+  if (chRegFindThreadByPointer(tp) == NULL) {
+    return OS_ERR_INVALID_ID;
+  }
+
   /* Checking priority range.*/
   if ((new_priority < MIN_PRIORITY) || (new_priority > MAX_PRIORITY)) {
     return OS_ERR_INVALID_PRIORITY;
@@ -1372,8 +1381,6 @@ int32 OS_TaskSetPriority (uint32 task_id, uint32 new_priority) {
   if (chThdGetPriorityX() == rt_newprio) {
     return OS_SUCCESS;
   }
-
-  /* TODO: Check presence in registry.*/
 
   chSysLock();
 
@@ -1464,19 +1471,15 @@ int32 OS_TaskGetIdByName (uint32 *task_id, const char *task_name) {
     return OS_ERR_NAME_TOO_LONG;
   }
 
-  /* TODO: Check presence in registry.*/
+  /* Searching in the registry.*/
+  tp = chRegFindThreadByName(task_name);
+  if (tp == NULL) {
+    return OS_ERR_NAME_NOT_FOUND;
+  }
 
-  /* Scanning registry.*/
-  tp = chRegFirstThread();
-  do {
-    if (strcmp(chRegGetThreadNameX(tp), task_name) == 0) {
-      *task_id = (uint32)tp;
-      return OS_SUCCESS;
-    }
-    tp = chRegNextThread(tp);
-  } while (tp != NULL);
+  *task_id = (uint32)tp;
 
-  return OS_ERR_NAME_NOT_FOUND;
+  return OS_SUCCESS;
 }
 
 /**
@@ -1494,12 +1497,15 @@ int32 OS_TaskGetInfo(uint32 task_id, OS_task_prop_t *task_prop) {
   thread_t *tp = (thread_t *)task_id;
   size_t wasize = (size_t)tp - (size_t)tp->stklimit + sizeof (thread_t);
 
+  /* Check for thread validity.*/
+  if (chRegFindThreadByPointer(tp) == NULL) {
+    return OS_ERR_INVALID_ID;
+  }
+
   /* NULL pointer checks.*/
   if (task_prop == NULL) {
     return OS_INVALID_POINTER;
   }
-
-  /* TODO: Check presence in registry.*/
 
   strncpy(task_prop->name, tp->name, OS_MAX_API_NAME - 1);
   task_prop->creator    = (uint32)chSysGetIdleThreadX();
