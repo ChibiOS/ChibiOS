@@ -81,6 +81,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Generic function pointer type.
+ */
+typedef void (*funcptr_t)(void);
+
+/**
  * @brief   Type of OSAL timer.
  */
 typedef struct {
@@ -1301,7 +1306,7 @@ int32 OS_TaskCreate(uint32 *task_id,
 
 /**
  * @brief   Installs a deletion handler.
- * @note    It is not currently implemented.
+ * @note    It is implemented as hooks in chconf.h.
  *
  * @param[in] function_pointer  the handler function
  * @return                      An error code.
@@ -1310,14 +1315,16 @@ int32 OS_TaskCreate(uint32 *task_id,
  */
 int32 OS_TaskInstallDeleteHandler(void *function_pointer) {
 
-  (void)function_pointer;
+  chThdGetSelfX()->osal_delete_handler = function_pointer;
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  return OS_SUCCESS;
 }
 
 /**
  * @brief   Task delete.
- * @note    It is not currently implemented.
+ * @note    Limitation, it does not actually kill the thread, it just sets a
+ *          flag in the thread that has then to terminate volountarly. The
+ *          flag can be checked using @p chThdShouldTerminateX().
  *
  * @param[in] task_id           the task id
  * @return                      An error code.
@@ -1335,13 +1342,18 @@ int32 OS_TaskDelete(uint32 task_id) {
   /* Asking for thread termination.*/
   chThdTerminate(tp);
 
-  /* Releasing the thread reference.*/
-  chThdRelease(tp);
-
   /* Waiting for termination.*/
   chThdWait(tp);
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  /* Calling the delete handler, if defined.*/
+  if (tp->osal_delete_handler != NULL) {
+    ((funcptr_t)(tp->osal_delete_handler))();
+  }
+
+  /* Releasing the thread reference.*/
+  chThdRelease(tp);
+
+  return OS_SUCCESS;
 }
 
 /**
