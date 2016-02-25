@@ -233,6 +233,33 @@ thread_t *chRegFindThreadByPointer(thread_t *tp) {
   return NULL;
 }
 
+/**
+ * @brief   Confirms that a working area is being used by some active thread.
+ * @note    The reference counter of the found thread is increased by one so
+ *          it cannot be disposed incidentally after the pointer has been
+ *          returned.
+ *
+ * @param[in] wa        pointer to a static working area
+ * @return              A pointer to the found thread.
+ * @retval NULL         if a matching thread has not been found.
+ *
+ * @api
+ */
+thread_t *chRegFindThreadByWorkingArea(stkalign_t *wa) {
+  thread_t *ctp;
+
+  /* Scanning registry.*/
+  ctp = chRegFirstThread();
+  do {
+    if (ctp->stklimit == wa) {
+      return ctp;
+    }
+    ctp = chRegNextThread(ctp);
+  } while (ctp != NULL);
+
+  return NULL;
+}
+
 #endif /* CH_CFG_USE_REGISTRY == TRUE */
 
 /** @} */

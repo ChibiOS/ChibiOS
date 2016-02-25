@@ -61,10 +61,6 @@
 #error "NASA OSAL requires CH_CFG_USE_MEMPOOLS"
 #endif
 
-#if CH_CFG_USE_DYNAMIC == FALSE
-#error "NASA OSAL requires CH_CFG_USE_DYNAMIC"
-#endif
-
 /*===========================================================================*/
 /* Module local definitions.                                                 */
 /*===========================================================================*/
@@ -1312,17 +1308,35 @@ int32 OS_TaskCreate(uint32 *task_id,
     return OS_INVALID_INT_NUM;
   }
 
+  /* Checking if this working area is already in use by some thread, the
+     error code is not very appropriate but this case seems to not be
+     coveded by the specification.*/
+  if ((tp = chRegFindThreadByWorkingArea((stkalign_t *)stack_pointer)) != NULL) {
+    return OS_ERR_NO_FREE_IDS;
+  }
+
+  /* Checking if the name is already in use.*/
+  if ((tp = chRegFindThreadByName(task_name)) != NULL) {
+    return OS_ERR_NAME_TAKEN;
+  }
+
   /* Converting priority to RT type.*/
   rt_prio = (tprio_t)256 - (tprio_t)priority;
   if (rt_prio == 1) {
     rt_prio = 2;
   }
 
-  tp = chThdCreateFromHeap(NULL, (size_t)stack_size, task_name,
-                           rt_prio, (tfunc_t)function_pointer, NULL);
-  if (tp == NULL) {
-    return OS_ERR_NO_FREE_IDS;
-  }
+  thread_descriptor_t td = {
+    task_name,
+    (stkalign_t *)stack_pointer,
+    (stkalign_t *)((uint8_t *)stack_pointer + stack_size),
+    rt_prio,
+    (tfunc_t)function_pointer,
+    NULL
+  };
+
+  /* Creating the task.*/
+  tp = chThdCreate(&td);
 
   /* Storing the task id.*/
   *task_id = (uint32)tp;
@@ -1375,9 +1389,6 @@ int32 OS_TaskDelete(uint32 task_id) {
   if (tp->osal_delete_handler != NULL) {
     ((funcptr_t)(tp->osal_delete_handler))();
   }
-
-  /* Releasing the thread reference.*/
-  chThdRelease(tp);
 
   return OS_SUCCESS;
 }
@@ -1479,9 +1490,6 @@ int32 OS_TaskSetPriority(uint32 task_id, uint32 new_priority) {
   chSchRescheduleS();
   chSysUnlock();
 
-  /* Releasing the thread reference.*/
-  chThdRelease(tp);
-
   return OS_SUCCESS;
 }
 
@@ -1541,9 +1549,6 @@ int32 OS_TaskGetIdByName(uint32 *task_id, const char *task_name) {
 
   *task_id = (uint32)tp;
 
-  /* Releasing the thread reference.*/
-  chThdRelease(tp);
-
   return OS_SUCCESS;
 }
 
@@ -1579,9 +1584,6 @@ int32 OS_TaskGetInfo(uint32 task_id, OS_task_prop_t *task_prop) {
   task_prop->stack_size = (uint32)MEM_ALIGN_NEXT(wasize, PORT_STACK_ALIGN);
   task_prop->priority   = (uint32)256U - (uint32)tp->realprio;
   task_prop->OStask_id  = task_id;
-
-  /* Releasing the thread reference.*/
-  chThdRelease(tp);
 
   return OS_SUCCESS;
 }

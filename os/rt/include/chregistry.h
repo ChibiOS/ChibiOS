@@ -110,6 +110,7 @@ extern "C" {
   thread_t *chRegNextThread(thread_t *tp);
   thread_t *chRegFindThreadByName(const char *name);
   thread_t *chRegFindThreadByPointer(thread_t *tp);
+  thread_t *chRegFindThreadByWorkingArea(stkalign_t *wa);
 #ifdef __cplusplus
 }
 #endif
