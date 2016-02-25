@@ -1312,11 +1312,15 @@ int32 OS_TaskCreate(uint32 *task_id,
      error code is not very appropriate but this case seems to not be
      coveded by the specification.*/
   if ((tp = chRegFindThreadByWorkingArea((stkalign_t *)stack_pointer)) != NULL) {
+    /* Releasing the thread reference.*/
+    chThdRelease(tp);
     return OS_ERR_NO_FREE_IDS;
   }
 
   /* Checking if the name is already in use.*/
   if ((tp = chRegFindThreadByName(task_name)) != NULL) {
+    /* Releasing the thread reference.*/
+    chThdRelease(tp);
     return OS_ERR_NAME_TAKEN;
   }
 
@@ -1389,6 +1393,9 @@ int32 OS_TaskDelete(uint32 task_id) {
   if (tp->osal_delete_handler != NULL) {
     ((funcptr_t)(tp->osal_delete_handler))();
   }
+
+  /* Releasing the thread reference.*/
+  chThdRelease(tp);
 
   return OS_SUCCESS;
 }
@@ -1490,6 +1497,9 @@ int32 OS_TaskSetPriority(uint32 task_id, uint32 new_priority) {
   chSchRescheduleS();
   chSysUnlock();
 
+  /* Releasing the thread reference.*/
+  chThdRelease(tp);
+
   return OS_SUCCESS;
 }
 
@@ -1549,6 +1559,9 @@ int32 OS_TaskGetIdByName(uint32 *task_id, const char *task_name) {
 
   *task_id = (uint32)tp;
 
+  /* Releasing the thread reference.*/
+  chThdRelease(tp);
+
   return OS_SUCCESS;
 }
 
@@ -1584,6 +1597,9 @@ int32 OS_TaskGetInfo(uint32 task_id, OS_task_prop_t *task_prop) {
   task_prop->stack_size = (uint32)MEM_ALIGN_NEXT(wasize, PORT_STACK_ALIGN);
   task_prop->priority   = (uint32)256U - (uint32)tp->realprio;
   task_prop->OStask_id  = task_id;
+
+  /* Releasing the thread reference.*/
+  chThdRelease(tp);
 
   return OS_SUCCESS;
 }
