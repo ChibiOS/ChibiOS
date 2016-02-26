@@ -39,6 +39,13 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   Idle thread working area.
+ */
+THD_WORKING_AREA(ch_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+#endif
+
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -152,8 +159,8 @@ void chSysInit(void) {
   {
     static const thread_descriptor_t idle_descriptor = {
       "idle",
-      THD_WORKING_AREA_BASE(ch.idle_thread_wa),
-      THD_WORKING_AREA_END(ch.idle_thread_wa),
+      THD_WORKING_AREA_BASE(ch_idle_thread_wa),
+      THD_WORKING_AREA_END(ch_idle_thread_wa),
       IDLEPRIO,
       _idle_thread,
       NULL

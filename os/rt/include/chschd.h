@@ -490,12 +490,6 @@ struct ch_system {
    */
   kernel_stats_t        kernel_stats;
 #endif
-#if CH_CFG_NO_IDLE_THREAD == FALSE
-  /**
-   * @brief   Idle thread working area.
-   */
-  THD_WORKING_AREA(idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
-#endif
 };
 
 /*===========================================================================*/
