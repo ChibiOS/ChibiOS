@@ -1311,7 +1311,8 @@ int32 OS_TaskCreate(uint32 *task_id,
   /* Checking if this working area is already in use by some thread, the
      error code is not very appropriate but this case seems to not be
      coveded by the specification.*/
-  if ((tp = chRegFindThreadByWorkingArea((stkalign_t *)stack_pointer)) != NULL) {
+  tp = chRegFindThreadByWorkingArea((stkalign_t *)stack_pointer);
+  if (tp != NULL) {
     /* Releasing the thread reference.*/
     chThdRelease(tp);
     return OS_ERR_NO_FREE_IDS;
@@ -1339,8 +1340,10 @@ int32 OS_TaskCreate(uint32 *task_id,
     NULL
   };
 
-  /* Creating the task.*/
+  /* Creating the task and detaching it, other APIs will have to gain a
+     reference using the registry API.*/
   tp = chThdCreate(&td);
+  chThdRelease(tp);
 
   /* Storing the task id.*/
   *task_id = (uint32)tp;
@@ -1377,8 +1380,9 @@ int32 OS_TaskInstallDeleteHandler(void *function_pointer) {
  */
 int32 OS_TaskDelete(uint32 task_id) {
   thread_t *tp = (thread_t *)task_id;
+  funcptr_t fp;
 
-  /* Check for thread validity.*/
+  /* Check for thread validity, getting a reference.*/
   if (chRegFindThreadByPointer(tp) == NULL) {
     return OS_ERR_INVALID_ID;
   }
@@ -1386,16 +1390,16 @@ int32 OS_TaskDelete(uint32 task_id) {
   /* Asking for thread termination.*/
   chThdTerminate(tp);
 
-  /* Waiting for termination.*/
+  /* Getting the delete handler while the thread is still referenced.*/
+  fp = (funcptr_t)tp->osal_delete_handler;
+
+  /* Waiting for termination, releasing the reference.*/
   chThdWait(tp);
 
   /* Calling the delete handler, if defined.*/
-  if (tp->osal_delete_handler != NULL) {
-    ((funcptr_t)(tp->osal_delete_handler))();
+  if (fp != NULL) {
+    fp();
   }
-
-  /* Releasing the thread reference.*/
-  chThdRelease(tp);
 
   return OS_SUCCESS;
 }

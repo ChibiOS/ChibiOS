@@ -462,9 +462,9 @@ void chThdExit(msg_t msg) {
  * @details The thread goes in the @p CH_STATE_FINAL state holding the
  *          specified exit status code, other threads can retrieve the
  *          exit status code by invoking the function @p chThdWait().
- * @post    Exiting a thread that does not have references (detached)
- *          causes the thread to remain in the registry. It can only
- *          be removed by performing a registry scan operation.
+ * @post    Exiting a non-static thread that does not have references
+ *          (detached) causes the thread to remain in the registry.
+ *          It can only be removed by performing a registry scan operation.
  * @post    Eventual code after this function will never be executed,
  *          this function never returns. The compiler has no way to
  *          know this so do not assume that the compiler would remove
@@ -488,6 +488,21 @@ void chThdExitS(msg_t msg) {
   while (list_notempty(&tp->waiting)) {
     (void) chSchReadyI(list_remove(&tp->waiting));
   }
+#endif
+
+#if CH_CFG_USE_REGISTRY == TRUE
+  /* Static threads with no references are immediately removed from the
+     registry because there is no memory to recover.*/
+#if CH_CFG_USE_DYNAMIC == TRUE
+  if ((tp->refs == (trefs_t)0) &&
+      (tp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC) {
+    REG_REMOVE(tp);
+  }
+#else
+  if (tp->refs == (trefs_t)0) {
+    REG_REMOVE(tp);
+  }
+#endif
 #endif
 
   /* Going into final state.*/
