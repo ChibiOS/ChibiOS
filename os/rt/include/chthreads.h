@@ -181,6 +181,13 @@ extern "C" {
   thread_t *chThdCreateStatic(void *wsp, size_t size,
                               tprio_t prio, tfunc_t pf, void *arg);
   thread_t *chThdStart(thread_t *tp);
+  thread_t *chThdAddRef(thread_t *tp);
+  void chThdRelease(thread_t *tp);
+  void chThdExit(msg_t msg);
+  void chThdExitS(msg_t msg);
+#if CH_CFG_USE_WAITEXIT == TRUE
+  msg_t chThdWait(thread_t *tp);
+#endif
   tprio_t chThdSetPriority(tprio_t newprio);
   void chThdTerminate(thread_t *tp);
   msg_t chThdSuspendS(thread_reference_t *trp);
@@ -195,11 +202,6 @@ extern "C" {
   void chThdSleepUntil(systime_t time);
   systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next);
   void chThdYield(void);
-  void chThdExit(msg_t msg);
-  void chThdExitS(msg_t msg);
-#if CH_CFG_USE_WAITEXIT == TRUE
-  msg_t chThdWait(thread_t *tp);
-#endif
 #ifdef __cplusplus
 }
 #endif

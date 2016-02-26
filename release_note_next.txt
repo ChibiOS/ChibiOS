@@ -24,12 +24,14 @@ a series of important new features.
 
 - Common ports architecture.
 - Ability to use the new shared RTOS components.
+- New threading API, now creating static threads is even faster.
+- Extended priority range from 1..127 to 1..255.
+- Enhanced dynamic threading, safer and easier to use.
+- Enhanced Registry, it is now possible to find threads by name, by pointer
+  or by working area.
 - Enhanced trace buffer, it is able to store events regarding not just threads
   but also IRQs, halts and user events. The trace record now stores both the
   "slow" system time and a RT stamp for increased accuracy.
-- Enhanced Registry, it is now possible to find threads by name or by pointer.
-- New threading API, now creating static threads is even faster.
-- Extended priority range to 1..255.
 - New kernel hooks for a more flexible code instrumentation.
 - Experimental NASA OSAL implementation.
 

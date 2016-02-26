@@ -235,7 +235,7 @@ struct ch_thread {
    * @brief   Various thread flags.
    */
   tmode_t               flags;
-#if (CH_CFG_USE_DYNAMIC == TRUE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   References to this thread.
    */

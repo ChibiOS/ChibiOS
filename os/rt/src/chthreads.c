@@ -103,10 +103,8 @@ thread_t *_thread_init(thread_t *tp, const char *name, tprio_t prio) {
 #if CH_DBG_THREADS_PROFILING == TRUE
   tp->time      = (systime_t)0;
 #endif
-#if CH_CFG_USE_DYNAMIC == TRUE
-  tp->refs      = (trefs_t)1;
-#endif
 #if CH_CFG_USE_REGISTRY == TRUE
+  tp->refs      = (trefs_t)1;
   tp->name      = name;
   REG_INSERT(tp);
 #endif
@@ -145,6 +143,10 @@ void _thread_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p CH_STATE_WTSTART.
+ * @post    The created thread has a reference counter set to one, it is
+ *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          in order to release the reference. The thread persists in the
+ *          registry until its reference counter reaches zero.
  * @post    The initialized thread can be subsequently started by invoking
  *          @p chThdStart(), @p chThdStartI() or @p chSchWakeupS()
  *          depending on the execution context.
@@ -193,6 +195,10 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p CH_STATE_WTSTART.
+ * @post    The created thread has a reference counter set to one, it is
+ *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          in order to release the reference. The thread persists in the
+ *          registry until its reference counter reaches zero.
  * @post    The initialized thread can be subsequently started by invoking
  *          @p chThdStart(), @p chThdStartI() or @p chSchWakeupS()
  *          depending on the execution context.
@@ -224,6 +230,10 @@ thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp) {
 /**
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized and make ready to execute.
+ * @post    The created thread has a reference counter set to one, it is
+ *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          in order to release the reference. The thread persists in the
+ *          registry until its reference counter reaches zero.
  * @post    The initialized thread can be subsequently started by invoking
  *          @p chThdStart(), @p chThdStartI() or @p chSchWakeupS()
  *          depending on the execution context.
@@ -247,6 +257,10 @@ thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
 /**
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized and make ready to execute.
+ * @post    The created thread has a reference counter set to one, it is
+ *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          in order to release the reference. The thread persists in the
+ *          registry until its reference counter reaches zero.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  *
@@ -275,6 +289,10 @@ thread_t *chThdCreate(const thread_descriptor_t *tdp) {
 
 /**
  * @brief   Creates a new thread into a static memory area.
+ * @post    The created thread has a reference counter set to one, it is
+ *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          in order to release the reference. The thread persists in the
+ *          registry until its reference counter reaches zero.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  *
@@ -345,6 +363,186 @@ thread_t *chThdStart(thread_t *tp) {
 
   return tp;
 }
+
+/**
+ * @brief   Adds a reference to a thread object.
+ * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in
+ *          order to use this function.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The same thread pointer passed as parameter
+ *                      representing the new reference.
+ *
+ * @api
+ */
+thread_t *chThdAddRef(thread_t *tp) {
+
+  chSysLock();
+  chDbgAssert(tp->refs < (trefs_t)255, "too many references");
+  tp->refs++;
+  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Releases a reference to a thread object.
+ * @details If the references counter reaches zero <b>and</b> the thread
+ *          is in the @p CH_STATE_FINAL state then the thread's memory is
+ *          returned to the proper allocator and the thread is removed
+ *          from the registry.<br>
+ *          Threads whose counter reaches zero and are still active become
+ *          "detached" and will be removed from registry on termination.
+ * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in
+ *          order to use this function.
+ * @note    Static threads are not affected.
+ *
+ * @param[in] tp        pointer to the thread
+ *
+ * @api
+ */
+void chThdRelease(thread_t *tp) {
+
+  chSysLock();
+  chDbgAssert(tp->refs > (trefs_t)0, "not referenced");
+  tp->refs--;
+
+  /* If the references counter reaches zero and the thread is in its
+     terminated state then the memory can be returned to the proper
+     allocator.*/
+  if ((tp->refs == (trefs_t)0) && (tp->state == CH_STATE_FINAL)) {
+    REG_REMOVE(tp);
+    chSysUnlock();
+
+#if CH_CFG_USE_DYNAMIC == TRUE
+    switch (tp->flags & CH_FLAG_MODE_MASK) {
+#if CH_CFG_USE_HEAP == TRUE
+    case CH_FLAG_MODE_HEAP:
+      chHeapFree(chthdGetStackLimitX(tp));
+      break;
+#endif
+#if CH_CFG_USE_MEMPOOLS == TRUE
+    case CH_FLAG_MODE_MPOOL:
+      chPoolFree(tp->mpool, chthdGetStackLimitX(tp));
+      break;
+#endif
+    default:
+      /* Nothing else to do for static threads.*/
+      break;
+    }
+    return;
+#endif /* CH_CFG_USE_DYNAMIC == TRUE */
+  }
+  chSysUnlock();
+}
+
+/**
+ * @brief   Terminates the current thread.
+ * @details The thread goes in the @p CH_STATE_FINAL state holding the
+ *          specified exit status code, other threads can retrieve the
+ *          exit status code by invoking the function @p chThdWait().
+ * @post    Eventual code after this function will never be executed,
+ *          this function never returns. The compiler has no way to
+ *          know this so do not assume that the compiler would remove
+ *          the dead code.
+ *
+ * @param[in] msg       thread exit code
+ *
+ * @api
+ */
+void chThdExit(msg_t msg) {
+
+  chSysLock();
+  chThdExitS(msg);
+  /* The thread never returns here.*/
+}
+
+/**
+ * @brief   Terminates the current thread.
+ * @details The thread goes in the @p CH_STATE_FINAL state holding the
+ *          specified exit status code, other threads can retrieve the
+ *          exit status code by invoking the function @p chThdWait().
+ * @post    Exiting a thread that does not have references (detached)
+ *          causes the thread to remain in the registry. It can only
+ *          be removed by performing a registry scan operation.
+ * @post    Eventual code after this function will never be executed,
+ *          this function never returns. The compiler has no way to
+ *          know this so do not assume that the compiler would remove
+ *          the dead code.
+ *
+ * @param[in] msg       thread exit code
+ *
+ * @sclass
+ */
+void chThdExitS(msg_t msg) {
+  thread_t *tp = currp;
+
+  /* Storing exit message.*/
+  tp->u.exitcode = msg;
+
+  /* Exit handler hook.*/
+  CH_CFG_THREAD_EXIT_HOOK(tp);
+
+#if CH_CFG_USE_WAITEXIT == TRUE
+  /* Waking up any waiting thread.*/
+  while (list_notempty(&tp->waiting)) {
+    (void) chSchReadyI(list_remove(&tp->waiting));
+  }
+#endif
+
+  /* Going into final state.*/
+  chSchGoSleepS(CH_STATE_FINAL);
+
+  /* The thread never returns here.*/
+  chDbgAssert(false, "zombies apocalypse");
+}
+
+#if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Blocks the execution of the invoking thread until the specified
+ *          thread terminates then the exit code is returned.
+ * @details This function waits for the specified thread to terminate then
+ *          decrements its reference counter, if the counter reaches zero then
+ *          the thread working area is returned to the proper allocator and
+ *          the thread is removed from registry.
+ * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
+ *          order to use this function.
+ * @post    Enabling @p chThdWait() requires 2-4 (depending on the
+ *          architecture) extra bytes in the @p thread_t structure.
+ * @note    If @p CH_CFG_USE_DYNAMIC is not specified this function just waits
+ *          for the thread termination, no memory allocators are involved.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The exit code from the terminated thread.
+ *
+ * @api
+ */
+msg_t chThdWait(thread_t *tp) {
+  msg_t msg;
+
+  chDbgCheck(tp != NULL);
+
+  chSysLock();
+  chDbgAssert(tp != currp, "waiting self");
+#if CH_CFG_USE_REGISTRY == TRUE
+  chDbgAssert(tp->refs > (trefs_t)0, "no references");
+#endif
+
+  if (tp->state != CH_STATE_FINAL) {
+    list_insert(currp, &tp->waiting);
+    chSchGoSleepS(CH_STATE_WTEXIT);
+  }
+  msg = tp->u.exitcode;
+  chSysUnlock();
+
+#if CH_CFG_USE_REGISTRY == TRUE
+  /* Releasing a reference to the thread.*/
+  chThdRelease(tp);
+#endif
+
+  return msg;
+}
+#endif /* CH_CFG_USE_WAITEXIT */
 
 /**
  * @brief   Changes the running thread priority level then reschedules if
@@ -481,124 +679,6 @@ void chThdYield(void) {
   chSchDoYieldS();
   chSysUnlock();
 }
-
-/**
- * @brief   Terminates the current thread.
- * @details The thread goes in the @p CH_STATE_FINAL state holding the
- *          specified exit status code, other threads can retrieve the
- *          exit status code by invoking the function @p chThdWait().
- * @post    Eventual code after this function will never be executed,
- *          this function never returns. The compiler has no way to
- *          know this so do not assume that the compiler would remove
- *          the dead code.
- *
- * @param[in] msg       thread exit code
- *
- * @api
- */
-void chThdExit(msg_t msg) {
-
-  chSysLock();
-  chThdExitS(msg);
-  /* The thread never returns here.*/
-}
-
-/**
- * @brief   Terminates the current thread.
- * @details The thread goes in the @p CH_STATE_FINAL state holding the
- *          specified exit status code, other threads can retrieve the
- *          exit status code by invoking the function @p chThdWait().
- * @post    Eventual code after this function will never be executed,
- *          this function never returns. The compiler has no way to
- *          know this so do not assume that the compiler would remove
- *          the dead code.
- *
- * @param[in] msg       thread exit code
- *
- * @sclass
- */
-void chThdExitS(msg_t msg) {
-  thread_t *tp = currp;
-
-  tp->u.exitcode = msg;
-#if defined(CH_CFG_THREAD_EXIT_HOOK)
-  CH_CFG_THREAD_EXIT_HOOK(tp);
-#endif
-#if CH_CFG_USE_WAITEXIT == TRUE
-  while (list_notempty(&tp->waiting)) {
-    (void) chSchReadyI(list_remove(&tp->waiting));
-  }
-#endif
-#if CH_CFG_USE_REGISTRY == TRUE
-  /* Static threads are immediately removed from the registry because
-     there is no memory to recover.*/
-  if ((tp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC) {
-    REG_REMOVE(tp);
-  }
-#endif
-  chSchGoSleepS(CH_STATE_FINAL);
-
-  /* The thread never returns here.*/
-  chDbgAssert(false, "zombies apocalypse");
-}
-
-#if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Blocks the execution of the invoking thread until the specified
- *          thread terminates then the exit code is returned.
- * @details This function waits for the specified thread to terminate then
- *          decrements its reference counter, if the counter reaches zero then
- *          the thread working area is returned to the proper allocator.<br>
- *          The memory used by the exited thread is handled in different ways
- *          depending on the API that spawned the thread:
- *          - If the thread was spawned by @p chThdCreateStatic() or by
- *            @p chThdCreateI() then nothing happens and the thread working
- *            area is not released or modified in any way. This is the
- *            default, totally static, behavior.
- *          - If the thread was spawned by @p chThdCreateFromHeap() then
- *            the working area is returned to the system heap.
- *          - If the thread was spawned by @p chThdCreateFromMemoryPool()
- *            then the working area is returned to the owning memory pool.
- *          .
- * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
- *          order to use this function.
- * @post    Enabling @p chThdWait() requires 2-4 (depending on the
- *          architecture) extra bytes in the @p thread_t structure.
- * @post    After invoking @p chThdWait() the thread pointer becomes invalid
- *          and must not be used as parameter for further system calls.
- * @note    If @p CH_CFG_USE_DYNAMIC is not specified this function just waits for
- *          the thread termination, no memory allocators are involved.
- *
- * @param[in] tp        pointer to the thread
- * @return              The exit code from the terminated thread.
- *
- * @api
- */
-msg_t chThdWait(thread_t *tp) {
-  msg_t msg;
-
-  chDbgCheck(tp != NULL);
-
-  chSysLock();
-  chDbgAssert(tp != currp, "waiting self");
-#if CH_CFG_USE_DYNAMIC == TRUE
-  chDbgAssert(tp->refs > (trefs_t)0, "not referenced");
-#endif
-  if (tp->state != CH_STATE_FINAL) {
-    list_insert(currp, &tp->waiting);
-    chSchGoSleepS(CH_STATE_WTEXIT);
-  }
-  msg = tp->u.exitcode;
-  chSysUnlock();
-
-#if CH_CFG_USE_DYNAMIC == TRUE
-  /* Releasing a lock if it is a dynamic thread.*/
-  chThdRelease(tp);
-#endif
-
-  return msg;
-}
-#endif /* CH_CFG_USE_WAITEXIT */
 
 /**
  * @brief   Sends the current thread sleeping and sets a reference variable.
