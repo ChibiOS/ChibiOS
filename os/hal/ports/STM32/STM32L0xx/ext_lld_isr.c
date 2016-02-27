@@ -59,7 +59,8 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE01_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & ((1U << 0) | (1U << 1));
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & ((1U << 0) | (1U << 1));
   EXTI->PR = pr;
   if (pr & (1U << 0))
     EXTD1.config->channels[0].cb(&EXTD1, 0);
@@ -81,7 +82,8 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE23_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & ((1U << 2) | (1U << 3));
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & ((1U << 2) | (1U << 3));
   EXTI->PR = pr;
   if (pr & (1U << 2))
     EXTD1.config->channels[2].cb(&EXTD1, 2);
@@ -103,9 +105,10 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE4_15_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & ((1U << 4)  | (1U << 5)  | (1U << 6)  | (1U << 7)  |
-                               (1U << 8)  | (1U << 9)  | (1U << 10) | (1U << 11) |
-                               (1U << 12) | (1U << 13) | (1U << 14) | (1U << 15));
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & ((1U << 4)  | (1U << 5)  | (1U << 6)  | (1U << 7)  |
+                     (1U << 8)  | (1U << 9)  | (1U << 10) | (1U << 11) |
+                     (1U << 12) | (1U << 13) | (1U << 14) | (1U << 15));
   EXTI->PR = pr;
   if (pr & (1U << 4))
     EXTD1.config->channels[4].cb(&EXTD1, 4);
@@ -147,7 +150,8 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE16_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & (1U << 16);
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & (1U << 16);
   EXTI->PR = pr;
   if (pr & (1U << 16))
     EXTD1.config->channels[16].cb(&EXTD1, 16);
@@ -167,7 +171,8 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE171920_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  pr = EXTI->PR & EXTI->IMR & ((1U << 17) | (1U << 19) | (1U << 20));
+  pr = EXTI->PR;
+  pr &= EXTI->IMR & ((1U << 17) | (1U << 19) | (1U << 20));
   EXTI->PR = pr;
   if (pr & (1U << 17))
     EXTD1.config->channels[17].cb(&EXTD1, 17);
@@ -198,7 +203,8 @@ OSAL_IRQ_HANDLER(STM32_EXTI_LINE2122_HANDLER) {
   {
     uint32_t pr;
 
-    pr = EXTI->PR & EXTI->IMR & ((1U << 21) | (1U << 22));
+    pr = EXTI->PR;
+    pr &= EXTI->IMR & ((1U << 21) | (1U << 22));
     EXTI->PR = pr;
     if (pr & (1U << 21))
       EXTD1.config->channels[21].cb(&EXTD1, 21);
