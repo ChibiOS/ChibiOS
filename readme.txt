@@ -73,6 +73,7 @@
 
 *** 2.6.10 ***
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
+- FIX: Fixed race condition in RT registry (bug #712). 
 - FIX: Fixed shift of signed constant causes warnings with IAR compiler
        (bug #709).
 - FIX: Fixed ARM errata 752419 (bug #706).

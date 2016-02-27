@@ -77,8 +77,7 @@ void chThdRelease(Thread *tp) {
   chSysLock();
   chDbgAssert(tp->p_refs > 0, "chThdRelease(), #1", "not referenced");
   refs = --tp->p_refs;
-  chSysUnlock();
-
+ 
   /* If the references counter reaches zero and the thread is in its
      terminated state then the memory can be returned to the proper
      allocator. Of course static threads are not affected.*/
@@ -89,17 +88,21 @@ void chThdRelease(Thread *tp) {
 #if CH_USE_REGISTRY
       REG_REMOVE(tp);
 #endif
-      chHeapFree(tp);
-      break;
+     chSysUnlock();
+     chHeapFree(tp);
+     break;
 #endif
 #if CH_USE_MEMPOOLS
     case THD_MEM_MODE_MEMPOOL:
 #if CH_USE_REGISTRY
       REG_REMOVE(tp);
 #endif
+      chSysUnlock();
       chPoolFree(tp->p_mpool, tp);
       break;
 #endif
+    default:
+      chSysUnlock();
     }
   }
 }
