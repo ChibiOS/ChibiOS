@@ -137,7 +137,7 @@ osStatus osThreadTerminate(osThreadId thread_id) {
        implemented using the registry.*/
     chThdExit(0);
   }
-  chEvtSignal((thread_t *)thread_id, CH_EVENT_TERMINATE);
+  chThdTerminate(thread_id);
   chThdWait((thread_t *)thread_id);
 
   return osOK;
