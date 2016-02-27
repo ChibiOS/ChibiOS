@@ -78,7 +78,7 @@ OSAL_IRQ_HANDLER(STM32_TIM2_HANDLER) {
   gpt_lld_serve_interrupt(&PWMD2, sr);
 #endif
 
-#if STM32_GPT_USE_TIM2
+#if STM32_ST_USE_TIM2
   st_lld_serve_interrupt();
 #endif
 
