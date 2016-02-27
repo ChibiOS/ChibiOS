@@ -79,6 +79,7 @@
 *****************************************************************************
 
 *** Next ***
+- ALL: Startup files relicensed under Apache 2.0.
 - VAR: The shell now accepts quoted arguments.
 - VAR: Centralized all usual shell commands into a single shell_cmd.c
        file. This will allow to update all demos with a single change.
