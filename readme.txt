@@ -80,6 +80,8 @@
 
 *** Next ***
 - ALL: Startup files relicensed under Apache 2.0.
+- ALL: Enhanced GCC .ld files with multiple flash regions and capability to
+       insert additional sections within the standard loading rules.
 - VAR: The shell now accepts quoted arguments.
 - VAR: Centralized all usual shell commands into a single shell_cmd.c
        file. This will allow to update all demos with a single change.
