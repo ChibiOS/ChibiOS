@@ -73,6 +73,8 @@
 
 *** 2.6.10 ***
 - NEW: Cortex-M7 support in the kernel, generic demo application added.
+- FIX: Fixed state check in lwIP when SYS_LIGHTWEIGHT_PROT is disabled
+       (bug #713).
 - FIX: Fixed race condition in RT registry (bug #712). 
 - FIX: Fixed shift of signed constant causes warnings with IAR compiler
        (bug #709).
