@@ -92,7 +92,7 @@ static THD_FUNCTION(irq_storm_thread, arg) {
   chRegSetThreadName("irq_storm");
 
   /* Thread loop, until terminated.*/
-  while ((chEvtGetEventsX() & CH_EVENT_TERMINATE) != 0U) {
+  while (chThdShouldTerminateX() == false) {
 
     /* Waiting for a message.*/
    chMBFetch(&mb[me], &msg, TIME_INFINITE);
@@ -271,7 +271,7 @@ void irq_storm_execute(const irq_storm_config_t *cfg) {
 
   /* Terminating threads and cleaning up.*/
   for (i = 0; i < IRQ_STORM_CFG_NUM_THREADS; i++) {
-    chEvtSignal(threads[i], CH_EVENT_TERMINATE);
+    chThdTerminate(threads[i]);
     chThdWait(threads[i]);
     threads[i] = NULL;
   }

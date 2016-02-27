@@ -183,11 +183,11 @@ int main(void) {
       /* Waiting for an exit event then freeing terminated shells.*/
       chEvtWaitAny(EVENT_MASK(0));
       if (chThdTerminatedX(shelltp1)) {
-        chThdFreeToHeap(shelltp1);
+        chThdRelease(shelltp1);
         shelltp1 = NULL;
       }
       if (chThdTerminatedX(shelltp2)) {
-        chThdFreeToHeap(shelltp2);
+        chThdRelease(shelltp2);
         shelltp2 = NULL;
       }
     }

@@ -5,13 +5,13 @@
 #
 
 # Compiler options
-OPT = $(USE_OPT)
-COPT = $(USE_COPT)
-CPPOPT = $(USE_CPPOPT)
+OPT    := $(USE_OPT)
+COPT   := $(USE_COPT)
+CPPOPT := $(USE_CPPOPT)
 
 # Garbage collection
 ifeq ($(USE_LINK_GC),yes)
-  OPT += -ffunction-sections -fdata-sections -fno-common
+  OPT   += -ffunction-sections -fdata-sections -fno-common
   LDOPT := ,--gc-sections
 else
   LDOPT :=
@@ -32,11 +32,11 @@ ifeq ($(USE_FPU),)
   USE_FPU = no
 endif
 ifneq ($(USE_FPU),no)
-  OPT += -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16 -fsingle-precision-constant
-  DDEFS += -DCORTEX_USE_FPU=TRUE
+  OPT    += -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+  DDEFS  += -DCORTEX_USE_FPU=TRUE
   DADEFS += -DCORTEX_USE_FPU=TRUE
 else
-  DDEFS += -DCORTEX_USE_FPU=FALSE
+  DDEFS  += -DCORTEX_USE_FPU=FALSE
   DADEFS += -DCORTEX_USE_FPU=FALSE
 endif
 
@@ -61,11 +61,11 @@ endif
 ifeq ($(BUILDDIR),.)
   BUILDDIR = build
 endif
-OUTFILES = $(BUILDDIR)/$(PROJECT).elf \
-           $(BUILDDIR)/$(PROJECT).hex \
-           $(BUILDDIR)/$(PROJECT).bin \
-           $(BUILDDIR)/$(PROJECT).dmp \
-           $(BUILDDIR)/$(PROJECT).list
+OUTFILES := $(BUILDDIR)/$(PROJECT).elf \
+            $(BUILDDIR)/$(PROJECT).hex \
+            $(BUILDDIR)/$(PROJECT).bin \
+            $(BUILDDIR)/$(PROJECT).dmp \
+            $(BUILDDIR)/$(PROJECT).list
 
 ifdef SREC
   OUTFILES += $(BUILDDIR)/$(PROJECT).srec
@@ -73,42 +73,43 @@ endif
 
 # Source files groups and paths
 ifeq ($(USE_THUMB),yes)
-  TCSRC += $(CSRC)
+  TCSRC   += $(CSRC)
   TCPPSRC += $(CPPSRC)
 else
-  ACSRC += $(CSRC)
+  ACSRC   += $(CSRC)
   ACPPSRC += $(CPPSRC)
 endif
-ASRC	  = $(ACSRC)$(ACPPSRC)
-TSRC	  = $(TCSRC)$(TCPPSRC)
-SRCPATHS  = $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(ASRC)) $(dir $(TSRC)))
+ASRC	  := $(ACSRC)$(ACPPSRC)
+TSRC	  := $(TCSRC)$(TCPPSRC)
+SRCPATHS  := $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(ASRC)) $(dir $(TSRC)))
 
 # Various directories
-OBJDIR    = $(BUILDDIR)/obj
-LSTDIR    = $(BUILDDIR)/lst
+OBJDIR    := $(BUILDDIR)/obj
+LSTDIR    := $(BUILDDIR)/lst
 
 # Object files groups
-ACOBJS    = $(addprefix $(OBJDIR)/, $(notdir $(ACSRC:.c=.o)))
-ACPPOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ACPPSRC:.cpp=.o)))
-TCOBJS    = $(addprefix $(OBJDIR)/, $(notdir $(TCSRC:.c=.o)))
-TCPPOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
-ASMOBJS   = $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
-ASMXOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
-OBJS	  = $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
+ACOBJS    := $(addprefix $(OBJDIR)/, $(notdir $(ACSRC:.c=.o)))
+ACPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(ACPPSRC:.cpp=.o)))
+TCOBJS    := $(addprefix $(OBJDIR)/, $(notdir $(TCSRC:.c=.o)))
+TCPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
+ASMOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
+ASMXOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
+OBJS	  := $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
 
 # Paths
-IINCDIR   = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
-LLIBDIR   = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
+IINCDIR   := $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
+LLIBDIR   := $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
+LLIBDIR   += -L$(dir $(LDSCRIPT))
 
 # Macros
-DEFS      = $(DDEFS) $(UDEFS)
-ADEFS 	  = $(DADEFS) $(UADEFS)
+DEFS      := $(DDEFS) $(UDEFS)
+ADEFS 	  := $(DADEFS) $(UADEFS)
 
 # Libs
-LIBS      = $(DLIBS) $(ULIBS)
+LIBS      := $(DLIBS) $(ULIBS)
 
 # Various settings
-MCFLAGS   = -mcpu=$(MCU)
+MCFLAGS   := -mcpu=$(MCU)
 ODFLAGS	  = -x --syms
 ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
 ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)

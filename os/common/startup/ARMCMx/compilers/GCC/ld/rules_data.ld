@@ -43,92 +43,6 @@ ENTRY(Reset_Handler)
 
 SECTIONS
 {
-    . = 0;
-    _text = .;
-
-    startup : ALIGN(16) SUBALIGN(16)
-    {
-        KEEP(*(.vectors))
-    } > flash
-
-    constructors : ALIGN(4) SUBALIGN(4)
-    {
-        __init_array_start = .;
-        KEEP(*(SORT(.init_array.*)))
-        KEEP(*(.init_array))
-        __init_array_end = .;
-    } > flash
-
-    destructors : ALIGN(4) SUBALIGN(4)
-    {
-        __fini_array_start = .;
-        KEEP(*(.fini_array))
-        KEEP(*(SORT(.fini_array.*)))
-        __fini_array_end = .;
-    } > flash
-
-    .text : ALIGN(16) SUBALIGN(16)
-    {
-        *(.text)
-        *(.text.*)
-        *(.rodata)
-        *(.rodata.*)
-        *(.glue_7t)
-        *(.glue_7)
-        *(.gcc*)
-    } > flash
-
-    .ARM.extab :
-    {
-        *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > flash
-
-    .ARM.exidx : {
-        __exidx_start = .;
-        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        __exidx_end = .;
-     } > flash
-
-    .eh_frame_hdr :
-    {
-        *(.eh_frame_hdr)
-    } > flash
-
-    .eh_frame : ONLY_IF_RO
-    {
-        *(.eh_frame)
-    } > flash
-
-    .textalign : ONLY_IF_RO
-    {
-        . = ALIGN(8);
-    } > flash
-
-    /* Legacy symbol, not used anywhere.*/
-    . = ALIGN(4);
-    PROVIDE(_etext = .);
-
-    /* Special section for exceptions stack.*/
-    .mstack :
-    {
-        . = ALIGN(8);
-        __main_stack_base__ = .;
-        . += __main_stack_size__;
-        . = ALIGN(8);
-        __main_stack_end__ = .;
-    } > MAIN_STACK_RAM
-
-    /* Special section for process stack.*/
-    .pstack :
-    {
-        __process_stack_base__ = .;
-        __main_thread_stack_base__ = .;
-        . += __process_stack_size__;
-        . = ALIGN(8);
-        __process_stack_end__ = .;
-        __main_thread_stack_end__ = .;
-    } > PROCESS_STACK_RAM
-
     .data : ALIGN(4)
     {
         . = ALIGN(4);
@@ -142,7 +56,7 @@ SECTIONS
         . = ALIGN(4);
         PROVIDE(_edata = .);
         _data_end = .;
-    } > DATA_RAM AT > flash
+    } > DATA_RAM AT > DATA_RAM_LMA
 
     .bss (NOLOAD) : ALIGN(4)
     {
@@ -164,7 +78,7 @@ SECTIONS
         *(.ram0_init)
         *(.ram0_init.*)
         . = ALIGN(4);
-    } > ram0 AT > flash
+    } > ram0 AT > RAM_INIT_FLASH_LMA
 
     .ram0 (NOLOAD) : ALIGN(4)
     {
@@ -188,7 +102,7 @@ SECTIONS
         *(.ram1_init)
         *(.ram1_init.*)
         . = ALIGN(4);
-    } > ram1 AT > flash
+    } > ram1 AT > RAM_INIT_FLASH_LMA
 
     .ram1 (NOLOAD) : ALIGN(4)
     {
@@ -212,7 +126,7 @@ SECTIONS
         *(.ram2_init)
         *(.ram2_init.*)
         . = ALIGN(4);
-    } > ram2 AT > flash
+    } > ram2 AT > RAM_INIT_FLASH_LMA
 
     .ram2 (NOLOAD) : ALIGN(4)
     {
@@ -236,7 +150,7 @@ SECTIONS
         *(.ram3_init)
         *(.ram3_init.*)
         . = ALIGN(4);
-    } > ram3 AT > flash
+    } > ram3 AT > RAM_INIT_FLASH_LMA
 
     .ram3 (NOLOAD) : ALIGN(4)
     {
@@ -260,7 +174,7 @@ SECTIONS
         *(.ram4_init)
         *(.ram4_init.*)
         . = ALIGN(4);
-    } > ram4 AT > flash
+    } > ram4 AT > RAM_INIT_FLASH_LMA
 
     .ram4 (NOLOAD) : ALIGN(4)
     {
@@ -284,7 +198,7 @@ SECTIONS
         *(.ram5_init)
         *(.ram5_init.*)
         . = ALIGN(4);
-    } > ram5 AT > flash
+    } > ram5 AT > RAM_INIT_FLASH_LMA
 
     .ram5 (NOLOAD) : ALIGN(4)
     {
@@ -308,7 +222,7 @@ SECTIONS
         *(.ram6_init)
         *(.ram6_init.*)
         . = ALIGN(4);
-    } > ram6 AT > flash
+    } > ram6 AT > RAM_INIT_FLASH_LMA
 
     .ram6 (NOLOAD) : ALIGN(4)
     {
@@ -332,7 +246,7 @@ SECTIONS
         *(.ram7_init)
         *(.ram7_init.*)
         . = ALIGN(4);
-    } > ram7 AT > flash
+    } > ram7 AT > RAM_INIT_FLASH_LMA
 
     .ram7 (NOLOAD) : ALIGN(4)
     {

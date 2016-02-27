@@ -239,7 +239,7 @@ static void ShellHandler(eventid_t id) {
 
   (void)id;
   if (chThdTerminatedX(shelltp)) {
-    chThdFreeToHeap(shelltp);         /* Returning memory to heap.        */
+    chThdWait(shelltp);                 /* Returning memory to heap.        */
     shelltp = NULL;
   }
 }
