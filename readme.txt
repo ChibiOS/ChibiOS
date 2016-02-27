@@ -73,6 +73,7 @@
 *****************************************************************************
 
 *** 16.1.4 ***
+- ALL: Startup files relicensed under Apache 2.0.
 - HAL: Fixed IAR warnings in ext_lld_isr.c (bug #711).
 - HAL: Fixed build error caused by STM32 SPIv1 driver (bug #710).
 - HAL: Fixed shift of signed constant causes warnings with IAR compiler
