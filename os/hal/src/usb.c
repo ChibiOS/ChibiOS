@@ -323,6 +323,7 @@ void usbStop(USBDriver *usbp) {
 
   /* Resetting all ongoing synchronous operations.*/
   for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
+#if USB_USE_WAIT == TRUE
     if (usbp->epc[i] != NULL) {
       if (usbp->epc[i]->in_state != NULL) {
         osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_RESET);
@@ -331,6 +332,8 @@ void usbStop(USBDriver *usbp) {
         osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_RESET);
       }
     }
+#endif
+    usbp->epc[i] = NULL;
   }
   osalOsRescheduleS();
   osalSysUnlock();
