@@ -80,6 +80,7 @@
 
 *** Next ***
 - RT:  Added RT-STM32L476-DISCOVERY demo.
+- HAL: Added more STM32L4xx testhal demos.
 - HAL: Updated all STM32F476 mcuconf.h files.
 - ALL: Startup files relicensed under Apache 2.0.
 - ALL: Enhanced GCC .ld files with multiple flash regions and capability to
