@@ -1,20 +1,24 @@
 *****************************************************************************
-** ChibiOS/RT port for ARM-Cortex-M4 STM32F476RG.                          **
+** ChibiOS/HAL - ADC driver demo for STM32L4xx.                            **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an ST NUCLEO-L476RG board.
+The demo runs on an STMicroelectronics STM32L4-Nucleo board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32L4xx ADC driver triggered by GPT.
+The application demonstrates the use of the STM32L4xx ADC driver.
+
+** Board Setup **
+
+- Connect PC1 to 3.3V and PC2 to GND for analog measurements.
 
 ** Build Procedure **
 
-The demo has been tested by using the free Codesourcery GCC-based toolchain
-and YAGARTO. just modify the TRGT line in the makefile in order to use
-different GCC toolchains.
+The demo has been tested using the free Codesourcery GCC-based toolchain
+and YAGARTO.
+Just modify the TRGT line in the makefile in order to use different GCC ports.
 
 ** Notes **
 
