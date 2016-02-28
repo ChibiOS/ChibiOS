@@ -92,6 +92,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed usbStop does not resume threads suspended in synchronous calls
+       to usbTransmit (bug #714)(backported to 16.1.4).
 - VAR: Fixed state check in lwIP when SYS_LIGHTWEIGHT_PROT is disabled
        (bug #713)(backported to 2.6.10, 3.0.6 and 16.1.4). 
 - RT:  Removed the p_msg field from the thread_t structure saving a
