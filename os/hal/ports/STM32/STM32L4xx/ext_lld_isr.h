@@ -96,13 +96,6 @@
 #endif
 
 /**
- * @brief   EXTI17 interrupt priority level setting.
- */
-#if !defined(STM32_EXT_EXTI17_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_EXT_EXTI17_IRQ_PRIORITY       6
-#endif
-
-/**
  * @brief   EXTI18 interrupt priority level setting.
  */
 #if !defined(STM32_EXT_EXTI18_IRQ_PRIORITY) || defined(__DOXYGEN__)
