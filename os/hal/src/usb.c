@@ -309,6 +309,7 @@ void usbStart(USBDriver *usbp, const USBConfig *config) {
  * @api
  */
 void usbStop(USBDriver *usbp) {
+  unsigned i;
 
   osalDbgCheck(usbp != NULL);
 
@@ -319,6 +320,19 @@ void usbStop(USBDriver *usbp) {
                 "invalid state");
   usb_lld_stop(usbp);
   usbp->state = USB_STOP;
+
+  /* Resetting all ongoing synchronous operations.*/
+  for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
+    if (usbp->epc[i] != NULL) {
+      if (usbp->epc[i]->in_state != NULL) {
+        osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_RESET);
+      }
+      if (usbp->epc[i]->out_state != NULL) {
+        osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_RESET);
+      }
+    }
+  }
+  osalOsRescheduleS();
   osalSysUnlock();
 }
 
