@@ -86,7 +86,7 @@ int main(void) {
   SysTick->LOAD = SYSTEM_CLOCK / CH_CFG_ST_FREQUENCY - (systime_t)1;
   SysTick->VAL = (uint32_t)0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk |
-                  SysTick_CTRL_ENABLE_Msk;
+                  SysTick_CTRL_TICKINT_Msk;
 
   /*
    * System initializations.

@@ -92,6 +92,10 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- RT:  Fixed wrong SysTick initialization in generic demos (bug #715)
+       (backported to 16.1.4).
+- NIL: Fixed wrong SysTick initialization in generic demos (bug #715)
+       (backported to 16.1.4).
 - HAL: Fixed usbStop does not resume threads suspended in synchronous calls
        to usbTransmit (bug #714)(backported to 16.1.4).
 - VAR: Fixed state check in lwIP when SYS_LIGHTWEIGHT_PROT is disabled
