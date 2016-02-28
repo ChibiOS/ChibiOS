@@ -29,7 +29,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
+        AnalogSwitch="Enabled"
         PinLock="Disabled" />
       <pin1
         ID="ARD_A1"
@@ -39,7 +39,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
+        AnalogSwitch="Enabled"
         PinLock="Disabled" />
       <pin2
         ID="ARD_D1 USART_TX"
@@ -69,7 +69,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
+        AnalogSwitch="Enabled"
         PinLock="Disabled" />
       <pin5
         ID="ARD_D13 LED_GREEN"
@@ -191,7 +191,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
+        AnalogSwitch="Enabled"
         PinLock="Disabled" />
       <pin1
         ID=""
@@ -353,7 +353,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
+        AnalogSwitch="Enabled"
         PinLock="Disabled" />
       <pin1
         ID="ARD_A4"
@@ -363,7 +363,7 @@
         Resistor="Floating"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
+        AnalogSwitch="Enabled"
         PinLock="Disabled" />
       <pin2
         ID=""
