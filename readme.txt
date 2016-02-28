@@ -74,6 +74,8 @@
 
 *** 16.1.4 ***
 - ALL: Startup files relicensed under Apache 2.0.
+- RT:  Added RT-STM32L476-DISCOVERY demo.
+- HAL: Updated all STM32F476 mcuconf.h files.
 - RT:  Fixed wrong SysTick initialization in generic demos (bug #715).
 - NIL: Fixed wrong SysTick initialization in generic demos (bug #715).
 - HAL: Fixed usbStop does not resume threads suspended in synchronous calls
