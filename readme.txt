@@ -74,6 +74,8 @@
 
 *** 16.1.4 ***
 - ALL: Startup files relicensed under Apache 2.0.
+- HAL: Fixed usbStop does not resume threads suspended in synchronous calls
+       to usbTransmit (bug #714).
 - VAR: Fixed state check in lwIP when SYS_LIGHTWEIGHT_PROT is disabled
        (bug #713).
 - RT:  Fixed race condition in RT registry (bug #712). 
