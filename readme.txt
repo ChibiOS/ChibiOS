@@ -94,6 +94,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- HAL: Fixed wrong definitions in STM32F746 mcuconf.h files (bug #716)
+       (backported to 16.1.4).
 - RT:  Fixed wrong SysTick initialization in generic demos (bug #715)
        (backported to 16.1.4).
 - NIL: Fixed wrong SysTick initialization in generic demos (bug #715)
