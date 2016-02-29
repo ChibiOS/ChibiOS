@@ -29,9 +29,9 @@ static void blinker(void) {
   OS_TaskRegister();
 
   while (true) {
-    palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
+    palSetLine(LINE_LED3);       /* Orange.  */
     OS_TaskDelay(500);
-    palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
+    palClearLine(LINE_LED3);     /* Orange.  */
     OS_TaskDelay(500);
   }
 }

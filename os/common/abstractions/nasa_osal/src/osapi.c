@@ -61,12 +61,22 @@
 #error "NASA OSAL requires CH_CFG_USE_MEMPOOLS"
 #endif
 
+#if CH_CFG_USE_HEAP == FALSE
+#error "NASA OSAL requires CH_CFG_USE_HEAP"
+#endif
+
 /*===========================================================================*/
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
 #define MIN_PRIORITY        1
 #define MAX_PRIORITY        255
+
+#define MIN_MESSAGE_SIZE    4
+#define MAX_MESSAGE_SIZE    16384
+
+#define MIN_QUEUE_DEPTH     1
+#define MAX_QUEUE_DEPTH     16384
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -94,15 +104,36 @@ typedef struct {
 } osal_timer_t;
 
 /**
+ * @brief   Type of an OSAL queue.
+ */
+typedef struct {
+  uint32                is_free;
+  char                  name[OS_MAX_API_NAME];
+  memory_pool_t         messages;
+  mailbox_t             mb;
+  msg_t                 *mb_buffer;
+} osal_queue_t;
+
+/**
+ * @brief   Type of an osal message with minimum size.
+ */
+typedef struct {
+  size_t                size;
+  char                  buf[4];
+} osal_message_t;
+
+/**
  * @brief   Type of OSAL main structure.
  */
 typedef struct {
   bool                  printf_enabled;
   memory_pool_t         timers_pool;
+  memory_pool_t         queues_pool;
   memory_pool_t         binary_semaphores_pool;
   memory_pool_t         count_semaphores_pool;
   memory_pool_t         mutexes_pool;
   osal_timer_t          timers[OS_MAX_TIMERS];
+  osal_queue_t          queues[OS_MAX_QUEUES];
   binary_semaphore_t    binary_semaphores[OS_MAX_BIN_SEMAPHORES];
   semaphore_t           count_semaphores[OS_MAX_COUNT_SEMAPHORES];
   mutex_t               mutexes[OS_MAX_MUTEXES];
@@ -135,6 +166,14 @@ static void timer_handler(void *p) {
   }
 }
 
+/**
+ * @brief   Message allocation from the default heap.
+ */
+static void *feed_message(size_t size, unsigned align) {
+
+  return chHeapAllocAligned(NULL, size, align);
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -165,6 +204,14 @@ int32 OS_API_Init(void) {
   chPoolLoadArray(&osal.timers_pool,
                   &osal.timers,
                   sizeof (osal_timer_t));
+
+  /* Queues pool initialization.*/
+  chPoolObjectInit(&osal.queues_pool,
+                   sizeof (osal_queue_t),
+                   NULL);
+  chPoolLoadArray(&osal.queues_pool,
+                  &osal.queues,
+                  sizeof (osal_queue_t));
 
   /* Binary Semaphores pool initialization.*/
   chPoolObjectInit(&osal.binary_semaphores_pool,
@@ -322,12 +369,13 @@ int32 OS_TimerCreate(uint32 *timer_id, const char *timer_name,
     return OS_TIMER_ERR_INVALID_ARGS;
   }
 
-  /* Checking semaphore name length.*/
+  /* Checking timer name length.*/
   if (strlen(timer_name) >= OS_MAX_API_NAME) {
     return OS_ERR_NAME_TOO_LONG;
   }
 
-  otp = chPoolAlloc(&osal.binary_semaphores_pool);
+  /* Getting object.*/
+  otp = chPoolAlloc(&osal.timers_pool);
   if (otp == NULL) {
     return OS_ERR_NO_FREE_IDS;
   }
@@ -493,6 +541,93 @@ int32 OS_TimerGetInfo(uint32 timer_id, OS_timer_prop_t *timer_prop) {
 
 /*-- Queues API -------------------------------------------------------------*/
 
+int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
+                     uint32 queue_depth, uint32 data_size, uint32 flags) {
+  osal_queue_t *oqp;
+  msg_t *buffer;
+
+  (void)flags;
+
+  /* NULL pointer checks.*/
+  if ((queue_id == NULL) || (queue_name == NULL)) {
+    return OS_INVALID_POINTER;
+  }
+
+  /* Checking queue name length.*/
+  if (strlen(queue_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
+  /* Checks on queue limits. There is no dedicated error code.*/
+  if ((data_size < MIN_MESSAGE_SIZE) || (data_size < MAX_MESSAGE_SIZE) ||
+      (queue_depth < MIN_QUEUE_DEPTH) || (queue_depth < MAX_QUEUE_DEPTH)) {
+    return OS_ERROR;
+  }
+
+  /* Getting object.*/
+  oqp = chPoolAlloc(&osal.queues_pool);
+  if (oqp == NULL) {
+    return OS_ERR_NO_FREE_IDS;
+  }
+
+  /* Attempting buffer allocation.*/
+
+  /* Initializing object static parts.*/
+  strncpy(oqp->name, queue_name, OS_MAX_API_NAME);
+  oqp->is_free = 0;
+  chPoolObjectInit(&oqp->messages,
+                   sizeof(size_t) + data_size,
+                   feed_message);
+  chMBObjectInit(&oqp->mb, buffer, (size_t)queue_depth);
+
+  return OS_SUCCESS;
+}
+
+int32 OS_QueueDelete(uint32 queue_id) {
+
+  (void)queue_id;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+int32 OS_QueueGet(uint32 queue_id, void *data, uint32 size,
+                  uint32 *size_copied, int32 timeout) {
+
+  (void)queue_id;
+  (void)data;
+  (void)size;
+  (void)size_copied;
+  (void)timeout;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+int32 OS_QueuePut(uint32 queue_id, void *data, uint32 size, uint32 flags) {
+
+  (void)queue_id;
+  (void)data;
+  (void)size;
+  (void)flags;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+int32 OS_QueueGetIdByName(uint32 *queue_id, const char *queue_name) {
+
+  (void)queue_id;
+  (void)queue_name;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+int32 OS_QueueGetInfo (uint32 queue_id, OS_queue_prop_t *queue_prop) {
+
+  (void)queue_id;
+  (void)queue_prop;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
 /*-- Binary Semaphore API ---------------------------------------------------*/
 
 /**
@@ -527,6 +662,7 @@ int32 OS_BinSemCreate(uint32 *sem_id, const char *sem_name,
     return OS_INVALID_INT_NUM;
   }
 
+  /* Getting object.*/
   bsp = chPoolAlloc(&osal.binary_semaphores_pool);
   if (bsp == NULL) {
     return OS_ERR_NO_FREE_IDS;
@@ -821,6 +957,7 @@ int32 OS_CountSemCreate(uint32 *sem_id, const char *sem_name,
     return OS_INVALID_INT_NUM;
   }
 
+  /* Getting object.*/
   sp = chPoolAlloc(&osal.count_semaphores_pool);
   if (sp == NULL) {
     return OS_ERR_NO_FREE_IDS;
@@ -1070,6 +1207,7 @@ int32 OS_MutSemCreate(uint32 *sem_id, const char *sem_name, uint32 options) {
     return OS_ERR_NAME_TOO_LONG;
   }
 
+  /* Getting object.*/
   mp = chPoolAlloc(&osal.mutexes_pool);
   if (mp == NULL) {
     return OS_ERR_NO_FREE_IDS;
