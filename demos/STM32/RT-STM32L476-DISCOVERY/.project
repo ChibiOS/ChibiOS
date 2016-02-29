@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<location>C:/ChibiStudio/chibios161/os/hal/boards/ST_STM32L476_DISCOVERY</location>
+			<locationURI>CHIBIOS/os/hal/boards/ST_STM32L476_DISCOVERY</locationURI>
 		</link>
 		<link>
 			<name>os</name>
