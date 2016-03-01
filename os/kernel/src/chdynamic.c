@@ -105,6 +105,8 @@ void chThdRelease(Thread *tp) {
       chSysUnlock();
     }
   }
+  else
+    chSysUnlock();
 }
 
 #if CH_USE_HEAP || defined(__DOXYGEN__)
