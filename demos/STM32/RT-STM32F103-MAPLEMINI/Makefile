@@ -107,9 +107,9 @@ include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here
 ifeq ($(USE_MAPLEMINI_BOOTLOADER),1)
-  LDSCRIPT = $(STARTUPLD)/STM32F103xE_maplemini_bootloader.ld
+  LDSCRIPT = $(STARTUPLD)/STM32F103xB_maplemini_bootloader.ld
 else
-  LDSCRIPT = $(STARTUPLD)/STM32F103xE.ld
+  LDSCRIPT = $(STARTUPLD)/STM32F103xB.ld
 endif
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
@@ -206,6 +206,9 @@ CPPWARN = -Wall -Wextra -Wundef
 
 # List all user C define here, like -D_DEBUG=1
 UDEFS =
+ifeq ($(USE_MAPLEMINI_BOOTLOADER),1)
+  UDEFS += -DCORTEX_VTOR_INIT=0x5000
+endif
 
 # Define ASM defines here
 UADEFS =
