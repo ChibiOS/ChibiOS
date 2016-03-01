@@ -52,7 +52,7 @@ void _unhandled_exception(void) {
 
 #if !defined(__DOXYGEN__)
 extern uint32_t __main_stack_end__;
-void Reset_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
+void Reset_Handler(void);
 void NMI_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
 void HardFault_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
 void MemManage_Handler(void) __attribute__((weak, alias("_unhandled_exception")));
