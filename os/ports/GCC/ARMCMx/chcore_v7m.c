@@ -237,7 +237,7 @@ void _port_switch(Thread *ntp, Thread *otp) {
 #if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) &&                                \
     ((CORTEX_MODEL == 3) || (CORTEX_MODEL == 4))
   asm volatile ("str     sp, [%1, #12]                          \n\t"
-                "ldr     sp, [%0, #12]                          \n\t"
+                "ldr     r3, [%0, #12]                          \n\t"
                 "mov     sp, r3" : : "r" (ntp), "r" (otp));
 #else
   asm volatile ("str     sp, [%1, #12]                          \n\t"
