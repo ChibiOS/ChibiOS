@@ -95,6 +95,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- VAR: Fixed wrong flash and ram size in linker script for maple mini
+       (bug #719).
 - VAR: Fixed GCC 5.2 crashes while compiling ChibiOS (bug #718)(backported
        to 3.0.6 and 16.1.4).
 - HAL: Fixed wrong definition in STM32L4 ext_lld_isr.h (bug #717)

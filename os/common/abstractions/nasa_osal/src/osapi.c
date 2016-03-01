@@ -109,9 +109,13 @@ typedef struct {
 typedef struct {
   uint32                is_free;
   char                  name[OS_MAX_API_NAME];
+  semaphore_t           free_msgs;
   memory_pool_t         messages;
   mailbox_t             mb;
   msg_t                 *mb_buffer;
+  void                  *q_buffer;
+  uint32                depth;
+  uint32                size;
 } osal_queue_t;
 
 /**
@@ -164,14 +168,6 @@ static void timer_handler(void *p) {
     chVTSetI(&otp->vt, US2ST(otp->interval_time), timer_handler, p);
     chSysUnlockFromISR();
   }
-}
-
-/**
- * @brief   Message allocation from the default heap.
- */
-static void *feed_message(size_t size, unsigned align) {
-
-  return chHeapAllocAligned(NULL, size, align);
 }
 
 /*===========================================================================*/
@@ -544,7 +540,7 @@ int32 OS_TimerGetInfo(uint32 timer_id, OS_timer_prop_t *timer_prop) {
 int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
                      uint32 queue_depth, uint32 data_size, uint32 flags) {
   osal_queue_t *oqp;
-  msg_t *buffer;
+  size_t msgsize;
 
   (void)flags;
 
@@ -570,24 +566,74 @@ int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
     return OS_ERR_NO_FREE_IDS;
   }
 
-  /* Attempting buffer allocation.*/
+  /* Attempting messages buffer allocation.*/
+  msgsize = MEM_ALIGN_NEXT(data_size + sizeof (size_t), PORT_NATURAL_ALIGN);
+  oqp->mb_buffer = chHeapAllocAligned(NULL,
+                                      msgsize * (size_t)queue_depth,
+                                      PORT_NATURAL_ALIGN);
+  if (oqp->mb_buffer == NULL) {
+    return OS_ERROR;
+  }
+
+  /* Attempting queue buffer allocation.*/
+  oqp->q_buffer = chHeapAllocAligned(NULL,
+                                     sizeof (msg_t) * (size_t)queue_depth,
+                                     PORT_NATURAL_ALIGN);
+  if (oqp->q_buffer == NULL) {
+    chHeapFree(oqp->mb_buffer);
+    return OS_ERROR;
+  }
 
   /* Initializing object static parts.*/
   strncpy(oqp->name, queue_name, OS_MAX_API_NAME);
+  chMBObjectInit(&oqp->mb, oqp->q_buffer, (size_t)queue_depth);
+  chSemObjectInit(&oqp->free_msgs, (cnt_t)queue_depth);
+  chPoolObjectInit(&oqp->messages, msgsize, NULL);
+  chPoolLoadArray(&oqp->messages, oqp->mb_buffer, (size_t)queue_depth);
+  oqp->depth   = queue_depth;
+  oqp->size    = data_size;
   oqp->is_free = 0;
-  chPoolObjectInit(&oqp->messages,
-                   sizeof(size_t) + data_size,
-                   feed_message);
-  chMBObjectInit(&oqp->mb, buffer, (size_t)queue_depth);
 
   return OS_SUCCESS;
 }
 
 int32 OS_QueueDelete(uint32 queue_id) {
+  osal_queue_t *oqp = (osal_queue_t *)queue_id;
+  void *q_buffer, *mb_buffer;
 
-  (void)queue_id;
+  /* Range check.*/
+  if ((oqp < &osal.queues[0]) ||
+      (oqp >= &osal.queues[OS_MAX_QUEUES])) {
+    return OS_ERR_INVALID_ID;
+  }
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  /* Critical zone.*/
+  chSysLock();
+
+  /* Marking as no more free.*/
+  oqp->is_free = 1;
+
+  /* Pointers to areas to be freed.*/
+  q_buffer  = oqp->q_buffer;
+  mb_buffer = oqp->mb_buffer;
+
+  /* Resetting the queue.*/
+  chMBResetI(&oqp->mb);
+  chSemResetI(&oqp->free_msgs, 0);
+
+  /* Flagging it as unused and returning it to the pool.*/
+  chPoolFreeI(&osal.queues_pool, (void *)oqp);
+
+  chSchRescheduleS();
+
+  /* Leaving critical zone.*/
+  chSysUnlock();
+
+  /* Freeing buffers, outside critical zone, slow heap operation.*/
+  chHeapFree(q_buffer);
+  chHeapFree(mb_buffer);
+
+  return OS_SUCCESS;
 }
 
 int32 OS_QueueGet(uint32 queue_id, void *data, uint32 size,
