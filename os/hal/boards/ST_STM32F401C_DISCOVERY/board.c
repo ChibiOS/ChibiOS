@@ -22,8 +22,7 @@
  * @details Digital I/O ports static configuration as defined in @p board.h.
  *          This variable is used by the HAL when initializing the PAL driver.
  */
-const PALConfig pal_default_config =
-{
+const PALConfig pal_default_config = {
 #if STM32_HAS_GPIOA
   {VAL_GPIOA_MODER, VAL_GPIOA_OTYPER, VAL_GPIOA_OSPEEDR, VAL_GPIOA_PUPDR,
    VAL_GPIOA_ODR,   VAL_GPIOA_AFRL,   VAL_GPIOA_AFRH},
@@ -77,21 +76,21 @@ void __early_init(void) {
 /**
  * @brief   SDC card detection.
  */
-bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
 
   (void)sdcp;
   /* TODO: Fill the implementation.*/
-  return TRUE;
+  return true;
 }
 
 /**
  * @brief   SDC card write protection detection.
  */
-bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
+bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
   (void)sdcp;
   /* TODO: Fill the implementation.*/
-  return FALSE;
+  return false;
 }
 #endif /* HAL_USE_SDC */
 
@@ -99,21 +98,21 @@ bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
 /**
  * @brief   MMC_SPI card detection.
  */
-bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 
   (void)mmcp;
   /* TODO: Fill the implementation.*/
-  return TRUE;
+  return true;
 }
 
 /**
  * @brief   MMC_SPI card write protection detection.
  */
-bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
+bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
 
   (void)mmcp;
   /* TODO: Fill the implementation.*/
-  return FALSE;
+  return false;
 }
 #endif
 
