@@ -405,7 +405,8 @@ int32 OS_TimerDelete(uint32 timer_id) {
 
   /* Range check.*/
   if ((otp < &osal.timers[0]) ||
-      (otp >= &osal.timers[OS_MAX_TIMERS])) {
+      (otp >= &osal.timers[OS_MAX_TIMERS]) ||
+      (otp->is_free)) {
     return OS_ERR_INVALID_ID;
   }
 
@@ -441,7 +442,8 @@ int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
 
   /* Range check.*/
   if ((otp < &osal.timers[0]) ||
-      (otp >= &osal.timers[OS_MAX_TIMERS])) {
+      (otp >= &osal.timers[OS_MAX_TIMERS]) ||
+      (otp->is_free)) {
     return OS_ERR_INVALID_ID;
   }
 
@@ -509,7 +511,8 @@ int32 OS_TimerGetInfo(uint32 timer_id, OS_timer_prop_t *timer_prop) {
 
   /* Range check.*/
   if ((otp < &osal.timers[0]) ||
-      (otp >= &osal.timers[OS_MAX_TIMERS])) {
+      (otp >= &osal.timers[OS_MAX_TIMERS]) ||
+      (otp->is_free)) {
     return OS_ERR_INVALID_ID;
   }
 
@@ -603,7 +606,8 @@ int32 OS_QueueDelete(uint32 queue_id) {
 
   /* Range check.*/
   if ((oqp < &osal.queues[0]) ||
-      (oqp >= &osal.queues[OS_MAX_QUEUES])) {
+      (oqp >= &osal.queues[OS_MAX_QUEUES]) ||
+      (oqp->is_free)) {
     return OS_ERR_INVALID_ID;
   }
 
@@ -638,14 +642,62 @@ int32 OS_QueueDelete(uint32 queue_id) {
 
 int32 OS_QueueGet(uint32 queue_id, void *data, uint32 size,
                   uint32 *size_copied, int32 timeout) {
+  osal_queue_t *oqp = (osal_queue_t *)queue_id;
+  msg_t msg, msgsts;
+  void *body;
 
-  (void)queue_id;
-  (void)data;
-  (void)size;
-  (void)size_copied;
-  (void)timeout;
+  /* NULL pointer checks.*/
+  if ((data == NULL) || (size_copied == NULL)) {
+    return OS_INVALID_POINTER;
+  }
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  /* Range check.*/
+  if ((oqp < &osal.queues[0]) ||
+      (oqp >= &osal.queues[OS_MAX_QUEUES]) ||
+      (oqp->is_free)) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  /* Check on minimum size.*/
+  if (size < oqp->size) {
+    return OS_QUEUE_INVALID_SIZE;
+  }
+
+  /* Special time handling.*/
+  if (timeout == OS_PEND) {
+    msgsts = chMBFetch(&oqp->mb, &msg, TIME_INFINITE);
+    if (msgsts < MSG_OK) {
+      *size_copied = 0;
+      return OS_ERROR;
+    }
+  }
+  else if (timeout == OS_CHECK) {
+    msgsts = chMBFetch(&oqp->mb, &msg, TIME_IMMEDIATE);
+    if (msgsts < MSG_OK) {
+      *size_copied = 0;
+      return OS_QUEUE_EMPTY;
+    }
+  }
+  else {
+    msgsts = chMBFetch(&oqp->mb, &msg, (systime_t)timeout);
+    if (msgsts < MSG_OK) {
+      *size_copied = 0;
+      return OS_QUEUE_TIMEOUT;
+    }
+  }
+
+  /* Message body and size.*/
+  *size_copied = ((osal_message_t *)msg)->size;
+  body  = (void *)((osal_message_t *)msg)->buf;
+
+  /* Copying the message body.*/
+  memcpy(data, body, *size_copied);
+
+  /* Freeing the message buffer.*/
+  chPoolFree(&oqp->messages, (void *)msg);
+  chSemSignal(&oqp->free_msgs);
+
+  return OS_SUCCESS;
 }
 
 int32 OS_QueuePut(uint32 queue_id, void *data, uint32 size, uint32 flags) {
