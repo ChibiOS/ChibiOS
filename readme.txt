@@ -95,6 +95,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- VAR: Fixed GCC 5.2 crashes while compiling ChibiOS (bug #718)(backported
+       to 3.0.6 and 16.1.4).
 - HAL: Fixed wrong definition in STM32L4 ext_lld_isr.h (bug #717)
        (backported to 16.1.4).
 - HAL: Fixed wrong definitions in STM32F746 mcuconf.h files (bug #716)
