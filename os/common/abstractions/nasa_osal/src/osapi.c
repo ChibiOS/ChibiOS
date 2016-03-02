@@ -380,10 +380,10 @@ int32 OS_TimerCreate(uint32 *timer_id, const char *timer_name,
 
   strncpy(otp->name, timer_name, OS_MAX_API_NAME);
   chVTObjectInit(&otp->vt);
-  otp->is_free       = 0;
   otp->start_time    = 0;
   otp->interval_time = 0;
   otp->callback_ptr  = callback_ptr;
+  otp->is_free       = 0;   /* Note, last.*/
 
   *clock_accuracy = (uint32)(1000000 / CH_CFG_ST_FREQUENCY);
 
@@ -411,6 +411,9 @@ int32 OS_TimerDelete(uint32 timer_id) {
   }
 
   chSysLock();
+
+  /* Marking as no more free, will be overwritten by the pool pointer.*/
+  otp->is_free = 1;
 
   /* Resetting the timer.*/
   chVTResetI(&otp->vt);
@@ -476,9 +479,10 @@ int32 OS_TimerSet(uint32 timer_id, uint32 start_time, uint32 interval_time) {
  * @api
  */
 int32 OS_TimerGetIdByName(uint32 *timer_id, const char *timer_name) {
+  osal_timer_t *otp;
 
   /* NULL pointer checks.*/
-  if ((timer_id == NULL) || (timer_id == NULL)) {
+  if ((timer_id == NULL) || (timer_name == NULL)) {
     return OS_INVALID_POINTER;
   }
 
@@ -487,7 +491,25 @@ int32 OS_TimerGetIdByName(uint32 *timer_id, const char *timer_name) {
     return OS_ERR_NAME_TOO_LONG;
   }
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  /* Searching the timer in the table.*/
+  for (otp = &osal.timers[0]; otp < &osal.timers[OS_MAX_QUEUES]; otp++) {
+    /* Entering a reentrant critical zone.*/
+    syssts_t sts = chSysGetStatusAndLockX();
+
+    if (!otp->is_free &&
+        (strncmp(otp->name, timer_name, OS_MAX_API_NAME - 1) == 0)) {
+      *timer_id = (uint32)otp;
+
+      /* Leaving the critical zone.*/
+      chSysRestoreStatusX(sts);
+      return OS_SUCCESS;
+    }
+
+    /* Leaving the critical zone.*/
+    chSysRestoreStatusX(sts);
+  }
+
+  return OS_ERR_NAME_NOT_FOUND;
 }
 
 /**
@@ -519,7 +541,7 @@ int32 OS_TimerGetInfo(uint32 timer_id, OS_timer_prop_t *timer_prop) {
   /* Entering a reentrant critical zone.*/
   sts = chSysGetStatusAndLockX();
 
-  /* If the semaphore is not in use then error.*/
+  /* If the timer is not in use then error.*/
   if (otp->is_free) {
     /* Leaving the critical zone.*/
     chSysRestoreStatusX(sts);
@@ -595,7 +617,7 @@ int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
   chPoolLoadArray(&oqp->messages, oqp->mb_buffer, (size_t)queue_depth);
   oqp->depth   = queue_depth;
   oqp->size    = data_size;
-  oqp->is_free = 0;
+  oqp->is_free = 0;   /* Note, last.*/
 
   return OS_SUCCESS;
 }
@@ -614,7 +636,7 @@ int32 OS_QueueDelete(uint32 queue_id) {
   /* Critical zone.*/
   chSysLock();
 
-  /* Marking as no more free.*/
+  /* Marking as no more free, will be overwritten by the pool pointer.*/
   oqp->is_free = 1;
 
   /* Pointers to areas to be freed.*/
@@ -701,27 +723,116 @@ int32 OS_QueueGet(uint32 queue_id, void *data, uint32 size,
 }
 
 int32 OS_QueuePut(uint32 queue_id, void *data, uint32 size, uint32 flags) {
+  osal_queue_t *oqp = (osal_queue_t *)queue_id;
+  msg_t msgsts;
+  osal_message_t *omsg;
 
-  (void)queue_id;
-  (void)data;
-  (void)size;
   (void)flags;
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  /* NULL pointer checks.*/
+  if (data == NULL) {
+    return OS_INVALID_POINTER;
+  }
+
+  /* Range check.*/
+  if ((oqp < &osal.queues[0]) ||
+      (oqp >= &osal.queues[OS_MAX_QUEUES]) ||
+      (oqp->is_free)) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  /* Check on maximum size.*/
+  if (size > oqp->size) {
+    return OS_QUEUE_INVALID_SIZE;
+  }
+
+  /* Getting a message buffer from the pool.*/
+  msgsts = chSemWait(&oqp->free_msgs);
+  if (msgsts < MSG_OK) {
+    return OS_ERROR;
+  }
+  omsg = chPoolAlloc(&oqp->messages);
+
+  /* Filling message size and data.*/
+  omsg->size = (size_t)size;
+  memcpy(omsg->buf, data, size);
+
+  /* Posting the message.*/
+  msgsts = chMBPost(&oqp->mb, (msg_t)omsg, TIME_INFINITE);
+  if (msgsts < MSG_OK) {
+    return OS_ERROR;
+  }
+
+  return OS_SUCCESS;
 }
 
 int32 OS_QueueGetIdByName(uint32 *queue_id, const char *queue_name) {
+  osal_queue_t *oqp;
 
-  (void)queue_id;
-  (void)queue_name;
+  /* NULL pointer checks.*/
+  if ((queue_id == NULL) || (queue_name == NULL)) {
+    return OS_INVALID_POINTER;
+  }
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  /* Checking name length.*/
+  if (strlen(queue_name) >= OS_MAX_API_NAME) {
+    return OS_ERR_NAME_TOO_LONG;
+  }
+
+  /* Searching the queue in the table.*/
+  for (oqp = &osal.queues[0]; oqp < &osal.queues[OS_MAX_QUEUES]; oqp++) {
+    /* Entering a reentrant critical zone.*/
+    syssts_t sts = chSysGetStatusAndLockX();
+
+    if (!oqp->is_free &&
+        (strncmp(oqp->name, queue_name, OS_MAX_API_NAME - 1) == 0)) {
+      *queue_id = (uint32)oqp;
+
+      /* Leaving the critical zone.*/
+      chSysRestoreStatusX(sts);
+      return OS_SUCCESS;
+    }
+
+    /* Leaving the critical zone.*/
+    chSysRestoreStatusX(sts);
+  }
+
+  return OS_ERR_NAME_NOT_FOUND;
 }
 
 int32 OS_QueueGetInfo (uint32 queue_id, OS_queue_prop_t *queue_prop) {
+  osal_queue_t *oqp = (osal_queue_t *)queue_id;
+  syssts_t sts;
 
-  (void)queue_id;
-  (void)queue_prop;
+  /* NULL pointer checks.*/
+  if (queue_prop == NULL) {
+    return OS_INVALID_POINTER;
+  }
+
+  /* Range check.*/
+  if ((oqp < &osal.queues[0]) ||
+      (oqp >= &osal.queues[OS_MAX_QUEUES]) ||
+      (oqp->is_free)) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  /* Entering a reentrant critical zone.*/
+  sts = chSysGetStatusAndLockX();
+
+  /* If the queue is not in use then error.*/
+  if (oqp->is_free) {
+    /* Leaving the critical zone.*/
+    chSysRestoreStatusX(sts);
+    return OS_ERR_INVALID_ID;
+  }
+
+  strncpy(queue_prop->name, oqp->name, OS_MAX_API_NAME - 1);
+  queue_prop->creator       = (uint32)0;
+
+  /* Leaving the critical zone.*/
+  chSysRestoreStatusX(sts);
+
+  return OS_SUCCESS;
 
   return OS_ERR_NOT_IMPLEMENTED;
 }
