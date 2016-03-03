@@ -143,7 +143,7 @@ void chSysInit(void) {
 
 #if CH_DBG_STATISTICS == TRUE
   /* Starting measurement for this thread.*/
-  chTMStartMeasurementX(&currp->p_stats);
+  chTMStartMeasurementX(&currp->stats);
 #endif
 
   /* It is alive now.*/

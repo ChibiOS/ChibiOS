@@ -341,7 +341,7 @@ int32 OS_Milli2Ticks(uint32 milli_seconds) {
 /*-- timers API -------------------------------------------------------------*/
 
 /**
- * @brief   Binary semaphore creation.
+ * @brief   Timer creation.
  *
  * @param[out] timer_id         pointer to a timer id variable
  * @param[in] timer_name        the timer name
@@ -562,6 +562,18 @@ int32 OS_TimerGetInfo(uint32 timer_id, OS_timer_prop_t *timer_prop) {
 
 /*-- Queues API -------------------------------------------------------------*/
 
+/**
+ * @brief   Queue creation.
+ *
+ * @param[out] queue_id         pointer to a queue id variable
+ * @param[in] queue_name        the queue name
+ * @param[in] queue_depth       desired queue depth
+ * @param[in] data_size         maximum message size
+ * @param[in] flags             queue option flags
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
                      uint32 queue_depth, uint32 data_size, uint32 flags) {
   osal_queue_t *oqp;
@@ -622,6 +634,14 @@ int32 OS_QueueCreate(uint32 *queue_id, const char *queue_name,
   return OS_SUCCESS;
 }
 
+/**
+ * @brief   Queue deletion.
+ *
+ * @param[in] queue_id          queue id variable
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_QueueDelete(uint32 queue_id) {
   osal_queue_t *oqp = (osal_queue_t *)queue_id;
   void *q_buffer, *mb_buffer;
@@ -662,6 +682,19 @@ int32 OS_QueueDelete(uint32 queue_id) {
   return OS_SUCCESS;
 }
 
+/**
+ * @brief   Retrieves a message from the queue.
+ *
+ * @param[in] queue_id          queue id variable
+ * @param[out] data             message buffer pointer
+ * @param[in] size              size of the buffer
+ * @param[out] size_copied      size of the received message
+ * @param[in] timeout           timeout in ticks, the special values @p OS_PEND
+ *                              and @p OS_CHECK can be specified
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_QueueGet(uint32 queue_id, void *data, uint32 size,
                   uint32 *size_copied, int32 timeout) {
   osal_queue_t *oqp = (osal_queue_t *)queue_id;
@@ -722,6 +755,17 @@ int32 OS_QueueGet(uint32 queue_id, void *data, uint32 size,
   return OS_SUCCESS;
 }
 
+/**
+ * @brief   Puts a message in the queue.
+ *
+ * @param[in] queue_id          queue id variable
+ * @param[in] data              message buffer pointer
+ * @param[in] size              size of the message
+ * @param[in] flags             operation flags
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_QueuePut(uint32 queue_id, void *data, uint32 size, uint32 flags) {
   osal_queue_t *oqp = (osal_queue_t *)queue_id;
   msg_t msgsts;
@@ -766,6 +810,15 @@ int32 OS_QueuePut(uint32 queue_id, void *data, uint32 size, uint32 flags) {
   return OS_SUCCESS;
 }
 
+/**
+ * @brief   Retrieves a queue id by name.
+ *
+ * @param[out] queue_id         pointer to a queue id variable
+ * @param[in] sem_name          the queue name
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_QueueGetIdByName(uint32 *queue_id, const char *queue_name) {
   osal_queue_t *oqp;
 
@@ -800,6 +853,16 @@ int32 OS_QueueGetIdByName(uint32 *queue_id, const char *queue_name) {
   return OS_ERR_NAME_NOT_FOUND;
 }
 
+/**
+ * @brief   Returns queue information.
+ * @note    This function can be safely called from timer callbacks or ISRs.
+ *
+ * @param[in] queue_id          queue id variable
+ * @param[in] queue_prop        queue properties
+ * @return                      An error code.
+ *
+ * @api
+ */
 int32 OS_QueueGetInfo (uint32 queue_id, OS_queue_prop_t *queue_prop) {
   osal_queue_t *oqp = (osal_queue_t *)queue_id;
   syssts_t sts;
