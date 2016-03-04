@@ -181,8 +181,10 @@ extern "C" {
   thread_t *chThdCreateStatic(void *wsp, size_t size,
                               tprio_t prio, tfunc_t pf, void *arg);
   thread_t *chThdStart(thread_t *tp);
+#if CH_CFG_USE_REGISTRY == TRUE
   thread_t *chThdAddRef(thread_t *tp);
   void chThdRelease(thread_t *tp);
+#endif
   void chThdExit(msg_t msg);
   void chThdExitS(msg_t msg);
 #if CH_CFG_USE_WAITEXIT == TRUE

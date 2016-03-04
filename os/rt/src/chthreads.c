@@ -107,6 +107,8 @@ thread_t *_thread_init(thread_t *tp, const char *name, tprio_t prio) {
   tp->refs      = (trefs_t)1;
   tp->name      = name;
   REG_INSERT(tp);
+#else
+  (void)name;
 #endif
 #if CH_CFG_USE_WAITEXIT == TRUE
   list_init(&tp->waiting);
@@ -364,6 +366,7 @@ thread_t *chThdStart(thread_t *tp) {
   return tp;
 }
 
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Adds a reference to a thread object.
  * @pre     The configuration option @p CH_CFG_USE_DYNAMIC must be enabled in
@@ -435,6 +438,7 @@ void chThdRelease(thread_t *tp) {
   }
   chSysUnlock();
 }
+#endif /* CH_CFG_USE_REGISTRY == TRUE */
 
 /**
  * @brief   Terminates the current thread.
