@@ -88,25 +88,25 @@ static void error_cb1(DACDriver *dacp, dacerror_t err) {
 }
 
 static const DACConfig dac1cfg1 = {
-  init:         2047U,
-  datamode:     DAC_DHRM_12BIT_RIGHT_DUAL
+  .init         = 2047U,
+  .datamode     = DAC_DHRM_12BIT_RIGHT_DUAL
 };
 
 static const DACConversionGroup dacgrpcfg1 = {
-  num_channels: 2U,
-  end_cb:       end_cb1,
-  error_cb:     error_cb1,
-  trigger:      DAC_TRG(0)
+  .num_channels = 2U,
+  .end_cb       = end_cb1,
+  .error_cb     = error_cb1,
+  .trigger      = DAC_TRG(0)
 };
 
 /*
  * GPT2 configuration.
  */
 static const GPTConfig gpt6cfg1 = {
-  frequency:    1000000U,
-  callback:     NULL,
-  cr2:          TIM_CR2_MMS_1,  /* MMS = 010 = TRGO on Update Event.        */
-  dier:         0U
+  .frequency    = 1000000U,
+  .callback     = NULL,
+  .cr2          = TIM_CR2_MMS_1,    /* MMS = 010 = TRGO on Update Event.    */
+  .dier         = 0U
 };
 
 /*
