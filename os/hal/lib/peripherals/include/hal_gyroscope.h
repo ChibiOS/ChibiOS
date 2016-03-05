@@ -25,6 +25,8 @@
 #ifndef _HAL_GYROSCOPE_H_
 #define _HAL_GYROSCOPE_H_
 
+#include "hal_sensors.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -42,11 +44,27 @@
 /*===========================================================================*/
 
 /**
+ * @brief   BaseGyroscope specific methods.
+ */
+#define _base_gyroscope_methods                                             \
+  _base_sensor_methods                                                      \
+  /* Remove the calibration data.*/                                         \
+  msg_t (*reset_calibration)(void *instance);                               \
+  /* Invokes the calibration procedure.*/                                   \
+  msg_t (*calibrate)(void *instance);
+
+/**
  * @brief   @p BaseGyroscope virtual methods table.
  */
 struct BaseGyroscopeVMT {
   _base_gyroscope_methods
 };
+
+/**
+ * @brief   @p BaseGyroscope specific data.
+ */
+#define _base_gyroscope_data                                                \
+  _base_sensor_data
 
 /**
  * @brief   Base gyroscope class.
@@ -63,21 +81,73 @@ typedef struct {
 /*===========================================================================*/
 
 /**
- * @brief   BaseGyroscope specific methods.
+ * @name    Macro Functions (BaseGyroscope)
+ * @{
  */
-#define _base_gyroscope_methods                                             \
-  _base_sensor_methods                                                      \
-  /* Remove the calibration data.*/                                         \
-  msg_t (*reset_calibration)(void);                                         \
-  /* Invokes the calibration procedure.*/                                   \
-  msg_t (*calibrate)(void);
+/**
+ * @brief   Gyroscope get axes number.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @return              The number of axes of the BaseSensor
+ *
+ * @api
+ */
+#define gyroscopeGetAxesNumber(ip) sensorGetAxesNumber(ip)
 
 /**
- * @brief   @p BaseGyroscope specific data.
- * @note    It is empty because @p BaseGyroscope is only an interface
- *          without implementation.
+ * @brief   Gyroscope read raw data.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] dp        pointer to a data array.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
  */
-#define _base_gyroscope_data
+#define gyroscopeReadRaw(ip, dp) sensorReadRaw(ip, dp)
+
+/**
+ * @brief   Gyroscope read cooked data.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * @param[in] dp        pointer to a data array.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define gyroscopeReadCooked(ip, dp) sensorReadCooked(ip, dp)
+
+/**
+ * @brief   Delete calibration data.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define gyroscopeResetCalibration(ip) ((ip)->vmt->reset_calibration(ip))
+
+/**
+ * @brief   Gyroscope calibration procedure.
+ *
+ * @param[in] ip        pointer to a @p BaseGyroscope class.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define gyroscopeCalibrate(ip) ((ip)->vmt->calibrate(ip))
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

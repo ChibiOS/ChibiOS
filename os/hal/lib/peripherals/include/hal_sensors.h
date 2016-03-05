@@ -42,11 +42,29 @@
 /*===========================================================================*/
 
 /**
+ * @brief   BaseSensor specific methods.
+ */
+#define _base_sensor_methods                                                \
+  /* Get number of axes.*/                                                  \
+  size_t (*get_axes_number)(void *instance);                                \
+  /* Reads the sensor raw data.*/                                           \
+  msg_t (*read_raw)(void *instance, int32_t axes[]);                        \
+  /* Reads the sensor returning normalized data.*/                          \
+  msg_t (*read_cooked)(void *instance, float axes[]);
+
+/**
  * @brief   @p BaseSensor virtual methods table.
  */
 struct BaseSensorVMT {
   _base_sensor_methods
 };
+
+/**
+ * @brief   @p BaseSensor specific data.
+ * @note    It is empty because @p BaseSensor is only an interface
+ *          without implementation.
+ */
+#define _base_sensor_data
 
 /**
  * @brief   Base stream class.
@@ -64,22 +82,47 @@ typedef struct {
 /*===========================================================================*/
 
 /**
- * @brief   BaseSensor specific methods.
+ * @name    Macro Functions (BaseSensor)
+ * @{
  */
-#define _base_sensor_methods                                                \
-  /* Get number of axes.*/                                                  \
-  size_t (*get_axes_number)(void);                                          \
-  /* Reads the sensor raw data.*/                                           \
-  msg_t (*read_raw)(uint32_t axes[]);                                       \
-  /* Reads the sensor returning normalized data.*/                          \
-  msg_t (*read_cooked)(float axes[]);
+/**
+ * @brief   Sensors get axes number.
+ *
+ * @param[in] ip        pointer to a @p BaseSensor or derived class.
+ * @return              The number of axes of the BaseSensor
+ *
+ * @api
+ */
+#define sensorGetAxesNumber(ip) ((ip)->vmt->get_axes_number(ip))
 
 /**
- * @brief   @p BaseSensor specific data.
- * @note    It is empty because @p BaseSensor is only an interface
- *          without implementation.
+ * @brief   Sensors read raw data.
+ *
+ * @param[in] ip        pointer to a @p BaseSensor or derived class.
+ * @param[in] dp        pointer to a data array.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
  */
-#define _base_sensor_data
+#define sensorReadRaw(ip, dp) ((ip)->vmt->read_raw(ip, dp))
+
+/**
+ * @brief   Sensors read cooked data.
+ *
+ * @param[in] ip        pointer to a @p BaseSensor or derived class.
+ * @param[in] dp        pointer to a data array.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define sensorReadCooked(ip, dp) ((ip)->vmt->read_cooked(ip, dp))
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

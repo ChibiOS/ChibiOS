@@ -25,6 +25,8 @@
 #ifndef _HAL_ACCELEROMETER_H_
 #define _HAL_ACCELEROMETER_H_
 
+#include "hal_sensors.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -42,12 +44,24 @@
 /*===========================================================================*/
 
 /**
+ * @brief   BaseAccelerometer specific methods.
+ */
+#define _base_accelerometer_methods                                         \
+  _base_sensor_methods
+
+/**
  * @brief   @p BaseAccelerometer virtual methods table.
  */
 struct BaseAccelerometerVMT {
   _base_accelerometer_methods
 };
 
+/**
+ * @brief   @p BaseAccelerometer specific data.
+ */
+#define _base_accelerometer_data                                            \
+  _base_sensor_data
+	
 /**
  * @brief   Base accelerometer class.
  * @details This class represents a generic a generic accelerometer.
@@ -63,21 +77,47 @@ typedef struct {
 /*===========================================================================*/
 
 /**
- * @brief   BaseAccelerometer specific methods.
+ * @name    Macro Functions (BaseAccelerometer)
+ * @{
  */
-#define _base_accelerometer_methods                                         \
-  _base_sensor_methods                                                      \
-  /* Remove the calibration data.*/                                            \
-  msg_t (*reset_calibration)(void);                                         \
-  /* Invokes the calibration procedure.*/                                   \
-  msg_t (*calibrate)(void);
+/**
+ * @brief   Accelerometer get axes number.
+ *
+ * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ * @return              The number of axes of the BaseSensor
+ *
+ * @api
+ */
+#define accelerometerGetAxesNumber(ip) sensorGetAxesNumber(ip)
 
 /**
- * @brief   @p BaseAccelerometer specific data.
- * @note    It is empty because @p BaseAccelerometer is only an interface
- *          without implementation.
+ * @brief   Accelerometer read raw data.
+ *
+ * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ * @param[in] dp        pointer to a data array.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
  */
-#define _base_accelerometer_data
+#define accelerometerReadRaw(ip, dp) sensorReadRaw(ip, dp)
+
+/**
+ * @brief   Accelerometer read cooked data.
+ *
+ * @param[in] ip        pointer to a @p BaseAccelerometer class.
+ * @param[in] dp        pointer to a data array.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define accelerometerReadCooked(ip, dp) sensorReadCooked(ip, dp)
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

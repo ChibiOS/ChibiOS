@@ -25,6 +25,8 @@
 #ifndef _HAL_COMPASS_H_
 #define _HAL_COMPASS_H_
 
+#include "hal_sensors.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -42,13 +44,24 @@
 /*===========================================================================*/
 
 /**
+ * @brief   BaseCompass specific methods.
+ */
+#define _base_compass_methods                                               \
+  _base_sensor_methods
+  
+/**
  * @brief   @p BaseCompass virtual methods table.
  */
-
 struct BaseCompassVMT {
   _base_compass_methods
 };
 
+/**
+ * @brief   @p BaseCompass specific data.
+ */
+#define _base_compass_data                                                  \
+  _base_sensor_data
+	
 /**
  * @brief   Base compass class.
  * @details This class represents a generic compass.
@@ -57,30 +70,79 @@ typedef struct {
   /** @brief Virtual Methods Table.*/
   const struct BaseCompassVMT *vmt;
   _base_compass_data
-
 } BaseCompass;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+/**
+ * @name    Macro Functions (BaseCompass)
+ * @{
+ */
+/**
+ * @brief   Compass get axes number.
+ *
+ * @param[in] ip        pointer to a @p BaseCompass class.
+ * @return              The number of axes of the BaseSensor
+ *
+ * @api
+ */
+#define compassGetAxesNumber(ip) sensorGetAxesNumber(ip)
 
 /**
- * @brief   BaseCompass specific methods.
+ * @brief   Compass read raw data.
+ *
+ * @param[in] ip        pointer to a @p BaseCompass class.
+ * @param[in] dp        pointer to a data array.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
  */
-
-#define _base_compass_methods                                               \
-  _base_sensor_methods                                                      \
-  /* Remove the calibration data.*/                                         \
-  msg_t (*reset_calibration)(void);                                         \
-  /* Invokes the calibration procedure.*/                                   \
-  msg_t (*calibrate)(void);
+#define compassReadRaw(ip, dp) sensorReadRaw(ip, dp)
 
 /**
- * @brief   @p BaseCompass specific data.
- * @note    It is empty because @p BaseCompass is only an interface
- *          without implementation.
+ * @brief   Compass read cooked data.
+ *
+ * @param[in] ip        pointer to a @p BaseCompass class.
+ * @param[in] dp        pointer to a data array.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
  */
-#define _base_compass_data
+#define compassReadCooked(ip, dp) sensorReadCooked(ip, dp)
+
+/**
+ * @brief   Delete calibration data.
+ *
+ * @param[in] ip        pointer to a @p BaseCompass class.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define compassResetCalibration(ip) ((ip)->vmt->reset_calibration(ip))
+
+/**
+ * @brief   Compass calibration procedure.
+ *
+ * @param[in] ip        pointer to a @p BaseCompass class.
+ * 
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more errors occurred.
+ *
+ * @api
+ */
+#define compassCalibrate(ip) ((ip)->vmt->calibrate(ip))
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
