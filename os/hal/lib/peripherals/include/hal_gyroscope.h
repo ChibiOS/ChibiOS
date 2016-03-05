@@ -42,22 +42,21 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p BaseSensor virtual methods table.
+ * @brief   @p BaseGyroscope virtual methods table.
  */
-struct BaseSensorVMT {
-  _base_sensor_methods
+struct BaseGyroscopeVMT {
+  _base_gyroscope_methods
 };
 
 /**
- * @brief   Base stream class.
- * @details This class represents a generic blocking unbuffered sequential
- *          data stream.
+ * @brief   Base gyroscope class.
+ * @details This class represents a generic gyroscope MEMS.
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseSensorVMT *vmt;
-  _base_sensor_data
-} BaseSensor;
+  const struct BaseGyroscopeVMT *vmt;
+  _base_gyroscope_data
+} BaseGyroscope;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -68,14 +67,14 @@ typedef struct {
  */
 #define _base_gyroscope_methods                                             \
   _base_sensor_methods                                                      \
-  /* Reads the sensor raw data.*/                                           \
+  /* Remove the calibration data.*/                                         \
   msg_t (*reset_calibration)(void);                                         \
   /* Invokes the calibration procedure.*/                                   \
   msg_t (*calibrate)(void);
 
 /**
- * @brief   @p BaseSensor specific data.
- * @note    It is empty because @p BaseSensor is only an interface
+ * @brief   @p BaseGyroscope specific data.
+ * @note    It is empty because @p BaseGyroscope is only an interface
  *          without implementation.
  */
 #define _base_gyroscope_data
