@@ -545,7 +545,7 @@
                                      PIN_PUPDR_FLOATING(GPIOB_LCD_SEG4))
 #define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_LCD_SEG21) |        \
                                      PIN_ODR_HIGH(GPIOB_LCD_SEG2) |         \
-                                     PIN_ODR_HIGH(GPIOB_LED_RED) |          \
+                                     PIN_ODR_LOW(GPIOB_LED_RED) |           \
                                      PIN_ODR_HIGH(GPIOB_SWO) |              \
                                      PIN_ODR_HIGH(GPIOB_LCD_SEG11) |        \
                                      PIN_ODR_HIGH(GPIOB_LCD_SEG12) |        \
@@ -998,7 +998,7 @@
                                      PIN_ODR_HIGH(GPIOE_SAI1_SCK) |         \
                                      PIN_ODR_HIGH(GPIOE_SAI1_SD) |          \
                                      PIN_ODR_HIGH(GPIOE_AUDIO_DIN) |        \
-                                     PIN_ODR_HIGH(GPIOE_LED_GREEN) |        \
+                                     PIN_ODR_LOW(GPIOE_LED_GREEN) |         \
                                      PIN_ODR_HIGH(GPIOE_AUDIO_CLK) |        \
                                      PIN_ODR_HIGH(GPIOE_QSPI_CLK) |         \
                                      PIN_ODR_HIGH(GPIOE_QSPI_CS) |          \
