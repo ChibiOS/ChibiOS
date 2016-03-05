@@ -666,7 +666,7 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
 #if STM32_SPI_USE_BIDIMODE
   osalDbgAssert((spip->spi->CR1 & SPI_CR1_BIDIMODE) == 0,
-                "spiExchange() not possible with BIDIMODE");
+                "spiPolledExchange() not possible with BIDIMODE");
   osalDbgAssert((spip->spi->CR1 & SPI_CR1_BIDIOE) != 0,
                 "BIDIOE not set");
 #endif
