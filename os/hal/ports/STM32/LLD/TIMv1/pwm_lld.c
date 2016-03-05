@@ -708,7 +708,7 @@ void pwm_lld_enable_channel(PWMDriver *pwmp,
 #if STM32_TIM_MAX_CHANNELS <= 4
   pwmp->tim->CCR[channel] = width;
 #else
-  if (channel <= 4)
+  if (channel < 4)
     pwmp->tim->CCR[channel] = width;
   else
     pwmp->tim->CCXR[channel - 4] = width;
@@ -733,7 +733,7 @@ void pwm_lld_disable_channel(PWMDriver *pwmp, pwmchannel_t channel) {
   pwmp->tim->CCR[channel] = 0;
   pwmp->tim->DIER &= ~(2 << channel);
 #else
-  if (channel <= 4) {
+  if (channel < 4) {
     pwmp->tim->CCR[channel] = 0;
     pwmp->tim->DIER &= ~(2 << channel);
   }
