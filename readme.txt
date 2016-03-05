@@ -95,6 +95,8 @@
 - RT:  Merged RT4.
 - NIL: Merged NIL2.
 - NIL: Added STM32F7 demo.
+- VAR: Fixed error in STM32 PWM driver regarding channels 4 and 5 (bug #722)
+       (backported to 3.0.6 and 16.1.4).
 - VAR: Fixed wrong flash and ram size in linker script for maple mini
        (bug #719).
 - VAR: Fixed GCC 5.2 crashes while compiling ChibiOS (bug #718)(backported
