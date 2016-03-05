@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    hal_gyroscope.h
- * @brief   Generic gyroscope interface header.
+ * @file    hal_compass.h
+ * @brief   Generic compass interface header.
  *
- * @addtogroup HAL_GYROSCOPE
+ * @addtogroup HAL_COMPASS
  * @{
  */
 
-#ifndef _HAL_GYROSCOPE_H_
-#define _HAL_GYROSCOPE_H_
+#ifndef _HAL_COMPASS_H_
+#define _HAL_COMPASS_H_
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -42,30 +42,33 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p BaseGyroscope virtual methods table.
+ * @brief   @p BaseCompass virtual methods table.
  */
-struct BaseGyroscopeVMT {
-  _base_gyroscope_methods
+
+struct BaseCompassVMT {
+  _base_compass_methods
 };
 
 /**
- * @brief   Base gyroscope class.
- * @details This class represents a generic gyroscope.
+ * @brief   Base compass class.
+ * @details This class represents a generic compass.
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseGyroscopeVMT *vmt;
-  _base_gyroscope_data
-} BaseGyroscope;
+  const struct BaseCompassVMT *vmt;
+  _base_compass_data
+
+} BaseCompass;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
 /**
- * @brief   BaseGyroscope specific methods.
+ * @brief   BaseCompass specific methods.
  */
-#define _base_gyroscope_methods                                             \
+
+#define _base_compass_methods                                               \
   _base_sensor_methods                                                      \
   /* Remove the calibration data.*/                                         \
   msg_t (*reset_calibration)(void);                                         \
@@ -73,11 +76,11 @@ typedef struct {
   msg_t (*calibrate)(void);
 
 /**
- * @brief   @p BaseGyroscope specific data.
- * @note    It is empty because @p BaseGyroscope is only an interface
+ * @brief   @p BaseCompass specific data.
+ * @note    It is empty because @p BaseCompass is only an interface
  *          without implementation.
  */
-#define _base_gyroscope_data
+#define _base_compass_data
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -91,6 +94,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_GYROSCOPE_H_ */
+#endif /* _HAL_COMPASS_H_ */
 
 /** @} */

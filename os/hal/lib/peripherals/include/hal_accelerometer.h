@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    hal_gyroscope.h
- * @brief   Generic gyroscope interface header.
+ * @file    hal_accelerometer.h
+ * @brief   Generic accelerometer interface header.
  *
- * @addtogroup HAL_GYROSCOPE
+ * @addtogroup HAL_ACCELEROMETER
  * @{
  */
 
-#ifndef _HAL_GYROSCOPE_H_
-#define _HAL_GYROSCOPE_H_
+#ifndef _HAL_ACCELEROMETER_H_
+#define _HAL_ACCELEROMETER_H_
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -42,42 +42,42 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p BaseGyroscope virtual methods table.
+ * @brief   @p BaseAccelerometer virtual methods table.
  */
-struct BaseGyroscopeVMT {
-  _base_gyroscope_methods
+struct BaseAccelerometerVMT {
+  _base_accelerometer_methods
 };
 
 /**
- * @brief   Base gyroscope class.
- * @details This class represents a generic gyroscope.
+ * @brief   Base accelerometer class.
+ * @details This class represents a generic a generic accelerometer.
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
-  const struct BaseGyroscopeVMT *vmt;
-  _base_gyroscope_data
-} BaseGyroscope;
+  const struct BaseAccelerometerVMT *vmt;
+  _base_sensor_data
+} BaseAccelerometer;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
 /**
- * @brief   BaseGyroscope specific methods.
+ * @brief   BaseAccelerometer specific methods.
  */
-#define _base_gyroscope_methods                                             \
+#define _base_accelerometer_methods                                         \
   _base_sensor_methods                                                      \
-  /* Remove the calibration data.*/                                         \
+  /* Remove the calibration data.*/                                            \
   msg_t (*reset_calibration)(void);                                         \
   /* Invokes the calibration procedure.*/                                   \
   msg_t (*calibrate)(void);
 
 /**
- * @brief   @p BaseGyroscope specific data.
- * @note    It is empty because @p BaseGyroscope is only an interface
+ * @brief   @p BaseAccelerometer specific data.
+ * @note    It is empty because @p BaseAccelerometer is only an interface
  *          without implementation.
  */
-#define _base_gyroscope_data
+#define _base_accelerometer_data
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -91,6 +91,6 @@ extern "C" {
 }
 #endif
 
-#endif /* _HAL_GYROSCOPE_H_ */
+#endif /* _HAL_ACCELEROMETER_H_ */
 
 /** @} */
