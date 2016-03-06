@@ -101,8 +101,8 @@
  * @brief  L3GD20 Power Mode
  */
 typedef enum {
-  L3GD20_PM_POWER_DOWN   = 0x00,   /**< Power down enabled.                 */          
-  L3GD20_PM_SLEEP_NORMAL = 0x08    /**< Normal operation mode.              */          
+  L3GD20_PM_POWER_DOWN   = 0x00,    /**< Power down enabled.                */          
+  L3GD20_PM_SLEEP_NORMAL = 0x08     /**< Normal operation mode.             */          
 }l3gd20_pm_t;
 
 /*===========================================================================*/
@@ -199,9 +199,11 @@ static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
 #if L3GD20_USE_SPI
   osalDbgAssert((((L3GD20Driver *)ip)->config->spip->state == SPI_READY),
                 "read_raw(), channel not ready");
+#if	L3GD20_SHARED_SPI
   spiAcquireBus(((L3GD20Driver *)ip)->config->spip);
   spiStart(((L3GD20Driver *)ip)->config->spip,
            ((L3GD20Driver *)ip)->config->spicfg);
+#endif /* L3GD20_SHARED_SPI */   
   if(((L3GD20Driver *)ip)->config->axesenabling & L3GD20_AE_X){
     axes[0] = (int16_t)(l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
                                        L3GD20_AD_OUT_X_L));
@@ -223,7 +225,9 @@ static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
                                         L3GD20_AD_OUT_Y_H) << 8);
     axes[2] -= ((L3GD20Driver *)ip)->bias[2];
   }
+#if	L3GD20_SHARED_SPI
   spiReleaseBus(((L3GD20Driver *)ip)->config->spip);
+#endif /* L3GD20_SHARED_SPI */   
 #endif
   return MSG_OK;
 }
@@ -326,8 +330,10 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
 
   devp->config = config;
   
-#if (L3GD20_USE_SPI)
+#if L3GD20_USE_SPI
+#if	L3GD20_SHARED_SPI
   spiAcquireBus((devp)->config->spip);
+#endif /* L3GD20_SHARED_SPI */
   spiStart((devp)->config->spip,
            (devp)->config->spicfg);
   l3gd20SPIWriteRegister(devp->config->spip, L3GD20_AD_CTRL_REG1,
@@ -338,7 +344,9 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
                          devp->config->fullscale |
                          devp->config->blockdataupdate |
                          devp->config->endianness);
+#if	L3GD20_SHARED_SPI
   spiReleaseBus((devp)->config->spip);
+#endif /* L3GD20_SHARED_SPI */  
 #endif /* L3GD20_USE_SPI */
   
   /* Storing sensitivity information according to full scale value */
@@ -372,13 +380,17 @@ void l3gd20Stop(L3GD20Driver *devp) {
 
 #if (L3GD20_USE_SPI)
   if (devp->state == L3GD20_STOP) {
+#if	L3GD20_SHARED_SPI
     spiAcquireBus((devp)->config->spip);
     spiStart((devp)->config->spip,
              (devp)->config->spicfg);
+#endif /* L3GD20_SHARED_SPI */
     l3gd20SPIWriteRegister(devp->config->spip, L3GD20_AD_CTRL_REG1,
                            L3GD20_PM_POWER_DOWN | L3GD20_AE_DISABLED);
     spiStop((devp)->config->spip);
+#if	L3GD20_SHARED_SPI
     spiReleaseBus((devp)->config->spip);
+#endif /* L3GD20_SHARED_SPI */    
   }			  
 #endif /* L3GD20_USE_SPI */
   devp->state = L3GD20_STOP;

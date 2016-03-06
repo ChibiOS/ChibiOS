@@ -48,7 +48,7 @@
  * @{
  */
 /**
- * @brief   L3GD20 SPI interface selector.
+ * @brief   L3GD20 SPI interface switch.
  * @details If set to @p TRUE the support for SPI is included.
  * @note    The default is @p TRUE.
  */
@@ -57,12 +57,22 @@
 #endif
 
 /**
- * @brief   L3GD20 I2C interface selector.
+ * @brief   L3GD20 I2C interface switch.
  * @details If set to @p TRUE the support for I2C is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(L3GD20_USE_I2C) || defined(__DOXYGEN__)
 #define L3GD20_USE_I2C                      FALSE
+#endif
+
+/**
+ * @brief   L3GD20 shared SPI switch.
+ * @details If set to @p TRUE the device acquires SPI bus ownership
+ *          on each transaction.
+ * @note    The default is @p FALSE. Requires SPI_USE_MUTUAL_EXCLUSION
+ */
+#if !defined(L3GD20_SHARED_SPI) || defined(__DOXYGEN__)
+#define L3GD20_SHARED_SPI                   FALSE
 #endif
 
 /**
@@ -87,8 +97,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if L3GD20_USE_SPI && L3GD20_USE_I2C
-#error "L3GD20_USE_SPI and L3GD20_USE_I2C cannot be both true"
+#if !(L3GD20_USE_SPI ^ L3GD20_USE_I2C)
+#error "L3GD20_USE_SPI and L3GD20_USE_I2C cannot be both true or both false"
 #endif
 
 #if L3GD20_USE_SPI && !HAL_USE_SPI
@@ -97,6 +107,10 @@
 
 #if L3GD20_USE_I2C && !HAL_USE_I2C
 #error "L3GD20_USE_I2C requires HAL_USE_I2C"
+#endif
+
+#if L3GD20_SHARED_SPI && !SPI_USE_MUTUAL_EXCLUSION
+#error "L3GD20_SHARED_SPI requires SPI_USE_MUTUAL_EXCLUSION"
 #endif
 
 /*===========================================================================*/
@@ -111,9 +125,9 @@
  * @brief  L3GD20 full scale
  */
 typedef enum {
-  L3GD20_FS_250DPS = 0x00,         /**< Full scale 250 degree per second.   */        
-  L3GD20_FS_500DPS = 0x10,         /**< Full scale 500 degree per second.   */        
-  L3GD20_FS_2000DPS = 0x20         /**< Full scale 2000 degree per second.  */         
+  L3GD20_FS_250DPS = 0x00,          /**< Full scale 250 degree per second.  */        
+  L3GD20_FS_500DPS = 0x10,          /**< Full scale 500 degree per second.  */        
+  L3GD20_FS_2000DPS = 0x20          /**< Full scale 2000 degree per second. */         
 }l3gd20_fs_t;
 
 /**

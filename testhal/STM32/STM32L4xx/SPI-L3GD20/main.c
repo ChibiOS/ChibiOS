@@ -46,7 +46,7 @@ static L3GD20Config l3gd20cfg = {
   &SPID2,                                    /* Pointer to SPI Driver */
   &spicfg,                                   /* Pointer to SPI Configuration */
   L3GD20_FS_250DPS,                          /* Full scale value */
-  L3GD20_ODR_760HZ_FC_100,                   /* Output data rate */
+  L3GD20_ODR_760HZ_FC_30,                    /* Output data rate */
   L3GD20_AE_XYZ,                             /* Enabled axes */
   L3GD20_BDU_BLOCKED,                        /* Block data update */
   L3GD20_END_LITTLE                          /* Endianness */
