@@ -186,11 +186,16 @@ static void l3gd20SPIWriteRegister(SPIDriver *spip, uint8_t reg,
 
 static size_t get_axes_number(void *ip) {
 
-  (void) ip;
+  osalDbgCheck(ip != NULL);
   return L3GD20_NUMBER_OF_AXES;
 }
 
 static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
+
+  osalDbgCheck((ip != NULL) && (axes != NULL));
+
+  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
+              "read_raw(), invalid state");
 
 #if L3GD20_USE_SPI
   osalDbgAssert((((L3GD20Driver *)ip)->config->spip->state == SPI_READY),
@@ -228,7 +233,14 @@ static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
 static msg_t read_cooked(void *ip, float axes[]) {
   uint32_t i;
   int32_t raw[L3GD20_NUMBER_OF_AXES];
-  msg_t msg = read_raw(ip, raw);
+  msg_t msg;
+
+  osalDbgCheck((ip != NULL) && (axes != NULL));
+
+  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
+              "read_cooked(), invalid state");
+
+  msg = read_raw(ip, raw);
   for(i = 0; i < L3GD20_NUMBER_OF_AXES ; i++){
     axes[i] = raw[i] * ((L3GD20Driver *)ip)->sensitivity;
   }
@@ -237,6 +249,13 @@ static msg_t read_cooked(void *ip, float axes[]) {
 
 static msg_t reset_calibration(void *ip) {
   uint32_t i;
+
+  osalDbgCheck(ip != NULL);
+
+  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY) ||
+                (((L3GD20Driver *)ip)->state == L3GD20_STOP),
+              "reset_calibration(), invalid state");
+
   for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++)
     ((L3GD20Driver *)ip)->bias[i] = 0;
   return MSG_OK;
@@ -244,20 +263,25 @@ static msg_t reset_calibration(void *ip) {
 
 static msg_t calibrate(void *ip) {
   uint32_t i, j;
-    int32_t raw[L3GD20_NUMBER_OF_AXES];
-    int32_t buff[L3GD20_NUMBER_OF_AXES] = {0, 0, 0};
+  int32_t raw[L3GD20_NUMBER_OF_AXES];
+  int32_t buff[L3GD20_NUMBER_OF_AXES] = {0, 0, 0};
 
-    for(i = 0; i < L3GD20_BIAS_ACQ_TIMES; i++){
-      read_raw(ip, raw);
-      for(j = 0; j < L3GD20_NUMBER_OF_AXES; j++){
-        buff[j] += raw[j];
-      }
-      osalThreadSleepMicroseconds(L3GD20_BIAS_SETTLING_uS);
-    }
+  osalDbgCheck(ip != NULL);
 
-    for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++){
-      ((L3GD20Driver *)ip)->bias[i] = buff[i] / L3GD20_BIAS_ACQ_TIMES;
+  osalDbgAssert((((L3GD20Driver *)ip)->state == L3GD20_READY),
+              "calibrate(), invalid state");
+
+  for(i = 0; i < L3GD20_BIAS_ACQ_TIMES; i++){
+    read_raw(ip, raw);
+    for(j = 0; j < L3GD20_NUMBER_OF_AXES; j++){
+      buff[j] += raw[j];
     }
+    osalThreadSleepMicroseconds(L3GD20_BIAS_SETTLING_uS);
+  }
+
+  for(i = 0; i < L3GD20_NUMBER_OF_AXES; i++){
+    ((L3GD20Driver *)ip)->bias[i] = buff[i] / L3GD20_BIAS_ACQ_TIMES;
+  }
   return MSG_OK;
 }
 
@@ -278,6 +302,7 @@ static const struct L3GD20VMT vmt = {
  */
 void l3gd20ObjectInit(L3GD20Driver *devp) {
   uint32_t i;
+
   devp->vmt = &vmt;
   devp->state  = L3GD20_STOP;
   devp->config = NULL;
@@ -296,6 +321,7 @@ void l3gd20ObjectInit(L3GD20Driver *devp) {
 void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
 
   osalDbgCheck((devp != NULL) && (config != NULL));
+
   osalDbgAssert((devp->state == L3GD20_STOP) || (devp->state == L3GD20_READY),
               "l3gd20Start(), invalid state");			  
 
@@ -343,7 +369,8 @@ void l3gd20Stop(L3GD20Driver *devp) {
   osalDbgCheck(devp != NULL);
 
   osalDbgAssert((devp->state == L3GD20_STOP) || (devp->state == L3GD20_READY),
-                "l3gd20Stop(), invalid state");				
+                "l3gd20Stop(), invalid state");
+
 #if (L3GD20_USE_SPI)
   if (devp->state == L3GD20_STOP) {
     spiAcquireBus((devp)->config->spip);
