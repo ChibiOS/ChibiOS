@@ -1,19 +1,19 @@
 *****************************************************************************
-** ChibiOS/HAL - IRQ_STORM stress test demo for STM32L4xx.                 **
+** ChibiOS/RT port for ARM-Cortex-M4 STM32L476.                            **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an STMicroelectronics STM32L4-Nucleo board.
+The demo runs on an STM32L4 Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32L4xx GPT, PAL and Serial
-drivers in order to implement a system stress demo.
+The demo flashes the board LED using a thread, read data from L3GD20 printing
+it on a BaseSequentialStream (USART2, mapped on USB virtual COM port).
 
 ** Build Procedure **
 
-The demo has been tested using the free Codesourcery GCC-based toolchain
+The demo has been tested by using the free Codesourcery GCC-based toolchain
 and YAGARTO.
 Just modify the TRGT line in the makefile in order to use different GCC ports.
 
