@@ -46,9 +46,15 @@
 /**
  * @brief   BaseCompass specific methods.
  */
+#define _base_compass_methods_alone
+
+/**
+ * @brief   BaseCompass specific methods with inherited ones.
+ */
 #define _base_compass_methods                                               \
-  _base_sensor_methods
-  
+  _base_sensor_methods                                                      \
+  _base_compass_methods_alone
+
 /**
  * @brief   @p BaseCompass virtual methods table.
  */

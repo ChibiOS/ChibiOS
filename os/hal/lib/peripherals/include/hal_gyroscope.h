@@ -46,12 +46,18 @@
 /**
  * @brief   BaseGyroscope specific methods.
  */
-#define _base_gyroscope_methods                                             \
-  _base_sensor_methods                                                      \
+#define _base_gyroscope_methods_alone                                       \
   /* Remove the calibration data.*/                                         \
   msg_t (*reset_calibration)(void *instance);                               \
   /* Invokes the calibration procedure.*/                                   \
   msg_t (*calibrate)(void *instance);
+
+/**
+ * @brief   BaseGyroscope specific methods with inherited ones.
+ */
+#define _base_gyroscope_methods                                             \
+  _base_sensor_methods                                                      \
+  _base_gyroscope_methods_alone
 
 /**
  * @brief   @p BaseGyroscope virtual methods table.

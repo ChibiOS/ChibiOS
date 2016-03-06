@@ -46,8 +46,14 @@
 /**
  * @brief   BaseAccelerometer specific methods.
  */
+#define _base_accelerometer_methods_alone
+
+/**
+ * @brief   BaseAccelerometer specific methods with inherited ones.
+ */
 #define _base_accelerometer_methods                                         \
-  _base_sensor_methods
+  _base_sensor_methods                                                      \
+  _base_accelerometer_methods_alone
 
 /**
  * @brief   @p BaseAccelerometer virtual methods table.

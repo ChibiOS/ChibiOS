@@ -44,13 +44,19 @@
 /**
  * @brief   BaseSensor specific methods.
  */
-#define _base_sensor_methods                                                \
+#define _base_sensor_methods_alone                                          \
   /* Get number of axes.*/                                                  \
   size_t (*get_axes_number)(void *instance);                                \
   /* Reads the sensor raw data.*/                                           \
   msg_t (*read_raw)(void *instance, int32_t axes[]);                        \
   /* Reads the sensor returning normalized data.*/                          \
   msg_t (*read_cooked)(void *instance, float axes[]);
+
+/**
+ * @brief   BaseSensor specific methods with inherited ones.
+ */
+#define _base_sensor_methods                                                \
+  _base_sensor_methods_alone
 
 /**
  * @brief   @p BaseSensor virtual methods table.
