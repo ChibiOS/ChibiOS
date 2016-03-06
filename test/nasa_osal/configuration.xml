@@ -286,6 +286,210 @@ test_assert_sequence("A", "task not executed");]]></value>
                   </step>
                 </steps>
               </case>
+              <case>
+                <brief>
+                  <value>OS_TaskCreate() priority ordering</value>
+                </brief>
+                <description>
+                  <value>Four tasks are created at different priorities and in different order. The execution order must happen in order of priority regardless the creation order.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Four tasks are created in priority order from low to high.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 tid1, tid2, tid3, tid4;
+
+err = OS_TaskCreate(&tid4,
+                    "running thread 4",
+                    test_thread4,
+                    (uint32 *)wa_test4,
+                    sizeof wa_test4,
+                    TASKS_BASE_PRIORITY - 0,
+                    0);
+test_assert(err == OS_SUCCESS, "task 4 creation failed");
+
+err = OS_TaskCreate(&tid3,
+                    "running thread 3",
+                    test_thread3,
+                    (uint32 *)wa_test3,
+                    sizeof wa_test3,
+                    TASKS_BASE_PRIORITY - 1,
+                    0);
+test_assert(err == OS_SUCCESS, "task 3 creation failed");
+
+err = OS_TaskCreate(&tid2,
+                    "running thread 2",
+                    test_thread2,
+                    (uint32 *)wa_test2,
+                    sizeof wa_test2,
+                    TASKS_BASE_PRIORITY - 2,
+                    0);
+test_assert(err == OS_SUCCESS, "task 2 creation failed");
+
+err = OS_TaskCreate(&tid1,
+                    "running thread 1",
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY - 3,
+                    0);
+test_assert(err == OS_SUCCESS, "task 1 creation failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Tasks are made runnable atomically and their execution order tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[OS_TaskDelay(5);
+test_assert_sequence("ABCD", "task order violation");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Four tasks are created in priority order from high to low.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 tid1, tid2, tid3, tid4;
+
+err = OS_TaskCreate(&tid1,
+                    "running thread 1",
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY - 3,
+                    0);
+test_assert(err == OS_SUCCESS, "task 1 creation failed");
+
+err = OS_TaskCreate(&tid2,
+                    "running thread 2",
+                    test_thread2,
+                    (uint32 *)wa_test2,
+                    sizeof wa_test2,
+                    TASKS_BASE_PRIORITY - 2,
+                    0);
+test_assert(err == OS_SUCCESS, "task 2 creation failed");
+
+err = OS_TaskCreate(&tid3,
+                    "running thread 3",
+                    test_thread3,
+                    (uint32 *)wa_test3,
+                    sizeof wa_test3,
+                    TASKS_BASE_PRIORITY - 1,
+                    0);
+test_assert(err == OS_SUCCESS, "task 3 creation failed");
+
+err = OS_TaskCreate(&tid4,
+                    "running thread 4",
+                    test_thread4,
+                    (uint32 *)wa_test4,
+                    sizeof wa_test4,
+                    TASKS_BASE_PRIORITY - 0,
+                    0);
+test_assert(err == OS_SUCCESS, "task 4 creation failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Tasks are made runnable atomically and their execution order tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[OS_TaskDelay(5);
+test_assert_sequence("ABCD", "task order violation");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Four tasks are created in an not ordered way.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 tid1, tid2, tid3, tid4;
+
+err = OS_TaskCreate(&tid2,
+                    "running thread 2",
+                    test_thread2,
+                    (uint32 *)wa_test2,
+                    sizeof wa_test2,
+                    TASKS_BASE_PRIORITY - 2,
+                    0);
+test_assert(err == OS_SUCCESS, "task 2 creation failed");
+
+err = OS_TaskCreate(&tid1,
+                    "running thread 1",
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY - 3,
+                    0);
+test_assert(err == OS_SUCCESS, "task 1 creation failed");
+
+err = OS_TaskCreate(&tid4,
+                    "running thread 4",
+                    test_thread4,
+                    (uint32 *)wa_test4,
+                    sizeof wa_test4,
+                    TASKS_BASE_PRIORITY - 0,
+                    0);
+test_assert(err == OS_SUCCESS, "task 4 creation failed");
+
+err = OS_TaskCreate(&tid3,
+                    "running thread 3",
+                    test_thread3,
+                    (uint32 *)wa_test3,
+                    sizeof wa_test3,
+                    TASKS_BASE_PRIORITY - 1,
+                    0);
+test_assert(err == OS_SUCCESS, "task 3 creation failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Tasks are made runnable atomically and their execution order tested.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[OS_TaskDelay(5);
+test_assert_sequence("ABCD", "task order violation");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
             </cases>
           </sequence>
         </sequences>

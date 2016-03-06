@@ -29,6 +29,7 @@
  *
  * <h2>Test Cases</h2>
  * - @subpage test_001_001
+ * - @subpage test_001_002
  * .
  */
 
@@ -36,7 +37,7 @@
  * Shared code.
  ****************************************************************************/
 
-#include "osapi.H"
+#include "osapi.h"
 
 static void test_thread1(void) {
 
@@ -263,6 +264,190 @@ static const testcase_t test_001_001 = {
   test_001_001_execute
 };
 
+/**
+ * @page test_001_002 OS_TaskCreate() priority ordering
+ *
+ * <h2>Description</h2>
+ * Four tasks are created at different priorities and in different
+ * order. The execution order must happen in order of priority
+ * regardless the creation order.
+ *
+ * <h2>Test Steps</h2>
+ * - Four tasks are created in priority order from low to high.
+ * - Tasks are made runnable atomically and their execution order
+ *   tested.
+ * - Four tasks are created in priority order from high to low.
+ * - Tasks are made runnable atomically and their execution order
+ *   tested.
+ * - Four tasks are created in an not ordered way.
+ * - Tasks are made runnable atomically and their execution order
+ *   tested.
+ * .
+ */
+
+static void test_001_002_execute(void) {
+
+  /* Four tasks are created in priority order from low to high.*/
+  test_set_step(1);
+  {
+    int32 err;
+    uint32 tid1, tid2, tid3, tid4;
+
+    err = OS_TaskCreate(&tid4,
+                        "running thread 4",
+                        test_thread4,
+                        (uint32 *)wa_test4,
+                        sizeof wa_test4,
+                        TASKS_BASE_PRIORITY - 0,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 4 creation failed");
+
+    err = OS_TaskCreate(&tid3,
+                        "running thread 3",
+                        test_thread3,
+                        (uint32 *)wa_test3,
+                        sizeof wa_test3,
+                        TASKS_BASE_PRIORITY - 1,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 3 creation failed");
+
+    err = OS_TaskCreate(&tid2,
+                        "running thread 2",
+                        test_thread2,
+                        (uint32 *)wa_test2,
+                        sizeof wa_test2,
+                        TASKS_BASE_PRIORITY - 2,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 2 creation failed");
+
+    err = OS_TaskCreate(&tid1,
+                        "running thread 1",
+                        test_thread1,
+                        (uint32 *)wa_test1,
+                        sizeof wa_test1,
+                        TASKS_BASE_PRIORITY - 3,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 1 creation failed");
+  }
+
+  /* Tasks are made runnable atomically and their execution order
+     tested.*/
+  test_set_step(2);
+  {
+    OS_TaskDelay(5);
+    test_assert_sequence("ABCD", "task order violation");
+  }
+
+  /* Four tasks are created in priority order from high to low.*/
+  test_set_step(3);
+  {
+    int32 err;
+    uint32 tid1, tid2, tid3, tid4;
+
+    err = OS_TaskCreate(&tid1,
+                        "running thread 1",
+                        test_thread1,
+                        (uint32 *)wa_test1,
+                        sizeof wa_test1,
+                        TASKS_BASE_PRIORITY - 3,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 1 creation failed");
+
+    err = OS_TaskCreate(&tid2,
+                        "running thread 2",
+                        test_thread2,
+                        (uint32 *)wa_test2,
+                        sizeof wa_test2,
+                        TASKS_BASE_PRIORITY - 2,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 2 creation failed");
+
+    err = OS_TaskCreate(&tid3,
+                        "running thread 3",
+                        test_thread3,
+                        (uint32 *)wa_test3,
+                        sizeof wa_test3,
+                        TASKS_BASE_PRIORITY - 1,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 3 creation failed");
+
+    err = OS_TaskCreate(&tid4,
+                        "running thread 4",
+                        test_thread4,
+                        (uint32 *)wa_test4,
+                        sizeof wa_test4,
+                        TASKS_BASE_PRIORITY - 0,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 4 creation failed");
+  }
+
+  /* Tasks are made runnable atomically and their execution order
+     tested.*/
+  test_set_step(4);
+  {
+    OS_TaskDelay(5);
+    test_assert_sequence("ABCD", "task order violation");
+  }
+
+  /* Four tasks are created in an not ordered way.*/
+  test_set_step(5);
+  {
+    int32 err;
+    uint32 tid1, tid2, tid3, tid4;
+
+    err = OS_TaskCreate(&tid2,
+                        "running thread 2",
+                        test_thread2,
+                        (uint32 *)wa_test2,
+                        sizeof wa_test2,
+                        TASKS_BASE_PRIORITY - 2,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 2 creation failed");
+
+    err = OS_TaskCreate(&tid1,
+                        "running thread 1",
+                        test_thread1,
+                        (uint32 *)wa_test1,
+                        sizeof wa_test1,
+                        TASKS_BASE_PRIORITY - 3,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 1 creation failed");
+
+    err = OS_TaskCreate(&tid4,
+                        "running thread 4",
+                        test_thread4,
+                        (uint32 *)wa_test4,
+                        sizeof wa_test4,
+                        TASKS_BASE_PRIORITY - 0,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 4 creation failed");
+
+    err = OS_TaskCreate(&tid3,
+                        "running thread 3",
+                        test_thread3,
+                        (uint32 *)wa_test3,
+                        sizeof wa_test3,
+                        TASKS_BASE_PRIORITY - 1,
+                        0);
+    test_assert(err == OS_SUCCESS, "task 3 creation failed");
+  }
+
+  /* Tasks are made runnable atomically and their execution order
+     tested.*/
+  test_set_step(6);
+  {
+    OS_TaskDelay(5);
+    test_assert_sequence("ABCD", "task order violation");
+  }
+}
+
+static const testcase_t test_001_002 = {
+  "OS_TaskCreate() priority ordering",
+  NULL,
+  NULL,
+  test_001_002_execute
+};
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -272,5 +457,6 @@ static const testcase_t test_001_001 = {
  */
 const testcase_t * const test_sequence_001[] = {
   &test_001_001,
+  &test_001_002,
   NULL
 };
