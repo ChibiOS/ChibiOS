@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SPC5-Config version="1.0.0">
+  <application name="Test Suite" version="1.0.0" standalone="true" locked="false">
+    <description>Test specification for the NASA OSAL ChibiOS extension.</description>
+    <component id="org.chibios.spc5.components.platform.generic">
+      <component id="org.chibios.spc5.components.chibios_unitary_tests_engine" />
+    </component>
+    <instances>
+      <instance locked="false" id="org.chibios.spc5.components.platform.generic" />
+      <instance locked="false" id="org.chibios.spc5.components.chibios_unitary_tests_engine">
+        <description>
+          <introduction>
+            <value>This document has been automatically generated.</value>
+          </introduction>
+        </description>
+        <global_data_and_code>
+          <global_definitions>
+            <value><![CDATA[#define TEST_SUITE_NAME                     "NASA OSAL over ChibiOS/RT Test Suite"
+
+#define TASKS_BASE_PRIORITY                 200
+#define TASKS_STACK_SIZE                    256
+
+extern THD_WORKING_AREA(wa_test1, TASKS_STACK_SIZE);
+extern THD_WORKING_AREA(wa_test2, TASKS_STACK_SIZE);
+extern THD_WORKING_AREA(wa_test3, TASKS_STACK_SIZE);
+extern THD_WORKING_AREA(wa_test4, TASKS_STACK_SIZE);]]></value>
+          </global_definitions>
+          <global_code>
+            <value><![CDATA[THD_WORKING_AREA(wa_test1, TASKS_STACK_SIZE);
+THD_WORKING_AREA(wa_test2, TASKS_STACK_SIZE);
+THD_WORKING_AREA(wa_test3, TASKS_STACK_SIZE);
+THD_WORKING_AREA(wa_test4, TASKS_STACK_SIZE);]]></value>
+          </global_code>
+        </global_data_and_code>
+        <sequences>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Threads Functionality</value>
+            </brief>
+            <description>
+              <value>This sequence tests the NASA OSAL over ChibiOS/RT functionalities related to threading.</value>
+            </description>
+            <shared_code>
+              <value><![CDATA[#include "osapi.h"
+
+static void test_thread1(void) {
+
+  test_emit_token('A');
+}
+
+static void test_thread2(void) {
+
+  test_emit_token('B');
+}
+
+static void test_thread3(void) {
+
+  test_emit_token('C');
+}
+
+static void test_thread4(void) {
+
+  test_emit_token('D');
+}]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>OS_TaskCreate() errors</value>
+                </brief>
+                <description>
+                  <value>Parameters checking in OS_TaskCreate() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>OS_TaskCreate() is invoked with task_id set to NULL, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_TaskCreate(NULL,                   /* Error.*/
+                    "failing thread",
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_INVALID_POINTER, "NULL not detected");
+test_assert_sequence("", "task executed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_TaskCreate() is invoked with task_name set to NULL, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 tid;
+
+err = OS_TaskCreate(&tid,
+                    NULL,                   /* Error.*/
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_INVALID_POINTER, "NULL not detected");
+test_assert_sequence("", "task executed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_TaskCreate() is invoked with stack_pointer set to NULL, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 tid;
+
+err = OS_TaskCreate(&tid,
+                    "failing thread",
+                    test_thread1,
+                    (uint32 *)NULL,         /* Error.*/
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_INVALID_POINTER, "NULL not detected");
+test_assert_sequence("", "task executed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_TaskCreate() is invoked with a very long task name, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 tid;
+
+err = OS_TaskCreate(&tid,
+                    "this is a very very long task name", /* Error.*/
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
+test_assert_sequence("", "task executed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_TaskCreate() is invoked with priority below and above allowed range, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 tid;
+
+err = OS_TaskCreate(&tid,
+                    "failing thread",
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    0,                      /* Error.*/
+                    0);
+test_assert(err == OS_ERR_INVALID_PRIORITY, "priority error not detected");
+test_assert_sequence("", "task executed");
+
+err = OS_TaskCreate(&tid,
+                   "failing thread",
+                   test_thread1,
+                   (uint32 *)wa_test1,
+                   sizeof wa_test1,
+                   256,                     /* Error.*/
+                   0);
+test_assert(err == OS_ERR_INVALID_PRIORITY, "priority error not detected");
+test_assert_sequence("", "task executed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_TaskCreate() is invoked with a stack size below minimum, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 tid;
+
+err = OS_TaskCreate(&tid,
+                    "failing thread",
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    16,                     /* Error.*/
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_INVALID_INT_NUM, "stack insufficient size not detected");
+test_assert_sequence("", "task executed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>OS_TaskCreate() is invoked twice with duplicated name and then duplicated stack, an error is expected in both cases.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+uint32 tid;
+
+err = OS_TaskCreate(&tid,
+                    "running thread",
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_SUCCESS, "task creation failed");
+
+err = OS_TaskCreate(&tid,
+                    "running thread",
+                    test_thread2,
+                    (uint32 *)wa_test2,
+                    sizeof wa_test2,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_ERR_NAME_TAKEN, "name conflict not detected");
+
+err = OS_TaskCreate(&tid,
+                    "another running thread",
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_ERR_NO_FREE_IDS, "stack conflict not detected");
+
+OS_TaskDelay(5);
+test_assert_sequence("A", "task not executed");
+
+err = OS_TaskCreate(&tid,
+                    "running thread",
+                    test_thread1,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_SUCCESS, "task creation failed");
+
+OS_TaskDelay(5);
+test_assert_sequence("A", "task not executed");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+        </sequences>
+      </instance>
+    </instances>
+    <exportedFeatures />
+  </application>
+</SPC5-Config>

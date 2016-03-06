@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,25 +15,29 @@
 */
 
 /**
+ * @mainpage Test Suite Specification
+ * This document has been automatically generated.
+ *
+ * <h2>Test Sequences</h2>
+ * - @subpage test_sequence_001
+ * .
+ */
+
+/**
  * @file    test_root.c
  * @brief   Test Suite root structures code.
  *
- * @addtogroup CH_TEST_ROOT
+ * @addtogroup SPC5_TEST_ROOT
  * @{
  */
 
 #include "hal.h"
 #include "ch_test.h"
-#include "osapi.h"
+#include "test_root.h"
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
-
-THD_WORKING_AREA(wa_test1, TASKS_STACK_SIZE);
-THD_WORKING_AREA(wa_test2, TASKS_STACK_SIZE);
-THD_WORKING_AREA(wa_test3, TASKS_STACK_SIZE);
-THD_WORKING_AREA(wa_test4, TASKS_STACK_SIZE);
 
 /**
  * @brief   Array of all the test sequences.
@@ -46,5 +50,10 @@ const testcase_t * const *test_suite[] = {
 /*===========================================================================*/
 /* Shared code.                                                              */
 /*===========================================================================*/
+
+THD_WORKING_AREA(wa_test1, TASKS_STACK_SIZE);
+THD_WORKING_AREA(wa_test2, TASKS_STACK_SIZE);
+THD_WORKING_AREA(wa_test3, TASKS_STACK_SIZE);
+THD_WORKING_AREA(wa_test4, TASKS_STACK_SIZE);
 
 /** @} */

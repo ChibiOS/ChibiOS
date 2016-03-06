@@ -18,27 +18,14 @@
  * @file    test_root.h
  * @brief   Test Suite root structures header.
  *
- * @addtogroup CH_TEST_ROOT
+ * @addtogroup SPC5_TEST_ROOT
  * @{
  */
 
-#ifndef _TEST_ROOT_H_
-#define _TEST_ROOT_H_
-
-#include "ch.h"
+#ifndef _SPC5_TEST_ROOT_H_
+#define _SPC5_TEST_ROOT_H_
 
 #include "test_sequence_001.h"
-
-/*===========================================================================*/
-/* Default definitions.                                                      */
-/*===========================================================================*/
-
-/* Global test suite name, it is printed on top of the test
-   report header.*/
-#define TEST_SUITE_NAME                     "NASA OSAL over ChibiOS/RT Test Suite"
-
-#define TASKS_BASE_PRIORITY                 200
-#define TASKS_STACK_SIZE                    256
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -46,15 +33,9 @@
 
 extern const testcase_t * const *test_suite[];
 
-extern THD_WORKING_AREA(wa_test1, TASKS_STACK_SIZE);
-extern THD_WORKING_AREA(wa_test2, TASKS_STACK_SIZE);
-extern THD_WORKING_AREA(wa_test3, TASKS_STACK_SIZE);
-extern THD_WORKING_AREA(wa_test4, TASKS_STACK_SIZE);
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 #ifdef __cplusplus
 }
 #endif
@@ -63,6 +44,16 @@ extern "C" {
 /* Shared definitions.                                                       */
 /*===========================================================================*/
 
-#endif /* _TEST_ROOT_H_ */
+#define TEST_SUITE_NAME                     "NASA OSAL over ChibiOS/RT Test Suite"
+
+#define TASKS_BASE_PRIORITY                 200
+#define TASKS_STACK_SIZE                    256
+
+extern THD_WORKING_AREA(wa_test1, TASKS_STACK_SIZE);
+extern THD_WORKING_AREA(wa_test2, TASKS_STACK_SIZE);
+extern THD_WORKING_AREA(wa_test3, TASKS_STACK_SIZE);
+extern THD_WORKING_AREA(wa_test4, TASKS_STACK_SIZE);
+
+#endif /* _SPC5_TEST_ROOT_H_ */
 
 /** @} */
