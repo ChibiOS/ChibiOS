@@ -35,59 +35,59 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define  L3GD20_SENS_250DPS                      ((float)0.00875f)
-#define  L3GD20_SENS_500DPS                      ((float)0.01750f)
-#define  L3GD20_SENS_2000DPS                     ((float)0.07000f)
+#define  L3GD20_SENS_250DPS                 ((float)0.00875f)
+#define  L3GD20_SENS_500DPS                 ((float)0.01750f)
+#define  L3GD20_SENS_2000DPS                ((float)0.07000f)
 
-#define  L3GD20_DI                               ((uint8_t)0xFF)
-#define  L3GD20_DI_0                             ((uint8_t)0x01)
-#define  L3GD20_DI_1                             ((uint8_t)0x02)
-#define  L3GD20_DI_2                             ((uint8_t)0x04)
-#define  L3GD20_DI_3                             ((uint8_t)0x08)
-#define  L3GD20_DI_4                             ((uint8_t)0x10)
-#define  L3GD20_DI_5                             ((uint8_t)0x20)
-#define  L3GD20_DI_6                             ((uint8_t)0x40)
-#define  L3GD20_DI_7                             ((uint8_t)0x80)
+#define  L3GD20_DI                          ((uint8_t)0xFF)
+#define  L3GD20_DI_0                        ((uint8_t)0x01)
+#define  L3GD20_DI_1                        ((uint8_t)0x02)
+#define  L3GD20_DI_2                        ((uint8_t)0x04)
+#define  L3GD20_DI_3                        ((uint8_t)0x08)
+#define  L3GD20_DI_4                        ((uint8_t)0x10)
+#define  L3GD20_DI_5                        ((uint8_t)0x20)
+#define  L3GD20_DI_6                        ((uint8_t)0x40)
+#define  L3GD20_DI_7                        ((uint8_t)0x80)
 
-#define  L3GD20_AD                               ((uint8_t)0x3F)
-#define  L3GD20_AD_0                             ((uint8_t)0x01)
-#define  L3GD20_AD_1                             ((uint8_t)0x02)
-#define  L3GD20_AD_2                             ((uint8_t)0x04)
-#define  L3GD20_AD_3                             ((uint8_t)0x08)
-#define  L3GD20_AD_4                             ((uint8_t)0x10)
-#define  L3GD20_AD_5                             ((uint8_t)0x20)
+#define  L3GD20_AD                          ((uint8_t)0x3F)
+#define  L3GD20_AD_0                        ((uint8_t)0x01)
+#define  L3GD20_AD_1                        ((uint8_t)0x02)
+#define  L3GD20_AD_2                        ((uint8_t)0x04)
+#define  L3GD20_AD_3                        ((uint8_t)0x08)
+#define  L3GD20_AD_4                        ((uint8_t)0x10)
+#define  L3GD20_AD_5                        ((uint8_t)0x20)
 
-#define  L3GD20_MS                               ((uint8_t)0x40)
-#define  L3GD20_RW                               ((uint8_t)0x80)
+#define  L3GD20_MS                          ((uint8_t)0x40)
+#define  L3GD20_RW                          ((uint8_t)0x80)
 
-#define  L3GD20_AD_WHO_AM_I                      ((uint8_t)0x0F)
-#define  L3GD20_AD_CTRL_REG1                     ((uint8_t)0x20)
-#define  L3GD20_AD_CTRL_REG2                     ((uint8_t)0x21)
-#define  L3GD20_AD_CTRL_REG3                     ((uint8_t)0x22)
-#define  L3GD20_AD_CTRL_REG4                     ((uint8_t)0x23)
-#define  L3GD20_AD_CTRL_REG5                     ((uint8_t)0x24)
-#define  L3GD20_AD_REFERENCE                     ((uint8_t)0x25)
-#define  L3GD20_AD_OUT_TEMP                      ((uint8_t)0x26)
-#define  L3GD20_AD_STATUS_REG                    ((uint8_t)0x27)
-#define  L3GD20_AD_OUT_X_L                       ((uint8_t)0x28)
-#define  L3GD20_AD_OUT_X_H                       ((uint8_t)0x29)
-#define  L3GD20_AD_OUT_Y_L                       ((uint8_t)0x2A)
-#define  L3GD20_AD_OUT_Y_H                       ((uint8_t)0x2B)
-#define  L3GD20_AD_OUT_Z_L                       ((uint8_t)0x2C)
-#define  L3GD20_AD_OUT_Z_H                       ((uint8_t)0x2D)
-#define  L3GD20_AD_FIFO_CTRL_REG                 ((uint8_t)0x2E)
-#define  L3GD20_AD_FIFO_SRC_REG                  ((uint8_t)0x2F)
-#define  L3GD20_AD_INT1_CFG                      ((uint8_t)0x30)
-#define  L3GD20_AD_INT1_SRC                      ((uint8_t)0x31)
-#define  L3GD20_AD_INT1_TSH_XH                   ((uint8_t)0x32)
-#define  L3GD20_AD_INT1_TSH_XL                   ((uint8_t)0x33)
-#define  L3GD20_AD_INT1_TSH_YH                   ((uint8_t)0x34)
-#define  L3GD20_AD_INT1_TSH_YL                   ((uint8_t)0x35)
-#define  L3GD20_AD_INT1_TSH_ZH                   ((uint8_t)0x36)
-#define  L3GD20_AD_INT1_TSH_ZL                   ((uint8_t)0x37)
-#define  L3GD20_AD_INT1_DURATION                 ((uint8_t)0x38)
+#define  L3GD20_AD_WHO_AM_I                 ((uint8_t)0x0F)
+#define  L3GD20_AD_CTRL_REG1                ((uint8_t)0x20)
+#define  L3GD20_AD_CTRL_REG2                ((uint8_t)0x21)
+#define  L3GD20_AD_CTRL_REG3                ((uint8_t)0x22)
+#define  L3GD20_AD_CTRL_REG4                ((uint8_t)0x23)
+#define  L3GD20_AD_CTRL_REG5                ((uint8_t)0x24)
+#define  L3GD20_AD_REFERENCE                ((uint8_t)0x25)
+#define  L3GD20_AD_OUT_TEMP                 ((uint8_t)0x26)
+#define  L3GD20_AD_STATUS_REG               ((uint8_t)0x27)
+#define  L3GD20_AD_OUT_X_L                  ((uint8_t)0x28)
+#define  L3GD20_AD_OUT_X_H                  ((uint8_t)0x29)
+#define  L3GD20_AD_OUT_Y_L                  ((uint8_t)0x2A)
+#define  L3GD20_AD_OUT_Y_H                  ((uint8_t)0x2B)
+#define  L3GD20_AD_OUT_Z_L                  ((uint8_t)0x2C)
+#define  L3GD20_AD_OUT_Z_H                  ((uint8_t)0x2D)
+#define  L3GD20_AD_FIFO_CTRL_REG            ((uint8_t)0x2E)
+#define  L3GD20_AD_FIFO_SRC_REG             ((uint8_t)0x2F)
+#define  L3GD20_AD_INT1_CFG                 ((uint8_t)0x30)
+#define  L3GD20_AD_INT1_SRC                 ((uint8_t)0x31)
+#define  L3GD20_AD_INT1_TSH_XH              ((uint8_t)0x32)
+#define  L3GD20_AD_INT1_TSH_XL              ((uint8_t)0x33)
+#define  L3GD20_AD_INT1_TSH_YH              ((uint8_t)0x34)
+#define  L3GD20_AD_INT1_TSH_YL              ((uint8_t)0x35)
+#define  L3GD20_AD_INT1_TSH_ZH              ((uint8_t)0x36)
+#define  L3GD20_AD_INT1_TSH_ZL              ((uint8_t)0x37)
+#define  L3GD20_AD_INT1_DURATION            ((uint8_t)0x38)
 
-#define  L3GD20_CTRL_REG4_FS                     ((uint8_t)0x30)
+#define  L3GD20_CTRL_REG4_FS                ((uint8_t)0x30)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -101,8 +101,8 @@
  * @brief  L3GD20 Power Mode
  */
 typedef enum {
-  L3GD20_PM_POWER_DOWN   = 0x00,            
-  L3GD20_PM_SLEEP_NORMAL = 0x08             
+  L3GD20_PM_POWER_DOWN   = 0x00,   /**< Power down enabled.                 */          
+  L3GD20_PM_SLEEP_NORMAL = 0x08    /**< Normal operation mode.              */          
 }l3gd20_pm_t;
 
 /*===========================================================================*/
@@ -183,7 +183,6 @@ static void l3gd20SPIWriteRegister(SPIDriver *spip, uint8_t reg,
 /*
  * Interface implementation.
  */
-
 static size_t get_axes_number(void *ip) {
 
   osalDbgCheck(ip != NULL);
@@ -228,7 +227,6 @@ static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
 #endif
   return MSG_OK;
 }
-
 
 static msg_t read_cooked(void *ip, float axes[]) {
   uint32_t i;
@@ -289,6 +287,7 @@ static const struct L3GD20VMT vmt = {
   get_axes_number, read_raw, read_cooked,
   reset_calibration, calibrate
 };
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -384,5 +383,4 @@ void l3gd20Stop(L3GD20Driver *devp) {
 #endif /* L3GD20_USE_SPI */
   devp->state = L3GD20_STOP;
 }
-
 /** @} */

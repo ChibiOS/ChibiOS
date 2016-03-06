@@ -37,7 +37,7 @@
 /**
  * @brief   L3GD20 number of axes.
  */
-#define  L3GD20_NUMBER_OF_AXES                   ((size_t)   3U)
+#define  L3GD20_NUMBER_OF_AXES              ((size_t)   3U)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -53,7 +53,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(L3GD20_USE_SPI) || defined(__DOXYGEN__)
-#define L3GD20_USE_SPI              TRUE
+#define L3GD20_USE_SPI                      TRUE
 #endif
 
 /**
@@ -62,7 +62,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(L3GD20_USE_I2C) || defined(__DOXYGEN__)
-#define L3GD20_USE_I2C              FALSE
+#define L3GD20_USE_I2C                      FALSE
 #endif
 
 /**
@@ -71,7 +71,7 @@
  *          bias. A repetition is required in order to remove noise.
  */
 #if !defined(L3GD20_BIAS_ACQ_TIMES) || defined(__DOXYGEN__)
-#define L3GD20_BIAS_ACQ_TIMES       50
+#define L3GD20_BIAS_ACQ_TIMES               50
 #endif
 
 /**
@@ -79,7 +79,7 @@
  * @details This is the time between each bias acquisition.
  */
 #if !defined(L3GD20_BIAS_SETTLING_uS) || defined(__DOXYGEN__)
-#define L3GD20_BIAS_SETTLING_uS     5000
+#define L3GD20_BIAS_SETTLING_uS             5000
 #endif
 /** @} */
 
@@ -98,6 +98,7 @@
 #if L3GD20_USE_I2C && !HAL_USE_I2C
 #error "L3GD20_USE_I2C requires HAL_USE_I2C"
 #endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
