@@ -87,7 +87,7 @@
 #define  L3GD20_AD_INT1_TSH_ZL              ((uint8_t)0x37)
 #define  L3GD20_AD_INT1_DURATION            ((uint8_t)0x38)
 
-#define  L3GD20_CTRL_REG4_FS                ((uint8_t)0x30)
+#define  L3GD20_CTRL_REG4_FS_MASK           ((uint8_t)0x30)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -299,7 +299,7 @@ static const struct L3GD20VMT vmt = {
 /**
  * @brief   Initializes an instance.
  *
- * @param[out] devp      pointer to the @p L3GD20Driver object
+ * @param[out] devp     pointer to the @p L3GD20Driver object
  *
  * @init
  */
@@ -316,8 +316,8 @@ void l3gd20ObjectInit(L3GD20Driver *devp) {
 /**
  * @brief   Configures and activates L3GD20 Complex Driver peripheral.
  *
- * @param[in] devp       pointer to the @p L3GD20Driver object
- * @param[in] config     pointer to the @p L3GD20Config object
+ * @param[in] devp      pointer to the @p L3GD20Driver object
+ * @param[in] config    pointer to the @p L3GD20Config object
  *
  * @api
  */
@@ -367,7 +367,7 @@ void l3gd20Start(L3GD20Driver *devp, const L3GD20Config *config) {
 /**
  * @brief   Deactivates the L3GD20 Complex Driver peripheral.
  *
- * @param[in] devp        pointer to the @p L3GD20Driver object
+ * @param[in] devp       pointer to the @p L3GD20Driver object
  *
  * @api
  */

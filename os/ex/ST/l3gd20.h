@@ -122,7 +122,7 @@
  * @{
  */
 /**
- * @brief  L3GD20 full scale
+ * @brief   L3GD20 full scale
  */
 typedef enum {
   L3GD20_FS_250DPS = 0x00,          /**< Full scale 250 degree per second.  */        
@@ -131,7 +131,7 @@ typedef enum {
 }l3gd20_fs_t;
 
 /**
- * @brief  L3GD20 output data rate and bandwidth
+ * @brief   L3GD20 output data rate and bandwidth
  */
 typedef enum {
   L3GD20_ODR_95HZ_FC_12_5 = 0x00,   /**< ODR 95 Hz, BW 12.5 Hz.             */       
@@ -165,7 +165,7 @@ typedef enum {
 }l3gd20_ae_t;
 
 /**
- * @brief  L3GD20 block data update
+ * @brief   L3GD20 block data update
  */
 typedef enum {
   L3GD20_BDU_CONTINOUS = 0x00,      /**< Block data continuously updated.   */         
@@ -173,7 +173,7 @@ typedef enum {
 }l3gd20_bdu_t;
 
 /**
- * @brief  L3GD20 endianness
+ * @brief   L3GD20 endianness
  */
 typedef enum {
   L3GD20_END_LITTLE = 0x00,         /**< Little endian.                     */ 
