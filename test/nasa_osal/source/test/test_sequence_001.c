@@ -232,7 +232,7 @@ static void test_001_001_execute(void) {
     test_assert(err == OS_ERR_NAME_TAKEN, "name conflict not detected");
 
     err = OS_TaskCreate(&tid,
-                        "another running thread",
+                        "conflicting thread",
                         test_thread1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
