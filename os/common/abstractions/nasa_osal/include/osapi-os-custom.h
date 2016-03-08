@@ -52,6 +52,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void OS_set_printf(int (*printf)(const char *fmt, ...));
   boolean OS_TaskDeleteCheck(void);
 #ifdef __cplusplus
 }

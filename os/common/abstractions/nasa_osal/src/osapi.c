@@ -22,6 +22,7 @@
  * @{
  */
 
+#include <stdarg.h>
 #include <string.h>
 
 #include "ch.h"
@@ -131,6 +132,9 @@ typedef struct {
  */
 typedef struct {
   bool                  printf_enabled;
+  int (*printf)(const char *fmt, ...);
+  virtual_timer_t       vt;
+  OS_time_t             localtime;
   memory_pool_t         timers_pool;
   memory_pool_t         queues_pool;
   memory_pool_t         binary_semaphores_pool;
@@ -152,6 +156,22 @@ static osal_t osal;
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief   System time callback.
+ */
+static void systime_update(void *p) {
+  systime_t delay = (systime_t)p;
+
+  chSysLockFromISR();
+  osal.localtime.microsecs += 1000;
+  if (osal.localtime.microsecs >= 1000000) {
+    osal.localtime.microsecs = 0;
+    osal.localtime.seconds++;
+  }
+  chVTDoSetI(&osal.vt, delay, systime_update, p);
+  chSysUnlockFromISR();
+}
 
 /**
  * @brief   Virtual timers callback.
@@ -182,7 +202,7 @@ static void timer_handler(void *p) {
  *          of the OS Abstraction Layer. It must be called in the application
  *          startup code before calling any other OS routines.
  *
- * @return                      kAn error code.
+ * @return                      An error code.
  *
  * @api
  */
@@ -192,6 +212,13 @@ int32 OS_API_Init(void) {
 
   /* OS_printf() initially disabled.*/
   osal.printf_enabled = false;
+  osal.printf = NULL;
+
+  /* System time handling.*/
+  osal.localtime.microsecs = 0;
+  osal.localtime.seconds   = 0;
+  chVTObjectInit(&osal.vt);
+  chVTSet(&osal.vt, MS2ST(1), systime_update, (void *)MS2ST(1));
 
   /* Timers pool initialization.*/
   chPoolObjectInit(&osal.timers_pool,
@@ -248,11 +275,12 @@ int32 OS_API_Init(void) {
  * @api
  */
 void OS_printf(const char *string, ...) {
+  va_list ap;
 
-  (void)string;
-
-  if (osal.printf_enabled) {
-
+  if (osal.printf_enabled && (osal.printf != NULL)) {
+    va_start(ap, string);
+    (void) osal.printf(string);
+    va_end(ap);
   }
 }
 
@@ -274,6 +302,20 @@ void OS_printf_disable(void) {
 void OS_printf_enable(void) {
 
   osal.printf_enabled = true;
+}
+
+/**
+ * @brief   Sets the system printf function.
+ * @note    By default the printf function is not defined.
+ * @note    This is a ChibiOS/RT extension.
+ *
+ * @param[in] printf    pointer to a @p printf() like function
+ *
+ * @api
+ */
+void OS_set_printf(int (*printf)(const char *fmt, ...)) {
+
+  osal.printf = printf;
 }
 
 /**
@@ -301,10 +343,11 @@ int32 OS_GetLocalTime(OS_time_t *time_struct) {
      return OS_INVALID_POINTER;
   }
 
-  time_struct->seconds = 0;
-  time_struct->microsecs = 0;
+  chSysLock();
+  *time_struct = osal.localtime;
+  chSysUnlock();
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  return OS_SUCCESS;
 }
 
 /**
@@ -322,7 +365,11 @@ int32 OS_SetLocalTime(OS_time_t *time_struct) {
      return OS_INVALID_POINTER;
   }
 
-  return OS_ERR_NOT_IMPLEMENTED;
+  chSysLock();
+  osal.localtime = *time_struct;
+  chSysUnlock();
+
+  return OS_SUCCESS;
 }
 
 /**
@@ -2032,6 +2079,139 @@ int32 OS_TaskGetInfo(uint32 task_id, OS_task_prop_t *task_prop) {
   chThdRelease(tp);
 
   return OS_SUCCESS;
+}
+
+/*-- System Interrupt API ---------------------------------------------------*/
+
+/* In ChibiOS interrupts are statically linked, the vectors table is in
+   flash.*/
+int32 OS_IntAttachHandler (uint32 InterruptNumber,
+                           osal_task_entry InterruptHandler,
+                           int32 parameter) {
+  (void)InterruptNumber;
+  (void)parameter;
+
+  /* NULL pointer checks.*/
+  if (InterruptHandler == NULL) {
+    return OS_INVALID_POINTER;
+  }
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+int32 OS_IntLock(void) {
+
+  return (int32)chSysGetStatusAndLockX();
+}
+
+int32 OS_IntUnlock(int32 IntLevel) {
+
+  chSysRestoreStatusX((syssts_t) IntLevel);
+
+  return OS_SUCCESS;
+}
+
+int32 OS_IntEnable(int32 Level) {
+
+  NVIC_EnableIRQ((IRQn_Type)Level);
+
+  return OS_SUCCESS;
+}
+
+int32 OS_IntDisable(int32 Level) {
+
+  NVIC_DisableIRQ((IRQn_Type)Level);
+
+  return OS_SUCCESS;
+}
+
+int32 OS_IntAck(int32 InterruptNumber) {
+
+  NVIC_ClearPendingIRQ((IRQn_Type)InterruptNumber);
+
+  return OS_SUCCESS;
+}
+
+/*-- System Exception API ---------------------------------------------------*/
+
+/* In ChibiOS exceptions are statically linked, the vectors table is in
+   flash.*/
+int32 OS_ExcAttachHandler(uint32 ExceptionNumber,
+                          void (*ExceptionHandler)(uint32, uint32 *,uint32),
+                          int32 parameter) {
+
+  (void)ExceptionNumber;
+  (void)parameter;
+
+  /* NULL pointer checks.*/
+  if (ExceptionHandler == NULL) {
+    return OS_INVALID_POINTER;
+  }
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+/* No exceptions masking.*/
+int32 OS_ExcEnable(int32 ExceptionNumber) {
+
+  (void)ExceptionNumber;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+/* No exceptions masking.*/
+int32 OS_ExcDisable(int32 ExceptionNumber) {
+
+  (void)ExceptionNumber;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+/*-- Floating Point Unit API ------------------------------------------------*/
+
+/* In ChibiOS exceptions are statically linked, the vectors table is in
+   flash.*/
+int32 OS_FPUExcAttachHandler(uint32 ExceptionNumber,
+                             void * ExceptionHandler ,
+                             int32 parameter) {
+
+  (void)ExceptionNumber;
+  (void)parameter;
+
+  /* NULL pointer checks.*/
+  if (ExceptionHandler == NULL) {
+    return OS_INVALID_POINTER;
+  }
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+int32 OS_FPUExcEnable(int32 ExceptionNumber) {
+
+  (void)ExceptionNumber;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+int32 OS_FPUExcDisable(int32 ExceptionNumber) {
+
+  (void)ExceptionNumber;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+int32 OS_FPUExcSetMask(uint32 mask) {
+
+  (void)mask;
+
+  return OS_ERR_NOT_IMPLEMENTED;
+}
+
+int32 OS_FPUExcGetMask(uint32 *mask) {
+
+  (void)mask;
+
+  return OS_ERR_NOT_IMPLEMENTED;
 }
 
 /** @} */
