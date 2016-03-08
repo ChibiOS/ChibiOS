@@ -10,7 +10,7 @@
       <instance locked="false" id="org.chibios.spc5.components.chibios_unitary_tests_engine">
         <description>
           <introduction>
-            <value>This document has been automatically generated.</value>
+            <value>Test suite for NASA OSAL implementation over ChibiOS/RT. The purpose of this suite is to perform unit tests on the OSAL module and to converge to 100% code coverage through successive improvements.</value>
           </introduction>
         </description>
         <global_data_and_code>
@@ -64,6 +64,14 @@ static void test_thread3(void) {
 static void test_thread4(void) {
 
   test_emit_token('D');
+}
+
+static void test_thread_delete(void) {
+
+  while (!OS_TaskDeleteCheck()) {
+    OS_TaskDelay(1);
+  }
+  test_emit_token('A');
 }]]></value>
             </shared_code>
             <cases>
@@ -489,6 +497,67 @@ test_assert_sequence("ABCD", "task order violation");]]></value>
                     </code>
                   </step>
                 </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>OS_TaskDelete() errors</value>
+                </brief>
+                <description>
+                  <value>Parameters checking in OS_TaskDelete() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>OS_TaskDelete() is invoked with task_id set to -1, an error is expected.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_TaskDelete((uint32)-1);
+test_assert(err == OS_ERR_INVALID_ID, "wrong task id not detected");]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>OS_TaskDelete() and OS_TaskInstallDeleteHandler() functionality</value>
+                </brief>
+                <description>
+                  <value>OS_TaskDelete() and OS_TaskInstallDeleteHandler() are tested for functionality.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps />
               </case>
             </cases>
           </sequence>

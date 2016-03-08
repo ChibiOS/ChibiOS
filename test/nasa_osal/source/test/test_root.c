@@ -16,7 +16,9 @@
 
 /**
  * @mainpage Test Suite Specification
- * This document has been automatically generated.
+ * Test suite for NASA OSAL implementation over ChibiOS/RT. The purpose
+ * of this suite is to perform unit tests on the OSAL module and to
+ * converge to 100% code coverage through successive improvements.
  *
  * <h2>Test Sequences</h2>
  * - @subpage test_sequence_001

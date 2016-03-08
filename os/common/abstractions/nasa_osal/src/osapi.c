@@ -1778,9 +1778,25 @@ int32 OS_TaskInstallDeleteHandler(void *function_pointer) {
 }
 
 /**
+ * @brief   Check for task termination request.
+ * @note    This is a ChibiOS/RT extension, direct task delete is not
+ *          allowed in RT.
+ *
+ * @return                      The termination request flag.
+ * @retval false                if termination has not been requested.
+ * @retval true                 if termination has been requested.
+ *
+ * @api
+ */
+boolean OS_TaskDeleteCheck(void) {
+
+  return (boolean)chThdShouldTerminateX();
+}
+
+/**
  * @brief   Task delete.
  * @note    Limitation, it does not actually kill the thread, it just sets a
- *          flag in the thread that has then to terminate volountarly. The
+ *          flag in the thread that has then to terminate voluntarily. The
  *          flag can be checked using @p chThdShouldTerminateX().
  *
  * @param[in] task_id           the task id

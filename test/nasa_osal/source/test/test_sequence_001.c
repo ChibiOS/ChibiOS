@@ -30,6 +30,8 @@
  * <h2>Test Cases</h2>
  * - @subpage test_001_001
  * - @subpage test_001_002
+ * - @subpage test_001_003
+ * - @subpage test_001_004
  * .
  */
 
@@ -57,6 +59,14 @@ static void test_thread3(void) {
 static void test_thread4(void) {
 
   test_emit_token('D');
+}
+
+static void test_thread_delete(void) {
+
+  while (!OS_TaskDeleteCheck()) {
+    OS_TaskDelay(1);
+  }
+  test_emit_token('A');
 }
 
 /****************************************************************************
@@ -448,6 +458,58 @@ static const testcase_t test_001_002 = {
   test_001_002_execute
 };
 
+/**
+ * @page test_001_003 OS_TaskDelete() errors
+ *
+ * <h2>Description</h2>
+ * Parameters checking in OS_TaskDelete() is tested.
+ *
+ * <h2>Test Steps</h2>
+ * - OS_TaskDelete() is invoked with task_id set to -1, an error is
+ *   expected.
+ * .
+ */
+
+static void test_001_003_execute(void) {
+
+  /* OS_TaskDelete() is invoked with task_id set to -1, an error is
+     expected.*/
+  test_set_step(1);
+  {
+    int32 err;
+
+    err = OS_TaskDelete((uint32)-1);
+    test_assert(err == OS_ERR_INVALID_ID, "wrong task id not detected");
+  }
+}
+
+static const testcase_t test_001_003 = {
+  "OS_TaskDelete() errors",
+  NULL,
+  NULL,
+  test_001_003_execute
+};
+
+/**
+ * @page test_001_004 OS_TaskDelete() and OS_TaskInstallDeleteHandler() functionality
+ *
+ * <h2>Description</h2>
+ * OS_TaskDelete() and OS_TaskInstallDeleteHandler() are tested for
+ * functionality.
+ *
+ * <h2>Test Steps</h2>
+ */
+
+static void test_001_004_execute(void) {
+}
+
+static const testcase_t test_001_004 = {
+  "OS_TaskDelete() and OS_TaskInstallDeleteHandler() functionality",
+  NULL,
+  NULL,
+  test_001_004_execute
+};
+
 /****************************************************************************
  * Exported data.
  ****************************************************************************/
@@ -458,5 +520,7 @@ static const testcase_t test_001_002 = {
 const testcase_t * const test_sequence_001[] = {
   &test_001_001,
   &test_001_002,
+  &test_001_003,
+  &test_001_004,
   NULL
 };
