@@ -66,12 +66,19 @@ static void test_thread4(void) {
   test_emit_token('D');
 }
 
+static void delete_handler(void) {
+
+  test_emit_token('C');
+}
+
 static void test_thread_delete(void) {
 
-  while (!OS_TaskDeleteCheck()) {
-    OS_TaskDelay(1);
-  }
   test_emit_token('A');
+  (void) OS_TaskInstallDeleteHandler(delete_handler);
+  while (!OS_TaskDeleteCheck()) {
+    (void) OS_TaskDelay(1);
+  }
+  test_emit_token('B');
 }]]></value>
             </shared_code>
             <cases>
@@ -554,10 +561,47 @@ test_assert(err == OS_ERR_INVALID_ID, "wrong task id not detected");]]></value>
                     <value />
                   </teardown_code>
                   <local_variables>
-                    <value />
+                    <value><![CDATA[uint32 tid;]]></value>
                   </local_variables>
                 </various_code>
-                <steps />
+                <steps>
+                  <step>
+                    <description>
+                      <value>Creating a task executing an infinite loop.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+err = OS_TaskCreate(&tid,
+                    "deletable thread",
+                    test_thread_delete,
+                    (uint32 *)wa_test1,
+                    sizeof wa_test1,
+                    TASKS_BASE_PRIORITY,
+                    0);
+test_assert(err == OS_SUCCESS, "deletable task creation failed");]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Letting the task run for a while then deleting it. A check is performed on the correct execution of the delete handler.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[int32 err;
+
+(void) OS_TaskDelay(50);
+err = OS_TaskDelete(tid);
+test_assert(err == OS_SUCCESS, "delete failed");
+test_assert_sequence("ABC", "events order violation");]]></value>
+                    </code>
+                  </step>
+                </steps>
               </case>
             </cases>
           </sequence>

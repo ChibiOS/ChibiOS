@@ -61,12 +61,19 @@ static void test_thread4(void) {
   test_emit_token('D');
 }
 
+static void delete_handler(void) {
+
+  test_emit_token('C');
+}
+
 static void test_thread_delete(void) {
 
-  while (!OS_TaskDeleteCheck()) {
-    OS_TaskDelay(1);
-  }
   test_emit_token('A');
+  (void) OS_TaskInstallDeleteHandler(delete_handler);
+  while (!OS_TaskDeleteCheck()) {
+    (void) OS_TaskDelay(1);
+  }
+  test_emit_token('B');
 }
 
 /****************************************************************************
@@ -498,9 +505,41 @@ static const testcase_t test_001_003 = {
  * functionality.
  *
  * <h2>Test Steps</h2>
+ * - Creating a task executing an infinite loop.
+ * - Letting the task run for a while then deleting it. A check is
+ *   performed on the correct execution of the delete handler.
+ * .
  */
 
 static void test_001_004_execute(void) {
+  uint32 tid;
+
+  /* Creating a task executing an infinite loop.*/
+  test_set_step(1);
+  {
+    int32 err;
+
+    err = OS_TaskCreate(&tid,
+                        "deletable thread",
+                        test_thread_delete,
+                        (uint32 *)wa_test1,
+                        sizeof wa_test1,
+                        TASKS_BASE_PRIORITY,
+                        0);
+    test_assert(err == OS_SUCCESS, "deletable task creation failed");
+  }
+
+  /* Letting the task run for a while then deleting it. A check is
+     performed on the correct execution of the delete handler.*/
+  test_set_step(2);
+  {
+    int32 err;
+
+    (void) OS_TaskDelay(50);
+    err = OS_TaskDelete(tid);
+    test_assert(err == OS_SUCCESS, "delete failed");
+    test_assert_sequence("ABC", "events order violation");
+  }
 }
 
 static const testcase_t test_001_004 = {
