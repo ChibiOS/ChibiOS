@@ -19,7 +19,7 @@
 #include "test_root.h"
 
 /**
- * @page test_sequence_001 Threads Functionality
+ * @page test_sequence_001 Tasks Functionality
  *
  * File: @ref test_sequence_001.c
  *
@@ -41,22 +41,22 @@
 
 #include "osapi.h"
 
-static void test_thread1(void) {
+static void test_task1(void) {
 
   test_emit_token('A');
 }
 
-static void test_thread2(void) {
+static void test_task2(void) {
 
   test_emit_token('B');
 }
 
-static void test_thread3(void) {
+static void test_task3(void) {
 
   test_emit_token('C');
 }
 
-static void test_thread4(void) {
+static void test_task4(void) {
 
   test_emit_token('D');
 }
@@ -66,7 +66,7 @@ static void delete_handler(void) {
   test_emit_token('C');
 }
 
-static void test_thread_delete(void) {
+static void test_task_delete(void) {
 
   test_emit_token('A');
   (void) OS_TaskInstallDeleteHandler(delete_handler);
@@ -113,8 +113,8 @@ static void test_001_001_execute(void) {
     int32 err;
 
     err = OS_TaskCreate(NULL,                   /* Error.*/
-                        "failing thread",
-                        test_thread1,
+                        "failing task",
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY,
@@ -132,7 +132,7 @@ static void test_001_001_execute(void) {
 
     err = OS_TaskCreate(&tid,
                         NULL,                   /* Error.*/
-                        test_thread1,
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY,
@@ -149,8 +149,8 @@ static void test_001_001_execute(void) {
     uint32 tid;
 
     err = OS_TaskCreate(&tid,
-                        "failing thread",
-                        test_thread1,
+                        "failing task",
+                        test_task1,
                         (uint32 *)NULL,         /* Error.*/
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY,
@@ -168,7 +168,7 @@ static void test_001_001_execute(void) {
 
     err = OS_TaskCreate(&tid,
                         "this is a very very long task name", /* Error.*/
-                        test_thread1,
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY,
@@ -185,8 +185,8 @@ static void test_001_001_execute(void) {
     uint32 tid;
 
     err = OS_TaskCreate(&tid,
-                        "failing thread",
-                        test_thread1,
+                        "failing task",
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         0,                      /* Error.*/
@@ -195,8 +195,8 @@ static void test_001_001_execute(void) {
     test_assert_sequence("", "task executed");
 
     err = OS_TaskCreate(&tid,
-                       "failing thread",
-                       test_thread1,
+                       "failing task",
+                       test_task1,
                        (uint32 *)wa_test1,
                        sizeof wa_test1,
                        256,                     /* Error.*/
@@ -213,8 +213,8 @@ static void test_001_001_execute(void) {
     uint32 tid;
 
     err = OS_TaskCreate(&tid,
-                        "failing thread",
-                        test_thread1,
+                        "failing task",
+                        test_task1,
                         (uint32 *)wa_test1,
                         16,                     /* Error.*/
                         TASKS_BASE_PRIORITY,
@@ -231,8 +231,8 @@ static void test_001_001_execute(void) {
     uint32 tid;
 
     err = OS_TaskCreate(&tid,
-                        "running thread",
-                        test_thread1,
+                        "running task",
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY,
@@ -240,8 +240,8 @@ static void test_001_001_execute(void) {
     test_assert(err == OS_SUCCESS, "task creation failed");
 
     err = OS_TaskCreate(&tid,
-                        "running thread",
-                        test_thread2,
+                        "running task",
+                        test_task2,
                         (uint32 *)wa_test2,
                         sizeof wa_test2,
                         TASKS_BASE_PRIORITY,
@@ -249,8 +249,8 @@ static void test_001_001_execute(void) {
     test_assert(err == OS_ERR_NAME_TAKEN, "name conflict not detected");
 
     err = OS_TaskCreate(&tid,
-                        "conflicting thread",
-                        test_thread1,
+                        "conflicting task",
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY,
@@ -262,8 +262,8 @@ static void test_001_001_execute(void) {
     test_assert_sequence("A", "task not executed");
 
     err = OS_TaskCreate(&tid,
-                        "running thread",
-                        test_thread1,
+                        "running task",
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY,
@@ -313,8 +313,8 @@ static void test_001_002_execute(void) {
     uint32 tid1, tid2, tid3, tid4;
 
     err = OS_TaskCreate(&tid4,
-                        "running thread 4",
-                        test_thread4,
+                        "running task 4",
+                        test_task4,
                         (uint32 *)wa_test4,
                         sizeof wa_test4,
                         TASKS_BASE_PRIORITY - 0,
@@ -322,8 +322,8 @@ static void test_001_002_execute(void) {
     test_assert(err == OS_SUCCESS, "task 4 creation failed");
 
     err = OS_TaskCreate(&tid3,
-                        "running thread 3",
-                        test_thread3,
+                        "running task 3",
+                        test_task3,
                         (uint32 *)wa_test3,
                         sizeof wa_test3,
                         TASKS_BASE_PRIORITY - 1,
@@ -331,8 +331,8 @@ static void test_001_002_execute(void) {
     test_assert(err == OS_SUCCESS, "task 3 creation failed");
 
     err = OS_TaskCreate(&tid2,
-                        "running thread 2",
-                        test_thread2,
+                        "running task 2",
+                        test_task2,
                         (uint32 *)wa_test2,
                         sizeof wa_test2,
                         TASKS_BASE_PRIORITY - 2,
@@ -340,8 +340,8 @@ static void test_001_002_execute(void) {
     test_assert(err == OS_SUCCESS, "task 2 creation failed");
 
     err = OS_TaskCreate(&tid1,
-                        "running thread 1",
-                        test_thread1,
+                        "running task 1",
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY - 3,
@@ -364,8 +364,8 @@ static void test_001_002_execute(void) {
     uint32 tid1, tid2, tid3, tid4;
 
     err = OS_TaskCreate(&tid1,
-                        "running thread 1",
-                        test_thread1,
+                        "running task 1",
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY - 3,
@@ -373,8 +373,8 @@ static void test_001_002_execute(void) {
     test_assert(err == OS_SUCCESS, "task 1 creation failed");
 
     err = OS_TaskCreate(&tid2,
-                        "running thread 2",
-                        test_thread2,
+                        "running task 2",
+                        test_task2,
                         (uint32 *)wa_test2,
                         sizeof wa_test2,
                         TASKS_BASE_PRIORITY - 2,
@@ -382,8 +382,8 @@ static void test_001_002_execute(void) {
     test_assert(err == OS_SUCCESS, "task 2 creation failed");
 
     err = OS_TaskCreate(&tid3,
-                        "running thread 3",
-                        test_thread3,
+                        "running task 3",
+                        test_task3,
                         (uint32 *)wa_test3,
                         sizeof wa_test3,
                         TASKS_BASE_PRIORITY - 1,
@@ -391,8 +391,8 @@ static void test_001_002_execute(void) {
     test_assert(err == OS_SUCCESS, "task 3 creation failed");
 
     err = OS_TaskCreate(&tid4,
-                        "running thread 4",
-                        test_thread4,
+                        "running task 4",
+                        test_task4,
                         (uint32 *)wa_test4,
                         sizeof wa_test4,
                         TASKS_BASE_PRIORITY - 0,
@@ -415,8 +415,8 @@ static void test_001_002_execute(void) {
     uint32 tid1, tid2, tid3, tid4;
 
     err = OS_TaskCreate(&tid2,
-                        "running thread 2",
-                        test_thread2,
+                        "running task 2",
+                        test_task2,
                         (uint32 *)wa_test2,
                         sizeof wa_test2,
                         TASKS_BASE_PRIORITY - 2,
@@ -424,8 +424,8 @@ static void test_001_002_execute(void) {
     test_assert(err == OS_SUCCESS, "task 2 creation failed");
 
     err = OS_TaskCreate(&tid1,
-                        "running thread 1",
-                        test_thread1,
+                        "running task 1",
+                        test_task1,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY - 3,
@@ -433,8 +433,8 @@ static void test_001_002_execute(void) {
     test_assert(err == OS_SUCCESS, "task 1 creation failed");
 
     err = OS_TaskCreate(&tid4,
-                        "running thread 4",
-                        test_thread4,
+                        "running task 4",
+                        test_task4,
                         (uint32 *)wa_test4,
                         sizeof wa_test4,
                         TASKS_BASE_PRIORITY - 0,
@@ -442,8 +442,8 @@ static void test_001_002_execute(void) {
     test_assert(err == OS_SUCCESS, "task 4 creation failed");
 
     err = OS_TaskCreate(&tid3,
-                        "running thread 3",
-                        test_thread3,
+                        "running task 3",
+                        test_task3,
                         (uint32 *)wa_test3,
                         sizeof wa_test3,
                         TASKS_BASE_PRIORITY - 1,
@@ -522,8 +522,8 @@ static void test_001_004_execute(void) {
     int32 err;
 
     err = OS_TaskCreate(&tid,
-                        "deletable thread",
-                        test_thread_delete,
+                        "deletable task",
+                        test_task_delete,
                         (uint32 *)wa_test1,
                         sizeof wa_test1,
                         TASKS_BASE_PRIORITY,
@@ -556,7 +556,7 @@ static const testcase_t test_001_004 = {
  ****************************************************************************/
 
 /**
- * @brief   Threads Functionality.
+ * @brief   Tasks Functionality.
  */
 const testcase_t * const test_sequence_001[] = {
   &test_001_001,
