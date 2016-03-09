@@ -220,9 +220,9 @@ static msg_t read_raw(void *ip, int32_t axes[L3GD20_NUMBER_OF_AXES]) {
   }
   if(((L3GD20Driver *)ip)->config->axesenabling & L3GD20_AE_Z){
     axes[2] = (int16_t)(l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
-                                       L3GD20_AD_OUT_Y_L));
+                                       L3GD20_AD_OUT_Z_L));
     axes[2] += (int16_t)(l3gd20SPIReadRegister(((L3GD20Driver *)ip)->config->spip,
-                                        L3GD20_AD_OUT_Y_H) << 8);
+                                        L3GD20_AD_OUT_Z_H) << 8);
     axes[2] -= ((L3GD20Driver *)ip)->bias[2];
   }
 #if	L3GD20_SHARED_SPI
