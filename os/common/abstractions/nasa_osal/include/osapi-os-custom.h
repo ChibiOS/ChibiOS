@@ -54,6 +54,7 @@ extern "C" {
 #endif
   void OS_set_printf(int (*printf)(const char *fmt, ...));
   boolean OS_TaskDeleteCheck(void);
+  int32 OS_TaskWait(uint32 task_id);
 #ifdef __cplusplus
 }
 #endif

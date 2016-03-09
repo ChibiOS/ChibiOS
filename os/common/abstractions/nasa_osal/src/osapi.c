@@ -1912,6 +1912,28 @@ void OS_TaskExit(void) {
 }
 
 /**
+ * @brief   Wait for task termination.
+ * @note    This is a ChibiOS/RT extension, added for improved testability.
+ *
+ * @param[in] task_id           the task id
+ * @return                      An error code.
+ *
+ * @api
+ */
+int32 OS_TaskWait(uint32 task_id) {
+  thread_t *tp = (thread_t *)task_id;
+
+  /* Check for thread validity, getting a reference.*/
+  if (chRegFindThreadByPointer(tp) == NULL) {
+    return OS_ERR_INVALID_ID;
+  }
+
+  (void) chThdWait(tp);
+
+  return OS_SUCCESS;
+}
+
+/**
  * @brief   Task delay.
  *
  * @param[in] milli_second      the period in miliseconds

@@ -283,7 +283,8 @@ err = OS_TaskCreate(&tid,
                     0);
 test_assert(err == OS_ERR_NO_FREE_IDS, "stack conflict not detected");
 
-OS_TaskDelay(5);
+err = OS_TaskWait(tid);
+test_assert(err == OS_SUCCESS, "wait failed");
 test_assert_sequence("A", "task not executed");
 
 err = OS_TaskCreate(&tid,
@@ -295,7 +296,8 @@ err = OS_TaskCreate(&tid,
                     0);
 test_assert(err == OS_SUCCESS, "task creation failed");
 
-OS_TaskDelay(5);
+err = OS_TaskWait(tid);
+test_assert(err == OS_SUCCESS, "wait failed");
 test_assert_sequence("A", "task not executed");]]></value>
                     </code>
                   </step>
@@ -620,7 +622,7 @@ test_assert_sequence("ABC", "events order violation");]]></value>
 
 #include "osapi.h"
 
-uint32 qid;
+uint32 qid, tid;
 
 #define WRITER_NUM_MESSAGES 16
 #define MESSAGE_SIZE        20
@@ -765,11 +767,16 @@ test_assert(err == OS_SUCCESS, "queue deletion failed");]]></value>
                 </condition>
                 <various_code>
                   <setup_code>
-                    <value><![CDATA[qid = 0;]]></value>
+                    <value><![CDATA[qid = 0;
+tid = 0;]]></value>
                   </setup_code>
                   <teardown_code>
                     <value><![CDATA[if (qid != 0) {
   (void) OS_QueueDelete(qid);
+}
+
+if (tid != 0) {
+  (void) OS_TaskWait(tid);
 }]]></value>
                   </teardown_code>
                   <local_variables>
@@ -840,7 +847,8 @@ test_assert(err == OS_SUCCESS, "writer task creation failed");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[OS_TaskDelay(10);
+                      <value><![CDATA[(void) OS_TaskWait(tid);
+tid = 0;
 test_assert_sequence("", "queue write errors occurred");]]></value>
                     </code>
                   </step>

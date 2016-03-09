@@ -257,7 +257,8 @@ static void test_001_001_execute(void) {
                         0);
     test_assert(err == OS_ERR_NO_FREE_IDS, "stack conflict not detected");
 
-    OS_TaskDelay(5);
+    err = OS_TaskWait(tid);
+    test_assert(err == OS_SUCCESS, "wait failed");
     test_assert_sequence("A", "task not executed");
 
     err = OS_TaskCreate(&tid,
@@ -269,7 +270,8 @@ static void test_001_001_execute(void) {
                         0);
     test_assert(err == OS_SUCCESS, "task creation failed");
 
-    OS_TaskDelay(5);
+    err = OS_TaskWait(tid);
+    test_assert(err == OS_SUCCESS, "wait failed");
     test_assert_sequence("A", "task not executed");
   }
 }
